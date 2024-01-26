@@ -40,7 +40,7 @@ from django.utils.translation import gettext_noop as _
 from uds.core import auths, types, consts, exceptions
 from uds.core.auths.auth import log_login
 from uds.core.ui import gui
-from uds.core.util import fields, ldaputil
+from uds.core.util import fields, ldaputil, validators
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -89,10 +89,10 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         required=True,
         tab=types.ui.Tab.CREDENTIALS,
     )
-    
+
     timeout = fields.timeout_field(tab=False, default=10)  # Use "main tab"
     verify_ssl = fields.verify_ssl_field(order=11)
-    
+
     certificate = gui.TextField(
         length=8192,
         lines=4,
@@ -191,113 +191,44 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     # Label for password field
     label_password = _("Password")
 
-    _connection: typing.Any = None
-    _host: str = ''
-    _port: str = ''
-    _ssl: bool = False
-    _username: str = ''
-    _password: str = ''
-    _timeout: str = ''
-    _ldapBase: str = ''
-    _userClass: str = ''
-    _groupClass: str = ''
-    _userIdAttr: str = ''
-    _groupIdAttr: str = ''
-    _memberAttr: str = ''
-    _userNameAttr: str = ''
-    _mfaAttr: str = ''
-    _verifySsl: bool = True
-    _certificate: str = ''
+    _connection: typing.Optional['ldaputil.LDAPObject'] = None
 
     def initialize(self, values: typing.Optional[dict[str, typing.Any]]) -> None:
         if values:
-            self._host = values['host']
-            self._port = values['port']
-            self._ssl = gui.as_bool(values['ssl'])
-            self._username = values['username']
-            self._password = values['password']
-            self._timeout = values['timeout']
-            self._ldapBase = values['ldapBase']
-            self._userClass = values['userClass']
-            self._groupClass = values['groupClass']
-            self._userIdAttr = values['userIdAttr']
-            self._groupIdAttr = values['groupIdAttr']
-            self._memberAttr = values['memberAttr']
-            self._userNameAttr = values['userNameAttr'].replace(' ', '')  # Removes white spaces
-            self._mfaAttr = values['mfaAttr']
-            self._verifySsl = gui.as_bool(values['verifySsl'])
-            self._certificate = values['certificate']
-
-    def get_fields_as_dict(self) -> gui.ValuesDictType:
-        return {
-            'host': self._host,
-            'port': self._port,
-            'ssl': gui.bool_as_str(self._ssl),
-            'username': self._username,
-            'password': self._password,
-            'timeout': self._timeout,
-            'ldapBase': self._ldapBase,
-            'userClass': self._userClass,
-            'groupClass': self._groupClass,
-            'userIdAttr': self._userIdAttr,
-            'groupIdAttr': self._groupIdAttr,
-            'memberAttr': self._memberAttr,
-            'userNameAttr': self._userNameAttr,
-            'mfaAttr': self._mfaAttr,
-            'verifySsl': gui.bool_as_str(self._verifySsl),
-            'certificate': self._certificate,
-        }
-
-    def marshal(self) -> bytes:
-        return '\t'.join(
-            [
-                'v2',
-                self._host,
-                self._port,
-                gui.bool_as_str(self._ssl),
-                self._username,
-                self._password,
-                self._timeout,
-                self._ldapBase,
-                self._userClass,
-                self._groupClass,
-                self._userIdAttr,
-                self._groupIdAttr,
-                self._memberAttr,
-                self._userNameAttr,
-                self._mfaAttr,
-                gui.bool_as_str(self._verifySsl),
-                self._certificate.strip(),
-            ]
-        ).encode('utf8')
+            self.username_attr.value = self.username_attr.value.replace(' ', '')  # Removes white spaces
+            validators.validate_server_certificate(self.certificate.value)
 
     def unmarshal(self, data: bytes):
+        if not data.startswith(b'v'):
+            return super().unmarshal(data)
+
         vals = data.decode('utf8').split('\t')
-        self._verifySsl = False  # Backward compatibility
-        self._mfaAttr = ''  # Backward compatibility
-        self._certificate = ''  # Backward compatibility
+
+        self.verify_ssl.value = False  # Backward compatibility
+        self.mfa_attribute.value = ''  # Backward compatibility
+        self.certificate.value = ''  # Backward compatibility
 
         logger.debug("Data: %s", vals[1:])
         (
-            self._host,
-            self._port,
-            ssl,
-            self._username,
-            self._password,
-            self._timeout,
-            self._ldapBase,
-            self._userClass,
-            self._groupClass,
-            self._userIdAttr,
-            self._groupIdAttr,
-            self._memberAttr,
-            self._userNameAttr,
+            self.host.value,
+            self.port.value,
+            self.use_ssl.value,
+            self.username.value,
+            self.password.value,
+            self.timeout.value,
+            self.ldap_base.value,
+            self.user_class.value,
+            self.group_class.value,
+            self.user_id_attr.value,
+            self.group_id_attr.value,
+            self.member_attr.value,
+            self.username_attr.value,
         ) = vals[1:14]
-        self._ssl = gui.as_bool(ssl)
 
         if vals[0] == 'v2':
-            (self._mfaAttr, verifySsl, self._certificate) = vals[14:17]
-            self._verifySsl = gui.as_bool(verifySsl)
+            (self.mfa_attribute.value, self.verify_ssl.value, self.certificate.value) = vals[14:17]
+
+        self.flag_for_upgrade()
 
     def mfaStorageKey(self, username: str) -> str:
         return 'mfa_' + str(self.db_obj().uuid) + username
@@ -313,15 +244,15 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         """
         if self._connection is None:  # We are not connected
             self._connection = ldaputil.connection(
-                self._username,
-                self._password,
-                self._host,
-                port=int(self._port),
-                ssl=self._ssl,
-                timeout=int(self._timeout),
+                self.username.as_str(),
+                self.password.as_str(),
+                self.host.as_str(),
+                port=self.port.as_int(),
+                ssl=self.use_ssl.as_bool(),
+                timeout=self.timeout.as_int(),
                 debug=False,
-                verify_ssl=self._verifySsl,
-                certificate=self._certificate,
+                verify_ssl=self.verify_ssl.as_bool(),
+                certificate=self.certificate.as_str(),
             )
 
         return self._connection
@@ -330,13 +261,13 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         return ldaputil.connection(
             username,
             password,
-            self._host,
-            port=int(self._port),
-            ssl=self._ssl,
-            timeout=int(self._timeout),
+            self.host.as_str(),
+            port=self.port.as_int(),
+            ssl=self.use_ssl.as_bool(),
+            timeout=self.timeout.as_int(),
             debug=False,
-            verify_ssl=self._verifySsl,
-            certificate=self._certificate,
+            verify_ssl=self.verify_ssl.as_bool(),
+            certificate=self.certificate.as_str(),
         )
 
     def __getUser(self, username: str) -> typing.Optional[ldaputil.LDAPResultType]:
@@ -346,15 +277,15 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         @return: None if username is not found, an dictionary of LDAP entry attributes if found.
         @note: Active directory users contains the groups it belongs to in "memberOf" attribute
         """
-        attributes = self._userNameAttr.split(',') + [self._userIdAttr]
-        if self._mfaAttr:
-            attributes = attributes + [self._mfaAttr]
+        attributes = self.username_attr.as_str().split(',') + [self.user_id_attr.as_str()]
+        if self.mfa_attribute.as_str():
+            attributes = attributes + [self.mfa_attribute.as_str()]
 
         return ldaputil.first(
             con=self.__connection(),
-            base=self._ldapBase,
-            objectClass=self._userClass,
-            field=self._userIdAttr,
+            base=self.ldap_base.as_str(),
+            objectClass=self.user_class.as_str(),
+            field=self.user_id_attr.as_str(),
             value=username,
             attributes=attributes,
             sizeLimit=LDAP_RESULT_LIMIT,
@@ -368,11 +299,11 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         """
         return ldaputil.first(
             con=self.__connection(),
-            base=self._ldapBase,
-            objectClass=self._groupClass,
-            field=self._groupIdAttr,
+            base=self.ldap_base.as_str(),
+            objectClass=self.group_class.as_str(),
+            field=self.group_id_attr.as_str(),
             value=groupName,
-            attributes=[self._memberAttr],
+            attributes=[self.member_attr.as_str()],
             sizeLimit=LDAP_RESULT_LIMIT,
         )
 
@@ -380,16 +311,16 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         try:
             groups: list[str] = []
 
-            filter_ = f'(&(objectClass={self._groupClass})(|({self._memberAttr}={user["_id"]})({self._memberAttr}={user["dn"]})))'
+            filter_ = f'(&(objectClass={self.group_class.as_str()})(|({self.member_attr.as_str()}={user["_id"]})({self.member_attr.as_str()}={user["dn"]})))'
             for d in ldaputil.as_dict(
                 con=self.__connection(),
-                base=self._ldapBase,
+                base=self.ldap_base.as_str(),
                 ldap_filter=filter_,
-                attributes=[self._groupIdAttr],
+                attributes=[self.group_id_attr.as_str()],
                 limit=10 * LDAP_RESULT_LIMIT,
             ):
-                if self._groupIdAttr in d:
-                    for k in d[self._groupIdAttr]:
+                if self.group_id_attr.as_str() in d:
+                    for k in d[self.group_id_attr.as_str()]:
                         groups.append(k)
 
             logger.debug('Groups: %s', groups)
@@ -409,7 +340,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                 ' '.join((str(k) for k in usr.get(id_, '')))
                 if isinstance(usr.get(id_), list)
                 else str(usr.get(id_, ''))
-                for id_ in self._userNameAttr.split(',')
+                for id_ in self.username_attr.as_str().split(',')
             ]
         ).strip()
 
@@ -445,10 +376,10 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                 return types.auth.FAILED_AUTH
 
             # store the user mfa attribute if it is set
-            if self._mfaAttr:
+            if self.mfa_attribute.as_str():
                 self.storage.put_pickle(
                     self.mfaStorageKey(username),
-                    user[self._mfaAttr][0],
+                    user[self.mfa_attribute.as_str()][0],
                 )
 
             groupsManager.validate(self.__getGroups(user))
@@ -517,14 +448,14 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             res = []
             for r in ldaputil.as_dict(
                 con=self.__connection(),
-                base=self._ldapBase,
-                ldap_filter=f'(&(objectClass={self._userClass})({self._userIdAttr}={pattern}*))',
-                attributes=[self._userIdAttr, self._userNameAttr],
+                base=self.ldap_base.as_str(),
+                ldap_filter=f'(&(objectClass={self.user_class.as_str()})({self.user_id_attr.as_str()}={pattern}*))',
+                attributes=[self.user_id_attr.as_str(), self.username_attr.as_str()],
                 limit=LDAP_RESULT_LIMIT,
             ):
                 res.append(
                     {
-                        'id': r[self._userIdAttr][0],  # Ignore @...
+                        'id': r[self.user_id_attr.as_str()][0],  # Ignore @...
                         'name': self.__getUserRealName(r),
                     }
                 )
@@ -539,12 +470,12 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             res = []
             for r in ldaputil.as_dict(
                 con=self.__connection(),
-                base=self._ldapBase,
-                ldap_filter=f'(&(objectClass={self._groupClass})({self._groupIdAttr}={pattern}*))',
-                attributes=[self._groupIdAttr, 'memberOf', 'description'],
+                base=self.ldap_base.as_str(),
+                ldap_filter=f'(&(objectClass={self.group_class.as_str()})({self.group_id_attr.as_str()}={pattern}*))',
+                attributes=[self.group_id_attr.as_str(), 'memberOf', 'description'],
                 limit=LDAP_RESULT_LIMIT,
             ):
-                res.append({'id': r[self._groupIdAttr][0], 'name': r['description'][0]})
+                res.append({'id': r[self.group_id_attr.as_str()][0], 'name': r['description'][0]})
 
             return res
         except Exception as e:
@@ -569,7 +500,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             return [False, str(e)]
 
         try:
-            con.search_s(base=self._ldapBase, scope=ldap.SCOPE_BASE)  # type: ignore  # SCOPE.. exists on LDAP after load
+            con.search_s(base=self.ldap_base.as_str(), scope=ldap.SCOPE_BASE)  # type: ignore  # SCOPE.. exists on LDAP after load
         except Exception:
             return [False, _('Ldap search base is incorrect')]
 
@@ -577,9 +508,9 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             if (
                 len(
                     con.search_ext_s(
-                        base=self._ldapBase,
+                        base=self.ldap_base.as_str(),
                         scope=ldap.SCOPE_SUBTREE,  # type: ignore  # SCOPE.. exists on LDAP after load
-                        filterstr=f'(objectClass={self._userClass})',
+                        filterstr=f'(objectClass={self.user_class.as_str()})',
                         sizelimit=1,
                     )
                 )
@@ -598,9 +529,9 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             if (
                 len(
                     con.search_ext_s(
-                        base=self._ldapBase,
+                        base=self.ldap_base.as_str(),
                         scope=ldap.SCOPE_SUBTREE,  # type: ignore  # SCOPE.. exists on LDAP after load
-                        filterstr=f'(objectClass={self._groupClass})',
+                        filterstr=f'(objectClass={self.group_class.as_str()})',
                         sizelimit=1,
                     )
                 )
@@ -619,9 +550,9 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             if (
                 len(
                     con.search_ext_s(
-                        base=self._ldapBase,
+                        base=self.ldap_base.as_str(),
                         scope=ldap.SCOPE_SUBTREE,  # type: ignore  # SCOPE.. exists on LDAP after load
-                        filterstr=f'({self._userIdAttr}=*)',
+                        filterstr=f'({self.user_id_attr.as_str()}=*)',
                         sizelimit=1,
                     )
                 )
@@ -640,9 +571,9 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             if (
                 len(
                     con.search_ext_s(
-                        base=self._ldapBase,
+                        base=self.ldap_base.as_str(),
                         scope=ldap.SCOPE_SUBTREE,  # type: ignore  # SCOPE.. exists on LDAP after load
-                        filterstr=f'({self._groupIdAttr}=*)',
+                        filterstr=f'({self.group_id_attr.as_str()}=*)',
                         sizelimit=1,
                     )
                 )
@@ -662,9 +593,9 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             if (
                 len(
                     con.search_ext_s(
-                        base=self._ldapBase,
+                        base=self.ldap_base.as_str(),
                         scope=ldap.SCOPE_SUBTREE,  # type: ignore  # SCOPE.. exists on LDAP after load
-                        filterstr=f'(&(objectClass={self._userClass})({self._userIdAttr}=*))',
+                        filterstr=f'(&(objectClass={self.user_class.as_str()})({self.user_id_attr.as_str()}=*))',
                         sizelimit=1,
                     )
                 )
@@ -684,10 +615,10 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         # And group part, with membership
         try:
             res = con.search_ext_s(
-                base=self._ldapBase,
+                base=self.ldap_base.as_str(),
                 scope=ldap.SCOPE_SUBTREE,  # type: ignore  # SCOPE.. exists on LDAP after load
-                filterstr=f'(&(objectClass={self._groupClass})({self._groupIdAttr}=*))',
-                attrlist=[self._memberAttr],
+                filterstr=f'(&(objectClass={self.group_class.as_str()})({self.group_id_attr.as_str()}=*))',
+                attrlist=[self.member_attr.as_str()],
             )
             if not res:
                 raise Exception(
@@ -697,7 +628,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                 )
             ok = False
             for r in res:
-                if self._memberAttr in r[1]:
+                if self.member_attr.as_str() in r[1]:
                     ok = True
                     break
             if ok is False:
@@ -712,8 +643,8 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
 
     def __str__(self):
         return (
-            f'Ldap Auth: {self._username}:{self._password}@{self._host}:{self._port}, '
-            f'base = {self._ldapBase}, userClass = {self._userClass}, groupClass = {self._groupClass}, '
-            f'userIdAttr = {self._userIdAttr}, groupIdAttr = {self._groupIdAttr}, '
-            f'memberAttr = {self._memberAttr}, userName attr = {self._userNameAttr}'
+            f'Ldap Auth: {self.username.as_str()}:{self.password.as_str()}@{self.host.as_str()}:{self.port.as_int()}, '
+            f'base = {self.ldap_base.as_str()}, userClass = {self.user_class.as_str()}, groupClass = {self.group_class.as_str()}, '
+            f'userIdAttr = {self.user_id_attr.as_str()}, groupIdAttr = {self.group_id_attr.as_str()}, '
+            f'memberAttr = {self.member_attr.as_str()}, userName attr = {self.username_attr.as_str()}'
         )

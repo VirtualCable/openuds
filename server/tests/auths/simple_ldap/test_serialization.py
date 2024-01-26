@@ -46,36 +46,38 @@ from uds.auths.SimpleLDAP import authenticator
 
 PASSWD: typing.Final[str] = 'PASSWD'
 
-# v1:
-#   self.host.value,
-#   self.port.value,
-#   self.use_ssl.value,
-#   self.username.value,
-#   self.password.value,
-#   self.timeout.value,
-#   self.ldap_base.value,
-#   self.user_class.value,
-#   self.userid_attr.value,
-#   self.groupname_attr.value,
-# v2:
-#   self.username_attr.value = vals[11]
-# v3:
-#   self.alternate_class.value = vals[12]
-# v4:
-#   self.mfa_attribute.value = vals[13]
-# v5:
-#   self.verify_ssl.value = vals[14]
-#   self.certificate.value = vals[15]
+        # vals = data.decode('utf8').split('\t')
+        # self._verifySsl = False  # Backward compatibility
+        # self._mfaAttr = ''  # Backward compatibility
+        # self._certificate = ''  # Backward compatibility
+
+        # logger.debug("Data: %s", vals[1:])
+        # (
+        #     self._host,
+        #     self._port,
+        #     ssl,
+        #     self._username,
+        #     self._password,
+        #     self._timeout,
+        #     self._ldapBase,
+        #     self._userClass,
+        #     self._groupClass,
+        #     self._userIdAttr,
+        #     self._groupIdAttr,
+        #     self._memberAttr,
+        #     self._userNameAttr,
+        # ) = vals[1:14]
+        # if vals[0] == 'v2':
+        #     (self._mfaAttr, verifySsl, self._certificate) = vals[14:17]
+        #     self._verifySsl = gui.as_bool(verifySsl)
+
 SERIALIZED_AUTH_DATA: typing.Final[typing.Mapping[str, bytes]] = {
-    'v1': b'v1\thost\t166\t1\tuame\t' + PASSWD.encode('utf8') + b'\t99\tdc=dom,dc=m\tuclass\tuseridAttr\tgroup_attr\t\tusernattr',
-    'v2': b'v2\thost\t166\t1\tuame\t' + PASSWD.encode('utf8') + b'\t99\tdc=dom,dc=m\tuclass\tuseridAttr\tgroup_attr\tusernattr',
-    'v3': b'v3\thost\t166\t1\tuame\t' + PASSWD.encode('utf8') + b'\t99\tdc=dom,dc=m\tuclass\tuseridAttr\tgroup_attr\tusernattr\taltClass',
-    'v4': b'v4\thost\t166\t1\tuame\t' + PASSWD.encode('utf8') + b'\t99\tdc=dom,dc=m\tuclass\tuseridAttr\tgroup_attr\tusernattr\taltClass\tmfa',
-    'v5': b'v5\thost\t166\t1\tuame\t' + PASSWD.encode('utf8') + b'\t99\tdc=dom,dc=m\tuclass\tuseridAttr\tgroup_attr\tusernattr\taltClass\tmfa\tTRUE\tcert',    
+    'v1': b'v1\thost\t166\tTRUE\tuame\t' + PASSWD.encode('utf8') + b'\t99\tdc=dom,dc=m\tuclass\tgclass\tuid_attr\tgid_attr\tmem_attr\tuname_attr',
+    'v2': b'v2\thost\t166\tTRUE\tuame\t' + PASSWD.encode('utf8') + b'\t99\tdc=dom,dc=m\tuclass\tgclass\tuid_attr\tgid_attr\tmem_attr\tuname_attr\tmfa_attr\tTRUE\tcert',
 }
 
 
-class RegexSerializationTest(UDSTestCase):
+class SimpleLdapSerializationTest(UDSTestCase):
     def check_provider(self, version: str, instance: 'authenticator.SimpleLDAPAuthenticator'):
         self.assertEqual(instance.host.as_str(), 'host')
         self.assertEqual(instance.port.as_int(), 166)
@@ -85,20 +87,24 @@ class RegexSerializationTest(UDSTestCase):
         self.assertEqual(instance.timeout.as_int(), 99)
         self.assertEqual(instance.ldap_base.as_str(), 'dc=dom,dc=m')
         self.assertEqual(instance.user_class.as_str(), 'uclass')
-        self.assertEqual(instance.userid_attr.as_str(), 'useridAttr')
-        self.assertEqual(instance.groupname_attr.as_str(), 'group_attr')
+        self.assertEqual(instance.group_class.as_str(), 'gclass')
+        self.assertEqual(instance.user_id_attr.as_str(), 'uid_attr')
+        self.assertEqual(instance.group_id_attr.as_str(), 'gid_attr')
+        self.assertEqual(instance.member_attr.as_str(), 'mem_attr')
+        self.assertEqual(instance.username_attr.as_str(), 'uname_attr')
+        
         if version >= 'v2':
-            self.assertEqual(instance.username_attr.as_str(), 'usernattr')
-
+            self.assertEqual(instance.mfa_attribute.as_str(), 'mfa_attr')
+            self.assertEqual(instance.verify_ssl.as_bool(), True)
+            self.assertEqual(instance.certificate.as_str(), 'cert')
+            
     def test_unmarshall_all_versions(self):
-        return
         for v in range(1, len(SERIALIZED_AUTH_DATA) + 1):
             instance = authenticator.SimpleLDAPAuthenticator(environment=Environment.get_temporary_environment())
             instance.unmarshal(SERIALIZED_AUTH_DATA['v{}'.format(v)])
             self.check_provider(f'v{v}', instance)
 
     def test_marshaling(self):
-        return
         # Unmarshall last version, remarshall and check that is marshalled using new marshalling format
         LAST_VERSION = 'v{}'.format(len(SERIALIZED_AUTH_DATA))
         instance = authenticator.SimpleLDAPAuthenticator(
