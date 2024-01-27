@@ -325,12 +325,12 @@ class EmailMFA(mfas.MFA):
 
     def process(
         self,
-        request: ExtendedHttpRequest,
+        request: 'ExtendedHttpRequest',
         userId: str,
         username: str,
         identifier: str,
         validity: int | None = None,
-    ) -> mfas.MFA.RESULT:
+    ) -> 'mfas.MFA.RESULT':
         # if ip allowed to skip mfa, return allowed
         if mfas.LoginAllowed.check_ip_allowed(request, self.allow_skip_mfa_from_networks.value):
             return mfas.MFA.RESULT.ALLOWED

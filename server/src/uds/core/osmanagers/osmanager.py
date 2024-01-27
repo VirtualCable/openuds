@@ -73,7 +73,7 @@ class OSManager(Module):
     # : Defaults to all. (list or tuple)
     servicesType: types.services.ServiceType = types.services.ServiceType.VDI
 
-    def __init__(self, environment: 'Environment', values: Module.ValuesType):
+    def __init__(self, environment: 'Environment', values: Module.ValuesType = None):
         super().__init__(environment, values)
         self.initialize(values)
 
@@ -216,16 +216,16 @@ class OSManager(Module):
         Invoked when OS Manager is deleted
         """
 
-    def log_known_ip(self, userService: 'UserService', ip: str) -> None:
-        userService.log_ip(ip)
+    def log_known_ip(self, userservice: 'UserService', ip: str) -> None:
+        userservice.log_ip(ip)
 
-    def to_ready(self, userService: 'UserService') -> None:
+    def to_ready(self, userservice: 'UserService') -> None:
         '''
         Resets login counter to 0
         '''
-        userService.properties['logins_counter'] = 0
+        userservice.properties['logins_counter'] = 0
         # And execute ready notification method
-        self.ready_notified(userService)
+        self.ready_notified(userservice)
 
     @staticmethod
     def logged_in(userservice: 'UserService', username: typing.Optional[str] = None) -> None:
@@ -235,19 +235,19 @@ class OSManager(Module):
           - Sets service in use
           - Invokes userLoggedIn for user service instance
         """
-        uniqueId = userservice.unique_id
-        userservice.setInUse(True)
+        unique_id = userservice.unique_id
+        userservice.set_in_use(True)
         userservice.properties['last_username'] = username or 'unknown'  # Store it for convenience
-        userServiceInstance = userservice.get_instance()
-        userServiceInstance.user_logged_in(username or 'unknown')
-        userservice.update_data(userServiceInstance)
+        userservice_instance = userservice.get_instance()
+        userservice_instance.user_logged_in(username or 'unknown')
+        userservice.update_data(userservice_instance)
 
-        serviceIp = userServiceInstance.get_ip()
+        userservice_ip = userservice_instance.get_ip()
 
-        fullUserName = userservice.user.pretty_name if userservice.user else 'unknown'
+        full_username = userservice.user.pretty_name if userservice.user else 'unknown'
 
-        knownUserIP = userservice.src_ip + ':' + userservice.src_hostname
-        knownUserIP = knownUserIP if knownUserIP != ':' else 'unknown'
+        know_user_ip = userservice.src_ip + ':' + userservice.src_hostname
+        know_user_ip = know_user_ip if know_user_ip != ':' else 'unknown'
 
         username = username or 'unknown'
 
@@ -255,9 +255,9 @@ class OSManager(Module):
             userservice.deployed_service,
             types.stats.EventType.LOGIN,
             fld1=username,
-            fld2=knownUserIP,
-            fld3=serviceIp,
-            fld4=fullUserName,
+            fld2=know_user_ip,
+            fld3=userservice_ip,
+            fld4=full_username,
         )
 
         log.log(
@@ -269,11 +269,11 @@ class OSManager(Module):
 
         log.log_use(
             'login',
-            uniqueId,
-            serviceIp,
+            unique_id,
+            userservice_ip,
             username,
-            knownUserIP,
-            fullUserName,
+            know_user_ip,
+            full_username,
             userservice.friendly_name,
             userservice.deployed_service.name,
         )
@@ -301,7 +301,7 @@ class OSManager(Module):
             return
 
         unique_id = userservice.unique_id
-        userservice.setInUse(False)
+        userservice.set_in_use(False)
         user_service_instance = userservice.get_instance()
         user_service_instance.user_logged_out(username or 'unknown')
         userservice.update_data(user_service_instance)

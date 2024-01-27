@@ -42,6 +42,7 @@ from uds.core import exceptions, types, consts
 from uds.core.managers.crypto import CryptoManager
 from uds.core.module import Module
 from uds.core.ui import gui
+from uds.core.workers import initialize
 
 from .linux_osmanager import LinuxOsManager
 
@@ -153,8 +154,7 @@ class LinuxOsADManager(LinuxOsManager):
     idle = LinuxOsManager.idle
     deadline = LinuxOsManager.deadline
 
-    def __init__(self, environment: 'Environment', values: 'Module.ValuesType') -> None:
-        super().__init__(environment, values)
+    def initialize(self, values: 'Module.ValuesType') -> None:
         if values:
             if self.domain.as_clean_str() == '':
                 raise exceptions.ui.ValidationError(_('Must provide a domain!'))
@@ -179,28 +179,5 @@ class LinuxOsADManager(LinuxOsManager):
                 'membership_software': self.membership_software.as_str(),
                 'ssl': self.use_ssl.as_bool(),
                 'automatic_id_mapping': self.automatic_id_mapping.as_bool(),
-                # Compatibility with old actors
-                'isPersistent': self.is_persistent(),  # compatibility
-                'clientSoftware': self.client_software.as_str(),  # compatibility
-                'serverSoftware': self.server_software.as_str(),  # compatibility
-                'membershipSoftware': self.membership_software.as_str(),  # compatibility
-                'automaticIdMapping': self.automatic_id_mapping.as_bool(),  # compatibility
             },
         }
-
-    def marshal(self) -> bytes:
-        # Override parent marshaller and go directly to Module serialization
-        # Use this until remove marshal/unmarshal from LinuxOsManager
-        data = Module.marshal(self)
-        return data
-
-    def unmarshal(self, data: bytes) -> None:
-        # Override parent unmarshaller and go directly to Module serialization
-        # Use this until remove marshal/unmarshal from LinuxOsManager
-        Module.unmarshal(self, data)
-        logger.debug('Unmarshalling data: %s', data)
-
-    def get_fields_as_dict(self) -> typing.Dict[str, typing.Any]:
-        # Override parent get_fields_as_dict and go directly to Serializable
-        # Use this until remove get_fields_as_dict from LinuxOsManager
-        return Module.get_fields_as_dict(self)

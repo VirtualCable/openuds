@@ -42,6 +42,7 @@ from uds.core.types.services import ServiceType as serviceTypes
 from uds.core.ui import gui
 from uds.core.util import log
 from uds.core.types.states import State
+from uds.core.workers import initialize
 
 if typing.TYPE_CHECKING:
     from uds.core.environment import Environment
@@ -65,12 +66,9 @@ class LinuxOsManager(osmanagers.OSManager):
         readonly=True,
         tooltip=_('What to do when user logs out from service'),
         choices=[
-            {'id': 'keep', 'text': gettext_lazy('Keep service assigned')},
-            {'id': 'remove', 'text': gettext_lazy('Remove service')},
-            {
-                'id': 'keep-always',
-                'text': gettext_lazy('Keep service assigned even on new publication'),
-            },
+            gui.choice_item('keep', gettext_lazy('Keep service assigned')),
+            gui.choice_item('remove', gettext_lazy('Remove service')),
+            gui.choice_item('keep-always', gettext_lazy('Keep service assigned even on new publication')),
         ],
         default='keep',
     )
@@ -90,46 +88,30 @@ class LinuxOsManager(osmanagers.OSManager):
     deadline = gui.CheckBoxField(
         label=_('Calendar logout'),
         order=90,
-        tooltip=_(
-            'If checked, UDS will try to logout user when the calendar for his current access expires'
-        ),
+        tooltip=_('If checked, UDS will try to logout user when the calendar for his current access expires'),
         tab=types.ui.Tab.ADVANCED,
         default=True,
     )
-    
-    _on_logout: str
-    _idle: int
-    _deadline: bool
 
     def _flag_processes_unused_machines(self) -> None:
-        self.handles_unused_userservices = self._on_logout == 'remove'
+        self.handles_unused_userservices = self.on_logout.value == 'remove'
 
-    def __init__(self, environment: 'Environment', values: 'Module.ValuesType') -> None:
-        super().__init__(environment, values)
-        if values is not None:
-            self._on_logout = values['on_logout']
-            self._idle = int(values['idle'])
-            self._deadline = gui.as_bool(values['deadline'])
-        else:
-            self._on_logout = ''
-            self._idle = -1
-            self._deadline = True
-
+    def initialize(self, values: 'Module.ValuesType') -> None:
         self._flag_processes_unused_machines()
 
-    def release(self, userService: 'UserService') -> None:
+    def release(self, userservice: 'UserService') -> None:
         pass
 
     def ignore_deadline(self) -> bool:
-        return not self._deadline
+        return not self.deadline.as_bool()
 
-    def is_removable_on_logout(self, userService: 'UserService') -> bool:
+    def is_removable_on_logout(self, userservice: 'UserService') -> bool:
         '''
         Says if a machine is removable on logout
         '''
-        if not userService.in_use:
-            if (self._on_logout == 'remove') or (
-                not userService.check_publication_validity() and self._on_logout == 'keep'
+        if not userservice.in_use:
+            if (self.on_logout.as_str() == 'remove') or (
+                not userservice.check_publication_validity() and self.on_logout.as_str() == 'keep'
             ):
                 return True
 
@@ -154,9 +136,7 @@ class LinuxOsManager(osmanagers.OSManager):
         except Exception:
             log.log(service, log.LogLevel.ERROR, f'do not understand {data}', origin)
 
-    def actor_data(
-        self, userService: 'UserService'
-    ) -> collections.abc.MutableMapping[str, typing.Any]:
+    def actor_data(self, userService: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
         return {'action': 'rename', 'name': userService.get_name()}  # No custom data
 
     def handle_unused(self, userservice: 'UserService') -> None:
@@ -174,7 +154,7 @@ class LinuxOsManager(osmanagers.OSManager):
             userservice.remove()
 
     def is_persistent(self) -> bool:
-        return self._on_logout == 'keep-always'
+        return self.on_logout.as_str() == 'keep-always'
 
     def check_state(self, userService: 'UserService') -> str:
         logger.debug('Checking state for service %s', userService)
@@ -184,41 +164,29 @@ class LinuxOsManager(osmanagers.OSManager):
         """
         On production environments, will return no idle for non removable machines
         """
-        if (
-            self._idle <= 0
-        ):  # or (settings.DEBUG is False and self._on_logout != 'remove'):
+        if self.idle.as_int() <= 0:  # or (settings.DEBUG is False and self._on_logout != 'remove'):
             return None
 
-        return self._idle
-
-    def marshal(self) -> bytes:
-        """
-        Serializes the os manager data so we can store it in database
-        """
-        return '\t'.join(
-            ['v3', self._on_logout, str(self._idle), gui.bool_as_str(self._deadline)]
-        ).encode('utf8')
+        return self.idle.as_int()
 
     def unmarshal(self, data: bytes) -> None:
+        if not data.startswith(b'v'):
+            return super().unmarshal(data)
+
         values = data.decode('utf8').split('\t')
-        self._idle = -1
-        self._deadline = True
+        self.idle.value = -1
+        self.deadline.value = True
         if values[0] == 'v1':
-            self._on_logout = values[1]
+            self.on_logout.value = values[1]
         elif values[0] == 'v2':
-            self._on_logout, self._idle = values[1], int(values[2])
+            self.on_logout.value, self.idle.value = values[1], int(values[2])
         elif values[0] == 'v3':
-            self._on_logout, self._idle, self._deadline = (
+            self.on_logout.value, self.idle.value, self.deadline.value = (
                 values[1],
                 int(values[2]),
                 gui.as_bool(values[3]),
             )
 
         self._flag_processes_unused_machines()
-
-    def get_fields_as_dict(self) -> gui.ValuesDictType:
-        return {
-            'on_logout': self._on_logout,
-            'idle': str(self._idle),
-            'deadline': gui.bool_as_str(self._deadline),
-        }
+        # Flag that we need an upgrade (remarshal and save)
+        self.flag_for_upgrade()

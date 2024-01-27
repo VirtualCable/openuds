@@ -80,6 +80,8 @@ logger = logging.getLogger(__name__)
 # Constants
 
 # Headers for the serialized data
+# A header is composed of:
+# 6 bytes -> Header, where last byte is the version (1..9 for now, a..z can be also used in the future)
 HEADER_BASE: typing.Final[bytes] = b'MGBAS1'
 HEADER_COMPRESSED: typing.Final[bytes] = b'MGZAS1'
 HEADER_ENCRYPTED: typing.Final[bytes] = b'MGEAS1'
@@ -118,7 +120,7 @@ def is_autoserializable_data(data: bytes) -> bool:
 
 
 @dataclasses.dataclass(slots=True)
-class _SerializableFieldMarshaler:
+class _MarshalInfo:
     name: str
     type_name: str
     value: bytes
@@ -133,7 +135,7 @@ class _SerializableFieldMarshaler:
         )
 
     @staticmethod
-    def unmarshal(data: bytes) -> typing.Tuple['_SerializableFieldMarshaler', bytes]:
+    def unmarshal(data: bytes) -> typing.Tuple['_MarshalInfo', bytes]:
         """Field data unmarshalling
 
         Args:
@@ -152,7 +154,7 @@ class _SerializableFieldMarshaler:
         )
         # Return field and remaining data
         return (
-            _SerializableFieldMarshaler(name, type_name, value),
+            _MarshalInfo(name, type_name, value),
             data[8 + name_len + type_name_len + data_len :],
         )
 
@@ -262,10 +264,10 @@ class BoolField(_SerializableField[bool]):
         super().__init__(bool, default)
 
     def marshal(self, instance: 'AutoSerializable') -> bytes:
-        return b'1' if self.__get__(instance) else b'0'
+        return b'\xff' if self.__get__(instance) else b'\x00'
 
     def unmarshal(self, instance: 'AutoSerializable', data: bytes) -> None:
-        self.__set__(instance, data == b'1')
+        self.__set__(instance, data != b'\x00')
 
 
 class ListField(_SerializableField[list[T]], list[T]):
@@ -282,10 +284,13 @@ class ListField(_SerializableField[list[T]], list[T]):
         super().__init__(list, default)
 
     def marshal(self, instance: 'AutoSerializable') -> bytes:
-        return json.dumps(self.__get__(instance)).encode()
+        # \x01 is the version of this field marshal format, so we can change it in the future
+        return b'\x01' + json.dumps(self.__get__(instance)).encode()
 
     def unmarshal(self, instance: 'AutoSerializable', data: bytes) -> None:
-        self.__set__(instance, json.loads(data))
+        if data[:1] != b'\x01':
+            raise ValueError('Invalid list data')
+        self.__set__(instance, json.loads(data[1:]))
 
 
 class DictField(_SerializableField[dict]):
@@ -302,10 +307,13 @@ class DictField(_SerializableField[dict]):
         super().__init__(dict, default)
 
     def marshal(self, instance: 'AutoSerializable') -> bytes:
-        return json.dumps(self.__get__(instance)).encode()
+        # \x01 is the version of this field marshal format, so we can change it in the future
+        return b'\x01' + json.dumps(self.__get__(instance)).encode()
 
     def unmarshal(self, instance: 'AutoSerializable', data: bytes) -> None:
-        self.__set__(instance, json.loads(data))
+        if data[:1] != b'\x01':
+            raise ValueError('Invalid dict data')
+        self.__set__(instance, json.loads(data[1:]))
 
 
 class PasswordField(StringField):
@@ -357,10 +365,13 @@ class PasswordField(StringField):
         return zlib.decompress(value)
 
     def marshal(self, instance: 'AutoSerializable') -> bytes:
-        return base64.b64encode(self._encrypt(self.__get__(instance)))
+        # \x01 is the version of this field marshal format, so we can change it in the future
+        return b'\x01' + base64.b64encode(self._encrypt(self.__get__(instance)))
 
     def unmarshal(self, instance: 'AutoSerializable', data: bytes) -> None:
-        self.__set__(instance, self._decrypt(base64.b64decode(data)).decode())
+        if data[:1] != b'\x01':
+            raise ValueError('Invalid password data')
+        self.__set__(instance, self._decrypt(base64.b64decode(data[1:])).decode())
 
 
 # ************************
@@ -437,8 +448,8 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
 
     def marshal(self) -> bytes:
         # Iterate over own members and extract fields
-        fields: list[_SerializableFieldMarshaler] = [
-            _SerializableFieldMarshaler(name=v.name, type_name=str(v.__class__.__name__), value=v.marshal(self))
+        fields: list[_MarshalInfo] = [
+            _MarshalInfo(name=v.name, type_name=str(v.__class__.__name__), value=v.marshal(self))
             for _, v in self._all_fields_attrs()
         ]
 
@@ -476,9 +487,9 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
             raise ValueError('Invalid checksum')
 
         # Iterate over fields
-        fields: dict[str, _SerializableFieldMarshaler] = {}
+        fields: dict[str, _MarshalInfo] = {}
         while data:
-            field, data = _SerializableFieldMarshaler.unmarshal(data)
+            field, data = _MarshalInfo.unmarshal(data)
             fields[field.name] = field
 
         for _, v in self._all_fields_attrs():

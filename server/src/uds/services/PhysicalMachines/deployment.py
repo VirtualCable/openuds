@@ -124,7 +124,7 @@ class IPMachineDeployed(services.UserService, AutoAttributes):
         if not self.service().get_token():
             userService = self.db_obj()
             if userService:
-                userService.setInUse(True)
+                userService.set_in_use(True)
 
         return self._state
 
@@ -139,7 +139,7 @@ class IPMachineDeployed(services.UserService, AutoAttributes):
         if not self.service().get_token():
             dbService = self.db_obj()
             if dbService:
-                dbService.setInUse(True)
+                dbService.set_in_use(True)
                 dbService.save()
         return self._state
 

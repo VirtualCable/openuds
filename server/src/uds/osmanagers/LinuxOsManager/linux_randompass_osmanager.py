@@ -38,6 +38,7 @@ import typing
 import collections.abc
 
 from django.utils.translation import gettext_noop as _
+from uds.core.module import Module
 from uds.core.ui import gui
 from uds.core import exceptions
 from uds.core.util import log
@@ -55,9 +56,7 @@ if typing.TYPE_CHECKING:
 class LinuxRandomPassManager(LinuxOsManager):
     type_name = _('Linux Random Password OS Manager')
     type_type = 'LinRandomPasswordManager'
-    type_description = _(
-        'Os Manager to control linux machines, with user password set randomly.'
-    )
+    type_description = _('Os Manager to control linux machines, with user password set randomly.')
     icon_file = 'losmanager.png'
 
     # Apart form data from linux os manager, we need also domain and credentials
@@ -74,32 +73,23 @@ class LinuxRandomPassManager(LinuxOsManager):
     idle = LinuxOsManager.idle
     deadline = LinuxOsManager.deadline
 
-    _user_account: str
-
-    def __init__(self, environment: 'Environment', values: 'Module.ValuesType') -> None:
-        super().__init__(environment, values)
+    def initialize(self, values: 'gui.ValuesType') -> None:
         if values is not None:
             if values['user_account'] == '':
-                raise exceptions.ui.ValidationError(
-                    _('Must provide an user account!!!')
-                )
-            self._user_account = values['user_account']
-        else:
-            self._user_account = ''
+                raise exceptions.ui.ValidationError(_('Must provide an user account!!!'))
 
     def process_user_password(
-        self, userService: 'UserService', username: str, password: str
+        self, userservice: 'UserService', username: str, password: str
     ) -> tuple[str, str]:
-        if username == self._user_account:
-            return (username, userService.recover_value('linOsRandomPass'))
+        if username == self.user_account.as_str():
+            return (username, userservice.recover_value('linOsRandomPass'))
         return username, password
 
     def gen_random_password(self, service: 'UserService') -> str:
         randomPass = service.recover_value('linOsRandomPass')
         if randomPass is None:
             randomPass = ''.join(
-                random.SystemRandom().choice(string.ascii_letters + string.digits)
-                for _ in range(16)
+                random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(16)
             )
             service.store_value('linOsRandomPass', randomPass)
             log.log(
@@ -111,42 +101,32 @@ class LinuxRandomPassManager(LinuxOsManager):
 
         return randomPass
 
-    def actor_data(
-        self, userService: 'UserService'
-    ) -> collections.abc.MutableMapping[str, typing.Any]:
+    def actor_data(self, userService: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
         return {
             'action': 'rename',
             'name': userService.get_name(),
-
             # Repeat data, to keep compat with old versions of Actor
             # Will be removed in a couple of versions
-            'username': self._user_account,
+            'username': self.user_account.as_str(),
             'password': '',  # On linux, user password is not needed so we provide an empty one
             'new_password': self.gen_random_password(userService),
-
             'custom': {
-                'username': self._user_account,
+                'username': self.user_account.as_str(),
                 'password': '',  # On linux, user password is not needed so we provide an empty one
                 'new_password': self.gen_random_password(userService),
             },
         }
 
-    def marshal(self) -> bytes:
-        """
-        Serializes the os manager data so we can store it in database
-        """
-        base = LinuxOsManager.marshal(self)
-        return '\t'.join(
-            ['v1', self._user_account, codecs.encode(base, 'hex').decode()]
-        ).encode('utf8')
-
     def unmarshal(self, data: bytes) -> None:
-        values = data.split(b'\t')
-        if values[0] == b'v1':
-            self._user_account = values[1].decode()
-            LinuxOsManager.unmarshal(self, codecs.decode(values[2], 'hex'))
+        if not data.startswith(b'v'):
+            super().unmarshal(data)
+        else:
+            values = data.split(b'\t')
+            if values[0] == b'v1':
+                self.user_account.value = values[1].decode()
+                LinuxOsManager.unmarshal(self, codecs.decode(values[2], 'hex'))
 
-    def get_fields_as_dict(self) -> gui.ValuesDictType:
-        dic = LinuxOsManager.get_fields_as_dict(self)
-        dic['user_account'] = self._user_account
-        return dic
+            self.flag_for_upgrade()
+
+        # Recalculate flag indicating if we need to process unused machines
+        self._flag_processes_unused_machines()

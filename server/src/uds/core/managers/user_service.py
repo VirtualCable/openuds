@@ -337,7 +337,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 raise OperationException(_('Can\'t remove a non active element'))
             userservice.set_state(State.REMOVING)
             logger.debug("***** The state now is %s *****", State.from_str(userservice.state).literal)
-            userservice.setInUse(False)  # For accounting, ensure that it is not in use right now
+            userservice.set_in_use(False)  # For accounting, ensure that it is not in use right now
             userservice.save()
 
         userServiceInstance = userservice.get_instance()

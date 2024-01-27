@@ -44,7 +44,6 @@ from uds.core.consts.system import VERSION
 from .linux_osmanager import LinuxOsManager
 from .linux_randompass_osmanager import LinuxRandomPassManager
 from .linux_ad_osmanager import LinuxOsADManager
-from .linux_freeipa_osmanager import LinuxOsFreeIPAManager
 
 downloads_manager().register(
     f'udsactor_{VERSION}_all.deb',

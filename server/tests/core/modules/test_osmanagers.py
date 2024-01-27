@@ -44,7 +44,6 @@ logger = logging.getLogger(__name__)
 MUST_HAVE: typing.Final[list[str]] = [
     'linrandompasswordmanager',
     'linuxadmanager',
-    'linuxfreeipamanager',
     'linuxmanager',
     'windomainmanager',
     'winrandompasswordmanager',

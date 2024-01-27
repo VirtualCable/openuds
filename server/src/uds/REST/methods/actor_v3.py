@@ -551,7 +551,7 @@ class Ready(BaseReadyChange):
 
         # Maybe we could also set as "inUse" to false because a ready can only ocurr if an user is not logged in
         userService = self.get_userservice()
-        userService.setInUse(False)
+        userService.set_in_use(False)
 
         return result
 

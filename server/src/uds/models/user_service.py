@@ -446,7 +446,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         self.user = user
         self.save(update_fields=['cache_level', 'state_date', 'user'])
 
-    def setInUse(self, inUse: bool) -> None:
+    def set_in_use(self, inUse: bool) -> None:
         """
         Set the "in_use" flag for this user deployed service
 
