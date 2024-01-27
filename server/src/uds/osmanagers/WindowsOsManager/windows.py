@@ -19,28 +19,16 @@ from django.utils.translation import gettext_noop as _
 from uds.core import exceptions, osmanagers, types, consts
 from uds.core.types.services import ServiceType as serviceTypes
 from uds.core.ui import gui
-from uds.core.util import log
+from uds.core.util import log, fields
 from uds.core.types.states import State
 from uds.models import TicketStore
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
+    from uds.core.module import Module
     from uds.models import UserService
 
 logger = logging.getLogger(__name__)
-
-
-def scrambleMsg(msg: str) -> str:
-    """
-    Simple scrambler so password are not seen at source page
-    """
-    data = msg.encode('utf8')
-    res = b''
-    n = 0x32
-    for c in data[::-1]:
-        res += bytes([c ^ n])
-        n = (n + c) & 0xFF
-    return codecs.encode(res, 'hex').decode()
 
 
 class WindowsOsManager(osmanagers.OSManager):
@@ -50,21 +38,7 @@ class WindowsOsManager(osmanagers.OSManager):
     icon_file = 'wosmanager.png'
     servicesType = serviceTypes.VDI
 
-    on_logout = gui.ChoiceField(
-        label=_('Logout Action'),
-        order=10,
-        readonly=True,
-        tooltip=_('What to do when user logs out from service'),
-        choices=[
-            {'id': 'keep', 'text': typing.cast(str, gettext_lazy('Keep service assigned'))},
-            {'id': 'remove', 'text': typing.cast(str, gettext_lazy('Remove service'))},
-            {
-                'id': 'keep-always',
-                'text': typing.cast(str, gettext_lazy('Keep service assigned even on new publication')),
-            },
-        ],
-        default='keep',
-    )
+    on_logout = fields.on_logout_field()
 
     idle = gui.NumericField(
         label=_("Max.Idle time"),
@@ -81,91 +55,57 @@ class WindowsOsManager(osmanagers.OSManager):
     deadline = gui.CheckBoxField(
         label=_('Calendar logout'),
         order=90,
-        tooltip=_(
-            'If checked, UDS will try to logout user when the calendar for his current access expires'
-        ),
+        tooltip=_('If checked, UDS will try to logout user when the calendar for his current access expires'),
         tab=types.ui.Tab.ADVANCED,
         default=True,
     )
 
-    _on_logout: str
-    _idle: int
-    _deadline: bool
+    def _flag_processes_unused_machines(self):
+        self.handles_unused_userservices = fields.onlogout_field_is_removable(self.on_logout)
 
-    @staticmethod
-    def validateLen(length):
-        try:
-            length = int(length)
-        except Exception:
-            raise exceptions.ui.ValidationError(
-                _('Length must be numeric!!')
-            ) from None
-        if length > 6 or length < 1:
-            raise exceptions.ui.ValidationError(
-                _('Length must be betwen 1 and 6')
-            )
-        return length
+    def validate(self, values: 'Module.ValuesType') -> None:
+        self._flag_processes_unused_machines()
 
-    def _set_handles_unused(self):
-        self.handles_unused_userservices = self._on_logout == 'remove'
-
-    def __init__(self, environment, values):
-        super().__init__(environment, values)
-        if values is not None:
-            self._on_logout = values['on_logout']
-            self._idle = int(values['idle'])
-            self._deadline = gui.as_bool(values['deadline'])
-        else:
-            self._on_logout = ''
-            self._idle = -1
-            self._deadline = True
-
-        self._set_handles_unused()
-
-    def is_removable_on_logout(self, userService: 'UserService') -> bool:
+    def is_removable_on_logout(self, userservice: 'UserService') -> bool:
         """
         Says if a machine is removable on logout
         """
-        if not userService.in_use:
-            if (self._on_logout == 'remove') or (
-                not userService.check_publication_validity() and self._on_logout == 'keep'
+        if not userservice.in_use:
+            if fields.onlogout_field_is_removable(self.on_logout) or(
+                not userservice.is_publication_valid() and fields.onlogout_field_is_keep(self.on_logout)
             ):
                 return True
 
         return False
 
-    def release(self, userService: 'UserService') -> None:
+    def release(self, userservice: 'UserService') -> None:
         pass
 
     def ignore_deadline(self) -> bool:
-        return not self._deadline
+        return not self.deadline.as_bool()
 
-    def get_name(self, userService: 'UserService') -> str:
-        return userService.get_name()
+    def get_name(self, userservice: 'UserService') -> str:
+        return userservice.get_name()
 
-    def do_log(self, userService: 'UserService', data: str, origin=log.LogSource.OSMANAGER):
+    def do_log(self, userservice: 'UserService', data: str, origin=log.LogSource.OSMANAGER):
         # Stores a log associated with this service
         try:
-            msg, levelStr = data.split('\t')
+            msg, level_str = data.split('\t')
             try:
-                level = log.LogLevel.from_str(levelStr)
+                level = log.LogLevel.from_str(level_str)
             except Exception:
-                logger.debug('Do not understand level %s', levelStr)
+                logger.debug('Do not understand level %s', level_str)
                 level = log.LogLevel.INFO
 
-            log.log(userService, level, msg, origin)
+            log.log(userservice, level, msg, origin)
         except Exception:
             logger.exception('WindowsOs Manager message log: ')
-            log.log(
-                userService, log.LogLevel.ERROR, f'do not understand {data}', origin
-            )
+            log.log(userservice, log.LogLevel.ERROR, f'do not understand {data}', origin)
 
-    def actor_data(
-        self, userService: 'UserService'
-    ) -> collections.abc.MutableMapping[str, typing.Any]:
-        return {'action': 'rename', 'name': userService.get_name()}  # No custom data
+    def actor_data(self, userservice: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
+        return {'action': 'rename', 'name': userservice.get_name()}  # No custom data
 
-    def process_user_password(
+    def update_credentials(
         self, userService: 'UserService', username: str, password: str
     ) -> tuple[str, str]:
         if userService.properties.get('sso_available') == '1':
@@ -177,14 +117,10 @@ class WindowsOsManager(osmanagers.OSManager):
                 username, domain = username.split('\\')
 
             creds = {'username': username, 'password': password, 'domain': domain}
-            ticket = TicketStore.create(
-                creds,validity=300
-            )  # , owner=SECURE_OWNER, secure=True)
+            ticket = TicketStore.create(creds, validity=300)  # , owner=SECURE_OWNER, secure=True)
             return ticket, ''
 
-        return osmanagers.OSManager.process_user_password(
-            self, userService, username, password
-        )
+        return super().update_credentials(userService, username, password)
 
     def handle_unused(self, userservice: 'UserService') -> None:
         """
@@ -201,57 +137,37 @@ class WindowsOsManager(osmanagers.OSManager):
             userservice.remove()
 
     def is_persistent(self):
-        return self._on_logout == 'keep-always'
+        return fields.onlogout_field_is_persistent(self.on_logout)
 
     def check_state(self, userservice: 'UserService') -> str:
         # will alway return true, because the check is done by an actor callback
         logger.debug('Checking state for service %s', userservice)
         return State.RUNNING
 
-    def max_idle(self):
-        """
-        On production environments, will return no idle for non removable machines
-        """
-        if (
-            self._idle <= 0
-        ):  # or (settings.DEBUG is False and self._on_logout != 'remove'):
+    def max_idle(self) -> typing.Optional[int]:
+        if self.idle.as_int() <= 0:
             return None
 
-        return self._idle
-
-    def marshal(self) -> bytes:
-        """
-        Serializes the os manager data so we can store it in database
-        """
-        return '\t'.join(
-            ['v3', self._on_logout, str(self._idle), gui.bool_as_str(self._deadline)]
-        ).encode('utf8')
+        return self.idle.as_int()
 
     def unmarshal(self, data: bytes) -> None:
-        vals = data.decode('utf8').split('\t')
-        self._idle = -1
-        self._deadline = True
-        try:
-            if vals[0] == 'v1':
-                self._on_logout = vals[1]
-            elif vals[0] == 'v2':
-                self._on_logout, self._idle = vals[1], int(vals[2])
-            elif vals[0] == 'v3':
-                self._on_logout, self._idle, self._deadline = (
-                    vals[1],
-                    int(vals[2]),
-                    gui.as_bool(vals[3]),
-                )
-        except Exception:
-            logger.exception(
-                'Exception unmarshalling. Some values left as default ones'
+        if not data.startswith(b'v'):
+            return super().unmarshal(data)
+
+        values = data.decode('utf8').split('\t')
+        self.idle.value = -1
+        self.deadline.value = True
+        if values[0] == 'v1':
+            self.on_logout.value = values[1]
+        elif values[0] == 'v2':
+            self.on_logout.value, self.idle.value = values[1], int(values[2])
+        elif values[0] == 'v3':
+            self.on_logout.value, self.idle.value, self.deadline.value = (
+                values[1],
+                int(values[2]),
+                gui.as_bool(values[3]),
             )
 
-        self._set_handles_unused()
-
-    def get_fields_as_dict(self) -> 'gui.ValuesDictType':
-        return {
-            'on_logout': self._on_logout,
-            'idle': str(self._idle),
-            'deadline': gui.bool_as_str(self._deadline),
-        }
+        self._flag_processes_unused_machines()
+        # Flag that we need an upgrade (remarshal and save)
+        self.flag_for_upgrade()

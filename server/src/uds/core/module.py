@@ -99,7 +99,6 @@ class Module(abc.ABC, UserInterface, Environmentable, Serializable):
     module.
     """
 
-    __slots__ = ['_uuid']
     # Import variable indicating this module is a base class not a real module
     # Note that Module is not a real module, but a base class for all modules so is_base is not used on this class
     # This means that is_base is set as a default here, but not checked for Module NEVER (but for subclasses)

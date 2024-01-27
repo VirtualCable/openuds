@@ -52,7 +52,7 @@ USE_SSL: typing.Final[bool] = True
 AUTOMATIC_ID_MAPPING: typing.Final[bool] = True
 
 
-class LinuxAdOsManagerTest(UDSTestCase):
+class LinuxAdOsManagerSerialTest(UDSTestCase):
     def test_marshaling(self) -> None:
         instance = osmanager.LinuxOsADManager(environment=Environment.get_temporary_environment())
         instance.domain.value = DOMAIN

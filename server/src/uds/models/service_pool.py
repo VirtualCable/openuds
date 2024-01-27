@@ -183,7 +183,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
     def transforms_user_or_password_for_service(self) -> bool:
         if self.osmanager:
-            return self.osmanager.get_type().transforms_user_or_password_for_service()
+            return self.osmanager.get_type().is_credentials_modified_for_service()
         return False
 
     def process_user_password(self, username: str, password: str) -> tuple[str, str]:

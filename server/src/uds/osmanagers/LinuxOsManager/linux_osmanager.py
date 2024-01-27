@@ -40,7 +40,7 @@ from django.utils.translation import gettext_noop as _
 from uds.core import osmanagers, types, consts
 from uds.core.types.services import ServiceType as serviceTypes
 from uds.core.ui import gui
-from uds.core.util import log
+from uds.core.util import fields, log
 from uds.core.types.states import State
 from uds.core.workers import initialize
 
@@ -60,18 +60,7 @@ class LinuxOsManager(osmanagers.OSManager):
 
     servicesType = serviceTypes.VDI
 
-    on_logout = gui.ChoiceField(
-        label=_('Logout Action'),
-        order=10,
-        readonly=True,
-        tooltip=_('What to do when user logs out from service'),
-        choices=[
-            gui.choice_item('keep', gettext_lazy('Keep service assigned')),
-            gui.choice_item('remove', gettext_lazy('Remove service')),
-            gui.choice_item('keep-always', gettext_lazy('Keep service assigned even on new publication')),
-        ],
-        default='keep',
-    )
+    on_logout = fields.on_logout_field()
 
     idle = gui.NumericField(
         label=_("Max.Idle time"),
@@ -94,7 +83,7 @@ class LinuxOsManager(osmanagers.OSManager):
     )
 
     def _flag_processes_unused_machines(self) -> None:
-        self.handles_unused_userservices = self.on_logout.value == 'remove'
+        self.handles_unused_userservices = fields.onlogout_field_is_removable(self.on_logout)
 
     def initialize(self, values: 'Module.ValuesType') -> None:
         self._flag_processes_unused_machines()
@@ -105,13 +94,14 @@ class LinuxOsManager(osmanagers.OSManager):
     def ignore_deadline(self) -> bool:
         return not self.deadline.as_bool()
 
+
     def is_removable_on_logout(self, userservice: 'UserService') -> bool:
-        '''
-        Says if a machine is removable on logout
-        '''
+        """
+        if a machine is removable on logout
+        """
         if not userservice.in_use:
-            if (self.on_logout.as_str() == 'remove') or (
-                not userservice.check_publication_validity() and self.on_logout.as_str() == 'keep'
+            if fields.onlogout_field_is_removable(self.on_logout) or(
+                not userservice.is_publication_valid() and fields.onlogout_field_is_keep(self.on_logout)
             ):
                 return True
 
@@ -154,17 +144,14 @@ class LinuxOsManager(osmanagers.OSManager):
             userservice.remove()
 
     def is_persistent(self) -> bool:
-        return self.on_logout.as_str() == 'keep-always'
+        return fields.onlogout_field_is_persistent(self.on_logout)
 
     def check_state(self, userService: 'UserService') -> str:
         logger.debug('Checking state for service %s', userService)
         return State.RUNNING
 
     def max_idle(self) -> typing.Optional[int]:
-        """
-        On production environments, will return no idle for non removable machines
-        """
-        if self.idle.as_int() <= 0:  # or (settings.DEBUG is False and self._on_logout != 'remove'):
+        if self.idle.as_int() <= 0:
             return None
 
         return self.idle.as_int()

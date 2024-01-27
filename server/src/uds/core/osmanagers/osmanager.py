@@ -182,14 +182,14 @@ class OSManager(Module):
         return False
 
     @classmethod
-    def transforms_user_or_password_for_service(cls: type['OSManager']) -> bool:
+    def is_credentials_modified_for_service(cls: type['OSManager']) -> bool:
         """
         Helper method that informs if the os manager transforms the username and/or the password.
         This is used from ServicePool
         """
-        return cls.process_user_password != OSManager.process_user_password
+        return cls.update_credentials != OSManager.update_credentials
 
-    def process_user_password(
+    def update_credentials(
         self,
         userservice: 'UserService',  # pylint: disable=unused-argument
         username: str,

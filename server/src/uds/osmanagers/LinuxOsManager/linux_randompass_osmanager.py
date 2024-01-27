@@ -78,7 +78,7 @@ class LinuxRandomPassManager(LinuxOsManager):
             if values['user_account'] == '':
                 raise exceptions.ui.ValidationError(_('Must provide an user account!!!'))
 
-    def process_user_password(
+    def update_credentials(
         self, userservice: 'UserService', username: str, password: str
     ) -> tuple[str, str]:
         if username == self.user_account.as_str():

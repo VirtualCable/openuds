@@ -39,6 +39,7 @@ import typing
 import collections.abc
 
 from django.utils.translation import gettext_noop as _
+from uds.core.module import Module
 from uds.core.ui import gui
 from uds.core.managers.crypto import CryptoManager
 from uds.core import exceptions
@@ -83,32 +84,23 @@ class WinRandomPassManager(WindowsOsManager):
     idle = WindowsOsManager.idle
     dead_line = WindowsOsManager.deadline
 
-    _user_account: str
-    _password: str
-
-    def __init__(self, environment: 'Environment', values: 'Module.ValuesType'):
-        super().__init__(environment, values)
+    def validate(self, values: 'Module.ValuesType') -> None:
         if values:
-            if values['userAccount'] == '':
+            self.user_account.value = self.user_account.as_clean_str()
+
+            if self.user_account.as_str() == '':
                 raise exceptions.ui.ValidationError(_('Must provide an user account!!!'))
-            if values['password'] == '':
+            if self.password.as_str() == '':
                 raise exceptions.ui.ValidationError(_('Must provide a password for the account!!!'))
-            self._user_account = values['userAccount']
-            self._password = values['password']
-        else:
-            self._user_account = ''
-            self._password = ''  # nosec: not a password (empty)
 
-    def process_user_password(
-        self, userService: 'UserService', username: str, password: str
-    ) -> tuple[str, str]:
-        if username == self._user_account:
-            password = userService.recover_value('winOsRandomPass')
+    def update_credentials(self, userservice: 'UserService', username: str, password: str) -> tuple[str, str]:
+        if username == self.user_account.as_clean_str():
+            password = userservice.recover_value('winOsRandomPass')
 
-        return WindowsOsManager.process_user_password(self, userService, username, password)
+        return WindowsOsManager.update_credentials(self, userservice, username, password)
 
-    def gen_random_password(self, userService: 'UserService'):
-        randomPass = userService.recover_value('winOsRandomPass')
+    def gen_random_password(self, userservice: 'UserService'):
+        randomPass = userservice.recover_value('winOsRandomPass')
         if not randomPass:
             # Generates a password that conforms to complexity
             rnd = random.SystemRandom()
@@ -118,49 +110,39 @@ class WinRandomPassManager(WindowsOsManager):
             randomPass = ''.join(rnd.choice(string.ascii_letters + string.digits) for _ in range(12))
             pos = rnd.randrange(0, len(randomPass))
             randomPass = randomPass[:pos] + base + randomPass[pos:]
-            userService.store_value('winOsRandomPass', randomPass)
+            userservice.store_value('winOsRandomPass', randomPass)
             log.log(
-                userService,
+                userservice,
                 log.LogLevel.INFO,
                 f'Password set to "{randomPass}"',
                 log.LogSource.OSMANAGER,
             )
         return randomPass
 
-    def actor_data(self, userService: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
+    def actor_data(self, userservice: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
         return {
             'action': 'rename',
-            'name': userService.get_name(),
-            # Repeat data, to keep compat with old versions of Actor
-            # Will be removed in a couple of versions
-            'username': self._user_account,
-            'password': self._password,
-            'new_password': self.gen_random_password(userService),
+            'name': userservice.get_name(),
+            # Repeat data, to keep compat with old versions of Actor (the part outside "custom")
+            # Will be removed in a couple of versions (maybe 6.0? :D), maybe before (But not before 5.0)
+            'username': self.user_account.as_clean_str(),
+            'password': self.password.as_str(),
+            'new_password': self.gen_random_password(userservice),
             'custom': {
-                'username': self._user_account,
-                'password': self._password,
-                'new_password': self.gen_random_password(userService),
+                'username': self.user_account.as_clean_str(),
+                'password': self.password.as_str(),
+                'new_password': self.gen_random_password(userservice),
             },
         }
 
-    def marshal(self) -> bytes:
-        '''
-        Serializes the os manager data so we can store it in database
-        '''
-        base = codecs.encode(super().marshal(), 'hex').decode()
-        return '\t'.join(['v1', self._user_account, CryptoManager().encrypt(self._password), base]).encode(
-            'utf8'
-        )
-
     def unmarshal(self, data: bytes) -> None:
+        if not data.startswith(b'v'):
+            return super().unmarshal(data)
+
         values = data.decode('utf8').split('\t')
         if values[0] == 'v1':
-            self._user_account = values[1]
-            self._password = CryptoManager().decrypt(values[2])
+            self.user_account.value = values[1]
+            self.password.value = CryptoManager().decrypt(values[2])
             super().unmarshal(codecs.decode(values[3].encode(), 'hex'))
 
-    def get_fields_as_dict(self) -> gui.ValuesDictType:
-        dic = super().get_fields_as_dict()
-        dic['user_account'] = self._user_account
-        dic['password'] = self._password
-        return dic
+        self.flag_for_upgrade()  # Force upgrade to new format

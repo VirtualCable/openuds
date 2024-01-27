@@ -33,7 +33,7 @@ import logging
 import typing
 import collections.abc
 
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django.db.models import Q
 
 from cryptography.x509 import load_pem_x509_certificate
@@ -214,7 +214,7 @@ def verify_ssl_field(
     order: int = 92,
     tab: 'types.ui.Tab|str|None|bool' = None,
     old_field_name: typing.Optional[str] = None,
-) -> ui.gui.CheckBoxField:   
+) -> ui.gui.CheckBoxField:
     return ui.gui.CheckBoxField(
         label=_('Verify SSL'),
         default=default,
@@ -362,3 +362,28 @@ def mfa_attr_field(order: int = 20, tab: 'types.ui.Tab|str|None|bool' = None) ->
         tab=None if tab is False else None if tab is None else types.ui.Tab.MFA,
         old_field_name='mfaAttr',
     )
+
+
+def on_logout_field(order: int = 10, tab: 'types.ui.Tab|str|None|bool' = False) -> ui.gui.ChoiceField:
+    return ui.gui.ChoiceField(
+        label=_('Logout Action'),
+        order=10,
+        readonly=True,
+        tooltip=_('What to do when user logs out from service'),
+        choices=[
+            ui.gui.choice_item('keep', _('Keep service assigned')),
+            ui.gui.choice_item('remove', _('Remove service')),
+            ui.gui.choice_item('keep-always', _('Keep service assigned even on new publication')),
+        ],
+        tab=None if tab is False else None if tab is None else types.ui.Tab.ADVANCED,
+        default='keep',
+    )
+
+def onlogout_field_is_persistent(fld: ui.gui.ChoiceField) -> bool:
+    return fld.value == 'keep-always'
+
+def onlogout_field_is_removable(fld: ui.gui.ChoiceField) -> bool:
+    return fld.value == 'remove'
+
+def onlogout_field_is_keep(fld: ui.gui.ChoiceField) -> bool:
+    return fld.value == 'keep'

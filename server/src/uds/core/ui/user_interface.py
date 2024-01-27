@@ -812,7 +812,10 @@ class gui:
             super()._set_value(gui.as_str(value))
 
         def as_str(self):
+            """Returns the password as string (stripped)"""
             return gui.as_str(self.value).strip()
+        
+        as_clean_str = as_str   # Alias in facet, for coherence with other string fields
 
         def __str__(self):
             return '********'

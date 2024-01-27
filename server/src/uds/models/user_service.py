@@ -402,7 +402,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         if serviceInstance.needs_manager is False or not servicePool.osmanager:
             return (username, password)
 
-        return servicePool.osmanager.get_instance().process_user_password(self, username, password)
+        return servicePool.osmanager.get_instance().update_credentials(self, username, password)
 
     def set_state(self, state: str) -> None:
         """
@@ -615,13 +615,14 @@ class UserService(UUIDModel, properties.PropertiesMixin):
     def actor_version(self, version: str) -> None:
         self.properties['actor_version'] = version
 
-    def check_publication_validity(self) -> bool:
+    def is_publication_valid(self) -> bool:
         """
         Returns True if this user service does not needs an publication, or if this deployed service publication is the current one
         """
         return (
-            self.deployed_service.service and self.deployed_service.service.get_type().publication_type is None
-        ) or self.publication == self.deployed_service.active_publication()
+            self.deployed_service.service.get_type().publication_type is None
+            or self.publication == self.deployed_service.active_publication()
+        )
 
     # Utility for logging
     def log(self, message: str, level: log.LogLevel = log.LogLevel.INFO) -> None:

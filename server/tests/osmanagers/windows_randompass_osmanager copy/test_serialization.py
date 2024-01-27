@@ -29,56 +29,56 @@
 '''
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-import typing
 import codecs
+import typing
 
 from tests.utils.test import UDSTestCase
 from uds.core.environment import Environment
+from uds.core.managers.crypto import CryptoManager
 
 from django.conf import settings
 
 
-from uds.osmanagers.LinuxOsManager import linux_randompass_osmanager as osmanager
+from uds.osmanagers.WindowsOsManager import windows_random as osmanager
 
 PASSWD: typing.Final[str] = 'PASSWD'
+CRYPTED_PASSWD: typing.Final[str] = CryptoManager().encrypt(PASSWD)
+
+# if data.startswith(b'v'):
+#     return super().unmarshal(data)
 
 # values = data.decode('utf8').split('\t')
-# self.idle.value = -1
-# self.deadline.value = True
 # if values[0] == 'v1':
-#     self.on_logout.value = values[1]
-# elif values[0] == 'v2':
-#     self.on_logout.value, self.idle.value = values[1], int(values[2])
-# elif values[0] == 'v3':
-#     self.on_logout.value, self.idle.value, self.deadline.value = (
-#         values[1],
-#         int(values[2]),
-#         gui.as_bool(values[3]),
-#     )
+#     self._user_account = values[1]
+#     self._password = CryptoManager().decrypt(values[2])
+#     super().unmarshal(codecs.decode(values[3].encode(), 'hex'))
+
+# self.flag_for_upgrade()  # Force upgrade to new format
+
 SERIALIZED_OSMANAGER_DATA: typing.Final[typing.Mapping[str, bytes]] = {
-    'v1': b'v1\tprueba\t' + codecs.encode(b'v3\tkeep\t30\ttrue', 'hex'),
+    'v1': b'v1\tUSER_ACCOUNT\t' + CRYPTED_PASSWD.encode() + b'\t' + codecs.encode(b'v3\tkeep\t30\ttrue', 'hex'),
 }
 
 
-class LinuxOsManagerSerialTest(UDSTestCase):
-    def check(self, version: str, instance: 'osmanager.LinuxRandomPassManager') -> None:
-        self.assertEqual(instance.user_account.value, 'prueba')
+class WindowsOsManagerSerialTest(UDSTestCase):
+    def check(self, version: str, instance: 'osmanager.WinRandomPassManager') -> None:
         self.assertEqual(instance.on_logout.value, 'keep')
         self.assertEqual(instance.idle.value, 30)
         self.assertEqual(instance.deadline.value, True)
 
+        self.assertEqual(instance.user_account.value, 'USER_ACCOUNT')
+        self.assertEqual(instance.password.value, PASSWD)
+
     def test_unmarshall_all_versions(self) -> None:
         for v in range(1, len(SERIALIZED_OSMANAGER_DATA) + 1):
-            instance = osmanager.LinuxRandomPassManager(environment=Environment.get_temporary_environment())
+            instance = osmanager.WinRandomPassManager(environment=Environment.get_temporary_environment())
             instance.unmarshal(SERIALIZED_OSMANAGER_DATA['v{}'.format(v)])
             self.check(f'v{v}', instance)
 
     def test_marshaling(self) -> None:
         # Unmarshall last version, remarshall and check that is marshalled using new marshalling format
         LAST_VERSION = 'v{}'.format(len(SERIALIZED_OSMANAGER_DATA))
-        instance = osmanager.LinuxRandomPassManager(
-            environment=Environment.get_temporary_environment()
-        )
+        instance = osmanager.WinRandomPassManager(environment=Environment.get_temporary_environment())
         instance.unmarshal(SERIALIZED_OSMANAGER_DATA[LAST_VERSION])
         marshaled_data = instance.marshal()
 
@@ -89,9 +89,7 @@ class LinuxOsManagerSerialTest(UDSTestCase):
         # Ensure fields has been marshalled using new format
         self.assertFalse(marshaled_data.startswith(b'v'))
         # Reunmarshall again and check that remarshalled flag is not set
-        instance = osmanager.LinuxRandomPassManager(
-            environment=Environment.get_temporary_environment()
-        )
+        instance = osmanager.WinRandomPassManager(environment=Environment.get_temporary_environment())
         instance.unmarshal(marshaled_data)
         self.assertFalse(instance.needs_upgrade())
 
