@@ -73,6 +73,8 @@ class _Unassigned:
 UNASSIGNED = _Unassigned()
 
 T = typing.TypeVar('T')
+V = typing.TypeVar('V')
+
 DefaultValueType = typing.Union[T, collections.abc.Callable[[], T], _Unassigned]
 
 logger = logging.getLogger(__name__)
@@ -201,8 +203,17 @@ class _SerializableField(typing.Generic[T]):
         if self.obj_type in (float, int) and isinstance(value, (float, int)):
             value = self.obj_type(value)  # type: ignore
         if not isinstance(value, self.obj_type):
-            # Allow int to float conversion and viceversa
-            raise TypeError(f"Field {self.name} cannot be set to {value} (type {self.obj_type.__name__})")
+            # Try casting to load values (maybe a namedtuple, i.e.)
+            try:
+                if isinstance(value, collections.abc.Mapping):
+                    value = self.obj_type(**value)   # If a dict, try to cast it to the object
+                elif isinstance(value, collections.abc.Iterable):  # IF a list, tuple, etc... try to cast it
+                    value = self.obj_type(*value)
+                else:  # Maybe it has a constructor that accepts a single value or is a callable...
+                    value = typing.cast(typing.Callable, self.obj_type)(value)
+            except Exception:
+                # Allow int to float conversion and viceversa
+                raise TypeError(f"Field {self.name} cannot be set to {value} (type {self.obj_type.__name__})")
         if not hasattr(instance, '_fields'):
             setattr(instance, '_fields', {})
         getattr(instance, '_fields')[self.name] = value
@@ -288,12 +299,12 @@ class ListField(_SerializableField[list[T]], list[T]):
         return b'\x01' + json.dumps(self.__get__(instance)).encode()
 
     def unmarshal(self, instance: 'AutoSerializable', data: bytes) -> None:
-        if data[:1] != b'\x01':
+        if data[0] != 1:
             raise ValueError('Invalid list data')
         self.__set__(instance, json.loads(data[1:]))
 
 
-class DictField(_SerializableField[dict]):
+class DictField(_SerializableField[dict[T, V]], dict[T, V]):
     """Dict field
 
     Note:
@@ -302,7 +313,7 @@ class DictField(_SerializableField[dict]):
 
     def __init__(
         self,
-        default: typing.Union[dict, collections.abc.Callable[[], dict]] = lambda: {},
+        default: typing.Union[dict[T, V], collections.abc.Callable[[], dict[T, V]]] = lambda: {},
     ):
         super().__init__(dict, default)
 
@@ -311,8 +322,43 @@ class DictField(_SerializableField[dict]):
         return b'\x01' + json.dumps(self.__get__(instance)).encode()
 
     def unmarshal(self, instance: 'AutoSerializable', data: bytes) -> None:
-        if data[:1] != b'\x01':
+        if data[0] != 1:
             raise ValueError('Invalid dict data')
+        self.__set__(instance, json.loads(data[1:]))
+
+
+class ObjectField(_SerializableField[T]):
+    """Object field
+
+    Note:
+        Object type must be serializable.
+        Also, take care with these fields and their changes, they are serialized as JSON
+        Perfectly supported classes are dataclasses and namedtuples, but any serializable class
+        can be used.
+
+        Again, be advised with using objects and later changing their definition, as this can
+        lead to errors when unmarshalling data.
+
+    """
+
+    def __init__(self, obj_type: 'type[T]', default: DefaultValueType = UNASSIGNED):
+        super().__init__(obj_type, default)
+
+    def marshal(self, instance: 'AutoSerializable') -> bytes:
+        # if is a dataclass
+        value = typing.cast(typing.Any, self.__get__(instance))
+        if dataclasses.is_dataclass(self.obj_type):
+            to_marshal = dataclasses.asdict(value)
+        elif hasattr(value, '_asdict'):
+            to_marshal = value._asdict()  # Serialize namedtuples as dicts
+        else:
+            to_marshal = value
+
+        return b'\x01' + json.dumps(to_marshal).encode()
+
+    def unmarshal(self, instance: 'AutoSerializable', data: bytes) -> None:
+        if data[0] != 1:
+            raise ValueError('Invalid object data')
         self.__set__(instance, json.loads(data[1:]))
 
 

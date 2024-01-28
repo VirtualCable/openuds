@@ -31,15 +31,27 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-# We use commit/rollback
-import typing
 import collections.abc
+import dataclasses
+import typing
+
+from uds.core.util import auto_serializable
 
 from ...utils.test import UDSTestCase
-from uds.core.util import auto_serializable
 
 UNICODE_CHARS = 'ñöçóá^(pípè)'
 UNICODE_CHARS_2 = 'ñöçóá^(€íöè)'
+
+@dataclasses.dataclass
+class SerializableDataclass:
+    int_val: int = 0
+    str_val: str = ''
+    float_val: float = 0.0
+    
+class SerializableNamedTuple(typing.NamedTuple):
+    int_val: int = 0
+    str_val: str = ''
+    float_val: float = 0.0
 
 
 class AutoSerializableClass(auto_serializable.AutoSerializable):
@@ -49,7 +61,9 @@ class AutoSerializableClass(auto_serializable.AutoSerializable):
     bool_field = auto_serializable.BoolField()
     password_field = auto_serializable.PasswordField()
     list_field = auto_serializable.ListField[int]()
-    dict_field = auto_serializable.DictField()
+    dict_field = auto_serializable.DictField[str, int]()
+    obj_dc_field = auto_serializable.ObjectField[SerializableDataclass](SerializableDataclass)
+    obj_nt_field = auto_serializable.ObjectField[SerializableNamedTuple](SerializableNamedTuple)
 
     non_auto_int = 1
 
@@ -61,7 +75,9 @@ class AutoSerializableCompressedClass(auto_serializable.AutoSerializableCompress
     bool_field = auto_serializable.BoolField()
     password_field = auto_serializable.PasswordField()
     list_field = auto_serializable.ListField[int]()
-    dict_field = auto_serializable.DictField()
+    dict_field = auto_serializable.DictField[str, int]()
+    obj_dc_field = auto_serializable.ObjectField[SerializableDataclass](SerializableDataclass)
+    obj_nt_field = auto_serializable.ObjectField[SerializableNamedTuple](SerializableNamedTuple)
 
     non_auto_int = 1
 
@@ -73,18 +89,23 @@ class AutoSerializableEncryptedClass(auto_serializable.AutoSerializableEncrypted
     bool_field = auto_serializable.BoolField()
     password_field = auto_serializable.PasswordField()
     list_field = auto_serializable.ListField[int]()
-    dict_field = auto_serializable.DictField()
+    dict_field = auto_serializable.DictField[str, int]()
+    obj_dc_field = auto_serializable.ObjectField[SerializableDataclass](SerializableDataclass)
+    obj_nt_field = auto_serializable.ObjectField[SerializableNamedTuple](SerializableNamedTuple)
 
     non_auto_int = 1
+
 
 class AddedClass:
     tr1: int = 0
     tr2: str = 'tr2'
 
+
 class DerivedAutoSerializableClass(AutoSerializableClass):
     int_field2 = auto_serializable.IntegerField()
     str_field2 = auto_serializable.StringField()
-    
+
+
 class DerivedAutoSerializableClass2(AddedClass, AutoSerializableClass):
     int_field2 = auto_serializable.IntegerField()
     str_field2 = auto_serializable.StringField()
@@ -105,6 +126,8 @@ class AutoSerializable(UDSTestCase):
         a.password_field = UNICODE_CHARS_2  # nosec: test password
         a.list_field = [1, 2, 3]
         a.dict_field = {'a': 1, 'b': 2, 'c': 3}
+        a.obj_dc_field = SerializableDataclass(1, '2', 3.0)
+        a.obj_nt_field = SerializableNamedTuple(1, '2', 3.0)
 
         a.non_auto_int = 2
 
@@ -124,26 +147,26 @@ class AutoSerializable(UDSTestCase):
             self.assertEqual(i.password_field, UNICODE_CHARS_2)
             self.assertEqual(i.list_field, [1, 2, 3])
             self.assertEqual(i.dict_field, {'a': 1, 'b': 2, 'c': 3})
-        
-        self.assertEqual(a.non_auto_int, 2)    # Not altered by serialization
-        
+            self.assertEqual(i.obj_dc_field, SerializableDataclass(1, '2', 3.0))
+            self.assertEqual(i.obj_nt_field, SerializableNamedTuple(1, '2', 3.0))
+
+        self.assertEqual(a.non_auto_int, 2)  # Not altered by serialization
+
         self.assertEqual(b.non_auto_int, 111)  # Not altered by deserialization
-        
 
-
-    def test_auto_serializable_base(self):
+    def test_auto_serializable_base(self) -> None:
         self.basic_check(AutoSerializableClass, AutoSerializableClass)
 
-    def test_auto_serializable_compressed(self):
+    def test_auto_serializable_compressed(self) -> None:
         self.basic_check(AutoSerializableCompressedClass, AutoSerializableCompressedClass)
 
-    def test_auto_serializable_encrypted(self):
+    def test_auto_serializable_encrypted(self) -> None:
         self.basic_check(AutoSerializableEncryptedClass, AutoSerializableEncryptedClass)
 
-    def test_auto_serializable_base_compressed(self):
+    def test_auto_serializable_base_compressed(self) -> None:
         self.basic_check(AutoSerializableClass, AutoSerializableCompressedClass)
 
-    def test_auto_serializable_base_encrypted(self):
+    def test_auto_serializable_base_encrypted(self) -> None:
         self.basic_check(AutoSerializableClass, AutoSerializableEncryptedClass)
 
     def test_auto_serializable_derived(self):
@@ -157,14 +180,14 @@ class AutoSerializable(UDSTestCase):
         instance.dict_field = {'a': 1, 'b': 2, 'c': 3}
         instance.int_field2 = 2
         instance.str_field2 = UNICODE_CHARS_2
-        
+
         data = instance.marshal()
-        
+
         instance2 = DerivedAutoSerializableClass()
         instance2.unmarshal(data)
-        
+
         self.assertEqual(instance, instance2)
-        
+
     def test_auto_serializable_derived_added(self):
         instance = DerivedAutoSerializableClass2()
         instance.int_field = 1
@@ -178,10 +201,10 @@ class AutoSerializable(UDSTestCase):
         instance.str_field2 = UNICODE_CHARS_2
         instance.tr1 = 3
         instance.tr2 = UNICODE_CHARS
-        
+
         data = instance.marshal()
-        
+
         instance2 = DerivedAutoSerializableClass2()
         instance2.unmarshal(data)
-        
+
         self.assertEqual(instance, instance2)

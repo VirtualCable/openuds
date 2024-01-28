@@ -160,7 +160,7 @@ class UserinterfaceTest(UDSTestCase):
 
         # Now deserialize old data with new method, (will internally call oldUnserializeForm)
         ui3 = TestingUserInterface()
-        ui3.deserialize_fields(data)
+        self.assertTrue(ui3.deserialize_fields(data))  # Should need upgrade
 
         self.assertEqual(ui, ui3)
         self.ensure_values_fine(ui3)
@@ -171,7 +171,7 @@ class UserinterfaceTest(UDSTestCase):
         ui = TestingUserInterface()
         data = ui.serialize_fields()
         ui2 = TestingUserInterface()
-        ui2.deserialize_fields(data)
+        self.assertFalse(ui2.deserialize_fields(data))  # Should not need upgrade
 
         self.assertEqual(ui, ui2)
         self.ensure_values_fine(ui2)
@@ -182,20 +182,19 @@ class UserinterfaceTest(UDSTestCase):
         ui = TestingUserInterfaceFieldNameOrig()
         data = ui.serialize_fields()
         ui2 = TestingUserInterfaceFieldName()
-        ui2.deserialize_fields(data)
+        self.assertFalse(ui2.deserialize_fields(data))  # Should not need upgrade
 
         self.assertEqual(ui.strField.value, ui2.str_field.value)
-        
+
         # On current version, we allow backwards compatibility, so no warning is issued
         # Will be removed on next major version
         with mock.patch('logging.Logger.warning') as mock_warning:
             data = ui2.serialize_fields()  # Should store str_field as strField
-            
-            ui.deserialize_fields(data)
-            
+
+            self.assertFalse(ui.deserialize_fields(data))  # Should need upgrade, current format serialized
+
             # Logger.warning should has not been called
             mock_warning.assert_not_called()
-            
+
             # And strField should be loaded from str_field
             self.assertEqual(ui.strField.value, ui2.str_field.value)
-

@@ -45,6 +45,7 @@ import collections.abc
 import abc
 
 from django.utils.translation import gettext
+from regex import F
 
 from uds.core import consts, exceptions, types
 from uds.core.managers.crypto import UDSK, CryptoManager
@@ -1503,23 +1504,26 @@ class UserInterface(metaclass=UserInterfaceAbstract):
     def deserialize_fields(
         self,
         values: bytes,
-    ) -> None:
+    ) -> bool:
         """New form unserialization
 
         Arguments:
             values {bytes} -- serialized form (zipped)
+            
+        Returns:
+            True if should upgrade to new format, False if not
 
         Keyword Arguments:
             serializer {typing.Optional[collections.abc.Callable[[str], typing.Any]]} -- deserializer (default: {None})
         """
 
         if not values:
-            return
+            return False
 
         if not values.startswith(SERIALIZATION_HEADER):
-            # Unserialize with old method
+            # Unserialize with old method, and notify that we need to upgrade
             self.deserialize_from_old_format(values)
-            return
+            return True
 
         # For future use, right now we only have one version
         version = values[  # pylint: disable=unused-variable
@@ -1530,7 +1534,7 @@ class UserInterface(metaclass=UserInterfaceAbstract):
 
         if not values:  # Apart of the header, there is nothing...
             logger.info('Empty values on unserialize_fields')
-            return
+            return False
 
         fields = serializer.deserialize(values) or []
 
@@ -1562,6 +1566,8 @@ class UserInterface(metaclass=UserInterfaceAbstract):
                 logger.warning('Field %s has different type than expected', field_name)
                 continue
             self._gui[field_name].value = FIELD_DECODERS[internal_field_type](field_value)
+            
+        return False
 
     def deserialize_from_old_format(self, values: bytes) -> None:
         """
