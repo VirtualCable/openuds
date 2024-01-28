@@ -36,12 +36,16 @@ import typing
 import collections.abc
 from .job import Job
 from .delayed_task import DelayedTask
-from .jobs_factory import JobsFactory
+
+# Imports for type checking
+if typing.TYPE_CHECKING:
+    from .jobs_factory import JobsFactory
 
 
 def factory() -> 'JobsFactory':
     """
     Returns a singleton to a jobs factory
     """
+    from .jobs_factory import JobsFactory  # pylint: disable=import-outside-toplevel
 
     return JobsFactory()
