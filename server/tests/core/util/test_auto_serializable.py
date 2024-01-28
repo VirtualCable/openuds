@@ -261,6 +261,12 @@ class AutoSerializable(UDSTestCase):
         data = instance.marshal()
 
         instance2 = AutoSerializableClass()
+        # Overwrite defaults, so we can check that they are restored on unmarshal
+        instance2.str_field = UNICODE_CHARS
+        instance2.float_field = 3.0
+        instance2.dict_field = {'a': 11, 'b': 22, 'c': 33}
+        instance2.obj_dc_field = SerializableDataclass(11, '22', 33.0)
+        
         instance2.unmarshal(data)
 
         self.assertNotEqual(instance2, instance)
