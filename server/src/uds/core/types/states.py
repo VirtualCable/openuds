@@ -95,7 +95,7 @@ class State(enum.StrEnum):
         return [self.LAUNCHING, self.PREPARING]
 
     @classproperty
-    def literal(self) -> str:
+    def localized(self) -> str:
         """Returns the literal translation of the state"""
         return _TRANSLATIONS.get(self, _TRANSLATIONS[State.UNKNOWN])
 

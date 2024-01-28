@@ -94,10 +94,10 @@ class Scheduler(models.Model):
         Returns an instance of the class that this record of the Scheduler represents. This clas is derived
         of uds.core.jobs.Job.Job
         """
-        jobInstance = jobs.factory().lookup(self.name)
+        job_instance_type = jobs.factory().lookup(self.name)
 
-        if jobInstance:
-            return jobInstance(self.get_environment())
+        if job_instance_type:
+            return job_instance_type(self.get_environment())
 
         return None
 

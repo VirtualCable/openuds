@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2021 Virtual Cable S.L.U.
+# Copyright (c) 2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -26,22 +26,28 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 """
-UDS jobs related modules
-
-Author: Adolfo Gómez, dkmaster at dkmon dot com
+@author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 import collections.abc
-from .job import Job
-from .delayed_task import DelayedTask
-from .jobs_factory import JobsFactory
+import logging
 
 
-def factory() -> 'JobsFactory':
-    """
-    Returns a singleton to a jobs factory
-    """
+from ...utils.test import UDSTestCase
 
-    return JobsFactory()
+from uds.core.util import factory
+
+logger = logging.getLogger(__name__)
+
+class FactoryObject:
+    def __init__(self, name: str, value: int):
+        self.name = name
+        self.value = value
+
+class FactoryTest(UDSTestCase):
+    def test_factory(self) -> None:
+        
+        f = factory.Factory[FactoryObject]()
+        
+        pass

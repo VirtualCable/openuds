@@ -93,7 +93,7 @@ class StateUpdater:
         logger.debug(
             'Running Executor for %s with state %s and executor %s',
             self.user_service.friendly_name,
-            State.from_str(state).literal,
+            State.from_str(state).localized,
             executor,
         )
 
@@ -133,8 +133,8 @@ class UpdateFromPreparing(StateUpdater):
 
         logger.debug(
             'State %s, StateOS %s for %s',
-            State.from_str(state).literal,
-            State.from_str(stateOs).literal,
+            State.from_str(state).localized,
+            State.from_str(stateOs).localized,
             self.user_service.friendly_name,
         )
         if stateOs == State.RUNNING:
@@ -193,10 +193,10 @@ class UpdateFromCanceling(StateUpdater):
 
 class UpdateFromOther(StateUpdater):
     def finish(self):
-        self.set_error(f'Unknown running transition from {State.from_str(self.user_service.state).literal}')
+        self.set_error(f'Unknown running transition from {State.from_str(self.user_service.state).localized}')
 
     def running(self):
-        self.set_error(f'Unknown running transition from {State.from_str(self.user_service.state).literal}')
+        self.set_error(f'Unknown running transition from {State.from_str(self.user_service.state).localized}')
 
 
 class UserServiceOpChecker(DelayedTask):
@@ -245,7 +245,7 @@ class UserServiceOpChecker(DelayedTask):
             logger.debug(
                 'Updating %s from %s with updater %s and state %s',
                 userservice.friendly_name,
-                State.from_str(userservice.state).literal,
+                State.from_str(userservice.state).localized,
                 updater,
                 state,
             )

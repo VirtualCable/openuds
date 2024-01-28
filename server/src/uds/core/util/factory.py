@@ -28,7 +28,7 @@ class Factory(typing.Generic[V], metaclass=singleton.Singleton):
         '''
         return self._objects
 
-    def put(self, type_name: str, type_: type[V]) -> None:
+    def register(self, type_name: str, type_: type[V]) -> None:
         '''
         Inserts an object into the factory.
         '''
@@ -43,17 +43,38 @@ class Factory(typing.Generic[V], metaclass=singleton.Singleton):
         Returns an object from the factory.
         '''
         return self._objects.get(type_name.lower())
-    
+
     def has(self, type_name: str) -> bool:
         '''
         Returns an object from the factory.
         '''
         return type_name.lower() in self._objects
-    
+
+    def items(self) -> collections.abc.ItemsView[str, type[V]]:
+        '''
+        Returns an object from the factory.
+        '''
+        return self._objects.items()
+
+    def keys(self) -> collections.abc.KeysView[str]:
+        '''
+        Returns an object from the factory.
+        '''
+        return self._objects.keys()
+
+    def values(self) -> collections.abc.ValuesView[type[V]]:
+        '''
+        Returns an object from the factory.
+        '''
+        return self._objects.values()
+
     # aliases for get
     lookup = get
     __getitem__ = get
+    __setitem__ = register
     __contains__ = has
+
+    # Note that there is no remove method, as we don't intend to remove once added to a factory
 
 
 class ModuleFactory(Factory[T]):
@@ -72,4 +93,4 @@ class ModuleFactory(Factory[T]):
         Inserts an object into the factory.
         '''
         # logger.debug('Adding %s as %s', type_.type(), type_.__module__)
-        super().put(type_.get_type().lower(), type_)
+        super().register(type_.get_type().lower(), type_)

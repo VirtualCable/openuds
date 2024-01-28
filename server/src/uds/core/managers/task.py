@@ -94,14 +94,14 @@ class TaskManager(metaclass=singleton.Singleton):
         logger.info("Caught term signal, finishing task manager")
         TaskManager.manager().keep_running = False
 
-    def register_job(self, jobType: type[jobs.Job]) -> None:
-        jobName = jobType.friendly_name
-        jobs.factory().put(jobName, jobType)
+    def register_job(self, job_type: type[jobs.Job]) -> None:
+        job_name = job_type.friendly_name
+        jobs.factory().register(job_name, job_type)
 
     def register_scheduled_tasks(self) -> None:
         logger.info("Registering sheduled tasks")
 
-        # Simply import this to make workers "auto import themself"
+        # Simply import this to make workers "register" themselves
         from uds.core import workers  # pylint: disable=unused-import, import-outside-toplevel
 
     def add_other_tasks(self) -> None:

@@ -286,9 +286,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
         cache.save(update_fields=['cache_level'])
         logger.debug(
             'Service State: %a %s %s',
-            State.from_str(state).literal,
-            State.from_str(cache.state).literal,
-            State.from_str(cache.os_state).literal,
+            State.from_str(state).localized,
+            State.from_str(cache.state).localized,
+            State.from_str(cache.os_state).localized,
         )
         if State.from_str(state).is_runing() and cache.is_usable():
             cache.set_state(State.PREPARING)
@@ -336,7 +336,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             if userservice.is_usable() is False and State.from_str(userservice.state).is_removable() is False:
                 raise OperationException(_('Can\'t remove a non active element'))
             userservice.set_state(State.REMOVING)
-            logger.debug("***** The state now is %s *****", State.from_str(userservice.state).literal)
+            logger.debug("***** The state now is %s *****", State.from_str(userservice.state).localized)
             userservice.set_in_use(False)  # For accounting, ensure that it is not in use right now
             userservice.save()
 

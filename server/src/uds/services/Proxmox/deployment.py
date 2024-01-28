@@ -35,7 +35,7 @@ import logging
 import typing
 import collections.abc
 
-from uds.core import services
+from uds.core import services, consts
 from uds.core.managers.user_service import UserServiceManager
 from uds.core.types.states import State
 from uds.core.util import log
@@ -67,7 +67,6 @@ logger = logging.getLogger(__name__)
     opGracelyStop,
 ) = range(11)
 
-NO_MORE_NAMES = 'NO-NAME-ERROR'
 UP_STATES = ('up', 'reboot_in_progress', 'powering_up', 'restoring_state')
 GUEST_SHUTDOWN_WAIT = 90  # Seconds
 
@@ -154,7 +153,7 @@ class ProxmoxDeployment(services.UserService):
                     self.service().get_basename(), self.service().get_lenname()
                 )
             except KeyError:
-                return NO_MORE_NAMES
+                return consts.NO_MORE_NAMES
         return self._name
 
     def set_ip(self, ip: str) -> None:
@@ -366,7 +365,7 @@ if sys.platform == 'win32':
         """
         templateId = self.publication().machine()
         name = self.get_name()
-        if name == NO_MORE_NAMES:
+        if name == consts.NO_MORE_NAMES:
             raise Exception(
                 'No more names available for this service. (Increase digits for this service to fix)'
             )

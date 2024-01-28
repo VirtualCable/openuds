@@ -35,7 +35,7 @@ import logging
 import typing
 import collections.abc
 
-from uds.core import services
+from uds.core import services, consts
 from uds.core.types.states import State
 from uds.core.util import log
 
@@ -51,8 +51,6 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 opCreate, opStart, opSuspend, opRemove, opWait, opError, opFinish, opRetry = range(8)
-
-NO_MORE_NAMES = 'NO-NAME-ERROR'
 
 
 class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-methods
@@ -123,7 +121,7 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
                     self.service().get_basename(), self.service().getLenName()
                 )
             except KeyError:
-                return NO_MORE_NAMES
+                return consts.NO_MORE_NAMES
         return self._name
 
     def set_ip(self, ip) -> None:
@@ -312,7 +310,7 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         """
         templateId = self.publication().getTemplateId()
         name = self.get_name()
-        if name == NO_MORE_NAMES:
+        if name == consts.NO_MORE_NAMES:
             raise Exception(
                 'No more names available for this service. (Increase digits for this service to fix)'
             )

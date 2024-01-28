@@ -635,7 +635,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         return (
             f'User service {self.name}, unique_id {self.unique_id},'
             f' cache_level {self.cache_level}, user {self.user},'
-            f' name {self.friendly_name}, state {State.from_str(self.state).literal}:{State.from_str(self.os_state).literal}'
+            f' name {self.friendly_name}, state {State.from_str(self.state).localized}:{State.from_str(self.os_state).localized}'
         )
 
     @staticmethod
