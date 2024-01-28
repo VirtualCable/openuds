@@ -543,9 +543,11 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
                 if v.name in fields and fields[v.name].type_name == str(v.__class__.__name__):
                     v.unmarshal(self, fields[v.name].value)
                 else:
+                    # If field is not found, or type is not the same, set default value
                     if not v.name in fields:
                         logger.warning('Field %s not found in unmarshalled data', v.name)
                     else:
+                        v.__set__(self, v._default())
                         logger.warning(
                             'Field %s has wrong type in unmarshalled data (should be %s and is %s',
                             v.name,
@@ -561,8 +563,13 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
         """
         if not isinstance(other, AutoSerializable):
             return False
+        
+        all_fields_attrs = list(self._all_fields_attrs())
+        
+        if {k for k, _ in all_fields_attrs} != {k for k, _ in other._all_fields_attrs()}:
+            return False
 
-        for k, v in self._all_fields_attrs():
+        for k, v in all_fields_attrs:
             if isinstance(v, _SerializableField):
                 if getattr(self, k) != getattr(other, k):
                     return False

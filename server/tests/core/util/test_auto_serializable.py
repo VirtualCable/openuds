@@ -42,12 +42,14 @@ from ...utils.test import UDSTestCase
 UNICODE_CHARS = 'ñöçóá^(pípè)'
 UNICODE_CHARS_2 = 'ñöçóá^(€íöè)'
 
+
 @dataclasses.dataclass
 class SerializableDataclass:
     int_val: int = 0
     str_val: str = ''
     float_val: float = 0.0
-    
+
+
 class SerializableNamedTuple(typing.NamedTuple):
     int_val: int = 0
     str_val: str = ''
@@ -55,15 +57,19 @@ class SerializableNamedTuple(typing.NamedTuple):
 
 
 class AutoSerializableClass(auto_serializable.AutoSerializable):
-    int_field = auto_serializable.IntegerField()
-    str_field = auto_serializable.StringField()
-    float_field = auto_serializable.FloatField()
-    bool_field = auto_serializable.BoolField()
-    password_field = auto_serializable.PasswordField()
-    list_field = auto_serializable.ListField[int]()
-    dict_field = auto_serializable.DictField[str, int]()
-    obj_dc_field = auto_serializable.ObjectField[SerializableDataclass](SerializableDataclass)
-    obj_nt_field = auto_serializable.ObjectField[SerializableNamedTuple](SerializableNamedTuple)
+    int_field = auto_serializable.IntegerField(default=11)
+    str_field = auto_serializable.StringField(default='str')
+    float_field = auto_serializable.FloatField(default=44.0)
+    bool_field = auto_serializable.BoolField(default=False)
+    password_field = auto_serializable.PasswordField(default='password')  # nosec: test password
+    list_field = auto_serializable.ListField[int](default=lambda: [1, 2, 3])
+    dict_field = auto_serializable.DictField[str, int](default=lambda: {'a': 1, 'b': 2, 'c': 3})
+    obj_dc_field = auto_serializable.ObjectField[SerializableDataclass](
+        SerializableDataclass, default=lambda: SerializableDataclass(1, '2', 3.0)
+    )
+    obj_nt_field = auto_serializable.ObjectField[SerializableNamedTuple](
+        SerializableNamedTuple, default=lambda: SerializableNamedTuple(1, '2', 3.0)
+    )
 
     non_auto_int = 1
 
@@ -109,6 +115,16 @@ class DerivedAutoSerializableClass(AutoSerializableClass):
 class DerivedAutoSerializableClass2(AddedClass, AutoSerializableClass):
     int_field2 = auto_serializable.IntegerField()
     str_field2 = auto_serializable.StringField()
+
+
+class AutoSerializableClassWithMissingFields(auto_serializable.AutoSerializable):
+    int_field = auto_serializable.IntegerField()
+    bool_field = auto_serializable.BoolField()
+    password_field = auto_serializable.PasswordField()
+    list_field = auto_serializable.ListField[int]()
+    obj_nt_field = auto_serializable.ObjectField[SerializableNamedTuple](SerializableNamedTuple)
+
+    non_auto_int = 1
 
 
 class AutoSerializable(UDSTestCase):
@@ -208,3 +224,55 @@ class AutoSerializable(UDSTestCase):
         instance2.unmarshal(data)
 
         self.assertEqual(instance, instance2)
+
+    def test_auto_serializable_with_missing_fields(self):
+        instance = AutoSerializableClass()
+        instance.int_field = 1
+        instance.str_field = UNICODE_CHARS
+        instance.float_field = 3.0
+        instance.bool_field = True
+        instance.password_field = UNICODE_CHARS_2  # nosec: test password
+        instance.list_field = [1, 2, 3]
+        instance.dict_field = {'a': 1, 'b': 2, 'c': 3}
+        instance.obj_dc_field = SerializableDataclass(1, '2', 3.0)
+        instance.obj_nt_field = SerializableNamedTuple(2, '3', 4.0)
+
+        data = instance.marshal()
+
+        instance2 = AutoSerializableClassWithMissingFields()
+        instance2.unmarshal(data)
+
+        self.assertNotEqual(instance2, instance)  # Missing fields, so not equal
+
+        self.assertEqual(instance2.int_field, 1)
+        self.assertEqual(instance2.bool_field, True)
+        self.assertEqual(instance2.password_field, UNICODE_CHARS_2)
+        self.assertEqual(instance2.list_field, [1, 2, 3])
+        self.assertEqual(instance2.obj_nt_field, SerializableNamedTuple(2, '3', 4.0))
+
+    def test_auto_serializable_with_added_fields(self):
+        instance = AutoSerializableClassWithMissingFields()
+        instance.int_field = 1
+        instance.bool_field = True
+        instance.password_field = UNICODE_CHARS_2  # nosec: test password
+        instance.list_field = [1, 2, 3]
+        instance.obj_nt_field = SerializableNamedTuple(2, '3', 4.0)
+
+        data = instance.marshal()
+
+        instance2 = AutoSerializableClass()
+        instance2.unmarshal(data)
+
+        self.assertNotEqual(instance2, instance)
+
+        # Ensure that missing fields are set to default values
+        # and deserialize correctly the rest of the fields
+        self.assertEqual(instance2.int_field, 1)  # deserialized value
+        self.assertEqual(instance2.str_field, 'str')  # default value
+        self.assertEqual(instance2.float_field, 44.0)  # default value
+        self.assertEqual(instance2.bool_field, True)  # deserialized value
+        self.assertEqual(instance2.password_field, UNICODE_CHARS_2)  # deserialized value
+        self.assertEqual(instance2.list_field, [1, 2, 3])  # deserialized value
+        self.assertEqual(instance2.dict_field, {'a': 1, 'b': 2, 'c': 3})  # default value
+        self.assertEqual(instance2.obj_dc_field, SerializableDataclass(1, '2', 3.0))  # default value
+        self.assertEqual(instance2.obj_nt_field, SerializableNamedTuple(2, '3', 4.0))  # deserialized value
