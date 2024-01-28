@@ -450,6 +450,11 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
     _fields: dict[str, typing.Any]
 
     def _all_fields_attrs(self) -> collections.abc.Iterator[tuple[str, typing.Any]]:
+        """Returns an iterator over all fields in the class, including inherited ones
+        
+        Returns:
+            Tuple(name, field) for each field in the class and its bases
+        """
         cls = self.__class__
         while True:
             for k, v in cls.__dict__.items():

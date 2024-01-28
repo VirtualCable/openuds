@@ -14,7 +14,7 @@ import typing
 # We use commit/rollback
 
 from tests.utils.test import UDSTestCase
-from uds.core.util import auto_serializable
+from uds.core.util import autoserializable
 from uds.core.environment import Environment
 
 

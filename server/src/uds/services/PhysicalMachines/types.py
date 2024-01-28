@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2019-2021 Virtual Cable S.L.U.
+# Copyright (c) 2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,47 +32,46 @@
 """
 import dataclasses
 import logging
-import stat
 import typing
 import collections.abc
 
-from uds.core.util import security
-from uds.core import services
-
-from .types import HostInfo
-
 logger = logging.getLogger(__name__)
 
-if typing.TYPE_CHECKING:
-    from . import provider
 
+@dataclasses.dataclass
+class HostInfo:
+    host: str
+    mac: str = ''
+    counter: str = ''
 
-class IPServiceBase(services.Service):
     @staticmethod
-    def compose_hosts_info(hosts_list: list[str]) -> typing.List[HostInfo]:
-        return [HostInfo.from_str(hostdata) for hostdata in hosts_list if hostdata.strip()]
+    def from_str(data: str) -> 'HostInfo':
+        """Extracts a HostInfo from a string
+        the string is "ip;mac~order" (mac and order are optional)
+        """
+        ip_mac, order = (data.split('~') + [''])[:2]
+        ip, mac = (ip_mac.split(';') + [''])[:2]
+        return HostInfo(ip, mac, order)
 
-    def parent(self) -> 'provider.PhysicalMachinesProvider':
-        return typing.cast('provider.PhysicalMachinesProvider', super().parent())
+    def as_str(self) -> str:
+        return f'{self.host};{self.mac}~{self.counter}'
 
-    def get_unassigned_host(self) -> typing.Optional['HostInfo']:
-        raise NotImplementedError('getUnassignedMachine')
+    @staticmethod
+    def from_dict(data: typing.Dict[str, typing.Any]) -> 'HostInfo':
+        return HostInfo(data['ip'], data['mac'], data['order'])
 
-    def unassign_host(self, host: 'HostInfo') -> None:
-        raise NotImplementedError('unassignMachine')
+    def as_dict(self) -> typing.Dict[str, typing.Any]:
+        return {'ip': self.host, 'mac': self.mac, 'order': self.counter}
+    
+    def pretty_print(self) -> str:
+        return f'{self.host} ({self.mac})'
+    
+    def as_identifier(self) -> str:
+        if self.mac:
+            return f'{self.host};{self.mac}'
+        return self.host
 
-    def wakeup(self, host: 'HostInfo', verify_ssl: bool = False) -> None:
-        if host.mac:
-            wake_on_land_endpoint = self.parent().wake_on_lan_endpoint(host)
-            if wake_on_land_endpoint:
-                logger.info('Launching WOL: %s', wake_on_land_endpoint)
-                try:
-                    security.secure_requests_session(verify=verify_ssl).get(wake_on_land_endpoint)
-                    # logger.debug('Result: %s', result)
-                except Exception as e:
-                    logger.error('Error on WOL: %s', e)
+    def __str__(self) -> str:
+        return self.as_str()
 
-    # Phisical machines does not have "real" providers, so
-    # always is available
-    def is_avaliable(self) -> bool:
-        return True
+

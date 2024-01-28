@@ -42,6 +42,7 @@ from uds.core import exceptions, types
 
 from .deployment import IPMachineDeployed
 from .service_base import IPServiceBase
+from .types import HostInfo
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -85,18 +86,18 @@ class IPSingleMachineService(IPServiceBase):
                 gettext('Invalid server used: "{}"'.format(self.ip.value))
             )
 
-    def getUnassignedMachine(self) -> typing.Optional[str]:
-        ip: typing.Optional[str] = None
+    def get_unassigned_host(self) -> typing.Optional['HostInfo']:
+        host: typing.Optional[HostInfo] = None
         try:
             counter = self.storage.get_unpickle('counter')
             counter = counter + 1 if counter is not None else 1
             self.storage.put_pickle('counter', counter)
-            ip = '{}~{}'.format(self.ip.value, counter)
+            host = HostInfo(self.ip.value, counter=str(counter))
         except Exception:
-            ip = None
-            logger.exception("Exception at getUnassignedMachine")
+            host = None
+            logger.exception("Exception at get_unassigned_host")
 
-        return ip
+        return host
 
-    def unassignMachine(self, ip: str) -> None:
+    def unassign_host(self, host: 'HostInfo') -> None:
         pass

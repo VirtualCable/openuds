@@ -42,6 +42,8 @@ from uds.core.util.auto_attributes import AutoAttributes
 from uds.core.util import net
 from uds.core.util import log
 
+from .types import HostInfo
+
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
@@ -105,19 +107,19 @@ class IPMachineDeployed(services.UserService, AutoAttributes):
     def set_ready(self) -> str:
         # If single machine, ip is IP~counter,
         # If multiple and has a ';' on IP, the values is IP;MAC
-        if ';' in self._ip:  # Only try wakeup if mac is present
-            ip, mac = self._ip.split('~')[0].split(';')[0:2]
-            self.service().wakeup(ip, mac)
+        host = HostInfo.from_str(self._ip)
+        if host.mac:
+            self.service().wakeup(host)
         self._state = State.FINISHED
         return self._state
 
-    def __deploy(self) -> str:
-        ip = self.service().getUnassignedMachine()
+    def _deploy(self) -> str:
+        ip = self.service().get_unassigned_host()
         if ip is None:
             self._reason = 'No machines left'
             self._state = State.ERROR
         else:
-            self._ip = ip
+            self._ip = ip.as_identifier()
             self._state = State.FINISHED
 
         # If not to be managed by a token, autologin user
@@ -130,7 +132,7 @@ class IPMachineDeployed(services.UserService, AutoAttributes):
 
     def deploy_for_user(self, user: 'models.User') -> str:
         logger.debug("Starting deploy of %s for user %s", self._ip, user)
-        return self.__deploy()
+        return self._deploy()
 
     def assign(self, ip: str) -> str:
         logger.debug('Assigning from assignable with ip %s', ip)
@@ -160,8 +162,9 @@ class IPMachineDeployed(services.UserService, AutoAttributes):
         return self._reason
 
     def destroy(self) -> str:
-        if self._ip != '':
-            self.service().unassignMachine(self._ip)
+        host = HostInfo.from_str(self._ip)
+        if host.host:
+            self.service().unassign_host(host)
         self._state = State.FINISHED
         return self._state
 

@@ -35,7 +35,7 @@ import collections.abc
 import dataclasses
 import typing
 
-from uds.core.util import auto_serializable
+from uds.core.util import autoserializable
 
 from ...utils.test import UDSTestCase
 
@@ -56,48 +56,48 @@ class SerializableNamedTuple(typing.NamedTuple):
     float_val: float = 0.0
 
 
-class AutoSerializableClass(auto_serializable.AutoSerializable):
-    int_field = auto_serializable.IntegerField(default=11)
-    str_field = auto_serializable.StringField(default='str')
-    float_field = auto_serializable.FloatField(default=44.0)
-    bool_field = auto_serializable.BoolField(default=False)
-    password_field = auto_serializable.PasswordField(default='password')  # nosec: test password
-    list_field = auto_serializable.ListField[int](default=lambda: [1, 2, 3])
-    dict_field = auto_serializable.DictField[str, int](default=lambda: {'a': 1, 'b': 2, 'c': 3})
-    obj_dc_field = auto_serializable.ObjectField[SerializableDataclass](
+class AutoSerializableClass(autoserializable.AutoSerializable):
+    int_field = autoserializable.IntegerField(default=11)
+    str_field = autoserializable.StringField(default='str')
+    float_field = autoserializable.FloatField(default=44.0)
+    bool_field = autoserializable.BoolField(default=False)
+    password_field = autoserializable.PasswordField(default='password')  # nosec: test password
+    list_field = autoserializable.ListField[int](default=lambda: [1, 2, 3])
+    dict_field = autoserializable.DictField[str, int](default=lambda: {'a': 1, 'b': 2, 'c': 3})
+    obj_dc_field = autoserializable.ObjectField[SerializableDataclass](
         SerializableDataclass, default=lambda: SerializableDataclass(1, '2', 3.0)
     )
-    obj_nt_field = auto_serializable.ObjectField[SerializableNamedTuple](
+    obj_nt_field = autoserializable.ObjectField[SerializableNamedTuple](
         SerializableNamedTuple, default=lambda: SerializableNamedTuple(1, '2', 3.0)
     )
 
     non_auto_int = 1
 
 
-class AutoSerializableCompressedClass(auto_serializable.AutoSerializableCompressed):
-    int_field = auto_serializable.IntegerField()
-    str_field = auto_serializable.StringField()
-    float_field = auto_serializable.FloatField()
-    bool_field = auto_serializable.BoolField()
-    password_field = auto_serializable.PasswordField()
-    list_field = auto_serializable.ListField[int]()
-    dict_field = auto_serializable.DictField[str, int]()
-    obj_dc_field = auto_serializable.ObjectField[SerializableDataclass](SerializableDataclass)
-    obj_nt_field = auto_serializable.ObjectField[SerializableNamedTuple](SerializableNamedTuple)
+class AutoSerializableCompressedClass(autoserializable.AutoSerializableCompressed):
+    int_field = autoserializable.IntegerField()
+    str_field = autoserializable.StringField()
+    float_field = autoserializable.FloatField()
+    bool_field = autoserializable.BoolField()
+    password_field = autoserializable.PasswordField()
+    list_field = autoserializable.ListField[int]()
+    dict_field = autoserializable.DictField[str, int]()
+    obj_dc_field = autoserializable.ObjectField[SerializableDataclass](SerializableDataclass)
+    obj_nt_field = autoserializable.ObjectField[SerializableNamedTuple](SerializableNamedTuple)
 
     non_auto_int = 1
 
 
-class AutoSerializableEncryptedClass(auto_serializable.AutoSerializableEncrypted):
-    int_field = auto_serializable.IntegerField()
-    str_field = auto_serializable.StringField()
-    float_field = auto_serializable.FloatField()
-    bool_field = auto_serializable.BoolField()
-    password_field = auto_serializable.PasswordField()
-    list_field = auto_serializable.ListField[int]()
-    dict_field = auto_serializable.DictField[str, int]()
-    obj_dc_field = auto_serializable.ObjectField[SerializableDataclass](SerializableDataclass)
-    obj_nt_field = auto_serializable.ObjectField[SerializableNamedTuple](SerializableNamedTuple)
+class AutoSerializableEncryptedClass(autoserializable.AutoSerializableEncrypted):
+    int_field = autoserializable.IntegerField()
+    str_field = autoserializable.StringField()
+    float_field = autoserializable.FloatField()
+    bool_field = autoserializable.BoolField()
+    password_field = autoserializable.PasswordField()
+    list_field = autoserializable.ListField[int]()
+    dict_field = autoserializable.DictField[str, int]()
+    obj_dc_field = autoserializable.ObjectField[SerializableDataclass](SerializableDataclass)
+    obj_nt_field = autoserializable.ObjectField[SerializableNamedTuple](SerializableNamedTuple)
 
     non_auto_int = 1
 
@@ -108,21 +108,21 @@ class AddedClass:
 
 
 class DerivedAutoSerializableClass(AutoSerializableClass):
-    int_field2 = auto_serializable.IntegerField()
-    str_field2 = auto_serializable.StringField()
+    int_field2 = autoserializable.IntegerField()
+    str_field2 = autoserializable.StringField()
 
 
 class DerivedAutoSerializableClass2(AddedClass, AutoSerializableClass):
-    int_field2 = auto_serializable.IntegerField()
-    str_field2 = auto_serializable.StringField()
+    int_field2 = autoserializable.IntegerField()
+    str_field2 = autoserializable.StringField()
 
 
-class AutoSerializableClassWithMissingFields(auto_serializable.AutoSerializable):
-    int_field = auto_serializable.IntegerField()
-    bool_field = auto_serializable.BoolField()
-    password_field = auto_serializable.PasswordField()
-    list_field = auto_serializable.ListField[int]()
-    obj_nt_field = auto_serializable.ObjectField[SerializableNamedTuple](SerializableNamedTuple)
+class AutoSerializableClassWithMissingFields(autoserializable.AutoSerializable):
+    int_field = autoserializable.IntegerField()
+    bool_field = autoserializable.BoolField()
+    password_field = autoserializable.PasswordField()
+    list_field = autoserializable.ListField[int]()
+    obj_nt_field = autoserializable.ObjectField[SerializableNamedTuple](SerializableNamedTuple)
 
     non_auto_int = 1
 

@@ -31,8 +31,8 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
-import pickle
-import random  # nosec # Pickle use is controled by app, never by non admin user input
+import pickle  # nosec # Pickle use is controled by app, never by non admin user input
+import random
 import typing
 import collections.abc
 
@@ -46,6 +46,7 @@ from uds.core.util.model import sql_stamp_seconds
 
 from .deployment import IPMachineDeployed
 from .service_base import IPServiceBase
+from .types import HostInfo
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -72,9 +73,10 @@ class IPMachinesService(IPServiceBase):
         readonly=False,
     )
 
-    ipList = gui.EditableListField(
-        label=typing.cast(str, _('List of servers')),
-        tooltip=typing.cast(str, _('List of servers available for this service')),
+    list_of_hosts = gui.EditableListField(
+        label=typing.cast(str, _('List of hosts')),
+        tooltip=typing.cast(str, _('List of hosts available for this service')),
+        old_field_name='ipList',
     )
 
     port = gui.NumericField(
@@ -88,45 +90,51 @@ class IPMachinesService(IPServiceBase):
         required=True,
         tab=types.ui.Tab.ADVANCED,
     )
-    skipTimeOnFailure = gui.NumericField(
+    ignore_minutes_on_failure = gui.NumericField(
         length=6,
-        label=typing.cast(str, _('Skip time')),
+        label=typing.cast(str, _('Ignore minutes on failure')),
         default=0,
         order=2,
         tooltip=typing.cast(str, _('If a host fails to check, skip it for this time (in minutes).')),
         min_value=0,
         required=True,
         tab=types.ui.Tab.ADVANCED,
+        old_field_name='skipTimeOnFailure',
     )
 
-    maxSessionForMachine = gui.NumericField(
+    max_session_hours = gui.NumericField(
         length=3,
-        label=typing.cast(str, _('Max session per machine')),
+        label=typing.cast(str, _('Max session duration')),
         default=0,
         order=3,
         tooltip=typing.cast(
             str,
             _(
-                'Maximum session duration before UDS thinks this machine got locked and releases it (hours). 0 means "never".'
+                'Max session duration before UDS releases a presumed locked machine (hours). 0 signifies "never".'
             ),
         ),
         min_value=0,
         required=True,
         tab=types.ui.Tab.ADVANCED,
+        old_field_name='maxSessionForMachine',
     )
-    lockByExternalAccess = gui.CheckBoxField(
+    lock_on_external_access = gui.CheckBoxField(
         label=typing.cast(str, _('Lock machine by external access')),
         tooltip=typing.cast(str, _('If checked, UDS will lock the machine if it is accesed from outside UDS.')),
         default=False,
         order=4,
         tab=types.ui.Tab.ADVANCED,
+        old_field_name='lockByExternalAccess',
     )
-    useRandomIp = gui.CheckBoxField(
-        label=typing.cast(str, _('Use random IP')),
-        tooltip=typing.cast(str, _('If checked, UDS will use a random IP from the list of servers.')),
+    randomize_host = gui.CheckBoxField(
+        label=typing.cast(str, _('Use random host')),
+        tooltip=typing.cast(
+            str, _('When enabled, UDS selects a random, rather than sequential, host from the list.')
+        ),
         default=False,
         order=5,
         tab=types.ui.Tab.ADVANCED,
+        old_field_name='useRandomIp',
     )
 
     # Description of service
@@ -144,203 +152,194 @@ class IPMachinesService(IPServiceBase):
 
     services_type_provided = types.services.ServiceType.VDI
 
-    _ips: list[str] = []
-    _token: str = ''
-    _port: int = 0
-    _skipTimeOnFailure: int = 0
-    _maxSessionForMachine: int = 0
-    _lockByExternalAccess: bool = False
-    _useRandomIp: bool = False
+    _cached_hosts: typing.Optional[typing.List['HostInfo']] = None
 
     def initialize(self, values: 'Module.ValuesType') -> None:
         if values is None:
             return
 
-        if values.get('ipList', None) is None:
-            self._ips = []
-        else:
-            # Check that ips are valid
-            for v in values['ipList']:
-                if not net.is_valid_host(v.split(';')[0]):  # Get only IP/hostname
-                    raise exceptions.ui.ValidationError(
-                        gettext('Invalid value detected on servers list: "{}"').format(v)
-                    )
-            self._ips = [
-                '{}~{}'.format(str(ip).strip(), i) for i, ip in enumerate(values['ipList']) if str(ip).strip()
-            ]  # Allow duplicates right now
-            # Current stored data, if it exists
+        for v in self.list_of_hosts.as_list():
+            if not net.is_valid_host(v.split(';')[0]):  # Get only IP/hostname
+                raise exceptions.ui.ValidationError(
+                    gettext('Invalid value detected on servers list: "{}"').format(v)
+                )
+
+        current_hosts = IPMachinesService.compose_hosts_info(self.list_of_hosts.as_list())
+        dissapeared = set(i.host for i in self.hosts) - set(i.host for i in current_hosts)
+
+        with transaction.atomic():
+            for removable in dissapeared:
+                self.storage.remove(removable)  # Clean up stored data for dissapeared hosts
+
+        self.hosts = current_hosts
+
+    @property
+    def hosts(self) -> typing.List['HostInfo']:
+        if self._cached_hosts is None:
             d = self.storage.read_from_db('ips')
-            old_ips = pickle.loads(d) if d and isinstance(d, bytes) else []  # nosec: pickle is safe here
-            # dissapeared ones
-            dissapeared = set(IPServiceBase.getIp(i.split('~')[0]) for i in old_ips) - set(
-                i.split('~')[0] for i in self._ips
-            )
-            with transaction.atomic():
-                for removable in dissapeared:
-                    self.storage.remove(removable)
+            hosts_list = pickle.loads(d) if d and isinstance(d, bytes) else []  # nosec: pickle is safe here
+            self._cached_hosts = IPMachinesService.compose_hosts_info(hosts_list)
+        return self._cached_hosts
 
-        self._token = self.token.value.strip()
-        self._port = self.port.value
-        self._skipTimeOnFailure = self.skipTimeOnFailure.as_int()
-        self._maxSessionForMachine = self.maxSessionForMachine.as_int()
-        self._lockByExternalAccess = self.lockByExternalAccess.as_bool()
-        self._useRandomIp = self.useRandomIp.as_bool()
+    @hosts.setter
+    def hosts(self, hosts: typing.List['HostInfo']) -> None:
+        self._cached_hosts = hosts
+        self.storage.save_to_db('ips', [i.as_str() for i in self.hosts])
 
-    def get_token(self):
-        return self._token or None
+    def get_token(self) -> typing.Optional[str]:
+        return self.token.as_str() or None
 
-    def get_fields_as_dict(self) -> gui.ValuesDictType:
-        ips = (i.split('~')[0] for i in self._ips)
-        return {
-            'ipList': ensure.is_list(ips),
-            'token': self._token,
-            'port': str(self._port),
-            'skipTimeOnFailure': str(self._skipTimeOnFailure),
-            'maxSessionForMachine': str(self._maxSessionForMachine),
-            'lockByExternalAccess': gui.bool_as_str(self._lockByExternalAccess),
-            'useRandomIp': gui.bool_as_str(self._useRandomIp),
-        }
-
-    def marshal(self) -> bytes:
-        self.storage.save_to_db('ips', pickle.dumps(self._ips))
-        return b'\0'.join(
-            [
-                b'v7',
-                self._token.encode(),
-                str(self._port).encode(),
-                str(self._skipTimeOnFailure).encode(),
-                str(self._maxSessionForMachine).encode(),
-                gui.bool_as_str(self._lockByExternalAccess).encode(),
-                gui.bool_as_str(self._useRandomIp).encode(),
-            ]
-        )
+    # def marshal(self) -> bytes:
+    #     self.storage.save_to_db('ips', pickle.dumps(self._ips))
+    #     return b'\0'.join(
+    #         [
+    #             b'v7',
+    #             self._token.encode(),
+    #             str(self._port).encode(),
+    #             str(self._skipTimeOnFailure).encode(),
+    #             str(self._maxSessionForMachine).encode(),
+    #             gui.bool_as_str(self._lockByExternalAccess).encode(),
+    #             gui.bool_as_str(self._useRandomIp).encode(),
+    #         ]
+    #     )
 
     def unmarshal(self, data: bytes) -> None:
+        if not data.startswith(b'v'):
+            return super().unmarshal(data)  # New format, use parent unmarshal
+
         values: list[bytes] = data.split(b'\0')
+        # Ensure list of ips is at latest "old" format
         d = self.storage.read_from_db('ips')
-        if isinstance(d, bytes):
-            self._ips = pickle.loads(d)  # nosec: pickle is safe here
-        elif isinstance(d, str):  # "legacy" saved elements
-            self._ips = pickle.loads(d.encode('utf8'))  # nosec: pickle is safe here
-            self.marshal()  # Ensure now is bytes..
-        else:
-            self._ips = []
+        if isinstance(d, str):  # "legacy" saved elements
+            _ips = pickle.loads(d.encode('utf8'))  # nosec: pickle is safe here
+            self.storage.save_to_db('ips', pickle.dumps(_ips))
+
+        self._cached_hosts = None  # Invalidate cache
+
         if values[0] != b'v1':
-            self._token = values[1].decode()
+            self.token.value = values[1].decode()
             if values[0] in (b'v3', b'v4', b'v5', b'v6', b'v7'):
-                self._port = int(values[2].decode())
+                self.port.value = int(values[2].decode())
             if values[0] in (b'v4', b'v5', b'v6', b'v7'):
-                self._skipTimeOnFailure = int(values[3].decode())
+                self.ignore_minutes_on_failure.value = int(values[3].decode())
             if values[0] in (b'v5', b'v6', b'v7'):
-                self._maxSessionForMachine = int(values[4].decode())
+                self.max_session_hours.value = int(values[4].decode())
             if values[0] in (b'v6', b'v7'):
-                self._lockByExternalAccess = gui.as_bool(values[5].decode())
+                self.lock_on_external_access.value = gui.as_bool(values[5].decode())
             if values[0] in (b'v7',):
-                self._useRandomIp = gui.as_bool(values[6].decode())
+                self.randomize_host.value = gui.as_bool(values[6].decode())
 
-        # Sets maximum services for this
-        self.userservices_limit = len(self._ips)
+        # Sets maximum services for this, and loads "hosts" into cache
+        self.userservices_limit = len(self.hosts)
+        
+        # Update editable hosts list
+        self.list_of_hosts.value = [i.as_identifier() for i in self.hosts]
 
-    def canBeUsed(self, locked: typing.Optional[typing.Union[str, int]], now: int) -> int:
+        self.flag_for_upgrade()  # Flag for upgrade as soon as possible
+
+    def is_usable(self, locked: typing.Optional[typing.Union[str, int]], now: int) -> int:
         # If _maxSessionForMachine is 0, it can be used only if not locked
         # (that is locked is None)
         locked = locked or 0
         if isinstance(locked, str) and not '.' in locked:  # Convert to int and treat it as a "locked" element
             locked = int(locked)
 
-        if self._maxSessionForMachine <= 0:
+        if self.max_session_hours.as_int() <= 0:
             return not bool(locked)  # If locked is None, it can be used
 
         if not isinstance(locked, int):  # May have "old" data, that was the IP repeated
             return False
 
-        if not locked or locked < now - self._maxSessionForMachine * 3600:
+        if not locked or locked < now - self.max_session_hours.as_int() * 3600:
             return True
 
         return False
 
-    def getUnassignedMachine(self) -> typing.Optional[str]:
+    def get_unassigned_host(self) -> typing.Optional['HostInfo']:
         # Search first unassigned machine
         try:
             now = sql_stamp_seconds()
 
             # Reorder ips, so we do not always get the same one if requested
-            allIps = self._ips[:]
-            if self._useRandomIp:
-                random.shuffle(allIps)
+            all_hosts = self.hosts
+            if self.randomize_host:
+                random.shuffle(all_hosts)
 
-            for ip in allIps:
-                theIP = IPServiceBase.getIp(ip)
-                theMAC = IPServiceBase.getMac(ip)
-                locked = self.storage.get_unpickle(theIP)
-                if self.canBeUsed(locked, now):
+            for host in all_hosts:
+                locked = self.storage.get_unpickle(host.host)
+                # If it is not locked
+                if self.is_usable(locked, now):
+                    # If the check failed not so long ago, skip it...
                     if (
-                        self._port > 0
-                        and self._skipTimeOnFailure > 0
-                        and self.cache.get('port{}'.format(theIP))
+                        self.port.as_int() > 0
+                        and self.ignore_minutes_on_failure.as_int() > 0
+                        and self.cache.get(f'port{host.host}')
                     ):
-                        continue  # The check failed not so long ago, skip it...
-                    self.storage.put_pickle(theIP, now)
+                        continue
+                    # Store/update lock time
+                    self.storage.put_pickle(host.host, now)
+
                     # Is WOL enabled?
-                    wolENABLED = bool(self.parent().wolURL(theIP, theMAC))
+                    is_wakeonland_enabled = bool(self.parent().wake_on_lan_endpoint(host))
                     # Now, check if it is available on port, if required...
-                    if self._port > 0 and not wolENABLED:  # If configured WOL, check is a nonsense
-                        if net.test_connectivity(theIP, self._port, timeOut=0.5) is False:
+                    if (
+                        self.port.as_int() > 0 and not is_wakeonland_enabled
+                    ):  # If configured WOL, check is a nonsense
+                        if net.test_connectivity(host.host, self.port.as_int(), timeout=0.5) is False:
                             # Log into logs of provider, so it can be "shown" on services logs
                             self.parent().do_log(
                                 log.LogLevel.WARNING,
-                                f'Host {theIP} not accesible on port {self._port}',
+                                f'Host {host.host} not accesible on port {self.port.as_int()}',
                             )
                             logger.warning(
                                 'Static Machine check on %s:%s failed. Will be ignored for %s minutes.',
-                                theIP,
-                                self._port,
-                                self._skipTimeOnFailure,
+                                host.host,
+                                self.port.as_int(),
+                                self.ignore_minutes_on_failure.as_int(),
                             )
-                            self.storage.remove(theIP)  # Return Machine to pool
-                            if self._skipTimeOnFailure > 0:
+                            self.storage.remove(host.host)  # Return Machine to pool
+                            if self.ignore_minutes_on_failure.as_int() > 0:
                                 self.cache.put(
-                                    'port{}'.format(theIP),
+                                    f'port{host.host}',
                                     '1',
-                                    validity=self._skipTimeOnFailure * 60,
+                                    validity=self.ignore_minutes_on_failure.as_int() * 60,
                                 )
                             continue
-                    if theMAC:
-                        return theIP + ';' + theMAC
-                    return theIP
+                    return host
             return None
         except Exception:
             logger.exception("Exception at getUnassignedMachine")
             return None
 
-    def unassignMachine(self, ip: str) -> None:
+    def unassign_host(self, host: 'HostInfo') -> None:
         try:
-            self.storage.remove(IPServiceBase.getIp(ip))
+            self.storage.remove(host.host)
         except Exception:
             logger.exception("Exception at getUnassignedMachine")
 
-    def enumerate_assignables(self):
-        return [(ip, ip.split('~')[0]) for ip in self._ips if self.storage.read_from_db(ip) is None]
+    def enumerate_assignables(self) -> typing.List[tuple[str, str]]:
+        return [
+            (f'{host.host}|{host.mac}', host.host)
+            for host in self.hosts
+            if self.storage.read_from_db(host.host) is None
+        ]
 
     def assign_from_assignables(
         self,
-        assignableId: str,
+        assignable_id: str,
         user: 'models.User',
         userDeployment: 'services.UserService',
     ) -> str:
-        userServiceInstance: IPMachineDeployed = typing.cast(IPMachineDeployed, userDeployment)
-        theIP = IPServiceBase.getIp(assignableId)
-        theMAC = IPServiceBase.getMac(assignableId)
+        userservice_instance: IPMachineDeployed = typing.cast(IPMachineDeployed, userDeployment)
+        host = HostInfo.from_str(assignable_id)
 
         now = sql_stamp_seconds()
-        locked = self.storage.get_unpickle(theIP)
-        if self.canBeUsed(locked, now):
-            self.storage.put_pickle(theIP, now)
-            if theMAC:
-                theIP += ';' + theMAC
-            return userServiceInstance.assign(theIP)
+        locked = self.storage.get_unpickle(host.host)
+        if self.is_usable(locked, now):
+            self.storage.put_pickle(host.host, now)
+            return userservice_instance.assign(host.as_identifier())
 
-        return userServiceInstance.error('IP already assigned')
+        return userservice_instance.error('IP already assigned')
 
     def process_login(self, id: str, remote_login: bool) -> None:
         '''
@@ -349,11 +348,11 @@ class IPMachinesService(IPServiceBase):
         logger.debug('Processing login for %s: %s', self, id)
 
         # Locate the IP on the storage
-        theIP = IPServiceBase.getIp(id)
+        host = HostInfo.from_str(id)
         now = sql_stamp_seconds()
-        locked: typing.Union[None, str, int] = self.storage.get_unpickle(theIP)
-        if self.canBeUsed(locked, now):
-            self.storage.put_pickle(theIP, str(now))  # Lock it
+        locked: typing.Union[None, str, int] = self.storage.get_unpickle(host.host)
+        if self.is_usable(locked, now):
+            self.storage.put_pickle(host.host, str(now))  # Lock it
 
     def process_logout(self, id: str, remote_login: bool) -> None:
         '''
@@ -361,11 +360,11 @@ class IPMachinesService(IPServiceBase):
         '''
         logger.debug('Processing logout for %s: %s', self, id)
         # Locate the IP on the storage
-        theIP = IPServiceBase.getIp(id)
-        locked: typing.Union[None, str, int] = self.storage.get_unpickle(theIP)
+        host = HostInfo.from_str(id)
+        locked: typing.Union[None, str, int] = self.storage.get_unpickle(host.host)
         # If locked is str, has been locked by processLogin so we can unlock it
         if isinstance(locked, str):
-            self.unassignMachine(id)
+            self.unassign_host(host)
         # If not proccesed by login, we cannot release it
 
     def notify_initialization(self, id: str) -> None:
@@ -374,17 +373,15 @@ class IPMachinesService(IPServiceBase):
         Normally, this means that
         '''
         logger.debug('Notify initialization for %s: %s', self, id)
-        self.unassignMachine(id)
+        self.unassign_host(HostInfo.from_str(id))
 
-    def get_valid_id(self, idsList: collections.abc.Iterable[str]) -> typing.Optional[str]:
+    def get_valid_id(self, ids: collections.abc.Iterable[str]) -> typing.Optional[str]:
         # If locking not allowed, return None
-        if self._lockByExternalAccess is False:
+        if self.lock_on_external_access.as_bool() is False:
             return None
         # Look for the first valid id on our list
-        for ip in self._ips:
-            theIP = IPServiceBase.getIp(ip)
-            theMAC = IPServiceBase.getMac(ip)
+        for host in self.hosts:
             # If is managed by us
-            if theIP in idsList or theMAC in idsList:
-                return theIP + ';' + theMAC if theMAC else theIP
+            if host.host in ids or host.mac in ids:
+                return host.as_identifier()
         return None

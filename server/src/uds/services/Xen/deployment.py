@@ -37,7 +37,7 @@ import collections.abc
 
 from uds.core import services, consts
 from uds.core.types.states import State
-from uds.core.util import log, auto_serializable
+from uds.core.util import autoserializable, log
 
 from .xen_client import XenPowerState
 
@@ -79,17 +79,17 @@ class Operation(enum.IntEnum):
             return Operation.UNKNOWN
 
 
-class XenLinkedDeployment(services.UserService, auto_serializable.AutoSerializable):
+class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializable):
     # : Recheck every six seconds by default (for task methods)
     suggested_delay = 7
 
-    _name = auto_serializable.StringField(default='')
-    _ip = auto_serializable.StringField(default='')
-    _mac = auto_serializable.StringField(default='')
-    _vmid = auto_serializable.StringField(default='')
-    _reason = auto_serializable.StringField(default='')
-    _task = auto_serializable.StringField(default='')
-    _queue = auto_serializable.ListField[Operation]()
+    _name = autoserializable.StringField(default='')
+    _ip = autoserializable.StringField(default='')
+    _mac = autoserializable.StringField(default='')
+    _vmid = autoserializable.StringField(default='')
+    _reason = autoserializable.StringField(default='')
+    _task = autoserializable.StringField(default='')
+    _queue = autoserializable.ListField[Operation]()
 
     def initialize(self) -> None:
         self._queue = []

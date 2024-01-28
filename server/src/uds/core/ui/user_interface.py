@@ -1241,7 +1241,12 @@ class gui:
             """
             Return value as list of strings
             """
-            return list(self.value)
+            if not self.value:
+                return []
+            try:
+                return list(self.value)
+            except Exception:
+                return []
 
     class EditableListField(InputField):
         """
@@ -1311,7 +1316,12 @@ class gui:
             """
             Return value as list of strings
             """
-            return list(self.value)
+            if not self.value:
+                return []
+            try:
+                return list(self.value)
+            except Exception:
+                return []
 
     class InfoField(InputField):
         """

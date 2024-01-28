@@ -239,8 +239,8 @@ class UserService(UUIDModel, properties.PropertiesMixin):
             try:
                 us.deserialize(self.data)
 
-                # if needs upgrade, we will serialize it again to ensure it is upgraded ASAP
-                # Eventually, it will be upgraded anyway, but could take too much time...
+                # if needs upgrade, we will serialize it again to ensure its format is upgraded ASAP
+                # Eventually, it will be upgraded anyway, but could take too much time (even years)...
                 # This way, if we instantiate it, it will be upgraded
                 if us.needs_upgrade():
                     self.data = us.serialize()

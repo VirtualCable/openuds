@@ -281,16 +281,16 @@ def is_valid_host(value: str):
     return is_valid_ip(value) or is_valid_fqdn(value)
 
 
-def test_connectivity(host: str, port: int, timeOut: float = 4) -> bool:
+def test_connectivity(host: str, port: int, timeout: float = 4) -> bool:
     try:
         logger.debug(
-            'Checking connection to %s:%s with %s seconds timeout', host, port, timeOut
+            'Checking connection to %s:%s with %s seconds timeout', host, port, timeout
         )
-        sock = socket.create_connection((host, port), timeOut)
+        sock = socket.create_connection((host, port), timeout)
         sock.close()
     except Exception as e:
         logger.debug(
-            'Exception checking %s:%s with %s timeout: %s', host, port, timeOut, e
+            'Exception checking %s:%s with %s timeout: %s', host, port, timeout, e
         )
         return False
     return True
