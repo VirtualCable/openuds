@@ -87,3 +87,6 @@ class FactoryTest(UDSTestCase):
         with mock.patch.object(factory.logger, 'debug') as mock_debug:
             test_factory.register('first', Subclass1)
             mock_debug.assert_called_once()
+
+        # As singleton, another instance should be the same
+        self.assertEqual(test_factory, factory.Factory[FactoryObject]())
