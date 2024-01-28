@@ -126,7 +126,7 @@ class XenPublication(Publication):
             return State.ERROR
 
         try:
-            state, result = self.service().checkTaskFinished(self._task)
+            state, result = self.service().check_task_finished(self._task)
             if state:  # Finished
                 self._state = 'finished'
                 self._templateId = result

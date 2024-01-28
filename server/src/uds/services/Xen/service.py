@@ -229,7 +229,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         self.datastore.set_choices(storages_list)
         self.network.set_choices(network_list)
 
-    def checkTaskFinished(self, task: str) -> tuple[bool, str]:
+    def check_task_finished(self, task: str) -> tuple[bool, str]:
         return self.parent().checkTaskFinished(task)
 
     def datastoreHasSpace(self) -> None:
@@ -356,7 +356,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         """
         return self.parent().resetVM(machineId, asnc)
 
-    def canSuspendVM(self, machineId: str) -> bool:
+    def can_suspend_machine(self, machineId: str) -> bool:
         """
         The machine can be suspended only when "suspend" is in their operations list (mush have xentools installed)
 
@@ -368,7 +368,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         """
         return self.parent().canSuspendVM(machineId)
 
-    def suspendVM(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
+    def suspend_machine(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
         """
         Tries to suspend a machine. No check is done, it is simply requested to Xen
 
@@ -407,7 +407,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
     def provisionVM(self, machineId: str, asnc: bool = True) -> str:
         return self.parent().provisionVM(machineId, asnc)
 
-    def getMacRange(self) -> str:
+    def get_macs_range(self) -> str:
         """
         Returns de selected mac range
         """
@@ -419,7 +419,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         """
         return self.baseName.value
 
-    def getLenName(self) -> int:
+    def get_lenname(self) -> int:
         """
         Returns the length of numbers part
         """

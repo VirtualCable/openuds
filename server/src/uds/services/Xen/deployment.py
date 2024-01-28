@@ -29,14 +29,15 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import enum
 import pickle  # nosec: not insecure, we are loading our own data
 import logging
 import typing
 import collections.abc
 
-from uds.core import services
+from uds.core import services, consts
 from uds.core.types.states import State
-from uds.core.util import log
+from uds.core.util import log, auto_serializable
 
 from .xen_client import XenPowerState
 
@@ -49,36 +50,46 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-(
-    opCreate,
-    opStart,
-    opStop,
-    opSuspend,
-    opRemove,
-    opWait,
-    opError,
-    opFinish,
-    opRetry,
-    opConfigure,
-    opProvision,
-    opWaitSuspend,
-) = range(12)
 
-NO_MORE_NAMES = 'NO-NAME-ERROR'
+class Operation(enum.IntEnum):
+    """
+    Operations for deployment
+    """
+
+    CREATE = 0
+    START = 1
+    STOP = 2
+    SUSPEND = 3
+    REMOVE = 4
+    WAIT = 5
+    ERROR = 6
+    FINISH = 7
+    RETRY = 8
+    CONFIGURE = 9
+    PROVISION = 10
+    WAIT_SUSPEND = 11
+
+    UNKNOWN = 99
+
+    @staticmethod
+    def from_int(value: int) -> 'Operation':
+        try:
+            return Operation(value)
+        except ValueError:
+            return Operation.UNKNOWN
 
 
-class XenLinkedDeployment(services.UserService):
+class XenLinkedDeployment(services.UserService, auto_serializable.AutoSerializable):
     # : Recheck every six seconds by default (for task methods)
     suggested_delay = 7
 
-    _name: str = ''
-    _ip: str = ''
-    _mac: str = ''
-    _man: str = ''
-    _vmid: str = ''
-    _reason: str = ''
-    _task = ''
-    _queue: list[int]
+    _name = auto_serializable.StringField(default='')
+    _ip = auto_serializable.StringField(default='')
+    _mac = auto_serializable.StringField(default='')
+    _vmid = auto_serializable.StringField(default='')
+    _reason = auto_serializable.StringField(default='')
+    _task = auto_serializable.StringField(default='')
+    _queue = auto_serializable.ListField[Operation]()
 
     def initialize(self) -> None:
         self._queue = []
@@ -92,22 +103,10 @@ class XenLinkedDeployment(services.UserService):
             raise Exception('No publication for this element!')
         return typing.cast('XenPublication', pub)
 
-    # Serializable needed methods
-    def marshal(self) -> bytes:
-        return b'\1'.join(
-            [
-                b'v1',
-                self._name.encode('utf8'),
-                self._ip.encode('utf8'),
-                self._mac.encode('utf8'),
-                self._vmid.encode('utf8'),
-                self._reason.encode('utf8'),
-                pickle.dumps(self._queue, protocol=0),
-                self._task.encode('utf8'),
-            ]
-        )
-
     def unmarshal(self, data: bytes) -> None:
+        if not data.startswith(b'v'):
+            return super().unmarshal(data)
+
         vals = data.split(b'\1')
         logger.debug('Values: %s', vals)
         if vals[0] == b'v1':
@@ -119,14 +118,16 @@ class XenLinkedDeployment(services.UserService):
             self._queue = pickle.loads(vals[6])  # nosec: not insecure, we are loading our own data
             self._task = vals[7].decode('utf8')
 
+        self.flag_for_upgrade()  # Force upgrade
+
     def get_name(self) -> str:
         if not self._name:
             try:
                 self._name = self.name_generator().get(
-                    self.service().get_basename(), self.service().getLenName()
+                    self.service().get_basename(), self.service().get_lenname()
                 )
             except KeyError:
-                return NO_MORE_NAMES
+                return consts.NO_MORE_NAMES
         return self._name
 
     def set_ip(self, ip: str) -> None:
@@ -135,7 +136,7 @@ class XenLinkedDeployment(services.UserService):
 
     def get_unique_id(self) -> str:
         if not self._mac:
-            self._mac = self.mac_generator().get(self.service().getMacRange())
+            self._mac = self.mac_generator().get(self.service().get_macs_range())
         return self._mac
 
     def get_ip(self) -> str:
@@ -149,10 +150,10 @@ class XenLinkedDeployment(services.UserService):
             state = self.service().getVMPowerState(self._vmid)
 
             if state != XenPowerState.running:
-                self._queue = [opStart, opFinish]
-                return self.__executeQueue()
+                self._queue = [Operation.START, Operation.FINISH]
+                return self._execute_from_queue()
 
-            self.cache.put('ready', '1', 30)                
+            self.cache.put('ready', '1', 30)
         except Exception as e:
             # On case of exception, log an an error and return as if the operation was executed
             self.do_log(log.LogLevel.ERROR, 'Error setting machine state: {}'.format(e))
@@ -167,10 +168,10 @@ class XenLinkedDeployment(services.UserService):
     def process_ready_from_os_manager(self, data: typing.Any) -> str:
         # Here we will check for suspending the VM (when full ready)
         logger.debug('Checking if cache 2 for %s', self._name)
-        if self.__getCurrentOp() == opWait:
+        if self._get_current_op() == Operation.WAIT:
             logger.debug('Machine is ready. Moving to level 2')
-            self.__popCurrentOp()  # Remove current state
-            return self.__executeQueue()
+            self._pop_current_op()  # Remove current state
+            return self._execute_from_queue()
         # Do not need to go to level 2 (opWait is in fact "waiting for moving machine to cache level 2)
         return State.FINISHED
 
@@ -179,51 +180,56 @@ class XenLinkedDeployment(services.UserService):
         Deploys an service instance for an user.
         """
         logger.debug('Deploying for user')
-        self.__initQueueForDeploy(False)
-        return self.__executeQueue()
+        self._init_queue_for_deployment(False)
+        return self._execute_from_queue()
 
     def deploy_for_cache(self, cacheLevel: int) -> str:
         """
         Deploys an service instance for cache
         """
-        self.__initQueueForDeploy(cacheLevel == self.L2_CACHE)
-        return self.__executeQueue()
+        self._init_queue_for_deployment(cacheLevel == self.L2_CACHE)
+        return self._execute_from_queue()
 
-    def __initQueueForDeploy(self, forLevel2: bool = False) -> None:
+    def _init_queue_for_deployment(self, forLevel2: bool = False) -> None:
         if forLevel2 is False:
-            self._queue = [opCreate, opConfigure, opProvision, opStart, opFinish]
+            self._queue = [
+                Operation.CREATE,
+                Operation.CONFIGURE,
+                Operation.PROVISION,
+                Operation.START,
+                Operation.FINISH,
+            ]
         else:
             self._queue = [
-                opCreate,
-                opConfigure,
-                opProvision,
-                opStart,
-                opWait,
-                opWaitSuspend,
-                opSuspend,
-                opFinish,
+                Operation.CREATE,
+                Operation.CONFIGURE,
+                Operation.PROVISION,
+                Operation.START,
+                Operation.WAIT,
+                Operation.WAIT_SUSPEND,
+                Operation.SUSPEND,
+                Operation.FINISH,
             ]
 
-    def __getCurrentOp(self) -> int:
+    def _get_current_op(self) -> Operation:
         if len(self._queue) == 0:
-            return opFinish
+            return Operation.FINISH
 
         return self._queue[0]
 
-    def __popCurrentOp(self) -> int:
+    def _pop_current_op(self) -> int:
         if len(self._queue) == 0:
-            return opFinish
+            return Operation.FINISH
 
-        res = self._queue.pop(0)
-        return res
+        return self._queue.pop(0)
 
-    def __pushFrontOp(self, op: int) -> None:
+    def _push_front_op(self, op: Operation) -> None:
         self._queue.insert(0, op)
 
-    def __pushBackOp(self, op: int) -> None:
+    def _push_back_op(self, op: Operation) -> None:
         self._queue.append(op)
 
-    def __error(self, reason: typing.Any) -> str:
+    def _error(self, reason: typing.Any) -> str:
         logger.debug('Setting error state, reason: %s', reason)
         self.do_log(log.LogLevel.ERROR, reason)
 
@@ -240,49 +246,47 @@ class XenLinkedDeployment(services.UserService):
             except Exception:
                 logger.debug('Can\'t set machine %s state to stopped', self._vmid)
 
-        self._queue = [opError]
+        self._queue = [Operation.ERROR]
         self._reason = str(reason)
         return State.ERROR
 
-    def __executeQueue(self) -> str:
+    def _execute_from_queue(self) -> str:
         self.__debug('executeQueue')
-        op = self.__getCurrentOp()
+        op = self._get_current_op()
 
-        if op == opError:
+        if op == Operation.ERROR:
             return State.ERROR
 
-        if op == opFinish:
+        if op == Operation.FINISH:
             return State.FINISHED
 
-        fncs: dict[int, typing.Optional[collections.abc.Callable[[], str]]] = {
-            opCreate: self.__create,
-            opRetry: self.__retry,
-            opStart: self.__startMachine,
-            opStop: self.__stopMachine,
-            opWaitSuspend: self.__waitSuspend,
-            opSuspend: self.__suspendMachine,
-            opWait: self.__wait,
-            opRemove: self.__remove,
-            opConfigure: self.__configure,
-            opProvision: self.__provision,
+        fncs: dict[Operation, typing.Optional[collections.abc.Callable[[], str]]] = {
+            Operation.CREATE: self._create,
+            Operation.RETRY: self._retry,
+            Operation.START: self._start_machine,
+            Operation.STOP: self._stop_machine,
+            Operation.WAIT_SUSPEND: self._wait_suspend,
+            Operation.SUSPEND: self._suspend_machine,
+            Operation.WAIT: self._wait,
+            Operation.REMOVE: self._remove,
+            Operation.CONFIGURE: self._configure,
+            Operation.PROVISION: self._provision,
         }
 
         try:
-            execFnc: typing.Optional[collections.abc.Callable[[], str]] = fncs.get(op, None)
+            operation: typing.Optional[collections.abc.Callable[[], str]] = fncs.get(op, None)
 
-            if execFnc is None:
-                return self.__error(
-                    'Unknown operation found at execution queue ({0})'.format(op)
-                )
+            if not operation:
+                return self._error('Unknown operation found at execution queue ({0})'.format(op))
 
-            execFnc()
+            operation()
 
             return State.RUNNING
         except Exception as e:
-            return self.__error(e)
+            return self._error(e)
 
     # Queue execution methods
-    def __retry(self) -> str:
+    def _retry(self) -> str:
         """
         Used to retry an operation
         In fact, this will not be never invoked, unless we push it twice, because
@@ -292,19 +296,19 @@ class XenLinkedDeployment(services.UserService):
         """
         return State.FINISHED
 
-    def __wait(self) -> str:
+    def _wait(self) -> str:
         """
         Executes opWait, it simply waits something "external" to end
         """
         return State.RUNNING
 
-    def __create(self) -> str:
+    def _create(self) -> str:
         """
         Deploys a machine from template for user/cache
         """
         templateId = self.publication().getTemplateId()
         name = self.get_name()
-        if name == NO_MORE_NAMES:
+        if name == consts.NO_MORE_NAMES:
             raise Exception(
                 'No more names available for this service. (Increase digits for this service to fix)'
             )
@@ -320,21 +324,21 @@ class XenLinkedDeployment(services.UserService):
 
         return State.RUNNING
 
-    def __remove(self) -> str:
+    def _remove(self) -> str:
         """
         Removes a machine from system
         """
         state = self.service().getVMPowerState(self._vmid)
 
         if state not in (XenPowerState.halted, XenPowerState.suspended):
-            self.__pushFrontOp(opStop)
-            self.__executeQueue()
+            self._push_front_op(Operation.STOP)
+            self._execute_from_queue()
         else:
             self.service().removeVM(self._vmid)
 
         return State.RUNNING
 
-    def __startMachine(self) -> str:
+    def _start_machine(self) -> str:
         """
         Powers on the machine
         """
@@ -347,7 +351,7 @@ class XenLinkedDeployment(services.UserService):
 
         return State.RUNNING
 
-    def __stopMachine(self) -> str:
+    def _stop_machine(self) -> str:
         """
         Powers off the machine
         """
@@ -360,18 +364,18 @@ class XenLinkedDeployment(services.UserService):
 
         return State.RUNNING
 
-    def __waitSuspend(self) -> str:
+    def _wait_suspend(self) -> str:
         """
         Before suspending, wait for machine to have the SUSPEND feature
         """
         self._task = ''
         return State.RUNNING
 
-    def __suspendMachine(self) -> str:
+    def _suspend_machine(self) -> str:
         """
         Suspends the machine
         """
-        task = self.service().suspendVM(self._vmid)
+        task = self.service().suspend_machine(self._vmid)
 
         if task is not None:
             self._task = task
@@ -380,7 +384,7 @@ class XenLinkedDeployment(services.UserService):
 
         return State.RUNNING
 
-    def __configure(self):
+    def _configure(self):
         """
         Provisions machine & changes the mac of the indicated nic
         """
@@ -388,65 +392,63 @@ class XenLinkedDeployment(services.UserService):
 
         return State.RUNNING
 
-    def __provision(self):
+    def _provision(self):
         """
         Makes machine usable on Xen
         """
-        self.service().provisionVM(
-            self._vmid, False
-        )  # Let's try this in "sync" mode, this must be fast enough
+        self.service().provisionVM(self._vmid, False)  # Let's try this in "sync" mode, this must be fast enough
 
         return State.RUNNING
 
     # Check methods
-    def __checkCreate(self):
+    def _create_checker(self):
         """
         Checks the state of a deploy for an user or cache
         """
-        state = self.service().checkTaskFinished(self._task)
+        state = self.service().check_task_finished(self._task)
         if state[0]:  # Finished
             self._vmid = state[1]
             return State.FINISHED
 
         return State.RUNNING
 
-    def __checkStart(self):
+    def _start_checker(self):
         """
         Checks if machine has started
         """
-        if self.service().checkTaskFinished(self._task)[0]:
+        if self.service().check_task_finished(self._task)[0]:
             return State.FINISHED
         return State.RUNNING
 
-    def __checkStop(self):
+    def _stop_checker(self):
         """
         Checks if machine has stoped
         """
-        if self.service().checkTaskFinished(self._task)[0]:
+        if self.service().check_task_finished(self._task)[0]:
             return State.FINISHED
         return State.RUNNING
 
-    def __checkWaitSuspend(self):
-        if self.service().canSuspendVM(self._vmid) is True:
+    def _wait_suspend_checker(self):
+        if self.service().can_suspend_machine(self._vmid) is True:
             return State.FINISHED
 
         return State.RUNNING
 
-    def __checkSuspend(self):
+    def _suspend_checker(self):
         """
         Check if the machine has suspended
         """
-        if self.service().checkTaskFinished(self._task)[0]:
+        if self.service().check_task_finished(self._task)[0]:
             return State.FINISHED
         return State.RUNNING
 
-    def __checkRemoved(self):
+    def removed_checker(self):
         """
         Checks if a machine has been removed
         """
         return State.FINISHED
 
-    def __checkConfigure(self):
+    def _configure_checker(self):
         """
         Checks if change mac operation has finished.
 
@@ -454,7 +456,7 @@ class XenLinkedDeployment(services.UserService):
         """
         return State.FINISHED
 
-    def __checkProvision(self):
+    def _provision_checker(self):
         return State.FINISHED
 
     def check_state(self) -> str:
@@ -462,57 +464,55 @@ class XenLinkedDeployment(services.UserService):
         Check what operation is going on, and acts acordly to it
         """
         self.__debug('check_state')
-        op = self.__getCurrentOp()
+        op = self._get_current_op()
 
-        if op == opError:
+        if op == Operation.ERROR:
             return State.ERROR
 
-        if op == opFinish:
+        if op == Operation.FINISH:
             return State.FINISHED
 
         fncs: dict[int, typing.Optional[collections.abc.Callable[[], str]]] = {
-            opCreate: self.__checkCreate,
-            opRetry: self.__retry,
-            opWait: self.__wait,
-            opStart: self.__checkStart,
-            opStop: self.__checkStop,
-            opWaitSuspend: self.__checkWaitSuspend,
-            opSuspend: self.__checkSuspend,
-            opRemove: self.__checkRemoved,
-            opConfigure: self.__checkConfigure,
-            opProvision: self.__checkProvision,
+            Operation.CREATE: self._create_checker,
+            Operation.RETRY: self._retry,
+            Operation.WAIT: self._wait,
+            Operation.START: self._start_checker,
+            Operation.STOP: self._stop_checker,
+            Operation.WAIT_SUSPEND: self._wait_suspend_checker,
+            Operation.SUSPEND: self._suspend_checker,
+            Operation.REMOVE: self.removed_checker,
+            Operation.CONFIGURE: self._configure_checker,
+            Operation.PROVISION: self._provision_checker,
         }
 
         try:
             chkFnc: typing.Optional[collections.abc.Callable[[], str]] = fncs.get(op, None)
 
             if chkFnc is None:
-                return self.__error(
-                    'Unknown operation found at check queue ({})'.format(op)
-                )
+                return self._error('Unknown operation found at check queue ({})'.format(op))
 
             state = chkFnc()
             if state == State.FINISHED:
-                self.__popCurrentOp()  # Remove runing op
-                return self.__executeQueue()
+                self._pop_current_op()  # Remove runing op
+                return self._execute_from_queue()
 
             return state
         except Exception as e:
-            return self.__error(e)
+            return self._error(e)
 
     def move_to_cache(self, newLevel: int) -> str:
         """
         Moves machines between cache levels
         """
-        if opRemove in self._queue:
+        if Operation.REMOVE in self._queue:
             return State.RUNNING
 
         if newLevel == self.L1_CACHE:
-            self._queue = [opStart, opFinish]
+            self._queue = [Operation.START, Operation.FINISH]
         else:
-            self._queue = [opStart, opSuspend, opFinish]
+            self._queue = [Operation.START, Operation.SUSPEND, Operation.FINISH]
 
-        return self.__executeQueue()
+        return self._execute_from_queue()
 
     def error_reason(self) -> str:
         return self._reason
@@ -521,16 +521,16 @@ class XenLinkedDeployment(services.UserService):
         self.__debug('destroy')
         # If executing something, wait until finished to remove it
         # We simply replace the execution queue
-        op = self.__getCurrentOp()
+        op = self._get_current_op()
 
-        if op == opError:
+        if op == Operation.ERROR:
             return State.FINISHED
 
-        if op == opFinish or op == opWait:
-            self._queue = [opStop, opRemove, opFinish]
-            return self.__executeQueue()
+        if op == Operation.FINISH or op == Operation.WAIT:
+            self._queue = [Operation.STOP, Operation.REMOVE, Operation.FINISH]
+            return self._execute_from_queue()
 
-        self._queue = [op, opStop, opRemove, opFinish]
+        self._queue = [op, Operation.STOP, Operation.REMOVE, Operation.FINISH]
         # Do not execute anything.here, just continue normally
         return State.RUNNING
 
@@ -538,20 +538,20 @@ class XenLinkedDeployment(services.UserService):
         return self.destroy()
 
     @staticmethod
-    def __op2str(op) -> str:
+    def __op2str(op: Operation) -> str:
         return {
-            opCreate: 'create',
-            opStart: 'start',
-            opStop: 'stop',
-            opWaitSuspend: 'wait-suspend',
-            opSuspend: 'suspend',
-            opRemove: 'remove',
-            opWait: 'wait',
-            opError: 'error',
-            opFinish: 'finish',
-            opRetry: 'retry',
-            opConfigure: 'configuring',
-            opProvision: 'provisioning',
+            Operation.CREATE: 'create',
+            Operation.START: 'start',
+            Operation.STOP: 'stop',
+            Operation.WAIT_SUSPEND: 'wait-suspend',
+            Operation.SUSPEND: 'suspend',
+            Operation.REMOVE: 'remove',
+            Operation.WAIT: 'wait',
+            Operation.ERROR: 'error',
+            Operation.FINISH: 'finish',
+            Operation.RETRY: 'retry',
+            Operation.CONFIGURE: 'configuring',
+            Operation.PROVISION: 'provisioning',
         }.get(op, '????')
 
     def __debug(self, txt: str) -> None:
