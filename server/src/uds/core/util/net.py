@@ -40,9 +40,7 @@ NetworklistType = typing.List[NetworkType]
 logger = logging.getLogger(__name__)
 
 # Test patters for networks
-reCIDR = re.compile(
-    r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})/([0-9]{1,2})$'
-)
+reCIDR = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})/([0-9]{1,2})$')
 reMask = re.compile(
     r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})netmask([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$'
 )
@@ -195,9 +193,7 @@ def networksFromString(
         raise ValueError(inputString)
 
 
-def ipInNetwork(
-    ip: typing.Union[str, int], network: typing.Union[str, NetworklistType]
-) -> bool:
+def ipInNetwork(ip: typing.Union[str, int], network: typing.Union[str, NetworklistType]) -> bool:
     if isinstance(ip, str):
         ip = ipToLong(ip)
     if isinstance(network, str):
@@ -231,3 +227,13 @@ def isValidFQDN(value: str) -> bool:
 
 def isValidHost(value: str):
     return isValidIp(value) or isValidFQDN(value)
+
+
+def isValidMAC(value: str) -> bool:
+    return (
+        re.match(
+            r'^([0-9a-fA-F]{2}[:-]){5}([0-9a-fA-F]{2})$',
+            value,
+        )
+        is not None
+    )

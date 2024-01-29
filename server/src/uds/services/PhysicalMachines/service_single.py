@@ -82,10 +82,22 @@ class IPSingleMachineService(IPServiceBase):
         if values is None:
             return
 
-        if not net.isValidHost(self.ip.value):
-            raise IPServiceBase.ValidationException(
-                gettext('Invalid server used: "{}"'.format(self.ip.value))
-            )
+        if ';' in self.ip.value:
+            # Check ip and mac
+            ip, mac = self.ip.value.split(';')
+            if not net.isValidHost(ip):
+                raise IPServiceBase.ValidationException(
+                    gettext('Invalid server used: "{}"'.format(ip))
+                )
+            if not net.isValidMAC(mac):
+                raise IPServiceBase.ValidationException(
+                    gettext('Invalid mac used: "{}"'.format(mac))
+                )
+        else:
+            if not net.isValidHost(self.ip.value):
+                raise IPServiceBase.ValidationException(
+                    gettext('Invalid server used: "{}"'.format(self.ip.value))
+                )
 
     def getUnassignedMachine(self) -> typing.Optional[str]:
         ip: typing.Optional[str] = None
