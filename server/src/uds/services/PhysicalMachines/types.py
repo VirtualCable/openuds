@@ -42,36 +42,45 @@ logger = logging.getLogger(__name__)
 class HostInfo:
     host: str
     mac: str = ''
-    counter: str = ''
+    order: str = ''
 
     @staticmethod
-    def from_str(data: str) -> 'HostInfo':
+    def from_str(data: str, overrided_order: typing.Optional[str] = None) -> 'HostInfo':
         """Extracts a HostInfo from a string
         the string is "ip;mac~order" (mac and order are optional)
         """
         ip_mac, order = (data.split('~') + [''])[:2]
         ip, mac = (ip_mac.split(';') + [''])[:2]
-        return HostInfo(ip, mac, order)
+        return HostInfo(ip, mac, overrided_order or order)
 
     def as_str(self) -> str:
-        return f'{self.host};{self.mac}~{self.counter}'
+        if self.mac:
+            return f'{self.host};{self.mac}~{self.order}'
+        return f'{self.host}~{self.order}'
 
     @staticmethod
     def from_dict(data: typing.Dict[str, typing.Any]) -> 'HostInfo':
         return HostInfo(data['ip'], data['mac'], data['order'])
 
     def as_dict(self) -> typing.Dict[str, typing.Any]:
-        return {'ip': self.host, 'mac': self.mac, 'order': self.counter}
-    
+        return {'ip': self.host, 'mac': self.mac, 'order': self.order}
+
     def pretty_print(self) -> str:
         return f'{self.host} ({self.mac})'
-    
+
     def as_identifier(self) -> str:
         if self.mac:
             return f'{self.host};{self.mac}'
         return self.host
 
+    def __hash__(self) -> int:
+        return hash(self.as_identifier())  # Hash only ip and mac (if present)
+
+    def __eq__(self, __value: object) -> bool:
+        return isinstance(__value, HostInfo) and self.as_identifier() == __value.as_identifier()
+    
+    def __gt__(self, __value: object) -> bool:
+        return isinstance(__value, HostInfo) and self.order > __value.order
+
     def __str__(self) -> str:
         return self.as_str()
-
-

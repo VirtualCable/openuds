@@ -154,17 +154,27 @@ class IPMachinesService(IPServiceBase):
 
     _cached_hosts: typing.Optional[typing.List['HostInfo']] = None
 
+    def init_gui(self) -> None:
+        # list_of_hosts is not stored on normar serializer, but on hosts
+        self.list_of_hosts.value = [i.as_identifier() for i in self.hosts]
+
     def initialize(self, values: 'Module.ValuesType') -> None:
+        hosts_list = self.list_of_hosts.as_list()
+        self.list_of_hosts.value = []  # Clear list of hosts, as it is now stored on hosts
+
         if values is None:
             return
 
-        for v in self.list_of_hosts.as_list():
+        for v in hosts_list:
             if not net.is_valid_host(v.split(';')[0]):  # Get only IP/hostname
                 raise exceptions.ui.ValidationError(
                     gettext('Invalid value detected on servers list: "{}"').format(v)
                 )
 
-        current_hosts = IPMachinesService.compose_hosts_info(self.list_of_hosts.as_list())
+        current_hosts = IPMachinesService.compose_hosts_info(hosts_list, add_order=True)
+
+        # Remove repeated hosts from list, we cannot have two hosts with same IP
+        current_hosts = sorted(set(current_hosts), key=lambda x: x.host)  # sort to ensure order is the correct :)
         dissapeared = set(i.host for i in self.hosts) - set(i.host for i in current_hosts)
 
         with transaction.atomic():
@@ -184,7 +194,15 @@ class IPMachinesService(IPServiceBase):
     @hosts.setter
     def hosts(self, hosts: typing.List['HostInfo']) -> None:
         self._cached_hosts = hosts
-        self.storage.save_to_db('ips', [i.as_str() for i in self.hosts])
+        self.storage.save_to_db('ips', pickle.dumps([i.as_str() for i in self.hosts]))
+
+    @staticmethod
+    def compose_hosts_info(hosts_list: list[str], add_order: bool = False) -> typing.List[HostInfo]:
+        return [
+            HostInfo.from_str(hostdata, '' if not add_order else str(counter))
+            for counter, hostdata in enumerate(hosts_list)
+            if hostdata.strip()
+        ]
 
     def get_token(self) -> typing.Optional[str]:
         return self.token.as_str() or None
@@ -217,9 +235,6 @@ class IPMachinesService(IPServiceBase):
 
         # Sets maximum services for this, and loads "hosts" into cache
         self.userservices_limit = len(self.hosts)
-        
-        # Update editable hosts list
-        self.list_of_hosts.value = [i.as_identifier() for i in self.hosts]
 
         self.flag_for_upgrade()  # Flag for upgrade as soon as possible
 

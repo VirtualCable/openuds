@@ -92,7 +92,11 @@ class PhysicalMachinesMultiSerializationTest(UDSTestCase):
         self.environment.storage.save_to_db('ips', pickle.dumps(STORED_IPS))
 
     def check(self, version: str, instance: 'service_multi.IPMachinesService') -> None:
-        self.assertEqual(instance.list_of_hosts.as_list(), EDITABLE_STORED_IPS)
+        # Stored list shuld be empty, as it is threated on a different storage
+        # So we ensure it's empty
+        self.assertEqual(instance.list_of_hosts.as_list(), [])
+        
+        self.assertEqual([i.as_identifier() for i in instance.hosts], EDITABLE_STORED_IPS)
 
         if version == 'v1':
             self.assertEqual(instance.token.as_str(), '')

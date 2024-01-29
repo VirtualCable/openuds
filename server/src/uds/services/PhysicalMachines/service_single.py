@@ -53,12 +53,13 @@ logger = logging.getLogger(__name__)
 
 class IPSingleMachineService(IPServiceBase):
     # Gui
-    ip = gui.TextField(
+    host = gui.TextField(
         length=64,
         label=_('Machine IP'),
         order=1,
         tooltip=_('Machine IP'),
         required=True,
+        old_field_name='ip'
     )
 
     # Description of service
@@ -80,10 +81,13 @@ class IPSingleMachineService(IPServiceBase):
     def initialize(self, values: 'Module.ValuesType') -> None:
         if values is None:
             return
+        
+        if ';' in self.host.as_str():
+            ip, mac = self.host.as_str().split(';')
 
-        if not net.is_valid_host(self.ip.value):
+        if not net.is_valid_host(self.host.value):
             raise exceptions.ui.ValidationError(
-                gettext('Invalid server used: "{}"'.format(self.ip.value))
+                gettext('Invalid server used: "{}"'.format(self.host.value))
             )
 
     def get_unassigned_host(self) -> typing.Optional['HostInfo']:
@@ -92,7 +96,7 @@ class IPSingleMachineService(IPServiceBase):
             counter = self.storage.get_unpickle('counter')
             counter = counter + 1 if counter is not None else 1
             self.storage.put_pickle('counter', counter)
-            host = HostInfo(self.ip.value, counter=str(counter))
+            host = HostInfo(self.host.value, order=str(counter))
         except Exception:
             host = None
             logger.exception("Exception at get_unassigned_host")

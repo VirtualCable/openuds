@@ -48,10 +48,6 @@ if typing.TYPE_CHECKING:
 
 
 class IPServiceBase(services.Service):
-    @staticmethod
-    def compose_hosts_info(hosts_list: list[str]) -> typing.List[HostInfo]:
-        return [HostInfo.from_str(hostdata) for hostdata in hosts_list if hostdata.strip()]
-
     def parent(self) -> 'provider.PhysicalMachinesProvider':
         return typing.cast('provider.PhysicalMachinesProvider', super().parent())
 
