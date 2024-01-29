@@ -101,12 +101,12 @@ class OsManagers(ModelHandler):
 
             if not osmanagerType:
                 raise exceptions.rest.NotFound('OS Manager type not found')
+            with Environment.temporary_environment() as env:
+                osmanager = osmanagerType(env, None)
 
-            osmanager = osmanagerType(Environment.get_temporary_environment(), None)
-
-            return self.add_default_fields(
-                osmanager.gui_description(),  # type: ignore  # may raise an exception if lookup fails
-                ['name', 'comments', 'tags'],
-            )
+                return self.add_default_fields(
+                    osmanager.gui_description(),  # type: ignore  # may raise an exception if lookup fails
+                    ['name', 'comments', 'tags'],
+                )
         except:
             raise exceptions.rest.NotFound('type not found')

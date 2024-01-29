@@ -87,7 +87,7 @@ class Scheduler(models.Model):
         """
         Returns an environment valid for the record this object represents
         """
-        return Environment.get_environment_for_table_record(self._meta.verbose_name, self.id)  # type: ignore  # pylint: disable=no-member
+        return Environment.environment_for_table_record(self._meta.verbose_name, self.id)  # type: ignore  # pylint: disable=no-member
 
     def get_instance(self) -> typing.Optional[jobs.Job]:
         """

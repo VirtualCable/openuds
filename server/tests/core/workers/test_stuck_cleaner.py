@@ -80,7 +80,7 @@ class StuckCleanerTest(UDSTestCase):
 
     def test_worker_outdated(self):
         count = UserService.objects.count()
-        cleaner = StuckCleaner(Environment.get_temporary_environment())
+        cleaner = StuckCleaner(Environment.testing_environment())
         cleaner.run()
         self.assertEqual(
             UserService.objects.count(), count // 4
@@ -94,7 +94,7 @@ class StuckCleanerTest(UDSTestCase):
             )
             us.save(update_fields=['state_date'])
         count = UserService.objects.count()
-        cleaner = StuckCleaner(Environment.get_temporary_environment())
+        cleaner = StuckCleaner(Environment.testing_environment())
         cleaner.run()
         self.assertEqual(
             UserService.objects.count(), count

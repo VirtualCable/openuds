@@ -137,7 +137,7 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
         if taskInstance:
             logger.debug('Executing delayedTask:>%s<', task)
             # Re-create environment data
-            taskInstance.env = Environment.get_environment_for_type(taskInstance.__class__)
+            taskInstance.env = Environment.environment_for_type(taskInstance.__class__)
             DelayedTaskThread(taskInstance).start()
 
     def _insert(self, instance: DelayedTask, delay: int, tag: str) -> None:

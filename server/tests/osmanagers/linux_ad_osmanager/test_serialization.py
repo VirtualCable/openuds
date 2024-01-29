@@ -54,7 +54,7 @@ AUTOMATIC_ID_MAPPING: typing.Final[bool] = True
 
 class LinuxAdOsManagerSerialTest(UDSTestCase):
     def test_marshaling(self) -> None:
-        instance = osmanager.LinuxOsADManager(environment=Environment.get_temporary_environment())
+        instance = osmanager.LinuxOsADManager(environment=Environment.testing_environment())
         instance.domain.value = DOMAIN
         instance.account.value = ACCOUNT
         instance.password.value = PASSWORD
@@ -74,7 +74,7 @@ class LinuxAdOsManagerSerialTest(UDSTestCase):
         # Ensure fields has been marshalled using new format
         self.assertFalse(marshaled_data.startswith(b'v'))
         # Reunmarshall again and check that remarshalled flag is not set
-        instance = osmanager.LinuxOsADManager(environment=Environment.get_temporary_environment())
+        instance = osmanager.LinuxOsADManager(environment=Environment.testing_environment())
         instance.unmarshal(marshaled_data)
         self.assertFalse(instance.needs_upgrade())
 

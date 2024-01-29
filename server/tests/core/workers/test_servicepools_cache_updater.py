@@ -71,7 +71,7 @@ class ServiceCacheUpdaterTest(UDSTestCase):
 
     def runCacheUpdater(self, times: int) -> int:
         for _ in range(times):
-            updater = ServiceCacheUpdater(Environment.get_temporary_environment())
+            updater = ServiceCacheUpdater(Environment.testing_environment())
             updater.run()
         # Test user service will cancel automatically so it will not get in "removable" state (on remove start, it will tell it has been removed)
         return self.servicePool.userServices.count() - self.removing_or_canceled_count()

@@ -84,33 +84,34 @@ class Notifiers(ModelHandler):
         if not notifierType:
             raise self.invalid_item_response()
 
-        notifier = notifierType(Environment.get_temporary_environment(), None)
+        with Environment.temporary_environment() as env:
+            notifier = notifierType(env, None)
 
-        localGui = self.add_default_fields(
-            notifier.gui_description(), ['name', 'comments', 'tags']
-        )
+            local_gui = self.add_default_fields(
+                notifier.gui_description(), ['name', 'comments', 'tags']
+            )
 
-        for field in [
-            {
-                'name': 'level',
-                'choices': [gui.choice_item(i[0], i[1]) for i in LogLevel.interesting()],
-                'label': gettext('Level'),
-                'tooltip': gettext('Level of notifications'),
-                'type': types.ui.FieldType.CHOICE,
-                'order': 102,
-            },
-            {
-                'name': 'enabled',
-                'label': gettext('Enabled'),
-                'tooltip': gettext('If checked, this notifier will be used'),
-                'type': types.ui.FieldType.CHECKBOX,
-                'order': 103,
-                'default': True,
-            }
-        ]:
-            self.add_field(localGui, field)
+            for field in [
+                {
+                    'name': 'level',
+                    'choices': [gui.choice_item(i[0], i[1]) for i in LogLevel.interesting()],
+                    'label': gettext('Level'),
+                    'tooltip': gettext('Level of notifications'),
+                    'type': types.ui.FieldType.CHOICE,
+                    'order': 102,
+                },
+                {
+                    'name': 'enabled',
+                    'label': gettext('Enabled'),
+                    'tooltip': gettext('If checked, this notifier will be used'),
+                    'type': types.ui.FieldType.CHECKBOX,
+                    'order': 103,
+                    'default': True,
+                }
+            ]:
+                self.add_field(local_gui, field)
 
-        return localGui
+            return local_gui
 
     def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
         item = ensure.is_instance(item, Notifier)

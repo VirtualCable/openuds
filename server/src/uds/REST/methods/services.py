@@ -290,36 +290,36 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         parent = ensure.is_instance(parent, models.Provider)
         try:
             logger.debug('getGui parameters: %s, %s', parent, forType)
-            parentInstance = parent.get_instance()
-            serviceType = parentInstance.get_service_by_type(forType)
-            if not serviceType:
+            parent_instance = parent.get_instance()
+            service_type = parent_instance.get_service_by_type(forType)
+            if not service_type:
                 raise self.invalid_item_response(f'Gui for {forType} not found')
+            with Environment.temporary_environment() as env:
+                service = service_type(
+                    env, parent_instance
+                )  # Instantiate it so it has the opportunity to alter gui description based on parent
+                local_gui = self.add_default_fields(
+                    service.gui_description(), ['name', 'comments', 'tags']
+                )
+                self.add_field(
+                    local_gui,
+                    {
+                        'name': 'max_services_count_type',
+                        'choices': [
+                            gui.choice_item('0', _('Standard')),
+                            gui.choice_item('1', _('Conservative')),
+                        ],
+                        'label': _('Service counting method'),
+                        'tooltip': _(
+                            'Kind of service counting for calculating if MAX is reached'
+                        ),
+                        'type': types.ui.FieldType.CHOICE,
+                        'readonly': False,
+                        'order': 101,
+                    },
+                )
 
-            service = serviceType(
-                Environment.get_temporary_environment(), parentInstance
-            )  # Instantiate it so it has the opportunity to alter gui description based on parent
-            localGui = self.add_default_fields(
-                service.gui_description(), ['name', 'comments', 'tags']
-            )
-            self.add_field(
-                localGui,
-                {
-                    'name': 'max_services_count_type',
-                    'choices': [
-                        gui.choice_item('0', _('Standard')),
-                        gui.choice_item('1', _('Conservative')),
-                    ],
-                    'label': _('Service counting method'),
-                    'tooltip': _(
-                        'Kind of service counting for calculating if MAX is reached'
-                    ),
-                    'type': types.ui.FieldType.CHOICE,
-                    'readonly': False,
-                    'order': 101,
-                },
-            )
-
-            return localGui
+                return local_gui
 
         except Exception as e:
             logger.exception('getGui')

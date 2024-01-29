@@ -124,8 +124,9 @@ class Providers(ModelHandler):
     def get_gui(self, type_: str) -> list[typing.Any]:
         providerType = services.factory().lookup(type_)
         if providerType:
-            provider = providerType(Environment.get_temporary_environment(), None)
-            return self.add_default_fields(provider.gui_description(), ['name', 'comments', 'tags'])
+            with Environment.temporary_environment() as env:
+                provider = providerType(env, None)
+                return self.add_default_fields(provider.gui_description(), ['name', 'comments', 'tags'])
         raise exceptions.rest.NotFound('Type not found!')
 
     def allservices(self) -> typing.Generator[dict, None, None]:
@@ -168,18 +169,18 @@ class Providers(ModelHandler):
         from uds.core.environment import Environment
 
         logger.debug('Type: %s', type_)
-        spType = services.factory().lookup(type_)
+        provider_type = services.factory().lookup(type_)
 
-        if not spType:
+        if not provider_type:
             raise exceptions.rest.NotFound('Type not found!')
 
-        tmpEnvironment = Environment.get_temporary_environment()
-        logger.debug('spType: %s', spType)
+        with Environment.temporary_environment() as temp_environment:
+            logger.debug('spType: %s', provider_type)
 
-        dct = self._params.copy()
-        dct['_request'] = self._request
-        res = spType.test(tmpEnvironment, dct)
-        if res[0]:
-            return 'ok'
+            dct = self._params.copy()
+            dct['_request'] = self._request
+            res = provider_type.test(temp_environment, dct)
+            if res[0]:
+                return 'ok'
 
-        return res[1]
+            return res[1]

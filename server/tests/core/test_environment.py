@@ -33,6 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import collections.abc
 import dataclasses
+from enum import unique
 import typing
 
 from uds.core import environment
@@ -40,53 +41,89 @@ from uds.core.util.cache import Cache
 from uds.core.util.storage import Storage
 from uds.core.util.unique_id_generator import UniqueIDGenerator
 
-from ..utils.test import UDSTestCase
+from ..utils.test import UDSTransactionTestCase
 
 
-class TestEnvironment(UDSTestCase):
-    def test_global_environment(self) -> None:
-        env = environment.Environment.get_common_environment()
+class TestEnvironment(UDSTransactionTestCase):
+    def _check_environment(
+        self,
+        env: environment.Environment,
+        expected_key: 'str|None',
+        is_persistent: bool,
+        recreate_fnc: typing.Optional[typing.Callable[[], environment.Environment]] = None,
+    ) -> None:
         self.assertIsInstance(env, environment.Environment)
         self.assertIsInstance(env.cache, Cache)
         self.assertIsInstance(env.storage, Storage)
-        self.assertIsInstance(env._id_generators, UniqueIDGenerator)
-        self.assertEqual(env.key, environment.GLOBAL_ENV)
+        self.assertIsInstance(env._id_generators, dict)
+        if expected_key is not None:
+            self.assertEqual(env.key, expected_key)
+
+        env.storage.put('test', 'test')
+        self.assertEqual(env.storage.get('test'), 'test')
+
+        env.cache.put('test', 'test')
+        self.assertEqual(env.cache.get('test'), 'test')
+
+        # Recreate environment
+        env = environment.Environment(env.key) if not recreate_fnc else recreate_fnc()
+
+        self.assertIsInstance(env, environment.Environment)
+        self.assertIsInstance(env.cache, Cache)
+        self.assertIsInstance(env.storage, Storage)
+        self.assertIsInstance(env._id_generators, dict)
+        if expected_key is not None:
+            self.assertEqual(env.key, expected_key)
+
+        if is_persistent:
+            self.assertEqual(env.storage.get('test'), 'test')
+            self.assertEqual(env.cache.get('test'), 'test')
+        else:
+            self.assertEqual(env.storage.get('test'), None)
+            self.assertEqual(env.cache.get('test'), None)
+
+    def test_global_environment(self) -> None:
+        env = environment.Environment.ommon_environment()
+        self._check_environment(env, environment.COMMON_ENV, True)
 
     def test_temporary_environment(self) -> None:
-        env = environment.Environment.get_temporary_environment()
-        self.assertIsInstance(env, environment.Environment)
-        self.assertIsInstance(env.cache, Cache)
-        self.assertIsInstance(env.storage, Storage)
-        self.assertIsInstance(env._id_generators, UniqueIDGenerator)
-        self.assertEqual(env.key, environment.TEMP_ENV)
+        env = environment.Environment.testing_environment()
+        self._check_environment(env, environment.TEST_ENV, False, recreate_fnc=environment.Environment.testing_environment)
 
     def test_table_record_environment(self) -> None:
-        env = environment.Environment.get_environment_for_table_record('test_table')
-        self.assertIsInstance(env, environment.Environment)
-        self.assertIsInstance(env.cache, Cache)
-        self.assertIsInstance(env.storage, Storage)
-        self.assertIsInstance(env._id_generators, UniqueIDGenerator)
-        self.assertEqual(env.key, 't-test_table')
-        
-        env = environment.Environment.get_environment_for_table_record('test_table', 123)
-        self.assertIsInstance(env, environment.Environment)
-        self.assertIsInstance(env.cache, Cache)
-        self.assertIsInstance(env.storage, Storage)
-        self.assertIsInstance(env._id_generators, UniqueIDGenerator)
-        self.assertEqual(env.key, 't-test_table-123')
-        
+        env = environment.Environment.environment_for_table_record('test_table')
+        self._check_environment(env, 't-test_table-', True)
+
+    def test_table_record_environment_with_id(self) -> None:
+        env = environment.Environment.environment_for_table_record('test_table', 123)
+        self._check_environment(env, 't-test_table-123', True)
+
     def test_environment_for_type(self) -> None:
-        env = environment.Environment.get_environment_for_type('test_type')
-        self.assertIsInstance(env, environment.Environment)
-        self.assertIsInstance(env.cache, Cache)
-        self.assertIsInstance(env.storage, Storage)
-        self.assertIsInstance(env._id_generators, UniqueIDGenerator)
-        self.assertEqual(env.key, 'type-test_type')
-        
-    def test_unique_environment(self) -> None:
-        env = environment.Environment.get_unique_environment()
-        self.assertIsInstance(env, environment.Environment)
-        self.assertIsInstance(env.cache, Cache)
-        self.assertIsInstance(env.storage, Storage)
-        self.assertIsInstance(env._id_generators, UniqueIDGenerator)
-        self
+        env = environment.Environment.environment_for_type('test_type')
+        self._check_environment(env, 'type-test_type', True)
+
+    def test_exclusive_temporary_environment(self) -> None:
+        unique_key: str = ''
+        with environment.Environment.temporary_environment() as env:
+            self.assertIsInstance(env, environment.Environment)
+            self.assertIsInstance(env.cache, Cache)
+            self.assertIsInstance(env.storage, Storage)
+            self.assertIsInstance(env._id_generators, dict)
+            unique_key = env.key  # store for later test
+
+            env.storage.put('test', 'test')
+            self.assertEqual(env.storage.get('test'), 'test')
+
+            env.cache.put('test', 'test')
+            self.assertEqual(env.cache.get('test'), 'test')
+
+        # Environment is cleared after exit, ensure it
+        env = environment.Environment(unique_key)
+        with env as env:
+            self.assertIsInstance(env, environment.Environment)
+            self.assertIsInstance(env.cache, Cache)
+            self.assertIsInstance(env.storage, Storage)
+            self.assertIsInstance(env._id_generators, dict)
+            self.assertEqual(env.key, unique_key)
+            self.assertEqual(env.storage.get('test'), None)
+            self.assertEqual(env.cache.get('test'), None)

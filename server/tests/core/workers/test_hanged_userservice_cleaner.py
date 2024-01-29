@@ -84,7 +84,7 @@ class HangedCleanerTest(UDSTestCase):
 
     def test_hanged_cleaner(self):
         # At start, there is no "removable" user services
-        cleaner = HangedCleaner(Environment.get_temporary_environment())
+        cleaner = HangedCleaner(Environment.testing_environment())
         cleaner.run()
         one_fith = TEST_SERVICES // 5
         self.assertEqual(

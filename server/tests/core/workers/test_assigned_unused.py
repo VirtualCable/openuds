@@ -53,12 +53,13 @@ class AssignedAndUnusedTest(UDSTestCase):
         # All created user services has "in_use" to False, os_state and state to USABLE
         self.userServices = fixtures_services.create_cache_testing_userservices(count=32)
 
-    def test_assigned_unused(self):
+    def test_assigned_unused(self):     
         for us in self.userServices:  # Update state date to now
             us.set_state(State.USABLE)
         # Set now, should not be removed
+        
         count = models.UserService.objects.filter(state=State.REMOVABLE).count()
-        cleaner = AssignedAndUnused(Environment.get_temporary_environment())
+        cleaner = AssignedAndUnused(Environment.testing_environment())
         # since_state = util.sql_datetime() - datetime.timedelta(seconds=cleaner.frecuency)
         cleaner.run()
         self.assertEqual(models.UserService.objects.filter(state=State.REMOVABLE).count(), count)

@@ -93,31 +93,35 @@ class SimpleLdapSerializationTest(UDSTestCase):
             
     def test_unmarshall_all_versions(self):
         for v in range(1, len(SERIALIZED_AUTH_DATA) + 1):
-            instance = authenticator.SimpleLDAPAuthenticator(environment=Environment.get_temporary_environment())
-            instance.unmarshal(SERIALIZED_AUTH_DATA['v{}'.format(v)])
-            self.check_provider(f'v{v}', instance)
+            with Environment.temporary_environment() as env:
+                instance = authenticator.SimpleLDAPAuthenticator(environment=env)
+                instance.unmarshal(SERIALIZED_AUTH_DATA['v{}'.format(v)])
+                self.check_provider(f'v{v}', instance)
 
     def test_marshaling(self):
         # Unmarshall last version, remarshall and check that is marshalled using new marshalling format
         LAST_VERSION = 'v{}'.format(len(SERIALIZED_AUTH_DATA))
-        instance = authenticator.SimpleLDAPAuthenticator(
-            environment=Environment.get_temporary_environment()
-        )
-        instance.unmarshal(SERIALIZED_AUTH_DATA[LAST_VERSION])
-        marshaled_data = instance.marshal()
+        with Environment.temporary_environment() as env:
+            instance = authenticator.SimpleLDAPAuthenticator(
+                environment=env
+            )
+            instance.unmarshal(SERIALIZED_AUTH_DATA[LAST_VERSION])
+            marshaled_data = instance.marshal()
 
-        # Ensure remarshalled flag is set
-        self.assertTrue(instance.needs_upgrade())
-        instance.flag_for_upgrade(False)  # reset flag
+            # Ensure remarshalled flag is set
+            self.assertTrue(instance.needs_upgrade())
+            instance.flag_for_upgrade(False)  # reset flag
 
-        # Ensure fields has been marshalled using new format
-        self.assertFalse(marshaled_data.startswith(b'v'))
-        # Reunmarshall again and check that remarshalled flag is not set
-        instance = authenticator.SimpleLDAPAuthenticator(
-            environment=Environment.get_temporary_environment()
-        )
-        instance.unmarshal(marshaled_data)
-        self.assertFalse(instance.needs_upgrade())
+            # Ensure fields has been marshalled using new format
+            self.assertFalse(marshaled_data.startswith(b'v'))
+        
+        with Environment.temporary_environment() as env:           
+            # Reunmarshall again and check that remarshalled flag is not set
+            instance = authenticator.SimpleLDAPAuthenticator(
+                environment=env
+            )
+            instance.unmarshal(marshaled_data)
+            self.assertFalse(instance.needs_upgrade())
 
-        # Check that data is correct
-        self.check_provider(LAST_VERSION, instance)
+            # Check that data is correct
+            self.check_provider(LAST_VERSION, instance)

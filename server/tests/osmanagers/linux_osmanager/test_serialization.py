@@ -76,7 +76,7 @@ class LinuxOsManagerTest(UDSTestCase):
 
     def test_unmarshall_all_versions(self) -> None:
         for v in range(1, len(SERIALIZED_OSMANAGER_DATA) + 1):
-            instance = osmanager.LinuxOsManager(environment=Environment.get_temporary_environment())
+            instance = osmanager.LinuxOsManager(environment=Environment.testing_environment())
             instance.unmarshal(SERIALIZED_OSMANAGER_DATA['v{}'.format(v)])
             self.check(f'v{v}', instance)
 
@@ -84,7 +84,7 @@ class LinuxOsManagerTest(UDSTestCase):
         # Unmarshall last version, remarshall and check that is marshalled using new marshalling format
         LAST_VERSION = 'v{}'.format(len(SERIALIZED_OSMANAGER_DATA))
         instance = osmanager.LinuxOsManager(
-            environment=Environment.get_temporary_environment()
+            environment=Environment.testing_environment()
         )
         instance.unmarshal(SERIALIZED_OSMANAGER_DATA[LAST_VERSION])
         marshaled_data = instance.marshal()
@@ -97,7 +97,7 @@ class LinuxOsManagerTest(UDSTestCase):
         self.assertFalse(marshaled_data.startswith(b'v'))
         # Reunmarshall again and check that remarshalled flag is not set
         instance = osmanager.LinuxOsManager(
-            environment=Environment.get_temporary_environment()
+            environment=Environment.testing_environment()
         )
         instance.unmarshal(marshaled_data)
         self.assertFalse(instance.needs_upgrade())

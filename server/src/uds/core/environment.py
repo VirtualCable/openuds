@@ -41,8 +41,8 @@ if typing.TYPE_CHECKING:
     from uds.core.util.unique_id_generator import UniqueIDGenerator
 
 
-TEMP_ENV = 'temporary'
-GLOBAL_ENV = 'global'
+TEST_ENV = 'testing_env'
+COMMON_ENV = 'global'
 
 
 class Environment:
@@ -62,7 +62,7 @@ class Environment:
 
     def __init__(
         self,
-        uniqueKey: str,
+        unique_key: str,
         id_generators: typing.Optional[dict[str, 'UniqueIDGenerator']] = None,
     ):
         """
@@ -76,9 +76,9 @@ class Environment:
         from uds.core.util.cache import Cache  # pylint: disable=import-outside-toplevel
         from uds.core.util.storage import Storage  # pylint: disable=import-outside-toplevel
 
-        self._key = uniqueKey
-        self._cache = Cache(uniqueKey)
-        self._storage = Storage(uniqueKey)
+        self._key = unique_key
+        self._cache = Cache(unique_key)
+        self._storage = Storage(unique_key)
         self._id_generators = id_generators or {}
 
     @property
@@ -126,7 +126,7 @@ class Environment:
             v.release()
 
     @staticmethod
-    def get_environment_for_table_record(
+    def environment_for_table_record(
         table_name: str,
         record_id: 'str|int|None' = None,
         id_generator_types: typing.Optional[dict[str, typing.Any]] = None,
@@ -141,9 +141,9 @@ class Environment:
         @return: Obtained associated environment (may be empty if none exists at database, but it will be valid)
         """
         if isinstance(record_id, int):  # So we keep zero int value
-            record_id = str(record_id)  
+            record_id = str(record_id)
         record_id = record_id or ''  # If no record id, get environment for table instead of record
-        
+
         if id_generator_types is None:
             id_generator_types = {}
         name = 't-' + table_name + '-' + record_id
@@ -153,7 +153,7 @@ class Environment:
         return Environment(name, id_generators)
 
     @staticmethod
-    def get_environment_for_type(type_) -> 'Environment':
+    def environment_for_type(type_) -> 'Environment':
         """
         Obtains an environment associated with a type instead of a record
         @param type_: Type
@@ -162,44 +162,43 @@ class Environment:
         return Environment('type-' + str(type_))
 
     @staticmethod
-    def get_unique_environment() -> 'Environment':
+    def temporary_environment() -> 'Environment':
         """
         Obtains an enviromnet with an unique identifier
-        
+
         Returns:
             An environment with an unique identifier
-            
+
         Note:
             Use this with "with" statement to ensure that environment is cleared after use
         """
-        return Environment(secrets.token_hex(16))
+        return Environment(
+            '#_#' + secrets.token_hex(16) + '#^#'
+        )  # Weird enough name to be unique, unless you try hard :)
 
     @staticmethod
-    def get_temporary_environment() -> 'Environment':
+    def testing_environment() -> 'Environment':
         """
         Provides a temporary environment needed in some calls (test provider, for example)
         It will not make environment persistent
         """
-        env = Environment(TEMP_ENV)
-        env.storage.clear()
-        env.cache.clear()
+        env = Environment(TEST_ENV)
+        env.clean_related_data()
         return env
 
     @staticmethod
-    def get_common_environment() -> 'Environment':
+    def ommon_environment() -> 'Environment':
         """
         Provides global environment
         """
-        return Environment(GLOBAL_ENV)  # This environment is a global environment for general utility.
+        return Environment(COMMON_ENV)  # This environment is a global environment for general utility.
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        self._cache.clear()
-        self._storage.clear()
-        for _, v in self._id_generators.items():
-            v.release()
+        if self._key == TEST_ENV or (self._key.startswith('#_#') and self._key.endswith('#^#')):
+            self.clean_related_data()
 
 
 class Environmentable:

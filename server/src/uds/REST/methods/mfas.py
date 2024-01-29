@@ -73,35 +73,36 @@ class MFA(ModelHandler):
             raise self.invalid_item_response()
 
         # Create a temporal instance to get the gui
-        mfa = mfaType(Environment.get_temporary_environment(), None)
+        with Environment.temporary_environment() as env:
+            mfa = mfaType(env, None)
 
-        localGui = self.add_default_fields(mfa.gui_description(), ['name', 'comments', 'tags'])
-        self.add_field(
-            localGui,
-            {
-                'name': 'remember_device',
-                'value': '0',
-                'min_value': '0',
-                'label': gettext('Device Caching'),
-                'tooltip': gettext('Time in hours to cache device so MFA is not required again. User based.'),
-                'type': types.ui.FieldType.NUMERIC,
-                'order': 111,
-            },
-        )
-        self.add_field(
-            localGui,
-            {
-                'name': 'validity',
-                'value': '5',
-                'min_value': '0',
-                'label': gettext('MFA code validity'),
-                'tooltip': gettext('Time in minutes to allow MFA code to be used.'),
-                'type': types.ui.FieldType.NUMERIC,
-                'order': 112,
-            },
-        )
+            localGui = self.add_default_fields(mfa.gui_description(), ['name', 'comments', 'tags'])
+            self.add_field(
+                localGui,
+                {
+                    'name': 'remember_device',
+                    'value': '0',
+                    'min_value': '0',
+                    'label': gettext('Device Caching'),
+                    'tooltip': gettext('Time in hours to cache device so MFA is not required again. User based.'),
+                    'type': types.ui.FieldType.NUMERIC,
+                    'order': 111,
+                },
+            )
+            self.add_field(
+                localGui,
+                {
+                    'name': 'validity',
+                    'value': '5',
+                    'min_value': '0',
+                    'label': gettext('MFA code validity'),
+                    'tooltip': gettext('Time in minutes to allow MFA code to be used.'),
+                    'type': types.ui.FieldType.NUMERIC,
+                    'order': 112,
+                },
+            )
 
-        return localGui
+            return localGui
 
     def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
         item = ensure.is_instance(item, models.MFA)

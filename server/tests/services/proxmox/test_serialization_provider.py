@@ -75,7 +75,7 @@ class TestProxmoxProviderSerialization(UDSTestCase):
         return super().tearDown()
 
     def test_provider_serialization(self) -> None:
-        provider = ProxmoxProvider(environment=Environment.get_temporary_environment())
+        provider = ProxmoxProvider(environment=Environment.testing_environment())
         provider.deserialize(PROVIDER_SERIALIZE_DATA)
 
         # Ensure values are ok

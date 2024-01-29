@@ -50,7 +50,7 @@ class DelayedTask(Environmentable):
         """
         Remember to invoke parent init in derived clases using super(myClass,self).__init__() to let this initialize its own variables
         """
-        super().__init__(environment or Environment.get_environment_for_type(self.__class__))
+        super().__init__(environment or Environment.environment_for_type(self.__class__))
 
     def execute(self) -> None:
         """

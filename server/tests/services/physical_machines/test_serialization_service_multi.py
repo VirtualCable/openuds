@@ -88,7 +88,7 @@ class PhysicalMachinesMultiSerializationTest(UDSTestCase):
     environment: Environment
 
     def setUp(self) -> None:
-        self.environment = Environment.get_environment_for_type('test')
+        self.environment = Environment.environment_for_type('test')
         self.environment.storage.save_to_db('ips', pickle.dumps(STORED_IPS))
 
     def check(self, version: str, instance: 'service_multi.IPMachinesService') -> None:
@@ -113,7 +113,7 @@ class PhysicalMachinesMultiSerializationTest(UDSTestCase):
         for v in range(1, len(SERIALIZED_DATA) + 1):
             version = f'v{v}'
             uninitialized_provider = provider.PhysicalMachinesProvider(
-                environment=Environment.get_temporary_environment()
+                environment=Environment.testing_environment()
             )
 
             instance = service_multi.IPMachinesService(

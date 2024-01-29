@@ -90,62 +90,63 @@ class Transports(ModelHandler):
         if not transportType:
             raise self.invalid_item_response()
 
-        transport = transportType(Environment.get_temporary_environment(), None)
+        with Environment.temporary_environment() as env:
+            transport = transportType(env, None)
 
-        field = self.add_default_fields(
-            transport.gui_description(), ['name', 'comments', 'tags', 'priority', 'networks']
-        )
-        field = self.add_field(
-            field,
-            {
-                'name': 'allowed_oss',
-                'value': [],
-                'choices': sorted(
-                    [ui.gui.choice_item(x.name, x.name) for x in consts.os.KNOWN_OS_LIST],
-                    key=lambda x: x['text'].lower(),
-                ),
-                'label': gettext('Allowed Devices'),
-                'tooltip': gettext(
-                    'If empty, any kind of device compatible with this transport will be allowed. Else, only devices compatible with selected values will be allowed'
-                ),
-                'type': types.ui.FieldType.MULTICHOICE,
-                'tab': types.ui.Tab.ADVANCED,
-                'order': 102,
-            },
-        )
-        field = self.add_field(
-            field,
-            {
-                'name': 'pools',
-                'value': [],
-                'choices': [
-                    ui.gui.choice_item(x.uuid, x.name)
-                    for x in ServicePool.objects.filter(service__isnull=False)
-                    .order_by('name')
-                    .prefetch_related('service')
-                    if transportType.protocol in x.service.get_type().allowed_protocols
-                ],
-                'label': gettext('Service Pools'),
-                'tooltip': gettext('Currently assigned services pools'),
-                'type': types.ui.FieldType.MULTICHOICE,
-                'order': 103,
-            },
-        )
-        field = self.add_field(
-            field,
-            {
-                'name': 'label',
-                'length': 32,
-                'value': '',
-                'label': gettext('Label'),
-                'tooltip': gettext('Metapool transport label (only used on metapool transports grouping)'),
-                'type': types.ui.FieldType.TEXT,
-                'order': 201,
-                'tab': types.ui.Tab.ADVANCED,
-            },
-        )
+            field = self.add_default_fields(
+                transport.gui_description(), ['name', 'comments', 'tags', 'priority', 'networks']
+            )
+            field = self.add_field(
+                field,
+                {
+                    'name': 'allowed_oss',
+                    'value': [],
+                    'choices': sorted(
+                        [ui.gui.choice_item(x.name, x.name) for x in consts.os.KNOWN_OS_LIST],
+                        key=lambda x: x['text'].lower(),
+                    ),
+                    'label': gettext('Allowed Devices'),
+                    'tooltip': gettext(
+                        'If empty, any kind of device compatible with this transport will be allowed. Else, only devices compatible with selected values will be allowed'
+                    ),
+                    'type': types.ui.FieldType.MULTICHOICE,
+                    'tab': types.ui.Tab.ADVANCED,
+                    'order': 102,
+                },
+            )
+            field = self.add_field(
+                field,
+                {
+                    'name': 'pools',
+                    'value': [],
+                    'choices': [
+                        ui.gui.choice_item(x.uuid, x.name)
+                        for x in ServicePool.objects.filter(service__isnull=False)
+                        .order_by('name')
+                        .prefetch_related('service')
+                        if transportType.protocol in x.service.get_type().allowed_protocols
+                    ],
+                    'label': gettext('Service Pools'),
+                    'tooltip': gettext('Currently assigned services pools'),
+                    'type': types.ui.FieldType.MULTICHOICE,
+                    'order': 103,
+                },
+            )
+            field = self.add_field(
+                field,
+                {
+                    'name': 'label',
+                    'length': 32,
+                    'value': '',
+                    'label': gettext('Label'),
+                    'tooltip': gettext('Metapool transport label (only used on metapool transports grouping)'),
+                    'type': types.ui.FieldType.TEXT,
+                    'order': 201,
+                    'tab': types.ui.Tab.ADVANCED,
+                },
+            )
 
-        return field
+            return field
 
     def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
         item = ensure.is_instance(item, Transport)
@@ -176,7 +177,9 @@ class Transports(ModelHandler):
         fields['label'] = fields['label'].strip().replace(' ', '-')
         # And ensure small_name chars are valid [ a-zA-Z0-9:-]+
         if fields['label'] and not re.match(r'^[a-zA-Z0-9:-]+$', fields['label']):
-            raise self.invalid_request_response(gettext('Label must contain only letters, numbers, ":" and "-"'))
+            raise self.invalid_request_response(
+                gettext('Label must contain only letters, numbers, ":" and "-"')
+            )
 
     def post_save(self, item: 'Model') -> None:
         item = ensure.is_instance(item, Transport)

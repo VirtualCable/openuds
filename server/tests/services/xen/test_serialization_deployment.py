@@ -61,7 +61,7 @@ class XendDeploymentSerializationTest(UDSTestCase):
         for v in range(1, len(SERIALIZED_LINKED_DEPLOYMENT_DATA) + 1):
             version = f'v{v}'
             instance = deployment.XenLinkedDeployment(
-                environment=Environment.get_temporary_environment(), service=None
+                environment=Environment.testing_environment(), service=None
             )
             instance.unmarshal(SERIALIZED_LINKED_DEPLOYMENT_DATA[version])
 
@@ -73,7 +73,7 @@ class XendDeploymentSerializationTest(UDSTestCase):
         VERSION = f'v{len(SERIALIZED_LINKED_DEPLOYMENT_DATA)}'
 
         instance = deployment.XenLinkedDeployment(
-            environment=Environment.get_temporary_environment(), service=None
+            environment=Environment.testing_environment(), service=None
         )
         instance.unmarshal(SERIALIZED_LINKED_DEPLOYMENT_DATA[VERSION])
         marshaled_data = instance.marshal()
@@ -86,7 +86,7 @@ class XendDeploymentSerializationTest(UDSTestCase):
         self.assertFalse(marshaled_data.startswith(b'v'))
         # Reunmarshall again and check that remarshalled flag is not set
         instance = deployment.XenLinkedDeployment(
-            environment=Environment.get_temporary_environment(), service=None
+            environment=Environment.testing_environment(), service=None
         )
         instance.unmarshal(marshaled_data)
         self.assertFalse(instance.needs_upgrade())
@@ -97,7 +97,7 @@ class XendDeploymentSerializationTest(UDSTestCase):
     def test_marshaling_queue(self) -> None:
         def _create_instance(unmarshal_data: 'bytes|None' = None) -> deployment.XenLinkedDeployment:
             instance = deployment.XenLinkedDeployment(
-                environment=Environment.get_temporary_environment(), service=None
+                environment=Environment.testing_environment(), service=None
             )
             if unmarshal_data:
                 instance.unmarshal(unmarshal_data)

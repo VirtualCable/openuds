@@ -93,7 +93,7 @@ class StatsAcummulatorTest(UDSTestCase):
         total_base_stats = DAYS * 24 * NUMBER_PER_HOUR * NUMBER_OF_POOLS * len(COUNTERS_TYPES)  # All stats
         self.assertEqual(base_stats.count(), total_base_stats)
 
-        optimizer = stats_collector.StatsAccumulator(Environment.get_temporary_environment())
+        optimizer = stats_collector.StatsAccumulator(Environment.testing_environment())
         optimizer.run()
         # Shoul have DAYS // 2 + 1 stats
         hour_stats = models.StatsCountersAccum.objects.filter(
