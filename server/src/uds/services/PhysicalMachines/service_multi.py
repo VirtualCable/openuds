@@ -189,20 +189,6 @@ class IPMachinesService(IPServiceBase):
     def get_token(self) -> typing.Optional[str]:
         return self.token.as_str() or None
 
-    # def marshal(self) -> bytes:
-    #     self.storage.save_to_db('ips', pickle.dumps(self._ips))
-    #     return b'\0'.join(
-    #         [
-    #             b'v7',
-    #             self._token.encode(),
-    #             str(self._port).encode(),
-    #             str(self._skipTimeOnFailure).encode(),
-    #             str(self._maxSessionForMachine).encode(),
-    #             gui.bool_as_str(self._lockByExternalAccess).encode(),
-    #             gui.bool_as_str(self._useRandomIp).encode(),
-    #         ]
-    #     )
-
     def unmarshal(self, data: bytes) -> None:
         if not data.startswith(b'v'):
             return super().unmarshal(data)  # New format, use parent unmarshal
