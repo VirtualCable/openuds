@@ -45,7 +45,6 @@ import collections.abc
 import abc
 
 from django.utils.translation import gettext
-from regex import F
 
 from uds.core import consts, exceptions, types
 from uds.core.managers.crypto import UDSK, CryptoManager
