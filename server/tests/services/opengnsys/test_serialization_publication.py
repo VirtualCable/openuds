@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+
 #
-# Copyright (c) 2017-2021 Virtual Cable S.L.U.
+# Copyright (c) 2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,51 +30,44 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import logging
+import pickle
 import typing
-import collections.abc
 
-from uds.core.services import Publication
-from uds.core.types.states import State
+# We use commit/rollback
+
+from tests.utils.test import UDSTestCase
 from uds.core.util import autoserializable
-from uds.core.util.model import sql_datetime
-
-# Not imported at runtime, just for type checking
-if typing.TYPE_CHECKING:
-    from .service import OGService
-
-logger = logging.getLogger(__name__)
+from uds.core.environment import Environment
 
 
-class OGPublication(Publication, autoserializable.AutoSerializable):
-    """
-    This class provides the publication of a oVirtLinkedService
-    """
+from uds.services.OpenGnsys import publication
 
-    suggested_delay = (
-        5  # : Suggested recheck time if publication is unfinished in seconds
-    )
+SERIALIZED_PUBLICATION_DATA: typing.Final[bytes] = b''
 
-    def service(self) -> 'OGService':
-        return typing.cast('OGService', super().service())
 
-    def publish(self) -> str:
-        """
-        Realizes the publication of the service, on OpenGnsys, does nothing
-        """
-        return State.FINISHED
+class OpenGnsysPublicationSerializationTest(UDSTestCase):
+    def check(self, instance: publication.OGPublication) -> None:
+        # No data currently, all is fine
+        pass
 
-    def check_state(self) -> str:
-        """
-        Checks state of publication creation
-        """
-        return State.FINISHED
+    def test_marshaling(self) -> None:
+        environment = Environment.testing_environment()
 
-    def error_reason(self) -> str:
-        return 'No error possible :)'
+        instance = publication.OGPublication(environment=environment, service=None)
+        #instance.unmarshal(SERIALIZED_PUBLICATION_DATA)
+        self.check(instance)
+        # Ensure remarshalled flag is set
+        #self.assertTrue(instance.needs_upgrade())
+        instance.flag_for_upgrade(False)  # reset flag
 
-    def destroy(self) -> str:
-        return State.FINISHED
+        marshaled_data = instance.marshal()
 
-    def cancel(self) -> str:
-        return self.destroy()
+        # Ensure fields has been marshalled using new format
+        self.assertFalse(marshaled_data.startswith(b'\1'))
+        # Reunmarshall again and check that remarshalled flag is not set
+        instance = publication.OGPublication(environment=environment, service=None)
+        #instance.unmarshal(marshaled_data)
+        #self.assertFalse(instance.needs_upgrade())
+
+        # Check that data is correct
+        self.check(instance)

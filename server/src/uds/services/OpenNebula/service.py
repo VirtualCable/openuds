@@ -39,8 +39,8 @@ from uds.core import services, types
 from uds.core.util import validators
 from uds.core.ui import gui
 
-from .publication import LivePublication
-from .deployment import LiveDeployment
+from .publication import OpenNebulaLivePublication
+from .deployment import OpenNebulaLiveDeployment
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -51,7 +51,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class LiveService(services.Service):
+class OpenNebulaLiveService(services.Service):
     """
     Opennebula Live Service
     """
@@ -95,9 +95,9 @@ class LiveService(services.Service):
 
     # : Types of publications (preparated data for deploys)
     # : In our case, we do no need a publication, so this is None
-    publication_type = LivePublication
+    publication_type = OpenNebulaLivePublication
     # : Types of deploys (services in cache and/or assigned to users)
-    user_service_type = LiveDeployment
+    user_service_type = OpenNebulaLiveDeployment
 
     allowed_protocols = types.transports.Protocol.generic_vdi(types.transports.Protocol.SPICE)
     services_type_provided = types.services.ServiceType.VDI
@@ -171,37 +171,34 @@ class LiveService(services.Service):
             [gui.choice_item(d.id, d.name) for d in self.parent().getDatastores()]
         )
 
-    def sanitizeVmName(self, name: str) -> str:
-        return self.parent().sanitizeVmName(name)
+    def sanitized_name(self, name: str) -> str:
+        return self.parent().sanitized_name(name)
 
-    def makeTemplate(self, templateName: str) -> str:
-        return self.parent().makeTemplate(
-            self.template.value, templateName, self.datastore.value
+    def make_template(self, name: str) -> str:
+        return self.parent().make_template(
+            self.template.value, name, self.datastore.value
         )
 
-    def checkTemplatePublished(self, templateId: str) -> bool:
-        return self.parent().checkTemplatePublished(templateId)
+    def check_template_published(self, template_id: str) -> bool:
+        return self.parent().check_template_published(template_id)
 
-    def deployFromTemplate(self, name: str, templateId: str) -> str:
+    def deploy_from_template(self, name: str, templateId: str) -> str:
         """
         Deploys a virtual machine on selected cluster from selected template
 
         Args:
             name: Name (sanitized) of the machine
             comments: Comments for machine
-            templateId: Id of the template to deploy from
-            displayType: 'vnc' or 'spice'. Display to use ad OpenNebula admin interface
-            memoryMB: Memory requested for machine, in MB
-            guaranteedMB: Minimum memory guaranteed for this machine
+            template_id: Id of the template to deploy from
 
         Returns:
             Id of the machine being created form template
         """
         logger.debug('Deploying from template %s machine %s', templateId, name)
         # self.datastoreHasSpace()
-        return self.parent().deployFromTemplate(name, templateId)
+        return self.parent().deply_from_template(name, templateId)
 
-    def removeTemplate(self, templateId: str) -> None:
+    def remove_template(self, templateId: str) -> None:
         """
         invokes removeTemplate from parent provider
         """

@@ -197,7 +197,7 @@ class OGService(services.Service):
             self.getReleaseURL(uuid, token),
         )
 
-    def notifyDeadline(
+    def notify_deadline(
         self, machineId: str, deadLine: typing.Optional[int]
     ) -> typing.Any:
         return self.parent().notifyDeadline(machineId, deadLine)

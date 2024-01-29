@@ -40,8 +40,8 @@ from uds.core import services, types
 from uds.core.util import utils, validators
 from uds.core.ui import gui
 
-from .publication import LivePublication
-from .deployment import LiveDeployment
+from .publication import OpenStackLivePublication
+from .deployment import OpenStackLiveDeployment
 from . import helpers
 
 
@@ -56,7 +56,7 @@ if typing.TYPE_CHECKING:
     Provider = typing.Union[OpenStackProvider, ProviderLegacy]
 
 
-class LiveService(services.Service):
+class OpenStackLiveService(services.Service):
     """
     OpenStack Live Service
     """
@@ -96,9 +96,9 @@ class LiveService(services.Service):
 
     # : Types of publications (preparated data for deploys)
     # : In our case, we do no need a publication, so this is None
-    publication_type = LivePublication
+    publication_type = OpenStackLivePublication
     # : Types of deploys (services in cache and/or assigned to users)
-    user_service_type = LiveDeployment
+    user_service_type = OpenStackLiveDeployment
 
     allowed_protocols = types.transports.Protocol.generic_vdi(types.transports.Protocol.SPICE)
     services_type_provided = types.services.ServiceType.VDI
@@ -278,7 +278,7 @@ class LiveService(services.Service):
             self.volume.value, templateName, description
         )
 
-    def getTemplate(self, snapshotId: str):
+    def get_template(self, snapshotId: str):
         """
         Checks current state of a template (an snapshot)
         """
@@ -313,7 +313,7 @@ class LiveService(services.Service):
         """
         self.api.deleteSnapshot(templateId)
 
-    def getMachineState(self, machineId: str) -> str:
+    def get_machine_state(self, machineId: str) -> str:
         """
         Invokes getServer from openstack client
 
@@ -375,7 +375,7 @@ class LiveService(services.Service):
         """
         self.api.stopServer(machineId)
 
-    def resetMachine(self, machineId: str) -> None:
+    def reset_machine(self, machineId: str) -> None:
         """
         Tries to stop a machine. No check is done, it is simply requested to OpenStack
 

@@ -46,7 +46,7 @@ from uds.core.util.cache import Cache
 from uds.core.util.decorators import cached
 
 from . import openstack
-from .service import LiveService
+from .service import OpenStackLiveService
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -81,7 +81,7 @@ class ProviderLegacy(ServiceProvider):
     """
 
     # : What kind of services we offer, this are classes inherited from Service
-    offers = [LiveService]
+    offers = [OpenStackLiveService]
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)

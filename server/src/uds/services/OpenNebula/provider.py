@@ -30,21 +30,20 @@
 '''
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+import collections.abc
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import types, consts
+from uds.core import consts, types
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
-from uds.core.util import validators
-from uds.core.util.cache import Cache
+from uds.core.util import fields, validators
 from uds.core.util.decorators import cached
 
 from . import on
-from .service import LiveService
+from .service import OpenNebulaLiveService
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -56,7 +55,7 @@ logger = logging.getLogger(__name__)
 
 class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
     # : What kind of services we offer, this are classes inherited from Service
-    offers = [LiveService]
+    offers = [OpenNebulaLiveService]
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
@@ -112,41 +111,9 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
         tooltip=_('Password of the user of OpenNebula'),
         required=True,
     )
-
-    concurrent_creation_limit = gui.NumericField(
-        length=3,
-        label=_('Creation concurrency'),
-        default=10,
-        min_value=1,
-        max_value=65536,
-        order=50,
-        tooltip=_('Maximum number of concurrently creating VMs'),
-        required=True,
-        tab=types.ui.Tab.ADVANCED,
-        old_field_name='maxPreparingServices',
-    )
-    concurrent_removal_limit = gui.NumericField(
-        length=3,
-        label=_('Removal concurrency'),
-        default=5,
-        min_value=1,
-        max_value=65536,
-        order=51,
-        tooltip=_('Maximum number of concurrently removing VMs'),
-        required=True,
-        tab=types.ui.Tab.ADVANCED,
-        old_field_name='maxRemovingServices',
-    )
-
-    timeout = gui.NumericField(
-        length=3,
-        label=_('Timeout'),
-        default=10,
-        order=90,
-        tooltip=_('Timeout in seconds of connection to OpenNebula'),
-        required=True,
-        tab=types.ui.Tab.ADVANCED,
-    )
+    concurrent_creation_limit = fields.concurrent_creation_limit_field()
+    concurrent_removal_limit = fields.concurrent_removal_limit_field()
+    timeout = fields.timeout_field(default=10)
 
     # Own variables
     _api: typing.Optional[on.client.OpenNebulaClient] = None
@@ -181,7 +148,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
     def resetApi(self) -> None:
         self._api = None
 
-    def sanitizeVmName(self, name: str) -> str:
+    def sanitized_name(self, name: str) -> str:
         return on.sanitizeName(name)
 
     def testConnection(self) -> list[typing.Any]:
@@ -214,16 +181,16 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
     ) -> collections.abc.Iterable[on.types.TemplateType]:
         yield from on.template.getTemplates(self.api, force)
 
-    def makeTemplate(self, fromTemplateId: str, name, toDataStore: str) -> str:
+    def make_template(self, fromTemplateId: str, name, toDataStore: str) -> str:
         return on.template.create(self.api, fromTemplateId, name, toDataStore)
 
-    def checkTemplatePublished(self, templateId: str) -> bool:
+    def check_template_published(self, templateId: str) -> bool:
         return on.template.checkPublished(self.api, templateId)
 
     def removeTemplate(self, templateId: str) -> None:
         on.template.remove(self.api, templateId)
 
-    def deployFromTemplate(self, name: str, templateId: str) -> str:
+    def deply_from_template(self, name: str, templateId: str) -> str:
         return on.template.deployFrom(self.api, templateId, name)
 
     def getMachineState(self, machineId: str) -> on.types.VmState:

@@ -57,7 +57,7 @@ def getApi(parameters: dict[str, str]) -> tuple[openstack.Client, bool]:
     provider.deserialize(parameters['ov'])
 
     if isinstance(provider, OpenStackProvider):
-        useSubnetsName = provider.useSubnetsName.as_bool()
+        useSubnetsName = provider.use_subnets_name.as_bool()
     else:
         useSubnetsName = False
 

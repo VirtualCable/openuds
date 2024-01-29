@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,30 +30,52 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import pickle  # nosec: not insecure, we are loading our own data
-import logging
-import typing
 import collections.abc
+import enum
+import logging
+import pickle  # nosec: not insecure, we are loading our own data
+import typing
 
-from uds.core import services, consts
+from uds.core import consts, services
 from uds.core.types.states import State
-from uds.core.util import log
+from uds.core.util import autoserializable, log
 
 from . import openstack
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from .service import LiveService
-    from .publication import LivePublication
+
+    from .publication import OpenStackLivePublication
+    from .service import OpenStackLiveService
 
 
 logger = logging.getLogger(__name__)
 
-opCreate, opStart, opSuspend, opRemove, opWait, opError, opFinish, opRetry = range(8)
+
+class Operation(enum.IntEnum):
+    CREATE = 0
+    START = 1
+    SUSPEND = 2
+    REMOVE = 3
+    WAIT = 4
+    ERROR = 5
+    FINISH = 6
+    RETRY = 7
+
+    UNKNOWN = 99
+
+    @staticmethod
+    def from_int(value: int) -> 'Operation':
+        try:
+            return Operation(value)
+        except ValueError:
+            return Operation.UNKNOWN
 
 
-class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-methods
+class OpenStackLiveDeployment(
+    services.UserService, autoserializable.AutoSerializable
+):  # pylint: disable=too-many-public-methods
     """
     This class generates the user consumable elements of the service tree.
 
@@ -64,47 +86,35 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
     The logic for managing ovirt deployments (user machines in this case) is here.
     """
 
-    _name: str = ''
-    _ip: str = ''
-    _mac: str = ''
-    _vmid: str = ''
-    _reason: str = ''
-    _queue: list[int] = []
+    _name = autoserializable.StringField(default='')
+    _ip = autoserializable.StringField(default='')
+    _mac = autoserializable.StringField(default='')
+    _vmid = autoserializable.StringField(default='')
+    _reason = autoserializable.StringField(default='')
+    _queue = autoserializable.ListField[Operation]()
+
+    # _name: str = ''
+    # _ip: str = ''
+    # _mac: str = ''
+    # _vmid: str = ''
+    # _reason: str = ''
+    # _queue: list[int] = []
 
     # : Recheck every this seconds by default (for task methods)
     suggested_delay = 5
 
-    def initialize(self) -> None:
-        self._name = ''
-        self._ip = ''
-        self._mac = ''
-        self._vmid = ''
-        self._reason = ''
-        self._queue = []
+    # For typing check only...
+    def service(self) -> 'OpenStackLiveService':
+        return typing.cast('OpenStackLiveService', super().service())
 
     # For typing check only...
-    def service(self) -> 'LiveService':
-        return typing.cast('LiveService', super().service())
-
-    # For typing check only...
-    def publication(self) -> 'LivePublication':
-        return typing.cast('LivePublication', super().publication())
-
-    # Serializable needed methods
-    def marshal(self) -> bytes:
-        return b'\1'.join(
-            [
-                b'v1',
-                self._name.encode('utf8'),
-                self._ip.encode('utf8'),
-                self._mac.encode('utf8'),
-                self._vmid.encode('utf8'),
-                self._reason.encode('utf8'),
-                pickle.dumps(self._queue, protocol=0),
-            ]
-        )
+    def publication(self) -> 'OpenStackLivePublication':
+        return typing.cast('OpenStackLivePublication', super().publication())
 
     def unmarshal(self, data: bytes) -> None:
+        if not data.startswith(b'v'):
+            return super().unmarshal(data)
+
         vals = data.split(b'\1')
         if vals[0] == b'v1':
             self._name = vals[1].decode('utf8')
@@ -112,7 +122,9 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
             self._mac = vals[3].decode('utf8')
             self._vmid = vals[4].decode('utf8')
             self._reason = vals[5].decode('utf8')
-            self._queue = pickle.loads(vals[6])  # nosec: not insecure, we are loading our own data
+            self._queue = [Operation.from_int(i) for i in pickle.loads(vals[6])]  # nosec
+            
+        self.flag_for_upgrade()  # Flag so manager can save it again with new format
 
     def get_name(self) -> str:
         if self._name == '':
@@ -142,10 +154,10 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
             return State.FINISHED
 
         try:
-            status = self.service().getMachineState(self._vmid)
+            status = self.service().get_machine_state(self._vmid)
 
             if openstack.statusIsLost(status):
-                return self.__error('Machine is not available anymore')
+                return self._error('Machine is not available anymore')
 
             if status == openstack.PAUSED:
                 self.service().resumeMachine(self._vmid)
@@ -163,15 +175,15 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
 
     def reset(self) -> None:
         if self._vmid != '':
-            self.service().resetMachine(self._vmid)
+            self.service().reset_machine(self._vmid)
 
     def process_ready_from_os_manager(self, data: typing.Any) -> str:
         # Here we will check for suspending the VM (when full ready)
         logger.debug('Checking if cache 2 for %s', self._name)
-        if self.__getCurrentOp() == opWait:
+        if self._get_current_op() == Operation.WAIT:
             logger.debug('Machine is ready. Moving to level 2')
-            self.__popCurrentOp()  # Remove current state
-            return self.__executeQueue()
+            self._pop_current_op()  # Remove current state
+            return self._execute_queue()
         # Do not need to go to level 2 (opWait is in fact "waiting for moving machine to cache level 2)
         return State.FINISHED
 
@@ -180,34 +192,34 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         Deploys an service instance for an user.
         """
         logger.debug('Deploying for user')
-        self.__initQueueForDeploy(False)
-        return self.__executeQueue()
+        self._init_queue_for_deploy(False)
+        return self._execute_queue()
 
     def deploy_for_cache(self, cacheLevel: int) -> str:
         """
         Deploys an service instance for cache
         """
-        self.__initQueueForDeploy(cacheLevel == self.L2_CACHE)
-        return self.__executeQueue()
+        self._init_queue_for_deploy(cacheLevel == self.L2_CACHE)
+        return self._execute_queue()
 
-    def __initQueueForDeploy(self, forLevel2: bool = False) -> None:
+    def _init_queue_for_deploy(self, forLevel2: bool = False) -> None:
         if forLevel2 is False:
-            self._queue = [opCreate, opFinish]
+            self._queue = [Operation.CREATE, Operation.FINISH]
         else:
-            self._queue = [opCreate, opWait, opSuspend, opFinish]
+            self._queue = [Operation.CREATE, Operation.WAIT, Operation.SUSPEND, Operation.FINISH]
 
-    def __checkMachineState(self, chkState: str) -> str:
+    def _check_machine_state(self, chkState: str) -> str:
         logger.debug(
             'Checking that state of machine %s (%s) is %s',
             self._vmid,
             self._name,
             chkState,
         )
-        status = self.service().getMachineState(self._vmid)
+        status = self.service().get_machine_state(self._vmid)
 
         # If we want to check an state and machine does not exists (except in case that we whant to check this)
         if openstack.statusIsLost(status):
-            return self.__error('Machine not available. ({})'.format(status))
+            return self._error('Machine not available. ({})'.format(status))
 
         ret = State.RUNNING
         chkStates = [chkState] if not isinstance(chkState, (list, tuple)) else chkState
@@ -216,26 +228,19 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
 
         return ret
 
-    def __getCurrentOp(self) -> int:
+    def _get_current_op(self) -> Operation:
         if not self._queue:
-            return opFinish
+            return Operation.FINISH
 
         return self._queue[0]
 
-    def __popCurrentOp(self) -> int:
+    def _pop_current_op(self) -> Operation:
         if not self._queue:
-            return opFinish
+            return Operation.FINISH
 
-        res = self._queue.pop(0)
-        return res
+        return self._queue.pop(0)
 
-    def __pushFrontOp(self, op: int) -> None:
-        self._queue.insert(0, op)
-
-    def __pushBackOp(self, op: int) -> None:
-        self._queue.append(op)
-
-    def __error(self, reason: typing.Any) -> str:
+    def _error(self, reason: typing.Any) -> str:
         """
         Internal method to set object as error state
 
@@ -243,7 +248,7 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
             State.ERROR, so we can do "return self.__error(reason)"
         """
         logger.debug('Setting error state, reason: %s', reason)
-        self._queue = [opError]
+        self._queue = [Operation.ERROR]
         self._reason = str(reason)
 
         self.do_log(log.LogLevel.ERROR, self._reason)
@@ -256,36 +261,34 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
 
         return State.ERROR
 
-    def __executeQueue(self) -> str:
+    def _execute_queue(self) -> str:
         self.__debug('executeQueue')
-        op = self.__getCurrentOp()
+        op = self._get_current_op()
 
-        if op == opError:
+        if op == Operation.ERROR:
             return State.ERROR
 
-        if op == opFinish:
+        if op == Operation.FINISH:
             return State.FINISHED
 
         fncs: dict[int, collections.abc.Callable[[], str]] = {
-            opCreate: self.__create,
-            opRetry: self.__retry,
-            opStart: self.__startMachine,
-            opSuspend: self.__suspendMachine,
-            opWait: self.__wait,
-            opRemove: self.__remove,
+            Operation.CREATE: self.__create,
+            Operation.RETRY: self.__retry,
+            Operation.START: self.__startMachine,
+            Operation.SUSPEND: self.__suspendMachine,
+            Operation.WAIT: self.__wait,
+            Operation.REMOVE: self.__remove,
         }
 
         try:
             if op not in fncs:
-                return self.__error(
-                    'Unknown operation found at execution queue ({0})'.format(op)
-                )
+                return self._error('Unknown operation found at execution queue ({0})'.format(op))
 
             fncs[op]()
 
             return State.RUNNING
         except Exception as e:
-            return self.__error(e)
+            return self._error(e)
 
     # Queue execution methods
     def __retry(self) -> str:
@@ -329,7 +332,7 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         """
         Removes a machine from system
         """
-        status = self.service().getMachineState(self._vmid)
+        status = self.service().get_machine_state(self._vmid)
 
         if openstack.statusIsLost(status):
             raise Exception('Machine not found. (Status {})'.format(status))
@@ -359,7 +362,7 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         """
         Checks the state of a deploy for an user or cache
         """
-        ret = self.__checkMachineState(openstack.ACTIVE)
+        ret = self._check_machine_state(openstack.ACTIVE)
         if ret == State.FINISHED:
             # Get IP & MAC (early stage)
             self._mac, self._ip = self.service().getNetInfo(self._vmid)
@@ -370,13 +373,13 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         """
         Checks if machine has started
         """
-        return self.__checkMachineState(openstack.ACTIVE)
+        return self._check_machine_state(openstack.ACTIVE)
 
     def __checkSuspend(self) -> str:
         """
         Check if the machine has suspended
         """
-        return self.__checkMachineState(openstack.SUSPENDED)
+        return self._check_machine_state(openstack.SUSPENDED)
 
     def __checkRemoved(self) -> str:
         """
@@ -389,51 +392,49 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         Check what operation is going on, and acts acordly to it
         """
         self.__debug('check_state')
-        op = self.__getCurrentOp()
+        op = self._get_current_op()
 
-        if op == opError:
+        if op == Operation.ERROR:
             return State.ERROR
 
-        if op == opFinish:
+        if op == Operation.FINISH:
             return State.FINISHED
 
         fncs: dict[int, collections.abc.Callable[[], str]] = {
-            opCreate: self.__checkCreate,
-            opRetry: self.__retry,
-            opWait: self.__wait,
-            opStart: self.__checkStart,
-            opSuspend: self.__checkSuspend,
-            opRemove: self.__checkRemoved,
+            Operation.CREATE: self.__checkCreate,
+            Operation.RETRY: self.__retry,
+            Operation.WAIT: self.__wait,
+            Operation.START: self.__checkStart,
+            Operation.SUSPEND: self.__checkSuspend,
+            Operation.REMOVE: self.__checkRemoved,
         }
 
         try:
             if op not in fncs:
-                return self.__error(
-                    'Unknown operation found at execution queue ({0})'.format(op)
-                )
+                return self._error('Unknown operation found at execution queue ({0})'.format(op))
 
             state = fncs[op]()
             if state == State.FINISHED:
-                self.__popCurrentOp()  # Remove runing op
-                return self.__executeQueue()
+                self._pop_current_op()  # Remove runing op
+                return self._execute_queue()
 
             return state
         except Exception as e:
-            return self.__error(e)
+            return self._error(e)
 
     def move_to_cache(self, newLevel: int) -> str:
         """
         Moves machines between cache levels
         """
-        if opRemove in self._queue:
+        if Operation.REMOVE in self._queue:
             return State.RUNNING
 
         if newLevel == self.L1_CACHE:
-            self._queue = [opStart, opFinish]
+            self._queue = [Operation.START, Operation.FINISH]
         else:
-            self._queue = [opStart, opSuspend, opFinish]
+            self._queue = [Operation.START, Operation.SUSPEND, Operation.FINISH]
 
-        return self.__executeQueue()
+        return self._execute_queue()
 
     def error_reason(self) -> str:
         return self._reason
@@ -445,16 +446,16 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         self.__debug('destroy')
         # If executing something, wait until finished to remove it
         # We simply replace the execution queue
-        op = self.__getCurrentOp()
+        op = self._get_current_op()
 
-        if op == opError:
-            return self.__error('Machine is already in error state!')
+        if op == Operation.ERROR:
+            return self._error('Machine is already in error state!')
 
-        if op == opFinish or op == opWait:
-            self._queue = [opRemove, opFinish]
-            return self.__executeQueue()
+        if op == Operation.FINISH or op == Operation.WAIT:
+            self._queue = [Operation.REMOVE, Operation.FINISH]
+            return self._execute_queue()
 
-        self._queue = [op, opRemove, opFinish]
+        self._queue = [op, Operation.REMOVE, Operation.FINISH]
         # Do not execute anything.here, just continue normally
         return State.RUNNING
 
@@ -471,16 +472,16 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         return self.destroy()
 
     @staticmethod
-    def __op2str(op):
+    def __op2str(op: Operation) -> str:
         return {
-            opCreate: 'create',
-            opStart: 'start',
-            opSuspend: 'suspend',
-            opRemove: 'remove',
-            opWait: 'wait',
-            opError: 'error',
-            opFinish: 'finish',
-            opRetry: 'retry',
+            Operation.CREATE: 'create',
+            Operation.START: 'start',
+            Operation.SUSPEND: 'suspend',
+            Operation.REMOVE: 'remove',
+            Operation.WAIT: 'wait',
+            Operation.ERROR: 'error',
+            Operation.FINISH: 'finish',
+            Operation.RETRY: 'retry',
         }.get(op, '????')
 
     def __debug(self, txt: str) -> None:
@@ -491,5 +492,5 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
             self._ip,
             self._mac,
             self._vmid,
-            [LiveDeployment.__op2str(op) for op in self._queue],
+            [OpenStackLiveDeployment.__op2str(op) for op in self._queue],
         )

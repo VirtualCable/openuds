@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -36,76 +36,53 @@ import collections.abc
 
 from uds.core.services import Publication
 from uds.core.types.states import State
+from uds.core.util import autoserializable
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from .service import LiveService
+    from .service import OpenStackLiveService
 
 logger = logging.getLogger(__name__)
 
 
-class LivePublication(Publication):
+class OpenStackLivePublication(Publication, autoserializable.AutoSerializable):
     """
     This class provides the publication of a oVirtLinkedService
     """
 
-    _name: str = ''
-    _reason: str = ''
-    _templateId: str = ''
-    _state: str = 'r'
-    _destroyAfter: str = 'n'
+    _name = autoserializable.StringField(default='')
+    _reason = autoserializable.StringField(default='')
+    _template_id = autoserializable.StringField(default='')
+    _state = autoserializable.StringField(default='r')
+    _destroy_after = autoserializable.BoolField(default=False)
 
-    suggested_delay = (
-        20  # : Suggested recheck time if publication is unfinished in seconds
-    )
+    # _name: str = ''
+    # _reason: str = ''
+    # _template_id: str = ''
+    # _state: str = 'r'
+    # _destroyAfter: str = 'n'
 
-    def initialize(self):
-        """
-        This method will be invoked by default __init__ of base class, so it gives
-        us the oportunity to initialize whataver we need here.
+    suggested_delay = 20  # : Suggested recheck time if publication is unfinished in seconds
 
-        In our case, we setup a few attributes..
-        """
-
-        # We do not check anything at marshal method, so we ensure that
-        # default values are correctly handled by marshal.
-        self._name = ''
-        self._reason = ''
-        self._templateId = ''
-        self._state = 'r'
-        self._destroyAfter = 'n'
-
-    def service(self) -> 'LiveService':
-        return typing.cast('LiveService', super().service())
-
-    def marshal(self) -> bytes:
-        """
-        returns data from an instance of Sample Publication serialized
-        """
-        return '\t'.join(
-            [
-                'v1',
-                self._name,
-                self._reason,
-                self._templateId,
-                self._state,
-                self._destroyAfter,
-            ]
-        ).encode('utf8')
+    def service(self) -> 'OpenStackLiveService':
+        return typing.cast('OpenStackLiveService', super().service())
 
     def unmarshal(self, data: bytes) -> None:
         """
         deserializes the data and loads it inside instance.
         """
+        if not data.startswith(b'v'):
+            return super().unmarshal(data)
+
         vals = data.decode('utf8').split('\t')
         if vals[0] == 'v1':
-            (
-                self._name,
-                self._reason,
-                self._templateId,
-                self._state,
-                self._destroyAfter,
-            ) = vals[1:]
+            (self._name, self._reason, self._template_id, self._state, destroy_after) = vals[1:]
+        else:
+            raise Exception('Invalid data')
+
+        self._destroy_after = destroy_after == 'y'
+
+        self.flag_for_upgrade()  # This will force remarshalling
 
     def publish(self) -> str:
         """
@@ -115,12 +92,12 @@ class LivePublication(Publication):
             'UDSP ' + self.servicepool_name() + "-" + str(self.revision())
         )
         self._reason = ''  # No error, no reason for it
-        self._destroyAfter = 'n'
+        self._destroy_after = False
 
         try:
             res = self.service().makeTemplate(self._name)
             logger.debug('Publication result: %s', res)
-            self._templateId = res['id']
+            self._template_id = res['id']
             self._state = res['status']
         except Exception as e:
             self._state = 'error'
@@ -139,11 +116,10 @@ class LivePublication(Publication):
         if self._state == 'available':
             return State.FINISHED
 
-        self._state = self.service().getTemplate(self._templateId)[
-            'status'
-        ]  # For next check
+        self._state = self.service().get_template(self._template_id)['status']  # For next check
 
-        if self._destroyAfter == 'y' and self._state == 'available':
+        if self._destroy_after and self._state == 'available':
+            self._destroy_after = False
             return self.destroy()
 
         return State.RUNNING
@@ -157,11 +133,11 @@ class LivePublication(Publication):
             return State.ERROR  # Nothing to cancel
 
         if self._state == 'creating':
-            self._destroyAfter = 'y'
+            self._destroy_after = True
             return State.RUNNING
 
         try:
-            self.service().removeTemplate(self._templateId)
+            self.service().removeTemplate(self._template_id)
         except Exception as e:
             self._state = 'error'
             self._reason = str(e)
@@ -180,4 +156,4 @@ class LivePublication(Publication):
         """
         Returns the template id associated with the publication
         """
-        return self._templateId
+        return self._template_id

@@ -39,12 +39,12 @@ from django.utils.translation import gettext_noop as _
 from uds.core import types, consts
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
-from uds.core.util import validators
+from uds.core.util import validators, fields
 from uds.core.util.cache import Cache
 from uds.core.util.decorators import cached
 
 from . import openstack
-from .service import LiveService
+from .service import OpenStackLiveService
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -78,7 +78,7 @@ class OpenStackProvider(ServiceProvider):
     """
 
     # : What kind of services we offer, this are classes inherited from Service
-    offers = [LiveService]
+    offers = [OpenStackLiveService]
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
@@ -143,42 +143,9 @@ class OpenStackProvider(ServiceProvider):
         required=True,
     )
 
-    concurrent_creation_limit = gui.NumericField(
-        length=3,
-        label=_('Creation concurrency'),
-        default=10,
-        min_value=1,
-        max_value=65536,
-        order=50,
-        tooltip=_('Maximum number of concurrently creating VMs'),
-        required=True,
-        tab=types.ui.Tab.ADVANCED,
-        old_field_name='maxPreparingServices',
-    )
-    concurrent_removal_limit = gui.NumericField(
-        length=3,
-        label=_('Removal concurrency'),
-        default=5,
-        min_value=1,
-        max_value=65536,
-        order=51,
-        tooltip=_('Maximum number of concurrently removing VMs'),
-        required=True,
-        tab=types.ui.Tab.ADVANCED,
-        old_field_name='maxRemovingServices',
-    )
-
-    timeout = gui.NumericField(
-        length=3,
-        label=_('Timeout'),
-        default=10,
-        min_value=1,
-        max_value=128,
-        order=99,
-        tooltip=_('Timeout in seconds of connection to OpenStack'),
-        required=True,
-        tab=types.ui.Tab.ADVANCED,
-    )
+    concurrent_creation_limit = fields.concurrent_creation_limit_field()
+    concurrent_removal_limit = fields.concurrent_removal_limit_field()
+    timeout = fields.timeout_field(default=10)
 
     tenant = gui.TextField(
         length=64,
@@ -201,7 +168,7 @@ class OpenStackProvider(ServiceProvider):
         tab=types.ui.Tab.ADVANCED,
     )
 
-    useSubnetsName = gui.CheckBoxField(
+    use_subnets_name = gui.CheckBoxField(
         label=_('Subnets names'),
         order=8,
         tooltip=_(
@@ -209,9 +176,10 @@ class OpenStackProvider(ServiceProvider):
         ),
         default=False,
         tab=types.ui.Tab.ADVANCED,
+        old_field_name='useSubnetsName',
     )
 
-    httpsProxy = gui.TextField(
+    https_proxy = gui.TextField(
         length=96,
         label=_('Proxy'),
         order=91,
@@ -220,6 +188,7 @@ class OpenStackProvider(ServiceProvider):
         ),
         required=False,
         tab=types.ui.Tab.ADVANCED,
+        old_field_name='httpsProxy',
     )
 
     legacy = False
@@ -241,8 +210,8 @@ class OpenStackProvider(ServiceProvider):
         region = region or self.region.value or None
         if self._api is None:
             proxies = None
-            if self.httpsProxy.value.strip():
-                proxies = {'https': self.httpsProxy.value}
+            if self.https_proxy.value.strip():
+                proxies = {'https': self.https_proxy.value}
             self._api = openstack.Client(
                 self.endpoint.value,
                 -1,

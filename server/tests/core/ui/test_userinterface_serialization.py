@@ -186,15 +186,22 @@ class UserinterfaceTest(UDSTestCase):
 
         self.assertEqual(ui.strField.value, ui2.str_field.value)
 
-        # On current version, we allow backwards compatibility, so no warning is issued
-        # Will be removed on next major version
+        # On current version, we do noallow backwards compatibility, so a warning is issued
+        # and the field is not loaded
         with mock.patch('logging.Logger.warning') as mock_warning:
+            ui2.str_field.value = 'new value'
             data = ui2.serialize_fields()  # Should store str_field as strField
 
             self.assertFalse(ui.deserialize_fields(data))  # Should need upgrade, current format serialized
 
-            # Logger.warning should has not been called
-            mock_warning.assert_not_called()
+            # Logger.warning should has been called (because there is an unknown field)
+            mock_warning.assert_called()
+            
+            # And field is not loaded
+            self.assertNotEqual(ui.strField.value, ui2.str_field.value)
+            
+            # Previously: 
+            # mock_warning.assert_not_called()
 
             # And strField should be loaded from str_field
-            self.assertEqual(ui.strField.value, ui2.str_field.value)
+            # self.assertEqual(ui.strField.value, ui2.str_field.value)

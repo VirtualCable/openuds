@@ -36,60 +36,63 @@ import collections.abc
 
 from uds.core.services import Publication
 from uds.core.types.states import State
+from uds.core.util import autoserializable
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from .service import LiveService
+    from .service import OpenNebulaLiveService
 
 logger = logging.getLogger(__name__)
 
 
-class LivePublication(Publication):
+class OpenNebulaLivePublication(Publication, autoserializable.AutoSerializable):
     """
     This class provides the publication of a oVirtLinkedService
     """
 
-    suggested_delay = (
-        2  # : Suggested recheck time if publication is unfinished in seconds
-    )
+    suggested_delay = 2  # : Suggested recheck time if publication is unfinished in seconds
 
-    _name: str = ''
-    _reason: str = ''
-    _templateId: str = ''
-    _state: str = 'r'
+    _name = autoserializable.StringField(default='')
+    _reason = autoserializable.StringField(default='')
+    _template_id = autoserializable.StringField(default='')
+    _state = autoserializable.StringField(default='r')
+    _destroy_after = autoserializable.BoolField(default=False)
 
-    def service(self) -> 'LiveService':
-        return typing.cast('LiveService', super().service())
+    # _name: str = ''
+    # _reason: str = ''
+    # _templateId: str = ''
+    # _state: str = 'r'
 
-    def marshal(self) -> bytes:
-        """
-        returns data from an instance of Sample Publication serialized
-        """
-        return '\t'.join(
-            ['v1', self._name, self._reason, self._templateId, self._state]
-        ).encode('utf8')
+    def service(self) -> 'OpenNebulaLiveService':
+        return typing.cast('OpenNebulaLiveService', super().service())
 
     def unmarshal(self, data: bytes) -> None:
         """
         deserializes the data and loads it inside instance.
         """
-        logger.debug('Data: %s', data)
+        if not data.startswith(b'v'):
+            return super().unmarshal(data)
+
         vals = data.decode('utf8').split('\t')
         if vals[0] == 'v1':
-            self._name, self._reason, self._templateId, self._state = vals[1:]
+            self._name, self._reason, self._template_id, self._state = vals[1:]
+
+        self._destroy_after = False
+
+        self.flag_for_upgrade()  # Flag so manager can save it again with new format
 
     def publish(self) -> str:
         """
         Realizes the publication of the service
         """
-        self._name = self.service().sanitizeVmName(
+        self._name = self.service().sanitized_name(
             'UDSP ' + self.servicepool_name() + "-" + str(self.revision())
         )
         self._reason = ''  # No error, no reason for it
         self._state = 'running'
 
         try:
-            self._templateId = self.service().makeTemplate(self._name)
+            self._template_id = self.service().make_template(self._name)
         except Exception as e:
             self._state = 'error'
             self._reason = str(e)
@@ -103,7 +106,7 @@ class LivePublication(Publication):
         """
         if self._state == 'running':
             try:
-                if self.service().checkTemplatePublished(self._templateId) is False:
+                if self.service().check_template_published(self._template_id) is False:
                     return State.RUNNING
                 self._state = 'ok'
             except Exception as e:
@@ -114,6 +117,10 @@ class LivePublication(Publication):
             return State.ERROR
 
         if self._state == 'ok':
+            if self._destroy_after:  # If we must destroy after publication, do it now
+                self._destroy_after = False
+                return self.destroy()
+
             return State.FINISHED
 
         self._state = 'ok'
@@ -140,9 +147,16 @@ class LivePublication(Publication):
         The retunred value is the same as when publishing, State.RUNNING,
         State.FINISHED or State.ERROR.
         """
+        if self._state == 'error':
+            return State.ERROR
+
+        if self._state == 'running':
+            self._destroy_after = True
+            return State.RUNNING
+
         # We do not do anything else to destroy this instance of publication
         try:
-            self.service().removeTemplate(self._templateId)
+            self.service().remove_template(self._template_id)
         except Exception as e:
             self._state = 'error'
             self._reason = str(e)
@@ -164,4 +178,4 @@ class LivePublication(Publication):
         """
         Returns the template id associated with the publication
         """
-        return self._templateId
+        return self._template_id

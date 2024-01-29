@@ -30,6 +30,8 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+from enum import auto
+import enum
 import pickle  # nosec: not insecure, we are loading our own data
 import logging
 import typing
@@ -37,66 +39,72 @@ import collections.abc
 
 from uds.core import services, consts
 from uds.core.types.states import State
-from uds.core.util import log
+from uds.core.util import log, autoserializable
 
 from . import on
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from .service import LiveService
-    from .publication import LivePublication
+    from .service import OpenNebulaLiveService
+    from .publication import OpenNebulaLivePublication
     from uds.core.util.storage import Storage
 
 logger = logging.getLogger(__name__)
 
-opCreate, opStart, opShutdown, opRemove, opWait, opError, opFinish, opRetry = range(8)
+
+class Operation(enum.IntEnum):
+    CREATE = 0
+    START = 1
+    SHUTDOWN = 2
+    REMOVE = 3
+    WAIT = 4
+    ERROR = 5
+    FINISH = 6
+    RETRY = 7
+
+    UNKNOWN = 99
+
+    @staticmethod
+    def from_int(value: int) -> 'Operation':
+        try:
+            return Operation(value)
+        except ValueError:
+            return Operation.UNKNOWN
 
 
-class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-methods
+class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerializable):
     # : Recheck every six seconds by default (for task methods)
     suggested_delay = 6
 
+    _name = autoserializable.StringField(default='')
+    _ip = autoserializable.StringField(default='')
+    _mac = autoserializable.StringField(default='')
+    _vmid = autoserializable.StringField(default='')
+    _reason = autoserializable.StringField(default='')
+    _queue = autoserializable.ListField[Operation]()
+
     #
-    _name: str = ''
-    _ip: str = ''
-    _mac: str = ''
-    _vmid: str = ''
-    _reason: str = ''
-    _queue: list[int]
+    # _name: str = ''
+    # _ip: str = ''
+    # _mac: str = ''
+    # _vmid: str = ''
+    # _reason: str = ''
+    # _queue: list[int]
 
-    def initialize(self):
-        self._name = ''
-        self._ip = ''
-        self._mac = ''
-        self._vmid = ''
-        self._reason = ''
-        self._queue = []
+    def service(self) -> 'OpenNebulaLiveService':
+        return typing.cast('OpenNebulaLiveService', super().service())
 
-    def service(self) -> 'LiveService':
-        return typing.cast('LiveService', super().service())
-
-    def publication(self) -> 'LivePublication':
+    def publication(self) -> 'OpenNebulaLivePublication':
         pub = super().publication()
         if pub is None:
             raise Exception('No publication for this element!')
-        return typing.cast('LivePublication', pub)
-
-    # Serializable needed methods
-    def marshal(self) -> bytes:
-        return b'\1'.join(
-            [
-                b'v1',
-                self._name.encode('utf8'),
-                self._ip.encode('utf8'),
-                self._mac.encode('utf8'),
-                self._vmid.encode('utf8'),
-                self._reason.encode('utf8'),
-                pickle.dumps(self._queue, protocol=0),
-            ]
-        )
+        return typing.cast('OpenNebulaLivePublication', pub)
 
     def unmarshal(self, data: bytes) -> None:
+        if not data.startswith(b'v'):
+            return super().unmarshal(data)
+
         vals = data.split(b'\1')
         if vals[0] == b'v1':
             self._name = vals[1].decode('utf8')
@@ -104,7 +112,9 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
             self._mac = vals[3].decode('utf8')
             self._vmid = vals[4].decode('utf8')
             self._reason = vals[5].decode('utf8')
-            self._queue = pickle.loads(vals[6])  # nosec: not insecure, we are loading our own data
+            self._queue = [Operation.from_int(i) for i in pickle.loads(vals[6])]  # nosec
+
+        self.flag_for_upgrade()  # Flag so manager can save it again with new format
 
     def get_name(self) -> str:
         if self._name == '':
@@ -134,7 +144,7 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
             state = self.service().getMachineState(self._vmid)
 
             if state == on.types.VmState.UNKNOWN:  # @UndefinedVariable
-                return self.__error('Machine is not available anymore')
+                return self._error('Machine is not available anymore')
 
             self.service().startMachine(self._vmid)
 
@@ -158,10 +168,10 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
     def process_ready_from_os_manager(self, data: typing.Any) -> str:
         # Here we will check for suspending the VM (when full ready)
         logger.debug('Checking if cache 2 for %s', self._name)
-        if self.__getCurrentOp() == opWait:
+        if self._get_current_op() == Operation.WAIT:
             logger.debug('Machine is ready. Moving to level 2')
-            self.__popCurrentOp()  # Remove current state
-            return self.__executeQueue()
+            self._get_and_pop_current_op()  # Remove current state
+            return self._execute_queue()
         # Do not need to go to level 2 (opWait is in fact "waiting for moving machine to cache level 2)
         return State.FINISHED
 
@@ -170,28 +180,34 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         Deploys an service instance for an user.
         """
         logger.debug('Deploying for user')
-        self.__initQueueForDeploy(False)
-        return self.__executeQueue()
+        self._init_queue_for_deploy(False)
+        return self._execute_queue()
 
     def deploy_for_cache(self, cacheLevel: int) -> str:
         """
         Deploys an service instance for cache
         """
-        self.__initQueueForDeploy(cacheLevel == self.L2_CACHE)
-        return self.__executeQueue()
+        self._init_queue_for_deploy(cacheLevel == self.L2_CACHE)
+        return self._execute_queue()
 
-    def __initQueueForDeploy(self, forLevel2: bool = False) -> None:
+    def _init_queue_for_deploy(self, forLevel2: bool = False) -> None:
         if forLevel2 is False:
-            self._queue = [opCreate, opStart, opFinish]
+            self._queue = [Operation.CREATE, Operation.START, Operation.FINISH]
         else:
-            self._queue = [opCreate, opStart, opWait, opShutdown, opFinish]
+            self._queue = [
+                Operation.CREATE,
+                Operation.START,
+                Operation.WAIT,
+                Operation.SHUTDOWN,
+                Operation.FINISH,
+            ]
 
-    def __checkMachineState(self, chkState: on.types.VmState) -> str:
+    def _check_machine_state(self, state: on.types.VmState) -> str:
         logger.debug(
             'Checking that state of machine %s (%s) is %s',
             self._vmid,
             self._name,
-            chkState,
+            state,
         )
         state = self.service().getMachineState(self._vmid)
 
@@ -200,39 +216,35 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
             on.types.VmState.UNKNOWN,
             on.types.VmState.DONE,
         ]:  # @UndefinedVariable
-            return self.__error('Machine not found')
+            return self._error('Machine not found')
 
         ret = State.RUNNING
 
-        if isinstance(chkState, (list, tuple)):
-            if state in chkState:
+        if isinstance(state, (list, tuple)):
+            if state in state:
                 ret = State.FINISHED
         else:
-            if state == chkState:
+            if state == state:
                 ret = State.FINISHED
 
         return ret
 
-    def __getCurrentOp(self) -> int:
+    def _get_current_op(self) -> Operation:
         if not self._queue:
-            return opFinish
+            return Operation.FINISH
 
         return self._queue[0]
 
-    def __popCurrentOp(self) -> int:
+    def _get_and_pop_current_op(self) -> Operation:
         if not self._queue:
-            return opFinish
+            return Operation.FINISH
 
-        res = self._queue.pop(0)
-        return res
+        return self._queue.pop(0)
 
-    def __pushFrontOp(self, op) -> None:
+    def _push_front_op(self, op: Operation) -> None:
         self._queue.insert(0, op)
 
-    def __pushBackOp(self, op) -> None:
-        self._queue.append(op)
-
-    def __error(self, reason: typing.Any) -> str:
+    def _error(self, reason: typing.Any) -> str:
         """
         Internal method to set object as error state
 
@@ -249,46 +261,44 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
             except Exception:
                 logger.warning('Can\'t set remove errored machine: %s', self._vmid)
 
-        self._queue = [opError]
+        self._queue = [Operation.ERROR]
         self._reason = str(reason)
         return State.ERROR
 
-    def __executeQueue(self) -> str:
+    def _execute_queue(self) -> str:
         self.__debug('executeQueue')
-        op = self.__getCurrentOp()
+        op = self._get_current_op()
 
-        if op == opError:
+        if op == Operation.ERROR:
             return State.ERROR
 
-        if op == opFinish:
+        if op == Operation.FINISH:
             return State.FINISHED
 
-        fncs: dict[int, typing.Optional[collections.abc.Callable[[], str]]] = {
-            opCreate: self.__create,
-            opRetry: self.__retry,
-            opStart: self.__startMachine,
-            opShutdown: self.__shutdownMachine,
-            opWait: self.__wait,
-            opRemove: self.__remove,
+        fncs: dict[Operation, typing.Optional[collections.abc.Callable[[], str]]] = {
+            Operation.CREATE: self._create,
+            Operation.RETRY: self._retry,
+            Operation.START: self._start_machine,
+            Operation.SHUTDOWN: self._shutdown_machine,
+            Operation.WAIT: self._wait,
+            Operation.REMOVE: self._remove,
         }
 
         try:
-            execFnc: typing.Optional[collections.abc.Callable[[], str]] = fncs.get(op, None)
+            operation_executor: typing.Optional[collections.abc.Callable[[], str]] = fncs.get(op, None)
 
-            if execFnc is None:
-                return self.__error(
-                    'Unknown operation found at execution queue ({0})'.format(op)
-                )
+            if operation_executor is None:
+                return self._error('Unknown operation found at execution queue ({0})'.format(op))
 
-            execFnc()
+            operation_executor()
 
             return State.RUNNING
         except Exception as e:
             logger.exception('Got Exception')
-            return self.__error(e)
+            return self._error(e)
 
     # Queue execution methods
-    def __retry(self) -> str:
+    def _retry(self) -> str:
         """
         Used to retry an operation
         In fact, this will not be never invoked, unless we push it twice, because
@@ -298,13 +308,13 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         """
         return State.FINISHED
 
-    def __wait(self) -> str:
+    def _wait(self) -> str:
         """
         Executes opWait, it simply waits something "external" to end
         """
         return State.RUNNING
 
-    def __create(self) -> str:
+    def _create(self) -> str:
         """
         Deploys a machine from template for user/cache
         """
@@ -315,11 +325,11 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
                 'No more names available for this service. (Increase digits for this service to fix)'
             )
 
-        name = self.service().sanitizeVmName(
+        name = self.service().sanitized_name(
             name
         )  # OpenNebula don't let us to create machines with more than 15 chars!!!
 
-        self._vmid = self.service().deployFromTemplate(name, templateId)
+        self._vmid = self.service().deploy_from_template(name, templateId)
         if self._vmid is None:
             raise Exception('Can\'t create machine')
 
@@ -328,7 +338,7 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
 
         return State.RUNNING
 
-    def __remove(self) -> str:
+    def _remove(self) -> str:
         """
         Removes a machine from system
         """
@@ -341,14 +351,14 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
             subState = self.service().getMachineSubstate(self._vmid)
             if subState < 3:  # Less than running
                 logger.info('Must wait before remove: %s', subState)
-                self.__pushFrontOp(opRetry)
+                self._push_front_op(Operation.RETRY)
                 return State.RUNNING
 
         self.service().removeMachine(self._vmid)
 
         return State.RUNNING
 
-    def __startMachine(self) -> str:
+    def _start_machine(self) -> str:
         """
         Powers on the machine
         """
@@ -359,7 +369,7 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
 
         return State.RUNNING
 
-    def __shutdownMachine(self) -> str:
+    def _shutdown_machine(self) -> str:
         """
         Suspends the machine
         """
@@ -367,25 +377,25 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         return State.RUNNING
 
     # Check methods
-    def __checkCreate(self) -> str:
+    def _create_checker(self) -> str:
         """
         Checks the state of a deploy for an user or cache
         """
-        return self.__checkMachineState(on.types.VmState.ACTIVE)  # @UndefinedVariable
+        return self._check_machine_state(on.types.VmState.ACTIVE)  # @UndefinedVariable
 
-    def __checkStart(self) -> str:
+    def _start_checker(self) -> str:
         """
         Checks if machine has started
         """
-        return self.__checkMachineState(on.types.VmState.ACTIVE)  # @UndefinedVariable
+        return self._check_machine_state(on.types.VmState.ACTIVE)  # @UndefinedVariable
 
-    def __checkShutdown(self) -> str:
+    def _shutdown_checker(self) -> str:
         """
         Check if the machine has suspended
         """
-        return self.__checkMachineState(on.types.VmState.POWEROFF)  # @UndefinedVariable
+        return self._check_machine_state(on.types.VmState.POWEROFF)  # @UndefinedVariable
 
-    def __checkRemoved(self) -> str:
+    def _remove_checker(self) -> str:
         """
         Checks if a machine has been removed
         """
@@ -396,53 +406,51 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         Check what operation is going on, and acts based on it
         """
         self.__debug('check_state')
-        op = self.__getCurrentOp()
+        op = self._get_current_op()
 
-        if op == opError:
+        if op == Operation.ERROR:
             return State.ERROR
 
-        if op == opFinish:
+        if op == Operation.FINISH:
             return State.FINISHED
 
-        fncs: dict[int, typing.Optional[collections.abc.Callable[[], str]]] = {
-            opCreate: self.__checkCreate,
-            opRetry: self.__retry,
-            opWait: self.__wait,
-            opStart: self.__checkStart,
-            opShutdown: self.__checkShutdown,
-            opRemove: self.__checkRemoved,
+        fncs: dict[Operation, typing.Optional[collections.abc.Callable[[], str]]] = {
+            Operation.CREATE: self._create_checker,
+            Operation.RETRY: self._retry,
+            Operation.WAIT: self._wait,
+            Operation.START: self._start_checker,
+            Operation.SHUTDOWN: self._shutdown_checker,
+            Operation.REMOVE: self._remove_checker,
         }
 
         try:
             chkFnc: typing.Optional[collections.abc.Callable[[], str]] = fncs.get(op, None)
 
             if chkFnc is None:
-                return self.__error(
-                    'Unknown operation found at check queue ({0})'.format(op)
-                )
+                return self._error('Unknown operation found at check queue ({0})'.format(op))
 
             state = chkFnc()
             if state == State.FINISHED:
-                self.__popCurrentOp()  # Remove runing op
-                return self.__executeQueue()
+                self._get_and_pop_current_op()  # Remove runing op
+                return self._execute_queue()
 
             return state
         except Exception as e:
-            return self.__error(e)
+            return self._error(e)
 
     def move_to_cache(self, newLevel: int) -> str:
         """
         Moves machines between cache levels
         """
-        if opRemove in self._queue:
+        if Operation.REMOVE in self._queue:
             return State.RUNNING
 
         if newLevel == self.L1_CACHE:
-            self._queue = [opStart, opFinish]
+            self._queue = [Operation.START, Operation.FINISH]
         else:
-            self._queue = [opStart, opShutdown, opFinish]
+            self._queue = [Operation.START, Operation.SHUTDOWN, Operation.FINISH]
 
-        return self.__executeQueue()
+        return self._execute_queue()
 
     def error_reason(self) -> str:
         """
@@ -461,16 +469,16 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         self.__debug('destroy')
         # If executing something, wait until finished to remove it
         # We simply replace the execution queue
-        op = self.__getCurrentOp()
+        op = self._get_current_op()
 
-        if op == opError:
-            return self.__error('Machine is already in error state!')
+        if op == Operation.ERROR:
+            return self._error('Machine is already in error state!')
 
-        if op in [opFinish, opWait, opStart, opCreate]:
-            self._queue = [opRemove, opFinish]
-            return self.__executeQueue()
+        if op in [Operation.FINISH, Operation.WAIT, Operation.START, Operation.CREATE]:
+            self._queue = [Operation.REMOVE, Operation.FINISH]
+            return self._execute_queue()
 
-        self._queue = [op, opRemove, opFinish]
+        self._queue = [op, Operation.REMOVE, Operation.FINISH]
         # Do not execute anything.here, just continue normally
         return State.RUNNING
 
@@ -487,16 +495,16 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         return self.destroy()
 
     @staticmethod
-    def __op2str(op) -> str:
+    def __op2str(op: Operation) -> str:
         return {
-            opCreate: 'create',
-            opStart: 'start',
-            opShutdown: 'shutdown',
-            opRemove: 'remove',
-            opWait: 'wait',
-            opError: 'error',
-            opFinish: 'finish',
-            opRetry: 'retry',
+            Operation.CREATE: 'create',
+            Operation.START: 'start',
+            Operation.SHUTDOWN: 'shutdown',
+            Operation.REMOVE: 'remove',
+            Operation.WAIT: 'wait',
+            Operation.ERROR: 'error',
+            Operation.FINISH: 'finish',
+            Operation.RETRY: 'retry',
         }.get(op, '????')
 
     def __debug(self, txt: str) -> None:
@@ -507,5 +515,5 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
             self._ip,
             self._mac,
             self._vmid,
-            [LiveDeployment.__op2str(op) for op in self._queue],
+            [OpenNebulaLiveDeployment.__op2str(op) for op in self._queue],
         )

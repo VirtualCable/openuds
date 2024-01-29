@@ -29,6 +29,8 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+from enum import auto
+import enum
 import pickle  # nosec: not insecure, we are loading our own data
 import logging
 import typing
@@ -37,7 +39,7 @@ import collections.abc
 from uds.core import services
 from uds.core.managers.crypto import CryptoManager
 from uds.core.types.states import State
-from uds.core.util import log
+from uds.core.util import log, autoserializable
 from uds.core.util.model import sql_stamp_seconds
 
 # Not imported at runtime, just for type checking
@@ -49,10 +51,26 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-opCreate, opError, opFinish, opRemove, opRetry, opStart = range(6)
+
+class Operation(enum.IntEnum):
+    CREATE = 0
+    ERROR = 1
+    FINISH = 2
+    RETRY = 3
+    REMOVE = 4
+    START = 5
+
+    UNKNOWN = 99
+
+    @staticmethod
+    def from_int(value: int) -> 'Operation':
+        try:
+            return Operation(value)
+        except ValueError:
+            return Operation.UNKNOWN
 
 
-class OGDeployment(services.UserService):
+class OGDeployment(services.UserService, autoserializable.AutoSerializable):
     """
     This class generates the user consumable elements of the service tree.
 
@@ -65,18 +83,25 @@ class OGDeployment(services.UserService):
 
     # : Recheck every N seconds by default (for task methods)
     suggested_delay = 20
+    _name = autoserializable.StringField(default='unknown')
+    _ip = autoserializable.StringField(default='')
+    _mac = autoserializable.StringField(default='')
+    _machine_id = autoserializable.StringField(default='')
+    _stamp = autoserializable.IntegerField(default=0)
+    _reason = autoserializable.StringField(default='')
+    _queue = autoserializable.ListField[Operation]()
 
-    _name: str = 'unknown'
-    _ip: str = ''
-    _mac: str = ''
-    _machineId: str = ''
-    _stamp: int = 0
-    _reason: str = ''
+    # _name: str = 'unknown'
+    # _ip: str = ''
+    # _mac: str = ''
+    # _machineId: str = ''
+    # _stamp: int = 0
+    # _reason: str = ''
 
-    _queue: list[
-        int
-    ]  # Do not initialize mutable, just declare and it is initialized on "initialize"
-    _uuid: str
+    # _queue: list[
+    #     int
+    # ]  # Do not initialize mutable, just declare and it is initialized on "initialize"
+    # _uuid: str
 
     def initialize(self) -> None:
         self._queue = []
@@ -90,39 +115,26 @@ class OGDeployment(services.UserService):
             raise Exception('No publication for this element!')
         return typing.cast('OGPublication', pub)
 
-    # Serializable needed methods
-    def marshal(self) -> bytes:
-        """
-        Does nothing right here, we will use environment storage in this sample
-        """
-        return b'\1'.join(
-            [
-                b'v1',
-                self._name.encode('utf8'),
-                self._ip.encode('utf8'),
-                self._mac.encode('utf8'),
-                self._machineId.encode('utf8'),
-                self._reason.encode('utf8'),
-                str(self._stamp).encode('utf8'),
-                pickle.dumps(self._queue, protocol=0),
-            ]
-        )
-
     def unmarshal(self, data: bytes) -> None:
         """
         Does nothing here also, all data are kept at environment storage
         """
+        if not data.startswith(b'v'):
+            return super().unmarshal(data)
+
         vals = data.split(b'\1')
         if vals[0] == b'v1':
             self._name = vals[1].decode('utf8')
             self._ip = vals[2].decode('utf8')
             self._mac = vals[3].decode('utf8')
-            self._machineId = vals[4].decode('utf8')
+            self._machine_id = vals[4].decode('utf8')
             self._reason = vals[5].decode('utf8')
             self._stamp = int(vals[6].decode('utf8'))
-            self._queue = pickle.loads(
-                vals[7]
-            )  # nosec: not insecure, we are loading our own data
+            self._queue = [
+                Operation.from_int(i) for i in pickle.loads(vals[7])
+            ]  # nosec: not insecure, we are loading our own data
+
+        self.flag_for_upgrade()  # Flag so manager can save it again with new format
 
     def get_name(self) -> str:
         return self._name
@@ -146,11 +158,9 @@ class OGDeployment(services.UserService):
 
         try:
             # First, check Machine is alive..
-            status = self.__checkMachineReady()
+            status = self._check_machine_is_ready()
             if status == State.FINISHED:
-                self.service().notifyDeadline(
-                    self._machineId, dbs.deployed_service.get_deadline()
-                )
+                self.service().notify_deadline(self._machine_id, dbs.deployed_service.get_deadline())
                 return State.FINISHED
 
             if status == State.ERROR:
@@ -158,47 +168,47 @@ class OGDeployment(services.UserService):
 
             # Machine powered off, check what to do...
             if self.service().is_removableIfUnavailable():
-                return self.__error(
+                return self._error(
                     'Machine is unavailable and service has "Remove if unavailable" flag active.'
                 )
 
             # Try to start it, and let's see
-            self._queue = [opStart, opFinish]
-            return self.__executeQueue()
+            self._queue = [Operation.START, Operation.FINISH]
+            return self._execute_queue()
 
         except Exception as e:
-            return self.__error(f'Error setting ready state: {e}')
+            return self._error(f'Error setting ready state: {e}')
 
     def deploy_for_user(self, user: 'models.User') -> str:
         """
         Deploys an service instance for an user.
         """
         logger.debug('Deploying for user')
-        self.__initQueueForDeploy()
-        return self.__executeQueue()
+        self._init_queue_for_deploy()
+        return self._execute_queue()
 
     def deploy_for_cache(self, cacheLevel: int) -> str:
         """
         Deploys an service instance for cache
         """
-        self.__initQueueForDeploy()  # No Level2 Cache possible
-        return self.__executeQueue()
+        self._init_queue_for_deploy()  # No Level2 Cache possible
+        return self._execute_queue()
 
-    def __initQueueForDeploy(self) -> None:
-        self._queue = [opCreate, opFinish]
+    def _init_queue_for_deploy(self) -> None:
+        self._queue = [Operation.CREATE, Operation.FINISH]
 
-    def __checkMachineReady(self) -> str:
+    def _check_machine_is_ready(self) -> str:
         logger.debug(
             'Checking that state of machine %s (%s) is ready',
-            self._machineId,
+            self._machine_id,
             self._name,
         )
 
         try:
-            status = self.service().status(self._machineId)
+            status = self.service().status(self._machine_id)
         except Exception as e:
             logger.exception('Exception at checkMachineReady')
-            return self.__error(f'Error checking machine: {e}')
+            return self._error(f'Error checking machine: {e}')
 
         # possible status are ("off", "oglive", "busy", "linux", "windows", "macos" o "unknown").
         if status['status'] in ("linux", "windows", "macos"):
@@ -206,20 +216,20 @@ class OGDeployment(services.UserService):
 
         return State.RUNNING
 
-    def __getCurrentOp(self) -> int:
+    def _get_current_op(self) -> Operation:
         if len(self._queue) == 0:
-            return opFinish
+            return Operation.FINISH
 
         return self._queue[0]
 
-    def __popCurrentOp(self) -> int:
+    def _pop_current_op(self) -> Operation:
         if len(self._queue) == 0:
-            return opFinish
+            return Operation.FINISH
 
         res = self._queue.pop(0)
         return res
 
-    def __error(self, reason: typing.Any) -> str:
+    def _error(self, reason: typing.Any) -> str:
         """
         Internal method to set object as error state
 
@@ -229,50 +239,48 @@ class OGDeployment(services.UserService):
         logger.debug('Setting error state, reason: %s', reason)
         self.do_log(log.LogLevel.ERROR, reason)
 
-        if self._machineId:
+        if self._machine_id:
             try:
-                self.service().unreserve(self._machineId)
+                self.service().unreserve(self._machine_id)
             except Exception as e:
                 logger.warning('Error unreserving machine: %s', e)
 
-        self._queue = [opError]
+        self._queue = [Operation.ERROR]
         self._reason = str(reason)
         return State.ERROR
 
-    def __executeQueue(self) -> str:
-        self.__debug('executeQueue')
-        op = self.__getCurrentOp()
+    def _execute_queue(self) -> str:
+        self._debug('executeQueue')
+        op = self._get_current_op()
 
-        if op == opError:
+        if op == Operation.ERROR:
             return State.ERROR
 
-        if op == opFinish:
+        if op == Operation.FINISH:
             return State.FINISHED
 
         fncs: dict[int, typing.Optional[collections.abc.Callable[[], str]]] = {
-            opCreate: self.__create,
-            opRetry: self.__retry,
-            opRemove: self.__remove,
-            opStart: self.__start,
+            Operation.CREATE: self._create,
+            Operation.RETRY: self._retry,
+            Operation.REMOVE: self._remove,
+            Operation.START: self._start,
         }
 
         try:
             execFnc: typing.Optional[collections.abc.Callable[[], str]] = fncs.get(op)
 
             if execFnc is None:
-                return self.__error(
-                    f'Unknown operation found at execution queue ({op})'
-                )
+                return self._error(f'Unknown operation found at execution queue ({op})')
 
             execFnc()
 
             return State.RUNNING
         except Exception as e:
             # logger.exception('Got Exception')
-            return self.__error(e)
+            return self._error(e)
 
     # Queue execution methods
-    def __retry(self) -> str:
+    def _retry(self) -> str:
         """
         Used to retry an operation
         In fact, this will not be never invoked, unless we push it twice, because
@@ -282,7 +290,7 @@ class OGDeployment(services.UserService):
         """
         return State.FINISHED
 
-    def __create(self) -> str:
+    def _create(self) -> str:
         """
         Deploys a machine from template for user/cache
         """
@@ -296,14 +304,14 @@ class OGDeployment(services.UserService):
             if r:  # Reservation was done, unreserve it!!!
                 logger.error('Error on notifyEvent (machine was reserved): %s', e)
                 try:
-                    self.service().unreserve(self._machineId)
+                    self.service().unreserve(self._machine_id)
                 except Exception as ei:
                     # Error unreserving reserved machine on creation
                     logger.error('Error unreserving errored machine: %s', ei)
 
             raise Exception(f'Error creating reservation: {e}') from e
 
-        self._machineId = r['id']
+        self._machine_id = r['id']
         self._name = r['name']
         self._mac = r['mac']
         self._ip = r['ip']
@@ -311,7 +319,7 @@ class OGDeployment(services.UserService):
 
         self.do_log(
             log.LogLevel.INFO,
-            f'Reserved machine {self._name}: id: {self._machineId}, mac: {self._mac}, ip: {self._ip}',
+            f'Reserved machine {self._name}: id: {self._machine_id}, mac: {self._mac}, ip: {self._ip}',
         )
 
         # Store actor version & Known ip
@@ -323,12 +331,12 @@ class OGDeployment(services.UserService):
 
         return State.RUNNING
 
-    def __start(self) -> str:
-        if self._machineId:
-            self.service().powerOn(self._machineId)
+    def _start(self) -> str:
+        if self._machine_id:
+            self.service().powerOn(self._machine_id)
         return State.RUNNING
 
-    def __remove(self) -> str:
+    def _remove(self) -> str:
         """
         Removes a machine from system
         Avoids "double unreserve" in case the reservation was made from release
@@ -338,20 +346,20 @@ class OGDeployment(services.UserService):
             # On release callback, we will set a property on DB called "from_release"
             # so we can avoid double unreserve
             if dbs.properties.get('from_release') is None:
-                self.service().unreserve(self._machineId)
+                self.service().unreserve(self._machine_id)
         return State.RUNNING
 
     # Check methods
-    def __checkCreate(self) -> str:
+    def _create_checker(self) -> str:
         """
         Checks the state of a deploy for an user or cache
         """
-        return self.__checkMachineReady()
+        return self._check_machine_is_ready()
 
     # Alias for poweron check
-    __checkStart = __checkCreate
+    __checkStart = _create_checker
 
-    def __checkRemoved(self) -> str:
+    def _removed_checker(self) -> str:
         """
         Checks if a machine has been removed
         """
@@ -361,40 +369,36 @@ class OGDeployment(services.UserService):
         """
         Check what operation is going on, and acts acordly to it
         """
-        self.__debug('check_state')
-        op = self.__getCurrentOp()
+        self._debug('check_state')
+        op = self._get_current_op()
 
-        if op == opError:
+        if op == Operation.ERROR:
             return State.ERROR
 
-        if op == opFinish:
+        if op == Operation.FINISH:
             return State.FINISHED
 
-        fncs: dict[int, typing.Optional[collections.abc.Callable[[], str]]] = {
-            opCreate: self.__checkCreate,
-            opRetry: self.__retry,
-            opRemove: self.__checkRemoved,
-            opStart: self.__checkStart,
+        fncs: dict[Operation, typing.Optional[collections.abc.Callable[[], str]]] = {
+            Operation.CREATE: self._create_checker,
+            Operation.RETRY: self._retry,
+            Operation.REMOVE: self._removed_checker,
+            Operation.START: self.__checkStart,
         }
 
         try:
-            chkFnc: typing.Optional[
-                typing.Optional[collections.abc.Callable[[], str]]
-            ] = fncs.get(op)
+            chkFnc: typing.Optional[typing.Optional[collections.abc.Callable[[], str]]] = fncs.get(op)
 
             if chkFnc is None:
-                return self.__error(
-                    f'Unknown operation found at check queue ({op})'
-                )
+                return self._error(f'Unknown operation found at check queue ({op})')
 
             state = chkFnc()
             if state == State.FINISHED:
-                self.__popCurrentOp()  # Remove runing op
-                return self.__executeQueue()
+                self._pop_current_op()  # Remove runing op
+                return self._execute_queue()
 
             return state
         except Exception as e:
-            return self.__error(e)
+            return self._error(e)
 
     def error_reason(self) -> str:
         """
@@ -410,11 +414,11 @@ class OGDeployment(services.UserService):
         """
         Invoked for destroying a deployed service
         """
-        self.__debug('destroy')
+        self._debug('destroy')
         # If executing something, wait until finished to remove it
         # We simply replace the execution queue
-        self._queue = [opRemove, opFinish]
-        return self.__executeQueue()
+        self._queue = [Operation.REMOVE, Operation.FINISH]
+        return self._execute_queue()
 
     def cancel(self) -> str:
         """
@@ -429,22 +433,22 @@ class OGDeployment(services.UserService):
         return self.destroy()
 
     @staticmethod
-    def __op2str(op: int) -> str:
+    def __op2str(op: Operation) -> str:
         return {
-            opCreate: 'create',
-            opRemove: 'remove',
-            opError: 'error',
-            opFinish: 'finish',
-            opRetry: 'retry',
+            Operation.CREATE: 'create',
+            Operation.REMOVE: 'remove',
+            Operation.ERROR: 'error',
+            Operation.FINISH: 'finish',
+            Operation.RETRY: 'retry',
         }.get(op, '????')
 
-    def __debug(self, txt) -> None:
+    def _debug(self, txt) -> None:
         logger.debug(
             'State at %s: name: %s, ip: %s, mac: %s, machine:%s, queue: %s',
             txt,
             self._name,
             self._ip,
             self._mac,
-            self._machineId,
+            self._machine_id,
             [OGDeployment.__op2str(op) for op in self._queue],
         )
