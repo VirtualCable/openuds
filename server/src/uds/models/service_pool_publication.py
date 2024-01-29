@@ -36,7 +36,6 @@ import typing
 import collections.abc
 
 from django.db import models
-import public
 
 from uds.core.managers import publication_manager
 from uds.core.types.states import State
@@ -114,7 +113,7 @@ class ServicePoolPublication(UUIDModel):
         """
         Returns an environment valid for the record this object represents
         """
-        return Environment.get_environment_for_table(self._meta.verbose_name, self.id)  # type: ignore
+        return Environment.get_environment_for_table_record(self._meta.verbose_name, self.id)  # type: ignore
 
     def get_instance(self) -> 'services.Publication':
         """

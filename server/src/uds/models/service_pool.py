@@ -165,7 +165,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         Returns an environment valid for the record this object represents
         """
-        return Environment.get_environment_for_table(self._meta.verbose_name, self.id)  # type: ignore
+        return Environment.get_environment_for_table_record(self._meta.verbose_name, self.id)  # type: ignore
 
     def active_publication(self) -> typing.Optional['ServicePoolPublication']:
         """

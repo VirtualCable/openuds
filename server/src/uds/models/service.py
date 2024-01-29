@@ -103,7 +103,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         """
         Returns an environment valid for the record this object represents
         """
-        return Environment.get_environment_for_table(
+        return Environment.get_environment_for_table_record(
             self._meta.verbose_name,  # type: ignore
             self.id,
             {

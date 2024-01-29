@@ -177,7 +177,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
 
         (see related classes uds.core.util.unique_name_generator and uds.core.util.unique_mac_generator)
         """
-        return Environment.get_environment_for_table(
+        return Environment.get_environment_for_table_record(
             self._meta.verbose_name,  # type: ignore  # pylint: disable=no-member
             self.id,
             {

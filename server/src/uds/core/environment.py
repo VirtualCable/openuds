@@ -31,6 +31,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import secrets
 import collections.abc
 
 
@@ -51,6 +52,7 @@ class Environment:
     not stored with main module data.
     The environment is composed of a "cache" and a "storage". First are volatile data, while second are persistent data.
     """
+
     __slots__ = ['_key', '_cache', '_storage', '_id_generators']
 
     _key: str
@@ -124,10 +126,10 @@ class Environment:
             v.release()
 
     @staticmethod
-    def get_environment_for_table(
-        tblName,
-        id_,
-        idGeneratorsTypes: typing.Optional[dict[str, typing.Any]] = None,
+    def get_environment_for_table_record(
+        table_name: str,
+        record_id: 'str|int|None' = None,
+        id_generator_types: typing.Optional[dict[str, typing.Any]] = None,
     ) -> 'Environment':
         """
         From a table name, and a id, tries to load the associated environment or creates a new
@@ -138,13 +140,17 @@ class Environment:
         @param idGeneratorsTypes: Associated Generators. Defaults to none
         @return: Obtained associated environment (may be empty if none exists at database, but it will be valid)
         """
-        if idGeneratorsTypes is None:
-            idGeneratorsTypes = {}
-        name = 't-' + tblName + '-' + str(id_)
-        idGenerators = {}
-        for k, v in idGeneratorsTypes.items():
-            idGenerators[k] = v(name)
-        return Environment(name, idGenerators)
+        if isinstance(record_id, int):  # So we keep zero int value
+            record_id = str(record_id)  
+        record_id = record_id or ''  # If no record id, get environment for table instead of record
+        
+        if id_generator_types is None:
+            id_generator_types = {}
+        name = 't-' + table_name + '-' + record_id
+        id_generators = {}
+        for k, v in id_generator_types.items():
+            id_generators[k] = v(name)
+        return Environment(name, id_generators)
 
     @staticmethod
     def get_environment_for_type(type_) -> 'Environment':
@@ -154,6 +160,19 @@ class Environment:
         @return Associated Environment
         """
         return Environment('type-' + str(type_))
+
+    @staticmethod
+    def get_unique_environment() -> 'Environment':
+        """
+        Obtains an enviromnet with an unique identifier
+        
+        Returns:
+            An environment with an unique identifier
+            
+        Note:
+            Use this with "with" statement to ensure that environment is cleared after use
+        """
+        return Environment(secrets.token_hex(16))
 
     @staticmethod
     def get_temporary_environment() -> 'Environment':
@@ -171,15 +190,23 @@ class Environment:
         """
         Provides global environment
         """
-        return Environment(
-            GLOBAL_ENV
-        )  # This environment is a global environment for general utility.
+        return Environment(GLOBAL_ENV)  # This environment is a global environment for general utility.
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self._cache.clear()
+        self._storage.clear()
+        for _, v in self._id_generators.items():
+            v.release()
 
 
 class Environmentable:
     """
     This is a base class provided for all objects that have an environment associated. These are mainly modules
     """
+
     __slots__ = ['_env']
 
     _env: Environment
