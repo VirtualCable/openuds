@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-17 16:09+0100\n"
+"POT-Creation-Date: 2024-01-30 20:51+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2020\n"
 "Language-Team: Catalan (http://app.transifex.com/openuds/openuds/language/"
@@ -1094,7 +1094,7 @@ msgstr "Usuaris actuals"
 #: services/Proxmox/provider.py:83 services/RDS_enterprise/provider.py:128
 #: services/VCloud_enterprise/provider.py:58
 #: services/Vmware_enterprise/provider.py:60 services/Xen/provider.py:107
-#: transports/HTML5RDP/html5rdp.py:100 transports/HTML5SSH/html5ssh.py:84
+#: transports/HTML5RDP/html5rdp.py:100 transports/HTML5SSH/html5ssh.py:82
 #: transports/HTML5VNC/html5vnc.py:87
 #: transports/NICEDCV_enterprise/nicedcv_base.py:46
 #: transports/NoMachine_enterprise/nomachine_base.py:63
@@ -1649,11 +1649,11 @@ msgstr ""
 "La classe de l'usuari o l'atribut d'ID de l'usuari LDAP probablement són "
 "erronis (el LDAP és un eDirectory?)"
 
-#: auths/IP/authenticator.py:48 auths/InternalDB/authenticator.py:87
+#: auths/IP/authenticator.py:48 auths/InternalDB/authenticator.py:85
 msgid "Accept proxy"
 msgstr "Acceptar proxy"
 
-#: auths/IP/authenticator.py:52 auths/InternalDB/authenticator.py:90
+#: auths/IP/authenticator.py:52 auths/InternalDB/authenticator.py:88
 msgid ""
 "If checked, requests via proxy will get FORWARDED ip address (take care with "
 "this bein checked, can take internal IP addresses from internet)"
@@ -1690,31 +1690,31 @@ msgstr "Tot sembla ser correcte"
 msgid "Internal Database"
 msgstr "Base de dades interna"
 
-#: auths/InternalDB/authenticator.py:60
+#: auths/InternalDB/authenticator.py:59
 msgid "Internal dabasase authenticator. Doesn't use external sources"
 msgstr "Autenticador de base de dades interna. No s'utilitzen fonts externes"
 
-#: auths/InternalDB/authenticator.py:71
+#: auths/InternalDB/authenticator.py:69
 msgid "Different user for each host"
 msgstr "Usuari diferent per a cada host"
 
-#: auths/InternalDB/authenticator.py:73
+#: auths/InternalDB/authenticator.py:71
 msgid "If checked, each host will have a different user name"
 msgstr "Si està seleccionat, cada host tindrà un nom d'usuari diferent"
 
-#: auths/InternalDB/authenticator.py:79
+#: auths/InternalDB/authenticator.py:77
 msgid "Reverse DNS"
 msgstr "DNS invers"
 
-#: auths/InternalDB/authenticator.py:81
+#: auths/InternalDB/authenticator.py:79
 msgid "If checked, the host will be reversed dns"
 msgstr "Si està seleccionat, el host serà DNS invers"
 
-#: auths/InternalDB/authenticator.py:182
+#: auths/InternalDB/authenticator.py:190
 msgid "Internal structures seems ok"
 msgstr "Les estructures internes semblen correctes"
 
-#: auths/InternalDB/authenticator.py:185
+#: auths/InternalDB/authenticator.py:193
 msgid "All seems fine in the authenticator."
 msgstr "Tot sembla correcte a l'autenticador"
 
@@ -3571,7 +3571,6 @@ msgid "Server Hint"
 msgstr "Pista del servidor"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:120
-#| msgid "In case of several AD servers, which one is preferred"
 msgid ""
 "In case of several AD servers, which one is preferred (only used for group "
 "and account removal operations)"
@@ -5467,9 +5466,15 @@ msgstr "IP simple estàtica"
 msgid "This service provides access to POWERED-ON Machine by IP"
 msgstr "Aquest servei proporciona accés a màquines engegades per IP"
 
-#: services/PhysicalMachines/service_single.py:87
+#: services/PhysicalMachines/service_single.py:90
+#: services/PhysicalMachines/service_single.py:99
 msgid "Invalid server used: \"{}\""
 msgstr "Utilitzat un servidor no vàlid: \"{}\""
+
+#: services/PhysicalMachines/service_single.py:94
+#| msgid "Invalid server used: \"{}\""
+msgid "Invalid mac used: \"{}\""
+msgstr "S&#39;ha utilitzat un Mac no vàlid: \"{}\""
 
 #: services/Proxmox/helpers.py:69
 msgid " shared"
@@ -6505,7 +6510,7 @@ msgstr "Servidor de túnel"
 
 #: transports/HTML5RDP/html5rdp.py:76
 #: transports/HTML5RDS_enterprise/html5rds.py:83
-#: transports/HTML5SSH/html5ssh.py:75 transports/HTML5VNC/html5vnc.py:78
+#: transports/HTML5SSH/html5ssh.py:74 transports/HTML5VNC/html5vnc.py:78
 msgid ""
 "Host of the tunnel server (use http/https & port if needed) as accesible "
 "from users"
@@ -6675,37 +6680,37 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:173
 #: transports/HTML5RDS_enterprise/html5rds.py:166
-#: transports/HTML5SSH/html5ssh.py:122
+#: transports/HTML5SSH/html5ssh.py:120
 msgid "File Sharing"
 msgstr "Compartició de fitxers"
 
 #: transports/HTML5RDP/html5rdp.py:175
 #: transports/HTML5RDS_enterprise/html5rds.py:168
-#: transports/HTML5SSH/html5ssh.py:124
+#: transports/HTML5SSH/html5ssh.py:122
 msgid "File upload/download redirection policy"
 msgstr "Política de redirecció de càrrega/descàrrega de fitxers"
 
 #: transports/HTML5RDP/html5rdp.py:178
 #: transports/HTML5RDS_enterprise/html5rds.py:171
-#: transports/HTML5SSH/html5ssh.py:127
+#: transports/HTML5SSH/html5ssh.py:125
 msgid "Disable file sharing"
 msgstr "Desactiva la compartició de fitxers"
 
 #: transports/HTML5RDP/html5rdp.py:179
 #: transports/HTML5RDS_enterprise/html5rds.py:172
-#: transports/HTML5SSH/html5ssh.py:128
+#: transports/HTML5SSH/html5ssh.py:126
 msgid "Allow download only"
 msgstr "Permet només la descàrrega"
 
 #: transports/HTML5RDP/html5rdp.py:180
 #: transports/HTML5RDS_enterprise/html5rds.py:173
-#: transports/HTML5SSH/html5ssh.py:129
+#: transports/HTML5SSH/html5ssh.py:127
 msgid "Allow upload only"
 msgstr "Permet només la càrrega"
 
 #: transports/HTML5RDP/html5rdp.py:181
 #: transports/HTML5RDS_enterprise/html5rds.py:174
-#: transports/HTML5SSH/html5ssh.py:130
+#: transports/HTML5SSH/html5ssh.py:128
 msgid "Enable file sharing"
 msgstr "Activa la compartició de fitxers"
 
@@ -6842,13 +6847,13 @@ msgstr "A prova de fallades"
 
 #: transports/HTML5RDP/html5rdp.py:231
 #: transports/HTML5RDS_enterprise/html5rds.py:222
-#: transports/HTML5SSH/html5ssh.py:174 transports/HTML5VNC/html5vnc.py:147
+#: transports/HTML5SSH/html5ssh.py:171 transports/HTML5VNC/html5vnc.py:147
 msgid "Ticket Validity"
 msgstr "Validesa del ticket"
 
 #: transports/HTML5RDP/html5rdp.py:235
 #: transports/HTML5RDS_enterprise/html5rds.py:226
-#: transports/HTML5SSH/html5ssh.py:178 transports/HTML5VNC/html5vnc.py:151
+#: transports/HTML5SSH/html5ssh.py:175 transports/HTML5VNC/html5vnc.py:151
 msgid ""
 "Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. "
 "The default value of 60 is recommended."
@@ -6858,21 +6863,21 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:244
 #: transports/HTML5RDS_enterprise/html5rds.py:235
-#: transports/HTML5SSH/html5ssh.py:186 transports/HTML5VNC/html5vnc.py:159
+#: transports/HTML5SSH/html5ssh.py:183 transports/HTML5VNC/html5vnc.py:159
 #: transports/URL/url_custom.py:82
 msgid "Force new HTML Window"
 msgstr "Forçar una nova finestra HTML"
 
 #: transports/HTML5RDP/html5rdp.py:245
 #: transports/HTML5RDS_enterprise/html5rds.py:236
-#: transports/HTML5SSH/html5ssh.py:187 transports/HTML5VNC/html5vnc.py:160
+#: transports/HTML5SSH/html5ssh.py:184 transports/HTML5VNC/html5vnc.py:160
 msgid "Select windows behavior for new connections on HTML5"
 msgstr ""
 "Seleccioneu el comportament de les finestres per a noves connexions a HTML5"
 
 #: transports/HTML5RDP/html5rdp.py:250
 #: transports/HTML5RDS_enterprise/html5rds.py:241
-#: transports/HTML5SSH/html5ssh.py:192 transports/HTML5VNC/html5vnc.py:165
+#: transports/HTML5SSH/html5ssh.py:189 transports/HTML5VNC/html5vnc.py:165
 msgid "Open every connection on the same window, but keeps UDS window."
 msgstr ""
 "Obrir totes les connexions a la mateixa finestra, però mantenir la finestra "
@@ -6880,13 +6885,13 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:253
 #: transports/HTML5RDS_enterprise/html5rds.py:244
-#: transports/HTML5SSH/html5ssh.py:195 transports/HTML5VNC/html5vnc.py:168
+#: transports/HTML5SSH/html5ssh.py:191 transports/HTML5VNC/html5vnc.py:168
 msgid "Force every connection to be opened on a new window."
 msgstr "Forçar l'obertura de totes les connexions en una finestra nova."
 
 #: transports/HTML5RDP/html5rdp.py:257
 #: transports/HTML5RDS_enterprise/html5rds.py:248
-#: transports/HTML5SSH/html5ssh.py:199 transports/HTML5VNC/html5vnc.py:172
+#: transports/HTML5SSH/html5ssh.py:194 transports/HTML5VNC/html5vnc.py:172
 msgid "Override UDS window and replace it with the connection."
 msgstr "Substitueix la finestra d'UDS per la connexió."
 
@@ -6955,7 +6960,7 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:323
 #: transports/HTML5RDS_enterprise/html5rds.py:374
-#: transports/HTML5SSH/html5ssh.py:214 transports/HTML5VNC/html5vnc.py:187
+#: transports/HTML5SSH/html5ssh.py:208 transports/HTML5VNC/html5vnc.py:187
 msgid "The server must be http or https"
 msgstr "El servidor ha de ser http o https"
 
@@ -7051,15 +7056,15 @@ msgstr "HTML5 SSH"
 msgid "SSH protocol using HTML5 client"
 msgstr "Protocol SSH amb el client HTML5"
 
-#: transports/HTML5SSH/html5ssh.py:86
+#: transports/HTML5SSH/html5ssh.py:84
 msgid "Username for SSH connection authentication."
 msgstr "Nom d&#39;usuari per a l&#39;autenticació de connexió SSH."
 
-#: transports/HTML5SSH/html5ssh.py:114
+#: transports/HTML5SSH/html5ssh.py:112
 msgid "SSH Command"
 msgstr "Comandament SSH"
 
-#: transports/HTML5SSH/html5ssh.py:117
+#: transports/HTML5SSH/html5ssh.py:115
 msgid ""
 "Command to execute on the remote server. If not provided, an interactive "
 "shell will be executed."
@@ -7067,42 +7072,45 @@ msgstr ""
 "Ordre per executar al servidor remot. Si no es proporciona, s&#39;executarà "
 "un shell interactiu."
 
-#: transports/HTML5SSH/html5ssh.py:135
+#: transports/HTML5SSH/html5ssh.py:133
 msgid "File Sharing Root"
 msgstr "Arrel per compartir fitxers"
 
-#: transports/HTML5SSH/html5ssh.py:138
+#: transports/HTML5SSH/html5ssh.py:135
 msgid ""
 "Root path for file sharing. If not provided, root directory will be used."
 msgstr ""
 "Ruta arrel per compartir fitxers. Si no es proporciona, s&#39;utilitzarà el "
 "directori arrel."
 
-#: transports/HTML5SSH/html5ssh.py:144
+#: transports/HTML5SSH/html5ssh.py:140
 msgid "SSH Server port"
 msgstr "Port del servidor SSH"
 
-#: transports/HTML5SSH/html5ssh.py:147
+#: transports/HTML5SSH/html5ssh.py:143
 msgid "Port of the SSH server."
 msgstr "Port del servidor SSH."
 
-#: transports/HTML5SSH/html5ssh.py:152
+#: transports/HTML5SSH/html5ssh.py:149
 msgid "SSH Host Key"
 msgstr "Clau d&#39;amfitrió SSH"
 
-#: transports/HTML5SSH/html5ssh.py:155
+#: transports/HTML5SSH/html5ssh.py:152
+#| msgid ""
+#| "Host key of the SSH server. If not provided, no verification of host "
+#| "identity is done."
 msgid ""
 "Host key of the SSH server. If not provided, no verification of host "
-"identity is done."
+"identity is done. (the line like in known_hosts file)"
 msgstr ""
 "Clau d&#39;amfitrió del servidor SSH. Si no es proporciona, no es verifica "
-"la identitat de l&#39;amfitrió."
+"la identitat de l&#39;amfitrió. (la línia com al fitxer known_hosts)"
 
-#: transports/HTML5SSH/html5ssh.py:161
+#: transports/HTML5SSH/html5ssh.py:158
 msgid "Server Keep Alive"
 msgstr "Servidor Keep Alive"
 
-#: transports/HTML5SSH/html5ssh.py:165
+#: transports/HTML5SSH/html5ssh.py:162
 msgid ""
 "Time in seconds between keep alive messages sent to server. If not provided, "
 "no keep alive messages are sent."
@@ -7931,7 +7939,7 @@ msgstr ""
 "El vostre servei s'està creant, si us plau, espereu uns segons mentre es "
 "completa.)"
 
-#: web/views/auth.py:182
+#: web/views/auth.py:183
 msgid "Authenticator does not provide information"
 msgstr "L'autenticador no proporciona informació"
 

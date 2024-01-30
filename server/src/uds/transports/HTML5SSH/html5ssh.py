@@ -71,9 +71,7 @@ class HTML5SSHTransport(transports.Transport):
     guacamoleServer = gui.TextField(
         label=_('Tunnel Server'),
         order=1,
-        tooltip=_(
-            'Host of the tunnel server (use http/https & port if needed) as accesible from users'
-        ),
+        tooltip=_('Host of the tunnel server (use http/https & port if needed) as accesible from users'),
         defvalue='https://',
         length=64,
         required=True,
@@ -134,9 +132,7 @@ class HTML5SSHTransport(transports.Transport):
     fileSharingRoot = gui.TextField(
         label=_('File Sharing Root'),
         order=32,
-        tooltip=_(
-            'Root path for file sharing. If not provided, root directory will be used.'
-        ),
+        tooltip=_('Root path for file sharing. If not provided, root directory will be used.'),
         tab=gui.PARAMETERS_TAB,
     )
     sshPort = gui.NumericField(
@@ -153,7 +149,7 @@ class HTML5SSHTransport(transports.Transport):
         label=_('SSH Host Key'),
         order=34,
         tooltip=_(
-            'Host key of the SSH server. If not provided, no verification of host identity is done.'
+            'Host key of the SSH server. If not provided, no verification of host identity is done. (the line like in known_hosts file)'
         ),
         tab=gui.PARAMETERS_TAB,
     )
@@ -192,9 +188,7 @@ class HTML5SSHTransport(transports.Transport):
                 gui.FALSE,
                 _('Open every connection on the same window, but keeps UDS window.'),
             ),
-            gui.choiceItem(
-                gui.TRUE, _('Force every connection to be opened on a new window.')
-            ),
+            gui.choiceItem(gui.TRUE, _('Force every connection to be opened on a new window.')),
             gui.choiceItem(
                 'overwrite',
                 _('Override UDS window and replace it with the connection.'),
@@ -211,9 +205,7 @@ class HTML5SSHTransport(transports.Transport):
         # Remove trailing / (one or more) from url if it exists from "guacamoleServer" field
         self.guacamoleServer.value = self.guacamoleServer.value.strip().rstrip('/')
         if self.guacamoleServer.value[0:4] != 'http':
-            raise transports.Transport.ValidationException(
-                _('The server must be http or https')
-            )
+            raise transports.Transport.ValidationException(_('The server must be http or https'))
 
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
         """
@@ -266,15 +258,15 @@ class HTML5SSHTransport(transports.Transport):
         # Filesharing using guacamole sftp
         if self.enableFileSharing.value != 'false':
             params['enable-sftp'] = 'true'
-            
+
             if self.fileSharingRoot.value.strip():
                 params['sftp-root-directory'] = self.fileSharingRoot.value.strip()
 
             if self.enableFileSharing.value not in ('down', 'true'):
-                 params['sftp-disable-download'] = 'true'
-            
+                params['sftp-disable-download'] = 'true'
+
             if self.enableFileSharing.value not in ('up', 'true'):
-                    params['sftp-disable-upload'] = 'true'
+                params['sftp-disable-upload'] = 'true'
 
         logger.debug('SSH Params: %s', params)
 
@@ -288,8 +280,4 @@ class HTML5SSHTransport(transports.Transport):
             onw = 'o_s_w=yes'
         onw = onw.format(hash(transport.name))
 
-        return str(
-            "{}/guacamole/#/?data={}.{}{}".format(
-                self.guacamoleServer.value, ticket, scrambler, onw
-            )
-        )
+        return str("{}/guacamole/#/?data={}.{}{}".format(self.guacamoleServer.value, ticket, scrambler, onw))

@@ -18,7 +18,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-17 16:09+0100\n"
+"POT-Creation-Date: 2024-01-30 20:51+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: Chinese (http://app.transifex.com/openuds/openuds/language/"
@@ -1062,7 +1062,7 @@ msgstr "目前的用户"
 #: services/Proxmox/provider.py:83 services/RDS_enterprise/provider.py:128
 #: services/VCloud_enterprise/provider.py:58
 #: services/Vmware_enterprise/provider.py:60 services/Xen/provider.py:107
-#: transports/HTML5RDP/html5rdp.py:100 transports/HTML5SSH/html5ssh.py:84
+#: transports/HTML5RDP/html5rdp.py:100 transports/HTML5SSH/html5ssh.py:82
 #: transports/HTML5VNC/html5vnc.py:87
 #: transports/NICEDCV_enterprise/nicedcv_base.py:46
 #: transports/NoMachine_enterprise/nomachine_base.py:63
@@ -1579,11 +1579,11 @@ msgid ""
 "Ldap user class or user id attr is probably wrong (Ldap is an eDirectory?)"
 msgstr "Ldap用户类或用户ID attr可能是错误的（Ldap是eDirectory？）"
 
-#: auths/IP/authenticator.py:48 auths/InternalDB/authenticator.py:87
+#: auths/IP/authenticator.py:48 auths/InternalDB/authenticator.py:85
 msgid "Accept proxy"
 msgstr "接受代理"
 
-#: auths/IP/authenticator.py:52 auths/InternalDB/authenticator.py:90
+#: auths/IP/authenticator.py:52 auths/InternalDB/authenticator.py:88
 msgid ""
 "If checked, requests via proxy will get FORWARDED ip address (take care with "
 "this bein checked, can take internal IP addresses from internet)"
@@ -1617,31 +1617,31 @@ msgstr "一切似乎都很好。"
 msgid "Internal Database"
 msgstr "内部数据库"
 
-#: auths/InternalDB/authenticator.py:60
+#: auths/InternalDB/authenticator.py:59
 msgid "Internal dabasase authenticator. Doesn't use external sources"
 msgstr "内部dabasase身份验证器。不使用外部资源"
 
-#: auths/InternalDB/authenticator.py:71
+#: auths/InternalDB/authenticator.py:69
 msgid "Different user for each host"
 msgstr "每个主机的用户不同"
 
-#: auths/InternalDB/authenticator.py:73
+#: auths/InternalDB/authenticator.py:71
 msgid "If checked, each host will have a different user name"
 msgstr "如果选中，则每个主机将具有不同的用户名"
 
-#: auths/InternalDB/authenticator.py:79
+#: auths/InternalDB/authenticator.py:77
 msgid "Reverse DNS"
 msgstr "反向DNS"
 
-#: auths/InternalDB/authenticator.py:81
+#: auths/InternalDB/authenticator.py:79
 msgid "If checked, the host will be reversed dns"
 msgstr "如果选中，则主机将被反转dns"
 
-#: auths/InternalDB/authenticator.py:182
+#: auths/InternalDB/authenticator.py:190
 msgid "Internal structures seems ok"
 msgstr "内部结构似乎没问题"
 
-#: auths/InternalDB/authenticator.py:185
+#: auths/InternalDB/authenticator.py:193
 msgid "All seems fine in the authenticator."
 msgstr "在验证器中一切似乎都很好。"
 
@@ -3411,7 +3411,6 @@ msgid "Server Hint"
 msgstr "服务器提示"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:120
-#| msgid "In case of several AD servers, which one is preferred"
 msgid ""
 "In case of several AD servers, which one is preferred (only used for group "
 "and account removal operations)"
@@ -5220,9 +5219,15 @@ msgstr "静态单IP"
 msgid "This service provides access to POWERED-ON Machine by IP"
 msgstr "此服务可通过IP访问POWERED-ON机器"
 
-#: services/PhysicalMachines/service_single.py:87
+#: services/PhysicalMachines/service_single.py:90
+#: services/PhysicalMachines/service_single.py:99
 msgid "Invalid server used: \"{}\""
 msgstr "使用的服务器无效：“{}”"
+
+#: services/PhysicalMachines/service_single.py:94
+#| msgid "Invalid server used: \"{}\""
+msgid "Invalid mac used: \"{}\""
+msgstr "使用的 Mac 无效：“{}”"
 
 #: services/Proxmox/helpers.py:69
 msgid " shared"
@@ -6207,7 +6212,7 @@ msgstr "隧道服务器"
 
 #: transports/HTML5RDP/html5rdp.py:76
 #: transports/HTML5RDS_enterprise/html5rds.py:83
-#: transports/HTML5SSH/html5ssh.py:75 transports/HTML5VNC/html5vnc.py:78
+#: transports/HTML5SSH/html5ssh.py:74 transports/HTML5VNC/html5vnc.py:78
 msgid ""
 "Host of the tunnel server (use http/https & port if needed) as accesible "
 "from users"
@@ -6357,37 +6362,37 @@ msgstr "如果选中，打印将被重定向到远程会话（如果客户端浏
 
 #: transports/HTML5RDP/html5rdp.py:173
 #: transports/HTML5RDS_enterprise/html5rds.py:166
-#: transports/HTML5SSH/html5ssh.py:122
+#: transports/HTML5SSH/html5ssh.py:120
 msgid "File Sharing"
 msgstr "文件共享"
 
 #: transports/HTML5RDP/html5rdp.py:175
 #: transports/HTML5RDS_enterprise/html5rds.py:168
-#: transports/HTML5SSH/html5ssh.py:124
+#: transports/HTML5SSH/html5ssh.py:122
 msgid "File upload/download redirection policy"
 msgstr "文件上传/下载重定向策略"
 
 #: transports/HTML5RDP/html5rdp.py:178
 #: transports/HTML5RDS_enterprise/html5rds.py:171
-#: transports/HTML5SSH/html5ssh.py:127
+#: transports/HTML5SSH/html5ssh.py:125
 msgid "Disable file sharing"
 msgstr "禁用文件共享"
 
 #: transports/HTML5RDP/html5rdp.py:179
 #: transports/HTML5RDS_enterprise/html5rds.py:172
-#: transports/HTML5SSH/html5ssh.py:128
+#: transports/HTML5SSH/html5ssh.py:126
 msgid "Allow download only"
 msgstr "只允许下载"
 
 #: transports/HTML5RDP/html5rdp.py:180
 #: transports/HTML5RDS_enterprise/html5rds.py:173
-#: transports/HTML5SSH/html5ssh.py:129
+#: transports/HTML5SSH/html5ssh.py:127
 msgid "Allow upload only"
 msgstr "只允许上传"
 
 #: transports/HTML5RDP/html5rdp.py:181
 #: transports/HTML5RDS_enterprise/html5rds.py:174
-#: transports/HTML5SSH/html5ssh.py:130
+#: transports/HTML5SSH/html5ssh.py:128
 msgid "Enable file sharing"
 msgstr "启用文件共享"
 
@@ -6524,13 +6529,13 @@ msgstr "故障安全"
 
 #: transports/HTML5RDP/html5rdp.py:231
 #: transports/HTML5RDS_enterprise/html5rds.py:222
-#: transports/HTML5SSH/html5ssh.py:174 transports/HTML5VNC/html5vnc.py:147
+#: transports/HTML5SSH/html5ssh.py:171 transports/HTML5VNC/html5vnc.py:147
 msgid "Ticket Validity"
 msgstr "机票有效期"
 
 #: transports/HTML5RDP/html5rdp.py:235
 #: transports/HTML5RDS_enterprise/html5rds.py:226
-#: transports/HTML5SSH/html5ssh.py:178 transports/HTML5VNC/html5vnc.py:151
+#: transports/HTML5SSH/html5ssh.py:175 transports/HTML5VNC/html5vnc.py:151
 msgid ""
 "Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. "
 "The default value of 60 is recommended."
@@ -6540,32 +6545,32 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:244
 #: transports/HTML5RDS_enterprise/html5rds.py:235
-#: transports/HTML5SSH/html5ssh.py:186 transports/HTML5VNC/html5vnc.py:159
+#: transports/HTML5SSH/html5ssh.py:183 transports/HTML5VNC/html5vnc.py:159
 #: transports/URL/url_custom.py:82
 msgid "Force new HTML Window"
 msgstr "强制新的HTML窗口"
 
 #: transports/HTML5RDP/html5rdp.py:245
 #: transports/HTML5RDS_enterprise/html5rds.py:236
-#: transports/HTML5SSH/html5ssh.py:187 transports/HTML5VNC/html5vnc.py:160
+#: transports/HTML5SSH/html5ssh.py:184 transports/HTML5VNC/html5vnc.py:160
 msgid "Select windows behavior for new connections on HTML5"
 msgstr "选择Windows行为以获取HTML5上的新连接"
 
 #: transports/HTML5RDP/html5rdp.py:250
 #: transports/HTML5RDS_enterprise/html5rds.py:241
-#: transports/HTML5SSH/html5ssh.py:192 transports/HTML5VNC/html5vnc.py:165
+#: transports/HTML5SSH/html5ssh.py:189 transports/HTML5VNC/html5vnc.py:165
 msgid "Open every connection on the same window, but keeps UDS window."
 msgstr "在同一窗口中打开每个连接，但保留UDS窗口。"
 
 #: transports/HTML5RDP/html5rdp.py:253
 #: transports/HTML5RDS_enterprise/html5rds.py:244
-#: transports/HTML5SSH/html5ssh.py:195 transports/HTML5VNC/html5vnc.py:168
+#: transports/HTML5SSH/html5ssh.py:191 transports/HTML5VNC/html5vnc.py:168
 msgid "Force every connection to be opened on a new window."
 msgstr "强制在新窗口中打开每个连接。"
 
 #: transports/HTML5RDP/html5rdp.py:257
 #: transports/HTML5RDS_enterprise/html5rds.py:248
-#: transports/HTML5SSH/html5ssh.py:199 transports/HTML5VNC/html5vnc.py:172
+#: transports/HTML5SSH/html5ssh.py:194 transports/HTML5VNC/html5vnc.py:172
 msgid "Override UDS window and replace it with the connection."
 msgstr "覆盖UDS窗口并将其替换为连接。"
 
@@ -6630,7 +6635,7 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:323
 #: transports/HTML5RDS_enterprise/html5rds.py:374
-#: transports/HTML5SSH/html5ssh.py:214 transports/HTML5VNC/html5vnc.py:187
+#: transports/HTML5SSH/html5ssh.py:208 transports/HTML5VNC/html5vnc.py:187
 msgid "The server must be http or https"
 msgstr "服务器必须是http或https"
 
@@ -6716,52 +6721,56 @@ msgstr "HTML5 SSH"
 msgid "SSH protocol using HTML5 client"
 msgstr "使用 HTML5 客户端的 SSH 协议"
 
-#: transports/HTML5SSH/html5ssh.py:86
+#: transports/HTML5SSH/html5ssh.py:84
 msgid "Username for SSH connection authentication."
 msgstr "SSH 连接认证的用户名。"
 
-#: transports/HTML5SSH/html5ssh.py:114
+#: transports/HTML5SSH/html5ssh.py:112
 msgid "SSH Command"
 msgstr "SSH 命令"
 
-#: transports/HTML5SSH/html5ssh.py:117
+#: transports/HTML5SSH/html5ssh.py:115
 msgid ""
 "Command to execute on the remote server. If not provided, an interactive "
 "shell will be executed."
 msgstr "在远程服务器上执行的命令。如果未提供，将执行交互式 shell。"
 
-#: transports/HTML5SSH/html5ssh.py:135
+#: transports/HTML5SSH/html5ssh.py:133
 msgid "File Sharing Root"
 msgstr "文件共享根"
 
-#: transports/HTML5SSH/html5ssh.py:138
+#: transports/HTML5SSH/html5ssh.py:135
 msgid ""
 "Root path for file sharing. If not provided, root directory will be used."
 msgstr "文件共享的根路径。如果未提供，将使用根目录。"
 
-#: transports/HTML5SSH/html5ssh.py:144
+#: transports/HTML5SSH/html5ssh.py:140
 msgid "SSH Server port"
 msgstr "SSH 服务器端口"
 
-#: transports/HTML5SSH/html5ssh.py:147
+#: transports/HTML5SSH/html5ssh.py:143
 msgid "Port of the SSH server."
 msgstr "SSH 服务器的端口。"
 
-#: transports/HTML5SSH/html5ssh.py:152
+#: transports/HTML5SSH/html5ssh.py:149
 msgid "SSH Host Key"
 msgstr "SSH 主机密钥"
 
-#: transports/HTML5SSH/html5ssh.py:155
+#: transports/HTML5SSH/html5ssh.py:152
+#| msgid ""
+#| "Host key of the SSH server. If not provided, no verification of host "
+#| "identity is done."
 msgid ""
 "Host key of the SSH server. If not provided, no verification of host "
-"identity is done."
-msgstr "SSH 服务器的主机密钥。如果未提供，则不会验证主机身份。"
+"identity is done. (the line like in known_hosts file)"
+msgstr "SSH 服务器的主机密钥。如果未提供，则不会验证主机身份。 "
+"（类似于known_hosts文件中的行）"
 
-#: transports/HTML5SSH/html5ssh.py:161
+#: transports/HTML5SSH/html5ssh.py:158
 msgid "Server Keep Alive"
 msgstr "服务器保持活动"
 
-#: transports/HTML5SSH/html5ssh.py:165
+#: transports/HTML5SSH/html5ssh.py:162
 msgid ""
 "Time in seconds between keep alive messages sent to server. If not provided, "
 "no keep alive messages are sent."
@@ -7528,7 +7537,7 @@ msgid ""
 "complete it.)"
 msgstr "我们正在创建您的服务，请等待几秒钟。）"
 
-#: web/views/auth.py:182
+#: web/views/auth.py:183
 msgid "Authenticator does not provide information"
 msgstr "Authenticator不提供信息"
 

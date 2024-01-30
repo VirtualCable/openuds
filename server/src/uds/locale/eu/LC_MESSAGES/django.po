@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-17 16:09+0100\n"
+"POT-Creation-Date: 2024-01-30 20:51+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>, 2015\n"
 "Language-Team: Basque (http://app.transifex.com/openuds/openuds/language/"
@@ -1092,7 +1092,7 @@ msgstr "Momentuko erabiltzaileak"
 #: services/Proxmox/provider.py:83 services/RDS_enterprise/provider.py:128
 #: services/VCloud_enterprise/provider.py:58
 #: services/Vmware_enterprise/provider.py:60 services/Xen/provider.py:107
-#: transports/HTML5RDP/html5rdp.py:100 transports/HTML5SSH/html5ssh.py:84
+#: transports/HTML5RDP/html5rdp.py:100 transports/HTML5SSH/html5ssh.py:82
 #: transports/HTML5VNC/html5vnc.py:87
 #: transports/NICEDCV_enterprise/nicedcv_base.py:46
 #: transports/NoMachine_enterprise/nomachine_base.py:63
@@ -1641,11 +1641,11 @@ msgstr ""
 "Ldap erabiltzailearen klasea edo erabiltzaile IDa ziurrenik oker dago (Ldap "
 "eDirectory bat da?)"
 
-#: auths/IP/authenticator.py:48 auths/InternalDB/authenticator.py:87
+#: auths/IP/authenticator.py:48 auths/InternalDB/authenticator.py:85
 msgid "Accept proxy"
 msgstr "Proxy-a onartu"
 
-#: auths/IP/authenticator.py:52 auths/InternalDB/authenticator.py:90
+#: auths/IP/authenticator.py:52 auths/InternalDB/authenticator.py:88
 msgid ""
 "If checked, requests via proxy will get FORWARDED ip address (take care with "
 "this bein checked, can take internal IP addresses from internet)"
@@ -1682,31 +1682,31 @@ msgstr "Dirudienez dena ondo dago"
 msgid "Internal Database"
 msgstr "Barneko datu-basea"
 
-#: auths/InternalDB/authenticator.py:60
+#: auths/InternalDB/authenticator.py:59
 msgid "Internal dabasase authenticator. Doesn't use external sources"
 msgstr "Barne dabasase autentikatzailea. Ez ditu kanpoko jatorriak erabiltzen"
 
-#: auths/InternalDB/authenticator.py:71
+#: auths/InternalDB/authenticator.py:69
 msgid "Different user for each host"
 msgstr "Ostalari bakoitzeko erabiltzaile ezberdinak"
 
-#: auths/InternalDB/authenticator.py:73
+#: auths/InternalDB/authenticator.py:71
 msgid "If checked, each host will have a different user name"
 msgstr "Aktibo izanez gero, erabiltzaile ezberdinak izango dituzte ostalariek"
 
-#: auths/InternalDB/authenticator.py:79
+#: auths/InternalDB/authenticator.py:77
 msgid "Reverse DNS"
 msgstr "Atzeranzko DNS-a"
 
-#: auths/InternalDB/authenticator.py:81
+#: auths/InternalDB/authenticator.py:79
 msgid "If checked, the host will be reversed dns"
 msgstr "Aktibo izanez gero, ostalariak atzeranzko dns-a izango du"
 
-#: auths/InternalDB/authenticator.py:182
+#: auths/InternalDB/authenticator.py:190
 msgid "Internal structures seems ok"
 msgstr "Barne egitura ondo dagoela dirudi"
 
-#: auths/InternalDB/authenticator.py:185
+#: auths/InternalDB/authenticator.py:193
 msgid "All seems fine in the authenticator."
 msgstr "Autentikatzailea ondo dagoela dirudi "
 
@@ -3547,7 +3547,6 @@ msgid "Server Hint"
 msgstr "Zerbitzariaren argibidea"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:120
-#| msgid "In case of several AD servers, which one is preferred"
 msgid ""
 "In case of several AD servers, which one is preferred (only used for group "
 "and account removal operations)"
@@ -5426,9 +5425,15 @@ msgid "This service provides access to POWERED-ON Machine by IP"
 msgstr ""
 "Zerbitzu honek IP bidez emandako POWERED-ON Machine sarbidea eskaintzen du"
 
-#: services/PhysicalMachines/service_single.py:87
+#: services/PhysicalMachines/service_single.py:90
+#: services/PhysicalMachines/service_single.py:99
 msgid "Invalid server used: \"{}\""
 msgstr "Erabilitako zerbitzari baliogabea: \"{}\""
+
+#: services/PhysicalMachines/service_single.py:94
+#| msgid "Invalid server used: \"{}\""
+msgid "Invalid mac used: \"{}\""
+msgstr "Erabilitako mac baliogabea: \"{}\""
 
 #: services/Proxmox/helpers.py:69
 msgid " shared"
@@ -6460,7 +6465,7 @@ msgstr "Tunel zerbitzaria"
 
 #: transports/HTML5RDP/html5rdp.py:76
 #: transports/HTML5RDS_enterprise/html5rds.py:83
-#: transports/HTML5SSH/html5ssh.py:75 transports/HTML5VNC/html5vnc.py:78
+#: transports/HTML5SSH/html5ssh.py:74 transports/HTML5VNC/html5vnc.py:78
 msgid ""
 "Host of the tunnel server (use http/https & port if needed) as accesible "
 "from users"
@@ -6627,37 +6632,37 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:173
 #: transports/HTML5RDS_enterprise/html5rds.py:166
-#: transports/HTML5SSH/html5ssh.py:122
+#: transports/HTML5SSH/html5ssh.py:120
 msgid "File Sharing"
 msgstr "Fitxategiak partekatzea"
 
 #: transports/HTML5RDP/html5rdp.py:175
 #: transports/HTML5RDS_enterprise/html5rds.py:168
-#: transports/HTML5SSH/html5ssh.py:124
+#: transports/HTML5SSH/html5ssh.py:122
 msgid "File upload/download redirection policy"
 msgstr "Fitxategiak kargatzeko / deskargatzeko birbideratze politika"
 
 #: transports/HTML5RDP/html5rdp.py:178
 #: transports/HTML5RDS_enterprise/html5rds.py:171
-#: transports/HTML5SSH/html5ssh.py:127
+#: transports/HTML5SSH/html5ssh.py:125
 msgid "Disable file sharing"
 msgstr "Desgaitu fitxategiak partekatzea"
 
 #: transports/HTML5RDP/html5rdp.py:179
 #: transports/HTML5RDS_enterprise/html5rds.py:172
-#: transports/HTML5SSH/html5ssh.py:128
+#: transports/HTML5SSH/html5ssh.py:126
 msgid "Allow download only"
 msgstr "Baimendu deskargatzea soilik"
 
 #: transports/HTML5RDP/html5rdp.py:180
 #: transports/HTML5RDS_enterprise/html5rds.py:173
-#: transports/HTML5SSH/html5ssh.py:129
+#: transports/HTML5SSH/html5ssh.py:127
 msgid "Allow upload only"
 msgstr "Baimendu kargatzea soilik"
 
 #: transports/HTML5RDP/html5rdp.py:181
 #: transports/HTML5RDS_enterprise/html5rds.py:174
-#: transports/HTML5SSH/html5ssh.py:130
+#: transports/HTML5SSH/html5ssh.py:128
 msgid "Enable file sharing"
 msgstr "Gaitu fitxategiak partekatzea"
 
@@ -6794,13 +6799,13 @@ msgstr "hutsegiteen aurkako"
 
 #: transports/HTML5RDP/html5rdp.py:231
 #: transports/HTML5RDS_enterprise/html5rds.py:222
-#: transports/HTML5SSH/html5ssh.py:174 transports/HTML5VNC/html5vnc.py:147
+#: transports/HTML5SSH/html5ssh.py:171 transports/HTML5VNC/html5vnc.py:147
 msgid "Ticket Validity"
 msgstr "Txartelaren balioa"
 
 #: transports/HTML5RDP/html5rdp.py:235
 #: transports/HTML5RDS_enterprise/html5rds.py:226
-#: transports/HTML5SSH/html5ssh.py:178 transports/HTML5VNC/html5vnc.py:151
+#: transports/HTML5SSH/html5ssh.py:175 transports/HTML5VNC/html5vnc.py:151
 msgid ""
 "Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. "
 "The default value of 60 is recommended."
@@ -6810,32 +6815,32 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:244
 #: transports/HTML5RDS_enterprise/html5rds.py:235
-#: transports/HTML5SSH/html5ssh.py:186 transports/HTML5VNC/html5vnc.py:159
+#: transports/HTML5SSH/html5ssh.py:183 transports/HTML5VNC/html5vnc.py:159
 #: transports/URL/url_custom.py:82
 msgid "Force new HTML Window"
 msgstr "HTML leiho berria behartu"
 
 #: transports/HTML5RDP/html5rdp.py:245
 #: transports/HTML5RDS_enterprise/html5rds.py:236
-#: transports/HTML5SSH/html5ssh.py:187 transports/HTML5VNC/html5vnc.py:160
+#: transports/HTML5SSH/html5ssh.py:184 transports/HTML5VNC/html5vnc.py:160
 msgid "Select windows behavior for new connections on HTML5"
 msgstr "Aukeratu leihoen portaera HTML5 konexio berrietarako"
 
 #: transports/HTML5RDP/html5rdp.py:250
 #: transports/HTML5RDS_enterprise/html5rds.py:241
-#: transports/HTML5SSH/html5ssh.py:192 transports/HTML5VNC/html5vnc.py:165
+#: transports/HTML5SSH/html5ssh.py:189 transports/HTML5VNC/html5vnc.py:165
 msgid "Open every connection on the same window, but keeps UDS window."
 msgstr "Ireki leiho berean konexio guztiak, baina UDS leihoa mantentzen du."
 
 #: transports/HTML5RDP/html5rdp.py:253
 #: transports/HTML5RDS_enterprise/html5rds.py:244
-#: transports/HTML5SSH/html5ssh.py:195 transports/HTML5VNC/html5vnc.py:168
+#: transports/HTML5SSH/html5ssh.py:191 transports/HTML5VNC/html5vnc.py:168
 msgid "Force every connection to be opened on a new window."
 msgstr "Behartu konexio guztiak leiho berri batean irekitzera."
 
 #: transports/HTML5RDP/html5rdp.py:257
 #: transports/HTML5RDS_enterprise/html5rds.py:248
-#: transports/HTML5SSH/html5ssh.py:199 transports/HTML5VNC/html5vnc.py:172
+#: transports/HTML5SSH/html5ssh.py:194 transports/HTML5VNC/html5vnc.py:172
 msgid "Override UDS window and replace it with the connection."
 msgstr "Gainidatzi UDS leihoa eta ordeztu konexioarekin."
 
@@ -6904,7 +6909,7 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:323
 #: transports/HTML5RDS_enterprise/html5rds.py:374
-#: transports/HTML5SSH/html5ssh.py:214 transports/HTML5VNC/html5vnc.py:187
+#: transports/HTML5SSH/html5ssh.py:208 transports/HTML5VNC/html5vnc.py:187
 msgid "The server must be http or https"
 msgstr "Zerbitzariak http edo https izan behar du"
 
@@ -7000,15 +7005,15 @@ msgstr "HTML5 SSH"
 msgid "SSH protocol using HTML5 client"
 msgstr "SSH protokoloa HTML5 bezeroa erabiliz"
 
-#: transports/HTML5SSH/html5ssh.py:86
+#: transports/HTML5SSH/html5ssh.py:84
 msgid "Username for SSH connection authentication."
 msgstr "SSH konexioaren autentifikaziorako erabiltzaile-izena."
 
-#: transports/HTML5SSH/html5ssh.py:114
+#: transports/HTML5SSH/html5ssh.py:112
 msgid "SSH Command"
 msgstr "SSH komandoa"
 
-#: transports/HTML5SSH/html5ssh.py:117
+#: transports/HTML5SSH/html5ssh.py:115
 msgid ""
 "Command to execute on the remote server. If not provided, an interactive "
 "shell will be executed."
@@ -7016,42 +7021,45 @@ msgstr ""
 "Urruneko zerbitzarian exekutatzeko komandoa. Ematen ez bada, shell "
 "interaktibo bat exekutatuko da."
 
-#: transports/HTML5SSH/html5ssh.py:135
+#: transports/HTML5SSH/html5ssh.py:133
 msgid "File Sharing Root"
 msgstr "Fitxategiak partekatzeko erroa"
 
-#: transports/HTML5SSH/html5ssh.py:138
+#: transports/HTML5SSH/html5ssh.py:135
 msgid ""
 "Root path for file sharing. If not provided, root directory will be used."
 msgstr ""
 "Fitxategiak partekatzeko erro bidea. Ematen ez bada, root direktorioa "
 "erabiliko da."
 
-#: transports/HTML5SSH/html5ssh.py:144
+#: transports/HTML5SSH/html5ssh.py:140
 msgid "SSH Server port"
 msgstr "SSH zerbitzariaren ataka"
 
-#: transports/HTML5SSH/html5ssh.py:147
+#: transports/HTML5SSH/html5ssh.py:143
 msgid "Port of the SSH server."
 msgstr "SSH zerbitzariaren ataka."
 
-#: transports/HTML5SSH/html5ssh.py:152
+#: transports/HTML5SSH/html5ssh.py:149
 msgid "SSH Host Key"
 msgstr "SSH ostalariaren gakoa"
 
-#: transports/HTML5SSH/html5ssh.py:155
+#: transports/HTML5SSH/html5ssh.py:152
+#| msgid ""
+#| "Host key of the SSH server. If not provided, no verification of host "
+#| "identity is done."
 msgid ""
 "Host key of the SSH server. If not provided, no verification of host "
-"identity is done."
+"identity is done. (the line like in known_hosts file)"
 msgstr ""
 "SSH zerbitzariaren ostalariaren gakoa. Ematen ez bada, ez da ostalariaren "
-"identitatea egiaztatzen."
+"identitatea egiaztatzen. (known_hosts fitxategian bezalako lerroa)"
 
-#: transports/HTML5SSH/html5ssh.py:161
+#: transports/HTML5SSH/html5ssh.py:158
 msgid "Server Keep Alive"
 msgstr "Zerbitzaria Keep Alive"
 
-#: transports/HTML5SSH/html5ssh.py:165
+#: transports/HTML5SSH/html5ssh.py:162
 msgid ""
 "Time in seconds between keep alive messages sent to server. If not provided, "
 "no keep alive messages are sent."
@@ -7867,7 +7875,7 @@ msgstr ""
 "Zure zerbitzua sortzen ari da, mesedez, itxaron segundo batzuk betetzen "
 "dugun bitartean.)"
 
-#: web/views/auth.py:182
+#: web/views/auth.py:183
 msgid "Authenticator does not provide information"
 msgstr "Autentikatzaileak ez du informaziorik eman."
 

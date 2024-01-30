@@ -33,7 +33,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-17 16:09+0100\n"
+"POT-Creation-Date: 2024-01-30 20:51+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier Gomez <jgomez@virtualcable.es>, 2021-2023\n"
 "Language-Team: Spanish (http://app.transifex.com/openuds/openuds/language/"
@@ -1107,7 +1107,7 @@ msgstr "Usuarios actuales"
 #: services/Proxmox/provider.py:83 services/RDS_enterprise/provider.py:128
 #: services/VCloud_enterprise/provider.py:58
 #: services/Vmware_enterprise/provider.py:60 services/Xen/provider.py:107
-#: transports/HTML5RDP/html5rdp.py:100 transports/HTML5SSH/html5ssh.py:84
+#: transports/HTML5RDP/html5rdp.py:100 transports/HTML5SSH/html5ssh.py:82
 #: transports/HTML5VNC/html5vnc.py:87
 #: transports/NICEDCV_enterprise/nicedcv_base.py:46
 #: transports/NoMachine_enterprise/nomachine_base.py:63
@@ -1660,11 +1660,11 @@ msgstr ""
 "La clase de usuario LDAP o el atributo id de usuario son probablemente "
 "incorrectos (¿Ldap es un eDirectory?)"
 
-#: auths/IP/authenticator.py:48 auths/InternalDB/authenticator.py:87
+#: auths/IP/authenticator.py:48 auths/InternalDB/authenticator.py:85
 msgid "Accept proxy"
 msgstr "Aceptar proxy"
 
-#: auths/IP/authenticator.py:52 auths/InternalDB/authenticator.py:90
+#: auths/IP/authenticator.py:52 auths/InternalDB/authenticator.py:88
 msgid ""
 "If checked, requests via proxy will get FORWARDED ip address (take care with "
 "this bein checked, can take internal IP addresses from internet)"
@@ -1701,31 +1701,31 @@ msgstr "Parece que todo está bien."
 msgid "Internal Database"
 msgstr "Base de datos interna"
 
-#: auths/InternalDB/authenticator.py:60
+#: auths/InternalDB/authenticator.py:59
 msgid "Internal dabasase authenticator. Doesn't use external sources"
 msgstr "Autenticador de base de datos interna. No usa fuentes externas"
 
-#: auths/InternalDB/authenticator.py:71
+#: auths/InternalDB/authenticator.py:69
 msgid "Different user for each host"
 msgstr "Diferente usuario para cada host"
 
-#: auths/InternalDB/authenticator.py:73
+#: auths/InternalDB/authenticator.py:71
 msgid "If checked, each host will have a different user name"
 msgstr "Si está seleccionado, cada host tendrá un nombre de usuario diferente"
 
-#: auths/InternalDB/authenticator.py:79
+#: auths/InternalDB/authenticator.py:77
 msgid "Reverse DNS"
 msgstr "DNS Inversa"
 
-#: auths/InternalDB/authenticator.py:81
+#: auths/InternalDB/authenticator.py:79
 msgid "If checked, the host will be reversed dns"
 msgstr "Si está seleccionado, el host será DNS Inversa"
 
-#: auths/InternalDB/authenticator.py:182
+#: auths/InternalDB/authenticator.py:190
 msgid "Internal structures seems ok"
 msgstr "Las estructuras internas parecen correctas"
 
-#: auths/InternalDB/authenticator.py:185
+#: auths/InternalDB/authenticator.py:193
 msgid "All seems fine in the authenticator."
 msgstr "Parace que todo funciona correctamente en el autenticador. "
 
@@ -3583,7 +3583,6 @@ msgid "Server Hint"
 msgstr "Sugerencia de Server"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:120
-#| msgid "In case of several AD servers, which one is preferred"
 msgid ""
 "In case of several AD servers, which one is preferred (only used for group "
 "and account removal operations)"
@@ -5474,9 +5473,15 @@ msgstr "Estatica, IP Simple"
 msgid "This service provides access to POWERED-ON Machine by IP"
 msgstr "Este servicio proporciona acceso a máquinas ENCENDIDAS por IP"
 
-#: services/PhysicalMachines/service_single.py:87
+#: services/PhysicalMachines/service_single.py:90
+#: services/PhysicalMachines/service_single.py:99
 msgid "Invalid server used: \"{}\""
 msgstr "Se utilizó un servidor no válido: \"{}\""
+
+#: services/PhysicalMachines/service_single.py:94
+#| msgid "Invalid server used: \"{}\""
+msgid "Invalid mac used: \"{}\""
+msgstr "Se utilizó una Mac no válida: \"{}\""
 
 #: services/Proxmox/helpers.py:69
 msgid " shared"
@@ -6505,7 +6510,7 @@ msgstr "Servidor de túnel"
 
 #: transports/HTML5RDP/html5rdp.py:76
 #: transports/HTML5RDS_enterprise/html5rds.py:83
-#: transports/HTML5SSH/html5ssh.py:75 transports/HTML5VNC/html5vnc.py:78
+#: transports/HTML5SSH/html5ssh.py:74 transports/HTML5VNC/html5vnc.py:78
 msgid ""
 "Host of the tunnel server (use http/https & port if needed) as accesible "
 "from users"
@@ -6674,37 +6679,37 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:173
 #: transports/HTML5RDS_enterprise/html5rds.py:166
-#: transports/HTML5SSH/html5ssh.py:122
+#: transports/HTML5SSH/html5ssh.py:120
 msgid "File Sharing"
 msgstr "Compartición de archivos"
 
 #: transports/HTML5RDP/html5rdp.py:175
 #: transports/HTML5RDS_enterprise/html5rds.py:168
-#: transports/HTML5SSH/html5ssh.py:124
+#: transports/HTML5SSH/html5ssh.py:122
 msgid "File upload/download redirection policy"
 msgstr "Política de redireccionamiento de carga/descarga de archivos"
 
 #: transports/HTML5RDP/html5rdp.py:178
 #: transports/HTML5RDS_enterprise/html5rds.py:171
-#: transports/HTML5SSH/html5ssh.py:127
+#: transports/HTML5SSH/html5ssh.py:125
 msgid "Disable file sharing"
 msgstr "Deshabilitar el uso compartido de archivos"
 
 #: transports/HTML5RDP/html5rdp.py:179
 #: transports/HTML5RDS_enterprise/html5rds.py:172
-#: transports/HTML5SSH/html5ssh.py:128
+#: transports/HTML5SSH/html5ssh.py:126
 msgid "Allow download only"
 msgstr "Permitir solo descarga"
 
 #: transports/HTML5RDP/html5rdp.py:180
 #: transports/HTML5RDS_enterprise/html5rds.py:173
-#: transports/HTML5SSH/html5ssh.py:129
+#: transports/HTML5SSH/html5ssh.py:127
 msgid "Allow upload only"
 msgstr "Permitir solo la carga"
 
 #: transports/HTML5RDP/html5rdp.py:181
 #: transports/HTML5RDS_enterprise/html5rds.py:174
-#: transports/HTML5SSH/html5ssh.py:130
+#: transports/HTML5SSH/html5ssh.py:128
 msgid "Enable file sharing"
 msgstr "Habilitar el uso compartido de archivos"
 
@@ -6841,13 +6846,13 @@ msgstr "A prueba de fallos"
 
 #: transports/HTML5RDP/html5rdp.py:231
 #: transports/HTML5RDS_enterprise/html5rds.py:222
-#: transports/HTML5SSH/html5ssh.py:174 transports/HTML5VNC/html5vnc.py:147
+#: transports/HTML5SSH/html5ssh.py:171 transports/HTML5VNC/html5vnc.py:147
 msgid "Ticket Validity"
 msgstr "Validez del ticket"
 
 #: transports/HTML5RDP/html5rdp.py:235
 #: transports/HTML5RDS_enterprise/html5rds.py:226
-#: transports/HTML5SSH/html5ssh.py:178 transports/HTML5VNC/html5vnc.py:151
+#: transports/HTML5SSH/html5ssh.py:175 transports/HTML5VNC/html5vnc.py:151
 msgid ""
 "Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. "
 "The default value of 60 is recommended."
@@ -6858,21 +6863,21 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:244
 #: transports/HTML5RDS_enterprise/html5rds.py:235
-#: transports/HTML5SSH/html5ssh.py:186 transports/HTML5VNC/html5vnc.py:159
+#: transports/HTML5SSH/html5ssh.py:183 transports/HTML5VNC/html5vnc.py:159
 #: transports/URL/url_custom.py:82
 msgid "Force new HTML Window"
 msgstr "Forzar nueva ventana HTML"
 
 #: transports/HTML5RDP/html5rdp.py:245
 #: transports/HTML5RDS_enterprise/html5rds.py:236
-#: transports/HTML5SSH/html5ssh.py:187 transports/HTML5VNC/html5vnc.py:160
+#: transports/HTML5SSH/html5ssh.py:184 transports/HTML5VNC/html5vnc.py:160
 msgid "Select windows behavior for new connections on HTML5"
 msgstr ""
 "Seleccione el comportamiento de Windows para nuevas conexiones en HTML5"
 
 #: transports/HTML5RDP/html5rdp.py:250
 #: transports/HTML5RDS_enterprise/html5rds.py:241
-#: transports/HTML5SSH/html5ssh.py:192 transports/HTML5VNC/html5vnc.py:165
+#: transports/HTML5SSH/html5ssh.py:189 transports/HTML5VNC/html5vnc.py:165
 msgid "Open every connection on the same window, but keeps UDS window."
 msgstr ""
 "Abre todas las conexiones en la misma ventana, pero mantiene la ventana de "
@@ -6880,13 +6885,13 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:253
 #: transports/HTML5RDS_enterprise/html5rds.py:244
-#: transports/HTML5SSH/html5ssh.py:195 transports/HTML5VNC/html5vnc.py:168
+#: transports/HTML5SSH/html5ssh.py:191 transports/HTML5VNC/html5vnc.py:168
 msgid "Force every connection to be opened on a new window."
 msgstr "Fuerza que todas las conexiones se abran en una nueva ventana."
 
 #: transports/HTML5RDP/html5rdp.py:257
 #: transports/HTML5RDS_enterprise/html5rds.py:248
-#: transports/HTML5SSH/html5ssh.py:199 transports/HTML5VNC/html5vnc.py:172
+#: transports/HTML5SSH/html5ssh.py:194 transports/HTML5VNC/html5vnc.py:172
 msgid "Override UDS window and replace it with the connection."
 msgstr "Anule la ventana UDS y reemplácela con la conexión."
 
@@ -6955,7 +6960,7 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:323
 #: transports/HTML5RDS_enterprise/html5rds.py:374
-#: transports/HTML5SSH/html5ssh.py:214 transports/HTML5VNC/html5vnc.py:187
+#: transports/HTML5SSH/html5ssh.py:208 transports/HTML5VNC/html5vnc.py:187
 msgid "The server must be http or https"
 msgstr "El servidor debe ser http o https"
 
@@ -7051,15 +7056,15 @@ msgstr "HTML5 SSH"
 msgid "SSH protocol using HTML5 client"
 msgstr "Protocolo SSH usando cliente HTML5"
 
-#: transports/HTML5SSH/html5ssh.py:86
+#: transports/HTML5SSH/html5ssh.py:84
 msgid "Username for SSH connection authentication."
 msgstr "Nombre de usuario para autenticación de conexión SSH."
 
-#: transports/HTML5SSH/html5ssh.py:114
+#: transports/HTML5SSH/html5ssh.py:112
 msgid "SSH Command"
 msgstr "Comando SSH"
 
-#: transports/HTML5SSH/html5ssh.py:117
+#: transports/HTML5SSH/html5ssh.py:115
 msgid ""
 "Command to execute on the remote server. If not provided, an interactive "
 "shell will be executed."
@@ -7067,42 +7072,46 @@ msgstr ""
 "Comando a ejecutar en el servidor remoto. Si no se proporciona, se ejecutará "
 "un shell interactivo."
 
-#: transports/HTML5SSH/html5ssh.py:135
+#: transports/HTML5SSH/html5ssh.py:133
 msgid "File Sharing Root"
 msgstr "Raíz para compartir archivos"
 
-#: transports/HTML5SSH/html5ssh.py:138
+#: transports/HTML5SSH/html5ssh.py:135
 msgid ""
 "Root path for file sharing. If not provided, root directory will be used."
 msgstr ""
 "Ruta raíz para compartir archivos. Si no se proporciona, se utilizará el "
 "directorio raíz."
 
-#: transports/HTML5SSH/html5ssh.py:144
+#: transports/HTML5SSH/html5ssh.py:140
 msgid "SSH Server port"
 msgstr "Puerto del servidor SSH"
 
-#: transports/HTML5SSH/html5ssh.py:147
+#: transports/HTML5SSH/html5ssh.py:143
 msgid "Port of the SSH server."
 msgstr "Puerto del servidor SSH."
 
-#: transports/HTML5SSH/html5ssh.py:152
+#: transports/HTML5SSH/html5ssh.py:149
 msgid "SSH Host Key"
 msgstr "Clave de host SSH"
 
-#: transports/HTML5SSH/html5ssh.py:155
+#: transports/HTML5SSH/html5ssh.py:152
+#| msgid ""
+#| "Host key of the SSH server. If not provided, no verification of host "
+#| "identity is done."
 msgid ""
 "Host key of the SSH server. If not provided, no verification of host "
-"identity is done."
+"identity is done. (the line like in known_hosts file)"
 msgstr ""
 "Clave de host del servidor SSH. Si no se proporciona, no se realiza ninguna "
-"verificación de la identidad del host."
+"verificación de la identidad del host. (la línea como en el archivo "
+"conocido_hosts)"
 
-#: transports/HTML5SSH/html5ssh.py:161
+#: transports/HTML5SSH/html5ssh.py:158
 msgid "Server Keep Alive"
 msgstr "Mantener vivo el servidor"
 
-#: transports/HTML5SSH/html5ssh.py:165
+#: transports/HTML5SSH/html5ssh.py:162
 msgid ""
 "Time in seconds between keep alive messages sent to server. If not provided, "
 "no keep alive messages are sent."
@@ -7924,7 +7933,7 @@ msgid ""
 msgstr ""
 "Su servicio se está creando (espere unos segundos mientras se completa)."
 
-#: web/views/auth.py:182
+#: web/views/auth.py:183
 msgid "Authenticator does not provide information"
 msgstr "El Autenticador no proporciona información"
 
