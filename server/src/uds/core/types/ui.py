@@ -110,7 +110,7 @@ class FieldPatternType(enum.StrEnum):
 
 
 class CallbackResultItem(typing.TypedDict):
-    # data = [{'name': 'datastore', 'choices': res}]
+    # {'name': 'datastore', 'choices': res}
     name: str
     choices: typing.List['ChoiceItem']
 

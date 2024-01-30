@@ -32,7 +32,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import collections.abc
 import logging
-from re import T
 import typing
 from datetime import datetime
 

@@ -135,8 +135,9 @@ class HTML5SSHTransport(transports.Transport):
     )
     ssh_host_key = gui.TextField(
         label=_('SSH Host Key'),
+        length=512,
         order=34,
-        tooltip=_('Host key of the SSH server. If not provided, no verification of host identity is done.'),
+        tooltip=_('Host key of the SSH server. If not provided, no verification of host identity is done. (as the line in known_hosts file)'),
         tab=types.ui.Tab.PARAMETERS,
         old_field_name='sshHostKey'
     )

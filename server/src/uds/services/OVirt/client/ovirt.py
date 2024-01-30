@@ -75,9 +75,9 @@ class Client:
     _password: str
     _timeout: int
     _cache: 'Cache'
-    _needsUsbFix = True
+    _needs_usb_fix = True
 
-    def __getKey(self, prefix: str = '') -> str:
+    def _generate_key(self, prefix: str = '') -> str:
         """
         Creates a key for the cache, using the prefix indicated as part of it
 
@@ -88,7 +88,7 @@ class Client:
             prefix, self._host, self._username, self._password, self._timeout
         )
 
-    def __getApi(self) -> ovirt.Connection:
+    def _api(self) -> ovirt.Connection:
         """
         Gets the api connection.
 
@@ -97,7 +97,7 @@ class Client:
 
         Must be accesed "locked", so we can safely alter cached_api and cached_api_key
         """
-        aKey = self.__getKey('o-host')
+        the_key = self._generate_key('o-host')
         # if cached_api_key == aKey:
         #    return cached_api
 
@@ -108,7 +108,7 @@ class Client:
                 # Nothing happens, may it was already disconnected
                 pass
         try:
-            Client.cached_api_key = aKey
+            Client.cached_api_key = the_key
             Client.cached_api = ovirt.Connection(
                 url='https://' + self._host + '/ovirt-engine/api',
                 username=self._username,
@@ -137,25 +137,25 @@ class Client:
         self._password = password
         self._timeout = int(timeout)
         self._cache = cache
-        self._needsUsbFix = True
+        self._needs_usb_fix = True
 
     def test(self) -> bool:
         try:
             lock.acquire(True)
-            return self.__getApi().test()
+            return self._api().test()
         except Exception as e:
             logger.error('Testing Server failed for oVirt: %s', e)
             return False
         finally:
             lock.release()
 
-    def isFullyFunctionalVersion(self) -> tuple[bool, str]:
+    def is_fully_functional_version(self) -> tuple[bool, str]:
         """
         '4.0 version is always functional (right now...)
         """
         return True, 'Test successfully passed'
 
-    def getVms(
+    def list_machines(
         self, force: bool = False
     ) -> list[collections.abc.MutableMapping[str, typing.Any]]:
         """
@@ -172,7 +172,7 @@ class Client:
                 'cluster_id'
 
         """
-        vmsKey = self.__getKey('o-vms')
+        vmsKey = self._generate_key('o-vms')
         val: typing.Optional[typing.Any] = self._cache.get(vmsKey)
 
         if val is not None and force is False:
@@ -181,7 +181,7 @@ class Client:
         try:
             lock.acquire(True)
 
-            api = self.__getApi()
+            api = self._api()
 
             vms: collections.abc.Iterable[typing.Any] = api.system_service().vms_service().list()  # type: ignore
 
@@ -210,7 +210,7 @@ class Client:
         finally:
             lock.release()
 
-    def getClusters(
+    def list_clusters(
         self, force: bool = False
     ) -> list[collections.abc.MutableMapping[str, typing.Any]]:
         """
@@ -228,7 +228,7 @@ class Client:
                 'datacenter_id'
 
         """
-        clsKey = self.__getKey('o-clusters')
+        clsKey = self._generate_key('o-clusters')
         val: typing.Optional[typing.Any] = self._cache.get(clsKey)
 
         if val and not force:
@@ -237,7 +237,7 @@ class Client:
         try:
             lock.acquire(True)
 
-            api = self.__getApi()
+            api = self._api()
 
             clusters: list[typing.Any] = api.system_service().clusters_service().list()  # type: ignore
 
@@ -254,7 +254,7 @@ class Client:
                 }
 
                 # Updates cache info for every single cluster
-                clKey = self.__getKey('o-cluster' + cluster.id)
+                clKey = self._generate_key('o-cluster' + cluster.id)
                 self._cache.put(clKey, val)
 
                 if dc is not None:
@@ -267,7 +267,7 @@ class Client:
         finally:
             lock.release()
 
-    def getClusterInfo(
+    def get_cluster_info(
         self, clusterId: str, force: bool = False
     ) -> collections.abc.MutableMapping[str, typing.Any]:
         """
@@ -285,7 +285,7 @@ class Client:
                 'id'
                 'datacenter_id'
         """
-        clKey = self.__getKey('o-cluster' + clusterId)
+        clKey = self._generate_key('o-cluster' + clusterId)
         val = self._cache.get(clKey)
 
         if val and not force:
@@ -294,7 +294,7 @@ class Client:
         try:
             lock.acquire(True)
 
-            api = self.__getApi()
+            api = self._api()
 
             c: typing.Any = api.system_service().clusters_service().service(clusterId).get()  # type: ignore
 
@@ -309,7 +309,7 @@ class Client:
         finally:
             lock.release()
 
-    def getDatacenterInfo(
+    def get_datacenter_info(
         self, datacenterId: str, force: bool = False
     ) -> collections.abc.MutableMapping[str, typing.Any]:
         """
@@ -336,7 +336,7 @@ class Client:
                    'active' -> True or False
 
         """
-        dcKey = self.__getKey('o-dc' + datacenterId)
+        dcKey = self._generate_key('o-dc' + datacenterId)
         val = self._cache.get(dcKey)
 
         if val is not None and force is False:
@@ -345,7 +345,7 @@ class Client:
         try:
             lock.acquire(True)
 
-            api = self.__getApi()
+            api = self._api()
 
             datacenter_service = (
                 api.system_service().data_centers_service().service(datacenterId)
@@ -383,7 +383,7 @@ class Client:
         finally:
             lock.release()
 
-    def getStorageInfo(
+    def get_storage_info(
         self, storageId: str, force: bool = False
     ) -> collections.abc.MutableMapping[str, typing.Any]:
         """
@@ -405,7 +405,7 @@ class Client:
                # 'active' -> True or False --> This is not provided by api?? (api.storagedomains.get)
 
         """
-        sdKey = self.__getKey('o-sd' + storageId)
+        sdKey = self._generate_key('o-sd' + storageId)
         val = self._cache.get(sdKey)
 
         if val and not force:
@@ -414,7 +414,7 @@ class Client:
         try:
             lock.acquire(True)
 
-            api = self.__getApi()
+            api = self._api()
 
             dd: typing.Any = api.system_service().storage_domains_service().service(storageId).get()  # type: ignore
 
@@ -431,7 +431,7 @@ class Client:
         finally:
             lock.release()
 
-    def makeTemplate(
+    def create_template(
         self,
         name: str,
         comments: str,
@@ -467,7 +467,7 @@ class Client:
         try:
             lock.acquire(True)
 
-            api = self.__getApi()
+            api = self._api()
 
             # cluster = ov.clusters_service().service('00000002-0002-0002-0002-0000000002e4') # .get()
             # vm = ov.vms_service().service('e7ff4e00-b175-4e80-9c1f-e50a5e76d347') # .get()
@@ -506,7 +506,7 @@ class Client:
         finally:
             lock.release()
 
-    def getTemplateState(self, templateId: str) -> str:
+    def get_template_state(self, templateId: str) -> str:
         """
         Returns current template state.
         This method do not uses cache at all (it always tries to get template state from oVirt server)
@@ -521,7 +521,7 @@ class Client:
         try:
             lock.acquire(True)
 
-            api = self.__getApi()
+            api = self._api()
 
             try:
                 template: typing.Any = (
@@ -538,16 +538,16 @@ class Client:
         finally:
             lock.release()
 
-    def deployFromTemplate(
+    def deploy_from_template(
         self,
         name: str,
         comments: str,
-        templateId: str,
-        clusterId: str,
-        displayType: str,
-        usbType: str,
-        memoryMB: int,
-        guaranteedMB: int,
+        template_id: str,
+        cluster_id: str,
+        display_type: str,
+        usb_type: str,
+        memory_mb: int,
+        guaranteed_mb: int,
     ) -> str:
         """
         Deploys a virtual machine on selected cluster from selected template
@@ -567,24 +567,24 @@ class Client:
         logger.debug(
             'Deploying machine with name "%s" from template %s at cluster %s with display %s and usb %s, memory %s and guaranteed %s',
             name,
-            templateId,
-            clusterId,
-            displayType,
-            usbType,
-            memoryMB,
-            guaranteedMB,
+            template_id,
+            cluster_id,
+            display_type,
+            usb_type,
+            memory_mb,
+            guaranteed_mb,
         )
         try:
             lock.acquire(True)
 
-            api = self.__getApi()
+            api = self._api()
 
             logger.debug('Deploying machine %s', name)
 
-            cluster = ovirt.types.Cluster(id=clusterId)
-            template = ovirt.types.Template(id=templateId)
+            cluster = ovirt.types.Cluster(id=cluster_id)
+            template = ovirt.types.Template(id=template_id)
 
-            if self._needsUsbFix is False and usbType in (
+            if self._needs_usb_fix is False and usb_type in (
                 'native',
             ):  # Removed 'legacy', from 3.6 is not used anymore, and from 4.0 not available
                 usb = ovirt.types.Usb(enabled=True, type=ovirt.types.UsbType.NATIVE)
@@ -592,7 +592,7 @@ class Client:
                 usb = ovirt.types.Usb(enabled=False)
 
             memoryPolicy = ovirt.types.MemoryPolicy(
-                guaranteed=guaranteedMB * 1024 * 1024
+                guaranteed=guaranteed_mb * 1024 * 1024
             )
             par = ovirt.types.Vm(
                 name=name,
@@ -600,7 +600,7 @@ class Client:
                 template=template,
                 description=comments,
                 type=ovirt.types.VmType.DESKTOP,
-                memory=memoryMB * 1024 * 1024,
+                memory=memory_mb * 1024 * 1024,
                 memory_policy=memoryPolicy,
                 usb=usb,
             )  # display=display,
@@ -610,7 +610,7 @@ class Client:
         finally:
             lock.release()
 
-    def removeTemplate(self, templateId: str) -> None:
+    def remove_template(self, templateId: str) -> None:
         """
         Removes a template from ovirt server
 
@@ -619,14 +619,14 @@ class Client:
         try:
             lock.acquire(True)
 
-            api = self.__getApi()
+            api = self._api()
 
             api.system_service().templates_service().service(templateId).remove()  # type: ignore
             # This returns nothing, if it fails it raises an exception
         finally:
             lock.release()
 
-    def getMachineState(self, machineId: str) -> str:
+    def get_machine_state(self, machineId: str) -> str:
         """
         Returns current state of a machine (running, suspended, ...).
         This method do not uses cache at all (it always tries to get machine state from oVirt server)
@@ -645,7 +645,7 @@ class Client:
         try:
             lock.acquire(True)
 
-            api = self.__getApi()
+            api = self._api()
 
             try:
                 vm = api.system_service().vms_service().service(machineId).get()  # type: ignore
@@ -660,7 +660,7 @@ class Client:
         finally:
             lock.release()
 
-    def startMachine(self, machineId: str) -> None:
+    def start_machine(self, machineId: str) -> None:
         """
         Tries to start a machine. No check is done, it is simply requested to oVirt.
 
@@ -674,7 +674,7 @@ class Client:
         try:
             lock.acquire(True)
 
-            api = self.__getApi()
+            api = self._api()
 
             vmService: typing.Any = (
                 api.system_service().vms_service().service(machineId)
@@ -688,7 +688,7 @@ class Client:
         finally:
             lock.release()
 
-    def stopMachine(self, machineId: str) -> None:
+    def stop_machine(self, machineId: str) -> None:
         """
         Tries to start a machine. No check is done, it is simply requested to oVirt
 
@@ -700,7 +700,7 @@ class Client:
         try:
             lock.acquire(True)
 
-            api = self.__getApi()
+            api = self._api()
 
             vmService: typing.Any = (
                 api.system_service().vms_service().service(machineId)
@@ -714,7 +714,7 @@ class Client:
         finally:
             lock.release()
 
-    def suspendMachine(self, machineId: str) -> None:
+    def suspend_machine(self, machineId: str) -> None:
         """
         Tries to start a machine. No check is done, it is simply requested to oVirt
 
@@ -726,7 +726,7 @@ class Client:
         try:
             lock.acquire(True)
 
-            api = self.__getApi()
+            api = self._api()
 
             vmService: typing.Any = (
                 api.system_service().vms_service().service(machineId)
@@ -740,7 +740,7 @@ class Client:
         finally:
             lock.release()
 
-    def removeMachine(self, machineId: str) -> None:
+    def remove_machine(self, machineId: str) -> None:
         """
         Tries to delete a machine. No check is done, it is simply requested to oVirt
 
@@ -752,7 +752,7 @@ class Client:
         try:
             lock.acquire(True)
 
-            api = self.__getApi()
+            api = self._api()
 
             vmService: typing.Any = (
                 api.system_service().vms_service().service(machineId)
@@ -766,14 +766,14 @@ class Client:
         finally:
             lock.release()
 
-    def updateMachineMac(self, machineId: str, macAddres: str) -> None:
+    def update_machine_mac(self, machineId: str, macAddres: str) -> None:
         """
         Changes the mac address of first nic of the machine to the one specified
         """
         try:
             lock.acquire(True)
 
-            api = self.__getApi()
+            api = self._api()
 
             vmService: typing.Any = (
                 api.system_service().vms_service().service(machineId)
@@ -794,13 +794,13 @@ class Client:
         finally:
             lock.release()
 
-    def fixUsb(self, machineId: str) -> None:
+    def fix_usb(self, machineId: str) -> None:
         # Fix for usb support
-        if self._needsUsbFix:
+        if self._needs_usb_fix:
             try:
                 lock.acquire(True)
 
-                api = self.__getApi()
+                api = self._api()
                 usb = ovirt.types.Usb(enabled=True, type=ovirt.types.UsbType.NATIVE)
                 vms: typing.Any = api.system_service().vms_service().service(machineId)
                 vmu = ovirt.types.Vm(usb=usb)
@@ -808,7 +808,7 @@ class Client:
             finally:
                 lock.release()
 
-    def getConsoleConnection(
+    def get_console_connection(
         self, machineId: str
     ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
         """
@@ -816,7 +816,7 @@ class Client:
         """
         try:
             lock.acquire(True)
-            api = self.__getApi()
+            api = self._api()
 
             vmService: typing.Any = (
                 api.system_service().vms_service().service(machineId)

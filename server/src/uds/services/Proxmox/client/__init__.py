@@ -294,7 +294,9 @@ class ProxmoxClient:
         key_fnc=caching_key_helper,
     )
     def list_node_gpu_devices(self, node: str, **kwargs) -> list[str]:
-        return [device['id'] for device in self._get(f'nodes/{node}/hardware/pci')['data'] if device.get('mdev')]
+        return [
+            device['id'] for device in self._get(f'nodes/{node}/hardware/pci')['data'] if device.get('mdev')
+        ]
 
     @ensure_connected
     def list_node_vgpus(self, node: str, **kwargs) -> list[typing.Any]:
@@ -387,9 +389,11 @@ class ProxmoxClient:
         # Check if mustHaveVGPUS is compatible with the node
         if must_have_vgpus is not None and must_have_vgpus != bool(self.list_node_gpu_devices(use_node)):
             raise ProxmoxNoGPUError(f'Node "{use_node}" does not have VGPUS and they are required')
-        
+
         if self.node_has_vgpus_available(use_node, vmInfo.vgpu_type):
-            raise ProxmoxNoGPUError(f'Node "{use_node}" does not have free VGPUS of type {vmInfo.vgpu_type} (requred by VM {vmInfo.name})')
+            raise ProxmoxNoGPUError(
+                f'Node "{use_node}" does not have free VGPUS of type {vmInfo.vgpu_type} (requred by VM {vmInfo.name})'
+            )
 
         # From normal vm, disable "linked cloning"
         if as_linked_clone and not vmInfo.template:
@@ -424,7 +428,7 @@ class ProxmoxClient:
 
     @ensure_connected
     @cached('hagrps', CACHE_DURATION, key_fnc=caching_key_helper)
-    def list_ha_groups(self) -> list[str]:
+    def list_ha_groups(self, **kwargs) -> list[str]:
         return [g['group'] for g in self._get('cluster/ha/groups')['data']]
 
     @ensure_connected
@@ -475,7 +479,9 @@ class ProxmoxClient:
         kwargs='node',
         key_fnc=caching_key_helper,
     )
-    def list_machines(self, node: typing.Union[None, str, collections.abc.Iterable[str]] = None) -> list[types.VMInfo]:
+    def list_machines(
+        self, node: typing.Union[None, str, collections.abc.Iterable[str]] = None, **kwargs
+    ) -> list[types.VMInfo]:
         nodeList: collections.abc.Iterable[str]
         if node is None:
             nodeList = [n.name for n in self.get_cluster_info().nodes if n.online]
@@ -672,8 +678,20 @@ class ProxmoxClient:
 
     @ensure_connected
     @cached('pools', CACHE_DURATION // 6, key_fnc=caching_key_helper)
-    def list_pools(self) -> list[types.PoolInfo]:
-        return [types.PoolInfo.from_dict(nodeStat) for nodeStat in self._get('pools')['data']]
+    def list_pools(self, **kwargs) -> list[types.PoolInfo]:
+        return [types.PoolInfo.from_dict(poolInfo) for poolInfo in self._get('pools')['data']]
+
+    @ensure_connected
+    @cached('pool', CACHE_DURATION, args=[1, 2], kwargs=['pool_id', 'retrieve_vm_names'], key_fnc=caching_key_helper)
+    def get_pool_info(self, pool_id: str, retrieve_vm_names: bool = False, **kwargs) -> types.PoolInfo:
+        pool_info = types.PoolInfo.from_dict(self._get(f'pools/{pool_id}')['data'])
+        if retrieve_vm_names:
+            for i in range(len(pool_info.members)):
+                try:
+                    pool_info.members[i] = pool_info.members[i]._replace(vmname=self.get_machine_info(pool_info.members[i].vmid).name or '')
+                except Exception:
+                    pool_info.members[i] = pool_info.members[i]._replace(vmname=f'VM-{pool_info.members[i].vmid}')
+        return pool_info
 
     @ensure_connected
     def get_console_connection(

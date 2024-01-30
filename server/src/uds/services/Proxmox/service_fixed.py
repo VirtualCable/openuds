@@ -33,12 +33,13 @@ import re
 import typing
 import collections.abc
 
-from django.utils.translation import gettext_noop as _
-from uds.core import services, types, consts
+from django.utils.translation import gettext_noop as _, gettext
+from uds.core import services, types, consts, exceptions
 from uds.core.ui import gui
-from uds.core.util import validators, log, fields
+from uds.core.util import validators, log
 from uds.core.util.cache import Cache
 from uds.core.util.decorators import cached
+from uds.core.workers import initialize
 
 from . import helpers
 from .deployment import ProxmoxDeployment
@@ -47,6 +48,7 @@ from .publication import ProxmoxPublication
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core.module import Module
+    from uds import models
 
     from . import client
     from .provider import ProxmoxProvider
@@ -54,7 +56,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public-methods
+class ProxmoxFixedService(services.Service):  # pylint: disable=too-many-public-methods
     """
     Proxmox Linked clones service. This is based on creating a template from selected vm, and then use it to
     """
@@ -62,11 +64,11 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    type_name = _('Proxmox Linked Clone')
+    type_name = _('Proxmox Fixed Machines')
     # : Type used internally to identify this provider
-    type_type = 'ProxmoxLinkedService'
+    type_type = 'ProxmoxFixedService'
     # : Description shown at administration interface for this provider
-    type_description = _('Proxmox Services based on templates and COW')
+    type_description = _('Proxmox Services based on fixed machines')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
@@ -105,96 +107,87 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
     allowed_protocols = types.transports.Protocol.generic_vdi(types.transports.Protocol.SPICE)
     services_type_provided = types.services.ServiceType.VDI
 
-    pool = gui.ChoiceField(
-        label=_("Pool"),
+    # Gui
+    token = gui.TextField(
         order=1,
-        tooltip=_('Pool that will contain UDS created vms'),
-        # tab=_('Machine'),
-        # required=True,
+        label=_('Service Token'),
+        length=16,
+        tooltip=_(
+            'Service token that will be used by actors to communicate with service. Leave empty for persistent assignation.'
+        ),
         default='',
+        required=False,
+        readonly=False,
     )
 
-    ha = gui.ChoiceField(
-        label=_('HA'),
-        order=2,
-        tooltip=_('Select if HA is enabled and HA group for machines of this service'),
-        readonly=True,
-    )
-
-    
-    soft_shutdown_field = fields.soft_shutdown_field()
-    
-    machine = gui.ChoiceField(
-        label=_("Base Machine"),
-        order=110,
+    pool = gui.ChoiceField(
+        label=_("Resource Pool"),
+        readonly=False,
+        order=20,
         fills={
-            'callback_name': 'pmFillResourcesFromMachine',
-            'function': helpers.get_storage,
-            'parameters': ['machine', 'prov_uuid'],
+            'callback_name': 'pmFillMachinesFromResource',
+            'function': helpers.get_machines,
+            'parameters': ['prov_uuid', 'pool'],
         },
-        tooltip=_('Service base machine'),
-        tab=_('Machine'),
+        tooltip=_('Resource Pool containing base machines'),
         required=True,
+        tab=_('Machines'),
+        old_field_name='resourcePool',
+    )
+    # Keep name as "machine" so we can use VCHelpers.getMachines
+    machines = gui.MultiChoiceField(
+        label=_("Machines"),
+        order=21,
+        tooltip=_('Machines for this service'),
+        required=True,
+        tab=_('Machines'),
+        rows=10,
     )
 
-    datastore = gui.ChoiceField(
-        label=_("Storage"),
-        readonly=False,
-        order=111,
-        tooltip=_('Storage for publications & machines.'),
-        tab=_('Machine'),
-        required=True,
+    use_snapshots = gui.CheckBoxField(
+        label=_('Use snapshots'),
+        default=False,
+        order=22,
+        tooltip=_('If active, UDS will try to create an snapshot on VM use and recover if on exit.'),
+        tab=_('Machines'),
+        old_field_name='useSnapshots',
     )
-
-    gpu = gui.ChoiceField(
-        label=_("GPU Availability"),
-        readonly=False,
-        order=112,
-        choices={
-            '0': _('Do not check'),
-            '1': _('Only if available'),
-            '2': _('Only if NOT available'),
-        },
-        tooltip=_('Storage for publications & machines.'),
-        tab=_('Machine'),
-        required=True,
-    )
-    
-    basename = fields.basename_field(order=115)
-    lenname = fields.lenname_field(order=116)
 
     prov_uuid = gui.HiddenField(value=None)
-    
+
+    def _get_assigned_machines(self) -> typing.Set[int]:
+        vals = self.storage.get_unpickle('vms')
+        logger.debug('Got storage VMS: %s', vals)
+        return vals or set()
+
+    def _save_assigned_machines(self, vals: typing.Set[int]) -> None:
+        logger.debug('Saving storage VMS: %s', vals)
+        self.storage.put_pickle('vms', vals)
+
     def initialize(self, values: 'Module.ValuesType') -> None:
+        """
+        Loads the assigned machines from storage
+        """
         if values:
-            self.basename.value = validators.validate_basename(
-                self.basename.value, length=self.lenname.as_int()
-            )
-            # if int(self.memory.value) < 128:
-            #     raise exceptions.ValidationException(_('The minimum allowed memory is 128 Mb'))
+            if not self.machines.value:
+                raise exceptions.ui.ValidationError(gettext('We need at least a machine'))
+
+            self.storage.put_pickle('maxDeployed', len(self.machines.as_list()))
+
+            # Remove machines not in values from "assigned" set
+            self._save_assigned_machines(self._get_assigned_machines() & set(self.machines.as_list()))
+            self.token.value = self.token.value.strip()
+        self.userservices_limit = self.storage.get_unpickle('maxDeployed')
 
     def init_gui(self) -> None:
         # Here we have to use "default values", cause values aren't used at form initialization
         # This is that value is always '', so if we want to change something, we have to do it
         # at defValue
-        self.prov_uuid.value = self.parent().db_obj().uuid
+        self.prov_uuid.value = self.parent().get_uuid()
 
-        # This is not the same case, values is not the "value" of the field, but
-        # the list of values shown because this is a "ChoiceField"
-        self.machine.set_choices(
-            [
-                gui.choice_item(str(m.vmid), f'{m.node}\\{m.name or m.vmid} ({m.vmid})')
-                for m in self.parent().list_machines()
-                if m.name and m.name[:3] != 'UDS'
-            ]
-        )
         self.pool.set_choices(
             [gui.choice_item('', _('None'))]
             + [gui.choice_item(p.poolid, p.poolid) for p in self.parent().list_pools()]
-        )
-        self.ha.set_choices(
-            [gui.choice_item('', _('Enabled')), gui.choice_item('__', _('Disabled'))]
-            + [gui.choice_item(group, group) for group in self.parent().list_ha_groups()]
         )
 
     def parent(self) -> 'ProxmoxProvider':
@@ -205,32 +198,6 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         Proxmox only allows machine names with [a-zA-Z0-9_-]
         """
         return re.sub("[^a-zA-Z0-9_-]", "-", name)
-
-    def make_template(self, vmId: int) -> None:
-        self.parent().create_template(vmId)
-
-    def clone_machine(self, name: str, description: str, vmId: int = -1) -> 'client.types.VmCreationResult':
-        name = self.sanitized_name(name)
-        pool = self.pool.value or None
-        if vmId == -1:  # vmId == -1 if cloning for template
-            return self.parent().clone_machine(
-                self.machine.value,
-                name,
-                description,
-                as_linked_clone=False,
-                target_storage=self.datastore.value,
-                target_pool=pool,
-            )
-
-        return self.parent().clone_machine(
-            vmId,
-            name,
-            description,
-            as_linked_clone=True,
-            target_storage=self.datastore.value,
-            target_pool=pool,
-            must_have_vgpus={'1': True, '2': False}.get(self.gpu.value, None),
-        )
 
     def get_machine_info(self, vmId: int) -> 'client.types.VMInfo':
         return self.parent().get_machine_info(vmId, self.pool.value.strip())
@@ -257,55 +224,68 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
     def shutdown_machine(self, vmId: int) -> 'client.types.UPID':
         return self.parent().shutdown_machine(vmId)
 
-    def remove_machine(self, vmId: int) -> 'client.types.UPID':
-        # First, remove from HA if needed
+    def get_machine_from_pool(self) -> int:
+        found_vmid: typing.Optional[int] = None
         try:
-            self.disable_ha(vmId)
+            assignedVmsSet = self._get_assigned_machines()
+            for k in self.machines.as_list():
+                checking_vmid = int(k)
+                if found_vmid not in assignedVmsSet:  # Not assigned
+                    # Check that the machine exists...
+                    try:
+                        vm_info = self.parent().get_machine_info(checking_vmid, self.pool.value.strip())
+                        found_vmid = checking_vmid
+                        break
+                    except Exception:  # Notifies on log, but skipt it
+                        self.parent().do_log(
+                            log.LogLevel.WARNING, 'Machine {} not accesible'.format(found_vmid)
+                        )
+                        logger.warning(
+                            'The service has machines that cannot be checked on vmware (connection error or machine has been deleted): %s',
+                            found_vmid,
+                        )
+
+            if found_vmid:
+                assignedVmsSet.add(found_vmid)
+                self._save_assigned_machines(assignedVmsSet)
+        except Exception:  #
+            raise Exception('No machine available')
+
+        if not found_vmid:
+            raise Exception('All machines from list already assigned.')
+
+        return found_vmid
+
+    def release_machine_from_pool(self, vmid: int) -> None:
+        try:
+            self._save_assigned_machines(self._get_assigned_machines() - {vmid})  # Sets operation
         except Exception as e:
-            logger.warning('Exception disabling HA for vm %s: %s', vmId, e)
-            self.do_log(level=log.LogLevel.WARNING, message=f'Exception disabling HA for vm {vmId}: {e}')
+            logger.warn('Cound not save assigned machines on vmware fixed pool: %s', e)
 
-        # And remove it
-        return self.parent().remove_machine(vmId)
+    def enumerate_assignables(self) -> list[tuple[str, str]]:
+        # Obtain machines names and ids for asignables
+        vms: dict[int, str] = {}
 
-    def enable_ha(self, vmId: int, started: bool = False) -> None:
-        if self.ha.value == '__':
-            return
-        self.parent().enable_ha(vmId, started, self.ha.value or None)
+        for member in self.parent().get_pool_info(self.pool.value.strip()).members:
+            vms[member.vmid] = member.vmname
 
-    def disable_ha(self, vmId: int) -> None:
-        if self.ha.value == '__':
-            return
-        self.parent().disable_ha(vmId)
+        assignedVmsSet = self._get_assigned_machines()
+        k: str
+        return [
+            (k, vms.get(int(k), 'Unknown!')) for k in self.machines.as_list() if int(k) not in assignedVmsSet
+        ]
 
-    def set_protection(self, vmId: int, node: typing.Optional[str] = None, protection: bool = False) -> None:
-        self.parent().set_protection(vmId, node, protection)
+    def assign_from_assignables(
+        self, assignable_id: str, user: 'models.User', user_deployment: 'services.UserService'
+    ) -> str:
+        userservice_instance: ProxmoxDeployment = typing.cast(ProxmoxDeployment, user_deployment)
+        assignedVmsSet = self._get_assigned_machines()
+        if assignable_id not in assignedVmsSet:
+            assignedVmsSet.add(int(assignable_id))
+            self._save_assigned_machines(assignedVmsSet)
+            return userservice_instance.assign(assignable_id)
 
-    def set_machine_mac(self, vmId: int, mac: str) -> None:
-        self.parent().set_machine_mac(vmId, mac)
-
-    def get_basename(self) -> str:
-        return self.basename.value
-
-    def get_lenname(self) -> int:
-        return int(self.lenname.value)
-
-    def get_macs_range(self) -> str:
-        """
-        Returns de selected mac range
-        """
-        return self.parent().get_macs_range()
-
-    def enable_ha_for_machines(self) -> bool:
-        return self.ha.value != '__'
-
-    def try_graceful_shutdown(self) -> bool:
-        return self.soft_shutdown_field.as_bool()
-
-    def get_console_connection(
-        self, machineId: str
-    ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
-        return self.parent().get_console_connection(machineId)
+        return userservice_instance.error('VM not available!')
 
     @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def is_avaliable(self) -> bool:

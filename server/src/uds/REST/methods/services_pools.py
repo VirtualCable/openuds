@@ -253,7 +253,7 @@ class ServicesPools(ModelHandler):
             val['tags'] = [tag.tag for tag in item.tags.all()]
             val['restrained'] = restrained
             val['permission'] = permissions.effective_permissions(self._user, item)
-            val['info'] = Services.serviceInfo(item.service)  # type: ignore
+            val['info'] = Services.service_info(item.service)  # type: ignore
             val['pool_group_id'] = poolGroupId
             val['pool_group_name'] = poolGroupName
             val['pool_group_thumb'] = poolGroupThumb

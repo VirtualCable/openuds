@@ -137,7 +137,7 @@ class Providers(ModelHandler):
             try:
                 perm = permissions.effective_permissions(self._user, s)
                 if perm >= uds.core.types.permissions.PermissionType.READ:
-                    yield DetailServices.serviceToDict(s, perm, True)
+                    yield DetailServices.service_to_dict(s, perm, True)
             except Exception:
                 logger.exception('Passed service cause type is unknown')
 
@@ -149,7 +149,7 @@ class Providers(ModelHandler):
             service = Service.objects.get(uuid=self._args[1])
             self.ensure_has_access(service.provider, uds.core.types.permissions.PermissionType.READ)
             perm = self.get_permissions(service.provider)
-            return DetailServices.serviceToDict(service, perm, True)
+            return DetailServices.service_to_dict(service, perm, True)
         except Exception:
             # logger.exception('Exception')
             return {}

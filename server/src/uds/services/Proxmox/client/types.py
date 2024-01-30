@@ -1,14 +1,13 @@
 import datetime
 import re
 import typing
-import dataclasses
 import collections.abc
 
 NETWORK_RE: typing.Final[typing.Pattern] = re.compile(r'([a-zA-Z0-9]+)=([^,]+)')  # May have vla id at end
 
 # Conversor from dictionary to NamedTuple
 CONVERSORS: typing.Final[collections.abc.MutableMapping[typing.Type, collections.abc.Callable]] = {
-    str: lambda x: str(x),
+    str: lambda x: str(x or ''),
     bool: lambda x: bool(x),
     int: lambda x: int(x or '0'),
     float: lambda x: float(x or '0'),
@@ -17,7 +16,7 @@ CONVERSORS: typing.Final[collections.abc.MutableMapping[typing.Type, collections
 
 
 def _from_dict(
-    type: type[typing.Any],
+    type: type[typing.NamedTuple],
     dictionary: collections.abc.MutableMapping[str, typing.Any],
     extra: typing.Optional[collections.abc.Mapping[str, typing.Any]] = None,
 ) -> typing.Any:
@@ -32,8 +31,8 @@ def _from_dict(
     )
 
 
-@dataclasses.dataclass(slots=True)
-class Cluster:
+# Need to be "NamedTuple"s because we use _fields attribute
+class Cluster(typing.NamedTuple):
     name: str
     version: str
     id: str
@@ -45,8 +44,7 @@ class Cluster:
         return _from_dict(Cluster, dictionary)
 
 
-@dataclasses.dataclass(slots=True)
-class Node:
+class Node(typing.NamedTuple):
     name: str
     online: bool
     local: bool
@@ -60,8 +58,7 @@ class Node:
         return _from_dict(Node, dictionary)
 
 
-@dataclasses.dataclass(slots=True)
-class NodeStats:
+class NodeStats(typing.NamedTuple):
     name: str
     status: str
     uptime: int
@@ -96,8 +93,7 @@ class NodeStats:
         )
 
 
-@dataclasses.dataclass(slots=True)
-class ClusterStatus:
+class ClusterStatus(typing.NamedTuple):
     cluster: typing.Optional[Cluster]
     nodes: list[Node]
 
@@ -115,8 +111,7 @@ class ClusterStatus:
         return ClusterStatus(cluster=cluster, nodes=nodes)
 
 
-@dataclasses.dataclass(slots=True)
-class UPID:
+class UPID(typing.NamedTuple):
     node: str
     pid: int
     pstart: int
@@ -142,8 +137,7 @@ class UPID:
         )
 
 
-@dataclasses.dataclass(slots=True)
-class TaskStatus:
+class TaskStatus(typing.NamedTuple):
     node: str
     pid: int
     pstart: int
@@ -172,8 +166,7 @@ class TaskStatus:
         return self.is_finished() and not self.is_completed()
 
 
-@dataclasses.dataclass(slots=True)
-class NetworkConfiguration:
+class NetworkConfiguration(typing.NamedTuple):
     net: str
     type: str
     mac: str
@@ -188,8 +181,7 @@ class NetworkConfiguration:
         return NetworkConfiguration(net=net, type=type, mac=mac)
 
 
-@dataclasses.dataclass(slots=True)
-class VMInfo:
+class VMInfo(typing.NamedTuple):
     status: str
     vmid: int
     node: str
@@ -231,8 +223,7 @@ class VMInfo:
         return data
 
 
-@dataclasses.dataclass(slots=True)
-class VMConfiguration:
+class VMConfiguration(typing.NamedTuple):
     name: str
     vga: str
     sockets: int
@@ -254,15 +245,13 @@ class VMConfiguration:
         return _from_dict(VMConfiguration, src)
 
 
-@dataclasses.dataclass(slots=True)
-class VmCreationResult:
+class VmCreationResult(typing.NamedTuple):
     node: str
     vmid: int
     upid: UPID
 
 
-@dataclasses.dataclass(slots=True)
-class StorageInfo:
+class StorageInfo(typing.NamedTuple):
     node: str
     storage: str
     content: tuple[str, ...]
@@ -280,11 +269,32 @@ class StorageInfo:
         return _from_dict(StorageInfo, dictionary)
 
 
-@dataclasses.dataclass(slots=True)
-class PoolInfo:
+class PoolMemberInfo(typing.NamedTuple):
+    id: str
+    node: str
+    storage: str
+    type: str
+    vmid: int
+    vmname: str
+
+    @staticmethod
+    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'PoolMemberInfo':
+        return _from_dict(PoolMemberInfo, dictionary)
+
+
+class PoolInfo(typing.NamedTuple):
     poolid: str
     comments: str
+    members: list[PoolMemberInfo]
 
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'PoolInfo':
-        return _from_dict(PoolInfo, dictionary)
+        if 'members' in dictionary:
+            members: list[PoolMemberInfo] = [PoolMemberInfo.from_dict(i) for i in dictionary['members']]
+        else:
+            members = []
+
+        dictionary['comments'] = dictionary.get('comments', '')
+
+        dictionary['members'] = members
+        return _from_dict(PoolInfo, dictionary=dictionary)

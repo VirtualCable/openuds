@@ -27,17 +27,18 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import logging
-import typing
 import collections.abc
-from uds.core import types
-
-from uds.core.environment import Environment 
+import logging
+from multiprocessing import pool
+import typing
 
 from django.utils.translation import gettext as _
 
+from uds.core import types
+from uds.core.environment import Environment
 from uds.core.ui.user_interface import gui
-
+from uds import models
+from uds.services.OpenNebula.on import vm
 
 logger = logging.getLogger(__name__)
 
@@ -46,9 +47,9 @@ def get_storage(parameters: typing.Any) -> types.ui.CallbackResultType:
     from .provider import ProxmoxProvider  # pylint: disable=import-outside-toplevel
 
     logger.debug('Parameters received by getResources Helper: %s', parameters)
-    env = Environment(parameters['ev'])
-    provider: ProxmoxProvider = ProxmoxProvider(env)
-    provider.deserialize(parameters['ov'])
+    provider = typing.cast(
+        ProxmoxProvider, models.Provider.objects.get(uuid=parameters['prov_uuid']).get_instance()
+    )
 
     # Obtains datacenter from cluster
     try:
@@ -58,26 +59,41 @@ def get_storage(parameters: typing.Any) -> types.ui.CallbackResultType:
 
     res = []
     # Get storages for that datacenter
-    for storage in sorted(
-        provider.listStorages(vm_info.node), key=lambda x: int(not x.shared)
-    ):
+    for storage in sorted(provider.list_storages(vm_info.node), key=lambda x: int(not x.shared)):
         if storage.type in ('lvm', 'iscsi', 'iscsidirect'):
             continue
         space, free = (
             storage.avail / 1024 / 1024 / 1024,
             (storage.avail - storage.used) / 1024 / 1024 / 1024,
         )
-        extra = (
-            _(' shared') if storage.shared else _(' (bound to {})').format(vm_info.node)
-        )
+        extra = _(' shared') if storage.shared else _(' (bound to {})').format(vm_info.node)
         res.append(
-            gui.choice_item(
-                storage.storage,
-                f'{storage.storage} ({space:4.2f} GB/{free:4.2f} GB){extra}'
-            )
+            gui.choice_item(storage.storage, f'{storage.storage} ({space:4.2f} GB/{free:4.2f} GB){extra}')
         )
 
     data: types.ui.CallbackResultType = [{'name': 'datastore', 'choices': res}]
 
     logger.debug('return data: %s', data)
     return data
+
+
+def get_machines(parameters: typing.Any) -> types.ui.CallbackResultType:
+    from .provider import ProxmoxProvider  # pylint: disable=import-outside-toplevel
+
+    logger.debug('Parameters received by getResources Helper: %s', parameters)
+    provider = typing.cast(
+        ProxmoxProvider, models.Provider.objects.get(uuid=parameters['prov_uuid']).get_instance()
+    )
+
+    # Obtains datacenter from cluster
+    try:
+        pool_info = provider.get_pool_info(parameters['pool'], retrieve_vm_names=True)
+    except Exception:
+        return []
+
+    return [
+        {
+            'name': 'machines',
+            'choices': [gui.choice_item(member.vmid, member.vmname) for member in pool_info.members],
+        }
+    ]

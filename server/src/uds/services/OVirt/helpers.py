@@ -31,7 +31,7 @@ def get_resources(parameters: typing.Any) -> types.ui.CallbackResultType:
     provider.deserialize(parameters['ov'])
 
     # Obtains datacenter from cluster
-    ci = provider.getClusterInfo(parameters['cluster'])
+    ci = provider.get_cluster_info(parameters['cluster'])
 
     res: list[types.ui.ChoiceItem] = []
     # Get storages for that datacenter

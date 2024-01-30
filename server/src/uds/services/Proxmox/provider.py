@@ -42,6 +42,7 @@ from uds.core.util.unique_mac_generator import UniqueMacGenerator
 
 from . import client
 from .service import ProxmoxLinkedService
+from .service_fixed import ProxmoxFixedService
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -53,12 +54,13 @@ logger = logging.getLogger(__name__)
 MAX_VM_ID: typing.Final[int] = 999999999
 
 
-class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-public-methods
-    offers = [ProxmoxLinkedService]
+class ProxmoxProvider(services.ServiceProvider):
     type_name = _('Proxmox Platform Provider')
     type_type = 'ProxmoxPlatform'
     type_description = _('Proxmox platform service provider')
     icon_file = 'provider.png'
+
+    offers = [ProxmoxLinkedService, ProxmoxFixedService]
 
     host = gui.TextField(
         length=64,
@@ -113,15 +115,15 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
     macs_range = fields.macs_range_field(default='52:54:00:00:00:00-52:54:00:FF:FF:FF')
 
     # Own variables
-    _api: typing.Optional[client.ProxmoxClient] = None
+    _cached_api: typing.Optional[client.ProxmoxClient] = None
     _vmid_generator: UniqueIDGenerator
 
-    def _getApi(self) -> client.ProxmoxClient:
+    def _api(self) -> client.ProxmoxClient:
         """
         Returns the connection API object
         """
-        if self._api is None:
-            self._api = client.ProxmoxClient(
+        if self._cached_api is None:
+            self._cached_api = client.ProxmoxClient(
                 self.host.value,
                 self.port.as_int(),
                 self.username.value,
@@ -131,7 +133,7 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
                 self.cache,
             )
 
-        return self._api
+        return self._cached_api
 
     # There is more fields type, but not here the best place to cover it
     def initialize(self, values: 'Module.ValuesType') -> None:
@@ -140,7 +142,7 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
         """
 
         # Just reset _api connection variable
-        self._api = None
+        self._cached_api = None
 
         if values is not None:
             self.timeout.value = validators.validate_timeout(self.timeout.value)
@@ -158,97 +160,100 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
             True if all went fine, false if id didn't
         """
 
-        return self._getApi().test()
+        return self._api().test()
 
-    def listMachines(self) -> list[client.types.VMInfo]:
-        return self._getApi().list_machines()
+    def list_machines(self) -> list[client.types.VMInfo]:
+        return self._api().list_machines()
 
     def get_machine_info(self, vmId: int, poolId: typing.Optional[str] = None) -> client.types.VMInfo:
-        return self._getApi().get_machines_pool_info(vmId, poolId, force=True)
+        return self._api().get_machines_pool_info(vmId, poolId, force=True)
 
     def get_machine_configuration(self, vmId: int) -> client.types.VMConfiguration:
-        return self._getApi().get_machine_configuration(vmId, force=True)
+        return self._api().get_machine_configuration(vmId, force=True)
 
-    def getStorageInfo(self, storageId: str, node: str) -> client.types.StorageInfo:
-        return self._getApi().get_storage(storageId, node)
+    def get_storage_info(self, storageId: str, node: str) -> client.types.StorageInfo:
+        return self._api().get_storage(storageId, node)
 
-    def listStorages(self, node: typing.Optional[str]) -> list[client.types.StorageInfo]:
-        return self._getApi().list_storages(node=node, content='images')
+    def list_storages(self, node: typing.Optional[str]) -> list[client.types.StorageInfo]:
+        return self._api().list_storages(node=node, content='images')
 
-    def listPools(self) -> list[client.types.PoolInfo]:
-        return self._getApi().list_pools()
+    def list_pools(self) -> list[client.types.PoolInfo]:
+        return self._api().list_pools()
+    
+    def get_pool_info(self, pool_id: str, retrieve_vm_names: bool = False) -> client.types.PoolInfo:
+        return self._api().get_pool_info(pool_id, retrieve_vm_names=retrieve_vm_names)
 
-    def make_template(self, vmId: int) -> None:
-        return self._getApi().convertToTemplate(vmId)
+    def create_template(self, vmId: int) -> None:
+        return self._api().convertToTemplate(vmId)
 
-    def cloneMachine(
+    def clone_machine(
         self,
-        vmId: int,
+        vmid: int,
         name: str,
         description: typing.Optional[str],
-        linkedClone: bool,
-        toNode: typing.Optional[str] = None,
-        toStorage: typing.Optional[str] = None,
-        toPool: typing.Optional[str] = None,
-        mustHaveVGPUS: typing.Optional[bool] = None,
+        as_linked_clone: bool,
+        target_node: typing.Optional[str] = None,
+        target_storage: typing.Optional[str] = None,
+        target_pool: typing.Optional[str] = None,
+        must_have_vgpus: typing.Optional[bool] = None,
     ) -> client.types.VmCreationResult:
-        return self._getApi().clone_machine(
-            vmId,
+        return self._api().clone_machine(
+            vmid,
             self.get_new_vmid(),
             name,
             description,
-            linkedClone,
-            toNode,
-            toStorage,
-            toPool,
-            mustHaveVGPUS,
+            as_linked_clone,
+            target_node,
+            target_storage,
+            target_pool,
+            must_have_vgpus,
         )
 
     def start_machine(self, vmId: int) -> client.types.UPID:
-        return self._getApi().start_machine(vmId)
+        return self._api().start_machine(vmId)
 
     def stop_machine(self, vmid: int) -> client.types.UPID:
-        return self._getApi().stop_machine(vmid)
+        return self._api().stop_machine(vmid)
 
     def reset_machine(self, vmid: int) -> client.types.UPID:
-        return self._getApi().reset_machine(vmid)
+        return self._api().reset_machine(vmid)
 
     def suspend_machine(self, vmId: int) -> client.types.UPID:
-        return self._getApi().suspend_machine(vmId)
+        return self._api().suspend_machine(vmId)
 
     def shutdown_machine(self, vmId: int) -> client.types.UPID:
-        return self._getApi().shutdown_machine(vmId)
+        return self._api().shutdown_machine(vmId)
 
     def remove_machine(self, vmid: int) -> client.types.UPID:
-        return self._getApi().remove_machine(vmid)
+        return self._api().remove_machine(vmid)
 
     def get_task_info(self, node: str, upid: str) -> client.types.TaskStatus:
-        return self._getApi().get_task(node, upid)
+        return self._api().get_task(node, upid)
 
     def enable_ha(self, vmId: int, started: bool = False, group: typing.Optional[str] = None) -> None:
-        self._getApi().enable_machine_ha(vmId, started, group)
+        self._api().enable_machine_ha(vmId, started, group)
 
     def set_machine_mac(self, vmId: int, macAddress: str) -> None:
-        self._getApi().set_machine_ha(vmId, macAddress)
+        self._api().set_machine_ha(vmId, macAddress)
 
     def disable_ha(self, vmid: int) -> None:
-        self._getApi().disable_machine_ha(vmid)
+        self._api().disable_machine_ha(vmid)
 
     def set_protection(self, vmId: int, node: typing.Optional[str] = None, protection: bool = False) -> None:
-        self._getApi().set_protection(vmId, node, protection)
+        self._api().set_protection(vmId, node, protection)
 
     def list_ha_groups(self) -> list[str]:
-        return self._getApi().list_ha_groups()
+        return self._api().list_ha_groups()
 
     def get_console_connection(
         self, machineId: str
     ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
-        return self._getApi().get_console_connection(machineId)
+        return self._api().get_console_connection(machineId)
 
     def get_new_vmid(self) -> int:
         while True:  # look for an unused VmId
             vmid = self._vmid_generator.get(self.start_vmid.as_int(), MAX_VM_ID)
-            if self._getApi().is_vmid_available(vmid):
+            if self._api().is_vmid_available(vmid):
                 return vmid
             # All assigned VMId will be left as unusable on UDS until released by time (3 years)
             # This is not a problem at all, in the rare case that a machine id is released from uds db
@@ -256,7 +261,7 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
 
     @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def is_available(self) -> bool:
-        return self._getApi().test()
+        return self._api().test()
 
     def get_macs_range(self) -> str:
         return self.macs_range.value

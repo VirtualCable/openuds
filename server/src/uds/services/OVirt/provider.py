@@ -37,7 +37,7 @@ from django.utils.translation import gettext_noop as _
 
 from uds.core import services, types, consts
 from uds.core.ui import gui
-from uds.core.util import validators
+from uds.core.util import validators, fields
 from uds.core.util.cache import Cache
 from uds.core.util.decorators import cached
 
@@ -95,7 +95,7 @@ class OVirtProvider(
     # but used for sample purposes
     # If we don't indicate an order, the output order of fields will be
     # "random"
-    ovirtVersion = gui.ChoiceField(
+    ovirt_version = gui.ChoiceField(
         order=1,
         label=_('oVirt Version'),
         tooltip=_('oVirt Server Version'),
@@ -106,6 +106,7 @@ class OVirtProvider(
             gui.choice_item('4', '4.x'),
         ],
         default='4',  # Default value is the ID of the choicefield
+        old_field_name='ovirtVersion',
     )
 
     host = gui.TextField(
@@ -131,30 +132,9 @@ class OVirtProvider(
         required=True,
     )
 
-    concurrent_creation_limit = gui.NumericField(
-        length=3,
-        label=_('Creation concurrency'),
-        default=10,
-        min_value=1,
-        max_value=65536,
-        order=50,
-        tooltip=_('Maximum number of concurrently creating VMs'),
-        required=True,
-        tab=types.ui.Tab.ADVANCED,
-        old_field_name='maxPreparingServices',
-    )
-    concurrent_removal_limit = gui.NumericField(
-        length=3,
-        label=_('Removal concurrency'),
-        default=5,
-        min_value=1,
-        max_value=65536,
-        order=51,
-        tooltip=_('Maximum number of concurrently removing VMs'),
-        required=True,
-        tab=types.ui.Tab.ADVANCED,
-        old_field_name='maxRemovingServices',
-    )
+    concurrent_creation_limit = fields.concurrent_creation_limit_field()
+    concurrent_removal_limit = fields.concurrent_removal_limit_field()
+    timeout = fields.timeout_field()
 
     timeout = gui.NumericField(
         length=3,
@@ -227,7 +207,7 @@ class OVirtProvider(
         """
         Checks that this version of ovirt if "fully functional" and does not needs "patchs'
         """
-        return list(self.__getApi().isFullyFunctionalVersion())
+        return list(self.__getApi().is_fully_functional_version())
 
     def getMachines(
         self, force: bool = False
@@ -247,7 +227,7 @@ class OVirtProvider(
                 'cluster_id'
         """
 
-        return self.__getApi().getVms(force)
+        return self.__getApi().list_machines(force)
 
     def getClusters(
         self, force: bool = False
@@ -267,9 +247,9 @@ class OVirtProvider(
                 'datacenter_id'
         """
 
-        return self.__getApi().getClusters(force)
+        return self.__getApi().list_clusters(force)
 
-    def getClusterInfo(
+    def get_cluster_info(
         self, clusterId: str, force: bool = False
     ) -> collections.abc.MutableMapping[str, typing.Any]:
         """
@@ -287,7 +267,7 @@ class OVirtProvider(
                 'id'
                 'datacenter_id'
         """
-        return self.__getApi().getClusterInfo(clusterId, force)
+        return self.__getApi().get_cluster_info(clusterId, force)
 
     def getDatacenterInfo(
         self, datacenterId: str, force: bool = False
@@ -317,7 +297,7 @@ class OVirtProvider(
                    'active' -> True or False
 
         """
-        return self.__getApi().getDatacenterInfo(datacenterId, force)
+        return self.__getApi().get_datacenter_info(datacenterId, force)
 
     def getStorageInfo(
         self, storageId: str, force: bool = False
@@ -341,7 +321,7 @@ class OVirtProvider(
                # 'active' -> True or False --> This is not provided by api?? (api.storagedomains.get)
 
         """
-        return self.__getApi().getStorageInfo(storageId, force)
+        return self.__getApi().get_storage_info(storageId, force)
 
     def makeTemplate(
         self,
@@ -366,7 +346,7 @@ class OVirtProvider(
         Returns
             Raises an exception if operation could not be acomplished, or returns the id of the template being created.
         """
-        return self.__getApi().makeTemplate(
+        return self.__getApi().create_template(
             name, comments, machineId, clusterId, storageId, displayType
         )
 
@@ -381,7 +361,7 @@ class OVirtProvider(
 
         (don't know if ovirt returns something more right now, will test what happens when template can't be published)
         """
-        return self.__getApi().getTemplateState(templateId)
+        return self.__getApi().get_template_state(templateId)
 
     def getMachineState(self, machineId: str) -> str:
         """
@@ -399,7 +379,7 @@ class OVirtProvider(
              suspended, image_illegal, image_locked or powering_down
              Also can return'unknown' if Machine is not known
         """
-        return self.__getApi().getMachineState(machineId)
+        return self.__getApi().get_machine_state(machineId)
 
     def removeTemplate(self, templateId: str) -> None:
         """
@@ -407,7 +387,7 @@ class OVirtProvider(
 
         Returns nothing, and raises an Exception if it fails
         """
-        return self.__getApi().removeTemplate(templateId)
+        return self.__getApi().remove_template(templateId)
 
     def deployFromTemplate(
         self,
@@ -435,7 +415,7 @@ class OVirtProvider(
         Returns:
             Id of the machine being created form template
         """
-        return self.__getApi().deployFromTemplate(
+        return self.__getApi().deploy_from_template(
             name,
             comments,
             templateId,
@@ -457,7 +437,7 @@ class OVirtProvider(
 
         Returns:
         """
-        self.__getApi().startMachine(machineId)
+        self.__getApi().start_machine(machineId)
 
     def stopMachine(self, machineId: str) -> None:
         """
@@ -468,7 +448,7 @@ class OVirtProvider(
 
         Returns:
         """
-        self.__getApi().stopMachine(machineId)
+        self.__getApi().stop_machine(machineId)
 
     def suspendMachine(self, machineId: str) -> None:
         """
@@ -479,7 +459,7 @@ class OVirtProvider(
 
         Returns:
         """
-        self.__getApi().suspendMachine(machineId)
+        self.__getApi().suspend_machine(machineId)
 
     def removeMachine(self, machineId: str) -> None:
         """
@@ -490,16 +470,16 @@ class OVirtProvider(
 
         Returns:
         """
-        self.__getApi().removeMachine(machineId)
+        self.__getApi().remove_machine(machineId)
 
     def updateMachineMac(self, machineId: str, macAddres: str) -> None:
         """
         Changes the mac address of first nic of the machine to the one specified
         """
-        self.__getApi().updateMachineMac(machineId, macAddres)
+        self.__getApi().update_machine_mac(machineId, macAddres)
 
     def fixUsb(self, machineId: str) -> None:
-        self.__getApi().fixUsb(machineId)
+        self.__getApi().fix_usb(machineId)
 
     def getMacRange(self) -> str:
         return self.macsRange.value
@@ -507,7 +487,7 @@ class OVirtProvider(
     def getConsoleConnection(
         self, machineId: str
     ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
-        return self.__getApi().getConsoleConnection(machineId)
+        return self.__getApi().get_console_connection(machineId)
 
     @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def is_available(self) -> bool:

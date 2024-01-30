@@ -63,10 +63,10 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
     Detail handler for Services, whose parent is a Provider
     """
 
-    custom_methods = ['servicesPools']
+    custom_methods = ['servicepools']
 
     @staticmethod
-    def serviceInfo(item: models.Service) -> dict[str, typing.Any]:
+    def service_info(item: models.Service) -> dict[str, typing.Any]:
         info = item.get_type()
 
         return {
@@ -86,7 +86,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         }
 
     @staticmethod
-    def serviceToDict(
+    def service_to_dict(
         item: models.Service, perm: int, full: bool = False
     ) -> dict[str, typing.Any]:
         """
@@ -113,7 +113,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             'permission': perm,
         }
         if full:
-            retVal['info'] = Services.serviceInfo(item)
+            retVal['info'] = Services.service_info(item)
 
         return retVal
 
@@ -123,9 +123,9 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         perm = permissions.effective_permissions(self._user, parent)
         try:
             if item is None:
-                return [Services.serviceToDict(k, perm) for k in parent.services.all()]
+                return [Services.service_to_dict(k, perm) for k in parent.services.all()]
             k = parent.services.get(uuid=process_uuid(item))
-            val = Services.serviceToDict(k, perm, full=True)
+            val = Services.service_to_dict(k, perm, full=True)
             return self.fill_instance_fields(k, val)
         except Exception as e:
             logger.error('Error getting services for %s: %s', parent, e)
@@ -334,7 +334,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         except Exception:
             raise self.invalid_item_response() from None
 
-    def servicesPools(self, parent: 'Model', item: str) -> typing.Any:
+    def servicepools(self, parent: 'Model', item: str) -> typing.Any:
         parent = ensure.is_instance(parent, models.Provider)
         service = parent.services.get(uuid=process_uuid(item))
         logger.debug('Got parameters for servicepools: %s, %s', parent, item)
