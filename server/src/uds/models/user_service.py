@@ -245,7 +245,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
                 if us.needs_upgrade():
                     self.data = us.serialize()
                     self.save(update_fields=['data'])
-                    us.flag_for_upgrade(False)
+                    us.mark_for_upgrade(False)
 
             except Exception:
                 logger.exception(

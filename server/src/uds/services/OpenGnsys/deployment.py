@@ -46,7 +46,7 @@ from uds.core.util.model import sql_stamp_seconds
 if typing.TYPE_CHECKING:
     from uds import models
     from .service import OGService
-    from .publication import OGPublication
+    from .publication import OpenGnsysPublication
     from uds.core.util.storage import Storage
 
 logger = logging.getLogger(__name__)
@@ -70,7 +70,7 @@ class Operation(enum.IntEnum):
             return Operation.UNKNOWN
 
 
-class OGDeployment(services.UserService, autoserializable.AutoSerializable):
+class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializable):
     """
     This class generates the user consumable elements of the service tree.
 
@@ -109,7 +109,7 @@ class OGDeployment(services.UserService, autoserializable.AutoSerializable):
     def service(self) -> 'OGService':
         return typing.cast('OGService', super().service())
 
-    def publication(self) -> 'OGPublication':
+    def publication(self) -> 'OpenGnsysPublication':
         pub = super().publication()
         if pub is None:
             raise Exception('No publication for this element!')
@@ -134,7 +134,7 @@ class OGDeployment(services.UserService, autoserializable.AutoSerializable):
                 Operation.from_int(i) for i in pickle.loads(vals[7])
             ]  # nosec: not insecure, we are loading our own data
 
-        self.flag_for_upgrade()  # Flag so manager can save it again with new format
+        self.mark_for_upgrade()  # Flag so manager can save it again with new format
 
     def get_name(self) -> str:
         return self._name
@@ -450,5 +450,5 @@ class OGDeployment(services.UserService, autoserializable.AutoSerializable):
             self._ip,
             self._mac,
             self._machine_id,
-            [OGDeployment.__op2str(op) for op in self._queue],
+            [OpenGnsysUserService.__op2str(op) for op in self._queue],
         )

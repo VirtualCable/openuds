@@ -118,7 +118,7 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
             self._queue = pickle.loads(vals[6])  # nosec: not insecure, we are loading our own data
             self._task = vals[7].decode('utf8')
 
-        self.flag_for_upgrade()  # Force upgrade
+        self.mark_for_upgrade()  # Force upgrade
 
     def get_name(self) -> str:
         if not self._name:

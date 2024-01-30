@@ -110,7 +110,7 @@ class SimpleLdapSerializationTest(UDSTestCase):
 
             # Ensure remarshalled flag is set
             self.assertTrue(instance.needs_upgrade())
-            instance.flag_for_upgrade(False)  # reset flag
+            instance.mark_for_upgrade(False)  # reset flag
 
             # Ensure fields has been marshalled using new format
             self.assertFalse(marshaled_data.startswith(b'v'))

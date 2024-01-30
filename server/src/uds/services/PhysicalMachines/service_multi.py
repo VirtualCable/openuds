@@ -236,7 +236,7 @@ class IPMachinesService(IPServiceBase):
         # Sets maximum services for this, and loads "hosts" into cache
         self.userservices_limit = len(self.hosts)
 
-        self.flag_for_upgrade()  # Flag for upgrade as soon as possible
+        self.mark_for_upgrade()  # Flag for upgrade as soon as possible
 
     def is_usable(self, locked: typing.Optional[typing.Union[str, int]], now: int) -> int:
         # If _maxSessionForMachine is 0, it can be used only if not locked

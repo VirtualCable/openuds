@@ -54,6 +54,14 @@ from uds.services.OpenNebula import deployment as deployment
 #     self._queue = [Operation.from_int(i) for i in pickle.loads(vals[6])]  # nosec
 
 # self.flag_for_upgrade()  # Flag so manager can save it again with new format
+EXPECTED_FIELDS: typing.Final[set[str]] = {
+    '_name',
+    '_ip',
+    '_mac',
+    '_vmid',
+    '_reason',
+    '_queue',
+}
 
 TEST_QUEUE: typing.Final[list[deployment.Operation]] = [
     deployment.Operation.CREATE,
@@ -93,7 +101,7 @@ class OpenNebulaDeploymentSerializationTest(UDSTransactionTestCase):
             self.check(instance)
             # Ensure remarshalled flag is set
             self.assertTrue(instance.needs_upgrade())
-            instance.flag_for_upgrade(False)  # reset flag
+            instance.mark_for_upgrade(False)  # reset flag
 
             marshaled_data = instance.marshal()
             self.assertFalse(
@@ -152,3 +160,11 @@ class OpenNebulaDeploymentSerializationTest(UDSTransactionTestCase):
             instance._queue,
             [deployment.Operation.CREATE, deployment.Operation.FINISH],
         )
+
+    def test_autoserialization_fields(self) -> None:
+        # This test is designed to ensure that all fields are autoserializable
+        # If some field is added or removed, this tests will warn us about it to fix the rest of the related tests
+        with Environment.temporary_environment() as env:
+            instance = deployment.OpenNebulaLiveDeployment(environment=env, service=None)
+
+            self.assertSetEqual(set(f[0] for f in instance._autoserializable_fields()), EXPECTED_FIELDS)

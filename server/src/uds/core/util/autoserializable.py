@@ -120,7 +120,6 @@ def is_autoserializable_data(data: bytes) -> bool:
     """
     return data[: len(HEADER_BASE)] == HEADER_BASE
 
-
 @dataclasses.dataclass(slots=True)
 class _MarshalInfo:
     name: str
@@ -449,7 +448,7 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
 
     _fields: dict[str, typing.Any]
 
-    def _all_fields_attrs(self) -> collections.abc.Iterator[tuple[str, typing.Any]]:
+    def _autoserializable_fields(self) -> collections.abc.Iterator[tuple[str, _SerializableField]]:
         """Returns an iterator over all fields in the class, including inherited ones
         
         Returns:
@@ -501,7 +500,7 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
         # Iterate over own members and extract fields
         fields: list[_MarshalInfo] = [
             _MarshalInfo(name=v.name, type_name=str(v.__class__.__name__), value=v.marshal(self))
-            for _, v in self._all_fields_attrs()
+            for _, v in self._autoserializable_fields()
         ]
 
         # Serialized data is:
@@ -543,7 +542,7 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
             field, data = _MarshalInfo.unmarshal(data)
             fields[field.name] = field
 
-        for _, v in self._all_fields_attrs():
+        for _, v in self._autoserializable_fields():
             if isinstance(v, _SerializableField):
                 if v.name in fields:
                     if fields[v.name].type_name == str(v.__class__.__name__):
@@ -568,9 +567,9 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
         if not isinstance(other, AutoSerializable):
             return False
         
-        all_fields_attrs = list(self._all_fields_attrs())
+        all_fields_attrs = list(self._autoserializable_fields())
         
-        if {k for k, _ in all_fields_attrs} != {k for k, _ in other._all_fields_attrs()}:
+        if {k for k, _ in all_fields_attrs} != {k for k, _ in other._autoserializable_fields()}:
             return False
 
         for k, v in all_fields_attrs:
@@ -584,7 +583,7 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
         return ', '.join(
             [
                 f"{k}={v.obj_type.__name__}({v.__get__(self)})"
-                for k, v in self._all_fields_attrs()
+                for k, v in self._autoserializable_fields()
                 if isinstance(v, _SerializableField)
             ]
         )

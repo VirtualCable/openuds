@@ -31,6 +31,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import pickle  # nosec: controled data
+import enum
 import logging
 import typing
 import collections.abc
@@ -38,7 +39,7 @@ import collections.abc
 from uds.core import services, consts
 from uds.core.managers.user_service import UserServiceManager
 from uds.core.types.states import State
-from uds.core.util import log
+from uds.core.util import log, autoserializable
 from uds.core.util.model import sql_stamp_seconds
 
 from .jobs import ProxmoxDeferredRemoval
@@ -53,25 +54,44 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-(
-    opCreate,
-    opStart,
-    opStop,
-    opShutdown,
-    opRemove,
-    opWait,
-    opError,
-    opFinish,
-    opRetry,
-    opGetMac,
-    opGracelyStop,
-) = range(11)
 
-UP_STATES = ('up', 'reboot_in_progress', 'powering_up', 'restoring_state')
+class Operation(enum.IntEnum):
+    """
+    Operation codes for Proxmox deployment
+    """
+
+    CREATE = 0
+    START = 1
+    STOP = 2
+    SHUTDOWN = 3
+    REMOVE = 4
+    WAIT = 5
+    ERROR = 6
+    FINISH = 7
+    RETRY = 8
+    GET_MAC = 9
+    GRACEFUL_STOP = 10
+
+    opUnknown = 99
+
+    @staticmethod
+    def from_int(value: int) -> 'Operation':
+        try:
+            return Operation(value)
+        except ValueError:
+            return Operation.opUnknown
+
+# The difference between "SHUTDOWN" and "GRACEFUL_STOP" is that the first one
+# is used to "best try to stop" the machine to move to L2 (that is, if it cannot be stopped,
+# it will be moved to L2 anyway, but keeps running), and the second one is used to "best try to stop"
+# the machine when destoying it (that is, if it cannot be stopped, it will be destroyed anyway after a
+# timeout of at most GUEST_SHUTDOWN_WAIT seconds)
+
+# UP_STATES = ('up', 'reboot_in_progress', 'powering_up', 'restoring_state')
 GUEST_SHUTDOWN_WAIT = 90  # Seconds
 
 
-class ProxmoxDeployment(services.UserService):
+class ProxmoxDeployment(services.UserService, autoserializable.AutoSerializable):
     """
     This class generates the user consumable elements of the service tree.
 
@@ -86,14 +106,22 @@ class ProxmoxDeployment(services.UserService):
     # : Recheck every this seconds by default (for task methods)
     suggested_delay = 12
 
+    _name = autoserializable.StringField(default='')
+    _ip = autoserializable.StringField(default='')
+    _mac = autoserializable.StringField(default='')
+    _task = autoserializable.StringField(default='')
+    _vmid = autoserializable.StringField(default='')
+    _reason = autoserializable.StringField(default='')
+    _queue = autoserializable.ListField[Operation]()
+
     # own vars
-    _name: str
-    _ip: str
-    _mac: str
-    _task: str
-    _vmid: str
-    _reason: str
-    _queue: list[int]
+    # _name: str
+    # _ip: str
+    # _mac: str
+    # _task: str
+    # _vmid: str
+    # _reason: str
+    # _queue: list[int]
 
     # Utility overrides for type checking...
     def service(self) -> 'ProxmoxLinkedService':
@@ -105,37 +133,13 @@ class ProxmoxDeployment(services.UserService):
             raise Exception('No publication for this element!')
         return typing.cast('ProxmoxPublication', pub)
 
-    def initialize(self):
-        self._name = ''
-        self._ip = ''
-        self._mac = ''
-        self._task = ''
-        self._vmid = ''
-        self._reason = ''
-        self._queue = []
-
-    # Serializable needed methods
-    def marshal(self) -> bytes:
-        """
-        Does nothing right here, we will use environment storage in this sample
-        """
-        return b'\1'.join(
-            [
-                b'v1',
-                self._name.encode('utf8'),
-                self._ip.encode('utf8'),
-                self._mac.encode('utf8'),
-                self._task.encode('utf8'),
-                self._vmid.encode('utf8'),
-                self._reason.encode('utf8'),
-                pickle.dumps(self._queue, protocol=0),
-            ]
-        )
-
     def unmarshal(self, data: bytes) -> None:
         """
         Does nothing here also, all data are keeped at environment storage
         """
+        if not data.startswith(b'v'):
+            return super().unmarshal(data)
+
         vals = data.split(b'\1')
         if vals[0] == b'v1':
             self._name = vals[1].decode('utf8')
@@ -144,7 +148,9 @@ class ProxmoxDeployment(services.UserService):
             self._task = vals[4].decode('utf8')
             self._vmid = vals[5].decode('utf8')
             self._reason = vals[6].decode('utf8')
-            self._queue = pickle.loads(vals[7])  # nosec: controled data
+            self._queue = [Operation.from_int(i) for i in pickle.loads(vals[7])]  # nosec: controled data
+
+        self.mark_for_upgrade()  # Flag so manager can save it again with new format
 
     def get_name(self) -> str:
         if self._name == '':
@@ -186,11 +192,11 @@ class ProxmoxDeployment(services.UserService):
         except client.ProxmoxConnectionError:
             raise  # If connection fails, let it fail on parent
         except Exception as e:
-            return self.__error(f'Machine not found: {e}')
+            return self._error(f'Machine not found: {e}')
 
         if vmInfo.status == 'stopped':
-            self._queue = [opStart, opFinish]
-            return self.__executeQueue()
+            self._queue = [Operation.START, Operation.FINISH]
+            return self._execute_queue()
 
         self.cache.put('ready', '1')
         return State.FINISHED
@@ -210,7 +216,7 @@ class ProxmoxDeployment(services.UserService):
     ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
         return self.service().get_console_connection(self._vmid)
 
-    def desktopLogin(
+    def desktop_login(
         self,
         username: str,
         password: str,
@@ -233,10 +239,10 @@ if sys.platform == 'win32':
     def process_ready_from_os_manager(self, data: typing.Any) -> str:
         # Here we will check for suspending the VM (when full ready)
         logger.debug('Checking if cache 2 for %s', self._name)
-        if self.__getCurrentOp() == opWait:
+        if self._get_current_op() == Operation.WAIT:
             logger.debug('Machine is ready. Moving to level 2')
-            self.__popCurrentOp()  # Remove current state
-            return self.__executeQueue()
+            self._pop_current_op()  # Remove current state
+            return self._execute_queue()
         # Do not need to go to level 2 (opWait is in fact "waiting for moving machine to cache level 2)
         return State.FINISHED
 
@@ -245,50 +251,57 @@ if sys.platform == 'win32':
         Deploys an service instance for an user.
         """
         logger.debug('Deploying for user')
-        self.__initQueueForDeploy(False)
-        return self.__executeQueue()
+        self._init_queue_for_deploy(False)
+        return self._execute_queue()
 
     def deploy_for_cache(self, cacheLevel: int) -> str:
         """
         Deploys an service instance for cache
         """
-        self.__initQueueForDeploy(cacheLevel == self.L2_CACHE)
-        return self.__executeQueue()
+        self._init_queue_for_deploy(cacheLevel == self.L2_CACHE)
+        return self._execute_queue()
 
-    def __initQueueForDeploy(self, forLevel2: bool = False) -> None:
+    def _init_queue_for_deploy(self, forLevel2: bool = False) -> None:
         if forLevel2 is False:
-            self._queue = [opCreate, opGetMac, opStart, opFinish]
+            self._queue = [Operation.CREATE, Operation.GET_MAC, Operation.START, Operation.FINISH]
         else:
-            self._queue = [opCreate, opGetMac, opStart, opWait, opShutdown, opFinish]
+            self._queue = [
+                Operation.CREATE,
+                Operation.GET_MAC,
+                Operation.START,
+                Operation.WAIT,
+                Operation.SHUTDOWN,
+                Operation.FINISH,
+            ]
 
-    def __setTask(self, upid: 'client.types.UPID'):
+    def _store_task(self, upid: 'client.types.UPID'):
         self._task = ','.join([upid.node, upid.upid])
 
-    def __getTask(self) -> tuple[str, str]:
+    def _retrieve_task(self) -> tuple[str, str]:
         vals = self._task.split(',')
         return (vals[0], vals[1])
 
-    def __getCurrentOp(self) -> int:
+    def _get_current_op(self) -> Operation:
         if not self._queue:
-            return opFinish
+            return Operation.FINISH
 
         return self._queue[0]
 
-    def __popCurrentOp(self) -> int:
+    def _pop_current_op(self) -> Operation:
         if not self._queue:
-            return opFinish
+            return Operation.FINISH
 
         res = self._queue.pop(0)
         return res
 
-    def __pushFrontOp(self, op: int):
+    def _push_front_op(self, op: Operation) -> None:
         self._queue.insert(0, op)
 
-    def __retryLater(self) -> str:
-        self.__pushFrontOp(opRetry)
+    def _retry_later(self) -> str:
+        self._push_front_op(Operation.RETRY)
         return State.RUNNING
 
-    def __error(self, reason: typing.Union[str, Exception]) -> str:
+    def _error(self, reason: typing.Union[str, Exception]) -> str:
         """
         Internal method to set object as error state
 
@@ -302,48 +315,46 @@ if sys.platform == 'win32':
         if self._vmid != '':  # Powers off
             ProxmoxDeferredRemoval.remove(self.service().parent(), int(self._vmid))
 
-        self._queue = [opError]
+        self._queue = [Operation.ERROR]
         self._reason = reason
         return State.ERROR
 
-    def __executeQueue(self) -> str:
+    def _execute_queue(self) -> str:
         self.__debug('executeQueue')
-        op = self.__getCurrentOp()
+        op = self._get_current_op()
 
-        if op == opError:
+        if op == Operation.ERROR:
             return State.ERROR
 
-        if op == opFinish:
+        if op == Operation.FINISH:
             return State.FINISHED
 
-        fncs: collections.abc.Mapping[int, typing.Optional[collections.abc.Callable[[], str]]] = {
-            opCreate: self.__create,
-            opRetry: self.__retry,
-            opStart: self.__startMachine,
-            opStop: self.__stopMachine,
-            opGracelyStop: self.__gracelyStop,
-            opShutdown: self.__shutdownMachine,
-            opWait: self.__wait,
-            opRemove: self.__remove,
-            opGetMac: self.__updateVmMacAndHA,
+        fncs: collections.abc.Mapping[Operation, typing.Optional[collections.abc.Callable[[], str]]] = {
+            Operation.CREATE: self._create,
+            Operation.RETRY: self._retry,
+            Operation.START: self._start_machine,
+            Operation.STOP: self._stop_machine,
+            Operation.GRACEFUL_STOP: self._gracely_stop,
+            Operation.SHUTDOWN: self._shutdown_machine,
+            Operation.WAIT: self._wait,
+            Operation.REMOVE: self._remove,
+            Operation.GET_MAC: self._update_machine_mac_and_ha,
         }
 
         try:
-            execFnc: typing.Optional[collections.abc.Callable[[], str]] = fncs.get(op, None)
+            operation_executor: typing.Optional[collections.abc.Callable[[], str]] = fncs.get(op, None)
 
-            if execFnc is None:
-                return self.__error(
-                    f'Unknown operation found at execution queue ({op})'
-                )
+            if operation_executor is None:
+                return self._error(f'Unknown operation found at execution queue ({op})')
 
-            execFnc()
+            operation_executor()
 
             return State.RUNNING
         except Exception as e:
-            return self.__error(e)
+            return self._error(e)
 
     # Queue execution methods
-    def __retry(self) -> str:
+    def _retry(self) -> str:
         """
         Used to retry an operation
         In fact, this will not be never invoked, unless we push it twice, because
@@ -353,17 +364,17 @@ if sys.platform == 'win32':
         """
         return State.FINISHED
 
-    def __wait(self) -> str:
+    def _wait(self) -> str:
         """
         Executes opWait, it simply waits something "external" to end
         """
         return State.RUNNING
 
-    def __create(self) -> str:
+    def _create(self) -> str:
         """
         Deploys a machine from template for user/cache
         """
-        templateId = self.publication().machine()
+        template_id = self.publication().machine()
         name = self.get_name()
         if name == consts.NO_MORE_NAMES:
             raise Exception(
@@ -372,15 +383,15 @@ if sys.platform == 'win32':
 
         comments = 'UDS Linked clone'
 
-        taskResult = self.service().clone_machine(name, comments, templateId)
+        task_result = self.service().clone_machine(name, comments, template_id)
 
-        self.__setTask(taskResult.upid)
+        self._store_task(task_result.upid)
 
-        self._vmid = str(taskResult.vmid)
+        self._vmid = str(task_result.vmid)
 
         return State.RUNNING
 
-    def __remove(self) -> str:
+    def _remove(self) -> str:
         """
         Removes a machine from system
         """
@@ -391,26 +402,26 @@ if sys.platform == 'win32':
 
         if vmInfo.status != 'stopped':
             logger.debug('Info status: %s', vmInfo)
-            self._queue = [opStop, opRemove, opFinish]
-            return self.__executeQueue()
-        self.__setTask(self.service().remove_machine(int(self._vmid)))
+            self._queue = [Operation.STOP, Operation.REMOVE, Operation.FINISH]
+            return self._execute_queue()
+        self._store_task(self.service().remove_machine(int(self._vmid)))
 
         return State.RUNNING
 
-    def __startMachine(self) -> str:
+    def _start_machine(self) -> str:
         try:
             vmInfo = self.service().get_machine_info(int(self._vmid))
         except client.ProxmoxConnectionError:
-            return self.__retryLater()
+            return self._retry_later()
         except Exception as e:
             raise Exception('Machine not found on start machine') from e
 
         if vmInfo.status == 'stopped':
-            self.__setTask(self.service().start_machine(int(self._vmid)))
+            self._store_task(self.service().start_machine(int(self._vmid)))
 
         return State.RUNNING
 
-    def __stopMachine(self) -> str:
+    def _stop_machine(self) -> str:
         try:
             vmInfo = self.service().get_machine_info(int(self._vmid))
         except Exception as e:
@@ -418,44 +429,42 @@ if sys.platform == 'win32':
 
         if vmInfo.status != 'stopped':
             logger.debug('Stopping machine %s', vmInfo)
-            self.__setTask(self.service().stop_machine(int(self._vmid)))
+            self._store_task(self.service().stop_machine(int(self._vmid)))
 
         return State.RUNNING
 
-    def __shutdownMachine(self) -> str:
+    def _shutdown_machine(self) -> str:
         try:
             vmInfo = self.service().get_machine_info(int(self._vmid))
         except client.ProxmoxConnectionError:
             return State.RUNNING  # Try again later
         except Exception as e:
-            raise Exception('Machine not found on suspend machine') from e
+            raise Exception('Machine not found or suspended machine') from e
 
         if vmInfo.status != 'stopped':
-            self.__setTask(self.service().shutdown_machine(int(self._vmid)))
+            self._store_task(self.service().shutdown_machine(int(self._vmid)))
 
         return State.RUNNING
 
-    def __gracelyStop(self) -> str:
+    def _gracely_stop(self) -> str:
         """
-        Tries to stop machine using vmware tools
-        If it takes too long to stop, or vmware tools are not installed,
+        Tries to stop machine using qemu guest tools
+        If it takes too long to stop, or qemu guest tools are not installed,
         will use "power off" "a las bravas"
         """
         self._task = ''
         shutdown = -1  # Means machine already stopped
         vmInfo = self.service().get_machine_info(int(self._vmid))
         if vmInfo.status != 'stopped':
-            self.__setTask(self.service().shutdown_machine(int(self._vmid)))
+            self._store_task(self.service().shutdown_machine(int(self._vmid)))
             shutdown = sql_stamp_seconds()
         logger.debug('Stoped vm using guest tools')
         self.storage.put_pickle('shutdown', shutdown)
         return State.RUNNING
 
-    def __updateVmMacAndHA(self) -> str:
+    def _update_machine_mac_and_ha(self) -> str:
         try:
-            self.service().enable_ha(
-                int(self._vmid), True
-            )  # Enable HA before continuing here
+            self.service().enable_ha(int(self._vmid), True)  # Enable HA before continuing here
 
             # Set vm mac address now on first interface
             self.service().set_machine_mac(int(self._vmid), self.get_unique_id())
@@ -465,11 +474,11 @@ if sys.platform == 'win32':
         return State.RUNNING
 
     # Check methods
-    def __checkTaskFinished(self):
+    def _check_task_finished(self) -> str:
         if self._task == '':
             return State.FINISHED
 
-        node, upid = self.__getTask()
+        node, upid = self._retrieve_task()
 
         try:
             task = self.service().get_task_info(node, upid)
@@ -477,38 +486,38 @@ if sys.platform == 'win32':
             return State.RUNNING  # Try again later
 
         if task.is_errored():
-            return self.__error(task.exitstatus)
+            return self._error(task.exitstatus)
 
-        if task.isCompleted():
+        if task.is_completed():
             return State.FINISHED
 
         return State.RUNNING
 
-    def __checkCreate(self) -> str:
+    def _create_checker(self) -> str:
         """
         Checks the state of a deploy for an user or cache
         """
-        return self.__checkTaskFinished()
+        return self._check_task_finished()
 
-    def __checkStart(self) -> str:
+    def _start_checker(self) -> str:
         """
         Checks if machine has started
         """
-        return self.__checkTaskFinished()
+        return self._check_task_finished()
 
-    def __checkStop(self) -> str:
+    def _stop_checker(self) -> str:
         """
         Checks if machine has stoped
         """
-        return self.__checkTaskFinished()
+        return self._check_task_finished()
 
-    def __checkShutdown(self) -> str:
+    def _shutdown_checker(self) -> str:
         """
         Check if the machine has suspended
         """
-        return self.__checkTaskFinished()
+        return self._check_task_finished()
 
-    def __checkGracelyStop(self) -> str:
+    def _graceful_stop_checker(self) -> str:
         """
         Check if the machine has gracely stopped (timed shutdown)
         """
@@ -521,7 +530,7 @@ if sys.platform == 'win32':
 
         if shutdown_start == 0:  # Was shut down a las bravas
             logger.debug('Macine DO NOT HAVE guest tools')
-            return self.__checkStop()
+            return self._stop_checker()
 
         logger.debug('Checking State')
         # Check if machine is already stopped
@@ -537,21 +546,21 @@ if sys.platform == 'win32':
             )
             # Not stopped by guest in time, but must be stopped normally
             self.storage.put_pickle('shutdown', 0)
-            return self.__stopMachine()  # Launch "hard" stop
+            return self._stop_machine()  # Launch "hard" stop
 
         return State.RUNNING
 
-    def __checkRemoved(self) -> str:
+    def _remove_checker(self) -> str:
         """
         Checks if a machine has been removed
         """
-        return self.__checkTaskFinished()
+        return self._check_task_finished()
 
-    def __checkMac(self) -> str:
+    def _mac_checker(self) -> str:
         """
         Checks if change mac operation has finished.
 
-        Changing nic configuration es 1-step operation, so when we check it here, it is already done
+        Changing nic configuration is 1-step operation, so when we check it here, it is already done
         """
         return State.FINISHED
 
@@ -560,58 +569,56 @@ if sys.platform == 'win32':
         Check what operation is going on, and acts acordly to it
         """
         self.__debug('check_state')
-        op = self.__getCurrentOp()
+        op = self._get_current_op()
 
-        if op == opError:
+        if op == Operation.ERROR:
             return State.ERROR
 
-        if op == opFinish:
+        if op == Operation.FINISH:
             return State.FINISHED
 
-        fncs = {
-            opCreate: self.__checkCreate,
-            opRetry: self.__retry,
-            opWait: self.__wait,
-            opStart: self.__checkStart,
-            opStop: self.__checkStop,
-            opGracelyStop: self.__checkGracelyStop,
-            opShutdown: self.__checkShutdown,
-            opRemove: self.__checkRemoved,
-            opGetMac: self.__checkMac,
+        fncs: dict[Operation, typing.Optional[collections.abc.Callable[[], str]]] = {
+            Operation.CREATE: self._create_checker,
+            Operation.RETRY: self._retry,
+            Operation.WAIT: self._wait,
+            Operation.START: self._start_checker,
+            Operation.STOP: self._stop_checker,
+            Operation.GRACEFUL_STOP: self._graceful_stop_checker,
+            Operation.SHUTDOWN: self._shutdown_checker,
+            Operation.REMOVE: self._remove_checker,
+            Operation.GET_MAC: self._mac_checker,
         }
 
         try:
-            chkFnc: typing.Optional[
-                typing.Optional[collections.abc.Callable[[], str]]
-            ] = fncs.get(op, None)
+            operation_checker: typing.Optional[typing.Optional[collections.abc.Callable[[], str]]] = fncs.get(
+                op, None
+            )
 
-            if chkFnc is None:
-                return self.__error(
-                    f'Unknown operation found at check queue ({op})'
-                )
+            if operation_checker is None:
+                return self._error(f'Unknown operation found at check queue ({op})')
 
-            state = chkFnc()
+            state = operation_checker()
             if state == State.FINISHED:
-                self.__popCurrentOp()  # Remove runing op
-                return self.__executeQueue()
+                self._pop_current_op()  # Remove runing op
+                return self._execute_queue()
 
             return state
         except Exception as e:
-            return self.__error(e)
+            return self._error(e)
 
     def move_to_cache(self, newLevel: int) -> str:
         """
         Moves machines between cache levels
         """
-        if opRemove in self._queue:
+        if Operation.REMOVE in self._queue:
             return State.RUNNING
 
         if newLevel == self.L1_CACHE:
-            self._queue = [opStart, opFinish]
+            self._queue = [Operation.START, Operation.FINISH]
         else:
-            self._queue = [opStart, opShutdown, opFinish]
+            self._queue = [Operation.START, Operation.SHUTDOWN, Operation.FINISH]
 
-        return self.__executeQueue()
+        return self._execute_queue()
 
     def error_reason(self) -> str:
         """
@@ -635,17 +642,17 @@ if sys.platform == 'win32':
 
         # If executing something, wait until finished to remove it
         # We simply replace the execution queue
-        op = self.__getCurrentOp()
+        op = self._get_current_op()
 
-        if op == opError:
-            return self.__error('Machine is already in error state!')
+        if op == Operation.ERROR:
+            return self._error('Machine is already in error state!')
 
-        lst = [] if not self.service().try_graceful_shutdown() else [opGracelyStop]
-        queue = lst + [opStop, opRemove, opFinish]
+        lst: list[Operation] = [] if not self.service().try_graceful_shutdown() else [Operation.GRACEFUL_STOP]
+        queue = lst + [Operation.STOP, Operation.REMOVE, Operation.FINISH]
 
-        if op in (opFinish, opWait):
+        if op in (Operation.FINISH, Operation.WAIT):
             self._queue[:] = queue
-            return self.__executeQueue()
+            return self._execute_queue()
 
         self._queue = [op] + queue
         # Do not execute anything.here, just continue normally
@@ -664,19 +671,19 @@ if sys.platform == 'win32':
         return self.destroy()
 
     @staticmethod
-    def __op2str(op: int) -> str:
+    def __op2str(op: Operation) -> str:
         return {
-            opCreate: 'create',
-            opStart: 'start',
-            opStop: 'stop',
-            opShutdown: 'suspend',
-            opGracelyStop: 'gracely stop',
-            opRemove: 'remove',
-            opWait: 'wait',
-            opError: 'error',
-            opFinish: 'finish',
-            opRetry: 'retry',
-            opGetMac: 'getting mac',
+            Operation.CREATE: 'create',
+            Operation.START: 'start',
+            Operation.STOP: 'stop',
+            Operation.SHUTDOWN: 'suspend',
+            Operation.GRACEFUL_STOP: 'gracely stop',
+            Operation.REMOVE: 'remove',
+            Operation.WAIT: 'wait',
+            Operation.ERROR: 'error',
+            Operation.FINISH: 'finish',
+            Operation.RETRY: 'retry',
+            Operation.GET_MAC: 'getting mac',
         }.get(op, '????')
 
     def __debug(self, txt):

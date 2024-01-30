@@ -170,4 +170,4 @@ class WindowsOsManager(osmanagers.OSManager):
 
         self._flag_processes_unused_machines()
         # Flag that we need an upgrade (remarshal and save)
-        self.flag_for_upgrade()
+        self.mark_for_upgrade()

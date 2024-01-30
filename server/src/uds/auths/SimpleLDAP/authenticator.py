@@ -228,7 +228,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         if vals[0] == 'v2':
             (self.mfa_attribute.value, self.verify_ssl.value, self.certificate.value) = vals[14:17]
 
-        self.flag_for_upgrade()
+        self.mark_for_upgrade()
 
     def mfaStorageKey(self, username: str) -> str:
         return 'mfa_' + str(self.db_obj().uuid) + username

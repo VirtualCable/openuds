@@ -282,13 +282,13 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
                 )
             )
 
-    def sanitizeVmName(self, name: str) -> str:
+    def sanitized_name(self, name: str) -> str:
         """
         Ovirt only allows machine names with [a-zA-Z0-9_-]
         """
         return re.sub("[^a-zA-Z0-9_-]", "_", name)
 
-    def makeTemplate(self, name: str, comments: str) -> str:
+    def make_template(self, name: str, comments: str) -> str:
         """
         Invokes makeTemplate from parent provider, completing params
 
@@ -315,7 +315,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
             self.display.value,
         )
 
-    def getTemplateState(self, templateId: str) -> str:
+    def get_template_state(self, templateId: str) -> str:
         """
         Invokes getTemplateState from parent provider
 
@@ -328,7 +328,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         """
         return self.parent().getTemplateState(templateId)
 
-    def deployFromTemplate(self, name: str, comments: str, templateId: str) -> str:
+    def deploy_from_template(self, name: str, comments: str, templateId: str) -> str:
         """
         Deploys a virtual machine on selected cluster from selected template
 
@@ -362,7 +362,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         """
         self.parent().removeTemplate(templateId)
 
-    def getMachineState(self, machineId: str) -> str:
+    def get_machine_state(self, machineId: str) -> str:
         """
         Invokes getMachineState from parent provider
         (returns if machine is "active" or "inactive"
@@ -404,7 +404,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         """
         self.parent().stopMachine(machineId)
 
-    def suspendMachine(self, machineId: str) -> None:
+    def suspend_machine(self, machineId: str) -> None:
         """
         Tries to start a machine. No check is done, it is simply requested to oVirt
 

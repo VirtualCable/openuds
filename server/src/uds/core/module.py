@@ -279,7 +279,7 @@ class Module(abc.ABC, UserInterface, Environmentable, Serializable):
         data serialized using serializeForm
         """
         if self.deserialize_fields(data):  # If upgrade of format requested
-            self.flag_for_upgrade()  # Flag for upgrade
+            self.mark_for_upgrade()  # Flag for upgrade
 
     def check(self) -> str:
         """

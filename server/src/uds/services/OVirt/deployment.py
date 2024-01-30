@@ -30,43 +30,59 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import pickle  # nosec: not insecure, we are loading our own data
-import logging
-import typing
 import collections.abc
+import enum
+import logging
+import pickle  # nosec: not insecure, we are loading our own data
+import typing
 
-from uds.core import services, consts
+from uds.core import consts, services
 from uds.core.managers.user_service import UserServiceManager
 from uds.core.types.states import State
-from uds.core.util import log
+from uds.core.util import autoserializable, log
 
 from .jobs import OVirtDeferredRemoval
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from .service import OVirtLinkedService
+
     from .publication import OVirtPublication
+    from .service import OVirtLinkedService
 
 logger = logging.getLogger(__name__)
 
-(
-    opCreate,
-    opStart,
-    opStop,
-    opSuspend,
-    opRemove,
-    opWait,
-    opError,
-    opFinish,
-    opRetry,
-    opChangeMac,
-) = range(10)
 
-UP_STATES = ('up', 'reboot_in_progress', 'powering_up', 'restoring_state')
+class Operation(enum.IntEnum):
+    """
+    Operation enumeration
+    """
+
+    CREATE = 0
+    START = 1
+    STOP = 2
+    SUSPEND = 3
+    REMOVE = 4
+    WAIT = 5
+    ERROR = 6
+    FINISH = 7
+    RETRY = 8
+    CHANGEMAC = 9
+
+    opUnknown = 99
+
+    @staticmethod
+    def from_int(value: int) -> 'Operation':
+        try:
+            return Operation(value)
+        except ValueError:
+            return Operation.opUnknown
 
 
-class OVirtLinkedDeployment(services.UserService):
+UP_STATES: typing.Final[set[str]] = {'up', 'reboot_in_progress', 'powering_up', 'restoring_state'}
+
+
+class OVirtLinkedDeployment(services.UserService, autoserializable.AutoSerializable):
     """
     This class generates the user consumable elements of the service tree.
 
@@ -81,13 +97,12 @@ class OVirtLinkedDeployment(services.UserService):
     # : Recheck every six seconds by default (for task methods)
     suggested_delay = 6
 
-    # own vars
-    _name: str
-    _ip: str
-    _mac: str
-    _vmid: str
-    _reason: str
-    _queue: list[int]
+    _name = autoserializable.StringField(default='')
+    _ip = autoserializable.StringField(default='')
+    _mac = autoserializable.StringField(default='')
+    _vmid = autoserializable.StringField(default='')
+    _reason = autoserializable.StringField(default='')
+    _queue = autoserializable.ListField[Operation]()
 
     # Utility overrides for type checking...
     def service(self) -> 'OVirtLinkedService':
@@ -99,35 +114,13 @@ class OVirtLinkedDeployment(services.UserService):
             raise Exception('No publication for this element!')
         return typing.cast('OVirtPublication', pub)
 
-    def initialize(self):
-        self._name = ''
-        self._ip = ''
-        self._mac = ''
-        self._vmid = ''
-        self._reason = ''
-        self._queue = []
-
-    # Serializable needed methods
-    def marshal(self) -> bytes:
-        """
-        Does nothing right here, we will use environment storage in this sample
-        """
-        return b'\1'.join(
-            [
-                b'v1',
-                self._name.encode('utf8'),
-                self._ip.encode('utf8'),
-                self._mac.encode('utf8'),
-                self._vmid.encode('utf8'),
-                self._reason.encode('utf8'),
-                pickle.dumps(self._queue, protocol=0),
-            ]
-        )
-
     def unmarshal(self, data: bytes) -> None:
         """
         Does nothing here also, all data are keeped at environment storage
         """
+        if not data.startswith(b'v'):
+            return super().unmarshal(data)
+
         vals = data.split(b'\1')
         if vals[0] == b'v1':
             self._name = vals[1].decode('utf8')
@@ -135,9 +128,11 @@ class OVirtLinkedDeployment(services.UserService):
             self._mac = vals[3].decode('utf8')
             self._vmid = vals[4].decode('utf8')
             self._reason = vals[5].decode('utf8')
-            self._queue = pickle.loads(
-                vals[6]
-            )  # nosec: not insecure, we are loading our own data
+            self._queue = [
+                Operation.from_int(i) for i in pickle.loads(vals[6])
+            ]  # nosec: not insecure, we are loading our own data
+
+        self.mark_for_upgrade()  # Flag so manager can save it again with new format
 
     def get_name(self) -> str:
         if self._name == '':
@@ -207,14 +202,14 @@ class OVirtLinkedDeployment(services.UserService):
             return State.FINISHED
 
         try:
-            state = self.service().getMachineState(self._vmid)
+            state = self.service().get_machine_state(self._vmid)
 
             if state == 'unknown':
-                return self.__error('Machine is not available anymore')
+                return self._error('Machine is not available anymore')
 
             if state not in UP_STATES:
-                self._queue = [opStart, opFinish]
-                return self.__executeQueue()
+                self._queue = [Operation.START, Operation.FINISH]
+                return self._execute_queue()
 
             self.cache.put('ready', '1')
         except Exception as e:
@@ -235,7 +230,7 @@ class OVirtLinkedDeployment(services.UserService):
     ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
         return self.service().getConsoleConnection(self._vmid)
 
-    def desktopLogin(
+    def desktop_login(
         self,
         username: str,
         password: str,
@@ -255,10 +250,10 @@ if sys.platform == 'win32':
     def process_ready_from_os_manager(self, data: typing.Any) -> str:
         # Here we will check for suspending the VM (when full ready)
         logger.debug('Checking if cache 2 for %s', self._name)
-        if self.__getCurrentOp() == opWait:
+        if self._get_current_op() == Operation.WAIT:
             logger.debug('Machine is ready. Moving to level 2')
-            self.__popCurrentOp()  # Remove current state
-            return self.__executeQueue()
+            self._pop_current_op()  # Remove current state
+            return self._execute_queue()
         # Do not need to go to level 2 (opWait is in fact "waiting for moving machine to cache level 2)
         return State.FINISHED
 
@@ -267,66 +262,70 @@ if sys.platform == 'win32':
         Deploys an service instance for an user.
         """
         logger.debug('Deploying for user')
-        self.__initQueueForDeploy(False)
-        return self.__executeQueue()
+        self._init_queue_for_deploy(False)
+        return self._execute_queue()
 
     def deploy_for_cache(self, cacheLevel: int) -> str:
         """
         Deploys an service instance for cache
         """
-        self.__initQueueForDeploy(cacheLevel == self.L2_CACHE)
-        return self.__executeQueue()
+        self._init_queue_for_deploy(cacheLevel == self.L2_CACHE)
+        return self._execute_queue()
 
-    def __initQueueForDeploy(self, forLevel2: bool = False) -> None:
+    def _init_queue_for_deploy(self, forLevel2: bool = False) -> None:
         if forLevel2 is False:
-            self._queue = [opCreate, opChangeMac, opStart, opFinish]
+            self._queue = [Operation.CREATE, Operation.CHANGEMAC, Operation.START, Operation.FINISH]
         else:
-            self._queue = [opCreate, opChangeMac, opStart, opWait, opSuspend, opFinish]
+            self._queue = [
+                Operation.CREATE,
+                Operation.CHANGEMAC,
+                Operation.START,
+                Operation.WAIT,
+                Operation.SUSPEND,
+                Operation.FINISH,
+            ]
 
-    def __checkMachineState(
-        self, chkState: typing.Union[list[str], tuple[str, ...], str]
-    ) -> str:
+    def _check_machine_state(self, check_state: collections.abc.Iterable[str]) -> str:
         logger.debug(
             'Checking that state of machine %s (%s) is %s',
             self._vmid,
             self._name,
-            chkState,
+            check_state,
         )
-        state = self.service().getMachineState(self._vmid)
+        state = self.service().get_machine_state(self._vmid)
 
         # If we want to check an state and machine does not exists (except in case that we whant to check this)
-        if state == 'unknown' and chkState != 'unknown':
-            return self.__error('Machine not found')
+        if state == 'unknown' and check_state != 'unknown':
+            return self._error('Machine not found')
 
         ret = State.RUNNING
-        if isinstance(chkState, (list, tuple)):
-            for cks in chkState:
+        if isinstance(check_state, (list, tuple)):
+            for cks in check_state:
                 if state == cks:
                     ret = State.FINISHED
                     break
         else:
-            if state == chkState:
+            if state == check_state:
                 ret = State.FINISHED
 
         return ret
 
-    def __getCurrentOp(self) -> int:
+    def _get_current_op(self) -> Operation:
         if not self._queue:
-            return opFinish
+            return Operation.FINISH
 
         return self._queue[0]
 
-    def __popCurrentOp(self) -> int:
+    def _pop_current_op(self) -> Operation:
         if not self._queue:
-            return opFinish
+            return Operation.FINISH
 
-        res = self._queue.pop(0)
-        return res
+        return self._queue.pop(0)
 
-    def __pushFrontOp(self, op: int):
+    def _push_front_op(self, op: Operation) -> None:
         self._queue.insert(0, op)
 
-    def __error(self, reason: typing.Union[str, Exception]) -> str:
+    def _error(self, reason: typing.Union[str, Exception]) -> str:
         """
         Internal method to set object as error state
 
@@ -340,47 +339,45 @@ if sys.platform == 'win32':
         if self._vmid != '':  # Powers off
             OVirtDeferredRemoval.remove(self.service().parent(), self._vmid)
 
-        self._queue = [opError]
+        self._queue = [Operation.ERROR]
         self._reason = reason
         return State.ERROR
 
-    def __executeQueue(self) -> str:
-        self.__debug('executeQueue')
-        op = self.__getCurrentOp()
+    def _execute_queue(self) -> str:
+        self._debug('executeQueue')
+        op = self._get_current_op()
 
-        if op == opError:
+        if op == Operation.ERROR:
             return State.ERROR
 
-        if op == opFinish:
+        if op == Operation.FINISH:
             return State.FINISHED
 
-        fncs: dict[int, typing.Optional[collections.abc.Callable[[], str]]] = {
-            opCreate: self.__create,
-            opRetry: self.__retry,
-            opStart: self.__startMachine,
-            opStop: self.__stopMachine,
-            opSuspend: self.__suspendMachine,
-            opWait: self.__wait,
-            opRemove: self.__remove,
-            opChangeMac: self.__changeMac,
+        fncs: dict[Operation, typing.Optional[collections.abc.Callable[[], str]]] = {
+            Operation.CREATE: self._create,
+            Operation.RETRY: self._retry,
+            Operation.START: self._start_machine,
+            Operation.STOP: self._stop_machine,
+            Operation.SUSPEND: self._suspend_machine,
+            Operation.WAIT: self._wait,
+            Operation.REMOVE: self._remove,
+            Operation.CHANGEMAC: self._change_mac,
         }
 
         try:
-            execFnc: typing.Optional[collections.abc.Callable[[], str]] = fncs.get(op, None)
+            operation_runner: typing.Optional[collections.abc.Callable[[], str]] = fncs.get(op, None)
 
-            if execFnc is None:
-                return self.__error(
-                    f'Unknown operation found at execution queue ({op})'
-                )
+            if operation_runner is None:
+                return self._error(f'Unknown operation found at execution queue ({op})')
 
-            execFnc()
+            operation_runner()
 
             return State.RUNNING
         except Exception as e:
-            return self.__error(e)
+            return self._error(e)
 
     # Queue execution methods
-    def __retry(self) -> str:
+    def _retry(self) -> str:
         """
         Used to retry an operation
         In fact, this will not be never invoked, unless we push it twice, because
@@ -390,56 +387,56 @@ if sys.platform == 'win32':
         """
         return State.FINISHED
 
-    def __wait(self) -> str:
+    def _wait(self) -> str:
         """
         Executes opWait, it simply waits something "external" to end
         """
         return State.RUNNING
 
-    def __create(self) -> str:
+    def _create(self) -> str:
         """
         Deploys a machine from template for user/cache
         """
-        templateId = self.publication().getTemplateId()
+        template_id = self.publication().get_template_id()
         name = self.get_name()
         if name == consts.NO_MORE_NAMES:
             raise Exception(
                 'No more names available for this service. (Increase digits for this service to fix)'
             )
 
-        name = self.service().sanitizeVmName(
+        name = self.service().sanitized_name(
             name
         )  # oVirt don't let us to create machines with more than 15 chars!!!
         comments = 'UDS Linked clone'
 
-        self._vmid = self.service().deployFromTemplate(name, comments, templateId)
+        self._vmid = self.service().deploy_from_template(name, comments, template_id)
         if self._vmid is None:
             raise Exception('Can\'t create machine')
 
         return State.RUNNING
 
-    def __remove(self) -> str:
+    def _remove(self) -> str:
         """
         Removes a machine from system
         """
-        state = self.service().getMachineState(self._vmid)
+        state = self.service().get_machine_state(self._vmid)
 
         if state == 'unknown':
             raise Exception('Machine not found')
 
         if state != 'down':
-            self.__pushFrontOp(opStop)
-            self.__executeQueue()
+            self._push_front_op(Operation.STOP)
+            self._execute_queue()
         else:
             self.service().removeMachine(self._vmid)
 
         return State.RUNNING
 
-    def __startMachine(self) -> str:
+    def _start_machine(self) -> str:
         """
         Powers on the machine
         """
-        state = self.service().getMachineState(self._vmid)
+        state = self.service().get_machine_state(self._vmid)
 
         if state == 'unknown':
             raise Exception('Machine not found')
@@ -448,18 +445,18 @@ if sys.platform == 'win32':
             return State.RUNNING
 
         if state not in ('down', 'suspended'):
-            self.__pushFrontOp(
-                opRetry
+            self._push_front_op(
+                Operation.RETRY
             )  # Will call "check Retry", that will finish inmediatly and again call this one
         self.service().startMachine(self._vmid)
 
         return State.RUNNING
 
-    def __stopMachine(self) -> str:
+    def _stop_machine(self) -> str:
         """
         Powers off the machine
         """
-        state = self.service().getMachineState(self._vmid)
+        state = self.service().get_machine_state(self._vmid)
 
         if state == 'unknown':
             raise Exception('Machine not found')
@@ -468,19 +465,19 @@ if sys.platform == 'win32':
             return State.RUNNING
 
         if state not in ('up', 'suspended'):
-            self.__pushFrontOp(
-                opRetry
+            self._push_front_op(
+                Operation.RETRY
             )  # Will call "check Retry", that will finish inmediatly and again call this one
         else:
             self.service().stopMachine(self._vmid)
 
         return State.RUNNING
 
-    def __suspendMachine(self) -> str:
+    def _suspend_machine(self) -> str:
         """
         Suspends the machine
         """
-        state = self.service().getMachineState(self._vmid)
+        state = self.service().get_machine_state(self._vmid)
 
         if state == 'unknown':
             raise Exception('Machine not found')
@@ -489,15 +486,15 @@ if sys.platform == 'win32':
             return State.RUNNING
 
         if state != 'up':
-            self.__pushFrontOp(
-                opRetry
+            self._push_front_op(
+                Operation.RETRY
             )  # Remember here, the return State.FINISH will make this retry be "poped" right ar return
         else:
-            self.service().suspendMachine(self._vmid)
+            self.service().suspend_machine(self._vmid)
 
         return State.RUNNING
 
-    def __changeMac(self) -> str:
+    def _change_mac(self) -> str:
         """
         Changes the mac of the first nic
         """
@@ -508,37 +505,37 @@ if sys.platform == 'win32':
         return State.RUNNING
 
     # Check methods
-    def __checkCreate(self) -> str:
+    def _create_checker(self) -> str:
         """
         Checks the state of a deploy for an user or cache
         """
-        return self.__checkMachineState('down')
+        return self._check_machine_state('down')
 
-    def __checkStart(self) -> str:
+    def _start_checker(self) -> str:
         """
         Checks if machine has started
         """
-        return self.__checkMachineState(UP_STATES)
+        return self._check_machine_state(UP_STATES)
 
-    def __checkStop(self) -> str:
+    def _stop_checker(self) -> str:
         """
         Checks if machine has stoped
         """
-        return self.__checkMachineState('down')
+        return self._check_machine_state('down')
 
-    def __checkSuspend(self) -> str:
+    def _suspend_checker(self) -> str:
         """
         Check if the machine has suspended
         """
-        return self.__checkMachineState('suspended')
+        return self._check_machine_state('suspended')
 
-    def __checkRemoved(self) -> str:
+    def _remove_checker(self) -> str:
         """
         Checks if a machine has been removed
         """
-        return self.__checkMachineState('unknown')
+        return self._check_machine_state('unknown')
 
-    def __checkMac(self) -> str:
+    def _mac_checker(self) -> str:
         """
         Checks if change mac operation has finished.
 
@@ -550,58 +547,54 @@ if sys.platform == 'win32':
         """
         Check what operation is going on, and acts acordly to it
         """
-        self.__debug('check_state')
-        op = self.__getCurrentOp()
+        self._debug('check_state')
+        op = self._get_current_op()
 
-        if op == opError:
+        if op == Operation.ERROR:
             return State.ERROR
 
-        if op == opFinish:
+        if op == Operation.FINISH:
             return State.FINISHED
 
-        fncs = {
-            opCreate: self.__checkCreate,
-            opRetry: self.__retry,
-            opWait: self.__wait,
-            opStart: self.__checkStart,
-            opStop: self.__checkStop,
-            opSuspend: self.__checkSuspend,
-            opRemove: self.__checkRemoved,
-            opChangeMac: self.__checkMac,
+        fncs: dict[Operation, typing.Optional[collections.abc.Callable[[], str]]] = {
+            Operation.CREATE: self._create_checker,
+            Operation.RETRY: self._retry,
+            Operation.WAIT: self._wait,
+            Operation.START: self._start_checker,
+            Operation.STOP: self._stop_checker,
+            Operation.SUSPEND: self._suspend_checker,
+            Operation.REMOVE: self._remove_checker,
+            Operation.CHANGEMAC: self._mac_checker,
         }
 
         try:
-            chkFnc: typing.Optional[
-                typing.Optional[collections.abc.Callable[[], str]]
-            ] = fncs.get(op, None)
+            operation_checker: typing.Optional[typing.Optional[collections.abc.Callable[[], str]]] = fncs.get(op, None)
 
-            if chkFnc is None:
-                return self.__error(
-                    f'Unknown operation found at check queue ({op})'
-                )
+            if operation_checker is None:
+                return self._error(f'Unknown operation found at check queue ({op})')
 
-            state = chkFnc()
+            state = operation_checker()
             if state == State.FINISHED:
-                self.__popCurrentOp()  # Remove runing op
-                return self.__executeQueue()
+                self._pop_current_op()  # Remove runing op
+                return self._execute_queue()
 
             return state
         except Exception as e:
-            return self.__error(e)
+            return self._error(e)
 
     def move_to_cache(self, newLevel: int) -> str:
         """
         Moves machines between cache levels
         """
-        if opRemove in self._queue:
+        if Operation.REMOVE in self._queue:
             return State.RUNNING
 
         if newLevel == self.L1_CACHE:
-            self._queue = [opStart, opFinish]
+            self._queue = [Operation.START, Operation.FINISH]
         else:
-            self._queue = [opStart, opSuspend, opFinish]
+            self._queue = [Operation.START, Operation.SUSPEND, Operation.FINISH]
 
-        return self.__executeQueue()
+        return self._execute_queue()
 
     def error_reason(self) -> str:
         """
@@ -617,7 +610,7 @@ if sys.platform == 'win32':
         """
         Invoked for destroying a deployed service
         """
-        self.__debug('destroy')
+        self._debug('destroy')
         if self._vmid == '':
             self._queue = []
             self._reason = "canceled"
@@ -625,16 +618,16 @@ if sys.platform == 'win32':
 
         # If executing something, wait until finished to remove it
         # We simply replace the execution queue
-        op = self.__getCurrentOp()
+        op = self._get_current_op()
 
-        if op == opError:
-            return self.__error('Machine is already in error state!')
+        if op == Operation.ERROR:
+            return self._error('Machine is already in error state!')
 
-        if op in (opFinish, opWait):
-            self._queue = [opStop, opRemove, opFinish]
-            return self.__executeQueue()
+        if op in (Operation.FINISH, Operation.WAIT):
+            self._queue = [Operation.STOP, Operation.REMOVE, Operation.FINISH]
+            return self._execute_queue()
 
-        self._queue = [op, opStop, opRemove, opFinish]
+        self._queue = [op, Operation.STOP, Operation.REMOVE, Operation.FINISH]
         # Do not execute anything.here, just continue normally
         return State.RUNNING
 
@@ -651,21 +644,21 @@ if sys.platform == 'win32':
         return self.destroy()
 
     @staticmethod
-    def __op2str(op: int) -> str:
+    def _op2str(op: Operation) -> str:
         return {
-            opCreate: 'create',
-            opStart: 'start',
-            opStop: 'stop',
-            opSuspend: 'suspend',
-            opRemove: 'remove',
-            opWait: 'wait',
-            opError: 'error',
-            opFinish: 'finish',
-            opRetry: 'retry',
-            opChangeMac: 'changing mac',
+            Operation.CREATE: 'create',
+            Operation.START: 'start',
+            Operation.STOP: 'stop',
+            Operation.SUSPEND: 'suspend',
+            Operation.REMOVE: 'remove',
+            Operation.WAIT: 'wait',
+            Operation.ERROR: 'error',
+            Operation.FINISH: 'finish',
+            Operation.RETRY: 'retry',
+            Operation.CHANGEMAC: 'changing mac',
         }.get(op, '????')
 
-    def __debug(self, txt):
+    def _debug(self, txt: str) -> None:
         logger.debug(
             'State at %s: name: %s, ip: %s, mac: %s, vmid:%s, queue: %s',
             txt,
@@ -673,5 +666,5 @@ if sys.platform == 'win32':
             self._ip,
             self._mac,
             self._vmid,
-            [OVirtLinkedDeployment.__op2str(op) for op in self._queue],
+            [OVirtLinkedDeployment._op2str(op) for op in self._queue],
         )

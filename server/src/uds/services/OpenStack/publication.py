@@ -82,7 +82,7 @@ class OpenStackLivePublication(Publication, autoserializable.AutoSerializable):
 
         self._destroy_after = destroy_after == 'y'
 
-        self.flag_for_upgrade()  # This will force remarshalling
+        self.mark_for_upgrade()  # This will force remarshalling
 
     def publish(self) -> str:
         """

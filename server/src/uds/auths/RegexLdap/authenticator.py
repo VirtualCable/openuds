@@ -264,7 +264,7 @@ class RegexLdap(auths.Authenticator):
                 self._certificate,
             ) = vals[11:]
 
-        self.flag_for_upgrade()  # Old version, so flag for upgrade if possible
+        self.mark_for_upgrade()  # Old version, so flag for upgrade if possible
 
     def _stablish_connection(self) -> 'ldaputil.LDAPObject':
         """

@@ -69,6 +69,14 @@ from uds.services.PhysicalMachines import provider, service_multi, service_base
 # self.userservices_limit = len(self.hosts)
 
 # self.flag_for_upgrade()  # Flag for upgrade as soon as possible
+EXPECTED_FIELDS: typing.Final[set[str]] = {
+    '_token',
+    '_port',
+    '_skip_time_on_failure',
+    '_max_session_for_machine',
+    '_lock_by_external_access',
+    '_use_random_ip',
+}
 
 STORED_IPS: typing.Final[typing.List[str]] = [f'{i};mac{i}~{i}' for i in range(1, 128)]
 EDITABLE_STORED_IPS: typing.Final[typing.List[str]] = [i.split('~')[0] for i in STORED_IPS]
@@ -137,7 +145,7 @@ class PhysicalMachinesMultiSerializationTest(UDSTestCase):
 
         # Ensure remarshalled flag is set
         self.assertTrue(instance.needs_upgrade())
-        instance.flag_for_upgrade(False)  # reset flag
+        instance.mark_for_upgrade(False)  # reset flag
 
         # Ensure fields has been marshalled using new format
         self.assertFalse(marshalled_data.startswith(b'v'))

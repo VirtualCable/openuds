@@ -60,7 +60,7 @@ PROVIDER_FIELDS_DATA: typing.Final[dict[str, typing.Any]] = {
 }
 
 
-class ProxmoxProviderSerializationTest(UDSTestCase):
+class TestProxmoxProviderSerialization(UDSTestCase):
     _oldUDSK: bytes
 
     def setUp(self) -> None:

@@ -145,4 +145,4 @@ class WinRandomPassManager(WindowsOsManager):
             self.password.value = CryptoManager().decrypt(values[2])
             super().unmarshal(codecs.decode(values[3].encode(), 'hex'))
 
-        self.flag_for_upgrade()  # Force upgrade to new format
+        self.mark_for_upgrade()  # Force upgrade to new format

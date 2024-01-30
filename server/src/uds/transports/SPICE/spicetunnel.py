@@ -156,7 +156,7 @@ class TSPICETransport(BaseSpiceTransport):
         r.ssl_connection = self.ssl_connection.as_bool()
 
         # if sso:  # If SSO requested, and when supported by platform
-        #     userServiceInstance.desktopLogin(user, password, '')
+        #     userServiceInstance.desktop_login(user, password, '')
 
         sp = {
             'as_file': r.as_file,

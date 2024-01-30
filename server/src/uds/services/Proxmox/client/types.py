@@ -165,11 +165,11 @@ class TaskStatus:
     def is_finished(self) -> bool:
         return self.status == 'stopped'
 
-    def isCompleted(self) -> bool:
+    def is_completed(self) -> bool:
         return self.is_finished() and self.exitstatus == 'OK'
 
     def is_errored(self) -> bool:
-        return self.is_finished() and not self.isCompleted()
+        return self.is_finished() and not self.is_completed()
 
 
 @dataclasses.dataclass(slots=True)

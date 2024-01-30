@@ -79,7 +79,7 @@ class OpenNebulaLivePublication(Publication, autoserializable.AutoSerializable):
 
         self._destroy_after = False
 
-        self.flag_for_upgrade()  # Flag so manager can save it again with new format
+        self.mark_for_upgrade()  # Flag so manager can save it again with new format
 
     def publish(self) -> str:
         """

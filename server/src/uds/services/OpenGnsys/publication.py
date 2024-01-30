@@ -45,7 +45,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class OGPublication(Publication, autoserializable.AutoSerializable):
+class OpenGnsysPublication(Publication, autoserializable.AutoSerializable):
     """
     This class provides the publication of a oVirtLinkedService
     """

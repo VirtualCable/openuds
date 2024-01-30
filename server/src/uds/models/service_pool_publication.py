@@ -157,7 +157,7 @@ class ServicePoolPublication(UUIDModel):
             publication.deserialize(self.data)
             if publication.needs_upgrade():
                 self.update_data(publication)
-                publication.flag_for_upgrade(False)
+                publication.mark_for_upgrade(False)
                 
         return publication
 

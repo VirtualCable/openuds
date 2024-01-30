@@ -466,4 +466,4 @@ class WinDomainOsManager(WindowsOsManager):
             self.remove_on_exit.value = True
         super().unmarshal(codecs.decode(values[5].encode(), 'hex'))
 
-        self.flag_for_upgrade()  # Force upgrade to new format
+        self.mark_for_upgrade()  # Force upgrade to new format

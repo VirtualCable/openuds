@@ -41,33 +41,43 @@ from uds.core.environment import Environment
 
 
 from uds.services.OpenGnsys import publication
+EXPECTED_FIELDS: typing.Final[set[str]] = set()
 
 SERIALIZED_PUBLICATION_DATA: typing.Final[bytes] = b''
 
 
 class OpenGnsysPublicationSerializationTest(UDSTestCase):
-    def check(self, instance: publication.OGPublication) -> None:
+    def check(self, instance: publication.OpenGnsysPublication) -> None:
         # No data currently, all is fine
         pass
 
     def test_marshaling(self) -> None:
         environment = Environment.testing_environment()
 
-        instance = publication.OGPublication(environment=environment, service=None)
+        instance = publication.OpenGnsysPublication(environment=environment, service=None)
         #instance.unmarshal(SERIALIZED_PUBLICATION_DATA)
         self.check(instance)
         # Ensure remarshalled flag is set
         #self.assertTrue(instance.needs_upgrade())
-        instance.flag_for_upgrade(False)  # reset flag
+        instance.mark_for_upgrade(False)  # reset flag
 
         marshaled_data = instance.marshal()
 
         # Ensure fields has been marshalled using new format
         self.assertFalse(marshaled_data.startswith(b'\1'))
         # Reunmarshall again and check that remarshalled flag is not set
-        instance = publication.OGPublication(environment=environment, service=None)
+        instance = publication.OpenGnsysPublication(environment=environment, service=None)
         #instance.unmarshal(marshaled_data)
         #self.assertFalse(instance.needs_upgrade())
 
         # Check that data is correct
         self.check(instance)
+
+    def test_autoserialization_fields(self) -> None:
+        # This test is designed to ensure that all fields are autoserializable
+        # If some field is added or removed, this tests will warn us about it to fix the rest of the related tests
+        with Environment.temporary_environment() as env:
+            instance = publication.OpenGnsysPublication(environment=env, service=None)
+
+            instance_fields = set(f[0] for f in instance._autoserializable_fields())
+            self.assertSetEqual(instance_fields, EXPECTED_FIELDS)

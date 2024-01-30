@@ -33,10 +33,13 @@ from datetime import datetime
 import logging
 import typing
 import collections.abc
+from cycler import V
 
 from django.utils.translation import gettext as _
+from regex import F
 from uds.core.services import Publication
 from uds.core.types.states import State
+from uds.core.util import autoserializable
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -45,52 +48,45 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class XenPublication(Publication):
+class XenPublication(Publication, autoserializable.AutoSerializable):
     suggested_delay = (
         20  # : Suggested recheck time if publication is unfinished in seconds
     )
 
-    _name: str = ''
-    _reason: str = ''
-    _destroyAfter: str = 'f'
-    _templateId: str = ''
-    _state: str = ''
-    _task: str = ''
+    _name = autoserializable.StringField(default='')
+    _reason = autoserializable.StringField(default='')
+    _destroy_after = autoserializable.BoolField(default=False)
+    _template_id = autoserializable.StringField(default='')
+    _state = autoserializable.StringField(default='')
+    _task = autoserializable.StringField(default='')
 
     def service(self) -> 'XenLinkedService':
         return typing.cast('XenLinkedService', super().service())
-
-    def marshal(self) -> bytes:
-        """
-        returns data from an instance of Sample Publication serialized
-        """
-        return '\t'.join(
-            [
-                'v1',
-                self._name,
-                self._reason,
-                self._destroyAfter,
-                self._templateId,
-                self._state,
-                self._task,
-            ]
-        ).encode('utf8')
 
     def unmarshal(self, data: bytes) -> None:
         """
         deserializes the data and loads it inside instance.
         """
+        if not data.startswith(b'v'):
+            return super().unmarshal(data)
+            
         # logger.debug('Data: {0}'.format(data))
         vals = data.decode('utf8').split('\t')
         if vals[0] == 'v1':
             (
                 self._name,
                 self._reason,
-                self._destroyAfter,
-                self._templateId,
+                destroy_after,
+                self._template_id,
                 self._state,
                 self._task,
             ) = vals[1:]
+        else:
+            raise ValueError('Invalid data format')
+            
+        self._destroy_after = destroy_after == 't'
+        
+        self.mark_for_upgrade()   # Force upgrade asap
 
     def publish(self) -> str:
         """
@@ -103,7 +99,7 @@ class XenPublication(Publication):
             self.servicepool_name(), str(datetime.now()).split('.')[0]
         )
         self._reason = ''  # No error, no reason for it
-        self._destroyAfter = 'f'
+        self._destroy_after = False
         self._state = 'ok'
 
         try:
@@ -129,11 +125,12 @@ class XenPublication(Publication):
             state, result = self.service().check_task_finished(self._task)
             if state:  # Finished
                 self._state = 'finished'
-                self._templateId = result
-                if self._destroyAfter == 't':
+                self._template_id = result
+                if self._destroy_after:
+                    self._destroy_after = False
                     return self.destroy()
 
-                self.service().convertToTemplate(self._templateId)
+                self.service().convertToTemplate(self._template_id)
                 return State.FINISHED
         except Exception as e:
             self._state = 'error'
@@ -148,11 +145,11 @@ class XenPublication(Publication):
     def destroy(self) -> str:
         # We do not do anything else to destroy this instance of publication
         if self._state == 'ok':
-            self._destroyAfter = 't'
+            self._destroy_after = True
             return State.RUNNING
 
         try:
-            self.service().removeTemplate(self._templateId)
+            self.service().removeTemplate(self._template_id)
         except Exception as e:
             self._state = 'error'
             self._reason = str(e)
@@ -171,4 +168,4 @@ class XenPublication(Publication):
         """
         Returns the template id associated with the publication
         """
-        return self._templateId
+        return self._template_id

@@ -50,7 +50,13 @@ from uds.services.OpenNebula import publication
 #     self._name, self._reason, self._template_id, self._state = vals[1:]
 
 # self.flag_for_upgrade()  # Flag so manager can save it again with new format
-
+EXPECTED_FIELDS: typing.Final[set[str]] = {
+    '_name',
+    '_reason',
+    '_template_id',
+    '_state',
+    '_destroy_after',  # Newly added field
+}
 
 SERIALIZED_PUBLICATION_DATA: typing.Final[bytes] = b'v1\tname\treason\ttemplate_id\tstate'
 
@@ -61,6 +67,7 @@ class OpenGnsysPublicationSerializationTest(UDSTestCase):
         self.assertEqual(instance._reason, 'reason')
         self.assertEqual(instance._template_id, 'template_id')
         self.assertEqual(instance._state, 'state')
+        self.assertEqual(instance._destroy_after, False)
 
     def test_marshaling(self) -> None:
         environment = Environment.testing_environment()
@@ -70,7 +77,7 @@ class OpenGnsysPublicationSerializationTest(UDSTestCase):
         self.check(instance)
         # Ensure remarshalled flag is set
         self.assertTrue(instance.needs_upgrade())
-        instance.flag_for_upgrade(False)  # reset flag
+        instance.mark_for_upgrade(False)  # reset flag
 
         marshaled_data = instance.marshal()
 
@@ -83,3 +90,11 @@ class OpenGnsysPublicationSerializationTest(UDSTestCase):
 
         # Check that data is correct
         self.check(instance)
+
+    def test_autoserialization_fields(self) -> None:
+        # This test is designed to ensure that all fields are autoserializable
+        # If some field is added or removed, this tests will warn us about it to fix the rest of the related tests
+        with Environment.temporary_environment() as env:
+            instance = publication.OpenNebulaLivePublication(environment=env, service=None)
+
+            self.assertSetEqual(set(f[0] for f in instance._autoserializable_fields()), EXPECTED_FIELDS)

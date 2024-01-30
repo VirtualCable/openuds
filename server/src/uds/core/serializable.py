@@ -111,7 +111,7 @@ class Serializable:
     # For remarshalling purposes
     # These facilitates a faster migration of old data formats to new ones
     # alowing us to remove old format support as soon as possible
-    def flag_for_upgrade(self, value: bool = True) -> None:
+    def mark_for_upgrade(self, value: bool = True) -> None:
         """
         Flags this object for remarshalling
         

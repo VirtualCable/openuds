@@ -39,8 +39,8 @@ from uds.core import types, services, consts
 from uds.core.ui import gui
 
 from . import helpers
-from .deployment import OGDeployment
-from .publication import OGPublication
+from .deployment import OpenGnsysUserService
+from .publication import OpenGnsysPublication
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -87,9 +87,9 @@ class OGService(services.Service):
 
     # : Types of publications (preparated data for deploys)
     # : In our case, we do no need a publication, so this is None
-    publication_type = OGPublication
+    publication_type = OpenGnsysPublication
     # : Types of deploys (services in cache and/or assigned to users)
-    user_service_type = OGDeployment
+    user_service_type = OpenGnsysUserService
 
     allowed_protocols = types.transports.Protocol.generic_vdi()
     services_type_provided = types.services.ServiceType.VDI

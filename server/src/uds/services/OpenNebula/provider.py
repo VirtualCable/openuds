@@ -299,7 +299,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
             'ticket': {'value': display['passwd'], 'expiry': ''},
         }
 
-    def desktopLogin(self, machineId: str, username: str, password: str, domain: str) -> dict[str, typing.Any]:
+    def desktop_login(self, machineId: str, username: str, password: str, domain: str) -> dict[str, typing.Any]:
         '''
         Not provided by OpenNebula API right now
         '''

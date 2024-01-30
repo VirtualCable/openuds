@@ -114,7 +114,7 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
             self._reason = vals[5].decode('utf8')
             self._queue = [Operation.from_int(i) for i in pickle.loads(vals[6])]  # nosec
 
-        self.flag_for_upgrade()  # Flag so manager can save it again with new format
+        self.mark_for_upgrade()  # Flag so manager can save it again with new format
 
     def get_name(self) -> str:
         if self._name == '':
@@ -162,8 +162,8 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
     def get_console_connection(self) -> dict[str, typing.Any]:
         return self.service().getConsoleConnection(self._vmid)
 
-    def desktopLogin(self, username: str, password: str, domain: str = ''):
-        return self.service().desktopLogin(self._vmid, username, password, domain)
+    def desktop_login(self, username: str, password: str, domain: str = ''):
+        return self.service().desktop_login(self._vmid, username, password, domain)
 
     def process_ready_from_os_manager(self, data: typing.Any) -> str:
         # Here we will check for suspending the VM (when full ready)

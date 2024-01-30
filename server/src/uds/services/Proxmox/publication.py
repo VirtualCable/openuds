@@ -36,6 +36,7 @@ import collections.abc
 
 from django.utils.translation import gettext as _
 from uds.core import services
+from uds.core.util import autoserializable
 from uds.core.types.states import State
 
 # Not imported at runtime, just for type checking
@@ -46,52 +47,28 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class ProxmoxPublication(services.Publication):
+class ProxmoxPublication(services.Publication, autoserializable.AutoSerializable):
     suggested_delay = 20
-
-    _name: str
-    _vm: str
-    _task: str
-    _state: str
-    _operation: str
-    _destroy_after_finish: str
-    _reason: str
-
-    def __init__(self, environment, **kwargs):
-        services.Publication.__init__(self, environment, **kwargs)
-        self._name = ''
-        self._vm = ''
-        self._task = ''
-        self._state = ''
-        self._operation = ''
-        self._destroy_after_finish = ''
-        self._reason = ''
+    
+    _name = autoserializable.StringField(default='')
+    _vm = autoserializable.StringField(default='')
+    _task = autoserializable.StringField(default='')
+    _state = autoserializable.StringField(default='')
+    _operation = autoserializable.StringField(default='')
+    _destroy_after = autoserializable.BoolField(default=False)
+    _reason = autoserializable.StringField(default='')
 
     # Utility overrides for type checking...
     def service(self) -> 'ProxmoxLinkedService':
         return typing.cast('ProxmoxLinkedService', super().service())
 
-    def marshal(self) -> bytes:
-        """
-        returns data from an instance of Sample Publication serialized
-        """
-        return '\t'.join(
-            [
-                'v1',
-                self._name,
-                self._vm,
-                self._task,
-                self._state,
-                self._operation,
-                self._destroy_after_finish,
-                self._reason,
-            ]
-        ).encode('utf8')
-
     def unmarshal(self, data: bytes) -> None:
         """
         deserializes the data and loads it inside instance.
         """
+        if not data.startswith(b'v'):
+            return super().unmarshal(data)
+        
         logger.debug('Data: %s', data)
         vals = data.decode('utf8').split('\t')
         if vals[0] == 'v1':
@@ -101,9 +78,15 @@ class ProxmoxPublication(services.Publication):
                 self._task,
                 self._state,
                 self._operation,
-                self._destroy_after_finish,
+                destroy_after,
                 self._reason,
             ) = vals[1:]
+        else:
+            raise ValueError('Invalid data format')
+            
+        self._destroy_after = destroy_after != ''
+        
+        self.mark_for_upgrade()  # Flag so manager can save it again with new format
 
     def publish(self) -> str:
         """
@@ -127,7 +110,7 @@ class ProxmoxPublication(services.Publication):
             self._task = ','.join((task.upid.node, task.upid.upid))
             self._state = State.RUNNING
             self._operation = 'p'  # Publishing
-            self._destroy_after_finish = ''
+            self._destroy_after = False
             return State.RUNNING
         except Exception as e:
             logger.exception('Caught exception %s', e)
@@ -154,7 +137,7 @@ class ProxmoxPublication(services.Publication):
             self._reason = task.exitstatus
             self._state = State.ERROR
         else:  # Finished
-            if self._destroy_after_finish:
+            if self._destroy_after:
                 return self.destroy()
             self._state = State.FINISHED
             if self._operation == 'p':  # not Destroying
@@ -177,18 +160,18 @@ class ProxmoxPublication(services.Publication):
 
     def finish(self) -> None:
         self._task = ''
-        self._destroy_after_finish = ''
+        self._destroy_after = False
 
     def destroy(self) -> str:
         if (
-            self._state == State.RUNNING and self._destroy_after_finish is False
+            self._state == State.RUNNING and self._destroy_after is False
         ):  # If called destroy twice, will BREAK STOP publication
-            self._destroy_after_finish = 'y'
+            self._destroy_after = True
             return State.RUNNING
 
         self.state = State.RUNNING
         self._operation = 'd'
-        self._destroy_after_finish = ''
+        self._destroy_after = False
         try:
             task = self.service().remove_machine(self.machine())
             self._task = ','.join((task.node, task.upid))

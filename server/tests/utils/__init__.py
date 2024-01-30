@@ -93,14 +93,13 @@ def ensure_data(
         db_data['id'] = db_data['uuid']
         del db_data['uuid']
 
-    errors = compare_dicts(
-        dct, db_data, ignore_keys=ignore_keys, ignore_values=ignore_values
-    )
+    errors = compare_dicts(dct, db_data, ignore_keys=ignore_keys, ignore_values=ignore_values)
     if errors:
         logger.info('Errors found: %s', errors)
         return False
-    
+
     return True
+
 
 def random_ip_v4() -> str:
     """
@@ -110,6 +109,7 @@ def random_ip_v4() -> str:
 
     return '.'.join(str(random.randint(0, 255)) for _ in range(4))  # nosec
 
+
 def random_ip_v6() -> str:
     """
     Returns a random ip v6 address
@@ -118,6 +118,7 @@ def random_ip_v6() -> str:
 
     return ':'.join('{:04x}'.format(random.randint(0, 65535)) for _ in range(8))  # nosec
 
+
 def random_mac() -> str:
     """
     Returns a random mac address
@@ -125,6 +126,7 @@ def random_mac() -> str:
     import random
 
     return ':'.join('{:02x}'.format(random.randint(0, 255)) for _ in range(6))  # nosec
+
 
 def random_hostname() -> str:
     """

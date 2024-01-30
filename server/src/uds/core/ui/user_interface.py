@@ -1488,7 +1488,7 @@ class UserInterface(metaclass=UserInterfaceAbstract):
                 dic[k] = v.value
         logger.debug('Values Dict: %s', dic)
         return dic
-
+    
     def serialize_fields(
         self,
     ) -> bytes:
@@ -1504,7 +1504,7 @@ class UserInterface(metaclass=UserInterfaceAbstract):
         # if required, we can usefield.old_field_name(), but better
         fields = [
             (field_name, field.type.name, FIELDS_ENCODERS[field.type](field))
-            for field_name, field in self._gui.items()
+            for field_name, field in self._all_serializable_fields()
             if FIELDS_ENCODERS[field.type](field) is not None
         ]
 
@@ -1515,15 +1515,29 @@ class UserInterface(metaclass=UserInterfaceAbstract):
         values: bytes,
     ) -> bool:
         """New form unserialization
-
-        Arguments:
-            values {bytes} -- serialized form (zipped)
+        
+        Args:
+            values: list of serilizes (as bytes) values
             
         Returns:
-            True if should upgrade to new format, False if not
+            bool -- True if values were unserialized using OLD method, False if using new one
+            
+        Note:
+            If returns True, the manager will try to remarshall the values using the new method
+            
+        Note:
+            The format of serialized fields is:
+            
+            .. code-block:: python
+                
+                    SERIALIZATION_HEADER + SERIALIZATION_VERSION + serializer.serialize(fields)
+                    
+                Where:
 
-        Keyword Arguments:
-            serializer {typing.Optional[collections.abc.Callable[[str], typing.Any]]} -- deserializer (default: {None})
+                * SERIALIZATION_HEADER: b'GUIZ'  (header)
+                * SERIALIZATION_VERSION: b'\001' (serialization version, currently 1)
+                * fields: list of tuples (field_name, field_type, field_value)
+                * serializer: serializer used (custom one that pickles, compress and encrypts data)
         """
 
         if not values:
@@ -1551,8 +1565,7 @@ class UserInterface(metaclass=UserInterfaceAbstract):
         field_names_translations: dict[str, str] = self._get_fieldname_translations()
 
         # Set all values to defaults ones
-        for field_name in self._gui:
-            field = self._gui[field_name]
+        for field_name, field in self._all_serializable_fields():
             if (
                 field.is_type(types.ui.FieldType.HIDDEN)
                 and field.is_serializable() is False
@@ -1670,10 +1683,14 @@ class UserInterface(metaclass=UserInterfaceAbstract):
 
         return found_errors
 
+    def _all_serializable_fields(self) -> collections.abc.Iterable[tuple[str, gui.InputField]]:
+        for k, field in self._gui.items():
+            yield (k, field)
+
     def _get_fieldname_translations(self) -> dict[str, str]:
         # Dict of translations from old_field_name to field_name
         field_names_translations: dict[str, str] = {}
-        for fld_name, fld in self._gui.items():
+        for fld_name, fld in self._all_serializable_fields():
             fld_old_field_name = fld.old_field_name()
             if fld_old_field_name and fld_old_field_name != fld_name:
                 field_names_translations[fld_old_field_name] = fld_name

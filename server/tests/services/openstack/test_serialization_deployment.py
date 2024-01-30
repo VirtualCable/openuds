@@ -52,6 +52,14 @@ from uds.services.OpenStack import deployment as deployment
 #     self._vmid = vals[4].decode('utf8')
 #     self._reason = vals[5].decode('utf8')
 #     self._queue = pickle.loads(vals[6])  # nosec: not insecure, we are loading our own data
+EXPECTED_FIELDS: typing.Final[set[str]] = {
+    '_name',
+    '_ip',
+    '_mac',
+    '_vmid',
+    '_reason',
+    '_queue',
+}
 
 TEST_QUEUE: typing.Final[list[deployment.Operation]] = [
     deployment.Operation.CREATE,
@@ -67,7 +75,7 @@ LAST_VERSION: typing.Final[str] = sorted(SERIALIZED_DEPLOYMENT_DATA.keys(), reve
 
 
 class OpenStackDeploymentSerializationTest(UDSTransactionTestCase):
-    def check(self, instance: deployment.OpenStackLiveDeployment) -> None:
+    def check(self, version: str, instance: deployment.OpenStackLiveDeployment) -> None:
         self.assertEqual(instance._name, 'name')
         self.assertEqual(instance._ip, 'ip')
         self.assertEqual(instance._mac, 'mac')
@@ -88,10 +96,10 @@ class OpenStackDeploymentSerializationTest(UDSTransactionTestCase):
         for v in range(1, len(SERIALIZED_DEPLOYMENT_DATA) + 1):
             version = f'v{v}'
             instance = _create_instance(SERIALIZED_DEPLOYMENT_DATA[version])
-            self.check(instance)
+            self.check(version, instance)
             # Ensure remarshalled flag is set
             self.assertTrue(instance.needs_upgrade())
-            instance.flag_for_upgrade(False)  # reset flag
+            instance.mark_for_upgrade(False)  # reset flag
 
             marshaled_data = instance.marshal()
             self.assertFalse(
@@ -102,7 +110,7 @@ class OpenStackDeploymentSerializationTest(UDSTransactionTestCase):
             self.assertFalse(
                 instance.needs_upgrade()
             )  # Reunmarshall again and check that remarshalled flag is not set
-            self.check(instance)
+            self.check(version, instance)
 
     def test_marshaling_queue(self) -> None:
         # queue is kept on "storage", so we need always same environment
@@ -150,3 +158,11 @@ class OpenStackDeploymentSerializationTest(UDSTransactionTestCase):
             instance._queue,
             [deployment.Operation.CREATE, deployment.Operation.FINISH],
         )
+
+    def test_autoserialization_fields(self) -> None:
+        # This test is designed to ensure that all fields are autoserializable
+        # If some field is added or removed, this tests will warn us about it to fix the rest of the related tests
+        with Environment.temporary_environment() as env:
+            instance = deployment.OpenStackLiveDeployment(environment=env, service=None)
+
+            self.assertSetEqual(set(f[0] for f in instance._autoserializable_fields()), EXPECTED_FIELDS)

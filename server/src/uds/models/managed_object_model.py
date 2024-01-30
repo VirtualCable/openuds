@@ -84,7 +84,7 @@ class ManagedObjectModel(UUIDModel):
                 # Re-serialize to db
                 self.data = obj.serialize()
                 self.save(update_fields=['data'])
-                obj.flag_for_upgrade(False)
+                obj.mark_for_upgrade(False)
 
         self._cached_instance = None  # Ensures returns correct value on get_instance
 
