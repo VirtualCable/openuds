@@ -149,6 +149,7 @@ class HTML5SSHTransport(transports.Transport):
         tab=gui.PARAMETERS_TAB,
     )
     sshHostKey = gui.TextField(
+        length=512,
         label=_('SSH Host Key'),
         order=34,
         tooltip=_(
