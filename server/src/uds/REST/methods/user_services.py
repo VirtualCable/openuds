@@ -124,13 +124,13 @@ class AssignedService(DetailHandler):
             if not item:
                 # First, fetch all properties for all assigned services on this pool
                 # We can cache them, because they are going to be readed anyway...
-                properties: dict[str, typing.Any] = {
-                    k: v
-                    for k, v in models.Properties.objects.filter(
-                        owner_type='userservice',
-                        owner_id__in=parent.assigned_user_services().values_list('uuid', flat=True),
-                    ).values_list('key', 'value')
-                }
+                properties: dict[str, typing.Any] = collections.defaultdict(dict)
+                for id, key, value in models.Properties.objects.filter(
+                    owner_type='userservice',
+                    owner_id__in=parent.assigned_user_services().values_list('uuid', flat=True),
+                ).values_list('owner_id', 'key', 'value'):
+                    properties[id][key] = value
+
                 return [
                     AssignedService.item_as_dict(k, properties.get(k.uuid, {}))
                     for k in parent.assigned_user_services()
