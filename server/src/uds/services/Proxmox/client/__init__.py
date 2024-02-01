@@ -30,21 +30,20 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-import re
-import urllib.parse
-import typing
 import collections.abc
 import logging
+import re
 import time
+import typing
+import urllib.parse
 
 import requests
 
-from . import types
-
-
 from uds.core import consts
 from uds.core.util import security
-from uds.core.util.decorators import cached, ensure_connected, FT
+from uds.core.util.decorators import cached, ensure_connected
+
+from . import types
 
 # DEFAULT_PORT = 8006
 
@@ -273,13 +272,7 @@ class ProxmoxClient:
         return True
 
     @ensure_connected
-    @cached(
-        'nodeNets',
-        CACHE_DURATION,
-        args=1,
-        kwargs=['node'],
-        key_fnc=caching_key_helper,
-    )
+    @cached('nodeNets', CACHE_DURATION, args=1, kwargs=['node'], key_fnc=caching_key_helper)
     def get_node_netoworks(self, node: str, **kwargs):
         return self._get('nodes/{}/network'.format(node))['data']
 
@@ -288,9 +281,7 @@ class ProxmoxClient:
     @cached(
         'nodeGpuDevices',
         CACHE_DURATION_LONG,
-        args=1,
-        kwargs=['node'],
-        key_fnc=caching_key_helper,
+        key_fnc=caching_key_helper
     )
     def list_node_gpu_devices(self, node: str, **kwargs) -> list[str]:
         return [
@@ -433,11 +424,11 @@ class ProxmoxClient:
         return [g['group'] for g in self._get('cluster/ha/groups')['data']]
 
     @ensure_connected
-    def enable_machine_ha(self, vmId: int, started: bool = False, group: typing.Optional[str] = None) -> None:
+    def enable_machine_ha(self, vmid: int, started: bool = False, group: typing.Optional[str] = None) -> None:
         self._post(
             'cluster/ha/resources',
             data=[
-                ('sid', 'vm:{}'.format(vmId)),
+                ('sid', f'vm:{vmid}'),
                 ('comment', 'UDS HA VM'),
                 ('state', 'started' if started else 'stopped'),
                 ('max_restart', '4'),
@@ -447,19 +438,19 @@ class ProxmoxClient:
         )
 
     @ensure_connected
-    def disable_machine_ha(self, vmId: int) -> None:
+    def disable_machine_ha(self, vmid: int) -> None:
         try:
-            self._delete('cluster/ha/resources/vm%3A{}'.format(vmId))
+            self._delete('cluster/ha/resources/vm%3A{}'.format(vmid))
         except Exception:
             logger.exception('removeFromHA')
 
     @ensure_connected
-    def set_protection(self, vmId: int, node: typing.Optional[str] = None, protection: bool = False) -> None:
+    def set_protection(self, vmid: int, node: typing.Optional[str] = None, protection: bool = False) -> None:
         params: list[tuple[str, str]] = [
             ('protection', str(int(protection))),
         ]
-        node = node or self.get_machine_info(vmId).node
-        self._post('nodes/{}/qemu/{}/config'.format(node, vmId), data=params)
+        node = node or self.get_machine_info(vmid).node
+        self._post('nodes/{}/qemu/{}/config'.format(node, vmid), data=params)
 
     @ensure_connected
     def get_guest_ip_address(
@@ -505,14 +496,18 @@ class ProxmoxClient:
             return []  # If we can't get snapshots, just return empty list
 
     @ensure_connected
-    @cached('snapshots', CACHE_DURATION, args=[1, 2], kwargs=['vmid', 'node'], key_fnc=caching_key_helper)
+    @cached('snapshots', CACHE_DURATION, key_fnc=caching_key_helper)
     def supports_snapshot(self, vmid: int, node: typing.Optional[str] = None) -> bool:
         # If machine uses tpm, snapshots are not supported
         return not self.get_machine_configuration(vmid, node).tpmstate0
 
     @ensure_connected
     def create_snapshot(
-        self, vmid: int, node: 'str|None' = None, name: typing.Optional[str] = None, description: typing.Optional[str] = None
+        self,
+        vmid: int,
+        node: 'str|None' = None,
+        name: typing.Optional[str] = None,
+        description: typing.Optional[str] = None,
     ) -> types.UPID:
         if self.supports_snapshot(vmid, node) is False:
             raise ProxmoxError('Machine does not support snapshots')
@@ -549,19 +544,14 @@ class ProxmoxClient:
             raise ProxmoxError('Snapshot name is required')
         return types.UPID.from_dict(self._post(f'nodes/{node}/qemu/{vmid}/snapshot/{name}/rollback'))
 
+    @ensure_connected
     def get_task(self, node: str, upid: str) -> types.TaskStatus:
         return types.TaskStatus.from_dict(
             self._get('nodes/{}/tasks/{}/status'.format(node, urllib.parse.quote(upid)))
         )
 
     @ensure_connected
-    @cached(
-        'vms',
-        CACHE_DURATION,
-        args=1,
-        kwargs='node',
-        key_fnc=caching_key_helper,
-    )
+    @cached('vms', CACHE_DURATION, key_fnc=caching_key_helper)
     def list_machines(
         self, node: typing.Union[None, str, collections.abc.Iterable[str]] = None, **kwargs
     ) -> list[types.VMInfo]:
@@ -582,13 +572,7 @@ class ProxmoxClient:
         return sorted(result, key=lambda x: '{}{}'.format(x.node, x.name))
 
     @ensure_connected
-    @cached(
-        'vmip',
-        CACHE_INFO_DURATION,
-        args=[1, 2],
-        kwargs=['vmid', 'poolid'],
-        key_fnc=caching_key_helper,
-    )
+    @cached('vmip', CACHE_INFO_DURATION, key_fnc=caching_key_helper)
     def get_machines_pool_info(self, vmid: int, poolid: typing.Optional[str], **kwargs) -> types.VMInfo:
         # try to locate machine in pool
         node = None
@@ -610,9 +594,7 @@ class ProxmoxClient:
     @cached(
         'vmin',
         CACHE_INFO_DURATION,
-        args=[1, 2],
-        kwargs=['vmid', 'node'],
-        key_fnc=caching_key_helper,
+        key_fnc=caching_key_helper
     )
     def get_machine_info(self, vmid: int, node: typing.Optional[str] = None, **kwargs) -> types.VMInfo:
         nodes = [types.Node(node, False, False, 0, '', '', '')] if node else self.get_cluster_info().nodes
@@ -707,26 +689,14 @@ class ProxmoxClient:
     resumeVm = start_machine
 
     @ensure_connected
-    @cached(
-        'storage',
-        CACHE_DURATION,
-        args=[1, 2],
-        kwargs=['storage', 'node'],
-        key_fnc=caching_key_helper,
-    )
+    @cached('storage', CACHE_DURATION, key_fnc=caching_key_helper)
     def get_storage(self, storage: str, node: str, **kwargs) -> types.StorageInfo:
         return types.StorageInfo.from_dict(
             self._get('nodes/{}/storage/{}/status'.format(node, urllib.parse.quote(storage)))['data']
         )
 
     @ensure_connected
-    @cached(
-        'storages',
-        CACHE_DURATION,
-        args=[1, 2],
-        kwargs=['node', 'content'],
-        key_fnc=caching_key_helper,
-    )
+    @cached('storages', CACHE_DURATION, key_fnc=caching_key_helper)
     def list_storages(
         self,
         node: typing.Union[None, str, collections.abc.Iterable[str]] = None,
@@ -765,9 +735,7 @@ class ProxmoxClient:
         return [types.PoolInfo.from_dict(poolInfo) for poolInfo in self._get('pools')['data']]
 
     @ensure_connected
-    @cached(
-        'pool', CACHE_DURATION, args=[1, 2], kwargs=['pool_id', 'retrieve_vm_names'], key_fnc=caching_key_helper
-    )
+    @cached('pool', CACHE_DURATION, key_fnc=caching_key_helper)
     def get_pool_info(self, pool_id: str, retrieve_vm_names: bool = False, **kwargs) -> types.PoolInfo:
         pool_info = types.PoolInfo.from_dict(self._get(f'pools/{pool_id}')['data'])
         if retrieve_vm_names:

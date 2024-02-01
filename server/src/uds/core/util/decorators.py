@@ -239,7 +239,7 @@ def cached(
         try:
             if not args_list and not kwargs_list:
                 for pos, (param_name, param) in enumerate(inspect.signature(fnc).parameters.items()):
-                    if param_name == 'self':
+                    if param_name == 'self':  # Self will provide a key, if necesary, using key_fnc
                         continue
                     # Parameters can be included twice in the cache, but it's not a problem
                     if param.kind in (

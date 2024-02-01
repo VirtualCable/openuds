@@ -660,7 +660,7 @@ class ServicesPools(ModelHandler):
         logger.debug('Creating from assignable: %s', self._params)
         UserServiceManager().create_from_assignable(
             item,
-            User.objects.get(uuid=process_uuid(self._params['user_id'])),
+            User.objects.get(uuid__iexact=process_uuid(self._params['user_id'])),
             self._params['assignable_id'],
         )
 
