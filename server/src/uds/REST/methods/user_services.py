@@ -154,9 +154,13 @@ class AssignedService(DetailHandler):
         return _('Assigned services')
 
     def get_fields(self, parent: 'Model') -> list[typing.Any]:
+        parent = ensure.is_instance(parent, models.ServicePool)
+        # Revision is only shown if publication type is not None
         return [
             {'creation_date': {'title': _('Creation date'), 'type': 'datetime'}},
+        ] + ([
             {'revision': {'title': _('Revision')}},
+        ] if parent.service.get_type().publication_type is not None else []) + [
             {'unique_id': {'title': 'Unique ID'}},
             {'ip': {'title': _('IP')}},
             {'friendly_name': {'title': _('Friendly name')}},

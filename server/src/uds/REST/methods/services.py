@@ -95,7 +95,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         :param full: If full is requested, add "extra" fields to complete information
         """
         itemType = item.get_type()
-        retVal = {
+        ret_value = {
             'id': item.uuid,
             'name': item.name,
             'tags': [tag.tag for tag in item.tags.all()],
@@ -113,9 +113,9 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             'permission': perm,
         }
         if full:
-            retVal['info'] = Services.service_info(item)
+            ret_value['info'] = Services.service_info(item)
 
-        return retVal
+        return ret_value
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]):
         parent = ensure.is_instance(parent, models.Provider)

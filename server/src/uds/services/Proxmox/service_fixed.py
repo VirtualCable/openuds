@@ -251,21 +251,19 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
             raise Exception('All machines from list already assigned.')
 
         return str(found_vmid)
-    
+
     def get_first_network_mac(self, vmid: str) -> str:
         config = self.parent().get_machine_configuration(int(vmid))
         return config.networks[0].mac.lower()
-
 
     def get_guest_ip_address(self, vmid: str) -> str:
         return self.parent().get_guest_ip_address(int(vmid))
 
     def get_machine_name(self, vmid: str) -> str:
         return self.parent().get_machine_info(int(vmid)).name or ''
-    
+
     def remove_and_free_machine(self, vmid: str) -> None:
         try:
             self._save_assigned_machines(self._get_assigned_machines() - {str(vmid)})  # Remove from assigned
         except Exception as e:
             logger.warn('Cound not save assigned machines on fixed pool: %s', e)
-
