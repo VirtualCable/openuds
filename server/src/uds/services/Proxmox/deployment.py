@@ -320,7 +320,7 @@ if sys.platform == 'win32':
         return State.ERROR
 
     def _execute_queue(self) -> str:
-        self.__debug('executeQueue')
+        self._debug('executeQueue')
         op = self._get_current_op()
 
         if op == Operation.ERROR:
@@ -423,12 +423,12 @@ if sys.platform == 'win32':
 
     def _stop_machine(self) -> str:
         try:
-            vmInfo = self.service().get_machine_info(int(self._vmid))
+            vm_info = self.service().get_machine_info(int(self._vmid))
         except Exception as e:
             raise Exception('Machine not found on stop machine') from e
 
-        if vmInfo.status != 'stopped':
-            logger.debug('Stopping machine %s', vmInfo)
+        if vm_info.status != 'stopped':
+            logger.debug('Stopping machine %s', vm_info)
             self._store_task(self.service().stop_machine(int(self._vmid)))
 
         return State.RUNNING
@@ -568,7 +568,7 @@ if sys.platform == 'win32':
         """
         Check what operation is going on, and acts acordly to it
         """
-        self.__debug('check_state')
+        self._debug('check_state')
         op = self._get_current_op()
 
         if op == Operation.ERROR:
@@ -634,7 +634,7 @@ if sys.platform == 'win32':
         """
         Invoked for destroying a deployed service
         """
-        self.__debug('destroy')
+        self._debug('destroy')
         if self._vmid == '':
             self._queue = []
             self._reason = "canceled"
@@ -671,7 +671,7 @@ if sys.platform == 'win32':
         return self.destroy()
 
     @staticmethod
-    def __op2str(op: Operation) -> str:
+    def _op2str(op: Operation) -> str:
         return {
             Operation.CREATE: 'create',
             Operation.START: 'start',
@@ -686,7 +686,7 @@ if sys.platform == 'win32':
             Operation.GET_MAC: 'getting mac',
         }.get(op, '????')
 
-    def __debug(self, txt):
+    def _debug(self, txt):
         logger.debug(
             'State at %s: name: %s, ip: %s, mac: %s, vmid:%s, queue: %s',
             txt,
@@ -694,5 +694,5 @@ if sys.platform == 'win32':
             self._ip,
             self._mac,
             self._vmid,
-            [ProxmoxDeployment.__op2str(op) for op in self._queue],
+            [ProxmoxDeployment._op2str(op) for op in self._queue],
         )

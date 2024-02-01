@@ -35,6 +35,7 @@ from datetime import timedelta
 from django.db.models import Q, Count
 
 from uds.core.jobs import Job
+from uds.core.util import log
 from uds.core.util.config import GlobalConfig
 from uds.core.types.states import State
 from uds.models import ServicePool
@@ -89,5 +90,11 @@ class AssignedAndUnused(Job):
                 for us in unusedMachines:
                     logger.debug(
                         'Found unused assigned service with no OS Manager %s', us
+                    )
+                    log.log(
+                        us,
+                        log.LogLevel.INFO,
+                        source=log.LogSource.SERVER,
+                        message='Removing unused assigned service',
                     )
                     us.release()

@@ -165,26 +165,26 @@ class ProxmoxProvider(services.ServiceProvider):
     def list_machines(self) -> list[client.types.VMInfo]:
         return self._api().list_machines()
 
-    def get_machine_info(self, vmId: int, poolId: typing.Optional[str] = None) -> client.types.VMInfo:
-        return self._api().get_machines_pool_info(vmId, poolId, force=True)
+    def get_machine_info(self, vmid: int, poolid: typing.Optional[str] = None) -> client.types.VMInfo:
+        return self._api().get_machines_pool_info(vmid, poolid, force=True)
 
-    def get_machine_configuration(self, vmId: int) -> client.types.VMConfiguration:
-        return self._api().get_machine_configuration(vmId, force=True)
+    def get_machine_configuration(self, vmid: int) -> client.types.VMConfiguration:
+        return self._api().get_machine_configuration(vmid, force=True)
 
-    def get_storage_info(self, storageId: str, node: str) -> client.types.StorageInfo:
-        return self._api().get_storage(storageId, node)
+    def get_storage_info(self, storageid: str, node: str) -> client.types.StorageInfo:
+        return self._api().get_storage(storageid, node)
 
     def list_storages(self, node: typing.Optional[str]) -> list[client.types.StorageInfo]:
         return self._api().list_storages(node=node, content='images')
 
     def list_pools(self) -> list[client.types.PoolInfo]:
         return self._api().list_pools()
-    
+
     def get_pool_info(self, pool_id: str, retrieve_vm_names: bool = False) -> client.types.PoolInfo:
         return self._api().get_pool_info(pool_id, retrieve_vm_names=retrieve_vm_names)
 
-    def create_template(self, vmId: int) -> None:
-        return self._api().convertToTemplate(vmId)
+    def create_template(self, vmid: int) -> None:
+        return self._api().convert_to_template(vmid)
 
     def clone_machine(
         self,
@@ -209,8 +209,8 @@ class ProxmoxProvider(services.ServiceProvider):
             must_have_vgpus,
         )
 
-    def start_machine(self, vmId: int) -> client.types.UPID:
-        return self._api().start_machine(vmId)
+    def start_machine(self, vmid: int) -> client.types.UPID:
+        return self._api().start_machine(vmid)
 
     def stop_machine(self, vmid: int) -> client.types.UPID:
         return self._api().stop_machine(vmid)
@@ -221,8 +221,8 @@ class ProxmoxProvider(services.ServiceProvider):
     def suspend_machine(self, vmId: int) -> client.types.UPID:
         return self._api().suspend_machine(vmId)
 
-    def shutdown_machine(self, vmId: int) -> client.types.UPID:
-        return self._api().shutdown_machine(vmId)
+    def shutdown_machine(self, vmid: int) -> client.types.UPID:
+        return self._api().shutdown_machine(vmid)
 
     def remove_machine(self, vmid: int) -> client.types.UPID:
         return self._api().remove_machine(vmid)
@@ -230,25 +230,27 @@ class ProxmoxProvider(services.ServiceProvider):
     def get_task_info(self, node: str, upid: str) -> client.types.TaskStatus:
         return self._api().get_task(node, upid)
 
-    def enable_ha(self, vmId: int, started: bool = False, group: typing.Optional[str] = None) -> None:
-        self._api().enable_machine_ha(vmId, started, group)
+    def enable_ha(self, vmid: int, started: bool = False, group: typing.Optional[str] = None) -> None:
+        self._api().enable_machine_ha(vmid, started, group)
 
-    def set_machine_mac(self, vmId: int, macAddress: str) -> None:
-        self._api().set_machine_ha(vmId, macAddress)
+    def set_machine_mac(self, vmid: int, macAddress: str) -> None:
+        self._api().set_machine_ha(vmid, macAddress)
 
     def disable_ha(self, vmid: int) -> None:
         self._api().disable_machine_ha(vmid)
 
-    def set_protection(self, vmId: int, node: typing.Optional[str] = None, protection: bool = False) -> None:
-        self._api().set_protection(vmId, node, protection)
+    def set_protection(self, vmid: int, node: typing.Optional[str] = None, protection: bool = False) -> None:
+        self._api().set_protection(vmid, node, protection)
 
     def list_ha_groups(self) -> list[str]:
         return self._api().list_ha_groups()
 
     def get_console_connection(
-        self, machineId: str
+        self,
+        vmid: str,
+        node: typing.Optional[str] = None,
     ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
-        return self._api().get_console_connection(machineId)
+        return self._api().get_console_connection(int(vmid), node)
 
     def get_new_vmid(self) -> int:
         while True:  # look for an unused VmId
@@ -258,6 +260,33 @@ class ProxmoxProvider(services.ServiceProvider):
             # All assigned VMId will be left as unusable on UDS until released by time (3 years)
             # This is not a problem at all, in the rare case that a machine id is released from uds db
             # if it exists when we try to create a new one, we will simply try to get another one
+
+    def get_guest_ip_address(self, vmid: int, node: typing.Optional[str] = None) -> str:
+        return self._api().get_guest_ip_address(vmid, node)
+
+    def supports_snapshot(self, vmid: int, node: typing.Optional[str] = None) -> bool:
+        return self._api().supports_snapshot(vmid, node)
+
+    def get_current_snapshot(
+        self, vmid: int, node: typing.Optional[str] = None
+    ) -> typing.Optional[client.types.SnapshotInfo]:
+        return (
+            sorted(
+                filter(lambda x: x.snaptime, self._api().list_snapshots(vmid, node)),
+                key=lambda x: x.snaptime or 0,
+                reverse=True,
+            )
+            + [None]
+        )[0]
+        
+    def create_snapshot(self, vmid: int, node: typing.Optional[str] = None, name: typing.Optional[str] = None, description: typing.Optional[str] = None) -> client.types.UPID:
+        return self._api().create_snapshot(vmid, node, name, description)
+        
+    def restore_snapshot(self, vmid: int, node: typing.Optional[str] = None, name: typing.Optional[str] = None) -> client.types.UPID:
+        """
+        In fact snapshot is not optional, but node is and want to keep the same signature as the api
+        """
+        return self._api().restore_snapshot(vmid, node, name) 
 
     @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def is_available(self) -> bool:

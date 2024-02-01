@@ -30,27 +30,28 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-import urllib3
 import re
-import urllib3.exceptions
 import urllib.parse
 import typing
 import collections.abc
 import logging
+import time
 
 import requests
 
 from . import types
 
 
+from uds.core import consts
 from uds.core.util import security
 from uds.core.util.decorators import cached, ensure_connected
 
 # DEFAULT_PORT = 8006
 
-CACHE_DURATION = 120  # Keep cache 2 minutes by default
-CACHE_INFO_DURATION = 30
-CACHE_DURATION_LONG = 24 * 60 * 60  # 24 hours
+CACHE_DURATION: typing.Final[int] = consts.cache.DEFAULT_CACHE_TIMEOUT
+CACHE_INFO_DURATION: typing.Final[int] = consts.cache.SHORT_CACHE_TIMEOUT
+# Cache duration is 3 minutes, so this is 60 mins * 24 = 1 day (default)
+CACHE_DURATION_LONG: typing.Final[int] = consts.cache.EXTREME_CACHE_TIMEOUT
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -102,6 +103,8 @@ class ProxmoxClient:
 
     cache: typing.Optional['Cache']
 
+    _DEBUG = False
+
     def __init__(
         self,
         host: str,
@@ -124,9 +127,6 @@ class ProxmoxClient:
         self._ticket = ''
         self._csrf = ''
 
-        # Disable warnings from urllib for
-        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
     @property
     def headers(self):
         return {
@@ -137,7 +137,12 @@ class ProxmoxClient:
 
     @staticmethod
     def ensure_correct(response: 'requests.Response') -> typing.Any:
+        if ProxmoxClient._DEBUG:
+            logger.debug('Response code: %s', response.status_code)
         if not response.ok:
+            if ProxmoxClient._DEBUG:
+                logger.debug('Response: %s', response.content)
+
             errMsg = 'Status code {}'.format(response.status_code)
             if response.status_code == 595:
                 raise ProxmoxNodeUnavailableError()
@@ -153,6 +158,9 @@ class ProxmoxClient:
 
             raise ProxmoxError(errMsg)
 
+        if ProxmoxClient._DEBUG:
+            logger.debug('Response: %s', response.content)
+
         return response.json()
 
     def _compose_url_for(self, path: str) -> str:
@@ -160,6 +168,10 @@ class ProxmoxClient:
 
     def _get(self, path: str) -> typing.Any:
         try:
+            if ProxmoxClient._DEBUG:
+                logger.debug('GET to %s', self._compose_url_for(path))
+                logger.debug('Headers: %s', self.headers)
+
             result = security.secure_requests_session(verify=self._validate_cert).get(
                 self._compose_url_for(path),
                 headers=self.headers,
@@ -313,8 +325,10 @@ class ProxmoxClient:
         ]
 
     @ensure_connected
-    def node_has_vgpus_available(self, node: str, vgpu_type: str, **kwargs) -> bool:
-        return any(gpu['available'] and gpu['type'] == vgpu_type for gpu in self.list_node_vgpus(node))
+    def node_has_vgpus_available(self, node: str, vgpu_type: typing.Optional[str], **kwargs) -> bool:
+        return any(
+            gpu['available'] and vgpu_type and gpu['type'] == vgpu_type for gpu in self.list_node_vgpus(node)
+        )
 
     @ensure_connected
     def get_best_node_for_machine(
@@ -376,7 +390,7 @@ class ProxmoxClient:
             # If storage is not shared, must be done on same as origin
             if use_storage and self.get_storage(use_storage, vmInfo.node).shared:
                 node = self.get_best_node_for_machine(
-                    minMemory=-1, mustHaveVGPUS=must_have_vgpus, mdevType=vmInfo.vgpu_type
+                    min_memory=-1, must_have_vgpus=must_have_vgpus, mdev_type=vmInfo.vgpu_type
                 )
                 if node is None:
                     raise ProxmoxError(
@@ -461,11 +475,93 @@ class ProxmoxClient:
         self._post('nodes/{}/qemu/{}/config'.format(node, vmId), data=params)
 
     @ensure_connected
-    def remove_machine(self, vmId: int, node: typing.Optional[str] = None, purge: bool = True) -> types.UPID:
-        node = node or self.get_machine_info(vmId).node
-        return types.UPID.from_dict(self._delete('nodes/{}/qemu/{}?purge=1'.format(node, vmId)))
+    def get_guest_ip_address(
+        self, vmid: int, node: typing.Optional[str], ip_version: typing.Literal['4', '6', ''] = ''
+    ) -> str:
+        """Returns the guest ip address of the specified machine"""
+        try:
+            node = node or self.get_machine_info(vmid).node
+            ifaces_list: list[dict[str, typing.Any]] = self._get(
+                f'nodes/{node}/qemu/{vmid}/agent/network-get-interfaces'
+            )['data']['result']
+            # look for first non-localhost interface with an ip address
+            for iface in ifaces_list:
+                if iface['name'] != 'lo' and 'ip-addresses' in iface:
+                    for ip in iface['ip-addresses']:
+                        if ip['ip-address'].startswith('127.'):
+                            continue
+                        if ip_version == '4' and ip.get('ip-address-type') != 'ipv4':
+                            continue
+                        elif ip_version == '6' and ip.get('ip-address-type') != 'ipv6':
+                            continue
+                        return ip['ip-address']
+        except Exception as e:
+            logger.info('Error getting guest ip address for machine %s: %s', vmid, e)
+            raise ProxmoxError(f'No ip address for vm {vmid}: {e}')
+
+        raise ProxmoxError('No ip address found for vm {}'.format(vmid))
 
     @ensure_connected
+    def remove_machine(self, vmid: int, node: typing.Optional[str] = None, purge: bool = True) -> types.UPID:
+        node = node or self.get_machine_info(vmid).node
+        return types.UPID.from_dict(self._delete('nodes/{}/qemu/{}?purge=1'.format(node, vmid)))
+
+    @ensure_connected
+    def list_snapshots(self, vmId: int, node: typing.Optional[str] = None) -> list[types.SnapshotInfo]:
+        node = node or self.get_machine_info(vmId).node
+        try:
+            return [
+                types.SnapshotInfo.from_dict(s)
+                for s in self._get('nodes/{}/qemu/{}/snapshot'.format(node, vmId))['data']
+            ]
+        except Exception:
+            return []  # If we can't get snapshots, just return empty list
+
+    @ensure_connected
+    @cached('snapshots', CACHE_DURATION, args=[1, 2], kwargs=['vmid', 'node'], key_fnc=caching_key_helper)
+    def supports_snapshot(self, vmid: int, node: typing.Optional[str] = None) -> bool:
+        # If machine uses tpm, snapshots are not supported
+        return not self.get_machine_configuration(vmid, node).tpmstate0
+
+    @ensure_connected
+    def create_snapshot(
+        self, vmid: int, node: 'str|None' = None, name: typing.Optional[str] = None, description: typing.Optional[str] = None
+    ) -> types.UPID:
+        if self.supports_snapshot(vmid, node) is False:
+            raise ProxmoxError('Machine does not support snapshots')
+
+        node = node or self.get_machine_info(vmid).node
+        # Compose a sanitized name, without spaces and with a timestamp
+        name = name or f'UDS-{time.time()}'
+        params: list[tuple[str, str]] = [
+            ('snapname', name),
+            ('description', description or f'UDS Snapshot created at {time.strftime("%c")}'),
+        ]
+        params.append(('snapname', name or ''))
+        return types.UPID.from_dict(self._post(f'nodes/{node}/qemu/{vmid}/snapshot', data=params))
+
+    @ensure_connected
+    def remove_snapshot(
+        self, vmid: int, node: 'str|None' = None, name: typing.Optional[str] = None
+    ) -> types.UPID:
+        node = node or self.get_machine_info(vmid).node
+        if name is None:
+            raise ProxmoxError('Snapshot name is required')
+        return types.UPID.from_dict(self._delete(f'nodes/{node}/qemu/{vmid}/snapshot/{name}'))
+
+    def get_current_snapshot(self, vmid: int, node: 'str|None' = None) -> str:
+        node = node or self.get_machine_info(vmid).node
+        return self._get(f'nodes/{node}/qemu/{vmid}/snapshot/current')['data']['name']
+
+    @ensure_connected
+    def restore_snapshot(
+        self, vmid: int, node: 'str|None' = None, name: typing.Optional[str] = None
+    ) -> types.UPID:
+        node = node or self.get_machine_info(vmid).node
+        if name is None:
+            raise ProxmoxError('Snapshot name is required')
+        return types.UPID.from_dict(self._post(f'nodes/{node}/qemu/{vmid}/snapshot/{name}/rollback'))
+
     def get_task(self, node: str, upid: str) -> types.TaskStatus:
         return types.TaskStatus.from_dict(
             self._get('nodes/{}/tasks/{}/status'.format(node, urllib.parse.quote(upid)))
@@ -503,10 +599,10 @@ class ProxmoxClient:
         'vmip',
         CACHE_INFO_DURATION,
         args=[1, 2],
-        kwargs=['vmId', 'poolId'],
+        kwargs=['vmid', 'poolid'],
         key_fnc=caching_key_helper,
     )
-    def get_machines_pool_info(self, vmid: int, poolid: str, **kwargs) -> types.VMInfo:
+    def get_machines_pool_info(self, vmid: int, poolid: typing.Optional[str], **kwargs) -> types.VMInfo:
         # try to locate machine in pool
         node = None
         if poolid:
@@ -528,7 +624,7 @@ class ProxmoxClient:
         'vmin',
         CACHE_INFO_DURATION,
         args=[1, 2],
-        kwargs=['vmId', 'node'],
+        kwargs=['vmid', 'node'],
         key_fnc=caching_key_helper,
     )
     def get_machine_info(self, vmid: int, node: typing.Optional[str] = None, **kwargs) -> types.VMInfo:
@@ -552,21 +648,21 @@ class ProxmoxClient:
         raise ProxmoxNotFound()
 
     @ensure_connected
-    def get_machine_configuration(self, vmId: int, node: typing.Optional[str] = None):
-        node = node or self.get_machine_info(vmId).node
-        return types.VMConfiguration.from_dict(self._get('nodes/{}/qemu/{}/config'.format(node, vmId))['data'])
+    def get_machine_configuration(self, vmid: int, node: typing.Optional[str] = None, **kwargs):
+        node = node or self.get_machine_info(vmid).node
+        return types.VMConfiguration.from_dict(self._get('nodes/{}/qemu/{}/config'.format(node, vmid))['data'])
 
     @ensure_connected
     def set_machine_ha(
         self,
-        vmId: int,
+        vmid: int,
         mac: str,
         netid: typing.Optional[str] = None,
         node: typing.Optional[str] = None,
     ) -> None:
-        node = node or self.get_machine_info(vmId).node
+        node = node or self.get_machine_info(vmid).node
         # First, read current configuration and extract network configuration
-        config = self._get('nodes/{}/qemu/{}/config'.format(node, vmId))['data']
+        config = self._get('nodes/{}/qemu/{}/config'.format(node, vmid))['data']
         if netid not in config:
             # Get first network interface (netX where X is a number)
             netid = next((k for k in config if k.startswith('net') and k[3:].isdigit()), None)
@@ -578,47 +674,47 @@ class ProxmoxClient:
         # Update mac address, that is the first field <model>=<mac>,<other options>
         netdata = re.sub(r'^([^=]+)=([^,]+),', r'\1={},'.format(mac), netdata)
 
-        logger.debug('Updating mac address for VM %s: %s=%s', vmId, netid, netdata)
+        logger.debug('Updating mac address for VM %s: %s=%s', vmid, netid, netdata)
 
         self._post(
-            'nodes/{}/qemu/{}/config'.format(node, vmId),
+            f'nodes/{node}/qemu/{vmid}/config',
             data=[(netid, netdata)],
         )
 
     @ensure_connected
-    def start_machine(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
+    def start_machine(self, vmid: int, node: typing.Optional[str] = None) -> types.UPID:
         # if exitstatus is "OK" or contains "already running", all is fine
-        node = node or self.get_machine_info(vmId).node
-        return types.UPID.from_dict(self._post('nodes/{}/qemu/{}/status/start'.format(node, vmId)))
+        node = node or self.get_machine_info(vmid).node
+        return types.UPID.from_dict(self._post('nodes/{}/qemu/{}/status/start'.format(node, vmid)))
 
     @ensure_connected
-    def stop_machine(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
-        node = node or self.get_machine_info(vmId).node
-        return types.UPID.from_dict(self._post('nodes/{}/qemu/{}/status/stop'.format(node, vmId)))
+    def stop_machine(self, vmid: int, node: typing.Optional[str] = None) -> types.UPID:
+        node = node or self.get_machine_info(vmid).node
+        return types.UPID.from_dict(self._post('nodes/{}/qemu/{}/status/stop'.format(node, vmid)))
 
     @ensure_connected
-    def reset_machine(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
-        node = node or self.get_machine_info(vmId).node
-        return types.UPID.from_dict(self._post('nodes/{}/qemu/{}/status/reset'.format(node, vmId)))
+    def reset_machine(self, vmid: int, node: typing.Optional[str] = None) -> types.UPID:
+        node = node or self.get_machine_info(vmid).node
+        return types.UPID.from_dict(self._post('nodes/{}/qemu/{}/status/reset'.format(node, vmid)))
 
     @ensure_connected
-    def suspend_machine(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
+    def suspend_machine(self, vmid: int, node: typing.Optional[str] = None) -> types.UPID:
         # if exitstatus is "OK" or contains "already running", all is fine
-        node = node or self.get_machine_info(vmId).node
-        return types.UPID.from_dict(self._post('nodes/{}/qemu/{}/status/suspend'.format(node, vmId)))
+        node = node or self.get_machine_info(vmid).node
+        return types.UPID.from_dict(self._post(f'nodes/{node}/qemu/{vmid}/status/suspend'))
 
     @ensure_connected
-    def shutdown_machine(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
+    def shutdown_machine(self, vmid: int, node: typing.Optional[str] = None) -> types.UPID:
         # if exitstatus is "OK" or contains "already running", all is fine
-        node = node or self.get_machine_info(vmId).node
-        return types.UPID.from_dict(self._post('nodes/{}/qemu/{}/status/shutdown'.format(node, vmId)))
+        node = node or self.get_machine_info(vmid).node
+        return types.UPID.from_dict(self._post('nodes/{}/qemu/{}/status/shutdown'.format(node, vmid)))
 
     @ensure_connected
-    def convertToTemplate(self, vmId: int, node: typing.Optional[str] = None) -> None:
-        node = node or self.get_machine_info(vmId).node
-        self._post('nodes/{}/qemu/{}/template'.format(node, vmId))
+    def convert_to_template(self, vmid: int, node: typing.Optional[str] = None) -> None:
+        node = node or self.get_machine_info(vmid).node
+        self._post('nodes/{}/qemu/{}/template'.format(node, vmid))
         # Ensure cache is reset for this VM (as it is now a template)
-        self.get_machine_info(vmId, force=True)
+        self.get_machine_info(vmid, force=True)
 
     # proxmox has a "resume", but start works for suspended vm so we use it
     resumeVm = start_machine
@@ -682,15 +778,21 @@ class ProxmoxClient:
         return [types.PoolInfo.from_dict(poolInfo) for poolInfo in self._get('pools')['data']]
 
     @ensure_connected
-    @cached('pool', CACHE_DURATION, args=[1, 2], kwargs=['pool_id', 'retrieve_vm_names'], key_fnc=caching_key_helper)
+    @cached(
+        'pool', CACHE_DURATION, args=[1, 2], kwargs=['pool_id', 'retrieve_vm_names'], key_fnc=caching_key_helper
+    )
     def get_pool_info(self, pool_id: str, retrieve_vm_names: bool = False, **kwargs) -> types.PoolInfo:
         pool_info = types.PoolInfo.from_dict(self._get(f'pools/{pool_id}')['data'])
         if retrieve_vm_names:
             for i in range(len(pool_info.members)):
                 try:
-                    pool_info.members[i] = pool_info.members[i]._replace(vmname=self.get_machine_info(pool_info.members[i].vmid).name or '')
+                    pool_info.members[i] = pool_info.members[i]._replace(
+                        vmname=self.get_machine_info(pool_info.members[i].vmid).name or ''
+                    )
                 except Exception:
-                    pool_info.members[i] = pool_info.members[i]._replace(vmname=f'VM-{pool_info.members[i].vmid}')
+                    pool_info.members[i] = pool_info.members[i]._replace(
+                        vmname=f'VM-{pool_info.members[i].vmid}'
+                    )
         return pool_info
 
     @ensure_connected

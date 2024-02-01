@@ -42,7 +42,7 @@ from uds.core.util.decorators import cached
 from uds.core.workers import initialize
 
 from . import helpers
-from .deployment import ProxmoxDeployment
+from .deployment_fixed import ProxmoxFixedUserService
 from .publication import ProxmoxPublication
 
 # Not imported at runtime, just for type checking
@@ -58,7 +58,7 @@ logger = logging.getLogger(__name__)
 
 class ProxmoxFixedService(services.Service):  # pylint: disable=too-many-public-methods
     """
-    Proxmox Linked clones service. This is based on creating a template from selected vm, and then use it to
+    Proxmox fixed machines service. 
     """
 
     # : Name to show the administrator. This string will be translated BEFORE
@@ -68,7 +68,7 @@ class ProxmoxFixedService(services.Service):  # pylint: disable=too-many-public-
     # : Type used internally to identify this provider
     type_type = 'ProxmoxFixedService'
     # : Description shown at administration interface for this provider
-    type_description = _('Proxmox Services based on fixed machines')
+    type_description = _('Proxmox Services based on fixed machines. Needs qemu agent installed on machines.')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
@@ -102,7 +102,7 @@ class ProxmoxFixedService(services.Service):  # pylint: disable=too-many-public-
     # : In our case, we do no need a publication, so this is None
     publication_type = ProxmoxPublication
     # : Types of deploys (services in cache and/or assigned to users)
-    user_service_type = ProxmoxDeployment
+    user_service_type = ProxmoxFixedUserService
 
     allowed_protocols = types.transports.Protocol.generic_vdi(types.transports.Protocol.SPICE)
     services_type_provided = types.services.ServiceType.VDI
@@ -205,6 +205,9 @@ class ProxmoxFixedService(services.Service):  # pylint: disable=too-many-public-
     def get_nic_mac(self, vmid: int) -> str:
         config = self.parent().get_machine_configuration(vmid)
         return config.networks[0].mac.lower()
+    
+    def get_guest_ip_address(self, vmid: int) -> str:
+        return self.parent().get_guest_ip_address(vmid)
 
     def get_task_info(self, node: str, upid: str) -> 'client.types.TaskStatus':
         return self.parent().get_task_info(node, upid)
@@ -227,10 +230,10 @@ class ProxmoxFixedService(services.Service):  # pylint: disable=too-many-public-
     def get_machine_from_pool(self) -> int:
         found_vmid: typing.Optional[int] = None
         try:
-            assignedVmsSet = self._get_assigned_machines()
+            assigned_vms = self._get_assigned_machines()
             for k in self.machines.as_list():
                 checking_vmid = int(k)
-                if found_vmid not in assignedVmsSet:  # Not assigned
+                if found_vmid not in assigned_vms:  # Not assigned
                     # Check that the machine exists...
                     try:
                         vm_info = self.parent().get_machine_info(checking_vmid, self.pool.value.strip())
@@ -241,13 +244,13 @@ class ProxmoxFixedService(services.Service):  # pylint: disable=too-many-public-
                             log.LogLevel.WARNING, 'Machine {} not accesible'.format(found_vmid)
                         )
                         logger.warning(
-                            'The service has machines that cannot be checked on vmware (connection error or machine has been deleted): %s',
+                            'The service has machines that cannot be checked on proxmox (connection error or machine has been deleted): %s',
                             found_vmid,
                         )
 
             if found_vmid:
-                assignedVmsSet.add(found_vmid)
-                self._save_assigned_machines(assignedVmsSet)
+                assigned_vms.add(found_vmid)
+                self._save_assigned_machines(assigned_vms)
         except Exception:  #
             raise Exception('No machine available')
 
@@ -261,7 +264,7 @@ class ProxmoxFixedService(services.Service):  # pylint: disable=too-many-public-
             self._save_assigned_machines(self._get_assigned_machines() - {vmid})  # Sets operation
         except Exception as e:
             logger.warn('Cound not save assigned machines on vmware fixed pool: %s', e)
-
+            
     def enumerate_assignables(self) -> list[tuple[str, str]]:
         # Obtain machines names and ids for asignables
         vms: dict[int, str] = {}
@@ -278,12 +281,12 @@ class ProxmoxFixedService(services.Service):  # pylint: disable=too-many-public-
     def assign_from_assignables(
         self, assignable_id: str, user: 'models.User', user_deployment: 'services.UserService'
     ) -> str:
-        userservice_instance: ProxmoxDeployment = typing.cast(ProxmoxDeployment, user_deployment)
+        userservice_instance = typing.cast(ProxmoxFixedUserService, user_deployment)
         assignedVmsSet = self._get_assigned_machines()
         if assignable_id not in assignedVmsSet:
             assignedVmsSet.add(int(assignable_id))
             self._save_assigned_machines(assignedVmsSet)
-            return userservice_instance.assign(assignable_id)
+            return userservice_instance.assign(int(assignable_id))
 
         return userservice_instance.error('VM not available!')
 

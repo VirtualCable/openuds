@@ -339,7 +339,7 @@ class Service(Module):
         return []
 
     def assign_from_assignables(
-        self, assignableId: str, user: 'models.User', userDeployment: 'UserService'
+        self, assignable_id: str, user: 'models.User', userservice: 'UserService'
     ) -> str:
         """
         Assigns from it internal assignable list to an user

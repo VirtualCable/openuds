@@ -1,15 +1,17 @@
+import collections.abc
 import ipaddress
 import logging
 import random
 import secrets
 import ssl
 import typing
-import collections.abc
 from datetime import datetime, timedelta
 
 import certifi
 import requests
 import requests.adapters
+import urllib3
+import urllib3.exceptions
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
@@ -23,6 +25,9 @@ logger = logging.getLogger(__name__)
 
 KEY_SIZE = 4096
 SECRET_SIZE = 32
+
+# Disable warnings from urllib for
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 try:
@@ -164,7 +169,7 @@ def secure_requests_session(
 
     # Copy verify value
     lverify = verify
-
+    
     class UDSHTTPAdapter(requests.adapters.HTTPAdapter):
         def init_poolmanager(self, *args, **kwargs) -> None:
             kwargs["ssl_context"] = create_client_sslcontext(verify=verify is True)

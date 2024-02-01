@@ -41,15 +41,18 @@ import collections.abc
 from django.db import transaction
 
 from uds.core import consts, types, exceptions
+from uds.core.util import singleton
+
 import uds.core.exceptions.rest
 
 logger = logging.getLogger(__name__)
 
 RT = typing.TypeVar('RT')
+FT = typing.TypeVar('FT', bound=collections.abc.Callable[..., typing.Any])
 
 
 # Caching statistics
-class CacheStats:
+class CacheStats(metaclass=singleton.Singleton):
     __slots__ = ('hits', 'misses', 'total', 'start_time', 'saving_time')
 
     hits: int
@@ -93,8 +96,9 @@ class CacheStats:
             f'saving_time={self.saving_time/1000000:.2f}'
         )
 
-
-stats = CacheStats()
+    @staticmethod
+    def manager() -> 'CacheStats':
+        return CacheStats()
 
 
 @dataclasses.dataclass
@@ -186,16 +190,14 @@ def deprecated_class_value(newVarName: str) -> collections.abc.Callable:
 
     return functools.partial(innerDeprecated, newVarName=newVarName)
 
-
-def ensure_connected(func: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
+def ensure_connected(func: FT) -> FT:
     """This decorator calls "connect" method of the class of the wrapped object"""
 
-    @functools.wraps(func)
-    def new_func(*args, **kwargs) -> RT:
+    def new_func(*args, **kwargs) -> typing.Any:
         args[0].connect()
         return func(*args, **kwargs)
 
-    return new_func
+    return typing.cast(FT, new_func)
 
 
 # Decorator for caching
@@ -206,7 +208,7 @@ def cached(
     args: typing.Optional[typing.Union[collections.abc.Iterable[int], int]] = None,
     kwargs: typing.Optional[typing.Union[collections.abc.Iterable[str], str]] = None,
     key_fnc: typing.Optional[collections.abc.Callable[[typing.Any], str]] = None,
-) -> collections.abc.Callable[[collections.abc.Callable[..., RT]], collections.abc.Callable[..., RT]]:
+) -> collections.abc.Callable[[FT], FT]:
     """Decorator that give us a "quick& clean" caching feature on db.
     The "cached" element must provide a "cache" variable, which is a cache object
 
@@ -232,7 +234,7 @@ def cached(
 
     hits = misses = exec_time = 0
 
-    def allow_cache_decorator(fnc: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
+    def allow_cache_decorator(fnc: FT) -> FT:
         # If no caching args and no caching kwargs, we will cache the whole call
         # If no parameters provider, try to infer them from function signature
         try:
@@ -259,7 +261,7 @@ def cached(
         lkey_fnc = key_fnc or (lambda x: fnc.__name__)
 
         @functools.wraps(fnc)
-        def wrapper(*args, **kwargs) -> RT:
+        def wrapper(*args, **kwargs) -> typing.Any:
             nonlocal hits, misses, exec_time
             with transaction.atomic():  # On its own transaction (for cache operations, that are on DB)
                 cache_key: str = prefix
@@ -287,12 +289,12 @@ def cached(
                     if data:
                         with lock:
                             hits += 1
-                            stats.add_hit(exec_time // hits)  # Use mean execution time
+                            CacheStats.manager().add_hit(exec_time // hits)  # Use mean execution time
                         return data
 
                 with lock:
                     misses += 1
-                    stats.add_miss()
+                    CacheStats.manager().add_miss()
 
                 if 'force' in kwargs:
                     # Remove force key
@@ -300,9 +302,7 @@ def cached(
 
                 t = time.thread_time_ns()
                 data = fnc(*args, **kwargs)
-                # Compute duration
-                with lock:
-                    exec_time += time.thread_time_ns() - t
+                exec_time += time.thread_time_ns() - t
 
                 try:
                     # Maybe returned data is not serializable. In that case, cache will fail but no harm is done with this
@@ -332,13 +332,13 @@ def cached(
         wrapper.cache_info = cache_info  # type: ignore
         wrapper.cache_clear = cache_clear  # type: ignore
 
-        return wrapper
+        return typing.cast(FT, wrapper)
 
     return allow_cache_decorator
 
 
 # Decorator to execute method in a thread
-def threaded(func: collections.abc.Callable[..., None]) -> collections.abc.Callable[..., None]:
+def threaded(func: FT) -> FT:
     """Decorator to execute method in a thread"""
 
     @functools.wraps(func)
@@ -346,14 +346,14 @@ def threaded(func: collections.abc.Callable[..., None]) -> collections.abc.Calla
         thread = threading.Thread(target=func, args=args, kwargs=kwargs)
         thread.start()
 
-    return wrapper
+    return typing.cast(FT, wrapper)
 
 
 def blocker(
     request_attr: typing.Optional[str] = None,
     max_failures: typing.Optional[int] = None,
     ignore_block_config: bool = False,
-) -> collections.abc.Callable[[collections.abc.Callable[..., RT]], collections.abc.Callable[..., RT]]:
+) -> collections.abc.Callable[[FT], FT]:
     """
     Decorator that will block the actor if it has more than ALLOWED_FAILS failures in BLOCK_ACTOR_TIME seconds
     GlobalConfig.BLOCK_ACTOR_FAILURES.getBool() --> If true, block actor after ALLOWED_FAILS failures
@@ -376,9 +376,9 @@ def blocker(
 
     max_failures = max_failures or consts.system.ALLOWED_FAILS
 
-    def decorator(f: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
+    def decorator(f: FT) -> FT:
         @functools.wraps(f)
-        def wrapper(*args: typing.Any, **kwargs: typing.Any) -> RT:
+        def wrapper(*args: typing.Any, **kwargs: typing.Any) -> typing.Any:
             if not GlobalConfig.BLOCK_ACTOR_FAILURES.as_bool(True) and not ignore_block_config:
                 return f(*args, **kwargs)
 
@@ -412,14 +412,14 @@ def blocker(
 
             return result
 
-        return wrapper
+        return typing.cast(FT, wrapper)
 
     return decorator
 
 
 def profile(
     log_file: typing.Optional[str] = None,
-) -> collections.abc.Callable[[collections.abc.Callable[..., RT]], collections.abc.Callable[..., RT]]:
+) -> collections.abc.Callable[[FT], FT]:
     """
     Decorator that will profile the wrapped function and log the results to the provided file
 
@@ -430,9 +430,8 @@ def profile(
         Decorator
     """
 
-    def decorator(f: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
-        @functools.wraps(f)
-        def wrapper(*args: typing.Any, **kwargs: typing.Any) -> RT:
+    def decorator(f: FT) -> FT:
+        def wrapper(*args: typing.Any, **kwargs: typing.Any) -> typing.Any:
             nonlocal log_file
             import cProfile
             import pstats
@@ -448,6 +447,6 @@ def profile(
             stats.dump_stats(log_file)
             return result
 
-        return wrapper
+        return typing.cast(FT, wrapper)
 
     return decorator
