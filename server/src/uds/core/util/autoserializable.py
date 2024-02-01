@@ -54,6 +54,7 @@ import zlib
 import base64
 import hashlib
 import struct
+import abc
 
 # Import the cryptography library
 from cryptography import fernet
@@ -119,6 +120,7 @@ def is_autoserializable_data(data: bytes) -> bool:
         True if data is autoserializable, False otherwise
     """
     return data[: len(HEADER_BASE)] == HEADER_BASE
+
 
 @dataclasses.dataclass(slots=True)
 class _MarshalInfo:
@@ -205,7 +207,7 @@ class _SerializableField(typing.Generic[T]):
             # Try casting to load values (maybe a namedtuple, i.e.)
             try:
                 if isinstance(value, collections.abc.Mapping):
-                    value = self.obj_type(**value)   # If a dict, try to cast it to the object
+                    value = self.obj_type(**value)  # If a dict, try to cast it to the object
                 elif isinstance(value, collections.abc.Iterable):  # IF a list, tuple, etc... try to cast it
                     value = self.obj_type(*value)
                 else:  # Maybe it has a constructor that accepts a single value or is a callable...
@@ -424,7 +426,7 @@ class PasswordField(StringField):
 # ************************
 
 
-class _FieldNameSetter(type):
+class _FieldNameSetter(abc.ABCMeta, type):
     """Simply adds the name of the field in the class to the field object"""
 
     def __new__(mcs, name, bases, attrs):
@@ -450,7 +452,7 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
 
     def _autoserializable_fields(self) -> collections.abc.Iterator[tuple[str, _SerializableField]]:
         """Returns an iterator over all fields in the class, including inherited ones
-        
+
         Returns:
             Tuple(name, field) for each field in the class and its bases
         """
@@ -566,9 +568,9 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
         """
         if not isinstance(other, AutoSerializable):
             return False
-        
+
         all_fields_attrs = list(self._autoserializable_fields())
-        
+
         if {k for k, _ in all_fields_attrs} != {k for k, _ in other._autoserializable_fields()}:
             return False
 

@@ -1342,7 +1342,7 @@ class gui:
             )
 
 
-class UserInterfaceType(type):
+class UserInterfaceType(abc.ABCMeta, type):
     """
     Metaclass definition for moving the user interface descriptions to a usable
     better place. This is done this way because we will "deepcopy" these fields
@@ -1368,15 +1368,10 @@ class UserInterfaceType(type):
 
             new_class_dict[attrName] = attr
         new_class_dict['_gui_fields_template'] = _gui
-        return typing.cast('UserInterfaceType', type.__new__(mcs, classname, bases, new_class_dict))
+        return typing.cast('UserInterfaceType', super().__new__(mcs, classname, bases, new_class_dict))
 
 
-# Intermediate class to allow to use abc.ABC and UserInterface
-class UserInterfaceAbstract(abc.ABCMeta, UserInterfaceType):
-    pass
-
-
-class UserInterface(metaclass=UserInterfaceAbstract):
+class UserInterface(metaclass=UserInterfaceType):
     """
     This class provides the management for gui descriptions (user forms)
 

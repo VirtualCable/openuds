@@ -113,7 +113,7 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
         pub = super().publication()
         if pub is None:
             raise Exception('No publication for this element!')
-        return typing.cast('OGPublication', pub)
+        return typing.cast('OpenGnsysPublication', pub)
 
     def unmarshal(self, data: bytes) -> None:
         """

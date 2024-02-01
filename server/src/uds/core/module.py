@@ -48,7 +48,7 @@ from .serializable import Serializable
 logger = logging.getLogger(__name__)
 
 
-class Module(abc.ABC, UserInterface, Environmentable, Serializable):
+class Module(UserInterface, Environmentable, Serializable, abc.ABC):
     """
     Base class for all modules used by UDS.
     This base module provides all the needed methods that modules must implement

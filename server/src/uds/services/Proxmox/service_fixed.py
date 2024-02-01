@@ -29,15 +29,14 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
-import re
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _, gettext
 from uds.core import services, types, consts, exceptions
+from uds.core.services.expecializations.fixed_machine.fixed_service import FixedService
+from uds.core.services.expecializations.fixed_machine.fixed_userservice import FixedUserService
 from uds.core.ui import gui
 from uds.core.util import validators, log
-from uds.core.util.cache import Cache
 from uds.core.util.decorators import cached
 from uds.core.workers import initialize
 
@@ -55,7 +54,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class ProxmoxFixedService(services.Service):  # pylint: disable=too-many-public-methods
+class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-methods
     """
     Proxmox fixed machines service.
     """
@@ -65,10 +64,6 @@ class ProxmoxFixedService(services.Service):  # pylint: disable=too-many-public-
     type_description = _('Proxmox Services based on fixed machines. Needs qemu agent installed on machines.')
     icon_file = 'service.png'
 
-    uses_cache = False  # Cache are running machine awaiting to be assigned
-    uses_cache_l2 = False  # L2 Cache are running machines in suspended state
-    needs_osmanager = False  # If the service needs a s.o. manager (managers are related to agents provided by services, i.e. virtual machines with agent)
-    must_assign_manually = False  # If true, the system can't do an automatic assignation of a deployed user service from this service
     can_reset = True
 
     # : Types of publications (preparated data for deploys)
@@ -81,17 +76,7 @@ class ProxmoxFixedService(services.Service):  # pylint: disable=too-many-public-
     services_type_provided = types.services.ServiceType.VDI
 
     # Gui
-    token = gui.TextField(
-        order=1,
-        label=_('Service Token'),
-        length=16,
-        tooltip=_(
-            'Service token that will be used by actors to communicate with service. Leave empty for persistent assignation.'
-        ),
-        default='',
-        required=False,
-        readonly=False,
-    )
+    token = FixedService.token
 
     pool = gui.ChoiceField(
         label=_("Resource Pool"),
@@ -128,15 +113,6 @@ class ProxmoxFixedService(services.Service):  # pylint: disable=too-many-public-
 
     prov_uuid = gui.HiddenField(value=None)
 
-    def _get_assigned_machines(self) -> typing.Set[int]:
-        vals = self.storage.get_unpickle('vms')
-        logger.debug('Got storage VMS: %s', vals)
-        return vals or set()
-
-    def _save_assigned_machines(self, vals: typing.Set[int]) -> None:
-        logger.debug('Saving storage VMS: %s', vals)
-        self.storage.put_pickle('vms', vals)
-
     def initialize(self, values: 'Module.ValuesType') -> None:
         """
         Loads the assigned machines from storage
@@ -145,12 +121,12 @@ class ProxmoxFixedService(services.Service):  # pylint: disable=too-many-public-
             if not self.machines.value:
                 raise exceptions.ui.ValidationError(gettext('We need at least a machine'))
 
-            self.storage.put_pickle('maxDeployed', len(self.machines.as_list()))
+            self.storage.put_pickle('userservices_limit', len(self.machines.as_list()))
 
             # Remove machines not in values from "assigned" set
             self._save_assigned_machines(self._get_assigned_machines() & set(self.machines.as_list()))
             self.token.value = self.token.value.strip()
-        self.userservices_limit = self.storage.get_unpickle('maxDeployed')
+        self.userservices_limit = self.storage.get_unpickle('userservices_limit')
 
     def init_gui(self) -> None:
         # Here we have to use "default values", cause values aren't used at form initialization
@@ -166,21 +142,8 @@ class ProxmoxFixedService(services.Service):  # pylint: disable=too-many-public-
     def parent(self) -> 'ProxmoxProvider':
         return typing.cast('ProxmoxProvider', super().parent())
 
-    def sanitized_name(self, name: str) -> str:
-        """
-        Proxmox only allows machine names with [a-zA-Z0-9_-]
-        """
-        return re.sub("[^a-zA-Z0-9_-]", "-", name)
-
     def get_machine_info(self, vmId: int) -> 'client.types.VMInfo':
         return self.parent().get_machine_info(vmId, self.pool.value.strip())
-
-    def get_nic_mac(self, vmid: int) -> str:
-        config = self.parent().get_machine_configuration(vmid)
-        return config.networks[0].mac.lower()
-
-    def get_guest_ip_address(self, vmid: int) -> str:
-        return self.parent().get_guest_ip_address(vmid)
 
     def get_task_info(self, node: str, upid: str) -> 'client.types.TaskStatus':
         return self.parent().get_task_info(node, upid)
@@ -200,7 +163,64 @@ class ProxmoxFixedService(services.Service):  # pylint: disable=too-many-public-
     def shutdown_machine(self, vmId: int) -> 'client.types.UPID':
         return self.parent().shutdown_machine(vmId)
 
-    def get_machine_from_pool(self) -> int:
+    def enumerate_assignables(self) -> list[tuple[str, str]]:
+        # Obtain machines names and ids for asignables
+        vms: dict[int, str] = {}
+
+        for member in self.parent().get_pool_info(self.pool.value.strip(), retrieve_vm_names=True).members:
+            vms[member.vmid] = member.vmname
+
+        assigned_vms = self._get_assigned_machines()
+        return [(k, vms.get(int(k), 'Unknown!')) for k in self.machines.as_list() if int(k) not in assigned_vms]
+
+    def assign_from_assignables(
+        self, assignable_id: str, user: 'models.User', user_deployment: 'services.UserService'
+    ) -> str:
+        userservice_instance = typing.cast(ProxmoxFixedUserService, user_deployment)
+        assigned_vms = self._get_assigned_machines()
+        if assignable_id not in assigned_vms:
+            assigned_vms.add(assignable_id)
+            self._save_assigned_machines(assigned_vms)
+            return userservice_instance.assign(assignable_id)
+
+        return userservice_instance.error('VM not available!')
+
+    @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
+    def is_avaliable(self) -> bool:
+        return self.parent().is_available()
+
+    def process_snapshot(self, remove: bool, userservice_instace: FixedUserService) -> str:
+        userservice_instace = typing.cast(ProxmoxFixedUserService, userservice_instace)
+        if self.use_snapshots.as_bool():
+            vmid = int(userservice_instace._vmid)
+            if remove:
+                try:
+                    # try to revert to snapshot
+                    snapshot = self.parent().get_current_snapshot(vmid)
+                    if snapshot:
+                        userservice_instace._store_task(
+                            self.parent().restore_snapshot(vmid, name=snapshot.name)
+                        )
+                except Exception as e:
+                    self.do_log(log.LogLevel.WARNING, 'Could not restore SNAPSHOT for this VM. ({})'.format(e))
+
+            else:
+                logger.debug('Using snapshots')
+                # If no snapshot exists for this vm, try to create one for it on background
+                # Lauch an snapshot. We will not wait for it to finish, but instead let it run "as is"
+                try:
+                    if not self.parent().get_current_snapshot(vmid):
+                        logger.debug('Not current snapshot')
+                        self.parent().create_snapshot(
+                            vmid,
+                            name='UDS Snapshot',
+                        )
+                except Exception as e:
+                    self.do_log(log.LogLevel.WARNING, 'Could not create SNAPSHOT for this VM. ({})'.format(e))
+
+        return types.states.State.RUNNING
+
+    def get_and_assign_machine(self) -> str:
         found_vmid: typing.Optional[int] = None
         try:
             assigned_vms = self._get_assigned_machines()
@@ -222,7 +242,7 @@ class ProxmoxFixedService(services.Service):  # pylint: disable=too-many-public-
                         )
 
             if found_vmid:
-                assigned_vms.add(found_vmid)
+                assigned_vms.add(str(found_vmid))
                 self._save_assigned_machines(assigned_vms)
         except Exception:  #
             raise Exception('No machine available')
@@ -230,38 +250,22 @@ class ProxmoxFixedService(services.Service):  # pylint: disable=too-many-public-
         if not found_vmid:
             raise Exception('All machines from list already assigned.')
 
-        return found_vmid
+        return str(found_vmid)
+    
+    def get_first_network_mac(self, vmid: str) -> str:
+        config = self.parent().get_machine_configuration(int(vmid))
+        return config.networks[0].mac.lower()
 
-    def release_machine_from_pool(self, vmid: int) -> None:
+
+    def get_guest_ip_address(self, vmid: str) -> str:
+        return self.parent().get_guest_ip_address(int(vmid))
+
+    def get_machine_name(self, vmid: str) -> str:
+        return self.parent().get_machine_info(int(vmid)).name or ''
+    
+    def remove_and_free_machine(self, vmid: str) -> None:
         try:
-            self._save_assigned_machines(self._get_assigned_machines() - {vmid})  # Remove from assigned
+            self._save_assigned_machines(self._get_assigned_machines() - {str(vmid)})  # Remove from assigned
         except Exception as e:
-            logger.warn('Cound not save assigned machines on vmware fixed pool: %s', e)
+            logger.warn('Cound not save assigned machines on fixed pool: %s', e)
 
-    def enumerate_assignables(self) -> list[tuple[str, str]]:
-        # Obtain machines names and ids for asignables
-        vms: dict[int, str] = {}
-
-        for member in self.parent().get_pool_info(self.pool.value.strip(), retrieve_vm_names=True).members:
-            vms[member.vmid] = member.vmname
-
-        assigned_vms = self._get_assigned_machines()
-        return [
-            (k, vms.get(int(k), 'Unknown!')) for k in self.machines.as_list() if int(k) not in assigned_vms
-        ]
-
-    def assign_from_assignables(
-        self, assignable_id: str, user: 'models.User', user_deployment: 'services.UserService'
-    ) -> str:
-        userservice_instance = typing.cast(ProxmoxFixedUserService, user_deployment)
-        assignedVmsSet = self._get_assigned_machines()
-        if assignable_id not in assignedVmsSet:
-            assignedVmsSet.add(int(assignable_id))
-            self._save_assigned_machines(assignedVmsSet)
-            return userservice_instance.assign(int(assignable_id))
-
-        return userservice_instance.error('VM not available!')
-
-    @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
-    def is_avaliable(self) -> bool:
-        return self.parent().is_available()

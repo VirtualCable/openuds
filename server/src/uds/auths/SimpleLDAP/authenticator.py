@@ -90,7 +90,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         tab=types.ui.Tab.CREDENTIALS,
     )
 
-    timeout = fields.timeout_field(tab=False, default=10)  # Use "main tab"
+    timeout = fields.timeout_field(tab=None, default=10)  # Use "main tab"
     verify_ssl = fields.verify_ssl_field(order=11)
 
     certificate = gui.TextField(

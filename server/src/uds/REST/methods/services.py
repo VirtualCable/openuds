@@ -129,7 +129,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             return self.fill_instance_fields(k, val)
         except Exception as e:
             logger.error('Error getting services for %s: %s', parent, e)
-            raise self.invalid_item_response() from e
+            raise self.invalid_item_response(repr(e)) from e
 
     def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
         return types.ui.RowStyleInfo(prefix='row-maintenance-', field='maintenance_mode')

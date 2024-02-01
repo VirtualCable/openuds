@@ -38,9 +38,10 @@ import collections.abc
 
 from django.utils.translation import gettext, gettext_noop as _
 
-from uds.core.ui import UserInterface, UserInterfaceAbstract, gui
+from uds.core.ui import gui
 from uds.core.reports import Report
 from uds import models
+from uds.core.ui.user_interface import UserInterfaceType
 
 from . import fields
 
@@ -61,7 +62,7 @@ reportAutoModelDct: collections.abc.Mapping[str, type[ReportAutoModel]] = {  # t
 }
 
 
-class ReportAutoType(UserInterfaceAbstract):
+class ReportAutoType(UserInterfaceType):
     def __new__(mcs, name, bases, attrs) -> 'ReportAutoType':
         # Add gui for elements...
         order = 1
@@ -86,7 +87,7 @@ class ReportAutoType(UserInterfaceAbstract):
                 attrs['interval'] = fields.intervals_field(order)
                 order += 1
 
-        return typing.cast('ReportAutoType', UserInterfaceAbstract.__new__(mcs, name, bases, attrs))
+        return typing.cast('ReportAutoType', super().__new__(mcs, name, bases, attrs))
     
 # pylint: disable=abstract-method
 class ReportAuto(Report, metaclass=ReportAutoType):
