@@ -160,7 +160,7 @@ class Service(Module):
     cache_tooltip_l2 = _('None')  # : Tooltip shown to user when this item is pointed at admin interface
 
     # : If the service needs a o.s. manager (see os managers section)
-    needs_manager: bool = False
+    needs_osmanager: bool = False
 
     # : If the service can be autoassigned or needs to be assigned by administrator
     # : Not all services are for assigning it. Thing, i.e., a Service that manages

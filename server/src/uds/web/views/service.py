@@ -151,21 +151,21 @@ def user_service_status(request: 'ExtendedHttpRequestWithUser', service_id: str,
     Note:
     '''
     ip: typing.Union[str, None, bool]
-    userService: typing.Optional['UserService'] = None
+    userservice: typing.Optional['UserService'] = None
     status = 'running'
     # If service exists (meta or not)
     if UserServiceManager().is_meta_service(service_id):
-        userService = UserServiceManager().locate_meta_service(user=request.user, id_metapool=service_id)
+        userservice = UserServiceManager().locate_meta_service(user=request.user, id_metapool=service_id)
     else:
-        userService = UserServiceManager().locate_user_service(
+        userservice = UserServiceManager().locate_user_service(
             user=request.user, id_service=service_id, create=False
         )
-    if userService:
+    if userservice:
         # Service exists...
         try:
-            userServiceInstance = userService.get_instance()
+            userServiceInstance = userservice.get_instance()
             ip = userServiceInstance.get_ip()
-            userService.log_ip(ip)
+            userservice.log_ip(ip)
             # logger.debug('Res: %s %s %s %s %s', ip, userService, userServiceInstance, transport, transportInstance)
         except ServiceNotReadyError:
             ip = None
@@ -173,7 +173,7 @@ def user_service_status(request: 'ExtendedHttpRequestWithUser', service_id: str,
             ip = False
 
         ready = 'ready'
-        if userService.properties.get('accessed_by_client', False) is True:
+        if userservice.properties.get('accessed_by_client', False) is True:
             ready = 'accessed'
 
         status = 'running' if ip is None else 'error' if ip is False else ready

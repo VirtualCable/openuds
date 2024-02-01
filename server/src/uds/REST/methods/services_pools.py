@@ -489,7 +489,7 @@ class ServicesPools(ModelHandler):
                 if serviceType.can_reset is False:
                     self._params['allow_users_reset'] = False
 
-                if serviceType.needs_manager is True:
+                if serviceType.needs_osmanager is True:
                     osmanager = OSManager.objects.get(uuid=process_uuid(fields['osmanager_id']))
                     fields['osmanager_id'] = osmanager.id
                 else:

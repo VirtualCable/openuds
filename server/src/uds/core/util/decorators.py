@@ -47,7 +47,6 @@ import uds.core.exceptions.rest
 
 logger = logging.getLogger(__name__)
 
-RT = typing.TypeVar('RT')
 FT = typing.TypeVar('FT', bound=collections.abc.Callable[..., typing.Any])
 
 
@@ -132,13 +131,13 @@ def classproperty(func: collections.abc.Callable) -> ClassPropertyDescriptor:
     return ClassPropertyDescriptor(func)
 
 
-def deprecated(func: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
+def deprecated(func: FT) -> FT:
     """This is a decorator which can be used to mark functions
     as deprecated. It will result in a warning being emitted
     when the function is used."""
 
     @functools.wraps(func)
-    def new_func(*args, **kwargs) -> RT:
+    def new_func(*args, **kwargs) -> typing.Any:
         try:
             caller = inspect.stack()[1]
             logger.warning(
@@ -152,7 +151,7 @@ def deprecated(func: collections.abc.Callable[..., RT]) -> collections.abc.Calla
 
         return func(*args, **kwargs)
 
-    return new_func
+    return typing.cast(FT, new_func)
 
 
 def deprecated_class_value(newVarName: str) -> collections.abc.Callable:

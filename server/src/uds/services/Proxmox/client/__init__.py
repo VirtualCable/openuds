@@ -44,7 +44,7 @@ from . import types
 
 from uds.core import consts
 from uds.core.util import security
-from uds.core.util.decorators import cached, ensure_connected
+from uds.core.util.decorators import cached, ensure_connected, FT
 
 # DEFAULT_PORT = 8006
 
@@ -103,8 +103,6 @@ class ProxmoxClient:
 
     cache: typing.Optional['Cache']
 
-    _DEBUG = False
-
     def __init__(
         self,
         host: str,
@@ -137,12 +135,8 @@ class ProxmoxClient:
 
     @staticmethod
     def ensure_correct(response: 'requests.Response') -> typing.Any:
-        if ProxmoxClient._DEBUG:
-            logger.debug('Response code: %s', response.status_code)
         if not response.ok:
-            if ProxmoxClient._DEBUG:
-                logger.debug('Response: %s', response.content)
-
+            logger.debug('Error on request %s: %s', response.status_code, response.content)
             errMsg = 'Status code {}'.format(response.status_code)
             if response.status_code == 595:
                 raise ProxmoxNodeUnavailableError()
@@ -158,9 +152,6 @@ class ProxmoxClient:
 
             raise ProxmoxError(errMsg)
 
-        if ProxmoxClient._DEBUG:
-            logger.debug('Response: %s', response.content)
-
         return response.json()
 
     def _compose_url_for(self, path: str) -> str:
@@ -168,10 +159,6 @@ class ProxmoxClient:
 
     def _get(self, path: str) -> typing.Any:
         try:
-            if ProxmoxClient._DEBUG:
-                logger.debug('GET to %s', self._compose_url_for(path))
-                logger.debug('Headers: %s', self.headers)
-
             result = security.secure_requests_session(verify=self._validate_cert).get(
                 self._compose_url_for(path),
                 headers=self.headers,

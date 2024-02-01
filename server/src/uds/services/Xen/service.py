@@ -87,7 +87,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
 
     # : If the service needs a s.o. manager (managers are related to agents
     # : provided by services itselfs, i.e. virtual machines with actors)
-    needs_manager = True
+    needs_osmanager = True
     # : If true, the system can't do an automatic assignation of a deployed user
     # : service from this service
     must_assign_manually = False

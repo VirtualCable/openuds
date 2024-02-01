@@ -208,7 +208,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         if not servicepool.service:
             raise Exception('Service not found')
         service_instance = servicepool.service.get_instance()
-        if service_instance.needs_manager is False or not servicepool.osmanager:
+        if service_instance.needs_osmanager is False or not servicepool.osmanager:
             osmanager_instance = None
         else:
             osmanager_instance = servicepool.osmanager.get_instance()
@@ -399,7 +399,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         if not servicePool.service:
             raise Exception('Service not found')
         serviceInstance = servicePool.service.get_instance()
-        if serviceInstance.needs_manager is False or not servicePool.osmanager:
+        if serviceInstance.needs_osmanager is False or not servicePool.osmanager:
             return (username, password)
 
         return servicePool.osmanager.get_instance().update_credentials(self, username, password)

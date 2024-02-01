@@ -43,7 +43,6 @@ from uds.core.workers import initialize
 
 from . import helpers
 from .deployment_fixed import ProxmoxFixedUserService
-from .publication import ProxmoxPublication
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -58,49 +57,23 @@ logger = logging.getLogger(__name__)
 
 class ProxmoxFixedService(services.Service):  # pylint: disable=too-many-public-methods
     """
-    Proxmox fixed machines service. 
+    Proxmox fixed machines service.
     """
 
-    # : Name to show the administrator. This string will be translated BEFORE
-    # : sending it to administration interface, so don't forget to
-    # : mark it as _ (using gettext_noop)
     type_name = _('Proxmox Fixed Machines')
-    # : Type used internally to identify this provider
     type_type = 'ProxmoxFixedService'
-    # : Description shown at administration interface for this provider
     type_description = _('Proxmox Services based on fixed machines. Needs qemu agent installed on machines.')
-    # : Icon file used as icon for this provider. This string will be translated
-    # : BEFORE sending it to administration interface, so don't forget to
-    # : mark it as _ (using gettext_noop)
     icon_file = 'service.png'
 
-    # Functional related data
-
-    # : If we need to generate "cache" for this service, so users can access the
-    # : provided services faster. Is uses_cache is True, you will need also
-    # : set publication_type, do take care about that!
-    uses_cache = True
-    # : Tooltip shown to user when this item is pointed at admin interface, none
-    # : because we don't use it
-    cache_tooltip = _('Number of desired machines to keep running waiting for a user')
-    # : If we need to generate a "Level 2" cache for this service (i.e., L1
-    # : could be running machines and L2 suspended machines)
-    uses_cache_l2 = True
-    # : Tooltip shown to user when this item is pointed at admin interface, None
-    # : also because we don't use it
-    cache_tooltip_l2 = _('Number of desired VMs to keep stopped waiting for use')
-
-    # : If the service needs a s.o. manager (managers are related to agents
-    # : provided by services itselfs, i.e. virtual machines with actors)
-    needs_manager = True
-    # : If true, the system can't do an automatic assignation of a deployed user
-    # : service from this service
-    must_assign_manually = False
+    uses_cache = False  # Cache are running machine awaiting to be assigned
+    uses_cache_l2 = False  # L2 Cache are running machines in suspended state
+    needs_osmanager = False  # If the service needs a s.o. manager (managers are related to agents provided by services, i.e. virtual machines with agent)
+    must_assign_manually = False  # If true, the system can't do an automatic assignation of a deployed user service from this service
     can_reset = True
 
     # : Types of publications (preparated data for deploys)
     # : In our case, we do no need a publication, so this is None
-    publication_type = ProxmoxPublication
+    publication_type = None
     # : Types of deploys (services in cache and/or assigned to users)
     user_service_type = ProxmoxFixedUserService
 
@@ -205,7 +178,7 @@ class ProxmoxFixedService(services.Service):  # pylint: disable=too-many-public-
     def get_nic_mac(self, vmid: int) -> str:
         config = self.parent().get_machine_configuration(vmid)
         return config.networks[0].mac.lower()
-    
+
     def get_guest_ip_address(self, vmid: int) -> str:
         return self.parent().get_guest_ip_address(vmid)
 
@@ -261,21 +234,20 @@ class ProxmoxFixedService(services.Service):  # pylint: disable=too-many-public-
 
     def release_machine_from_pool(self, vmid: int) -> None:
         try:
-            self._save_assigned_machines(self._get_assigned_machines() - {vmid})  # Sets operation
+            self._save_assigned_machines(self._get_assigned_machines() - {vmid})  # Remove from assigned
         except Exception as e:
             logger.warn('Cound not save assigned machines on vmware fixed pool: %s', e)
-            
+
     def enumerate_assignables(self) -> list[tuple[str, str]]:
         # Obtain machines names and ids for asignables
         vms: dict[int, str] = {}
 
-        for member in self.parent().get_pool_info(self.pool.value.strip()).members:
+        for member in self.parent().get_pool_info(self.pool.value.strip(), retrieve_vm_names=True).members:
             vms[member.vmid] = member.vmname
 
-        assignedVmsSet = self._get_assigned_machines()
-        k: str
+        assigned_vms = self._get_assigned_machines()
         return [
-            (k, vms.get(int(k), 'Unknown!')) for k in self.machines.as_list() if int(k) not in assignedVmsSet
+            (k, vms.get(int(k), 'Unknown!')) for k in self.machines.as_list() if int(k) not in assigned_vms
         ]
 
     def assign_from_assignables(

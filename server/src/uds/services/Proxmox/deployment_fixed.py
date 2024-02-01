@@ -43,12 +43,12 @@ from uds.core.util import log, autoserializable
 from uds.core.util.model import sql_stamp_seconds
 
 from .jobs import ProxmoxDeferredRemoval
-
+from . import client
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from . import client, service_fixed, publication
+    from . import service_fixed, publication
 
 logger = logging.getLogger(__name__)
 
@@ -118,10 +118,10 @@ class ProxmoxFixedUserService(services.UserService, autoserializable.AutoSeriali
         return State.RUNNING
 
     def _store_task(self, upid: 'client.types.UPID'):
-        self._task = ','.join([upid.node, upid.upid])
+        self._task = '\t'.join([upid.node, upid.upid])
 
     def _retrieve_task(self) -> tuple[str, str]:
-        vals = self._task.split(',')
+        vals = self._task.split('\t')
         return (vals[0], vals[1])
 
     def _error(self, reason: typing.Union[str, Exception]) -> str:
@@ -229,12 +229,12 @@ class ProxmoxFixedUserService(services.UserService, autoserializable.AutoSeriali
         }
 
         try:
-            execFnc: typing.Optional[collections.abc.Callable[[], str]] = fncs.get(op, None)
+            operation_runner: typing.Optional[collections.abc.Callable[[], str]] = fncs.get(op, None)
 
-            if not execFnc:
+            if not operation_runner:
                 return self._error(f'Unknown operation found at execution queue ({op})')
 
-            execFnc()
+            operation_runner()
 
             return State.RUNNING
         except Exception as e:
@@ -295,9 +295,9 @@ class ProxmoxFixedUserService(services.UserService, autoserializable.AutoSeriali
         try:
             if self.service().use_snapshots.as_bool():
                 # try to revert to snapshot
-                snapid = self.service().parent().get_current_snapshot(self._vmid)
-                if snapid:
-                    self._store_task(self.service().parent().restore_snapshot(self._vmid, name=snapid.name))
+                snapshot = self.service().parent().get_current_snapshot(self._vmid)
+                if snapshot:
+                    self._store_task(self.service().parent().restore_snapshot(self._vmid, name=snapshot.name))
         except Exception as e:
             self.do_log(log.LogLevel.WARNING, 'Could not restore SNAPSHOT for this VM. ({})'.format(e))
 
@@ -306,13 +306,13 @@ class ProxmoxFixedUserService(services.UserService, autoserializable.AutoSeriali
 
     def _start_machine(self) -> str:
         try:
-            vmInfo = self.service().get_machine_info(int(self._vmid))
+            vminfo = self.service().get_machine_info(int(self._vmid))
         except client.ProxmoxConnectionError:
             return self._retry_later()
         except Exception as e:
             raise Exception('Machine not found on start machine') from e
 
-        if vmInfo.status == 'stopped':
+        if vminfo.status == 'stopped':
             self._store_task(self.service().start_machine(int(self._vmid)))
 
         return State.RUNNING
