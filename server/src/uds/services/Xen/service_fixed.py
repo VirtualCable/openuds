@@ -41,20 +41,19 @@ from uds.core.util.decorators import cached
 from uds.core.workers import initialize
 
 from . import helpers
-from .deployment_fixed import ProxmoxFixedUserService
+from .deployment_fixed import XenFixedUserService
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core.module import Module
     from uds import models
 
-    from . import client
-    from .provider import ProxmoxProvider
+    from .provider import XenProvider
 
 logger = logging.getLogger(__name__)
 
 
-class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-methods
+class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
     """
     Proxmox fixed machines service.
     """
@@ -70,7 +69,7 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
     # : In our case, we do no need a publication, so this is None
     publication_type = None
     # : Types of deploys (services in cache and/or assigned to users)
-    user_service_type = ProxmoxFixedUserService
+    user_service_type = XenFixedUserService
 
     allowed_protocols = types.transports.Protocol.generic_vdi(types.transports.Protocol.SPICE)
     services_type_provided = types.services.ServiceType.VDI
@@ -78,14 +77,14 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
     # Gui
     token = FixedService.token
 
-    pool = gui.ChoiceField(
-        label=_("Resource Pool"),
+    folder = gui.ChoiceField(
+        label=_("Folder"),
         readonly=False,
         order=20,
         fills={
-            'callback_name': 'pmFillMachinesFromResource',
+            'callback_name': 'xmFillMachinesFromFolder',
             'function': helpers.get_machines,
-            'parameters': ['prov_uuid', 'pool'],
+            'parameters': ['prov_uuid', 'folder'],
         },
         tooltip=_('Resource Pool containing base machines'),
         required=True,
@@ -134,31 +133,63 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
         # at defValue
         self.prov_uuid.value = self.parent().get_uuid()
 
-        self.pool.set_choices(
-            [gui.choice_item('', _('None'))]
-            + [gui.choice_item(p.poolid, p.poolid) for p in self.parent().list_pools()]
-        )
+        self.folder.set_choices([gui.choice_item(folder, folder) for folder in self.parent().list_folders()])
 
-    def parent(self) -> 'ProxmoxProvider':
-        return typing.cast('ProxmoxProvider', super().parent())
+    def parent(self) -> 'XenProvider':
+        return typing.cast('XenProvider', super().parent())
 
-    def get_machine_info(self, vmId: int) -> 'client.types.VMInfo':
-        return self.parent().get_machine_info(vmId, self.pool.value.strip())
+    def get_machine_power_state(self, machine_id: str) -> str:
+        """
+        Invokes getMachineState from parent provider
 
-    def get_task_info(self, node: str, upid: str) -> 'client.types.TaskStatus':
-        return self.parent().get_task_info(node, upid)
+        Args:
+            machineId: If of the machine to get state
 
-    def start_machine(self, vmId: int) -> 'client.types.UPID':
-        return self.parent().start_machine(vmId)
+        Returns:
+            one of this values:
+        """
+        return self.parent().get_machine_power_state(machine_id)
 
-    def stop_machine(self, vmId: int) -> 'client.types.UPID':
-        return self.parent().stop_machine(vmId)
+    def start_machine(self, machine_id: str) -> typing.Optional[str]:
+        """
+        Tries to start a machine. No check is done, it is simply requested to Xen.
 
-    def reset_machine(self, vmId: int) -> 'client.types.UPID':
-        return self.parent().reset_machine(vmId)
+        This start also "resume" suspended/paused machines
 
-    def shutdown_machine(self, vmId: int) -> 'client.types.UPID':
-        return self.parent().shutdown_machine(vmId)
+        Args:
+            machineId: Id of the machine
+
+        Returns:
+        """
+        return self.parent().start_machine(machine_id)
+
+    def stop_machine(self, machine_id: str) -> typing.Optional[str]:
+        """
+        Tries to stop a machine. No check is done, it is simply requested to Xen
+
+        Args:
+            machineId: Id of the machine
+
+        Returns:
+        """
+        return self.parent().stop_machine(machine_id)
+
+    def reset_machine(self, machine_id: str) -> typing.Optional[str]:
+        """
+        Tries to stop a machine. No check is done, it is simply requested to Xen
+
+        Args:
+            machineId: Id of the machine
+
+        Returns:
+        """
+        return self.parent().reset_machine(machine_id)
+
+    def shutdown_machine(self, vm_id: str) -> typing.Optional[str]:
+        return self.parent().shutdown_machine(vm_id)
+
+    def check_task_finished(self, task: str) -> tuple[bool, str]:
+        return self.parent().check_task_finished(task)
 
     @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def is_avaliable(self) -> bool:
@@ -168,16 +199,13 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
         # Obtain machines names and ids for asignables
         vms: dict[int, str] = {}
 
-        for member in self.parent().get_pool_info(self.pool.value.strip(), retrieve_vm_names=True).members:
-            vms[member.vmid] = member.vmname
-
         assigned_vms = self._get_assigned_machines()
         return [(k, vms.get(int(k), 'Unknown!')) for k in self.machines.as_list() if int(k) not in assigned_vms]
 
     def assign_from_assignables(
         self, assignable_id: str, user: 'models.User', user_deployment: 'services.UserService'
     ) -> str:
-        userservice_instance = typing.cast(ProxmoxFixedUserService, user_deployment)
+        userservice_instance = typing.cast(XenFixedUserService, user_deployment)
         assigned_vms = self._get_assigned_machines()
         if assignable_id not in assigned_vms:
             assigned_vms.add(assignable_id)
@@ -187,17 +215,16 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
         return userservice_instance.error('VM not available!')
 
     def process_snapshot(self, remove: bool, userservice_instace: FixedUserService) -> str:
-        userservice_instace = typing.cast(ProxmoxFixedUserService, userservice_instace)
+        userservice_instace = typing.cast(XenFixedUserService, userservice_instace)
         if self.use_snapshots.as_bool():
-            vmid = int(userservice_instace._vmid)
-            if remove:
+            vmid = userservice_instace._vmid
+
+            snapshots = [i['id'] for i in self.parent().list_snapshots(vmid)]
+            snapshot = snapshots[0] if snapshots else None
+
+            if remove and snapshot:
                 try:
-                    # try to revert to snapshot
-                    snapshot = self.parent().get_current_snapshot(vmid)
-                    if snapshot:
-                        userservice_instace._store_task(
-                            self.parent().restore_snapshot(vmid, name=snapshot.name)
-                        )
+                    userservice_instace._task = self.parent().restore_snapshot(snapshot['id'])
                 except Exception as e:
                     self.do_log(log.LogLevel.WARNING, 'Could not restore SNAPSHOT for this VM. ({})'.format(e))
 
@@ -206,8 +233,9 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
                 # If no snapshot exists for this vm, try to create one for it on background
                 # Lauch an snapshot. We will not wait for it to finish, but instead let it run "as is"
                 try:
-                    if not self.parent().get_current_snapshot(vmid):
+                    if not snapshot:  # No snapshot, try to create one
                         logger.debug('Not current snapshot')
+                        # We don't need the snapshot nor the task, will simply restore to newer snapshot on remove
                         self.parent().create_snapshot(
                             vmid,
                             name='UDS Snapshot',
@@ -218,15 +246,15 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
         return types.states.State.RUNNING
 
     def get_and_assign_machine(self) -> str:
-        found_vmid: typing.Optional[int] = None
+        found_vmid: typing.Optional[str] = None
         try:
             assigned_vms = self._get_assigned_machines()
             for k in self.machines.as_list():
-                checking_vmid = int(k)
+                checking_vmid = k
                 if found_vmid not in assigned_vms:  # Not assigned
                     # Check that the machine exists...
                     try:
-                        vm_info = self.parent().get_machine_info(checking_vmid, self.pool.value.strip())
+                        vm_name = self.parent().get_machine_name(checking_vmid)
                         found_vmid = checking_vmid
                         break
                     except Exception:  # Notifies on log, but skipt it
@@ -250,14 +278,13 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
         return str(found_vmid)
 
     def get_first_network_mac(self, vmid: str) -> str:
-        config = self.parent().get_machine_configuration(int(vmid))
-        return config.networks[0].mac.lower()
+        return self.parent().get_first_mac(vmid)
 
     def get_guest_ip_address(self, vmid: str) -> str:
-        return self.parent().get_guest_ip_address(int(vmid))
+        return self.parent().get_first_ip(vmid)
 
     def get_machine_name(self, vmid: str) -> str:
-        return self.parent().get_machine_info(int(vmid)).name or ''
+        return self.parent().get_machine_name(vmid)
 
     def remove_and_free_machine(self, vmid: str) -> None:
         try:

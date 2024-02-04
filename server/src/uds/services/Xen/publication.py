@@ -92,7 +92,7 @@ class XenPublication(Publication, autoserializable.AutoSerializable):
         """
         Realizes the publication of the service
         """
-        self._name = self.service().sanitizeVmName(
+        self._name = self.service().sanitized_name(
             'UDS Pub ' + self.servicepool_name() + "-" + str(self.revision())
         )
         comments = _('UDS pub for {0} at {1}').format(
@@ -103,7 +103,7 @@ class XenPublication(Publication, autoserializable.AutoSerializable):
         self._state = 'ok'
 
         try:
-            self._task = self.service().startDeployTemplate(self._name, comments)
+            self._task = self.service().start_deploy_of_template(self._name, comments)
         except Exception as e:
             self._state = 'error'
             self._reason = str(e)
@@ -130,7 +130,7 @@ class XenPublication(Publication, autoserializable.AutoSerializable):
                     self._destroy_after = False
                     return self.destroy()
 
-                self.service().convertToTemplate(self._template_id)
+                self.service().convert_to_template(self._template_id)
                 return State.FINISHED
         except Exception as e:
             self._state = 'error'
@@ -149,7 +149,7 @@ class XenPublication(Publication, autoserializable.AutoSerializable):
             return State.RUNNING
 
         try:
-            self.service().removeTemplate(self._template_id)
+            self.service().remove_template(self._template_id)
         except Exception as e:
             self._state = 'error'
             self._reason = str(e)

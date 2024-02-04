@@ -76,6 +76,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
     This class represents a fixed user service, that is, a service that is assigned to an user
     and that will be always the from a "fixed" machine, that is, a machine that is not created.
     """
+
     suggested_delay = 4
 
     _name = autoserializable.StringField(default='')
@@ -84,8 +85,12 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
     _reason = autoserializable.StringField(default='')
     _task = autoserializable.StringField(default='')
     _queue = autoserializable.ListField[Operation]()  # Default is empty list
-    
-    _create_queue: typing.ClassVar[typing.List[Operation]] = [Operation.CREATE, Operation.START, Operation.FINISH]
+
+    _create_queue: typing.ClassVar[typing.List[Operation]] = [
+        Operation.CREATE,
+        Operation.START,
+        Operation.FINISH,
+    ]
     _destrpy_queue: typing.ClassVar[typing.List[Operation]] = [Operation.REMOVE, Operation.FINISH]
 
     @typing.final
@@ -125,6 +130,14 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         reason = str(reason)
         logger.debug('Setting error state, reason: %s', reason)
         self.do_log(log.LogLevel.ERROR, reason)
+
+        if self._vmid:
+            try:
+                self.service().remove_and_free_machine(self._vmid)
+                self.service().process_snapshot(remove=True, userservice_instace=self)
+                self._vmid = ''
+            except Exception as e:
+                logger.exception('Exception removing machine: %s', e)
 
         self._queue = [Operation.ERROR]
         self._reason = reason
@@ -236,7 +249,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
 
         # Try to process snaptshots if needed
         state = self.service().process_snapshot(remove=False, userservice_instace=self)
-        
+
         if state == State.ERROR:
             return state
 
@@ -247,7 +260,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
                 userService.set_in_use(True)
 
         return state
-    
+
     @typing.final
     def _remove(self) -> str:
         """

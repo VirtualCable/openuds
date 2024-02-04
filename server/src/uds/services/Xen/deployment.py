@@ -147,11 +147,11 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
             return State.FINISHED
 
         try:
-            state = self.service().getVMPowerState(self._vmid)
+            state = self.service().get_machine_power_state(self._vmid)
 
             if state != XenPowerState.running:
                 self._queue = [Operation.START, Operation.FINISH]
-                return self._execute_from_queue()
+                return self._execute_queue()
 
             self.cache.put('ready', '1', 30)
         except Exception as e:
@@ -163,7 +163,7 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
 
     def reset(self) -> None:
         if self._vmid:
-            self.service().resetVM(self._vmid)  # Reset in sync
+            self.service().reset_machine(self._vmid)  # Reset in sync
 
     def process_ready_from_os_manager(self, data: typing.Any) -> str:
         # Here we will check for suspending the VM (when full ready)
@@ -171,7 +171,7 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
         if self._get_current_op() == Operation.WAIT:
             logger.debug('Machine is ready. Moving to level 2')
             self._pop_current_op()  # Remove current state
-            return self._execute_from_queue()
+            return self._execute_queue()
         # Do not need to go to level 2 (opWait is in fact "waiting for moving machine to cache level 2)
         return State.FINISHED
 
@@ -181,14 +181,14 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
         """
         logger.debug('Deploying for user')
         self._init_queue_for_deployment(False)
-        return self._execute_from_queue()
+        return self._execute_queue()
 
     def deploy_for_cache(self, cacheLevel: int) -> str:
         """
         Deploys an service instance for cache
         """
         self._init_queue_for_deployment(cacheLevel == self.L2_CACHE)
-        return self._execute_from_queue()
+        return self._execute_queue()
 
     def _init_queue_for_deployment(self, forLevel2: bool = False) -> None:
         if forLevel2 is False:
@@ -235,14 +235,14 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
 
         if self._vmid != '':  # Powers off and delete VM
             try:
-                state = self.service().getVMPowerState(self._vmid)
+                state = self.service().get_machine_power_state(self._vmid)
                 if state in (
                     XenPowerState.running,
                     XenPowerState.paused,
                     XenPowerState.suspended,
                 ):
-                    self.service().stopVM(self._vmid, False)  # In sync mode
-                self.service().removeVM(self._vmid)
+                    self.service().stop_machine(self._vmid, False)  # In sync mode
+                self.service().remove_machine(self._vmid)
             except Exception:
                 logger.debug('Can\'t set machine %s state to stopped', self._vmid)
 
@@ -250,7 +250,7 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
         self._reason = str(reason)
         return State.ERROR
 
-    def _execute_from_queue(self) -> str:
+    def _execute_queue(self) -> str:
         self.__debug('executeQueue')
         op = self._get_current_op()
 
@@ -313,12 +313,12 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
                 'No more names available for this service. (Increase digits for this service to fix)'
             )
 
-        name = 'UDS service ' + self.service().sanitizeVmName(
+        name = 'UDS service ' + self.service().sanitized_name(
             name
         )  # oVirt don't let us to create machines with more than 15 chars!!!
         comments = 'UDS Linked clone'
 
-        self._task = self.service().startDeployFromTemplate(name, comments, templateId)
+        self._task = self.service().start_deploy_from_template(name, comments, templateId)
         if self._task is None:
             raise Exception('Can\'t create machine')
 
@@ -328,13 +328,13 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
         """
         Removes a machine from system
         """
-        state = self.service().getVMPowerState(self._vmid)
+        state = self.service().get_machine_power_state(self._vmid)
 
         if state not in (XenPowerState.halted, XenPowerState.suspended):
             self._push_front_op(Operation.STOP)
-            self._execute_from_queue()
+            self._execute_queue()
         else:
-            self.service().removeVM(self._vmid)
+            self.service().remove_machine(self._vmid)
 
         return State.RUNNING
 
@@ -342,7 +342,7 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
         """
         Powers on the machine
         """
-        task = self.service().startVM(self._vmid)
+        task = self.service().start_machine(self._vmid)
 
         if task is not None:
             self._task = task
@@ -355,7 +355,7 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
         """
         Powers off the machine
         """
-        task = self.service().stopVM(self._vmid)
+        task = self.service().stop_machine(self._vmid)
 
         if task is not None:
             self._task = task
@@ -388,7 +388,7 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
         """
         Provisions machine & changes the mac of the indicated nic
         """
-        self.service().configureVM(self._vmid, self.get_unique_id())
+        self.service().configure_machine(self._vmid, self.get_unique_id())
 
         return State.RUNNING
 
@@ -396,7 +396,7 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
         """
         Makes machine usable on Xen
         """
-        self.service().provisionVM(self._vmid, False)  # Let's try this in "sync" mode, this must be fast enough
+        self.service().provision_machine(self._vmid, False)  # Let's try this in "sync" mode, this must be fast enough
 
         return State.RUNNING
 
@@ -494,7 +494,7 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
             state = chkFnc()
             if state == State.FINISHED:
                 self._pop_current_op()  # Remove runing op
-                return self._execute_from_queue()
+                return self._execute_queue()
 
             return state
         except Exception as e:
@@ -512,7 +512,7 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
         else:
             self._queue = [Operation.START, Operation.SUSPEND, Operation.FINISH]
 
-        return self._execute_from_queue()
+        return self._execute_queue()
 
     def error_reason(self) -> str:
         return self._reason
@@ -528,7 +528,7 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
 
         if op == Operation.FINISH or op == Operation.WAIT:
             self._queue = [Operation.STOP, Operation.REMOVE, Operation.FINISH]
-            return self._execute_from_queue()
+            return self._execute_queue()
 
         self._queue = [op, Operation.STOP, Operation.REMOVE, Operation.FINISH]
         # Do not execute anything.here, just continue normally

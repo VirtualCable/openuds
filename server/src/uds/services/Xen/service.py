@@ -35,7 +35,7 @@ import collections.abc
 
 from django.utils.translation import gettext_noop as _
 from uds.core import services, exceptions, types
-from uds.core.util import validators
+from uds.core.util import fields, validators
 from uds.core.ui import gui
 
 from .publication import XenPublication
@@ -101,25 +101,23 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
 
     services_type_provided = types.services.ServiceType.VDI
 
-
     # Now the form part
     datastore = gui.ChoiceField(
         label=_("Storage SR"),
         readonly=False,
         order=100,
-        tooltip=_(
-            'Storage where to publish and put incrementals (only shared storages are supported)'
-        ),
+        tooltip=_('Storage where to publish and put incrementals (only shared storages are supported)'),
         required=True,
     )
 
-    minSpaceGB = gui.NumericField(
+    min_space_gb = gui.NumericField(
         length=3,
         label=_('Reserved Space'),
         default=32,
         order=101,
         tooltip=_('Minimal free space in GB'),
         required=True,
+        old_field_name='minSpaceGB',
     )
 
     machine = gui.ChoiceField(
@@ -161,24 +159,8 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         required=True,
     )
 
-    baseName = gui.TextField(
-        label=_('Machine Names'),
-        readonly=False,
-        order=114,
-        tooltip=_('Base name for clones from this machine'),
-        tab=_('Machine'),
-        required=True,
-    )
-
-    lenName = gui.NumericField(
-        length=1,
-        label=_('Name Length'),
-        default=5,
-        order=115,
-        tooltip=_('Size of numeric part for the names of these machines'),
-        tab=_('Machine'),
-        required=True,
-    )
+    basename = fields.basename_field(order=114)
+    lenname = fields.lenname_field(order=115)
 
     def initialize(self, values):
         """
@@ -188,12 +170,10 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         initialized by __init__ method of base class, before invoking this.
         """
         if values:
-            validators.validate_basename(self.baseName.value, self.lenName.as_int())
+            validators.validate_basename(self.basename.value, self.lenname.as_int())
 
             if int(self.memory.value) < 256:
-                raise exceptions.ui.ValidationError(
-                    _('The minimum allowed memory is 256 Mb')
-                )
+                raise exceptions.ui.ValidationError(_('The minimum allowed memory is 256 Mb'))
 
     def parent(self) -> 'XenProvider':
         return typing.cast('XenProvider', super().parent())
@@ -203,12 +183,10 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         # This is that value is always '', so if we want to change something, we have to do it
         # at defValue
 
-        machines_list = [
-            gui.choice_item(m['id'], m['name']) for m in self.parent().getMachines()
-        ]
+        machines_list = [gui.choice_item(m['id'], m['name']) for m in self.parent().list_machines()]
 
         storages_list = []
-        for storage in self.parent().getStorages():
+        for storage in self.parent().list_storages():
             space, free = (
                 storage['size'] / 1024,
                 (storage['size'] - storage['used']) / 1024,
@@ -220,37 +198,34 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
                 )
             )
 
-        network_list = [
-            gui.choice_item(net['id'], net['name'])
-            for net in self.parent().getNetworks()
-        ]
+        network_list = [gui.choice_item(net['id'], net['name']) for net in self.parent().get_networks()]
 
         self.machine.set_choices(machines_list)
         self.datastore.set_choices(storages_list)
         self.network.set_choices(network_list)
 
     def check_task_finished(self, task: str) -> tuple[bool, str]:
-        return self.parent().checkTaskFinished(task)
+        return self.parent().check_task_finished(task)
 
-    def datastoreHasSpace(self) -> None:
+    def has_datastore_space(self) -> None:
         # Get storages for that datacenter
-        info = self.parent().getStorageInfo(self.datastore.value)
+        info = self.parent().get_storage_info(self.datastore.value)
         logger.debug('Checking datastore space for %s: %s', self.datastore.value, info)
         availableGB = (info['size'] - info['used']) / 1024
-        if availableGB < self.minSpaceGB.as_int():
+        if availableGB < self.min_space_gb.as_int():
             raise Exception(
                 'Not enough free space available: (Needs at least {} GB and there is only {} GB '.format(
-                    self.minSpaceGB.as_int(), availableGB
+                    self.min_space_gb.as_int(), availableGB
                 )
             )
 
-    def sanitizeVmName(self, name: str) -> str:
+    def sanitized_name(self, name: str) -> str:
         """
         Xen Seems to allow all kind of names
         """
         return name
 
-    def startDeployTemplate(self, name: str, comments: str) -> str:
+    def start_deploy_of_template(self, name: str, comments: str) -> str:
         """
         Invokes makeTemplate from parent provider, completing params
 
@@ -271,19 +246,17 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         )
 
         # Checks datastore available space, raises exeception in no min available
-        self.datastoreHasSpace()
+        self.has_datastore_space()
 
-        return self.parent().cloneForTemplate(
-            name, comments, self.machine.value, self.datastore.value
-        )
+        return self.parent().clone_for_template(name, comments, self.machine.value, self.datastore.value)
 
-    def convertToTemplate(self, machineId: str) -> None:
+    def convert_to_template(self, machineId: str) -> None:
         """
         converts machine to template
         """
-        self.parent().convertToTemplate(machineId, self.shadow.value)
+        self.parent().convert_to_template(machineId, self.shadow.value)
 
-    def startDeployFromTemplate(self, name: str, comments: str, templateId: str) -> str:
+    def start_deploy_from_template(self, name: str, comments: str, templateId: str) -> str:
         """
         Deploys a virtual machine on selected cluster from selected template
 
@@ -299,17 +272,17 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
             Id of the machine being created form template
         """
         logger.debug('Deploying from template %s machine %s', templateId, name)
-        self.datastoreHasSpace()
+        self.has_datastore_space()
 
-        return self.parent().startDeployFromTemplate(name, comments, templateId)
+        return self.parent().start_deploy_from_template(name, comments, templateId)
 
-    def removeTemplate(self, templateId: str) -> None:
+    def remove_template(self, templateId: str) -> None:
         """
         invokes removeTemplate from parent provider
         """
-        self.parent().removeTemplate(templateId)
+        self.parent().remove_template(templateId)
 
-    def getVMPowerState(self, machineId: str) -> str:
+    def get_machine_power_state(self, machineId: str) -> str:
         """
         Invokes getMachineState from parent provider
 
@@ -319,9 +292,9 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         Returns:
             one of this values:
         """
-        return self.parent().getVMPowerState(machineId)
+        return self.parent().get_machine_power_state(machineId)
 
-    def startVM(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
+    def start_machine(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
         """
         Tries to start a machine. No check is done, it is simply requested to Xen.
 
@@ -332,9 +305,9 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
 
         Returns:
         """
-        return self.parent().startVM(machineId, asnc)
+        return self.parent().start_machine(machineId, asnc)
 
-    def stopVM(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
+    def stop_machine(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
         """
         Tries to stop a machine. No check is done, it is simply requested to Xen
 
@@ -343,9 +316,9 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
 
         Returns:
         """
-        return self.parent().stopVM(machineId, asnc)
+        return self.parent().stop_machine(machineId, asnc)
 
-    def resetVM(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
+    def reset_machine(self, machine_id: str, asnc: bool = True) -> typing.Optional[str]:
         """
         Tries to stop a machine. No check is done, it is simply requested to Xen
 
@@ -354,7 +327,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
 
         Returns:
         """
-        return self.parent().resetVM(machineId, asnc)
+        return self.parent().reset_machine(machine_id, asnc)
 
     def can_suspend_machine(self, machineId: str) -> bool:
         """
@@ -366,7 +339,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         Returns:
             True if the machien can be suspended
         """
-        return self.parent().canSuspendVM(machineId)
+        return self.parent().can_suspend_machine(machineId)
 
     def suspend_machine(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
         """
@@ -377,9 +350,9 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
 
         Returns:
         """
-        return self.parent().suspendVM(machineId, asnc)
+        return self.parent().suspend_machine(machineId, asnc)
 
-    def resumeVM(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
+    def resume_machine(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
         """
         Tries to resume a machine. No check is done, it is simply requested to Xen
 
@@ -388,9 +361,9 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
 
         Returns:
         """
-        return self.parent().suspendVM(machineId, asnc)
+        return self.parent().suspend_machine(machineId, asnc)
 
-    def removeVM(self, machineId: str) -> None:
+    def remove_machine(self, machineId: str) -> None:
         """
         Tries to delete a machine. No check is done, it is simply requested to Xen
 
@@ -399,28 +372,28 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
 
         Returns:
         """
-        self.parent().removeVM(machineId)
+        self.parent().remove_machine(machineId)
 
-    def configureVM(self, machineId: str, mac: str) -> None:
-        self.parent().configureVM(machineId, self.network.value, mac, self.memory.value)
+    def configure_machine(self, machine_id: str, mac: str) -> None:
+        self.parent().configure_machine(machine_id, self.network.value, mac, self.memory.value)
 
-    def provisionVM(self, machineId: str, asnc: bool = True) -> str:
-        return self.parent().provisionVM(machineId, asnc)
+    def provision_machine(self, machine_id: str, as_async: bool = True) -> str:
+        return self.parent().provision_machine(machine_id, as_async)
 
     def get_macs_range(self) -> str:
         """
         Returns de selected mac range
         """
-        return self.parent().getMacRange()
+        return self.parent().get_macs_range()
 
     def get_basename(self) -> str:
         """
         Returns the base name
         """
-        return self.baseName.value
+        return self.basename.value
 
     def get_lenname(self) -> int:
         """
         Returns the length of numbers part
         """
-        return int(self.lenName.value)
+        return int(self.lenname.value)

@@ -41,17 +41,16 @@ from uds.core.services.specializations.fixed_machine.fixed_userservice import Fi
 from uds.core.types.states import State
 from uds.core.util import log, autoserializable
 
-from . import client
+from . import xen_client
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds import models
     from . import service_fixed
 
 logger = logging.getLogger(__name__)
 
 
-class ProxmoxFixedUserService(FixedUserService, autoserializable.AutoSerializable):
+class XenFixedUserService(FixedUserService, autoserializable.AutoSerializable):
     """
     This class generates the user consumable elements of the service tree.
 
@@ -65,44 +64,32 @@ class ProxmoxFixedUserService(FixedUserService, autoserializable.AutoSerializabl
 
     # : Recheck every ten seconds by default (for task methods)
     suggested_delay = 4
-    def _store_task(self, upid: 'client.types.UPID') -> None:
-        self._task = '\t'.join([upid.node, upid.upid])
-
-    def _retrieve_task(self) -> tuple[str, str]:
-        vals = self._task.split('\t')
-        return (vals[0], vals[1])
-
     # Utility overrides for type checking...
-    def service(self) -> 'service_fixed.ProxmoxFixedService':
-        return typing.cast('service_fixed.ProxmoxFixedService', super().service())
+    def service(self) -> 'service_fixed.XenFixedService':
+        return typing.cast('service_fixed.XenFixedService', super().service())
 
     def set_ready(self) -> str:
         if self.cache.get('ready') == '1':
             return State.FINISHED
 
         try:
-            vminfo = self.service().get_machine_info(int(self._vmid))
-        except client.ProxmoxConnectionError:
-            raise  # If connection fails, let it fail on parent
+            state = self.service().get_machine_power_state(self._vmid)
+
+            if state != xen_client.XenPowerState.running:
+                self._queue = [Operation.START, Operation.FINISH]
+                return self._execute_queue()
+
+            self.cache.put('ready', '1', 30)
         except Exception as e:
-            return self._error(f'Machine not found: {e}')
+            # On case of exception, log an an error and return as if the operation was executed
+            self.do_log(log.LogLevel.ERROR, 'Error setting machine state: {}'.format(e))
+            # return self.__error('Machine is not available anymore')
 
-        if vminfo.status == 'stopped':
-            self._queue = [Operation.START, Operation.FINISH]
-            return self._execute_queue()
-
-        self.cache.put('ready', '1')
         return State.FINISHED
 
     def reset(self) -> None:
-        """
-        o Proxmox, reset operation just shutdowns it until v3 support is removed
-        """
-        if self._vmid != '':
-            try:
-                self.service().reset_machine(int(self._vmid))
-            except Exception:  # nosec: if cannot reset, ignore it
-                pass  # If could not reset, ignore it...
+        if self._vmid:
+            self.service().reset_machine(self._vmid)  # Reset in sync
 
     def process_ready_from_os_manager(self, data: typing.Any) -> str:
         return State.FINISHED
@@ -112,26 +99,24 @@ class ProxmoxFixedUserService(FixedUserService, autoserializable.AutoSerializabl
 
     def _start_machine(self) -> str:
         try:
-            vminfo = self.service().get_machine_info(int(self._vmid))
-        except client.ProxmoxConnectionError:
-            return self._retry_later()
+            state = self.service().get_machine_power_state(self._vmid)
         except Exception as e:
             raise Exception('Machine not found on start machine') from e
 
-        if vminfo.status == 'stopped':
-            self._store_task(self.service().start_machine(int(self._vmid)))
+        if state != xen_client.XenPowerState.running:
+            self._task = self.service().start_machine(self._vmid) or ''
 
         return State.RUNNING
 
     def _stop_machine(self) -> str:
         try:
-            vm_info = self.service().get_machine_info(int(self._vmid))
+            state = self.service().get_machine_power_state(self._vmid)
         except Exception as e:
             raise Exception('Machine not found on stop machine') from e
 
-        if vm_info.status != 'stopped':
-            logger.debug('Stopping machine %s', vm_info)
-            self._store_task(self.service().stop_machine(int(self._vmid)))
+        if state == xen_client.XenPowerState.running:
+            logger.debug('Stopping machine %s', self._vmid)
+            self._task = self.service().stop_machine(self._vmid) or ''
 
         return State.RUNNING
 
@@ -140,17 +125,16 @@ class ProxmoxFixedUserService(FixedUserService, autoserializable.AutoSerializabl
         if self._task == '':
             return State.FINISHED
 
-        node, upid = self._retrieve_task()
-
         try:
-            task = self.service().get_task_info(node, upid)
-        except client.ProxmoxConnectionError:
+            finished, per = self.service().check_task_finished(self._task)
+        except xen_client.XenFailure:
             return State.RUNNING  # Try again later
+        except Exception as e:  # Failed for some other reason
+            if isinstance(e.args[0], dict) and 'error_connection' in e.args[0]:
+                return State.RUNNING  # Try again later
+            raise e
 
-        if task.is_errored():
-            return self._error(task.exitstatus)
-
-        if task.is_completed():
+        if finished:
             return State.FINISHED
 
         return State.RUNNING

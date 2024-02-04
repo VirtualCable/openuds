@@ -39,8 +39,10 @@ from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 from uds.core.util.cache import Cache
 from uds.core.util.decorators import cached
+from uds.core.util import fields
 
 from .service import XenLinkedService
+from .service_fixed import XenFixedService
 from .xen_client import XenServer
 
 # from uds.core.util import validators
@@ -76,7 +78,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
     """
 
     # : What kind of services we offer, this are classes inherited from Service
-    offers = [XenLinkedService]
+    offers = [XenLinkedService, XenFixedService]
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
@@ -121,61 +123,20 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         tooltip=_('Password of the user of XenServer'),
         required=True,
     )
+    concurrent_creation_limit = fields.concurrent_creation_limit_field()
+    concurrent_removal_limit = fields.concurrent_removal_limit_field()
 
-    concurrent_creation_limit = gui.NumericField(
-        length=3,
-        label=_('Creation concurrency'),
-        default=10,
-        min_value=1,
-        max_value=65536,
-        order=50,
-        tooltip=_('Maximum number of concurrently creating VMs'),
-        required=True,
-        tab=types.ui.Tab.ADVANCED,
-        old_field_name='maxPreparingServices',
-    )
-    concurrent_removal_limit = gui.NumericField(
-        length=3,
-        label=_('Removal concurrency'),
-        default=5,
-        min_value=1,
-        max_value=65536,
-        order=51,
-        tooltip=_('Maximum number of concurrently removing VMs'),
-        required=True,
-        tab=types.ui.Tab.ADVANCED,
-        old_field_name='maxRemovingServices',
-    )
-
-    macsRange = gui.TextField(
-        length=36,
-        label=_('Macs range'),
-        default='02:46:00:00:00:00-02:46:00:FF:FF:FF',
-        order=90,
-        readonly=True,
-        tooltip=_('Range of valid macs for created machines'),
-        required=True,
-        tab=types.ui.Tab.ADVANCED,
-    )
-    verifySSL = gui.CheckBoxField(
-        label=_('Verify Certificate'),
-        order=91,
-        tooltip=_(
-            'If selected, certificate will be checked against system valid certificate providers'
-        ),
-        tab=types.ui.Tab.ADVANCED,
-        default=False,
-    )
-
-    hostBackup = gui.TextField(
+    macs_range = fields.macs_range_field(default='02:46:00:00:00:00-02:46:00:FF:FF:FF')
+    verify_ssl = fields.verify_ssl_field(old_field_name='verifySSL')
+    
+    host_backup = gui.TextField(
         length=64,
         label=_('Backup Host'),
         order=92,
-        tooltip=_(
-            'XenServer BACKUP IP or Hostname (used on connection failure to main server)'
-        ),
+        tooltip=_('XenServer BACKUP IP or Hostname (used on connection failure to main server)'),
         tab=types.ui.Tab.ADVANCED,
         required=False,
+        old_field_name='hostBackup',
     )
 
     _api: typing.Optional[XenServer]
@@ -184,19 +145,19 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
     # If we want to connect to more than one server, we need keep locked access to api, change api server, etc..
     # We have implemented an "exclusive access" client that will only connect to one server at a time (using locks)
     # and this way all will be fine
-    def __getApi(self, force: bool = False) -> XenServer:
+    def _get_api(self, force: bool = False) -> XenServer:
         """
         Returns the connection API object for XenServer (using XenServersdk)
         """
         if not self._api or force:
             self._api = XenServer(
                 self.host.value,
-                self.hostBackup.value,
+                self.host_backup.value,
                 443,
                 self.username.value,
                 self.password.value,
                 True,
-                self.verifySSL.as_bool(),
+                self.verify_ssl.as_bool(),
             )
 
         return self._api
@@ -210,7 +171,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         # Just reset _api connection variable
         self._api = None
 
-    def testConnection(self):
+    def test_connection(self):
         """
         Test that conection to XenServer server is fine
 
@@ -218,9 +179,9 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
 
             True if all went fine, false if id didn't
         """
-        self.__getApi().test()
+        self._get_api().test()
 
-    def checkTaskFinished(self, task: typing.Optional[str]) -> tuple[bool, str]:
+    def check_task_finished(self, task: typing.Optional[str]) -> tuple[bool, str]:
         """
         Checks a task state.
         Returns None if task is Finished
@@ -230,7 +191,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         if not task:
             return True, ''
 
-        ts = self.__getApi().getTaskInfo(task)
+        ts = self._get_api().get_task_info(task)
         logger.debug('Task status: %s', ts)
         if ts['status'] == 'running':
             return False, ts['progress']
@@ -238,11 +199,9 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
             return True, ts['result']
 
         # Any other state, raises an exception
-        raise Exception(str(ts['result']))  # Should be error message
+        raise Exception(ts)  # Should be error message
 
-    def getMachines(
-        self, force: bool = False
-    ) -> collections.abc.Iterable[collections.abc.MutableMapping[str, typing.Any]]:
+    def list_machines(self, force: bool = False) -> list[collections.abc.MutableMapping[str, typing.Any]]:
         """
         Obtains the list of machines inside XenServer.
         Machines starting with UDS are filtered out
@@ -258,14 +217,9 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
                 'cluster_id'
         """
 
-        for m in self.__getApi().getVMs():
-            if m['name'][:3] == 'UDS':
-                continue
-            yield m
+        return [m for m in self._get_api().list_machines() if m['name'][:3] != 'UDS']
 
-    def getStorages(
-        self, force: bool = False
-    ) -> collections.abc.Iterable[collections.abc.MutableMapping[str, typing.Any]]:
+    def list_storages(self, force: bool = False) -> list[dict[str, typing.Any]]:
         """
         Obtains the list of storages inside XenServer.
 
@@ -280,11 +234,9 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
                 'size'
                 'used'
         """
-        return self.__getApi().getSRs()
+        return self._get_api().list_srs()
 
-    def getStorageInfo(
-        self, storageId: str, force=False
-    ) -> collections.abc.MutableMapping[str, typing.Any]:
+    def get_storage_info(self, storageId: str, force=False) -> collections.abc.MutableMapping[str, typing.Any]:
         """
         Obtains the storage info
 
@@ -304,19 +256,19 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
                # 'active' -> True or False --> This is not provided by api?? (api.storagedomains.get)
 
         """
-        return self.__getApi().getSRInfo(storageId)
+        return self._get_api().get_sr_info(storageId)
 
-    def getNetworks(
+    def get_networks(
         self, force: bool = False
     ) -> collections.abc.Iterable[collections.abc.MutableMapping[str, typing.Any]]:
-        return self.__getApi().getNetworks()
+        return self._get_api().list_networks()
 
-    def cloneForTemplate(self, name: str, comments: str, machineId: str, sr: str):
-        task = self.__getApi().clone_vm(machineId, name, sr)
+    def clone_for_template(self, name: str, comments: str, machineId: str, sr: str):
+        task = self._get_api().clone_machine(machineId, name, sr)
         logger.debug('Task for cloneForTemplate: %s', task)
         return task
 
-    def convertToTemplate(self, machineId: str, shadowMultiplier: int = 4) -> None:
+    def convert_to_template(self, machine_id: str, shadow_multiplier: int = 4) -> None:
         """
         Publish the machine (makes a template from it so we can create COWs) and returns the template id of
         the creating machine
@@ -331,17 +283,17 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         Returns
             Raises an exception if operation could not be acomplished, or returns the id of the template being created.
         """
-        self.__getApi().convertToTemplate(machineId, shadowMultiplier)
+        self._get_api().convert_to_template(machine_id, shadow_multiplier)
 
-    def removeTemplate(self, templateId: str) -> None:
+    def remove_template(self, templateId: str) -> None:
         """
         Removes a template from XenServer server
 
         Returns nothing, and raises an Exception if it fails
         """
-        self.__getApi().removeTemplate(templateId)
+        self._get_api().remove_template(templateId)
 
-    def startDeployFromTemplate(self, name: str, comments: str, templateId: str) -> str:
+    def start_deploy_from_template(self, name: str, comments: str, template_id: str) -> str:
         """
         Deploys a virtual machine on selected cluster from selected template
 
@@ -357,15 +309,28 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         Returns:
             Id of the machine being created form template
         """
-        return self.__getApi().cloneTemplate(templateId, name)
+        return self._get_api().start_deploy_from_template(template_id, name)
 
-    def getVMPowerState(self, machineId: str) -> str:
+    def get_machine_power_state(self, machine_id: str) -> str:
         """
         Returns current machine power state
         """
-        return self.__getApi().getVMPowerState(machineId)
+        return self._get_api().get_machine_power_state(machine_id)
 
-    def startVM(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
+    def get_machine_name(self, machine_id: str) -> str:
+        return self._get_api().get_machine_info(machine_id).get('name_label', '')
+    
+    def list_folders(self) -> list[str]:
+        return self._get_api().list_folders()
+
+    def get_machine_folder(self, machine_id: str) -> str:
+        return self._get_api().get_machine_folder(machine_id)
+    
+    def get_machines_from_folder(self, folder: str, retrieve_names: bool = False) -> list[dict[str, typing.Any]]:
+        return self._get_api().get_machines_from_folder(folder, retrieve_names)
+        
+
+    def start_machine(self, machine_id: str, as_async: bool = True) -> typing.Optional[str]:
         """
         Tries to start a machine. No check is done, it is simply requested to XenServer.
 
@@ -376,9 +341,9 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
 
         Returns:
         """
-        return self.__getApi().startVM(machineId, asnc)
+        return self._get_api().start_machine(machine_id, as_async)
 
-    def stopVM(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
+    def stop_machine(self, machine_id: str, as_async: bool = True) -> typing.Optional[str]:
         """
         Tries to start a machine. No check is done, it is simply requested to XenServer
 
@@ -387,9 +352,9 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
 
         Returns:
         """
-        return self.__getApi().stopVM(machineId, asnc)
+        return self._get_api().stop_machine(machine_id, as_async)
 
-    def resetVM(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
+    def reset_machine(self, machine_id: str, as_async: bool = True) -> typing.Optional[str]:
         """
         Tries to start a machine. No check is done, it is simply requested to XenServer
 
@@ -398,9 +363,9 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
 
         Returns:
         """
-        return self.__getApi().resetVM(machineId, asnc)
+        return self._get_api().reset_machine(machine_id, as_async)
 
-    def canSuspendVM(self, machineId: str) -> bool:
+    def can_suspend_machine(self, machine_id: str) -> bool:
         """
         The machine can be suspended only when "suspend" is in their operations list (mush have xentools installed)
 
@@ -410,9 +375,9 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         Returns:
             True if the machien can be suspended
         """
-        return self.__getApi().canSuspendVM(machineId)
+        return self._get_api().can_suspend_machine(machine_id)
 
-    def suspendVM(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
+    def suspend_machine(self, machine_id: str, as_async: bool = True) -> typing.Optional[str]:
         """
         Tries to start a machine. No check is done, it is simply requested to XenServer
 
@@ -421,9 +386,9 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
 
         Returns:
         """
-        return self.__getApi().suspendVM(machineId, asnc)
+        return self._get_api().suspend_machine(machine_id, as_async)
 
-    def resumeVM(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
+    def resume_machine(self, machine_id: str, as_async: bool = True) -> typing.Optional[str]:
         """
         Tries to start a machine. No check is done, it is simply requested to XenServer
 
@@ -432,9 +397,20 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
 
         Returns:
         """
-        return self.__getApi().resumeVM(machineId, asnc)
+        return self._get_api().resume_machine(machine_id, as_async)
 
-    def removeVM(self, machineId: str) -> None:
+    def shutdown_machine(self, machine_id: str, as_async: bool = True) -> typing.Optional[str]:
+        """
+        Tries to start a machine. No check is done, it is simply requested to XenServer
+
+        Args:
+            machineId: Id of the machine
+
+        Returns:
+        """
+        return self._get_api().shutdown_machine(machine_id, as_async)
+
+    def remove_machine(self, machine_id: str) -> None:
         """
         Tries to delete a machine. No check is done, it is simply requested to XenServer
 
@@ -443,23 +419,39 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
 
         Returns:
         """
-        self.__getApi().removeVM(machineId)
+        self._get_api().remove_machine(machine_id)
 
-    def configureVM(self, machineId: str, netId: str, mac: str, memory: int) -> None:
-        self.__getApi().configureVM(
-            machineId, mac={'network': netId, 'mac': mac}, memory=memory
-        )
+    def configure_machine(self, machine_id: str, netId: str, mac: str, memory: int) -> None:
+        self._get_api().configure_machine(machine_id, mac={'network': netId, 'mac': mac}, memory=memory)
 
-    def provisionVM(self, machineId: str, asnc: bool = True) -> str:
-        return self.__getApi().provisionVM(machineId, asnc=asnc)
+    def provision_machine(self, machine_id: str, as_async: bool = True) -> str:
+        return self._get_api().provision_machine(machine_id, as_async=as_async)
 
-    def getMacRange(self) -> str:
-        return self.macsRange.value
+    def get_first_ip(self, machine_id: str) -> str:
+        return self._get_api().get_first_ip(machine_id)
 
-    @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
+    def get_first_mac(self, machine_id: str) -> str:
+        return self._get_api().get_first_mac(machine_id)
+
+    def create_snapshot(self, machine_id: str, name: str) -> str:
+        return self._get_api().create_snapshot(machine_id, name)
+
+    def restore_snapshot(self, snapshot_id: str) -> str:
+        return self._get_api().restore_snapshot(snapshot_id)
+
+    def remove_snapshot(self, snapshot_id: str) -> str:
+        return self._get_api().remove_snapshot(snapshot_id)
+
+    def list_snapshots(self, machine_id: str, full_info: bool = False) -> list[dict[str, typing.Any]]:
+        return self._get_api().list_snapshots(machine_id)
+
+    def get_macs_range(self) -> str:
+        return self.macs_range.value
+
+    @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT, key_fnc=lambda x: x.host.as_str())
     def is_available(self) -> bool:
         try:
-            self.testConnection()
+            self.test_connection()
             return True
         except Exception:
             return False
@@ -495,7 +487,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         # return [True, _('Nothing tested, but all went fine..')]
         xe = XenProvider(env, data)
         try:
-            xe.testConnection()
+            xe.test_connection()
             return [True, _('Connection test successful')]
         except Exception as e:
             return [False, _("Connection failed: {}").format(str(e))]
