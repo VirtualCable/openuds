@@ -44,7 +44,7 @@ from uds.core.ui import gui
 from uds.core.util import ensure, log, net
 from uds.core.util.model import sql_stamp_seconds
 
-from .deployment import IPMachineDeployed
+from .deployment import IPMachineUserService
 from .service_base import IPServiceBase
 from .types import HostInfo
 
@@ -148,7 +148,7 @@ class IPMachinesService(IPServiceBase):
     needs_osmanager = False  # If the service needs a s.o. manager (managers are related to agents provided by services itselfs, i.e. virtual machines with agent)
     must_assign_manually = False  # If true, the system can't do an automatic assignation of a deployed user service from this service
 
-    user_service_type = IPMachineDeployed
+    user_service_type = IPMachineUserService
 
     services_type_provided = types.services.ServiceType.VDI
 
@@ -331,7 +331,7 @@ class IPMachinesService(IPServiceBase):
         user: 'models.User',
         userDeployment: 'services.UserService',
     ) -> str:
-        userservice_instance: IPMachineDeployed = typing.cast(IPMachineDeployed, userDeployment)
+        userservice_instance: IPMachineUserService = typing.cast(IPMachineUserService, userDeployment)
         host = HostInfo.from_str(assignable_id)
 
         now = sql_stamp_seconds()

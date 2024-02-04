@@ -40,7 +40,7 @@ from uds.core.ui import gui
 from uds.core.util import net
 from uds.core import exceptions, types
 
-from .deployment import IPMachineDeployed
+from .deployment import IPMachineUserService
 from .service_base import IPServiceBase
 from .types import HostInfo
 
@@ -73,7 +73,7 @@ class IPSingleMachineService(IPServiceBase):
     needs_osmanager = False  # If the service needs a s.o. manager (managers are related to agents provided by services itselfs, i.e. virtual machines with agent)
     must_assign_manually = False  # If true, the system can't do an automatic assignation of a deployed user service from this service
 
-    user_service_type = IPMachineDeployed
+    user_service_type = IPMachineUserService
 
     services_type_provided = types.services.ServiceType.VDI
 

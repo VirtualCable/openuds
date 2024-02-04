@@ -38,9 +38,8 @@ import dns.resolver
 
 from uds.core import services
 from uds.core.types.states import State
-from uds.core.util.auto_attributes import AutoAttributes
 from uds.core.util import net
-from uds.core.util import log
+from uds.core.util import log, autoserializable, auto_attributes
 
 from .types import HostInfo
 
@@ -51,18 +50,24 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-
-class IPMachineDeployed(services.UserService, AutoAttributes):
-    suggested_delay = 10
-
+# This class is used for serialization of old data
+class OldIPSerialData(auto_attributes.AutoAttributes):
     _ip: str
     _reason: str
     _state: str
-
-    def __init__(self, environment, **kwargs):
-        AutoAttributes.__init__(self, ip=str, reason=str, state=str)
-        services.UserService.__init__(self, environment, **kwargs)
+    
+    def __init__(self):
+        auto_attributes.AutoAttributes.__init__(self, ip=str, reason=str, state=str)
+        self._ip = ''
+        self._reason = ''
         self._state = State.FINISHED
+
+class IPMachineUserService(services.UserService, autoserializable.AutoSerializable):
+    suggested_delay = 10
+
+    _ip = autoserializable.StringField(default='')
+    _reason = autoserializable.StringField(default='')
+    _state = autoserializable.StringField(default=State.FINISHED)
 
     # Utility overrides for type checking...
     def service(self) -> 'IPServiceBase':
@@ -170,3 +175,18 @@ class IPMachineDeployed(services.UserService, AutoAttributes):
 
     def cancel(self) -> str:
         return self.destroy()
+
+    def unmarshal(self, data: bytes) -> None:
+        if autoserializable.is_autoserializable_data(data):
+            return super().unmarshal(data)
+
+        _auto_data = OldIPSerialData()
+        _auto_data.unmarshal(data)
+
+        # Fill own data from restored data
+        self._ip = _auto_data._ip
+        self._reason = _auto_data._reason
+        self._state = _auto_data._state
+
+        # Flag for upgrade
+        self.mark_for_upgrade(True)
