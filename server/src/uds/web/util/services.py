@@ -141,7 +141,7 @@ def getServicesData(
                 'link': html.udsAccessLink(request, 'M' + meta.uuid, idd(i)),  # type: ignore
                 'priority': i.priority,
             }
-            for i in transports
+            for i in sorted(transports, key=lambda x: x.priority)
         ]
 
     # Preload all assigned user services for this user
