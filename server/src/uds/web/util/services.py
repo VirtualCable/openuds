@@ -29,6 +29,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import collections.abc
+from functools import reduce
 import logging
 import typing
 
@@ -53,7 +54,7 @@ from uds.models import MetaPool, Network, ServicePool, ServicePoolGroup, TicketS
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core.types.requests import ExtendedHttpRequestWithUser
-    from uds.models import Image
+    from uds.models import Image, MetaPoolMember
 
 
 logger = logging.getLogger(__name__)
@@ -120,54 +121,45 @@ def get_services_info_dict(
     """
     # We look for services for this authenticator groups. User is logged in in just 1 authenticator, so his groups must coincide with those assigned to ds
     groups = list(request.user.get_groups())
-    availServicePools = list(
+    available_service_pools = list(
         ServicePool.get_pools_for_groups(groups, request.user)
     )  # Pass in user to get "number_assigned" to optimize
-    availMetaPools = list(
+    available_metapools = list(
         MetaPool.metapools_for_groups(groups, request.user)
     )  # Pass in user to get "number_assigned" to optimize
     now = sql_datetime()
 
     # Information for administrators
     nets = ''
-    validTrans = ''
+    valid_transports = ''
 
-    osType: 'types.os.KnownOS' = request.os.os
-    logger.debug('OS: %s', osType)
-
-    if request.user.is_staff():
-        nets = ','.join([n.name for n in Network.get_networks_for_ip(request.ip)])
-        tt = []
-        t: Transport
-        for t in Transport.objects.all().prefetch_related('networks'):
-            if t.is_ip_allowed(request.ip):
-                tt.append(t.name)
-        validTrans = ','.join(tt)
-
-    logger.debug('Checking meta pools: %s', availMetaPools)
-    services = []
+    os_type: 'types.os.KnownOS' = request.os.os
+    logger.debug('OS: %s', os_type)
+  
+    def _is_valid_transport(t: Transport) -> bool:
+        transport_type = t.get_type()
+        return (
+            transport_type is not None
+            and t.is_ip_allowed(request.ip)
+            and transport_type.supports_os(os_type)
+            and t.is_os_allowed(os_type)
+        )
 
     # Metapool helpers
-    def transportIterator(member) -> collections.abc.Iterable[Transport]:
+    def _valid_transports(member: 'MetaPoolMember') -> collections.abc.Iterable[Transport]:
         t: Transport
         for t in member.pool.transports.all().order_by('priority'):
             try:
-                typeTrans = t.get_type()
-                if (
-                    typeTrans
-                    and t.is_ip_allowed(request.ip)
-                    and typeTrans.supports_os(osType)
-                    and t.is_os_allowed(osType)
-                ):
+                if _is_valid_transport(t):
                     yield t
             except Exception as e:
                 logger.warning('Transport %s of %s not found. Ignoring. (%s)', t, member.pool, e)
 
-    def buildMetaTransports(
-        transports: collections.abc.Iterable[Transport], isLabel: bool, meta: 'MetaPool'
+    def _build_transports_for_meta(
+        transports: collections.abc.Iterable[Transport], is_by_label: bool, meta: 'MetaPool'
     ) -> list[collections.abc.Mapping[str, typing.Any]]:
         def idd(i):
-            return i.uuid if not isLabel else 'LABEL:' + i.label
+            return i.uuid if not is_by_label else 'LABEL:' + i.label
 
         return [
             {
@@ -176,110 +168,96 @@ def get_services_info_dict(
                 'link': html.uds_access_link(request, 'M' + meta.uuid, idd(i)),  # type: ignore
                 'priority': i.priority,
             }
-            for i in transports
+            for i in sorted(transports, key=lambda x: x.priority)  # Sorted by priority
         ]
+
+    if request.user.is_staff():
+        nets = ','.join([n.name for n in Network.get_networks_for_ip(request.ip)])
+        tt = []
+        t: Transport
+        for t in Transport.objects.all().prefetch_related('networks'):
+            if t.is_ip_allowed(request.ip):
+                tt.append(t.name)
+        valid_transports = ','.join(tt)
+
+    logger.debug('Checking meta pools: %s', available_metapools)
+    services = []
 
     # Preload all assigned user services for this user
     # Add meta pools data first
-    for meta in availMetaPools:
+    for meta in available_metapools:
         # Check that we have access to at least one transport on some of its children
-        metaTransports: list[collections.abc.Mapping[str, typing.Any]] = []
+        transports_in_meta: list[collections.abc.Mapping[str, typing.Any]] = []
         in_use = meta.number_in_use > 0  # type: ignore # anotated value
 
-        inAll: typing.Optional[typing.Set[str]] = None
-        tmpSet: typing.Set[str]
-
-        # If no macro on names, skip calculation (and set to empty)
-        if '{' in meta.name or '{' in meta.visual_name:
-            poolUsageInfo = meta.usage()
-            use_percent = str(poolUsageInfo.percent) + '%'
-            use_count = str(poolUsageInfo.used)
-            left_count = str(poolUsageInfo.total - poolUsageInfo.used)
-            max_srvs = str(poolUsageInfo.total)
-        else:
-            max_srvs = ''
-            use_percent = ''
-            use_count = ''
-            left_count = ''
-
-        # pylint: disable=cell-var-from-loop
-        def macro_info(x: str) -> str:
-            return (
-                x.replace('{use}', use_percent)
-                .replace('{total}', max_srvs)
-                .replace('{usec}', use_count)
-                .replace('{left}', left_count)
+        # Calculate info variable macros content if needed
+        info_vars = (
+            types.pools.UsageInfoVars(meta.usage())
+            if (
+                types.pools.UsageInfoVars.has_macros(meta.name)
+                or types.pools.UsageInfoVars.has_macros(meta.visual_name)
             )
+            else types.pools.UsageInfoVars()
+        )
 
         if meta.transport_grouping == types.pools.TransportSelectionPolicy.COMMON:
-            # only keep transports that are in ALL members
-            for member in meta.members.all().order_by('priority'):
-                tmpSet = set()
-                # if first pool, get all its transports and check that are valid
-                for t in transportIterator(member):
-                    if inAll is None:
-                        tmpSet.add(t.uuid)  # type: ignore
-                    elif t.uuid in inAll:  # For subsequent, reduce...
-                        tmpSet.add(t.uuid)  # type: ignore
+            # Keep only transports that are in all pools
+            # This will be done by getting all transports from all pools and then intersecting them
+            # using reduce
+            transports_in_all_pools = typing.cast(
+                set[Transport],
+                reduce(
+                    lambda x, y: x & y,
+                    [{t for t in _valid_transports(member)} for member in meta.members.all()],
+                ),
+            )
 
-                inAll = tmpSet
-            # tmpSet has ALL common transports
-            metaTransports = buildMetaTransports(
-                Transport.objects.filter(uuid__in=inAll or []), isLabel=False, meta=meta
+            transports_in_meta = _build_transports_for_meta(
+                transports_in_all_pools,
+                is_by_label=False,
+                meta=meta,
             )
         elif meta.transport_grouping == types.pools.TransportSelectionPolicy.LABEL:
             ltrans: collections.abc.MutableMapping[str, Transport] = {}
-            for member in meta.members.all().order_by('priority'):
-                tmpSet = set()
+            transports_in_all_pools_by_label: typing.Optional[typing.Set[str]] = None
+            temporary_transport_set_by_label: typing.Set[str]
+
+            for member in meta.members.all():
+                temporary_transport_set_by_label = set()
                 # if first pool, get all its transports and check that are valid
-                for t in transportIterator(member):
+                for t in _valid_transports(member):
                     if not t.label:
                         continue
                     if t.label not in ltrans or ltrans[t.label].priority > t.priority:
                         ltrans[t.label] = t
-                    if inAll is None:
-                        tmpSet.add(t.label)
-                    elif t.label in inAll:  # For subsequent, reduce...
-                        tmpSet.add(t.label)
+                    if transports_in_all_pools_by_label is None:
+                        temporary_transport_set_by_label.add(t.label)
+                    elif t.label in transports_in_all_pools_by_label:  # For subsequent, reduce...
+                        temporary_transport_set_by_label.add(t.label)
 
-                inAll = tmpSet
+                transports_in_all_pools_by_label = temporary_transport_set_by_label
             # tmpSet has ALL common transports
-            metaTransports = buildMetaTransports(
-                (v for k, v in ltrans.items() if k in (inAll or set())), isLabel=True, meta=meta
+            transports_in_meta = _build_transports_for_meta(
+                (v for k, v in ltrans.items() if k in (transports_in_all_pools_by_label or set())),
+                is_by_label=True,
+                meta=meta,
             )
         else:
-            for member in meta.members.all():
-                # if pool.is_in_maintenance():
-                #    continue
-                for t in member.pool.transports.all():
-                    typeTrans = t.get_type()
-                    if (
-                        typeTrans
-                        and t.is_ip_allowed(request.ip)
-                        and typeTrans.supports_os(osType)
-                        and t.is_os_allowed(osType)
-                    ):
-                        metaTransports = [
-                            {
-                                'id': 'meta',
-                                'name': 'meta',
-                                'link': html.uds_access_link(request, 'M' + meta.uuid, None),  # type: ignore
-                                'priority': 0,
-                            }
-                        ]
-                        break
-
-                # if not in_use and meta.number_in_use:  # Only look for assignation on possible used
-                #     assignedUserService = UserServiceManager().getExistingAssignationForUser(pool, request.user)
-                #     if assignedUserService:
-                #         in_use = assignedUserService.in_use
-
-                # Stop when 1 usable pool is found (metaTransports is filled)
-                if metaTransports:
-                    break
+            # If we have at least one valid transport, 
+            # mark as "meta" transport and add it to the list
+            transports_in_meta = [
+                {
+                    'id': 'meta',
+                    'name': 'meta',
+                    'link': html.uds_access_link(request, 'M' + meta.uuid, None),  # type: ignore
+                    'priority': 0,
+                }
+                if any(_valid_transports(member) for member in meta.members.all())
+                else {}
+            ]
 
         # If no usable pools, this is not visible
-        if metaTransports:
+        if transports_in_meta:
             group: collections.abc.MutableMapping[str, typing.Any] = (
                 meta.servicesPoolGroup.as_dict if meta.servicesPoolGroup else ServicePoolGroup.default().as_dict
             )
@@ -288,13 +266,13 @@ def get_services_info_dict(
                 _service_info(
                     uuid=meta.uuid,
                     is_meta=True,
-                    name=macro_info(meta.name),
-                    visual_name=macro_info(meta.visual_name),
+                    name=info_vars.replace(meta.name),
+                    visual_name=info_vars.replace(meta.visual_name),
                     description=meta.comments,
                     group=group,
-                    transports=metaTransports,
+                    transports=transports_in_meta,
                     image=meta.image,
-                    show_transports=len(metaTransports) > 1,
+                    show_transports=len(transports_in_meta) > 1,
                     allow_users_remove=meta.allow_users_remove,
                     allow_users_reset=meta.allow_users_remove,
                     maintenance=meta.is_in_maintenance(),
@@ -307,20 +285,20 @@ def get_services_info_dict(
             )
 
     # Now generic user service
-    for sPool in availServicePools:
+    for service_pool in available_service_pools:
         # Skip pools that are part of meta pools
-        if sPool.owned_by_meta:
+        if service_pool.owned_by_meta:
             continue
 
         # If no macro on names, skip calculation
-        if '{' in sPool.name or '{' in sPool.visual_name:
-            poolUsageInfo = sPool.usage(
-                sPool.usage_count,  # type: ignore # anotated value
+        if '{' in service_pool.name or '{' in service_pool.visual_name:
+            pool_usage_info = service_pool.usage(
+                service_pool.usage_count,  # type: ignore # anotated value
             )
-            use_percent = str(poolUsageInfo.percent) + '%'
-            use_count = str(poolUsageInfo.used)
-            left_count = str(poolUsageInfo.total - poolUsageInfo.used)
-            max_srvs = str(poolUsageInfo.total)
+            use_percent = str(pool_usage_info.percent) + '%'
+            use_count = str(pool_usage_info.used)
+            left_count = str(pool_usage_info.total - pool_usage_info.used)
+            max_srvs = str(pool_usage_info.total)
         else:
             max_srvs = ''
             use_percent = ''
@@ -328,7 +306,7 @@ def get_services_info_dict(
             left_count = ''
 
         # pylint: disable=cell-var-from-loop
-        def macro_info(x: str) -> str:
+        def _replace_macro_vars(x: str) -> str:
             return (
                 x.replace('{use}', use_percent)
                 .replace('{total}', max_srvs)
@@ -338,19 +316,14 @@ def get_services_info_dict(
 
         trans: list[collections.abc.Mapping[str, typing.Any]] = []
         for t in sorted(
-            sPool.transports.all(), key=lambda x: x.priority
+            service_pool.transports.all(), key=lambda x: x.priority
         ):  # In memory sort, allows reuse prefetched and not too big array
-            typeTrans = t.get_type()
-            if (
-                typeTrans
-                and t.is_ip_allowed(request.ip)
-                and typeTrans.supports_os(osType)
-                and t.is_os_allowed(osType)
-            ):
-                if typeTrans.own_link:
-                    link = reverse('webapi.transport_own_link', args=('F' + sPool.uuid, t.uuid))  # type: ignore
+            transport_type = t.get_type()
+            if _is_valid_transport(t):
+                if transport_type.own_link:
+                    link = reverse('webapi.transport_own_link', args=('F' + service_pool.uuid, t.uuid))  # type: ignore
                 else:
-                    link = html.uds_access_link(request, 'F' + sPool.uuid, t.uuid)  # type: ignore
+                    link = html.uds_access_link(request, 'F' + service_pool.uuid, t.uuid)  # type: ignore
                 trans.append({'id': t.uuid, 'name': t.name, 'link': link, 'priority': t.priority})
 
         # If empty transports, do not include it on list
@@ -358,52 +331,54 @@ def get_services_info_dict(
             continue
 
         # Locate if user service has any already assigned user service for this. Use "pre cached" number of assignations in this pool to optimize
-        in_use = typing.cast(typing.Any, sPool).number_in_use > 0
+        in_use = typing.cast(typing.Any, service_pool).number_in_use > 0
         # if svr.number_in_use:  # Anotated value got from getDeployedServicesForGroups(...). If 0, no assignation for this user
         #     ads = UserServiceManager().getExistingAssignationForUser(svr, request.user)
         #     if ads:
         #         in_use = ads.in_use
 
         group = (
-            sPool.servicesPoolGroup.as_dict if sPool.servicesPoolGroup else ServicePoolGroup.default().as_dict
+            service_pool.servicesPoolGroup.as_dict
+            if service_pool.servicesPoolGroup
+            else ServicePoolGroup.default().as_dict
         )
 
         # Only add toBeReplaced info in case we allow it. This will generate some "overload" on the services
-        toBeReplacedDate = (
-            sPool.when_will_be_replaced(request.user)
-            if typing.cast(typing.Any, sPool).pubs_active > 0
+        when_will_be_replaced = (
+            service_pool.when_will_be_replaced(request.user)
+            if typing.cast(typing.Any, service_pool).pubs_active > 0
             and GlobalConfig.NOTIFY_REMOVAL_BY_PUB.as_bool(False)
             else None
         )
         # tbr = False
-        if toBeReplacedDate:
-            toBeReplaced = formats.date_format(toBeReplacedDate, 'SHORT_DATETIME_FORMAT')
-            toBeReplacedTxt = gettext(
+        if when_will_be_replaced:
+            replace_date_as_str = formats.date_format(when_will_be_replaced, 'SHORT_DATETIME_FORMAT')
+            replace_date_info_text = gettext(
                 'This service is about to be replaced by a new version. Please, close the session before {} and save all your work to avoid loosing it.'
-            ).format(toBeReplacedDate)
+            ).format(when_will_be_replaced)
         else:
-            toBeReplaced = None
-            toBeReplacedTxt = ''
+            replace_date_as_str = None
+            replace_date_info_text = ''
 
         services.append(
             _service_info(
-                uuid=sPool.uuid,
+                uuid=service_pool.uuid,
                 is_meta=False,
-                name=macro_info(sPool.name),
-                visual_name=macro_info(sPool.visual_name),
-                description=sPool.comments,
+                name=_replace_macro_vars(service_pool.name),
+                visual_name=_replace_macro_vars(service_pool.visual_name),
+                description=service_pool.comments,
                 group=group,
                 transports=trans,
-                image=sPool.image,
-                show_transports=sPool.show_transports,
-                allow_users_remove=sPool.allow_users_remove,
-                allow_users_reset=sPool.allow_users_reset,
-                maintenance=sPool.is_in_maintenance(),
-                not_accesible=not sPool.is_access_allowed(now),
+                image=service_pool.image,
+                show_transports=service_pool.show_transports,
+                allow_users_remove=service_pool.allow_users_remove,
+                allow_users_reset=service_pool.allow_users_reset,
+                maintenance=service_pool.is_in_maintenance(),
+                not_accesible=not service_pool.is_access_allowed(now),
                 in_use=in_use,
-                to_be_replaced=toBeReplaced,
-                to_be_replaced_text=toBeReplacedTxt,
-                custom_calendar_text=sPool.calendar_message,
+                to_be_replaced=replace_date_as_str,
+                to_be_replaced_text=replace_date_info_text,
+                custom_calendar_text=service_pool.calendar_message,
             )
         )
 
@@ -427,7 +402,7 @@ def get_services_info_dict(
         'services': services,
         'ip': request.ip,
         'nets': nets,
-        'transports': validTrans,
+        'transports': valid_transports,
         'autorun': autorun,
     }
 

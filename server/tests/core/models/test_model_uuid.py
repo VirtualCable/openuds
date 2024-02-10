@@ -47,9 +47,9 @@ class ModelUUIDTest(UDSTestCase):
 
     def setUp(self) -> None:
         super().setUp()
-        self.auth = authenticators_fixtures.createAuthenticator()
-        self.group = authenticators_fixtures.createGroups(self.auth, 1)[0]
-        self.user = authenticators_fixtures.createUsers(self.auth, 1, groups=[self.group])[0]
+        self.auth = authenticators_fixtures.create_authenticator()
+        self.group = authenticators_fixtures.create_groups(self.auth, 1)[0]
+        self.user = authenticators_fixtures.create_users(self.auth, 1, groups=[self.group])[0]
     
     def test_uuid_lowercase(self):
         """

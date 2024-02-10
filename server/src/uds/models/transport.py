@@ -77,6 +77,11 @@ class Transport(ManagedObjectModel, TaggingMixin):
 
     deployedServices: 'models.manager.RelatedManager[ServicePool]'
     networks: 'models.manager.RelatedManager[Network]'
+    
+    @property
+    # Alias for future renaming (start using alias asap)
+    def service_pools(self) -> 'models.manager.RelatedManager[ServicePool]':
+        return self.deployedServices
 
     class Meta(ManagedObjectModel.Meta):  # pylint: disable=too-few-public-methods
         """

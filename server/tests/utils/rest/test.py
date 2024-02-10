@@ -65,23 +65,23 @@ class RESTTestCase(test.UDSTransactionTestCase):
     def setUp(self) -> None:
         # Set up data for REST Test cases
         # First, the authenticator related
-        self.auth = authenticators_fixtures.createAuthenticator()
-        self.simple_groups = authenticators_fixtures.createGroups(self.auth, NUMBER_OF_ITEMS_TO_CREATE)
+        self.auth = authenticators_fixtures.create_authenticator()
+        self.simple_groups = authenticators_fixtures.create_groups(self.auth, NUMBER_OF_ITEMS_TO_CREATE)
         self.meta_groups = authenticators_fixtures.createMetaGroups(self.auth, NUMBER_OF_ITEMS_TO_CREATE)
         # Create some users, one admin, one staff and one user
-        self.admins = authenticators_fixtures.createUsers(
+        self.admins = authenticators_fixtures.create_users(
             self.auth,
             number_of_users=NUMBER_OF_ITEMS_TO_CREATE,
             is_admin=True,
             groups=self.groups,
         )
-        self.staffs = authenticators_fixtures.createUsers(
+        self.staffs = authenticators_fixtures.create_users(
             self.auth,
             number_of_users=NUMBER_OF_ITEMS_TO_CREATE,
             is_staff=True,
             groups=self.groups,
         )
-        self.plain_users = authenticators_fixtures.createUsers(
+        self.plain_users = authenticators_fixtures.create_users(
             self.auth, number_of_users=NUMBER_OF_ITEMS_TO_CREATE, groups=self.groups
         )
 

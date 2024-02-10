@@ -55,6 +55,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
     """
     Proxmox fixed machines service.
     """
+
     is_base: typing.ClassVar[bool] = True  # This is a base service, not a final one
 
     uses_cache = False  # Cache are running machine awaiting to be assigned
@@ -73,7 +74,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
     # allowed_protocols = types.transports.Protocol.generic_vdi(types.transports.Protocol.SPICE)
     # services_type_provided = types.services.ServiceType.VDI
 
-    # Gui
+    # Gui remplates, to be "incorporated" by inherited classes if needed
     token = gui.TextField(
         order=1,
         label=_('Service Token'),
@@ -84,6 +85,25 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         default='',
         required=False,
         readonly=False,
+    )
+
+    use_snapshots = gui.CheckBoxField(
+        label=_('Use snapshots'),
+        default=False,
+        order=22,
+        tooltip=_('If active, UDS will try to create an snapshot (if one already does not exists) before accessing a machine, and restore it after usage.'),
+        tab=_('Machines'),
+        old_field_name='useSnapshots',
+    )
+
+    # Keep name as "machine" so we can use VCHelpers.getMachines
+    machines = gui.MultiChoiceField(
+        label=_("Machines"),
+        order=21,
+        tooltip=_('Machines for this service'),
+        required=True,
+        tab=_('Machines'),
+        rows=10,
     )
 
     def _get_assigned_machines(self) -> typing.Set[str]:

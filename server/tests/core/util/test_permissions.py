@@ -60,15 +60,15 @@ class PermissionsTest(UDSTestCase):
     network: models.Network
 
     def setUp(self) -> None:
-        self.authenticator = authenticators_fixtures.createAuthenticator()
-        self.groups = authenticators_fixtures.createGroups(self.authenticator)
-        self.users = authenticators_fixtures.createUsers(
+        self.authenticator = authenticators_fixtures.create_authenticator()
+        self.groups = authenticators_fixtures.create_groups(self.authenticator)
+        self.users = authenticators_fixtures.create_users(
             self.authenticator, groups=self.groups
         )
-        self.admins = authenticators_fixtures.createUsers(
+        self.admins = authenticators_fixtures.create_users(
             self.authenticator, is_admin=True, groups=self.groups
         )
-        self.staffs = authenticators_fixtures.createUsers(
+        self.staffs = authenticators_fixtures.create_users(
             self.authenticator, is_staff=True, groups=self.groups
         )
         self.userService = services_fixtures.create_one_cache_testing_userservice(

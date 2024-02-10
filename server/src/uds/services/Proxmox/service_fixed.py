@@ -32,6 +32,7 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _, gettext
+from regex import F
 from uds.core import services, types, consts, exceptions
 from uds.core.services.specializations.fixed_machine.fixed_service import FixedService
 from uds.core.services.specializations.fixed_machine.fixed_userservice import FixedUserService
@@ -92,24 +93,9 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
         tab=_('Machines'),
         old_field_name='resourcePool',
     )
-    # Keep name as "machine" so we can use VCHelpers.getMachines
-    machines = gui.MultiChoiceField(
-        label=_("Machines"),
-        order=21,
-        tooltip=_('Machines for this service'),
-        required=True,
-        tab=_('Machines'),
-        rows=10,
-    )
-
-    use_snapshots = gui.CheckBoxField(
-        label=_('Use snapshots'),
-        default=False,
-        order=22,
-        tooltip=_('If active, UDS will try to create an snapshot on VM use and recover if on exit.'),
-        tab=_('Machines'),
-        old_field_name='useSnapshots',
-    )
+    
+    machines = FixedService.machines
+    use_snapshots = FixedService.use_snapshots
 
     prov_uuid = gui.HiddenField(value=None)
 

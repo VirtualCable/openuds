@@ -66,3 +66,6 @@ DEFAULT_MAX_PREPARING_SERVICES: typing.Final[int] = 15
 
 # Default wait time for rechecks, etc...
 DEFAULT_WAIT_TIME: typing.Final[int] = 8  # seconds
+
+# UDS Action url scheme
+UDS_ACTION_SCHEME: typing.Final[str] = 'udsa://'

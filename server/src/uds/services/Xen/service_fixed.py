@@ -55,7 +55,8 @@ logger = logging.getLogger(__name__)
 
 class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
     """
-    Proxmox fixed machines service.
+    Represents a Proxmox service based on fixed machines.
+    This service requires the qemu agent to be installed on the machines.
     """
 
     type_name = _('Proxmox Fixed Machines')
@@ -86,29 +87,13 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
             'function': helpers.get_machines,
             'parameters': ['prov_uuid', 'folder'],
         },
-        tooltip=_('Resource Pool containing base machines'),
+        tooltip=_('Folder containing base machines'),
         required=True,
         tab=_('Machines'),
         old_field_name='resourcePool',
     )
-    # Keep name as "machine" so we can use VCHelpers.getMachines
-    machines = gui.MultiChoiceField(
-        label=_("Machines"),
-        order=21,
-        tooltip=_('Machines for this service'),
-        required=True,
-        tab=_('Machines'),
-        rows=10,
-    )
-
-    use_snapshots = gui.CheckBoxField(
-        label=_('Use snapshots'),
-        default=False,
-        order=22,
-        tooltip=_('If active, UDS will try to create an snapshot on VM use and recover if on exit.'),
-        tab=_('Machines'),
-        old_field_name='useSnapshots',
-    )
+    machines = FixedService.machines
+    use_snapshots = FixedService.use_snapshots
 
     prov_uuid = gui.HiddenField(value=None)
 

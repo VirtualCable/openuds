@@ -159,7 +159,7 @@ def create_test_publication(
     return publication
 
 
-def create_test_transport() -> models.Transport:
+def create_test_transport(**kwargs) -> models.Transport:
     from uds.transports.Test import TestTransport
 
     values = TestTransport(
@@ -170,6 +170,7 @@ def create_test_transport() -> models.Transport:
         comments='Comment for Transport %d' % (glob['transport_id']),
         data_type=TestTransport.type_type,
         data=TestTransport(environment.Environment(str(glob['transport_id'])), values).serialize(),
+        **kwargs,
     )
     glob['transport_id'] += 1
     return transport
@@ -255,9 +256,9 @@ def create_cache_testing_userservices(
     from . import authenticators
 
     if not user or not groups:
-        auth = authenticators.createAuthenticator()
-        groups = authenticators.createGroups(auth, 3)
-        user = authenticators.createUsers(auth, 1, groups=groups)[0]
+        auth = authenticators.create_authenticator()
+        groups = authenticators.create_groups(auth, 3)
+        user = authenticators.create_users(auth, 1, groups=groups)[0]
     user_services: list[models.UserService] = []
     for _ in range(count):
         user_services.append(create_one_cache_testing_userservice(createProvider(), user, groups, type_))

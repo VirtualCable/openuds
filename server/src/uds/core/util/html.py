@@ -37,6 +37,8 @@ import collections.abc
 from django.utils.translation import get_language
 from django.utils import formats
 
+from uds.core import consts
+
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest  # pylint: disable=ungrouped-imports
 
@@ -62,7 +64,7 @@ def uds_access_link(
     '''
     If transportId (uuid) is None, this will be a metaLink
     '''
-    return f'udsa://{serviceId}/{transportId or "meta"}'
+    return f'{consts.system.UDS_ACTION_SCHEME}{serviceId}/{transportId or "meta"}'
 
 
 def parse_date(dateToParse) -> datetime.date:

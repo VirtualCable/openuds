@@ -85,6 +85,7 @@ class HighAvailabilityPolicy(enum.IntEnum):
             (HighAvailabilityPolicy.ENABLED, _('Enabled')),
         ]
 
+
 @dataclasses.dataclass(frozen=True)
 class UsageInfo:
     used: int
@@ -93,3 +94,31 @@ class UsageInfo:
     @property
     def percent(self) -> int:
         return (self.used * 100 // self.total) if self.total > 0 else 0
+
+
+class UsageInfoVars:
+    use_percent: str
+    use_count: str
+    left_count: str
+    max_srvs: str
+
+    def __init__(self, pool_usage_info: typing.Optional[UsageInfo] = None):
+        if pool_usage_info is None:
+            pool_usage_info = UsageInfo(0, 0)
+
+        self.use_percent = str(pool_usage_info.percent) + '%' if pool_usage_info.total > 0 else ''
+        self.use_count = str(pool_usage_info.used) if pool_usage_info.total > 0 else ''
+        self.left_count = str(pool_usage_info.total - pool_usage_info.used) if pool_usage_info.total > 0 else ''
+        self.max_srvs = str(pool_usage_info.total) if pool_usage_info.total > 0 else ''
+
+    def replace(self, x: str) -> str:
+        return (
+            x.replace('{use}', self.use_percent)
+            .replace('{total}', self.max_srvs)
+            .replace('{usec}', self.use_count)
+            .replace('{left}', self.left_count)
+        )
+
+    @staticmethod
+    def has_macros(x: str) -> bool:
+        return any(y in x for y in ('{use}', '{total}', '{usec}', '{left}'))

@@ -290,7 +290,8 @@ def concurrent_removal_limit_field(
 
 
 def remove_duplicates_field(
-    order: int = 102, tab: 'types.ui.Tab|str|None' = types.ui.Tab.ADVANCED
+    order: int = 102, tab: 'types.ui.Tab|str|None' = types.ui.Tab.ADVANCED,
+    old_field_name: typing.Optional[str] = None,
 ) -> ui.gui.CheckBoxField:
     return ui.gui.CheckBoxField(
         label=_('Remove found duplicates'),
@@ -298,7 +299,7 @@ def remove_duplicates_field(
         order=order,
         tooltip=_('If active, found duplicates vApps for this service will be removed'),
         tab=tab,
-        old_field_name='removeDuplicates',
+        old_field_name=old_field_name,
     )
 
 
