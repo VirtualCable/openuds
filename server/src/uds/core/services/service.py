@@ -123,11 +123,11 @@ class Service(Module):
     # : Normally set to UNLIMITED. This attribute indicates if the service has some "limitation"
     # : for providing user services. This attribute can be set here or
     # : modified at instance level, core will access always to it using an instance object.
-    # : Note: you can override this value on service instantiation by providing a "maxService":
-    # :      - If userservices_limit is an integer, it will be used as max_user_services
-    # :      - If userservices_limit is a gui.NumericField, it will be used as max_user_services (.num() will be called)
-    # :      - If userservices_limit is a callable, it will be called and the result will be used as max_user_services
-    # :      - If userservices_limit is None, max_user_services will be set to consts.UNLIMITED (as default)
+    # : Note: you can override this value on service instantiation by providing a "services_limit":
+    # :      - If services_limit is an integer, it will be used as userservices_limit
+    # :      - If services_limit is a gui.NumericField, it will be used as userservices_limit (.num() will be called)
+    # :      - If services_limit is a callable, it will be called and the result will be used as userservices_limit
+    # :      - If services_limit is None, userservices_limit will be set to consts.UNLIMITED (as default)
     userservices_limit: int = consts.UNLIMITED
 
     # : If this item "has overrided fields", on deployed service edition, defined keys will overwrite defined ones
@@ -139,7 +139,7 @@ class Service(Module):
     # :    }
     # : This means that service pool will have cache_l2_srvs = 10 and cache_l1_srvs = 20, no matter what the user has provided
     # : on a save invocation to REST api for ServicePool
-    overrided_fields: typing.Optional[collections.abc.MutableMapping[str, typing.Any]] = None
+    overrided_fields: typing.Optional[dict[str, typing.Any]] = None
 
     # : If this class uses cache or not. If uses cache is true, means that the
     # : service can "prepare" some user deployments to allow quicker user access
@@ -277,14 +277,14 @@ class Service(Module):
         super().unmarshal(data)
 
         if hasattr(self, 'services_limit'):
-            # Fix self "max_user_services" value after loading fields
+            # Fix self "userservices_limit" value after loading fields
             try:
                 services_limit = getattr(self, 'services_limit', None)
                 if isinstance(services_limit, int):
                     self.userservices_limit = services_limit
                 elif isinstance(services_limit, gui.NumericField):
                     self.userservices_limit = services_limit.as_int()
-                    # For 0 values on max_user_services field, we will set it to UNLIMITED
+                    # For 0 values on userservices_limit field, we will set it to UNLIMITED
                     if self.userservices_limit == 0:
                         self.userservices_limit = consts.UNLIMITED
                 elif callable(services_limit):
@@ -294,7 +294,7 @@ class Service(Module):
             except Exception:
                 self.userservices_limit = consts.UNLIMITED
 
-            # Ensure that max_user_services is not negative
+            # Ensure that userservices_limit is not negative
             if self.userservices_limit < 0:
                 self.userservices_limit = consts.UNLIMITED
 

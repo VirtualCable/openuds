@@ -37,6 +37,7 @@ from django.utils.translation import gettext as _
 from uds.core import types
 from uds.core.environment import Environment
 from uds.core.ui import gui
+from uds import models
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -49,18 +50,16 @@ def get_resources(parameters: typing.Any) -> types.ui.CallbackResultType:
     from .provider import OGProvider
 
     logger.debug('Parameters received by getResources Helper: %s', parameters)
-    env = Environment(parameters['ev'])
-    provider = OGProvider(env)
-    provider.deserialize(parameters['ov'])
+    provider = typing.cast(
+        'OGProvider', models.Provider.objects.get(id=parameters['parent_uuid']).get_instance()
+    )
 
     api = provider.api
 
     labs = [gui.choice_item('0', _('All Labs'))] + [
-        gui.choice_item(l['id'], l['name']) for l in api.getLabs(ou=parameters['ou'])
+        gui.choice_item(l['id'], l['name']) for l in api.list_labs(ou=parameters['ou'])
     ]
-    images = [
-        gui.choice_item(z['id'], z['name']) for z in api.getImages(ou=parameters['ou'])
-    ]
+    images = [gui.choice_item(z['id'], z['name']) for z in api.list_images(ou=parameters['ou'])]
 
     data: types.ui.CallbackResultType = [
         {'name': 'lab', 'choices': labs},

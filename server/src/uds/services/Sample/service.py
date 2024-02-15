@@ -207,7 +207,7 @@ class ServiceTwo(services.Service):
     icon_file = 'provider.png'  # : We reuse provider icon here :-)
 
     # Functional related data
-    max_user_services = 5  # : Max number of deployed services for user in this service
+    userservices_limit = 5  # : Max number of deployed services for user in this service
     uses_cache = True
     cache_tooltip = _('L1 cache for dummy elements')
     uses_cache_l2 = True

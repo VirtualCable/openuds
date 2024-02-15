@@ -167,9 +167,9 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
                 return State.ERROR
 
             # Machine powered off, check what to do...
-            if self.service().is_removableIfUnavailable():
+            if not self.service().try_start_if_unavailable():
                 return self._error(
-                    'Machine is unavailable and service has "Remove if unavailable" flag active.'
+                    'Machine is unavailable and "start if unavailable" is not active'
                 )
 
             # Try to start it, and let's see
@@ -298,7 +298,7 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
         token = CryptoManager().random_string(32)
         try:
             r = self.service().reserve()
-            self.service().notifyEvents(r['id'], token, self._uuid)
+            self.service().notify_endpoints(r['id'], token, self._uuid)
         except Exception as e:
             # logger.exception('Creating machine')
             if r:  # Reservation was done, unreserve it!!!
@@ -333,7 +333,7 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
 
     def _start(self) -> str:
         if self._machine_id:
-            self.service().powerOn(self._machine_id)
+            self.service().power_on(self._machine_id)
         return State.RUNNING
 
     def _remove(self) -> str:
@@ -357,7 +357,7 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
         return self._check_machine_is_ready()
 
     # Alias for poweron check
-    __checkStart = _create_checker
+    _checkStart = _create_checker
 
     def _removed_checker(self) -> str:
         """
@@ -382,7 +382,7 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
             Operation.CREATE: self._create_checker,
             Operation.RETRY: self._retry,
             Operation.REMOVE: self._removed_checker,
-            Operation.START: self.__checkStart,
+            Operation.START: self._checkStart,
         }
 
         try:
@@ -433,7 +433,7 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
         return self.destroy()
 
     @staticmethod
-    def __op2str(op: Operation) -> str:
+    def _op2str(op: Operation) -> str:
         return {
             Operation.CREATE: 'create',
             Operation.REMOVE: 'remove',
@@ -450,5 +450,5 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
             self._ip,
             self._mac,
             self._machine_id,
-            [OpenGnsysUserService.__op2str(op) for op in self._queue],
+            [OpenGnsysUserService._op2str(op) for op in self._queue],
         )

@@ -36,10 +36,15 @@ import logging
 import typing
 import collections.abc
 
+from requests import get
+from uds.core import consts
+
+from uds.core.util.decorators import ensure_connected
 from uds.core.util import security
 
 from . import urls
 from . import fake
+from . import types
 
 logger = logging.getLogger(__name__)
 
@@ -48,29 +53,20 @@ if typing.TYPE_CHECKING:
     from uds.core.util.cache import Cache
 
 # Fake part
-FAKE = True
-CACHE_VALIDITY = 180
-TIMEOUT = 10
+FAKE: typing.Final[bool] = True
+CACHE_VALIDITY: typing.Final[int] = consts.cache.DEFAULT_CACHE_TIMEOUT
+TIMEOUT: typing.Final[int] = 10
 
 RT = typing.TypeVar('RT')
 
 
-# Decorator
-def ensureConnected(fnc: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
-    def inner(*args, **kwargs) -> RT:
-        args[0].connect()
-        return fnc(*args, **kwargs)
-
-    return inner
-
-
 # Result checker
-def ensureResponseIsValid(
-    response: 'requests.Response', errMsg: typing.Optional[str] = None
+def ensure_response_is_valid(
+    response: 'requests.Response', error_message: typing.Optional[str] = None
 ) -> typing.Any:
     if not response.ok:
-        if not errMsg:
-            errMsg = 'Invalid response'
+        if not error_message:
+            error_message = 'Invalid response'
 
         try:
             # Extract any key, in case of error is expected to have only one top key so this will work
@@ -80,18 +76,14 @@ def ensureResponseIsValid(
         if 'Database error' in err:
             err = 'Database error: Please, check OpenGnsys fields length on remotepc table (loginurl and logouturl)'
 
-        errMsg = '{}: {}, ({})'.format(errMsg, err, response.status_code)
-        logger.error('%s: %s', errMsg, response.content)
-        raise Exception(errMsg)
+        error_message = '{}: {}, ({})'.format(error_message, err, response.status_code)
+        logger.error('%s: %s', error_message, response.content)
+        raise Exception(error_message)
 
     try:
         return json.loads(response.content)
     except Exception:
-        raise Exception(
-            'Error communicating with OpenGnsys: {}'.format(
-                response.content[:128].decode()
-            )
-        )
+        raise Exception('Error communicating with OpenGnsys: {}'.format(response.content[:128].decode()))
 
 
 class OpenGnsysClient:
@@ -100,8 +92,8 @@ class OpenGnsysClient:
     endpoint: str
     auth: typing.Optional[str]
     cache: 'Cache'
-    verifyCert: bool
-    cachedVersion: typing.Optional[str]
+    verify_ssl: bool
+    cached_version: typing.Optional[str]
 
     def __init__(
         self,
@@ -109,15 +101,15 @@ class OpenGnsysClient:
         password: str,
         endpoint: str,
         cache: 'Cache',
-        verifyCert: bool = False,
+        verify_ssl: bool = False,
     ):
         self.username = username
         self.password = password
         self.endpoint = endpoint
         self.auth = None
         self.cache = cache
-        self.verifyCert = verifyCert
-        self.cachedVersion = None
+        self.verify_ssl = verify_ssl
+        self.cached_version = None
 
     @property
     def headers(self) -> collections.abc.MutableMapping[str, str]:
@@ -127,48 +119,48 @@ class OpenGnsysClient:
 
         return headers
 
-    def _ogUrl(self, path: str) -> str:
+    def _og_endpoint(self, path: str) -> str:
         return self.endpoint + '/' + path
 
-    def _post(
-        self, path: str, data: typing.Any, errMsg: typing.Optional[str] = None
-    ) -> typing.Any:
+    def _post(self, path: str, data: typing.Any, error_message: typing.Optional[str] = None) -> typing.Any:
         if not FAKE:
-            return ensureResponseIsValid(
-                security.secure_requests_session(verify=self.verifyCert).post(
-                    self._ogUrl(path),
+            return ensure_response_is_valid(
+                security.secure_requests_session(verify=self.verify_ssl).post(
+                    self._og_endpoint(path),
                     data=json.dumps(data),
                     headers=self.headers,
                     timeout=TIMEOUT,
                 ),
-                errMsg=errMsg,
+                error_message=error_message,
             )
         # FAKE Connection :)
-        return fake.post(path, data, errMsg)
+        return fake.post(path, data, error_message)
 
-    def _get(self, path: str, errMsg: typing.Optional[str] = None) -> typing.Any:
+    def _get(self, path: str, error_message: typing.Optional[str] = None) -> typing.Any:
         if not FAKE:
-            return ensureResponseIsValid(
-                security.secure_requests_session(verify=self.verifyCert).get(
-                    self._ogUrl(path), headers=self.headers, verify=self.verifyCert,
+            return ensure_response_is_valid(
+                security.secure_requests_session(verify=self.verify_ssl).get(
+                    self._og_endpoint(path),
+                    headers=self.headers,
+                    verify=self.verify_ssl,
                     timeout=TIMEOUT,
                 ),
-                errMsg=errMsg,
+                error_message=error_message,
             )
         # FAKE Connection :)
-        return fake.get(path, errMsg)
+        return fake.get(path, error_message)
 
-    def _delete(self, path: str, errMsg: typing.Optional[str] = None) -> typing.Any:
+    def _delete(self, path: str, error_message: typing.Optional[str] = None) -> typing.Any:
         if not FAKE:
-            return ensureResponseIsValid(
-                security.secure_requests_session(verify=self.verifyCert).delete(
-                    self._ogUrl(path),
+            return ensure_response_is_valid(
+                security.secure_requests_session(verify=self.verify_ssl).delete(
+                    self._og_endpoint(path),
                     headers=self.headers,
                     timeout=TIMEOUT,
                 ),
-                errMsg=errMsg,
+                error_message=error_message,
             )
-        return fake.delete(path, errMsg)
+        return fake.delete(path, error_message)
 
     def connect(self) -> None:
         if self.auth:
@@ -182,7 +174,7 @@ class OpenGnsysClient:
         auth = self._post(
             urls.LOGIN,
             data={'username': self.username, 'password': self.password},
-            errMsg='Loggin in',
+            error_message='Loggin in',
         )
 
         self.auth = auth['apikey']
@@ -191,57 +183,58 @@ class OpenGnsysClient:
     @property
     def version(self) -> str:
         logger.debug('Getting version')
-        if not self.cachedVersion:
+        if not self.cached_version:
             # Retrieve Version & keep it
-            info = self._get(urls.INFO, errMsg="Retrieving info")
-            self.cachedVersion = info['version']
+            info = self._get(urls.INFO, error_message="Retrieving info")
+            self.cached_version = info['version']
 
-        return typing.cast(str, self.cachedVersion)
+        return typing.cast(str, self.cached_version)
 
-    @ensureConnected
-    def getOus(self) -> typing.Any:
+    @ensure_connected
+    def list_of_ous(self) -> list[types.OGOuInfo]:
         # Returns an array of elements with:
         # 'id': OpenGnsys Id
         # 'name': OU name
         # OpenGnsys already returns it in this format :)
-        return self._get(urls.OUS, errMsg='Getting list of ous')
+        return [
+            {'id': ou['id'], 'name': ou['name']}
+            for ou in self._get(urls.OUS, error_message='Getting list of ous')
+        ]
 
-    @ensureConnected
-    def getLabs(self, ou: str) -> list[collections.abc.MutableMapping[str, str]]:
+    @ensure_connected
+    def list_labs(self, ou: str) -> list[types.OGLabInfo]:
         # Returns a list of available labs on an ou
         # /ous/{ouid}/labs
         # Take into accout that we must exclude the ones with "inremotepc" set to false.
-        errMsg = 'Getting list of labs from ou {}'.format(ou)
+        error_message = 'Getting list of labs from ou {}'.format(ou)
         return [
             {'id': l['id'], 'name': l['name']}
-            for l in self._get(urls.LABS.format(ou=ou), errMsg=errMsg)
+            for l in self._get(urls.LABS.format(ou=ou), error_message=error_message)
             if l.get('inremotepc', False) is True
         ]
 
-    @ensureConnected
-    def getImages(self, ou: str) -> list[collections.abc.MutableMapping[str, str]]:
+    @ensure_connected
+    def list_images(self, ou: str) -> list[types.OGImageInfo]:
         # Returns a list of available labs on an ou
         # /ous/{ouid}/images
         # Take into accout that we must exclude the ones with "inremotepc" set to false.
-        errMsg = 'Getting list of images from ou {}'.format(ou)
+        error_message = 'Getting list of images from ou {}'.format(ou)
         return [
             {'id': l['id'], 'name': l['name']}
-            for l in self._get(urls.IMAGES.format(ou=ou), errMsg=errMsg)
+            for l in self._get(urls.IMAGES.format(ou=ou), error_message=error_message)
             if l.get('inremotepc', False) is True
         ]
 
-    @ensureConnected
-    def reserve(
-        self, ou: str, image: str, lab: int = 0, maxtime: int = 24
-    ) -> collections.abc.MutableMapping[str, typing.Union[str, int]]:
+    @ensure_connected
+    def reserve(self, ou: str, image: str, lab: int = 0, maxtime: int = 24) -> types.OGReservationInfo:
         # This method is inteded to "get" a machine from OpenGnsys
         # The method used is POST
         # invokes /ous/{ouid}}/images/{imageid}/reserve
         # also remember to store "labid"
         # Labid can be "0" that means "all laboratories"
-        errMsg = 'Reserving image {} in ou {}'.format(image, ou)
+        error_message = 'Reserving image {} in ou {}'.format(image, ou)
         data = {'labid': lab, 'maxtime': maxtime}
-        res = self._post(urls.RESERVE.format(ou=ou, image=image), data, errMsg=errMsg)
+        res = self._post(urls.RESERVE.format(ou=ou, image=image), data, error_message=error_message)
         return {
             'ou': ou,
             'image': image,
@@ -253,61 +246,60 @@ class OpenGnsysClient:
             'mac': ':'.join(re.findall('..', res['mac'])),
         }
 
-    @ensureConnected
-    def unreserve(self, machineId: str) -> typing.Any:
+    @ensure_connected
+    def unreserve(self, machine_id: str) -> None:
         # This method releases the previous reservation
         # Invoked every time we need to release a reservation (i mean, if a reservation is done, this will be called with the obtained id from that reservation)
-        ou, lab, client = machineId.split('.')
-        errMsg = 'Unreserving client {} in lab {} in ou {}'.format(client, lab, ou)
-        return self._delete(
-            urls.UNRESERVE.format(ou=ou, lab=lab, client=client), errMsg=errMsg
-        )
+        ou, lab, client = machine_id.split('.')
+        error_message = 'Unreserving client {} in lab {} in ou {}'.format(client, lab, ou)
+        self._delete(urls.UNRESERVE.format(ou=ou, lab=lab, client=client), error_message=error_message)
 
-    @ensureConnected
-    def powerOn(self, machineId, image):
+    @ensure_connected
+    def power_on(self, machine_id, image) -> None:
         # This method ask to poweron a machine to openGnsys
-        ou, lab, client = machineId.split('.')
-        errMsg = 'Powering on client {} in lab {} in ou {}'.format(client, lab, ou)
+        ou, lab, client = machine_id.split('.')
         try:
             data = {
                 'image': image,
             }
-            return self._post(
-                urls.START.format(ou=ou, lab=lab, client=client), data, errMsg=errMsg
+            self._post(
+                urls.START.format(ou=ou, lab=lab, client=client),
+                data,
+                error_message=f'Powering on client {client} in lab {lab} in ou {ou}',
             )
-        except Exception:  # For now, if this fails, ignore it to keep backwards compat
-            return 'OK'
+        except Exception as e:  # For now, if this fails, ignore it to keep backwards compat
+            logger.error('Error powering on machine %s: %s', machine_id, e)
 
-    @ensureConnected
-    def notifyURLs(
-        self, machineId: str, loginURL: str, logoutURL: str, releaseURL: str
-    ) -> typing.Any:
-        ou, lab, client = machineId.split('.')
-        errMsg = 'Notifying login/logout urls'
-        data = {'urlLogin': loginURL, 'urlLogout': logoutURL, 'urlRelease': releaseURL}
+    @ensure_connected
+    def notify_endpoints(self, machine_id: str, login_url: str, logout_url: str, release_url: str) -> None:
+        ou, lab, client = machine_id.split('.')
+        data = {'urlLogin': login_url, 'urlLogout': logout_url, 'urlRelease': release_url}
 
-        return self._post(
-            urls.EVENTS.format(ou=ou, lab=lab, client=client), data, errMsg=errMsg
+        self._post(
+            urls.EVENTS.format(ou=ou, lab=lab, client=client), data, error_message='Notifying login/logout urls'
         )
 
-    @ensureConnected
-    def notifyDeadline(
-        self, machineId: str, deadLine: typing.Optional[int]
-    ) -> typing.Any:
-        ou, lab, client = machineId.split('.')
-        deadLine = deadLine or 0
-        errMsg = 'Notifying deadline'
-        data = {'deadLine': deadLine}
+    @ensure_connected
+    def notify_deadline(self, machine_id: str, dead_line: typing.Optional[int]) -> None:
+        ou, lab, client = machine_id.split('.')
+        dead_line = dead_line or 0
+        data = {'deadLine': dead_line}
 
-        return self._post(
-            urls.SESSIONS.format(ou=ou, lab=lab, client=client), data, errMsg=errMsg
+        self._post(
+            urls.SESSIONS.format(ou=ou, lab=lab, client=client), data, error_message='Notifying deadline'
         )
 
-    @ensureConnected
-    def status(self, id_: str) -> typing.Any:
+    @ensure_connected
+    def status(self, id_: str) -> types.OGStatusInfo:
         # This method gets the status of the machine
         # /ous/{uoid}/labs/{labid}/clients/{clientid}/status
         # possible status are ("off", "oglive", "busy", "linux", "windows", "macos" o "unknown").
         # Look at api at informatica.us..
         ou, lab, client = id_.split('.')
-        return self._get(urls.STATUS.format(ou=ou, lab=lab, client=client))
+        response = self._get(urls.STATUS.format(ou=ou, lab=lab, client=client))
+        return {
+            'id': str(response['id']),
+            'ip': response.get('ip', ''),
+            'status': response['status'],
+            'loggedin': response.get('loggedin', False),
+        }

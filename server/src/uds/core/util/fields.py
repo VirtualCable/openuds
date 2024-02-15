@@ -288,6 +288,23 @@ def concurrent_removal_limit_field(
         old_field_name='maxRemovingServices',
     )
 
+def services_limit_field(
+    order: int = 4,
+    tab: 'types.ui.Tab|str|None' = types.ui.Tab.ADVANCED,
+) -> ui.gui.NumericField:
+    return  ui.gui.NumericField(
+        order=order,
+        label=_("Max. Allowed services"),
+        min_value=0,
+        max_value=999999,
+        default=0,  # 0 in this field means no limit
+        readonly=False,
+        tooltip=_('Maximum number of allowed services (0 means no limit)'),
+        required=True,
+        tab=tab,
+        old_field_name='maxServices',
+    )
+
 
 def remove_duplicates_field(
     order: int = 102, tab: 'types.ui.Tab|str|None' = types.ui.Tab.ADVANCED,

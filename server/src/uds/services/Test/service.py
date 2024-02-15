@@ -92,7 +92,7 @@ class TestServiceCache(services.Service):
     icon_file = 'provider.png'  # : We reuse provider icon here :-), it's just for testing purpuoses
 
     # Functional related data
-    max_user_services = 1000  # A big number for testing
+    userservices_limit = 1000  # A big number for testing
     uses_cache = True
     cache_tooltip = _('L1 cache for dummy elements')
     uses_cache_l2 = True

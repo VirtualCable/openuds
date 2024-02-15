@@ -40,7 +40,7 @@ from django.utils.translation import gettext_noop as _
 from uds.core import types, consts
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
-from uds.core.util import validators
+from uds.core.util import fields, validators
 from uds.core.util.cache import Cache
 from uds.core.util.decorators import cached
 
@@ -55,6 +55,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 MIN_VERSION = '1.1.0'
+
 
 class OGProvider(ServiceProvider):
     """
@@ -98,26 +99,16 @@ class OGProvider(ServiceProvider):
     # but used for sample purposes
     # If we don't indicate an order, the output order of fields will be
     # "random"
-    host = gui.TextField(
-        length=64, label=_('Host'), order=1, tooltip=_('OpenGnsys Host'), required=True
-    )
+    host = gui.TextField(length=64, label=_('Host'), order=1, tooltip=_('OpenGnsys Host'), required=True)
     port = gui.NumericField(
         length=5,
         label=_('Port'),
         default=443,
         order=2,
-        tooltip=_(
-            'OpenGnsys Port (default is 443, and only ssl connection is allowed)'
-        ),
+        tooltip=_('OpenGnsys Port (default is 443, and only ssl connection is allowed)'),
         required=True,
     )
-    checkCert = gui.CheckBoxField(
-        label=_('Check Cert.'),
-        order=3,
-        tooltip=_(
-            'If checked, ssl certificate of OpenGnsys server must be valid (not self signed)'
-        ),
-    )
+    verify_ssl = fields.verify_ssl_field(order=3, old_field_name='checkCert')
     username = gui.TextField(
         length=32,
         label=_('Username'),
@@ -132,39 +123,18 @@ class OGProvider(ServiceProvider):
         tooltip=_('Password of the user of OpenGnsys'),
         required=True,
     )
-    udsServerAccessUrl = gui.TextField(
+    uds_endpoint = gui.TextField(
         length=32,
-        label=_('UDS Server URL'),
+        label=_('UDS Server endpoint'),
         order=6,
-        tooltip=_('URL used by OpenGnsys to access UDS. If empty, UDS will guess it.'),
+        tooltip=_('URL used by OpenGnsys to access UDS. If empty, UDS will try to guess it.'),
         required=False,
         tab=types.ui.Tab.PARAMETERS,
+        old_field_name='udsServerAccessUrl',
     )
-
-    concurrent_creation_limit = gui.NumericField(
-        length=3,
-        label=_('Creation concurrency'),
-        default=10,
-        min_value=1,
-        max_value=65536,
-        order=50,
-        tooltip=_('Maximum number of concurrently creating VMs'),
-        required=True,
-        tab=types.ui.Tab.ADVANCED,
-        old_field_name='maxPreparingServices',
-    )
-    concurrent_removal_limit = gui.NumericField(
-        length=3,
-        label=_('Removal concurrency'),
-        default=8,
-        min_value=1,
-        max_value=65536,
-        order=51,
-        tooltip=_('Maximum number of concurrently removing VMs'),
-        required=True,
-        tab=types.ui.Tab.ADVANCED,
-        old_field_name='maxRemovingServices',
-    )
+    
+    concurrent_creation_limit = fields.concurrent_creation_limit_field()
+    concurrent_removal_limit = fields.concurrent_removal_limit_field()
 
     timeout = gui.NumericField(
         length=3,
@@ -194,14 +164,14 @@ class OGProvider(ServiceProvider):
             try:
                 request = values['_request']
 
-                if self.udsServerAccessUrl.value.strip() == '':
-                    self.udsServerAccessUrl.value = request.build_absolute_uri('/')
+                if self.uds_endpoint.as_clean_str() == '':
+                    self.uds_endpoint.value = request.build_absolute_uri('/')
 
                 # Ensure that url ends with /
-                if self.udsServerAccessUrl.value[-1] != '/':
-                    self.udsServerAccessUrl.value += '/'
+                self.uds_endpoint.value = self.uds_endpoint.as_str().strip('/') + '/'
             except Exception as e:
-                self.udsServerAccessUrl.value = ''
+                logger.error('Error while trying to get UDS endpoint: %s', e)
+                self.uds_endpoint.value = ''
 
     @property
     def endpoint(self) -> str:
@@ -215,16 +185,16 @@ class OGProvider(ServiceProvider):
                 self.password.value,
                 self.endpoint,
                 self.cache,
-                self.checkCert.as_bool(),
+                self.verify_ssl.as_bool(),
             )
 
         logger.debug('Api: %s', self._api)
         return self._api
 
-    def resetApi(self) -> None:
+    def clear_api(self) -> None:
         self._api = None
 
-    def testConnection(self) -> list[typing.Any]:
+    def test_connection(self) -> list[typing.Any]:
         """
         Test that conection to OpenGnsys server is fine
 
@@ -263,31 +233,25 @@ class OGProvider(ServiceProvider):
             second is an String with error, preferably i18n..
 
         """
-        return OGProvider(env, data).testConnection()
+        return OGProvider(env, data).test_connection()
 
-    def getUDSServerAccessUrl(self) -> str:
-        return self.udsServerAccessUrl.value
+    def get_uds_endpoint(self) -> str:
+        return self.uds_endpoint.value
 
-    def reserve(
-        self, ou: str, image: str, lab: int = 0, maxtime: int = 0
-    ) -> typing.Any:
+    def reserve(self, ou: str, image: str, lab: int = 0, maxtime: int = 0) -> typing.Any:
         return self.api.reserve(ou, image, lab, maxtime)
 
-    def unreserve(self, machineId: str) -> typing.Any:
-        return self.api.unreserve(machineId)
+    def unreserve(self, machine_id: str) -> None:
+        self.api.unreserve(machine_id)
 
-    def powerOn(self, machineId: str, image: str) -> typing.Any:
-        return self.api.powerOn(machineId, image)
+    def power_on(self, machine_id: str, image: str) -> None:
+        self.api.power_on(machine_id, image)
 
-    def notifyEvents(
-        self, machineId: str, loginURL: str, logoutURL: str, releaseURL: str
-    ) -> typing.Any:
-        return self.api.notifyURLs(machineId, loginURL, logoutURL, releaseURL)
+    def notify_endpoints(self, machine_id: str, login_url: str, logout_url: str, release_url: str) -> None:
+        self.api.notify_endpoints(machine_id, login_url, logout_url, release_url)
 
-    def notifyDeadline(
-        self, machineId: str, deadLine: typing.Optional[int]
-    ) -> typing.Any:
-        return self.api.notifyDeadline(machineId, deadLine)
+    def notify_deadline(self, machineId: str, deadLine: typing.Optional[int]) -> None:
+        self.api.notify_deadline(machineId, deadLine)
 
     def status(self, machineId: str) -> typing.Any:
         return self.api.status(machineId)

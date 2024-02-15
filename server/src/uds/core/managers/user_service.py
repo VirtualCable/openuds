@@ -88,7 +88,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
     def _check_user_services_limit_reached(self, service_pool: ServicePool) -> None:
         """
-        Checks if max_user_services for the service has been reached, and, if so,
+        Checks if userservices_limit for the service has been reached, and, if so,
         raises an exception that no more services of this kind can be reached
         """
         if self.maximum_user_services_reached(service_pool.service):
@@ -122,7 +122,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         Private method to instatiate a cache element at database with default states
         """
-        # Checks if max_user_services has been reached and if so, raises an exception
+        # Checks if userservices_limit has been reached and if so, raises an exception
         self._check_user_services_limit_reached(publication.deployed_service)
         now = sql_datetime()
         return publication.userServices.create(

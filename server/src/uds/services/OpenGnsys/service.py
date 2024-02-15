@@ -37,6 +37,7 @@ from django.utils.translation import gettext_noop as _
 
 from uds.core import types, services, consts
 from uds.core.ui import gui
+from uds.core.util import fields
 
 from . import helpers
 from .deployment import OpenGnsysUserService
@@ -94,16 +95,14 @@ class OGService(services.Service):
     allowed_protocols = types.transports.Protocol.generic_vdi()
     services_type_provided = types.services.ServiceType.VDI
 
-
-
     # Now the form part
     ou = gui.ChoiceField(
         label=_("OU"),
         order=100,
         fills={
-            'callback_name': 'osFillData',
+            'callback_name': 'OgFillOuData',
             'function': helpers.get_resources,
-            'parameters': ['ov', 'ev', 'ou'],
+            'parameters': ['parent_uuid', 'ou'],
         },
         tooltip=_('Organizational Unit'),
         required=True,
@@ -111,7 +110,10 @@ class OGService(services.Service):
 
     # Lab is not required, but maybe used as filter
     lab = gui.ChoiceField(
-        label=_("lab"), order=101, tooltip=_('Laboratory'), required=False
+        label=_("lab"),
+        order=101,
+        tooltip=_('Laboratory'),
+        required=False,
     )
 
     # Required, this is the base image
@@ -122,7 +124,7 @@ class OGService(services.Service):
         required=True,
     )
 
-    maxReservationTime = gui.NumericField(
+    max_reserve_hours = gui.NumericField(
         length=3,
         label=_("Max. reservation time"),
         order=110,
@@ -133,98 +135,78 @@ class OGService(services.Service):
         min_value=24,
         tab=_('Advanced'),
         required=False,
+        old_field_name='maxReservationTime',
     )
 
-    startIfUnavailable = gui.CheckBoxField(
+    start_if_unavailable = gui.CheckBoxField(
         label=_('Start if unavailable'),
         default=True,
         order=111,
         tooltip=_(
             'If active, machines that are not available on user connect (on some OS) will try to power on through OpenGnsys.'
         ),
+        old_field_name='startIfUnavailable',
     )
 
-    services_limit = gui.NumericField(
-        order=4,
-        label=_("Max. Allowed services"),
-        min_value=0,
-        max_value=99999,
-        default=0,
-        readonly=False,
-        tooltip=_('Maximum number of allowed services (0 or less means no limit)'),
-        required=True,
-        tab=types.ui.Tab.ADVANCED,
-        old_field_name='maxServices',
-    )
+    services_limit = fields.services_limit_field()
 
-    ov = gui.HiddenField(value=None)
-    ev = gui.HiddenField(
-        value=None
-    )  # We need to keep the env so we can instantiate the Provider
+    parent_uuid = gui.HiddenField(value=None)
 
     def init_gui(self) -> None:
         """
         Loads required values inside
         """
-        ous = [gui.choice_item(r['id'], r['name']) for r in self.parent().api.getOus()]
+        ous = [gui.choice_item(r['id'], r['name']) for r in self.parent().api.list_of_ous()]
         self.ou.set_choices(ous)
 
-        self.ov.value = self.parent().serialize()
-        self.ev.value = self.parent().env.key
+        self.parent_uuid.value = self.parent().db_obj().uuid
 
     def parent(self) -> 'OGProvider':
         return typing.cast('OGProvider', super().parent())
 
-    def status(self, machineId: str) -> typing.Any:
-        return self.parent().status(machineId)
+    def status(self, machine_id: str) -> typing.Any:
+        return self.parent().status(machine_id)
 
     def reserve(self) -> typing.Any:
         return self.parent().reserve(
             self.ou.value,
             self.image.value,
             self.lab.value,
-            self.maxReservationTime.as_int(),
+            self.max_reserve_hours.as_int(),
         )
 
-    def unreserve(self, machineId: str) -> typing.Any:
-        return self.parent().unreserve(machineId)
+    def unreserve(self, machine_id: str) -> None:
+        self.parent().unreserve(machine_id)
 
-    def notifyEvents(self, machineId: str, token: str, uuid: str) -> typing.Any:
-        return self.parent().notifyEvents(
-            machineId,
-            self.getLoginNotifyURL(uuid, token),
-            self.getLogoutNotifyURL(uuid, token),
-            self.getReleaseURL(uuid, token),
+    def notify_endpoints(self, machine_id: str, token: str, uuid: str) -> None:
+        self.parent().notify_endpoints(
+            machine_id,
+            self.get_login_notify_url(uuid, token),
+            self.get_logout_notify_url(uuid, token),
+            self.get_relase_url(uuid, token),
         )
 
-    def notify_deadline(
-        self, machineId: str, deadLine: typing.Optional[int]
-    ) -> typing.Any:
-        return self.parent().notifyDeadline(machineId, deadLine)
+    def notify_deadline(self, machine_id: str, deadLine: typing.Optional[int]) -> None:
+        self.parent().notify_deadline(machine_id, deadLine)
 
-    def powerOn(self, machineId: str) -> typing.Any:
-        return self.parent().powerOn(machineId, self.image.value)
+    def power_on(self, machine_id: str) -> None:
+        self.parent().power_on(machine_id, self.image.value)
 
-    def _notifyURL(self, uuid: str, token: str, message: str) -> str:
+    def _notify_url(self, uuid: str, token: str, message: str) -> str:
         # The URL is "GET messages URL".
-        return '{accessURL}uds/ognotify/{message}/{token}/{uuid}'.format(
-            accessURL=self.parent().getUDSServerAccessUrl(),
-            uuid=uuid,
-            token=token,
-            message=message,
-        )
+        return f'{self.parent().get_uds_endpoint()}uds/ognotify/{message}/{token}/{uuid}'
 
-    def getLoginNotifyURL(self, uuid: str, token: str) -> str:
-        return self._notifyURL(uuid, token, 'login')
+    def get_login_notify_url(self, uuid: str, token: str) -> str:
+        return self._notify_url(uuid, token, 'login')
 
-    def getLogoutNotifyURL(self, uuid: str, token: str) -> str:
-        return self._notifyURL(uuid, token, 'logout')
+    def get_logout_notify_url(self, uuid: str, token: str) -> str:
+        return self._notify_url(uuid, token, 'logout')
 
-    def getReleaseURL(self, uuid: str, token: str) -> str:
-        return self._notifyURL(uuid, token, 'release')
+    def get_relase_url(self, uuid: str, token: str) -> str:
+        return self._notify_url(uuid, token, 'release')
 
-    def is_removableIfUnavailable(self):
-        return self.startIfUnavailable.as_bool()
+    def try_start_if_unavailable(self):
+        return self.start_if_unavailable.as_bool()
 
     def is_avaliable(self) -> bool:
         return self.parent().is_available()

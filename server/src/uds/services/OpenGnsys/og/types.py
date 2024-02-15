@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+
 #
-# Copyright (c) 2017-2024 Virtual Cable S.L.U.
+# Copyright (c) 2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,15 +33,33 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import typing
 
 
-LOGIN: typing.Final[str] = '/login'
-INFO: typing.Final[str] = '/info'
-OUS: typing.Final[str] = '/ous'
-LABS: typing.Final[str] = '/ous/{ou}/labs'
-IMAGES: typing.Final[str] = '/ous/{ou}/images'
-RESERVE: typing.Final[str] = '/ous/{ou}/images/{image}/reserve'
-UNRESERVE: typing.Final[str] = '/ous/{ou}/labs/{lab}/clients/{client}/unreserve'
-STATUS: typing.Final[str] = '/ous/{ou}/labs/{lab}/clients/{client}/status'
-EVENTS: typing.Final[str] = '/ous/{ou}/labs/{lab}/clients/{client}/events'
-SESSIONS: typing.Final[str] = '/ous/{ou}/labs/{lab}/clients/{client}/session'
-# TODO: fix this
-START: typing.Final[str] = '/ous/{ou}/labs/{lab}/clients/{client}/init'
+class OGOuInfo(typing.TypedDict):
+    id: str
+    name: str
+
+
+class OGLabInfo(typing.TypedDict):
+    id: str
+    name: str
+
+
+class OGImageInfo(typing.TypedDict):
+    id: str
+    name: str
+
+
+class OGReservationInfo(typing.TypedDict):
+    id: str
+    name: str
+    ou: str
+    image: str
+    lab: int
+    client: str
+    ip: str
+    mac: str
+
+class OGStatusInfo(typing.TypedDict):
+    id: str
+    ip: str
+    status: str
+    loggedin: bool

@@ -148,7 +148,7 @@ def post(
         res['ip'] = '1.2.3.4'
         return res
 
-    # Ignore rest of responses
+    # Ignore rest of requests, simply return ok
     return {'status': 'ok'}
 
 
