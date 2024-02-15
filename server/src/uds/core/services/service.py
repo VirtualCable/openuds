@@ -339,13 +339,13 @@ class Service(Module):
         return []
 
     def assign_from_assignables(
-        self, assignable_id: str, user: 'models.User', userservice: 'UserService'
+        self, assignable_id: str, user: 'models.User', userservice_instance: 'UserService'
     ) -> str:
         """
         Assigns from it internal assignable list to an user
 
         args:
-            assignableId: Id of the assignable element
+            assignable_id: Id of the assignable element
             user: User to assign to
             userDeployment: User deployment to assign
 
@@ -353,7 +353,11 @@ class Service(Module):
             Base implementation does nothing, to be overriden if needed
 
         Returns:
-            str: The state of the service after the assignation
+            str: The state of the user service after the assignation
+            
+        Note:
+            The state is the state of the "user service" after the assignation, not the state of the service itself.
+            This allows to process the assignation as an user service regular task, so it can be processed by the core.
 
         """
         return State.FINISHED

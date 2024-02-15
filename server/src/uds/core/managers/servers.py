@@ -133,21 +133,21 @@ class ServerManager(metaclass=singleton.Singleton):
 
     def _find_best_server(
         self,
-        userService: 'models.UserService',
-        serverGroup: 'models.ServerGroup',
+        userservice: 'models.UserService',
+        server_group: 'models.ServerGroup',
         now: datetime.datetime,
-        minMemoryMB: int = 0,
-        excludeServersUUids: typing.Optional[typing.Set[str]] = None,
+        min_memory_mb: int = 0,
+        excluded_servers_uuids: typing.Optional[typing.Set[str]] = None,
     ) -> tuple['models.Server', 'types.servers.ServerStats']:
         """
         Finds the best server for a service
         """
         best: typing.Optional[tuple['models.Server', 'types.servers.ServerStats']] = None
         unmanaged_list: list['models.Server'] = []
-        fltrs = serverGroup.servers.filter(maintenance_mode=False)
+        fltrs = server_group.servers.filter(maintenance_mode=False)
         fltrs = fltrs.filter(Q(locked_until=None) | Q(locked_until__lte=now))  # Only unlocked servers
-        if excludeServersUUids:
-            fltrs = fltrs.exclude(uuid__in=excludeServersUUids)
+        if excluded_servers_uuids:
+            fltrs = fltrs.exclude(uuid__in=excluded_servers_uuids)
 
         serversStats = self.get_server_stats(fltrs)
 
@@ -156,7 +156,7 @@ class ServerManager(metaclass=singleton.Singleton):
             if stats is None:
                 unmanaged_list.append(server)
                 continue
-            if minMemoryMB and stats.memused // (1024 * 1024) < minMemoryMB:  # Stats has minMemory in bytes
+            if min_memory_mb and stats.memused // (1024 * 1024) < min_memory_mb:  # Stats has minMemory in bytes
                 continue
 
             if best is None or stats.weight() < best[1].weight():
@@ -184,53 +184,53 @@ class ServerManager(metaclass=singleton.Singleton):
 
         # If best was locked, notify it (will be notified again on assign)
         if best[0].locked_until is not None:
-            requester.ServerApiRequester(best[0]).notify_release(userService)
+            requester.ServerApiRequester(best[0]).notify_release(userservice)
 
         return best
 
     def assign(
         self,
-        userService: 'models.UserService',
-        serverGroup: 'models.ServerGroup',
-        serviceType: types.services.ServiceType = types.services.ServiceType.VDI,
-        minMemoryMB: int = 0,  # Does not apply to unmanged servers
-        lockTime: typing.Optional[datetime.timedelta] = None,
+        userservice: 'models.UserService',
+        server_group: 'models.ServerGroup',
+        service_type: types.services.ServiceType = types.services.ServiceType.VDI,
+        min_memory_mb: int = 0,  # Does not apply to unmanged servers
+        lock_interval: typing.Optional[datetime.timedelta] = None,
         server: typing.Optional['models.Server'] = None,  # If not note
-        excludeServersUUids: typing.Optional[typing.Set[str]] = None,
+        excluded_servers_uuids: typing.Optional[typing.Set[str]] = None,
     ) -> typing.Optional[types.servers.ServerCounter]:
         """
         Select a server for an userservice to be assigned to
 
         Args:
-            userService: User service to assign server to (in fact, user of userservice) and to notify
-            serverGroup: Server group to select server from
-            serverType: Type of service to assign
-            minMemoryMB: Minimum memory required for server in MB, does not apply to unmanaged servers
-            maxLockTime: If not None, lock server for this time
+            userservice: User service to assign server to (in fact, user of userservice) and to notify
+            server_group: Server group to select server from
+            service_type: Type of service to assign
+            min_memory_mb: Minimum memory required for server in MB, does not apply to unmanaged servers
+            lock_interval: If not None, lock server for this time
             server: If not None, use this server instead of selecting one from serverGroup. (Used on manual assign)
-            excludeServersUUids: If not None, exclude this servers from selection. Used in case we check the availability of a server
+            excluded_servers_uuids: If not None, exclude this servers from selection. Used in case we check the availability of a server
                                  with some external method and we want to exclude it from selection because it has already failed.
 
         Returns:
             uuid of server assigned
         """
-        if not userService.user:
+        if not userservice.user:
             raise exceptions.UDSException(_('No user assigned to service'))
 
         # Look for existing user asignation through properties
-        prop_name = self.property_name(userService.user)
+        prop_name = self.property_name(userservice.user)
         now = model_utils.sql_datetime()
 
-        excludeServersUUids = excludeServersUUids or set()
+        excluded_servers_uuids = excluded_servers_uuids or set()
 
-        with serverGroup.properties as props:
+        with server_group.properties as props:
             info: typing.Optional[types.servers.ServerCounter] = types.servers.ServerCounter.from_iterable(
                 props.get(prop_name)
             )
             # If server is forced, and server is part of the group, use it
             if server:
                 if (
-                    server.groups.filter(uuid=serverGroup.uuid).exclude(uuid__in=excludeServersUUids).count()
+                    server.groups.filter(uuid=server_group.uuid).exclude(uuid__in=excluded_servers_uuids).count()
                     == 0
                 ):
                     raise exceptions.UDSException(_('Server is not part of the group'))
@@ -253,7 +253,7 @@ class ServerManager(metaclass=singleton.Singleton):
                     # remove it from saved and use look for another one
                     svr = models.Server.objects.filter(uuid=info.server_uuid).first()
                     if not svr or (
-                        svr.maintenance_mode or svr.uuid in excludeServersUUids or svr.is_restrained()
+                        svr.maintenance_mode or svr.uuid in excluded_servers_uuids or svr.is_restrained()
                     ):
                         info = None
                         del props[prop_name]
@@ -265,20 +265,20 @@ class ServerManager(metaclass=singleton.Singleton):
                     try:
                         with transaction.atomic():
                             best = self._find_best_server(
-                                userService=userService,
-                                serverGroup=serverGroup,
+                                userservice=userservice,
+                                server_group=server_group,
                                 now=now,
-                                minMemoryMB=minMemoryMB,
-                                excludeServersUUids=excludeServersUUids,
+                                min_memory_mb=min_memory_mb,
+                                excluded_servers_uuids=excluded_servers_uuids,
                             )
 
                             info = types.servers.ServerCounter(best[0].uuid, 0)
-                            best[0].locked_until = now + lockTime if lockTime else None
+                            best[0].locked_until = now + lock_interval if lock_interval else None
                             best[0].save(update_fields=['locked_until'])
                     except exceptions.UDSException:  # No more servers
                         return None
-                elif lockTime:  # If lockTime is set, update it
-                    models.Server.objects.filter(uuid=info.server_uuid).update(locked_until=now + lockTime)
+                elif lock_interval:  # If lockTime is set, update it
+                    models.Server.objects.filter(uuid=info.server_uuid).update(locked_until=now + lock_interval)
 
             # Notify to server
             # Update counter
@@ -293,7 +293,7 @@ class ServerManager(metaclass=singleton.Singleton):
 
         # Notify assgination in every case, even if reassignation to same server is made
         # This lets the server to keep track, if needed, of multi-assignations
-        self.notify_assign(bestServer, userService, serviceType, info.counter)
+        self.notify_assign(bestServer, userservice, service_type, info.counter)
         return info
 
     def release(

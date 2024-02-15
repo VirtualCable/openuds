@@ -201,7 +201,7 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
                 except Exception as e:
                     self.do_log(log.LogLevel.WARNING, 'Could not create SNAPSHOT for this VM. ({})'.format(e))
 
-        return types.states.State.RUNNING
+        return types.states.State.FINISHED
 
     def get_and_assign_machine(self) -> str:
         found_vmid: typing.Optional[int] = None
@@ -245,8 +245,10 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
     def get_machine_name(self, vmid: str) -> str:
         return self.parent().get_machine_info(int(vmid)).name or ''
 
-    def remove_and_free_machine(self, vmid: str) -> None:
+    def remove_and_free_machine(self, vmid: str) -> str:
         try:
             self._save_assigned_machines(self._get_assigned_machines() - {str(vmid)})  # Remove from assigned
+            return types.states.State.FINISHED
         except Exception as e:
             logger.warn('Cound not save assigned machines on fixed pool: %s', e)
+            raise

@@ -78,8 +78,8 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
         # commodity call to assign
         self.assign = functools.partial(
             self.manager.assign,
-            serverGroup=self.registered_servers_group,
-            serviceType=types.services.ServiceType.VDI,
+            server_group=self.registered_servers_group,
+            service_type=types.services.ServiceType.VDI,
         )
         self.all_uuids: list[str] = list(
             self.registered_servers_group.servers.all().values_list('uuid', flat=True)
@@ -176,7 +176,7 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
         with self.createMockApiRequester() as mockServerApiRequester:
             # Assign all user services with lock
             for userService in self.user_services[:NUM_REGISTEREDSERVERS]:
-                assignation = self.assign(userService, lockTime=datetime.timedelta(seconds=1.1))
+                assignation = self.assign(userService, lock_interval=datetime.timedelta(seconds=1.1))
                 if assignation is None:
                     self.fail('Assignation returned None')
                     return  # For mypy
@@ -191,12 +191,12 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
 
             # Next one should fail with aa None return
             self.assertIsNone(
-                self.assign(self.user_services[NUM_REGISTEREDSERVERS], lockTime=datetime.timedelta(seconds=1))
+                self.assign(self.user_services[NUM_REGISTEREDSERVERS], lock_interval=datetime.timedelta(seconds=1))
             )
 
             # Wait a bit more than a second, and try again, it should work
             time.sleep(1.1)
-            self.assign(self.user_services[NUM_REGISTEREDSERVERS], lockTime=datetime.timedelta(seconds=1))
+            self.assign(self.user_services[NUM_REGISTEREDSERVERS], lock_interval=datetime.timedelta(seconds=1))
 
             # notify_release should has been called once
             self.assertEqual(mockServerApiRequester.return_value.notify_release.call_count, 1)

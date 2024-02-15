@@ -95,6 +95,20 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         tab=_('Machines'),
         old_field_name='useSnapshots',
     )
+    
+    # This one replaces use_snapshots, and is used to select the snapshot type (No snapshot, recover snapshot and stop machine, recover snapshot and start machine)
+    snapshot_type = gui.ChoiceField(
+        label=_('Snapshot type'),
+        order=22,
+        default='0',
+        tooltip=_('If active, UDS will try to create an snapshot (if one already does not exists) before accessing a machine, and restore it after usage.'),
+        tab=_('Machines'),
+        choices=[
+            gui.choice_item('no', _('No snapshot')),
+            gui.choice_item('stop', _('Recover snapshot and stop machine')),
+            gui.choice_item('start', _('Recover snapshot and start machine')),
+        ],
+    )   
 
     # Keep name as "machine" so we can use VCHelpers.getMachines
     machines = gui.MultiChoiceField(
@@ -132,44 +146,56 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         returns:
             str: the state to be processes by user service
         """
-        return types.states.State.RUNNING
+        return types.states.State.FINISHED
 
     @abc.abstractmethod
     def get_machine_name(self, vmid: str) -> str:
         """
         Returns the machine name for the given vmid
         """
-        pass
+        raise NotImplementedError()
 
     @abc.abstractmethod
     def get_and_assign_machine(self) -> str:
         """
         Gets automatically an assigns a machine
+        Returns the id of the assigned machine
         """
-        pass
+        raise NotImplementedError()
 
     @abc.abstractmethod
-    def remove_and_free_machine(self, vmid: str) -> None:
+    def remove_and_free_machine(self, vmid: str) -> str:
         """
         Removes and frees a machine
+        Returns an state (State.FINISHED is nothing to do left)
         """
-        pass
+        raise NotImplementedError()
 
     @abc.abstractmethod
     def get_first_network_mac(self, vmid: str) -> str:
-        """If no mac, return empty string"""
-        pass
+        """If no mac, return empty string
+        Returns the first network mac of the machine
+        """
+        raise NotImplementedError()
 
     @abc.abstractmethod
     def get_guest_ip_address(self, vmid: str) -> str:
-        pass
+        """Returns the guest ip address of the machine
+        """
+        raise NotImplementedError()
 
     @abc.abstractmethod
     def enumerate_assignables(self) -> list[tuple[str, str]]:
-        pass
+        """
+        Returns a list of tuples with the id and the name of the assignables
+        """
+        raise NotImplementedError()
 
     @abc.abstractmethod
     def assign_from_assignables(
-        self, assignable_id: str, user: 'models.User', user_deployment: 'services.UserService'
+        self, assignable_id: str, user: 'models.User', userservice_instance: 'services.UserService'
     ) -> str:
-        pass
+        """
+        Assigns a machine from the assignables
+        """
+        raise NotImplementedError()

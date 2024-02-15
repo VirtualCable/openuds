@@ -65,6 +65,7 @@ class ProxmoxFixedUserService(FixedUserService, autoserializable.AutoSerializabl
 
     # : Recheck every ten seconds by default (for task methods)
     suggested_delay = 4
+
     def _store_task(self, upid: 'client.types.UPID') -> None:
         self._task = '\t'.join([upid.node, upid.upid])
 
@@ -110,20 +111,18 @@ class ProxmoxFixedUserService(FixedUserService, autoserializable.AutoSerializabl
     def error(self, reason: str) -> str:
         return self._error(reason)
 
-    def _start_machine(self) -> str:
+    def _start_machine(self) -> None:
         try:
             vminfo = self.service().get_machine_info(int(self._vmid))
         except client.ProxmoxConnectionError:
-            return self._retry_later()
+            self._retry_later()
         except Exception as e:
             raise Exception('Machine not found on start machine') from e
 
         if vminfo.status == 'stopped':
             self._store_task(self.service().start_machine(int(self._vmid)))
 
-        return State.RUNNING
-
-    def _stop_machine(self) -> str:
+    def _stop_machine(self) -> None:
         try:
             vm_info = self.service().get_machine_info(int(self._vmid))
         except Exception as e:
@@ -132,8 +131,6 @@ class ProxmoxFixedUserService(FixedUserService, autoserializable.AutoSerializabl
         if vm_info.status != 'stopped':
             logger.debug('Stopping machine %s', vm_info)
             self._store_task(self.service().stop_machine(int(self._vmid)))
-
-        return State.RUNNING
 
     # Check methods
     def _check_task_finished(self) -> str:
@@ -156,12 +153,6 @@ class ProxmoxFixedUserService(FixedUserService, autoserializable.AutoSerializabl
         return State.RUNNING
 
     # Check methods
-    def _create_checker(self) -> str:
-        """
-        Checks the state of a deploy for an user or cache
-        """
-        return State.FINISHED
-
     def _start_checker(self) -> str:
         """
         Checks if machine has started
@@ -171,11 +162,5 @@ class ProxmoxFixedUserService(FixedUserService, autoserializable.AutoSerializabl
     def _stop_checker(self) -> str:
         """
         Checks if machine has stoped
-        """
-        return self._check_task_finished()
-
-    def _removed_checker(self) -> str:
-        """
-        Checks if a machine has been removed
         """
         return self._check_task_finished()

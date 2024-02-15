@@ -84,9 +84,9 @@ class ServerManagerManagedServersTest(UDSTestCase):
         # commodity call to assign
         self.assign = functools.partial(
             self.manager.assign,
-            serverGroup=self.registered_servers_group,
-            serviceType=types.services.ServiceType.VDI,
-            minMemoryMB=MIN_TEST_MEMORY_MB,
+            server_group=self.registered_servers_group,
+            service_type=types.services.ServiceType.VDI,
+            min_memory_mb=MIN_TEST_MEMORY_MB,
         )
         self.all_uuids: list[str] = list(
             self.registered_servers_group.servers.all().values_list('uuid', flat=True)
@@ -217,7 +217,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
         with self.create_mock_api_requester() as mockServerApiRequester:
             # Assign all user services with lock
             for userService in self.user_services[:NUM_REGISTEREDSERVERS]:
-                assignation = self.assign(userService, lockTime=datetime.timedelta(seconds=1))
+                assignation = self.assign(userService, lock_interval=datetime.timedelta(seconds=1))
                 if assignation is None:
                     self.fail('Assignation returned None')
                     return  # For mypy
@@ -231,12 +231,12 @@ class ServerManagerManagedServersTest(UDSTestCase):
 
             # Next one should fail returning None
             self.assertIsNone(
-                self.assign(self.user_services[NUM_REGISTEREDSERVERS], lockTime=datetime.timedelta(seconds=1))
+                self.assign(self.user_services[NUM_REGISTEREDSERVERS], lock_interval=datetime.timedelta(seconds=1))
             )
 
             # Wait a second, and try again, it should work
             time.sleep(1)
-            self.assign(self.user_services[NUM_REGISTEREDSERVERS], lockTime=datetime.timedelta(seconds=1))
+            self.assign(self.user_services[NUM_REGISTEREDSERVERS], lock_interval=datetime.timedelta(seconds=1))
 
             # notify_release should has been called once
             self.assertEqual(mockServerApiRequester.return_value.notify_release.call_count, 1)
@@ -247,7 +247,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
             for assignations in range(2):  # Second pass will get current assignation, not new ones
                 for elementNumber, userService in enumerate(self.user_services[:NUM_REGISTEREDSERVERS]):
                     # Ensure locking server, so we have to use every server only once
-                    assignation = self.assign(userService, lockTime=datetime.timedelta(seconds=32))
+                    assignation = self.assign(userService, lock_interval=datetime.timedelta(seconds=32))
                     self.assertEqual(
                         serverApiRequester.notify_assign.call_count,
                         assignations * NUM_REGISTEREDSERVERS + elementNumber + 1,
@@ -265,7 +265,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
 
             # Trying to lock a new one, should fail
             self.assertIsNone(
-                self.assign(self.user_services[NUM_REGISTEREDSERVERS], lockTime=datetime.timedelta(seconds=32))
+                self.assign(self.user_services[NUM_REGISTEREDSERVERS], lock_interval=datetime.timedelta(seconds=32))
             )
 
             # All servers should be locked

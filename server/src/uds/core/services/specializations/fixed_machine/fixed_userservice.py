@@ -36,6 +36,7 @@ import enum
 import logging
 import typing
 import collections.abc
+from webbrowser import Opera
 
 from uds.core import services, consts
 from uds.core.managers.user_service import UserServiceManager
@@ -60,6 +61,9 @@ class Operation(enum.IntEnum):
     ERROR = 5
     FINISH = 6
     RETRY = 7
+    SNAPSHOT_CREATE = 8  # to recall process_snapshot
+    SNAPSHOT_RECOVER = 9  # to recall process_snapshot
+    PROCESS_TOKEN = 10
 
     UNKNOWN = 99
 
@@ -84,14 +88,27 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
     _vmid = autoserializable.StringField(default='')
     _reason = autoserializable.StringField(default='')
     _task = autoserializable.StringField(default='')
+    _exec_state = autoserializable.StringField(default=State.RUNNING)
     _queue = autoserializable.ListField[Operation]()  # Default is empty list
 
-    _create_queue: typing.ClassVar[typing.List[Operation]] = [
+    _create_queue: typing.ClassVar[list[Operation]] = [
         Operation.CREATE,
+        Operation.SNAPSHOT_CREATE,
+        Operation.PROCESS_TOKEN,
         Operation.START,
         Operation.FINISH,
     ]
-    _destrpy_queue: typing.ClassVar[typing.List[Operation]] = [Operation.REMOVE, Operation.FINISH]
+    _destroy_queue: typing.ClassVar[list[Operation]] = [
+        Operation.REMOVE,
+        Operation.SNAPSHOT_RECOVER,
+        Operation.FINISH,
+    ]
+    _assign_queue: typing.ClassVar[list[Operation]] = [
+        Operation.CREATE,
+        Operation.SNAPSHOT_CREATE,
+        Operation.PROCESS_TOKEN,
+        Operation.FINISH,
+    ]
 
     @typing.final
     def _get_current_op(self) -> Operation:
@@ -175,17 +192,16 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         Deploys an service instance for an user.
         """
         logger.debug('Deploying for user')
-        self._init_queue_for_deploy(False)
+        self._vmid = self.service().get_and_assign_machine()
+        self._queue = FixedUserService._create_queue.copy()  # copy is needed to avoid modifying class var
         return self._execute_queue()
 
     @typing.final
     def assign(self, vmid: str) -> str:
         logger.debug('Assigning from VM {}'.format(vmid))
-        return self._create(vmid)
-
-    @typing.final
-    def _init_queue_for_deploy(self, for_level2: bool = False) -> None:
-        self._queue = FixedUserService._create_queue.copy()  # copy is needed to avoid modifying class var
+        self._vmid = vmid
+        self._queue = FixedUserService._assign_queue.copy()  # copy is needed to avoid modifying class var
+        return self._execute_queue()
 
     @typing.final
     def _execute_queue(self) -> str:
@@ -198,17 +214,20 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         if op == Operation.FINISH:
             return State.FINISHED
 
-        fncs: collections.abc.Mapping[Operation, typing.Optional[collections.abc.Callable[[], str]]] = {
+        fncs: dict[Operation, collections.abc.Callable[[], None]] = {
             Operation.CREATE: self._create,
             Operation.RETRY: self._retry,
             Operation.START: self._start_machine,
             Operation.STOP: self._stop_machine,
             Operation.WAIT: self._wait,
             Operation.REMOVE: self._remove,
+            Operation.SNAPSHOT_CREATE: self._snapshot_create,
+            Operation.SNAPSHOT_RECOVER: self._snapshot_recover,
+            Operation.PROCESS_TOKEN: self._process_token,
         }
 
         try:
-            operation_runner: typing.Optional[collections.abc.Callable[[], str]] = fncs.get(op, None)
+            operation_runner: typing.Optional[collections.abc.Callable[[], None]] = fncs.get(op, None)
 
             if not operation_runner:
                 return self._error(f'Unknown operation found at execution queue ({op})')
@@ -221,7 +240,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             return self._error(str(e))
 
     @typing.final
-    def _retry(self) -> str:
+    def _retry(self) -> None:
         """
         Used to retry an operation
         In fact, this will not be never invoked, unless we push it twice, because
@@ -229,62 +248,86 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
 
         At executeQueue this return value will be ignored, and it will only be used at check_state
         """
-        return State.FINISHED
+        pass
 
     @typing.final
-    def _wait(self) -> str:
+    def _wait(self) -> None:
         """
         Executes opWait, it simply waits something "external" to end
         """
-        return State.RUNNING
+        pass
 
     @typing.final
-    def _create(self, vmid: str = '') -> str:
+    def _create(self) -> None:
         """
         Deploys a machine from template for user/cache
         """
-        self._vmid = vmid or self.service().get_and_assign_machine()
         self._mac = self.service().get_first_network_mac(self._vmid) or ''
         self._name = self.service().get_machine_name(self._vmid) or f'VM-{self._vmid}'
 
+    @typing.final
+    def _snapshot_create(self) -> None:
+        """
+        Creates a snapshot if needed
+        """
         # Try to process snaptshots if needed
-        state = self.service().process_snapshot(remove=False, userservice_instace=self)
+        self._exec_state = self.service().process_snapshot(remove=False, userservice_instace=self)
 
-        if state == State.ERROR:
-            return state
+    @typing.final
+    def _snapshot_recover(self) -> None:
+        """
+        Recovers a snapshot if needed
+        """
+        self._exec_state = self.service().process_snapshot(remove=True, userservice_instace=self)
 
+    @typing.final
+    def _process_token(self) -> None:
         # If not to be managed by a token, "autologin" user
         if not self.service().get_token():
             userService = self.db_obj()
             if userService:
                 userService.set_in_use(True)
 
-        return state
+        self._exec_state = State.FINISHED
 
-    @typing.final
-    def _remove(self) -> str:
+    def _remove(self) -> None:
         """
         Removes the snapshot if needed and releases the machine again
         """
-        self.service().remove_and_free_machine(self._vmid)
-
-        state = self.service().process_snapshot(remove=True, userservice_instace=self)
-
-        return state
-
-    @abc.abstractmethod
-    def _start_machine(self) -> str:
-        pass
-
-    @abc.abstractmethod
-    def _stop_machine(self) -> str:
-        pass
+        self._exec_state = self.service().remove_and_free_machine(self._vmid)
 
     # Check methods
     def _create_checker(self) -> str:
         """
         Checks the state of a deploy for an user or cache
         """
+        return self._state_checker()
+
+    def _snapshot_create_checker(self) -> str:
+        """
+        Checks the state of a snapshot creation
+        """
+        return self._state_checker()
+
+    def _snapshot_recover_checker(self) -> str:
+        """
+        Checks the state of a snapshot recovery
+        """
+        return self._state_checker()
+
+    def _process_token_checker(self) -> str:
+        """
+        Checks the state of a token processing
+        """
+        return self._state_checker()
+
+    def _state_checker(self) -> str:
+        return self._exec_state
+
+    def _retry_checker(self) -> str:
+        return State.FINISHED
+
+    def _wait_checker(self) -> str:
         return State.FINISHED
 
     @abc.abstractmethod
@@ -292,21 +335,28 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         """
         Checks if machine has started
         """
-        pass
+        raise NotImplementedError()
+
+    @abc.abstractmethod
+    def _start_machine(self) -> None:
+        raise NotImplementedError()
+
+    @abc.abstractmethod
+    def _stop_machine(self) -> None:
+        raise NotImplementedError()
 
     @abc.abstractmethod
     def _stop_checker(self) -> str:
         """
         Checks if machine has stoped
         """
-        pass
+        raise NotImplementedError()
 
-    @abc.abstractmethod
     def _removed_checker(self) -> str:
         """
         Checks if a machine has been removed
         """
-        pass
+        return self._exec_state
 
     @typing.final
     def check_state(self) -> str:
@@ -322,13 +372,16 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         if op == Operation.FINISH:
             return State.FINISHED
 
-        fncs: collections.abc.Mapping[Operation, typing.Optional[collections.abc.Callable[[], str]]] = {
+        fncs: dict[Operation, collections.abc.Callable[[], str]] = {
             Operation.CREATE: self._create_checker,
-            Operation.RETRY: self._retry,
-            Operation.WAIT: self._wait,
+            Operation.RETRY: self._retry_checker,
+            Operation.WAIT: self._wait_checker,
             Operation.START: self._start_checker,
             Operation.STOP: self._stop_checker,
             Operation.REMOVE: self._removed_checker,
+            Operation.SNAPSHOT_CREATE: self._snapshot_create_checker,
+            Operation.SNAPSHOT_RECOVER: self._snapshot_recover_checker,
+            Operation.PROCESS_TOKEN: self._process_token_checker,
         }
 
         try:
@@ -371,7 +424,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         """
         Invoked for destroying a deployed service
         """
-        self._queue = FixedUserService._destrpy_queue.copy()  # copy is needed to avoid modifying class var
+        self._queue = FixedUserService._destroy_queue.copy()  # copy is needed to avoid modifying class var
         return self._execute_queue()
 
     @typing.final
@@ -385,7 +438,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         When administrator requests it, the cancel is "delayed" and not
         invoked directly.
         """
-        logger.debug('Canceling %s with taskId=%s, vmId=%s', self._name, self._task, self._vmid)
+        logger.debug('Canceling %s with taskid=%s, vmid=%s', self._name, self._task, self._vmid)
         return self.destroy()
 
     @staticmethod
@@ -399,6 +452,9 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             Operation.ERROR: 'error',
             Operation.FINISH: 'finish',
             Operation.RETRY: 'retry',
+            Operation.SNAPSHOT_CREATE: 'snapshot_create',
+            Operation.SNAPSHOT_RECOVER: 'snapshot_recover',
+            Operation.PROCESS_TOKEN: 'process_token',
         }.get(op, '????')
 
     def _debug(self, txt: str) -> None:
