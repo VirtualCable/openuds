@@ -440,7 +440,6 @@ gettext("Comments");
 gettext("State");
 gettext("Enabled");
 gettext("Disabled");
-gettext("Blocked");
 gettext("Role");
 gettext("Admin");
 gettext("Staff member");
