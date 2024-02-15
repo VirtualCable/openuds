@@ -13,6 +13,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # , 2014
 # blafuente <blafuente@virtualcable.es>, 2014
 # Javier <jgonzalez@virtualcable.es>, 2014
@@ -22,7 +23,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-08 18:25+0100\n"
+"POT-Creation-Date: 2024-02-15 20:30+0100\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: English (http://app.transifex.com/openuds/openuds/language/"
@@ -59,7 +60,7 @@ msgstr "Services in use"
 #: static/admin/translations-fakejs.js:219
 #: static/admin/translations-fakejs.js:247
 #: static/admin/translations-fakejs.js:272 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:26
+#: static/modern/translations-fakejs.js:33
 msgid "Error"
 msgstr "Error"
 
@@ -71,9 +72,9 @@ msgstr "Please, select a valid user"
 #: static/admin/translations-fakejs.js:360
 #: static/admin/translations-fakejs.js:397
 #: static/admin/translations-fakejs.js:435
-#: static/admin/translations-fakejs.js:474
-#: static/admin/translations-fakejs.js:477
-#: static/admin/translations-fakejs.js:509
+#: static/admin/translations-fakejs.js:473
+#: static/admin/translations-fakejs.js:476
+#: static/admin/translations-fakejs.js:508
 msgid "Logs"
 msgstr "Logs"
 
@@ -103,12 +104,12 @@ msgstr "Assign service"
 #: static/admin/translations-fakejs.js:389
 #: static/admin/translations-fakejs.js:403
 #: static/admin/translations-fakejs.js:420
-#: static/admin/translations-fakejs.js:450
-#: static/admin/translations-fakejs.js:467
-#: static/admin/translations-fakejs.js:481
-#: static/admin/translations-fakejs.js:491
-#: static/admin/translations-fakejs.js:516
-#: static/admin/translations-fakejs.js:524
+#: static/admin/translations-fakejs.js:449
+#: static/admin/translations-fakejs.js:466
+#: static/admin/translations-fakejs.js:480
+#: static/admin/translations-fakejs.js:490
+#: static/admin/translations-fakejs.js:515
+#: static/admin/translations-fakejs.js:523
 msgid "Cancel"
 msgstr "Cancel"
 
@@ -504,7 +505,7 @@ msgstr "Pool"
 #: static/admin/translations-fakejs.js:131
 #: static/admin/translations-fakejs.js:177
 #: static/admin/translations-fakejs.js:440
-#: static/admin/translations-fakejs.js:456
+#: static/admin/translations-fakejs.js:455
 msgid "State"
 msgstr "State"
 
@@ -544,40 +545,39 @@ msgstr "Group"
 #: static/admin/translations-fakejs.js:388
 #: static/admin/translations-fakejs.js:409
 #: static/admin/translations-fakejs.js:439
-#: static/admin/translations-fakejs.js:455
+#: static/admin/translations-fakejs.js:454
 msgid "Comments"
 msgstr "Comments"
 
 #: static/admin/translations-fakejs.js:122
 #: static/admin/translations-fakejs.js:441
-#: static/admin/translations-fakejs.js:457
-#: static/admin/translations-fakejs.js:460
+#: static/admin/translations-fakejs.js:456
+#: static/admin/translations-fakejs.js:459
 msgid "Enabled"
 msgstr "Enabled"
 
 #: static/admin/translations-fakejs.js:123
 #: static/admin/translations-fakejs.js:442
-#: static/admin/translations-fakejs.js:458
-#: static/admin/translations-fakejs.js:461
+#: static/admin/translations-fakejs.js:457
+#: static/admin/translations-fakejs.js:460
 msgid "Disabled"
 msgstr "Disabled"
 
 #: static/admin/translations-fakejs.js:124
-#: static/admin/translations-fakejs.js:443
 msgid "Blocked"
 msgstr "Blocked"
 
 #: static/admin/translations-fakejs.js:125
 #: static/admin/translations-fakejs.js:179
 #: static/admin/translations-fakejs.js:393
-#: static/admin/translations-fakejs.js:539
+#: static/admin/translations-fakejs.js:538
 msgid "Service pools"
 msgstr "Service pools"
 
 #: static/admin/translations-fakejs.js:126
 #: static/admin/translations-fakejs.js:424
 #: static/admin/translations-fakejs.js:433
-#: static/admin/translations-fakejs.js:519
+#: static/admin/translations-fakejs.js:518
 msgid "Users"
 msgstr "Users"
 
@@ -588,9 +588,9 @@ msgstr "Users"
 #: static/admin/translations-fakejs.js:425
 #: static/admin/translations-fakejs.js:428
 #: static/admin/translations-fakejs.js:434
-#: static/admin/translations-fakejs.js:449
-#: static/admin/translations-fakejs.js:520
-#: static/admin/translations-fakejs.js:541
+#: static/admin/translations-fakejs.js:448
+#: static/admin/translations-fakejs.js:519
+#: static/admin/translations-fakejs.js:540
 msgid "Groups"
 msgstr "Groups"
 
@@ -623,7 +623,7 @@ msgstr "Services Pools"
 #: static/admin/translations-fakejs.js:141
 #: static/admin/translations-fakejs.js:142
 #: static/admin/translations-fakejs.js:171
-#: static/modern/translations-fakejs.js:40
+#: static/modern/translations-fakejs.js:69
 msgid "Information"
 msgstr "Information"
 
@@ -666,7 +666,7 @@ msgid "Related data cleaned"
 msgstr "Related data cleaned"
 
 #: static/admin/translations-fakejs.js:152
-#: static/admin/translations-fakejs.js:463
+#: static/admin/translations-fakejs.js:462
 msgid "Match mode"
 msgstr "Match mode"
 
@@ -692,17 +692,14 @@ msgstr "Delete MFA"
 
 #: static/admin/translations-fakejs.js:158
 #: static/admin/translations-fakejs.js:169
-#| msgid "New service"
 msgid "New server"
 msgstr "New server"
 
 #: static/admin/translations-fakejs.js:159
-#| msgid "Edit service"
 msgid "Edit server"
 msgstr "Edit server"
 
 #: static/admin/translations-fakejs.js:160
-#| msgid "Delete service"
 msgid "Delete server"
 msgstr "Delete server"
 
@@ -787,22 +784,18 @@ msgid "Delete Network"
 msgstr "Delete Network"
 
 #: static/admin/translations-fakejs.js:194
-#| msgid "New rule"
 msgid "New tunnel"
 msgstr "New tunnel"
 
 #: static/admin/translations-fakejs.js:195
-#| msgid "Edit rule"
 msgid "Edit tunnel"
 msgstr "Edit tunnel"
 
 #: static/admin/translations-fakejs.js:196
-#| msgid "Delete user"
 msgid "Delete tunnel"
 msgstr "Delete tunnel"
 
 #: static/admin/translations-fakejs.js:200
-#| msgid "Please, select a valid user"
 msgid "Please, select a valid server"
 msgstr "Please, select a valid server"
 
@@ -811,7 +804,6 @@ msgid "This tunnel already has all the tunnel servers available"
 msgstr "This tunnel already has all the tunnel servers available"
 
 #: static/admin/translations-fakejs.js:209
-#| msgid "Remove member pool"
 msgid "Remove member from tunnel"
 msgstr "Remove member from tunnel"
 
@@ -828,7 +820,6 @@ msgid "Delete Transport"
 msgstr "Delete Transport"
 
 #: static/admin/translations-fakejs.js:213
-#| msgid "Delete actor token - USE WITH EXTREME CAUTION!!!"
 msgid "Delete servers token - USE WITH EXTREME CAUTION!!!"
 msgstr "Delete servers token - USE WITH EXTREME CAUTION!!!"
 
@@ -867,12 +858,10 @@ msgid "Report finished"
 msgstr "Report finished"
 
 #: static/admin/translations-fakejs.js:228
-#| msgid "New provider"
 msgid "New Notifier"
 msgstr "New Notifier"
 
 #: static/admin/translations-fakejs.js:229
-#| msgid "Edit provider"
 msgid "Edit Notifier"
 msgstr "Edit Notifier"
 
@@ -923,15 +912,15 @@ msgstr "Main"
 
 #: static/admin/translations-fakejs.js:243
 #: static/admin/translations-fakejs.js:260
-#: static/admin/translations-fakejs.js:556
-#: static/modern/translations-fakejs.js:49
+#: static/admin/translations-fakejs.js:555
+#: static/modern/translations-fakejs.js:60
 msgid "Yes"
 msgstr "Yes"
 
 #: static/admin/translations-fakejs.js:244
 #: static/admin/translations-fakejs.js:261
-#: static/admin/translations-fakejs.js:557
-#: static/modern/translations-fakejs.js:50
+#: static/admin/translations-fakejs.js:556
+#: static/modern/translations-fakejs.js:61
 msgid "No"
 msgstr "No"
 
@@ -959,7 +948,7 @@ msgstr "Full Access"
 #: static/admin/translations-fakejs.js:251
 #: static/admin/translations-fakejs.js:336
 #: static/admin/translations-fakejs.js:344
-#: static/admin/translations-fakejs.js:447
+#: static/admin/translations-fakejs.js:446
 msgid "User"
 msgstr "User"
 
@@ -968,7 +957,7 @@ msgstr "User"
 #: static/admin/translations-fakejs.js:343
 #: static/admin/translations-fakejs.js:376
 #: static/admin/translations-fakejs.js:383
-#: static/modern/translations-fakejs.js:78
+#: static/modern/translations-fakejs.js:48
 msgid "Authenticator"
 msgstr "Authenticator"
 
@@ -986,7 +975,6 @@ msgstr "Confirm revokation of permission"
 
 #: static/admin/translations-fakejs.js:257
 #: static/admin/translations-fakejs.js:262
-#| msgid "March"
 msgid "Search"
 msgstr "Search"
 
@@ -997,7 +985,6 @@ msgid "No entries found"
 msgstr "No entries found"
 
 #: static/admin/translations-fakejs.js:259
-#| msgid "Selected items"
 msgid "Select"
 msgstr "Select"
 
@@ -1006,9 +993,9 @@ msgid ", (%i more items)"
 msgstr ", (%i more items)"
 
 #: static/admin/translations-fakejs.js:265
-#: static/admin/translations-fakejs.js:502
-#: static/admin/translations-fakejs.js:511
-#: static/modern/translations-fakejs.js:35
+#: static/admin/translations-fakejs.js:501
+#: static/admin/translations-fakejs.js:510
+#: static/modern/translations-fakejs.js:81
 msgid "Filter"
 msgstr "Filter"
 
@@ -1046,7 +1033,7 @@ msgid "Deletion finished"
 msgstr "Deletion finished"
 
 #: static/admin/translations-fakejs.js:287 static/modern/main.js:1
-#: static/modern/translations-fakejs.js:13
+#: static/modern/translations-fakejs.js:7
 msgid "seconds"
 msgstr "seconds"
 
@@ -1119,7 +1106,7 @@ msgid "authenticator"
 msgstr "authenticator"
 
 #: static/admin/translations-fakejs.js:313
-#: static/admin/translations-fakejs.js:448
+#: static/admin/translations-fakejs.js:447
 msgid "MFA"
 msgstr "MFA"
 
@@ -1152,7 +1139,7 @@ msgid "Go to"
 msgstr "Go to"
 
 #: static/admin/translations-fakejs.js:322
-#: static/modern/translations-fakejs.js:51
+#: static/modern/translations-fakejs.js:62
 msgid "Dashboard"
 msgstr "Dashboard"
 
@@ -1215,14 +1202,14 @@ msgstr "Change owner of assigned service"
 #: static/admin/translations-fakejs.js:421
 #: static/admin/translations-fakejs.js:426
 #: static/admin/translations-fakejs.js:431
-#: static/admin/translations-fakejs.js:451
-#: static/admin/translations-fakejs.js:468
-#: static/admin/translations-fakejs.js:478
-#: static/admin/translations-fakejs.js:482
-#: static/admin/translations-fakejs.js:492
-#: static/admin/translations-fakejs.js:517
-#: static/admin/translations-fakejs.js:522
-#: static/admin/translations-fakejs.js:525
+#: static/admin/translations-fakejs.js:450
+#: static/admin/translations-fakejs.js:467
+#: static/admin/translations-fakejs.js:477
+#: static/admin/translations-fakejs.js:481
+#: static/admin/translations-fakejs.js:491
+#: static/admin/translations-fakejs.js:516
+#: static/admin/translations-fakejs.js:521
+#: static/admin/translations-fakejs.js:524
 msgid "Ok"
 msgstr "Ok"
 
@@ -1251,10 +1238,10 @@ msgstr "Transport"
 #: static/admin/translations-fakejs.js:392
 #: static/admin/translations-fakejs.js:419
 #: static/admin/translations-fakejs.js:432
-#: static/admin/translations-fakejs.js:469
-#: static/admin/translations-fakejs.js:471
-#: static/admin/translations-fakejs.js:483
-#: static/admin/translations-fakejs.js:526
+#: static/admin/translations-fakejs.js:468
+#: static/admin/translations-fakejs.js:470
+#: static/admin/translations-fakejs.js:482
+#: static/admin/translations-fakejs.js:525
 msgid "Summary"
 msgstr "Summary"
 
@@ -1263,8 +1250,8 @@ msgid "Cache"
 msgstr "Cache"
 
 #: static/admin/translations-fakejs.js:355
-#: static/admin/translations-fakejs.js:535
-#: static/modern/translations-fakejs.js:44
+#: static/admin/translations-fakejs.js:534
+#: static/modern/translations-fakejs.js:73
 msgid "Transports"
 msgstr "Transports"
 
@@ -1406,7 +1393,7 @@ msgstr "Repeat every"
 
 #: static/admin/translations-fakejs.js:422
 #: static/admin/translations-fakejs.js:427
-#: static/admin/translations-fakejs.js:475
+#: static/admin/translations-fakejs.js:474
 msgid "Information for"
 msgstr "Information for"
 
@@ -1426,291 +1413,281 @@ msgstr "New user"
 msgid "Real name"
 msgstr "Real name"
 
-#: static/admin/translations-fakejs.js:444
+#: static/admin/translations-fakejs.js:443
 msgid "Role"
 msgstr "Role"
 
-#: static/admin/translations-fakejs.js:445
+#: static/admin/translations-fakejs.js:444
 msgid "Admin"
 msgstr "Admin"
 
-#: static/admin/translations-fakejs.js:446
+#: static/admin/translations-fakejs.js:445
 msgid "Staff member"
 msgstr "Staff member"
 
-#: static/admin/translations-fakejs.js:452
+#: static/admin/translations-fakejs.js:451
 msgid "Edit group"
 msgstr "Edit group"
 
-#: static/admin/translations-fakejs.js:453
+#: static/admin/translations-fakejs.js:452
 msgid "New group"
 msgstr "New group"
 
-#: static/admin/translations-fakejs.js:454
+#: static/admin/translations-fakejs.js:453
 msgid "Meta group name"
 msgstr "Meta group name"
 
-#: static/admin/translations-fakejs.js:459
-#| msgid "Edit MFA"
+#: static/admin/translations-fakejs.js:458
 msgid "Skip MFA"
 msgstr "Skip MFA"
 
-#: static/admin/translations-fakejs.js:462
+#: static/admin/translations-fakejs.js:461
 msgid "Service Pools"
 msgstr "Service Pools"
 
-#: static/admin/translations-fakejs.js:464
-#| msgid "group"
+#: static/admin/translations-fakejs.js:463
 msgid "Any group"
 msgstr "Any group"
 
-#: static/admin/translations-fakejs.js:465
-#| msgid "pool group"
+#: static/admin/translations-fakejs.js:464
 msgid "All groups"
 msgstr "All groups"
 
-#: static/admin/translations-fakejs.js:466
+#: static/admin/translations-fakejs.js:465
 msgid "Selected Groups"
 msgstr "Selected Groups"
 
-#: static/admin/translations-fakejs.js:470
-#: static/admin/translations-fakejs.js:472
-#: static/admin/translations-fakejs.js:527
+#: static/admin/translations-fakejs.js:469
+#: static/admin/translations-fakejs.js:471
+#: static/admin/translations-fakejs.js:526
 msgid "Services"
 msgstr "Services"
 
-#: static/admin/translations-fakejs.js:473
+#: static/admin/translations-fakejs.js:472
 msgid "Usage"
 msgstr "Usage"
 
-#: static/admin/translations-fakejs.js:476
+#: static/admin/translations-fakejs.js:475
 msgid "Services pools"
 msgstr "Services pools"
 
-#: static/admin/translations-fakejs.js:479
-#| msgid "Assign service to user manually"
+#: static/admin/translations-fakejs.js:478
 msgid "Assign new server to tunnel group"
 msgstr "Assign new server to tunnel group"
 
-#: static/admin/translations-fakejs.js:480
+#: static/admin/translations-fakejs.js:479
 msgid "Tunnel"
 msgstr "Tunnel"
 
-#: static/admin/translations-fakejs.js:484
-#| msgid "Tunnel"
+#: static/admin/translations-fakejs.js:483
 msgid "Tunnel servers"
 msgstr "Tunnel servers"
 
-#: static/admin/translations-fakejs.js:485
+#: static/admin/translations-fakejs.js:484
 msgid "New image for"
 msgstr "New image for"
 
-#: static/admin/translations-fakejs.js:486
+#: static/admin/translations-fakejs.js:485
 msgid "Edit for"
 msgstr "Edit for"
 
-#: static/admin/translations-fakejs.js:487
+#: static/admin/translations-fakejs.js:486
 msgid "Image name"
 msgstr "Image name"
 
-#: static/admin/translations-fakejs.js:488
+#: static/admin/translations-fakejs.js:487
 msgid "Image (click to change)"
 msgstr "Image (click to change)"
 
-#: static/admin/translations-fakejs.js:489
-#| msgid "For optimal results, use "
+#: static/admin/translations-fakejs.js:488
 msgid "For optimal results, use \"squared\" images."
 msgstr "For optimal results, use \"squared\" images."
 
-#: static/admin/translations-fakejs.js:490
+#: static/admin/translations-fakejs.js:489
 msgid "The image will be resized on upload to"
 msgstr "The image will be resized on upload to"
 
-#: static/admin/translations-fakejs.js:493
+#: static/admin/translations-fakejs.js:492
 msgid "UDS Configuration"
 msgstr "UDS Configuration"
 
-#: static/admin/translations-fakejs.js:494
-#: static/admin/translations-fakejs.js:513
+#: static/admin/translations-fakejs.js:493
+#: static/admin/translations-fakejs.js:512
 msgid "Save"
 msgstr "Save"
 
+#: static/admin/translations-fakejs.js:494
 #: static/admin/translations-fakejs.js:495
 #: static/admin/translations-fakejs.js:496
-#: static/admin/translations-fakejs.js:497
 msgid "New"
 msgstr "New"
 
-#: static/admin/translations-fakejs.js:498
-#: static/admin/translations-fakejs.js:506
+#: static/admin/translations-fakejs.js:497
+#: static/admin/translations-fakejs.js:505
 msgid "Edit"
 msgstr "Edit"
 
-#: static/admin/translations-fakejs.js:499
-#: static/admin/translations-fakejs.js:507
+#: static/admin/translations-fakejs.js:498
+#: static/admin/translations-fakejs.js:506
 msgid "Permissions"
 msgstr "Permissions"
 
-#: static/admin/translations-fakejs.js:500
-#: static/admin/translations-fakejs.js:510
+#: static/admin/translations-fakejs.js:499
+#: static/admin/translations-fakejs.js:509
 msgid "Export"
 msgstr "Export"
 
-#: static/admin/translations-fakejs.js:501
-#: static/admin/translations-fakejs.js:508
+#: static/admin/translations-fakejs.js:500
+#: static/admin/translations-fakejs.js:507
 msgid "Delete"
 msgstr "Delete"
 
-#: static/admin/translations-fakejs.js:503
+#: static/admin/translations-fakejs.js:502
 msgid "Selected items"
 msgstr "Selected items"
 
-#: static/admin/translations-fakejs.js:504
+#: static/admin/translations-fakejs.js:503
 msgid "Copy"
 msgstr "Copy"
 
-#: static/admin/translations-fakejs.js:505
+#: static/admin/translations-fakejs.js:504
 msgid "Detail"
 msgstr "Detail"
 
-#: static/admin/translations-fakejs.js:512
+#: static/admin/translations-fakejs.js:511
 msgid "Discard & close"
 msgstr "Discard & close"
 
-#: static/admin/translations-fakejs.js:514
+#: static/admin/translations-fakejs.js:513
 msgid "New user permission for"
 msgstr "New user permission for"
 
-#: static/admin/translations-fakejs.js:515
+#: static/admin/translations-fakejs.js:514
 msgid "New group permission for"
 msgstr "New group permission for"
 
-#: static/admin/translations-fakejs.js:518
+#: static/admin/translations-fakejs.js:517
 msgid "Permissions for"
 msgstr "Permissions for"
 
-#: static/admin/translations-fakejs.js:521
+#: static/admin/translations-fakejs.js:520
 msgid "New permission..."
 msgstr "New permission..."
 
-#: static/admin/translations-fakejs.js:523
+#: static/admin/translations-fakejs.js:522
 msgid "Remove all"
 msgstr "Remove all"
 
-#: static/admin/translations-fakejs.js:528
-#| msgid "provider"
+#: static/admin/translations-fakejs.js:527
 msgid "Providers"
 msgstr "Providers"
 
-#: static/admin/translations-fakejs.js:529
-#: static/admin/translations-fakejs.js:550
-#| msgid "Services"
+#: static/admin/translations-fakejs.js:528
+#: static/admin/translations-fakejs.js:549
 msgid "Servers"
 msgstr "Servers"
 
-#: static/admin/translations-fakejs.js:530
+#: static/admin/translations-fakejs.js:529
 msgid "Authentication"
 msgstr "Authentication"
 
-#: static/admin/translations-fakejs.js:531
+#: static/admin/translations-fakejs.js:530
 msgid "Authenticators"
 msgstr "Authenticators"
 
-#: static/admin/translations-fakejs.js:532
+#: static/admin/translations-fakejs.js:531
 msgid "Multi Factor"
 msgstr "Multi Factor"
 
-#: static/admin/translations-fakejs.js:533
+#: static/admin/translations-fakejs.js:532
 msgid "Os Managers"
 msgstr "Os Managers"
 
-#: static/admin/translations-fakejs.js:534
+#: static/admin/translations-fakejs.js:533
 msgid "Connectivity"
 msgstr "Connectivity"
 
-#: static/admin/translations-fakejs.js:536
-#: static/modern/translations-fakejs.js:46
+#: static/admin/translations-fakejs.js:535
+#: static/modern/translations-fakejs.js:75
 msgid "Networks"
 msgstr "Networks"
 
-#: static/admin/translations-fakejs.js:537
-#| msgid "Tunnel"
+#: static/admin/translations-fakejs.js:536
 msgid "Tunnels"
 msgstr "Tunnels"
 
-#: static/admin/translations-fakejs.js:538
+#: static/admin/translations-fakejs.js:537
 msgid "Pools"
 msgstr "Pools"
 
-#: static/admin/translations-fakejs.js:540
+#: static/admin/translations-fakejs.js:539
 msgid "Meta pools"
 msgstr "Meta pools"
 
-#: static/admin/translations-fakejs.js:542
+#: static/admin/translations-fakejs.js:541
 msgid "Calendars"
 msgstr "Calendars"
 
-#: static/admin/translations-fakejs.js:543
-#| msgid "Accounts"
+#: static/admin/translations-fakejs.js:542
 msgid "Accounting"
 msgstr "Accounting"
 
-#: static/admin/translations-fakejs.js:544
+#: static/admin/translations-fakejs.js:543
 msgid "Tools"
 msgstr "Tools"
 
-#: static/admin/translations-fakejs.js:545
+#: static/admin/translations-fakejs.js:544
 msgid "Gallery"
 msgstr "Gallery"
 
-#: static/admin/translations-fakejs.js:546
+#: static/admin/translations-fakejs.js:545
 msgid "Reports"
 msgstr "Reports"
 
-#: static/admin/translations-fakejs.js:547
+#: static/admin/translations-fakejs.js:546
 msgid "Notifiers"
 msgstr "Notifiers"
 
-#: static/admin/translations-fakejs.js:548
+#: static/admin/translations-fakejs.js:547
 msgid "Tokens"
 msgstr "Tokens"
 
-#: static/admin/translations-fakejs.js:549
+#: static/admin/translations-fakejs.js:548
 msgid "Actor"
 msgstr "Actor"
 
-#: static/admin/translations-fakejs.js:551
+#: static/admin/translations-fakejs.js:550
 msgid "Configuration"
 msgstr "Configuration"
 
-#: static/admin/translations-fakejs.js:552
+#: static/admin/translations-fakejs.js:551
 msgid "Flush Cache"
 msgstr "Flush Cache"
 
-#: static/admin/translations-fakejs.js:553
+#: static/admin/translations-fakejs.js:552
 msgid "User mode"
 msgstr "User mode"
 
-#: static/admin/translations-fakejs.js:554
-#: static/modern/translations-fakejs.js:53
+#: static/admin/translations-fakejs.js:553
+#: static/modern/translations-fakejs.js:64
 msgid "Logout"
 msgstr "Logout"
 
-#: static/admin/translations-fakejs.js:555
-#: static/modern/translations-fakejs.js:48
+#: static/admin/translations-fakejs.js:554
+#: static/modern/translations-fakejs.js:59
 msgid "Close"
 msgstr "Close"
 
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:17
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:24
 msgid "Launching service"
 msgstr "Launching service"
 
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:18
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:25
 msgid "Invalid UDS URL"
 msgstr "Invalid UDS URL"
 
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:19
-#: static/modern/translations-fakejs.js:24
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:26
+#: static/modern/translations-fakejs.js:31
 msgid "Please wait until the service is launched."
 msgstr "Please wait until the service is launched."
 
@@ -1722,12 +1699,12 @@ msgstr ""
 "Remember that you will need the UDS client on your platform to access the "
 "service."
 
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:20
-#: static/modern/translations-fakejs.js:23
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:27
+#: static/modern/translations-fakejs.js:30
 msgid "Service ready"
 msgstr "Service ready"
 
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:21
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:28
 msgid "UDS Client not launching"
 msgstr "UDS Client not launching"
 
@@ -1739,7 +1716,7 @@ msgstr ""
 "It seems that you don't have UDS Client installed. Please, install it from "
 "here:"
 
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:22
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:29
 msgid "UDS Client Download"
 msgstr "UDS Client Download"
 
@@ -1751,223 +1728,222 @@ msgstr "Launching UDS Client, almost done."
 msgid "Error communicating with your service. Please, retry again."
 msgstr "Error communicating with your service. Please, retry again."
 
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:25
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:32
 msgid "Your session has expired. Please, login again"
 msgstr "Your session has expired. Please, login again"
 
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:27
-#: static/modern/translations-fakejs.js:30
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:3
+#: static/modern/translations-fakejs.js:4
 msgid "Errors found"
 msgstr "Errors found"
 
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:14
-#: static/modern/translations-fakejs.js:76
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:18
+#: static/modern/translations-fakejs.js:46
 msgid "Username"
 msgstr "Username"
 
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:15
-#: static/modern/translations-fakejs.js:77
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:19
+#: static/modern/translations-fakejs.js:47
 msgid "Password"
 msgstr "Password"
 
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:16
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:20
 msgid "Domain"
 msgstr "Domain"
 
-#: static/modern/translations-fakejs.js:3
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:8
 msgid "Service is in maintenance"
 msgstr "Service is in maintenance"
 
-#: static/modern/translations-fakejs.js:4
-msgid "This service is currently not accessible due to schedule restrictions."
-msgstr "This service is currently not accessible due to schedule restrictions."
-
-#: static/modern/translations-fakejs.js:5
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:10
 msgid "Launcher"
 msgstr "Launcher"
 
-#: static/modern/translations-fakejs.js:6
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:11
 msgid "Service is in maintenance and cannot be launched"
 msgstr "Service is in maintenance and cannot be launched"
 
-#: static/modern/translations-fakejs.js:7
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:12
 msgid "This service is currently not accesible due to schedule restrictions."
 msgstr "This service is currently not accesible due to schedule restrictions."
 
-#: static/modern/translations-fakejs.js:8
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:13
 msgid "Release service: "
 msgstr "Release service: "
 
-#: static/modern/translations-fakejs.js:9
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:14
 msgid "Reset service: "
 msgstr "Reset service: "
 
-#: static/modern/translations-fakejs.js:10
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:15
 msgid "Service released"
 msgstr "Service released"
 
-#: static/modern/translations-fakejs.js:11
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:16
 msgid "Service reseted"
 msgstr "Service reseted"
 
-#: static/modern/translations-fakejs.js:12
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:17
 msgid "Are you sure?"
 msgstr "Are you sure?"
 
-#: static/modern/translations-fakejs.js:28
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:5
 msgid "Warning"
 msgstr "Warning"
 
-#: static/modern/translations-fakejs.js:29
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:6
 msgid "Service is in maintenance and cannot be executed"
 msgstr "Service is in maintenance and cannot be executed"
 
-#: static/modern/translations-fakejs.js:31
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:21
 msgid "We use cookies to track usage and preferences"
 msgstr "We use cookies to track usage and preferences"
 
-#: static/modern/translations-fakejs.js:32
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:22
 msgid "I Understand"
 msgstr "I Understand"
 
-#: static/modern/translations-fakejs.js:33
+#: static/modern/main.js:1 static/modern/translations-fakejs.js:23
 msgid "Learn more"
 msgstr "Learn more"
 
-#: static/modern/translations-fakejs.js:36
-msgid "Release service"
-msgstr "Release service"
+#: static/modern/translations-fakejs.js:9
+msgid "This service is currently not accessible due to schedule restrictions."
+msgstr "This service is currently not accessible due to schedule restrictions."
 
-#: static/modern/translations-fakejs.js:37
-msgid "Reset service"
-msgstr "Reset service"
-
-#: static/modern/translations-fakejs.js:38
-msgid "Connections"
-msgstr "Connections"
-
-#: static/modern/translations-fakejs.js:39
-msgid "Actions"
-msgstr "Actions"
-
-#: static/modern/translations-fakejs.js:41
-#: static/modern/translations-fakejs.js:42
-msgid "Client IP"
-msgstr "Client IP"
-
-#: static/modern/translations-fakejs.js:43
-msgid "Detected proxy ip"
-msgstr "Detected proxy ip"
-
-#: static/modern/translations-fakejs.js:45
-msgid "UDS transports for this client"
-msgstr "UDS transports for this client"
-
-#: static/modern/translations-fakejs.js:47
-msgid "UDS networks for this IP"
-msgstr "UDS networks for this IP"
-
-#: static/modern/translations-fakejs.js:52
-#: static/modern/translations-fakejs.js:64
-msgid "Downloads"
-msgstr "Downloads"
-
-#: static/modern/translations-fakejs.js:54
-#: static/modern/translations-fakejs.js:56
-#: static/modern/translations-fakejs.js:62
-msgid "UDS Client"
-msgstr "UDS Client"
-
-#: static/modern/translations-fakejs.js:55
-#: static/modern/translations-fakejs.js:57
-msgid "About"
-msgstr "About"
-
-#: static/modern/translations-fakejs.js:58
-msgid "Please, enter access credentials"
-msgstr "Please, enter access credentials"
-
-#: static/modern/translations-fakejs.js:59
+#: static/modern/translations-fakejs.js:35
 msgid "You can access UDS Open Source code at"
 msgstr "You can access UDS Open Source code at"
 
-#: static/modern/translations-fakejs.js:60
+#: static/modern/translations-fakejs.js:36
 msgid "UDS has been developed using these components:"
 msgstr "UDS has been developed using these components:"
 
-#: static/modern/translations-fakejs.js:61
+#: static/modern/translations-fakejs.js:37
 msgid "If you find that we missed any component, please let us know"
 msgstr "If you find that we missed any component, please let us know"
 
-#: static/modern/translations-fakejs.js:63
-msgid "Download UDS client for your platform"
-msgstr "Download UDS client for your platform"
-
-#: static/modern/translations-fakejs.js:65
-msgid "Always download the UDS actor matching your platform"
-msgstr "Always download the UDS actor matching your platform"
-
-#: static/modern/translations-fakejs.js:66
-msgid ""
-"Legacy actors are only provided for old operating system support. Try to "
-"avoid them."
-msgstr ""
-"Legacy actors are only provided for old operating system support. Try to "
-"avoid them."
-
-#: static/modern/translations-fakejs.js:67
-msgid "An error has occurred"
-msgstr "An error has occurred"
-
-#: static/modern/translations-fakejs.js:68
-msgid "Return"
-msgstr "Return"
-
-#: static/modern/translations-fakejs.js:69
-msgid "UDS Service launcher"
-msgstr "UDS Service launcher"
-
-#: static/modern/translations-fakejs.js:70
-msgid "The service you have requested is being launched."
-msgstr "The service you have requested is being launched."
-
-#: static/modern/translations-fakejs.js:71
-msgid "Please, note that reloading this page will not work."
-msgstr "Please, note that reloading this page will not work."
-
-#: static/modern/translations-fakejs.js:72
-msgid "To relaunch service, you will have to do it from origin."
-msgstr "To relaunch service, you will have to do it from origin."
-
-#: static/modern/translations-fakejs.js:73
-msgid ""
-"If the service does not launchs automatically, probably you dont have the "
-"UDS Client installed"
-msgstr ""
-"If the service does not launchs automatically, probably you dont have the "
-"UDS Client installed"
-
-#: static/modern/translations-fakejs.js:74
-msgid "You can obtain it from the"
-msgstr "You can obtain it from the"
-
-#: static/modern/translations-fakejs.js:75
-msgid "UDS Client download page"
-msgstr "UDS Client download page"
-
-#: static/modern/translations-fakejs.js:79
-msgid "Login"
-msgstr "Login"
-
-#: static/modern/translations-fakejs.js:80
+#: static/modern/translations-fakejs.js:38
 msgid "Login Verification"
 msgstr "Login Verification"
 
-#: static/modern/translations-fakejs.js:81
-#| msgid "Remember me for"
-msgid "Remember Me"
-msgstr "Remember Me"
+#: static/modern/translations-fakejs.js:39
+msgid "Remember me for"
+msgstr "Remember me for"
 
-#: static/modern/translations-fakejs.js:82
+#: static/modern/translations-fakejs.js:40
 msgid "Submit"
 msgstr "Submit"
+
+#: static/modern/translations-fakejs.js:41
+#: static/modern/translations-fakejs.js:65
+#: static/modern/translations-fakejs.js:67
+msgid "UDS Client"
+msgstr "UDS Client"
+
+#: static/modern/translations-fakejs.js:42
+msgid "Download UDS client for your platform"
+msgstr "Download UDS client for your platform"
+
+#: static/modern/translations-fakejs.js:43
+#: static/modern/translations-fakejs.js:63
+msgid "Downloads"
+msgstr "Downloads"
+
+#: static/modern/translations-fakejs.js:44
+msgid "Always download the UDS actor matching your platform"
+msgstr "Always download the UDS actor matching your platform"
+
+#: static/modern/translations-fakejs.js:45
+msgid ""
+"Legacy actors are only provided for old operating system support. Try to "
+"avoid them."
+msgstr ""
+"Legacy actors are only provided for old operating system support. Try to "
+"avoid them."
+
+#: static/modern/translations-fakejs.js:49
+msgid "Login"
+msgstr "Login"
+
+#: static/modern/translations-fakejs.js:50
+msgid "An error has occurred"
+msgstr "An error has occurred"
+
+#: static/modern/translations-fakejs.js:51
+msgid "Return"
+msgstr "Return"
+
+#: static/modern/translations-fakejs.js:52
+msgid "UDS Service launcher"
+msgstr "UDS Service launcher"
+
+#: static/modern/translations-fakejs.js:53
+msgid "The service you have requested is being launched."
+msgstr "The service you have requested is being launched."
+
+#: static/modern/translations-fakejs.js:54
+msgid "Please, note that reloading this page will not work."
+msgstr "Please, note that reloading this page will not work."
+
+#: static/modern/translations-fakejs.js:55
+msgid "To relaunch service, you will have to do it from origin."
+msgstr "To relaunch service, you will have to do it from origin."
+
+#: static/modern/translations-fakejs.js:56
+msgid ""
+"If the service does not launchs automatically, probably you dont have the "
+"UDS Client installed"
+msgstr ""
+"If the service does not launchs automatically, probably you dont have the "
+"UDS Client installed"
+
+#: static/modern/translations-fakejs.js:57
+msgid "You can obtain it from the"
+msgstr "You can obtain it from the"
+
+#: static/modern/translations-fakejs.js:58
+msgid "UDS Client download page"
+msgstr "UDS Client download page"
+
+#: static/modern/translations-fakejs.js:66
+#: static/modern/translations-fakejs.js:68
+msgid "About"
+msgstr "About"
+
+#: static/modern/translations-fakejs.js:70
+#: static/modern/translations-fakejs.js:71
+msgid "Client IP"
+msgstr "Client IP"
+
+#: static/modern/translations-fakejs.js:72
+msgid "Detected proxy ip"
+msgstr "Detected proxy ip"
+
+#: static/modern/translations-fakejs.js:74
+msgid "UDS transports for this client"
+msgstr "UDS transports for this client"
+
+#: static/modern/translations-fakejs.js:76
+msgid "UDS networks for this IP"
+msgstr "UDS networks for this IP"
+
+#: static/modern/translations-fakejs.js:77
+msgid "Release service"
+msgstr "Release service"
+
+#: static/modern/translations-fakejs.js:78
+msgid "Reset service"
+msgstr "Reset service"
+
+#: static/modern/translations-fakejs.js:79
+msgid "Connections"
+msgstr "Connections"
+
+#: static/modern/translations-fakejs.js:80
+msgid "Actions"
+msgstr "Actions"
+
+#: static/modern/translations-fakejs.js:82
+msgid "Please, enter access credentials"
+msgstr "Please, enter access credentials"
