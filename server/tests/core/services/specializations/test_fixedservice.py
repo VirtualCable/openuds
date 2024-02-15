@@ -38,7 +38,13 @@ from uds.core.services.specializations.fixed_machine import fixed_service, fixed
 
 
 class FixedServiceTest(UDSTestCase):
-    pass
+    def create_elements(self) -> tuple['FixedProvider', 'FixedService', 'FixedUserService']:
+        environment = self.create_environment()
+        prov = FixedProvider(environment=environment)
+        service = FixedService(environment=environment, parent=prov)
+        user_service = FixedUserService(environment=environment, service=service)
+
+        return prov, service, user_service
 
 
 class FixedUserService(fixed_userservice.FixedUserService):
@@ -67,6 +73,10 @@ class FixedUserService(fixed_userservice.FixedUserService):
 
 
 class FixedService(fixed_service.FixedService):
+    type_name = 'Fixed Service'
+    type_type = 'FixedService'
+    type_description = 'Fixed Service description'
+
     token = fixed_service.FixedService.token
     snapshot_type = fixed_service.FixedService.snapshot_type
     machines = fixed_service.FixedService.machines
@@ -119,4 +129,8 @@ class FixedService(fixed_service.FixedService):
 
 
 class FixedProvider(services.provider.ServiceProvider):
+    type_name = 'Fixed Provider'
+    type_type = 'FixedProvider'
+    type_description = 'Fixed Provider description'
+
     offers = [FixedService]

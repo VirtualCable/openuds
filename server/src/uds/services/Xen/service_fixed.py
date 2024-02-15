@@ -271,8 +271,10 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
     def get_machine_name(self, vmid: str) -> str:
         return self.parent().get_machine_name(vmid)
 
-    def remove_and_free_machine(self, vmid: str) -> None:
+    def remove_and_free_machine(self, vmid: str) -> str:
         try:
             self._save_assigned_machines(self._get_assigned_machines() - {str(vmid)})  # Remove from assigned
+            return types.states.State.FINISHED
         except Exception as e:
-            logger.warn('Cound not save assigned machines on fixed pool: %s', e)
+            logger.warning('Cound not save assigned machines on fixed pool: %s', e)
+            raise

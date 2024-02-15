@@ -250,5 +250,5 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
             self._save_assigned_machines(self._get_assigned_machines() - {str(vmid)})  # Remove from assigned
             return types.states.State.FINISHED
         except Exception as e:
-            logger.warn('Cound not save assigned machines on fixed pool: %s', e)
+            logger.warning('Cound not save assigned machines on fixed pool: %s', e)
             raise

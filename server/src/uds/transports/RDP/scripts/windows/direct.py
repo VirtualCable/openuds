@@ -33,7 +33,7 @@ try:
     wreg.SetValueEx(key, sp['ip'], 0, wreg.REG_DWORD, 255)  # type: ignore
     wreg.CloseKey(key)  # type: ignore
 except Exception as e:  # nosec: Not really interested in the exception
-    # logger.warn('Exception fixing redirection dialog: %s', e)
+    # logger.warning('Exception fixing redirection dialog: %s', e)
     pass  # Key does not exists, ok...
 
 # The password must be encoded, to be included in a .rdp file, as 'UTF-16LE' before protecting (CtrpyProtectData) it in order to work with mstsc

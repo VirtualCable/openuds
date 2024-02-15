@@ -36,6 +36,7 @@ from django.test import TestCase, TransactionTestCase
 from django.test.client import Client, AsyncClient  # type: ignore   # Pylance does not know about AsyncClient, but it is there
 from django.http.response import HttpResponse
 from django.conf import settings
+from uds.core.environment import Environment
 
 from uds.core.managers.crypto import CryptoManager
 
@@ -250,6 +251,8 @@ class UDSTestCase(UDSTestCaseMixin, TestCase):
         super().setUpClass()
         setupClass(cls)  # The one local to this module
 
+    def create_environment(self) -> Environment:
+        return Environment.testing_environment()
 
 class UDSTransactionTestCase(UDSTestCaseMixin, TransactionTestCase):
     @classmethod

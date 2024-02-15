@@ -64,6 +64,7 @@ class XenFixedUserService(FixedUserService, autoserializable.AutoSerializable):
 
     # : Recheck every ten seconds by default (for task methods)
     suggested_delay = 4
+
     # Utility overrides for type checking...
     def service(self) -> 'service_fixed.XenFixedService':
         return typing.cast('service_fixed.XenFixedService', super().service())
@@ -97,7 +98,7 @@ class XenFixedUserService(FixedUserService, autoserializable.AutoSerializable):
     def error(self, reason: str) -> str:
         return self._error(reason)
 
-    def _start_machine(self) -> str:
+    def _start_machine(self) -> None:
         try:
             state = self.service().get_machine_power_state(self._vmid)
         except Exception as e:
@@ -106,9 +107,7 @@ class XenFixedUserService(FixedUserService, autoserializable.AutoSerializable):
         if state != xen_client.XenPowerState.running:
             self._task = self.service().start_machine(self._vmid) or ''
 
-        return State.RUNNING
-
-    def _stop_machine(self) -> str:
+    def _stop_machine(self) -> None:
         try:
             state = self.service().get_machine_power_state(self._vmid)
         except Exception as e:
@@ -117,8 +116,6 @@ class XenFixedUserService(FixedUserService, autoserializable.AutoSerializable):
         if state == xen_client.XenPowerState.running:
             logger.debug('Stopping machine %s', self._vmid)
             self._task = self.service().stop_machine(self._vmid) or ''
-
-        return State.RUNNING
 
     # Check methods
     def _check_task_finished(self) -> str:

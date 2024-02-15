@@ -131,7 +131,14 @@ class UserService(Environmentable, Serializable):
 
     _db_obj: typing.Optional['models.UserService'] = None
 
-    def __init__(self, environment: 'Environment', **kwargs):
+    def __init__(
+        self,
+        environment: 'Environment',
+        service: 'services.Service',
+        publication: typing.Optional['services.Publication'] = None,
+        osmanager: typing.Optional['osmanagers.OSManager'] = None,
+        uuid: str = '',
+    ):
         """
         Do not forget to invoke this in your derived class using "super(self.__class__, self).__init__(environment, **kwargs)"
         We want to use the env, service and storage methods outside class. If not called, you must implement your own methods
@@ -151,10 +158,10 @@ class UserService(Environmentable, Serializable):
         """
         Environmentable.__init__(self, environment)
         Serializable.__init__(self)
-        self._service = kwargs['service']  # Raises an exception if service is not included. Parent
-        self._publication = kwargs.get('publication', None)
-        self._osmanager = kwargs.get('osmanager', None)
-        self._uuid = kwargs.get('uuid', '')
+        self._service = service
+        self._publication = publication
+        self._osmanager = osmanager
+        self._uuid = uuid
 
         self.initialize()
 
