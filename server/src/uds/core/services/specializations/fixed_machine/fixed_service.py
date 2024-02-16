@@ -135,7 +135,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         """
         return re.sub("[^a-zA-Z0-9_-]", "-", name)
 
-    def process_snapshot(self, remove: bool, userservice_instace: 'FixedUserService') -> str:
+    def process_snapshot(self, remove: bool, userservice_instance: 'FixedUserService') -> None:
         """
         Processes snapshot creation if needed for this service
         Defaults to do nothing
@@ -144,9 +144,10 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
             remove (bool): If True, called from "remove" action, else called from "create" action
 
         returns:
-            str: the state to be processes by user service
+            None
+            If needs to notify an error, raise an exception
         """
-        return types.states.State.FINISHED
+        return
 
     @abc.abstractmethod
     def get_machine_name(self, vmid: str) -> str:

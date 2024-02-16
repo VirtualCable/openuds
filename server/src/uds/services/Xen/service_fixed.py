@@ -31,12 +31,14 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 import typing
 
-from django.utils.translation import gettext_noop as _, gettext
-from uds.core import services, types, consts, exceptions
+from django.utils.translation import gettext
+from django.utils.translation import gettext_noop as _
+
+from uds.core import consts, exceptions, services, types
 from uds.core.services.specializations.fixed_machine.fixed_service import FixedService
 from uds.core.services.specializations.fixed_machine.fixed_userservice import FixedUserService
 from uds.core.ui import gui
-from uds.core.util import validators, log
+from uds.core.util import log, validators
 from uds.core.util.decorators import cached
 from uds.core.workers import initialize
 
@@ -45,8 +47,8 @@ from .deployment_fixed import XenFixedUserService
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.module import Module
     from uds import models
+    from uds.core.module import Module
 
     from .provider import XenProvider
 
@@ -105,12 +107,9 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
             if not self.machines.value:
                 raise exceptions.ui.ValidationError(gettext('We need at least a machine'))
 
-            self.storage.put_pickle('userservices_limit', len(self.machines.as_list()))
-
             # Remove machines not in values from "assigned" set
             self._save_assigned_machines(self._get_assigned_machines() & set(self.machines.as_list()))
             self.token.value = self.token.value.strip()
-        self.userservices_limit = self.storage.get_unpickle('userservices_limit')
 
     def init_gui(self) -> None:
         # Here we have to use "default values", cause values aren't used at form initialization
@@ -164,14 +163,14 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
         Tries to stop a machine. No check is done, it is simply requested to Xen
 
         Args:
-            machineId: Id of the machine
+            machine_id: Id of the machine
 
         Returns:
         """
         return self.parent().reset_machine(machine_id)
 
-    def shutdown_machine(self, vm_id: str) -> typing.Optional[str]:
-        return self.parent().shutdown_machine(vm_id)
+    def shutdown_machine(self, machine_id: str) -> typing.Optional[str]:
+        return self.parent().shutdown_machine(machine_id)
 
     def check_task_finished(self, task: str) -> tuple[bool, str]:
         return self.parent().check_task_finished(task)
@@ -199,7 +198,7 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
 
         return userservice_instance.error('VM not available!')
 
-    def process_snapshot(self, remove: bool, userservice_instace: FixedUserService) -> str:
+    def process_snapshot(self, remove: bool, userservice_instace: FixedUserService) -> None:
         userservice_instace = typing.cast(XenFixedUserService, userservice_instace)
         if self.use_snapshots.as_bool():
             vmid = userservice_instace._vmid
@@ -227,8 +226,6 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
                         )
                 except Exception as e:
                     self.do_log(log.LogLevel.WARNING, 'Could not create SNAPSHOT for this VM. ({})'.format(e))
-
-        return types.states.State.RUNNING
 
     def get_and_assign_machine(self) -> str:
         found_vmid: typing.Optional[str] = None

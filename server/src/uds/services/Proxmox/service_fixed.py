@@ -31,13 +31,14 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 import typing
 
-from django.utils.translation import gettext_noop as _, gettext
-from regex import F
-from uds.core import services, types, consts, exceptions
+from django.utils.translation import gettext
+from django.utils.translation import gettext_noop as _
+
+from uds.core import consts, exceptions, services, types
 from uds.core.services.specializations.fixed_machine.fixed_service import FixedService
 from uds.core.services.specializations.fixed_machine.fixed_userservice import FixedUserService
 from uds.core.ui import gui
-from uds.core.util import validators, log
+from uds.core.util import log, validators
 from uds.core.util.decorators import cached
 from uds.core.workers import initialize
 
@@ -46,8 +47,8 @@ from .deployment_fixed import ProxmoxFixedUserService
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.module import Module
     from uds import models
+    from uds.core.module import Module
 
     from . import client
     from .provider import ProxmoxProvider
@@ -93,7 +94,7 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
         tab=_('Machines'),
         old_field_name='resourcePool',
     )
-    
+
     machines = FixedService.machines
     use_snapshots = FixedService.use_snapshots
 
@@ -172,7 +173,7 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
 
         return userservice_instance.error('VM not available!')
 
-    def process_snapshot(self, remove: bool, userservice_instace: FixedUserService) -> str:
+    def process_snapshot(self, remove: bool, userservice_instace: FixedUserService) -> None:
         userservice_instace = typing.cast(ProxmoxFixedUserService, userservice_instace)
         if self.use_snapshots.as_bool():
             vmid = int(userservice_instace._vmid)
@@ -200,8 +201,6 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
                         )
                 except Exception as e:
                     self.do_log(log.LogLevel.WARNING, 'Could not create SNAPSHOT for this VM. ({})'.format(e))
-
-        return types.states.State.FINISHED
 
     def get_and_assign_machine(self) -> str:
         found_vmid: typing.Optional[int] = None

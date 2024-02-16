@@ -64,6 +64,7 @@ class Operation(enum.IntEnum):
     SNAPSHOT_CREATE = 8  # to recall process_snapshot
     SNAPSHOT_RECOVER = 9  # to recall process_snapshot
     PROCESS_TOKEN = 10
+    NOP = 11
 
     UNKNOWN = 99
 
@@ -88,7 +89,6 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
     _vmid = autoserializable.StringField(default='')
     _reason = autoserializable.StringField(default='')
     _task = autoserializable.StringField(default='')
-    _exec_state = autoserializable.StringField(default=State.RUNNING)
     _queue = autoserializable.ListField[Operation]()  # Default is empty list
 
     _create_queue: typing.ClassVar[list[Operation]] = [
@@ -151,7 +151,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         if self._vmid:
             try:
                 self.service().remove_and_free_machine(self._vmid)
-                self.service().process_snapshot(remove=True, userservice_instace=self)
+                self.service().process_snapshot(remove=True, userservice_instance=self)
                 self._vmid = ''
             except Exception as e:
                 logger.exception('Exception removing machine: %s', e)
@@ -224,6 +224,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             Operation.SNAPSHOT_CREATE: self._snapshot_create,
             Operation.SNAPSHOT_RECOVER: self._snapshot_recover,
             Operation.PROCESS_TOKEN: self._process_token,
+            Operation.NOP: self._nop,
         }
 
         try:
@@ -236,7 +237,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
 
             return State.RUNNING
         except Exception as e:
-            logger.exception('Unexpected VMware exception: %s', e)
+            logger.exception('Unexpected FixedUserService exception: %s', e)
             return self._error(str(e))
 
     @typing.final
@@ -256,6 +257,13 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         Executes opWait, it simply waits something "external" to end
         """
         pass
+    
+    @typing.final
+    def _nop(self) -> None:
+        """
+        Executes opWait, it simply waits something "external" to end
+        """
+        pass
 
     @typing.final
     def _create(self) -> None:
@@ -271,63 +279,61 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         Creates a snapshot if needed
         """
         # Try to process snaptshots if needed
-        self._exec_state = self.service().process_snapshot(remove=False, userservice_instace=self)
+        self.service().process_snapshot(remove=False, userservice_instance=self)
 
     @typing.final
     def _snapshot_recover(self) -> None:
         """
         Recovers a snapshot if needed
         """
-        self._exec_state = self.service().process_snapshot(remove=True, userservice_instace=self)
+        self.service().process_snapshot(remove=True, userservice_instance=self)
 
     @typing.final
     def _process_token(self) -> None:
         # If not to be managed by a token, "autologin" user
         if not self.service().get_token():
-            userService = self.db_obj()
-            if userService:
-                userService.set_in_use(True)
-
-        self._exec_state = State.FINISHED
+            userservice = self.db_obj()
+            if userservice:
+                userservice.set_in_use(True)
 
     def _remove(self) -> None:
         """
         Removes the snapshot if needed and releases the machine again
         """
-        self._exec_state = self.service().remove_and_free_machine(self._vmid)
+        self.service().remove_and_free_machine(self._vmid)
 
     # Check methods
     def _create_checker(self) -> str:
         """
         Checks the state of a deploy for an user or cache
         """
-        return self._state_checker()
+        return State.FINISHED
 
     def _snapshot_create_checker(self) -> str:
         """
         Checks the state of a snapshot creation
         """
-        return self._state_checker()
+        return State.FINISHED
 
     def _snapshot_recover_checker(self) -> str:
         """
         Checks the state of a snapshot recovery
         """
-        return self._state_checker()
+        return State.FINISHED
 
     def _process_token_checker(self) -> str:
         """
         Checks the state of a token processing
         """
-        return self._state_checker()
-
-    def _state_checker(self) -> str:
-        return self._exec_state
+        return State.FINISHED
 
     def _retry_checker(self) -> str:
         return State.FINISHED
 
     def _wait_checker(self) -> str:
+        return State.FINISHED
+    
+    def _nop_checker(self) -> str:
         return State.FINISHED
 
     @abc.abstractmethod
@@ -356,7 +362,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         """
         Checks if a machine has been removed
         """
-        return self._exec_state
+        return State.FINISHED
 
     @typing.final
     def check_state(self) -> str:
@@ -382,6 +388,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             Operation.SNAPSHOT_CREATE: self._snapshot_create_checker,
             Operation.SNAPSHOT_RECOVER: self._snapshot_recover_checker,
             Operation.PROCESS_TOKEN: self._process_token_checker,
+            Operation.NOP: self._nop_checker,
         }
 
         try:
@@ -397,7 +404,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
 
             return state
         except Exception as e:
-            logger.exception('Unexpected VMware exception: %s', e)
+            logger.exception('Unexpected UserService check exception: %s', e)
             return self._error(str(e))
 
     @typing.final

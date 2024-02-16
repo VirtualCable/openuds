@@ -29,50 +29,236 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import typing
+from unittest import mock
+
+from regex import F
+
 from uds import models
-from uds.core import types, services
+from uds.core import services, types
+from uds.core.services.specializations.fixed_machine import (
+    fixed_service,
+    fixed_userservice,
+)
+
 from ....utils.test import UDSTestCase
 
-from uds.core.services.specializations.fixed_machine import fixed_service, fixed_userservice
+
+@dataclasses.dataclass
+class FixedServiceIterationInfo:
+    queue: list[fixed_userservice.Operation]
+    service_calls: list[mock._Call] = dataclasses.field(default_factory=list)
+    user_service_calls: list[mock._Call] = dataclasses.field(default_factory=list)
+    state: str = types.states.State.RUNNING
+
+    def __mul__(self, other: int) -> list['FixedServiceIterationInfo']:
+        return [self] * other
+
+
+EXPECTED_DEPLOY_ITERATIONS_INFO: typing.Final[list[FixedServiceIterationInfo]] = [
+    # Initial state for queue
+    FixedServiceIterationInfo(
+        queue=[
+            fixed_userservice.Operation.CREATE,
+            fixed_userservice.Operation.SNAPSHOT_CREATE,
+            fixed_userservice.Operation.PROCESS_TOKEN,
+            fixed_userservice.Operation.START,
+            fixed_userservice.Operation.FINISH,
+        ],
+        service_calls=[
+            mock.call.get_and_assign_machine(),
+            mock.call.get_first_network_mac('assigned'),
+            mock.call.get_machine_name('assigned'),
+        ],
+    ),
+    # Machine has no snapshot, and it's running, try to stop
+    # (this is what our testing example does, but maybe it's not the best approach for all services)
+    FixedServiceIterationInfo(
+        queue=[
+            fixed_userservice.Operation.NOP,
+            fixed_userservice.Operation.STOP,
+            fixed_userservice.Operation.SNAPSHOT_CREATE,
+            fixed_userservice.Operation.PROCESS_TOKEN,
+            fixed_userservice.Operation.START,
+            fixed_userservice.Operation.FINISH,
+        ],
+        service_calls=[
+            mock.call.process_snapshot(False, mock.ANY),
+        ],
+    ),
+    FixedServiceIterationInfo(
+        queue=[
+            fixed_userservice.Operation.STOP,
+            fixed_userservice.Operation.SNAPSHOT_CREATE,
+            fixed_userservice.Operation.PROCESS_TOKEN,
+            fixed_userservice.Operation.START,
+            fixed_userservice.Operation.FINISH,
+        ],
+        user_service_calls=[mock.call._stop_machine()],
+    ),
+    # The current operation is snapshot, so check previous operation (Finished) and then process snapshot
+    FixedServiceIterationInfo(
+        queue=[
+            fixed_userservice.Operation.SNAPSHOT_CREATE,
+            fixed_userservice.Operation.PROCESS_TOKEN,
+            fixed_userservice.Operation.START,
+            fixed_userservice.Operation.FINISH,
+        ],
+        service_calls=[
+            mock.call.process_snapshot(False, mock.ANY),
+        ],
+        user_service_calls=[mock.call._stop_checker()],
+    ),
+    FixedServiceIterationInfo(
+        queue=[
+            fixed_userservice.Operation.PROCESS_TOKEN,
+            fixed_userservice.Operation.START,
+            fixed_userservice.Operation.FINISH,
+        ],
+        user_service_calls=[mock.call.db_obj()],
+    ),
+    FixedServiceIterationInfo(
+        queue=[
+            fixed_userservice.Operation.START,
+            fixed_userservice.Operation.FINISH,
+        ],
+        user_service_calls=[mock.call._start_machine()],
+    ),
+    # When in queue is only finish, it's the last iteration
+    # (or if queue is empty, but that's not the case here)
+    FixedServiceIterationInfo(
+        queue=[
+            fixed_userservice.Operation.FINISH,
+        ],
+        user_service_calls=[mock.call._start_checker()],
+        state=types.states.State.FINISHED,
+    ),
+]
+
+EXPECTED_REMOVAL_ITERATIONS_INFO: typing.Final[list[FixedServiceIterationInfo]] = [
+    FixedServiceIterationInfo(
+        queue=[
+            fixed_userservice.Operation.REMOVE,
+            fixed_userservice.Operation.SNAPSHOT_RECOVER,
+            fixed_userservice.Operation.FINISH,
+        ],
+        service_calls=[mock.call.remove_and_free_machine('assigned')],
+    ),
+    FixedServiceIterationInfo(
+        queue=[
+            fixed_userservice.Operation.SNAPSHOT_RECOVER,
+            fixed_userservice.Operation.FINISH,
+        ],
+        service_calls=[mock.call.process_snapshot(True, mock.ANY)],
+    ),
+    FixedServiceIterationInfo(
+        queue=[
+            fixed_userservice.Operation.FINISH,
+        ],
+        state=types.states.State.FINISHED,
+    ),
+]
 
 
 class FixedServiceTest(UDSTestCase):
-    def create_elements(self) -> tuple['FixedProvider', 'FixedService', 'FixedUserService']:
+    def create_elements(
+        self,
+    ) -> tuple['FixedTestingProvider', 'FixedTestingService', 'FixedTestingUserService']:
         environment = self.create_environment()
-        prov = FixedProvider(environment=environment)
-        service = FixedService(environment=environment, parent=prov)
-        user_service = FixedUserService(environment=environment, service=service)
+        prov = FixedTestingProvider(environment=environment)
+        service = FixedTestingService(environment=environment, parent=prov)
+        user_service = FixedTestingUserService(environment=environment, service=service)
 
         return prov, service, user_service
 
+    def check_iterations(
+        self,
+        service: 'FixedTestingService',
+        userservice: 'FixedTestingUserService',
+        iterations: list[FixedServiceIterationInfo],
+        removal: bool,
+    ) -> None:
+        first: bool = True
 
-class FixedUserService(fixed_userservice.FixedUserService):
-    started: bool = False
-    counter: int = 0
+        for iteration in iterations:
+            # Clear mocks
+            service.mock.reset_mock()
+            userservice.mock.reset_mock()
+
+            if first:  # First iteration is call for deploy
+                if not removal:
+                    state = userservice.deploy_for_user(models.User())
+                else:
+                    state = userservice.destroy()
+                first = False
+            else:
+                state = userservice.check_state()
+            self.assertEqual(state, iteration.state, f'Iteration {iteration} {state}')
+            self.assertEqual(
+                userservice._queue,
+                iteration.queue,
+                f'Iteration {iteration} {userservice._queue} {iteration.queue}',
+            )
+            self.assertEqual(
+                service.mock.mock_calls,
+                iteration.service_calls,
+                f'Iteration {iteration} {userservice._queue}',
+            )
+            self.assertEqual(
+                userservice.mock.mock_calls,
+                iteration.user_service_calls,
+                f'Iteration {iteration} {userservice._queue}',
+            )
+
+    def deploy_service(
+        self, service: 'FixedTestingService', userservice: 'FixedTestingUserService', max_iterations: int = 100
+    ) -> None:
+        if userservice.deploy_for_user(models.User()) != types.states.State.FINISHED:
+            while userservice.check_state() != types.states.State.FINISHED and max_iterations > 0:
+                max_iterations -= 1
+
+        # Clear mocks
+        service.mock.reset_mock()
+        userservice.mock.reset_mock()
+
+    def test_fixed_service_deploy(self) -> None:
+        prov, service, userservice = self.create_elements()
+        self.check_iterations(service, userservice, EXPECTED_DEPLOY_ITERATIONS_INFO, removal=False)
+
+    def test_fixed_service_removal(self) -> None:
+        prov, service, userservice = self.create_elements()
+
+        # Ensure fully deployed state for userservice
+        self.deploy_service(service, userservice)
+
+        # Userservice is in deployed state, so we can remove it
+        self.check_iterations(service, userservice, EXPECTED_REMOVAL_ITERATIONS_INFO, removal=True)
+
+
+class FixedTestingUserService(fixed_userservice.FixedUserService):
+    mock: 'mock.Mock' = mock.MagicMock()
 
     def _start_machine(self) -> None:
-        self.started = True
-        self.counter = 2
+        self.mock._start_machine()
 
     def _stop_machine(self) -> None:
-        self.started = False
-        self.counter = 2
+        self.mock._stop_machine()
 
     def _start_checker(self) -> str:
-        self.counter = self.counter - 1
-        if self.counter <= 0:
-            return types.states.State.FINISHED
-        return types.states.State.RUNNING
+        self.mock._start_checker()
+        return types.states.State.FINISHED
 
     def _stop_checker(self) -> str:
-        self.counter = self.counter - 1
-        if self.counter <= 0:
-            return types.states.State.FINISHED
-        return types.states.State.RUNNING
+        self.mock._stop_checker()
+        return types.states.State.FINISHED
+
+    def db_obj(self) -> typing.Any:
+        self.mock.db_obj()
+        return None
 
 
-class FixedService(fixed_service.FixedService):
+class FixedTestingService(fixed_service.FixedService):
     type_name = 'Fixed Service'
     type_type = 'FixedService'
     type_description = 'Fixed Service description'
@@ -81,38 +267,49 @@ class FixedService(fixed_service.FixedService):
     snapshot_type = fixed_service.FixedService.snapshot_type
     machines = fixed_service.FixedService.machines
 
-    snapshot_proccessed: bool = False
-    is_remove_snapshot: bool = False
-    assigned_machine: str = ''
+    user_service_type = FixedTestingUserService
+    first_process_called = False
 
-    user_service_type = FixedUserService
+    mock: 'mock.Mock' = mock.MagicMock()
 
-    def process_snapshot(self, remove: bool, userservice_instace: fixed_userservice.FixedUserService) -> str:
-        self.snapshot_proccessed = True
-        self.is_remove_snapshot = remove
-        return super().process_snapshot(remove, userservice_instace)
+    def process_snapshot(self, remove: bool, userservice_instance: fixed_userservice.FixedUserService) -> None:
+        self.mock.process_snapshot(remove, userservice_instance)
+        if not remove and not self.first_process_called:
+            # We want to call start, then snapshot, again
+            # As we have snapshot on top of queue, we need to insert NOP -> STOP
+            # This way, NOP will be consumed right now, then start will be called and then
+            # this will be called again
+            userservice_instance._push_front_op(fixed_userservice.Operation.STOP)
+            userservice_instance._push_front_op(fixed_userservice.Operation.NOP)
+            self.first_process_called = True
 
     def get_machine_name(self, vmid: str) -> str:
+        self.mock.get_machine_name(vmid)
         return f'Machine {vmid}'
 
     def get_and_assign_machine(self) -> str:
+        self.mock.get_and_assign_machine()
         self.assigned_machine = 'assigned'
         return self.assigned_machine
 
     def remove_and_free_machine(self, vmid: str) -> str:
+        self.mock.remove_and_free_machine(vmid)
         self.assigned_machine = ''
         return types.states.State.FINISHED
 
     def get_first_network_mac(self, vmid: str) -> str:
-        raise NotImplementedError()
+        self.mock.get_first_network_mac(vmid)
+        return '00:00:00:00:00:00'
 
     def get_guest_ip_address(self, vmid: str) -> str:
-        raise NotImplementedError()
+        self.mock.get_guest_ip_address(vmid)
+        return '10.0.0.10'
 
     def enumerate_assignables(self) -> list[tuple[str, str]]:
         """
         Returns a list of tuples with the id and the name of the assignables
         """
+        self.mock.enumerate_assignables()
         return [
             ('1', 'Machine 1'),
             ('2', 'Machine 2'),
@@ -125,12 +322,13 @@ class FixedService(fixed_service.FixedService):
         """
         Assigns a machine from the assignables
         """
+        self.mock.assign_from_assignables(assignable_id, user, userservice_instance)
         return types.states.State.FINISHED
 
 
-class FixedProvider(services.provider.ServiceProvider):
+class FixedTestingProvider(services.provider.ServiceProvider):
     type_name = 'Fixed Provider'
     type_type = 'FixedProvider'
     type_description = 'Fixed Provider description'
 
-    offers = [FixedService]
+    offers = [FixedTestingService]
