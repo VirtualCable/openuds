@@ -186,7 +186,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def enumerate_assignables(self) -> list[tuple[str, str]]:
+    def enumerate_assignables(self) -> collections.abc.Iterable[types.ui.ChoiceItem]:
         """
         Returns a list of tuples with the id and the name of the assignables
         """

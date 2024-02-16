@@ -31,9 +31,8 @@
 """
 import dataclasses
 import typing
+import collections.abc
 from unittest import mock
-
-from regex import F
 
 from uds import models
 from uds.core import services, types
@@ -41,6 +40,7 @@ from uds.core.services.specializations.fixed_machine import (
     fixed_service,
     fixed_userservice,
 )
+from uds.core.ui.user_interface import gui
 
 from ....utils.test import UDSTestCase
 
@@ -225,6 +225,14 @@ class FixedServiceTest(UDSTestCase):
     def test_fixed_service_deploy(self) -> None:
         prov, service, userservice = self.create_elements()
         self.check_iterations(service, userservice, EXPECTED_DEPLOY_ITERATIONS_INFO, removal=False)
+        
+    def test_fixed_service_deploy_no_machine(self) -> None:
+        prov, service, userservice = self.create_elements()
+        service.available_machines_number = 2
+        self.deploy_service(service, userservice)  # Should be deployed without issues
+        self.deploy_service(service, userservice)  # Should be deployed without issues, 2nd time
+        # And now, should fail to deploy again
+        self.assertRaises(Exception, self.deploy_service, service, userservice)
 
     def test_fixed_service_removal(self) -> None:
         prov, service, userservice = self.create_elements()
@@ -269,6 +277,7 @@ class FixedTestingService(fixed_service.FixedService):
 
     user_service_type = FixedTestingUserService
     first_process_called = False
+    available_machines_number = 1
 
     mock: 'mock.Mock' = mock.MagicMock()
 
@@ -289,6 +298,9 @@ class FixedTestingService(fixed_service.FixedService):
 
     def get_and_assign_machine(self) -> str:
         self.mock.get_and_assign_machine()
+        if self.available_machines_number <= 0:
+            raise Exception('No machine available')
+        self.available_machines_number -= 1
         self.assigned_machine = 'assigned'
         return self.assigned_machine
 
@@ -305,15 +317,15 @@ class FixedTestingService(fixed_service.FixedService):
         self.mock.get_guest_ip_address(vmid)
         return '10.0.0.10'
 
-    def enumerate_assignables(self) -> list[tuple[str, str]]:
+    def enumerate_assignables(self) -> collections.abc.Iterable[types.ui.ChoiceItem]:
         """
         Returns a list of tuples with the id and the name of the assignables
         """
         self.mock.enumerate_assignables()
         return [
-            ('1', 'Machine 1'),
-            ('2', 'Machine 2'),
-            ('3', 'Machine 3'),
+            gui.choice_item('1', 'Machine 1'),
+            gui.choice_item('2', 'Machine 2'),
+            gui.choice_item('3', 'Machine 3'),
         ]
 
     def assign_from_assignables(

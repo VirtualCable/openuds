@@ -122,6 +122,7 @@ class ServicesPools(ModelHandler):
         ('getFallbackAccess', True),
         ('actionsList', True),
         ('listAssignables', True),
+        ('list_assignables', True),
         ('createFromAssignable', True),
     ]
 
@@ -647,10 +648,14 @@ class ServicesPools(ModelHandler):
         )
         return validActions
 
+    # Deprecated, use list_assignables
     def listAssignables(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)
         service = item.service.get_instance()  # type: ignore
-        return [gui.choice_item(i[0], i[1]) for i in service.enumerate_assignables()]
+        return list(service.enumerate_assignables())
+    
+    def list_assignables(self, item: 'Model') -> typing.Any:
+        return self.listAssignables(item)
 
     def createFromAssignable(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)

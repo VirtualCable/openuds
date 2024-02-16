@@ -28,6 +28,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import collections.abc
 import logging
 import typing
 
@@ -150,7 +151,7 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
     def is_avaliable(self) -> bool:
         return self.parent().is_available()
 
-    def enumerate_assignables(self) -> list[tuple[str, str]]:
+    def enumerate_assignables(self) -> collections.abc.Iterable[types.ui.ChoiceItem]:
         # Obtain machines names and ids for asignables
         vms: dict[int, str] = {}
 
@@ -158,7 +159,7 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
             vms[member.vmid] = member.vmname
 
         assigned_vms = self._get_assigned_machines()
-        return [(k, vms.get(int(k), 'Unknown!')) for k in self.machines.as_list() if int(k) not in assigned_vms]
+        return [gui.choice_item(k, vms.get(int(k), 'Unknown!')) for k in self.machines.as_list() if int(k) not in assigned_vms]
 
     def assign_from_assignables(
         self, assignable_id: str, user: 'models.User', user_deployment: 'services.UserService'

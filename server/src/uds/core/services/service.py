@@ -328,13 +328,14 @@ class Service(Module):
         """
         return typing.cast('UniqueNameGenerator', self.id_generator('name'))
 
-    def enumerate_assignables(self) -> collections.abc.Iterable[tuple[str, str]]:
+    def enumerate_assignables(self) -> collections.abc.Iterable[types.ui.ChoiceItem]:
         """
         If overrided, will provide list of assignables elements, so we can "add" an element manually to the list of assigned user services
         If not overriden, means that it cannot assign manually
 
         Returns:
-            list[tuple[str, str]] -- List of asignables services, first element is id, second is name of the element
+            collections.abc.Iterable[types.ui.ChoiceItem]: List of asignables services (as ChoiceItem)
+            
         """
         return []
 

@@ -318,9 +318,9 @@ class IPMachinesService(IPServiceBase):
         except Exception:
             logger.exception("Exception at getUnassignedMachine")
 
-    def enumerate_assignables(self) -> typing.List[tuple[str, str]]:
+    def enumerate_assignables(self) -> collections.abc.Iterable[types.ui.ChoiceItem]:
         return [
-            (f'{host.host}|{host.mac}', host.host)
+            gui.choice_item(f'{host.host}|{host.mac}', host.host)
             for host in self.hosts
             if self.storage.read_from_db(host.host) is None
         ]
