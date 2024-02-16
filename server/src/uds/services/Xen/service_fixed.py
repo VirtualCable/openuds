@@ -198,17 +198,17 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
 
         return userservice_instance.error('VM not available!')
 
-    def process_snapshot(self, remove: bool, userservice_instace: FixedUserService) -> None:
-        userservice_instace = typing.cast(XenFixedUserService, userservice_instace)
+    def process_snapshot(self, remove: bool, userservice_instance: FixedUserService) -> None:
+        userservice_instance = typing.cast(XenFixedUserService, userservice_instance)
         if self.use_snapshots.as_bool():
-            vmid = userservice_instace._vmid
+            vmid = userservice_instance._vmid
 
             snapshots = [i['id'] for i in self.parent().list_snapshots(vmid)]
             snapshot = snapshots[0] if snapshots else None
 
             if remove and snapshot:
                 try:
-                    userservice_instace._task = self.parent().restore_snapshot(snapshot['id'])
+                    userservice_instance._task = self.parent().restore_snapshot(snapshot['id'])
                 except Exception as e:
                     self.do_log(log.LogLevel.WARNING, 'Could not restore SNAPSHOT for this VM. ({})'.format(e))
 

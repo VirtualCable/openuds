@@ -38,9 +38,8 @@ from uds.core import consts, exceptions, services, types
 from uds.core.services.specializations.fixed_machine.fixed_service import FixedService
 from uds.core.services.specializations.fixed_machine.fixed_userservice import FixedUserService
 from uds.core.ui import gui
-from uds.core.util import log, validators
+from uds.core.util import log
 from uds.core.util.decorators import cached
-from uds.core.workers import initialize
 
 from . import helpers
 from .deployment_fixed import ProxmoxFixedUserService
@@ -173,16 +172,16 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
 
         return userservice_instance.error('VM not available!')
 
-    def process_snapshot(self, remove: bool, userservice_instace: FixedUserService) -> None:
-        userservice_instace = typing.cast(ProxmoxFixedUserService, userservice_instace)
+    def process_snapshot(self, remove: bool, userservice_instance: FixedUserService) -> None:
+        userservice_instance = typing.cast(ProxmoxFixedUserService, userservice_instance)
         if self.use_snapshots.as_bool():
-            vmid = int(userservice_instace._vmid)
+            vmid = int(userservice_instance._vmid)
             if remove:
                 try:
                     # try to revert to snapshot
                     snapshot = self.parent().get_current_snapshot(vmid)
                     if snapshot:
-                        userservice_instace._store_task(
+                        userservice_instance._store_task(
                             self.parent().restore_snapshot(vmid, name=snapshot.name)
                         )
                 except Exception as e:
