@@ -41,7 +41,7 @@ from django.utils.translation import gettext_lazy
 from django.utils.translation import gettext_noop as _
 
 from uds.core import consts, transports, types
-from uds.core.managers.user_service import UserServiceManager
+from uds.core.managers.userservice import UserServiceManager
 from uds.core.types.preferences import CommonPrefs
 from uds.core.ui import gui
 from uds.core.util import connection

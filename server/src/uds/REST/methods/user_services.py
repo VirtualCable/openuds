@@ -39,7 +39,7 @@ from django.utils.translation import gettext as _
 import uds.core.types.permissions
 from uds import models
 from uds.core import exceptions, types
-from uds.core.managers.user_service import UserServiceManager
+from uds.core.managers.userservice import UserServiceManager
 from uds.core.types.states import State
 from uds.core.util import ensure, log, permissions
 from uds.core.util.model import process_uuid

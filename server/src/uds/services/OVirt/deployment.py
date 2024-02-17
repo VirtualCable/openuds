@@ -37,7 +37,7 @@ import pickle  # nosec: not insecure, we are loading our own data
 import typing
 
 from uds.core import consts, services
-from uds.core.managers.user_service import UserServiceManager
+from uds.core.managers.userservice import UserServiceManager
 from uds.core.types.states import State
 from uds.core.util import autoserializable, log
 

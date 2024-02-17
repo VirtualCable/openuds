@@ -39,7 +39,7 @@ from django.db import transaction
 from django.db.models import Q
 from uds.core.util.config import GlobalConfig
 from uds.core.types.states import State
-from uds.core.managers.user_service import UserServiceManager
+from uds.core.managers.userservice import UserServiceManager
 from uds.core.services.exceptions import MaxServicesReachedError
 from uds.models import ServicePool, ServicePoolPublication, UserService
 from uds.core import services

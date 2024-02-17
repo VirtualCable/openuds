@@ -37,7 +37,7 @@ import typing
 
 from uds.core import exceptions, types
 from uds.core.managers.crypto import CryptoManager
-from uds.core.managers.user_service import UserServiceManager
+from uds.core.managers.userservice import UserServiceManager
 from uds.core.services.exceptions import ServiceNotReadyError
 from uds.core.types.requests import ExtendedHttpRequestWithUser
 from uds.core.util.rest.tools import match

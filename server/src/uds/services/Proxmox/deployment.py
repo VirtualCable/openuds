@@ -37,7 +37,7 @@ import typing
 import collections.abc
 
 from uds.core import services, consts
-from uds.core.managers.user_service import UserServiceManager
+from uds.core.managers.userservice import UserServiceManager
 from uds.core.types.states import State
 from uds.core.util import log, autoserializable
 from uds.core.util.model import sql_stamp_seconds

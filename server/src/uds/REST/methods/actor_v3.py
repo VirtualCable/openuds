@@ -40,7 +40,7 @@ from django.conf import settings
 # from uds.core import VERSION
 from uds.core import consts, exceptions, osmanagers, types
 from uds.core.managers.crypto import CryptoManager
-from uds.core.managers.user_service import UserServiceManager
+from uds.core.managers.userservice import UserServiceManager
 from uds.core.util import log, security
 from uds.core.util.cache import Cache
 from uds.core.util.config import GlobalConfig

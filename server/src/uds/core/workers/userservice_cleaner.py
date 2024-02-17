@@ -35,7 +35,7 @@ import typing
 import collections.abc
 
 from django.db import transaction
-from uds.core.managers.user_service import UserServiceManager
+from uds.core.managers.userservice import UserServiceManager
 from uds.core.util.config import GlobalConfig
 from uds.models import UserService
 from uds.core.util.model import sql_datetime

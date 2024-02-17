@@ -456,7 +456,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         :note: If the state is Fase (set to not in use), a check for removal of this deployed service is launched.
         """
         # pylint: disable=import-outside-toplevel
-        from uds.core.managers.user_service import UserServiceManager
+        from uds.core.managers.userservice import UserServiceManager
 
         self.in_use = inUse
         self.in_use_date = sql_datetime()
@@ -529,7 +529,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         Returns if this service is ready (not preparing or marked for removal)
         """
         # pylint: disable=import-outside-toplevel
-        from uds.core.managers.user_service import UserServiceManager
+        from uds.core.managers.userservice import UserServiceManager
 
         # Call to isReady of the instance
         return UserServiceManager().is_ready(self)
@@ -554,7 +554,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         Asks the UserServiceManager to cancel the current operation of this user deployed service.
         """
         # pylint: disable=import-outside-toplevel
-        from uds.core.managers.user_service import UserServiceManager
+        from uds.core.managers.userservice import UserServiceManager
 
         # Cancel is a "forced" operation, so they are not checked against limits
         UserServiceManager().cancel(self)
@@ -582,7 +582,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
             cacheLevel: New cache level to put object in
         """
         # pylint: disable=import-outside-toplevel
-        from uds.core.managers.user_service import UserServiceManager
+        from uds.core.managers.userservice import UserServiceManager
 
         UserServiceManager().move_to_level(self, cacheLevel)
 

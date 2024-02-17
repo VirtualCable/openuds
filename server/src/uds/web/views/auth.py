@@ -43,7 +43,7 @@ from uds.core import auths, consts, exceptions, types
 from uds.core.auths.auth import (authenticate_via_callback, log_login,
                                  uds_cookie, web_login, web_logout)
 from uds.core.managers.crypto import CryptoManager
-from uds.core.managers.user_service import UserServiceManager
+from uds.core.managers.userservice import UserServiceManager
 from uds.core.services.exceptions import ServiceNotReadyError
 from uds.core.types.states import State
 from uds.core.util import html

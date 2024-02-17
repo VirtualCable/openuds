@@ -43,7 +43,7 @@ from django.db import models
 
 from uds.core.util import calendar
 from uds.core.util import log
-from uds.core.managers.user_service import UserServiceManager
+from uds.core.managers.userservice import UserServiceManager
 from uds.core import services, types, consts
 
 from .calendar import Calendar

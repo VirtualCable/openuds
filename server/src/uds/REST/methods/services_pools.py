@@ -40,7 +40,7 @@ from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
 from uds.core import types, exceptions, consts
-from uds.core.managers.user_service import UserServiceManager
+from uds.core.managers.userservice import UserServiceManager
 from uds.core.ui import gui
 from uds.core.consts.images import DEFAULT_THUMB_BASE64
 from uds.core.util import log, permissions, ensure

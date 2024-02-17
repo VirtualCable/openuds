@@ -56,8 +56,8 @@ from uds.core.types.states import State
 from uds.core.util.stats import events
 from uds.models import MetaPool, ServicePool, ServicePoolPublication, Transport, User, UserService
 
-from .userservice import comms
-from .userservice.opchecker import UserServiceOpChecker
+from .userservice_helpers import comms
+from .userservice_helpers.opchecker import UserServiceOpChecker
 
 if typing.TYPE_CHECKING:
     from uds import models

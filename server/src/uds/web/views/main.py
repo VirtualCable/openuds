@@ -48,7 +48,7 @@ from uds import models
 from uds.core import consts, exceptions, mfas, types
 from uds.core.auths import auth
 from uds.core.managers.crypto import CryptoManager
-from uds.core.managers.user_service import UserServiceManager
+from uds.core.managers.userservice import UserServiceManager
 from uds.core.util import config, storage
 from uds.core.util.model import sql_stamp_seconds
 from uds.web.forms.login_form import LoginForm
