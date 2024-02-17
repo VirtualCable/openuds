@@ -75,7 +75,7 @@ class Cache:
             key = key.encode('utf8')
         return hash_key(self._bowner + key)
 
-    def get(self, skey: typing.Union[str, bytes], defValue: typing.Any = None) -> typing.Any:
+    def get(self, skey: typing.Union[str, bytes], default: typing.Any = None) -> typing.Any:
         now = sql_datetime()
         # logger.debug('Requesting key "%s" for cache "%s"', skey, self._owner)
         try:
@@ -84,7 +84,7 @@ class Cache:
             c: DBCache = DBCache.objects.get(owner=self._owner, pk=key)
             # If expired
             if now > c.created + datetime.timedelta(seconds=c.validity):
-                return defValue
+                return default
 
             try:
                 # logger.debug('value: %s', c.value)
@@ -92,14 +92,14 @@ class Cache:
             except Exception:  # If invalid, simple do not use it
                 # logger.exception('Invalid deserialization value from cache. Removing it.')
                 c.delete()
-                return defValue
+                return default
 
             Cache.hits += 1
             return val
         except DBCache.DoesNotExist:  # @UndefinedVariable
             Cache.misses += 1
             # logger.debug('key not found: %s', skey)
-            return defValue
+            return default
         # except OperationalError:
         # If database is not ready, just return default value
         # This is not a big issue, since cache is not critical
@@ -118,7 +118,7 @@ class Cache:
 
             # logger.exception('Error getting cache key: %s', skey)
             Cache.misses += 1
-            return defValue
+            return default
 
     def __getitem__(self, key: typing.Union[str, bytes]) -> typing.Any:
         """

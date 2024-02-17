@@ -219,6 +219,9 @@ class Config:
             if self.get(force) == '0':
                 return False
             return True
+        
+        def as_str(self, force: bool = False) -> str:
+            return self.get(force)
 
         def key(self) -> str:
             return self._key

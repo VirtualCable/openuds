@@ -119,6 +119,7 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
         # Here we have to use "default values", cause values aren't used at form initialization
         # This is that value is always '', so if we want to change something, we have to do it
         # at defValue
+        # Log with call stack
         self.prov_uuid.value = self.parent().get_uuid()
 
         self.pool.set_choices(

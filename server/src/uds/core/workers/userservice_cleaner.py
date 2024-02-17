@@ -51,20 +51,18 @@ logger = logging.getLogger(__name__)
 
 
 class UserServiceInfoItemsCleaner(Job):
-    frecuency = 14401
-    frecuency_cfg = (
-        GlobalConfig.KEEP_INFO_TIME
-    )  # Request run cache "info" cleaner every configured seconds. If config value is changed, it will be used at next reload
+    frecuency = 3600  # Constant time, every hour will check for old info items
+    # frecuency_cfg = (
+    #     GlobalConfig.KEEP_INFO_TIME
+    # )  # Request run cache "info" cleaner every configured seconds. If config value is changed, it will be used at next reload
     friendly_name = 'User Service Info Cleaner'
 
     def run(self) -> None:
-        removeFrom = sql_datetime() - timedelta(
-            seconds=GlobalConfig.KEEP_INFO_TIME.as_int(True)
-        )
-        logger.debug('Removing information user services from %s', removeFrom)
+        remove_since = sql_datetime() - timedelta(seconds=GlobalConfig.KEEP_INFO_TIME.as_int(True))
+        logger.debug('Removing information user services from %s', remove_since)
         with transaction.atomic():
             UserService.objects.select_for_update().filter(
-                state__in=State.INFO_STATES, state_date__lt=removeFrom
+                state__in=State.INFO_STATES, state_date__lt=remove_since
             ).delete()
 
 
@@ -78,35 +76,36 @@ class UserServiceRemover(Job):
     def run(self) -> None:
         # USER_SERVICE_REMOVAL_LIMIT is the maximum number of items to remove at once
         # This configuration value is cached at startup, so it is not updated until next reload
-        removeAtOnce: int = GlobalConfig.USER_SERVICE_CLEAN_NUMBER.as_int()
+        max_to_remove: int = GlobalConfig.USER_SERVICE_CLEAN_NUMBER.as_int()
         manager = UserServiceManager()
 
         with transaction.atomic():
             removeFrom = sql_datetime() - timedelta(
                 seconds=10
             )  # We keep at least 10 seconds the machine before removing it, so we avoid connections errors
-            removableUserServices: collections.abc.Iterable[
-                UserService
-            ] = UserService.objects.filter(
+            candidates: collections.abc.Iterable[UserService] = UserService.objects.filter(
                 state=State.REMOVABLE,
                 state_date__lt=removeFrom,
                 deployed_service__service__provider__maintenance_mode=False,
-            ).iterator(
-                chunk_size=removeAtOnce
-            )
+            ).iterator(chunk_size=max_to_remove)
 
         # We remove at once, but we limit the number of items to remove
+        # Cache deployed_services that cannot remove to avoid checking them again
+        not_removable_deployed_services: typing.Set[int] = set()
 
-        for removableUserService in removableUserServices:
+        for candidate in candidates:
             # if removal limit is reached, we stop
-            if removeAtOnce <= 0:
+            if max_to_remove <= 0:
                 break
-            logger.debug('Checking removal of %s', removableUserService.name)
+            logger.debug('Checking removal of %s', candidate.name)
             try:
-                if manager.can_remove_service_from_service_pool(
-                    removableUserService.deployed_service
+                if (
+                    candidate.service_pool.id not in not_removable_deployed_services
+                    and manager.is_userservice_removal_allowed(candidate.service_pool)
                 ):
-                    manager.remove(removableUserService)
-                    removeAtOnce -= 1  # We promoted one removal
+                    manager.remove(candidate)
+                    max_to_remove -= 1  # We promoted one removal
+                else:
+                    not_removable_deployed_services.add(candidate.service_pool.id)
             except Exception:
                 logger.exception('Exception removing user service')

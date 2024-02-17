@@ -284,8 +284,8 @@ def cached(
                 data: typing.Any = None
                 # If misses is 0, we are starting, so we will not try to get from cache
                 if not kwargs.get('force', False) and ltimeout > 0 and misses > 0:
-                    data = cache.get(cache_key)
-                    if data:
+                    data = cache.get(cache_key, default=consts.cache.CACHE_NOT_FOUND)
+                    if data is not consts.cache.CACHE_NOT_FOUND:
                         with lock:
                             hits += 1
                             CacheStats.manager().add_hit(exec_time // hits)  # Use mean execution time

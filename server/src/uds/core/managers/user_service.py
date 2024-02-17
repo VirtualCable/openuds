@@ -50,6 +50,7 @@ from uds.core.services.exceptions import (
     ServiceNotReadyError,
 )
 from uds.core.util import log, singleton
+from uds.core.util.decorators import cached
 from uds.core.util.model import sql_datetime
 from uds.core.types.states import State
 from uds.core.util.stats import events
@@ -118,7 +119,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         return False
 
-    def _create_cache_user_service_at_db(self, publication: ServicePoolPublication, cacheLevel: int) -> UserService:
+    def _create_cache_user_service_at_db(
+        self, publication: ServicePoolPublication, cacheLevel: int
+    ) -> UserService:
         """
         Private method to instatiate a cache element at database with default states
         """
@@ -137,7 +140,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
             in_use=False,
         )
 
-    def _create_assigned_user_service_at_db(self, publication: ServicePoolPublication, user: User) -> UserService:
+    def _create_assigned_user_service_at_db(
+        self, publication: ServicePoolPublication, user: User
+    ) -> UserService:
         """
         Private method to instatiate an assigned element at database with default state
         """
@@ -155,7 +160,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
             in_use=False,
         )
 
-    def _create_assigned_user_service_at_db_from_pool(self, service_pool: ServicePool, user: User) -> UserService:
+    def _create_assigned_user_service_at_db_from_pool(
+        self, service_pool: ServicePool, user: User
+    ) -> UserService:
         """
         __createCacheAtDb and __createAssignedAtDb uses a publication for create the UserService.
         There is cases where deployed services do not have publications (do not need them), so we need this method to create
@@ -324,7 +331,6 @@ class UserServiceManager(metaclass=singleton.Singleton):
             # If cancel is not supported, base cancel always returns "FINISHED", and
             # opchecker will set state to "removable"
             UserServiceOpChecker.make_unique(user_service, user_service_instance, state)
-
 
     def remove(self, userservice: UserService) -> None:
         """
@@ -503,7 +509,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
         serviceType = service_pool.service.get_type()
         if serviceType.uses_cache:
             inAssigned = (
-                service_pool.assigned_user_services().filter(self.get_state_filter(service_pool.service)).count()
+                service_pool.assigned_user_services()
+                .filter(self.get_state_filter(service_pool.service))
+                .count()
             )
             if (
                 inAssigned >= service_pool.max_srvs
@@ -520,7 +528,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         events.add_event(service_pool, events.types.stats.EventType.CACHE_MISS, fld1=0)
         return self.create_assigned_for(service_pool, user)
 
-    def get_user_services_in_states_for_provider(self, provider: 'models.Provider', states: list[str]) -> int:
+    def count_userservices_in_states_for_provider(self, provider: 'models.Provider', states: list[str]) -> int:
         """
         Returns the number of services of a service provider in the state indicated
         """
@@ -528,25 +536,32 @@ class UserServiceManager(metaclass=singleton.Singleton):
             deployed_service__service__provider=provider, state__in=states
         ).count()
 
-    def can_remove_service_from_service_pool(self, service_pool: ServicePool) -> bool:
+    # Avoids too many complex queries to database
+    @cached(prefix='max_srvs', timeout=30)  # Less than user service removal check time
+    def is_userservice_removal_allowed(self, service_pool: ServicePool) -> bool:
         """
         checks if we can do a "remove" from a deployed service
         """
-        removing = self.get_user_services_in_states_for_provider(service_pool.service.provider, [State.REMOVING])
+        removing = self.count_userservices_in_states_for_provider(
+            service_pool.service.provider, [State.REMOVING]
+        )
         service_instance = service_pool.service.get_instance()
         if (
-            service_instance.is_avaliable()
-            and removing >= service_instance.parent().get_concurrent_removal_limit()
-            and service_instance.parent().get_ignore_limits() is False
+            (removing >= service_instance.parent().get_concurrent_removal_limit()
+            and service_instance.parent().get_ignore_limits() is False)
+            or service_pool.service.provider.is_in_maintenance()
+            or service_pool.is_restrained()
+            or not service_instance.is_avaliable()
         ):
             return False
+
         return True
 
     def can_grow_service_pool(self, service_pool: ServicePool) -> bool:
         """
         Checks if we can start a new service
         """
-        preparingForProvider = self.get_user_services_in_states_for_provider(
+        preparingForProvider = self.count_userservices_in_states_for_provider(
             service_pool.service.provider, [State.PREPARING]
         )
         serviceInstance = service_pool.service.get_instance()
