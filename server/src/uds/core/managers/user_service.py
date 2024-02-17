@@ -39,6 +39,7 @@ from django.db.models import Q
 from django.db import transaction
 from uds.core.services.exceptions import OperationException
 from uds.core.util.config import GlobalConfig
+from uds.core.util.decorators import allowCache
 from uds.core.util.state import State
 from uds.core.util import log
 from uds.core.services.exceptions import (
@@ -572,6 +573,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             deployed_service__service__provider=provider, state__in=states
         ).count()
 
+    @allowCache(cachePrefix='max_svrs', cacheTimeout=30, cachingArgs=(1,), cachingKWArgs=('servicePool'))
     def canRemoveServiceFromDeployedService(self, servicePool: ServicePool) -> bool:
         """
         checks if we can do a "remove" from a deployed service
@@ -582,8 +584,10 @@ class UserServiceManager(metaclass=singleton.Singleton):
         )
         serviceInstance = servicePool.service.getInstance()
         if (
-            removing >= serviceInstance.parent().getMaxRemovingServices()
-            and serviceInstance.parent().getIgnoreLimits() is False
+            (removing >= serviceInstance.parent().getMaxRemovingServices()
+            and serviceInstance.parent().getIgnoreLimits() is False)
+            or servicePool.service.provider.isInMaintenance()
+            or servicePool.isRestrained()
         ):
             return False
         return True

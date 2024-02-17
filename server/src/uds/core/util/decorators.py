@@ -228,14 +228,15 @@ def allowCache(
             )
             # If invoked from a class, and the class provides "cache"
             # we will use it, otherwise, we will use a global cache
-            cache = getattr(args[0], 'cache', None) or Cache('functionCache')
+            cache: 'Cache' = getattr(args[0], 'cache', None) or Cache('functionCache')
             kkey = keyFnc(args[0]) if len(args) > 0 else ''
             cacheKey = '{}-{}.{}'.format(cachePrefix, kkey, argList)
 
             data: typing.Any = None
             if not kwargs.get('force', False) and cacheTimeout > 0:
-                data = cache.get(cacheKey)
-                if data:
+                NOT_FOUND = object()
+                data = cache.get(cacheKey, defValue=NOT_FOUND)
+                if data is not NOT_FOUND:
                     setattr(fnc, '__cache_hit__', getattr(fnc, '__cache_hit__') + 1)
                     stats.add_hit(getattr(fnc, '__exec_time__'))
                     return data
