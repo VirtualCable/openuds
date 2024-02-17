@@ -3583,7 +3583,7 @@ msgid ""
 "Range of valid macs for created machines. Must be in the range {default}"
 msgstr ""
 "Диапазон допустимых компьютеров Mac для созданных машин. Должно быть в "
-"диапазоне {по умолчанию}"
+"диапазоне {default}"
 
 #: core/util/fields.py:393 osmanagers/Test/testing_osmanager.py:61
 msgid "Logout Action"

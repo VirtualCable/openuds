@@ -3624,8 +3624,7 @@ msgstr "Gamme Mac"
 msgid ""
 "Range of valid macs for created machines. Must be in the range {default}"
 msgstr ""
-"Gamme de Mac valides pour les machines créées. Doit être dans la plage {par "
-"défaut}"
+"Gamme de Mac valides pour les machines créées. Doit être dans la plage {default}"
 
 #: core/util/fields.py:393 osmanagers/Test/testing_osmanager.py:61
 msgid "Logout Action"
