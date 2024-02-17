@@ -56,9 +56,7 @@ class UserServiceInfoItemsCleaner(Job):
     friendly_name = 'User Service Info Cleaner'
 
     def run(self) -> None:
-        removeFrom = getSqlDatetime() - timedelta(
-            seconds=GlobalConfig.KEEP_INFO_TIME.getInt(True)
-        )
+        removeFrom = getSqlDatetime() - timedelta(seconds=GlobalConfig.KEEP_INFO_TIME.getInt(True))
         logger.debug('Removing information user services from %s', removeFrom)
         with transaction.atomic():
             UserService.objects.select_for_update().filter(
@@ -78,30 +76,33 @@ class UserServiceRemover(Job):
         # This configuration value is cached at startup, so it is not updated until next reload
         removeAtOnce: int = GlobalConfig.USER_SERVICE_CLEAN_NUMBER.getInt()
         manager = managers.userServiceManager()
-        
+
         with transaction.atomic():
             removeFrom = getSqlDatetime() - timedelta(
                 seconds=10
             )  # We keep at least 10 seconds the machine before removing it, so we avoid connections errors
-            removableUserServices: typing.Iterable[
-                UserService
-            ] = UserService.objects.filter(
+            removableUserServices: typing.Iterable[UserService] = UserService.objects.filter(
                 state=State.REMOVABLE,
                 state_date__lt=removeFrom,
                 deployed_service__service__provider__maintenance_mode=False,
             ).iterator(chunk_size=removeAtOnce)
 
         # We remove at once, but we limit the number of items to remove
+        # Cache deployed_services that cannot remove to avoid checking them again
+        not_removable_deployed_services: typing.Set[int] = set()
 
         for removableUserService in removableUserServices:
             if removeAtOnce <= 0:
                 break
             logger.debug('Checking removal of %s', removableUserService.name)
             try:
-                if manager.canRemoveServiceFromDeployedService(
-                    removableUserService.deployed_service
+                if (
+                    removableUserService.deployed_service.id not in not_removable_deployed_services
+                    and manager.canRemoveServiceFromDeployedService(removableUserService.deployed_service)
                 ):
                     manager.remove(removableUserService)
                     removeAtOnce -= 1  # We promoted one removal
+                else:
+                    not_removable_deployed_services.add(removableUserService.deployed_service.id)
             except Exception:
                 logger.exception('Exception removing user service')
