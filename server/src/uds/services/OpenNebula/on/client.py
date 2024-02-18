@@ -358,25 +358,25 @@ class OpenNebulaClient:  # pylint: disable=too-many-public-methods
         )
 
     @ensureConnected
-    def deleteVM(self, vmId: str) -> str:
+    def remove_machine(self, vmId: str) -> str:
         """
         Deletes an vm
         """
         if self.version[0] == '4':  # type: ignore
-            return self.VMAction(vmId, 'delete')
+            return self.set_machine_state(vmId, 'delete')
 
         # Version 5
-        return self.VMAction(vmId, 'terminate-hard')
+        return self.set_machine_state(vmId, 'terminate-hard')
 
     @ensureConnected
-    def getVMState(self, vmId: str) -> types.VmState:
+    def get_machine_state(self, vmId: str) -> types.VmState:
         """
         Returns the VM State
         """
         return self.VMInfo(vmId).state
 
     @ensureConnected
-    def getVMSubstate(self, vmId: str) -> int:
+    def get_machine_substate(self, vmId: str) -> int:
         """
         Returns the VM State
         """
@@ -392,6 +392,6 @@ class OpenNebulaClient:  # pylint: disable=too-many-public-methods
             return -1
 
     @ensureConnected
-    def VMAction(self, vmId: str, action: str) -> str:
+    def set_machine_state(self, vmId: str, action: str) -> str:
         result = self.connection.one.vm.action(self.sessionString, action, int(vmId))
         return checkResultRaw(result)

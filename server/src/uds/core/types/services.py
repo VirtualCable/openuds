@@ -29,7 +29,12 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
+import typing
+import collections.abc
 import enum
+
+from attr import field
 
 
 class ServiceType(enum.StrEnum):
@@ -66,3 +71,21 @@ class ServicesCountingType(enum.IntEnum):
             return ServicesCountingType[value]
         except KeyError:
             return ServicesCountingType.STANDARD
+        
+@dataclasses.dataclass
+class ConsoleConnectionTicket:
+    value: str = ''
+    expires: str = ''
+
+@dataclasses.dataclass
+class ConsoleConnectionInfo:
+    type: str
+    address: str
+    port: int = -1
+    secure_port: int = -1
+    cert_subject: str = ''
+    ticket: ConsoleConnectionTicket = dataclasses.field(default_factory=ConsoleConnectionTicket)
+    
+    ca: str = ''
+    proxy: str = ''
+    monitors: int = 0

@@ -119,24 +119,24 @@ class TSPICETransport(BaseSpiceTransport):
         ticket = ''
         ticket_secure = ''
 
-        if 'proxy' in con:
+        if con.proxy:
             logger.exception('Proxied SPICE tunnels are not suppoorted')
             return super().get_transport_script(
                 userService, transport, ip, os, user, password, request
             )
 
-        if con['port']:
+        if con.port:
             ticket = TicketStore.create_for_tunnel(
                 userService=userService,
-                port=int(con['port']),
+                port=int(con.port),
                 validity=self.tunnel_wait.as_int() + 60,  # Ticket overtime
             )
 
-        if con['secure_port']:
+        if con.secure_port:
             ticket_secure = TicketStore.create_for_tunnel(
                 userService=userService,
-                port=int(con['secure_port']),
-                host=con['address'],
+                port=int(con.secure_port),
+                host=con.address,
                 validity=self.tunnel_wait.as_int() + 60,  # Ticket overtime
             )
 
@@ -144,9 +144,9 @@ class TSPICETransport(BaseSpiceTransport):
             '127.0.0.1',
             '{port}',
             '{secure_port}',
-            con['ticket']['value'],  # This is secure ticket from kvm, not UDS ticket
-            con.get('ca', self.server_certificate.value.strip()),
-            con['cert_subject'],
+            con.ticket.value,  # This is secure ticket from kvm, not UDS ticket
+            con.ca or self.server_certificate.value.strip(),
+            con.cert_subject,
             fullscreen=self.fullscreen.as_bool(),
         )
 

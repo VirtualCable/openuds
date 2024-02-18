@@ -302,9 +302,9 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         return self.soft_shutdown_field.as_bool()
 
     def get_console_connection(
-        self, machineId: str
-    ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
-        return self.provider().get_console_connection(machineId)
+        self, machine_id: str
+    ) -> typing.Optional[types.services.ConsoleConnectionInfo]:
+        return self.provider().get_console_connection(machine_id)
 
     @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def is_avaliable(self) -> bool:

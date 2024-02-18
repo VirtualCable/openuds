@@ -17,9 +17,9 @@ CONVERSORS: typing.Final[collections.abc.MutableMapping[typing.Any, collections.
     float: lambda x: float(x or '0'),
     typing.Optional[float]: lambda x: float(x or '0') if x is not None else None,
     datetime.datetime: lambda x: datetime.datetime.fromtimestamp(int(x)),
-    typing.Optional[datetime.datetime]: lambda x: datetime.datetime.fromtimestamp(int(x))
-    if x is not None
-    else None,
+    typing.Optional[datetime.datetime]: lambda x: (
+        datetime.datetime.fromtimestamp(int(x)) if x is not None else None
+    ),
 }
 
 
@@ -101,12 +101,12 @@ class NodeStats(typing.NamedTuple):
         )
 
 
-class ClusterStatus(typing.NamedTuple):
+class ClusterInfo(typing.NamedTuple):
     cluster: typing.Optional[Cluster]
     nodes: list[Node]
 
     @staticmethod
-    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'ClusterStatus':
+    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'ClusterInfo':
         nodes: list[Node] = []
         cluster: typing.Optional[Cluster] = None
 
@@ -116,7 +116,7 @@ class ClusterStatus(typing.NamedTuple):
             else:
                 nodes.append(Node.from_dict(i))
 
-        return ClusterStatus(cluster=cluster, nodes=nodes)
+        return ClusterInfo(cluster=cluster, nodes=nodes)
 
 
 class UPID(typing.NamedTuple):
@@ -311,8 +311,8 @@ class PoolInfo(typing.NamedTuple):
 
 
 class SnapshotInfo(typing.NamedTuple):
-    description: str
     name: str
+    description: str
 
     parent: typing.Optional[str]
     snaptime: typing.Optional[int]
@@ -321,3 +321,15 @@ class SnapshotInfo(typing.NamedTuple):
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'SnapshotInfo':
         return _from_dict(SnapshotInfo, dictionary)
+
+
+class VGPUInfo(typing.NamedTuple):
+    name: str
+    description: str
+    device: str
+    available: bool
+    type: str
+
+    @staticmethod
+    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'VGPUInfo':
+        return _from_dict(VGPUInfo, dictionary)

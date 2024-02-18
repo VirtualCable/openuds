@@ -37,7 +37,7 @@ import logging
 import typing
 import collections.abc
 
-from uds.core import services, consts
+from uds.core import services, consts, types
 from uds.core.types.states import State
 from uds.core.util import log, autoserializable
 
@@ -159,8 +159,8 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
         if self._vmid != '':
             self.service().resetMachine(self._vmid)
 
-    def get_console_connection(self) -> dict[str, typing.Any]:
-        return self.service().getConsoleConnection(self._vmid)
+    def get_console_connection(self) -> typing.Optional[types.services.ConsoleConnectionInfo]:
+        return self.service().get_console_connection(self._vmid)
 
     def desktop_login(self, username: str, password: str, domain: str = ''):
         return self.service().desktop_login(self._vmid, username, password, domain)

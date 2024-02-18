@@ -35,6 +35,8 @@ import collections.abc
 
 import ovirtsdk4 as ovirt
 
+from uds.core import types
+
 # Sometimes, we import ovirtsdk4 but "types" does not get imported... event can't be found????
 # With this seems to work propertly
 try:
@@ -84,9 +86,7 @@ class Client:
         Returns:
             The cache key, taking into consideration the prefix
         """
-        return "{}{}{}{}{}".format(
-            prefix, self._host, self._username, self._password, self._timeout
-        )
+        return "{}{}{}{}{}".format(prefix, self._host, self._username, self._password, self._timeout)
 
     def _api(self) -> ovirt.Connection:
         """
@@ -155,9 +155,7 @@ class Client:
         """
         return True, 'Test successfully passed'
 
-    def list_machines(
-        self, force: bool = False
-    ) -> list[collections.abc.MutableMapping[str, typing.Any]]:
+    def list_machines(self, force: bool = False) -> list[collections.abc.MutableMapping[str, typing.Any]]:
         """
         Obtains the list of machines inside ovirt that do aren't part of uds
 
@@ -210,9 +208,7 @@ class Client:
         finally:
             lock.release()
 
-    def list_clusters(
-        self, force: bool = False
-    ) -> list[collections.abc.MutableMapping[str, typing.Any]]:
+    def list_clusters(self, force: bool = False) -> list[collections.abc.MutableMapping[str, typing.Any]]:
         """
         Obtains the list of clusters inside ovirt
 
@@ -347,9 +343,7 @@ class Client:
 
             api = self._api()
 
-            datacenter_service = (
-                api.system_service().data_centers_service().service(datacenterId)
-            )
+            datacenter_service = api.system_service().data_centers_service().service(datacenterId)
             d: typing.Any = datacenter_service.get()  # type: ignore
 
             storage = []
@@ -496,9 +490,7 @@ class Client:
             tvm = ovirt.types.Vm(id=vm.id)
             tcluster = ovirt.types.Cluster(id=cluster.id)
 
-            template = ovirt.types.Template(
-                name=name, vm=tvm, cluster=tcluster, description=comments
-            )
+            template = ovirt.types.Template(name=name, vm=tvm, cluster=tcluster, description=comments)
 
             # display=display)
 
@@ -591,9 +583,7 @@ class Client:
             else:
                 usb = ovirt.types.Usb(enabled=False)
 
-            memoryPolicy = ovirt.types.MemoryPolicy(
-                guaranteed=guaranteed_mb * 1024 * 1024
-            )
+            memoryPolicy = ovirt.types.MemoryPolicy(guaranteed=guaranteed_mb * 1024 * 1024)
             par = ovirt.types.Vm(
                 name=name,
                 cluster=cluster,
@@ -676,9 +666,7 @@ class Client:
 
             api = self._api()
 
-            vmService: typing.Any = (
-                api.system_service().vms_service().service(machineId)
-            )
+            vmService: typing.Any = api.system_service().vms_service().service(machineId)
 
             if vmService.get() is None:
                 raise Exception('Machine not found')
@@ -702,9 +690,7 @@ class Client:
 
             api = self._api()
 
-            vmService: typing.Any = (
-                api.system_service().vms_service().service(machineId)
-            )
+            vmService: typing.Any = api.system_service().vms_service().service(machineId)
 
             if vmService.get() is None:
                 raise Exception('Machine not found')
@@ -728,9 +714,7 @@ class Client:
 
             api = self._api()
 
-            vmService: typing.Any = (
-                api.system_service().vms_service().service(machineId)
-            )
+            vmService: typing.Any = api.system_service().vms_service().service(machineId)
 
             if vmService.get() is None:
                 raise Exception('Machine not found')
@@ -754,9 +738,7 @@ class Client:
 
             api = self._api()
 
-            vmService: typing.Any = (
-                api.system_service().vms_service().service(machineId)
-            )
+            vmService: typing.Any = api.system_service().vms_service().service(machineId)
 
             if vmService.get() is None:
                 raise Exception('Machine not found')
@@ -775,16 +757,12 @@ class Client:
 
             api = self._api()
 
-            vmService: typing.Any = (
-                api.system_service().vms_service().service(machineId)
-            )
+            vmService: typing.Any = api.system_service().vms_service().service(machineId)
 
             if vmService.get() is None:
                 raise Exception('Machine not found')
 
-            nic = vmService.nics_service().list()[
-                0
-            ]  # If has no nic, will raise an exception (IndexError)
+            nic = vmService.nics_service().list()[0]  # If has no nic, will raise an exception (IndexError)
             nic.mac.address = macAddres
             nicService = vmService.nics_service().service(nic.id)
             nicService.update(nic)
@@ -808,9 +786,7 @@ class Client:
             finally:
                 lock.release()
 
-    def get_console_connection(
-        self, machineId: str
-    ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
+    def get_console_connection(self, machine_id: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
         """
         Gets the connetion info for the specified machine
         """
@@ -818,9 +794,7 @@ class Client:
             lock.acquire(True)
             api = self._api()
 
-            vmService: typing.Any = (
-                api.system_service().vms_service().service(machineId)
-            )
+            vmService: typing.Any = api.system_service().vms_service().service(machine_id)
             vm = vmService.get()
 
             if vm is None:
@@ -834,9 +808,7 @@ class Client:
             if display.certificate is not None:
                 cert_subject = display.certificate.subject
             else:
-                for i in typing.cast(
-                    collections.abc.Iterable, api.system_service().hosts_service().list()
-                ):
+                for i in typing.cast(collections.abc.Iterable, api.system_service().hosts_service().list()):
                     for k in typing.cast(
                         collections.abc.Iterable,
                         api.system_service()
@@ -852,15 +824,14 @@ class Client:
                     if cert_subject != '':
                         break
 
-            return {
-                'type': display.type.value,
-                'address': display.address,
-                'port': display.port,
-                'secure_port': display.secure_port,
-                'monitors': display.monitors,
-                'cert_subject': cert_subject,
-                'ticket': {'value': ticket.value, 'expiry': ticket.expiry},
-            }
+            return types.services.ConsoleConnectionInfo(
+                type=display.type.value,
+                address=display.address,
+                port=display.port,
+                secure_port=display.secure_port,
+                cert_subject=cert_subject,
+                ticket=types.services.ConsoleConnectionTicket(value=ticket.value),
+            )
 
         except Exception:
             return None

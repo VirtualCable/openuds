@@ -39,7 +39,7 @@ import urllib.parse
 
 import requests
 
-from uds.core import consts
+from uds.core import consts, types as core_types
 from uds.core.util import security
 from uds.core.util.decorators import cached, ensure_connected
 
@@ -256,8 +256,8 @@ class ProxmoxClient:
 
     @ensure_connected
     @cached('cluster', CACHE_DURATION, key_fnc=caching_key_helper)
-    def get_cluster_info(self, **kwargs) -> types.ClusterStatus:
-        return types.ClusterStatus.from_dict(self._get('cluster/status'))
+    def get_cluster_info(self, **kwargs) -> types.ClusterInfo:
+        return types.ClusterInfo.from_dict(self._get('cluster/status'))
 
     @ensure_connected
     def get_next_vmid(self) -> int:
@@ -273,31 +273,21 @@ class ProxmoxClient:
 
     @ensure_connected
     @cached('nodeNets', CACHE_DURATION, args=1, kwargs=['node'], key_fnc=caching_key_helper)
-    def get_node_netoworks(self, node: str, **kwargs):
+    def get_node_networks(self, node: str, **kwargs) -> typing.Any:
         return self._get('nodes/{}/network'.format(node))['data']
 
     # pylint: disable=unused-argument
     @ensure_connected
-    @cached(
-        'nodeGpuDevices',
-        CACHE_DURATION_LONG,
-        key_fnc=caching_key_helper
-    )
+    @cached('nodeGpuDevices', CACHE_DURATION_LONG, key_fnc=caching_key_helper)
     def list_node_gpu_devices(self, node: str, **kwargs) -> list[str]:
         return [
             device['id'] for device in self._get(f'nodes/{node}/hardware/pci')['data'] if device.get('mdev')
         ]
 
     @ensure_connected
-    def list_node_vgpus(self, node: str, **kwargs) -> list[typing.Any]:
+    def list_node_vgpus(self, node: str, **kwargs) -> list[types.VGPUInfo]:
         return [
-            {
-                'name': gpu['name'],
-                'description': gpu['description'],
-                'device': device,
-                'available': gpu['available'],
-                'type': gpu['type'],
-            }
+            types.VGPUInfo.from_dict(gpu)
             for device in self.list_node_gpu_devices(node)
             for gpu in self._get(f'nodes/{node}/hardware/pci/{device}/mdev')['data']
         ]
@@ -305,7 +295,7 @@ class ProxmoxClient:
     @ensure_connected
     def node_has_vgpus_available(self, node: str, vgpu_type: typing.Optional[str], **kwargs) -> bool:
         return any(
-            gpu['available'] and vgpu_type and gpu['type'] == vgpu_type for gpu in self.list_node_vgpus(node)
+            gpu.available and (vgpu_type is None or gpu.type == vgpu_type) for gpu in self.list_node_vgpus(node)
         )
 
     @ensure_connected
@@ -591,11 +581,7 @@ class ProxmoxClient:
         return self.get_machine_info(vmid, node, **kwargs)
 
     @ensure_connected
-    @cached(
-        'vmin',
-        CACHE_INFO_DURATION,
-        key_fnc=caching_key_helper
-    )
+    @cached('vmin', CACHE_INFO_DURATION, key_fnc=caching_key_helper)
     def get_machine_info(self, vmid: int, node: typing.Optional[str] = None, **kwargs) -> types.VMInfo:
         nodes = [types.Node(node, False, False, 0, '', '', '')] if node else self.get_cluster_info().nodes
         any_node_is_down = False
@@ -617,7 +603,7 @@ class ProxmoxClient:
         raise ProxmoxNotFound()
 
     @ensure_connected
-    def get_machine_configuration(self, vmid: int, node: typing.Optional[str] = None, **kwargs):
+    def get_machine_configuration(self, vmid: int, node: typing.Optional[str] = None, **kwargs) -> types.VMConfiguration:
         node = node or self.get_machine_info(vmid).node
         return types.VMConfiguration.from_dict(self._get('nodes/{}/qemu/{}/config'.format(node, vmid))['data'])
 
@@ -686,7 +672,7 @@ class ProxmoxClient:
         self.get_machine_info(vmid, force=True)
 
     # proxmox has a "resume", but start works for suspended vm so we use it
-    resumeVm = start_machine
+    resume_machine = start_machine
 
     @ensure_connected
     @cached('storage', CACHE_DURATION, key_fnc=caching_key_helper)
@@ -753,26 +739,24 @@ class ProxmoxClient:
     @ensure_connected
     def get_console_connection(
         self, vmId: int, node: typing.Optional[str] = None
-    ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
+    ) -> typing.Optional[core_types.services.ConsoleConnectionInfo]:
         """
         Gets the connetion info for the specified machine
         """
         node = node or self.get_machine_info(vmId).node
-        res = self._post(f'nodes/{node}/qemu/{vmId}/spiceproxy')['data']
-
-        return {
-            'type': res['type'],
-            'proxy': res['proxy'],
-            'address': res['host'],
-            'port': res.get('port', None),
-            'secure_port': res['tls-port'],
-            'cert_subject': res['host-subject'],
-            'ticket': {
-                'value': res['password'],
-                'expiry': '',
-            },
-            'ca': res.get('ca', None),
-        }
+        res: dict = self._post(f'nodes/{node}/qemu/{vmId}/spiceproxy')['data']
+        return core_types.services.ConsoleConnectionInfo(
+            type=res['type'],
+            proxy=res['proxy'],
+            address=res['host'],
+            port=res.get('port', None),
+            secure_port=res['tls-port'],
+            cert_subject=res['host-subject'],
+            ticket=core_types.services.ConsoleConnectionTicket(
+                value=res['password']
+            ),
+            ca=res.get('ca', None),
+        )
         # Sample data:
         # 'data': {'proxy': 'http://pvealone.dkmon.com:3128',
         # 'release-cursor': 'Ctrl+Alt+R',

@@ -36,7 +36,7 @@ import logging
 import typing
 import collections.abc
 
-from uds.core import services, consts
+from uds.core import services, consts, types
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.types.states import State
 from uds.core.util import log, autoserializable
@@ -213,7 +213,7 @@ class ProxmoxDeployment(services.UserService, autoserializable.AutoSerializable)
 
     def get_console_connection(
         self,
-    ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
+    ) -> typing.Optional[types.services.ConsoleConnectionInfo]:
         return self.service().get_console_connection(self._vmid)
 
     def desktop_login(

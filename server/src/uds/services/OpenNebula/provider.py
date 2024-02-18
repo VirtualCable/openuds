@@ -31,6 +31,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import collections.abc
+import dis
 import logging
 import typing
 
@@ -78,9 +79,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
     # but used for sample purposes
     # If we don't indicate an order, the output order of fields will be
     # "random"
-    host = gui.TextField(
-        length=64, label=_('Host'), order=1, tooltip=_('OpenNebula Host'), required=True
-    )
+    host = gui.TextField(length=64, label=_('Host'), order=1, tooltip=_('OpenNebula Host'), required=True)
     port = gui.NumericField(
         length=5,
         label=_('Port'),
@@ -132,16 +131,12 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
 
     @property
     def endpoint(self) -> str:
-        return 'http{}://{}:{}/RPC2'.format(
-            's' if self.ssl.as_bool() else '', self.host.value, self.port.value
-        )
+        return 'http{}://{}:{}/RPC2'.format('s' if self.ssl.as_bool() else '', self.host.value, self.port.value)
 
     @property
     def api(self) -> on.client.OpenNebulaClient:
         if self._api is None:
-            self._api = on.client.OpenNebulaClient(
-                self.username.value, self.password.value, self.endpoint
-            )
+            self._api = on.client.OpenNebulaClient(self.username.value, self.password.value, self.endpoint)
 
         return self._api
 
@@ -171,14 +166,10 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
 
         return [True, _('Opennebula test connection passed')]
 
-    def getDatastores(
-        self, datastoreType: int = 0
-    ) -> collections.abc.Iterable[on.types.StorageType]:
+    def getDatastores(self, datastoreType: int = 0) -> collections.abc.Iterable[on.types.StorageType]:
         yield from on.storage.enumerateDatastores(self.api, datastoreType)
 
-    def getTemplates(
-        self, force: bool = False
-    ) -> collections.abc.Iterable[on.types.TemplateType]:
+    def getTemplates(self, force: bool = False) -> collections.abc.Iterable[on.types.TemplateType]:
         yield from on.template.getTemplates(self.api, force)
 
     def make_template(self, fromTemplateId: str, name, toDataStore: str) -> str:
@@ -204,13 +195,13 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
         Returns:
             one of the on.VmState Values
         '''
-        return on.vm.getMachineState(self.api, machineId)
+        return on.vm.get_machine_state(self.api, machineId)
 
     def getMachineSubstate(self, machineId: str) -> int:
         '''
         Returns the  LCM_STATE of a machine (STATE must be ready or this will return -1)
         '''
-        return on.vm.getMachineSubstate(self.api, machineId)
+        return on.vm.get_machine_substate(self.api, machineId)
 
     def startMachine(self, machineId: str) -> None:
         '''
@@ -223,7 +214,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
 
         Returns:
         '''
-        on.vm.startMachine(self.api, machineId)
+        on.vm.start_machine(self.api, machineId)
 
     def stopMachine(self, machineId: str) -> None:
         '''
@@ -234,7 +225,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
 
         Returns:
         '''
-        on.vm.stopMachine(self.api, machineId)
+        on.vm.stop_machine(self.api, machineId)
 
     def suspendMachine(self, machineId: str) -> None:
         '''
@@ -245,7 +236,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
 
         Returns:
         '''
-        on.vm.suspendMachine(self.api, machineId)
+        on.vm.suspend_machine(self.api, machineId)
 
     def shutdownMachine(self, machineId: str) -> None:
         '''
@@ -256,13 +247,13 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
 
         Returns:
         '''
-        on.vm.shutdownMachine(self.api, machineId)
+        on.vm.shutdown_machine(self.api, machineId)
 
     def resetMachine(self, machineId: str) -> None:
         '''
         Resets a machine (hard-reboot)
         '''
-        on.vm.resetMachine(self.api, machineId)
+        on.vm.reset_machine(self.api, machineId)
 
     def removeMachine(self, machineId: str) -> None:
         '''
@@ -273,31 +264,21 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
 
         Returns:
         '''
-        on.vm.removeMachine(self.api, machineId)
+        on.vm.remove_machine(self.api, machineId)
 
-    def getNetInfo(
-        self, machineId: str, networkId: typing.Optional[str] = None
-    ) -> tuple[str, str]:
+    def getNetInfo(self, machineId: str, networkId: typing.Optional[str] = None) -> tuple[str, str]:
         '''
         Changes the mac address of first nic of the machine to the one specified
         '''
-        return on.vm.getNetInfo(self.api, machineId, networkId)
+        return on.vm.get_network_info(self.api, machineId, networkId)
 
-    def getConsoleConnection(self, machineId: str) -> dict[str, typing.Any]:
-        display = on.vm.getDisplayConnection(self.api, machineId)
+    def get_console_connection(self, machine_id: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
+        console_connection_info = on.vm.get_console_connection(self.api, machine_id)
 
-        if display is None:
+        if console_connection_info is None:
             raise Exception('Invalid console connection on OpenNebula!!!')
-
-        return {
-            'type': display['type'],
-            'address': display['host'],
-            'port': display['port'],
-            'secure_port': -1,
-            'monitors': 1,
-            'cert_subject': '',
-            'ticket': {'value': display['passwd'], 'expiry': ''},
-        }
+        
+        return console_connection_info
 
     def desktop_login(self, machineId: str, username: str, password: str, domain: str) -> dict[str, typing.Any]:
         '''

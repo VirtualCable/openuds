@@ -36,7 +36,7 @@ import logging
 import pickle  # nosec: not insecure, we are loading our own data
 import typing
 
-from uds.core import consts, services
+from uds.core import consts, services, types
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.types.states import State
 from uds.core.util import autoserializable, log
@@ -227,8 +227,8 @@ class OVirtLinkedDeployment(services.UserService, autoserializable.AutoSerializa
 
     def get_console_connection(
         self,
-    ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
-        return self.service().getConsoleConnection(self._vmid)
+    ) -> typing.Optional[types.services.ConsoleConnectionInfo]:
+        return self.service().get_console_connection(self._vmid)
 
     def desktop_login(
         self,

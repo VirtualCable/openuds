@@ -55,6 +55,7 @@ class SPICETransport(BaseSpiceTransport):
     Provides access via SPICE to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
+
     is_base = False
 
     type_name = _('SPICE')
@@ -83,29 +84,31 @@ class SPICETransport(BaseSpiceTransport):
         request: 'ExtendedHttpRequestWithUser',
     ) -> 'types.transports.TransportScript':
         try:
-            userServiceInstance = userService.get_instance()
-            con: typing.Optional[collections.abc.MutableMapping[str, typing.Any]] = userServiceInstance.get_console_connection()
+            userservice_instance = userService.get_instance()
+            con: typing.Optional[types.services.ConsoleConnectionInfo] = (
+                userservice_instance.get_console_connection()
+            )
         except Exception:
             logger.exception('Error getting console connection data')
             raise
-        
+
         logger.debug('Connection data: %s', con)
         if not con:
             raise exceptions.service.TransportError('No console connection data')
 
-        port: str = con['port'] or '-1'
-        secure_port: str = con['secure_port'] or '-1'
+        port: str = str(con.port) or '-1'
+        secure_port: str = str(con.secure_port) or '-1'
 
         r = RemoteViewerFile(
-            con['address'],
+            con.address,
             port,
             secure_port,
-            con['ticket']['value'],
-            con.get('ca', self.server_certificate.value.strip()),
-            con['cert_subject'],
+            con.ticket.value,
+            con.ca or self.server_certificate.value.strip(),
+            con.cert_subject,
             fullscreen=self.fullscreen.as_bool(),
         )
-        r.proxy = self.overrided_proxy.value.strip() or con.get('proxy', None)
+        r.proxy = self.overrided_proxy.value.strip() or con.proxy or ''
 
         r.usb_auto_share = self.allow_usb_redirection.as_bool()
         r.new_usb_auto_share = self.allow_usb_redirection_new_plugs.as_bool()
@@ -122,7 +125,4 @@ class SPICETransport(BaseSpiceTransport):
         try:
             return self.get_script(os.os.os_name(), 'direct', sp)
         except Exception:
-            return super().get_transport_script(
-                userService, transport, ip, os, user, password, request
-            )
-
+            return super().get_transport_script(userService, transport, ip, os, user, password, request)

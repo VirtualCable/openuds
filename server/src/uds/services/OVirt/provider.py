@@ -484,10 +484,10 @@ class OVirtProvider(
     def getMacRange(self) -> str:
         return self.macsRange.value
 
-    def getConsoleConnection(
-        self, machineId: str
-    ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
-        return self.__getApi().get_console_connection(machineId)
+    def get_console_connection(
+        self, machine_id: str
+    ) -> typing.Optional[types.services.ConsoleConnectionInfo]:
+        return self.__getApi().get_console_connection(machine_id)
 
     @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def is_available(self) -> bool:

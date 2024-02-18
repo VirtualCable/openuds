@@ -142,13 +142,13 @@ class BaseSpiceTransport(transports.Transport):
         old_field_name='overridedProxy',
     )
 
-    def is_ip_allowed(self, userService: 'models.UserService', ip: str) -> bool:
+    def is_ip_allowed(self, userservice: 'models.UserService', ip: str) -> bool:
         """
         Checks if the transport is available for the requested destination ip
         """
         ready = self.cache.get(ip)
         if ready is None:
-            userServiceInstance = userService.get_instance()
+            userServiceInstance = userservice.get_instance()
             con = userServiceInstance.get_console_connection()
 
             logger.debug('Connection data: %s', con)
@@ -156,36 +156,34 @@ class BaseSpiceTransport(transports.Transport):
             if con is None:
                 return False
 
-            if 'proxy' in con:  # If we have a proxy, we can't check if it is available, return True
+            if con.proxy is not None:
                 return True
 
-            port, secure_port = con['port'] or -1, con['secure_port'] or -1
-
             # test ANY of the ports
-            port_to_test = port if port != -1 else secure_port
+            port_to_test = con.port if con.port != -1 else con.secure_port
             if port_to_test == -1:
                 self.cache.put(
-                    'cachedMsg', 'Could not find the PORT for connection', 120
+                    'cached_message', 'Could not find the PORT for connection', 120
                 )  # Write a message, that will be used from getCustom
                 logger.info('SPICE didn\'t find has any port: %s', con)
                 return False
 
             self.cache.put(
-                'cachedMsg',
+                'cached_message',
                 'Could not reach server "{}" on port "{}" from broker (prob. causes are name resolution & firewall rules)'.format(
-                    con['address'], port_to_test
+                    con.address, port_to_test
                 ),
                 120,
             )
 
-            if self.test_connectivity(userService, con['address'], port_to_test) is True:
+            if self.test_connectivity(userservice, con.address, port_to_test) is True:
                 self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
                 ready = 'Y'
 
         return ready == 'Y'
 
     def get_available_error_msg(self, userService: 'models.UserService', ip: str) -> str:
-        msg = self.cache.get('cachedMsg')
+        msg = self.cache.get('cached_message')
         if msg is None:
             return transports.Transport.get_available_error_msg(self, userService, ip)
         return msg

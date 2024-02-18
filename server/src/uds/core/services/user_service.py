@@ -32,6 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 import collections.abc
+from uds.core import types
 
 from uds.core.environment import Environmentable
 from uds.core.serializable import Serializable
@@ -599,9 +600,7 @@ class UserService(Environmentable, Serializable):
         """
         return None
 
-    def get_console_connection(
-        self,
-    ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
+    def get_console_connection(self) -> typing.Optional[types.services.ConsoleConnectionInfo]:
         """
         This method is invoked by any connection that needs special connection data
         to connenct to it using, for example, SPICE protocol. (that currently is the only one)

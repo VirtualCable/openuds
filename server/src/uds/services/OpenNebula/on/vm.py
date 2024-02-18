@@ -36,6 +36,8 @@ import collections.abc
 
 from defusedxml import minidom
 
+from uds.core import types as core_types
+
 from . import types
 
 # Not imported at runtime, just for type checking
@@ -45,7 +47,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def getMachineState(api: 'client.OpenNebulaClient', machineId: str) -> types.VmState:
+def get_machine_state(api: 'client.OpenNebulaClient', machine_id: str) -> types.VmState:
     '''
     Returns the state of the machine
     This method do not uses cache at all (it always tries to get machine state from OpenNebula server)
@@ -57,30 +59,26 @@ def getMachineState(api: 'client.OpenNebulaClient', machineId: str) -> types.VmS
         one of the on.VmState Values
     '''
     try:
-        return api.getVMState(machineId)
+        return api.get_machine_state(machine_id)
     except Exception as e:
-        logger.error(
-            'Error obtaining machine state for %s on OpenNebula: %s', machineId, e
-        )
+        logger.error('Error obtaining machine state for %s on OpenNebula: %s', machine_id, e)
 
     return types.VmState.UNKNOWN
 
 
-def getMachineSubstate(api: 'client.OpenNebulaClient', machineId: str) -> int:
+def get_machine_substate(api: 'client.OpenNebulaClient', machineId: str) -> int:
     '''
     Returns the lcm_state
     '''
     try:
-        return api.getVMSubstate(machineId)
+        return api.get_machine_substate(machineId)
     except Exception as e:
-        logger.error(
-            'Error obtaining machine substate for %s on OpenNebula: %s', machineId, e
-        )
+        logger.error('Error obtaining machine substate for %s on OpenNebula: %s', machineId, e)
 
     return types.VmState.UNKNOWN.value
 
 
-def startMachine(api: 'client.OpenNebulaClient', machineId: str) -> None:
+def start_machine(api: 'client.OpenNebulaClient', machine_id: str) -> None:
     '''
     Tries to start a machine. No check is done, it is simply requested to OpenNebula.
 
@@ -92,13 +90,13 @@ def startMachine(api: 'client.OpenNebulaClient', machineId: str) -> None:
     Returns:
     '''
     try:
-        api.VMAction(machineId, 'resume')
+        api.set_machine_state(machine_id, 'resume')
     except Exception:
         # MAybe the machine is already running. If we get error here, simply ignore it for now...
         pass
 
 
-def stopMachine(api: 'client.OpenNebulaClient', machineId: str) -> None:
+def stop_machine(api: 'client.OpenNebulaClient', machine_id: str) -> None:
     '''
     Tries to start a machine. No check is done, it is simply requested to OpenNebula
 
@@ -108,12 +106,12 @@ def stopMachine(api: 'client.OpenNebulaClient', machineId: str) -> None:
     Returns:
     '''
     try:
-        api.VMAction(machineId, 'poweroff-hard')
+        api.set_machine_state(machine_id, 'poweroff-hard')
     except Exception as e:
-        logger.error('Error powering off %s on OpenNebula: %s', machineId, e)
+        logger.error('Error powering off %s on OpenNebula: %s', machine_id, e)
 
 
-def suspendMachine(api: 'client.OpenNebulaClient', machineId: str) -> None:
+def suspend_machine(api: 'client.OpenNebulaClient', machine_id: str) -> None:
     '''
     Tries to suspend a machine. No check is done, it is simply requested to OpenNebula
 
@@ -123,12 +121,12 @@ def suspendMachine(api: 'client.OpenNebulaClient', machineId: str) -> None:
     Returns:
     '''
     try:
-        api.VMAction(machineId, 'suspend')
+        api.set_machine_state(machine_id, 'suspend')
     except Exception as e:
-        logger.error('Error suspending %s on OpenNebula: %s', machineId, e)
+        logger.error('Error suspending %s on OpenNebula: %s', machine_id, e)
 
 
-def shutdownMachine(api: 'client.OpenNebulaClient', machineId: str) -> None:
+def shutdown_machine(api: 'client.OpenNebulaClient', machine_id: str) -> None:
     '''
     Tries to "gracefully" shutdown a machine. No check is done, it is simply requested to OpenNebula
 
@@ -138,12 +136,12 @@ def shutdownMachine(api: 'client.OpenNebulaClient', machineId: str) -> None:
     Returns:
     '''
     try:
-        api.VMAction(machineId, 'poweroff')
+        api.set_machine_state(machine_id, 'poweroff')
     except Exception as e:
-        logger.error('Error shutting down %s on OpenNebula: %s', machineId, e)
+        logger.error('Error shutting down %s on OpenNebula: %s', machine_id, e)
 
 
-def resetMachine(api: 'client.OpenNebulaClient', machineId: str) -> None:
+def reset_machine(api: 'client.OpenNebulaClient', machineId: str) -> None:
     '''
     Tries to suspend a machine. No check is done, it is simply requested to OpenNebula
 
@@ -153,12 +151,12 @@ def resetMachine(api: 'client.OpenNebulaClient', machineId: str) -> None:
     Returns:
     '''
     try:
-        api.VMAction(machineId, 'reboot-hard')
+        api.set_machine_state(machineId, 'reboot-hard')
     except Exception as e:
         logger.error('Error reseting %s on OpenNebula: %s', machineId, e)
 
 
-def removeMachine(api: 'client.OpenNebulaClient', machineId: str) -> None:
+def remove_machine(api: 'client.OpenNebulaClient', machineId: str) -> None:
     '''
     Tries to delete a machine. No check is done, it is simply requested to OpenNebula
 
@@ -170,14 +168,14 @@ def removeMachine(api: 'client.OpenNebulaClient', machineId: str) -> None:
     try:
         # vm = oca.VirtualMachine.new_with_id(api, int(machineId))
         # vm.delete()
-        api.deleteVM(machineId)
+        api.remove_machine(machineId)
     except Exception as e:
         err = 'Error removing machine {} on OpenNebula: {}'.format(machineId, e)
         logger.exception(err)
         raise Exception(err)
 
 
-def enumerateMachines(
+def enumerate_machines(
     api: 'client.OpenNebulaClient',
 ) -> collections.abc.Iterable[types.VirtualMachineType]:
     '''
@@ -197,7 +195,7 @@ def enumerateMachines(
     yield from api.enumVMs()
 
 
-def getNetInfo(
+def get_network_info(
     api: 'client.OpenNebulaClient',
     machineId: str,
     networkId: typing.Optional[str] = None,
@@ -216,9 +214,7 @@ def getNetInfo(
                 node = nic
                 break
     except Exception:
-        raise Exception(
-            'No network interface found on template. Please, add a network and republish.'
-        )
+        raise Exception('No network interface found on template. Please, add a network and republish.')
 
     logger.debug(node.toxml())
 
@@ -231,14 +227,12 @@ def getNetInfo(
 
         return (node.getElementsByTagName('MAC')[0].childNodes[0].data, ip)
     except Exception:
-        raise Exception(
-            'No network interface found on template. Please, add a network and republish.'
-        )
+        raise Exception('No network interface found on template. Please, add a network and republish.')
 
 
-def getDisplayConnection(
+def get_console_connection(
     api: 'client.OpenNebulaClient', machineId: str
-) -> typing.Optional[dict[str, typing.Any]]:
+) -> typing.Optional[core_types.services.ConsoleConnectionInfo]:
     '''
     If machine is not running or there is not a display, will return NONE
     SPICE connections should check that 'type' is 'SPICE'
@@ -255,13 +249,16 @@ def getDisplayConnection(
             passwd = ''
 
         lastChild: typing.Any = md.getElementsByTagName('HISTORY_RECORDS')[0].lastChild
-        host = (
-            lastChild.getElementsByTagName('HOSTNAME')[0]
-            .childNodes[0]
-            .data
-            if lastChild else ''
+        address = lastChild.getElementsByTagName('HOSTNAME')[0].childNodes[0].data if lastChild else ''
+
+        return core_types.services.ConsoleConnectionInfo(
+            type=type_,
+            address=address,
+            port=int(port),
+            secure_port=-1,
+            cert_subject='',
+            ticket=core_types.services.ConsoleConnectionTicket(value=passwd),
         )
-        return {'type': type_, 'host': host, 'port': int(port), 'passwd': passwd}
 
     except Exception:
         return None  # No SPICE connection

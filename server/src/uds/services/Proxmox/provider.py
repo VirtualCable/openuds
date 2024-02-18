@@ -247,10 +247,10 @@ class ProxmoxProvider(services.ServiceProvider):
 
     def get_console_connection(
         self,
-        vmid: str,
+        machine_id: str,
         node: typing.Optional[str] = None,
-    ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
-        return self._api().get_console_connection(int(vmid), node)
+    ) -> typing.Optional[types.services.ConsoleConnectionInfo]:
+        return self._api().get_console_connection(int(machine_id), node)
 
     def get_new_vmid(self) -> int:
         while True:  # look for an unused VmId

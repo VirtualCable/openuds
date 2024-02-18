@@ -309,8 +309,8 @@ class OpenNebulaLiveService(services.Service):
         """
         return self.lenName.as_int()
 
-    def getConsoleConnection(self, machineId: str) -> dict[str, typing.Any]:
-        return self.provider().getConsoleConnection(machineId)
+    def get_console_connection(self, machineId: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
+        return self.provider().get_console_connection(machineId)
 
     def desktop_login(
         self, machineId: str, username: str, password: str, domain: str
