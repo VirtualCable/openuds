@@ -48,8 +48,8 @@ if typing.TYPE_CHECKING:
 
 
 class IPServiceBase(services.Service):
-    def parent(self) -> 'provider.PhysicalMachinesProvider':
-        return typing.cast('provider.PhysicalMachinesProvider', super().parent())
+    def provider(self) -> 'provider.PhysicalMachinesProvider':
+        return typing.cast('provider.PhysicalMachinesProvider', super().provider())
 
     def get_unassigned_host(self) -> typing.Optional['HostInfo']:
         raise NotImplementedError('getUnassignedMachine')
@@ -59,7 +59,7 @@ class IPServiceBase(services.Service):
 
     def wakeup(self, host: 'HostInfo', verify_ssl: bool = False) -> None:
         if host.mac:
-            wake_on_land_endpoint = self.parent().wake_on_lan_endpoint(host)
+            wake_on_land_endpoint = self.provider().wake_on_lan_endpoint(host)
             if wake_on_land_endpoint:
                 logger.info('Launching WOL: %s', wake_on_land_endpoint)
                 try:

@@ -176,28 +176,28 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         # Here we have to use "default values", cause values aren't used at form initialization
         # This is that value is always '', so if we want to change something, we have to do it
         # at defValue
-        self.prov_uuid.value = self.parent().db_obj().uuid
+        self.prov_uuid.value = self.provider().db_obj().uuid
 
         # This is not the same case, values is not the "value" of the field, but
         # the list of values shown because this is a "ChoiceField"
         self.machine.set_choices(
             [
                 gui.choice_item(str(m.vmid), f'{m.node}\\{m.name or m.vmid} ({m.vmid})')
-                for m in self.parent().list_machines()
+                for m in self.provider().list_machines()
                 if m.name and m.name[:3] != 'UDS'
             ]
         )
         self.pool.set_choices(
             [gui.choice_item('', _('None'))]
-            + [gui.choice_item(p.poolid, p.poolid) for p in self.parent().list_pools()]
+            + [gui.choice_item(p.poolid, p.poolid) for p in self.provider().list_pools()]
         )
         self.ha.set_choices(
             [gui.choice_item('', _('Enabled')), gui.choice_item('__', _('Disabled'))]
-            + [gui.choice_item(group, group) for group in self.parent().list_ha_groups()]
+            + [gui.choice_item(group, group) for group in self.provider().list_ha_groups()]
         )
 
-    def parent(self) -> 'ProxmoxProvider':
-        return typing.cast('ProxmoxProvider', super().parent())
+    def provider(self) -> 'ProxmoxProvider':
+        return typing.cast('ProxmoxProvider', super().provider())
 
     def sanitized_name(self, name: str) -> str:
         """
@@ -206,13 +206,13 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         return re.sub("[^a-zA-Z0-9_-]", "-", name)
 
     def make_template(self, vmId: int) -> None:
-        self.parent().create_template(vmId)
+        self.provider().create_template(vmId)
 
     def clone_machine(self, name: str, description: str, vmId: int = -1) -> 'client.types.VmCreationResult':
         name = self.sanitized_name(name)
         pool = self.pool.value or None
         if vmId == -1:  # vmId == -1 if cloning for template
-            return self.parent().clone_machine(
+            return self.provider().clone_machine(
                 self.machine.value,
                 name,
                 description,
@@ -221,7 +221,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
                 target_pool=pool,
             )
 
-        return self.parent().clone_machine(
+        return self.provider().clone_machine(
             vmId,
             name,
             description,
@@ -232,29 +232,29 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         )
 
     def get_machine_info(self, vmId: int) -> 'client.types.VMInfo':
-        return self.parent().get_machine_info(vmId, self.pool.value.strip())
+        return self.provider().get_machine_info(vmId, self.pool.value.strip())
 
     def get_nic_mac(self, vmid: int) -> str:
-        config = self.parent().get_machine_configuration(vmid)
+        config = self.provider().get_machine_configuration(vmid)
         return config.networks[0].mac.lower()
 
     def get_task_info(self, node: str, upid: str) -> 'client.types.TaskStatus':
-        return self.parent().get_task_info(node, upid)
+        return self.provider().get_task_info(node, upid)
 
     def start_machine(self, vmId: int) -> 'client.types.UPID':
-        return self.parent().start_machine(vmId)
+        return self.provider().start_machine(vmId)
 
     def stop_machine(self, vmId: int) -> 'client.types.UPID':
-        return self.parent().stop_machine(vmId)
+        return self.provider().stop_machine(vmId)
 
     def reset_machine(self, vmId: int) -> 'client.types.UPID':
-        return self.parent().reset_machine(vmId)
+        return self.provider().reset_machine(vmId)
 
     def suspend_machine(self, vmId: int) -> 'client.types.UPID':
-        return self.parent().suspend_machine(vmId)
+        return self.provider().suspend_machine(vmId)
 
     def shutdown_machine(self, vmId: int) -> 'client.types.UPID':
-        return self.parent().shutdown_machine(vmId)
+        return self.provider().shutdown_machine(vmId)
 
     def remove_machine(self, vmId: int) -> 'client.types.UPID':
         # First, remove from HA if needed
@@ -265,23 +265,23 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
             self.do_log(level=log.LogLevel.WARNING, message=f'Exception disabling HA for vm {vmId}: {e}')
 
         # And remove it
-        return self.parent().remove_machine(vmId)
+        return self.provider().remove_machine(vmId)
 
     def enable_ha(self, vmId: int, started: bool = False) -> None:
         if self.ha.value == '__':
             return
-        self.parent().enable_ha(vmId, started, self.ha.value or None)
+        self.provider().enable_ha(vmId, started, self.ha.value or None)
 
     def disable_ha(self, vmId: int) -> None:
         if self.ha.value == '__':
             return
-        self.parent().disable_ha(vmId)
+        self.provider().disable_ha(vmId)
 
     def set_protection(self, vmId: int, node: typing.Optional[str] = None, protection: bool = False) -> None:
-        self.parent().set_protection(vmId, node, protection)
+        self.provider().set_protection(vmId, node, protection)
 
     def set_machine_mac(self, vmId: int, mac: str) -> None:
-        self.parent().set_machine_mac(vmId, mac)
+        self.provider().set_machine_mac(vmId, mac)
 
     def get_basename(self) -> str:
         return self.basename.value
@@ -293,7 +293,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         """
         Returns de selected mac range
         """
-        return self.parent().get_macs_range()
+        return self.provider().get_macs_range()
 
     def enable_ha_for_machines(self) -> bool:
         return self.ha.value != '__'
@@ -304,8 +304,8 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
     def get_console_connection(
         self, machineId: str
     ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
-        return self.parent().get_console_connection(machineId)
+        return self.provider().get_console_connection(machineId)
 
     @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def is_avaliable(self) -> bool:
-        return self.parent().is_available()
+        return self.provider().is_available()

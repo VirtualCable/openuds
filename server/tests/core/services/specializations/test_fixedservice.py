@@ -167,7 +167,7 @@ class FixedServiceTest(UDSTestCase):
     ) -> tuple['FixedTestingProvider', 'FixedTestingService', 'FixedTestingUserService']:
         environment = self.create_environment()
         prov = FixedTestingProvider(environment=environment)
-        service = FixedTestingService(environment=environment, parent=prov)
+        service = FixedTestingService(environment=environment, provider=prov)
         user_service = FixedTestingUserService(environment=environment, service=service)
 
         return prov, service, user_service

@@ -212,7 +212,7 @@ class Service(Module):
     def __init__(
         self,
         environment: 'environment.Environment',
-        parent: 'services.ServiceProvider',
+        provider: 'services.ServiceProvider',
         values: Module.ValuesType = None,
         uuid: typing.Optional[str] = None,
     ):
@@ -222,7 +222,7 @@ class Service(Module):
         cache and storage are "convenient" methods to access _env.cache and _env.storage
         """
         Module.__init__(self, environment, values, uuid)
-        self._provider = parent
+        self._provider = provider
         self.initialize(values)
 
     def initialize(self, values: Module.ValuesType) -> None:
@@ -251,7 +251,7 @@ class Service(Module):
             self._db_obj = Service.objects.get(uuid=self.get_uuid())
         return self._db_obj
 
-    def parent(self) -> 'services.ServiceProvider':
+    def provider(self) -> 'services.ServiceProvider':
         """
         Utility method to access parent provider for this service
 

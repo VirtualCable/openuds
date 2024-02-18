@@ -129,7 +129,7 @@ class PhysicalMachinesMultiSerializationTest(UDSTestCase):
             )
 
             instance = service_multi.IPMachinesService(
-                environment=self.environment, parent=uninitialized_provider
+                environment=self.environment, provider=uninitialized_provider
             )
             instance.unmarshal(SERIALIZED_DATA[version])
 
@@ -139,7 +139,7 @@ class PhysicalMachinesMultiSerializationTest(UDSTestCase):
         # Unmarshall last version, remarshall and check that is marshalled using new marshalling format
         version = f'v{len(SERIALIZED_DATA)}'
         uninitialized_provider = provider.PhysicalMachinesProvider(environment=self.environment)
-        instance = service_multi.IPMachinesService(environment=self.environment, parent=uninitialized_provider)
+        instance = service_multi.IPMachinesService(environment=self.environment, provider=uninitialized_provider)
         instance.unmarshal(SERIALIZED_DATA[version])
         marshalled_data = instance.marshal()
 
@@ -150,7 +150,7 @@ class PhysicalMachinesMultiSerializationTest(UDSTestCase):
         # Ensure fields has been marshalled using new format
         self.assertFalse(marshalled_data.startswith(b'v'))
         # Reunmarshall again and check that remarshalled flag is not set
-        instance = service_multi.IPMachinesService(environment=self.environment, parent=uninitialized_provider)
+        instance = service_multi.IPMachinesService(environment=self.environment, provider=uninitialized_provider)
         instance.unmarshal(marshalled_data)
         self.assertFalse(instance.needs_upgrade())
 

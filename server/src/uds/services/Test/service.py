@@ -72,14 +72,14 @@ class TestServiceNoCache(services.Service):
     publication_type = None
     user_service_type = TestUserService
 
-    def parent(self) -> 'TestProvider':
-        return typing.cast('TestProvider', super().parent())
+    def provider(self) -> 'TestProvider':
+        return typing.cast('TestProvider', super().provider())
 
     def get_name(self) -> str:
-        return self.parent().get_name() + '{' + self.type_name + '}'
+        return self.provider().get_name() + '{' + self.type_name + '}'
 
     def get_basename(self) -> str:
-        return self.parent().get_name()
+        return self.provider().get_name()
 
 class TestServiceCache(services.Service):
     """
@@ -108,11 +108,11 @@ class TestServiceCache(services.Service):
     # : Types of deploys (services in cache and/or assigned to users)
     user_service_type = TestUserService
 
-    def parent(self) -> 'TestProvider':
-        return typing.cast('TestProvider', super().parent())
+    def provider(self) -> 'TestProvider':
+        return typing.cast('TestProvider', super().provider())
 
     def get_name(self) -> str:
-        return self.parent().get_name() + '{' + self.type_name + '}'
+        return self.provider().get_name() + '{' + self.type_name + '}'
 
     def get_basename(self) -> str:
-        return self.parent().get_name()
+        return self.provider().get_name()

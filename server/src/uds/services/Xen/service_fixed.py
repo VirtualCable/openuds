@@ -116,12 +116,12 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
         # Here we have to use "default values", cause values aren't used at form initialization
         # This is that value is always '', so if we want to change something, we have to do it
         # at defValue
-        self.prov_uuid.value = self.parent().get_uuid()
+        self.prov_uuid.value = self.provider().get_uuid()
 
-        self.folder.set_choices([gui.choice_item(folder, folder) for folder in self.parent().list_folders()])
+        self.folder.set_choices([gui.choice_item(folder, folder) for folder in self.provider().list_folders()])
 
-    def parent(self) -> 'XenProvider':
-        return typing.cast('XenProvider', super().parent())
+    def provider(self) -> 'XenProvider':
+        return typing.cast('XenProvider', super().provider())
 
     def get_machine_power_state(self, machine_id: str) -> str:
         """
@@ -133,7 +133,7 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
         Returns:
             one of this values:
         """
-        return self.parent().get_machine_power_state(machine_id)
+        return self.provider().get_machine_power_state(machine_id)
 
     def start_machine(self, machine_id: str) -> typing.Optional[str]:
         """
@@ -146,7 +146,7 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
 
         Returns:
         """
-        return self.parent().start_machine(machine_id)
+        return self.provider().start_machine(machine_id)
 
     def stop_machine(self, machine_id: str) -> typing.Optional[str]:
         """
@@ -157,7 +157,7 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
 
         Returns:
         """
-        return self.parent().stop_machine(machine_id)
+        return self.provider().stop_machine(machine_id)
 
     def reset_machine(self, machine_id: str) -> typing.Optional[str]:
         """
@@ -168,17 +168,17 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
 
         Returns:
         """
-        return self.parent().reset_machine(machine_id)
+        return self.provider().reset_machine(machine_id)
 
     def shutdown_machine(self, machine_id: str) -> typing.Optional[str]:
-        return self.parent().shutdown_machine(machine_id)
+        return self.provider().shutdown_machine(machine_id)
 
     def check_task_finished(self, task: str) -> tuple[bool, str]:
-        return self.parent().check_task_finished(task)
+        return self.provider().check_task_finished(task)
 
     @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def is_avaliable(self) -> bool:
-        return self.parent().is_available()
+        return self.provider().is_available()
 
     def enumerate_assignables(self) -> collections.abc.Iterable[types.ui.ChoiceItem]:
         # Obtain machines names and ids for asignables
@@ -204,12 +204,12 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
         if self.use_snapshots.as_bool():
             vmid = userservice_instance._vmid
 
-            snapshots = [i['id'] for i in self.parent().list_snapshots(vmid)]
+            snapshots = [i['id'] for i in self.provider().list_snapshots(vmid)]
             snapshot = snapshots[0] if snapshots else None
 
             if remove and snapshot:
                 try:
-                    userservice_instance._task = self.parent().restore_snapshot(snapshot['id'])
+                    userservice_instance._task = self.provider().restore_snapshot(snapshot['id'])
                 except Exception as e:
                     self.do_log(log.LogLevel.WARNING, 'Could not restore SNAPSHOT for this VM. ({})'.format(e))
 
@@ -221,7 +221,7 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
                     if not snapshot:  # No snapshot, try to create one
                         logger.debug('Not current snapshot')
                         # We don't need the snapshot nor the task, will simply restore to newer snapshot on remove
-                        self.parent().create_snapshot(
+                        self.provider().create_snapshot(
                             vmid,
                             name='UDS Snapshot',
                         )
@@ -237,11 +237,11 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
                 if found_vmid not in assigned_vms:  # Not assigned
                     # Check that the machine exists...
                     try:
-                        vm_name = self.parent().get_machine_name(checking_vmid)
+                        vm_name = self.provider().get_machine_name(checking_vmid)
                         found_vmid = checking_vmid
                         break
                     except Exception:  # Notifies on log, but skipt it
-                        self.parent().do_log(
+                        self.provider().do_log(
                             log.LogLevel.WARNING, 'Machine {} not accesible'.format(found_vmid)
                         )
                         logger.warning(
@@ -261,13 +261,13 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
         return str(found_vmid)
 
     def get_first_network_mac(self, vmid: str) -> str:
-        return self.parent().get_first_mac(vmid)
+        return self.provider().get_first_mac(vmid)
 
     def get_guest_ip_address(self, vmid: str) -> str:
-        return self.parent().get_first_ip(vmid)
+        return self.provider().get_first_ip(vmid)
 
     def get_machine_name(self, vmid: str) -> str:
-        return self.parent().get_machine_name(vmid)
+        return self.provider().get_machine_name(vmid)
 
     def remove_and_free_machine(self, vmid: str) -> str:
         try:

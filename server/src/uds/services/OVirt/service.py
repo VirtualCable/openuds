@@ -239,10 +239,10 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         # Here we have to use "default values", cause values aren't used at form initialization
         # This is that value is always '', so if we want to change something, we have to do it
         # at defValue
-        self.ov.value = self.parent().serialize()
-        self.ev.value = self.parent().env.key
+        self.ov.value = self.provider().serialize()
+        self.ev.value = self.provider().env.key
 
-        machines = self.parent().getMachines()
+        machines = self.provider().getMachines()
         vals = []
         for m in machines:
             vals.append(gui.choice_item(m['id'], m['name']))
@@ -251,15 +251,15 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         # the list of values shown because this is a "ChoiceField"
         self.machine.set_choices(vals)
 
-        clusters = self.parent().getClusters()
+        clusters = self.provider().getClusters()
         vals = []
         for c in clusters:
             vals.append(gui.choice_item(c['id'], c['name']))
 
         self.cluster.set_choices(vals)
 
-    def parent(self) -> 'OVirtProvider':
-        return typing.cast('OVirtProvider', super().parent())
+    def provider(self) -> 'OVirtProvider':
+        return typing.cast('OVirtProvider', super().provider())
 
     def datastoreHasSpace(self) -> None:
         """Checks if datastore has enough space
@@ -272,7 +272,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         """
         # Get storages for that datacenter
         logger.debug('Checking datastore space for %s', self.datastore.value)
-        info = self.parent().getStorageInfo(self.datastore.value)
+        info = self.provider().getStorageInfo(self.datastore.value)
         logger.debug('Datastore Info: %s', info)
         availableGB = info['available'] / (1024 * 1024 * 1024)
         if availableGB < self.minSpaceGB.as_int():
@@ -306,7 +306,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         # Get storages for that datacenter
 
         self.datastoreHasSpace()
-        return self.parent().makeTemplate(
+        return self.provider().makeTemplate(
             name,
             comments,
             self.machine.value,
@@ -326,7 +326,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
 
         Raises an exception if operation fails.
         """
-        return self.parent().getTemplateState(templateId)
+        return self.provider().getTemplateState(templateId)
 
     def deploy_from_template(self, name: str, comments: str, templateId: str) -> str:
         """
@@ -345,7 +345,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         """
         logger.debug('Deploying from template %s machine %s', templateId, name)
         self.datastoreHasSpace()
-        return self.parent().deployFromTemplate(
+        return self.provider().deployFromTemplate(
             name,
             comments,
             templateId,
@@ -360,7 +360,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         """
         invokes removeTemplate from parent provider
         """
-        self.parent().removeTemplate(templateId)
+        self.provider().removeTemplate(templateId)
 
     def get_machine_state(self, machineId: str) -> str:
         """
@@ -378,7 +378,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
              suspended, image_illegal, image_locked or powering_down
              Also can return'unknown' if Machine is not known
         """
-        return self.parent().getMachineState(machineId)
+        return self.provider().getMachineState(machineId)
 
     def startMachine(self, machineId: str) -> None:
         """
@@ -391,7 +391,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
 
         Returns:
         """
-        self.parent().startMachine(machineId)
+        self.provider().startMachine(machineId)
 
     def stopMachine(self, machineId: str) -> None:
         """
@@ -402,7 +402,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
 
         Returns:
         """
-        self.parent().stopMachine(machineId)
+        self.provider().stopMachine(machineId)
 
     def suspend_machine(self, machineId: str) -> None:
         """
@@ -413,7 +413,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
 
         Returns:
         """
-        self.parent().suspendMachine(machineId)
+        self.provider().suspendMachine(machineId)
 
     def removeMachine(self, machineId: str) -> None:
         """
@@ -424,23 +424,23 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
 
         Returns:
         """
-        self.parent().removeMachine(machineId)
+        self.provider().removeMachine(machineId)
 
     def updateMachineMac(self, machineId: str, macAddres: str) -> None:
         """
         Changes the mac address of first nic of the machine to the one specified
         """
-        self.parent().updateMachineMac(machineId, macAddres)
+        self.provider().updateMachineMac(machineId, macAddres)
 
     def fixUsb(self, machineId: str):
         if self.usb.value in ('native',):
-            self.parent().fixUsb(machineId)
+            self.provider().fixUsb(machineId)
 
     def getMacRange(self) -> str:
         """
         Returns de selected mac range
         """
-        return self.parent().getMacRange()
+        return self.provider().getMacRange()
 
     def get_basename(self) -> str:
         """
@@ -463,7 +463,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
     def getConsoleConnection(
         self, machineId: str
     ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
-        return self.parent().getConsoleConnection(machineId)
+        return self.provider().getConsoleConnection(machineId)
 
     def is_avaliable(self) -> bool:
-        return self.parent().is_available()
+        return self.provider().is_available()

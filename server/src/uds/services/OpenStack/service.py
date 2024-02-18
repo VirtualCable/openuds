@@ -213,22 +213,22 @@ class OpenStackLiveService(services.Service):
         if values:
             validators.validate_basename(self.baseName.value, self.lenName.as_int())
 
-        # self.ov.value = self.parent().serialize()
-        # self.ev.value = self.parent().env.key
+        # self.ov.value = self.provider().serialize()
+        # self.ev.value = self.provider().env.key
 
-    def parent(self) -> 'Provider':
-        return typing.cast('Provider', super().parent())
+    def provider(self) -> 'Provider':
+        return typing.cast('Provider', super().provider())
 
     def init_gui(self):
         """
         Loads required values inside
         """
-        api = self.parent().api()
+        api = self.provider().api()
 
         # Checks if legacy or current openstack provider
         parentCurrent = (
-            typing.cast('OpenStackProvider', self.parent())
-            if not self.parent().legacy
+            typing.cast('OpenStackProvider', self.provider())
+            if not self.provider().legacy
             else None
         )
 
@@ -250,23 +250,23 @@ class OpenStackLiveService(services.Service):
         self.project.set_choices(tenants)
 
         # So we can instantiate parent to get API
-        logger.debug(self.parent().serialize())
+        logger.debug(self.provider().serialize())
 
-        self.ov.value = self.parent().serialize()
-        self.ev.value = self.parent().env.key
-        self.legacy.value = gui.bool_as_str(self.parent().legacy)
+        self.ov.value = self.provider().serialize()
+        self.ev.value = self.provider().env.key
+        self.legacy.value = gui.bool_as_str(self.provider().legacy)
 
     @property
     def api(self) -> 'openstack.Client':
         if not self._api:
-            self._api = self.parent().api(
+            self._api = self.provider().api(
                 projectId=self.project.value, region=self.region.value
             )
 
         return self._api
 
     def sanitizeVmName(self, name: str) -> str:
-        return self.parent().sanitizeVmName(name)
+        return self.provider().sanitizeVmName(name)
 
     def makeTemplate(self, templateName: str, description: typing.Optional[str] = None):
         # First, ensures that volume has not any running instances
@@ -443,4 +443,4 @@ class OpenStackLiveService(services.Service):
         return int(self.lenName.value)
 
     def is_avaliable(self) -> bool:
-        return self.parent().is_available()
+        return self.provider().is_available()

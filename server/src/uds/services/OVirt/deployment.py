@@ -337,7 +337,7 @@ if sys.platform == 'win32':
         self.do_log(log.LogLevel.ERROR, reason)
 
         if self._vmid != '':  # Powers off
-            OVirtDeferredRemoval.remove(self.service().parent(), self._vmid)
+            OVirtDeferredRemoval.remove(self.service().provider(), self._vmid)
 
         self._queue = [Operation.ERROR]
         self._reason = reason

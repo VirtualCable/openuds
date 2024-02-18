@@ -93,7 +93,7 @@ class IPMachineUserService(services.UserService, autoserializable.AutoSerializab
                     res = dns.resolver.resolve(ip, 'AAAA')
                     ip = typing.cast(str, res[0].address)  # type: ignore  # If no address, it will raise an exception
                 except Exception as e:
-                    self.service().parent().do_log(
+                    self.service().provider().do_log(
                         log.LogLevel.WARNING, f'User service could not resolve Name {ip} ({e}).'
                     )
 

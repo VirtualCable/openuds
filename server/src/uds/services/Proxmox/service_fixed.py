@@ -120,43 +120,43 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
         # This is that value is always '', so if we want to change something, we have to do it
         # at defValue
         # Log with call stack
-        self.prov_uuid.value = self.parent().get_uuid()
+        self.prov_uuid.value = self.provider().get_uuid()
 
         self.pool.set_choices(
             [gui.choice_item('', _('None'))]
-            + [gui.choice_item(p.poolid, p.poolid) for p in self.parent().list_pools()]
+            + [gui.choice_item(p.poolid, p.poolid) for p in self.provider().list_pools()]
         )
 
-    def parent(self) -> 'ProxmoxProvider':
-        return typing.cast('ProxmoxProvider', super().parent())
+    def provider(self) -> 'ProxmoxProvider':
+        return typing.cast('ProxmoxProvider', super().provider())
 
     def get_machine_info(self, vmId: int) -> 'client.types.VMInfo':
-        return self.parent().get_machine_info(vmId, self.pool.value.strip())
+        return self.provider().get_machine_info(vmId, self.pool.value.strip())
 
     def get_task_info(self, node: str, upid: str) -> 'client.types.TaskStatus':
-        return self.parent().get_task_info(node, upid)
+        return self.provider().get_task_info(node, upid)
 
     def start_machine(self, vmId: int) -> 'client.types.UPID':
-        return self.parent().start_machine(vmId)
+        return self.provider().start_machine(vmId)
 
     def stop_machine(self, vmId: int) -> 'client.types.UPID':
-        return self.parent().stop_machine(vmId)
+        return self.provider().stop_machine(vmId)
 
     def reset_machine(self, vmId: int) -> 'client.types.UPID':
-        return self.parent().reset_machine(vmId)
+        return self.provider().reset_machine(vmId)
 
     def shutdown_machine(self, vmId: int) -> 'client.types.UPID':
-        return self.parent().shutdown_machine(vmId)
+        return self.provider().shutdown_machine(vmId)
 
     @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def is_avaliable(self) -> bool:
-        return self.parent().is_available()
+        return self.provider().is_available()
 
     def enumerate_assignables(self) -> collections.abc.Iterable[types.ui.ChoiceItem]:
         # Obtain machines names and ids for asignables
         vms: dict[int, str] = {}
 
-        for member in self.parent().get_pool_info(self.pool.value.strip(), retrieve_vm_names=True).members:
+        for member in self.provider().get_pool_info(self.pool.value.strip(), retrieve_vm_names=True).members:
             vms[member.vmid] = member.vmname
 
         assigned_vms = self._get_assigned_machines()
@@ -181,10 +181,10 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
             if remove:
                 try:
                     # try to revert to snapshot
-                    snapshot = self.parent().get_current_snapshot(vmid)
+                    snapshot = self.provider().get_current_snapshot(vmid)
                     if snapshot:
                         userservice_instance._store_task(
-                            self.parent().restore_snapshot(vmid, name=snapshot.name)
+                            self.provider().restore_snapshot(vmid, name=snapshot.name)
                         )
                 except Exception as e:
                     self.do_log(log.LogLevel.WARNING, 'Could not restore SNAPSHOT for this VM. ({})'.format(e))
@@ -194,9 +194,9 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
                 # If no snapshot exists for this vm, try to create one for it on background
                 # Lauch an snapshot. We will not wait for it to finish, but instead let it run "as is"
                 try:
-                    if not self.parent().get_current_snapshot(vmid):
+                    if not self.provider().get_current_snapshot(vmid):
                         logger.debug('Not current snapshot')
-                        self.parent().create_snapshot(
+                        self.provider().create_snapshot(
                             vmid,
                             name='UDS Snapshot',
                         )
@@ -212,11 +212,11 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
                 if found_vmid not in assigned_vms:  # Not assigned
                     # Check that the machine exists...
                     try:
-                        vm_info = self.parent().get_machine_info(checking_vmid, self.pool.value.strip())
+                        vm_info = self.provider().get_machine_info(checking_vmid, self.pool.value.strip())
                         found_vmid = checking_vmid
                         break
                     except Exception:  # Notifies on log, but skipt it
-                        self.parent().do_log(
+                        self.provider().do_log(
                             log.LogLevel.WARNING, 'Machine {} not accesible'.format(found_vmid)
                         )
                         logger.warning(
@@ -236,14 +236,14 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
         return str(found_vmid)
 
     def get_first_network_mac(self, vmid: str) -> str:
-        config = self.parent().get_machine_configuration(int(vmid))
+        config = self.provider().get_machine_configuration(int(vmid))
         return config.networks[0].mac.lower()
 
     def get_guest_ip_address(self, vmid: str) -> str:
-        return self.parent().get_guest_ip_address(int(vmid))
+        return self.provider().get_guest_ip_address(int(vmid))
 
     def get_machine_name(self, vmid: str) -> str:
-        return self.parent().get_machine_info(int(vmid)).name or ''
+        return self.provider().get_machine_info(int(vmid)).name or ''
 
     def remove_and_free_machine(self, vmid: str) -> str:
         try:

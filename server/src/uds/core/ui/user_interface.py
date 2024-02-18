@@ -848,7 +848,7 @@ class gui:
               def init_gui(self):
                   # always set default using self, cause we only want to store
                   # value for current instance
-                  self.hidden.value = self.parent().serialize()
+                  self.hidden.value = self.provider().serialize()
                   # Note, you can use setDefault for legacy compat
 
         """

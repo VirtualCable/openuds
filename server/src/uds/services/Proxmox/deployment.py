@@ -313,7 +313,7 @@ if sys.platform == 'win32':
         self.do_log(log.LogLevel.ERROR, reason)
 
         if self._vmid != '':  # Powers off
-            ProxmoxDeferredRemoval.remove(self.service().parent(), int(self._vmid))
+            ProxmoxDeferredRemoval.remove(self.service().provider(), int(self._vmid))
 
         self._queue = [Operation.ERROR]
         self._reason = reason

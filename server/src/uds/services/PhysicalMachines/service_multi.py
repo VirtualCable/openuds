@@ -281,14 +281,14 @@ class IPMachinesService(IPServiceBase):
                     self.storage.put_pickle(host.host, now)
 
                     # Is WOL enabled?
-                    is_wakeonland_enabled = bool(self.parent().wake_on_lan_endpoint(host))
+                    is_wakeonland_enabled = bool(self.provider().wake_on_lan_endpoint(host))
                     # Now, check if it is available on port, if required...
                     if (
                         self.port.as_int() > 0 and not is_wakeonland_enabled
                     ):  # If configured WOL, check is a nonsense
                         if net.test_connectivity(host.host, self.port.as_int(), timeout=0.5) is False:
                             # Log into logs of provider, so it can be "shown" on services logs
-                            self.parent().do_log(
+                            self.provider().do_log(
                                 log.LogLevel.WARNING,
                                 f'Host {host.host} not accesible on port {self.port.as_int()}',
                             )

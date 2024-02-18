@@ -547,8 +547,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
         )
         service_instance = service_pool.service.get_instance()
         if (
-            (removing >= service_instance.parent().get_concurrent_removal_limit()
-            and service_instance.parent().get_ignore_limits() is False)
+            (removing >= service_instance.provider().get_concurrent_removal_limit()
+            and service_instance.provider().get_ignore_limits() is False)
             or service_pool.service.provider.is_in_maintenance()
             or service_pool.is_restrained()
             or not service_instance.is_avaliable()
@@ -566,8 +566,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
         )
         serviceInstance = service_pool.service.get_instance()
         if self.maximum_user_services_reached(service_pool.service) or (
-            preparingForProvider >= serviceInstance.parent().get_concurrent_creation_limit()
-            and serviceInstance.parent().get_ignore_limits() is False
+            preparingForProvider >= serviceInstance.provider().get_concurrent_creation_limit()
+            and serviceInstance.provider().get_ignore_limits() is False
         ):
             return False
         return True

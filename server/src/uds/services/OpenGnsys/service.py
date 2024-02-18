@@ -156,19 +156,19 @@ class OGService(services.Service):
         """
         Loads required values inside
         """
-        ous = [gui.choice_item(r['id'], r['name']) for r in self.parent().api.list_of_ous()]
+        ous = [gui.choice_item(r['id'], r['name']) for r in self.provider().api.list_of_ous()]
         self.ou.set_choices(ous)
 
-        self.parent_uuid.value = self.parent().db_obj().uuid
+        self.parent_uuid.value = self.provider().db_obj().uuid
 
-    def parent(self) -> 'OGProvider':
-        return typing.cast('OGProvider', super().parent())
+    def provider(self) -> 'OGProvider':
+        return typing.cast('OGProvider', super().provider())
 
     def status(self, machine_id: str) -> typing.Any:
-        return self.parent().status(machine_id)
+        return self.provider().status(machine_id)
 
     def reserve(self) -> typing.Any:
-        return self.parent().reserve(
+        return self.provider().reserve(
             self.ou.value,
             self.image.value,
             self.lab.value,
@@ -176,10 +176,10 @@ class OGService(services.Service):
         )
 
     def unreserve(self, machine_id: str) -> None:
-        self.parent().unreserve(machine_id)
+        self.provider().unreserve(machine_id)
 
     def notify_endpoints(self, machine_id: str, token: str, uuid: str) -> None:
-        self.parent().notify_endpoints(
+        self.provider().notify_endpoints(
             machine_id,
             self.get_login_notify_url(uuid, token),
             self.get_logout_notify_url(uuid, token),
@@ -187,14 +187,14 @@ class OGService(services.Service):
         )
 
     def notify_deadline(self, machine_id: str, deadLine: typing.Optional[int]) -> None:
-        self.parent().notify_deadline(machine_id, deadLine)
+        self.provider().notify_deadline(machine_id, deadLine)
 
     def power_on(self, machine_id: str) -> None:
-        self.parent().power_on(machine_id, self.image.value)
+        self.provider().power_on(machine_id, self.image.value)
 
     def _notify_url(self, uuid: str, token: str, message: str) -> str:
         # The URL is "GET messages URL".
-        return f'{self.parent().get_uds_endpoint()}uds/ognotify/{message}/{token}/{uuid}'
+        return f'{self.provider().get_uds_endpoint()}uds/ognotify/{message}/{token}/{uuid}'
 
     def get_login_notify_url(self, uuid: str, token: str) -> str:
         return self._notify_url(uuid, token, 'login')
@@ -209,4 +209,4 @@ class OGService(services.Service):
         return self.start_if_unavailable.as_bool()
 
     def is_avaliable(self) -> bool:
-        return self.parent().is_available()
+        return self.provider().is_available()

@@ -175,18 +175,18 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
             if int(self.memory.value) < 256:
                 raise exceptions.ui.ValidationError(_('The minimum allowed memory is 256 Mb'))
 
-    def parent(self) -> 'XenProvider':
-        return typing.cast('XenProvider', super().parent())
+    def provider(self) -> 'XenProvider':
+        return typing.cast('XenProvider', super().provider())
 
     def init_gui(self) -> None:
         # Here we have to use "default values", cause values aren't used at form initialization
         # This is that value is always '', so if we want to change something, we have to do it
         # at defValue
 
-        machines_list = [gui.choice_item(m['id'], m['name']) for m in self.parent().list_machines()]
+        machines_list = [gui.choice_item(m['id'], m['name']) for m in self.provider().list_machines()]
 
         storages_list = []
-        for storage in self.parent().list_storages():
+        for storage in self.provider().list_storages():
             space, free = (
                 storage['size'] / 1024,
                 (storage['size'] - storage['used']) / 1024,
@@ -198,18 +198,18 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
                 )
             )
 
-        network_list = [gui.choice_item(net['id'], net['name']) for net in self.parent().get_networks()]
+        network_list = [gui.choice_item(net['id'], net['name']) for net in self.provider().get_networks()]
 
         self.machine.set_choices(machines_list)
         self.datastore.set_choices(storages_list)
         self.network.set_choices(network_list)
 
     def check_task_finished(self, task: str) -> tuple[bool, str]:
-        return self.parent().check_task_finished(task)
+        return self.provider().check_task_finished(task)
 
     def has_datastore_space(self) -> None:
         # Get storages for that datacenter
-        info = self.parent().get_storage_info(self.datastore.value)
+        info = self.provider().get_storage_info(self.datastore.value)
         logger.debug('Checking datastore space for %s: %s', self.datastore.value, info)
         availableGB = (info['size'] - info['used']) / 1024
         if availableGB < self.min_space_gb.as_int():
@@ -248,13 +248,13 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         # Checks datastore available space, raises exeception in no min available
         self.has_datastore_space()
 
-        return self.parent().clone_for_template(name, comments, self.machine.value, self.datastore.value)
+        return self.provider().clone_for_template(name, comments, self.machine.value, self.datastore.value)
 
     def convert_to_template(self, machineId: str) -> None:
         """
         converts machine to template
         """
-        self.parent().convert_to_template(machineId, self.shadow.value)
+        self.provider().convert_to_template(machineId, self.shadow.value)
 
     def start_deploy_from_template(self, name: str, comments: str, templateId: str) -> str:
         """
@@ -274,13 +274,13 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         logger.debug('Deploying from template %s machine %s', templateId, name)
         self.has_datastore_space()
 
-        return self.parent().start_deploy_from_template(name, comments, templateId)
+        return self.provider().start_deploy_from_template(name, comments, templateId)
 
     def remove_template(self, templateId: str) -> None:
         """
         invokes removeTemplate from parent provider
         """
-        self.parent().remove_template(templateId)
+        self.provider().remove_template(templateId)
 
     def get_machine_power_state(self, machineId: str) -> str:
         """
@@ -292,7 +292,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         Returns:
             one of this values:
         """
-        return self.parent().get_machine_power_state(machineId)
+        return self.provider().get_machine_power_state(machineId)
 
     def start_machine(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
         """
@@ -305,7 +305,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
 
         Returns:
         """
-        return self.parent().start_machine(machineId, asnc)
+        return self.provider().start_machine(machineId, asnc)
 
     def stop_machine(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
         """
@@ -316,7 +316,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
 
         Returns:
         """
-        return self.parent().stop_machine(machineId, asnc)
+        return self.provider().stop_machine(machineId, asnc)
 
     def reset_machine(self, machine_id: str, asnc: bool = True) -> typing.Optional[str]:
         """
@@ -327,7 +327,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
 
         Returns:
         """
-        return self.parent().reset_machine(machine_id, asnc)
+        return self.provider().reset_machine(machine_id, asnc)
 
     def can_suspend_machine(self, machineId: str) -> bool:
         """
@@ -339,7 +339,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         Returns:
             True if the machien can be suspended
         """
-        return self.parent().can_suspend_machine(machineId)
+        return self.provider().can_suspend_machine(machineId)
 
     def suspend_machine(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
         """
@@ -350,7 +350,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
 
         Returns:
         """
-        return self.parent().suspend_machine(machineId, asnc)
+        return self.provider().suspend_machine(machineId, asnc)
 
     def resume_machine(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
         """
@@ -361,7 +361,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
 
         Returns:
         """
-        return self.parent().suspend_machine(machineId, asnc)
+        return self.provider().suspend_machine(machineId, asnc)
 
     def remove_machine(self, machineId: str) -> None:
         """
@@ -372,19 +372,19 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
 
         Returns:
         """
-        self.parent().remove_machine(machineId)
+        self.provider().remove_machine(machineId)
 
     def configure_machine(self, machine_id: str, mac: str) -> None:
-        self.parent().configure_machine(machine_id, self.network.value, mac, self.memory.value)
+        self.provider().configure_machine(machine_id, self.network.value, mac, self.memory.value)
 
     def provision_machine(self, machine_id: str, as_async: bool = True) -> str:
-        return self.parent().provision_machine(machine_id, as_async)
+        return self.provider().provision_machine(machine_id, as_async)
 
     def get_macs_range(self) -> str:
         """
         Returns de selected mac range
         """
-        return self.parent().get_macs_range()
+        return self.provider().get_macs_range()
 
     def get_basename(self) -> str:
         """

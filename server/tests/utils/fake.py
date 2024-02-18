@@ -48,6 +48,6 @@ def fake_service() -> services.Service:
     uuid_ = str(uuid.uuid4())
     return services.Service(
         environment=environment.Environment.private_environment(uuid_),
-        parent=fake_service_provider(),
+        provider=fake_service_provider(),
         uuid=uuid_,
     )
