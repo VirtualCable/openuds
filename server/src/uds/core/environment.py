@@ -153,13 +153,23 @@ class Environment:
         return Environment(name, id_generators)
 
     @staticmethod
-    def environment_for_type(type_) -> 'Environment':
+    def type_environment(type_: typing.Type) -> 'Environment':
         """
         Obtains an environment associated with a type instead of a record
         @param type_: Type
         @return Associated Environment
         """
         return Environment('type-' + str(type_))
+    
+    @staticmethod
+    def private_environment(owner: typing.Any) -> 'Environment':
+        """
+        Obtains an environment with an unique identifier
+        @return: An environment with an unique identifier
+        """
+        return Environment(
+            '#_#' + str(id(owner)) + '#^#'
+        )
 
     @staticmethod
     def temporary_environment() -> 'Environment':
@@ -187,7 +197,7 @@ class Environment:
         return env
 
     @staticmethod
-    def ommon_environment() -> 'Environment':
+    def common_environment() -> 'Environment':
         """
         Provides global environment
         """

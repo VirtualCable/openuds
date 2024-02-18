@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+
 #
-# Copyright (c) 2022-2024 Virtual Cable S.L.U.
+# Copyright (c) 2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -25,45 +26,27 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-import random
-import uuid
 import typing
 import collections.abc
 
-from . import constants
+from unittest import mock
+from ...utils.autospec import autospec, AutoSpecMethodInfo
+
+from uds.services.Proxmox import provider, client
+
+METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
+    AutoSpecMethodInfo('test', method=mock.Mock(return_value=True)),
+]
 
 
-def random_string(size: int = 6, chars: typing.Optional[str] = None) -> str:
-    chars = chars or constants.STRING_CHARS
-    return ''.join(
-        random.choice(chars)  # nosec: Not used for cryptography, just for testing
-        for _ in range(size)
-    )
-
-def random_utf8_string(size: int = 6) -> str:
-    # Generate a random utf-8 string of length "length"
-    # some utf-8 non ascii chars are generated, but not all of them
-    return ''.join(random.choice(constants.UTF_CHARS) for _ in range(size))  # nosec
-
-
-def random_uuid() -> str:
-    return str(uuid.uuid4())
-
-def random_int(start: int = 0, end: int = 100000) -> int:
-    return random.randint(start, end)  # nosec
-
-def random_ip() -> str:
-    return '.'.join(
-        str(
-            random.randint(0, 255)  # nosec: Not used for cryptography, just for testing
-        )
-        for _ in range(4)
-    )
-
-
-def random_mac() -> str:
-    return ':'.join(random_string(2, '0123456789ABCDEF') for _ in range(6))
+class TestProxmovProvider:
+    def test_provider(self) -> None:
+        """
+        Test the provider
+        """
+        client = autospec(provider.ProxmoxProvider, METHODS_INFO)
+        assert client.test() is True

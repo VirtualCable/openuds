@@ -47,7 +47,7 @@ from uds.core import types, consts
 if typing.TYPE_CHECKING:
     from .user_service import UserService
     from .publication import Publication
-    from uds.core import services
+    from uds.core import services, environment
     from uds.core.util.unique_name_generator import UniqueNameGenerator
     from uds.core.util.unique_mac_generator import UniqueMacGenerator
     from uds.core.util.unique_gid_generator import UniqueGIDGenerator
@@ -211,7 +211,7 @@ class Service(Module):
 
     def __init__(
         self,
-        environment,
+        environment: 'environment.Environment',
         parent: 'services.ServiceProvider',
         values: Module.ValuesType = None,
         uuid: typing.Optional[str] = None,

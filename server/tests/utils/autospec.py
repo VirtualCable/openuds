@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2022-2024 Virtual Cable S.L.U.
+# Copyright (c) 2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,42 +28,24 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-import random
-import uuid
-import typing
 import collections.abc
+import typing
+import dataclasses
+from unittest import mock
 
-from . import constants
-
-
-def random_string(size: int = 6, chars: typing.Optional[str] = None) -> str:
-    chars = chars or constants.STRING_CHARS
-    return ''.join(
-        random.choice(chars)  # nosec: Not used for cryptography, just for testing
-        for _ in range(size)
-    )
-
-def random_utf8_string(size: int = 6) -> str:
-    # Generate a random utf-8 string of length "length"
-    # some utf-8 non ascii chars are generated, but not all of them
-    return ''.join(random.choice(constants.UTF_CHARS) for _ in range(size))  # nosec
-
-
-def random_uuid() -> str:
-    return str(uuid.uuid4())
-
-def random_int(start: int = 0, end: int = 100000) -> int:
-    return random.randint(start, end)  # nosec
-
-def random_ip() -> str:
-    return '.'.join(
-        str(
-            random.randint(0, 255)  # nosec: Not used for cryptography, just for testing
-        )
-        for _ in range(4)
-    )
-
-
-def random_mac() -> str:
-    return ':'.join(random_string(2, '0123456789ABCDEF') for _ in range(6))
+@dataclasses.dataclass
+class AutoSpecMethodInfo:
+    name: str
+    return_value: typing.Any = None
+    method: 'typing.Callable|None' = None
+    
+    
+def autospec(cls: typing.Type, metods_info: collections.abc.Iterable, **kwargs: typing.Any) -> typing.Any:
+    """
+    This is a helper function that will create a mock object with the same methods as the class passed as parameter.
+    This is useful for testing purposes, where you want to mock a class and still have the same methods available.
+    """
+    obj = mock.create_autospec(cls, **kwargs)
+    for method_info in metods_info:
+        setattr(obj, method_info.name, method_info.method or mock.Mock(return_value=method_info.return_value))
+    return obj

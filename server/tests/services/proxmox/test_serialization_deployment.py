@@ -35,9 +35,8 @@ import typing
 
 # We use storage, so we need transactional tests
 from tests.utils.test import UDSTransactionTestCase
-from uds.core.util import autoserializable
+from uds.core.services import service
 from uds.core.environment import Environment
-from uds.services import Proxmox
 
 
 from uds.services.Proxmox.deployment import Operation as Operation, ProxmoxDeployment as Deployment
@@ -95,7 +94,7 @@ class ProxmoxDeploymentSerializationTest(UDSTransactionTestCase):
         environment = Environment.testing_environment()
 
         def _create_instance(unmarshal_data: 'bytes|None' = None) -> Deployment:
-            instance = Deployment(environment=environment, service=None)
+            instance = Deployment(environment=environment, service=service.Service(Environment.testing_environment(), )
             if unmarshal_data:
                 instance.unmarshal(unmarshal_data)
             return instance

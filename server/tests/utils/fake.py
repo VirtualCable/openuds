@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2022-2024 Virtual Cable S.L.U.
+# Copyright (c) 2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -34,36 +34,20 @@ import uuid
 import typing
 import collections.abc
 
-from . import constants
+from uds.core import services, environment
 
 
-def random_string(size: int = 6, chars: typing.Optional[str] = None) -> str:
-    chars = chars or constants.STRING_CHARS
-    return ''.join(
-        random.choice(chars)  # nosec: Not used for cryptography, just for testing
-        for _ in range(size)
+def fake_service_provider() -> services.ServiceProvider:
+    uuid_ = str(uuid.uuid4())
+    return services.ServiceProvider(
+        environment=environment.Environment.private_environment(uuid_),
+        uuid=uuid_,
     )
-
-def random_utf8_string(size: int = 6) -> str:
-    # Generate a random utf-8 string of length "length"
-    # some utf-8 non ascii chars are generated, but not all of them
-    return ''.join(random.choice(constants.UTF_CHARS) for _ in range(size))  # nosec
-
-
-def random_uuid() -> str:
-    return str(uuid.uuid4())
-
-def random_int(start: int = 0, end: int = 100000) -> int:
-    return random.randint(start, end)  # nosec
-
-def random_ip() -> str:
-    return '.'.join(
-        str(
-            random.randint(0, 255)  # nosec: Not used for cryptography, just for testing
-        )
-        for _ in range(4)
+    
+def fake_service() -> services.Service:
+    uuid_ = str(uuid.uuid4())
+    return services.Service(
+        environment=environment.Environment.private_environment(uuid_),
+        parent=fake_service_provider(),
+        uuid=uuid_,
     )
-
-
-def random_mac() -> str:
-    return ':'.join(random_string(2, '0123456789ABCDEF') for _ in range(6))

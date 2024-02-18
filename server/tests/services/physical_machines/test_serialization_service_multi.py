@@ -96,7 +96,7 @@ class PhysicalMachinesMultiSerializationTest(UDSTestCase):
     environment: Environment
 
     def setUp(self) -> None:
-        self.environment = Environment.environment_for_type('test')
+        self.environment = Environment.temporary_environment()
         self.environment.storage.save_to_db('ips', pickle.dumps(STORED_IPS))
 
     def check(self, version: str, instance: 'service_multi.IPMachinesService') -> None:

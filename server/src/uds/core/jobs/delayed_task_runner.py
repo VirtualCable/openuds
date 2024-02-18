@@ -28,8 +28,8 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import base64
 import time
-import codecs
 import pickle  # nosec: pickle is safe here
 import threading
 from socket import gethostname
@@ -71,6 +71,7 @@ class DelayedTaskThread(threading.Thread):
         except Exception as e:
             logger.exception("Exception in thread %s: %s", e.__class__, e)
         finally:
+            # This is run on a different thread, so we ensure the connection is closed
             connections['default'].close()
 
 
@@ -120,9 +121,9 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
                 )  # @UndefinedVariable
                 if task.insert_date > now + timedelta(seconds=30):
                     logger.warning('Executed %s due to insert_date being in the future!', task.type)
-                taskInstanceDump = codecs.decode(task.instance.encode(), 'base64')
+                task_instance_dump = base64.b64decode(task.instance.encode())
                 task.delete()
-            taskInstance = pickle.loads(taskInstanceDump)  # nosec: controlled pickle
+            task_instance = pickle.loads(task_instance_dump)  # nosec: controlled pickle
         except IndexError:
             return  # No problem, there is no waiting delayed task
         except OperationalError:
@@ -134,11 +135,11 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
             logger.exception('Obtainint one task for execution')
             return
 
-        if taskInstance:
+        if task_instance:
             logger.debug('Executing delayedTask:>%s<', task)
             # Re-create environment data
-            taskInstance.env = Environment.environment_for_type(taskInstance.__class__)
-            DelayedTaskThread(taskInstance).start()
+            task_instance.env = Environment.type_environment(task_instance.__class__)
+            DelayedTaskThread(task_instance).start()
 
     def _insert(self, instance: DelayedTask, delay: int, tag: str) -> None:
         now = sql_datetime()
@@ -148,7 +149,7 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
         # Save "env" from delayed task, set it to None and restore it after save
         env = instance.env
         instance.env = None  # type: ignore   # clean env before saving pickle, save space (the env will be created again when executing)
-        instance_dump = codecs.encode(pickle.dumps(instance), 'base64').decode()
+        instance_dump = base64.b64encode(pickle.dumps(instance)).decode()
         instance.env = env
 
         type_name = str(cls.__module__ + '.' + cls.__name__)

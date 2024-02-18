@@ -83,7 +83,7 @@ class TestEnvironment(UDSTransactionTestCase):
             self.assertEqual(env.cache.get('test'), None)
 
     def test_global_environment(self) -> None:
-        env = environment.Environment.ommon_environment()
+        env = environment.Environment.common_environment()
         self._check_environment(env, environment.COMMON_ENV, True)
 
     def test_temporary_environment(self) -> None:
@@ -99,8 +99,8 @@ class TestEnvironment(UDSTransactionTestCase):
         self._check_environment(env, 't-test_table-123', True)
 
     def test_environment_for_type(self) -> None:
-        env = environment.Environment.environment_for_type('test_type')
-        self._check_environment(env, 'type-test_type', True)
+        env = environment.Environment.type_environment(TestEnvironment)
+        self._check_environment(env, 'type-' + str(TestEnvironment), True)
 
     def test_exclusive_temporary_environment(self) -> None:
         unique_key: str = ''
