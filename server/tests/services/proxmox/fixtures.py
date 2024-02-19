@@ -260,7 +260,7 @@ CONSOLE_CONNECTION: typing.Final[types.services.ConsoleConnectionInfo] = types.s
 CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     # connect returns None
     # Test method
-    AutoSpecMethodInfo('test', method=mock.Mock(return_value=True)),
+    AutoSpecMethodInfo('test', return_value=True),
     # get_cluster_info
     AutoSpecMethodInfo('get_cluster_info', return_value=CLUSTER_INFO),
     # get_next_vmid

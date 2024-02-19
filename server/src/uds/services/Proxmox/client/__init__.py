@@ -255,7 +255,7 @@ class ProxmoxClient:
         return True
 
     @ensure_connected
-    @cached('cluster', CACHE_DURATION, key_fnc=caching_key_helper)
+    @cached('cluster', CACHE_DURATION, key_helper=caching_key_helper)
     def get_cluster_info(self, **kwargs) -> types.ClusterInfo:
         return types.ClusterInfo.from_dict(self._get('cluster/status'))
 
@@ -272,13 +272,13 @@ class ProxmoxClient:
         return True
 
     @ensure_connected
-    @cached('nodeNets', CACHE_DURATION, args=1, kwargs=['node'], key_fnc=caching_key_helper)
+    @cached('nodeNets', CACHE_DURATION, args=1, kwargs=['node'], key_helper=caching_key_helper)
     def get_node_networks(self, node: str, **kwargs) -> typing.Any:
         return self._get('nodes/{}/network'.format(node))['data']
 
     # pylint: disable=unused-argument
     @ensure_connected
-    @cached('nodeGpuDevices', CACHE_DURATION_LONG, key_fnc=caching_key_helper)
+    @cached('nodeGpuDevices', CACHE_DURATION_LONG, key_helper=caching_key_helper)
     def list_node_gpu_devices(self, node: str, **kwargs) -> list[str]:
         return [
             device['id'] for device in self._get(f'nodes/{node}/hardware/pci')['data'] if device.get('mdev')
@@ -409,7 +409,7 @@ class ProxmoxClient:
         )
 
     @ensure_connected
-    @cached('hagrps', CACHE_DURATION, key_fnc=caching_key_helper)
+    @cached('hagrps', CACHE_DURATION, key_helper=caching_key_helper)
     def list_ha_groups(self, **kwargs) -> list[str]:
         return [g['group'] for g in self._get('cluster/ha/groups')['data']]
 
@@ -486,7 +486,7 @@ class ProxmoxClient:
             return []  # If we can't get snapshots, just return empty list
 
     @ensure_connected
-    @cached('snapshots', CACHE_DURATION, key_fnc=caching_key_helper)
+    @cached('snapshots', CACHE_DURATION, key_helper=caching_key_helper)
     def supports_snapshot(self, vmid: int, node: typing.Optional[str] = None) -> bool:
         # If machine uses tpm, snapshots are not supported
         return not self.get_machine_configuration(vmid, node).tpmstate0
@@ -541,7 +541,7 @@ class ProxmoxClient:
         )
 
     @ensure_connected
-    @cached('vms', CACHE_DURATION, key_fnc=caching_key_helper)
+    @cached('vms', CACHE_DURATION, key_helper=caching_key_helper)
     def list_machines(
         self, node: typing.Union[None, str, collections.abc.Iterable[str]] = None, **kwargs
     ) -> list[types.VMInfo]:
@@ -562,7 +562,7 @@ class ProxmoxClient:
         return sorted(result, key=lambda x: '{}{}'.format(x.node, x.name))
 
     @ensure_connected
-    @cached('vmip', CACHE_INFO_DURATION, key_fnc=caching_key_helper)
+    @cached('vmip', CACHE_INFO_DURATION, key_helper=caching_key_helper)
     def get_machine_pool_info(self, vmid: int, poolid: typing.Optional[str], **kwargs) -> types.VMInfo:
         # try to locate machine in pool
         node = None
@@ -581,7 +581,7 @@ class ProxmoxClient:
         return self.get_machine_info(vmid, node, **kwargs)
 
     @ensure_connected
-    @cached('vmin', CACHE_INFO_DURATION, key_fnc=caching_key_helper)
+    @cached('vmin', CACHE_INFO_DURATION, key_helper=caching_key_helper)
     def get_machine_info(self, vmid: int, node: typing.Optional[str] = None, **kwargs) -> types.VMInfo:
         nodes = [types.Node(node, False, False, 0, '', '', '')] if node else self.get_cluster_info().nodes
         any_node_is_down = False
@@ -675,14 +675,14 @@ class ProxmoxClient:
     resume_machine = start_machine
 
     @ensure_connected
-    @cached('storage', CACHE_DURATION, key_fnc=caching_key_helper)
+    @cached('storage', CACHE_DURATION, key_helper=caching_key_helper)
     def get_storage(self, storage: str, node: str, **kwargs) -> types.StorageInfo:
         return types.StorageInfo.from_dict(
             self._get('nodes/{}/storage/{}/status'.format(node, urllib.parse.quote(storage)))['data']
         )
 
     @ensure_connected
-    @cached('storages', CACHE_DURATION, key_fnc=caching_key_helper)
+    @cached('storages', CACHE_DURATION, key_helper=caching_key_helper)
     def list_storages(
         self,
         node: typing.Union[None, str, collections.abc.Iterable[str]] = None,
@@ -709,19 +709,19 @@ class ProxmoxClient:
         return result
 
     @ensure_connected
-    @cached('nodeStats', CACHE_INFO_DURATION, key_fnc=caching_key_helper)
+    @cached('nodeStats', CACHE_INFO_DURATION, key_helper=caching_key_helper)
     def get_node_stats(self, **kwargs) -> list[types.NodeStats]:
         return [
             types.NodeStats.from_dict(nodeStat) for nodeStat in self._get('cluster/resources?type=node')['data']
         ]
 
     @ensure_connected
-    @cached('pools', CACHE_DURATION // 6, key_fnc=caching_key_helper)
+    @cached('pools', CACHE_DURATION // 6, key_helper=caching_key_helper)
     def list_pools(self, **kwargs) -> list[types.PoolInfo]:
         return [types.PoolInfo.from_dict(poolInfo) for poolInfo in self._get('pools')['data']]
 
     @ensure_connected
-    @cached('pool', CACHE_DURATION, key_fnc=caching_key_helper)
+    @cached('pool', CACHE_DURATION, key_helper=caching_key_helper)
     def get_pool_info(self, pool_id: str, retrieve_vm_names: bool = False, **kwargs) -> types.PoolInfo:
         pool_info = types.PoolInfo.from_dict(self._get(f'pools/{pool_id}')['data'])
         if retrieve_vm_names:

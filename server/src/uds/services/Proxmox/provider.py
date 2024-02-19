@@ -54,6 +54,13 @@ logger = logging.getLogger(__name__)
 MAX_VMID: typing.Final[int] = 999999999
 
 
+def cache_key_helper(self: 'ProxmoxProvider') -> str:
+    """
+    Helper function to generate cache keys for the ProxmoxProvider class
+    """
+    return f'{self.host.value}-{self.port.as_int()}'
+
+
 class ProxmoxProvider(services.ServiceProvider):
     type_name = _('Proxmox Platform Provider')
     type_type = 'ProxmoxPlatform'
@@ -174,13 +181,17 @@ class ProxmoxProvider(services.ServiceProvider):
     def get_storage_info(self, storageid: str, node: str, force: bool = False) -> client.types.StorageInfo:
         return self._api().get_storage(storageid, node, force=force)
 
-    def list_storages(self, node: typing.Optional[str] = None, force: bool = False) -> list[client.types.StorageInfo]:
+    def list_storages(
+        self, node: typing.Optional[str] = None, force: bool = False
+    ) -> list[client.types.StorageInfo]:
         return self._api().list_storages(node=node, content='images', force=force)
 
     def list_pools(self, force: bool = False) -> list[client.types.PoolInfo]:
         return self._api().list_pools(force=force)
 
-    def get_pool_info(self, pool_id: str, retrieve_vm_names: bool = False, force: bool = False) -> client.types.PoolInfo:
+    def get_pool_info(
+        self, pool_id: str, retrieve_vm_names: bool = False, force: bool = False
+    ) -> client.types.PoolInfo:
         return self._api().get_pool_info(pool_id, retrieve_vm_names=retrieve_vm_names, force=force)
 
     def create_template(self, vmid: int) -> None:
@@ -299,7 +310,7 @@ class ProxmoxProvider(services.ServiceProvider):
         """
         return self._api().restore_snapshot(vmid, node, name)
 
-    @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
+    @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def is_available(self) -> bool:
         return self._api().test()
 

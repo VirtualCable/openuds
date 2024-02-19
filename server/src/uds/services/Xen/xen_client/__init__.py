@@ -212,7 +212,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
     def has_pool(self) -> bool:
         return self.check_login() and bool(self._pool_name)
 
-    @cached(prefix='xen_pool', timeout=consts.cache.LONG_CACHE_TIMEOUT, key_fnc=cache_key_helper)
+    @cached(prefix='xen_pool', timeout=consts.cache.LONG_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def get_pool_name(self) -> str:
         pool = self.pool.get_all()[0]
         return self.pool.get_name_label(pool)
@@ -325,7 +325,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
 
         return {'result': result, 'progress': progress, 'status': str(status), 'connection_error': True}
 
-    @cached(prefix='xen_srs', timeout=consts.cache.DEFAULT_CACHE_TIMEOUT, key_fnc=cache_key_helper)
+    @cached(prefix='xen_srs', timeout=consts.cache.DEFAULT_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def list_srs(self) -> list[dict[str, typing.Any]]:
         return_list: list[dict[str, typing.Any]] = []
         for srId in self.SR.get_all():
@@ -352,7 +352,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
                 )
         return return_list
 
-    @cached(prefix='xen_sr', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_fnc=cache_key_helper)
+    @cached(prefix='xen_sr', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def get_sr_info(self, srid: str) -> dict[str, typing.Any]:
         return {
             'id': srid,
@@ -361,7 +361,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
             'used': XenServer.to_mb(self.SR.get_physical_utilisation(srid)),
         }
 
-    @cached(prefix='xen_nets', timeout=consts.cache.DEFAULT_CACHE_TIMEOUT, key_fnc=cache_key_helper)
+    @cached(prefix='xen_nets', timeout=consts.cache.DEFAULT_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def list_networks(self, **kwargs) -> list[dict[str, typing.Any]]:
         return_list: list[dict[str, typing.Any]] = []
         for netId in self.network.get_all():
@@ -375,11 +375,11 @@ class XenServer:  # pylint: disable=too-many-public-methods
 
         return return_list
 
-    @cached(prefix='xen_net', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_fnc=cache_key_helper)
+    @cached(prefix='xen_net', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def get_network_info(self, net_id: str) -> dict[str, typing.Any]:
         return {'id': net_id, 'name': self.network.get_name_label(net_id)}
 
-    @cached(prefix='xen_vms', timeout=consts.cache.DEFAULT_CACHE_TIMEOUT, key_fnc=cache_key_helper)
+    @cached(prefix='xen_vms', timeout=consts.cache.DEFAULT_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def list_machines(self) -> list[dict[str, typing.Any]]:
         return_list: list[dict[str, typing.Any]] = []
         try:
@@ -410,14 +410,14 @@ class XenServer:  # pylint: disable=too-many-public-methods
         except XenAPI.Failure as e:
             raise XenFailure(e.details)
 
-    @cached(prefix='xen_vm', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_fnc=cache_key_helper)
+    @cached(prefix='xen_vm', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def get_machine_info(self, vmid: str, **kwargs) -> dict[str, typing.Any]:
         try:
             return self.VM.get_record(vmid)
         except XenAPI.Failure as e:
             raise XenFailure(e.details)
 
-    @cached(prefix='xen_vm_f', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_fnc=cache_key_helper)
+    @cached(prefix='xen_vm_f', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def get_machine_folder(self, vmid: str, **kwargs) -> str:
         try:
             other_config = self.VM.get_other_config(vmid)
@@ -633,7 +633,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
         except XenAPI.Failure as e:
             raise XenFailure(e.details)
 
-    @cached(prefix='xen_snapshots', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_fnc=cache_key_helper)
+    @cached(prefix='xen_snapshots', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def list_snapshots(self, vmid: str, full_info: bool = False, **kwargs) -> list[dict[str, typing.Any]]:
         """Returns a list of snapshots for the specified VM, sorted by snapshot_time in descending order.
         (That is, the most recent snapshot is first in the list.)
@@ -665,7 +665,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
         except XenAPI.Failure as e:
             raise XenFailure(e.details)
 
-    @cached(prefix='xen_folders', timeout=consts.cache.LONG_CACHE_TIMEOUT, key_fnc=cache_key_helper)
+    @cached(prefix='xen_folders', timeout=consts.cache.LONG_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def list_folders(self, **kwargs) -> list[str]:
         """list "Folders" from the "Organizations View" of the XenServer
 

@@ -580,7 +580,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
     @decorators.cached(
         prefix='spm',
-        key_fnc=CACHING_KEY_FNC,
+        key_helper=CACHING_KEY_FNC,
         timeout=3600,  # 1 hour
     )
     def get_sp_metadata(self) -> str:

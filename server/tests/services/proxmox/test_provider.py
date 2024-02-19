@@ -125,7 +125,7 @@ class TestProxmovProvider(UDSTestCase):
             self.assertEqual(provider.is_available(), False)
             api.test.assert_called_once_with()
 
-    def test_provider_methods(self) -> None:
+    def test_provider_methods_1(self) -> None:
         """
         Test the provider methods
         """
@@ -154,7 +154,13 @@ class TestProxmovProvider(UDSTestCase):
             api.get_storage.assert_called_once_with(
                 fixtures.STORAGES[2].storage, fixtures.STORAGES[2].node, force=True
             )
-            api.get_storage.reset_mock()
+
+    def test_provider_methods_2(self) -> None:
+        """
+        Test the provider methods
+        """
+        with fixtures.patch_provider_api() as api:
+            provider = fixtures.create_provider()
             self.assertEqual(
                 provider.get_storage_info(fixtures.STORAGES[2].storage, fixtures.STORAGES[2].node),
                 fixtures.STORAGES[2],
@@ -180,6 +186,12 @@ class TestProxmovProvider(UDSTestCase):
             self.assertEqual(provider.list_pools(), fixtures.POOLS)
             api.list_pools.assert_called_once_with(force=False)
 
+    def test_provider_methods3(self) -> None:
+        """
+        Test the provider methods
+        """
+        with fixtures.patch_provider_api() as api:
+            provider = fixtures.create_provider()
             self.assertEqual(
                 provider.get_pool_info(fixtures.POOLS[2].poolid, retrieve_vm_names=True, force=True),
                 fixtures.POOLS[2],
@@ -216,6 +228,12 @@ class TestProxmovProvider(UDSTestCase):
             self.assertEqual(provider.suspend_machine(1), fixtures.UPID)
             api.suspend_machine.assert_called_once_with(1)
 
+    def test_provider_methods_4(self) -> None:
+        """
+        Test the provider methods
+        """
+        with fixtures.patch_provider_api() as api:
+            provider = fixtures.create_provider()
             self.assertEqual(provider.shutdown_machine(1), fixtures.UPID)
             api.shutdown_machine.assert_called_once_with(1)
 
@@ -239,6 +257,13 @@ class TestProxmovProvider(UDSTestCase):
 
             self.assertEqual(provider.list_ha_groups(), fixtures.HA_GROUPS)
             api.list_ha_groups.assert_called_once_with()
+
+    def test_provider_methods_5(self) -> None:
+        """
+        Test the provider methods
+        """
+        with fixtures.patch_provider_api() as api:
+            provider = fixtures.create_provider()
 
             self.assertEqual(provider.get_console_connection('1'), fixtures.CONSOLE_CONNECTION)
             api.get_console_connection.assert_called_once_with(1, None)

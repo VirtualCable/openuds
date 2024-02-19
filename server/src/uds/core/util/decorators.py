@@ -206,7 +206,7 @@ def cached(
     timeout: typing.Union[collections.abc.Callable[[], int], int] = -1,
     args: typing.Optional[typing.Union[collections.abc.Iterable[int], int]] = None,
     kwargs: typing.Optional[typing.Union[collections.abc.Iterable[str], str]] = None,
-    key_fnc: typing.Optional[collections.abc.Callable[[typing.Any], str]] = None,
+    key_helper: typing.Optional[collections.abc.Callable[[typing.Any], str]] = None,
 ) -> collections.abc.Callable[[FT], FT]:
     """Decorator that give us a "quick& clean" caching feature on db.
     The "cached" element must provide a "cache" variable, which is a cache object
@@ -257,7 +257,7 @@ def cached(
             # Not inspectable, no caching possible, return original function
             return fnc
 
-        lkey_fnc = key_fnc or (lambda x: fnc.__name__)
+        lkey_fnc = key_helper or (lambda x: fnc.__name__)
 
         @functools.wraps(fnc)
         def wrapper(*args, **kwargs) -> typing.Any:

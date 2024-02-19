@@ -99,7 +99,7 @@ class CacheTest(UDSTransactionTestCase):
             def __init__(self, value: str):
                 self.value = [value] * 8
 
-            @cached(prefix='test', timeout=1, key_fnc=cache_key)
+            @cached(prefix='test', timeout=1, key_helper=cache_key)
             def cached_test(self, **kwargs) -> list[str]:
                 self.call_count += 1
                 return self.value

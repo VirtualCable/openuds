@@ -448,7 +448,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
     def get_macs_range(self) -> str:
         return self.macs_range.value
 
-    @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT, key_fnc=lambda x: x.host.as_str())
+    @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT, key_helper=lambda x: x.host.as_str())
     def is_available(self) -> bool:
         try:
             self.test_connection()
