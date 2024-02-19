@@ -563,7 +563,7 @@ class ProxmoxClient:
 
     @ensure_connected
     @cached('vmip', CACHE_INFO_DURATION, key_fnc=caching_key_helper)
-    def get_machines_pool_info(self, vmid: int, poolid: typing.Optional[str], **kwargs) -> types.VMInfo:
+    def get_machine_pool_info(self, vmid: int, poolid: typing.Optional[str], **kwargs) -> types.VMInfo:
         # try to locate machine in pool
         node = None
         if poolid:

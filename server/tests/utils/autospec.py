@@ -33,8 +33,6 @@ import typing
 import dataclasses
 from unittest import mock
 
-T = typing.TypeVar('T')
-
 @dataclasses.dataclass
 class AutoSpecMethodInfo:
     name: str
@@ -42,7 +40,7 @@ class AutoSpecMethodInfo:
     method: 'typing.Callable|None' = None
     
     
-def autospec(cls: typing.Type[T], metods_info: collections.abc.Iterable, **kwargs: typing.Any) -> T:
+def autospec(cls: type, metods_info: collections.abc.Iterable, **kwargs: typing.Any) -> mock.Mock:
     """
     This is a helper function that will create a mock object with the same methods as the class passed as parameter.
     This is useful for testing purposes, where you want to mock a class and still have the same methods available.
@@ -51,5 +49,11 @@ def autospec(cls: typing.Type[T], metods_info: collections.abc.Iterable, **kwarg
     """
     obj = mock.create_autospec(cls, **kwargs)
     for method_info in metods_info:
-        setattr(obj, method_info.name, method_info.method or mock.Mock(return_value=method_info.return_value))
+        # Set the return value for the method or the side_effect
+        mck = getattr(obj, method_info.name)
+        if method_info.method is not None:
+            mck.side_effect = method_info.method
+        else:
+            mck.return_value = method_info.return_value
+            
     return obj
