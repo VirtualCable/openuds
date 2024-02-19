@@ -40,6 +40,7 @@ from unittest import mock
 import uuid
 
 from uds.core import types, environment
+from uds.core.ui.user_interface import gui
 from uds.services.OpenNebula.on import vm
 
 from ...utils.test import UDSTestCase
@@ -148,7 +149,7 @@ VMS_INFO: typing.Final[list[client.types.VMInfo]] = [
         maxdisk=1,
         mem=1024 * 1024 * 1024 * i,
         maxmem=1024 * 1024 * 1024 * i * 2,
-        name='name',
+        name=f'name{i}',
         pid=1000 + i,
         qmpstatus='qmpstatus',
         tags='tags',
@@ -170,7 +171,11 @@ VMS_CONFIGURATION: typing.Final[list[client.types.VMConfiguration]] = [
         cores=1,
         vmgenid='vmgenid',
         digest='digest',
-        networks=[client.types.NetworkConfiguration(net='net', type='type', mac=f'{i:02x}:00:00:00:00:{i:02x}')],
+        networks=[
+            client.types.NetworkConfiguration(
+                net='net', type='type', mac=f'{i:02x}:{i+1:02x}:{i+2:02x}:{i+3:02x}:{i+4:02x}:{i+5:02x}'
+            )
+        ],
         tpmstate0='tpmstate0',
         template=bool(i > 8),  # Last two are templates
     )
@@ -244,16 +249,18 @@ POOLS: typing.Final[list[client.types.PoolInfo]] = [
 
 GUEST_IP_ADDRESS: typing.Final[str] = '1.0.0.1'
 
-CONSOLE_CONNECTION: typing.Final[types.services.ConsoleConnectionInfo] = types.services.ConsoleConnectionInfo(
-    type='spice',
-    address=GUEST_IP_ADDRESS,
-    port=5900,
-    secure_port=5901,
-    cert_subject='',
-    ticket=types.services.ConsoleConnectionTicket(value='ticket'),
-    ca='',
-    proxy='',
-    monitors=1,
+CONSOLE_CONNECTION_INFO: typing.Final[types.services.ConsoleConnectionInfo] = (
+    types.services.ConsoleConnectionInfo(
+        type='spice',
+        address=GUEST_IP_ADDRESS,
+        port=5900,
+        secure_port=5901,
+        cert_subject='',
+        ticket=types.services.ConsoleConnectionTicket(value='ticket'),
+        ca='',
+        proxy='',
+        monitors=1,
+    )
 )
 
 # Methods that returns None or "internal" methods are not tested
@@ -295,8 +302,6 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     AutoSpecMethodInfo('create_snapshot', return_value=UPID),
     # remove_snapshot
     AutoSpecMethodInfo('remove_snapshot', return_value=UPID),
-    # get_current_snapshot
-    AutoSpecMethodInfo('get_current_snapshot', return_value=SNAPSHOTS_INFO[0].name),
     # restore_snapshot
     AutoSpecMethodInfo('restore_snapshot', return_value=UPID),
     # get_task
@@ -347,10 +352,10 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
         'get_pool_info', method=lambda poolid, **kwargs: next(filter(lambda p: p.poolid == poolid, POOLS))
     ),
     # get_console_connection
-    AutoSpecMethodInfo('get_console_connection', return_value=CONSOLE_CONNECTION),
+    AutoSpecMethodInfo('get_console_connection', return_value=CONSOLE_CONNECTION_INFO),
 ]
 
-PROVIDER_VALUES_DICT: typing.Final[dict[str, typing.Any]] = {
+PROVIDER_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
     'host': 'host',
     'port': 8006,
     'username': 'username',
@@ -360,6 +365,24 @@ PROVIDER_VALUES_DICT: typing.Final[dict[str, typing.Any]] = {
     'timeout': 10,
     'start_vmid': 100,
     'macs_range': '00:00:00:00:00:00-00:00:00:ff:ff:ff',
+}
+
+
+SERVICE_LINKED_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
+    'pool': POOLS[0].poolid,
+    'ha': HA_GROUPS[0],
+    'soft_shutdown': False,
+    'machine': VMS_INFO[0].vmid,
+    'datastore': STORAGES[0].storage,
+    'gpu': VGPUS[0].type,
+    'basename': 'base',
+    'lenname': 4,
+}
+
+SERVICE_FIXED_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
+    'pool': POOLS[0].poolid,
+    'machines': [str(VMS_INFO[2].vmid), str(VMS_INFO[3].vmid), str(VMS_INFO[4].vmid)],
+    'use_snapshots': True,
 }
 
 
@@ -392,4 +415,38 @@ def create_provider(**kwargs: typing.Any) -> provider.ProxmoxProvider:
     uuid_ = str(uuid.uuid4())
     return provider.ProxmoxProvider(
         environment=environment.Environment.private_environment(uuid), values=values, uuid=uuid_
+    )
+
+
+def create_service_linked(
+    provider: typing.Optional[provider.ProxmoxProvider] = None, **kwargs: typing.Any
+) -> service.ProxmoxLinkedService:
+    """
+    Create a fixed service
+    """
+    uuid_ = str(uuid.uuid4())
+    values = SERVICE_LINKED_VALUES_DICT.copy()
+    values.update(kwargs)
+    return service.ProxmoxLinkedService(
+        environment=environment.Environment.private_environment(uuid_),
+        provider=provider or create_provider(),
+        values=values,
+        uuid=uuid_,
+    )
+
+
+def create_service_fixed(
+    provider: typing.Optional[provider.ProxmoxProvider] = None, **kwargs: typing.Any
+) -> service_fixed.ProxmoxFixedService:
+    """
+    Create a fixed service
+    """
+    uuid_ = str(uuid.uuid4())
+    values = SERVICE_FIXED_VALUES_DICT.copy()
+    values.update(kwargs)
+    return service_fixed.ProxmoxFixedService(
+        environment=environment.Environment.private_environment(uuid_),
+        provider=provider or create_provider(),
+        values=values,
+        uuid=uuid_,
     )

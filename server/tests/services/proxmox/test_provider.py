@@ -243,13 +243,13 @@ class TestProxmovProvider(UDSTestCase):
             self.assertEqual(provider.get_task_info('node', 'upid'), fixtures.TASK_STATUS)
             api.get_task.assert_called_once_with('node', 'upid')
 
-            provider.enable_ha(1, True, 'group')
+            provider.enable_machine_ha(1, True, 'group')
             api.enable_machine_ha.assert_called_once_with(1, True, 'group')
 
             provider.set_machine_mac(1, 'mac')
             api.set_machine_ha.assert_called_once_with(1, 'mac')
 
-            provider.disable_ha(1)
+            provider.disable_machine_ha(1)
             api.disable_machine_ha.assert_called_once_with(1)
 
             provider.set_protection(1, 'node', True)
@@ -265,7 +265,7 @@ class TestProxmovProvider(UDSTestCase):
         with fixtures.patch_provider_api() as api:
             provider = fixtures.create_provider()
 
-            self.assertEqual(provider.get_console_connection('1'), fixtures.CONSOLE_CONNECTION)
+            self.assertEqual(provider.get_console_connection('1'), fixtures.CONSOLE_CONNECTION_INFO)
             api.get_console_connection.assert_called_once_with(1, None)
 
             vmid = provider.get_new_vmid()
@@ -273,7 +273,7 @@ class TestProxmovProvider(UDSTestCase):
                 self.assertEqual(provider.get_new_vmid(), vmid + i)
 
             self.assertEqual(provider.get_guest_ip_address(1), fixtures.GUEST_IP_ADDRESS)
-            api.get_guest_ip_address.assert_called_once_with(1, None)
+            api.get_guest_ip_address.assert_called_once_with(1, None, '')
 
             self.assertEqual(provider.supports_snapshot(1), True)
             api.supports_snapshot.assert_called_once_with(1, None)

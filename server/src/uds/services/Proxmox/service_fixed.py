@@ -144,7 +144,11 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
             vms[member.vmid] = member.vmname
 
         assigned_vms = self._get_assigned_machines()
-        return [gui.choice_item(k, vms.get(int(k), 'Unknown!')) for k in self.machines.as_list() if int(k) not in assigned_vms]
+        return [
+            gui.choice_item(k, vms.get(int(k), 'Unknown!'))
+            for k in self.machines.as_list()
+            if int(k) not in assigned_vms
+        ]
 
     def assign_from_assignables(
         self, assignable_id: str, user: 'models.User', user_deployment: 'services.UserService'
@@ -179,7 +183,7 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
                 # Lauch an snapshot. We will not wait for it to finish, but instead let it run "as is"
                 try:
                     if not self.provider().get_current_snapshot(vmid):
-                        logger.debug('Not current snapshot')
+                        logger.debug('No current snapshot')
                         self.provider().create_snapshot(
                             vmid,
                             name='UDS Snapshot',
@@ -188,15 +192,14 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
                     self.do_log(log.LogLevel.WARNING, 'Could not create SNAPSHOT for this VM. ({})'.format(e))
 
     def get_and_assign_machine(self) -> str:
-        found_vmid: typing.Optional[int] = None
+        found_vmid: typing.Optional[str] = None
         try:
             assigned_vms = self._get_assigned_machines()
-            for k in self.machines.as_list():
-                checking_vmid = int(k)
-                if found_vmid not in assigned_vms:  # Not assigned
-                    # Check that the machine exists...
+            for checking_vmid in self.machines.as_list():
+                if checking_vmid not in assigned_vms:  # Not already assigned
                     try:
-                        vm_info = self.provider().get_machine_info(checking_vmid, self.pool.value.strip())
+                        # Invoke to check it exists, do not need to store the result
+                        self.provider().get_machine_info(int(checking_vmid), self.pool.value.strip())
                         found_vmid = checking_vmid
                         break
                     except Exception:  # Notifies on log, but skipt it
@@ -209,7 +212,7 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
                         )
 
             if found_vmid:
-                assigned_vms.add(str(found_vmid))
+                assigned_vms.add(found_vmid)
                 self._save_assigned_machines(assigned_vms)
         except Exception:  #
             raise Exception('No machine available')

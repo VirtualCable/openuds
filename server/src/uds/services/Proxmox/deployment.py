@@ -477,7 +477,7 @@ if sys.platform == 'win32':
 
     def _update_machine_mac_and_ha(self) -> None:
         try:
-            self.service().enable_ha(int(self._vmid), True)  # Enable HA before continuing here
+            self.service().enable_machine_ha(int(self._vmid), True)  # Enable HA before continuing here
 
             # Set vm mac address now on first interface
             self.service().provider().set_machine_mac(int(self._vmid), self.get_unique_id())

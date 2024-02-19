@@ -129,12 +129,6 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         logger.debug('Saving storage VMS: %s', vals)
         self.storage.put_pickle('vms', vals)
 
-    def sanitized_name(self, name: str) -> str:
-        """
-        Proxmox only allows machine names with [a-zA-Z0-9_-]
-        """
-        return re.sub("[^a-zA-Z0-9_-]", "-", name)
-
     def process_snapshot(self, remove: bool, userservice_instance: 'FixedUserService') -> None:
         """
         Processes snapshot creation if needed for this service

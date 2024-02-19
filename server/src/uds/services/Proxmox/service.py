@@ -210,7 +210,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         pool = self.pool.value or None
         if vmid == -1:  # vmId == -1 if cloning for template
             return self.provider().clone_machine(
-                gui.as_int(self.machine.value),
+                self.machine.as_int(),
                 name,
                 description,
                 as_linked_clone=False,
@@ -228,8 +228,8 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
             must_have_vgpus={'1': True, '2': False}.get(self.gpu.value, None),
         )
 
-    def get_machine_info(self, vmId: int) -> 'client.types.VMInfo':
-        return self.provider().get_machine_info(vmId, self.pool.value.strip())
+    def get_machine_info(self, vmid: int) -> 'client.types.VMInfo':
+        return self.provider().get_machine_info(vmid, self.pool.value.strip())
 
     def get_nic_mac(self, vmid: int) -> str:
         config = self.provider().get_machine_configuration(vmid)
@@ -238,7 +238,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
     def remove_machine(self, vmid: int) -> 'client.types.UPID':
         # First, remove from HA if needed
         try:
-            self.disable_ha(vmid)
+            self.disable_machine_ha(vmid)
         except Exception as e:
             logger.warning('Exception disabling HA for vm %s: %s', vmid, e)
             self.do_log(level=log.LogLevel.WARNING, message=f'Exception disabling HA for vm {vmid}: {e}')
@@ -246,15 +246,15 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         # And remove it
         return self.provider().remove_machine(vmid)
 
-    def enable_ha(self, vmid: int, started: bool = False) -> None:
+    def enable_machine_ha(self, vmid: int, started: bool = False) -> None:
         if self.ha.value == '__':
             return
-        self.provider().enable_ha(vmid, started, self.ha.value or None)
+        self.provider().enable_machine_ha(vmid, started, self.ha.value or None)
 
-    def disable_ha(self, vmid: int) -> None:
+    def disable_machine_ha(self, vmid: int) -> None:
         if self.ha.value == '__':
             return
-        self.provider().disable_ha(vmid)
+        self.provider().disable_machine_ha(vmid)
 
     def get_basename(self) -> str:
         return self.basename.value

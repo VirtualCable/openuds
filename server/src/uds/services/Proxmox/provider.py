@@ -241,13 +241,13 @@ class ProxmoxProvider(services.ServiceProvider):
     def get_task_info(self, node: str, upid: str) -> client.types.TaskStatus:
         return self._api().get_task(node, upid)
 
-    def enable_ha(self, vmid: int, started: bool = False, group: typing.Optional[str] = None) -> None:
+    def enable_machine_ha(self, vmid: int, started: bool = False, group: typing.Optional[str] = None) -> None:
         self._api().enable_machine_ha(vmid, started, group)
 
     def set_machine_mac(self, vmid: int, macAddress: str) -> None:
         self._api().set_machine_ha(vmid, macAddress)
 
-    def disable_ha(self, vmid: int) -> None:
+    def disable_machine_ha(self, vmid: int) -> None:
         self._api().disable_machine_ha(vmid)
 
     def set_protection(self, vmid: int, node: typing.Optional[str] = None, protection: bool = False) -> None:
@@ -275,8 +275,8 @@ class ProxmoxProvider(services.ServiceProvider):
             # if it exists when we try to create a new one, we will simply try to get another one
         raise client.ProxmoxError(f'Could not get a new vmid!!: last tried {vmid}')
 
-    def get_guest_ip_address(self, vmid: int, node: typing.Optional[str] = None) -> str:
-        return self._api().get_guest_ip_address(vmid, node)
+    def get_guest_ip_address(self, vmid: int, node: typing.Optional[str] = None, ip_version: typing.Literal['4', '6', ''] = '') -> str:
+        return self._api().get_guest_ip_address(vmid, node, ip_version)
 
     def supports_snapshot(self, vmid: int, node: typing.Optional[str] = None) -> bool:
         return self._api().supports_snapshot(vmid, node)

@@ -147,7 +147,7 @@ class ProxmoxPublication(services.Publication, autoserializable.AutoSerializable
                     0.5
                 )  # Give some tome to proxmox. We have observed some concurrency issues
                 # And add it to HA if
-                self.service().enable_ha(int(self._vm))
+                self.service().enable_machine_ha(int(self._vm))
                 time.sleep(0.5)
                 # Mark vm as template
                 self.service().provider().create_template(int(self._vm))

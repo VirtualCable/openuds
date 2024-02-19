@@ -101,6 +101,7 @@ class gui:
         str,
         typing.Union[
             str,
+            int,
             bool,
             list[str],
             types.ui.ChoiceItem,
@@ -120,7 +121,7 @@ class gui:
     ] = {}
 
     @staticmethod
-    def choice_item(id_: typing.Union[str, int], text: typing.Union[str, int]) -> 'types.ui.ChoiceItem':
+    def choice_item(id_: typing.Union[str, int], text: str) -> 'types.ui.ChoiceItem':
         """
         Helper method to create a single choice item.
         """
@@ -161,7 +162,7 @@ class gui:
                     raise ValueError(f'Invalid choice dict: {val}')
                 return gui.choice_item(val['id'], val['text'])
             # If val is not a dict, and it has not 'id' and 'text', raise an exception
-            return gui.choice_item(val, val)
+            return gui.choice_item(val, str(val))
 
         # If is a dict
         if isinstance(vals, collections.abc.Mapping):
@@ -417,13 +418,13 @@ class gui:
             Intended to be overriden by descendants
             """
             return True
-        
+
         def as_int(self) -> int:
             """
             Return value as integer
             """
             return gui.as_int(self.value)
-            
+
         def as_str(self) -> str:
             """
             Return value as string
@@ -741,10 +742,10 @@ class gui:
             """Alias for "value" property, but as timestamp"""
             return int(time.mktime(self.as_date().timetuple()))
             # return int(time.mktime(datetime.datetime.strptime(self.value, '%Y-%m-%d').timetuple()))
-            
+
         def as_int(self) -> int:
             return self.as_timestamp()
-        
+
         def as_str(self) -> str:
             return str(self.as_date())
 
@@ -1470,23 +1471,24 @@ class UserInterface(metaclass=UserInterfaceType):
 
         # If a field has a callable on defined attributes(value, default, choices)
         # update the reference to the new copy
-        for key, val in self._gui.items():  # And refresh self references to them
-            setattr(self, key, val)  # Reference to self._gui[key]
+        for fld_name, fld in self._gui.items():  # And refresh self references to them
+            setattr(self, fld_name, fld)  # Reference to self._gui[key]
 
             # Check for "callable" fields and update them if needed
             for field in ['choices', 'default']:  # Update references to self for callable fields
-                attr = getattr(val._fields_info, field, None)
+                attr = getattr(fld._fields_info, field, None)
                 if attr and callable(attr):
                     # val is an InputField derived instance, so it is a reference to self._gui[key]
-                    setattr(val._fields_info, field, attr())
+                    setattr(fld._fields_info, field, attr())
 
-        if values is not None:
-            for k, v in self._gui.items():
-                if k in values:
-                    v.value = values[k]
+            if values is not None:
+                if fld_name in values:
+                    fld.value = values[fld_name]
                 else:
                     caller = inspect.stack()[1]
-                    logger.warning('Field %s not found (invoked from %s:%s)', k, caller.filename, caller.lineno)
+                    logger.warning(
+                        'Field %s not found (invoked from %s:%s)', fld_name, caller.filename, caller.lineno
+                    )
 
     def init_gui(self) -> None:
         """

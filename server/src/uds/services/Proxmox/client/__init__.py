@@ -415,17 +415,25 @@ class ProxmoxClient:
 
     @ensure_connected
     def enable_machine_ha(self, vmid: int, started: bool = False, group: typing.Optional[str] = None) -> None:
+        """
+        Enable high availability for a virtual machine.
+
+        Args:
+            vmid (int): The ID of the virtual machine.
+            started (bool, optional): Whether the virtual machine should be started. Defaults to False.
+            group (str, optional): The group to which the virtual machine belongs. Defaults to None.
+        """
         self._post(
             'cluster/ha/resources',
             data=[
-                ('sid', f'vm:{vmid}'),
-                ('comment', 'UDS HA VM'),
-                ('state', 'started' if started else 'stopped'),
-                ('max_restart', '4'),
-                ('max_relocate', '4'),
-            ]
-            + ([('group', group)] if group else []),
-        )
+                    ('sid', f'vm:{vmid}'),
+                    ('comment', 'UDS HA VM'),
+                    ('state', 'started' if started else 'stopped'),
+                    ('max_restart', '4'),
+                    ('max_relocate', '4'),
+                ]
+                + ([('group', group)] if group else []),
+            )
 
     @ensure_connected
     def disable_machine_ha(self, vmid: int) -> None:
@@ -520,10 +528,6 @@ class ProxmoxClient:
         if name is None:
             raise ProxmoxError('Snapshot name is required')
         return types.UPID.from_dict(self._delete(f'nodes/{node}/qemu/{vmid}/snapshot/{name}'))
-
-    def get_current_snapshot(self, vmid: int, node: 'str|None' = None) -> str:
-        node = node or self.get_machine_info(vmid).node
-        return self._get(f'nodes/{node}/qemu/{vmid}/snapshot/current')['data']['name']
 
     @ensure_connected
     def restore_snapshot(
