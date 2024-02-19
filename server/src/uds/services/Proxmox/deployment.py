@@ -207,7 +207,7 @@ class ProxmoxDeployment(services.UserService, autoserializable.AutoSerializable)
         """
         if self._vmid != '':
             try:
-                self.service().reset_machine(int(self._vmid))
+                self.service().provider().reset_machine(int(self._vmid))
             except Exception:  # nosec: if cannot reset, ignore it
                 pass  # If could not reset, ignore it...
 
@@ -417,7 +417,7 @@ if sys.platform == 'win32':
             raise Exception('Machine not found on start machine') from e
 
         if vmInfo.status == 'stopped':
-            self._store_task(self.service().start_machine(int(self._vmid)))
+            self._store_task(self.service().provider().start_machine(int(self._vmid)))
 
         return State.RUNNING
 
@@ -429,7 +429,7 @@ if sys.platform == 'win32':
 
         if vm_info.status != 'stopped':
             logger.debug('Stopping machine %s', vm_info)
-            self._store_task(self.service().stop_machine(int(self._vmid)))
+            self._store_task(self.service().provider().stop_machine(int(self._vmid)))
 
         return State.RUNNING
 
@@ -442,7 +442,7 @@ if sys.platform == 'win32':
             raise Exception('Machine not found or suspended machine') from e
 
         if vmInfo.status != 'stopped':
-            self._store_task(self.service().shutdown_machine(int(self._vmid)))
+            self._store_task(self.service().provider().shutdown_machine(int(self._vmid)))
 
         return State.RUNNING
 
@@ -456,7 +456,7 @@ if sys.platform == 'win32':
         shutdown = -1  # Means machine already stopped
         vmInfo = self.service().get_machine_info(int(self._vmid))
         if vmInfo.status != 'stopped':
-            self._store_task(self.service().shutdown_machine(int(self._vmid)))
+            self._store_task(self.service().provider().shutdown_machine(int(self._vmid)))
             shutdown = sql_stamp_seconds()
         logger.debug('Stoped vm using guest tools')
         self.storage.put_pickle('shutdown', shutdown)
@@ -467,7 +467,7 @@ if sys.platform == 'win32':
             self.service().enable_ha(int(self._vmid), True)  # Enable HA before continuing here
 
             # Set vm mac address now on first interface
-            self.service().set_machine_mac(int(self._vmid), self.get_unique_id())
+            self.service().provider().set_machine_mac(int(self._vmid), self.get_unique_id())
         except Exception as e:
             logger.exception('Setting HA and MAC on proxmox')
             raise Exception(f'Error setting MAC and HA on proxmox: {e}') from e
@@ -481,7 +481,7 @@ if sys.platform == 'win32':
         node, upid = self._retrieve_task()
 
         try:
-            task = self.service().get_task_info(node, upid)
+            task = self.service().provider().get_task_info(node, upid)
         except client.ProxmoxConnectionError:
             return State.RUNNING  # Try again later
 

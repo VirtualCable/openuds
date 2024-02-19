@@ -101,7 +101,7 @@ class ProxmoxFixedUserService(FixedUserService, autoserializable.AutoSerializabl
         """
         if self._vmid != '':
             try:
-                self.service().reset_machine(int(self._vmid))
+                self.service().provider().reset_machine(int(self._vmid))
             except Exception:  # nosec: if cannot reset, ignore it
                 pass  # If could not reset, ignore it...
 
@@ -120,7 +120,7 @@ class ProxmoxFixedUserService(FixedUserService, autoserializable.AutoSerializabl
             raise Exception('Machine not found on start machine') from e
 
         if vminfo.status == 'stopped':
-            self._store_task(self.service().start_machine(int(self._vmid)))
+            self._store_task(self.service().provider().start_machine(int(self._vmid)))
 
     def _stop_machine(self) -> None:
         try:
@@ -130,7 +130,7 @@ class ProxmoxFixedUserService(FixedUserService, autoserializable.AutoSerializabl
 
         if vm_info.status != 'stopped':
             logger.debug('Stopping machine %s', vm_info)
-            self._store_task(self.service().stop_machine(int(self._vmid)))
+            self._store_task(self.service().provider().stop_machine(int(self._vmid)))
 
     # Check methods
     def _check_task_finished(self) -> str:
@@ -140,7 +140,7 @@ class ProxmoxFixedUserService(FixedUserService, autoserializable.AutoSerializabl
         node, upid = self._retrieve_task()
 
         try:
-            task = self.service().get_task_info(node, upid)
+            task = self.service().provider().get_task_info(node, upid)
         except client.ProxmoxConnectionError:
             return State.RUNNING  # Try again later
 

@@ -205,9 +205,6 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         """
         return re.sub("[^a-zA-Z0-9_-]", "-", name)
 
-    def make_template(self, vmId: int) -> None:
-        self.provider().create_template(vmId)
-
     def clone_machine(self, name: str, description: str, vmId: int = -1) -> 'client.types.VmCreationResult':
         name = self.sanitized_name(name)
         pool = self.pool.value or None
@@ -238,50 +235,26 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         config = self.provider().get_machine_configuration(vmid)
         return config.networks[0].mac.lower()
 
-    def get_task_info(self, node: str, upid: str) -> 'client.types.TaskStatus':
-        return self.provider().get_task_info(node, upid)
-
-    def start_machine(self, vmId: int) -> 'client.types.UPID':
-        return self.provider().start_machine(vmId)
-
-    def stop_machine(self, vmId: int) -> 'client.types.UPID':
-        return self.provider().stop_machine(vmId)
-
-    def reset_machine(self, vmId: int) -> 'client.types.UPID':
-        return self.provider().reset_machine(vmId)
-
-    def suspend_machine(self, vmId: int) -> 'client.types.UPID':
-        return self.provider().suspend_machine(vmId)
-
-    def shutdown_machine(self, vmId: int) -> 'client.types.UPID':
-        return self.provider().shutdown_machine(vmId)
-
-    def remove_machine(self, vmId: int) -> 'client.types.UPID':
+    def remove_machine(self, vmid: int) -> 'client.types.UPID':
         # First, remove from HA if needed
         try:
-            self.disable_ha(vmId)
+            self.disable_ha(vmid)
         except Exception as e:
-            logger.warning('Exception disabling HA for vm %s: %s', vmId, e)
-            self.do_log(level=log.LogLevel.WARNING, message=f'Exception disabling HA for vm {vmId}: {e}')
+            logger.warning('Exception disabling HA for vm %s: %s', vmid, e)
+            self.do_log(level=log.LogLevel.WARNING, message=f'Exception disabling HA for vm {vmid}: {e}')
 
         # And remove it
-        return self.provider().remove_machine(vmId)
+        return self.provider().remove_machine(vmid)
 
-    def enable_ha(self, vmId: int, started: bool = False) -> None:
+    def enable_ha(self, vmid: int, started: bool = False) -> None:
         if self.ha.value == '__':
             return
-        self.provider().enable_ha(vmId, started, self.ha.value or None)
+        self.provider().enable_ha(vmid, started, self.ha.value or None)
 
-    def disable_ha(self, vmId: int) -> None:
+    def disable_ha(self, vmid: int) -> None:
         if self.ha.value == '__':
             return
-        self.provider().disable_ha(vmId)
-
-    def set_protection(self, vmId: int, node: typing.Optional[str] = None, protection: bool = False) -> None:
-        self.provider().set_protection(vmId, node, protection)
-
-    def set_machine_mac(self, vmId: int, mac: str) -> None:
-        self.provider().set_machine_mac(vmId, mac)
+        self.provider().disable_ha(vmid)
 
     def get_basename(self) -> str:
         return self.basename.value
@@ -295,7 +268,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         """
         return self.provider().get_macs_range()
 
-    def enable_ha_for_machines(self) -> bool:
+    def is_ha_enabled(self) -> bool:
         return self.ha.value != '__'
 
     def try_graceful_shutdown(self) -> bool:
@@ -306,6 +279,5 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
     ) -> typing.Optional[types.services.ConsoleConnectionInfo]:
         return self.provider().get_console_connection(machine_id)
 
-    @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def is_avaliable(self) -> bool:
         return self.provider().is_available()

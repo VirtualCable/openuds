@@ -133,22 +133,6 @@ class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-meth
     def get_machine_info(self, vmId: int) -> 'client.types.VMInfo':
         return self.provider().get_machine_info(vmId, self.pool.value.strip())
 
-    def get_task_info(self, node: str, upid: str) -> 'client.types.TaskStatus':
-        return self.provider().get_task_info(node, upid)
-
-    def start_machine(self, vmId: int) -> 'client.types.UPID':
-        return self.provider().start_machine(vmId)
-
-    def stop_machine(self, vmId: int) -> 'client.types.UPID':
-        return self.provider().stop_machine(vmId)
-
-    def reset_machine(self, vmId: int) -> 'client.types.UPID':
-        return self.provider().reset_machine(vmId)
-
-    def shutdown_machine(self, vmId: int) -> 'client.types.UPID':
-        return self.provider().shutdown_machine(vmId)
-
-    @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def is_avaliable(self) -> bool:
         return self.provider().is_available()
 
