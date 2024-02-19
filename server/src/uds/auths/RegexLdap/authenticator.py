@@ -214,20 +214,19 @@ class RegexLdap(auths.Authenticator):
         self.certificate.value = ''  # Backward compatibility
 
         # Common values
+        self.host.value = vals[1]
+        self.port.value = int(vals[2])
+        self.use_ssl.value = gui.as_bool(vals[3])
+        self.username.value = vals[4]
+        self.password.value = vals[5]
+        self.timeout.value = int(vals[6])
+        self.ldap_base.value = vals[7]
+        self.user_class.value = vals[8]
+        self.userid_attr.value = vals[9]
+        self.groupname_attr.value = vals[10]
+        
 
         logger.debug('Common: %s', vals[1:11])
-        (
-            self.host.value,
-            self.port.value,
-            self.use_ssl.value,
-            self.username.value,
-            self.password.value,  # Password was not encrypted before, new serializations will be
-            self.timeout.value,
-            self.ldap_base.value,
-            self.user_class.value,
-            self.userid_attr.value,
-            self.groupname_attr.value,
-        ) = vals[1:11]
 
         if vals[0] == 'v1':
             logger.debug("Data: %s", vals[11:])
@@ -256,13 +255,11 @@ class RegexLdap(auths.Authenticator):
             ) = vals[11:]
         elif vals[0] == 'v5':
             logger.debug("Data v5: %s", vals[1:])
-            (
-                self.username_attr.value,
-                self.alternate_class.value,
-                self.mfa_attribute.value,
-                self.verify_ssl.value,
-                self._certificate,
-            ) = vals[11:]
+            self.username_attr.value = vals[11]
+            self.alternate_class.value = vals[12]
+            self.mfa_attribute.value = vals[13]
+            self.verify_ssl.value = gui.as_bool(vals[14])
+            self._certificate = vals[15]
 
         self.mark_for_upgrade()  # Old version, so flag for upgrade if possible
 
@@ -325,11 +322,11 @@ class RegexLdap(auths.Authenticator):
         # and add result attributes to "main" search.
         # For example, you can have authentication in an "user" object class and attributes in an "user_attributes" object class.
         # Note: This is very rare situation, but it ocurrs :)
-        if user and self.alternate_class.as_clean_str():
+        if user and self.alternate_class.value.strip():
             for usr in ldaputil.as_dict(
                 con=self._stablish_connection(),
                 base=self.ldap_base.as_str(),
-                ldap_filter=f'(&(objectClass={self.alternate_class.as_clean_str()})({self.userid_attr.as_str()}={ldaputil.escape(username)}))',
+                ldap_filter=f'(&(objectClass={self.alternate_class.value.strip()})({self.userid_attr.as_str()}={ldaputil.escape(username)}))',
                 attributes=attributes,
                 limit=LDAP_RESULT_LIMIT,
             ):
@@ -547,7 +544,7 @@ class RegexLdap(auths.Authenticator):
             # If found 1 or more, all right
             pass
 
-        for groupname_attr in self.groupname_attr.as_clean_str().split('\n'):
+        for groupname_attr in self.groupname_attr.value.strip().split('\n'):
             vals = groupname_attr.split('=')[0]
             if vals == 'dn':
                 continue

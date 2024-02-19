@@ -164,7 +164,7 @@ class OGProvider(ServiceProvider):
             try:
                 request = values['_request']
 
-                if self.uds_endpoint.as_clean_str() == '':
+                if self.uds_endpoint.value.strip() == '':
                     self.uds_endpoint.value = request.build_absolute_uri('/')
 
                 # Ensure that url ends with /

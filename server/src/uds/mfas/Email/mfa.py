@@ -213,7 +213,7 @@ class EmailMFA(mfas.MFA):
         # check hostname for stmp server si valid and is in the right format
         # that is a hostname or ip address with optional port
         # if hostname is not valid, we will raise an exception
-        hostname = self.hostname.as_clean_str()
+        hostname = self.hostname.value.strip()
         if not hostname:
             raise exceptions.ui.ValidationError(_('Invalid SMTP hostname'))
 
@@ -222,7 +222,7 @@ class EmailMFA(mfas.MFA):
             host, port = validators.validate_host_port(hostname)
             self.hostname.value = f'{host}:{port}'
         else:
-            host = self.hostname.as_clean_str()
+            host = self.hostname.value.strip()
             self.hostname.value = validators.validate_fqdn(host)
 
         # now check from email and to email
@@ -244,8 +244,8 @@ class EmailMFA(mfas.MFA):
             try:
                 # Create message container
                 msg = MIMEMultipart('alternative')
-                msg['Subject'] = self.email_subject.as_clean_str()
-                msg['From'] = self.from_email.as_clean_str()
+                msg['Subject'] = self.email_subject.value.strip()
+                msg['From'] = self.from_email.value.strip()
                 msg['To'] = identifier
 
                 msg.attach(
@@ -287,7 +287,7 @@ class EmailMFA(mfas.MFA):
         """
         Login to SMTP server
         """
-        host = self.hostname.as_clean_str()
+        host = self.hostname.value.strip()
         if ':' in host:
             host, ports = host.split(':')
             port = int(ports)

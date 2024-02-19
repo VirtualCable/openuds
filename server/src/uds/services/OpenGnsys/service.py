@@ -171,7 +171,7 @@ class OGService(services.Service):
         return self.provider().reserve(
             self.ou.value,
             self.image.value,
-            self.lab.value,
+            self.lab.as_int(),
             self.max_reserve_hours.as_int(),
         )
 

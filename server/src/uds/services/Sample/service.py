@@ -236,7 +236,7 @@ class ServiceTwo(services.Service):
 
         # No checks here
 
-    def get_names(self) -> str:
+    def get_names(self) -> list[str]:
         """
         For using at deployed services, really nothing
         """

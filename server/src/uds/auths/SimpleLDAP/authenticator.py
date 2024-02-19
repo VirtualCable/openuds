@@ -208,25 +208,27 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         self.mfa_attribute.value = ''  # Backward compatibility
         self.certificate.value = ''  # Backward compatibility
 
+
+        self.host.value = vals[1]
+        self.port.value = int(vals[2])
+        self.use_ssl.value = gui.as_bool(vals[3])
+        self.username.value = vals[4]
+        self.password.value = vals[5]
+        self.timeout.value = int(vals[6])
+        self.ldap_base.value = vals[7]
+        self.user_class.value = vals[8]
+        self.group_class.value = vals[9]
+        self.user_id_attr.value = vals[10]
+        self.group_id_attr.value = vals[11]
+        self.member_attr.value = vals[12]
+        self.username_attr.value = vals[13]
+
         logger.debug("Data: %s", vals[1:])
-        (
-            self.host.value,
-            self.port.value,
-            self.use_ssl.value,
-            self.username.value,
-            self.password.value,
-            self.timeout.value,
-            self.ldap_base.value,
-            self.user_class.value,
-            self.group_class.value,
-            self.user_id_attr.value,
-            self.group_id_attr.value,
-            self.member_attr.value,
-            self.username_attr.value,
-        ) = vals[1:14]
 
         if vals[0] == 'v2':
-            (self.mfa_attribute.value, self.verify_ssl.value, self.certificate.value) = vals[14:17]
+            self.mfa_attribute.value = vals[14]
+            self.verify_ssl.value = gui.as_bool(vals[15])
+            self.certificate.value = vals[16]
 
         self.mark_for_upgrade()
 

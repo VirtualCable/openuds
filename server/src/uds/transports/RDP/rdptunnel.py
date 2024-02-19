@@ -154,32 +154,32 @@ class TRDPTransport(BaseRDPTransport):
 
         r = RDPFile(width == '-1' or height == '-1', width, height, depth, target=os.os)
         #r.enablecredsspsupport = ci.get('sso') == 'True' or self.credssp.as_bool()
-        r.enablecredsspsupport = self.credssp.as_bool()
+        r.enable_credssp_support = self.credssp.as_bool()
         r.address = '{address}'
         r.username = ci.username
         r.password = ci.password
         r.domain = ci.domain
 
-        r.redirectPrinters = self.allow_printers.as_bool()
-        r.redirectSmartcards = self.allow_smartcards.as_bool()
-        r.redirectDrives = self.allow_drives.value
-        r.redirectSerials = self.allow_serial_ports.as_bool()
-        r.enableClipboard = self.allow_clipboard.as_bool()
-        r.redirectAudio = self.allow_audio.as_bool()
-        r.redirectWebcam = self.allow_webcam.as_bool()
-        r.showWallpaper = self.wallpaper.as_bool()
+        r.redir_printers = self.allow_printers.as_bool()
+        r.redir_smartcards = self.allow_smartcards.as_bool()
+        r.redir_drives = self.allow_drives.value
+        r.redir_serials = self.allow_serial_ports.as_bool()
+        r.enable_clipboard = self.allow_clipboard.as_bool()
+        r.redir_audio = self.allow_audio.as_bool()
+        r.redir_webcam = self.allow_webcam.as_bool()
+        r.show_wallpaper = self.wallpaper.as_bool()
         r.multimon = self.multimon.as_bool()
-        r.desktopComposition = self.aero.as_bool()
-        r.smoothFonts = self.smooth.as_bool()
-        r.displayConnectionBar = self.show_connection_bar.as_bool()
-        r.enablecredsspsupport = self.credssp.as_bool()
+        r.desktop_composition = self.aero.as_bool()
+        r.smooth_fonts = self.smooth.as_bool()
+        r.pin_bar = self.show_connection_bar.as_bool()
+        r.enable_credssp_support = self.credssp.as_bool()
         r.multimedia = self.lnx_multimedia.as_bool()
         r.alsa = self.lnx_alsa.as_bool()
-        r.smartcardString = self.lnx_smartcard_string.value
-        r.printerString = self.lnx_printer_string.value
-        r.enforcedShares = self.enforce_drives.value
-        r.redirectUSB = self.allow_usb_redirection.value
-        r.optimizeTeams = self.wnd_optimize_teams.as_bool()
+        r.smartcard_params = self.lnx_smartcard_string.value
+        r.printer_params = self.lnx_printer_string.value
+        r.enforced_shares = self.enforce_drives.value
+        r.redir_usb = self.allow_usb_redirection.value
+        r.optimize_teams = self.wnd_optimize_teams.as_bool()
 
         sp: collections.abc.MutableMapping[str, typing.Any] = {
             'tunHost': tunHost,
@@ -192,7 +192,7 @@ class TRDPTransport(BaseRDPTransport):
         }
 
         if os.os == types.os.KnownOS.WINDOWS:
-            r.customParameters = self.wnd_custom_parameters.value
+            r.custom_parameters = self.wnd_custom_parameters.value
             if ci.password:
                 r.password = '{password}'  # nosec: password is not hardcoded
             sp.update(
@@ -202,14 +202,14 @@ class TRDPTransport(BaseRDPTransport):
                 }
             )
         elif os.os == types.os.KnownOS.LINUX:
-            r.customParameters = self.lnx_custom_parameters.value
+            r.custom_parameters = self.lnx_custom_parameters.value
             sp.update(
                 {
                     'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
                 }
             )
         elif os.os == types.os.KnownOS.MAC_OS:
-            r.customParameters = self.mac_custom_parameters.value
+            r.custom_parameters = self.mac_custom_parameters.value
             sp.update(
                 {
                     'as_new_xfreerdp_params': r.as_new_xfreerdp_params,

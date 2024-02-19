@@ -139,7 +139,7 @@ class WinDomainOsManager(WindowsOsManager):
         if values:
             # Some cleaning of input data (remove spaces, etc..)
             for fld in (self.domain, self.account, self.ou, self.grp, self.server_hint):
-                fld.value = fld.as_clean_str().replace(' ', '')
+                fld.value = fld.value.strip().replace(' ', '')
 
             if self.domain.as_str() == '':
                 raise exceptions.ui.ValidationError(_('Must provide a domain!'))

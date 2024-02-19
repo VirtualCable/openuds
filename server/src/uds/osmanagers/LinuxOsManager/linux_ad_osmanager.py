@@ -156,9 +156,9 @@ class LinuxOsADManager(LinuxOsManager):
 
     def initialize(self, values: 'Module.ValuesType') -> None:
         if values:
-            if self.domain.as_clean_str() == '':
+            if self.domain.value.strip() == '':
                 raise exceptions.ui.ValidationError(_('Must provide a domain!'))
-            if self.account.as_clean_str() == '':
+            if self.account.value.strip() == '':
                 raise exceptions.ui.ValidationError(_('Must provide an account to add machines to domain!'))
             if self.password.as_str() == '':
                 raise exceptions.ui.ValidationError(_('Must provide a password for the account!'))

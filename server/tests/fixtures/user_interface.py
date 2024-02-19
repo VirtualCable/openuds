@@ -47,7 +47,7 @@ DEFAULTS: dict[str, typing.Any] = {
     'image_choice_field': 'Default value image choice',
     'image_field': 'Default value image',
     'date_field': datetime.date(2009, 12, 9),
-    'info_field': 'Default value info',
+    'help_field': ['title', 'Default value info'],
 }
 
 
@@ -133,9 +133,10 @@ class TestingUserInterface(UserInterface):
         required=True,
         default=typing.cast(datetime.date, DEFAULTS['date_field']),
     )
-    info_field = gui.InfoField(
-        label='Info Field',  # Invalid value for real use, but for testing is ok
-        default=typing.cast(str, DEFAULTS['info_field']),
+    help_field = gui.HelpField(
+        label='Info Field',  
+        title=DEFAULTS['help_field'][0],
+        help=DEFAULTS['help_field'][1],
     )
 
     # Equals operator, to speed up tests writing

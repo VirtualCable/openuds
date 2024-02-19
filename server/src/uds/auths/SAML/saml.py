@@ -548,12 +548,12 @@ class SAMLAuthenticator(auths.Authenticator):
             'security': {
                 # in days, converted to seconds, this is a duration
                 'metadataCacheDuration': self.metadata_cache_duration.as_int() * 86400
-                if self.metadata_cache_duration.int_value > 0
+                if self.metadata_cache_duration.value > 0
                 else 86400 * 365 * 10,
                 # This is a date of end of validity
                 'metadataValidUntil': sql_datetime()
                 + datetime.timedelta(days=self.metadata_validity_duration.as_int())
-                if self.metadata_cache_duration.int_value > 0
+                if self.metadata_cache_duration.value > 0
                 else sql_datetime() + datetime.timedelta(days=365 * 10),
                 'nameIdEncrypted': self.use_name_id_encrypted.as_bool(),
                 'authnRequestsSigned': self.use_authn_requests_signed.as_bool(),

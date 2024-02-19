@@ -70,16 +70,6 @@ class TelegramNotifier(messaging.Notifier):
     # : mark it as _ (using gettext_noop)
     icon_file = 'telegram.png'
 
-    botname = gui.TextField(
-        length=64,
-        label=_('Bot Name'),
-        order=1,
-        tooltip=_('Bot name'),
-        required=True,
-        default='',
-        tab=_('Telegram'),
-    )
-
     access_token = gui.TextField(
         length=64,
         label=_('Access Token'),
@@ -128,8 +118,8 @@ class TelegramNotifier(messaging.Notifier):
         # check hostname for stmp server si valid and is in the right format
         # that is a hostname or ip address with optional port
         # if hostname is not valid, we will raise an exception
-        for i in (self.botname, self.access_token, self.secret):
-            s = i.as_clean_str()
+        for i in (self.access_token, self.secret):
+            s = i.value.strip()
             if not s:
                 raise exceptions.ui.ValidationError(_('Invalid value for {}').format(i.label))
             i.value = s
@@ -143,7 +133,7 @@ class TelegramNotifier(messaging.Notifier):
         logger.debug('Sending telegram message: %s', telegramMsg)
         # load chat_ids
         chat_ids = self.storage.get_unpickle('chat_ids') or []
-        t = telegram.Telegram(self.access_token.value, self.botname.value)
+        t = telegram.Telegram(self.access_token.value)  # Only writing, can ingnore last_offset
         for chatId in chat_ids:
             with ignore_exceptions():
                 t.send_message(chatId, telegramMsg)

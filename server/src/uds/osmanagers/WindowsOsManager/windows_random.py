@@ -86,7 +86,7 @@ class WinRandomPassManager(WindowsOsManager):
 
     def validate(self, values: 'Module.ValuesType') -> None:
         if values:
-            self.user_account.value = self.user_account.as_clean_str()
+            self.user_account.value = self.user_account.value.strip()
 
             if self.user_account.as_str() == '':
                 raise exceptions.ui.ValidationError(_('Must provide an user account!!!'))
@@ -94,7 +94,7 @@ class WinRandomPassManager(WindowsOsManager):
                 raise exceptions.ui.ValidationError(_('Must provide a password for the account!!!'))
 
     def update_credentials(self, userservice: 'UserService', username: str, password: str) -> tuple[str, str]:
-        if username == self.user_account.as_clean_str():
+        if username == self.user_account.value.strip():
             password = userservice.recover_value('winOsRandomPass')
 
         return WindowsOsManager.update_credentials(self, userservice, username, password)
@@ -125,11 +125,11 @@ class WinRandomPassManager(WindowsOsManager):
             'name': userservice.get_name(),
             # Repeat data, to keep compat with old versions of Actor (the part outside "custom")
             # Will be removed in a couple of versions (maybe 6.0? :D), maybe before (But not before 5.0)
-            'username': self.user_account.as_clean_str(),
+            'username': self.user_account.value.strip(),
             'password': self.password.as_str(),
             'new_password': self.gen_random_password(userservice),
             'custom': {
-                'username': self.user_account.as_clean_str(),
+                'username': self.user_account.value.strip(),
                 'password': self.password.as_str(),
                 'new_password': self.gen_random_password(userservice),
             },

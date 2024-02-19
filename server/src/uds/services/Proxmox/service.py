@@ -205,12 +205,12 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         """
         return re.sub("[^a-zA-Z0-9_-]", "-", name)
 
-    def clone_machine(self, name: str, description: str, vmId: int = -1) -> 'client.types.VmCreationResult':
+    def clone_machine(self, name: str, description: str, vmid: int = -1) -> 'client.types.VmCreationResult':
         name = self.sanitized_name(name)
         pool = self.pool.value or None
-        if vmId == -1:  # vmId == -1 if cloning for template
+        if vmid == -1:  # vmId == -1 if cloning for template
             return self.provider().clone_machine(
-                self.machine.value,
+                gui.as_int(self.machine.value),
                 name,
                 description,
                 as_linked_clone=False,
@@ -219,7 +219,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
             )
 
         return self.provider().clone_machine(
-            vmId,
+            vmid,
             name,
             description,
             as_linked_clone=True,

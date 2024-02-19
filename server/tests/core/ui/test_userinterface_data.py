@@ -86,7 +86,7 @@ class UserinterfaceInternalTest(UDSTestCase):
         self.assertEqual(ui.date_field.as_datetime().date(), DEFAULTS['date_field'])
         self.assertEqual(ui.date_field.as_timestamp(), int(time.mktime(DEFAULTS['date_field'].timetuple())))
         
-        self.assertEqual(ui.info_field.value, DEFAULTS['info_field'])
+        self.assertEqual(ui.help_field.value, DEFAULTS['help_field'])
         
     def test_default(self):
         ui = TestingUserInterface()
@@ -102,7 +102,7 @@ class UserinterfaceInternalTest(UDSTestCase):
         self.assertEqual(ui.checkbox_field.default, DEFAULTS['checkbox_field'])
         self.assertEqual(ui.image_choice_field.default, DEFAULTS['image_choice_field'])
         self.assertEqual(ui.date_field.default, DEFAULTS['date_field'])
-        self.assertEqual(ui.info_field.default, DEFAULTS['info_field'])
+        self.assertEqual(ui.help_field.default, DEFAULTS['help_field'])
 
     def test_references(self):
         ui = TestingUserInterface()
@@ -118,7 +118,7 @@ class UserinterfaceInternalTest(UDSTestCase):
         self.assertEqual(ui.checkbox_field.value, ui._gui['checkbox_field'].value)
         self.assertEqual(ui.image_choice_field.value, ui._gui['image_choice_field'].value)
         self.assertEqual(ui.date_field.value, ui._gui['date_field'].value)
-        self.assertEqual(ui.info_field.value, ui._gui['info_field'].value)
+        self.assertEqual(ui.help_field.value, ui._gui['help_field'].value)
 
     def test_modify(self):
         ui = TestingUserInterface()
@@ -145,8 +145,8 @@ class UserinterfaceInternalTest(UDSTestCase):
         self.assertEqual(ui.image_choice_field.value, ui._gui['image_choice_field'].value)
         ui.date_field.value = '2001-01-01'
         self.assertEqual(ui.date_field.value, ui._gui['date_field'].value)
-        ui.info_field.value = 'New value'
-        self.assertEqual(ui.info_field.value, ui._gui['info_field'].value)
+        ui.help_field.value = 'New value'
+        self.assertEqual(ui.help_field.value, ui._gui['help_field'].value)
 
     def test_valuesDict(self):
         ui = TestingUserInterface()
@@ -164,7 +164,7 @@ class UserinterfaceInternalTest(UDSTestCase):
                 'checkbox_field': DEFAULTS['checkbox_field'],
                 'image_choice_field': DEFAULTS['image_choice_field'],
                 'date_field': DEFAULTS['date_field'],
-                'info_field': DEFAULTS['info_field'],
+                'help_field': DEFAULTS['help_field'],
             },
         )
         
@@ -184,7 +184,7 @@ class UserinterfaceInternalTest(UDSTestCase):
                 'checkbox_field': 'Checkbox Field',
                 'image_choice_field': 'Image Choice Field',
                 'date_field': 'Date Field',
-                'info_field': 'Info Field',
+                'help_field': 'Info Field',
             },
         )
         
@@ -204,7 +204,7 @@ class UserinterfaceInternalTest(UDSTestCase):
                 'checkbox_field': 8,
                 'image_choice_field': 9,
                 'date_field': 10,
-                'info_field': 0,  # Info field is without order, so it's 0
+                'help_field': 0,  # Info field is without order, so it's 0
             },
         )
         
@@ -224,7 +224,7 @@ class UserinterfaceInternalTest(UDSTestCase):
                 'checkbox_field': True,
                 'image_choice_field': True,
                 'date_field': True,
-                'info_field': None,  # Info field is without required, so it's None
+                'help_field': None,  # Info field is without required, so it's None
             },
         )
         
@@ -244,6 +244,6 @@ class UserinterfaceInternalTest(UDSTestCase):
                 'checkbox_field': 'This is a checkbox field',
                 'image_choice_field': 'This is a image choice field',
                 'date_field': 'This is a date field',
-                'info_field': '',  # Info field is without tooltip, so it's '' because it's required
+                'help_field': '',  # Info field is without tooltip, so it's '' because it's required
             },
         )

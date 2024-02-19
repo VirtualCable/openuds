@@ -41,41 +41,41 @@ import collections.abc
 from uds.core import types
 
 class RDPFile:
-    fullScreen = False
-    width = '800'
-    height = '600'
-    bpp = '32'
-    address = ''
-    username = ''
-    domain = ''
-    password = ''   # nosec: emtpy password is ok here
-    redirectSerials = False
-    redirectPrinters = False
-    redirectDrives = "false"  # Can have "true", "false" or "dynamic"
-    redirectHome = False
-    redirectSmartcards = False
-    redirectAudio = True
-    redirectWebcam = False
-    redirectUSB = 'false'  # Can have, false, true, or a GUID
-    compression = True
-    multimedia = True
-    alsa = True
-    displayConnectionBar = True
-    showWallpaper = False
-    multimon = False
-    desktopComposition = False
-    smoothFonts = True
-    printerString = None
-    smartcardString = None
-    enablecredsspsupport = False
-    enableClipboard = False
-    customParameters: typing.Optional[str] = None
-    enforcedShares: typing.Optional[str] = None
-    optimizeTeams = False
+    fullScreen: bool = False
+    width: str = '800'
+    height: str = '600'
+    bpp: str = '32'
+    address: str = ''
+    username: str = ''
+    domain: str = ''
+    password: str = ''   # nosec: emtpy password is ok here
+    redir_serials: bool = False
+    redir_printers: bool = False
+    redir_drives: str = "false"  # Can have "true", "false" or "dynamic"
+    redir_home_dir: bool = False
+    redir_smartcards: bool = False
+    redir_audio: bool = True
+    redir_webcam: bool = False
+    redir_usb: str = 'false'  # Can have, false, true, or a GUID
+    compression: bool = True
+    multimedia: bool = True
+    alsa: bool = True
+    pin_bar: bool = True
+    show_wallpaper: bool = False
+    multimon: bool = False
+    desktop_composition: bool = False
+    smooth_fonts: bool = True
+    printer_params: typing.Optional[str] = None
+    smartcard_params: typing.Optional[str] = None
+    enable_credssp_support: bool = False
+    enable_clipboard:bool = False
+    custom_parameters: typing.Optional[str] = None
+    enforced_shares: typing.Optional[str] = None
+    optimize_teams: bool = False
 
     def __init__(
         self,
-        fullScreen: bool,
+        fullscreen: bool,
         width: typing.Union[str, int],
         height: typing.Union[str, int],
         bpp: str,
@@ -84,7 +84,7 @@ class RDPFile:
         self.width = str(width)
         self.height = str(height)
         self.bpp = str(bpp)
-        self.fullScreen = fullScreen
+        self.fullScreen = fullscreen
         self.target = target
 
     def get(self):
@@ -111,16 +111,16 @@ class RDPFile:
         """
         params = ['/t:UDS-Connection', '/cert-ignore']  # , '/sec:rdp']
 
-        if self.enableClipboard:
+        if self.enable_clipboard:
             params.append('/clipboard')
 
-        if self.redirectSmartcards:
-            if self.smartcardString not in (None, ''):
-                params.append('/smartcard:{}'.format(self.smartcardString))
+        if self.redir_smartcards:
+            if self.smartcard_params not in (None, ''):
+                params.append('/smartcard:{}'.format(self.smartcard_params))
             else:
                 params.append('/smartcard')
 
-        if self.redirectAudio:
+        if self.redir_audio:
             if self.alsa and self.target != types.os.KnownOS.MAC_OS:
                 params.append('/sound:sys:alsa,format:1,quality:high')
                 params.append('/microphone:sys:alsa')
@@ -132,26 +132,26 @@ class RDPFile:
         if self.multimedia:
             params.append('/video')
 
-        if self.redirectDrives != 'false':
+        if self.redir_drives != 'false':
             if self.target in (types.os.KnownOS.LINUX, types.os.KnownOS.MAC_OS):
                 params.append('/drive:home,$HOME')
             else:
                 params.append('/drive:Users,/Users')
             # params.append('/home-drive')
 
-        if self.redirectSerials is True:
+        if self.redir_serials is True:
             params.append('/serial:/dev/ttyS0')
 
-        if self.redirectPrinters:
-            if self.printerString not in (None, ''):
-                params.append('/printer:{}'.format(self.printerString))
+        if self.redir_printers:
+            if self.printer_params not in (None, ''):
+                params.append('/printer:{}'.format(self.printer_params))
             else:
                 params.append('/printer')
 
         # if not self.compression:
         #    params.append('-compression')
 
-        if self.showWallpaper:
+        if self.show_wallpaper:
             params.append('+themes')
             params.append('+wallpaper')
 
@@ -170,7 +170,7 @@ class RDPFile:
 
         params.append('/bpp:{}'.format(self.bpp))
 
-        if self.smoothFonts is True:
+        if self.smooth_fonts is True:
             params.append('+fonts')
 
         # RDP Security is A MUST if no username nor password is provided
@@ -190,8 +190,8 @@ class RDPFile:
         if forceRDPSecurity:
             params.append('/sec:rdp')
 
-        if self.customParameters and self.customParameters.strip() != '':
-            params += shlex.split(self.customParameters.strip())
+        if self.custom_parameters and self.custom_parameters.strip() != '':
+            params += shlex.split(self.custom_parameters.strip())
 
         # On MacOSX, /rfx /gfx:rfx are almost inprescindible, as it seems the only way to get a decent performance
         if self.target == types.os.KnownOS.MAC_OS:
@@ -204,15 +204,15 @@ class RDPFile:
     def getGeneric(self):  # pylint: disable=too-many-statements
         password = '{password}'  # nosec: placeholder
         screenMode = '2' if self.fullScreen else '1'
-        audioMode = '0' if self.redirectAudio else '2'
-        serials = '1' if self.redirectSerials else '0'
-        scards = '1' if self.redirectSmartcards else '0'
-        printers = '1' if self.redirectPrinters else '0'
+        audioMode = '0' if self.redir_audio else '2'
+        serials = '1' if self.redir_serials else '0'
+        scards = '1' if self.redir_smartcards else '0'
+        printers = '1' if self.redir_printers else '0'
         compression = '1' if self.compression else '0'
-        connectionBar = '1' if self.displayConnectionBar else '0'
-        disableWallpaper = '0' if self.showWallpaper else '1'
+        connectionBar = '1' if self.pin_bar else '0'
+        disableWallpaper = '0' if self.show_wallpaper else '1'
         useMultimon = '1' if self.multimon else '0'
-        enableClipboard = '1' if self.enableClipboard else '0'
+        enableClipboard = '1' if self.enable_clipboard else '0'
 
         res = ''
         res += 'screen mode id:i:' + screenMode + '\n'
@@ -234,7 +234,7 @@ class RDPFile:
         if self.username:
             res += 'username:s:' + self.username + '\n'
             res += 'domain:s:' + self.domain + '\n'
-            if self.target == types.os.KnownOS.WINDOWS and not self.optimizeTeams:
+            if self.target == types.os.KnownOS.WINDOWS and not self.optimize_teams:
                 res += 'password 51:b:' + password + '\n'
 
         res += 'alternate shell:s:' + '\n'
@@ -255,42 +255,42 @@ class RDPFile:
         res += 'connection type:i:6\n'
 
         res += 'videoplaybackmode:i:1\n'
-        if self.smoothFonts is True:
+        if self.smooth_fonts is True:
             res += 'allow font smoothing:i:1\n'
-        if self.desktopComposition is True:
+        if self.desktop_composition is True:
             res += 'allow desktop composition:i:1\n'
 
-        if self.redirectAudio is True:
+        if self.redir_audio is True:
             res += 'audiocapturemode:i:1\n'
 
-        if self.redirectWebcam:
+        if self.redir_webcam:
             res += 'camerastoredirect:s:*\n'
 
         enforcedSharesStr = (
-            ';'.join(self.enforcedShares.replace(' ', '').upper().split(',')) + ';'
-            if self.enforcedShares
+            ';'.join(self.enforced_shares.replace(' ', '').upper().split(',')) + ';'
+            if self.enforced_shares
             else ''
         )
 
-        if self.redirectDrives != 'false':
-            if self.redirectDrives == 'true':
+        if self.redir_drives != 'false':
+            if self.redir_drives == 'true':
                 res += 'drivestoredirect:s:{}\n'.format(enforcedSharesStr or '*')
             else:  # Dynamic
                 res += 'drivestoredirect:s:{}DynamicDrives\n'.format(enforcedSharesStr)
             res += 'devicestoredirect:s:*\n'
 
-        if self.redirectUSB != 'false':
-            if self.redirectUSB == 'true':
+        if self.redir_usb != 'false':
+            if self.redir_usb == 'true':
                 res += 'usbdevicestoredirect:s:*\n'
             else:
                 # add the USB device to the list of devices to redirect
                 # escape { and } characters
                 res += 'usbdevicestoredirect:s:{}\n'.format(
-                    self.redirectUSB.replace('{', '{{').replace('}', '}}')
+                    self.redir_usb.replace('{', '{{').replace('}', '}}')
                 )
 
         res += 'enablecredsspsupport:i:{}\n'.format(
-            0 if self.enablecredsspsupport is False else 1
+            0 if self.enable_credssp_support is False else 1
         )
 
         # DirectX?
@@ -301,8 +301,8 @@ class RDPFile:
 
         # If target is windows, add customParameters
         if self.target == types.os.KnownOS.WINDOWS:
-            if self.customParameters and self.customParameters.strip() != '':
-                res += self.customParameters.strip() + '\n'
+            if self.custom_parameters and self.custom_parameters.strip() != '':
+                res += self.custom_parameters.strip() + '\n'
 
         return res
 
@@ -310,11 +310,11 @@ class RDPFile:
     def as_rdp_url(self) -> str:
         # Some parameters
         screenMode = '2' if self.fullScreen else '1'
-        audioMode = '0' if self.redirectAudio else '2'
+        audioMode = '0' if self.redir_audio else '2'
         useMultimon = '1' if self.multimon else '0'
-        disableWallpaper = '0' if self.showWallpaper else '1'
-        printers = '1' if self.redirectPrinters else '0'
-        credsspsupport = '1' if self.enablecredsspsupport else '0'
+        disableWallpaper = '0' if self.show_wallpaper else '1'
+        printers = '1' if self.redir_printers else '0'
+        credsspsupport = '1' if self.enable_credssp_support else '0'
 
         parameters = [
             ('full address', f's:{self.address}'),
@@ -338,13 +338,13 @@ class RDPFile:
             if self.domain:
                 parameters.append(('domain', f's:{urllib.parse.quote(self.domain)}'))
 
-        if self.desktopComposition:
+        if self.desktop_composition:
             parameters.append(('allow desktop composition', 'i:1'))
 
-        if self.smoothFonts:
+        if self.smooth_fonts:
             parameters.append(('allow font smoothing', 'i:1'))
 
-        if self.redirectDrives != 'false':  # Only "all drives" is supported
+        if self.redir_drives != 'false':  # Only "all drives" is supported
             parameters.append(('drivestoredirect', 's:*'))
 
         return 'rdp://' + '&'.join(

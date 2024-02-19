@@ -215,7 +215,7 @@ class gui:
         return consts.TRUE_STR if bol else consts.FALSE_STR
 
     @staticmethod
-    def as_int(value: typing.Union[str, bytes, bool, int]) -> int:
+    def as_int(value: typing.Union[str, bytes, bool, int], default: int = 0) -> int:
         """
         Converts the string "true" (case insensitive) to True (boolean).
         Anything else is converted to false
@@ -229,7 +229,7 @@ class gui:
         try:
             return int(value)
         except Exception:
-            return 0
+            return default
 
     @staticmethod
     def as_str(value: typing.Any) -> str:
@@ -417,9 +417,27 @@ class gui:
             Intended to be overriden by descendants
             """
             return True
+        
+        def as_int(self) -> int:
+            """
+            Return value as integer
+            """
+            return gui.as_int(self.value)
+            
+        def as_str(self) -> str:
+            """
+            Return value as string
+            """
+            return gui.as_str(self.value)
 
-        def __str__(self):
-            return str(self.value)
+        def as_clean_str(self) -> str:
+            return self.as_str().strip()
+
+        def as_bool(self):
+            """
+            Checks that the value is true
+            """
+            return gui.as_bool(self.value)
 
         def __repr__(self):
             return f'{self.__class__.__name__}: {repr(self._fields_info)}'
@@ -506,9 +524,6 @@ class gui:
                     else types.ui.FieldPatternType(pattern)
                 )
 
-        def as_clean_str(self):
-            return str(self.value).strip()
-
         def validate(self) -> bool:
             return super().validate() and self._validate_pattern()
 
@@ -547,17 +562,19 @@ class gui:
                 return re.match(pattern, self.value) is not None
             return True  # No pattern, so it's valid
 
-        def as_str(self) -> str:
-            return gui.as_str(self.value)
+        @property
+        def value(self) -> str:
+            return gui.as_str(super().value)
+
+        @value.setter
+        def value(self, value: str) -> None:
+            super()._set_value(value)
 
         def _set_value(self, value: typing.Any) -> None:
             """
             To ensure value is an str
             """
             super()._set_value(gui.as_str(value))
-
-        def __str__(self):
-            return str(self.value)
 
     class TextAutocompleteField(TextField):
         """
@@ -605,9 +622,6 @@ class gui:
             Set the values for this choice field
             """
             self._fields_info.choices = gui.as_choices(values)
-
-        def as_str(self) -> str:
-            return gui.as_str(self.value)
 
     class NumericField(InputField):
         """
@@ -662,15 +676,6 @@ class gui:
             self._fields_info.min_value = min_value
             self._fields_info.max_value = max_value
 
-        def as_int(self) -> int:
-            """
-            Return value as integer
-            """
-            try:
-                return int(self.value)
-            except Exception:
-                return 0
-
         def _set_value(self, value: typing.Any) -> None:
             """
             To ensure value is an int
@@ -678,8 +683,12 @@ class gui:
             super()._set_value(gui.as_int(value))
 
         @property
-        def int_value(self) -> int:
-            return self.as_int()
+        def value(self) -> int:
+            return gui.as_int(super().value)
+
+        @value.setter
+        def value(self, value: int) -> None:
+            self._set_value(value)
 
     class DateField(InputField):
         """
@@ -719,7 +728,7 @@ class gui:
 
         def as_date(self) -> datetime.date:
             """Alias for "value" property"""
-            return typing.cast(datetime.date, self.value)
+            return typing.cast(datetime.date, super().value)
 
         def as_datetime(self) -> datetime.datetime:
             """Alias for "value" property, but as datetime.datetime"""
@@ -732,6 +741,12 @@ class gui:
             """Alias for "value" property, but as timestamp"""
             return int(time.mktime(self.as_date().timetuple()))
             # return int(time.mktime(datetime.datetime.strptime(self.value, '%Y-%m-%d').timetuple()))
+            
+        def as_int(self) -> int:
+            return self.as_timestamp()
+        
+        def as_str(self) -> str:
+            return str(self.as_date())
 
         # Override value setter, so we can convert from datetime.datetime or str to datetime.date
         def _set_value(self, value: typing.Any) -> None:
@@ -746,15 +761,20 @@ class gui:
 
             super()._set_value(value)
 
-        def gui_description(self) -> dict[str, typing.Any]:
-            theGui = super().gui_description()
-            # Convert if needed value and default to string (YYYY-MM-DD)
-            if 'default' in theGui:
-                theGui['default'] = str(theGui['default'])
-            return theGui
+        @property
+        def value(self) -> datetime.date:
+            return self.as_date()
 
-        def __str__(self):
-            return str(f'Datetime: {self.value}')
+        @value.setter
+        def value(self, value: datetime.date) -> None:
+            self._set_value(value)
+
+        def gui_description(self) -> dict[str, typing.Any]:
+            fldgui = super().gui_description()
+            # Convert if needed value and default to string (YYYY-MM-DD)
+            if 'default' in fldgui:
+                fldgui['default'] = str(fldgui['default'])
+            return fldgui
 
     class PasswordField(InputField):
         """
@@ -814,11 +834,19 @@ class gui:
         def as_str(self):
             """Returns the password as string (stripped)"""
             return gui.as_str(self.value).strip()
-        
-        as_clean_str = as_str   # Alias in facet, for coherence with other string fields
+
+        as_clean_str = as_str  # Alias in facet, for coherence with other string fields
+
+        @property
+        def value(self) -> str:
+            return gui.as_str(super().value)  # Avoid recursion
+
+        @value.setter
+        def value(self, value: str) -> None:
+            self._set_value(value)
 
         def __str__(self):
-            return '********'
+            return '********'  # Override so we do not show the password
 
     class HiddenField(InputField):
         """
@@ -938,14 +966,13 @@ class gui:
             super()._set_value(gui.as_bool(value))
             # self._fields_info.value = gui.as_bool(value)
 
-        def as_bool(self):
-            """
-            Checks that the value is true
-            """
-            return gui.as_bool(self.value)
+        @property
+        def value(self) -> bool:
+            return gui.as_bool(super().value)
 
-        def __str__(self):
-            return str(self.as_bool())
+        @value.setter
+        def value(self, value: bool) -> None:
+            self._set_value(value)
 
     class ChoiceField(InputField):
         """
@@ -1100,6 +1127,14 @@ class gui:
         def as_str(self) -> str:
             return gui.as_str(self.value)
 
+        @property
+        def value(self) -> str:
+            return gui.as_str(super().value)
+
+        @value.setter
+        def value(self, value: str) -> None:
+            self._set_value(value)
+
     class ImageChoiceField(InputField):
         def __init__(
             self,
@@ -1148,6 +1183,14 @@ class gui:
 
         def as_str(self) -> str:
             return gui.as_str(self.value)
+
+        @property
+        def value(self) -> str:
+            return gui.as_str(super().value)
+
+        @value.setter
+        def value(self, value: str) -> None:
+            self._set_value(value)
 
     class MultiChoiceField(InputField):
         """
@@ -1240,12 +1283,20 @@ class gui:
             """
             Return value as list of strings
             """
-            if not self.value:
+            if not super().value:
                 return []
             try:
-                return list(self.value)
+                return list(super().value)
             except Exception:
                 return []
+
+        @property
+        def value(self) -> list[str]:
+            return self.as_list()
+
+        @value.setter
+        def value(self, value: collections.abc.Iterable[str]) -> None:
+            self._set_value(value)
 
     class EditableListField(InputField):
         """
@@ -1315,14 +1366,22 @@ class gui:
             """
             Return value as list of strings
             """
-            if not self.value:
+            if not super().value:
                 return []
             try:
-                return list(self.value)
+                return list(super().value)
             except Exception:
                 return []
 
-    class InfoField(InputField):
+        @property
+        def value(self) -> list[str]:
+            return self.as_list()
+
+        @value.setter
+        def value(self, value: collections.abc.Iterable) -> None:
+            self._set_value(value)
+
+    class HelpField(InputField):
         """
         Informational field (no input nor output)
 
@@ -1334,11 +1393,12 @@ class gui:
         def __init__(
             self,
             label: str,
-            default: str,
+            title: str,
+            help: str,
             old_field_name: typing.Optional[str] = None,
         ) -> None:
             super().__init__(
-                label=label, default=default, type=types.ui.FieldType.INFO, old_field_name=old_field_name
+                label=label, default=[title, help], type=types.ui.FieldType.INFO, old_field_name=old_field_name
             )
 
 
@@ -1483,7 +1543,7 @@ class UserInterface(metaclass=UserInterfaceType):
                 dic[k] = v.value
         logger.debug('Values Dict: %s', dic)
         return dic
-    
+
     def serialize_fields(
         self,
     ) -> bytes:
@@ -1510,23 +1570,23 @@ class UserInterface(metaclass=UserInterfaceType):
         values: bytes,
     ) -> bool:
         """New form unserialization
-        
+
         Args:
             values: list of serilizes (as bytes) values
-            
+
         Returns:
             bool -- True if values were unserialized using OLD method, False if using new one
-            
+
         Note:
             If returns True, the manager will try to remarshall the values using the new method
-            
+
         Note:
             The format of serialized fields is:
-            
+
             .. code-block:: python
-                
+
                     SERIALIZATION_HEADER + SERIALIZATION_VERSION + serializer.serialize(fields)
-                    
+
                 Where:
 
                 * SERIALIZATION_HEADER: b'GUIZ'  (header)
@@ -1561,10 +1621,7 @@ class UserInterface(metaclass=UserInterfaceType):
 
         # Set all values to defaults ones
         for field_name, field in self._all_serializable_fields():
-            if (
-                field.is_type(types.ui.FieldType.HIDDEN)
-                and field.is_serializable() is False
-            ):
+            if field.is_type(types.ui.FieldType.HIDDEN) and field.is_serializable() is False:
                 # logger.debug('Field {0} is not unserializable'.format(k))
                 continue
             field.value = field.default
@@ -1583,7 +1640,7 @@ class UserInterface(metaclass=UserInterfaceType):
                 logger.warning('Field %s has different type than expected', field_name)
                 continue
             self._gui[field_name].value = FIELD_DECODERS[internal_field_type](field_value)
-            
+
         return False
 
     def deserialize_from_old_format(self, values: bytes) -> None:
@@ -1715,7 +1772,9 @@ FIELDS_ENCODERS: typing.Final[
     types.ui.FieldType.INFO: lambda x: None,
 }
 
-FIELD_DECODERS: typing.Final[collections.abc.Mapping[types.ui.FieldType, collections.abc.Callable[[str], typing.Any]]] = {
+FIELD_DECODERS: typing.Final[
+    collections.abc.Mapping[types.ui.FieldType, collections.abc.Callable[[str], typing.Any]]
+] = {
     types.ui.FieldType.TEXT: lambda x: x,
     types.ui.FieldType.TEXT_AUTOCOMPLETE: lambda x: x,
     types.ui.FieldType.NUMERIC: int,
