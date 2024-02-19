@@ -420,14 +420,14 @@ def create_provider(**kwargs: typing.Any) -> provider.ProxmoxProvider:
 
 def create_service_linked(
     provider: typing.Optional[provider.ProxmoxProvider] = None, **kwargs: typing.Any
-) -> service.ProxmoxLinkedService:
+) -> service.ProxmoxServiceLinked:
     """
     Create a fixed service
     """
     uuid_ = str(uuid.uuid4())
     values = SERVICE_LINKED_VALUES_DICT.copy()
     values.update(kwargs)
-    return service.ProxmoxLinkedService(
+    return service.ProxmoxServiceLinked(
         environment=environment.Environment.private_environment(uuid_),
         provider=provider or create_provider(),
         values=values,
@@ -437,14 +437,14 @@ def create_service_linked(
 
 def create_service_fixed(
     provider: typing.Optional[provider.ProxmoxProvider] = None, **kwargs: typing.Any
-) -> service_fixed.ProxmoxFixedService:
+) -> service_fixed.ProxmoxServiceFixed:
     """
     Create a fixed service
     """
     uuid_ = str(uuid.uuid4())
     values = SERVICE_FIXED_VALUES_DICT.copy()
     values.update(kwargs)
-    return service_fixed.ProxmoxFixedService(
+    return service_fixed.ProxmoxServiceFixed(
         environment=environment.Environment.private_environment(uuid_),
         provider=provider or create_provider(),
         values=values,

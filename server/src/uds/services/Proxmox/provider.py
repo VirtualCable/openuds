@@ -41,8 +41,8 @@ from uds.core.util.unique_id_generator import UniqueIDGenerator
 from uds.core.util.unique_mac_generator import UniqueMacGenerator
 
 from . import client
-from .service import ProxmoxLinkedService
-from .service_fixed import ProxmoxFixedService
+from .service import ProxmoxServiceLinked
+from .service_fixed import ProxmoxServiceFixed
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -67,7 +67,7 @@ class ProxmoxProvider(services.ServiceProvider):
     type_description = _('Proxmox platform service provider')
     icon_file = 'provider.png'
 
-    offers = [ProxmoxLinkedService, ProxmoxFixedService]
+    offers = [ProxmoxServiceLinked, ProxmoxServiceFixed]
 
     host = gui.TextField(
         length=64,

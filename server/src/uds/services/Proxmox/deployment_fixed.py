@@ -75,8 +75,8 @@ class ProxmoxFixedUserService(FixedUserService, autoserializable.AutoSerializabl
         return (vals[0], vals[1])
 
     # Utility overrides for type checking...
-    def service(self) -> 'service_fixed.ProxmoxFixedService':
-        return typing.cast('service_fixed.ProxmoxFixedService', super().service())
+    def service(self) -> 'service_fixed.ProxmoxServiceFixed':
+        return typing.cast('service_fixed.ProxmoxServiceFixed', super().service())
 
     def set_ready(self) -> str:
         if self.cache.get('ready') == '1':

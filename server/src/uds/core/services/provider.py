@@ -93,9 +93,8 @@ class ServiceProvider(module.Module):
     type_name = 'Base Provider'
 
     # : Name of type used by Managers to identify this tipe of service
-    # : We could have used here the Class name, but we decided that the
-    # : module implementator will be the one that will provide a name that
-    # : will relation the class (type) and that name.
+    # : Must not be modified once assigned, because it's stored at database, and any saved
+    # : data will not be able to be unmarshalled if this is changed.
     type_type = 'BaseServiceProvider'
 
     # : Description shown at administration level for this provider.

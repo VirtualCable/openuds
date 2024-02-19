@@ -40,7 +40,7 @@ from uds.core.util import validators, log, fields
 from uds.core.util.decorators import cached
 
 from . import helpers
-from .deployment import ProxmoxDeployment
+from .deployment import ProxmoxUserserviceLinked
 from .publication import ProxmoxPublication
 
 # Not imported at runtime, just for type checking
@@ -53,7 +53,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public-methods
+class ProxmoxServiceLinked(services.Service):  # pylint: disable=too-many-public-methods
     """
     Proxmox Linked clones service. This is based on creating a template from selected vm, and then use it to
     """
@@ -62,7 +62,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
     type_name = _('Proxmox Linked Clone')
-    # : Type used internally to identify this provider
+    # : Type used internally to identify this provider, must not be modified once created
     type_type = 'ProxmoxLinkedService'
     # : Description shown at administration interface for this provider
     type_description = _('Proxmox Services based on templates and COW')
@@ -99,7 +99,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
     # : In our case, we do no need a publication, so this is None
     publication_type = ProxmoxPublication
     # : Types of deploys (services in cache and/or assigned to users)
-    user_service_type = ProxmoxDeployment
+    user_service_type = ProxmoxUserserviceLinked
 
     allowed_protocols = types.transports.Protocol.generic_vdi(types.transports.Protocol.SPICE)
     services_type_provided = types.services.ServiceType.VDI

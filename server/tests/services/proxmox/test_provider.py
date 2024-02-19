@@ -31,9 +31,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import datetime
 import collections.abc
-import itertools
 from unittest import mock
 
 from uds.core import ui, environment

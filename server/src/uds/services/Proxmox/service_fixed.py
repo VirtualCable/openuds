@@ -56,7 +56,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class ProxmoxFixedService(FixedService):  # pylint: disable=too-many-public-methods
+class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-methods
     """
     Proxmox fixed machines service.
     """

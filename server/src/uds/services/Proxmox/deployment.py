@@ -49,7 +49,7 @@ from . import client
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from .service import ProxmoxLinkedService
+    from .service import ProxmoxServiceLinked
     from .publication import ProxmoxPublication
 
 logger = logging.getLogger(__name__)
@@ -91,7 +91,7 @@ class Operation(enum.IntEnum):
 # UP_STATES = ('up', 'reboot_in_progress', 'powering_up', 'restoring_state')
 
 
-class ProxmoxDeployment(services.UserService, autoserializable.AutoSerializable):
+class ProxmoxUserserviceLinked(services.UserService, autoserializable.AutoSerializable):
     """
     This class generates the user consumable elements of the service tree.
 
@@ -124,8 +124,8 @@ class ProxmoxDeployment(services.UserService, autoserializable.AutoSerializable)
     # _queue: list[int]
 
     # Utility overrides for type checking...
-    def service(self) -> 'ProxmoxLinkedService':
-        return typing.cast('ProxmoxLinkedService', super().service())
+    def service(self) -> 'ProxmoxServiceLinked':
+        return typing.cast('ProxmoxServiceLinked', super().service())
 
     def publication(self) -> 'ProxmoxPublication':
         pub = super().publication()
@@ -709,5 +709,5 @@ if sys.platform == 'win32':
             self._ip,
             self._mac,
             self._vmid,
-            [ProxmoxDeployment._op2str(op) for op in self._queue],
+            [ProxmoxUserserviceLinked._op2str(op) for op in self._queue],
         )

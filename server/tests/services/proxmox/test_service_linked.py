@@ -30,16 +30,9 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
-import datetime
-import collections.abc
-import itertools
 from unittest import mock
 
-from numpy import fix
-
-from uds.core import ui, environment
-from uds.services.Proxmox.service import ProxmoxLinkedService
+from uds.services.Proxmox.service import ProxmoxServiceLinked
 
 from . import fixtures
 

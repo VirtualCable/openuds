@@ -40,7 +40,7 @@ from uds.core.environment import Environment
 from uds.services import Proxmox
 
 
-from uds.services.Proxmox.deployment import Operation as Operation, ProxmoxDeployment as Deployment
+from uds.services.Proxmox.deployment import Operation as Operation, ProxmoxUserserviceLinked as Deployment
 
 # if not data.startswith(b'v'):
 #     return super().unmarshal(data)

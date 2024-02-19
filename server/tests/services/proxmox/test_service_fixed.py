@@ -31,16 +31,10 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import datetime
-import collections.abc
-import itertools
 from unittest import mock
-from netaddr import N
-
-from numpy import fix
 
 from uds.core import types, ui, environment
-from uds.services.Proxmox.service_fixed import ProxmoxFixedService
+from uds.services.Proxmox.service_fixed import ProxmoxServiceFixed
 
 from . import fixtures
 
