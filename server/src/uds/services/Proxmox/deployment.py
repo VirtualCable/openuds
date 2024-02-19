@@ -81,6 +81,7 @@ class Operation(enum.IntEnum):
         except ValueError:
             return Operation.opUnknown
 
+
 # The difference between "SHUTDOWN" and "GRACEFUL_STOP" is that the first one
 # is used to "best try to stop" the machine to move to L2 (that is, if it cannot be stopped,
 # it will be moved to L2 anyway, but keeps running), and the second one is used to "best try to stop"
@@ -88,7 +89,6 @@ class Operation(enum.IntEnum):
 # timeout of at most GUEST_SHUTDOWN_WAIT seconds)
 
 # UP_STATES = ('up', 'reboot_in_progress', 'powering_up', 'restoring_state')
-GUEST_SHUTDOWN_WAIT = 90  # Seconds
 
 
 class ProxmoxDeployment(services.UserService, autoserializable.AutoSerializable):
@@ -329,7 +329,7 @@ if sys.platform == 'win32':
         if op == Operation.FINISH:
             return State.FINISHED
 
-        fncs: collections.abc.Mapping[Operation, typing.Optional[collections.abc.Callable[[], str]]] = {
+        fncs: collections.abc.Mapping[Operation, typing.Optional[collections.abc.Callable[[], None]]] = {
             Operation.CREATE: self._create,
             Operation.RETRY: self._retry,
             Operation.START: self._start_machine,
@@ -342,7 +342,7 @@ if sys.platform == 'win32':
         }
 
         try:
-            operation_executor: typing.Optional[collections.abc.Callable[[], str]] = fncs.get(op, None)
+            operation_executor: typing.Optional[collections.abc.Callable[[], None]] = fncs.get(op, None)
 
             if operation_executor is None:
                 return self._error(f'Unknown operation found at execution queue ({op})')
@@ -354,7 +354,7 @@ if sys.platform == 'win32':
             return self._error(e)
 
     # Queue execution methods
-    def _retry(self) -> str:
+    def _retry(self) -> None:
         """
         Used to retry an operation
         In fact, this will not be never invoked, unless we push it twice, because
@@ -362,15 +362,27 @@ if sys.platform == 'win32':
 
         At executeQueue this return value will be ignored, and it will only be used at check_state
         """
+        pass
+    
+    def _retry_checker(self) -> str:
+        """
+        This method is not used, because retry operation is never used
+        """
         return State.FINISHED
 
-    def _wait(self) -> str:
+    def _wait(self) -> None:
         """
         Executes opWait, it simply waits something "external" to end
         """
-        return State.RUNNING
+        pass
+    
+    def _wait_checker(self) -> str:
+        """
+        This method is not used, because wait operation is never used
+        """
+        return State.FINISHED
 
-    def _create(self) -> str:
+    def _create(self) -> None:
         """
         Deploys a machine from template for user/cache
         """
@@ -389,41 +401,39 @@ if sys.platform == 'win32':
 
         self._vmid = str(task_result.vmid)
 
-        return State.RUNNING
-
-    def _remove(self) -> str:
+    def _remove(self) -> None:
         """
         Removes a machine from system
         """
         try:
-            vmInfo = self.service().get_machine_info(int(self._vmid))
+            vm_info = self.service().get_machine_info(int(self._vmid))
         except Exception as e:
             raise Exception('Machine not found on remove machine') from e
 
-        if vmInfo.status != 'stopped':
-            logger.debug('Info status: %s', vmInfo)
+        if vm_info.status != 'stopped':
+            logger.debug('Info status: %s', vm_info)
             self._queue = [Operation.STOP, Operation.REMOVE, Operation.FINISH]
-            return self._execute_queue()
+            self._execute_queue()
         self._store_task(self.service().remove_machine(int(self._vmid)))
 
-        return State.RUNNING
-
-    def _start_machine(self) -> str:
+    def _start_machine(self) -> None:
         try:
-            vmInfo = self.service().get_machine_info(int(self._vmid))
+            vm_info = self.service().get_machine_info(int(self._vmid))
         except client.ProxmoxConnectionError:
-            return self._retry_later()
+            self._retry_later()
+            return
         except Exception as e:
             raise Exception('Machine not found on start machine') from e
 
-        if vmInfo.status == 'stopped':
+        if vm_info.status == 'stopped':
             self._store_task(self.service().provider().start_machine(int(self._vmid)))
 
-        return State.RUNNING
-
-    def _stop_machine(self) -> str:
+    def _stop_machine(self) -> None:
         try:
             vm_info = self.service().get_machine_info(int(self._vmid))
+        except client.ProxmoxConnectionError:
+            self._retry_later()
+            return
         except Exception as e:
             raise Exception('Machine not found on stop machine') from e
 
@@ -431,22 +441,19 @@ if sys.platform == 'win32':
             logger.debug('Stopping machine %s', vm_info)
             self._store_task(self.service().provider().stop_machine(int(self._vmid)))
 
-        return State.RUNNING
-
-    def _shutdown_machine(self) -> str:
+    def _shutdown_machine(self) -> None:
         try:
-            vmInfo = self.service().get_machine_info(int(self._vmid))
+            vm_info = self.service().get_machine_info(int(self._vmid))
         except client.ProxmoxConnectionError:
-            return State.RUNNING  # Try again later
+            self._retry_later()
+            return
         except Exception as e:
             raise Exception('Machine not found or suspended machine') from e
 
-        if vmInfo.status != 'stopped':
+        if vm_info.status != 'stopped':
             self._store_task(self.service().provider().shutdown_machine(int(self._vmid)))
 
-        return State.RUNNING
-
-    def _gracely_stop(self) -> str:
+    def _gracely_stop(self) -> None:
         """
         Tries to stop machine using qemu guest tools
         If it takes too long to stop, or qemu guest tools are not installed,
@@ -454,24 +461,32 @@ if sys.platform == 'win32':
         """
         self._task = ''
         shutdown = -1  # Means machine already stopped
-        vmInfo = self.service().get_machine_info(int(self._vmid))
-        if vmInfo.status != 'stopped':
+        try:
+            vm_info = self.service().get_machine_info(int(self._vmid))
+        except client.ProxmoxConnectionError:
+            self._retry_later()
+            return
+        except Exception as e:
+            raise Exception('Machine not found on stop machine') from e
+
+        if vm_info.status != 'stopped':
             self._store_task(self.service().provider().shutdown_machine(int(self._vmid)))
             shutdown = sql_stamp_seconds()
         logger.debug('Stoped vm using guest tools')
         self.storage.put_pickle('shutdown', shutdown)
-        return State.RUNNING
 
-    def _update_machine_mac_and_ha(self) -> str:
+    def _update_machine_mac_and_ha(self) -> None:
         try:
             self.service().enable_ha(int(self._vmid), True)  # Enable HA before continuing here
 
             # Set vm mac address now on first interface
             self.service().provider().set_machine_mac(int(self._vmid), self.get_unique_id())
+        except client.ProxmoxConnectionError:
+            self._retry_later()
+            return
         except Exception as e:
             logger.exception('Setting HA and MAC on proxmox')
             raise Exception(f'Error setting MAC and HA on proxmox: {e}') from e
-        return State.RUNNING
 
     # Check methods
     def _check_task_finished(self) -> str:
@@ -538,15 +553,15 @@ if sys.platform == 'win32':
             return State.FINISHED  # It's stopped
 
         logger.debug('State is running')
-        if sql_stamp_seconds() - shutdown_start > GUEST_SHUTDOWN_WAIT:
+        if sql_stamp_seconds() - shutdown_start > consts.os.MAX_GUEST_SHUTDOWN_WAIT:
             logger.debug('Time is consumed, falling back to stop')
             self.do_log(
                 log.LogLevel.ERROR,
-                f'Could not shutdown machine using soft power off in time ({GUEST_SHUTDOWN_WAIT} seconds). Powering off.',
+                f'Could not shutdown machine using soft power off in time ({consts.os.MAX_GUEST_SHUTDOWN_WAIT} seconds). Powering off.',
             )
             # Not stopped by guest in time, but must be stopped normally
             self.storage.put_pickle('shutdown', 0)
-            return self._stop_machine()  # Launch "hard" stop
+            self._stop_machine()  # Launch "hard" stop
 
         return State.RUNNING
 
@@ -579,8 +594,8 @@ if sys.platform == 'win32':
 
         fncs: dict[Operation, typing.Optional[collections.abc.Callable[[], str]]] = {
             Operation.CREATE: self._create_checker,
-            Operation.RETRY: self._retry,
-            Operation.WAIT: self._wait,
+            Operation.RETRY: self._retry_checker,
+            Operation.WAIT: self._wait_checker,
             Operation.START: self._start_checker,
             Operation.STOP: self._stop_checker,
             Operation.GRACEFUL_STOP: self._graceful_stop_checker,

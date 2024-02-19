@@ -64,8 +64,9 @@ class Operation(enum.IntEnum):
     SNAPSHOT_CREATE = 8  # to recall process_snapshot
     SNAPSHOT_RECOVER = 9  # to recall process_snapshot
     PROCESS_TOKEN = 10
-    NOP = 11
+    SOFT_SHUTDOWN = 11
 
+    NOP = 98
     UNKNOWN = 99
 
     @staticmethod
@@ -224,6 +225,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             Operation.SNAPSHOT_CREATE: self._snapshot_create,
             Operation.SNAPSHOT_RECOVER: self._snapshot_recover,
             Operation.PROCESS_TOKEN: self._process_token,
+            Operation.SOFT_SHUTDOWN: self._soft_shutdown_machine,
             Operation.NOP: self._nop,
         }
 
@@ -257,7 +259,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         Executes opWait, it simply waits something "external" to end
         """
         pass
-    
+
     @typing.final
     def _nop(self) -> None:
         """
@@ -332,31 +334,42 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
 
     def _wait_checker(self) -> str:
         return State.FINISHED
-    
+
     def _nop_checker(self) -> str:
         return State.FINISHED
 
-    @abc.abstractmethod
+    def _start_machine(self) -> None:
+        """ 
+        Override this method to start the machine if needed
+        """
+        pass
+
     def _start_checker(self) -> str:
         """
         Checks if machine has started
         """
-        raise NotImplementedError()
+        return State.FINISHED
 
-    @abc.abstractmethod
-    def _start_machine(self) -> None:
-        raise NotImplementedError()
-
-    @abc.abstractmethod
     def _stop_machine(self) -> None:
-        raise NotImplementedError()
+        """
+        Override this method to stop the machine if needed
+        """
+        pass
 
-    @abc.abstractmethod
     def _stop_checker(self) -> str:
         """
         Checks if machine has stoped
         """
-        raise NotImplementedError()
+        return State.FINISHED
+
+    # Not abstract methods, defaults to stop machine
+    def _soft_shutdown_machine(self) -> None:
+        """
+        """
+        return self._stop_machine()  # Default is to stop the machine
+
+    def _soft_shutdown_checker(self) -> str:
+        return self._stop_checker()  # Default is to check if machine has stopped
 
     def _removed_checker(self) -> str:
         """
@@ -388,6 +401,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             Operation.SNAPSHOT_CREATE: self._snapshot_create_checker,
             Operation.SNAPSHOT_RECOVER: self._snapshot_recover_checker,
             Operation.PROCESS_TOKEN: self._process_token_checker,
+            Operation.SOFT_SHUTDOWN: self._soft_shutdown_checker,
             Operation.NOP: self._nop_checker,
         }
 

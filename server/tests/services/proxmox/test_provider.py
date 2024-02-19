@@ -134,7 +134,7 @@ class TestProxmovProvider(UDSTestCase):
 
             self.assertEqual(provider.test_connection(), True)
             api.test.assert_called_once_with()
-            
+
             self.assertEqual(provider.list_machines(force=True), fixtures.VMS_INFO)
             api.list_machines.assert_called_once_with(force=True)
             api.list_machines.reset_mock()
@@ -143,139 +143,122 @@ class TestProxmovProvider(UDSTestCase):
 
             self.assertEqual(provider.get_machine_info(1), fixtures.VMS_INFO[0])
             api.get_machine_pool_info.assert_called_once_with(1, None, force=True)
-            
+
             self.assertEqual(provider.get_machine_configuration(1), fixtures.VMS_CONFIGURATION[0])
             api.get_machine_configuration.assert_called_once_with(1, force=True)
-            
-            self.assertEqual(provider.get_storage_info(fixtures.STORAGES[2].storage, fixtures.STORAGES[2].node, force=True), fixtures.STORAGES[2])
-            api.get_storage.assert_called_once_with(fixtures.STORAGES[2].storage, fixtures.STORAGES[2].node, force=True)
+
+            self.assertEqual(
+                provider.get_storage_info(fixtures.STORAGES[2].storage, fixtures.STORAGES[2].node, force=True),
+                fixtures.STORAGES[2],
+            )
+            api.get_storage.assert_called_once_with(
+                fixtures.STORAGES[2].storage, fixtures.STORAGES[2].node, force=True
+            )
             api.get_storage.reset_mock()
-            self.assertEqual(provider.get_storage_info(fixtures.STORAGES[2].storage, fixtures.STORAGES[2].node), fixtures.STORAGES[2])
-            api.get_storage.assert_called_once_with(fixtures.STORAGES[2].storage, fixtures.STORAGES[2].node, force=False)
-            
-            self.assertEqual(provider.list_storages(fixtures.STORAGES[2].node), list(filter(lambda x: x.node == fixtures.STORAGES[2].node, fixtures.STORAGES)))
-            api.list_storages.assert_called_once_with(node=fixtures.STORAGES[2].node, content='images', force=False)
+            self.assertEqual(
+                provider.get_storage_info(fixtures.STORAGES[2].storage, fixtures.STORAGES[2].node),
+                fixtures.STORAGES[2],
+            )
+            api.get_storage.assert_called_once_with(
+                fixtures.STORAGES[2].storage, fixtures.STORAGES[2].node, force=False
+            )
+
+            self.assertEqual(
+                provider.list_storages(fixtures.STORAGES[2].node),
+                list(filter(lambda x: x.node == fixtures.STORAGES[2].node, fixtures.STORAGES)),
+            )
+            api.list_storages.assert_called_once_with(
+                node=fixtures.STORAGES[2].node, content='images', force=False
+            )
             api.list_storages.reset_mock()
             self.assertEqual(provider.list_storages(), fixtures.STORAGES)
             api.list_storages.assert_called_once_with(node=None, content='images', force=False)
-            
-            
-    # def list_pools(self) -> list[client.types.PoolInfo]:
-    #     return self._api().list_pools()
 
-    # def get_pool_info(self, pool_id: str, retrieve_vm_names: bool = False) -> client.types.PoolInfo:
-    #     return self._api().get_pool_info(pool_id, retrieve_vm_names=retrieve_vm_names)
+            self.assertEqual(provider.list_pools(force=True), fixtures.POOLS)
+            api.list_pools.assert_called_once_with(force=True)
+            api.list_pools.reset_mock()
+            self.assertEqual(provider.list_pools(), fixtures.POOLS)
+            api.list_pools.assert_called_once_with(force=False)
 
-    # def create_template(self, vmid: int) -> None:
-    #     return self._api().convert_to_template(vmid)
+            self.assertEqual(
+                provider.get_pool_info(fixtures.POOLS[2].poolid, retrieve_vm_names=True, force=True),
+                fixtures.POOLS[2],
+            )
+            api.get_pool_info.assert_called_once_with(
+                fixtures.POOLS[2].poolid, retrieve_vm_names=True, force=True
+            )
+            api.get_pool_info.reset_mock()
+            self.assertEqual(provider.get_pool_info(fixtures.POOLS[2].poolid), fixtures.POOLS[2])
+            api.get_pool_info.assert_called_once_with(
+                fixtures.POOLS[2].poolid, retrieve_vm_names=False, force=False
+            )
 
-    # def clone_machine(
-    #     self,
-    #     vmid: int,
-    #     name: str,
-    #     description: typing.Optional[str],
-    #     as_linked_clone: bool,
-    #     target_node: typing.Optional[str] = None,
-    #     target_storage: typing.Optional[str] = None,
-    #     target_pool: typing.Optional[str] = None,
-    #     must_have_vgpus: typing.Optional[bool] = None,
-    # ) -> client.types.VmCreationResult:
-    #     return self._api().clone_machine(
-    #         vmid,
-    #         self.get_new_vmid(),
-    #         name,
-    #         description,
-    #         as_linked_clone,
-    #         target_node,
-    #         target_storage,
-    #         target_pool,
-    #         must_have_vgpus,
-    #     )
+            provider.create_template(1)
+            api.convert_to_template.assert_called_once_with(1)
 
-    # def start_machine(self, vmid: int) -> client.types.UPID:
-    #     return self._api().start_machine(vmid)
+            self.assertEqual(
+                provider.clone_machine(1, 'name', 'description', True, 'node', 'storage', 'pool', True),
+                fixtures.VM_CREATION_RESULT,
+            )
+            api.clone_machine.assert_called_once_with(
+                1, mock.ANY, 'name', 'description', True, 'node', 'storage', 'pool', True
+            )
 
-    # def stop_machine(self, vmid: int) -> client.types.UPID:
-    #     return self._api().stop_machine(vmid)
+            self.assertEqual(provider.start_machine(1), fixtures.UPID)
+            api.start_machine.assert_called_once_with(1)
 
-    # def reset_machine(self, vmid: int) -> client.types.UPID:
-    #     return self._api().reset_machine(vmid)
+            self.assertEqual(provider.stop_machine(1), fixtures.UPID)
+            api.stop_machine.assert_called_once_with(1)
 
-    # def suspend_machine(self, vmId: int) -> client.types.UPID:
-    #     return self._api().suspend_machine(vmId)
+            self.assertEqual(provider.reset_machine(1), fixtures.UPID)
+            api.reset_machine.assert_called_once_with(1)
 
-    # def shutdown_machine(self, vmid: int) -> client.types.UPID:
-    #     return self._api().shutdown_machine(vmid)
+            self.assertEqual(provider.suspend_machine(1), fixtures.UPID)
+            api.suspend_machine.assert_called_once_with(1)
 
-    # def remove_machine(self, vmid: int) -> client.types.UPID:
-    #     return self._api().remove_machine(vmid)
+            self.assertEqual(provider.shutdown_machine(1), fixtures.UPID)
+            api.shutdown_machine.assert_called_once_with(1)
 
-    # def get_task_info(self, node: str, upid: str) -> client.types.TaskStatus:
-    #     return self._api().get_task(node, upid)
+            self.assertEqual(provider.remove_machine(1), fixtures.UPID)
+            api.remove_machine.assert_called_once_with(1)
 
-    # def enable_ha(self, vmid: int, started: bool = False, group: typing.Optional[str] = None) -> None:
-    #     self._api().enable_machine_ha(vmid, started, group)
+            self.assertEqual(provider.get_task_info('node', 'upid'), fixtures.TASK_STATUS)
+            api.get_task.assert_called_once_with('node', 'upid')
 
-    # def set_machine_mac(self, vmid: int, macAddress: str) -> None:
-    #     self._api().set_machine_ha(vmid, macAddress)
+            provider.enable_ha(1, True, 'group')
+            api.enable_machine_ha.assert_called_once_with(1, True, 'group')
 
-    # def disable_ha(self, vmid: int) -> None:
-    #     self._api().disable_machine_ha(vmid)
+            provider.set_machine_mac(1, 'mac')
+            api.set_machine_ha.assert_called_once_with(1, 'mac')
 
-    # def set_protection(self, vmid: int, node: typing.Optional[str] = None, protection: bool = False) -> None:
-    #     self._api().set_protection(vmid, node, protection)
+            provider.disable_ha(1)
+            api.disable_machine_ha.assert_called_once_with(1)
 
-    # def list_ha_groups(self) -> list[str]:
-    #     return self._api().list_ha_groups()
+            provider.set_protection(1, 'node', True)
+            api.set_protection.assert_called_once_with(1, 'node', True)
 
-    # def get_console_connection(
-    #     self,
-    #     machine_id: str,
-    #     node: typing.Optional[str] = None,
-    # ) -> typing.Optional[types.services.ConsoleConnectionInfo]:
-    #     return self._api().get_console_connection(int(machine_id), node)
+            self.assertEqual(provider.list_ha_groups(), fixtures.HA_GROUPS)
+            api.list_ha_groups.assert_called_once_with()
 
-    # def get_new_vmid(self) -> int:
-    #     while True:  # look for an unused VmId
-    #         vmid = self._vmid_generator.get(self.start_vmid.as_int(), MAX_VMID)
-    #         if self._api().is_vmid_available(vmid):
-    #             return vmid
-    #         # All assigned vmid will be left as unusable on UDS until released by time (3 years)
-    #         # This is not a problem at all, in the rare case that a machine id is released from uds db
-    #         # if it exists when we try to create a new one, we will simply try to get another one
+            self.assertEqual(provider.get_console_connection('1'), fixtures.CONSOLE_CONNECTION)
+            api.get_console_connection.assert_called_once_with(1, None)
 
-    # def get_guest_ip_address(self, vmid: int, node: typing.Optional[str] = None) -> str:
-    #     return self._api().get_guest_ip_address(vmid, node)
+            vmid = provider.get_new_vmid()
+            for i in range(1, 128):
+                self.assertEqual(provider.get_new_vmid(), vmid + i)
 
-    # def supports_snapshot(self, vmid: int, node: typing.Optional[str] = None) -> bool:
-    #     return self._api().supports_snapshot(vmid, node)
+            self.assertEqual(provider.get_guest_ip_address(1), fixtures.GUEST_IP_ADDRESS)
+            api.get_guest_ip_address.assert_called_once_with(1, None)
 
-    # def get_current_snapshot(
-    #     self, vmid: int, node: typing.Optional[str] = None
-    # ) -> typing.Optional[client.types.SnapshotInfo]:
-    #     return (
-    #         sorted(
-    #             filter(lambda x: x.snaptime, self._api().list_snapshots(vmid, node)),
-    #             key=lambda x: x.snaptime or 0,
-    #             reverse=True,
-    #         )
-    #         + [None]
-    #     )[0]
+            self.assertEqual(provider.supports_snapshot(1), True)
+            api.supports_snapshot.assert_called_once_with(1, None)
 
-    # def create_snapshot(
-    #     self,
-    #     vmid: int,
-    #     node: typing.Optional[str] = None,
-    #     name: typing.Optional[str] = None,
-    #     description: typing.Optional[str] = None,
-    # ) -> client.types.UPID:
-    #     return self._api().create_snapshot(vmid, node, name, description)
+            api.list_snapshots.reset_mock()
+            self.assertEqual(provider.get_current_snapshot(1), fixtures.SNAPSHOTS_INFO[0])
+            api.list_snapshots.assert_called_once_with(1, None)
 
-    # def restore_snapshot(
-    #     self, vmid: int, node: typing.Optional[str] = None, name: typing.Optional[str] = None
-    # ) -> client.types.UPID:
-    #     """
-    #     In fact snapshot is not optional, but node is and want to keep the same signature as the api
-    #     """
-    #     return self._api().restore_snapshot(vmid, node, name)
-            
+            self.assertEqual(provider.create_snapshot(1), fixtures.UPID)
+            api.create_snapshot.assert_called_once_with(1, None, None, None)
+
+            provider.restore_snapshot(1, 'node', 'name')
+            api.restore_snapshot.assert_called_once_with(1, 'node', 'name')

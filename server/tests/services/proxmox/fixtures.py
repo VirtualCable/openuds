@@ -128,6 +128,13 @@ VGPUS: typing.Final[list[client.types.VGPUInfo]] = [
     ),
 ]
 
+HA_GROUPS: typing.Final[list[str]] = [
+    'ha_group_1',
+    'ha_group_2',
+    'ha_group_3',
+    'ha_group_4',
+]
+
 VMS_INFO: typing.Final[list[client.types.VMInfo]] = [
     client.types.VMInfo(
         status='status',
@@ -163,7 +170,7 @@ VMS_CONFIGURATION: typing.Final[list[client.types.VMConfiguration]] = [
         cores=1,
         vmgenid='vmgenid',
         digest='digest',
-        networks=[client.types.NetworkConfiguration(net='net', type='type', mac='mac')],
+        networks=[client.types.NetworkConfiguration(net='net', type='type', mac=f'{i:02x}:00:00:00:00:{i:02x}')],
         tpmstate0='tpmstate0',
         template=bool(i > 8),  # Last two are templates
     )
@@ -235,9 +242,11 @@ POOLS: typing.Final[list[client.types.PoolInfo]] = [
     for i in range(10)
 ]
 
+GUEST_IP_ADDRESS: typing.Final[str] = '1.0.0.1'
+
 CONSOLE_CONNECTION: typing.Final[types.services.ConsoleConnectionInfo] = types.services.ConsoleConnectionInfo(
     type='spice',
-    address='2.2.2.2',
+    address=GUEST_IP_ADDRESS,
     port=5900,
     secure_port=5901,
     cert_subject='',
@@ -270,12 +279,12 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     # clone_machine
     AutoSpecMethodInfo('clone_machine', return_value=VM_CREATION_RESULT),
     # list_ha_groups
-    AutoSpecMethodInfo('list_ha_groups', return_value=['ha_group_1', 'ha_group_2']),
+    AutoSpecMethodInfo('list_ha_groups', return_value=HA_GROUPS),
     # enable_machine_ha return None
     # disable_machine_ha return None
     # set_protection return None
     # get_guest_ip_address
-    AutoSpecMethodInfo('get_guest_ip_address', return_value='1.0.0.1'),
+    AutoSpecMethodInfo('get_guest_ip_address', return_value=GUEST_IP_ADDRESS),
     # remove_machine
     AutoSpecMethodInfo('remove_machine', return_value=UPID),
     # list_snapshots
@@ -317,16 +326,26 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     AutoSpecMethodInfo('convert_to_template', return_value=UPID),
     # get_storage
     AutoSpecMethodInfo(
-        'get_storage', method=lambda storage, node, **kwargs: next(filter(lambda s: s.storage == storage, STORAGES))
+        'get_storage',
+        method=lambda storage, node, **kwargs: next(filter(lambda s: s.storage == storage, STORAGES)),
     ),
     # list_storages
-    AutoSpecMethodInfo('list_storages', method=lambda node, **kwargs: (list(filter(lambda s: s.node == node, STORAGES))) if node is not None else STORAGES),
+    AutoSpecMethodInfo(
+        'list_storages',
+        method=lambda node, **kwargs: (
+            (list(filter(lambda s: s.node == node, STORAGES))) if node is not None else STORAGES
+        ),
+    ),
     # get_node_stats
     AutoSpecMethodInfo(
         'get_node_stats', method=lambda node, **kwargs: next(filter(lambda n: n.name == node, NODE_STATS))
     ),
     # list_pools
     AutoSpecMethodInfo('list_pools', return_value=POOLS),
+    # get_pool_info
+    AutoSpecMethodInfo(
+        'get_pool_info', method=lambda poolid, **kwargs: next(filter(lambda p: p.poolid == poolid, POOLS))
+    ),
     # get_console_connection
     AutoSpecMethodInfo('get_console_connection', return_value=CONSOLE_CONNECTION),
 ]

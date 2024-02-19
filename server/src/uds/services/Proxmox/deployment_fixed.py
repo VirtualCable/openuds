@@ -36,10 +36,11 @@ import logging
 import typing
 import collections.abc
 
-from uds.core import services
+from uds.core import consts, services
 from uds.core.services.specializations.fixed_machine.fixed_userservice import FixedUserService, Operation
 from uds.core.types.states import State
 from uds.core.util import log, autoserializable
+from uds.core.util.model import sql_stamp_seconds
 
 from . import client
 
@@ -122,16 +123,6 @@ class ProxmoxFixedUserService(FixedUserService, autoserializable.AutoSerializabl
         if vminfo.status == 'stopped':
             self._store_task(self.service().provider().start_machine(int(self._vmid)))
 
-    def _stop_machine(self) -> None:
-        try:
-            vm_info = self.service().get_machine_info(int(self._vmid))
-        except Exception as e:
-            raise Exception('Machine not found on stop machine') from e
-
-        if vm_info.status != 'stopped':
-            logger.debug('Stopping machine %s', vm_info)
-            self._store_task(self.service().provider().stop_machine(int(self._vmid)))
-
     # Check methods
     def _check_task_finished(self) -> str:
         if self._task == '':
@@ -156,11 +147,5 @@ class ProxmoxFixedUserService(FixedUserService, autoserializable.AutoSerializabl
     def _start_checker(self) -> str:
         """
         Checks if machine has started
-        """
-        return self._check_task_finished()
-
-    def _stop_checker(self) -> str:
-        """
-        Checks if machine has stoped
         """
         return self._check_task_finished()

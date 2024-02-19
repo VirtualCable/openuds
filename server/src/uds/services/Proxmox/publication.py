@@ -124,7 +124,7 @@ class ProxmoxPublication(services.Publication, autoserializable.AutoSerializable
             return self._state
         node, upid = self._task.split(',')
         try:
-            task = self.service().get_task_info(node, upid)
+            task = self.service().provider().get_task_info(node, upid)
             if task.is_running():
                 return State.RUNNING
         except Exception as e:
@@ -142,7 +142,7 @@ class ProxmoxPublication(services.Publication, autoserializable.AutoSerializable
             self._state = State.FINISHED
             if self._operation == 'p':  # not Destroying
                 # Disable Protection (removal)
-                self.service().set_protection(int(self._vm), protection=False)
+                self.service().provider().set_protection(int(self._vm), protection=False)
                 time.sleep(
                     0.5
                 )  # Give some tome to proxmox. We have observed some concurrency issues
@@ -150,7 +150,7 @@ class ProxmoxPublication(services.Publication, autoserializable.AutoSerializable
                 self.service().enable_ha(int(self._vm))
                 time.sleep(0.5)
                 # Mark vm as template
-                self.service().make_template(int(self._vm))
+                self.service().provider().create_template(int(self._vm))
 
                 # This seems to cause problems on Proxmox
                 # makeTemplate --> setProtection (that calls "config"). Seems that the HD dissapears...

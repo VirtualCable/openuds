@@ -88,3 +88,6 @@ BROWSER_RULES: dict[types.os.KnownBrowser, tuple] = {
     types.os.KnownBrowser.SEAMONKEY: (types.os.KnownBrowser.SEAMONKEY, (types.os.KnownBrowser.FIREFOX,)),
     types.os.KnownBrowser.OPERA: (types.os.KnownBrowser.OPERA, ()),
 }
+
+# Max wait time for guest shutdown
+MAX_GUEST_SHUTDOWN_WAIT: typing.Final[int] = 90  # Seconds
