@@ -353,6 +353,8 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     ),
     # get_console_connection
     AutoSpecMethodInfo('get_console_connection', return_value=CONSOLE_CONNECTION_INFO),
+    # journal
+    AutoSpecMethodInfo('journal', return_value=['journal line 1', 'journal line 2']),
 ]
 
 PROVIDER_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
