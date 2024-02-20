@@ -136,3 +136,25 @@ def random_hostname() -> str:
     import string
 
     return ''.join(random.choice(string.ascii_lowercase) for _ in range(15))  # nosec
+
+
+# Just compare types
+# This is a simple class that returns true if the types of the two objects are the same
+class MustBeOfType:
+    _kind: type
+    
+    def __init__(self, kind: type) -> None:
+        self._kind = kind
+    
+    def __eq__(self, other: typing.Any) -> bool:
+        return isinstance(other, self._kind)
+
+    def __ne__(self, other: typing.Any) -> bool:
+        return not self.__eq__(other)
+
+    def __str__(self) -> str:
+        return f'{self.__class__.__name__}({self._kind.__name__})'
+
+    def __repr__(self) -> str:
+        return self.__str__()
+

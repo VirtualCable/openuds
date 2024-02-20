@@ -74,7 +74,7 @@ authLogger = logging.getLogger('authLog')
 
 RT = typing.TypeVar('RT')
 
-
+# Local type only
 class AuthResult(typing.NamedTuple):
     user: typing.Optional[models.User] = None
     url: typing.Optional[str] = None

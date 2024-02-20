@@ -46,7 +46,15 @@ from uds.services.OpenNebula.on import vm
 from ...utils.test import UDSTestCase
 from ...utils.autospec import autospec, AutoSpecMethodInfo
 
-from uds.services.Proxmox import provider, client, service, service_fixed
+from uds.services.Proxmox import (
+    provider,
+    client,
+    service,
+    service_fixed,
+    publication,
+    deployment,
+    deployment_fixed,
+)
 
 NODES: typing.Final[list[client.types.Node]] = [
     client.types.Node(name='node0', online=True, local=True, nodeid=1, ip='0.0.0.1', level='level', id='id'),
@@ -160,7 +168,7 @@ VMS_INFO: typing.Final[list[client.types.VMInfo]] = [
         diskwrite=1,
         vgpu_type=VGPUS[i % len(VGPUS)].type,
     )
-    for i in range(10)
+    for i in range(1,16)
 ]
 
 VMS_CONFIGURATION: typing.Final[list[client.types.VMConfiguration]] = [
@@ -219,8 +227,8 @@ TASK_STATUS = client.types.TaskStatus(
     pstart=1,
     starttime=datetime.datetime.now(),
     type='type',
-    status='status',
-    exitstatus='exitstatus',
+    status='stopped',
+    exitstatus='OK',
     user='user',
     upid='upid',
     id='id',
@@ -450,5 +458,22 @@ def create_service_fixed(
         environment=environment.Environment.private_environment(uuid_),
         provider=provider or create_provider(),
         values=values,
+        uuid=uuid_,
+    )
+
+
+def create_publication(
+    service: typing.Optional[service.ProxmoxServiceLinked] = None,
+    **kwargs: typing.Any,
+) -> 'publication.ProxmoxPublication':
+    """
+    Create a publication
+    """
+    uuid_ = str(uuid.uuid4())
+    return publication.ProxmoxPublication(
+        environment=environment.Environment.private_environment(uuid_),
+        service=service or create_service_linked(**kwargs),
+        revision=1,
+        servicepool_name='servicepool_name',
         uuid=uuid_,
     )

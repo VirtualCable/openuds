@@ -76,7 +76,7 @@ SERIALIZED_PUBLICATION_DATA: typing.Final[bytes] = b'v1\tname\tvm\ttask\tstate\t
 class OpenStackPublicationSerializationTest(UDSTestCase):
     def check(self, instance: publication.ProxmoxPublication) -> None:
         self.assertEqual(instance._name, 'name')
-        self.assertEqual(instance._vm, 'vm')
+        self.assertEqual(instance._vmid, 'vm')
         self.assertEqual(instance._task, 'task')
         self.assertEqual(instance._state, 'state')
         self.assertEqual(instance._operation, 'operation')

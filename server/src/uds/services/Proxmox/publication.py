@@ -51,7 +51,7 @@ class ProxmoxPublication(services.Publication, autoserializable.AutoSerializable
     suggested_delay = 20
     
     _name = autoserializable.StringField(default='')
-    _vm = autoserializable.StringField(default='')
+    _vmid = autoserializable.StringField(default='')
     _task = autoserializable.StringField(default='')
     _state = autoserializable.StringField(default='')
     _operation = autoserializable.StringField(default='')
@@ -74,7 +74,7 @@ class ProxmoxPublication(services.Publication, autoserializable.AutoSerializable
         if vals[0] == 'v1':
             (
                 self._name,
-                self._vm,
+                self._vmid,
                 self._task,
                 self._state,
                 self._operation,
@@ -106,7 +106,7 @@ class ProxmoxPublication(services.Publication, autoserializable.AutoSerializable
                 self.servicepool_name(), str(datetime.now()).split('.')[0]
             )
             task = self.service().clone_machine(self._name, comments)
-            self._vm = str(task.vmid)
+            self._vmid = str(task.vmid)
             self._task = ','.join((task.upid.node, task.upid.upid))
             self._state = State.RUNNING
             self._operation = 'p'  # Publishing
@@ -142,15 +142,15 @@ class ProxmoxPublication(services.Publication, autoserializable.AutoSerializable
             self._state = State.FINISHED
             if self._operation == 'p':  # not Destroying
                 # Disable Protection (removal)
-                self.service().provider().set_protection(int(self._vm), protection=False)
+                self.service().provider().set_protection(int(self._vmid), protection=False)
                 time.sleep(
                     0.5
                 )  # Give some tome to proxmox. We have observed some concurrency issues
                 # And add it to HA if
-                self.service().enable_machine_ha(int(self._vm))
+                self.service().enable_machine_ha(int(self._vmid))
                 time.sleep(0.5)
                 # Mark vm as template
-                self.service().provider().create_template(int(self._vm))
+                self.service().provider().create_template(int(self._vmid))
 
                 # This seems to cause problems on Proxmox
                 # makeTemplate --> setProtection (that calls "config"). Seems that the HD dissapears...
@@ -169,7 +169,7 @@ class ProxmoxPublication(services.Publication, autoserializable.AutoSerializable
             self._destroy_after = True
             return State.RUNNING
 
-        self.state = State.RUNNING
+        self._state = State.RUNNING
         self._operation = 'd'
         self._destroy_after = False
         try:
@@ -188,4 +188,4 @@ class ProxmoxPublication(services.Publication, autoserializable.AutoSerializable
         return self._reason
 
     def machine(self) -> int:
-        return int(self._vm)
+        return int(self._vmid)

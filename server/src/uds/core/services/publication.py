@@ -91,7 +91,16 @@ class Publication(Environmentable, Serializable):
 
     _db_obj: typing.Optional['models.ServicePoolPublication']
 
-    def __init__(self, environment: 'Environment', **kwargs):
+    def __init__(
+        self,
+        environment: 'Environment',
+        *,
+        service: 'services.Service',
+        os_manager: typing.Optional['osmanagers.OSManager'] = None,
+        revision: int = -1,
+        servicepool_name: str = 'Unknown',
+        uuid: str = '',
+    ) -> None:
         """
         Do not forget to invoke this in your derived class using "super(self.__class__, self).__init__(environment, values)"
         We want to use the env, cache and storage methods outside class. If not called, you must implement your own methods
@@ -100,11 +109,11 @@ class Publication(Environmentable, Serializable):
         """
         Environmentable.__init__(self, environment)
         Serializable.__init__(self)
-        self._osManager = kwargs.get('osmanager', None)
-        self._service = kwargs['service']  # Raises an exception if service is not included
-        self._revision = kwargs.get('revision', -1)
-        self._servicepool_name = kwargs.get('servicepool_name', 'Unknown')
-        self._uuid = kwargs.get('uuid', '')
+        self._service = service
+        self._osmanager = os_manager
+        self._revision = revision
+        self._servicepool_name = servicepool_name
+        self._uuid = uuid
 
         self.initialize()
 
@@ -147,7 +156,7 @@ class Publication(Environmentable, Serializable):
             The returned value can be None if no Os manager is needed by
             the service owner of this publication.
         """
-        return self._osManager
+        return self._osmanager
 
     def revision(self) -> int:
         """
@@ -211,7 +220,7 @@ class Publication(Environmentable, Serializable):
         State values RUNNING, FINISHED or ERROR.
 
         This method will be invoked whenever a publication is started, but it
-        do not finish in 1 step. (that is, invoked as long as the instance has not 
+        do not finish in 1 step. (that is, invoked as long as the instance has not
         finished or produced an error)
 
         The idea behind this is simple, we can initiate an operation of publishing,
@@ -303,4 +312,4 @@ class Publication(Environmentable, Serializable):
         """
         String method, mainly used for debugging purposes
         """
-        return 'Base Publication'
+        return f'{self.__class__.__name__}({self._service.name})'

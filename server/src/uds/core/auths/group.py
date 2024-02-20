@@ -38,7 +38,7 @@ import collections.abc
 # Imports for type checking
 if typing.TYPE_CHECKING:
     from .authenticator import Authenticator as AuthenticatorInstance
-    from uds.models.group import Group as DBGroup
+    from uds import models
 
 
 logger = logging.getLogger(__name__)
@@ -50,22 +50,22 @@ class Group:
 
     It's only constructor expect a database group as parameter.
     """
-    _db_group: 'DBGroup'
+    _db_group: 'models.Group'
 
-    def __init__(self, db_group: 'DBGroup'):
+    def __init__(self, db_group: 'models.Group'):
         """
         Initializes internal data
         """
-        self._manager = db_group.get_manager()
+        self._cached_manager = db_group.get_manager()
         self._db_group = db_group
 
     def manager(self) -> 'AuthenticatorInstance':
         """
         Returns the database authenticator associated with this group
         """
-        return self._manager
+        return self._cached_manager
 
-    def db_obj(self) -> 'DBGroup':
+    def db_obj(self) -> 'models.Group':
         """
         Returns the database group associated with this
         """

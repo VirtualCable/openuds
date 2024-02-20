@@ -40,8 +40,7 @@ from .groups_manager import GroupsManager
 # Imports for type checking
 if typing.TYPE_CHECKING:
     from .authenticator import Authenticator as AuthenticatorInstance
-    from uds.models.group import Group as DBGroup
-    from uds.models.user import User as DBUser
+    from uds import models
 
 
 logger = logging.getLogger(__name__)
@@ -53,26 +52,16 @@ class User:
     and its groups.
     """
 
-    _manager: 'AuthenticatorInstance'
-    grps_manager: typing.Optional['GroupsManager']
-    _db_user: 'DBUser'
+    _cached_manager: 'AuthenticatorInstance'
+    _groups_manager: 'GroupsManager'
+    _db_user: 'models.User'
     _groups: typing.Optional[list[Group]]
 
-    def __init__(self, db_user: 'DBUser') -> None:
-        self._manager = db_user.get_manager()
-        self.grps_manager = None
+    def __init__(self, db_user: 'models.User') -> None:
+        self._cached_manager = db_user.get_manager()
+        self._groups_manager = GroupsManager(db_user.manager)
         self._db_user = db_user
         self._groups = None
-
-    def _groups_manager(self) -> 'GroupsManager':
-        """
-        If the groups manager for this user already exists, it returns this.
-        If it does not exists, it creates one default from authenticator and
-        returns it.
-        """
-        if self.grps_manager is None:
-            self.grps_manager = GroupsManager(self._manager.db_obj())
-        return self.grps_manager
 
     def groups(self) -> list[Group]:
         """
@@ -87,9 +76,9 @@ class User:
         )
 
         if self._groups is None:
-            if self._manager.external_source:
-                self._manager.get_groups(self._db_user.name, self._groups_manager())
-                self._groups = list(self._groups_manager().enumerate_valid_groups())
+            if self._cached_manager.external_source:
+                self._cached_manager.get_groups(self._db_user.name, self._groups_manager)
+                self._groups = list(self._groups_manager.enumerate_valid_groups())
                 logger.debug(self._groups)
                 # This is just for updating "cached" data of this user, we only get real groups at login and at modify user operation
                 usr = DBUser.objects.get(pk=self._db_user.id)  # @UndefinedVariable
@@ -104,9 +93,9 @@ class User:
         """
         Returns the authenticator instance
         """
-        return self._manager
+        return self._cached_manager
 
-    def db_obj(self) -> 'DBUser':
+    def db_obj(self) -> 'models.User':
         """
         Returns the database user
         """
