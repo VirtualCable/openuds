@@ -186,7 +186,7 @@ class ProxmoxPublication(services.Publication):
             self._destroyAfter = 'y'
             return State.RUNNING
 
-        self.state = State.RUNNING
+        self._state = State.RUNNING
         self._operation = 'd'
         self._destroyAfter = ''
         try:
