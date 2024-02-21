@@ -60,7 +60,7 @@ class WindowsOsManager(osmanagers.OSManager):
         default=True,
     )
 
-    def _flag_processes_unused_machines(self):
+    def _flag_processes_unused_machines(self) -> None:
         self.handles_unused_userservices = fields.onlogout_field_is_removable(self.on_logout)
 
     def validate(self, values: 'Module.ValuesType') -> None:
@@ -71,7 +71,7 @@ class WindowsOsManager(osmanagers.OSManager):
         Says if a machine is removable on logout
         """
         if not userservice.in_use:
-            if fields.onlogout_field_is_removable(self.on_logout) or(
+            if fields.onlogout_field_is_removable(self.on_logout) or (
                 not userservice.is_publication_valid() and fields.onlogout_field_is_keep(self.on_logout)
             ):
                 return True
@@ -87,27 +87,10 @@ class WindowsOsManager(osmanagers.OSManager):
     def get_name(self, userservice: 'UserService') -> str:
         return userservice.get_name()
 
-    def do_log(self, userservice: 'UserService', data: str, origin=log.LogSource.OSMANAGER):
-        # Stores a log associated with this service
-        try:
-            msg, level_str = data.split('\t')
-            try:
-                level = log.LogLevel.from_str(level_str)
-            except Exception:
-                logger.debug('Do not understand level %s', level_str)
-                level = log.LogLevel.INFO
-
-            log.log(userservice, level, msg, origin)
-        except Exception:
-            logger.exception('WindowsOs Manager message log: ')
-            log.log(userservice, log.LogLevel.ERROR, f'do not understand {data}', origin)
-
     def actor_data(self, userservice: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
         return {'action': 'rename', 'name': userservice.get_name()}  # No custom data
 
-    def update_credentials(
-        self, userService: 'UserService', username: str, password: str
-    ) -> tuple[str, str]:
+    def update_credentials(self, userService: 'UserService', username: str, password: str) -> tuple[str, str]:
         if userService.properties.get('sso_available') == '1':
             # Generate a ticket, store it and return username with no password
             domain = ''
@@ -136,7 +119,7 @@ class WindowsOsManager(osmanagers.OSManager):
             )
             userservice.remove()
 
-    def is_persistent(self):
+    def is_persistent(self) -> bool:
         return fields.onlogout_field_is_persistent(self.on_logout)
 
     def check_state(self, userservice: 'UserService') -> str:

@@ -130,7 +130,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         self._queue.insert(0, op)
 
     @typing.final
-    def _push_back_op(self, op) -> None:
+    def _push_back_op(self, op: Operation) -> None:
         self._queue.append(op)
 
     @typing.final

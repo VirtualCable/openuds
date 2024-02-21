@@ -65,59 +65,34 @@ class PoolPerformanceReport(StatsReport):
     uuid = '88932b48-1fd3-11e5-a776-10feed05884b'
 
     # Input fields
-    pools = gui.MultiChoiceField(
-        order=1, label=_('Pools'), tooltip=_('Pools for report'), required=True
-    )
+    pools = StatsReport.pools
+    start_date = StatsReport.start_date
+    end_date = StatsReport.end_date
 
-    startDate = gui.DateField(
-        order=2,
-        label=_('Starting date'),
-        tooltip=_('starting date for report'),
-        default=dateutils.start_of_month,
-        required=True,
-    )
-
-    endDate = gui.DateField(
-        order=3,
-        label=_('Finish date'),
-        tooltip=_('finish date for report'),
-        default=dateutils.tomorrow,
-        required=True,
-    )
-
-    samplingPoints = gui.NumericField(
-        order=4,
-        label=_('Number of intervals'),
-        length=3,
-        min_value=0,
-        max_value=32,
-        tooltip=_('Number of sampling points used in charts'),
-        default=8,
-    )
+    sampling_points = StatsReport.sampling_points
 
     def init_gui(self) -> None:
         logger.debug('Initializing gui')
-        vals = [
-            gui.choice_item(v.uuid, v.name)
-            for v in ServicePool.objects.all().order_by('name')
-        ]
+        vals = [gui.choice_item(v.uuid, v.name) for v in ServicePool.objects.all().order_by('name')]
         self.pools.set_choices(vals)
 
-    def getPools(self) -> collections.abc.Iterable[tuple[str, str]]:
+    def list_pools(self) -> collections.abc.Iterable[tuple[str, str]]:
         for p in ServicePool.objects.filter(uuid__in=self.pools.value):
             yield (str(p.id), p.name)
 
-    def getRangeData(
+    def get_range_data(
         self,
-    ) -> tuple[str, list, list]:  # pylint: disable=too-many-locals
-        start = self.startDate.as_timestamp()
-        end = self.endDate.as_timestamp()
-        if self.samplingPoints.as_int() < 2:
-            self.samplingPoints.value = 2
-        if self.samplingPoints.as_int() > 128:
-            self.samplingPoints.value = 128
+    ) -> tuple[
+        str, list[dict[str, typing.Any]], list[dict[str, typing.Any]]
+    ]:  # pylint: disable=too-many-locals
+        start = self.start_date.as_timestamp()
+        end = self.end_date.as_timestamp()
+        if self.sampling_points.as_int() < 2:
+            self.sampling_points.value = 2
+        if self.sampling_points.as_int() > 128:
+            self.sampling_points.value = 128
 
-        samplingPoints = self.samplingPoints.as_int()
+        samplingPoints = self.sampling_points.as_int()
 
         # x axis label format
         if end - start > 3600 * 24 * 2:
@@ -128,15 +103,17 @@ class PoolPerformanceReport(StatsReport):
         samplingIntervals: list[tuple[int, int]] = []
         samplingIntervalSeconds = (end - start) / samplingPoints
         for i in range(samplingPoints):
-            samplingIntervals.append((int(start + i * samplingIntervalSeconds), int(start + (i + 1) * samplingIntervalSeconds)))
+            samplingIntervals.append(
+                (int(start + i * samplingIntervalSeconds), int(start + (i + 1) * samplingIntervalSeconds))
+            )
 
         # Store dataUsers for all pools
-        poolsData = []
+        poolsData: list[dict[str, typing.Any]] = []
 
         fld = StatsManager.manager().get_event_field_for('username')
 
-        reportData = []
-        for p in self.getPools():
+        reportData: list[dict[str, typing.Any]] = []
+        for p in self.list_pools():
             dataUsers = []
             dataAccesses = []
             for interval in samplingIntervals:
@@ -180,9 +157,9 @@ class PoolPerformanceReport(StatsReport):
 
         return xLabelFormat, poolsData, reportData
 
-    def generate(self):
+    def generate(self) -> bytes:
         # Generate the sampling intervals and get dataUsers from db
-        xLabelFormat, poolsData, reportData = self.getRangeData()
+        xLabelFormat, poolsData, reportData = self.get_range_data()
 
         graph1 = io.BytesIO()
         graph2 = io.BytesIO()
@@ -195,16 +172,11 @@ class PoolPerformanceReport(StatsReport):
         data = {
             'title': _('Distinct Users'),
             'x': X,
-            'xtickFnc': lambda l: filters.date(
-                datetime.datetime.fromtimestamp(X[int(l)]), xLabelFormat
-            )
-            if int(l) >= 0
-            else '',
+            'xtickFnc': lambda l: (
+                filters.date(datetime.datetime.fromtimestamp(X[int(l)]), xLabelFormat) if int(l) >= 0 else ''
+            ),
             'xlabel': _('Date'),
-            'y': [
-                {'label': p['name'], 'data': [v[1] for v in p['dataUsers']]}
-                for p in poolsData
-            ],
+            'y': [{'label': p['name'], 'data': [v[1] for v in p['dataUsers']]} for p in poolsData],
             'ylabel': _('Users'),
         }
 
@@ -214,16 +186,11 @@ class PoolPerformanceReport(StatsReport):
         data = {
             'title': _('Accesses'),
             'x': X,
-            'xtickFnc': lambda l: filters.date(
-                datetime.datetime.fromtimestamp(X[int(l)]), xLabelFormat
-            )
-            if int(l) >= 0
-            else '',
+            'xtickFnc': lambda l: (
+                filters.date(datetime.datetime.fromtimestamp(X[int(l)]), xLabelFormat) if int(l) >= 0 else ''
+            ),
             'xlabel': _('Date'),
-            'y': [
-                {'label': p['name'], 'data': [v[1] for v in p['dataAccesses']]}
-                for p in poolsData
-            ],
+            'y': [{'label': p['name'], 'data': [v[1] for v in p['dataAccesses']]} for p in poolsData],
             'ylabel': _('Accesses'),
         }
 
@@ -235,10 +202,10 @@ class PoolPerformanceReport(StatsReport):
             'uds/reports/stats/pools-performance.html',
             dct={
                 'data': reportData,
-                'pools': [i[1] for i in self.getPools()],
-                'beginning': self.startDate.as_date(),
-                'ending': self.endDate.as_date(),
-                'intervals': self.samplingPoints.as_int(),
+                'pools': [i[1] for i in self.list_pools()],
+                'beginning': self.start_date.as_date(),
+                'ending': self.end_date.as_date(),
+                'intervals': self.sampling_points.as_int(),
             },
             header=gettext('UDS Pools Performance Report'),
             water=gettext('Pools Performance'),
@@ -254,15 +221,15 @@ class PoolPerformanceReportCSV(PoolPerformanceReport):
 
     # Input fields
     pools = PoolPerformanceReport.pools
-    startDate = PoolPerformanceReport.startDate
-    endDate = PoolPerformanceReport.endDate
-    samplingPoints = PoolPerformanceReport.samplingPoints
+    startDate = PoolPerformanceReport.start_date
+    endDate = PoolPerformanceReport.end_date
+    samplingPoints = PoolPerformanceReport.sampling_points
 
-    def generate(self):
+    def generate(self) -> bytes:
         output = io.StringIO()
         writer = csv.writer(output)
 
-        reportData = self.getRangeData()[2]
+        reportData = self.get_range_data()[2]
 
         writer.writerow(
             [
@@ -276,4 +243,4 @@ class PoolPerformanceReportCSV(PoolPerformanceReport):
         for v in reportData:
             writer.writerow([v['name'], v['date'], v['users'], v['accesses']])
 
-        return output.getvalue()
+        return output.getvalue().encode('utf-8')

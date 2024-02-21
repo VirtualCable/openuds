@@ -299,7 +299,7 @@ class Service(Module):
 
         # Keep untouched if services_limit is not present
 
-    def user_services_for_assignation(self, **kwargs) -> collections.abc.Iterable['UserService']:
+    def user_services_for_assignation(self, **kwargs: typing.Any) -> collections.abc.Iterable['UserService']:
         """
         override this if mustAssignManualy is True
         @params kwargs: Named arguments
@@ -485,7 +485,7 @@ class Service(Module):
             and cls.assign_from_assignables is not Service.assign_from_assignables
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         String method, mainly used for debugging purposes
         """

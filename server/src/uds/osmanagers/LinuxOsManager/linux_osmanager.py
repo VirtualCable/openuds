@@ -94,13 +94,12 @@ class LinuxOsManager(osmanagers.OSManager):
     def ignore_deadline(self) -> bool:
         return not self.deadline.as_bool()
 
-
     def is_removable_on_logout(self, userservice: 'UserService') -> bool:
         """
         if a machine is removable on logout
         """
         if not userservice.in_use:
-            if fields.onlogout_field_is_removable(self.on_logout) or(
+            if fields.onlogout_field_is_removable(self.on_logout) or (
                 not userservice.is_publication_valid() and fields.onlogout_field_is_keep(self.on_logout)
             ):
                 return True
@@ -112,19 +111,6 @@ class LinuxOsManager(osmanagers.OSManager):
         gets name from deployed
         """
         return service.get_name()
-
-    def do_log(self, service: 'UserService', data, origin=log.LogSource.OSMANAGER) -> None:
-        # Stores a log associated with this service
-        try:
-            msg, slevel = data.split('\t')
-            try:
-                level = log.LogLevel.from_str(slevel)
-            except Exception:
-                logger.debug('Do not understand level %s', slevel)
-                level = log.LogLevel.INFO
-            log.log(service, level, msg, origin)
-        except Exception:
-            log.log(service, log.LogLevel.ERROR, f'do not understand {data}', origin)
 
     def actor_data(self, userService: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
         return {'action': 'rename', 'name': userService.get_name()}  # No custom data

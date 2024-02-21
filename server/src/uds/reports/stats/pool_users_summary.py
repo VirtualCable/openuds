@@ -53,42 +53,23 @@ logger = logging.getLogger(__name__)
 class UsageSummaryByUsersPool(StatsReport):
     filename = 'pool_user_usage.pdf'
     name = _('Pool Usage by users')  # Report name
-    description = _(
-        'Generates a report with the summary of users usage for a pool'
-    )  # Report description
+    description = _('Generates a report with the summary of users usage for a pool')  # Report description
     uuid = '202c6438-30a8-11e7-80e4-77c1e4cb9e09'
 
-    # Input fields
-    pool = gui.ChoiceField(
-        order=1, label=_('Pool'), tooltip=_('Pool for report'), required=True
-    )
-
-    startDate = gui.DateField(
-        order=2,
-        label=_('Starting date'),
-        tooltip=_('starting date for report'),
-        default=dateutils.start_of_month,
-        required=True,
-    )
-
-    endDate = gui.DateField(
-        order=3,
-        label=_('Finish date'),
-        tooltip=_('finish date for report'),
-        default=dateutils.tomorrow,
-        required=True,
-    )
+    # UserInterface will ignore all fields that are not from FINAL class
+    # so we must redeclare them here
+    pool = StatsReport.pool
+    start_date = StatsReport.start_date
+    end_date = StatsReport.end_date
 
     def init_gui(self) -> None:
         logger.debug('Initializing gui')
         vals = [gui.choice_item(v.uuid, v.name) for v in ServicePool.objects.all()]
         self.pool.set_choices(vals)
 
-    def getPoolData(
-        self, pool
-    ) -> tuple[list[dict[str, typing.Any]], str]:
-        start = self.startDate.as_timestamp()
-        end = self.endDate.as_timestamp()
+    def get_pool_data(self, pool: 'ServicePool') -> tuple[list[dict[str, typing.Any]], str]:
+        start = self.start_date.as_timestamp()
+        end = self.end_date.as_timestamp()
         logger.debug(self.pool.value)
 
         items = (
@@ -104,7 +85,7 @@ class UsageSummaryByUsersPool(StatsReport):
         )
 
         logins: dict[str, int] = {}
-        users: dict[str, dict] = {}
+        users: dict[str, dict[str, typing.Any]] = {}
         for i in items:
             # if '\\' in i.fld1:
             #    continue
@@ -139,19 +120,19 @@ class UsageSummaryByUsersPool(StatsReport):
 
         return data, pool.name
 
-    def getData(self) -> tuple[list[dict[str, typing.Any]], str]:
-        return self.getPoolData(ServicePool.objects.get(uuid=self.pool.value))
+    def get_data(self) -> tuple[list[dict[str, typing.Any]], str]:
+        return self.get_pool_data(ServicePool.objects.get(uuid=self.pool.value))
 
     def generate(self) -> bytes:
-        items, poolName = self.getData()
+        items, poolName = self.get_data()
 
         return self.template_as_pdf(
             'uds/reports/stats/pool-users-summary.html',
             dct={
                 'data': items,
                 'pool': poolName,
-                'beginning': self.startDate.as_date(),
-                'ending': self.endDate.as_date(),
+                'beginning': self.start_date.as_date(),
+                'ending': self.end_date.as_date(),
             },
             header=gettext('Users usage list for {}').format(poolName),
             water=gettext('UDS Report of users in {}').format(poolName),
@@ -166,14 +147,14 @@ class UsageSummaryByUsersPoolCSV(UsageSummaryByUsersPool):
 
     # Input fields
     pool = UsageSummaryByUsersPool.pool
-    startDate = UsageSummaryByUsersPool.startDate
-    endDate = UsageSummaryByUsersPool.endDate
+    startDate = UsageSummaryByUsersPool.start_date
+    endDate = UsageSummaryByUsersPool.end_date
 
     def generate(self) -> bytes:
         output = io.StringIO()
         writer = csv.writer(output)
 
-        reportData = self.getData()[0]
+        reportData = self.get_data()[0]
 
         writer.writerow(
             [

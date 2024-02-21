@@ -62,6 +62,54 @@ class Report(UserInterface):
     description: str = _('Base report')  # Report description
     filename: str = 'file.pdf'  # Filename that will be returned as 'hint' on rest report request
 
+    def __init__(self, values: gui.ValuesType = None):
+        """
+        Do not forget to invoke this in your derived class using
+        "super(self.__class__, self).__init__(values)".
+
+        The values parameter is passed directly to UserInterface base.
+
+        Values are passed to __initialize__ method. It this is not None,
+        the values contains a dictionary of values received from administration gui,
+        that contains the form data requested from user.
+
+        If you override marshal, unmarshal and inherited UserInterface method
+        dict_of_values, you must also take account of values (dict) provided at the
+        __init__ method of your class.
+        """
+        #
+        super().__init__(values)
+        self.initialize(values)
+
+    def initialize(self, values: typing.Optional[gui.ValuesType]) -> None:
+        """
+        Invoked just right after initializing report, so we avoid rewriting __init__
+        if values is None, we are initializing an "new" element, if values is a dict, is the values
+        that self has received on constructuon
+
+        This can be or can be not overriden
+        """
+
+    def generate(self) -> 'bytes':
+        """
+        Generates the reports
+
+        An string representing the report is to be expected to be returned
+
+        this MUST be overriden
+        """
+        raise NotImplementedError()
+
+    def generate_encoded(self) -> str:
+        """
+        Generated base 64 encoded report.
+        Basically calls generate and encodes resuslt as base64
+        """
+        data = self.generate()
+        if self.encoded:
+            return codecs.encode(data, 'base64').decode().replace('\n', '')
+        return data.decode('utf-8')
+
     @classmethod
     def translated_name(cls) -> str:
         """
@@ -154,55 +202,6 @@ class Report(UserInterface):
         t = loader.get_template(templateName)
 
         return Report.as_pdf(t.render(dct), header=header, water=water, images=images)
-
-    def __init__(self, values: gui.ValuesType = None):
-        """
-        Do not forget to invoke this in your derived class using
-        "super(self.__class__, self).__init__(values)".
-
-        The values parameter is passed directly to UserInterface base.
-
-        Values are passed to __initialize__ method. It this is not None,
-        the values contains a dictionary of values received from administration gui,
-        that contains the form data requested from user.
-
-        If you override marshal, unmarshal and inherited UserInterface method
-        dict_of_values, you must also take account of values (dict) provided at the
-        __init__ method of your class.
-        """
-        #
-        super().__init__(values)
-        self.initialize(values)
-
-    def initialize(self, values: typing.Optional[gui.ValuesType]) -> None:
-        """
-        Invoked just right after initializing report, so we avoid rewriting __init__
-        if values is None, we are initializing an "new" element, if values is a dict, is the values
-        that self has received on constructuon
-
-        This can be or can be not overriden
-        """
-
-    def generate(self) -> bytes:
-        """
-        Generates the reports
-
-        An string representing the report is to be expected to be returned
-
-        this MUST be overriden
-        """
-        raise NotImplementedError()
-
-    def generate_encoded(self) -> str:
-        """
-        Generated base 64 encoded report.
-        Basically calls generate and encodes resuslt as base64
-        """
-        data = self.generate()
-        if self.encoded:
-            return codecs.encode(data, 'base64').decode().replace('\n', '')
-
-        return typing.cast(str, data)
 
     def __str__(self) -> str:
         return f'Report {self.name} with uuid {self.uuid}'

@@ -85,7 +85,7 @@ class TestOSManager(osmanagers.OSManager):
         required=True,
     )
 
-    def initialize(self, values: 'Module.ValuesType'):
+    def initialize(self, values: 'Module.ValuesType') -> None:
         self.handles_unused_userservices = True
 
     def release(self, userService: 'UserService') -> None:
@@ -109,22 +109,7 @@ class TestOSManager(osmanagers.OSManager):
         """
         return userService.get_name()
 
-    def do_log(self, service: 'UserService', data, origin=log.LogSource.OSMANAGER) -> None:
-        # Stores a log associated with this service
-        try:
-            msg, slevel = data.split('\t')
-            try:
-                level = log.LogLevel.from_str(slevel)
-            except Exception:
-                logger.debug('Do not understand level %s', slevel)
-                level = log.LogLevel.INFO
-            log.log(service, level, msg, origin)
-        except Exception:
-            log.log(service, log.LogLevel.ERROR, f'do not understand {data}', origin)
-
-    def actor_data(
-        self, userService: 'UserService'
-    ) -> collections.abc.MutableMapping[str, typing.Any]:
+    def actor_data(self, userService: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
         return {'action': 'rename', 'name': userService.get_name()}
 
     def handle_unused(self, userservice: 'UserService') -> None:
@@ -141,7 +126,7 @@ class TestOSManager(osmanagers.OSManager):
             )
             userservice.remove()
 
-    def is_persistent(self):
+    def is_persistent(self) -> bool:
         return self.on_logout.value == 'keep-always'
 
     def check_state(self, userService: 'UserService') -> str:
@@ -152,9 +137,7 @@ class TestOSManager(osmanagers.OSManager):
         """
         On production environments, will return no idle for non removable machines
         """
-        if (
-            self.idle.value <= 0
-        ):  # or (settings.DEBUG is False and self.on_logout != 'remove'):
+        if self.idle.value <= 0:  # or (settings.DEBUG is False and self.on_logout != 'remove'):
             return None
 
         return self.idle.value

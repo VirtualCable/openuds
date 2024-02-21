@@ -61,27 +61,17 @@ class CountersPoolAssigned(StatsReport):
     description = _('Pools usage counters for an specific day')  # Report description
     uuid = '0b429f70-2fc6-11e7-9a2a-8fc37101e66a'
 
-    startDate = gui.DateField(
-        order=2,
-        label=_('Date'),
-        tooltip=_('Date for report'),
-        default=dateutils.start_of_month,
-        required=True,
-    )
+    pools = StatsReport.pools
+    start_date = StatsReport.start_date
 
-    pools = gui.MultiChoiceField(order=1, label=_('Pools'), tooltip=_('Pools for report'), required=True)
-
-    def initialize(self, values):
-        pass
-
-    def init_gui(self):
+    def init_gui(self) -> None:
         logger.debug('Initializing gui')
         vals = [gui.choice_item(v.uuid, v.name) for v in ServicePool.objects.all().order_by('name')]
         self.pools.set_choices(vals)
 
-    def getData(self) -> list[dict[str, typing.Any]]:
+    def get_data(self) -> list[dict[str, typing.Any]]:
         # Generate the sampling intervals and get dataUsers from db
-        start = self.startDate.as_date()
+        start = self.start_date.as_date()
 
         data = []
 
@@ -113,8 +103,8 @@ class CountersPoolAssigned(StatsReport):
 
         return data
 
-    def generate(self):
-        items = self.getData()
+    def generate(self) -> bytes:
+        items = self.get_data()
 
         graph1 = io.BytesIO()
 
@@ -135,7 +125,7 @@ class CountersPoolAssigned(StatsReport):
             dct={
                 'data': items,
                 'pools': [v.name for v in ServicePool.objects.filter(uuid__in=self.pools.value)],
-                'beginning': self.startDate.as_date(),
+                'beginning': self.start_date.as_date(),
             },
             header=gettext('Services usage report for a day'),
             water=gettext('Service usage report'),
@@ -150,18 +140,18 @@ class CountersPoolAssignedCSV(CountersPoolAssigned):
     encoded = False
 
     # Input fields
-    startDate = CountersPoolAssigned.startDate
+    startDate = CountersPoolAssigned.start_date
     pools = CountersPoolAssigned.pools
 
-    def generate(self):
+    def generate(self) -> bytes:
         output = io.StringIO()
         writer = csv.writer(output)
         writer.writerow([gettext('Pool'), gettext('Hour'), gettext('Services')])
 
-        items = self.getData()
+        items = self.get_data()
 
         for i in items:
             for j in range(24):
                 writer.writerow([i['name'], f'{j:02d}', i['hours'][j]])
 
-        return output.getvalue()
+        return output.getvalue().encode()

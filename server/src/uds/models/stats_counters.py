@@ -64,7 +64,7 @@ class StatsCounters(models.Model):
 
     @staticmethod
     def get_grouped(
-        owner_type: typing.Union[int, collections.abc.Iterable[int]], counter_type: int, **kwargs
+        owner_type: typing.Union[int, collections.abc.Iterable[int]], counter_type: int, **kwargs: typing.Any
     ) -> typing.Generator[tuple[int, int], None, None]:
         """
         Returns a QuerySet of counters grouped by owner_type and counter_type
@@ -93,14 +93,20 @@ class StatsCounters(models.Model):
             since = int(since.timestamp())
         if not since:
             # Get first timestamp from table, we knwo table has at least one record
-            since = StatsCounters.objects.order_by('stamp').first().stamp  # type: ignore
+            first = StatsCounters.objects.order_by('stamp').first()
+            if first is None:
+                return  # No data
+            since = first.stamp
         to = typing.cast('int', kwargs.get('to'))
         if isinstance(to, datetime.datetime):
             # Convert to unix timestamp
             to = int(to.timestamp())
         if not to:
             # Get last timestamp from table, we know table has at least one record
-            to = StatsCounters.objects.order_by('-stamp').first().stamp  # type: ignore
+            last = StatsCounters.objects.order_by('-stamp').first()
+            if last is None:
+                return
+            to = last.stamp
 
         q = q.filter(stamp__gte=since, stamp__lte=to)
 
@@ -126,7 +132,7 @@ class StatsCounters(models.Model):
         fnc = models.Avg('value') if not kwargs.get('use_max') else models.Max('value')
 
         q = (
-            q.order_by('group_by_stamp')  # type: ignore  # group_by_stamp is added by extra
+            q.order_by('group_by_stamp')
             .values('group_by_stamp')
             .annotate(
                 value=fnc,
@@ -138,5 +144,5 @@ class StatsCounters(models.Model):
         for i in q.values('group_by_stamp', 'value'):
             yield (int(i['group_by_stamp']), i['value'])
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{datetime.datetime.fromtimestamp(self.stamp)} - {self.owner_id}:{self.owner_type}:{self.counter_type} {self.value}'

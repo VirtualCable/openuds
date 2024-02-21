@@ -192,7 +192,7 @@ class WinDomainOsManager(WindowsOsManager):
         _error_string = "No servers found"
         # And if not possible, try using NON-SSL
         for server in servers:
-            ssl = self.use_ssl.as_bool() == 'y'
+            ssl = self.use_ssl.as_bool()
             port = server[1] if not ssl else -1
             try:
                 return ldaputil.connection(
@@ -282,7 +282,7 @@ class WinDomainOsManager(WindowsOsManager):
                     f'Could not remove machine from domain (_ldap._tcp.{self.domain.as_str()} not found)',
                     log.LogSource.OSMANAGER,
                 )
-            except ldap.ALREADY_EXISTS:  # type: ignore  # (valid)
+            except ldaputil.ALREADY_EXISTS:
                 # Already added this machine to this group, pass
                 error = None
                 break
@@ -368,7 +368,7 @@ class WinDomainOsManager(WindowsOsManager):
             return str(e)
 
         try:
-            ldap_connection.search_st(self.ou.as_str(), ldap.SCOPE_BASE)  # type: ignore  # (valid)
+            ldap_connection.search_st(self.ou.as_str(), ldaputil.SCOPE_BASE)
         except ldaputil.LDAPError as e:
             return _('Check error: {}').format(e)
 
@@ -398,7 +398,7 @@ class WinDomainOsManager(WindowsOsManager):
                 ou = 'cn=Computers,dc=' + ',dc='.join(wd.domain.as_str().split('.'))
 
             logger.info('Checking %s with ou %s', wd.domain.as_str(), ou)
-            r = ldap_connection.search_st(ou, ldap.SCOPE_BASE)  # type: ignore  # (valid)
+            r = ldap_connection.search_st(ou, ldaputil.SCOPE_BASE)
             logger.info('Result of search: %s', r)
 
         except ldaputil.LDAPError:

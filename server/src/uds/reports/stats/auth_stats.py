@@ -48,6 +48,7 @@ logger = logging.getLogger(__name__)
 MAX_ELEMENTS = 10000
 BIG_INTERVAL = 3600 * 24 * 30 * 12  # 12 months
 
+
 class AuthenticatorsStats(StatsReportAuto):
     dates = 'range'
     intervals = True
@@ -61,7 +62,7 @@ class AuthenticatorsStats(StatsReportAuto):
     )  # Report description
     uuid = 'a5a43bc0-d543-11ea-af8f-af01fa65994e'
 
-    def generate(self) -> typing.Any:
+    def generate(self) -> bytes:
 
         stats = []
         for a in self.get_model_records():
@@ -74,14 +75,14 @@ class AuthenticatorsStats(StatsReportAuto):
                 data = [0, 0, 0]
                 # Get stats for interval
                 for counter in counters.enumerate_counters(
-                        typing.cast('models.Authenticator', a),
-                        counters.types.stats.CounterType.AUTH_SERVICES,
-                        since=start,
-                        to=end,
-                        interval=BIG_INTERVAL,
-                        limit=MAX_ELEMENTS,
-                        use_max=True,
-                    ):
+                    typing.cast('models.Authenticator', a),
+                    counters.types.stats.CounterType.AUTH_SERVICES,
+                    since=start,
+                    to=end,
+                    interval=BIG_INTERVAL,
+                    limit=MAX_ELEMENTS,
+                    use_max=True,
+                ):
                     data[0] += counter[1]
 
                 for counter in counters.enumerate_counters(

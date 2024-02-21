@@ -76,10 +76,6 @@ class StatsManager(metaclass=singleton.Singleton):
     that has counters (such as how many users is at a time active at platform, how many services
     are assigned, are in use, in cache, etc...
     """
-
-    def __init__(self):
-        pass
-
     @staticmethod
     def manager() -> 'StatsManager':
         return StatsManager()  # Singleton pattern will return always the same instance
@@ -119,7 +115,7 @@ class StatsManager(metaclass=singleton.Singleton):
             Nothing
         """
         if stamp is None:
-            stamp = typing.cast(datetime.datetime, sql_datetime())
+            stamp = sql_datetime()
 
         # To Unix epoch
         stampInt = int(time.mktime(stamp.timetuple()))  # pylint: disable=maybe-no-member
@@ -148,7 +144,7 @@ class StatsManager(metaclass=singleton.Singleton):
         max_intervals: typing.Optional[int],
         limit: typing.Optional[int],
         use_max: bool = False,
-    ) -> collections.abc.Iterable:
+    ) -> collections.abc.Iterable[tuple[int, int]]:
         """
         Retrieves counters from item
 
@@ -232,7 +228,7 @@ class StatsManager(metaclass=singleton.Singleton):
             yield last
             stamp += intervalType.seconds()
 
-    def perform_counters_maintenance(self):
+    def perform_counters_maintenance(self) -> None:
         """
         Removes all counters previous to configured max keep time for stat information from database.
         """
@@ -247,8 +243,8 @@ class StatsManager(metaclass=singleton.Singleton):
 
     # Event stats
     def add_event(
-        self, owner_type: types.stats.EventOwnerType, owner_id: int, event_type: types.stats.EventType, **kwargs
-    ):
+        self, owner_type: types.stats.EventOwnerType, owner_id: int, event_type: types.stats.EventType, **kwargs: typing.Any
+    ) -> bool:
         """
         Adds a new event stat to database.
 
@@ -274,11 +270,12 @@ class StatsManager(metaclass=singleton.Singleton):
         try:
 
             def get_kwarg(fld: str) -> str:
-                val = kwargs.get(fld)
-                if val is None:
+                SENTINEL: typing.Final = object()
+                val = kwargs.get(fld, SENTINEL)
+                if val is SENTINEL and fld in _FLDS_EQUIV:
                     for i in _FLDS_EQUIV[fld]:
-                        val = kwargs.get(i)
-                        if val is not None:
+                        val = kwargs.get(i, SENTINEL)
+                        if val is not SENTINEL:
                             break
                 return val or ''
 
@@ -308,7 +305,7 @@ class StatsManager(metaclass=singleton.Singleton):
             types.stats.EventOwnerType, collections.abc.Iterable[types.stats.EventOwnerType]
         ],
         event_type: typing.Union[types.stats.EventType, collections.abc.Iterable[types.stats.EventType]],
-        **kwargs
+        **kwargs: typing.Any,
     ) -> 'models.QuerySet[StatsEvents]':
         """
         Retrieves counters from item
@@ -332,16 +329,16 @@ class StatsManager(metaclass=singleton.Singleton):
         # If number is not specified, we return five last events
         number = number or 5
         if starting_id:
-            return StatsEvents.objects.filter(id__gt=starting_id).order_by('-id')[:number]  # type: ignore  # Slicing is not supported by pylance right now
-        return StatsEvents.objects.order_by('-id')[:number]  # type: ignore  # Slicing is not supported by pylance right now
+            return StatsEvents.objects.filter(id__gt=starting_id).order_by('-id')[:number]
+        return StatsEvents.objects.order_by('-id')[:number]
 
-    def perform_events_maintenancecleanupEvents(self):
+    def perform_events_maintenancecleanupEvents(self) -> None:
         """
         Removes all events previous to configured max keep time for stat information from database.
         """
 
         self._do_maintanance(StatsEvents)
 
-    def acummulate(self, max_days: int = 7):
+    def acummulate(self, max_days: int = 7) -> None:
         for interval in StatsCountersAccum.IntervalType:
             StatsCountersAccum.acummulate(interval, max_days)

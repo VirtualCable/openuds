@@ -77,7 +77,7 @@ class OSManager(Module):
         super().__init__(environment, values)
         self.initialize(values)
 
-    def initialize(self, values: Module.ValuesType):
+    def initialize(self, values: Module.ValuesType) -> None:
         """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,

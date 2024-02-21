@@ -99,25 +99,25 @@ class WinRandomPassManager(WindowsOsManager):
 
         return WindowsOsManager.update_credentials(self, userservice, username, password)
 
-    def gen_random_password(self, userservice: 'UserService'):
-        randomPass = userservice.recover_value('winOsRandomPass')
-        if not randomPass:
+    def gen_random_password(self, userservice: 'UserService') -> str:
+        rnd_password = userservice.recover_value('winOsRandomPass')
+        if not rnd_password:
             # Generates a password that conforms to complexity
             rnd = random.SystemRandom()
             base = ''.join(
                 rnd.choice(v) for v in (string.ascii_lowercase, string.ascii_uppercase, string.digits)
             ) + rnd.choice('.+-')
-            randomPass = ''.join(rnd.choice(string.ascii_letters + string.digits) for _ in range(12))
-            pos = rnd.randrange(0, len(randomPass))
-            randomPass = randomPass[:pos] + base + randomPass[pos:]
-            userservice.store_value('winOsRandomPass', randomPass)
+            rnd_password = ''.join(rnd.choice(string.ascii_letters + string.digits) for _ in range(12))
+            pos = rnd.randrange(0, len(rnd_password))
+            rnd_password = rnd_password[:pos] + base + rnd_password[pos:]
+            userservice.store_value('winOsRandomPass', rnd_password)
             log.log(
                 userservice,
                 log.LogLevel.INFO,
-                f'Password set to "{randomPass}"',
+                f'Password set to "{rnd_password}"',
                 log.LogSource.OSMANAGER,
             )
-        return randomPass
+        return rnd_password
 
     def actor_data(self, userservice: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
         return {

@@ -34,10 +34,10 @@ from . import rds
 
 ALL: typing.Final = (rds,)
 
-def migrate(apps, schema_editor):
+def migrate(apps: typing.Any, schema_editor: typing.Any) -> None:
     for i in ALL:
         i.migrate(apps, schema_editor)
 
-def rollback(apps, schema_editor):
+def rollback(apps: typing.Any, schema_editor: typing.Any) -> None:
     for i in reversed(ALL):
        i.rollback(apps, schema_editor)

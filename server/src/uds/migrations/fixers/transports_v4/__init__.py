@@ -34,10 +34,10 @@ from . import html5rdp, html5rds, html5ssh, html5vnc, nicedcv, rdp, rds, nomachi
 
 ALL: typing.Final = (html5rdp, html5rds, html5ssh, html5vnc, nicedcv, rdp, rds, nomachine, spice, x2go)
 
-def migrate(apps, schema_editor):
+def migrate(apps: typing.Any, schema_editor: typing.Any) -> None:
     for i in ALL:
         i.migrate(apps, schema_editor)
 
-def rollback(apps, schema_editor):
+def rollback(apps: typing.Any, schema_editor: typing.Any) -> None:
     for i in reversed(ALL):
        i.rollback(apps, schema_editor)

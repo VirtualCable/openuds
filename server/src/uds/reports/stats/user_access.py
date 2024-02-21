@@ -61,24 +61,12 @@ class StatsReportLogin(StatsReport):
     uuid = '0f62f19a-f166-11e4-8f59-10feed05884b'
 
     # Input fields
-    startDate = gui.DateField(
-        order=1,
-        label=_('Starting date'),
-        tooltip=_('starting date for report'),
-        default=dateutils.start_of_month,
-        required=True,
-    )
+    start_date = StatsReport.start_date
 
-    endDate = gui.DateField(
-        order=2,
-        label=_('Finish date'),
-        tooltip=_('finish date for report'),
-        default=dateutils.tomorrow,
-        required=True,
-    )
+    end_date = StatsReport.end_date
 
-    samplingPoints = gui.NumericField(
-        order=3,
+    sampling_points = gui.NumericField(
+        order=4,
         label=_('Number of intervals'),
         length=3,
         min_value=0,
@@ -87,21 +75,15 @@ class StatsReportLogin(StatsReport):
         default=64,
     )
 
-    def initialize(self, values):
-        pass
+    def get_range_data(self) -> tuple[str, list[tuple[int, int]], list[dict[str, typing.Any]]]:
+        start = self.start_date.as_timestamp()
+        end = self.end_date.as_timestamp()
+        if self.sampling_points.as_int() < 2:
+            self.sampling_points.value = 2
+        if self.sampling_points.as_int() > 128:
+            self.sampling_points.value = 128
 
-    def init_gui(self):
-        pass
-
-    def getRangeData(self) -> tuple[str, list, list]:
-        start = self.startDate.as_timestamp()
-        end = self.endDate.as_timestamp()
-        if self.samplingPoints.as_int() < 2:
-            self.samplingPoints.value = 2
-        if self.samplingPoints.as_int() > 128:
-            self.samplingPoints.value = 128
-
-        samplingPoints = self.samplingPoints.as_int()
+        samplingPoints = self.sampling_points.as_int()
 
         # x axis label format
         if end - start > 3600 * 24 * 2:
@@ -116,8 +98,8 @@ class StatsReportLogin(StatsReport):
                 (int(start + i * samplingIntervalSeconds), int(start + (i + 1) * samplingIntervalSeconds))
             )
 
-        data = []
-        reportData = []
+        data: list[tuple[int, int]] = []
+        reportData: list[dict[str, typing.Any]] = []
         for interval in samplingIntervals:
             key = (interval[0] + interval[1]) // 2
             val = (
@@ -142,9 +124,9 @@ class StatsReportLogin(StatsReport):
 
         return xLabelFormat, data, reportData
 
-    def getWeekHourlyData(self):
-        start = self.startDate.as_timestamp()
-        end = self.endDate.as_timestamp()
+    def get_week_hourly_data(self) -> tuple[list[int], list[int], list[list[int]]]:
+        start = self.start_date.as_timestamp()
+        end = self.end_date.as_timestamp()
 
         dataWeek = [0] * 7
         dataHour = [0] * 24
@@ -160,8 +142,8 @@ class StatsReportLogin(StatsReport):
 
         return dataWeek, dataHour, dataWeekHour
 
-    def generate(self):
-        xLabelFormat, data, reportData = self.getRangeData()
+    def generate(self) -> bytes:
+        xLabelFormat, data, reportData = self.get_range_data()
 
         #
         # User access by date graph
@@ -184,7 +166,7 @@ class StatsReportLogin(StatsReport):
         graph2 = io.BytesIO()
         graph3 = io.BytesIO()
         graph4 = io.BytesIO()
-        dataWeek, dataHour, dataWeekHour = self.getWeekHourlyData()
+        dataWeek, dataHour, dataWeekHour = self.get_week_hourly_data()
 
         X = list(range(7))
         d = {
@@ -245,9 +227,9 @@ class StatsReportLogin(StatsReport):
             'uds/reports/stats/user-access.html',
             dct={
                 'data': reportData,
-                'beginning': self.startDate.as_date(),
-                'ending': self.endDate.as_date(),
-                'intervals': self.samplingPoints.as_int(),
+                'beginning': self.start_date.as_date(),
+                'ending': self.end_date.as_date(),
+                'intervals': self.sampling_points.as_int(),
             },
             header=gettext('Users access to UDS'),
             water=gettext('UDS Report for users access'),
@@ -269,19 +251,19 @@ class StatsReportLoginCSV(StatsReportLogin):
     encoded = False
 
     # Input fields
-    startDate = StatsReportLogin.startDate
-    endDate = StatsReportLogin.endDate
-    samplingPoints = StatsReportLogin.samplingPoints
+    startDate = StatsReportLogin.start_date
+    endDate = StatsReportLogin.end_date
+    samplingPoints = StatsReportLogin.sampling_points
 
-    def generate(self):
+    def generate(self) -> bytes:
         output = io.StringIO()
         writer = csv.writer(output)
 
-        reportData = self.getRangeData()[2]
+        reportData = self.get_range_data()[2]
 
         writer.writerow([gettext('Date range'), gettext('Users')])
 
         for v in reportData:
             writer.writerow([v['date'], v['users']])
 
-        return output.getvalue()
+        return output.getvalue().encode()

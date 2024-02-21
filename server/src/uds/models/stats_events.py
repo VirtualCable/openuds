@@ -71,44 +71,47 @@ class StatsEvents(models.Model):
 
     @staticmethod
     def enumerate_stats(
-        owner_type: typing.Union[types.stats.EventOwnerType, collections.abc.Iterable[types.stats.EventOwnerType]],
+        owner_type: typing.Union[
+            types.stats.EventOwnerType, collections.abc.Iterable[types.stats.EventOwnerType]
+        ],
         event_type: typing.Union[types.stats.EventType, collections.abc.Iterable[types.stats.EventType]],
-        **kwargs,
+        **kwargs: typing.Any,
     ) -> 'models.QuerySet[StatsEvents]':
         """
         Returns a queryset with the average stats grouped by interval for owner_type and owner_id (optional)
         """
+        q = StatsEvents.objects.filter()
         if isinstance(owner_type, int):
-            owner_type = [owner_type]
+            q = q.filter(owner_type=owner_type)
+        else:
+            q = q.filter(owner_type__in=owner_type)
         if isinstance(event_type, int):
-            event_type = [event_type]
-        q = StatsEvents.objects.filter(owner_type__in=owner_type, event_type__in=event_type)
+            q = q.filter(event_type=event_type)
+        else:
+            q = q.filter(event_type__in=event_type)
 
         if 'owner_id' in kwargs:
             owner_id = kwargs['owner_id']
             if isinstance(owner_id, int):
-                owner_id = [owner_id]
-            q = q.filter(owner_id__in=owner_id)
+                q = q.filter(owner_id=owner_id)
+            else:
+                q = q.filter(owner_id__in=owner_id)
 
         since = kwargs.get('since')
         if isinstance(since, datetime.datetime):
             # Convert to unix timestamp
             since = int(since.timestamp())
-        if not since:
-            # Get first timestamp from table, we knwo table has at least one record
-            since = StatsEvents.objects.order_by('stamp').first().stamp # type: ignore
+        if since and isinstance(since, int):
+            q = q.filter(stamp__gte=since)
         to = kwargs.get('to')
         if isinstance(to, datetime.datetime):
             # Convert to unix timestamp
             to = int(to.timestamp())
-        if not to:
-            # Get last timestamp from table, we know table has at least one record
-            to = StatsEvents.objects.order_by('-stamp').first().stamp # type: ignore
+        if to and isinstance(to, int):
+            q = q.filter(stamp__lte=to)
 
-        q = q.filter(stamp__gte=since, stamp__lte=to)
-
-        if kwargs.get('limit'):
-            q = q[:kwargs['limit']]
+        if kwargs.get('limit') and isinstance(kwargs['limit'], int) and kwargs['limit'] > 0:
+            q = q[: kwargs['limit']]
 
         return q
 
@@ -171,7 +174,7 @@ class StatsEvents(models.Model):
             ]
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             f'Log of {self.owner_type}({self.owner_id}): {self.event_type} - {self.stamp}, '
             f'{self.fld1}, {self.fld2}, {self.fld3}'

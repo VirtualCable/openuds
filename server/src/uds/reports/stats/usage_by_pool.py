@@ -56,30 +56,11 @@ class UsageByPool(StatsReport):
     uuid = '38ec12dc-beaf-11e5-bd0a-10feed05884b'
 
     # Input fields
-    pool = gui.MultiChoiceField(
-        order=1, label=_('Pool'), tooltip=_('Pool for report'), required=True
-    )
+    pool = StatsReport.pool
+    start_date = StatsReport.start_date
+    end_date = StatsReport.end_date
 
-    startDate = gui.DateField(
-        order=2,
-        label=_('Starting date'),
-        tooltip=_('starting date for report'),
-        default=dateutils.start_of_month,
-        required=True,
-    )
-
-    endDate = gui.DateField(
-        order=3,
-        label=_('Finish date'),
-        tooltip=_('finish date for report'),
-        default=dateutils.end_of_month,
-        required=True,
-    )
-
-    def initialize(self, values):
-        pass
-
-    def init_gui(self):
+    def init_gui(self) -> None:
         logger.debug('Initializing gui')
         vals = [gui.choice_item('0-0-0-0', gettext('ALL POOLS'))] + [
             gui.choice_item(v.uuid, v.name)
@@ -88,10 +69,10 @@ class UsageByPool(StatsReport):
         ]
         self.pool.set_choices(vals)
 
-    def getData(self) -> tuple[list[dict[str, typing.Any]], str]:
+    def get_data(self) -> tuple[list[dict[str, typing.Any]], str]:
         # Generate the sampling intervals and get dataUsers from db
-        start = self.startDate.as_timestamp()
-        end = self.endDate.as_timestamp()
+        start = self.start_date.as_timestamp()
+        end = self.end_date.as_timestamp()
         logger.debug(self.pool.value)
         if '0-0-0-0' in self.pool.value:
             pools = ServicePool.objects.all()
@@ -136,8 +117,8 @@ class UsageByPool(StatsReport):
 
         return data, ','.join([p.name for p in pools])
 
-    def generate(self):
-        items, poolName = self.getData()
+    def generate(self) -> bytes:
+        items, poolName = self.get_data()
 
         return self.template_as_pdf(
             'uds/reports/stats/usage-by-pool.html',
@@ -158,14 +139,14 @@ class UsageByPoolCSV(UsageByPool):
 
     # Input fields
     pool = UsageByPool.pool
-    startDate = UsageByPool.startDate
-    endDate = UsageByPool.endDate
+    startDate = UsageByPool.start_date
+    endDate = UsageByPool.end_date
 
-    def generate(self):
+    def generate(self) -> bytes:
         output = io.StringIO()
         writer = csv.writer(output)
 
-        reportData = self.getData()[0]
+        reportData = self.get_data()[0]
 
         writer.writerow(
             [
@@ -182,4 +163,4 @@ class UsageByPoolCSV(UsageByPool):
                 [v['date'], v['name'], v['time'], v['pool_name'], v['origin']]
             )
 
-        return output.getvalue()
+        return output.getvalue().encode()

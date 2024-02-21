@@ -37,10 +37,12 @@ import tempfile
 import os.path
 
 import ldap.filter
+# Import for local use, and reexport
 from ldap import (
     SCOPE_BASE,  # pyright: ignore
     SCOPE_SUBTREE,  # pyright: ignore
     SCOPE_ONELEVEL,  # pyright: ignore
+    ALREADY_EXISTS,  # pyright: ignore
     # SCOPE_SUBORDINATE,  # pyright: ignore
 )
 

@@ -53,17 +53,17 @@ class PoolsUsageSummary(UsageByPool):
 
     # Input fields
     pool = UsageByPool.pool
-    startDate = UsageByPool.startDate
-    endDate = UsageByPool.endDate
+    start_date = UsageByPool.start_date
+    end_date = UsageByPool.end_date
 
     def processedData(
         self,
     ) -> tuple[
         typing.ValuesView[collections.abc.MutableMapping[str, typing.Any]], int, int, int
     ]:
-        orig, poolNames = super().getData()  # pylint: disable=unused-variable  # Keep name for reference
+        orig, poolNames = super().get_data()  # pylint: disable=unused-variable  # Keep name for reference
 
-        pools: dict[str, dict] = {}
+        pools: dict[str, dict[str, typing.Any]] = {}
         totalTime: int = 0
         totalCount: int = 0
 
@@ -94,11 +94,11 @@ class PoolsUsageSummary(UsageByPool):
 
         return pools.values(), totalTime, totalCount or 1, len(uniqueUsers)
 
-    def generate(self):
+    def generate(self) -> bytes:
         pools, totalTime, totalCount, uniqueUsers = self.processedData()
 
-        start = self.startDate.value
-        end = self.endDate.value
+        start = self.start_date.as_str()
+        end = self.end_date.as_str()
 
         logger.debug('Pools: %s --- %s  --- %s', pools, totalTime, totalCount)
 
@@ -143,10 +143,10 @@ class PoolsUsageSummaryCSV(PoolsUsageSummary):
 
     # Input fields
     pool = PoolsUsageSummary.pool
-    startDate = PoolsUsageSummary.startDate
-    endDate = PoolsUsageSummary.endDate
+    startDate = PoolsUsageSummary.start_date
+    endDate = PoolsUsageSummary.end_date
 
-    def generate(self):
+    def generate(self) -> bytes:
         output = io.StringIO()
         writer = csv.writer(output)
 
@@ -177,4 +177,4 @@ class PoolsUsageSummaryCSV(PoolsUsageSummary):
             ]
         )
 
-        return output.getvalue()
+        return output.getvalue().encode()
