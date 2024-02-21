@@ -138,7 +138,7 @@ class OVirtLinkedDeployment(services.UserService, autoserializable.AutoSerializa
         if self._name == '':
             try:
                 self._name = self.name_generator().get(
-                    self.service().get_basename(), self.service().getLenName()
+                    self.service().get_basename(), self.service().get_lenname()
                 )
             except KeyError:
                 return consts.NO_MORE_NAMES
@@ -170,7 +170,7 @@ class OVirtLinkedDeployment(services.UserService, autoserializable.AutoSerializa
         to use to get an unused mac.
         """
         if self._mac == '':
-            self._mac = self.mac_generator().get(self.service().getMacRange())
+            self._mac = self.mac_generator().get(self.service().get_macs_range())
         return self._mac
 
     def get_ip(self) -> str:
@@ -223,7 +223,7 @@ class OVirtLinkedDeployment(services.UserService, autoserializable.AutoSerializa
         o oVirt, reset operation just shutdowns it until v3 support is removed
         """
         if self._vmid != '':
-            self.service().stopMachine(self._vmid)
+            self.service().stop_machine(self._vmid)
 
     def get_console_connection(
         self,
@@ -428,7 +428,7 @@ if sys.platform == 'win32':
             self._push_front_op(Operation.STOP)
             self._execute_queue()
         else:
-            self.service().removeMachine(self._vmid)
+            self.service().remove_machine(self._vmid)
 
         return State.RUNNING
 
@@ -448,7 +448,7 @@ if sys.platform == 'win32':
             self._push_front_op(
                 Operation.RETRY
             )  # Will call "check Retry", that will finish inmediatly and again call this one
-        self.service().startMachine(self._vmid)
+        self.service().start_machine(self._vmid)
 
         return State.RUNNING
 
@@ -469,7 +469,7 @@ if sys.platform == 'win32':
                 Operation.RETRY
             )  # Will call "check Retry", that will finish inmediatly and again call this one
         else:
-            self.service().stopMachine(self._vmid)
+            self.service().stop_machine(self._vmid)
 
         return State.RUNNING
 
@@ -498,9 +498,9 @@ if sys.platform == 'win32':
         """
         Changes the mac of the first nic
         """
-        self.service().updateMachineMac(self._vmid, self.get_unique_id())
+        self.service().update_machine_mac(self._vmid, self.get_unique_id())
         # Fix usb if needed
-        self.service().fixUsb(self._vmid)
+        self.service().fix_usb(self._vmid)
 
         return State.RUNNING
 

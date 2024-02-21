@@ -47,6 +47,9 @@ from .serializable import Serializable
 
 logger = logging.getLogger(__name__)
 
+if typing.TYPE_CHECKING:
+    from uds.core import types
+
 
 class Module(UserInterface, Environmentable, Serializable, abc.ABC):
     """
@@ -104,11 +107,6 @@ class Module(UserInterface, Environmentable, Serializable, abc.ABC):
     # This means that is_base is set as a default here, but not checked for Module NEVER (but for subclasses)
     is_base: typing.ClassVar[bool] = False
 
-    # Types
-    ValuesType = typing.Optional[
-        dict[str, typing.Any]
-    ]  # values type value will be str or list[str] int most cases
-
     # : Which coded to use to encode module by default.
     # : Basic name used to provide the administrator an "huma readable" form for the module
     type_name: typing.ClassVar[str] = 'Base Module'
@@ -129,6 +127,95 @@ class Module(UserInterface, Environmentable, Serializable, abc.ABC):
     # uuid of this module, if any
     # Maybe used by some modules to identify themselves
     _uuid: str
+
+    def __init__(
+        self,
+        environment: Environment,
+        values: 'types.core.ValuesType' = None,
+        uuid: typing.Optional[str] = None,
+    ):
+        """
+        Do not forget to invoke this in your derived class using
+        "super(self.__class__, self).__init__(environment, values)".
+
+        We want to use the env, cache and storage methods outside class.
+        If not called, you must implement your own methods.
+
+        cache and storage are "convenient" methods to access _env.cache and
+        _env.storage
+
+        The values param is passed directly to UserInterface base.
+
+        The environment param is passed directly to environment.
+
+        Values are passed to __initialize__ method. It this is not None,
+        the values contains a dictionary of values received from administration gui,
+        that contains the form data requested from user.
+
+        If you override marshal, unmarshal and inherited UserInterface method
+        dict_of_values, you must also take account of values (dict) provided at the
+        __init__ method of your class.
+        """
+        UserInterface.__init__(self, values)
+        Environmentable.__init__(self, environment)
+        Serializable.__init__(self)
+        self._uuid = uuid or ''
+
+    def is_dirty(self) -> bool:
+        """
+        This method informs the core if the module has changed serializable data,
+        and that must be re-serialized
+
+        Default implemetation is that on every method call, module will be dirty
+
+        Note: The implementation of this is a work in progress, so right now the module will be serialized out on every access
+        """
+        return True
+
+    def marshal(self) -> bytes:
+        """
+        By default and if not overriden by descendants, this method, overridden
+        from Serializable, and returns the serialization of
+        form field stored values.
+        """
+        return self.serialize_fields()
+
+    def unmarshal(self, data: bytes) -> None:
+        """
+        By default and if not overriden by descendants, this method recovers
+        data serialized using serializeForm
+        """
+        if self.deserialize_fields(data):  # If upgrade of format requested
+            self.mark_for_upgrade()  # Flag for upgrade
+
+    def check(self) -> str:
+        """
+        Method that will provide the "check" capability for the module.
+
+        The return value that this method must provide is simply an string,
+        preferable internacionalizated.
+
+        Returns:
+            Internacionalized (using gettext) string of result of the check.
+        """
+        return _("No check method provided.")
+
+    def get_uuid(self) -> str:
+        return self._uuid
+
+    def set_uuid(self, uuid: typing.Optional[str]) -> None:
+        self._uuid = uuid or ''
+
+    def destroy(self) -> None:
+        """
+        Invoked before deleting an module from database.
+
+        Do whatever needed here, as deleting associated data if needed
+        (no example come to my head right now... :-) )
+
+        Returns:
+            Nothing
+        """
 
     @classmethod
     def name(cls: type['Module']) -> str:
@@ -193,12 +280,12 @@ class Module(UserInterface, Environmentable, Serializable, abc.ABC):
 
     @classmethod
     def icon64(cls: type['Module']) -> str:
-        return utils.load_Icon_b64(
+        return utils.load_icon_b64(
             os.path.dirname(typing.cast(str, sys.modules[cls.__module__].__file__)) + '/' + cls.icon_file
         )
 
     @staticmethod
-    def test(env: Environment, data: dict[str, str]) -> list[typing.Any]:
+    def test(env: 'Environment', data: 'types.core.ValuesType') -> 'types.core.TestResult':
         """
         Test if the connection data is ok.
 
@@ -216,96 +303,8 @@ class Module(UserInterface, Environmentable, Serializable, abc.ABC):
             (True is all right, false is error),
             second is an String with error, preferably internacionalizated..
         """
-        return [True, _("No connection checking method is implemented.")]
-
-    def __init__(
-        self,
-        environment: Environment,
-        values: ValuesType = None,
-        uuid: typing.Optional[str] = None,
-    ):
-        """
-        Do not forget to invoke this in your derived class using
-        "super(self.__class__, self).__init__(environment, values)".
-
-        We want to use the env, cache and storage methods outside class.
-        If not called, you must implement your own methods.
-
-        cache and storage are "convenient" methods to access _env.cache and
-        _env.storage
-
-        The values param is passed directly to UserInterface base.
-
-        The environment param is passed directly to environment.
-
-        Values are passed to __initialize__ method. It this is not None,
-        the values contains a dictionary of values received from administration gui,
-        that contains the form data requested from user.
-
-        If you override marshal, unmarshal and inherited UserInterface method
-        dict_of_values, you must also take account of values (dict) provided at the
-        __init__ method of your class.
-        """
-        UserInterface.__init__(self, values)
-        Environmentable.__init__(self, environment)
-        Serializable.__init__(self)
-        self._uuid = uuid or ''
+        return types.core.TestResult(success=True, error=_("No connection checking method is implemented."))
 
     def __str__(self) -> str:
         return "Base Module"
 
-    def is_dirty(self) -> bool:
-        """
-        This method informs the core if the module has changed serializable data,
-        and that must be re-serialized
-
-        Default implemetation is that on every method call, module will be dirty
-
-        Note: The implementation of this is a work in progress, so right now the module will be serialized out on every access
-        """
-        return True
-
-    def marshal(self) -> bytes:
-        """
-        By default and if not overriden by descendants, this method, overridden
-        from Serializable, and returns the serialization of
-        form field stored values.
-        """
-        return self.serialize_fields()
-
-    def unmarshal(self, data: bytes) -> None:
-        """
-        By default and if not overriden by descendants, this method recovers
-        data serialized using serializeForm
-        """
-        if self.deserialize_fields(data):  # If upgrade of format requested
-            self.mark_for_upgrade()  # Flag for upgrade
-
-    def check(self) -> str:
-        """
-        Method that will provide the "check" capability for the module.
-
-        The return value that this method must provide is simply an string,
-        preferable internacionalizated.
-
-        Returns:
-            Internacionalized (using gettext) string of result of the check.
-        """
-        return _("No check method provided.")
-
-    def get_uuid(self) -> str:
-        return self._uuid
-
-    def set_uuid(self, uuid: typing.Optional[str]) -> None:
-        self._uuid = uuid or ''
-
-    def destroy(self) -> None:
-        """
-        Invoked before deleting an module from database.
-
-        Do whatever needed here, as deleting associated data if needed
-        (no example come to my head right now... :-) )
-
-        Returns:
-            Nothing
-        """

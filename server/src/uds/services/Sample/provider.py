@@ -168,7 +168,7 @@ class Provider(services.ServiceProvider):
     )
 
     # There is more fields type, but not here the best place to cover it
-    def initialize(self, values: 'Module.ValuesType') -> None:
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         """
         We will use the "autosave" feature for form fields, that is more than
         enought for most providers. (We simply need to store data provided by user

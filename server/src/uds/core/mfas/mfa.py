@@ -141,11 +141,11 @@ class MFA(Module):
         OK = 1
         ALLOWED = 2
 
-    def __init__(self, environment: 'Environment', values: Module.ValuesType):
+    def __init__(self, environment: 'Environment', values: types.core.ValuesType):
         super().__init__(environment, values)
         self.initialize(values)
 
-    def initialize(self, values: Module.ValuesType) -> None:
+    def initialize(self, values: types.core.ValuesType) -> None:
         """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,

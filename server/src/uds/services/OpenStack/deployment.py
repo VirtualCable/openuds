@@ -156,7 +156,7 @@ class OpenStackLiveDeployment(
         try:
             status = self.service().get_machine_state(self._vmid)
 
-            if openstack.statusIsLost(status):
+            if openstack.status_is_lost(status):
                 return self._error('Machine is not available anymore')
 
             if status == openstack.PAUSED:
@@ -218,7 +218,7 @@ class OpenStackLiveDeployment(
         status = self.service().get_machine_state(self._vmid)
 
         # If we want to check an state and machine does not exists (except in case that we whant to check this)
-        if openstack.statusIsLost(status):
+        if openstack.status_is_lost(status):
             return self._error('Machine not available. ({})'.format(status))
 
         ret = State.RUNNING
@@ -334,7 +334,7 @@ class OpenStackLiveDeployment(
         """
         status = self.service().get_machine_state(self._vmid)
 
-        if openstack.statusIsLost(status):
+        if openstack.status_is_lost(status):
             raise Exception('Machine not found. (Status {})'.format(status))
 
         self.service().removeMachine(self._vmid)

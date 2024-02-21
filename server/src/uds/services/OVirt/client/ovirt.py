@@ -149,11 +149,11 @@ class Client:
         finally:
             lock.release()
 
-    def is_fully_functional_version(self) -> tuple[bool, str]:
+    def is_fully_functional_version(self) -> types.core.TestResult:
         """
         '4.0 version is always functional (right now...)
         """
-        return True, 'Test successfully passed'
+        return types.core.TestResult(True)
 
     def list_machines(self, force: bool = False) -> list[collections.abc.MutableMapping[str, typing.Any]]:
         """
@@ -181,7 +181,7 @@ class Client:
 
             api = self._api()
 
-            vms: collections.abc.Iterable[typing.Any] = api.system_service().vms_service().list()  # type: ignore
+            vms: collections.abc.Iterable[typing.Any] = api.system_service().vms_service().list()  # pyright: ignore
 
             logger.debug('oVirt VMS: %s', vms)
 
@@ -235,7 +235,7 @@ class Client:
 
             api = self._api()
 
-            clusters: list[typing.Any] = api.system_service().clusters_service().list()  # type: ignore
+            clusters: list[typing.Any] = api.system_service().clusters_service().list()  # pyright: ignore
 
             res: list[collections.abc.MutableMapping[str, typing.Any]] = []
 
@@ -292,7 +292,7 @@ class Client:
 
             api = self._api()
 
-            c: typing.Any = api.system_service().clusters_service().service(clusterId).get()  # type: ignore
+            c: typing.Any = api.system_service().clusters_service().service(clusterId).get()  # pyright: ignore
 
             dc = c.data_center
 
@@ -344,10 +344,10 @@ class Client:
             api = self._api()
 
             datacenter_service = api.system_service().data_centers_service().service(datacenterId)
-            d: typing.Any = datacenter_service.get()  # type: ignore
+            d: typing.Any = datacenter_service.get()  # pyright: ignore
 
             storage = []
-            for dd in typing.cast(collections.abc.Iterable, datacenter_service.storage_domains_service().list()):  # type: ignore
+            for dd in typing.cast(collections.abc.Iterable[typing.Any], datacenter_service.storage_domains_service().list()):  # pyright: ignore
                 try:
                     active = dd.status.value
                 except Exception:
@@ -410,7 +410,7 @@ class Client:
 
             api = self._api()
 
-            dd: typing.Any = api.system_service().storage_domains_service().service(storageId).get()  # type: ignore
+            dd: typing.Any = api.system_service().storage_domains_service().service(storageId).get()  # pyright: ignore
 
             res = {
                 'id': dd.id,
@@ -468,8 +468,8 @@ class Client:
 
             vms = api.system_service().vms_service().service(machineId)
 
-            cluster: typing.Any = api.system_service().clusters_service().service(clusterId).get()  # type: ignore
-            vm: typing.Any = vms.get()  # type: ignore
+            cluster: typing.Any = api.system_service().clusters_service().service(clusterId).get()  # pyright: ignore
+            vm: typing.Any = vms.get()  # pyright: ignore
 
             if vm is None:
                 raise Exception('Machine not found')
@@ -494,7 +494,7 @@ class Client:
 
             # display=display)
 
-            return api.system_service().templates_service().add(template).id  # type: ignore
+            return api.system_service().templates_service().add(template).id  # pyright: ignore
         finally:
             lock.release()
 
@@ -517,7 +517,7 @@ class Client:
 
             try:
                 template: typing.Any = (
-                    api.system_service().templates_service().service(templateId).get()  # type: ignore
+                    api.system_service().templates_service().service(templateId).get()  # pyright: ignore
                 )
 
                 if not template:
@@ -595,7 +595,7 @@ class Client:
                 usb=usb,
             )  # display=display,
 
-            return api.system_service().vms_service().add(par).id  # type: ignore
+            return api.system_service().vms_service().add(par).id  # pyright: ignore
 
         finally:
             lock.release()
@@ -611,7 +611,7 @@ class Client:
 
             api = self._api()
 
-            api.system_service().templates_service().service(templateId).remove()  # type: ignore
+            api.system_service().templates_service().service(templateId).remove()  # pyright: ignore
             # This returns nothing, if it fails it raises an exception
         finally:
             lock.release()
@@ -638,12 +638,12 @@ class Client:
             api = self._api()
 
             try:
-                vm = api.system_service().vms_service().service(machineId).get()  # type: ignore
+                vm = api.system_service().vms_service().service(machineId).get()  # pyright: ignore
 
-                if vm is None or vm.status is None:  # type: ignore
+                if vm is None or vm.status is None:  # pyright: ignore
                     return 'unknown'
 
-                return vm.status.value  # type: ignore
+                return vm.status.value  # pyright: ignore
             except Exception:  # machine not found
                 return 'unknown'
 
@@ -748,7 +748,7 @@ class Client:
         finally:
             lock.release()
 
-    def update_machine_mac(self, machineId: str, macAddres: str) -> None:
+    def update_machine_mac(self, machineid: str, mac: str) -> None:
         """
         Changes the mac address of first nic of the machine to the one specified
         """
@@ -757,14 +757,14 @@ class Client:
 
             api = self._api()
 
-            vmService: typing.Any = api.system_service().vms_service().service(machineId)
+            vm_service: typing.Any = api.system_service().vms_service().service(machineid)
 
-            if vmService.get() is None:
+            if vm_service.get() is None:
                 raise Exception('Machine not found')
 
-            nic = vmService.nics_service().list()[0]  # If has no nic, will raise an exception (IndexError)
-            nic.mac.address = macAddres
-            nicService = vmService.nics_service().service(nic.id)
+            nic = vm_service.nics_service().list()[0]  # If has no nic, will raise an exception (IndexError)
+            nic.mac.address = mac
+            nicService = vm_service.nics_service().service(nic.id)
             nicService.update(nic)
         except IndexError:
             raise Exception('Machine do not have network interfaces!!')
@@ -794,27 +794,27 @@ class Client:
             lock.acquire(True)
             api = self._api()
 
-            vmService: typing.Any = api.system_service().vms_service().service(machine_id)
-            vm = vmService.get()
+            vm_service: typing.Any = api.system_service().vms_service().service(machine_id)
+            vm = vm_service.get()
 
             if vm is None:
                 raise Exception('Machine not found')
 
             display = vm.display
-            ticket = vmService.ticket()
+            ticket = vm_service.ticket()
 
             # Get host subject
             cert_subject = ''
             if display.certificate is not None:
                 cert_subject = display.certificate.subject
             else:
-                for i in typing.cast(collections.abc.Iterable, api.system_service().hosts_service().list()):
+                for i in typing.cast(collections.abc.Iterable[typing.Any], api.system_service().hosts_service().list()):
                     for k in typing.cast(
-                        collections.abc.Iterable,
+                        collections.abc.Iterable[typing.Any],
                         api.system_service()
                         .hosts_service()
                         .service(i.id)
-                        .nics_service()  # type: ignore
+                        .nics_service()  # pyright: ignore
                         .list(),
                     ):
                         if k.ip.address == display.address:

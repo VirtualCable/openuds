@@ -42,6 +42,7 @@ from uds.core.ui import gui
 if typing.TYPE_CHECKING:
     from .service import Service
     from uds import models
+    from uds.core import types
 
 logger = logging.getLogger(__name__)
 
@@ -152,7 +153,7 @@ class ServiceProvider(module.Module):
     def __init__(
         self,
         environment: environment.Environment,
-        values: 'module.Module.ValuesType' = None,
+        values: 'types.core.ValuesType' = None,
         uuid: typing.Optional[str] = None,
     ):
         """
@@ -165,7 +166,7 @@ class ServiceProvider(module.Module):
         super().__init__(environment, values, uuid=uuid)
         self.initialize(values)
 
-    def initialize(self, values: 'module.Module.ValuesType') -> None:
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,
@@ -230,7 +231,7 @@ class ServiceProvider(module.Module):
         if self.get_uuid():
             log.log(DBProvider.objects.get(uuid=self.get_uuid()), level, message, log.LogSource.SERVICE)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Basic implementation, mostly used for debuging and testing, never used
         at user or admin interfaces.

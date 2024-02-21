@@ -39,15 +39,21 @@ import dns.reversename
 from uds.core.util.decorators import cached
 
 @cached(prefix='resolver.resolve', timeout=60)  # Cache for 1 hour
-def resolve(hostname: str) -> list[str]:
+def resolve(hostname: str, rdtype: typing.Optional[str] = None) -> list[str]:
     """
     Resolves a hostname to a list of ips
     First items are ipv4, then ipv6
     """
     ips: list[str] = []
-    for i in ('A', 'AAAA'):
+    if rdtype is None:
+        for i in ('A', 'AAAA'):
+            try:
+                ips.extend([str(ip) for ip in typing.cast(collections.abc.Iterable[typing.Any], dns.resolver.resolve(hostname, i))])
+            except dns.resolver.NXDOMAIN:
+                pass
+    else:
         try:
-            ips.extend([str(ip) for ip in typing.cast(collections.abc.Iterable[typing.Any], dns.resolver.resolve(hostname, i))])
+            ips.extend([str(ip) for ip in typing.cast(collections.abc.Iterable[typing.Any], dns.resolver.resolve(hostname, rdtype))])
         except dns.resolver.NXDOMAIN:
             pass
     return ips

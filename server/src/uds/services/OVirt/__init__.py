@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,8 +30,8 @@
 from uds.core import managers
 
 from .provider import OVirtProvider
-from .jobs import OVirtHouseKeeping, OVirtDeferredRemoval
+from .jobs import OVirtDeferredRemoval  # OVirtHouseKeeping, 
 
 # Scheduled task to do clean processes
-for cls in (OVirtDeferredRemoval, OVirtHouseKeeping):
+for cls in (OVirtDeferredRemoval, ):  # OVirtHouseKeeping,
     managers.task_manager().register_job(cls)

@@ -179,8 +179,5 @@ class Providers(ModelHandler):
 
             dct = self._params.copy()
             dct['_request'] = self._request
-            res = provider_type.test(temp_environment, dct)
-            if res[0]:
-                return 'ok'
-
-            return res[1]
+            test_result = provider_type.test(temp_environment, dct)
+            return 'ok' if test_result.success else test_result.error

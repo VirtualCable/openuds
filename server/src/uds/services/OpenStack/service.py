@@ -266,7 +266,7 @@ class OpenStackLiveService(services.Service):
         return self._api
 
     def sanitizeVmName(self, name: str) -> str:
-        return self.provider().sanitizeVmName(name)
+        return self.provider().sanitized_name(name)
 
     def makeTemplate(self, templateName: str, description: typing.Optional[str] = None):
         # First, ensures that volume has not any running instances

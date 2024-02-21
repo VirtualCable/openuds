@@ -138,8 +138,8 @@ class IPAuth(auths.Authenticator):
         return types.auth.FAILED_AUTH
 
     @staticmethod
-    def test(env: 'environment.Environment', data: dict[str, str]) -> list[typing.Any]:
-        return [True, _("Internal structures seems ok")]
+    def test(env: 'environment.Environment', data: 'types.core.ValuesType') -> 'types.core.TestResult':
+        return types.core.TestResult(True)
 
     def check(self) -> str:
         return _("All seems to be fine.")

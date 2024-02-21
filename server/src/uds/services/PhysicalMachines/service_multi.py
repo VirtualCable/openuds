@@ -158,7 +158,7 @@ class IPMachinesService(IPServiceBase):
         # list_of_hosts is not stored on normar serializer, but on hosts
         self.list_of_hosts.value = [i.as_identifier() for i in self.hosts]
 
-    def initialize(self, values: 'Module.ValuesType') -> None:
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         hosts_list = self.list_of_hosts.as_list()
         self.list_of_hosts.value = []  # Clear list of hosts, as it is now stored on hosts
 

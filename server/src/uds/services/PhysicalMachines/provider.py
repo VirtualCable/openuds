@@ -68,11 +68,11 @@ class PhysicalMachinesProvider(services.ServiceProvider):
         tab=types.ui.Tab.ADVANCED,
     )
 
-    def initialize(self, values: 'Module.ValuesType') -> None:
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         """checks and initializes values
 
         Args:
-            values (Module.ValuesType): List of values on initialization (maybe None)
+            values (types.core.ValuesType): List of values on initialization (maybe None)
 
         Raises:
             exceptions.ValidationException

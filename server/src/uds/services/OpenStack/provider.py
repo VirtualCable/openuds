@@ -48,7 +48,7 @@ from .service import OpenStackLiveService
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.module import Module
+    from uds.core import environment
 
 logger = logging.getLogger(__name__)
 
@@ -151,9 +151,7 @@ class OpenStackProvider(ServiceProvider):
         length=64,
         label=_('Project Id'),
         order=6,
-        tooltip=_(
-            'Project (tenant) for this provider. Set only if required by server.'
-        ),
+        tooltip=_('Project (tenant) for this provider. Set only if required by server.'),
         required=False,
         default='',
         tab=types.ui.Tab.ADVANCED,
@@ -171,9 +169,7 @@ class OpenStackProvider(ServiceProvider):
     use_subnets_name = gui.CheckBoxField(
         label=_('Subnets names'),
         order=8,
-        tooltip=_(
-            'If checked, the name of the subnets will be used instead of the names of networks'
-        ),
+        tooltip=_('If checked, the name of the subnets will be used instead of the names of networks'),
         default=False,
         tab=types.ui.Tab.ADVANCED,
         old_field_name='useSubnetsName',
@@ -196,7 +192,7 @@ class OpenStackProvider(ServiceProvider):
     # Own variables
     _api: typing.Optional[openstack.Client] = None
 
-    def initialize(self, values: 'Module.ValuesType' = None):
+    def initialize(self, values: 'types.core.ValuesType' = None) -> None:
         """
         We will use the "autosave" feature for form fields
         """
@@ -205,8 +201,10 @@ class OpenStackProvider(ServiceProvider):
         if values is not None:
             self.timeout.value = validators.validate_timeout(self.timeout.value)
 
-    def api(self, projectId=None, region=None) -> openstack.Client:
-        projectId = projectId or self.tenant.value or None
+    def api(
+        self, project_id: typing.Optional[str] = None, region: typing.Optional[str] = None
+    ) -> openstack.Client:
+        project_id = project_id or self.tenant.value or None
         region = region or self.region.value or None
         if self._api is None:
             proxies = None
@@ -220,7 +218,7 @@ class OpenStackProvider(ServiceProvider):
                 self.password.value,
                 legacyVersion=False,
                 useSSL=False,
-                projectId=projectId,
+                projectId=project_id,
                 region=region,
                 access=self.access.value,
                 proxies=proxies,
@@ -228,9 +226,9 @@ class OpenStackProvider(ServiceProvider):
         return self._api
 
     def sanitizeVmName(self, name: str) -> str:
-        return openstack.sanitizeName(name)
+        return openstack.sanitized_name(name)
 
-    def testConnection(self):
+    def test_connection(self) -> types.core.TestResult:
         """
         Test that conection to OpenStack server is fine
 
@@ -240,16 +238,16 @@ class OpenStackProvider(ServiceProvider):
         """
         logger.debug('Testing connection to OpenStack')
         try:
-            if self.api().testConnection() is False:
+            if self.api().test_connection() is False:
                 raise Exception('Check connection credentials, server, etc.')
         except Exception as e:
             logger.exception('Error')
-            return [False, '{}'.format(e)]
+            return types.core.TestResult(False, _('Error: {}').format(e))
 
-        return [True, _('OpenStack test connection passed')]
+        return types.core.TestResult(True)
 
     @staticmethod
-    def test(env, data):
+    def test(env: 'environment.Environment', data: 'types.core.ValuesType') -> 'types.core.TestResult':
         """
         Test ovirt Connectivity
 
@@ -265,7 +263,7 @@ class OpenStackProvider(ServiceProvider):
             second is an String with error, preferably internacionalizated..
 
         """
-        return OpenStackProvider(env, data).testConnection()
+        return OpenStackProvider(env, data).test_connection()
 
     @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def is_available(self) -> bool:
@@ -273,4 +271,3 @@ class OpenStackProvider(ServiceProvider):
         Check if aws provider is reachable
         """
         return self.api().is_available()
-

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+
 #
-# Copyright (c) 2023 Virtual Cable S.L.U.
+# Copyright (c) 2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,26 +30,18 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+from email import message
+import typing
+import dataclasses
 
-# pylint: disable=unused-import
-from . import (
-    auth,
-    calendar,
-    connections,
-    errors,
-    os,
-    permissions,
-    pools,
-    requests,
-    rest,
-    servers,
-    services,
-    states,
-    stats,
-    transports,
-    ui,
-    core,
-)
+# Module values type
+ValuesType = typing.Optional[
+    dict[str, typing.Any]
+]
 
-# Log is not imported here, as it is a special case with lots of dependencies
-# Preferences must be include explicitly, as it is not a "normal use" type
+
+# Module Test Result type
+@dataclasses.dataclass
+class TestResult:
+    success: bool
+    error: str = ''

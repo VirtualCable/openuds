@@ -172,7 +172,7 @@ class Authenticator(Module):
     def __init__(
         self,
         environment: 'Environment',
-        values: typing.Optional[dict[str, str]] = None,
+        values: types.core.ValuesType = None,
         uuid: typing.Optional[str] = None,
     ):
         """
@@ -184,7 +184,7 @@ class Authenticator(Module):
         super().__init__(environment, values, uuid=uuid)
         self.initialize(values)
 
-    def initialize(self, values: typing.Optional[dict[str, typing.Any]]) -> None:
+    def initialize(self, values: types.core.ValuesType) -> None:
         """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,

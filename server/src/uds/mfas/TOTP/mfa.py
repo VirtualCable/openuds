@@ -100,7 +100,7 @@ class TOTP_MFA(mfas.MFA):
         tab=_('Config'),
     )
 
-    def initialize(self, values: 'Module.ValuesType') -> None:
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         return super().initialize(values)
 
     def allow_login_without_identifier(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:

@@ -85,7 +85,7 @@ class TestOSManager(osmanagers.OSManager):
         required=True,
     )
 
-    def initialize(self, values: 'Module.ValuesType') -> None:
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         self.handles_unused_userservices = True
 
     def release(self, userService: 'UserService') -> None:

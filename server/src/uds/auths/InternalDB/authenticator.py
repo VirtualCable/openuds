@@ -202,8 +202,8 @@ class InternalDBAuth(auths.Authenticator):
         pass
 
     @staticmethod
-    def test(env: 'environment.Environment', data: dict[str, str]) -> list[typing.Any]:  # pylint: disable=unused-argument
-        return [True, _("Internal structures seems ok")]
+    def test(env: 'environment.Environment', data: 'types.core.ValuesType') -> 'types.core.TestResult':
+        return types.core.TestResult(True)
 
     def check(self) -> str:
         return _("All seems fine in the authenticator.")

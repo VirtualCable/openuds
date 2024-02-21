@@ -145,7 +145,7 @@ class RadiusOTP(mfas.MFA):
         old_field_name='allowLoginWithoutMFA',
     )
 
-    def initialize(self, values: 'Module.ValuesType') -> None:
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         return super().initialize(values)
 
     def radius_client(self) -> client.RadiusClient:

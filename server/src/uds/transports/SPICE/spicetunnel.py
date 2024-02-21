@@ -86,7 +86,7 @@ class TSPICETransport(BaseSpiceTransport):
     allow_smartcards = BaseSpiceTransport.allow_smartcards
     ssl_connection = BaseSpiceTransport.ssl_connection
 
-    def initialize(self, values: 'Module.ValuesType'):
+    def initialize(self, values: 'types.core.ValuesType'):
         if values:
             validators.validate_host_port(values.get('tunnelServer', ''))
 

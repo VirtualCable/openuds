@@ -46,8 +46,7 @@ from .service_fixed import ProxmoxServiceFixed
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.environment import Environment
-    from uds.core.module import Module
+    from uds.core import environment
 
 logger = logging.getLogger(__name__)
 
@@ -143,7 +142,7 @@ class ProxmoxProvider(services.ServiceProvider):
         return self._cached_api
 
     # There is more fields type, but not here the best place to cover it
-    def initialize(self, values: 'Module.ValuesType') -> None:
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         """
         We will use the "autosave" feature for form fields
         """
@@ -318,7 +317,7 @@ class ProxmoxProvider(services.ServiceProvider):
         return self.macs_range.value
 
     @staticmethod
-    def test(env: 'Environment', data: 'Module.ValuesType') -> list[typing.Any]:
+    def test(env: 'environment.Environment', data: 'types.core.ValuesType') -> 'types.core.TestResult':
         """
         Test Proxmox Connectivity
 
@@ -348,6 +347,6 @@ class ProxmoxProvider(services.ServiceProvider):
         # return [True, _('Nothing tested, but all went fine..')]
         prox = ProxmoxProvider(env, data)
         if prox.test_connection() is True:
-            return [True, 'Test successfully passed']
+            return types.core.TestResult(True, _('Test passed'))
 
-        return [False, _("Connection failed. Check connection params")]
+        return types.core.TestResult(False, _('Connection failed. Check connection params'))

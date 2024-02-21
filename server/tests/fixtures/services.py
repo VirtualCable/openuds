@@ -159,7 +159,7 @@ def create_test_publication(
     return publication
 
 
-def create_test_transport(**kwargs) -> models.Transport:
+def create_test_transport(**kwargs: typing.Any) -> models.Transport:
     from uds.transports.Test import TestTransport
 
     values = TestTransport(

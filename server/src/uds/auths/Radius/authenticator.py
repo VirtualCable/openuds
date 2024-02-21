@@ -36,7 +36,7 @@ import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import auths, types, consts
+from uds.core import auths, environment, types, consts
 from uds.core.auths.auth import log_login
 from uds.core.managers.crypto import CryptoManager
 from uds.core.ui import gui
@@ -151,7 +151,9 @@ class RadiusAuth(auths.Authenticator):
     ) -> types.auth.AuthenticationResult:
         try:
             connection = self.radius_client()
-            groups, mfaCode, state = connection.authenticate(username=username, password=credentials, mfaField=self.mfaAttr.value.strip())
+            groups, mfaCode, state = connection.authenticate(
+                username=username, password=credentials, mfaField=self.mfaAttr.value.strip()
+            )
             # If state, store in session
             if state:
                 request.session[client.STATE_VAR_NAME] = state.decode()
@@ -197,26 +199,24 @@ class RadiusAuth(auths.Authenticator):
         return super().remove_user(username)
 
     @staticmethod
-    def test(env: 'Environment', data: typing.Any) -> list[typing.Any]:
+    def test(env: 'environment.Environment', data: 'types.core.ValuesType') -> 'types.core.TestResult':
         """Test the connection to the server ."""
         try:
             auth = RadiusAuth(None, env, data)  # type: ignore
             return auth.test_connection()
         except Exception as e:
             logger.error("Exception found testing Radius auth %s: %s", e.__class__, e)
-            return [False, _('Error testing connection')]
+            return types.core.TestResult(False, _('Error testing connection'))
 
-    def test_connection(self) -> list[typing.Any]:
+    def test_connection(self) -> types.core.TestResult:
         """Test connection to Radius Server"""
         try:
             connection = self.radius_client()
             # Reply is not important...
-            connection.authenticate(
-                CryptoManager().random_string(10), CryptoManager().random_string(10)
-            )
+            connection.authenticate(CryptoManager().random_string(10), CryptoManager().random_string(10))
         except client.RadiusAuthenticationError:
             pass
         except Exception:
             logger.exception('Connecting')
-            return [False, _('Connection to Radius server failed')]
-        return [True, _('Connection to Radius server seems ok')]
+            return types.core.TestResult(False, _('Connection to Radius server failed'))
+        return types.core.TestResult(True)

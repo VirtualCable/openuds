@@ -742,7 +742,7 @@ class Client:  # pylint: disable=too-many-public-methods
         # Ignore response for this...
         # ensureResponseIsValid(r, 'Reseting server')
 
-    def testConnection(self) -> bool:
+    def test_connection(self) -> bool:
         # First, ensure requested api is supported
         # We need api version 3.2 or greater
         try:

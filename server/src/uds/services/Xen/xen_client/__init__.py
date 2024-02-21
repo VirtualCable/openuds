@@ -61,7 +61,7 @@ class XenFailure(XenAPI.Failure, XenFault):
     exHostIsSlave = 'HOST_IS_SLAVE'
     exSRError = 'SR_BACKEND_FAILURE_44'
 
-    def __init__(self, details: typing.Optional[list] = None):
+    def __init__(self, details: typing.Optional[list[typing.Any]] = None):
         details = [] if details is None else details
         super(XenFailure, self).__init__(details)
 
@@ -362,7 +362,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
         }
 
     @cached(prefix='xen_nets', timeout=consts.cache.DEFAULT_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def list_networks(self, **kwargs) -> list[dict[str, typing.Any]]:
+    def list_networks(self, **kwargs: typing.Any) -> list[dict[str, typing.Any]]:
         return_list: list[dict[str, typing.Any]] = []
         for netId in self.network.get_all():
             if self.network.get_other_config(netId).get('is_host_internal_management_network', False) is False:
@@ -411,14 +411,14 @@ class XenServer:  # pylint: disable=too-many-public-methods
             raise XenFailure(e.details)
 
     @cached(prefix='xen_vm', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def get_machine_info(self, vmid: str, **kwargs) -> dict[str, typing.Any]:
+    def get_machine_info(self, vmid: str, **kwargs: typing.Any) -> dict[str, typing.Any]:
         try:
             return self.VM.get_record(vmid)
         except XenAPI.Failure as e:
             raise XenFailure(e.details)
 
     @cached(prefix='xen_vm_f', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def get_machine_folder(self, vmid: str, **kwargs) -> str:
+    def get_machine_folder(self, vmid: str, **kwargs: typing.Any) -> str:
         try:
             other_config = self.VM.get_other_config(vmid)
             return other_config.get('folder', '')
@@ -440,7 +440,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
             return None  # Already powered off
         return (self.Async if as_async else self).VM.hard_shutdown(vmid)
 
-    def reset_machine(self, vmid, as_async=True) -> typing.Optional[str]:
+    def reset_machine(self, vmid: str, as_async: bool = True) -> typing.Optional[str]:
         vmState = self.get_machine_power_state(vmid)
         if vmState in (XenPowerState.suspended, XenPowerState.halted):
             return None  # Already powered off, cannot reboot
@@ -526,7 +526,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
         vmid: str,
         mac: typing.Optional[dict[str, str]] = None,
         memory: typing.Optional[typing.Union[str, int]] = None,
-    ):
+    ) -> None:
         """
         Optional args:
             mac = { 'network': netId, 'mac': mac }
@@ -634,7 +634,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
             raise XenFailure(e.details)
 
     @cached(prefix='xen_snapshots', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def list_snapshots(self, vmid: str, full_info: bool = False, **kwargs) -> list[dict[str, typing.Any]]:
+    def list_snapshots(self, vmid: str, full_info: bool = False, **kwargs: typing.Any) -> list[dict[str, typing.Any]]:
         """Returns a list of snapshots for the specified VM, sorted by snapshot_time in descending order.
         (That is, the most recent snapshot is first in the list.)
 
@@ -666,7 +666,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
             raise XenFailure(e.details)
 
     @cached(prefix='xen_folders', timeout=consts.cache.LONG_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def list_folders(self, **kwargs) -> list[str]:
+    def list_folders(self, **kwargs: typing.Any) -> list[str]:
         """list "Folders" from the "Organizations View" of the XenServer
 
         Returns:

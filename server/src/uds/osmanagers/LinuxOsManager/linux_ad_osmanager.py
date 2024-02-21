@@ -154,7 +154,7 @@ class LinuxOsADManager(LinuxOsManager):
     idle = LinuxOsManager.idle
     deadline = LinuxOsManager.deadline
 
-    def initialize(self, values: 'Module.ValuesType') -> None:
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         if values:
             if self.domain.value.strip() == '':
                 raise exceptions.ui.ValidationError(_('Must provide a domain!'))

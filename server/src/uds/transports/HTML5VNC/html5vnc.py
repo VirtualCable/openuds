@@ -144,7 +144,7 @@ class HTML5VNCTransport(transports.Transport):
     force_new_window = HTML5RDPTransport.force_new_window
     custom_glyptodon_path = HTML5RDPTransport.custom_glyptodon_path
 
-    def initialize(self, values: 'Module.ValuesType'):
+    def initialize(self, values: 'types.core.ValuesType'):
         if not values:
             return
 

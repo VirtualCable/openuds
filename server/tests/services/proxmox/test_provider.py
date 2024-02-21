@@ -34,7 +34,7 @@ import typing
 import collections.abc
 from unittest import mock
 
-from uds.core import ui, environment
+from uds.core import types, ui, environment
 from uds.services.Proxmox.provider import ProxmoxProvider
 
 from . import fixtures
@@ -81,9 +81,9 @@ class TestProxmovProvider(UDSTestCase):
             # Ensure test is called
             api.test.assert_called_once_with()
 
-            self.assertIsInstance(result, collections.abc.Sequence)
-            self.assertEqual(result[0], True)
-            self.assertIsInstance(result[1], str)
+            self.assertIsInstance(result, types.core.TestResult)
+            self.assertEqual(result.success, True)
+            self.assertIsInstance(result.error, str)
 
             # Now, return false
             api.test.return_value = False
@@ -96,9 +96,9 @@ class TestProxmovProvider(UDSTestCase):
             # Ensure test is called
             api.test.assert_called_once_with()
 
-            self.assertIsInstance(result, collections.abc.Sequence)
-            self.assertEqual(result[0], False)
-            self.assertIsInstance(result[1], str)
+            self.assertIsInstance(result, types.core.TestResult)
+            self.assertEqual(result.success, False)
+            self.assertIsInstance(result.error, str)
 
     def test_provider_is_available(self) -> None:
         """

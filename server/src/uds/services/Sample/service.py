@@ -152,7 +152,7 @@ class ServiceOne(services.Service):
         default='',  # Default value is the ID of the choicefield
     )
 
-    def initialize(self, values: 'Module.ValuesType') -> None:
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         """
         We check here form values to see if they are valid.
 

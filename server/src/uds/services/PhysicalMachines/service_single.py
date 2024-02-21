@@ -78,7 +78,7 @@ class IPSingleMachineService(IPServiceBase):
     services_type_provided = types.services.ServiceType.VDI
 
 
-    def initialize(self, values: 'Module.ValuesType') -> None:
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         if values is None:
             return
         

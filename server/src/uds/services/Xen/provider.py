@@ -55,8 +55,7 @@ logger = logging.getLogger(__name__)
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.environment import Environment
-    from uds.core.module import Module
+    from uds.core import environment
 
 
 class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
@@ -128,7 +127,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
 
     macs_range = fields.macs_range_field(default='02:46:00:00:00:00-02:46:00:FF:FF:FF')
     verify_ssl = fields.verify_ssl_field(old_field_name='verifySSL')
-    
+
     host_backup = gui.TextField(
         length=64,
         label=_('Backup Host'),
@@ -163,7 +162,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         return self._api
 
     # There is more fields type, but not here the best place to cover it
-    def initialize(self, values: 'Module.ValuesType') -> None:
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         """
         We will use the "autosave" feature for form fields
         """
@@ -171,7 +170,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         # Just reset _api connection variable
         self._api = None
 
-    def test_connection(self):
+    def test_connection(self) -> None:
         """
         Test that conection to XenServer server is fine
 
@@ -236,7 +235,9 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         """
         return self._get_api().list_srs()
 
-    def get_storage_info(self, storageId: str, force=False) -> collections.abc.MutableMapping[str, typing.Any]:
+    def get_storage_info(
+        self, storageId: str, force: bool = False
+    ) -> collections.abc.MutableMapping[str, typing.Any]:
         """
         Obtains the storage info
 
@@ -263,7 +264,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
     ) -> collections.abc.Iterable[collections.abc.MutableMapping[str, typing.Any]]:
         return self._get_api().list_networks()
 
-    def clone_for_template(self, name: str, comments: str, machineId: str, sr: str):
+    def clone_for_template(self, name: str, comments: str, machineId: str, sr: str) -> str:
         task = self._get_api().clone_machine(machineId, name, sr)
         logger.debug('Task for cloneForTemplate: %s', task)
         return task
@@ -319,16 +320,17 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
 
     def get_machine_name(self, machine_id: str) -> str:
         return self._get_api().get_machine_info(machine_id).get('name_label', '')
-    
+
     def list_folders(self) -> list[str]:
         return self._get_api().list_folders()
 
     def get_machine_folder(self, machine_id: str) -> str:
         return self._get_api().get_machine_folder(machine_id)
-    
-    def get_machines_from_folder(self, folder: str, retrieve_names: bool = False) -> list[dict[str, typing.Any]]:
+
+    def get_machines_from_folder(
+        self, folder: str, retrieve_names: bool = False
+    ) -> list[dict[str, typing.Any]]:
         return self._get_api().get_machines_from_folder(folder, retrieve_names)
-        
 
     def start_machine(self, machine_id: str, as_async: bool = True) -> typing.Optional[str]:
         """
@@ -457,7 +459,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
             return False
 
     @staticmethod
-    def test(env: 'Environment', data: 'Module.ValuesType') -> list[typing.Any]:
+    def test(env: 'environment.Environment', data: 'types.core.ValuesType') -> 'types.core.TestResult':
         """
         Test XenServer Connectivity
 
@@ -488,6 +490,6 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         xe = XenProvider(env, data)
         try:
             xe.test_connection()
-            return [True, _('Connection test successful')]
+            return types.core.TestResult(True, _('Connection test successful'))
         except Exception as e:
-            return [False, _("Connection failed: {}").format(str(e))]
+            return types.core.TestResult(False, _('Connection failed: {}').format(str(e)))

@@ -73,11 +73,11 @@ class OSManager(Module):
     # : Defaults to all. (list or tuple)
     servicesType: types.services.ServiceType = types.services.ServiceType.VDI
 
-    def __init__(self, environment: 'Environment', values: Module.ValuesType = None):
+    def __init__(self, environment: 'Environment', values: types.core.ValuesType = None):
         super().__init__(environment, values)
         self.initialize(values)
 
-    def initialize(self, values: Module.ValuesType) -> None:
+    def initialize(self, values: types.core.ValuesType) -> None:
         """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,

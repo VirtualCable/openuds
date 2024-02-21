@@ -37,7 +37,7 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import consts, types
+from uds.core import consts, environment, types
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 from uds.core.util import fields, validators
@@ -117,7 +117,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
     # Own variables
     _api: typing.Optional[on.client.OpenNebulaClient] = None
 
-    def initialize(self, values: 'Module.ValuesType') -> None:
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         '''
         We will use the "autosave" feature for form fields
         '''
@@ -146,7 +146,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
     def sanitized_name(self, name: str) -> str:
         return on.sanitizeName(name)
 
-    def testConnection(self) -> list[typing.Any]:
+    def test_connection(self) -> types.core.TestResult:
         '''
         Test that conection to OpenNebula server is fine
 
@@ -157,14 +157,14 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
 
         try:
             if self.api.version[0] < '4':
-                return [
+                return types.core.TestResult(
                     False,
-                    'OpenNebula version is not supported (required version 4.1 or newer)',
-                ]
+                    _('OpenNebula version is not supported (required version 4.1 or newer)'),
+                )
         except Exception as e:
-            return [False, '{}'.format(e)]
+            return types.core.TestResult(False, _('Error connecting to OpenNebula: {}').format(e))
 
-        return [True, _('Opennebula test connection passed')]
+        return types.core.TestResult(True, _('Opennebula test connection passed'))
 
     def getDatastores(self, datastoreType: int = 0) -> collections.abc.Iterable[on.types.StorageType]:
         yield from on.storage.enumerateDatastores(self.api, datastoreType)
@@ -172,8 +172,8 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
     def getTemplates(self, force: bool = False) -> collections.abc.Iterable[on.types.TemplateType]:
         yield from on.template.getTemplates(self.api, force)
 
-    def make_template(self, fromTemplateId: str, name, toDataStore: str) -> str:
-        return on.template.create(self.api, fromTemplateId, name, toDataStore)
+    def make_template(self, from_template_id: str, name: str, dest_storage: str) -> str:
+        return on.template.create(self.api, from_template_id, name, dest_storage)
 
     def check_template_published(self, templateId: str) -> bool:
         return on.template.checkPublished(self.api, templateId)
@@ -287,12 +287,12 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
         return dict()
 
     @staticmethod
-    def test(env: 'Environment', data: 'Module.ValuesType') -> list[typing.Any]:
-        return OpenNebulaProvider(env, data).testConnection()
+    def test(env: 'environment.Environment', data: 'types.core.ValuesType') -> 'types.core.TestResult':
+        return OpenNebulaProvider(env, data).test_connection()
 
     @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def is_available(self) -> bool:
         """
         Check if aws provider is reachable
         """
-        return self.testConnection()[0]
+        return self.test_connection().success

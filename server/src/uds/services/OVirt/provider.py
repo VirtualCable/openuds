@@ -46,14 +46,12 @@ from .service import OVirtLinkedService
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.environment import Environment
-    from uds.core.module import Module
+    from uds.core import environment
 
 logger = logging.getLogger(__name__)
 
-class OVirtProvider(
-    services.ServiceProvider
-):  # pylint: disable=too-many-public-methods
+
+class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-public-methods
     """
     This class represents the sample services provider
 
@@ -134,27 +132,8 @@ class OVirtProvider(
 
     concurrent_creation_limit = fields.concurrent_creation_limit_field()
     concurrent_removal_limit = fields.concurrent_removal_limit_field()
-    timeout = fields.timeout_field()
-
-    timeout = gui.NumericField(
-        length=3,
-        label=_('Timeout'),
-        default=10,
-        order=90,
-        tooltip=_('Timeout in seconds of connection to oVirt'),
-        required=True,
-        tab=types.ui.Tab.ADVANCED,
-    )
-    macsRange = gui.TextField(
-        length=36,
-        label=_('Macs range'),
-        default='52:54:00:00:00:00-52:54:00:FF:FF:FF',
-        order=91,
-        readonly=True,
-        tooltip=_('Range of valid macs for UDS managed machines'),
-        required=True,
-        tab=types.ui.Tab.ADVANCED,
-    )
+    timeout = fields.timeout_field(default=10, order=90)
+    macs_range = fields.macs_range_field(default='52:54:00:00:00:00-52:54:00:FF:FF:FF', order=91)
 
     # Own variables
     _api: typing.Optional[client.Client] = None
@@ -163,7 +142,7 @@ class OVirtProvider(
     # If we want to connect to more than one server, we need keep locked access to api, change api server, etc..
     # We have implemented an "exclusive access" client that will only connect to one server at a time (using locks)
     # and this way all will be fine
-    def __getApi(self) -> client.Client:
+    def _get_api(self) -> client.Client:
         """
         Returns the connection API object for oVirt (using ovirtsdk)
         """
@@ -179,7 +158,7 @@ class OVirtProvider(
         return self._api
 
     # There is more fields type, but not here the best place to cover it
-    def initialize(self, values: 'Module.ValuesType') -> None:
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         """
         We will use the "autosave" feature for form fields
         """
@@ -188,11 +167,11 @@ class OVirtProvider(
         self._api = None
 
         if values is not None:
-            self.macsRange.value = validators.validate_mac_range(self.macsRange.value)
+            self.macs_range.value = validators.validate_mac_range(self.macs_range.value)
             self.timeout.value = validators.validate_timeout(self.timeout.value)
             logger.debug(self.host.value)
 
-    def testConnection(self) -> bool:
+    def test_connection(self) -> bool:
         """
         Test that conection to oVirt server is fine
 
@@ -201,17 +180,15 @@ class OVirtProvider(
             True if all went fine, false if id didn't
         """
 
-        return self.__getApi().test()
+        return self._get_api().test()
 
-    def testValidVersion(self):
+    def test_version_is_valid(self) -> types.core.TestResult:
         """
         Checks that this version of ovirt if "fully functional" and does not needs "patchs'
         """
-        return list(self.__getApi().is_fully_functional_version())
+        return self._get_api().is_fully_functional_version()
 
-    def getMachines(
-        self, force: bool = False
-    ) -> list[collections.abc.MutableMapping[str, typing.Any]]:
+    def list_machines(self, force: bool = False) -> list[collections.abc.MutableMapping[str, typing.Any]]:
         """
         Obtains the list of machines inside oVirt.
         Machines starting with UDS are filtered out
@@ -227,11 +204,9 @@ class OVirtProvider(
                 'cluster_id'
         """
 
-        return self.__getApi().list_machines(force)
+        return self._get_api().list_machines(force)
 
-    def getClusters(
-        self, force: bool = False
-    ) -> list[collections.abc.MutableMapping[str, typing.Any]]:
+    def list_clusters(self, force: bool = False) -> list[collections.abc.MutableMapping[str, typing.Any]]:
         """
         Obtains the list of clusters inside oVirt.
 
@@ -247,7 +222,7 @@ class OVirtProvider(
                 'datacenter_id'
         """
 
-        return self.__getApi().list_clusters(force)
+        return self._get_api().list_clusters(force)
 
     def get_cluster_info(
         self, clusterId: str, force: bool = False
@@ -267,7 +242,7 @@ class OVirtProvider(
                 'id'
                 'datacenter_id'
         """
-        return self.__getApi().get_cluster_info(clusterId, force)
+        return self._get_api().get_cluster_info(clusterId, force)
 
     def getDatacenterInfo(
         self, datacenterId: str, force: bool = False
@@ -297,7 +272,7 @@ class OVirtProvider(
                    'active' -> True or False
 
         """
-        return self.__getApi().get_datacenter_info(datacenterId, force)
+        return self._get_api().get_datacenter_info(datacenterId, force)
 
     def getStorageInfo(
         self, storageId: str, force: bool = False
@@ -321,9 +296,9 @@ class OVirtProvider(
                # 'active' -> True or False --> This is not provided by api?? (api.storagedomains.get)
 
         """
-        return self.__getApi().get_storage_info(storageId, force)
+        return self._get_api().get_storage_info(storageId, force)
 
-    def makeTemplate(
+    def make_template(
         self,
         name: str,
         comments: str,
@@ -346,11 +321,9 @@ class OVirtProvider(
         Returns
             Raises an exception if operation could not be acomplished, or returns the id of the template being created.
         """
-        return self.__getApi().create_template(
-            name, comments, machineId, clusterId, storageId, displayType
-        )
+        return self._get_api().create_template(name, comments, machineId, clusterId, storageId, displayType)
 
-    def getTemplateState(self, templateId: str) -> str:
+    def get_template_state(self, templateId: str) -> str:
         """
         Returns current template state.
 
@@ -361,9 +334,9 @@ class OVirtProvider(
 
         (don't know if ovirt returns something more right now, will test what happens when template can't be published)
         """
-        return self.__getApi().get_template_state(templateId)
+        return self._get_api().get_template_state(templateId)
 
-    def getMachineState(self, machineId: str) -> str:
+    def get_machine_state(self, machineId: str) -> str:
         """
         Returns the state of the machine
         This method do not uses cache at all (it always tries to get machine state from oVirt server)
@@ -379,17 +352,17 @@ class OVirtProvider(
              suspended, image_illegal, image_locked or powering_down
              Also can return'unknown' if Machine is not known
         """
-        return self.__getApi().get_machine_state(machineId)
+        return self._get_api().get_machine_state(machineId)
 
-    def removeTemplate(self, templateId: str) -> None:
+    def remove_template(self, templateId: str) -> None:
         """
         Removes a template from ovirt server
 
         Returns nothing, and raises an Exception if it fails
         """
-        return self.__getApi().remove_template(templateId)
+        return self._get_api().remove_template(templateId)
 
-    def deployFromTemplate(
+    def deploy_from_template(
         self,
         name: str,
         comments: str,
@@ -415,7 +388,7 @@ class OVirtProvider(
         Returns:
             Id of the machine being created form template
         """
-        return self.__getApi().deploy_from_template(
+        return self._get_api().deploy_from_template(
             name,
             comments,
             templateId,
@@ -426,7 +399,7 @@ class OVirtProvider(
             guaranteedMB,
         )
 
-    def startMachine(self, machineId: str) -> None:
+    def start_machine(self, machineId: str) -> None:
         """
         Tries to start a machine. No check is done, it is simply requested to oVirt.
 
@@ -437,9 +410,9 @@ class OVirtProvider(
 
         Returns:
         """
-        self.__getApi().start_machine(machineId)
+        self._get_api().start_machine(machineId)
 
-    def stopMachine(self, machineId: str) -> None:
+    def stop_machine(self, machineId: str) -> None:
         """
         Tries to start a machine. No check is done, it is simply requested to oVirt
 
@@ -448,9 +421,9 @@ class OVirtProvider(
 
         Returns:
         """
-        self.__getApi().stop_machine(machineId)
+        self._get_api().stop_machine(machineId)
 
-    def suspendMachine(self, machineId: str) -> None:
+    def suspend_machine(self, machineId: str) -> None:
         """
         Tries to start a machine. No check is done, it is simply requested to oVirt
 
@@ -459,9 +432,9 @@ class OVirtProvider(
 
         Returns:
         """
-        self.__getApi().suspend_machine(machineId)
+        self._get_api().suspend_machine(machineId)
 
-    def removeMachine(self, machineId: str) -> None:
+    def remove_machine(self, machineId: str) -> None:
         """
         Tries to delete a machine. No check is done, it is simply requested to oVirt
 
@@ -470,34 +443,32 @@ class OVirtProvider(
 
         Returns:
         """
-        self.__getApi().remove_machine(machineId)
+        self._get_api().remove_machine(machineId)
 
     def updateMachineMac(self, machineId: str, macAddres: str) -> None:
         """
         Changes the mac address of first nic of the machine to the one specified
         """
-        self.__getApi().update_machine_mac(machineId, macAddres)
+        self._get_api().update_machine_mac(machineId, macAddres)
 
     def fixUsb(self, machineId: str) -> None:
-        self.__getApi().fix_usb(machineId)
+        self._get_api().fix_usb(machineId)
 
-    def getMacRange(self) -> str:
-        return self.macsRange.value
+    def get_macs_range(self) -> str:
+        return self.macs_range.value
 
-    def get_console_connection(
-        self, machine_id: str
-    ) -> typing.Optional[types.services.ConsoleConnectionInfo]:
-        return self.__getApi().get_console_connection(machine_id)
+    def get_console_connection(self, machine_id: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
+        return self._get_api().get_console_connection(machine_id)
 
     @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def is_available(self) -> bool:
         """
         Check if aws provider is reachable
         """
-        return self.testConnection()
+        return self.test_connection()
 
     @staticmethod
-    def test(env: 'Environment', data: 'Module.ValuesType') -> list[typing.Any]:
+    def test(env: 'environment.Environment', data: 'types.core.ValuesType') -> 'types.core.TestResult':
         """
         Test ovirt Connectivity
 
@@ -526,7 +497,8 @@ class OVirtProvider(
         #    return [False, str(e)]
         # return [True, _('Nothing tested, but all went fine..')]
         ov = OVirtProvider(env, data)
-        if ov.testConnection() is True:
-            return ov.testValidVersion()
+        if ov.test_connection() is True:
 
-        return [False, _("Connection failed. Check connection params")]
+            return ov.test_version_is_valid()
+
+        return types.core.TestResult(False, _('Connection failed. Check connection params'))

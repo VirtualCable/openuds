@@ -30,6 +30,8 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
+import collections.abc
 
 template = '''[General]
 UDS=@ByteArray()
@@ -96,19 +98,19 @@ sshproxykrblogin=false
 
 
 def getTemplate(
-    speed,
-    pack,
-    quality,
-    sound,
-    soundSystem,
-    windowManager,
-    exports,
-    rootless,
-    width,
-    height,
-    user,
-):
-    trueFalse = lambda x: 'true' if x else 'false'
+    speed: typing.Any,
+    pack: typing.Any,
+    quality: typing.Any,
+    sound: typing.Any,
+    soundSystem: typing.Any,
+    windowManager: typing.Any,
+    exports: typing.Any,
+    rootless: bool,
+    width: typing.Any,
+    height: typing.Any,
+    user: typing.Any,
+) -> str:
+    trueFalse: collections.abc.Callable[[bool], str] = lambda x: 'true' if x else 'false'
     export = 'export="{export}"' if exports else ''
     if width == -1 or height == -1:
         width = 800

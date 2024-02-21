@@ -44,12 +44,12 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class OVirtHouseKeeping(jobs.Job):
-    frecuency = 60 * 60 * 24 * 15 + 1  # Once every 15 days
-    friendly_name = 'Ovirt house keeping'
-
-    def run(self):
-        return
+# class OVirtHouseKeeping(jobs.Job):
+#     frecuency = 60 * 60 * 24 * 15 + 1  # Once every 15 days
+#     friendly_name = 'Ovirt house keeping'
+#
+#     def run(self) -> None:
+#         pass
 
 
 class OVirtDeferredRemoval(jobs.Job):
@@ -67,9 +67,9 @@ class OVirtDeferredRemoval(jobs.Job):
             # Tries to stop machine sync when found, if any error is done, defer removal for a scheduled task
             try:
                 # First check state & stop machine if needed
-                state = providerInstance.getMachineState(vmId)
+                state = providerInstance.get_machine_state(vmId)
                 if state in ('up', 'powering_up', 'suspended'):
-                    providerInstance.stopMachine(vmId)
+                    providerInstance.stop_machine(vmId)
                 elif state != 'unknown':  # Machine exists, remove it later
                     providerInstance.storage.save_to_db('tr' + vmId, vmId, attr1='tRm')
 
@@ -104,13 +104,13 @@ class OVirtDeferredRemoval(jobs.Job):
                     logger.debug('Found %s for removal %s', vmId, i)
                     # If machine is powered on, tries to stop it
                     # tries to remove in sync mode
-                    state = instance.getMachineState(vmId)
+                    state = instance.get_machine_state(vmId)
                     if state in ('up', 'powering_up', 'suspended'):
-                        instance.stopMachine(vmId)
+                        instance.stop_machine(vmId)
                         return
 
                     if state != 'unknown':  # Machine exists, try to remove it now
-                        instance.removeMachine(vmId)
+                        instance.remove_machine(vmId)
 
                     # It this is reached, remove check
                     storage.remove('tr' + vmId)

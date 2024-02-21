@@ -100,7 +100,7 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
 
     prov_uuid = gui.HiddenField(value=None)
 
-    def initialize(self, values: 'Module.ValuesType') -> None:
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         """
         Loads the assigned machines from storage
         """

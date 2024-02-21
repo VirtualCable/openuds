@@ -81,11 +81,11 @@ logger = logging.getLogger(__name__)
 
 
 # Helpers to check statuses
-def statusIsLost(status):
+def status_is_lost(status: str) -> bool:
     return status in [DELETED, ERROR, UNKNOWN, SOFT_DELETED]
 
 
-def sanitizeName(name):
+def sanitized_name(name: str) -> str:
     """
     machine names with [a-zA-Z0-9_-]
     """

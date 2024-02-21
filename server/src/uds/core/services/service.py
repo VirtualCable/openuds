@@ -212,7 +212,7 @@ class Service(Module):
         self,
         environment: 'environment.Environment',
         provider: 'services.ServiceProvider',
-        values: Module.ValuesType = None,
+        values: types.core.ValuesType = None,
         uuid: typing.Optional[str] = None,
     ):
         """
@@ -224,7 +224,7 @@ class Service(Module):
         self._provider = provider
         self.initialize(values)
 
-    def initialize(self, values: Module.ValuesType) -> None:
+    def initialize(self, values: types.core.ValuesType) -> None:
         """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,

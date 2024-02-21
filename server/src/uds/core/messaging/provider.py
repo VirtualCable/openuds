@@ -39,6 +39,7 @@ from uds.core.module import Module
 
 if typing.TYPE_CHECKING:
     from uds.core.environment import Environment
+    from uds.core import types
 
 
 class Notifier(Module):
@@ -72,11 +73,11 @@ class Notifier(Module):
     # : your own :py:meth:uds.core.module.BaseModule.icon method.
     icon_file: typing.ClassVar[str] = 'notifier.png'
 
-    def __init__(self, environment: 'Environment', values: Module.ValuesType):
+    def __init__(self, environment: 'Environment', values: 'types.core.ValuesType') -> None:
         super().__init__(environment, values)
         self.initialize(values)
 
-    def initialize(self, values: Module.ValuesType):
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,
@@ -91,6 +92,7 @@ class Notifier(Module):
 
         Default implementation does nothing
         """
+        pass
 
     def notify(self, group: str, identificator: str, level: LogLevel, message: str) -> None:
         """

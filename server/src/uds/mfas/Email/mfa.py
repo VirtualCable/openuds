@@ -203,7 +203,7 @@ class EmailMFA(mfas.MFA):
         old_field_name='mailHtml',
     )
 
-    def initialize(self, values: 'Module.ValuesType' = None):
+    def initialize(self, values: 'types.core.ValuesType' = None):
         """
         We will use the "autosave" feature for form fields
         """

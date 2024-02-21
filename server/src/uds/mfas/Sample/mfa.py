@@ -59,7 +59,7 @@ class SampleMFA(mfas.MFA):
         default=True,
     )
 
-    def initialize(self, values: 'Module.ValuesType') -> None:
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         return super().initialize(values)
 
     def label(self) -> str:

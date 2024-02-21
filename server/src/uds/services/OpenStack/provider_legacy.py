@@ -38,7 +38,7 @@ import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import types, consts
+from uds.core import environment, types, consts
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 from uds.core.util import validators
@@ -215,7 +215,7 @@ class ProviderLegacy(ServiceProvider):
     # Own variables
     _api: typing.Optional[openstack.Client] = None
 
-    def initialize(self, values: 'Module.ValuesType' = None):
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         """
         We will use the "autosave" feature for form fields
         """
@@ -224,8 +224,8 @@ class ProviderLegacy(ServiceProvider):
         if values is not None:
             self.timeout.value = validators.validate_timeout(self.timeout.value)
 
-    def api(self, projectId=None, region=None) -> openstack.Client:
-        proxies = None
+    def api(self, projectid: typing.Optional[str]=None, region: typing.Optional[str]=None) -> openstack.Client:
+        proxies: typing.Optional[dict[str, str]] = None
         if self.httpsProxy.value.strip():
             proxies = {'https': self.httpsProxy.value}
         return openstack.Client(
@@ -236,16 +236,16 @@ class ProviderLegacy(ServiceProvider):
             self.password.value,
             legacyVersion=True,
             useSSL=self.ssl.as_bool(),
-            projectId=projectId,
+            projectId=projectid,
             region=region,
             access=self.access.value,
             proxies=proxies,
         )
 
-    def sanitizeVmName(self, name: str) -> str:
-        return openstack.sanitizeName(name)
+    def sanitized_name(self, name: str) -> str:
+        return openstack.sanitized_name(name)
 
-    def testConnection(self):
+    def test_connection(self) -> types.core.TestResult:
         """
         Test that conection to OpenStack server is fine
 
@@ -255,15 +255,15 @@ class ProviderLegacy(ServiceProvider):
         """
 
         try:
-            if self.api().testConnection() is False:
+            if self.api().test_connection() is False:
                 raise Exception('Check connection credentials, server, etc.')
         except Exception as e:
-            return [False, '{}'.format(e)]
+            return types.core.TestResult(False, '{}'.format(e))
 
-        return [True, _('OpenStack test connection passed')]
+        return types.core.TestResult(True)
 
     @staticmethod
-    def test(env, data):
+    def test(env: 'environment.Environment', data: 'types.core.ValuesType') -> 'types.core.TestResult':
         """
         Test ovirt Connectivity
 
@@ -279,13 +279,13 @@ class ProviderLegacy(ServiceProvider):
             second is an String with error, preferably internacionalizated..
 
         """
-        return ProviderLegacy(env, data).testConnection()
+        return ProviderLegacy(env, data).test_connection()
 
     @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def is_available(self) -> bool:
         """
         Check if aws provider is reachable
         """
-        return self.testConnection()[0]
+        return self.test_connection().success
 
         

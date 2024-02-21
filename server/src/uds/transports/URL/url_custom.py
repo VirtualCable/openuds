@@ -85,7 +85,7 @@ class URLCustomTransport(transports.Transport):
         old_field_name='forceNewWindow',  # Allows compat with old versions
     )
 
-    def initialize(self, values: 'Module.ValuesType'):
+    def initialize(self, values: 'types.core.ValuesType'):
         if not values:
             return
         # Strip spaces

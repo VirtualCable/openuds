@@ -81,11 +81,11 @@ class Transport(Module):
     # For allowing grouping transport on dashboard "new" menu, and maybe other places
     group: typing.ClassVar[types.transports.Grouping] = types.transports.Grouping.DIRECT
 
-    def __init__(self, environment: 'Environment', values: Module.ValuesType):
+    def __init__(self, environment: 'Environment', values: types.core.ValuesType):
         super().__init__(environment, values)
         self.initialize(values)
 
-    def initialize(self, values: 'Module.ValuesType'):
+    def initialize(self, values: 'types.core.ValuesType'):
         """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,

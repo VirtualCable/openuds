@@ -139,7 +139,7 @@ class OpenNebulaLiveService(services.Service):
         required=True,
     )
 
-    def initialize(self, values: 'Module.ValuesType') -> None:
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         """
         We check here form values to see if they are valid.
 

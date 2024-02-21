@@ -82,7 +82,7 @@ class TestTransport(transports.Transport):
         tab=types.ui.Tab.ADVANCED,
     )
 
-    def initialize(self, values: 'Module.ValuesType'):
+    def initialize(self, values: 'types.core.ValuesType'):
         if not values:
             return
         # Strip spaces

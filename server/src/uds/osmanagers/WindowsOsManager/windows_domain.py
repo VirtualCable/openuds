@@ -42,16 +42,13 @@ import ldap
 from django.utils.translation import gettext_noop as _
 from uds.core.ui import gui
 from uds.core.managers.crypto import CryptoManager
-from uds.core import exceptions, consts, types
-from uds.core.util import fields, log
-from uds.core.util import ldaputil
+from uds.core import environment, exceptions, consts, types
+from uds.core.util import fields, log, ldaputil
 
 from .windows import WindowsOsManager
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.module import Module
-    from uds.core.environment import Environment
     from uds.models import UserService
 
 
@@ -135,7 +132,7 @@ class WinDomainOsManager(WindowsOsManager):
     idle = WindowsOsManager.idle
     deadline = WindowsOsManager.deadline
 
-    def initialize(self, values: 'Module.ValuesType') -> None:
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         if values:
             # Some cleaning of input data (remove spaces, etc..)
             for fld in (self.domain, self.account, self.ou, self.grp, self.server_hint):
@@ -383,7 +380,7 @@ class WinDomainOsManager(WindowsOsManager):
 
     # pylint: disable=protected-access
     @staticmethod
-    def test(env: 'Environment', data: dict[str, str]) -> list[typing.Any]:
+    def test(env: 'environment.Environment', data: 'types.core.ValuesType') -> 'types.core.TestResult':
         logger.debug('Test invoked')
         wd = WinDomainOsManager(env, data)
         logger.debug(wd)
@@ -391,7 +388,10 @@ class WinDomainOsManager(WindowsOsManager):
             try:
                 ldap_connection = wd._connect_ldap()
             except ldaputil.LDAPError as e:
-                return [False, _('Could not access AD using LDAP ({0})').format(e)]
+                return types.core.TestResult(
+                    False,
+                    _('Could not access AD using LDAP ({0})').format(e),
+                )
 
             ou = wd.ou.as_str()
             if ou == '':
@@ -403,21 +403,26 @@ class WinDomainOsManager(WindowsOsManager):
 
         except ldaputil.LDAPError:
             if wd and not wd.ou.as_str():
-                return [
+                return types.core.TestResult(
                     False,
-                    _('The default path {0} for computers was not found!!!').format(wd.ou.as_str()),
-                ]
-            return [False, _('The ou path {0} was not found!!!').format(wd.ou.as_str())]
+                    _('The default path for computers was not found!!!'),
+                )
+            return types.core.TestResult(
+                False,
+                _('The ou path {0} was not found!!!').format(wd.ou.as_str()),
+            )
         except dns.resolver.NXDOMAIN:
-            return [
-                True,
-                _('Could not check parameters (_ldap._tcp.{0} can\'r be resolved)').format(wd.domain.as_str()),
-            ]
+            return types.core.TestResult(
+                False,
+                _('Could not check parameters (_ldap._tcp.{0} can\'t be resolved)').format(wd.domain.as_str()),
+            )
         except Exception as e:
-            logger.exception('Exception ')
-            return [False, str(e)]
+            return types.core.TestResult(
+                False,
+                _('Unknown error: {0}').format(e),
+            )
 
-        return [True, _("All parameters seem to work fine.")]
+        return types.core.TestResult(True)
 
     def actor_data(self, userservice: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
         return {

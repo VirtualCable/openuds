@@ -39,15 +39,16 @@ import collections.abc
 
 
 from django.utils.translation import gettext_noop as _
-from uds.core import services
+from uds.core import services, types
 from uds.core import module
 from .service import TestServiceNoCache, TestServiceCache
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.environment import Environment
+    from uds.core import environment
 
 logger = logging.getLogger(__name__)
+
 
 class TestProvider(services.ServiceProvider):
     """
@@ -57,6 +58,7 @@ class TestProvider(services.ServiceProvider):
     a provider.
 
     """
+
     # : What kind of services we offer, this are classes inherited from Service
     offers = [TestServiceNoCache, TestServiceCache]
     # : Name to show the administrator. This string will be translated BEFORE
@@ -73,10 +75,10 @@ class TestProvider(services.ServiceProvider):
     icon_file = 'provider.png'
 
     # Max preparing concurrent services
-    concurrent_creation_limit = 1000 # a lot, this in fact will not make anything
+    concurrent_creation_limit = 1000  # a lot, this in fact will not make anything
 
     # Mas removing concurrent services
-    concurrent_removal_limit = 1000 # a lot, this in fact will not make anything
+    concurrent_removal_limit = 1000  # a lot, this in fact will not make anything
 
     # Simple data for testing pourposes
     @dataclasses.dataclass
@@ -84,27 +86,25 @@ class TestProvider(services.ServiceProvider):
         """
         This is the data we will store in the storage
         """
+
         name: str = ''
         integer: int = 0
 
     data: Data
 
-    def initialize(self, values: 'module.Module.ValuesType') -> None:
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         self.data = TestProvider.Data()
         if values:
             self.data.name = ''.join(random.SystemRandom().choices(string.ascii_letters, k=10))
             self.data.integer = random.randint(0, 100)
             return super().initialize(values)
-        
+
     @staticmethod
-    def test(
-        env: 'Environment', data: dict[str, str]
-    ) -> list[typing.Any]:
-        return [True, _('Nothing tested, but all went fine..')]
+    def test(env: 'environment.Environment', data: 'types.core.ValuesType') -> types.core.TestResult:
+        return types.core.TestResult(True, _('Nothing tested, but all went fine..'))
 
     def get_name(self) -> str:
         """
         returns a random name for testing pourposes
         """
         return self.data.name
-    

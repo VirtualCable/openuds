@@ -117,7 +117,7 @@ class TRDPTransport(BaseRDPTransport):
     wnd_custom_parameters = BaseRDPTransport.wnd_custom_parameters
     # optimizeTeams = BaseRDPTransport.optimizeTeams
 
-    def initialize(self, values: 'Module.ValuesType'):
+    def initialize(self, values: 'types.core.ValuesType'):
         if values:
             validators.validate_host_port(values.get('tunnelServer', ''))
 

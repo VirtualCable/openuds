@@ -164,7 +164,7 @@ class ProxmoxServiceLinked(services.Service):  # pylint: disable=too-many-public
 
     prov_uuid = gui.HiddenField(value=None)
     
-    def initialize(self, values: 'Module.ValuesType') -> None:
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         if values:
             self.basename.value = validators.validate_basename(
                 self.basename.value, length=self.lenname.as_int()

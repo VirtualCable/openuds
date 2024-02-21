@@ -39,10 +39,10 @@ import collections.abc
 import ldap
 from django.utils.translation import gettext_noop as _
 
-from uds.core import auths, exceptions, types, consts
+from uds.core import auths, environment, exceptions, types, consts
 from uds.core.auths.auth import log_login
 from uds.core.ui import gui
-from uds.core.util import ldaputil, auth as auth_utils, fields
+from uds.core.util import ensure, ldaputil, auth as auth_utils, fields
 
 try:
     # pylint: disable=no-name-in-module
@@ -224,7 +224,6 @@ class RegexLdap(auths.Authenticator):
         self.user_class.value = vals[8]
         self.userid_attr.value = vals[9]
         self.groupname_attr.value = vals[10]
-        
 
         logger.debug('Common: %s', vals[1:11])
 
@@ -353,7 +352,7 @@ class RegexLdap(auths.Authenticator):
 
         return user
 
-    def _get_groups(self, user: ldaputil.LDAPResultType):
+    def _get_groups(self, user: ldaputil.LDAPResultType) -> typing.List[str]:
         grps = auth_utils.process_regex_field(self.groupname_attr.as_str(), user)
         if extra:
             try:
@@ -362,7 +361,7 @@ class RegexLdap(auths.Authenticator):
                 logger.exception('Exception getting extra groups')
         return grps
 
-    def _get_real_name(self, user: ldaputil.LDAPResultType):
+    def _get_real_name(self, user: ldaputil.LDAPResultType) -> str:
         return ' '.join(auth_utils.process_regex_field(self.username_attr.value, user))
 
     def authenticate(
@@ -446,7 +445,7 @@ class RegexLdap(auths.Authenticator):
         """
         return self.create_user(usrData)
 
-    def get_groups(self, username: str, groups_manager: 'auths.GroupsManager'):
+    def get_groups(self, username: str, groups_manager: 'auths.GroupsManager') -> None:
         """
         Looks for the real groups to which the specified user belongs
         Updates groups manager with valid groups
@@ -482,42 +481,43 @@ class RegexLdap(auths.Authenticator):
             raise exceptions.auth.AuthenticatorException(_('Too many results, be more specific')) from e
 
     @staticmethod
-    def test(env, data):
+    def test(env: 'environment.Environment', data: 'types.core.ValuesType') -> 'types.core.TestResult':
         try:
             auth = RegexLdap(None, env, data)  # type: ignore  # Regexldap does not use "dbAuth", so it's safe...
             return auth.test_connection()
         except Exception as e:
             logger.error('Exception found testing Simple LDAP auth %s: %s', e.__class__, e)
-            return [False, "Error testing connection"]
+            return types.core.TestResult(False, f'Error testing connection: {e}')
 
-    def test_connection(self):
+    def test_connection(self) -> types.core.TestResult:
         try:
             con = self._stablish_connection()
         except Exception as e:
-            return [False, str(e)]
+            return types.core.TestResult(False, f'Error connecting to ldap: {e}')
 
         try:
-            con.search_s(base=self.ldap_base.as_str(), scope=ldap.SCOPE_BASE)  # type: ignore   # ldap.SCOPE_* not resolved due to dynamic creation?
+            con.search_s(base=self.ldap_base.as_str(), scope=ldaputil.SCOPE_BASE)
         except Exception:
-            return [False, _('Ldap search base is incorrect')]
+            return types.core.TestResult(False, _('Ldap search base is incorrect'))
 
         try:
             if (
                 len(
-                    con.search_ext_s(
-                        base=self.ldap_base.as_str(),
-                        scope=ldap.SCOPE_SUBTREE,  # type: ignore   # ldap.SCOPE_* not resolved due to dynamic creation?
-                        filterstr=f'(objectClass={self.user_class.as_str()})',
-                        sizelimit=1,
+                    ensure.is_list(
+                        con.search_ext_s(
+                            base=self.ldap_base.as_str(),
+                            scope=ldaputil.SCOPE_SUBTREE,
+                            filterstr=f'(objectClass={self.user_class.as_str()})',
+                            sizelimit=1,
+                        )
                     )
                 )
                 == 1
             ):
                 raise Exception()
-            return [
-                False,
-                _('Ldap user class seems to be incorrect (no user found by that class)'),
-            ]
+            return types.core.TestResult(
+                False, _('Ldap user class seems to be incorrect (no user found by that class)')
+            )
         except Exception:  # nosec: Control flow
             # If found 1 or more, all right
             pass
@@ -526,20 +526,19 @@ class RegexLdap(auths.Authenticator):
         try:
             if (
                 len(
-                    con.search_ext_s(
-                        base=self.ldap_base.as_str(),
-                        scope=ldap.SCOPE_SUBTREE,  # type: ignore   # ldap.SCOPE_* not resolved due to dynamic creation?
-                        filterstr=f'(&(objectClass={self.user_class.as_str()})({self.userid_attr.as_str()}=*))',
-                        sizelimit=1,
+                    ensure.is_list(
+                        con.search_ext_s(
+                            base=self.ldap_base.as_str(),
+                            scope=ldaputil.SCOPE_SUBTREE,
+                            filterstr=f'(&(objectClass={self.user_class.as_str()})({self.userid_attr.as_str()}=*))',
+                            sizelimit=1,
+                        )
                     )
                 )
                 == 1
             ):
                 raise Exception()
-            return [
-                False,
-                _('Ldap user id attr is probably wrong (can\'t find any user with both conditions)'),
-            ]
+            return types.core.TestResult(False, _('Ldap user id attr is probably wrong (can\'t find any user with that attribute)'))
         except Exception:  # nosec: Control flow
             # If found 1 or more, all right
             pass
@@ -551,22 +550,22 @@ class RegexLdap(auths.Authenticator):
             try:
                 if (
                     len(
-                        con.search_ext_s(
+                        ensure.is_list(con.search_ext_s(
                             base=self.ldap_base.as_str(),
-                            scope=ldap.SCOPE_SUBTREE,  # type: ignore   # ldap.SCOPE_* not resolved due to dynamic creation?
+                            scope=ldaputil.SCOPE_SUBTREE,
                             filterstr=f'({vals}=*)',
                             sizelimit=1,
                         )
-                    )
+                    ))
                     == 1
                 ):
                     continue
             except Exception:  # nosec: Control flow
                 continue
-            return [
+            return types.core.TestResult(
                 False,
-                _('Ldap group id attribute seems to be incorrect (no group found by that attribute)'),
-            ]
+                _('Ldap group name attribute seems to be incorrect (no group found by that attribute)'),
+            )
 
         # Now try to test regular expression to see if it matches anything (
         try:
@@ -577,12 +576,9 @@ class RegexLdap(auths.Authenticator):
         except Exception:  # nosec: Control flow
             pass
 
-        return [
-            True,
-            _("Connection params seem correct, test was succesfully executed"),
-        ]
+        return types.core.TestResult(True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             f'Ldap Auth: {self.username.as_str()}:{self.password.as_str()}@{self.host.as_str()}:{self.port.as_int()},'
             f' base = {self.ldap_base.as_str()}, user_class = {self.user_class.as_str()}, user_id_attr = {self.userid_attr.as_str()},'

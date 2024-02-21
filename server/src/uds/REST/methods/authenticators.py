@@ -236,9 +236,9 @@ class Authenticators(ModelHandler):
         dct['_request'] = self._request
         with Environment.temporary_environment() as env:
             res = authType.test(env, dct)
-            if res[0]:
+            if res.success:
                 return self.success()
-            return res[1]
+            return res.error
 
     def pre_save(
         self, fields: dict[str, typing.Any]

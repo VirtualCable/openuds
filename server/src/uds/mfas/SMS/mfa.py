@@ -261,7 +261,7 @@ class SMSMFA(mfas.MFA):
         tab=_('Config'),
     )
 
-    def initialize(self, values: 'Module.ValuesType') -> None:
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         return super().initialize(values)
 
     def build_sms_url(

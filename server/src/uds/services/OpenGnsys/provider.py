@@ -132,7 +132,7 @@ class OGProvider(ServiceProvider):
         tab=types.ui.Tab.PARAMETERS,
         old_field_name='udsServerAccessUrl',
     )
-    
+
     concurrent_creation_limit = fields.concurrent_creation_limit_field()
     concurrent_removal_limit = fields.concurrent_removal_limit_field()
 
@@ -149,7 +149,7 @@ class OGProvider(ServiceProvider):
     # Own variables
     _api: typing.Optional[og.OpenGnsysClient] = None
 
-    def initialize(self, values: 'Module.ValuesType') -> None:
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         """
         We will use the "autosave" feature for form fields
         """
@@ -194,7 +194,7 @@ class OGProvider(ServiceProvider):
     def clear_api(self) -> None:
         self._api = None
 
-    def test_connection(self) -> list[typing.Any]:
+    def test_connection(self) -> types.core.TestResult:
         """
         Test that conection to OpenGnsys server is fine
 
@@ -204,20 +204,20 @@ class OGProvider(ServiceProvider):
         """
         try:
             if self.api.version[0:5] < MIN_VERSION:
-                return [
+                return types.core.TestResult(
                     False,
-                    'OpenGnsys version is not supported (required version 1.1.0 or newer and found {})'.format(
-                        self.api.version
-                    ),
-                ]
+                    _(
+                        'OpenGnsys version is not supported (required version 1.1.0 or newer and found {})'
+                    ).format(self.api.version),
+                )
         except Exception as e:
             logger.exception('Error')
-            return [False, '{}'.format(e)]
+            return types.core.TestResult(False, _('Error testing OpenGnsys connection: {}').format(e))
 
-        return [True, _('OpenGnsys test connection passed')]
+        return types.core.TestResult(True, _('OpenGnsys test connection passed'))
 
     @staticmethod
-    def test(env: 'Environment', data: 'Module.ValuesType') -> list[typing.Any]:
+    def test(env: 'Environment', data: 'types.core.ValuesType') -> 'types.core.TestResult':
         """
         Test ovirt Connectivity
 

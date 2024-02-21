@@ -92,7 +92,7 @@ class TX2GOTransport(BaseX2GOTransport):
     pack = BaseX2GOTransport.pack
     quality = BaseX2GOTransport.quality
 
-    def initialize(self, values: 'Module.ValuesType'):
+    def initialize(self, values: 'types.core.ValuesType'):
         if values:
             validators.validate_host_port(values.get('tunnelServer', ''))
 

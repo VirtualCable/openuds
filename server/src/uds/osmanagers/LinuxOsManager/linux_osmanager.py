@@ -85,7 +85,7 @@ class LinuxOsManager(osmanagers.OSManager):
     def _flag_processes_unused_machines(self) -> None:
         self.handles_unused_userservices = fields.onlogout_field_is_removable(self.on_logout)
 
-    def initialize(self, values: 'Module.ValuesType') -> None:
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         self._flag_processes_unused_machines()
 
     def release(self, userservice: 'UserService') -> None:

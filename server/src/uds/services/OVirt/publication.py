@@ -165,7 +165,7 @@ class OVirtPublication(Publication, autoserializable.AutoSerializable):
             return State.RUNNING
 
         try:
-            self.service().removeTemplate(self._template_id)
+            self.service().remove_template(self._template_id)
         except Exception as e:
             self._state = 'error'
             self._reason = str(e)
