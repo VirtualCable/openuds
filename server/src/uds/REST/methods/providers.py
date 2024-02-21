@@ -81,7 +81,7 @@ class Providers(ModelHandler):
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
     table_row_style = types.ui.RowStyleInfo(prefix='row-maintenance-', field='maintenance_mode')
 
-    def item_as_dict(self, item: 'Provider') -> dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Provider') -> types.rest.ItemDictType:
         type_ = item.get_type()
 
         # Icon can have a lot of data (1-2 Kbytes), but it's not expected to have a lot of services providers, and even so, this will work fine
@@ -129,7 +129,7 @@ class Providers(ModelHandler):
                 return self.add_default_fields(provider.gui_description(), ['name', 'comments', 'tags'])
         raise exceptions.rest.NotFound('Type not found!')
 
-    def allservices(self) -> typing.Generator[dict, None, None]:
+    def allservices(self) -> typing.Generator[types.rest.ItemDictType, None, None]:
         """
         Custom method that returns "all existing services", no mater who's his daddy :)
         """
@@ -141,7 +141,7 @@ class Providers(ModelHandler):
             except Exception:
                 logger.exception('Passed service cause type is unknown')
 
-    def service(self) -> dict:
+    def service(self) -> types.rest.ItemDictType:
         """
         Custom method that returns a service by its uuid, no matter who's his daddy
         """
@@ -154,7 +154,7 @@ class Providers(ModelHandler):
             # logger.exception('Exception')
             return {}
 
-    def maintenance(self, item: 'Model') -> dict:
+    def maintenance(self, item: 'Model') -> types.rest.ItemDictType:
         """
         Custom method that swaps maintenance mode state for a provider
         :param item:
@@ -165,7 +165,7 @@ class Providers(ModelHandler):
         item.save()
         return self.item_as_dict(item)
 
-    def test(self, type_: str):
+    def test(self, type_: str) -> str:
         from uds.core.environment import Environment
 
         logger.debug('Type: %s', type_)

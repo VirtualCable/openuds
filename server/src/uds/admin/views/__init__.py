@@ -28,6 +28,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
 import logging
 
 from django.http import HttpResponse
@@ -36,18 +37,17 @@ from django.shortcuts import render
 from django.template import RequestContext, loader
 from django.utils.translation import gettext as _
 
+from uds.core import consts
 from uds.core.auths.auth import web_login_required
 
 logger = logging.getLogger(__name__)
 
-CSRF_FIELD = 'csrfmiddlewaretoken'
-
-
-CSRF_FIELD = 'csrfmiddlewaretoken'
+if typing.TYPE_CHECKING:
+    from django.http import HttpRequest
 
 
 @web_login_required(admin=True)
-def index(request):
+def index(request: 'HttpRequest') -> HttpResponse:
     # Gets csrf token
     csrf_token = csrf.get_token(request)
     if csrf_token is not None:
@@ -56,12 +56,12 @@ def index(request):
     return render(
         request,
         'uds/admin/index.html',
-        {'csrf_field': CSRF_FIELD, 'csrf_token': csrf_token},
+        {'csrf_field': consts.auth.CSRF_FIELD, 'csrf_token': csrf_token},
     )
 
 
 @web_login_required(admin=True)
-def tmpl(request, template):
+def tmpl(request: 'HttpRequest', template: str) -> HttpResponse:
     try:
         t = loader.get_template('uds/admin/tmpl/' + template + ".html")
         c = RequestContext(request)
@@ -73,5 +73,5 @@ def tmpl(request, template):
 
 
 @web_login_required(admin=True)
-def sample(request):
+def sample(request: 'HttpRequest') -> HttpResponse:
     return render(request, 'uds/admin/sample.html')

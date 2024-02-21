@@ -49,6 +49,7 @@ logger = logging.getLogger(__name__)
 
 if typing.TYPE_CHECKING:
     from django.db.models import Model
+from uds.core.ui import gui
 
 # Enclosed methods under /item path
 
@@ -95,20 +96,20 @@ class ServicesPoolGroups(ModelHandler):
         localGui = self.add_default_fields([], ['name', 'comments', 'priority'])
 
         for field in [
-            {
-                'name': 'image_id',
-                'choices': [gui.choice_image(-1, '--------', DEFAULT_THUMB_BASE64)]
-                + gui.sorted_choices(
-                    [
-                        gui.choice_image(v.uuid, v.name, v.thumb64)  # type: ignore
-                        for v in Image.objects.all()
-                    ]
-                ),
-                'label': gettext('Associated Image'),
-                'tooltip': gettext('Image assocciated with this service'),
-                'type': types.ui.FieldType.IMAGECHOICE,
-                'order': 102,
-            }
+                        {
+                            'name': 'image_id',
+                            'choices': [gui.choice_image(-1, '--------', DEFAULT_THUMB_BASE64)]
+                            + gui.sorted_choices(
+                                [
+                                    gui.choice_image(v.uuid, v.name, v.thumb64)
+                                    for v in Image.objects.all()
+                                ]
+                            ),
+                            'label': gettext('Associated Image'),
+                            'tooltip': gettext('Image assocciated with this service'),
+                            'type': types.ui.FieldType.IMAGECHOICE,
+                            'order': 102,
+                        }
         ]:
             self.add_field(localGui, field)
 

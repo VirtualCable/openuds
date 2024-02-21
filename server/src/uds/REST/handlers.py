@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2021 Virtual Cable S.L.U.
+# Copyright (c) 2012-2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -89,13 +89,16 @@ class Handler:
     _args: tuple[
         str, ...
     ]  # This are the "path" split by /, that is, the REST invocation arguments
-    _kwargs: dict
+    _kwargs: dict[str, typing.Any]  # This are the "path" split by /, that is, the REST invocation arguments
     _headers: dict[str, str]
     _session: typing.Optional[SessionStore]
     _auth_token: typing.Optional[str]
     _user: 'User'
 
-    # method names: 'get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'
+    # The dispatcher proceses the request and calls the method with the same name as the operation
+    # currently, only 'get', 'post, 'put' y 'delete' are supported
+
+    # possible future:'patch', 'head', 'options', 'trace'
     def __init__(
         self,
         request: 'ExtendedHttpRequestWithUser',
@@ -103,7 +106,7 @@ class Handler:
         method: str,
         params: dict[str, typing.Any],
         *args: str,
-        **kwargs,
+        **kwargs: typing.Any,
     ):
         logger.debug(
             'Data: %s %s %s', self.__class__, self.needs_admin, self.authenticated
@@ -190,7 +193,7 @@ class Handler:
         return self._request
 
     @property
-    def params(self) -> typing.Any:
+    def params(self) -> dict[str, typing.Any]:
         """
         Returns the params object
         """
@@ -202,6 +205,12 @@ class Handler:
         Returns the args object
         """
         return self._args
+    
+    @property
+    def session(self) -> 'SessionStore':
+        if self._session is None:
+            raise Exception('No session available')
+        return self._session
 
     # Auth related
     def get_auth_token(self) -> typing.Optional[str]:
@@ -221,7 +230,7 @@ class Handler:
         is_admin: bool,
         staff_member: bool,
         scrambler: str,
-    ):
+    ) -> None:
         """
         Stores the authentication data inside current session
         :param session: session handler (Djano user session object)
@@ -259,7 +268,7 @@ class Handler:
         is_admin: bool,
         staf_member: bool,
         scrambler: str,
-    ):
+    ) -> str:
         """
         Generates the authentication token from a session, that is basically
         the session key itself
@@ -285,7 +294,7 @@ class Handler:
         self._auth_token = session.session_key
         self._session = session
 
-        return self._auth_token
+        return typing.cast(str, self._auth_token)
 
     def clear_auth_token(self) -> None:
         """

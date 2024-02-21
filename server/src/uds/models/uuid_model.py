@@ -31,6 +31,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.db import models
 
@@ -40,7 +41,7 @@ from uds.core.util.model import generate_uuid
 logger = logging.getLogger(__name__)
 
 
-class UUIDModel(models.Model):
+class UUIDModel(models.Model):    
     """
     Base abstract model for models that require an uuid
     """
@@ -55,7 +56,7 @@ class UUIDModel(models.Model):
         abstract = True
 
     # Override default save to add uuid
-    def save(self, *args, **kwargs):
+    def save(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         if not self.uuid:
             self.uuid = generate_uuid()
         elif self.uuid != self.uuid.lower():
@@ -66,4 +67,4 @@ class UUIDModel(models.Model):
         if 'update_fields' in kwargs:
             kwargs['update_fields'] = list(kwargs['update_fields']) + ['uuid']
 
-        return models.Model.save(self, *args, **kwargs)
+        models.Model.save(self, *args, **kwargs)

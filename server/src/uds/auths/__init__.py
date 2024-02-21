@@ -43,7 +43,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 from uds.core.util import modfinder
 
 
-def __loadModules__():
+def __loadModules__() -> None:
     """
     This imports all packages that are descendant of this package, and, after that,
     it register all subclases of authenticator as

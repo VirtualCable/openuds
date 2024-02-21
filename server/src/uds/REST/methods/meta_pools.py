@@ -194,7 +194,7 @@ class MetaPools(ModelHandler):
                 'name': 'image_id',
                 'choices': [gui.choice_image(-1, '--------', DEFAULT_THUMB_BASE64)]
                 + gui.sorted_choices(
-                    [gui.choice_image(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]  # type: ignore
+                    [gui.choice_image(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]
                 ),
                 'label': gettext('Associated Image'),
                 'tooltip': gettext('Image assocciated with this service'),
@@ -207,7 +207,7 @@ class MetaPools(ModelHandler):
                 'choices': [gui.choice_image(-1, typing.cast(str, _('Default')), DEFAULT_THUMB_BASE64)]
                 + gui.sorted_choices(
                     [
-                        gui.choice_image(v.uuid, v.name, v.thumb64)  # type: ignore
+                        gui.choice_image(v.uuid, v.name, v.thumb64)
                         for v in ServicePoolGroup.objects.all()
                     ]
                 ),
@@ -290,7 +290,7 @@ class MetaPools(ModelHandler):
         item.delete()
 
     # Set fallback status
-    def setFallbackAccess(self, item: MetaPool):
+    def setFallbackAccess(self, item: MetaPool) -> typing.Any:
         self.ensure_has_access(item, types.permissions.PermissionType.MANAGEMENT)
 
         fallback = self._params.get('fallbackAccess', 'ALLOW')
@@ -299,10 +299,10 @@ class MetaPools(ModelHandler):
         item.save()
         return ''
 
-    def getFallbackAccess(self, item: MetaPool):
+    def getFallbackAccess(self, item: MetaPool) -> typing.Any:
         return item.fallbackAccess
 
     #  Returns the action list based on current element, for calendars (nothing right now for metapools, because no actions are allowed)
-    def actionsList(self, item: MetaPool):
+    def actionsList(self, item: MetaPool) -> typing.Any:
         validActions = ()
         return validActions

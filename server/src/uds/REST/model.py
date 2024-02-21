@@ -114,7 +114,9 @@ class BaseModelHandler(Handler):
                         caller.filename,
                         caller.lineno,
                     )
-                    raise exceptions.rest.RequestError(f'Field {fld} is mandatory on {field.get("name", "")} field.')
+                    raise exceptions.rest.RequestError(
+                        f'Field {fld} is mandatory on {field.get("name", "")} field.'
+                    )
 
             if choices:
                 guiDesc['choices'] = choices
@@ -269,16 +271,14 @@ class BaseModelHandler(Handler):
     def get_permissions(self, obj: models.Model, root: bool = False) -> int:
         return permissions.effective_permissions(self._user, obj, root)
 
-    def type_info(
-        self, type_: type['Module']  # pylint: disable=unused-argument
-    ) -> dict[str, typing.Any]:
+    def type_info(self, type_: type['Module']) -> dict[str, typing.Any]:  # pylint: disable=unused-argument
         """
         Returns info about the type
         In fact, right now, it returns an empty dict, that will be extended by typeAsDict
         """
         return {}
 
-    def type_as_dict(self, type_: type['Module']) -> dict[str, typing.Any]:
+    def type_as_dict(self, type_: type['Module']) -> types.rest.TypeInfoDict:
         """
         Returns a dictionary describing the type (the name, the icon, description, etc...)
         """
@@ -335,9 +335,7 @@ class BaseModelHandler(Handler):
 
         return args
 
-    def fill_instance_fields(
-        self, item: 'models.Model', res: dict[str, typing.Any]
-    ) -> dict[str, typing.Any]:
+    def fill_instance_fields(self, item: 'models.Model', res: dict[str, typing.Any]) -> dict[str, typing.Any]:
         """
         For Managed Objects (db element that contains a serialized object), fills a dictionary with the "field" parameters values.
         For non managed objects, it does nothing
@@ -391,7 +389,7 @@ class BaseModelHandler(Handler):
         logger.debug('Returning success on %s %s', self.__class__, self._args)
         return consts.OK
 
-    def test(self, type_: str) -> None:  # pylint: disable=unused-argument
+    def test(self, type_: str) -> str:  # pylint: disable=unused-argument
         """
         Invokes a test for an item
         """
@@ -584,9 +582,7 @@ class DetailHandler(BaseModelHandler):
 
     # Override this to provide functionality
     # Default (as sample) get_items
-    def get_items(
-        self, parent: models.Model, item: typing.Optional[str]
-    ) -> typing.Union[list[dict], dict]:
+    def get_items(self, parent: models.Model, item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         """
         This MUST be overridden by derived classes
         Excepts to return a list of dictionaries or a single dictionary, depending on "item" param
@@ -666,8 +662,8 @@ class DetailHandler(BaseModelHandler):
         return []
 
     def get_types(
-        self, parent: models.Model, forType: typing.Optional[str]
-    ) -> collections.abc.Iterable[dict[str, typing.Any]]:
+        self, parent: models.Model, for_type: typing.Optional[str]
+    ) -> collections.abc.Iterable[types.rest.TypeInfoDict]:
         """
         The default is that detail element will not have any types (they are "homogeneous")
         but we provided this method, that can be overridden, in case one detail needs it
@@ -720,13 +716,13 @@ class ModelHandler(BaseModelHandler):
     # This is an array of tuples of two items, where first is method and second inticates if method needs parent id (normal behavior is it needs it)
     # For example ('services', True) -- > .../id_parent/services
     #             ('services', False) --> ..../services
-    custom_methods: typing.ClassVar[
-        list[tuple[str, bool]]
-    ] = []  # If this model respond to "custom" methods, we will declare them here
+    custom_methods: typing.ClassVar[list[tuple[str, bool]]] = (
+        []
+    )  # If this model respond to "custom" methods, we will declare them here
     # If this model has details, which ones
-    detail: typing.ClassVar[
-        typing.Optional[dict[str, type[DetailHandler]]]
-    ] = None  # Dictionary containing detail routing
+    detail: typing.ClassVar[typing.Optional[dict[str, type[DetailHandler]]]] = (
+        None  # Dictionary containing detail routing
+    )
     # Fields that are going to be saved directly
     # * If a field is in the form "field:default" and field is not present in the request, default will be used
     # * If the "default" is the string "None", then the default will be None
@@ -744,7 +740,7 @@ class ModelHandler(BaseModelHandler):
     # This methods must be override, depending on what is provided
 
     # Data related
-    def item_as_dict(self, item: models.Model) -> dict[str, typing.Any]:
+    def item_as_dict(self, item: models.Model) -> types.rest.ItemDictType:
         """
         Must be overriden by descendants.
         Expects the return of an item as a dictionary
@@ -766,11 +762,13 @@ class ModelHandler(BaseModelHandler):
         """
         return []
 
-    def get_types(self, *args, **kwargs) -> typing.Generator[dict[str, typing.Any], None, None]:
+    def get_types(
+        self, *args: typing.Any, **kwargs: typing.Any
+    ) -> typing.Generator[types.rest.TypeInfoDict, None, None]:
         for type_ in self.enum_types():
             yield self.type_as_dict(type_)
 
-    def get_type(self, type_: str) -> dict[str, typing.Any]:
+    def get_type(self, type_: str) -> types.rest.TypeInfoDict:
         found = None
         for v in self.get_types():
             if v['type'] == type_:
@@ -784,7 +782,7 @@ class ModelHandler(BaseModelHandler):
         return found
 
     # log related
-    def get_logs(self, item: models.Model) -> list[dict]:
+    def get_logs(self, item: models.Model) -> list[dict[typing.Any, typing.Any]]:
         self.ensure_has_access(item, types.permissions.PermissionType.READ)
         try:
             return log.get_logs(item)
@@ -848,7 +846,7 @@ class ModelHandler(BaseModelHandler):
 
             r = re.compile(s + fnmatch.translate(pattern) + e, re.RegexFlag.IGNORECASE)
 
-            def fltr_function(item: collections.abc.MutableMapping[str, typing.Any]):
+            def fltr_function(item: collections.abc.MutableMapping[str, typing.Any]) -> bool:
                 try:
                     if fld not in item or r.match(item[fld]) is None:
                         return False
@@ -870,7 +868,7 @@ class ModelHandler(BaseModelHandler):
     def process_detail(self) -> typing.Any:
         logger.debug('Processing detail %s for with params %s', self._path, self._params)
         try:
-            item: models.Model = self.model.objects.filter(uuid=self._args[0])[0]  # type: ignore  # Slicing is not supported by pylance right now
+            item: models.Model = self.model.objects.filter(uuid=self._args[0])[0]
             # If we do not have access to parent to, at least, read...
 
             if self._operation in ('put', 'post', 'delete'):
@@ -907,7 +905,9 @@ class ModelHandler(BaseModelHandler):
             logger.error('Exception processing detail: %s', e)
             raise self.invalid_request_response() from e
 
-    def get_items(self, *args, **kwargs) -> typing.Generator[collections.abc.MutableMapping[str, typing.Any], None, None]:
+    def get_items(
+        self, *args: typing.Any, **kwargs: typing.Any
+    ) -> typing.Generator[types.rest.ItemDictType, None, None]:
         if 'overview' in kwargs:
             overview = kwargs['overview']
             del kwargs['overview']
@@ -927,7 +927,7 @@ class ModelHandler(BaseModelHandler):
             del kwargs['query']
         else:
             logger.debug('Args: %s, kwargs: %s', args, kwargs)
-            query = self.model.objects.filter(*args, **kwargs).prefetch_related(*prefetch)  # type: ignore  # mypy complains about type of model
+            query = self.model.objects.filter(*args, **kwargs).prefetch_related(*prefetch)
 
         if self.model_filter is not None:
             query = query.filter(**self.model_filter)
@@ -939,7 +939,7 @@ class ModelHandler(BaseModelHandler):
             try:
                 if (
                     permissions.has_access(
-                        typing.cast('User', self._user),
+                        self._user,
                         item,
                         types.permissions.PermissionType.READ,
                     )
@@ -979,7 +979,7 @@ class ModelHandler(BaseModelHandler):
                     item = operation = None
                     try:
                         operation = getattr(self, self._args[1])
-                        item = self.model.objects.get(uuid=self._args[0].lower())  # type: ignore  # mypy complains about type of model
+                        item = self.model.objects.get(uuid=self._args[0].lower())
                     except Exception as e:
                         logger.error(
                             'Invalid custom method exception %s/%s/%s: %s',
@@ -1018,7 +1018,7 @@ class ModelHandler(BaseModelHandler):
 
             # get item ID
             try:
-                item = self.model.objects.get(uuid=self._args[0].lower())  # type: ignore  # mypy complains about type of model
+                item = self.model.objects.get(uuid=self._args[0].lower())
 
                 self.ensure_has_access(item, types.permissions.PermissionType.READ)
 
@@ -1048,7 +1048,7 @@ class ModelHandler(BaseModelHandler):
                 raise self.invalid_request_response()
             try:
                 # DB maybe case sensitive??, anyway, uuids are stored in lowercase
-                item = self.model.objects.get(  # type: ignore  # mypy complains about type of model
+                item = self.model.objects.get(
                     uuid=self._args[0].lower()
                 )
                 return self.get_logs(item)
@@ -1108,11 +1108,11 @@ class ModelHandler(BaseModelHandler):
             deleteOnError = False
             item: models.Model
             if not self._args:  # create new?
-                item = self.model.objects.create(**args)  # type: ignore  # mypy complains about type of model
+                item = self.model.objects.create(**args)
                 deleteOnError = True
             else:  # Must have 1 arg
                 # We have to take care with this case, update will efectively update records on db
-                item = self.model.objects.get(uuid=self._args[0].lower())  # type: ignore  # mypy complains about type of model
+                item = self.model.objects.get(uuid=self._args[0].lower())
                 for v in self.remove_fields:
                     if v in args:
                         del args[v]
@@ -1155,7 +1155,7 @@ class ModelHandler(BaseModelHandler):
 
             return res
 
-        except self.model.DoesNotExist:  # type: ignore  # mypy complains about type of model
+        except self.model.DoesNotExist:
             raise exceptions.rest.NotFound('Item not found') from None
         except IntegrityError:  # Duplicate key probably
             raise exceptions.rest.RequestError('Element already exists (duplicate key error)') from None
@@ -1183,10 +1183,10 @@ class ModelHandler(BaseModelHandler):
         )  # Must have write permissions to delete
 
         try:
-            item = self.model.objects.get(uuid=self._args[0].lower())  # type: ignore  # mypy complains about type of model
+            item = self.model.objects.get(uuid=self._args[0].lower())
             self.validate_delete(item)
             self.delete_item(item)
-        except self.model.DoesNotExist:  # type: ignore  # mypy complains about type of model
+        except self.model.DoesNotExist:
             raise exceptions.rest.NotFound('Element do not exists') from None
 
         return consts.OK

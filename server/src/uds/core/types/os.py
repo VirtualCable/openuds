@@ -54,10 +54,10 @@ class KnownOS(enum.Enum):
     WYSE = ('WYSE',)
     UNKNOWN = ('Unknown',)
 
-    def os_name(self):
+    def os_name(self) -> str:
         return self.value[0].lower()
     
-    def __str__(self):
+    def __str__(self) -> str:
         return self.os_name()
 
 # Order is important here, as we will use the first match

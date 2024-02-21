@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2021 Virtual Cable S.L.
+# Copyright (c) 2012-2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import collections.abc
 import logging
@@ -81,9 +81,11 @@ class AssignedService(DetailHandler):
             'id_deployed_service': item.deployed_service.uuid,
             'unique_id': item.unique_id,
             'friendly_name': item.friendly_name,
-            'state': item.state
-            if not (props.get('destroy_after') and item.state == State.PREPARING)
-            else State.CANCELING,  # Destroy after means that we need to cancel AFTER finishing preparing, but not before...
+            'state': (
+                item.state
+                if not (props.get('destroy_after') and item.state == State.PREPARING)
+                else State.CANCELING
+            ),  # Destroy after means that we need to cancel AFTER finishing preparing, but not before...
             'os_state': item.os_state,
             'state_date': item.state_date,
             'creation_date': item.creation_date,
@@ -117,7 +119,7 @@ class AssignedService(DetailHandler):
             )
         return val
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]):
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = ensure.is_instance(parent, models.ServicePool)
         # Extract provider
         try:
@@ -156,28 +158,36 @@ class AssignedService(DetailHandler):
     def get_fields(self, parent: 'Model') -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.ServicePool)
         # Revision is only shown if publication type is not None
-        return [
-            {'creation_date': {'title': _('Creation date'), 'type': 'datetime'}},
-        ] + ([
-            {'revision': {'title': _('Revision')}},
-        ] if parent.service.get_type().publication_type is not None else []) + [
-            {'unique_id': {'title': 'Unique ID'}},
-            {'ip': {'title': _('IP')}},
-            {'friendly_name': {'title': _('Friendly name')}},
-            {
-                'state': {
-                    'title': _('status'),
-                    'type': 'dict',
-                    'dict': State.literals_dict(),
-                }
-            },
-            {'state_date': {'title': _('Status date'), 'type': 'datetime'}},
-            {'in_use': {'title': _('In Use')}},
-            {'source_host': {'title': _('Src Host')}},
-            {'source_ip': {'title': _('Src Ip')}},
-            {'owner': {'title': _('Owner')}},
-            {'actor_version': {'title': _('Actor version')}},
-        ]
+        return (
+            [
+                {'creation_date': {'title': _('Creation date'), 'type': 'datetime'}},
+            ]
+            + (
+                [
+                    {'revision': {'title': _('Revision')}},
+                ]
+                if parent.service.get_type().publication_type is not None
+                else []
+            )
+            + [
+                {'unique_id': {'title': 'Unique ID'}},
+                {'ip': {'title': _('IP')}},
+                {'friendly_name': {'title': _('Friendly name')}},
+                {
+                    'state': {
+                        'title': _('status'),
+                        'type': 'dict',
+                        'dict': State.literals_dict(),
+                    }
+                },
+                {'state_date': {'title': _('Status date'), 'type': 'datetime'}},
+                {'in_use': {'title': _('In Use')}},
+                {'source_host': {'title': _('Src Host')}},
+                {'source_ip': {'title': _('Src Ip')}},
+                {'owner': {'title': _('Owner')}},
+                {'actor_version': {'title': _('Actor version')}},
+            ]
+        )
 
     def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
         return types.ui.RowStyleInfo(prefix='row-state-', field='state')
@@ -239,7 +249,7 @@ class AssignedService(DetailHandler):
                 f'There is already another user service assigned to {user.pretty_name}'
             )
 
-        userService.user = user  # type: ignore
+        userService.user = user
         userService.save()
 
         # Log change
@@ -257,7 +267,7 @@ class CachedService(AssignedService):
 
     custom_methods: typing.ClassVar[list[str]] = []  # Remove custom methods from assigned services
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]):
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = ensure.is_instance(parent, models.ServicePool)
         # Extract provider
         try:
@@ -310,7 +320,7 @@ class Groups(DetailHandler):
     Processes the groups detail requests of a Service Pool
     """
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]):
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = ensure.is_instance(parent, models.ServicePool)
         group: models.Group
         return [
@@ -387,14 +397,14 @@ class Transports(DetailHandler):
     Processes the transports detail requests of a Service Pool
     """
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]):
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = ensure.is_instance(parent, models.ServicePool)
 
-        def get_type(trans: 'models.Transport'):
+        def get_type(trans: 'models.Transport') -> types.rest.TypeInfoDict:
             try:
                 return self.type_as_dict(trans.get_type())
             except Exception:  # No type found
-                return None
+                raise self.invalid_item_response()
 
         return [
             {
@@ -451,7 +461,7 @@ class Publications(DetailHandler):
 
     custom_methods = ['publish', 'cancel']  # We provided these custom methods
 
-    def publish(self, parent: 'Model'):
+    def publish(self, parent: 'Model') -> typing.Any:
         """
         Custom method "publish", provided to initiate a publication of a deployed service
         :param parent: Parent service pool
@@ -478,7 +488,7 @@ class Publications(DetailHandler):
 
         return self.success()
 
-    def cancel(self, parent: 'Model', uuid: str):
+    def cancel(self, parent: 'Model', uuid: str) -> typing.Any:
         """
         Invoked to cancel a running publication
         Double invocation (this means, invoking cancel twice) will mean that is a "forced cancelation"
@@ -508,7 +518,7 @@ class Publications(DetailHandler):
 
         return self.success()
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]):
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = ensure.is_instance(parent, models.ServicePool)
         return [
             {
@@ -549,7 +559,7 @@ class Changelog(DetailHandler):
     Processes the transports detail requests of a Service Pool
     """
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]):
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = ensure.is_instance(parent, models.ServicePool)
         return [
             {

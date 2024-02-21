@@ -116,7 +116,7 @@ class Environment:
         """
         return self._key
 
-    def clean_related_data(self):
+    def clean_related_data(self) -> None:
         """
         Removes all related information from database for this environment.
         """
@@ -153,23 +153,21 @@ class Environment:
         return Environment(name, id_generators)
 
     @staticmethod
-    def type_environment(type_: typing.Type) -> 'Environment':
+    def type_environment(type_: typing.Type[typing.Any]) -> 'Environment':
         """
         Obtains an environment associated with a type instead of a record
         @param type_: Type
         @return Associated Environment
         """
         return Environment('type-' + str(type_))
-    
+
     @staticmethod
     def private_environment(owner: typing.Any) -> 'Environment':
         """
         Obtains an environment with an unique identifier
         @return: An environment with an unique identifier
         """
-        return Environment(
-            '#_#' + str(id(owner)) + '#^#'
-        )
+        return Environment('#_#' + str(id(owner)) + '#^#')
 
     @staticmethod
     def temporary_environment() -> 'Environment':
@@ -203,10 +201,10 @@ class Environment:
         """
         return Environment(COMMON_ENV)  # This environment is a global environment for general utility.
 
-    def __enter__(self):
+    def __enter__(self) -> 'Environment':
         return self
 
-    def __exit__(self, exc_type, exc_value, traceback):
+    def __exit__(self, exc_type: typing.Any, exc_value: typing.Any, traceback: typing.Any) -> None:
         if self._key == TEST_ENV or (self._key.startswith('#_#') and self._key.endswith('#^#')):
             self.clean_related_data()
 
@@ -240,7 +238,7 @@ class Environmentable:
         return self._env
 
     @env.setter
-    def env(self, environment: 'Environment'):
+    def env(self, environment: 'Environment') -> None:
         """
         Assigns a new environment
 

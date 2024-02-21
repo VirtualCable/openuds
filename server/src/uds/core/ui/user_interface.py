@@ -36,6 +36,7 @@ import copy
 import datetime
 import inspect
 import logging
+from os import read
 import pickle  # nosec: safe usage
 import re
 import time
@@ -283,23 +284,34 @@ class gui:
         _fields_info: types.ui.FieldInfo
 
         def __init__(
-            self, label: str, type: types.ui.FieldType, old_field_name: typing.Optional[str], **kwargs
+            self,
+            label: str,
+            type: types.ui.FieldType,
+            old_field_name: typing.Optional[str],
+            order: int = 0,
+            tooltip: str = '',
+            length: typing.Optional[int] = None,
+            required: typing.Optional[bool] = None,
+            default:  typing.Union[collections.abc.Callable[[], typing.Any], typing.Any] = None,
+            readonly: typing.Optional[bool] = None,
+            value: typing.Any = None,
+            tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
+            **kwargs: typing.Any,
         ) -> None:
-            default = kwargs.get('default')
             # Length is not used on some kinds of fields, but present in all anyway
             # This property only affects in "modify" operations
             self._fields_info = types.ui.FieldInfo(
                 old_field_name=old_field_name,
-                order=kwargs.get('order') or 0,
+                order=order,
                 label=label,
-                tooltip=kwargs.get('tooltip') or '',
+                tooltip=tooltip,
                 type=type,
-                length=kwargs.get('length'),
-                required=kwargs.get('required'),
+                length=kwargs.get('length') or consts.system.DEFAULT_TEXT_LENGTH,
+                required=required,
                 default=default if not callable(default) else default,
-                readonly=kwargs.get('readonly'),
-                value=kwargs.get('value') if kwargs.get('value') is not None else default,
-                tab=types.ui.Tab.from_str(kwargs.get('tab')),
+                readonly=readonly,
+                value=value,
+                tab=tab,
             )
 
         @property
@@ -434,13 +446,13 @@ class gui:
         def as_clean_str(self) -> str:
             return self.as_str().strip()
 
-        def as_bool(self):
+        def as_bool(self) -> bool:
             """
             Checks that the value is true
             """
             return gui.as_bool(self.value)
 
-        def __repr__(self):
+        def __repr__(self) -> str:
             return f'{self.__class__.__name__}: {repr(self._fields_info)}'
 
     class TextField(InputField):
@@ -618,7 +630,7 @@ class gui:
             self.type = types.ui.FieldType.TEXT_AUTOCOMPLETE
             self._fields_info.choices = gui.as_choices(choices or [])
 
-        def set_choices(self, values: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]):
+        def set_choices(self, values: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]) -> None:
             """
             Set the values for this choice field
             """
@@ -735,7 +747,7 @@ class gui:
             """Alias for "value" property, but as datetime.datetime"""
             # Convert date to datetime
             return datetime.datetime.combine(
-                typing.cast(datetime.date, self.value), datetime.datetime.min.time()
+                self.as_date(), datetime.datetime.min.time()
             )
 
         def as_timestamp(self) -> int:
@@ -832,7 +844,7 @@ class gui:
             """
             super()._set_value(gui.as_str(value))
 
-        def as_str(self):
+        def as_str(self) -> str:
             """Returns the password as string (stripped)"""
             return gui.as_str(self.value).strip()
 
@@ -846,7 +858,7 @@ class gui:
         def value(self, value: str) -> None:
             self._set_value(value)
 
-        def __str__(self):
+        def __str__(self) -> str:
             return '********'  # Override so we do not show the password
 
     class HiddenField(InputField):
@@ -960,7 +972,7 @@ class gui:
                 type=types.ui.FieldType.CHECKBOX,
             )
 
-        def _set_value(self, value: typing.Union[str, bytes, bool]):
+        def _set_value(self, value: typing.Union[str, bytes, bool]) -> None:
             """
             Override to set value to True or False (bool)
             """
@@ -1113,7 +1125,7 @@ class gui:
                 if fills['callback_name'] not in gui.callbacks:
                     gui.callbacks[fills['callback_name']] = fnc
 
-        def set_choices(self, values: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]):
+        def set_choices(self, values: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]) -> None:
             """
             Set the values for this choice field
             """
@@ -1170,7 +1182,7 @@ class gui:
 
             self._fields_info.choices = gui.as_choices(choices or [])
 
-        def set_choices(self, values: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]):
+        def set_choices(self, values: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]) -> None:
             """
             Set the values for this choice field
             """
@@ -1264,7 +1276,7 @@ class gui:
             self._fields_info.rows = rows
             self._fields_info.choices = gui.as_choices(choices or [])
 
-        def set_choices(self, choices: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]):
+        def set_choices(self, choices: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]) -> None:
             """
             Set the values for this choice field
             """
@@ -1379,7 +1391,7 @@ class gui:
             return self.as_list()
 
         @value.setter
-        def value(self, value: collections.abc.Iterable) -> None:
+        def value(self, value: collections.abc.Iterable[typing.Any]) -> None:
             self._set_value(value)
 
     class HelpField(InputField):
@@ -1429,7 +1441,7 @@ class UserInterfaceType(abc.ABCMeta, type):
 
             new_class_dict[attrName] = attr
         new_class_dict['_gui_fields_template'] = _gui
-        return typing.cast('UserInterfaceType', super().__new__(mcs, classname, bases, new_class_dict))
+        return super().__new__(mcs, classname, bases, new_class_dict)
 
 
 class UserInterface(metaclass=UserInterfaceType):

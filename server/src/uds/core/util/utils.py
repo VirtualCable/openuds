@@ -46,43 +46,41 @@ from django.utils.translation import gettext
 
 logger = logging.getLogger(__name__)
 
+VT = typing.TypeVar('VT')
 
-class CaseInsensitiveDict(dict):
-    @classmethod
-    def _k(cls, key: str) -> str:
-        return key.lower() if isinstance(key, str) else key
+class CaseInsensitiveDict(dict[str, VT]):
+    @staticmethod
+    def _k(key: str) -> str:
+        return key.lower()
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: typing.Any, **kwargs: VT):
         super().__init__(*args, **kwargs)
         self._convert_keys()
 
-    def __getitem__(self, key: str) -> typing.Any:
-        return super().__getitem__(self.__class__._k(key.lower()))
+    def __getitem__(self, key: str) -> VT:
+        return super().__getitem__(CaseInsensitiveDict._k(key))
 
-    def __setitem__(self, key: str, value: typing.Any) -> None:
-        super().__setitem__(self.__class__._k(key.lower()), value)
+    def __setitem__(self, key: str, value: VT) -> None:
+        super().__setitem__(CaseInsensitiveDict._k(key), value)
 
     def __delitem__(self, key: str) -> None:
-        return super().__delitem__(self.__class__._k(key.lower()))
+        return super().__delitem__(CaseInsensitiveDict._k(key))
 
     def __contains__(self, key: typing.Any) -> bool:
         if not isinstance(key, str):
             return False
         return super().__contains__(key.lower())
 
-    def pop(self, key: str, *args, **kwargs) -> typing.Any:
-        return super().pop(self.__class__._k(key.lower()), *args, **kwargs)  # pylint: disable=protected-access
+    def pop(self, key: str, *args: typing.Any, **kwargs: typing.Any) -> VT:
+        return super().pop(CaseInsensitiveDict._k(key), *args, **kwargs)
 
-    def get(self, key: str, *args, **kwargs) -> typing.Any:
-        return super().get(self.__class__._k(key.lower()), *args, **kwargs)  # pylint: disable=protected-access
+    def get(self, key: str, *args: typing.Any, **kwargs: typing.Any) -> typing.Optional[VT]: # type: ignore
+        return super().get(CaseInsensitiveDict._k(key), *args, **kwargs)
 
-    def setdefault(self, key: str, *args, **kwargs) -> typing.Any:
+    def setdefault(self, key: str, *args: typing.Any, **kwargs: typing.Any) -> VT:
         return super().setdefault(
-            self.__class__._k(key.lower()), *args, **kwargs
+            CaseInsensitiveDict._k(key), *args, **kwargs
         )  # pylint: disable=protected-access
-
-    def update(self, other_dct=None, **kwargs):
-        super().update(self.__class__(other_dct or {}, **kwargs))
 
     def _convert_keys(self) -> None:
         for k in list(self.keys()):  # List is to make a copy of keys, because we are going to change it
@@ -103,7 +101,7 @@ def package_relative_file(moduleName: str, fileName: str) -> str:
     return fileName
 
 
-def timestamp_as_str(stamp: float, format_: typing.Optional[str]=None):
+def timestamp_as_str(stamp: float, format_: typing.Optional[str] = None) -> str:
     """
     Converts a timestamp to date string using specified format (DJANGO format such us SHORT_DATETIME_FORMAT..)
     """
@@ -164,11 +162,13 @@ def load_Icon_b64(iconFilename: str) -> str:
 
 
 @contextlib.contextmanager
-def ignore_exceptions():
+def ignore_exceptions(log: bool = False) -> typing.Iterator[None]:
     """
     Ignores exceptions
     """
     try:
         yield
-    except Exception:  # nosec: want to catch all exceptions
+    except Exception as e:
+        if log:
+            logger.error('Ignoring exception: %s', e)
         pass

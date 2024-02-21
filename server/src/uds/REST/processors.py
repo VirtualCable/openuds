@@ -30,14 +30,13 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import collections.abc
 import datetime
-import json as json  # type: ignore
-
+import json
 import logging
 import time
 import types
 import typing
-import collections.abc
 
 from django.http import HttpResponse
 
@@ -84,21 +83,21 @@ class ContentProcessor:
         """
         return {}
 
-    def get_response(self, obj):
+    def get_response(self, obj: typing.Any) -> HttpResponse:
         """
         Converts an obj to a response of specific type (json, XML, ...)
         This is done using "render" method of specific type
         """
         return HttpResponse(content=self.render(obj), content_type=self.mime_type + "; charset=utf-8")
 
-    def render(self, obj: typing.Any):
+    def render(self, obj: typing.Any) -> str:
         """
         Renders an obj to the spefific type
         """
         return str(obj)
 
     @staticmethod
-    def process_for_render(obj: typing.Any):
+    def process_for_render(obj: typing.Any) -> typing.Any:
         """
         Helper for renderers. Alters some types so they can be serialized correctly (as we want them to be)
         """
@@ -136,11 +135,11 @@ class MarshallerProcessor(ContentProcessor):
             length = int(self._request.META.get('CONTENT_LENGTH') or '0')
             if length == 0 or not self._request.body:
                 return self.process_get_parameters()
-            
+
             # logger.debug('Body: >>{}<< {}'.format(self._request.body, len(self._request.body)))
             if length > consts.system.MAX_REQUEST_SIZE or length > len(self._request.body):
                 raise ParametersException('Request size too big')
-            
+
             res = self.marshaller.loads(self._request.body.decode('utf8'))
             logger.debug('Unmarshalled content: %s', res)
             return res
@@ -148,7 +147,7 @@ class MarshallerProcessor(ContentProcessor):
             logger.exception('parsing %s: %s', self.mime_type, self._request.body.decode('utf8'))
             raise ParametersException(str(e))
 
-    def render(self, obj: typing.Any):
+    def render(self, obj: typing.Any) -> str:
         return self.marshaller.dumps(ContentProcessor.process_for_render(obj))
 
 
@@ -159,6 +158,7 @@ class JsonProcessor(MarshallerProcessor):
     """
     Provides JSON content processor
     """
+
     mime_type: typing.ClassVar[str] = 'application/json'
     extensions: typing.ClassVar[collections.abc.Iterable[str]] = ['json']
     marshaller: typing.ClassVar[typing.Any] = json

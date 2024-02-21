@@ -67,10 +67,7 @@ def get_servicepools_counters(
 ) -> list[collections.abc.Mapping[str, typing.Any]]:
     try:
         cacheKey = (
-            (servicePool and str(servicePool.id) or 'all')
-            + str(counter_type)
-            + str(POINTS)
-            + str(since_days)
+            (servicePool and str(servicePool.id) or 'all') + str(counter_type) + str(POINTS) + str(since_days)
         )
         to = sql_datetime()
         since: datetime.datetime = to - datetime.timedelta(days=since_days)
@@ -95,11 +92,13 @@ def get_servicepools_counters(
                 val.append({'stamp': x[0], 'value': int(x[1])})
             logger.debug('val: %s', val)
             if len(val) >= 2:
-                cache.put(cacheKey, codecs.encode(pickle.dumps(val), 'zip'), CACHE_TIME*2)
+                cache.put(cacheKey, codecs.encode(pickle.dumps(val), 'zip'), CACHE_TIME * 2)
             else:
                 val = [{'stamp': since, 'value': 0}, {'stamp': to, 'value': 0}]
         else:
-            val = pickle.loads(codecs.decode(cachedValue, 'zip'))  # nosec: pickle is used to cache data, not to load it
+            val = pickle.loads(
+                codecs.decode(cachedValue, 'zip')
+            )  # nosec: pickle is used to cache data, not to load it
 
         # return [{'stamp': since + datetime.timedelta(hours=i*10), 'value': i*i*counter_type//4} for i in range(300)]
 
@@ -110,7 +109,6 @@ def get_servicepools_counters(
 
 
 class System(Handler):
-
     """
     {
         'paths': [
@@ -129,6 +127,7 @@ class System(Handler):
         ]
     }
     """
+
     needs_admin = False
     needs_staff = True
 
@@ -145,7 +144,6 @@ class System(Handler):
     ]
     help_text = 'Provides system information. Must be admin to access this'
 
-
     def get(self) -> typing.Any:
         logger.debug('args: %s', self._args)
         # Only allow admin user for global stats
@@ -161,9 +159,7 @@ class System(Handler):
                 user_services: int = models.UserService.objects.exclude(
                     state__in=(State.REMOVED, State.ERROR)
                 ).count()
-                restrained_services_pools: int = (
-                    models.ServicePool.restraineds_queryset().count()
-                )
+                restrained_services_pools: int = models.ServicePool.restraineds_queryset().count()
                 return {
                     'users': users,
                     'groups': groups,
@@ -179,9 +175,7 @@ class System(Handler):
             pool: typing.Optional[models.ServicePool] = None
             if len(self._args) == 3:
                 try:
-                    pool = models.ServicePool.objects.get(
-                        uuid=process_uuid(self._args[2])
-                    )
+                    pool = models.ServicePool.objects.get(uuid=process_uuid(self._args[2]))
                 except Exception:
                     pool = None
             # If pool is None, needs admin also
@@ -214,5 +208,5 @@ class System(Handler):
 
         raise exceptions.rest.RequestError('invalid request')
 
-    def put(self):
-        raise exceptions.rest.RequestError()
+    def put(self) -> typing.Any:
+        raise exceptions.rest.RequestError()  # Not allowed right now

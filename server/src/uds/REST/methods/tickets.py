@@ -104,7 +104,7 @@ class Tickets(Handler):
             res['error'] = error
         return res
 
-    def get(self):
+    def get(self) -> typing.Any:
         """
         Processes get requests, currently none
         """
@@ -255,13 +255,15 @@ class Tickets(Handler):
                         ):
                             pool.assignedGroups.add(auth.groups.get(uuid=addGrp))
 
-                    servicePoolId = 'F' + pool.uuid  # type: ignore
+                    servicePoolId = 'F' + pool.uuid
 
         except models.Authenticator.DoesNotExist:
             return Tickets.result(error='Authenticator does not exists')
-        except models.ServicePool.DoesNotExist:  # type: ignore   # this is fine, is not the same as models.Authenticator.DoesNotExist
+        except models.ServicePool.DoesNotExist:
+            pass
             return Tickets.result(error='Service pool (or metapool) does not exists')
-        except models.Transport.DoesNotExist:  # type: ignore   # this is fine, is not the same as models.Authenticator.DoesNotExist
+        except models.Transport.DoesNotExist:
+            pass
             return Tickets.result(error='Transport does not exists')
         except Exception as e:
             return Tickets.result(error=str(e))

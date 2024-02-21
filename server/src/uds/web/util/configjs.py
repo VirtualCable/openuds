@@ -55,9 +55,6 @@ logger = logging.getLogger(__name__)
 
 register = template.Library()
 
-CSRF_FIELD = 'csrfmiddlewaretoken'
-
-
 def uds_js(request: 'ExtendedHttpRequest') -> str:
     auth_host = (
         request.META.get('HTTP_HOST') or request.META.get('SERVER_NAME') or 'auth_host'
@@ -138,7 +135,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
     # logger.debug('Authenticators: %s', authenticators)
 
     # the auths for client
-    def _get_auth_info(auth: Authenticator):
+    def _get_auth_info(auth: Authenticator) -> dict[str, typing.Any]:
         theType = auth.get_type()
         return {
             'id': auth.uuid,
@@ -212,7 +209,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
         'min_for_filter': GlobalConfig.SITE_FILTER_MIN.as_int(True),
     }
 
-    info: typing.Optional[collections.abc.MutableMapping] = None
+    info: typing.Optional[dict[str, typing.Any]] = None
     if user and user.is_staff():
         info = {
             'networks': [n.name for n in Network.get_networks_for_ip(request.ip)],
@@ -316,7 +313,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
             'vnc_userservices': vnc_userservices,
         }
 
-    errors: list = []
+    errors: list[str] = []
     if 'errors' in request.session:
         errors = request.session['errors']
         del request.session['errors']

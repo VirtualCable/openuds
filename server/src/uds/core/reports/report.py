@@ -49,44 +49,42 @@ logger = logging.getLogger(__name__)
 
 
 class Report(UserInterface):
-    mime_type: typing.ClassVar[
-        str
-    ] = 'application/pdf'  # Report returns pdfs by default, but could be anything else
+    mime_type: typing.ClassVar[str] = (
+        'application/pdf'  # Report returns pdfs by default, but could be anything else
+    )
     name: typing.ClassVar[str] = _('Base Report')  # Report name
     group: typing.ClassVar[str] = ''  # So we can "group" reports by kind?
-    encoded: typing.ClassVar[
-        bool
-    ] = True  # If the report is mean to be encoded (binary reports as PDFs == True, text reports must be False so utf-8 is correctly threated
+    encoded: typing.ClassVar[bool] = (
+        True  # If the report is mean to be encoded (binary reports as PDFs == True, text reports must be False so utf-8 is correctly threated
+    )
     uuid: typing.ClassVar[str] = ''
 
     description: str = _('Base report')  # Report description
-    filename: str = (
-        'file.pdf'  # Filename that will be returned as 'hint' on rest report request
-    )
+    filename: str = 'file.pdf'  # Filename that will be returned as 'hint' on rest report request
 
     @classmethod
-    def translated_name(cls):
+    def translated_name(cls) -> str:
         """
         Helper to return translated report name
         """
         return gettext(cls.name)
 
     @classmethod
-    def translated_description(cls):
+    def translated_description(cls) -> str:
         """
         Helper to return translated report description
         """
         return gettext(cls.description)
 
     @classmethod
-    def translated_group(cls):
+    def translated_group(cls) -> str:
         """
         Helper to return translated report description
         """
         return gettext(cls.group)
 
     @classmethod
-    def get_uuid(cls):
+    def get_uuid(cls) -> str:
         if cls.uuid is None:
             raise Exception(f'Class does not includes an uuid!!!: {cls}')
         return cls.uuid
@@ -105,8 +103,8 @@ class Report(UserInterface):
 
         # url fetcher for weasyprint
         def report_fetcher(
-            url: str, timeout=10, ssl_context=None  # pylint: disable=unused-argument
-        ) -> dict:
+            url: str, timeout: int = 10, ssl_context: typing.Any = None  # pylint: disable=unused-argument
+        ) -> dict[str, 'str|bytes|None']:
             logger.debug('Getting url for weasyprint %s', url)
             if url.startswith('stock://'):
                 imagePath = stock.get_stock_image_path(url[8:])
@@ -133,21 +131,23 @@ class Report(UserInterface):
             .replace('{water}', water or 'UDS Report')
             .replace(
                 '{printed}',
-                _('Printed in {now:%Y, %b %d} at {now:%H:%M}').format(
-                    now=datetime.datetime.now()
-                ),
+                _('Printed in {now:%Y, %b %d} at {now:%H:%M}').format(now=datetime.datetime.now()),
             )
         )
 
         h = HTML(string=html, url_fetcher=report_fetcher)
         c = CSS(string=css)
 
-        return typing.cast(
-            bytes, h.write_pdf(stylesheets=[c])
-        )  # Return a new bytes object
+        return typing.cast(bytes, h.write_pdf(stylesheets=[c]))  # Return a new bytes object
 
     @staticmethod
-    def template_as_pdf(templateName, dct, header=None, water=None, images=None) -> bytes:
+    def template_as_pdf(
+        templateName: str,
+        dct: dict[str, typing.Any],
+        header: typing.Optional[str] = None,
+        water: typing.Optional[str] = None,
+        images: typing.Optional[dict[str, bytes]] = None,
+    ) -> bytes:
         """
         Renders a template as PDF
         """
@@ -174,7 +174,7 @@ class Report(UserInterface):
         super().__init__(values)
         self.initialize(values)
 
-    def initialize(self, values: typing.Optional[gui.ValuesType]):
+    def initialize(self, values: typing.Optional[gui.ValuesType]) -> None:
         """
         Invoked just right after initializing report, so we avoid rewriting __init__
         if values is None, we are initializing an "new" element, if values is a dict, is the values
@@ -204,5 +204,5 @@ class Report(UserInterface):
 
         return typing.cast(str, data)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'Report {self.name} with uuid {self.uuid}'

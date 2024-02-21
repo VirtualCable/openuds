@@ -71,9 +71,7 @@ class User:
 
         :note: Once obtained valid groups, it caches them until object removal.
         """
-        from uds.models.user import (  # pylint: disable=import-outside-toplevel
-            User as DBUser,
-        )
+        from uds.models.user import User as DBUser  # Ensure no circular imports
 
         if self._groups is None:
             if self._cached_manager.external_source:
@@ -82,7 +80,7 @@ class User:
                 logger.debug(self._groups)
                 # This is just for updating "cached" data of this user, we only get real groups at login and at modify user operation
                 usr = DBUser.objects.get(pk=self._db_user.id)  # @UndefinedVariable
-                usr.groups.set((g.db_obj().id for g in self._groups if g.db_obj().is_meta is False))  # type: ignore
+                usr.groups.set(g.db_obj() for g in self._groups if not g.db_obj().is_meta)
             else:
                 # From db
                 usr = DBUser.objects.get(pk=self._db_user.id)  # @UndefinedVariable

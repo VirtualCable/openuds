@@ -93,7 +93,7 @@ class Connection(Handler):
         self._request.user = self._user
 
         return Connection.result(
-            result=services.get_services_info_dict(typing.cast(ExtendedHttpRequestWithUser, self._request))
+            result=services.get_services_info_dict(self._request)
         )
 
     def connection(self, idService: str, idTransport: str, skip: str = '') -> dict[str, typing.Any]:
@@ -180,9 +180,9 @@ class Connection(Handler):
 
     def getUdsLink(self, idService: str, idTransport: str) -> dict[str, typing.Any]:
         # Returns the UDS link for the user & transport
-        self._request.user = self._user  # type: ignore
-        setattr(self._request, '_cryptedpass', self._session['REST']['password'])  # type: ignore  # pylint: disable=protected-access
-        setattr(self._request, '_scrambler', self._request.META['HTTP_SCRAMBLER'])  # type: ignore  # pylint: disable=protected-access
+        self._request.user = self._user
+        setattr(self._request, '_cryptedpass', self.session['REST']['password'])
+        setattr(self._request, '_scrambler', self._request.META['HTTP_SCRAMBLER'])
         linkInfo = services.enable_service(self._request, idService=idService, idTransport=idTransport)
         if linkInfo['error']:
             return Connection.result(error=linkInfo['error'])

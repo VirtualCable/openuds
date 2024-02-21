@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2022 Virtual Cable S.L.U.
+# Copyright (c) 2012-2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -82,16 +82,16 @@ class HandlerNode:
         return ret
 
 
-class Dispatcher(View):
+class Dispatcher(View):  # type: ignore
     """
     This class is responsible of dispatching REST requests
     """
 
     # This attribute will contain all paths--> handler relations, filled at Initialized method
-    services: typing.ClassVar[HandlerNode] = HandlerNode('', None, {})  # type: ignore
+    services: typing.ClassVar[HandlerNode] = HandlerNode('', None, {}) 
 
-    @method_decorator(csrf_exempt)
-    def dispatch(self, request: 'http.request.HttpRequest', *args, **kwargs):
+    @method_decorator(csrf_exempt) 
+    def dispatch(self, request: 'http.request.HttpRequest', *args: typing.Any, **kwargs: typing.Any) -> 'http.HttpResponse':
         """
         Processes the REST request and routes it wherever it needs to be routed
         """
@@ -138,6 +138,9 @@ class Dispatcher(View):
 
         # Obtain method to be invoked
         http_method: str = request.method.lower() if request.method else ''
+        # ensure method is recognized
+        if http_method not in ('get', 'post', 'put', 'delete'):
+            return http.HttpResponseNotAllowed(['GET', 'POST', 'PUT', 'DELETE'], content_type="text/plain")
 
         # Path here has "remaining" path, that is, method part has been removed
         args = tuple(path)
@@ -255,7 +258,7 @@ class Dispatcher(View):
 
     # Initializes the dispatchers
     @staticmethod
-    def initialize():
+    def initialize() -> None:
         """
         This imports all packages that are descendant of this package, and, after that,
         it register all subclases of Handler. (In fact, it looks for packages inside "methods" package, child of this)

@@ -78,7 +78,7 @@ class Reports(model.BaseModelHandler):
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
     table_row_style = types.ui.RowStyleInfo(prefix='row-state-', field='state')
 
-    def _findReport(self, uuid: str, values=None) -> 'Report':
+    def _findReport(self, uuid: str, values: typing.Optional[typing.Dict[str, typing.Any]] = None) -> 'Report':
         found = None
         logger.debug('Looking for report %s', uuid)
         for i in reports.available_reports:
@@ -111,7 +111,7 @@ class Reports(model.BaseModelHandler):
             ((model.GUI, '<report>'), lambda report: self.get_gui(report)),
         )
 
-    def put(self):
+    def put(self) -> typing.Any:
         """
         Processes a PUT request
         """
@@ -150,8 +150,8 @@ class Reports(model.BaseModelHandler):
 
     # Returns the list of
     def get_items(
-        self, *args, **kwargs
-    ) -> typing.Generator[dict[str, typing.Any], None, None]:
+        self, *args: typing.Any, **kwargs: typing.Any
+    ) -> typing.Generator[types.rest.ItemDictType, None, None]:
         for i in reports.available_reports:
             yield {
                 'id': i.get_uuid(),

@@ -79,16 +79,16 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             'cache_tooltip_l2': _(info.cache_tooltip_l2),
             'needs_osmanager': info.needs_osmanager,
             'allowed_protocols': info.allowed_protocols,
-            'services_type_provided': [info.services_type_provided],  # As a list for compatibility, to be removed TODO: Remove
+            'services_type_provided': [
+                info.services_type_provided
+            ],  # As a list for compatibility, to be removed TODO: Remove
             'must_assign_manually': info.must_assign_manually,
             'can_reset': info.can_reset,
             'can_list_assignables': info.can_assign(),
         }
 
     @staticmethod
-    def service_to_dict(
-        item: models.Service, perm: int, full: bool = False
-    ) -> dict[str, typing.Any]:
+    def service_to_dict(item: models.Service, perm: int, full: bool = False) -> dict[str, typing.Any]:
         """
         Convert a service db item to a dict for a rest response
         :param item: Service item (db)
@@ -103,9 +103,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             'type': item.data_type,
             'type_name': _(itemType.name()),
             'deployed_services_count': item.deployedServices.count(),
-            'user_services_count': models.UserService.objects.filter(
-                deployed_service__service=item
-            )
+            'user_services_count': models.UserService.objects.filter(deployed_service__service=item)
             .exclude(state__in=State.INFO_STATES)
             .count(),
             'max_services_count_type': item.max_services_count_type,
@@ -117,7 +115,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
         return ret_value
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]):
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = ensure.is_instance(parent, models.Provider)
         # Check what kind of access do we have to parent provider
         perm = permissions.effective_permissions(self._user, parent)
@@ -134,30 +132,27 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
     def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
         return types.ui.RowStyleInfo(prefix='row-maintenance-', field='maintenance_mode')
 
-    def _deleteIncompleteService(
-        self, service: models.Service
-    ):  # pylint: disable=no-self-use
+    def _delete_incomplete_service(self, service: models.Service) -> None:
         """
         Deletes a service if it is needed to (that is, if it is not None) and silently catch any exception of this operation
         :param service:  Service to delete (may be None, in which case it does nothing)
         """
-        if service:
-            try:
-                service.delete()
-            except Exception:  # nosec: This is a delete, we don't care about exceptions
-                pass
+        try:
+            service.delete()
+        except Exception:  # nosec: This is a delete, we don't care about exceptions
+            pass
 
     def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
         parent = ensure.is_instance(parent, models.Provider)
         # Extract item db fields
         # We need this fields for all
         logger.debug('Saving service for %s / %s', parent, item)
-        fields = self.fields_from_params(
-            ['name', 'comments', 'data_type', 'tags', 'max_services_count_type']
-        )
+        fields = self.fields_from_params(['name', 'comments', 'data_type', 'tags', 'max_services_count_type'])
         # Fix max_services_count_type to ServicesCountingType enum or ServicesCountingType.STANDARD if not found
         try:
-            fields['max_services_count_type'] = types.services.ServicesCountingType.from_int(int(fields['max_services_count_type']))
+            fields['max_services_count_type'] = types.services.ServicesCountingType.from_int(
+                int(fields['max_services_count_type'])
+            )
         except Exception:
             fields['max_services_count_type'] = types.services.ServicesCountingType.STANDARD
         tags = fields['tags']
@@ -174,9 +169,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             if service is None:
                 raise Exception('Cannot create service!')
 
-            service.tags.set(
-                [models.Tag.objects.get_or_create(tag=val)[0] for val in tags]
-            )
+            service.tags.set([models.Tag.objects.get_or_create(tag=val)[0] for val in tags])
 
             serviceInstance = service.get_instance(self._params)
 
@@ -194,20 +187,18 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             if service and service.token and not item:
                 service.delete()
                 raise exceptions.rest.RequestError(
-                    _(
-                        'Service token seems to be in use by other service. Please, select a new one.'
-                    )
+                    _('Service token seems to be in use by other service. Please, select a new one.')
                 ) from e
             raise exceptions.rest.RequestError(_('Element already exists (duplicate key error)')) from e
         except exceptions.ui.ValidationError as e:
             if (
                 not item and service
             ):  # Only remove partially saved element if creating new (if editing, ignore this)
-                self._deleteIncompleteService(service)
+                self._delete_incomplete_service(service)
             raise exceptions.rest.RequestError(_('Input error: {0}'.format(e))) from e
         except Exception as e:
             if not item and service:
-                self._deleteIncompleteService(service)
+                self._delete_incomplete_service(service)
             logger.exception('Saving Service')
             raise exceptions.rest.RequestError('incorrect invocation to PUT: {0}'.format(e)) from e
 
@@ -247,19 +238,20 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                 'max_services_count_type': {
                     'title': _('Max services count type'),
                     'type': 'dict',
-                    'dict': {'0': _('Standard'), '1': _('Conservative')}
+                    'dict': {'0': _('Standard'), '1': _('Conservative')},
                 },
             },
             {'tags': {'title': _('tags'), 'visible': False}},
         ]
 
     def get_types(
-        self, parent: 'Model', forType: typing.Optional[str]
-    ) -> collections.abc.Iterable[dict[str, typing.Any]]:
+        self, parent: 'Model', for_type: typing.Optional[str]
+    ) -> collections.abc.Iterable[types.rest.TypeInfoDict]:
+
         parent = ensure.is_instance(parent, models.Provider)
-        logger.debug('get_types parameters: %s, %s', parent, forType)
-        offers: list[dict[str, typing.Any]] = []
-        if forType is None:
+        logger.debug('get_types parameters: %s, %s', parent, for_type)
+        offers: list[types.rest.TypeInfoDict] = []
+        if for_type is None:
             offers = [
                 {
                     'name': _(t.name()),
@@ -271,7 +263,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             ]
         else:
             for t in parent.get_type().get_provided_services():
-                if forType == t.get_type():
+                if for_type == t.get_type():
                     offers = [
                         {
                             'name': _(t.name()),
@@ -281,7 +273,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                         }
                     ]
                     break
-            if offers:
+            if not offers:
                 raise exceptions.rest.NotFound('type not found')
 
         return offers  # Default is that details do not have types
@@ -298,9 +290,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                 service = service_type(
                     env, parent_instance
                 )  # Instantiate it so it has the opportunity to alter gui description based on parent
-                local_gui = self.add_default_fields(
-                    service.gui_description(), ['name', 'comments', 'tags']
-                )
+                local_gui = self.add_default_fields(service.gui_description(), ['name', 'comments', 'tags'])
                 self.add_field(
                     local_gui,
                     {
@@ -310,9 +300,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                             gui.choice_item('1', _('Conservative')),
                         ],
                         'label': _('Service counting method'),
-                        'tooltip': _(
-                            'Kind of service counting for calculating if MAX is reached'
-                        ),
+                        'tooltip': _('Kind of service counting for calculating if MAX is reached'),
                         'type': types.ui.FieldType.CHOICE,
                         'readonly': False,
                         'order': 101,
@@ -348,9 +336,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                     {
                         'id': i.uuid,
                         'name': i.name,
-                        'thumb': i.image.thumb64
-                        if i.image is not None
-                        else DEFAULT_THUMB_BASE64,
+                        'thumb': i.image.thumb64 if i.image is not None else DEFAULT_THUMB_BASE64,
                         'user_services_count': i.userServices.exclude(
                             state__in=(State.REMOVED, State.ERROR)
                         ).count(),

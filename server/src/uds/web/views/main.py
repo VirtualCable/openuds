@@ -200,7 +200,7 @@ def mfa(
 
     # Obtain MFA data
     auth_instance = request.user.manager.get_instance()
-    mfa_instance = typing.cast('mfas.MFA', mfa_provider.get_instance())
+    mfa_instance = mfa_provider.get_instance()
 
     # Get validity duration
     validity = mfa_provider.validity * 60

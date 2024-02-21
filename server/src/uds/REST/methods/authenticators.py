@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014-2022 Virtual Cable S.L.U.
+# Copyright (c) 2014-2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -88,13 +88,13 @@ class Authenticators(ModelHandler):
     def type_info(self, type_: type['Module']) -> dict[str, typing.Any]:
         if issubclass(type_, auths.Authenticator):
             return {
-                'search_users_supported': type_.search_users != auths.Authenticator.search_users,  # type: ignore
-                'search_groups_supported': type_.search_groups != auths.Authenticator.search_groups,  # type: ignore
+                'search_users_supported': type_.search_users != auths.Authenticator.search_users,
+                'search_groups_supported': type_.search_groups != auths.Authenticator.search_groups,
                 'needs_password': type_.needs_password,
                 'label_username': _(type_.label_username),
                 'label_groupname': _(type_.label_groupname),
                 'label_password': _(type_.label_password),
-                'create_users_supported': type_.create_user != auths.Authenticator.create_user,  # type: ignore
+                'create_users_supported': type_.create_user != auths.Authenticator.create_user,
                 'is_external': type_.external_source,
                 'mfa_supported': type_.provides_mfa(),
             }
@@ -194,10 +194,10 @@ class Authenticators(ModelHandler):
         if networks is None:  # None is not provided, empty list is ok and means no networks
             return
         logger.debug('Networks: %s', networks)
-        item.networks.set(Network.objects.filter(uuid__in=networks))  # type: ignore  # set is not part of "queryset"
+        item.networks.set(Network.objects.filter(uuid__in=networks))
 
     # Custom "search" method
-    def search(self, item: 'Model') -> list[dict]:
+    def search(self, item: 'Model') -> list[types.rest.ItemDictType]:
         item = ensure.is_instance(item, Authenticator)
         self.ensure_has_access(item, types.permissions.PermissionType.READ)
         try:
@@ -213,8 +213,8 @@ class Authenticators(ModelHandler):
 
             canDoSearch = (
                 type_ == 'user'
-                and (auth.search_users != auths.Authenticator.search_users)  # type: ignore
-                or (auth.search_groups != auths.Authenticator.search_groups)  # type: ignore
+                and (auth.search_users != auths.Authenticator.search_users)
+                or (auth.search_groups != auths.Authenticator.search_groups)
             )
             if canDoSearch is False:
                 raise self.not_supported_response()
@@ -227,7 +227,7 @@ class Authenticators(ModelHandler):
             return [{'id': _('Too many results...'), 'name': _('Refine your query')}]
             # self.invalidResponseException('{}'.format(e))
 
-    def test(self, type_: str):
+    def test(self, type_: str) -> typing.Any:
         authType = auths.factory().lookup(type_)
         if not authType:
             raise self.invalid_request_response(f'Invalid type: {type_}')
@@ -261,13 +261,13 @@ class Authenticators(ModelHandler):
                 typing.cast(str, _('Label must contain only letters, numbers, or symbols: - : .'))
             )
 
-    def delete_item(self, item: 'Model'):
+    def delete_item(self, item: 'Model') -> None:
         # For every user, remove assigned services (mark them for removal)
         item = ensure.is_instance(item, Authenticator)
 
         for user in item.users.all():
             for userService in user.userServices.all():
-                userService.user = None  # type: ignore
+                userService.user = None
                 userService.remove_or_cancel()
 
         item.delete()

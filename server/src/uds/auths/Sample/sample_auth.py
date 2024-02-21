@@ -228,7 +228,7 @@ class SampleAuth(auths.Authenticator):
 
         return types.auth.SUCCESS_AUTH
 
-    def get_groups(self, username: str, groupsManager: 'auths.GroupsManager'):
+    def get_groups(self, username: str, groupsManager: 'auths.GroupsManager') -> None:
         """
         As with authenticator part related to groupsManager, this
         method will fill the groups to which the specified username belongs to.

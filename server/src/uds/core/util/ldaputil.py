@@ -38,10 +38,10 @@ import os.path
 
 import ldap.filter
 from ldap import (
-    SCOPE_BASE,  # type: ignore
-    SCOPE_SUBTREE,  # type: ignore
-    SCOPE_ONELEVEL,  # type: ignore
-    # SCOPE_SUBORDINATE,  # type: ignore
+    SCOPE_BASE,  # pyright: ignore
+    SCOPE_SUBTREE,  # pyright: ignore
+    SCOPE_ONELEVEL,  # pyright: ignore
+    # SCOPE_SUBORDINATE,  # pyright: ignore
 )
 
 from django.utils.translation import gettext as _
@@ -63,7 +63,7 @@ LDAPResultType = collections.abc.MutableMapping[str, typing.Any]
 
 class LDAPError(Exception):
     @staticmethod
-    def reraise(e: typing.Any):
+    def reraise(e: typing.Any) -> None:
         _str = _('Connection error: ')
         if hasattr(e, 'message') and isinstance(e.message, dict):
             _str += f'{e.message.get("info", "")}, {e.message.get("desc", "")}'
@@ -120,7 +120,7 @@ def connection(
     l: 'LDAPObject'
     try:
         if debug:
-            ldap.set_option(ldap.OPT_DEBUG_LEVEL, 8191)  # type: ignore
+            ldap.set_option(ldap.OPT_DEBUG_LEVEL, 8191)  # pyright: ignore
 
         schema = 'ldaps' if ssl else 'ldap'
         if port == -1:
@@ -128,11 +128,11 @@ def connection(
         uri = f'{schema}://{host}:{port}'
         logger.debug('Ldap uri: %s', uri)
 
-        l = ldap.initialize(uri=uri)  # type: ignore
-        l.set_option(ldap.OPT_REFERRALS, 0)  # type: ignore
-        l.set_option(ldap.OPT_TIMEOUT, int(timeout))  # type: ignore
+        l = ldap.initialize(uri=uri)  # pyright: ignore
+        l.set_option(ldap.OPT_REFERRALS, 0)  # pyright: ignore
+        l.set_option(ldap.OPT_TIMEOUT, int(timeout))  # pyright: ignore
         l.network_timeout = int(timeout)
-        l.protocol_version = ldap.VERSION3  # type: ignore
+        l.protocol_version = ldap.VERSION3  # pyright: ignore
 
         certificate = (certificate or '').strip()
 
@@ -144,26 +144,26 @@ def connection(
                 cert_filename = os.path.join(tempfile.gettempdir(), f'ldap-cert-{host}.pem')
                 with open(cert_filename, 'w') as f:
                     f.write(certificate)
-                l.set_option(ldap.OPT_X_TLS_CACERTFILE, cert_filename)  # type: ignore
+                l.set_option(ldap.OPT_X_TLS_CACERTFILE, cert_filename)  # pyright: ignore
                 # If enforced on settings, do no change it here
                 if not getattr(settings, 'LDAP_CIPHER_SUITE', None):
                     cipher_suite = 'PFS'
 
             if not verify_ssl:
-                l.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)  # type: ignore
+                l.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)  # pyright: ignore
             # Disable TLS1 and TLS1.1
             # 0x304 = TLS1.3, 0x303 = TLS1.2, 0x302 = TLS1.1, 0x301 = TLS1.0, but use ldap module constants
             # Ensure that libldap is compiled with TLS1.3 support
             minVersion = getattr(settings, 'SECURE_MIN_TLS_VERSION', '1.2')
             if hasattr(ldap, 'OPT_X_TLS_PROTOCOL_TLS1_3'):
                 tls_version = {
-                    '1.2': ldap.OPT_X_TLS_PROTOCOL_TLS1_2,  # type: ignore
-                    '1.3': ldap.OPT_X_TLS_PROTOCOL_TLS1_3,  # type: ignore
+                    '1.2': ldap.OPT_X_TLS_PROTOCOL_TLS1_2,  # pyright: ignore
+                    '1.3': ldap.OPT_X_TLS_PROTOCOL_TLS1_3,  # pyright: ignore
                 }.get(
-                    minVersion, ldap.OPT_X_TLS_PROTOCOL_TLS1_2  # type: ignore
+                    minVersion, ldap.OPT_X_TLS_PROTOCOL_TLS1_2  # pyright: ignore
                 )
 
-                l.set_option(ldap.OPT_X_TLS_PROTOCOL_MIN, tls_version)  # type: ignore
+                l.set_option(ldap.OPT_X_TLS_PROTOCOL_MIN, tls_version)  # pyright: ignore
             # Cipher suites are from GNU TLS, not OpenSSL
             # https://gnutls.org/manual/html_node/Priority-Strings.html for more info
             # i.e.:
@@ -175,8 +175,8 @@ def connection(
             #  Note: Your distro could have compiled libldap with OpenSSL, so this will not work
             #  You can simply use OpenSSL cipher suites, but you will need to test them
             try:
-                l.set_option(ldap.OPT_X_TLS_CIPHER_SUITE, cipher_suite)  # type: ignore
-                l.set_option(ldap.OPT_X_TLS_NEWCTX, 0)  # type: ignore
+                l.set_option(ldap.OPT_X_TLS_CIPHER_SUITE, cipher_suite)  # pyright: ignore
+                l.set_option(ldap.OPT_X_TLS_NEWCTX, 0)  # pyright: ignore
             except Exception:
                 logger.info('Cipher suite %s not supported by libldap', cipher_suite)
 
@@ -184,9 +184,9 @@ def connection(
 
         logger.debug('Connection was successful')
         return l
-    except ldap.SERVER_DOWN as e:  # type: ignore
+    except ldap.SERVER_DOWN as e:  # pyright: ignore
         raise LDAPError(_('Can\'t contact LDAP server') + f': {e}') from e
-    except ldap.LDAPError as e:  # type: ignore
+    except ldap.LDAPError as e:  # pyright: ignore
         LDAPError.reraise(e)
     except Exception as e:
         logger.exception('Exception connection:')
@@ -222,7 +222,7 @@ def as_dict(
             attrlist=attributes,
             sizelimit=limit,
         )
-    except ldap.LDAPError as e:  # type: ignore
+    except ldap.LDAPError as e:  # pyright: ignore
         LDAPError.reraise(e)
     except Exception as e:
         logger.exception('Exception connection:')
@@ -237,9 +237,9 @@ def as_dict(
 
             # Convert back attritutes to test_type ONLY on python2
             dct = (
-                utils.CaseInsensitiveDict((k, ['']) for k in attributes)
+                utils.CaseInsensitiveDict[list[str]]((k, ['']) for k in attributes)
                 if attributes is not None
-                else utils.CaseInsensitiveDict()
+                else utils.CaseInsensitiveDict[list[str]]()
             )
 
             # Convert back result fields to str

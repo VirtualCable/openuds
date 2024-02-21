@@ -74,6 +74,7 @@ authLogger = logging.getLogger('authLog')
 
 RT = typing.TypeVar('RT')
 
+
 # Local type only
 class AuthResult(typing.NamedTuple):
     user: typing.Optional[models.User] = None
@@ -99,7 +100,7 @@ def uds_cookie(
             )
         request.COOKIES['uds'] = cookie
     else:
-        cookie = request.COOKIES['uds'][:consts.auth.UDS_COOKIE_LENGTH]
+        cookie = request.COOKIES['uds'][: consts.auth.UDS_COOKIE_LENGTH]
 
     if response and force:
         response.set_cookie('uds', cookie)
@@ -122,7 +123,7 @@ def root_user() -> models.User:
         staff_member=True,
         is_admin=True,
     )
-    user.manager = models.Authenticator()  # type: ignore
+    user.manager = models.Authenticator()
     # Fake overwrite some methods, a bit cheating? maybe? :)
     user.get_groups = lambda: []  # type: ignore
     user.update_last_access = lambda: None  # type: ignore
@@ -158,7 +159,7 @@ def web_login_required(
     ) -> collections.abc.Callable[..., HttpResponse]:
         @wraps(view_func)
         def _wrapped_view(
-            request: 'ExtendedHttpRequest', *args, **kwargs
+            request: 'ExtendedHttpRequest', *args: typing.Any, **kwargs: typing.Any
         ) -> HttpResponse:
             """
             Wrapped function for decorator
@@ -168,9 +169,7 @@ def web_login_required(
                 return HttpResponseRedirect(reverse('page.login'))
 
             if admin in (True, 'admin'):
-                if request.user.is_staff() is False or (
-                    admin == 'admin' and not request.user.is_admin
-                ):
+                if request.user.is_staff() is False or (admin == 'admin' and not request.user.is_admin):
                     return HttpResponseForbidden(_('Forbidden'))
 
             return view_func(request, *args, **kwargs)
@@ -194,7 +193,7 @@ def needs_trusted_source(
     """
 
     @wraps(view_func)
-    def _wrapped_view(request: 'ExtendedHttpRequest', *args, **kwargs) -> HttpResponse:
+    def _wrapped_view(request: 'ExtendedHttpRequest', *args: typing.Any, **kwargs: typing.Any) -> HttpResponse:
         """
         Wrapped function for decorator
         """
@@ -214,11 +213,9 @@ def needs_trusted_source(
 # decorator to deny non authenticated requests
 # The difference with web_login_required is that this one does not redirect to login page
 # it's designed to be used in ajax calls mainly
-def deny_non_authenticated(
-    view_func: collections.abc.Callable[..., RT]
-) -> collections.abc.Callable[..., RT]:
+def deny_non_authenticated(view_func: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
     @wraps(view_func)
-    def _wrapped_view(request: 'ExtendedHttpRequest', *args, **kwargs) -> RT:
+    def _wrapped_view(request: 'ExtendedHttpRequest', *args: typing.Any, **kwargs: typing.Any) -> RT:
         if not request.user or not request.authorized:
             return HttpResponseForbidden()  # type: ignore
         return view_func(request, *args, **kwargs)
@@ -247,9 +244,7 @@ def register_user(
         # Now we update database groups for this user
         usr.get_manager().recreate_groups(usr)
         # And add an login event
-        events.add_event(
-            authenticator, events.types.stats.EventType.LOGIN, username=username, srcip=request.ip
-        )
+        events.add_event(authenticator, events.types.stats.EventType.LOGIN, username=username, srcip=request.ip)
         events.add_event(
             authenticator,
             events.types.stats.EventType.PLATFORM,
@@ -284,9 +279,7 @@ def authenticate(
 
 
     """
-    logger.debug(
-        'Authenticating user %s with authenticator %s', username, authenticator
-    )
+    logger.debug('Authenticating user %s with authenticator %s', username, authenticator)
 
     # If global root auth is enabled && user/password is correct,
     if (
@@ -349,13 +342,13 @@ def authenticate_via_callback(
          the groups of this user so your getGroups will work correctly.
     """
     gm = auths.GroupsManager(authenticator)
-    authInstance = authenticator.get_instance()
+    auth_instance = authenticator.get_instance()
 
     # If there is no callback for this authenticator...
-    if authInstance.auth_callback is auths.Authenticator.auth_callback:
+    if auth_instance.auth_callback is auths.Authenticator.auth_callback:  # type: ignore   # mypy thins it's a comparison overlap
         raise exceptions.auth.InvalidAuthenticatorException()
 
-    result = authInstance.auth_callback(params, gm, request)
+    result = auth_instance.auth_callback(params, gm, request)
     if result.success == types.auth.AuthenticationState.FAIL or (
         result.success == types.auth.AuthenticationState.SUCCESS and not gm.has_valid_groups()
     ):
@@ -365,7 +358,7 @@ def authenticate_via_callback(
         return AuthResult(url=result.url)
 
     if result.username:
-        return register_user(authenticator, authInstance, result.username or '', request)
+        return register_user(authenticator, auth_instance, result.username or '', request)
     else:
         logger.warning('Authenticator %s returned empty username', authenticator.name)
 
@@ -387,8 +380,10 @@ def authenticate_info_url(authenticator: typing.Union[str, bytes, models.Authent
         name = authenticator
     elif isinstance(authenticator, bytes):
         name = authenticator.decode('utf8')
+    elif isinstance(authenticator, models.Authenticator):
+        name = authenticator.small_name
     else:
-        name = typing.cast('models.Authenticator', authenticator).small_name
+        raise ValueError('Invalid authenticator type')
 
     return reverse('page.auth.info', kwargs={'authenticator_name': name})
 
@@ -407,9 +402,7 @@ def web_login(
         REST,
     )
 
-    if (
-        user.id != consts.auth.ROOT_ID
-    ):  # If not ROOT user (this user is not inside any authenticator)
+    if user.id != consts.auth.ROOT_ID:  # If not ROOT user (this user is not inside any authenticator)
         manager_id = user.manager.id
     else:
         manager_id = -1
@@ -418,9 +411,7 @@ def web_login(
     cookie = uds_cookie(request, response)
 
     user.update_last_access()
-    request.authorized = (
-        False  # For now, we don't know if the user is authorized until MFA is checked
-    )
+    request.authorized = False  # For now, we don't know if the user is authorized until MFA is checked
     # Store request ip in session
     request.session[consts.auth.SESSION_IP_KEY] = request.ip
     # If Enabled zero trust, do not cache credentials
@@ -460,14 +451,10 @@ def web_password(request: HttpRequest) -> str:
             getattr(request, '_scrambler'),
         )
     passkey = base64.b64decode(request.session.get(consts.auth.SESSION_PASS_KEY, ''))
-    return CryptoManager().symmetric_decrypt(
-        passkey, uds_cookie(request)
-    )  # recover as original unicode string
+    return CryptoManager().symmetric_decrypt(passkey, uds_cookie(request))  # recover as original unicode string
 
 
-def web_logout(
-    request: 'ExtendedHttpRequest', exit_url: typing.Optional[str] = None
-) -> HttpResponse:
+def web_logout(request: 'ExtendedHttpRequest', exit_url: typing.Optional[str] = None) -> HttpResponse:
     """
     Helper function to clear user related data from session. If this method is not used, the session we be cleaned anyway
     by django in regular basis.

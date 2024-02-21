@@ -172,14 +172,13 @@ class CalendarRule(UUIDModel):
     def duration_as_minutes(self) -> int:
         return dunit_to_mins.get(self.duration_unit, 1) * self.duration
 
-    def save(self, *args, **kwargs):
+    def save(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         logger.debug('Saving...')
         self.calendar.modified = sql_datetime()
 
-        res = super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
         # Ensure saves associated calendar, so next execution of actions is updated with rule values
         self.calendar.save()
-        return res
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'Rule {self.name}: {self.start}-{self.end}, {self.frequency}, Interval: {self.interval}, duration: {self.duration}'

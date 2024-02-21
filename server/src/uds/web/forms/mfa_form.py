@@ -40,6 +40,3 @@ logger = logging.getLogger(__name__)
 class MFAForm(forms.Form):
     code = forms.CharField(max_length=64, widget=forms.TextInput())
     remember = forms.BooleanField(required=False)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)

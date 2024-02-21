@@ -49,6 +49,7 @@ from uds.core.ui import gui
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
+    from uds.core import environment
     from uds.core.types.requests import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)
@@ -127,7 +128,7 @@ class InternalDBAuth(auths.Authenticator):
                 usr = auth.users.get(name=username, state=State.ACTIVE)
                 parent = usr.uuid
                 grps = [g for g in usr.groups.all()]
-                usr.id = usr.uuid = None  # type: ignore  # Empty id
+                typing.cast(typing.Any, usr).id = typing.cast(typing.Any, usr).uuid = None  # cast to avoid pylance error
                 if usr.real_name.strip() == '':
                     usr.real_name = usr.name
                 usr.name = ip_username
@@ -174,7 +175,7 @@ class InternalDBAuth(auths.Authenticator):
         log_login(request, self.db_obj(), username, 'Invalid password')
         return types.auth.FAILED_AUTH
 
-    def get_groups(self, username: str, groupsManager: 'auths.GroupsManager'):
+    def get_groups(self, username: str, groupsManager: 'auths.GroupsManager') -> None:
         dbAuth = self.db_obj()
         try:
             user: 'models.User' = dbAuth.users.get(name=username.lower(), state=State.ACTIVE)
@@ -197,15 +198,15 @@ class InternalDBAuth(auths.Authenticator):
         except Exception:
             return super().get_real_name(username)
 
-    def create_user(self, usrData):
+    def create_user(self, usrData: dict[str, typing.Any]) -> None:
         pass
 
     @staticmethod
-    def test(env, data):  # pylint: disable=unused-argument
+    def test(env: 'environment.Environment', data: dict[str, str]) -> list[typing.Any]:  # pylint: disable=unused-argument
         return [True, _("Internal structures seems ok")]
 
-    def check(self):
+    def check(self) -> str:
         return _("All seems fine in the authenticator.")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Internal DB Authenticator Authenticator"

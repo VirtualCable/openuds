@@ -190,8 +190,10 @@ class Transports(ModelHandler):
             return
         if networks is None:  # None is not provided, empty list is ok and means no networks
             return
+        from uds.models import ServicePool  # Add the import statement for the ServicePool class
+
         logger.debug('Networks: %s', networks)
-        item.networks.set(Network.objects.filter(uuid__in=networks))  # type: ignore  # set is not part of "queryset"
+        item.networks.set(Network.objects.filter(uuid__in=networks))
 
         try:
             pools = self._params['pools']
@@ -203,7 +205,7 @@ class Transports(ModelHandler):
             return
 
         logger.debug('Pools: %s', pools)
-        item.deployedServices.set(ServicePool.objects.filter(uuid__in=pools))  # type: ignore  # set is not part of "queryset"
+        item.deployedServices.set(ServicePool.objects.filter(uuid__in=pools))
 
         # try:
         #    oss = ','.join(self._params['allowed_oss'])

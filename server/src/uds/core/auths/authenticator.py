@@ -504,7 +504,7 @@ class Authenticator(Module):
         """
         return username
 
-    def get_groups(self, username: str, groupsManager: 'GroupsManager'):
+    def get_groups(self, username: str, groupsManager: 'GroupsManager') -> None:
         """
         Looks for the real groups to which the specified user belongs.
 
@@ -590,7 +590,7 @@ class Authenticator(Module):
         """
         return username
 
-    def create_user(self, usrData: dict[str, str]) -> None:
+    def create_user(self, usrData: dict[str, typing.Any]) -> None:
         """
         This method is used when creating an user to allow the authenticator:
 
@@ -621,6 +621,7 @@ class Authenticator(Module):
                says that user can't be created manually
 
         """
+        pass
 
     def modify_user(self, usrData: dict[str, str]) -> None:
         """

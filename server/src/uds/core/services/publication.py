@@ -308,7 +308,7 @@ class Publication(Environmentable, Serializable):
         """
         raise NotImplementedError(f'cancel method for class {self.__class__.__name__} not provided!')
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         String method, mainly used for debugging purposes
         """

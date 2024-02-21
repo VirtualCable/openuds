@@ -55,7 +55,7 @@ DENY = 'DENY'
 
 class AccessCalendars(DetailHandler):
     @staticmethod
-    def as_dict(item: 'CalendarAccess'):
+    def as_dict(item: 'CalendarAccess') -> types.rest.ItemDictType:
         return {
             'id': item.uuid,
             'calendar_id': item.calendar.uuid,
@@ -64,7 +64,7 @@ class AccessCalendars(DetailHandler):
             'priority': item.priority,
         }
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]):
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = ensure.is_instance(parent, ServicePool)
         try:
             if not item:
@@ -76,7 +76,7 @@ class AccessCalendars(DetailHandler):
             logger.exception('err: %s', item)
             raise self.invalid_item_response() from e
 
-    def get_title(self, parent: 'Model'):
+    def get_title(self, parent: 'Model') -> str:
         return _('Access restrictions by calendar')
 
     def get_fields(self, parent: 'Model') -> list[typing.Any]:
@@ -106,8 +106,8 @@ class AccessCalendars(DetailHandler):
 
         if uuid is not None:
             calAccess: 'CalendarAccess' = parent.calendarAccess.get(uuid=uuid)
-            calAccess.calendar = calendar  # type: ignore
-            calAccess.service_pool = parent  # type: ignore
+            calAccess.calendar = calendar
+            calAccess.service_pool = parent
             calAccess.access = access
             calAccess.priority = priority
             calAccess.save()
@@ -160,7 +160,7 @@ class ActionsCalendars(DetailHandler):
             'last_execution': item.last_execution,
         }
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]):
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = ensure.is_instance(parent, ServicePool)
         try:
             if item is None:
@@ -172,7 +172,7 @@ class ActionsCalendars(DetailHandler):
         except Exception as e:
             raise self.invalid_item_response() from e
 
-    def get_title(self, parent: 'Model'):
+    def get_title(self, parent: 'Model') -> str:
         return _('Scheduled actions')
 
     def get_fields(self, parent: 'Model') -> list[typing.Any]:
@@ -208,8 +208,8 @@ class ActionsCalendars(DetailHandler):
 
         if uuid is not None:
             calAction = CalendarAction.objects.get(uuid=uuid)
-            calAction.calendar = calendar  # type: ignore
-            calAction.service_pool = parent  # type: ignore
+            calAction.calendar = calendar
+            calAction.service_pool = parent
             calAction.action = action
             calAction.at_start = at_start
             calAction.events_offset = events_offset
@@ -241,7 +241,7 @@ class ActionsCalendars(DetailHandler):
 
         log.log(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
 
-    def execute(self, parent: 'Model', item: str):
+    def execute(self, parent: 'Model', item: str) -> typing.Any:
         parent = ensure.is_instance(parent, ServicePool)
         logger.debug('Launching action')
         uuid = process_uuid(item)

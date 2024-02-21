@@ -126,7 +126,7 @@ class ServicesPools(ModelHandler):
         ('createFromAssignable', True),
     ]
 
-    def get_items(self, *args, **kwargs) -> typing.Generator[typing.Any, None, None]:
+    def get_items(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Generator[types.rest.ItemDictType, None, None]:
         # Optimized query, due that there is a lot of info needed for theee
         d = sql_datetime() - datetime.timedelta(seconds=GlobalConfig.RESTRAINT_TIME.as_int())
         return super().get_items(
@@ -199,15 +199,15 @@ class ServicesPools(ModelHandler):
             'name': item.name,
             'short_name': item.short_name,
             'tags': [tag.tag for tag in item.tags.all()],
-            'parent': item.service.name,  # type: ignore
-            'parent_type': item.service.data_type,  # type: ignore
+            'parent': item.service.name,
+            'parent_type': item.service.data_type,
             'comments': item.comments,
             'state': state,
             'thumb': item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64,
             'account': item.account.name if item.account is not None else '',
             'account_id': item.account.uuid if item.account is not None else None,
-            'service_id': item.service.uuid,  # type: ignore
-            'provider_id': item.service.provider.uuid,  # type: ignore
+            'service_id': item.service.uuid,
+            'provider_id': item.service.provider.uuid,
             'image_id': item.image.uuid if item.image is not None else None,
             'initial_srvs': item.initial_srvs,
             'cache_l1_srvs': item.cache_l1_srvs,
@@ -228,10 +228,10 @@ class ServicesPools(ModelHandler):
         # Extended info
         if not summary:
             if hasattr(item, 'valid_count'):
-                valid_count = item.valid_count  # type: ignore
-                preparing_count = item.preparing_count  # type: ignore
-                restrained = item.error_count >= GlobalConfig.RESTRAINT_COUNT.as_int()  # type: ignore
-                usage_count = item.usage_count  # type: ignore
+                valid_count =  getattr(item, 'valid_count')
+                preparing_count = getattr(item, 'preparing_count')
+                restrained = getattr(item, 'error_count') >= GlobalConfig.RESTRAINT_COUNT.as_int()
+                usage_count = getattr(item, 'usage_count')
             else:
                 valid_count = item.userServices.exclude(state__in=State.INFO_STATES).count()
                 preparing_count = item.userServices.filter(state=State.PREPARING).count()
@@ -254,7 +254,7 @@ class ServicesPools(ModelHandler):
             val['tags'] = [tag.tag for tag in item.tags.all()]
             val['restrained'] = restrained
             val['permission'] = permissions.effective_permissions(self._user, item)
-            val['info'] = Services.service_info(item.service)  # type: ignore
+            val['info'] = Services.service_info(item.service)
             val['pool_group_id'] = poolGroupId
             val['pool_group_name'] = poolGroupName
             val['pool_group_thumb'] = poolGroupThumb
@@ -291,7 +291,7 @@ class ServicesPools(ModelHandler):
                 'choices': [gui.choice_item('', '')]
                 + gui.sorted_choices(
                     [
-                        gui.choice_item(v.uuid, v.provider.name + '\\' + v.name)  # type: ignore
+                        gui.choice_item(v.uuid, v.provider.name + '\\' + v.name)
                         for v in Service.objects.all()
                     ]
                 ),
@@ -305,7 +305,7 @@ class ServicesPools(ModelHandler):
                 'name': 'osmanager_id',
                 'choices': [gui.choice_item(-1, '')]
                 + gui.sorted_choices(
-                    [gui.choice_item(v.uuid, v.name) for v in OSManager.objects.all()]  # type: ignore
+                    [gui.choice_item(v.uuid, v.name) for v in OSManager.objects.all()]
                 ),
                 'label': gettext('OS Manager'),
                 'tooltip': gettext('OS Manager used as base of this service pool'),
@@ -357,7 +357,7 @@ class ServicesPools(ModelHandler):
                 'name': 'image_id',
                 'choices': [gui.choice_image(-1, '--------', DEFAULT_THUMB_BASE64)]
                 + gui.sorted_choices(
-                    [gui.choice_image(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]  # type: ignore
+                    [gui.choice_image(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]
                 ),
                 'label': gettext('Associated Image'),
                 'tooltip': gettext('Image assocciated with this service'),
@@ -370,7 +370,7 @@ class ServicesPools(ModelHandler):
                 'choices': [gui.choice_image(-1, _('Default'), DEFAULT_THUMB_BASE64)]
                 + gui.sorted_choices(
                     [
-                        gui.choice_image(v.uuid, v.name, v.thumb64)  # type: ignore
+                        gui.choice_image(v.uuid, v.name, v.thumb64)
                         for v in ServicePoolGroup.objects.all()
                     ]
                 ),
@@ -446,7 +446,7 @@ class ServicesPools(ModelHandler):
                 'name': 'account_id',
                 'choices': [gui.choice_item(-1, '')]
                 + gui.sorted_choices(
-                    [gui.choice_item(v.uuid, v.name) for v in Account.objects.all()]  # type: ignore
+                    [gui.choice_item(v.uuid, v.name) for v in Account.objects.all()]
                 ),
                 'label': gettext('Accounting'),
                 'tooltip': gettext('Account associated to this service pool'),
@@ -462,7 +462,7 @@ class ServicesPools(ModelHandler):
     # pylint: disable=too-many-statements
     def pre_save(self, fields: dict[str, typing.Any]) -> None:
         # logger.debug(self._params)
-        def macro_fld_len(x) -> int:
+        def macro_fld_len(x: str) -> int:
             w = x
             for i in ('{use}', '{total}', '{usec}', '{left}'):
                 w = w.replace(i, 'xx')
@@ -590,7 +590,7 @@ class ServicesPools(ModelHandler):
             logger.exception('deleting service pool')
 
     # Logs
-    def get_logs(self, item: 'Model') -> list[dict]:
+    def get_logs(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)
         try:
             return log.get_logs(item)
@@ -598,7 +598,7 @@ class ServicesPools(ModelHandler):
             return []
 
     # Set fallback status
-    def setFallbackAccess(self, item: 'Model'):
+    def setFallbackAccess(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)
         self.ensure_has_access(item, types.permissions.PermissionType.MANAGEMENT)
 
@@ -609,7 +609,7 @@ class ServicesPools(ModelHandler):
             item.save()
         return item.fallbackAccess
 
-    def getFallbackAccess(self, item: 'Model'):
+    def getFallbackAccess(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)
         return item.fallbackAccess
 
@@ -617,7 +617,7 @@ class ServicesPools(ModelHandler):
     def actionsList(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)
         validActions: tuple[types.calendar.CalendarAction, ...] = ()
-        itemInfo = item.service.get_type()  # type: ignore
+        itemInfo = item.service.get_type()
         if itemInfo.uses_cache is True:
             validActions += (
                 consts.calendar.CALENDAR_ACTION_INITIAL,
@@ -651,7 +651,7 @@ class ServicesPools(ModelHandler):
     # Deprecated, use list_assignables
     def listAssignables(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)
-        service = item.service.get_instance()  # type: ignore
+        service = item.service.get_instance()
         return list(service.enumerate_assignables())
     
     def list_assignables(self, item: 'Model') -> typing.Any:

@@ -68,8 +68,6 @@ operations_logger = logging.getLogger('operationsLog')
 
 
 class UserServiceManager(metaclass=singleton.Singleton):
-    def __init__(self):
-        pass
 
     @staticmethod
     def manager() -> 'UserServiceManager':
@@ -400,9 +398,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                     cache_level=services.UserService.L1_CACHE,
                     state=State.USABLE,
                     os_state=State.USABLE,
-                )[
-                    :1  # type: ignore  # Slicing is not supported by pylance right now
-                ],
+                )[:1],
             )
             if caches:
                 cache = caches[0]
@@ -410,7 +406,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 if (
                     service_pool.cached_users_services()
                     .select_for_update()
-                    .filter(user=None, uuid=typing.cast(UserService, cache).uuid)
+                    .filter(user=None, uuid=cache.uuid)
                     .update(user=user, cache_level=0)
                     != 1
                 ):
@@ -425,16 +421,14 @@ class UserServiceManager(metaclass=singleton.Singleton):
                     list[UserService],
                     service_pool.cached_users_services()
                     .select_for_update()
-                    .filter(cache_level=services.UserService.L1_CACHE, state=State.USABLE)[
-                        :1  # type: ignore  # Slicing is not supported by pylance right now
-                    ],
+                    .filter(cache_level=services.UserService.L1_CACHE, state=State.USABLE)[:1],
                 )
-                if cache:
+                if caches:  # If there is a cache, we will use it
                     cache = caches[0]
                     if (
                         service_pool.cached_users_services()
                         .select_for_update()
-                        .filter(user=None, uuid=typing.cast(UserService, cache).uuid)
+                        .filter(user=None, uuid=cache.uuid)
                         .update(user=user, cache_level=0)
                         != 1
                     ):
@@ -469,16 +463,14 @@ class UserServiceManager(metaclass=singleton.Singleton):
             caches = (
                 service_pool.cached_users_services()
                 .select_for_update()
-                .filter(cache_level=services.UserService.L1_CACHE, state=State.PREPARING)[
-                    :1  # type: ignore  # Slicing is not supported by pylance right now
-                ]
+                .filter(cache_level=services.UserService.L1_CACHE, state=State.PREPARING)[:1]
             )
-            if caches:
-                cache = caches[0]  # type: ignore  # Slicing is not supported by pylance right now
+            if caches:  # If there is a cache, we will use it
+                cache = caches[0]
                 if (
                     service_pool.cached_users_services()
                     .select_for_update()
-                    .filter(user=None, uuid=typing.cast(UserService, cache).uuid)
+                    .filter(user=None, uuid=cache.uuid)
                     .update(user=user, cache_level=0)
                     != 1
                 ):
@@ -547,8 +539,10 @@ class UserServiceManager(metaclass=singleton.Singleton):
         )
         service_instance = service_pool.service.get_instance()
         if (
-            (removing >= service_instance.provider().get_concurrent_removal_limit()
-            and service_instance.provider().get_ignore_limits() is False)
+            (
+                removing >= service_instance.provider().get_concurrent_removal_limit()
+                and service_instance.provider().get_ignore_limits() is False
+            )
             or service_pool.service.provider.is_in_maintenance()
             or service_pool.is_restrained()
             or not service_instance.is_avaliable()
@@ -994,9 +988,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 state__in=State.VALID_STATES,
                 user=user,
                 cache_level=0,
-            ).order_by('deployed_service__name')[
-                0  # type: ignore  # Slicing is not supported by pylance right now
-            ]
+            ).order_by('deployed_service__name')[0]
             logger.debug('Already assigned %s', alreadyAssigned)
             # If already assigned, and HA is enabled, check if it is accessible
             if meta.ha_policy == types.pools.HighAvailabilityPolicy.ENABLED:

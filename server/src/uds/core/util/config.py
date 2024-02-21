@@ -134,7 +134,7 @@ class Config:
             return self._section_name
 
     class Value:
-        _section: 'Config.Section'  # type: ignore  # mypy complains??
+        _section: 'Config.Section' 
         _type: int
         _key: str
         _default: str
@@ -278,7 +278,7 @@ class Config:
             return f'{self._section.name()}.{self._key}'
 
     @staticmethod
-    def section(sectionType: SectionType):
+    def section(sectionType: SectionType) -> 'Config.Section':
         return Config.Section(sectionType)
 
     @staticmethod
@@ -312,7 +312,7 @@ class Config:
         # If cfg value does not exists, simply ignore request
         try:
             cfg: DBConfig = DBConfig.objects.filter(section=section, key=key)[
-                0  # type: ignore  # Slicing is not supported by pylance right now
+                0
             ]
             if check_type and cfg.field_type in (
                 Config.FieldType.READ,
@@ -775,7 +775,7 @@ class GlobalConfig:
     _initDone = False
 
     @staticmethod
-    def isInitialized():
+    def isInitialized() -> bool:
         return GlobalConfig._initDone
 
     @staticmethod
@@ -808,13 +808,13 @@ class GlobalConfig:
 
 
 # Signals for avoid saving config values on migrations
-def _pre_migrate(sender, **kwargs):
+def _pre_migrate(sender: typing.Any, **kwargs: typing.Any) -> None:
     # logger.info('Migrating database, AVOID saving config values')
     global _is_migrating
     _is_migrating = True
 
 
-def _post_migrate(sender, **kwargs):
+def _post_migrate(sender: typing.Any, **kwargs: typing.Any) -> None:
     # logger.info('Migration DONE, ALLOWING saving config values')
     global _is_migrating
     _is_migrating = False

@@ -34,10 +34,9 @@ import collections.abc
 import logging
 import typing
 
-from django.utils.translation import gettext
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 
-from uds.core import exceptions, osmanagers
+from uds.core import exceptions, osmanagers, types
 from uds.core.environment import Environment
 from uds.core.util import ensure, permissions
 from uds.models import OSManager
@@ -64,7 +63,7 @@ class OsManagers(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def osmToDict(self, osm: OSManager) -> dict[str, typing.Any]:
+    def os_manager_as_dict(self, osm: OSManager) -> dict[str, typing.Any]:
         type_ = osm.get_type()
         return {
             'id': osm.uuid,
@@ -73,14 +72,16 @@ class OsManagers(ModelHandler):
             'deployed_count': osm.deployedServices.count(),
             'type': type_.get_type(),
             'type_name': type_.name(),
-            'servicesTypes': [type_.servicesType],  # A list for backward compatibility. TODO: To be removed when admin interface is changed
+            'servicesTypes': [
+                type_.servicesType
+            ],  # A list for backward compatibility. TODO: To be removed when admin interface is changed
             'comments': osm.comments,
             'permission': permissions.effective_permissions(self._user, osm),
         }
 
-    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> types.rest.ItemDictType:
         item = ensure.is_instance(item, OSManager)
-        return self.osmToDict(item)
+        return self.os_manager_as_dict(item)
 
     def validate_delete(self, item: 'Model') -> None:
         item = ensure.is_instance(item, OSManager)
@@ -105,7 +106,7 @@ class OsManagers(ModelHandler):
                 osmanager = osmanagerType(env, None)
 
                 return self.add_default_fields(
-                    osmanager.gui_description(),  # type: ignore  # may raise an exception if lookup fails
+                    osmanager.gui_description(),
                     ['name', 'comments', 'tags'],
                 )
         except:

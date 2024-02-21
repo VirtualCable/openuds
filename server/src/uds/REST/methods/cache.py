@@ -28,9 +28,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from django.core.cache import caches
 
@@ -46,7 +47,7 @@ class Cache(Handler):
     authenticated = True
     needs_admin = True
 
-    def get(self):
+    def get(self) -> typing.Any:
         """
         Processes get method. Basically, clears & purges the cache, no matter what params
         """

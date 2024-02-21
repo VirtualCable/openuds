@@ -58,7 +58,7 @@ class _LocalGrp:
         """
         return name.casefold() == self.name.casefold()
     
-    def replace(self, **kwargs) -> '_LocalGrp':
+    def replace(self, **kwargs: typing.Any) -> '_LocalGrp':
         return dataclasses.replace(self, **kwargs)
 
 

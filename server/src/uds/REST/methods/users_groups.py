@@ -53,18 +53,15 @@ from .user_services import AssignedService
 
 if typing.TYPE_CHECKING:
     from django.db.models import Model
+    from uds.models import UserService
 
 
 logger = logging.getLogger(__name__)
 
 # Details of /auth
 
-# Not imported at runtime, just for type checking
-if typing.TYPE_CHECKING:
-    from uds.models import UserService
 
-
-def get_groups_from_metagroup(groups) -> collections.abc.Iterable[Group]:
+def get_groups_from_metagroup(groups: collections.abc.Iterable[Group]) -> collections.abc.Iterable[Group]:
     for g in groups:
         if g.is_meta:
             for x in g.groups.all():
@@ -73,7 +70,7 @@ def get_groups_from_metagroup(groups) -> collections.abc.Iterable[Group]:
             yield g
 
 
-def get_service_pools_for_groups(groups):
+def get_service_pools_for_groups(groups: collections.abc.Iterable[Group]) -> collections.abc.Iterable[ServicePool]:
     for servicePool in ServicePool.get_pools_for_groups(groups):
         yield servicePool
 
@@ -85,7 +82,7 @@ class Users(DetailHandler):
         parent = ensure.is_instance(parent, Authenticator)
 
         # processes item to change uuid key for id
-        def uuid_to_id(iterable: collections.abc.Iterable[typing.Any]):  # will get values from a queryset
+        def uuid_to_id(iterable: collections.abc.Iterable[typing.Any]) -> collections.abc.Generator[typing.Any, None, None]:
             for v in iterable:
                 v['id'] = v['uuid']
                 del v['uuid']
@@ -192,7 +189,7 @@ class Users(DetailHandler):
 
         return log.get_logs(user)
 
-    def save_item(self, parent: 'Model', item):
+    def save_item(self, parent: 'Model', item:  typing.Optional[str]) -> None:
         parent = ensure.is_instance(parent, Authenticator)
         logger.debug('Saving user %s / %s', parent, item)
         valid_fields = [
@@ -254,9 +251,7 @@ class Users(DetailHandler):
             logger.exception('Saving user')
             raise self.invalid_request_response() from e
 
-        return self.get_items(parent, user.uuid)
-
-    def delete_item(self, parent: 'Model', item: str):
+    def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, Authenticator)
         try:
             user = parent.users.get(uuid=process_uuid(item))
@@ -269,16 +264,16 @@ class Users(DetailHandler):
                     f'Removal of user {user.pretty_name} denied due to insufficients rights'
                 )
 
-            assignedUserService: 'UserService'
-            for assignedUserService in user.userServices.all():
+            assigned_userservice: 'UserService'
+            for assigned_userservice in user.userServices.all():
                 try:
-                    assignedUserService.user = None  # type: ignore  # Remove assigned user (avoid cascade deletion)
-                    assignedUserService.save(update_fields=['user'])
-                    assignedUserService.remove_or_cancel()
+                    assigned_userservice.user = None
+                    assigned_userservice.save(update_fields=['user'])
+                    assigned_userservice.remove_or_cancel()
                 except Exception:
                     logger.exception('Removing user service')
                     try:
-                        assignedUserService.save()
+                        assigned_userservice.save()
                     except Exception:
                         logger.exception('Saving user on removing error')
 
@@ -287,9 +282,7 @@ class Users(DetailHandler):
             logger.exception('Removing user')
             raise self.invalid_item_response() from e
 
-        return 'deleted'
-
-    def servicesPools(self, parent: 'Model', item: str):
+    def servicesPools(self, parent: 'Model', item: str) -> typing.Any:
         parent = ensure.is_instance(parent, Authenticator)
         uuid = process_uuid(item)
         user = parent.users.get(uuid=process_uuid(uuid))
@@ -310,7 +303,7 @@ class Users(DetailHandler):
 
         return res
 
-    def userServices(self, parent: 'Authenticator', item: str) -> list[dict]:
+    def userServices(self, parent: 'Authenticator', item: str) -> typing.Any:
         parent = ensure.is_instance(parent, Authenticator)
         uuid = process_uuid(item)
         user = parent.users.get(uuid=process_uuid(uuid))
@@ -334,7 +327,7 @@ class Users(DetailHandler):
 class Groups(DetailHandler):
     custom_methods = ['servicesPools', 'users']
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]):
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = ensure.is_instance(parent, Authenticator)
         try:
             multi = False
@@ -401,13 +394,13 @@ class Groups(DetailHandler):
             }
         ]
 
-    def get_types(self, parent: 'Model', forType: typing.Optional[str]):
+    def get_types(self, parent: 'Model', for_type: typing.Optional[str]) -> collections.abc.Iterable[types.rest.TypeInfoDict]:
         parent = ensure.is_instance(parent, Authenticator)
         tDct = {
             'group': {'name': _('Group'), 'description': _('UDS Group')},
             'meta': {'name': _('Meta group'), 'description': _('UDS Meta Group')},
         }
-        types = [
+        types_list: list[types.rest.TypeInfoDict] = [
             {
                 'name': v['name'],
                 'type': k,
@@ -417,11 +410,11 @@ class Groups(DetailHandler):
             for k, v in tDct.items()
         ]
 
-        if forType is None:
-            return types
+        if for_type is None:
+            return types_list
 
         try:
-            return next(filter(lambda x: x['type'] == forType, types))
+            return [next(filter(lambda x: x['type'] == for_type, types_list))]
         except Exception:
             raise self.invalid_request_response() from None
 
@@ -524,7 +517,7 @@ class Groups(DetailHandler):
         parent = ensure.is_instance(parent, Authenticator)
         group = parent.groups.get(uuid=process_uuid(uuid))
 
-        def info(user):
+        def info(user: 'User') -> dict[str, typing.Any]:
             return {
                 'id': user.uuid,
                 'name': user.name,
@@ -536,21 +529,21 @@ class Groups(DetailHandler):
         if group.is_meta:
             # Get all users for everygroup and
             groups = get_groups_from_metagroup((group,))
-            tmpSet: typing.Optional[typing.Set] = None
+            users_set: typing.Optional[set['User']] = None
             for g in groups:
-                gSet = set((i for i in g.users.all()))
-                if tmpSet is None:
-                    tmpSet = gSet
+                current_set: set['User'] = set((i for i in g.users.all()))
+                if users_set is None:
+                    users_set = current_set
                 else:
                     if group.meta_if_any:
-                        tmpSet |= gSet
+                        users_set |= current_set
                     else:
-                        tmpSet &= gSet
+                        users_set &= current_set
 
-                        if not tmpSet:
+                        if not users_set:
                             break  # If already empty, stop
-            users = list(tmpSet or {}) if tmpSet else []
-            tmpSet = None
+            users = list(users_set or {}) if users_set else []
+            users_set = None
         else:
             users = list(group.users.all())
 

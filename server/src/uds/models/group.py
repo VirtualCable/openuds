@@ -66,6 +66,8 @@ class Group(UUIDModel):
     comments = models.CharField(max_length=256, default='')
     users = models.ManyToManyField(User, related_name='groups')
     is_meta = models.BooleanField(default=False, db_index=True)
+    # meta_if_any means that if an user belongs to ANY of the groups, it will be considered as belonging to this group
+    # if it is false, the user must belong to ALL of the groups to be considered as belonging to this group
     meta_if_any = models.BooleanField(default=False)
     groups = models.ManyToManyField('self', symmetrical=False)
     created = models.DateTimeField(default=sql_datetime, blank=True)
@@ -115,7 +117,7 @@ class Group(UUIDModel):
         return f'Group {self.name}(id:{self.id}) from auth {self.manager.name}'
 
     @staticmethod
-    def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def pre_delete(sender: typing.Any, **kwargs: typing.Any) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 

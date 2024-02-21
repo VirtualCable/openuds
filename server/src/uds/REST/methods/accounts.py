@@ -38,6 +38,7 @@ import collections.abc
 from django.utils.translation import gettext_lazy as _
 
 from uds.REST.model import ModelHandler
+from uds.core import types
 import uds.core.types.permissions
 from uds.core.util import permissions, ensure
 from uds.models import Account
@@ -71,7 +72,7 @@ class Accounts(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def item_as_dict(self, item: 'Model'):
+    def item_as_dict(self, item: 'Model') -> types.rest.ItemDictType:
         item = ensure.is_instance(item, Account)
         return {
             'id': item.uuid,

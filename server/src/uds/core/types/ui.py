@@ -152,7 +152,7 @@ class FieldInfo:
     required: typing.Optional[bool] = None
     length: typing.Optional[int] = None
     lines: typing.Optional[int] = None
-    pattern: typing.Union[FieldPatternType, 're.Pattern'] = FieldPatternType.NONE
+    pattern: typing.Union[FieldPatternType, 'typing.Pattern[str]'] = FieldPatternType.NONE
     tab: typing.Union[Tab, str, None] = None
     choices: typing.Optional[ChoicesType] = None
     min_value: typing.Optional[int] = None

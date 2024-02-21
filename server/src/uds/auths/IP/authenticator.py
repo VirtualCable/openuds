@@ -44,7 +44,7 @@ from uds.core.util import net
 logger = logging.getLogger(__name__)
 
 if typing.TYPE_CHECKING:
-    from uds.core.types.requests import ExtendedHttpRequest
+    from uds.core import environment
 
 
 class IPAuth(auths.Authenticator):
@@ -80,7 +80,7 @@ class IPAuth(auths.Authenticator):
 
     block_user_on_failures = False
 
-    def getIp(self, request: 'ExtendedHttpRequest') -> str:
+    def getIp(self, request: 'types.requests.ExtendedHttpRequest') -> str:
         ip = request.ip_proxy if self.acceptProxy.as_bool() else request.ip
         logger.debug('Client IP: %s', ip)
         # If ipv4 on ipv6, we must remove the ipv6 prefix
@@ -88,7 +88,7 @@ class IPAuth(auths.Authenticator):
             ip = ip.split(':')[-1]
         return ip
 
-    def get_groups(self, username: str, groupsManager: 'auths.GroupsManager'):
+    def get_groups(self, username: str, groupsManager: 'auths.GroupsManager') -> None:
         # these groups are a bit special. They are in fact ip-ranges, and we must check that the ip is in betwen
         # The ranges are stored in group names
         for g in groupsManager.enumerate_groups_name():
@@ -103,7 +103,7 @@ class IPAuth(auths.Authenticator):
         username: str,
         credentials: str,  # pylint: disable=unused-argument
         groupsManager: 'auths.GroupsManager',
-        request: 'ExtendedHttpRequest',
+        request: 'types.requests.ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         # If credentials is a dict, that can't be sent directly from web interface, we allow entering
         if username == self.getIp(request):
@@ -111,7 +111,7 @@ class IPAuth(auths.Authenticator):
             return types.auth.SUCCESS_AUTH
         return types.auth.FAILED_AUTH
 
-    def is_ip_allowed(self, request: 'ExtendedHttpRequest'):
+    def is_ip_allowed(self, request: 'types.requests.ExtendedHttpRequest') -> bool:
         """
         Used by the login interface to determine if the authenticator is visible on the login page.
         """
@@ -126,7 +126,7 @@ class IPAuth(auths.Authenticator):
         username: str,
         credentials: str,  # pylint: disable=unused-argument
         groupsManager: 'auths.GroupsManager',
-        request: 'ExtendedHttpRequest',
+        request: 'types.requests.ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         # In fact, username does not matter, will get IP from request
         username = self.getIp(request)  # Override provided username and use source IP
@@ -138,13 +138,13 @@ class IPAuth(auths.Authenticator):
         return types.auth.FAILED_AUTH
 
     @staticmethod
-    def test(env, data):  # pylint: disable=unused-argument
+    def test(env: 'environment.Environment', data: dict[str, str]) -> list[typing.Any]:
         return [True, _("Internal structures seems ok")]
 
-    def check(self):
+    def check(self) -> str:
         return _("All seems to be fine.")
 
-    def get_javascript(self, request: 'ExtendedHttpRequest') -> typing.Optional[str]:
+    def get_javascript(self, request: 'types.requests.ExtendedHttpRequest') -> typing.Optional[str]:
         # We will authenticate ip here, from request.ip
         # If valid, it will simply submit form with ip submited and a cached generated random password
         ip = self.getIp(request)
@@ -161,5 +161,5 @@ class IPAuth(auths.Authenticator):
 
         return 'alert("invalid authhenticator"); window.location.reload();'
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "IP Authenticator"

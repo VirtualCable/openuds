@@ -52,10 +52,6 @@ class LogManager(metaclass=singleton.Singleton):
     """
     Manager for logging (at database) events
     """
-
-    def __init__(self):
-        pass
-
     @staticmethod
     def manager() -> 'LogManager':
         return LogManager()  # Singleton pattern will return always the same instance
@@ -68,7 +64,7 @@ class LogManager(metaclass=singleton.Singleton):
         message: str,
         source: str,
         logName: str
-    ):
+    ) -> None:
         """
         Logs a message associated to owner
         """
@@ -94,17 +90,17 @@ class LogManager(metaclass=singleton.Singleton):
 
     def _get_logs(
         self, owner_type: LogObjectType, owner_id: int, limit: int
-    ) -> list[dict]:
+    ) -> list[dict[str, typing.Any]]:
         """
         Get all logs associated with an user service, ordered by date
         """
         qs = Log.objects.filter(owner_id=owner_id, owner_type=owner_type.value)
         return [
             {'date': x.created, 'level': x.level, 'source': x.source, 'message': x.data}
-            for x in reversed(qs.order_by('-created', '-id')[:limit])  # type: ignore  # Slicing is not supported by pylance right now
+            for x in reversed(qs.order_by('-created', '-id')[:limit])
         ]
 
-    def _clear_logs(self, owner_type: LogObjectType, owner_id: int):
+    def _clear_logs(self, owner_type: LogObjectType, owner_id: int) -> None:
         """
         Clears ALL logs related to user service
         """
@@ -117,7 +113,7 @@ class LogManager(metaclass=singleton.Singleton):
         message: str,
         source: str,
         logName: typing.Optional[str] = None,
-    ):
+    ) -> None:
         """
         Do the logging for the requested object.
 
@@ -141,7 +137,7 @@ class LogManager(metaclass=singleton.Singleton):
 
     def get_logs(
         self, db_object: typing.Optional['Model'], limit: int = -1
-    ) -> list[dict]:
+    ) -> list[dict[str, typing.Any]]:
         """
         Get the logs associated with "wichObject", limiting to "limit" (default is GlobalConfig.MAX_LOGS_PER_ELEMENT)
         """
@@ -161,7 +157,7 @@ class LogManager(metaclass=singleton.Singleton):
 
         return []
 
-    def clear_logs(self, db_object: typing.Optional['Model']):
+    def clear_logs(self, db_object: typing.Optional['Model']) -> None:
         """
         Clears all logs related to wichObject
 

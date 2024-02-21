@@ -109,9 +109,9 @@ def incFailedIp(request: 'ExtendedHttpRequest') -> None:
 
 
 # Decorator that clears failed counter for the IP if succeeds
-def clearIfSuccess(func: collections.abc.Callable) -> collections.abc.Callable:
+def clearIfSuccess(func: collections.abc.Callable[..., typing.Any]) -> collections.abc.Callable[..., typing.Any]:
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: typing.Any, **kwargs: typing.Any) -> typing.Any:
         _self = typing.cast('ActorV3Action', args[0])
         result = func(
             *args, **kwargs
@@ -135,7 +135,7 @@ class ActorV3Action(Handler):
         return rest_result(result=result, **kwargs)
 
     @staticmethod
-    def set_comms_endpoint(userService: UserService, ip: str, port: int, secret: str):
+    def set_comms_endpoint(userService: UserService, ip: str, port: int, secret: str) -> None:
         userService.set_comms_endpoint(f'https://{ip}:{port}/actor/{secret}')
 
     @staticmethod
@@ -286,12 +286,12 @@ class Register(ActorV3Action):
             actor_token.hostname = self._params['hostname']
             actor_token.log_level = self._params['log_level']
             actor_token.subtype = self._params.get('version', '')
-            actor_token.data = {  # type: ignore
+            actor_token.data = typing.cast(typing.Any, {  # Cast due to mypy complains on this assignment
                 'pre_command': self._params['pre_command'],
                 'post_command': self._params['post_command'],
                 'run_once_command': self._params['run_once_command'],
                 'custom': self._params.get('custom', ''),
-            }
+            })
             actor_token.stamp = sql_datetime()
             actor_token.save()
             logger.info('Registered actor %s', self._params)
@@ -304,7 +304,7 @@ class Register(ActorV3Action):
                 'ip': self._params['ip'],
                 'hostname': self._params['hostname'],
                 'log_level': self._params['log_level'],
-                'data': {  # type: ignore
+                'data': {
                     'pre_command': self._params['pre_command'],
                     'post_command': self._params['post_command'],
                     'run_once_command': self._params['run_once_command'],

@@ -34,6 +34,6 @@ take care of registering it as provider
 
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from .SampleAuth import SampleAuth
+from .sample_auth import SampleAuth
 
 __updated__ = '2014-02-19'

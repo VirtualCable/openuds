@@ -117,14 +117,14 @@ class ClassPropertyDescriptor:
     Class property descriptor
     """
 
-    def __init__(self, fget: collections.abc.Callable) -> None:
+    def __init__(self, fget: collections.abc.Callable[..., typing.Any]) -> None:
         self.fget = fget
 
     def __get__(self, obj: typing.Any, cls: typing.Any = None) -> typing.Any:
         return self.fget(cls)
 
 
-def classproperty(func: collections.abc.Callable) -> ClassPropertyDescriptor:
+def classproperty(func: collections.abc.Callable[..., typing.Any]) -> ClassPropertyDescriptor:
     """
     Class property decorator
     """
@@ -137,7 +137,7 @@ def deprecated(func: FT) -> FT:
     when the function is used."""
 
     @functools.wraps(func)
-    def new_func(*args, **kwargs) -> typing.Any:
+    def new_func(*args: typing.Any, **kwargs: typing.Any) -> typing.Any:
         try:
             caller = inspect.stack()[1]
             logger.warning(
@@ -154,7 +154,7 @@ def deprecated(func: FT) -> FT:
     return typing.cast(FT, new_func)
 
 
-def deprecated_class_value(newVarName: str) -> collections.abc.Callable:
+def deprecated_class_value(new_var_name: str) -> collections.abc.Callable[..., typing.Any]:
     """
     Decorator to make a class value deprecated and warn about it
 
@@ -165,14 +165,14 @@ def deprecated_class_value(newVarName: str) -> collections.abc.Callable:
     """
 
     class innerDeprecated:
-        fget: collections.abc.Callable
+        fget: collections.abc.Callable[..., typing.Any]
         new_var_name: str
 
-        def __init__(self, method: collections.abc.Callable, newVarName: str) -> None:
+        def __init__(self, method: collections.abc.Callable[..., typing.Any], newVarName: str) -> None:
             self.new_var_name = newVarName
-            self.fget = method  # type: ignore
+            self.fget = method
 
-        def __get__(self, instance, cls=None):
+        def __get__(self, instance: typing.Any, cls: typing.Any = None) -> typing.Any:
             try:
                 caller = inspect.stack()[1]
                 logger.warning(
@@ -187,12 +187,13 @@ def deprecated_class_value(newVarName: str) -> collections.abc.Callable:
 
             return self.fget(cls)
 
-    return functools.partial(innerDeprecated, newVarName=newVarName)
+    return functools.partial(innerDeprecated, newVarName=new_var_name)
+
 
 def ensure_connected(func: FT) -> FT:
     """This decorator calls "connect" method of the class of the wrapped object"""
 
-    def new_func(*args, **kwargs) -> typing.Any:
+    def new_func(*args: typing.Any, **kwargs: typing.Any) -> typing.Any:
         args[0].connect()
         return func(*args, **kwargs)
 
@@ -260,7 +261,7 @@ def cached(
         lkey_fnc = key_helper or (lambda x: fnc.__name__)
 
         @functools.wraps(fnc)
-        def wrapper(*args, **kwargs) -> typing.Any:
+        def wrapper(*args: typing.Any, **kwargs: typing.Any) -> typing.Any:
             nonlocal hits, misses, exec_time
             with transaction.atomic():  # On its own transaction (for cache operations, that are on DB)
                 cache_key: str = prefix
@@ -341,7 +342,7 @@ def threaded(func: FT) -> FT:
     """Decorator to execute method in a thread"""
 
     @functools.wraps(func)
-    def wrapper(*args, **kwargs) -> None:
+    def wrapper(*args: typing.Any, **kwargs: typing.Any) -> None:
         thread = threading.Thread(target=func, args=args, kwargs=kwargs)
         thread.start()
 

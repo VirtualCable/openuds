@@ -45,6 +45,7 @@ from . import client
 
 if typing.TYPE_CHECKING:
     from uds.core.types.requests import ExtendedHttpRequest
+    from uds.core.environment import Environment
 
 logger = logging.getLogger(__name__)
 
@@ -196,7 +197,7 @@ class RadiusAuth(auths.Authenticator):
         return super().remove_user(username)
 
     @staticmethod
-    def test(env, data):
+    def test(env: 'Environment', data: typing.Any) -> list[typing.Any]:
         """Test the connection to the server ."""
         try:
             auth = RadiusAuth(None, env, data)  # type: ignore
@@ -205,7 +206,7 @@ class RadiusAuth(auths.Authenticator):
             logger.error("Exception found testing Radius auth %s: %s", e.__class__, e)
             return [False, _('Error testing connection')]
 
-    def test_connection(self):
+    def test_connection(self) -> list[typing.Any]:
         """Test connection to Radius Server"""
         try:
             connection = self.radius_client()

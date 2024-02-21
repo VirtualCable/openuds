@@ -83,13 +83,13 @@ class PropertyAccessor:
             pass  # Ignore if not exists
 
     def __contains__(self, key: str) -> bool:
-        return self._filter().filter(key=key).exists()
+        return bool(self._filter().filter(key=key).exists())
 
     def __iter__(self) -> typing.Iterator[str]:
         return iter(self._filter().values_list('key', flat=True))
 
     def __len__(self) -> int:
-        return self._filter().count()
+        return int(self._filter().count())
 
     def get(self, key: str, default: typing.Any = None) -> typing.Any:
         try:
@@ -129,7 +129,7 @@ class PropertyAccessor:
         self.transaction.__enter__()
         return self
 
-    def __exit__(self, exc_type, exc_value, traceback) -> None:
+    def __exit__(self, exc_type: typing.Any, exc_value: typing.Any, traceback: typing.Any) -> None:
         if self.transaction:
             self.transaction.__exit__(exc_type, exc_value, traceback)
 
@@ -153,7 +153,7 @@ class PropertiesMixin:
         return PropertyAccessor(owner_id=owner_id, owner_type=owner_type)
 
     @staticmethod
-    def _pre_delete_properties_signal(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def _pre_delete_properties_signal(sender: typing.Any, **kwargs: typing.Any) -> None:  # pylint: disable=unused-argument
         to_delete: 'PropertiesMixin' = kwargs['instance']
         # We are deleting the object, so we delete the properties too
         # Remember that properties is a generic table, does not have any cascade delete

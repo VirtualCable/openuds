@@ -47,7 +47,7 @@ def resolve(hostname: str) -> list[str]:
     ips: list[str] = []
     for i in ('A', 'AAAA'):
         try:
-            ips.extend([str(ip) for ip in dns.resolver.resolve(hostname, i)])  # type: ignore
+            ips.extend([str(ip) for ip in typing.cast(collections.abc.Iterable[typing.Any], dns.resolver.resolve(hostname, i))])
         except dns.resolver.NXDOMAIN:
             pass
     return ips
@@ -58,6 +58,6 @@ def reverse_resolve(ip: str) -> list[str]:
     Resolves an ip to a list of hostnames
     """
     try:
-        return[str(i).rstrip('.') for i in dns.resolver.query(dns.reversename.from_address(ip).to_text(), 'PTR')]  # type: ignore
+        return[str(i).rstrip('.') for i in typing.cast(collections.abc.Iterable[typing.Any], dns.resolver.query(dns.reversename.from_address(ip).to_text(), 'PTR'))]
     except dns.resolver.NXDOMAIN:
         return []

@@ -115,7 +115,7 @@ class RadiusClient:
             otp_needed=RadiusStates.NEEDED,
         )
 
-    def sendAccessRequest(self, username: str, password: str, **kwargs) -> pyrad.packet.AuthPacket:
+    def sendAccessRequest(self, username: str, password: str, **kwargs: typing.Any) -> pyrad.packet.AuthPacket:
         req: pyrad.packet.AuthPacket = self.radiusServer.CreateAuthPacket(
             code=pyrad.packet.AccessRequest,
             User_Name=username,

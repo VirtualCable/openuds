@@ -55,7 +55,7 @@ class TunnelServers(DetailHandler):
     # tunnels/[id]/servers
     custom_methods = ['maintenance']
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]):
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = ensure.is_instance(parent, models.ServerGroup)
         try:
             multi = False

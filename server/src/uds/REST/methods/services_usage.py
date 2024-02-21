@@ -81,8 +81,8 @@ class ServicesUsage(DetailHandler):
             'friendly_name': item.friendly_name,
             'owner': owner,
             'owner_info': owner_info,
-            'service': item.deployed_service.service.name,  # type: ignore
-            'service_id': item.deployed_service.service.uuid,  # type: ignore
+            'service': item.deployed_service.service.name,
+            'service_id': item.deployed_service.service.uuid,
             'pool': item.deployed_service.name,
             'pool_id': item.deployed_service.uuid,
             'ip': props.get('ip', _('unknown')),
@@ -91,7 +91,7 @@ class ServicesUsage(DetailHandler):
             'in_use': item.in_use,
         }
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]):
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = ensure.is_instance(parent, Provider)
         try:
             if item is None:

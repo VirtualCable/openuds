@@ -198,7 +198,7 @@ class Module(UserInterface, Environmentable, Serializable, abc.ABC):
         )
 
     @staticmethod
-    def test(env: Environment, data: dict[str, str]) -> list[typing.Any]:  # pylint: disable=unused-argument
+    def test(env: Environment, data: dict[str, str]) -> list[typing.Any]:
         """
         Test if the connection data is ok.
 
@@ -251,7 +251,7 @@ class Module(UserInterface, Environmentable, Serializable, abc.ABC):
         Serializable.__init__(self)
         self._uuid = uuid or ''
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Base Module"
 
     def is_dirty(self) -> bool:

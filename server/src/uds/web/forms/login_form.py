@@ -53,7 +53,7 @@ class LoginForm(forms.Form):
     )
     logouturl = forms.CharField(widget=forms.HiddenInput(), required=False)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         # If an specified login is passed in, retrieve it & remove it from kwargs dict
         tag = kwargs.get('tag', None)
         if 'tag' in kwargs:

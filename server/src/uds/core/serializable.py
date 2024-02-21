@@ -51,7 +51,7 @@ class Serializable:
     #   If found, and has __dict__, then we will use it
     #   on marshal and unmarshal methods
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._needs_upgrade = False
 
     def marshal(self) -> bytes:
@@ -69,7 +69,7 @@ class Serializable:
         # This is an struct, and will be pickled by default
 
         if hasattr(self, 'data') and hasattr(getattr(self, 'data'), '__dict__'):
-            return pickle.dumps(getattr(self, 'data'), protocol=pickle.HIGHEST_PROTOCOL)  # type: ignore
+            return pickle.dumps(getattr(self, 'data'), protocol=pickle.HIGHEST_PROTOCOL)
 
         raise NotImplementedError('You must override the marshal method or provide a data member')
 

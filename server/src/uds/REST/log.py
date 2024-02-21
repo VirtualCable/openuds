@@ -63,7 +63,7 @@ def replace_path(path: str) -> str:
         if f'/{type}/' in path:
             try:
                 uuid = path.split(f'/{type}/')[1].split('/')[0]
-                name = model.objects.get(uuid=uuid).name  # type: ignore
+                name = model.objects.get(uuid=uuid).name
                 path = path.replace(uuid, f'[{name}]')
             except Exception:  # nosec: intentionally broad exception
                 pass
@@ -73,7 +73,7 @@ def replace_path(path: str) -> str:
 
 def log_operation(
     handler: typing.Optional['Handler'], response_code: int, level: LogLevel = LogLevel.INFO
-):
+) -> None:
     """
     Logs a request
     """

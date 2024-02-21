@@ -35,7 +35,7 @@ import collections.abc
 
 from django.db import models
 
-from uds.core import auths, environment, consts
+from uds.core import auths, environment, consts, ui
 from uds.core.util import log, net
 from uds.core.types.states import State
 
@@ -46,7 +46,7 @@ from .tag import TaggingMixin
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.models import Group, Network, User, MFA
-    from django.db.models.manager import RelatedManager # type: ignore  # MyPy complains because of django-stubs
+    from django.db.models.manager import RelatedManager  # type: ignore  # MyPy complains because of django-stubs
 
 
 logger = logging.getLogger(__name__)
@@ -87,7 +87,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         ordering = ('name',)
         app_label = 'uds'
 
-    def get_instance(self, values=None) -> auths.Authenticator:
+    def get_instance(self, values: ui.gui.ValuesType = None) -> auths.Authenticator:
         """
         Instantiates the object this record contains.
 
@@ -104,7 +104,9 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         """
         if self.id is None:
             # Return a fake authenticator
-            return auths.Authenticator(environment.Environment.environment_for_table_record('fake_auth'), values, uuid=self.uuid)
+            return auths.Authenticator(
+                environment.Environment.environment_for_table_record('fake_auth'), values, uuid=self.uuid
+            )
 
         auType = self.get_type()
         env = self.get_environment()
@@ -233,7 +235,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
             return exists
         # Deny, must not be in any network
         return not exists
-    
+
     @staticmethod
     def null() -> 'Authenticator':
         """
@@ -249,7 +251,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         return Authenticator.objects.all().order_by('priority')
 
     @staticmethod
-    def get_by_tag(tag=None) -> collections.abc.Iterable['Authenticator']:
+    def get_by_tag(tag: typing.Optional[str] = None) -> collections.abc.Iterable['Authenticator']:
         """
         Gets authenticator by tag name.
         Special tag name "disabled" is used to exclude customAuth
@@ -258,22 +260,22 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         from uds.core.util.config import GlobalConfig
 
         if tag is not None:
-            authsList = Authenticator.objects.filter(small_name=tag).order_by('priority', 'name')
-            if not authsList.exists():
-                authsList = Authenticator.objects.all().order_by('priority', 'name')
+            auths_list = Authenticator.objects.filter(small_name=tag).order_by('priority', 'name')
+            if not auths_list.exists():
+                auths_list = Authenticator.objects.all().order_by('priority', 'name')
                 # If disallow global login (use all auths), get just the first by priority/name
                 if GlobalConfig.DISALLOW_GLOBAL_LOGIN.as_bool(False) is True:
-                    authsList = authsList[:1]  # type: ignore  # Slicing is not supported by pylance right now
-            logger.debug(authsList)
+                    auths_list = auths_list[:1]
+            logger.debug(auths_list)
         else:
-            authsList = Authenticator.objects.all().order_by('priority', 'name')
+            auths_list = Authenticator.objects.all().order_by('priority', 'name')
 
-        for auth in authsList:
+        for auth in auths_list:
             if auth.get_type() and (not auth.get_type().is_custom() or tag != 'disabled'):
                 yield auth
 
     @staticmethod
-    def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def pre_delete(sender: typing.Any, **kwargs: typing.Any) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -324,7 +326,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
             ]
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{self.name} of type {self.data_type} (id:{self.id})'
 
 

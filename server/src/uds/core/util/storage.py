@@ -81,7 +81,7 @@ def _decode_value(dbk: str, value: typing.Optional[str]) -> tuple[str, typing.An
     return ('', None)
 
 
-class StorageAsDict(MutableMapping):
+class StorageAsDict(MutableMapping[str, typing.Any]):
     """
     Accesses storage as dictionary. Much more convenient that old method
     """
@@ -168,7 +168,7 @@ class StorageAsDict(MutableMapping):
         dbk = self._key(key)
         DBStorage.objects.filter(key=dbk).delete()
 
-    def __iter__(self):
+    def __iter__(self) -> typing.Iterator[str]:
         """
         Iterates through keys
         """
@@ -183,10 +183,10 @@ class StorageAsDict(MutableMapping):
         return self._filtered.count()
 
     # Optimized methods, avoid re-reading from DB
-    def items(self):
+    def items(self) -> typing.Iterator[tuple[str, typing.Any]]:  # type: ignore   # compatible type
         return iter(_decode_value(i.key, i.data) for i in self._filtered)
 
-    def values(self):
+    def values(self) -> typing.Iterator[typing.Any]:  # type: ignore   # compatible type
         return iter(_decode_value(i.key, i.data)[1] for i in self._filtered)
 
     def get(self, key: str, default: typing.Any = None) -> typing.Any:
@@ -224,7 +224,7 @@ class StorageAccess:
         self._group = group
         self._atomic = transaction.atomic() if atomic else None
 
-    def __enter__(self):
+    def __enter__(self) -> StorageAsDict:
         if self._atomic:
             self._atomic.__enter__()
         return StorageAsDict(
@@ -233,7 +233,7 @@ class StorageAccess:
             atomic=bool(self._atomic),
         )
 
-    def __exit__(self, exc_type, exc_value, traceback):
+    def __exit__(self, exc_type: typing.Any, exc_value: typing.Any, traceback: typing.Any) -> None:
         if self._atomic:
             self._atomic.__exit__(exc_type, exc_value, traceback)
 
@@ -243,8 +243,14 @@ class Storage:
     _bownwer: bytes
 
     def __init__(self, owner: typing.Union[str, bytes]):
-        self._owner = typing.cast(str, owner.decode('utf-8') if isinstance(owner, bytes) else owner)
-        self._bowner = self._owner.encode('utf8')
+        if isinstance(owner, bytes):
+            self._owner = owner.decode('utf-8')
+            self._bowner = owner
+        elif isinstance(owner, str):
+            self._owner = owner
+            self._bowner = owner.encode('utf8')
+        else:
+            raise TypeError(f'Owner must be str or bytes, {type(owner)} found')
 
     def get_key(self, key: typing.Union[str, bytes], old_method: bool = False) -> str:
         bkey: bytes = key.encode('utf8') if isinstance(key, str) else key
@@ -333,7 +339,7 @@ class Storage:
             return pickle.loads(typing.cast(bytes, v))  # nosec: This is e controled pickle loading
         return None
 
-    def get_unpickle_by_attr1(self, attr1: str, forUpdate: bool = False):
+    def get_unpickle_by_attr1(self, attr1: str, forUpdate: bool = False) -> typing.Any:
         try:
             query = DBStorage.objects.filter(owner=self._owner, attr1=attr1)
             if forUpdate:
@@ -347,29 +353,33 @@ class Storage:
     def remove(
         self, skey: typing.Union[collections.abc.Iterable[typing.Union[str, bytes]], str, bytes]
     ) -> None:
-        keys: collections.abc.Iterable[typing.Union[str, bytes]] = typing.cast(
-            collections.abc.Iterable[typing.Union[str, bytes]],
-            [skey] if isinstance(skey, (str, bytes)) else skey,
-        )
+        keys: 'collections.abc.Iterable[str|bytes]'
+        if isinstance(skey, (str, bytes)):
+            keys = [skey]
+        elif isinstance(skey, collections.abc.Iterable):
+            keys = typing.cast('collections.abc.Iterable[str|bytes]', skey)
+
         try:
             # Process several keys at once
             DBStorage.objects.filter(key__in=[self.get_key(k) for k in keys]).delete()
         except Exception:  # nosec: Not interested in processing exceptions, just ignores it
             pass
 
-    def lock(self):
+    def lock(self) -> None:
         """
         Use with care. If locked, it must be unlocked before returning
         legacy, not user anymore
         """
         # dbStorage.objects.lock()  # @UndefinedVariable
+        pass
 
-    def unlock(self):
+    def unlock(self) -> None:
         """
         Must be used to unlock table
         legacy, not user anymore
         """
         # dbStorage.objects.unlock()  # @UndefinedVariable
+        pass
 
     def as_dict(
         self,
@@ -409,7 +419,7 @@ class Storage:
         for v in self.filter(attr1, forUpdate):
             yield (v[0], pickle.loads(v[1]), v[2])  # nosec: secure pickle load
 
-    def clear(self):
+    def clear(self) -> None:
         Storage.delete(self._owner)
 
     @staticmethod

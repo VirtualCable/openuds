@@ -114,7 +114,7 @@ class ServerGroup(UUIDModel, TaggingMixin, properties.PropertiesMixin):
             path = '/' + path
         return f'https://{self.host}:{self.port}{path}'
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
 
@@ -393,7 +393,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         # v1 is currently the only version, but we can add more in the future
         return f'https://{pre}{self.ip}{post}:{self.listen_port}/{self.server_type.path()}/v1/{path}'
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'<RegisterdServer {self.token} of type {self.server_type.name} created on {self.stamp} by {self.username} from {self.ip}/{self.hostname}>'
 
 

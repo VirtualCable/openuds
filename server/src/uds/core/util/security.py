@@ -34,7 +34,7 @@ try:
     # Ensure that we do not get warnings about self signed certificates and so
     import requests.packages.urllib3  # type: ignore
 
-    requests.packages.urllib3.disable_warnings()  # type: ignore  # pylint: disable=no-member
+    requests.packages.urllib3.disable_warnings() 
 except Exception:  # nosec: simple check for disabling warnings,
     # Igonre if we cannot disable warnings
     pass
@@ -171,13 +171,13 @@ def secure_requests_session(
     lverify = verify
     
     class UDSHTTPAdapter(requests.adapters.HTTPAdapter):
-        def init_poolmanager(self, *args, **kwargs) -> None:
+        def init_poolmanager(self, *args: typing.Any, **kwargs: typing.Any) -> None:
             kwargs["ssl_context"] = create_client_sslcontext(verify=verify is True)
 
             # See urllib3.poolmanager.SSL_KEYWORDS for all available keys.
-            return super().init_poolmanager(*args, **kwargs)
+            return super().init_poolmanager(*args, **kwargs)  # type: ignore
 
-        def cert_verify(self, conn, url, verify, cert) -> None:
+        def cert_verify(self, conn: typing.Any, url: typing.Any, verify: 'str|bool', cert: typing.Any) -> None:
             """Verify a SSL certificate. This method should not be called from user
             code, and is only exposed for use when subclassing the HTTPAdapter class
             """
@@ -191,7 +191,7 @@ def secure_requests_session(
             # for k, v in conn.__dict__.items():
             #     logger.info('Connection info: %s = %s', k, v)
 
-            super().cert_verify(conn, url, verify, cert)
+            super().cert_verify(conn, url, verify, cert)  # type: ignore
 
     session = requests.Session()
     session.mount("https://", UDSHTTPAdapter())

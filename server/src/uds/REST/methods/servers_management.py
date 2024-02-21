@@ -111,7 +111,7 @@ class ServersTokens(ModelHandler):
 class ServersServers(DetailHandler):
     custom_methods = ['maintenance']
 
-    def get_items(self, parent_: 'Model', item: typing.Optional[str]):
+    def get_items(self, parent_: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = typing.cast('models.ServerGroup', parent_)  # We will receive for sure
         try:
             multi = False
@@ -326,7 +326,7 @@ class ServersGroups(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def get_types(self, *args, **kwargs) -> typing.Generator[dict[str, typing.Any], None, None]:
+    def get_types(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Generator[types.rest.TypeInfoDict, None, None]:
         for i in types.servers.ServerSubtype.manager().enum():
             v = types.rest.TypeInfo(
                 name=i.description, type=f'{i.type.name}@{i.subtype}', description='', icon=i.icon

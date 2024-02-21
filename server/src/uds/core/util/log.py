@@ -53,9 +53,10 @@ useLogger = logging.getLogger('useLog')
 
 # Pattern for look for date and time in this format: 2023-04-20 04:03:08,776 (and trailing spaces)
 # This is the format used by python logging module
-DATETIME_PATTERN: typing.Final[re.Pattern] = re.compile(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) *')
+DATETIME_PATTERN: typing.Final[typing.Pattern[str]] = re.compile(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) *')
 # Pattern for removing the LOGLEVEL from the log line beginning
-LOGLEVEL_PATTERN: typing.Final[re.Pattern] = re.compile(r'^(DEBUG|INFO|WARNING|ERROR|CRITICAL) *')
+LOGLEVEL_PATTERN: typing.Final[typing.Pattern[str]] = re.compile(r'^(DEBUG|INFO|WARNING|ERROR|CRITICAL) *')
+
 
 
 class LogLevel(enum.IntEnum):
@@ -191,7 +192,7 @@ def log(
     LogManager.manager().log(wichObject, level, message, source, logName)
 
 
-def get_logs(wichObject: typing.Optional['Model'], limit: int = -1) -> list[dict]:
+def get_logs(wichObject: typing.Optional['Model'], limit: int = -1) -> list[dict[str, typing.Any]]:
     """
     Get the logs associated with "wichObject", limiting to "limit" (default is GlobalConfig.MAX_LOGS_PER_ELEMENT)
     """
@@ -208,7 +209,7 @@ def clear_logs(wichObject: typing.Optional['Model']) -> None:
     # pylint: disable=import-outside-toplevel
     from uds.core.managers.log import LogManager
 
-    return LogManager().clear_logs(wichObject)
+    LogManager().clear_logs(wichObject)
 
 
 class UDSLogHandler(logging.handlers.RotatingFileHandler):

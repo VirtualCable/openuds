@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2023 Virtual Cable S.L.U.
+# Copyright (c) 2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -35,7 +35,7 @@ from uds.core.consts.system import VERSION
 from uds.core.util.model import sql_stamp_seconds
 
 
-def rest_result(result: typing.Any, **kwargs) -> dict[str, typing.Any]:
+def rest_result(result: typing.Any, **kwargs: typing.Any) -> dict[str, typing.Any]:
     '''
     Returns a REST result
     '''

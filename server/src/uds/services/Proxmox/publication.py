@@ -48,6 +48,7 @@ logger = logging.getLogger(__name__)
 
 
 class ProxmoxPublication(services.Publication, autoserializable.AutoSerializable):
+    
     suggested_delay = 20
     
     _name = autoserializable.StringField(default='')

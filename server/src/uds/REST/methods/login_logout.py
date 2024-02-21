@@ -35,7 +35,7 @@ import logging
 import time
 import typing
 
-from uds.core import consts, exceptions
+from uds.core import consts, exceptions, types
 from uds.core.auths.auth import authenticate
 from uds.core.managers.crypto import CryptoManager
 from uds.core.util.cache import Cache
@@ -210,12 +210,12 @@ class Logout(Handler):
     path = 'auth'
     authenticated = True  # By default, all handlers needs authentication
 
-    def get(self):
+    def get(self) -> typing.Any:
         # Remove auth token
         self.clear_auth_token()
         return {'result': 'ok'}
 
-    def post(self):
+    def post(self) -> typing.Any:
         return self.get()
 
 
