@@ -28,6 +28,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import abc
 import threading
 import time
 import signal
@@ -45,24 +46,26 @@ from uds.core.util import singleton
 logger = logging.getLogger(__name__)
 
 
-class BaseThread(threading.Thread):
-    def request_stop(self):
+class BaseThread(threading.Thread, abc.ABC):
+    
+    @abc.abstractmethod
+    def request_stop(self) -> None:
         raise NotImplementedError
 
 
 class SchedulerThread(BaseThread):
-    def run(self):
+    def run(self) -> None:
         Scheduler.scheduler().run()
 
-    def request_stop(self):
+    def request_stop(self) -> None:
         Scheduler.scheduler().notify_termination()
 
 
 class DelayedTaskThread(BaseThread):
-    def run(self):
+    def run(self) -> None:
         DelayedTaskRunner.runner().run()
 
-    def request_stop(self):
+    def request_stop(self) -> None:
         DelayedTaskRunner.runner().request_stop()
 
 
@@ -73,7 +76,7 @@ class TaskManager(metaclass=singleton.Singleton):
     keep_running: bool
     threads: list[BaseThread]
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.keep_running = True
         self.threads = []
 

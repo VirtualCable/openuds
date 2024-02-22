@@ -35,9 +35,8 @@ import typing
 import collections.abc
 
 from django.utils.translation import gettext as _
-from uds.core import services
+from uds.core import services, types
 from uds.core.util import autoserializable
-from uds.core.types.states import State
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -48,9 +47,9 @@ logger = logging.getLogger(__name__)
 
 
 class ProxmoxPublication(services.Publication, autoserializable.AutoSerializable):
-    
+
     suggested_delay = 20
-    
+
     _name = autoserializable.StringField(default='')
     _vmid = autoserializable.StringField(default='')
     _task = autoserializable.StringField(default='')
@@ -69,7 +68,7 @@ class ProxmoxPublication(services.Publication, autoserializable.AutoSerializable
         """
         if not data.startswith(b'v'):
             return super().unmarshal(data)
-        
+
         logger.debug('Data: %s', data)
         vals = data.decode('utf8').split('\t')
         if vals[0] == 'v1':
@@ -84,69 +83,58 @@ class ProxmoxPublication(services.Publication, autoserializable.AutoSerializable
             ) = vals[1:]
         else:
             raise ValueError('Invalid data format')
-            
+
         self._destroy_after = destroy_after != ''
-        
+
         self.mark_for_upgrade()  # Flag so manager can save it again with new format
 
-    def publish(self) -> str:
+    def publish(self) -> types.states.State:
         """
         If no space is available, publication will fail with an error
         """
         try:
             # First we should create a full clone, so base machine do not get fullfilled with "garbage" delta disks...
-            self._name = (
-                'UDS '
-                + _('Publication')
-                + ' '
-                + self.servicepool_name()
-                + "-"
-                + str(self.revision())
-            )
+            self._name = 'UDS ' + _('Publication') + ' ' + self.servicepool_name() + "-" + str(self.revision())
             comments = _('UDS Publication for {0} created at {1}').format(
                 self.servicepool_name(), str(datetime.now()).split('.')[0]
             )
             task = self.service().clone_machine(self._name, comments)
             self._vmid = str(task.vmid)
             self._task = ','.join((task.upid.node, task.upid.upid))
-            self._state = State.RUNNING
+            self._state = types.states.State.RUNNING
             self._operation = 'p'  # Publishing
             self._destroy_after = False
-            return State.RUNNING
+            return types.states.State.RUNNING
         except Exception as e:
             logger.exception('Caught exception %s', e)
             self._reason = str(e)
-            return State.ERROR
+            return types.states.State.ERROR
 
-    def check_state(
-        self,
-    ) -> str:  # pylint: disable = too-many-branches,too-many-return-statements
-        if self._state != State.RUNNING:
-            return self._state
+    def check_state(self) -> types.states.State:
+        if self._state != types.states.State.RUNNING:
+            return types.states.State.from_str(self._state)
         node, upid = self._task.split(',')
         try:
             task = self.service().provider().get_task_info(node, upid)
             if task.is_running():
-                return State.RUNNING
+                return types.states.State.RUNNING
         except Exception as e:
             logger.exception('Proxmox publication')
-            self._state = State.ERROR
+            self._state = types.states.State.ERROR
             self._reason = str(e)
             return self._state
 
         if task.is_errored():
             self._reason = task.exitstatus
-            self._state = State.ERROR
+            self._state = types.states.State.ERROR
         else:  # Finished
             if self._destroy_after:
                 return self.destroy()
-            self._state = State.FINISHED
+            self._state = types.states.State.FINISHED
             if self._operation == 'p':  # not Destroying
                 # Disable Protection (removal)
                 self.service().provider().set_protection(int(self._vmid), protection=False)
-                time.sleep(
-                    0.5
-                )  # Give some tome to proxmox. We have observed some concurrency issues
+                time.sleep(0.5)  # Give some tome to proxmox. We have observed some concurrency issues
                 # And add it to HA if
                 self.service().enable_machine_ha(int(self._vmid))
                 time.sleep(0.5)
@@ -163,26 +151,30 @@ class ProxmoxPublication(services.Publication, autoserializable.AutoSerializable
         self._task = ''
         self._destroy_after = False
 
-    def destroy(self) -> str:
+    def destroy(self) -> types.states.State:
         if (
-            self._state == State.RUNNING and self._destroy_after is False
+            self._state == types.states.State.RUNNING and self._destroy_after is False
         ):  # If called destroy twice, will BREAK STOP publication
             self._destroy_after = True
-            return State.RUNNING
+            return types.states.State.RUNNING
 
-        self._state = State.RUNNING
+        self._state = types.states.State.RUNNING
         self._operation = 'd'
         self._destroy_after = False
         try:
             task = self.service().remove_machine(self.machine())
             self._task = ','.join((task.node, task.upid))
-            return State.RUNNING
+            return types.states.State.RUNNING
         except Exception as e:
             self._reason = str(e)  # Store reason of error
-            logger.warning('Problem destroying publication %s: %s. Please, check machine state On Proxmox', self.machine(), e)
-            return State.ERROR
+            logger.warning(
+                'Problem destroying publication %s: %s. Please, check machine state On Proxmox',
+                self.machine(),
+                e,
+            )
+            return types.states.State.ERROR
 
-    def cancel(self) -> str:
+    def cancel(self) -> types.states.State:
         return self.destroy()
 
     def error_reason(self) -> str:

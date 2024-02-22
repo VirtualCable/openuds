@@ -231,7 +231,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             assigned = self._create_assigned_user_service_at_db_from_pool(service_pool, user)
 
         assignedInstance = assigned.get_instance()
-        state = assignedInstance.deploy_for_user(user)
+        state = types.states.State.from_str(assignedInstance.deploy_for_user(user))
 
         UserServiceOpChecker.make_unique(assigned, assignedInstance, state)
 
@@ -271,7 +271,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         # Now, get from serviceInstance the data
         assigned_userservice_instance = assigned.get_instance()
-        state = serviceInstance.assign_from_assignables(assignable_id, user, assigned_userservice_instance)
+        state = types.states.State.from_str(serviceInstance.assign_from_assignables(assignable_id, user, assigned_userservice_instance))
         # assigned.u(assignedInstance)
 
         UserServiceOpChecker.make_unique(assigned, assigned_userservice_instance, state)
@@ -323,7 +323,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         else:
             user_service.set_state(State.CANCELING)
             # We simply notify service that it should cancel operation
-            state = user_service_instance.cancel()
+            state = types.states.State.from_str(user_service_instance.cancel())
 
             # Data will be serialized on makeUnique process
             # If cancel is not supported, base cancel always returns "FINISHED", and
@@ -690,7 +690,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         if kind in 'A':  # This is an assigned service
             logger.debug('Getting A service %s', uuid_user_service)
             user_service = UserService.objects.get(uuid=uuid_user_service, user=user)
-            typing.cast(UserService, user_service).deployed_service.validate_user(user)
+            user_service.deployed_service.validate_user(user)
         else:
             try:
                 service_pool: ServicePool = ServicePool.objects.get(uuid=uuid_user_service)

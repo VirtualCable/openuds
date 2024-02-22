@@ -86,7 +86,7 @@ class ServerGroup(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     def get_owner_id_and_type(self) -> tuple[str, str]:
         return self.uuid, 'servergroup'
 
-    class Meta:
+    class Meta:  # pyright: ignore
         # Unique for host and port, so we can have only one group for each host:port
         app_label = 'uds'
 
@@ -194,12 +194,12 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
 
     # Group (of registered servers) this server belongs to
     # Note that only Tunnel servers can belong to more than one servergroup
-    groups = models.ManyToManyField(
+    groups: 'models.ManyToManyField[ServerGroup, Server]' = models.ManyToManyField(
         ServerGroup,
         related_name='servers',
     )
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:  # pyright: ignore
         app_label = 'uds'
 
     # For properties

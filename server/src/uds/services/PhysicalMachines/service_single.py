@@ -83,9 +83,12 @@ class IPSingleMachineService(IPServiceBase):
             return
         
         if ';' in self.host.as_str():
-            ip, mac = self.host.as_str().split(';')
+            host, _mac = self.host.as_str().split(';')
+        else:
+            host = self.host.as_str()
+            _mac = ''
 
-        if not net.is_valid_host(self.host.value):
+        if not net.is_valid_host(host):
             raise exceptions.ui.ValidationError(
                 gettext('Invalid server used: "{}"'.format(self.host.value))
             )

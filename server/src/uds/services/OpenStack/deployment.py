@@ -36,8 +36,7 @@ import logging
 import pickle  # nosec: not insecure, we are loading our own data
 import typing
 
-from uds.core import consts, services
-from uds.core.types.states import State
+from uds.core import consts, services, types
 from uds.core.util import autoserializable, log
 
 from . import openstack
@@ -145,13 +144,13 @@ class OpenStackLiveDeployment(
     def get_ip(self) -> str:
         return self._ip
 
-    def set_ready(self) -> str:
+    def set_ready(self) -> types.states.State:
         """
         The method is invoked whenever a machine is provided to an user, right
         before presenting it (via transport rendering) to the user.
         """
         if self.cache.get('ready') == '1':
-            return State.FINISHED
+            return types.states.State.FINISHED
 
         try:
             status = self.service().get_machine_state(self._vmid)
@@ -171,13 +170,13 @@ class OpenStackLiveDeployment(
             self.do_log(log.LogLevel.ERROR, 'Error on setReady: {}'.format(e))
             # Treat as operation done, maybe the machine is ready and we can continue
 
-        return State.FINISHED
+        return types.states.State.FINISHED
 
     def reset(self) -> None:
         if self._vmid != '':
             self.service().reset_machine(self._vmid)
 
-    def process_ready_from_os_manager(self, data: typing.Any) -> str:
+    def process_ready_from_os_manager(self, data: typing.Any) -> types.states.State:
         # Here we will check for suspending the VM (when full ready)
         logger.debug('Checking if cache 2 for %s', self._name)
         if self._get_current_op() == Operation.WAIT:
@@ -185,9 +184,9 @@ class OpenStackLiveDeployment(
             self._pop_current_op()  # Remove current state
             return self._execute_queue()
         # Do not need to go to level 2 (opWait is in fact "waiting for moving machine to cache level 2)
-        return State.FINISHED
+        return types.states.State.FINISHED
 
-    def deploy_for_user(self, user: 'models.User') -> str:
+    def deploy_for_user(self, user: 'models.User') -> types.states.State:
         """
         Deploys an service instance for an user.
         """
@@ -195,11 +194,11 @@ class OpenStackLiveDeployment(
         self._init_queue_for_deploy(False)
         return self._execute_queue()
 
-    def deploy_for_cache(self, cacheLevel: int) -> str:
+    def deploy_for_cache(self, level: int) -> types.states.State:
         """
         Deploys an service instance for cache
         """
-        self._init_queue_for_deploy(cacheLevel == self.L2_CACHE)
+        self._init_queue_for_deploy(level == self.L2_CACHE)
         return self._execute_queue()
 
     def _init_queue_for_deploy(self, forLevel2: bool = False) -> None:
@@ -208,7 +207,7 @@ class OpenStackLiveDeployment(
         else:
             self._queue = [Operation.CREATE, Operation.WAIT, Operation.SUSPEND, Operation.FINISH]
 
-    def _check_machine_state(self, chkState: str) -> str:
+    def _check_machine_state(self, chkState: str) -> types.states.State:
         logger.debug(
             'Checking that state of machine %s (%s) is %s',
             self._vmid,
@@ -221,10 +220,10 @@ class OpenStackLiveDeployment(
         if openstack.status_is_lost(status):
             return self._error('Machine not available. ({})'.format(status))
 
-        ret = State.RUNNING
+        ret = types.states.State.RUNNING
         chkStates = [chkState] if not isinstance(chkState, (list, tuple)) else chkState
         if status in chkStates:
-            ret = State.FINISHED
+            ret = types.states.State.FINISHED
 
         return ret
 
@@ -240,12 +239,12 @@ class OpenStackLiveDeployment(
 
         return self._queue.pop(0)
 
-    def _error(self, reason: typing.Any) -> str:
+    def _error(self, reason: typing.Any) -> types.states.State:
         """
         Internal method to set object as error state
 
         Returns:
-            State.ERROR, so we can do "return self.__error(reason)"
+            types.states.State.ERROR, so we can do "return self.__error(reason)"
         """
         logger.debug('Setting error state, reason: %s', reason)
         self._queue = [Operation.ERROR]
@@ -259,25 +258,25 @@ class OpenStackLiveDeployment(
             except Exception:
                 logger.warning('Can\t set machine %s state to stopped', self._vmid)
 
-        return State.ERROR
+        return types.states.State.ERROR
 
-    def _execute_queue(self) -> str:
-        self.__debug('executeQueue')
+    def _execute_queue(self) -> types.states.State:
+        self._debug('executeQueue')
         op = self._get_current_op()
 
         if op == Operation.ERROR:
-            return State.ERROR
+            return types.states.State.ERROR
 
         if op == Operation.FINISH:
-            return State.FINISHED
+            return types.states.State.FINISHED
 
         fncs: dict[int, collections.abc.Callable[[], str]] = {
-            Operation.CREATE: self.__create,
-            Operation.RETRY: self.__retry,
-            Operation.START: self.__startMachine,
-            Operation.SUSPEND: self.__suspendMachine,
-            Operation.WAIT: self.__wait,
-            Operation.REMOVE: self.__remove,
+            Operation.CREATE: self._create,
+            Operation.RETRY: self._retry,
+            Operation.START: self._start_machine,
+            Operation.SUSPEND: self._suspend_machine,
+            Operation.WAIT: self._wait,
+            Operation.REMOVE: self._remove,
         }
 
         try:
@@ -286,32 +285,32 @@ class OpenStackLiveDeployment(
 
             fncs[op]()
 
-            return State.RUNNING
+            return types.states.State.RUNNING
         except Exception as e:
             return self._error(e)
 
     # Queue execution methods
-    def __retry(self) -> str:
+    def _retry(self) -> types.states.State:
         """
         Used to retry an operation
         In fact, this will not be never invoked, unless we push it twice, because
-        check_state method will "pop" first item when a check operation returns State.FINISHED
+        check_state method will "pop" first item when a check operation returns types.states.State.FINISHED
 
         At executeQueue this return value will be ignored, and it will only be used at check_state
         """
-        return State.FINISHED
+        return types.states.State.FINISHED
 
-    def __wait(self) -> str:
+    def _wait(self) -> types.states.State:
         """
         Executes opWait, it simply waits something "external" to end
         """
-        return State.RUNNING
+        return types.states.State.RUNNING
 
-    def __create(self) -> str:
+    def _create(self) -> str:
         """
         Deploys a machine from template for user/cache
         """
-        templateId = self.publication().getTemplateId()
+        templateId = self.publication().get_template_id()
         name = self.get_name()
         if name == consts.NO_MORE_NAMES:
             raise Exception(
@@ -326,9 +325,9 @@ class OpenStackLiveDeployment(
         if not self._vmid:
             raise Exception('Can\'t create machine')
 
-        return State.RUNNING
+        return types.states.State.RUNNING
 
-    def __remove(self) -> str:
+    def _remove(self) -> str:
         """
         Removes a machine from system
         """
@@ -339,74 +338,74 @@ class OpenStackLiveDeployment(
 
         self.service().remove_machine(self._vmid)
 
-        return State.RUNNING
+        return types.states.State.RUNNING
 
-    def __startMachine(self) -> str:
+    def _start_machine(self) -> str:
         """
         Powers on the machine
         """
         self.service().start_machine(self._vmid)
 
-        return State.RUNNING
+        return types.states.State.RUNNING
 
-    def __suspendMachine(self) -> str:
+    def _suspend_machine(self) -> str:
         """
         Suspends the machine
         """
         self.service().suspend_machine(self._vmid)
 
-        return State.RUNNING
+        return types.states.State.RUNNING
 
     # Check methods
-    def __checkCreate(self) -> str:
+    def _check_create(self) -> types.states.State:
         """
         Checks the state of a deploy for an user or cache
         """
         ret = self._check_machine_state(openstack.ACTIVE)
-        if ret == State.FINISHED:
+        if ret == types.states.State.FINISHED:
             # Get IP & MAC (early stage)
             self._mac, self._ip = self.service().get_network_info(self._vmid)
 
         return ret
 
-    def __checkStart(self) -> str:
+    def _check_start(self) -> types.states.State:
         """
         Checks if machine has started
         """
         return self._check_machine_state(openstack.ACTIVE)
 
-    def __checkSuspend(self) -> str:
+    def _check_suspend(self) -> types.states.State:
         """
         Check if the machine has suspended
         """
         return self._check_machine_state(openstack.SUSPENDED)
 
-    def __checkRemoved(self) -> str:
+    def _check_removed(self) -> types.states.State:
         """
         Checks if a machine has been removed
         """
-        return State.FINISHED  # No check at all, always true
+        return types.states.State.FINISHED  # No check at all, always true
 
-    def check_state(self) -> str:
+    def check_state(self) -> types.states.State:
         """
         Check what operation is going on, and acts acordly to it
         """
-        self.__debug('check_state')
+        self._debug('check_state')
         op = self._get_current_op()
 
         if op == Operation.ERROR:
-            return State.ERROR
+            return types.states.State.ERROR
 
         if op == Operation.FINISH:
-            return State.FINISHED
+            return types.states.State.FINISHED
 
-        fncs: dict[int, collections.abc.Callable[[], str]] = {
-            Operation.CREATE: self.__checkCreate,
-            Operation.RETRY: self.__retry,
-            Operation.WAIT: self.__wait,
-            Operation.START: self.__checkStart,
-            Operation.SUSPEND: self.__checkSuspend,
-            Operation.REMOVE: self.__checkRemoved,
+        fncs: dict[int, collections.abc.Callable[[], types.states.State]] = {
+            Operation.CREATE: self._check_create,
+            Operation.RETRY: self._retry,
+            Operation.WAIT: self._wait,
+            Operation.START: self._check_start,
+            Operation.SUSPEND: self._check_suspend,
+            Operation.REMOVE: self._check_removed,
         }
 
         try:
@@ -414,7 +413,7 @@ class OpenStackLiveDeployment(
                 return self._error('Unknown operation found at execution queue ({0})'.format(op))
 
             state = fncs[op]()
-            if state == State.FINISHED:
+            if state == types.states.State.FINISHED:
                 self._pop_current_op()  # Remove runing op
                 return self._execute_queue()
 
@@ -422,14 +421,14 @@ class OpenStackLiveDeployment(
         except Exception as e:
             return self._error(e)
 
-    def move_to_cache(self, newLevel: int) -> str:
+    def move_to_cache(self, level: int) -> types.states.State:
         """
         Moves machines between cache levels
         """
         if Operation.REMOVE in self._queue:
-            return State.RUNNING
+            return types.states.State.RUNNING
 
-        if newLevel == self.L1_CACHE:
+        if level == self.L1_CACHE:
             self._queue = [Operation.START, Operation.FINISH]
         else:
             self._queue = [Operation.START, Operation.SUSPEND, Operation.FINISH]
@@ -439,11 +438,11 @@ class OpenStackLiveDeployment(
     def error_reason(self) -> str:
         return self._reason
 
-    def destroy(self) -> str:
+    def destroy(self) -> types.states.State:
         """
         Invoked for destroying a deployed service
         """
-        self.__debug('destroy')
+        self._debug('destroy')
         # If executing something, wait until finished to remove it
         # We simply replace the execution queue
         op = self._get_current_op()
@@ -457,12 +456,12 @@ class OpenStackLiveDeployment(
 
         self._queue = [op, Operation.REMOVE, Operation.FINISH]
         # Do not execute anything.here, just continue normally
-        return State.RUNNING
+        return types.states.State.RUNNING
 
-    def cancel(self) -> str:
+    def cancel(self) -> types.states.State:
         """
         This is a task method. As that, the excepted return values are
-        State values RUNNING, FINISHED or ERROR.
+        types.states.State.values RUNNING, FINISHED or ERROR.
 
         This can be invoked directly by an administration or by the clean up
         of the deployed service (indirectly).
@@ -472,7 +471,7 @@ class OpenStackLiveDeployment(
         return self.destroy()
 
     @staticmethod
-    def __op2str(op: Operation) -> str:
+    def _op2str(op: Operation) -> str:
         return {
             Operation.CREATE: 'create',
             Operation.START: 'start',
@@ -484,13 +483,13 @@ class OpenStackLiveDeployment(
             Operation.RETRY: 'retry',
         }.get(op, '????')
 
-    def __debug(self, txt: str) -> None:
+    def _debug(self, txt: str) -> None:
         logger.debug(
-            'State at %s: name: %s, ip: %s, mac: %s, vmid:%s, queue: %s',
+            'types.states.State.at %s: name: %s, ip: %s, mac: %s, vmid:%s, queue: %s',
             txt,
             self._name,
             self._ip,
             self._mac,
             self._vmid,
-            [OpenStackLiveDeployment.__op2str(op) for op in self._queue],
+            [OpenStackLiveDeployment._op2str(op) for op in self._queue],
         )

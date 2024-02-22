@@ -270,7 +270,7 @@ class PublicationManager(metaclass=singleton.Singleton):
     Manager responsible of controlling publications
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     @staticmethod
@@ -284,7 +284,7 @@ class PublicationManager(metaclass=singleton.Singleton):
 
     def publish(
         self, servicePool: ServicePool, changeLog: typing.Optional[str] = None
-    ):  # pylint: disable=no-self-use
+    ) -> None:
         """
         Initiates the publication of a service pool, or raises an exception if this cannot be done
         :param servicePool: Service pool object (db object)
@@ -330,7 +330,7 @@ class PublicationManager(metaclass=singleton.Singleton):
 
     def cancel(
         self, publication: ServicePoolPublication
-    ):  # pylint: disable=no-self-use
+    ) -> ServicePoolPublication:
         """
         Invoked to cancel a publication.
         Double invokation (i.e. invokation over a "cancelling" item) will lead to a "forced" cancellation (unclean)
@@ -372,7 +372,7 @@ class PublicationManager(metaclass=singleton.Singleton):
 
     def unpublish(
         self, servicepool_publication: ServicePoolPublication
-    ):  # pylint: disable=no-self-use
+    ) -> None:
         """
         Unpublishes an active (usable) or removable publication
         :param servicePoolPub: Publication to unpublish

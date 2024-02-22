@@ -30,13 +30,11 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import pickle  # nosec: controled data
-import enum
 import logging
 import typing
 import collections.abc
 
-from uds.core import services
+from uds.core import types
 from uds.core.services.specializations.fixed_machine.fixed_userservice import FixedUserService, Operation
 from uds.core.types.states import State
 from uds.core.util import log, autoserializable
@@ -69,9 +67,9 @@ class XenFixedUserService(FixedUserService, autoserializable.AutoSerializable):
     def service(self) -> 'service_fixed.XenFixedService':
         return typing.cast('service_fixed.XenFixedService', super().service())
 
-    def set_ready(self) -> str:
+    def set_ready(self) -> types.states.State:
         if self.cache.get('ready') == '1':
-            return State.FINISHED
+            return types.states.State.FINISHED
 
         try:
             state = self.service().get_machine_power_state(self._vmid)
@@ -86,14 +84,14 @@ class XenFixedUserService(FixedUserService, autoserializable.AutoSerializable):
             self.do_log(log.LogLevel.ERROR, 'Error setting machine state: {}'.format(e))
             # return self.__error('Machine is not available anymore')
 
-        return State.FINISHED
+        return types.states.State.FINISHED
 
     def reset(self) -> None:
         if self._vmid:
             self.service().reset_machine(self._vmid)  # Reset in sync
 
-    def process_ready_from_os_manager(self, data: typing.Any) -> str:
-        return State.FINISHED
+    def process_ready_from_os_manager(self, data: typing.Any) -> types.states.State:
+        return types.states.State.FINISHED
 
     def error(self, reason: str) -> str:
         return self._error(reason)
@@ -118,44 +116,44 @@ class XenFixedUserService(FixedUserService, autoserializable.AutoSerializable):
             self._task = self.service().stop_machine(self._vmid) or ''
 
     # Check methods
-    def _check_task_finished(self) -> str:
+    def _check_task_finished(self) -> types.states.State:
         if self._task == '':
-            return State.FINISHED
+            return types.states.State.FINISHED
 
         try:
-            finished, per = self.service().check_task_finished(self._task)
+            finished, _per = self.service().check_task_finished(self._task)
         except xen_client.XenFailure:
-            return State.RUNNING  # Try again later
+            return types.states.State.RUNNING  # Try again later
         except Exception as e:  # Failed for some other reason
             if isinstance(e.args[0], dict) and 'error_connection' in e.args[0]:
-                return State.RUNNING  # Try again later
+                return types.states.State.RUNNING  # Try again later
             raise e
 
         if finished:
-            return State.FINISHED
+            return types.states.State.FINISHED
 
-        return State.RUNNING
+        return types.states.State.RUNNING
 
     # Check methods
-    def _create_checker(self) -> str:
+    def _create_checker(self) -> types.states.State:
         """
         Checks the state of a deploy for an user or cache
         """
-        return State.FINISHED
+        return types.states.State.FINISHED
 
-    def _start_checker(self) -> str:
+    def _start_checker(self) -> types.states.State:
         """
         Checks if machine has started
         """
         return self._check_task_finished()
 
-    def _stop_checker(self) -> str:
+    def _stop_checker(self) -> types.states.State:
         """
         Checks if machine has stoped
         """
         return self._check_task_finished()
 
-    def _removed_checker(self) -> str:
+    def _removed_checker(self) -> types.states.State:
         """
         Checks if a machine has been removed
         """

@@ -35,8 +35,7 @@ import dataclasses
 import typing
 import collections.abc
 
-from uds.core import services
-from uds.core.types.states import State
+from uds.core import services, types
 
 from . import service
 
@@ -59,6 +58,7 @@ class TestUserService(services.UserService):
         """
         This is the data we will store in the storage
         """
+
         count: int = -1
         ready: bool = False
         name: str = ''
@@ -92,35 +92,33 @@ class TestUserService(services.UserService):
     def get_unique_id(self) -> str:
         logger.info('Getting unique id of deployment %s', self.data)
         if not self.data.mac:
-            self.data.mac = self.mac_generator().get(
-                '00:00:00:00:00:00-00:FF:FF:FF:FF:FF'
-            )
+            self.data.mac = self.mac_generator().get('00:00:00:00:00:00-00:FF:FF:FF:FF:FF')
         return self.data.mac
 
     def get_ip(self) -> str:
         logger.info('Getting ip of deployment %s', self.data)
         ip = typing.cast(str, self.storage.read_from_db('ip'))
-        if ip is None:
+        if not ip:
             ip = '8.6.4.2'  # Sample IP for testing purposses only
         return ip
 
-    def set_ready(self) -> str:
+    def set_ready(self) -> types.states.State:
         logger.info('Setting ready %s', self.data)
         self.data.ready = True
-        return State.FINISHED
+        return types.states.State.FINISHED
 
-    def deploy_for_user(self, user: 'models.User') -> str:
+    def deploy_for_user(self, user: 'models.User') -> types.states.State:
         logger.info('Deploying for user %s %s', user, self.data)
         self.data.count = 3
-        return State.RUNNING
+        return types.states.State.RUNNING
 
-    def check_state(self) -> str:
+    def check_state(self) -> types.states.State:
         logger.info('Checking state of deployment %s', self.data)
         if self.data.count <= 0:
-            return State.FINISHED
+            return types.states.State.FINISHED
 
         self.data.count -= 1
-        return State.RUNNING
+        return types.states.State.RUNNING
 
     def finish(self) -> None:
         logger.info('Finishing deployment %s', self.data)
@@ -129,17 +127,16 @@ class TestUserService(services.UserService):
     def user_logged_in(self, username: str) -> None:
         logger.info('User %s has logged in', username)
 
-    def user_logged_out(self, username) -> None:
+    def user_logged_out(self, username: str) -> None:
         logger.info('User %s has logged out', username)
 
     def error_reason(self) -> str:
         return 'No error'
 
-    def destroy(self) -> str:
+    def destroy(self) -> types.states.State:
         logger.info('Destroying deployment %s', self.data)
         self.data.count = -1
-        return State.FINISHED
+        return types.states.State.FINISHED
 
-    def cancel(self) -> str:
+    def cancel(self) -> types.states.State:
         return self.destroy()
-

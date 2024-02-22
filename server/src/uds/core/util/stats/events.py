@@ -126,6 +126,7 @@ def get_owner(
         return OSManager.objects.get(pk=ownerId)
     return None
 
+
 @dataclasses.dataclass
 class EventTupleType:
     stamp: datetime.datetime
@@ -136,7 +137,7 @@ class EventTupleType:
     event_type: types.stats.EventType
 
     # aliases for fields
-    def __getitem__(self, item) -> typing.Any:
+    def __getitem__(self, item: str) -> typing.Any:
         if item in _REVERSE_FLDS_EQUIV:
             item = _REVERSE_FLDS_EQUIV[item]
         return self.__getattribute__(item)
@@ -150,7 +151,7 @@ class EventTupleType:
 EventClass = typing.Union[Provider, Service, ServicePool, Authenticator]
 
 
-def add_event(obj: EventClass, eventType: types.stats.EventType, **kwargs) -> bool:
+def add_event(obj: EventClass, eventType: types.stats.EventType, **kwargs: typing.Any) -> bool:
     """
     Adds a event stat to specified object
 
@@ -164,7 +165,9 @@ def add_event(obj: EventClass, eventType: types.stats.EventType, **kwargs) -> bo
     return StatsManager.manager().add_event(_OWNER_FROM_MODEL[type(obj)], obj.id, eventType, **kwargs)
 
 
-def get_events(obj: EventClass, eventType: types.stats.EventType, **kwargs) -> typing.Generator[EventTupleType, None, None]:
+def get_events(
+    obj: EventClass, eventType: types.stats.EventType, **kwargs: typing.Any
+) -> typing.Generator[EventTupleType, None, None]:
     """
     Get events
 

@@ -35,7 +35,7 @@ import typing
 import collections.abc
 
 from django.utils.translation import gettext_noop as _
-from uds.core import services, exceptions
+from uds.core import services, exceptions, types
 from uds.core.ui import gui
 
 from .publication import SamplePublication
@@ -225,16 +225,6 @@ class ServiceTwo(services.Service):
 
     # Gui, we will use here the EditableList field
     names = gui.EditableListField(label=_('List of names'))
-
-    def __init__(self, environment, parent, values=None):
-        """
-        We here can get a HUGE list from client.
-        Right now, this is treated same as other fields, in a near
-        future we will se how to handle this better
-        """
-        super(ServiceTwo, self).__init__(environment, parent, values)
-
-        # No checks here
 
     def get_names(self) -> list[str]:
         """

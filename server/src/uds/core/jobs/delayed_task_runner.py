@@ -86,7 +86,7 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
     _hostname: typing.ClassVar[str]  # "Our" hostname
     _keep_running: typing.ClassVar[bool]  # If we should keep it running
 
-    def __init__(self):
+    def __init__(self) -> None:
         DelayedTaskRunner._hostname = gethostname()
         DelayedTaskRunner._keep_running = True
         logger.debug("Initialized delayed task runner for host %s", DelayedTaskRunner._hostname)
@@ -117,7 +117,7 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
                 task: DBDelayedTask = (
                     DBDelayedTask.objects.select_for_update()
                     .filter(filt)
-                    .order_by('execution_time')[0]  # type: ignore  # Slicing is not supported by pylance right now
+                    .order_by('execution_time')[0]
                 )  # @UndefinedVariable
                 if task.insert_date > now + timedelta(seconds=30):
                     logger.warning('Executed %s due to insert_date being in the future!', task.type)

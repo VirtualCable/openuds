@@ -72,7 +72,7 @@ BROWSERS_RE: dict[types.os.KnownBrowser, tuple[typing.Pattern[str], ...]] = {
     types.os.KnownBrowser.EDGE: (re.compile(r'Edg/([0-9.]+)'),),
 }
 
-BROWSER_RULES: dict[types.os.KnownBrowser, tuple] = {
+BROWSER_RULES: dict[types.os.KnownBrowser, tuple[types.os.KnownBrowser, tuple[types.os.KnownBrowser, ...]]] = {
     types.os.KnownBrowser.EDGE: (types.os.KnownBrowser.EDGE, ()),
     types.os.KnownBrowser.CHROME: (
         types.os.KnownBrowser.CHROME,

@@ -40,7 +40,7 @@ from uds.core.util import ensure
 logger = logging.getLogger(__name__)
 
 
-def validate_regex_field(field: ui.gui.TextField, field_value: typing.Optional[str] = None):
+def validate_regex_field(field: ui.gui.TextField, field_value: typing.Optional[str] = None) -> None:
     """
     Validates the multi line fields refering to attributes
     """
@@ -70,7 +70,7 @@ def get_attributes_regex_field(field: 'ui.gui.TextField|str') -> set[str]:
 
     res: set[str] = set()
     for line in content.splitlines():
-        attr, pattern = (line.split('=')[0:2] + [''])[0:2]
+        attr, _pattern = (line.split('=')[0:2] + [''])[0:2]
 
         # If attributes concateated with +, add all
         if '+' in attr:

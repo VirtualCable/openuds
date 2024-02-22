@@ -30,7 +30,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import datetime
 import logging
-import datetime
 import typing
 import collections.abc
 from concurrent.futures import ThreadPoolExecutor
@@ -60,10 +59,8 @@ class ServerManager(metaclass=singleton.Singleton):
     MAX_COUNTERS_AGE: typing.Final[datetime.timedelta] = datetime.timedelta(days=3)
     BASE_PROPERTY_NAME: typing.Final[str] = 'sm_usr_'
 
-    last_counters_clean: datetime.datetime
-
-    def __init__(self):
-        self.last_counters_clean = datetime.datetime.now()
+    # Singleton, can initialize here
+    last_counters_clean: datetime.datetime = datetime.datetime.now()
 
     @staticmethod
     def manager() -> 'ServerManager':
@@ -230,7 +227,7 @@ class ServerManager(metaclass=singleton.Singleton):
             # If server is forced, and server is part of the group, use it
             if server:
                 if (
-                    server.groups.filter(uuid=server_group.uuid).exclude(uuid__in=excluded_servers_uuids).count()
+                    server.groups.filter(uuid=server_group.uuid).exclude(uuid__in=excluded_servers_uuids).count()  
                     == 0
                 ):
                     raise exceptions.UDSException(_('Server is not part of the group'))
@@ -481,7 +478,7 @@ class ServerManager(metaclass=singleton.Singleton):
         Args:
             serverGroup: Server group to realize maintenance on
         """
-        for k, v in serverGroup.properties.items():
+        for k, _ in serverGroup.properties.items():
             if k.startswith(self.BASE_PROPERTY_NAME):
                 uuid = k[len(self.BASE_PROPERTY_NAME) :]
                 try:

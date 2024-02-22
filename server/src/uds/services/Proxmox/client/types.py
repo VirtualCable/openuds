@@ -4,21 +4,21 @@ import re
 import typing
 import collections.abc
 
-NETWORK_RE: typing.Final[typing.Pattern] = re.compile(r'([a-zA-Z0-9]+)=([^,]+)')  # May have vla id at end
+NETWORK_RE: typing.Final[typing.Pattern[str]] = re.compile(r'([a-zA-Z0-9]+)=([^,]+)')  # May have vla id at end
 
 # Conversor from dictionary to NamedTuple
-CONVERSORS: typing.Final[collections.abc.MutableMapping[typing.Any, collections.abc.Callable]] = {
+CONVERSORS: typing.Final[dict[typing.Any, collections.abc.Callable[[typing.Type[typing.Any]], typing.Any]]] = {
     str: lambda x: str(x or ''),
-    typing.Optional[str]: lambda x: str(x) if x is not None else None,
+    typing.Optional[str]: lambda x: str(x) if x is not None else None,  # pyright: ignore
     bool: lambda x: bool(x),
-    typing.Optional[bool]: lambda x: bool(x) if x is not None else None,
-    int: lambda x: int(x or '0'),
-    typing.Optional[int]: lambda x: int(x or '0') if x is not None else None,
-    float: lambda x: float(x or '0'),
-    typing.Optional[float]: lambda x: float(x or '0') if x is not None else None,
-    datetime.datetime: lambda x: datetime.datetime.fromtimestamp(int(x)),
+    typing.Optional[bool]: lambda x: bool(x) if x is not None else None,  # pyright: ignore
+    int: lambda x: int(x or '0'),  # pyright: ignore
+    typing.Optional[int]: lambda x: int(x or '0') if x is not None else None,  # pyright: ignore
+    float: lambda x: float(x or '0'),  # pyright: ignore
+    typing.Optional[float]: lambda x: float(x or '0') if x is not None else None,  # pyright: ignore
+    datetime.datetime: lambda x: datetime.datetime.fromtimestamp(int(x)),  # pyright: ignore
     typing.Optional[datetime.datetime]: lambda x: (
-        datetime.datetime.fromtimestamp(int(x)) if x is not None else None
+        datetime.datetime.fromtimestamp(int(x)) if x is not None else None  # pyright: ignore
     ),
 }
 

@@ -36,11 +36,9 @@ import enum
 import logging
 import typing
 import collections.abc
-from webbrowser import Opera
 
-from uds.core import services, consts
+from uds.core import services, consts, types
 from uds.core.managers.userservice import UserServiceManager
-from uds.core.types.states import State
 from uds.core.util import log, autoserializable
 from uds.core.util.model import sql_stamp_seconds
 
@@ -136,9 +134,9 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
     @typing.final
     def _retry_later(self) -> str:
         self._push_front_op(Operation.RETRY)
-        return State.RUNNING
+        return types.states.State.RUNNING
 
-    def _error(self, reason: typing.Union[str, Exception]) -> str:
+    def _error(self, reason: typing.Union[str, Exception]) -> types.states.State:
         """
         Internal method to set object as error state
 
@@ -159,7 +157,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
 
         self._queue = [Operation.ERROR]
         self._reason = reason
-        return State.ERROR
+        return types.states.State.ERROR
 
     # Utility overrides for type checking...
     # Probably, overriden again on child classes
@@ -188,7 +186,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         return ''
 
     @typing.final
-    def deploy_for_user(self, user: 'models.User') -> str:
+    def deploy_for_user(self, user: 'models.User') -> types.states.State:
         """
         Deploys an service instance for an user.
         """
@@ -205,15 +203,15 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         return self._execute_queue()
 
     @typing.final
-    def _execute_queue(self) -> str:
+    def _execute_queue(self) -> types.states.State:
         self._debug('executeQueue')
         op = self._get_current_op()
 
         if op == Operation.ERROR:
-            return State.ERROR
+            return types.states.State.ERROR
 
         if op == Operation.FINISH:
-            return State.FINISHED
+            return types.states.State.FINISHED
 
         fncs: dict[Operation, collections.abc.Callable[[], None]] = {
             Operation.CREATE: self._create,
@@ -237,7 +235,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
 
             operation_runner()
 
-            return State.RUNNING
+            return types.states.State.RUNNING
         except Exception as e:
             logger.exception('Unexpected FixedUserService exception: %s', e)
             return self._error(str(e))
@@ -305,38 +303,38 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         self.service().remove_and_free_machine(self._vmid)
 
     # Check methods
-    def _create_checker(self) -> str:
+    def _create_checker(self) -> types.states.State:
         """
         Checks the state of a deploy for an user or cache
         """
-        return State.FINISHED
+        return types.states.State.FINISHED
 
-    def _snapshot_create_checker(self) -> str:
+    def _snapshot_create_checker(self) -> types.states.State:
         """
         Checks the state of a snapshot creation
         """
-        return State.FINISHED
+        return types.states.State.FINISHED
 
-    def _snapshot_recover_checker(self) -> str:
+    def _snapshot_recover_checker(self) -> types.states.State:
         """
         Checks the state of a snapshot recovery
         """
-        return State.FINISHED
+        return types.states.State.FINISHED
 
-    def _process_token_checker(self) -> str:
+    def _process_token_checker(self) -> types.states.State:
         """
         Checks the state of a token processing
         """
-        return State.FINISHED
+        return types.states.State.FINISHED
 
-    def _retry_checker(self) -> str:
-        return State.FINISHED
+    def _retry_checker(self) -> types.states.State:
+        return types.states.State.FINISHED
 
-    def _wait_checker(self) -> str:
-        return State.FINISHED
+    def _wait_checker(self) -> types.states.State:
+        return types.states.State.FINISHED
 
-    def _nop_checker(self) -> str:
-        return State.FINISHED
+    def _nop_checker(self) -> types.states.State:
+        return types.states.State.FINISHED
 
     def _start_machine(self) -> None:
         """ 
@@ -344,11 +342,11 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         """
         pass
 
-    def _start_checker(self) -> str:
+    def _start_checker(self) -> types.states.State:
         """
         Checks if machine has started
         """
-        return State.FINISHED
+        return types.states.State.FINISHED
 
     def _stop_machine(self) -> None:
         """
@@ -356,11 +354,11 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         """
         pass
 
-    def _stop_checker(self) -> str:
+    def _stop_checker(self) -> types.states.State:
         """
         Checks if machine has stoped
         """
-        return State.FINISHED
+        return types.states.State.FINISHED
 
     # Not abstract methods, defaults to stop machine
     def _soft_shutdown_machine(self) -> None:
@@ -368,17 +366,17 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         """
         return self._stop_machine()  # Default is to stop the machine
 
-    def _soft_shutdown_checker(self) -> str:
+    def _soft_shutdown_checker(self) -> types.states.State:
         return self._stop_checker()  # Default is to check if machine has stopped
 
-    def _removed_checker(self) -> str:
+    def _removed_checker(self) -> types.states.State:
         """
         Checks if a machine has been removed
         """
-        return State.FINISHED
+        return types.states.State.FINISHED
 
     @typing.final
-    def check_state(self) -> str:
+    def check_state(self) -> types.states.State:
         """
         Check what operation is going on, and acts acordly to it
         """
@@ -386,12 +384,12 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         op = self._get_current_op()
 
         if op == Operation.ERROR:
-            return State.ERROR
+            return types.states.State.ERROR
 
         if op == Operation.FINISH:
-            return State.FINISHED
+            return types.states.State.FINISHED
 
-        fncs: dict[Operation, collections.abc.Callable[[], str]] = {
+        fncs: dict[Operation, collections.abc.Callable[[], types.states.State]] = {
             Operation.CREATE: self._create_checker,
             Operation.RETRY: self._retry_checker,
             Operation.WAIT: self._wait_checker,
@@ -406,13 +404,13 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         }
 
         try:
-            check_function: typing.Optional[collections.abc.Callable[[], str]] = fncs.get(op, None)
+            check_function: typing.Optional[collections.abc.Callable[[], types.states.State]] = fncs.get(op, None)
 
             if check_function is None:
                 return self._error('Unknown operation found at check queue ({0})'.format(op))
 
             state = check_function()
-            if state == State.FINISHED:
+            if state == types.states.State.FINISHED:
                 self._pop_current_op()  # Remove runing op, till now only was "peek"
                 return self._execute_queue()
 
@@ -441,7 +439,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         return self._reason
 
     @typing.final
-    def destroy(self) -> str:
+    def destroy(self) -> types.states.State:
         """
         Invoked for destroying a deployed service
         """
@@ -449,7 +447,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         return self._execute_queue()
 
     @typing.final
-    def cancel(self) -> str:
+    def cancel(self) -> types.states.State:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.

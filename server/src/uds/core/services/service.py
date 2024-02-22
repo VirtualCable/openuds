@@ -382,7 +382,7 @@ class Service(Module):
         """
         return None
 
-    def get_valid_id(self, idsList: collections.abc.Iterable[str]) -> typing.Optional[str]:
+    def get_valid_id(self, ids: collections.abc.Iterable[str]) -> typing.Optional[str]:
         """
         Looks for an "owned" id in the provided list. If found, returns it, else return None
 

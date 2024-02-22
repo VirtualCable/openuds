@@ -38,7 +38,7 @@ from datetime import datetime
 from django.utils.translation import gettext as _
 
 from uds.core.services import Publication
-from uds.core.types.states import State
+from uds.core import types
 from uds.core.util import autoserializable
 
 # Not imported at runtime, just for type checking
@@ -87,7 +87,7 @@ class OVirtPublication(Publication, autoserializable.AutoSerializable):
         self._destroy_after = destroy_after == 't'
         self.mark_for_upgrade()  # Mark so manager knows it has to be saved again
 
-    def publish(self) -> str:
+    def publish(self) -> types.states.State:
         """
         Realizes the publication of the service
         """
@@ -106,19 +106,19 @@ class OVirtPublication(Publication, autoserializable.AutoSerializable):
         except Exception as e:
             self._state = 'error'
             self._reason = str(e)
-            return State.ERROR
+            return types.states.State.ERROR
 
-        return State.RUNNING
+        return types.states.State.RUNNING
 
-    def check_state(self) -> str:
+    def check_state(self) -> types.states.State:
         """
         Checks state of publication creation
         """
         if self._state == 'ok':
-            return State.FINISHED
+            return types.states.State.FINISHED
 
         if self._state == 'error':
-            return State.ERROR
+            return types.states.State.ERROR
 
         try:
             self._state = self.service().get_template_state(self._template_id)
@@ -127,28 +127,28 @@ class OVirtPublication(Publication, autoserializable.AutoSerializable):
         except Exception as e:
             self._state = 'error'
             self._reason = str(e)
-            return State.ERROR
+            return types.states.State.ERROR
 
         # If publication os done (template is ready), and cancel was requested, do it just after template becomes ready
         if self._state == 'ok':
             if self._destroy_after:
                 self._destroy_after = False
                 return self.destroy()
-            return State.FINISHED
+            return types.states.State.FINISHED
 
-        return State.RUNNING
+        return types.states.State.RUNNING
 
     def error_reason(self) -> str:
         """
         If a publication produces an error, here we must notify the reason why
         it happened. This will be called just after publish or check_state
-        if they return State.ERROR
+        if they return types.states.State.ERROR
 
         Returns an string, in our case, set at check_state
         """
         return self._reason
 
-    def destroy(self) -> str:
+    def destroy(self) -> types.states.State:
         """
         This is called once a publication is no more needed.
 
@@ -156,24 +156,24 @@ class OVirtPublication(Publication, autoserializable.AutoSerializable):
         removing created "external" data (environment gets cleaned by core),
         etc..
 
-        The retunred value is the same as when publishing, State.RUNNING,
-        State.FINISHED or State.ERROR.
+        The retunred value is the same as when publishing, types.states.State.RUNNING,
+        types.states.State.FINISHED or types.states.State.ERROR.
         """
         # We do not do anything else to destroy this instance of publication
         if self._state == 'locked':
             self._destroy_after = True
-            return State.RUNNING
+            return types.states.State.RUNNING
 
         try:
             self.service().remove_template(self._template_id)
         except Exception as e:
             self._state = 'error'
             self._reason = str(e)
-            return State.ERROR
+            return types.states.State.ERROR
 
-        return State.FINISHED
+        return types.states.State.FINISHED
 
-    def cancel(self) -> str:
+    def cancel(self) -> types.states.State:
         """
         Do same thing as destroy
         """

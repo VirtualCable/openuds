@@ -53,7 +53,7 @@ class MessageProcessorThread(BaseThread):
     ]
     _cached_stamp: float
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.name = 'MessageProcessorThread'
         self._cached_providers = None
@@ -73,7 +73,7 @@ class MessageProcessorThread(BaseThread):
             self._cached_stamp = time.time()
         return self._cached_providers
 
-    def run(self):
+    def run(self) -> None:
         while self._keep_running:
             # Locate all notifications from "persistent" and try to process them
             # If no notification can be fully resolved, it will be kept in the database
@@ -149,5 +149,5 @@ class MessageProcessorThread(BaseThread):
                     break
                 time.sleep(1)
 
-    def request_stop(self):
+    def request_stop(self) -> None:
         self._keep_running = False

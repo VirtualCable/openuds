@@ -77,13 +77,13 @@ class StateUpdater:
     def log_ip(self):
         ip = self.user_service_instance.get_ip()
 
-        if ip is not None and ip != '':
+        if ip:
             self.user_service.log_ip(ip)
 
     def check_later(self):
         UserServiceOpChecker.check_later(self.user_service, self.user_service_instance)
 
-    def run(self, state):
+    def run(self, state: 'State'):
         executor = {
             State.RUNNING: self.running,
             State.ERROR: self.error,
@@ -104,7 +104,7 @@ class StateUpdater:
 
         logger.debug('Executor for %s done', self.user_service.friendly_name)
 
-    def finish(self):
+    def finish(self) -> None:
         raise NotImplementedError()
 
     def running(self):
@@ -212,7 +212,7 @@ class UserServiceOpChecker(DelayedTask):
         self._state = service.state
 
     @staticmethod
-    def make_unique(userservice: UserService, userservice_instance: services.UserService, state: str):
+    def make_unique(userservice: UserService, userservice_instance: services.UserService, state: State):
         """
         This method ensures that there will be only one delayedtask related to the userService indicated
         """
@@ -220,7 +220,7 @@ class UserServiceOpChecker(DelayedTask):
         UserServiceOpChecker.state_updater(userservice, userservice_instance, state)
 
     @staticmethod
-    def state_updater(userservice: UserService, userservice_instance: services.UserService, state: str):
+    def state_updater(userservice: UserService, userservice_instance: services.UserService, state: State):
         """
         Checks the value returned from invocation to publish or checkPublishingState, updating the servicePoolPub database object
         Return True if it has to continue checking, False if finished
@@ -278,7 +278,7 @@ class UserServiceOpChecker(DelayedTask):
         logger.debug('Checking user service finished %s', self._svrId)
         user_service: 'UserService|None' = None
         try:
-            user_service = typing.cast(UserService, UserService.objects.get(pk=self._svrId))
+            user_service = UserService.objects.get(pk=self._svrId)
             if user_service.state != self._state:
                 logger.debug('Task overrided by another task (state of item changed)')
                 # This item is no longer valid, returning will not check it again (no checkLater called)

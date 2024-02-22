@@ -118,14 +118,14 @@ class ServiceCacheUpdater(Job):
     friendly_name = 'Service Cache Updater'
 
     @staticmethod
-    def _notify_restrain(servicePool) -> None:
+    def _notify_restrain(servicepool: 'ServicePool') -> None:
         log.log(
-            servicePool,
+            servicepool,
             log.LogLevel.WARNING,
             'Service Pool is restrained due to excesive errors',
             log.LogSource.INTERNAL,
         )
-        logger.info('%s is restrained, will check this later', servicePool.name)
+        logger.info('%s is restrained, will check this later', servicepool.name)
 
     def service_pools_needing_cache_update(
         self,
@@ -148,7 +148,7 @@ class ServiceCacheUpdater(Job):
         for servicepool in candidate_servicepools:
             servicepool.user_services.update()  # Cleans cached queries
             # If this deployedService don't have a publication active and needs it, ignore it
-            service_instance = servicepool.service.get_instance()  # type: ignore
+            service_instance = servicepool.service.get_instance()
 
             if service_instance.uses_cache is False:
                 logger.debug(
@@ -200,7 +200,7 @@ class ServiceCacheUpdater(Job):
             )
             assigned_count: int = (
                 servicepool.assigned_user_services()
-                .filter(UserServiceManager().get_state_filter(servicepool.service))  # type: ignore
+                .filter(UserServiceManager().get_state_filter(servicepool.service))
                 .count()
             )
             pool_stat = ServicePoolStats(servicepool, l1_cache_count, l2_cache_count, assigned_count)
@@ -212,7 +212,6 @@ class ServiceCacheUpdater(Job):
                 l2_cache_count,
                 assigned_count,
             )
-            l1_assigned_count = l1_cache_count + assigned_count
 
             # We have more than we want
             if pool_stat.l1_cache_overflow():
@@ -390,7 +389,7 @@ class ServiceCacheUpdater(Job):
     def reduce_l2_cache(
         self,
         servicepool_stats: ServicePoolStats,
-    ):
+    ) -> None:
         logger.debug("Reducing L2 cache erasing a service in cache for %s", servicepool_stats.servicepool.name)
         if servicepool_stats.l2_cache_count > 0:
             cacheItems = (

@@ -58,16 +58,16 @@ def uds_link(request: 'HttpRequest', ticket: str, scrambler: str) -> str:
 
 def uds_access_link(
     request: 'HttpRequest',  # pylint: disable=unused-argument
-    serviceId: str,
-    transportId: typing.Optional[str],
+    service_id: str,
+    transport_id: typing.Optional[str],
 ) -> str:
     '''
     If transportId (uuid) is None, this will be a metaLink
     '''
-    return f'{consts.system.UDS_ACTION_SCHEME}{serviceId}/{transportId or "meta"}'
+    return f'{consts.system.UDS_ACTION_SCHEME}{service_id}/{transport_id or "meta"}'
 
 
-def parse_date(dateToParse) -> datetime.date:
+def parse_date(string_date: str) -> datetime.date:
     if get_language() == 'fr':
         date_format = '%d/%m/%Y'
     else:
@@ -75,28 +75,15 @@ def parse_date(dateToParse) -> datetime.date:
             formats.get_format('SHORT_DATE_FORMAT').replace('Y', '%Y').replace('m', '%m').replace('d', '%d')
         )  # pylint: disable=maybe-no-member
 
-    return datetime.datetime.strptime(dateToParse, date_format).date()
+    return datetime.datetime.strptime(string_date, date_format).date()
 
 
-def date_to_literal(date) -> str:
+def date_to_literal(date: datetime.datetime) -> str:
     # Fix for FR lang for datepicker
     if get_language() == 'fr':
-        date = date.strftime('%d/%m/%Y')
+        d = date.strftime('%d/%m/%Y')
     else:
-        date = formats.date_format(date, 'SHORT_DATE_FORMAT')
+        d = formats.date_format(date, 'SHORT_DATE_FORMAT')
 
-    return date
+    return d
 
-
-def extract_key(
-    dictionary: dict, key: typing.Any, fmt: typing.Optional[str] = None, default: typing.Any = None
-):
-    fmt = fmt or '{0}'
-    default = default or ''
-
-    if key in dictionary:
-        value = fmt.format(dictionary[key])
-        del dictionary[key]
-    else:
-        value = default
-    return value

@@ -48,6 +48,7 @@ if typing.TYPE_CHECKING:
         HttpResponse,
     )
     from uds import models
+    from uds.core.types.requests import ExtendedHttpRequest
     from uds.core.environment import Environment
     from uds.core import types
     from .groups_manager import GroupsManager
@@ -516,7 +517,7 @@ class Authenticator(Module):
         """
         raise NotImplementedError
 
-    def get_javascript(self, request: 'HttpRequest') -> typing.Optional[str]:
+    def get_javascript(self, request: 'ExtendedHttpRequest') -> typing.Optional[str]:
         """
         If you override this method, and returns something different of None,
         UDS will consider your authenticator as "Owner draw", that is, that it

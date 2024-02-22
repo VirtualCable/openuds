@@ -44,9 +44,9 @@ class ExtendedHttpRequest(HttpRequest):
     ip_version: int
     ip_proxy: str
     os: 'types.os.DetectedOsInfo'
-    user: typing.Optional['User']
+    user: typing.Optional['User']  # type: ignore   # Override base user to be optional
     authorized: bool
 
 
 class ExtendedHttpRequestWithUser(ExtendedHttpRequest):
-    user: 'User'
+    user: 'User'  # type: ignore  # Has the user always

@@ -60,13 +60,10 @@ class IPMachinesService(IPServiceBase):
     # Gui
     token = gui.TextField(
         order=1,
-        label=typing.cast(str, _('Service Token')),
+        label=_('Service Token'),
         length=64,
-        tooltip=typing.cast(
-            str,
-            _(
-                'Service token that will be used by actors to communicate with service. Leave empty for persistent assignation.'
-            ),
+        tooltip=_(
+            'Service token that will be used by actors to communicate with service. Leave empty for persistent assignation.'
         ),
         default='',
         required=False,
@@ -74,28 +71,26 @@ class IPMachinesService(IPServiceBase):
     )
 
     list_of_hosts = gui.EditableListField(
-        label=typing.cast(str, _('List of hosts')),
-        tooltip=typing.cast(str, _('List of hosts available for this service')),
+        label=_('List of hosts'),
+        tooltip=_('List of hosts available for this service'),
         old_field_name='ipList',
     )
 
     port = gui.NumericField(
         length=5,
-        label=typing.cast(str, _('Check Port')),
+        label=_('Check Port'),
         default=0,
         order=2,
-        tooltip=typing.cast(
-            str, _('If non zero, only hosts responding to connection on that port will be served.')
-        ),
+        tooltip=_('If non zero, only hosts responding to connection on that port will be served.'),
         required=True,
         tab=types.ui.Tab.ADVANCED,
     )
     ignore_minutes_on_failure = gui.NumericField(
         length=6,
-        label=typing.cast(str, _('Ignore minutes on failure')),
+        label=_('Ignore minutes on failure'),
         default=0,
         order=2,
-        tooltip=typing.cast(str, _('If a host fails to check, skip it for this time (in minutes).')),
+        tooltip=_('If a host fails to check, skip it for this time (in minutes).'),
         min_value=0,
         required=True,
         tab=types.ui.Tab.ADVANCED,
@@ -104,33 +99,26 @@ class IPMachinesService(IPServiceBase):
 
     max_session_hours = gui.NumericField(
         length=3,
-        label=typing.cast(str, _('Max session duration')),
+        label=_('Max session duration'),
         default=0,
         order=3,
-        tooltip=typing.cast(
-            str,
-            _(
-                'Max session duration before UDS releases a presumed locked machine (hours). 0 signifies "never".'
-            ),
-        ),
+        tooltip=_('Max session duration before UDS releases a presumed locked machine (hours). 0 signifies "never".'),
         min_value=0,
         required=True,
         tab=types.ui.Tab.ADVANCED,
         old_field_name='maxSessionForMachine',
     )
     lock_on_external_access = gui.CheckBoxField(
-        label=typing.cast(str, _('Lock machine by external access')),
-        tooltip=typing.cast(str, _('If checked, UDS will lock the machine if it is accesed from outside UDS.')),
+        label=_('Lock machine by external access'),
+        tooltip=_('If checked, UDS will lock the machine if it is accessed from outside UDS.'),
         default=False,
         order=4,
         tab=types.ui.Tab.ADVANCED,
         old_field_name='lockByExternalAccess',
     )
     randomize_host = gui.CheckBoxField(
-        label=typing.cast(str, _('Use random host')),
-        tooltip=typing.cast(
-            str, _('When enabled, UDS selects a random, rather than sequential, host from the list.')
-        ),
+        label=_('Use random host'),
+        tooltip=_('When enabled, UDS selects a random, rather than sequential, host from the list.'),
         default=False,
         order=5,
         tab=types.ui.Tab.ADVANCED,
@@ -138,9 +126,9 @@ class IPMachinesService(IPServiceBase):
     )
 
     # Description of service
-    type_name = typing.cast(str, _('Static Multiple IP'))
+    type_name = _('Static Multiple IP')
     type_type = 'IPMachinesService'
-    type_description = typing.cast(str, _('This service provides access to POWERED-ON Machines by IP'))
+    type_description = _('This service provides access to POWERED-ON Machines by IP')
     icon_file = 'machines.png'
 
     uses_cache = False  # Cache are running machine awaiting to be assigned
@@ -187,7 +175,7 @@ class IPMachinesService(IPServiceBase):
     def hosts(self) -> typing.List['HostInfo']:
         if self._cached_hosts is None:
             d = self.storage.read_from_db('ips')
-            hosts_list = pickle.loads(d) if d and isinstance(d, bytes) else []  # nosec: pickle is safe here
+            hosts_list: list[str] = pickle.loads(d) if d and isinstance(d, bytes) else []  # nosec: pickle is safe here
             self._cached_hosts = IPMachinesService.compose_hosts_info(hosts_list)
         return self._cached_hosts
 
@@ -329,18 +317,18 @@ class IPMachinesService(IPServiceBase):
         self,
         assignable_id: str,
         user: 'models.User',
-        userDeployment: 'services.UserService',
+        userservice_instance: 'services.UserService',
     ) -> str:
-        userservice_instance: IPMachineUserService = typing.cast(IPMachineUserService, userDeployment)
+        ipmachine_instance: IPMachineUserService = typing.cast(IPMachineUserService, userservice_instance)
         host = HostInfo.from_str(assignable_id)
 
         now = sql_stamp_seconds()
         locked = self.storage.get_unpickle(host.host)
         if self.is_usable(locked, now):
             self.storage.put_pickle(host.host, now)
-            return userservice_instance.assign(host.as_identifier())
+            return ipmachine_instance.assign(host.as_identifier())
 
-        return userservice_instance.error('IP already assigned')
+        return ipmachine_instance.error('IP already assigned')
 
     def process_login(self, id: str, remote_login: bool) -> None:
         '''

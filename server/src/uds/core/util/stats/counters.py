@@ -54,27 +54,27 @@ CounterClass = typing.TypeVar('CounterClass', Provider, Service, ServicePool, Au
 
 
 # Helpers
-def _get_id(obj):
+def _get_id(obj: 'CounterClass') -> typing.Optional[int]:
     return obj.id if obj.id != -1 else None
 
 
-def _get_prov_serv_ids(provider) -> tuple:
+def _get_prov_serv_ids(provider: 'Provider') -> tuple[int, ...]:
     return tuple(i.id for i in provider.services.all())
 
 
-def _get_serv_pool_ids(service) -> tuple:
+def _get_serv_pool_ids(service: 'Service') -> tuple[int, ...]:
     return tuple(i.id for i in service.deployedServices.all())
 
 
-def _get_prov_serv_pool_ids(provider) -> tuple:
-    res: tuple = ()
+def _get_prov_serv_pool_ids(provider: 'Provider') -> tuple[int, ...]:
+    res: tuple[int, ...] = ()
     for i in provider.services.all():
         res += _get_serv_pool_ids(i)
     return res
 
 
 _id_retriever: typing.Final[
-    collections.abc.Mapping[type[Model], collections.abc.Mapping[int, collections.abc.Callable]]
+    collections.abc.Mapping[type[Model], collections.abc.Mapping[int, collections.abc.Callable[[typing.Any], typing.Any]]]
 ] = {
     Provider: {
         types.stats.CounterType.LOAD: _get_id,
@@ -149,7 +149,7 @@ def add_counter(
 
 
 def enumerate_counters(
-    obj: CounterClass, counterType: types.stats.CounterType, **kwargs
+    obj: CounterClass, counterType: types.stats.CounterType, **kwargs: typing.Any
 ) -> typing.Generator[tuple[datetime.datetime, int], None, None]:
     """
     Get counters
@@ -184,7 +184,7 @@ def enumerate_counters(
         return
 
     if not kwargs.get('all', False):
-        owner_ids = fnc(obj)
+        owner_ids = fnc(obj)  # pyright: ignore
     else:
         owner_ids = None
 

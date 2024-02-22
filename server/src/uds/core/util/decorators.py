@@ -30,7 +30,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import dataclasses
 import functools
-import hashlib
 import inspect
 import logging
 import threading

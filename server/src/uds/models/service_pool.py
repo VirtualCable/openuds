@@ -56,9 +56,16 @@ from .uuid_model import UUIDModel
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.models import (CalendarAccess, CalendarAction, Group,
-                            MetaPoolMember, ServicePoolPublication,
-                            ServicePoolPublicationChangelog, User, UserService)
+    from uds.models import (
+        CalendarAccess,
+        CalendarAction,
+        Group,
+        MetaPoolMember,
+        ServicePoolPublication,
+        ServicePoolPublicationChangelog,
+        User,
+        UserService,
+    )
 
 logger = logging.getLogger(__name__)
 
@@ -84,8 +91,12 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         related_name='deployedServices',
         on_delete=models.CASCADE,
     )
-    transports = models.ManyToManyField(Transport, related_name='deployedServices', db_table='uds__ds_trans')
-    assignedGroups = models.ManyToManyField(Group, related_name='deployedServices', db_table='uds__ds_grps')
+    transports: 'models.ManyToManyField[Transport, ServicePool]' = models.ManyToManyField(
+        Transport, related_name='deployedServices', db_table='uds__ds_trans'
+    )
+    assignedGroups: 'models.ManyToManyField[Group, ServicePool]' = models.ManyToManyField(
+        Group, related_name='deployedServices', db_table='uds__ds_grps'
+    )
     state = models.CharField(max_length=1, default=types.states.State.ACTIVE, db_index=True)
     state_date = models.DateTimeField(default=consts.NEVER)
     show_transports = models.BooleanField(default=True)
@@ -132,7 +143,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
     current_pub_revision = models.PositiveIntegerField(default=1)
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager["ServicePool"]'
+    # objects: 'models.manager.Manager["ServicePool"]'
     publications: 'models.manager.RelatedManager[ServicePoolPublication]'
     memberOfMeta: 'models.manager.RelatedManager[MetaPoolMember]'
     userServices: 'models.manager.RelatedManager[UserService]'
@@ -153,7 +164,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
     def calendar_access(self) -> 'models.manager.RelatedManager[CalendarAccess]':
         return self.calendarAccess
 
-    class Meta(UUIDModel.Meta):  # pylint: disable=too-few-public-methods
+    class Meta(UUIDModel.Meta):  # pyright: ignore
         """
         Meta class to declare the name of the table at database
         """
@@ -199,13 +210,10 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
     @staticmethod
     def restraineds_queryset() -> 'models.QuerySet[ServicePool]':
-        from django.db.models import \
-            Count  # pylint: disable=import-outside-toplevel
+        from django.db.models import Count  # pylint: disable=import-outside-toplevel
 
-        from uds.core.util.config import \
-            GlobalConfig  # pylint: disable=import-outside-toplevel
-        from uds.models.user_service import \
-            UserService  # pylint: disable=import-outside-toplevel
+        from uds.core.util.config import GlobalConfig  # pylint: disable=import-outside-toplevel
+        from uds.models.user_service import UserService  # pylint: disable=import-outside-toplevel
 
         if GlobalConfig.RESTRAINT_TIME.as_int() <= 0:
             return (
@@ -215,12 +223,13 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         date = sql_datetime() - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.as_int())
         min_ = GlobalConfig.RESTRAINT_COUNT.as_int()
 
-        res = []
-        for v in (
+        res: list[dict[str, typing.Any]] = []
+        for v in typing.cast(
+            list[dict[str, typing.Any]],
             UserService.objects.filter(state=types.states.State.ERROR, state_date__gt=date)
             .values('deployed_service')
             .annotate(how_many=Count('deployed_service'))
-            .order_by('deployed_service')
+            .order_by('deployed_service'),
         ):
             if v['how_many'] >= min_:
                 res.append(v['deployed_service'])
@@ -236,7 +245,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
     @property
     def visual_name(self) -> str:
-        logger.debug("SHORT: %s %s %s", self.short_name, self.short_name is not None, self.name)
+        logger.debug("SHORT: %s %s %s", self.short_name, self.short_name != '', self.name)
         if self.short_name and str(self.short_name).strip():
             return str(self.short_name.strip())
         return str(self.name)
@@ -255,13 +264,12 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         The time that a service is in restrain mode is 20 minutes by default (1200 secs), but it can be modified
         at globalconfig variables
         """
-        from uds.core.util.config import \
-            GlobalConfig  # pylint: disable=import-outside-toplevel
+        from uds.core.util.config import GlobalConfig  # pylint: disable=import-outside-toplevel
 
         if GlobalConfig.RESTRAINT_TIME.as_int() <= 0:
             return False  # Do not perform any restraint check if we set the globalconfig to 0 (or less)
 
-        date = typing.cast(datetime, sql_datetime()) - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.as_int())
+        date = sql_datetime() - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.as_int())
         if (
             self.userServices.filter(state=types.states.State.ERROR, state_date__gt=date).count()
             >= GlobalConfig.RESTRAINT_COUNT.as_int()
@@ -312,23 +320,23 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         return None
 
-    def is_access_allowed(self, chkDateTime=None) -> bool:
+    def is_access_allowed(self, check_datetime: typing.Optional[datetime] = None) -> bool:
         """
         Checks if the access for a service pool is allowed or not (based esclusively on associated calendars)
         """
-        if chkDateTime is None:
-            chkDateTime = sql_datetime()
+        if check_datetime is None:
+            check_datetime = sql_datetime()
 
         access = self.fallbackAccess
         # Let's see if we can access by current datetime
         for ac in sorted(self.calendarAccess.all(), key=operator.attrgetter('priority')):
-            if calendar.CalendarChecker(ac.calendar).check(chkDateTime):
+            if calendar.CalendarChecker(ac.calendar).check(check_datetime):
                 access = ac.access
                 break  # Stops on first rule match found
 
         return access == types.states.State.ALLOW
 
-    def get_deadline(self, chkDateTime: typing.Optional[datetime] = None) -> typing.Optional[int]:
+    def get_deadline(self, check_datetime: typing.Optional[datetime] = None) -> typing.Optional[int]:
         """Gets the deadline for an access on chkDateTime in seconds
 
         Keyword Arguments:
@@ -337,30 +345,30 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         Returns:
             typing.Optional[int] -- [Returns deadline in secods. If no deadline (forever), will return None]
         """
-        if chkDateTime is None:
-            chkDateTime = typing.cast(datetime, sql_datetime())
+        if check_datetime is None:
+            check_datetime = sql_datetime()
 
-        if self.is_access_allowed(chkDateTime) is False:
+        if self.is_access_allowed(check_datetime) is False:
             return -1
 
-        deadLine = None
+        deadline = None
 
         for ac in self.calendarAccess.all():
             if ac.access == types.states.State.ALLOW and self.fallbackAccess == types.states.State.DENY:
-                nextE = calendar.CalendarChecker(ac.calendar).next_event(chkDateTime, False)
-                if not deadLine or (nextE and deadLine > nextE):
-                    deadLine = nextE
+                nextE = calendar.CalendarChecker(ac.calendar).next_event(check_datetime, False)
+                if not deadline or (nextE and deadline > nextE):
+                    deadline = nextE
             elif ac.access == types.states.State.DENY:  # DENY
-                nextE = calendar.CalendarChecker(ac.calendar).next_event(chkDateTime, True)
-                if not deadLine or (nextE and deadLine > nextE):
-                    deadLine = nextE
+                nextE = calendar.CalendarChecker(ac.calendar).next_event(check_datetime, True)
+                if not deadline or (nextE and deadline > nextE):
+                    deadline = nextE
 
-        if deadLine is None:
+        if deadline is None:
             if self.fallbackAccess == types.states.State.ALLOW:
                 return None
             return -1
 
-        return int((deadLine - chkDateTime).total_seconds())
+        return int((deadline - check_datetime).total_seconds())
 
     def set_value(self, name: str, value: typing.Any):
         """
@@ -480,7 +488,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         ):
             raise InvalidServiceException()
 
-    def validate_transport(self, transport) -> None:
+    def validate_transport(self, transport: 'Transport') -> None:
         if (
             self.transports.filter(id=transport.id).count()  # pylint: disable=no-member
             == 0  # pylint: disable=no-member
@@ -520,8 +528,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         Returns:
             List of accesible deployed services
         """
-        from uds.core import \
-            services  # pylint: disable=import-outside-toplevel
+        from uds.core import services  # pylint: disable=import-outside-toplevel
 
         servicesNotNeedingPub = [t.get_type() for t in services.factory().services_not_needing_publication()]
         # Get services that HAS publications
@@ -590,8 +597,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         No check is done, it simply redirects the request to PublicationManager, where checks are done.
         """
-        from uds.core.managers import \
-            publication_manager  # pylint: disable=import-outside-toplevel
+        from uds.core.managers import publication_manager  # pylint: disable=import-outside-toplevel
 
         publication_manager().publish(self, changeLog)
 
@@ -634,25 +640,25 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         return self.userServices.filter(cache_level=0, user=None)
 
-    def usage(self, cachedValue=-1) -> types.pools.UsageInfo:
+    def usage(self, cached_value: int = -1) -> types.pools.UsageInfo:
         """
         Returns the % used services, then count and the max related to "maximum" user services
         If no "maximum" number of services, will return 0% ofc
         cachedValue is used to optimize (if known the number of assigned services, we can avoid to query the db)
         """
         maxs = self.max_srvs
-        if maxs == 0 and self.service:
+        if maxs == 0:
             maxs = self.service.get_instance().userservices_limit
 
-        if cachedValue == -1:
-            cachedValue = (
+        if cached_value == -1:
+            cached_value = (
                 self.assigned_user_services().filter(state__in=types.states.State.VALID_STATES).count()
             )
 
-        if maxs == 0 or max == consts.UNLIMITED:
-            return types.pools.UsageInfo(cachedValue, consts.UNLIMITED)
+        if maxs == 0 or maxs == consts.UNLIMITED:
+            return types.pools.UsageInfo(cached_value, consts.UNLIMITED)
 
-        return types.pools.UsageInfo(cachedValue, maxs)
+        return types.pools.UsageInfo(cached_value, maxs)
 
     def test_connectivity(self, host: str, port: typing.Union[str, int], timeout: float = 4) -> bool:
         return bool(self.service) and self.service.test_connectivity(host, port, timeout)
@@ -662,7 +668,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         log.log(self, level, message, log.LogSource.INTERNAL)
 
     @staticmethod
-    def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def pre_delete(sender: typing.Any, **kwargs: typing.Any) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -671,19 +677,18 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         :note: If destroy raises an exception, the deletion is not taken.
         """
-        from uds.core.util.permissions import \
-            clean  # pylint: disable=import-outside-toplevel
+        from uds.core.util.permissions import clean  # pylint: disable=import-outside-toplevel
 
-        toDelete: 'ServicePool' = kwargs['instance']
+        to_delete: 'ServicePool' = kwargs['instance']
 
-        logger.debug('Deleting Service Pool %s', toDelete)
-        toDelete.get_environment().clean_related_data()
+        logger.debug('Deleting Service Pool %s', to_delete)
+        to_delete.get_environment().clean_related_data()
 
         # Clears related logs
-        log.clear_logs(toDelete)
+        log.clear_logs(to_delete)
 
         # Clears related permissions
-        clean(toDelete)
+        clean(to_delete)
 
     # returns CSV header
     @staticmethod

@@ -38,8 +38,7 @@ import typing
 import collections.abc
 
 from django.utils.translation import gettext as _
-from uds.core import services
-from uds.core.types.states import State
+from uds.core import services, types
 
 logger = logging.getLogger(__name__)
 
@@ -80,32 +79,32 @@ class TestPublication(services.Publication):
         # We do not check anything at marshal method, so we ensure that
         # default values are correctly handled by marshal.
         self.data.name = ''.join(random.choices(string.ascii_letters, k=8))
-        self.data.state = State.RUNNING
+        self.data.state = types.states.State.RUNNING
         self.data.reason = 'none'
         self.data.number = 10
 
-    def publish(self) -> str:
+    def publish(self) -> types.states.State:
         logger.info('Publishing publication %s: %s remaining',self.data.name, self.data.number)
         self.data.number -= 1
 
         if self.data.number <= 0:
-            self.data.state = State.FINISHED
-        return self.data.state
+            self.data.state = types.states.State.FINISHED
+        return types.states.State.from_str(self.data.state)
 
     def finish(self) -> None:
         # Make simply a random string
         logger.info('Finishing publication %s', self.data.name)
         self.data.number = 0
-        self.data.state = State.FINISHED
+        self.data.state = types.states.State.FINISHED
 
     def error_reason(self) -> str:
         return self.data.reason
 
-    def destroy(self) -> str:
+    def destroy(self) -> types.states.State:
         logger.info('Destroying publication %s', self.data.name)
-        return State.FINISHED
+        return types.states.State.FINISHED
 
-    def cancel(self) -> str:
+    def cancel(self) -> types.states.State:
         logger.info('Canceling publication %s', self.data.name)
         return self.destroy()
 

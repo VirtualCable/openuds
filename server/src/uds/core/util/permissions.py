@@ -91,7 +91,7 @@ def add_user_permission(
     user: 'models.User',
     obj: 'Model',
     permission: PermissionType = PermissionType.READ,
-):
+) -> None:
     # Some permissions added to some object types needs at least READ_PERMISSION on parent
     models.Permissions.add_permission(
         user=user,
@@ -105,7 +105,7 @@ def add_group_permission(
     group: 'models.Group',
     obj: 'Model',
     permission: PermissionType = PermissionType.READ,
-):
+) -> None:
     models.Permissions.add_permission(
         group=group,
         object_type=objtype.ObjectType.from_model(obj),
@@ -119,7 +119,7 @@ def has_access(
     obj: 'Model',
     permission: PermissionType = PermissionType.ALL,
     for_type: bool = False,
-):
+) -> bool:
     return effective_permissions(user, obj, for_type).contains(permission)
 
 

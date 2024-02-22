@@ -142,7 +142,7 @@ class StatsCleaner(Job):
     frecuency = 3600 * 24 * 15  # Ejecuted just once every 15 days
     friendly_name = 'Statistic housekeeping'
 
-    def run(self):
+    def run(self) -> None:
         logger.debug('Starting statistics cleanup')
         try:
             StatsManager.manager().perform_counters_maintenance()
@@ -169,7 +169,7 @@ class StatsAccumulator(Job):
     )
     friendly_name = 'Statistics acummulator'
 
-    def run(self):
+    def run(self) -> None:
         try:
             StatsManager.manager().acummulate(config.GlobalConfig.STATS_ACCUM_MAX_CHUNK_TIME.as_int())
         except Exception:

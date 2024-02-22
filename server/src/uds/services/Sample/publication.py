@@ -37,8 +37,7 @@ import typing
 import collections.abc
 
 from django.utils.translation import gettext as _
-from uds.core import services
-from uds.core.types.states import State
+from uds.core import services, types
 
 logger = logging.getLogger(__name__)
 
@@ -123,7 +122,7 @@ class SamplePublication(services.Publication):
         self._reason = vals[1]
         self._number = int(vals[2])
 
-    def publish(self) -> str:
+    def publish(self) -> types.states.State:
         """
         This method is invoked whenever the administrator requests a new publication.
 
@@ -135,7 +134,7 @@ class SamplePublication(services.Publication):
         All publications can be synchronous or asynchronous.
 
         The main difference between both is that first do whatever needed, (the
-        action must be fast enough to do not block core), returning State.FINISHED.
+        action must be fast enough to do not block core), returning types.states.State.FINISHED.
 
         The second (asynchronous) are publications that could block the core, so
         it have to be done in more than one step.
@@ -144,7 +143,7 @@ class SamplePublication(services.Publication):
             * First we invoke the copy operation to virtualization provider
             * Second, we kept needed values inside instance so we can serialize
               them whenever requested
-            * Returns an State.RUNNING, indicating the core that the publication
+            * Returns an types.states.State.RUNNING, indicating the core that the publication
               has started but has to finish sometime later. (We do no check
               again the state and keep waiting here, because we will block the
               core untill this operation is finished).
@@ -157,7 +156,7 @@ class SamplePublication(services.Publication):
         finish at publish call but a later check_state call
 
         Take care with instantiating threads from here. Whenever a publish returns
-        "State.RUNNING", the core will recheck it later, but not using this instance
+        "types.states.State.RUNNING", the core will recheck it later, but not using this instance
         and maybe that even do not use this server.
 
         If you want to use threadings or somethin likt it, use DelayedTasks and
@@ -178,17 +177,17 @@ class SamplePublication(services.Publication):
         """
         self._number = 5
         self._reason = ''
-        return State.RUNNING
+        return types.states.State.RUNNING
 
-    def check_state(self) -> str:
+    def check_state(self) -> types.states.State:
         """
         Our publish method will initiate publication, but will not finish it.
         So in our sample, wi will only check if _number reaches 0, and if so
         return that we have finished, else we will return that we are working
         on it.
 
-        One publish returns State.RUNNING, this task will get called untill
-        check_state returns State.FINISHED.
+        One publish returns types.states.State.RUNNING, this task will get called untill
+        check_state returns types.states.State.FINISHED.
 
         Also, wi will make the publication fail one of every 10 calls to this
         method.
@@ -204,11 +203,11 @@ class SamplePublication(services.Publication):
         # One of every 10 calls
         if random.randint(0, 9) == 9:
             self._reason = _('Random integer was 9!!! :-)')
-            return State.ERROR
+            return types.states.State.ERROR
 
         if self._number <= 0:
-            return State.FINISHED
-        return State.RUNNING
+            return types.states.State.FINISHED
+        return types.states.State.RUNNING
 
     def finish(self) -> None:
         """
@@ -228,13 +227,13 @@ class SamplePublication(services.Publication):
         """
         If a publication produces an error, here we must notify the reason why
         it happened. This will be called just after publish or check_state
-        if they return State.ERROR
+        if they return types.states.State.ERROR
 
         Returns an string, in our case, set at check_state
         """
         return self._reason
 
-    def destroy(self) -> str:
+    def destroy(self) -> types.states.State:
         """
         This is called once a publication is no more needed.
 
@@ -242,16 +241,16 @@ class SamplePublication(services.Publication):
         removing created "external" data (environment gets cleaned by core),
         etc..
 
-        The retunred value is the same as when publishing, State.RUNNING,
-        State.FINISHED or State.ERROR.
+        The retunred value is the same as when publishing, types.states.State.RUNNING,
+        types.states.State.FINISHED or types.states.State.ERROR.
         """
         self._name = ''
         self._reason = ''  # In fact, this is not needed, but cleaning up things... :-)
 
         # We do not do anything else to destroy this instance of publication
-        return State.FINISHED
+        return types.states.State.FINISHED
 
-    def cancel(self) -> str:
+    def cancel(self) -> types.states.State:
         """
         Invoked for canceling the current operation.
         This can be invoked directly by an administration or by the clean up

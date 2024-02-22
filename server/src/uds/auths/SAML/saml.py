@@ -32,11 +32,10 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import datetime
 import logging
-import re
 import typing
 import collections.abc
 import xml.sax  # nosec: used to parse trusted xml provided only by administrators
-from urllib import parse
+from urllib.parse import urlparse
 
 import requests
 from django.utils.translation import gettext
@@ -55,6 +54,7 @@ from uds.core.util.model import sql_datetime
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest
+    from urllib.parse import ParseResult
 
     from uds.core.types.requests import ExtendedHttpRequestWithUser
 
@@ -454,9 +454,7 @@ class SAMLAuthenticator(auths.Authenticator):
             xml.sax.parseString(idp_metadata, xml.sax.ContentHandler())  # type: ignore  # nosec: url provided by admin
         except Exception as e:
             msg = (gettext(' (obtained from URL)') if from_url else '') + str(e)
-            raise exceptions.ui.ValidationError(
-                gettext('XML does not seem valid for IDP Metadata ') + msg
-            )
+            raise exceptions.ui.ValidationError(gettext('XML does not seem valid for IDP Metadata ') + msg)
 
         # Now validate regular expressions, if they exists
         auth_utils.validate_regex_field(self.attrs_username)
@@ -468,7 +466,7 @@ class SAMLAuthenticator(auths.Authenticator):
         request: 'ExtendedHttpRequest',
         params: typing.Optional['types.auth.AuthCallbackParams'] = None,
     ) -> dict[str, typing.Any]:
-        manage_url_obj: 'parse.ParseResult' = parse.urlparse(self.manage_url.value)
+        manage_url_obj = typing.cast('ParseResult', urlparse(self.manage_url.value))
         script_path: str = manage_url_obj.path
         host: str = manage_url_obj.netloc
         if ':' in host:
@@ -524,7 +522,7 @@ class SAMLAuthenticator(auths.Authenticator):
         else:
             val = self.idp_metadata.value
 
-        return OneLogin_Saml2_IdPMetadataParser.parse(val)
+        return OneLogin_Saml2_IdPMetadataParser.parse(val)  # pyright: ignore reportUnknownVariableType
 
     def build_onelogin_settings(self) -> dict[str, typing.Any]:
         return {
@@ -547,14 +545,17 @@ class SAMLAuthenticator(auths.Authenticator):
             'idp': self.get_idp_metadata_dict()['idp'],
             'security': {
                 # in days, converted to seconds, this is a duration
-                'metadataCacheDuration': self.metadata_cache_duration.as_int() * 86400
-                if self.metadata_cache_duration.value > 0
-                else 86400 * 365 * 10,
+                'metadataCacheDuration': (
+                    self.metadata_cache_duration.as_int() * 86400
+                    if self.metadata_cache_duration.value > 0
+                    else 86400 * 365 * 10
+                ),
                 # This is a date of end of validity
-                'metadataValidUntil': sql_datetime()
-                + datetime.timedelta(days=self.metadata_validity_duration.as_int())
-                if self.metadata_cache_duration.value > 0
-                else sql_datetime() + datetime.timedelta(days=365 * 10),
+                'metadataValidUntil': (
+                    sql_datetime() + datetime.timedelta(days=self.metadata_validity_duration.as_int())
+                    if self.metadata_cache_duration.value > 0
+                    else sql_datetime() + datetime.timedelta(days=365 * 10)
+                ),
                 'nameIdEncrypted': self.use_name_id_encrypted.as_bool(),
                 'authnRequestsSigned': self.use_authn_requests_signed.as_bool(),
                 'logoutRequestSigned': self.logout_request_signed.as_bool(),
@@ -585,8 +586,10 @@ class SAMLAuthenticator(auths.Authenticator):
     )
     def get_sp_metadata(self) -> str:
         saml_settings = OneLogin_Saml2_Settings(settings=self.build_onelogin_settings())
-        metadata = saml_settings.get_sp_metadata()
-        errors = saml_settings.validate_metadata(metadata)
+        metadata: typing.Any = saml_settings.get_sp_metadata()
+        errors: list[typing.Any] = saml_settings.validate_metadata(  # pyright: ignore reportUnknownVariableType
+            metadata
+        )
         if len(errors) > 0:
             raise exceptions.auth.AuthenticatorException(
                 gettext('Error validating SP metadata: ') + str(errors)
@@ -640,12 +643,14 @@ class SAMLAuthenticator(auths.Authenticator):
         settings = OneLogin_Saml2_Settings(settings=self.build_onelogin_settings())
         auth = OneLogin_Saml2_Auth(req, settings)
 
-        url = auth.process_slo(request_id=logout_req_id)
+        url: str = auth.process_slo(request_id=logout_req_id)  # pyright: ignore reportUnknownVariableType
 
-        errors = auth.get_errors()
+        errors: list[str] = auth.get_errors()
 
         if errors:
-            logger.debug('Error on SLO: %s', auth.get_last_response_xml())
+            logger.debug(
+                'Error on SLO: %s', auth.get_last_response_xml()  # pyright: ignore reportUnknownVariableType
+            )
             logger.debug('post_data: %s', req['post_data'])
             logger.info('Errors processing logout request: %s', errors)
             raise exceptions.auth.AuthenticatorException(gettext('Error processing SLO: ') + str(errors))
@@ -664,20 +669,20 @@ class SAMLAuthenticator(auths.Authenticator):
         self,
         parameters: 'types.auth.AuthCallbackParams',
         gm: 'auths.GroupsManager',
-        request: 'ExtendedHttpRequestWithUser',
+        request: 'ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         req = self.build_req_from_request(request, params=parameters)
 
         if 'logout' in parameters.get_params:
-            return self.logout_callback(req, request)
+            return self.logout_callback(req, typing.cast('ExtendedHttpRequestWithUser', request))
 
         try:
             settings = OneLogin_Saml2_Settings(settings=self.build_onelogin_settings())
             auth = OneLogin_Saml2_Auth(req, settings)
-            auth.process_response()
+            auth.process_response()  # pyright: ignore reportUnknownVariableType
         except Exception as e:
             raise exceptions.auth.AuthenticatorException(gettext('Error processing SAML response: ') + str(e))
-        errors = auth.get_errors()
+        errors: list[str] = auth.get_errors()
         if errors:
             raise exceptions.auth.AuthenticatorException('SAML response error: ' + str(errors))
 
@@ -705,24 +710,34 @@ class SAMLAuthenticator(auths.Authenticator):
         #         url=auth.redirect_to(req['post_data']['RelayState'])
         #     )
 
-        attributes = auth.get_attributes().copy()
+        attributes: dict[str, typing.Any] = (  # pyright: ignore reportUnknownVariableType
+            auth.get_attributes().copy()  # pyright: ignore reportUnknownVariableType
+        )
         # Append attributes by its friendly name
-        attributes.update(auth.get_friendlyname_attributes())
+        attributes.update(auth.get_friendlyname_attributes())  # pyright: ignore reportUnknownVariableType
 
         if not attributes:
             raise exceptions.auth.AuthenticatorException(gettext('No attributes returned from IdP'))
-        logger.debug("Attributes: %s", attributes)
+        logger.debug("Attributes: %s", attributes)  # pyright: ignore reportUnknownVariableType
 
         # Now that we have attributes, we can extract values from this, map groups, etc...
         username = ''.join(
-            auth_utils.process_regex_field(self.attrs_username.value, attributes)
+            auth_utils.process_regex_field(
+                self.attrs_username.value, attributes  # pyright: ignore reportUnknownVariableType
+            )
         )  # in case of multiple values is returned, join them
         logger.debug('Username: %s', username)
 
-        groups = auth_utils.process_regex_field(self.attrs_groupname.value, attributes)
+        groups = auth_utils.process_regex_field(
+            self.attrs_groupname.value, attributes  # pyright: ignore reportUnknownVariableType
+        )
         logger.debug('Groups: %s', groups)
 
-        realName = ' '.join(auth_utils.process_regex_field(self.attrs_realname.value, attributes))
+        realName = ' '.join(
+            auth_utils.process_regex_field(
+                self.attrs_realname.value, attributes  # pyright: ignore reportUnknownVariableType
+            )
+        )
         logger.debug('Real name: %s', realName)
 
         # store groups for this username at storage, so we can check it at a later stage
@@ -732,7 +747,11 @@ class SAMLAuthenticator(auths.Authenticator):
         if self.mfa_attr.value.strip():
             self.storage.put_pickle(
                 self.mfa_storage_key(username),
-                ''.join(auth_utils.process_regex_field(self.mfa_attr.value, attributes)),
+                ''.join(
+                    auth_utils.process_regex_field(
+                        self.mfa_attr.value, attributes  # pyright: ignore reportUnknownVariableType
+                    )
+                ),
             )  # in case multipel values is returned, join them
         else:
             self.storage.remove(self.mfa_storage_key(username))
@@ -768,7 +787,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
         return types.auth.AuthenticationResult(
             success=types.auth.AuthenticationState.REDIRECT,
-            url=auth.logout(
+            url=auth.logout(  # pyright: ignore reportUnknownVariableType
                 name_id=saml.get('nameid'),
                 session_index=saml.get('session_index'),
                 nq=saml.get('nameid_namequalifier'),
@@ -796,11 +815,11 @@ class SAMLAuthenticator(auths.Authenticator):
         req = self.build_req_from_request(request)
         auth = OneLogin_Saml2_Auth(req, self.build_onelogin_settings())
 
-        return f'window.location="{auth.login()}";'
+        return f'window.location="{auth.login()}";'  # pyright: ignore reportUnknownVariableType
 
-    def remove_user(self, username):
+    def remove_user(self, username: str) -> None:
         """
         Clean ups storage data
         """
         self.storage.remove(username)
-        self.storage.remove('lasso-' + username)
+        self.mfa_clean(username)

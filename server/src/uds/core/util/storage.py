@@ -72,7 +72,7 @@ def _decode_value(dbk: str, value: typing.Optional[str]) -> tuple[str, typing.An
             if isinstance(v, tuple) and v[0] == MARK:
                 return typing.cast(tuple[str, typing.Any], v[1:])
             # Fix value so it contains also the "key" (in this case, the original key is lost, we have only the hash value...)
-            return ('#' + dbk, v)
+            return ('#' + dbk, typing.cast(typing.Any, v))
         except Exception:
             try:
                 return ('#' + dbk, base64.b64decode(value.encode()).decode())
@@ -110,7 +110,7 @@ class StorageAsDict(MutableMapping[str, typing.Any]):
         self._atomic = atomic  # Not used right now, maybe removed
 
     @property
-    def _db(self) -> typing.Union[models.QuerySet, models.Manager]:
+    def _db(self) -> typing.Union[models.QuerySet[DBStorage], models.Manager[DBStorage]]:
         if self._atomic:
             return DBStorage.objects.select_for_update()
         return DBStorage.objects
@@ -131,7 +131,7 @@ class StorageAsDict(MutableMapping[str, typing.Any]):
         return _old_calculate_key(self._owner.encode(), key.encode())
 
     def __getitem__(self, key: str) -> typing.Any:
-        if not isinstance(key, str):
+        if not isinstance(key, str):  # pyright: ignore reportUnnecessaryIsInstance
             raise TypeError(f'Key must be str, {type(key)} found')
 
         # First, try new key, and, if needed, old key
@@ -139,11 +139,11 @@ class StorageAsDict(MutableMapping[str, typing.Any]):
         for use_old_method in (False, True):
             db_key = self._key(key, old_method=use_old_method)
             try:
-                c: DBStorage = typing.cast(DBStorage, self._db.get(pk=db_key))
+                c: DBStorage = self._db.get(pk=db_key)
                 if c.owner != self._owner:  # Maybe a key collision,
                     logger.error('Key collision detected for key %s', key)
                     return None
-                okey, value = _decode_value(db_key, c.data)
+                _, value = _decode_value(db_key, c.data)
                 if use_old_method:
                     # Update key on db
                     c.delete()
@@ -154,7 +154,7 @@ class StorageAsDict(MutableMapping[str, typing.Any]):
         return None
 
     def __setitem__(self, key: str, value: typing.Any) -> None:
-        if not isinstance(key, str):
+        if not isinstance(key, str):  # pyright: ignore reportUnnecessaryIsInstance
             raise TypeError(f'Key must be str type, {type(key)} found')
 
         dbk = self._key(key)
@@ -246,7 +246,7 @@ class Storage:
         if isinstance(owner, bytes):
             self._owner = owner.decode('utf-8')
             self._bowner = owner
-        elif isinstance(owner, str):
+        elif isinstance(owner, str):  # pyright: ignore reportUnnecessaryIsInstance  Wants to ensure that it is a string no runtime error
             self._owner = owner
             self._bowner = owner.encode('utf8')
         else:
@@ -356,8 +356,8 @@ class Storage:
         keys: 'collections.abc.Iterable[str|bytes]'
         if isinstance(skey, (str, bytes)):
             keys = [skey]
-        elif isinstance(skey, collections.abc.Iterable):
-            keys = typing.cast('collections.abc.Iterable[str|bytes]', skey)
+        else:
+            keys = skey # typing.cast('collections.abc.Iterable[str|bytes]', skey)
 
         try:
             # Process several keys at once

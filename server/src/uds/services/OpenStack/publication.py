@@ -35,7 +35,7 @@ import typing
 import collections.abc
 
 from uds.core.services import Publication
-from uds.core.types.states import State
+from uds.core import types
 from uds.core.util import autoserializable
 
 # Not imported at runtime, just for type checking
@@ -84,7 +84,7 @@ class OpenStackLivePublication(Publication, autoserializable.AutoSerializable):
 
         self.mark_for_upgrade()  # This will force remarshalling
 
-    def publish(self) -> str:
+    def publish(self) -> types.states.State:
         """
         Realizes the publication of the service
         """
@@ -102,19 +102,19 @@ class OpenStackLivePublication(Publication, autoserializable.AutoSerializable):
         except Exception as e:
             self._state = 'error'
             self._reason = 'Got error {}'.format(e)
-            return State.ERROR
+            return types.states.State.ERROR
 
-        return State.RUNNING
+        return types.states.State.RUNNING
 
-    def check_state(self) -> str:
+    def check_state(self) -> types.states.State:
         """
         Checks state of publication creation
         """
         if self._state == 'error':
-            return State.ERROR
+            return types.states.State.ERROR
 
         if self._state == 'available':
-            return State.FINISHED
+            return types.states.State.FINISHED
 
         self._state = self.service().get_template(self._template_id)['status']  # For next check
 
@@ -122,37 +122,37 @@ class OpenStackLivePublication(Publication, autoserializable.AutoSerializable):
             self._destroy_after = False
             return self.destroy()
 
-        return State.RUNNING
+        return types.states.State.RUNNING
 
     def error_reason(self) -> str:
         return self._reason
 
-    def destroy(self) -> str:
+    def destroy(self) -> types.states.State:
         # We do not do anything else to destroy this instance of publication
         if self._state == 'error':
-            return State.ERROR  # Nothing to cancel
+            return types.states.State.ERROR  # Nothing to cancel
 
         if self._state == 'creating':
             self._destroy_after = True
-            return State.RUNNING
+            return types.states.State.RUNNING
 
         try:
             self.service().remove_template(self._template_id)
         except Exception as e:
             self._state = 'error'
             self._reason = str(e)
-            return State.ERROR
+            return types.states.State.ERROR
 
-        return State.FINISHED
+        return types.states.State.FINISHED
 
-    def cancel(self) -> str:
+    def cancel(self) -> types.states.State:
         return self.destroy()
 
     # Here ends the publication needed methods.
     # Methods provided below are specific for this publication
     # and will be used by user deployments that uses this kind of publication
 
-    def getTemplateId(self) -> str:
+    def get_template_id(self) -> str:
         """
         Returns the template id associated with the publication
         """

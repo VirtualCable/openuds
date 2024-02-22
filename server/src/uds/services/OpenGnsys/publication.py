@@ -34,7 +34,7 @@ import typing
 import collections.abc
 
 from uds.core.services import Publication
-from uds.core.types.states import State
+from uds.core import types
 from uds.core.util import autoserializable
 from uds.core.util.model import sql_datetime
 
@@ -57,23 +57,23 @@ class OpenGnsysPublication(Publication, autoserializable.AutoSerializable):
     def service(self) -> 'OGService':
         return typing.cast('OGService', super().service())
 
-    def publish(self) -> str:
+    def publish(self) -> types.states.State:
         """
         Realizes the publication of the service, on OpenGnsys, does nothing
         """
-        return State.FINISHED
+        return types.states.State.FINISHED
 
-    def check_state(self) -> str:
+    def check_state(self) -> types.states.State:
         """
         Checks state of publication creation
         """
-        return State.FINISHED
+        return types.states.State.FINISHED
 
     def error_reason(self) -> str:
         return 'No error possible :)'
 
-    def destroy(self) -> str:
-        return State.FINISHED
+    def destroy(self) -> types.states.State:
+        return types.states.State.FINISHED
 
-    def cancel(self) -> str:
+    def cancel(self) -> types.states.State:
         return self.destroy()

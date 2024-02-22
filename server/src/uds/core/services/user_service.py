@@ -30,23 +30,21 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
 import collections.abc
-from uds.core import types
+import typing
 
+from uds.core import types
 from uds.core.environment import Environmentable
 from uds.core.serializable import Serializable
-from uds.core.types.states import State
 from uds.core.util import log
 
 if typing.TYPE_CHECKING:
     from uds import models
-    from uds.core import services
-    from uds.core import osmanagers
+    from uds.core import osmanagers, services
     from uds.core.environment import Environment
-    from uds.core.util.unique_name_generator import UniqueNameGenerator
-    from uds.core.util.unique_mac_generator import UniqueMacGenerator
     from uds.core.util.unique_gid_generator import UniqueGIDGenerator
+    from uds.core.util.unique_mac_generator import UniqueMacGenerator
+    from uds.core.util.unique_name_generator import UniqueNameGenerator
 
 
 class UserService(Environmentable, Serializable):
@@ -275,7 +273,7 @@ class UserService(Environmentable, Serializable):
         """
         raise NotImplementedError('Base getUniqueId for User Deployment called!!!')
 
-    def process_ready_from_os_manager(self, data: typing.Any) -> str:  # pylint: disable=unused-argument
+    def process_ready_from_os_manager(self, data: typing.Any) -> types.states.State:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -301,7 +299,7 @@ class UserService(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        return State.FINISHED
+        return types.states.State.FINISHED
 
     def get_ip(self) -> str:
         """
@@ -320,7 +318,7 @@ class UserService(Environmentable, Serializable):
         If you assign the service IP by your own methods, do not override this
         """
 
-    def set_ready(self) -> str:
+    def set_ready(self) -> types.states.State:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -352,9 +350,9 @@ class UserService(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        return State.FINISHED
+        return types.states.State.FINISHED
 
-    def deploy_for_cache(self, cacheLevel: int) -> str:
+    def deploy_for_cache(self, level: int) -> types.states.State:
         """
         Deploys a user deployment as cache.
 
@@ -393,7 +391,7 @@ class UserService(Environmentable, Serializable):
         """
         raise Exception(f'Base deploy for cache invoked! for class {self.__class__.__name__}')
 
-    def deploy_for_user(self, user: 'models.User') -> str:
+    def deploy_for_user(self, user: 'models.User') -> types.states.State:
         """
         Deploys an service instance for an user.
 
@@ -428,7 +426,7 @@ class UserService(Environmentable, Serializable):
         """
         raise NotImplementedError(f'Base deploy for user invoked! for class {self.__class__.__name__}')
 
-    def check_state(self) -> str:
+    def check_state(self) -> types.states.State:
         """
         This is a task method. As that, the expected return values are
         State values RUNNING, FINISHED or ERROR.
@@ -466,8 +464,9 @@ class UserService(Environmentable, Serializable):
                not needed, but can be provided (default implementation of base class does
                nothing)
         """
+        pass
 
-    def move_to_cache(self, newLevel: int) -> str:  # pylint: disable=unused-argument
+    def move_to_cache(self, level: int) -> types.states.State:  # pylint: disable=unused-argument
         """
         This method is invoked whenever the core needs to move from the current
         cache level to a new cache level an user deployment.
@@ -494,7 +493,7 @@ class UserService(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        return State.FINISHED
+        return types.states.State.FINISHED
 
     def user_logged_in(self, username: str) -> None:
         """
@@ -510,6 +509,7 @@ class UserService(Environmentable, Serializable):
 
         The user provided is just an string, that is provided by actors.
         """
+        pass
 
     def user_logged_out(self, username: str) -> None:
         """
@@ -525,6 +525,7 @@ class UserService(Environmentable, Serializable):
 
         The user provided is just an string, that is provided by actor.
         """
+        pass
 
     def error_reason(self) -> str:
         """
@@ -541,7 +542,7 @@ class UserService(Environmentable, Serializable):
         """
         return 'unknown'
 
-    def destroy(self) -> str:
+    def destroy(self) -> types.states.State:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -559,7 +560,7 @@ class UserService(Environmentable, Serializable):
         """
         raise NotImplementedError(f'destroy method for class {self.__class__.__name__} not provided!')
 
-    def cancel(self) -> str:
+    def cancel(self) -> types.states.State:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -576,7 +577,7 @@ class UserService(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        return State.RUNNING
+        return types.states.State.RUNNING
 
     @classmethod
     def supports_cancel(cls: type['UserService']) -> bool:

@@ -33,6 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import abc
 import typing
 import collections.abc
+from uds.core import types
 
 from uds.core.environment import Environmentable
 from uds.core.serializable import Serializable
@@ -178,7 +179,7 @@ class Publication(Environmentable, Serializable):
         return self._uuid
 
     @abc.abstractmethod
-    def publish(self) -> str:
+    def publish(self) -> types.states.State:
         """
         This method is invoked whenever the administrator requests a new publication.
 
@@ -214,7 +215,7 @@ class Publication(Environmentable, Serializable):
         raise NotImplementedError(f'publish method for class {self.__class__.__name__} not provided! ')
 
     @abc.abstractmethod
-    def check_state(self) -> str:
+    def check_state(self) -> types.states.State:
         """
         This is a task method. As that, the expected return values are
         State values RUNNING, FINISHED or ERROR.
@@ -267,7 +268,7 @@ class Publication(Environmentable, Serializable):
         return 'unknown'
 
     @abc.abstractmethod
-    def destroy(self) -> str:
+    def destroy(self) -> types.states.State:
         """
         This is a task method. As that, the expected return values are
         State values RUNNING, FINISHED or ERROR.
@@ -288,7 +289,7 @@ class Publication(Environmentable, Serializable):
         raise NotImplementedError(f'destroy method for class {self.__class__.__name__} not provided!')
 
     @abc.abstractmethod
-    def cancel(self) -> str:
+    def cancel(self) -> types.states.State:
         """
         This is a task method. As that, the expected return values are
         State values RUNNING, FINISHED or ERROR.

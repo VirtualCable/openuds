@@ -34,8 +34,7 @@ import logging
 import typing
 import collections.abc
 
-from uds.core import services
-from uds.core.types.states import State
+from uds.core import services, types
 
 from . import service as sample_service
 
@@ -118,7 +117,7 @@ class SampleUserServiceOne(services.UserService):
         generate more names. (Generator are simple utility classes)
         """
         name: str = typing.cast(str, self.storage.read_from_db('name'))
-        if name is None:
+        if not name:
             name = self.name_generator().get(
                 self.service().get_basename() + '-' + self.service().getColour(), 3
             )
@@ -152,7 +151,7 @@ class SampleUserServiceOne(services.UserService):
         to use to get an unused mac.
         """
         mac = typing.cast(str, self.storage.read_from_db('mac'))
-        if mac is None:
+        if not mac:
             mac = self.mac_generator().get('00:00:00:00:00:00-00:FF:FF:FF:FF:FF')
             self.storage.save_to_db('mac', mac)
         return mac
@@ -176,11 +175,11 @@ class SampleUserServiceOne(services.UserService):
 
         """
         ip = typing.cast(str, self.storage.read_from_db('ip'))
-        if ip is None:
+        if not ip:
             ip = '192.168.0.34'  # Sample IP for testing purposses only
         return ip
 
-    def set_ready(self) -> str:
+    def set_ready(self) -> types.states.State:
         """
         This is a task method. As that, the expected return values are
         State values RUNNING, FINISHED or ERROR.
@@ -198,22 +197,22 @@ class SampleUserServiceOne(services.UserService):
 
         This method, in this case, will check the state of the machine, and if
         it is "ready", that is, powered on and accesible, it will return
-        "State.FINISHED". If the machine is not accesible (has ben erased, for
-        example), it will return "State.ERROR" and store a reason of error so UDS
+        "types.states.State.FINISHED". If the machine is not accesible (has ben erased, for
+        example), it will return "types.states.State.ERROR" and store a reason of error so UDS
         can ask for it and present this information to the Administrator.
 
         If the machine powered off, or suspended, or any other state that is not
         directly usable but can be put in an usable state, it will return
-        "State.RUNNING", and core will use check_state to see when the operation
+        "types.states.State.RUNNING", and core will use check_state to see when the operation
         has finished.
 
         I hope this sample is enough to explain the use of this method..
         """
 
         # In our case, the service is always ready
-        return State.FINISHED
+        return types.states.State.FINISHED
 
-    def deploy_for_user(self, user: 'models.User') -> str:
+    def deploy_for_user(self, user: 'models.User') -> types.states.State:
         """
         Deploys an service instance for an user.
 
@@ -232,9 +231,9 @@ class SampleUserServiceOne(services.UserService):
 
         If the service gets created in "one step", that is, before the return
         of this method, the consumable service for the user gets created, it
-        will return "State.FINISH".
+        will return "types.states.State.FINISH".
         If the service needs more steps (as in this case), we will return
-        "State.RUNNING", and if it has an error, it wil return "State.ERROR" and
+        "types.states.State.RUNNING", and if it has an error, it wil return "types.states.State.ERROR" and
         store an error string so administration interface can show it.
 
         We do not use user for anything, as in most cases will be.
@@ -246,11 +245,11 @@ class SampleUserServiceOne(services.UserService):
         # random fail
         if random.randint(0, 9) == 9:  # nosec: just testing values
             self.storage.save_to_db('error', 'Random error at deployForUser :-)')
-            return State.ERROR
+            return types.states.State.ERROR
 
-        return State.RUNNING
+        return types.states.State.RUNNING
 
-    def check_state(self) -> str:
+    def check_state(self) -> types.states.State:
         """
         Our deployForUser method will initiate the consumable service deployment,
         but will not finish it.
@@ -259,8 +258,8 @@ class SampleUserServiceOne(services.UserService):
         return that we have finished, else we will return that we are working
         on it.
 
-        One deployForUser returns State.RUNNING, this task will get called until
-        check_state returns State.FINISHED.
+        One deployForUser returns types.states.State.RUNNING, this task will get called until
+        check_state returns types.states.State.FINISHED.
 
         Also, we will make the publication fail one of every 10 calls to this
         method.
@@ -284,15 +283,15 @@ class SampleUserServiceOne(services.UserService):
         # In our sample, we only use check_state in case of deployForUser,
         # so at first call count will be 0.
         if count >= 5:
-            return State.FINISHED
+            return types.states.State.FINISHED
 
         # random fail
         if random.randint(0, 9) == 9:  # nosec: just testing values
             self.storage.save_to_db('error', 'Random error at check_state :-)')
-            return State.ERROR
+            return types.states.State.ERROR
 
         self.storage.save_to_db('count', str(count))
-        return State.RUNNING
+        return types.states.State.RUNNING
 
     def finish(self) -> None:
         """
@@ -324,7 +323,7 @@ class SampleUserServiceOne(services.UserService):
         # We store the value at storage, but never get used, just an example
         self.storage.save_to_db('user', username)
 
-    def user_logged_out(self, username) -> None:
+    def user_logged_out(self, username: str) -> None:
         """
         This method must be available so os managers can invoke it whenever
         an user get logged out if a service.
@@ -351,18 +350,18 @@ class SampleUserServiceOne(services.UserService):
         """
         return typing.cast(str, self.storage.read_from_db('error')) or 'No error'
 
-    def destroy(self) -> str:
+    def destroy(self) -> types.states.State:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
 
         Invoked for destroying a deployed service
         Do whatever needed here, as deleting associated data if needed (i.e. a copy of the machine, snapshots, etc...)
-        @return: State.FINISHED if no more checks/steps for deployment are needed, State.RUNNING if more steps are needed (steps checked using check_state)
+        @return: types.states.State.FINISHED if no more checks/steps for deployment are needed, types.states.State.RUNNING if more steps are needed (steps checked using check_state)
         """
-        return State.FINISHED
+        return types.states.State.FINISHED
 
-    def cancel(self) -> str:
+    def cancel(self) -> types.states.State:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -372,4 +371,4 @@ class SampleUserServiceOne(services.UserService):
         When administrator requests it, the cancel is "delayed" and not
         invoked directly.
         """
-        return State.FINISHED
+        return types.states.State.FINISHED

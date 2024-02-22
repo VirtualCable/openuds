@@ -161,12 +161,10 @@ class OpenNebulaLiveService(services.Service):
         Loads required values inside
         """
 
-        t: 'on.types.TemplateType'
         self.template.set_choices(
             [gui.choice_item(t.id, t.name) for t in self.provider().getTemplates()]
         )
 
-        d: 'on.types.StorageType'
         self.datastore.set_choices(
             [gui.choice_item(d.id, d.name) for d in self.provider().getDatastores()]
         )
