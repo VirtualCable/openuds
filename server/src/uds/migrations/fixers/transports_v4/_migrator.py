@@ -10,7 +10,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-def tunnel_transport(apps, TransportType: typing.Type, serverAttr: str, is_html_server: bool = False) -> None:
+def tunnel_transport(apps: typing.Any, TransportType: typing.Type[typing.Any], serverAttr: str, is_html_server: bool = False) -> None:
     """
     Migrates an old tunnel transport to a new one (with tunnelServer)
     """
@@ -69,7 +69,7 @@ def tunnel_transport(apps, TransportType: typing.Type, serverAttr: str, is_html_
         print(e)
         logger.exception('Exception found while migrating HTML5RDP transports')
 
-def tunnel_transport_back(apps, TransportType: typing.Type, serverAttr: str, is_html_server: bool) -> None:
+def tunnel_transport_back(apps: typing.Any, TransportType: typing.Type[typing.Any], serverAttr: str, is_html_server: bool) -> None:
     """
     "Un-Migrates" an new tunnel transport to an old one (without tunnelServer)
     """

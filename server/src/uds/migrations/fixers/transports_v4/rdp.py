@@ -28,6 +28,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
 import logging
 
 from uds.core import consts, transports
@@ -88,9 +89,9 @@ class TRDPTransport(transports.Transport):
     tunnel = gui.ChoiceField(label='')
 
 
-def migrate(apps, schema_editor) -> None:
+def migrate(apps: typing.Any, schema_editor: typing.Any) -> None:
     _migrator.tunnel_transport(apps, TRDPTransport, 'tunnelServer', is_html_server=False)
 
 
-def rollback(apps, schema_editor) -> None:
+def rollback(apps: typing.Any, schema_editor: typing.Any) -> None:
     _migrator.tunnel_transport_back(apps, TRDPTransport, 'tunnelServer', is_html_server=False)

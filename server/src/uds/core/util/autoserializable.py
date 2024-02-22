@@ -166,9 +166,9 @@ class _MarshalInfo:
 class _SerializableField(typing.Generic[T]):
     name: str
     obj_type: 'type[T]'
-    default: DefaultValueType
+    default: DefaultValueType[T]
 
-    def __init__(self, obj_type: 'type[T]', default: DefaultValueType = UNASSIGNED):
+    def __init__(self, obj_type: 'type[T]', default: DefaultValueType[T] = UNASSIGNED):
         self.obj_type = obj_type
         self.default = default
 
@@ -201,7 +201,7 @@ class _SerializableField(typing.Generic[T]):
     def __set__(self, instance: 'AutoSerializable', value: T) -> None:
         # If type is float and value is int, convert it
         # Or if type is int and value is float, convert it
-        if self.obj_type in (float, int) and isinstance(value, (float, int)):
+        if typing.cast(typing.Type[typing.Any], self.obj_type) in (float, int) and isinstance(value, (float, int)):
             value = self.obj_type(value)  # type: ignore
         if not isinstance(value, self.obj_type):
             # Try casting to load values (maybe a namedtuple, i.e.)
@@ -211,7 +211,7 @@ class _SerializableField(typing.Generic[T]):
                 elif isinstance(value, collections.abc.Iterable):  # IF a list, tuple, etc... try to cast it
                     value = self.obj_type(*value)
                 else:  # Maybe it has a constructor that accepts a single value or is a callable...
-                    value = typing.cast(typing.Callable, self.obj_type)(value)
+                    value = typing.cast(typing.Callable[..., typing.Any], self.obj_type)(value)
             except Exception:
                 # Allow int to float conversion and viceversa
                 raise TypeError(f"Field {self.name} cannot be set to {value} (type {self.obj_type.__name__})")
@@ -231,7 +231,7 @@ class _SerializableField(typing.Generic[T]):
         Note:
             Only str, int, and float are supported in this base class.
         """
-        if self.obj_type in (str, int, float):
+        if typing.cast(typing.Type[typing.Any], self.obj_type) in (str, int, float):
             return str(self.__get__(instance)).encode()
         raise TypeError(f"Field {self.name} cannot be marshalled (type {self.obj_type})")
 
@@ -248,8 +248,8 @@ class _SerializableField(typing.Generic[T]):
         Note:
             Only str, int, and float are supported in this base class.
         """
-        if self.obj_type in (str, int, float):
-            tp: typing.Type = self.obj_type
+        if typing.cast(typing.Type[typing.Any], self.obj_type) in (str, int, float):
+            tp: typing.Type[T] = self.obj_type
             self.__set__(instance, tp(data.decode()))
             return
         raise TypeError(f"Field {self.name} cannot be unmarshalled (type {self.obj_type})")
@@ -342,7 +342,7 @@ class ObjectField(_SerializableField[T]):
 
     """
 
-    def __init__(self, obj_type: 'type[T]', default: DefaultValueType = UNASSIGNED):
+    def __init__(self, obj_type: 'type[T]', default: DefaultValueType[T] = UNASSIGNED):
         super().__init__(obj_type, default)
 
     def marshal(self, instance: 'AutoSerializable') -> bytes:
@@ -429,7 +429,7 @@ class PasswordField(StringField):
 class _FieldNameSetter(abc.ABCMeta, type):
     """Simply adds the name of the field in the class to the field object"""
 
-    def __new__(mcs, name, bases, attrs):
+    def __new__(mcs, name: str, bases: typing.Tuple[type, ...], attrs: dict[str, typing.Any]) -> type:
         for k, v in attrs.items():
             if isinstance(v, _SerializableField):
                 v.name = k
@@ -450,7 +450,7 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
 
     _fields: dict[str, typing.Any]
 
-    def _autoserializable_fields(self) -> collections.abc.Iterator[tuple[str, _SerializableField]]:
+    def _autoserializable_fields(self) -> collections.abc.Iterator[tuple[str, _SerializableField[typing.Any]]]:
         """Returns an iterator over all fields in the class, including inherited ones
 
         Returns:
@@ -545,20 +545,19 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
             fields[field.name] = field
 
         for _, v in self._autoserializable_fields():
-            if isinstance(v, _SerializableField):
-                if v.name in fields:
-                    if fields[v.name].type_name == str(v.__class__.__name__):
-                        v.unmarshal(self, fields[v.name].value)
-                    else:
-                        logger.warning(
-                            'Field %s has wrong type in unmarshalled data (should be %s and is %s',
-                            v.name,
-                            fields[v.name].type_name,
-                            v.__class__.__name__,
-                        )
+            if v.name in fields:
+                if fields[v.name].type_name == str(v.__class__.__name__):
+                    v.unmarshal(self, fields[v.name].value)
                 else:
-                    logger.debug('Field %s not found in unmarshalled data', v.name)
-                    v.__set__(self, v._default())  # Set default value
+                    logger.warning(
+                        'Field %s has wrong type in unmarshalled data (should be %s and is %s',
+                        v.name,
+                        fields[v.name].type_name,
+                        v.__class__.__name__,
+                    )
+            else:
+                logger.debug('Field %s not found in unmarshalled data', v.name)
+                v.__set__(self, v._default())  # Set default value
 
     def __eq__(self, other: typing.Any) -> bool:
         """
@@ -574,10 +573,9 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
         if {k for k, _ in all_fields_attrs} != {k for k, _ in other._autoserializable_fields()}:
             return False
 
-        for k, v in all_fields_attrs:
-            if isinstance(v, _SerializableField):
-                if getattr(self, k) != getattr(other, k):
-                    return False
+        for k, _ in all_fields_attrs:
+            if getattr(self, k) != getattr(other, k):
+                return False
 
         return True
 
@@ -586,7 +584,6 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
             [
                 f"{k}={v.obj_type.__name__}({v.__get__(self)})"
                 for k, v in self._autoserializable_fields()
-                if isinstance(v, _SerializableField)
             ]
         )
 

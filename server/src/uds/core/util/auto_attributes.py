@@ -42,14 +42,14 @@ logger = logging.getLogger(__name__)
 
 
 class Attribute:
-    _type: typing.Type
+    _type: typing.Type[typing.Any]
     _value: typing.Any
 
-    def __init__(self, theType: typing.Type, value: typing.Any = None):
+    def __init__(self, theType: typing.Type[typing.Any], value: typing.Any = None):
         self._type = theType
         self.setValue(value)
 
-    def get_type(self) -> typing.Type:
+    def get_type(self) -> typing.Type[typing.Any]:
         return self._type
 
     def getValue(self) -> typing.Any:
@@ -76,12 +76,12 @@ class AutoAttributes(Serializable):
 
     attrs: collections.abc.MutableMapping[str, Attribute]
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: typing.Any):
         self.attrs = {}  # Ensure attrs is created BEFORE calling super, that can contain _ variables
         Serializable.__init__(self)
         self.declare(**kwargs)
 
-    def __getattribute__(self, name) -> typing.Any:
+    def __getattribute__(self, name: str) -> typing.Any:
         if name.startswith('_') and name[1:] in self.attrs:
             return self.attrs[name[1:]].getValue()
         return super().__getattribute__(name)
@@ -92,7 +92,7 @@ class AutoAttributes(Serializable):
         else:
             super().__setattr__(name, value)
 
-    def declare(self, **kwargs) -> None:
+    def declare(self, **kwargs: typing.Any) -> None:
         d: collections.abc.MutableMapping[str, Attribute] = {}
         for key, typ in kwargs.items():
             d[key] = Attribute(typ)

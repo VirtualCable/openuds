@@ -29,6 +29,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from uds.core import consts, transports
 from uds.core.ui import gui
@@ -84,9 +85,9 @@ class HTML5RDSTransport(transports.Transport):
     tunnel = gui.ChoiceField(label='')
 
 
-def migrate(apps, schema_editor) -> None:
+def migrate(apps: typing.Any, schema_editor: typing.Any) -> None:
     _migrator.tunnel_transport(apps, HTML5RDSTransport, 'guacamoleServer', is_html_server=True)
 
 
-def rollback(apps, schema_editor) -> None:
+def rollback(apps: typing.Any, schema_editor: typing.Any) -> None:
     _migrator.tunnel_transport_back(apps, HTML5RDSTransport, 'guacamoleServer', is_html_server=True)
