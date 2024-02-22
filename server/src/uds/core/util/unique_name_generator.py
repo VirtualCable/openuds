@@ -41,7 +41,7 @@ logger = logging.getLogger(__name__)
 class UniqueNameGenerator(UniqueIDGenerator):
     __slots__ = ()
 
-    def __init__(self, owner):
+    def __init__(self, owner: str) -> None:
         super().__init__('name', owner)
 
     def _to_name(self, seq: int, length: int) -> str:
@@ -56,18 +56,18 @@ class UniqueNameGenerator(UniqueIDGenerator):
         """
         if seq == -1:
             raise KeyError('No more names available. Please, increase service digits.')
-        return f'{self._base_name}{seq:0{length}d}'
+        return f'{self._basename}{seq:0{length}d}'
 
     def get(self, baseName: str, length: int = 5) -> str:  # type: ignore  # pylint: disable=arguments-differ,arguments-renamed
-        self.setBaseName(baseName)
+        self.set_basename(baseName)
         minVal = 0
         maxVal = 10**length - 1
         return self._to_name(super().get(minVal, maxVal), length)
 
     def transfer(self, baseName: str, name: str, toUNGen: 'UniqueNameGenerator') -> None:  # type: ignore  # pylint: disable=arguments-differ
-        self.setBaseName(baseName)
-        super().transfer(int(name[len(self._base_name) :]), toUNGen)
+        self.set_basename(baseName)
+        super().transfer(int(name[len(self._basename) :]), toUNGen)
 
     def free(self, baseName: str, name: str) -> None:  # type: ignore  # pylint: disable=arguments-differ
-        self.setBaseName(baseName)
-        super().free(int(name[len(self._base_name) :]))
+        self.set_basename(baseName)
+        super().free(int(name[len(self._basename) :]))

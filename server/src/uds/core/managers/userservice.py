@@ -685,12 +685,12 @@ class UserServiceManager(metaclass=singleton.Singleton):
         kind, uuid_user_service = id_service[0], id_service[1:]
 
         logger.debug('Kind of service: %s, idService: %s', kind, uuid_user_service)
-        user_service: typing.Optional[UserService] = None
+        userservice: typing.Optional[UserService] = None
 
         if kind in 'A':  # This is an assigned service
             logger.debug('Getting A service %s', uuid_user_service)
-            user_service = UserService.objects.get(uuid=uuid_user_service, user=user)
-            user_service.deployed_service.validate_user(user)
+            userservice = UserService.objects.get(uuid=uuid_user_service, user=user)
+            typing.cast(UserService, userservice).deployed_service.validate_user(user)  # pyright: ignore reportGeneralTypeIssues  # Mypy thinks that userservice is None
         else:
             try:
                 service_pool: ServicePool = ServicePool.objects.get(uuid=uuid_user_service)
@@ -700,19 +700,19 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
                 # Now we have to locate an instance of the service, so we can assign it to user.
                 if create:  # getAssignation, if no assignation is found, tries to create one
-                    user_service = self.get_assignation_for_user(service_pool, user)
+                    userservice = self.get_assignation_for_user(service_pool, user)
                 else:  # Sometimes maybe we only need to locate the existint user service
-                    user_service = self.get_existing_assignation_for_user(service_pool, user)
+                    userservice = self.get_existing_assignation_for_user(service_pool, user)
             except ServicePool.DoesNotExist:
                 logger.debug('Service pool does not exist')
                 return None
 
-        logger.debug('Found service: %s', user_service)
+        logger.debug('Found service: %s', userservice)
 
-        if user_service and user_service.state == State.ERROR:
+        if userservice and userservice.state == State.ERROR:
             return None
 
-        return user_service
+        return userservice
 
     def get_user_service_info(  # pylint: disable=too-many-locals, too-many-branches, too-many-statements
         self,

@@ -54,19 +54,19 @@ class CreateNewIdException(Exception):
 
 
 class UniqueIDGenerator:
-    __slots__ = ('_owner', '_base_name')
+    __slots__ = ('_owner', '_basename')
 
     # owner is the owner of the UniqueID
     _owner: str
     # base name for filtering unique ids. (I.e. "mac", "ip", "ipv6" ....)
-    _base_name: str
+    _basename: str
 
     def __init__(self, type_name: str, owner: str, baseName: typing.Optional[str] = None):
         self._owner = owner + type_name
-        self._base_name = 'uds' if baseName is None else baseName
+        self._basename = 'uds' if baseName is None else baseName
 
-    def setBaseName(self, newBaseName: str):
-        self._base_name = newBaseName
+    def set_basename(self, basename: str) -> None:
+        self._basename = basename
 
     def __filter(
         self, range_start: int, range_end: int = MAX_SEQ, for_update: bool = False
@@ -74,7 +74,7 @@ class UniqueIDGenerator:
         # Order is defined on UniqueId model, and is '-seq' by default (so this gets items in sequence order)
         # if not for update, do not use the clause :)
         obj = UniqueId.objects.select_for_update() if for_update else UniqueId.objects
-        return obj.filter(basename=self._base_name, seq__gte=range_start, seq__lte=range_end)
+        return obj.filter(basename=self._basename, seq__gte=range_start, seq__lte=range_end)
 
     def get(self, range_start: int = 0, range_end: int = MAX_SEQ) -> int:
         """
@@ -94,7 +94,7 @@ class UniqueIDGenerator:
                     flt = self.__filter(range_start, range_end, for_update=True)
                     item: typing.Optional[UniqueId] = None
                     try:
-                        item = flt.filter(assigned=False).order_by('seq')[0]  # type: ignore  # Slicing is not supported by pylance right now
+                        item = flt.filter(assigned=False).order_by('seq')[0]
                         if item:
                             item.owner = self._owner
                             item.assigned = True
@@ -110,9 +110,7 @@ class UniqueIDGenerator:
                     if not item:
                         # logger.debug('No free found, creating new one')
                         try:
-                            last: UniqueId = flt.filter(assigned=True)[
-                                0  # type: ignore  # Slicing is not supported by pylance right now
-                            ]  # DB Returns correct order so the 0 item is the last
+                            last: UniqueId = flt.filter(assigned=True).order_by('-seq')[0]
                             seq = last.seq + 1
                         except IndexError:  # If there is no assigned at database
                             seq = range_start
@@ -123,7 +121,7 @@ class UniqueIDGenerator:
                         # will get an "duplicate key error",
                         UniqueId.objects.create(
                             owner=self._owner,
-                            basename=self._base_name,
+                            basename=self._basename,
                             seq=seq,
                             assigned=True,
                             stamp=stamp,
@@ -146,13 +144,13 @@ class UniqueIDGenerator:
     def transfer(self, seq: int, toUidGen: 'UniqueIDGenerator') -> bool:
         self.__filter(0, for_update=True).filter(owner=self._owner, seq=seq).update(
             owner=toUidGen._owner,  # pylint: disable=protected-access
-            basename=toUidGen._base_name,  # pylint: disable=protected-access
+            basename=toUidGen._basename,  # pylint: disable=protected-access
             stamp=sql_stamp_seconds(),
         )
         return True
 
-    def free(self, seq) -> None:
-        logger.debug('Freeing seq %s from %s (%s)', seq, self._owner, self._base_name)
+    def free(self, seq: int) -> None:
+        logger.debug('Freeing seq %s from %s (%s)', seq, self._owner, self._basename)
         with transaction.atomic():
             flt = (
                 self.__filter(0, for_update=True)
@@ -165,7 +163,7 @@ class UniqueIDGenerator:
     def _purge(self) -> None:
         logger.debug('Purging UniqueID database')
         try:
-            last: UniqueId = self.__filter(0, for_update=False).filter(assigned=True)[0]  # type: ignore  # Slicing is not supported by pylance right now
+            last: UniqueId = self.__filter(0, for_update=False).filter(assigned=True)[0]
             logger.debug('Last: %s', last)
             seq = last.seq + 1
         except Exception:

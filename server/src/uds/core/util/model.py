@@ -137,5 +137,5 @@ def generate_uuid(obj: typing.Any = None) -> str:
 
 def process_uuid(uuid: str) -> str:
     if isinstance(uuid, bytes):
-        uuid = uuid.decode('utf8')  # type: ignore
+        uuid = uuid.decode('utf8')
     return uuid.lower()

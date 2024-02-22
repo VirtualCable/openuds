@@ -144,7 +144,7 @@ class OSManager(Module):
         """
         return {}
 
-    def check_state(self, userservice: 'UserService') -> str:  # pylint: disable=unused-argument
+    def check_state(self, userservice: 'UserService') -> types.states.State:  # pylint: disable=unused-argument
         """
         This method must be overriden so your os manager can respond to requests from system to the current state of the service
         This method will be invoked when:
@@ -164,7 +164,7 @@ class OSManager(Module):
         """
         pass
     
-    def is_removable_on_logout(self, userservice: 'UserService') -> bool:  # pylint: disable=unused-argument
+    def is_removable_on_logout(self, userservice: 'UserService') -> bool: 
         """
         If returns true, when actor notifies "logout", UDS will mark service for removal
         can be overriden

@@ -87,7 +87,7 @@ def validate_numeric(
     return int(value)
 
 
-def validate_hostname(hostname: str, max_length: int = 64, domain_allowed=False, field_name: typing.Optional[str] = None) -> str:
+def validate_hostname(hostname: str, max_length: int = 64, domain_allowed: bool=False, field_name: typing.Optional[str] = None) -> str:
     field_name = f' (On field {field_name})' if field_name else ''
     if len(hostname) > max_length:
         raise exceptions.ui.ValidationError(

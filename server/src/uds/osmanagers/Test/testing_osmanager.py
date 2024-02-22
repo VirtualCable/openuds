@@ -129,8 +129,8 @@ class TestOSManager(osmanagers.OSManager):
     def is_persistent(self) -> bool:
         return self.on_logout.value == 'keep-always'
 
-    def check_state(self, userService: 'UserService') -> str:
-        logger.debug('Checking state for service %s', userService)
+    def check_state(self, userservice: 'UserService') -> types.states.State:
+        logger.debug('Checking state for service %s', userservice)
         return State.RUNNING
 
     def max_idle(self) -> typing.Optional[int]:

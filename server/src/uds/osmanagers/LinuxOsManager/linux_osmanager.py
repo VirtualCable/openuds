@@ -112,8 +112,8 @@ class LinuxOsManager(osmanagers.OSManager):
         """
         return service.get_name()
 
-    def actor_data(self, userService: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
-        return {'action': 'rename', 'name': userService.get_name()}  # No custom data
+    def actor_data(self, userservice: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
+        return {'action': 'rename', 'name': userservice.get_name()}  # No custom data
 
     def handle_unused(self, userservice: 'UserService') -> None:
         """
@@ -132,8 +132,8 @@ class LinuxOsManager(osmanagers.OSManager):
     def is_persistent(self) -> bool:
         return fields.onlogout_field_is_persistent(self.on_logout)
 
-    def check_state(self, userService: 'UserService') -> str:
-        logger.debug('Checking state for service %s', userService)
+    def check_state(self, userservice: 'UserService') -> types.states.State:
+        logger.debug('Checking state for service %s', userservice)
         return State.RUNNING
 
     def max_idle(self) -> typing.Optional[int]:

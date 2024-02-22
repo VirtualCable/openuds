@@ -36,7 +36,7 @@ import logging
 import typing
 import collections.abc
 
-from uds.core import consts, services
+from uds.core import consts, services, types
 from uds.core.services.specializations.fixed_machine.fixed_userservice import FixedUserService, Operation
 from uds.core.types.states import State
 from uds.core.util import log, autoserializable
@@ -78,9 +78,9 @@ class ProxmoxFixedUserService(FixedUserService, autoserializable.AutoSerializabl
     def service(self) -> 'service_fixed.ProxmoxServiceFixed':
         return typing.cast('service_fixed.ProxmoxServiceFixed', super().service())
 
-    def set_ready(self) -> str:
+    def set_ready(self) -> types.states.State:
         if self.cache.get('ready') == '1':
-            return State.FINISHED
+            return types.states.State.FINISHED
 
         try:
             vminfo = self.service().get_machine_info(int(self._vmid))
@@ -94,7 +94,7 @@ class ProxmoxFixedUserService(FixedUserService, autoserializable.AutoSerializabl
             return self._execute_queue()
 
         self.cache.put('ready', '1')
-        return State.FINISHED
+        return types.states.State.FINISHED
 
     def reset(self) -> None:
         """
@@ -106,8 +106,8 @@ class ProxmoxFixedUserService(FixedUserService, autoserializable.AutoSerializabl
             except Exception:  # nosec: if cannot reset, ignore it
                 pass  # If could not reset, ignore it...
 
-    def process_ready_from_os_manager(self, data: typing.Any) -> str:
-        return State.FINISHED
+    def process_ready_from_os_manager(self, data: typing.Any) -> types.states.State:
+        return types.states.State.FINISHED
 
     def error(self, reason: str) -> str:
         return self._error(reason)
@@ -117,6 +117,7 @@ class ProxmoxFixedUserService(FixedUserService, autoserializable.AutoSerializabl
             vminfo = self.service().get_machine_info(int(self._vmid))
         except client.ProxmoxConnectionError:
             self._retry_later()
+            return
         except Exception as e:
             raise Exception('Machine not found on start machine') from e
 
@@ -124,27 +125,27 @@ class ProxmoxFixedUserService(FixedUserService, autoserializable.AutoSerializabl
             self._store_task(self.service().provider().start_machine(int(self._vmid)))
 
     # Check methods
-    def _check_task_finished(self) -> str:
+    def _check_task_finished(self) -> types.states.State:
         if self._task == '':
-            return State.FINISHED
+            return types.states.State.FINISHED
 
         node, upid = self._retrieve_task()
 
         try:
             task = self.service().provider().get_task_info(node, upid)
         except client.ProxmoxConnectionError:
-            return State.RUNNING  # Try again later
+            return types.states.State.RUNNING  # Try again later
 
         if task.is_errored():
             return self._error(task.exitstatus)
 
         if task.is_completed():
-            return State.FINISHED
+            return types.states.State.FINISHED
 
-        return State.RUNNING
+        return types.states.State.RUNNING
 
     # Check methods
-    def _start_checker(self) -> str:
+    def _start_checker(self) -> types.states.State:
         """
         Checks if machine has started
         """

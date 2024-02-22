@@ -90,8 +90,8 @@ class WindowsOsManager(osmanagers.OSManager):
     def actor_data(self, userservice: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
         return {'action': 'rename', 'name': userservice.get_name()}  # No custom data
 
-    def update_credentials(self, userService: 'UserService', username: str, password: str) -> tuple[str, str]:
-        if userService.properties.get('sso_available') == '1':
+    def update_credentials(self, userservice: 'UserService', username: str, password: str) -> tuple[str, str]:
+        if userservice.properties.get('sso_available') == '1':
             # Generate a ticket, store it and return username with no password
             domain = ''
             if '@' in username:
@@ -103,7 +103,7 @@ class WindowsOsManager(osmanagers.OSManager):
             ticket = TicketStore.create(creds, validity=300)  # , owner=SECURE_OWNER, secure=True)
             return ticket, ''
 
-        return super().update_credentials(userService, username, password)
+        return super().update_credentials(userservice, username, password)
 
     def handle_unused(self, userservice: 'UserService') -> None:
         """
@@ -122,7 +122,7 @@ class WindowsOsManager(osmanagers.OSManager):
     def is_persistent(self) -> bool:
         return fields.onlogout_field_is_persistent(self.on_logout)
 
-    def check_state(self, userservice: 'UserService') -> str:
+    def check_state(self, userservice: 'UserService') -> types.states.State:
         # will alway return true, because the check is done by an actor callback
         logger.debug('Checking state for service %s', userservice)
         return State.RUNNING

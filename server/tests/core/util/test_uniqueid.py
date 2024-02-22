@@ -108,7 +108,7 @@ class UniqueIdTest(UDSTestCase):
             self.assertEqual(self.ugidGen.get(), f'uds{x:08d}')
 
     def test_gid_basename(self):
-        self.ugidGen.setBaseName('mar')
+        self.ugidGen.set_basename('mar')
         for x in range(100):
             self.assertEqual(self.ugidGen.get(), f'mar{x:08d}')
 

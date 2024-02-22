@@ -31,6 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
 from .unique_id_generator import UniqueIDGenerator, MAX_SEQ
 
@@ -40,13 +41,13 @@ logger = logging.getLogger(__name__)
 class UniqueGIDGenerator(UniqueIDGenerator):
     __slots__ = ()
 
-    def __init__(self, owner, baseName=None):
-        super().__init__('id', owner, baseName)
+    def __init__(self, owner: str, basename: typing.Optional[str]=None):
+        super().__init__('id', owner, basename)
 
     def _to_name(self, seq: int) -> str:
         if seq == -1:
             raise KeyError('No more GIDS available.')
-        return f'{self._base_name}{seq:08d}'
+        return f'{self._basename}{seq:08d}'
         # return "%s%0*d" % (self._baseName, 8, seq)
 
     def get(self, rangeStart: int = 0, rangeEnd: int = MAX_SEQ) -> str:  # type: ignore

@@ -52,9 +52,6 @@ class NotificationsManager(metaclass=singleton.Singleton):
 
     _initialized: bool = False
 
-    def __init__(self):
-        pass
-
     def _ensure_local_db_exists(self) -> bool:
         if not apps.ready:
             return False
@@ -77,7 +74,7 @@ class NotificationsManager(metaclass=singleton.Singleton):
     def manager() -> 'NotificationsManager':
         return NotificationsManager()  # Singleton pattern will return always the same instance
 
-    def notify(self, group: str, identificator: str, level: LogLevel, message: str, *args) -> None:
+    def notify(self, group: str, identificator: str, level: LogLevel, message: str, *args: typing.Any) -> None:
         from uds.models.notifications import Notification  # pylint: disable=import-outside-toplevel
 
         # Due to use of local db, we must ensure that it exists (and cannot do it on ready)
