@@ -315,7 +315,7 @@ class HTML5RDPTransport(transports.Transport):
         #    )
 
     # Same check as normal RDP transport
-    def is_ip_allowed(self, userService: 'models.UserService', ip: str) -> bool:
+    def is_ip_allowed(self, userservice: 'models.UserService', ip: str) -> bool:
         """
         Checks if the transport is available for the requested destination ip
         Override this in yours transports
@@ -324,7 +324,7 @@ class HTML5RDPTransport(transports.Transport):
         ready = self.cache.get(ip)
         if not ready:
             # Check again for readyness
-            if self.test_connectivity(userService, ip, self.rdp_port.as_int()) is True:
+            if self.test_connectivity(userservice, ip, self.rdp_port.as_int()) is True:
                 self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
             self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
@@ -336,18 +336,18 @@ class HTML5RDPTransport(transports.Transport):
 
     def get_connection_info(
         self,
-        userService: typing.Union['models.UserService', 'models.ServicePool'],
+        userservice: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
     ) -> types.connections.ConnectionData:
         username = user.get_username_for_auth()
 
         # Maybe this is called from another provider, as for example WYSE, that need all connections BEFORE
-        if isinstance(userService, models.UserService):
-            cdata = userService.get_instance().get_connection_data()
+        if isinstance(userservice, models.UserService):
+            cdata = userservice.get_instance().get_connection_data()
             if cdata:
-                username = cdata[1] or username
-                password = cdata[2] or password
+                username = cdata.username or username
+                password = cdata.password or password
 
         if self.forced_password.value:
             password = self.forced_password.value
@@ -384,7 +384,7 @@ class HTML5RDPTransport(transports.Transport):
             username = 'AzureAD\\' + username
 
         # Fix username/password acording to os manager
-        username, password = userService.process_user_password(username, password)
+        username, password = userservice.process_user_password(username, password)
 
         return types.connections.ConnectionData(
             protocol=self.protocol,

@@ -70,7 +70,7 @@ class Transport(Module):
     # Windows
     # Macintosh
     # Linux
-    supported_oss: tuple = consts.os.DESKTOP_OSS  # Supported operating systems
+    supported_oss: tuple[types.os.KnownOS, ...] = consts.os.DESKTOP_OSS  # Supported operating systems
 
     # If the link to use transport is provided by transport itself
     own_link: bool = False
@@ -85,7 +85,7 @@ class Transport(Module):
         super().__init__(environment, values)
         self.initialize(values)
 
-    def initialize(self, values: 'types.core.ValuesType'):
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,
@@ -115,7 +115,7 @@ class Transport(Module):
     ) -> bool:
         return net.test_connectivity(ip, int(port), timeout)
 
-    def is_ip_allowed(self, userService: 'models.UserService', ip: str) -> bool:
+    def is_ip_allowed(self, userservice: 'models.UserService', ip: str) -> bool:
         """
         Checks if the transport is available for the requested destination ip
         Override this in yours transports
@@ -130,7 +130,7 @@ class Transport(Module):
         return f'Not accessible (using service ip {ip})'
 
     @classmethod
-    def supports_protocol(cls, protocol: typing.Union[collections.abc.Iterable, str]):
+    def supports_protocol(cls, protocol: typing.Union[collections.abc.Iterable[str], str]) -> bool:
         if isinstance(protocol, str):
             return protocol.lower() == cls.protocol.lower()
         # Not string group of strings
@@ -156,7 +156,7 @@ class Transport(Module):
 
     def get_connection_info(
         self,
-        userService: typing.Union['models.UserService', 'models.ServicePool'],
+        userservice: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
     ) -> types.connections.ConnectionData:
@@ -179,10 +179,10 @@ class Transport(Module):
                ServicePool or UserService. In case of getConnectionInfo for an ServicePool, no transformation
                is done, because there is no relation at that level between user and service.
         """
-        if isinstance(userService, models.ServicePool):
-            username, password = userService.process_user_password(user.name, password)
+        if isinstance(userservice, models.ServicePool):
+            username, password = userservice.process_user_password(user.name, password)
         else:
-            username = self.processed_username(userService, user)
+            username = self.processed_username(userservice, user)
         return types.connections.ConnectionData(
             protocol=self.protocol,
             username=username,
@@ -311,6 +311,3 @@ class Transport(Module):
         If transport provides own link, this method provides the link itself
         """
         return 'https://www.udsenterprise.com'
-
-    def __str__(self):
-        return f'Transport {self.type_name} ({self.type_description})'

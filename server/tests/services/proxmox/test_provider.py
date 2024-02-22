@@ -53,13 +53,20 @@ class TestProxmovProvider(UDSTestCase):
         self.assertEqual(provider.port.as_int(), fixtures.PROVIDER_VALUES_DICT['port'])
         self.assertEqual(provider.username.as_str(), fixtures.PROVIDER_VALUES_DICT['username'])
         self.assertEqual(provider.password.as_str(), fixtures.PROVIDER_VALUES_DICT['password'])
+
+        if not isinstance(provider.concurrent_creation_limit, ui.gui.NumericField):
+            self.fail('concurrent_creation_limit is not a NumericField')
+
         self.assertEqual(
-            typing.cast(ui.gui.NumericField, provider.concurrent_creation_limit).as_int(),
+            provider.concurrent_creation_limit.as_int(),
             fixtures.PROVIDER_VALUES_DICT['concurrent_creation_limit'],
         )
         # concurrent_removal_limit
+        if not isinstance(provider.concurrent_removal_limit, ui.gui.NumericField):
+            self.fail('concurrent_creation_limit is not a NumericField')
+
         self.assertEqual(
-            typing.cast(ui.gui.NumericField, provider.concurrent_removal_limit).as_int(),
+            provider.concurrent_removal_limit.as_int(),
             fixtures.PROVIDER_VALUES_DICT['concurrent_removal_limit'],
         )
         self.assertEqual(provider.timeout.as_int(), fixtures.PROVIDER_VALUES_DICT['timeout'])

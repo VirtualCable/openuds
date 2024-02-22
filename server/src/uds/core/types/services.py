@@ -89,3 +89,9 @@ class ConsoleConnectionInfo:
     ca: str = ''
     proxy: str = ''
     monitors: int = 0
+
+@dataclasses.dataclass
+class ConnectionData:
+    host: str = ''
+    username: str = ''
+    password: str = ''

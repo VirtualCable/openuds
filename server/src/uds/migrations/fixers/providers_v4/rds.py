@@ -118,9 +118,9 @@ class RDSProvider(services.ServiceProvider):
     serverGroup = gui.ChoiceField(label='')
 
 
-def migrate(apps, schema_editor) -> None:
+def migrate(apps: typing.Any, schema_editor: typing.Any) -> None:
     _migrator.migrate(apps, 'Provider', RDSProvider, RDS_SUBTYPE, 'ipList')
 
 
-def rollback(apps, schema_editor) -> None:
+def rollback(apps: typing.Any, schema_editor: typing.Any) -> None:
     _migrator.rollback(apps, 'Provider', RDSProvider, RDS_SUBTYPE, 'ipList')

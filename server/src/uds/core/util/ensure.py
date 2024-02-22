@@ -63,12 +63,14 @@ def is_iterable(obj: typing.Any) -> typing.Generator[typing.Any, None, None]:
     if isinstance(obj, (str, bytes)):
         yield obj
     else:
-        try:
+        if isinstance(obj, collections.abc.Iterable):
             yield from obj
-        except Exception:  # Not iterable
-            yield obj
+            return
+        yield obj  # if not iterable, return the object itself
+
 
 T = typing.TypeVar('T')
+
 
 def is_instance(obj: typing.Any, cls: type[T]) -> T:
     """Checks if an object is an instance of a class or a list of instances of a class
@@ -79,7 +81,7 @@ def is_instance(obj: typing.Any, cls: type[T]) -> T:
 
     Returns:
         T: The object if it's an instance of the class, casted to the class if it's a list of instances of the class
-        
+
     Raises:
         ValueError: If the object is not an instance of the class
     """

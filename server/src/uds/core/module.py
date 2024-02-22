@@ -118,9 +118,6 @@ class Module(UserInterface, Environmentable, Serializable, abc.ABC):
     # This is expected to be png, use this format always
     icon_file: typing.ClassVar[str] = 'base.png'
 
-    # Not defined, but declared. If module is groupable, this value will contain to which group belongs
-    group: typing.ClassVar[str]
-
     # if this modules is marked as "Experimental"
     experimental: typing.ClassVar[bool] = False
 

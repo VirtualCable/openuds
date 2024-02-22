@@ -202,9 +202,9 @@ class OpenStackProvider(ServiceProvider):
             self.timeout.value = validators.validate_timeout(self.timeout.value)
 
     def api(
-        self, project_id: typing.Optional[str] = None, region: typing.Optional[str] = None
+        self, projectid: typing.Optional[str] = None, region: typing.Optional[str] = None
     ) -> openstack.Client:
-        project_id = project_id or self.tenant.value or None
+        projectid = projectid or self.tenant.value or None
         region = region or self.region.value or None
         if self._api is None:
             proxies = None
@@ -216,16 +216,16 @@ class OpenStackProvider(ServiceProvider):
                 self.domain.value,
                 self.username.value,
                 self.password.value,
-                legacyVersion=False,
-                useSSL=False,
-                projectId=project_id,
+                is_legacy=False,
+                use_ssl=False,
+                projectid=projectid,
                 region=region,
                 access=self.access.value,
                 proxies=proxies,
             )
         return self._api
 
-    def sanitizeVmName(self, name: str) -> str:
+    def sanitized_name(self, name: str) -> str:
         return openstack.sanitized_name(name)
 
     def test_connection(self) -> types.core.TestResult:

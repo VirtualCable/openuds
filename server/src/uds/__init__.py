@@ -32,10 +32,8 @@
 """
 
 # Make sure that all services are "available" at service startup
-import math
-import ssl
 import logging
-from django.db import connections
+import typing
 
 from django.db.backends.signals import connection_created
 
@@ -65,7 +63,7 @@ class UDSAppConfig(AppConfig):
     name = 'uds'
     verbose_name = 'Universal Desktop Services'
 
-    def ready(self):
+    def ready(self) -> None:
         # We have to take care with this, because it's supposed to be executed
         # with ANY command from manage.
         logger.debug('Initializing app (ready) ***************')
@@ -110,7 +108,7 @@ default_app_config = 'uds.UDSAppConfig'
 # Sets up several sqlite non existing methodsm and some optimizations on sqlite
 # pylint: disable=unused-argument
 @receiver(connection_created)
-def extend_sqlite(connection=None, **kwargs) -> None:
+def extend_sqlite(connection: typing.Any = None, **kwargs: typing.Any) -> None:
     if connection and connection.vendor == "sqlite":
         logger.debug('Connection vendor is sqlite, extending methods')
         cursor = connection.cursor()

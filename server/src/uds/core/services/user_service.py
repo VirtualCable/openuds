@@ -579,11 +579,11 @@ class UserService(Environmentable, Serializable):
         return State.RUNNING
 
     @classmethod
-    def supports_cancel(cls) -> bool:
+    def supports_cancel(cls: type['UserService']) -> bool:
         """
         Helper to query if a class is custom (implements getJavascript method)
         """
-        return cls.cancel != UserService.cancel  # type: ignore
+        return cls.cancel != UserService.cancel
 
     def reset(self) -> None:
         """
@@ -592,7 +592,7 @@ class UserService(Environmentable, Serializable):
         base method does nothing
         """
 
-    def get_connection_data(self) -> typing.Optional[tuple[str, str, str]]:
+    def get_connection_data(self) -> typing.Optional[types.services.ConnectionData]:
         """
         This method is only invoked on some user deployments that needs to provide
         Credentials based on deployment itself
@@ -622,8 +622,8 @@ class UserService(Environmentable, Serializable):
         """
         return None
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Mainly used for debugging purposses
         """
-        return "Base Deployed Service"
+        return f'{self.__class__.__name__}({self.get_unique_id()})'

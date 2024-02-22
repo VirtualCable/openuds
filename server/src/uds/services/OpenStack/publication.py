@@ -88,14 +88,14 @@ class OpenStackLivePublication(Publication, autoserializable.AutoSerializable):
         """
         Realizes the publication of the service
         """
-        self._name = self.service().sanitizeVmName(
+        self._name = self.service().sanitized_name(
             'UDSP ' + self.servicepool_name() + "-" + str(self.revision())
         )
         self._reason = ''  # No error, no reason for it
         self._destroy_after = False
 
         try:
-            res = self.service().makeTemplate(self._name)
+            res = self.service().make_template(self._name)
             logger.debug('Publication result: %s', res)
             self._template_id = res['id']
             self._state = res['status']
@@ -137,7 +137,7 @@ class OpenStackLivePublication(Publication, autoserializable.AutoSerializable):
             return State.RUNNING
 
         try:
-            self.service().removeTemplate(self._template_id)
+            self.service().remove_template(self._template_id)
         except Exception as e:
             self._state = 'error'
             self._reason = str(e)

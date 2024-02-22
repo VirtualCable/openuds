@@ -628,10 +628,10 @@ class UserService(UUIDModel, properties.PropertiesMixin):
     def log(self, message: str, level: log.LogLevel = log.LogLevel.INFO) -> None:
         log.log(self, level, message, log.LogSource.INTERNAL)
 
-    def test_connectivity(self, host, port, timeout=4) -> bool:
+    def test_connectivity(self, host: str, port: 'str|int', timeout:int=4) -> bool:
         return self.deployed_service.test_connectivity(host, port, timeout)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             f'User service {self.name}, unique_id {self.unique_id},'
             f' cache_level {self.cache_level}, user {self.user},'
@@ -639,7 +639,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         )
 
     @staticmethod
-    def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def pre_delete(sender: typing.Any, **kwargs: typing.Any) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 

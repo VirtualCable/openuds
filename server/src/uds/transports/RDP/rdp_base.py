@@ -363,7 +363,7 @@ class BaseRDPTransport(transports.Transport):
         old_field_name='optimizeTeams',
     )
 
-    def is_ip_allowed(self, userService: 'models.UserService', ip: str) -> bool:
+    def is_ip_allowed(self, userservice: 'models.UserService', ip: str) -> bool:
         """
         Checks if the transport is available for the requested destination ip
         Override this in yours transports
@@ -372,7 +372,7 @@ class BaseRDPTransport(transports.Transport):
         ready = self.cache.get(ip)
         if ready is None:
             # Check again for ready
-            if self.test_connectivity(userService, ip, self.rdp_port.as_int()) is True:
+            if self.test_connectivity(userservice, ip, self.rdp_port.as_int()) is True:
                 self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
             self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
@@ -448,19 +448,19 @@ class BaseRDPTransport(transports.Transport):
 
     def get_connection_info(
         self,
-        userService: typing.Union['models.UserService', 'models.ServicePool'],
+        userservice: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
     ) -> types.connections.ConnectionData:
         username = None
-        if isinstance(userService, UserService):
-            cdata = userService.get_instance().get_connection_data()
+        if isinstance(userservice, UserService):
+            cdata = userservice.get_instance().get_connection_data()
             if cdata:
-                username = cdata[1] or username
-                password = cdata[2] or password
+                username = cdata.username or username
+                password = cdata.password or password
 
         return self.process_user_password(
-            typing.cast('models.UserService', userService),
+            typing.cast('models.UserService', userservice),
             user,
             password,
             altUsername=username,

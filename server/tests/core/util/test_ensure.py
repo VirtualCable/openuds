@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 
 
 class EnsureTest(UDSTestCase):
-    def test_ensure_list(self):
+    def test_ensure_list(self) -> None:
         self.assertEqual(ensure.is_list([]), [])
         self.assertEqual(ensure.is_list([1, 2, 3]), [1, 2, 3])
         self.assertEqual(ensure.is_list((1, 2, 3)), [1, 2, 3])
@@ -53,7 +53,7 @@ class EnsureTest(UDSTestCase):
         self.assertEqual(ensure.is_list({1, 2, 3}), [1, 2, 3])
 
 
-    def test_ensure_iterable(self):
+    def test_ensure_iterable(self) -> None:
         self.assertEqual(list(ensure.is_iterable([])), [])
         self.assertIsInstance(ensure.is_iterable([]), typing.Iterator)
         self.assertEqual(list(ensure.is_iterable([1, 2, 3])), [1, 2, 3])

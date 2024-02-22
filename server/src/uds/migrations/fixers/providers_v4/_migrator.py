@@ -49,7 +49,7 @@ if typing.TYPE_CHECKING:
 
 
 def migrate(
-    apps, model: typing.Literal['Provider', 'Service'], DataType: typing.Any, subtype: str, ipListAttr: str
+    apps: typing.Any, model: typing.Literal['Provider', 'Service'], DataType: typing.Any, subtype: str, ipListAttr: str
 ) -> None:
     try:
         Table: type['uds.models.ManagedObjectModel'] = apps.get_model('uds', model)
@@ -60,7 +60,7 @@ def migrate(
         # For testing
         # from uds.models import Provider, Server, ServerGroup
 
-        for record in Table.objects.filter(data_type=DataType.type_type):  # type: ignore
+        for record in Table.objects.filter(data_type=DataType.type_type):  # pyright: ignore
             # Extract data
             obj = DataType(Environment(record.uuid), None)
             obj.deserialize(record.data)
@@ -125,7 +125,7 @@ def migrate(
         print(e)
         logger.exception('Exception found while migrating HTML5RDP transports')
 
-def rollback(apps, model: typing.Literal['Provider', 'Service'], DataType: typing.Any, subtype: str, ipListAttr: str) -> None:
+def rollback(apps: typing.Any, model: typing.Literal['Provider', 'Service'], DataType: typing.Any, subtype: str, ipListAttr: str) -> None:
     """
     "Un-Migrates" an new tunnel transport to an old one (without tunnelServer)
     """
@@ -137,7 +137,7 @@ def rollback(apps, model: typing.Literal['Provider', 'Service'], DataType: typin
         # For testing
         # from uds.models import Transport, ServerGroup
 
-        for record in Table.objects.filter(data_type=DataType.type_type):  # type: ignore
+        for record in Table.objects.filter(data_type=DataType.type_type):  # pyright: ignore
             # Extranct data
             obj = DataType(Environment(record.uuid), None)
             obj.deserialize(record.data)

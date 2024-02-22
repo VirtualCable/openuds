@@ -39,7 +39,7 @@ import typing
 import collections.abc
 
 from django.utils.translation import gettext_noop as _
-from uds.core.module import Module
+from uds.core import types
 from uds.core.ui import gui
 from uds.core.managers.crypto import CryptoManager
 from uds.core import exceptions
@@ -49,8 +49,6 @@ from .windows import WindowsOsManager
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.module import Module
-    from uds.core.environment import Environment
     from uds.models import UserService
 
 

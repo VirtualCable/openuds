@@ -53,7 +53,7 @@ if typing.TYPE_CHECKING:
     from .provider import OpenStackProvider
     from .provider_legacy import ProviderLegacy
 
-    Provider = typing.Union[OpenStackProvider, ProviderLegacy]
+    AnyOpenStackProvider = typing.Union[OpenStackProvider, ProviderLegacy]
 
 
 class OpenStackLiveService(services.Service):
@@ -203,7 +203,7 @@ class OpenStackLiveService(services.Service):
 
     _api: typing.Optional['openstack.Client'] = None
 
-    def initialize(self, values):
+    def initialize(self, values: types.core.ValuesType) -> None: 
         """
         We check here form values to see if they are valid.
 
@@ -216,10 +216,10 @@ class OpenStackLiveService(services.Service):
         # self.ov.value = self.provider().serialize()
         # self.ev.value = self.provider().env.key
 
-    def provider(self) -> 'Provider':
-        return typing.cast('Provider', super().provider())
+    def provider(self) -> 'AnyOpenStackProvider':
+        return typing.cast('AnyOpenStackProvider', super().provider())
 
-    def init_gui(self):
+    def init_gui(self) -> None:
         """
         Loads required values inside
         """
@@ -260,31 +260,31 @@ class OpenStackLiveService(services.Service):
     def api(self) -> 'openstack.Client':
         if not self._api:
             self._api = self.provider().api(
-                projectId=self.project.value, region=self.region.value
+                projectid=self.project.value, region=self.region.value
             )
 
         return self._api
 
-    def sanitizeVmName(self, name: str) -> str:
+    def sanitized_name(self, name: str) -> str:
         return self.provider().sanitized_name(name)
 
-    def makeTemplate(self, templateName: str, description: typing.Optional[str] = None):
+    def make_template(self, template_name: str, description: typing.Optional[str] = None) -> dict[str, typing.Any]:
         # First, ensures that volume has not any running instances
         # if self.api.getVolume(self.volume.value)['status'] != 'available':
         #    raise Exception('The Volume is in use right now. Ensure that there is no machine running before publishing')
 
         description = description or 'UDS Template snapshot'
-        return self.api.createVolumeSnapshot(
-            self.volume.value, templateName, description
+        return self.api.create_volume_snapshot(
+            self.volume.value, template_name, description
         )
 
-    def get_template(self, snapshotId: str):
+    def get_template(self, snapshot_id: str) -> dict[str, typing.Any]:
         """
         Checks current state of a template (an snapshot)
         """
-        return self.api.getSnapshot(snapshotId)
+        return self.api.get_snapshot(snapshot_id)
 
-    def deployFromTemplate(self, name: str, snapshotId: str) -> str:
+    def deploy_from_template(self, name: str, snapshotId: str) -> str:
         """
         Deploys a virtual machine on selected cluster from selected template
 
@@ -307,11 +307,11 @@ class OpenStackLiveService(services.Service):
             securityGroupsIdsList=self.securityGroups.value,
         )['id']
 
-    def removeTemplate(self, templateId: str) -> None:
+    def remove_template(self, templateId: str) -> None:
         """
         invokes removeTemplate from parent provider
         """
-        self.api.deleteSnapshot(templateId)
+        self.api.delete_snapshot(templateId)
 
     def get_machine_state(self, machineId: str) -> str:
         """
@@ -351,7 +351,7 @@ class OpenStackLiveService(services.Service):
             )
         return server['status']
 
-    def startMachine(self, machineId: str) -> None:
+    def start_machine(self, machineId: str) -> None:
         """
         Tries to start a machine. No check is done, it is simply requested to OpenStack.
 
@@ -362,9 +362,9 @@ class OpenStackLiveService(services.Service):
 
         Returns:
         """
-        self.api.startServer(machineId)
+        self.api.start_server(machineId)
 
-    def stopMachine(self, machineId: str) -> None:
+    def stop_machine(self, machineId: str) -> None:
         """
         Tries to stop a machine. No check is done, it is simply requested to OpenStack
 
@@ -373,7 +373,7 @@ class OpenStackLiveService(services.Service):
 
         Returns:
         """
-        self.api.stopServer(machineId)
+        self.api.stop_server(machineId)
 
     def reset_machine(self, machineId: str) -> None:
         """
@@ -384,9 +384,9 @@ class OpenStackLiveService(services.Service):
 
         Returns:
         """
-        self.api.resetServer(machineId)
+        self.api.reset_server(machineId)
 
-    def suspendMachine(self, machineId: str) -> None:
+    def suspend_machine(self, machineId: str) -> None:
         """
         Tries to suspend a machine. No check is done, it is simply requested to OpenStack
 
@@ -395,9 +395,9 @@ class OpenStackLiveService(services.Service):
 
         Returns:
         """
-        self.api.suspendServer(machineId)
+        self.api.suspend_server(machineId)
 
-    def resumeMachine(self, machineId: str) -> None:
+    def resume_machine(self, machineid: str) -> None:
         """
         Tries to start a machine. No check is done, it is simply requested to OpenStack
 
@@ -406,9 +406,9 @@ class OpenStackLiveService(services.Service):
 
         Returns:
         """
-        self.api.resumeServer(machineId)
+        self.api.resume_server(machineid)
 
-    def removeMachine(self, machineId: str) -> None:
+    def remove_machine(self, machineid: str) -> None:
         """
         Tries to delete a machine. No check is done, it is simply requested to OpenStack
 
@@ -417,13 +417,13 @@ class OpenStackLiveService(services.Service):
 
         Returns:
         """
-        self.api.deleteServer(machineId)
+        self.api.delete_server(machineid)
 
-    def getNetInfo(self, machineId: str) -> tuple[str, str]:
+    def get_network_info(self, machineid: str) -> tuple[str, str]:
         """
         Gets the mac address of first nic of the machine
         """
-        net = self.api.getServer(machineId)['addresses']
+        net = self.api.getServer(machineid)['addresses']
         vals = next(iter(net.values()))[
             0
         ]  # Returns "any" mac address of any interface. We just need only one interface info
@@ -436,7 +436,7 @@ class OpenStackLiveService(services.Service):
         """
         return self.baseName.value
 
-    def getLenName(self) -> int:
+    def get_lenname(self) -> int:
         """
         Returns the length of numbers part
         """

@@ -55,7 +55,7 @@ DEFAULT_OS: typing.Final[types.os.KnownOS] = types.os.KnownOS.WINDOWS
 
 KNOW_BROWSERS: typing.Final[tuple[types.os.KnownBrowser, ...]] = tuple(types.os.KnownBrowser)
 
-BROWSERS_RE: dict[types.os.KnownBrowser, tuple] = {
+BROWSERS_RE: dict[types.os.KnownBrowser, tuple[typing.Pattern[str], ...]] = {
     types.os.KnownBrowser.FIREFOX: (re.compile(r'Firefox/([0-9.]+)'),),
     types.os.KnownBrowser.SEAMONKEY: (re.compile(r'Seamonkey/([0-9.]+)'),),
     types.os.KnownBrowser.CHROME: (re.compile(r'Chrome/([0-9.]+)'),),

@@ -59,9 +59,7 @@ VERIFY_SSL = False
 
 
 # Helpers
-def ensureResponseIsValid(
-    response: 'requests.Response', errMsg: typing.Optional[str] = None
-) -> None:
+def ensureResponseIsValid(response: 'requests.Response', errMsg: typing.Optional[str] = None) -> None:
     if response.ok is False:
         try:
             (
@@ -72,7 +70,9 @@ def ensureResponseIsValid(
             )  # Extract any key, in case of error is expected to have only one top key so this will work
             msg = ': {message}'.format(**err)
             errMsg = errMsg + msg if errMsg else msg
-        except Exception:  # nosec: If error geting error message, simply ignore it (will be loged on service log anyway)
+        except (
+            Exception
+        ):  # nosec: If error geting error message, simply ignore it (will be loged on service log anyway)
             pass
         if errMsg is None:
             errMsg = 'Error checking response'
@@ -93,9 +93,7 @@ def getRecurringUrlJson(
     while True:
         counter += 1
         logger.debug('Requesting url #%s: %s / %s', counter, url, params)
-        r = session.get(
-            url, params=params, headers=headers, timeout=timeout
-        )
+        r = session.get(url, params=params, headers=headers, timeout=timeout)
 
         ensureResponseIsValid(r, errMsg)
 
@@ -112,9 +110,10 @@ def getRecurringUrlJson(
 
 RT = typing.TypeVar('RT')
 
+
 # Decorators
 def authRequired(func: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
-    def ensurer(obj: 'Client', *args, **kwargs) -> RT:
+    def ensurer(obj: 'Client', *args: typing.Any, **kwargs: typing.Any) -> RT:
         obj.ensureAuthenticated()
         try:
             return func(obj, *args, **kwargs)
@@ -126,13 +125,14 @@ def authRequired(func: collections.abc.Callable[..., RT]) -> collections.abc.Cal
 
 
 def auth_project_required(func: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
-    def ensurer(obj, *args, **kwargs) -> RT:
-        if obj._projectId is None:  # pylint: disable=protected-access
+    def ensurer(obj: 'Client', *args: typing.Any, **kwargs: typing.Any) -> RT:
+        if obj._projectid is None:
             raise Exception('Need a project for method {}'.format(func))
         obj.ensureAuthenticated()
         return func(obj, *args, **kwargs)
 
     return ensurer
+
 
 class Client:  # pylint: disable=too-many-public-methods
     PUBLIC = 'public'
@@ -141,17 +141,17 @@ class Client:  # pylint: disable=too-many-public-methods
 
     _authenticated: bool
     _authenticatedProjectId: typing.Optional[str]
-    _authUrl: str
-    _tokenId: typing.Optional[str]
+    _authurl: str
+    _tokenid: typing.Optional[str]
     _catalog: typing.Optional[list[dict[str, typing.Any]]]
-    _isLegacy: bool
+    _is_legacy: bool
     _volume: str
     _access: typing.Optional[str]
     _domain: str
     _username: str
     _password: str
-    _userId: typing.Optional[str]
-    _projectId: typing.Optional[str]
+    _userid: typing.Optional[str]
+    _projectid: typing.Optional[str]
     _project: typing.Optional[str]
     _region: typing.Optional[str]
     _timeout: int
@@ -165,12 +165,12 @@ class Client:  # pylint: disable=too-many-public-methods
         domain: str,
         username: str,
         password: str,
-        legacyVersion: bool = True,
-        useSSL: bool = False,
-        projectId: typing.Optional[str] = None,
+        is_legacy: bool = True,
+        use_ssl: bool = False,
+        projectid: typing.Optional[str] = None,
         region: typing.Optional[str] = None,
         access: typing.Optional[str] = None,
-        proxies: typing.Optional[collections.abc.MutableMapping[str, str]] = None,
+        proxies: typing.Optional[dict[str, str]] = None,
     ):
         self._session = security.secure_requests_session(verify=VERIFY_SSL)
         if proxies:
@@ -178,38 +178,45 @@ class Client:  # pylint: disable=too-many-public-methods
 
         self._authenticated = False
         self._authenticatedProjectId = None
-        self._tokenId = None
+        self._tokenid = None
         self._catalog = None
-        self._isLegacy = legacyVersion
+        self._is_legacy = is_legacy
 
         self._access = Client.PUBLIC if access is None else access
         self._domain, self._username, self._password = domain, username, password
-        self._userId = None
-        self._projectId = projectId
+        self._userid = None
+        self._projectid = projectid
         self._project = None
         self._region = region
         self._timeout = 10
         self._volume = ''
 
-        if legacyVersion:
-            self._authUrl = 'http{}://{}:{}/'.format('s' if useSSL else '', host, port)
+        if is_legacy:
+            self._authurl = 'http{}://{}:{}/'.format('s' if use_ssl else '', host, port)
         else:
-            self._authUrl = host  # Host contains auth URL
-            if self._authUrl[-1] != '/':
-                self._authUrl += '/'
+            self._authurl = host  # Host contains auth URL
+            if self._authurl[-1] != '/':
+                self._authurl += '/'
 
-
-    def _getEndpointFor(
-        self, *type_: str
-    ) -> str:  # If no region is indicatad, first endpoint is returned
+    def _get_endpoint_for(self, *type_: str) -> str:  # If no region is indicatad, first endpoint is returned
         def inner_get(for_type: str) -> str:
             if not self._catalog:
                 raise Exception('No catalog for endpoints')
-            for i in filter(lambda v: v['type'] == for_type, self._catalog):
-                for j in filter(lambda v: v['interface'] == self._access, i['endpoints']):
+
+            for i in typing.cast(
+                list[dict[str, typing.Any]], filter(lambda v: v['type'] == for_type, self._catalog)
+            ):
+                for j in typing.cast(
+                    list[dict[str, typing.Any]],
+                    filter(
+                        lambda v: v['interface'] == self._access,
+                        typing.cast(list[dict[str, typing.Any]], i['endpoints']),
+                    ),
+                ):
                     if not self._region or j['region'] == self._region:
                         return j['url']
             raise Exception('No endpoint url found')
+
         for t in type_:
             try:
                 return inner_get(t)
@@ -219,8 +226,8 @@ class Client:  # pylint: disable=too-many-public-methods
 
     def _requestHeaders(self) -> dict[str, str]:
         headers = {'content-type': 'application/json'}
-        if self._tokenId:
-            headers['X-Auth-Token'] = self._tokenId
+        if self._tokenid:
+            headers['X-Auth-Token'] = self._tokenid
 
         return headers
 
@@ -233,11 +240,7 @@ class Client:  # pylint: disable=too-many-public-methods
                     'password': {
                         'user': {
                             'name': self._username,
-                            'domain': {
-                                'name': 'Default'
-                                if self._domain is None
-                                else self._domain
-                            },
+                            'domain': {'name': 'Default' if not self._domain else self._domain},
                             'password': self._password,
                         }
                     },
@@ -245,20 +248,18 @@ class Client:  # pylint: disable=too-many-public-methods
             }
         }
 
-        if self._projectId is None:
+        if self._projectid is None:
             self._authenticatedProjectId = None
-            if self._isLegacy:
+            if self._is_legacy:
                 data['auth']['scope'] = 'unscoped'
         else:
-            self._authenticatedProjectId = self._projectId
-            data['auth']['scope'] = {
-                'project': {'id': self._projectId, 'domain': {'name': self._domain}}
-            }
+            self._authenticatedProjectId = self._projectid
+            data['auth']['scope'] = {'project': {'id': self._projectid, 'domain': {'name': self._domain}}}
 
         # logger.debug('Request data: {}'.format(data))
 
         r = self._session.post(
-            self._authUrl + 'v3/auth/tokens',
+            self._authurl + 'v3/auth/tokens',
             data=json.dumps(data),
             headers={'content-type': 'application/json'},
             timeout=self._timeout,
@@ -267,17 +268,17 @@ class Client:  # pylint: disable=too-many-public-methods
         ensureResponseIsValid(r, 'Invalid Credentials')
 
         self._authenticated = True
-        self._tokenId = r.headers['X-Subject-Token']
+        self._tokenid = r.headers['X-Subject-Token']
         # Extract the token id
         token = r.json()['token']
         # logger.debug('Got token {}'.format(token))
-        self._userId = token['user']['id']
+        self._userid = token['user']['id']
         # validity = (dateutil.parser.parse(token['expires_at']).replace(tzinfo=None) - dateutil.parser.parse(token['issued_at']).replace(tzinfo=None)).seconds - 60
 
         # logger.debug('The token {} will be valid for {}'.format(self._tokenId, validity))
 
         # Now, if endpoints are present (only if tenant was specified), store them
-        if self._projectId is not None:
+        if self._projectid is not None:
             self._catalog = token['catalog']
             # Check for the presence of the endpoint for volumes
             # Volume v2 api was deprecated in Pike release, and removed on Xena release
@@ -289,16 +290,13 @@ class Client:  # pylint: disable=too-many-public-methods
                     self._volume = 'volumev2'
 
     def ensureAuthenticated(self) -> None:
-        if (
-            self._authenticated is False
-            or self._projectId != self._authenticatedProjectId
-        ):
+        if self._authenticated is False or self._projectid != self._authenticatedProjectId:
             self.authPassword()
 
     @authRequired
     def listProjects(self) -> collections.abc.Iterable[typing.Any]:
         return getRecurringUrlJson(
-            self._authUrl + 'v3/users/{user_id}/projects'.format(user_id=self._userId),
+            self._authurl + 'v3/users/{user_id}/projects'.format(user_id=self._userid),
             self._session,
             headers=self._requestHeaders(),
             key='projects',
@@ -309,7 +307,7 @@ class Client:  # pylint: disable=too-many-public-methods
     @authRequired
     def listRegions(self) -> collections.abc.Iterable[typing.Any]:
         return getRecurringUrlJson(
-            self._authUrl + 'v3/regions/',
+            self._authurl + 'v3/regions/',
             self._session,
             headers=self._requestHeaders(),
             key='regions',
@@ -325,7 +323,7 @@ class Client:  # pylint: disable=too-many-public-methods
     ) -> collections.abc.Iterable[typing.Any]:
         path = '/servers/' + 'detail' if detail is True else ''
         return getRecurringUrlJson(
-            self._getEndpointFor('compute', 'compute_legacy') + path,
+            self._get_endpoint_for('compute', 'compute_legacy') + path,
             self._session,
             headers=self._requestHeaders(),
             key='servers',
@@ -337,7 +335,7 @@ class Client:  # pylint: disable=too-many-public-methods
     @auth_project_required
     def listImages(self) -> collections.abc.Iterable[typing.Any]:
         return getRecurringUrlJson(
-            self._getEndpointFor('image') + '/v2/images?status=active',
+            self._get_endpoint_for('image') + '/v2/images?status=active',
             self._session,
             headers=self._requestHeaders(),
             key='images',
@@ -348,7 +346,7 @@ class Client:  # pylint: disable=too-many-public-methods
     @auth_project_required
     def listVolumeTypes(self) -> collections.abc.Iterable[typing.Any]:
         return getRecurringUrlJson(
-            self._getEndpointFor(self._volume) + '/types',
+            self._get_endpoint_for(self._volume) + '/types',
             self._session,
             headers=self._requestHeaders(),
             key='volume_types',
@@ -359,7 +357,7 @@ class Client:  # pylint: disable=too-many-public-methods
     @auth_project_required
     def listVolumes(self) -> collections.abc.Iterable[typing.Any]:
         return getRecurringUrlJson(
-            self._getEndpointFor(self._volume) + '/volumes/detail',
+            self._get_endpoint_for(self._volume) + '/volumes/detail',
             self._session,
             headers=self._requestHeaders(),
             key='volumes',
@@ -372,7 +370,7 @@ class Client:  # pylint: disable=too-many-public-methods
         self, volumeId: typing.Optional[dict[str, typing.Any]] = None
     ) -> collections.abc.Iterable[typing.Any]:
         for s in getRecurringUrlJson(
-            self._getEndpointFor(self._volume) + '/snapshots',
+            self._get_endpoint_for(self._volume) + '/snapshots',
             self._session,
             headers=self._requestHeaders(),
             key='snapshots',
@@ -385,7 +383,7 @@ class Client:  # pylint: disable=too-many-public-methods
     @auth_project_required
     def listAvailabilityZones(self) -> collections.abc.Iterable[typing.Any]:
         for az in getRecurringUrlJson(
-            self._getEndpointFor('compute', 'compute_legacy') + '/os-availability-zone',
+            self._get_endpoint_for('compute', 'compute_legacy') + '/os-availability-zone',
             self._session,
             headers=self._requestHeaders(),
             key='availabilityZoneInfo',
@@ -398,7 +396,7 @@ class Client:  # pylint: disable=too-many-public-methods
     @auth_project_required
     def listFlavors(self) -> collections.abc.Iterable[typing.Any]:
         return getRecurringUrlJson(
-            self._getEndpointFor('compute', 'compute_legacy') + '/flavors',
+            self._get_endpoint_for('compute', 'compute_legacy') + '/flavors',
             self._session,
             headers=self._requestHeaders(),
             key='flavors',
@@ -407,24 +405,22 @@ class Client:  # pylint: disable=too-many-public-methods
         )
 
     @auth_project_required
-    def listNetworks(self, nameFromSubnets=False) -> collections.abc.Iterable[typing.Any]:
+    def listNetworks(self, name_from_subnets: bool=False) -> collections.abc.Iterable[typing.Any]:
         nets = getRecurringUrlJson(
-            self._getEndpointFor('network') + '/v2.0/networks',
+            self._get_endpoint_for('network') + '/v2.0/networks',
             self._session,
             headers=self._requestHeaders(),
             key='networks',
             errMsg='List Networks',
             timeout=self._timeout,
         )
-        if not nameFromSubnets:
+        if not name_from_subnets:
             yield from nets
         else:
             # Get and cache subnets names
-            subnetNames = {s['id']: s['name'] for s in self.listSubnets()}
+            subnetNames = {s['id']: s['name'] for s in self.list_subnets()}
             for net in nets:
-                name = ','.join(
-                    subnetNames[i] for i in net['subnets'] if i in subnetNames
-                )
+                name = ','.join(subnetNames[i] for i in net['subnets'] if i in subnetNames)
                 net['old_name'] = net['name']
                 if name:
                     net['name'] = name
@@ -432,9 +428,9 @@ class Client:  # pylint: disable=too-many-public-methods
                 yield net
 
     @auth_project_required
-    def listSubnets(self) -> collections.abc.Iterable[typing.Any]:
+    def list_subnets(self) -> collections.abc.Iterable[typing.Any]:
         return getRecurringUrlJson(
-            self._getEndpointFor('network') + '/v2.0/subnets',
+            self._get_endpoint_for('network') + '/v2.0/subnets',
             self._session,
             headers=self._requestHeaders(),
             key='subnets',
@@ -448,14 +444,14 @@ class Client:  # pylint: disable=too-many-public-methods
         networkId: typing.Optional[str] = None,
         ownerId: typing.Optional[str] = None,
     ) -> collections.abc.Iterable[typing.Any]:
-        params = {}
+        params: dict[str, typing.Any] = {}
         if networkId is not None:
             params['network_id'] = networkId
         if ownerId is not None:
             params['device_owner'] = ownerId
 
         return getRecurringUrlJson(
-            self._getEndpointFor('network') + '/v2.0/ports',
+            self._get_endpoint_for('network') + '/v2.0/ports',
             self._session,
             headers=self._requestHeaders(),
             key='ports',
@@ -467,7 +463,7 @@ class Client:  # pylint: disable=too-many-public-methods
     @auth_project_required
     def listSecurityGroups(self) -> collections.abc.Iterable[typing.Any]:
         return getRecurringUrlJson(
-            self._getEndpointFor('compute', 'compute_legacy') + '/os-security-groups',
+            self._get_endpoint_for('compute', 'compute_legacy') + '/os-security-groups',
             self._session,
             headers=self._requestHeaders(),
             key='security_groups',
@@ -478,7 +474,7 @@ class Client:  # pylint: disable=too-many-public-methods
     @auth_project_required
     def getServer(self, serverId: str) -> dict[str, typing.Any]:
         r = self._session.get(
-            self._getEndpointFor('compute', 'compute_legacy')
+            self._get_endpoint_for('compute', 'compute_legacy')
             + '/servers/{server_id}'.format(server_id=serverId),
             headers=self._requestHeaders(),
             timeout=self._timeout,
@@ -489,8 +485,7 @@ class Client:  # pylint: disable=too-many-public-methods
     @auth_project_required
     def getVolume(self, volumeId: str) -> dict[str, typing.Any]:
         r = self._session.get(
-            self._getEndpointFor(self._volume)
-            + '/volumes/{volume_id}'.format(volume_id=volumeId),
+            self._get_endpoint_for(self._volume) + '/volumes/{volume_id}'.format(volume_id=volumeId),
             headers=self._requestHeaders(),
             timeout=self._timeout,
         )
@@ -500,14 +495,13 @@ class Client:  # pylint: disable=too-many-public-methods
         return r.json()['volume']
 
     @auth_project_required
-    def getSnapshot(self, snapshotId: str) -> dict[str, typing.Any]:
+    def get_snapshot(self, snapshotId: str) -> dict[str, typing.Any]:
         """
         States are:
             creating, available, deleting, error,  error_deleting
         """
         r = self._session.get(
-            self._getEndpointFor(self._volume)
-            + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
+            self._get_endpoint_for(self._volume) + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
             headers=self._requestHeaders(),
             timeout=self._timeout,
         )
@@ -531,8 +525,7 @@ class Client:  # pylint: disable=too-many-public-methods
             data['snapshot']['description'] = description
 
         r = self._session.put(
-            self._getEndpointFor(self._volume)
-            + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
+            self._get_endpoint_for(self._volume) + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
             data=json.dumps(data),
             headers=self._requestHeaders(),
             timeout=self._timeout,
@@ -543,7 +536,7 @@ class Client:  # pylint: disable=too-many-public-methods
         return r.json()['snapshot']
 
     @auth_project_required
-    def createVolumeSnapshot(
+    def create_volume_snapshot(
         self, volumeId: str, name: str, description: typing.Optional[str] = None
     ) -> dict[str, typing.Any]:
         description = description or 'UDS Snapshot'
@@ -559,15 +552,13 @@ class Client:  # pylint: disable=too-many-public-methods
         # First, ensure volume is in state "available"
 
         r = self._session.post(
-            self._getEndpointFor(self._volume) + '/snapshots',
+            self._get_endpoint_for(self._volume) + '/snapshots',
             data=json.dumps(data),
             headers=self._requestHeaders(),
             timeout=self._timeout,
         )
 
-        ensureResponseIsValid(
-            r, 'Cannot create snapshot. Ensure volume is in state "available"'
-        )
+        ensureResponseIsValid(r, 'Cannot create snapshot. Ensure volume is in state "available"')
 
         return r.json()['snapshot']
 
@@ -586,7 +577,7 @@ class Client:  # pylint: disable=too-many-public-methods
         }
 
         r = self._session.post(
-            self._getEndpointFor(self._volume) + '/volumes',
+            self._get_endpoint_for(self._volume) + '/volumes',
             data=json.dumps(data),
             headers=self._requestHeaders(),
             timeout=self._timeout,
@@ -635,7 +626,7 @@ class Client:  # pylint: disable=too-many-public-methods
         }
 
         r = self._session.post(
-            self._getEndpointFor('compute', 'compute_legacy') + '/servers',
+            self._get_endpoint_for('compute', 'compute_legacy') + '/servers',
             data=json.dumps(data),
             headers=self._requestHeaders(),
             timeout=self._timeout,
@@ -646,7 +637,7 @@ class Client:  # pylint: disable=too-many-public-methods
         return r.json()['server']
 
     @auth_project_required
-    def deleteServer(self, serverId: str) -> None:
+    def delete_server(self, serverId: str) -> None:
         # r = self._session.post(
         #     self._getEndpointFor('compute', , 'compute_legacy') + '/servers/{server_id}/action'.format(server_id=serverId),
         #     data='{"forceDelete": null}',
@@ -654,23 +645,20 @@ class Client:  # pylint: disable=too-many-public-methods
         #     timeout=self._timeout
         # )
         r = self._session.delete(
-            self._getEndpointFor('compute', 'compute_legacy')
+            self._get_endpoint_for('compute', 'compute_legacy')
             + '/servers/{server_id}'.format(server_id=serverId),
             headers=self._requestHeaders(),
             timeout=self._timeout,
         )
 
-        ensureResponseIsValid(
-            r, 'Cannot delete server (probably server does not exists).'
-        )
+        ensureResponseIsValid(r, 'Cannot delete server (probably server does not exists).')
 
         # This does not returns anything
 
     @auth_project_required
-    def deleteSnapshot(self, snapshotId: str) -> None:
+    def delete_snapshot(self, snapshotId: str) -> None:
         r = self._session.delete(
-            self._getEndpointFor(self._volume)
-            + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
+            self._get_endpoint_for(self._volume) + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
             headers=self._requestHeaders(),
             timeout=self._timeout,
         )
@@ -680,9 +668,9 @@ class Client:  # pylint: disable=too-many-public-methods
         # Does not returns a message body
 
     @auth_project_required
-    def startServer(self, serverId: str) -> None:
+    def start_server(self, serverId: str) -> None:
         r = self._session.post(
-            self._getEndpointFor('compute', 'compute_legacy')
+            self._get_endpoint_for('compute', 'compute_legacy')
             + '/servers/{server_id}/action'.format(server_id=serverId),
             data='{"os-start": null}',
             headers=self._requestHeaders(),
@@ -694,9 +682,9 @@ class Client:  # pylint: disable=too-many-public-methods
         # This does not returns anything
 
     @auth_project_required
-    def stopServer(self, serverId: str) -> None:
+    def stop_server(self, serverId: str) -> None:
         r = self._session.post(
-            self._getEndpointFor('compute', 'compute_legacy')
+            self._get_endpoint_for('compute', 'compute_legacy')
             + '/servers/{server_id}/action'.format(server_id=serverId),
             data='{"os-stop": null}',
             headers=self._requestHeaders(),
@@ -706,9 +694,9 @@ class Client:  # pylint: disable=too-many-public-methods
         ensureResponseIsValid(r, 'Stoping server')
 
     @auth_project_required
-    def suspendServer(self, serverId: str) -> None:
+    def suspend_server(self, serverId: str) -> None:
         r = self._session.post(
-            self._getEndpointFor('compute', 'compute_legacy')
+            self._get_endpoint_for('compute', 'compute_legacy')
             + '/servers/{server_id}/action'.format(server_id=serverId),
             data='{"suspend": null}',
             headers=self._requestHeaders(),
@@ -718,9 +706,9 @@ class Client:  # pylint: disable=too-many-public-methods
         ensureResponseIsValid(r, 'Suspending server')
 
     @auth_project_required
-    def resumeServer(self, serverId: str) -> None:
+    def resume_server(self, serverId: str) -> None:
         r = self._session.post(
-            self._getEndpointFor('compute', 'compute_legacy')
+            self._get_endpoint_for('compute', 'compute_legacy')
             + '/servers/{server_id}/action'.format(server_id=serverId),
             data='{"resume": null}',
             headers=self._requestHeaders(),
@@ -730,10 +718,11 @@ class Client:  # pylint: disable=too-many-public-methods
         ensureResponseIsValid(r, 'Resuming server')
 
     @auth_project_required
-    def resetServer(self, serverId: str) -> None:
-        r = self._session.post(  # pylint: disable=unused-variable
-            self._getEndpointFor('compute', 'compute_legacy')
-            + '/servers/{server_id}/action'.format(server_id=serverId),
+    def reset_server(self, server_id: str) -> None:
+        # Does not need return value
+        self._session.post(
+            self._get_endpoint_for('compute', 'compute_legacy')
+            + '/servers/{server_id}/action'.format(server_id=server_id),
             data='{"reboot":{"type":"HARD"}}',
             headers=self._requestHeaders(),
             timeout=self._timeout,
@@ -746,9 +735,7 @@ class Client:  # pylint: disable=too-many-public-methods
         # First, ensure requested api is supported
         # We need api version 3.2 or greater
         try:
-            r = self._session.get(
-                self._authUrl, headers=self._requestHeaders()
-            )
+            r = self._session.get(self._authurl, headers=self._requestHeaders())
         except Exception:
             logger.exception('Testing')
             raise Exception('Connection error')
@@ -779,9 +766,7 @@ class Client:  # pylint: disable=too-many-public-methods
     def is_available(self) -> bool:
         try:
             # If we can connect, it is available
-            self._session.get(
-                self._authUrl, verify=VERIFY_SSL, headers=self._requestHeaders()
-            )
+            self._session.get(self._authurl, verify=VERIFY_SSL, headers=self._requestHeaders())
             return True
         except Exception:
             return False

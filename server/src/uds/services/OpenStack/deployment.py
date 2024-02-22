@@ -130,13 +130,13 @@ class OpenStackLiveDeployment(
         if self._name == '':
             try:
                 self._name = self.name_generator().get(
-                    self.service().get_basename(), self.service().getLenName()
+                    self.service().get_basename(), self.service().get_lenname()
                 )
             except KeyError:
                 return consts.NO_MORE_NAMES
         return self._name
 
-    def set_ip(self, ip) -> None:
+    def set_ip(self, ip: str) -> None:
         self._ip = ip
 
     def get_unique_id(self) -> str:
@@ -160,9 +160,9 @@ class OpenStackLiveDeployment(
                 return self._error('Machine is not available anymore')
 
             if status == openstack.PAUSED:
-                self.service().resumeMachine(self._vmid)
+                self.service().resume_machine(self._vmid)
             elif status in (openstack.STOPPED, openstack.SHUTOFF):
-                self.service().startMachine(self._vmid)
+                self.service().start_machine(self._vmid)
 
             # Right now, we suppose the machine is ready
 
@@ -255,7 +255,7 @@ class OpenStackLiveDeployment(
 
         if self._vmid:  # Powers off & delete it
             try:
-                self.service().removeMachine(self._vmid)
+                self.service().remove_machine(self._vmid)
             except Exception:
                 logger.warning('Can\t set machine %s state to stopped', self._vmid)
 
@@ -318,12 +318,12 @@ class OpenStackLiveDeployment(
                 'No more names available for this service. (Increase digits for this service to fix)'
             )
 
-        name = self.service().sanitizeVmName(
+        name = self.service().sanitized_name(
             name
         )  # OpenNebula don't let us to create machines with more than 15 chars!!!
 
-        self._vmid = self.service().deployFromTemplate(name, templateId)
-        if self._vmid is None:
+        self._vmid = self.service().deploy_from_template(name, templateId)
+        if not self._vmid:
             raise Exception('Can\'t create machine')
 
         return State.RUNNING
@@ -337,7 +337,7 @@ class OpenStackLiveDeployment(
         if openstack.status_is_lost(status):
             raise Exception('Machine not found. (Status {})'.format(status))
 
-        self.service().removeMachine(self._vmid)
+        self.service().remove_machine(self._vmid)
 
         return State.RUNNING
 
@@ -345,7 +345,7 @@ class OpenStackLiveDeployment(
         """
         Powers on the machine
         """
-        self.service().startMachine(self._vmid)
+        self.service().start_machine(self._vmid)
 
         return State.RUNNING
 
@@ -353,7 +353,7 @@ class OpenStackLiveDeployment(
         """
         Suspends the machine
         """
-        self.service().suspendMachine(self._vmid)
+        self.service().suspend_machine(self._vmid)
 
         return State.RUNNING
 
@@ -365,7 +365,7 @@ class OpenStackLiveDeployment(
         ret = self._check_machine_state(openstack.ACTIVE)
         if ret == State.FINISHED:
             # Get IP & MAC (early stage)
-            self._mac, self._ip = self.service().getNetInfo(self._vmid)
+            self._mac, self._ip = self.service().get_network_info(self._vmid)
 
         return ret
 

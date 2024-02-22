@@ -37,7 +37,7 @@ import collections.abc
 from django.utils.translation import gettext as _
 
 from uds.core import consts
-from uds.core.util import singleton
+from uds.core.util import ensure, singleton
 
 
 class ServerType(enum.IntEnum):
@@ -48,7 +48,7 @@ class ServerType(enum.IntEnum):
     UNMANAGED = 100
 
     def as_str(self) -> str:
-        return self.name.lower()  # type: ignore
+        return self.name.lower()
 
     def path(self) -> str:
         return {
@@ -256,10 +256,11 @@ class ServerCounter(typing.NamedTuple):
     counter: int
 
     @staticmethod
-    def from_iterable(data: typing.Optional[collections.abc.Iterable]) -> typing.Optional['ServerCounter']:
+    def from_iterable(data: typing.Optional[collections.abc.Iterable[typing.Any]]) -> typing.Optional['ServerCounter']:
         if data is None:
             return None
-        return ServerCounter(*data)
+        
+        return ServerCounter(*ensure.is_iterable(data))
 
     @staticmethod
     def null() -> 'ServerCounter':
