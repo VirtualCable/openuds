@@ -134,7 +134,7 @@ class SampleAuth(auths.Authenticator):
         if values and len(self.groups.value) < 2:
             raise exceptions.ui.ValidationError(_('We need more than two groups!'))
 
-    def search_users(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
+    def search_users(self, pattern: str) -> collections.abc.Iterable[types.auth.SearchResultItem]:
         """
         Here we will receive a pattern for searching users.
 
@@ -144,15 +144,9 @@ class SampleAuth(auths.Authenticator):
         facility for users. In our case, we will simply return a list of users
         (array of dictionaries with ids and names) with the pattern plus 1..10
         """
-        return [
-            {
-                'id': f'{pattern}-{a}',
-                'name': f'{pattern} number {a}',
-            }
-            for a in range(1, 10)
-        ]
+        return [types.auth.SearchResultItem(id=f'{pattern}-{a}', name=f'{pattern} number {a}') for a in range(1, 10)]
 
-    def search_groups(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
+    def search_groups(self, pattern: str) -> collections.abc.Iterable[types.auth.SearchResultItem]:
         """
         Here we we will receive a patter for searching groups.
 
@@ -161,11 +155,7 @@ class SampleAuth(auths.Authenticator):
         contains the pattern indicated.
         """
         pattern = pattern.lower()
-        res = []
-        for g in self.groups.value:
-            if g.lower().find(pattern) != -1:
-                res.append({'id': g, 'name': ''})
-        return res
+        return [types.auth.SearchResultItem(id=g, name='') for g in self.groups.value if g.lower().find(pattern) != -1]
 
     def authenticate(
         self,

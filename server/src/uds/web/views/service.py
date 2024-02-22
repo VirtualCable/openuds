@@ -64,7 +64,7 @@ def transport_own_link(request: 'ExtendedHttpRequestWithUser', service_id: str, 
     # For type checkers to "be happy"
     try:
         res = UserServiceManager().get_user_service_info(request.user, request.os, request.ip, service_id, transport_id)
-        ip, userService, iads, trans, itrans = res
+        ip, userService, _iads, trans, itrans = res
         # This returns a response object in fact
         if itrans and ip:
             response = {
@@ -169,7 +169,7 @@ def user_service_status(request: 'ExtendedHttpRequestWithUser', service_id: str,
             # logger.debug('Res: %s %s %s %s %s', ip, userService, userServiceInstance, transport, transportInstance)
         except ServiceNotReadyError:
             ip = None
-        except Exception as e:
+        except Exception:
             ip = False
 
         ready = 'ready'

@@ -42,7 +42,6 @@ import re
 import time
 import typing
 import collections.abc
-import collections.abc
 import abc
 
 from django.utils.translation import gettext
@@ -166,19 +165,14 @@ class gui:
             return gui.choice_item(val, str(val))
 
         # If is a dict
-        if isinstance(vals, collections.abc.Mapping):
-            return [gui.choice_item(str(k), v) for k, v in vals.items()]
+        if isinstance(vals, dict):
+            return [gui.choice_item(str(k), v) for k, v in typing.cast(dict[str, str], vals).items()]
 
-        # if single value, convert to list
-        if not isinstance(vals, collections.abc.Iterable) or isinstance(vals, str):
-            vals = [vals]
+        if isinstance(vals, str):
+            return [gui.choice_item(vals, vals)]
 
-        # If is an iterable
-        if isinstance(vals, collections.abc.Iterable):
-            return [_choice_from_value(v) for v in vals]
-
-        # This should never happen
-        raise ValueError(f'Invalid type for convertToChoices: {vals}')
+        # Vals is an iterable, so we convert it to a list of choice items
+        return [_choice_from_value(v) for v in vals]
 
     @staticmethod
     def sorted_choices(
@@ -292,7 +286,7 @@ class gui:
             tooltip: str = '',
             length: typing.Optional[int] = None,
             required: typing.Optional[bool] = None,
-            default:  typing.Union[collections.abc.Callable[[], typing.Any], typing.Any] = None,
+            default: typing.Union[collections.abc.Callable[[], typing.Any], typing.Any] = None,
             readonly: typing.Optional[bool] = None,
             value: typing.Any = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
@@ -746,9 +740,7 @@ class gui:
         def as_datetime(self) -> datetime.datetime:
             """Alias for "value" property, but as datetime.datetime"""
             # Convert date to datetime
-            return datetime.datetime.combine(
-                self.as_date(), datetime.datetime.min.time()
-            )
+            return datetime.datetime.combine(self.as_date(), datetime.datetime.min.time())
 
         def as_timestamp(self) -> int:
             """Alias for "value" property, but as timestamp"""
@@ -1276,7 +1268,9 @@ class gui:
             self._fields_info.rows = rows
             self._fields_info.choices = gui.as_choices(choices or [])
 
-        def set_choices(self, choices: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]) -> None:
+        def set_choices(
+            self, choices: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]
+        ) -> None:
             """
             Set the values for this choice field
             """
@@ -1288,8 +1282,8 @@ class gui:
             """
             if not isinstance(value, collections.abc.Iterable):
                 value = [gui.as_str(value)]
-            else:
-                value = [gui.as_str(i) for i in value]
+            else:  # Is an iterable
+                value = [gui.as_str(i) for i in typing.cast(collections.abc.Iterable[typing.Any], value)]
             super()._set_value(value)
 
         def as_list(self) -> list[str]:
@@ -1372,7 +1366,7 @@ class gui:
             if not isinstance(value, collections.abc.Iterable):
                 value = [gui.as_str(value)]
             else:
-                value = [gui.as_str(i) for i in value]
+                value = [gui.as_str(i) for i in typing.cast(collections.abc.Iterable[typing.Any], value)]
             super()._set_value(value)
 
         def as_list(self) -> list[str]:
@@ -1428,7 +1422,7 @@ class UserInterfaceType(abc.ABCMeta, type):
         bases: tuple[type, ...],
         namespace: dict[str, typing.Any],
     ) -> 'UserInterfaceType':
-        new_class_dict = {}
+        new_class_dict: dict[str, typing.Any] = {}
         _gui: collections.abc.MutableMapping[str, gui.InputField] = {}
 
         # Make a copy of gui fields description
@@ -1618,7 +1612,7 @@ class UserInterface(metaclass=UserInterfaceType):
             return True
 
         # For future use, right now we only have one version
-        version = values[  # pylint: disable=unused-variable
+        _version = values[
             len(SERIALIZATION_HEADER) : len(SERIALIZATION_HEADER) + len(SERIALIZATION_VERSION)
         ]
 
@@ -1700,10 +1694,7 @@ class UserInterface(metaclass=UserInterfaceType):
                         elif v.startswith(PASSWORD_FIELD):
                             val = CryptoManager().aes_decrypt(v[1:], UDSK, True).decode()
                         else:
-                            val = v
-                            # Ensure "legacy bytes" values are loaded correctly as unicode
-                            if isinstance(val, bytes):
-                                val = val.decode('utf8')
+                            val = v.decode('utf8')
                     except Exception:
                         logger.exception('Pickling %s from %s', k, self)
                         val = ''

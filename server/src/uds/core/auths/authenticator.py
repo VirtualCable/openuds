@@ -264,7 +264,7 @@ class Authenticator(Module):
         """
         return cls.authenticate is not Authenticator.authenticate
 
-    def search_users(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
+    def search_users(self, pattern: str) -> collections.abc.Iterable[types.auth.SearchResultItem]:
         """
         If you provide this method, the user will be allowed to search users,
         that is, the search button at administration interface, at user form,
@@ -284,7 +284,7 @@ class Authenticator(Module):
         """
         return []
 
-    def search_groups(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
+    def search_groups(self, pattern: str) -> collections.abc.Iterable[types.auth.SearchResultItem]:
         """
         Returns an array of groups that match the supplied pattern
         If none found, returns empty array. Items returned are BaseGroups (or derived)

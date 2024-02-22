@@ -37,6 +37,7 @@ import tempfile
 import os.path
 
 import ldap.filter
+
 # Import for local use, and reexport
 from ldap import (
     SCOPE_BASE,  # pyright: ignore
@@ -58,6 +59,7 @@ from uds.core.util import utils
 logger = logging.getLogger(__name__)
 
 LDAPResultType = collections.abc.MutableMapping[str, typing.Any]
+LDAPSearchResultType = typing.Optional[list[tuple[typing.Optional[str], dict[str, typing.Any]]]]
 
 # About ldap filters: (just for reference)
 # https://ldap.com/ldap-filters/
@@ -65,10 +67,10 @@ LDAPResultType = collections.abc.MutableMapping[str, typing.Any]
 
 class LDAPError(Exception):
     @staticmethod
-    def reraise(e: typing.Any) -> None:
+    def reraise(e: typing.Any) -> typing.NoReturn:
         _str = _('Connection error: ')
-        if hasattr(e, 'message') and isinstance(e.message, dict):
-            _str += f'{e.message.get("info", "")}, {e.message.get("desc", "")}'
+        if hasattr(e, 'message') and isinstance(getattr(e, 'message'), dict):
+            _str += f'{getattr(e, "message").get("info", "")}, {e.message.get("desc", "")}'
         else:
             _str += str(e)
         raise LDAPError(_str) from e
@@ -78,7 +80,7 @@ def escape(value: str) -> str:
     """
     Escape filter chars for ldap search filter
     """
-    return ldap.filter.escape_filter_chars(value)
+    return ldap.filter.escape_filter_chars(value)  # pyright: ignore reportGeneralTypeIssues
 
 
 def connection(
@@ -158,7 +160,7 @@ def connection(
             # Ensure that libldap is compiled with TLS1.3 support
             minVersion = getattr(settings, 'SECURE_MIN_TLS_VERSION', '1.2')
             if hasattr(ldap, 'OPT_X_TLS_PROTOCOL_TLS1_3'):
-                tls_version = {
+                tls_version: typing.Any = {  # for pyright to ignore
                     '1.2': ldap.OPT_X_TLS_PROTOCOL_TLS1_2,  # pyright: ignore
                     '1.3': ldap.OPT_X_TLS_PROTOCOL_TLS1_3,  # pyright: ignore
                 }.get(
@@ -182,7 +184,7 @@ def connection(
             except Exception:
                 logger.info('Cipher suite %s not supported by libldap', cipher_suite)
 
-        l.simple_bind_s(who=username, cred=password)
+        l.simple_bind_s(who=username, cred=password)  # pyright: ignore reportGeneralTypeIssues
 
         logger.debug('Connection was successful')
         return l
@@ -214,10 +216,10 @@ def as_dict(
     if attributes:
         attributes = list(attributes)  # Ensures iterable is a list
 
-    res = None
+    res: LDAPSearchResultType = None
     try:
         # On python2, attrs and search string is str (not unicode), in 3, str (not bytes)
-        res = con.search_ext_s(
+        res = con.search_ext_s(  # pyright: ignore reportGeneralTypeIssues
             base,
             scope=scope,
             filterstr=ldap_filter,
@@ -230,7 +232,9 @@ def as_dict(
         logger.exception('Exception connection:')
         raise LDAPError(str(e)) from e
 
-    logger.debug('Result of search %s on %s: %s', ldap_filter, base, res)
+    logger.debug(
+        'Result of search %s on %s: %s', ldap_filter, base, res
+    )  # pyright: ignore reportGeneralTypeIssues
 
     if res is not None:
         for r in res:
@@ -238,7 +242,7 @@ def as_dict(
                 continue  # Skip None entities
 
             # Convert back attritutes to test_type ONLY on python2
-            dct = (
+            dct: dict[str, typing.Any] = (
                 utils.CaseInsensitiveDict[list[str]]((k, ['']) for k in attributes)
                 if attributes is not None
                 else utils.CaseInsensitiveDict[list[str]]()
@@ -268,7 +272,7 @@ def first(
     @param objectClass: Objectclass of the user mane username to search.
     @return: None if username is not found, an dictionary of LDAP entry attributes if found (all in unicode on py2, str on py3).
     """
-    value = ldap.filter.escape_filter_chars(value)
+    value = ldap.filter.escape_filter_chars(value)  # pyright: ignore reportGeneralTypeIssues
 
     attrList = [field] + list(attributes) if attributes else []
 
@@ -286,14 +290,14 @@ def first(
 
 # Recursive delete
 def recursive_delete(con: 'LDAPObject', base_dn: str) -> None:
-    search = con.search_s(base_dn, SCOPE_ONELEVEL)
+    search: LDAPSearchResultType = con.search_s(base_dn, SCOPE_ONELEVEL)  # pyright: ignore reportGeneralTypeIssues
     if search:
         for found in search:
             # recursive_delete(conn, dn)
             # RIGHT NOW IS NOT RECURSIVE, JUST 1 LEVEL BELOW!!!
-            con.delete_s(found[0])
+            con.delete_s(found[0])  # pyright: ignore reportGeneralTypeIssues
 
-    con.delete_s(base_dn)
+    con.delete_s(base_dn)  # pyright: ignore reportGeneralTypeIssues
 
 
 def get_root_dse(con: 'LDAPObject') -> typing.Optional[LDAPResultType]:

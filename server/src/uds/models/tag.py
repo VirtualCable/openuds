@@ -82,7 +82,7 @@ class Tag(UUIDModel):
     servicepool_set: 'models.manager.RelatedManager[ServicePool]'
     transport_set: 'models.manager.RelatedManager[Transport]'
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:  # pyright: ignore
         """
         Meta class to declare db table
         """
@@ -99,7 +99,7 @@ class Tag(UUIDModel):
 
 
 class TaggingMixin(models.Model):
-    tags = models.ManyToManyField(Tag)
+    tags: 'models.ManyToManyField[models.Model, TaggingMixin]' = models.ManyToManyField(Tag)
 
     class Meta:  # pylint: disable=too-few-public-methods
         abstract = True

@@ -31,6 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import collections.abc
+import itertools
 import logging
 import re
 import typing
@@ -43,7 +44,7 @@ from uds.core.environment import Environment
 from uds.core.ui import gui
 from uds.core.util import ensure, permissions
 from uds.core.util.model import process_uuid
-from uds.models import MFA, Authenticator, Network
+from uds.models import MFA, Authenticator, Network, Tag
 from uds.REST.model import ModelHandler
 
 from .users_groups import Groups, Users
@@ -65,7 +66,7 @@ class Authenticators(ModelHandler):
     detail = {'users': Users, 'groups': Groups}
     save_fields = ['name', 'comments', 'tags', 'priority', 'small_name', 'mfa_id:_']
 
-    table_title = typing.cast(str, _('Authenticators'))
+    table_title = _('Authenticators')
     table_fields = [
         {'numeric_id': {'title': _('Id'), 'visible': True}},
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
@@ -103,11 +104,11 @@ class Authenticators(ModelHandler):
 
     def get_gui(self, type_: str) -> list[typing.Any]:
         try:
-            authType = auths.factory().lookup(type_)
-            if authType:
+            auth_type = auths.factory().lookup(type_)
+            if auth_type:
                 # Create a new instance of the authenticator to access to its GUI
                 with Environment.temporary_environment() as env:
-                    authInstance = authType(env, None)
+                    authInstance = auth_type(env, None)
                     field = self.add_default_fields(
                         authInstance.gui_description(),
                         ['name', 'comments', 'tags', 'priority', 'small_name', 'networks'],
@@ -132,15 +133,12 @@ class Authenticators(ModelHandler):
                         },
                     )
                     # If supports mfa, add MFA provider selector field
-                    if authType.provides_mfa():
+                    if auth_type.provides_mfa():
                         self.add_field(
                             field,
                             {
                                 'name': 'mfa_id',
-                                'choices': [gui.choice_item('', typing.cast(str, _('None')))]
-                                + gui.sorted_choices(
-                                    [gui.choice_item(v.uuid or '', v.name) for v in MFA.objects.all()]
-                                ),
+                                'choices': [gui.choice_item('', str(_('None')))],
                                 'label': gettext('MFA Provider'),
                                 'tooltip': gettext('MFA provider to use for this authenticator'),
                                 'type': types.ui.FieldType.CHOICE,
@@ -158,7 +156,7 @@ class Authenticators(ModelHandler):
         summary = 'summarize' in self._params
 
         item = ensure.is_instance(item, Authenticator)
-        v = {
+        v: dict[str, typing.Any] = {
             'numeric_id': item.id,
             'id': item.uuid,
             'name': item.name,
@@ -168,7 +166,7 @@ class Authenticators(ModelHandler):
             type_ = item.get_type()
             v.update(
                 {
-                    'tags': [tag.tag for tag in item.tags.all()],
+                    'tags': [tag.tag for tag in typing.cast(collections.abc.Iterable[Tag], item.tags.all())],
                     'comments': item.comments,
                     'net_filtering': item.net_filtering,
                     'networks': [{'id': n.uuid} for n in item.networks.all()],
@@ -220,8 +218,11 @@ class Authenticators(ModelHandler):
                 raise self.not_supported_response()
 
             if type_ == 'user':
-                return list(auth.search_users(term))[:limit]
-            return list(auth.search_groups(term))[:limit]
+                iterable = auth.search_users(term)
+            else:
+                iterable = auth.search_groups(term)
+
+            return [i.as_dict() for i in itertools.islice(iterable, limit)]
         except Exception as e:
             logger.exception('Too many results: %s', e)
             return [{'id': _('Too many results...'), 'name': _('Refine your query')}]
@@ -258,7 +259,7 @@ class Authenticators(ModelHandler):
         # And ensure small_name chars are valid [a-zA-Z0-9:-]+
         if fields['small_name'] and not re.match(r'^[a-zA-Z0-9:.-]+$', fields['small_name']):
             raise self.invalid_request_response(
-                typing.cast(str, _('Label must contain only letters, numbers, or symbols: - : .'))
+                _('Label must contain only letters, numbers, or symbols: - : .')
             )
 
     def delete_item(self, item: 'Model') -> None:

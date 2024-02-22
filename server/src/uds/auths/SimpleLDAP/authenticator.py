@@ -446,39 +446,39 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             raise exceptions.auth.AuthenticatorException(_('Username not found'))
         groupsManager.validate(self._get_groups(user))
 
-    def search_users(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
+    def search_users(self, pattern: str) -> collections.abc.Iterable[types.auth.SearchResultItem]:
         try:
-            res = []
-            for r in ldaputil.as_dict(
-                con=self._get_connection(),
-                base=self.ldap_base.as_str(),
-                ldap_filter=f'(&(objectClass={self.user_class.as_str()})({self.user_id_attr.as_str()}={pattern}*))',
-                attributes=[self.user_id_attr.as_str(), self.username_attr.as_str()],
-                limit=LDAP_RESULT_LIMIT,
-            ):
-                res.append(
-                    {
-                        'id': r[self.user_id_attr.as_str()][0],  # Ignore @...
-                        'name': self._get_user_realname(r),
-                    }
+            return [
+                types.auth.SearchResultItem(
+                    id=r[self.user_id_attr.as_str()][0], name=self._get_user_realname(r)
                 )
+                for r in ldaputil.as_dict(
+                    con=self._get_connection(),
+                    base=self.ldap_base.as_str(),
+                    ldap_filter=f'(&(objectClass={self.user_class.as_str()})({self.user_id_attr.as_str()}={pattern}*))',
+                    attributes=[self.user_id_attr.as_str(), self.username_attr.as_str()],
+                    limit=LDAP_RESULT_LIMIT,
+                )
+            ]
 
             return res
         except Exception as e:
             logger.exception("Exception: ")
             raise exceptions.auth.AuthenticatorException(_('Too many results, be more specific')) from e
 
-    def search_groups(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
+    def search_groups(self, pattern: str) -> collections.abc.Iterable[types.auth.SearchResultItem]:
         try:
             res = []
-            for r in ldaputil.as_dict(
-                con=self._get_connection(),
-                base=self.ldap_base.as_str(),
-                ldap_filter=f'(&(objectClass={self.group_class.as_str()})({self.group_id_attr.as_str()}={pattern}*))',
-                attributes=[self.group_id_attr.as_str(), 'memberOf', 'description'],
-                limit=LDAP_RESULT_LIMIT,
-            ):
-                res.append({'id': r[self.group_id_attr.as_str()][0], 'name': r['description'][0]})
+            return [
+                types.auth.SearchResultItem(id=r[self.group_id_attr.as_str()][0], name=r['description'][0])
+                for r in ldaputil.as_dict(
+                    con=self._get_connection(),
+                    base=self.ldap_base.as_str(),
+                    ldap_filter=f'(&(objectClass={self.group_class.as_str()})({self.group_id_attr.as_str()}={pattern}*))',
+                    attributes=[self.group_id_attr.as_str(), 'memberOf', 'description'],
+                    limit=LDAP_RESULT_LIMIT,
+                )
+            ]
 
             return res
         except Exception as e:
@@ -501,7 +501,11 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             return types.core.TestResult(False, str(e))
 
         try:
-            con.search_s(base=self.ldap_base.as_str(), scope=ldaputil.SCOPE_BASE)
+            con.search_s(  # pyright: ignore reportGeneralTypeIssues
+                base=self.ldap_base.as_str(),
+                scope=ldaputil.SCOPE_BASE,  # pyright: ignore reportGeneralTypeIssues
+            )
+
         except Exception:
             return types.core.TestResult(False, _('Ldap search base is incorrect'))
 
@@ -509,9 +513,9 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             if (
                 len(
                     ensure.is_list(
-                        con.search_ext_s(
+                        con.search_ext_s(  # pyright: ignore reportGeneralTypeIssues
                             base=self.ldap_base.as_str(),
-                            scope=ldaputil.SCOPE_SUBTREE,
+                            scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportGeneralTypeIssues
                             filterstr=f'(objectClass={self.user_class.as_str()})',
                             sizelimit=1,
                         )
@@ -524,9 +528,9 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             if (
                 len(
                     ensure.is_list(
-                        con.search_ext_s(
+                        con.search_ext_s(  # pyright: ignore reportGeneralTypeIssues
                             base=self.ldap_base.as_str(),
-                            scope=ldaputil.SCOPE_SUBTREE,
+                            scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportGeneralTypeIssues
                             filterstr=f'(objectClass={self.group_class.as_str()})',
                             sizelimit=1,
                         )
@@ -539,9 +543,9 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             if (
                 len(
                     ensure.is_list(
-                        con.search_ext_s(
+                        con.search_ext_s(  # pyright: ignore reportGeneralTypeIssues
                             base=self.ldap_base.as_str(),
-                            scope=ldaputil.SCOPE_SUBTREE,
+                            scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportGeneralTypeIssues
                             filterstr=f'({self.user_id_attr.as_str()}=*)',
                             sizelimit=1,
                         )
@@ -556,9 +560,9 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             if (
                 len(
                     ensure.is_list(
-                        con.search_ext_s(
+                        con.search_ext_s(  # pyright: ignore reportGeneralTypeIssues
                             base=self.ldap_base.as_str(),
-                            scope=ldaputil.SCOPE_SUBTREE,
+                            scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportGeneralTypeIssues
                             filterstr=f'({self.group_id_attr.as_str()}=*)',
                             sizelimit=1,
                         )
@@ -573,9 +577,9 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             if (
                 len(
                     ensure.is_list(
-                        con.search_ext_s(
+                        con.search_ext_s(  # pyright: ignore reportGeneralTypeIssues
                             base=self.ldap_base.as_str(),
-                            scope=ldaputil.SCOPE_SUBTREE,
+                            scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportGeneralTypeIssues
                             filterstr=f'(&(objectClass={self.user_class.as_str()})({self.user_id_attr.as_str()}=*))',
                             sizelimit=1,
                         )
@@ -590,9 +594,9 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                 )
 
             res = ensure.is_list(
-                con.search_ext_s(
+                con.search_ext_s(  # pyright: ignore reportGeneralTypeIssues
                     base=self.ldap_base.as_str(),
-                    scope=ldaputil.SCOPE_SUBTREE,
+                    scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportGeneralTypeIssues
                     filterstr=f'(&(objectClass={self.group_class.as_str()})({self.group_id_attr.as_str()}=*))',
                     attrlist=[self.member_attr.as_str()],
                 )

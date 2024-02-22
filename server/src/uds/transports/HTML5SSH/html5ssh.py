@@ -160,11 +160,8 @@ class HTML5SSHTransport(transports.Transport):
     force_new_window = HTML5RDPTransport.force_new_window
     custom_glyptodon_path = HTML5RDPTransport.custom_glyptodon_path
 
-    def initialize(self, values: 'types.core.ValuesType'):
-        if not values:
-            return
 
-    def is_ip_allowed(self, userService: 'models.UserService', ip: str) -> bool:
+    def is_ip_allowed(self, userservice: 'models.UserService', ip: str) -> bool:
         """
         Checks if the transport is available for the requested destination ip
         Override this in yours transports
@@ -173,7 +170,7 @@ class HTML5SSHTransport(transports.Transport):
         ready = self.cache.get(ip)
         if not ready:
             # Check again for readyness
-            if self.test_connectivity(userService, ip, self.ssh_port.value) is True:
+            if self.test_connectivity(userservice, ip, self.ssh_port.value) is True:
                 self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
             self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)

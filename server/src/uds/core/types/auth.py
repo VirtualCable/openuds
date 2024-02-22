@@ -67,15 +67,18 @@ class AuthenticationInternalUrl(enum.Enum):
         """
         return reverse(self.value)
 
+
 @dataclasses.dataclass(frozen=True)
 class AuthenticationResult:
     success: AuthenticationState
     url: typing.Optional[str] = None
     username: typing.Optional[str] = None
 
+
 # Comodity values
 FAILED_AUTH = AuthenticationResult(success=AuthenticationState.FAIL)
 SUCCESS_AUTH = AuthenticationResult(success=AuthenticationState.SUCCESS)
+
 
 @dataclasses.dataclass
 class AuthCallbackParams:
@@ -104,6 +107,7 @@ class AuthCallbackParams:
             query_string=request.META['QUERY_STRING'],
         )
 
+
 @dataclasses.dataclass
 class LoginResult:
     user: typing.Optional['User'] = None
@@ -112,3 +116,11 @@ class LoginResult:
     errid: int = 0
     url: typing.Optional[str] = None
 
+
+@dataclasses.dataclass
+class SearchResultItem:
+    id: str
+    name: str
+
+    def as_dict(self) -> typing.Dict[str, str]:
+        return dataclasses.asdict(self)
