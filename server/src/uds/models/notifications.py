@@ -91,9 +91,9 @@ class Notifier(ManagedObjectModel, TaggingMixin):
     level = models.PositiveIntegerField(default=LogLevel.ERROR)
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager[Notifier]'
+    # objects: 'models.manager.BaseManager[Notifier]'
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:  # pyright: ignore
         """
         Meta class to declare db table
         """
@@ -125,7 +125,7 @@ class Notifier(ManagedObjectModel, TaggingMixin):
         )
 
     @staticmethod
-    def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def pre_delete(sender: typing.Any, **kwargs: typing.Any) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 

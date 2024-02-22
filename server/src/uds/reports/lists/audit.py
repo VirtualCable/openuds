@@ -78,7 +78,7 @@ class ListReportAuditCSV(ListReport):
     uuid = 'b5f5ebc8-44e9-11ed-97a9-efa619da6a49'
 
     # Generator of data
-    def genData(self) -> typing.Generator[tuple, None, None]:
+    def genData(self) -> typing.Generator[tuple[typing.Any, typing.Any, typing.Any, typing.Any, typing.Any, typing.Any], None, None]:
         # Xtract user method, response_code and request from data
         # the format is "user: [method/response_code] request"
         rx = re.compile(

@@ -472,18 +472,18 @@ class OAuth2Authenticator(auths.Authenticator):
     def auth_callback(
         self,
         parameters: 'types.auth.AuthCallbackParams',
-        gm: 'auths.GroupsManager',
+        groups_manager: 'auths.GroupsManager',
         request: 'types.requests.ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         match self.responseType.value:
             case 'code' | 'pkce':
-                return self.auth_callback_code(parameters, gm, request)
+                return self.auth_callback_code(parameters, groups_manager, request)
             case 'token':
-                return self.auth_callback_token(parameters, gm, request)
+                return self.auth_callback_token(parameters, groups_manager, request)
             case 'openid+code':
-                return self.auth_callback_openid_code(parameters, gm, request)
+                return self.auth_callback_openid_code(parameters, groups_manager, request)
             case 'openid+token_id':
-                return self.authcallback_openid_id_token(parameters, gm, request)
+                return self.authcallback_openid_id_token(parameters, groups_manager, request)
             case _:
                 raise Exception('Invalid response type')
         return auths.SUCCESS_AUTH
@@ -501,11 +501,11 @@ class OAuth2Authenticator(auths.Authenticator):
         """
         return f'window.location="{self._get_login_url(request)}";'
 
-    def get_groups(self, username: str, groupsManager: 'auths.GroupsManager'):
+    def get_groups(self, username: str, groups_manager: 'auths.GroupsManager') -> None:
         data = self.storage.get_unpickle(username)
         if not data:
             return
-        groupsManager.validate(data[1])
+        groups_manager.validate(data[1])
 
     def get_real_name(self, username: str) -> str:
         data = self.storage.get_unpickle(username)

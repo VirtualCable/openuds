@@ -205,7 +205,7 @@ class OGService(services.Service):
     def get_relase_url(self, uuid: str, token: str) -> str:
         return self._notify_url(uuid, token, 'release')
 
-    def try_start_if_unavailable(self):
+    def try_start_if_unavailable(self) -> bool:
         return self.start_if_unavailable.as_bool()
 
     def is_avaliable(self) -> bool:

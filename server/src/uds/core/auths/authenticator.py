@@ -505,7 +505,7 @@ class Authenticator(Module):
         """
         return username
 
-    def get_groups(self, username: str, groupsManager: 'GroupsManager') -> None:
+    def get_groups(self, username: str, groups_manager: 'GroupsManager') -> None:
         """
         Looks for the real groups to which the specified user belongs.
 
@@ -535,7 +535,7 @@ class Authenticator(Module):
     def auth_callback(
         self,
         parameters: 'types.auth.AuthCallbackParams',
-        gm: 'GroupsManager',
+        groups_manager: 'GroupsManager',
         request: 'types.requests.ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         """
@@ -591,7 +591,7 @@ class Authenticator(Module):
         """
         return username
 
-    def create_user(self, usrData: dict[str, typing.Any]) -> None:
+    def create_user(self, user_data: dict[str, typing.Any]) -> None:
         """
         This method is used when creating an user to allow the authenticator:
 
@@ -624,7 +624,7 @@ class Authenticator(Module):
         """
         pass
 
-    def modify_user(self, usrData: dict[str, str]) -> None:
+    def modify_user(self, user_data: dict[str, str]) -> None:
         """
         This method is used when modifying an user to allow the authenticator:
 
@@ -650,7 +650,7 @@ class Authenticator(Module):
                data of users.
         """
 
-    def create_group(self, groupData: dict[str, str]) -> None:
+    def create_group(self, group_data: dict[str, str]) -> None:
         """
         This method is used when creating a new group to allow the authenticator:
 
@@ -676,7 +676,7 @@ class Authenticator(Module):
             name (group name) to a new one!
         """
 
-    def modify_group(self, groupData: dict[str, str]) -> None:
+    def modify_group(self, group_data: dict[str, str]) -> None:
         """
         This method is used when modifying group to allow the authenticator:
 

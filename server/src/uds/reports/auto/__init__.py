@@ -54,7 +54,7 @@ ReportAutoModel = typing.Union[
     models.Provider,
 ]
 
-reportAutoModelDct: collections.abc.Mapping[str, type[ReportAutoModel]] = {  # type: ignore
+reportAutoModelDct: collections.abc.Mapping[str, type[ReportAutoModel]] = {
     'ServicePool': models.ServicePool,
     'Authenticator': models.Authenticator,
     'Service': models.Service,
@@ -63,32 +63,40 @@ reportAutoModelDct: collections.abc.Mapping[str, type[ReportAutoModel]] = {  # t
 
 
 class ReportAutoType(UserInterfaceType):
-    def __new__(mcs, name, bases, attrs) -> 'ReportAutoType':
+    def __new__(
+        mcs: type['UserInterfaceType'],
+        classname: str,
+        bases: tuple[type, ...],
+        namespace: dict[str, typing.Any],
+    ) -> 'ReportAutoType':
         # Add gui for elements...
         order = 1
 
         # Check what source
-        if attrs.get('data_source'):
-            attrs['source'] = fields.source_field(order, attrs['data_source'], attrs['multiple'])
+        if namespace.get('data_source'):
+            namespace['source'] = fields.source_field(order, namespace['data_source'], namespace['multiple'])
             order += 1
 
             # Check if date must be added
-            if attrs.get('dates') == 'single':
-                attrs['date_start'] = fields.single_date_field(order)
+            if namespace.get('dates') == 'single':
+                namespace['date_start'] = fields.single_date_field(order)
                 order += 1
-            elif attrs.get('dates') == 'range':
-                attrs['date_start'] = fields.start_date_field(order)
+            elif namespace.get('dates') == 'range':
+                namespace['date_start'] = fields.start_date_field(order)
                 order += 1
-                attrs['date_end'] = fields.end_date_field(order)
+                namespace['date_end'] = fields.end_date_field(order)
                 order += 1
 
             # Check if data interval should be included
-            if attrs.get('intervals'):
-                attrs['interval'] = fields.intervals_field(order)
+            if namespace.get('intervals'):
+                namespace['interval'] = fields.intervals_field(order)
                 order += 1
 
-        return typing.cast('ReportAutoType', super().__new__(mcs, name, bases, attrs))
-    
+        return typing.cast(
+            'ReportAutoType', super().__new__(mcs, classname, bases, namespace)  # pyright: ignore
+        )
+
+
 # pylint: disable=abstract-method
 class ReportAuto(Report, metaclass=ReportAutoType):
     # Variables that will be overwriten on new class creation
@@ -116,7 +124,7 @@ class ReportAuto(Report, metaclass=ReportAutoType):
 
         return reportAutoModelDct[data_source]
 
-    def init_gui(self):
+    def init_gui(self) -> None:
         # Fills datasource
         fields.source_field_data(self.getModel(), self.source)
         logger.debug('Source field data: %s', self.source)
@@ -133,7 +141,7 @@ class ReportAuto(Report, metaclass=ReportAutoType):
 
         return items
 
-    def getIntervalInHours(self):
+    def getIntervalInHours(self) -> int:
         return {'hour': 1, 'day': 24, 'week': 24 * 7, 'month': 24 * 30}[self.interval.value]
 
     def getIntervalsList(self) -> list[tuple[datetime.datetime, datetime.datetime]]:

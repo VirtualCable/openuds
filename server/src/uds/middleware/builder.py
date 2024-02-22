@@ -54,7 +54,7 @@ ResponseMiddelwareProcessorType = collections.abc.Callable[['ExtendedHttpRequest
 def build_middleware(
     request_processor: RequestMiddelwareProcessorType,
     response_processor: ResponseMiddelwareProcessorType,
-) -> collections.abc.Callable[[typing.Any], typing.Union[collections.abc.Callable, typing.Coroutine]]:
+) -> collections.abc.Callable[[typing.Any], typing.Union[collections.abc.Callable[..., typing.Any], typing.Coroutine[typing.Any, None, None]]]:
     """
     Creates a method to be used as a middleware, synchronously or asynchronously.
     Currently, the is forced to sync an production, but it will be changed in the future to allow async
@@ -63,7 +63,7 @@ def build_middleware(
     @sync_and_async_middleware
     def middleware(
         get_response: typing.Any,
-    ) -> typing.Union[collections.abc.Callable, typing.Coroutine]:
+    ) -> typing.Union[collections.abc.Callable[..., typing.Any], typing.Coroutine[typing.Any, None, None]]:
         if settings.DEBUG and asyncio.iscoroutinefunction(get_response):
 
             async def async_middleware(

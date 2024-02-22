@@ -273,7 +273,7 @@ if sys.platform == 'win32':
                 Operation.FINISH,
             ]
 
-    def _store_task(self, upid: 'client.types.UPID'):
+    def _store_task(self, upid: 'client.types.UPID') -> None:
         self._task = ','.join([upid.node, upid.upid])
 
     def _retrieve_task(self) -> tuple[str, str]:

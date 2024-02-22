@@ -38,6 +38,7 @@ import logging
 # import openpyxl.writer.excel
 
 from django.utils.translation import gettext, gettext_lazy as _
+from uds.core import types
 
 from uds.core.ui import gui
 from uds.models import Authenticator
@@ -62,7 +63,7 @@ class ListReportUsers(ListReport):
     description = _('List users of platform')  # Report description
     uuid = '8cd1cfa6-ed48-11e4-83e5-10feed05884b'
 
-    def initialize(self, values):
+    def initialize(self, values: types.core.ValuesType) -> None:
         if values:
             auth = Authenticator.objects.get(uuid=self.authenticator.value)
             self.filename = auth.name + '.pdf'
@@ -97,7 +98,7 @@ class ListReportsUsersCSV(ListReportUsers):
 
     authenticator = ListReportUsers.authenticator
 
-    def initialize(self, values):
+    def initialize(self, values: types.core.ValuesType) -> None:
         if values:
             auth = Authenticator.objects.get(uuid=self.authenticator.value)
             self.filename = auth.name + '.csv'

@@ -91,9 +91,9 @@ def _process_response(
 ) -> 'HttpResponse':
     if GlobalConfig.ENHANCED_SECURITY.as_bool():
         # Legacy browser support for X-XSS-Protection
-        response.headers.setdefault('X-XSS-Protection', '1; mode=block')  # type: ignore
+        response.headers.setdefault('X-XSS-Protection', '1; mode=block')
         # Add Content-Security-Policy, see https://www.owasp.org/index.php/Content_Security_Policy
-        response.headers.setdefault(  # type: ignore
+        response.headers.setdefault(
             'Content-Security-Policy',
             "default-src 'self' 'unsafe-inline' 'unsafe-eval' uds: udss:; img-src 'self' https: data:;",
         )

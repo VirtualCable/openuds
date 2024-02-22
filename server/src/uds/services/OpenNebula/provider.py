@@ -280,11 +280,11 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
         
         return console_connection_info
 
-    def desktop_login(self, machineId: str, username: str, password: str, domain: str) -> dict[str, typing.Any]:
+    def desktop_login(self, machine_id: str, username: str, password: str, domain: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
         '''
         Not provided by OpenNebula API right now
         '''
-        return dict()
+        return None
 
     @staticmethod
     def test(env: 'environment.Environment', data: 'types.core.ValuesType') -> 'types.core.TestResult':

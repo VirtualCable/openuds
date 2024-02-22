@@ -25,14 +25,14 @@ class TelegramReceiver(jobs.Job):
     frecuency = 60  # Once every 60 seconds
     friendly_name = 'Telegram Receiver'
 
-    def run(self):
+    def run(self) -> None:
         logger.debug('Retrieven messages from Telegram')
 
         # Get all Notifiers that are telegram notifiers
-        for telegramDbNotifier in Notifier.objects.filter(data_Type=notifier.TELEGRAM_TYPE):
+        for telegramDbNotifier in Notifier.objects.filter(data_type=notifier.TELEGRAM_TYPE):
             n = typing.cast(notifier.TelegramNotifier, telegramDbNotifier.get_instance())
 
-            if n is None:
+            if not n:  # even if marked as telegram, it could be not a telegram notifier
                 logger.error('Notifier %s is not a Telegram notifier', telegramDbNotifier.name)
                 continue
 

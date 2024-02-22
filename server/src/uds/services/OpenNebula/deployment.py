@@ -161,7 +161,7 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
     def get_console_connection(self) -> typing.Optional[types.services.ConsoleConnectionInfo]:
         return self.service().get_console_connection(self._vmid)
 
-    def desktop_login(self, username: str, password: str, domain: str = ''):
+    def desktop_login(self, username: str, password: str, domain: str = '') -> typing.Optional[types.services.ConsoleConnectionInfo]:
         return self.service().desktop_login(self._vmid, username, password, domain)
 
     def process_ready_from_os_manager(self, data: typing.Any) -> types.states.State:

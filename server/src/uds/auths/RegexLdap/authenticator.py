@@ -341,22 +341,22 @@ class RegexLdap(auths.Authenticator):
                             user[norm_attrname] = [user[norm_attrname]]
 
                         # Convert values to list, if not list
-                        if not isinstance(v, (list, tuple)):
+                        if not isinstance(v, collections.abc.Iterable):
                             v = [v]
 
                         # Now append to existing values
-                        for x in v:
+                        for x in typing.cast(typing.Iterable[str], v):
                             user[norm_attrname].append(x)
                     else:
                         user[norm_attrname] = v
 
         return user
 
-    def _get_groups(self, user: ldaputil.LDAPResultType) -> typing.List[str]:
+    def _get_groups(self, user: ldaputil.LDAPResultType) -> list[str]:
         grps = auth_utils.process_regex_field(self.groupname_attr.as_str(), user)
         if extra:
             try:
-                grps += extra.get_groups(self, user)
+                grps += typing.cast(list[str], extra.get_groups(self, user))  # pyright: ignore
             except Exception:
                 logger.exception('Exception getting extra groups')
         return grps
@@ -411,20 +411,20 @@ class RegexLdap(auths.Authenticator):
         except Exception:
             return types.auth.FAILED_AUTH
 
-    def create_user(self, usrData: dict[str, str]) -> None:
+    def create_user(self, user_data: dict[str, str]) -> None:
         """
         We must override this method in authenticators not based on external sources (i.e. database users, text file users, etc..)
         External sources already has the user  cause they are managed externally, so, it can at most test if the users exists on external source
         before accepting it.
         Groups are only used in case of internal users (non external sources) that must know to witch groups this user belongs to
-        @param usrData: Contains data received from user directly, that is, a dictionary with at least: name, real_name, comments, state & password
+        @param user_data: Contains data received from user directly, that is, a dictionary with at least: name, real_name, comments, state & password
         @return:  Raises an exception (AuthException) it things didn't went fine
         """
-        res = self._get_user(usrData['name'])
+        res = self._get_user(user_data['name'])
         if res is None:
             raise exceptions.auth.AuthenticatorException(_('Username not found'))
         # Fills back realName field
-        usrData['real_name'] = self._get_real_name(res)
+        user_data['real_name'] = self._get_real_name(res)
 
     def get_real_name(self, username: str) -> str:
         """
@@ -435,15 +435,15 @@ class RegexLdap(auths.Authenticator):
             return username
         return self._get_real_name(res)
 
-    def modify_user(self, usrData: dict[str, str]) -> None:
+    def modify_user(self, user_data: dict[str, str]) -> None:
         """
         We must override this method in authenticators not based on external sources (i.e. database users, text file users, etc..)
         Modify user has no reason on external sources, so it will never be used (probably)
         Groups are only used in case of internal users (non external sources) that must know to witch groups this user belongs to
-        @param usrData: Contains data received from user directly, that is, a dictionary with at least: name, realName, comments, state & password
+        @param user_data: Contains data received from user directly, that is, a dictionary with at least: name, realName, comments, state & password
         @return:  Raises an exception it things doesn't go fine
         """
-        return self.create_user(usrData)
+        return self.create_user(user_data)
 
     def get_groups(self, username: str, groups_manager: 'auths.GroupsManager') -> None:
         """
@@ -457,9 +457,8 @@ class RegexLdap(auths.Authenticator):
         groups = self._get_groups(user)
         groups_manager.validate(groups)
 
-    def search_users(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
+    def search_users(self, pattern: str) -> collections.abc.Iterable[types.auth.SearchResultItem]:
         try:
-            res = []
             for r in ldaputil.as_dict(
                 con=self._stablish_connection(),
                 base=self.ldap_base.as_str(),
@@ -468,14 +467,10 @@ class RegexLdap(auths.Authenticator):
                 limit=LDAP_RESULT_LIMIT,
             ):
                 logger.debug('Result: %s', r)
-                res.append(
-                    {
-                        'id': r.get(self.userid_attr.as_str().lower(), '')[0],
-                        'name': self._get_real_name(r),
-                    }
+                yield types.auth.SearchResultItem(
+                    id=r.get(self.userid_attr.as_str().lower(), [''])[0],
+                    name=self._get_real_name(r),
                 )
-            logger.debug(res)
-            return res
         except Exception as e:
             logger.exception("Exception: ")
             raise exceptions.auth.AuthenticatorException(_('Too many results, be more specific')) from e
@@ -496,7 +491,10 @@ class RegexLdap(auths.Authenticator):
             return types.core.TestResult(False, f'Error connecting to ldap: {e}')
 
         try:
-            con.search_s(base=self.ldap_base.as_str(), scope=ldaputil.SCOPE_BASE)
+            con.search_s(  # pyright: ignore reportUnknownMemberType
+                base=self.ldap_base.as_str(),
+                scope=ldaputil.SCOPE_BASE,  # pyright: ignore reportUnknownMemberType
+            )
         except Exception:
             return types.core.TestResult(False, _('Ldap search base is incorrect'))
 
@@ -504,9 +502,9 @@ class RegexLdap(auths.Authenticator):
             if (
                 len(
                     ensure.is_list(
-                        con.search_ext_s(
+                        con.search_ext_s(  # pyright: ignore reportUnknownMemberType
                             base=self.ldap_base.as_str(),
-                            scope=ldaputil.SCOPE_SUBTREE,
+                            scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportUnknownMemberType
                             filterstr=f'(objectClass={self.user_class.as_str()})',
                             sizelimit=1,
                         )
@@ -527,9 +525,9 @@ class RegexLdap(auths.Authenticator):
             if (
                 len(
                     ensure.is_list(
-                        con.search_ext_s(
+                        con.search_ext_s(  # pyright: ignore reportUnknownMemberType
                             base=self.ldap_base.as_str(),
-                            scope=ldaputil.SCOPE_SUBTREE,
+                            scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportUnknownMemberType
                             filterstr=f'(&(objectClass={self.user_class.as_str()})({self.userid_attr.as_str()}=*))',
                             sizelimit=1,
                         )
@@ -538,7 +536,9 @@ class RegexLdap(auths.Authenticator):
                 == 1
             ):
                 raise Exception()
-            return types.core.TestResult(False, _('Ldap user id attr is probably wrong (can\'t find any user with that attribute)'))
+            return types.core.TestResult(
+                False, _('Ldap user id attr is probably wrong (can\'t find any user with that attribute)')
+            )
         except Exception:  # nosec: Control flow
             # If found 1 or more, all right
             pass
@@ -550,13 +550,15 @@ class RegexLdap(auths.Authenticator):
             try:
                 if (
                     len(
-                        ensure.is_list(con.search_ext_s(
-                            base=self.ldap_base.as_str(),
-                            scope=ldaputil.SCOPE_SUBTREE,
-                            filterstr=f'({vals}=*)',
-                            sizelimit=1,
+                        ensure.is_list(
+                            con.search_ext_s(  # pyright: ignore reportUnknownMemberType
+                                base=self.ldap_base.as_str(),
+                                scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportUnknownMemberType
+                                filterstr=f'({vals}=*)',
+                                sizelimit=1,
+                            )
                         )
-                    ))
+                    )
                     == 1
                 ):
                     continue

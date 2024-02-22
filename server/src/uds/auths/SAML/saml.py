@@ -451,7 +451,7 @@ class SAMLAuthenticator(auths.Authenticator):
         # Try to parse it so we can check it is valid. Right now, it checks just that this is XML, will
         # correct it to check that is is valid idp metadata
         try:
-            xml.sax.parseString(idp_metadata, xml.sax.ContentHandler())  # type: ignore  # nosec: url provided by admin
+            xml.sax.parseString(idp_metadata, xml.sax.ContentHandler())
         except Exception as e:
             msg = (gettext(' (obtained from URL)') if from_url else '') + str(e)
             raise exceptions.ui.ValidationError(gettext('XML does not seem valid for IDP Metadata ') + msg)
@@ -617,7 +617,7 @@ class SAMLAuthenticator(auths.Authenticator):
     def mfa_storage_key(self, username: str) -> str:
         return 'mfa_' + self.db_obj().uuid + username  # type: ignore
 
-    def mfa_clean(self, username: str):
+    def mfa_clean(self, username: str) -> None:
         self.storage.remove(self.mfa_storage_key(username))
 
     def mfa_identifier(self, username: str) -> str:
@@ -668,7 +668,7 @@ class SAMLAuthenticator(auths.Authenticator):
     def auth_callback(
         self,
         parameters: 'types.auth.AuthCallbackParams',
-        gm: 'auths.GroupsManager',
+        groups_manager: 'auths.GroupsManager',
         request: 'ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         req = self.build_req_from_request(request, params=parameters)
@@ -758,7 +758,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
         # Now we check validity of user
 
-        gm.validate(groups)
+        groups_manager.validate(groups)
 
         return types.auth.AuthenticationResult(
             success=types.auth.AuthenticationState.SUCCESS, username=username
@@ -796,11 +796,11 @@ class SAMLAuthenticator(auths.Authenticator):
             ),
         )
 
-    def get_groups(self, username: str, groupsManager: 'auths.GroupsManager'):
+    def get_groups(self, username: str, groups_manager: 'auths.GroupsManager') -> None:
         data = self.storage.get_unpickle(username)
         if not data:
             return
-        groupsManager.validate(data[1])
+        groups_manager.validate(data[1])
 
     def get_real_name(self, username: str) -> str:
         data = self.storage.get_unpickle(username)

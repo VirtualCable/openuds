@@ -56,14 +56,16 @@ logger = logging.getLogger(__name__)
 
 
 @web_login_required(admin=False)
-def transport_own_link(request: 'ExtendedHttpRequestWithUser', service_id: str, transport_id: str):
+def transport_own_link(request: 'ExtendedHttpRequestWithUser', service_id: str, transport_id: str) -> HttpResponse:
     response: collections.abc.MutableMapping[str, typing.Any] = {}
 
     # If userService is not owned by user, will raise an exception
 
     # For type checkers to "be happy"
     try:
-        res = UserServiceManager().get_user_service_info(request.user, request.os, request.ip, service_id, transport_id)
+        res = UserServiceManager().get_user_service_info(
+            request.user, request.os, request.ip, service_id, transport_id
+        )
         ip, userService, _iads, trans, itrans = res
         # This returns a response object in fact
         if itrans and ip:
@@ -94,9 +96,7 @@ def transport_icon(request: 'ExtendedHttpRequest', transport_id: str) -> HttpRes
         transport: Transport
         if transport_id[:6] == 'LABEL:':
             # Get First label
-            transport = Transport.objects.filter(label=transport_id[6:]).order_by('priority')[
-                0  # type: ignore  # Slicing is not supported by pylance right now
-            ]
+            transport = Transport.objects.filter(label=transport_id[6:]).order_by('priority')[0]
         else:
             transport = Transport.objects.get(uuid=process_uuid(transport_id))
         return HttpResponse(transport.get_instance().icon(), content_type='image/png')
@@ -141,7 +141,9 @@ def closer(request: 'ExtendedHttpRequest') -> HttpResponse:
 
 @web_login_required(admin=False)
 @never_cache
-def user_service_status(request: 'ExtendedHttpRequestWithUser', service_id: str, transport_id: str) -> HttpResponse:
+def user_service_status(
+    request: 'ExtendedHttpRequestWithUser', service_id: str, transport_id: str
+) -> HttpResponse:
     '''
     Returns;
      'running' if not ready
@@ -206,7 +208,7 @@ def action(request: 'ExtendedHttpRequestWithUser', service_id: str, action_strin
         elif (
             action_string == 'reset'
             and userService.deployed_service.allow_users_reset
-            and userService.deployed_service.service.get_type().can_reset  # type: ignore
+            and userService.deployed_service.service.get_type().can_reset
         ):
             rebuild = True
             log.log(

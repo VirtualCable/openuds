@@ -128,8 +128,7 @@ class RadiusOTP(mfas.MFA):
         tooltip=_('Networks for Radius OTP authentication'),
         required=False,
         choices=lambda: [
-            gui.choice_item(v.uuid, v.name)  # type: ignore
-            for v in models.Network.objects.all().order_by('name')
+            gui.choice_item(v.uuid, v.name) for v in models.Network.objects.all().order_by('name')
         ],
         tab=_('Config'),
     )
@@ -144,9 +143,6 @@ class RadiusOTP(mfas.MFA):
         tab=_('Config'),
         old_field_name='allowLoginWithoutMFA',
     )
-
-    def initialize(self, values: 'types.core.ValuesType') -> None:
-        return super().initialize(values)
 
     def radius_client(self) -> client.RadiusClient:
         """Return a new radius client ."""
@@ -199,7 +195,9 @@ class RadiusOTP(mfas.MFA):
             auth_reply = connection.authenticate_challenge(username, password=web_pwd)
         except Exception as e:
             logger.error("Exception found connecting to Radius OTP %s: %s", e.__class__, e)
-            if not mfas.LoginAllowed.check_action(self.response_error_action.value, request, self.networks.value):
+            if not mfas.LoginAllowed.check_action(
+                self.response_error_action.value, request, self.networks.value
+            ):
                 raise Exception(_('Radius OTP connection error')) from e
             logger.warning(
                 "Radius OTP connection error: Allowing access to user [%s] from IP [%s] without OTP",
@@ -267,7 +265,9 @@ class RadiusOTP(mfas.MFA):
                     auth_reply = connection.authenticate_challenge(username, password=web_pwd, otp=code)
             except Exception as e:
                 logger.error("Exception found connecting to Radius OTP %s: %s", e.__class__, e)
-                if mfas.LoginAllowed.check_action(self.response_error_action.value, request, self.networks.value):
+                if mfas.LoginAllowed.check_action(
+                    self.response_error_action.value, request, self.networks.value
+                ):
                     raise Exception(_('Radius OTP connection error')) from e
                 logger.warning(
                     "Radius OTP connection error: Allowing access to user [%s] from IP [%s] without OTP",

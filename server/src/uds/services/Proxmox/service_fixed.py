@@ -147,20 +147,20 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
         return [
             gui.choice_item(k, vms.get(int(k), 'Unknown!'))
             for k in self.machines.as_list()
-            if int(k) not in assigned_vms
+            if k not in assigned_vms
         ]
 
     def assign_from_assignables(
-        self, assignable_id: str, user: 'models.User', user_deployment: 'services.UserService'
+        self, assignable_id: str, user: 'models.User', userservice_instance: 'services.UserService'
     ) -> str:
-        userservice_instance = typing.cast(ProxmoxFixedUserService, user_deployment)
+        proxmox_service_instance = typing.cast(ProxmoxFixedUserService, userservice_instance)
         assigned_vms = self._get_assigned_machines()
         if assignable_id not in assigned_vms:
             assigned_vms.add(assignable_id)
             self._save_assigned_machines(assigned_vms)
-            return userservice_instance.assign(assignable_id)
+            return proxmox_service_instance.assign(assignable_id)
 
-        return userservice_instance.error('VM not available!')
+        return proxmox_service_instance.error('VM not available!')
 
     def process_snapshot(self, remove: bool, userservice_instance: FixedUserService) -> None:
         userservice_instance = typing.cast(ProxmoxFixedUserService, userservice_instance)
