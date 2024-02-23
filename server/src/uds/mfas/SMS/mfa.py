@@ -39,7 +39,7 @@ from django.utils.translation import gettext_noop as _, gettext
 import requests.auth
 
 from uds import models
-from uds.core import mfas
+from uds.core import mfas, types
 from uds.core.ui import gui
 from uds.core.util import security
 
@@ -255,7 +255,7 @@ class SMSMFA(mfas.MFA):
         tooltip=_('Networks for SMS authentication'),
         required=False,
         choices=lambda: [
-            gui.choice_item(v.uuid, v.name)  # type: ignore
+            gui.choice_item(v.uuid, v.name)
             for v in models.Network.objects.all().order_by('name')
         ],
         tab=_('Config'),

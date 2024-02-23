@@ -40,11 +40,11 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 
 from uds.core import auths, consts, exceptions, types
-from uds.core.auths.auth import (authenticate_via_callback, log_login,
-                                 uds_cookie, web_login, web_logout)
+from uds.core.auths.auth import authenticate_via_callback, log_login, uds_cookie, web_login, web_logout
 from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.services.exceptions import ServiceNotReadyError
+from uds.core.types.requests import ExtendedHttpRequest
 from uds.core.types.states import State
 from uds.core.util import html
 from uds.core.util.model import process_uuid
@@ -53,6 +53,7 @@ from uds.web.util import errors
 
 if typing.TYPE_CHECKING:
     from uds.core.types.requests import ExtendedHttpRequestWithUser
+    from uds import models
 
 logger = logging.getLogger(__name__)
 
@@ -76,7 +77,9 @@ def auth_callback(request: HttpRequest, authenticator_name: str) -> HttpResponse
     """
     try:
         authenticator = (
-            Authenticator.objects.filter(Q(name=authenticator_name) | Q(small_name=authenticator_name)).order_by('priority').first()
+            Authenticator.objects.filter(Q(name=authenticator_name) | Q(small_name=authenticator_name))
+            .order_by('priority')
+            .first()
         )
         if not authenticator:
             raise Exception('Authenticator not found')
@@ -146,7 +149,9 @@ def auth_info(request: 'HttpRequest', authenticator_name: str) -> HttpResponse:
     try:
         logger.debug('Getting info for %s', authenticator_name)
         authenticator = (
-            Authenticator.objects.filter(Q(name=authenticator_name) | Q(small_name=authenticator_name)).order_by('priority').first()
+            Authenticator.objects.filter(Q(name=authenticator_name) | Q(small_name=authenticator_name))
+            .order_by('priority')
+            .first()
         )
         if not authenticator:
             raise Exception('Authenticator not found')
@@ -170,7 +175,7 @@ def auth_info(request: 'HttpRequest', authenticator_name: str) -> HttpResponse:
 
 # Gets the javascript from the custom authtenticator
 @never_cache
-def custom_auth(request: 'HttpRequest', auth_id: str) -> HttpResponse:
+def custom_auth(request: 'ExtendedHttpRequest', auth_id: str) -> HttpResponse:
     res: typing.Optional[str] = ''
     try:
         try:
@@ -211,7 +216,7 @@ def ticket_auth(
         auth = Authenticator.objects.get(uuid=auth)
         # If user does not exists in DB, create it right now
         # Add user to groups, if they exists...
-        grps: list = []
+        grps: list['models.Group'] = []
         for g in groups:
             try:
                 grps.append(auth.groups.get(uuid=g))
@@ -223,11 +228,11 @@ def ticket_auth(
             raise Exception('Invalid ticket authentication')
 
         usr = auth.get_or_create_user(username, realname)
-        if usr is None or State.from_str(usr.state).is_active() is False:  # If user is inactive, raise an exception
+        if not usr or State.from_str(usr.state).is_active() is False:  # If user is inactive, raise an exception
             raise exceptions.auth.InvalidUserException()
 
         # Add groups to user (replace existing groups)
-        usr.groups.set(grps)  # type: ignore
+        usr.groups.set(grps)
 
         # Force cookie generation
         web_login(request, None, usr, password)
@@ -257,11 +262,9 @@ def ticket_auth(
 
             transportInstance = transport.get_instance()
             if transportInstance.own_link is True:
-                link = reverse(
-                    'webapi.transport_own_link', args=('A' + userservice.uuid, transport.uuid)  # type: ignore
-                )
+                link = reverse('webapi.transport_own_link', args=('A' + userservice.uuid, transport.uuid))
             else:
-                link = html.uds_access_link(request, 'A' + userservice.uuid, transport.uuid)  # type: ignore
+                link = html.uds_access_link(request, 'A' + userservice.uuid, transport.uuid)
 
             request.session['launch'] = link
             response = HttpResponseRedirect(reverse('page.ticket.launcher'))
@@ -278,7 +281,9 @@ def ticket_auth(
     except Authenticator.DoesNotExist:
         logger.error('Ticket has an non existing authenticator')
         return errors.error_view(request, types.errors.Error.ACCESS_DENIED)
-    except ServicePool.DoesNotExist:  # type: ignore  # DoesNotExist is different for each model
+    except (
+        ServicePool.DoesNotExist
+    ):  # This is a very rare case, but can happen if service is deleted after ticket is created
         logger.error('Ticket has an invalid Service Pool')
         return errors.error_view(request, types.errors.Error.SERVICE_NOT_FOUND)
     except Exception as e:

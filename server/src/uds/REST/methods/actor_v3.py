@@ -611,7 +611,7 @@ class Login(ActorV3Action):
 
             logger.debug('Max idle: %s', max_idle)
 
-            src = userservice.getConnectionSource()
+            src = userservice.get_connection_source()
             session_id = userservice.start_session()  # creates a session for every login requested
 
             if osmanager:  # For os managed services, let's check if we honor deadline

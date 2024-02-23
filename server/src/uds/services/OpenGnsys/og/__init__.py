@@ -255,7 +255,7 @@ class OpenGnsysClient:
         self._delete(urls.UNRESERVE.format(ou=ou, lab=lab, client=client), error_message=error_message)
 
     @ensure_connected
-    def power_on(self, machine_id, image) -> None:
+    def power_on(self, machine_id: str, image: str) -> None:
         # This method ask to poweron a machine to openGnsys
         ou, lab, client = machine_id.split('.')
         try:

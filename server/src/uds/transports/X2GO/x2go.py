@@ -86,7 +86,7 @@ class X2GOTransport(BaseX2GOTransport):
 
         priv, pub = self.getAndPushKey(ci.username, userservice)
 
-        width, height = self.getScreenSize()
+        width, height = self.get_screen_size()
         rootless = False
         desktop = self.desktop_type.value
         if desktop == "UDSVAPP":

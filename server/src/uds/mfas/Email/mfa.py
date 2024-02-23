@@ -40,7 +40,7 @@ import logging
 from django.utils.translation import gettext_noop as _, gettext
 
 from uds import models
-from uds.core import mfas, exceptions
+from uds.core import mfas, exceptions, types
 from uds.core.mfas.mfa import MFA
 from uds.core.types.requests import ExtendedHttpRequest
 from uds.core.ui import gui
@@ -152,8 +152,7 @@ class EmailMFA(mfas.MFA):
         tooltip=_('Users within these networks will not be asked for OTP'),
         required=False,
         choices=lambda: [
-            gui.choice_item(v.uuid, v.name)  # type: ignore
-            for v in models.Network.objects.all().order_by('name')
+            gui.choice_item(v.uuid, v.name) for v in models.Network.objects.all().order_by('name')
         ],
         tab=_('Config'),
     )
@@ -166,8 +165,7 @@ class EmailMFA(mfas.MFA):
         tooltip=_('Networks for Email OTP authentication'),
         required=False,
         choices=lambda: [
-            gui.choice_item(v.uuid, v.name)  # type: ignore
-            for v in models.Network.objects.all().order_by('name')
+            gui.choice_item(v.uuid, v.name) for v in models.Network.objects.all().order_by('name')
         ],
         tab=_('Config'),
     )
@@ -203,7 +201,7 @@ class EmailMFA(mfas.MFA):
         old_field_name='mailHtml',
     )
 
-    def initialize(self, values: 'types.core.ValuesType' = None):
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         """
         We will use the "autosave" feature for form fields
         """

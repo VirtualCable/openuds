@@ -96,7 +96,7 @@ def process_login(server: 'models.Server', data: dict[str, typing.Any]) -> typin
         osmanagers.OSManager.logged_in(userService, data['username'])
 
     # Get the source of the connection and a new session id
-    src = userService.getConnectionSource()
+    src = userService.get_connection_source()
     session_id = userService.start_session()  # creates a session for every login requested
 
     osmanager: typing.Optional[osmanagers.OSManager] = userService.get_osmanager_instance()

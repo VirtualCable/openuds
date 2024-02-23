@@ -222,7 +222,7 @@ class BaseX2GOTransport(transports.Transport):
             self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
-    def getScreenSize(self) -> tuple[int, int]:
+    def get_screen_size(self) -> tuple[int, int]:
         return CommonPrefs.get_wh(self.screen_size.value)
 
     def processed_username(self, userService: 'models.UserService', user: 'models.User') -> str:

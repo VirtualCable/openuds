@@ -29,6 +29,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
+import argparse
 import errno
 import stat
 import os.path
@@ -59,10 +60,7 @@ class UDSFS(Operations):
     # Own stats are the service creation date and 2 hardlinks because of the root folder
     _own_stats = types.StatType(st_mode=(stat.S_IFDIR | 0o755), st_nlink=2 + len(dispatchers))
 
-    def __init__(self):
-        pass
-
-    def _dispatch(self, path: typing.Optional[str], operation: str, *args, **kwargs) -> typing.Any:
+    def _dispatch(self, path: typing.Optional[str], operation: str, *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
         try:
             if path:
                 path_parts = path.split('/')
@@ -109,21 +107,21 @@ class UDSFS(Operations):
         '''
         Flushes the content of the "virtual" file
         '''
-        self._dispatch(path, 'flush')
+        self._dispatch(path, 'flush') 
 
 
 class Command(BaseCommand):
-    args = "<mod.name=value mod.name=value mod.name=value...>"
-    help = "Updates configuration values. If mod is omitted, UDS will be used. Omit whitespaces betwen name, =, and value (they must be a single param)"
+    args = "<mount_point> [-d]"
+    help = "Mounts a FUSE filesystem for UDS. This command will not return until the filesystem is unmounted."
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument('mount_point', type=str, help='Mount point for the FUSE filesystem')
         parser.add_argument('-d', '--debug', action='store_true', help='Enable debug logging')
 
-    def handle(self, *args, **options):
+    def handle(self, *args: typing.Any, **options: typing.Any) -> None:
         logger.debug("Handling UDS FS")
 
-        fuse = FUSE(
+        _fuse = FUSE(
             UDSFS(),
             options['mount_point'],
             foreground=True,

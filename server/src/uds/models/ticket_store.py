@@ -66,7 +66,7 @@ class TicketStore(UUIDModel):
     class InvalidTicket(Exception):
         pass
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:  # pyright: ignore
         """
         Meta class to declare the name of the table at database
         """
@@ -203,7 +203,7 @@ class TicketStore(UUIDModel):
         uuid: str,
         validity: typing.Optional[int] = None,
         owner: typing.Optional[str] = None,
-    ):
+    ) -> None:
         try:
             t = TicketStore.objects.get(uuid=uuid, owner=owner)
             t.stamp = sql_datetime()

@@ -231,11 +231,11 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
 
         self.mark_for_upgrade()
 
-    def mfaStorageKey(self, username: str) -> str:
+    def mfa_storage_key(self, username: str) -> str:
         return 'mfa_' + str(self.db_obj().uuid) + username
 
     def mfa_identifier(self, username: str) -> str:
-        return self.storage.get_unpickle(self.mfaStorageKey(username)) or ''
+        return self.storage.get_unpickle(self.mfa_storage_key(username)) or ''
 
     def _get_connection(self) -> 'ldaputil.LDAPObject':
         """
@@ -381,7 +381,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             # store the user mfa attribute if it is set
             if self.mfa_attribute.as_str():
                 self.storage.put_pickle(
-                    self.mfaStorageKey(username),
+                    self.mfa_storage_key(username),
                     user[self.mfa_attribute.as_str()][0],
                 )
 

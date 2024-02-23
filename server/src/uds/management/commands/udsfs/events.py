@@ -85,9 +85,6 @@ class EventFS(types.UDSFSInterface):
         '12',
     ]
 
-    def __init__(self):
-        pass
-
     def getattr(self, path: list[str]) -> types.StatType:
         if len(path) < 1:
             return EventFS._directory_stats
@@ -144,7 +141,7 @@ class EventFS(types.UDSFSInterface):
         )
         events = EventFS.get_events(year, month, day, skip)
         # Compose lines, adjsting each line length to LINELEN
-        theLines = [pretty_print(x).encode('utf-8') for x in events[:lines]]  # type: ignore  # Slicing is not supported by pylance right now
+        theLines = [pretty_print(x).encode('utf-8') for x in events[:lines]]
         # Adjust each line length to LINELEN (after encoding from utf8)
         theLines = [x + b' ' * (LINELEN - len(x) - 1) + b'\n' for x in theLines]
         # Return lines
@@ -165,6 +162,4 @@ class EventFS(types.UDSFSInterface):
         start = calendar.timegm((year, month, day, 0, 0, 0, 0, 0, 0))
         end = calendar.timegm((year, month, day, 23, 59, 59, 0, 0, 0))
         logger.debug('Reading stats events from %s to %s, skiping %s first', start, end, skip)
-        return StatsEvents.objects.filter(stamp__gte=start, stamp__lte=end).order_by('stamp')[
-            skip:  # type: ignore  # Slicing is not supported by pylance right now
-        ]
+        return StatsEvents.objects.filter(stamp__gte=start, stamp__lte=end).order_by('stamp')[skip:]

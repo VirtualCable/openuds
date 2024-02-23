@@ -318,7 +318,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
             val = typing.cast(str, self.get_environment().storage.get(name))
         return val
 
-    def setConnectionSource(self, src: types.connections.ConnectionSource) -> None:
+    def set_connection_source(self, src: types.connections.ConnectionSource) -> None:
         """
         Notifies that the last access to this service was initiated from provided params
 
@@ -341,7 +341,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
 
         self.save(update_fields=['src_ip', 'src_hostname'])
 
-    def getConnectionSource(self) -> types.connections.ConnectionSource:
+    def get_connection_source(self) -> types.connections.ConnectionSource:
         """
         Returns stored connection source data (ip & hostname)
 
@@ -355,22 +355,22 @@ class UserService(UUIDModel, properties.PropertiesMixin):
             self.src_hostname or 'unknown',
         )
 
-    def getOsManager(self) -> typing.Optional['OSManager']:
+    def get_osmanager(self) -> typing.Optional['OSManager']:
         return self.deployed_service.osmanager
 
     def get_osmanager_instance(self) -> typing.Optional['osmanagers.OSManager']:
-        osmanager = self.getOsManager()
+        osmanager = self.get_osmanager()
         if osmanager:
             return osmanager.get_instance()
         return None
 
-    def needsOsManager(self) -> bool:
+    def needs_osmanager(self) -> bool:
         """
         Returns True if this User Service needs an os manager (i.e. parent services pools is marked to use an os manager)
         """
-        return bool(self.getOsManager())
+        return bool(self.get_osmanager())
 
-    def transformsUserOrPasswordForService(self):
+    def transforms_user_or_password_for_service(self):
         """
         If the os manager changes the username or the password, this will return True
         """

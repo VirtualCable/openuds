@@ -40,7 +40,7 @@ import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import messaging, exceptions
+from uds.core import messaging, exceptions, types
 from uds.core.ui import gui
 from uds.core.util import validators
 
@@ -140,7 +140,7 @@ class EmailNotifier(messaging.Notifier):
         old_field_name='enableHTML'
     )
 
-    def initialize(self, values: 'types.core.ValuesType' = None):
+    def initialize(self, values: 'types.core.ValuesType' = None) -> None:
         """
         We will use the "autosave" feature for form fields
         """

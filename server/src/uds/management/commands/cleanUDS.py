@@ -32,6 +32,7 @@
 """
 import logging
 import sys
+import typing
 
 from django.core.management.base import BaseCommand
 from django.core.cache import cache
@@ -49,7 +50,7 @@ class Command(BaseCommand):
     args = "None"
     help = "Clean up all uneeded data from UDS (cache, ...). This is mainly used for versions installations, so he have clean data"
 
-    def handle(self, *args, **options):
+    def handle(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         sys.stdout.write("Cleaning up UDS\n")
         GlobalConfig.initialize()
 

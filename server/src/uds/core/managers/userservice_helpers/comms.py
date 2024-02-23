@@ -123,7 +123,7 @@ def notify_preconnect(userService: 'UserService', info: types.connections.Connec
     """
     Notifies a preconnect to an user service
     """
-    src = userService.getConnectionSource()
+    src = userService.get_connection_source()
     if userService.deployed_service.service.get_instance().notify_preconnect(userService, info) is True:
         return  # Ok, service handled it
 

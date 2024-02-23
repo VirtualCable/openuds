@@ -744,7 +744,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             )
 
         # Early log of "access try" so we can imagine what is going on
-        user_service.setConnectionSource(types.connections.ConnectionSource(src_ip, client_hostname or src_ip))
+        user_service.set_connection_source(types.connections.ConnectionSource(src_ip, client_hostname or src_ip))
 
         if user_service.is_in_maintenance():
             raise ServiceInMaintenanceMode()

@@ -122,13 +122,13 @@ class SampleUserServiceTwo(services.UserService):
         data = '\t'.join(
             ['v1', self._name, self._ip, self._mac, self._error, str(self._count)]
         )
-        return codecs.encode(data.encode(), encoding='zip')  # type: ignore
+        return codecs.encode(data.encode(), encoding='zip')
 
     def unmarshal(self, data: bytes) -> None:
         """
         We unmarshal the content.
         """
-        values: list[str] = codecs.decode(data, 'zip').decode().split('\t')  # type: ignore
+        values: list[str] = codecs.decode(data, 'zip').decode().split('\t')
         # Data Version check
         # If we include some new data at some point in a future, we can
         # add "default" values at v1 check, and load new values at 'v2' check.
@@ -358,7 +358,7 @@ class SampleUserServiceTwo(services.UserService):
 
         return types.states.State.RUNNING
 
-    def finish(self):
+    def finish(self) -> None:
         """
         Invoked when the core notices that the deployment of a service has finished.
         (No matter whether it is for cache or for an user)

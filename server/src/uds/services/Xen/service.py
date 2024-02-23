@@ -162,7 +162,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
     basename = fields.basename_field(order=114)
     lenname = fields.lenname_field(order=115)
 
-    def initialize(self, values):
+    def initialize(self, values: types.core.ValuesType) -> None:
         """
         We check here form values to see if they are valid.
 
@@ -185,7 +185,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
 
         machines_list = [gui.choice_item(m['id'], m['name']) for m in self.provider().list_machines()]
 
-        storages_list = []
+        storages_list: list[types.ui.ChoiceItem] = []
         for storage in self.provider().list_storages():
             space, free = (
                 storage['size'] / 1024,

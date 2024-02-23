@@ -82,10 +82,10 @@ def create(
         imgs = {i.name: i.id for i in api.enumImages()}
 
         info = api.templateInfo(templateId).xml
-        template = minidom.parseString(info).getElementsByTagName('TEMPLATE')[0]
-        logger.debug('XML: %s', template.toxml())
+        template: typing.Any = minidom.parseString(info).getElementsByTagName('TEMPLATE')[0]  # pyright: ignore
+        logger.debug('XML: %s', template.toxml())    # pyright: ignore
 
-        for counter, dsk in enumerate(template.getElementsByTagName('DISK')):
+        for counter, dsk in enumerate(template.getElementsByTagName('DISK')):    # pyright: ignore
             imgIds = dsk.getElementsByTagName('IMAGE_ID')
             if not imgIds:
                 fromId = False
@@ -153,7 +153,7 @@ def remove(api: 'client.OpenNebulaClient', templateId: str) -> None:
             imgs = {i.name: i.id for i in api.enumImages()}
 
             info = api.templateInfo(templateId).xml
-            template = minidom.parseString(info).getElementsByTagName('TEMPLATE')[0]
+            template: typing.Any = minidom.parseString(info).getElementsByTagName('TEMPLATE')[0]  # pyright: ignore
             logger.debug('XML: %s', template.toxml())
 
             for dsk in template.getElementsByTagName('DISK'):
@@ -198,15 +198,15 @@ def deployFrom(api: 'client.OpenNebulaClient', templateId: str, name: str) -> st
     return vmId
 
 
-def checkPublished(api: 'client.OpenNebulaClient', templateId):
+def check_published(api: 'client.OpenNebulaClient', template_id: str) -> bool:
     """
     checks if the template is fully published (images are ready...)
     """
     try:
         imgs = {i.name: i.id for i in api.enumImages()}
 
-        info = api.templateInfo(templateId).xml
-        template = minidom.parseString(info).getElementsByTagName('TEMPLATE')[0]
+        info = api.templateInfo(template_id).xml
+        template: typing.Any = minidom.parseString(info).getElementsByTagName('TEMPLATE')[0]  # pyright: ignore
         logger.debug('XML: %s', template.toxml())
 
         for dsk in template.getElementsByTagName('DISK'):
@@ -223,7 +223,7 @@ def checkPublished(api: 'client.OpenNebulaClient', templateId):
 
             logger.debug('Found %s for checking', imgId)
 
-            state = api.imageInfo(imgId).state
+            state = api.image_info(imgId).state
             if state in (types.ImageState.INIT, types.ImageState.LOCKED):
                 return False
             if state != types.ImageState.READY:  # If error is not READY

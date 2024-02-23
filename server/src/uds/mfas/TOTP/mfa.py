@@ -41,7 +41,7 @@ from django.utils.translation import gettext_noop as _, gettext
 
 from uds import models
 from uds.core.util.model import sql_datetime
-from uds.core import mfas, exceptions
+from uds.core import mfas, exceptions, types
 from uds.core.ui import gui
 
 if typing.TYPE_CHECKING:
@@ -94,7 +94,7 @@ class TOTP_MFA(mfas.MFA):
         tooltip=_('Users within these networks will not be asked for OTP'),
         required=False,
         choices=lambda: [
-            gui.choice_item(v.uuid, v.name)  # type: ignore
+            gui.choice_item(v.uuid, v.name)
             for v in models.Network.objects.all().order_by('name')
         ],
         tab=_('Config'),
@@ -151,7 +151,7 @@ class TOTP_MFA(mfas.MFA):
         # Compose the QR code from provisioning URI
         totp = self.get_totp(userId, username)
         uri = totp.provisioning_uri()
-        img = qrcode.make(uri)
+        img: bytes = qrcode.make(uri)  # pyright: ignore
         imgByteStream = io.BytesIO()
         img.save(imgByteStream, format='PNG')  # type: ignore  # pylance complains abot format, but it is ok
         # Convert to base64 to be used in html img tag

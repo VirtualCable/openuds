@@ -207,7 +207,7 @@ class ServerApiRequester:
         Returns:
             True if notification was sent, False otherwise
         """
-        src = userService.getConnectionSource()
+        src = userService.get_connection_source()
 
         logger.debug(
             'Notifying preconnect of service %s to server %s: %s', userService.uuid, self.server.host, info

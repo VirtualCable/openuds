@@ -88,9 +88,7 @@ class PhysicalMachinesProvider(services.ServiceProvider):
                 config.read_string(self.config.value)
                 # Seems a valid configuration file, let's see if all se
             except Exception as e:
-                raise exceptions.ui.ValidationError(
-                    _('Invalid advanced configuration: ') + str(e)
-                )
+                raise exceptions.ui.ValidationError(_('Invalid advanced configuration: ') + str(e))
 
             for section in config.sections():
                 if section not in VALID_CONFIG_SECTIONS:
@@ -109,14 +107,10 @@ class PhysicalMachinesProvider(services.ServiceProvider):
                     ) from None
                 # Now check value is an url
                 if config['wol'][key][:4] != 'http':
-                    raise exceptions.ui.ValidationError(
-                        _('Invalid url in advanced configuration: ') + key
-                    )
+                    raise exceptions.ui.ValidationError(_('Invalid url in advanced configuration: ') + key)
 
-    from .service_multi import \
-        IPMachinesService  # pylint: disable=import-outside-toplevel
-    from .service_single import \
-        IPSingleMachineService  # pylint: disable=import-outside-toplevel
+    from .service_multi import IPMachinesService  # pylint: disable=import-outside-toplevel
+    from .service_single import IPSingleMachineService  # pylint: disable=import-outside-toplevel
 
     offers = [IPMachinesService, IPSingleMachineService]
 
@@ -159,6 +153,3 @@ class PhysicalMachinesProvider(services.ServiceProvider):
             logger.error('Error parsing advanced configuration: %s', e)
 
         return ''
-
-    def __str__(self):
-        return "Physical Machines Provider"

@@ -73,7 +73,7 @@ class CalendarAction(UUIDModel):
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[CalendarAction]'
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:  # pyright: ignore
         """
         Meta class to declare db table
         """
@@ -82,40 +82,40 @@ class CalendarAction(UUIDModel):
         app_label = 'uds'
 
     @property
-    def offset(self):
+    def offset(self) -> datetime.timedelta:
         return datetime.timedelta(minutes=self.events_offset)
 
     @property
-    def prettyParams(self) -> str:
+    def pretty_params(self) -> str:
         try:
-            ca = consts.calendar.CALENDAR_ACTION_DICT.get(self.action)
+            cal_action = consts.calendar.CALENDAR_ACTION_DICT.get(self.action)
 
-            if ca is None:
+            if cal_action is None:
                 raise Exception(f'Action {self.action} not found')
 
             params = json.loads(self.params)
-            res = []
-            for p in ca['params']:
-                val = params[p['name']]
-                pp = f'{p["name"]}='
+            res: list[str] = []
+            for param in cal_action['params']:
+                val = params[param['name']]
+                pretty_param = f'{param["name"]}='
                 # Transport
-                if p['type'] == 'transport':
+                if param['type'] == 'transport':
                     try:
-                        pp += Transport.objects.get(uuid=val).name
+                        pretty_param += Transport.objects.get(uuid=val).name
                     except Exception:
-                        pp += '(invalid)'
+                        pretty_param += '(invalid)'
                 # Groups
-                elif p['type'] == 'group':
+                elif param['type'] == 'group':
                     try:
-                        auth, grp = params[p['name']].split('@')
+                        auth, grp = params[param['name']].split('@')
                         auth = Authenticator.objects.get(uuid=auth)
                         grp = auth.groups.get(uuid=grp)
-                        pp += grp.name + '@' + auth.name
+                        pretty_param += grp.name + '@' + auth.name
                     except Exception:
-                        pp += '(invalid)'
+                        pretty_param += '(invalid)'
                 else:
-                    pp += str(val)
-                res.append(pp)
+                    pretty_param += str(val)
+                res.append(pretty_param)
             return ','.join(res)
         except Exception:
             logger.exception('error')
@@ -194,9 +194,11 @@ class CalendarAction(UUIDModel):
             for i in self.service_pool.cached_users_services().filter(
                 UserServiceManager().get_cache_state_filter(
                     self.service_pool,
-                    services.UserService.L1_CACHE
-                    if self.action == consts.calendar.CALENDAR_ACTION_CLEAN_CACHE_L1['id']
-                    else services.UserService.L2_CACHE,
+                    (
+                        services.UserService.L1_CACHE
+                        if self.action == consts.calendar.CALENDAR_ACTION_CLEAN_CACHE_L1['id']
+                        else services.UserService.L2_CACHE
+                    ),
                 )
             ):
                 i.remove()
@@ -266,11 +268,11 @@ class CalendarAction(UUIDModel):
                     self.service_pool.save()
 
                 self.service_pool.log(
-                    f'Executed action {description} [{self.prettyParams}]',
+                    f'Executed action {description} [{self.pretty_params}]',
                     level=log.LogLevel.INFO,
                 )
             except Exception:
-                self.service_pool.log(f'Error executing scheduled action {description} [{self.prettyParams}]')
+                self.service_pool.log(f'Error executing scheduled action {description} [{self.pretty_params}]')
                 logger.exception('Error executing scheduled action')
         else:
             self.service_pool.log(f'Scheduled action not executed because is not supported: {self.action}')
@@ -279,7 +281,7 @@ class CalendarAction(UUIDModel):
         if save:
             self.save()
 
-    def save(self, *args, **kwargs):
+    def save(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         last_execution = self.last_execution or sql_datetime()
         possibleNext = calendar.CalendarChecker(self.calendar).next_event(
             check_from=last_execution - self.offset, start_event=self.at_start
@@ -291,7 +293,7 @@ class CalendarAction(UUIDModel):
 
         super().save(*args, **kwargs)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             f'Calendar of {self.service_pool.name},'
             f' last_execution = {self.last_execution},'

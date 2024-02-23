@@ -150,7 +150,7 @@ class Connection(Handler):
             ) = res  # pylint: disable=unused-variable
             password = CryptoManager().symmetric_decrypt(self.recover_value('password'), scrambler)
 
-            userService.setConnectionSource(
+            userService.set_connection_source(
                 types.connections.ConnectionSource(self._request.ip, hostname)
             )  # Store where we are accessing from so we can notify Service
 

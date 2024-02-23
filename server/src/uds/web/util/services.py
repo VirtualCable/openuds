@@ -29,9 +29,9 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import collections.abc
-from functools import reduce
 import logging
 import typing
+from functools import reduce
 
 from django.urls import reverse
 from django.utils import formats
@@ -79,7 +79,7 @@ def _service_info(
     to_be_replaced: typing.Optional[str],
     to_be_replaced_text: str,
     custom_calendar_text: str,
-):
+) -> collections.abc.Mapping[str, typing.Any]:
     return {
         'id': ('M' if is_meta else 'F') + uuid,
         'is_meta': is_meta,
@@ -135,11 +135,11 @@ def get_services_info_dict(
 
     os_type: 'types.os.KnownOS' = request.os.os
     logger.debug('OS: %s', os_type)
-  
+
     def _is_valid_transport(t: Transport) -> bool:
         transport_type = t.get_type()
         return (
-            transport_type is not None
+            bool(transport_type)
             and t.is_ip_allowed(request.ip)
             and transport_type.supports_os(os_type)
             and t.is_os_allowed(os_type)
@@ -158,14 +158,14 @@ def get_services_info_dict(
     def _build_transports_for_meta(
         transports: collections.abc.Iterable[Transport], is_by_label: bool, meta: 'MetaPool'
     ) -> list[collections.abc.Mapping[str, typing.Any]]:
-        def idd(i):
+        def idd(i: 'Transport') -> str:
             return i.uuid if not is_by_label else 'LABEL:' + i.label
 
         return [
             {
                 'id': idd(i),
                 'name': i.name,
-                'link': html.uds_access_link(request, 'M' + meta.uuid, idd(i)),  # type: ignore
+                'link': html.uds_access_link(request, 'M' + meta.uuid, idd(i)),
                 'priority': i.priority,
             }
             for i in sorted(transports, key=lambda x: x.priority)  # Sorted by priority
@@ -173,22 +173,19 @@ def get_services_info_dict(
 
     if request.user.is_staff():
         nets = ','.join([n.name for n in Network.get_networks_for_ip(request.ip)])
-        tt = []
-        t: Transport
-        for t in Transport.objects.all().prefetch_related('networks'):
-            if t.is_ip_allowed(request.ip):
-                tt.append(t.name)
-        valid_transports = ','.join(tt)
+        valid_transports = ','.join(
+            t.name for t in Transport.objects.all().prefetch_related('networks') if t.is_ip_allowed(request.ip)
+        )
 
     logger.debug('Checking meta pools: %s', available_metapools)
-    services = []
+    services: list[collections.abc.Mapping[str, typing.Any]] = []
 
     # Preload all assigned user services for this user
     # Add meta pools data first
     for meta in available_metapools:
         # Check that we have access to at least one transport on some of its children
         transports_in_meta: list[collections.abc.Mapping[str, typing.Any]] = []
-        in_use = meta.number_in_use > 0  # type: ignore # anotated value
+        in_use: bool = typing.cast(typing.Any, meta).number_in_use > 0  # Anotated value
 
         # Calculate info variable macros content if needed
         info_vars = (
@@ -204,14 +201,13 @@ def get_services_info_dict(
             # Keep only transports that are in all pools
             # This will be done by getting all transports from all pools and then intersecting them
             # using reduce
-            transports_in_all_pools = typing.cast(
-                set[Transport],
-                reduce(
-                    lambda x, y: x & y,
-                    [{t for t in _valid_transports(member)} for member in meta.members.all()],
-                ),
+            reducer: collections.abc.Callable[[set[Transport], set[Transport]], set[Transport]] = (
+                lambda x, y: x & y
             )
-
+            transports_in_all_pools = reduce(
+                reducer,
+                [{t for t in _valid_transports(member)} for member in meta.members.all()],
+            )
             transports_in_meta = _build_transports_for_meta(
                 transports_in_all_pools,
                 is_by_label=False,
@@ -243,17 +239,19 @@ def get_services_info_dict(
                 meta=meta,
             )
         else:
-            # If we have at least one valid transport, 
+            # If we have at least one valid transport,
             # mark as "meta" transport and add it to the list
             transports_in_meta = [
-                {
-                    'id': 'meta',
-                    'name': 'meta',
-                    'link': html.uds_access_link(request, 'M' + meta.uuid, None),  # type: ignore
-                    'priority': 0,
-                }
-                if any(_valid_transports(member) for member in meta.members.all())
-                else {}
+                (
+                    {
+                        'id': 'meta',
+                        'name': 'meta',
+                        'link': html.uds_access_link(request, 'M' + meta.uuid, None), 
+                        'priority': 0,
+                    }
+                    if any(_valid_transports(member) for member in meta.members.all())
+                    else {}
+                )
             ]
 
         # If no usable pools, this is not visible
@@ -293,7 +291,7 @@ def get_services_info_dict(
         # If no macro on names, skip calculation
         if '{' in service_pool.name or '{' in service_pool.visual_name:
             pool_usage_info = service_pool.usage(
-                service_pool.usage_count,  # type: ignore # anotated value
+                typing.cast(typing.Any, service_pool).usage_count,  # anotated value
             )
             use_percent = str(pool_usage_info.percent) + '%'
             use_count = str(pool_usage_info.used)
@@ -321,9 +319,9 @@ def get_services_info_dict(
             transport_type = t.get_type()
             if _is_valid_transport(t):
                 if transport_type.own_link:
-                    link = reverse('webapi.transport_own_link', args=('F' + service_pool.uuid, t.uuid))  # type: ignore
+                    link = reverse('webapi.transport_own_link', args=('F' + service_pool.uuid, t.uuid))
                 else:
-                    link = html.uds_access_link(request, 'F' + service_pool.uuid, t.uuid)  # type: ignore
+                    link = html.uds_access_link(request, 'F' + service_pool.uuid, t.uuid)
                 trans.append({'id': t.uuid, 'name': t.name, 'link': link, 'priority': t.priority})
 
         # If empty transports, do not include it on list
@@ -331,11 +329,7 @@ def get_services_info_dict(
             continue
 
         # Locate if user service has any already assigned user service for this. Use "pre cached" number of assignations in this pool to optimize
-        in_use = typing.cast(typing.Any, service_pool).number_in_use > 0
-        # if svr.number_in_use:  # Anotated value got from getDeployedServicesForGroups(...). If 0, no assignation for this user
-        #     ads = UserServiceManager().getExistingAssignationForUser(svr, request.user)
-        #     if ads:
-        #         in_use = ads.in_use
+        in_use = typing.cast(typing.Any, service_pool).number_in_use > 0  # number_in_use is anotated value
 
         group = (
             service_pool.servicesPoolGroup.as_dict
@@ -433,10 +427,10 @@ def enable_service(
         error = ''  # No error
 
         if typeTrans.own_link:
-            url = reverse('webapi.transport_own_link', args=('A' + userService.uuid, trans.uuid))  # type: ignore
+            url = reverse('webapi.transport_own_link', args=('A' + userService.uuid, trans.uuid))
         else:
             data = {
-                'service': 'A' + userService.uuid,  # type: ignore
+                'service': 'A' + userService.uuid,
                 'transport': trans.uuid,
                 'user': request.user.uuid,
                 'password': password,

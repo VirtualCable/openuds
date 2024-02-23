@@ -57,7 +57,7 @@ class CalendarAccess(UUIDModel):
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[CalendarAccess]'
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:  # pyright: ignore
         """
         Meta class to declare db table
         """
@@ -77,9 +77,9 @@ class CalendarAccessMeta(UUIDModel):
     priority = models.IntegerField(default=0, db_index=True)
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[CalendarAccessMeta]'
+    # objects: 'models.BaseManager[CalendarAccessMeta]'
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:  # pyright: ignore
         """
         Meta class to declare db table
         """
@@ -88,5 +88,5 @@ class CalendarAccessMeta(UUIDModel):
         ordering = ('priority',)
         app_label = 'uds'
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'Calendar Access Meta {self.calendar}/{self.access}'

@@ -15,7 +15,7 @@
 
 # Modified to add type checking, fix bugs, etc.. by dkmaster@dkmon.com
 
-# pylint: disable=protected-access,too-few-public-methods,unused-argument
+# pyright: reportConstantRedefinition=false,reportUnknownVariableType=false,reportUnknownMemberType=false
 
 import sys
 import os
@@ -797,7 +797,7 @@ class FUSE:
             if val is None:
                 continue
 
-            if hasattr(prototype, 'argtypes'):
+            if hasattr(typing.cast(typing.Any, prototype), 'argtypes'):
                 val = prototype(partial(FUSE._wrapper, getattr(self, name)))  # type: ignore
 
             setattr(fuse_ops, name, val)
@@ -816,7 +816,7 @@ class FUSE:
 
         del self.operations  # Invoke the destructor
 
-        if not isinstance(self.__critical_exception, Exception):
+        if not isinstance(self.__critical_exception, Exception):  # pyright: ignore
             raise self.__critical_exception  # pyright: ignore
         if err:
             raise RuntimeError(err)

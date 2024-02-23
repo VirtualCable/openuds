@@ -254,31 +254,19 @@ def calendar_rule_exporter(
 class Command(BaseCommand):
     help = 'Export entities from UDS to be imported in another UDS instance'
 
-    VALID_ENTITIES: collections.abc.Mapping[str, collections.abc.Callable[[], str]]
     verbose: bool = True
     filter_args: list[tuple[str, str]] = []
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         super().__init__(*args, **kwargs)
-        self.VALID_ENTITIES = {
-            'providers': self.export_providers,
-            'services': self.export_services,
-            'authenticators': self.export_authenticators,
-            'users': self.export_users,
-            'groups': self.export_groups,
-            'mfa': self.export_mfa,
-            'networks': self.export_networks,
-            'transports': self.export_transports,
-            'osmanagers': self.export_osmanagers,
-        }
 
     def add_arguments(self, parser: 'argparse.ArgumentParser') -> None:
         # Accepts a list of valid entities to export
         parser.add_argument(
             'entities',
             nargs='+',
-            choices=self.VALID_ENTITIES.keys(),
-            default=self.VALID_ENTITIES.keys(),
+            choices=VALID_ENTITIES.keys(),
+            default=VALID_ENTITIES.keys(),
             help='Entities to export',
         )
 
@@ -318,7 +306,7 @@ class Command(BaseCommand):
             help='Quiet mode',
         )
 
-    def handle(self, *args, **options) -> None:
+    def handle(self, *args: typing.Any, **options: typing.Any) -> None:
         self.verbose = options['verbose']
 
         if self.verbose:
@@ -338,7 +326,7 @@ class Command(BaseCommand):
         with open(options['output'], 'w', encoding='utf8') as f:
             for entity in entities:
                 self.stderr.write(f'Exporting {entity}')
-                f.write(self.VALID_ENTITIES[entity]())
+                f.write(VALID_ENTITIES[entity](self))
                 f.write('')
 
         if self.verbose:
@@ -357,9 +345,9 @@ class Command(BaseCommand):
         if self.filter_args:
             return typing.cast(
                 'typing.Iterator[ModelType]',
-                model.objects.filter(reduce(operator.or_, (Q(**{k: v}) for k, v in self.filter_args))),  # type: ignore
+                model.objects.filter(reduce(operator.or_, (Q(**{k: v}) for k, v in self.filter_args))),
             )
-        return typing.cast('typing.Iterator[ModelType]', model.objects.all().iterator())  # type: ignore
+        return typing.cast('typing.Iterator[ModelType]', model.objects.all().iterator())
 
     def output_count(self, message: str, iterable: collections.abc.Iterable[T]) -> collections.abc.Iterable[T]:
         """
@@ -385,31 +373,16 @@ class Command(BaseCommand):
 
     def export_services(self) -> str:
         # First, locate providers for services with the filter
-        services_list = list(
-            self.output_count('Filtering services', self.apply_filter(models.Service))
-        )
-        providers_list = {
-            s.provider for s in self.output_count('Filtering providers', services_list)
-        }
+        services_list = list(self.output_count('Filtering services', self.apply_filter(models.Service)))
+        providers_list = {s.provider for s in self.output_count('Filtering providers', services_list)}
         # Now, export those providers
-        providers = [
-            provider_exporter(p)
-            for p in self.output_count('Saving providers', providers_list)
-        ]
+        providers = [provider_exporter(p) for p in self.output_count('Saving providers', providers_list)]
 
         # Then, export services with the filter
-        services = [
-            service_exporter(s)
-            for s in self.output_count('Saving services', services_list)
-        ]
+        services = [service_exporter(s) for s in self.output_count('Saving services', services_list)]
 
-        return (
-            '# Providers\n'
-            + yaml.safe_dump(providers)
-            + '# Services\n'
-            + yaml.safe_dump(services)
-        )
-    
+        return '# Providers\n' + yaml.safe_dump(providers) + '# Services\n' + yaml.safe_dump(services)
+
     def export_mfa(self) -> str:
         """
         Exports all mfa to a list of dicts
@@ -443,12 +416,8 @@ class Command(BaseCommand):
         Exports all users to a list of dicts
         """
         # first, locate authenticators for users with the filter
-        users_list = list(
-            self.output_count('Filtering users', self.apply_filter(models.User))
-        )
-        authenticators_list = {
-            u.manager for u in self.output_count('Filtering authenticators', users_list)
-        }
+        users_list = list(self.output_count('Filtering users', self.apply_filter(models.User)))
+        authenticators_list = {u.manager for u in self.output_count('Filtering authenticators', users_list)}
         # Now, groups that contains those users
         groups_list: typing.Set[models.Group] = set()
         for u in self.output_count('Filtering groups', users_list):
@@ -456,19 +425,14 @@ class Command(BaseCommand):
 
         # now, export those authenticators
         authenticators = [
-            authenticator_exporter(a)
-            for a in self.output_count('Saving authenticators', authenticators_list)
+            authenticator_exporter(a) for a in self.output_count('Saving authenticators', authenticators_list)
         ]
 
         # then, export those groups
-        groups = [
-            group_export(g) for g in self.output_count('Saving groups', groups_list)
-        ]
+        groups = [group_export(g) for g in self.output_count('Saving groups', groups_list)]
 
         # finally, export users with the filter
-        users = [
-            user_exporter(u) for u in self.output_count('Saving users', users_list)
-        ]
+        users = [user_exporter(u) for u in self.output_count('Saving users', users_list)]
         return (
             '# Authenticators\n'
             + yaml.safe_dump(authenticators)
@@ -483,29 +447,16 @@ class Command(BaseCommand):
         Exports all groups to a list of dicts
         """
         # First export authenticators for groups with the filter
-        groups_list = list(
-            self.output_count('Filtering groups', self.apply_filter(models.Group))
-        )
-        authenticators_list = {
-            g.manager
-            for g in self.output_count('Filtering authenticators', groups_list)
-        }
+        groups_list = list(self.output_count('Filtering groups', self.apply_filter(models.Group)))
+        authenticators_list = {g.manager for g in self.output_count('Filtering authenticators', groups_list)}
         authenticators = [
-            authenticator_exporter(a)
-            for a in self.output_count('Saving authenticators', authenticators_list)
+            authenticator_exporter(a) for a in self.output_count('Saving authenticators', authenticators_list)
         ]
 
         # then, export groups with the filter
-        groups = [
-            group_export(g) for g in self.output_count('Saving groups', groups_list)
-        ]
+        groups = [group_export(g) for g in self.output_count('Saving groups', groups_list)]
 
-        return (
-            '# Authenticators\n'
-            + yaml.safe_dump(authenticators)
-            + '# Groups\n'
-            + yaml.safe_dump(groups)
-        )
+        return '# Authenticators\n' + yaml.safe_dump(authenticators) + '# Groups\n' + yaml.safe_dump(groups)
 
     def export_networks(self) -> str:
         """
@@ -514,9 +465,7 @@ class Command(BaseCommand):
         return '# Networks\n' + yaml.safe_dump(
             [
                 network_exporter(n)
-                for n in self.output_count(
-                    'Saving networks', self.apply_filter(models.Network)
-                )
+                for n in self.output_count('Saving networks', self.apply_filter(models.Network))
             ]
         )
 
@@ -525,31 +474,16 @@ class Command(BaseCommand):
         Exports all transports to a list of dicts
         """
         # First, export networks for transports with the filter
-        transports_list = list(
-            self.output_count(
-                'Filtering transports', self.apply_filter(models.Transport)
-            )
-        )
+        transports_list = list(self.output_count('Filtering transports', self.apply_filter(models.Transport)))
         networks_list: typing.Set['models.Network'] = set()
         for t in self.output_count('Filtering networks', transports_list):
             networks_list.update(t.networks.all())
-        networks = [
-            network_exporter(n)
-            for n in self.output_count('Saving networks', networks_list)
-        ]
+        networks = [network_exporter(n) for n in self.output_count('Saving networks', networks_list)]
 
         # then, export transports with the filter
-        transports = [
-            transport_exporter(t)
-            for t in self.output_count('Saving transports', transports_list)
-        ]
+        transports = [transport_exporter(t) for t in self.output_count('Saving transports', transports_list)]
 
-        return (
-            '# Networks\n'
-            + yaml.safe_dump(networks)
-            + '# Transports\n'
-            + yaml.safe_dump(transports)
-        )
+        return '# Networks\n' + yaml.safe_dump(networks) + '# Transports\n' + yaml.safe_dump(transports)
 
     def export_osmanagers(self) -> str:
         """
@@ -558,9 +492,7 @@ class Command(BaseCommand):
         return '# OSManagers\n' + yaml.safe_dump(
             [
                 osmanager_exporter(o)
-                for o in self.output_count(
-                    'Saving osmanagers', self.apply_filter(models.OSManager)
-                )
+                for o in self.output_count('Saving osmanagers', self.apply_filter(models.OSManager))
             ]
         )
 
@@ -586,3 +518,16 @@ class Command(BaseCommand):
                     entities.remove(replace)
 
         return entities
+
+VALID_ENTITIES: typing.Final[collections.abc.Mapping[str, collections.abc.Callable[['Command'], str]]] = {
+    'providers': Command.export_providers,
+    'services': Command.export_services,
+    'authenticators': Command.export_authenticators,
+    'users': Command.export_users,
+    'groups': Command.export_groups,
+    'mfa': Command.export_mfa,
+    'networks': Command.export_networks,
+    'transports': Command.export_transports,
+    'osmanagers': Command.export_osmanagers,
+}
+

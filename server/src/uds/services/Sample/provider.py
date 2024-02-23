@@ -38,7 +38,7 @@ import collections.abc
 
 
 from django.utils.translation import gettext_noop as _
-from uds.core import services, exceptions, consts
+from uds.core import services, exceptions, consts, types
 from uds.core.ui import gui
 from .service import ServiceOne, ServiceTwo
 
@@ -182,9 +182,7 @@ class Provider(services.ServiceProvider):
         # values are only passed from administration client. Internals
         # instantiations are always empty.
         if values and self.methAlive.as_bool():
-            raise exceptions.ui.ValidationError(
-                _('Methuselah is not alive!!! :-)')
-            )
+            raise exceptions.ui.ValidationError(_('Methuselah is not alive!!! :-)'))
 
     # Marshal and unmarshal are defaults ones, also enought
 
@@ -192,9 +190,7 @@ class Provider(services.ServiceProvider):
     # base class so we don't have to mess with all those things...
 
     @staticmethod
-    def test(
-        env: 'Environment', data: dict[str, str]
-    ) -> list[typing.Any]:
+    def test(env: 'Environment', data: 'types.core.ValuesType') -> 'types.core.TestResult':
         """
         Create your test method here so the admin can push the "check" button
         and this gets executed.
@@ -225,11 +221,12 @@ class Provider(services.ServiceProvider):
             )
         except exceptions.ui.ValidationError as e:
             # If we say that meth is alive, instantiation will
-            return [False, str(e)]
+            return types.core.TestResult(False, str(e))
         except Exception as e:
             logger.exception("Exception caugth!!!")
-            return [False, str(e)]
-        return [True, _('Nothing tested, but all went fine..')]
+            return types.core.TestResult(False, str(e))
+
+        return types.core.TestResult(True, _('All seems to be fine'))
 
     # Congratulations!!!, the needed part of your first simple provider is done!
     # Now you can go to administration panel, and check it

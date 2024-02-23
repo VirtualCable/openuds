@@ -42,6 +42,8 @@ from uds.core.consts.images import DEFAULT_THUMB_BASE64
 from .uuid_model import UUIDModel
 from .image import Image
 
+if typing.TYPE_CHECKING:
+    from service_pool import ServicePool
 
 logger = logging.getLogger(__name__)
 
@@ -65,6 +67,7 @@ class ServicePoolGroup(UUIDModel):
 
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[ServicePoolGroup]'
+    servicesPools: 'models.manager.Manager[ServicePool]'
 
     class Meta(UUIDModel.Meta):  # pylint: disable=too-few-public-methods
         """

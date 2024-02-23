@@ -85,7 +85,7 @@ class NodeStats(typing.NamedTuple):
         return _from_dict(NodeStats, dictionary)
 
     @staticmethod
-    def empty():
+    def empty() -> 'NodeStats':
         return NodeStats(
             name='',
             status='offline',

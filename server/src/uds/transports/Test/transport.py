@@ -82,7 +82,7 @@ class TestTransport(transports.Transport):
         tab=types.ui.Tab.ADVANCED,
     )
 
-    def initialize(self, values: 'types.core.ValuesType'):
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         if not values:
             return
         # Strip spaces
@@ -95,7 +95,7 @@ class TestTransport(transports.Transport):
             )
 
     # Same check as normal RDP transport
-    def is_ip_allowed(self, userService: 'models.UserService', ip: str) -> bool:
+    def is_ip_allowed(self, userservice: 'models.UserService', ip: str) -> bool:
         # No check is done for URL transport
         return True
 

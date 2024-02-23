@@ -65,17 +65,17 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
 
     version = models.IntegerField(default=4)  # network type, ipv4 or ipv6
     net_string = models.CharField(max_length=240, default='')
-    transports = models.ManyToManyField(
+    transports: 'models.ManyToManyField[Transport, Network]' = models.ManyToManyField(
         'Transport', related_name='networks', db_table='uds_net_trans'
     )
-    authenticators = models.ManyToManyField(
+    authenticators: 'models.ManyToManyField[Authenticator, Network]' = models.ManyToManyField(
         'Authenticator', related_name='networks', db_table='uds_net_auths'
     )
 
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[Network]'
 
-    class Meta(UUIDModel.Meta):  # pylint: disable=too-few-public-methods
+    class Meta(UUIDModel.Meta):  # pyright: ignore
         """
         Meta class to declare default order
         """
@@ -198,7 +198,7 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
     # utility method to allow "in" operator
     __contains__ = contains
 
-    def save(self, *args, **kwargs) -> None:
+    def save(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         """
         Overrides save to update the start, end and version fields
         """
@@ -212,15 +212,15 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         return f'Network {self.name} ({self.net_string}) from {self.str_net_start} to {self.str_net_end} ({self.version})'
 
     @staticmethod
-    def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def pre_delete(sender: typing.Any, **kwargs: typing.Any) -> None:  # pylint: disable=unused-argument
         from uds.core.util.permissions import clean  # pylint: disable=import-outside-toplevel
 
-        toDelete: 'Network' = kwargs['instance']
+        to_delete: 'Network' = kwargs['instance']
 
-        logger.debug('Before delete auth %s', toDelete)
+        logger.debug('Before delete auth %s', to_delete)
 
         # Clears related permissions
-        clean(toDelete)
+        clean(to_delete)
 
 
 # Connects a pre deletion signal to Authenticator

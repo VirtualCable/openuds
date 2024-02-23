@@ -39,7 +39,7 @@ import time
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import messaging, exceptions
+from uds.core import messaging, exceptions, types
 from uds.core.ui import gui
 from uds.core.util.model import sql_datetime
 from uds.core.util.utils import ignore_exceptions
@@ -108,7 +108,7 @@ class TelegramNotifier(messaging.Notifier):
         old_field_name='checkDelay',
     )
 
-    def initialize(self, values: 'types.core.ValuesType' = None):
+    def initialize(self, values: 'types.core.ValuesType' = None) -> None:
         """
         We will use the "autosave" feature for form fields
         """

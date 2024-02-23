@@ -304,7 +304,7 @@ class HTML5RDPTransport(transports.Transport):
         old_field_name='customGEPath',
     )
 
-    def initialize(self, values: 'types.core.ValuesType'):
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         if not values:
             return
         # if self.useEmptyCreds.as_bool() and self.security.value != 'rdp':

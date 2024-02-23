@@ -40,6 +40,7 @@ import collections.abc
 
 from uds.core import types
 
+
 class RDPFile:
     fullScreen: bool = False
     width: str = '800'
@@ -48,7 +49,7 @@ class RDPFile:
     address: str = ''
     username: str = ''
     domain: str = ''
-    password: str = ''   # nosec: emtpy password is ok here
+    password: str = ''  # nosec: emtpy password is ok here
     redir_serials: bool = False
     redir_printers: bool = False
     redir_drives: str = "false"  # Can have "true", "false" or "dynamic"
@@ -68,7 +69,7 @@ class RDPFile:
     printer_params: typing.Optional[str] = None
     smartcard_params: typing.Optional[str] = None
     enable_credssp_support: bool = False
-    enable_clipboard:bool = False
+    enable_clipboard: bool = False
     custom_parameters: typing.Optional[str] = None
     enforced_shares: typing.Optional[str] = None
     optimize_teams: bool = False
@@ -87,24 +88,22 @@ class RDPFile:
         self.fullScreen = fullscreen
         self.target = target
 
-    def get(self):
+    def get(self) -> str:
         if self.target in (
             types.os.KnownOS.WINDOWS,
             types.os.KnownOS.LINUX,
             types.os.KnownOS.MAC_OS,
         ):
-            return self.getGeneric()
+            return self.as_mstsc_file
         # Unknown target
         return ''
 
     @property
-    def as_file(self):
+    def as_file(self) -> str:
         return self.get()
 
     @property
-    def as_new_xfreerdp_params(
-        self,
-    ):  # pylint: disable=too-many-statements,too-many-branches
+    def as_new_xfreerdp_params(self) -> typing.List[str]:
         """
         Parameters for xfreerdp >= 1.1.0 with self rdp description
         Note that server is not added
@@ -201,7 +200,8 @@ class RDPFile:
 
         return params
 
-    def getGeneric(self):  # pylint: disable=too-many-statements
+    @property
+    def as_mstsc_file(self) -> str:  # pylint: disable=too-many-statements
         password = '{password}'  # nosec: placeholder
         screenMode = '2' if self.fullScreen else '1'
         audioMode = '0' if self.redir_audio else '2'
@@ -289,9 +289,7 @@ class RDPFile:
                     self.redir_usb.replace('{', '{{').replace('}', '}}')
                 )
 
-        res += 'enablecredsspsupport:i:{}\n'.format(
-            0 if self.enable_credssp_support is False else 1
-        )
+        res += 'enablecredsspsupport:i:{}\n'.format(0 if self.enable_credssp_support is False else 1)
 
         # DirectX?
         res += 'redirectdirectx:i:1\n'
@@ -316,7 +314,7 @@ class RDPFile:
         printers = '1' if self.redir_printers else '0'
         credsspsupport = '1' if self.enable_credssp_support else '0'
 
-        parameters = [
+        parameters: list[tuple[str, str]] = [
             ('full address', f's:{self.address}'),
             ('audiomode', f'i:{audioMode}'),
             ('screen mode id', f'i:{screenMode}'),
@@ -347,6 +345,4 @@ class RDPFile:
         if self.redir_drives != 'false':  # Only "all drives" is supported
             parameters.append(('drivestoredirect', 's:*'))
 
-        return 'rdp://' + '&'.join(
-            (urllib.parse.quote(i[0]) + '=' + i[1] for i in parameters)
-        )
+        return 'rdp://' + '&'.join((urllib.parse.quote(i[0]) + '=' + i[1] for i in parameters))

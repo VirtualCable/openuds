@@ -176,7 +176,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
         return on.template.create(self.api, from_template_id, name, dest_storage)
 
     def check_template_published(self, templateId: str) -> bool:
-        return on.template.checkPublished(self.api, templateId)
+        return on.template.check_published(self.api, templateId)
 
     def removeTemplate(self, templateId: str) -> None:
         on.template.remove(self.api, templateId)

@@ -155,7 +155,7 @@ class ActionsCalendars(DetailHandler):
             'at_start': item.at_start,
             'events_offset': item.events_offset,
             'params': params,
-            'pretty_params': item.prettyParams,
+            'pretty_params': item.pretty_params,
             'next_execution': item.next_execution,
             'last_execution': item.last_execution,
         }

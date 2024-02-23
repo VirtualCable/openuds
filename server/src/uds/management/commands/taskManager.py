@@ -30,11 +30,13 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import argparse
 import sys
 import os
 import signal
 import time
 import logging
+import typing
 
 from django.core.management.base import BaseCommand  # , CommandError
 from django.conf import settings
@@ -47,7 +49,7 @@ logger = logging.getLogger(__name__)
 PID_FILE = 'taskmanager.pid'
 
 
-def getPidFile():
+def pid_file_path() -> str:
     return settings.BASE_DIR + '/' + PID_FILE
 
 
@@ -58,7 +60,7 @@ def become_daemon(
     out_log: str = '/dev/null',
     err_log: str = '/dev/null',
     umask: int = 0o022,
-):
+) -> None:
     """Robustly turn into a UNIX daemon, running in our_home_dir."""
     # First fork
     try:
@@ -93,7 +95,7 @@ class Command(BaseCommand):
     args = "None"
     help = "Executes the task manager as a daemon. No parameter show current status of task manager"
 
-    def add_arguments(self, parser) -> None:
+    def add_arguments(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument(
             '--start',
             action='store_true',
@@ -123,7 +125,7 @@ class Command(BaseCommand):
             help='Stop any running daemon',
         )
 
-    def handle(self, *args, **options) -> None:
+    def handle(self, *args: typing.Any, **options: typing.Any) -> None:
         logger.info("Running task manager command")
 
         GlobalConfig.initialize()
@@ -136,7 +138,7 @@ class Command(BaseCommand):
 
         pid: int = 0
         try:
-            pid = int(open(getPidFile(), 'r', encoding='utf8').readline())  # pylint: disable=consider-using-with
+            pid = int(open(pid_file_path(), 'r', encoding='utf8').readline())
         except Exception:
             pid = 0
 
@@ -145,10 +147,10 @@ class Command(BaseCommand):
                 logger.info('Stopping task manager. pid: %s', pid)
                 os.kill(pid, signal.SIGTERM)
                 time.sleep(1)  # Wait a bit before running new one
-                os.unlink(getPidFile())
+                os.unlink(pid_file_path())
             except Exception:
                 logger.error("Could not stop task manager (maybe it's not runing?)")
-                os.unlink(getPidFile())
+                os.unlink(pid_file_path())
 
         if start:
             logger.info('Starting task manager.')
@@ -161,7 +163,7 @@ class Command(BaseCommand):
                 )
                 pid = os.getpid()
 
-                with open(getPidFile(), 'w+', encoding='utf8') as f:
+                with open(pid_file_path(), 'w+', encoding='utf8') as f:
                     f.write(f'{pid}\n')
 
             manager = task_manager()

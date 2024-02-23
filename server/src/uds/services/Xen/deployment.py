@@ -384,7 +384,7 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
 
         return types.states.State.RUNNING
 
-    def _configure(self):
+    def _configure(self) -> types.states.State:
         """
         Provisions machine & changes the mac of the indicated nic
         """
@@ -392,7 +392,7 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
 
         return types.states.State.RUNNING
 
-    def _provision(self):
+    def _provision(self) -> types.states.State:
         """
         Makes machine usable on Xen
         """

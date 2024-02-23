@@ -74,7 +74,7 @@ class AccountUsage(UUIDModel):
         Account, related_name='usages', on_delete=models.CASCADE
     )
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:  # pyright: ignore
         """
         Meta class to declare the name of the table at database
         """
@@ -110,5 +110,5 @@ class AccountUsage(UUIDModel):
     def elapsed_timemark(self) -> str:
         return seconds_to_time_string(self.elapsed_seconds_timemark)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'AccountUsage id {self.id}, pool {self.pool_name}, name {self.user_name}, start {self.start}, end {self.end}'

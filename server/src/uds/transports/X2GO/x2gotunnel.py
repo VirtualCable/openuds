@@ -92,7 +92,7 @@ class TX2GOTransport(BaseX2GOTransport):
     pack = BaseX2GOTransport.pack
     quality = BaseX2GOTransport.quality
 
-    def initialize(self, values: 'types.core.ValuesType'):
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         if values:
             validators.validate_host_port(values.get('tunnelServer', ''))
 
@@ -108,9 +108,9 @@ class TX2GOTransport(BaseX2GOTransport):
     ) -> 'types.transports.TransportScript':
         ci = self.get_connection_info(userService, user, password)
 
-        priv, pub = self.getAndPushKey(ci.username, userService)
+        private_key, _public_key = self.getAndPushKey(ci.username, userService)
 
-        width, height = self.getScreenSize()
+        width, height = self.get_screen_size()
 
         rootless = False
         desktop = self.desktop_type.value
@@ -147,7 +147,7 @@ class TX2GOTransport(BaseX2GOTransport):
             'tunWait': self.tunnel_wait.as_int(),
             'tunChk': self.verify_certificate.as_bool(),
             'ticket': ticket,
-            'key': priv,
+            'key': private_key,
             'xf': xf,
         }
 

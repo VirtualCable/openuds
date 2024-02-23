@@ -30,6 +30,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import argparse
 import logging
 import typing
 import datetime
@@ -58,13 +59,13 @@ def get_serialized_from_managed_object(
     removableFields: typing.Optional[list[str]] = None,
 ) -> collections.abc.Mapping[str, typing.Any]:
     try:
-        obj = mod.get_instance()
-        gui = {i['name']: i['gui']['type'] for i in obj.gui_description()}
+        obj: 'Module' = mod.get_instance()
+        gui_types: dict[str, str] = {i['name']: str(i['gui']['type']) for i in obj.gui_description()}
         values = obj.get_fields_as_dict()
         # Remove password fields
-        for k, v in gui.items():
-            if v == 'password':
-                values[k] = '********'
+        for fld, fld_type in gui_types.items():
+            if fld_type == 'password':
+                values[fld] = '********'
         # Some names are know "secret data"
         for i in ('serverCertificate', 'privateKey'):
             if i in values:
@@ -82,20 +83,20 @@ def get_serialized_from_managed_object(
         return {}
 
 
-def getSerializedFromModel(
+def get_serialized_from_model(
     mod: 'dbmodels.Model',
-    removableFields: typing.Optional[list[str]] = None,
-    passwordFields: typing.Optional[list[str]] = None,
+    removable_fields: typing.Optional[list[str]] = None,
+    password_fields: typing.Optional[list[str]] = None,
 ) -> collections.abc.Mapping[str, typing.Any]:
-    removableFields = removableFields or []
-    passwordFields = passwordFields or []
+    removable_fields = removable_fields or []
+    password_fields = password_fields or []
     try:
-        values = mod._meta.managers[0].filter(pk=mod.pk).values()[0]  # type: ignore  # pylint: disable=protected-access
-        for i in ['uuid', 'id'] + removableFields:
+        values = mod._meta.managers[0].filter(pk=mod.pk).values()[0]
+        for i in ['uuid', 'id'] + removable_fields:
             if i in values:
                 del values[i]
 
-        for i in passwordFields:
+        for i in password_fields:
             if i in values:
                 values[i] = '********'
         return values
@@ -106,7 +107,7 @@ def getSerializedFromModel(
 class Command(BaseCommand):
     help = "Outputs all UDS Trees of elements in YAML format"
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument(
             '--all-userservices',
             action='store_true',
@@ -124,7 +125,7 @@ class Command(BaseCommand):
         )
 
     # pylint: disable=too-many-locals,too-many-branches,too-many-statements
-    def handle(self, *args, **options) -> None:
+    def handle(self, *args: typing.Any, **options: typing.Any) -> None:
         logger.debug("Show Tree")
         # firt, genertate Provider-service-servicepool tree
         cntr = 0
@@ -139,19 +140,19 @@ class Command(BaseCommand):
 
         tree: dict[str, typing.Any] = {}
         try:
-            providers = {}
+            providers: dict[str, typing.Any] = {}
             for provider in models.Provider.objects.all():
-                services = {}
+                services: dict[str, typing.Any] = {}
                 services_count = 0
                 servicepools_count = 0
                 userservices_count = 0
                 for service in provider.services.all():
-                    servicePools = {}
+                    service_pools: dict[str, typing.Any] = {}
                     partial_servicepools_count = 0
                     partial_userservices_count = 0
                     for service_pool in service.deployedServices.all():
                         # get assigned user services with ERROR status
-                        userservices = {}
+                        userservices: dict[str, typing.Any] = {}
                         fltr = service_pool.userServices.all()
                         if not options['alluserservices']:
                             fltr = fltr.filter(state=State.ERROR)
@@ -187,21 +188,21 @@ class Command(BaseCommand):
                         ).values('stamp', 'revision', 'log')
 
                         for publication in service_pool.publications.all():
-                            publications[str(publication.revision)] = getSerializedFromModel(
+                            publications[str(publication.revision)] = get_serialized_from_model(
                                 publication, ['data']
                             )
 
                         # get assigned groups
-                        groups = []
+                        groups: list[str] = []
                         for group in service_pool.assignedGroups.all():
                             groups.append(group.pretty_name)
 
                         # get calendar actions
-                        calendar_actions = {}
+                        calendar_actions: dict[str, typing.Any] = {}
                         for calendar_action in models.CalendarAction.objects.filter(service_pool=service_pool):
                             calendar_actions[calendar_action.calendar.name] = {
                                 'action': calendar_action.action,
-                                'params': calendar_action.prettyParams,
+                                'params': calendar_action.pretty_params,
                                 'at_start': calendar_action.at_start,
                                 'events_offset': calendar_action.events_offset,
                                 'last_execution': calendar_action.last_execution,
@@ -213,22 +214,22 @@ class Command(BaseCommand):
                         for ca in models.CalendarAccess.objects.filter(service_pool=service_pool):
                             calendar_access[ca.calendar.name] = ca.access
 
-                        servicePools[f'{service_pool.name} ({partial_userservices_count})'] = {
-                            '_': getSerializedFromModel(service_pool),
+                        service_pools[f'{service_pool.name} ({partial_userservices_count})'] = {
+                            '_': get_serialized_from_model(service_pool),
                             'userservices': userservices,
                             'calendar_access': calendar_access,
                             'calendar_actions': calendar_actions,
                             'groups': groups,
                             'publications': publications,
-                            'publicationChangelog': list(changelogs),
+                            'publication_changelog': list(changelogs),
                         }
 
-                    partial_servicepools_count = len(servicePools)
+                    partial_servicepools_count = len(service_pools)
                     servicepools_count += partial_servicepools_count
 
                     services[f'{service.name} ({partial_servicepools_count}, {partial_userservices_count})'] = {
                         '_': get_serialized_from_managed_object(service),
-                        'servicePools': servicePools,
+                        'service_pools': service_pools,
                     }
 
                 services_count += len(services)
@@ -245,7 +246,7 @@ class Command(BaseCommand):
                 # Groups
                 grps: dict[str, typing.Any] = {}
                 for group in authenticator.groups.all()[:max_items]:  # at most max_items items
-                    grps[group.name] = getSerializedFromModel(group, ['manager_id', 'name'])
+                    grps[group.name] = get_serialized_from_model(group, ['manager_id', 'name'])
                 users_count: int = authenticator.users.count()
                 last_year_users_count: int = authenticator.users.filter(
                     last_access__gt=now - CONSIDERED_OLD
@@ -267,7 +268,7 @@ class Command(BaseCommand):
             tree[counter('TRANSPORTS')] = transports
 
             # Networks
-            networks = {}
+            networks: dict[str, typing.Any] = {}
             for network in models.Network.objects.all():
                 networks[network.name] = {
                     'networks': network.net_string,
@@ -289,10 +290,10 @@ class Command(BaseCommand):
                 # calendar rules
                 rules = {}
                 for rule in models.CalendarRule.objects.filter(calendar=calendar):
-                    rules[rule.name] = getSerializedFromModel(rule, ['calendar_id', 'name'])
+                    rules[rule.name] = get_serialized_from_model(rule, ['calendar_id', 'name'])
 
                 calendars[calendar.name] = {
-                    '_': getSerializedFromModel(calendar),
+                    '_': get_serialized_from_model(calendar),
                     'rules': rules,
                 }
 
@@ -301,7 +302,7 @@ class Command(BaseCommand):
             # Metapools
             metapools: dict[str, typing.Any] = {}
             for metapool in models.MetaPool.objects.all():
-                metapools[metapool.name] = getSerializedFromModel(metapool)
+                metapools[metapool.name] = get_serialized_from_model(metapool)
 
             tree[counter('METAPOOLS')] = metapools
 
@@ -309,7 +310,7 @@ class Command(BaseCommand):
             accounts: dict[str, typing.Any] = {}
             for account in models.Account.objects.all():
                 accounts[account.name] = {
-                    '_': getSerializedFromModel(account),
+                    '_': get_serialized_from_model(account),
                     'usages': list(account.usages.all().values('user_name', 'pool_name', 'start', 'end')),
                 }
 
@@ -320,8 +321,7 @@ class Command(BaseCommand):
             for servicePoolGroup in models.ServicePoolGroup.objects.all():
                 servicePoolGroups[servicePoolGroup.name] = {
                     'comments': servicePoolGroup.comments,
-                    'servicePools': [sp.name for sp in servicePoolGroup.servicesPools.all()],  # type: ignore
-                }
+                    'service_pools': [sp.name for sp in servicePoolGroup.servicesPools.all()],                }
 
             tree[counter('SERVICEPOOLGROUPS')] = servicePoolGroups
 
@@ -339,7 +339,7 @@ class Command(BaseCommand):
             # Rest of registerd servers
             registeredServers: dict[str, typing.Any] = {}
             for i, registeredServer in enumerate(models.Server.objects.all()):
-                registeredServers[f'{i}'] = getSerializedFromModel(registeredServer)
+                registeredServers[f'{i}'] = get_serialized_from_model(registeredServer)
 
             tree[counter('REGISTEREDSERVERS')] = registeredServers
 

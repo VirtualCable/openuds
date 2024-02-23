@@ -57,6 +57,10 @@ class StatInterval(typing.NamedTuple):
     @property
     def end_timestamp(self) -> int:
         return calendar.timegm(self.end.timetuple())
+    
+    @property
+    def duration(self) -> datetime.timedelta:
+        return self.end - self.start
 
 
 class VirtualFileInfo(typing.NamedTuple):
@@ -113,7 +117,7 @@ class StatsFS(types.UDSFSInterface):
         }
 
     # Splits the filename and returns a tuple with "dispatcher", "interval", "extension"
-    def getFilenameComponents(
+    def get_filename_components(
         self, filename: list[str]
     ) -> tuple[DispatcherType, StatInterval, str]:
         if len(filename) != 1:
@@ -135,12 +139,12 @@ class StatsFS(types.UDSFSInterface):
         if dispatcher not in self._dispatchers:
             raise FileNotFoundError()
 
-        fnc, requiresInterval = self._dispatchers[dispatcher]
+        fnc, requires_interval = self._dispatchers[dispatcher]
 
-        if extension == '' and requiresInterval is True:
+        if extension == '' and requires_interval is True:
             raise FileNotFoundError()
 
-        if requiresInterval:
+        if requires_interval:
             if interval not in self._interval:
                 raise FileNotFoundError()
 
@@ -152,12 +156,12 @@ class StatsFS(types.UDSFSInterface):
         if extension != 'csv':
             raise FileNotFoundError()
 
-        todayStart = datetime.datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+        today_start = datetime.datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
         return (
             fnc,
             StatInterval(
-                start=todayStart + range[0],
-                end=todayStart + range[1],
+                start=today_start + range[0],
+                end=today_start + range[1],
             ),
             extension,
         )
@@ -187,10 +191,10 @@ class StatsFS(types.UDSFSInterface):
         if len(path) == 0:
             return self._directory_stats
 
-        dispatcher, interval, extension = self.getFilenameComponents(path)
+        dispatcher, interval, extension = self.get_filename_components(path)
 
         # if interval is today, cache time is 10 seconds, else cache time is 60 seconds
-        if interval == StatsFS._interval['today']:
+        if interval.duration == StatsFS._interval['today']:
             cacheTime = 10
         else:
             cacheTime = 60
@@ -219,10 +223,10 @@ class StatsFS(types.UDSFSInterface):
     def read(self, path: list[str], size: int, offset: int) -> bytes:
         logger.debug('Reading data from %s: offset: %s, size: %s', path, offset, size)
 
-        dispatcher, interval, extension = self.getFilenameComponents(path)
+        dispatcher, interval, extension = self.get_filename_components(path)
 
         # if interval is today, cache time is 10 seconds, else cache time is 60 seconds
-        if interval == StatsFS._interval['today']:
+        if interval.duration == StatsFS._interval['today']:
             cacheTime = 10
         else:
             cacheTime = 60

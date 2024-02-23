@@ -85,7 +85,7 @@ class URLCustomTransport(transports.Transport):
         old_field_name='forceNewWindow',  # Allows compat with old versions
     )
 
-    def initialize(self, values: 'types.core.ValuesType'):
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         if not values:
             return
         # Strip spaces
@@ -98,7 +98,7 @@ class URLCustomTransport(transports.Transport):
             )
 
     # Same check as normal RDP transport
-    def is_ip_allowed(self, userService: 'models.UserService', ip: str) -> bool:
+    def is_ip_allowed(self, userservice: 'models.UserService', ip: str) -> bool:
         # No check is done for URL transport
         return True
 

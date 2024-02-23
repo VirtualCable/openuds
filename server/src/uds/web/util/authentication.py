@@ -68,7 +68,7 @@ def check_login(  # pylint: disable=too-many-branches, too-many-statements
                 tag = host
             except Exception:
                 try:
-                    tag = Authenticator.objects.order_by('priority')[0].small_name  # type: ignore  # Slicing is not supported by pylance right now
+                    tag = Authenticator.objects.order_by('priority')[0].small_name
                 except Exception:  # There is no authenticators yet, simply allow global login to nowhere.. :-)
                     tag = None
 
@@ -78,7 +78,6 @@ def check_login(  # pylint: disable=too-many-branches, too-many-statements
         logger.debug('Request does not have uds cookie')
         return types.auth.LoginResult(errid=types.errors.Error.COOKIES_NEEDED)
     if form.is_valid():
-        os = request.os
         try:
             authenticator = Authenticator.objects.get(uuid=process_uuid(form.cleaned_data['authenticator']))
         except Exception:

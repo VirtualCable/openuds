@@ -98,7 +98,7 @@ def source_field(
     data_source = data_source.split('.')[0]
     # logger.debug('SOURCE: %s', data_source)
 
-    fieldType: typing.Type = gui.ChoiceField if not multiple else gui.MultiChoiceField
+    field_type: typing.Type[gui.ChoiceField|gui.MultiChoiceField] = gui.ChoiceField if not multiple else gui.MultiChoiceField
 
     labels: typing.Any = {
         'ServicePool': (_('Service pool'), _('Service pool for report')),
@@ -107,9 +107,9 @@ def source_field(
         'Provider': (_('Service provider'), _('Service provider for report')),
     }.get(data_source)
 
-    logger.debug('Labels: %s, %s', labels, fieldType)
+    logger.debug('Labels: %s, %s', labels, field_type)
 
-    return fieldType(label=labels[0], order=order, tooltip=labels[1], required=True)
+    return field_type(label=labels[0], order=order, tooltip=labels[1], required=True)
 
 
 def source_field_data(

@@ -281,7 +281,7 @@ class ServiceCacheUpdater(Job):
                     )
                     .order_by('creation_date')
                 ):
-                    if n.needsOsManager():
+                    if n.needs_osmanager():
                         if (
                             State.from_str(n.state).is_usable() is False
                             or State.from_str(n.os_state).is_usable()
@@ -371,7 +371,7 @@ class ServiceCacheUpdater(Job):
         if servicepool_stats.l2_cache_count < servicepool_stats.servicepool.cache_l2_srvs:
             valid = None
             for n in cacheItems:
-                if n.needsOsManager():
+                if n.needs_osmanager():
                     if State.from_str(n.state).is_usable() is False or State.from_str(n.os_state).is_usable():
                         valid = n
                         break

@@ -37,7 +37,7 @@ import logging
 import typing
 import collections.abc
 
-from uds.core.util import xml2dict
+from uds.core.util import ensure, xml2dict
 
 from . import types
 
@@ -45,11 +45,12 @@ logger = logging.getLogger(__name__)
 
 RT = typing.TypeVar('RT')
 
+
 # Decorator
-def ensureConnected(fnc: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
-    def inner(*args, **kwargs) -> RT:
-        args[0].connect()
-        return fnc(*args, **kwargs)
+def ensure_connected(fnc: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
+    def inner(obj: 'OpenNebulaClient', *args: typing.Any, **kwargs: typing.Any) -> RT:
+        obj.connect()
+        return fnc(obj, *args, **kwargs)
 
     return inner
 
@@ -71,10 +72,7 @@ def checkResult(lst: typing.Any) -> tuple[collections.abc.Mapping[str, typing.An
     return xml2dict.parse(checkResultRaw(lst)), lst[1]
 
 
-def asIterable(element: RT) -> collections.abc.Iterable[RT]:
-    if isinstance(element, (tuple, list)):
-        return element
-    return (element,)
+as_iterable = ensure.is_iterable
 
 
 class OpenNebulaClient:  # pylint: disable=too-many-public-methods
@@ -93,38 +91,34 @@ class OpenNebulaClient:  # pylint: disable=too-many-public-methods
         self.cachedVersion = None
 
     @property
-    def sessionString(self):
+    def session_string(self) -> str:
         return '{}:{}'.format(self.username, self.password)
 
-    @property  # type: ignore
-    @ensureConnected
+    @property
+    @ensure_connected
     def version(self) -> list[str]:
         if self.cachedVersion is None:
             # Retrieve Version & keep it
-            result = self.connection.one.system.version(self.sessionString)
+            result = self.connection.one.system.version(self.session_string)
             self.cachedVersion = checkResultRaw(result).split('.')
         return self.cachedVersion
 
     def connect(self) -> None:
-        if self.connection is not None:
+        if not self.connection:
             return
 
         self.connection = xmlrpc.client.ServerProxy(self.endpoint)
 
-    @ensureConnected
+    @ensure_connected
     def enumStorage(self, storageType: int = 0) -> collections.abc.Iterable[types.StorageType]:
         sstorageType = str(storageType)  # Ensure it is an string
         # Invoke datastore pools info, no parameters except connection string
-        result, _ = checkResult(
-            self.connection.one.datastorepool.info(self.sessionString)
-        )
-        for ds in asIterable(result['DATASTORE_POOL']['DATASTORE']):
+        result, _ = checkResult(self.connection.one.datastorepool.info(self.session_string))
+        for ds in as_iterable(result['DATASTORE_POOL']['DATASTORE']):
             if ds['TYPE'] == sstorageType:
-                yield types.StorageType(
-                    ds['ID'], ds['NAME'], int(ds['TOTAL_MB']), int(ds['FREE_MB']), None
-                )
+                yield types.StorageType(ds['ID'], ds['NAME'], int(ds['TOTAL_MB']), int(ds['FREE_MB']), None)
 
-    @ensureConnected
+    @ensure_connected
     def enumTemplates(self) -> collections.abc.Iterable[types.TemplateType]:
         """
         Invoke templates pools info, with this parameters:
@@ -133,18 +127,14 @@ class OpenNebulaClient:  # pylint: disable=too-many-public-methods
         3.- When the next parameter is >= -1 this is the Range start ID. Can be -1. For smaller values this is the offset used for pagination.
         4.- For values >= -1 this is the Range end ID. Can be -1 to get until the last ID. For values < -1 this is the page size used for pagination.
         """
-        result, _ = checkResult(
-            self.connection.one.templatepool.info(self.sessionString, -1, -1, -1)
-        )
-        for ds in asIterable(result['VMTEMPLATE_POOL']['VMTEMPLATE']):
+        result, _ = checkResult(self.connection.one.templatepool.info(self.session_string, -1, -1, -1))
+        for ds in as_iterable(result['VMTEMPLATE_POOL']['VMTEMPLATE']):
             try:
-                yield types.TemplateType(
-                    ds['ID'], ds['NAME'], int(ds['TEMPLATE']['MEMORY']), None
-                )
+                yield types.TemplateType(ds['ID'], ds['NAME'], int(ds['TEMPLATE']['MEMORY']), None)
             except Exception:  # Maybe no memory? (then template is not usable)
                 pass
 
-    @ensureConnected
+    @ensure_connected
     def enumImages(self) -> collections.abc.Iterable[types.ImageType]:
         """
         Invoke images pools info, with this parameters:
@@ -153,10 +143,8 @@ class OpenNebulaClient:  # pylint: disable=too-many-public-methods
         3.- When the next parameter is >= -1 this is the Range start ID. Can be -1. For smaller values this is the offset used for pagination.
         4.- For values >= -1 this is the Range end ID. Can be -1 to get until the last ID. For values < -1 this is the page size used for pagination.
         """
-        result, _ = checkResult(
-            self.connection.one.imagepool.info(self.sessionString, -1, -1, -1)
-        )
-        for ds in asIterable(result['IMAGE_POOL']['IMAGE']):
+        result, _ = checkResult(self.connection.one.imagepool.info(self.session_string, -1, -1, -1))
+        for ds in as_iterable(result['IMAGE_POOL']['IMAGE']):
             yield types.ImageType(
                 ds['ID'],
                 ds['NAME'],
@@ -167,18 +155,14 @@ class OpenNebulaClient:  # pylint: disable=too-many-public-methods
                 None,
             )
 
-    @ensureConnected
-    def templateInfo(
-        self, templateId: str, extraInfo: bool = False
-    ) -> types.TemplateType:
+    @ensure_connected
+    def templateInfo(self, templateId: str, extraInfo: bool = False) -> types.TemplateType:
         """
         Returns a list
         first element is a dictionary (built from XML)
         second is original XML
         """
-        result = self.connection.one.template.info(
-            self.sessionString, int(templateId), extraInfo
-        )
+        result = self.connection.one.template.info(self.session_string, int(templateId), extraInfo)
         ds, xml = checkResult(result)
         return types.TemplateType(
             ds['VMTEMPLATE']['ID'],
@@ -187,7 +171,7 @@ class OpenNebulaClient:  # pylint: disable=too-many-public-methods
             xml,
         )
 
-    @ensureConnected
+    @ensure_connected
     def instantiateTemplate(
         self,
         templateId: str,
@@ -206,13 +190,13 @@ class OpenNebulaClient:  # pylint: disable=too-many-public-methods
         6.- true to create a private persistent copy of the template plus any image defined in DISK, and instantiate that copy.
             Note: This parameter is ignored on version 4, it is new for version 5.
         """
-        if self.version[0] == '4':  # type: ignore  # Version 4 has one less parameter than version 5
+        if self.version[0] == '4':
             result = self.connection.one.template.instantiate(
-                self.sessionString, int(templateId), vmName, createHold, templateToMerge
+                self.session_string, int(templateId), vmName, createHold, templateToMerge
             )
         else:
             result = self.connection.one.template.instantiate(
-                self.sessionString,
+                self.session_string,
                 int(templateId),
                 vmName,
                 createHold,
@@ -222,10 +206,8 @@ class OpenNebulaClient:  # pylint: disable=too-many-public-methods
 
         return checkResultRaw(result)
 
-    @ensureConnected
-    def updateTemplate(
-        self, templateId: str, templateData: str, updateType: int = 0
-    ) -> str:
+    @ensure_connected
+    def updateTemplate(self, templateId: str, templateData: str, updateType: int = 0) -> str:
         """
         Updates the template with the templateXml
         1.- Session string
@@ -234,76 +216,64 @@ class OpenNebulaClient:  # pylint: disable=too-many-public-methods
         4.- Update type. 0 replace the whole template, 1 merge with the existing one
         """
         result = self.connection.one.template.update(
-            self.sessionString, int(templateId), templateData, int(updateType)
+            self.session_string, int(templateId), templateData, int(updateType)
         )
         return checkResultRaw(result)
 
-    @ensureConnected
+    @ensure_connected
     def cloneTemplate(self, templateId: str, name: str) -> str:
         """
         Clones the template
         """
-        if self.version[0] == '4':  # type: ignore
-            result = self.connection.one.template.clone(
-                self.sessionString, int(templateId), name
-            )
+        if self.version[0] == '4':
+            result = self.connection.one.template.clone(self.session_string, int(templateId), name)
         else:
             result = self.connection.one.template.clone(
-                self.sessionString, int(templateId), name, False
+                self.session_string, int(templateId), name, False
             )  # This works as previous version clone
 
         return checkResultRaw(result)
 
-    @ensureConnected
+    @ensure_connected
     def deleteTemplate(self, templateId: str) -> str:
         """
         Deletes the template (not images)
         """
-        result = self.connection.one.template.delete(
-            self.sessionString, int(templateId)
-        )
+        result = self.connection.one.template.delete(self.session_string, int(templateId))
         return checkResultRaw(result)
 
-    @ensureConnected
-    def cloneImage(
-        self, srcId: str, name: str, datastoreId: typing.Union[str, int] = -1
-    ) -> str:
+    @ensure_connected
+    def cloneImage(self, srcId: str, name: str, datastoreId: typing.Union[str, int] = -1) -> str:
         """
         Clones the image.
         """
-        result = self.connection.one.image.clone(
-            self.sessionString, int(srcId), name, int(datastoreId)
-        )
+        result = self.connection.one.image.clone(self.session_string, int(srcId), name, int(datastoreId))
         return checkResultRaw(result)
 
-    @ensureConnected
+    @ensure_connected
     def makePersistentImage(self, imageId: str, persistent: bool = False) -> str:
         """
         Clones the image.
         """
-        result = self.connection.one.image.persistent(
-            self.sessionString, int(imageId), persistent
-        )
+        result = self.connection.one.image.persistent(self.session_string, int(imageId), persistent)
         return checkResultRaw(result)
 
-    @ensureConnected
+    @ensure_connected
     def deleteImage(self, imageId: str) -> str:
         """
         Deletes an image
         """
-        result = self.connection.one.image.delete(self.sessionString, int(imageId))
+        result = self.connection.one.image.delete(self.session_string, int(imageId))
         return checkResultRaw(result)
 
-    @ensureConnected
-    def imageInfo(self, imageInfo) -> types.ImageType:
+    @ensure_connected
+    def image_info(self, imginfo: str) -> types.ImageType:
         """
         Returns a list
         first element is a dictionary (built from XML)
         second is original XML
         """
-        result, xml = checkResult(
-            self.connection.one.image.info(self.sessionString, int(imageInfo))
-        )
+        result, xml = checkResult(self.connection.one.image.info(self.session_string, int(imginfo)))
         ds = result['IMAGE']
         return types.ImageType(
             ds['ID'],
@@ -315,7 +285,7 @@ class OpenNebulaClient:  # pylint: disable=too-many-public-methods
             xml,
         )
 
-    @ensureConnected
+    @ensure_connected
     def enumVMs(self) -> collections.abc.Iterable[types.VirtualMachineType]:
         """
         Invoke vm pools info, with this parameters:
@@ -325,11 +295,9 @@ class OpenNebulaClient:  # pylint: disable=too-many-public-methods
         4.- For values >= -1 this is the Range end ID. Can be -1 to get until the last ID. For values < -1 this is the page size used for pagination.
         5.- VM state to filter by. (-2 = any state including DONE, -1 = any state EXCEPT DONE)
         """
-        result, _ = checkResult(
-            self.connection.one.vmpool.info(self.sessionString, -1, -1, -1, -1)
-        )
+        result, _ = checkResult(self.connection.one.vmpool.info(self.session_string, -1, -1, -1, -1))
         if result['VM_POOL']:
-            for ds in asIterable(result['VM_POOL'].get('VM', [])):
+            for ds in as_iterable(result['VM_POOL'].get('VM', [])):
                 yield types.VirtualMachineType(
                     ds['ID'],
                     ds['NAME'],
@@ -338,16 +306,14 @@ class OpenNebulaClient:  # pylint: disable=too-many-public-methods
                     None,
                 )
 
-    @ensureConnected
+    @ensure_connected
     def VMInfo(self, vmId: str) -> types.VirtualMachineType:
         """
         Returns a list
         first element is a dictionary (built from XML)
         second is original XML
         """
-        result, xml = checkResult(
-            self.connection.one.vm.info(self.sessionString, int(vmId))
-        )
+        result, xml = checkResult(self.connection.one.vm.info(self.session_string, int(vmId)))
         ds = result['VM']
         return types.VirtualMachineType(
             ds['ID'],
@@ -357,30 +323,30 @@ class OpenNebulaClient:  # pylint: disable=too-many-public-methods
             xml,
         )
 
-    @ensureConnected
-    def remove_machine(self, vmId: str) -> str:
+    @ensure_connected
+    def remove_machine(self, vmid: str) -> str:
         """
         Deletes an vm
         """
-        if self.version[0] == '4':  # type: ignore
-            return self.set_machine_state(vmId, 'delete')
+        if self.version[0] == '4':
+            return self.set_machine_state(vmid, 'delete')
 
         # Version 5
-        return self.set_machine_state(vmId, 'terminate-hard')
+        return self.set_machine_state(vmid, 'terminate-hard')
 
-    @ensureConnected
+    @ensure_connected
     def get_machine_state(self, vmId: str) -> types.VmState:
         """
         Returns the VM State
         """
         return self.VMInfo(vmId).state
 
-    @ensureConnected
+    @ensure_connected
     def get_machine_substate(self, vmId: str) -> int:
         """
         Returns the VM State
         """
-        result = self.connection.one.vm.info(self.sessionString, int(vmId))
+        result = self.connection.one.vm.info(self.session_string, int(vmId))
         r, _ = checkResult(result)
         try:
             if int(r['VM']['STATE']) == types.VmState.ACTIVE.value:
@@ -391,7 +357,7 @@ class OpenNebulaClient:  # pylint: disable=too-many-public-methods
             logger.exception('getVMSubstate')
             return -1
 
-    @ensureConnected
+    @ensure_connected
     def set_machine_state(self, vmId: str, action: str) -> str:
-        result = self.connection.one.vm.action(self.sessionString, action, int(vmId))
+        result = self.connection.one.vm.action(self.session_string, action, int(vmId))
         return checkResultRaw(result)

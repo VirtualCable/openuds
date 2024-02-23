@@ -125,7 +125,7 @@ class ProxmoxClient:
         self._csrf = ''
 
     @property
-    def headers(self):
+    def headers(self) -> dict[str, str]:
         return {
             'Accept': 'application/json',
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -157,7 +157,7 @@ class ProxmoxClient:
                         logger.error(' * %s', line)
                         
                     error_message = f'Error 500 on request: {" ## ".join(journal)}'
-                except Exception as e:
+                except Exception:
                     pass  # If we can't get journal, just use default message
 
             raise ProxmoxError(error_message)
@@ -264,14 +264,14 @@ class ProxmoxClient:
     def test(self) -> bool:
         try:
             self.connect()
-        except Exception as e:
+        except Exception:
             # logger.error('Error testing proxmox: %s', e)
             return False
         return True
 
     @ensure_connected
     @cached('cluster', CACHE_DURATION, key_helper=caching_key_helper)
-    def get_cluster_info(self, **kwargs) -> types.ClusterInfo:
+    def get_cluster_info(self, **kwargs: typing.Any) -> types.ClusterInfo:
         return types.ClusterInfo.from_dict(self._get('cluster/status'))
 
     @ensure_connected
@@ -288,13 +288,13 @@ class ProxmoxClient:
 
     @ensure_connected
     @cached('nodeNets', CACHE_DURATION, args=1, kwargs=['node'], key_helper=caching_key_helper)
-    def get_node_networks(self, node: str, **kwargs) -> typing.Any:
+    def get_node_networks(self, node: str, **kwargs: typing.Any) -> typing.Any:
         return self._get(f'nodes/{node}/network', node=node)['data']
 
     # pylint: disable=unused-argument
     @ensure_connected
     @cached('nodeGpuDevices', CACHE_DURATION_LONG, key_helper=caching_key_helper)
-    def list_node_gpu_devices(self, node: str, **kwargs) -> list[str]:
+    def list_node_gpu_devices(self, node: str, **kwargs: typing.Any) -> list[str]:
         return [
             device['id']
             for device in self._get(f'nodes/{node}/hardware/pci', node=node)['data']
@@ -302,7 +302,7 @@ class ProxmoxClient:
         ]
 
     @ensure_connected
-    def list_node_vgpus(self, node: str, **kwargs) -> list[types.VGPUInfo]:
+    def list_node_vgpus(self, node: str, **kwargs: typing.Any) -> list[types.VGPUInfo]:
         return [
             types.VGPUInfo.from_dict(gpu)
             for device in self.list_node_gpu_devices(node)
@@ -310,7 +310,7 @@ class ProxmoxClient:
         ]
 
     @ensure_connected
-    def node_has_vgpus_available(self, node: str, vgpu_type: typing.Optional[str], **kwargs) -> bool:
+    def node_has_vgpus_available(self, node: str, vgpu_type: typing.Optional[str], **kwargs: typing.Any) -> bool:
         return any(
             gpu.available and (vgpu_type is None or gpu.type == vgpu_type) for gpu in self.list_node_vgpus(node)
         )
@@ -427,7 +427,7 @@ class ProxmoxClient:
 
     @ensure_connected
     @cached('hagrps', CACHE_DURATION, key_helper=caching_key_helper)
-    def list_ha_groups(self, **kwargs) -> list[str]:
+    def list_ha_groups(self, **kwargs: typing.Any) -> list[str]:
         return [g['group'] for g in self._get('cluster/ha/groups')['data']]
 
     @ensure_connected
@@ -565,7 +565,7 @@ class ProxmoxClient:
     @ensure_connected
     @cached('vms', CACHE_DURATION, key_helper=caching_key_helper)
     def list_machines(
-        self, node: typing.Union[None, str, collections.abc.Iterable[str]] = None, **kwargs
+        self, node: typing.Union[None, str, collections.abc.Iterable[str]] = None, **kwargs: typing.Any
     ) -> list[types.VMInfo]:
         node_list: collections.abc.Iterable[str]
         if node is None:
@@ -575,7 +575,7 @@ class ProxmoxClient:
         else:
             node_list = node
 
-        result = []
+        result: list[types.VMInfo] = []
         for node_name in node_list:
             for vm in self._get(f'nodes/{node_name}/qemu', node=node_name)['data']:
                 vm['node'] = node_name
@@ -585,7 +585,7 @@ class ProxmoxClient:
 
     @ensure_connected
     @cached('vmip', CACHE_INFO_DURATION, key_helper=caching_key_helper)
-    def get_machine_pool_info(self, vmid: int, poolid: typing.Optional[str], **kwargs) -> types.VMInfo:
+    def get_machine_pool_info(self, vmid: int, poolid: typing.Optional[str], **kwargs: typing.Any) -> types.VMInfo:
         # try to locate machine in pool
         node = None
         if poolid:
@@ -604,7 +604,7 @@ class ProxmoxClient:
 
     @ensure_connected
     @cached('vmin', CACHE_INFO_DURATION, key_helper=caching_key_helper)
-    def get_machine_info(self, vmid: int, node: typing.Optional[str] = None, **kwargs) -> types.VMInfo:
+    def get_machine_info(self, vmid: int, node: typing.Optional[str] = None, **kwargs: typing.Any) -> types.VMInfo:
         nodes = [types.Node(node, False, False, 0, '', '', '')] if node else self.get_cluster_info().nodes
         any_node_is_down = False
         for n in nodes:
@@ -626,7 +626,7 @@ class ProxmoxClient:
 
     @ensure_connected
     def get_machine_configuration(
-        self, vmid: int, node: typing.Optional[str] = None, **kwargs
+        self, vmid: int, node: typing.Optional[str] = None, **kwargs: typing.Any
     ) -> types.VMConfiguration:
         node = node or self.get_machine_info(vmid).node
         return types.VMConfiguration.from_dict(self._get(f'nodes/{node}/qemu/{vmid}/config', node=node)['data'])
@@ -701,7 +701,7 @@ class ProxmoxClient:
 
     @ensure_connected
     @cached('storage', CACHE_DURATION, key_helper=caching_key_helper)
-    def get_storage(self, storage: str, node: str, **kwargs) -> types.StorageInfo:
+    def get_storage(self, storage: str, node: str, **kwargs: typing.Any) -> types.StorageInfo:
         return types.StorageInfo.from_dict(
             self._get(f'nodes/{node}/storage/{urllib.parse.quote(storage)}/status', node=node)['data']
         )
@@ -712,7 +712,7 @@ class ProxmoxClient:
         self,
         node: typing.Union[None, str, collections.abc.Iterable[str]] = None,
         content: typing.Optional[str] = None,
-        **kwargs,
+        **kwargs: typing.Any,
     ) -> list[types.StorageInfo]:
         """We use a list for storage instead of an iterator, so we can cache it..."""
         nodes: collections.abc.Iterable[str]
@@ -735,19 +735,19 @@ class ProxmoxClient:
 
     @ensure_connected
     @cached('nodeStats', CACHE_INFO_DURATION, key_helper=caching_key_helper)
-    def get_node_stats(self, **kwargs) -> list[types.NodeStats]:
+    def get_node_stats(self, **kwargs: typing.Any) -> list[types.NodeStats]:
         return [
             types.NodeStats.from_dict(nodeStat) for nodeStat in self._get('cluster/resources?type=node')['data']
         ]
 
     @ensure_connected
     @cached('pools', CACHE_DURATION // 6, key_helper=caching_key_helper)
-    def list_pools(self, **kwargs) -> list[types.PoolInfo]:
+    def list_pools(self, **kwargs: typing.Any) -> list[types.PoolInfo]:
         return [types.PoolInfo.from_dict(poolInfo) for poolInfo in self._get('pools')['data']]
 
     @ensure_connected
     @cached('pool', CACHE_DURATION, key_helper=caching_key_helper)
-    def get_pool_info(self, pool_id: str, retrieve_vm_names: bool = False, **kwargs) -> types.PoolInfo:
+    def get_pool_info(self, pool_id: str, retrieve_vm_names: bool = False, **kwargs: typing.Any) -> types.PoolInfo:
         pool_info = types.PoolInfo.from_dict(self._get(f'pools/{pool_id}')['data'])
         if retrieve_vm_names:
             for i in range(len(pool_info.members)):
@@ -769,7 +769,7 @@ class ProxmoxClient:
         Gets the connetion info for the specified machine
         """
         node = node or self.get_machine_info(vmid).node
-        res: dict = self._post(f'nodes/{node}/qemu/{vmid}/spiceproxy', node=node)['data']
+        res: dict[str, typing.Any] = self._post(f'nodes/{node}/qemu/{vmid}/spiceproxy', node=node)['data']
         return core_types.services.ConsoleConnectionInfo(
             type=res['type'],
             proxy=res['proxy'],
@@ -795,7 +795,7 @@ class ProxmoxClient:
         # 'ca': '-----BEGIN CERTIFICATE-----\\n......\\n-----END CERTIFICATE-----\\n'}}
 
     @ensure_connected
-    def journal(self, node: str, lastentries: int = 4, **kwargs) -> list[str]:
+    def journal(self, node: str, lastentries: int = 4, **kwargs: typing.Any) -> list[str]:
         try:
             return self._get(f'nodes/{node}/journal?lastentries={lastentries}')['data']
         except Exception:

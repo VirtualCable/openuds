@@ -185,19 +185,19 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
         vms: dict[int, str] = {}
 
         assigned_vms = self._get_assigned_machines()
-        return [gui.choice_item(k, vms.get(int(k), 'Unknown!')) for k in self.machines.as_list() if int(k) not in assigned_vms]
+        return [gui.choice_item(k, vms.get(int(k), 'Unknown!')) for k in self.machines.as_list() if k not in assigned_vms]
 
     def assign_from_assignables(
-        self, assignable_id: str, user: 'models.User', user_deployment: 'services.UserService'
+        self, assignable_id: str, user: 'models.User', userservice_instance: 'services.UserService'
     ) -> str:
-        userservice_instance = typing.cast(XenFixedUserService, user_deployment)
+        xen_userservice_instance = typing.cast(XenFixedUserService, userservice_instance)
         assigned_vms = self._get_assigned_machines()
         if assignable_id not in assigned_vms:
             assigned_vms.add(assignable_id)
             self._save_assigned_machines(assigned_vms)
-            return userservice_instance.assign(assignable_id)
+            return xen_userservice_instance.assign(assignable_id)
 
-        return userservice_instance.error('VM not available!')
+        return xen_userservice_instance.error('VM not available!')
 
     def process_snapshot(self, remove: bool, userservice_instance: FixedUserService) -> None:
         userservice_instance = typing.cast(XenFixedUserService, userservice_instance)
@@ -232,12 +232,11 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
         found_vmid: typing.Optional[str] = None
         try:
             assigned_vms = self._get_assigned_machines()
-            for k in self.machines.as_list():
-                checking_vmid = k
-                if found_vmid not in assigned_vms:  # Not assigned
+            for checking_vmid in self.machines.as_list():
+                if checking_vmid not in assigned_vms:  # Not assigned
                     # Check that the machine exists...
                     try:
-                        vm_name = self.provider().get_machine_name(checking_vmid)
+                        _vm_name = self.provider().get_machine_name(checking_vmid)
                         found_vmid = checking_vmid
                         break
                     except Exception:  # Notifies on log, but skipt it

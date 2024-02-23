@@ -154,7 +154,7 @@ def post(
 
 # FAKE get
 def get(
-    path, errMsg: typing.Optional[str]
+    path: str, errMsg: typing.Optional[str]
 ) -> typing.Any:  # pylint: disable=too-many-return-statements
     logger.info('FAKE GET request to %s. (%s)', path, errMsg)
     if path == urls.INFO:
@@ -180,7 +180,7 @@ def get(
     raise Exception('Unknown FAKE URL on GET: {}'.format(path))
 
 
-def delete(path: str, errMsg: typing.Optional[str]):
+def delete(path: str, errMsg: typing.Optional[str]) -> typing.Any:
     logger.info('FAKE DELETE request to %s. (%s)', path, errMsg)
     # Right now, only "unreserve" uses delete, so simply return
     return UNRESERVE

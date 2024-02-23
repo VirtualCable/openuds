@@ -1543,14 +1543,14 @@ class UserInterface(metaclass=UserInterfaceType):
                extracted from form fields
 
         """
-        dic: gui.ValuesDictType = {}
-        for k, v in self._gui.items():
-            if v.is_type(types.ui.FieldType.EDITABLELIST, types.ui.FieldType.MULTICHOICE):
-                dic[k] = ensure.is_list(v.value)
+        fields: gui.ValuesDictType = {}
+        for fld, fld_gui in self._gui.items():
+            if fld_gui.is_type(types.ui.FieldType.EDITABLELIST, types.ui.FieldType.MULTICHOICE):
+                fields[fld] = ensure.is_list(fld_gui.value)
             else:
-                dic[k] = v.value
-        logger.debug('Values Dict: %s', dic)
-        return dic
+                fields[fld] = fld_gui.value
+        logger.debug('Values Dict: %s', fields)
+        return fields
 
     def serialize_fields(
         self,

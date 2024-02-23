@@ -55,7 +55,7 @@ class OldIPSerialData(auto_attributes.AutoAttributes):
     _reason: str
     _state: str
     
-    def __init__(self):
+    def __init__(self) -> None:
         auto_attributes.AutoAttributes.__init__(self, ip=str, reason=str, state=str)
         self._ip = ''
         self._reason = ''
@@ -85,12 +85,12 @@ class IPMachineUserService(services.UserService, autoserializable.AutoSerializab
             try:
                 # Prefer ipv4 first
                 res = dns.resolver.resolve(ip)
-                ip = typing.cast(str, res[0].address)  # type: ignore  # If no address, it will raise an exception
+                ip = typing.cast(str, res[0].address)   # pyright: ignore
             except Exception:
                 # If not found, try ipv6
                 try:
                     res = dns.resolver.resolve(ip, 'AAAA')
-                    ip = typing.cast(str, res[0].address)  # type: ignore  # If no address, it will raise an exception
+                    ip = typing.cast(str, res[0].address)  # pyright: ignore
                 except Exception as e:
                     self.service().provider().do_log(
                         log.LogLevel.WARNING, f'User service could not resolve Name {ip} ({e}).'
