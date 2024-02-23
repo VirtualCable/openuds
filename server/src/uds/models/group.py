@@ -64,12 +64,12 @@ class Group(UUIDModel):
     name = models.CharField(max_length=128, db_index=True)
     state = models.CharField(max_length=1, default=State.ACTIVE, db_index=True)
     comments = models.CharField(max_length=256, default='')
-    users = models.ManyToManyField(User, related_name='groups')
+    users: 'models.ManyToManyField[User, Group]' = models.ManyToManyField(User, related_name='groups')
     is_meta = models.BooleanField(default=False, db_index=True)
     # meta_if_any means that if an user belongs to ANY of the groups, it will be considered as belonging to this group
     # if it is false, the user must belong to ALL of the groups to be considered as belonging to this group
     meta_if_any = models.BooleanField(default=False)
-    groups = models.ManyToManyField('self', symmetrical=False)
+    groups: 'models.ManyToManyField[Group, Group]' = models.ManyToManyField('self', symmetrical=False)
     created = models.DateTimeField(default=sql_datetime, blank=True)
     skip_mfa = models.CharField(max_length=1, default=State.INACTIVE, db_index=True)
 
@@ -85,7 +85,7 @@ class Group(UUIDModel):
         """
         return self.deployedServices
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:  # pyright: ignore
         """
         Meta class to declare default order and unique multiple field index
         """

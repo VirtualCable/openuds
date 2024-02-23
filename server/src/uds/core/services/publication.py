@@ -97,7 +97,7 @@ class Publication(Environmentable, Serializable):
         environment: 'Environment',
         *,
         service: 'services.Service',
-        os_manager: typing.Optional['osmanagers.OSManager'] = None,
+        osmanager: typing.Optional['osmanagers.OSManager'] = None,
         revision: int = -1,
         servicepool_name: str = 'Unknown',
         uuid: str = '',
@@ -111,7 +111,7 @@ class Publication(Environmentable, Serializable):
         Environmentable.__init__(self, environment)
         Serializable.__init__(self)
         self._service = service
-        self._osmanager = os_manager
+        self._osmanager = osmanager
         self._revision = revision
         self._servicepool_name = servicepool_name
         self._uuid = uuid

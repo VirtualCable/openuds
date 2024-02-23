@@ -41,7 +41,6 @@ import uuid
 
 from uds.core import types, environment
 from uds.core.ui.user_interface import gui
-from uds.services.OpenNebula.on import vm
 
 from ...utils.test import UDSTestCase
 from ...utils.autospec import autospec, AutoSpecMethodInfo
@@ -317,11 +316,11 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     # list_machines
     AutoSpecMethodInfo('list_machines', return_value=VMS_INFO),
     # get_machine_pool_info
-    AutoSpecMethodInfo('get_machine_pool_info', method=lambda vmid, poolid, **kwargs: VMS_INFO[vmid - 1]),
+    AutoSpecMethodInfo('get_machine_pool_info', method=lambda vmid, poolid, **kwargs: VMS_INFO[vmid - 1]),  # pyright: ignore
     # get_machine_info
-    AutoSpecMethodInfo('get_machine_info', method=lambda vmid, *args, **kwargs: VMS_INFO[vmid - 1]),
+    AutoSpecMethodInfo('get_machine_info', method=lambda vmid, *args, **kwargs: VMS_INFO[vmid - 1]),  # pyright: ignore
     # get_machine_configuration
-    AutoSpecMethodInfo('get_machine_configuration', method=lambda vmid, **kwargs: VMS_CONFIGURATION[vmid - 1]),
+    AutoSpecMethodInfo('get_machine_configuration', method=lambda vmid, **kwargs: VMS_CONFIGURATION[vmid - 1]),  # pyright: ignore
     # set_machine_ha return None
     # start_machine
     AutoSpecMethodInfo('start_machine', return_value=UPID),
@@ -340,24 +339,24 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     # get_storage
     AutoSpecMethodInfo(
         'get_storage',
-        method=lambda storage, node, **kwargs: next(filter(lambda s: s.storage == storage, STORAGES)),
+        method=lambda storage, node, **kwargs: next(filter(lambda s: s.storage == storage, STORAGES)),  # pyright: ignore
     ),
     # list_storages
     AutoSpecMethodInfo(
         'list_storages',
-        method=lambda node, **kwargs: (
-            (list(filter(lambda s: s.node == node, STORAGES))) if node is not None else STORAGES
+        method=lambda node, **kwargs: (  # pyright: ignore
+            (list(filter(lambda s: s.node == node, STORAGES))) if node is not None else STORAGES  # pyright: ignore
         ),
     ),
     # get_node_stats
     AutoSpecMethodInfo(
-        'get_node_stats', method=lambda node, **kwargs: next(filter(lambda n: n.name == node, NODE_STATS))
+        'get_node_stats', method=lambda node, **kwargs: next(filter(lambda n: n.name == node, NODE_STATS))  # pyright: ignore
     ),
     # list_pools
     AutoSpecMethodInfo('list_pools', return_value=POOLS),
     # get_pool_info
     AutoSpecMethodInfo(
-        'get_pool_info', method=lambda poolid, **kwargs: next(filter(lambda p: p.poolid == poolid, POOLS))
+        'get_pool_info', method=lambda poolid, **kwargs: next(filter(lambda p: p.poolid == poolid, POOLS))  # pyright: ignore
     ),
     # get_console_connection
     AutoSpecMethodInfo('get_console_connection', return_value=CONSOLE_CONNECTION_INFO),
@@ -390,9 +389,11 @@ SERVICE_LINKED_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
 }
 
 SERVICE_FIXED_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
+    'token': '',
     'pool': POOLS[0].poolid,
     'machines': [str(VMS_INFO[2].vmid), str(VMS_INFO[3].vmid), str(VMS_INFO[4].vmid)],
     'use_snapshots': True,
+    'prov_uuid': '',
 }
 
 

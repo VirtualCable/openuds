@@ -37,10 +37,10 @@ from unittest import mock
 class AutoSpecMethodInfo:
     name: str
     return_value: typing.Any = None
-    method: 'typing.Callable|None' = None
+    method: 'typing.Callable[..., typing.Any]|None' = None
     
     
-def autospec(cls: type, metods_info: collections.abc.Iterable, **kwargs: typing.Any) -> mock.Mock:
+def autospec(cls: type, metods_info: collections.abc.Iterable[AutoSpecMethodInfo], **kwargs: typing.Any) -> mock.Mock:
     """
     This is a helper function that will create a mock object with the same methods as the class passed as parameter.
     This is useful for testing purposes, where you want to mock a class and still have the same methods available.

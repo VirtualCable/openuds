@@ -64,7 +64,7 @@ class TestProxmovFixedService(UDSTransactionTestCase):
             api.test.assert_called_with()
 
     def test_service_methods_1(self) -> None:
-        with fixtures.patch_provider_api() as api:
+        with fixtures.patch_provider_api():
             service = fixtures.create_service_fixed()
 
             self.assertEqual(service.get_machine_info(2).name, fixtures.VMS_INFO[1].name)
@@ -72,7 +72,7 @@ class TestProxmovFixedService(UDSTransactionTestCase):
             # is_available is already tested, so we will skip it
 
             # Enumerate assignables
-            locate_vm = lambda vmid: next(
+            locate_vm: typing.Callable[[str], typing.Any] = lambda vmid: next(
                 (x for x in fixtures.VMS_INFO if x.vmid == int(vmid)), fixtures.VMS_INFO[0]
             )
 
@@ -109,7 +109,7 @@ class TestProxmovFixedService(UDSTransactionTestCase):
             self.assertEqual(service._get_assigned_machines(), set([vmid, vmid2]))
 
     def test_service_methods_2(self) -> None:
-        with fixtures.patch_provider_api() as api:
+        with fixtures.patch_provider_api():
             service = fixtures.create_service_fixed()
 
             # Get machine name

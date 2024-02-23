@@ -279,14 +279,14 @@ class Users(DetailHandler):
 
             user.delete()
         except Exception as e:
-            logger.exception('Removing user')
+            logger.error('Error on user removal of %s.%s:  %s', parent.name, item, e)
             raise self.invalid_item_response() from e
 
-    def servicesPools(self, parent: 'Model', item: str) -> typing.Any:
+    def servicesPools(self, parent: 'Model', item: str) -> list[dict[str, typing.Any]]:
         parent = ensure.is_instance(parent, Authenticator)
         uuid = process_uuid(item)
         user = parent.users.get(uuid=process_uuid(uuid))
-        res = []
+        res: list[dict[str, typing.Any]] = []
         groups = list(user.get_groups())
         for i in get_service_pools_for_groups(groups):
             res.append(
@@ -303,11 +303,11 @@ class Users(DetailHandler):
 
         return res
 
-    def userServices(self, parent: 'Authenticator', item: str) -> typing.Any:
+    def userServices(self, parent: 'Authenticator', item: str) -> list[dict[str, typing.Any]]:
         parent = ensure.is_instance(parent, Authenticator)
         uuid = process_uuid(item)
         user = parent.users.get(uuid=process_uuid(uuid))
-        res = []
+        res: list[dict[str, typing.Any]] = []
         for i in user.userServices.all():
             if i.state == State.USABLE:
                 v = AssignedService.item_as_dict(i)
@@ -336,10 +336,10 @@ class Groups(DetailHandler):
                 q = parent.groups.all().order_by('name')
             else:
                 q = parent.groups.filter(uuid=process_uuid(item))
-            res = []
+            res: list[dict[str, typing.Any]] = []
             i = None
             for i in q:
-                val = {
+                val: dict[str, typing.Any] = {
                     'id': i.uuid,
                     'name': i.name,
                     'comments': i.comments,
@@ -360,7 +360,7 @@ class Groups(DetailHandler):
             result['pools'] = [v.uuid for v in get_service_pools_for_groups([i])]
             return result
         except Exception as e:
-            logger.exception('REST groups')
+            logger.error('Group item not found: %s.%s: %s', parent.name, item, e)
             raise self.invalid_item_response() from e
 
     def get_title(self, parent: 'Model') -> str:
@@ -434,31 +434,30 @@ class Groups(DetailHandler):
             fields = self.fields_from_params(valid_fields)
             is_pattern = fields.get('name', '').find('pat:') == 0
             auth = parent.get_instance()
+            to_save: dict[str, typing.Any] = {}
             if not item:  # Create new
                 if not is_meta and not is_pattern:
                     auth.create_group(
                         fields
                     )  # this throws an exception if there is an error (for example, this auth can't create groups)
-                toSave = {}
                 for k in valid_fields:
-                    toSave[k] = fields[k]
-                toSave['comments'] = fields['comments'][:255]
-                toSave['is_meta'] = is_meta
-                toSave['meta_if_any'] = meta_if_any
-                group = parent.groups.create(**toSave)
+                    to_save[k] = fields[k]
+                to_save['comments'] = fields['comments'][:255]
+                to_save['is_meta'] = is_meta
+                to_save['meta_if_any'] = meta_if_any
+                group = parent.groups.create(**to_save)
             else:
                 if not is_meta and not is_pattern:
                     auth.modify_group(fields)
-                toSave = {}
                 for k in valid_fields:
-                    toSave[k] = fields[k]
-                del toSave['name']  # Name can't be changed
-                toSave['comments'] = fields['comments'][:255]
-                toSave['meta_if_any'] = meta_if_any
-                toSave['skip_mfa'] = fields['skip_mfa']
+                    to_save[k] = fields[k]
+                del to_save['name']  # Name can't be changed
+                to_save['comments'] = fields['comments'][:255]
+                to_save['meta_if_any'] = meta_if_any
+                to_save['skip_mfa'] = fields['skip_mfa']
 
                 group = parent.groups.get(uuid=process_uuid(item))
-                group.__dict__.update(toSave)
+                group.__dict__.update(to_save)
 
             if is_meta:
                 # Do not allow to add meta groups to meta groups

@@ -35,6 +35,7 @@ import codecs
 import copy
 import datetime
 import inspect
+import itertools
 import logging
 from os import read
 import pickle  # nosec: safe usage
@@ -43,6 +44,7 @@ import time
 import typing
 import collections.abc
 import abc
+from django.conf import settings
 
 from django.utils.translation import gettext
 
@@ -1491,10 +1493,10 @@ class UserInterface(metaclass=UserInterfaceType):
                 if fld_name in values:
                     fld.value = values[fld_name]
                 else:
-                    caller = inspect.stack()[1]
-                    logger.warning(
-                        'Field %s not found (invoked from %s:%s)', fld_name, caller.filename, caller.lineno
-                    )
+                    logger.warning('Field %s.%s not found in values data, ', self.__class__.__name__, fld_name)
+                    if settings.DEBUG:
+                        for caller in itertools.islice(inspect.stack(), 1,  8):
+                            logger.warning('  %s:%s:%s', caller.filename, caller.lineno, caller.function)
 
     def init_gui(self) -> None:
         """
@@ -1612,9 +1614,7 @@ class UserInterface(metaclass=UserInterfaceType):
             return True
 
         # For future use, right now we only have one version
-        _version = values[
-            len(SERIALIZATION_HEADER) : len(SERIALIZATION_HEADER) + len(SERIALIZATION_VERSION)
-        ]
+        _version = values[len(SERIALIZATION_HEADER) : len(SERIALIZATION_HEADER) + len(SERIALIZATION_VERSION)]
 
         values = values[len(SERIALIZATION_HEADER) + len(SERIALIZATION_VERSION) :]
 
