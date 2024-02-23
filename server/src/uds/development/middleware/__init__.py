@@ -26,21 +26,25 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import collections.abc
 import logging
+import typing
+
+from django.http import HttpRequest
 
 logger = logging.getLogger(__name__)
 
 
-class RequestDebug:
+class RequestDebugMiddleware:
     """
     Used for logging some request data on develeopment
     """
 
-    def __init__(self, get_response):
+    def __init__(self, get_response: collections.abc.Callable[[typing.Any], typing.Any]):
         self.get_response = get_response
 
-    def __call__(self, request):
-        logger.info('Request lang: %s', request.LANGUAGE_CODE)
+    def __call__(self, request: HttpRequest) -> typing.Any:
+        logger.info('Request: %s', request)
 
         response = self.get_response(request)
 

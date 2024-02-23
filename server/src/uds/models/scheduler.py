@@ -87,7 +87,7 @@ class Scheduler(models.Model):
         """
         Returns an environment valid for the record this object represents
         """
-        return Environment.environment_for_table_record(self._meta.verbose_name, self.id)  # type: ignore  # pylint: disable=no-member
+        return Environment.environment_for_table_record(self._meta.verbose_name or self._meta.db_table, self.id)
 
     def get_instance(self) -> typing.Optional[jobs.Job]:
         """
@@ -102,13 +102,13 @@ class Scheduler(models.Model):
         return None
 
     @staticmethod
-    def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def pre_delete(sender: typing.Any, **kwargs: typing.Any) -> None:  # pylint: disable=unused-argument
         """
         Used to remove environment for sheduled task
         """
-        toDelete: 'Scheduler' = kwargs['instance']
-        logger.debug('Deleting sheduled task %s', toDelete)
-        toDelete.get_environment().clean_related_data()
+        to_delete: 'Scheduler' = kwargs['instance']
+        logger.debug('Deleting sheduled task %s', to_delete)
+        to_delete.get_environment().clean_related_data()
 
     def __str__(self) -> str:
         return f'Scheduled task {self.name}, every {self.frecuency}, last execution at {self.last_execution}, state = {self.state}'

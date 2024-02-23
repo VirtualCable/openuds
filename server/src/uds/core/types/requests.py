@@ -44,9 +44,9 @@ class ExtendedHttpRequest(HttpRequest):
     ip_version: int
     ip_proxy: str
     os: 'types.os.DetectedOsInfo'
-    user: typing.Optional['User']  # type: ignore   # Override base user to be optional
+    user: typing.Optional['User'] # pyright: ignore[reportIncompatibleVariableOverride]
     authorized: bool
 
 
 class ExtendedHttpRequestWithUser(ExtendedHttpRequest):
-    user: 'User'  # type: ignore  # Has the user always
+    user: 'User' # pyright: ignore[reportIncompatibleVariableOverride]

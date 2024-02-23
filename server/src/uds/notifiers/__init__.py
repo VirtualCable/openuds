@@ -48,7 +48,7 @@ from uds.core.util import modfinder
 logger = logging.getLogger(__name__)
 
 
-def __loadModules():
+def __loadModules() -> None:
     """
     Loads all notifiers modules
     """

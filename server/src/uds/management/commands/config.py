@@ -30,7 +30,9 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import argparse
 import logging
+import typing
 
 from django.core.management.base import BaseCommand
 from uds.core.util.config import Config, GlobalConfig
@@ -42,14 +44,12 @@ class Command(BaseCommand):
     args = "<mod.name=value mod.name=value mod.name=value...>"
     help = "Updates configuration values. If mod is omitted, UDS will be used. Omit whitespaces betwen name, =, and value (they must be a single param)"
 
-    def add_arguments(self, parser) -> None:
+    def add_arguments(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument('name_value', nargs='+', type=str)
         # If set as "password field"
         parser.add_argument('--password', action='store_true', default=False, help='Set as password field')
-        
-        
 
-    def handle(self, *args, **options) -> None:
+    def handle(self, *args: typing.Any, **options: typing.Any) -> None:
         logger.debug("Handling settings")
         GlobalConfig.initialize()
         try:

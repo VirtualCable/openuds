@@ -44,7 +44,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 from uds.core.util import modfinder
 
 
-def __init__():
+def __load_modules__() -> None:
     """
     This imports all packages that are descendant of this package, and, after that,
     it register all subclases of service provider as
@@ -57,4 +57,4 @@ def __init__():
     )
 
 
-__init__()
+__load_modules__()

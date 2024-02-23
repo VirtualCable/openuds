@@ -52,19 +52,21 @@ class NetworkType(typing.NamedTuple):
 logger = logging.getLogger(__name__)
 
 # Test patters for networks IPv4
-RECIDRIPV4: typing.Final[re.Pattern] = re.compile(
+RECIDRIPV4: typing.Final[re.Pattern[str]] = re.compile(
     r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})/([0-9]{1,2})$'
 )
-REMASKIPV4: typing.Final[re.Pattern] = re.compile(
+REMASKIPV4: typing.Final[re.Pattern[str]] = re.compile(
     r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})netmask([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$'
 )
-RE1ASTERISKIPV4: typing.Final[re.Pattern] = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.\*$')
-RE2ASTERISKIPV4: typing.Final[re.Pattern] = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.\*\.?\*?$')
-RE3ASTERISKIPV4: typing.Final[re.Pattern] = re.compile(r'^([0-9]{1,3})\.\*\.?\*?\.?\*?$')
-RERANGEIPV4: typing.Final[re.Pattern] = re.compile(
+RE1ASTERISKIPV4: typing.Final[re.Pattern[str]] = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.\*$')
+RE2ASTERISKIPV4: typing.Final[re.Pattern[str]] = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.\*\.?\*?$')
+RE3ASTERISKIPV4: typing.Final[re.Pattern[str]] = re.compile(r'^([0-9]{1,3})\.\*\.?\*?\.?\*?$')
+RERANGEIPV4: typing.Final[re.Pattern[str]] = re.compile(
     r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})-([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$'
 )
-RESINGLEIPV4: typing.Final[re.Pattern] = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$')
+RESINGLEIPV4: typing.Final[re.Pattern[str]] = re.compile(
+    r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$'
+)
 
 
 def ip_to_long(ip: str) -> IpType:
@@ -110,12 +112,12 @@ def network_from_str_ipv4(nets_string: str) -> NetworkType:
     input_string = nets_string
     logger.debug('Getting network from %s', nets_string)
 
-    def check(*args) -> None:
+    def check(*args: str) -> None:
         for n in args:
             if int(n) < 0 or int(n) > 255:
                 raise Exception()
 
-    def to_num(*args) -> int:
+    def to_num(*args: str) -> int:
         start = 256 * 256 * 256
         val = 0
         for n in args:
@@ -230,11 +232,7 @@ def networks_from_str(
     If allowMultipleNetworks is True, it allows ',' and ';' separators (and, ofc, more than 1 network)
     Returns a list of networks tuples in the form [(start1, end1), (start2, end2) ...]
     """
-    res = []
-    for strNet in re.split('[;,]', nets):
-        if strNet:
-            res.append(network_from_str(strNet, version))
-    return res
+    return [network_from_str(str_net, version) for str_net in re.split('[;,]', nets) if str_net]
 
 
 def contains(
@@ -277,20 +275,16 @@ def is_valid_fqdn(value: str) -> bool:
     )
 
 
-def is_valid_host(value: str):
+def is_valid_host(value: str) -> bool:
     return is_valid_ip(value) or is_valid_fqdn(value)
 
 
 def test_connectivity(host: str, port: int, timeout: float = 4) -> bool:
     try:
-        logger.debug(
-            'Checking connection to %s:%s with %s seconds timeout', host, port, timeout
-        )
+        logger.debug('Checking connection to %s:%s with %s seconds timeout', host, port, timeout)
         sock = socket.create_connection((host, port), timeout)
         sock.close()
     except Exception as e:
-        logger.debug(
-            'Exception checking %s:%s with %s timeout: %s', host, port, timeout, e
-        )
+        logger.debug('Exception checking %s:%s with %s timeout: %s', host, port, timeout, e)
         return False
     return True

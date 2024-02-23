@@ -250,7 +250,7 @@ class _SerializableField(typing.Generic[T]):
         """
         if typing.cast(typing.Type[typing.Any], self.obj_type) in (str, int, float):
             tp: typing.Type[T] = self.obj_type
-            self.__set__(instance, tp(data.decode()))
+            self.__set__(instance, tp(data.decode()))  # type: ignore  # mypy complains about calling tp(...)
             return
         raise TypeError(f"Field {self.name} cannot be unmarshalled (type {self.obj_type})")
 

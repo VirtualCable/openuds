@@ -60,7 +60,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
+class MetaPool(UUIDModel, TaggingMixin):
     """
     A meta pool is a pool that has pool members
     """
@@ -83,7 +83,9 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         related_name='metaPools',
         on_delete=models.SET_NULL,
     )
-    assignedGroups = models.ManyToManyField(Group, related_name='metaPools', db_table='uds__meta_grps')
+    assignedGroups: 'models.ManyToManyField[Group, MetaPool]' = models.ManyToManyField(
+        Group, related_name='metaPools', db_table='uds__meta_grps'
+    )
 
     # Message if access denied
     calendar_message = models.CharField(default='', max_length=256)
@@ -102,7 +104,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
     calendarAccess: 'models.manager.RelatedManager[CalendarAccessMeta]'
     members: 'models.manager.RelatedManager["MetaPoolMember"]'
 
-    class Meta(UUIDModel.Meta):  # pylint: disable=too-few-public-methods
+    class Meta(UUIDModel.Meta):  # pyright: ignore
         """
         Meta class to declare the name of the table at database
         """
@@ -156,7 +158,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
 
         return access == types.states.State.ALLOW
 
-    def usage(self, cachedValue=-1) -> types.pools.UsageInfo:
+    def usage(self, cached_value: int = -1) -> types.pools.UsageInfo:
         """
         Returns the % used services, then count and the max related to "maximum" user services
         If no "maximum" number of services, will return 0% ofc
@@ -192,7 +194,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         usage_count = 0
         max_count = 0
         for pool in query:
-            poolInfo = pool.usage(pool.usage_count)  # type:ignore  # Anotated field
+            poolInfo = pool.usage(typing.cast(typing.Any, pool).usage_count)  # usage_count is anottated value, integer
             usage_count += poolInfo.used
             # If any of the pools has no max, then max is -1
             if max_count == consts.UNLIMITED or poolInfo.total == consts.UNLIMITED:
@@ -207,7 +209,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
 
     @property
     def visual_name(self) -> str:
-        logger.debug('SHORT: %s %s %s', self.short_name, self.short_name is not None, self.name)
+        logger.debug('SHORT: %s %s %s', self.short_name, bool(self.short_name), self.name)
         sn = str(self.short_name).strip()
         return sn if sn else self.name
 
@@ -261,7 +263,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         return meta
 
     @staticmethod
-    def pre_delete(sender, **kwargs) -> None:
+    def pre_delete(sender: typing.Any, **kwargs: typing.Any) -> None:
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -272,15 +274,15 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         """
         from uds.core.util.permissions import clean  # pylint: disable=import-outside-toplevel
 
-        toDelete: 'MetaPool' = kwargs['instance']
+        to_delete: 'MetaPool' = kwargs['instance']
 
         # Clears related logs
-        log.clear_logs(toDelete)
+        log.clear_logs(to_delete)
 
         # Clears related permissions
-        clean(toDelete)
+        clean(to_delete)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'Meta pool: {self.name}, no. pools: {self.members.all().count()}, visible: {self.visible}, policy: {self.policy}'
 
 

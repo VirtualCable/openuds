@@ -48,7 +48,7 @@ from .uuid_model import UUIDModel
 if typing.TYPE_CHECKING:
     from uds.models import Group, UserService, Permissions
     from uds.core.types.requests import ExtendedHttpRequest
-    from django.db.models.manager import RelatedManager # type: ignore  # MyPy complains because of django-stubs
+    from django.db.models.manager import RelatedManager  # type: ignore  # MyPy complains because of django-stubs
 
 
 logger = logging.getLogger(__name__)
@@ -60,9 +60,7 @@ class User(UUIDModel, properties.PropertiesMixin):
     This class represents a single user, associated with one authenticator
     """
 
-    manager = models.ForeignKey(
-        Authenticator, on_delete=models.CASCADE, related_name='users'
-    )
+    manager = models.ForeignKey(Authenticator, on_delete=models.CASCADE, related_name='users')
     name = models.CharField(max_length=128, db_index=True)
     real_name = models.CharField(max_length=128)
     comments = models.CharField(max_length=256)
@@ -70,12 +68,8 @@ class User(UUIDModel, properties.PropertiesMixin):
     password = models.CharField(
         max_length=128, default=''
     )  # Only used on "internal" sources or sources that "needs password"
-    mfa_data = models.CharField(
-        max_length=128, default=''
-    )  # Only used on "internal" sources
-    staff_member = models.BooleanField(
-        default=False
-    )  # Staff members can login to admin
+    mfa_data = models.CharField(max_length=128, default='')  # Only used on "internal" sources
+    staff_member = models.BooleanField(default=False)  # Staff members can login to admin
     is_admin = models.BooleanField(default=False)  # is true, this is a super-admin
     last_access = models.DateTimeField(default=NEVER)
     parent = models.CharField(max_length=50, default=None, null=True)
@@ -94,11 +88,7 @@ class User(UUIDModel, properties.PropertiesMixin):
 
         ordering = ('name',)
         app_label = 'uds'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['manager', 'name'], name='u_usr_manager_name'
-            )
-        ]
+        constraints = [models.UniqueConstraint(fields=['manager', 'name'], name='u_usr_manager_name')]
 
     # For properties
     def get_owner_id_and_type(self) -> tuple[str, str]:
@@ -155,9 +145,7 @@ class User(UUIDModel, properties.PropertiesMixin):
         """
         if self.parent:
             try:
-                usr = User.objects.prefetch_related('authenticator', 'groups').get(
-                    uuid=self.parent
-                )
+                usr = User.objects.prefetch_related('authenticator', 'groups').get(uuid=self.parent)
             except Exception:  # If parent do not exists
                 usr = self
         else:
@@ -177,22 +165,22 @@ class User(UUIDModel, properties.PropertiesMixin):
                 number_belongs_meta=Count('groups', filter=Q(groups__id__in=grps))
             )  # g.groups.filter(id__in=grps).count()
         ):
-            numberGroupsBelongingInMeta: int = g.number_belongs_meta  # type: ignore  # anottation
+            numberGroupsBelongingInMeta: int = typing.cast(typing.Any, g).number_belongs_meta  # Anotated field
 
             logger.debug('gn = %s', numberGroupsBelongingInMeta)
-            logger.debug('groups count: %s', g.number_groups)  # type: ignore  # anottation
+            logger.debug('groups count: %s', typing.cast(typing.Any, g).number_groups)  # Anotated field
 
             if g.meta_if_any is True and numberGroupsBelongingInMeta > 0:
-                numberGroupsBelongingInMeta = g.number_groups  # type: ignore  # anottation
+                numberGroupsBelongingInMeta = typing.cast(typing.Any, g).number_groups  # Anotated field
 
             logger.debug('gn after = %s', numberGroupsBelongingInMeta)
 
             # If a meta group is empty, all users belongs to it. we can use gn != 0 to check that if it is empty, is not valid
-            if numberGroupsBelongingInMeta == g.number_groups:  # type: ignore  # anottation
+            if numberGroupsBelongingInMeta == typing.cast(typing.Any, g).number_groups:
                 # This group matches
                 yield g
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{self.pretty_name} (id:{self.id})'
 
     def clean_related_data(self) -> None:
@@ -204,7 +192,7 @@ class User(UUIDModel, properties.PropertiesMixin):
             self.manager.mfa.get_instance().reset_data(mfas.MFA.get_user_id(self))
 
     @staticmethod
-    def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def pre_delete(sender: typing.Any, **kwargs: typing.Any) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -239,6 +227,7 @@ class User(UUIDModel, properties.PropertiesMixin):
             us.remove()
 
         logger.debug('Deleted user %s', to_delete)
+
 
 # Connect to pre delete signal
 signals.pre_delete.connect(User.pre_delete, sender=User)

@@ -83,7 +83,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
     def service_pools(self) -> 'models.manager.RelatedManager[ServicePool]':
         return self.deployedServices
 
-    class Meta(ManagedObjectModel.Meta):  # pylint: disable=too-few-public-methods
+    class Meta(ManagedObjectModel.Meta):  # pyright: ignore
         """
         Meta class to declare default order
         """
@@ -157,7 +157,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
         return f'{self.name} of type {self.data_type} (id:{self.id})'
 
     @staticmethod
-    def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def pre_delete(sender: typing.Any, **kwargs: typing.Any) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -168,17 +168,17 @@ class Transport(ManagedObjectModel, TaggingMixin):
         """
         from uds.core.util.permissions import clean  # pylint: disable=import-outside-toplevel
 
-        toDelete: 'Transport' = kwargs['instance']
+        to_delete: 'Transport' = kwargs['instance']
 
-        logger.debug('Before delete transport %s', toDelete)
+        logger.debug('Before delete transport %s', to_delete)
         # Only tries to get instance if data is not empty
-        if toDelete.data != '':
-            s = toDelete.get_instance()
+        if to_delete.data != '':
+            s = to_delete.get_instance()
             s.destroy()
             s.env.clean_related_data()
 
         # Clears related permissions
-        clean(toDelete)
+        clean(to_delete)
 
 
 # : Connects a pre deletion signal to OS Manager

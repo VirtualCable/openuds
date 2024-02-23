@@ -38,11 +38,11 @@ class StateQueue:
     _queue: list[typing.Any]
     _current: typing.Optional[typing.Any]
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._queue = []
         self._current = None
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'<StateQueue Current: {self._current}, Queue: ({",".join(state for state in self._queue)})>'
 
     def clear(self) -> None:
@@ -80,7 +80,7 @@ class StateQueue:
             return self._queue.pop(0)
         return None
 
-    def remove(self, state: typing.Any):
+    def remove(self, state: typing.Any) -> None:
         try:
             self._queue.remove(state)
         except Exception:  # nosec: Fine to ignore exception here

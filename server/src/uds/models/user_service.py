@@ -178,7 +178,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         (see related classes uds.core.util.unique_name_generator and uds.core.util.unique_mac_generator)
         """
         return Environment.environment_for_table_record(
-            self._meta.verbose_name,  # type: ignore  # pylint: disable=no-member
+            self._meta.verbose_name or self._meta.model_name or '',  
             self.id,
             {
                 'mac': unique.UniqueMacGenerator,
@@ -218,8 +218,8 @@ class UserService(UUIDModel, properties.PropertiesMixin):
             if self.publication is not None:
                 publication_instance = self.publication.get_instance()
         except Exception:
-            # The publication to witch this item points to, does not exists
-            self.publication = None  # type: ignore
+            # The publication to which this item points to, does not exists
+            self.publication = None
             logger.exception(
                 'Got exception at get_instance of an userService %s (seems that publication does not exists!)',
                 self,
@@ -256,7 +256,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
                 )
         return us
 
-    def update_data(self, userservice_instance: 'services.UserService'):
+    def update_data(self, userservice_instance: 'services.UserService') -> None:
         """
         Updates the data field with the serialized :py:class:uds.core.services.UserDeployment
 
@@ -370,7 +370,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         """
         return bool(self.get_osmanager())
 
-    def transforms_user_or_password_for_service(self):
+    def transforms_user_or_password_for_service(self) -> bool:
         """
         If the os manager changes the username or the password, this will return True
         """

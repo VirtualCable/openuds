@@ -30,6 +30,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import argparse
 import logging
 import typing
 import collections.abc
@@ -45,7 +46,7 @@ logger = logging.getLogger(__name__)
 class Command(BaseCommand):
     help = "Show current PUBLIC configuration of UDS broker (passwords are not shown)"
 
-    def add_arguments(self, parser) -> None:
+    def add_arguments(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument(
             '--csv',
             action='store_true',
@@ -61,7 +62,7 @@ class Command(BaseCommand):
             help='Shows configuration in YAML format',
         )
 
-    def handle(self, *args, **options) -> None:
+    def handle(self, *args: typing.Any, **options: typing.Any) -> None:
         logger.debug("Show settings")
         config.GlobalConfig.initialize()
         try:

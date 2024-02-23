@@ -29,14 +29,14 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 
 # from django.views.decorators.cache import cache_page
 from uds.core.util.config import GlobalConfig
 
 
 # @cache_page(3600, key_prefix='custom', cache='memory')
-def custom(request, component):
+def custom(request: 'HttpRequest', component: str) -> 'HttpResponse':
     content_type = 'text/plain'
     value = ''
 

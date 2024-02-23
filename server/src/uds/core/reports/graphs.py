@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+# pyright: reportUnknownMemberType=false
 
 import logging
 import io
@@ -38,7 +39,7 @@ import collections.abc
 
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
-from matplotlib import cm
+from matplotlib import colormaps
 
 # This must be imported to allow 3d projections
 from mpl_toolkits.mplot3d.axes3d import Axes3D  # pylint: disable=unused-import
@@ -81,10 +82,10 @@ def bar_chart(
     ys = data['y']
 
     width = 0.60
-    fig: Figure = Figure(figsize=(size[0], size[1]), dpi=size[2])  # type: ignore
+    fig: Figure = Figure(figsize=(size[0], size[1]), dpi=size[2])
     FigureCanvas(fig)  # Stores canvas on fig.canvas
 
-    axis = fig.add_subplot(1, 1, 1)  # type: ignore
+    axis = fig.add_subplot(1, 1, 1)
     axis.grid(color='r', linestyle='dotted', linewidth=0.1, alpha=0.5)
 
     bottom = np.zeros(len(ys[0]['data']))
@@ -138,10 +139,10 @@ def line_chart(
     x = data['x']
     y = data['y']
 
-    fig: Figure = Figure(figsize=(size[0], size[1]), dpi=size[2])  # type: ignore
+    fig: Figure = Figure(figsize=(size[0], size[1]), dpi=size[2])
     FigureCanvas(fig)  # Stores canvas on fig.canvas
 
-    axis = fig.add_subplot(111)  # type: ignore
+    axis = fig.add_subplot(111)
     axis.grid(color='r', linestyle='dotted', linewidth=0.1, alpha=0.5)
 
     for i in y:
@@ -209,25 +210,18 @@ def surface_chart(
     logger.debug('Y\': %s', y)
     logger.debug('Z\': %s', z)
 
-    fig: Figure = Figure(figsize=(size[0], size[1]), dpi=size[2])  # type: ignore
+    fig: Figure = Figure(figsize=(size[0], size[1]), dpi=size[2])
     FigureCanvas(fig)  # Stores canvas on fig.canvas
 
-    axis: typing.Any = fig.add_subplot(1, 1, 1, projection='3d')  # type: ignore
+    axis: typing.Any = fig.add_subplot(1, 1, 1, projection='3d')
     # axis.grid(color='r', linestyle='dotted', linewidth=0.1, alpha=0.5)
 
+    cmap = colormaps['coolwarm']
+
     if data.get('wireframe', False):
-        axis.plot_wireframe(
-            x,
-            y,
-            z,
-            rstride=1,
-            cstride=1,
-            cmap=cm.coolwarm,  # type: ignore  # it's there, but maybe it's created dynamically
-        )
+        axis.plot_wireframe(x, y, z, rstride=1, cstride=1, cmap=cmap)
     else:
-        axis.plot_surface(
-            x, y, z, rstride=1, cstride=1, cmap=cm.coolwarm  # type: ignore  # pylint: disable=no-member
-        )
+        axis.plot_surface(x, y, z, rstride=1, cstride=1, cmap=cmap)
 
     axis.set_title(data.get('title', ''))
     axis.set_xlabel(data['xlabel'])

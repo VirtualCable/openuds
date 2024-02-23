@@ -69,9 +69,9 @@ class ManagedObjectModel(UUIDModel):
         """
         Returns an environment valid for the record this object represents
         """
-        return Environment.environment_for_table_record(self._meta.verbose_name, self.id)  # type: ignore  # pylint: disable=no-member
+        return Environment.environment_for_table_record(self._meta.verbose_name or self._meta.db_table, self.id)
 
-    def deserialize(self, obj: Module, values: typing.Optional[collections.abc.Mapping[str, str]]):
+    def deserialize(self, obj: Module, values: typing.Optional[collections.abc.Mapping[str, str]]) -> None:
         """
         Conditionally deserializes obj if not initialized via user interface and data holds something
         """

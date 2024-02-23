@@ -65,7 +65,9 @@ if typing.TYPE_CHECKING:
     from cryptography.hazmat.primitives.asymmetric.dh import DHPrivateKey
 
 # Note the REAL BIG importance of the SECRET_KEY. if lost, all encripted stored data (almost all fields) will be lost...
-UDSK: typing.Final[bytes] = settings.SECRET_KEY[8:24].encode()  # UDS key, new, for AES256, so it's 16 bytes length
+UDSK: typing.Final[bytes] = settings.SECRET_KEY[
+    8:24
+].encode()  # UDS key, new, for AES256, so it's 16 bytes length
 
 
 class CryptoManager(metaclass=singleton.Singleton):
@@ -84,15 +86,27 @@ class CryptoManager(metaclass=singleton.Singleton):
 
     @staticmethod
     def aes_key(key: typing.Union[str, bytes], length: int) -> bytes:
-        if isinstance(key, str):
-            bkey = key.encode('utf8')
-        else:
-            bkey = key
+        """
+        Generate an AES key of the specified length using the provided key.
 
-        while len(key) < length:
-            key += key  # type: ignore  # Pylance complains about types??
+        This method is used to generate an AES key of the specified length using the provided key.
 
-        kl: list[int] = list(key)  # type: ignore  # Pylance complains about types??
+        Args:
+            key (Union[str, bytes]): The key used to generate the AES key. It can be either a string or bytes.
+            length (int): The desired length of the AES key.
+
+        Returns:
+            bytes: The generated AES key.
+
+        Raises:
+            ValueError: If the length is not a positive integer.
+
+        """
+        bkey: bytes = key.encode() if isinstance(key, str) else key
+        while len(bkey) < length:
+            bkey += bkey
+
+        kl: list[int] = list(bkey)
         pos = 0
         while len(kl) > length:
             kl[pos] ^= kl[length]
@@ -184,7 +198,7 @@ class CryptoManager(metaclass=singleton.Singleton):
         mult = len(value) // len(key) + 1
         value_array = array.array('B', value)
         # Ensure key array is at least as long as value_array
-        key_array = array.array('B', key * mult)  # type: ignore  # Pylance complains about types??
+        key_array = array.array('B', key * mult)
         # We must return binary in xor, because result is in fact binary
         return array.array('B', (value_array[i] ^ key_array[i] for i in range(len(value_array)))).tobytes()
 
@@ -272,7 +286,7 @@ class CryptoManager(metaclass=singleton.Singleton):
             try:
                 ph.verify(hashValue[8:], value)
                 return True
-            except Exception as e:
+            except Exception:
                 return False  # Verify will raise an exception if not valid
 
         # Old sha1

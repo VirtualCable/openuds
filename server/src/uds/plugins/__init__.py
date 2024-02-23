@@ -34,7 +34,7 @@ from uds.core.util import modfinder
 logger = logging.getLogger(__name__)
 
 
-def __load_plugins():
+def __load_plugins() -> None:
     """
     This imports all packages that are descendant of this package, and, after that,
     it register all subclases of service provider as

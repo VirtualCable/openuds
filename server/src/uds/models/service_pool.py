@@ -71,7 +71,7 @@ logger = logging.getLogger(__name__)
 
 
 # pylint: disable=too-many-public-methods
-class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
+class ServicePool(UUIDModel, TaggingMixin):
     """
     A deployed service is the Service produced element that is assigned finally to an user (i.e. a Virtual Machine, etc..)
     """
@@ -176,7 +176,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         Returns an environment valid for the record this object represents
         """
-        return Environment.environment_for_table_record(self._meta.verbose_name, self.id)  # type: ignore
+        return Environment.environment_for_table_record(self._meta.verbose_name or self._meta.db_table, self.id)
 
     def active_publication(self) -> typing.Optional['ServicePoolPublication']:
         """
@@ -303,12 +303,9 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         # Return the date
         try:
-            found = typing.cast(
-                'UserService',
-                self.assigned_user_services().filter(user=forUser, state__in=types.states.State.VALID_STATES)[
-                    0
-                ],  # type: ignore  # Slicing is not supported by pylance right now
-            )
+            found = self.assigned_user_services().filter(
+                user=forUser, state__in=types.states.State.VALID_STATES
+            )[0]  # Raises exception if at least one is not found
             if activePub and found.publication and activePub.id != found.publication.id:
                 ret = self.get_value('toBeReplacedIn')
                 if ret:
@@ -370,7 +367,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         return int((deadline - check_datetime).total_seconds())
 
-    def set_value(self, name: str, value: typing.Any):
+    def set_value(self, name: str, value: typing.Any) -> None:
         """
         Stores a value inside custom storage
 
@@ -431,7 +428,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         self,
         activePub: typing.Optional['ServicePoolPublication'],
         skipAssigned: bool = False,
-    ):
+    ) -> None:
         """
         Used when a new publication is finished.
 
@@ -719,7 +716,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
             ]
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             f'Service pool {self.name}({self.id}) with {self.initial_srvs}'
             f' as initial, {self.cache_l1_srvs} as L1 cache, {self.cache_l2_srvs}'

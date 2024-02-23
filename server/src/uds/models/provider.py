@@ -49,7 +49,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
+class Provider(ManagedObjectModel, TaggingMixin):
     """
     A Provider represents the Service provider itself, (i.e. a KVM Server or a Terminal Server)
     """
@@ -60,7 +60,7 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
     # objects: 'models.manager.Manager[Provider]'
     services: 'models.manager.RelatedManager[Service]'
 
-    class Meta(ManagedObjectModel.Meta):  # pylint: disable=too-few-public-methods
+    class Meta(ManagedObjectModel.Meta):  # pyright: ignore
         """
         Meta class to declare default order
         """
@@ -103,7 +103,7 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
         return f'Provider {self.name} of type {self.data_type} (id:{self.id})'
 
     @staticmethod
-    def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def pre_delete(sender: typing.Any, **kwargs: typing.Any) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Provider class "Destroy" before deleting it from database.
 

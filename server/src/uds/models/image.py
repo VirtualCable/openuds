@@ -80,7 +80,7 @@ class Image(UUIDModel):
     metaPools: 'models.manager.RelatedManager[MetaPool]'
     servicesPoolsGroup: 'models.manager.RelatedManager[ServicePoolGroup]'
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:  # pyright: ignore
         """
         Meta class to declare the name of the table at database
         """
@@ -114,7 +114,7 @@ class Image(UUIDModel):
         """
         Returns the value of the image (data) as a base 64 encoded string
         """
-        return base64.b64encode(typing.cast(bytes, self.data)).decode()
+        return base64.b64encode(self.data).decode()
 
     @property
     def thumb64(self) -> str:
@@ -157,12 +157,10 @@ class Image(UUIDModel):
                 data = value
             elif isinstance(value, str):
                 data = base64.b64decode(value)
-            elif isinstance(value, PIL.Image.Image):
+            else:
                 with io.BytesIO() as output:
                     value.save(output, format='PNG')
                     data = output.getvalue()
-            else:
-                raise ValueError('Invalid image type')
 
             self.width, self.height, self.data = Image.prepare_for_db(data)
 
@@ -197,9 +195,9 @@ class Image(UUIDModel):
     def thumbnail_as_response(self) -> HttpResponse:
         return HttpResponse(self.thumb, content_type='image/png')
 
-    def save(self, *args, **kwargs):
+    def save(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         self.stamp = sql_datetime()
         return super().save(*args, **kwargs)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'Image Id: {self.id}, Name: {self.name}, Size: {self.size}, Length: {len(self.data)} bytes, Thumb length: {len(self.thumb)} bytes'

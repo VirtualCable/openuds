@@ -88,12 +88,12 @@ class Account(UUIDModel, TaggingMixin):
             return None
 
         tmp = userService.accounting
-        tmp.user_service = None  # type: ignore
+        tmp.user_service = None 
         tmp.end = sql_datetime()
         tmp.save()
         return tmp
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:  # pyright: ignore
         """
         Meta class to declare the name of the table at database
         """
@@ -101,5 +101,5 @@ class Account(UUIDModel, TaggingMixin):
         db_table = 'uds_accounts'
         app_label = 'uds'
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'Account id {self.id}, name {self.name}'

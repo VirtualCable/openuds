@@ -39,7 +39,7 @@ class SessionSerializer:
     """
     Serializer for django sessions.
     """
-    def dumps(self, data) -> bytes:
+    def dumps(self, data: typing.Any) -> bytes:
         """
         Serialize data for storage in a session.
         """

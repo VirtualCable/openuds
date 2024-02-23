@@ -12,13 +12,13 @@ CONVERSORS: typing.Final[dict[typing.Any, collections.abc.Callable[[typing.Type[
     typing.Optional[str]: lambda x: str(x) if x is not None else None,  # pyright: ignore
     bool: lambda x: bool(x),
     typing.Optional[bool]: lambda x: bool(x) if x is not None else None,  # pyright: ignore
-    int: lambda x: int(x or '0'),  # pyright: ignore
-    typing.Optional[int]: lambda x: int(x or '0') if x is not None else None,  # pyright: ignore
-    float: lambda x: float(x or '0'),  # pyright: ignore
-    typing.Optional[float]: lambda x: float(x or '0') if x is not None else None,  # pyright: ignore
-    datetime.datetime: lambda x: datetime.datetime.fromtimestamp(int(x)),  # pyright: ignore
+    int: lambda x: int(x or '0'),  # type: ignore
+    typing.Optional[int]: lambda x: int(x or '0') if x is not None else None,  # type: ignore
+    float: lambda x: float(x or '0'),  # type: ignore
+    typing.Optional[float]: lambda x: float(x or '0') if x is not None else None,  # type: ignore
+    datetime.datetime: lambda x: datetime.datetime.fromtimestamp(int(x)),  # type: ignore
     typing.Optional[datetime.datetime]: lambda x: (
-        datetime.datetime.fromtimestamp(int(x)) if x is not None else None  # pyright: ignore
+        datetime.datetime.fromtimestamp(int(x)) if x is not None else None  # type: ignore
     ),
 }
 
@@ -31,7 +31,7 @@ def _from_dict(
     extra = extra or {}
     return type(
         **{
-            k: CONVERSORS.get(type.__annotations__.get(k, str), lambda x: x)(
+            k: typing.cast(typing.Callable[..., typing.Any], CONVERSORS.get(type.__annotations__.get(k, str), lambda x: x))(
                 dictionary.get(k, extra.get(k, None))
             )
             for k in type._fields  # type: ignore

@@ -13,12 +13,15 @@ class Singleton(type):
 
     _instance: typing.Optional[typing.Any]
 
-    # We use __init__ so we customise the created class from this metaclass
-    def __init__(cls, *args, **kwargs) -> None:
+    # Ensure "_instance" is not inherited
+    def __init__(cls: 'Singleton', *args: typing.Any, **kwargs: typing.Any) -> None:
+        """
+        Initialize the Singleton metaclass for each class that uses it
+        """
         cls._instance = None
         super().__init__(*args, **kwargs)
 
-    def __call__(cls, *args, **kwargs) -> typing.Any:
+    def __call__(cls: 'Singleton', *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
         if cls._instance is None:
             cls._instance = super().__call__(*args, **kwargs)
         return cls._instance

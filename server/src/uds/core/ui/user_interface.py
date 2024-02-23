@@ -1285,7 +1285,7 @@ class gui:
             if not isinstance(value, collections.abc.Iterable):
                 value = [gui.as_str(value)]
             else:  # Is an iterable
-                value = [gui.as_str(i) for i in typing.cast(collections.abc.Iterable[typing.Any], value)]
+                value = [gui.as_str(i) for i in value]  # pyright: ignore[reportUnknownVariableType]
             super()._set_value(value)
 
         def as_list(self) -> list[str]:
@@ -1368,7 +1368,7 @@ class gui:
             if not isinstance(value, collections.abc.Iterable):
                 value = [gui.as_str(value)]
             else:
-                value = [gui.as_str(i) for i in typing.cast(collections.abc.Iterable[typing.Any], value)]
+                value = [gui.as_str(i) for i in value]  # pyright: ignore[reportUnknownVariableType]
             super()._set_value(value)
 
         def as_list(self) -> list[str]:

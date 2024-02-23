@@ -75,7 +75,7 @@ class Cache(models.Model):
                 if now > v.created + timedelta(seconds=v.validity):
                     v.delete()
 
-    def __str__(self):
+    def __str__(self) -> str:
         if sql_datetime() > (self.created + timedelta(seconds=self.validity)):
             expired = "Expired"
         else:

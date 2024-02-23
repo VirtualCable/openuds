@@ -49,7 +49,7 @@ if typing.TYPE_CHECKING:
     from .authenticator import Authenticator
     
 
-class Network(UUIDModel, TaggingMixin):  # type: ignore
+class Network(UUIDModel, TaggingMixin):
     """
     This model is used for keeping information of networks associated with transports (right now, just transports..)
     """

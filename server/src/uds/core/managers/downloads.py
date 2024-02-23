@@ -37,7 +37,7 @@ import typing
 import collections.abc
 
 from wsgiref.util import FileWrapper
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpRequest
 
 from uds.core.managers.crypto import CryptoManager
 from uds.core.util import singleton
@@ -59,7 +59,8 @@ class DownloadsManager(metaclass=singleton.Singleton):
 
     _downloadables: dict[str, dict[str, str]] = {}
 
-    def __init__(self):
+    def __init__(self) -> None:
+        super().__init__()
         self._downloadables = {}
 
     @staticmethod
@@ -67,7 +68,7 @@ class DownloadsManager(metaclass=singleton.Singleton):
         # Singleton pattern will return always the same instance
         return DownloadsManager()
 
-    def register(self, name: str, comment: str, path: str, mime: str = 'application/octet-stream'):
+    def register(self, name: str, comment: str, path: str, mime: str = 'application/octet-stream') -> None:
         """
         Registers a downloadable file.
         @param name: name shown
@@ -85,7 +86,7 @@ class DownloadsManager(metaclass=singleton.Singleton):
     def downloadables(self) -> dict[str, dict[str, str]]:
         return self._downloadables
 
-    def send(self, request, _id) -> HttpResponse:
+    def send(self, request: 'HttpRequest', _id: str) -> HttpResponse:
         if _id not in self._downloadables:
             logger.error('Downloadable id %s not found in %s!!!', _id, self._downloadables)
             raise Http404
@@ -96,7 +97,7 @@ class DownloadsManager(metaclass=singleton.Singleton):
             self._downloadables[_id]['mime'],
         )
 
-    def _send_file(self, _, name, filename, mime) -> HttpResponse:
+    def _send_file(self, request: 'HttpRequest', name: str, filename: str, mime: str) -> HttpResponse:
         """
         Send a file through Django without loading the whole file into
         memory at once. The FileWrapper will turn the file object into an

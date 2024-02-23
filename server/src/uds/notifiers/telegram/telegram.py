@@ -60,7 +60,7 @@ class Telegram:
 
     def request(
         self,
-        method,
+        method: str,
         params: typing.Optional[dict[str, typing.Any]] = None,
         *,
         stream: bool = False,

@@ -113,7 +113,7 @@ class ServicePoolPublication(UUIDModel):
         """
         Returns an environment valid for the record this object represents
         """
-        return Environment.environment_for_table_record(self._meta.verbose_name, self.id)  # type: ignore
+        return Environment.environment_for_table_record(self._meta.verbose_name or self._meta.db_table, self.id)
 
     def get_instance(self) -> 'services.Publication':
         """
@@ -158,7 +158,7 @@ class ServicePoolPublication(UUIDModel):
             if publication.needs_upgrade():
                 self.update_data(publication)
                 publication.mark_for_upgrade(False)
-                
+
         return publication
 
     def update_data(self, publication_instance: 'services.Publication') -> None:
@@ -196,7 +196,7 @@ class ServicePoolPublication(UUIDModel):
 
         publication_manager().unpublish(self)
 
-    def cancel(self):
+    def cancel(self) -> None:
         """
         Invoques the cancelation of this publication
         """
@@ -226,9 +226,7 @@ class ServicePoolPublication(UUIDModel):
         logger.debug('Deleted publication %s', to_delete)
 
     def __str__(self) -> str:
-        return (
-            f'Publication {self.deployed_service.name}, rev {self.revision}, state {State.from_str(self.state).localized}'
-        )
+        return f'Publication {self.deployed_service.name}, rev {self.revision}, state {State.from_str(self.state).localized}'
 
 
 # Connects a pre deletion signal to Authenticator

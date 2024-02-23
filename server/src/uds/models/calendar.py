@@ -57,7 +57,7 @@ class Calendar(UUIDModel, TaggingMixin):
     calendaraction_set: 'models.manager.RelatedManager[CalendarAction]'
     calendaraccess_set: 'models.manager.RelatedManager[CalendarAccess]'
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:  # pyright: ignore
         """
         Meta class to declare db table
         """
@@ -66,10 +66,10 @@ class Calendar(UUIDModel, TaggingMixin):
         app_label = 'uds'
 
     # Override default save to add uuid
-    def save(self, *args, **kwargs):
+    def save(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         logger.debug('Saving calendar')
 
-        res = UUIDModel.save(self, *args, **kwargs)
+        UUIDModel.save(self, *args, **kwargs)
 
         # Basically, recalculates all related actions next execution time...
         try:
@@ -80,7 +80,5 @@ class Calendar(UUIDModel, TaggingMixin):
         ):  # nosec: catch all, we don't want to fail here (if one action cannot be saved, we don't want to fail all)
             pass
 
-        return res
-
-    def __str__(self):
+    def __str__(self) -> str:
         return f'Calendar "{self.name}" modified on {self.modified}, rules: {self.rules.count()}'

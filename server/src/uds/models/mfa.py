@@ -86,7 +86,7 @@ class MFA(ManagedObjectModel, TaggingMixin):  # type: ignore
         return f'MFA {self.name} of type {self.data_type} (id:{self.id})'
 
     @staticmethod
-    def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def pre_delete(sender: typing.Any, **kwargs: typing.Any) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 

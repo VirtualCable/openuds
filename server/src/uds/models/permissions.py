@@ -113,9 +113,9 @@ class Permissions(UUIDModel):
             q = Q(group=group)
 
         try:
-            existing: Permissions = Permissions.objects.filter(q, object_type=object_type.type, object_id=object_id)[
-                0  # type: ignore  # Slicing is not supported by pylance right now
-            ]
+            existing: Permissions = Permissions.objects.filter(
+                q, object_type=object_type.type, object_id=object_id
+            )[0]
             existing.permission = permission
             existing.save()
             return existing
@@ -158,9 +158,7 @@ class Permissions(UUIDModel):
                 Q(object_type=object_type.type),
                 Q(object_id=None) | Q(object_id=object_id),
                 q,
-            ).order_by('-permission')[
-                0  # type: ignore  # Slicing is not supported by pylance right now
-            ]
+            ).order_by('-permission')[0]
             logger.debug('Got permission %s', perm)
             return PermissionType(perm.permission)
         except Exception:  # DoesNotExists

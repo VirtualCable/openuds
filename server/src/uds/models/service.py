@@ -61,16 +61,20 @@ class ServiceTokenAlias(models.Model):
     This model stores the alias for a service token.
     """
 
-    service = models.ForeignKey('Service', on_delete=models.CASCADE, related_name='aliases')
+    service: 'models.ForeignKey[Service]' = models.ForeignKey(
+        'Service', on_delete=models.CASCADE, related_name='aliases'
+    )
     alias = models.CharField(max_length=64, unique=True)
-    unique_id = models.CharField(max_length=128, default='', db_index=True)  # Used to locate an already created alias for a userService and service
+    unique_id = models.CharField(
+        max_length=128, default='', db_index=True
+    )  # Used to locate an already created alias for a userService and service
 
     def __str__(self) -> str:
-        return str(self.alias)  # pylint complains about CharField
+        return str(self.alias)
 
 
 # pylint: disable=no-member
-class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
+class Service(ManagedObjectModel, TaggingMixin):
     """
     A Service represents an specidied type of service offered to final users,
     with it configuration (i.e. a KVM Base Machine for cloning or a Terminal
@@ -83,14 +87,12 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
 
     max_services_count_type = models.PositiveIntegerField(default=ServicesCountingType.STANDARD)
 
-    _cached_instance: typing.Optional['services.Service'] = None
-
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager["Service"]'
     deployedServices: 'models.manager.RelatedManager[ServicePool]'
     aliases: 'models.manager.RelatedManager[ServiceTokenAlias]'
 
-    class Meta(ManagedObjectModel.Meta):  # pylint: disable=too-few-public-methods
+    class Meta(ManagedObjectModel.Meta):  # pyright: ignore
         """
         Meta class to declare default order and unique multiple field index
         """
@@ -104,7 +106,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         Returns an environment valid for the record this object represents
         """
         return Environment.environment_for_table_record(
-            self._meta.verbose_name,  # type: ignore
+            self._meta.verbose_name or self._meta.db_table,
             self.id,
             {
                 'mac': unique.UniqueMacGenerator,
@@ -130,7 +132,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         """
         if self._cached_instance and values is None:
             # logger.debug('Got cached instance instead of deserializing a new one for {}'.format(self.name))
-            return self._cached_instance
+            return typing.cast('services.Service', self._cached_instance)
 
         prov: 'services.ServiceProvider' = self.provider.get_instance()
         sType = prov.get_service_by_type(self.data_type)
@@ -202,7 +204,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         return f'{self.name} of type {self.data_type} (id:{self.id})'
 
     @staticmethod
-    def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def pre_delete(sender: typing.Any, **kwargs: typing.Any) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 

@@ -147,7 +147,7 @@ class Environment:
         if id_generator_types is None:
             id_generator_types = {}
         name = 't-' + table_name + '-' + record_id
-        id_generators = {}
+        id_generators: dict[str, typing.Any] = {}
         for k, v in id_generator_types.items():
             id_generators[k] = v(name)
         return Environment(name, id_generators)
