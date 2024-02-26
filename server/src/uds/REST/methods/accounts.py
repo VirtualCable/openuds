@@ -64,7 +64,7 @@ class Accounts(ModelHandler):
 
     save_fields = ['name', 'comments', 'tags']
 
-    table_title = typing.cast(str, _('Accounts'))
+    table_title = _('Accounts')
     table_fields = [
         {'name': {'title': _('Name'), 'visible': True}},
         {'comments': {'title': _('Comments')}},

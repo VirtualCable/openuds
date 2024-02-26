@@ -40,6 +40,7 @@ import types
 import typing
 
 from django.http import HttpResponse
+from django.utils.functional import Promise as DjangoPromise
 
 from uds.core import consts
 
@@ -104,12 +105,12 @@ class ContentProcessor:
         """
         if obj is None or isinstance(obj, (bool, int, float, str)):
             return obj
+        
+        if isinstance(obj, DjangoPromise):
+            return str(obj)  # This is for translations
 
         if isinstance(obj, dict):
             return {k: ContentProcessor.process_for_render(v) for k, v in typing.cast(dict[str, typing.Any], obj).items()}
-        
-        if isinstance(obj, str):
-            return obj
         
         if isinstance(obj, bytes):
             return obj.decode('utf-8')

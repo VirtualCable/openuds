@@ -33,6 +33,7 @@ import typing
 import collections.abc
 
 from uds import models
+from uds.core import consts
 
 # Import for REST using this module can access constants easily
 # pylint: disable=unused-import
@@ -84,7 +85,14 @@ def log_operation(
 
     # If a common request, and no error, we don't log it because it's useless and a waste of resources
     if response_code < 400 and any(
-        x in path for x in ('overview', 'tableinfo', 'gui', 'types', 'system')
+        x in path
+        for x in (
+            consts.rest.OVERVIEW,
+            consts.rest.GUI,
+            consts.rest.TABLEINFO,
+            consts.rest.TYPES,
+            consts.rest.SYSTEM,
+        )
     ):
         return
 
@@ -94,8 +102,6 @@ def log_operation(
     log(
         None,  # > None Objects goes to SYSLOG (global log)
         level=level,
-        message=f'{handler.request.ip} [{username}]: [{handler.request.method}/{response_code}] {path}'[
-            :4096
-        ],
+        message=f'{handler.request.ip} [{username}]: [{handler.request.method}/{response_code}] {path}'[:4096],
         source=LogSource.REST,
     )

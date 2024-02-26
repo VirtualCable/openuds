@@ -39,3 +39,5 @@ TYPES: typing.Final[str] = 'types'
 TABLEINFO: typing.Final[str] = 'tableinfo'
 GUI: typing.Final[str] = 'gui'
 LOG: typing.Final[str] = 'log'
+
+SYSTEM: typing.Final[str] = 'system'  # Defined on system class, here for reference

@@ -36,12 +36,21 @@ import pickle  # nosec:  Used with care :)
 import lzma
 import logging
 
+from django.conf import settings
+
 from uds.core.managers.crypto import CryptoManager
 
 logger = logging.getLogger(__name__)
 
-CURRENT_SERIALIZER_VERSION: typing.Final[bytes] = b'v1'
+CURRENT_SERIALIZER_VERSION: typing.Final[bytes] = getattr(settings, 'SERIALIZER_VERSION', 'v0').encode()
+
+SERIALIZERS: typing.Final[collections.abc.Mapping[bytes, collections.abc.Callable[[typing.Any], bytes]]] = {
+    b'v0': lambda x: x,
+    b'v1': CryptoManager().fast_crypt,
+}
+
 DESERIALIZERS: typing.Final[collections.abc.Mapping[bytes, collections.abc.Callable[[bytes], bytes]]] = {
+    b'v0': lambda x: x,
     b'v1': CryptoManager().fast_decrypt,
 }
 
@@ -53,7 +62,9 @@ def serialize(obj: typing.Any) -> bytes:
     # generate pickle dump and encrypt it to keep it safe
     # Compress data using lzma first
 
-    data = CryptoManager().fast_crypt(lzma.compress(pickle.dumps(obj)))  # With latest available protocol
+    data = SERIALIZERS[CURRENT_SERIALIZER_VERSION](
+        lzma.compress(pickle.dumps(obj))
+    )  # Pickle with latest available protocol
     return CURRENT_SERIALIZER_VERSION + data
 
 
