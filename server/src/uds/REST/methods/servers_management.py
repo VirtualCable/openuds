@@ -62,7 +62,7 @@ class ServersTokens(ModelHandler):
     path = 'servers'
     name = 'tokens'
 
-    table_title = typing.cast('str', _('Registered Servers'))
+    table_title = _('Registered Servers')
     table_fields = [
         {'hostname': {'title': _('Hostname')}},
         {'ip': {'title': _('IP')}},
@@ -72,8 +72,8 @@ class ServersTokens(ModelHandler):
         {'stamp': {'title': _('Date'), 'type': 'datetime'}},
     ]
 
-    def item_as_dict(self, item_: 'Model') -> dict[str, typing.Any]:
-        item = typing.cast('models.Server', item_)  # We will receive for sure
+    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
+        item = typing.cast('models.Server', item)  # We will receive for sure
         return {
             'id': item.uuid,
             'name': str(_('Token isued by {} from {}')).format(item.username, item.ip),
@@ -111,8 +111,8 @@ class ServersTokens(ModelHandler):
 class ServersServers(DetailHandler):
     custom_methods = ['maintenance']
 
-    def get_items(self, parent_: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
-        parent = typing.cast('models.ServerGroup', parent_)  # We will receive for sure
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
+        parent = typing.cast('models.ServerGroup', parent)  # We will receive for sure
         try:
             multi = False
             if item is None:
@@ -120,7 +120,7 @@ class ServersServers(DetailHandler):
                 q = parent.servers.all()
             else:
                 q = parent.servers.filter(uuid=process_uuid(item))
-            res = []
+            res: types.rest.ManyItemsDictType = []
             i = None
             for i in q:
                 val = {
@@ -144,7 +144,7 @@ class ServersServers(DetailHandler):
     def get_title(self, parent: 'Model') -> str:
         parent = ensure.is_instance(parent, models.ServerGroup)
         try:
-            return _('Servers of {0}').format(parent.name)
+            return (_('Servers of {0}')).format(parent.name)
         except Exception:
             return str(_('Servers'))
 
@@ -316,7 +316,7 @@ class ServersGroups(ModelHandler):
     name = 'groups'
 
     save_fields = ['name', 'comments', 'type', 'tags']  # Subtype is appended on pre_save
-    table_title = typing.cast(str, _('Servers Groups'))
+    table_title = _('Servers Groups')
     table_fields = [
         {'name': {'title': _('Name')}},
         {'comments': {'title': _('Comments')}},
@@ -338,9 +338,9 @@ class ServersGroups(ModelHandler):
             type_ += '@default'
         kind, subkind = type_.split('@')[:2]
         if kind == types.servers.ServerType.SERVER.name:
-            kind = typing.cast(str, _('Standard'))
+            kind = _('Standard')
         elif kind == types.servers.ServerType.UNMANAGED.name:
-            kind = typing.cast(str, _('Unmanaged'))
+            kind = _('Unmanaged')
         title = _('of type') + f' {subkind.upper()} {kind}'
         return self.add_field(
             self.add_default_fields(

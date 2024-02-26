@@ -88,14 +88,14 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         }
 
     @staticmethod
-    def service_to_dict(item: models.Service, perm: int, full: bool = False) -> dict[str, typing.Any]:
+    def service_to_dict(item: models.Service, perm: int, full: bool = False) -> types.rest.ItemDictType:
         """
         Convert a service db item to a dict for a rest response
         :param item: Service item (db)
         :param full: If full is requested, add "extra" fields to complete information
         """
         itemType = item.get_type()
-        ret_value = {
+        ret_value: dict[str, typing.Any] = {
             'id': item.uuid,
             'name': item.name,
             'tags': [tag.tag for tag in item.tags.all()],
@@ -166,7 +166,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                 service = parent.services.get(uuid=process_uuid(item))
                 service.__dict__.update(fields)
 
-            if service is None:
+            if not service:
                 raise Exception('Cannot create service!')
 
             service.tags.set([models.Tag.objects.get_or_create(tag=val)[0] for val in tags])
@@ -322,11 +322,11 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         except Exception:
             raise self.invalid_item_response() from None
 
-    def servicepools(self, parent: 'Model', item: str) -> typing.Any:
+    def servicepools(self, parent: 'Model', item: str) -> types.rest.ManyItemsDictType:
         parent = ensure.is_instance(parent, models.Provider)
         service = parent.services.get(uuid=process_uuid(item))
         logger.debug('Got parameters for servicepools: %s, %s', parent, item)
-        res = []
+        res: types.rest.ManyItemsDictType = []
         for i in service.deployedServices.all():
             try:
                 self.ensure_has_access(

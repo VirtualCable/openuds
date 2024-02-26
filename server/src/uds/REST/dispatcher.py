@@ -167,12 +167,9 @@ class Dispatcher(View):  # type: ignore
                 content_type="text/plain",
             )
         except AttributeError:
-            allowedMethods = []
-            for n in ['get', 'post', 'put', 'delete']:
-                if hasattr(handler, n):
-                    allowedMethods.append(n)
+            allowed_methods: list[str] = [n for n in ['get', 'post', 'put', 'delete'] if hasattr(handler, n)]
             log.log_operation(handler, 405, log.LogLevel.ERROR)
-            return http.HttpResponseNotAllowed(allowedMethods, content_type="text/plain")
+            return http.HttpResponseNotAllowed(allowed_methods, content_type="text/plain")
         except exceptions.rest.AccessDenied:
             log.log_operation(handler, 403, log.LogLevel.ERROR)
             return http.HttpResponseForbidden('access denied', content_type="text/plain")

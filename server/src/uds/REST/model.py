@@ -139,7 +139,7 @@ class BaseModelHandler(Handler):
             guiDesc['order'] = field.get('order', 0)
             guiDesc['label'] = field.get('label', field['name'])
 
-            v = {
+            v: dict[str, typing.Any] = {
                 'name': field.get('name', ''),
                 'value': field.get('value', ''),
                 'gui': guiDesc,
@@ -289,7 +289,7 @@ class BaseModelHandler(Handler):
             icon=type_.icon64().replace('\n', ''),
         ).as_dict(**self.type_info(type_))
         if hasattr(type_, 'group'):
-            res['group'] = _(type_.group)  # Add group info is it is contained
+            res['group'] = getattr(type_, 'group')  # Add group info is it is contained
         return res
 
     def process_table_fields(
@@ -830,10 +830,10 @@ class ModelHandler(BaseModelHandler):
             return data
 
         # Filtering a non iterable (list or tuple)
-        if not isinstance(data, (list, tuple, GeneratorType)):
+        if not isinstance(data, collections.abc.Iterable):
             return data
 
-        logger.debug('data: %s, fltr: %s', data, self.fltr)
+        logger.debug('data: %s, fltr: %s', typing.cast(typing.Any, data), self.fltr)
         try:
             fld, pattern = self.fltr.split('=')
             s, e = '', ''
@@ -846,15 +846,19 @@ class ModelHandler(BaseModelHandler):
 
             r = re.compile(s + fnmatch.translate(pattern) + e, re.RegexFlag.IGNORECASE)
 
-            def fltr_function(item: collections.abc.MutableMapping[str, typing.Any]) -> bool:
+            def fltr_function(item: typing.Any) -> bool:
+                if not isinstance(item, dict):
+                    return False
                 try:
-                    if fld not in item or r.match(item[fld]) is None:
+                    if fld not in item or r.match(typing.cast(dict[str, typing.Any], item)[fld]) is None:
                         return False
                 except Exception:
                     return False
                 return True
 
-            res = list(filter(fltr_function, data))
+            res: list[dict[str, typing.Any]] = list(
+                filter(fltr_function, typing.cast(collections.abc.Iterable[dict[str, typing.Any]], data))
+            )
 
             logger.debug('After filtering: %s', res)
             return res
@@ -1048,9 +1052,7 @@ class ModelHandler(BaseModelHandler):
                 raise self.invalid_request_response()
             try:
                 # DB maybe case sensitive??, anyway, uuids are stored in lowercase
-                item = self.model.objects.get(
-                    uuid=self._args[0].lower()
-                )
+                item = self.model.objects.get(uuid=self._args[0].lower())
                 return self.get_logs(item)
             except Exception as e:
                 raise self.invalid_item_response() from e

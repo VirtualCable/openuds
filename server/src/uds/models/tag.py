@@ -99,7 +99,7 @@ class Tag(UUIDModel):
 
 
 class TaggingMixin(models.Model):
-    tags: 'models.ManyToManyField[models.Model, TaggingMixin]' = models.ManyToManyField(Tag)
+    tags: 'models.ManyToManyField[Tag, TaggingMixin]' = models.ManyToManyField(Tag)
 
     class Meta:  # pylint: disable=too-few-public-methods
         abstract = True

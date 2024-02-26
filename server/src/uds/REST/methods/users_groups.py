@@ -396,7 +396,7 @@ class Groups(DetailHandler):
 
     def get_types(self, parent: 'Model', for_type: typing.Optional[str]) -> collections.abc.Iterable[types.rest.TypeInfoDict]:
         parent = ensure.is_instance(parent, Authenticator)
-        tDct = {
+        types_dict: dict[str, dict[str, str]] = {
             'group': {'name': _('Group'), 'description': _('UDS Group')},
             'meta': {'name': _('Meta group'), 'description': _('UDS Meta Group')},
         }
@@ -407,7 +407,7 @@ class Groups(DetailHandler):
                 'description': v['description'],
                 'icon': '',
             }
-            for k, v in tDct.items()
+            for k, v in types_dict.items()
         ]
 
         if for_type is None:

@@ -33,16 +33,8 @@ import typing
 import dataclasses
 import collections.abc
 
-from click import group
 
-class TypeInfoDict(typing.TypedDict):
-    name: str
-    type: str
-    description: str
-    icon: str
-    
-    group: typing.NotRequired[str]
-
+TypeInfoDict = dict[str, typing.Any]  # Alias for type info dict
 
 @dataclasses.dataclass
 class TypeInfo:
@@ -51,22 +43,24 @@ class TypeInfo:
     description: str
     icon: str
 
-    def as_dict(self, group: typing.Optional[str] = None) -> TypeInfoDict:
-        res: TypeInfoDict = {
+    def as_dict(self, **kwargs: typing.Any) -> TypeInfoDict:
+        res: dict[str, typing.Any] = {
             'name': self.name,
             'type': self.type,
             'description': self.description,
             'icon': self.icon,
         }
-        if group is not None:
-            res['group'] = group
+        res.update(kwargs)
+
         return res
-        
+
+
 # This is a named tuple for convenience, and must be
 # compatible with tuple[str, bool] (name, needs_parent)
 class ModelCustomMethod(typing.NamedTuple):
     name: str
     needs_parent: bool = True
+
 
 # Alias for item type
 ItemDictType = dict[str, typing.Any]
