@@ -39,7 +39,7 @@ from django.conf import settings
 from uds.core.util import ensure
 
 class GuiTest(UDSTestCase):
-    def test_globals(self):
+    def test_globals(self) -> None:
         self.assertEqual(UDSK, settings.SECRET_KEY[8:24].encode())
         self.assertEqual(UDSB, b'udsprotect')
 

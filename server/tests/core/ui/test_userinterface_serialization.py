@@ -39,7 +39,7 @@ import collections.abc
 from ...utils.test import UDSTestCase
 
 from uds.core import types, consts
-from uds.core.ui.user_interface import gui
+from uds.core.ui.user_interface import UserInterface
 from unittest import mock
 
 from ...fixtures.user_interface import (
@@ -52,7 +52,7 @@ from ...fixtures.user_interface import (
 logger = logging.getLogger(__name__)
 
 
-def old_serialize_form(ui) -> bytes:
+def old_serialize_form(ui: 'UserInterface') -> bytes:
     """
     All values stored at form fields are serialized and returned as a single
     string
@@ -76,7 +76,7 @@ def old_serialize_form(ui) -> bytes:
 
     # Separators for fields, old implementation
     MULTIVALUE_FIELD: typing.Final[bytes] = b'\001'
-    OLD_PASSWORD_FIELD: typing.Final[bytes] = b'\004'
+    # OLD_PASSWORD_FIELD: typing.Final[bytes] = b'\004'
     PASSWORD_FIELD: typing.Final[bytes] = b'\005'
 
     FIELD_SEPARATOR: typing.Final[bytes] = b'\002'
@@ -85,7 +85,7 @@ def old_serialize_form(ui) -> bytes:
     # import inspect
     # logger.debug('Caller is : {}'.format(inspect.stack()))
 
-    arr = []
+    arr: list[bytes] = []
     val: typing.Any
     for k, v in ui._gui.items():
         logger.debug('serializing Key: %s/%s', k, v.value)
@@ -147,7 +147,7 @@ class UserinterfaceTest(UDSTestCase):
         )
         self.assertEqual(ui.date_field.value, DEFAULTS['date_field'], 'date_field')
 
-    def test_old_serialization(self):
+    def test_old_serialization(self) -> None:
         # This test is to ensure that old serialized data can be loaded
         # This data is from a
         ui = TestingUserInterface()
@@ -165,7 +165,7 @@ class UserinterfaceTest(UDSTestCase):
         self.assertEqual(ui, ui3)
         self.ensure_values_fine(ui3)
 
-    def test_new_serialization(self):
+    def test_new_serialization(self) -> None:
         # This test is to ensure that new serialized data can be loaded
         # First
         ui = TestingUserInterface()
@@ -176,7 +176,7 @@ class UserinterfaceTest(UDSTestCase):
         self.assertEqual(ui, ui2)
         self.ensure_values_fine(ui2)
 
-    def test_old_field_name(self):
+    def test_old_field_name(self) -> None:
         # This test is to ensure that new serialized data can be loaded
         # mock logging warning
         ui = TestingUserInterfaceFieldNameOrig()

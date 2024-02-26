@@ -185,7 +185,7 @@ class AutoSerializable(UDSTestCase):
     def test_auto_serializable_base_encrypted(self) -> None:
         self.basic_check(AutoSerializableClass, AutoSerializableEncryptedClass)
 
-    def test_auto_serializable_derived(self):
+    def test_auto_serializable_derived(self) -> None:
         instance = DerivedAutoSerializableClass()
         instance.int_field = 1
         instance.str_field = UNICODE_CHARS
@@ -204,7 +204,7 @@ class AutoSerializable(UDSTestCase):
 
         self.assertEqual(instance, instance2)
 
-    def test_auto_serializable_derived_added(self):
+    def test_auto_serializable_derived_added(self) -> None:
         instance = DerivedAutoSerializableClass2()
         instance.int_field = 1
         instance.str_field = UNICODE_CHARS
@@ -225,7 +225,7 @@ class AutoSerializable(UDSTestCase):
 
         self.assertEqual(instance, instance2)
 
-    def test_auto_serializable_with_missing_fields(self):
+    def test_auto_serializable_with_missing_fields(self) -> None:
         instance = AutoSerializableClass()
         instance.int_field = 1
         instance.str_field = UNICODE_CHARS
@@ -250,7 +250,7 @@ class AutoSerializable(UDSTestCase):
         self.assertEqual(instance2.list_field, [1, 2, 3])
         self.assertEqual(instance2.obj_nt_field, SerializableNamedTuple(2, '3', 4.0))
 
-    def test_auto_serializable_with_added_fields(self):
+    def test_auto_serializable_with_added_fields(self) -> None:
         instance = AutoSerializableClassWithMissingFields()
         instance.int_field = 1
         instance.bool_field = True

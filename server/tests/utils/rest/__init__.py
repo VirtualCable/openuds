@@ -136,11 +136,11 @@ def random_value(
 
 
 class RestStruct:
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: typing.Any) -> None:
         for k, v in kwargs.items():
             setattr(self, k, v)
 
-    def as_dict(self, **kwargs) -> dict[str, typing.Any]:
+    def as_dict(self, **kwargs: typing.Any) -> dict[str, typing.Any]:
         # Use kwargs to override values
         res = {k: kwargs.get(k, getattr(self, k)) for k in self.__annotations__}  # pylint: disable=no-member
         # Remove None values for optional fields
@@ -158,7 +158,7 @@ class RestStruct:
         }
 
     @classmethod
-    def random_create(cls, **kwargs) -> 'RestStruct':
+    def random_create(cls, **kwargs: typing.Any) -> 'RestStruct':
         # Use kwargs to override values
         # Extract type from annotations
         return cls(**{k: random_value(v, kwargs.get(k, None)) for k, v in cls.__annotations__.items()})

@@ -50,7 +50,7 @@ TEST_SERVICES = 5 * 5  # Ensure multiple of 5 for testing
 class HangedCleanerTest(UDSTestCase):
     userServices: list[models.UserService]
 
-    def setUp(self):
+    def setUp(self) -> None:
         config.GlobalConfig.MAX_INITIALIZING_TIME.set(MAX_INIT)
         config.GlobalConfig.MAX_REMOVAL_TIME.set(MAX_INIT)
         HangedCleaner.setup()
@@ -82,7 +82,7 @@ class HangedCleanerTest(UDSTestCase):
             )
             us.save(update_fields=['state', 'os_state', 'state_date'])
 
-    def test_hanged_cleaner(self):
+    def test_hanged_cleaner(self) -> None:
         # At start, there is no "removable" user services
         cleaner = HangedCleaner(Environment.testing_environment())
         cleaner.run()

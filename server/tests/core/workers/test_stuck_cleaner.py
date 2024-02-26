@@ -78,7 +78,7 @@ class StuckCleanerTest(UDSTestCase):
 
             us.save(update_fields=['state_date', 'state', 'os_state'])
 
-    def test_worker_outdated(self):
+    def test_worker_outdated(self) -> None:
         count = UserService.objects.count()
         cleaner = StuckCleaner(Environment.testing_environment())
         cleaner.run()
@@ -86,7 +86,7 @@ class StuckCleanerTest(UDSTestCase):
             UserService.objects.count(), count // 4
         )  # 3/4 of user services should be removed
 
-    def test_worker_not_outdated(self):
+    def test_worker_not_outdated(self) -> None:
         # Fix state_date to be less than 1 day for all user services
         for us in self.userServices:
             us.state_date = datetime.datetime.now() - datetime.timedelta(

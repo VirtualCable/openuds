@@ -51,7 +51,7 @@ class ModelUUIDTest(UDSTestCase):
         self.group = authenticators_fixtures.create_groups(self.auth, 1)[0]
         self.user = authenticators_fixtures.create_users(self.auth, 1, groups=[self.group])[0]
     
-    def test_uuid_lowercase(self):
+    def test_uuid_lowercase(self) -> None:
         """
         Tests that uuids are always lowercase
         """

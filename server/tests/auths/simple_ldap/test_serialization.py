@@ -71,7 +71,7 @@ SERIALIZED_AUTH_DATA: typing.Final[typing.Mapping[str, bytes]] = {
 
 
 class SimpleLdapSerializationTest(UDSTestCase):
-    def check_provider(self, version: str, instance: 'authenticator.SimpleLDAPAuthenticator'):
+    def check_provider(self, version: str, instance: 'authenticator.SimpleLDAPAuthenticator') -> None:
         self.assertEqual(instance.host.as_str(), 'host')
         self.assertEqual(instance.port.as_int(), 166)
         self.assertEqual(instance.use_ssl.as_bool(), True)
@@ -91,14 +91,14 @@ class SimpleLdapSerializationTest(UDSTestCase):
             self.assertEqual(instance.verify_ssl.as_bool(), True)
             self.assertEqual(instance.certificate.as_str(), 'cert')
             
-    def test_unmarshall_all_versions(self):
+    def test_unmarshall_all_versions(self) -> None:
         for v in range(1, len(SERIALIZED_AUTH_DATA) + 1):
             with Environment.temporary_environment() as env:
                 instance = authenticator.SimpleLDAPAuthenticator(environment=env)
                 instance.unmarshal(SERIALIZED_AUTH_DATA['v{}'.format(v)])
                 self.check_provider(f'v{v}', instance)
 
-    def test_marshaling(self):
+    def test_marshaling(self) -> None:
         # Unmarshall last version, remarshall and check that is marshalled using new marshalling format
         LAST_VERSION = 'v{}'.format(len(SERIALIZED_AUTH_DATA))
         with Environment.temporary_environment() as env:

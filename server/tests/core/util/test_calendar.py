@@ -42,7 +42,7 @@ class CalendarTest(UDSTestCase):
     def setUp(self) -> None:
         createCalendars()
 
-    def test_calendar_dayly(self):
+    def test_calendar_dayly(self) -> None:
         cal = Calendar.objects.get(uuid='2cf6846b-d889-57ce-bb35-e647040a95b6')
         chk = calendar.CalendarChecker(cal)
         calendar.CalendarChecker.updates = 0
@@ -94,7 +94,7 @@ class CalendarTest(UDSTestCase):
 
         self.assertEqual(chk.updates, 366)
 
-    def test_calendar_weekly(self):
+    def test_calendar_weekly(self) -> None:
         cal = Calendar.objects.get(uuid='c1221a6d-3848-5fa3-ae98-172662c0f554')
         chk = calendar.CalendarChecker(cal)
         calendar.CalendarChecker.updates = 0
@@ -144,7 +144,7 @@ class CalendarTest(UDSTestCase):
 
         self.assertEqual(chk.updates, 365)
 
-    def test_calendar_monthly(self):
+    def test_calendar_monthly(self) -> None:
         cal = Calendar.objects.get(uuid='353c4cb8-e02d-5387-a18f-f634729fde81')
         chk = calendar.CalendarChecker(cal)
         calendar.CalendarChecker.updates = 0
@@ -186,7 +186,7 @@ class CalendarTest(UDSTestCase):
 
         self.assertEqual(chk.updates, 730)
 
-    def test_calendar_weekdays(self):
+    def test_calendar_weekdays(self) -> None:
         cal = Calendar.objects.get(uuid='bccfd011-605b-565f-a08e-80bf75114dce')
         chk = calendar.CalendarChecker(cal)
         calendar.CalendarChecker.updates = 0
@@ -229,7 +229,7 @@ class CalendarTest(UDSTestCase):
 
         self.assertEqual(chk.updates, 730)
 
-    def test_calendar_durations(self):
+    def test_calendar_durations(self) -> None:
         cal = Calendar.objects.get(uuid='60160f94-c8fe-5fdc-bbbe-325010980106')
         chk = calendar.CalendarChecker(cal)
 

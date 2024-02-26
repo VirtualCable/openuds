@@ -773,7 +773,7 @@ class gui:
             return self.as_date()
 
         @value.setter
-        def value(self, value: datetime.date) -> None:
+        def value(self, value: datetime.date|str) -> None:
             self._set_value(value)
 
         def gui_description(self) -> dict[str, typing.Any]:

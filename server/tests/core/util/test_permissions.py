@@ -35,6 +35,8 @@ import typing
 import collections.abc
 import uds.core.types.permissions
 
+from django.db.models import Model
+
 from uds.core.util import permissions
 from uds.core.util import objtype
 from uds import models
@@ -62,9 +64,7 @@ class PermissionsTest(UDSTestCase):
     def setUp(self) -> None:
         self.authenticator = authenticators_fixtures.create_authenticator()
         self.groups = authenticators_fixtures.create_groups(self.authenticator)
-        self.users = authenticators_fixtures.create_users(
-            self.authenticator, groups=self.groups
-        )
+        self.users = authenticators_fixtures.create_users(self.authenticator, groups=self.groups)
         self.admins = authenticators_fixtures.create_users(
             self.authenticator, is_admin=True, groups=self.groups
         )
@@ -83,98 +83,54 @@ class PermissionsTest(UDSTestCase):
 
         self.network = network_fixtures.createNetwork()
 
-    def doTestUserPermissions(self, obj, user: models.User):
-        permissions.add_user_permission(
-            user, obj, uds.core.types.permissions.PermissionType.NONE
-        )
+    def doTestUserPermissions(self, obj: 'Model', user: models.User) -> None:
+        permissions.add_user_permission(user, obj, uds.core.types.permissions.PermissionType.NONE)
         self.assertEqual(models.Permissions.objects.count(), 1)
         perm = models.Permissions.objects.all()[0]
         self.assertEqual(perm.object_type, objtype.ObjectType.from_model(obj).type)
         self.assertEqual(perm.object_id, obj.pk)
         self.assertEqual(perm.permission, uds.core.types.permissions.PermissionType.NONE)
-        self.assertTrue(
-            permissions.has_access(
-                user, obj, uds.core.types.permissions.PermissionType.NONE
-            )
-        )
+        self.assertTrue(permissions.has_access(user, obj, uds.core.types.permissions.PermissionType.NONE))
         self.assertEqual(
-            permissions.has_access(
-                user, obj, uds.core.types.permissions.PermissionType.READ
-            ),
+            permissions.has_access(user, obj, uds.core.types.permissions.PermissionType.READ),
             user.is_admin,
         )
         self.assertEqual(
-            permissions.has_access(
-                user, obj, uds.core.types.permissions.PermissionType.MANAGEMENT
-            ),
+            permissions.has_access(user, obj, uds.core.types.permissions.PermissionType.MANAGEMENT),
             user.is_admin,
         )
         self.assertEqual(
-            permissions.has_access(
-                user, obj, uds.core.types.permissions.PermissionType.ALL
-            ),
+            permissions.has_access(user, obj, uds.core.types.permissions.PermissionType.ALL),
             user.is_admin,
         )
 
         # Add a new permission, must overwrite the previous one
-        permissions.add_user_permission(
-            user, obj, uds.core.types.permissions.PermissionType.ALL
-        )
+        permissions.add_user_permission(user, obj, uds.core.types.permissions.PermissionType.ALL)
         self.assertEqual(models.Permissions.objects.count(), 1)
         perm = models.Permissions.objects.all()[0]
         self.assertEqual(perm.object_type, PermissionsTest.getObjectType(obj))
         self.assertEqual(perm.object_id, obj.pk)
         self.assertEqual(perm.permission, uds.core.types.permissions.PermissionType.ALL)
-        self.assertTrue(
-            permissions.has_access(
-                user, obj, uds.core.types.permissions.PermissionType.NONE
-            )
-        )
-        self.assertTrue(
-            permissions.has_access(
-                user, obj, uds.core.types.permissions.PermissionType.READ
-            )
-        )
-        self.assertTrue(
-            permissions.has_access(
-                user, obj, uds.core.types.permissions.PermissionType.MANAGEMENT
-            )
-        )
-        self.assertTrue(
-            permissions.has_access(
-                user, obj, uds.core.types.permissions.PermissionType.ALL
-            )
-        )
+        self.assertTrue(permissions.has_access(user, obj, uds.core.types.permissions.PermissionType.NONE))
+        self.assertTrue(permissions.has_access(user, obj, uds.core.types.permissions.PermissionType.READ))
+        self.assertTrue(permissions.has_access(user, obj, uds.core.types.permissions.PermissionType.MANAGEMENT))
+        self.assertTrue(permissions.has_access(user, obj, uds.core.types.permissions.PermissionType.ALL))
 
         # Again, with read
-        permissions.add_user_permission(
-            user, obj, uds.core.types.permissions.PermissionType.READ
-        )
+        permissions.add_user_permission(user, obj, uds.core.types.permissions.PermissionType.READ)
         self.assertEqual(models.Permissions.objects.count(), 1)
         perm = models.Permissions.objects.all()[0]
         self.assertEqual(perm.object_type, PermissionsTest.getObjectType(obj))
         self.assertEqual(perm.object_id, obj.pk)
         self.assertEqual(perm.permission, uds.core.types.permissions.PermissionType.READ)
-        self.assertTrue(
-            permissions.has_access(
-                user, obj, uds.core.types.permissions.PermissionType.NONE
-            )
-        )
-        self.assertTrue(
-            permissions.has_access(
-                user, obj, uds.core.types.permissions.PermissionType.READ
-            )
-        )
+        self.assertTrue(permissions.has_access(user, obj, uds.core.types.permissions.PermissionType.NONE))
+        self.assertTrue(permissions.has_access(user, obj, uds.core.types.permissions.PermissionType.READ))
         self.assertEqual(
-            permissions.has_access(
-                user, obj, uds.core.types.permissions.PermissionType.MANAGEMENT
-            ),
+            permissions.has_access(user, obj, uds.core.types.permissions.PermissionType.MANAGEMENT),
             user.is_admin,
         )
         self.assertEqual(
-            permissions.has_access(
-                user, obj, uds.core.types.permissions.PermissionType.ALL
-            ),
+            permissions.has_access(user, obj, uds.core.types.permissions.PermissionType.ALL),
             user.is_admin,
         )
 
@@ -182,85 +138,47 @@ class PermissionsTest(UDSTestCase):
         obj.delete()
         self.assertEqual(models.Permissions.objects.count(), 0)
 
-    def doTestGroupPermissions(self, obj, user: models.User):
+    def doTestGroupPermissions(self, obj: 'Model', user: models.User):
         group = user.groups.all()[0]
 
-        permissions.add_group_permission(
-            group, obj, uds.core.types.permissions.PermissionType.NONE
-        )
+        permissions.add_group_permission(group, obj, uds.core.types.permissions.PermissionType.NONE)
         self.assertEqual(models.Permissions.objects.count(), 1)
         perm = models.Permissions.objects.all()[0]
         self.assertEqual(perm.object_type, PermissionsTest.getObjectType(obj))
         self.assertEqual(perm.object_id, obj.pk)
         self.assertEqual(perm.permission, uds.core.types.permissions.PermissionType.NONE)
-        self.assertTrue(
-            permissions.has_access(
-                user, obj, uds.core.types.permissions.PermissionType.NONE
-            )
-        )
+        self.assertTrue(permissions.has_access(user, obj, uds.core.types.permissions.PermissionType.NONE))
         # Admins has all permissions ALWAYS
         self.assertEqual(
-            permissions.has_access(
-                user, obj, uds.core.types.permissions.PermissionType.READ
-            ),
+            permissions.has_access(user, obj, uds.core.types.permissions.PermissionType.READ),
             user.is_admin,
         )
         self.assertEqual(
-            permissions.has_access(
-                user, obj, uds.core.types.permissions.PermissionType.ALL
-            ),
+            permissions.has_access(user, obj, uds.core.types.permissions.PermissionType.ALL),
             user.is_admin,
         )
 
-        permissions.add_group_permission(
-            group, obj, uds.core.types.permissions.PermissionType.ALL
-        )
+        permissions.add_group_permission(group, obj, uds.core.types.permissions.PermissionType.ALL)
         self.assertEqual(models.Permissions.objects.count(), 1)
         perm = models.Permissions.objects.all()[0]
         self.assertEqual(perm.object_type, PermissionsTest.getObjectType(obj))
         self.assertEqual(perm.object_id, obj.pk)
         self.assertEqual(perm.permission, uds.core.types.permissions.PermissionType.ALL)
-        self.assertTrue(
-            permissions.has_access(
-                user, obj, uds.core.types.permissions.PermissionType.NONE
-            )
-        )
-        self.assertTrue(
-            permissions.has_access(
-                user, obj, uds.core.types.permissions.PermissionType.READ
-            )
-        )
-        self.assertTrue(
-            permissions.has_access(
-                user, obj, uds.core.types.permissions.PermissionType.ALL
-            )
-        )
+        self.assertTrue(permissions.has_access(user, obj, uds.core.types.permissions.PermissionType.NONE))
+        self.assertTrue(permissions.has_access(user, obj, uds.core.types.permissions.PermissionType.READ))
+        self.assertTrue(permissions.has_access(user, obj, uds.core.types.permissions.PermissionType.ALL))
 
         # Add user permission, DB must contain both an return ALL
 
-        permissions.add_user_permission(
-            user, obj, uds.core.types.permissions.PermissionType.READ
-        )
+        permissions.add_user_permission(user, obj, uds.core.types.permissions.PermissionType.READ)
         self.assertEqual(models.Permissions.objects.count(), 2)
         perm = models.Permissions.objects.all()[0]
         self.assertEqual(perm.object_type, PermissionsTest.getObjectType(obj))
         self.assertEqual(perm.object_id, obj.pk)
         self.assertEqual(perm.permission, uds.core.types.permissions.PermissionType.ALL)
-        self.assertTrue(
-            permissions.has_access(
-                user, obj, uds.core.types.permissions.PermissionType.NONE
-            )
-        )
-        self.assertTrue(
-            permissions.has_access(
-                user, obj, uds.core.types.permissions.PermissionType.READ
-            )
-        )
-        self.assertTrue(
-            permissions.has_access(
-                user, obj, uds.core.types.permissions.PermissionType.ALL
-            )
-        )
+        self.assertTrue(permissions.has_access(user, obj, uds.core.types.permissions.PermissionType.NONE))
+        self.assertTrue(permissions.has_access(user, obj, uds.core.types.permissions.PermissionType.READ))
+        self.assertTrue(permissions.has_access(user, obj, uds.core.types.permissions.PermissionType.ALL))
 
         # Remove obj, permissions must have gone away
         obj.delete()
@@ -268,150 +186,126 @@ class PermissionsTest(UDSTestCase):
 
     # Every tests reverses the DB and recalls setUp
 
-    def test_user_auth_permissions_user(self):
+    def test_user_auth_permissions_user(self) -> None:
         self.doTestUserPermissions(self.authenticator, self.users[0])
 
-    def test_user_auth_permissions_admin(self):
+    def test_user_auth_permissions_admin(self) -> None:
         self.doTestUserPermissions(self.authenticator, self.admins[0])
 
-    def test_user_auth_permissions_staff(self):
+    def test_user_auth_permissions_staff(self) -> None:
         self.doTestUserPermissions(self.authenticator, self.staffs[0])
 
-    def test_group_auth_permissions_user(self):
+    def test_group_auth_permissions_user(self) -> None:
         self.doTestGroupPermissions(self.authenticator, self.users[0])
 
-    def test_group_auth_permissions_admin(self):
+    def test_group_auth_permissions_admin(self) -> None:
         self.doTestGroupPermissions(self.authenticator, self.admins[0])
 
-    def test_group_auth_permissions_staff(self):
+    def test_group_auth_permissions_staff(self) -> None:
         self.doTestGroupPermissions(self.authenticator, self.staffs[0])
 
-    def test_user_servicepool_permissions_user(self):
+    def test_user_servicepool_permissions_user(self) -> None:
         self.doTestUserPermissions(self.userService.deployed_service, self.users[0])
 
-    def test_user_servicepool_permissions_admin(self):
+    def test_user_servicepool_permissions_admin(self) -> None:
         self.doTestUserPermissions(self.userService.deployed_service, self.admins[0])
 
-    def test_user_servicepool_permissions_staff(self):
+    def test_user_servicepool_permissions_staff(self) -> None:
         self.doTestUserPermissions(self.userService.deployed_service, self.staffs[0])
 
-    def test_group_servicepool_permissions_user(self):
+    def test_group_servicepool_permissions_user(self) -> None:
         self.doTestGroupPermissions(self.userService.deployed_service, self.users[0])
 
-    def test_group_servicepool_permissions_admin(self):
+    def test_group_servicepool_permissions_admin(self) -> None:
         self.doTestGroupPermissions(self.userService.deployed_service, self.admins[0])
 
-    def test_group_servicepool_permissions_staff(self):
+    def test_group_servicepool_permissions_staff(self) -> None:
         self.doTestGroupPermissions(self.userService.deployed_service, self.staffs[0])
 
-    def test_user_transport_permissions_user(self):
+    def test_user_transport_permissions_user(self) -> None:
         self.doTestUserPermissions(
-            self.userService.deployed_service.transports.first(), self.users[0]
+            typing.cast(models.Transport, self.userService.deployed_service.transports.first()), self.users[0]
         )
 
-    def test_user_transport_permissions_admin(self):
+    def test_user_transport_permissions_admin(self) -> None:
         self.doTestUserPermissions(
-            self.userService.deployed_service.transports.first(), self.admins[0]
+            typing.cast(models.Transport, self.userService.deployed_service.transports.first()), self.admins[0]
         )
 
-    def test_user_transport_permissions_staff(self):
+    def test_user_transport_permissions_staff(self) -> None:
         self.doTestUserPermissions(
-            self.userService.deployed_service.transports.first(), self.staffs[0]
+            typing.cast(models.Transport, self.userService.deployed_service.transports.first()), self.staffs[0]
         )
 
-    def test_group_transport_permissions_user(self):
+    def test_group_transport_permissions_user(self) -> None:
         self.doTestGroupPermissions(
-            self.userService.deployed_service.transports.first(), self.users[0]
+            typing.cast(models.Transport, self.userService.deployed_service.transports.first()), self.users[0]
         )
 
-    def test_group_transport_permissions_admin(self):
+    def test_group_transport_permissions_admin(self) -> None:
         self.doTestGroupPermissions(
-            self.userService.deployed_service.transports.first(), self.admins[0]
+            typing.cast(models.Transport, self.userService.deployed_service.transports.first()), self.admins[0]
         )
 
-    def test_group_transport_permissions_staff(self):
+    def test_group_transport_permissions_staff(self) -> None:
         self.doTestGroupPermissions(
-            self.userService.deployed_service.transports.first(), self.staffs[0]
+            typing.cast(models.Transport, self.userService.deployed_service.transports.first()), self.staffs[0]
         )
 
-    def test_user_service_permissions_user(self):
-        self.doTestUserPermissions(
-            self.userService.deployed_service.service, self.users[0]
-        )
+    def test_user_service_permissions_user(self) -> None:
+        self.doTestUserPermissions(self.userService.deployed_service.service, self.users[0])
 
-    def test_user_service_permissions_admin(self):
-        self.doTestUserPermissions(
-            self.userService.deployed_service.service, self.admins[0]
-        )
+    def test_user_service_permissions_admin(self) -> None:
+        self.doTestUserPermissions(self.userService.deployed_service.service, self.admins[0])
 
-    def test_user_service_permissions_staff(self):
-        self.doTestUserPermissions(
-            self.userService.deployed_service.service, self.staffs[0]
-        )
+    def test_user_service_permissions_staff(self) -> None:
+        self.doTestUserPermissions(self.userService.deployed_service.service, self.staffs[0])
 
-    def test_group_service_permissions_user(self):
-        self.doTestGroupPermissions(
-            self.userService.deployed_service.service, self.users[0]
-        )
+    def test_group_service_permissions_user(self) -> None:
+        self.doTestGroupPermissions(self.userService.deployed_service.service, self.users[0])
 
-    def test_group_service_permissions_admin(self):
-        self.doTestGroupPermissions(
-            self.userService.deployed_service.service, self.admins[0]
-        )
+    def test_group_service_permissions_admin(self) -> None:
+        self.doTestGroupPermissions(self.userService.deployed_service.service, self.admins[0])
 
-    def test_group_service_permissions_staff(self):
-        self.doTestGroupPermissions(
-            self.userService.deployed_service.service, self.staffs[0]
-        )
+    def test_group_service_permissions_staff(self) -> None:
+        self.doTestGroupPermissions(self.userService.deployed_service.service, self.staffs[0])
 
-    def test_user_provider_permissions_user(self):
-        self.doTestUserPermissions(
-            self.userService.deployed_service.service.provider, self.users[0]
-        )
+    def test_user_provider_permissions_user(self) -> None:
+        self.doTestUserPermissions(self.userService.deployed_service.service.provider, self.users[0])
 
-    def test_user_provider_permissions_admin(self):
-        self.doTestUserPermissions(
-            self.userService.deployed_service.service.provider, self.admins[0]
-        )
+    def test_user_provider_permissions_admin(self) -> None:
+        self.doTestUserPermissions(self.userService.deployed_service.service.provider, self.admins[0])
 
-    def test_user_provider_permissions_staff(self):
-        self.doTestUserPermissions(
-            self.userService.deployed_service.service.provider, self.staffs[0]
-        )
+    def test_user_provider_permissions_staff(self) -> None:
+        self.doTestUserPermissions(self.userService.deployed_service.service.provider, self.staffs[0])
 
-    def test_group_provider_permissions_user(self):
-        self.doTestGroupPermissions(
-            self.userService.deployed_service.service.provider, self.users[0]
-        )
+    def test_group_provider_permissions_user(self) -> None:
+        self.doTestGroupPermissions(self.userService.deployed_service.service.provider, self.users[0])
 
-    def test_group_provider_permissions_admin(self):
-        self.doTestGroupPermissions(
-            self.userService.deployed_service.service.provider, self.admins[0]
-        )
+    def test_group_provider_permissions_admin(self) -> None:
+        self.doTestGroupPermissions(self.userService.deployed_service.service.provider, self.admins[0])
 
-    def test_group_provider_permissions_staff(self):
-        self.doTestGroupPermissions(
-            self.userService.deployed_service.service.provider, self.staffs[0]
-        )
+    def test_group_provider_permissions_staff(self) -> None:
+        self.doTestGroupPermissions(self.userService.deployed_service.service.provider, self.staffs[0])
 
-    def test_user_network_permissions_user(self):
+    def test_user_network_permissions_user(self) -> None:
         self.doTestUserPermissions(self.network, self.users[0])
 
-    def test_user_network_permissions_admin(self):
+    def test_user_network_permissions_admin(self) -> None:
         self.doTestUserPermissions(self.network, self.admins[0])
 
-    def test_user_network_permissions_staff(self):
+    def test_user_network_permissions_staff(self) -> None:
         self.doTestUserPermissions(self.network, self.staffs[0])
 
-    def test_group_network_permissions_user(self):
+    def test_group_network_permissions_user(self) -> None:
         self.doTestGroupPermissions(self.network, self.users[0])
 
-    def test_group_network_permissions_admin(self):
+    def test_group_network_permissions_admin(self) -> None:
         self.doTestGroupPermissions(self.network, self.admins[0])
 
-    def test_group_network_permissions_staff(self):
+    def test_group_network_permissions_staff(self) -> None:
         self.doTestGroupPermissions(self.network, self.staffs[0])
 
     @staticmethod
-    def getObjectType(obj: typing.Type) -> int:
+    def getObjectType(obj: typing.Any) -> int:
         return objtype.ObjectType.from_model(obj).type

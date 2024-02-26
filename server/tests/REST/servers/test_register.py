@@ -113,7 +113,7 @@ class ServerRegisterTest(rest.test.RESTTestCase):
             self._data2['mac'] = random_mac()
             self._data2['os'] = (
                 types.os.KnownOS.UNKNOWN.value[0]
-                if os != types.os.KnownOS.UNKNOWN
+                if os != types.os.KnownOS.UNKNOWN.value[0]
                 else types.os.KnownOS.WINDOWS.value[0]
             )
             response = self.client.rest_post(
@@ -135,8 +135,6 @@ class ServerRegisterTest(rest.test.RESTTestCase):
             # Rest of fields should be the same
 
     def test_invalid_register(self) -> None:
-        response: 'UDSHttpResponse'
-        
         def _do_test(where: str) -> None:
             response = self.client.rest_post(
                 'servers/register',

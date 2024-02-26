@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 
 
 class UserinterfaceInternalTest(UDSTestCase):
-    def test_value(self):
+    def test_value(self) -> None:
         # Asserts that data is correctly stored and retrieved
         ui = TestingUserInterface()
         self.assertEqual(ui.str_field.value, DEFAULTS['str_field'])
@@ -88,7 +88,7 @@ class UserinterfaceInternalTest(UDSTestCase):
         
         self.assertEqual(ui.help_field.value, DEFAULTS['help_field'])
         
-    def test_default(self):
+    def test_default(self) -> None:
         ui = TestingUserInterface()
         # Now for default values
         self.assertEqual(ui.str_field.default, DEFAULTS['str_field'])
@@ -104,7 +104,7 @@ class UserinterfaceInternalTest(UDSTestCase):
         self.assertEqual(ui.date_field.default, DEFAULTS['date_field'])
         self.assertEqual(ui.help_field.default, DEFAULTS['help_field'])
 
-    def test_references(self):
+    def test_references(self) -> None:
         ui = TestingUserInterface()
         # Ensure references are fine
         self.assertEqual(ui.str_field.value, ui._gui['str_field'].value)
@@ -120,7 +120,7 @@ class UserinterfaceInternalTest(UDSTestCase):
         self.assertEqual(ui.date_field.value, ui._gui['date_field'].value)
         self.assertEqual(ui.help_field.value, ui._gui['help_field'].value)
 
-    def test_modify(self):
+    def test_modify(self) -> None:
         ui = TestingUserInterface()
         # Modify values, and recheck references
         ui.str_field.value = 'New value'
@@ -148,7 +148,7 @@ class UserinterfaceInternalTest(UDSTestCase):
         ui.help_field.value = 'New value'
         self.assertEqual(ui.help_field.value, ui._gui['help_field'].value)
 
-    def test_valuesDict(self):
+    def test_valuesDict(self) -> None:
         ui = TestingUserInterface()
         self.assertEqual(
             ui.get_fields_as_dict(),
@@ -168,7 +168,7 @@ class UserinterfaceInternalTest(UDSTestCase):
             },
         )
         
-    def test_labels(self):
+    def test_labels(self) -> None:
         ui = TestingUserInterface()
         self.assertEqual(
             { k: v.label for k, v in ui._gui.items() },
@@ -188,7 +188,7 @@ class UserinterfaceInternalTest(UDSTestCase):
             },
         )
         
-    def test_order(self):
+    def test_order(self) -> None:
         ui = TestingUserInterface()
         self.assertEqual(
             { k: v._fields_info.order for k, v in ui._gui.items() },
@@ -208,7 +208,7 @@ class UserinterfaceInternalTest(UDSTestCase):
             },
         )
         
-    def test_required(self):
+    def test_required(self) -> None:
         ui = TestingUserInterface()
         self.assertEqual(
             { k: v._fields_info.required for k, v in ui._gui.items() },
@@ -228,7 +228,7 @@ class UserinterfaceInternalTest(UDSTestCase):
             },
         )
         
-    def test_tooltip(self):
+    def test_tooltip(self) -> None:
         ui = TestingUserInterface()
         self.assertEqual(
             { k: v._fields_info.tooltip for k, v in ui._gui.items() },

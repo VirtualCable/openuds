@@ -44,7 +44,7 @@ VALUE_1 = [u'únîcödè€', b'string', {'a': 1, 'b': 2.0}]
 
 
 class CacheTest(UDSTransactionTestCase):
-    def test_cache(self):
+    def test_cache(self) -> None:
         cache = Cache(UNICODE_CHARS)
 
         # Get default value, with unicode

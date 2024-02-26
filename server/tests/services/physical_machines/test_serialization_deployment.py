@@ -24,7 +24,7 @@ from uds.services.PhysicalMachines import provider, deployment
 
 
 class IPMachineUserServiceSerializationTest(UDSTestCase):
-    def test_marshalling(self):
+    def test_marshalling(self) -> None:
         obj = deployment.OldIPSerialData()
         obj._ip = '1.1.1.1'
         obj._state = 'state'
@@ -37,7 +37,7 @@ class IPMachineUserServiceSerializationTest(UDSTestCase):
 
         data = obj.marshal()
 
-        instance = deployment.IPMachineUserService(environment=Environment.testing_environment(), service=None)
+        instance = deployment.IPMachineUserService(environment=Environment.testing_environment(), service=None)  # type: ignore  # service is not used
         instance.unmarshal(data)
 
         marshaled_data = instance.marshal()
@@ -53,7 +53,7 @@ class IPMachineUserServiceSerializationTest(UDSTestCase):
         _check_fields(instance)
 
         # Reunmarshall again and check that remarshalled flag is not set
-        instance = deployment.IPMachineUserService(environment=Environment.testing_environment(), service=None)
+        instance = deployment.IPMachineUserService(environment=Environment.testing_environment(), service=None)  # type: ignore  # service is not used
         instance.unmarshal(marshaled_data)
         self.assertFalse(instance.needs_upgrade())
 

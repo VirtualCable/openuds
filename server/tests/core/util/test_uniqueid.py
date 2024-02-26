@@ -49,81 +49,81 @@ TEST_MAC_RANGE = '00:50:56:10:00:00-00:50:56:3F:FF:FF'  # Testing mac range
 TEST_MAC_RANGE_FULL = '00:50:56:10:00:00-00:50:56:10:00:10'  # Testing mac range for NO MORE MACS
 
 
-def macToInt(mac):
+def mac_to_integer(mac: str) -> int:
     return int(mac.replace(':', ''), 16)
 
 
 class UniqueIdTest(UDSTestCase):
-    uidGen: UniqueIDGenerator
+    uniqueid_generator: UniqueIDGenerator
     ugidGen: UniqueGIDGenerator
     macGen: UniqueMacGenerator
-    nameGen: UniqueNameGenerator
+    name_generator: UniqueNameGenerator
 
     def setUp(self) -> None:
-        self.uidGen = UniqueIDGenerator('uidg1', 'test', 'test')
+        self.uniqueid_generator = UniqueIDGenerator('uidg1', 'test', 'test')
         self.ugidGen = UniqueGIDGenerator('test')
         self.macGen = UniqueMacGenerator('test')
-        self.nameGen = UniqueNameGenerator('test')
+        self.name_generator = UniqueNameGenerator('test')
 
-    def test_seq_uid(self):
+    def test_seq_uid(self) -> None:
         for x in range(100):
-            self.assertEqual(self.uidGen.get(), x)
+            self.assertEqual(self.uniqueid_generator.get(), x)
 
-        self.uidGen.free(40)
+        self.uniqueid_generator.free(40)
 
-        self.assertEqual(self.uidGen.get(), 40)
+        self.assertEqual(self.uniqueid_generator.get(), 40)
 
-    def test_release_unique_id(self):
+    def test_release_unique_id(self) -> None:
         for _ in range(100):
-            self.uidGen.get()
+            self.uniqueid_generator.get()
 
-        self.assertEqual(self.uidGen.get(), 100)
+        self.assertEqual(self.uniqueid_generator.get(), 100)
 
-        self.uidGen.release()  # Clear ups
+        self.uniqueid_generator.release()  # Clear ups
 
-        self.assertEqual(self.uidGen.get(), 0)
+        self.assertEqual(self.uniqueid_generator.get(), 0)
 
-    def test_release_older_unique_id(self):
+    def test_release_older_unique_id(self) -> None:
         NUM = 100
         for i in range(NUM):
-            self.assertEqual(self.uidGen.get(), i)
+            self.assertEqual(self.uniqueid_generator.get(), i)
 
         stamp = sql_stamp_seconds() + 1
         time.sleep(2)
 
         for i in range(NUM):
-            self.assertEqual(self.uidGen.get(), i + NUM)
+            self.assertEqual(self.uniqueid_generator.get(), i + NUM)
 
-        self.uidGen.release_older_than(stamp)  # Clear ups older than 0 seconds ago
+        self.uniqueid_generator.release_older_than(stamp)  # Clear ups older than 0 seconds ago
 
         for i in range(NUM):
-            self.assertEqual(self.uidGen.get(), i)
+            self.assertEqual(self.uniqueid_generator.get(), i)
 
         # from NUM to NUM*2-1 (both included) are still there, so we should get 200
-        self.assertEqual(self.uidGen.get(), NUM * 2)
-        self.assertEqual(self.uidGen.get(), NUM * 2 + 1)
+        self.assertEqual(self.uniqueid_generator.get(), NUM * 2)
+        self.assertEqual(self.uniqueid_generator.get(), NUM * 2 + 1)
 
-    def test_gid(self):
+    def test_gid(self) -> None:
         for x in range(100):
             self.assertEqual(self.ugidGen.get(), f'uds{x:08d}')
 
-    def test_gid_basename(self):
+    def test_gid_basename(self) -> None:
         self.ugidGen.set_basename('mar')
         for x in range(100):
             self.assertEqual(self.ugidGen.get(), f'mar{x:08d}')
 
-    def test_mac(self):
-        start, end = TEST_MAC_RANGE.split('-')  # pylint: disable=unused-variable
+    def test_mac(self) -> None:
+        start, _end = TEST_MAC_RANGE.split('-')  # pylint: disable=unused-variable
 
         self.assertEqual(self.macGen.get(TEST_MAC_RANGE), start)
 
-        starti = macToInt(start) + 1  # We have already got 1 element
+        starti = mac_to_integer(start) + 1  # We have already got 1 element
 
         lst = [start]
 
         for x in range(400):
             mac = self.macGen.get(TEST_MAC_RANGE)
-            self.assertEqual(macToInt(mac), starti + x)
+            self.assertEqual(mac_to_integer(mac), starti + x)
             lst.append(mac)
 
         for x in lst:
@@ -131,37 +131,37 @@ class UniqueIdTest(UDSTestCase):
 
         self.assertEqual(self.macGen.get(TEST_MAC_RANGE), start)
 
-    def test_mac_full(self):
+    def test_mac_full(self) -> None:
         start, end = TEST_MAC_RANGE_FULL.split('-')
 
-        length = macToInt(end) - macToInt(start) + 1
+        length = mac_to_integer(end) - mac_to_integer(start) + 1
 
-        starti = macToInt(start)
+        starti = mac_to_integer(start)
 
         for x in range(length):
-            self.assertEqual(macToInt(self.macGen.get(TEST_MAC_RANGE_FULL)), starti + x)
+            self.assertEqual(mac_to_integer(self.macGen.get(TEST_MAC_RANGE_FULL)), starti + x)
 
         for x in range(20):
             self.assertEqual(self.macGen.get(TEST_MAC_RANGE_FULL), '00:00:00:00:00:00')
 
-    def test_name(self):
-        lst = []
+    def test_name(self) -> None:
+        lst: list[str] = []
         num = 0
         for length in range(2, 10):
             for x in range(20):
-                name = self.nameGen.get('test', length=length)
+                name = self.name_generator.get('test', length=length)
                 lst.append(name)
                 self.assertEqual(name, f'test{num:0{length}d}'.format(num, width=length))
                 num += 1
 
         for x in lst:
-            self.nameGen.free('test', x)
+            self.name_generator.free('test', x)
 
-        self.assertEqual(self.nameGen.get('test', length=1), 'test0')
+        self.assertEqual(self.name_generator.get('test', length=1), 'test0')
 
-    def test_name_full(self):
+    def test_name_full(self) -> None:
         for _ in range(10):
-            self.nameGen.get('test', length=1)
+            self.name_generator.get('test', length=1)
 
         with self.assertRaises(KeyError):
-            self.nameGen.get('test', length=1)
+            self.name_generator.get('test', length=1)

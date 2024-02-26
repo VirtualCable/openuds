@@ -132,9 +132,10 @@ class ModelAccountTest(UDSTestCase):
         acc = models.Account.objects.create(name='Test Account')
         for i in range(NUM_USERSERVICES):
             usage = acc.start_accounting(self.user_services[i])
-            self.assertIsNotNone(usage)
-            usage.start = usage.start - datetime.timedelta(seconds=32 + i)  # type: ignore
-            usage.save(update_fields=['start'])  # type: ignore
+            if not usage:
+                self.fail('Usage not created')
+            usage.start = usage.start - datetime.timedelta(seconds=32 + i)
+            usage.save(update_fields=['start'])
             usage_end = acc.stop_accounting(self.user_services[i])
             self.assertIsNotNone(usage_end)
 

@@ -47,7 +47,7 @@ class GraphsTest(UDSTestCase):
     data1: dict[str, typing.Any]
     data2: dict[str, typing.Any]
 
-    def setUp(self):
+    def setUp(self) -> None:
         # Data must be a dict with the following keys:
         #     - x: List of x values
         #     - y: List of dicts with the following keys:
@@ -109,7 +109,7 @@ class GraphsTest(UDSTestCase):
         }
         
 
-    def test_bar_chart(self):
+    def test_bar_chart(self) -> None:
         output = io.BytesIO()
         graphs.bar_chart((10, 8, 96), data=self.data1, output=output)
         value = output.getvalue()
@@ -120,7 +120,7 @@ class GraphsTest(UDSTestCase):
             f.write(value)
 
 
-    def test_line_chart(self):
+    def test_line_chart(self) -> None:
         output = io.BytesIO()
         graphs.line_chart((10, 8, 96), data=self.data1, output=output)
         value = output.getvalue()
@@ -131,7 +131,7 @@ class GraphsTest(UDSTestCase):
             f.write(value)
 
 
-    def test_surface_chart(self):
+    def test_surface_chart(self) -> None:
         output = io.BytesIO()
         graphs.surface_chart((10, 8, 96), data=self.data2, output=output)
         value = output.getvalue()
@@ -143,7 +143,7 @@ class GraphsTest(UDSTestCase):
             f.write(value)
 
 
-    def test_surface_chart_wireframe(self):
+    def test_surface_chart_wireframe(self) -> None:
         self.data2['wireframe'] = True
         output = io.BytesIO()
         graphs.surface_chart((10, 8, 96), data=self.data2, output=output)

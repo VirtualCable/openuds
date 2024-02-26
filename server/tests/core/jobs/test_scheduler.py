@@ -33,6 +33,7 @@
 import time
 import threading
 from tracemalloc import stop
+import typing
 from unittest import mock
 
 from django.test import TransactionTestCase
@@ -57,24 +58,24 @@ class SchedulerTest(TransactionTestCase):
         ) as mock_ensure_jobs_registered:
             left = 4
 
-            def our_execute_job(*args, **kwargs) -> None:
+            def _our_execute_job(*args: typing.Any, **kwargs: typing.Any) -> None:
                 nonlocal left
                 left -= 1
                 if left == 0:
                     sch.notify_termination()
 
-            mock_execute_job.side_effect = our_execute_job
+            mock_execute_job.side_effect = _our_execute_job
 
             # Execute run, but if it does not call execute_job, it will hang
             # so we execute a thread that will call notify_termination after 1 second
             stop_event = threading.Event()
 
-            def ensure_stops() -> None:
+            def _ensure_stops() -> None:
                 stop_event.wait(scheduler.Scheduler.granularity * 10)
                 if left > 0:
                     sch.notify_termination()
 
-            watchdog = threading.Thread(target=ensure_stops)
+            watchdog = threading.Thread(target=_ensure_stops)
             watchdog.start()
 
             sch.run()

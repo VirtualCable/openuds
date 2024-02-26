@@ -44,7 +44,7 @@ class RedirectMiddlewareTest(test.UDSTransactionTestCase):
     """
     Test client functionality
     """
-    def test_redirect(self):
+    def test_redirect(self) -> None:
         RedirectMiddlewareTest.add_middleware('uds.middleware.redirect.RedirectMiddleware')
         page = 'https://testserver' + reverse('page.index')
         response = self.client.get('/', secure=False)

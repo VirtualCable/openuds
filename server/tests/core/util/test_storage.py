@@ -41,7 +41,7 @@ VALUE_1 = ['unicode', b'string', {'a': 1, 'b': 2.0}]
 
 
 class StorageTest(UDSTestCase):
-    def test_storage(self):
+    def test_storage(self) -> None:
         strg = storage.Storage(UNICODE_CHARS)
 
         strg.put(UNICODE_CHARS, b'chars')
@@ -72,7 +72,7 @@ class StorageTest(UDSTestCase):
         self.assertIsNone(strg.get(b'key'))
         self.assertIsNone(strg.get_unpickle('pickle'))
 
-    def test_storage_as_dict(self):
+    def test_storage_as_dict(self) -> None:
         strg = storage.Storage(UNICODE_CHARS)
 
         strg.put(UNICODE_CHARS, 'chars')
@@ -89,7 +89,7 @@ class StorageTest(UDSTestCase):
         # because the format is not compatible (with the dict, the values are stored as a tuple, with the original key stored
         # and with old format, only the value is stored
 
-    def test_old_storage_compat(self):
+    def test_old_storage_compat(self) -> None:
         models.Storage.objects.create(
             owner=UNICODE_CHARS,
             key=storage._old_calculate_key(UNICODE_CHARS.encode(), UNICODE_CHARS.encode()),
@@ -105,7 +105,7 @@ class StorageTest(UDSTestCase):
             key=storage._calculate_key(UNICODE_CHARS.encode(), UNICODE_CHARS.encode()),
         )
 
-    def test_storage_as_dict_old(self):
+    def test_storage_as_dict_old(self) -> None:
         models.Storage.objects.create(
             owner=UNICODE_CHARS,
             key=storage._old_calculate_key(UNICODE_CHARS.encode(), UNICODE_CHARS.encode()),

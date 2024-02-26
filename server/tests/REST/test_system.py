@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 
 class SystemTest(rest.test.RESTTestCase):
-    def test_overview(self):
+    def test_overview(self) -> None:
         # If not logged in, will fail
         response = self.client.rest_get('system/overview')
         self.assertEqual(response.status_code, 403)
@@ -70,7 +70,7 @@ class SystemTest(rest.test.RESTTestCase):
         self.assertEqual(json['restrained_services_pools'], 0)
 
         
-    def test_chart_pool(self):
+    def test_chart_pool(self) -> None:
         # First, create fixtures for the pool
         DAYS = 30
         for pool in [self.user_service_managed, self.user_service_unmanaged]:

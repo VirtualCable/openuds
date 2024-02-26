@@ -47,13 +47,13 @@ from ...fixtures import services as fixtures_services
 class AssignedAndUnusedTest(UDSTestCase):
     userServices: list[models.UserService]
 
-    def setUp(self):
+    def setUp(self) -> None:
         config.GlobalConfig.CHECK_UNUSED_TIME.set('600')
         AssignedAndUnused.setup()
         # All created user services has "in_use" to False, os_state and state to USABLE
         self.userServices = fixtures_services.create_cache_testing_userservices(count=32)
 
-    def test_assigned_unused(self):     
+    def test_assigned_unused(self) -> None:     
         for us in self.userServices:  # Update state date to now
             us.set_state(State.USABLE)
         # Set now, should not be removed

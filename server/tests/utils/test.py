@@ -26,8 +26,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+# pyright: reportUnknownMemberType=false
 import typing
 import collections.abc
 import logging
@@ -50,11 +51,12 @@ class UDSHttpResponse(HttpResponse):
     """
     Custom response class to be able to access the response content
     """
+
     url: str
 
     def __init__(self, content: bytes, *args: typing.Any, **kwargs: typing.Any) -> None:
         super().__init__(content, *args, **kwargs)
-        
+
     def json(self) -> typing.Any:
         return super().json()
 
@@ -100,7 +102,7 @@ class UDSClientMixin:
             kwargs['REMOTE_ADDR'] = '127.0.0.1'
         elif self.ip_version == 6:
             kwargs['REMOTE_ADDR'] = '::1'
-            
+
         kwargs['headers'] = self.uds_headers
 
     def compose_rest_url(self, method: str) -> str:
@@ -164,7 +166,7 @@ class UDSClient(UDSClientMixin, Client):
         return self.delete(self.compose_rest_url(method), *args, **kwargs)
 
 
-class UDSAsyncClient(UDSClientMixin, AsyncClient):
+class UDSAsyncClient(UDSClientMixin, AsyncClient):  # type: ignore   # Django stubs do not include AsyncClient
     def __init__(
         self,
         enforce_csrf_checks: bool = False,
@@ -173,7 +175,7 @@ class UDSAsyncClient(UDSClientMixin, AsyncClient):
     ):
 
         # Instantiate the client and add basic user agent
-        AsyncClient.__init__(self, enforce_csrf_checks, raise_request_exception)
+        AsyncClient.__init__(self, enforce_csrf_checks, raise_request_exception)  # pyright: ignore
         UDSClientMixin.initialize(self)
 
         # and required UDS cookie
@@ -184,7 +186,7 @@ class UDSAsyncClient(UDSClientMixin, AsyncClient):
         request = request.copy()
         # Add headers
         request.update(self.uds_headers)
-        return await super().request(**request)
+        return await super().request(**request)  # pyright: ignore
 
     # pylint: disable=invalid-overridden-method
     async def get(self, *args: typing.Any, **kwargs: typing.Any) -> 'UDSHttpResponse':
@@ -244,7 +246,7 @@ class UDSTestCaseMixin:
             pass  # Not present
 
 
-class UDSTestCase(UDSTestCaseMixin, TestCase):
+class UDSTestCase(UDSTestCaseMixin, TestCase):  # pyright: ignore   # Overrides superclass client
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
@@ -253,7 +255,8 @@ class UDSTestCase(UDSTestCaseMixin, TestCase):
     def create_environment(self) -> Environment:
         return Environment.testing_environment()
 
-class UDSTransactionTestCase(UDSTestCaseMixin, TransactionTestCase):
+
+class UDSTransactionTestCase(UDSTestCaseMixin, TransactionTestCase):  # pyright: ignore  # superclass client
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()

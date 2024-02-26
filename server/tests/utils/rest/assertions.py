@@ -44,8 +44,8 @@ logger = logging.getLogger(__name__)
 def assertUserIs(
     user: models.User,
     compare_to: collections.abc.Mapping[str, typing.Any],
-    compare_uuid=False,
-    compare_password=False,
+    compare_uuid: bool=False,
+    compare_password: bool=False,
 ) -> bool:
     ignore_fields = ['password', 'groups', 'mfa_data', 'last_access', 'role']
 
@@ -100,7 +100,7 @@ def assertUserIs(
 
 
 def assertGroupIs(
-    group: models.Group, compare_to: collections.abc.Mapping[str, typing.Any], compare_uuid=False
+    group: models.Group, compare_to: collections.abc.Mapping[str, typing.Any], compare_uuid: bool=False
 ) -> bool:
     ignore_fields = ['groups', 'users', 'is_meta', 'type', 'pools']
 
@@ -143,7 +143,7 @@ def assertGroupIs(
 def assertServicePoolIs(
     pool: models.ServicePool,
     compare_to: collections.abc.Mapping[str, typing.Any],
-    compare_uuid=False,
+    compare_uuid: bool=False,
 ) -> bool:
     ignore_fields = [
         'tags',

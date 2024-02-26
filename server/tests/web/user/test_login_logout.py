@@ -56,7 +56,7 @@ class WebLoginLogoutTest(test.WEBTestCase):
         response = typing.cast('HttpResponse', self.client.get('/uds/utility/uds.js'))
         self.assertContains(response, '"errors": ["Access denied"]', status_code=200)
 
-    def test_login_logout_success(self):
+    def test_login_logout_success(self) -> None:
         """
         Test login and logout
         """
@@ -117,7 +117,7 @@ class WebLoginLogoutTest(test.WEBTestCase):
         response = self.do_login('invalid', rootpass, auth.uuid)
         self.assertInvalidLogin(response)
 
-    def test_login_valid_user_no_group(self):
+    def test_login_valid_user_no_group(self) -> None:
         user = fixtures_authenticators.create_users(
             fixtures_authenticators.create_authenticator(),
         )[0]
@@ -147,7 +147,7 @@ class WebLoginLogoutTest(test.WEBTestCase):
 
         self.assertEqual(models.Log.objects.count(), 12)
 
-    def test_login_invalid_user(self):
+    def test_login_invalid_user(self) -> None:
         user = fixtures_authenticators.create_users(
             fixtures_authenticators.create_authenticator(),
         )[0]

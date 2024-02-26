@@ -50,7 +50,7 @@ class DownloadsManagerTest(WEBTestCase):
     manager: DownloadsManager
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         from uds.core.managers import downloads_manager
 
         super().setUpClass()
@@ -60,7 +60,7 @@ class DownloadsManagerTest(WEBTestCase):
         )
         cls.manager = downloads_manager()
 
-    def test_downloads(self):
+    def test_downloads(self) -> None:
         for v in (
             ('test.txt', 'text/plain', '1f47ec0a-1ad4-5d63-b41c-5d2befadab8d'),
             (

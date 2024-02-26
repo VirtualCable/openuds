@@ -77,7 +77,7 @@ def logout(caller: SimpleTestCase, client: Client, auth_token: str) -> None:
     response = client.get(
         '/uds/rest/auth/logout',
         content_type='application/json',
-        **{consts.auth.AUTH_TOKEN_HEADER: auth_token}  # type: ignore
+        **{consts.auth.AUTH_TOKEN_HEADER: auth_token} # pyright: ignore
     )
     caller.assertEqual(response.status_code, 200, 'Logout')
     caller.assertEqual(response.json(), {'result': 'ok'}, 'Logout')
