@@ -30,12 +30,9 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import abc
-from turtle import st
 import typing
 import dataclasses
 import collections.abc
-
-from uds.core.util.ldaputil import as_dict
 
 TypeInfoDict = dict[str, typing.Any]  # Alias for type info dict
 
