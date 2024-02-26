@@ -262,10 +262,10 @@ class Dispatcher(View):  # type: ignore
         """
         logger.info('Initializing REST Handlers')
         # Our parent module "REST", because we are in "dispatcher"
-        modName = __name__[: __name__.rfind('.')]
+        module_name = __name__[: __name__.rfind('.')]
 
         def checker(x: type[Handler]) -> bool:
-            # only register if final class, no inherited classes
+            # only register if final class, no classes that have subclasses
             logger.info(
                 'Checking %s - %s - %s', x.__name__, issubclass(x, DetailHandler), x.__subclasses__() == []
             )
@@ -275,7 +275,7 @@ class Dispatcher(View):  # type: ignore
         modfinder.dynamically_load_and_register_packages(
             Dispatcher.register_handler,
             Handler,
-            module_name=modName,
+            module_name=module_name,
             checker=checker,
             package_name='methods',
         )       

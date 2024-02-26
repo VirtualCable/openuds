@@ -29,12 +29,37 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import abc
+from turtle import st
 import typing
 import dataclasses
 import collections.abc
 
+from uds.core.util.ldaputil import as_dict
 
 TypeInfoDict = dict[str, typing.Any]  # Alias for type info dict
+
+
+class ExtraTypeInfo(abc.ABC):
+    def as_dict(self) -> TypeInfoDict:
+        return {}
+
+
+@dataclasses.dataclass
+class AuthenticatorTypeInfo(ExtraTypeInfo):
+    search_users_supported: bool
+    search_groups_supported: bool
+    needs_password: bool
+    label_username: str
+    label_groupname: str
+    label_password: str
+    create_users_supported: bool
+    is_external: bool
+    mfa_supported: bool
+
+    def as_dict(self) -> TypeInfoDict:
+        return dataclasses.asdict(self)
+
 
 @dataclasses.dataclass
 class TypeInfo:
@@ -43,16 +68,29 @@ class TypeInfo:
     description: str
     icon: str
 
-    def as_dict(self, **kwargs: typing.Any) -> TypeInfoDict:
+    group: typing.Optional[str] = None
+
+    extra: 'ExtraTypeInfo|None' = None
+
+    def as_dict(self) -> TypeInfoDict:
         res: dict[str, typing.Any] = {
             'name': self.name,
             'type': self.type,
             'description': self.description,
             'icon': self.icon,
         }
-        res.update(kwargs)
+        # Add optional fields
+        if self.group:
+            res['group'] = self.group
+
+        if self.extra:
+            res.update(self.extra.as_dict())
 
         return res
+
+    @staticmethod
+    def null() -> 'TypeInfo':
+        return TypeInfo(name='', type='', description='', icon='', extra=None)
 
 
 # This is a named tuple for convenience, and must be
@@ -67,3 +105,6 @@ ItemDictType = dict[str, typing.Any]
 
 # Alias for get_items return type
 ManyItemsDictType = typing.Union[list[ItemDictType], ItemDictType]
+
+# 
+FieldType = collections.abc.Mapping[str, typing.Any]

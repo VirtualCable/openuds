@@ -38,6 +38,7 @@ import typing
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
+from netaddr import N
 
 from uds.core import auths, consts, exceptions, types
 from uds.core.environment import Environment
@@ -86,21 +87,21 @@ class Authenticators(ModelHandler):
     def enum_types(self) -> collections.abc.Iterable[type[auths.Authenticator]]:
         return auths.factory().providers().values()
 
-    def type_info(self, type_: type['Module']) -> dict[str, typing.Any]:
+    def type_info(self, type_: type['Module']) -> typing.Optional[types.rest.AuthenticatorTypeInfo]:
         if issubclass(type_, auths.Authenticator):
-            return {
-                'search_users_supported': type_.search_users != auths.Authenticator.search_users,
-                'search_groups_supported': type_.search_groups != auths.Authenticator.search_groups,
-                'needs_password': type_.needs_password,
-                'label_username': _(type_.label_username),
-                'label_groupname': _(type_.label_groupname),
-                'label_password': _(type_.label_password),
-                'create_users_supported': type_.create_user != auths.Authenticator.create_user,
-                'is_external': type_.external_source,
-                'mfa_supported': type_.provides_mfa(),
-            }
+            return types.rest.AuthenticatorTypeInfo(
+                search_users_supported=type_.search_users != auths.Authenticator.search_users,
+                search_groups_supported=type_.search_groups != auths.Authenticator.search_groups,
+                needs_password=type_.needs_password,
+                label_username=_(type_.label_username),
+                label_groupname=_(type_.label_groupname),
+                label_password=_(type_.label_password),
+                create_users_supported=type_.create_user != auths.Authenticator.create_user,
+                is_external=type_.external_source,
+                mfa_supported=type_.provides_mfa(),
+            )
         # Not of my type
-        return {}
+        return None
 
     def get_gui(self, type_: str) -> list[typing.Any]:
         try:
@@ -176,7 +177,7 @@ class Authenticators(ModelHandler):
                     'users_count': item.users.count(),
                     'type': type_.get_type(),
                     'type_name': type_.name(),
-                    'type_info': self.type_info(type_),
+                    'type_info': self.type_as_dict(type_),
                     'permission': permissions.effective_permissions(self._user, item),
                 }
             )

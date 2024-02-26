@@ -70,7 +70,9 @@ def get_groups_from_metagroup(groups: collections.abc.Iterable[Group]) -> collec
             yield g
 
 
-def get_service_pools_for_groups(groups: collections.abc.Iterable[Group]) -> collections.abc.Iterable[ServicePool]:
+def get_service_pools_for_groups(
+    groups: collections.abc.Iterable[Group],
+) -> collections.abc.Iterable[ServicePool]:
     for servicePool in ServicePool.get_pools_for_groups(groups):
         yield servicePool
 
@@ -82,7 +84,9 @@ class Users(DetailHandler):
         parent = ensure.is_instance(parent, Authenticator)
 
         # processes item to change uuid key for id
-        def uuid_to_id(iterable: collections.abc.Iterable[typing.Any]) -> collections.abc.Generator[typing.Any, None, None]:
+        def uuid_to_id(
+            iterable: collections.abc.Iterable[typing.Any],
+        ) -> collections.abc.Generator[typing.Any, None, None]:
             for v in iterable:
                 v['id'] = v['uuid']
                 del v['uuid']
@@ -118,7 +122,7 @@ class Users(DetailHandler):
                         or _('User')
                     )
                 return values
-            u = parent.users.get(uuid=process_uuid(item))
+            u = parent.users.get(uuid__iexact=process_uuid(item))
             res = model_to_dict(
                 u,
                 fields=(
@@ -189,7 +193,7 @@ class Users(DetailHandler):
 
         return log.get_logs(user)
 
-    def save_item(self, parent: 'Model', item:  typing.Optional[str]) -> None:
+    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
         parent = ensure.is_instance(parent, Authenticator)
         logger.debug('Saving user %s / %s', parent, item)
         valid_fields = [
@@ -391,10 +395,12 @@ class Groups(DetailHandler):
                     'type': 'dict',
                     'dict': {State.ACTIVE: _('Enabled'), State.INACTIVE: _('Disabled')},
                 }
-            }
+            },
         ]
 
-    def get_types(self, parent: 'Model', for_type: typing.Optional[str]) -> collections.abc.Iterable[types.rest.TypeInfoDict]:
+    def get_types(
+        self, parent: 'Model', for_type: typing.Optional[str]
+    ) -> collections.abc.Iterable[types.rest.TypeInfoDict]:
         parent = ensure.is_instance(parent, Authenticator)
         types_dict: dict[str, dict[str, str]] = {
             'group': {'name': _('Group'), 'description': _('UDS Group')},

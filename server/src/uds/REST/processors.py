@@ -32,6 +32,7 @@
 """
 import collections.abc
 import datetime
+from gc import collect
 import json
 import logging
 import time
@@ -105,19 +106,22 @@ class ContentProcessor:
             return obj
 
         if isinstance(obj, dict):
-            return {k: ContentProcessor.process_for_render(v) for k, v in obj.items()}
+            return {k: ContentProcessor.process_for_render(v) for k, v in typing.cast(dict[str, typing.Any], obj).items()}
+        
+        if isinstance(obj, str):
+            return obj
+        
+        if isinstance(obj, bytes):
+            return obj.decode('utf-8')
 
-        if isinstance(obj, (list, tuple, types.GeneratorType)):
-            return [ContentProcessor.process_for_render(v) for v in obj]
+        if isinstance(obj, collections.abc.Iterable):
+            return [ContentProcessor.process_for_render(v) for v in typing.cast(collections.abc.Iterable[typing.Any], obj)]
 
         if isinstance(obj, (datetime.datetime,)):  # Datetime as timestamp
             return int(time.mktime(obj.timetuple()))
 
         if isinstance(obj, (datetime.date,)):  # Date as string
             return '{}-{:02d}-{:02d}'.format(obj.year, obj.month, obj.day)
-
-        if isinstance(obj, bytes):
-            return obj.decode('utf-8')
 
         return str(obj)
 
