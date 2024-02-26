@@ -99,9 +99,10 @@ class ModelCustomMethod(typing.NamedTuple):
 
 # Alias for item type
 ItemDictType = dict[str, typing.Any]
+ItemListType = list[ItemDictType]
 
 # Alias for get_items return type
-ManyItemsDictType = typing.Union[list[ItemDictType], ItemDictType]
+ManyItemsDictType = typing.Union[ItemListType, ItemDictType]
 
 # 
 FieldType = collections.abc.Mapping[str, typing.Any]

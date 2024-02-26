@@ -32,13 +32,13 @@
 """
 import logging
 
-from .unique_id_generator import UniqueIDGenerator
+from .unique_id_generator import UniqueGenerator
 
 logger = logging.getLogger(__name__)
 
 
 # noinspection PyMethodOverriding
-class UniqueNameGenerator(UniqueIDGenerator):
+class UniqueNameGenerator(UniqueGenerator):
     __slots__ = ()
 
     def __init__(self, owner: str) -> None:
@@ -58,16 +58,17 @@ class UniqueNameGenerator(UniqueIDGenerator):
             raise KeyError('No more names available. Please, increase service digits.')
         return f'{self._basename}{seq:0{length}d}'
 
-    def get(self, baseName: str, length: int = 5) -> str:  # type: ignore  # pylint: disable=arguments-differ,arguments-renamed
-        self.set_basename(baseName)
+
+    def get(self, basename: str, length: int = 5) -> str:
+        self.set_basename(basename)
         minVal = 0
         maxVal = 10**length - 1
-        return self._to_name(super().get(minVal, maxVal), length)
+        return self._to_name(super()._get(minVal, maxVal), length)
 
-    def transfer(self, baseName: str, name: str, toUNGen: 'UniqueNameGenerator') -> None:  # type: ignore  # pylint: disable=arguments-differ
-        self.set_basename(baseName)
-        super().transfer(int(name[len(self._basename) :]), toUNGen)
+    def transfer(self, basename: str, name: str, toUNGen: 'UniqueNameGenerator') -> None:
+        self.set_basename(basename)
+        super()._transfer(int(name[len(self._basename) :]), toUNGen)
 
-    def free(self, baseName: str, name: str) -> None:  # type: ignore  # pylint: disable=arguments-differ
-        self.set_basename(baseName)
-        super().free(int(name[len(self._basename) :]))
+    def free(self, basename: str, name: str) -> None:
+        self.set_basename(basename)
+        super()._free(int(name[len(self._basename) :]))

@@ -56,13 +56,13 @@ def mac_to_integer(mac: str) -> int:
 class UniqueIdTest(UDSTestCase):
     uniqueid_generator: UniqueIDGenerator
     ugidGen: UniqueGIDGenerator
-    macGen: UniqueMacGenerator
+    macs_generator: UniqueMacGenerator
     name_generator: UniqueNameGenerator
 
     def setUp(self) -> None:
         self.uniqueid_generator = UniqueIDGenerator('uidg1', 'test', 'test')
         self.ugidGen = UniqueGIDGenerator('test')
-        self.macGen = UniqueMacGenerator('test')
+        self.macs_generator = UniqueMacGenerator('test')
         self.name_generator = UniqueNameGenerator('test')
 
     def test_seq_uid(self) -> None:
@@ -115,21 +115,21 @@ class UniqueIdTest(UDSTestCase):
     def test_mac(self) -> None:
         start, _end = TEST_MAC_RANGE.split('-')  # pylint: disable=unused-variable
 
-        self.assertEqual(self.macGen.get(TEST_MAC_RANGE), start)
+        self.assertEqual(self.macs_generator.get(TEST_MAC_RANGE), start)
 
         starti = mac_to_integer(start) + 1  # We have already got 1 element
 
         lst = [start]
 
         for x in range(400):
-            mac = self.macGen.get(TEST_MAC_RANGE)
+            mac = self.macs_generator.get(TEST_MAC_RANGE)
             self.assertEqual(mac_to_integer(mac), starti + x)
             lst.append(mac)
 
         for x in lst:
-            self.macGen.free(x)
+            self.macs_generator.free(x)
 
-        self.assertEqual(self.macGen.get(TEST_MAC_RANGE), start)
+        self.assertEqual(self.macs_generator.get(TEST_MAC_RANGE), start)
 
     def test_mac_full(self) -> None:
         start, end = TEST_MAC_RANGE_FULL.split('-')
@@ -139,10 +139,10 @@ class UniqueIdTest(UDSTestCase):
         starti = mac_to_integer(start)
 
         for x in range(length):
-            self.assertEqual(mac_to_integer(self.macGen.get(TEST_MAC_RANGE_FULL)), starti + x)
+            self.assertEqual(mac_to_integer(self.macs_generator.get(TEST_MAC_RANGE_FULL)), starti + x)
 
         for x in range(20):
-            self.assertEqual(self.macGen.get(TEST_MAC_RANGE_FULL), '00:00:00:00:00:00')
+            self.assertEqual(self.macs_generator.get(TEST_MAC_RANGE_FULL), '00:00:00:00:00:00')
 
     def test_name(self) -> None:
         lst: list[str] = []

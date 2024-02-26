@@ -30,6 +30,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import abc
 import logging
 import time
 import typing
@@ -37,6 +38,7 @@ import collections.abc
 
 from django.db import transaction, OperationalError, connection
 from django.db.utils import IntegrityError
+from uds.core import consts
 
 from uds.models.unique_id import UniqueId
 from uds.core.util.model import sql_stamp_seconds
@@ -46,14 +48,12 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-MAX_SEQ = 1000000000000000
-
 
 class CreateNewIdException(Exception):
     pass
 
 
-class UniqueIDGenerator:
+class UniqueGenerator(abc.ABC):
     __slots__ = ('_owner', '_basename')
 
     # owner is the owner of the UniqueID
@@ -61,27 +61,30 @@ class UniqueIDGenerator:
     # base name for filtering unique ids. (I.e. "mac", "ip", "ipv6" ....)
     _basename: str
 
-    def __init__(self, type_name: str, owner: str, baseName: typing.Optional[str] = None):
+    def __init__(self, type_name: str, owner: str, basename: typing.Optional[str] = None):
         self._owner = owner + type_name
-        self._basename = 'uds' if baseName is None else baseName
+        self._basename = basename or 'uds'
 
     def set_basename(self, basename: str) -> None:
         self._basename = basename
 
     def __filter(
-        self, range_start: int, range_end: int = MAX_SEQ, for_update: bool = False
+        self, range_start: int, range_end: int = consts.system.MAX_SEQ, for_update: bool = False
     ) -> 'models.QuerySet[UniqueId]':
         # Order is defined on UniqueId model, and is '-seq' by default (so this gets items in sequence order)
         # if not for update, do not use the clause :)
         obj = UniqueId.objects.select_for_update() if for_update else UniqueId.objects
         return obj.filter(basename=self._basename, seq__gte=range_start, seq__lte=range_end)
 
-    def get(self, range_start: int = 0, range_end: int = MAX_SEQ) -> int:
+    def _get(self, range_start: int = 0, range_end: typing.Optional[int] = None) -> int:
         """
         Tries to generate a new unique id in the range provided. This unique id
         is global to "unique ids' database
         """
         # First look for a name in the range defined
+        range_end = (
+            consts.system.MAX_SEQ if range_end is None else range_end
+        )  # So we allow 0 to be a valid range end
         stamp = sql_stamp_seconds()
         seq = range_start
         # logger.debug(UniqueId)
@@ -141,15 +144,15 @@ class UniqueIDGenerator:
         # logger.debug('Seq: {}'.format(seq))
         return seq
 
-    def transfer(self, seq: int, toUidGen: 'UniqueIDGenerator') -> bool:
+    def _transfer(self, seq: int, to_generator: 'UniqueGenerator') -> bool:
         self.__filter(0, for_update=True).filter(owner=self._owner, seq=seq).update(
-            owner=toUidGen._owner,  # pylint: disable=protected-access
-            basename=toUidGen._basename,  # pylint: disable=protected-access
+            owner=to_generator._owner,
+            basename=to_generator._basename,
             stamp=sql_stamp_seconds(),
         )
         return True
 
-    def free(self, seq: int) -> None:
+    def _free(self, seq: int) -> None:
         logger.debug('Freeing seq %s from %s (%s)', seq, self._owner, self._basename)
         with transaction.atomic():
             flt = (
@@ -184,3 +187,18 @@ class UniqueIDGenerator:
             assigned=False, owner='', stamp=stamp
         )
         self._purge()
+
+
+class UniqueIDGenerator(UniqueGenerator):
+    """
+    Unique ID generator
+    """
+
+    def get(self, range_start: int = 0, range_end: int = consts.system.MAX_SEQ) -> int:
+        return self._get(range_start, range_end)
+
+    def transfer(self, seq: int, to_generator: 'UniqueIDGenerator') -> bool:
+        return self._transfer(seq, to_generator)
+
+    def free(self, seq: int) -> None:
+        self._free(seq)

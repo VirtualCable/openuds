@@ -83,7 +83,7 @@ class OvirtPublicationSerializationTest(UDSTestCase):
     def test_marshaling(self) -> None:
         environment = Environment.testing_environment()
 
-        instance = Publication(environment=environment, service=None)
+        instance = Publication(environment=environment, service=None)  # type: ignore
         instance.unmarshal(SERIALIZED_PUBLICATION_DATA)
         self.check(instance)
         # Ensure remarshalled flag is set
@@ -95,7 +95,7 @@ class OvirtPublicationSerializationTest(UDSTestCase):
         # Ensure fields has been marshalled using new format
         self.assertFalse(marshaled_data.startswith(b'\1'))
         # Reunmarshall again and check that remarshalled flag is not set
-        instance = Publication(environment=environment, service=None)
+        instance = Publication(environment=environment, service=None)  # type: ignore
         instance.unmarshal(marshaled_data)
         self.assertFalse(instance.needs_upgrade())
 
@@ -106,5 +106,5 @@ class OvirtPublicationSerializationTest(UDSTestCase):
         # This test is designed to ensure that all fields are autoserializable
         # If some field is added or removed, this tests will warn us about it to fix the rest of the related tests
         with Environment.temporary_environment() as env:
-            instance = Publication(environment=env, service=None)
+            instance = Publication(environment=env, service=None)  # type: ignore
             self.assertSetEqual(set(f[0] for f in instance._autoserializable_fields()), EXPECTED_FIELDS)

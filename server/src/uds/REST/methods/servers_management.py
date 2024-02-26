@@ -120,7 +120,7 @@ class ServersServers(DetailHandler):
                 q = parent.servers.all()
             else:
                 q = parent.servers.filter(uuid=process_uuid(item))
-            res: types.rest.ManyItemsDictType = []
+            res: types.rest.ItemListType = []
             i = None
             for i in q:
                 val = {
@@ -326,11 +326,17 @@ class ServersGroups(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def get_types(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Generator[types.rest.TypeInfoDict, None, None]:
+    def get_types(
+        self, *args: typing.Any, **kwargs: typing.Any
+    ) -> typing.Generator[types.rest.TypeInfoDict, None, None]:
         for i in types.servers.ServerSubtype.manager().enum():
             v = types.rest.TypeInfo(
-                name=i.description, type=f'{i.type.name}@{i.subtype}', description='', icon=i.icon
-            ).as_dict(group=gettext('Managed') if i.managed else gettext('Unmanaged'))
+                name=i.description,
+                type=f'{i.type.name}@{i.subtype}',
+                description='',
+                icon=i.icon,
+                group=gettext('Managed') if i.managed else gettext('Unmanaged'),
+            ).as_dict()
             yield v
 
     def get_gui(self, type_: str) -> list[typing.Any]:

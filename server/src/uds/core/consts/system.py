@@ -43,7 +43,9 @@ VERSION_STAMP = f'{time.strftime("%Y%m%d")}'
 REQUIRED_CLIENT_VERSION = '3.6.0'
 
 # Max size of a rest request body
-MAX_REQUEST_SIZE: typing.Final[int] = int(getattr(settings, 'MAX_REST_BODY_SIZE', 1024 * 1024 * 10))  # from settings, 10Mb by default
+MAX_REQUEST_SIZE: typing.Final[int] = int(
+    getattr(settings, 'MAX_REST_BODY_SIZE', 1024 * 1024 * 10)
+)  # from settings, 10Mb by default
 
 # Max ip v6 string length representation, allowing ipv4 mapped addresses
 MAX_IPV6_LENGTH: typing.Final[int] = 45
@@ -69,3 +71,6 @@ DEFAULT_WAIT_TIME: typing.Final[int] = 8  # seconds
 
 # UDS Action url scheme
 UDS_ACTION_SCHEME: typing.Final[str] = 'udsa://'
+
+# Max sequence number for generators
+MAX_SEQ: typing.Final[int] = 1000000000000000

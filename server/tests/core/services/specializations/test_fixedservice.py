@@ -223,11 +223,11 @@ class FixedServiceTest(UDSTestCase):
         userservice.mock.reset_mock()
 
     def test_fixed_service_deploy(self) -> None:
-        prov, service, userservice = self.create_elements()
+        _prov, service, userservice = self.create_elements()
         self.check_iterations(service, userservice, EXPECTED_DEPLOY_ITERATIONS_INFO, removal=False)
         
     def test_fixed_service_deploy_no_machine(self) -> None:
-        prov, service, userservice = self.create_elements()
+        _prov, service, userservice = self.create_elements()
         service.available_machines_number = 2
         self.deploy_service(service, userservice)  # Should be deployed without issues
         self.deploy_service(service, userservice)  # Should be deployed without issues, 2nd time
@@ -235,7 +235,7 @@ class FixedServiceTest(UDSTestCase):
         self.assertRaises(Exception, self.deploy_service, service, userservice)
 
     def test_fixed_service_removal(self) -> None:
-        prov, service, userservice = self.create_elements()
+        _prov, service, userservice = self.create_elements()
 
         # Ensure fully deployed state for userservice
         self.deploy_service(service, userservice)
@@ -253,11 +253,11 @@ class FixedTestingUserService(fixed_userservice.FixedUserService):
     def _stop_machine(self) -> None:
         self.mock._stop_machine()
 
-    def _start_checker(self) -> str:
+    def _start_checker(self) -> types.states.State:
         self.mock._start_checker()
         return types.states.State.FINISHED
 
-    def _stop_checker(self) -> str:
+    def _stop_checker(self) -> types.states.State:
         self.mock._stop_checker()
         return types.states.State.FINISHED
 

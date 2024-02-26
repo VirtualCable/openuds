@@ -57,7 +57,7 @@ class Cache:
 
     @staticmethod
     def _basic_serialize(value: typing.Any) -> str:
-        return codecs.encode(serializer.serialize_v1(value), 'base64').decode()
+        return codecs.encode(serializer.serialize(value), 'base64').decode()
 
     @staticmethod
     def _basic_deserialize(value: str) -> typing.Any:

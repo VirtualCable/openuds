@@ -36,8 +36,8 @@ import collections.abc
 from click import style
 
 from django.utils.translation import gettext_lazy as _
-from uds.core import types
 
+from uds.core import types, consts
 from uds.core.util.rest.tools import match
 from uds.REST import model
 from uds import reports
@@ -68,7 +68,7 @@ class Reports(model.BaseModelHandler):
 
     needs_admin = True  # By default, staff is lower level needed
 
-    table_title = typing.cast(str, _('Available reports'))
+    table_title = _('Available reports')
     table_fields = [
         {'group': {'title': _('Group')}},
         {'name': {'title': _('Name')}},
@@ -78,7 +78,7 @@ class Reports(model.BaseModelHandler):
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
     table_row_style = types.ui.RowStyleInfo(prefix='row-state-', field='state')
 
-    def _findReport(self, uuid: str, values: typing.Optional[typing.Dict[str, typing.Any]] = None) -> 'Report':
+    def _locate_report(self, uuid: str, values: typing.Optional[typing.Dict[str, typing.Any]] = None) -> 'Report':
         found = None
         logger.debug('Looking for report %s', uuid)
         for i in reports.available_reports:
@@ -97,18 +97,21 @@ class Reports(model.BaseModelHandler):
         def error() -> typing.NoReturn:
             raise self.invalid_request_response()
 
+        def report_gui(report_id: str) -> typing.Any:
+            return self.get_gui(report_id)
+
         return match(
             self._args,
             error,
             ((), lambda: list(self.get_items())),
-            ((model.OVERVIEW,), lambda: list(self.get_items())),
+            ((consts.rest.OVERVIEW,), lambda: list(self.get_items())),
             (
-                (model.TABLEINFO,),
+                (consts.rest.TABLEINFO,),
                 lambda: self.process_table_fields(
                     str(self.table_title), self.table_fields, self.table_row_style
                 ),
             ),
-            ((model.GUI, '<report>'), lambda report: self.get_gui(report)),
+            ((consts.rest.GUI, '<report>'), report_gui),
         )
 
     def put(self) -> typing.Any:
@@ -125,7 +128,7 @@ class Reports(model.BaseModelHandler):
         if len(self._args) != 1:
             raise self.invalid_request_response()
 
-        report = self._findReport(self._args[0], self._params)
+        report = self._locate_report(self._args[0], self._params)
 
         try:
             logger.debug('Report: %s', report)
@@ -145,7 +148,7 @@ class Reports(model.BaseModelHandler):
 
     # Gui related
     def get_gui(self, type_: str) -> list[typing.Any]:
-        report = self._findReport(type_)
+        report = self._locate_report(type_)
         return sorted(report.gui_description(), key=lambda f: f['gui']['order'])
 
     # Returns the list of

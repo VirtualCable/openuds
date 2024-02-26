@@ -143,7 +143,7 @@ class UserinterfaceInternalTest(UDSTestCase):
         self.assertEqual(ui.checkbox_field.value, ui._gui['checkbox_field'].value)
         ui.image_choice_field.value = 'New value'
         self.assertEqual(ui.image_choice_field.value, ui._gui['image_choice_field'].value)
-        ui.date_field.value = '2001-01-01'
+        ui.date_field.value = '2001-01-01'  # type: ignore  # Mypy conplains if setter allows different values than getter
         self.assertEqual(ui.date_field.value, ui._gui['date_field'].value)
         ui.help_field.value = 'New value'
         self.assertEqual(ui.help_field.value, ui._gui['help_field'].value)

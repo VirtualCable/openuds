@@ -93,7 +93,7 @@ class OpenGnsysDeploymentSerializationTest(UDSTransactionTestCase):
         environment = Environment.testing_environment()
 
         def _create_instance(unmarshal_data: 'bytes|None' = None) -> deployment.OpenGnsysUserService:
-            instance = deployment.OpenGnsysUserService(environment=environment, service=None)
+            instance = deployment.OpenGnsysUserService(environment=environment, service=None)   # type: ignore
             if unmarshal_data:
                 instance.unmarshal(unmarshal_data)
             return instance
@@ -120,7 +120,7 @@ class OpenGnsysDeploymentSerializationTest(UDSTransactionTestCase):
         environment.storage.put_pickle('queue', TEST_QUEUE)
 
         def _create_instance(unmarshal_data: 'bytes|None' = None) -> deployment.OpenGnsysUserService:
-            instance = deployment.OpenGnsysUserService(environment=environment, service=None)
+            instance = deployment.OpenGnsysUserService(environment=environment, service=None)  # type: ignore
             if unmarshal_data:
                 instance.unmarshal(unmarshal_data)
             return instance
@@ -164,7 +164,7 @@ class OpenGnsysDeploymentSerializationTest(UDSTransactionTestCase):
         # This test is designed to ensure that all fields are autoserializable
         # If some field is added or removed, this tests will warn us about it to fix the rest of the related tests
         with Environment.temporary_environment() as env:
-            instance = deployment.OpenGnsysUserService(environment=env, service=None)
+            instance = deployment.OpenGnsysUserService(environment=env, service=None)  # type: ignore
 
             instance_fields = set(f[0] for f in instance._autoserializable_fields())
             self.assertSetEqual(instance_fields, EXPECTED_FIELDS)

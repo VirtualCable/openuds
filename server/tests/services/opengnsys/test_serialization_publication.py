@@ -54,7 +54,7 @@ class OpenGnsysPublicationSerializationTest(UDSTestCase):
     def test_marshaling(self) -> None:
         environment = Environment.testing_environment()
 
-        instance = publication.OpenGnsysPublication(environment=environment, service=None)
+        instance = publication.OpenGnsysPublication(environment=environment, service=None)  # type: ignore
         #instance.unmarshal(SERIALIZED_PUBLICATION_DATA)
         self.check(instance)
         # Ensure remarshalled flag is set
@@ -66,7 +66,7 @@ class OpenGnsysPublicationSerializationTest(UDSTestCase):
         # Ensure fields has been marshalled using new format
         self.assertFalse(marshaled_data.startswith(b'\1'))
         # Reunmarshall again and check that remarshalled flag is not set
-        instance = publication.OpenGnsysPublication(environment=environment, service=None)
+        instance = publication.OpenGnsysPublication(environment=environment, service=None)  # type: ignore
         #instance.unmarshal(marshaled_data)
         #self.assertFalse(instance.needs_upgrade())
 
@@ -77,7 +77,7 @@ class OpenGnsysPublicationSerializationTest(UDSTestCase):
         # This test is designed to ensure that all fields are autoserializable
         # If some field is added or removed, this tests will warn us about it to fix the rest of the related tests
         with Environment.temporary_environment() as env:
-            instance = publication.OpenGnsysPublication(environment=env, service=None)
+            instance = publication.OpenGnsysPublication(environment=env, service=None)  # type: ignore
 
             instance_fields = set(f[0] for f in instance._autoserializable_fields())
             self.assertSetEqual(instance_fields, EXPECTED_FIELDS)

@@ -38,7 +38,7 @@ import collections.abc
 if typing.TYPE_CHECKING:
     from uds.core.util.cache import Cache
     from uds.core.util.storage import Storage
-    from uds.core.util.unique_id_generator import UniqueIDGenerator
+    from uds.core.util.unique_id_generator import UniqueGenerator
 
 
 TEST_ENV = 'testing_env'
@@ -58,12 +58,12 @@ class Environment:
     _key: str
     _cache: 'Cache'
     _storage: 'Storage'
-    _id_generators: dict[str, 'UniqueIDGenerator']
+    _id_generators: dict[str, 'UniqueGenerator']
 
     def __init__(
         self,
         unique_key: str,
-        id_generators: typing.Optional[dict[str, 'UniqueIDGenerator']] = None,
+        id_generators: typing.Optional[dict[str, 'UniqueGenerator']] = None,
     ):
         """
         Initialized the Environment for the specified id
@@ -97,7 +97,7 @@ class Environment:
         """
         return self._storage
 
-    def id_generator(self, generator_id: str) -> 'UniqueIDGenerator':
+    def id_generator(self, generator_id: str) -> 'UniqueGenerator':
         """
         The idea of generator of id is to obtain at some moment Ids with a proper generator.
         If the environment do not contains generators of id, this method will return None.
@@ -270,7 +270,7 @@ class Environmentable:
         """
         return self._env.storage
 
-    def id_generator(self, generatorId: str) -> 'UniqueIDGenerator':
+    def id_generator(self, generatorId: str) -> 'UniqueGenerator':
         """
         Utility method to access the id generator of the environment containe by this object
 

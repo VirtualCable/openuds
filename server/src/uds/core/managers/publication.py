@@ -37,7 +37,7 @@ import datetime
 from django.utils.translation import gettext as _
 from django.db import transaction
 
-from uds.core.util.serializer import serialize_v1
+from uds.core.util.serializer import serialize
 from uds.core.jobs.delayed_task import DelayedTask
 from uds.core.jobs.delayed_task_runner import DelayedTaskRunner
 from uds.core.util.config import GlobalConfig
@@ -121,7 +121,7 @@ class PublicationLauncher(DelayedTask):
             servicePool.current_pub_revision += 1
             servicePool.set_value(
                 'toBeReplacedIn',
-                serialize_v1(
+                serialize(
                     now
                     + datetime.timedelta(
                         hours=GlobalConfig.SESSION_EXPIRE_TIME.as_int(True)

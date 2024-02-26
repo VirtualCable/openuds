@@ -90,7 +90,7 @@ class OpenNebulaDeploymentSerializationTest(UDSTransactionTestCase):
         environment = Environment.testing_environment()
 
         def _create_instance(unmarshal_data: 'bytes|None' = None) -> deployment.OpenNebulaLiveDeployment:
-            instance = deployment.OpenNebulaLiveDeployment(environment=environment, service=None)
+            instance = deployment.OpenNebulaLiveDeployment(environment=environment, service=None)  # type: ignore
             if unmarshal_data:
                 instance.unmarshal(unmarshal_data)
             return instance
@@ -121,7 +121,7 @@ class OpenNebulaDeploymentSerializationTest(UDSTransactionTestCase):
         environment.storage.put_pickle('queue', TEST_QUEUE)
 
         def _create_instance(unmarshal_data: 'bytes|None' = None) -> deployment.OpenNebulaLiveDeployment:
-            instance = deployment.OpenNebulaLiveDeployment(environment=environment, service=None)
+            instance = deployment.OpenNebulaLiveDeployment(environment=environment, service=None)  # type: ignore
             if unmarshal_data:
                 instance.unmarshal(unmarshal_data)
             return instance
@@ -165,6 +165,6 @@ class OpenNebulaDeploymentSerializationTest(UDSTransactionTestCase):
         # This test is designed to ensure that all fields are autoserializable
         # If some field is added or removed, this tests will warn us about it to fix the rest of the related tests
         with Environment.temporary_environment() as env:
-            instance = deployment.OpenNebulaLiveDeployment(environment=env, service=None)
+            instance = deployment.OpenNebulaLiveDeployment(environment=env, service=None)  # type: ignore
 
             self.assertSetEqual(set(f[0] for f in instance._autoserializable_fields()), EXPECTED_FIELDS)

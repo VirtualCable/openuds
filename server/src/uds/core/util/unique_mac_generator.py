@@ -32,13 +32,14 @@
 """
 import logging
 import re
+import typing
 
-from .unique_id_generator import UniqueIDGenerator
+from .unique_id_generator import UniqueGenerator
 
 logger = logging.getLogger(__name__)
 
 
-class UniqueMacGenerator(UniqueIDGenerator):
+class UniqueMacGenerator(UniqueGenerator):
     __slots__ = ('_macRange',)
 
     def __init__(self, owner: str) -> None:
@@ -52,15 +53,15 @@ class UniqueMacGenerator(UniqueIDGenerator):
             return '00:00:00:00:00:00'
         return re.sub(r"(..)", r"\1:", f'{seq:012X}')[:-1]
 
-    # noinspection PyMethodOverriding
-    def get(self, macRange: str) -> str:  # type: ignore  # pylint: disable=arguments-differ
-        firstMac, lastMac = macRange.split('-')
-        return self._to_mac_addr(super().get(self._to_int(firstMac), self._to_int(lastMac)))
+    # Mac Generator rewrites the signature of parent class, so we need to redefine it here
+    def get(self, mac_range: str) -> str:
+        first_mac, last_mac = mac_range.split('-')
+        return self._to_mac_addr(super()._get(self._to_int(first_mac), self._to_int(last_mac)))
 
-    def transfer(self, mac: str, toUMgen: 'UniqueMacGenerator'):  # type: ignore  # pylint: disable=arguments-renamed
-        super().transfer(self._to_int(mac), toUMgen)
+    def transfer(self, seq: str, to_generator: 'UniqueMacGenerator') -> bool:
+        return super()._transfer(self._to_int(seq), to_generator)
 
-    def free(self, mac: str) -> None:  # type: ignore  # pylint: disable=arguments-renamed
-        super().free(self._to_int(mac))
+    def free(self, seq: str) -> None:
+        super()._free(self._to_int(seq))
 
     # Release is inherited, no mod needed

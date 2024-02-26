@@ -121,10 +121,9 @@ class ServiceProvider(module.Module):
     # : Note: This cannot be renamed with out a "migration", because it's used at database
     concurrent_removal_limit: typing.Optional[typing.Union[int, gui.NumericField]] = None
 
-    # : This defines if the limits (max.. vars) should be taken into accout or simply ignored
-    # : Default is return the GlobalConfig value of GlobalConfig.IGNORE_LIMITS
+    # : This defines if the limits (concurrent... vars) should be taken into accout or simply ignored
     # : Note: this variable can be either a fixed value (integer, string) or a Gui text field (with a .value)
-    ignore_limits: typing.Any = None
+    ignore_limits: typing.Optional[typing.Union[bool, gui.CheckBoxField]] = None
 
     _db_obj: typing.Optional['models.Provider'] = None
 
@@ -219,8 +218,12 @@ class ServiceProvider(module.Module):
         if val is None:
             val = self.ignore_limits = False
 
-        val = getattr(val, 'value', val)
-        return val is True or val == consts.TRUE_STR
+        if isinstance(val, gui.CheckBoxField):
+            ret_val = val.as_bool()
+        else:
+            ret_val = val
+
+        return ret_val
 
     def do_log(self, level: log.LogLevel, message: str) -> None:
         """

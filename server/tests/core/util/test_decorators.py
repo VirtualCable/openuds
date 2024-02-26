@@ -33,6 +33,7 @@
 """
 # We use commit/rollback
 from functools import cache
+import typing
 from unittest import mock
 
 from ...utils.test import UDSTransactionTestCase
@@ -100,7 +101,7 @@ class CacheTest(UDSTransactionTestCase):
                 self.value = [value] * 8
 
             @cached(prefix='test', timeout=1, key_helper=cache_key)
-            def cached_test(self, **kwargs) -> list[str]:
+            def cached_test(self, **kwargs: typing.Any) -> list[str]:
                 self.call_count += 1
                 return self.value
 

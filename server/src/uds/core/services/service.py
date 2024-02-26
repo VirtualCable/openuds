@@ -189,7 +189,9 @@ class Service(Module):
     # : Restricted transports
     # : If this list contains anything else but emtpy, the only allowed protocol for transports
     # : will be the ones listed here (on implementation, ofc)
-    allowed_protocols: collections.abc.Iterable[types.transports.Protocol] = types.transports.Protocol.generic_vdi()
+    allowed_protocols: collections.abc.Iterable[types.transports.Protocol] = (
+        types.transports.Protocol.generic_vdi()
+    )
 
     # : If this services "spawns" a new copy on every execution (that is, does not "reuse" the previous opened session)
     # : Default behavior is False (and most common), but some services may need to respawn a new "copy" on every launch
@@ -327,6 +329,14 @@ class Service(Module):
         """
         return typing.cast('UniqueNameGenerator', self.id_generator('name'))
 
+    def gid_generator(self) -> 'UniqueGIDGenerator':
+        """
+        Utility method to access provided global ids generator (inside environment)
+
+        Returns the environment unique global id generator
+        """
+        return typing.cast('UniqueGIDGenerator', self.id_generator('id'))
+
     def enumerate_assignables(self) -> collections.abc.Iterable[types.ui.ChoiceItem]:
         """
         If overrided, will provide list of assignables elements, so we can "add" an element manually to the list of assigned user services
@@ -334,7 +344,7 @@ class Service(Module):
 
         Returns:
             collections.abc.Iterable[types.ui.ChoiceItem]: List of asignables services (as ChoiceItem)
-            
+
         """
         return []
 
@@ -354,7 +364,7 @@ class Service(Module):
 
         Returns:
             str: The state of the user service after the assignation
-            
+
         Note:
             The state is the state of the "user service" after the assignation, not the state of the service itself.
             This allows to process the assignation as an user service regular task, so it can be processed by the core.

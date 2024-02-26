@@ -61,7 +61,7 @@ class EmailNotifierTest(UDSTestCase):
             hostname='localhost',
             port=1025,
         )
-        self.smtp_server.start()
+        self.smtp_server.start()  # type: ignore
         
     def tearDown(self) -> None:
         # Stop smtp debug server

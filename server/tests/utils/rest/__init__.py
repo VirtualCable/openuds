@@ -96,13 +96,13 @@ class uuid_type:
     pass
 
 
-RestFieldType = tuple[str, typing.Union[typing.Type, tuple[str, ...]]]
+RestFieldType = tuple[str, typing.Union[typing.Type[typing.Any], tuple[str, ...]]]
 RestFieldReference = typing.Final[list[RestFieldType]]
 
 
 # pylint: disable=too-many-return-statements
 def random_value(
-    field_type: typing.Union[typing.Type, tuple[str, ...]],
+    field_type: typing.Union[typing.Type[typing.Any], tuple[str, ...]],
     value: typing.Any = None,
 ) -> typing.Any:
     if value is not None and value != 'fixme':

@@ -326,7 +326,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         parent = ensure.is_instance(parent, models.Provider)
         service = parent.services.get(uuid=process_uuid(item))
         logger.debug('Got parameters for servicepools: %s, %s', parent, item)
-        res: types.rest.ManyItemsDictType = []
+        res: types.rest.ItemListType = []
         for i in service.deployedServices.all():
             try:
                 self.ensure_has_access(

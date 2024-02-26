@@ -138,7 +138,7 @@ class PermissionsTest(UDSTestCase):
         obj.delete()
         self.assertEqual(models.Permissions.objects.count(), 0)
 
-    def doTestGroupPermissions(self, obj: 'Model', user: models.User):
+    def do_test_group_permissions(self, obj: 'Model', user: models.User) -> None:
         group = user.groups.all()[0]
 
         permissions.add_group_permission(group, obj, uds.core.types.permissions.PermissionType.NONE)
@@ -196,13 +196,13 @@ class PermissionsTest(UDSTestCase):
         self.doTestUserPermissions(self.authenticator, self.staffs[0])
 
     def test_group_auth_permissions_user(self) -> None:
-        self.doTestGroupPermissions(self.authenticator, self.users[0])
+        self.do_test_group_permissions(self.authenticator, self.users[0])
 
     def test_group_auth_permissions_admin(self) -> None:
-        self.doTestGroupPermissions(self.authenticator, self.admins[0])
+        self.do_test_group_permissions(self.authenticator, self.admins[0])
 
     def test_group_auth_permissions_staff(self) -> None:
-        self.doTestGroupPermissions(self.authenticator, self.staffs[0])
+        self.do_test_group_permissions(self.authenticator, self.staffs[0])
 
     def test_user_servicepool_permissions_user(self) -> None:
         self.doTestUserPermissions(self.userService.deployed_service, self.users[0])
@@ -214,13 +214,13 @@ class PermissionsTest(UDSTestCase):
         self.doTestUserPermissions(self.userService.deployed_service, self.staffs[0])
 
     def test_group_servicepool_permissions_user(self) -> None:
-        self.doTestGroupPermissions(self.userService.deployed_service, self.users[0])
+        self.do_test_group_permissions(self.userService.deployed_service, self.users[0])
 
     def test_group_servicepool_permissions_admin(self) -> None:
-        self.doTestGroupPermissions(self.userService.deployed_service, self.admins[0])
+        self.do_test_group_permissions(self.userService.deployed_service, self.admins[0])
 
     def test_group_servicepool_permissions_staff(self) -> None:
-        self.doTestGroupPermissions(self.userService.deployed_service, self.staffs[0])
+        self.do_test_group_permissions(self.userService.deployed_service, self.staffs[0])
 
     def test_user_transport_permissions_user(self) -> None:
         self.doTestUserPermissions(
@@ -238,17 +238,17 @@ class PermissionsTest(UDSTestCase):
         )
 
     def test_group_transport_permissions_user(self) -> None:
-        self.doTestGroupPermissions(
+        self.do_test_group_permissions(
             typing.cast(models.Transport, self.userService.deployed_service.transports.first()), self.users[0]
         )
 
     def test_group_transport_permissions_admin(self) -> None:
-        self.doTestGroupPermissions(
+        self.do_test_group_permissions(
             typing.cast(models.Transport, self.userService.deployed_service.transports.first()), self.admins[0]
         )
 
     def test_group_transport_permissions_staff(self) -> None:
-        self.doTestGroupPermissions(
+        self.do_test_group_permissions(
             typing.cast(models.Transport, self.userService.deployed_service.transports.first()), self.staffs[0]
         )
 
@@ -262,13 +262,13 @@ class PermissionsTest(UDSTestCase):
         self.doTestUserPermissions(self.userService.deployed_service.service, self.staffs[0])
 
     def test_group_service_permissions_user(self) -> None:
-        self.doTestGroupPermissions(self.userService.deployed_service.service, self.users[0])
+        self.do_test_group_permissions(self.userService.deployed_service.service, self.users[0])
 
     def test_group_service_permissions_admin(self) -> None:
-        self.doTestGroupPermissions(self.userService.deployed_service.service, self.admins[0])
+        self.do_test_group_permissions(self.userService.deployed_service.service, self.admins[0])
 
     def test_group_service_permissions_staff(self) -> None:
-        self.doTestGroupPermissions(self.userService.deployed_service.service, self.staffs[0])
+        self.do_test_group_permissions(self.userService.deployed_service.service, self.staffs[0])
 
     def test_user_provider_permissions_user(self) -> None:
         self.doTestUserPermissions(self.userService.deployed_service.service.provider, self.users[0])
@@ -280,13 +280,13 @@ class PermissionsTest(UDSTestCase):
         self.doTestUserPermissions(self.userService.deployed_service.service.provider, self.staffs[0])
 
     def test_group_provider_permissions_user(self) -> None:
-        self.doTestGroupPermissions(self.userService.deployed_service.service.provider, self.users[0])
+        self.do_test_group_permissions(self.userService.deployed_service.service.provider, self.users[0])
 
     def test_group_provider_permissions_admin(self) -> None:
-        self.doTestGroupPermissions(self.userService.deployed_service.service.provider, self.admins[0])
+        self.do_test_group_permissions(self.userService.deployed_service.service.provider, self.admins[0])
 
     def test_group_provider_permissions_staff(self) -> None:
-        self.doTestGroupPermissions(self.userService.deployed_service.service.provider, self.staffs[0])
+        self.do_test_group_permissions(self.userService.deployed_service.service.provider, self.staffs[0])
 
     def test_user_network_permissions_user(self) -> None:
         self.doTestUserPermissions(self.network, self.users[0])
@@ -298,13 +298,13 @@ class PermissionsTest(UDSTestCase):
         self.doTestUserPermissions(self.network, self.staffs[0])
 
     def test_group_network_permissions_user(self) -> None:
-        self.doTestGroupPermissions(self.network, self.users[0])
+        self.do_test_group_permissions(self.network, self.users[0])
 
     def test_group_network_permissions_admin(self) -> None:
-        self.doTestGroupPermissions(self.network, self.admins[0])
+        self.do_test_group_permissions(self.network, self.admins[0])
 
     def test_group_network_permissions_staff(self) -> None:
-        self.doTestGroupPermissions(self.network, self.staffs[0])
+        self.do_test_group_permissions(self.network, self.staffs[0])
 
     @staticmethod
     def getObjectType(obj: typing.Any) -> int:

@@ -29,5 +29,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+from .base import BaseModelHandler
 from .detail import DetailHandler
 from .model import ModelHandler
