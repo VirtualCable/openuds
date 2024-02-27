@@ -32,7 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from unittest import mock
 
-from uds.services.Proxmox.service import ProxmoxServiceLinked
+from uds.services.Proxmox.service_linked import ProxmoxServiceLinked
 
 from . import fixtures
 

@@ -102,28 +102,28 @@ class TestUserService(services.UserService):
             ip = '8.6.4.2'  # Sample IP for testing purposses only
         return ip
 
-    def set_ready(self) -> types.states.State:
+    def set_ready(self) -> types.states.DeployState:
         logger.info('Setting ready %s', self.data)
         self.data.ready = True
-        return types.states.State.FINISHED
+        return types.states.DeployState.FINISHED
 
-    def deploy_for_user(self, user: 'models.User') -> types.states.State:
+    def deploy_for_user(self, user: 'models.User') -> types.states.DeployState:
         logger.info('Deploying for user %s %s', user, self.data)
         self.data.count = 3
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
     
-    def deploy_for_cache(self, level: int) -> types.states.State:
+    def deploy_for_cache(self, level: int) -> types.states.DeployState:
         logger.info('Deploying for cache %s %s', level, self.data)
         self.data.count = 3
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
 
-    def check_state(self) -> types.states.State:
+    def check_state(self) -> types.states.DeployState:
         logger.info('Checking state of deployment %s', self.data)
         if self.data.count <= 0:
-            return types.states.State.FINISHED
+            return types.states.DeployState.FINISHED
 
         self.data.count -= 1
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
 
     def finish(self) -> None:
         logger.info('Finishing deployment %s', self.data)
@@ -138,10 +138,10 @@ class TestUserService(services.UserService):
     def error_reason(self) -> str:
         return 'No error'
 
-    def destroy(self) -> types.states.State:
+    def destroy(self) -> types.states.DeployState:
         logger.info('Destroying deployment %s', self.data)
         self.data.count = -1
-        return types.states.State.FINISHED
+        return types.states.DeployState.FINISHED
 
-    def cancel(self) -> types.states.State:
+    def cancel(self) -> types.states.DeployState:
         return self.destroy()

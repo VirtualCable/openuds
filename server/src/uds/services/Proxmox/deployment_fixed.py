@@ -52,7 +52,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class ProxmoxFixedUserService(FixedUserService, autoserializable.AutoSerializable):
+class ProxmoxUserServiceFixed(FixedUserService, autoserializable.AutoSerializable):
     """
     This class generates the user consumable elements of the service tree.
 
@@ -78,9 +78,9 @@ class ProxmoxFixedUserService(FixedUserService, autoserializable.AutoSerializabl
     def service(self) -> 'service_fixed.ProxmoxServiceFixed':
         return typing.cast('service_fixed.ProxmoxServiceFixed', super().service())
 
-    def set_ready(self) -> types.states.State:
+    def set_ready(self) -> types.states.DeployState:
         if self.cache.get('ready') == '1':
-            return types.states.State.FINISHED
+            return types.states.DeployState.FINISHED
 
         try:
             vminfo = self.service().get_machine_info(int(self._vmid))
@@ -94,7 +94,7 @@ class ProxmoxFixedUserService(FixedUserService, autoserializable.AutoSerializabl
             return self._execute_queue()
 
         self.cache.put('ready', '1')
-        return types.states.State.FINISHED
+        return types.states.DeployState.FINISHED
 
     def reset(self) -> None:
         """
@@ -106,10 +106,10 @@ class ProxmoxFixedUserService(FixedUserService, autoserializable.AutoSerializabl
             except Exception:  # nosec: if cannot reset, ignore it
                 pass  # If could not reset, ignore it...
 
-    def process_ready_from_os_manager(self, data: typing.Any) -> types.states.State:
-        return types.states.State.FINISHED
+    def process_ready_from_os_manager(self, data: typing.Any) -> types.states.DeployState:
+        return types.states.DeployState.FINISHED
 
-    def error(self, reason: str) -> str:
+    def error(self, reason: str) -> types.states.DeployState:
         return self._error(reason)
 
     def _start_machine(self) -> None:
@@ -125,27 +125,27 @@ class ProxmoxFixedUserService(FixedUserService, autoserializable.AutoSerializabl
             self._store_task(self.service().provider().start_machine(int(self._vmid)))
 
     # Check methods
-    def _check_task_finished(self) -> types.states.State:
+    def _check_task_finished(self) -> types.states.DeployState:
         if self._task == '':
-            return types.states.State.FINISHED
+            return types.states.DeployState.FINISHED
 
         node, upid = self._retrieve_task()
 
         try:
             task = self.service().provider().get_task_info(node, upid)
         except client.ProxmoxConnectionError:
-            return types.states.State.RUNNING  # Try again later
+            return types.states.DeployState.RUNNING  # Try again later
 
         if task.is_errored():
             return self._error(task.exitstatus)
 
         if task.is_completed():
-            return types.states.State.FINISHED
+            return types.states.DeployState.FINISHED
 
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
 
     # Check methods
-    def _start_checker(self) -> types.states.State:
+    def _start_checker(self) -> types.states.DeployState:
         """
         Checks if machine has started
         """

@@ -37,9 +37,11 @@ import collections.abc
 from django.db import models
 
 from uds.core.environment import Environment
-from uds.core.module import Module
 
 from .uuid_model import UUIDModel
+
+if typing.TYPE_CHECKING:
+    from uds.core.module import Module
 
 
 logger = logging.getLogger(__name__)
@@ -56,7 +58,7 @@ class ManagedObjectModel(UUIDModel):
     data = models.TextField(default='')
     comments = models.CharField(max_length=256)
 
-    _cached_instance: typing.Optional[Module] = None
+    _cached_instance: typing.Optional['Module'] = None
 
     class Meta(UUIDModel.Meta):  # pylint: disable=too-few-public-methods
         """
@@ -71,7 +73,7 @@ class ManagedObjectModel(UUIDModel):
         """
         return Environment.environment_for_table_record(self._meta.verbose_name or self._meta.db_table, self.id)
 
-    def deserialize(self, obj: Module, values: typing.Optional[collections.abc.Mapping[str, str]]) -> None:
+    def deserialize(self, obj: 'Module', values: typing.Optional[collections.abc.Mapping[str, str]]) -> None:
         """
         Conditionally deserializes obj if not initialized via user interface and data holds something
         """
@@ -88,7 +90,7 @@ class ManagedObjectModel(UUIDModel):
 
         self._cached_instance = None  # Ensures returns correct value on get_instance
 
-    def get_instance(self, values: typing.Optional[dict[str, str]] = None) -> Module:
+    def get_instance(self, values: typing.Optional[dict[str, str]] = None) -> 'Module':
         """
         Instantiates the object this record contains.
 
@@ -116,7 +118,7 @@ class ManagedObjectModel(UUIDModel):
 
         return obj
 
-    def get_type(self) -> type[Module]:
+    def get_type(self) -> type['Module']:
         """
         Returns the type of self (as python type)
         Must be overriden!!!

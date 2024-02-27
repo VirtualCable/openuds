@@ -226,7 +226,7 @@ class SampleUserServiceTwo(services.UserService):
             return '192.168.0.34'  # Sample IP for testing purposes only
         return self._ip
 
-    def set_ready(self) -> types.states.State:
+    def set_ready(self) -> types.states.DeployState:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -244,22 +244,22 @@ class SampleUserServiceTwo(services.UserService):
 
         This method, in this case, will check the state of the machine, and if
         it is "ready", that is, powered on and accessible, it will return
-        "types.states.State.FINISHED". If the machine is not accessible (has been erased, for
-        example), it will return "types.states.State.ERROR" and store a reason of error so UDS
+        "types.states.DeployState.FINISHED". If the machine is not accessible (has been erased, for
+        example), it will return "types.states.DeployState.ERROR" and store a reason of error so UDS
         can ask for it and present this information to the Administrator.
 
         If the machine powered off, or suspended, or any other state that is not
         directly usable but can be put in an usable state, it will return
-        "types.states.State.RUNNING", and core will use check_state to see when the operation
+        "types.states.DeployState.RUNNING", and core will use check_state to see when the operation
         has finished.
 
         I hope this sample is enough to explain the use of this method..
         """
 
         # In our case, the service is always ready
-        return types.states.State.FINISHED
+        return types.states.DeployState.FINISHED
 
-    def deploy_for_user(self, user: 'models.User') -> types.states.State:
+    def deploy_for_user(self, user: 'models.User') -> types.states.DeployState:
         """
         Deploys an service instance for an user.
 
@@ -278,9 +278,9 @@ class SampleUserServiceTwo(services.UserService):
 
         If the service gets created in "one step", that is, before the return
         of this method, the consumable service for the user gets created, it
-        will return "types.states.State.FINISH".
+        will return "types.states.DeployState.FINISH".
         If the service needs more steps (as in this case), we will return
-        "types.states.State.RUNNING", and if it has an error, it wil return "types.states.State.ERROR" and
+        "types.states.DeployState.RUNNING", and if it has an error, it wil return "types.states.DeployState.ERROR" and
         store an error string so administration interface can show it.
 
         We do not use user for anything, as in most cases will be.
@@ -294,11 +294,11 @@ class SampleUserServiceTwo(services.UserService):
             # Note that we can mark this string as translatable, and return
             # it translated at error_reason method
             self._error = 'Random error at deployForUser :-)'
-            return types.states.State.ERROR
+            return types.states.DeployState.ERROR
 
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
 
-    def deploy_for_cache(self, level: int) -> types.states.State:
+    def deploy_for_cache(self, level: int) -> types.states.DeployState:
         """
         Deploys a user deployment as cache.
 
@@ -315,9 +315,9 @@ class SampleUserServiceTwo(services.UserService):
                cache level (L1, L2) is the deployment
         """
         self._count = 0
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
 
-    def check_state(self) -> types.states.State:
+    def check_state(self) -> types.states.DeployState:
         """
         Our deployForUser method will initiate the consumable service deployment,
         but will not finish it.
@@ -326,8 +326,8 @@ class SampleUserServiceTwo(services.UserService):
         return that we have finished, else we will return that we are working
         on it.
 
-        One deployForUser returns types.states.State.RUNNING, this task will get called until
-        check_state returns types.states.State.FINISHED.
+        One deployForUser returns types.states.DeployState.RUNNING, this task will get called until
+        check_state returns types.states.DeployState.FINISHED.
 
         Also, we will make the user deployment fail one of every 10 calls to this
         method.
@@ -349,14 +349,14 @@ class SampleUserServiceTwo(services.UserService):
         # In our sample, we only use check_state in case of deployForUser,
         # so at first call count will be 0.
         if self._count >= 5:
-            return types.states.State.FINISHED
+            return types.states.DeployState.FINISHED
 
         # random fail
         if random.randint(0, 9) == 9:  # nosec: just testing values
             self._error = 'Random error at check_state :-)'
-            return types.states.State.ERROR
+            return types.states.DeployState.ERROR
 
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
 
     def finish(self) -> None:
         """
@@ -421,18 +421,18 @@ class SampleUserServiceTwo(services.UserService):
         """
         return self._error
 
-    def destroy(self) -> types.states.State:
+    def destroy(self) -> types.states.DeployState:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
 
         Invoked for destroying a deployed service
         Do whatever needed here, as deleting associated data if needed (i.e. a copy of the machine, snapshots, etc...)
-        @return: types.states.State.FINISHED if no more checks/steps for deployment are needed, types.states.State.RUNNING if more steps are needed (steps checked using check_state)
+        @return: types.states.DeployState.FINISHED if no more checks/steps for deployment are needed, types.states.DeployState.RUNNING if more steps are needed (steps checked using check_state)
         """
-        return types.states.State.FINISHED
+        return types.states.DeployState.FINISHED
 
-    def cancel(self) -> types.states.State:
+    def cancel(self) -> types.states.DeployState:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -442,4 +442,4 @@ class SampleUserServiceTwo(services.UserService):
         When administrator requests it, the cancel is "delayed" and not
         invoked directly.
         """
-        return types.states.State.FINISHED
+        return types.states.DeployState.FINISHED

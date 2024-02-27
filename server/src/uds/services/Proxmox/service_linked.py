@@ -40,7 +40,7 @@ from uds.core.util import validators, log, fields
 from uds.core.util.decorators import cached
 
 from . import helpers
-from .deployment import ProxmoxUserserviceLinked
+from .deployment_linked import ProxmoxUserserviceLinked
 from .publication import ProxmoxPublication
 
 # Not imported at runtime, just for type checking

@@ -230,10 +230,10 @@ class UserServiceManager(metaclass=singleton.Singleton):
             )
             assigned = self._create_assigned_user_service_at_db_from_pool(service_pool, user)
 
-        assignedInstance = assigned.get_instance()
-        state = types.states.State.from_str(assignedInstance.deploy_for_user(user))
+        assigned_instance = assigned.get_instance()
+        state = assigned_instance.deploy_for_user(user)
 
-        UserServiceOpChecker.make_unique(assigned, assignedInstance, state)
+        UserServiceOpChecker.make_unique(assigned, assigned_instance, state)
 
         return assigned
 
@@ -271,7 +271,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         # Now, get from serviceInstance the data
         assigned_userservice_instance = assigned.get_instance()
-        state = types.states.State.from_str(serviceInstance.assign_from_assignables(assignable_id, user, assigned_userservice_instance))
+        state = serviceInstance.assign_from_assignables(assignable_id, user, assigned_userservice_instance)
         # assigned.u(assignedInstance)
 
         UserServiceOpChecker.make_unique(assigned, assigned_userservice_instance, state)
@@ -285,8 +285,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         cache.refresh_from_db()
         logger.debug('Moving cache %s to level %s', cache, cache_level)
-        cacheInstance = cache.get_instance()
-        state = cacheInstance.move_to_cache(cache_level)
+        cache_instance = cache.get_instance()
+        state = cache_instance.move_to_cache(cache_level)
         cache.cache_level = cache_level
         cache.save(update_fields=['cache_level'])
         logger.debug(
@@ -295,11 +295,11 @@ class UserServiceManager(metaclass=singleton.Singleton):
             State.from_str(cache.state).localized,
             State.from_str(cache.os_state).localized,
         )
-        if State.from_str(state).is_runing() and cache.is_usable():
+        if state.is_runing() and cache.is_usable():
             cache.set_state(State.PREPARING)
 
         # Data will be serialized on makeUnique process
-        UserServiceOpChecker.make_unique(cache, cacheInstance, state)
+        UserServiceOpChecker.make_unique(cache, cache_instance, state)
 
     def cancel(self, user_service: UserService) -> None:
         """
@@ -323,7 +323,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         else:
             user_service.set_state(State.CANCELING)
             # We simply notify service that it should cancel operation
-            state = types.states.State.from_str(user_service_instance.cancel())
+            state = user_service_instance.cancel()
 
             # Data will be serialized on makeUnique process
             # If cancel is not supported, base cancel always returns "FINISHED", and
@@ -584,7 +584,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         logger.debug('State: %s', state)
 
-        if state == State.FINISHED:
+        if state == types.states.DeployState.FINISHED:
             user_service.update_data(userServiceInstance)
             return True
 
@@ -664,7 +664,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             logger.debug('Notifying user service ready state')
             state = userServiceInstance.process_ready_from_os_manager(data)
             logger.debug('State: %s', state)
-            if state == State.FINISHED:
+            if state == types.states.DeployState.FINISHED:
                 user_service.update_data(userServiceInstance)
                 logger.debug('Service is now ready')
             elif user_service.state in (

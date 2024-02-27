@@ -86,7 +86,7 @@ class TestProxmovFixedService(UDSTransactionTestCase):
 
             vmid: str = typing.cast(list[str], fixtures.SERVICE_FIXED_VALUES_DICT['machines'])[0]
             # Assign from assignables
-            with mock.patch('uds.services.Proxmox.service_fixed.ProxmoxFixedUserService') as userservice:
+            with mock.patch('uds.services.Proxmox.service_fixed.ProxmoxUserServiceFixed') as userservice:
                 userservice_instance = userservice.return_value
                 userservice_instance.assign.return_value = 'OK'
                 self.assertEqual(

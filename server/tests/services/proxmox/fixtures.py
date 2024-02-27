@@ -46,13 +46,13 @@ from ...utils.test import UDSTestCase
 from ...utils.autospec import autospec, AutoSpecMethodInfo
 
 from uds.services.Proxmox import (
+    deployment_linked,
     provider,
     client,
-    service,
     service_fixed,
     publication,
-    deployment,
     deployment_fixed,
+    service_linked,
 )
 
 NODES: typing.Final[list[client.types.Node]] = [
@@ -167,7 +167,7 @@ VMS_INFO: typing.Final[list[client.types.VMInfo]] = [
         diskwrite=1,
         vgpu_type=VGPUS[i % len(VGPUS)].type,
     )
-    for i in range(1,16)
+    for i in range(1, 16)
 ]
 
 VMS_CONFIGURATION: typing.Final[list[client.types.VMConfiguration]] = [
@@ -316,11 +316,17 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     # list_machines
     AutoSpecMethodInfo('list_machines', return_value=VMS_INFO),
     # get_machine_pool_info
-    AutoSpecMethodInfo('get_machine_pool_info', method=lambda vmid, poolid, **kwargs: VMS_INFO[vmid - 1]),  # pyright: ignore
+    AutoSpecMethodInfo(
+        'get_machine_pool_info', method=lambda vmid, poolid, **kwargs: VMS_INFO[vmid - 1]  # pyright: ignore
+    ),  # pyright: ignore
     # get_machine_info
-    AutoSpecMethodInfo('get_machine_info', method=lambda vmid, *args, **kwargs: VMS_INFO[vmid - 1]),  # pyright: ignore
+    AutoSpecMethodInfo(
+        'get_machine_info', method=lambda vmid, *args, **kwargs: VMS_INFO[vmid - 1]  # pyright: ignore
+    ),  # pyright: ignore
     # get_machine_configuration
-    AutoSpecMethodInfo('get_machine_configuration', method=lambda vmid, **kwargs: VMS_CONFIGURATION[vmid - 1]),  # pyright: ignore
+    AutoSpecMethodInfo(
+        'get_machine_configuration', method=lambda vmid, **kwargs: VMS_CONFIGURATION[vmid - 1]  # pyright: ignore
+    ),  # pyright: ignore
     # set_machine_ha return None
     # start_machine
     AutoSpecMethodInfo('start_machine', return_value=UPID),
@@ -339,24 +345,30 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     # get_storage
     AutoSpecMethodInfo(
         'get_storage',
-        method=lambda storage, node, **kwargs: next(filter(lambda s: s.storage == storage, STORAGES)),  # pyright: ignore
+        method=lambda storage, node, **kwargs: next(  # pyright: ignore
+            filter(lambda s: s.storage == storage, STORAGES)  # pyright: ignore
+        ),  # pyright: ignore
     ),
     # list_storages
     AutoSpecMethodInfo(
         'list_storages',
         method=lambda node, **kwargs: (  # pyright: ignore
-            (list(filter(lambda s: s.node == node, STORAGES))) if node is not None else STORAGES  # pyright: ignore
+            (list(filter(lambda s: s.node == node, STORAGES)))      # pyright: ignore
+            if node is not None
+            else STORAGES  # pyright: ignore
         ),
     ),
     # get_node_stats
     AutoSpecMethodInfo(
-        'get_node_stats', method=lambda node, **kwargs: next(filter(lambda n: n.name == node, NODE_STATS))  # pyright: ignore
+        'get_node_stats',
+        method=lambda node, **kwargs: next(filter(lambda n: n.name == node, NODE_STATS)),  # pyright: ignore
     ),
     # list_pools
     AutoSpecMethodInfo('list_pools', return_value=POOLS),
     # get_pool_info
     AutoSpecMethodInfo(
-        'get_pool_info', method=lambda poolid, **kwargs: next(filter(lambda p: p.poolid == poolid, POOLS))  # pyright: ignore
+        'get_pool_info',
+        method=lambda poolid, **kwargs: next(filter(lambda p: p.poolid == poolid, POOLS)),  # pyright: ignore
     ),
     # get_console_connection
     AutoSpecMethodInfo('get_console_connection', return_value=CONSOLE_CONNECTION_INFO),
@@ -431,14 +443,14 @@ def create_provider(**kwargs: typing.Any) -> provider.ProxmoxProvider:
 
 def create_service_linked(
     provider: typing.Optional[provider.ProxmoxProvider] = None, **kwargs: typing.Any
-) -> service.ProxmoxServiceLinked:
+) -> service_linked.ProxmoxServiceLinked:
     """
     Create a fixed service
     """
     uuid_ = str(uuid.uuid4())
     values = SERVICE_LINKED_VALUES_DICT.copy()
     values.update(kwargs)
-    return service.ProxmoxServiceLinked(
+    return service_linked.ProxmoxServiceLinked(
         environment=environment.Environment.private_environment(uuid_),
         provider=provider or create_provider(),
         values=values,
@@ -464,7 +476,7 @@ def create_service_fixed(
 
 
 def create_publication(
-    service: typing.Optional[service.ProxmoxServiceLinked] = None,
+    service: typing.Optional[service_linked.ProxmoxServiceLinked] = None,
     **kwargs: typing.Any,
 ) -> 'publication.ProxmoxPublication':
     """
@@ -476,5 +488,45 @@ def create_publication(
         service=service or create_service_linked(**kwargs),
         revision=1,
         servicepool_name='servicepool_name',
+        uuid=uuid_,
+    )
+
+
+def create_userservice_fixed(
+    service: typing.Optional[service_fixed.ProxmoxServiceFixed] = None,
+) -> deployment_fixed.ProxmoxUserServiceFixed:
+    """
+    Create a fixed user service, has no publication
+    """
+    # def __init__(
+    #     self,
+    #     environment: 'Environment',
+    #     service: 'services.Service',
+    #     publication: typing.Optional['services.Publication'] = None,
+    #     osmanager: typing.Optional['osmanagers.OSManager'] = None,
+    #     uuid: str = '',
+    # ):
+
+    uuid_ = str(uuid.uuid4().hex)
+    return deployment_fixed.ProxmoxUserServiceFixed(
+        environment=environment.Environment.private_environment(uuid_),
+        service=service or create_service_fixed(),
+        publication=None,
+        uuid=uuid_,
+    )
+
+
+def create_userservice_linked(
+    service: typing.Optional[service_linked.ProxmoxServiceLinked] = None,
+    publication: typing.Optional['publication.ProxmoxPublication'] = None,
+) -> deployment_linked.ProxmoxUserserviceLinked:
+    """
+    Create a linked user service
+    """
+    uuid_ = str(uuid.uuid4())
+    return deployment_linked.ProxmoxUserserviceLinked(
+        environment=environment.Environment.private_environment(uuid_),
+        service=service or create_service_linked(),
+        publication=publication or create_publication(),
         uuid=uuid_,
     )

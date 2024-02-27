@@ -142,9 +142,9 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
     def get_ip(self) -> str:
         return self._ip
 
-    def set_ready(self) -> types.states.State:
+    def set_ready(self) -> types.states.DeployState:
         if self.cache.get('ready') == '1':
-            return types.states.State.FINISHED
+            return types.states.DeployState.FINISHED
 
         try:
             state = self.service().get_machine_power_state(self._vmid)
@@ -159,13 +159,13 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
             self.do_log(log.LogLevel.ERROR, 'Error setting machine state: {}'.format(e))
             # return self.__error('Machine is not available anymore')
 
-        return types.states.State.FINISHED
+        return types.states.DeployState.FINISHED
 
     def reset(self) -> None:
         if self._vmid:
             self.service().reset_machine(self._vmid)  # Reset in sync
 
-    def process_ready_from_os_manager(self, data: typing.Any) -> types.states.State:
+    def process_ready_from_os_manager(self, data: typing.Any) -> types.states.DeployState:
         # Here we will check for suspending the VM (when full ready)
         logger.debug('Checking if cache 2 for %s', self._name)
         if self._get_current_op() == Operation.WAIT:
@@ -173,9 +173,9 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
             self._pop_current_op()  # Remove current state
             return self._execute_queue()
         # Do not need to go to level 2 (opWait is in fact "waiting for moving machine to cache level 2)
-        return types.states.State.FINISHED
+        return types.states.DeployState.FINISHED
 
-    def deploy_for_user(self, user: 'models.User') -> types.states.State:
+    def deploy_for_user(self, user: 'models.User') -> types.states.DeployState:
         """
         Deploys an service instance for an user.
         """
@@ -183,7 +183,7 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
         self._init_queue_for_deployment(False)
         return self._execute_queue()
 
-    def deploy_for_cache(self, level: int) -> types.states.State:
+    def deploy_for_cache(self, level: int) -> types.states.DeployState:
         """
         Deploys an service instance for cache
         """
@@ -229,7 +229,7 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
     def _push_back_op(self, op: Operation) -> None:
         self._queue.append(op)
 
-    def _error(self, reason: typing.Any) -> types.states.State:
+    def _error(self, reason: typing.Any) -> types.states.DeployState:
         logger.debug('Setting error state, reason: %s', reason)
         self.do_log(log.LogLevel.ERROR, reason)
 
@@ -248,17 +248,17 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
 
         self._queue = [Operation.ERROR]
         self._reason = str(reason)
-        return types.states.State.ERROR
+        return types.states.DeployState.ERROR
 
-    def _execute_queue(self) -> types.states.State:
+    def _execute_queue(self) -> types.states.DeployState:
         self.__debug('executeQueue')
         op = self._get_current_op()
 
         if op == Operation.ERROR:
-            return types.states.State.ERROR
+            return types.states.DeployState.ERROR
 
         if op == Operation.FINISH:
-            return types.states.State.FINISHED
+            return types.states.DeployState.FINISHED
 
         fncs: dict[Operation, typing.Optional[collections.abc.Callable[[], str]]] = {
             Operation.CREATE: self._create,
@@ -281,26 +281,26 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
 
             operation()
 
-            return types.states.State.RUNNING
+            return types.states.DeployState.RUNNING
         except Exception as e:
             return self._error(e)
 
     # Queue execution methods
-    def _retry(self) -> types.states.State:
+    def _retry(self) -> types.states.DeployState:
         """
         Used to retry an operation
         In fact, this will not be never invoked, unless we push it twice, because
-        check_state method will "pop" first item when a check operation returns types.states.State.FINISHED
+        check_state method will "pop" first item when a check operation returns types.states.DeployState.FINISHED
 
         At executeQueue this return value will be ignored, and it will only be used at check_state
         """
-        return types.states.State.FINISHED
+        return types.states.DeployState.FINISHED
 
-    def _wait(self) -> types.states.State:
+    def _wait(self) -> types.states.DeployState:
         """
         Executes opWait, it simply waits something "external" to end
         """
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
 
     def _create(self) -> str:
         """
@@ -322,7 +322,7 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
         if not self._task:
             raise Exception('Can\'t create machine')
 
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
 
     def _remove(self) -> str:
         """
@@ -336,7 +336,7 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
         else:
             self.service().remove_machine(self._vmid)
 
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
 
     def _start_machine(self) -> str:
         """
@@ -349,7 +349,7 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
         else:
             self._task = ''
 
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
 
     def _stop_machine(self) -> str:
         """
@@ -362,14 +362,14 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
         else:
             self._task = ''
 
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
 
     def _wait_suspend(self) -> str:
         """
         Before suspending, wait for machine to have the SUSPEND feature
         """
         self._task = ''
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
 
     def _suspend_machine(self) -> str:
         """
@@ -382,84 +382,84 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
         else:
             self._task = ''
 
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
 
-    def _configure(self) -> types.states.State:
+    def _configure(self) -> types.states.DeployState:
         """
         Provisions machine & changes the mac of the indicated nic
         """
         self.service().configure_machine(self._vmid, self.get_unique_id())
 
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
 
-    def _provision(self) -> types.states.State:
+    def _provision(self) -> types.states.DeployState:
         """
         Makes machine usable on Xen
         """
         self.service().provision_machine(self._vmid, False)  # Let's try this in "sync" mode, this must be fast enough
 
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
 
     # Check methods
-    def _create_checker(self) -> types.states.State:
+    def _create_checker(self) -> types.states.DeployState:
         """
         Checks the state of a deploy for an user or cache
         """
         state = self.service().check_task_finished(self._task)
         if state[0]:  # Finished
             self._vmid = state[1]
-            return types.states.State.FINISHED
+            return types.states.DeployState.FINISHED
 
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
 
-    def _start_checker(self) -> types.states.State:
+    def _start_checker(self) -> types.states.DeployState:
         """
         Checks if machine has started
         """
         if self.service().check_task_finished(self._task)[0]:
-            return types.states.State.FINISHED
-        return types.states.State.RUNNING
+            return types.states.DeployState.FINISHED
+        return types.states.DeployState.RUNNING
 
-    def _stop_checker(self) -> types.states.State:
+    def _stop_checker(self) -> types.states.DeployState:
         """
         Checks if machine has stoped
         """
         if self.service().check_task_finished(self._task)[0]:
-            return types.states.State.FINISHED
-        return types.states.State.RUNNING
+            return types.states.DeployState.FINISHED
+        return types.states.DeployState.RUNNING
 
-    def _wait_suspend_checker(self) -> types.states.State:
+    def _wait_suspend_checker(self) -> types.states.DeployState:
         if self.service().can_suspend_machine(self._vmid) is True:
-            return types.states.State.FINISHED
+            return types.states.DeployState.FINISHED
 
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
 
-    def _suspend_checker(self) -> types.states.State:
+    def _suspend_checker(self) -> types.states.DeployState:
         """
         Check if the machine has suspended
         """
         if self.service().check_task_finished(self._task)[0]:
-            return types.states.State.FINISHED
-        return types.states.State.RUNNING
+            return types.states.DeployState.FINISHED
+        return types.states.DeployState.RUNNING
 
-    def removed_checker(self) -> types.states.State:
+    def removed_checker(self) -> types.states.DeployState:
         """
         Checks if a machine has been removed
         """
-        return types.states.State.FINISHED
+        return types.states.DeployState.FINISHED
 
-    def _configure_checker(self) -> types.states.State:
+    def _configure_checker(self) -> types.states.DeployState:
         """
         Checks if change mac operation has finished.
 
         Changing nic configuration es 1-step operation, so when we check it here, it is already done
         """
-        return types.states.State.FINISHED
+        return types.states.DeployState.FINISHED
 
-    def _provision_checker(self) -> types.states.State:
-        return types.states.State.FINISHED
+    def _provision_checker(self) -> types.states.DeployState:
+        return types.states.DeployState.FINISHED
 
-    def check_state(self) -> types.states.State:
+    def check_state(self) -> types.states.DeployState:
         """
         Check what operation is going on, and acts acordly to it
         """
@@ -467,12 +467,12 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
         op = self._get_current_op()
 
         if op == Operation.ERROR:
-            return types.states.State.ERROR
+            return types.states.DeployState.ERROR
 
         if op == Operation.FINISH:
-            return types.states.State.FINISHED
+            return types.states.DeployState.FINISHED
 
-        fncs: dict[int, typing.Optional[collections.abc.Callable[[], types.states.State]]] = {
+        fncs: dict[int, typing.Optional[collections.abc.Callable[[], types.states.DeployState]]] = {
             Operation.CREATE: self._create_checker,
             Operation.RETRY: self._retry,
             Operation.WAIT: self._wait,
@@ -486,13 +486,13 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
         }
 
         try:
-            chkFnc: typing.Optional[collections.abc.Callable[[], types.states.State]] = fncs.get(op, None)
+            chkFnc: typing.Optional[collections.abc.Callable[[], types.states.DeployState]] = fncs.get(op, None)
 
             if chkFnc is None:
                 return self._error('Unknown operation found at check queue ({})'.format(op))
 
             state = chkFnc()
-            if state == types.states.State.FINISHED:
+            if state == types.states.DeployState.FINISHED:
                 self._pop_current_op()  # Remove runing op
                 return self._execute_queue()
 
@@ -500,12 +500,12 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
         except Exception as e:
             return self._error(e)
 
-    def move_to_cache(self, level: int) -> types.states.State:
+    def move_to_cache(self, level: int) -> types.states.DeployState:
         """
         Moves machines between cache levels
         """
         if Operation.REMOVE in self._queue:
-            return types.states.State.RUNNING
+            return types.states.DeployState.RUNNING
 
         if level == self.L1_CACHE:
             self._queue = [Operation.START, Operation.FINISH]
@@ -517,14 +517,14 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
     def error_reason(self) -> str:
         return self._reason
 
-    def destroy(self) -> types.states.State:
+    def destroy(self) -> types.states.DeployState:
         self.__debug('destroy')
         # If executing something, wait until finished to remove it
         # We simply replace the execution queue
         op = self._get_current_op()
 
         if op == Operation.ERROR:
-            return types.states.State.FINISHED
+            return types.states.DeployState.FINISHED
 
         if op == Operation.FINISH or op == Operation.WAIT:
             self._queue = [Operation.STOP, Operation.REMOVE, Operation.FINISH]
@@ -532,9 +532,9 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
 
         self._queue = [op, Operation.STOP, Operation.REMOVE, Operation.FINISH]
         # Do not execute anything.here, just continue normally
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
 
-    def cancel(self) -> types.states.State:
+    def cancel(self) -> types.states.DeployState:
         return self.destroy()
 
     @staticmethod

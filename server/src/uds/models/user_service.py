@@ -419,7 +419,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
             self.state = state
             self.save(update_fields=['state', 'state_date'])
 
-    def setOsState(self, state: str) -> None:
+    def set_os_state(self, state: str) -> None:
         """
         Updates the os state (state of the os) of this object and, optionally, saves it
 

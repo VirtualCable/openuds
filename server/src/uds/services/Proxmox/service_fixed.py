@@ -43,7 +43,7 @@ from uds.core.util import log
 from uds.core.util.decorators import cached
 
 from . import helpers
-from .deployment_fixed import ProxmoxFixedUserService
+from .deployment_fixed import ProxmoxUserServiceFixed
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -73,7 +73,7 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
     # : In our case, we do no need a publication, so this is None
     publication_type = None
     # : Types of deploys (services in cache and/or assigned to users)
-    user_service_type = ProxmoxFixedUserService
+    user_service_type = ProxmoxUserServiceFixed
 
     allowed_protocols = types.transports.Protocol.generic_vdi(types.transports.Protocol.SPICE)
     services_type_provided = types.services.ServiceType.VDI
@@ -153,8 +153,8 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
 
     def assign_from_assignables(
         self, assignable_id: str, user: 'models.User', userservice_instance: 'services.UserService'
-    ) -> str:
-        proxmox_service_instance = typing.cast(ProxmoxFixedUserService, userservice_instance)
+    ) -> types.states.DeployState:
+        proxmox_service_instance = typing.cast(ProxmoxUserServiceFixed, userservice_instance)
         assigned_vms = self._get_assigned_machines()
         if assignable_id not in assigned_vms:
             assigned_vms.add(assignable_id)
@@ -164,7 +164,7 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
         return proxmox_service_instance.error('VM not available!')
 
     def process_snapshot(self, remove: bool, userservice_instance: FixedUserService) -> None:
-        userservice_instance = typing.cast(ProxmoxFixedUserService, userservice_instance)
+        userservice_instance = typing.cast(ProxmoxUserServiceFixed, userservice_instance)
         if self.use_snapshots.as_bool():
             vmid = int(userservice_instance._vmid)
             if remove:

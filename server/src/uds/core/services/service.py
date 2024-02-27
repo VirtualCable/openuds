@@ -38,7 +38,6 @@ import logging
 from django.utils.translation import gettext_noop as _
 from uds.core.module import Module
 from uds.core.ui.user_interface import gui
-from uds.core.types.states import State
 from uds.core.util import log
 
 from uds.core import types, consts
@@ -350,7 +349,7 @@ class Service(Module):
 
     def assign_from_assignables(
         self, assignable_id: str, user: 'models.User', userservice_instance: 'UserService'
-    ) -> str:
+    ) -> types.states.DeployState:
         """
         Assigns from it internal assignable list to an user
 
@@ -370,7 +369,7 @@ class Service(Module):
             This allows to process the assignation as an user service regular task, so it can be processed by the core.
 
         """
-        return State.FINISHED
+        return types.states.DeployState.FINISHED
 
     def get_token(self) -> typing.Optional[str]:
         """

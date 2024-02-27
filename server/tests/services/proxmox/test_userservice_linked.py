@@ -35,9 +35,10 @@ import datetime
 import collections.abc
 import itertools
 from unittest import mock
+from tests.web import user
 
-from uds.core import ui, environment
-from uds.services.Proxmox.deployment import ProxmoxUserserviceLinked
+from uds.core import types, ui, environment
+from uds.services.Proxmox.deployment_fixed import ProxmoxUserServiceFixed
 
 from . import fixtures
 
@@ -46,9 +47,14 @@ from ...utils.test import UDSTestCase
 
 class TestProxmovLinkedService(UDSTestCase):
 
-    def test_userservice(self) -> None:
+    def test_userservice_fixed_user(self) -> None:
         """
         Test the user service
         """
-        with fixtures.patch_provider_api() as api:
-            pass
+        with fixtures.patch_provider_api() as _api:
+            userservice = fixtures.create_userservice_fixed()
+
+            # Test Deploy for cache, should raise Exception due
+            # to the fact fixed services cannot have cached items
+            with self.assertRaises(Exception):
+                userservice.deploy_for_cache(level=1)

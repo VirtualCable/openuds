@@ -50,7 +50,7 @@ class FixedServiceIterationInfo:
     queue: list[fixed_userservice.Operation]
     service_calls: list[mock._Call] = dataclasses.field(default_factory=list)
     user_service_calls: list[mock._Call] = dataclasses.field(default_factory=list)
-    state: str = types.states.State.RUNNING
+    state: str = types.states.DeployState.RUNNING
 
     def __mul__(self, other: int) -> list['FixedServiceIterationInfo']:
         return [self] * other
@@ -132,7 +132,7 @@ EXPECTED_DEPLOY_ITERATIONS_INFO: typing.Final[list[FixedServiceIterationInfo]] =
             fixed_userservice.Operation.FINISH,
         ],
         user_service_calls=[mock.call._start_checker()],
-        state=types.states.State.FINISHED,
+        state=types.states.DeployState.FINISHED,
     ),
 ]
 
@@ -156,7 +156,7 @@ EXPECTED_REMOVAL_ITERATIONS_INFO: typing.Final[list[FixedServiceIterationInfo]] 
         queue=[
             fixed_userservice.Operation.FINISH,
         ],
-        state=types.states.State.FINISHED,
+        state=types.states.DeployState.FINISHED,
     ),
 ]
 
@@ -214,8 +214,8 @@ class FixedServiceTest(UDSTestCase):
     def deploy_service(
         self, service: 'FixedTestingService', userservice: 'FixedTestingUserService', max_iterations: int = 100
     ) -> None:
-        if userservice.deploy_for_user(models.User()) != types.states.State.FINISHED:
-            while userservice.check_state() != types.states.State.FINISHED and max_iterations > 0:
+        if userservice.deploy_for_user(models.User()) != types.states.DeployState.FINISHED:
+            while userservice.check_state() != types.states.DeployState.FINISHED and max_iterations > 0:
                 max_iterations -= 1
 
         # Clear mocks
@@ -253,13 +253,13 @@ class FixedTestingUserService(fixed_userservice.FixedUserService):
     def _stop_machine(self) -> None:
         self.mock._stop_machine()
 
-    def _start_checker(self) -> types.states.State:
+    def _start_checker(self) -> types.states.DeployState:
         self.mock._start_checker()
-        return types.states.State.FINISHED
+        return types.states.DeployState.FINISHED
 
-    def _stop_checker(self) -> types.states.State:
+    def _stop_checker(self) -> types.states.DeployState:
         self.mock._stop_checker()
-        return types.states.State.FINISHED
+        return types.states.DeployState.FINISHED
 
     def db_obj(self) -> typing.Any:
         self.mock.db_obj()
@@ -307,7 +307,7 @@ class FixedTestingService(fixed_service.FixedService):
     def remove_and_free_machine(self, vmid: str) -> str:
         self.mock.remove_and_free_machine(vmid)
         self.assigned_machine = ''
-        return types.states.State.FINISHED
+        return types.states.DeployState.FINISHED
 
     def get_first_network_mac(self, vmid: str) -> str:
         self.mock.get_first_network_mac(vmid)
@@ -335,7 +335,7 @@ class FixedTestingService(fixed_service.FixedService):
         Assigns a machine from the assignables
         """
         self.mock.assign_from_assignables(assignable_id, user, userservice_instance)
-        return types.states.State.FINISHED
+        return types.states.DeployState.FINISHED
 
 
 class FixedTestingProvider(services.provider.ServiceProvider):

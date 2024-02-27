@@ -500,7 +500,7 @@ class BaseReadyChange(ActorV3Action):
         )
 
         if userService.os_state != State.USABLE:
-            userService.setOsState(State.USABLE)
+            userService.set_os_state(State.USABLE)
             # Notify osmanager or readyness if has os manager
             osmanager = userService.get_osmanager_instance()
 

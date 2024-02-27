@@ -192,13 +192,13 @@ class OVirtLinkedDeployment(services.UserService, autoserializable.AutoSerializa
         """
         return self._ip
 
-    def set_ready(self) -> types.states.State:
+    def set_ready(self) -> types.states.DeployState:
         """
         The method is invoked whenever a machine is provided to an user, right
         before presenting it (via transport rendering) to the user.
         """
         if self.cache.get('ready') == '1':
-            return types.states.State.FINISHED
+            return types.states.DeployState.FINISHED
 
         try:
             state = self.service().get_machine_state(self._vmid)
@@ -215,7 +215,7 @@ class OVirtLinkedDeployment(services.UserService, autoserializable.AutoSerializa
             self.do_log(log.LogLevel.ERROR, f'Error on setReady: {e}')
             # Treat as operation done, maybe the machine is ready and we can continue
 
-        return types.states.State.FINISHED
+        return types.states.DeployState.FINISHED
 
     def reset(self) -> None:
         """
@@ -246,7 +246,7 @@ if sys.platform == 'win32':
         if dbUserService:
             UserServiceManager().send_script(dbUserService, script)
 
-    def process_ready_from_os_manager(self, data: typing.Any) -> types.states.State:
+    def process_ready_from_os_manager(self, data: typing.Any) -> types.states.DeployState:
         # Here we will check for suspending the VM (when full ready)
         logger.debug('Checking if cache 2 for %s', self._name)
         if self._get_current_op() == Operation.WAIT:
@@ -254,9 +254,9 @@ if sys.platform == 'win32':
             self._pop_current_op()  # Remove current state
             return self._execute_queue()
         # Do not need to go to level 2 (opWait is in fact "waiting for moving machine to cache level 2)
-        return types.states.State.FINISHED
+        return types.states.DeployState.FINISHED
 
-    def deploy_for_user(self, user: 'models.User') -> types.states.State:
+    def deploy_for_user(self, user: 'models.User') -> types.states.DeployState:
         """
         Deploys an service instance for an user.
         """
@@ -264,7 +264,7 @@ if sys.platform == 'win32':
         self._init_queue_for_deploy(False)
         return self._execute_queue()
 
-    def deploy_for_cache(self, level: int) -> types.states.State:
+    def deploy_for_cache(self, level: int) -> types.states.DeployState:
         """
         Deploys an service instance for cache
         """
@@ -284,7 +284,7 @@ if sys.platform == 'win32':
                 Operation.FINISH,
             ]
 
-    def _check_machine_state(self, check_state: collections.abc.Iterable[str]) -> types.states.State:
+    def _check_machine_state(self, check_state: collections.abc.Iterable[str]) -> types.states.DeployState:
         logger.debug(
             'Checking that state of machine %s (%s) is %s',
             self._vmid,
@@ -297,15 +297,15 @@ if sys.platform == 'win32':
         if state == 'unknown' and check_state != 'unknown':
             return self._error('Machine not found')
 
-        ret = types.states.State.RUNNING
+        ret = types.states.DeployState.RUNNING
         if isinstance(check_state, (list, tuple)):
             for cks in check_state:
                 if state == cks:
-                    ret = types.states.State.FINISHED
+                    ret = types.states.DeployState.FINISHED
                     break
         else:
             if state == check_state:
-                ret = types.states.State.FINISHED
+                ret = types.states.DeployState.FINISHED
 
         return ret
 
@@ -324,12 +324,12 @@ if sys.platform == 'win32':
     def _push_front_op(self, op: Operation) -> None:
         self._queue.insert(0, op)
 
-    def _error(self, reason: typing.Union[str, Exception]) -> types.states.State:
+    def _error(self, reason: typing.Union[str, Exception]) -> types.states.DeployState:
         """
         Internal method to set object as error state
 
         Returns:
-            types.states.State.ERROR, so we can do "return self.__error(reason)"
+            types.states.DeployState.ERROR, so we can do "return self.__error(reason)"
         """
         reason = str(reason)
         logger.debug('Setting error state, reason: %s', reason)
@@ -340,17 +340,17 @@ if sys.platform == 'win32':
 
         self._queue = [Operation.ERROR]
         self._reason = reason
-        return types.states.State.ERROR
+        return types.states.DeployState.ERROR
 
-    def _execute_queue(self) -> types.states.State:
+    def _execute_queue(self) -> types.states.DeployState:
         self._debug('executeQueue')
         op = self._get_current_op()
 
         if op == Operation.ERROR:
-            return types.states.State.ERROR
+            return types.states.DeployState.ERROR
 
         if op == Operation.FINISH:
-            return types.states.State.FINISHED
+            return types.states.DeployState.FINISHED
 
         fncs: dict[Operation, typing.Optional[collections.abc.Callable[[], str]]] = {
             Operation.CREATE: self._create,
@@ -371,26 +371,26 @@ if sys.platform == 'win32':
 
             operation_runner()
 
-            return types.states.State.RUNNING
+            return types.states.DeployState.RUNNING
         except Exception as e:
             return self._error(e)
 
     # Queue execution methods
-    def _retry(self) -> types.states.State:
+    def _retry(self) -> types.states.DeployState:
         """
         Used to retry an operation
         In fact, this will not be never invoked, unless we push it twice, because
-        check_state method will "pop" first item when a check operation returns types.states.State.FINISHED
+        check_state method will "pop" first item when a check operation returns types.states.DeployState.FINISHED
 
         At executeQueue this return value will be ignored, and it will only be used at check_state
         """
-        return types.states.State.FINISHED
+        return types.states.DeployState.FINISHED
 
-    def _wait(self) -> types.states.State:
+    def _wait(self) -> types.states.DeployState:
         """
         Executes opWait, it simply waits something "external" to end
         """
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
 
     def _create(self) -> str:
         """
@@ -412,7 +412,7 @@ if sys.platform == 'win32':
         if not self._vmid:
             raise Exception('Can\'t create machine')
 
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
 
     def _remove(self) -> str:
         """
@@ -429,7 +429,7 @@ if sys.platform == 'win32':
         else:
             self.service().remove_machine(self._vmid)
 
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
 
     def _start_machine(self) -> str:
         """
@@ -441,7 +441,7 @@ if sys.platform == 'win32':
             raise Exception('Machine not found')
 
         if state in UP_STATES:  # Already started, return
-            return types.states.State.RUNNING
+            return types.states.DeployState.RUNNING
 
         if state not in ('down', 'suspended'):
             self._push_front_op(
@@ -449,7 +449,7 @@ if sys.platform == 'win32':
             )  # Will call "check Retry", that will finish inmediatly and again call this one
         self.service().start_machine(self._vmid)
 
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
 
     def _stop_machine(self) -> str:
         """
@@ -461,7 +461,7 @@ if sys.platform == 'win32':
             raise Exception('Machine not found')
 
         if state == 'down':  # Already stoped, return
-            return types.states.State.RUNNING
+            return types.states.DeployState.RUNNING
 
         if state not in ('up', 'suspended'):
             self._push_front_op(
@@ -470,7 +470,7 @@ if sys.platform == 'win32':
         else:
             self.service().stop_machine(self._vmid)
 
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
 
     def _suspend_machine(self) -> str:
         """
@@ -482,16 +482,16 @@ if sys.platform == 'win32':
             raise Exception('Machine not found')
 
         if state == 'suspended':  # Already suspended, return
-            return types.states.State.RUNNING
+            return types.states.DeployState.RUNNING
 
         if state != 'up':
             self._push_front_op(
                 Operation.RETRY
-            )  # Remember here, the return types.states.State.FINISH will make this retry be "poped" right ar return
+            )  # Remember here, the return types.states.DeployState.FINISH will make this retry be "poped" right ar return
         else:
             self.service().suspend_machine(self._vmid)
 
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
 
     def _change_mac(self) -> str:
         """
@@ -501,48 +501,48 @@ if sys.platform == 'win32':
         # Fix usb if needed
         self.service().fix_usb(self._vmid)
 
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
 
     # Check methods
-    def _create_checker(self) -> types.states.State:
+    def _create_checker(self) -> types.states.DeployState:
         """
         Checks the state of a deploy for an user or cache
         """
         return self._check_machine_state('down')
 
-    def _start_checker(self) -> types.states.State:
+    def _start_checker(self) -> types.states.DeployState:
         """
         Checks if machine has started
         """
         return self._check_machine_state(UP_STATES)
 
-    def _stop_checker(self) -> types.states.State:
+    def _stop_checker(self) -> types.states.DeployState:
         """
         Checks if machine has stoped
         """
         return self._check_machine_state('down')
 
-    def _suspend_checker(self) -> types.states.State:
+    def _suspend_checker(self) -> types.states.DeployState:
         """
         Check if the machine has suspended
         """
         return self._check_machine_state('suspended')
 
-    def _remove_checker(self) -> types.states.State:
+    def _remove_checker(self) -> types.states.DeployState:
         """
         Checks if a machine has been removed
         """
         return self._check_machine_state('unknown')
 
-    def _mac_checker(self) -> types.states.State:
+    def _mac_checker(self) -> types.states.DeployState:
         """
         Checks if change mac operation has finished.
 
         Changing nic configuration es 1-step operation, so when we check it here, it is already done
         """
-        return types.states.State.FINISHED
+        return types.states.DeployState.FINISHED
 
-    def check_state(self) -> types.states.State:
+    def check_state(self) -> types.states.DeployState:
         """
         Check what operation is going on, and acts acordly to it
         """
@@ -550,12 +550,12 @@ if sys.platform == 'win32':
         op = self._get_current_op()
 
         if op == Operation.ERROR:
-            return types.states.State.ERROR
+            return types.states.DeployState.ERROR
 
         if op == Operation.FINISH:
-            return types.states.State.FINISHED
+            return types.states.DeployState.FINISHED
 
-        fncs: dict[Operation, typing.Optional[collections.abc.Callable[[], types.states.State]]] = {
+        fncs: dict[Operation, typing.Optional[collections.abc.Callable[[], types.states.DeployState]]] = {
             Operation.CREATE: self._create_checker,
             Operation.RETRY: self._retry,
             Operation.WAIT: self._wait,
@@ -567,13 +567,13 @@ if sys.platform == 'win32':
         }
 
         try:
-            operation_checker: typing.Optional[typing.Optional[collections.abc.Callable[[], types.states.State]]] = fncs.get(op, None)
+            operation_checker: typing.Optional[typing.Optional[collections.abc.Callable[[], types.states.DeployState]]] = fncs.get(op, None)
 
             if operation_checker is None:
                 return self._error(f'Unknown operation found at check queue ({op})')
 
             state = operation_checker()
-            if state == types.states.State.FINISHED:
+            if state == types.states.DeployState.FINISHED:
                 self._pop_current_op()  # Remove runing op
                 return self._execute_queue()
 
@@ -581,12 +581,12 @@ if sys.platform == 'win32':
         except Exception as e:
             return self._error(e)
 
-    def move_to_cache(self, level: int) -> types.states.State:
+    def move_to_cache(self, level: int) -> types.states.DeployState:
         """
         Moves machines between cache levels
         """
         if Operation.REMOVE in self._queue:
-            return types.states.State.RUNNING
+            return types.states.DeployState.RUNNING
 
         if level == self.L1_CACHE:
             self._queue = [Operation.START, Operation.FINISH]
@@ -605,7 +605,7 @@ if sys.platform == 'win32':
         """
         return self._reason
 
-    def destroy(self) -> types.states.State:
+    def destroy(self) -> types.states.DeployState:
         """
         Invoked for destroying a deployed service
         """
@@ -613,7 +613,7 @@ if sys.platform == 'win32':
         if self._vmid == '':
             self._queue = []
             self._reason = "canceled"
-            return types.states.State.FINISHED
+            return types.states.DeployState.FINISHED
 
         # If executing something, wait until finished to remove it
         # We simply replace the execution queue
@@ -628,12 +628,12 @@ if sys.platform == 'win32':
 
         self._queue = [op, Operation.STOP, Operation.REMOVE, Operation.FINISH]
         # Do not execute anything.here, just continue normally
-        return types.states.State.RUNNING
+        return types.states.DeployState.RUNNING
 
-    def cancel(self) -> types.states.State:
+    def cancel(self) -> types.states.DeployState:
         """
         This is a task method. As that, the excepted return values are
-        types.states.State.values RUNNING, FINISHED or ERROR.
+        types.states.DeployState.values RUNNING, FINISHED or ERROR.
 
         This can be invoked directly by an administration or by the clean up
         of the deployed service (indirectly).
@@ -659,7 +659,7 @@ if sys.platform == 'win32':
 
     def _debug(self, txt: str) -> None:
         logger.debug(
-            'types.states.State.at %s: name: %s, ip: %s, mac: %s, vmid:%s, queue: %s',
+            'types.states.DeployState.at %s: name: %s, ip: %s, mac: %s, vmid:%s, queue: %s',
             txt,
             self._name,
             self._ip,

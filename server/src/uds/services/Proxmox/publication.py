@@ -40,7 +40,7 @@ from uds.core.util import autoserializable
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from .service import ProxmoxServiceLinked
+    from .service_linked import ProxmoxServiceLinked
     from . import client
 
 logger = logging.getLogger(__name__)

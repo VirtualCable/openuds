@@ -40,20 +40,21 @@ import typing
 import collections.abc
 
 from django.conf import settings
-from requests import get
+
+if typing.TYPE_CHECKING:
+    from uds.core.util.factory import ModuleFactory
+    from uds.core import module
 
 from uds.core import module
 
 logger = logging.getLogger(__name__)
 
-T = typing.TypeVar('T', bound=module.Module)
+T = typing.TypeVar('T', bound='module.Module')
 V = typing.TypeVar('V')
 
 patterns: list[typing.Any] = []
 
 
-if typing.TYPE_CHECKING:
-    from uds.core.util.factory import ModuleFactory
 
 
 def get_urlpatterns_from_modules() -> list[typing.Any]:

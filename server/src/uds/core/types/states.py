@@ -32,7 +32,6 @@
 """
 import typing
 import enum
-import collections.abc
 
 from django.utils.translation import gettext_lazy as _
 
@@ -158,6 +157,30 @@ class State(enum.StrEnum):
             return {k: str(v) for k, v in _TRANSLATIONS.items()}
         else:
             return {k: str(_TRANSLATIONS[k]) for k in lst}
+
+
+class DeployState(enum.StrEnum):
+    RUNNING = State.RUNNING
+    FINISHED = State.FINISHED
+    ERROR = State.ERROR
+
+    UNKNOWN = State.UNKNOWN
+
+    def is_errored(self) -> bool:
+        return self == DeployState.ERROR
+
+    def is_finished(self) -> bool:
+        return self == DeployState.FINISHED
+
+    def is_runing(self) -> bool:
+        return self == DeployState.RUNNING
+
+    @staticmethod
+    def from_str(state: str) -> 'DeployState':
+        try:
+            return DeployState(state)
+        except ValueError:
+            return DeployState.UNKNOWN
 
 
 _TRANSLATIONS: typing.Final[dict[State, str]] = {
