@@ -31,7 +31,9 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
+import dataclasses
 import datetime
+import enum
 import logging
 import typing
 import collections.abc
@@ -47,50 +49,66 @@ from ..core.util.model import sql_datetime
 
 logger = logging.getLogger(__name__)
 
-WEEKDAYS: typing.Final[str] = 'WEEKDAYS'
-NEVER: typing.Final[str] = 'NEVER'
+@dataclasses.dataclass(frozen=True)
+class _FrequencyData:
+    title: str
+    rule: int
+    minutes: int
 
-# Frequencies
-freqs: tuple[tuple[str, str], ...] = (
-    ('YEARLY', typing.cast(str, _('Yearly'))),
-    ('MONTHLY', typing.cast(str, _('Monthly'))),
-    ('WEEKLY', typing.cast(str, _('Weekly'))),
-    ('DAILY', typing.cast(str, _('Daily'))),
-    (WEEKDAYS, typing.cast(str, _('Weekdays'))),
-    (NEVER, typing.cast(str, _('Never'))),
-)
 
-frq_to_rrl: collections.abc.Mapping[str, int] = {
-    'YEARLY': rules.YEARLY,
-    'MONTHLY': rules.MONTHLY,
-    'WEEKLY': rules.WEEKLY,
-    'DAILY': rules.DAILY,
-    'NEVER': rules.YEARLY,
-}
+class FrequencyInfo(enum.Enum):
+    YEARLY = _FrequencyData(_('Yearly'), rules.YEARLY, 366 * 24 * 60)
+    MONTHLY = _FrequencyData(_('Monthly'), rules.MONTHLY, 31 * 24 * 60)
+    WEEKLY = _FrequencyData(_('Weekly'), rules.WEEKLY, 7 * 24 * 60)
+    DAILY = _FrequencyData(_('Daily'), rules.DAILY, 24 * 60)
+    WEEKDAYS = _FrequencyData(_('Weekdays'), -1, 7 * 24 * 60)
+    NEVER = _FrequencyData(
+        _('Never'), rules.YEARLY, 1000 * 1000 * 24 * 60
+    )  # Very high interval, so it never repeats
 
-frq_to_mins: collections.abc.Mapping[str, int] = {
-    'YEARLY': 366 * 24 * 60,
-    'MONTHLY': 31 * 24 * 60,
-    'WEEKLY': 7 * 24 * 60,
-    'DAILY': 24 * 60,
-    'NEVER': 1000* 1000 * 24 * 60,
-}
+    def __str__(self) -> str:
+        return self.name
 
-dunits: tuple[tuple[str, str], ...] = (
-    ('MINUTES', _('Minutes')),
-    ('HOURS', _('Hours')),
-    ('DAYS', _('Days')),
-    ('WEEKS', _('Weeks')),
-)
+    @staticmethod
+    def as_choices() -> tuple[tuple[str, str], ...]:
+        return tuple((str(f.name), str(f.value.title)) for f in FrequencyInfo)
 
-dunit_to_mins: collections.abc.Mapping[str, int] = {
-    'MINUTES': 1,
-    'HOURS': 60,
-    'DAYS': 60 * 24,
-    'WEEKS': 60 * 24 * 7,
-}
+    @staticmethod
+    def from_str(value: str) -> 'FrequencyInfo':
+        try:
+            return FrequencyInfo[value]
+        except KeyError:
+            return FrequencyInfo.YEARLY
 
-weekdays: tuple[rules.weekday, ...] = (
+
+@dataclasses.dataclass
+class _DurationData:
+    title: str
+    minutes: int
+
+
+class DurationInfo(enum.Enum):
+    MINUTES = _DurationData(_('Minutes'), 1)
+    HOURS = _DurationData(_('Hours'), 60)
+    DAYS = _DurationData(_('Days'), 60 * 24)
+    WEEKS = _DurationData(_('Weeks'), 60 * 24 * 7)
+
+    def __str__(self) -> str:
+        return self.name
+
+    @staticmethod
+    def as_choices() -> tuple[tuple[str, str], ...]:
+        return tuple((str(f.name), str(f.value.title)) for f in DurationInfo)
+
+    @staticmethod
+    def from_str(value: str) -> 'DurationInfo':
+        try:
+            return DurationInfo[value]
+        except KeyError:
+            return DurationInfo.MINUTES
+
+
+WEEKDAYS_LIST: typing.Final[tuple[rules.weekday, ...]] = (
     rules.SU,
     rules.MO,
     rules.TU,
@@ -108,18 +126,16 @@ class CalendarRule(UUIDModel):
 
     start = models.DateTimeField()
     end = models.DateField(null=True, blank=True)
-    frequency = models.CharField(choices=freqs, max_length=32)
+    frequency = models.CharField(choices=FrequencyInfo.as_choices(), max_length=32)
     interval = models.IntegerField(
         default=1
     )  # If interval is for WEEKDAYS, every bit means a day of week (bit 0 = SUN, 1 = MON, ...)
     duration = models.IntegerField(default=0)  # Duration in "duration_unit" units
-    duration_unit = models.CharField(choices=dunits, default='MINUTES', max_length=32)
+    duration_unit = models.CharField(choices=DurationInfo.as_choices(), default='MINUTES', max_length=32)
 
-    calendar = models.ForeignKey(
-        Calendar, related_name='rules', on_delete=models.CASCADE
-    )
+    calendar = models.ForeignKey(Calendar, related_name='rules', on_delete=models.CASCADE)
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:  # pyright: ignore
         """
         Meta class to declare db table
         """
@@ -127,8 +143,8 @@ class CalendarRule(UUIDModel):
         db_table = 'uds_calendar_rules'
         app_label = 'uds'
 
-    def _rrule(self, atEnd: bool) -> rules.rrule:
-        if self.interval == 0:  # Fix 0 intervals
+    def _rrule(self, at_end_of_interval: bool) -> rules.rrule:
+        if self.interval == 0:  # Fix 0 duration intervals
             self.interval = 1
 
         end = datetime.datetime.combine(
@@ -137,20 +153,21 @@ class CalendarRule(UUIDModel):
         )
 
         # If at end of interval is requested, displace dstart to match end of interval
-        dstart = self.start if not atEnd else self.start + datetime.timedelta(minutes=self.duration_as_minutes)
+        dstart = (
+            self.start
+            if not at_end_of_interval
+            else self.start + datetime.timedelta(minutes=self.duration_as_minutes)
+        )
 
-        if self.frequency == WEEKDAYS:
-            dw = []
-            l = self.interval
-            for i in range(7):
-                if l & 1 == 1:
-                    dw.append(weekdays[i])
-                l >>= 1
+        if self.frequency == str(FrequencyInfo.WEEKDAYS):
+            dw = [WEEKDAYS_LIST[i] for i in range(7) if self.interval & (1 << i) != 0]
             return rules.rrule(rules.DAILY, byweekday=dw, dtstart=dstart, until=end)
-        if self.frequency == NEVER:  # do not repeat
-            return rules.rrule(rules.YEARLY, interval=1000, dtstart=dstart, until=dstart+datetime.timedelta(days=1))
+        if self.frequency == str(FrequencyInfo.NEVER):  # do not repeat
+            return rules.rrule(
+                rules.YEARLY, interval=1000, dtstart=dstart, until=dstart + datetime.timedelta(days=1)
+            )
         return rules.rrule(
-            frq_to_rrl[self.frequency],
+            FrequencyInfo.from_str(self.frequency).value.rule,
             interval=self.interval,
             dtstart=dstart,
             until=end,
@@ -164,13 +181,11 @@ class CalendarRule(UUIDModel):
 
     @property
     def frequency_as_minutes(self) -> int:
-        if self.frequency != WEEKDAYS:
-            return frq_to_mins.get(self.frequency, 0) * self.interval
-        return 7 * 24 * 60
+        return FrequencyInfo.from_str(self.frequency).value.minutes
 
     @property
     def duration_as_minutes(self) -> int:
-        return dunit_to_mins.get(self.duration_unit, 1) * self.duration
+        return DurationInfo.from_str(self.duration_unit).value.minutes * self.duration
 
     def save(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         logger.debug('Saving...')

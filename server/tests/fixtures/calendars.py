@@ -35,7 +35,7 @@ import datetime
 import random
 
 from uds import models
-from uds.models.calendar_rule import freqs, dunits
+from uds.models.calendar_rule import FrequencyInfo
 
 
 # fixtures for calendars and calendar rules

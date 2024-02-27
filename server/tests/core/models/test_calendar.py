@@ -35,7 +35,8 @@ import datetime
 import logging
 
 from uds import models
-from uds.models.calendar_rule import freqs, dunits, weekdays
+from uds.models.calendar_rule import  FrequencyInfo, DurationInfo
+#FREQ_NAMES, dunits, WEEKDAYS_LIST
 from ...utils.test import UDSTestCase
 
 if typing.TYPE_CHECKING:
@@ -43,6 +44,8 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+FREQ_NAMES: typing.Final[list[str]] = [i.name for i in FrequencyInfo]
+DURATION_UNITS: typing.Final[list[str]] = [i.name for i in DurationInfo]
 
 class ModelCalendarTest(UDSTestCase):
     def test_calendar(self) -> None:
@@ -69,10 +72,10 @@ class ModelCalendarTest(UDSTestCase):
                     comments='Test Rule Comments' + str(i),
                     start=datetime.datetime(2009+i, (i%12)+1, (i%28)+1, (i%24), (i%60)),
                     end=datetime.date(2010+i, (i%12)+1, (i%28)+1),
-                    frequency=freqs[i%len(freqs)][0],
+                    frequency=FREQ_NAMES[i%len(FREQ_NAMES)],
                     interval=1,
                     duration=i,
-                    duration_unit=dunits[i%len(dunits)][0],
+                    duration_unit=DURATION_UNITS[i%len(DURATION_UNITS)],
                 )
             # Also add a weekday interval
             calendar.rules.create(
@@ -98,8 +101,8 @@ class ModelCalendarTest(UDSTestCase):
                 self.assertEqual(rule.comments, 'Test Rule Comments' + str(i))
                 self.assertEqual(rule.start, datetime.datetime(2009+i, (i%12)+1, (i%28)+1, (i%24), (i%60)))
                 self.assertEqual(rule.end, datetime.date(2010+i, (i%12)+1, (i%28)+1))
-                self.assertEqual(rule.frequency, freqs[i%len(freqs)][0])
+                self.assertEqual(rule.frequency, FREQ_NAMES[i%len(FREQ_NAMES)])
                 self.assertEqual(rule.interval, 1)
                 self.assertEqual(rule.duration, i)
-                self.assertEqual(rule.duration_unit, dunits[i%len(dunits)][0])
+                self.assertEqual(rule.duration_unit, DURATION_UNITS[i%len(DURATION_UNITS)])
 

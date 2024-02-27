@@ -42,7 +42,7 @@ from uds.core import exceptions
 from uds.core.util import ensure, permissions
 from uds.core.util.model import process_uuid, sql_datetime
 from uds.models.calendar import Calendar
-from uds.models.calendar_rule import CalendarRule, freqs
+from uds.models.calendar_rule import CalendarRule, FREQ_NAMES
 from uds.REST.model import DetailHandler
 
 # Not imported at runtime, just for type checking
@@ -103,7 +103,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
                 'frequency': {
                     'title': _('Repeats'),
                     'type': 'dict',
-                    'dict': dict((v[0], str(v[1])) for v in freqs),
+                    'dict': dict((v[0], str(v[1])) for v in FREQ_NAMES),
                 }
             },
             {'interval': {'title': _('Every'), 'type': 'callback'}},
