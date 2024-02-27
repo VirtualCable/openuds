@@ -59,14 +59,14 @@ class OldIPSerialData(auto_attributes.AutoAttributes):
         auto_attributes.AutoAttributes.__init__(self, ip=str, reason=str, state=str)
         self._ip = ''
         self._reason = ''
-        self._state = types.states.DeployState.FINISHED
+        self._state = types.states.TaskState.FINISHED
 
 class IPMachineUserService(services.UserService, autoserializable.AutoSerializable):
     suggested_delay = 10
 
     _ip = autoserializable.StringField(default='')
     _reason = autoserializable.StringField(default='')
-    _state = autoserializable.StringField(default=types.states.DeployState.FINISHED)
+    _state = autoserializable.StringField(default=types.states.TaskState.FINISHED)
 
     # Utility overrides for type checking...
     def service(self) -> 'IPServiceBase':
@@ -108,23 +108,23 @@ class IPMachineUserService(services.UserService, autoserializable.AutoSerializab
         # If multiple and has a ';' on IP, the values is IP;MAC
         return self._ip.replace('~', ':').split(';')[0]
 
-    def set_ready(self) -> types.states.DeployState:
+    def set_ready(self) -> types.states.TaskState:
         # If single machine, ip is IP~counter,
         # If multiple and has a ';' on IP, the values is IP;MAC
         host = HostInfo.from_str(self._ip)
         if host.mac:
             self.service().wakeup(host)
-        self._state = types.states.DeployState.FINISHED
+        self._state = types.states.TaskState.FINISHED
         return self._state
 
-    def _deploy(self) -> types.states.DeployState:
+    def _deploy(self) -> types.states.TaskState:
         ip = self.service().get_unassigned_host()
         if ip is None:
             self._reason = 'No machines left'
-            self._state = types.states.DeployState.ERROR
+            self._state = types.states.TaskState.ERROR
         else:
             self._ip = ip.as_identifier()
-            self._state = types.states.DeployState.FINISHED
+            self._state = types.states.TaskState.FINISHED
 
         # If not to be managed by a token, autologin user
         if not self.service().get_token():
@@ -134,14 +134,14 @@ class IPMachineUserService(services.UserService, autoserializable.AutoSerializab
 
         return self._state
 
-    def deploy_for_user(self, user: 'models.User') -> types.states.DeployState:
+    def deploy_for_user(self, user: 'models.User') -> types.states.TaskState:
         logger.debug("Starting deploy of %s for user %s", self._ip, user)
         return self._deploy()
 
-    def assign(self, ip: str) -> types.states.DeployState:
+    def assign(self, ip: str) -> types.states.TaskState:
         logger.debug('Assigning from assignable with ip %s', ip)
         self._ip = ip
-        self._state = types.states.DeployState.FINISHED
+        self._state = types.states.TaskState.FINISHED
         if not self.service().get_token():
             dbService = self.db_obj()
             if dbService:
@@ -149,14 +149,14 @@ class IPMachineUserService(services.UserService, autoserializable.AutoSerializab
                 dbService.save()
         return self._state
 
-    def error(self, reason: str) -> types.states.DeployState:
-        self._state = types.states.DeployState.ERROR
+    def error(self, reason: str) -> types.states.TaskState:
+        self._state = types.states.TaskState.ERROR
         self._ip = ''
         self._reason = reason
         return self._state
 
-    def check_state(self) -> types.states.DeployState:
-        return types.states.DeployState.from_str(self._state)
+    def check_state(self) -> types.states.TaskState:
+        return types.states.TaskState.from_str(self._state)
 
     def error_reason(self) -> str:
         """
@@ -165,14 +165,14 @@ class IPMachineUserService(services.UserService, autoserializable.AutoSerializab
         """
         return self._reason
 
-    def destroy(self) -> types.states.DeployState:
+    def destroy(self) -> types.states.TaskState:
         host = HostInfo.from_str(self._ip)
         if host.host:
             self.service().unassign_host(host)
-        self._state = types.states.DeployState.FINISHED
+        self._state = types.states.TaskState.FINISHED
         return self._state
 
-    def cancel(self) -> types.states.DeployState:
+    def cancel(self) -> types.states.TaskState:
         return self.destroy()
 
     def unmarshal(self, data: bytes) -> None:

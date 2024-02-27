@@ -135,9 +135,9 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
     def get_ip(self) -> str:
         return self._ip
 
-    def set_ready(self) -> types.states.DeployState:
+    def set_ready(self) -> types.states.TaskState:
         if self.cache.get('ready') == '1':
-            return types.states.DeployState.FINISHED
+            return types.states.TaskState.FINISHED
 
         try:
             state = self.service().getMachineState(self._vmid)
@@ -152,7 +152,7 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
             self.do_log(log.LogLevel.ERROR, 'Error on setReady: {}'.format(e))
             # Treat as operation done, maybe the machine is ready and we can continue
 
-        return types.states.DeployState.FINISHED
+        return types.states.TaskState.FINISHED
 
     def reset(self) -> None:
         if self._vmid != '':
@@ -164,7 +164,7 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
     def desktop_login(self, username: str, password: str, domain: str = '') -> typing.Optional[types.services.ConsoleConnectionInfo]:
         return self.service().desktop_login(self._vmid, username, password, domain)
 
-    def process_ready_from_os_manager(self, data: typing.Any) -> types.states.DeployState:
+    def process_ready_from_os_manager(self, data: typing.Any) -> types.states.TaskState:
         # Here we will check for suspending the VM (when full ready)
         logger.debug('Checking if cache 2 for %s', self._name)
         if self._get_current_op() == Operation.WAIT:
@@ -172,9 +172,9 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
             self._get_and_pop_current_op()  # Remove current state
             return self._execute_queue()
         # Do not need to go to level 2 (opWait is in fact "waiting for moving machine to cache level 2)
-        return types.states.DeployState.FINISHED
+        return types.states.TaskState.FINISHED
 
-    def deploy_for_user(self, user: 'models.User') -> types.states.DeployState:
+    def deploy_for_user(self, user: 'models.User') -> types.states.TaskState:
         """
         Deploys an service instance for an user.
         """
@@ -182,7 +182,7 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
         self._init_queue_for_deploy(False)
         return self._execute_queue()
 
-    def deploy_for_cache(self, level: int) -> types.states.DeployState:
+    def deploy_for_cache(self, level: int) -> types.states.TaskState:
         """
         Deploys an service instance for cache
         """
@@ -201,7 +201,7 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
                 Operation.FINISH,
             ]
 
-    def _check_machine_state(self, state: on.types.VmState) -> types.states.DeployState:
+    def _check_machine_state(self, state: on.types.VmState) -> types.states.TaskState:
         logger.debug(
             'Checking that state of machine %s (%s) is %s',
             self._vmid,
@@ -217,14 +217,14 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
         ]:  # @UndefinedVariable
             return self._error('Machine not found')
 
-        ret = types.states.DeployState.RUNNING
+        ret = types.states.TaskState.RUNNING
 
         if isinstance(state, (list, tuple)):
             if state in state:
-                ret = types.states.DeployState.FINISHED
+                ret = types.states.TaskState.FINISHED
         else:
             if state == state:
-                ret = types.states.DeployState.FINISHED
+                ret = types.states.TaskState.FINISHED
 
         return ret
 
@@ -243,7 +243,7 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
     def _push_front_op(self, op: Operation) -> None:
         self._queue.insert(0, op)
 
-    def _error(self, reason: typing.Any) -> types.states.DeployState:
+    def _error(self, reason: typing.Any) -> types.states.TaskState:
         """
         Internal method to set object as error state
 
@@ -262,17 +262,17 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
 
         self._queue = [Operation.ERROR]
         self._reason = str(reason)
-        return types.states.DeployState.ERROR
+        return types.states.TaskState.ERROR
 
-    def _execute_queue(self) -> types.states.DeployState:
+    def _execute_queue(self) -> types.states.TaskState:
         self.__debug('executeQueue')
         op = self._get_current_op()
 
         if op == Operation.ERROR:
-            return types.states.DeployState.ERROR
+            return types.states.TaskState.ERROR
 
         if op == Operation.FINISH:
-            return types.states.DeployState.FINISHED
+            return types.states.TaskState.FINISHED
 
         fncs: dict[Operation, typing.Optional[collections.abc.Callable[[], str]]] = {
             Operation.CREATE: self._create,
@@ -291,13 +291,13 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
 
             operation_executor()
 
-            return types.states.DeployState.RUNNING
+            return types.states.TaskState.RUNNING
         except Exception as e:
             logger.exception('Got Exception')
             return self._error(e)
 
     # Queue execution methods
-    def _retry(self) -> types.states.DeployState:
+    def _retry(self) -> types.states.TaskState:
         """
         Used to retry an operation
         In fact, this will not be never invoked, unless we push it twice, because
@@ -305,13 +305,13 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
 
         At executeQueue this return value will be ignored, and it will only be used at check_state
         """
-        return types.states.DeployState.FINISHED
+        return types.states.TaskState.FINISHED
 
-    def _wait(self) -> types.states.DeployState:
+    def _wait(self) -> types.states.TaskState:
         """
         Executes opWait, it simply waits something "external" to end
         """
-        return types.states.DeployState.RUNNING
+        return types.states.TaskState.RUNNING
 
     def _create(self) -> str:
         """
@@ -335,7 +335,7 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
         # Get IP & MAC (early stage)
         # self._mac, self._ip = self.service().getNetInfo(self._vmid)
 
-        return types.states.DeployState.RUNNING
+        return types.states.TaskState.RUNNING
 
     def _remove(self) -> str:
         """
@@ -351,11 +351,11 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
             if subState < 3:  # Less than running
                 logger.info('Must wait before remove: %s', subState)
                 self._push_front_op(Operation.RETRY)
-                return types.states.DeployState.RUNNING
+                return types.states.TaskState.RUNNING
 
         self.service().removeMachine(self._vmid)
 
-        return types.states.DeployState.RUNNING
+        return types.states.TaskState.RUNNING
 
     def _start_machine(self) -> str:
         """
@@ -366,41 +366,41 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
         # Get IP & MAC (later stage, after "powering on")
         self._mac, self._ip = self.service().getNetInfo(self._vmid)
 
-        return types.states.DeployState.RUNNING
+        return types.states.TaskState.RUNNING
 
     def _shutdown_machine(self) -> str:
         """
         Suspends the machine
         """
         self.service().shutdownMachine(self._vmid)
-        return types.states.DeployState.RUNNING
+        return types.states.TaskState.RUNNING
 
     # Check methods
-    def _create_checker(self) -> types.states.DeployState:
+    def _create_checker(self) -> types.states.TaskState:
         """
         Checks the state of a deploy for an user or cache
         """
         return self._check_machine_state(on.types.VmState.ACTIVE)  # @UndefinedVariable
 
-    def _start_checker(self) -> types.states.DeployState:
+    def _start_checker(self) -> types.states.TaskState:
         """
         Checks if machine has started
         """
         return self._check_machine_state(on.types.VmState.ACTIVE)  # @UndefinedVariable
 
-    def _shutdown_checker(self) -> types.states.DeployState:
+    def _shutdown_checker(self) -> types.states.TaskState:
         """
         Check if the machine has suspended
         """
         return self._check_machine_state(on.types.VmState.POWEROFF)  # @UndefinedVariable
 
-    def _remove_checker(self) -> types.states.DeployState:
+    def _remove_checker(self) -> types.states.TaskState:
         """
         Checks if a machine has been removed
         """
-        return types.states.DeployState.FINISHED  # No check at all, always true
+        return types.states.TaskState.FINISHED  # No check at all, always true
 
-    def check_state(self) -> types.states.DeployState:
+    def check_state(self) -> types.states.TaskState:
         """
         Check what operation is going on, and acts based on it
         """
@@ -408,12 +408,12 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
         op = self._get_current_op()
 
         if op == Operation.ERROR:
-            return types.states.DeployState.ERROR
+            return types.states.TaskState.ERROR
 
         if op == Operation.FINISH:
-            return types.states.DeployState.FINISHED
+            return types.states.TaskState.FINISHED
 
-        fncs: dict[Operation, typing.Optional[collections.abc.Callable[[], types.states.DeployState]]] = {
+        fncs: dict[Operation, typing.Optional[collections.abc.Callable[[], types.states.TaskState]]] = {
             Operation.CREATE: self._create_checker,
             Operation.RETRY: self._retry,
             Operation.WAIT: self._wait,
@@ -423,13 +423,13 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
         }
 
         try:
-            chkFnc: typing.Optional[collections.abc.Callable[[], types.states.DeployState]] = fncs.get(op, None)
+            chkFnc: typing.Optional[collections.abc.Callable[[], types.states.TaskState]] = fncs.get(op, None)
 
             if chkFnc is None:
                 return self._error('Unknown operation found at check queue ({0})'.format(op))
 
             state = chkFnc()
-            if state == types.states.DeployState.FINISHED:
+            if state == types.states.TaskState.FINISHED:
                 self._get_and_pop_current_op()  # Remove runing op
                 return self._execute_queue()
 
@@ -437,12 +437,12 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
         except Exception as e:
             return self._error(e)
 
-    def move_to_cache(self, level: int) -> types.states.DeployState:
+    def move_to_cache(self, level: int) -> types.states.TaskState:
         """
         Moves machines between cache levels
         """
         if Operation.REMOVE in self._queue:
-            return types.states.DeployState.RUNNING
+            return types.states.TaskState.RUNNING
 
         if level == self.L1_CACHE:
             self._queue = [Operation.START, Operation.FINISH]
@@ -461,7 +461,7 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
         """
         return self._reason
 
-    def destroy(self) -> types.states.DeployState:
+    def destroy(self) -> types.states.TaskState:
         """
         Invoked for destroying a deployed service
         """
@@ -479,9 +479,9 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
 
         self._queue = [op, Operation.REMOVE, Operation.FINISH]
         # Do not execute anything.here, just continue normally
-        return types.states.DeployState.RUNNING
+        return types.states.TaskState.RUNNING
 
-    def cancel(self) -> types.states.DeployState:
+    def cancel(self) -> types.states.TaskState:
         """
         This is a task method. As that, the excepted return values are
         types.states.DeployState.values RUNNING, FINISHED or ERROR.

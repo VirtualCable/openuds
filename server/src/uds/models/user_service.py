@@ -39,7 +39,7 @@ from django.db.models import signals
 
 from uds.core import types, consts
 from uds.core.environment import Environment
-from uds.core.util import log, unique, properties
+from uds.core.util import log, properties
 from uds.core.util.model import sql_datetime
 from uds.core.types.states import State
 from uds.models import service_pool
@@ -180,11 +180,6 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         return Environment.environment_for_table_record(
             self._meta.verbose_name or self._meta.model_name or '',  
             self.id,
-            {
-                'mac': unique.UniqueMacGenerator,
-                'name': unique.UniqueNameGenerator,
-                'id': unique.UniqueGIDGenerator,
-            },
         )
 
     def get_instance(self) -> 'services.UserService':

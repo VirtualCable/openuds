@@ -30,7 +30,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import abc
 import logging
 import time
 import typing
@@ -53,7 +52,7 @@ class CreateNewIdException(Exception):
     pass
 
 
-class UniqueGenerator(abc.ABC):
+class UniqueGenerator:
     __slots__ = ('_owner', '_basename')
 
     # owner is the owner of the UniqueID
@@ -61,8 +60,8 @@ class UniqueGenerator(abc.ABC):
     # base name for filtering unique ids. (I.e. "mac", "ip", "ipv6" ....)
     _basename: str
 
-    def __init__(self, type_name: str, owner: str, basename: typing.Optional[str] = None):
-        self._owner = owner + type_name
+    def __init__(self, owner: str, basename: typing.Optional[str] = None):
+        self._owner = owner
         self._basename = basename or 'uds'
 
     def set_basename(self, basename: str) -> None:

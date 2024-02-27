@@ -182,9 +182,9 @@ class ProxmoxUserserviceLinked(services.UserService, autoserializable.AutoSerial
     def get_ip(self) -> str:
         return self._ip
 
-    def set_ready(self) -> types.states.DeployState:
+    def set_ready(self) -> types.states.TaskState:
         if self.cache.get('ready') == '1':
-            return types.states.DeployState.FINISHED
+            return types.states.TaskState.FINISHED
 
         try:
             vmInfo = self.service().get_machine_info(int(self._vmid))
@@ -198,7 +198,7 @@ class ProxmoxUserserviceLinked(services.UserService, autoserializable.AutoSerial
             return self._execute_queue()
 
         self.cache.put('ready', '1')
-        return types.states.DeployState.FINISHED
+        return types.states.TaskState.FINISHED
 
     def reset(self) -> None:
         """
@@ -235,7 +235,7 @@ if sys.platform == 'win32':
             except Exception as e:
                 logger.info('Exception sending loggin to %s: %s', dbService, e)
 
-    def process_ready_from_os_manager(self, data: typing.Any) -> types.states.DeployState:
+    def process_ready_from_os_manager(self, data: typing.Any) -> types.states.TaskState:
         # Here we will check for suspending the VM (when full ready)
         logger.debug('Checking if cache 2 for %s', self._name)
         if self._get_current_op() == Operation.WAIT:
@@ -243,9 +243,9 @@ if sys.platform == 'win32':
             self._pop_current_op()  # Remove current state
             return self._execute_queue()
         # Do not need to go to level 2 (opWait is in fact "waiting for moving machine to cache level 2)
-        return types.states.DeployState.FINISHED
+        return types.states.TaskState.FINISHED
 
-    def deploy_for_user(self, user: 'models.User') -> types.states.DeployState:
+    def deploy_for_user(self, user: 'models.User') -> types.states.TaskState:
         """
         Deploys an service instance for an user.
         """
@@ -253,7 +253,7 @@ if sys.platform == 'win32':
         self._init_queue_for_deploy(False)
         return self._execute_queue()
 
-    def deploy_for_cache(self, level: int) -> types.states.DeployState:
+    def deploy_for_cache(self, level: int) -> types.states.TaskState:
         """
         Deploys an service instance for cache
         """
@@ -298,14 +298,14 @@ if sys.platform == 'win32':
 
     def _retry_later(self) -> str:
         self._push_front_op(Operation.RETRY)
-        return types.states.DeployState.RUNNING
+        return types.states.TaskState.RUNNING
 
-    def _error(self, reason: typing.Union[str, Exception]) -> types.states.DeployState:
+    def _error(self, reason: typing.Union[str, Exception]) -> types.states.TaskState:
         """
         Internal method to set object as error state
 
         Returns:
-            types.states.DeployState.ERROR, so we can do "return self.__error(reason)"
+            types.states.TaskState.ERROR, so we can do "return self.__error(reason)"
         """
         reason = str(reason)
         logger.debug('Setting error state, reason: %s', reason)
@@ -316,17 +316,17 @@ if sys.platform == 'win32':
 
         self._queue = [Operation.ERROR]
         self._reason = reason
-        return types.states.DeployState.ERROR
+        return types.states.TaskState.ERROR
 
-    def _execute_queue(self) -> types.states.DeployState:
+    def _execute_queue(self) -> types.states.TaskState:
         self._debug('executeQueue')
         op = self._get_current_op()
 
         if op == Operation.ERROR:
-            return types.states.DeployState.ERROR
+            return types.states.TaskState.ERROR
 
         if op == Operation.FINISH:
-            return types.states.DeployState.FINISHED
+            return types.states.TaskState.FINISHED
 
         fncs: collections.abc.Mapping[Operation, typing.Optional[collections.abc.Callable[[], None]]] = {
             Operation.CREATE: self._create,
@@ -348,7 +348,7 @@ if sys.platform == 'win32':
 
             operation_executor()
 
-            return types.states.DeployState.RUNNING
+            return types.states.TaskState.RUNNING
         except Exception as e:
             return self._error(e)
 
@@ -357,17 +357,17 @@ if sys.platform == 'win32':
         """
         Used to retry an operation
         In fact, this will not be never invoked, unless we push it twice, because
-        check_state method will "pop" first item when a check operation returns types.states.DeployState.FINISHED
+        check_state method will "pop" first item when a check operation returns types.states.TaskState.FINISHED
 
         At executeQueue this return value will be ignored, and it will only be used at check_state
         """
         pass
     
-    def _retry_checker(self) -> types.states.DeployState:
+    def _retry_checker(self) -> types.states.TaskState:
         """
         This method is not used, because retry operation is never used
         """
-        return types.states.DeployState.FINISHED
+        return types.states.TaskState.FINISHED
 
     def _wait(self) -> None:
         """
@@ -375,11 +375,11 @@ if sys.platform == 'win32':
         """
         pass
     
-    def _wait_checker(self) -> types.states.DeployState:
+    def _wait_checker(self) -> types.states.TaskState:
         """
         This method is not used, because wait operation is never used
         """
-        return types.states.DeployState.FINISHED
+        return types.states.TaskState.FINISHED
 
     def _create(self) -> None:
         """
@@ -476,6 +476,7 @@ if sys.platform == 'win32':
 
     def _update_machine_mac_and_ha(self) -> None:
         try:
+            # Note: service will only enable ha if it is configured to do so
             self.service().enable_machine_ha(int(self._vmid), True)  # Enable HA before continuing here
 
             # Set vm mac address now on first interface
@@ -488,50 +489,50 @@ if sys.platform == 'win32':
             raise Exception(f'Error setting MAC and HA on proxmox: {e}') from e
 
     # Check methods
-    def _check_task_finished(self) -> types.states.DeployState:
+    def _check_task_finished(self) -> types.states.TaskState:
         if self._task == '':
-            return types.states.DeployState.FINISHED
+            return types.states.TaskState.FINISHED
 
         node, upid = self._retrieve_task()
 
         try:
             task = self.service().provider().get_task_info(node, upid)
         except client.ProxmoxConnectionError:
-            return types.states.DeployState.RUNNING  # Try again later
+            return types.states.TaskState.RUNNING  # Try again later
 
         if task.is_errored():
             return self._error(task.exitstatus)
 
         if task.is_completed():
-            return types.states.DeployState.FINISHED
+            return types.states.TaskState.FINISHED
 
-        return types.states.DeployState.RUNNING
+        return types.states.TaskState.RUNNING
 
-    def _create_checker(self) -> types.states.DeployState:
+    def _create_checker(self) -> types.states.TaskState:
         """
         Checks the state of a deploy for an user or cache
         """
         return self._check_task_finished()
 
-    def _start_checker(self) -> types.states.DeployState:
+    def _start_checker(self) -> types.states.TaskState:
         """
         Checks if machine has started
         """
         return self._check_task_finished()
 
-    def _stop_checker(self) -> types.states.DeployState:
+    def _stop_checker(self) -> types.states.TaskState:
         """
         Checks if machine has stoped
         """
         return self._check_task_finished()
 
-    def _shutdown_checker(self) -> types.states.DeployState:
+    def _shutdown_checker(self) -> types.states.TaskState:
         """
         Check if the machine has suspended
         """
         return self._check_task_finished()
 
-    def _graceful_stop_checker(self) -> types.states.DeployState:
+    def _graceful_stop_checker(self) -> types.states.TaskState:
         """
         Check if the machine has gracely stopped (timed shutdown)
         """
@@ -540,7 +541,7 @@ if sys.platform == 'win32':
         if shutdown_start < 0:  # Was already stopped
             # Machine is already stop
             logger.debug('Machine WAS stopped')
-            return types.states.DeployState.FINISHED
+            return types.states.TaskState.FINISHED
 
         if shutdown_start == 0:  # Was shut down a las bravas
             logger.debug('Macine DO NOT HAVE guest tools')
@@ -549,7 +550,7 @@ if sys.platform == 'win32':
         logger.debug('Checking State')
         # Check if machine is already stopped
         if self.service().get_machine_info(int(self._vmid)).status == 'stopped':
-            return types.states.DeployState.FINISHED  # It's stopped
+            return types.states.TaskState.FINISHED  # It's stopped
 
         logger.debug('State is running')
         if sql_stamp_seconds() - shutdown_start > consts.os.MAX_GUEST_SHUTDOWN_WAIT:
@@ -562,23 +563,23 @@ if sys.platform == 'win32':
             self.storage.put_pickle('shutdown', 0)
             self._stop_machine()  # Launch "hard" stop
 
-        return types.states.DeployState.RUNNING
+        return types.states.TaskState.RUNNING
 
-    def _remove_checker(self) -> types.states.DeployState:
+    def _remove_checker(self) -> types.states.TaskState:
         """
         Checks if a machine has been removed
         """
         return self._check_task_finished()
 
-    def _mac_checker(self) -> types.states.DeployState:
+    def _mac_checker(self) -> types.states.TaskState:
         """
         Checks if change mac operation has finished.
 
         Changing nic configuration is 1-step operation, so when we check it here, it is already done
         """
-        return types.states.DeployState.FINISHED
+        return types.states.TaskState.FINISHED
 
-    def check_state(self) -> types.states.DeployState:
+    def check_state(self) -> types.states.TaskState:
         """
         Check what operation is going on, and acts acordly to it
         """
@@ -586,12 +587,12 @@ if sys.platform == 'win32':
         op = self._get_current_op()
 
         if op == Operation.ERROR:
-            return types.states.DeployState.ERROR
+            return types.states.TaskState.ERROR
 
         if op == Operation.FINISH:
-            return types.states.DeployState.FINISHED
+            return types.states.TaskState.FINISHED
 
-        fncs: dict[Operation, typing.Optional[collections.abc.Callable[[], types.states.DeployState]]] = {
+        fncs: dict[Operation, typing.Optional[collections.abc.Callable[[], types.states.TaskState]]] = {
             Operation.CREATE: self._create_checker,
             Operation.RETRY: self._retry_checker,
             Operation.WAIT: self._wait_checker,
@@ -604,7 +605,7 @@ if sys.platform == 'win32':
         }
 
         try:
-            operation_checker: typing.Optional[typing.Optional[collections.abc.Callable[[], types.states.DeployState]]] = fncs.get(
+            operation_checker: typing.Optional[typing.Optional[collections.abc.Callable[[], types.states.TaskState]]] = fncs.get(
                 op, None
             )
 
@@ -612,7 +613,7 @@ if sys.platform == 'win32':
                 return self._error(f'Unknown operation found at check queue ({op})')
 
             state = operation_checker()
-            if state == types.states.DeployState.FINISHED:
+            if state == types.states.TaskState.FINISHED:
                 self._pop_current_op()  # Remove runing op
                 return self._execute_queue()
 
@@ -620,12 +621,12 @@ if sys.platform == 'win32':
         except Exception as e:
             return self._error(e)
 
-    def move_to_cache(self, level: int) -> types.states.DeployState:
+    def move_to_cache(self, level: int) -> types.states.TaskState:
         """
         Moves machines between cache levels
         """
         if Operation.REMOVE in self._queue:
-            return types.states.DeployState.RUNNING
+            return types.states.TaskState.RUNNING
 
         if level == self.L1_CACHE:
             self._queue = [Operation.START, Operation.FINISH]
@@ -644,7 +645,7 @@ if sys.platform == 'win32':
         """
         return self._reason
 
-    def destroy(self) -> types.states.DeployState:
+    def destroy(self) -> types.states.TaskState:
         """
         Invoked for destroying a deployed service
         """
@@ -652,7 +653,7 @@ if sys.platform == 'win32':
         if self._vmid == '':
             self._queue = []
             self._reason = "canceled"
-            return types.states.DeployState.FINISHED
+            return types.states.TaskState.FINISHED
 
         # If executing something, wait until finished to remove it
         # We simply replace the execution queue
@@ -670,9 +671,9 @@ if sys.platform == 'win32':
 
         self._queue = [op] + queue
         # Do not execute anything.here, just continue normally
-        return types.states.DeployState.RUNNING
+        return types.states.TaskState.RUNNING
 
-    def cancel(self) -> types.states.DeployState:
+    def cancel(self) -> types.states.TaskState:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.

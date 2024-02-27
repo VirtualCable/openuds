@@ -189,7 +189,7 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
 
     def assign_from_assignables(
         self, assignable_id: str, user: 'models.User', userservice_instance: 'services.UserService'
-    ) -> types.states.DeployState:
+    ) -> types.states.TaskState:
         xen_userservice_instance = typing.cast(XenFixedUserService, userservice_instance)
         assigned_vms = self._get_assigned_machines()
         if assignable_id not in assigned_vms:

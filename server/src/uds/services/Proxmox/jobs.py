@@ -146,5 +146,5 @@ class ProxmoxVmidReleaser(jobs.Job):
 
     def run(self) -> None:
         logger.debug('Proxmox Vmid releader running')
-        gen = UniqueIDGenerator('vmid', 'proxmox', 'proxmox')
+        gen = UniqueIDGenerator('proxmoxvmid', 'proxmox')
         gen.release_older_than(sql_stamp_seconds() - MAX_VMID_LIFE_SECS)

@@ -159,7 +159,7 @@ class State(enum.StrEnum):
             return {k: str(_TRANSLATIONS[k]) for k in lst}
 
 
-class DeployState(enum.StrEnum):
+class TaskState(enum.StrEnum):
     RUNNING = State.RUNNING
     FINISHED = State.FINISHED
     ERROR = State.ERROR
@@ -167,20 +167,20 @@ class DeployState(enum.StrEnum):
     UNKNOWN = State.UNKNOWN
 
     def is_errored(self) -> bool:
-        return self == DeployState.ERROR
+        return self == TaskState.ERROR
 
     def is_finished(self) -> bool:
-        return self == DeployState.FINISHED
+        return self == TaskState.FINISHED
 
     def is_runing(self) -> bool:
-        return self == DeployState.RUNNING
+        return self == TaskState.RUNNING
 
     @staticmethod
-    def from_str(state: str) -> 'DeployState':
+    def from_str(state: str) -> 'TaskState':
         try:
-            return DeployState(state)
+            return TaskState(state)
         except ValueError:
-            return DeployState.UNKNOWN
+            return TaskState.UNKNOWN
 
 
 _TRANSLATIONS: typing.Final[dict[State, str]] = {

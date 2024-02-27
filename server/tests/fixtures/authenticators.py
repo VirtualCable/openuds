@@ -40,7 +40,7 @@ from uds.core.managers.crypto import CryptoManager
 glob = {'user_id': 0, 'group_id': 0}
 
 
-def create_authenticator(
+def create_db_authenticator(
     authenticator: typing.Optional[models.Authenticator] = None,
 ) -> models.Authenticator:
     """
@@ -61,7 +61,7 @@ def create_authenticator(
     return authenticator
 
 
-def create_users(
+def create_db_users(
     authenticator: models.Authenticator,
     number_of_users: int = 1,
     is_staff: bool = False,
@@ -96,7 +96,7 @@ def create_users(
     return users
 
 
-def create_groups(
+def create_db_groups(
     authenticator: models.Authenticator, number_of_groups: int = 1
 ) -> list[models.Group]:
     """
@@ -116,7 +116,7 @@ def create_groups(
     return groups
 
 
-def createMetaGroups(
+def create_db_metagroups(
     authenticator: models.Authenticator, number_of_meta: int = 1
 ) -> list[models.Group]:
     """

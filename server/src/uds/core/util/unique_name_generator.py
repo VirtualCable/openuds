@@ -42,7 +42,7 @@ class UniqueNameGenerator(UniqueGenerator):
     __slots__ = ()
 
     def __init__(self, owner: str) -> None:
-        super().__init__('name', owner)
+        super().__init__(owner)
 
     def _to_name(self, seq: int, length: int) -> str:
         """Converts a sequence number to a name

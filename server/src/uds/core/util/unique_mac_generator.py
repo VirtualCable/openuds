@@ -43,7 +43,7 @@ class UniqueMacGenerator(UniqueGenerator):
     __slots__ = ('_macRange',)
 
     def __init__(self, owner: str) -> None:
-        super().__init__('mac', owner, '\tmac')
+        super().__init__(owner, '\tmac')
 
     def _to_int(self, mac: str) -> int:
         return int(mac.replace(':', ''), 16)

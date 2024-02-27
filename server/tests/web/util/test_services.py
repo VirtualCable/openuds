@@ -57,10 +57,10 @@ class TestGetServicesData(UDSTransactionTestCase):
 
     def setUp(self) -> None:
         # We need to create a user with some services
-        self.auth = fixtures_authenticators.create_authenticator()
-        self.groups = fixtures_authenticators.create_groups(self.auth, 3)
-        self.user = fixtures_authenticators.create_users(self.auth, 1, groups=self.groups)[0]
-        self.transports = [fixtures_services.create_test_transport(priority=counter, label=f'label{counter}') for counter in range(10)]
+        self.auth = fixtures_authenticators.create_db_authenticator()
+        self.groups = fixtures_authenticators.create_db_groups(self.auth, 3)
+        self.user = fixtures_authenticators.create_db_users(self.auth, 1, groups=self.groups)[0]
+        self.transports = [fixtures_services.create_db_transport(priority=counter, label=f'label{counter}') for counter in range(10)]
 
         self.request = mock.Mock()
         self.request.user = self.user
@@ -84,7 +84,7 @@ class TestGetServicesData(UDSTransactionTestCase):
         service_pools: list[models.ServicePool] = []
         for i in range(110):
             service_pools.append(
-                fixtures_services.create_cache_testing_userservices(
+                fixtures_services.create_db_cache_userservices(
                     count=1, user=self.user, groups=self.groups
                 )[0].deployed_service
             )
@@ -92,7 +92,7 @@ class TestGetServicesData(UDSTransactionTestCase):
         # Create 10 meta services, for this user, last 10 user_services will not be added to meta pools
         meta_services: list[models.MetaPool] = []
         for i in range(10):
-            service_pool = fixtures_services.create_test_metapool(
+            service_pool = fixtures_services.create_db_metapool(
                 service_pools=service_pools[i * 10 : (i + 1) * 10],
                 groups=self.groups,
                 transport_grouping=grouping_method,
@@ -104,7 +104,7 @@ class TestGetServicesData(UDSTransactionTestCase):
         service_pools: list[models.ServicePool] = []
         for i in range(10):
             service_pools.append(
-                fixtures_services.create_cache_testing_userservices(
+                fixtures_services.create_db_cache_userservices(
                     count=1, user=self.user, groups=self.groups
                 )[0].deployed_service
             )
@@ -181,7 +181,7 @@ class TestGetServicesData(UDSTransactionTestCase):
         service_pools: list[models.ServicePool] = []
         for i in range(100):
             service_pools.append(
-                fixtures_services.create_cache_testing_userservices(
+                fixtures_services.create_db_cache_userservices(
                     count=1, user=self.user, groups=self.groups
                 )[0].deployed_service
             )
@@ -190,7 +190,7 @@ class TestGetServicesData(UDSTransactionTestCase):
         meta_services: list[models.MetaPool] = []
         for i in range(10):
             meta_services.append(
-                fixtures_services.create_test_metapool(
+                fixtures_services.create_db_metapool(
                     service_pools=service_pools[i * 10 : (i + 1) * 10], groups=self.groups
                 )
             )
@@ -229,7 +229,7 @@ class TestGetServicesData(UDSTransactionTestCase):
         user_services: list[models.ServicePool] = []
         for i in range(110):
             user_services.append(
-                fixtures_services.create_cache_testing_userservices(
+                fixtures_services.create_db_cache_userservices(
                     count=1, user=self.user, groups=self.groups
                 )[0].deployed_service
             )
@@ -238,7 +238,7 @@ class TestGetServicesData(UDSTransactionTestCase):
         meta_services: list[models.MetaPool] = []
         for i in range(10):
             meta_services.append(
-                fixtures_services.create_test_metapool(
+                fixtures_services.create_db_metapool(
                     service_pools=user_services[i * 10 : (i + 1) * 10], groups=self.groups
                 )
             )
@@ -259,7 +259,7 @@ class TestGetServicesData(UDSTransactionTestCase):
     ) -> tuple[list[models.ServicePool], models.MetaPool]:
         service_pools: list[models.ServicePool] = []
         for i in range(count):
-            pool = fixtures_services.create_cache_testing_userservices(
+            pool = fixtures_services.create_db_cache_userservices(
                 count=1, user=self.user, groups=self.groups
             )[0].deployed_service
 
@@ -269,7 +269,7 @@ class TestGetServicesData(UDSTransactionTestCase):
                 pool.transports.add(*random.sample(self.transports[3:], 3))
             service_pools.append(pool)
 
-        return service_pools, fixtures_services.create_test_metapool(
+        return service_pools, fixtures_services.create_db_metapool(
             service_pools=service_pools,
             groups=self.groups,
             transport_grouping=transport_grouping,

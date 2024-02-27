@@ -79,7 +79,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         related_name='authenticators',
     )
 
-    class Meta(ManagedObjectModel.Meta):  # pylint: disable=too-few-public-methods
+    class Meta(ManagedObjectModel.Meta):  # pyright: ignore
         """
         Meta class to declare default order
         """
@@ -102,7 +102,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
 
         Raises:
         """
-        if self.id is None:
+        if not self.id:
             # Return a fake authenticator
             return auths.Authenticator(
                 environment.Environment.environment_for_table_record('fake_auth'), values, uuid=self.uuid

@@ -48,18 +48,18 @@ class LoginLogoutTest(test.UDSTestCase):
         """
         Test login and logout
         """
-        auth = fixtures_authenticators.create_authenticator()
+        auth = fixtures_authenticators.create_db_authenticator()
         # Create some ramdom users
-        admins = fixtures_authenticators.create_users(
+        admins = fixtures_authenticators.create_db_users(
             auth, number_of_users=8, is_admin=True
         )
-        staffs = fixtures_authenticators.create_users(
+        staffs = fixtures_authenticators.create_db_users(
             auth, number_of_users=8, is_staff=True
         )
-        users = fixtures_authenticators.create_users(auth, number_of_users=8)
+        users = fixtures_authenticators.create_db_users(auth, number_of_users=8)
 
         # Create some groups
-        groups = fixtures_authenticators.create_groups(auth, number_of_groups=32)
+        groups = fixtures_authenticators.create_db_groups(auth, number_of_groups=32)
 
         # Add users to some groups, ramdomly
         for user in users + admins + staffs:

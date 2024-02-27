@@ -83,12 +83,12 @@ class StateUpdater(abc.ABC):
     def check_later(self) -> None:
         UserServiceOpChecker.check_later(self.user_service, self.user_service_instance)
 
-    def run(self, state: types.states.DeployState) -> None:
+    def run(self, state: types.states.TaskState) -> None:
         # Deployments can olny be on RUNNING, ERROR or FINISHED states
         executor = {
-            types.states.DeployState.RUNNING: self.state_running,
-            types.states.DeployState.ERROR: self.state_error,
-            types.states.DeployState.FINISHED: self.state_finish,
+            types.states.TaskState.RUNNING: self.state_running,
+            types.states.TaskState.ERROR: self.state_error,
+            types.states.TaskState.FINISHED: self.state_finish,
         }.get(state, self.state_error)
 
         logger.debug(
@@ -146,7 +146,7 @@ class UpdateFromPreparing(StateUpdater):
             # This will return a new task state, and that one will be the one taken into account
             self.user_service.set_os_state(types.states.State.USABLE)
             rs = self.user_service_instance.process_ready_from_os_manager('')
-            if rs != types.states.DeployState.FINISHED:
+            if rs != types.states.TaskState.FINISHED:
                 self.check_later()
                 # No not alter current state if after notifying os manager the user service keeps working
                 state = types.states.State.from_str(self.user_service.state)
@@ -219,7 +219,7 @@ class UserServiceOpChecker(DelayedTask):
 
     @staticmethod
     def make_unique(
-        userservice: UserService, userservice_instance: services.UserService, state: types.states.DeployState
+        userservice: UserService, userservice_instance: services.UserService, state: types.states.TaskState
     ) -> None:
         """
         This method ensures that there will be only one delayedtask related to the userService indicated
@@ -229,7 +229,7 @@ class UserServiceOpChecker(DelayedTask):
 
     @staticmethod
     def state_updater(
-        userservice: UserService, userservice_instance: services.UserService, state: types.states.DeployState
+        userservice: UserService, userservice_instance: services.UserService, state: types.states.TaskState
     ) -> None:
         """
         Checks the value returned from invocation to publish or checkPublishingState, updating the servicePoolPub database object

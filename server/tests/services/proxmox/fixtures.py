@@ -143,9 +143,9 @@ HA_GROUPS: typing.Final[list[str]] = [
     'ha_group_4',
 ]
 
-VMS_INFO: typing.Final[list[client.types.VMInfo]] = [
+VMS_INFO: list[client.types.VMInfo] = [
     client.types.VMInfo(
-        status='status',
+        status='stopped',
         vmid=i,
         node=NODES[i % len(NODES)].name,
         template=True,

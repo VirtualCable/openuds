@@ -62,17 +62,17 @@ class PermissionsTest(UDSTestCase):
     network: models.Network
 
     def setUp(self) -> None:
-        self.authenticator = authenticators_fixtures.create_authenticator()
-        self.groups = authenticators_fixtures.create_groups(self.authenticator)
-        self.users = authenticators_fixtures.create_users(self.authenticator, groups=self.groups)
-        self.admins = authenticators_fixtures.create_users(
+        self.authenticator = authenticators_fixtures.create_db_authenticator()
+        self.groups = authenticators_fixtures.create_db_groups(self.authenticator)
+        self.users = authenticators_fixtures.create_db_users(self.authenticator, groups=self.groups)
+        self.admins = authenticators_fixtures.create_db_users(
             self.authenticator, is_admin=True, groups=self.groups
         )
-        self.staffs = authenticators_fixtures.create_users(
+        self.staffs = authenticators_fixtures.create_db_users(
             self.authenticator, is_staff=True, groups=self.groups
         )
-        self.userService = services_fixtures.create_one_cache_testing_userservice(
-            services_fixtures.createProvider(),
+        self.userService = services_fixtures.create_db_one_cache_userservice(
+            services_fixtures.create_db_provider(),
             self.users[0],
             list(self.users[0].groups.all()),
             'managed',

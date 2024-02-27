@@ -153,7 +153,7 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
 
     def assign_from_assignables(
         self, assignable_id: str, user: 'models.User', userservice_instance: 'services.UserService'
-    ) -> types.states.DeployState:
+    ) -> types.states.TaskState:
         proxmox_service_instance = typing.cast(ProxmoxUserServiceFixed, userservice_instance)
         assigned_vms = self._get_assigned_machines()
         if assignable_id not in assigned_vms:
@@ -215,7 +215,8 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
             if found_vmid:
                 assigned_vms.add(found_vmid)
                 self._save_assigned_machines(assigned_vms)
-        except Exception:  #
+        except Exception as e:  #
+            logger.debug('Error getting machine: %s', e)
             raise Exception('No machine available')
 
         if not found_vmid:

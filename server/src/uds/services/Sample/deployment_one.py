@@ -179,7 +179,7 @@ class SampleUserServiceOne(services.UserService):
             ip = '192.168.0.34'  # Sample IP for testing purposses only
         return ip
 
-    def set_ready(self) -> types.states.DeployState:
+    def set_ready(self) -> types.states.TaskState:
         """
         This is a task method. As that, the expected return values are
         State values RUNNING, FINISHED or ERROR.
@@ -210,9 +210,9 @@ class SampleUserServiceOne(services.UserService):
         """
 
         # In our case, the service is always ready
-        return types.states.DeployState.FINISHED
+        return types.states.TaskState.FINISHED
 
-    def deploy_for_user(self, user: 'models.User') -> types.states.DeployState:
+    def deploy_for_user(self, user: 'models.User') -> types.states.TaskState:
         """
         Deploys an service instance for an user.
 
@@ -245,11 +245,11 @@ class SampleUserServiceOne(services.UserService):
         # random fail
         if random.randint(0, 9) == 9:  # nosec: just testing values
             self.storage.save_to_db('error', 'Random error at deployForUser :-)')
-            return types.states.DeployState.ERROR
+            return types.states.TaskState.ERROR
 
-        return types.states.DeployState.RUNNING
+        return types.states.TaskState.RUNNING
 
-    def check_state(self) -> types.states.DeployState:
+    def check_state(self) -> types.states.TaskState:
         """
         Our deployForUser method will initiate the consumable service deployment,
         but will not finish it.
@@ -283,15 +283,15 @@ class SampleUserServiceOne(services.UserService):
         # In our sample, we only use check_state in case of deployForUser,
         # so at first call count will be 0.
         if count >= 5:
-            return types.states.DeployState.FINISHED
+            return types.states.TaskState.FINISHED
 
         # random fail
         if random.randint(0, 9) == 9:  # nosec: just testing values
             self.storage.save_to_db('error', 'Random error at check_state :-)')
-            return types.states.DeployState.ERROR
+            return types.states.TaskState.ERROR
 
         self.storage.save_to_db('count', str(count))
-        return types.states.DeployState.RUNNING
+        return types.states.TaskState.RUNNING
 
     def finish(self) -> None:
         """
@@ -350,7 +350,7 @@ class SampleUserServiceOne(services.UserService):
         """
         return typing.cast(str, self.storage.read_from_db('error')) or 'No error'
 
-    def destroy(self) -> types.states.DeployState:
+    def destroy(self) -> types.states.TaskState:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -359,9 +359,9 @@ class SampleUserServiceOne(services.UserService):
         Do whatever needed here, as deleting associated data if needed (i.e. a copy of the machine, snapshots, etc...)
         @return: types.states.DeployState.FINISHED if no more checks/steps for deployment are needed, types.states.DeployState.RUNNING if more steps are needed (steps checked using check_state)
         """
-        return types.states.DeployState.FINISHED
+        return types.states.TaskState.FINISHED
 
-    def cancel(self) -> types.states.DeployState:
+    def cancel(self) -> types.states.TaskState:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -371,4 +371,4 @@ class SampleUserServiceOne(services.UserService):
         When administrator requests it, the cancel is "delayed" and not
         invoked directly.
         """
-        return types.states.DeployState.FINISHED
+        return types.states.TaskState.FINISHED

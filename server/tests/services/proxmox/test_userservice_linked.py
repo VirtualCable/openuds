@@ -37,24 +37,115 @@ import itertools
 from unittest import mock
 from tests.web import user
 
+from uds import models
 from uds.core import types, ui, environment
-from uds.services.Proxmox.deployment_fixed import ProxmoxUserServiceFixed
+from uds.services.Proxmox.deployment_linked import ProxmoxUserserviceLinked
 
 from . import fixtures
 
-from ...utils.test import UDSTestCase
+from ...utils.test import UDSTransactionTestCase
 
 
-class TestProxmovLinkedService(UDSTestCase):
+# We use transactions on some related methods (storage access, etc...)
+class TestProxmovLinkedService(UDSTransactionTestCase):
 
-    def test_userservice_fixed_user(self) -> None:
+    def test_userservice_fixed_cache_l1(self) -> None:
         """
         Test the user service
         """
-        with fixtures.patch_provider_api() as _api:
-            userservice = fixtures.create_userservice_fixed()
+        with fixtures.patch_provider_api() as api:
+            userservice = fixtures.create_userservice_linked()
+            service = userservice.service()
+            publication = userservice.publication()
+            publication._vmid = '1'
 
-            # Test Deploy for cache, should raise Exception due
-            # to the fact fixed services cannot have cached items
-            with self.assertRaises(Exception):
-                userservice.deploy_for_cache(level=1)
+            state = userservice.deploy_for_cache(level=1)
+
+            self.assertEqual(state, types.states.TaskState.RUNNING)
+
+            while state == types.states.TaskState.RUNNING:
+                state = userservice.check_state()
+
+            self.assertEqual(state, types.states.TaskState.FINISHED)
+
+            self.assertEqual(userservice._name[: len(service.get_basename())], service.get_basename())
+            self.assertEqual(len(userservice._name), len(service.get_basename()) + service.get_lenname())
+            
+            vmid = int(userservice._vmid)
+            
+            api.clone_machine.assert_called_with(
+                publication.machine(),
+                mock.ANY,
+                userservice._name,
+                mock.ANY,
+                True,
+                None,
+                service.datastore.value,
+                service.pool.value,
+                None,
+            )
+            
+            # api.get_task should have been invoked at least once
+            self.assertTrue(api.get_task.called)
+            
+            api.enable_machine_ha.assert_called()
+            
+            api.set_machine_mac.assert_called_with(vmid, userservice._mac)
+            api.get_machine_pool_info.assert_called_with(vmid, service.pool.value, force=True)
+            api.start_machine.assert_called_with(vmid)
+            
+            
+    def test_userservice_fixed_cache_l2_no_ha(self) -> None:
+        """
+        Test the user service
+        """
+        with fixtures.patch_provider_api() as api:
+            userservice = fixtures.create_userservice_linked()
+            service = userservice.service()
+            service.ha.value = '__'  # Disabled
+            
+            # Set machine state for fixture to started
+            fixtures.VMS_INFO = [fixtures.VMS_INFO[i]._replace(status = 'running') for i in range(len(fixtures.VMS_INFO))]
+            
+            publication = userservice.publication()
+            publication._vmid = '1'
+
+            state = userservice.deploy_for_cache(level=2)
+
+            self.assertEqual(state, types.states.TaskState.RUNNING)
+
+            while state == types.states.TaskState.RUNNING:
+                state = userservice.check_state()
+
+            self.assertEqual(state, types.states.TaskState.FINISHED)
+
+            self.assertEqual(userservice._name[: len(service.get_basename())], service.get_basename())
+            self.assertEqual(len(userservice._name), len(service.get_basename()) + service.get_lenname())
+            
+            vmid = int(userservice._vmid)
+            
+            api.clone_machine.assert_called_with(
+                publication.machine(),
+                mock.ANY,
+                userservice._name,
+                mock.ANY,
+                True,
+                None,
+                service.datastore.value,
+                service.pool.value,
+                None,
+            )
+            
+            # api.get_task should have been invoked at least once
+            self.assertTrue(api.get_task.called)
+            
+            # Shoud not have been called since HA is disabled
+            api.enable_machine_ha.assert_not_called()
+            
+            api.set_machine_mac.assert_called_with(vmid, userservice._mac)
+            api.get_machine_pool_info.assert_called_with(vmid, service.pool.value, force=True)
+            # Now, called should not have been called because machine is running
+            # api.start_machine.assert_called_with(vmid)
+            # Stop machine should have been called
+            api.shutdown_machine.assert_called_with(vmid)
+            

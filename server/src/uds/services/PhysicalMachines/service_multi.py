@@ -318,7 +318,7 @@ class IPMachinesService(IPServiceBase):
         assignable_id: str,
         user: 'models.User',
         userservice_instance: 'services.UserService',
-    ) -> types.states.DeployState:
+    ) -> types.states.TaskState:
         ipmachine_instance: IPMachineUserService = typing.cast(IPMachineUserService, userservice_instance)
         host = HostInfo.from_str(assignable_id)
 

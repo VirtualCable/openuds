@@ -189,7 +189,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
     @abc.abstractmethod
     def assign_from_assignables(
         self, assignable_id: str, user: 'models.User', userservice_instance: 'services.UserService'
-    ) -> types.states.DeployState:
+    ) -> types.states.TaskState:
         """
         Assigns a machine from the assignables
         """

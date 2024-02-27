@@ -60,18 +60,18 @@ class WebLoginLogoutTest(test.WEBTestCase):
         """
         Test login and logout
         """
-        auth = fixtures_authenticators.create_authenticator()
+        auth = fixtures_authenticators.create_db_authenticator()
         # Create some ramdom users
-        admins = fixtures_authenticators.create_users(
+        admins = fixtures_authenticators.create_db_users(
             auth, number_of_users=8, is_admin=True
         )
-        stafs = fixtures_authenticators.create_users(
+        stafs = fixtures_authenticators.create_db_users(
             auth, number_of_users=8, is_staff=True
         )
-        users = fixtures_authenticators.create_users(auth, number_of_users=8)
+        users = fixtures_authenticators.create_db_users(auth, number_of_users=8)
 
         # Create some groups
-        groups = fixtures_authenticators.create_groups(auth, number_of_groups=32)
+        groups = fixtures_authenticators.create_db_groups(auth, number_of_groups=32)
 
         # Add users to some groups, ramdomly
         for user in users + admins + stafs:
@@ -118,8 +118,8 @@ class WebLoginLogoutTest(test.WEBTestCase):
         self.assertInvalidLogin(response)
 
     def test_login_valid_user_no_group(self) -> None:
-        user = fixtures_authenticators.create_users(
-            fixtures_authenticators.create_authenticator(),
+        user = fixtures_authenticators.create_db_users(
+            fixtures_authenticators.create_db_authenticator(),
         )[0]
 
         response = self.do_login(user.name, user.name, user.manager.uuid)
@@ -127,8 +127,8 @@ class WebLoginLogoutTest(test.WEBTestCase):
 
         self.assertEqual(models.Log.objects.count(), 4)
 
-        user = fixtures_authenticators.create_users(
-            fixtures_authenticators.create_authenticator(),
+        user = fixtures_authenticators.create_db_users(
+            fixtures_authenticators.create_db_authenticator(),
             is_staff=True,
         )[0]
 
@@ -137,8 +137,8 @@ class WebLoginLogoutTest(test.WEBTestCase):
 
         self.assertEqual(models.Log.objects.count(), 8)
 
-        user = fixtures_authenticators.create_users(
-            fixtures_authenticators.create_authenticator(),
+        user = fixtures_authenticators.create_db_users(
+            fixtures_authenticators.create_db_authenticator(),
             is_admin=True,
         )[0]
 
@@ -148,8 +148,8 @@ class WebLoginLogoutTest(test.WEBTestCase):
         self.assertEqual(models.Log.objects.count(), 12)
 
     def test_login_invalid_user(self) -> None:
-        user = fixtures_authenticators.create_users(
-            fixtures_authenticators.create_authenticator(),
+        user = fixtures_authenticators.create_db_users(
+            fixtures_authenticators.create_db_authenticator(),
         )[0]
 
         response = self.do_login(user.name, 'wrong password', user.manager.uuid)
@@ -159,8 +159,8 @@ class WebLoginLogoutTest(test.WEBTestCase):
         # + 2 system logs (auth.log), one for each failed login
         self.assertEqual(models.Log.objects.count(), 6)
 
-        user = fixtures_authenticators.create_users(
-            fixtures_authenticators.create_authenticator(),
+        user = fixtures_authenticators.create_db_users(
+            fixtures_authenticators.create_db_authenticator(),
             is_staff=True,
         )[0]
 
@@ -169,8 +169,8 @@ class WebLoginLogoutTest(test.WEBTestCase):
 
         self.assertEqual(models.Log.objects.count(), 12)
 
-        user = fixtures_authenticators.create_users(
-            fixtures_authenticators.create_authenticator(),
+        user = fixtures_authenticators.create_db_users(
+            fixtures_authenticators.create_db_authenticator(),
             is_admin=True,
         )[0]
 

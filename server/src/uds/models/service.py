@@ -38,7 +38,6 @@ from django.db import models
 
 from uds.core.environment import Environment
 from uds.core.util import log
-from uds.core.util import unique
 from uds.core.util import net
 from uds.core.types.services import ServicesCountingType
 
@@ -108,11 +107,6 @@ class Service(ManagedObjectModel, TaggingMixin):
         return Environment.environment_for_table_record(
             self._meta.verbose_name or self._meta.db_table,
             self.id,
-            {
-                'mac': unique.UniqueMacGenerator,
-                'name': unique.UniqueNameGenerator,
-                'id': unique.UniqueGIDGenerator,
-            },
         )
 
     def get_instance(self, values: typing.Optional[dict[str, str]] = None) -> 'services.Service':

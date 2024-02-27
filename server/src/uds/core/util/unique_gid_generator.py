@@ -43,7 +43,7 @@ class UniqueGIDGenerator(UniqueGenerator):
     __slots__ = ()
 
     def __init__(self, owner: str, basename: typing.Optional[str] = None):
-        super().__init__('id', owner, basename)
+        super().__init__(owner, basename)
 
     def _to_name(self, seq: int) -> str:
         if seq == -1:

@@ -144,7 +144,7 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
     def get_ip(self) -> str:
         return self._ip
 
-    def set_ready(self) -> types.states.DeployState:
+    def set_ready(self) -> types.states.TaskState:
         """
         Notifies the current "deadline" to the user, before accessing by UDS
         The machine has been already been started.
@@ -153,17 +153,17 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
         """
         dbs = self.db_obj()
         if not dbs:
-            return types.states.DeployState.FINISHED
+            return types.states.TaskState.FINISHED
 
         try:
             # First, check Machine is alive..
             status = self._check_machine_is_ready()
-            if status == types.states.DeployState.FINISHED:
+            if status == types.states.TaskState.FINISHED:
                 self.service().notify_deadline(self._machine_id, dbs.deployed_service.get_deadline())
-                return types.states.DeployState.FINISHED
+                return types.states.TaskState.FINISHED
 
-            if status == types.states.DeployState.ERROR:
-                return types.states.DeployState.ERROR
+            if status == types.states.TaskState.ERROR:
+                return types.states.TaskState.ERROR
 
             # Machine powered off, check what to do...
             if not self.service().try_start_if_unavailable():
@@ -178,7 +178,7 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
         except Exception as e:
             return self._error(f'Error setting ready state: {e}')
 
-    def deploy_for_user(self, user: 'models.User') -> types.states.DeployState:
+    def deploy_for_user(self, user: 'models.User') -> types.states.TaskState:
         """
         Deploys an service instance for an user.
         """
@@ -186,7 +186,7 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
         self._init_queue_for_deploy()
         return self._execute_queue()
 
-    def deploy_for_cache(self, level: int) -> types.states.DeployState:
+    def deploy_for_cache(self, level: int) -> types.states.TaskState:
         """
         Deploys an service instance for cache
         """
@@ -196,7 +196,7 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
     def _init_queue_for_deploy(self) -> None:
         self._queue = [Operation.CREATE, Operation.FINISH]
 
-    def _check_machine_is_ready(self) -> types.states.DeployState:
+    def _check_machine_is_ready(self) -> types.states.TaskState:
         logger.debug(
             'Checking that state of machine %s (%s) is ready',
             self._machine_id,
@@ -211,9 +211,9 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
 
         # possible status are ("off", "oglive", "busy", "linux", "windows", "macos" o "unknown").
         if status['status'] in ("linux", "windows", "macos"):
-            return types.states.DeployState.FINISHED
+            return types.states.TaskState.FINISHED
 
-        return types.states.DeployState.RUNNING
+        return types.states.TaskState.RUNNING
 
     def _get_current_op(self) -> Operation:
         if len(self._queue) == 0:
@@ -228,7 +228,7 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
         res = self._queue.pop(0)
         return res
 
-    def _error(self, reason: typing.Any) -> types.states.DeployState:
+    def _error(self, reason: typing.Any) -> types.states.TaskState:
         """
         Internal method to set object as error state
 
@@ -246,17 +246,17 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
 
         self._queue = [Operation.ERROR]
         self._reason = str(reason)
-        return types.states.DeployState.ERROR
+        return types.states.TaskState.ERROR
 
-    def _execute_queue(self) -> types.states.DeployState:
+    def _execute_queue(self) -> types.states.TaskState:
         self._debug('executeQueue')
         op = self._get_current_op()
 
         if op == Operation.ERROR:
-            return types.states.DeployState.ERROR
+            return types.states.TaskState.ERROR
 
         if op == Operation.FINISH:
-            return types.states.DeployState.FINISHED
+            return types.states.TaskState.FINISHED
 
         fncs: dict[int, typing.Optional[collections.abc.Callable[[], str]]] = {
             Operation.CREATE: self._create,
@@ -273,13 +273,13 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
 
             execFnc()
 
-            return types.states.DeployState.RUNNING
+            return types.states.TaskState.RUNNING
         except Exception as e:
             # logger.exception('Got Exception')
             return self._error(e)
 
     # Queue execution methods
-    def _retry(self) -> types.states.DeployState:
+    def _retry(self) -> types.states.TaskState:
         """
         Used to retry an operation
         In fact, this will not be never invoked, unless we push it twice, because
@@ -287,7 +287,7 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
 
         At executeQueue this return value will be ignored, and it will only be used at check_state
         """
-        return types.states.DeployState.FINISHED
+        return types.states.TaskState.FINISHED
 
     def _create(self) -> str:
         """
@@ -328,12 +328,12 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
             dbs.properties['token'] = token
             dbs.log_ip(self._ip)
 
-        return types.states.DeployState.RUNNING
+        return types.states.TaskState.RUNNING
 
     def _start(self) -> str:
         if self._machine_id:
             self.service().power_on(self._machine_id)
-        return types.states.DeployState.RUNNING
+        return types.states.TaskState.RUNNING
 
     def _remove(self) -> str:
         """
@@ -346,10 +346,10 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
             # so we can avoid double unreserve
             if dbs.properties.get('from_release') is None:
                 self.service().unreserve(self._machine_id)
-        return types.states.DeployState.RUNNING
+        return types.states.TaskState.RUNNING
 
     # Check methods
-    def _create_checker(self) -> types.states.DeployState:
+    def _create_checker(self) -> types.states.TaskState:
         """
         Checks the state of a deploy for an user or cache
         """
@@ -358,13 +358,13 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
     # Alias for poweron check
     _checkStart = _create_checker
 
-    def _removed_checker(self) -> types.states.DeployState:
+    def _removed_checker(self) -> types.states.TaskState:
         """
         Checks if a machine has been removed
         """
-        return types.states.DeployState.FINISHED  # No check at all, always true
+        return types.states.TaskState.FINISHED  # No check at all, always true
 
-    def check_state(self) -> types.states.DeployState:
+    def check_state(self) -> types.states.TaskState:
         """
         Check what operation is going on, and acts acordly to it
         """
@@ -372,12 +372,12 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
         op = self._get_current_op()
 
         if op == Operation.ERROR:
-            return types.states.DeployState.ERROR
+            return types.states.TaskState.ERROR
 
         if op == Operation.FINISH:
-            return types.states.DeployState.FINISHED
+            return types.states.TaskState.FINISHED
 
-        fncs: dict[Operation, typing.Optional[collections.abc.Callable[[], types.states.DeployState]]] = {
+        fncs: dict[Operation, typing.Optional[collections.abc.Callable[[], types.states.TaskState]]] = {
             Operation.CREATE: self._create_checker,
             Operation.RETRY: self._retry,
             Operation.REMOVE: self._removed_checker,
@@ -385,13 +385,13 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
         }
 
         try:
-            chkFnc: typing.Optional[typing.Optional[collections.abc.Callable[[], types.states.DeployState]]] = fncs.get(op)
+            chkFnc: typing.Optional[typing.Optional[collections.abc.Callable[[], types.states.TaskState]]] = fncs.get(op)
 
             if chkFnc is None:
                 return self._error(f'Unknown operation found at check queue ({op})')
 
             state = chkFnc()
-            if state == types.states.DeployState.FINISHED:
+            if state == types.states.TaskState.FINISHED:
                 self._pop_current_op()  # Remove runing op
                 return self._execute_queue()
 
@@ -409,7 +409,7 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
         """
         return self._reason
 
-    def destroy(self) -> types.states.DeployState:
+    def destroy(self) -> types.states.TaskState:
         """
         Invoked for destroying a deployed service
         """
@@ -419,7 +419,7 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
         self._queue = [Operation.REMOVE, Operation.FINISH]
         return self._execute_queue()
 
-    def cancel(self) -> types.states.DeployState:
+    def cancel(self) -> types.states.TaskState:
         """
         This is a task method. As that, the excepted return values are
         types.states.DeployState.values RUNNING, FINISHED or ERROR.

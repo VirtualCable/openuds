@@ -349,7 +349,7 @@ class Service(Module):
 
     def assign_from_assignables(
         self, assignable_id: str, user: 'models.User', userservice_instance: 'UserService'
-    ) -> types.states.DeployState:
+    ) -> types.states.TaskState:
         """
         Assigns from it internal assignable list to an user
 
@@ -369,7 +369,7 @@ class Service(Module):
             This allows to process the assignation as an user service regular task, so it can be processed by the core.
 
         """
-        return types.states.DeployState.FINISHED
+        return types.states.TaskState.FINISHED
 
     def get_token(self) -> typing.Optional[str]:
         """

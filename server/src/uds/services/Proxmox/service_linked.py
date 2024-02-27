@@ -119,7 +119,6 @@ class ProxmoxServiceLinked(services.Service):  # pylint: disable=too-many-public
         tooltip=_('Select if HA is enabled and HA group for machines of this service'),
         readonly=True,
     )
-
     
     soft_shutdown_field = fields.soft_shutdown_field()
     

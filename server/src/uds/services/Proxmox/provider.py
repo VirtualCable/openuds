@@ -155,7 +155,7 @@ class ProxmoxProvider(services.ServiceProvider):
             logger.debug(self.host.value)
 
         # All proxmox use same UniqueId generator, even if they are different servers
-        self._vmid_generator = UniqueIDGenerator('vmid', 'proxmox', 'proxmox')
+        self._vmid_generator = UniqueIDGenerator('proxmoxvmid', 'proxmox')
 
     def test_connection(self) -> bool:
         """
@@ -244,7 +244,7 @@ class ProxmoxProvider(services.ServiceProvider):
         self._api().enable_machine_ha(vmid, started, group)
 
     def set_machine_mac(self, vmid: int, macAddress: str) -> None:
-        self._api().set_machine_ha(vmid, macAddress)
+        self._api().set_machine_mac(vmid, macAddress)
 
     def disable_machine_ha(self, vmid: int) -> None:
         self._api().disable_machine_ha(vmid)

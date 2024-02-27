@@ -449,7 +449,7 @@ class ProxmoxClient:
                 ('max_restart', '4'),
                 ('max_relocate', '4'),
             ]
-            + ([('group', group)] if group else []),
+            + ([('group', group)] if group else []),  # Append ha group if present
         )
 
     @ensure_connected
@@ -632,7 +632,7 @@ class ProxmoxClient:
         return types.VMConfiguration.from_dict(self._get(f'nodes/{node}/qemu/{vmid}/config', node=node)['data'])
 
     @ensure_connected
-    def set_machine_ha(
+    def set_machine_mac(
         self,
         vmid: int,
         mac: str,

@@ -34,6 +34,7 @@ import typing
 import secrets
 import collections.abc
 
+from uds.core.util import unique_name_generator, unique_gid_generator, unique_mac_generator
 
 if typing.TYPE_CHECKING:
     from uds.core.util.cache import Cache
@@ -43,6 +44,13 @@ if typing.TYPE_CHECKING:
 
 TEST_ENV = 'testing_env'
 COMMON_ENV = 'global'
+
+# Generators of ids
+GENERATORS_TYPES: typing.Final[collections.abc.Mapping[str, type['UniqueGenerator']]] = {
+    'mac': unique_mac_generator.UniqueMacGenerator,
+    'name': unique_name_generator.UniqueNameGenerator,
+    'id': unique_gid_generator.UniqueGIDGenerator,
+}
 
 
 class Environment:
@@ -63,7 +71,6 @@ class Environment:
     def __init__(
         self,
         unique_key: str,
-        id_generators: typing.Optional[dict[str, 'UniqueGenerator']] = None,
     ):
         """
         Initialized the Environment for the specified id
@@ -79,7 +86,8 @@ class Environment:
         self._key = unique_key
         self._cache = Cache(unique_key)
         self._storage = Storage(unique_key)
-        self._id_generators = id_generators or {}
+
+        self._id_generators = {k: v(self._key) for k, v in GENERATORS_TYPES.items()}
 
     @property
     def cache(self) -> 'Cache':
@@ -129,7 +137,6 @@ class Environment:
     def environment_for_table_record(
         table_name: str,
         record_id: 'str|int|None' = None,
-        id_generator_types: typing.Optional[dict[str, typing.Any]] = None,
     ) -> 'Environment':
         """
         From a table name, and a id, tries to load the associated environment or creates a new
@@ -140,17 +147,13 @@ class Environment:
         @param idGeneratorsTypes: Associated Generators. Defaults to none
         @return: Obtained associated environment (may be empty if none exists at database, but it will be valid)
         """
+
         if isinstance(record_id, int):  # So we keep zero int value
             record_id = str(record_id)
         record_id = record_id or ''  # If no record id, get environment for table instead of record
 
-        if id_generator_types is None:
-            id_generator_types = {}
         name = 't-' + table_name + '-' + record_id
-        id_generators: dict[str, typing.Any] = {}
-        for k, v in id_generator_types.items():
-            id_generators[k] = v(name)
-        return Environment(name, id_generators)
+        return Environment(name)
 
     @staticmethod
     def type_environment(type_: typing.Type[typing.Any]) -> 'Environment':

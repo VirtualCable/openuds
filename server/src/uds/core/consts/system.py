@@ -36,6 +36,9 @@ import collections.abc
 
 from django.conf import settings
 
+if typing.TYPE_CHECKING:
+    from uds.core.util.unique_id_generator import UniqueGenerator
+
 # UDS Version related
 VERSION = '4.0.0'
 VERSION_STAMP = f'{time.strftime("%Y%m%d")}'
@@ -74,3 +77,4 @@ UDS_ACTION_SCHEME: typing.Final[str] = 'udsa://'
 
 # Max sequence number for generators
 MAX_SEQ: typing.Final[int] = 1000000000000000
+

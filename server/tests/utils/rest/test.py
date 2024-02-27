@@ -65,23 +65,23 @@ class RESTTestCase(test.UDSTransactionTestCase):
     def setUp(self) -> None:
         # Set up data for REST Test cases
         # First, the authenticator related
-        self.auth = authenticators_fixtures.create_authenticator()
-        self.simple_groups = authenticators_fixtures.create_groups(self.auth, NUMBER_OF_ITEMS_TO_CREATE)
-        self.meta_groups = authenticators_fixtures.createMetaGroups(self.auth, NUMBER_OF_ITEMS_TO_CREATE)
+        self.auth = authenticators_fixtures.create_db_authenticator()
+        self.simple_groups = authenticators_fixtures.create_db_groups(self.auth, NUMBER_OF_ITEMS_TO_CREATE)
+        self.meta_groups = authenticators_fixtures.create_db_metagroups(self.auth, NUMBER_OF_ITEMS_TO_CREATE)
         # Create some users, one admin, one staff and one user
-        self.admins = authenticators_fixtures.create_users(
+        self.admins = authenticators_fixtures.create_db_users(
             self.auth,
             number_of_users=NUMBER_OF_ITEMS_TO_CREATE,
             is_admin=True,
             groups=self.groups,
         )
-        self.staffs = authenticators_fixtures.create_users(
+        self.staffs = authenticators_fixtures.create_db_users(
             self.auth,
             number_of_users=NUMBER_OF_ITEMS_TO_CREATE,
             is_staff=True,
             groups=self.groups,
         )
-        self.plain_users = authenticators_fixtures.create_users(
+        self.plain_users = authenticators_fixtures.create_db_users(
             self.auth, number_of_users=NUMBER_OF_ITEMS_TO_CREATE, groups=self.groups
         )
 
@@ -91,15 +91,15 @@ class RESTTestCase(test.UDSTransactionTestCase):
             log.log(user, log.LogLevel.WARNING, f'Warning Log for {user.name}')
             log.log(user, log.LogLevel.ERROR, f'Error Log for {user.name}')
 
-        self.provider = services_fixtures.createProvider()
+        self.provider = services_fixtures.create_db_provider()
 
-        self.user_service_managed = services_fixtures.create_one_cache_testing_userservice(
+        self.user_service_managed = services_fixtures.create_db_one_cache_userservice(
             self.provider,
             self.admins[0],
             self.groups,
             'managed',
         )
-        self.user_service_unmanaged = services_fixtures.create_one_cache_testing_userservice(
+        self.user_service_unmanaged = services_fixtures.create_db_one_cache_userservice(
             self.provider,
             self.admins[0],
             self.groups,
@@ -109,10 +109,10 @@ class RESTTestCase(test.UDSTransactionTestCase):
         self.user_services = []
         for user in self.users:
             self.user_services.append(
-                services_fixtures.create_one_cache_testing_userservice(self.provider, user, self.groups, 'managed')
+                services_fixtures.create_db_one_cache_userservice(self.provider, user, self.groups, 'managed')
             )
             self.user_services.append(
-                services_fixtures.create_one_cache_testing_userservice(
+                services_fixtures.create_db_one_cache_userservice(
                     self.provider, user, self.groups, 'unmanaged'
                 )
             )

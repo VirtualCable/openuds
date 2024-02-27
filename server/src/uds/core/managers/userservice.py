@@ -584,7 +584,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         logger.debug('State: %s', state)
 
-        if state == types.states.DeployState.FINISHED:
+        if state == types.states.TaskState.FINISHED:
             user_service.update_data(userServiceInstance)
             return True
 
@@ -664,7 +664,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             logger.debug('Notifying user service ready state')
             state = userServiceInstance.process_ready_from_os_manager(data)
             logger.debug('State: %s', state)
-            if state == types.states.DeployState.FINISHED:
+            if state == types.states.TaskState.FINISHED:
                 user_service.update_data(userServiceInstance)
                 logger.debug('Service is now ready')
             elif user_service.state in (
