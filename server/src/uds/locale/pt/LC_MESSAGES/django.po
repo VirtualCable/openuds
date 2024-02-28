@@ -17,6 +17,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012
 # Javier Gomez <jgomez@virtualcable.es>, 2023
 # Javier <jgonzalez@virtualcable.es>, 2023
@@ -24,7 +25,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-28 00:54+0100\n"
+"POT-Creation-Date: 2024-02-28 01:51+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2023\n"
 "Language-Team: Portuguese (http://app.transifex.com/openuds/openuds/language/"
@@ -1567,7 +1568,6 @@ msgid "Error testing connection"
 msgstr "Erro ao testar conexão"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:896
-#| msgid "Domain seems to be incorrect, please check it"
 msgid "Connection seems to be incorrect, please check it"
 msgstr "A conexão parece estar incorreta, verifique"
 
@@ -1752,12 +1752,10 @@ msgid "Authenticate against eDirectory"
 msgstr "Autenticar-se contra o eDirectory"
 
 #: auths/EDirectory_enterprise/authenticator.py:363
-#| msgid "Connection error: "
 msgid "Connection error"
 msgstr "Erro de conexão"
 
 #: auths/EDirectory_enterprise/authenticator.py:370
-#| msgid "Connection error: "
 msgid "Connection error: {}"
 msgstr "Erro de conexão: {}"
 
@@ -1783,9 +1781,6 @@ msgstr ""
 "foi encontrado por esse atributo)"
 
 #: auths/EDirectory_enterprise/authenticator.py:436
-#| msgid ""
-#| "Ldap group id attribute seems to be incorrect (no group found by that "
-#| "attribute)"
 msgid ""
 "Ldap group attribute seems to be incorrect (no group found by that attribute)"
 msgstr ""
@@ -2142,9 +2137,6 @@ msgid "Regular Expressions LDAP authenticator"
 msgstr "Autenticador LDAP de Expressões Regulares"
 
 #: auths/RegexLdap/authenticator.py:540
-#| msgid ""
-#| "Ldap user id attr is probably wrong (can't find any user with both "
-#| "conditions)"
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with that attribute)"
 msgstr ""
@@ -2152,9 +2144,6 @@ msgstr ""
 "encontrar nenhum usuário com esse atributo)"
 
 #: auths/RegexLdap/authenticator.py:569
-#| msgid ""
-#| "Ldap group id attribute seems to be incorrect (no group found by that "
-#| "attribute)"
 msgid ""
 "Ldap group name attribute seems to be incorrect (no group found by that "
 "attribute)"
@@ -2422,8 +2411,9 @@ msgstr "O certificado e a chave privada não correspondem"
 
 #: auths/SAML/saml.py:447
 #, python-brace-format
-msgid "Can't fetch url {0}: {1}"
-msgstr "Não é possível buscar o URL {0}: {1}"
+#| msgid "Can't fetch url {0}: {1}"
+msgid "Can't fetch url {url}: {error}"
+msgstr "Não é possível buscar o URL {url}: {error}"
 
 #: auths/SAML/saml.py:456
 msgid " (obtained from URL)"
@@ -4696,7 +4686,6 @@ msgid "Could not access AD using LDAP ({0})"
 msgstr "Não foi possível acessar o AD usando o LDAP ({0})"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:408
-#| msgid "The default path {0} for computers was not found!!!"
 msgid "The default path for computers was not found!!!"
 msgstr "O caminho padrão para computadores não foi encontrado!!!"
 
@@ -4707,7 +4696,6 @@ msgstr "O caminho ou {0} não foi encontrado !!!"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:417
 #, python-brace-format
-#| msgid "Could not check parameters (_ldap._tcp.{0} can'r be resolved)"
 msgid "Could not check parameters (_ldap._tcp.{0} can't be resolved)"
 msgstr ""
 "Não foi possível verificar os parâmetros (_ldap._tcp.{0} não pode ser "
@@ -4715,7 +4703,6 @@ msgstr ""
 
 #: osmanagers/WindowsOsManager/windows_domain.py:422
 #, python-brace-format
-#| msgid "Unknown error"
 msgid "Unknown error: {0}"
 msgstr "Erro desconhecido: {0}"
 
@@ -5710,14 +5697,10 @@ msgid ""
 msgstr "Rede para as máquinas (cada máquina criada será anexada a esta rede)"
 
 #: services/Nutanix_enterprise/service_fixed.py:64
-#| msgid "Proxmox Fixed Machines"
 msgid "Nutanix Fixed Machines"
 msgstr "Máquinas Fixas Nutanix"
 
 #: services/Nutanix_enterprise/service_fixed.py:66
-#| msgid ""
-#| "Proxmox Services based on fixed machines. Needs qemu agent installed on "
-#| "machines."
 msgid ""
 "Nutanix Services based on fixed machines. Needs qemu agent installed on "
 "machines."
@@ -5867,7 +5850,6 @@ msgstr ""
 "recente e encontrada {})"
 
 #: services/OpenGnsys/provider.py:215
-#| msgid "Error testing connection"
 msgid "Error testing OpenGnsys connection: {}"
 msgstr "Erro ao testar a conexão OpenGnsys: {}"
 
@@ -5974,7 +5956,6 @@ msgstr ""
 "recente)"
 
 #: services/OpenNebula/provider.py:165
-#| msgid "Edirectory connection error: {}"
 msgid "Error connecting to OpenNebula: {}"
 msgstr "Erro ao conectar-se ao OpenNebula: {}"
 
@@ -6099,7 +6080,6 @@ msgstr "Se marcado, o nome das sub-redes será usado em vez dos nomes das redes"
 
 #: services/OpenStack/provider.py:245
 #: services/VCloud_enterprise/provider.py:200
-#| msgid "Error"
 msgid "Error: {}"
 msgstr "Erro: {}"
 
@@ -6265,8 +6245,6 @@ msgid "Lock machine by external access"
 msgstr "Bloquear máquina por acesso externo"
 
 #: services/PhysicalMachines/service_multi.py:113
-#| msgid ""
-#| "If checked, UDS will lock the machine if it is accesed from outside UDS."
 msgid ""
 "If checked, UDS will lock the machine if it is accessed from outside UDS."
 msgstr ""
@@ -6357,7 +6335,6 @@ msgid "Starting machine id on proxmox"
 msgstr "Iniciando o id da máquina no proxmox"
 
 #: services/Proxmox/provider.py:350
-#| msgid "User's password"
 msgid "Test passed"
 msgstr "Teste aprovado"
 
@@ -6802,7 +6779,6 @@ msgid "Methuselah is not alive!!! :-)"
 msgstr "Matusalém não está vivo !!! :-)"
 
 #: services/Sample/provider.py:229
-#| msgid "All seems to be fine."
 msgid "All seems to be fine"
 msgstr "Tudo parece estar bem"
 

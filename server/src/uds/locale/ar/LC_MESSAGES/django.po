@@ -17,12 +17,13 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Abdel Baaddi <abaaddi@virtualcable.es>, 2017-2018
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-28 00:54+0100\n"
+"POT-Creation-Date: 2024-02-28 01:51+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>, 2017-2018\n"
 "Language-Team: Arabic (http://app.transifex.com/openuds/openuds/language/"
@@ -1550,7 +1551,6 @@ msgid "Error testing connection"
 msgstr "خطأ في اختبار الاتصال"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:896
-#| msgid "Domain seems to be incorrect, please check it"
 msgid "Connection seems to be incorrect, please check it"
 msgstr "يبدو أن الاتصال غير صحيح، يرجى التحقق من ذلك"
 
@@ -1734,12 +1734,10 @@ msgid "Authenticate against eDirectory"
 msgstr "مصادقة ضد eDirectory"
 
 #: auths/EDirectory_enterprise/authenticator.py:363
-#| msgid "Connection error: "
 msgid "Connection error"
 msgstr "خطأ في الإتصال"
 
 #: auths/EDirectory_enterprise/authenticator.py:370
-#| msgid "Connection error: "
 msgid "Connection error: {}"
 msgstr "خطأ في الإتصال: {}"
 
@@ -1763,9 +1761,6 @@ msgstr ""
 "يبدو أن Ldap المستخدم معرف السمة غير صحيحة (أي مستخدم موجود بذلك السمة)"
 
 #: auths/EDirectory_enterprise/authenticator.py:436
-#| msgid ""
-#| "Ldap group id attribute seems to be incorrect (no group found by that "
-#| "attribute)"
 msgid ""
 "Ldap group attribute seems to be incorrect (no group found by that attribute)"
 msgstr ""
@@ -2109,9 +2104,6 @@ msgid "Regular Expressions LDAP authenticator"
 msgstr " التعبيرات العادية لمصادق LDAP"
 
 #: auths/RegexLdap/authenticator.py:540
-#| msgid ""
-#| "Ldap user id attr is probably wrong (can't find any user with both "
-#| "conditions)"
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with that attribute)"
 msgstr ""
@@ -2119,9 +2111,6 @@ msgstr ""
 "السمة)"
 
 #: auths/RegexLdap/authenticator.py:569
-#| msgid ""
-#| "Ldap group id attribute seems to be incorrect (no group found by that "
-#| "attribute)"
 msgid ""
 "Ldap group name attribute seems to be incorrect (no group found by that "
 "attribute)"
@@ -2386,8 +2375,9 @@ msgstr "الشهادة والمفتاح الخاص لا يتطابقان"
 
 #: auths/SAML/saml.py:447
 #, python-brace-format
-msgid "Can't fetch url {0}: {1}"
-msgstr "لا يمكن إحضار url {0}: {1}"
+#| msgid "Can't fetch url {0}: {1}"
+msgid "Can't fetch url {url}: {error}"
+msgstr "لا يمكن جلب عنوان URL {url}: {error}"
 
 #: auths/SAML/saml.py:456
 msgid " (obtained from URL)"
@@ -4611,7 +4601,6 @@ msgid "Could not access AD using LDAP ({0})"
 msgstr "لا يمكن الوصول إلى AD باستخدام LDAP ({0})"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:408
-#| msgid "The default path {0} for computers was not found!!!"
 msgid "The default path for computers was not found!!!"
 msgstr "لم يتم العثور على المسار الافتراضي لأجهزة الكمبيوتر !!!"
 
@@ -4622,13 +4611,11 @@ msgstr "لم يتم العثور على مسار OU {0} !!!"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:417
 #, python-brace-format
-#| msgid "Could not check parameters (_ldap._tcp.{0} can'r be resolved)"
 msgid "Could not check parameters (_ldap._tcp.{0} can't be resolved)"
 msgstr "تعذر التحقق من المعلمات (لا يمكن حل _ldap._tcp.{0})"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:422
 #, python-brace-format
-#| msgid "Unknown error"
 msgid "Unknown error: {0}"
 msgstr "خطأ غير معروف: {0}"
 
@@ -5610,14 +5597,10 @@ msgid ""
 msgstr "شبكة للأجهزة (كل آلة تم إنشاؤها سوف يتم إرفاق هذا شبكة الاتصال)"
 
 #: services/Nutanix_enterprise/service_fixed.py:64
-#| msgid "Proxmox Fixed Machines"
 msgid "Nutanix Fixed Machines"
 msgstr "آلات نوتانيكس الثابتة"
 
 #: services/Nutanix_enterprise/service_fixed.py:66
-#| msgid ""
-#| "Proxmox Services based on fixed machines. Needs qemu agent installed on "
-#| "machines."
 msgid ""
 "Nutanix Services based on fixed machines. Needs qemu agent installed on "
 "machines."
@@ -5765,7 +5748,6 @@ msgstr ""
 "إصدار OpenGnsys غير مدعوم (الإصدار المطلوب 1.1.0 أو أحدث وتم العثور عليه {})"
 
 #: services/OpenGnsys/provider.py:215
-#| msgid "Error testing connection"
 msgid "Error testing OpenGnsys connection: {}"
 msgstr "خطأ في اختبار اتصال OpenGnsys: {}"
 
@@ -5869,7 +5851,6 @@ msgid "OpenNebula version is not supported (required version 4.1 or newer)"
 msgstr "إصدار OpenNebula غير مدعوم (الإصدار المطلوب 4.1 أو أحدث)"
 
 #: services/OpenNebula/provider.py:165
-#| msgid "Edirectory connection error: {}"
 msgid "Error connecting to OpenNebula: {}"
 msgstr "خطأ في الاتصال بـ OpenNebula: {}"
 
@@ -5993,7 +5974,6 @@ msgstr ""
 
 #: services/OpenStack/provider.py:245
 #: services/VCloud_enterprise/provider.py:200
-#| msgid "Error"
 msgid "Error: {}"
 msgstr "خطأ: {}"
 
@@ -6157,8 +6137,6 @@ msgid "Lock machine by external access"
 msgstr "قفل الجهاز عن طريق الوصول الخارجي"
 
 #: services/PhysicalMachines/service_multi.py:113
-#| msgid ""
-#| "If checked, UDS will lock the machine if it is accesed from outside UDS."
 msgid ""
 "If checked, UDS will lock the machine if it is accessed from outside UDS."
 msgstr "إذا تم تحديده، فسيقوم UDS بقفل الجهاز إذا تم الوصول إليه من خارج UDS."
@@ -6246,7 +6224,6 @@ msgid "Starting machine id on proxmox"
 msgstr "جارٍ بدء معرف الجهاز في proxmox"
 
 #: services/Proxmox/provider.py:350
-#| msgid "User's password"
 msgid "Test passed"
 msgstr "نجح الاختبار"
 
@@ -6668,7 +6645,6 @@ msgid "Methuselah is not alive!!! :-)"
 msgstr "متوشالح ليس على قيد الحياة !!! :-)"
 
 #: services/Sample/provider.py:229
-#| msgid "All seems to be fine."
 msgid "All seems to be fine"
 msgstr "يبدو أن كل شيء على ما يرام"
 

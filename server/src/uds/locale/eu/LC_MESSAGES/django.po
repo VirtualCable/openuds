@@ -3,13 +3,28 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Adolfo Gómez <dkmaster@dkmon.com>, 2015-2024
+# Translators:
+# Translators:
+# Translators:
+# Translators:
+# Translators:
+# Translators:
+# Translators:
+# Translators:
+# Translators:
+# Translators:
+# Translators:
+# Translators:
+# Translators:
+# Translators:
+# Translators:
+# Adolfo Gómez <dkmaster@dkmon.com>, 2015
 # Lanmedia Comunicaciones <jetxaniz@lanmedia.es>, 2016-2017,2020
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-28 00:54+0100\n"
+"POT-Creation-Date: 2024-02-28 01:51+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>, 2015\n"
 "Language-Team: Basque (http://app.transifex.com/openuds/openuds/language/"
@@ -1554,7 +1569,6 @@ msgid "Error testing connection"
 msgstr "Errorea konexioa probatzean"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:896
-#| msgid "Domain seems to be incorrect, please check it"
 msgid "Connection seems to be incorrect, please check it"
 msgstr "Konexioa okerra dela dirudi, egiaztatu mesedez"
 
@@ -1740,12 +1754,10 @@ msgid "Authenticate against eDirectory"
 msgstr "eDirectory-ren kontra autentikatu"
 
 #: auths/EDirectory_enterprise/authenticator.py:363
-#| msgid "Connection error: "
 msgid "Connection error"
 msgstr "Konexio-errorea"
 
 #: auths/EDirectory_enterprise/authenticator.py:370
-#| msgid "Connection error: "
 msgid "Connection error: {}"
 msgstr "Konexio-errorea: {}"
 
@@ -1771,9 +1783,6 @@ msgstr ""
 "dituen erabiltzaileak)"
 
 #: auths/EDirectory_enterprise/authenticator.py:436
-#| msgid ""
-#| "Ldap group id attribute seems to be incorrect (no group found by that "
-#| "attribute)"
 msgid ""
 "Ldap group attribute seems to be incorrect (no group found by that attribute)"
 msgstr ""
@@ -2131,9 +2140,6 @@ msgid "Regular Expressions LDAP authenticator"
 msgstr "LDAP autentikatzailearen adierazpen erregularrak"
 
 #: auths/RegexLdap/authenticator.py:540
-#| msgid ""
-#| "Ldap user id attr is probably wrong (can't find any user with both "
-#| "conditions)"
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with that attribute)"
 msgstr ""
@@ -2141,9 +2147,6 @@ msgstr ""
 "erabiltzailerik aurkitu)"
 
 #: auths/RegexLdap/authenticator.py:569
-#| msgid ""
-#| "Ldap group id attribute seems to be incorrect (no group found by that "
-#| "attribute)"
 msgid ""
 "Ldap group name attribute seems to be incorrect (no group found by that "
 "attribute)"
@@ -2410,8 +2413,9 @@ msgstr "Ziurtagiria eta gako pribatua ez datoz bat"
 
 #: auths/SAML/saml.py:447
 #, python-brace-format
-msgid "Can't fetch url {0}: {1}"
-msgstr "Ezin da URL {0} eskuratu: {1}"
+#| msgid "Can't fetch url {0}: {1}"
+msgid "Can't fetch url {url}: {error}"
+msgstr "Ezin da {url} URLa eskuratu: {error}"
 
 #: auths/SAML/saml.py:456
 msgid " (obtained from URL)"
@@ -4681,7 +4685,6 @@ msgid "Could not access AD using LDAP ({0})"
 msgstr "Ezin izan da AD erabili LDAP ({0}) erabiliz"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:408
-#| msgid "The default path {0} for computers was not found!!!"
 msgid "The default path for computers was not found!!!"
 msgstr "Ordenagailuentzako bide lehenetsia ez da aurkitu!!!"
 
@@ -4692,13 +4695,11 @@ msgstr "{0} bideoa ez da aurkitu!"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:417
 #, python-brace-format
-#| msgid "Could not check parameters (_ldap._tcp.{0} can'r be resolved)"
 msgid "Could not check parameters (_ldap._tcp.{0} can't be resolved)"
 msgstr "Ezin izan dira parametroak egiaztatu (_ldap._tcp.{0} ezin da konpondu)"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:422
 #, python-brace-format
-#| msgid "Unknown error"
 msgid "Unknown error: {0}"
 msgstr "Errore ezezaguna: {0}"
 
@@ -5694,14 +5695,10 @@ msgid ""
 msgstr "Makinen sarea (sortutako makina bakoitza sare honetara atxikiko da)"
 
 #: services/Nutanix_enterprise/service_fixed.py:64
-#| msgid "Proxmox Fixed Machines"
 msgid "Nutanix Fixed Machines"
 msgstr "Nutanix makina finkoak"
 
 #: services/Nutanix_enterprise/service_fixed.py:66
-#| msgid ""
-#| "Proxmox Services based on fixed machines. Needs qemu agent installed on "
-#| "machines."
 msgid ""
 "Nutanix Services based on fixed machines. Needs qemu agent installed on "
 "machines."
@@ -5852,7 +5849,6 @@ msgstr ""
 "{} aurkitu da)"
 
 #: services/OpenGnsys/provider.py:215
-#| msgid "Error testing connection"
 msgid "Error testing OpenGnsys connection: {}"
 msgstr "Errore bat gertatu da OpenGnsys konexioa probatzean: {}"
 
@@ -5957,7 +5953,6 @@ msgstr ""
 "OpenNebula bertsioa ez da onartzen (beharrezkoa 4.1 bertsioa edo berriagoa)"
 
 #: services/OpenNebula/provider.py:165
-#| msgid "Edirectory connection error: {}"
 msgid "Error connecting to OpenNebula: {}"
 msgstr "Errore bat gertatu da OpenNebula-ra konektatzean: {}"
 
@@ -6082,7 +6077,6 @@ msgstr "Egiaztatuta badago, sareen izenak erabiliko dira sareen izenen ordez"
 
 #: services/OpenStack/provider.py:245
 #: services/VCloud_enterprise/provider.py:200
-#| msgid "Error"
 msgid "Error: {}"
 msgstr "Errorea: {}"
 
@@ -6250,8 +6244,6 @@ msgid "Lock machine by external access"
 msgstr "Blokeatu makina kanpoko sarbidearen bidez"
 
 #: services/PhysicalMachines/service_multi.py:113
-#| msgid ""
-#| "If checked, UDS will lock the machine if it is accesed from outside UDS."
 msgid ""
 "If checked, UDS will lock the machine if it is accessed from outside UDS."
 msgstr "Hautatzen bada, UDSk makina blokeatuko du UDS kanpotik sartzen bada."
@@ -6342,7 +6334,6 @@ msgid "Starting machine id on proxmox"
 msgstr "Proxmox-en makinaren IDa abiarazten"
 
 #: services/Proxmox/provider.py:350
-#| msgid "User's password"
 msgid "Test passed"
 msgstr "Proba gainditu da"
 
@@ -6784,7 +6775,6 @@ msgid "Methuselah is not alive!!! :-)"
 msgstr "Methuselah ez da bizirik! :-)"
 
 #: services/Sample/provider.py:229
-#| msgid "All seems to be fine."
 msgid "All seems to be fine"
 msgstr "Dena ondo dagoela dirudi"
 

@@ -444,7 +444,7 @@ class SAMLAuthenticator(auths.Authenticator):
                 idp_metadata = resp.content.decode()
             except Exception as e:
                 raise exceptions.ui.ValidationError(
-                    gettext('Can\'t fetch url {0}: {1}').format(self.idp_metadata.value, str(e))
+                    gettext('Can\'t fetch url {url}: {error}').format(url=self.idp_metadata.value, error=str(e))
                 )
             from_url = True
 

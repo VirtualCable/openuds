@@ -17,11 +17,12 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-28 00:54+0100\n"
+"POT-Creation-Date: 2024-02-28 01:51+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: Chinese (http://app.transifex.com/openuds/openuds/language/"
@@ -1517,7 +1518,6 @@ msgid "Error testing connection"
 msgstr "错误测试连接"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:896
-#| msgid "Domain seems to be incorrect, please check it"
 msgid "Connection seems to be incorrect, please check it"
 msgstr "连接好像不正确，请检查一下"
 
@@ -1696,12 +1696,10 @@ msgid "Authenticate against eDirectory"
 msgstr "针对eDirectory进行身份验证"
 
 #: auths/EDirectory_enterprise/authenticator.py:363
-#| msgid "Connection error: "
 msgid "Connection error"
 msgstr "连接错误"
 
 #: auths/EDirectory_enterprise/authenticator.py:370
-#| msgid "Connection error: "
 msgid "Connection error: {}"
 msgstr "连接错误： {}"
 
@@ -1723,9 +1721,6 @@ msgid ""
 msgstr "Ldap用户标识属性似乎不正确（该属性找不到用户）"
 
 #: auths/EDirectory_enterprise/authenticator.py:436
-#| msgid ""
-#| "Ldap group id attribute seems to be incorrect (no group found by that "
-#| "attribute)"
 msgid ""
 "Ldap group attribute seems to be incorrect (no group found by that attribute)"
 msgstr "LDAP 组属性似乎不正确（该属性未找到组）"
@@ -2060,17 +2055,11 @@ msgid "Regular Expressions LDAP authenticator"
 msgstr "正则表达式LDAP身份验证器"
 
 #: auths/RegexLdap/authenticator.py:540
-#| msgid ""
-#| "Ldap user id attr is probably wrong (can't find any user with both "
-#| "conditions)"
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with that attribute)"
 msgstr "Ldap 用户 ID 属性可能是错误的（找不到具有该属性的任何用户）"
 
 #: auths/RegexLdap/authenticator.py:569
-#| msgid ""
-#| "Ldap group id attribute seems to be incorrect (no group found by that "
-#| "attribute)"
 msgid ""
 "Ldap group name attribute seems to be incorrect (no group found by that "
 "attribute)"
@@ -2319,8 +2308,9 @@ msgstr "证书和私钥不匹配"
 
 #: auths/SAML/saml.py:447
 #, python-brace-format
-msgid "Can't fetch url {0}: {1}"
-msgstr "无法获取网址{0}：{1}"
+#| msgid "Can't fetch url {0}: {1}"
+msgid "Can't fetch url {url}: {error}"
+msgstr "无法获取网址 {url}: {error}"
 
 #: auths/SAML/saml.py:456
 msgid " (obtained from URL)"
@@ -4481,7 +4471,6 @@ msgid "Could not access AD using LDAP ({0})"
 msgstr "无法使用LDAP（{0}）访问AD"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:408
-#| msgid "The default path {0} for computers was not found!!!"
 msgid "The default path for computers was not found!!!"
 msgstr "找不到计算机的默认路径！"
 
@@ -4492,13 +4481,11 @@ msgstr "找不到ou路径{0}！"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:417
 #, python-brace-format
-#| msgid "Could not check parameters (_ldap._tcp.{0} can'r be resolved)"
 msgid "Could not check parameters (_ldap._tcp.{0} can't be resolved)"
 msgstr "无法检查参数（_ldap._tcp.{0} 无法解析）"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:422
 #, python-brace-format
-#| msgid "Unknown error"
 msgid "Unknown error: {0}"
 msgstr "未知错误：{0}"
 
@@ -5469,14 +5456,10 @@ msgid ""
 msgstr "机器网络（创建的每台机器都将连接到该网络）"
 
 #: services/Nutanix_enterprise/service_fixed.py:64
-#| msgid "Proxmox Fixed Machines"
 msgid "Nutanix Fixed Machines"
 msgstr "Nutanix 固定机器"
 
 #: services/Nutanix_enterprise/service_fixed.py:66
-#| msgid ""
-#| "Proxmox Services based on fixed machines. Needs qemu agent installed on "
-#| "machines."
 msgid ""
 "Nutanix Services based on fixed machines. Needs qemu agent installed on "
 "machines."
@@ -5618,7 +5601,6 @@ msgid ""
 msgstr "不支持 OpenGnsys 版本（需要 1.1.0 或更高版本并找到 {}）"
 
 #: services/OpenGnsys/provider.py:215
-#| msgid "Error testing connection"
 msgid "Error testing OpenGnsys connection: {}"
 msgstr "测试 OpenGnsys 连接时出错：{}"
 
@@ -5718,7 +5700,6 @@ msgid "OpenNebula version is not supported (required version 4.1 or newer)"
 msgstr "不支持 OpenNebula 版本（需要 4.1 或更高版本）"
 
 #: services/OpenNebula/provider.py:165
-#| msgid "Edirectory connection error: {}"
 msgid "Error connecting to OpenNebula: {}"
 msgstr "连接到 OpenNebula 时出错：{}"
 
@@ -5839,7 +5820,6 @@ msgstr "如果选中，将使用子网名称代替网络名称"
 
 #: services/OpenStack/provider.py:245
 #: services/VCloud_enterprise/provider.py:200
-#| msgid "Error"
 msgid "Error: {}"
 msgstr "错误： {}"
 
@@ -5999,8 +5979,6 @@ msgid "Lock machine by external access"
 msgstr "通过外部访问锁定机器"
 
 #: services/PhysicalMachines/service_multi.py:113
-#| msgid ""
-#| "If checked, UDS will lock the machine if it is accesed from outside UDS."
 msgid ""
 "If checked, UDS will lock the machine if it is accessed from outside UDS."
 msgstr "如果选中，则当从外部 UDS 访问机器时，UDS 将锁定机器。"
@@ -6086,7 +6064,6 @@ msgid "Starting machine id on proxmox"
 msgstr "proxmox 上的启动机器 ID"
 
 #: services/Proxmox/provider.py:350
-#| msgid "User's password"
 msgid "Test passed"
 msgstr "考试通过了"
 
@@ -6502,7 +6479,6 @@ msgid "Methuselah is not alive!!! :-)"
 msgstr "玛土撒拉还活着！ :-)"
 
 #: services/Sample/provider.py:229
-#| msgid "All seems to be fine."
 msgid "All seems to be fine"
 msgstr "一切似乎都很好"
 
