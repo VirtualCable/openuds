@@ -14,6 +14,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2022
 # Alexander <ag@kub.tel>, 2020
 # Alexey Shabalin <a.shabalin@gmail.com>, 2019
@@ -29,7 +30,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-15 20:30+0100\n"
+"POT-Creation-Date: 2024-02-28 00:54+0100\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Elena Mishina, 2022-2024\n"
 "Language-Team: Russian (http://app.transifex.com/openuds/openuds/language/"
@@ -1838,7 +1839,7 @@ msgstr "Подтверждение входа"
 
 #: static/modern/translations-fakejs.js:39
 msgid "Remember me for"
-msgstr "Запомни меня для"
+msgstr "Запомнить меня для"
 
 #: static/modern/translations-fakejs.js:40
 msgid "Submit"
