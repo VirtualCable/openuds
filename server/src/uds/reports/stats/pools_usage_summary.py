@@ -61,13 +61,13 @@ class PoolsUsageSummary(UsageByPool):
     ) -> tuple[
         typing.ValuesView[collections.abc.MutableMapping[str, typing.Any]], int, int, int
     ]:
-        orig, poolNames = super().get_data()  # pylint: disable=unused-variable  # Keep name for reference
+        orig, _pool_names = super().get_data()  # pylint: disable=unused-variable  # Keep name for reference
 
         pools: dict[str, dict[str, typing.Any]] = {}
         totalTime: int = 0
         totalCount: int = 0
 
-        uniqueUsers = set()
+        unique_users: set[str] = set()
 
         for v in orig:
             uuid = v['pool']
@@ -82,7 +82,7 @@ class PoolsUsageSummary(UsageByPool):
             pools[uuid]['count'] += 1
             # Now add user id to pool
             pools[uuid]['users'].add(v['name'])
-            uniqueUsers.add(v['name'])
+            unique_users.add(v['name'])
 
             totalTime += v['time']
             totalCount += 1
@@ -92,7 +92,7 @@ class PoolsUsageSummary(UsageByPool):
         for _, pn in pools.items():
             pn['users'] = len(pn['users'])
 
-        return pools.values(), totalTime, totalCount or 1, len(uniqueUsers)
+        return pools.values(), totalTime, totalCount or 1, len(unique_users)
 
     def generate(self) -> bytes:
         pools, totalTime, totalCount, uniqueUsers = self.processedData()

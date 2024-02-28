@@ -691,7 +691,7 @@ if sys.platform == 'win32':
             Operation.CREATE: 'create',
             Operation.START: 'start',
             Operation.STOP: 'stop',
-            Operation.SHUTDOWN: 'suspend',
+            Operation.SHUTDOWN: 'shutdown',
             Operation.GRACEFUL_STOP: 'gracely stop',
             Operation.REMOVE: 'remove',
             Operation.WAIT: 'wait',

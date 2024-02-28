@@ -67,8 +67,6 @@ if typing.TYPE_CHECKING:
 def index(request: HttpRequest) -> HttpResponse:
     # Gets csrf token
     csrf_token = csrf.get_token(request)
-    if csrf_token is not None:
-        csrf_token = str(csrf_token)
 
     response = render(
         request=request,
@@ -175,7 +173,7 @@ def mfa(
 
     store: 'storage.Storage' = storage.Storage('mfs')
 
-    mfa_provider = typing.cast('None|models.MFA', request.user.manager.mfa)
+    mfa_provider = request.user.manager.mfa  # typing.cast('None|models.MFA',
     if not mfa_provider:
         logger.warning('MFA: No MFA provider for user')
         return HttpResponseRedirect(reverse('page.index'))

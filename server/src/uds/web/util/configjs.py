@@ -90,7 +90,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
             # Tag will also include non visible authenticators
             # tag, later will remove "auth_host"
             authenticators = list(auths.filter(small_name__in=[auth_host, tag]))
-        except Exception as e:
+        except Exception:
             authenticators = []
     else:
         if not tag:  # If no tag, remove hidden auths
@@ -145,7 +145,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
             'is_custom': theType.is_custom(),
         }
 
-    config = {
+    config: dict[str, typing.Any] = {
         'version': consts.system.VERSION,
         'version_stamp': consts.system.VERSION_STAMP,
         'language': get_language(),

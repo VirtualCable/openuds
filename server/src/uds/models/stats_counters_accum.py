@@ -81,7 +81,7 @@ class StatsCountersAccum(models.Model):
     v_min = models.IntegerField(default=0)
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager[StatsCountersAccum]'
+    # objects: 'models.manager.Manager[StatsCountersAccum]'
 
     class Meta:  # pylint: disable=too-few-public-methods
         """

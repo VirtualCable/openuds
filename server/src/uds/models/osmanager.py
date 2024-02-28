@@ -56,7 +56,7 @@ class OSManager(ManagedObjectModel, TaggingMixin):
     # objects: 'models.manager.Manager[OSManager]'
     deployedServices: 'models.manager.RelatedManager[ServicePool]'
 
-    class Meta(ManagedObjectModel.Meta):  # pylint: disable=too-few-public-methods
+    class Meta(ManagedObjectModel.Meta):  # pyright: ignore
         """
         Meta class to declare default order
         """

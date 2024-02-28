@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import stat
 import typing
 import datetime
 import collections.abc
@@ -39,17 +40,34 @@ from tests.web import user
 
 from uds import models
 from uds.core import types, ui, environment
-from uds.services.Proxmox.deployment_linked import ProxmoxUserserviceLinked
+from uds.models import service
+from uds.services.Proxmox.deployment_linked import ProxmoxUserserviceLinked, Operation
 
 from . import fixtures
 
 from ...utils.test import UDSTransactionTestCase
 
 
+def limit_iter(check: typing.Callable[[], bool], limit: int = 128) -> typing.Generator[int, None, None]:
+    """
+    Limit an iterator to a number of elements
+    """
+    current = 0
+    while current < limit and check():
+        yield current
+        current += 1
+
+    if current < limit:
+        return
+
+    # Limit reached, raise an exception
+    raise Exception(f'Limit reached: {current}/{limit}: {check()}')
+
+
 # We use transactions on some related methods (storage access, etc...)
 class TestProxmovLinkedService(UDSTransactionTestCase):
 
-    def test_userservice_fixed_cache_l1(self) -> None:
+    def test_userservice_linked_cache_l1(self) -> None:
         """
         Test the user service
         """
@@ -63,16 +81,17 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
 
             self.assertEqual(state, types.states.TaskState.RUNNING)
 
-            while state == types.states.TaskState.RUNNING:
+            # Ensure that in the event of failure, we don't loop forever
+            for _ in limit_iter(lambda: state == types.states.TaskState.RUNNING, limit=128):
                 state = userservice.check_state()
 
             self.assertEqual(state, types.states.TaskState.FINISHED)
 
             self.assertEqual(userservice._name[: len(service.get_basename())], service.get_basename())
             self.assertEqual(len(userservice._name), len(service.get_basename()) + service.get_lenname())
-            
+
             vmid = int(userservice._vmid)
-            
+
             api.clone_machine.assert_called_with(
                 publication.machine(),
                 mock.ANY,
@@ -84,18 +103,17 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
                 service.pool.value,
                 None,
             )
-            
+
             # api.get_task should have been invoked at least once
             self.assertTrue(api.get_task.called)
-            
+
             api.enable_machine_ha.assert_called()
-            
+
             api.set_machine_mac.assert_called_with(vmid, userservice._mac)
             api.get_machine_pool_info.assert_called_with(vmid, service.pool.value, force=True)
             api.start_machine.assert_called_with(vmid)
-            
-            
-    def test_userservice_fixed_cache_l2_no_ha(self) -> None:
+
+    def test_userservice_linked_cache_l2_no_ha(self) -> None:
         """
         Test the user service
         """
@@ -103,10 +121,12 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
             userservice = fixtures.create_userservice_linked()
             service = userservice.service()
             service.ha.value = '__'  # Disabled
-            
+
             # Set machine state for fixture to started
-            fixtures.VMS_INFO = [fixtures.VMS_INFO[i]._replace(status = 'running') for i in range(len(fixtures.VMS_INFO))]
-            
+            fixtures.VMS_INFO = [
+                fixtures.VMS_INFO[i]._replace(status='running') for i in range(len(fixtures.VMS_INFO))
+            ]
+
             publication = userservice.publication()
             publication._vmid = '1'
 
@@ -114,16 +134,16 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
 
             self.assertEqual(state, types.states.TaskState.RUNNING)
 
-            while state == types.states.TaskState.RUNNING:
+            for _ in limit_iter(lambda: state == types.states.TaskState.RUNNING, limit=128):
                 state = userservice.check_state()
 
             self.assertEqual(state, types.states.TaskState.FINISHED)
 
             self.assertEqual(userservice._name[: len(service.get_basename())], service.get_basename())
             self.assertEqual(len(userservice._name), len(service.get_basename()) + service.get_lenname())
-            
+
             vmid = int(userservice._vmid)
-            
+
             api.clone_machine.assert_called_with(
                 publication.machine(),
                 mock.ANY,
@@ -135,17 +155,113 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
                 service.pool.value,
                 None,
             )
-            
+
             # api.get_task should have been invoked at least once
             self.assertTrue(api.get_task.called)
-            
+
             # Shoud not have been called since HA is disabled
             api.enable_machine_ha.assert_not_called()
-            
+
             api.set_machine_mac.assert_called_with(vmid, userservice._mac)
             api.get_machine_pool_info.assert_called_with(vmid, service.pool.value, force=True)
             # Now, called should not have been called because machine is running
             # api.start_machine.assert_called_with(vmid)
             # Stop machine should have been called
             api.shutdown_machine.assert_called_with(vmid)
-            
+
+    def test_userservice_linked_user(self) -> None:
+        """
+        Test the user service
+        """
+        with fixtures.patch_provider_api() as api:
+            userservice = fixtures.create_userservice_linked()
+            service = userservice.service()
+
+            publication = userservice.publication()
+            publication._vmid = '1'
+
+            state = userservice.deploy_for_user(models.User())
+
+            self.assertEqual(state, types.states.TaskState.RUNNING)
+
+            for _ in limit_iter(lambda: state == types.states.TaskState.RUNNING, limit=128):
+                state = userservice.check_state()
+
+            self.assertEqual(state, types.states.TaskState.FINISHED)
+
+            self.assertEqual(userservice._name[: len(service.get_basename())], service.get_basename())
+            self.assertEqual(len(userservice._name), len(service.get_basename()) + service.get_lenname())
+
+            vmid = int(userservice._vmid)
+
+            api.clone_machine.assert_called_with(
+                publication.machine(),
+                mock.ANY,
+                userservice._name,
+                mock.ANY,
+                True,
+                None,
+                service.datastore.value,
+                service.pool.value,
+                None,
+            )
+
+            # api.get_task should have been invoked at least once
+            self.assertTrue(api.get_task.called)
+
+            api.enable_machine_ha.assert_called()
+
+            api.set_machine_mac.assert_called_with(vmid, userservice._mac)
+            api.get_machine_pool_info.assert_called_with(vmid, service.pool.value, force=True)
+            api.start_machine.assert_called_with(vmid)
+
+    def test_userservice_cancel(self) -> None:
+        """
+        Test the user service
+        """
+        with fixtures.patch_provider_api() as _api:
+            for graceful in [True, False]:
+                userservice = fixtures.create_userservice_linked()
+                service = userservice.service()
+                service.soft_shutdown_field.value = graceful
+                publication = userservice.publication()
+                publication._vmid = '1'
+
+                # Set machine state for fixture to started
+                fixtures.VMS_INFO = [
+                    fixtures.VMS_INFO[i]._replace(status='running') for i in range(len(fixtures.VMS_INFO))
+                ]
+
+                state = userservice.deploy_for_user(models.User())
+
+                self.assertEqual(state, types.states.TaskState.RUNNING)
+
+                current_op = userservice._get_current_op()
+
+                # Invoke cancel
+                state = userservice.cancel()
+
+                self.assertEqual(state, types.states.TaskState.RUNNING)
+
+                self.assertEqual(
+                    userservice._queue,
+                    [current_op]
+                    + ([Operation.GRACEFUL_STOP] if graceful else [])
+                    + [Operation.STOP, Operation.REMOVE, Operation.FINISH],
+                )
+
+                for counter in limit_iter(lambda: state == types.states.TaskState.RUNNING, limit=128):
+                    state = userservice.check_state()
+                    if counter > 5:
+                        # Set machine state for fixture to stopped
+                        fixtures.VMS_INFO = [
+                            fixtures.VMS_INFO[i]._replace(status='stopped')
+                            for i in range(len(fixtures.VMS_INFO))
+                        ]
+
+                self.assertEqual(state, types.states.TaskState.FINISHED)
+
+                if graceful:
+                    _api.shutdown_machine.assert_called()
+                else:
+                    _api.stop_machine.assert_called()

@@ -52,7 +52,7 @@ class StatsCounters(models.Model):
     value = models.IntegerField(db_index=True, default=0)
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager[StatsCounters]'
+    # objects: 'models.manager.Manager[StatsCounters]'
 
     class Meta:  # pylint: disable=too-few-public-methods
         """
