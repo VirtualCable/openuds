@@ -118,13 +118,18 @@ class ServiceCacheUpdater(Job):
 
     @staticmethod
     def _notify_restrain(servicepool: 'ServicePool') -> None:
+        remaining_restraing_time = servicepool.remaining_restraint_time()
         log.log(
             servicepool,
             log.LogLevel.WARNING,
-            'Service Pool is restrained due to excesive errors',
+            f'Service Pool is restrained due to excesive errors (will be available in {remaining_restraing_time} seconds)',
             log.LogSource.INTERNAL,
         )
-        logger.info('%s is restrained, will check this later', servicepool.name)
+        logger.info(
+            '%s will be restrained during %s seconds. Will check this later',
+            servicepool.name,
+            remaining_restraing_time,
+        )
 
     def service_pools_needing_cache_update(
         self,
@@ -228,7 +233,7 @@ class ServiceCacheUpdater(Job):
                     ServicePoolStats(servicepool, l1_cache_count, l2_cache_count, assigned_count)
                 )
                 continue
-            
+
             # If this service don't allows more starting user services, continue
             if not UserServiceManager().can_grow_service_pool(servicepool):
                 logger.debug(
@@ -236,14 +241,14 @@ class ServiceCacheUpdater(Job):
                     servicepool,
                 )
                 continue
-            
+
             if pool_stat.l1_cache_needed():
                 logger.debug('Needs to grow L1 cache for %s', servicepool)
                 servicepools_numbers.append(
                     ServicePoolStats(servicepool, l1_cache_count, l2_cache_count, assigned_count)
                 )
                 continue
-            
+
             if pool_stat.l2_cache_needed():
                 logger.debug('Needs to grow L2 cache for %s', servicepool)
                 servicepools_numbers.append(

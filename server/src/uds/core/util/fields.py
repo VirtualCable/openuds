@@ -346,7 +346,7 @@ def soft_shutdown_field(
     )
 
 
-def keep_on_access_error_field(
+def maintain_on_error_field(
     order: int = 104,
     tab: 'types.ui.Tab|str|None' = types.ui.Tab.ADVANCED,
     old_field_name: typing.Optional[str] = None,

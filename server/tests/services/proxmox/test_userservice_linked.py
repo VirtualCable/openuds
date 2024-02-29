@@ -223,7 +223,7 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
             for graceful in [True, False]:
                 userservice = fixtures.create_userservice_linked()
                 service = userservice.service()
-                service.soft_shutdown_field.value = graceful
+                service.try_soft_shutdown.value = graceful
                 publication = userservice.publication()
                 publication._vmid = '1'
 

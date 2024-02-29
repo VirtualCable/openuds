@@ -188,7 +188,7 @@ class ServicePool(UUIDModel, TaggingMixin):
             None if there is no valid publication for this deployed service.
         """
         try:
-            return self.publications.filter(state=types.states.State.USABLE)[0] 
+            return self.publications.filter(state=types.states.State.USABLE)[0]
         except Exception:
             return None
 
@@ -278,11 +278,31 @@ class ServicePool(UUIDModel, TaggingMixin):
 
         return False
 
+    def remaining_restraint_time(self) -> int:
+        from uds.core.util.config import GlobalConfig
+
+        if GlobalConfig.RESTRAINT_TIME.as_int() <= 0:
+            return 0
+
+        date = sql_datetime() - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.as_int())
+        count = self.userServices.filter(state=types.states.State.ERROR, state_date__gt=date).count()
+        if count < GlobalConfig.RESTRAINT_COUNT.as_int():
+            return 0
+
+        return GlobalConfig.RESTRAINT_TIME.as_int() - int(
+            (
+                sql_datetime()
+                - self.userServices.filter(state=types.states.State.ERROR, state_date__gt=date)
+                .latest('state_date')
+                .state_date
+            ).total_seconds()
+        )
+
     def is_in_maintenance(self) -> bool:
         return self.service.is_in_maintenance() if self.service else True
 
     def is_visible(self) -> bool:
-        return self.visible 
+        return self.visible
 
     def is_usable(self) -> bool:
         return (
@@ -305,7 +325,9 @@ class ServicePool(UUIDModel, TaggingMixin):
         try:
             found = self.assigned_user_services().filter(
                 user=forUser, state__in=types.states.State.VALID_STATES
-            )[0]  # Raises exception if at least one is not found
+            )[
+                0
+            ]  # Raises exception if at least one is not found
             if activePub and found.publication and activePub.id != found.publication.id:
                 ret = self.get_value('toBeReplacedIn')
                 if ret:

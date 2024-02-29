@@ -116,7 +116,7 @@ class ProxmoxServiceLinked(services.Service):  # pylint: disable=too-many-public
         readonly=True,
     )
     
-    soft_shutdown_field = fields.soft_shutdown_field()
+    try_soft_shutdown = fields.soft_shutdown_field()
     
     machine = gui.ChoiceField(
         label=_("Base Machine"),
@@ -267,7 +267,7 @@ class ProxmoxServiceLinked(services.Service):  # pylint: disable=too-many-public
         return self.ha.value != '__'
 
     def try_graceful_shutdown(self) -> bool:
-        return self.soft_shutdown_field.as_bool()
+        return self.try_soft_shutdown.as_bool()
 
     def get_console_connection(
         self, machine_id: str
