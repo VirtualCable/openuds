@@ -68,7 +68,7 @@ class UserServiceSession(models.Model):  # pylint: disable=too-many-public-metho
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager["UserServiceSession"]'
 
-    class Meta(models.Model.Meta):
+    class Meta():  # pyright: ignore
         """
         Meta class to declare default order and unique multiple field index
         """

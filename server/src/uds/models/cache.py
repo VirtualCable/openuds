@@ -56,7 +56,7 @@ class Cache(models.Model):
     # "fake" relations declarations for type checking
     # objects: 'models.manager.Manager[Cache]'
 
-    class Meta(models.Model.Meta):
+    class Meta():  # pyright: ignore
         """
         Meta class to declare the name of the table at database
         """

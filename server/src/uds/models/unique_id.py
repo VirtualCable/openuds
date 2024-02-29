@@ -52,7 +52,7 @@ class UniqueId(models.Model):
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[UniqueId]'
 
-    class Meta(models.Model.Meta):
+    class Meta: # pyright: ignore
         """
         Meta class to declare default order and unique multiple field index
         """

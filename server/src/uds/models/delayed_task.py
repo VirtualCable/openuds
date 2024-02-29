@@ -61,7 +61,7 @@ class DelayedTask(models.Model):
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[DelayedTask]'
 
-    class Meta(models.Model.Meta):
+    class Meta():  # pyright: ignore
         """
         Meta class to declare default order and unique multiple field index
         """
