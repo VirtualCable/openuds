@@ -30,7 +30,6 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
 from unittest import mock
 
 from uds import models
@@ -40,22 +39,7 @@ from uds.services.Proxmox.deployment_linked import Operation
 from . import fixtures
 
 from ...utils.test import UDSTransactionTestCase
-
-
-def limit_iter(check: typing.Callable[[], bool], limit: int = 128) -> typing.Generator[int, None, None]:
-    """
-    Limit an iterator to a number of elements
-    """
-    current = 0
-    while current < limit and check():
-        yield current
-        current += 1
-
-    if current < limit:
-        return
-
-    # Limit reached, raise an exception
-    raise Exception(f'Limit reached: {current}/{limit}: {check()}')
+from ...utils.generators import limited_iterator
 
 
 # We use transactions on some related methods (storage access, etc...)
@@ -82,7 +66,7 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
             self.assertEqual(state, types.states.TaskState.RUNNING)
 
             # Ensure that in the event of failure, we don't loop forever
-            for _ in limit_iter(lambda: state == types.states.TaskState.RUNNING, limit=128):
+            for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
                 state = userservice.check_state()
 
             self.assertEqual(state, types.states.TaskState.FINISHED)
@@ -134,7 +118,7 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
 
             self.assertEqual(state, types.states.TaskState.RUNNING)
 
-            for _ in limit_iter(lambda: state == types.states.TaskState.RUNNING, limit=128):
+            for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
                 state = userservice.check_state()
 
             self.assertEqual(state, types.states.TaskState.FINISHED)
@@ -184,7 +168,7 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
 
             self.assertEqual(state, types.states.TaskState.RUNNING)
 
-            for _ in limit_iter(lambda: state == types.states.TaskState.RUNNING, limit=128):
+            for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
                 state = userservice.check_state()
 
             self.assertEqual(state, types.states.TaskState.FINISHED)
@@ -214,6 +198,17 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
             api.set_machine_mac.assert_called_with(vmid, userservice._mac)
             api.get_machine_pool_info.assert_called_with(vmid, service.pool.value, force=True)
             api.start_machine.assert_called_with(vmid)
+            
+            # Set ready state with the valid machine
+            state = userservice.set_ready()
+            # Machine is stopped, so task must be RUNNING (opossed to FINISHED)
+            self.assertEqual(state, types.states.TaskState.RUNNING)
+            
+            for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=32):
+                state = userservice.check_state()
+                
+            # Should be finished now
+            self.assertEqual(state, types.states.TaskState.FINISHED)
 
     def test_userservice_cancel(self) -> None:
         """
@@ -250,7 +245,7 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
                     + [Operation.STOP, Operation.REMOVE, Operation.FINISH],
                 )
 
-                for counter in limit_iter(lambda: state == types.states.TaskState.RUNNING, limit=128):
+                for counter in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
                     state = userservice.check_state()
                     if counter > 5:
                         # Set machine state for fixture to stopped

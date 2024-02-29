@@ -30,20 +30,15 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
-import datetime
-import collections.abc
-import itertools
 from unittest import mock
-from tests.web import user
 
 from uds import models
-from uds.core import types, ui, environment
-from uds.services.Proxmox.deployment_fixed import ProxmoxUserServiceFixed
+from uds.core import types
 
 from . import fixtures
 
 from ...utils.test import UDSTransactionTestCase
+from ...utils.generators import limited_iterator
 
 
 # We use transactions on some related methods (storage access, etc...)
@@ -94,5 +89,14 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
             # must be empty now
             self.assertEqual(service._get_assigned_machines(), set())
             
+            # set_ready, machine is "stopped" in this test, so must return RUNNING
+            state = userservice.set_ready()
+            self.assertEqual(state, types.states.TaskState.RUNNING)
+            
+            for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=32):
+                state = userservice.check_state()
+            
+            # Should be finished now
+            self.assertEqual(state, types.states.TaskState.FINISHED)
             
             

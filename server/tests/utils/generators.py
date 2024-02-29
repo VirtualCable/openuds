@@ -32,7 +32,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import random
 import uuid
 import typing
-import collections.abc
 
 from . import constants
 
@@ -40,9 +39,9 @@ from . import constants
 def random_string(size: int = 6, chars: typing.Optional[str] = None) -> str:
     chars = chars or constants.STRING_CHARS
     return ''.join(
-        random.choice(chars)  # nosec: Not used for cryptography, just for testing
-        for _ in range(size)
+        random.choice(chars) for _ in range(size)  # nosec: Not used for cryptography, just for testing
     )
+
 
 def random_utf8_string(size: int = 6) -> str:
     # Generate a random utf-8 string of length "length"
@@ -53,17 +52,32 @@ def random_utf8_string(size: int = 6) -> str:
 def random_uuid() -> str:
     return str(uuid.uuid4())
 
+
 def random_int(start: int = 0, end: int = 100000) -> int:
     return random.randint(start, end)  # nosec
 
+
 def random_ip() -> str:
     return '.'.join(
-        str(
-            random.randint(0, 255)  # nosec: Not used for cryptography, just for testing
-        )
-        for _ in range(4)
+        str(random.randint(0, 255)) for _ in range(4)  # nosec: Not used for cryptography, just for testing
     )
 
 
 def random_mac() -> str:
     return ':'.join(random_string(2, '0123456789ABCDEF') for _ in range(6))
+
+
+def limited_iterator(check: typing.Callable[[], bool], limit: int = 128) -> typing.Generator[int, None, None]:
+    """
+    Limit an iterator to a number of elements
+    """
+    current = 0
+    while current < limit and check():
+        yield current
+        current += 1
+
+    if current < limit:
+        return
+
+    # Limit reached, raise an exception
+    raise Exception(f'Limit reached: {current}/{limit}: {check()}')
