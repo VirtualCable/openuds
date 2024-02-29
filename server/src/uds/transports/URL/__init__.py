@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-202 Virtual Cable S.L.U.
+# Copyright (c) 2012-2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,7 +28,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+# pyright: reportUnusedImport=false
 
 from .url_custom import URLCustomTransport

@@ -31,7 +31,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import collections.abc
 import enum
 import datetime
 import logging
@@ -83,7 +82,7 @@ class StatsCountersAccum(models.Model):
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[StatsCountersAccum]'
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:  # pyright: ignore
         """
         Meta class to declare db table
         """
@@ -144,7 +143,7 @@ class StatsCountersAccum(models.Model):
         interval = interval_type.seconds()
 
         # Get last stamp in table for this interval_type
-        start_record = (
+        start_record: 'StatsCounters|StatsCountersAccum|None' = (
             StatsCountersAccum.objects.filter(interval_type=interval_type)
             .order_by('stamp')
             .last()

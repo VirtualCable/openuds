@@ -33,7 +33,6 @@ import stat
 import calendar
 import datetime
 import typing
-import collections.abc
 import logging
 
 from django.db.models import QuerySet

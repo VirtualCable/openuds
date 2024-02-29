@@ -30,9 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from re import X
 import typing
-import collections.abc
 
 # Constants for Visibility
 VISIBLE: typing.Final[str] = 'v'

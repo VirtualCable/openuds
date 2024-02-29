@@ -30,7 +30,6 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from email import message
 import typing
 import dataclasses
 

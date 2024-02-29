@@ -35,9 +35,9 @@ import typing
 
 from uds import models
 from uds.core import exceptions, types
-from uds.core.auths.auth import is_source_trusted
+from uds.core.auths.auth import is_trusted_source
 from uds.core.util import log, net
-from uds.core.util.model import sql_datetime, sql_stamp_seconds
+from uds.core.util.model import sql_stamp_seconds
 from uds.core.util.stats import events
 from uds.REST import Handler
 
@@ -71,7 +71,7 @@ class TunnelTicket(Handler):
         )
 
         if (
-            not is_source_trusted(self._request.ip)
+            not is_trusted_source(self._request.ip)
             or len(self._args) != 3
             or len(self._args[0]) != 48
         ):

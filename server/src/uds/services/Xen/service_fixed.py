@@ -39,9 +39,8 @@ from uds.core import consts, exceptions, services, types
 from uds.core.services.specializations.fixed_machine.fixed_service import FixedService
 from uds.core.services.specializations.fixed_machine.fixed_userservice import FixedUserService
 from uds.core.ui import gui
-from uds.core.util import log, validators
+from uds.core.util import log
 from uds.core.util.decorators import cached
-from uds.core.workers import initialize
 
 from . import helpers
 from .deployment_fixed import XenFixedUserService
@@ -49,7 +48,6 @@ from .deployment_fixed import XenFixedUserService
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from uds.core.module import Module
 
     from .provider import XenProvider
 

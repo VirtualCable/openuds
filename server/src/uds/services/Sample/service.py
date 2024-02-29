@@ -32,7 +32,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _
 from uds.core import services, exceptions, types
@@ -45,8 +44,7 @@ from .deployment_two import SampleUserServiceTwo
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.module import Module
-    from uds.core.environment import Environment
+    pass
 
 logger = logging.getLogger(__name__)
 

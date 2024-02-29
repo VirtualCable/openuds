@@ -69,7 +69,7 @@ class ServerRegisterBase(Handler):
         # Validate parameters
         try:
             try:
-                t = types.servers.ServerType(type)
+                types.servers.ServerType(type)  # try to convert
             except ValueError:
                 raise ValueError(_('Invalid type. Type must be an integer.'))
             if len(subtype) > 16:

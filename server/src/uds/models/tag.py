@@ -31,7 +31,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import collections.abc
 import logging
 
 
@@ -101,5 +100,5 @@ class Tag(UUIDModel):
 class TaggingMixin(models.Model):
     tags: 'models.ManyToManyField[Tag, TaggingMixin]' = models.ManyToManyField(Tag)
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:  # pyright: ignore
         abstract = True

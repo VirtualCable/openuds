@@ -31,7 +31,7 @@
 """
 import logging
 
-from uds.core.jobs import Job
+# from uds.core.jobs import Job
 
 # from uds.core.util.config import GlobalConfig
 

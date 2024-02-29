@@ -6,7 +6,6 @@ Created on Nov 15, 2012-2019
 import logging
 
 import typing
-import collections.abc
 
 from uds.core import types
 from uds.core.ui.user_interface import gui

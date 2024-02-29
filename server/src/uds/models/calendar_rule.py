@@ -36,7 +36,6 @@ import datetime
 import enum
 import logging
 import typing
-import collections.abc
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _

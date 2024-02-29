@@ -30,21 +30,15 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import abc
 import logging
-import re
 import typing
 import collections.abc
 
-from django.utils.translation import gettext_noop as _, gettext
-from uds.core import services, types, consts, exceptions
+from django.utils.translation import gettext_noop as _
+from uds.core import services, types
 from uds.core.ui import gui
-from uds.core.util import validators, log
-from uds.core.util.cache import Cache
-from uds.core.util.decorators import cached
-from uds.core.workers import initialize
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.module import Module
     from uds import models
     from .fixed_userservice import FixedUserService
 

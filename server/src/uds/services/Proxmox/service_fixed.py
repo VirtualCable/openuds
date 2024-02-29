@@ -35,12 +35,11 @@ import typing
 from django.utils.translation import gettext
 from django.utils.translation import gettext_noop as _
 
-from uds.core import consts, exceptions, services, types
+from uds.core import exceptions, services, types
 from uds.core.services.specializations.fixed_machine.fixed_service import FixedService
 from uds.core.services.specializations.fixed_machine.fixed_userservice import FixedUserService
 from uds.core.ui import gui
 from uds.core.util import log
-from uds.core.util.decorators import cached
 
 from . import helpers
 from .deployment_fixed import ProxmoxUserServiceFixed
@@ -48,7 +47,6 @@ from .deployment_fixed import ProxmoxUserServiceFixed
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from uds.core.module import Module
 
     from . import client
     from .provider import ProxmoxProvider

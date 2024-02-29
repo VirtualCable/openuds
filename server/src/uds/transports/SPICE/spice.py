@@ -32,7 +32,6 @@
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
@@ -44,7 +43,6 @@ from .spice_base import BaseSpiceTransport
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from uds.core import transports
     from uds.core.types.requests import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
@@ -75,7 +73,7 @@ class SPICETransport(BaseSpiceTransport):
 
     def get_transport_script(
         self,
-        userService: 'models.UserService',
+        userservice: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
         os: 'types.os.DetectedOsInfo',
@@ -84,7 +82,7 @@ class SPICETransport(BaseSpiceTransport):
         request: 'ExtendedHttpRequestWithUser',
     ) -> 'types.transports.TransportScript':
         try:
-            userservice_instance = userService.get_instance()
+            userservice_instance = userservice.get_instance()
             con: typing.Optional[types.services.ConsoleConnectionInfo] = (
                 userservice_instance.get_console_connection()
             )
@@ -125,4 +123,4 @@ class SPICETransport(BaseSpiceTransport):
         try:
             return self.get_script(os.os.os_name(), 'direct', sp)
         except Exception:
-            return super().get_transport_script(userService, transport, ip, os, user, password, request)
+            return super().get_transport_script(userservice, transport, ip, os, user, password, request)

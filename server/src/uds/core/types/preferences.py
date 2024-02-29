@@ -30,11 +30,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-
-import typing
-import collections.abc
-
-
 class CommonPrefs:
     SZ_PREF = 'screenSize'
     SZ_640x480 = '1'

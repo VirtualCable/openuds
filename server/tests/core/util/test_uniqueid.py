@@ -60,7 +60,7 @@ class UniqueIdTest(UDSTestCase):
     name_generator: UniqueNameGenerator
 
     def setUp(self) -> None:
-        self.uniqueid_generator = UniqueIDGenerator('uidg1', 'test', 'test')
+        self.uniqueid_generator = UniqueIDGenerator('test', 'test')
         self.ugidGen = UniqueGIDGenerator('test')
         self.macs_generator = UniqueMacGenerator('test')
         self.name_generator = UniqueNameGenerator('test')

@@ -1,11 +1,42 @@
-import collections.abc
+# -*- coding: utf-8 -*-
+
+#
+# Copyright (c) 2012-2024 Virtual Cable S.L.U.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without modification,
+# are permitted provided that the following conditions are met:
+#
+#    * Redistributions of source code must retain the above copyright notice,
+#      this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above copyright notice,
+#      this list of conditions and the following disclaimer in the documentation
+#      and/or other materials provided with the distribution.
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
+#      may be used to endorse or promote products derived from this software
+#      without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+"""
+Author: Adolfo Gómez, dkmaster at dkmon dot com
+"""
 import ipaddress
 import logging
 import random
 import secrets
 import ssl
 import typing
-from datetime import datetime, timedelta
+import datetime
 
 import certifi
 import requests
@@ -34,7 +65,7 @@ try:
     # Ensure that we do not get warnings about self signed certificates and so
     import requests.packages.urllib3  # type: ignore
 
-    requests.packages.urllib3.disable_warnings() 
+    requests.packages.urllib3.disable_warnings()  # pyright: ignore
 except Exception:  # nosec: simple check for disabling warnings,
     # Igonre if we cannot disable warnings
     pass
@@ -58,7 +89,7 @@ def create_self_signed_cert(ip: str) -> tuple[str, str, str]:
     san = x509.SubjectAlternativeName([x509.IPAddress(ipaddress.ip_address(ip))])
 
     basic_contraints = x509.BasicConstraints(ca=True, path_length=0)
-    now = datetime.utcnow()
+    now = datetime.datetime.now(datetime.UTC)
     cert = (
         x509.CertificateBuilder()
         .subject_name(name)
@@ -66,7 +97,7 @@ def create_self_signed_cert(ip: str) -> tuple[str, str, str]:
         .public_key(key.public_key())
         .serial_number(random.SystemRandom().randint(0, 1 << 64))
         .not_valid_before(now)
-        .not_valid_after(now + timedelta(days=10 * 365))
+        .not_valid_after(now + datetime.timedelta(days=10 * 365))
         .add_extension(basic_contraints, False)
         .add_extension(san, False)
         .sign(key, hashes.SHA256(), default_backend())

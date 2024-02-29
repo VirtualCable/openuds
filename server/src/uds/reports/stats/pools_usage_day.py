@@ -34,14 +34,12 @@ import io
 import datetime
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext, gettext_lazy as _
 
 from uds.core.ui import gui
 from uds.core.util.stats import counters
 from uds.core.reports import graphs
-from uds.core.util import dateutils
 from uds.models import ServicePool
 
 
@@ -73,7 +71,7 @@ class CountersPoolAssigned(StatsReport):
         # Generate the sampling intervals and get dataUsers from db
         start = self.start_date.as_date()
 
-        data = []
+        data: list[dict[str, typing.Any]] = []
 
         pool: ServicePool
         for poolUuid in self.pools.value:

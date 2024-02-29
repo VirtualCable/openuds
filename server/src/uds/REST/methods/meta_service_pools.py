@@ -31,7 +31,6 @@
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext as _
 
@@ -147,7 +146,7 @@ class MetaAssignedService(DetailHandler):
         element['pool_name'] = item.deployed_service.name
         return element
 
-    def _getAssignedService(self, metaPool: models.MetaPool, userServiceId: str) -> models.UserService:
+    def _get_assigned_userservice(self, metaPool: models.MetaPool, userServiceId: str) -> models.UserService:
         """
         Gets an assigned service and checks that it belongs to this metapool
         If not found, raises InvalidItemException
@@ -185,7 +184,7 @@ class MetaAssignedService(DetailHandler):
 
         try:
             if not item:  # All items
-                result = {}
+                result: dict[str, typing.Any] = {}
 
                 for k, props in assignedUserServicesForPools():
                     result[k.uuid] = MetaAssignedService.item_as_dict(parent, k, props)
@@ -193,7 +192,7 @@ class MetaAssignedService(DetailHandler):
 
             return MetaAssignedService.item_as_dict(
                 parent,
-                self._getAssignedService(parent, item),
+                self._get_assigned_userservice(parent, item),
                 props={
                     k: v
                     for k, v in models.Properties.objects.filter(
@@ -237,7 +236,7 @@ class MetaAssignedService(DetailHandler):
     def get_logs(self, parent: 'Model', item: str) -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.MetaPool)
         try:
-            asignedService = self._getAssignedService(parent, item)
+            asignedService = self._get_assigned_userservice(parent, item)
             logger.debug('Getting logs for %s', asignedService)
             return log.get_logs(asignedService)
         except Exception:
@@ -245,7 +244,7 @@ class MetaAssignedService(DetailHandler):
 
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, models.MetaPool)
-        userService = self._getAssignedService(parent, item)
+        userService = self._get_assigned_userservice(parent, item)
 
         if userService.user:
             logStr = 'Deleted assigned service {} to user {} by {}'.format(
@@ -274,17 +273,17 @@ class MetaAssignedService(DetailHandler):
             raise self.invalid_item_response()
 
         fields = self.fields_from_params(['auth_id', 'user_id'])
-        service = self._getAssignedService(parent, item)
+        userservice = self._get_assigned_userservice(parent, item)
         user = models.User.objects.get(uuid=process_uuid(fields['user_id']))
 
         logStr = 'Changing ownership of service from {} to {} by {}'.format(
-            service.user.pretty_name if service.user else 'unknown', user.pretty_name, self._user.pretty_name
+            userservice.user.pretty_name if userservice.user else 'unknown', user.pretty_name, self._user.pretty_name
         )
 
         # If there is another service that has this same owner, raise an exception
         if (
-            service.deployed_service.userServices.filter(user=user)
-            .exclude(uuid=service.uuid)
+            userservice.deployed_service.userServices.filter(user=user)
+            .exclude(uuid=userservice.uuid)
             .exclude(state__in=State.INFO_STATES)
             .count()
             > 0
@@ -293,8 +292,8 @@ class MetaAssignedService(DetailHandler):
                 'There is already another user service assigned to {}'.format(user.pretty_name)
             )
 
-        service.user = user
-        service.save()
+        userservice.user = user
+        userservice.save()
 
         # Log change
         log.log(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)

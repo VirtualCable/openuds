@@ -31,7 +31,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import collections.abc
 
 MANAGED: typing.Final[str] = 'managed'
 UNMANAGED: typing.Final[str] = 'unmanaged'  # matches the definition of UDS Actors OFC

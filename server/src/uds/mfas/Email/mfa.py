@@ -29,25 +29,23 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+import logging
 import smtplib
 import ssl
 import typing
-import collections.abc
-import logging
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
-from django.utils.translation import gettext_noop as _, gettext
+from django.utils.translation import gettext
+from django.utils.translation import gettext_noop as _
 
 from uds import models
-from uds.core import mfas, exceptions, types
-from uds.core.mfas.mfa import MFA
+from uds.core import exceptions, mfas, types
 from uds.core.types.requests import ExtendedHttpRequest
 from uds.core.ui import gui
-from uds.core.util import validators, decorators
+from uds.core.util import decorators, validators
 
 if typing.TYPE_CHECKING:
-    from uds.core.module import Module
     from uds.core.types.requests import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)

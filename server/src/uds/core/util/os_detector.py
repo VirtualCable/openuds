@@ -30,13 +30,9 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import enum
-import re
 import logging
 import typing
 import collections.abc
-
-from numpy import mat
 
 from uds.core import types, consts
 

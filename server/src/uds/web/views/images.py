@@ -30,7 +30,6 @@
 """
 import logging
 import typing
-import collections.abc
 
 from django.http import HttpResponse
 from django.views.decorators.cache import cache_page

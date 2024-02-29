@@ -66,7 +66,7 @@ class Providers(ModelHandler):
 
     save_fields = ['name', 'comments', 'tags']
 
-    table_title = typing.cast(str, _('Service providers'))
+    table_title = _('Service providers')
 
     # Table info fields
     table_fields = [
@@ -81,7 +81,8 @@ class Providers(ModelHandler):
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
     table_row_style = types.ui.RowStyleInfo(prefix='row-maintenance-', field='maintenance_mode')
 
-    def item_as_dict(self, item: 'Provider') -> types.rest.ItemDictType:
+    def item_as_dict(self, item: 'Model') -> types.rest.ItemDictType:
+        item = ensure.is_instance(item, Provider)
         type_ = item.get_type()
 
         # Icon can have a lot of data (1-2 Kbytes), but it's not expected to have a lot of services providers, and even so, this will work fine

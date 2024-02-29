@@ -36,10 +36,8 @@ import logging
 import typing
 import collections.abc
 
-from uds.core import services, consts, types
-from uds.core.managers.userservice import UserServiceManager
+from uds.core import services, types
 from uds.core.util import log, autoserializable
-from uds.core.util.model import sql_stamp_seconds
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:

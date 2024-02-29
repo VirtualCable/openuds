@@ -33,11 +33,11 @@ import logging
 import typing
 import collections.abc
 
-import ldap
+import ldap  # pyright: ignore  # Needed to import ldap.filter without errors
 import ldap.filter
 from django.utils.translation import gettext_noop as _
 
-from uds.core import auths, environment, types, consts, exceptions
+from uds.core import auths, environment, types, exceptions
 from uds.core.auths.auth import log_login
 from uds.core.ui import gui
 from uds.core.util import ensure, fields, ldaputil, validators
@@ -351,7 +351,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         self,
         username: str,
         credentials: str,
-        groupsManager: 'auths.GroupsManager',
+        groups_manager: 'auths.GroupsManager',
         request: 'ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         '''
@@ -385,7 +385,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                     user[self.mfa_attribute.as_str()][0],
                 )
 
-            groupsManager.validate(self._get_groups(user))
+            groups_manager.validate(self._get_groups(user))
 
             return types.auth.SUCCESS_AUTH
 

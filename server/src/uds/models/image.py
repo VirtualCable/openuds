@@ -28,13 +28,10 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from email.mime import base
 import io
 import base64
 import logging
-from operator import ne
 import typing
-import collections.abc
 
 
 import PIL.Image

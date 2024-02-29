@@ -39,7 +39,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 # module = sys.modules[__name__]
-def sanitizeName(name: str) -> str:
+def sanitized_name(name: str) -> str:
     """
     machine names with [a-zA-Z0-9_-]
     """

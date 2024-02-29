@@ -32,7 +32,6 @@
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
@@ -65,7 +64,7 @@ class ServicesPoolGroups(ModelHandler):
     model = ServicePoolGroup
     save_fields = ['name', 'comments', 'image_id', 'priority']
 
-    table_title = typing.cast(str, _('Services Pool Groups'))
+    table_title = _('Services Pool Groups')
     table_fields = [
         {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
         {

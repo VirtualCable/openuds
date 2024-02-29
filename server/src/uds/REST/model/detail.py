@@ -31,25 +31,16 @@
 """
 # pylint: disable=too-many-public-methods
 
-import abc
-import fnmatch
-import inspect
 import logging
-import re
 import typing
 import collections.abc
-from types import GeneratorType
 
-from django.db import IntegrityError, models
+from django.db import models
 from django.utils.translation import gettext as _
 
 from uds.core import consts
-from uds.core import exceptions
 from uds.core import types
-from uds.core.module import Module
-from uds.core.util import log, permissions
 from uds.core.util.model import process_uuid
-from uds.models import ManagedObjectModel, Network, Tag, TaggingMixin
 from uds.REST.utils import rest_result
 
 from .base import BaseModelHandler
@@ -60,9 +51,6 @@ if typing.TYPE_CHECKING:
     from .model import ModelHandler
 
 logger = logging.getLogger(__name__)
-
-
-
 
 
 # Details do not have types at all
@@ -94,7 +82,7 @@ class DetailHandler(BaseModelHandler):
     _parent: typing.Optional['ModelHandler']
     _path: str
     _params: typing.Any  # _params is deserialized object from request
-    _args: tuple[str, ...]
+    _args: list[str]
     _kwargs: dict[str, typing.Any]
     _user: 'User'
 
@@ -114,7 +102,7 @@ class DetailHandler(BaseModelHandler):
         self._parent = parent_handler
         self._path = path
         self._params = params
-        self._args = args
+        self._args = list(args)
         self._kwargs = kwargs
         self._user = kwargs.get('user', None)
 
@@ -349,4 +337,3 @@ class DetailHandler(BaseModelHandler):
         :return: a list of log elements (normally got using "uds.core.util.log.get_logs" method)
         """
         raise self.invalid_method_response()
-

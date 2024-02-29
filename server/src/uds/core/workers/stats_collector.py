@@ -30,7 +30,6 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
-import typing
 import collections.abc
 
 from uds import models
@@ -56,13 +55,13 @@ class DeployedServiceStatsCollector(Job):
     def run(self) -> None:
         logger.debug('Starting Deployed service stats collector')
 
-        servicePoolsToCheck: collections.abc.Iterable[
+        service_pool_to_check: collections.abc.Iterable[
             models.ServicePool
         ] = models.ServicePool.objects.filter(state=State.ACTIVE).iterator()
         stamp = model.sql_datetime()
         # Global counters
         totalAssigned, totalInUse, totalCached = 0, 0, 0
-        for servicePool in servicePoolsToCheck:
+        for servicePool in service_pool_to_check:
             try:
                 fltr = servicePool.assigned_user_services().exclude(
                     state__in=State.INFO_STATES
@@ -98,12 +97,12 @@ class DeployedServiceStatsCollector(Job):
 
         totalUsers, totalAssigned, totalWithService = 0, 0, 0
         for auth in models.Authenticator.objects.all():
-            fltr = auth.users.order_by().filter(userServices__isnull=False).exclude(
+            fltr_user = auth.users.filter(userServices__isnull=False).exclude(
                 userServices__state__in=State.INFO_STATES
-            )
+            ).order_by()
             users = auth.users.all().count()
-            users_with_service = fltr.values('id').distinct().count()  # Use "values" to simplify query (only id)
-            number_assigned_services = fltr.values('id').count()
+            users_with_service = fltr_user.values('id').distinct().count()  # Use "values" to simplify query (only id)
+            number_assigned_services = fltr_user.values('id').count()
             # Global counters
             totalUsers += users
             totalAssigned += number_assigned_services

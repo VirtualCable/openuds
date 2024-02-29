@@ -32,6 +32,8 @@ UDS Service modules interfaces and classes.
 
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+# pyright: reportUnusedImport=false
+
 from . import exceptions
 
 from .user_service import UserService

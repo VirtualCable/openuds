@@ -32,7 +32,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
-import collections.abc
 
 from django.db import models
 from django.db.models import Count, Q, signals
@@ -48,7 +47,7 @@ from .uuid_model import UUIDModel
 if typing.TYPE_CHECKING:
     from uds.models import Group, UserService, Permissions
     from uds.core.types.requests import ExtendedHttpRequest
-    from django.db.models.manager import RelatedManager  # type: ignore  # MyPy complains because of django-stubs
+    from django.db.models.manager import RelatedManager
 
 
 logger = logging.getLogger(__name__)

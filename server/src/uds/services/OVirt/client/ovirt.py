@@ -28,6 +28,8 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+# pyright: reportUnknownMemberType=false, reportAttributeAccessIssue=false
+
 import threading
 import logging
 import typing
@@ -40,7 +42,7 @@ from uds.core import types
 # Sometimes, we import ovirtsdk4 but "types" does not get imported... event can't be found????
 # With this seems to work propertly
 try:
-    from ovirtsdk4 import types as ovirtTypes
+    from ovirtsdk4 import types as ovirtTypes  # pyright: ignore[reportUnusedImport]
 except Exception:  # nosec just to bring on the types if they exist
     pass
 
@@ -181,7 +183,9 @@ class Client:
 
             api = self._api()
 
-            vms: collections.abc.Iterable[typing.Any] = api.system_service().vms_service().list()  # pyright: ignore
+            vms: collections.abc.Iterable[typing.Any] = (
+                api.system_service().vms_service().list()
+            )  # pyright: ignore
 
             logger.debug('oVirt VMS: %s', vms)
 
@@ -347,7 +351,9 @@ class Client:
             d: typing.Any = datacenter_service.get()  # pyright: ignore
 
             storage = []
-            for dd in typing.cast(collections.abc.Iterable[typing.Any], datacenter_service.storage_domains_service().list()):  # pyright: ignore
+            for dd in typing.cast(
+                collections.abc.Iterable[typing.Any], datacenter_service.storage_domains_service().list()
+            ):  # pyright: ignore
                 try:
                     active = dd.status.value
                 except Exception:
@@ -364,7 +370,7 @@ class Client:
                     }
                 )
 
-            res = {
+            res: dict[str, typing.Any] = {
                 'name': d.name,
                 'id': d.id,
                 'storage_type': d.local and 'local' or 'shared',
@@ -410,7 +416,9 @@ class Client:
 
             api = self._api()
 
-            dd: typing.Any = api.system_service().storage_domains_service().service(storageId).get()  # pyright: ignore
+            dd: typing.Any = (
+                api.system_service().storage_domains_service().service(storageId).get()
+            )  # pyright: ignore
 
             res = {
                 'id': dd.id,
@@ -429,10 +437,10 @@ class Client:
         self,
         name: str,
         comments: str,
-        machineId: str,
-        clusterId: str,
-        storageId: str,
-        displayType: str,
+        machine_id: str,
+        cluster_id: str,
+        storage_id: str,
+        display_type: str,
     ) -> str:
         """
         Publish the machine (makes a template from it so we can create COWs) and returns the template id of
@@ -452,10 +460,10 @@ class Client:
             "n: %s, c: %s, vm: %s, cl: %s, st: %s, dt: %s",
             name,
             comments,
-            machineId,
-            clusterId,
-            storageId,
-            displayType,
+            machine_id,
+            cluster_id,
+            storage_id,
+            display_type,
         )
 
         try:
@@ -466,9 +474,11 @@ class Client:
             # cluster = ov.clusters_service().service('00000002-0002-0002-0002-0000000002e4') # .get()
             # vm = ov.vms_service().service('e7ff4e00-b175-4e80-9c1f-e50a5e76d347') # .get()
 
-            vms = api.system_service().vms_service().service(machineId)
+            vms: typing.Any = api.system_service().vms_service().service(machine_id)
 
-            cluster: typing.Any = api.system_service().clusters_service().service(clusterId).get()  # pyright: ignore
+            cluster: typing.Any = (
+                api.system_service().clusters_service().service(cluster_id).get()
+            )  # pyright: ignore
             vm: typing.Any = vms.get()  # pyright: ignore
 
             if vm is None:
@@ -498,7 +508,7 @@ class Client:
         finally:
             lock.release()
 
-    def get_template_state(self, templateId: str) -> str:
+    def get_template_state(self, template_id: str) -> str:
         """
         Returns current template state.
         This method do not uses cache at all (it always tries to get template state from oVirt server)
@@ -517,7 +527,7 @@ class Client:
 
             try:
                 template: typing.Any = (
-                    api.system_service().templates_service().service(templateId).get()  # pyright: ignore
+                    api.system_service().templates_service().service(template_id).get()  # pyright: ignore
                 )
 
                 if not template:
@@ -650,7 +660,7 @@ class Client:
         finally:
             lock.release()
 
-    def start_machine(self, machineId: str) -> None:
+    def start_machine(self, machine_id: str) -> None:
         """
         Tries to start a machine. No check is done, it is simply requested to oVirt.
 
@@ -666,7 +676,7 @@ class Client:
 
             api = self._api()
 
-            vmService: typing.Any = api.system_service().vms_service().service(machineId)
+            vmService: typing.Any = api.system_service().vms_service().service(machine_id)
 
             if vmService.get() is None:
                 raise Exception('Machine not found')
@@ -808,7 +818,9 @@ class Client:
             if display.certificate is not None:
                 cert_subject = display.certificate.subject
             else:
-                for i in typing.cast(collections.abc.Iterable[typing.Any], api.system_service().hosts_service().list()):
+                for i in typing.cast(
+                    collections.abc.Iterable[typing.Any], api.system_service().hosts_service().list()
+                ):
                     for k in typing.cast(
                         collections.abc.Iterable[typing.Any],
                         api.system_service()

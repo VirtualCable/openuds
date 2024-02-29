@@ -31,13 +31,12 @@
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
 import uds.core.types.permissions
-from uds.core import types, consts, ui
+from uds.core import types, consts
 from uds.core.util import permissions, validators, ensure
 from uds.core.util.model import process_uuid
 from uds import models
@@ -45,7 +44,6 @@ from uds.REST.model import DetailHandler, ModelHandler
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.module import Module
     from django.db.models import Model
 
 logger = logging.getLogger(__name__)
@@ -64,7 +62,7 @@ class TunnelServers(DetailHandler):
                 q = parent.servers.all().order_by('hostname')
             else:
                 q = parent.servers.filter(uuid=process_uuid(item))
-            res = []
+            res: list[dict[str, typing.Any]] = []
             i = None
             for i in q:
                 val = {
@@ -150,7 +148,7 @@ class Tunnels(ModelHandler):
     detail = {'servers': TunnelServers}
     save_fields = ['name', 'comments', 'host:', 'port:0']
 
-    table_title = typing.cast(str, _('Tunnels'))
+    table_title = _('Tunnels')
     table_fields = [
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
         {'comments': {'title': _('Comments')}},
@@ -216,7 +214,7 @@ class Tunnels(ModelHandler):
 
         item = self._args[-1]
 
-        if item is None:
+        if not item:
             raise self.invalid_item_response('No server specified')
 
         try:
@@ -226,7 +224,6 @@ class Tunnels(ModelHandler):
         except Exception:
             raise self.invalid_item_response() from None
 
-        # TODO: implement this
         return 'ok'
 
     def tunnels(self, parent: 'Model') -> typing.Any:

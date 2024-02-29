@@ -1,0 +1,13 @@
+{
+    "include": [
+        "src"
+    ],
+    "exclude": [
+        "**/scripts",
+        "**/__pycache__",
+    ],
+    "typeCheckingMode": "strict",
+    "reportPrivateUsage": false,
+    "reportUnusedImport": true,
+    "reportMissingTypeStubs": false,
+}

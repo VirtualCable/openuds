@@ -45,7 +45,7 @@ from django.utils.translation import gettext_lazy as _
 from uds.core.managers.stats import StatsManager
 from uds.core.reports import graphs
 from uds.core.ui import gui
-from uds.core.util import dateutils, utils
+from uds.core.util import utils
 from uds.core.util.stats import events
 from uds.models import ServicePool
 
@@ -114,8 +114,8 @@ class PoolPerformanceReport(StatsReport):
 
         reportData: list[dict[str, typing.Any]] = []
         for p in self.list_pools():
-            dataUsers = []
-            dataAccesses = []
+            dataUsers: list[tuple[int, int]] = []
+            dataAccesses: list[tuple[int, int]] = []
             for interval in samplingIntervals:
                 key = (interval[0] + interval[1]) // 2
                 q = (
@@ -167,28 +167,29 @@ class PoolPerformanceReport(StatsReport):
         # surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)  # @UndefinedVariable
 
         # logger.debug('PoolsData: %s', poolsData)
+        def _tick_fnc1(l: int) -> str:
+            return filters.date(datetime.datetime.fromtimestamp(l), xLabelFormat) if int(l) >= 0 else ''
 
-        X = [v[0] for v in poolsData[0]['dataUsers']]
+        x = [v[0] for v in poolsData[0]['dataUsers']]
         data = {
             'title': _('Distinct Users'),
-            'x': X,
-            'xtickFnc': lambda l: (
-                filters.date(datetime.datetime.fromtimestamp(X[int(l)]), xLabelFormat) if int(l) >= 0 else ''
-            ),
+            'x': x,
+            'xtickFnc': _tick_fnc1,
             'xlabel': _('Date'),
             'y': [{'label': p['name'], 'data': [v[1] for v in p['dataUsers']]} for p in poolsData],
             'ylabel': _('Users'),
         }
 
         graphs.bar_chart(SIZE, data, graph1)
+        
+        def _tick_fnc2(l: int) -> str:
+            return filters.date(datetime.datetime.fromtimestamp(l), xLabelFormat) if int(l) >= 0 else ''
 
-        X = [v[0] for v in poolsData[0]['dataAccesses']]
+        x = [v[0] for v in poolsData[0]['dataAccesses']]
         data = {
             'title': _('Accesses'),
-            'x': X,
-            'xtickFnc': lambda l: (
-                filters.date(datetime.datetime.fromtimestamp(X[int(l)]), xLabelFormat) if int(l) >= 0 else ''
-            ),
+            'x': x,
+            'xtickFnc': _tick_fnc2,
             'xlabel': _('Date'),
             'y': [{'label': p['name'], 'data': [v[1] for v in p['dataAccesses']]} for p in poolsData],
             'ylabel': _('Accesses'),

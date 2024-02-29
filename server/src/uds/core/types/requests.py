@@ -30,7 +30,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import collections.abc
 
 from django.http import HttpRequest
 
@@ -44,7 +43,7 @@ class ExtendedHttpRequest(HttpRequest):
     ip_version: int
     ip_proxy: str
     os: 'types.os.DetectedOsInfo'
-    user: typing.Optional['User'] # pyright: ignore[reportIncompatibleVariableOverride]
+    user: typing.Optional['User'] # type: ignore
     authorized: bool
 
 

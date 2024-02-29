@@ -32,7 +32,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import re
 import typing
-import collections.abc
 
 from uds.core import types
 

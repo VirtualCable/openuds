@@ -46,7 +46,6 @@ from .uuid_model import UUIDModel
 
 if typing.TYPE_CHECKING:
     from uds.models.transport import Transport
-    from uds.models.user import User
     from uds.models.user_service import UserService
 
 
@@ -190,7 +189,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     log_level = models.IntegerField(default=log.LogLevel.ERROR.value)
 
     # Extra data, for server type custom data use (i.e. actor keeps command related data here)
-    data = models.JSONField(null=True, blank=True, default=None)
+    data: typing.Any = models.JSONField(null=True, blank=True, default=None)
 
     # Group (of registered servers) this server belongs to
     # Note that only Tunnel servers can belong to more than one servergroup

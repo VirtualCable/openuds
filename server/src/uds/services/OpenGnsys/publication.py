@@ -31,12 +31,10 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
-import collections.abc
 
 from uds.core.services import Publication
 from uds.core import types
 from uds.core.util import autoserializable
-from uds.core.util.model import sql_datetime
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:

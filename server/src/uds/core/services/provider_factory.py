@@ -30,7 +30,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
 import collections.abc
 import logging
 
@@ -68,7 +67,7 @@ class ServiceProviderFactory(factory.ModuleFactory[ServiceProvider]):
             return
 
         # Fix offers by checking if they are valid
-        offers = []
+        offers: list[type['Service']] = []
         for s in type_.offers:
             if s.uses_cache_l2:
                 s.uses_cache = True   # Ensures uses cache is true

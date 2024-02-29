@@ -30,9 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from pickle import LONG
 import typing
-import collections.abc
 
 
 # Default timeouts, in seconds

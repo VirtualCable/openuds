@@ -30,7 +30,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
-import collections.abc
 
 from django.db import models
 

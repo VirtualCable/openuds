@@ -34,7 +34,6 @@ import datetime
 import io
 import logging
 import typing
-import collections.abc
 
 import django.template.defaultfilters as filters
 from django.utils.translation import gettext
@@ -43,7 +42,7 @@ from django.utils.translation import gettext_lazy as _
 from uds.core.managers.stats import StatsManager
 from uds.core.reports import graphs
 from uds.core.ui import gui
-from uds.core.util import dateutils, stats, utils
+from uds.core.util import stats, utils
 
 from .base import StatsReport
 
@@ -149,12 +148,15 @@ class StatsReportLogin(StatsReport):
         # User access by date graph
         #
         graph1 = io.BytesIO()
+        
+        def _tick_fnc1(l: int) -> str:
+            return filters.date(datetime.datetime.fromtimestamp(l), xLabelFormat)
 
-        X = [v[0] for v in data]
-        d = {
+        x = [v[0] for v in data]
+        d: dict[str, typing.Any] = {
             'title': _('Users Access (global)'),
-            'x': X,
-            'xtickFnc': lambda l: filters.date(datetime.datetime.fromtimestamp(l), xLabelFormat),
+            'x': x,
+            'xtickFnc': _tick_fnc1,
             'xlabel': _('Date'),
             'y': [{'label': 'Users', 'data': [v[1] for v in data]}],
             'ylabel': 'Users',
@@ -167,12 +169,9 @@ class StatsReportLogin(StatsReport):
         graph3 = io.BytesIO()
         graph4 = io.BytesIO()
         dataWeek, dataHour, dataWeekHour = self.get_week_hourly_data()
-
-        X = list(range(7))
-        d = {
-            'title': _('Users Access (by week)'),
-            'x': X,
-            'xtickFnc': lambda l: [
+        
+        def _tick_fnc2(l: int) -> str:
+            return [
                 _('Monday'),
                 _('Tuesday'),
                 _('Wednesday'),
@@ -180,7 +179,13 @@ class StatsReportLogin(StatsReport):
                 _('Friday'),
                 _('Saturday'),
                 _('Sunday'),
-            ][l],
+            ][l]
+
+        x = list(range(7))
+        d = {
+            'title': _('Users Access (by week)'),
+            'x': x,
+            'xtickFnc': _tick_fnc2,
             'xlabel': _('Day of week'),
             'y': [{'label': 'Users', 'data': list(dataWeek)}],
             'ylabel': 'Users',
@@ -188,35 +193,30 @@ class StatsReportLogin(StatsReport):
 
         graphs.bar_chart(SIZE, d, graph2)
 
-        X = list(range(24))
+        x = list(range(24))
         d = {
             'title': _('Users Access (by hour)'),
-            'x': X,
+            'x': x,
             'xlabel': _('Hour'),
             'y': [{'label': 'Users', 'data': list(dataHour)}],
             'ylabel': 'Users',
         }
 
         graphs.bar_chart(SIZE, d, graph3)
+        
+        def _tick_fnc3(l: int) -> str:
+            return str(l)
 
-        X = list(range(24))
+        x = list(range(24))
         Y = list(range(7))
         d = {
             'title': _('Users Access (by hour)'),
-            'x': X,
+            'x': x,
             'xlabel': _('Hour'),
-            'xtickFnc': lambda l: l,
+            'xtickFnc': _tick_fnc3,
             'y': Y,
             'ylabel': _('Day of week'),
-            'ytickFnc': lambda l: [
-                _('Monday'),
-                _('Tuesday'),
-                _('Wednesday'),
-                _('Thursday'),
-                _('Friday'),
-                _('Saturday'),
-                _('Sunday'),
-            ][l],
+            'ytickFnc': _tick_fnc2,
             'z': dataWeekHour,
             'zlabel': _('Users'),
         }

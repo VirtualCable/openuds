@@ -32,7 +32,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
-import collections.abc
 
 from uds.core import types
 from uds.core.services.specializations.fixed_machine.fixed_userservice import FixedUserService, Operation

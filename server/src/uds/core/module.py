@@ -35,7 +35,6 @@ import logging
 import os.path
 import sys
 import typing
-import collections.abc
 
 from django.utils.translation import gettext as _
 

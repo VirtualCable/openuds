@@ -46,7 +46,7 @@ from .tag import TaggingMixin
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.models import Group, Network, User, MFA
-    from django.db.models.manager import RelatedManager  # type: ignore  # MyPy complains because of django-stubs
+    from django.db.models.manager import RelatedManager 
 
 
 logger = logging.getLogger(__name__)
@@ -204,7 +204,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         except Exception:
             return returnValueIfNot
 
-    def is_ip_allowed(self, ipStr: str) -> bool:
+    def is_ip_allowed(self, ip_string: str) -> bool:
         """
         Checks if this transport is valid for the specified IP.
 
@@ -226,10 +226,10 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         """
         if self.net_filtering == consts.auth.NO_FILTERING:
             return True
-        ip, version = net.ip_to_long(ipStr)
+        ip_number, version = net.ip_to_long(ip_string)
         # Allow
         exists = self.networks.filter(
-            start__lte=Network.hexlify(ip), end__gte=Network.hexlify(ip), version=version
+            start__lte=Network.hexlify(ip_number), end__gte=Network.hexlify(ip_number), version=version
         ).exists()
         if self.net_filtering == consts.auth.ALLOW:
             return exists

@@ -27,18 +27,14 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import collections.abc
 import logging
-from multiprocessing import pool
 import typing
 
 from django.utils.translation import gettext as _
 
 from uds.core import types
-from uds.core.environment import Environment
 from uds.core.ui.user_interface import gui
 from uds import models
-from uds.services.OpenNebula.on import vm
 
 logger = logging.getLogger(__name__)
 

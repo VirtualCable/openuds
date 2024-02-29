@@ -41,7 +41,6 @@ from uds.core import services
 class UserDeploymentService(AutoSerializable, services.UserDeployment):
     ...
 
-
 """
 
 import dataclasses
@@ -56,11 +55,9 @@ import hashlib
 import struct
 import abc
 
-# Import the cryptography library
 from cryptography import fernet
 
 from django.conf import settings
-from requests import get
 
 from uds.core.serializable import Serializable
 
@@ -201,7 +198,9 @@ class _SerializableField(typing.Generic[T]):
     def __set__(self, instance: 'AutoSerializable', value: T) -> None:
         # If type is float and value is int, convert it
         # Or if type is int and value is float, convert it
-        if typing.cast(typing.Type[typing.Any], self.obj_type) in (float, int) and isinstance(value, (float, int)):
+        if typing.cast(typing.Type[typing.Any], self.obj_type) in (float, int) and isinstance(
+            value, (float, int)
+        ):
             value = self.obj_type(value)  # type: ignore
         if not isinstance(value, self.obj_type):
             # Try casting to load values (maybe a namedtuple, i.e.)
@@ -374,7 +373,7 @@ class PasswordField(StringField):
 
     def __init__(self, default: str = '', crypt_key: str = ''):
         super().__init__(default)
-        self._crypt_key = crypt_key or settings.SECRET_KEY[:32]
+        self._crypt_key = crypt_key or settings.SECRET_KEY[:32]  # If no SECRET_KEY, will raise an exception...
 
     def _encrypt(self, value: str) -> bytes:
         """Encrypt a password
@@ -581,10 +580,7 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
 
     def __str__(self) -> str:
         return ', '.join(
-            [
-                f"{k}={v.obj_type.__name__}({v.__get__(self)})"
-                for k, v in self._autoserializable_fields()
-            ]
+            [f"{k}={v.obj_type.__name__}({v.__get__(self)})" for k, v in self._autoserializable_fields()]
         )
 
 

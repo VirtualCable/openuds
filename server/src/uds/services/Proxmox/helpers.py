@@ -27,7 +27,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import collections.abc
 import logging
 import typing
 
@@ -54,7 +53,7 @@ def get_storage(parameters: typing.Any) -> types.ui.CallbackResultType:
     except Exception:
         return []
 
-    res = []
+    res: list[types.ui.ChoiceItem] = []
     # Get storages for that datacenter
     for storage in sorted(provider.list_storages(vm_info.node), key=lambda x: int(not x.shared)):
         if storage.type in ('lvm', 'iscsi', 'iscsidirect'):

@@ -33,7 +33,6 @@
 import datetime
 import logging
 import typing
-import collections.abc
 
 from django.db.models import Count, Q
 from django.utils.translation import gettext
@@ -101,7 +100,7 @@ class ServicesPools(ModelHandler):
 
     remove_fields = ['osmanager_id', 'service_id']
 
-    table_title = typing.cast(str, _('Service Pools'))
+    table_title = _('Service Pools')
     table_fields = [
         {'name': {'title': _('Name')}},
         {'state': {'title': _('Status'), 'type': 'dict', 'dict': State.literals_dict()}},
@@ -194,7 +193,7 @@ class ServicesPools(ModelHandler):
         # This needs a lot of queries, and really does not apport anything important to the report
         # elif UserServiceManager().canInitiateServiceFromDeployedService(item) is False:
         #     state = State.SLOWED_DOWN
-        val = {
+        val: dict[str, typing.Any] = {
             'id': item.uuid,
             'name': item.name,
             'short_name': item.short_name,
@@ -614,39 +613,39 @@ class ServicesPools(ModelHandler):
         return item.fallbackAccess
 
     #  Returns the action list based on current element, for calendar
-    def actionsList(self, item: 'Model') -> typing.Any:
+    def actionsList(self, item: 'Model') -> list[types.calendar.CalendarAction]:
         item = ensure.is_instance(item, ServicePool)
-        validActions: tuple[types.calendar.CalendarAction, ...] = ()
+        valid_actions: list[types.calendar.CalendarAction] = []
         itemInfo = item.service.get_type()
         if itemInfo.uses_cache is True:
-            validActions += (
+            valid_actions += [
                 consts.calendar.CALENDAR_ACTION_INITIAL,
                 consts.calendar.CALENDAR_ACTION_CACHE_L1,
                 consts.calendar.CALENDAR_ACTION_MAX,
-            )
+            ]
             if itemInfo.uses_cache_l2 is True:
-                validActions += (consts.calendar.CALENDAR_ACTION_CACHE_L2,)
+                valid_actions += [consts.calendar.CALENDAR_ACTION_CACHE_L2,]
 
         if itemInfo.publication_type is not None:
-            validActions += (consts.calendar.CALENDAR_ACTION_PUBLISH,)
+            valid_actions += [consts.calendar.CALENDAR_ACTION_PUBLISH,]
 
         # Transport & groups actions
-        validActions += (
+        valid_actions += [
             consts.calendar.CALENDAR_ACTION_ADD_TRANSPORT,
             consts.calendar.CALENDAR_ACTION_DEL_TRANSPORT,
             consts.calendar.CALENDAR_ACTION_DEL_ALL_TRANSPORTS,
             consts.calendar.CALENDAR_ACTION_ADD_GROUP,
             consts.calendar.CALENDAR_ACTION_DEL_GROUP,
             consts.calendar.CALENDAR_ACTION_DEL_ALL_GROUPS,
-        )
+        ]
 
         # Advanced actions
-        validActions += (
+        valid_actions += [
             consts.calendar.CALENDAR_ACTION_IGNORE_UNUSED,
             consts.calendar.CALENDAR_ACTION_REMOVE_USERSERVICES,
             consts.calendar.CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES,
-        )
-        return validActions
+        ]
+        return valid_actions
 
     # Deprecated, use list_assignables
     def listAssignables(self, item: 'Model') -> typing.Any:

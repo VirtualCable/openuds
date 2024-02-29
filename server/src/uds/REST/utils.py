@@ -29,7 +29,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import typing
-import collections.abc
 
 from uds.core.consts.system import VERSION
 from uds.core.util.model import sql_stamp_seconds

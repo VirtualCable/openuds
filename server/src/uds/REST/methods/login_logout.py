@@ -35,7 +35,7 @@ import logging
 import time
 import typing
 
-from uds.core import consts, exceptions, types
+from uds.core import consts, exceptions
 from uds.core.auths.auth import authenticate
 from uds.core.managers.crypto import CryptoManager
 from uds.core.util.cache import Cache

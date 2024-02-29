@@ -34,7 +34,6 @@ import logging
 import datetime
 import secrets
 import typing
-import collections.abc
 import time
 
 from django.utils.translation import gettext_noop as _
@@ -48,7 +47,7 @@ from . import telegram
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.module import Module
+    pass
 
 logger = logging.getLogger(__name__)
 

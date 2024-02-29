@@ -34,7 +34,6 @@ import copy
 import random
 import logging
 import typing
-import collections.abc
 
 from . import urls
 

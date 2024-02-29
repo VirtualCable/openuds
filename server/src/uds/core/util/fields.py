@@ -55,7 +55,10 @@ def _server_group_values(
     types_: collections.abc.Iterable[types.servers.ServerType], subtype: typing.Optional[str] = None
 ) -> list[types.ui.ChoiceItem]:
     fltr = models.ServerGroup.objects.filter(
-        functools.reduce(lambda x, y: x | y, [Q(type=type_) for type_ in types_])
+        functools.reduce(
+            lambda x, y: x | y,  # pyright: ignore[reportUnknownLambdaType,reportUnknownArgumentType]
+            [Q(type=type_) for type_ in types_],  # pyright: ignore[reportUnknownArgumentType]
+        )
     )
     if subtype is not None:
         fltr = fltr.filter(subtype=subtype)
@@ -131,7 +134,9 @@ def get_server_group_from_field(fld: ui.gui.ChoiceField) -> models.ServerGroup:
 
 
 # Ticket validity time field (for http related tunnels)
-def tunnel_ticket_validity_field(order: int = 90, tab: 'types.ui.Tab|None' = types.ui.Tab.ADVANCED) -> ui.gui.NumericField:
+def tunnel_ticket_validity_field(
+    order: int = 90, tab: 'types.ui.Tab|None' = types.ui.Tab.ADVANCED
+) -> ui.gui.NumericField:
     return ui.gui.NumericField(
         length=3,
         label=_('Ticket Validity'),
@@ -148,7 +153,9 @@ def tunnel_ticket_validity_field(order: int = 90, tab: 'types.ui.Tab|None' = typ
 
 
 # Tunnel wait time (for uds client related tunnels)
-def tunnel_wait_time_field(order: int = 2, tab: 'types.ui.Tab|None' = types.ui.Tab.TUNNEL) -> ui.gui.NumericField:
+def tunnel_wait_time_field(
+    order: int = 2, tab: 'types.ui.Tab|None' = types.ui.Tab.TUNNEL
+) -> ui.gui.NumericField:
     return ui.gui.NumericField(
         length=3,
         label=_('Tunnel wait time'),
@@ -288,11 +295,12 @@ def concurrent_removal_limit_field(
         old_field_name='maxRemovingServices',
     )
 
+
 def services_limit_field(
     order: int = 4,
     tab: 'types.ui.Tab|str|None' = types.ui.Tab.ADVANCED,
 ) -> ui.gui.NumericField:
-    return  ui.gui.NumericField(
+    return ui.gui.NumericField(
         order=order,
         label=_("Max. Allowed services"),
         min_value=0,
@@ -307,7 +315,8 @@ def services_limit_field(
 
 
 def remove_duplicates_field(
-    order: int = 102, tab: 'types.ui.Tab|str|None' = types.ui.Tab.ADVANCED,
+    order: int = 102,
+    tab: 'types.ui.Tab|str|None' = types.ui.Tab.ADVANCED,
     old_field_name: typing.Optional[str] = None,
 ) -> ui.gui.CheckBoxField:
     return ui.gui.CheckBoxField(

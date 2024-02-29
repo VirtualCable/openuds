@@ -38,7 +38,6 @@ import typing
 import collections.abc
 
 from django.utils.translation import gettext_noop as _
-from uds.core.module import Module
 from uds.core.ui import gui
 from uds.core import exceptions
 from uds.core.util import log
@@ -49,8 +48,6 @@ logger = logging.getLogger(__name__)
 
 if typing.TYPE_CHECKING:
     from uds.models.user_service import UserService
-    from uds.core.environment import Environment
-    from uds.core.module import Module
 
 
 class LinuxRandomPassManager(LinuxOsManager):
@@ -87,7 +84,7 @@ class LinuxRandomPassManager(LinuxOsManager):
 
     def gen_random_password(self, service: 'UserService') -> str:
         randomPass = service.recover_value('linOsRandomPass')
-        if randomPass is None:
+        if not randomPass:
             randomPass = ''.join(
                 random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(16)
             )
@@ -101,19 +98,19 @@ class LinuxRandomPassManager(LinuxOsManager):
 
         return randomPass
 
-    def actor_data(self, userService: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
+    def actor_data(self, userservice: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
         return {
             'action': 'rename',
-            'name': userService.get_name(),
+            'name': userservice.get_name(),
             # Repeat data, to keep compat with old versions of Actor
             # Will be removed in a couple of versions
             'username': self.user_account.as_str(),
             'password': '',  # On linux, user password is not needed so we provide an empty one
-            'new_password': self.gen_random_password(userService),
+            'new_password': self.gen_random_password(userservice),
             'custom': {
                 'username': self.user_account.as_str(),
                 'password': '',  # On linux, user password is not needed so we provide an empty one
-                'new_password': self.gen_random_password(userService),
+                'new_password': self.gen_random_password(userservice),
             },
         }
 

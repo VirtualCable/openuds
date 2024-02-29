@@ -32,7 +32,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _
 from uds.core import services, types
@@ -46,7 +45,6 @@ from .deployment import OpenNebulaLiveDeployment
 if typing.TYPE_CHECKING:
     from . import on
     from .provider import OpenNebulaProvider
-    from uds.core.module import Module
 
 logger = logging.getLogger(__name__)
 

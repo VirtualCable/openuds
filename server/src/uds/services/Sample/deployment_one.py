@@ -32,7 +32,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
-import collections.abc
 
 from uds.core import services, types
 
@@ -41,8 +40,6 @@ from . import service as sample_service
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from .service import ServiceOne
-    from .publication import SamplePublication
 
 logger = logging.getLogger(__name__)
 

@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+# pyright: reportUnusedImport=false
 
 from .openstack_client import Client
 

@@ -50,8 +50,6 @@ if typing.TYPE_CHECKING:
 def index(request: 'HttpRequest') -> HttpResponse:
     # Gets csrf token
     csrf_token = csrf.get_token(request)
-    if csrf_token is not None:
-        csrf_token = str(csrf_token)
 
     return render(
         request,

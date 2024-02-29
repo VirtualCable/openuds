@@ -32,18 +32,17 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import time
 import typing
-import collections.abc
 
 from django.conf import settings
 
 if typing.TYPE_CHECKING:
-    from uds.core.util.unique_id_generator import UniqueGenerator
+    pass
 
 # UDS Version related
-VERSION = '4.0.0'
-VERSION_STAMP = f'{time.strftime("%Y%m%d")}'
+VERSION: typing.Final[str] = '4.0.0'
+VERSION_STAMP: typing.Final[str] = f'{time.strftime("%Y%m%d")}'
 # Minimal uds client version required to connect to this server
-REQUIRED_CLIENT_VERSION = '3.6.0'
+REQUIRED_CLIENT_VERSION: typing.Final[str] = '3.6.0'
 
 # Max size of a rest request body
 MAX_REQUEST_SIZE: typing.Final[int] = int(

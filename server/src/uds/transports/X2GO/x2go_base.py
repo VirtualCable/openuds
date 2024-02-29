@@ -34,17 +34,16 @@ import io
 import logging
 import os
 import typing
-import collections.abc
 
 import paramiko
 from django.utils.translation import gettext_lazy
 from django.utils.translation import gettext_noop as _
 
-from uds.core import consts, transports, types
+from uds.core import transports, types
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.types.preferences import CommonPrefs
 from uds.core.ui import gui
-from uds.core.util import connection
+from uds.core.util import net
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -207,7 +206,7 @@ class BaseX2GOTransport(transports.Transport):
         tab=types.ui.Tab.ADVANCED,
     )
 
-    def is_ip_allowed(self, userService: 'models.UserService', ip: str) -> bool:
+    def is_ip_allowed(self, userservice: 'models.UserService', ip: str) -> bool:
         """
         Checks if the transport is available for the requested destination ip
         Override this in yours transports
@@ -216,7 +215,7 @@ class BaseX2GOTransport(transports.Transport):
         ready = self.cache.get(ip)
         if ready is None:
             # Check again for ready
-            if connection.test_connectivity(ip, 22):
+            if net.test_connectivity(ip, 22):
                 self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
             self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
@@ -260,11 +259,11 @@ class BaseX2GOTransport(transports.Transport):
 
     def get_connection_info(
         self,
-        userService: typing.Union['models.UserService', 'models.ServicePool'],
+        userservice: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
     ) -> types.connections.ConnectionData:
-        return self.process_user_password(userService, user, password)
+        return self.process_user_password(userservice, user, password)
 
     def genKeyPairForSsh(self) -> tuple[str, str]:
         """

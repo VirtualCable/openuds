@@ -30,7 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import collections.abc
+# pyright: reportUnusedImport=false
 import time
 import typing
 from datetime import datetime

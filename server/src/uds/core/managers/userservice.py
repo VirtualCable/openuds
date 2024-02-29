@@ -34,7 +34,6 @@ import logging
 import operator
 import random
 import typing
-import collections.abc
 
 from django.db import transaction
 from django.db.models import Q
@@ -460,7 +459,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         # Now find if there is a preparing one
         with transaction.atomic():
-            caches = (
+            caches = list(
                 service_pool.cached_users_services()
                 .select_for_update()
                 .filter(cache_level=services.UserService.L1_CACHE, state=State.PREPARING)[:1]

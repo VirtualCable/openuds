@@ -29,7 +29,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from email.mime import base
 import pickle  # nosec: This is e controled pickle use
 import base64
 import hashlib

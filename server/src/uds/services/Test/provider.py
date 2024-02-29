@@ -35,12 +35,10 @@ import random
 import string
 import dataclasses
 import typing
-import collections.abc
 
 
 from django.utils.translation import gettext_noop as _
 from uds.core import services, types
-from uds.core import module
 from .service import TestServiceNoCache, TestServiceCache
 
 # Not imported at runtime, just for type checking

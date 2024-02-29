@@ -32,7 +32,7 @@ import logging
 import typing
 
 from uds.core.ui import gui
-from uds.core import transports, consts
+from uds.core import transports
 
 from . import _migrator
 

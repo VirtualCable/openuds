@@ -41,21 +41,17 @@ import datetime
 import urllib.parse
 from base64 import b64decode
 
-import defusedxml.ElementTree as etree
 import jwt
 import requests
 from django.utils.translation import gettext
 from django.utils.translation import gettext_noop as _
 
 from uds.core import auths, consts, exceptions, types
-from uds.core.managers.crypto import CryptoManager
 from uds.core.ui import gui
 from uds.core.util import fields, model, auth as auth_utils
 
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest
-
-    from cryptography.x509 import Certificate
 
 logger = logging.getLogger(__name__)
 
@@ -63,6 +59,7 @@ logger = logging.getLogger(__name__)
 PKCE_ALPHABET: typing.Final[str] = string.ascii_letters + string.digits + '-._~'
 # Length of the State parameter
 STATE_LENGTH: typing.Final[int] = 16
+
 
 @dataclasses.dataclass
 class TokenInfo:
@@ -450,7 +447,9 @@ class OAuth2Authenticator(auths.Authenticator):
 
         if self.responseType.value in ('code', 'pkce', 'openid+code'):
             if self.commonGroups.value.strip() == '':
-                raise exceptions.ui.ValidationError(gettext('Common groups is required for "code" response types'))
+                raise exceptions.ui.ValidationError(
+                    gettext('Common groups is required for "code" response types')
+                )
             if self.tokenEndpoint.value.strip() == '':
                 raise exceptions.ui.ValidationError(
                     gettext('Token endpoint is required for "code" response types')

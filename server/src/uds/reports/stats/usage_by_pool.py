@@ -34,14 +34,13 @@ import datetime
 import io
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
 from uds.core.managers.stats import StatsManager
 from uds.core.ui import gui
-from uds.core.util import dateutils, stats
+from uds.core.util import stats
 from uds.models import ServicePool
 
 from .base import StatsReport
@@ -78,7 +77,7 @@ class UsageByPool(StatsReport):
             pools = ServicePool.objects.all()
         else:
             pools = ServicePool.objects.filter(uuid__in=self.pool.value)
-        data = []
+        data: list[dict[str, typing.Any]] = []
         for pool in pools:
             items = (
                 StatsManager.manager()
@@ -101,7 +100,7 @@ class UsageByPool(StatsReport):
                     logins[i.fld4] = i.stamp
                 else:
                     if i.fld4 in logins:
-                        stamp = logins[i.fld4]
+                        stamp = typing.cast(int, logins[i.fld4])
                         del logins[i.fld4]
                         total = i.stamp - stamp
                         data.append(

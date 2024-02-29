@@ -42,7 +42,7 @@ import ldap
 from django.utils.translation import gettext_noop as _
 from uds.core.ui import gui
 from uds.core.managers.crypto import CryptoManager
-from uds.core import environment, exceptions, consts, types
+from uds.core import environment, exceptions, types
 from uds.core.util import fields, log, ldaputil
 
 from .windows import WindowsOsManager
@@ -164,7 +164,7 @@ class WinDomainOsManager(WindowsOsManager):
 
         for server in reversed(
             sorted(
-                iter(dns.resolver.resolve('_ldap._tcp.' + self.domain.as_str(), 'SRV')),
+                iter(typing.cast(collections.abc.Iterable[typing.Any], dns.resolver.resolve('_ldap._tcp.' + self.domain.as_str(), 'SRV'))),
                 key=key,
             )
         ):
@@ -279,7 +279,7 @@ class WinDomainOsManager(WindowsOsManager):
                     f'Could not remove machine from domain (_ldap._tcp.{self.domain.as_str()} not found)',
                     log.LogSource.OSMANAGER,
                 )
-            except ldaputil.ALREADY_EXISTS:
+            except ldaputil.ALREADY_EXISTS:  # pyright: ignore
                 # Already added this machine to this group, pass
                 error = None
                 break
@@ -365,7 +365,7 @@ class WinDomainOsManager(WindowsOsManager):
             return str(e)
 
         try:
-            ldap_connection.search_st(self.ou.as_str(), ldaputil.SCOPE_BASE)
+            ldap_connection.search_st(self.ou.as_str(), ldaputil.SCOPE_BASE)  # pyright: ignore
         except ldaputil.LDAPError as e:
             return _('Check error: {}').format(e)
 

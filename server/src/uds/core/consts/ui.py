@@ -31,7 +31,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import collections.abc
 
 # Old encryption key, log ago deprecated, but still here for reading old data
 UDSB: typing.Final[bytes] = b'udsprotect'

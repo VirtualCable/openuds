@@ -32,12 +32,10 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 from datetime import datetime
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext as _
 from uds.core import types
 from uds.core.services import Publication
-from uds.core.types.states import State
 from uds.core.util import autoserializable
 
 # Not imported at runtime, just for type checking

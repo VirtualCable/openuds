@@ -33,7 +33,6 @@ import stat
 import time
 import logging
 import typing
-import collections.abc
 
 logger = logging.getLogger(__name__)
 

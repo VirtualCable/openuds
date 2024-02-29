@@ -32,7 +32,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import enum
 import typing
 import dataclasses
-import collections.abc
 
 from django.utils.translation import gettext as _
 

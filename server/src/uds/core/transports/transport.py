@@ -33,7 +33,6 @@
 import sys
 import codecs
 import logging
-import json
 import typing
 import collections.abc
 
@@ -201,7 +200,7 @@ class Transport(Module):
 
     def get_transport_script(
         self,
-        userService: 'models.UserService',
+        userservice: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
         os: 'types.os.DetectedOsInfo',  # pylint: disable=redefined-outer-name

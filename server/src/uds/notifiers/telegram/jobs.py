@@ -10,7 +10,6 @@
 """
 import logging
 import typing
-import collections.abc
 
 from uds.core import jobs
 

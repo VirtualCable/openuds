@@ -37,13 +37,12 @@ import collections.abc
 from django.utils.translation import gettext_noop as _
 from uds.core.types.requests import ExtendedHttpRequest
 from uds.core.ui import gui
-from uds.core import auths, exceptions, types, consts
+from uds.core import auths, exceptions, types
 
 if typing.TYPE_CHECKING:
     from django.http import (
         HttpRequest,
     )  # pylint: disable=ungrouped-imports
-    from uds.core.types.requests import ExtendedHttpRequestWithUser
     from uds.core.auths.groups_manager import GroupsManager
 
 
@@ -161,7 +160,7 @@ class SampleAuth(auths.Authenticator):
         self,
         username: str,
         credentials: str,
-        groupsManager: 'GroupsManager',
+        groups_manager: 'GroupsManager',
         request: 'ExtendedHttpRequest',  # pylint: disable=unused-argument
     ) -> types.auth.AuthenticationResult:
         """
@@ -212,13 +211,13 @@ class SampleAuth(auths.Authenticator):
         # two letters equals to the groups names known by UDS
         # For this, we will ask the groups manager for the groups names, and will check that and,
         # if the user match this criteria, will mark that group as valid
-        for g in groupsManager.enumerate_groups_name():
+        for g in groups_manager.enumerate_groups_name():
             if len(set(g.lower()).intersection(username.lower())) >= 2:
-                groupsManager.validate(g)
+                groups_manager.validate(g)
 
         return types.auth.SUCCESS_AUTH
 
-    def get_groups(self, username: str, groupsManager: 'auths.GroupsManager') -> None:
+    def get_groups(self, username: str, groups_manager: 'auths.GroupsManager') -> None:
         """
         As with authenticator part related to groupsManager, this
         method will fill the groups to which the specified username belongs to.
@@ -229,9 +228,9 @@ class SampleAuth(auths.Authenticator):
 
         In our case, we simply repeat the process that we also do at authenticate
         """
-        for g in groupsManager.enumerate_groups_name():
+        for g in groups_manager.enumerate_groups_name():
             if len(set(g.lower()).intersection(username.lower())) >= 2:
-                groupsManager.validate(g)
+                groups_manager.validate(g)
 
     def get_javascript(self, request: 'HttpRequest') -> typing.Optional[str]:  # pylint: disable=unused-argument
         """
@@ -263,7 +262,7 @@ class SampleAuth(auths.Authenticator):
     def auth_callback(
         self,
         parameters: 'types.auth.AuthCallbackParams',
-        gm: 'GroupsManager',
+        groups_manager: 'GroupsManager',
         request: 'types.requests.ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         """
@@ -283,7 +282,7 @@ class SampleAuth(auths.Authenticator):
 
         return types.auth.AuthenticationResult(types.auth.AuthenticationState.SUCCESS, username=user)
 
-    def create_user(self, usrData: dict[str, str]) -> None:
+    def create_user(self, user_data: dict[str, str]) -> None:
         """
         This method provides a "check oportunity" to authenticators for users created
         manually at administration interface.
@@ -301,10 +300,10 @@ class SampleAuth(auths.Authenticator):
         """
         from uds.core.types.states import State  # pylint: disable=import-outside-toplevel
 
-        usrData['real_name'] = usrData['name'] + ' ' + usrData['name']
-        usrData['state'] = State.INACTIVE
+        user_data['real_name'] = user_data['name'] + ' ' + user_data['name']
+        user_data['state'] = State.INACTIVE
 
-    def modify_user(self, usrData: dict[str, str]) -> None:
+    def modify_user(self, user_data: dict[str, str]) -> None:
         """
         This method provides a "check opportunity" to authenticator for users modified
         at administration interface.
@@ -321,5 +320,5 @@ class SampleAuth(auths.Authenticator):
         Here, we will simply update the realName of the user, and (we have to take care
         this this kind of things) modify the userName to a new one, the original plus '-1'
         """
-        usrData['real_name'] = usrData['name'] + ' ' + usrData['name']
-        usrData['name'] += '-1'
+        user_data['real_name'] = user_data['name'] + ' ' + user_data['name']
+        user_data['name'] += '-1'

@@ -82,7 +82,7 @@ class HandlerNode:
         return ret
 
 
-class Dispatcher(View):  # type: ignore
+class Dispatcher(View):
     """
     This class is responsible of dispatching REST requests
     """

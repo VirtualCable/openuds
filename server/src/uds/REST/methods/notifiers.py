@@ -36,7 +36,6 @@ import collections.abc
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
-from traitlets import default
 
 from uds.core import messaging, types
 from uds.core.environment import Environment
@@ -65,7 +64,7 @@ class Notifiers(ModelHandler):
         'enabled',
     ]
 
-    table_title = typing.cast(str, _('Notifiers'))
+    table_title = _('Notifiers')
     table_fields = [
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
         {'type_name': {'title': _('Type')}},

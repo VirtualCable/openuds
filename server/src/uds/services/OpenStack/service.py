@@ -32,12 +32,11 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
 from uds.core import services, types
-from uds.core.util import utils, validators
+from uds.core.util import validators
 from uds.core.ui import gui
 
 from .publication import OpenStackLivePublication

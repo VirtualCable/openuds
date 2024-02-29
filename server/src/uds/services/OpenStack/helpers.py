@@ -31,7 +31,6 @@
 '''
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext as _
 from uds.core import types

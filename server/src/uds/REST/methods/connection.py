@@ -30,7 +30,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import collections.abc
 import datetime
 import logging
 import typing
@@ -39,7 +38,6 @@ from uds.core import exceptions, types
 from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.services.exceptions import ServiceNotReadyError
-from uds.core.types.requests import ExtendedHttpRequestWithUser
 from uds.core.util.rest.tools import match
 from uds.REST import Handler
 from uds.web.util import services

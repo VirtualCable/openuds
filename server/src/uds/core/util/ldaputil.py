@@ -40,12 +40,17 @@ import ldap.filter
 
 # Import for local use, and reexport
 from ldap import (
-    SCOPE_BASE,  # pyright: ignore
-    SCOPE_SUBTREE,  # pyright: ignore
-    SCOPE_ONELEVEL,  # pyright: ignore
-    ALREADY_EXISTS,  # pyright: ignore
+    SCOPE_BASE as S_BASE,  # pyright: ignore
+    SCOPE_SUBTREE as S_SUBTREE,  # pyright: ignore
+    SCOPE_ONELEVEL as S_ONELEVEL,  # pyright: ignore
+    ALREADY_EXISTS as S_ALREADY_EX,  # pyright: ignore
     # SCOPE_SUBORDINATE,  # pyright: ignore
 )
+
+SCOPE_BASE: int = S_BASE  # pyright: ignore
+SCOPE_SUBTREE: int = S_SUBTREE  # pyright: ignore
+SCOPE_ONELEVEL: int = S_ONELEVEL  # pyright: ignore
+ALREADY_EXISTS: int = S_ALREADY_EX  # pyright: ignore
 
 from django.utils.translation import gettext as _
 from django.conf import settings

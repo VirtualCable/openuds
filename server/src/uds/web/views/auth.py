@@ -28,7 +28,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import collections.abc
 import logging
 import typing
 
@@ -39,7 +38,7 @@ from django.utils.translation import gettext as _
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 
-from uds.core import auths, consts, exceptions, types
+from uds.core import auths, exceptions, types
 from uds.core.auths.auth import authenticate_via_callback, log_login, uds_cookie, web_login, web_logout
 from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.userservice import UserServiceManager

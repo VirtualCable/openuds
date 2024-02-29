@@ -322,7 +322,7 @@ class Authenticator(Module):
         self,
         username: str,
         credentials: str,
-        groupsManager: 'GroupsManager',
+        groups_manager: 'GroupsManager',
         request: 'types.requests.ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         """
@@ -364,7 +364,7 @@ class Authenticator(Module):
         """
         return types.auth.FAILED_AUTH
 
-    def is_ip_allowed(self, request: 'HttpRequest') -> bool:
+    def is_ip_allowed(self, request: 'types.requests.ExtendedHttpRequest') -> bool:
         """
         Used by the login interface to determine if the authenticator is visible on the login page.
         """
@@ -372,7 +372,7 @@ class Authenticator(Module):
         if not self.db_obj().id:
             return True
         return self.db_obj().state != consts.auth.DISABLED and self.db_obj().is_ip_allowed(
-            typing.cast('types.requests.ExtendedHttpRequest', request).ip
+            request.ip
         )
 
     def transformed_username(

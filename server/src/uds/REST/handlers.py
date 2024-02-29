@@ -30,7 +30,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import collections.abc
 import logging
 import codecs
 
@@ -54,27 +53,24 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-
 class Handler:
     """
     REST requests handler base class
     """
 
-    raw: typing.ClassVar[
-        bool
-    ] = False  # If true, Handler will return directly an HttpResponse Object
-    name: typing.ClassVar[
-        typing.Optional[str]
-    ] = None  # If name is not used, name will be the class name in lower case
-    path: typing.ClassVar[
-        typing.Optional[str]
-    ] = None  # Path for this method, so we can do /auth/login, /auth/logout, /auth/auths in a simple way
-    authenticated: typing.ClassVar[
-        bool
-    ] = True  # By default, all handlers needs authentication. Will be overwriten if needs_admin or needs_staff,
-    needs_admin: typing.ClassVar[
-        bool
-    ] = False  # By default, the methods will be accessible by anyone if nothing else indicated
+    raw: typing.ClassVar[bool] = False  # If true, Handler will return directly an HttpResponse Object
+    name: typing.ClassVar[typing.Optional[str]] = (
+        None  # If name is not used, name will be the class name in lower case
+    )
+    path: typing.ClassVar[typing.Optional[str]] = (
+        None  # Path for this method, so we can do /auth/login, /auth/logout, /auth/auths in a simple way
+    )
+    authenticated: typing.ClassVar[bool] = (
+        True  # By default, all handlers needs authentication. Will be overwriten if needs_admin or needs_staff,
+    )
+    needs_admin: typing.ClassVar[bool] = (
+        False  # By default, the methods will be accessible by anyone if nothing else indicated
+    )
     needs_staff: typing.ClassVar[bool] = False  # By default, staff
 
     # For implementing help
@@ -85,10 +81,11 @@ class Handler:
     _request: 'ExtendedHttpRequestWithUser'  # It's a modified HttpRequest
     _path: str
     _operation: str
-    _params: dict[str, typing.Any]  # This is a deserliazied object from request. Can be anything as 'a' or {'a': 1} or ....
-    _args: tuple[
-        str, ...
-    ]  # This are the "path" split by /, that is, the REST invocation arguments
+    _params: dict[
+        str, typing.Any
+    ]  # This is a deserliazied object from request. Can be anything as 'a' or {'a': 1} or ....
+    # These are the "path" split by /, that is, the REST invocation arguments
+    _args: list[str]
     _kwargs: dict[str, typing.Any]  # This are the "path" split by /, that is, the REST invocation arguments
     _headers: dict[str, str]
     _session: typing.Optional[SessionStore]
@@ -108,9 +105,7 @@ class Handler:
         *args: str,
         **kwargs: typing.Any,
     ):
-        logger.debug(
-            'Data: %s %s %s', self.__class__, self.needs_admin, self.authenticated
-        )
+        logger.debug('Data: %s %s %s', self.__class__, self.needs_admin, self.authenticated)
         if (
             self.needs_admin or self.needs_staff
         ) and not self.authenticated:  # If needs_admin, must also be authenticated
@@ -122,13 +117,11 @@ class Handler:
         self._path = path
         self._operation = method
         self._params = params
-        self._args = args
+        self._args = list(args)  # copy of args
         self._kwargs = kwargs
         self._headers = {}
         self._auth_token = None
-        if (
-            self.authenticated
-        ):  # Only retrieve auth related data on authenticated handlers
+        if self.authenticated:  # Only retrieve auth related data on authenticated handlers
             try:
                 self._auth_token = self._request.headers.get(consts.auth.AUTH_TOKEN_HEADER, '')
                 self._session = SessionStore(session_key=self._auth_token)
@@ -200,12 +193,12 @@ class Handler:
         return self._params
 
     @property
-    def args(self) -> tuple[str, ...]:
+    def args(self) -> list[str]:
         """
         Returns the args object
         """
         return self._args
-    
+
     @property
     def session(self) -> 'SessionStore':
         if self._session is None:
@@ -244,9 +237,7 @@ class Handler:
             staff_member = True  # Make admins also staff members :-)
 
         # crypt password and convert to base64
-        passwd = codecs.encode(
-            CryptoManager().symmetric_encrypt(password, scrambler), 'base64'
-        ).decode()
+        passwd = codecs.encode(CryptoManager().symmetric_encrypt(password, scrambler), 'base64').decode()
 
         session['REST'] = {
             'auth': id_auth,
@@ -334,15 +325,11 @@ class Handler:
                 self._session.accessed = True
                 self._session.save()
         except Exception:
-            logger.exception(
-                'Got an exception setting session value %s to %s', key, value
-            )
+            logger.exception('Got an exception setting session value %s to %s', key, value)
 
     def is_ip_allowed(self) -> bool:
         try:
-            return net.contains(
-                GlobalConfig.ADMIN_TRUSTED_SOURCES.get(True), self._request.ip
-            )
+            return net.contains(GlobalConfig.ADMIN_TRUSTED_SOURCES.get(True), self._request.ip)
         except Exception:
             logger.warning(
                 'Error checking truted ADMIN source: "%s" does not seems to be a valid network string. Using Unrestricted access.',

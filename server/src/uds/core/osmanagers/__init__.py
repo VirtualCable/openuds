@@ -29,8 +29,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-# pylint: disable=unused-import
+# pyright: reportUnusedImport=false
 from .osmanager import OSManager
 from .osmfactory import OSManagersFactory
 

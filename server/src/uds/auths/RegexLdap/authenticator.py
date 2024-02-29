@@ -32,14 +32,12 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
-import re
 import typing
 import collections.abc
 
-import ldap
 from django.utils.translation import gettext_noop as _
 
-from uds.core import auths, environment, exceptions, types, consts
+from uds.core import auths, environment, exceptions, types
 from uds.core.auths.auth import log_login
 from uds.core.ui import gui
 from uds.core.util import ensure, ldaputil, auth as auth_utils, fields
@@ -52,8 +50,6 @@ except Exception:
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds import models
-    from uds.core.environment import Environment
     from uds.core.types.requests import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)
@@ -368,7 +364,7 @@ class RegexLdap(auths.Authenticator):
         self,
         username: str,
         credentials: str,
-        groupsManager: 'auths.GroupsManager',
+        groups_manager: 'auths.GroupsManager',
         request: 'ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         """
@@ -404,7 +400,7 @@ class RegexLdap(auths.Authenticator):
                     usr[self.mfa_attribute.value][0],
                 )
 
-            groupsManager.validate(self._get_groups(usr))
+            groups_manager.validate(self._get_groups(usr))
 
             return types.auth.SUCCESS_AUTH
 

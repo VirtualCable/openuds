@@ -31,7 +31,6 @@
 """
 from datetime import timedelta
 import logging
-import typing
 import collections.abc
 
 from django.db import transaction
@@ -71,7 +70,7 @@ class DeployedServiceRemover(Job):
 
     def start_removal_of(self, service_pool: ServicePool) -> None:
         if (
-            service_pool.service is None
+            not service_pool.service
         ):  # Maybe an inconsistent value? (must not, but if no ref integrity in db, maybe someone hand-changed something.. ;)")
             logger.error('Found service pool %s without service', service_pool.name)
             service_pool.delete()  # Just remove it "a las bravas", the best we can do

@@ -32,7 +32,6 @@
 import datetime
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import get_language
 from django.utils import formats

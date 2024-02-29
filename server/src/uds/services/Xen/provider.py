@@ -37,7 +37,6 @@ from django.utils.translation import gettext_noop as _
 from uds.core import types, consts
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
-from uds.core.util.cache import Cache
 from uds.core.util.decorators import cached
 from uds.core.util import fields
 

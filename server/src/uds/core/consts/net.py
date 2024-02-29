@@ -31,7 +31,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import collections.abc
 
 # Request related timeouts, etc..
 DEFAULT_REQUEST_TIMEOUT: typing.Final[int] = 20  # In seconds

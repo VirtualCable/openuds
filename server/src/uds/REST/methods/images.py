@@ -32,12 +32,10 @@
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_lazy as _, gettext
 from uds.models import Image
 from uds.core import types
-from uds.core.ui import gui
 from uds.core.util import ensure
 
 from uds.REST.model import ModelHandler
@@ -59,7 +57,7 @@ class Images(ModelHandler):
     model = Image
     save_fields = ['name', 'data']
 
-    table_title = typing.cast(str, _('Image Gallery'))
+    table_title = _('Image Gallery')
     table_fields = [
         {
             'thumb': {

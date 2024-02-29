@@ -30,7 +30,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
-import collections.abc
 
 from django.db import models, transaction
 
@@ -61,7 +60,7 @@ class Notification(models.Model):
     # "fake" declarations for type checking
     # objects: 'models.BaseManager[Notification]'
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:  # pyright: ignore
         """
         Meta class to declare db table
         """

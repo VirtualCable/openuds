@@ -30,7 +30,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import collections.abc
 
 from uds import models
 from uds.core import consts
@@ -47,7 +46,9 @@ if typing.TYPE_CHECKING:
 #   If path has ".../services/[uuid]/..." we will replace uuid with "service name" sourrounded by []
 #   If path has ".../users/[uuid]/..." we will replace uuid with "user name" sourrounded by []
 #   If path has ".../groups/[uuid]/..." we will replace uuid with "group name" sourrounded by []
-UUID_REPLACER = (
+UUID_REPLACER: tuple[
+    tuple[str, type[models.Provider | models.Service | models.ServicePool | models.User | models.Group]], ...
+] = (
     ('providers', models.Provider),
     ('services', models.Service),
     ('servicespools', models.ServicePool),

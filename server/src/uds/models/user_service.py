@@ -32,7 +32,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
-import collections.abc
 
 from django.db import models
 from django.db.models import signals
@@ -42,7 +41,6 @@ from uds.core.environment import Environment
 from uds.core.util import log, properties
 from uds.core.util.model import sql_datetime
 from uds.core.types.states import State
-from uds.models import service_pool
 from uds.models.service_pool import ServicePool
 from uds.models.service_pool_publication import ServicePoolPublication
 from uds.models.user import User
@@ -311,7 +309,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         # If value is found on property, use it, else, try to recover it from storage
         if val is None:
             val = typing.cast(str, self.get_environment().storage.get(name))
-        return val
+        return val or ''
 
     def set_connection_source(self, src: types.connections.ConnectionSource) -> None:
         """

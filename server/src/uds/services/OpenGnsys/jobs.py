@@ -33,7 +33,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import datetime
 import logging
 import typing
-import collections.abc
 
 from uds.core import jobs
 from uds import models
@@ -44,7 +43,7 @@ from .service import OGService
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.module import Module
+    pass
 
 logger = logging.getLogger(__name__)
 

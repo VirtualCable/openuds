@@ -31,11 +31,10 @@
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import transports, types, consts
+from uds.core import types
 from uds.core.ui import gui
 from uds.core.util import fields, validators
 from uds.models import TicketStore
@@ -46,7 +45,6 @@ from .x2go_base import BaseX2GOTransport
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from uds.core.module import Module
     from uds.core.types.requests import ExtendedHttpRequestWithUser
 
 
@@ -98,7 +96,7 @@ class TX2GOTransport(BaseX2GOTransport):
 
     def get_transport_script(
         self,
-        userService: 'models.UserService',
+        userservice: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
         os: 'types.os.DetectedOsInfo',
@@ -106,9 +104,9 @@ class TX2GOTransport(BaseX2GOTransport):
         password: str,
         request: 'ExtendedHttpRequestWithUser',
     ) -> 'types.transports.TransportScript':
-        ci = self.get_connection_info(userService, user, password)
+        ci = self.get_connection_info(userservice, user, password)
 
-        private_key, _public_key = self.getAndPushKey(ci.username, userService)
+        private_key, _public_key = self.getAndPushKey(ci.username, userservice)
 
         width, height = self.get_screen_size()
 
@@ -133,7 +131,7 @@ class TX2GOTransport(BaseX2GOTransport):
         )
 
         ticket = TicketStore.create_for_tunnel(
-            userService=userService,
+            userService=userservice,
             port=22,
             validity=self.tunnel_wait.as_int() + 60,  # Ticket overtime
         )
@@ -154,4 +152,4 @@ class TX2GOTransport(BaseX2GOTransport):
         try:
             return self.get_script(os.os.os_name(), 'tunnel', sp)
         except Exception:
-            return super().get_transport_script(userService, transport, ip, os, user, password, request)
+            return super().get_transport_script(userservice, transport, ip, os, user, password, request)

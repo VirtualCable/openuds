@@ -32,8 +32,8 @@ UDS jobs related modules
 
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+# pyright: reportUnusedImport=false
 import typing
-import collections.abc
 from .job import Job
 from .delayed_task import DelayedTask
 

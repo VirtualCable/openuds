@@ -56,7 +56,7 @@ class Cache(models.Model):
     # "fake" relations declarations for type checking
     # objects: 'models.manager.Manager[Cache]'
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta(models.Model.Meta):
         """
         Meta class to declare the name of the table at database
         """

@@ -36,7 +36,6 @@ from socket import gethostname
 from datetime import timedelta
 import logging
 import typing
-import collections.abc
 
 from django.db import connections
 from django.db import transaction, OperationalError

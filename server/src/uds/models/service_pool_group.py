@@ -43,7 +43,7 @@ from .uuid_model import UUIDModel
 from .image import Image
 
 if typing.TYPE_CHECKING:
-    from service_pool import ServicePool
+    from .service_pool import ServicePool
 
 logger = logging.getLogger(__name__)
 

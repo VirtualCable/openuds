@@ -78,7 +78,7 @@ class LoginAllowed(enum.StrEnum):
         networks: typing.Optional[collections.abc.Iterable[str]] = None,
     ) -> bool:
 
-        if isinstance(action, str):
+        if not isinstance(action, LoginAllowed):
             action = LoginAllowed(action)
 
         return {

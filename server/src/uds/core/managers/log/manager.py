@@ -31,7 +31,6 @@
 """
 # import traceback
 import typing
-import collections.abc
 import logging
 
 from uds.core.util import singleton
@@ -44,7 +43,6 @@ from uds.core.types.log import LogObjectType
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from django.db.models import Model
-    from uds import models
 
 logger = logging.getLogger(__name__)
 
@@ -70,8 +68,6 @@ class LogManager(metaclass=singleton.Singleton):
         """
         # Ensure message fits on space
         message = str(message)[:4096]
-
-        qs = Log.objects.filter(owner_id=owner_id, owner_type=owner_type.value)
 
         # now, we add new log
         try:

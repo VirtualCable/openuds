@@ -32,7 +32,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import json
 import logging
 import typing
-import collections.abc
 
 from django import template
 from django.conf import settings

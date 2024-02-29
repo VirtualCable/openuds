@@ -34,7 +34,6 @@ import time
 import signal
 import logging
 import typing
-import collections.abc
 
 from django.db import connection
 from uds.core.jobs.scheduler import Scheduler
@@ -105,7 +104,7 @@ class TaskManager(metaclass=singleton.Singleton):
         logger.info("Registering sheduled tasks")
 
         # Simply import this to make workers "register" themselves
-        from uds.core import workers  # pylint: disable=unused-import, import-outside-toplevel
+        from uds.core import workers  # pyright: ignore[reportUnusedImport]
 
     def add_other_tasks(self) -> None:
         logger.info("Registering other tasks")

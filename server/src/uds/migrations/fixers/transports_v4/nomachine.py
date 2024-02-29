@@ -31,7 +31,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import typing
 import logging
 
-from uds.core import consts, transports
+from uds.core import transports
 from uds.core.ui import gui
 
 from . import _migrator

@@ -32,12 +32,11 @@ import datetime
 import logging
 import secrets
 import typing
-import collections.abc
 
 import dns.resolver
 import dns.reversename
 
-from uds.core import types, consts
+from uds.core import types
 from uds.core.environment import Environment
 from uds.core.util import validators
 
@@ -56,7 +55,7 @@ def migrate(
         ServerGroup: 'type[uds.models.ServerGroup]' = apps.get_model(
             'uds', 'ServerGroup'
         )
-        Server: 'type[uds.models.Server]' = apps.get_model('uds', 'Server')
+        # Server: 'type[uds.models.Server]' = apps.get_model('uds', 'Server')
         # For testing
         # from uds.models import Provider, Server, ServerGroup
 
@@ -75,7 +74,7 @@ def migrate(
                     validators.validate_ip(server)
                     # Is Pure IP, try to get hostname
                     try:
-                        answers = dns.resolver.resolve(dns.reversename.from_address(server), 'PTR')
+                        answers = typing.cast(list[typing.Any], dns.resolver.resolve(dns.reversename.from_address(server), 'PTR'))
                         server_ip_hostname.append((server, str(answers[0]).rstrip('.')))
                     except Exception:
                         # No problem, no reverse dns, hostname is the same as IP
@@ -83,12 +82,12 @@ def migrate(
                 except Exception:
                     # Not pure IP, try to resolve it and get first IP
                     try:
-                        answers = dns.resolver.resolve(server, 'A')
+                        answers = typing.cast(list[typing.Any], dns.resolver.resolve(server, 'A'))
                         server_ip_hostname.append((str(answers[0]), server))
                     except Exception:
                         # Try AAAA
                         try:
-                            answers = dns.resolver.resolve(server, 'AAAA')
+                            answers = typing.cast(list[typing.Any], dns.resolver.resolve(server, 'AAAA'))
                             server_ip_hostname.append((str(answers[0]), server))
                         except Exception:
                             # Not found, continue, but do not add to servers and log it

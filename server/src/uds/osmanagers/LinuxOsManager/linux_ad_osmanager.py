@@ -30,7 +30,6 @@
 """
 @author: Alexander Burmatov,  thatman at altlinux dot org
 """
-import codecs
 import logging
 import typing
 import collections.abc
@@ -38,16 +37,11 @@ import collections.abc
 from django.utils.translation import gettext_lazy
 from django.utils.translation import gettext_noop as _
 
-from uds.core import exceptions, types, consts
-from uds.core.managers.crypto import CryptoManager
-from uds.core.module import Module
-from uds.core.ui import gui
-from uds.core.workers import initialize
+from uds.core import ui, types, exceptions
 
 from .linux_osmanager import LinuxOsManager
 
 if typing.TYPE_CHECKING:
-    from uds.core.environment import Environment
     from uds.models.user_service import UserService
 
 
@@ -60,28 +54,28 @@ class LinuxOsADManager(LinuxOsManager):
     type_description = _('Os Manager to control Linux virtual machines with active directory')
     icon_file = 'losmanager.png'
 
-    domain = gui.TextField(
+    domain = ui.gui.TextField(
         length=64,
         label=_('Domain'),
         order=1,
         tooltip=_('Domain to join machines to (use FQDN form, Netbios name not supported for most operations)'),
         required=True,
     )
-    account = gui.TextField(
+    account = ui.gui.TextField(
         length=64,
         label=_('Account'),
         order=2,
         tooltip=_('Account with rights to add machines to domain'),
         required=True,
     )
-    password = gui.PasswordField(
+    password = ui.gui.PasswordField(
         length=64,
         label=_('Password'),
         order=3,
         tooltip=_('Password of the account'),
         required=True,
     )
-    ou = gui.TextField(
+    ou = ui.gui.TextField(
         length=256,
         label=_('OU'),
         order=4,
@@ -89,43 +83,43 @@ class LinuxOsADManager(LinuxOsManager):
             'Organizational unit where to add machines in domain (not used if IPA is selected). i.e.: ou=My Machines,dc=mydomain,dc=local'
         ),
     )
-    client_software = gui.ChoiceField(
+    client_software = ui.gui.ChoiceField(
         label=_('Client software'),
         order=5,
         tooltip=_('Use specific client software'),
         choices=[
-            gui.choice_item('automatically', gettext_lazy('Automatically')),
-            gui.choice_item('sssd', gettext_lazy('SSSD')),
-            gui.choice_item('winbind', gettext_lazy('Winbind')),
+            ui.gui.choice_item('automatically', gettext_lazy('Automatically')),
+            ui.gui.choice_item('sssd', gettext_lazy('SSSD')),
+            ui.gui.choice_item('winbind', gettext_lazy('Winbind')),
         ],
         tab=types.ui.Tab.ADVANCED,
         default='automatically',
     )
-    membership_software = gui.ChoiceField(
+    membership_software = ui.gui.ChoiceField(
         label=_('Membership software'),
         order=6,
         tooltip=_('Use specific membership software'),
         choices=[
-            gui.choice_item('automatically', gettext_lazy('Automatically')),
-            gui.choice_item('samba', gettext_lazy('Samba')),
-            gui.choice_item('adcli', gettext_lazy('AdCli')),
+            ui.gui.choice_item('automatically', gettext_lazy('Automatically')),
+            ui.gui.choice_item('samba', gettext_lazy('Samba')),
+            ui.gui.choice_item('adcli', gettext_lazy('AdCli')),
         ],
         tab=types.ui.Tab.ADVANCED,
         default='automatically',
     )
-    server_software = gui.ChoiceField(
+    server_software = ui.gui.ChoiceField(
         label=_('Server software'),
         order=7,
         tooltip=_('Use specific server software'),
         choices=[
             # gui.choice_item('automatically', gettext_lazy('Automatically')),
-            gui.choice_item('active-directory', gettext_lazy('Active Directory')),
-            gui.choice_item('freeipa', gettext_lazy('FreeIPA')),
+            ui.gui.choice_item('active-directory', gettext_lazy('Active Directory')),
+            ui.gui.choice_item('freeipa', gettext_lazy('FreeIPA')),
         ],
         tab=types.ui.Tab.ADVANCED,
         default='active-directory',
     )
-    remove_on_exit = gui.CheckBoxField(
+    remove_on_exit = ui.gui.CheckBoxField(
         label=_('Machine clean'),
         order=7,
         tooltip=_(
@@ -134,14 +128,14 @@ class LinuxOsADManager(LinuxOsManager):
         tab=types.ui.Tab.ADVANCED,
         default=True,
     )
-    use_ssl = gui.CheckBoxField(
+    use_ssl = ui.gui.CheckBoxField(
         label=_('Use SSL'),
         order=8,
         tooltip=_('If checked, a ssl connection to Active Directory will be used'),
         tab=types.ui.Tab.ADVANCED,
         default=True,
     )
-    automatic_id_mapping = gui.CheckBoxField(
+    automatic_id_mapping = ui.gui.CheckBoxField(
         label=_('Automatic ID mapping'),
         order=9,
         tooltip=_('If checked, automatic ID mapping'),

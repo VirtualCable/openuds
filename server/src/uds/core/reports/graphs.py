@@ -42,7 +42,7 @@ from matplotlib.figure import Figure
 from matplotlib import colormaps
 
 # This must be imported to allow 3d projections
-from mpl_toolkits.mplot3d.axes3d import Axes3D  # pylint: disable=unused-import
+from mpl_toolkits.mplot3d.axes3d import Axes3D  # pyright: ignore[reportUnusedImport]
 
 import numpy as np
 

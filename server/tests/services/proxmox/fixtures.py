@@ -33,8 +33,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import contextlib
 import typing
 import datetime
-import collections.abc
-import itertools
 
 from unittest import mock
 import uuid
@@ -42,7 +40,6 @@ import uuid
 from uds.core import types, environment
 from uds.core.ui.user_interface import gui
 
-from ...utils.test import UDSTestCase
 from ...utils.autospec import autospec, AutoSpecMethodInfo
 
 from uds.services.Proxmox import (
@@ -327,7 +324,7 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     AutoSpecMethodInfo(
         'get_machine_configuration', method=lambda vmid, **kwargs: VMS_CONFIGURATION[vmid - 1]  # pyright: ignore
     ),  # pyright: ignore
-    # set_machine_ha return None
+    # enable_machine_ha return None
     # start_machine
     AutoSpecMethodInfo('start_machine', return_value=UPID),
     # stop_machine

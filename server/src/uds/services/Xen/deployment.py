@@ -36,7 +36,6 @@ import typing
 import collections.abc
 
 from uds.core import services, consts, types
-from uds.core.types.states import State
 from uds.core.util import autoserializable, log
 
 from .xen_client import XenPowerState
@@ -46,7 +45,6 @@ if typing.TYPE_CHECKING:
     from uds import models
     from .service import XenLinkedService
     from .publication import XenPublication
-    from uds.core.util.storage import Storage
 
 logger = logging.getLogger(__name__)
 

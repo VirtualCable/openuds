@@ -64,7 +64,7 @@ class Transports(ModelHandler):
         'label',
     ]
 
-    table_title = typing.cast(str, _('Transports'))
+    table_title = _('Transports')
     table_fields = [
         {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},

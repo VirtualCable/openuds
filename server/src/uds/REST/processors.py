@@ -32,11 +32,9 @@
 """
 import collections.abc
 import datetime
-from gc import collect
 import json
 import logging
 import time
-import types
 import typing
 
 from django.http import HttpResponse

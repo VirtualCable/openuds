@@ -32,7 +32,6 @@
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
@@ -46,7 +45,6 @@ from ..HTML5RDP.html5rdp import HTML5RDPTransport
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.module import Module
     from uds.core.types.requests import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)

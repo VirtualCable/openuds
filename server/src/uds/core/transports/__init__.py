@@ -32,8 +32,9 @@ UDS Service modules interfaces and classes.
 
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from .transport import Transport
+# pyright: reportUnusedImport=false
 from .transport_factory import TransportsFactory
+from .transport import Transport
 
 
 def factory() -> TransportsFactory:

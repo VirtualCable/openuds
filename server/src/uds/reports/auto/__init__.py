@@ -30,13 +30,12 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import abc
 import datetime
 import logging
 import typing
 import collections.abc
 
-from django.utils.translation import gettext, gettext_noop as _
+from django.utils.translation import gettext_noop as _
 
 from uds.core.ui import gui
 from uds.core.reports import Report

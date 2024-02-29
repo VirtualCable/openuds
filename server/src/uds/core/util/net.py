@@ -30,7 +30,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import collections.abc
 import ipaddress
 import logging
 import re

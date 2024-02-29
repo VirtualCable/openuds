@@ -30,18 +30,12 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import stat
 import typing
-import datetime
-import collections.abc
-import itertools
 from unittest import mock
-from tests.web import user
 
 from uds import models
-from uds.core import types, ui, environment
-from uds.models import service
-from uds.services.Proxmox.deployment_linked import ProxmoxUserserviceLinked, Operation
+from uds.core import types
+from uds.services.Proxmox.deployment_linked import Operation
 
 from . import fixtures
 
@@ -66,6 +60,12 @@ def limit_iter(check: typing.Callable[[], bool], limit: int = 128) -> typing.Gen
 
 # We use transactions on some related methods (storage access, etc...)
 class TestProxmovLinkedService(UDSTransactionTestCase):
+    def setUp(self) -> None:
+        # Set machine state for fixture to started
+        fixtures.VMS_INFO = [
+            fixtures.VMS_INFO[i]._replace(status='stopped') for i in range(len(fixtures.VMS_INFO))
+        ]
+        
 
     def test_userservice_linked_cache_l1(self) -> None:
         """

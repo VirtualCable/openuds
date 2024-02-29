@@ -28,7 +28,6 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import enum
 import datetime
 import logging
 import typing
@@ -67,7 +66,7 @@ def _get_serv_pool_ids(service: 'Service') -> tuple[int, ...]:
 
 
 def _get_prov_serv_pool_ids(provider: 'Provider') -> tuple[int, ...]:
-    res: tuple[int, ...] = ()
+    res: tuple[int, ...] = tuple()
     for i in provider.services.all():
         res += _get_serv_pool_ids(i)
     return res

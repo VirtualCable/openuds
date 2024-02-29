@@ -55,7 +55,7 @@ class MFA(ModelHandler):
     model = models.MFA
     save_fields = ['name', 'comments', 'tags', 'remember_device', 'validity']
 
-    table_title = typing.cast(str, _('Multi Factor Authentication'))
+    table_title = _('Multi Factor Authentication')
     table_fields = [
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
         {'type_name': {'title': _('Type')}},

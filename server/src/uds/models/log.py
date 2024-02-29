@@ -64,7 +64,7 @@ class Log(models.Model):
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[Log]'
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:  # pyright: ignore
         """
         Meta class to declare db table
         """

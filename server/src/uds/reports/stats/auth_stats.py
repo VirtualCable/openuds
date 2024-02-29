@@ -31,7 +31,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext, gettext_lazy as _
 
@@ -64,7 +63,7 @@ class AuthenticatorsStats(StatsReportAuto):
 
     def generate(self) -> bytes:
 
-        stats = []
+        stats: list[dict[str, typing.Any]] = []
         for a in self.get_model_records():
             # Will show a.name on every change...
             stats.append({'date': a.name, 'users': None})

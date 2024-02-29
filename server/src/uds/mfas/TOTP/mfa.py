@@ -29,7 +29,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import collections.abc
 import logging
 import io
 import base64
@@ -45,7 +44,6 @@ from uds.core import mfas, exceptions, types
 from uds.core.ui import gui
 
 if typing.TYPE_CHECKING:
-    from uds.core.module import Module
     from uds.core.types.requests import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)

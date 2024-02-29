@@ -31,7 +31,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import collections.abc
-import dis
 import logging
 import typing
 
@@ -48,8 +47,7 @@ from .service import OpenNebulaLiveService
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.environment import Environment
-    from uds.core.module import Module
+    pass
 
 logger = logging.getLogger(__name__)
 
@@ -144,7 +142,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
         self._api = None
 
     def sanitized_name(self, name: str) -> str:
-        return on.sanitizeName(name)
+        return on.sanitized_name(name)
 
     def test_connection(self) -> types.core.TestResult:
         '''

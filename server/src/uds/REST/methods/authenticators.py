@@ -38,7 +38,6 @@ import typing
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
-from netaddr import N
 
 from uds.core import auths, consts, exceptions, types
 from uds.core.environment import Environment
@@ -210,12 +209,14 @@ class Authenticators(ModelHandler):
 
             auth = item.get_instance()
 
-            canDoSearch = (
+            # Cast to Any because we want to compare with the default method or if it's overriden
+            # Cast is neccesary to avoid mypy errors, for example
+            search_supported = (
                 type_ == 'user'
-                and (auth.search_users != auths.Authenticator.search_users)
-                or (auth.search_groups != auths.Authenticator.search_groups)
+                and (typing.cast(typing.Any, auth.search_users) != typing.cast(typing.Any, auths.Authenticator.search_users))
+                or (typing.cast(typing.Any, auth.search_groups) != typing.cast(typing.Any, auths.Authenticator.search_groups))
             )
-            if canDoSearch is False:
+            if search_supported is False:
                 raise self.not_supported_response()
 
             if type_ == 'user':

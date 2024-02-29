@@ -32,15 +32,12 @@
 import argparse
 import errno
 import stat
-import os.path
 import logging
 import typing
-import collections.abc
 
 
 from django.core.management.base import BaseCommand
 
-from uds import models
 from uds.core.util.fuse import FUSE, FuseOSError, Operations
 
 from . import types

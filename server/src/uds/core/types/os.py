@@ -32,8 +32,6 @@
 """
 import dataclasses
 import enum
-import typing
-import collections.abc
 
 @dataclasses.dataclass
 class DetectedOsInfo:

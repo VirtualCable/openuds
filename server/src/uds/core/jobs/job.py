@@ -30,7 +30,6 @@
 """
 import logging
 import typing
-import collections.abc
 
 from uds.core.environment import Environmentable
 from uds.core.util.config import Config

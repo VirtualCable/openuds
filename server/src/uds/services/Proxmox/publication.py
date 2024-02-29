@@ -32,7 +32,6 @@ from datetime import datetime
 import time
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext as _
 from uds.core import services, types
@@ -41,7 +40,6 @@ from uds.core.util import autoserializable
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from .service_linked import ProxmoxServiceLinked
-    from . import client
 
 logger = logging.getLogger(__name__)
 

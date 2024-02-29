@@ -8,15 +8,13 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import codecs
 import logging
 import typing
 import collections.abc
 
-from django.utils.translation import gettext_lazy
 from django.utils.translation import gettext_noop as _
 
-from uds.core import exceptions, osmanagers, types, consts
+from uds.core import osmanagers, types
 from uds.core.types.services import ServiceType as serviceTypes
 from uds.core.ui import gui
 from uds.core.util import log, fields
@@ -25,7 +23,6 @@ from uds.models import TicketStore
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.module import Module
     from uds.models import UserService
 
 logger = logging.getLogger(__name__)

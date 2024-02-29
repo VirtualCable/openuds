@@ -33,7 +33,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
-import collections.abc
 
 # Imports for type checking
 if typing.TYPE_CHECKING:

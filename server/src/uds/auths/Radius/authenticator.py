@@ -32,11 +32,10 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import auths, environment, types, consts
+from uds.core import auths, environment, types
 from uds.core.auths.auth import log_login
 from uds.core.managers.crypto import CryptoManager
 from uds.core.ui import gui
@@ -45,8 +44,7 @@ from . import client
 
 if typing.TYPE_CHECKING:
     from uds.core.types.requests import ExtendedHttpRequest
-    from uds.core.environment import Environment
-
+    
 logger = logging.getLogger(__name__)
 
 
@@ -146,7 +144,7 @@ class RadiusAuth(auths.Authenticator):
         self,
         username: str,
         credentials: str,
-        groupsManager: 'auths.GroupsManager',
+        groups_manager: 'auths.GroupsManager',
         request: 'ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         try:
@@ -181,15 +179,15 @@ class RadiusAuth(auths.Authenticator):
             storage[username] = groups
 
         # Validate groups
-        groupsManager.validate(groups)
+        groups_manager.validate(groups)
 
         return types.auth.SUCCESS_AUTH
 
-    def get_groups(self, username: str, groupsManager: 'auths.GroupsManager') -> None:
+    def get_groups(self, username: str, groups_manager: 'auths.GroupsManager') -> None:
         with self.storage.as_dict() as storage:
-            groupsManager.validate(storage.get(username, []))
+            groups_manager.validate(storage.get(username, []))
 
-    def create_user(self, usrData: dict[str, str]) -> None:
+    def create_user(self, user_data: dict[str, str]) -> None:
         pass
 
     def remove_user(self, username: str) -> None:

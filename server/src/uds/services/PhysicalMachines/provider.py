@@ -33,7 +33,6 @@
 import configparser
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
@@ -42,7 +41,6 @@ from uds.core.ui.user_interface import gui
 from uds.core.util import log, net, resolver
 
 if typing.TYPE_CHECKING:
-    from uds.core.module import Module
     from .service_base import HostInfo
 
 logger = logging.getLogger(__name__)

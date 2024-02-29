@@ -81,7 +81,7 @@ class Permissions(Handler):
     def as_dict(
         perms: collections.abc.Iterable[models.Permissions],
     ) -> list[dict[str, str]]:
-        res = []
+        res: list[dict[str, typing.Any]] = []
         entity: typing.Optional[typing.Union[models.User, models.Group]]
         for perm in perms:
             if perm.user is None:
@@ -129,8 +129,6 @@ class Permissions(Handler):
         Processes put requests
         """
         logger.debug('Put args: %s', self._args)
-
-        la = len(self._args)
 
         perm = uds.core.types.permissions.PermissionType.from_str(self._params.get('perm', '0'))
 

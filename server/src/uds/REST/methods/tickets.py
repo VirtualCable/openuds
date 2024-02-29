@@ -33,7 +33,6 @@
 import datetime
 import logging
 import typing
-import collections.abc
 
 
 from uds.REST import Handler
@@ -93,9 +92,7 @@ class Tickets(Handler):
     needs_admin = True  # By default, staff is lower level needed
 
     @staticmethod
-    def result(
-        result: str = '', error: typing.Optional[str] = None
-    ) -> dict[str, typing.Any]:
+    def result(result: str = '', error: typing.Optional[str] = None) -> dict[str, typing.Any]:
         """
         Returns a result for a Ticket request
         """
@@ -166,9 +163,7 @@ class Tickets(Handler):
 
             # Will raise an exception if no auth found
             if authId:
-                auth = models.Authenticator.objects.get(
-                    uuid=process_uuid(authId.lower())
-                )
+                auth = models.Authenticator.objects.get(uuid=process_uuid(authId.lower()))
             elif authName:
                 auth = models.Authenticator.objects.get(name=authName)
             else:
@@ -217,42 +212,30 @@ class Tickets(Handler):
                 pool: typing.Union[models.ServicePool, models.MetaPool]
 
                 try:
-                    pool = typing.cast(
-                        models.MetaPool, models.MetaPool.objects.get(uuid=poolUuid)
+                    pool = models.MetaPool.objects.get(
+                        uuid=poolUuid
                     )  # If not an metapool uuid, will process it as a servicePool
                     if force:
                         # First, add groups to metapool
-                        for addGrp in set(groupIds) - set(
-                            pool.assignedGroups.values_list('uuid', flat=True)
-                        ):
+                        for addGrp in set(groupIds) - set(pool.assignedGroups.values_list('uuid', flat=True)):
                             pool.assignedGroups.add(auth.groups.get(uuid=addGrp))
                         # And now, to ALL metapool members
                         for metaMember in pool.members.all():
                             # Now add groups to pools
                             for addGrp in set(groupIds) - set(
-                                metaMember.pool.assignedGroups.values_list(
-                                    'uuid', flat=True
-                                )
+                                metaMember.pool.assignedGroups.values_list('uuid', flat=True)
                             ):
-                                metaMember.pool.assignedGroups.add(
-                                    auth.groups.get(uuid=addGrp)
-                                )
+                                metaMember.pool.assignedGroups.add(auth.groups.get(uuid=addGrp))
 
                     # For metapool, transport is ignored..
 
                     servicePoolId = 'M' + pool.uuid
-
                 except models.MetaPool.DoesNotExist:
-                    pool = typing.cast(
-                        models.ServicePool,
-                        models.ServicePool.objects.get(uuid=poolUuid),
-                    )
+                    pool = models.ServicePool.objects.get(uuid=poolUuid)
 
                     # If forced that servicePool must honor groups
                     if force:
-                        for addGrp in set(groupIds) - set(
-                            pool.assignedGroups.values_list('uuid', flat=True)
-                        ):
+                        for addGrp in set(groupIds) - set(pool.assignedGroups.values_list('uuid', flat=True)):
                             pool.assignedGroups.add(auth.groups.get(uuid=addGrp))
 
                     servicePoolId = 'F' + pool.uuid

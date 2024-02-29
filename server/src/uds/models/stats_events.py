@@ -61,7 +61,7 @@ class StatsEvents(models.Model):
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[StatsEvents]'
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:  # pyright: ignore
         """
         Meta class to declare db table
         """
@@ -137,7 +137,7 @@ class StatsEvents(models.Model):
         """
         Returns the timestamp in ISO format (UTC)
         """
-        stamp = datetime.datetime.utcfromtimestamp(self.stamp)
+        stamp = datetime.datetime.fromtimestamp(self.stamp, datetime.UTC)
         return stamp.isoformat()
 
     # returns CSV header

@@ -317,13 +317,13 @@ class Command(BaseCommand):
             tree[counter('ACCOUNTS')] = accounts
 
             # Service pool groups
-            servicePoolGroups = {}
+            service_pool_groups: dict[str, typing.Any] = {}
             for servicePoolGroup in models.ServicePoolGroup.objects.all():
-                servicePoolGroups[servicePoolGroup.name] = {
+                service_pool_groups[servicePoolGroup.name] = {
                     'comments': servicePoolGroup.comments,
                     'service_pools': [sp.name for sp in servicePoolGroup.servicesPools.all()],                }
 
-            tree[counter('SERVICEPOOLGROUPS')] = servicePoolGroups
+            tree[counter('SERVICEPOOLGROUPS')] = service_pool_groups
 
             # Gallery
             gallery: dict[str, typing.Any] = {}

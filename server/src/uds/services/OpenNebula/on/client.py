@@ -286,7 +286,7 @@ class OpenNebulaClient:  # pylint: disable=too-many-public-methods
         )
 
     @ensure_connected
-    def enumVMs(self) -> collections.abc.Iterable[types.VirtualMachineType]:
+    def enumerate_machines(self) -> collections.abc.Iterable[types.VirtualMachineType]:
         """
         Invoke vm pools info, with this parameters:
         1.- Session string

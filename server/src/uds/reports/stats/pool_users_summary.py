@@ -30,18 +30,15 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import csv
-import datetime
 import io
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
 from uds.core.managers.stats import StatsManager
 from uds.core.ui import gui
-from uds.core.util import dateutils
 from uds.core.util.stats import events
 from uds.models import ServicePool
 

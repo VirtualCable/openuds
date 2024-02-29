@@ -33,17 +33,12 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import random
 import string
 import logging
-import typing
-import collections.abc
 
 from django.utils.translation import gettext as _
 from uds.core import services, types
 
 logger = logging.getLogger(__name__)
 
-# Not imported at runtime, just for type checking
-if typing.TYPE_CHECKING:
-    from .service import ServiceOne, ServiceTwo
 
 
 class SamplePublication(services.Publication):

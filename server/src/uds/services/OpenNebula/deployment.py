@@ -30,7 +30,6 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from enum import auto
 import enum
 import pickle  # nosec: not insecure, we are loading our own data
 import logging
@@ -47,7 +46,6 @@ if typing.TYPE_CHECKING:
     from uds import models
     from .service import OpenNebulaLiveService
     from .publication import OpenNebulaLivePublication
-    from uds.core.util.storage import Storage
 
 logger = logging.getLogger(__name__)
 

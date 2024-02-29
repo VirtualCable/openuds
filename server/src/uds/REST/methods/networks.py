@@ -32,7 +32,6 @@
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_lazy as _, gettext
 
@@ -59,7 +58,7 @@ class Networks(ModelHandler):
     model = Network
     save_fields = ['name', 'net_string', 'tags']
 
-    table_title = typing.cast(str, _('Networks'))
+    table_title = _('Networks')
     table_fields = [
         {
             'name': {

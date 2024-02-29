@@ -54,7 +54,7 @@ class OsManagers(ModelHandler):
     model = OSManager
     save_fields = ['name', 'comments', 'tags']
 
-    table_title = typing.cast(str, _('OS Managers'))
+    table_title = _('OS Managers')
     table_fields = [
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
         {'type_name': {'title': _('Type')}},

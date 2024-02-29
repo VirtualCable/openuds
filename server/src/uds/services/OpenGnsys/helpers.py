@@ -28,14 +28,12 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import collections.abc
 import logging
 import typing
 
 from django.utils.translation import gettext as _
 
 from uds.core import types
-from uds.core.environment import Environment
 from uds.core.ui import gui
 from uds import models
 
@@ -47,8 +45,6 @@ logger = logging.getLogger(__name__)
 
 
 def get_resources(parameters: typing.Any) -> types.ui.CallbackResultType:
-    from .provider import OGProvider
-
     logger.debug('Parameters received by getResources Helper: %s', parameters)
     provider = typing.cast(
         'OGProvider', models.Provider.objects.get(id=parameters['parent_uuid']).get_instance()

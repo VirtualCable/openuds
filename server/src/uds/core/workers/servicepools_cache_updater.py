@@ -31,7 +31,6 @@
 """
 import dataclasses
 import logging
-from multiprocessing import pool
 import typing
 import collections.abc
 

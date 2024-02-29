@@ -31,7 +31,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
-import collections.abc
 
 from django.apps import apps
 from django.db import connections
@@ -40,7 +39,7 @@ from uds.core.util import singleton
 from uds.core.util.log import LogLevel
 
 if typing.TYPE_CHECKING:
-    from ..messaging import provider
+    pass
 
 logger = logging.getLogger(__name__)
 

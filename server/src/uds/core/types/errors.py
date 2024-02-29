@@ -30,7 +30,6 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import stat
 import typing
 import enum
 import logging

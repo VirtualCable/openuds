@@ -31,7 +31,6 @@
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_lazy as _
 from django import forms
@@ -62,7 +61,7 @@ class LoginForm(forms.Form):
         # Parent init
         super(LoginForm, self).__init__(*args, **kwargs)
 
-        choices = []
+        choices: list[tuple[str, str]] = []
 
         for a in Authenticator.get_by_tag(tag):
             if not a.get_type():  # Not existing manager for the auth?

@@ -29,15 +29,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+# pyright: reportUnusedImport=false
 import os.path
 import typing
-import collections.abc
 import sys
 
 from django.utils.translation import gettext_noop as _
-from uds.core import osmanagers
 from uds.core import managers
 from uds.core.consts.system import VERSION
 

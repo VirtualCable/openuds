@@ -33,11 +33,10 @@
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import auths, types, consts
+from uds.core import auths, types
 from uds.core.ui import gui
 from uds.core.util import net
 
@@ -88,13 +87,13 @@ class IPAuth(auths.Authenticator):
             ip = ip.split(':')[-1]
         return ip
 
-    def get_groups(self, username: str, groupsManager: 'auths.GroupsManager') -> None:
+    def get_groups(self, username: str, groups_manager: 'auths.GroupsManager') -> None:
         # these groups are a bit special. They are in fact ip-ranges, and we must check that the ip is in betwen
         # The ranges are stored in group names
-        for g in groupsManager.enumerate_groups_name():
+        for g in groups_manager.enumerate_groups_name():
             try:
                 if net.contains(g, username):
-                    groupsManager.validate(g)
+                    groups_manager.validate(g)
             except Exception as e:
                 logger.error('Invalid network for IP auth: %s', e)
 
@@ -102,12 +101,12 @@ class IPAuth(auths.Authenticator):
         self,
         username: str,
         credentials: str,  # pylint: disable=unused-argument
-        groupsManager: 'auths.GroupsManager',
+        groups_manager: 'auths.GroupsManager',
         request: 'types.requests.ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         # If credentials is a dict, that can't be sent directly from web interface, we allow entering
         if username == self.getIp(request):
-            self.get_groups(username, groupsManager)
+            self.get_groups(username, groups_manager)
             return types.auth.SUCCESS_AUTH
         return types.auth.FAILED_AUTH
 

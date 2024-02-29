@@ -39,14 +39,6 @@ The registration of modules is done locating subclases of :py:class:`uds.core.au
 
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import os.path
-import pkgutil
-import importlib
-import sys
-import typing
-import collections.abc
-
-
 import logging
 
 from uds.core.util import modfinder

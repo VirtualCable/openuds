@@ -32,14 +32,13 @@
 import re
 import logging
 import typing
-import collections.abc
 
 
 from django.http import HttpResponseForbidden
 
 from uds.core import consts
 from uds.core.util.config import GlobalConfig
-from uds.core.auths.auth import is_source_trusted
+from uds.core.auths.auth import is_trusted_source
 
 from . import builder
 
@@ -56,7 +55,7 @@ bot = re.compile(r'bot|spider', re.IGNORECASE)
 def _process_request(request: 'ExtendedHttpRequest') -> typing.Optional['HttpResponse']:
     ua = request.META.get('HTTP_USER_AGENT', '') or 'Unknown'
     # If bot, break now
-    if bot.search(ua) or (ua == 'Unknown' and not is_source_trusted(request.ip)):
+    if bot.search(ua) or (ua == 'Unknown' and not is_trusted_source(request.ip)):
         # Return emty response if bot is detected
         logger.info(
             'Denied Bot %s from %s to %s',
@@ -91,11 +90,10 @@ def _process_response(
 ) -> 'HttpResponse':
     if GlobalConfig.ENHANCED_SECURITY.as_bool():
         # Legacy browser support for X-XSS-Protection
-        response.headers.setdefault('X-XSS-Protection', '1; mode=block')
+        response['X-XSS-Protection'] = '1; mode=block'
         # Add Content-Security-Policy, see https://www.owasp.org/index.php/Content_Security_Policy
-        response.headers.setdefault(
-            'Content-Security-Policy',
-            "default-src 'self' 'unsafe-inline' 'unsafe-eval' uds: udss:; img-src 'self' https: data:;",
+        response['Content-Security-Policy'] = (
+            "default-src 'self' 'unsafe-inline' 'unsafe-eval' uds: udss:; img-src 'self' https: data:;"
         )
     return response
 

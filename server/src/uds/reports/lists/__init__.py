@@ -27,9 +27,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
+# pyright: reportUnusedImport=false
 # Make reports visible to autoloader
 from . import users
 from . import audit

@@ -33,7 +33,6 @@ import traceback
 import json
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import render
@@ -43,7 +42,6 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 
 from uds.core import types
-from uds.models import ServicePool, Transport, UserService, Authenticator
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:

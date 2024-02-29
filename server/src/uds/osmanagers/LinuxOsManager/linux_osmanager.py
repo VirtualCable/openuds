@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,25 +28,21 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
 import collections.abc
 
-from django.utils.translation import gettext_lazy
 from django.utils.translation import gettext_noop as _
 
-from uds.core import osmanagers, types, consts
+from uds.core import osmanagers, types
 from uds.core.types.services import ServiceType as serviceTypes
 from uds.core.ui import gui
 from uds.core.util import fields, log
 from uds.core.types.states import State
-from uds.core.workers import initialize
 
 if typing.TYPE_CHECKING:
-    from uds.core.environment import Environment
-    from uds.core.module import Module
     from uds.models.user_service import UserService
 
 logger = logging.getLogger(__name__)

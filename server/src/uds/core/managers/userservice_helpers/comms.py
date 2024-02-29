@@ -28,7 +28,6 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import base64
 import json
 import logging
 import os
@@ -97,9 +96,9 @@ def _execute_actor_request(
                 verify=verify,
                 timeout=TIMEOUT,
             )
-        if verify:
+        if not(isinstance(verify, bool)):
             try:
-                os.remove(typing.cast(str, verify))
+                os.remove(verify)
             except Exception:
                 logger.exception('removing verify')
         js = r.json()

@@ -28,6 +28,5 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-# pylint: disable=unused-import
+# pyright: reportUnusedImport=false
 from . import mfa

@@ -180,7 +180,7 @@ def web_login_required(
 
 
 # Helper for checking if requests is from trusted source
-def is_source_trusted(ip: str) -> bool:
+def is_trusted_source(ip: str) -> bool:
     return net.contains(GlobalConfig.TRUSTED_SOURCES.get(True), ip)
 
 
@@ -198,7 +198,7 @@ def needs_trusted_source(
         Wrapped function for decorator
         """
         try:
-            if not is_source_trusted(request.ip):
+            if not is_trusted_source(request.ip):
                 return HttpResponseForbidden()
         except Exception:
             logger.warning(
@@ -240,7 +240,7 @@ def register_user(
     usr = authenticator.get_or_create_user(username, username)
     usr.real_name = authInstance.get_real_name(username)
     usr.save()
-    if usr is not None and State.from_str(usr.state).is_active():
+    if usr and State.from_str(usr.state).is_active():
         # Now we update database groups for this user
         usr.get_manager().recreate_groups(usr)
         # And add an login event
@@ -380,10 +380,8 @@ def authenticate_info_url(authenticator: typing.Union[str, bytes, models.Authent
         name = authenticator
     elif isinstance(authenticator, bytes):
         name = authenticator.decode('utf8')
-    elif isinstance(authenticator, models.Authenticator):
-        name = authenticator.small_name
     else:
-        raise ValueError('Invalid authenticator type')
+        name = authenticator.small_name
 
     return reverse('page.auth.info', kwargs={'authenticator_name': name})
 
@@ -540,7 +538,7 @@ def log_login(
 
 def log_logout(request: 'ExtendedHttpRequest') -> None:
     if request.user:
-        if request.user.manager.id is not None:
+        if request.user.manager.id:
             log.log(
                 request.user.manager,
                 log.LogLevel.INFO,

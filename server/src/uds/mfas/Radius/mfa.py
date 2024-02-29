@@ -26,12 +26,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-@author: Daniel Torregrosa
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Daniel Torregrosa
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
 import typing
-import collections.abc
 import logging
 
 from django.utils.translation import gettext_noop as _, gettext
@@ -51,7 +50,6 @@ from uds.auths.Radius.client import (
 from uds.core.auths.auth import web_password
 
 if typing.TYPE_CHECKING:
-    from uds.core.module import Module
     from uds.core.types.requests import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)

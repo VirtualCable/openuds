@@ -32,7 +32,6 @@
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import collections.abc
 import logging
 import typing
 
@@ -40,7 +39,7 @@ import dns.resolver
 import dns.reversename
 from django.utils.translation import gettext_noop as _
 
-from uds.core import auths, consts, exceptions, types
+from uds.core import auths, types
 from uds.core.auths.auth import log_login
 from uds.core.managers.crypto import CryptoManager
 from uds.core.types.states import State
@@ -100,7 +99,7 @@ class InternalDBAuth(auths.Authenticator):
         ip = request.ip_proxy if self.accepts_proxy.as_bool() else request.ip  # pylint: disable=maybe-no-member
         if self.reverse_dns.as_bool():
             try:
-                return str(dns.resolver.query(dns.reversename.from_address(ip).to_text(), 'PTR')[0])
+                return str(dns.resolver.query(dns.reversename.from_address(ip).to_text(), 'PTR')[0])  # pyright: ignore[reportUnknownArgumentType]
             except Exception:
                 # if we can't get the reverse, we will use the ip
                 pass
@@ -175,7 +174,7 @@ class InternalDBAuth(auths.Authenticator):
         log_login(request, self.db_obj(), username, 'Invalid password')
         return types.auth.FAILED_AUTH
 
-    def get_groups(self, username: str, groupsManager: 'auths.GroupsManager') -> None:
+    def get_groups(self, username: str, groups_manager: 'auths.GroupsManager') -> None:
         dbAuth = self.db_obj()
         try:
             user: 'models.User' = dbAuth.users.get(name=username.lower(), state=State.ACTIVE)
@@ -188,7 +187,7 @@ class InternalDBAuth(auths.Authenticator):
                 grps.extend([g.name for g in parent.groups.all()])
             except Exception:
                 pass
-        groupsManager.validate(grps)
+        groups_manager.validate(grps)
 
     def get_real_name(self, username: str) -> str:
         # Return the real name of the user, if it is set
@@ -198,7 +197,7 @@ class InternalDBAuth(auths.Authenticator):
         except Exception:
             return super().get_real_name(username)
 
-    def create_user(self, usrData: dict[str, typing.Any]) -> None:
+    def create_user(self, user_data: dict[str, typing.Any]) -> None:
         pass
 
     @staticmethod

@@ -29,7 +29,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
@@ -38,7 +37,6 @@ from uds.core.ui import gui
 from uds.core.util import validators, fields
 from uds.core.util.decorators import cached
 from uds.core.util.unique_id_generator import UniqueIDGenerator
-from uds.core.util.unique_mac_generator import UniqueMacGenerator
 
 from . import client
 from .service_linked import ProxmoxServiceLinked

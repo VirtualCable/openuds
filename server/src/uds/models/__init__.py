@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+# pyright: reportUnusedImport=false
 
 # Imports all models so they are available for migrations, etc..
 from .managed_object_model import ManagedObjectModel

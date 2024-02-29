@@ -33,7 +33,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import codecs
 import logging
 import typing
-import collections.abc
 
 from uds.core import services, types
 

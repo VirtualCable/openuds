@@ -188,7 +188,7 @@ class ServicePool(UUIDModel, TaggingMixin):
             None if there is no valid publication for this deployed service.
         """
         try:
-            return self.publications.filter(state=types.states.State.USABLE)[0]  # type: ignore  # Slicing is not supported by pylance right now
+            return self.publications.filter(state=types.states.State.USABLE)[0] 
         except Exception:
             return None
 
@@ -282,7 +282,7 @@ class ServicePool(UUIDModel, TaggingMixin):
         return self.service.is_in_maintenance() if self.service else True
 
     def is_visible(self) -> bool:
-        return self.visible  # type: ignore
+        return self.visible 
 
     def is_usable(self) -> bool:
         return (
@@ -466,8 +466,6 @@ class ServicePool(UUIDModel, TaggingMixin):
         Ensures that at least a group of groups (database groups) has access to this Service Pool
         raise an InvalidUserException if fails check
         """
-        from uds.core import auths  # pylint: disable=import-outside-toplevel
-
         if not set(groups) & set(
             self.assignedGroups.all()  # pylint: disable=no-member
         ):  # pylint: disable=no-member

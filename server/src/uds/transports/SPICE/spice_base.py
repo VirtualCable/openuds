@@ -32,11 +32,10 @@
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _
 from uds.core.ui import gui
-from uds.core import transports, types, consts
+from uds.core import transports, types
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -156,7 +155,7 @@ class BaseSpiceTransport(transports.Transport):
             if con is None:
                 return False
 
-            if con.proxy is not None:
+            if con.proxy:  # if proxy is set, we can't use it
                 return True
 
             # test ANY of the ports
@@ -221,8 +220,8 @@ class BaseSpiceTransport(transports.Transport):
 
     def get_connection_info(
         self,
-        userService: typing.Union['models.UserService', 'models.ServicePool'],
+        userservice: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
     ) -> types.connections.ConnectionData:
-        return self.process_user_password(userService, user, password)
+        return self.process_user_password(userservice, user, password)

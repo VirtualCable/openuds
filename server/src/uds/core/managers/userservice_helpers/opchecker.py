@@ -33,7 +33,6 @@
 import abc
 import logging
 import typing
-import collections.abc
 
 from uds.core import services, types
 from uds.core.jobs.delayed_task import DelayedTask

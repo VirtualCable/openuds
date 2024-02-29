@@ -32,5 +32,6 @@
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+# pyright: reportUnusedImport=false
 from uds.core.util.config import Config
 from .authenticator import IPAuth

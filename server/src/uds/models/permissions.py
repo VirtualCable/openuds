@@ -65,7 +65,7 @@ class Permissions(UUIDModel):
     )  # Future "permisions ends at this moment", not assigned right now
 
     user = models.ForeignKey(
-        User,
+        'User',
         on_delete=models.CASCADE,
         related_name='permissions',
         null=True,
@@ -73,7 +73,7 @@ class Permissions(UUIDModel):
         default=None,
     )
     group = models.ForeignKey(
-        Group,
+        'Group',
         on_delete=models.CASCADE,
         related_name='permissions',
         null=True,

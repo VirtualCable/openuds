@@ -54,7 +54,7 @@ class StatsCounters(models.Model):
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[StatsCounters]'
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:  # pyright: ignore
         """
         Meta class to declare db table
         """
@@ -123,7 +123,7 @@ class StatsCounters(models.Model):
             interval = int(to - since) / max_intervals
 
         if interval > 0:
-            q = q.extra(  # nosec: SQL injection is not possible here
+            q = q.extra(  # type: ignore # nosec: SQL injection is not possible here
                 select={
                     'group_by_stamp': f'stamp - (stamp %% {interval})',  # f'{floor}(stamp / {interval}) * {interval}',
                 },
@@ -132,7 +132,7 @@ class StatsCounters(models.Model):
         fnc = models.Avg('value') if not kwargs.get('use_max') else models.Max('value')
 
         q = (
-            q.order_by('group_by_stamp')
+            q.order_by('group_by_stamp')  # type: ignore
             .values('group_by_stamp')
             .annotate(
                 value=fnc,

@@ -1,5 +1,4 @@
 import datetime
-from os import name
 import re
 import typing
 import collections.abc
@@ -34,7 +33,7 @@ def _from_dict(
             k: typing.cast(typing.Callable[..., typing.Any], CONVERSORS.get(type.__annotations__.get(k, str), lambda x: x))(
                 dictionary.get(k, extra.get(k, None))
             )
-            for k in type._fields  # type: ignore
+            for k in type._fields  # pyright: ignore   # _fields is a NamedTuple attribute that contains fields
         }
     )
 

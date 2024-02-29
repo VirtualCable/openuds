@@ -29,15 +29,12 @@ import ssl
 import xmlrpc.client
 import logging
 import typing
-import collections.abc
 
-from MySQLdb import connect
-import server
 from uds.core import consts
 
 from uds.core.util.decorators import cached
 
-import XenAPI
+import XenAPI  # pyright: ignore
 
 
 logger = logging.getLogger(__name__)
@@ -51,7 +48,7 @@ class XenFault(Exception):
 
 
 def cache_key_helper(server_api: 'XenServer') -> str:
-    return server_api._url
+    return server_api._url  # pyright: ignore[reportPrivateUsage]
 
 
 class XenFailure(XenAPI.Failure, XenFault):
@@ -66,16 +63,16 @@ class XenFailure(XenAPI.Failure, XenFault):
         super(XenFailure, self).__init__(details)
 
     def isHandleInvalid(self) -> bool:
-        return self.details[0] == XenFailure.exHandleInvalid
+        return typing.cast(typing.Any, self.details[0]) == XenFailure.exHandleInvalid
 
     def needs_xen_tools(self) -> bool:
-        return self.details[0] == XenFailure.exVmMissingPVDrivers
+        return typing.cast(typing.Any, self.details[0]) == XenFailure.exVmMissingPVDrivers
 
     def bad_power_state(self) -> bool:
-        return self.details[0] == XenFailure.exBadVmPowerState
+        return typing.cast(typing.Any, self.details[0]) == XenFailure.exBadVmPowerState
 
     def is_slave(self) -> bool:
-        return self.details[0] == XenFailure.exHostIsSlave
+        return typing.cast(typing.Any, self.details[0]) == XenFailure.exHostIsSlave
 
     def as_human_readable(self) -> str:
         try:
@@ -86,9 +83,9 @@ class XenFailure(XenAPI.Failure, XenFault):
                 XenFailure.exSRError: 'Error on SR: {2}',
                 XenFailure.exHandleInvalid: 'Invalid reference to {1}',
             }
-            err = errList.get(self.details[0], 'Error {0}')
+            err = errList.get(typing.cast(typing.Any, self.details[0]), 'Error {0}')
 
-            return err.format(*self.details)
+            return err.format(*typing.cast(list[typing.Any], self.details))
         except Exception:
             return 'Unknown exception: {0}'.format(self.details)
 
@@ -247,7 +244,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
                 logger.info(
                     '%s is an Slave, connecting to master at %s',
                     self._host,
-                    e.details[1],
+                    typing.cast(typing.Any, e.details[1])
                 )
                 self._host = e.details[1]
                 self.login(backup_checked=backup_checked)
@@ -278,9 +275,8 @@ class XenServer:  # pylint: disable=too-many-public-methods
 
     def get_task_info(self, task: str) -> dict[str, typing.Any]:
         progress = 0
-        result = None
+        result: typing.Any = None
         destroy_task = False
-        connection_error = False
         try:
             status = self.task.get_status(task)
             logger.debug('Task %s in state %s', task, status)
@@ -294,20 +290,19 @@ class XenServer:  # pylint: disable=too-many-public-methods
                 result = XenFailure(self.task.get_error_info(task))
                 destroy_task = True
         except XenAPI.Failure as e:
-            logger.debug('XenServer Failure: %s', e.details[0])
+            logger.debug('XenServer Failure: %s', typing.cast(str, e.details[0]))
             if e.details[0] == 'HANDLE_INVALID':
                 result = None
                 status = 'unknown'
                 progress = 0
             else:
                 destroy_task = True
-                result = e.details[0]
+                result = typing.cast(str, e.details[0])
                 status = 'failure'
         except ConnectionError as e:
             logger.debug('Connection error: %s', e)
             result = 'Connection error'
             status = 'failure'
-            connection_error = True
         except Exception as e:
             logger.exception('Unexpected exception!')
             result = str(e)
@@ -501,9 +496,9 @@ class XenServer:  # pylint: disable=too-many-public-methods
 
     def remove_machine(self, vmid: str) -> None:
         logger.debug('Removing machine')
-        vdisToDelete = []
+        vdis_to_delete: list[str] = []
         for vdb in self.VM.get_VBDs(vmid):
-            vdi = None
+            vdi = ''
             try:
                 vdi = self.VBD.get_VDI(vdb)
                 if vdi == 'OpaqueRef:NULL':
@@ -516,9 +511,9 @@ class XenServer:  # pylint: disable=too-many-public-methods
                 logger.debug('%s is read only, skipping', vdi)
                 continue
             logger.debug('VDI to delete: %s', vdi)
-            vdisToDelete.append(vdi)
+            vdis_to_delete.append(vdi)
         self.VM.destroy(vmid)
-        for vdi in vdisToDelete:
+        for vdi in vdis_to_delete:
             self.VDI.destroy(vdi)
 
     def configure_machine(

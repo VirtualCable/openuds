@@ -34,9 +34,8 @@ import codecs
 import datetime
 import logging
 import typing
-import collections.abc
 
-from weasyprint import HTML, CSS, default_url_fetcher
+from weasyprint import HTML, CSS, default_url_fetcher  # pyright: ignore[reportUnknownVariableType]
 
 from django.utils.translation import gettext, gettext_noop as _
 from django.template import loader
@@ -133,7 +132,7 @@ class Report(UserInterface):
 
     @classmethod
     def get_uuid(cls) -> str:
-        if cls.uuid is None:
+        if not cls.uuid:
             raise Exception(f'Class does not includes an uuid!!!: {cls}')
         return cls.uuid
 
@@ -186,7 +185,7 @@ class Report(UserInterface):
         h = HTML(string=html, url_fetcher=report_fetcher)
         c = CSS(string=css)
 
-        return typing.cast(bytes, h.write_pdf(stylesheets=[c]))  # Return a new bytes object
+        return typing.cast(bytes, h.write_pdf(stylesheets=[c]))  # Return a new bytes object  # pyright: ignore[reportUnknownMemberType]
 
     @staticmethod
     def template_as_pdf(

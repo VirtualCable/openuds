@@ -31,14 +31,11 @@
 """
 # pylint: disable=too-many-public-methods
 
-import abc
 import fnmatch
-import inspect
 import logging
 import re
 import typing
 import collections.abc
-from types import GeneratorType
 
 from django.db import IntegrityError, models
 from django.utils.translation import gettext as _
@@ -48,15 +45,12 @@ from uds.core import exceptions
 from uds.core import types
 from uds.core.module import Module
 from uds.core.util import log, permissions
-from uds.core.util.model import process_uuid
-from uds.models import ManagedObjectModel, Network, Tag, TaggingMixin
-from uds.REST.utils import rest_result
+from uds.models import ManagedObjectModel, Tag, TaggingMixin
 
 from .base import BaseModelHandler
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.models import User
     from .detail import DetailHandler
 
 logger = logging.getLogger(__name__)

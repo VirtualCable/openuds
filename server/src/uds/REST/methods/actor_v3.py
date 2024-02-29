@@ -401,7 +401,7 @@ class Initialize(ActorV3Action):
                 # If not found an alias, try to locate on service table
                 # Not on alias token, try to locate on Service table
                 if not service:
-                    service = typing.cast('Service', Service.objects.get(token=token))
+                    service = Service.objects.get(token=token)
                     # If exists, create and alias for it
                     # Get first mac and, if not exists, get first ip
                     unique_id = self._params['id'][0].get('mac', self._params['id'][0].get('ip', ''))
@@ -835,7 +835,7 @@ class Notify(ActorV3Action):
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
         try:
             action = NotifyActionType(self._params['action'])
-            token = self._params['token']  # pylint: disable=unused-variable  # Just to check it exists
+            _token = self._params['token']  # Just to check it exists
         except Exception as e:
             # Requested login, logout or whatever
             raise exceptions.rest.RequestError('Invalid parameters') from e

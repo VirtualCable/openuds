@@ -31,11 +31,10 @@
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import exceptions, transports, types, consts
+from uds.core import exceptions, types
 from uds.core.ui import gui
 from uds.core.util import fields, validators
 from uds.models import TicketStore
@@ -46,7 +45,6 @@ from .spice_base import BaseSpiceTransport
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from uds.core.module import Module
     from uds.core.types.requests import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
@@ -92,7 +90,7 @@ class TSPICETransport(BaseSpiceTransport):
 
     def get_transport_script(  # pylint: disable=too-many-locals
         self,
-        userService: 'models.UserService',
+        userservice: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
         os: 'types.os.DetectedOsInfo',
@@ -101,7 +99,7 @@ class TSPICETransport(BaseSpiceTransport):
         request: 'ExtendedHttpRequestWithUser',
     ) -> types.transports.TransportScript:
         try:
-            userServiceInstance = userService.get_instance()
+            userServiceInstance = userservice.get_instance()
             con = userServiceInstance.get_console_connection()
         except Exception:
             logger.exception('Error getting console connection data')
@@ -122,19 +120,19 @@ class TSPICETransport(BaseSpiceTransport):
         if con.proxy:
             logger.exception('Proxied SPICE tunnels are not suppoorted')
             return super().get_transport_script(
-                userService, transport, ip, os, user, password, request
+                userservice, transport, ip, os, user, password, request
             )
 
         if con.port:
             ticket = TicketStore.create_for_tunnel(
-                userService=userService,
+                userService=userservice,
                 port=int(con.port),
                 validity=self.tunnel_wait.as_int() + 60,  # Ticket overtime
             )
 
         if con.secure_port:
             ticket_secure = TicketStore.create_for_tunnel(
-                userService=userService,
+                userService=userservice,
                 port=int(con.secure_port),
                 host=con.address,
                 validity=self.tunnel_wait.as_int() + 60,  # Ticket overtime
@@ -173,5 +171,5 @@ class TSPICETransport(BaseSpiceTransport):
             return self.get_script(os.os.os_name(), 'tunnel', sp)
         except Exception:
             return super().get_transport_script(
-                userService, transport, ip, os, user, password, request
+                userservice, transport, ip, os, user, password, request
             )

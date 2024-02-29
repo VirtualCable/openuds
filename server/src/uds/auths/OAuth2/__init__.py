@@ -34,4 +34,5 @@ take care of registering it as provider
 
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+# pyright: reportUnusedImport=false
 from .authenticator import OAuth2Authenticator

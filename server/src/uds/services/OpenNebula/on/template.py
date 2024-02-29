@@ -38,7 +38,7 @@ import collections.abc
 from defusedxml import minidom
 
 from . import types
-from .common import sanitizeName
+from .common import sanitized_name
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -114,7 +114,7 @@ def create(
             #    raise Exception('The base machines images are not in READY state')
 
             # Now clone the image
-            imgName = sanitizeName(name + ' DSK ' + str(counter))
+            imgName = sanitized_name(name + ' DSK ' + str(counter))
             newId = api.cloneImage(
                 imgId, imgName, toDataStore
             )  # api.call('image.clone', int(imgId), imgName, int(toDataStore))

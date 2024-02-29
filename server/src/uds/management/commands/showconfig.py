@@ -33,7 +33,6 @@
 import argparse
 import logging
 import typing
-import collections.abc
 import csv
 import yaml
 

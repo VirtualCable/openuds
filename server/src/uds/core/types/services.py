@@ -30,11 +30,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import dataclasses
-import typing
-import collections.abc
 import enum
-
-from attr import field
 
 
 class ServiceType(enum.StrEnum):

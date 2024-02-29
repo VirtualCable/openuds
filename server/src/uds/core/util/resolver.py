@@ -28,10 +28,8 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import time
 import typing
 import collections.abc
-import functools
 
 import dns.resolver
 import dns.reversename

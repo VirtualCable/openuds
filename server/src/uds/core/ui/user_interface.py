@@ -37,7 +37,6 @@ import datetime
 import inspect
 import itertools
 import logging
-from os import read
 import pickle  # nosec: safe usage
 import re
 import time

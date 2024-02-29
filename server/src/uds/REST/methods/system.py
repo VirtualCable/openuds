@@ -170,10 +170,10 @@ class System(Handler):
                     'restrained_services_pools': restrained_services_pools,
                 }
 
-        if len(self._args) in (2, 3):
+        if len(self.args) in (2, 3):
             # Extract pool if provided
             pool: typing.Optional[models.ServicePool] = None
-            if len(self._args) == 3:
+            if len(self.args) == 3:
                 try:
                     pool = models.ServicePool.objects.get(uuid=process_uuid(self._args[2]))
                 except Exception:
@@ -186,14 +186,14 @@ class System(Handler):
                 self._user, typing.cast('Model', pool), types.permissions.PermissionType.READ
             ):
                 raise exceptions.rest.AccessDenied()
-            if self._args[0] == 'stats':
-                if self._args[1] == 'assigned':
+            if self.args[0] == 'stats':
+                if self.args[1] == 'assigned':
                     return get_servicepools_counters(pool, counters.types.stats.CounterType.ASSIGNED)
-                elif self._args[1] == 'inuse':
+                elif self.args[1] == 'inuse':
                     return get_servicepools_counters(pool, counters.types.stats.CounterType.INUSE)
-                elif self._args[1] == 'cached':
+                elif self.args[1] == 'cached':
                     return get_servicepools_counters(pool, counters.types.stats.CounterType.CACHED)
-                elif self._args[1] == 'complete':
+                elif self.args[1] == 'complete':
                     return {
                         'assigned': get_servicepools_counters(
                             pool, counters.types.stats.CounterType.ASSIGNED, since_days=7

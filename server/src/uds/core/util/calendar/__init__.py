@@ -30,11 +30,10 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+# pyright: reportUnknownMemberType=false
 import datetime
 import hashlib
-import time
 import typing
-import collections.abc
 import logging
 
 import bitarray
@@ -99,7 +98,7 @@ class CalendarChecker:
 
             _end = end if r_end is None or end < r_end else r_end
 
-            for val in rr.between(_start, _end, inc=True):
+            for val in typing.cast(list[datetime.datetime], rr.between(_start, _end, inc=True)):
                 if val.date() != data_date:
                     diff = int((start - val).total_seconds() / 60)
                     pos = 0
@@ -116,18 +115,19 @@ class CalendarChecker:
         return data
 
     def _update_events(
-        self, check_from: datetime.datetime, startEvent: bool = True
+        self, check_from: datetime.datetime, start_event: bool = True
     ) -> typing.Optional[datetime.datetime]:
-        next_event = None
+        next_event: 'datetime.datetime|None' = None
+        event: typing.Optional[datetime.datetime] = None
         for rule in self.calendar.rules.all():
             # logger.debug('RULE: start = {}, checkFrom = {}, end'.format(rule.start.date(), checkFrom.date()))
             if rule.end is not None and rule.end < check_from.date():
                 continue
             # logger.debug('Rule in check interval...')
-            if startEvent:
-                event = rule.as_rrule().after(check_from)  # At start
+            if start_event:
+                event = typing.cast(datetime.datetime|None, rule.as_rrule().after(check_from))  # At start
             else:
-                event = rule.as_rrule_end().after(check_from)  # At end
+                event = typing.cast(datetime.datetime|None, rule.as_rrule_end().after(check_from))  # At end
 
             if event and (next_event is None or next_event > event):
                 next_event = event

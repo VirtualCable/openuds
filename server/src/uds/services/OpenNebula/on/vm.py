@@ -192,19 +192,18 @@ def enumerate_machines(
             'id'
             'cluster_id'
     '''
-    yield from api.enumVMs()
-
+    yield from api.enumerate_machines()
 
 def get_network_info(
     api: 'client.OpenNebulaClient',
-    machineId: str,
+    machine_id: str,
     networkId: typing.Optional[str] = None,
 ) -> tuple[str, str]:
     '''
     Get the MAC and the IP for the network and machine. If network is None, for the first network
     '''
     # md = minidom.parseString(api.call('vm.info', int(machineId)))
-    md = minidom.parseString(api.VMInfo(machineId).xml)
+    md: typing.Any = minidom.parseString(api.VMInfo(machine_id).xml or '')  # pyright: ignore[reportUnknownMemberType]
     node = md
 
     try:
@@ -237,7 +236,7 @@ def get_console_connection(
     If machine is not running or there is not a display, will return NONE
     SPICE connections should check that 'type' is 'SPICE'
     '''
-    md = minidom.parseString(api.VMInfo(machineId).xml)
+    md: typing.Any = minidom.parseString(api.VMInfo(machineId).xml or '')  # pyright: ignore[reportUnknownMemberType]
     try:
         graphics = md.getElementsByTagName('GRAPHICS')[0]
 

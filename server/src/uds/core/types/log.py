@@ -1,4 +1,3 @@
-import stat
 import typing
 import collections.abc
 import functools

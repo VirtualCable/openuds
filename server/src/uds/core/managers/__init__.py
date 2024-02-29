@@ -33,11 +33,9 @@ UDS managers (downloads, users publications, ...)
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import collections.abc
 
 # Imports for type checking only (not on runtime), we have later to get rid of false "redefined outer names" for pylint
 if typing.TYPE_CHECKING:
-    from .crypto import CryptoManager
     from .task import TaskManager
     from .downloads import DownloadsManager
     from .log import LogManager
@@ -62,10 +60,12 @@ def log_manager() -> 'LogManager':
 
     return LogManager()
 
+
 def publication_manager() -> 'PublicationManager':
     from .publication import PublicationManager
 
     return PublicationManager()
+
 
 def notifications_manager() -> 'NotificationsManager':
     from .notifications import NotificationsManager

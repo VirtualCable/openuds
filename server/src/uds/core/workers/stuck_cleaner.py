@@ -31,7 +31,6 @@
 """
 from datetime import datetime, timedelta
 import logging
-import typing
 import collections.abc
 
 from django.db.models import Q, Count

@@ -33,8 +33,6 @@
 
 import os
 import logging
-import typing
-import collections.abc
 
 from wsgiref.util import FileWrapper
 from django.http import HttpResponse, Http404, HttpRequest

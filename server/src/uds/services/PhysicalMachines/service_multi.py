@@ -41,7 +41,7 @@ from django.utils.translation import gettext, gettext_lazy as _
 
 from uds.core import exceptions, services, types
 from uds.core.ui import gui
-from uds.core.util import ensure, log, net
+from uds.core.util import log, net
 from uds.core.util.model import sql_stamp_seconds
 
 from .deployment import IPMachineUserService
@@ -51,7 +51,6 @@ from .types import HostInfo
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from uds.core.module import Module
 
 logger = logging.getLogger(__name__)
 

@@ -32,7 +32,6 @@
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _
 from .x2go_base import BaseX2GOTransport
@@ -41,7 +40,7 @@ from . import x2go_file
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from uds.core import transports, types
+    from uds.core import types
     from uds.core.types.requests import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
@@ -84,7 +83,7 @@ class X2GOTransport(BaseX2GOTransport):
     ) -> 'types.transports.TransportScript':
         ci = self.get_connection_info(userservice, user, password)
 
-        priv, pub = self.getAndPushKey(ci.username, userservice)
+        priv, _pub = self.getAndPushKey(ci.username, userservice)
 
         width, height = self.get_screen_size()
         rootless = False

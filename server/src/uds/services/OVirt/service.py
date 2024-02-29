@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -33,7 +33,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import re
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
@@ -48,7 +47,6 @@ from . import helpers
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from .provider import OVirtProvider
-    from uds.core.module import Module
 
 logger = logging.getLogger(__name__)
 
@@ -104,7 +102,6 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
     allowed_protocols = types.transports.Protocol.generic_vdi(types.transports.Protocol.SPICE)
     services_type_provided = types.services.ServiceType.VDI
 
-
     # Now the form part
     cluster = gui.ChoiceField(
         label=_("Cluster"),
@@ -134,7 +131,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         order=102,
         tooltip=_('Minimal free space in GB'),
         required=True,
-        old_field_name='minSpaceGB'
+        old_field_name='minSpaceGB',
     )
 
     machine = gui.ChoiceField(
@@ -167,7 +164,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         tooltip=_('Physical memory guaranteed to machines'),
         tab=_('Machine'),
         required=True,
-        old_field_name='memoryGuaranteed'
+        old_field_name='memoryGuaranteed',
     )
 
     usb = gui.ChoiceField(
@@ -197,7 +194,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
     lenname = fields.lenname_field(order=116, tab=_('Machine'))
 
     parent_uuid = gui.HiddenField()
-    
+
     def initialize(self, values: 'types.core.ValuesType') -> None:
         """
         We check here form values to see if they are valid.
@@ -208,9 +205,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         if values:
             validators.validate_basename(self.basename.value, self.lenname.as_int())
             if int(self.memory.value) < 256 or int(self.guaranteed_memory.value) < 256:
-                raise exceptions.ui.ValidationError(
-                    _('The minimum allowed memory is 256 Mb')
-                )
+                raise exceptions.ui.ValidationError(_('The minimum allowed memory is 256 Mb'))
             if int(self.guaranteed_memory.value) > int(self.memory.value):
                 self.guaranteed_memory.value = self.memory.value
 
@@ -223,7 +218,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         # This is that value is always '', so if we want to change something, we have to do it
         # at defValue
         self.parent_uuid.value = self.provider().get_uuid()
-        
+
         # This is not the same case, values is not the "value" of the field, but
         # the list of values shown because this is a "ChoiceField"
         self.machine.set_choices(gui.choice_item(m['id'], m['name']) for m in self.provider().list_machines())
@@ -432,9 +427,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         """
         return self.display.value
 
-    def get_console_connection(
-        self, machineId: str
-    ) -> typing.Optional[types.services.ConsoleConnectionInfo]:
+    def get_console_connection(self, machineId: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
         return self.provider().get_console_connection(machineId)
 
     def is_avaliable(self) -> bool:

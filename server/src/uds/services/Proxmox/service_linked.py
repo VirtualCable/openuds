@@ -31,13 +31,11 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 import re
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _
-from uds.core import services, types, consts
+from uds.core import services, types
 from uds.core.ui import gui
 from uds.core.util import validators, log, fields
-from uds.core.util.decorators import cached
 
 from . import helpers
 from .deployment_linked import ProxmoxUserserviceLinked
@@ -45,8 +43,6 @@ from .publication import ProxmoxPublication
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.module import Module
-
     from . import client
     from .provider import ProxmoxProvider
 

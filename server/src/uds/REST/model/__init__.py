@@ -29,6 +29,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+# pyright: reportUnusedImport=false
 from .base import BaseModelHandler
 from .detail import DetailHandler
 from .model import ModelHandler

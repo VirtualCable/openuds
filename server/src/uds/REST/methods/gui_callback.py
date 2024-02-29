@@ -30,9 +30,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import collections.abc
 import logging
-import typing
 
 from uds.core import exceptions, types
 from uds.core.ui import gui

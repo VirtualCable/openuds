@@ -36,7 +36,6 @@ import logging
 import typing
 import collections.abc
 
-from requests import get
 from uds.core import consts
 
 from uds.core.util.decorators import ensure_connected

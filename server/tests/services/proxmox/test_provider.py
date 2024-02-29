@@ -30,8 +30,6 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
-import collections.abc
 from unittest import mock
 
 from uds.core import types, ui, environment
@@ -252,7 +250,7 @@ class TestProxmovProvider(UDSTestCase):
             api.enable_machine_ha.assert_called_once_with(1, True, 'group')
 
             provider.set_machine_mac(1, 'mac')
-            api.set_machine_ha.assert_called_once_with(1, 'mac')
+            api.set_machine_mac.assert_called_once_with(1, 'mac')
 
             provider.disable_machine_ha(1)
             api.disable_machine_ha.assert_called_once_with(1)

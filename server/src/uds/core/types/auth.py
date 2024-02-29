@@ -31,7 +31,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 import dataclasses
-import collections.abc
 import enum
 
 from django.urls import reverse

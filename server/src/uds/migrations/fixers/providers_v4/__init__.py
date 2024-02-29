@@ -29,7 +29,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import collections.abc
 from . import rds
 
 ALL: typing.Final = (rds,)

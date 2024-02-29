@@ -27,8 +27,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-@author: dkmaster@dkmon.com
+Author: dkmaster@dkmon.com
 """
+# pyright: reportUnknownMemberType=false,reportUnknownVariableType=false,reportUnknownArgumentType=false
 import typing
 import collections.abc
 

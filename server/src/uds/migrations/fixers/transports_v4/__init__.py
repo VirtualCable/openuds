@@ -29,7 +29,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import collections.abc
 from . import html5rdp, html5rds, html5ssh, html5vnc, nicedcv, rdp, rds, nomachine, spice, x2go
 
 ALL: typing.Final = (html5rdp, html5rds, html5ssh, html5vnc, nicedcv, rdp, rds, nomachine, spice, x2go)

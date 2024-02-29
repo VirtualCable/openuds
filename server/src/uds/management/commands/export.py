@@ -45,7 +45,6 @@ from uds.core import consts
 
 if typing.TYPE_CHECKING:
     import argparse
-    from django.db.models import Model
     from uds.models.uuid_model import UUIDModel
 
 logger = logging.getLogger(__name__)

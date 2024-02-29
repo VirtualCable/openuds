@@ -32,6 +32,7 @@ UDS authentication related interfaces and classes
 
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+# pyright: reportUnusedImport=false
 from .authenticator import (
     Authenticator,
 )

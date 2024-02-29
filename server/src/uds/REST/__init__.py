@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -27,15 +27,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import logging
-import typing
-import collections.abc
-
-logger = logging.getLogger(__name__)
-
+# pyright: reportUnusedImport=false
 # Convenience imports, must be present before initializing handlers
 from .handlers import Handler
-
 from .dispatcher import Dispatcher

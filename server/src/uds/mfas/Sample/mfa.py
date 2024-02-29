@@ -31,15 +31,13 @@
 
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import mfas, types, consts
+from uds.core import mfas, types
 from uds.core.ui import gui
 
 if typing.TYPE_CHECKING:
-    from uds.core.module import Module
     from uds.core.types.requests import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)

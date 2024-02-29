@@ -33,7 +33,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 import re
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
@@ -45,7 +44,6 @@ from uds.core.util.model import sql_datetime
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.module import Module
     from uds.core.types.requests import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)

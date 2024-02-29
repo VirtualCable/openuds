@@ -35,7 +35,7 @@ import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import transports, types, consts
+from uds.core import types
 from uds.core.ui import gui
 from uds.core.util import fields, validators
 from uds.models import TicketStore
@@ -46,7 +46,6 @@ from .rdp_file import RDPFile
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from uds.core.module import Module
     from uds.core.types.requests import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
@@ -123,7 +122,7 @@ class TRDPTransport(BaseRDPTransport):
 
     def get_transport_script(  # pylint: disable=too-many-locals
         self,
-        userService: 'models.UserService',
+        userservice: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
         os: 'types.os.DetectedOsInfo',
@@ -133,7 +132,7 @@ class TRDPTransport(BaseRDPTransport):
     ) -> 'types.transports.TransportScript':
         # We use helper to keep this clean
 
-        ci = self.get_connection_info(userService, user, password)
+        ci = self.get_connection_info(userservice, user, password)
 
         # escape conflicting chars : Note, on 3.0 this should not be neccesary. Kept until more tests
         # password = password.replace('\\', '\\\\').replace('"', '\\"').replace("'", "\\'")
@@ -144,7 +143,7 @@ class TRDPTransport(BaseRDPTransport):
         depth = self.color_depth.value
 
         ticket = TicketStore.create_for_tunnel(
-            userService=userService,
+            userService=userservice,
             port=self.rdp_port.as_int(),
             validity=self.tunnel_wait.as_int() + 60,  # Ticket overtime
         )
@@ -222,6 +221,6 @@ class TRDPTransport(BaseRDPTransport):
                 'Os not valid for RDP Transport: %s',
                 request.META.get('HTTP_USER_AGENT', 'Unknown'),
             )
-            return super().get_transport_script(userService, transport, ip, os, user, password, request)
+            return super().get_transport_script(userservice, transport, ip, os, user, password, request)
 
         return self.get_script(os.os.os_name(), 'tunnel', sp)

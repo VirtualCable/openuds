@@ -44,7 +44,6 @@ from uds.core.util import log
 
 if typing.TYPE_CHECKING:
     from uds.models.user_service import UserService
-    from uds.core.module import Module
 
 logger = logging.getLogger(__name__)
 
@@ -88,16 +87,16 @@ class TestOSManager(osmanagers.OSManager):
     def initialize(self, values: 'types.core.ValuesType') -> None:
         self.handles_unused_userservices = True
 
-    def release(self, userService: 'UserService') -> None:
-        logger.debug('User service %s released', userService)
+    def release(self, userservice: 'UserService') -> None:
+        logger.debug('User service %s released', userservice)
 
-    def is_removable_on_logout(self, userService: 'UserService') -> bool:
+    def is_removable_on_logout(self, userservice: 'UserService') -> bool:
         '''
         Says if a machine is removable on logout
         '''
-        if not userService.in_use:
+        if not userservice.in_use:
             if (self.on_logout.value == 'remove') or (
-                not userService.is_publication_valid() and self.on_logout.value == 'keep'
+                not userservice.is_publication_valid() and self.on_logout.value == 'keep'
             ):
                 return True
 
@@ -109,8 +108,8 @@ class TestOSManager(osmanagers.OSManager):
         """
         return userService.get_name()
 
-    def actor_data(self, userService: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
-        return {'action': 'rename', 'name': userService.get_name()}
+    def actor_data(self, userservice: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
+        return {'action': 'rename', 'name': userservice.get_name()}
 
     def handle_unused(self, userservice: 'UserService') -> None:
         """

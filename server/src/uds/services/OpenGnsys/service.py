@@ -31,11 +31,10 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import types, services, consts
+from uds.core import types, services
 from uds.core.ui import gui
 from uds.core.util import fields
 
@@ -46,7 +45,6 @@ from .publication import OpenGnsysPublication
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from .provider import OGProvider
-    from uds.core.module import Module
 
 logger = logging.getLogger(__name__)
 

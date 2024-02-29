@@ -49,7 +49,7 @@ class Properties(models.Model):
     key = models.CharField(max_length=64, db_index=True)
     value: typing.Any = models.JSONField(default=dict)
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:  # pyright: ignore
         """
         Meta class to declare the name of the table at database
         """

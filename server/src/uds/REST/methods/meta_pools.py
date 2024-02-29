@@ -32,7 +32,6 @@
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
@@ -83,7 +82,7 @@ class MetaPools(ModelHandler):
         'transport_grouping',
     ]
 
-    table_title = typing.cast(str, _('Meta Pools'))
+    table_title = _('Meta Pools')
     table_fields = [
         {'name': {'title': _('Name')}},
         {'comments': {'title': _('Comments')}},
@@ -116,7 +115,7 @@ class MetaPools(ModelHandler):
         # if item does not have an associated service, hide it (the case, for example, for a removed service)
         # Access from dict will raise an exception, and item will be skipped
         poolGroupId = None
-        poolGroupName = typing.cast(str, _('Default'))
+        poolGroupName = _('Default')
         poolGroupThumb = DEFAULT_THUMB_BASE64
         if item.servicesPoolGroup is not None:
             poolGroupId = item.servicesPoolGroup.uuid
@@ -204,7 +203,7 @@ class MetaPools(ModelHandler):
             },
             {
                 'name': 'servicesPoolGroup_id',
-                'choices': [gui.choice_image(-1, typing.cast(str, _('Default')), DEFAULT_THUMB_BASE64)]
+                'choices': [gui.choice_image(-1, _('Default'), DEFAULT_THUMB_BASE64)]
                 + gui.sorted_choices(
                     [
                         gui.choice_image(v.uuid, v.name, v.thumb64)

@@ -52,7 +52,7 @@ class UUIDModel(models.Model):
     # Just a fake declaration to allow type checking
     id: int
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:  # pyright: ignore
         abstract = True
 
     # Override default save to add uuid

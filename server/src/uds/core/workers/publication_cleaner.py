@@ -31,7 +31,6 @@
 """
 from datetime import timedelta
 import logging
-import typing
 import collections.abc
 
 from uds.core.managers import publication_manager

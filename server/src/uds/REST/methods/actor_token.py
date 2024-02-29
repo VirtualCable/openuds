@@ -32,12 +32,12 @@
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_lazy as _
 
 from uds.core import types, consts
 from uds.core.types import permissions
+from uds.core.util import ensure
 from uds.core.util.log import LogLevel
 from uds.models import Server
 from uds.core.exceptions.rest import NotFound, RequestError
@@ -55,7 +55,7 @@ class ActorTokens(ModelHandler):
     model = Server
     model_filter = {'type': types.servers.ServerType.ACTOR}
 
-    table_title = typing.cast(str, _('Actor tokens'))
+    table_title = _('Actor tokens')
     table_fields = [
         # {'token': {'title': _('Token')}},
         {'stamp': {'title': _('Date'), 'type': 'datetime'}},
@@ -68,9 +68,9 @@ class ActorTokens(ModelHandler):
         {'log_level': {'title': _('Log level')}},
     ]
 
-    def item_as_dict(self, item_: 'Model') -> dict[str, typing.Any]:
-        item = typing.cast(Server, item_)
-        data = item.data or {}
+    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
+        item = ensure.is_instance(item, Server)
+        data: dict[str, typing.Any] = item.data or {}
         log_level_int = data.get('log_level', 2)
         if log_level_int < 10000:  # Old log level
             log_level = LogLevel.from_actor_level(log_level_int).name

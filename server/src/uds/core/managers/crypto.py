@@ -39,7 +39,6 @@ import re
 import string
 import logging
 import typing
-import collections.abc
 import secrets
 
 # For password secrets

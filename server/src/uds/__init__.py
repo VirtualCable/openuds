@@ -30,6 +30,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+# pyright: reportUnusedImport=false
 
 # Make sure that all services are "available" at service startup
 import logging

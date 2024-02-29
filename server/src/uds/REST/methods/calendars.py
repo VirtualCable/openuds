@@ -32,7 +32,6 @@
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_lazy as _
 from uds.models import Calendar
@@ -60,7 +59,7 @@ class Calendars(ModelHandler):
 
     save_fields = ['name', 'comments', 'tags']
 
-    table_title = typing.cast(str, _('Calendars'))
+    table_title = _('Calendars')
     table_fields = [
         {
             'name': {

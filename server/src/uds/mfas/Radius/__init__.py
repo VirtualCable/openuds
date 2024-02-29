@@ -25,6 +25,8 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-# pylint: disable=unused-import
+"""
+Author: Adolfo Gómez, dkmaster at dkmon dot com
+"""
+# pyright: reportUnusedImport=false
 from . import mfa

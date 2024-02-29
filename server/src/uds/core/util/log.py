@@ -34,7 +34,6 @@ import os
 import logging
 import logging.handlers
 import typing
-import collections.abc
 import enum
 import re
 
@@ -268,6 +267,6 @@ class UDSLogHandler(logging.handlers.RotatingFileHandler):
             priority = 4 if record.levelno == logging.WARNING else 3 if record.levelno == logging.ERROR else 2
 
             if journal is not None:
-                journal.send(MESSAGE=msg, PRIORITY=priority, SYSLOG_IDENTIFIER=identificator)
+                journal.send(MESSAGE=msg, PRIORITY=priority, SYSLOG_IDENTIFIER=identificator)  # pyright: ignore[reportUnknownMemberType]
 
         return super().emit(record)

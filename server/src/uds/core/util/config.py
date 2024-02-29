@@ -187,11 +187,11 @@ class Config:
                 self.set(self._default)
                 self._data = self._default
             except Exception as e:  # On migration, this could happen
-                logger.info('Error accessing db config %s.%s', self._section.name(), self._key)
+                logger.info('Error accessing db config %s.%s: %s', self._section.name(), self._key, e)
                 # logger.exception(e)
                 self._data = self._default
 
-            return typing.cast(str, self._data)
+            return self._data
 
         def set_params(self, params: typing.Any) -> None:
             _config_params[self._section.name() + self._key] = params
@@ -793,12 +793,12 @@ class GlobalConfig:
                     logger.debug('Get later: %s', c)
                     c.get()
 
-                _for_recovering_later[:] = []
+                _for_recovering_later[:] = []  # pyright: ignore[reportUnknownArgumentType]
 
                 for c, v in _for_saving_later:
                     logger.debug('Saving delayed value: %s', c)
                     c.set(v)
-                _for_saving_later[:] = []
+                _for_saving_later[:] = []  # pyright: ignore[reportUnknownArgumentType]
 
                 # Process some global config parameters
                 # GlobalConfig.UDS_THEME.setParams(['html5', 'semantic'])

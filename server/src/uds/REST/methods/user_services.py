@@ -322,7 +322,6 @@ class Groups(DetailHandler):
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = ensure.is_instance(parent, models.ServicePool)
-        group: models.Group
         return [
             {
                 'id': group.uuid,
@@ -334,7 +333,7 @@ class Groups(DetailHandler):
                 'type': 'meta' if group.is_meta else 'group',
                 'auth_name': group.manager.name,
             }
-            for group in parent.assignedGroups.all()
+            for group in typing.cast(collections.abc.Iterable[models.Group], parent.assignedGroups.all())
         ]
 
     def get_title(self, parent: 'Model') -> str:

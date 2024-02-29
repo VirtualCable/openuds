@@ -30,7 +30,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
 import typing
-import collections.abc
 import re
 import logging
 
@@ -44,7 +43,6 @@ from uds.core.ui import gui
 from uds.core.util import security
 
 if typing.TYPE_CHECKING:
-    from uds.core.module import Module
     from uds.core.types.requests import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)
