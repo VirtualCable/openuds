@@ -34,10 +34,9 @@ import typing
 # We use commit/rollback
 
 from tests.utils.test import UDSTestCase
-from uds.core.managers import crypto
 from uds.core.environment import Environment
 
-from uds.services.PhysicalMachines import provider, service_multi, service_base
+from uds.services.PhysicalMachines import provider, service_multi
 
 
 # if not data.startswith(b'v'):
