@@ -138,11 +138,20 @@ class _MarshalInfo:
     def unmarshal(data: bytes) -> typing.Tuple['_MarshalInfo', bytes]:
         """Field data unmarshalling
 
+            # Serialized data is:
+            # 2 bytes -> name length
+            # 2 bytes -> type name length
+            # 4 bytes -> data length
+            # n bytes -> name
+            # n bytes -> type name
+            # n bytes -> data
+
         Args:
             data: Data to unmarshal
 
         Returns:
-            Tuple with field and remaining data (that is, data without the unmarshalled field)
+            unmarshalled field and remaining data
+            
         """
         # Extract name length, type name length and data length
         name_len, type_name_len, data_len = pack_struct.unpack(data[:8])

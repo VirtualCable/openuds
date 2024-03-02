@@ -35,9 +35,7 @@ import typing
 
 # We use storage, so we need transactional tests
 from tests.utils.test import UDSTransactionTestCase
-from uds.core.util import autoserializable
 from uds.core.environment import Environment
-from uds.services import Proxmox
 
 
 from uds.services.OVirt.deployment import Operation as Operation, OVirtLinkedDeployment as Deployment
@@ -74,7 +72,7 @@ TEST_QUEUE: typing.Final[list[Operation]] = [
 ]
 
 SERIALIZED_DEPLOYMENT_DATA: typing.Final[typing.Mapping[str, bytes]] = {
-    'v1': b'v1\x01name\x01ip\x01mac\x01vmid\x01reason\x01' + pickle.dumps(TEST_QUEUE),
+    'v1': b'v1\x01name\x01ip\x01mac\x01vmid\x01reason\x01' + pickle.dumps(TEST_QUEUE, protocol=0),
 }
 
 LAST_VERSION: typing.Final[str] = sorted(SERIALIZED_DEPLOYMENT_DATA.keys(), reverse=True)[0]

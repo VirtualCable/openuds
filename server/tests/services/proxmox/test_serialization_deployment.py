@@ -37,7 +37,6 @@ import typing
 from ...utils.test import UDSTransactionTestCase
 from ...utils import fake
 
-from uds.core.services import service
 from uds.core.environment import Environment
 
 from uds.services.Proxmox.deployment_linked import Operation as Operation, ProxmoxUserserviceLinked as Deployment
@@ -75,7 +74,7 @@ TEST_QUEUE: typing.Final[list[Operation]] = [
 ]
 
 SERIALIZED_DEPLOYMENT_DATA: typing.Final[typing.Mapping[str, bytes]] = {
-    'v1': b'v1\x01name\x01ip\x01mac\x01task\x01vmid\x01reason\x01' + pickle.dumps(TEST_QUEUE),
+    'v1': b'v1\x01name\x01ip\x01mac\x01task\x01vmid\x01reason\x01' + pickle.dumps(TEST_QUEUE, protocol=0),
 }
 
 LAST_VERSION: typing.Final[str] = sorted(SERIALIZED_DEPLOYMENT_DATA.keys(), reverse=True)[0]
