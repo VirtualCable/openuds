@@ -31,16 +31,17 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from unittest import mock
+from uds import models
 
 from uds.core import types, ui, environment
 from uds.services.Proxmox.provider import ProxmoxProvider
 
 from . import fixtures
 
-from ...utils.test import UDSTestCase
+from ...utils.test import UDSTransactionTestCase
 
 
-class TestProxmovProvider(UDSTestCase):
+class TestProxmovProvider(UDSTransactionTestCase):
     def test_provider_data(self) -> None:
         """
         Test the provider
@@ -290,3 +291,33 @@ class TestProxmovProvider(UDSTestCase):
 
             provider.restore_snapshot(1, 'node', 'name')
             api.restore_snapshot.assert_called_once_with(1, 'node', 'name')
+
+    def test_helpers(self) -> None:
+        """
+        Test the provider helpers
+        """
+        from uds.services.Proxmox.helpers import get_storage, get_machines
+
+        with fixtures.patch_provider_api() as api:
+            provider = fixtures.create_provider()
+            # Ensure exists on db
+            db_provider = models.Provider.objects.create(
+                name='test proxmox provider',
+                comments='test comments',
+                data_type=provider.type_type,
+                data=provider.serialize(),
+            )
+
+            # Test get_storage
+            vm_info = provider.get_machine_info(1)
+            h_storage = get_storage({'prov_uuid': db_provider.uuid, 'machine': '1'})
+            self.assertEqual(
+                list(map(lambda x: x['id'], h_storage[0]['choices'],)),
+                list(map(lambda x: x.storage, filter(lambda x: x.node == vm_info.node, fixtures.STORAGES))),
+            )
+            h_machines = get_machines({'prov_uuid': db_provider.uuid, 'pool': fixtures.POOLS[0].poolid})
+            # Test get_machines
+            self.assertEqual(
+                list(map(lambda x: x['id'], h_machines[0]['choices'],)),
+                list(map(lambda x: str(x.vmid), fixtures.POOLS[0].members)),
+            )
