@@ -298,7 +298,7 @@ class TestProxmovProvider(UDSTransactionTestCase):
         """
         from uds.services.Proxmox.helpers import get_storage, get_machines
 
-        with fixtures.patch_provider_api() as api:
+        with fixtures.patch_provider_api() as _api:
             provider = fixtures.create_provider()
             # Ensure exists on db
             db_provider = models.Provider.objects.create(

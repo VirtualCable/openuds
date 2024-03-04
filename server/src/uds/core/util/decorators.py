@@ -191,7 +191,7 @@ def deprecated_class_value(new_var_name: str) -> collections.abc.Callable[..., t
 
 def ensure_connected(func: FT) -> FT:
     """This decorator calls "connect" method of the class of the wrapped object"""
-
+    @functools.wraps(func)
     def new_func(*args: typing.Any, **kwargs: typing.Any) -> typing.Any:
         args[0].connect()
         return func(*args, **kwargs)
