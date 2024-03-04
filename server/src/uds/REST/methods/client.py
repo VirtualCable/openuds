@@ -63,8 +63,8 @@ class Client(Handler):
     def result(
         result: typing.Any = None,
         error: typing.Optional[typing.Union[str, int]] = None,
-        errorCode: int = 0,
-        retryable: bool = False,
+        error_code: int = 0,
+        is_retrayable: bool = False,
     ) -> dict[str, typing.Any]:
         """
         Helper method to create a "result" set for actor response
@@ -84,16 +84,16 @@ class Client(Handler):
             if isinstance(error, int):
                 error = types.errors.Error.from_int(error).message
             # error = str(error)  # Ensures error is an string
-            if errorCode != 0:
+            if error_code != 0:
                 # Reformat error so it is better understood by users
                 # error += ' (code {0:04X})'.format(errorCode)
                 error = (
                     _('Your service is being created. Please, wait while we complete it')
-                    + f' ({int(errorCode)*25}%)'
+                    + f' ({int(error_code)*25}%)'
                 )
 
             res['error'] = error
-            res['retryable'] = '1' if retryable else '0'
+            res['retryable'] = '1' if is_retrayable else '0'
 
         logger.debug('Client Result: %s', res)
 
@@ -191,7 +191,7 @@ class Client(Handler):
             # Refresh ticket and make this retrayable
             TicketStore.revalidate(ticket, 20)  # Retry will be in at most 5 seconds, so 20 is fine :)
             return Client.result(
-                error=types.errors.Error.SERVICE_IN_PREPARATION, errorCode=e.code, retryable=True
+                error=types.errors.Error.SERVICE_IN_PREPARATION, error_code=e.code, is_retrayable=True
             )
         except Exception as e:
             logger.exception("Exception")

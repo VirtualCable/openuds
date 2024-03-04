@@ -444,7 +444,7 @@ def enable_service(
         # error += ' (code {0:04X})'.format(e.code)
         error = (
             gettext('Your service is being created, please, wait for a few seconds while we complete it.)')
-            + f'({e.code*25}%)'
+            + f'({e.code.as_percent()}%)'
         )
     except MaxServicesReachedError:
         logger.info('Number of service reached MAX for service pool "%s"', idService)

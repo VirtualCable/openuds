@@ -36,6 +36,7 @@ from uds.core.exceptions import UDSException
 
 if typing.TYPE_CHECKING:
     from uds.models import UserService, Transport
+    from uds.core.types.services import ReadyStatus
 
 
 class ServiceException(UDSException):
@@ -109,14 +110,14 @@ class ServiceNotReadyError(ServiceException):
     Can include an optional code error
     """
 
-    code: int
+    code: 'ReadyStatus'
     user_service: typing.Optional['UserService']
     transport: typing.Optional['Transport']
 
     def __init__(
         self,
         *,
-        code: int = 0x0000,
+        code: 'ReadyStatus' = typing.cast('ReadyStatus', 0x0000),  # ReadyStatus.READY
         user_service: typing.Optional['UserService'] = None,
         transport: typing.Optional['Transport'] = None
     ):

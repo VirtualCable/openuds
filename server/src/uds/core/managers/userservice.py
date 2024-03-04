@@ -784,12 +784,13 @@ class UserServiceManager(metaclass=singleton.Singleton):
         if not validate_with_test:
             # traceLogger.info('GOT service "{}" for user "{}" with transport "{}" (NOT TESTED)'.format(userService.name, userName, trans.name))
             return None, user_service, None, transport, None
-
-        serviceNotReadyCode = 0x0001
+        
+        service_status: types.services.ReadyStatus = types.services.ReadyStatus.USERSERVICE_NOT_READY
         ip = 'unknown'
         # Test if the service is ready
         if user_service.is_ready():
-            serviceNotReadyCode = 0x0002
+            # Is ready, update possible state
+            service_status = types.services.ReadyStatus.USERSERVICE_NO_IP
             log.log(
                 user_service,
                 log.LogLevel.INFO,
@@ -803,7 +804,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             logger.debug('IP: %s', ip)
 
             if self.check_user_service_uuid(user_service) is False:  # The service is not the expected one
-                serviceNotReadyCode = 0x0004
+                service_status = types.services.ReadyStatus.USERSERVICE_INVALID_UUID
                 log.log(
                     user_service,
                     log.LogLevel.WARNING,
@@ -821,7 +822,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                     uniqueid=user_service.unique_id,
                 )
                 if ip:
-                    serviceNotReadyCode = 0x0003
+                    service_status = types.services.ReadyStatus.TRANSPORT_NOT_READY
                     transportInstance = transport.get_instance()
                     if transportInstance.is_ip_allowed(user_service, ip):
                         log.log(user_service, log.LogLevel.INFO, "User service ready", log.LogSource.WEB)
@@ -863,13 +864,13 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         trace_logger.error(
             'ERROR %s on service "%s" for user "%s" with transport "%s" (ip:%s)',
-            serviceNotReadyCode,
+            service_status,
             user_service.name,
             userName,
             transport.name,
             ip,
         )
-        raise ServiceNotReadyError(code=serviceNotReadyCode, user_service=user_service, transport=transport)
+        raise ServiceNotReadyError(code=service_status, user_service=user_service, transport=transport)
 
     def is_meta_service(self, meta_id: str) -> bool:
         return meta_id[0] == 'M'
@@ -956,7 +957,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         usable: typing.Optional[tuple[ServicePool, Transport]] = None
         # Now, Lets find first if there is one assigned in ANY pool
 
-        def ensureTransport(
+        def _ensure_transport(
             pool: ServicePool,
         ) -> typing.Optional[tuple[ServicePool, Transport]]:
             found = None
@@ -999,7 +1000,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 raise Exception()  # And process a new access
 
             # Ensure transport is available for the OS, and store it
-            usable = ensureTransport(alreadyAssigned.deployed_service)
+            usable = _ensure_transport(alreadyAssigned.deployed_service)
             # Found already assigned, ensure everythinf is fine
             if usable:
                 return self.get_user_service_info(
@@ -1021,7 +1022,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                         continue
 
                 # Ensure transport is available for the OS
-                usable = ensureTransport(pool)
+                usable = _ensure_transport(pool)
 
                 # Stop if a pool-transport is found and can be assigned to user
                 if usable:

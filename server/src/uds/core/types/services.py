@@ -67,11 +67,13 @@ class ServicesCountingType(enum.IntEnum):
             return ServicesCountingType[value]
         except KeyError:
             return ServicesCountingType.STANDARD
-        
+
+
 @dataclasses.dataclass
 class ConsoleConnectionTicket:
     value: str = ''
     expires: str = ''
+
 
 @dataclasses.dataclass
 class ConsoleConnectionInfo:
@@ -81,13 +83,28 @@ class ConsoleConnectionInfo:
     secure_port: int = -1
     cert_subject: str = ''
     ticket: ConsoleConnectionTicket = dataclasses.field(default_factory=ConsoleConnectionTicket)
-    
+
     ca: str = ''
     proxy: str = ''
     monitors: int = 0
+
 
 @dataclasses.dataclass
 class ConnectionData:
     host: str = ''
     username: str = ''
     password: str = ''
+
+
+class ReadyStatus(enum.IntEnum):
+    READY = 0x0000
+    USERSERVICE_NOT_READY = 0x0001
+    USERSERVICE_NO_IP = 0x0002
+    TRANSPORT_NOT_READY = 0x0003
+    USERSERVICE_INVALID_UUID = 0x0004
+
+    def as_percent(self) -> int:
+        """
+        Returns the code as a percentage (0-100)
+        """
+        return 25 * self.value

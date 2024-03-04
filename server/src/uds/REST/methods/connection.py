@@ -62,8 +62,8 @@ class Connection(Handler):
     def result(
         result: typing.Any = None,
         error: typing.Optional[typing.Union[str, int]] = None,
-        errorCode: int = 0,
-        retryable: bool = False,
+        error_code: int = 0,
+        is_retrayable: bool = False,
     ) -> dict[str, typing.Any]:
         """
         Helper method to create a "result" set for connection response
@@ -77,11 +77,11 @@ class Connection(Handler):
             if isinstance(error, int):
                 error = types.errors.Error.from_int(error).message
             error = str(error)  # Ensure error is an string
-            if errorCode != 0:
-                error += f' (code {errorCode:04X})'
+            if error_code != 0:
+                error += f' (code {error_code:04X})'
             res['error'] = error
 
-        res['retryable'] = '1' if retryable else '0'
+        res['retryable'] = '1' if is_retrayable else '0'
 
         return res
 
@@ -126,7 +126,7 @@ class Connection(Handler):
         except ServiceNotReadyError as e:
             # Refresh ticket and make this retrayable
             return Connection.result(
-                error=types.errors.Error.SERVICE_IN_PREPARATION, errorCode=e.code, retryable=True
+                error=types.errors.Error.SERVICE_IN_PREPARATION, error_code=e.code, is_retrayable=True
             )
         except Exception as e:
             logger.exception("Exception")
@@ -144,7 +144,7 @@ class Connection(Handler):
                 userService,
                 _,  # userServiceInstance,
                 transport,
-                transportInstance,
+                transport_instance,
             ) = res  # pylint: disable=unused-variable
             password = CryptoManager().symmetric_decrypt(self.recover_value('password'), scrambler)
 
@@ -152,10 +152,10 @@ class Connection(Handler):
                 types.connections.ConnectionSource(self._request.ip, hostname)
             )  # Store where we are accessing from so we can notify Service
 
-            if not ip or not transportInstance:
+            if not ip or not transport_instance:
                 raise ServiceNotReadyError()
 
-            transportScript = transportInstance.encoded_transport_script(
+            transportScript = transport_instance.encoded_transport_script(
                 userService,
                 transport,
                 ip,
@@ -168,7 +168,7 @@ class Connection(Handler):
             return Connection.result(result=transportScript)
         except ServiceNotReadyError as e:
             # Refresh ticket and make this retrayable
-            return Connection.result(error=types.errors.Error.SERVICE_IN_PREPARATION, errorCode=e.code, retryable=True)
+            return Connection.result(error=types.errors.Error.SERVICE_IN_PREPARATION, error_code=e.code, is_retrayable=True)
         except Exception as e:
             logger.exception("Exception")
             return Connection.result(error=str(e))

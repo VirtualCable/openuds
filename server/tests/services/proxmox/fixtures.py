@@ -314,15 +314,18 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     AutoSpecMethodInfo(client.ProxmoxClient.list_machines, return_value=VMS_INFO),
     # get_machine_pool_info
     AutoSpecMethodInfo(
-        client.ProxmoxClient.get_machine_pool_info, method=lambda vmid, poolid, **kwargs: VMS_INFO[vmid - 1]  # pyright: ignore
+        client.ProxmoxClient.get_machine_pool_info,
+        method=lambda vmid, poolid, **kwargs: VMS_INFO[vmid - 1],  # pyright: ignore
     ),  # pyright: ignore
     # get_machine_info
     AutoSpecMethodInfo(
-        client.ProxmoxClient.get_machine_info, method=lambda vmid, *args, **kwargs: VMS_INFO[vmid - 1]  # pyright: ignore
+        client.ProxmoxClient.get_machine_info,
+        method=lambda vmid, *args, **kwargs: VMS_INFO[vmid - 1],  # pyright: ignore
     ),  # pyright: ignore
     # get_machine_configuration
     AutoSpecMethodInfo(
-        client.ProxmoxClient.get_machine_configuration, method=lambda vmid, **kwargs: VMS_CONFIGURATION[vmid - 1]  # pyright: ignore
+        client.ProxmoxClient.get_machine_configuration,
+        method=lambda vmid, **kwargs: VMS_CONFIGURATION[vmid - 1],  # pyright: ignore
     ),  # pyright: ignore
     # enable_machine_ha return None
     # start_machine
@@ -350,7 +353,7 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     AutoSpecMethodInfo(
         client.ProxmoxClient.list_storages,
         method=lambda node, **kwargs: (  # pyright: ignore
-            (list(filter(lambda s: s.node == node, STORAGES)))      # pyright: ignore
+            (list(filter(lambda s: s.node == node, STORAGES)))  # pyright: ignore
             if node is not None
             else STORAGES  # pyright: ignore
         ),

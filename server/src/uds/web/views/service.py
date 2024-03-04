@@ -56,7 +56,9 @@ logger = logging.getLogger(__name__)
 
 
 @web_login_required(admin=False)
-def transport_own_link(request: 'ExtendedHttpRequestWithUser', service_id: str, transport_id: str) -> HttpResponse:
+def transport_own_link(
+    request: 'ExtendedHttpRequestWithUser', service_id: str, transport_id: str
+) -> HttpResponse:
     response: collections.abc.MutableMapping[str, typing.Any] = {}
 
     # If userService is not owned by user, will raise an exception
@@ -81,7 +83,7 @@ def transport_own_link(request: 'ExtendedHttpRequestWithUser', service_id: str, 
                 )
             }
     except ServiceNotReadyError as e:
-        response = {'running': e.code * 25}
+        response = {'running': e.code.as_percent()}
     except Exception as e:
         logger.exception("Exception")
         response = {'error': str(e)}
