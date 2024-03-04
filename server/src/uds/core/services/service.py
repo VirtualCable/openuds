@@ -269,6 +269,13 @@ class Service(Module):
         Ideally, availability should be cached for a while, so that we don't have to check it every time.
         """
         return True
+    
+    def can_clean_errored_userservices(self) -> bool:
+        """
+        Returns if this service can clean errored services. This is used to check if a service can be cleaned
+        from the stuck cleaner job, for example. By default, this method returns True.
+        """
+        return True
 
     def unmarshal(self, data: bytes) -> None:
         # In fact, we will not unmarshal anything here, but setup maxDeployed

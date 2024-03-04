@@ -167,42 +167,42 @@ class DeployedServiceRemover(Job):
 
     def run(self) -> None:
         # First check if there is someone in "removable" estate
-        removableServicePools: collections.abc.Iterable[
+        removable_servicepools: collections.abc.Iterable[
             ServicePool
         ] = ServicePool.objects.filter(state=State.REMOVABLE).order_by('state_date')[
             :10
         ]
 
-        for servicePool in removableServicePools:
+        for servicepool in removable_servicepools:
             try:
                 # Skips checking deployed services in maintenance mode
-                if servicePool.is_in_maintenance() is False:
-                    self.start_removal_of(servicePool)
+                if servicepool.is_in_maintenance() is False:
+                    self.start_removal_of(servicepool)
             except Exception as e1:
-                logger.error('Error removing service pool %s: %s', servicePool.name, e1)
+                logger.error('Error removing service pool %s: %s', servicepool.name, e1)
                 try:
-                    servicePool.delete()
+                    servicepool.delete()
                 except Exception as e2:
                     logger.error('Could not delete %s', e2)
 
-        removingServicePools: collections.abc.Iterable[ServicePool] = ServicePool.objects.filter(
+        already_removing_servicepools: collections.abc.Iterable[ServicePool] = ServicePool.objects.filter(
             state=State.REMOVING
         ).order_by('state_date')[:10]
         # Check if they have been removing for a long time.
         # Note. if year is 1972, it comes from a previous version, set state_date to now
         # If in time and not in maintenance mode, continue removing
-        for servicePool in removingServicePools:
+        for servicepool in already_removing_servicepools:
             try:
-                if servicePool.state_date.year == 1972:
-                    servicePool.state_date = sql_datetime()
-                    servicePool.save(update_fields=['state_date'])
-                if servicePool.state_date < sql_datetime() - timedelta(
+                if servicepool.state_date.year == 1972:
+                    servicepool.state_date = sql_datetime()
+                    servicepool.save(update_fields=['state_date'])
+                if servicepool.state_date < sql_datetime() - timedelta(
                     seconds=MAX_REMOVING_TIME
                 ):
-                    self.force_removal_of(servicePool)  # Force removal
+                    self.force_removal_of(servicepool)  # Force removal
 
                 # Skips checking deployed services in maintenance mode
-                if servicePool.is_in_maintenance() is False:
-                    self.continue_removal_of(servicePool)
+                if servicepool.is_in_maintenance() is False:
+                    self.continue_removal_of(servicepool)
             except Exception:
                 logger.exception('Removing deployed service')

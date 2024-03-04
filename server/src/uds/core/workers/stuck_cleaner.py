@@ -43,9 +43,7 @@ from uds.core.util import log
 
 logger = logging.getLogger(__name__)
 
-MAX_STUCK_TIME = (
-    3600 * 24
-)  # At most 1 days "Stuck", not configurable (there is no need to)
+MAX_STUCK_TIME = 3600 * 24  # At most 1 days "Stuck", not configurable (there is no need to)
 
 
 class StuckCleaner(Job):
@@ -70,10 +68,7 @@ class StuckCleaner(Job):
                         Q(
                             userServices__state=State.PREPARING,
                         )
-                        | ~Q(
-                            userServices__state__in=State.INFO_STATES
-                            + State.VALID_STATES
-                        )
+                        | ~Q(userServices__state__in=State.INFO_STATES + State.VALID_STATES)
                     ),
                 )
             )
@@ -89,12 +84,14 @@ class StuckCleaner(Job):
             yield from q.exclude(state__in=State.INFO_STATES + State.VALID_STATES)
             yield from q.filter(state=State.PREPARING)
 
-        for servicePool in servicePoolswithStucks:
+        for servicepool in servicePoolswithStucks:
+            if servicepool.service.get_instance().can_clean_errored_userservices() is False:
+                continue
             # logger.debug('Searching for stuck states for %s', servicePool.name)
-            for stuck in _retrieve_stuck_user_services(servicePool):
+            for stuck in _retrieve_stuck_user_services(servicepool):
                 logger.debug('Found stuck user service %s', stuck)
                 log.log(
-                    servicePool,
+                    servicepool,
                     log.LogLevel.ERROR,
                     f'User service {stuck.name} has been hard removed because it\'s stuck',
                 )
