@@ -25,8 +25,8 @@ def execNewXFreeRdp(xfreerdp, port):
 
 
 # Try to locate a xfreerdp and udsrdp. udsrdp will be used if found.
-xfreerdp = tools.findApp('xfreerdp')
-udsrdp = tools.findApp('udsrdp')
+xfreerdp = tools.find_application('xfreerdp')
+udsrdp = tools.find_application('udsrdp')
 fnc, app = None, None
 
 if xfreerdp:

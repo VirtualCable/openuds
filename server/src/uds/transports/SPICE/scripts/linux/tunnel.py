@@ -8,7 +8,7 @@ import subprocess
 from uds import tools  # type: ignore
 from uds.tunnel import forward  # type: ignore
 
-executable = tools.findApp('remote-viewer')
+executable = tools.find_application('remote-viewer')
 
 if executable is None:
     raise Exception(
@@ -52,5 +52,5 @@ theFile = theFile.format(
     port='-1' if not fs else fs.server_address[1],
 )
 
-filename = tools.saveTempFile(theFile)
+filename = tools.save_temp_file(theFile)
 subprocess.Popen([executable, filename])

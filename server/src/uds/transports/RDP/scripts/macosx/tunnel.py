@@ -38,7 +38,7 @@ msrdc_localized = (
     '/Applications/Microsoft Remote Desktop.localized/Microsoft Remote Desktop.app'
 )
 
-xfreerdp = tools.findApp('xfreerdp')
+xfreerdp = tools.find_application('xfreerdp')
 executable = None
 
 # Check first xfreerdp, allow password redir
@@ -99,7 +99,7 @@ if fs.check() is False:
 if executable in (msrdc, msrdc_localized):
     theFile = theFile = sp['as_file'].format(address=address)  # type: ignore
 
-    filename = tools.saveTempFile(theFile)
+    filename = tools.save_temp_file(theFile)
     # Rename as .rdp, so open recognizes it
     shutil.move(filename, filename + '.rdp')
 
@@ -115,7 +115,7 @@ if executable in (msrdc, msrdc_localized):
             ]
         )
     )
-    tools.addFileToUnlink(filename + '.rdp')
+    tools.register_for_delayed_deletion(filename + '.rdp')
 elif executable == xfreerdp:
     # Fix resolution...
     try:

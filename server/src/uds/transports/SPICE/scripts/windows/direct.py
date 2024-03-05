@@ -16,7 +16,7 @@ for env in ('PROGRAMFILES', 'PROGRAMW6432'):
     if env in os.environ:
         extraPaths += tuple(p + '\\bin' for p in glob.glob(os.environ[env] + '\\VirtViewer*'))  # type: ignore
 
-executable = tools.findApp('remote-viewer.exe', extraPaths)
+executable = tools.find_application('remote-viewer.exe', extraPaths)
 
 if executable is None:
     raise Exception(
@@ -32,6 +32,6 @@ if executable is None:
 
 theFile = sp['as_file']  # type: ignore
 
-filename = tools.saveTempFile(theFile)
+filename = tools.save_temp_file(theFile)
 
 subprocess.Popen([executable, filename])

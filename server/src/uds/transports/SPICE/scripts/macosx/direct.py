@@ -29,6 +29,6 @@ if not os.path.isfile(remoteViewer):
 
 theFile = sp['as_file']  # type: ignore
 
-filename = tools.saveTempFile(theFile)
+filename = tools.save_temp_file(theFile)
 
 subprocess.Popen([remoteViewer, filename])

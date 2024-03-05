@@ -16,7 +16,7 @@ msrdc_localized = (
 )
 # msrdc_app = '/Contents/MacOS/Microsoft Remote Desktop'
 
-xfreerdp = tools.findApp('xfreerdp')
+xfreerdp = tools.find_application('xfreerdp')
 executable = None
 
 
@@ -85,7 +85,7 @@ if executable is None:
         )
 if executable in (msrdc, msrdc_localized):
     theFile = sp['as_file']  # type: ignore
-    filename = tools.saveTempFile(theFile)
+    filename = tools.save_temp_file(theFile)
     # Rename as .rdp, so open recognizes it
     shutil.move(filename, filename + '.rdp')
 
@@ -101,7 +101,7 @@ if executable in (msrdc, msrdc_localized):
             ]
         )
     )
-    tools.addFileToUnlink(filename + '.rdp')
+    tools.register_for_delayed_deletion(filename + '.rdp')
 elif executable == xfreerdp:
     # Fix resolution...
     try:

@@ -45,7 +45,7 @@ theFile = sp['as_file'].format(  # type: ignore
     password=password, address='127.0.0.1:{}'.format(fs.server_address[1])
 )
 
-filename = tools.saveTempFile(theFile)
+filename = tools.save_temp_file(theFile)
 
 if sp['optimize_teams']:  # type: ignore
     try:
@@ -58,10 +58,10 @@ if sp['optimize_teams']:  # type: ignore
     filename = filename + '.rdp'
     os.startfile(filename)  # type: ignore  # nosec
 else:
-    executable = tools.findApp('mstsc.exe')
+    executable = tools.find_application('mstsc.exe')
     if executable is None:
         raise Exception('Unable to find mstsc.exe. Check that path points to your SYSTEM32 folder')
 
     subprocess.Popen([executable, filename])  # nosec
 
-# tools.addFileToUnlink(filename)
+# tools.register_for_delayed_deletion(filename)

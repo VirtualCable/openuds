@@ -10,13 +10,13 @@ from os.path import expanduser
 from uds import tools  # type: ignore
 
 home = expanduser('~').replace('\\', '\\\\') + '#1;'
-keyFile = tools.saveTempFile(sp['key'])  # type: ignore
+keyFile = tools.save_temp_file(sp['key'])  # type: ignore
 # On windows, the separator beween active and not is "#"
 theFile = sp['xf'].format(export='c:\\\\#1;', keyFile=keyFile.replace('\\', '/'), ip=sp['ip'], port=sp['port'])  # type: ignore
-filename = tools.saveTempFile(theFile)
+filename = tools.save_temp_file(theFile)
 
 x2goPath = os.environ['PROGRAMFILES(X86)'] + '\\x2goclient'
-executable = tools.findApp('x2goclient.exe', [x2goPath])
+executable = tools.find_application('x2goclient.exe', [x2goPath])
 if executable is None:
     raise Exception(
         '''<p>You must have installed latest X2GO Client in order to connect to this UDS service.</p>
@@ -36,5 +36,5 @@ subprocess.Popen(
         '--add-to-known-hosts',
     ]
 )
-# tools.addFileToUnlink(filename)
-# tools.addFileToUnlink(keyFile)
+# tools.register_for_delayed_deletion(filename)
+# tools.register_for_delayed_deletion(keyFile)

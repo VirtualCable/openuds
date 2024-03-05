@@ -38,7 +38,7 @@ except Exception as e:  # nosec: Not really interested in the exception
 
 # The password must be encoded, to be included in a .rdp file, as 'UTF-16LE' before protecting (CtrpyProtectData) it in order to work with mstsc
 theFile = sp['as_file'].format(password=password)  # type: ignore
-filename = tools.saveTempFile(theFile)
+filename = tools.save_temp_file(theFile)
 
 if sp['optimize_teams'] == True:  # type: ignore
     try:
@@ -52,7 +52,7 @@ if sp['optimize_teams'] == True:  # type: ignore
     filename = filename + '.rdp'
     os.startfile(filename)  # type: ignore  # nosec
 else:
-    executable = tools.findApp('mstsc.exe')
+    executable = tools.find_application('mstsc.exe')
     if executable is None:
         raise Exception(
             'Unable to find mstsc.exe. Check that path points to your SYSTEM32 folder'
@@ -60,4 +60,4 @@ else:
 
     subprocess.Popen([executable, filename])  # nosec
 
-tools.addFileToUnlink(filename)
+tools.register_for_delayed_deletion(filename)
