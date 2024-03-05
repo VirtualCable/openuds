@@ -13,7 +13,7 @@ def execUdsRdp(udsrdp, port):
     import os.path
 
     params = [os.path.expandvars(i) for i in [udsrdp] + sp['as_new_xfreerdp_params'] + ['/v:127.0.0.1:{}'.format(port)]]  # type: ignore
-    tools.addTaskToWait(subprocess.Popen(params))
+    tools.add_task_to_wait(subprocess.Popen(params))
 
 
 def execNewXFreeRdp(xfreerdp, port):
@@ -21,7 +21,7 @@ def execNewXFreeRdp(xfreerdp, port):
     import os.path
 
     params = [os.path.expandvars(i) for i in [xfreerdp] + sp['as_new_xfreerdp_params'] + ['/v:127.0.0.1:{}'.format(port)]]  # type: ignore
-    tools.addTaskToWait(subprocess.Popen(params))
+    tools.add_task_to_wait(subprocess.Popen(params))
 
 
 # Try to locate a xfreerdp and udsrdp. udsrdp will be used if found.

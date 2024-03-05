@@ -89,9 +89,9 @@ if executable in (msrdc, msrdc_localized):
     # Rename as .rdp, so open recognizes it
     shutil.move(filename, filename + '.rdp')
 
-    # tools.addTaskToWait(subprocess.Popen(['open', filename + '.rdp']))
+    # tools.add_task_to_wait(subprocess.Popen(['open', filename + '.rdp']))
     # Force MSRDP to be used with -a (thanks to Dani Torregrosa @danitorregrosa (https://github.com/danitorregrosa) )
-    tools.addTaskToWait(
+    tools.add_task_to_wait(
         subprocess.Popen(  # nosec  No user input here
             [
                 'open',
