@@ -93,7 +93,8 @@ class Client(Handler):
                 )
 
             res['error'] = error
-            res['retryable'] = '1' if is_retrayable else '0'
+            # is_retrayable is new key, but we keep retryable for compatibility
+            res['is_retryable'] = res['retryable'] = '1' if is_retrayable else '0'
 
         logger.debug('Client Result: %s', res)
 
@@ -220,7 +221,7 @@ class Client(Handler):
                     'requiredVersion': consts.system.REQUIRED_CLIENT_VERSION,  # Compat with old clients, TB removed soon...
                     'required_version': consts.system.REQUIRED_CLIENT_VERSION,
                     'downloadUrl': self._request.build_absolute_uri(reverse('page.client-download')),  # Compat with old clients, TB removed soon...
-                    'download_url': self._request.build_absolute_uri(reverse('page.client-download')),
+                    'client_link': self._request.build_absolute_uri(reverse('page.client-download')),
                 }
             )
 
