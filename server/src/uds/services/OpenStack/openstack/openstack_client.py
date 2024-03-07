@@ -199,7 +199,7 @@ class Client:  # pylint: disable=too-many-public-methods
 
 
     def _getEndpointFor(
-        self, *type_: str
+        self, *type_: str,
     ) -> str:  # If no region is indicatad, first endpoint is returned
         def inner_get(for_type: str) -> str:
             if not self._catalog:
@@ -207,7 +207,8 @@ class Client:  # pylint: disable=too-many-public-methods
             for i in filter(lambda v: v['type'] == for_type, self._catalog):
                 for j in filter(lambda v: v['interface'] == self._access, i['endpoints']):
                     if not self._region or j['region'] == self._region:
-                        return j['url']
+                        if 'myhuaweicloud.eu/V1.0' not in j['url']:
+                            return j['url']
             raise Exception('No endpoint url found')
         for t in type_:
             try:
