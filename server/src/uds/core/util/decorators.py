@@ -257,7 +257,7 @@ def cached(
             # Not inspectable, no caching possible, return original function
             return fnc
 
-        lkey_fnc = key_helper or (lambda x: fnc.__name__)
+        lkey_fnc: collections.abc.Callable[[str], str] = key_helper or (lambda x: fnc.__name__)
 
         @functools.wraps(fnc)
         def wrapper(*args: typing.Any, **kwargs: typing.Any) -> typing.Any:

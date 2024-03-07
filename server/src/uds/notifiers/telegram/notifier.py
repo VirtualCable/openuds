@@ -131,31 +131,31 @@ class TelegramNotifier(messaging.Notifier):
         telegramMsg = f'{group} - {identificator} - {str(level)}: {message}'
         logger.debug('Sending telegram message: %s', telegramMsg)
         # load chat_ids
-        chat_ids = self.storage.get_unpickle('chat_ids') or []
+        chat_ids: list[int] = self.storage.get_unpickle('chat_ids') or []
         t = telegram.Telegram(self.access_token.value)  # Only writing, can ingnore last_offset
-        for chatId in chat_ids:
+        for chad_id in chat_ids:
             with ignore_exceptions():
-                t.send_message(chatId, telegramMsg)
+                t.send_message(chad_id, telegramMsg)
                 # Wait a bit, so we don't send more than 10 messages per second
                 time.sleep(0.1)
 
     def subscribe_user(self, chat_id: int) -> None:
         # we do not expect to have a lot of users, so we will use a simple storage
         # that holds a list of chat_ids
-        chat_ids = self.storage.get_unpickle('chat_ids') or []
+        chat_ids: list[int] = self.storage.get_unpickle('chat_ids') or []
         if chat_id not in chat_ids:
             chat_ids.append(chat_id)
             self.storage.put_pickle('chat_ids', chat_ids)
             logger.info('User %s subscribed to notifications', chat_id)
 
-    def unsubscrite_user(self, chatId: int) -> None:
+    def unsubscrite_user(self, chat_id: int) -> None:
         # we do not expect to have a lot of users, so we will use a simple storage
         # that holds a list of chat_ids
-        chat_ids = self.storage.get_unpickle('chat_ids') or []
-        if chatId in chat_ids:
-            chat_ids.remove(chatId)
+        chat_ids: list[int] = self.storage.get_unpickle('chat_ids') or []
+        if chat_id in chat_ids:
+            chat_ids.remove(chat_id)
             self.storage.put_pickle('chat_ids', chat_ids)
-            logger.info('User %s unsubscribed from notifications', chatId)
+            logger.info('User %s unsubscribed from notifications', chat_id)
 
     def retrieve_messages(self) -> None:
         if not self.access_token.value.strip():

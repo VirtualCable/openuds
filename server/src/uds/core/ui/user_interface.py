@@ -1621,7 +1621,7 @@ class UserInterface(metaclass=UserInterfaceType):
             logger.info('Empty values on unserialize_fields')
             return False
 
-        fields = serializer.deserialize(values) or []
+        fields: list[typing.Any] = serializer.deserialize(values) or []
 
         # Dict of translations from old_field_name to field_name
         field_names_translations: dict[str, str] = self._get_fieldname_translations()

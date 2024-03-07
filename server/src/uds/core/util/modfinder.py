@@ -147,7 +147,7 @@ def dynamically_load_and_register_packages(
     # Ensures all modules under modName (and optionally packageName) are imported
     import_modules(module_name, package_name=package_name)
 
-    checkFnc = checker or (lambda x: True)
+    check_function: collections.abc.Callable[[type[V]], bool] = checker or (lambda x: True)
 
     def process(classes: collections.abc.Iterable[type[V]]) -> None:
         cls: type[V]
@@ -157,7 +157,7 @@ def dynamically_load_and_register_packages(
             if clsSubCls:
                 process(clsSubCls)  # recursive add sub classes
 
-            if not checkFnc(cls):
+            if not check_function(cls):
                 logger.debug('Node is a not accepted, skipping: %s.%s', cls.__module__, cls.__name__)
                 continue
 
