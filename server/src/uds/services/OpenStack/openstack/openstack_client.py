@@ -80,7 +80,8 @@ def ensureResponseIsValid(
 
 
 def getRecurringUrlJson(
-    url: str,
+    endpoint: str,
+    path: str,
     session: 'requests.Session',
     headers: typing.Dict[str, str],
     key: str,
@@ -89,6 +90,7 @@ def getRecurringUrlJson(
     timeout: int = 10,
 ) -> typing.Iterable[typing.Any]:
     counter = 0
+    url = endpoint + path
     while True:
         counter += 1
         logger.debug('Requesting url #%s: %s / %s', counter, url, params)
@@ -107,6 +109,9 @@ def getRecurringUrlJson(
             break
 
         url = j['next']
+        if not url.startswith('http'):
+            url = endpoint + url
+            
 
 
 RT = typing.TypeVar('RT')
@@ -298,7 +303,8 @@ class Client:  # pylint: disable=too-many-public-methods
     @authRequired
     def listProjects(self) -> typing.Iterable[typing.Any]:
         return getRecurringUrlJson(
-            self._authUrl + 'v3/users/{user_id}/projects'.format(user_id=self._userId),
+            self._authUrl,
+            'v3/users/{user_id}/projects'.format(user_id=self._userId),
             self._session,
             headers=self._requestHeaders(),
             key='projects',
@@ -309,7 +315,8 @@ class Client:  # pylint: disable=too-many-public-methods
     @authRequired
     def listRegions(self) -> typing.Iterable[typing.Any]:
         return getRecurringUrlJson(
-            self._authUrl + 'v3/regions/',
+            self._authUrl,
+            'v3/regions/',
             self._session,
             headers=self._requestHeaders(),
             key='regions',
@@ -325,7 +332,8 @@ class Client:  # pylint: disable=too-many-public-methods
     ) -> typing.Iterable[typing.Any]:
         path = '/servers' + ('/detail' if detail is True else '')
         return getRecurringUrlJson(
-            self._getEndpointFor('compute', 'compute_legacy') + path,
+            self._getEndpointFor('compute', 'compute_legacy'),
+            path,
             self._session,
             headers=self._requestHeaders(),
             key='servers',
@@ -337,7 +345,8 @@ class Client:  # pylint: disable=too-many-public-methods
     @authProjectRequired
     def listImages(self) -> typing.Iterable[typing.Any]:
         return getRecurringUrlJson(
-            self._getEndpointFor('image') + '/v2/images?status=active',
+            self._getEndpointFor('image'),
+            '/v2/images?status=active',
             self._session,
             headers=self._requestHeaders(),
             key='images',
@@ -348,7 +357,8 @@ class Client:  # pylint: disable=too-many-public-methods
     @authProjectRequired
     def listVolumeTypes(self) -> typing.Iterable[typing.Any]:
         return getRecurringUrlJson(
-            self._getEndpointFor(self._volume) + '/types',
+            self._getEndpointFor(self._volume),
+            '/types',
             self._session,
             headers=self._requestHeaders(),
             key='volume_types',
@@ -359,7 +369,8 @@ class Client:  # pylint: disable=too-many-public-methods
     @authProjectRequired
     def listVolumes(self) -> typing.Iterable[typing.Any]:
         return getRecurringUrlJson(
-            self._getEndpointFor(self._volume) + '/volumes/detail',
+            self._getEndpointFor(self._volume),
+            '/volumes/detail',
             self._session,
             headers=self._requestHeaders(),
             key='volumes',
@@ -372,7 +383,8 @@ class Client:  # pylint: disable=too-many-public-methods
         self, volumeId: typing.Optional[typing.Dict[str, typing.Any]] = None
     ) -> typing.Iterable[typing.Any]:
         for s in getRecurringUrlJson(
-            self._getEndpointFor(self._volume) + '/snapshots',
+            self._getEndpointFor(self._volume),
+            '/snapshots',
             self._session,
             headers=self._requestHeaders(),
             key='snapshots',
@@ -385,7 +397,8 @@ class Client:  # pylint: disable=too-many-public-methods
     @authProjectRequired
     def listAvailabilityZones(self) -> typing.Iterable[typing.Any]:
         for az in getRecurringUrlJson(
-            self._getEndpointFor('compute', 'compute_legacy') + '/os-availability-zone',
+            self._getEndpointFor('compute', 'compute_legacy'),
+            '/os-availability-zone',
             self._session,
             headers=self._requestHeaders(),
             key='availabilityZoneInfo',
@@ -398,7 +411,8 @@ class Client:  # pylint: disable=too-many-public-methods
     @authProjectRequired
     def listFlavors(self) -> typing.Iterable[typing.Any]:
         return getRecurringUrlJson(
-            self._getEndpointFor('compute', 'compute_legacy') + '/flavors',
+            self._getEndpointFor('compute', 'compute_legacy'),
+            '/flavors',
             self._session,
             headers=self._requestHeaders(),
             key='flavors',
@@ -409,7 +423,8 @@ class Client:  # pylint: disable=too-many-public-methods
     @authProjectRequired
     def listNetworks(self, nameFromSubnets=False) -> typing.Iterable[typing.Any]:
         nets = getRecurringUrlJson(
-            self._getEndpointFor('network') + '/v2.0/networks',
+            self._getEndpointFor('network'),
+            '/v2.0/networks',
             self._session,
             headers=self._requestHeaders(),
             key='networks',
@@ -434,7 +449,8 @@ class Client:  # pylint: disable=too-many-public-methods
     @authProjectRequired
     def listSubnets(self) -> typing.Iterable[typing.Any]:
         return getRecurringUrlJson(
-            self._getEndpointFor('network') + '/v2.0/subnets',
+            self._getEndpointFor('network'),
+            '/v2.0/subnets',
             self._session,
             headers=self._requestHeaders(),
             key='subnets',
@@ -455,7 +471,8 @@ class Client:  # pylint: disable=too-many-public-methods
             params['device_owner'] = ownerId
 
         return getRecurringUrlJson(
-            self._getEndpointFor('network') + '/v2.0/ports',
+            self._getEndpointFor('network'),
+            '/v2.0/ports',
             self._session,
             headers=self._requestHeaders(),
             key='ports',
@@ -467,7 +484,8 @@ class Client:  # pylint: disable=too-many-public-methods
     @authProjectRequired
     def listSecurityGroups(self) -> typing.Iterable[typing.Any]:
         return getRecurringUrlJson(
-            self._getEndpointFor('compute', 'compute_legacy') + '/os-security-groups',
+            self._getEndpointFor('compute', 'compute_legacy'),
+            '/os-security-groups',
             self._session,
             headers=self._requestHeaders(),
             key='security_groups',
