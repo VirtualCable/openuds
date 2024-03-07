@@ -118,25 +118,23 @@ class OpenStackLiveService(services.Service):
         fills={
             'callback_name': 'osFillResources',
             'function': helpers.get_resources,
-            'parameters': ['ov', 'ev', 'project', 'region', 'legacy'],
+            'parameters': ['parent_uuid', 'project', 'region'],
         },
         tooltip=_('Project for this service'),
         required=True,
         readonly=True,
     )
-    availabilityZone = gui.ChoiceField(
+    availability_zone = gui.ChoiceField(
         label=_('Availability Zones'),
         order=3,
         fills={
             'callback_name': 'osFillVolumees',
             'function': helpers.get_volumes,
             'parameters': [
-                'ov',
-                'ev',
+                'parent_uuid',
                 'project',
                 'region',
-                'availabilityZone',
-                'legacy',
+                'availability_zone',
             ],
         },
         tooltip=_('Service availability zones'),
@@ -167,12 +165,13 @@ class OpenStackLiveService(services.Service):
         tab=_('Machine'),
     )
 
-    securityGroups = gui.MultiChoiceField(
+    security_groups = gui.MultiChoiceField(
         label=_('Security Groups'),
         order=8,
         tooltip=_('Service security groups'),
         required=True,
         tab=_('Machine'),
+        old_field_name='securityGroups',
     )
 
     baseName = gui.TextField(
@@ -194,11 +193,8 @@ class OpenStackLiveService(services.Service):
         tab=_('Machine'),
     )
 
-    ov = gui.HiddenField(value=None)
-    ev = gui.HiddenField(value=None)
-    legacy = gui.HiddenField(
-        value=None
-    )  # We need to keep the env so we can instantiate the Provider
+    parent_uuid = gui.HiddenField(
+    )
 
     _api: typing.Optional['openstack.Client'] = None
 
@@ -250,10 +246,8 @@ class OpenStackLiveService(services.Service):
 
         # So we can instantiate parent to get API
         logger.debug(self.provider().serialize())
-
-        self.ov.value = self.provider().serialize()
-        self.ev.value = self.provider().env.key
-        self.legacy.value = gui.bool_as_str(self.provider().legacy)
+        
+        self.parent_uuid = self.provider().get_uuid()
 
     @property
     def api(self) -> 'openstack.Client':
@@ -283,7 +277,7 @@ class OpenStackLiveService(services.Service):
         """
         return self.api.get_snapshot(snapshot_id)
 
-    def deploy_from_template(self, name: str, snapshotId: str) -> str:
+    def deploy_from_template(self, name: str, snapshot_id: str) -> str:
         """
         Deploys a virtual machine on selected cluster from selected template
 
@@ -295,15 +289,15 @@ class OpenStackLiveService(services.Service):
         Returns:
             Id of the machine being created form template
         """
-        logger.debug('Deploying from template %s machine %s', snapshotId, name)
+        logger.debug('Deploying from template %s machine %s', snapshot_id, name)
         # self.datastoreHasSpace()
         return self.api.create_server_from_snapshot(
-            snapshotId=snapshotId,
+            snapshot_id=snapshot_id,
             name=name,
-            availabilityZone=self.availabilityZone.value,
-            flavorId=self.flavor.value,
-            networkId=self.network.value,
-            securityGroupsIdsList=self.securityGroups.value,
+            availability_zone=self.availability_zone.value,
+            flavor_id=self.flavor.value,
+            network_id=self.network.value,
+            security_groups_ids=self.security_groups.value,
         )['id']
 
     def remove_template(self, templateId: str) -> None:

@@ -33,6 +33,8 @@ import logging
 import typing
 
 from django.utils.translation import gettext as _
+
+from uds import models
 from uds.core import types
 from uds.core.ui import gui
 
@@ -44,23 +46,18 @@ logger = logging.getLogger(__name__)
 def getApi(parameters: dict[str, str]) -> tuple[openstack.Client, bool]:
     from .provider_legacy import ProviderLegacy
     from .provider import OpenStackProvider
-    from uds.core.environment import Environment
 
-    env = Environment(parameters['ev'])
-    provider: typing.Union[ProviderLegacy, OpenStackProvider]
-    if parameters['legacy'] == 'true':
-        provider = ProviderLegacy(env)
-    else:
-        provider = OpenStackProvider(env)
-
-    provider.deserialize(parameters['ov'])
+    provider = typing.cast(
+        typing.Union[ProviderLegacy, OpenStackProvider],
+        models.Provider.objects.get(uuid=parameters['prov_uuid']).get_instance(),
+    )
 
     if isinstance(provider, OpenStackProvider):
-        useSubnetsName = provider.use_subnets_name.as_bool()
+        use_subnets_names = provider.use_subnets_name.as_bool()
     else:
-        useSubnetsName = False
+        use_subnets_names = False
 
-    return (provider.api(parameters['project'], parameters['region']), useSubnetsName)
+    return (provider.api(parameters['project'], parameters['region']), use_subnets_names)
 
 
 def get_resources(
@@ -69,12 +66,12 @@ def get_resources(
     '''
     This helper is designed as a callback for Project Selector
     '''
-    api, nameFromSubnets = getApi(parameters)
+    api, name_from_subnets = getApi(parameters)
 
     zones = [gui.choice_item(z, z) for z in api.list_availability_zones()]
     networks = [
         gui.choice_item(z['id'], z['name'])
-        for z in api.list_networks(nameFromSubnets=nameFromSubnets)
+        for z in api.list_networks(name_from_subnets=name_from_subnets)
     ]
     flavors = [gui.choice_item(z['id'], z['name']) for z in api.list_flavors()]
     securityGroups = [

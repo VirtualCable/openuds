@@ -832,12 +832,12 @@ class Client:  # pylint: disable=too-many-public-methods
 
     def create_server_from_snapshot(
         self,
-        snapshotId: str,
+        snapshot_id: str,
         name: str,
         availability_zone: str,
-        flavorId: str,
-        networkId: str,
-        securityGroupsIdsList: collections.abc.Iterable[str],
+        flavor_id: str,
+        network_id: str,
+        security_groups_ids: collections.abc.Iterable[str],
         count: int = 1,
     ) -> dict[str, typing.Any]:
         data = {
@@ -850,7 +850,7 @@ class Client:  # pylint: disable=too-many-public-methods
                 'block_device_mapping_v2': [
                     {
                         'boot_index': '0',
-                        'uuid': snapshotId,
+                        'uuid': snapshot_id,
                         # 'volume_size': 1,
                         # 'device_name': 'vda',
                         'source_type': 'snapshot',
@@ -858,12 +858,12 @@ class Client:  # pylint: disable=too-many-public-methods
                         'delete_on_termination': True,
                     }
                 ],
-                'flavorRef': flavorId,
+                'flavorRef': flavor_id,
                 # 'OS-DCF:diskConfig': 'AUTO',
                 'max_count': count,
                 'min_count': count,
-                'networks': [{'uuid': networkId}],
-                'security_groups': [{'name': sg} for sg in securityGroupsIdsList],
+                'networks': [{'uuid': network_id}],
+                'security_groups': [{'name': sg} for sg in security_groups_ids],
             }
         }
 
