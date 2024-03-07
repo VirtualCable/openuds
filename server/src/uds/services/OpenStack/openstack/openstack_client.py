@@ -323,7 +323,7 @@ class Client:  # pylint: disable=too-many-public-methods
         detail: bool = False,
         params: typing.Optional[typing.Dict[str, str]] = None,
     ) -> typing.Iterable[typing.Any]:
-        path = '/servers/' + 'detail' if detail is True else ''
+        path = '/servers' + ('/detail' if detail is True else '')
         return getRecurringUrlJson(
             self._getEndpointFor('compute', 'compute_legacy') + path,
             self._session,
