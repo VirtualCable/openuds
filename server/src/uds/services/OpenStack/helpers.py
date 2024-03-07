@@ -71,17 +71,17 @@ def get_resources(
     '''
     api, nameFromSubnets = getApi(parameters)
 
-    zones = [gui.choice_item(z, z) for z in api.listAvailabilityZones()]
+    zones = [gui.choice_item(z, z) for z in api.list_availability_zones()]
     networks = [
         gui.choice_item(z['id'], z['name'])
-        for z in api.listNetworks(nameFromSubnets=nameFromSubnets)
+        for z in api.list_networks(nameFromSubnets=nameFromSubnets)
     ]
-    flavors = [gui.choice_item(z['id'], z['name']) for z in api.listFlavors()]
+    flavors = [gui.choice_item(z['id'], z['name']) for z in api.list_flavors()]
     securityGroups = [
-        gui.choice_item(z['id'], z['name']) for z in api.listSecurityGroups()
+        gui.choice_item(z['id'], z['name']) for z in api.list_security_groups()
     ]
     volumeTypes = [gui.choice_item('-', _('None'))] + [
-        gui.choice_item(t['id'], t['name']) for t in api.listVolumeTypes()
+        gui.choice_item(t['id'], t['name']) for t in api.list_volume_types()
     ]
 
     data: types.ui.CallbackResultType = [
@@ -105,7 +105,7 @@ def get_volumes(
     # Source volumes are all available for us
     # volumes = [gui.choice_item(v['id'], v['name']) for v in api.listVolumes() if v['name'] != '' and v['availability_zone'] == parameters['availabilityZone']]
     volumes = [
-        gui.choice_item(v['id'], v['name']) for v in api.listVolumes() if v['name'] != ''
+        gui.choice_item(v['id'], v['name']) for v in api.list_volumes() if v['name'] != ''
     ]
 
     data: types.ui.CallbackResultType = [

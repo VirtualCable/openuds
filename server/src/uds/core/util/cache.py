@@ -53,7 +53,6 @@ class Cache:
     misses = 0
 
     _owner: str
-    _bowner: bytes
 
     @staticmethod
     def _basic_serialize(value: typing.Any) -> str:
@@ -68,18 +67,17 @@ class Cache:
 
     def __init__(self, owner: typing.Union[str, bytes]):
         self._owner = owner.decode('utf-8') if isinstance(owner, bytes) else owner
-        self._bowner = self._owner.encode('utf8')
 
-    def __get_key(self, key: typing.Union[str, bytes]) -> str:
+    def _get_key(self, key: typing.Union[str, bytes]) -> str:
         if isinstance(key, str):
             key = key.encode('utf8')
-        return hash_key(self._bowner + key)
+        return hash_key(self._owner.encode() + key)
 
     def get(self, skey: typing.Union[str, bytes], default: typing.Any = None) -> typing.Any:
         now = sql_datetime()
         # logger.debug('Requesting key "%s" for cache "%s"', skey, self._owner)
         try:
-            key = self.__get_key(skey)
+            key = self._get_key(skey)
             # logger.debug('Key: %s', key)
             c: DBCache = DBCache.objects.get(owner=self._owner, pk=key)
             # If expired
@@ -133,7 +131,7 @@ class Cache:
         """
         # logger.debug('Removing key "%s" for uService "%s"' % (skey, self._owner))
         try:
-            key = self.__get_key(skey)
+            key = self._get_key(skey)
             DBCache.objects.get(pk=key).delete()  # @UndefinedVariable
             return True
         except DBCache.DoesNotExist:  # @UndefinedVariable
@@ -159,7 +157,7 @@ class Cache:
         # logger.debug('Saving key "%s" for cache "%s"' % (skey, self._owner,))
         if validity is None:
             validity = consts.cache.DEFAULT_CACHE_TIMEOUT
-        key = self.__get_key(skey)
+        key = self._get_key(skey)
         strValue = Cache._serializer(value)
         now = sql_datetime()
         # Remove existing if any and create a new one
@@ -200,7 +198,7 @@ class Cache:
     def refresh(self, skey: typing.Union[str, bytes]) -> None:
         # logger.debug('Refreshing key "%s" for cache "%s"' % (skey, self._owner,))
         try:
-            key = self.__get_key(skey)
+            key = self._get_key(skey)
             c = DBCache.objects.get(pk=key)
             c.created = sql_datetime()
             c.save()

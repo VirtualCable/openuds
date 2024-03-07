@@ -236,7 +236,7 @@ class OpenStackLiveService(services.Service):
                 gui.choice_item(parentCurrent.region.value, parentCurrent.region.value)
             ]
         else:
-            regions = [gui.choice_item(r['id'], r['id']) for r in api.listRegions()]
+            regions = [gui.choice_item(r['id'], r['id']) for r in api.list_regions()]
 
         self.region.set_choices(regions)
 
@@ -245,7 +245,7 @@ class OpenStackLiveService(services.Service):
                 gui.choice_item(parentCurrent.tenant.value, parentCurrent.tenant.value)
             ]
         else:
-            tenants = [gui.choice_item(t['id'], t['name']) for t in api.listProjects()]
+            tenants = [gui.choice_item(t['id'], t['name']) for t in api.list_projects()]
         self.project.set_choices(tenants)
 
         # So we can instantiate parent to get API
@@ -340,7 +340,7 @@ class OpenStackLiveService(services.Service):
                 VERIFY_RESIZE. System is awaiting confirmation that the server is operational after a move or resize.
                 SHUTOFF. The server was powered down by the user, either through the OpenStack Compute API or from within the server. For example, the user issued a shutdown -h command from within the server. If the OpenStack Compute manager detects that the VM was powered down, it transitions the server to the SHUTOFF status.
         """
-        server = self.api.getServer(machineId)
+        server = self.api.get_server(machineId)
         if server['status'] in ('ERROR', 'DELETED'):
             logger.warning(
                 'Got server status %s for %s: %s',
@@ -422,7 +422,7 @@ class OpenStackLiveService(services.Service):
         """
         Gets the mac address of first nic of the machine
         """
-        net = self.api.getServer(machineid)['addresses']
+        net = self.api.get_server(machineid)['addresses']
         vals = next(iter(net.values()))[
             0
         ]  # Returns "any" mac address of any interface. We just need only one interface info
