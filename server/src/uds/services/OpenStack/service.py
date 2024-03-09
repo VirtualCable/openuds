@@ -36,11 +36,12 @@ import typing
 from django.utils.translation import gettext_noop as _
 
 from uds.core import services, types
-from uds.core.util import validators
+from uds.core.util import fields, validators
 from uds.core.ui import gui
 
 from .publication import OpenStackLivePublication
 from .deployment import OpenStackLiveDeployment
+from .openstack import types as openstack_types, openstack_client
 from . import helpers
 
 
@@ -48,7 +49,6 @@ logger = logging.getLogger(__name__)
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from . import openstack
     from .provider import OpenStackProvider
     from .provider_legacy import OpenStackProviderLegacy
 
@@ -101,8 +101,6 @@ class OpenStackLiveService(services.Service):
 
     allowed_protocols = types.transports.Protocol.generic_vdi(types.transports.Protocol.SPICE)
     services_type_provided = types.services.ServiceType.VDI
-
-
 
     # Now the form part
     region = gui.ChoiceField(
@@ -174,31 +172,16 @@ class OpenStackLiveService(services.Service):
         old_field_name='securityGroups',
     )
 
-    baseName = gui.TextField(
-        label=_('Machine Names'),
-        readonly=False,
-        order=9,
-        tooltip=_('Base name for clones from this machine'),
-        required=True,
-        tab=_('Machine'),
-    )
+    basename = fields.basename_field(order=9, tab=_('Machine'))
+    lenname = fields.lenname_field(order=10, tab=_('Machine'))
 
-    lenName = gui.NumericField(
-        length=1,
-        label=_('Name Length'),
-        default=5,
-        order=10,
-        tooltip=_('Size of numeric part for the names of these machines'),
-        required=True,
-        tab=_('Machine'),
-    )
+    maintain_on_error = fields.maintain_on_error_field(order=104)
 
-    parent_uuid = gui.HiddenField(
-    )
+    parent_uuid = gui.HiddenField()
 
-    _api: typing.Optional['openstack.Client'] = None
+    _api: typing.Optional['openstack_client.OpenstackClient'] = None
 
-    def initialize(self, values: types.core.ValuesType) -> None: 
+    def initialize(self, values: types.core.ValuesType) -> None:
         """
         We check here form values to see if they are valid.
 
@@ -206,7 +189,7 @@ class OpenStackLiveService(services.Service):
         initialized by __init__ method of base class, before invoking this.
         """
         if values:
-            validators.validate_basename(self.baseName.value, self.lenName.as_int())
+            validators.validate_basename(self.basename.value, self.lenname.as_int())
 
         # self.ov.value = self.provider().serialize()
         # self.ev.value = self.provider().env.key
@@ -221,55 +204,45 @@ class OpenStackLiveService(services.Service):
         api = self.provider().api()
 
         # Checks if legacy or current openstack provider
-        parent = (
-            typing.cast('OpenStackProvider', self.provider())
-            if not self.provider().legacy
-            else None
-        )
+        parent = typing.cast('OpenStackProvider', self.provider()) if not self.provider().legacy else None
 
         if parent and parent.region.value:
-            regions = [
-                gui.choice_item(parent.region.value, parent.region.value)
-            ]
+            regions = [gui.choice_item(parent.region.value, parent.region.value)]
         else:
             regions = [gui.choice_item(r.id, r.name) for r in api.list_regions()]
 
         self.region.set_choices(regions)
 
         if parent and parent.tenant.value:
-            tenants = [
-                gui.choice_item(parent.tenant.value, parent.tenant.value)
-            ]
+            tenants = [gui.choice_item(parent.tenant.value, parent.tenant.value)]
         else:
             tenants = [gui.choice_item(t.id, t.name) for t in api.list_projects()]
         self.project.set_choices(tenants)
 
         # So we can instantiate parent to get API
         logger.debug(self.provider().serialize())
-        
+
         self.parent_uuid.value = self.provider().get_uuid()
 
     @property
-    def api(self) -> 'openstack.Client':
+    def api(self) -> 'openstack_client.OpenstackClient':
         if not self._api:
-            self._api = self.provider().api(
-                projectid=self.project.value, region=self.region.value
-            )
+            self._api = self.provider().api(projectid=self.project.value, region=self.region.value)
 
         return self._api
 
     def sanitized_name(self, name: str) -> str:
         return self.provider().sanitized_name(name)
 
-    def make_template(self, template_name: str, description: typing.Optional[str] = None) -> dict[str, typing.Any]:
+    def make_template(
+        self, template_name: str, description: typing.Optional[str] = None
+    ) -> dict[str, typing.Any]:
         # First, ensures that volume has not any running instances
         # if self.api.getVolume(self.volume.value)['status'] != 'available':
         #    raise Exception('The Volume is in use right now. Ensure that there is no machine running before publishing')
 
         description = description or 'UDS Template snapshot'
-        return self.api.create_volume_snapshot(
-            self.volume.value, template_name, description
-        )
+        return self.api.create_volume_snapshot(self.volume.value, template_name, description)
 
     def get_template(self, snapshot_id: str) -> dict[str, typing.Any]:
         """
@@ -306,43 +279,20 @@ class OpenStackLiveService(services.Service):
         """
         self.api.delete_snapshot(templateId)
 
-    def get_machine_state(self, machineId: str) -> str:
-        """
-        Invokes getServer from openstack client
-
-        Args:
-            machineId: If of the machine to get state
-
-        Returns:
-            one of this values:
-                ACTIVE. The server is active.
-                BUILDING. The server has not finished the original build process.
-                DELETED. The server is permanently deleted.
-                ERROR. The server is in error.
-                HARD_REBOOT. The server is hard rebooting. This is equivalent to pulling the power plug on a physical server, plugging it back in, and rebooting it.
-                MIGRATING. The server is being migrated to a new host.
-                PASSWORD. The password is being reset on the server.
-                PAUSED. In a paused state, the state of the server is stored in RAM. A paused server continues to run in frozen state.
-                REBOOT. The server is in a soft reboot state. A reboot command was passed to the operating system.
-                REBUILD. The server is currently being rebuilt from an image.
-                RESCUED. The server is in rescue mode. A rescue image is running with the original server image attached.
-                RESIZED. Server is performing the differential copy of data that changed during its initial copy. Server is down for this stage.
-                REVERT_RESIZE. The resize or migration of a server failed for some reason. The destination server is being cleaned up and the original source server is restarting.
-                SOFT_DELETED. The server is marked as deleted but the disk images are still available to restore.
-                STOPPED. The server is powered off and the disk image still persists.
-                SUSPENDED. The server is suspended, either by request or necessity. This status appears for only the XenServer/XCP, KVM, and ESXi hypervisors. Administrative users can suspend an instance if it is infrequently used or to perform system maintenance. When you suspend an instance, its VM state is stored on disk, all memory is written to disk, and the virtual machine is stopped. Suspending an instance is similar to placing a device in hibernation; memory and vCPUs become available to create other instances.
-                VERIFY_RESIZE. System is awaiting confirmation that the server is operational after a move or resize.
-                SHUTOFF. The server was powered down by the user, either through the OpenStack Compute API or from within the server. For example, the user issued a shutdown -h command from within the server. If the OpenStack Compute manager detects that the VM was powered down, it transitions the server to the SHUTOFF status.
-        """
-        server = self.api.get_server(machineId)
-        if server['status'] in ('ERROR', 'DELETED'):
+    def get_machine_state(self, machine_id: str) -> openstack_types.Status:
+        vminfo = self.api.get_server(machine_id)
+        if vminfo.status in (openstack_types.Status.ERROR, openstack_types.Status.DELETED):
             logger.warning(
                 'Got server status %s for %s: %s',
-                server['status'],
-                machineId,
-                server.get('fault'),
+                vminfo.status,
+                machine_id,
+                vminfo.fault,
             )
-        return server['status']
+        return vminfo.status
+
+    def get_machine_power_state(self, machine_id: str) -> openstack_types.PowerState:
+        vminfo = self.api.get_server(machine_id)
+        return vminfo.power_state
 
     def start_machine(self, machineId: str) -> None:
         """
@@ -416,24 +366,26 @@ class OpenStackLiveService(services.Service):
         """
         Gets the mac address of first nic of the machine
         """
-        net = self.api.get_server(machineid)['addresses']
-        vals = next(iter(net.values()))[
-            0
-        ]  # Returns "any" mac address of any interface. We just need only one interface info
-        # vals = six.next(six.itervalues(net))[0]
-        return vals['OS-EXT-IPS-MAC:mac_addr'].upper(), vals['addr']
+        vminfo = self.api.get_server(machineid)
+        return vminfo.addresses[0].addr, vminfo.addresses[0].mac.upper()
 
     def get_basename(self) -> str:
         """
         Returns the base name
         """
-        return self.baseName.value
+        return self.basename.value
 
     def get_lenname(self) -> int:
         """
         Returns the length of numbers part
         """
-        return int(self.lenName.value)
+        return int(self.lenname.value)
 
     def is_avaliable(self) -> bool:
         return self.provider().is_available()
+
+    def can_clean_errored_userservices(self) -> bool:
+        return not self.maintain_on_error.value
+
+    def keep_on_error(self) -> bool:
+        return not self.maintain_on_error.as_bool()

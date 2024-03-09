@@ -41,7 +41,7 @@ from uds.core.ui import gui
 from uds.core.util import validators, fields
 from uds.core.util.decorators import cached
 
-from . import openstack
+from .openstack import openstack_client, sanitized_name
 from .service import OpenStackLiveService
 
 # Not imported at runtime, just for type checking
@@ -188,7 +188,7 @@ class OpenStackProvider(ServiceProvider):
     legacy = False
 
     # Own variables
-    _api: typing.Optional[openstack.Client] = None
+    _api: typing.Optional[openstack_client.OpenstackClient] = None
 
     def initialize(self, values: 'types.core.ValuesType' = None) -> None:
         """
@@ -201,14 +201,14 @@ class OpenStackProvider(ServiceProvider):
 
     def api(
         self, projectid: typing.Optional[str] = None, region: typing.Optional[str] = None
-    ) -> openstack.Client:
+    ) -> openstack_client.OpenstackClient:
         projectid = projectid or self.tenant.value or None
         region = region or self.region.value or None
         if self._api is None:
             proxies = None
             if self.https_proxy.value.strip():
                 proxies = {'https': self.https_proxy.value}
-            self._api = openstack.Client(
+            self._api = openstack_client.OpenstackClient(
                 self.endpoint.value,
                 -1,
                 self.domain.value,
@@ -224,7 +224,7 @@ class OpenStackProvider(ServiceProvider):
         return self._api
 
     def sanitized_name(self, name: str) -> str:
-        return openstack.sanitized_name(name)
+        return sanitized_name(name)
 
     def test_connection(self) -> types.core.TestResult:
         """

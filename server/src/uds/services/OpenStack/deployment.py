@@ -39,7 +39,7 @@ import typing
 from uds.core import consts, services, types
 from uds.core.util import autoserializable, log
 
-from . import openstack
+from .openstack import types as openstack_types
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -155,12 +155,14 @@ class OpenStackLiveDeployment(
         try:
             status = self.service().get_machine_state(self._vmid)
 
-            if openstack.status_is_lost(status):
+            if status.is_lost():
                 return self._error('Machine is not available anymore')
 
-            if status == openstack.PAUSED:
+            power_state = self.service().get_machine_power_state(self._vmid)
+
+            if power_state.is_paused():
                 self.service().resume_machine(self._vmid)
-            elif status in (openstack.STOPPED, openstack.SHUTOFF):
+            elif power_state.is_stopped():
                 self.service().start_machine(self._vmid)
 
             # Right now, we suppose the machine is ready
@@ -207,25 +209,21 @@ class OpenStackLiveDeployment(
         else:
             self._queue = [Operation.CREATE, Operation.WAIT, Operation.SUSPEND, Operation.FINISH]
 
-    def _check_machine_state(self, chkState: str) -> types.states.TaskState:
+    def _check_machine_power_state(self, check_state: openstack_types.PowerState) -> types.states.TaskState:
         logger.debug(
             'Checking that state of machine %s (%s) is %s',
             self._vmid,
             self._name,
-            chkState,
+            check_state,
         )
-        status = self.service().get_machine_state(self._vmid)
-
-        # If we want to check an state and machine does not exists (except in case that we whant to check this)
-        if openstack.status_is_lost(status):
-            return self._error('Machine not available. ({})'.format(status))
-
+        power_state = self.service().get_machine_power_state(self._vmid)
+        
         ret = types.states.TaskState.RUNNING
-        chkStates = [chkState] if not isinstance(chkState, (list, tuple)) else chkState
-        if status in chkStates:
+        if power_state == check_state:
             ret = types.states.TaskState.FINISHED
 
         return ret
+
 
     def _get_current_op(self) -> Operation:
         if not self._queue:
@@ -252,7 +250,7 @@ class OpenStackLiveDeployment(
 
         self.do_log(log.LogLevel.ERROR, self._reason)
 
-        if self._vmid:  # Powers off & delete it
+        if self._vmid and self.service().keep_on_error() is False:  # Powers off & delete it
             try:
                 self.service().remove_machine(self._vmid)
             except Exception:
@@ -333,7 +331,7 @@ class OpenStackLiveDeployment(
         """
         status = self.service().get_machine_state(self._vmid)
 
-        if openstack.status_is_lost(status):
+        if status.is_lost():
             raise Exception('Machine not found. (Status {})'.format(status))
 
         self.service().remove_machine(self._vmid)
@@ -361,7 +359,7 @@ class OpenStackLiveDeployment(
         """
         Checks the state of a deploy for an user or cache
         """
-        ret = self._check_machine_state(openstack.ACTIVE)
+        ret = self._check_machine_power_state(openstack_types.PowerState.RUNNING)
         if ret == types.states.TaskState.FINISHED:
             # Get IP & MAC (early stage)
             self._mac, self._ip = self.service().get_network_info(self._vmid)
@@ -372,13 +370,13 @@ class OpenStackLiveDeployment(
         """
         Checks if machine has started
         """
-        return self._check_machine_state(openstack.ACTIVE)
+        return self._check_machine_power_state(openstack_types.PowerState.RUNNING)
 
     def _check_suspend(self) -> types.states.TaskState:
         """
         Check if the machine has suspended
         """
-        return self._check_machine_state(openstack.SUSPENDED)
+        return self._check_machine_power_state(openstack_types.PowerState.SUSPENDED)
 
     def _check_removed(self) -> types.states.TaskState:
         """

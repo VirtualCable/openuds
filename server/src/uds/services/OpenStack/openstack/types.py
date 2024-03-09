@@ -36,33 +36,119 @@ import dataclasses
 import enum
 
 
-class State(enum.StrEnum):
-    ACTIVE = 'ACTIVE'
-    BUILDING = 'BUILDING'
-    DELETED = 'DELETED'
-    ERROR = 'ERROR'
-    HARD_REBOOT = 'HARD_REBOOT'
-    MIGRATING = 'MIGRATING'
-    PASSWORD = 'PASSWORD'
-    PAUSED = 'PAUSED'
-    REBOOT = 'REBOOT'
-    REBUILD = 'REBUILD'
-    RESCUED = 'RESCUED'
-    RESIZED = 'RESIZED'
-    REVERT_RESIZE = 'REVERT_RESIZE'
-    SOFT_DELETED = 'SOFT_DELETED'
-    STOPPED = 'STOPPED'
-    SUSPENDED = 'SUSPENDED'
-    UNKNOWN = 'UNKNOWN'
-    VERIFY_RESIZE = 'VERIFY_RESIZE'
-    SHUTOFF = 'SHUTOFF'
+class Status(enum.StrEnum):
+    ACTIVE = 'ACTIVE'  # The server is active.
+    BUILD = 'BUILD'  # The server has not finished the original build process.
+    DELETED = 'DELETED'  # The server is permanently deleted.
+    ERROR = 'ERROR'  # The server is in error.
+    HARD_REBOOT = 'HARD_REBOOT'  # The server is hard rebooting. This is equivalent to pulling the power plug on a physical server, plugging it back in, and rebooting it.
+    MIGRATING = 'MIGRATING'  # The server is being migrated to a new host.
+    PASSWORD = 'PASSWORD'  # The password is being reset on the server.
+    PAUSED = 'PAUSED'  # In a paused state, the state of the server is stored in RAM. A paused server continues to run in frozen state.
+    REBOOT = (
+        'REBOOT'  # The server is in a soft reboot state. A reboot command was passed to the operating system.
+    )
+    REBUILD = 'REBUILD'  # The server is currently being rebuilt from an image.
+    RESCUE = 'RESCUE'  # The server is in rescue mode. A rescue image is running with the original server image attached.
+    RESIZE = 'RESIZE'  # Server is performing the differential copy of data that changed during its initial copy. Server is down for this stage.
+    REVERT_RESIZE = 'REVERT_RESIZE'  # The resize or migration of a server failed for some reason. The destination server is being cleaned up and the original source server is restarting.
+    SHELVED = 'SHELVED'  # The server is in shelved state. Depending on the shelve offload time, the server will be automatically shelved offloaded.
+    SHELVED_OFFLOADED = 'SHELVED_OFFLOADED'  # The shelved server is offloaded (removed from the compute host) and it needs unshelved action to be used again.
+    SHUTOFF = 'SHUTOFF'  # The server is powered off and the disk image still persists.
+    SOFT_DELETED = (
+        'SOFT_DELETED'  # The server is marked as deleted but the disk images are still available to restore.
+    )
+    SUSPENDED = 'SUSPENDED'  # The server is suspended, either by request or necessity. When you suspend a server, its state is stored on disk, all memory is written to disk, and the server is stopped. Suspending a server is similar to placing a device in hibernation and its occupied resource will not be freed but rather kept for when the server is resumed. If a server is infrequently used and the occupied resource needs to be freed to create other servers, it should be shelved.
+    UNKNOWN = 'UNKNOWN'  # The state of the server is unknown. Contact your cloud provider.
+    VERIFY_RESIZE = 'VERIFY_RESIZE'  # System is awaiting confirmation that the server is operational after a move or resize.
 
+    @staticmethod
+    def from_str(s: str) -> 'Status':
+        try:
+            return Status(s)
+        except ValueError:
+            return Status.UNKNOWN
+
+
+    # Helpers to check statuses
+    def is_lost(self) -> bool:
+        return self in [Status.DELETED, Status.ERROR, Status.UNKNOWN, Status.SOFT_DELETED]
+    
+    def is_paused(self) -> bool:
+        return self in [Status.PAUSED, Status.SUSPENDED]
+    
+    def is_running(self) -> bool:
+        return self in [Status.ACTIVE, Status.RESCUE, Status.RESIZE, Status.VERIFY_RESIZE]
+    
+    def is_stopped(self) -> bool:
+        return self in [Status.SHUTOFF, Status.SHELVED, Status.SHELVED_OFFLOADED, Status.SOFT_DELETED]
+
+
+class PowerState(enum.IntEnum):
+    NOSTATE = 0
+    RUNNING = 1
+    PAUSED = 3
+    SHUTDOWN = 4
+    CRASHED = 6
+    SUSPENDED = 7
+
+    @staticmethod
+    def from_int(i: int) -> 'PowerState':
+        try:
+            return PowerState(i)
+        except ValueError:
+            return PowerState.NOSTATE
+
+    def is_paused(self) -> bool:
+        return self == PowerState.PAUSED
+    
+    def is_running(self) -> bool:
+        return self == PowerState.RUNNING
+    
+    def is_stopped(self) -> bool:
+        return self in [PowerState.SHUTDOWN, PowerState.CRASHED, PowerState.SUSPENDED]
 
 @dataclasses.dataclass
 class VMInfo:
+
+    @dataclasses.dataclass
+    class AddresInfo:
+        version: int
+        addr: str
+        mac: str
+        type: str
+        network_name: str = ''
+
+        @staticmethod
+        def from_dict(d: dict[str, typing.Any]) -> 'VMInfo.AddresInfo':
+            return VMInfo.AddresInfo(
+                version=d.get('version') or 4,
+                addr=d.get('addr') or '',
+                mac=d.get('OS-EXT-IPS-MAC:mac_addr') or '',
+                type=d.get('OS-EXT-IPS:type') or '',
+            )
+
+        @staticmethod
+        def from_addresses(adresses: dict[str, list[dict[str, typing.Any]]]) -> list['VMInfo.AddresInfo']:
+            def _build() -> typing.Generator['VMInfo.AddresInfo', None, None]:
+                for net_name, inner_addresses in adresses.items():
+                    for address in inner_addresses:
+                        address_info = VMInfo.AddresInfo.from_dict(address)
+                        address_info.network_name = net_name
+                        yield address_info
+
+            return list(_build())
+
     id: str
     name: str
-    href: str = ''
+    href: str
+    flavor: str
+    status: Status
+    power_state: PowerState
+    addresses: list[AddresInfo]  # network_name: AddresInfo
+    access_addr_ipv4: str
+    access_addr_ipv6: str
+    fault: typing.Optional[str]
 
     @staticmethod
     def from_dict(d: dict[str, typing.Any]) -> 'VMInfo':
@@ -75,10 +161,22 @@ class VMInfo:
                     break
             except Exception:
                 pass  # Just ignore any error here
+        # Try to get flavor, only on >= 2.47
+        try:
+            flavor = d.get('flavor', {}).get('id', '')
+        except Exception:
+            flavor = ''
         return VMInfo(
             id=d['id'],
             name=d['name'],
             href=href,
+            flavor=flavor,
+            status=Status.from_str(d.get('status', Status.UNKNOWN.value)),
+            power_state=PowerState.from_int(d.get('OS-EXT-STS:power_state', PowerState.NOSTATE)),
+            addresses=VMInfo.AddresInfo.from_addresses(d.get('addresses', {})),
+            access_addr_ipv4=d.get('accessIPv4', ''),
+            access_addr_ipv6=d.get('accessIPv6', ''),
+            fault=d.get('fault', None),
         )
 
 
@@ -179,6 +277,7 @@ class VolumeTypeInfo:
             name=d['name'],
         )
 
+
 @dataclasses.dataclass
 class AvailabilityZoneInfo:
     id: str
@@ -189,4 +288,124 @@ class AvailabilityZoneInfo:
         return AvailabilityZoneInfo(
             id=d['zoneName'],
             name=d['zoneName'],
+        )
+
+
+@dataclasses.dataclass
+class FlavorInfo:
+    id: str
+    name: str
+    vcpus: int
+    ram: int
+    disk: int
+    swap: int
+    is_public: bool
+    disabled: bool
+
+    @staticmethod
+    def from_dict(d: dict[str, typing.Any]) -> 'FlavorInfo':
+        return FlavorInfo(
+            id=d['id'],
+            name=d['name'],
+            vcpus=d['vcpus'],
+            ram=d['ram'],
+            disk=d['disk'],
+            swap=d['swap'],
+            is_public=d.get('os-flavor-access:is_public', True),
+            disabled=d.get('OS-FLV-DISABLED:disabled', False),
+        )
+
+
+@dataclasses.dataclass
+class NetworkInfo:
+    id: str
+    name: str
+    status: str
+    shared: bool
+    subnets: list[str]
+    availability_zones: list[str]
+
+    @staticmethod
+    def from_dict(d: dict[str, typing.Any]) -> 'NetworkInfo':
+        return NetworkInfo(
+            id=d['id'],
+            name=d['name'],
+            status=d['status'],
+            shared=d['shared'],
+            subnets=d['subnets'],
+            availability_zones=d.get('availability_zones', []),
+        )
+
+
+@dataclasses.dataclass
+class SubnetInfo:
+    id: str
+    name: str
+    cidr: str
+    enable_dhcp: bool
+    gateway_ip: str
+    ip_version: int
+    network_id: str
+
+    @staticmethod
+    def from_dict(d: dict[str, typing.Any]) -> 'SubnetInfo':
+        return SubnetInfo(
+            id=d['id'],
+            name=d['name'],
+            cidr=d['cidr'],
+            enable_dhcp=d['enable_dhcp'],
+            gateway_ip=d['gateway_ip'],
+            ip_version=d['ip_version'],
+            network_id=d['network_id'],
+        )
+
+
+@dataclasses.dataclass
+class PortInfo:
+
+    @dataclasses.dataclass
+    class FixedIp:
+        ip_address: str
+        subnet_id: str
+
+        @staticmethod
+        def from_dict(d: dict[str, typing.Any]) -> 'PortInfo.FixedIp':
+            return PortInfo.FixedIp(
+                ip_address=d['ip_address'],
+                subnet_id=d['subnet_id'],
+            )
+
+    id: str
+    name: str
+    status: str
+    device_id: str
+    device_owner: str
+    mac_address: str
+    fixed_ips: list['FixedIp']
+
+    @staticmethod
+    def from_dict(d: dict[str, typing.Any]) -> 'PortInfo':
+        return PortInfo(
+            id=d['id'],
+            name=d['name'],
+            status=d['status'],
+            device_id=d['device_id'],
+            device_owner=d['device_owner'],
+            mac_address=d['mac_address'],
+            fixed_ips=[PortInfo.FixedIp.from_dict(ip) for ip in d['fixed_ips']],
+        )
+
+
+@dataclasses.dataclass
+class SecurityGroupInfo:
+    id: str
+    name: str
+    description: str
+
+    @staticmethod
+    def from_dict(d: dict[str, typing.Any]) -> 'SecurityGroupInfo':
+        return SecurityGroupInfo(
+            id=d['id'],
+            name=d['name'],
+            description=d['description'],
         )

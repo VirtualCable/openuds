@@ -33,8 +33,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # pyright: reportUnusedImport=false
 import os.path
-import typing
-import sys
 
 from django.utils.translation import gettext_noop as _
 from uds.core import managers

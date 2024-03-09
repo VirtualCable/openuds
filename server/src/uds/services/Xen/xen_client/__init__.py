@@ -76,14 +76,14 @@ class XenFailure(XenAPI.Failure, XenFault):
 
     def as_human_readable(self) -> str:
         try:
-            errList = {
+            error_list = {
                 XenFailure.exBadVmPowerState: 'Machine state is invalid for requested operation (needs {2} and state is {3})',
                 XenFailure.exVmMissingPVDrivers: 'Machine needs Xen Server Tools to allow requested operation',
                 XenFailure.exHostIsSlave: 'The connected host is an slave, try to connect to {1}',
                 XenFailure.exSRError: 'Error on SR: {2}',
                 XenFailure.exHandleInvalid: 'Invalid reference to {1}',
             }
-            err = errList.get(typing.cast(typing.Any, self.details[0]), 'Error {0}')
+            err = error_list.get(typing.cast(typing.Any, self.details[0]), 'Error {0}')
 
             return err.format(*typing.cast(list[typing.Any], self.details))
         except Exception:

@@ -62,6 +62,7 @@ VOLUMES_ENDPOINT_TYPES = [
     'volumev2',
 ]  #  'volume' is also valid, but it is deprecated A LONG TYPE AGO
 COMPUTE_ENDPOINT_TYPES = ['compute', 'compute_legacy']
+NETWORKS_ENDPOINT_TYPES = ['network']
 
 
 # Helpers
@@ -122,7 +123,7 @@ def auth_required(for_project: bool = False) -> collections.abc.Callable[[decora
 
     def decorator(func: decorators.FT) -> decorators.FT:
         @functools.wraps(func)
-        def wrapper(obj: 'Client', *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
+        def wrapper(obj: 'OpenstackClient', *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
             if for_project is True:
                 if obj._projectid is None:
                     raise Exception('Need a project for method {}'.format(func))
@@ -134,7 +135,7 @@ def auth_required(for_project: bool = False) -> collections.abc.Callable[[decora
     return decorator
 
 
-def cache_key_helper(obj: 'Client', *args: typing.Any, **kwargs: typing.Any) -> str:
+def cache_key_helper(obj: 'OpenstackClient', *args: typing.Any, **kwargs: typing.Any) -> str:
     return '_'.join(
         [
             obj._authurl,
@@ -150,7 +151,7 @@ def cache_key_helper(obj: 'Client', *args: typing.Any, **kwargs: typing.Any) -> 
     )
 
 
-class Client:  # pylint: disable=too-many-public-methods
+class OpenstackClient:  # pylint: disable=too-many-public-methods
     PUBLIC = 'public'
     PRIVATE = 'private'
     INTERNAL = 'url'
@@ -200,7 +201,7 @@ class Client:  # pylint: disable=too-many-public-methods
         self._catalog = None
         self._is_legacy = is_legacy
 
-        self._access = Client.PUBLIC if access is None else access
+        self._access = OpenstackClient.PUBLIC if access is None else access
         self._domain, self._username, self._password = domain, username, password
         self._userid = None
         self._projectid = projectid
@@ -480,16 +481,6 @@ class Client:  # pylint: disable=too-many-public-methods
             )
         ]
 
-        # TODO: Remove this
-        # return get_recurring_url_json(
-        #     self._get_endpoint_for('volumev3', 'volumev2') + '/types',
-        #     self._session,
-        #     headers=self._get_request_headers(),
-        #     key='volume_types',
-        #     error_message='List Volume Types',
-        #     timeout=self._timeout,
-        # )
-
     @decorators.cached(prefix='vols', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def list_volumes(self) -> list[openstack_types.VolumeInfo]:
         return [
@@ -501,16 +492,6 @@ class Client:  # pylint: disable=too-many-public-methods
                 key='volumes',
             )
         ]
-
-        # TODO: Remove this
-        # return get_recurring_url_json(
-        #     self._get_endpoint_for('volumev3', 'volumev2') + '/volumes/detail',
-        #     self._session,
-        #     headers=self._get_request_headers(),
-        #     key='volumes',
-        #     error_message='List Volumes',
-        #     timeout=self._timeout,
-        # )
 
     def list_volume_snapshots(
         self, volume_id: typing.Optional[dict[str, typing.Any]] = None
@@ -526,18 +507,6 @@ class Client:  # pylint: disable=too-many-public-methods
             if volume_id is None or snapshot['volume_id'] == volume_id
         ]
 
-        # TODO: Remove this
-        # for s in get_recurring_url_json(
-        #     self._get_endpoint_for('volumev3', 'volumev2') + '/snapshots',
-        #     self._session,
-        #     headers=self._get_request_headers(),
-        #     key='snapshots',
-        #     error_message='List snapshots',
-        #     timeout=self._timeout,
-        # ):
-        #     if volume_id is None or s['volume_id'] == volume_id:
-        #         yield s
-
     @decorators.cached(prefix='azs', timeout=consts.cache.EXTREME_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def list_availability_zones(self) -> list[openstack_types.AvailabilityZoneInfo]:
         return [
@@ -551,155 +520,97 @@ class Client:  # pylint: disable=too-many-public-methods
             if availability_zone['zoneState']['available'] is True
         ]
 
-        # TODO: Remove this
-        # for az in get_recurring_url_json(
-        #     self._get_compute_endpoint() + '/os-availability-zone',
-        #     self._session,
-        #     headers=self._get_request_headers(),
-        #     key='availabilityZoneInfo',
-        #     error_message='List Availability Zones',
-        #     timeout=self._timeout,
-        # ):
-        #     if az['zoneState']['available'] is True:
-        #         yield az['zoneName']
-
     @decorators.cached(prefix='flvs', timeout=consts.cache.EXTREME_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def list_flavors(self) -> list[typing.Any]:
-        return list(
-            self._get_recurring_from_endpoint(
+    def list_flavors(self) -> list[openstack_types.FlavorInfo]:
+        return [
+            openstack_types.FlavorInfo.from_dict(f)
+            for f in self._get_recurring_from_endpoint(
                 endpoint_types=COMPUTE_ENDPOINT_TYPES,
-                path='/flavors',
+                path='/flavors/detail',
                 error_message='List Flavors',
                 key='flavors',
             )
-        )
-
-        # TODO: Remove this
-        # return get_recurring_url_json(
-        #     self._get_compute_endpoint() + '/flavors',
-        #     self._session,
-        #     headers=self._get_request_headers(),
-        #     key='flavors',
-        #     error_message='List Flavors',
-        #     timeout=self._timeout,
-        # )
+        ]
 
     @decorators.cached(prefix='nets', timeout=consts.cache.LONG_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def list_networks(self, name_from_subnets: bool = False) -> list[typing.Any]:
+    def list_networks(self, name_from_subnets: bool = False) -> list[openstack_types.NetworkInfo]:
         nets = self._get_recurring_from_endpoint(
-            endpoint_types=['network'],
+            endpoint_types=NETWORKS_ENDPOINT_TYPES,
             path='/v2.0/networks',
             error_message='List Networks',
             key='networks',
         )
 
-        # TODO: Remove this
-        # nets = get_recurring_url_json(
-        #     self._get_endpoint_for('network') + '/v2.0/networks',
-        #     self._session,
-        #     headers=self._get_request_headers(),
-        #     key='networks',
-        #     error_message='List Networks',
-        #     timeout=self._timeout,
-        # )
         if not name_from_subnets:
-            return list(nets)
+            return [openstack_types.NetworkInfo.from_dict(n) for n in nets]
         else:
             # Get and cache subnets names
-            subnetNames = {s['id']: s['name'] for s in self.list_subnets()}
-            res: list[typing.Any] = []
+            subnets_dct = {s.id: f'{s.name} ({s.cidr})' for s in self.list_subnets()}
+            res: list[openstack_types.NetworkInfo] = []
             for net in nets:
-                name = ','.join(subnetNames[i] for i in net['subnets'] if i in subnetNames)
-                net['old_name'] = net['name']
+                name = ','.join(subnets_dct[i] for i in net['subnets'] if i in subnets_dct)
                 if name:
                     net['name'] = name
 
-                res.append(net)
+                res.append(openstack_types.NetworkInfo.from_dict(net))
+
             return res
 
     @decorators.cached(prefix='subns', timeout=consts.cache.LONG_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def list_subnets(self) -> collections.abc.Iterable[typing.Any]:
-        return list(
-            self._get_recurring_from_endpoint(
-                endpoint_types=['network'],
+    def list_subnets(self) -> collections.abc.Iterable[openstack_types.SubnetInfo]:
+        return [
+            openstack_types.SubnetInfo.from_dict(s)
+            for s in self._get_recurring_from_endpoint(
+                endpoint_types=NETWORKS_ENDPOINT_TYPES,
                 path='/v2.0/subnets',
                 error_message='List Subnets',
                 key='subnets',
             )
-        )
-
-        # TODO: Remove this
-        # return get_recurring_url_json(
-        #     self._get_endpoint_for('network') + '/v2.0/subnets',
-        #     self._session,
-        #     headers=self._get_request_headers(),
-        #     key='subnets',
-        #     error_message='List Subnets',
-        #     timeout=self._timeout,
-        # )
+        ]
 
     @decorators.cached(prefix='sgps', timeout=consts.cache.LONG_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def list_ports(
         self,
-        networkId: typing.Optional[str] = None,
-        ownerId: typing.Optional[str] = None,
-    ) -> list[typing.Any]:
+        network_id: typing.Optional[str] = None,
+        owner_id: typing.Optional[str] = None,
+    ) -> list[openstack_types.PortInfo]:
         params: dict[str, typing.Any] = {}
-        if networkId is not None:
-            params['network_id'] = networkId
-        if ownerId is not None:
-            params['device_owner'] = ownerId
+        if network_id is not None:
+            params['network_id'] = network_id
+        if owner_id is not None:
+            params['device_owner'] = owner_id
 
-        return list(
-            self._get_recurring_from_endpoint(
-                endpoint_types=['network'],
+        return [
+            openstack_types.PortInfo.from_dict(p)
+            for p in self._get_recurring_from_endpoint(
+                endpoint_types=NETWORKS_ENDPOINT_TYPES,
                 path='/v2.0/ports',
                 error_message='List ports',
                 key='ports',
                 params=params,
             )
-        )
+        ]
 
-        # TODO: Remove this
-        # return get_recurring_url_json(
-        #     self._get_endpoint_for('network') + '/v2.0/ports',
-        #     self._session,
-        #     headers=self._get_request_headers(),
-        #     key='ports',
-        #     params=params,
-        #     error_message='List ports',
-        #     timeout=self._timeout,
-        # )
-
-    @decorators.cached(prefix='sgps', timeout=consts.cache.LONG_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def list_security_groups(self) -> list[typing.Any]:
-        return list(
-            self._get_recurring_from_endpoint(
-                endpoint_types=['network'],
+    @decorators.cached(prefix='sgps', timeout=consts.cache.EXTREME_CACHE_TIMEOUT, key_helper=cache_key_helper)
+    def list_security_groups(self) -> list[openstack_types.SecurityGroupInfo]:
+        return [
+            openstack_types.SecurityGroupInfo.from_dict(sg)
+            for sg in self._get_recurring_from_endpoint(
+                endpoint_types=NETWORKS_ENDPOINT_TYPES,
                 path='/v2.0/security-groups',
                 error_message='List security groups',
                 key='security_groups',
             )
-        )
+        ]
 
-        # TODO: Remove this
-        # return get_recurring_url_json(
-        #     self._get_compute_endpoint() + '/os-security-groups',
-        #     self._session,
-        #     headers=self._get_request_headers(),
-        #     key='security_groups',
-        #     error_message='List security groups',
-        #     timeout=self._timeout,
-        # )
-
-    def get_server(self, server_id: str) -> dict[str, typing.Any]:
+    def get_server(self, server_id: str) -> openstack_types.VMInfo:
         r = self._request_from_endpoint(
             'get',
             endpoints_types=COMPUTE_ENDPOINT_TYPES,
             path=f'/servers/{server_id}',
             error_message='Get Server information',
         )
-        return r.json()['server']
+        return openstack_types.VMInfo.from_dict(r.json()['server'])
 
     def get_volume(self, volumeId: str) -> dict[str, typing.Any]:
         r = self._request_from_endpoint(
@@ -708,15 +619,6 @@ class Client:  # pylint: disable=too-many-public-methods
             path=f'/volumes/{volumeId}',
             error_message='Get Volume information',
         )
-
-        # TODO: Remove this
-        # r = self._session.get(
-        #     self._get_endpoint_for('volumev3', 'volumev2') + '/volumes/{volume_id}'.format(volume_id=volumeId),
-        #     headers=self._get_request_headers(),
-        #     timeout=self._timeout,
-        # )
-
-        # ensure_valid_response(r, 'Get Volume information')
 
         return r.json()['volume']
 
@@ -731,15 +633,6 @@ class Client:  # pylint: disable=too-many-public-methods
             path=f'/snapshots/{snapshot_id}',
             error_message='Get Snaphost information',
         )
-
-        # TODO: Remove this
-        # r = self._session.get(
-        #     self._get_endpoint_for('volumev3', 'volumev2') + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
-        #     headers=self._get_request_headers(),
-        #     timeout=self._timeout,
-        # )
-
-        # ensure_valid_response(r, 'Get Snaphost information')
 
         return r.json()['snapshot']
 
@@ -763,16 +656,6 @@ class Client:  # pylint: disable=too-many-public-methods
             data=json.dumps(data),
             error_message='Update Snaphost information',
         )
-
-        # TODO: Remove this
-        # r = self._session.put(
-        #     self._get_endpoint_for('volumev3', 'volumev2') + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshot_id),
-        #     data=json.dumps(data),
-        #     headers=self._get_request_headers(),
-        #     timeout=self._timeout,
-        # )
-
-        # ensure_valid_response(r, 'Update Snaphost information')
 
         return r.json()['snapshot']
 
@@ -799,16 +682,6 @@ class Client:  # pylint: disable=too-many-public-methods
             error_message='Get Volume information',
         )
 
-        # TODO: Remove this
-        # r = self._session.post(
-        #     self._get_endpoint_for('volumev3', 'volumev2') + '/snapshots',
-        #     data=json.dumps(data),
-        #     headers=self._get_request_headers(),
-        #     timeout=self._timeout,
-        # )
-
-        # ensure_valid_response(r, 'Cannot create snapshot. Ensure volume is in state "available"')
-
         return r.json()['snapshot']
 
     def create_volume_from_snapshot(
@@ -831,16 +704,6 @@ class Client:  # pylint: disable=too-many-public-methods
             data=json.dumps(data),
             error_message='Create Volume from Snapshot',
         )
-
-        # TODO: Remove this
-        # r = self._session.post(
-        #     self._get_endpoint_for('volumev3', 'volumev2') + '/volumes',
-        #     data=json.dumps(data),
-        #     headers=self._get_request_headers(),
-        #     timeout=self._timeout,
-        # )
-
-        # ensure_valid_response(r, 'Cannot create volume from snapshot.')
 
         return r.json()['volume']
 
@@ -889,16 +752,6 @@ class Client:  # pylint: disable=too-many-public-methods
             error_message='Create instance from snapshot',
         )
 
-        # TODO: Remove this
-        # r = self._session.post(
-        #     self._get_compute_endpoint() + '/servers',
-        #     data=json.dumps(data),
-        #     headers=self._get_request_headers(),
-        #     timeout=self._timeout,
-        # )
-
-        # ensure_valid_response(r, 'Cannot create instance from snapshot.')
-
         return r.json()['server']
 
     @auth_required(for_project=True)
@@ -911,22 +764,6 @@ class Client:  # pylint: disable=too-many-public-methods
             error_message='Cannot delete server (probably server does not exists).',
         )
 
-        # TODO: Remove this
-        # r = self._session.post(
-        #     self._getEndpointFor('compute', , 'compute_legacy') + '/servers/{server_id}/action'.format(server_id=serverId),
-        #     data='{"forceDelete": null}',
-        #     headers=self._requestHeaders(),
-        #     timeout=self._timeout
-        # )
-
-        # r = self._session.delete(
-        #     self._get_compute_endpoint() + f'/servers/{server_id}',
-        #     headers=self._get_request_headers(),
-        #     timeout=self._timeout,
-        # )
-
-        # ensure_valid_response(r, 'Cannot delete server (probably server does not exists).')
-
     def delete_snapshot(self, snapshot_id: str) -> None:
         # This does not returns anything
         self._request_from_endpoint(
@@ -935,17 +772,6 @@ class Client:  # pylint: disable=too-many-public-methods
             path=f'/snapshots/{snapshot_id}',
             error_message='Cannot remove snapshot.',
         )
-
-        # TODO: Remove this
-        # r = self._session.delete(
-        #     self._get_endpoint_for('volumev3', 'volumev2') + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
-        #     headers=self._get_request_headers(),
-        #     timeout=self._timeout,
-        # )
-
-        # ensure_valid_response(r, 'Cannot remove snapshot.')
-
-        # Does not returns a message body
 
     def start_server(self, server_id: str) -> None:
         # this does not returns anything
@@ -957,16 +783,6 @@ class Client:  # pylint: disable=too-many-public-methods
             error_message='Starting server',
         )
 
-        # TODO: Remove this
-        # r = self._session.post(
-        #     self._get_compute_endpoint() + f'/servers/{server_id}/action',
-        #     data='{"os-start": null}',
-        #     headers=self._get_request_headers(),
-        #     timeout=self._timeout,
-        # )
-
-        # ensure_valid_response(r, 'Starting server')
-
     def stop_server(self, server_id: str) -> None:
         # this does not returns anything
         self._request_from_endpoint(
@@ -976,16 +792,6 @@ class Client:  # pylint: disable=too-many-public-methods
             data='{"os-stop": null}',
             error_message='Stoping server',
         )
-
-        # TODO: Remove this
-        # r = self._session.post(
-        #     self._get_compute_endpoint() + f'/servers/{server_id}/action',
-        #     data='{"os-stop": null}',
-        #     headers=self._get_request_headers(),
-        #     timeout=self._timeout,
-        # )
-
-        # ensure_valid_response(r, 'Stoping server')
 
     @auth_required(for_project=True)
     def suspend_server(self, server_id: str) -> None:
@@ -998,16 +804,6 @@ class Client:  # pylint: disable=too-many-public-methods
             error_message='Suspending server',
         )
 
-        # TODO: Remove this
-        # r = self._session.post(
-        #     self._get_compute_endpoint() + f'/servers/{server_id}/action',
-        #     data='{"suspend": null}',
-        #     headers=self._get_request_headers(),
-        #     timeout=self._timeout,
-        # )
-
-        # ensure_valid_response(r, 'Suspending server')
-
     def resume_server(self, server_id: str) -> None:
         # This does not returns anything
         self._request_from_endpoint(
@@ -1018,26 +814,18 @@ class Client:  # pylint: disable=too-many-public-methods
             error_message='Resuming server',
         )
 
-        # r = self._session.post(
-        #     self._get_compute_endpoint() + f'/servers/{server_id}/action',
-        #     data='{"resume": null}',
-        #     headers=self._get_request_headers(),
-        #     timeout=self._timeout,
-        # )
-
-        # ensure_valid_response(r, 'Resuming server')
-
     def reset_server(self, server_id: str) -> None:
         # Does not need return value
-        self._session.post(
-            self._get_compute_endpoint() + f'/servers/{server_id}/action',
-            data='{"reboot":{"type":"HARD"}}',
-            headers=self._get_request_headers(),
-            timeout=self._timeout,
-        )
-
-        # Ignore response for this...
-        # ensureResponseIsValid(r, 'Reseting server')
+        try:
+            self._request_from_endpoint(
+                'post',
+                endpoints_types=COMPUTE_ENDPOINT_TYPES,
+                path=f'/servers/{server_id}/action',
+                data='{"reboot":{"type":"HARD"}}',
+                error_message='Resetting server',
+            )
+        except Exception:
+            pass  # Ignore error for reseting server
 
     def test_connection(self) -> bool:
         # First, ensure requested api is supported

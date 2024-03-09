@@ -147,13 +147,13 @@ def dynamically_load_and_register_packages(
 
     check_function: collections.abc.Callable[[type[V]], bool] = checker or (lambda x: True)
 
-    def process(classes: collections.abc.Iterable[type[V]]) -> None:
+    def _process(classes: collections.abc.Iterable[type[V]]) -> None:
         cls: type[V]
         for cls in classes:
             clsSubCls = cls.__subclasses__()
 
             if clsSubCls:
-                process(clsSubCls)  # recursive add sub classes
+                _process(clsSubCls)  # recursive add sub classes
 
             if not check_function(cls):
                 logger.debug('Node is a not accepted, skipping: %s.%s', cls.__module__, cls.__name__)
@@ -168,7 +168,7 @@ def dynamically_load_and_register_packages(
                 logger.error('   - Error registering %s.%s: %s', cls.__module__, cls.__name__, e)
 
     logger.info('* Start registering %s', module_name)
-    process(type_.__subclasses__())
+    _process(type_.__subclasses__())
     logger.info('* Done Registering %s', module_name)
 
 
@@ -187,7 +187,7 @@ def dynamically_load_and_register_modules(
         module_name (str): Name of the package to load
     '''
 
-    def checker(cls: type[T]) -> bool:
+    def _checker(cls: type[T]) -> bool:
         # Will receive all classes that are subclasses of type_
         return not cls.is_base
 
@@ -195,5 +195,5 @@ def dynamically_load_and_register_modules(
         factory.insert,
         type_,
         module_name,
-        checker=checker,
+        checker=_checker,
     )

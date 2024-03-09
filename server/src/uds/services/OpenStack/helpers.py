@@ -68,20 +68,16 @@ def get_resources(parameters: dict[str, str]) -> types.ui.CallbackResultType:
 
     zones = [gui.choice_item(z.id, z.name) for z in api.list_availability_zones()]
     networks = [
-        gui.choice_item(z['id'], z['name']) for z in api.list_networks(name_from_subnets=name_from_subnets)
+        gui.choice_item(z.id, z.name) for z in api.list_networks(name_from_subnets=name_from_subnets)
     ]
-    flavors = [gui.choice_item(z['id'], z['name']) for z in api.list_flavors()]
-    securityGroups = [gui.choice_item(z['id'], z['name']) for z in api.list_security_groups()]
-    volumeTypes = [gui.choice_item('-', _('None'))] + [
-        gui.choice_item(t.id, t.name) for t in api.list_volume_types()
-    ]
+    flavors = [gui.choice_item(z.id, f'{z.name} ({z.vcpus} vCPUs, {z.ram} MiB)') for z in api.list_flavors() if not z.disabled]
+    security_groups = [gui.choice_item(z.id, z.name) for z in api.list_security_groups()]
 
     data: types.ui.CallbackResultType = [
-        {'name': 'availabilityZone', 'choices': zones},
+        {'name': 'availability_zone', 'choices': zones},
         {'name': 'network', 'choices': networks},
         {'name': 'flavor', 'choices': flavors},
-        {'name': 'securityGroups', 'choices': securityGroups},
-        {'name': 'volumeType', 'choices': volumeTypes},
+        {'name': 'security_groups', 'choices': security_groups},
     ]
     logger.debug('Return data: %s', data)
     return data

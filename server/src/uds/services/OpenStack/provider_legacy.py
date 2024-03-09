@@ -43,7 +43,7 @@ from uds.core.ui import gui
 from uds.core.util import validators, fields
 from uds.core.util.decorators import cached
 
-from . import openstack
+from .openstack import openstack_client, sanitized_name
 from .service import OpenStackLiveService
 
 # Not imported at runtime, just for type checking
@@ -179,7 +179,7 @@ class OpenStackProviderLegacy(ServiceProvider):
     legacy = True
 
     # Own variables
-    _api: typing.Optional[openstack.Client] = None
+    _api: typing.Optional[openstack_client.OpenstackClient] = None
 
     def initialize(self, values: 'types.core.ValuesType') -> None:
         """
@@ -190,11 +190,11 @@ class OpenStackProviderLegacy(ServiceProvider):
         if values is not None:
             self.timeout.value = validators.validate_timeout(self.timeout.value)
 
-    def api(self, projectid: typing.Optional[str]=None, region: typing.Optional[str]=None) -> openstack.Client:
+    def api(self, projectid: typing.Optional[str]=None, region: typing.Optional[str]=None) -> openstack_client.OpenstackClient:
         proxies: typing.Optional[dict[str, str]] = None
         if self.https_proxy.value.strip():
             proxies = {'https': self.https_proxy.value}
-        return openstack.Client(
+        return openstack_client.OpenstackClient(
             self.host.value,
             self.port.value,
             self.domain.value,
@@ -209,7 +209,7 @@ class OpenStackProviderLegacy(ServiceProvider):
         )
 
     def sanitized_name(self, name: str) -> str:
-        return openstack.sanitized_name(name)
+        return sanitized_name(name)
 
     def test_connection(self) -> types.core.TestResult:
         """

@@ -30,12 +30,10 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-# pyright: reportUnusedImport=false
+import re
 
-from .openstack_client import Client
-
-# Import submodules
-from .common import *
-
-# Logger imported from .common, if you ask
-logger = logging.getLogger(__name__)
+def sanitized_name(name: str) -> str:
+    """
+    machine names with [a-zA-Z0-9_-]
+    """
+    return re.sub("[^a-zA-Z0-9._-]", "_", name)
