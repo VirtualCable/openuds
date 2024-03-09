@@ -41,6 +41,8 @@ from uds.core import consts
 
 from uds.core.util import security, cache, decorators
 
+from . import types as openstack_types
+
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     import requests
@@ -54,7 +56,12 @@ logger = logging.getLogger(__name__)
 # These are related to auth, compute & network basically
 
 # Do not verify SSL conections right now
-VERIFY_SSL = False
+VERIFY_SSL: typing.Final[bool] = False
+VOLUMES_ENDPOINT_TYPES = [
+    'volumev3',
+    'volumev2',
+]  #  'volume' is also valid, but it is deprecated A LONG TYPE AGO
+COMPUTE_ENDPOINT_TYPES = ['compute', 'compute_legacy']
 
 
 # Helpers
@@ -154,7 +161,6 @@ class Client:  # pylint: disable=too-many-public-methods
     _tokenid: typing.Optional[str]
     _catalog: typing.Optional[list[dict[str, typing.Any]]]
     _is_legacy: bool
-    _volume: str
     _access: typing.Optional[str]
     _domain: str
     _username: str
@@ -178,7 +184,7 @@ class Client:  # pylint: disable=too-many-public-methods
         username: str,
         password: str,
         is_legacy: bool = True,
-        use_ssl: bool = False,
+        use_ssl: bool = False,  # Only used for legacy
         projectid: typing.Optional[str] = None,
         region: typing.Optional[str] = None,
         access: typing.Optional[str] = None,
@@ -201,7 +207,6 @@ class Client:  # pylint: disable=too-many-public-methods
         self._project = None
         self._region = region
         self._timeout = 10
-        self._volume = ''
 
         if is_legacy:
             self._authurl = 'http{}://{}:{}/'.format('s' if use_ssl else '', host, port)
@@ -388,23 +393,26 @@ class Client:  # pylint: disable=too-many-public-methods
         # Now, if endpoints are present (only if tenant was specified), store them
         if self._projectid is not None:
             self._catalog = token['catalog']
+            logger.debug('Catalog found: %s', self._catalog)
             # Check for the presence of the endpoint for volumes
             # Volume v2 api was deprecated in Pike release, and removed on Xena release
             # Volume v3 api is available since Mitaka. Both are API compatible
-            if self._catalog:
-                if any(v['type'] == 'volumev3' for v in self._catalog):
-                    self._volume = 'volumev3'
-                else:
-                    self._volume = 'volumev2'
+            # if self._catalog:
+            #    if any(v['type'] == 'volumev3' for v in self._catalog):
+            #        'volumev3', 'volumev2' = 'volumev3'
+            #    else:
+            #        'volumev3', 'volumev2' = 'volumev2'
 
     def ensure_authenticated(self) -> None:
         if self._authenticated is False or self._projectid != self._authenticatedProjectId:
             self.authenticate_with_password()
 
     @auth_required()
-    def list_projects(self) -> list[typing.Any]:
-        return list(
-            get_recurring_url_json(
+    @decorators.cached(prefix='prjs', timeout=consts.cache.EXTREME_CACHE_TIMEOUT, key_helper=cache_key_helper)
+    def list_projects(self) -> list[openstack_types.ProjectInfo]:
+        return [
+            openstack_types.ProjectInfo.from_dict(p)
+            for p in get_recurring_url_json(
                 self._authurl,
                 'v3/users/{user_id}/projects'.format(user_id=self._userid),
                 self._session,
@@ -413,63 +421,68 @@ class Client:  # pylint: disable=too-many-public-methods
                 error_message='List Projects',
                 timeout=self._timeout,
             )
-        )
+        ]
 
     @auth_required()
-    def list_regions(self) -> list[typing.Any]:
-        return list(
-            get_recurring_url_json(
+    @decorators.cached(prefix='rgns', timeout=consts.cache.EXTREME_CACHE_TIMEOUT, key_helper=cache_key_helper)
+    def list_regions(self) -> list[openstack_types.RegionInfo]:
+        return [
+            openstack_types.RegionInfo.from_dict(r)
+            for r in get_recurring_url_json(
                 self._authurl,
-                'v3/regions/',
+                'v3/regions',
                 self._session,
                 headers=self._get_request_headers(),
                 key='regions',
                 error_message='List Regions',
                 timeout=self._timeout,
             )
-        )
+        ]
 
     @decorators.cached(prefix='svrs', timeout=consts.cache.DEFAULT_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def list_servers(
         self,
         detail: bool = False,
         params: typing.Optional[dict[str, str]] = None,
-    ) -> list[typing.Any]:
-        return list(
-            self._get_recurring_from_endpoint(
-                endpoint_types=['compute', 'compute_legacy'],
+    ) -> list[openstack_types.VMInfo]:
+        return [
+            openstack_types.VMInfo.from_dict(s)
+            for s in self._get_recurring_from_endpoint(
+                endpoint_types=COMPUTE_ENDPOINT_TYPES,
                 path='/servers' + ('/detail' if detail is True else ''),
                 error_message='List Vms',
                 key='servers',
                 params=params,
             )
-        )
+        ]
 
     @decorators.cached(prefix='imgs', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def list_images(self) -> list[typing.Any]:
-        return list(
-            self._get_recurring_from_endpoint(
+    def list_images(self) -> list[openstack_types.ImageInfo]:
+        return [
+            openstack_types.ImageInfo.from_dict(i)
+            for i in self._get_recurring_from_endpoint(
                 endpoint_types=['image'],
                 path='/v2/images?status=active',
                 error_message='List Images',
                 key='images',
             )
-        )
+        ]
 
-    @decorators.cached(prefix='volts', timeout=consts.cache.LONG_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def list_volume_types(self) -> list[typing.Any]:
-        return list(
-            self._get_recurring_from_endpoint(
-                endpoint_types=[self._volume],
+    @decorators.cached(prefix='volts', timeout=consts.cache.EXTREME_CACHE_TIMEOUT, key_helper=cache_key_helper)
+    def list_volume_types(self) -> list[openstack_types.VolumeTypeInfo]:
+        return [
+            openstack_types.VolumeTypeInfo.from_dict(t)
+            for t in self._get_recurring_from_endpoint(
+                endpoint_types=VOLUMES_ENDPOINT_TYPES,
                 path='/types',
                 error_message='List Volume Types',
                 key='volume_types',
             )
-        )
+        ]
 
         # TODO: Remove this
         # return get_recurring_url_json(
-        #     self._get_endpoint_for(self._volume) + '/types',
+        #     self._get_endpoint_for('volumev3', 'volumev2') + '/types',
         #     self._session,
         #     headers=self._get_request_headers(),
         #     key='volume_types',
@@ -478,19 +491,20 @@ class Client:  # pylint: disable=too-many-public-methods
         # )
 
     @decorators.cached(prefix='vols', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def list_volumes(self) -> list[typing.Any]:
-        return list(
-            self._get_recurring_from_endpoint(
-                endpoint_types=[self._volume],
+    def list_volumes(self) -> list[openstack_types.VolumeInfo]:
+        return [
+            openstack_types.VolumeInfo.from_dict(v)
+            for v in self._get_recurring_from_endpoint(
+                endpoint_types=VOLUMES_ENDPOINT_TYPES,
                 path='/volumes/detail',
                 error_message='List Volumes',
                 key='volumes',
             )
-        )
+        ]
 
         # TODO: Remove this
         # return get_recurring_url_json(
-        #     self._get_endpoint_for(self._volume) + '/volumes/detail',
+        #     self._get_endpoint_for('volumev3', 'volumev2') + '/volumes/detail',
         #     self._session,
         #     headers=self._get_request_headers(),
         #     key='volumes',
@@ -500,11 +514,11 @@ class Client:  # pylint: disable=too-many-public-methods
 
     def list_volume_snapshots(
         self, volume_id: typing.Optional[dict[str, typing.Any]] = None
-    ) -> list[typing.Any]:
+    ) -> list[openstack_types.VolumeSnapshotInfo]:
         return [
-            snapshot
+            openstack_types.VolumeSnapshotInfo.from_dict(snapshot)
             for snapshot in self._get_recurring_from_endpoint(
-                endpoint_types=[self._volume],
+                endpoint_types=VOLUMES_ENDPOINT_TYPES,
                 path='/snapshots',
                 error_message='List snapshots',
                 key='snapshots',
@@ -514,7 +528,7 @@ class Client:  # pylint: disable=too-many-public-methods
 
         # TODO: Remove this
         # for s in get_recurring_url_json(
-        #     self._get_endpoint_for(self._volume) + '/snapshots',
+        #     self._get_endpoint_for('volumev3', 'volumev2') + '/snapshots',
         #     self._session,
         #     headers=self._get_request_headers(),
         #     key='snapshots',
@@ -524,12 +538,12 @@ class Client:  # pylint: disable=too-many-public-methods
         #     if volume_id is None or s['volume_id'] == volume_id:
         #         yield s
 
-    @decorators.cached(prefix='azs', timeout=consts.cache.LONG_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def list_availability_zones(self) -> list[typing.Any]:
+    @decorators.cached(prefix='azs', timeout=consts.cache.EXTREME_CACHE_TIMEOUT, key_helper=cache_key_helper)
+    def list_availability_zones(self) -> list[openstack_types.AvailabilityZoneInfo]:
         return [
-            availability_zone['zoneName']
+            openstack_types.AvailabilityZoneInfo.from_dict(availability_zone)
             for availability_zone in self._get_recurring_from_endpoint(
-                endpoint_types=['compute', 'compute_legacy'],
+                endpoint_types=COMPUTE_ENDPOINT_TYPES,
                 path='/os-availability-zone',
                 error_message='List Availability Zones',
                 key='availabilityZoneInfo',
@@ -549,11 +563,11 @@ class Client:  # pylint: disable=too-many-public-methods
         #     if az['zoneState']['available'] is True:
         #         yield az['zoneName']
 
-    @decorators.cached(prefix='flvs', timeout=consts.cache.LONG_CACHE_TIMEOUT, key_helper=cache_key_helper)
+    @decorators.cached(prefix='flvs', timeout=consts.cache.EXTREME_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def list_flavors(self) -> list[typing.Any]:
         return list(
             self._get_recurring_from_endpoint(
-                endpoint_types=['compute', 'compute_legacy'],
+                endpoint_types=COMPUTE_ENDPOINT_TYPES,
                 path='/flavors',
                 error_message='List Flavors',
                 key='flavors',
@@ -681,7 +695,7 @@ class Client:  # pylint: disable=too-many-public-methods
     def get_server(self, server_id: str) -> dict[str, typing.Any]:
         r = self._request_from_endpoint(
             'get',
-            endpoints_types=['compute', 'compute_legacy'],
+            endpoints_types=COMPUTE_ENDPOINT_TYPES,
             path=f'/servers/{server_id}',
             error_message='Get Server information',
         )
@@ -690,14 +704,14 @@ class Client:  # pylint: disable=too-many-public-methods
     def get_volume(self, volumeId: str) -> dict[str, typing.Any]:
         r = self._request_from_endpoint(
             'get',
-            endpoints_types=[self._volume],
+            endpoints_types=VOLUMES_ENDPOINT_TYPES,
             path=f'/volumes/{volumeId}',
             error_message='Get Volume information',
         )
 
         # TODO: Remove this
         # r = self._session.get(
-        #     self._get_endpoint_for(self._volume) + '/volumes/{volume_id}'.format(volume_id=volumeId),
+        #     self._get_endpoint_for('volumev3', 'volumev2') + '/volumes/{volume_id}'.format(volume_id=volumeId),
         #     headers=self._get_request_headers(),
         #     timeout=self._timeout,
         # )
@@ -713,14 +727,14 @@ class Client:  # pylint: disable=too-many-public-methods
         """
         r = self._request_from_endpoint(
             'get',
-            endpoints_types=[self._volume],
+            endpoints_types=VOLUMES_ENDPOINT_TYPES,
             path=f'/snapshots/{snapshot_id}',
             error_message='Get Snaphost information',
         )
 
         # TODO: Remove this
         # r = self._session.get(
-        #     self._get_endpoint_for(self._volume) + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
+        #     self._get_endpoint_for('volumev3', 'volumev2') + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
         #     headers=self._get_request_headers(),
         #     timeout=self._timeout,
         # )
@@ -744,7 +758,7 @@ class Client:  # pylint: disable=too-many-public-methods
 
         r = self._request_from_endpoint(
             'put',
-            endpoints_types=[self._volume],
+            endpoints_types=VOLUMES_ENDPOINT_TYPES,
             path=f'/snapshots/{snapshot_id}',
             data=json.dumps(data),
             error_message='Update Snaphost information',
@@ -752,7 +766,7 @@ class Client:  # pylint: disable=too-many-public-methods
 
         # TODO: Remove this
         # r = self._session.put(
-        #     self._get_endpoint_for(self._volume) + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshot_id),
+        #     self._get_endpoint_for('volumev3', 'volumev2') + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshot_id),
         #     data=json.dumps(data),
         #     headers=self._get_request_headers(),
         #     timeout=self._timeout,
@@ -779,7 +793,7 @@ class Client:  # pylint: disable=too-many-public-methods
 
         r = self._request_from_endpoint(
             'post',
-            endpoints_types=[self._volume],
+            endpoints_types=VOLUMES_ENDPOINT_TYPES,
             path=f'/volumes/{volume_id}',
             data=json.dumps(data),
             error_message='Get Volume information',
@@ -787,7 +801,7 @@ class Client:  # pylint: disable=too-many-public-methods
 
         # TODO: Remove this
         # r = self._session.post(
-        #     self._get_endpoint_for(self._volume) + '/snapshots',
+        #     self._get_endpoint_for('volumev3', 'volumev2') + '/snapshots',
         #     data=json.dumps(data),
         #     headers=self._get_request_headers(),
         #     timeout=self._timeout,
@@ -812,7 +826,7 @@ class Client:  # pylint: disable=too-many-public-methods
 
         r = self._request_from_endpoint(
             'post',
-            endpoints_types=[self._volume],
+            endpoints_types=VOLUMES_ENDPOINT_TYPES,
             path='/volumes',
             data=json.dumps(data),
             error_message='Create Volume from Snapshot',
@@ -820,7 +834,7 @@ class Client:  # pylint: disable=too-many-public-methods
 
         # TODO: Remove this
         # r = self._session.post(
-        #     self._get_endpoint_for(self._volume) + '/volumes',
+        #     self._get_endpoint_for('volumev3', 'volumev2') + '/volumes',
         #     data=json.dumps(data),
         #     headers=self._get_request_headers(),
         #     timeout=self._timeout,
@@ -869,7 +883,7 @@ class Client:  # pylint: disable=too-many-public-methods
 
         r = self._request_from_endpoint(
             'post',
-            endpoints_types=['compute', 'compute_legacy'],
+            endpoints_types=COMPUTE_ENDPOINT_TYPES,
             path='/servers',
             data=json.dumps(data),
             error_message='Create instance from snapshot',
@@ -892,7 +906,7 @@ class Client:  # pylint: disable=too-many-public-methods
         # This does not returns anything
         self._request_from_endpoint(
             'delete',
-            endpoints_types=['compute', 'compute_legacy'],
+            endpoints_types=COMPUTE_ENDPOINT_TYPES,
             path=f'/servers/{server_id}',
             error_message='Cannot delete server (probably server does not exists).',
         )
@@ -917,14 +931,14 @@ class Client:  # pylint: disable=too-many-public-methods
         # This does not returns anything
         self._request_from_endpoint(
             'delete',
-            endpoints_types=[self._volume],
+            endpoints_types=VOLUMES_ENDPOINT_TYPES,
             path=f'/snapshots/{snapshot_id}',
             error_message='Cannot remove snapshot.',
         )
 
         # TODO: Remove this
         # r = self._session.delete(
-        #     self._get_endpoint_for(self._volume) + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
+        #     self._get_endpoint_for('volumev3', 'volumev2') + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
         #     headers=self._get_request_headers(),
         #     timeout=self._timeout,
         # )
@@ -937,7 +951,7 @@ class Client:  # pylint: disable=too-many-public-methods
         # this does not returns anything
         self._request_from_endpoint(
             'post',
-            endpoints_types=['compute', 'compute_legacy'],
+            endpoints_types=COMPUTE_ENDPOINT_TYPES,
             path=f'/servers/{server_id}/action',
             data='{"os-start": null}',
             error_message='Starting server',
@@ -957,7 +971,7 @@ class Client:  # pylint: disable=too-many-public-methods
         # this does not returns anything
         self._request_from_endpoint(
             'post',
-            endpoints_types=['compute', 'compute_legacy'],
+            endpoints_types=COMPUTE_ENDPOINT_TYPES,
             path=f'/servers/{server_id}/action',
             data='{"os-stop": null}',
             error_message='Stoping server',
@@ -978,7 +992,7 @@ class Client:  # pylint: disable=too-many-public-methods
         # this does not returns anything
         self._request_from_endpoint(
             'post',
-            endpoints_types=['compute', 'compute_legacy'],
+            endpoints_types=COMPUTE_ENDPOINT_TYPES,
             path=f'/servers/{server_id}/action',
             data='{"suspend": null}',
             error_message='Suspending server',
@@ -998,7 +1012,7 @@ class Client:  # pylint: disable=too-many-public-methods
         # This does not returns anything
         self._request_from_endpoint(
             'post',
-            endpoints_types=['compute', 'compute_legacy'],
+            endpoints_types=COMPUTE_ENDPOINT_TYPES,
             path=f'/servers/{server_id}/action',
             data='{"resume": null}',
             error_message='Resuming server',

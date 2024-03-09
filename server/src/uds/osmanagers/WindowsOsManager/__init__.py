@@ -44,18 +44,20 @@ from .windows import WindowsOsManager
 from .windows_domain import WinDomainOsManager
 from .windows_random import WinRandomPassManager
 
+# We know for sure __package__ is not None, because we are a submodules of a package
+_mypath = os.path.dirname(typing.cast(str, sys.modules[__package__].__file__))  # pyright: ignore
+
+
 managers.downloads_manager().register(
     f'UDSActorSetup-{VERSION}.exe',
     _('UDS Actor for windows machines'),
-    os.path.dirname(typing.cast(str, sys.modules[__package__].__file__))
-    + f'/files/UDSActorSetup-{VERSION}.exe',
+    _mypath + f'/files/UDSActorSetup-{VERSION}.exe',
     'application/vnd.microsoft.portable-executable',
 )
 
 managers.downloads_manager().register(
     f'UDSActorUnmanagedSetup-{VERSION}.exe',
     _('UDS Actor for Unmanaged windows machines. Used ONLY for static machines.'),
-    os.path.dirname(typing.cast(str, sys.modules[__package__].__file__))
-    + f'/files/UDSActorUnmanagedSetup-{VERSION}.exe',
+    _mypath + f'/files/UDSActorUnmanagedSetup-{VERSION}.exe',
     'application/vnd.microsoft.portable-executable',
 )

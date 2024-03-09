@@ -31,5 +31,5 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # pyright: reportUnusedImport=false
 
-from .provider_legacy import ProviderLegacy
+from .provider_legacy import OpenStackProviderLegacy
 from .provider import OpenStackProvider

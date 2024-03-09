@@ -40,7 +40,7 @@ from django.utils.translation import gettext_noop as _
 from uds.core import environment, types, consts
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
-from uds.core.util import validators
+from uds.core.util import validators, fields
 from uds.core.util.decorators import cached
 
 from . import openstack
@@ -60,7 +60,7 @@ INTERFACE_VALUES = [
 ]
 
 
-class ProviderLegacy(ServiceProvider):
+class OpenStackProviderLegacy(ServiceProvider):
     """
     This class represents the sample services provider
 
@@ -157,44 +157,11 @@ class ProviderLegacy(ServiceProvider):
         required=True,
     )
 
-    concurrent_creation_limit = gui.NumericField(
-        length=3,
-        label=_('Creation concurrency'),
-        default=10,
-        min_value=1,
-        max_value=65536,
-        order=50,
-        tooltip=_('Maximum number of concurrently creating VMs'),
-        required=True,
-        tab=types.ui.Tab.ADVANCED,
-        old_field_name='maxPreparingServices',
-    )
-    concurrent_removal_limit = gui.NumericField(
-        length=3,
-        label=_('Removal concurrency'),
-        default=5,
-        min_value=1,
-        max_value=65536,
-        order=51,
-        tooltip=_('Maximum number of concurrently removing VMs'),
-        required=True,
-        tab=types.ui.Tab.ADVANCED,
-        old_field_name='maxRemovingServices',
-    )
+    concurrent_creation_limit = fields.concurrent_creation_limit_field()
+    concurrent_removal_limit = fields.concurrent_removal_limit_field()
+    timeout = fields.timeout_field(default=10)
 
-    timeout = gui.NumericField(
-        length=3,
-        label=_('Timeout'),
-        default=10,
-        min_value=1,
-        max_value=128,
-        order=99,
-        tooltip=_('Timeout in seconds of connection to OpenStack'),
-        required=True,
-        tab=types.ui.Tab.ADVANCED,
-    )
-
-    httpsProxy = gui.TextField(
+    https_proxy = gui.TextField(
         length=96,
         label=_('Proxy'),
         order=91,
@@ -203,6 +170,7 @@ class ProviderLegacy(ServiceProvider):
         ),
         required=False,
         tab=types.ui.Tab.ADVANCED,
+        old_field_name='httpsProxy',
     )
 
     # tenant = gui.TextField(length=64, label=_('Project'), order=6, tooltip=_('Project (tenant) for this provider'), required=True, default='')
@@ -224,8 +192,8 @@ class ProviderLegacy(ServiceProvider):
 
     def api(self, projectid: typing.Optional[str]=None, region: typing.Optional[str]=None) -> openstack.Client:
         proxies: typing.Optional[dict[str, str]] = None
-        if self.httpsProxy.value.strip():
-            proxies = {'https': self.httpsProxy.value}
+        if self.https_proxy.value.strip():
+            proxies = {'https': self.https_proxy.value}
         return openstack.Client(
             self.host.value,
             self.port.value,
@@ -277,7 +245,7 @@ class ProviderLegacy(ServiceProvider):
             second is an String with error, preferably internacionalizated..
 
         """
-        return ProviderLegacy(env, data).test_connection()
+        return OpenStackProviderLegacy(env, data).test_connection()
 
     @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def is_available(self) -> bool:

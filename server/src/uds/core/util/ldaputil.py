@@ -47,6 +47,8 @@ from ldap import (
     # SCOPE_SUBORDINATE,  # pyright: ignore
 )
 
+# Reexporting, so we can use them as ldaputil.SCOPE_BASE, etc...
+# This allows us to replace this in a future with another ldap library if needed
 SCOPE_BASE: int = S_BASE  # pyright: ignore
 SCOPE_SUBTREE: int = S_SUBTREE  # pyright: ignore
 SCOPE_ONELEVEL: int = S_ONELEVEL  # pyright: ignore
@@ -56,7 +58,11 @@ from django.utils.translation import gettext as _
 from django.conf import settings
 
 # So it is avaliable for importers
-from ldap.ldapobject import LDAPObject
+from ldap.ldapobject import LDAPObject as S_LDAPObject  # pyright: ignore
+
+# Reexporting, so we can use them as ldaputil.LDAPObject, etc...
+# This allows us to replace this in a future with another ldap library if needed
+LDAPObject: typing.TypeAlias = S_LDAPObject
 
 from uds.core.util import utils
 

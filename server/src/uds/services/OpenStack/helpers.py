@@ -44,11 +44,11 @@ logger = logging.getLogger(__name__)
 
 
 def getApi(parameters: dict[str, str]) -> tuple[openstack.Client, bool]:
-    from .provider_legacy import ProviderLegacy
+    from .provider_legacy import OpenStackProviderLegacy
     from .provider import OpenStackProvider
 
     provider = typing.cast(
-        typing.Union[ProviderLegacy, OpenStackProvider],
+        typing.Union[OpenStackProviderLegacy, OpenStackProvider],
         models.Provider.objects.get(uuid=parameters['prov_uuid']).get_instance(),
     )
 
@@ -60,25 +60,20 @@ def getApi(parameters: dict[str, str]) -> tuple[openstack.Client, bool]:
     return (provider.api(parameters['project'], parameters['region']), use_subnets_names)
 
 
-def get_resources(
-    parameters: dict[str, str]
-) -> types.ui.CallbackResultType:
+def get_resources(parameters: dict[str, str]) -> types.ui.CallbackResultType:
     '''
     This helper is designed as a callback for Project Selector
     '''
     api, name_from_subnets = getApi(parameters)
 
-    zones = [gui.choice_item(z, z) for z in api.list_availability_zones()]
+    zones = [gui.choice_item(z.id, z.name) for z in api.list_availability_zones()]
     networks = [
-        gui.choice_item(z['id'], z['name'])
-        for z in api.list_networks(name_from_subnets=name_from_subnets)
+        gui.choice_item(z['id'], z['name']) for z in api.list_networks(name_from_subnets=name_from_subnets)
     ]
     flavors = [gui.choice_item(z['id'], z['name']) for z in api.list_flavors()]
-    securityGroups = [
-        gui.choice_item(z['id'], z['name']) for z in api.list_security_groups()
-    ]
+    securityGroups = [gui.choice_item(z['id'], z['name']) for z in api.list_security_groups()]
     volumeTypes = [gui.choice_item('-', _('None'))] + [
-        gui.choice_item(t['id'], t['name']) for t in api.list_volume_types()
+        gui.choice_item(t.id, t.name) for t in api.list_volume_types()
     ]
 
     data: types.ui.CallbackResultType = [
@@ -92,18 +87,14 @@ def get_resources(
     return data
 
 
-def get_volumes(
-    parameters: dict[str, str]
-) -> types.ui.CallbackResultType:
+def get_volumes(parameters: dict[str, str]) -> types.ui.CallbackResultType:
     '''
     This helper is designed as a callback for Zone Selector
     '''
     api, _ = getApi(parameters)
     # Source volumes are all available for us
     # volumes = [gui.choice_item(v['id'], v['name']) for v in api.listVolumes() if v['name'] != '' and v['availability_zone'] == parameters['availabilityZone']]
-    volumes = [
-        gui.choice_item(v['id'], v['name']) for v in api.list_volumes() if v['name'] != ''
-    ]
+    volumes = [gui.choice_item(v.id, v.name) for v in api.list_volumes() if v.name]
 
     data: types.ui.CallbackResultType = [
         {'name': 'volume', 'choices': volumes},

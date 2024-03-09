@@ -50,9 +50,9 @@ logger = logging.getLogger(__name__)
 if typing.TYPE_CHECKING:
     from . import openstack
     from .provider import OpenStackProvider
-    from .provider_legacy import ProviderLegacy
+    from .provider_legacy import OpenStackProviderLegacy
 
-    AnyOpenStackProvider = typing.Union[OpenStackProvider, ProviderLegacy]
+    AnyOpenStackProvider = typing.Union[OpenStackProvider, OpenStackProviderLegacy]
 
 
 class OpenStackLiveService(services.Service):
@@ -221,33 +221,33 @@ class OpenStackLiveService(services.Service):
         api = self.provider().api()
 
         # Checks if legacy or current openstack provider
-        parentCurrent = (
+        parent = (
             typing.cast('OpenStackProvider', self.provider())
             if not self.provider().legacy
             else None
         )
 
-        if parentCurrent and parentCurrent.region.value:
+        if parent and parent.region.value:
             regions = [
-                gui.choice_item(parentCurrent.region.value, parentCurrent.region.value)
+                gui.choice_item(parent.region.value, parent.region.value)
             ]
         else:
-            regions = [gui.choice_item(r['id'], r['id']) for r in api.list_regions()]
+            regions = [gui.choice_item(r.id, r.name) for r in api.list_regions()]
 
         self.region.set_choices(regions)
 
-        if parentCurrent and parentCurrent.tenant.value:
+        if parent and parent.tenant.value:
             tenants = [
-                gui.choice_item(parentCurrent.tenant.value, parentCurrent.tenant.value)
+                gui.choice_item(parent.tenant.value, parent.tenant.value)
             ]
         else:
-            tenants = [gui.choice_item(t['id'], t['name']) for t in api.list_projects()]
+            tenants = [gui.choice_item(t.id, t.name) for t in api.list_projects()]
         self.project.set_choices(tenants)
 
         # So we can instantiate parent to get API
         logger.debug(self.provider().serialize())
         
-        self.parent_uuid = self.provider().get_uuid()
+        self.parent_uuid.value = self.provider().get_uuid()
 
     @property
     def api(self) -> 'openstack.Client':
