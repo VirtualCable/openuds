@@ -316,7 +316,7 @@ class Client:  # pylint: disable=too-many-public-methods
     def listRegions(self) -> typing.Iterable[typing.Any]:
         return getRecurringUrlJson(
             self._authUrl,
-            'v3/regions/',
+            'v3/regions',
             self._session,
             headers=self._requestHeaders(),
             key='regions',
