@@ -44,8 +44,9 @@ from .linux_osmanager import LinuxOsManager
 from .linux_randompass_osmanager import LinuxRandomPassManager
 from .linux_ad_osmanager import LinuxOsADManager
 
-# We know for sure __package__ is not None, because we are a submodules of a package
-_mypath = os.path.dirname(typing.cast(str, sys.modules[__package__].__file__))  # pyright: ignore
+_mypath = os.path.dirname(__spec__.origin)
+# Old version, using spec is better, but we can use __package__ as well
+#_mypath = os.path.dirname(typing.cast(str, sys.modules[__package__].__file__))  # pyright: ignore
 
 downloads_manager().register(
     f'udsactor_{VERSION}_all.deb',

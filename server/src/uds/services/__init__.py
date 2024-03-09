@@ -53,11 +53,9 @@ def __loadModules() -> None:
     This imports all packages that are descendant of this package, and, after that,
     it register all subclases of service provider as
     """
-    from uds.core import services  # pylint: disable=import-outside-toplevel
+    from uds.core import services
 
-    modfinder.dynamically_load_and_register_modules(
-        services.factory(), services.ServiceProvider, __name__
-    )
+    modfinder.dynamically_load_and_register_modules(services.factory(), services.ServiceProvider, __name__)
 
 
 __loadModules()

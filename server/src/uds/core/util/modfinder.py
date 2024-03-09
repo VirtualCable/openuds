@@ -55,8 +55,6 @@ V = typing.TypeVar('V')
 patterns: list[typing.Any] = []
 
 
-
-
 def get_urlpatterns_from_modules() -> list[typing.Any]:
     """Loads dipatcher modules urls to add to django urlpatterns
 
@@ -99,7 +97,7 @@ def import_modules(module_name: str, *, package_name: typing.Optional[str] = Non
         This function is used to dinamycally import all submodules inside a submodule (with optional package name).
 
     """
-    # Dinamycally import children of this package.
+    # Dinamycally import children of the package.
     package_path = os.path.dirname(typing.cast(str, sys.modules[module_name].__file__))
     if package_name:  # Append package name to path and module name
         package_path = os.path.join(package_path, package_name)
