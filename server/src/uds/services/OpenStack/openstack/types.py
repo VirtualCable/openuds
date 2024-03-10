@@ -65,21 +65,20 @@ class Status(enum.StrEnum):
     @staticmethod
     def from_str(s: str) -> 'Status':
         try:
-            return Status(s)
+            return Status(s.upper())
         except ValueError:
             return Status.UNKNOWN
-
 
     # Helpers to check statuses
     def is_lost(self) -> bool:
         return self in [Status.DELETED, Status.ERROR, Status.UNKNOWN, Status.SOFT_DELETED]
-    
+
     def is_paused(self) -> bool:
         return self in [Status.PAUSED, Status.SUSPENDED]
-    
+
     def is_running(self) -> bool:
         return self in [Status.ACTIVE, Status.RESCUE, Status.RESIZE, Status.VERIFY_RESIZE]
-    
+
     def is_stopped(self) -> bool:
         return self in [Status.SHUTOFF, Status.SHELVED, Status.SHELVED_OFFLOADED, Status.SOFT_DELETED]
 
@@ -101,12 +100,33 @@ class PowerState(enum.IntEnum):
 
     def is_paused(self) -> bool:
         return self == PowerState.PAUSED
-    
+
     def is_running(self) -> bool:
         return self == PowerState.RUNNING
-    
+
     def is_stopped(self) -> bool:
         return self in [PowerState.SHUTDOWN, PowerState.CRASHED, PowerState.SUSPENDED]
+
+
+class SnapshotStatus(enum.StrEnum):
+    CREATING = 'creating'  # The snapshot is being created.
+    AVAILABLE = 'available'  # The snapshot is ready to use.
+    BACKING_UP = 'backing-up'  # The snapshot is being backed up.
+    DELETING = 'deleting'  # The snapshot is being deleted.
+    ERROR = 'error'  # A snapshot creation error has occurred.
+    DELETED = 'deleted'  # The snapshot is deleted.
+    UNMANAGING = 'unmanaging'  # The snapshot is being unmanaged.
+    RESTORING = 'restoring'  # The snapshot is being restored to a volume.
+    ERROR_DELETING = 'error_deleting'  # A snapshot deletion error has occurred.
+    
+    UNKNOWN = 'unknown'  # The state of the snapshot is unknown. Internal, not from openstack
+    
+    @staticmethod
+    def from_str(s: str) -> 'SnapshotStatus':
+        try:
+            return SnapshotStatus(s.lower())
+        except ValueError:
+            return SnapshotStatus.UNKNOWN
 
 @dataclasses.dataclass
 class VMInfo:
@@ -149,6 +169,7 @@ class VMInfo:
     access_addr_ipv4: str
     access_addr_ipv6: str
     fault: typing.Optional[str]
+    admin_pass: str
 
     @staticmethod
     def from_dict(d: dict[str, typing.Any]) -> 'VMInfo':
@@ -168,15 +189,16 @@ class VMInfo:
             flavor = ''
         return VMInfo(
             id=d['id'],
-            name=d['name'],
+            name=d.get('name', d['id']),
             href=href,
             flavor=flavor,
             status=Status.from_str(d.get('status', Status.UNKNOWN.value)),
             power_state=PowerState.from_int(d.get('OS-EXT-STS:power_state', PowerState.NOSTATE)),
             addresses=VMInfo.AddresInfo.from_addresses(d.get('addresses', {})),
-            access_addr_ipv4=d.get('accessIPv4', ''),
-            access_addr_ipv6=d.get('accessIPv6', ''),
+            access_addr_ipv4=d.get('accessIPv4') or '',
+            access_addr_ipv6=d.get('accessIPv6') or '',
             fault=d.get('fault', None),
+            admin_pass=d.get('adminPass') or '',
         )
 
 
@@ -232,12 +254,22 @@ class ImageInfo:
 class VolumeInfo:
     id: str
     name: str
+    description: str
+    size: int
+    availability_zone: str
+    bootable: bool
+    encrypted: bool
 
     @staticmethod
     def from_dict(d: dict[str, typing.Any]) -> 'VolumeInfo':
         return VolumeInfo(
             id=d['id'],
             name=d['name'] or '',
+            description=d.get('description', ''),
+            size=d.get('size', 0),
+            availability_zone=d.get('availability_zone', ''),
+            bootable=d.get('bootable', False),
+            encrypted=d.get('encrypted', False),
         )
 
 
@@ -246,7 +278,7 @@ class VolumeSnapshotInfo:
     id: str
     name: str
     description: str
-    status: str
+    status: SnapshotStatus
     size: int  # in gibibytes (GiB)
     created_at: datetime.datetime
     updated_at: datetime.datetime
@@ -254,14 +286,16 @@ class VolumeSnapshotInfo:
     @staticmethod
     def from_dict(d: dict[str, typing.Any]) -> 'VolumeSnapshotInfo':
         # Try to get created_at and updated_at, if not possible, just ignore it
+        created_at = datetime.datetime.fromisoformat(d.get('created_at') or '1970-01-01T00:00:00')
+        updated_at = datetime.datetime.fromisoformat(d.get('updated_at') or '1970-01-01T00:00:00')
         return VolumeSnapshotInfo(
             id=d['id'],
             name=d['name'],
             description=d['description'] or '',
-            status=d['status'],
+            status=SnapshotStatus.from_str(d['status']),
             size=d['size'],
-            created_at=datetime.datetime.fromisoformat(d['created_at']),
-            updated_at=datetime.datetime.fromisoformat(d['updated_at']),
+            created_at=created_at,
+            updated_at=updated_at,
         )
 
 

@@ -65,59 +65,6 @@ COMPUTE_ENDPOINT_TYPES = ['compute', 'compute_legacy']
 NETWORKS_ENDPOINT_TYPES = ['network']
 
 
-# Helpers
-def ensure_valid_response(response: 'requests.Response', errMsg: typing.Optional[str] = None) -> None:
-    if response.ok is False:
-        try:
-            (
-                _,
-                err,
-            ) = (
-                response.json().popitem()
-            )  # Extract any key, in case of error is expected to have only one top key so this will work
-            msg = ': {message}'.format(**err)
-            errMsg = errMsg + msg if errMsg else msg
-        except (
-            Exception
-        ):  # nosec: If error geting error message, simply ignore it (will be loged on service log anyway)
-            pass
-        if errMsg is None:
-            errMsg = 'Error checking response'
-        logger.error('%s: %s', errMsg, response.content)
-        raise Exception(errMsg)
-
-
-def get_recurring_url_json(
-    endpoint: str,
-    path: str,
-    session: 'requests.Session',
-    headers: dict[str, str],
-    key: str,
-    params: typing.Optional[collections.abc.Mapping[str, str]] = None,
-    error_message: typing.Optional[str] = None,
-    timeout: int = 10,
-) -> collections.abc.Iterable[typing.Any]:
-    counter = 0
-    while True:
-        counter += 1
-        logger.debug('Requesting url #%s: %s%s / %s', counter, endpoint, path, params)
-        r = session.get(endpoint + path, params=params, headers=headers, timeout=timeout)
-
-        ensure_valid_response(r, error_message)
-
-        j = r.json()
-
-        for v in j[key]:
-            yield v
-
-        if 'next' not in j:
-            break
-
-        logger.debug('Json: %s', j)
-
-        path = j['next']
-
-
 # Decorators
 def auth_required(for_project: bool = False) -> collections.abc.Callable[[decorators.FT], decorators.FT]:
 
@@ -285,12 +232,14 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
         path: str,
         error_message: str,
         data: typing.Any = None,
+        expects_json: bool = True,
     ) -> typing.Any:
         cache_key = ''.join(endpoints_types)
         found_endpoints = self._get_endpoints_iterable(cache_key, *endpoints_types)
 
         for i, endpoint in enumerate(found_endpoints):
             try:
+                logger.debug('Requesting from endpoint: %s and path %s using %s: %s', endpoint, path, type, data)
                 r = self._session.request(
                     type,
                     endpoint + path,
@@ -298,7 +247,11 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
                     headers=self._get_request_headers(),
                     timeout=self._timeout,
                 )
-                ensure_valid_response(r, error_message)
+                if not expects_json:  
+                    return r
+                
+                OpenstackClient._ensure_valid_response(r, error_message)
+                logger.debug('Result: %s', r.json())
                 return r
             except Exception as e:
                 if i == len(found_endpoints) - 1:
@@ -327,7 +280,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
                 self.cache.put(
                     cache_key, endpoint, consts.cache.EXTREME_CACHE_TIMEOUT
                 )  # Cache endpoint for a very long time
-                yield from get_recurring_url_json(
+                yield from OpenstackClient._get_recurring_url_json(
                     endpoint=endpoint,
                     path=path,
                     session=self._session,
@@ -379,7 +332,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
             timeout=self._timeout,
         )
 
-        ensure_valid_response(r, 'Invalid Credentials')
+        OpenstackClient._ensure_valid_response(r, 'Invalid Credentials')
 
         self._authenticated = True
         self._tokenid = r.headers['X-Subject-Token']
@@ -413,7 +366,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
     def list_projects(self) -> list[openstack_types.ProjectInfo]:
         return [
             openstack_types.ProjectInfo.from_dict(p)
-            for p in get_recurring_url_json(
+            for p in OpenstackClient._get_recurring_url_json(
                 self._authurl,
                 'v3/users/{user_id}/projects'.format(user_id=self._userid),
                 self._session,
@@ -429,7 +382,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
     def list_regions(self) -> list[openstack_types.RegionInfo]:
         return [
             openstack_types.RegionInfo.from_dict(r)
-            for r in get_recurring_url_json(
+            for r in OpenstackClient._get_recurring_url_json(
                 self._authurl,
                 'v3/regions',
                 self._session,
@@ -612,7 +565,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
         )
         return openstack_types.VMInfo.from_dict(r.json()['server'])
 
-    def get_volume(self, volumeId: str) -> dict[str, typing.Any]:
+    def get_volume(self, volumeId: str) -> openstack_types.VolumeInfo:
         r = self._request_from_endpoint(
             'get',
             endpoints_types=VOLUMES_ENDPOINT_TYPES,
@@ -620,9 +573,9 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
             error_message='Get Volume information',
         )
 
-        return r.json()['volume']
+        return openstack_types.VolumeInfo.from_dict(r.json()['volume'])
 
-    def get_snapshot(self, snapshot_id: str) -> dict[str, typing.Any]:
+    def get_volume_snapshot(self, snapshot_id: str) -> openstack_types.VolumeSnapshotInfo:
         """
         States are:
             creating, available, deleting, error,  error_deleting
@@ -634,14 +587,14 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
             error_message='Get Snaphost information',
         )
 
-        return r.json()['snapshot']
+        return openstack_types.VolumeSnapshotInfo.from_dict(r.json()['snapshot'])
 
     def update_snapshot(
         self,
         snapshot_id: str,
         name: typing.Optional[str] = None,
         description: typing.Optional[str] = None,
-    ) -> dict[str, typing.Any]:
+    ) -> openstack_types.VolumeSnapshotInfo:
         data: dict[str, typing.Any] = {'snapshot': {}}
         if name:
             data['snapshot']['name'] = name
@@ -657,11 +610,11 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
             error_message='Update Snaphost information',
         )
 
-        return r.json()['snapshot']
+        return openstack_types.VolumeSnapshotInfo.from_dict(r.json()['snapshot'])
 
     def create_volume_snapshot(
         self, volume_id: str, name: str, description: typing.Optional[str] = None
-    ) -> dict[str, typing.Any]:
+    ) -> openstack_types.VolumeSnapshotInfo:
         description = description or 'UDS Snapshot'
         data = {
             'snapshot': {
@@ -672,21 +625,19 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
             }
         }
 
-        # First, ensure volume is in state "available"
-
         r = self._request_from_endpoint(
             'post',
             endpoints_types=VOLUMES_ENDPOINT_TYPES,
-            path=f'/volumes/{volume_id}',
+            path=f'/snapshots',
             data=json.dumps(data),
-            error_message='Get Volume information',
+            error_message='Create Volume Snapshot',
         )
 
-        return r.json()['snapshot']
+        return openstack_types.VolumeSnapshotInfo.from_dict(r.json()['snapshot'])
 
     def create_volume_from_snapshot(
         self, snapshotId: str, name: str, description: typing.Optional[str] = None
-    ) -> dict[str, typing.Any]:
+    ) -> openstack_types.VolumeInfo:
         description = description or 'UDS Volume'
         data = {
             'volume': {
@@ -705,7 +656,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
             error_message='Create Volume from Snapshot',
         )
 
-        return r.json()['volume']
+        return openstack_types.VolumeInfo.from_dict(r.json()['volume'])
 
     def create_server_from_snapshot(
         self,
@@ -716,7 +667,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
         network_id: str,
         security_groups_ids: collections.abc.Iterable[str],
         count: int = 1,
-    ) -> dict[str, typing.Any]:
+    ) -> openstack_types.VMInfo:
         data = {
             'server': {
                 'name': name,
@@ -752,9 +703,8 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
             error_message='Create instance from snapshot',
         )
 
-        return r.json()['server']
+        return openstack_types.VMInfo.from_dict(r.json()['server'])
 
-    @auth_required(for_project=True)
     def delete_server(self, server_id: str) -> None:
         # This does not returns anything
         self._request_from_endpoint(
@@ -762,6 +712,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
             endpoints_types=COMPUTE_ENDPOINT_TYPES,
             path=f'/servers/{server_id}',
             error_message='Cannot delete server (probably server does not exists).',
+            expects_json=False,
         )
 
     def delete_snapshot(self, snapshot_id: str) -> None:
@@ -771,6 +722,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
             endpoints_types=VOLUMES_ENDPOINT_TYPES,
             path=f'/snapshots/{snapshot_id}',
             error_message='Cannot remove snapshot.',
+            expects_json=False,
         )
 
     def start_server(self, server_id: str) -> None:
@@ -781,6 +733,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
             path=f'/servers/{server_id}/action',
             data='{"os-start": null}',
             error_message='Starting server',
+            expects_json=False,
         )
 
     def stop_server(self, server_id: str) -> None:
@@ -791,9 +744,9 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
             path=f'/servers/{server_id}/action',
             data='{"os-stop": null}',
             error_message='Stoping server',
+            expects_json=False,
         )
 
-    @auth_required(for_project=True)
     def suspend_server(self, server_id: str) -> None:
         # this does not returns anything
         self._request_from_endpoint(
@@ -802,6 +755,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
             path=f'/servers/{server_id}/action',
             data='{"suspend": null}',
             error_message='Suspending server',
+            expects_json=False,
         )
 
     def resume_server(self, server_id: str) -> None:
@@ -812,6 +766,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
             path=f'/servers/{server_id}/action',
             data='{"resume": null}',
             error_message='Resuming server',
+            expects_json=False,
         )
 
     def reset_server(self, server_id: str) -> None:
@@ -823,6 +778,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
                 path=f'/servers/{server_id}/action',
                 data='{"reboot":{"type":"HARD"}}',
                 error_message='Resetting server',
+                expects_json=False,
             )
         except Exception:
             pass  # Ignore error for reseting server
@@ -866,3 +822,59 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
             return True
         except Exception:
             return False
+
+    # Helpers
+    @staticmethod
+    def _get_recurring_url_json(
+        endpoint: str,
+        path: str,
+        session: 'requests.Session',
+        headers: dict[str, str],
+        key: str,
+        params: typing.Optional[collections.abc.Mapping[str, str]] = None,
+        error_message: typing.Optional[str] = None,
+        timeout: int = 10,
+    ) -> collections.abc.Iterable[typing.Any]:
+        counter = 0
+        path = endpoint + path
+        while True:
+            counter += 1
+            logger.debug('Requesting url #%s: %s / %s', counter, path, params)
+            r = session.get(path, params=params, headers=headers, timeout=timeout)
+
+            OpenstackClient._ensure_valid_response(r, error_message)
+
+            j = r.json()
+
+            logger.debug('Json: *** %s  ***', r.content)
+
+            for v in j[key]:
+                yield v
+
+            if 'next' not in j:
+                break
+
+            path = j['next']
+            if path.startswith('http') is False:
+                path = endpoint + path
+
+    @staticmethod
+    def _ensure_valid_response(response: 'requests.Response', errMsg: typing.Optional[str] = None) -> None:
+        if response.ok is False:
+            try:
+                (
+                    _,
+                    err,
+                ) = (
+                    response.json().popitem()
+                )  # Extract any key, in case of error is expected to have only one top key so this will work
+                msg = ': {message}'.format(**err)
+                errMsg = errMsg + msg if errMsg else msg
+            except (
+                Exception
+            ):  # nosec: If error geting error message, simply ignore it (will be loged on service log anyway)
+                pass
+            if errMsg is None:
+                errMsg = 'Error checking response'
+            logger.error('%s: %s', errMsg, response.content)
+            raise Exception(errMsg)

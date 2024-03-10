@@ -37,6 +37,8 @@ from uds.core.services import Publication
 from uds.core import types
 from uds.core.util import autoserializable
 
+from .openstack import types as openstack_types
+
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from .service import OpenStackLiveService
@@ -52,7 +54,7 @@ class OpenStackLivePublication(Publication, autoserializable.AutoSerializable):
     _name = autoserializable.StringField(default='')
     _reason = autoserializable.StringField(default='')
     _template_id = autoserializable.StringField(default='')
-    _state = autoserializable.StringField(default='r')
+    _status = autoserializable.StringField(default='r')
     _destroy_after = autoserializable.BoolField(default=False)
 
     # _name: str = ''
@@ -75,7 +77,7 @@ class OpenStackLivePublication(Publication, autoserializable.AutoSerializable):
 
         vals = data.decode('utf8').split('\t')
         if vals[0] == 'v1':
-            (self._name, self._reason, self._template_id, self._state, destroy_after) = vals[1:]
+            (self._name, self._reason, self._template_id, self._status, destroy_after) = vals[1:]
         else:
             raise Exception('Invalid data')
 
@@ -96,10 +98,11 @@ class OpenStackLivePublication(Publication, autoserializable.AutoSerializable):
         try:
             res = self.service().make_template(self._name)
             logger.debug('Publication result: %s', res)
-            self._template_id = res['id']
-            self._state = res['status']
+            self._template_id = res.id
+            self._status = res.status
         except Exception as e:
-            self._state = 'error'
+            logger.exception('Got exception')
+            self._status = 'error'
             self._reason = 'Got error {}'.format(e)
             return types.states.State.ERROR
 
@@ -109,36 +112,41 @@ class OpenStackLivePublication(Publication, autoserializable.AutoSerializable):
         """
         Checks state of publication creation
         """
-        if self._state == 'error':
+        if self._status == openstack_types.SnapshotStatus.ERROR:
             return types.states.State.ERROR
 
-        if self._state == 'available':
+        if self._status ==  openstack_types.SnapshotStatus.AVAILABLE:
             return types.states.State.FINISHED
 
-        self._state = self.service().get_template(self._template_id)['status']  # For next check
+        try:
+            self._status = self.service().get_template(self._template_id).status  # For next check
 
-        if self._destroy_after and self._state == 'available':
-            self._destroy_after = False
-            return self.destroy()
+            if self._destroy_after and self._status == openstack_types.SnapshotStatus.AVAILABLE:
+                self._destroy_after = False
+                return self.destroy()
 
-        return types.states.State.RUNNING
+            return types.states.State.RUNNING
+        except Exception as e:
+            self._status = 'error'
+            self._reason = str(e)
+            return types.states.State.ERROR
 
     def error_reason(self) -> str:
         return self._reason
 
     def destroy(self) -> types.states.State:
         # We do not do anything else to destroy this instance of publication
-        if self._state == 'error':
+        if self._status == 'error':
             return types.states.State.ERROR  # Nothing to cancel
 
-        if self._state == 'creating':
+        if self._status == 'creating':
             self._destroy_after = True
             return types.states.State.RUNNING
 
         try:
             self.service().remove_template(self._template_id)
         except Exception as e:
-            self._state = 'error'
+            self._status = 'error'
             self._reason = str(e)
             return types.states.State.ERROR
 

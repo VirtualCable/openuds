@@ -38,12 +38,12 @@ from uds import models
 from uds.core import types
 from uds.core.ui import gui
 
-from . import openstack
+from .openstack import openstack_client
 
 logger = logging.getLogger(__name__)
 
 
-def getApi(parameters: dict[str, str]) -> tuple[openstack.Client, bool]:
+def getApi(parameters: dict[str, str]) -> tuple[openstack_client.OpenstackClient, bool]:
     from .provider_legacy import OpenStackProviderLegacy
     from .provider import OpenStackProvider
 

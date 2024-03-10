@@ -116,7 +116,7 @@ class OpenStackLiveService(services.Service):
         fills={
             'callback_name': 'osFillResources',
             'function': helpers.get_resources,
-            'parameters': ['parent_uuid', 'project', 'region'],
+            'parameters': ['prov_uuid', 'project', 'region'],
         },
         tooltip=_('Project for this service'),
         required=True,
@@ -129,7 +129,7 @@ class OpenStackLiveService(services.Service):
             'callback_name': 'osFillVolumees',
             'function': helpers.get_volumes,
             'parameters': [
-                'parent_uuid',
+                'prov_uuid',
                 'project',
                 'region',
                 'availability_zone',
@@ -177,7 +177,7 @@ class OpenStackLiveService(services.Service):
 
     maintain_on_error = fields.maintain_on_error_field(order=104)
 
-    parent_uuid = gui.HiddenField()
+    prov_uuid = gui.HiddenField()
 
     _api: typing.Optional['openstack_client.OpenstackClient'] = None
 
@@ -222,7 +222,7 @@ class OpenStackLiveService(services.Service):
         # So we can instantiate parent to get API
         logger.debug(self.provider().serialize())
 
-        self.parent_uuid.value = self.provider().get_uuid()
+        self.prov_uuid.value = self.provider().get_uuid()
 
     @property
     def api(self) -> 'openstack_client.OpenstackClient':
@@ -236,7 +236,7 @@ class OpenStackLiveService(services.Service):
 
     def make_template(
         self, template_name: str, description: typing.Optional[str] = None
-    ) -> dict[str, typing.Any]:
+    ) -> openstack_types.VolumeSnapshotInfo:
         # First, ensures that volume has not any running instances
         # if self.api.getVolume(self.volume.value)['status'] != 'available':
         #    raise Exception('The Volume is in use right now. Ensure that there is no machine running before publishing')
@@ -244,11 +244,11 @@ class OpenStackLiveService(services.Service):
         description = description or 'UDS Template snapshot'
         return self.api.create_volume_snapshot(self.volume.value, template_name, description)
 
-    def get_template(self, snapshot_id: str) -> dict[str, typing.Any]:
+    def get_template(self, snapshot_id: str) -> openstack_types.VolumeSnapshotInfo:
         """
         Checks current state of a template (an snapshot)
         """
-        return self.api.get_snapshot(snapshot_id)
+        return self.api.get_volume_snapshot(snapshot_id)
 
     def deploy_from_template(self, name: str, snapshot_id: str) -> str:
         """
@@ -271,7 +271,7 @@ class OpenStackLiveService(services.Service):
             flavor_id=self.flavor.value,
             network_id=self.network.value,
             security_groups_ids=self.security_groups.value,
-        )['id']
+        ).id
 
     def remove_template(self, templateId: str) -> None:
         """
@@ -351,7 +351,7 @@ class OpenStackLiveService(services.Service):
         """
         self.api.resume_server(machineid)
 
-    def remove_machine(self, machineid: str) -> None:
+    def remove_machine(self, machine_id: str) -> None:
         """
         Tries to delete a machine. No check is done, it is simply requested to OpenStack
 
@@ -360,14 +360,14 @@ class OpenStackLiveService(services.Service):
 
         Returns:
         """
-        self.api.delete_server(machineid)
+        self.api.delete_server(machine_id)
 
-    def get_network_info(self, machineid: str) -> tuple[str, str]:
+    def get_network_info(self, machine_id: str) -> tuple[str, str]:
         """
         Gets the mac address of first nic of the machine
         """
-        vminfo = self.api.get_server(machineid)
-        return vminfo.addresses[0].addr, vminfo.addresses[0].mac.upper()
+        vminfo = self.api.get_server(machine_id)
+        return vminfo.addresses[0].mac, vminfo.addresses[0].addr.upper()
 
     def get_basename(self) -> str:
         """

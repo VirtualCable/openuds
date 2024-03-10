@@ -30,17 +30,13 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import pickle
 import typing
 
 from tests.utils.test import UDSTestCase
 from uds.core.environment import Environment
-from uds.core.util import autoserializable
 from uds.services.OpenStack import publication
 
 # We use commit/rollback
-
-
 
 
 # if not data.startswith(b'v'):
@@ -48,7 +44,7 @@ from uds.services.OpenStack import publication
 
 # vals = data.decode('utf8').split('\t')
 # if vals[0] == 'v1':
-#     (self._name, self._reason, self._template_id, self._state, destroy_after) = vals[1:]
+#     (self._name, self._reason, self._template_id, self._status, destroy_after) = vals[1:]
 # else:
 #     raise Exception('Invalid data')
 
@@ -57,7 +53,7 @@ EXPECTED_FIELDS: typing.Final[set[str]] = {
     '_name',
     '_reason',
     '_template_id',
-    '_state',
+    '_status',
     '_destroy_after',
 }
 
@@ -70,7 +66,7 @@ class OpenStackPublicationSerializationTest(UDSTestCase):
         self.assertEqual(instance._name, 'name')
         self.assertEqual(instance._reason, 'reason')
         self.assertEqual(instance._template_id, 'template_id')
-        self.assertEqual(instance._state, 'state')
+        self.assertEqual(instance._status, 'state')
         self.assertTrue(instance._destroy_after)
 
     def test_marshaling(self) -> None:
