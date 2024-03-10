@@ -239,7 +239,9 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
 
         for i, endpoint in enumerate(found_endpoints):
             try:
-                logger.debug('Requesting from endpoint: %s and path %s using %s: %s', endpoint, path, type, data)
+                logger.debug(
+                    'Requesting from endpoint: %s and path %s using %s: %s', endpoint, path, type, data
+                )
                 r = self._session.request(
                     type,
                     endpoint + path,
@@ -247,11 +249,9 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
                     headers=self._get_request_headers(),
                     timeout=self._timeout,
                 )
-                if not expects_json:  
-                    return r
-                
-                OpenstackClient._ensure_valid_response(r, error_message)
-                logger.debug('Result: %s', r.json())
+
+                OpenstackClient._ensure_valid_response(r, error_message, expects_json=expects_json)
+                logger.debug('Result: %s', r.content)
                 return r
             except Exception as e:
                 if i == len(found_endpoints) - 1:
@@ -446,6 +446,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
             )
         ]
 
+    @decorators.cached(prefix='snps', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def list_volume_snapshots(
         self, volume_id: typing.Optional[dict[str, typing.Any]] = None
     ) -> list[openstack_types.VolumeSnapshotInfo]:
@@ -859,15 +860,15 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
                 path = endpoint + path
 
     @staticmethod
-    def _ensure_valid_response(response: 'requests.Response', errMsg: typing.Optional[str] = None) -> None:
+    def _ensure_valid_response(
+        response: 'requests.Response', errMsg: typing.Optional[str] = None, expects_json: bool = True
+    ) -> None:
         if response.ok is False:
+            if not expects_json:
+                return  # If not expecting json, simply return
             try:
-                (
-                    _,
-                    err,
-                ) = (
-                    response.json().popitem()
-                )  # Extract any key, in case of error is expected to have only one top key so this will work
+                # Extract any key, in case of error is expected to have only one top key so this will work
+                _, err = response.json().popitem()
                 msg = ': {message}'.format(**err)
                 errMsg = errMsg + msg if errMsg else msg
             except (
