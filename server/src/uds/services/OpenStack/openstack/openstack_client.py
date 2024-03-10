@@ -64,20 +64,26 @@ VOLUMES_ENDPOINT_TYPES = [
 COMPUTE_ENDPOINT_TYPES = ['compute', 'compute_legacy']
 NETWORKS_ENDPOINT_TYPES = ['network']
 
+T = typing.TypeVar('T')
+P = typing.ParamSpec('P')
+
 
 # Decorators
-def auth_required(for_project: bool = False) -> collections.abc.Callable[[decorators.FT], decorators.FT]:
+def auth_required(
+    for_project: bool = False,
+) -> collections.abc.Callable[[collections.abc.Callable[P, T]], collections.abc.Callable[P, T]]:
 
-    def decorator(func: decorators.FT) -> decorators.FT:
+    def decorator(func: collections.abc.Callable[P, T]) -> collections.abc.Callable[P, T]:
         @functools.wraps(func)
-        def wrapper(obj: 'OpenstackClient', *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
+        def wrapper(*args: P.args, **kwargs: P.kwargs) -> typing.Any:
+            obj = typing.cast('OpenstackClient', args[0])
             if for_project is True:
                 if obj._projectid is None:
                     raise Exception('Need a project for method {}'.format(func))
             obj.ensure_authenticated()
-            return func(obj, *args, **kwargs)
+            return func(*args, **kwargs)
 
-        return typing.cast(decorators.FT, wrapper)
+        return wrapper
 
     return decorator
 

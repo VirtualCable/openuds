@@ -44,7 +44,7 @@ from .linux_osmanager import LinuxOsManager
 from .linux_randompass_osmanager import LinuxRandomPassManager
 from .linux_ad_osmanager import LinuxOsADManager
 
-_mypath = os.path.dirname(__spec__.origin)
+_mypath = os.path.dirname(__spec__.origin)  # type: ignore[name-defined]  # mypy incorrectly report __spec__ as not beind defined
 # Old version, using spec is better, but we can use __package__ as well
 #_mypath = os.path.dirname(typing.cast(str, sys.modules[__package__].__file__))  # pyright: ignore
 
