@@ -274,6 +274,11 @@ class gui:
         so if you use both, the used one will be "value". This is valid for
         all form fields. (Anyway, default is part of the "value" property, so
         if you use "value", you will get the default value if not set)
+        
+        Note:
+            Currently, old field name is only intended for 4.0 migration, so it has only one value.
+            This means that only one rename can be donoe currently. If needed, we can add a list of old names
+            in a future version. (str|list[str]|None instead of str|None)
         """
 
         _fields_info: types.ui.FieldInfo
@@ -301,9 +306,9 @@ class gui:
                 label=label,
                 tooltip=tooltip,
                 type=type,
-                length=kwargs.get('length') or consts.system.DEFAULT_TEXT_LENGTH,
+                length=length if length is not None else consts.system.DEFAULT_TEXT_LENGTH,
                 required=required,
-                default=default if not callable(default) else default,
+                default=default,
                 readonly=readonly,
                 value=value,
                 tab=tab,
@@ -1565,7 +1570,7 @@ class UserInterface(metaclass=UserInterfaceType):
         # Any unexpected type will raise an exception
         # Note that we always store CURRENT field name, so once migrated forward
         # we cannot reverse it to original...
-        # if required, we can usefield.old_field_name(), but better
+        # if required, we can use field.old_field_name(), but better not
         fields = [
             (field_name, field.type.name, FIELDS_ENCODERS[field.type](field))
             for field_name, field in self._all_serializable_fields()

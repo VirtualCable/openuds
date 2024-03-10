@@ -43,7 +43,7 @@ from uds.core.ui import gui
 from uds.core.util import validators, fields
 from uds.core.util.decorators import cached
 
-from .openstack import openstack_client, sanitized_name
+from .openstack import openstack_client, sanitized_name, types as openstack_types
 from .service import OpenStackLiveService
 
 # Not imported at runtime, just for type checking
@@ -104,17 +104,13 @@ class OpenStackProviderLegacy(ServiceProvider):
     # but used for sample purposes
     # If we don't indicate an order, the output order of fields will be
     # "random"
-    host = gui.TextField(
-        length=64, label=_('Host'), order=1, tooltip=_('OpenStack Host'), required=True
-    )
+    host = gui.TextField(length=64, label=_('Host'), order=1, tooltip=_('OpenStack Host'), required=True)
     port = gui.NumericField(
         length=5,
         label=_('Port'),
         default=5000,
         order=2,
-        tooltip=_(
-            '5000 for older releases, 80/443 (ssl) for releases newer than OCATA'
-        ),
+        tooltip=_('5000 for older releases, 80/443 (ssl) for releases newer than OCATA'),
         required=True,
     )
     ssl = gui.CheckBoxField(
@@ -190,7 +186,9 @@ class OpenStackProviderLegacy(ServiceProvider):
         if values is not None:
             self.timeout.value = validators.validate_timeout(self.timeout.value)
 
-    def api(self, projectid: typing.Optional[str]=None, region: typing.Optional[str]=None) -> openstack_client.OpenstackClient:
+    def api(
+        self, projectid: typing.Optional[str] = None, region: typing.Optional[str] = None
+    ) -> openstack_client.OpenstackClient:
         proxies: typing.Optional[dict[str, str]] = None
         if self.https_proxy.value.strip():
             proxies = {'https': self.https_proxy.value}
@@ -204,7 +202,7 @@ class OpenStackProviderLegacy(ServiceProvider):
             use_ssl=self.ssl.as_bool(),
             projectid=projectid,
             region=region,
-            access=self.access.value,
+            access=openstack_types.AccessType.from_str(self.access.value),
             proxies=proxies,
         )
 
@@ -252,6 +250,4 @@ class OpenStackProviderLegacy(ServiceProvider):
         """
         Check if aws provider is reachable
         """
-        return self.test_connection().success
-
-        
+        return self.api().is_available()

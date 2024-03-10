@@ -52,7 +52,7 @@ if typing.TYPE_CHECKING:
     from .provider import OpenStackProvider
     from .provider_legacy import OpenStackProviderLegacy
 
-    AnyOpenStackProvider = typing.Union[OpenStackProvider, OpenStackProviderLegacy]
+    AnyOpenStackProvider: typing.TypeAlias = typing.Union[OpenStackProvider, OpenStackProviderLegacy]
 
 
 class OpenStackLiveService(services.Service):
@@ -250,7 +250,7 @@ class OpenStackLiveService(services.Service):
         """
         return self.api.get_volume_snapshot(snapshot_id)
 
-    def deploy_from_template(self, name: str, snapshot_id: str) -> str:
+    def deploy_from_template(self, name: str, snapshot_id: str) -> openstack_types.ServerInfo:
         """
         Deploys a virtual machine on selected cluster from selected template
 
@@ -271,7 +271,7 @@ class OpenStackLiveService(services.Service):
             flavor_id=self.flavor.value,
             network_id=self.network.value,
             security_groups_ids=self.security_groups.value,
-        ).id
+        )
 
     def remove_template(self, templateId: str) -> None:
         """
@@ -279,9 +279,9 @@ class OpenStackLiveService(services.Service):
         """
         self.api.delete_snapshot(templateId)
 
-    def get_machine_state(self, machine_id: str) -> openstack_types.Status:
+    def get_machine_status(self, machine_id: str) -> openstack_types.ServerStatus:
         vminfo = self.api.get_server(machine_id)
-        if vminfo.status in (openstack_types.Status.ERROR, openstack_types.Status.DELETED):
+        if vminfo.status in (openstack_types.ServerStatus.ERROR, openstack_types.ServerStatus.DELETED):
             logger.warning(
                 'Got server status %s for %s: %s',
                 vminfo.status,
@@ -351,7 +351,7 @@ class OpenStackLiveService(services.Service):
         """
         self.api.resume_server(machineid)
 
-    def remove_machine(self, machine_id: str) -> None:
+    def delete_machine(self, machine_id: str) -> None:
         """
         Tries to delete a machine. No check is done, it is simply requested to OpenStack
 
@@ -362,12 +362,12 @@ class OpenStackLiveService(services.Service):
         """
         self.api.delete_server(machine_id)
 
-    def get_network_info(self, machine_id: str) -> tuple[str, str]:
+    def get_server_address(self, machine_id: str) -> openstack_types.ServerInfo.AddresInfo:
         """
         Gets the mac address of first nic of the machine
         """
         vminfo = self.api.get_server(machine_id)
-        return vminfo.addresses[0].mac, vminfo.addresses[0].addr.upper()
+        return vminfo.addresses[0]
 
     def get_basename(self) -> str:
         """
@@ -388,4 +388,4 @@ class OpenStackLiveService(services.Service):
         return not self.maintain_on_error.value
 
     def keep_on_error(self) -> bool:
-        return not self.maintain_on_error.as_bool()
+        return self.maintain_on_error.as_bool()

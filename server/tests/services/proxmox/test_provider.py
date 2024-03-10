@@ -41,7 +41,7 @@ from . import fixtures
 from ...utils.test import UDSTransactionTestCase
 
 
-class TestProxmovProvider(UDSTransactionTestCase):
+class TestProxmoxProvider(UDSTransactionTestCase):
     def test_provider_data(self) -> None:
         """
         Test the provider

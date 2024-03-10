@@ -41,7 +41,7 @@ from uds.core.ui import gui
 from uds.core.util import validators, fields
 from uds.core.util.decorators import cached
 
-from .openstack import openstack_client, sanitized_name
+from .openstack import openstack_client, sanitized_name, types as openstack_types
 from .service import OpenStackLiveService
 
 # Not imported at runtime, just for type checking
@@ -205,7 +205,7 @@ class OpenStackProvider(ServiceProvider):
         projectid = projectid or self.tenant.value or None
         region = region or self.region.value or None
         if self._api is None:
-            proxies = None
+            proxies: 'dict[str, str]|None' = None
             if self.https_proxy.value.strip():
                 proxies = {'https': self.https_proxy.value}
             self._api = openstack_client.OpenstackClient(
@@ -218,7 +218,7 @@ class OpenStackProvider(ServiceProvider):
                 use_ssl=False,
                 projectid=projectid,
                 region=region,
-                access=self.access.value,
+                access=openstack_types.AccessType.from_str(self.access.value),
                 proxies=proxies,
             )
         return self._api

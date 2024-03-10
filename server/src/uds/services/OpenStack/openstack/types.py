@@ -36,7 +36,7 @@ import dataclasses
 import enum
 
 
-class Status(enum.StrEnum):
+class ServerStatus(enum.StrEnum):
     ACTIVE = 'ACTIVE'  # The server is active.
     BUILD = 'BUILD'  # The server has not finished the original build process.
     DELETED = 'DELETED'  # The server is permanently deleted.
@@ -63,24 +63,24 @@ class Status(enum.StrEnum):
     VERIFY_RESIZE = 'VERIFY_RESIZE'  # System is awaiting confirmation that the server is operational after a move or resize.
 
     @staticmethod
-    def from_str(s: str) -> 'Status':
+    def from_str(s: str) -> 'ServerStatus':
         try:
-            return Status(s.upper())
+            return ServerStatus(s.upper())
         except ValueError:
-            return Status.UNKNOWN
+            return ServerStatus.UNKNOWN
 
     # Helpers to check statuses
     def is_lost(self) -> bool:
-        return self in [Status.DELETED, Status.ERROR, Status.UNKNOWN, Status.SOFT_DELETED]
+        return self in [ServerStatus.DELETED, ServerStatus.ERROR, ServerStatus.UNKNOWN, ServerStatus.SOFT_DELETED]
 
     def is_paused(self) -> bool:
-        return self in [Status.PAUSED, Status.SUSPENDED]
+        return self in [ServerStatus.PAUSED, ServerStatus.SUSPENDED]
 
     def is_running(self) -> bool:
-        return self in [Status.ACTIVE, Status.RESCUE, Status.RESIZE, Status.VERIFY_RESIZE]
+        return self in [ServerStatus.ACTIVE, ServerStatus.RESCUE, ServerStatus.RESIZE, ServerStatus.VERIFY_RESIZE]
 
     def is_stopped(self) -> bool:
-        return self in [Status.SHUTOFF, Status.SHELVED, Status.SHELVED_OFFLOADED, Status.SOFT_DELETED]
+        return self in [ServerStatus.SHUTOFF, ServerStatus.SHELVED, ServerStatus.SHELVED_OFFLOADED, ServerStatus.SOFT_DELETED]
 
 
 class PowerState(enum.IntEnum):
@@ -108,6 +108,19 @@ class PowerState(enum.IntEnum):
         return self in [PowerState.SHUTDOWN, PowerState.CRASHED, PowerState.SUSPENDED]
 
 
+class AccessType(enum.StrEnum):
+    PUBLIC = 'public'
+    PRIVATE = 'private'
+    INTERNAL = 'url'
+
+    @staticmethod
+    def from_str(s: str) -> 'AccessType':
+        try:
+            return AccessType(s.lower())
+        except ValueError:
+            return AccessType.PUBLIC
+
+
 class SnapshotStatus(enum.StrEnum):
     CREATING = 'creating'  # The snapshot is being created.
     AVAILABLE = 'available'  # The snapshot is ready to use.
@@ -118,9 +131,9 @@ class SnapshotStatus(enum.StrEnum):
     UNMANAGING = 'unmanaging'  # The snapshot is being unmanaged.
     RESTORING = 'restoring'  # The snapshot is being restored to a volume.
     ERROR_DELETING = 'error_deleting'  # A snapshot deletion error has occurred.
-    
+
     UNKNOWN = 'unknown'  # The state of the snapshot is unknown. Internal, not from openstack
-    
+
     @staticmethod
     def from_str(s: str) -> 'SnapshotStatus':
         try:
@@ -128,32 +141,61 @@ class SnapshotStatus(enum.StrEnum):
         except ValueError:
             return SnapshotStatus.UNKNOWN
 
+
+class NetworkStatus(enum.StrEnum):
+    ACTIVE = 'ACTIVE'  # The network is active.
+    DOWN = 'DOWN'  # The network is down.
+    BUILD = 'BUILD'  # The network has not finished the original build process.
+    ERROR = 'ERROR'  # The network is in error.
+
+    @staticmethod
+    def from_str(s: str) -> 'NetworkStatus':
+        try:
+            return NetworkStatus(s.upper())
+        except ValueError:
+            return NetworkStatus.ERROR
+
+
+class PortStatus(enum.StrEnum):
+    ACTIVE = 'ACTIVE'  # The port is active.
+    DOWN = 'DOWN'  # The port is down.
+    BUILD = 'BUILD'  # The port has not finished the original build process.
+    ERROR = 'ERROR'  # The port is in error.
+
+    @staticmethod
+    def from_str(s: str) -> 'PortStatus':
+        try:
+            return PortStatus(s.upper())
+        except ValueError:
+            return PortStatus.ERROR
+
+
 @dataclasses.dataclass
-class VMInfo:
+class ServerInfo:
 
     @dataclasses.dataclass
     class AddresInfo:
         version: int
-        addr: str
+        ip: str
         mac: str
         type: str
         network_name: str = ''
 
         @staticmethod
-        def from_dict(d: dict[str, typing.Any]) -> 'VMInfo.AddresInfo':
-            return VMInfo.AddresInfo(
+        def from_dict(d: dict[str, typing.Any]) -> 'ServerInfo.AddresInfo':
+            return ServerInfo.AddresInfo(
                 version=d.get('version') or 4,
-                addr=d.get('addr') or '',
-                mac=d.get('OS-EXT-IPS-MAC:mac_addr') or '',
+                ip=d.get('addr') or '',
+                mac=(d.get('OS-EXT-IPS-MAC:mac_addr') or '').upper(),
                 type=d.get('OS-EXT-IPS:type') or '',
             )
 
         @staticmethod
-        def from_addresses(adresses: dict[str, list[dict[str, typing.Any]]]) -> list['VMInfo.AddresInfo']:
-            def _build() -> typing.Generator['VMInfo.AddresInfo', None, None]:
+        def from_addresses(adresses: dict[str, list[dict[str, typing.Any]]]) -> list['ServerInfo.AddresInfo']:
+            def _build() -> typing.Generator['ServerInfo.AddresInfo', None, None]:
                 for net_name, inner_addresses in adresses.items():
                     for address in inner_addresses:
-                        address_info = VMInfo.AddresInfo.from_dict(address)
+                        address_info = ServerInfo.AddresInfo.from_dict(address)
                         address_info.network_name = net_name
                         yield address_info
 
@@ -163,7 +205,7 @@ class VMInfo:
     name: str
     href: str
     flavor: str
-    status: Status
+    status: ServerStatus
     power_state: PowerState
     addresses: list[AddresInfo]  # network_name: AddresInfo
     access_addr_ipv4: str
@@ -172,7 +214,7 @@ class VMInfo:
     admin_pass: str
 
     @staticmethod
-    def from_dict(d: dict[str, typing.Any]) -> 'VMInfo':
+    def from_dict(d: dict[str, typing.Any]) -> 'ServerInfo':
         # Look for self link
         href: str = ''
         for link in d.get('links', []):
@@ -187,14 +229,14 @@ class VMInfo:
             flavor = d.get('flavor', {}).get('id', '')
         except Exception:
             flavor = ''
-        return VMInfo(
+        return ServerInfo(
             id=d['id'],
             name=d.get('name', d['id']),
             href=href,
             flavor=flavor,
-            status=Status.from_str(d.get('status', Status.UNKNOWN.value)),
+            status=ServerStatus.from_str(d.get('status', ServerStatus.UNKNOWN.value)),
             power_state=PowerState.from_int(d.get('OS-EXT-STS:power_state', PowerState.NOSTATE)),
-            addresses=VMInfo.AddresInfo.from_addresses(d.get('addresses', {})),
+            addresses=ServerInfo.AddresInfo.from_addresses(d.get('addresses', {})),
             access_addr_ipv4=d.get('accessIPv4') or '',
             access_addr_ipv6=d.get('accessIPv6') or '',
             fault=d.get('fault', None),
@@ -276,6 +318,7 @@ class VolumeInfo:
 @dataclasses.dataclass
 class VolumeSnapshotInfo:
     id: str
+    volume_id: str
     name: str
     description: str
     status: SnapshotStatus
@@ -290,6 +333,7 @@ class VolumeSnapshotInfo:
         updated_at = datetime.datetime.fromisoformat(d.get('updated_at') or '1970-01-01T00:00:00')
         return VolumeSnapshotInfo(
             id=d['id'],
+            volume_id=d['volume_id'],
             name=d['name'],
             description=d['description'] or '',
             status=SnapshotStatus.from_str(d['status']),
@@ -316,12 +360,15 @@ class VolumeTypeInfo:
 class AvailabilityZoneInfo:
     id: str
     name: str
+    available: bool
 
     @staticmethod
     def from_dict(d: dict[str, typing.Any]) -> 'AvailabilityZoneInfo':
+        available = d.get('zoneState', {}).get('available', False)
         return AvailabilityZoneInfo(
             id=d['zoneName'],
             name=d['zoneName'],
+            available=available,
         )
 
 
@@ -344,7 +391,7 @@ class FlavorInfo:
             vcpus=d['vcpus'],
             ram=d['ram'],
             disk=d['disk'],
-            swap=d['swap'],
+            swap=d['swap'] or 0,
             is_public=d.get('os-flavor-access:is_public', True),
             disabled=d.get('OS-FLV-DISABLED:disabled', False),
         )
@@ -354,7 +401,7 @@ class FlavorInfo:
 class NetworkInfo:
     id: str
     name: str
-    status: str
+    status: NetworkStatus
     shared: bool
     subnets: list[str]
     availability_zones: list[str]
@@ -364,7 +411,7 @@ class NetworkInfo:
         return NetworkInfo(
             id=d['id'],
             name=d['name'],
-            status=d['status'],
+            status=NetworkStatus.from_str(d['status']),
             shared=d['shared'],
             subnets=d['subnets'],
             availability_zones=d.get('availability_zones', []),
@@ -398,13 +445,13 @@ class SubnetInfo:
 class PortInfo:
 
     @dataclasses.dataclass
-    class FixedIp:
+    class FixedIpInfo:
         ip_address: str
         subnet_id: str
 
         @staticmethod
-        def from_dict(d: dict[str, typing.Any]) -> 'PortInfo.FixedIp':
-            return PortInfo.FixedIp(
+        def from_dict(d: dict[str, typing.Any]) -> 'PortInfo.FixedIpInfo':
+            return PortInfo.FixedIpInfo(
                 ip_address=d['ip_address'],
                 subnet_id=d['subnet_id'],
             )
@@ -415,7 +462,7 @@ class PortInfo:
     device_id: str
     device_owner: str
     mac_address: str
-    fixed_ips: list['FixedIp']
+    fixed_ips: list['FixedIpInfo']
 
     @staticmethod
     def from_dict(d: dict[str, typing.Any]) -> 'PortInfo':
@@ -426,7 +473,7 @@ class PortInfo:
             device_id=d['device_id'],
             device_owner=d['device_owner'],
             mac_address=d['mac_address'],
-            fixed_ips=[PortInfo.FixedIp.from_dict(ip) for ip in d['fixed_ips']],
+            fixed_ips=[PortInfo.FixedIpInfo.from_dict(ip) for ip in d['fixed_ips']],
         )
 
 

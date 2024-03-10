@@ -88,7 +88,7 @@ def auth_required(
     return decorator
 
 
-def cache_key_helper(obj: 'OpenstackClient', *args: typing.Any, **kwargs: typing.Any) -> str:
+def cache_key_helper(obj: 'OpenstackClient') -> str:
     return '_'.join(
         [
             obj._authurl,
@@ -98,17 +98,11 @@ def cache_key_helper(obj: 'OpenstackClient', *args: typing.Any, **kwargs: typing
             str(obj._projectid),
             str(obj._region),
             str(obj._access),
-            str(args),
-            str(kwargs),
         ]
     )
 
 
 class OpenstackClient:  # pylint: disable=too-many-public-methods
-    PUBLIC = 'public'
-    PRIVATE = 'private'
-    INTERNAL = 'url'
-
     _authenticated: bool
     _authenticatedProjectId: typing.Optional[str]
     _authurl: str
@@ -141,7 +135,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
         use_ssl: bool = False,  # Only used for legacy
         projectid: typing.Optional[str] = None,
         region: typing.Optional[str] = None,
-        access: typing.Optional[str] = None,
+        access: typing.Optional[openstack_types.AccessType] = None,
         proxies: typing.Optional[dict[str, str]] = None,
     ):
         self._session = security.secure_requests_session(verify=VERIFY_SSL)
@@ -154,7 +148,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
         self._catalog = None
         self._is_legacy = is_legacy
 
-        self._access = OpenstackClient.PUBLIC if access is None else access
+        self._access = openstack_types.AccessType.PUBLIC if access is None else access
         self._domain, self._username, self._password = domain, username, password
         self._userid = None
         self._projectid = projectid
@@ -404,9 +398,9 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
         self,
         detail: bool = False,
         params: typing.Optional[dict[str, str]] = None,
-    ) -> list[openstack_types.VMInfo]:
+    ) -> list[openstack_types.ServerInfo]:
         return [
-            openstack_types.VMInfo.from_dict(s)
+            openstack_types.ServerInfo.from_dict(s)
             for s in self._get_recurring_from_endpoint(
                 endpoint_types=COMPUTE_ENDPOINT_TYPES,
                 path='/servers' + ('/detail' if detail is True else ''),
@@ -469,6 +463,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
 
     @decorators.cached(prefix='azs', timeout=consts.cache.EXTREME_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def list_availability_zones(self) -> list[openstack_types.AvailabilityZoneInfo]:
+        # Only available zones are returned
         return [
             openstack_types.AvailabilityZoneInfo.from_dict(availability_zone)
             for availability_zone in self._get_recurring_from_endpoint(
@@ -563,20 +558,20 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
             )
         ]
 
-    def get_server(self, server_id: str) -> openstack_types.VMInfo:
+    def get_server(self, server_id: str) -> openstack_types.ServerInfo:
         r = self._request_from_endpoint(
             'get',
             endpoints_types=COMPUTE_ENDPOINT_TYPES,
             path=f'/servers/{server_id}',
             error_message='Get Server information',
         )
-        return openstack_types.VMInfo.from_dict(r.json()['server'])
+        return openstack_types.ServerInfo.from_dict(r.json()['server'])
 
-    def get_volume(self, volumeId: str) -> openstack_types.VolumeInfo:
+    def get_volume(self, volume_id: str) -> openstack_types.VolumeInfo:
         r = self._request_from_endpoint(
             'get',
             endpoints_types=VOLUMES_ENDPOINT_TYPES,
-            path=f'/volumes/{volumeId}',
+            path=f'/volumes/{volume_id}',
             error_message='Get Volume information',
         )
 
@@ -643,7 +638,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
         return openstack_types.VolumeSnapshotInfo.from_dict(r.json()['snapshot'])
 
     def create_volume_from_snapshot(
-        self, snapshotId: str, name: str, description: typing.Optional[str] = None
+        self, snapshot_id: str, name: str, description: typing.Optional[str] = None
     ) -> openstack_types.VolumeInfo:
         description = description or 'UDS Volume'
         data = {
@@ -651,7 +646,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
                 'name': name,
                 'description': description,
                 # 'volume_type': volType,  # This seems to be the volume type name, not the id
-                'snapshot_id': snapshotId,
+                'snapshot_id': snapshot_id,
             }
         }
 
@@ -674,7 +669,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
         network_id: str,
         security_groups_ids: collections.abc.Iterable[str],
         count: int = 1,
-    ) -> openstack_types.VMInfo:
+    ) -> openstack_types.ServerInfo:
         data = {
             'server': {
                 'name': name,
@@ -710,7 +705,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
             error_message='Create instance from snapshot',
         )
 
-        return openstack_types.VMInfo.from_dict(r.json()['server'])
+        return openstack_types.ServerInfo.from_dict(r.json()['server'])
 
     def delete_server(self, server_id: str) -> None:
         # This does not returns anything
