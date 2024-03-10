@@ -130,6 +130,7 @@ def classproperty(func: collections.abc.Callable[..., typing.Any]) -> ClassPrope
     return ClassPropertyDescriptor(func)
 
 
+
 def deprecated(func: collections.abc.Callable[P, T]) -> collections.abc.Callable[P, T]:
     """This is a decorator which can be used to mark functions
     as deprecated. It will result in a warning being emitted
@@ -188,14 +189,20 @@ def deprecated_class_value(new_var_name: str) -> collections.abc.Callable[..., t
 
     return functools.partial(innerDeprecated, newVarName=new_var_name)
 
+# So only classes that have a "connect" method can use this decorator
+class _HasConnect(typing.Protocol):
+    def connect(self) -> None:
+        ...
 
-def ensure_connected(func: collections.abc.Callable[P, T]) -> collections.abc.Callable[P, T]:
+HasConnect = typing.TypeVar('HasConnect', bound=_HasConnect)
+
+def ensure_connected(func: collections.abc.Callable[typing.Concatenate[HasConnect, P], T]) -> collections.abc.Callable[typing.Concatenate[HasConnect, P], T]:
     """This decorator calls "connect" method of the class of the wrapped object"""
 
     @functools.wraps(func)
-    def new_func(*args: P.args, **kwargs: P.kwargs) -> T:
-        args[0].connect()  # type: ignore
-        return func(*args, **kwargs)
+    def new_func(obj: HasConnect, *args: P.args, **kwargs: P.kwargs) -> T:
+        obj.connect()  # type: ignore
+        return func(obj, *args, **kwargs)
 
     return new_func
 
@@ -273,14 +280,18 @@ def cached(
                     cache_key += str(args[i])
             for s in kwargs_list:
                 cache_key += str(kwargs.get(s, ''))
-            # Append key data
-            cache_key += key_helper_fnc(args[0] if len(args) > 0 else fnc.__name__)
-
+                
+            # Append key helper to cache key and get real cache
             # Note tha this value (cache_key) will be hashed by cache, so it's not a problem if it's too long
-
+            if len(args) > 0:
+                cache_key += key_helper_fnc(args[0])
+                inner_cache: 'Cache|None' = getattr(args[0], 'cache', None)
+            else:
+                cache_key += key_helper_fnc(fnc.__name__)
+                inner_cache = None
+            
             # Get cache from object if present, or use the global 'functionCache' (generic, common to all objects)
-            inner_cache: 'Cache|None' = getattr(args[0], 'cache', None) if len(args) > 0 else None
-            cache: 'Cache' = inner_cache or Cache('functionCache')
+            cache = inner_cache or Cache('functionCache')
 
             # if timeout is a function, call it
             effective_timeout = timeout() if callable(timeout) else timeout
@@ -387,18 +398,19 @@ def blocker(
             if not GlobalConfig.BLOCK_ACTOR_FAILURES.as_bool(True) and not ignore_block_config:
                 return f(*args, **kwargs)
 
-            request: typing.Optional['types.requests.ExtendedHttpRequest'] = getattr(
+            request: typing.Optional[typing.Any] = getattr(
                 args[0], request_attr or '_request', None
             )
 
             # No request object, so we can't block
-            if request is None:
+            if request is None or not isinstance(request, types.requests.ExtendedHttpRequest):
+                logger.debug('No request object, so we can\'t block: (value is %s)', request)
                 return f(*args, **kwargs)
 
             ip = request.ip
 
             # if ip is blocked, raise exception
-            failures_count = mycache.get(ip, 0)
+            failures_count: int = mycache.get(ip, 0)
             if failures_count >= max_failures:
                 raise exceptions.rest.AccessDenied
 
@@ -422,7 +434,7 @@ def blocker(
     return decorator
 
 
-def profile(
+def profiler(
     log_file: typing.Optional[str] = None,
 ) -> collections.abc.Callable[[collections.abc.Callable[P, T]], collections.abc.Callable[P, T]]:
     """

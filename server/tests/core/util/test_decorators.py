@@ -32,7 +32,6 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # We use commit/rollback
-from functools import cache
 import typing
 from unittest import mock
 
