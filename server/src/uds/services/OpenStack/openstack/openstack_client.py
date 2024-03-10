@@ -816,6 +816,8 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
             )
         )
 
+    # Low cache, simple to avoid non needed requests
+    @decorators.cached(prefix='vols', timeout=8, key_helper=cache_key_helper)
     def is_available(self) -> bool:
         try:
             # If we can connect, it is available
