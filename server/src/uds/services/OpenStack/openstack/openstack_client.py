@@ -561,7 +561,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
     # Very small timeout, so repeated operations will use same data
     # Any cache time less than 5 seconds will be fine, beceuse checks on 
     # openstack are done every 5 seconds
-    @decorators.cached(prefix='svr', timeout=3, key_helper=cache_key_helper)
+    @decorators.cached(prefix='svr', timeout=4, key_helper=cache_key_helper)
     def get_server(self, server_id: str) -> openstack_types.ServerInfo:
         r = self._request_from_endpoint(
             'get',
@@ -823,7 +823,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
         )
 
     # Low cache, simple to avoid non needed requests
-    @decorators.cached(prefix='vols', timeout=8, key_helper=cache_key_helper)
+    @decorators.cached(prefix='ava', timeout=4, key_helper=cache_key_helper)
     def is_available(self) -> bool:
         try:
             # If we can connect, it is available
