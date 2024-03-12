@@ -98,21 +98,29 @@ class Publication(Environmentable, Serializable):
         service: 'services.Service',
         osmanager: typing.Optional['osmanagers.OSManager'] = None,
         revision: int = -1,
-        servicepool_name: str = 'Unknown',
+        servicepool_name: typing.Optional[str] = None,
         uuid: str = '',
     ) -> None:
         """
-        Do not forget to invoke this in your derived class using "super(self.__class__, self).__init__(environment, values)"
+        Instead of overriding __init__, override initialize method, that will be called
+        just after all internal initialization is completed.
         We want to use the env, cache and storage methods outside class. If not called, you must implement your own methods
         cache and storage are "convenient" methods to access _env.cache and _env.storage
-        @param environment: Environment assigned to this publication
+        
+        Args:
+            environment (Environment): Environment of the service
+            service (services.Service): Service that owns this publication
+            osmanager (osmanagers.OSManager, optional): OsManager associated with this publication. Defaults to None.
+            revision (int, optional): Revision of the publication. Defaults to -1.
+            servicepool_name (str, optional): Name of the service pool. Defaults to None. (Unknown)
+            uuid (str, optional): UUID of the publication. Defaults to ''.
         """
         Environmentable.__init__(self, environment)
         Serializable.__init__(self)
         self._service = service
         self._osmanager = osmanager
         self._revision = revision
-        self._servicepool_name = servicepool_name
+        self._servicepool_name = servicepool_name or 'Unknown'
         self._uuid = uuid
 
         self.initialize()

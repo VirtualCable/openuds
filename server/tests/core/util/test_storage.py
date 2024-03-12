@@ -84,6 +84,12 @@ class StorageTest(UDSTestCase):
             self.assertEqual(d[UNICODE_CHARS], 'chars')
 
             self.assertEqual(d['test_key'], UNICODE_CHARS_2)
+            
+            # Assert that UNICODE_CHARS is in the dict
+            d['test_key2'] = 0
+            d['test_key2'] += 1
+            
+            self.assertEqual(d['test_key2'], 1)
 
         # The values set inside the "with" are not available "outside"
         # because the format is not compatible (with the dict, the values are stored as a tuple, with the original key stored

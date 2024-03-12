@@ -40,7 +40,7 @@ from uds.core.util import fields, validators
 from uds.core.ui import gui
 
 from .publication import OpenStackLivePublication
-from .deployment import OpenStackLiveDeployment
+from .deployment import OpenStackLiveUserService
 from .openstack import types as openstack_types, openstack_client
 from . import helpers
 
@@ -97,7 +97,7 @@ class OpenStackLiveService(services.Service):
     # : In our case, we do no need a publication, so this is None
     publication_type = OpenStackLivePublication
     # : Types of deploys (services in cache and/or assigned to users)
-    user_service_type = OpenStackLiveDeployment
+    user_service_type = OpenStackLiveUserService
 
     allowed_protocols = types.transports.Protocol.generic_vdi(types.transports.Protocol.SPICE)
     services_type_provided = types.services.ServiceType.VDI
@@ -175,11 +175,14 @@ class OpenStackLiveService(services.Service):
     basename = fields.basename_field(order=9, tab=_('Machine'))
     lenname = fields.lenname_field(order=10, tab=_('Machine'))
 
-    maintain_on_error = fields.maintain_on_error_field(order=104)
+    maintain_on_error = fields.maintain_on_error_field(order=11, tab=_('Machine'))
 
     prov_uuid = gui.HiddenField()
 
     _api: typing.Optional['openstack_client.OpenstackClient'] = None
+    
+    # Note: currently, Openstack does not provides a way of specifying how to stop the server
+    # At least, i have not found it on the documentation
 
     def initialize(self, values: types.core.ValuesType) -> None:
         """
@@ -305,6 +308,10 @@ class OpenStackLiveService(services.Service):
 
         Returns:
         """
+        # if already running, do nothing
+        if self.get_machine_power_state(machineId) == openstack_types.PowerState.RUNNING:
+            return
+        
         self.api.start_server(machineId)
 
     def stop_machine(self, machineId: str) -> None:
@@ -316,6 +323,10 @@ class OpenStackLiveService(services.Service):
 
         Returns:
         """
+        # If already stopped, do nothing
+        if self.get_machine_power_state(machineId) == openstack_types.PowerState.SHUTDOWN:
+            return
+        
         self.api.stop_server(machineId)
 
     def reset_machine(self, machineId: str) -> None:
@@ -338,6 +349,9 @@ class OpenStackLiveService(services.Service):
 
         Returns:
         """
+        # If not running, do nothing
+        if self.get_machine_power_state(machineId) != openstack_types.PowerState.RUNNING:
+            return
         self.api.suspend_server(machineId)
 
     def resume_machine(self, machineid: str) -> None:
@@ -349,6 +363,9 @@ class OpenStackLiveService(services.Service):
 
         Returns:
         """
+        # If not suspended, do nothing
+        if self.get_machine_power_state(machineid) != openstack_types.PowerState.SUSPENDED:
+            return
         self.api.resume_server(machineid)
 
     def delete_machine(self, machine_id: str) -> None:

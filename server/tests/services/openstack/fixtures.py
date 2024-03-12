@@ -43,7 +43,7 @@ from uds.core.ui.user_interface import gui
 
 from ...utils.autospec import autospec, AutoSpecMethodInfo
 
-from uds.services.OpenStack import provider, provider_legacy, service
+from uds.services.OpenStack import provider, provider_legacy, service, publication, deployment
 from uds.services.OpenStack.openstack import openstack_client, types as openstack_types
 
 AnyOpenStackProvider: typing.TypeAlias = typing.Union[provider.OpenStackProvider, provider_legacy.OpenStackProviderLegacy]
@@ -395,7 +395,7 @@ def create_provider_legacy(**kwargs: typing.Any) -> provider_legacy.OpenStackPro
     )
 
 
-def create_service(
+def create_live_service(
     provider: AnyOpenStackProvider, **kwargs: typing.Any
 ) -> service.OpenStackLiveService:
     """
@@ -409,5 +409,33 @@ def create_service(
         provider=provider,
         environment=environment.Environment.private_environment(uuid),
         values=values,
+        uuid=uuid_,
+    )
+    
+def create_publication(service: service.OpenStackLiveService) -> publication.OpenStackLivePublication:
+    """
+    Create a publication
+    """
+    uuid_ = str(uuid.uuid4())
+    return publication.OpenStackLivePublication(
+        environment=environment.Environment.private_environment(uuid_),
+        service=service,
+        revision=1,
+        servicepool_name='servicepool_name',
+        uuid=uuid_,
+    )
+
+def create_live_userservice(
+    service: service.OpenStackLiveService,
+    publication: typing.Optional[publication.OpenStackLivePublication] = None,
+) -> deployment.OpenStackLiveUserService:
+    """
+    Create a linked user service
+    """
+    uuid_ = str(uuid.uuid4())
+    return deployment.OpenStackLiveUserService(
+        environment=environment.Environment.private_environment(uuid_),
+        service=service,
+        publication=publication or create_publication(service),
         uuid=uuid_,
     )

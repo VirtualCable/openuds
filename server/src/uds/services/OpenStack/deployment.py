@@ -51,6 +51,10 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+# How many times we will check for a machine to be ready/stopped/whatever
+# 25 = 25 * 5 = 125 seconds (5 is suggested_delay)
+CHECK_COUNT_BEFORE_FAILURE: typing.Final[int] = 25
+
 
 class Operation(enum.IntEnum):
     CREATE = 0
@@ -61,6 +65,7 @@ class Operation(enum.IntEnum):
     ERROR = 5
     FINISH = 6
     RETRY = 7
+    STOP = 8
 
     UNKNOWN = 99
 
@@ -72,7 +77,7 @@ class Operation(enum.IntEnum):
             return Operation.UNKNOWN
 
 
-class OpenStackLiveDeployment(
+class OpenStackLiveUserService(
     services.UserService, autoserializable.AutoSerializable
 ):  # pylint: disable=too-many-public-methods
     """
@@ -90,6 +95,7 @@ class OpenStackLiveDeployment(
     _mac = autoserializable.StringField(default='')
     _vmid = autoserializable.StringField(default='')
     _reason = autoserializable.StringField(default='')
+    _check_count = autoserializable.IntegerField(default=CHECK_COUNT_BEFORE_FAILURE)
     _queue = autoserializable.ListField[Operation]()
 
     # _name: str = ''
@@ -200,26 +206,32 @@ class OpenStackLiveDeployment(
         """
         Deploys an service instance for cache
         """
-        self._init_queue_for_deploy(level == self.L2_CACHE)
+        self._init_queue_for_deploy(level)
         return self._execute_queue()
 
-    def _init_queue_for_deploy(self, forLevel2: bool = False) -> None:
-        if forLevel2 is False:
+    def _init_queue_for_deploy(self, level: int) -> None:
+        if level in (self.USER, self.L1_CACHE):
             self._queue = [Operation.CREATE, Operation.FINISH]
         else:
             self._queue = [Operation.CREATE, Operation.WAIT, Operation.SUSPEND, Operation.FINISH]
 
-    def _check_machine_power_state(self, check_state: openstack_types.PowerState) -> types.states.TaskState:
+    def _check_machine_power_state(self, *check_state: 'openstack_types.PowerState') -> types.states.TaskState:
+        self._check_count -= 1
+        if self._check_count < 0:
+            return self._error('Machine is not {str(check_state)} after {CHECK_COUNT_BEFORE_FAILURE} checks')
+
         logger.debug(
-            'Checking that state of machine %s (%s) is %s',
+            'Checking that state of machine %s (%s) is %s (remaining checks: %s)',
             self._vmid,
             self._name,
             check_state,
+            self._check_count,
         )
         power_state = self.service().get_machine_power_state(self._vmid)
 
         ret = types.states.TaskState.RUNNING
-        if power_state == check_state:
+
+        if power_state in check_state:
             ret = types.states.TaskState.FINISHED
 
         return ret
@@ -236,6 +248,11 @@ class OpenStackLiveDeployment(
 
         return self._queue.pop(0)
 
+    def _reset_check_count(self) -> None:
+        # Check the maximum number of checks before failure
+        # So we dont stuck forever on check state to CHECK_COUNT_BEFORE_FAILURE
+        self._check_count = CHECK_COUNT_BEFORE_FAILURE
+
     def _error(self, reason: typing.Any) -> types.states.TaskState:
         """
         Internal method to set object as error state
@@ -244,16 +261,26 @@ class OpenStackLiveDeployment(
             types.states.DeployState.ERROR, so we can do "return self.__error(reason)"
         """
         logger.debug('Setting error state, reason: %s', reason)
+        is_creation = self._get_current_op() == Operation.CREATE
         self._queue = [Operation.ERROR]
         self._reason = str(reason)
 
         self.do_log(log.LogLevel.ERROR, self._reason)
 
-        if self._vmid and self.service().keep_on_error() is False:  # Powers off & delete it
-            try:
-                self.service().delete_machine(self._vmid)
-            except Exception:
-                logger.warning('Can\t set machine %s state to stopped', self._vmid)
+        if self._vmid:
+            # Creating machines should be deleted on error
+            if is_creation or self.service().keep_on_error() is False:  # Powers off & delete it
+                try:
+                    self.service().delete_machine(self._vmid)
+                except Exception:
+                    logger.warning('Can\t set machine %s state to stopped', self._vmid)
+            else:
+                self.do_log(
+                    log.LogLevel.INFO, 'Keep on error is enabled, machine will not be marked for deletion'
+                )
+                # Simple fix queue to FINISH and return it
+                self._queue = [Operation.FINISH]
+                return types.states.TaskState.FINISHED
 
         return types.states.TaskState.ERROR
 
@@ -267,27 +294,18 @@ class OpenStackLiveDeployment(
         if op == Operation.FINISH:
             return types.states.TaskState.FINISHED
 
-        fncs: dict[int, collections.abc.Callable[[], str]] = {
-            Operation.CREATE: self._create,
-            Operation.RETRY: self._retry,
-            Operation.START: self._start_machine,
-            Operation.SUSPEND: self._suspend_machine,
-            Operation.WAIT: self._wait,
-            Operation.REMOVE: self._remove,
-        }
-
         try:
-            if op not in fncs:
+            if op not in _EXECUTE_FNCS:
                 return self._error('Unknown operation found at execution queue ({0})'.format(op))
 
-            fncs[op]()
+            _EXECUTE_FNCS[op](self)
 
             return types.states.TaskState.RUNNING
         except Exception as e:
             return self._error(e)
 
     # Queue execution methods
-    def _retry(self) -> types.states.TaskState:
+    def _retry(self) -> None:
         """
         Used to retry an operation
         In fact, this will not be never invoked, unless we push it twice, because
@@ -295,15 +313,15 @@ class OpenStackLiveDeployment(
 
         At executeQueue this return value will be ignored, and it will only be used at check_state
         """
-        return types.states.TaskState.FINISHED
+        pass
 
-    def _wait(self) -> types.states.TaskState:
+    def _wait(self) -> None:
         """
         Executes opWait, it simply waits something "external" to end
         """
-        return types.states.TaskState.RUNNING
+        pass
 
-    def _create(self) -> str:
+    def _create(self) -> None:
         """
         Deploys a machine from template for user/cache
         """
@@ -320,9 +338,11 @@ class OpenStackLiveDeployment(
         if not self._vmid:
             raise Exception('Can\'t create machine')
 
-        return types.states.TaskState.RUNNING
+        self._reset_check_count()
 
-    def _remove(self) -> str:
+        return None
+
+    def _remove(self) -> None:
         """
         Removes a machine from system
         """
@@ -333,22 +353,40 @@ class OpenStackLiveDeployment(
 
         self.service().delete_machine(self._vmid)
 
-        return types.states.TaskState.RUNNING
-
-    def _start_machine(self) -> str:
+    def _start_machine(self) -> None:
         """
         Powers on the machine
         """
         self.service().start_machine(self._vmid)
 
-        return types.states.TaskState.RUNNING
+        self._reset_check_count()
 
-    def _suspend_machine(self) -> str:
+    def _stop_machine(self) -> None:
+        """
+        Powers off the machine
+        """
+        self.service().stop_machine(self._vmid)
+
+        self._reset_check_count()
+
+    def _suspend_machine(self) -> None:
         """
         Suspends the machine
         """
         self.service().suspend_machine(self._vmid)
 
+        self._reset_check_count()
+
+    def _check_retry(self) -> types.states.TaskState:
+        """
+        This method is invoked when a task has been retried.
+        """
+        return types.states.TaskState.FINISHED
+
+    def _check_wait(self) -> types.states.TaskState:
+        """
+        This method is invoked when a task is waiting for something.
+        """
         return types.states.TaskState.RUNNING
 
     # Check methods
@@ -356,8 +394,11 @@ class OpenStackLiveDeployment(
         """
         Checks the state of a deploy for an user or cache
         """
+        # Checks if machine has been created
         ret = self._check_machine_power_state(openstack_types.PowerState.RUNNING)
         if ret == types.states.TaskState.FINISHED:
+            # If machine is requested to not be removed never, we may end with
+            # an empty mac and ip, but no problem. Next time we will get it
             # Get IP & MAC (early stage)
             addr = self.service().get_server_address(self._vmid)
             self._mac, self._ip = addr.mac, addr.ip
@@ -369,6 +410,16 @@ class OpenStackLiveDeployment(
         Checks if machine has started
         """
         return self._check_machine_power_state(openstack_types.PowerState.RUNNING)
+
+    def _check_stop(self) -> types.states.TaskState:
+        """
+        Checks if machine has stopped
+        """
+        return self._check_machine_power_state(
+            openstack_types.PowerState.SHUTDOWN,
+            openstack_types.PowerState.CRASHED,
+            openstack_types.PowerState.SUSPENDED,
+        )
 
     def _check_suspend(self) -> types.states.TaskState:
         """
@@ -395,20 +446,11 @@ class OpenStackLiveDeployment(
         if op == Operation.FINISH:
             return types.states.TaskState.FINISHED
 
-        fncs: dict[int, collections.abc.Callable[[], types.states.TaskState]] = {
-            Operation.CREATE: self._check_create,
-            Operation.RETRY: self._retry,
-            Operation.WAIT: self._wait,
-            Operation.START: self._check_start,
-            Operation.SUSPEND: self._check_suspend,
-            Operation.REMOVE: self._check_removed,
-        }
-
         try:
-            if op not in fncs:
+            if op not in _CHECK_FNCS:
                 return self._error('Unknown operation found at execution queue ({0})'.format(op))
 
-            state = fncs[op]()
+            state = _CHECK_FNCS[op](self)
             if state == types.states.TaskState.FINISHED:
                 self._pop_current_op()  # Remove runing op
                 return self._execute_queue()
@@ -426,7 +468,7 @@ class OpenStackLiveDeployment(
 
         if level == self.L1_CACHE:
             self._queue = [Operation.START, Operation.FINISH]
-        else:
+        else:  # Currently L2 is not supported
             self._queue = [Operation.START, Operation.SUSPEND, Operation.FINISH]
 
         return self._execute_queue()
@@ -446,11 +488,15 @@ class OpenStackLiveDeployment(
         if op == Operation.ERROR:
             return self._error('Machine is already in error state!')
 
-        if op == Operation.FINISH or op == Operation.WAIT:
-            self._queue = [Operation.REMOVE, Operation.FINISH]
-            return self._execute_queue()
+        ops = [Operation.STOP, Operation.REMOVE, Operation.FINISH]
 
-        self._queue = [op, Operation.REMOVE, Operation.FINISH]
+        if op == Operation.FINISH or op == Operation.WAIT:
+            self._queue = ops
+            return self._execute_queue()  # Run it right now
+
+        # If an operation is pending, maybe checking, so we will wait until it finishes
+        self._queue = [op] + ops
+
         # Do not execute anything.here, just continue normally
         return types.states.TaskState.RUNNING
 
@@ -487,5 +533,28 @@ class OpenStackLiveDeployment(
             self._ip,
             self._mac,
             self._vmid,
-            [OpenStackLiveDeployment._op2str(op) for op in self._queue],
+            [OpenStackLiveUserService._op2str(op) for op in self._queue],
         )
+
+
+# Execution methods
+_EXECUTE_FNCS: dict[int, collections.abc.Callable[[OpenStackLiveUserService], None]] = {
+    Operation.CREATE: OpenStackLiveUserService._create,
+    Operation.RETRY: OpenStackLiveUserService._retry,
+    Operation.START: OpenStackLiveUserService._start_machine,
+    Operation.STOP: OpenStackLiveUserService._stop_machine,
+    Operation.SUSPEND: OpenStackLiveUserService._suspend_machine,
+    Operation.WAIT: OpenStackLiveUserService._wait,
+    Operation.REMOVE: OpenStackLiveUserService._remove,
+}
+
+# Check methods
+_CHECK_FNCS: dict[int, collections.abc.Callable[[OpenStackLiveUserService], types.states.TaskState]] = {
+    Operation.CREATE: OpenStackLiveUserService._check_create,
+    Operation.RETRY: OpenStackLiveUserService._check_retry,
+    Operation.WAIT: OpenStackLiveUserService._check_wait,
+    Operation.START: OpenStackLiveUserService._check_start,
+    Operation.STOP: OpenStackLiveUserService._check_stop,
+    Operation.SUSPEND: OpenStackLiveUserService._check_suspend,
+    Operation.REMOVE: OpenStackLiveUserService._check_removed,
+}

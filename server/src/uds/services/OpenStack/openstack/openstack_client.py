@@ -558,6 +558,10 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
             )
         ]
 
+    # Very small timeout, so repeated operations will use same data
+    # Any cache time less than 5 seconds will be fine, beceuse checks on 
+    # openstack are done every 5 seconds
+    @decorators.cached(prefix='svr', timeout=3, key_helper=cache_key_helper)
     def get_server(self, server_id: str) -> openstack_types.ServerInfo:
         r = self._request_from_endpoint(
             'get',
@@ -771,14 +775,15 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
             expects_json=False,
         )
 
-    def reset_server(self, server_id: str) -> None:
+    def reset_server(self, server_id: str, hard: bool = True) -> None:
         # Does not need return value
         try:
+            type_reboot = 'HARD' if hard else 'SOFT'
             self._request_from_endpoint(
                 'post',
                 endpoints_types=COMPUTE_ENDPOINT_TYPES,
                 path=f'/servers/{server_id}/action',
-                data='{"reboot":{"type":"HARD"}}',
+                data='{"reboot":{"type":"' + type_reboot + '"}}',
                 error_message='Resetting server',
                 expects_json=False,
             )

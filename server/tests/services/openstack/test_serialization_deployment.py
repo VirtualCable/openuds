@@ -58,6 +58,7 @@ EXPECTED_FIELDS: typing.Final[set[str]] = {
     '_vmid',
     '_reason',
     '_queue',
+    '_check_count'
 }
 
 TEST_QUEUE: typing.Final[list[deployment.Operation]] = [
@@ -74,7 +75,7 @@ LAST_VERSION: typing.Final[str] = sorted(SERIALIZED_DEPLOYMENT_DATA.keys(), reve
 
 
 class OpenStackDeploymentSerializationTest(UDSTransactionTestCase):
-    def check(self, version: str, instance: deployment.OpenStackLiveDeployment) -> None:
+    def check(self, version: str, instance: deployment.OpenStackLiveUserService) -> None:
         self.assertEqual(instance._name, 'name')
         self.assertEqual(instance._ip, 'ip')
         self.assertEqual(instance._mac, 'mac')
@@ -86,8 +87,8 @@ class OpenStackDeploymentSerializationTest(UDSTransactionTestCase):
         # queue is kept on "storage", so we need always same environment
         environment = Environment.testing_environment()
 
-        def _create_instance(unmarshal_data: 'bytes|None' = None) -> deployment.OpenStackLiveDeployment:
-            instance = deployment.OpenStackLiveDeployment(environment=environment, service=None)  # type: ignore
+        def _create_instance(unmarshal_data: 'bytes|None' = None) -> deployment.OpenStackLiveUserService:
+            instance = deployment.OpenStackLiveUserService(environment=environment, service=None)  # type: ignore
             if unmarshal_data:
                 instance.unmarshal(unmarshal_data)
             return instance
@@ -117,8 +118,8 @@ class OpenStackDeploymentSerializationTest(UDSTransactionTestCase):
         # Store queue
         environment.storage.put_pickle('queue', TEST_QUEUE)
 
-        def _create_instance(unmarshal_data: 'bytes|None' = None) -> deployment.OpenStackLiveDeployment:
-            instance = deployment.OpenStackLiveDeployment(environment=environment, service=None)  # type: ignore
+        def _create_instance(unmarshal_data: 'bytes|None' = None) -> deployment.OpenStackLiveUserService:
+            instance = deployment.OpenStackLiveUserService(environment=environment, service=None)  # type: ignore
             if unmarshal_data:
                 instance.unmarshal(unmarshal_data)
             return instance
@@ -162,6 +163,6 @@ class OpenStackDeploymentSerializationTest(UDSTransactionTestCase):
         # This test is designed to ensure that all fields are autoserializable
         # If some field is added or removed, this tests will warn us about it to fix the rest of the related tests
         with Environment.temporary_environment() as env:
-            instance = deployment.OpenStackLiveDeployment(environment=env, service=None)  # type: ignore
+            instance = deployment.OpenStackLiveUserService(environment=env, service=None)  # type: ignore
 
             self.assertSetEqual(set(f[0] for f in instance._autoserializable_fields()), EXPECTED_FIELDS)

@@ -109,7 +109,7 @@ class UserService(Environmentable, Serializable):
         method error_reason can be called multiple times, including
         serializations in middle, so remember to include reason of error in serializations
     """
-
+    USER: int = 0  # : Constant for User cache level
     L1_CACHE = 1  # : Constant for Cache of level 1
     L2_CACHE = 2  # : Constant for Cache of level 2
 

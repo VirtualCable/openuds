@@ -51,7 +51,7 @@ class TestOpenstackService(UDSTransactionTestCase):
         """
         for prov in (fixtures.create_provider_legacy(), fixtures.create_provider()):
             with fixtures.patch_provider_api(legacy=prov.legacy) as client:
-                service = fixtures.create_service(prov)  # Will use provider patched api
+                service = fixtures.create_live_service(prov)  # Will use provider patched api
                 self.assertEqual(service.api, client)
                 self.assertEqual(service.sanitized_name('a b c'), 'a_b_c')
 
@@ -83,24 +83,29 @@ class TestOpenstackService(UDSTransactionTestCase):
                 self.assertIsInstance(data, openstack_types.PowerState)
                 client.get_server.assert_called_once_with(fixtures.SERVERS_LIST[0].id)
 
-                server_id = fixtures.SERVERS_LIST[0].id
-                service.start_machine(server_id)
-                client.start_server.assert_called_once_with(server_id)
+                server = fixtures.SERVERS_LIST[0]
+                service.start_machine(server.id)
+                
+                server.power_state = openstack_types.PowerState.SHUTDOWN
+                client.start_server.assert_called_once_with(server.id)
 
-                service.stop_machine(server_id)
-                client.stop_server.assert_called_once_with(server_id)
+                server.power_state = openstack_types.PowerState.RUNNING
+                service.stop_machine(server.id)
+                client.stop_server.assert_called_once_with(server.id)
 
-                service.suspend_machine(server_id)
-                client.suspend_server.assert_called_once_with(server_id)
+                server.power_state = openstack_types.PowerState.RUNNING
+                service.suspend_machine(server.id)
+                client.suspend_server.assert_called_once_with(server.id)
 
-                service.resume_machine(server_id)
-                client.resume_server.assert_called_once_with(server_id)
+                server.power_state = openstack_types.PowerState.SUSPENDED
+                service.resume_machine(server.id)
+                client.resume_server.assert_called_once_with(server.id)
 
-                service.reset_machine(server_id)
-                client.reset_server.assert_called_once_with(server_id)
+                service.reset_machine(server.id)
+                client.reset_server.assert_called_once_with(server.id)
 
-                service.delete_machine(server_id)
-                client.delete_server.assert_called_once_with(server_id)
+                service.delete_machine(server.id)
+                client.delete_server.assert_called_once_with(server.id)
 
                 self.assertTrue(service.is_avaliable())
                 client.is_available.assert_called_once_with()
