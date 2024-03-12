@@ -134,7 +134,7 @@ class OpenStackLiveUserService(
     def get_name(self) -> str:
         if self._name == '':
             try:
-                self._name = self.name_generator().get(
+                self._name = 'UDS-U-' + self.name_generator().get(
                     self.service().get_basename(), self.service().get_lenname()
                 )
             except KeyError:
@@ -278,7 +278,7 @@ class OpenStackLiveUserService(
                 self.do_log(
                     log.LogLevel.INFO, 'Keep on error is enabled, machine will not be marked for deletion'
                 )
-                # Simple fix queue to FINISH and return it
+                # Fix queue to FINISH and return it
                 self._queue = [Operation.FINISH]
                 return types.states.TaskState.FINISHED
 

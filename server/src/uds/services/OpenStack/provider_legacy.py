@@ -45,6 +45,7 @@ from uds.core.util.decorators import cached
 
 from .openstack import openstack_client, sanitized_name, types as openstack_types
 from .service import OpenStackLiveService
+from .service_fixed import OpenStackServiceFixed
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -79,7 +80,7 @@ class OpenStackProviderLegacy(ServiceProvider):
     """
 
     # : What kind of services we offer, this are classes inherited from Service
-    offers = [OpenStackLiveService]
+    offers = [OpenStackLiveService, OpenStackServiceFixed]
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)

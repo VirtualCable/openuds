@@ -90,7 +90,7 @@ class OpenStackLivePublication(Publication, autoserializable.AutoSerializable):
         Realizes the publication of the service
         """
         self._name = self.service().sanitized_name(
-            'UDSP ' + self.servicepool_name() + "-" + str(self.revision())
+            'UDS-P-' + self.servicepool_name() + "-" + str(self.revision())
         )
         self._reason = ''  # No error, no reason for it
         self._destroy_after = False

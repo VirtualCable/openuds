@@ -43,7 +43,7 @@ from .openstack import openstack_client
 logger = logging.getLogger(__name__)
 
 
-def getApi(parameters: dict[str, str]) -> tuple[openstack_client.OpenstackClient, bool]:
+def get_api(parameters: dict[str, str]) -> tuple[openstack_client.OpenstackClient, bool]:
     from .provider_legacy import OpenStackProviderLegacy
     from .provider import OpenStackProvider
 
@@ -64,7 +64,7 @@ def get_resources(parameters: dict[str, str]) -> types.ui.CallbackResultType:
     '''
     This helper is designed as a callback for Project Selector
     '''
-    api, name_from_subnets = getApi(parameters)
+    api, name_from_subnets = get_api(parameters)
 
     zones = [gui.choice_item(z.id, z.name) for z in api.list_availability_zones()]
     networks = [
@@ -87,7 +87,7 @@ def get_volumes(parameters: dict[str, str]) -> types.ui.CallbackResultType:
     '''
     This helper is designed as a callback for Zone Selector
     '''
-    api, _ = getApi(parameters)
+    api, _ = get_api(parameters)
     # Source volumes are all available for us
     # volumes = [gui.choice_item(v['id'], v['name']) for v in api.listVolumes() if v['name'] != '' and v['availability_zone'] == parameters['availabilityZone']]
     volumes = [gui.choice_item(v.id, v.name) for v in api.list_volumes() if v.name]
@@ -97,3 +97,19 @@ def get_volumes(parameters: dict[str, str]) -> types.ui.CallbackResultType:
     ]
     logger.debug('Return data: %s', data)
     return data
+
+def get_machines(parameters: dict[str, str]) -> types.ui.CallbackResultType:
+    # Needs prov_uuid, project and region in order to work
+    api = get_api(parameters)[0]
+
+    try:    
+        servers = [gui.choice_item(s.id, s.name) for s in api.list_servers() if not s.name.lower().startswith('uds')]
+    except Exception:
+        return []
+    
+    return [
+        {
+            'name': 'machines',
+            'choices': servers,
+        }
+    ]

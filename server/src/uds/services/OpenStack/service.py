@@ -222,9 +222,6 @@ class OpenStackLiveService(services.Service):
             tenants = [gui.choice_item(t.id, t.name) for t in api.list_projects()]
         self.project.set_choices(tenants)
 
-        # So we can instantiate parent to get API
-        logger.debug(self.provider().serialize())
-
         self.prov_uuid.value = self.provider().get_uuid()
 
     @property

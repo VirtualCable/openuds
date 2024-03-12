@@ -156,19 +156,52 @@ class TestOpenstackLiveDeployment(UDSTransactionTestCase):
         This test will not have keep on error active, and will create correctly
         but will error on set_ready, so it will be put on error state
         """
-        pass
-    
+        """
+        Test the user service
+        """
+        for keep_on_error in (True, False):
+            for prov in (fixtures.create_provider_legacy(), fixtures.create_provider()):
+                with fixtures.patch_provider_api(legacy=prov.legacy) as _api:
+                    service = fixtures.create_live_service(prov, maintain_on_error=keep_on_error)
+                    userservice = fixtures.create_live_userservice(service=service)
+                    publication = userservice.publication()
+                    publication._template_id = 'snap1'
+
+                    state = userservice.deploy_for_user(models.User())
+                    self.assertEqual(state, types.states.TaskState.RUNNING)
+
+                    server = fixtures.get_id(fixtures.SERVERS_LIST, userservice._vmid)
+                    server.power_state = openstack_types.PowerState.RUNNING
+
+                    for _counter in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
+                        state = userservice.check_state()
+
+                    # Correctly created
+                    self.assertEqual(state, types.states.TaskState.FINISHED)
+
+                    # We are going to force an error on set_ready
+                    server.status = openstack_types.ServerStatus.ERROR
+
+                    state = userservice.set_ready()
+
+                    if keep_on_error:
+                        self.assertEqual(state, types.states.TaskState.FINISHED)
+                    else:
+                        self.assertEqual(state, types.states.TaskState.ERROR)
+
     def test_userservice_error_keep_create(self) -> None:
         """
         This test will have keep on error active, and will create incorrectly
         so vm will be deleted and put on error state
         """
-        pass
-    
-    def test_userservice_error_keep(self) -> None:
-        """
-        This test will have keep on error active, and will create correctly
-        but error will came later (on set_ready) and will not be put on error state
-        nor deleted
-        """
-        pass
+        for prov in (fixtures.create_provider_legacy(), fixtures.create_provider()):
+            with fixtures.patch_provider_api(legacy=prov.legacy) as api:
+                service = fixtures.create_live_service(prov, maintain_on_eror=True)
+                userservice = fixtures.create_live_userservice(service=service)
+                publication = userservice.publication()
+                publication._template_id = 'snap1'
+
+                api.create_server_from_snapshot.side_effect = Exception('Error')
+                state = userservice.deploy_for_user(models.User())
+
+                self.assertEqual(state, types.states.TaskState.ERROR)
