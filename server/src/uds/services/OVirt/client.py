@@ -30,6 +30,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # pyright: reportUnknownMemberType=false, reportAttributeAccessIssue=false
 
+import contextlib
 import threading
 import logging
 import typing
@@ -37,7 +38,8 @@ import collections.abc
 
 import ovirtsdk4 as ovirt
 
-from uds.core import types
+from uds.core import consts, types
+from uds.core.util import decorators
 
 # Sometimes, we import ovirtsdk4 but "types" does not get imported... event can't be found????
 # With this seems to work propertly
@@ -52,7 +54,23 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-lock = threading.Lock()
+_lock = threading.Lock()
+USE_LOCK: typing.Final[bool] = False
+
+
+@contextlib.contextmanager
+def _access_lock() -> typing.Generator[None, None, None]:
+    if USE_LOCK:
+        _lock.acquire()
+    try:
+        yield
+    finally:
+        if USE_LOCK:
+            _lock.release()
+
+
+def _key_helper(obj: 'Client') -> str:
+    return obj._host + obj._username
 
 
 class Client:
@@ -66,9 +84,6 @@ class Client:
 
     """
 
-    cached_api: typing.ClassVar[typing.Optional[ovirt.Connection]] = None
-    cached_api_key: typing.ClassVar[typing.Optional[str]] = None
-
     CACHE_TIME_LOW = 60 * 5  # Cache time for requests are 5 minutes by default
     CACHE_TIME_HIGH = (
         60 * 30
@@ -81,16 +96,10 @@ class Client:
     _cache: 'Cache'
     _needs_usb_fix = True
 
-    def _generate_key(self, prefix: str = '') -> str:
-        """
-        Creates a key for the cache, using the prefix indicated as part of it
+    _api: typing.Optional[ovirt.Connection] = None
 
-        Returns:
-            The cache key, taking into consideration the prefix
-        """
-        return "{}{}{}{}{}".format(prefix, self._host, self._username, self._password, self._timeout)
-
-    def _api(self) -> ovirt.Connection:
+    @property
+    def api(self) -> ovirt.Connection:
         """
         Gets the api connection.
 
@@ -99,32 +108,24 @@ class Client:
 
         Must be accesed "locked", so we can safely alter cached_api and cached_api_key
         """
-        the_key = self._generate_key('o-host')
         # if cached_api_key == aKey:
         #    return cached_api
 
-        if Client.cached_api:
+        if self._api is None:
             try:
-                Client.cached_api.close()
-            except Exception:  # nosec: this is a "best effort" close
-                # Nothing happens, may it was already disconnected
-                pass
-        try:
-            Client.cached_api_key = the_key
-            Client.cached_api = ovirt.Connection(
-                url='https://' + self._host + '/ovirt-engine/api',
-                username=self._username,
-                password=self._password,
-                timeout=self._timeout,
-                insecure=True,
-            )  # , debug=True, log=logger )
+                self._api = ovirt.Connection(
+                    url='https://' + self._host + '/ovirt-engine/api',
+                    username=self._username,
+                    password=self._password,
+                    timeout=self._timeout,
+                    insecure=True,
+                )  # , debug=True, log=logger )
+            except Exception as e:
+                self._api = None
+                logger.exception('Exception on ovirt connection at %s', self._host)
+                raise Exception('Error connecting to oVirt: {}'.format(e)) from e
 
-            return Client.cached_api
-        except:
-            logger.exception('Exception connection ovirt at %s', self._host)
-            Client.cached_api = None
-            Client.cached_api_key = None
-            raise Exception("Can't connet to server at {}".format(self._host))
+        return self._api
 
     def __init__(
         self,
@@ -143,13 +144,11 @@ class Client:
 
     def test(self) -> bool:
         try:
-            lock.acquire(True)
-            return self._api().test()
+            with _access_lock():
+                return self.api.test()
         except Exception as e:
             logger.error('Testing Server failed for oVirt: %s', e)
             return False
-        finally:
-            lock.release()
 
     def is_fully_functional_version(self) -> types.core.TestResult:
         """
@@ -157,6 +156,7 @@ class Client:
         """
         return types.core.TestResult(True)
 
+    @decorators.cached(prefix='o-vms', timeout=consts.cache.DEFAULT_CACHE_TIMEOUT, key_helper=_key_helper)
     def list_machines(self, force: bool = False) -> list[collections.abc.MutableMapping[str, typing.Any]]:
         """
         Obtains the list of machines inside ovirt that do aren't part of uds
@@ -172,19 +172,9 @@ class Client:
                 'cluster_id'
 
         """
-        vmsKey = self._generate_key('o-vms')
-        val: typing.Optional[typing.Any] = self._cache.get(vmsKey)
-
-        if val is not None and force is False:
-            return val
-
-        try:
-            lock.acquire(True)
-
-            api = self._api()
-
+        with _access_lock():
             vms: collections.abc.Iterable[typing.Any] = (
-                api.system_service().vms_service().list()
+                self.api.system_service().vms_service().list()
             )  # pyright: ignore
 
             logger.debug('oVirt VMS: %s', vms)
@@ -205,13 +195,9 @@ class Client:
                     }
                 )
 
-            self._cache.put(vmsKey, res, Client.CACHE_TIME_LOW)
-
             return res
 
-        finally:
-            lock.release()
-
+    @decorators.cached(prefix='o-clusters', timeout=consts.cache.LONG_CACHE_TIMEOUT, key_helper=_key_helper)
     def list_clusters(self, force: bool = False) -> list[collections.abc.MutableMapping[str, typing.Any]]:
         """
         Obtains the list of clusters inside ovirt
@@ -228,18 +214,10 @@ class Client:
                 'datacenter_id'
 
         """
-        clsKey = self._generate_key('o-clusters')
-        val: typing.Optional[typing.Any] = self._cache.get(clsKey)
-
-        if val and not force:
-            return val
-
-        try:
-            lock.acquire(True)
-
-            api = self._api()
-
-            clusters: list[typing.Any] = api.system_service().clusters_service().list()  # pyright: ignore
+        with _access_lock():
+            clusters: list[typing.Any] = typing.cast(
+                list[typing.Any], self.api.system_service().clusters_service().list()
+            )
 
             res: list[collections.abc.MutableMapping[str, typing.Any]] = []
 
@@ -253,20 +231,12 @@ class Client:
                     'datacenter_id': dc.id if dc else None,
                 }
 
-                # Updates cache info for every single cluster
-                clKey = self._generate_key('o-cluster' + cluster.id)
-                self._cache.put(clKey, val)
-
                 if dc is not None:
                     res.append(val)
 
-            self._cache.put(clsKey, res, Client.CACHE_TIME_HIGH)
-
             return res
 
-        finally:
-            lock.release()
-
+    @decorators.cached(prefix='o-cluster', timeout=consts.cache.LONG_CACHE_TIMEOUT, key_helper=_key_helper)
     def get_cluster_info(
         self, clusterId: str, force: bool = False
     ) -> collections.abc.MutableMapping[str, typing.Any]:
@@ -285,30 +255,19 @@ class Client:
                 'id'
                 'datacenter_id'
         """
-        clKey = self._generate_key('o-cluster' + clusterId)
-        val = self._cache.get(clKey)
-
-        if val and not force:
-            return val
-
-        try:
-            lock.acquire(True)
-
-            api = self._api()
-
-            c: typing.Any = api.system_service().clusters_service().service(clusterId).get()  # pyright: ignore
+        with _access_lock():
+            c: typing.Any = typing.cast(
+                typing.Any, self.api.system_service().clusters_service().service(clusterId).get()
+            )
 
             dc = c.data_center
 
             if dc is not None:
                 dc = dc.id
 
-            res = {'name': c.name, 'id': c.id, 'datacenter_id': dc}
-            self._cache.put(clKey, res, Client.CACHE_TIME_HIGH)
-            return res
-        finally:
-            lock.release()
+            return {'name': c.name, 'id': c.id, 'datacenter_id': dc}
 
+    @decorators.cached(prefix='o-dc', timeout=consts.cache.LONG_CACHE_TIMEOUT, key_helper=_key_helper)
     def get_datacenter_info(
         self, datacenterId: str, force: bool = False
     ) -> collections.abc.MutableMapping[str, typing.Any]:
@@ -336,19 +295,11 @@ class Client:
                    'active' -> True or False
 
         """
-        dcKey = self._generate_key('o-dc' + datacenterId)
-        val = self._cache.get(dcKey)
-
-        if val is not None and force is False:
-            return val
-
-        try:
-            lock.acquire(True)
-
-            api = self._api()
-
-            datacenter_service = api.system_service().data_centers_service().service(datacenterId)
-            d: typing.Any = datacenter_service.get()  # pyright: ignore
+        with _access_lock():
+            datacenter_service: typing.Any = (
+                self.api.system_service().data_centers_service().service(datacenterId)
+            )
+            d: typing.Any = datacenter_service.get()
 
             storage = []
             for dd in typing.cast(
@@ -370,7 +321,7 @@ class Client:
                     }
                 )
 
-            res: dict[str, typing.Any] = {
+            return {
                 'name': d.name,
                 'id': d.id,
                 'storage_type': d.local and 'local' or 'shared',
@@ -378,11 +329,7 @@ class Client:
                 'storage': storage,
             }
 
-            self._cache.put(dcKey, res, Client.CACHE_TIME_HIGH)
-            return res
-        finally:
-            lock.release()
-
+    @decorators.cached(prefix='o-sd', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=_key_helper)
     def get_storage_info(
         self, storageId: str, force: bool = False
     ) -> collections.abc.MutableMapping[str, typing.Any]:
@@ -405,20 +352,10 @@ class Client:
                # 'active' -> True or False --> This is not provided by api?? (api.storagedomains.get)
 
         """
-        sdKey = self._generate_key('o-sd' + storageId)
-        val = self._cache.get(sdKey)
-
-        if val and not force:
-            return val
-
-        try:
-            lock.acquire(True)
-
-            api = self._api()
-
-            dd: typing.Any = (
-                api.system_service().storage_domains_service().service(storageId).get()
-            )  # pyright: ignore
+        with _access_lock():
+            dd: typing.Any = typing.cast(
+                typing.Any, self.api.system_service().storage_domains_service().service(storageId).get()
+            )
 
             res = {
                 'id': dd.id,
@@ -428,10 +365,7 @@ class Client:
                 'used': dd.used,
             }
 
-            self._cache.put(sdKey, res, Client.CACHE_TIME_LOW)
             return res
-        finally:
-            lock.release()
 
     def create_template(
         self,
@@ -466,19 +400,15 @@ class Client:
             display_type,
         )
 
-        try:
-            lock.acquire(True)
-
-            api = self._api()
-
+        with _access_lock():
             # cluster = ov.clusters_service().service('00000002-0002-0002-0002-0000000002e4') # .get()
             # vm = ov.vms_service().service('e7ff4e00-b175-4e80-9c1f-e50a5e76d347') # .get()
 
-            vms: typing.Any = api.system_service().vms_service().service(machine_id)
+            vms: typing.Any = self.api.system_service().vms_service().service(machine_id)
 
-            cluster: typing.Any = (
-                api.system_service().clusters_service().service(cluster_id).get()
-            )  # pyright: ignore
+            cluster: typing.Any = typing.cast(
+                typing.Any, self.api.system_service().clusters_service().service(cluster_id).get()
+            )
             vm: typing.Any = vms.get()  # pyright: ignore
 
             if vm is None:
@@ -504,9 +434,7 @@ class Client:
 
             # display=display)
 
-            return api.system_service().templates_service().add(template).id  # pyright: ignore
-        finally:
-            lock.release()
+            return typing.cast(str, self.api.system_service().templates_service().add(template).id)
 
     def get_template_state(self, template_id: str) -> str:
         """
@@ -520,14 +448,13 @@ class Client:
 
         (don't know if ovirt returns something more right now, will test what happens when template can't be published)
         """
-        try:
-            lock.acquire(True)
-
-            api = self._api()
-
+        with _access_lock():
             try:
-                template: typing.Any = (
-                    api.system_service().templates_service().service(template_id).get()  # pyright: ignore
+                # we cast constantly to typing.Any because pyright does not recognize the types
+                # But anotate the "real" type on the cast
+                template: typing.Any = typing.cast(
+                    ovirt.types.Template,
+                    self.api.system_service().templates_service().service(template_id).get(),
                 )
 
                 if not template:
@@ -536,9 +463,6 @@ class Client:
                 return template.status.value
             except Exception:  # Not found
                 return 'removed'
-
-        finally:
-            lock.release()
 
     def deploy_from_template(
         self,
@@ -576,11 +500,7 @@ class Client:
             memory_mb,
             guaranteed_mb,
         )
-        try:
-            lock.acquire(True)
-
-            api = self._api()
-
+        with _access_lock():
             logger.debug('Deploying machine %s', name)
 
             cluster = ovirt.types.Cluster(id=cluster_id)
@@ -605,10 +525,7 @@ class Client:
                 usb=usb,
             )  # display=display,
 
-            return api.system_service().vms_service().add(par).id  # pyright: ignore
-
-        finally:
-            lock.release()
+            return typing.cast(str, self.api.system_service().vms_service().add(par).id)
 
     def remove_template(self, templateId: str) -> None:
         """
@@ -616,16 +533,12 @@ class Client:
 
         Returns nothing, and raises an Exception if it fails
         """
-        try:
-            lock.acquire(True)
-
-            api = self._api()
-
-            api.system_service().templates_service().service(templateId).remove()  # pyright: ignore
+        with _access_lock():
+            self.api.system_service().templates_service().service(templateId).remove()
             # This returns nothing, if it fails it raises an exception
-        finally:
-            lock.release()
 
+    # Very short timeout on cache
+    @decorators.cached(prefix='o-vm', timeout=3, key_helper=_key_helper)
     def get_machine_state(self, machineId: str) -> str:
         """
         Returns current state of a machine (running, suspended, ...).
@@ -642,13 +555,9 @@ class Client:
              suspended, image_illegal, image_locked or powering_down
              Also can return'unknown' if Machine is not known
         """
-        try:
-            lock.acquire(True)
-
-            api = self._api()
-
+        with _access_lock():
             try:
-                vm = api.system_service().vms_service().service(machineId).get()  # pyright: ignore
+                vm: typing.Any = self.api.system_service().vms_service().service(machineId).get()
 
                 if vm is None or vm.status is None:  # pyright: ignore
                     return 'unknown'
@@ -656,9 +565,6 @@ class Client:
                 return vm.status.value  # pyright: ignore
             except Exception:  # machine not found
                 return 'unknown'
-
-        finally:
-            lock.release()
 
     def start_machine(self, machine_id: str) -> None:
         """
@@ -671,22 +577,15 @@ class Client:
 
         Returns:
         """
-        try:
-            lock.acquire(True)
+        with _access_lock():
+            vm_service: typing.Any = self.api.system_service().vms_service().service(machine_id)
 
-            api = self._api()
-
-            vmService: typing.Any = api.system_service().vms_service().service(machine_id)
-
-            if vmService.get() is None:
+            if vm_service.get() is None:
                 raise Exception('Machine not found')
 
-            vmService.start()
+            vm_service.start()
 
-        finally:
-            lock.release()
-
-    def stop_machine(self, machineId: str) -> None:
+    def stop_machine(self, machine_id: str) -> None:
         """
         Tries to start a machine. No check is done, it is simply requested to oVirt
 
@@ -695,22 +594,15 @@ class Client:
 
         Returns:
         """
-        try:
-            lock.acquire(True)
+        with _access_lock():
+            vm_service: typing.Any = self.api.system_service().vms_service().service(machine_id)
 
-            api = self._api()
-
-            vmService: typing.Any = api.system_service().vms_service().service(machineId)
-
-            if vmService.get() is None:
+            if vm_service.get() is None:
                 raise Exception('Machine not found')
 
-            vmService.stop()
+            vm_service.stop()
 
-        finally:
-            lock.release()
-
-    def suspend_machine(self, machineId: str) -> None:
+    def suspend_machine(self, machine_id: str) -> None:
         """
         Tries to start a machine. No check is done, it is simply requested to oVirt
 
@@ -719,22 +611,15 @@ class Client:
 
         Returns:
         """
-        try:
-            lock.acquire(True)
-
-            api = self._api()
-
-            vmService: typing.Any = api.system_service().vms_service().service(machineId)
+        with _access_lock():
+            vmService: typing.Any = self.api.system_service().vms_service().service(machine_id)
 
             if vmService.get() is None:
                 raise Exception('Machine not found')
 
             vmService.suspend()
 
-        finally:
-            lock.release()
-
-    def remove_machine(self, machineId: str) -> None:
+    def remove_machine(self, machine_id: str) -> None:
         """
         Tries to delete a machine. No check is done, it is simply requested to oVirt
 
@@ -743,110 +628,87 @@ class Client:
 
         Returns:
         """
-        try:
-            lock.acquire(True)
-
-            api = self._api()
-
-            vmService: typing.Any = api.system_service().vms_service().service(machineId)
-
-            if vmService.get() is None:
-                raise Exception('Machine not found')
-
-            vmService.remove()
-
-        finally:
-            lock.release()
-
-    def update_machine_mac(self, machineid: str, mac: str) -> None:
-        """
-        Changes the mac address of first nic of the machine to the one specified
-        """
-        try:
-            lock.acquire(True)
-
-            api = self._api()
-
-            vm_service: typing.Any = api.system_service().vms_service().service(machineid)
+        with _access_lock():
+            vm_service: typing.Any = self.api.system_service().vms_service().service(machine_id)
 
             if vm_service.get() is None:
                 raise Exception('Machine not found')
 
-            nic = vm_service.nics_service().list()[0]  # If has no nic, will raise an exception (IndexError)
-            nic.mac.address = mac
-            nicService = vm_service.nics_service().service(nic.id)
-            nicService.update(nic)
-        except IndexError:
-            raise Exception('Machine do not have network interfaces!!')
+            vm_service.remove()
 
-        finally:
-            lock.release()
+    def update_machine_mac(self, machine_id: str, mac: str) -> None:
+        """
+        Changes the mac address of first nic of the machine to the one specified
+        """
+        with _access_lock():
+            try:
+                vm_service: typing.Any = self.api.system_service().vms_service().service(machine_id)
 
-    def fix_usb(self, machineId: str) -> None:
+                if vm_service.get() is None:
+                    raise Exception('Machine not found')
+
+                nic = vm_service.nics_service().list()[0]  # If has no nic, will raise an exception (IndexError)
+                nic.mac.address = mac
+                nicService = vm_service.nics_service().service(nic.id)
+                nicService.update(nic)
+            except IndexError:
+                raise Exception('Machine do not have network interfaces!!')
+
+    def fix_usb(self, machine_id: str) -> None:
         # Fix for usb support
         if self._needs_usb_fix:
-            try:
-                lock.acquire(True)
-
-                api = self._api()
+            with _access_lock():
                 usb = ovirt.types.Usb(enabled=True, type=ovirt.types.UsbType.NATIVE)
-                vms: typing.Any = api.system_service().vms_service().service(machineId)
+                vms: typing.Any = self.api.system_service().vms_service().service(machine_id)
                 vmu = ovirt.types.Vm(usb=usb)
                 vms.update(vmu)
-            finally:
-                lock.release()
 
     def get_console_connection(self, machine_id: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
         """
         Gets the connetion info for the specified machine
         """
-        try:
-            lock.acquire(True)
-            api = self._api()
+        with _access_lock():
+            try:
+                vm_service: typing.Any = self.api.system_service().vms_service().service(machine_id)
+                vm = vm_service.get()
 
-            vm_service: typing.Any = api.system_service().vms_service().service(machine_id)
-            vm = vm_service.get()
+                if vm is None:
+                    raise Exception('Machine not found')
 
-            if vm is None:
-                raise Exception('Machine not found')
+                display = vm.display
+                ticket = vm_service.ticket()
 
-            display = vm.display
-            ticket = vm_service.ticket()
-
-            # Get host subject
-            cert_subject = ''
-            if display.certificate is not None:
-                cert_subject = display.certificate.subject
-            else:
-                for i in typing.cast(
-                    collections.abc.Iterable[typing.Any], api.system_service().hosts_service().list()
-                ):
-                    for k in typing.cast(
-                        collections.abc.Iterable[typing.Any],
-                        api.system_service()
-                        .hosts_service()
-                        .service(i.id)
-                        .nics_service()  # pyright: ignore
-                        .list(),
+                # Get host subject
+                cert_subject = ''
+                if display.certificate is not None:
+                    cert_subject = display.certificate.subject
+                else:
+                    for i in typing.cast(
+                        collections.abc.Iterable[typing.Any], self.api.system_service().hosts_service().list()
                     ):
-                        if k.ip.address == display.address:
-                            cert_subject = i.certificate.subject
+                        for k in typing.cast(
+                            collections.abc.Iterable[typing.Any],
+                            self.api.system_service()
+                            .hosts_service()
+                            .service(i.id)
+                            .nics_service()  # pyright: ignore
+                            .list(),
+                        ):
+                            if k.ip.address == display.address:
+                                cert_subject = i.certificate.subject
+                                break
+                        # If found
+                        if cert_subject != '':
                             break
-                    # If found
-                    if cert_subject != '':
-                        break
 
-            return types.services.ConsoleConnectionInfo(
-                type=display.type.value,
-                address=display.address,
-                port=display.port,
-                secure_port=display.secure_port,
-                cert_subject=cert_subject,
-                ticket=types.services.ConsoleConnectionTicket(value=ticket.value),
-            )
+                return types.services.ConsoleConnectionInfo(
+                    type=display.type.value,
+                    address=display.address,
+                    port=display.port,
+                    secure_port=display.secure_port,
+                    cert_subject=cert_subject,
+                    ticket=types.services.ConsoleConnectionTicket(value=ticket.value),
+                )
 
-        except Exception:
-            return None
-
-        finally:
-            lock.release()
+            except Exception:
+                return None

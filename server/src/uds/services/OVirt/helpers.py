@@ -34,7 +34,7 @@ def get_resources(parameters: typing.Any) -> types.ui.CallbackResultType:
 
     res: list[types.ui.ChoiceItem] = []
     # Get storages for that datacenter
-    for storage in provider.getDatacenterInfo(ci['datacenter_id'])['storage']:
+    for storage in provider.get_datacenter_info(ci['datacenter_id'])['storage']:
         if storage['type'] == 'data':
             space, free = (storage['available'] + storage['used']) / 1024 / 1024 / 1024, storage[
                 'available'

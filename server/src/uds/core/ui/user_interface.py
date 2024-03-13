@@ -315,11 +315,11 @@ class gui:
             )
 
         @property
-        def type(self) -> 'types.ui.FieldType':
+        def field_type(self) -> 'types.ui.FieldType':
             return types.ui.FieldType(self._fields_info.type)
 
-        @type.setter
-        def type(self, type_: 'types.ui.FieldType') -> None:
+        @field_type.setter
+        def field_type(self, type_: 'types.ui.FieldType') -> None:
             """
             Sets the type of this field.
 
@@ -627,7 +627,7 @@ class gui:
                 old_field_name=old_field_name,
             )
             # Update parent type
-            self.type = types.ui.FieldType.TEXT_AUTOCOMPLETE
+            self.field_type = types.ui.FieldType.TEXT_AUTOCOMPLETE  # pyright: ignore[reportIncompatibleMethodOverride]
             self._fields_info.choices = gui.as_choices(choices or [])
 
         def set_choices(self, values: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]) -> None:
@@ -1572,9 +1572,9 @@ class UserInterface(metaclass=UserInterfaceType):
         # we cannot reverse it to original...
         # if required, we can use field.old_field_name(), but better not
         fields = [
-            (field_name, field.type.name, FIELDS_ENCODERS[field.type](field))
+            (field_name, field.field_type.name, FIELDS_ENCODERS[field.field_type](field))
             for field_name, field in self._all_serializable_fields()
-            if FIELDS_ENCODERS[field.type](field) is not None
+            if FIELDS_ENCODERS[field.field_type](field) is not None
         ]
 
         return SERIALIZATION_HEADER + SERIALIZATION_VERSION + serializer.serialize(fields)
@@ -1644,7 +1644,7 @@ class UserInterface(metaclass=UserInterfaceType):
             if field_name not in self._gui:
                 logger.warning('Field %s not found in form', field_name)
                 continue
-            internal_field_type = self._gui[field_name].type
+            internal_field_type = self._gui[field_name].field_type
             if internal_field_type not in FIELD_DECODERS:
                 logger.warning('Field %s has no converter', field_name)
                 continue

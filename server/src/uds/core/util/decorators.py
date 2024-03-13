@@ -189,20 +189,23 @@ def deprecated_class_value(new_var_name: str) -> collections.abc.Callable[..., t
 
     return functools.partial(innerDeprecated, newVarName=new_var_name)
 
-# So only classes that have a "connect" method can use this decorator
+# Keep this, but mypy does not likes it... it's perfect with pyright
+# # So only classes that have a "connect" method can use this decorator
 class _HasConnect(typing.Protocol):
     def connect(self) -> None:
         ...
 
-HasConnect = typing.TypeVar('HasConnect', bound=_HasConnect)
+# HasConnect = typing.TypeVar('HasConnect', bound=_HasConnect)
+# def ensure_connected(func: collections.abc.Callable[typing.Concatenate[HasConnect, P], T]) -> collections.abc.Callable[typing.Concatenate[HasConnect, P], T]:
 
-def ensure_connected(func: collections.abc.Callable[typing.Concatenate[HasConnect, P], T]) -> collections.abc.Callable[typing.Concatenate[HasConnect, P], T]:
+def ensure_connected(func: collections.abc.Callable[P, T]) -> collections.abc.Callable[P, T]:
     """This decorator calls "connect" method of the class of the wrapped object"""
 
     @functools.wraps(func)
-    def new_func(obj: HasConnect, *args: P.args, **kwargs: P.kwargs) -> T:
-        obj.connect()  # type: ignore
-        return func(obj, *args, **kwargs)
+    def new_func(*args: P.args, **kwargs: P.kwargs) -> T:
+        self = typing.cast(_HasConnect, args[0])
+        self.connect()
+        return func(*args, **kwargs)
 
     return new_func
 
@@ -469,3 +472,4 @@ def profiler(
         return wrapper
 
     return decorator
+

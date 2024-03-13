@@ -32,10 +32,9 @@ import logging
 import typing
 import collections.abc
 
-from django.utils.translation import gettext
 from django.utils.translation import gettext_noop as _
 
-from uds.core import consts, exceptions, services, types
+from uds.core import consts, services, types
 from uds.core.services.specializations.fixed_machine.fixed_service import FixedService
 from uds.core.services.specializations.fixed_machine.fixed_userservice import FixedUserService
 from uds.core.ui import gui
@@ -98,17 +97,7 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
 
     prov_uuid = gui.HiddenField(value=None)
 
-    def initialize(self, values: 'types.core.ValuesType') -> None:
-        """
-        Loads the assigned machines from storage
-        """
-        if values:
-            if not self.machines.value:
-                raise exceptions.ui.ValidationError(gettext('We need at least a machine'))
-
-            # Remove machines not in values from "assigned" set
-            self._save_assigned_machines(self._get_assigned_machines() & set(self.machines.as_list()))
-            self.token.value = self.token.value.strip()
+    # Uses default FixedService.initialize
 
     def init_gui(self) -> None:
         # Here we have to use "default values", cause values aren't used at form initialization
@@ -180,20 +169,27 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
 
     def enumerate_assignables(self) -> collections.abc.Iterable[types.ui.ChoiceItem]:
         # Obtain machines names and ids for asignables
-        vms: dict[int, str] = {}
+        vms: dict[str, str] = {
+            machine['id']: machine['name']
+            for machine in self.provider().get_machines_from_folder(self.folder.value, retrieve_names=True)
+        }
 
-        assigned_vms = self._get_assigned_machines()
-        return [gui.choice_item(k, vms.get(int(k), 'Unknown!')) for k in self.machines.as_list() if k not in assigned_vms]
+        with self._assigned_machines_access() as assigned_vms:
+            return [
+                gui.choice_item(k, vms[k])
+                for k in self.machines.as_list()
+                if k not in assigned_vms
+                and k in vms  # Only machines not assigned, and that exists on xen will be available
+            ]
 
     def assign_from_assignables(
         self, assignable_id: str, user: 'models.User', userservice_instance: 'services.UserService'
     ) -> types.states.TaskState:
         xen_userservice_instance = typing.cast(XenFixedUserService, userservice_instance)
-        assigned_vms = self._get_assigned_machines()
-        if assignable_id not in assigned_vms:
-            assigned_vms.add(assignable_id)
-            self._save_assigned_machines(assigned_vms)
-            return xen_userservice_instance.assign(assignable_id)
+        with self._assigned_machines_access() as assigned_vms:
+            if assignable_id not in assigned_vms:
+                assigned_vms.add(assignable_id)
+                return xen_userservice_instance.assign(assignable_id)
 
         return xen_userservice_instance.error('VM not available!')
 
@@ -228,29 +224,28 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
 
     def get_and_assign_machine(self) -> str:
         found_vmid: typing.Optional[str] = None
-        try:
-            assigned_vms = self._get_assigned_machines()
-            for checking_vmid in self.machines.as_list():
-                if checking_vmid not in assigned_vms:  # Not assigned
-                    # Check that the machine exists...
-                    try:
-                        _vm_name = self.provider().get_machine_name(checking_vmid)
-                        found_vmid = checking_vmid
-                        break
-                    except Exception:  # Notifies on log, but skipt it
-                        self.provider().do_log(
-                            log.LogLevel.WARNING, 'Machine {} not accesible'.format(found_vmid)
-                        )
-                        logger.warning(
-                            'The service has machines that cannot be checked on proxmox (connection error or machine has been deleted): %s',
-                            found_vmid,
-                        )
+        with self._assigned_machines_access() as assigned_vms:
+            try:
+                for checking_vmid in self.machines.as_list():
+                    if checking_vmid not in assigned_vms:  # Not assigned
+                        # Check that the machine exists...
+                        try:
+                            _vm_name = self.provider().get_machine_name(checking_vmid)
+                            found_vmid = checking_vmid
+                            break
+                        except Exception:  # Notifies on log, but skipt it
+                            self.provider().do_log(
+                                log.LogLevel.WARNING, 'Machine {} not accesible'.format(found_vmid)
+                            )
+                            logger.warning(
+                                'The service has machines that cannot be checked on xen (connection error or machine has been deleted): %s',
+                                found_vmid,
+                            )
 
-            if found_vmid:
-                assigned_vms.add(str(found_vmid))
-                self._save_assigned_machines(assigned_vms)
-        except Exception:  #
-            raise Exception('No machine available')
+                if found_vmid:
+                    assigned_vms.add(str(found_vmid))
+            except Exception:  #
+                raise Exception('No machine available')
 
         if not found_vmid:
             raise Exception('All machines from list already assigned.')
@@ -268,7 +263,8 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
 
     def remove_and_free_machine(self, vmid: str) -> str:
         try:
-            self._save_assigned_machines(self._get_assigned_machines() - {str(vmid)})  # Remove from assigned
+            with self._assigned_machines_access() as assigned_vms:
+                assigned_vms.remove(vmid)
             return types.states.State.FINISHED
         except Exception as e:
             logger.warning('Cound not save assigned machines on fixed pool: %s', e)

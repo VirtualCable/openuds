@@ -32,10 +32,9 @@ import collections.abc
 import logging
 import typing
 
-from django.utils.translation import gettext
 from django.utils.translation import gettext_noop as _
 
-from uds.core import exceptions, services, types
+from uds.core import services, types
 from uds.core.services.specializations.fixed_machine.fixed_service import FixedService
 from uds.core.services.specializations.fixed_machine.fixed_userservice import FixedUserService
 from uds.core.ui import gui
@@ -99,20 +98,7 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
 
     prov_uuid = gui.HiddenField(value=None)
 
-    def initialize(self, values: 'types.core.ValuesType') -> None:
-        """
-        Loads the assigned machines from storage
-        """
-        if values:
-            if not self.machines.value:
-                raise exceptions.ui.ValidationError(gettext('We need at least a machine'))
-
-            self.storage.put_pickle('userservices_limit', len(self.machines.as_list()))
-
-            # Remove machines not in values from "assigned" set
-            self._save_assigned_machines(self._get_assigned_machines() & set(self.machines.as_list()))
-            self.token.value = self.token.value.strip()
-        self.userservices_limit = self.storage.get_unpickle('userservices_limit')
+    # Uses default FixedService.initialize
 
     def init_gui(self) -> None:
         # Here we have to use "default values", cause values aren't used at form initialization
@@ -143,23 +129,22 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
         for member in self.provider().get_pool_info(self.pool.value.strip(), retrieve_vm_names=True).members:
             vms[member.vmid] = member.vmname
 
-        assigned_vms = self._get_assigned_machines()
-        return [
-            gui.choice_item(k, vms[int(k)])
-            for k in self.machines.as_list()
-            if k not in assigned_vms
-            and int(k) not in vms
-        ]
+        with self._assigned_machines_access() as assigned_vms:
+            return [
+                gui.choice_item(k, vms[int(k)])
+                for k in self.machines.as_list()
+                if k not in assigned_vms
+                and int(k) not in vms
+            ]
 
     def assign_from_assignables(
         self, assignable_id: str, user: 'models.User', userservice_instance: 'services.UserService'
     ) -> types.states.TaskState:
         proxmox_service_instance = typing.cast(ProxmoxUserServiceFixed, userservice_instance)
-        assigned_vms = self._get_assigned_machines()
-        if assignable_id not in assigned_vms:
-            assigned_vms.add(assignable_id)
-            self._save_assigned_machines(assigned_vms)
-            return proxmox_service_instance.assign(assignable_id)
+        with self._assigned_machines_access() as assigned_vms:
+            if assignable_id not in assigned_vms:
+                assigned_vms.add(assignable_id)
+                return proxmox_service_instance.assign(assignable_id)
 
         return proxmox_service_instance.error('VM not available!')
 
@@ -195,26 +180,25 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
     def get_and_assign_machine(self) -> str:
         found_vmid: typing.Optional[str] = None
         try:
-            assigned_vms = self._get_assigned_machines()
-            for checking_vmid in self.machines.as_list():
-                if checking_vmid not in assigned_vms:  # Not already assigned
-                    try:
-                        # Invoke to check it exists, do not need to store the result
-                        self.provider().get_machine_info(int(checking_vmid), self.pool.value.strip())
-                        found_vmid = checking_vmid
-                        break
-                    except Exception:  # Notifies on log, but skipt it
-                        self.provider().do_log(
-                            log.LogLevel.WARNING, 'Machine {} not accesible'.format(found_vmid)
-                        )
-                        logger.warning(
-                            'The service has machines that cannot be checked on proxmox (connection error or machine has been deleted): %s',
-                            found_vmid,
-                        )
+            with self._assigned_machines_access() as assigned_vms:
+                for checking_vmid in self.machines.as_list():
+                    if checking_vmid not in assigned_vms:  # Not already assigned
+                        try:
+                            # Invoke to check it exists, do not need to store the result
+                            self.provider().get_machine_info(int(checking_vmid), self.pool.value.strip())
+                            found_vmid = checking_vmid
+                            break
+                        except Exception:  # Notifies on log, but skipt it
+                            self.provider().do_log(
+                                log.LogLevel.WARNING, 'Machine {} not accesible'.format(found_vmid)
+                            )
+                            logger.warning(
+                                'The service has machines that cannot be checked on proxmox (connection error or machine has been deleted): %s',
+                                found_vmid,
+                            )
 
-            if found_vmid:
-                assigned_vms.add(found_vmid)
-                self._save_assigned_machines(assigned_vms)
+                if found_vmid:
+                    assigned_vms.add(found_vmid)
         except Exception as e:  #
             logger.debug('Error getting machine: %s', e)
             raise Exception('No machine available')
@@ -236,7 +220,8 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
 
     def remove_and_free_machine(self, vmid: str) -> str:
         try:
-            self._save_assigned_machines(self._get_assigned_machines() - {str(vmid)})  # Remove from assigned
+            with self._assigned_machines_access() as assigned_vms:
+                assigned_vms.remove(vmid)
             return types.states.State.FINISHED
         except Exception as e:
             logger.warning('Cound not save assigned machines on fixed pool: %s', e)

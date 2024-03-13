@@ -364,22 +364,6 @@ class Storage:
         except Exception:  # nosec: Not interested in processing exceptions, just ignores it
             pass
 
-    def lock(self) -> None:
-        """
-        Use with care. If locked, it must be unlocked before returning
-        legacy, not user anymore
-        """
-        # dbStorage.objects.lock()  # @UndefinedVariable
-        pass
-
-    def unlock(self) -> None:
-        """
-        Must be used to unlock table
-        legacy, not user anymore
-        """
-        # dbStorage.objects.unlock()  # @UndefinedVariable
-        pass
-
     def as_dict(
         self,
         group: typing.Optional[str] = None,

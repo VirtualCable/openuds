@@ -29,12 +29,13 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import abc
+import contextlib
 import logging
 import typing
 import collections.abc
 
-from django.utils.translation import gettext_noop as _
-from uds.core import services, types
+from django.utils.translation import gettext_noop as _, gettext
+from uds.core import services, types, exceptions
 from uds.core.ui import gui
 
 # Not imported at runtime, just for type checking
@@ -117,17 +118,34 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         tab=_('Machines'),
         rows=10,
     )
+    
+    def initialize(self, values: 'types.core.ValuesType') -> None:
+        """
+        Fixed token value, ensure we have at least one machine,
+        ensure assigned machines stored values are updated acording to the machines list
+        and recover userservice_limit from machines list length
+        If overriden, can be called to avoid redundant code
+        """
+        if values:
+            if not self.machines.value:
+                raise exceptions.ui.ValidationError(gettext('We need at least a machine'))
 
-    def _get_assigned_machines(self) -> typing.Set[str]:
-        with self.storage.as_dict() as d:
-            vals = d.get('vms', None)
-        logger.debug('Got storage VMS: %s', vals)
-        return vals or set()
-
-    def _save_assigned_machines(self, vals: typing.Set[str]) -> None:
-        logger.debug('Saving storage VMS: %s', vals)
-        with self.storage.as_dict() as d:
-            d['vms'] = vals
+            # Remove machines not in values from "assigned" set
+            with self._assigned_machines_access() as assigned_vms:
+                assigned_vms &= set(self.machines.as_list())
+            self.token.value = self.token.value.strip()
+        # Recover userservice
+        self.userservices_limit = len(self.machines.as_list())
+        
+    @contextlib.contextmanager
+    def _assigned_machines_access(self) -> collections.abc.Generator[set[str], None, None]:
+        with self.storage.as_dict(atomic=True) as d:
+            machines: set[str] = d.get('vms', set())
+            initial_machines = machines.copy()  # for comparison later
+            yield machines
+            # If has changed, save it
+            if machines != initial_machines:
+                d['vms'] = machines  # Store it
 
     def process_snapshot(self, remove: bool, userservice_instance: 'FixedUserService') -> None:
         """

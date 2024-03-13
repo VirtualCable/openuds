@@ -239,7 +239,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         """
         # Get storages for that datacenter
         logger.debug('Checking datastore space for %s', self.datastore.value)
-        info = self.provider().getStorageInfo(self.datastore.value)
+        info = self.provider().get_storage_info(self.datastore.value)
         logger.debug('Datastore Info: %s', info)
         availableGB = info['available'] / (1024 * 1024 * 1024)
         if availableGB < self.reserved_storage_gb.as_int():
@@ -397,7 +397,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         """
         Changes the mac address of first nic of the machine to the one specified
         """
-        self.provider().updateMachineMac(machine_id, mac)
+        self.provider().update_machine_mac(machine_id, mac)
 
     def fix_usb(self, machine_id: str) -> None:
         if self.usb.value in ('native',):

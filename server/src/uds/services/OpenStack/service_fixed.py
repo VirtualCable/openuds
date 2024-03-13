@@ -32,10 +32,9 @@ import collections.abc
 import logging
 import typing
 
-from django.utils.translation import gettext
 from django.utils.translation import gettext_noop as _
 
-from uds.core import exceptions, services, types
+from uds.core import services, types
 from uds.core.services.specializations.fixed_machine.fixed_service import FixedService
 from uds.core.services.specializations.fixed_machine.fixed_userservice import FixedUserService
 from uds.core.ui import gui
@@ -103,35 +102,19 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
     )
 
     machines = FixedService.machines
-    
+
     prov_uuid = gui.HiddenField()
-   
+
     _api: typing.Optional['openstack_client.OpenstackClient'] = None
-    
+
     @property
     def api(self) -> 'openstack_client.OpenstackClient':
         if not self._api:
             self._api = self.provider().api(projectid=self.project.value, region=self.region.value)
 
         return self._api
-  
 
-    def initialize(self, values: 'types.core.ValuesType') -> None:
-        """
-        Loads the assigned machines from storage
-        """
-        if values:
-            if not self.machines.value:
-                raise exceptions.ui.ValidationError(gettext('We need at least a machine'))
-
-            with self.storage.as_dict() as d:
-                d['userservices_limit'] = len(self.machines.as_list())
-
-            # Remove machines not in values from "assigned" set
-            self._save_assigned_machines(self._get_assigned_machines() & set(self.machines.as_list()))
-            self.token.value = self.token.value.strip()
-        with self.storage.as_dict() as d:
-            self.userservices_limit = d.get('userservices_limit', 0)
+    # Uses default FixedService.initialize
 
     def init_gui(self) -> None:
         api = self.provider().api()
@@ -162,56 +145,54 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
 
     def enumerate_assignables(self) -> collections.abc.Iterable[types.ui.ChoiceItem]:
         # Obtain machines names and ids for asignables
-        servers = {server.id:server.name for server in self.api.list_servers() if not server.name.startswith('UDS-')}
+        servers = {
+            server.id: server.name for server in self.api.list_servers() if not server.name.startswith('UDS-')
+        }
 
-        assigned_servers = self._get_assigned_machines()
-        # Only machines not assigned, and that exists on openstack will be available
-        return [
-            gui.choice_item(k, servers[k])
-            for k in self.machines.as_list()
-            if k not in assigned_servers
-            and k in servers
-        ]
+        with self._assigned_machines_access() as assigned_servers:
+            return [
+                gui.choice_item(k, servers[k])
+                for k in self.machines.as_list()
+                if k not in assigned_servers and k in servers
+            ]
 
     def assign_from_assignables(
         self, assignable_id: str, user: 'models.User', userservice_instance: 'services.UserService'
     ) -> types.states.TaskState:
         openstack_userservice_instance = typing.cast(OpenStackUserServiceFixed, userservice_instance)
-        assigned_vms = self._get_assigned_machines()
-        if assignable_id not in assigned_vms:
-            assigned_vms.add(assignable_id)
-            self._save_assigned_machines(assigned_vms)
-            return openstack_userservice_instance.assign(assignable_id)
+        with self._assigned_machines_access() as assigned:
+            if assignable_id not in assigned:
+                assigned.add(assignable_id)
+                return openstack_userservice_instance.assign(assignable_id)
 
         return openstack_userservice_instance.error('VM not available!')
 
     def process_snapshot(self, remove: bool, userservice_instance: FixedUserService) -> None:
-        return # No snapshots support
+        return  # No snapshots support
 
     def get_and_assign_machine(self) -> str:
         found_vmid: typing.Optional[str] = None
         try:
-            assigned_vms = self._get_assigned_machines()
-            for checking_vmid in self.machines.as_list():
-                if checking_vmid not in assigned_vms:  # Not already assigned
-                    try:
-                        # Invoke to check it exists, do not need to store the result
-                        if self.api.get_server(checking_vmid).status.is_lost():
-                            raise Exception('Machine not found')  # Simply translate is_lost to an exception
-                        found_vmid = checking_vmid
-                        break
-                    except Exception:  # Notifies on log, but skipt it
-                        self.provider().do_log(
-                            log.LogLevel.WARNING, 'Machine {} not accesible'.format(found_vmid)
-                        )
-                        logger.warning(
-                            'The service has machines that cannot be checked on proxmox (connection error or machine has been deleted): %s',
-                            found_vmid,
-                        )
+            with self._assigned_machines_access() as assigned:
+                for checking_vmid in self.machines.as_list():
+                    if checking_vmid not in assigned:  # Not already assigned
+                        try:
+                            # Invoke to check it exists, do not need to store the result
+                            if self.api.get_server(checking_vmid).status.is_lost():
+                                raise Exception('Machine not found')  # Simply translate is_lost to an exception
+                            found_vmid = checking_vmid
+                            break
+                        except Exception:  # Notifies on log, but skipt it
+                            self.provider().do_log(
+                                log.LogLevel.WARNING, 'Machine {} not accesible'.format(found_vmid)
+                            )
+                            logger.warning(
+                                'The service has machines that cannot be checked on proxmox (connection error or machine has been deleted): %s',
+                                found_vmid,
+                            )
 
-            if found_vmid:
-                assigned_vms.add(found_vmid)
-                self._save_assigned_machines(assigned_vms)
+                if found_vmid:
+                    assigned.add(found_vmid)
         except Exception as e:  #
             logger.debug('Error getting machine: %s', e)
             raise Exception('No machine available')
@@ -223,7 +204,7 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
 
     def get_first_network_mac(self, vmid: str) -> str:
         return self.api.get_server(vmid).addresses[0].mac
-        
+
     def get_guest_ip_address(self, vmid: str) -> str:
         return self.api.get_server(vmid).addresses[0].ip
 
@@ -232,7 +213,8 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
 
     def remove_and_free_machine(self, vmid: str) -> str:
         try:
-            self._save_assigned_machines(self._get_assigned_machines() - {str(vmid)})  # Remove from assigned
+            with self._assigned_machines_access() as assigned:
+                assigned.remove(vmid)
             return types.states.State.FINISHED
         except Exception as e:
             logger.warning('Cound not save assigned machines on fixed pool: %s', e)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2019 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -73,7 +73,7 @@ class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-publi
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    type_name = _('oVirt/RHEV Platform Provider')
+    type_name = _('oVirt/OLVM Platform Provider')
     # : Type used internally to identify this provider
     type_type = 'oVirtPlatform'
     # : Description shown at administration interface for this provider
@@ -94,8 +94,8 @@ class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-publi
     # "random"
     ovirt_version = gui.ChoiceField(
         order=1,
-        label=_('oVirt Version'),
-        tooltip=_('oVirt Server Version'),
+        label=_('Server Version'),
+        tooltip=_('oVirt/OVLM Server Version'),
         # In this case, the choice can have none value selected by default
         required=True,
         readonly=False,
@@ -117,7 +117,13 @@ class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-publi
         length=32,
         label=_('Username'),
         order=3,
-        tooltip=_('User with valid privileges on oVirt, (use "user@domain" form)'),
+        tooltip=_(
+            (
+                'User with valid privileges on oVirt.'
+                ' Use "user@domain" if using AAA, or "user@domain@provider" if using keycloak.'
+                ' I.e. "admin@ovirt@internalsso" or "admin@internal")'
+            )
+        ),
         required=True,
         default='admin@internal',
     )
@@ -243,7 +249,7 @@ class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-publi
         """
         return self._get_api().get_cluster_info(clusterId, force)
 
-    def getDatacenterInfo(
+    def get_datacenter_info(
         self, datacenterId: str, force: bool = False
     ) -> collections.abc.MutableMapping[str, typing.Any]:
         """
@@ -273,7 +279,7 @@ class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-publi
         """
         return self._get_api().get_datacenter_info(datacenterId, force)
 
-    def getStorageInfo(
+    def get_storage_info(
         self, storageId: str, force: bool = False
     ) -> collections.abc.MutableMapping[str, typing.Any]:
         """
@@ -444,7 +450,7 @@ class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-publi
         """
         self._get_api().remove_machine(machineId)
 
-    def updateMachineMac(self, machineId: str, macAddres: str) -> None:
+    def update_machine_mac(self, machineId: str, macAddres: str) -> None:
         """
         Changes the mac address of first nic of the machine to the one specified
         """
