@@ -328,25 +328,13 @@ if sys.platform == 'win32':
         if op == Operation.FINISH:
             return types.states.TaskState.FINISHED
 
-        fncs: collections.abc.Mapping[Operation, typing.Optional[collections.abc.Callable[[], None]]] = {
-            Operation.CREATE: self._create,
-            Operation.RETRY: self._retry,
-            Operation.START: self._start_machine,
-            Operation.STOP: self._stop_machine,
-            Operation.GRACEFUL_STOP: self._gracely_stop,
-            Operation.SHUTDOWN: self._shutdown_machine,
-            Operation.WAIT: self._wait,
-            Operation.REMOVE: self._remove,
-            Operation.GET_MAC: self._update_machine_mac_and_ha,
-        }
-
         try:
-            operation_executor: typing.Optional[collections.abc.Callable[[], None]] = fncs.get(op, None)
+            operation_executor = _EXECUTORS.get(op, None)
 
             if operation_executor is None:
                 return self._error(f'Unknown operation found at execution queue ({op})')
 
-            operation_executor()
+            operation_executor(self)
 
             return types.states.TaskState.RUNNING
         except Exception as e:
@@ -362,7 +350,7 @@ if sys.platform == 'win32':
         At executeQueue this return value will be ignored, and it will only be used at check_state
         """
         pass
-    
+
     def _retry_checker(self) -> types.states.TaskState:
         """
         This method is not used, because retry operation is never used
@@ -374,7 +362,7 @@ if sys.platform == 'win32':
         Executes opWait, it simply waits something "external" to end
         """
         pass
-    
+
     def _wait_checker(self) -> types.states.TaskState:
         """
         This method is not used, because wait operation is never used
@@ -592,27 +580,13 @@ if sys.platform == 'win32':
         if op == Operation.FINISH:
             return types.states.TaskState.FINISHED
 
-        fncs: dict[Operation, typing.Optional[collections.abc.Callable[[], types.states.TaskState]]] = {
-            Operation.CREATE: self._create_checker,
-            Operation.RETRY: self._retry_checker,
-            Operation.WAIT: self._wait_checker,
-            Operation.START: self._start_checker,
-            Operation.STOP: self._stop_checker,
-            Operation.GRACEFUL_STOP: self._graceful_stop_checker,
-            Operation.SHUTDOWN: self._shutdown_checker,
-            Operation.REMOVE: self._remove_checker,
-            Operation.GET_MAC: self._mac_checker,
-        }
-
         try:
-            operation_checker: typing.Optional[typing.Optional[collections.abc.Callable[[], types.states.TaskState]]] = fncs.get(
-                op, None
-            )
+            operation_checker = _CHECKERS.get(op, None)
 
             if operation_checker is None:
                 return self._error(f'Unknown operation found at check queue ({op})')
 
-            state = operation_checker()
+            state = operation_checker(self)
             if state == types.states.TaskState.FINISHED:
                 self._pop_current_op()  # Remove runing op
                 return self._execute_queue()
@@ -711,3 +685,35 @@ if sys.platform == 'win32':
             self._vmid,
             [ProxmoxUserserviceLinked._op2str(op) for op in self._queue],
         )
+
+
+_EXECUTORS: typing.Final[
+    collections.abc.Mapping[
+        Operation, typing.Optional[collections.abc.Callable[[ProxmoxUserserviceLinked], None]]
+    ]
+] = {
+    Operation.CREATE: ProxmoxUserserviceLinked._create,
+    Operation.RETRY: ProxmoxUserserviceLinked._retry,
+    Operation.START: ProxmoxUserserviceLinked._start_machine,
+    Operation.STOP: ProxmoxUserserviceLinked._stop_machine,
+    Operation.GRACEFUL_STOP: ProxmoxUserserviceLinked._gracely_stop,
+    Operation.SHUTDOWN: ProxmoxUserserviceLinked._shutdown_machine,
+    Operation.WAIT: ProxmoxUserserviceLinked._wait,
+    Operation.REMOVE: ProxmoxUserserviceLinked._remove,
+    Operation.GET_MAC: ProxmoxUserserviceLinked._update_machine_mac_and_ha,
+}
+
+
+_CHECKERS: dict[
+    Operation, typing.Optional[collections.abc.Callable[[ProxmoxUserserviceLinked], types.states.TaskState]]
+] = {
+    Operation.CREATE: ProxmoxUserserviceLinked._create_checker,
+    Operation.RETRY: ProxmoxUserserviceLinked._retry_checker,
+    Operation.WAIT: ProxmoxUserserviceLinked._wait_checker,
+    Operation.START: ProxmoxUserserviceLinked._start_checker,
+    Operation.STOP: ProxmoxUserserviceLinked._stop_checker,
+    Operation.GRACEFUL_STOP: ProxmoxUserserviceLinked._graceful_stop_checker,
+    Operation.SHUTDOWN: ProxmoxUserserviceLinked._shutdown_checker,
+    Operation.REMOVE: ProxmoxUserserviceLinked._remove_checker,
+    Operation.GET_MAC: ProxmoxUserserviceLinked._mac_checker,
+}

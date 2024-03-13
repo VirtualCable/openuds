@@ -137,6 +137,7 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
 
     def enumerate_assignables(self) -> collections.abc.Iterable[types.ui.ChoiceItem]:
         # Obtain machines names and ids for asignables
+        # Only machines that already exists on proxmox and are not already assigned
         vms: dict[int, str] = {}
 
         for member in self.provider().get_pool_info(self.pool.value.strip(), retrieve_vm_names=True).members:
@@ -144,9 +145,10 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
 
         assigned_vms = self._get_assigned_machines()
         return [
-            gui.choice_item(k, vms.get(int(k), 'Unknown!'))
+            gui.choice_item(k, vms[int(k)])
             for k in self.machines.as_list()
             if k not in assigned_vms
+            and int(k) not in vms
         ]
 
     def assign_from_assignables(
