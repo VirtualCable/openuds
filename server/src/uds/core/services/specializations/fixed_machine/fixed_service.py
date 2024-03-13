@@ -85,24 +85,28 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         label=_('Use snapshots'),
         default=False,
         order=22,
-        tooltip=_('If active, UDS will try to create an snapshot (if one already does not exists) before accessing a machine, and restore it after usage.'),
+        tooltip=_(
+            'If active, UDS will try to create an snapshot (if one already does not exists) before accessing a machine, and restore it after usage.'
+        ),
         tab=_('Machines'),
         old_field_name='useSnapshots',
     )
-    
+
     # This one replaces use_snapshots, and is used to select the snapshot type (No snapshot, recover snapshot and stop machine, recover snapshot and start machine)
     snapshot_type = gui.ChoiceField(
         label=_('Snapshot type'),
         order=22,
         default='0',
-        tooltip=_('If active, UDS will try to create an snapshot (if one already does not exists) before accessing a machine, and restore it after usage.'),
+        tooltip=_(
+            'If active, UDS will try to create an snapshot (if one already does not exists) before accessing a machine, and restore it after usage.'
+        ),
         tab=_('Machines'),
         choices=[
             gui.choice_item('no', _('No snapshot')),
             gui.choice_item('stop', _('Recover snapshot and stop machine')),
             gui.choice_item('start', _('Recover snapshot and start machine')),
         ],
-    )   
+    )
 
     # Keep name as "machine" so we can use VCHelpers.getMachines
     machines = gui.MultiChoiceField(
@@ -115,13 +119,15 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
     )
 
     def _get_assigned_machines(self) -> typing.Set[str]:
-        vals = self.storage.get_unpickle('vms')
+        with self.storage.as_dict() as d:
+            vals = d.get('vms', None)
         logger.debug('Got storage VMS: %s', vals)
         return vals or set()
 
     def _save_assigned_machines(self, vals: typing.Set[str]) -> None:
         logger.debug('Saving storage VMS: %s', vals)
-        self.storage.put_pickle('vms', vals)
+        with self.storage.as_dict() as d:
+            d['vms'] = vals
 
     def process_snapshot(self, remove: bool, userservice_instance: 'FixedUserService') -> None:
         """
@@ -169,8 +175,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
 
     @abc.abstractmethod
     def get_guest_ip_address(self, vmid: str) -> str:
-        """Returns the guest ip address of the machine
-        """
+        """Returns the guest ip address of the machine"""
         raise NotImplementedError()
 
     @abc.abstractmethod

@@ -33,9 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import typing
 from unittest import mock
 
-from uds.core import types, ui, environment
-from uds.services.Proxmox.service_fixed import ProxmoxServiceFixed
-
+from uds.core import types, ui
 from . import fixtures
 
 from ...utils.test import UDSTransactionTestCase

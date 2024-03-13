@@ -43,19 +43,29 @@ from uds.core.ui.user_interface import gui
 
 from ...utils.autospec import autospec, AutoSpecMethodInfo
 
-from uds.services.OpenStack import provider, provider_legacy, service, publication, deployment
+from uds.services.OpenStack import (
+    provider,
+    provider_legacy,
+    service,
+    publication,
+    deployment,
+    service_fixed,
+    deployment_fixed,
+)
 from uds.services.OpenStack.openstack import openstack_client, types as openstack_types
 
-AnyOpenStackProvider: typing.TypeAlias = typing.Union[provider.OpenStackProvider, provider_legacy.OpenStackProviderLegacy]
+AnyOpenStackProvider: typing.TypeAlias = typing.Union[
+    provider.OpenStackProvider, provider_legacy.OpenStackProviderLegacy
+]
 
 
 GUEST_IP_ADDRESS: str = '1.0.0.1'
 
 FLAVORS_LIST: list[openstack_types.FlavorInfo] = [
     openstack_types.FlavorInfo(
-        id='ai2.xlarge.4',
-        name='ai2.xlarge.4',
-        vcpus=4,
+        id=f'fid{n}',
+        name=f'Flavor name{n}',
+        vcpus=n,
         ram=1024 * n,  # MiB
         disk=1024 * 1024 * n,  # GiB
         swap=0,
@@ -343,6 +353,14 @@ SERVICE_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
     # 'prov_uuid': str(uuid.uuid4()),  # Not stored on db, so not needed
 }
 
+SERVICES_FIXED_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
+    'token': 'token',
+    'region': random.choice(REGIONS_LIST).id,
+    'project': random.choice(PROJECTS_LIST).id,
+    'machines': [i.id for i in random.sample(SERVERS_LIST, 4)],
+    # 'prov_uuid': str(uuid.uuid4()),  # Not stored on db, so not needed
+}
+
 
 def create_client_mock() -> mock.Mock:
     """
@@ -395,9 +413,7 @@ def create_provider_legacy(**kwargs: typing.Any) -> provider_legacy.OpenStackPro
     )
 
 
-def create_live_service(
-    provider: AnyOpenStackProvider, **kwargs: typing.Any
-) -> service.OpenStackLiveService:
+def create_live_service(provider: AnyOpenStackProvider, **kwargs: typing.Any) -> service.OpenStackLiveService:
     """
     Create a service
     """
@@ -411,7 +427,8 @@ def create_live_service(
         values=values,
         uuid=uuid_,
     )
-    
+
+
 def create_publication(service: service.OpenStackLiveService) -> publication.OpenStackLivePublication:
     """
     Create a publication
@@ -425,6 +442,7 @@ def create_publication(service: service.OpenStackLiveService) -> publication.Ope
         uuid=uuid_,
     )
 
+
 def create_live_userservice(
     service: service.OpenStackLiveService,
     publication: typing.Optional[publication.OpenStackLivePublication] = None,
@@ -437,5 +455,40 @@ def create_live_userservice(
         environment=environment.Environment.private_environment(uuid_),
         service=service,
         publication=publication or create_publication(service),
+        uuid=uuid_,
+    )
+
+
+def create_fixed_service(
+    provider: AnyOpenStackProvider, **kwargs: typing.Any
+) -> service_fixed.OpenStackServiceFixed:
+    """
+    Create a fixed service
+    """
+    values = SERVICES_FIXED_VALUES_DICT.copy()
+    values.update(kwargs)
+
+    uuid_ = str(uuid.uuid4())
+    return service_fixed.OpenStackServiceFixed(
+        provider=provider,
+        environment=environment.Environment.private_environment(uuid_),
+        values=values,
+        uuid=uuid_,
+    )
+
+
+# Fixed has no publications
+
+
+def create_fixed_userservice(
+    service: service_fixed.OpenStackServiceFixed,
+) -> deployment_fixed.OpenStackUserServiceFixed:
+    """
+    Create a linked user service
+    """
+    uuid_ = str(uuid.uuid4())
+    return deployment_fixed.OpenStackUserServiceFixed(
+        environment=environment.Environment.private_environment(uuid_),
+        service=service,
         uuid=uuid_,
     )

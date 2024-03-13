@@ -60,6 +60,9 @@ class OpenStackUserServiceFixed(FixedUserService, autoserializable.AutoSerializa
 
     # : Recheck every ten seconds by default (for task methods)
     suggested_delay = 4
+    
+    # Override _assign_queue
+    
 
     # Utility overrides for type checking...
     def service(self) -> 'service_fixed.OpenStackServiceFixed':
@@ -70,11 +73,11 @@ class OpenStackUserServiceFixed(FixedUserService, autoserializable.AutoSerializa
             return types.states.TaskState.FINISHED
 
         try:
-            vminfo = self.service().get_machine_info(self._vmid)
+            server_info = self.service().api.get_server(self._vmid)
         except Exception as e:
             return self._error(f'Machine not found: {e}')
 
-        if vminfo.status == 'stopped':
+        if server_info.status == 'stopped':
             self._queue = [Operation.START, Operation.FINISH]
             return self._execute_queue()
 
@@ -99,10 +102,10 @@ class OpenStackUserServiceFixed(FixedUserService, autoserializable.AutoSerializa
 
     def _start_machine(self) -> None:
         try:
-            vminfo = self.service().get_machine_info(self._vmid)
+            server_info = self.service().api.get_server(self._vmid)
         except Exception as e:
             raise Exception('Machine not found on start machine') from e
 
-        if vminfo.power_state != openstack_types.PowerState.RUNNING:
+        if server_info.power_state != openstack_types.PowerState.RUNNING:
             self.service().api.start_server(self._vmid)  # Start the server
 

@@ -30,15 +30,9 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
-import datetime
-import collections.abc
-import itertools
 from unittest import mock
 
-from uds.core import types, ui, environment
-from uds.services.OpenNebula.on.vm import remove_machine
-from uds.services.Proxmox.publication import ProxmoxPublication
+from uds.core import types
 
 from . import fixtures
 

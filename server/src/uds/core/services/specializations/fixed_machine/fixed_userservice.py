@@ -87,6 +87,9 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
     _task = autoserializable.StringField(default='')
     _queue = autoserializable.ListField[Operation]()  # Default is empty list
 
+    # Note that even if SNAPHSHOT operations are in middel
+    # implementations may opt to no have snapshots at all
+    # In this case, the process_snapshot method will do nothing
     _create_queue: typing.ClassVar[list[Operation]] = [
         Operation.CREATE,
         Operation.SNAPSHOT_CREATE,
@@ -210,27 +213,13 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         if op == Operation.FINISH:
             return types.states.TaskState.FINISHED
 
-        fncs: dict[Operation, collections.abc.Callable[[], None]] = {
-            Operation.CREATE: self._create,
-            Operation.RETRY: self._retry,
-            Operation.START: self._start_machine,
-            Operation.STOP: self._stop_machine,
-            Operation.WAIT: self._wait,
-            Operation.REMOVE: self._remove,
-            Operation.SNAPSHOT_CREATE: self._snapshot_create,
-            Operation.SNAPSHOT_RECOVER: self._snapshot_recover,
-            Operation.PROCESS_TOKEN: self._process_token,
-            Operation.SOFT_SHUTDOWN: self._soft_shutdown_machine,
-            Operation.NOP: self._nop,
-        }
-
         try:
-            operation_runner: typing.Optional[collections.abc.Callable[[], None]] = fncs.get(op, None)
+            operation_runner = _EXEC_FNCS.get(op, None)
 
             if not operation_runner:
                 return self._error(f'Unknown operation found at execution queue ({op})')
 
-            operation_runner()
+            operation_runner(self)
 
             return types.states.TaskState.RUNNING
         except Exception as e:
@@ -386,27 +375,13 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         if op == Operation.FINISH:
             return types.states.TaskState.FINISHED
 
-        FNCS: typing.Final[dict[Operation, collections.abc.Callable[[], types.states.TaskState]]] = {
-            Operation.CREATE: self._create_checker,
-            Operation.RETRY: self._retry_checker,
-            Operation.WAIT: self._wait_checker,
-            Operation.START: self._start_checker,
-            Operation.STOP: self._stop_checker,
-            Operation.REMOVE: self._removed_checker,
-            Operation.SNAPSHOT_CREATE: self._snapshot_create_checker,
-            Operation.SNAPSHOT_RECOVER: self._snapshot_recover_checker,
-            Operation.PROCESS_TOKEN: self._process_token_checker,
-            Operation.SOFT_SHUTDOWN: self._soft_shutdown_checker,
-            Operation.NOP: self._nop_checker,
-        }
-
         try:
-            check_function: typing.Optional[collections.abc.Callable[[], types.states.TaskState]] = FNCS.get(op, None)
+            check_function = _CHECK_FNCS.get(op, None)
 
             if check_function is None:
                 return self._error('Unknown operation found at check queue ({0})'.format(op))
 
-            state = check_function()
+            state = check_function(self)
             if state == types.states.TaskState.FINISHED:
                 self._pop_current_op()  # Remove runing op, till now only was "peek"
                 return self._execute_queue()
@@ -487,3 +462,34 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             self._vmid,
             self._task,
         )
+
+
+_EXEC_FNCS: typing.Final[collections.abc.Mapping[Operation, collections.abc.Callable[[FixedUserService], None]]] = {
+    Operation.CREATE: FixedUserService._create,
+    Operation.RETRY: FixedUserService._retry,
+    Operation.START: FixedUserService._start_machine,
+    Operation.STOP: FixedUserService._stop_machine,
+    Operation.WAIT: FixedUserService._wait,
+    Operation.REMOVE: FixedUserService._remove,
+    Operation.SNAPSHOT_CREATE: FixedUserService._snapshot_create,
+    Operation.SNAPSHOT_RECOVER: FixedUserService._snapshot_recover,
+    Operation.PROCESS_TOKEN: FixedUserService._process_token,
+    Operation.SOFT_SHUTDOWN: FixedUserService._soft_shutdown_machine,
+    Operation.NOP: FixedUserService._nop,
+}
+
+
+_CHECK_FNCS: typing.Final[collections.abc.Mapping[Operation, collections.abc.Callable[[FixedUserService], types.states.TaskState]]] = {
+    Operation.CREATE: FixedUserService._create_checker,
+    Operation.RETRY: FixedUserService._retry_checker,
+    Operation.WAIT: FixedUserService._wait_checker,
+    Operation.START: FixedUserService._start_checker,
+    Operation.STOP: FixedUserService._stop_checker,
+    Operation.REMOVE: FixedUserService._removed_checker,
+    Operation.SNAPSHOT_CREATE: FixedUserService._snapshot_create_checker,
+    Operation.SNAPSHOT_RECOVER: FixedUserService._snapshot_recover_checker,
+    Operation.PROCESS_TOKEN: FixedUserService._process_token_checker,
+    Operation.SOFT_SHUTDOWN: FixedUserService._soft_shutdown_checker,
+    Operation.NOP: FixedUserService._nop_checker,
+}
+

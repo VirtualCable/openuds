@@ -37,11 +37,10 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import environment, types, consts
+from uds.core import environment, types
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 from uds.core.util import validators, fields
-from uds.core.util.decorators import cached
 
 from .openstack import openstack_client, sanitized_name, types as openstack_types
 from .service import OpenStackLiveService
@@ -246,7 +245,6 @@ class OpenStackProviderLegacy(ServiceProvider):
         """
         return OpenStackProviderLegacy(env, data).test_connection()
 
-    @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def is_available(self) -> bool:
         """
         Check if aws provider is reachable

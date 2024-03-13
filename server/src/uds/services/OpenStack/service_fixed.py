@@ -47,7 +47,7 @@ from .deployment_fixed import OpenStackUserServiceFixed
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from .openstack import openstack_client, types as openstack_types
+    from .openstack import openstack_client
 
     from .provider import OpenStackProvider
     from .provider_legacy import OpenStackProviderLegacy
@@ -157,9 +157,6 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
     def provider(self) -> 'AnyOpenStackProvider':
         return typing.cast('AnyOpenStackProvider', super().provider())
 
-    def get_machine_info(self, vmid: str) -> 'openstack_types.ServerInfo':
-        return self.api.get_server(vmid)
-
     def is_avaliable(self) -> bool:
         return self.provider().is_available()
 
@@ -168,23 +165,25 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
         servers = {server.id:server.name for server in self.api.list_servers() if not server.name.startswith('UDS-')}
 
         assigned_servers = self._get_assigned_machines()
+        # Only machines not assigned, and that exists on openstack will be available
         return [
-            gui.choice_item(k, servers.get(k, 'Unknown!'))
+            gui.choice_item(k, servers[k])
             for k in self.machines.as_list()
             if k not in assigned_servers
+            and k in servers
         ]
 
     def assign_from_assignables(
         self, assignable_id: str, user: 'models.User', userservice_instance: 'services.UserService'
     ) -> types.states.TaskState:
-        proxmox_service_instance = typing.cast(OpenStackUserServiceFixed, userservice_instance)
+        openstack_userservice_instance = typing.cast(OpenStackUserServiceFixed, userservice_instance)
         assigned_vms = self._get_assigned_machines()
         if assignable_id not in assigned_vms:
             assigned_vms.add(assignable_id)
             self._save_assigned_machines(assigned_vms)
-            return proxmox_service_instance.assign(assignable_id)
+            return openstack_userservice_instance.assign(assignable_id)
 
-        return proxmox_service_instance.error('VM not available!')
+        return openstack_userservice_instance.error('VM not available!')
 
     def process_snapshot(self, remove: bool, userservice_instance: FixedUserService) -> None:
         return # No snapshots support
@@ -198,7 +197,7 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
                     try:
                         # Invoke to check it exists, do not need to store the result
                         if self.api.get_server(checking_vmid).status.is_lost():
-                            raise Exception('Machine not found')  # Process on except
+                            raise Exception('Machine not found')  # Simply translate is_lost to an exception
                         found_vmid = checking_vmid
                         break
                     except Exception:  # Notifies on log, but skipt it
@@ -220,7 +219,7 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
         if not found_vmid:
             raise Exception('All machines from list already assigned.')
 
-        return str(found_vmid)
+        return found_vmid
 
     def get_first_network_mac(self, vmid: str) -> str:
         return self.api.get_server(vmid).addresses[0].mac
