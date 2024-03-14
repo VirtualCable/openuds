@@ -351,12 +351,22 @@ class ModelHandler(BaseModelHandler):
 
         # if has custom methods, look for if this request matches any of them
         for cm in self.custom_methods:
+            # Convert to snake case
+            snake_case_name = re.sub(r'(?<!^)(?=[A-Z])', '_', cm[0]).lower()
+            # And snake case to camel case (first letter lower case, rest upper case)
+            camel_case_name = ''.join(x.capitalize() for x in snake_case_name.split('_'))
+            camel_case_name = camel_case_name[0].lower() + camel_case_name[1:]
             if nArgs > 1 and cm[1] is True:  # Method needs parent (existing item)
-                if self._args[1] == cm[0]:
-                    item = operation = None
+                if self._args[1] in (camel_case_name, snake_case_name):
+                    item = None
+                    # Check if operation method exists
+                    operation = getattr(self, snake_case_name) or getattr(self, camel_case_name)
                     try:
-                        operation = getattr(self, self._args[1])
-                        item = self.model.objects.get(uuid__iexact=self._args[0].lower())
+                        if not operation:
+                            raise Exception()  # Operation not found
+                        item = self.model.objects.get(uuid__iexact=self._args[0])
+                    except self.model.DoesNotExist:
+                        raise self.invalid_item_response()
                     except Exception as e:
                         logger.error(
                             'Invalid custom method exception %s/%s/%s: %s',
@@ -369,12 +379,10 @@ class ModelHandler(BaseModelHandler):
 
                     return operation(item)
 
-            elif self._args[0] == cm[0]:
-                operation = None
-                try:
-                    operation = getattr(self, self._args[0])
-                except Exception as e:
-                    raise self.invalid_method_response() from e
+            elif self._args[0] in (snake_case_name, snake_case_name):
+                operation = getattr(self, snake_case_name) or getattr(self, snake_case_name)
+                if not operation:
+                    raise self.invalid_method_response()
 
                 return operation()
 

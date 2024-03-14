@@ -117,15 +117,16 @@ class ServicesPools(ModelHandler):
     table_row_style = types.ui.RowStyleInfo(prefix='row-state-', field='state')
 
     custom_methods = [
-        ('setFallbackAccess', True),
-        ('getFallbackAccess', True),
-        ('actionsList', True),
-        ('listAssignables', True),
+        ('set_fallback_access', True),
+        ('get_fallback_access', True),
+        ('actions_list', True),
         ('list_assignables', True),
-        ('createFromAssignable', True),
+        ('create_from_assignable', True),
     ]
 
-    def get_items(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Generator[types.rest.ItemDictType, None, None]:
+    def get_items(
+        self, *args: typing.Any, **kwargs: typing.Any
+    ) -> typing.Generator[types.rest.ItemDictType, None, None]:
         # Optimized query, due that there is a lot of info needed for theee
         d = sql_datetime() - datetime.timedelta(seconds=GlobalConfig.RESTRAINT_TIME.as_int())
         return super().get_items(
@@ -227,7 +228,7 @@ class ServicesPools(ModelHandler):
         # Extended info
         if not summary:
             if hasattr(item, 'valid_count'):
-                valid_count =  getattr(item, 'valid_count')
+                valid_count = getattr(item, 'valid_count')
                 preparing_count = getattr(item, 'preparing_count')
                 restrained = getattr(item, 'error_count') >= GlobalConfig.RESTRAINT_COUNT.as_int()
                 usage_count = getattr(item, 'usage_count')
@@ -289,10 +290,7 @@ class ServicesPools(ModelHandler):
                 'name': 'service_id',
                 'choices': [gui.choice_item('', '')]
                 + gui.sorted_choices(
-                    [
-                        gui.choice_item(v.uuid, v.provider.name + '\\' + v.name)
-                        for v in Service.objects.all()
-                    ]
+                    [gui.choice_item(v.uuid, v.provider.name + '\\' + v.name) for v in Service.objects.all()]
                 ),
                 'label': gettext('Base service'),
                 'tooltip': gettext('Service used as base of this service pool'),
@@ -303,9 +301,7 @@ class ServicesPools(ModelHandler):
             {
                 'name': 'osmanager_id',
                 'choices': [gui.choice_item(-1, '')]
-                + gui.sorted_choices(
-                    [gui.choice_item(v.uuid, v.name) for v in OSManager.objects.all()]
-                ),
+                + gui.sorted_choices([gui.choice_item(v.uuid, v.name) for v in OSManager.objects.all()]),
                 'label': gettext('OS Manager'),
                 'tooltip': gettext('OS Manager used as base of this service pool'),
                 'type': types.ui.FieldType.CHOICE,
@@ -368,10 +364,7 @@ class ServicesPools(ModelHandler):
                 'name': 'pool_group_id',
                 'choices': [gui.choice_image(-1, _('Default'), DEFAULT_THUMB_BASE64)]
                 + gui.sorted_choices(
-                    [
-                        gui.choice_image(v.uuid, v.name, v.thumb64)
-                        for v in ServicePoolGroup.objects.all()
-                    ]
+                    [gui.choice_image(v.uuid, v.name, v.thumb64) for v in ServicePoolGroup.objects.all()]
                 ),
                 'label': gettext('Pool group'),
                 'tooltip': gettext('Pool group for this pool (for pool classify on display)'),
@@ -444,9 +437,7 @@ class ServicesPools(ModelHandler):
             {
                 'name': 'account_id',
                 'choices': [gui.choice_item(-1, '')]
-                + gui.sorted_choices(
-                    [gui.choice_item(v.uuid, v.name) for v in Account.objects.all()]
-                ),
+                + gui.sorted_choices([gui.choice_item(v.uuid, v.name) for v in Account.objects.all()]),
                 'label': gettext('Accounting'),
                 'tooltip': gettext('Account associated to this service pool'),
                 'type': types.ui.FieldType.CHOICE,
@@ -597,7 +588,7 @@ class ServicesPools(ModelHandler):
             return []
 
     # Set fallback status
-    def setFallbackAccess(self, item: 'Model') -> typing.Any:
+    def set_fallback_access(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)
         self.ensure_has_access(item, types.permissions.PermissionType.MANAGEMENT)
 
@@ -608,12 +599,12 @@ class ServicesPools(ModelHandler):
             item.save()
         return item.fallbackAccess
 
-    def getFallbackAccess(self, item: 'Model') -> typing.Any:
+    def get_fallback_access(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)
         return item.fallbackAccess
 
     #  Returns the action list based on current element, for calendar
-    def actionsList(self, item: 'Model') -> list[types.calendar.CalendarAction]:
+    def actions_list(self, item: 'Model') -> list[types.calendar.CalendarAction]:
         item = ensure.is_instance(item, ServicePool)
         valid_actions: list[types.calendar.CalendarAction] = []
         itemInfo = item.service.get_type()
@@ -624,10 +615,14 @@ class ServicesPools(ModelHandler):
                 consts.calendar.CALENDAR_ACTION_MAX,
             ]
             if itemInfo.uses_cache_l2 is True:
-                valid_actions += [consts.calendar.CALENDAR_ACTION_CACHE_L2,]
+                valid_actions += [
+                    consts.calendar.CALENDAR_ACTION_CACHE_L2,
+                ]
 
         if itemInfo.publication_type is not None:
-            valid_actions += [consts.calendar.CALENDAR_ACTION_PUBLISH,]
+            valid_actions += [
+                consts.calendar.CALENDAR_ACTION_PUBLISH,
+            ]
 
         # Transport & groups actions
         valid_actions += [
@@ -648,15 +643,12 @@ class ServicesPools(ModelHandler):
         return valid_actions
 
     # Deprecated, use list_assignables
-    def listAssignables(self, item: 'Model') -> typing.Any:
+    def list_assignables(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)
         service = item.service.get_instance()
         return list(service.enumerate_assignables())
-    
-    def list_assignables(self, item: 'Model') -> typing.Any:
-        return self.listAssignables(item)
 
-    def createFromAssignable(self, item: 'Model') -> typing.Any:
+    def create_from_assignable(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)
         if 'user_id' not in self._params or 'assignable_id' not in self._params:
             return self.invalid_request_response('Invalid parameters')
