@@ -153,7 +153,8 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
             return [
                 gui.choice_item(k, servers[k])
                 for k in self.machines.as_list()
-                if k not in assigned_servers and k in servers
+                if k not in assigned_servers
+                and k in servers  # Only machines not assigned, and that exists on provider will be available
             ]
 
     def assign_from_assignables(

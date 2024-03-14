@@ -31,15 +31,11 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import collections.abc
-import dataclasses
-from enum import unique
 import typing
 
 from uds.core import environment
 from uds.core.util.cache import Cache
 from uds.core.util.storage import Storage
-from uds.core.util.unique_id_generator import UniqueIDGenerator
 
 from ..utils.test import UDSTransactionTestCase
 
@@ -60,7 +56,7 @@ class TestEnvironment(UDSTransactionTestCase):
             self.assertEqual(env.key, expected_key)
 
         env.storage.put('test', 'test')
-        self.assertEqual(env.storage.get('test'), 'test')
+        self.assertEqual(env.storage.read('test'), 'test')
 
         env.cache.put('test', 'test')
         self.assertEqual(env.cache.get('test'), 'test')
@@ -76,10 +72,10 @@ class TestEnvironment(UDSTransactionTestCase):
             self.assertEqual(env.key, expected_key)
 
         if is_persistent:
-            self.assertEqual(env.storage.get('test'), 'test')
+            self.assertEqual(env.storage.read('test'), 'test')
             self.assertEqual(env.cache.get('test'), 'test')
         else:
-            self.assertEqual(env.storage.get('test'), None)
+            self.assertEqual(env.storage.read('test'), None)
             self.assertEqual(env.cache.get('test'), None)
 
     def test_global_environment(self) -> None:
@@ -112,7 +108,7 @@ class TestEnvironment(UDSTransactionTestCase):
             unique_key = env.key  # store for later test
 
             env.storage.put('test', 'test')
-            self.assertEqual(env.storage.get('test'), 'test')
+            self.assertEqual(env.storage.read('test'), 'test')
 
             env.cache.put('test', 'test')
             self.assertEqual(env.cache.get('test'), 'test')
@@ -125,5 +121,5 @@ class TestEnvironment(UDSTransactionTestCase):
             self.assertIsInstance(env.storage, Storage)
             self.assertIsInstance(env._id_generators, dict)
             self.assertEqual(env.key, unique_key)
-            self.assertEqual(env.storage.get('test'), None)
+            self.assertEqual(env.storage.read('test'), None)
             self.assertEqual(env.cache.get('test'), None)

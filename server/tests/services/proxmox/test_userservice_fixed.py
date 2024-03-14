@@ -51,7 +51,8 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
         with fixtures.patch_provider_api() as _api:
             userservice = fixtures.create_userservice_fixed()
             service = userservice.service()
-            self.assertEqual(service._get_assigned_machines(), set())
+            with service._assigned_machines_access() as assigned_machines:
+                self.assertEqual(assigned_machines, set())
 
             # patch userservice db_obj() method to return a mock
             userservice_db = mock.MagicMock()
@@ -74,8 +75,9 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
             userservice_db.set_in_use.assert_called_once_with(True)
 
             # vmid should have been assigned, so it must be in the assigned machines
-            self.assertEqual(set(userservice._vmid), service._get_assigned_machines())
-
+            with service._assigned_machines_access() as assigned_machines:
+                self.assertEqual({userservice._vmid}, assigned_machines)
+            
             # Now, let's release the service
             state = userservice.destroy()
             
@@ -87,7 +89,8 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
             self.assertEqual(state, types.states.TaskState.FINISHED)
             
             # must be empty now
-            self.assertEqual(service._get_assigned_machines(), set())
+            with service._assigned_machines_access() as assigned_machines:
+                self.assertEqual(assigned_machines, set())
             
             # set_ready, machine is "stopped" in this test, so must return RUNNING
             state = userservice.set_ready()

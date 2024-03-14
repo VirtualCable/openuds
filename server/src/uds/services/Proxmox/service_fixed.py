@@ -53,7 +53,6 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-
 class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-methods
     """
     Proxmox fixed machines service.
@@ -134,7 +133,7 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
                 gui.choice_item(k, vms[int(k)])
                 for k in self.machines.as_list()
                 if k not in assigned_vms
-                and int(k) not in vms
+                and int(k) in vms  # Only machines not assigned, and that exists on provider will be available
             ]
 
     def assign_from_assignables(

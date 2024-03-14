@@ -122,7 +122,7 @@ class XenDeploymentSerializationTest(UDSTransactionTestCase):
         # queue is kept on "storage", so we need always same environment
         environment = Environment.testing_environment()
         # Store queue
-        environment.storage.put_pickle('queue', TEST_QUEUE)
+        environment.storage.save_pickled('queue', TEST_QUEUE)
 
         def _create_instance(unmarshal_data: 'bytes|None' = None) -> Deployment:
             instance = Deployment(environment=environment, service=None)  # type: ignore  # service is not used

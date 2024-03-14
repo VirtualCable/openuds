@@ -400,7 +400,7 @@ SERVICE_LINKED_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
     'lenname': 4,
 }
 
-SERVICE_FIXED_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
+SERVICE_FIXED_VALUES_DICT: gui.ValuesDictType = {
     'token': '',
     'pool': POOLS[0].poolid,
     'machines': [str(VMS_INFO[2].vmid), str(VMS_INFO[3].vmid), str(VMS_INFO[4].vmid)],

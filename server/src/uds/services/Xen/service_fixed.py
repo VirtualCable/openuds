@@ -179,7 +179,7 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
                 gui.choice_item(k, vms[k])
                 for k in self.machines.as_list()
                 if k not in assigned_vms
-                and k in vms  # Only machines not assigned, and that exists on xen will be available
+                and k in vms  # Only machines not assigned, and that exists on provider will be available
             ]
 
     def assign_from_assignables(

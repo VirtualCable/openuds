@@ -104,7 +104,8 @@ class TestProxmovFixedService(UDSTransactionTestCase):
             self.assertEqual(service.get_and_assign_machine(), vmid2)
 
             # Now two machies should be assigned
-            self.assertEqual(service._get_assigned_machines(), set([vmid, vmid2]))
+            with service._assigned_machines_access() as assigned_machines:
+                self.assertEqual(assigned_machines, set([vmid, vmid2]))
 
     def test_service_methods_2(self) -> None:
         with fixtures.patch_provider_api():
@@ -124,9 +125,13 @@ class TestProxmovFixedService(UDSTransactionTestCase):
             # Remove and free machine
             # Fist, assign a machine
             vmid = service.get_and_assign_machine()
-            self.assertEqual(service._get_assigned_machines(), set([vmid]))
+            with service._assigned_machines_access() as assigned_machines:               
+                self.assertEqual(assigned_machines, set([vmid]))
+
+            # And now free it                
             self.assertEqual(service.remove_and_free_machine(vmid), types.states.State.FINISHED)
-            self.assertEqual(service._get_assigned_machines(), set())
+            with service._assigned_machines_access() as assigned_machines:
+                self.assertEqual(assigned_machines, set())
 
     def test_process_snapshot(self) -> None:
         with fixtures.patch_provider_api() as api:

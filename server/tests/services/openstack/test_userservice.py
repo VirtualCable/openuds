@@ -91,14 +91,15 @@ class TestOpenstackLiveDeployment(UDSTransactionTestCase):
 
                     self.assertEqual(state, types.states.TaskState.FINISHED, f'Error on {to_test} deployment')
 
+                    # userservice name is UDS-U-
                     self.assertEqual(
-                        userservice._name[: len(service.get_basename())],
+                        userservice._name[6: 6+len(service.get_basename())],
                         service.get_basename(),
                         f'Error on {to_test} deployment',
                     )
                     self.assertEqual(
                         len(userservice._name),
-                        len(service.get_basename()) + service.get_lenname(),
+                        len(service.get_basename()) + service.get_lenname() + 6,  # for UDS-U- prefix
                         f'Error on {to_test} deployment',
                     )
 

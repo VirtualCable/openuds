@@ -42,61 +42,61 @@ from ...utils.generators import limited_iterator
 
 
 # We use transactions on some related methods (storage access, etc...)
-class TestProxmovLinkedService(UDSTransactionTestCase):
+class TestOpenstackLiveService(UDSTransactionTestCase):
 
     def test_userservice_fixed_user(self) -> None:
         """
         Test the user service
         """
-        with fixtures.patch_provider_api() as _api:
-            userservice = fixtures.create_userservice_fixed()
-            service = userservice.service()
-            self.assertEqual(service._get_assigned_machines(), set())
+        for prov in (fixtures.create_provider_legacy(), fixtures.create_provider()):
+            with fixtures.patch_provider_api(legacy=prov.legacy) as _api:
+                service = fixtures.create_fixed_service(prov)  # Will use provider patched api
+                userservice = fixtures.create_fixed_userservice(service)
 
-            # patch userservice db_obj() method to return a mock
-            userservice_db = mock.MagicMock()
-            userservice.db_obj = mock.MagicMock(return_value=userservice_db)
-            # Test Deploy for cache, should raise Exception due
-            # to the fact fixed services cannot have cached items
-            with self.assertRaises(Exception):
-                userservice.deploy_for_cache(level=1)
+                # patch userservice db_obj() method to return a mock
+                userservice_db = mock.MagicMock()
+                userservice.db_obj = mock.MagicMock(return_value=userservice_db)
+                # Test Deploy for cache, should raise Exception due
+                # to the fact fixed services cannot have cached items
+                with self.assertRaises(Exception):
+                    userservice.deploy_for_cache(level=1)
 
-            state = userservice.deploy_for_user(models.User())
+                state = userservice.deploy_for_user(models.User())
 
-            self.assertEqual(state, types.states.TaskState.RUNNING)
+                self.assertEqual(state, types.states.TaskState.RUNNING)
 
-            while state == types.states.TaskState.RUNNING:
-                state = userservice.check_state()
+                for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=32):
+                    state = userservice.check_state()
 
-            self.assertEqual(state, types.states.TaskState.FINISHED)
+                self.assertEqual(state, types.states.TaskState.FINISHED)
 
-            # userservice_db Should have halle set_in_use(True)
-            userservice_db.set_in_use.assert_called_once_with(True)
+                # userservice_db Should have halle set_in_use(True)
+                userservice_db.set_in_use.assert_called_once_with(True)
 
-            # vmid should have been assigned, so it must be in the assigned machines
-            self.assertEqual(set(userservice._vmid), service._get_assigned_machines())
+                # vmid should have been assigned, so it must be in the assigned machines
+                with service._assigned_machines_access() as assigned_machines:
+                    self.assertEqual({userservice._vmid}, assigned_machines)
 
-            # Now, let's release the service
-            state = userservice.destroy()
-            
-            self.assertEqual(state, types.states.TaskState.RUNNING)
-            
-            while state == types.states.TaskState.RUNNING:
-                state = userservice.check_state()
-                
-            self.assertEqual(state, types.states.TaskState.FINISHED)
-            
-            # must be empty now
-            self.assertEqual(service._get_assigned_machines(), set())
-            
-            # set_ready, machine is "stopped" in this test, so must return RUNNING
-            state = userservice.set_ready()
-            self.assertEqual(state, types.states.TaskState.RUNNING)
-            
-            for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=32):
-                state = userservice.check_state()
-            
-            # Should be finished now
-            self.assertEqual(state, types.states.TaskState.FINISHED)
-            
-            
+                # Now, let's release the service
+                state = userservice.destroy()
+
+                self.assertEqual(state, types.states.TaskState.RUNNING)
+
+                while state == types.states.TaskState.RUNNING:
+                    state = userservice.check_state()
+
+                self.assertEqual(state, types.states.TaskState.FINISHED)
+
+                # must be empty now
+                with service._assigned_machines_access() as assigned_machines:
+                    self.assertEqual(set(), assigned_machines)
+
+                # set_ready, machine is "stopped" in this test, so must return RUNNING
+                state = userservice.set_ready()
+                self.assertEqual(state, types.states.TaskState.RUNNING)
+
+                for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=32):
+                    state = userservice.check_state()
+
+                # Should be finished now
+                self.assertEqual(state, types.states.TaskState.FINISHED)

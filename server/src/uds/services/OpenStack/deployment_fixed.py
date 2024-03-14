@@ -77,7 +77,7 @@ class OpenStackUserServiceFixed(FixedUserService, autoserializable.AutoSerializa
         except Exception as e:
             return self._error(f'Machine not found: {e}')
 
-        if server_info.status == 'stopped':
+        if server_info.power_state == openstack_types.PowerState.SHUTDOWN:
             self._queue = [Operation.START, Operation.FINISH]
             return self._execute_queue()
 
