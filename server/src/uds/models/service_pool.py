@@ -124,6 +124,9 @@ class ServicePool(UUIDModel, TaggingMixin):
 
     # Message if access denied
     calendar_message = models.CharField(default='', max_length=256)
+    custom_message = models.CharField(default='', max_length=1024)
+    display_custom_message = models.BooleanField(default=False)
+
     # Default fallback action for access
     fallbackAccess = models.CharField(default=types.states.State.ALLOW, max_length=8)
 
@@ -409,7 +412,7 @@ class ServicePool(UUIDModel, TaggingMixin):
         Returns:
             Stored value, None if no value was stored
         """
-        return typing.cast(str, self.get_environment().storage.get(name))
+        return typing.cast(str, self.get_environment().storage.read(name))
 
     def set_state(self, state: str, save: bool = True) -> None:
         """

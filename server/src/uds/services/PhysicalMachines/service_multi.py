@@ -254,7 +254,7 @@ class IPMachinesService(IPServiceBase):
                 random.shuffle(all_hosts)
 
             for host in all_hosts:
-                locked = self.storage.get_unpickle(host.host)
+                locked = self.storage.read_pickled(host.host)
                 # If it is not locked
                 if self.is_usable(locked, now):
                     # If the check failed not so long ago, skip it...
@@ -265,7 +265,7 @@ class IPMachinesService(IPServiceBase):
                     ):
                         continue
                     # Store/update lock time
-                    self.storage.put_pickle(host.host, now)
+                    self.storage.save_pickled(host.host, now)
 
                     # Is WOL enabled?
                     is_wakeonland_enabled = bool(self.provider().wake_on_lan_endpoint(host))
@@ -322,9 +322,9 @@ class IPMachinesService(IPServiceBase):
         host = HostInfo.from_str(assignable_id)
 
         now = sql_stamp_seconds()
-        locked = self.storage.get_unpickle(host.host)
+        locked = self.storage.read_pickled(host.host)
         if self.is_usable(locked, now):
-            self.storage.put_pickle(host.host, now)
+            self.storage.save_pickled(host.host, now)
             return ipmachine_instance.assign(host.as_identifier())
 
         return ipmachine_instance.error('IP already assigned')
@@ -338,9 +338,9 @@ class IPMachinesService(IPServiceBase):
         # Locate the IP on the storage
         host = HostInfo.from_str(id)
         now = sql_stamp_seconds()
-        locked: typing.Union[None, str, int] = self.storage.get_unpickle(host.host)
+        locked: typing.Union[None, str, int] = self.storage.read_pickled(host.host)
         if self.is_usable(locked, now):
-            self.storage.put_pickle(host.host, str(now))  # Lock it
+            self.storage.save_pickled(host.host, str(now))  # Lock it
 
     def process_logout(self, id: str, remote_login: bool) -> None:
         '''
@@ -349,7 +349,7 @@ class IPMachinesService(IPServiceBase):
         logger.debug('Processing logout for %s: %s', self, id)
         # Locate the IP on the storage
         host = HostInfo.from_str(id)
-        locked: typing.Union[None, str, int] = self.storage.get_unpickle(host.host)
+        locked: typing.Union[None, str, int] = self.storage.read_pickled(host.host)
         # If locked is str, has been locked by processLogin so we can unlock it
         if isinstance(locked, str):
             self.unassign_host(host)

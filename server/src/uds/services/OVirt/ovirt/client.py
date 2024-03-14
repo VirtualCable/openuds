@@ -36,17 +36,13 @@ import logging
 import typing
 import collections.abc
 
-import ovirtsdk4 as ovirt
+import ovirtsdk4
+import ovirtsdk4.types
 
 from uds.core import consts, types
 from uds.core.util import decorators
 
-# Sometimes, we import ovirtsdk4 but "types" does not get imported... event can't be found????
-# With this seems to work propertly
-try:
-    from ovirtsdk4 import types as ovirtTypes  # pyright: ignore[reportUnusedImport]
-except Exception:  # nosec just to bring on the types if they exist
-    pass
+from . import types as ov_types
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -84,22 +80,16 @@ class Client:
 
     """
 
-    CACHE_TIME_LOW = 60 * 5  # Cache time for requests are 5 minutes by default
-    CACHE_TIME_HIGH = (
-        60 * 30
-    )  # Cache time for requests that are less probable to change (as cluster perteinance of a machine)
-
     _host: str
     _username: str
     _password: str
     _timeout: int
     _cache: 'Cache'
-    _needs_usb_fix = True
 
-    _api: typing.Optional[ovirt.Connection] = None
+    _api: typing.Optional[ovirtsdk4.Connection] = None
 
     @property
-    def api(self) -> ovirt.Connection:
+    def api(self) -> ovirtsdk4.Connection:
         """
         Gets the api connection.
 
@@ -113,7 +103,7 @@ class Client:
 
         if self._api is None:
             try:
-                self._api = ovirt.Connection(
+                self._api = ovirtsdk4.Connection(
                     url='https://' + self._host + '/ovirt-engine/api',
                     username=self._username,
                     password=self._password,
@@ -132,7 +122,7 @@ class Client:
         host: str,
         username: str,
         password: str,
-        timeout: typing.Union[str, int],
+        timeout: int,
         cache: 'Cache',
     ):
         self._host = host
@@ -140,7 +130,6 @@ class Client:
         self._password = password
         self._timeout = int(timeout)
         self._cache = cache
-        self._needs_usb_fix = True
 
     def test(self) -> bool:
         try:
@@ -150,14 +139,8 @@ class Client:
             logger.error('Testing Server failed for oVirt: %s', e)
             return False
 
-    def is_fully_functional_version(self) -> types.core.TestResult:
-        """
-        '4.0 version is always functional (right now...)
-        """
-        return types.core.TestResult(True)
-
     @decorators.cached(prefix='o-vms', timeout=consts.cache.DEFAULT_CACHE_TIMEOUT, key_helper=_key_helper)
-    def list_machines(self, force: bool = False) -> list[collections.abc.MutableMapping[str, typing.Any]]:
+    def list_machines(self, **kwargs: typing.Any) -> list[ov_types.VMInfo]:
         """
         Obtains the list of machines inside ovirt that do aren't part of uds
 
@@ -173,32 +156,20 @@ class Client:
 
         """
         with _access_lock():
-            vms: collections.abc.Iterable[typing.Any] = (
-                self.api.system_service().vms_service().list()
-            )  # pyright: ignore
+            return [
+                ov_types.VMInfo.from_data(vm)
+                for vm in typing.cast(list[typing.Any], self.api.system_service().vms_service().list())
+            ]
 
-            logger.debug('oVirt VMS: %s', vms)
-
-            res: list[collections.abc.MutableMapping[str, typing.Any]] = []
-
-            for vm in vms:
-                try:
-                    pair = [vm.usb.enabled, vm.usb.type.value]
-                except Exception:
-                    pair = [False, '']
-                res.append(
-                    {
-                        'name': vm.name,
-                        'id': vm.id,
-                        'cluster_id': vm.cluster.id,
-                        'usb': pair,
-                    }
-                )
-
-            return res
+    @decorators.cached(prefix='o-vm', timeout=3, key_helper=_key_helper)
+    def get_machine(self, machine_id: str, **kwargs: typing.Any) -> ov_types.VMInfo:
+        with _access_lock():
+            return ov_types.VMInfo.from_data(
+                typing.cast(typing.Any, self.api.system_service().vms_service().service(machine_id).get())
+            )
 
     @decorators.cached(prefix='o-clusters', timeout=consts.cache.LONG_CACHE_TIMEOUT, key_helper=_key_helper)
-    def list_clusters(self, force: bool = False) -> list[collections.abc.MutableMapping[str, typing.Any]]:
+    def list_clusters(self, **kwargs: typing.Any) -> list[ov_types.ClusterInfo]:
         """
         Obtains the list of clusters inside ovirt
 
@@ -206,40 +177,17 @@ class Client:
             force: If true, force to update the cache, if false, tries to first
             get data from cache and, if valid, return this.
 
-        Returns
-            Filters out clusters not attached to any datacenter
-            An array of dictionaries, containing:
-                'name'
-                'id'
-                'datacenter_id'
-
         """
         with _access_lock():
-            clusters: list[typing.Any] = typing.cast(
-                list[typing.Any], self.api.system_service().clusters_service().list()
-            )
-
-            res: list[collections.abc.MutableMapping[str, typing.Any]] = []
-
-            cluster: typing.Any
-            for cluster in clusters:
-                dc = cluster.data_center
-
-                val = {
-                    'name': cluster.name,
-                    'id': cluster.id,
-                    'datacenter_id': dc.id if dc else None,
-                }
-
-                if dc is not None:
-                    res.append(val)
-
-            return res
+            return [
+                ov_types.ClusterInfo.from_data(cluster)
+                for cluster in typing.cast(
+                    list[typing.Any], self.api.system_service().clusters_service().list()
+                )
+            ]
 
     @decorators.cached(prefix='o-cluster', timeout=consts.cache.LONG_CACHE_TIMEOUT, key_helper=_key_helper)
-    def get_cluster_info(
-        self, clusterId: str, force: bool = False
-    ) -> collections.abc.MutableMapping[str, typing.Any]:
+    def get_cluster_info(self, cluster_id: str, **kwargs: typing.Any) -> ov_types.ClusterInfo:
         """
         Obtains the cluster info
 
@@ -248,29 +196,14 @@ class Client:
             force: If true, force to update the cache, if false, tries to first
             get data from cache and, if valid, return this.
 
-        Returns
-
-            A dictionary with following values
-                'name'
-                'id'
-                'datacenter_id'
         """
         with _access_lock():
-            c: typing.Any = typing.cast(
-                typing.Any, self.api.system_service().clusters_service().service(clusterId).get()
+            return ov_types.ClusterInfo.from_data(
+                typing.cast(typing.Any, self.api.system_service().clusters_service().service(cluster_id).get())
             )
 
-            dc = c.data_center
-
-            if dc is not None:
-                dc = dc.id
-
-            return {'name': c.name, 'id': c.id, 'datacenter_id': dc}
-
     @decorators.cached(prefix='o-dc', timeout=consts.cache.LONG_CACHE_TIMEOUT, key_helper=_key_helper)
-    def get_datacenter_info(
-        self, datacenterId: str, force: bool = False
-    ) -> collections.abc.MutableMapping[str, typing.Any]:
+    def get_datacenter_info(self, datacenter_id: str, **kwargs: typing.Any) -> ov_types.DatacenterInfo:
         """
         Obtains the datacenter info
 
@@ -279,93 +212,43 @@ class Client:
             force: If true, force to update the cache, if false, tries to first
             get data from cache and, if valid, return this.
 
-        Returns
+        Returns:
+            the datacenter info on a DatacenterInfo object
 
-            A dictionary with following values
-                'name'
-                'id'
-                'storage_type' -> ('isisi', 'nfs', ....)
-                'description'
-                'storage' -> array of dictionaries, with:
-                   'id' -> Storage id
-                   'name' -> Storage name
-                   'type' -> Storage type ('data', 'iso')
-                   'available' -> Space available, in bytes
-                   'used' -> Space used, in bytes
-                   'active' -> True or False
 
         """
         with _access_lock():
             datacenter_service: typing.Any = (
-                self.api.system_service().data_centers_service().service(datacenterId)
+                self.api.system_service().data_centers_service().service(datacenter_id)
             )
-            d: typing.Any = datacenter_service.get()
 
-            storage = []
-            for dd in typing.cast(
-                collections.abc.Iterable[typing.Any], datacenter_service.storage_domains_service().list()
-            ):  # pyright: ignore
-                try:
-                    active = dd.status.value
-                except Exception:
-                    active = 'inactive'
+            data: typing.Any = datacenter_service.get()
 
-                storage.append(
-                    {
-                        'id': dd.id,
-                        'name': dd.name,
-                        'type': dd.type.value,
-                        'available': dd.available,
-                        'used': dd.used,
-                        'active': active == 'active',
-                    }
-                )
+            return ov_types.DatacenterInfo.from_data(
+                data,
+                [
+                    ov_types.StorageInfo.from_data(s)
+                    for s in datacenter_service.storage_domains_service().list()
+                ],
+            )
 
-            return {
-                'name': d.name,
-                'id': d.id,
-                'storage_type': d.local and 'local' or 'shared',
-                'description': d.description,
-                'storage': storage,
-            }
-
-    @decorators.cached(prefix='o-sd', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=_key_helper)
-    def get_storage_info(
-        self, storageId: str, force: bool = False
-    ) -> collections.abc.MutableMapping[str, typing.Any]:
+    @decorators.cached(prefix='o-str', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=_key_helper)
+    def get_storage_info(self, storage_id: str, **kwargs: typing.Any) -> ov_types.StorageInfo:
         """
         Obtains the datacenter info
 
         Args:
-            datacenterId: Id of the datacenter to get information about it
-            force: If true, force to update the cache, if false, tries to first
-            get data from cache and, if valid, return this.
+            storageId: Id of the storage to get information about it
 
-        Returns
-
-            A dictionary with following values
-               'id' -> Storage id
-               'name' -> Storage name
-               'type' -> Storage type ('data', 'iso')
-               'available' -> Space available, in bytes
-               'used' -> Space used, in bytes
-               # 'active' -> True or False --> This is not provided by api?? (api.storagedomains.get)
-
+        Returns:
+            the storage info on a StorageInfo object
         """
         with _access_lock():
-            dd: typing.Any = typing.cast(
-                typing.Any, self.api.system_service().storage_domains_service().service(storageId).get()
+            return ov_types.StorageInfo.from_data(
+                typing.cast(
+                    typing.Any, self.api.system_service().storage_domains_service().service(storage_id).get()
+                )
             )
-
-            res = {
-                'id': dd.id,
-                'name': dd.name,
-                'type': dd.type.value,
-                'available': dd.available,
-                'used': dd.used,
-            }
-
-            return res
 
     def create_template(
         self,
@@ -420,17 +303,17 @@ class Client:
             if vm.status.value != 'down':
                 raise Exception('Machine must be powered off to publish it')
 
-            # sd = [ovirt.types.StorageDomain(id=storageId)]
+            # sd = [ovirtsdk4.types.StorageDomain(id=storageId)]
             # dsks = []
             # for dsk in vms.disk_attachments_service().list():
             #    dsks = None
             # dsks.append(params.Disk(id=dsk.get_id(), storage_domains=sd, alias=dsk.get_alias()))
             # dsks.append(dsk)
 
-            tvm = ovirt.types.Vm(id=vm.id)
-            tcluster = ovirt.types.Cluster(id=cluster.id)
+            tvm = ovirtsdk4.types.Vm(id=vm.id)
+            tcluster = ovirtsdk4.types.Cluster(id=cluster.id)
 
-            template = ovirt.types.Template(name=name, vm=tvm, cluster=tcluster, description=comments)
+            template = ovirtsdk4.types.Template(name=name, vm=tvm, cluster=tcluster, description=comments)
 
             # display=display)
 
@@ -453,7 +336,7 @@ class Client:
                 # we cast constantly to typing.Any because pyright does not recognize the types
                 # But anotate the "real" type on the cast
                 template: typing.Any = typing.cast(
-                    ovirt.types.Template,
+                    ovirtsdk4.types.Template,
                     self.api.system_service().templates_service().service(template_id).get(),
                 )
 
@@ -503,23 +386,19 @@ class Client:
         with _access_lock():
             logger.debug('Deploying machine %s', name)
 
-            cluster = ovirt.types.Cluster(id=cluster_id)
-            template = ovirt.types.Template(id=template_id)
+            cluster = ovirtsdk4.types.Cluster(id=cluster_id)
+            template = ovirtsdk4.types.Template(id=template_id)
 
-            if self._needs_usb_fix is False and usb_type in (
-                'native',
-            ):  # Removed 'legacy', from 3.6 is not used anymore, and from 4.0 not available
-                usb = ovirt.types.Usb(enabled=True, type=ovirt.types.UsbType.NATIVE)
-            else:
-                usb = ovirt.types.Usb(enabled=False)
+            # Create initally the machine without usb support, will be added later
+            usb = ovirtsdk4.types.Usb(enabled=False)
 
-            memoryPolicy = ovirt.types.MemoryPolicy(guaranteed=guaranteed_mb * 1024 * 1024)
-            par = ovirt.types.Vm(
+            memoryPolicy = ovirtsdk4.types.MemoryPolicy(guaranteed=guaranteed_mb * 1024 * 1024)
+            par = ovirtsdk4.types.Vm(
                 name=name,
                 cluster=cluster,
                 template=template,
                 description=comments,
-                type=ovirt.types.VmType.DESKTOP,
+                type=ovirtsdk4.types.VmType.DESKTOP,
                 memory=memory_mb * 1024 * 1024,
                 memory_policy=memoryPolicy,
                 usb=usb,
@@ -537,9 +416,7 @@ class Client:
             self.api.system_service().templates_service().service(templateId).remove()
             # This returns nothing, if it fails it raises an exception
 
-    # Very short timeout on cache
-    @decorators.cached(prefix='o-vm', timeout=3, key_helper=_key_helper)
-    def get_machine_state(self, machineId: str) -> str:
+    def get_machine_state(self, machine_id: str) -> ov_types.VmStatus:
         """
         Returns current state of a machine (running, suspended, ...).
         This method do not uses cache at all (it always tries to get machine state from oVirt server)
@@ -557,14 +434,10 @@ class Client:
         """
         with _access_lock():
             try:
-                vm: typing.Any = self.api.system_service().vms_service().service(machineId).get()
-
-                if vm is None or vm.status is None:  # pyright: ignore
-                    return 'unknown'
-
-                return vm.status.value  # pyright: ignore
+                vm_info = self.get_machine(machine_id)
+                return vm_info.status
             except Exception:  # machine not found
-                return 'unknown'
+                return ov_types.VmStatus.UNKNOWN
 
     def start_machine(self, machine_id: str) -> None:
         """
@@ -656,12 +529,11 @@ class Client:
 
     def fix_usb(self, machine_id: str) -> None:
         # Fix for usb support
-        if self._needs_usb_fix:
-            with _access_lock():
-                usb = ovirt.types.Usb(enabled=True, type=ovirt.types.UsbType.NATIVE)
-                vms: typing.Any = self.api.system_service().vms_service().service(machine_id)
-                vmu = ovirt.types.Vm(usb=usb)
-                vms.update(vmu)
+        with _access_lock():
+            usb = ovirtsdk4.types.Usb(enabled=True, type=ovirtsdk4.types.UsbType.NATIVE)
+            vms: typing.Any = self.api.system_service().vms_service().service(machine_id)
+            vmu = ovirtsdk4.types.Vm(usb=usb)
+            vms.update(vmu)
 
     def get_console_connection(self, machine_id: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
         """

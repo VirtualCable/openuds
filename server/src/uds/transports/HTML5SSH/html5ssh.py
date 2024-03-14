@@ -236,5 +236,5 @@ class HTML5SSHTransport(transports.Transport):
         # Remove trailing /
         path = path.rstrip('/')
 
-        tunnelServer = fields.get_tunnel_from_field(self.tunnel)
-        return str(f'https://{tunnelServer.host}:{tunnelServer.port}{path}/#/?data={ticket}.{scrambler}{onw}')
+        tunnel_server = fields.get_tunnel_from_field(self.tunnel)
+        return str(f'https://{tunnel_server.host}:{tunnel_server.port}{path}/#/?data={ticket}.{scrambler}{onw}')

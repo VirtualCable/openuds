@@ -31,8 +31,6 @@
 import logging
 import typing
 
-from django.urls import reverse
-
 from uds.core.transports.transport_factory import TransportsFactory
 
 from tests.utils.test import UDSTestCase
@@ -64,8 +62,8 @@ class TestTransports(UDSTestCase):
     """
 
     def test_transports_loads_correctly(self) -> None:
-        from uds import transports  # ensure transports are registered
+        from uds import transports  as _  # Not used, juet to load all transports
 
         factory = TransportsFactory()
         for transport in MUST_HAVE:
-            self.assertTrue(factory.has(transport))
+            self.assertTrue(factory.has(transport), f"Transport {transport} not found")

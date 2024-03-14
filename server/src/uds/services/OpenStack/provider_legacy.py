@@ -204,6 +204,7 @@ class OpenStackProviderLegacy(ServiceProvider):
             region=region,
             access=openstack_types.AccessType.from_str(self.access.value),
             proxies=proxies,
+            timeout=self.timeout.value,
         )
 
     def sanitized_name(self, name: str) -> str:

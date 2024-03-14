@@ -197,7 +197,7 @@ class RegexLdap(auths.Authenticator):
         return 'mfa_' + self.db_obj().uuid + username
 
     def mfa_identifier(self, username: str) -> str:
-        return self.storage.get_unpickle(self.mfa_storage_key(username)) or ''
+        return self.storage.read_pickled(self.mfa_storage_key(username)) or ''
 
     def unmarshal(self, data: bytes) -> None:
         if not data.startswith(b'v'):
@@ -395,7 +395,7 @@ class RegexLdap(auths.Authenticator):
 
             # store the user mfa attribute if it is set
             if self.mfa_attribute.value:
-                self.storage.put_pickle(
+                self.storage.save_pickled(
                     self.mfa_storage_key(username),
                     usr[self.mfa_attribute.value][0],
                 )

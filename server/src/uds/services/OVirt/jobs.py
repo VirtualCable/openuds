@@ -35,6 +35,7 @@ import typing
 from uds.core import jobs
 
 from uds.models import Provider
+from .ovirt import types as ov_types
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -57,26 +58,24 @@ class OVirtDeferredRemoval(jobs.Job):
     counter = 0
 
     @staticmethod
-    def remove(providerInstance: 'OVirtProvider', vmId: str) -> None:
-        logger.debug(
-            'Adding %s from %s to defeffed removal process', vmId, providerInstance
-        )
+    def remove(instance: 'OVirtProvider', vmid: str) -> None:
+        logger.debug('Adding %s from %s to defeffed removal process', vmid, instance)
         OVirtDeferredRemoval.counter += 1
         try:
             # Tries to stop machine sync when found, if any error is done, defer removal for a scheduled task
             try:
                 # First check state & stop machine if needed
-                state = providerInstance.get_machine_state(vmId)
-                if state in ('up', 'powering_up', 'suspended'):
-                    providerInstance.stop_machine(vmId)
-                elif state != 'unknown':  # Machine exists, remove it later
-                    providerInstance.storage.save_to_db('tr' + vmId, vmId, attr1='tRm')
+                state = instance.api.get_machine_state(vmid)
+                if state in (ov_types.VmStatus.UP, ov_types.VmStatus.POWERING_UP, ov_types.VmStatus.SUSPENDED):
+                    instance.api.stop_machine(vmid)
+                elif state != ov_types.VmStatus.UNKNOWN:  # Machine exists, remove it later
+                    instance.storage.save_to_db('tr' + vmid, vmid, attr1='tRm')
 
             except Exception as e:
-                providerInstance.storage.save_to_db('tr' + vmId, vmId, attr1='tRm')
+                instance.storage.save_to_db('tr' + vmid, vmid, attr1='tRm')
                 logger.info(
                     'Machine %s could not be removed right now, queued for later: %s',
-                    vmId,
+                    vmid,
                     e,
                 )
 
@@ -89,30 +88,32 @@ class OVirtDeferredRemoval(jobs.Job):
         logger.debug('Looking for deferred vm removals')
 
         # Look for Providers of type Ovirt
-        for provider in Provider.objects.filter(
-            maintenance_mode=False, data_type=OVirtProvider.type_type
-        ):
+        for provider in Provider.objects.filter(maintenance_mode=False, data_type=OVirtProvider.type_type):
             logger.debug('Provider %s if os type ovirt', provider)
 
             storage = provider.get_environment().storage
             instance: OVirtProvider = typing.cast(OVirtProvider, provider.get_instance())
 
             for i in storage.filter('tRm'):
-                vmId = i[1].decode()
+                vmid = i[1].decode()
                 try:
-                    logger.debug('Found %s for removal %s', vmId, i)
+                    logger.debug('Found %s for removal %s', vmid, i)
                     # If machine is powered on, tries to stop it
                     # tries to remove in sync mode
-                    state = instance.get_machine_state(vmId)
-                    if state in ('up', 'powering_up', 'suspended'):
-                        instance.stop_machine(vmId)
+                    state = instance.api.get_machine_state(vmid)
+                    if state in (
+                        ov_types.VmStatus.UP,
+                        ov_types.VmStatus.POWERING_UP,
+                        ov_types.VmStatus.SUSPENDED,
+                    ):
+                        instance.api.stop_machine(vmid)
                         return
 
-                    if state != 'unknown':  # Machine exists, try to remove it now
-                        instance.remove_machine(vmId)
+                    if state != ov_types.VmStatus.UNKNOWN:  # Machine exists, try to remove it now
+                        instance.api.remove_machine(vmid)
 
                     # It this is reached, remove check
-                    storage.remove('tr' + vmId)
+                    storage.remove('tr' + vmid)
                 except Exception as e:  # Any other exception wil be threated again
                     # instance.log('Delayed removal of %s has failed: %s. Will retry later', vmId, e)
                     logger.error('Delayed removal of %s failed: %s', i, e)

@@ -185,7 +185,7 @@ def mfa(
     if mfa_cookie and mfa_provider.remember_device > 0:
         stored_user_id: typing.Optional[str]
         created: typing.Optional[datetime.datetime]
-        stored_user_id, created = store.get_unpickle(mfa_cookie) or (None, None)
+        stored_user_id, created = store.read_pickled(mfa_cookie) or (None, None)
         if (
             stored_user_id
             and created
@@ -259,7 +259,7 @@ def mfa(
                 if mfa_provider.remember_device > 0 and form.cleaned_data['remember'] is True:
                     # Store also cookie locally, to check if remember_device is changed
                     mfa_cookie = CryptoManager().random_string(96)
-                    store.put_pickle(
+                    store.save_pickled(
                         mfa_cookie,
                         (mfa_user_id, now),
                     )

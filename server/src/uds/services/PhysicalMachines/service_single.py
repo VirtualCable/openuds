@@ -95,9 +95,9 @@ class IPSingleMachineService(IPServiceBase):
     def get_unassigned_host(self) -> typing.Optional['HostInfo']:
         host: typing.Optional[HostInfo] = None
         try:
-            counter = self.storage.get_unpickle('counter')
+            counter = self.storage.read_pickled('counter')
             counter = counter + 1 if counter is not None else 1
-            self.storage.put_pickle('counter', counter)
+            self.storage.save_pickled('counter', counter)
             host = HostInfo(self.host.value, order=str(counter))
         except Exception:
             host = None

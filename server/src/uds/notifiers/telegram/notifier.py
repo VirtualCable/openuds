@@ -131,7 +131,7 @@ class TelegramNotifier(messaging.Notifier):
         telegramMsg = f'{group} - {identificator} - {str(level)}: {message}'
         logger.debug('Sending telegram message: %s', telegramMsg)
         # load chat_ids
-        chat_ids: list[int] = self.storage.get_unpickle('chat_ids') or []
+        chat_ids: list[int] = self.storage.read_pickled('chat_ids') or []
         t = telegram.Telegram(self.access_token.value)  # Only writing, can ingnore last_offset
         for chad_id in chat_ids:
             with ignore_exceptions():
@@ -142,41 +142,41 @@ class TelegramNotifier(messaging.Notifier):
     def subscribe_user(self, chat_id: int) -> None:
         # we do not expect to have a lot of users, so we will use a simple storage
         # that holds a list of chat_ids
-        chat_ids: list[int] = self.storage.get_unpickle('chat_ids') or []
+        chat_ids: list[int] = self.storage.read_pickled('chat_ids') or []
         if chat_id not in chat_ids:
             chat_ids.append(chat_id)
-            self.storage.put_pickle('chat_ids', chat_ids)
+            self.storage.save_pickled('chat_ids', chat_ids)
             logger.info('User %s subscribed to notifications', chat_id)
 
     def unsubscrite_user(self, chat_id: int) -> None:
         # we do not expect to have a lot of users, so we will use a simple storage
         # that holds a list of chat_ids
-        chat_ids: list[int] = self.storage.get_unpickle('chat_ids') or []
+        chat_ids: list[int] = self.storage.read_pickled('chat_ids') or []
         if chat_id in chat_ids:
             chat_ids.remove(chat_id)
-            self.storage.put_pickle('chat_ids', chat_ids)
+            self.storage.save_pickled('chat_ids', chat_ids)
             logger.info('User %s unsubscribed from notifications', chat_id)
 
     def retrieve_messages(self) -> None:
         if not self.access_token.value.strip():
             return  # no access token, no messages
         # Time of last retrieve
-        last_check: typing.Optional[datetime.datetime] = self.storage.get_unpickle('last_check')
+        last_check: typing.Optional[datetime.datetime] = self.storage.read_pickled('last_check')
         now = sql_datetime()
 
         # If last check is not set, we will set it to now
         if last_check is None:
             last_check = now - datetime.timedelta(seconds=self.check_delay.as_int() + 1)
-            self.storage.put_pickle('last_check', last_check)
+            self.storage.save_pickled('last_check', last_check)
 
         # If not enough time has passed, we will not check
         if last_check + datetime.timedelta(seconds=self.check_delay.as_int()) > now:
             return
 
         # Update last check
-        self.storage.put_pickle('last_check', now)
+        self.storage.save_pickled('last_check', now)
 
-        last_offset = self.storage.get_unpickle('last_offset') or 0
+        last_offset = self.storage.read_pickled('last_offset') or 0
         t = telegram.Telegram(self.access_token.value, last_offset=last_offset)
         with ignore_exceptions():  # In case getUpdates fails, ignore it
             for update in t.get_updates():
@@ -198,4 +198,4 @@ class TelegramNotifier(messaging.Notifier):
                     elif message in ('/leave', '/unsubscribe'):
                         self.unsubscrite_user(update.chat.id)
                         t.send_message(update.chat.id, _('You have been unsubscribed from notifications'))
-            self.storage.put_pickle('last_offset', t.last_offset)
+            self.storage.save_pickled('last_offset', t.last_offset)

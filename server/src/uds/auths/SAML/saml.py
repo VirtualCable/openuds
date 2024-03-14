@@ -620,7 +620,7 @@ class SAMLAuthenticator(auths.Authenticator):
         self.storage.remove(self.mfa_storage_key(username))
 
     def mfa_identifier(self, username: str) -> str:
-        return self.storage.get_unpickle(self.mfa_storage_key(username)) or ''
+        return self.storage.read_pickled(self.mfa_storage_key(username)) or ''
 
     def logout_callback(
         self,
@@ -740,11 +740,11 @@ class SAMLAuthenticator(auths.Authenticator):
         logger.debug('Real name: %s', realName)
 
         # store groups for this username at storage, so we can check it at a later stage
-        self.storage.put_pickle(username, [realName, groups])
+        self.storage.save_pickled(username, [realName, groups])
 
         # store also the mfa identifier field value, in case we have provided it
         if self.mfa_attr.value.strip():
-            self.storage.put_pickle(
+            self.storage.save_pickled(
                 self.mfa_storage_key(username),
                 ''.join(
                     auth_utils.process_regex_field(
@@ -796,13 +796,13 @@ class SAMLAuthenticator(auths.Authenticator):
         )
 
     def get_groups(self, username: str, groups_manager: 'auths.GroupsManager') -> None:
-        data = self.storage.get_unpickle(username)
+        data = self.storage.read_pickled(username)
         if not data:
             return
         groups_manager.validate(data[1])
 
     def get_real_name(self, username: str) -> str:
-        data = self.storage.get_unpickle(username)
+        data = self.storage.read_pickled(username)
         if not data:
             return username
         return data[0]

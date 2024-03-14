@@ -52,14 +52,14 @@ class StorageTest(UDSTestCase):
         strg.put(b'key', UNICODE_CHARS)
         strg.put(UNICODE_CHARS_2, UNICODE_CHARS)
 
-        strg.put_pickle('pickle', VALUE_1)
+        strg.save_pickled('pickle', VALUE_1)
 
-        self.assertEqual(strg.get(UNICODE_CHARS), u'chars')  # Always returns unicod
+        self.assertEqual(strg.read(UNICODE_CHARS), u'chars')  # Always returns unicod
         self.assertEqual(strg.read_from_db('saveData'), UNICODE_CHARS)
         self.assertEqual(strg.read_from_db('saveData2'), UNICODE_CHARS_2)
-        self.assertEqual(strg.get(b'key'), UNICODE_CHARS)
-        self.assertEqual(strg.get(UNICODE_CHARS_2), UNICODE_CHARS)
-        self.assertEqual(strg.get_unpickle('pickle'), VALUE_1)
+        self.assertEqual(strg.read(b'key'), UNICODE_CHARS)
+        self.assertEqual(strg.read(UNICODE_CHARS_2), UNICODE_CHARS)
+        self.assertEqual(strg.read_pickled('pickle'), VALUE_1)
 
         self.assertEqual(len(list(strg.search_by_attr1(UNICODE_CHARS))), 2)
         self.assertEqual(len(list(strg.search_by_attr1('attribute'))), 2)
@@ -68,9 +68,9 @@ class StorageTest(UDSTestCase):
         strg.remove(b'key')
         strg.remove('pickle')
 
-        self.assertIsNone(strg.get(UNICODE_CHARS))
-        self.assertIsNone(strg.get(b'key'))
-        self.assertIsNone(strg.get_unpickle('pickle'))
+        self.assertIsNone(strg.read(UNICODE_CHARS))
+        self.assertIsNone(strg.read(b'key'))
+        self.assertIsNone(strg.read_pickled('pickle'))
 
     def test_storage_as_dict(self) -> None:
         strg = storage.Storage(UNICODE_CHARS)
@@ -103,7 +103,7 @@ class StorageTest(UDSTestCase):
         )
         strg = storage.Storage(UNICODE_CHARS)
         # Ensure that key is found
-        self.assertEqual(strg.get(UNICODE_CHARS), UNICODE_CHARS * 5)
+        self.assertEqual(strg.read(UNICODE_CHARS), UNICODE_CHARS * 5)
         # And that now, the key is stored in the new format
         # If not exists, will raise an exception
         models.Storage.objects.get(

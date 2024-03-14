@@ -389,7 +389,7 @@ class OAuth2Authenticator(auths.Authenticator):
         groups.extend(self.commonGroups.value.split(','))
 
         # store groups for this username at storage, so we can check it at a later stage
-        self.storage.put_pickle(username, [realName, groups])
+        self.storage.save_pickled(username, [realName, groups])
 
         # Validate common groups
         gm.validate(groups)
@@ -501,13 +501,13 @@ class OAuth2Authenticator(auths.Authenticator):
         return f'window.location="{self._get_login_url(request)}";'
 
     def get_groups(self, username: str, groups_manager: 'auths.GroupsManager') -> None:
-        data = self.storage.get_unpickle(username)
+        data = self.storage.read_pickled(username)
         if not data:
             return
         groups_manager.validate(data[1])
 
     def get_real_name(self, username: str) -> str:
-        data = self.storage.get_unpickle(username)
+        data = self.storage.read_pickled(username)
         if not data:
             return username
         return data[0]

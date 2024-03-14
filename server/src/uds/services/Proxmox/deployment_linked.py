@@ -460,7 +460,7 @@ if sys.platform == 'win32':
             self._store_task(self.service().provider().shutdown_machine(int(self._vmid)))
             shutdown = sql_stamp_seconds()
         logger.debug('Stoped vm using guest tools')
-        self.storage.put_pickle('shutdown', shutdown)
+        self.storage.save_pickled('shutdown', shutdown)
 
     def _update_machine_mac_and_ha(self) -> None:
         try:
@@ -524,7 +524,7 @@ if sys.platform == 'win32':
         """
         Check if the machine has gracely stopped (timed shutdown)
         """
-        shutdown_start = self.storage.get_unpickle('shutdown')
+        shutdown_start = self.storage.read_pickled('shutdown')
         logger.debug('Shutdown start: %s', shutdown_start)
         if shutdown_start < 0:  # Was already stopped
             # Machine is already stop
@@ -548,7 +548,7 @@ if sys.platform == 'win32':
                 f'Could not shutdown machine using soft power off in time ({consts.os.MAX_GUEST_SHUTDOWN_WAIT} seconds). Powering off.',
             )
             # Not stopped by guest in time, but must be stopped normally
-            self.storage.put_pickle('shutdown', 0)
+            self.storage.save_pickled('shutdown', 0)
             self._stop_machine()  # Launch "hard" stop
 
         return types.states.TaskState.RUNNING

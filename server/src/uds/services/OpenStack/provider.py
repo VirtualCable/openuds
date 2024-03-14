@@ -220,6 +220,7 @@ class OpenStackProvider(ServiceProvider):
                 region=region,
                 access=openstack_types.AccessType.from_str(self.access.value),
                 proxies=proxies,
+                timeout=self.timeout.value,
             )
         return self._api
 

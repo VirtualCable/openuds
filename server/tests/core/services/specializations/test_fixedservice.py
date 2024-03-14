@@ -330,7 +330,7 @@ class FixedTestingService(fixed_service.FixedService):
 
     def assign_from_assignables(
         self, assignable_id: str, user: 'models.User', userservice_instance: 'services.UserService'
-    ) -> str:
+    ) -> types.states.TaskState:
         """
         Assigns a machine from the assignables
         """

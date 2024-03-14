@@ -64,7 +64,7 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
     type_name = _('OpenStack Fixed Machines')
     type_type = 'OpenStackFixedService'
     type_description = _('OpenStack Services based on fixed machines.')
-    icon_file = 'service.png'
+    icon_file = 'openstack.png'
 
     can_reset = True
 

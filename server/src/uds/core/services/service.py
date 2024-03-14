@@ -458,11 +458,11 @@ class Service(Module):
         return
 
     def store_id_info(self, id: str, data: typing.Any) -> None:
-        self.storage.put_pickle('__nfo_' + id, data)
+        self.storage.save_pickled('__nfo_' + id, data)
 
     def recover_id_info(self, id: str, delete: bool = False) -> typing.Any:
         # recovers the information
-        value = self.storage.get_unpickle('__nfo_' + id)
+        value = self.storage.read_pickled('__nfo_' + id)
         if value and delete:
             self.storage.delete('__nfo_' + id)
         return value

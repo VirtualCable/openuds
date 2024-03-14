@@ -284,7 +284,7 @@ class Storage:
     def put(self, skey: typing.Union[str, bytes], data: typing.Any) -> None:
         return self.save_to_db(skey, data)
 
-    def put_pickle(
+    def save_pickled(
         self,
         skey: typing.Union[str, bytes],
         data: typing.Any,
@@ -329,19 +329,19 @@ class Storage:
                 pass
         return None
 
-    def get(self, skey: typing.Union[str, bytes]) -> typing.Optional[typing.Union[str, bytes]]:
+    def read(self, skey: typing.Union[str, bytes]) -> typing.Optional[typing.Union[str, bytes]]:
         return self.read_from_db(skey)
 
-    def get_unpickle(self, skey: typing.Union[str, bytes]) -> typing.Any:
+    def read_pickled(self, skey: typing.Union[str, bytes]) -> typing.Any:
         v = self.read_from_db(skey, True)
         if v:
             return pickle.loads(typing.cast(bytes, v))  # nosec: This is e controled pickle loading
         return None
 
-    def get_unpickle_by_attr1(self, attr1: str, forUpdate: bool = False) -> typing.Any:
+    def read_pickle_by_attr1(self, attr1: str, for_update: bool = False) -> typing.Any:
         try:
             query = DBStorage.objects.filter(owner=self._owner, attr1=attr1)
-            if forUpdate:
+            if for_update:
                 query = query.select_for_update()
             return pickle.loads(  # nosec: This is e controled pickle loading
                 codecs.decode(query[0].data.encode(), 'base64')

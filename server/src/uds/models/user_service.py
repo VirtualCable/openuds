@@ -308,7 +308,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         # To transition between old store at storage table and new properties table
         # If value is found on property, use it, else, try to recover it from storage
         if val is None:
-            val = typing.cast(str, self.get_environment().storage.get(name))
+            val = typing.cast(str, self.get_environment().storage.read(name))
         return val or ''
 
     def set_connection_source(self, src: types.connections.ConnectionSource) -> None:

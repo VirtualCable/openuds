@@ -499,7 +499,7 @@ class HTML5RDPTransport(transports.Transport):
         # Remove trailing /
         path = path.rstrip('/')
 
-        tunnelServer = fields.get_tunnel_from_field(self.tunnel)
+        tunnel_server = fields.get_tunnel_from_field(self.tunnel)
         return str(
-            f'https://{tunnelServer.host}:{tunnelServer.port}{path}/#/?data={ticket}.{scrambler}{onw}{extra_params}'
+            f'https://{tunnel_server.host}:{tunnel_server.port}{path}/#/?data={ticket}.{scrambler}{onw}{extra_params}'
         )

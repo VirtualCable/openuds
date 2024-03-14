@@ -31,7 +31,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
@@ -40,7 +39,7 @@ from uds.core.ui import gui
 from uds.core.util import validators, fields
 from uds.core.util.decorators import cached
 
-from . import client
+from .ovirt import client
 from .service import OVirtLinkedService
 
 # Not imported at runtime, just for type checking
@@ -147,7 +146,8 @@ class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-publi
     # If we want to connect to more than one server, we need keep locked access to api, change api server, etc..
     # We have implemented an "exclusive access" client that will only connect to one server at a time (using locks)
     # and this way all will be fine
-    def _get_api(self) -> client.Client:
+    @property
+    def api(self) -> client.Client:
         """
         Returns the connection API object for oVirt (using ovirtsdk)
         """
@@ -185,285 +185,10 @@ class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-publi
             True if all went fine, false if id didn't
         """
 
-        return self._get_api().test()
-
-    def test_version_is_valid(self) -> types.core.TestResult:
-        """
-        Checks that this version of ovirt if "fully functional" and does not needs "patchs'
-        """
-        return self._get_api().is_fully_functional_version()
-
-    def list_machines(self, force: bool = False) -> list[collections.abc.MutableMapping[str, typing.Any]]:
-        """
-        Obtains the list of machines inside oVirt.
-        Machines starting with UDS are filtered out
-
-        Args:
-            force: If true, force to update the cache, if false, tries to first
-            get data from cache and, if valid, return this.
-
-        Returns
-            An array of dictionaries, containing:
-                'name'
-                'id'
-                'cluster_id'
-        """
-
-        return self._get_api().list_machines(force)
-
-    def list_clusters(self, force: bool = False) -> list[collections.abc.MutableMapping[str, typing.Any]]:
-        """
-        Obtains the list of clusters inside oVirt.
-
-        Args:
-            force: If true, force to update the cache, if false, tries to first
-            get data from cache and, if valid, return this.
-
-        Returns
-            Filters out clusters not attached to any datacenter
-            An array of dictionaries, containing:
-                'name'
-                'id'
-                'datacenter_id'
-        """
-
-        return self._get_api().list_clusters(force)
-
-    def get_cluster_info(
-        self, clusterId: str, force: bool = False
-    ) -> collections.abc.MutableMapping[str, typing.Any]:
-        """
-        Obtains the cluster info
-
-        Args:
-            datacenterId: Id of the cluster to get information about it
-            force: If true, force to update the cache, if false, tries to first
-            get data from cache and, if valid, return this.
-
-        Returns
-
-            A dictionary with following values
-                'name'
-                'id'
-                'datacenter_id'
-        """
-        return self._get_api().get_cluster_info(clusterId, force)
-
-    def get_datacenter_info(
-        self, datacenterId: str, force: bool = False
-    ) -> collections.abc.MutableMapping[str, typing.Any]:
-        """
-        Obtains the datacenter info
-
-        Args:
-            datacenterId: Id of the datacenter to get information about it
-            force: If true, force to update the cache, if false, tries to first
-            get data from cache and, if valid, return this.
-
-        Returns
-
-            A dictionary with following values
-                'name'
-                'id'
-                'storage_type' -> ('isisi', 'nfs', ....)
-                'storage_format' -> ('v1', v2')
-                'description'
-                'storage' -> array of dictionaries, with:
-                   'id' -> Storage id
-                   'name' -> Storage name
-                   'type' -> Storage type ('data', 'iso')
-                   'available' -> Space available, in bytes
-                   'used' -> Space used, in bytes
-                   'active' -> True or False
-
-        """
-        return self._get_api().get_datacenter_info(datacenterId, force)
-
-    def get_storage_info(
-        self, storageId: str, force: bool = False
-    ) -> collections.abc.MutableMapping[str, typing.Any]:
-        """
-        Obtains the storage info
-
-        Args:
-            storageId: Id of the storage to get information about it
-            force: If true, force to update the cache, if false, tries to first
-            get data from cache and, if valid, return this.
-
-        Returns
-
-            A dictionary with following values
-               'id' -> Storage id
-               'name' -> Storage name
-               'type' -> Storage type ('data', 'iso')
-               'available' -> Space available, in bytes
-               'used' -> Space used, in bytes
-               # 'active' -> True or False --> This is not provided by api?? (api.storagedomains.get)
-
-        """
-        return self._get_api().get_storage_info(storageId, force)
-
-    def make_template(
-        self,
-        name: str,
-        comments: str,
-        machineId: str,
-        clusterId: str,
-        storageId: str,
-        displayType: str,
-    ) -> str:
-        """
-        Publish the machine (makes a template from it so we can create COWs) and returns the template id of
-        the creating machine
-
-        Args:
-            name: Name of the machine (care, only ascii characters and no spaces!!!)
-            machineId: id of the machine to be published
-            clusterId: id of the cluster that will hold the machine
-            storageId: id of the storage tuat will contain the publication AND linked clones
-            displayType: type of display (for oVirt admin interface only)
-
-        Returns
-            Raises an exception if operation could not be acomplished, or returns the id of the template being created.
-        """
-        return self._get_api().create_template(name, comments, machineId, clusterId, storageId, displayType)
-
-    def get_template_state(self, templateId: str) -> str:
-        """
-        Returns current template state.
-
-        Returned values could be:
-            ok
-            locked
-            removed
-
-        (don't know if ovirt returns something more right now, will test what happens when template can't be published)
-        """
-        return self._get_api().get_template_state(templateId)
-
-    def get_machine_state(self, machineId: str) -> str:
-        """
-        Returns the state of the machine
-        This method do not uses cache at all (it always tries to get machine state from oVirt server)
-
-        Args:
-            machineId: Id of the machine to get state
-
-        Returns:
-            one of this values:
-             unassigned, down, up, powering_up, powered_down,
-             paused, migrating_from, migrating_to, unknown, not_responding,
-             wait_for_launch, reboot_in_progress, saving_state, restoring_state,
-             suspended, image_illegal, image_locked or powering_down
-             Also can return'unknown' if Machine is not known
-        """
-        return self._get_api().get_machine_state(machineId)
-
-    def remove_template(self, templateId: str) -> None:
-        """
-        Removes a template from ovirt server
-
-        Returns nothing, and raises an Exception if it fails
-        """
-        return self._get_api().remove_template(templateId)
-
-    def deploy_from_template(
-        self,
-        name: str,
-        comments: str,
-        templateId: str,
-        clusterId: str,
-        displayType: str,
-        usbType: str,
-        memoryMB: int,
-        guaranteedMB: int,
-    ) -> str:
-        """
-        Deploys a virtual machine on selected cluster from selected template
-
-        Args:
-            name: Name (sanitized) of the machine
-            comments: Comments for machine
-            templateId: Id of the template to deploy from
-            clusterId: Id of the cluster to deploy to
-            displayType: 'vnc' or 'spice'. Display to use ad oVirt admin interface
-            memoryMB: Memory requested for machine, in MB
-            guaranteedMB: Minimum memory guaranteed for this machine
-
-        Returns:
-            Id of the machine being created form template
-        """
-        return self._get_api().deploy_from_template(
-            name,
-            comments,
-            templateId,
-            clusterId,
-            displayType,
-            usbType,
-            memoryMB,
-            guaranteedMB,
-        )
-
-    def start_machine(self, machineId: str) -> None:
-        """
-        Tries to start a machine. No check is done, it is simply requested to oVirt.
-
-        This start also "resume" suspended/paused machines
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        self._get_api().start_machine(machineId)
-
-    def stop_machine(self, machineId: str) -> None:
-        """
-        Tries to start a machine. No check is done, it is simply requested to oVirt
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        self._get_api().stop_machine(machineId)
-
-    def suspend_machine(self, machineId: str) -> None:
-        """
-        Tries to start a machine. No check is done, it is simply requested to oVirt
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        self._get_api().suspend_machine(machineId)
-
-    def remove_machine(self, machineId: str) -> None:
-        """
-        Tries to delete a machine. No check is done, it is simply requested to oVirt
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        self._get_api().remove_machine(machineId)
-
-    def update_machine_mac(self, machineId: str, macAddres: str) -> None:
-        """
-        Changes the mac address of first nic of the machine to the one specified
-        """
-        self._get_api().update_machine_mac(machineId, macAddres)
-
-    def fixUsb(self, machineId: str) -> None:
-        self._get_api().fix_usb(machineId)
+        return self.api.test()
 
     def get_macs_range(self) -> str:
         return self.macs_range.value
-
-    def get_console_connection(self, machine_id: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
-        return self._get_api().get_console_connection(machine_id)
 
     @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def is_available(self) -> bool:
@@ -503,7 +228,6 @@ class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-publi
         # return [True, _('Nothing tested, but all went fine..')]
         ov = OVirtProvider(env, data)
         if ov.test_connection() is True:
-
-            return ov.test_version_is_valid()
+            return types.core.TestResult(True, _('Connection to oVirt server is ok'))
 
         return types.core.TestResult(False, _('Connection failed. Check connection params'))

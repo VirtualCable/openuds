@@ -109,7 +109,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         fills={
             'callback_name': 'ovFillResourcesFromCluster',
             'function': helpers.get_resources,
-            'parameters': ['cluster', 'ov', 'ev'],
+            'parameters': ['cluster', 'parent_uuid'],
         },
         tooltip=_("Cluster to contain services"),
         required=True,
@@ -175,7 +175,6 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         choices=[
             gui.choice_item('disabled', 'disabled'),
             gui.choice_item('native', 'native'),
-            # gui.choice_item('legacy', 'legacy (deprecated)'),
         ],
         tab=_('Machine'),
         default='1',  # Default value is the ID of the choicefield
@@ -221,14 +220,14 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
 
         # This is not the same case, values is not the "value" of the field, but
         # the list of values shown because this is a "ChoiceField"
-        self.machine.set_choices(gui.choice_item(m['id'], m['name']) for m in self.provider().list_machines())
+        self.machine.set_choices(gui.choice_item(m.id, m.name) for m in self.provider().api.list_machines())
 
-        self.cluster.set_choices(gui.choice_item(c['id'], c['name']) for c in self.provider().list_clusters())
+        self.cluster.set_choices(gui.choice_item(c.id, c.name) for c in self.provider().api.list_clusters())
 
     def provider(self) -> 'OVirtProvider':
         return typing.cast('OVirtProvider', super().provider())
 
-    def has_enought_storage_(self) -> None:
+    def verify_free_storage(self) -> None:
         """Checks if datastore has enough space
 
         Raises:
@@ -239,13 +238,13 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         """
         # Get storages for that datacenter
         logger.debug('Checking datastore space for %s', self.datastore.value)
-        info = self.provider().get_storage_info(self.datastore.value)
+        info = self.provider().api.get_storage_info(self.datastore.value)
         logger.debug('Datastore Info: %s', info)
-        availableGB = info['available'] / (1024 * 1024 * 1024)
-        if availableGB < self.reserved_storage_gb.as_int():
+        free_storage_gb = info.available / (1024 * 1024 * 1024)
+        if free_storage_gb < self.reserved_storage_gb.value:
             raise Exception(
                 'Not enough free space available: (Needs at least {0} GB and there is only {1} GB '.format(
-                    self.reserved_storage_gb.as_int(), availableGB
+                    self.reserved_storage_gb.as_int(), free_storage_gb
                 )
             )
 
@@ -272,8 +271,8 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         # Checks datastore size
         # Get storages for that datacenter
 
-        self.has_enought_storage_()
-        return self.provider().make_template(
+        self.verify_free_storage()
+        return self.provider().api.create_template(
             name,
             comments,
             self.machine.value,
@@ -282,7 +281,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
             self.display.value,
         )
 
-    def get_template_state(self, templateId: str) -> str:
+    def get_template_state(self, template_id: str) -> str:
         """
         Invokes getTemplateState from parent provider
 
@@ -293,7 +292,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
 
         Raises an exception if operation fails.
         """
-        return self.provider().get_template_state(templateId)
+        return self.provider().api.get_template_state(template_id)
 
     def deploy_from_template(self, name: str, comments: str, templateId: str) -> str:
         """
@@ -311,8 +310,8 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
             Id of the machine being created form template
         """
         logger.debug('Deploying from template %s machine %s', templateId, name)
-        self.has_enought_storage_()
-        return self.provider().deploy_from_template(
+        self.verify_free_storage()
+        return self.provider().api.deploy_from_template(
             name,
             comments,
             templateId,
@@ -323,13 +322,13 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
             int(self.guaranteed_memory.value),
         )
 
-    def remove_template(self, templateId: str) -> None:
+    def remove_template(self, template_id: str) -> None:
         """
         invokes removeTemplate from parent provider
         """
-        self.provider().remove_template(templateId)
+        self.provider().api.remove_template(template_id)
 
-    def get_machine_state(self, machineid: str) -> str:
+    def get_machine_state(self, machine_id: str) -> str:
         """
         Invokes getMachineState from parent provider
         (returns if machine is "active" or "inactive"
@@ -345,9 +344,9 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
              suspended, image_illegal, image_locked or powering_down
              Also can return'unknown' if Machine is not known
         """
-        return self.provider().get_machine_state(machineid)
+        return self.provider().api.get_machine_state(machine_id)
 
-    def start_machine(self, machineid: str) -> None:
+    def start_machine(self, machine_id: str) -> None:
         """
         Tries to start a machine. No check is done, it is simply requested to oVirt.
 
@@ -358,7 +357,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
 
         Returns:
         """
-        self.provider().start_machine(machineid)
+        self.provider().api.start_machine(machine_id)
 
     def stop_machine(self, machine_id: str) -> None:
         """
@@ -369,7 +368,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
 
         Returns:
         """
-        self.provider().stop_machine(machine_id)
+        self.provider().api.stop_machine(machine_id)
 
     def suspend_machine(self, machine_id: str) -> None:
         """
@@ -380,7 +379,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
 
         Returns:
         """
-        self.provider().suspend_machine(machine_id)
+        self.provider().api.suspend_machine(machine_id)
 
     def remove_machine(self, machine_id: str) -> None:
         """
@@ -391,17 +390,18 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
 
         Returns:
         """
-        self.provider().remove_machine(machine_id)
+        self.provider().api.remove_machine(machine_id)
 
     def update_machine_mac(self, machine_id: str, mac: str) -> None:
         """
         Changes the mac address of first nic of the machine to the one specified
         """
-        self.provider().update_machine_mac(machine_id, mac)
+        self.provider().api.update_machine_mac(machine_id, mac)
 
     def fix_usb(self, machine_id: str) -> None:
+        # If has usb, upgrade vm to add it now
         if self.usb.value in ('native',):
-            self.provider().fixUsb(machine_id)
+            self.provider().api.fix_usb(machine_id)
 
     def get_macs_range(self) -> str:
         """
@@ -427,8 +427,8 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         """
         return self.display.value
 
-    def get_console_connection(self, machineId: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
-        return self.provider().get_console_connection(machineId)
+    def get_console_connection(self, machine_id: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
+        return self.provider().api.get_console_connection(machine_id)
 
     def is_avaliable(self) -> bool:
         return self.provider().is_available()

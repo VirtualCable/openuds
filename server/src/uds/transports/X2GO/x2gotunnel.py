@@ -36,7 +36,7 @@ from django.utils.translation import gettext_noop as _
 
 from uds.core import types
 from uds.core.ui import gui
-from uds.core.util import fields, validators
+from uds.core.util import fields
 from uds.models import TicketStore
 
 from . import x2go_file
@@ -91,8 +91,7 @@ class TX2GOTransport(BaseX2GOTransport):
     quality = BaseX2GOTransport.quality
 
     def initialize(self, values: 'types.core.ValuesType') -> None:
-        if values:
-            validators.validate_host_port(values.get('tunnelServer', ''))
+        pass
 
     def get_transport_script(
         self,

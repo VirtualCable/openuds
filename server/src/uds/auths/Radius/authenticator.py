@@ -138,7 +138,7 @@ class RadiusAuth(auths.Authenticator):
         return 'mfa_' + str(self.db_obj().uuid) + username
 
     def mfa_identifier(self, username: str) -> str:
-        return self.storage.get_unpickle(self.mfa_storage_key(username)) or ''
+        return self.storage.read_pickled(self.mfa_storage_key(username)) or ''
 
     def authenticate(
         self,
@@ -157,7 +157,7 @@ class RadiusAuth(auths.Authenticator):
                 request.session[client.STATE_VAR_NAME] = state.decode()
             # store the user mfa attribute if it is set
             if mfaCode:
-                self.storage.put_pickle(
+                self.storage.save_pickled(
                     self.mfa_storage_key(username),
                     mfaCode,
                 )

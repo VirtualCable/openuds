@@ -121,14 +121,14 @@ class TOTP_MFA(mfas.MFA):
         # Get data from storage related to this user
         # Data contains the secret and if the user has already logged in already some time
         # so we show the QR code only once
-        data: typing.Optional[tuple[str, bool]] = self.storage.get_unpickle(userId)
+        data: typing.Optional[tuple[str, bool]] = self.storage.read_pickled(userId)
         if data is None:
             data = (pyotp.random_base32(), False)
             self._save_user_data(userId, data)
         return data
 
     def _save_user_data(self, userId: str, data: tuple[str, bool]) -> None:
-        self.storage.put_pickle(userId, data)
+        self.storage.save_pickled(userId, data)
 
     def _remove_user_data(self, userId: str) -> None:
         self.storage.remove(userId)

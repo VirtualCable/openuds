@@ -137,6 +137,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
         region: typing.Optional[str] = None,
         access: typing.Optional[openstack_types.AccessType] = None,
         proxies: typing.Optional[dict[str, str]] = None,
+        timeout: int = 10,
     ):
         self._session = security.secure_requests_session(verify=VERIFY_SSL)
         if proxies:
@@ -154,7 +155,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
         self._projectid = projectid
         self._project = None
         self._region = region
-        self._timeout = 10
+        self._timeout = timeout
 
         if is_legacy:
             self._authurl = 'http{}://{}:{}/'.format('s' if use_ssl else '', host, port)
