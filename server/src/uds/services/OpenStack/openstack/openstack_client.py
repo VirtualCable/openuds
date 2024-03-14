@@ -175,6 +175,7 @@ class Client:  # pylint: disable=too-many-public-methods
         region: typing.Optional[str] = None,
         access: typing.Optional[str] = None,
         proxies: typing.Optional[typing.MutableMapping[str, str]] = None,
+        timeout: typing.Optional[int] = None,
     ):
         self._session = security.secureRequestsSession(verify=VERIFY_SSL)
         if proxies:
@@ -192,7 +193,7 @@ class Client:  # pylint: disable=too-many-public-methods
         self._projectId = projectId
         self._project = None
         self._region = region
-        self._timeout = 10
+        self._timeout = timeout or 10
         self._volume = ''
 
         if legacyVersion:

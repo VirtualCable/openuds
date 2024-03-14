@@ -234,6 +234,7 @@ class ProviderLegacy(ServiceProvider):
             region=region,
             access=self.access.value,
             proxies=proxies,
+            timeout=self.timeout.num()
         )
 
     def sanitizeVmName(self, name: str) -> str:
