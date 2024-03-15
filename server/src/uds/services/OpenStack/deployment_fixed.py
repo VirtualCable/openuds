@@ -100,7 +100,7 @@ class OpenStackUserServiceFixed(FixedUserService, autoserializable.AutoSerializa
     def error(self, reason: str) -> types.states.TaskState:
         return self._error(reason)
 
-    def _start_machine(self) -> None:
+    def start_machine(self) -> None:
         try:
             server_info = self.service().api.get_server(self._vmid)
         except Exception as e:

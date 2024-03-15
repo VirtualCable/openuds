@@ -213,30 +213,12 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         if op == Operation.FINISH:
             return types.states.TaskState.FINISHED
 
-        # We need to declare here the dict, because some methods can be overrided
-        # and, if declared at class level, the overrided method will not be used
-        _EXEC_FNCS: typing.Final[collections.abc.Mapping[Operation, collections.abc.Callable[[], None]]] = {
-            Operation.CREATE: self._create,
-            Operation.RETRY: self._retry,
-            Operation.START: self._start_machine,
-            Operation.STOP: self._stop_machine,
-            Operation.WAIT: self._wait,
-            Operation.REMOVE: self._remove,
-            Operation.SNAPSHOT_CREATE: self._snapshot_create,
-            Operation.SNAPSHOT_RECOVER: self._snapshot_recover,
-            Operation.PROCESS_TOKEN: self._process_token,
-            Operation.SOFT_SHUTDOWN: self._soft_shutdown_machine,
-            Operation.NOP: self._nop,
-        }
-        
-
         try:
-            operation_runner = _EXEC_FNCS.get(op, None)
-
-            if not operation_runner:
-                return self._error(f'Unknown operation found at execution queue ({op})')
-
-            operation_runner()
+            operation_runner = _EXEC_FNCS[op]
+            
+            # Invoke using instance, we have overrided methods
+            # and we want to use the overrided ones
+            getattr(self, operation_runner.__name__)()
 
             return types.states.TaskState.RUNNING
         except Exception as e:
@@ -299,80 +281,79 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             if userservice:
                 userservice.set_in_use(True)
 
-    def _remove(self) -> None:
+    def remove(self) -> None:
         """
         Removes the snapshot if needed and releases the machine again
         """
         self.service().remove_and_free_machine(self._vmid)
 
     # Check methods
-    def _create_checker(self) -> types.states.TaskState:
+    def create_checker(self) -> types.states.TaskState:
         """
         Checks the state of a deploy for an user or cache
         """
         return types.states.TaskState.FINISHED
 
-    def _snapshot_create_checker(self) -> types.states.TaskState:
+    def snapshot_create_checker(self) -> types.states.TaskState:
         """
         Checks the state of a snapshot creation
         """
         return types.states.TaskState.FINISHED
 
-    def _snapshot_recover_checker(self) -> types.states.TaskState:
+    def snapshot_recover_checker(self) -> types.states.TaskState:
         """
         Checks the state of a snapshot recovery
         """
         return types.states.TaskState.FINISHED
 
-    def _process_token_checker(self) -> types.states.TaskState:
+    def process_token_checker(self) -> types.states.TaskState:
         """
         Checks the state of a token processing
         """
         return types.states.TaskState.FINISHED
 
-    def _retry_checker(self) -> types.states.TaskState:
+    def retry_checker(self) -> types.states.TaskState:
         return types.states.TaskState.FINISHED
 
-    def _wait_checker(self) -> types.states.TaskState:
+    def wait_checker(self) -> types.states.TaskState:
         return types.states.TaskState.FINISHED
 
-    def _nop_checker(self) -> types.states.TaskState:
+    def nop_checker(self) -> types.states.TaskState:
         return types.states.TaskState.FINISHED
 
-    def _start_machine(self) -> None:
-        """ 
+    def start_machine(self) -> None:
+        """
         Override this method to start the machine if needed
         """
         pass
 
-    def _start_checker(self) -> types.states.TaskState:
+    def start_checker(self) -> types.states.TaskState:
         """
         Checks if machine has started
         """
         return types.states.TaskState.FINISHED
 
-    def _stop_machine(self) -> None:
+    def stop_machine(self) -> None:
         """
         Override this method to stop the machine if needed
         """
         pass
 
-    def _stop_checker(self) -> types.states.TaskState:
+    def stop_checker(self) -> types.states.TaskState:
         """
         Checks if machine has stoped
         """
         return types.states.TaskState.FINISHED
 
     # Not abstract methods, defaults to stop machine
-    def _soft_shutdown_machine(self) -> None:
-        """
-        """
-        return self._stop_machine()  # Default is to stop the machine
+    def soft_shutdown_machine(self) -> None:
+        """ """
+        return self.stop_machine()  # Default is to stop the machine
 
-    def _soft_shutdown_checker(self) -> types.states.TaskState:
-        return self._stop_checker()  # Default is to check if machine has stopped
+    def soft_shutdown_checker(self) -> types.states.TaskState:
+        return self.stop_checker()  # Default is to check if machine has stopped
 
-    def _removed_checker(self) -> types.states.TaskState:
+    def removed_checker(self) -> types.states.TaskState:
         """
         Checks if a machine has been removed
         """
@@ -392,29 +373,14 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         if op == Operation.FINISH:
             return types.states.TaskState.FINISHED
 
-        # We need to declare here the dict, because some methods can be overrided
-        # and, if declared at class level, the overrided method will not be used
-        _CHECK_FNCS: typing.Final[collections.abc.Mapping[Operation, collections.abc.Callable[[], types.states.TaskState]]] = {
-            Operation.CREATE: self._create_checker,
-            Operation.RETRY: self._retry_checker,
-            Operation.WAIT: self._wait_checker,
-            Operation.START: self._start_checker,
-            Operation.STOP: self._stop_checker,
-            Operation.REMOVE: self._removed_checker,
-            Operation.SNAPSHOT_CREATE: self._snapshot_create_checker,
-            Operation.SNAPSHOT_RECOVER: self._snapshot_recover_checker,
-            Operation.PROCESS_TOKEN: self._process_token_checker,
-            Operation.SOFT_SHUTDOWN: self._soft_shutdown_checker,
-            Operation.NOP: self._nop_checker,
-        }
-
         try:
-            check_function = _CHECK_FNCS.get(op, None)
+            check_function = _CHECK_FNCS[op]
 
-            if check_function is None:
-                return self._error('Unknown operation found at check queue ({0})'.format(op))
 
-            state = check_function()
+            # Invoke using instance, we have overrided methods
+            # and we want to use the overrided ones
+            state = typing.cast(types.states.TaskState, getattr(self, check_function.__name__)())
+
             if state == types.states.TaskState.FINISHED:
                 self._pop_current_op()  # Remove runing op, till now only was "peek"
                 return self._execute_queue()
@@ -499,3 +465,39 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             self._task,
         )
 
+
+# This is a map of operations to methods
+# Operations, duwe to the fact that can be overrided some of them, must be invoked via instance
+# Basically, all methods starting with _ are final, and all other are overridable
+# We use __name__ later to use them, so we can use type checking and invoke them via instance
+# Note that ERROR and FINISH are not here, as they final states not needing to be executed
+_EXEC_FNCS: typing.Final[collections.abc.Mapping[Operation, collections.abc.Callable[[FixedUserService], None]]] = {
+    Operation.CREATE: FixedUserService._create,
+    Operation.RETRY: FixedUserService._retry,
+    Operation.START: FixedUserService.start_machine,
+    Operation.STOP: FixedUserService.stop_machine,
+    Operation.WAIT: FixedUserService._wait,
+    Operation.REMOVE: FixedUserService.remove,
+    Operation.SNAPSHOT_CREATE: FixedUserService._snapshot_create,
+    Operation.SNAPSHOT_RECOVER: FixedUserService._snapshot_recover,
+    Operation.PROCESS_TOKEN: FixedUserService._process_token,
+    Operation.SOFT_SHUTDOWN: FixedUserService.soft_shutdown_machine,
+    Operation.NOP: FixedUserService._nop,
+}
+
+# Same af before, but for check methods
+_CHECK_FNCS: typing.Final[
+    collections.abc.Mapping[Operation, collections.abc.Callable[[FixedUserService], types.states.TaskState]]
+] = {
+    Operation.CREATE: FixedUserService.create_checker,
+    Operation.RETRY: FixedUserService.retry_checker,
+    Operation.WAIT: FixedUserService.wait_checker,
+    Operation.START: FixedUserService.start_checker,
+    Operation.STOP: FixedUserService.stop_checker,
+    Operation.REMOVE: FixedUserService.removed_checker,
+    Operation.SNAPSHOT_CREATE: FixedUserService.snapshot_create_checker,
+    Operation.SNAPSHOT_RECOVER: FixedUserService.snapshot_recover_checker,
+    Operation.PROCESS_TOKEN: FixedUserService.process_token_checker,
+    Operation.SOFT_SHUTDOWN: FixedUserService.soft_shutdown_checker,
+    Operation.NOP: FixedUserService.nop_checker,
+}

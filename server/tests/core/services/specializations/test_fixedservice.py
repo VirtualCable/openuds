@@ -247,17 +247,17 @@ class FixedServiceTest(UDSTestCase):
 class FixedTestingUserService(fixed_userservice.FixedUserService):
     mock: 'mock.Mock' = mock.MagicMock()
 
-    def _start_machine(self) -> None:
+    def start_machine(self) -> None:
         self.mock._start_machine()
 
-    def _stop_machine(self) -> None:
+    def stop_machine(self) -> None:
         self.mock._stop_machine()
 
-    def _start_checker(self) -> types.states.TaskState:
+    def start_checker(self) -> types.states.TaskState:
         self.mock._start_checker()
         return types.states.TaskState.FINISHED
 
-    def _stop_checker(self) -> types.states.TaskState:
+    def stop_checker(self) -> types.states.TaskState:
         self.mock._stop_checker()
         return types.states.TaskState.FINISHED
 
