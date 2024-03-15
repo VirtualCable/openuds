@@ -9,13 +9,13 @@ from os.path import expanduser
 from uds import tools  # type: ignore
 
 home = expanduser('~') + ':1;/media:1;'
-keyFile = tools.save_temp_file(sp['key'])  # type: ignore
+keyFile = tools.saveTempFile(sp['key'])  # type: ignore
 theFile = sp['xf'].format(export=home, keyFile=keyFile.replace('\\', '/'), ip=sp['ip'], port=sp['port'])  # type: ignore
-filename = tools.save_temp_file(theFile)
+filename = tools.saveTempFile(theFile)
 
 # HOME=[temporal folder, where we create a .x2goclient folder and a sessions inside] pyhoca-cli -P UDS/test-session
 
-executable = tools.find_application('x2goclient')
+executable = tools.findApp('x2goclient')
 if executable is None:
     raise Exception(
         '''<p>You must have installed latest X2GO Client in order to connect to this UDS service.</p>
@@ -33,5 +33,5 @@ subprocess.Popen(
         '--add-to-known-hosts',
     ]
 )
-# tools.register_for_delayed_deletion(filename)
-# tools.register_for_delayed_deletion(keyFile)
+# tools.addFileToUnlink(filename)
+# tools.addFileToUnlink(keyFile)

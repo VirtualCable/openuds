@@ -33,12 +33,12 @@ try:
     wreg.SetValueEx(key, sp['ip'], 0, wreg.REG_DWORD, 255)  # type: ignore
     wreg.CloseKey(key)  # type: ignore
 except Exception as e:  # nosec: Not really interested in the exception
-    # logger.warning('Exception fixing redirection dialog: %s', e)
+    # logger.warn('Exception fixing redirection dialog: %s', e)
     pass  # Key does not exists, ok...
 
 # The password must be encoded, to be included in a .rdp file, as 'UTF-16LE' before protecting (CtrpyProtectData) it in order to work with mstsc
 theFile = sp['as_file'].format(password=password)  # type: ignore
-filename = tools.save_temp_file(theFile)
+filename = tools.saveTempFile(theFile)
 
 if sp['optimize_teams'] == True:  # type: ignore
     try:
@@ -46,13 +46,13 @@ if sp['optimize_teams'] == True:  # type: ignore
         h = wreg.OpenKey(wreg.HKEY_CLASSES_ROOT, '.rdp\\OpenWithProgids', 0, wreg.KEY_READ)  # type: ignore
         h.Close()
     except Exception:
-        raise Exception('Required Microsoft RDP Client is not found. Please, install it from Microsoft store.')
+        raise Exception('Required Microsoft Remote Desktop Application is not found. Please, install it from Microsoft store.')
     # Add .rdp to filename for open with
     os.rename(filename, filename + '.rdp')
     filename = filename + '.rdp'
     os.startfile(filename)  # type: ignore  # nosec
 else:
-    executable = tools.find_application('mstsc.exe')
+    executable = tools.findApp('mstsc.exe')
     if executable is None:
         raise Exception(
             'Unable to find mstsc.exe. Check that path points to your SYSTEM32 folder'
@@ -60,4 +60,4 @@ else:
 
     subprocess.Popen([executable, filename])  # nosec
 
-tools.register_for_delayed_deletion(filename)
+# tools.addFileToUnlink(filename)

@@ -1,4 +1,4 @@
-import subprocess  # nosec  No user input here
+import subprocess
 import shutil
 import os
 import os.path
@@ -16,16 +16,16 @@ msrdc_localized = (
 )
 # msrdc_app = '/Contents/MacOS/Microsoft Remote Desktop'
 
-xfreerdp = tools.find_application('xfreerdp')
+xfreerdp = tools.findApp('xfreerdp')
 executable = None
 
 
 def fixResolution():
     import re
-    import subprocess  # nosec  No user input here
+    import subprocess
 
     results = str(
-        subprocess.Popen(   # nosec  No user input here
+        subprocess.Popen(
             ['system_profiler SPDisplaysDataType'], stdout=subprocess.PIPE, shell=True
         ).communicate()[0]
     )
@@ -85,14 +85,14 @@ if executable is None:
         )
 if executable in (msrdc, msrdc_localized):
     theFile = sp['as_file']  # type: ignore
-    filename = tools.save_temp_file(theFile)
+    filename = tools.saveTempFile(theFile)
     # Rename as .rdp, so open recognizes it
     shutil.move(filename, filename + '.rdp')
 
-    # tools.add_task_to_wait(subprocess.Popen(['open', filename + '.rdp']))
+    # tools.addTaskToWait(subprocess.Popen(['open', filename + '.rdp']))
     # Force MSRDP to be used with -a (thanks to Dani Torregrosa @danitorregrosa (https://github.com/danitorregrosa) )
-    tools.add_task_to_wait(
-        subprocess.Popen(  # nosec  No user input here
+    tools.addTaskToWait(
+        subprocess.Popen(
             [
                 'open',
                 '-a',
@@ -101,7 +101,7 @@ if executable in (msrdc, msrdc_localized):
             ]
         )
     )
-    tools.register_for_delayed_deletion(filename + '.rdp')
+    tools.addFileToUnlink(filename + '.rdp')
 elif executable == xfreerdp:
     # Fix resolution...
     try:
@@ -110,4 +110,4 @@ elif executable == xfreerdp:
         xfparms = list(map(lambda x: x.replace('#WIDTH#', '1400').replace('#HEIGHT#', '800'), sp['as_new_xfreerdp_params']))  # type: ignore
 
     params = [os.path.expandvars(i) for i in [executable] + xfparms + ['/v:{}'.format(sp['address'])]]  # type: ignore
-    subprocess.Popen(params)  # nosec  No user input here
+    subprocess.Popen(params)

@@ -1,5 +1,4 @@
-import os
-import subprocess  # nosec
+import subprocess
 import win32crypt  # type: ignore
 import codecs
 
@@ -17,51 +16,46 @@ fs = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket'], ti
 
 # Check that tunnel works..
 if fs.check() is False:
-    raise Exception('<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>')
+    raise Exception(
+        '<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>'
+    )
 
 thePass = sp['password'].encode('UTF-16LE')  # type: ignore
 
 try:
-    password = codecs.encode(win32crypt.CryptProtectData(thePass, None, None, None, None, 0x01), 'hex').decode()
+    password = codecs.encode(
+        win32crypt.CryptProtectData(thePass, None, None, None, None, 0x01), 'hex'
+    ).decode()
 except Exception:
     # Cannot encrypt for user, trying for machine
-    password = codecs.encode(win32crypt.CryptProtectData(thePass, None, None, None, None, 0x05), 'hex').decode()
-
-try:
-    key = wreg.OpenKey(  # type: ignore
-        wreg.HKEY_CURRENT_USER,  # type: ignore
-        'Software\\Microsoft\\Terminal Server Client\\LocalDevices',
-        0,
-        wreg.KEY_SET_VALUE,  # type: ignore
-    )
-    wreg.SetValueEx(key, '127.0.0.1', 0, wreg.REG_DWORD, 255)  # type: ignore
-    wreg.CloseKey(key)  # type: ignore
-except Exception as e:  # nosec: Not really interested in the exception
-    # logger.warning('Exception fixing redirection dialog: %s', e)
-    pass  # Key does not exists, but it's ok
+    password = codecs.encode(
+        win32crypt.CryptProtectData(thePass, None, None, None, None, 0x05), 'hex'
+    ).decode()
 
 # The password must be encoded, to be included in a .rdp file, as 'UTF-16LE' before protecting (CtrpyProtectData) it in order to work with mstsc
 theFile = sp['as_file'].format(  # type: ignore
     password=password, address='127.0.0.1:{}'.format(fs.server_address[1])
 )
 
-filename = tools.save_temp_file(theFile)
+filename = tools.saveTempFile(theFile)
+executable = tools.findApp('mstsc.exe')
+if executable is None:
+    raise Exception(
+        'Unable to find mstsc.exe. Check that path points to your SYSTEM32 folder'
+    )
 
-if sp['optimize_teams']:  # type: ignore
-    try:
-        h = wreg.OpenKey(wreg.HKEY_CLASSES_ROOT, '.rdp\OpenWithProgids', 0, wreg.KEY_READ)  # type: ignore
-        h.Close()
-    except Exception:
-        raise Exception('<p>Required Microsoft RDP Client is not found.</p><p>Please, install it from <b>Microsoft store</b>.</p>')
-    # Add .rdp to filename for open with
-    os.rename(filename, filename + '.rdp')
-    filename = filename + '.rdp'
-    os.startfile(filename)  # type: ignore  # nosec
-else:
-    executable = tools.find_application('mstsc.exe')
-    if executable is None:
-        raise Exception('Unable to find mstsc.exe. Check that path points to your SYSTEM32 folder')
+try:
+    key = wreg.OpenKey(
+        wreg.HKEY_CURRENT_USER,
+        'Software\\Microsoft\\Terminal Server Client\\LocalDevices',
+        0,
+        wreg.KEY_SET_VALUE,
+    )
+    wreg.SetValueEx(key, '127.0.0.1', 0, wreg.REG_DWORD, 255)  # type: ignore
+    wreg.CloseKey(key)
+except Exception as e:
+    # logger.warn('Exception fixing redirection dialog: %s', e)
+    pass  # Key does not exists, but it's ok
 
-    subprocess.Popen([executable, filename])  # nosec
-
-# tools.register_for_delayed_deletion(filename)
+subprocess.Popen([executable, filename])
+tools.addFileToUnlink(filename)

@@ -56,5 +56,5 @@ theFile = theFile.format(
     port='-1' if not fs else fs.server_address[1],
 )
 
-filename = tools.save_temp_file(theFile)
+filename = tools.saveTempFile(theFile)
 subprocess.Popen([remoteViewer, filename])

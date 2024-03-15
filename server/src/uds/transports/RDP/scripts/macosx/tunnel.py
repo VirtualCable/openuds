@@ -1,6 +1,7 @@
-import subprocess  # nosec  No user input here
-import os
+# pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable, invalid-sequence-index
+import subprocess
 import shutil
+import os
 import os.path
 
 from uds.tunnel import forward  # type: ignore
@@ -13,10 +14,10 @@ globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
 
 def fixResolution():
     import re
-    import subprocess  # nosec  No user input here
+    import subprocess
 
     results = str(
-        subprocess.Popen(  # nosec  No user input here
+        subprocess.Popen(
             ['system_profiler SPDisplaysDataType'], stdout=subprocess.PIPE, shell=True
         ).communicate()[0]
     )
@@ -38,7 +39,7 @@ msrdc_localized = (
     '/Applications/Microsoft Remote Desktop.localized/Microsoft Remote Desktop.app'
 )
 
-xfreerdp = tools.find_application('xfreerdp')
+xfreerdp = tools.findApp('xfreerdp')
 executable = None
 
 # Check first xfreerdp, allow password redir
@@ -99,14 +100,14 @@ if fs.check() is False:
 if executable in (msrdc, msrdc_localized):
     theFile = theFile = sp['as_file'].format(address=address)  # type: ignore
 
-    filename = tools.save_temp_file(theFile)
+    filename = tools.saveTempFile(theFile)
     # Rename as .rdp, so open recognizes it
     shutil.move(filename, filename + '.rdp')
 
-    # tools.add_task_to_wait(subprocess.Popen(['open', filename + '.rdp']))
+    # tools.addTaskToWait(subprocess.Popen(['open', filename + '.rdp']))
     # Force MSRDP to be used with -a (thanks to Dani Torregrosa @danitorregrosa (https://github.com/danitorregrosa) )
-    tools.add_task_to_wait(
-        subprocess.Popen(  # nosec  No user input here
+    tools.addTaskToWait(
+        subprocess.Popen(
             [
                 'open',
                 '-a',
@@ -115,7 +116,7 @@ if executable in (msrdc, msrdc_localized):
             ]
         )
     )
-    tools.register_for_delayed_deletion(filename + '.rdp')
+    tools.addFileToUnlink(filename + '.rdp')
 elif executable == xfreerdp:
     # Fix resolution...
     try:
@@ -127,4 +128,4 @@ elif executable == xfreerdp:
         os.path.expandvars(i)
         for i in [executable] + xfparms + ['/v:{}'.format(address)]
     ]
-    subprocess.Popen(params)  # nosec  No user input here
+    subprocess.Popen(params)

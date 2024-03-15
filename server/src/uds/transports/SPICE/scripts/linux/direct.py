@@ -7,7 +7,7 @@ import subprocess
 
 from uds import tools  # type: ignore
 
-executable = tools.find_application('remote-viewer')
+executable = tools.findApp('remote-viewer')
 
 if executable is None:
     raise Exception(
@@ -20,6 +20,6 @@ if executable is None:
 
 theFile = sp['as_file']  # type: ignore
 
-filename = tools.save_temp_file(theFile)
+filename = tools.saveTempFile(theFile)
 
 subprocess.Popen([executable, filename])

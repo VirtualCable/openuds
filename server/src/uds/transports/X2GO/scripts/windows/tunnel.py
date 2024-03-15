@@ -22,12 +22,12 @@ if fs.check() is False:
 
 # Care, expanduser is encoding using "mcbs", so treat it as bytes on python 2.7
 home = expanduser('~').replace('\\', '\\\\') + '#1;'
-keyFile = tools.save_temp_file(sp['key'])  # type: ignore
+keyFile = tools.saveTempFile(sp['key'])  # type: ignore
 theFile = sp['xf'].format(export=home, keyFile=keyFile.replace('\\', '/'), ip='127.0.0.1', port=fs.server_address[1])  # type: ignore
-filename = tools.save_temp_file(theFile)
+filename = tools.saveTempFile(theFile)
 
 x2goPath = os.environ['PROGRAMFILES(X86)'] + '\\x2goclient'
-executable = tools.find_application('x2goclient.exe', [x2goPath])
+executable = tools.findApp('x2goclient.exe', [x2goPath])
 if executable is None:
     raise Exception(
         '''<p>You must have installed latest X2GO Client in default program file folder in order to connect to this UDS service.</p>
