@@ -96,6 +96,8 @@ class ServicesPools(ModelHandler):
         'ignores_unused',
         'account_id',
         'calendar_message',
+        'custom_message',
+        'display_custom_message',
     ]
 
     remove_fields = ['osmanager_id', 'service_id']
@@ -223,6 +225,8 @@ class ServicesPools(ModelHandler):
                 {'id': i.meta_pool.uuid, 'name': i.meta_pool.name} for i in item.memberOfMeta.all()
             ],
             'calendar_message': item.calendar_message,
+            'custom_message': item.custom_message,
+            'display_custom_message': item.display_custom_message,
         }
 
         # Extended info
@@ -384,6 +388,26 @@ class ServicesPools(ModelHandler):
                 'tab': gettext('Display'),
             },
             {
+                'name': 'custom_message',
+                'value': '',
+                'label': gettext('Custom launch message text'),
+                'tooltip': gettext(
+                    'Custom message to be shown to users, if active, when trying to start a service from this pool.'
+                ),
+                'type': types.ui.FieldType.TEXT,
+                'order': 123,
+                'tab': gettext('Display'),
+            },
+            {
+                'name': 'display_custom_message',
+                'value': False,
+                'label': gettext('Enable custom launch message'),
+                'tooltip': gettext('If active, the custom launch message will be shown to users'),
+                'type': types.ui.FieldType.CHECKBOX,
+                'order': 124,
+                'tab': gettext('Display'),
+            },
+            {
                 'name': 'initial_srvs',
                 'value': '0',
                 'min_value': '0',
@@ -475,10 +499,10 @@ class ServicesPools(ModelHandler):
                 serviceType = service.get_type()
 
                 if serviceType.publication_type is None:
-                    self._params['publish_on_save'] = False
+                    fields['publish_on_save'] = False
 
                 if serviceType.can_reset is False:
-                    self._params['allow_users_reset'] = False
+                    fields['allow_users_reset'] = False
 
                 if serviceType.needs_osmanager is True:
                     osmanager = OSManager.objects.get(uuid=process_uuid(fields['osmanager_id']))
@@ -592,7 +616,7 @@ class ServicesPools(ModelHandler):
         item = ensure.is_instance(item, ServicePool)
         self.ensure_has_access(item, types.permissions.PermissionType.MANAGEMENT)
 
-        fallback = self._params.get('fallbackAccess')
+        fallback = self._params.get('fallbackAccess', self.params.get('fallback', None))
         if fallback:
             logger.debug('Setting fallback of %s to %s', item.name, fallback)
             item.fallbackAccess = fallback
@@ -639,6 +663,7 @@ class ServicesPools(ModelHandler):
             consts.calendar.CALENDAR_ACTION_IGNORE_UNUSED,
             consts.calendar.CALENDAR_ACTION_REMOVE_USERSERVICES,
             consts.calendar.CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES,
+            consts.calendar.CALENDAR_ACTION_DISPLAY_CUSTOM_MESSAGE,
         ]
         return valid_actions
 

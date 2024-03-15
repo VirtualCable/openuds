@@ -48,6 +48,7 @@ from uds.core.util import log, permissions
 from uds.models import ManagedObjectModel, Tag, TaggingMixin
 
 from .base import BaseModelHandler
+from ..utils import camel_and_snake_case_from
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -352,15 +353,12 @@ class ModelHandler(BaseModelHandler):
         # if has custom methods, look for if this request matches any of them
         for cm in self.custom_methods:
             # Convert to snake case
-            snake_case_name = re.sub(r'(?<!^)(?=[A-Z])', '_', cm[0]).lower()
-            # And snake case to camel case (first letter lower case, rest upper case)
-            camel_case_name = ''.join(x.capitalize() for x in snake_case_name.split('_'))
-            camel_case_name = camel_case_name[0].lower() + camel_case_name[1:]
+            camel_case_name, snake_case_name = camel_and_snake_case_from(cm[0])
             if nArgs > 1 and cm[1] is True:  # Method needs parent (existing item)
                 if self._args[1] in (camel_case_name, snake_case_name):
                     item = None
                     # Check if operation method exists
-                    operation = getattr(self, snake_case_name) or getattr(self, camel_case_name)
+                    operation = getattr(self, snake_case_name, None) or getattr(self, camel_case_name, None)
                     try:
                         if not operation:
                             raise Exception()  # Operation not found

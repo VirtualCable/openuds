@@ -79,6 +79,7 @@ def _service_info(
     to_be_replaced: typing.Optional[str],
     to_be_replaced_text: str,
     custom_calendar_text: str,
+    custom_message_text: typing.Optional[str],
 ) -> collections.abc.Mapping[str, typing.Any]:
     return {
         'id': ('M' if is_meta else 'F') + uuid,
@@ -98,6 +99,7 @@ def _service_info(
         'to_be_replaced': to_be_replaced,
         'to_be_replaced_text': to_be_replaced_text,
         'custom_calendar_text': custom_calendar_text,
+        'custom_message_text': custom_message_text,
     }
 
 
@@ -186,6 +188,17 @@ def get_services_info_dict(
         # Check that we have access to at least one transport on some of its children
         transports_in_meta: list[collections.abc.Mapping[str, typing.Any]] = []
         in_use: bool = typing.cast(typing.Any, meta).number_in_use > 0  # Anotated value
+        custom_message: typing.Optional[str] = None
+
+        # Fist member of the pool that has a custom message, and is enabled, will be used
+        # Ordered by priority, using internal sort, to take advantage of prefetched data
+        sorted_members = sorted(meta.members.all(), key=lambda x: x.priority)
+
+        # Get first member with custom message visible and enabled for metapools
+        for member in sorted_members:
+            if member.pool.display_custom_message and member.pool.visible and member.pool.custom_message.strip():
+                custom_message = member.pool.custom_message
+                break
 
         # Calculate info variable macros content if needed
         info_vars = (
@@ -206,7 +219,7 @@ def get_services_info_dict(
             )
             transports_in_all_pools = reduce(
                 reducer,
-                [{t for t in _valid_transports(member)} for member in meta.members.all()],
+                [{t for t in _valid_transports(member)} for member in sorted_members],
             )
             transports_in_meta = _build_transports_for_meta(
                 transports_in_all_pools,
@@ -218,7 +231,7 @@ def get_services_info_dict(
             transports_in_all_pools_by_label: typing.Optional[typing.Set[str]] = None
             temporary_transport_set_by_label: typing.Set[str]
 
-            for member in meta.members.all():
+            for member in sorted_members:
                 temporary_transport_set_by_label = set()
                 # if first pool, get all its transports and check that are valid
                 for t in _valid_transports(member):
@@ -246,7 +259,7 @@ def get_services_info_dict(
                     {
                         'id': 'meta',
                         'name': 'meta',
-                        'link': html.uds_access_link(request, 'M' + meta.uuid, None), 
+                        'link': html.uds_access_link(request, 'M' + meta.uuid, None),
                         'priority': 0,
                     }
                     if any(_valid_transports(member) for member in meta.members.all())
@@ -279,6 +292,7 @@ def get_services_info_dict(
                     to_be_replaced=None,
                     to_be_replaced_text='',
                     custom_calendar_text=meta.calendar_message,
+                    custom_message_text=custom_message,
                 )
             )
 
@@ -373,6 +387,8 @@ def get_services_info_dict(
                 to_be_replaced=replace_date_as_str,
                 to_be_replaced_text=replace_date_info_text,
                 custom_calendar_text=service_pool.calendar_message,
+                # Only add custom message if it's enabled and has a message
+                custom_message_text=service_pool.custom_message if service_pool.display_custom_message and service_pool.custom_message.strip() else None,
             )
         )
 

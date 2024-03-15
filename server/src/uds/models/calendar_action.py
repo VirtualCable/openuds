@@ -139,57 +139,57 @@ class CalendarAction(UUIDModel):
         self.last_execution = sql_datetime()
         params = json.loads(self.params)
 
-        saveServicePool = save
+        should_save_servicepool = save
 
-        def numVal(field: str) -> int:
+        def _numeric_value(field: str) -> int:
             v = int(params[field])
             return v if v >= 0 else 0
 
         # Actions related to calendar actions
-        def set_l1_cache() -> None:
-            self.service_pool.cache_l1_srvs = numVal('size')
+        def _set_l1_cache() -> None:
+            self.service_pool.cache_l1_srvs = _numeric_value('size')
 
-        def set_l2_cache() -> None:
-            self.service_pool.cache_l2_srvs = numVal('size')
+        def _set_l2_cache() -> None:
+            self.service_pool.cache_l2_srvs = _numeric_value('size')
 
-        def set_initial() -> None:
-            self.service_pool.initial_srvs = numVal('size')
+        def _set_initial() -> None:
+            self.service_pool.initial_srvs = _numeric_value('size')
 
-        def set_max() -> None:
-            self.service_pool.max_srvs = numVal('size')
+        def _set_max() -> None:
+            self.service_pool.max_srvs = _numeric_value('size')
 
-        def publish() -> None:
-            nonlocal saveServicePool
+        def _publish() -> None:
+            nonlocal should_save_servicepool
             self.service_pool.publish()
-            saveServicePool = False
+            should_save_servicepool = False
 
-        def ignores_unused() -> None:
+        def _ignores_unused() -> None:
             self.service_pool.ignores_unused = params['state'] in ('true', '1', True)
 
-        def remove_userservices() -> None:
+        def _remove_userservices() -> None:
             # 1.- Remove usable assigned services (Ignore "creating ones", just for created)
             for userService in self.service_pool.assigned_user_services().filter(
                 state=types.states.State.USABLE
             ):
                 userService.remove()
 
-        def remove_stuck_userservice() -> None:
+        def _remove_stuck_userservice() -> None:
             # 1.- Remove stuck assigned services (Ignore "creating ones", just for created)
-            since = sql_datetime() - datetime.timedelta(hours=numVal('hours'))
+            since = sql_datetime() - datetime.timedelta(hours=_numeric_value('hours'))
             for userService in self.service_pool.assigned_user_services().filter(
                 state_date__lt=since, state=types.states.State.USABLE
             ):
                 userService.remove()
 
-        def del_all_transport() -> None:
+        def _del_all_transport() -> None:
             # 2.- Remove all transports
             self.service_pool.transports.clear()
 
-        def del_all_groups() -> None:
+        def _del_all_groups() -> None:
             # 3.- Remove all groups
             self.service_pool.assignedGroups.clear()
 
-        def clear_cache() -> None:
+        def _clear_cache() -> None:
             # 4.- Remove all cache_l1_srvs
             for i in self.service_pool.cached_users_services().filter(
                 UserServiceManager().get_cache_state_filter(
@@ -203,7 +203,7 @@ class CalendarAction(UUIDModel):
             ):
                 i.remove()
 
-        def add_del_transport() -> None:
+        def _add_del_transport() -> None:
             try:
                 t = Transport.objects.get(uuid=params['transport'])
                 if self.action == consts.calendar.CALENDAR_ACTION_ADD_TRANSPORT['id']:
@@ -215,7 +215,7 @@ class CalendarAction(UUIDModel):
                     'Scheduled action not executed because transport is not available anymore'
                 )
 
-        def add_del_group() -> None:
+        def _add_del_group() -> None:
             try:
                 auth, grp = params['group'].split('@')
                 grp = Authenticator.objects.get(uuid=auth).groups.get(uuid=grp)
@@ -225,46 +225,50 @@ class CalendarAction(UUIDModel):
                     self.service_pool.assignedGroups.remove(grp)
             except Exception:
                 self.service_pool.log('Scheduled action not executed because group is not available anymore')
+                
+        def _set_display_custom_message() -> None:
+            self.service_pool.display_custom_message = params['visible'] in ('true', '1', True)
 
         actions: collections.abc.Mapping[str, tuple[collections.abc.Callable[[], None], bool]] = {
             # Id, actions (lambda), saveServicePool (bool)
-            consts.calendar.CALENDAR_ACTION_CACHE_L1['id']: (set_l1_cache, True),
-            consts.calendar.CALENDAR_ACTION_CACHE_L2['id']: (set_l2_cache, True),
-            consts.calendar.CALENDAR_ACTION_INITIAL['id']: (set_initial, True),
-            consts.calendar.CALENDAR_ACTION_MAX['id']: (set_max, True),
-            consts.calendar.CALENDAR_ACTION_PUBLISH['id']: (publish, False),
-            consts.calendar.CALENDAR_ACTION_IGNORE_UNUSED['id']: (ignores_unused, True),
-            consts.calendar.CALENDAR_ACTION_REMOVE_USERSERVICES['id']: (remove_userservices, False),
+            consts.calendar.CALENDAR_ACTION_CACHE_L1['id']: (_set_l1_cache, True),
+            consts.calendar.CALENDAR_ACTION_CACHE_L2['id']: (_set_l2_cache, True),
+            consts.calendar.CALENDAR_ACTION_INITIAL['id']: (_set_initial, True),
+            consts.calendar.CALENDAR_ACTION_MAX['id']: (_set_max, True),
+            consts.calendar.CALENDAR_ACTION_PUBLISH['id']: (_publish, False),
+            consts.calendar.CALENDAR_ACTION_IGNORE_UNUSED['id']: (_ignores_unused, True),
+            consts.calendar.CALENDAR_ACTION_REMOVE_USERSERVICES['id']: (_remove_userservices, False),
             consts.calendar.CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES['id']: (
-                remove_stuck_userservice,
+                _remove_stuck_userservice,
                 False,
             ),
-            consts.calendar.CALENDAR_ACTION_DEL_ALL_TRANSPORTS['id']: (del_all_transport, False),
-            consts.calendar.CALENDAR_ACTION_DEL_ALL_GROUPS['id']: (del_all_groups, False),
-            consts.calendar.CALENDAR_ACTION_CLEAN_CACHE_L1['id']: (clear_cache, False),
-            consts.calendar.CALENDAR_ACTION_CLEAN_CACHE_L2['id']: (clear_cache, False),
+            consts.calendar.CALENDAR_ACTION_DEL_ALL_TRANSPORTS['id']: (_del_all_transport, False),
+            consts.calendar.CALENDAR_ACTION_DEL_ALL_GROUPS['id']: (_del_all_groups, False),
+            consts.calendar.CALENDAR_ACTION_CLEAN_CACHE_L1['id']: (_clear_cache, False),
+            consts.calendar.CALENDAR_ACTION_CLEAN_CACHE_L2['id']: (_clear_cache, False),
             consts.calendar.CALENDAR_ACTION_ADD_TRANSPORT['id']: (
-                add_del_transport,
+                _add_del_transport,
                 False,
             ),
             consts.calendar.CALENDAR_ACTION_DEL_TRANSPORT['id']: (
-                add_del_transport,
+                _add_del_transport,
                 False,
             ),
-            consts.calendar.CALENDAR_ACTION_ADD_GROUP['id']: (add_del_group, False),
-            consts.calendar.CALENDAR_ACTION_DEL_GROUP['id']: (add_del_group, False),
+            consts.calendar.CALENDAR_ACTION_ADD_GROUP['id']: (_add_del_group, False),
+            consts.calendar.CALENDAR_ACTION_DEL_GROUP['id']: (_add_del_group, False),
+            consts.calendar.CALENDAR_ACTION_DISPLAY_CUSTOM_MESSAGE['id']: (_set_display_custom_message, True),
         }
 
-        fncAction, saveServicePool = actions.get(self.action, (None, False))
+        action_executor, should_save_servicepool = actions.get(self.action, (None, False))
 
         action = consts.calendar.CALENDAR_ACTION_DICT.get(self.action)
         description = self.action if not action else action.get('description', self.action)
 
-        if fncAction:
+        if action_executor:
             try:
-                fncAction()
+                action_executor()
 
-                if saveServicePool:
+                if should_save_servicepool:
                     self.service_pool.save()
 
                 self.service_pool.log(

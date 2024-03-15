@@ -321,7 +321,8 @@ class Groups(DetailHandler):
     """
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
-        parent = ensure.is_instance(parent, models.ServicePool)
+        parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
+        
         return [
             {
                 'id': group.uuid,
@@ -337,7 +338,7 @@ class Groups(DetailHandler):
         ]
 
     def get_title(self, parent: 'Model') -> str:
-        parent = ensure.is_instance(parent, models.ServicePool)
+        parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
         return _('Assigned groups')
 
     def get_fields(self, parent: 'Model') -> list[typing.Any]:
@@ -369,7 +370,8 @@ class Groups(DetailHandler):
         return types.ui.RowStyleInfo(prefix='row-state-', field='state')
 
     def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
-        parent = ensure.is_instance(parent, models.ServicePool)
+        parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
+        
         group: models.Group = models.Group.objects.get(uuid=process_uuid(self._params['id']))
         parent.assignedGroups.add(group)
         log.log(

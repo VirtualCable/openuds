@@ -180,6 +180,18 @@ CALENDAR_ACTION_CLEAN_CACHE_L2: typing.Final['CalendarAction'] = {
     'params': (),
 }
 
+CALENDAR_ACTION_DISPLAY_CUSTOM_MESSAGE: typing.Final['CalendarAction'] = {
+    'id': 'DISPLAY_CUSTOM_MESSAGE',
+    'description': _('Custom message on launchers'),
+    'params': (
+        {
+            'type': 'bool',
+            'name': 'visible',
+            'description': _('Visible'),
+            'default': False,
+        },
+    ),
+}
 
 CALENDAR_ACTION_DICT: typing.Final[dict[str, 'CalendarAction']] = {
     c['id']: c
@@ -200,5 +212,6 @@ CALENDAR_ACTION_DICT: typing.Final[dict[str, 'CalendarAction']] = {
         CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES,
         CALENDAR_ACTION_CLEAN_CACHE_L1,
         CALENDAR_ACTION_CLEAN_CACHE_L2,
+        CALENDAR_ACTION_DISPLAY_CUSTOM_MESSAGE,
     )
 }

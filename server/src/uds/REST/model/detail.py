@@ -44,6 +44,7 @@ from uds.core.util.model import process_uuid
 from uds.REST.utils import rest_result
 
 from .base import BaseModelHandler
+from ..utils import camel_and_snake_case_from
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -113,13 +114,14 @@ class DetailHandler(BaseModelHandler):
         :param parent: Parent Model Element
         :param arg: argument to pass to custom method
         """
-        logger.debug('Checking custom method %s', check)
-        if check in self.custom_methods:
-            operation = getattr(self, check)
-
-            if not arg:
-                return operation(parent)
-            return operation(parent, arg)
+        for to_check in self.custom_methods:
+            camel_case_name, snake_case_name = camel_and_snake_case_from(to_check)
+            if check in (camel_case_name, snake_case_name):
+                operation = getattr(self, snake_case_name, None) or getattr(self, camel_case_name, None)
+                if operation:
+                    if not arg:
+                        return operation(parent)
+                    return operation(parent, arg)
 
         return None
 

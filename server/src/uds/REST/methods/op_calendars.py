@@ -39,7 +39,7 @@ from django.utils.translation import gettext as _
 from uds.core import types, consts
 from uds.core.util import log, ensure
 from uds.core.util.model import process_uuid
-from uds.models import Calendar, CalendarAction, CalendarAccess, ServicePool
+from uds import models
 from uds.REST.model import DetailHandler
 
 # Not imported at runtime, just for type checking
@@ -54,7 +54,7 @@ DENY = 'DENY'
 
 class AccessCalendars(DetailHandler):
     @staticmethod
-    def as_dict(item: 'CalendarAccess') -> types.rest.ItemDictType:
+    def as_dict(item: 'models.CalendarAccess|models.CalendarAccessMeta') -> types.rest.ItemDictType:
         return {
             'id': item.uuid,
             'calendar_id': item.calendar.uuid,
@@ -64,13 +64,13 @@ class AccessCalendars(DetailHandler):
         }
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
-        parent = ensure.is_instance(parent, ServicePool)
+        # parent can be a ServicePool or a metaPool
+        parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
+
         try:
             if not item:
                 return [AccessCalendars.as_dict(i) for i in parent.calendarAccess.all()]
-            return AccessCalendars.as_dict(
-                parent.calendarAccess.get(uuid=process_uuid(item))
-            )
+            return AccessCalendars.as_dict(parent.calendarAccess.get(uuid=process_uuid(item)))
         except Exception as e:
             logger.exception('err: %s', item)
             raise self.invalid_item_response() from e
@@ -86,34 +86,27 @@ class AccessCalendars(DetailHandler):
         ]
 
     def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
-        parent = ensure.is_instance(parent, ServicePool)
+        parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
         # If already exists
         uuid = process_uuid(item) if item is not None else None
 
         try:
-            calendar: Calendar = Calendar.objects.get(
-                uuid=process_uuid(self._params['calendar_id'])
-            )
+            calendar: models.Calendar = models.Calendar.objects.get(uuid=process_uuid(self._params['calendar_id']))
             access: str = self._params['access'].upper()
             if access not in (ALLOW, DENY):
                 raise Exception()
         except Exception as e:
-            raise self.invalid_request_response(
-                _('Invalid parameters on request')
-            ) from e
+            raise self.invalid_request_response(_('Invalid parameters on request')) from e
         priority = int(self._params['priority'])
 
         if uuid is not None:
-            calAccess: 'CalendarAccess' = parent.calendarAccess.get(uuid=uuid)
+            calAccess = parent.calendarAccess.get(uuid=uuid)
             calAccess.calendar = calendar
-            calAccess.service_pool = parent
             calAccess.access = access
             calAccess.priority = priority
             calAccess.save()
         else:
-            parent.calendarAccess.create(
-                calendar=calendar, access=access, priority=priority
-            )
+            parent.calendarAccess.create(calendar=calendar, access=access, priority=priority)
 
         log.log(
             parent,
@@ -123,7 +116,7 @@ class AccessCalendars(DetailHandler):
         )
 
     def delete_item(self, parent: 'Model', item: str) -> None:
-        parent = ensure.is_instance(parent, ServicePool)
+        parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
         calendarAccess = parent.calendarAccess.get(uuid=process_uuid(self._args[0]))
         logStr = f'Removed access calendar {calendarAccess.calendar.name} by {self._user.pretty_name}'
         calendarAccess.delete()
@@ -141,7 +134,7 @@ class ActionsCalendars(DetailHandler):
     ]
 
     @staticmethod
-    def as_dict(item: 'CalendarAction') -> dict[str, typing.Any]:
+    def as_dict(item: 'models.CalendarAction') -> dict[str, typing.Any]:
         action = consts.calendar.CALENDAR_ACTION_DICT.get(item.action)
         descrption = action.get('description') if action is not None else ''
         params = json.loads(item.params)
@@ -160,12 +153,10 @@ class ActionsCalendars(DetailHandler):
         }
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
-        parent = ensure.is_instance(parent, ServicePool)
+        parent = ensure.is_instance(parent, models.ServicePool)
         try:
             if item is None:
-                return [
-                    ActionsCalendars.as_dict(i) for i in parent.calendaraction_set.all()
-                ]
+                return [ActionsCalendars.as_dict(i) for i in parent.calendaraction_set.all()]
             i = parent.calendaraction_set.get(uuid=process_uuid(item))
             return ActionsCalendars.as_dict(i)
         except Exception as e:
@@ -179,18 +170,25 @@ class ActionsCalendars(DetailHandler):
             {'calendar': {'title': _('Calendar')}},
             {'description': {'title': _('Action')}},
             {'pretty_params': {'title': _('Parameters')}},
-            {'at_start': {'title': _('Relative to')}},
+            {
+                'at_start': {
+                    'title': _('Relative to'),
+                    'type': 'dict',
+                    'dict': {True: _('Start'), False: _('End')},
+                }
+            },
+            # {'at_start': {'title': _('At start')}},
             {'events_offset': {'title': _('Time offset')}},
             {'next_execution': {'title': _('Next execution'), 'type': 'datetime'}},
             {'last_execution': {'title': _('Last execution'), 'type': 'datetime'}},
         ]
 
     def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
-        parent = ensure.is_instance(parent, ServicePool)
+        parent = ensure.is_instance(parent, models.ServicePool)
         # If already exists
         uuid = process_uuid(item) if item is not None else None
 
-        calendar = Calendar.objects.get(uuid=process_uuid(self._params['calendar_id']))
+        calendar = models.Calendar.objects.get(uuid=process_uuid(self._params['calendar_id']))
         action = self._params['action'].upper()
         if action not in consts.calendar.CALENDAR_ACTION_DICT:
             raise self.invalid_request_response()
@@ -199,14 +197,14 @@ class ActionsCalendars(DetailHandler):
         params = json.dumps(self._params['params'])
 
         # logger.debug('Got parameters: {} {} {} {} ----> {}'.format(calendar, action, events_offset, at_start, params))
-        logStr = (
+        log_string = (
             f'{"Added" if uuid is None else "Updated"} scheduled action '
             f'{calendar.name},{action},{events_offset},{"start" if at_start else "end"},{params} '
             f'by {self._user.pretty_name}'
         )
 
         if uuid is not None:
-            calAction = CalendarAction.objects.get(uuid=uuid)
+            calAction = models.CalendarAction.objects.get(uuid=uuid)
             calAction.calendar = calendar
             calAction.service_pool = parent
             calAction.action = action
@@ -215,7 +213,7 @@ class ActionsCalendars(DetailHandler):
             calAction.params = params
             calAction.save()
         else:
-            CalendarAction.objects.create(
+            models.CalendarAction.objects.create(
                 calendar=calendar,
                 service_pool=parent,
                 action=action,
@@ -224,11 +222,11 @@ class ActionsCalendars(DetailHandler):
                 params=params,
             )
 
-        log.log(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
+        log.log(parent, log.LogLevel.INFO, log_string, log.LogSource.ADMIN)
 
     def delete_item(self, parent: 'Model', item: str) -> None:
-        parent = ensure.is_instance(parent, ServicePool)
-        calendarAction = CalendarAction.objects.get(uuid=process_uuid(self._args[0]))
+        parent = ensure.is_instance(parent, models.ServicePool)
+        calendarAction = models.CalendarAction.objects.get(uuid=process_uuid(self._args[0]))
         logStr = (
             f'Removed scheduled action "{calendarAction.calendar.name},'
             f'{calendarAction.action},{calendarAction.events_offset},'
@@ -241,10 +239,10 @@ class ActionsCalendars(DetailHandler):
         log.log(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
 
     def execute(self, parent: 'Model', item: str) -> typing.Any:
-        parent = ensure.is_instance(parent, ServicePool)
+        parent = ensure.is_instance(parent, models.ServicePool)
         logger.debug('Launching action')
         uuid = process_uuid(item)
-        calendarAction: CalendarAction = CalendarAction.objects.get(uuid=uuid)
+        calendarAction: models.CalendarAction = models.CalendarAction.objects.get(uuid=uuid)
         self.ensure_has_access(calendarAction, types.permissions.PermissionType.MANAGEMENT)
 
         logStr = (
