@@ -88,7 +88,7 @@ def fix_list_of_ids(idsList: list[str]) -> list[str]:
     return list(set([i.upper() for i in idsList] + [i.lower() for i in idsList]))
 
 
-def checkBlockedIp(request: 'ExtendedHttpRequest') -> None:
+def check_ip_is_blocked(request: 'ExtendedHttpRequest') -> None:
     if GlobalConfig.BLOCK_ACTOR_FAILURES.as_bool() is False:
         return
     fails = cache.get(request.ip) or 0
@@ -103,26 +103,28 @@ def checkBlockedIp(request: 'ExtendedHttpRequest') -> None:
         raise exceptions.rest.BlockAccess()
 
 
-def incFailedIp(request: 'ExtendedHttpRequest') -> None:
+def increase_failed_ip_count(request: 'ExtendedHttpRequest') -> None:
     fails = cache.get(request.ip, 0) + 1
     cache.put(request.ip, fails, GlobalConfig.LOGIN_BLOCK.as_int())
 
+P = typing.ParamSpec('P')
+T = typing.TypeVar('T')
 
 # Decorator that clears failed counter for the IP if succeeds
-def clearIfSuccess(func: collections.abc.Callable[..., typing.Any]) -> collections.abc.Callable[..., typing.Any]:
+def clear_on_success(func: collections.abc.Callable[P, T]) -> collections.abc.Callable[P, T]:
     @functools.wraps(func)
-    def wrapper(*args: typing.Any, **kwargs: typing.Any) -> typing.Any:
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
         _self = typing.cast('ActorV3Action', args[0])
         result = func(
             *args, **kwargs
         )  # If raises any exception, it will be raised and we will not clear the counter
-        clearFailedIp(_self._request)  # pylint: disable=protected-access
+        clear_failed_ip_counter(_self._request)  # pylint: disable=protected-access
         return result
 
     return wrapper
 
 
-def clearFailedIp(request: 'ExtendedHttpRequest') -> None:
+def clear_failed_ip_counter(request: 'ExtendedHttpRequest') -> None:
     cache.remove(request.ip)
 
 
@@ -166,13 +168,13 @@ class ActorV3Action(Handler):
 
     def post(self) -> dict[str, typing.Any]:
         try:
-            checkBlockedIp(self._request)
+            check_ip_is_blocked(self._request)
             result = self.action()
             logger.debug('Action result: %s', result)
             return result
         except (exceptions.rest.BlockAccess, KeyError):
             # For blocking attacks
-            incFailedIp(self._request)
+            increase_failed_ip_count(self._request)
         except Exception as e:
             logger.exception('Posting %s: %s', self.__class__, e)
 
@@ -235,10 +237,10 @@ class Test(ActorV3Action):
                 Server.objects.get(
                     token=self._params['token'], type=types.servers.ServerType.ACTOR
                 )  # Not assigned, because only needs check
-            clearFailedIp(self._request)
+            clear_failed_ip_counter(self._request)
         except Exception:
             # Increase failed attempts
-            incFailedIp(self._request)
+            increase_failed_ip_count(self._request)
             # And return test failed
             return ActorV3Action.actor_result('invalid token', error='invalid token')
 
@@ -842,7 +844,7 @@ class Notify(ActorV3Action):
 
         try:
             # Check block manually
-            checkBlockedIp(self._request)  # pylint: disable=protected-access
+            check_ip_is_blocked(self._request)  # pylint: disable=protected-access
             if action == NotifyActionType.LOGIN:
                 Login.action(typing.cast(Login, self))
             elif action == NotifyActionType.LOGOUT:
@@ -853,6 +855,6 @@ class Notify(ActorV3Action):
             return ActorV3Action.actor_result('ok')
         except UserService.DoesNotExist:
             # For blocking attacks
-            incFailedIp(self._request)  # pylint: disable=protected-access
+            increase_failed_ip_count(self._request)  # pylint: disable=protected-access
 
         raise exceptions.rest.AccessDenied('Access denied')
