@@ -121,13 +121,24 @@ VMS_INFO: list[ov_types.VMInfo] = [
 
 TEMPLATES_INFO: list[ov_types.TemplateInfo] = [
     ov_types.TemplateInfo(
-        id=f'tid-{i}',
+        id=f'teid-{i}',
         name=f'template-{i}',
         description=f'Template {i} description',
         cluster_id=from_list(CLUSTERS_INFO, i // 8).id,
         status=from_list([ov_types.TemplateStatus.OK, ov_types.TemplateStatus.UNKNOWN], i // 2),
     )
     for i in range(16)
+]
+
+SNAPSHOTS_INFO: list[ov_types.SnapshotInfo] = [
+    ov_types.SnapshotInfo(
+        id=f'snid-{i}',
+        name=f'snapshot-{i}',
+        description='Active VM',
+        status=ov_types.SnapshotStatus.OK,
+        type=ov_types.SnapshotType.ACTIVE,
+    )
+    for i in range(8)
 ]
 
 CONSOLE_CONNECTION_INFO: types.services.ConsoleConnectionInfo = types.services.ConsoleConnectionInfo(
@@ -146,6 +157,7 @@ CONSOLE_CONNECTION_INFO: types.services.ConsoleConnectionInfo = types.services.C
 # Methods that returns None or "internal" methods are not tested
 # The idea behind this is to allow testing the provider, service and deployment classes
 # without the need of a real OpenStack environment
+# all methods that returns None are provided by the auto spec mock
 CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     AutoSpecMethodInfo(client.Client.list_machines, return_value=VMS_INFO),
     AutoSpecMethodInfo(
@@ -180,11 +192,19 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
         client.Client.deploy_from_template,
         return_value=lambda *args, **kwargs: random.choice(VMS_INFO),  # pyright: ignore
     ),
+    AutoSpecMethodInfo(client.Client.list_snapshots, return_value=SNAPSHOTS_INFO),
+    AutoSpecMethodInfo(
+        client.Client.get_snapshot_info,
+        return_value=lambda snapshot_id, **kwargs: get_id(SNAPSHOTS_INFO, snapshot_id),  # pyright: ignore
+    ),
     AutoSpecMethodInfo(
         client.Client.get_console_connection_info,
         return_value=CONSOLE_CONNECTION_INFO,
     ),
-    
+    AutoSpecMethodInfo(
+        client.Client.create_snapshot,
+        return_value=lambda *args, **kwargs: random.choice(SNAPSHOTS_INFO),  # pyright: ignore
+    ),
     # connect returns None
     # Test method
     # AutoSpecMethodInfo(client.Client.list_projects, returns=True),

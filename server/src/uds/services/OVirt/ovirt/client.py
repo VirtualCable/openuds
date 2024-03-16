@@ -162,7 +162,7 @@ class Client:
                 for vm in typing.cast(list[typing.Any], self.api.system_service().vms_service().list())
             ]
 
-    @decorators.cached(prefix='o-vm', timeout=3, key_helper=_key_helper)
+    @decorators.cached(prefix='o-vm', timeout=consts.cache.SMALLEST_CACHE_TIMEOUT, key_helper=_key_helper)
     def get_machine_info(self, machine_id: str, **kwargs: typing.Any) -> ov_types.VMInfo:
         with _access_lock():
             try:
@@ -327,6 +327,7 @@ class Client:
                 )
             )
 
+    @decorators.cached(prefix='o-templates', timeout=consts.cache.DEFAULT_CACHE_TIMEOUT, key_helper=_key_helper)
     def get_template_info(self, template_id: str) -> ov_types.TemplateInfo:
         """
         Returns the template info for the given template id
@@ -399,9 +400,7 @@ class Client:
                 usb=usb,
             )  # display=display,
 
-            return ov_types.VMInfo.from_data(
-                self.api.system_service().vms_service().add(par)
-            )
+            return ov_types.VMInfo.from_data(self.api.system_service().vms_service().add(par))
 
     def remove_template(self, template_id: str) -> None:
         """
@@ -412,6 +411,71 @@ class Client:
         with _access_lock():
             self.api.system_service().templates_service().service(template_id).remove()
             # This returns nothing, if it fails it raises an exception
+
+    @decorators.cached(
+        prefix='o-templates', timeout=consts.cache.SMALLEST_CACHE_TIMEOUT, key_helper=_key_helper
+    )
+    def list_snapshots(self, machine_id: str) -> list[ov_types.SnapshotInfo]:
+        """
+        Lists the snapshots of the given machine
+        """
+        with _access_lock():
+            vm_service: typing.Any = self.api.system_service().vms_service().service(machine_id)
+
+            if vm_service.get() is None:
+                raise Exception('Machine not found')
+
+            return [
+                ov_types.SnapshotInfo.from_data(s)
+                for s in typing.cast(list[typing.Any], vm_service.snapshots_service().list())
+            ]
+
+    @decorators.cached(prefix='o-snapshot', timeout=consts.cache.SMALLEST_CACHE_TIMEOUT, key_helper=_key_helper)
+    def get_snapshot_info(self, machine_id: str, snapshot_id: str) -> ov_types.SnapshotInfo:
+        """
+        Returns the snapshot info for the given snapshot id
+        """
+        with _access_lock():
+            vm_service: typing.Any = self.api.system_service().vms_service().service(machine_id)
+
+            if vm_service.get() is None:
+                raise Exception('Machine not found')
+
+            return ov_types.SnapshotInfo.from_data(
+                typing.cast(
+                    ovirtsdk4.types.Snapshot,
+                    vm_service.snapshots_service().service(snapshot_id).get(),
+                )
+            )
+
+    def create_snapshot(
+        self, machine_id: str, snapshot_name: str, snapshot_description: str
+    ) -> ov_types.SnapshotInfo:
+        """
+        Creates a snapshot of the machine with the given name and description
+        """
+        with _access_lock():
+            vm_service: typing.Any = self.api.system_service().vms_service().service(machine_id)
+
+            if vm_service.get() is None:
+                raise Exception('Machine not found')
+
+            snapshot = ovirtsdk4.types.Snapshot(
+                name=snapshot_name, description=snapshot_description, persist_memorystate=True
+            )
+            return ov_types.SnapshotInfo.from_data(vm_service.snapshots_service().add(snapshot))
+
+    def remove_snapshot(self, machine_id: str, snapshot_id: str) -> None:
+        """
+        Removes the snapshot with the given id
+        """
+        with _access_lock():
+            vm_service: typing.Any = self.api.system_service().vms_service().service(machine_id)
+
+            if vm_service.get() is None:
+                raise Exception('Machine not found')
+
+            vm_service.snapshots_service().service(snapshot_id).remove()
 
     def start_machine(self, machine_id: str) -> None:
         """
@@ -434,10 +498,10 @@ class Client:
 
     def stop_machine(self, machine_id: str) -> None:
         """
-        Tries to start a machine. No check is done, it is simply requested to oVirt
+        Tries to stop a machine. No check is done, it is simply requested to oVirt
 
         Args:
-            machineId: Id of the machine
+            machine_id: Id of the machine
 
         Returns:
         """
@@ -448,13 +512,30 @@ class Client:
                 raise Exception('Machine not found')
 
             vm_service.stop()
+            
+    def shutdown_machine(self, machine_id: str) -> None:
+        """
+        Tries to shutdown a machine. No check is done, it is simply requested to oVirt
+
+        Args:
+            machine_id: Id of the machine
+
+        Returns:
+        """
+        with _access_lock():
+            vm_service: typing.Any = self.api.system_service().vms_service().service(machine_id)
+
+            if vm_service.get() is None:
+                raise Exception('Machine not found')
+
+            vm_service.shutdown()
 
     def suspend_machine(self, machine_id: str) -> None:
         """
-        Tries to start a machine. No check is done, it is simply requested to oVirt
+        Tries to suspend a machine. No check is done, it is simply requested to oVirt
 
         Args:
-            machineId: Id of the machine
+            machine_id: Id of the machine
 
         Returns:
         """
@@ -509,7 +590,9 @@ class Client:
             vmu = ovirtsdk4.types.Vm(usb=usb)
             vms.update(vmu)
 
-    def get_console_connection_info(self, machine_id: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
+    def get_console_connection_info(
+        self, machine_id: str
+    ) -> typing.Optional[types.services.ConsoleConnectionInfo]:
         """
         Gets the connetion info for the specified machine
         """

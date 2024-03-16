@@ -88,6 +88,41 @@ class TemplateStatus(enum.StrEnum):
             return TemplateStatus.ILLEGAL
 
 
+class SnapshotStatus(enum.StrEnum):
+    # Adapted from ovirtsdk4
+    IN_PREVIEW = 'in_preview'
+    LOCKED = 'locked'
+    OK = 'ok'
+
+    # Custom value to represent the snapshot is missing
+    UNKNOWN = 'unknown'
+
+    @staticmethod
+    def from_str(status: str) -> 'SnapshotStatus':
+        try:
+            return SnapshotStatus(status)
+        except ValueError:
+            return SnapshotStatus.UNKNOWN
+
+
+class SnapshotType(enum.StrEnum):
+    # Adapted from ovirtsdk4
+    ACTIVE = 'active'
+    PREVIEW = 'preview'
+    REGULAR = 'regular'
+    STATELESS = 'stateless'
+
+    # Custom value to represent the snapshot is missing
+    UNKNOWN = 'unknown'
+
+    @staticmethod
+    def from_str(status: str) -> 'SnapshotType':
+        try:
+            return SnapshotType(status)
+        except ValueError:
+            return SnapshotType.UNKNOWN
+
+
 @dataclasses.dataclass
 class StorageInfo:
     id: str
@@ -197,3 +232,28 @@ class TemplateInfo:
     @staticmethod
     def missing() -> 'TemplateInfo':
         return TemplateInfo(id='', name='', description='', cluster_id='', status=TemplateStatus.UNKNOWN)
+
+
+@dataclasses.dataclass
+class SnapshotInfo:
+    id: str
+    name: typing.Optional[str ]
+    description: str
+    status: SnapshotStatus
+    type: SnapshotType
+
+    @staticmethod
+    def from_data(snapshot: typing.Any) -> 'SnapshotInfo':
+        return SnapshotInfo(
+            id=snapshot.id,
+            name=snapshot.name,
+            description=snapshot.description,
+            status=SnapshotStatus.from_str(snapshot.snapshot_status.value),
+            type=SnapshotType.from_str(snapshot.snapshot_type.value),
+        )
+
+    @staticmethod
+    def missing() -> 'SnapshotInfo':
+        return SnapshotInfo(
+            id='', name='', description='', status=SnapshotStatus.UNKNOWN, type=SnapshotType.UNKNOWN
+        )

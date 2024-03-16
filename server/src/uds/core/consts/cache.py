@@ -38,6 +38,7 @@ DEFAULT_CACHE_TIMEOUT: typing.Final[int] = 60 * 3  # 3 minutes
 LONG_CACHE_TIMEOUT: typing.Final[int] = DEFAULT_CACHE_TIMEOUT * 20  # 1 hour
 EXTREME_CACHE_TIMEOUT: typing.Final[int] = LONG_CACHE_TIMEOUT * 24  # 1 day
 SHORT_CACHE_TIMEOUT: typing.Final[int] = DEFAULT_CACHE_TIMEOUT // 3  # 1 minute
+SMALLEST_CACHE_TIMEOUT: typing.Final[int] = 3  # 3 seconds
 
 # Used to mark a cache as not found
 # use "cache.get(..., default=CACHE_NOT_FOUND)" to check if a cache is non existing instead of real None value
