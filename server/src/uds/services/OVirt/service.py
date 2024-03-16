@@ -41,12 +41,15 @@ from uds.core.util import validators, fields
 from uds.core.ui import gui
 
 from .publication import OVirtPublication
-from .deployment import OVirtLinkedDeployment
+from .deployment import OVirtLinkedUserService
 from . import helpers
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from .provider import OVirtProvider
+    
+
+from .ovirt import types as ov_types
 
 logger = logging.getLogger(__name__)
 
@@ -97,7 +100,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
     # : In our case, we do no need a publication, so this is None
     publication_type = OVirtPublication
     # : Types of deploys (services in cache and/or assigned to users)
-    user_service_type = OVirtLinkedDeployment
+    user_service_type = OVirtLinkedUserService
 
     allowed_protocols = types.transports.Protocol.generic_vdi(types.transports.Protocol.SPICE)
     services_type_provided = types.services.ServiceType.VDI
@@ -254,7 +257,10 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         """
         return re.sub("[^a-zA-Z0-9_-]", "_", name)
 
-    def make_template(self, name: str, comments: str) -> str:
+    class TemplateInfo:
+        pass
+
+    def make_template(self, name: str, comments: str) -> ov_types.TemplateInfo:
         """
         Invokes makeTemplate from parent provider, completing params
 
@@ -281,20 +287,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
             self.display.value,
         )
 
-    def get_template_state(self, template_id: str) -> str:
-        """
-        Invokes getTemplateState from parent provider
-
-        Args:
-            templateId: templateId to remove
-
-        Returns nothing
-
-        Raises an exception if operation fails.
-        """
-        return self.provider().api.get_template_state(template_id)
-
-    def deploy_from_template(self, name: str, comments: str, templateId: str) -> str:
+    def deploy_from_template(self, name: str, comments: str, template_id: str) -> ov_types.VMInfo:
         """
         Deploys a virtual machine on selected cluster from selected template
 
@@ -307,96 +300,20 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
             guaranteedMB: Minimum memory guaranteed for this machine
 
         Returns:
-            Id of the machine being created form template
+            Info of the deployed machine
         """
-        logger.debug('Deploying from template %s machine %s', templateId, name)
+        logger.debug('Deploying from template %s machine %s', template_id, name)
         self.verify_free_storage()
         return self.provider().api.deploy_from_template(
             name,
             comments,
-            templateId,
+            template_id,
             self.cluster.value,
             self.display.value,
             self.usb.value,
             int(self.memory.value),
             int(self.guaranteed_memory.value),
         )
-
-    def remove_template(self, template_id: str) -> None:
-        """
-        invokes removeTemplate from parent provider
-        """
-        self.provider().api.remove_template(template_id)
-
-    def get_machine_state(self, machine_id: str) -> str:
-        """
-        Invokes getMachineState from parent provider
-        (returns if machine is "active" or "inactive"
-
-        Args:
-            machineId: If of the machine to get state
-
-        Returns:
-            one of this values:
-             unassigned, down, up, powering_up, powered_down,
-             paused, migrating_from, migrating_to, unknown, not_responding,
-             wait_for_launch, reboot_in_progress, saving_state, restoring_state,
-             suspended, image_illegal, image_locked or powering_down
-             Also can return'unknown' if Machine is not known
-        """
-        return self.provider().api.get_machine_state(machine_id)
-
-    def start_machine(self, machine_id: str) -> None:
-        """
-        Tries to start a machine. No check is done, it is simply requested to oVirt.
-
-        This start also "resume" suspended/paused machines
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        self.provider().api.start_machine(machine_id)
-
-    def stop_machine(self, machine_id: str) -> None:
-        """
-        Tries to start a machine. No check is done, it is simply requested to oVirt
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        self.provider().api.stop_machine(machine_id)
-
-    def suspend_machine(self, machine_id: str) -> None:
-        """
-        Tries to start a machine. No check is done, it is simply requested to oVirt
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        self.provider().api.suspend_machine(machine_id)
-
-    def remove_machine(self, machine_id: str) -> None:
-        """
-        Tries to delete a machine. No check is done, it is simply requested to oVirt
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        self.provider().api.remove_machine(machine_id)
-
-    def update_machine_mac(self, machine_id: str, mac: str) -> None:
-        """
-        Changes the mac address of first nic of the machine to the one specified
-        """
-        self.provider().api.update_machine_mac(machine_id, mac)
 
     def fix_usb(self, machine_id: str) -> None:
         # If has usb, upgrade vm to add it now
@@ -428,7 +345,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         return self.display.value
 
     def get_console_connection(self, machine_id: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
-        return self.provider().api.get_console_connection(machine_id)
+        return self.provider().api.get_console_connection_info(machine_id)
 
     def is_avaliable(self) -> bool:
         return self.provider().is_available()

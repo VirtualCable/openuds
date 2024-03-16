@@ -40,6 +40,8 @@ from uds.core.services import Publication
 from uds.core import types
 from uds.core.util import autoserializable
 
+from .ovirt import types as ov_types
+
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from .service import OVirtLinkedService
@@ -101,7 +103,7 @@ class OVirtPublication(Publication, autoserializable.AutoSerializable):
         self._state = 'locked'
 
         try:
-            self._template_id = self.service().make_template(self._name, comments)
+            self._template_id = self.service().make_template(self._name, comments).id
         except Exception as e:
             self._state = 'error'
             self._reason = str(e)
@@ -120,20 +122,22 @@ class OVirtPublication(Publication, autoserializable.AutoSerializable):
             return types.states.State.ERROR
 
         try:
-            self._state = self.service().get_template_state(self._template_id)
-            if self._state == 'removed':
+            status = self.service().provider().api.get_template_info(self._template_id).status
+            if status == ov_types.TemplateStatus.UNKNOWN:
                 raise Exception('Template has been removed!')
+
+            # If publication os done (template is ready), and cancel was requested, do it just after template becomes ready
+            if status == ov_types.TemplateStatus.OK:
+                self._state = 'ok'
+                if self._destroy_after:
+                    self._destroy_after = False
+                    return self.destroy()
+                return types.states.State.FINISHED
+
         except Exception as e:
             self._state = 'error'
             self._reason = str(e)
             return types.states.State.ERROR
-
-        # If publication os done (template is ready), and cancel was requested, do it just after template becomes ready
-        if self._state == 'ok':
-            if self._destroy_after:
-                self._destroy_after = False
-                return self.destroy()
-            return types.states.State.FINISHED
 
         return types.states.State.RUNNING
 
@@ -164,7 +168,7 @@ class OVirtPublication(Publication, autoserializable.AutoSerializable):
             return types.states.State.RUNNING
 
         try:
-            self.service().remove_template(self._template_id)
+            self.service().provider().api.remove_template(self._template_id)
         except Exception as e:
             self._state = 'error'
             self._reason = str(e)

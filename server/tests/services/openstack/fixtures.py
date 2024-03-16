@@ -262,35 +262,37 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     ),
     AutoSpecMethodInfo(
         openstack_client.OpenstackClient.get_server,
-        method=lambda server_id: get_id(SERVERS_LIST, server_id),  # pyright: ignore
+        return_value=lambda server_id: get_id(SERVERS_LIST, server_id),  # pyright: ignore
     ),  # pyright: ignore
     AutoSpecMethodInfo(
         openstack_client.OpenstackClient.get_volume,
-        method=lambda volume_id: get_id(VOLUMES_LIST, volume_id),  # pyright: ignore
+        return_value=lambda volume_id: get_id(VOLUMES_LIST, volume_id),  # pyright: ignore
     ),  # pyright: ignore
     AutoSpecMethodInfo(
         openstack_client.OpenstackClient.get_volume_snapshot,
-        method=lambda snapshot_id: get_id(VOLUME_SNAPSHOTS_LIST, snapshot_id),  # pyright: ignore
+        return_value=lambda snapshot_id: get_id(VOLUME_SNAPSHOTS_LIST, snapshot_id),  # pyright: ignore
     ),  # pyright: ignore
     AutoSpecMethodInfo(
         openstack_client.OpenstackClient.update_snapshot,
-        method=lambda snapshot_id, name, description: get_id(  # pyright: ignore
+        return_value=lambda snapshot_id, name, description: get_id(  # pyright: ignore
             VOLUME_SNAPSHOTS_LIST, snapshot_id  # pyright: ignore
         ),
     ),
     AutoSpecMethodInfo(
         openstack_client.OpenstackClient.create_volume_snapshot,
-        method=lambda volume_id, name, description: random.choice(VOLUME_SNAPSHOTS_LIST),  # pyright: ignore
+        return_value=lambda volume_id, name, description: random.choice(  # pyright: ignore
+            VOLUME_SNAPSHOTS_LIST,
+        ),
     ),
     AutoSpecMethodInfo(
         openstack_client.OpenstackClient.create_volume_from_snapshot,
-        method=lambda snapshot_id, name, description: get_id(  # pyright: ignore
+        return_value=lambda snapshot_id, name, description: get_id(  # pyright: ignore
             VOLUMES_LIST, f'vid{len(VOLUMES_LIST) + 1}'
         ),
     ),
     AutoSpecMethodInfo(
         openstack_client.OpenstackClient.create_server_from_snapshot,
-        method=lambda *args, **kwargs: random.choice(SERVERS_LIST),  # pyright: ignore
+        return_value=lambda *args, **kwargs: random.choice(SERVERS_LIST),  # pyright: ignore
     ),
     AutoSpecMethodInfo(
         openstack_client.OpenstackClient.test_connection,
@@ -305,7 +307,7 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     # AutoSpecMethodInfo(client.Client.list_projects, return_value=True),
     # AutoSpecMethodInfo(
     #    client.ProxmoxClient.get_node_stats,
-    #    method=lambda node, **kwargs: next(filter(lambda n: n.name == node, NODE_STATS)),  # pyright: ignore
+    #    return_value=lambda node, **kwargs: next(filter(lambda n: n.name == node, NODE_STATS)),  # pyright: ignore
     # ),
 ]
 

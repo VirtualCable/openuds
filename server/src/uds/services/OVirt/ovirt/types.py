@@ -3,7 +3,7 @@ import typing
 import dataclasses
 
 
-class VmStatus(enum.StrEnum):
+class VMStatus(enum.StrEnum):
     # Adapted from ovirtsdk4
     DOWN = 'down'
     IMAGE_LOCKED = 'image_locked'
@@ -22,11 +22,11 @@ class VmStatus(enum.StrEnum):
     WAIT_FOR_LAUNCH = 'wait_for_launch'
 
     @staticmethod
-    def from_str(status: str) -> 'VmStatus':
+    def from_str(status: str) -> 'VMStatus':
         try:
-            return VmStatus(status)
+            return VMStatus(status)
         except ValueError:
-            return VmStatus.UNKNOWN
+            return VMStatus.UNKNOWN
 
 
 class StorageStatus(enum.StrEnum):
@@ -49,6 +49,7 @@ class StorageStatus(enum.StrEnum):
         except ValueError:
             return StorageStatus.UNKNOWN
 
+
 class StorageType(enum.StrEnum):
     # Adapted from ovirtsdk4
     DATA = 'data'
@@ -57,16 +58,34 @@ class StorageType(enum.StrEnum):
     ISO = 'iso'
     MANAGED_BLOCK_STORAGE = 'managed_block_storage'
     VOLUME = 'volume'
-    
+
     # Custom value to represent an unknown storage type
     UNKNOWN = 'unknown'
-    
+
     @staticmethod
     def from_str(type: str) -> 'StorageType':
         try:
             return StorageType(type)
         except ValueError:
             return StorageType.UNKNOWN
+
+
+class TemplateStatus(enum.StrEnum):
+    # Adapted from ovirtsdk4
+    ILLEGAL = 'illegal'
+    LOCKED = 'locked'
+    OK = 'ok'
+
+    # Custom value to represent the template is missing
+    # Used on get_template_info
+    UNKNOWN = 'unknown'
+
+    @staticmethod
+    def from_str(status: str) -> 'TemplateStatus':
+        try:
+            return TemplateStatus(status)
+        except ValueError:
+            return TemplateStatus.ILLEGAL
 
 
 @dataclasses.dataclass
@@ -98,7 +117,7 @@ class StorageInfo:
 class DatacenterInfo:
     name: str
     id: str
-    storage_type: str
+    local_storage: bool
     description: str
     storage: list[StorageInfo]
 
@@ -107,7 +126,7 @@ class DatacenterInfo:
         return DatacenterInfo(
             name=datacenter.name,
             id=datacenter.id,
-            storage_type=datacenter.local and 'local' or 'shared',
+            local_storage=datacenter.local,
             description=datacenter.description,
             storage=storage,
         )
@@ -136,7 +155,7 @@ class VMInfo:
     usb_enabled: bool
     # usb legacy is not supported anymore, so we only have "native"
     # and does not needs a separate field
-    status: VmStatus
+    status: VMStatus
 
     @staticmethod
     def from_data(vm: typing.Any) -> 'VMInfo':
@@ -149,5 +168,32 @@ class VMInfo:
             id=vm.id,
             cluster_id=vm.cluster.id,
             usb_enabled=usb_enabled,
-            status=VmStatus.from_str(vm.status.value),
+            status=VMStatus.from_str(vm.status.value),
         )
+
+    @staticmethod
+    def missing() -> 'VMInfo':
+        return VMInfo(name='', id='', cluster_id='', usb_enabled=False, status=VMStatus.UNKNOWN)
+
+
+@dataclasses.dataclass
+class TemplateInfo:
+    id: str
+    name: str
+    description: str
+    cluster_id: str
+    status: TemplateStatus
+
+    @staticmethod
+    def from_data(template: typing.Any) -> 'TemplateInfo':
+        return TemplateInfo(
+            id=template.id,
+            name=template.name,
+            description=template.description,
+            cluster_id=template.cluster.id,
+            status=TemplateStatus.from_str(template.status.value),
+        )
+
+    @staticmethod
+    def missing() -> 'TemplateInfo':
+        return TemplateInfo(id='', name='', description='', cluster_id='', status=TemplateStatus.UNKNOWN)

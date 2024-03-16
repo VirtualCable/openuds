@@ -35,6 +35,7 @@ import threading
 import logging
 import typing
 import collections.abc
+import ssl  # for getting server certificate
 
 import ovirtsdk4
 import ovirtsdk4.types
@@ -162,11 +163,14 @@ class Client:
             ]
 
     @decorators.cached(prefix='o-vm', timeout=3, key_helper=_key_helper)
-    def get_machine(self, machine_id: str, **kwargs: typing.Any) -> ov_types.VMInfo:
+    def get_machine_info(self, machine_id: str, **kwargs: typing.Any) -> ov_types.VMInfo:
         with _access_lock():
-            return ov_types.VMInfo.from_data(
-                typing.cast(typing.Any, self.api.system_service().vms_service().service(machine_id).get())
-            )
+            try:
+                return ov_types.VMInfo.from_data(
+                    typing.cast(typing.Any, self.api.system_service().vms_service().service(machine_id).get())
+                )
+            except Exception:
+                return ov_types.VMInfo.missing()
 
     @decorators.cached(prefix='o-clusters', timeout=consts.cache.LONG_CACHE_TIMEOUT, key_helper=_key_helper)
     def list_clusters(self, **kwargs: typing.Any) -> list[ov_types.ClusterInfo]:
@@ -258,7 +262,7 @@ class Client:
         cluster_id: str,
         storage_id: str,
         display_type: str,
-    ) -> str:
+    ) -> ov_types.TemplateInfo:
         """
         Publish the machine (makes a template from it so we can create COWs) and returns the template id of
         the creating machine
@@ -316,36 +320,27 @@ class Client:
             template = ovirtsdk4.types.Template(name=name, vm=tvm, cluster=tcluster, description=comments)
 
             # display=display)
+            return ov_types.TemplateInfo.from_data(
+                typing.cast(
+                    ovirtsdk4.types.Template,
+                    self.api.system_service().templates_service().add(template),
+                )
+            )
 
-            return typing.cast(str, self.api.system_service().templates_service().add(template).id)
-
-    def get_template_state(self, template_id: str) -> str:
+    def get_template_info(self, template_id: str) -> ov_types.TemplateInfo:
         """
-        Returns current template state.
-        This method do not uses cache at all (it always tries to get template state from oVirt server)
-
-        Returned values could be:
-            ok
-            locked
-            removed
-
-        (don't know if ovirt returns something more right now, will test what happens when template can't be published)
+        Returns the template info for the given template id
         """
         with _access_lock():
             try:
-                # we cast constantly to typing.Any because pyright does not recognize the types
-                # But anotate the "real" type on the cast
-                template: typing.Any = typing.cast(
-                    ovirtsdk4.types.Template,
-                    self.api.system_service().templates_service().service(template_id).get(),
+                return ov_types.TemplateInfo.from_data(
+                    typing.cast(
+                        ovirtsdk4.types.Template,
+                        self.api.system_service().templates_service().service(template_id).get(),
+                    )
                 )
-
-                if not template:
-                    return 'removed'
-
-                return template.status.value
             except Exception:  # Not found
-                return 'removed'
+                return ov_types.TemplateInfo.missing()
 
     def deploy_from_template(
         self,
@@ -357,7 +352,7 @@ class Client:
         usb_type: str,
         memory_mb: int,
         guaranteed_mb: int,
-    ) -> str:
+    ) -> ov_types.VMInfo:
         """
         Deploys a virtual machine on selected cluster from selected template
 
@@ -404,40 +399,19 @@ class Client:
                 usb=usb,
             )  # display=display,
 
-            return typing.cast(str, self.api.system_service().vms_service().add(par).id)
+            return ov_types.VMInfo.from_data(
+                self.api.system_service().vms_service().add(par)
+            )
 
-    def remove_template(self, templateId: str) -> None:
+    def remove_template(self, template_id: str) -> None:
         """
         Removes a template from ovirt server
 
         Returns nothing, and raises an Exception if it fails
         """
         with _access_lock():
-            self.api.system_service().templates_service().service(templateId).remove()
+            self.api.system_service().templates_service().service(template_id).remove()
             # This returns nothing, if it fails it raises an exception
-
-    def get_machine_state(self, machine_id: str) -> ov_types.VmStatus:
-        """
-        Returns current state of a machine (running, suspended, ...).
-        This method do not uses cache at all (it always tries to get machine state from oVirt server)
-
-        Args:
-            machineId: Id of the machine to get status
-
-        Returns:
-            one of this values:
-             unassigned, down, up, powering_up, powered_down,
-             paused, migrating_from, migrating_to, unknown, not_responding,
-             wait_for_launch, reboot_in_progress, saving_state, restoring_state,
-             suspended, image_illegal, image_locked or powering_down
-             Also can return'unknown' if Machine is not known
-        """
-        with _access_lock():
-            try:
-                vm_info = self.get_machine(machine_id)
-                return vm_info.status
-            except Exception:  # machine not found
-                return ov_types.VmStatus.UNKNOWN
 
     def start_machine(self, machine_id: str) -> None:
         """
@@ -535,7 +509,7 @@ class Client:
             vmu = ovirtsdk4.types.Vm(usb=usb)
             vms.update(vmu)
 
-    def get_console_connection(self, machine_id: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
+    def get_console_connection_info(self, machine_id: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
         """
         Gets the connetion info for the specified machine
         """
@@ -550,10 +524,12 @@ class Client:
                 display = vm.display
                 ticket = vm_service.ticket()
 
+                ca: str = ''  # Not known ca
                 # Get host subject
                 cert_subject = ''
                 if display.certificate is not None:
                     cert_subject = display.certificate.subject
+                    ca = display.certificate.content
                 else:
                     for i in typing.cast(
                         collections.abc.Iterable[typing.Any], self.api.system_service().hosts_service().list()
@@ -572,6 +548,12 @@ class Client:
                         # If found
                         if cert_subject != '':
                             break
+                    # Try to get certificate from host
+                    # Note: This will only work if the certificate is self-signed
+                    try:
+                        ca = ssl.get_server_certificate((display.address, display.secure_port))
+                    except Exception:
+                        ca = ''
 
                 return types.services.ConsoleConnectionInfo(
                     type=display.type.value,
@@ -579,6 +561,7 @@ class Client:
                     port=display.port,
                     secure_port=display.secure_port,
                     cert_subject=cert_subject,
+                    ca=ca,
                     ticket=types.services.ConsoleConnectionTicket(value=ticket.value),
                 )
 

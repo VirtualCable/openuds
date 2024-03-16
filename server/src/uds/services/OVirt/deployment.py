@@ -41,6 +41,7 @@ from uds.core.managers.userservice import UserServiceManager
 from uds.core.util import autoserializable, log
 
 from .jobs import OVirtDeferredRemoval
+from .ovirt import types as ov_types
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -78,10 +79,15 @@ class Operation(enum.IntEnum):
             return Operation.opUnknown
 
 
-UP_STATES: typing.Final[set[str]] = {'up', 'reboot_in_progress', 'powering_up', 'restoring_state'}
+UP_STATES: typing.Final[set[ov_types.VMStatus]] = {
+    ov_types.VMStatus.UP,
+    ov_types.VMStatus.REBOOT_IN_PROGRESS,
+    ov_types.VMStatus.POWERING_UP,
+    ov_types.VMStatus.RESTORING_STATE,
+}
 
 
-class OVirtLinkedDeployment(services.UserService, autoserializable.AutoSerializable):
+class OVirtLinkedUserService(services.UserService, autoserializable.AutoSerializable):
     """
     This class generates the user consumable elements of the service tree.
 
@@ -201,12 +207,12 @@ class OVirtLinkedDeployment(services.UserService, autoserializable.AutoSerializa
             return types.states.TaskState.FINISHED
 
         try:
-            state = self.service().get_machine_state(self._vmid)
+            vminfo = self.service().provider().api.get_machine_info(self._vmid)
 
-            if state == 'unknown':
-                return self._error('Machine is not available anymore')
+            if vminfo.status == ov_types.VMStatus.UNKNOWN:
+                return self._error('Machine not found')
 
-            if state not in UP_STATES:
+            if vminfo.status not in UP_STATES:
                 self._queue = [Operation.START, Operation.FINISH]
                 return self._execute_queue()
 
@@ -222,7 +228,7 @@ class OVirtLinkedDeployment(services.UserService, autoserializable.AutoSerializa
         o oVirt, reset operation just shutdowns it until v3 support is removed
         """
         if self._vmid != '':
-            self.service().stop_machine(self._vmid)
+            self.service().provider().api.stop_machine(self._vmid)
 
     def get_console_connection(
         self,
@@ -284,28 +290,25 @@ if sys.platform == 'win32':
                 Operation.FINISH,
             ]
 
-    def _check_machine_state(self, check_state: collections.abc.Iterable[str]) -> types.states.TaskState:
+    def _check_machine_state(
+        self, check_state: collections.abc.Iterable[ov_types.VMStatus]
+    ) -> types.states.TaskState:
         logger.debug(
             'Checking that state of machine %s (%s) is %s',
             self._vmid,
             self._name,
             check_state,
         )
-        state = self.service().get_machine_state(self._vmid)
-
-        # If we want to check an state and machine does not exists (except in case that we whant to check this)
-        if state == 'unknown' and check_state != 'unknown':
+        vm_info = self.service().provider().api.get_machine_info(self._vmid)
+        if vm_info.status == ov_types.VMStatus.UNKNOWN:
             return self._error('Machine not found')
 
         ret = types.states.TaskState.RUNNING
-        if isinstance(check_state, (list, tuple)):
-            for cks in check_state:
-                if state == cks:
-                    ret = types.states.TaskState.FINISHED
-                    break
-        else:
-            if state == check_state:
+        # if iterable...
+        for cks in check_state:
+            if vm_info.status == cks:
                 ret = types.states.TaskState.FINISHED
+                break
 
         return ret
 
@@ -408,9 +411,7 @@ if sys.platform == 'win32':
         )  # oVirt don't let us to create machines with more than 15 chars!!!
         comments = 'UDS Linked clone'
 
-        self._vmid = self.service().deploy_from_template(name, comments, template_id)
-        if not self._vmid:
-            raise Exception('Can\'t create machine')
+        self._vmid = self.service().deploy_from_template(name, comments, template_id).id
 
         return types.states.TaskState.RUNNING
 
@@ -418,16 +419,15 @@ if sys.platform == 'win32':
         """
         Removes a machine from system
         """
-        state = self.service().get_machine_state(self._vmid)
+        vminfo = self.service().provider().api.get_machine_info(self._vmid)
 
-        if state == 'unknown':
+        if vminfo.status == ov_types.VMStatus.UNKNOWN:
             raise Exception('Machine not found')
 
-        if state != 'down':
-            self._push_front_op(Operation.STOP)
-            self._execute_queue()
+        if vminfo.status != ov_types.VMStatus.DOWN:
+            self._push_front_op(Operation.RETRY)
         else:
-            self.service().remove_machine(self._vmid)
+            self.service().provider().api.remove_machine(self._vmid)
 
         return types.states.TaskState.RUNNING
 
@@ -435,19 +435,15 @@ if sys.platform == 'win32':
         """
         Powers on the machine
         """
-        state = self.service().get_machine_state(self._vmid)
+        vminfo = self.service().provider().api.get_machine_info(self._vmid)
 
-        if state == 'unknown':
+        if vminfo.status == ov_types.VMStatus.UNKNOWN:
             raise Exception('Machine not found')
 
-        if state in UP_STATES:  # Already started, return
-            return types.states.TaskState.RUNNING
-
-        if state not in ('down', 'suspended'):
-            self._push_front_op(
-                Operation.RETRY
-            )  # Will call "check Retry", that will finish inmediatly and again call this one
-        self.service().start_machine(self._vmid)
+        if vminfo.status not in UP_STATES:
+            self._push_front_op(Operation.RETRY)
+        else:
+            self.service().provider().api.start_machine(self._vmid)
 
         return types.states.TaskState.RUNNING
 
@@ -455,20 +451,18 @@ if sys.platform == 'win32':
         """
         Powers off the machine
         """
-        state = self.service().get_machine_state(self._vmid)
+        vminfo = self.service().provider().api.get_machine_info(self._vmid)
 
-        if state == 'unknown':
+        if vminfo.status == ov_types.VMStatus.UNKNOWN:
             raise Exception('Machine not found')
 
-        if state == 'down':  # Already stoped, return
+        if vminfo.status == ov_types.VMStatus.DOWN:  # Already stoped, return
             return types.states.TaskState.RUNNING
 
-        if state not in ('up', 'suspended'):
-            self._push_front_op(
-                Operation.RETRY
-            )  # Will call "check Retry", that will finish inmediatly and again call this one
+        if vminfo.status not in UP_STATES:
+            self._push_front_op(Operation.RETRY)
         else:
-            self.service().stop_machine(self._vmid)
+            self.service().provider().api.stop_machine(self._vmid)
 
         return types.states.TaskState.RUNNING
 
@@ -476,20 +470,20 @@ if sys.platform == 'win32':
         """
         Suspends the machine
         """
-        state = self.service().get_machine_state(self._vmid)
+        vminfo = self.service().provider().api.get_machine_info(self._vmid)
 
-        if state == 'unknown':
+        if vminfo.status == ov_types.VMStatus.UNKNOWN:
             raise Exception('Machine not found')
 
-        if state == 'suspended':  # Already suspended, return
+        if vminfo.status == ov_types.VMStatus.SUSPENDED:  # Already suspended, return
             return types.states.TaskState.RUNNING
 
-        if state != 'up':
+        if vminfo.status not in UP_STATES:
             self._push_front_op(
                 Operation.RETRY
             )  # Remember here, the return types.states.DeployState.FINISH will make this retry be "poped" right ar return
         else:
-            self.service().suspend_machine(self._vmid)
+            self.service().provider().api.suspend_machine(self._vmid)
 
         return types.states.TaskState.RUNNING
 
@@ -497,7 +491,7 @@ if sys.platform == 'win32':
         """
         Changes the mac of the first nic
         """
-        self.service().update_machine_mac(self._vmid, self.get_unique_id())
+        self.service().provider().api.update_machine_mac(self._vmid, self.get_unique_id())
         # Fix usb if needed
         self.service().fix_usb(self._vmid)
 
@@ -508,7 +502,7 @@ if sys.platform == 'win32':
         """
         Checks the state of a deploy for an user or cache
         """
-        return self._check_machine_state('down')
+        return self._check_machine_state([ov_types.VMStatus.DOWN])
 
     def _start_checker(self) -> types.states.TaskState:
         """
@@ -520,19 +514,21 @@ if sys.platform == 'win32':
         """
         Checks if machine has stoped
         """
-        return self._check_machine_state('down')
+        return self._check_machine_state([ov_types.VMStatus.DOWN])
 
     def _suspend_checker(self) -> types.states.TaskState:
         """
         Check if the machine has suspended
         """
-        return self._check_machine_state('suspended')
+        return self._check_machine_state(
+            [ov_types.VMStatus.SUSPENDED, ov_types.VMStatus.DOWN]
+        )  # Down is also valid for us
 
     def _remove_checker(self) -> types.states.TaskState:
         """
         Checks if a machine has been removed
         """
-        return self._check_machine_state('unknown')
+        return self._check_machine_state([ov_types.VMStatus.UNKNOWN])
 
     def _mac_checker(self) -> types.states.TaskState:
         """
@@ -567,7 +563,9 @@ if sys.platform == 'win32':
         }
 
         try:
-            operation_checker: typing.Optional[typing.Optional[collections.abc.Callable[[], types.states.TaskState]]] = fncs.get(op, None)
+            operation_checker: typing.Optional[
+                typing.Optional[collections.abc.Callable[[], types.states.TaskState]]
+            ] = fncs.get(op, None)
 
             if operation_checker is None:
                 return self._error(f'Unknown operation found at check queue ({op})')
@@ -665,5 +663,5 @@ if sys.platform == 'win32':
             self._ip,
             self._mac,
             self._vmid,
-            [OVirtLinkedDeployment._op2str(op) for op in self._queue],
+            [OVirtLinkedUserService._op2str(op) for op in self._queue],
         )
