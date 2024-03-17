@@ -72,7 +72,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
     def manager() -> 'UserServiceManager':
         return UserServiceManager()  # Singleton pattern will return always the same instance
 
-    def get_cache_state_filter(self, service_pool: ServicePool, level: int) -> Q:
+    def get_cache_state_filter(self, service_pool: ServicePool, level: types.services.CacheLevel) -> Q:
         return Q(cache_level=level) & self.get_state_filter(service_pool.service)
 
     @staticmethod
@@ -179,18 +179,18 @@ class UserServiceManager(metaclass=singleton.Singleton):
             in_use=False,
         )
 
-    def create_cache_for(self, publication: ServicePoolPublication, cacheLevel: int) -> UserService:
+    def create_cache_for(self, publication: ServicePoolPublication, cache_level: types.services.CacheLevel) -> UserService:
         """
         Creates a new cache for the deployed service publication at level indicated
         """
         operations_logger.info(
             'Creating a new cache element at level %s for publication %s',
-            cacheLevel,
+            cache_level,
             publication,
         )
-        cache = self._create_cache_user_service_at_db(publication, cacheLevel)
+        cache = self._create_cache_user_service_at_db(publication, cache_level)
         ci = cache.get_instance()
-        state = ci.deploy_for_cache(cacheLevel)
+        state = ci.deploy_for_cache(cache_level)
 
         UserServiceOpChecker.state_updater(cache, ci, state)
         return cache
@@ -277,7 +277,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         return assigned
 
-    def move_to_level(self, cache: UserService, cache_level: int) -> None:
+    def move_to_level(self, cache: UserService, cache_level: types.services.CacheLevel) -> None:
         """
         Moves a cache element from one level to another
         @return: cache element
@@ -394,7 +394,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 service_pool.cached_users_services()
                 .select_for_update()
                 .filter(
-                    cache_level=services.UserService.L1_CACHE,
+                    cache_level=types.services.CacheLevel.L1,
                     state=State.USABLE,
                     os_state=State.USABLE,
                 )[:1],
@@ -420,7 +420,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                     list[UserService],
                     service_pool.cached_users_services()
                     .select_for_update()
-                    .filter(cache_level=services.UserService.L1_CACHE, state=State.USABLE)[:1],
+                    .filter(cache_level=types.services.CacheLevel.L1, state=State.USABLE)[:1],
                 )
                 if caches:  # If there is a cache, we will use it
                     cache = caches[0]
@@ -450,7 +450,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 service_pool,
                 types.stats.EventType.CACHE_HIT,
                 fld1=service_pool.cached_users_services()
-                .filter(cache_level=services.UserService.L1_CACHE, state=State.USABLE)
+                .filter(cache_level=types.services.CacheLevel.L1, state=State.USABLE)
                 .count(),
             )
             return cache
@@ -462,7 +462,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             caches = list(
                 service_pool.cached_users_services()
                 .select_for_update()
-                .filter(cache_level=services.UserService.L1_CACHE, state=State.PREPARING)[:1]
+                .filter(cache_level=types.services.CacheLevel.L1, state=State.PREPARING)[:1]
             )
             if caches:  # If there is a cache, we will use it
                 cache = caches[0]
@@ -491,7 +491,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 service_pool,
                 events.types.stats.EventType.CACHE_MISS,
                 fld1=service_pool.cached_users_services()
-                .filter(cache_level=services.UserService.L1_CACHE, state=State.PREPARING)
+                .filter(cache_level=types.services.CacheLevel.L1, state=State.PREPARING)
                 .count(),
             )
             return cache

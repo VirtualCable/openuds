@@ -65,10 +65,10 @@ class OVirtDeferredRemoval(jobs.Job):
             # Tries to stop machine sync when found, if any error is done, defer removal for a scheduled task
             try:
                 # First check state & stop machine if needed
-                state = instance.api.get_machine_state(vmid)
-                if state in (ov_types.VMStatus.UP, ov_types.VMStatus.POWERING_UP, ov_types.VMStatus.SUSPENDED):
+                status = instance.api.get_machine_info(vmid).status
+                if status in (ov_types.VMStatus.UP, ov_types.VMStatus.POWERING_UP, ov_types.VMStatus.SUSPENDED):
                     instance.api.stop_machine(vmid)
-                elif state != ov_types.VMStatus.UNKNOWN:  # Machine exists, remove it later
+                elif status != ov_types.VMStatus.UNKNOWN:  # Machine exists, remove it later
                     instance.storage.save_to_db('tr' + vmid, vmid, attr1='tRm')
 
             except Exception as e:
@@ -100,8 +100,8 @@ class OVirtDeferredRemoval(jobs.Job):
                     logger.debug('Found %s for removal %s', vmid, i)
                     # If machine is powered on, tries to stop it
                     # tries to remove in sync mode
-                    state = instance.api.get_machine_state(vmid)
-                    if state in (
+                    status = instance.api.get_machine_info(vmid).status
+                    if status in (
                         ov_types.VMStatus.UP,
                         ov_types.VMStatus.POWERING_UP,
                         ov_types.VMStatus.SUSPENDED,
@@ -109,7 +109,7 @@ class OVirtDeferredRemoval(jobs.Job):
                         instance.api.stop_machine(vmid)
                         return
 
-                    if state != ov_types.VMStatus.UNKNOWN:  # Machine exists, try to remove it now
+                    if status != ov_types.VMStatus.UNKNOWN:  # Machine exists, try to remove it now
                         instance.api.remove_machine(vmid)
 
                     # It this is reached, remove check

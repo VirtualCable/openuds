@@ -41,7 +41,7 @@ from uds.core.types.states import State
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.services.exceptions import MaxServicesReachedError
 from uds.models import ServicePool, ServicePoolPublication, UserService
-from uds.core import services
+from uds.core import types
 from uds.core.util import log
 from uds.core.jobs import Job
 
@@ -188,14 +188,14 @@ class ServiceCacheUpdater(Job):
             # to create new items over the limit stablisshed, so we will not remove them anymore
             l1_cache_count: int = (
                 servicepool.cached_users_services()
-                .filter(UserServiceManager().get_cache_state_filter(servicepool, services.UserService.L1_CACHE))
+                .filter(UserServiceManager().get_cache_state_filter(servicepool, types.services.CacheLevel.L1))
                 .count()
             )
             l2_cache_count: int = (
                 (
                     servicepool.cached_users_services()
                     .filter(
-                        UserServiceManager().get_cache_state_filter(servicepool, services.UserService.L2_CACHE)
+                        UserServiceManager().get_cache_state_filter(servicepool, types.services.CacheLevel.L2)
                     )
                     .count()
                 )
@@ -280,7 +280,7 @@ class ServiceCacheUpdater(Job):
                     .select_for_update()
                     .filter(
                         UserServiceManager().get_cache_state_filter(
-                            servicepool_stats.servicepool, services.UserService.L2_CACHE
+                            servicepool_stats.servicepool, types.services.CacheLevel.L2
                         )
                     )
                     .order_by('creation_date')
@@ -297,13 +297,13 @@ class ServiceCacheUpdater(Job):
                         break
 
             if valid is not None:
-                valid.move_to_level(services.UserService.L1_CACHE)
+                valid.move_to_level(types.services.CacheLevel.L1)
                 return
         try:
             # This has a velid publication, or it will not be here
             UserServiceManager().create_cache_for(
                 typing.cast(ServicePoolPublication, servicepool_stats.servicepool.active_publication()),
-                services.UserService.L1_CACHE,
+                types.services.CacheLevel.L1,
             )
         except MaxServicesReachedError:
             log.log(
@@ -336,7 +336,7 @@ class ServiceCacheUpdater(Job):
             # This has a velid publication, or it will not be here
             UserServiceManager().create_cache_for(
                 typing.cast(ServicePoolPublication, servicepool_stats.servicepool.active_publication()),
-                services.UserService.L2_CACHE,
+                types.services.CacheLevel.L2,
             )
         except MaxServicesReachedError:
             logger.warning(
@@ -358,7 +358,7 @@ class ServiceCacheUpdater(Job):
             for i in servicepool_stats.servicepool.cached_users_services()
             .filter(
                 UserServiceManager().get_cache_state_filter(
-                    servicepool_stats.servicepool, services.UserService.L1_CACHE
+                    servicepool_stats.servicepool, types.services.CacheLevel.L1
                 )
             )
             .order_by('-creation_date')
@@ -384,7 +384,7 @@ class ServiceCacheUpdater(Job):
                     break
 
             if valid is not None:
-                valid.move_to_level(services.UserService.L2_CACHE)
+                valid.move_to_level(types.services.CacheLevel.L2)
                 return
 
         cache = cacheItems[0]
@@ -400,7 +400,7 @@ class ServiceCacheUpdater(Job):
                 servicepool_stats.servicepool.cached_users_services()
                 .filter(
                     UserServiceManager().get_cache_state_filter(
-                        servicepool_stats.servicepool, services.UserService.L2_CACHE
+                        servicepool_stats.servicepool, types.services.CacheLevel.L2
                     )
                 )
                 .order_by('creation_date')

@@ -59,7 +59,7 @@ class TestOpenstackLiveService(UDSTransactionTestCase):
                 # Test Deploy for cache, should raise Exception due
                 # to the fact fixed services cannot have cached items
                 with self.assertRaises(Exception):
-                    userservice.deploy_for_cache(level=1)
+                    userservice.deploy_for_cache(level=types.services.CacheLevel.L1)
 
                 state = userservice.deploy_for_user(models.User())
 

@@ -79,7 +79,7 @@ STORAGES_INFO: list[ov_types.StorageInfo] = [
         id=f'stid-{i}',
         name=f'storage-{i}',
         type=from_enum(ov_types.StorageType, i),
-        available=(i+4) * 1024 * 1024 * 1024,  # So all storages has enough space
+        available=(i + 4) * 1024 * 1024 * 1024,  # So all storages has enough space
         used=i * 1024 * 1024 * 1024 // 2,
         status=from_list([ov_types.StorageStatus.ACTIVE, ov_types.StorageStatus.INACTIVE], i),
     )
@@ -255,7 +255,9 @@ def patch_provider_api(
 ) -> typing.Generator[mock.Mock, None, None]:
     client = create_client_mock()
     # api is a property, patch it correctly
-    with mock.patch('uds.services.OVirt.provider.OVirtProvider.api', new_callable=mock.PropertyMock, **kwargs) as api:
+    with mock.patch(
+        'uds.services.OVirt.provider.OVirtProvider.api', new_callable=mock.PropertyMock, **kwargs
+    ) as api:
         api.return_value = client
         yield client
 
@@ -273,7 +275,9 @@ def create_provider(**kwargs: typing.Any) -> 'provider.OVirtProvider':
     )
 
 
-def create_linked_service(provider: typing.Optional[provider.OVirtProvider] = None, **kwargs: typing.Any) -> 'service_linked.OVirtLinkedService':
+def create_linked_service(
+    provider: typing.Optional[provider.OVirtProvider] = None, **kwargs: typing.Any
+) -> 'service_linked.OVirtLinkedService':
     """
     Create a service
     """
@@ -294,23 +298,26 @@ def create_publication(service: 'service_linked.OVirtLinkedService') -> publicat
     Create a publication
     """
     uuid_ = str(uuid.uuid4())
-    return publication.OVirtPublication(
+    pub = publication.OVirtPublication(
         environment=environment.Environment.private_environment(uuid_),
         service=service,
         revision=1,
         servicepool_name='servicepool_name',
         uuid=uuid_,
     )
+    pub._template_id = random.choice(TEMPLATES_INFO).id
+    return pub
 
 
 def create_linked_userservice(
-    service: 'service_linked.OVirtLinkedService',
+    service: typing.Optional['service_linked.OVirtLinkedService'] = None,
     publication: typing.Optional[publication.OVirtPublication] = None,
 ) -> 'deployment_linked.OVirtLinkedUserService':
     """
     Create a linked user service
     """
     uuid_ = str(uuid.uuid4())
+    service = service or create_linked_service()
     return deployment_linked.OVirtLinkedUserService(
         environment=environment.Environment.private_environment(uuid_),
         service=service,

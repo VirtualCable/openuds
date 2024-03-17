@@ -181,15 +181,15 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
         self._init_queue_for_deployment(False)
         return self._execute_queue()
 
-    def deploy_for_cache(self, level: int) -> types.states.TaskState:
+    def deploy_for_cache(self, level: types.services.CacheLevel) -> types.states.TaskState:
         """
         Deploys an service instance for cache
         """
-        self._init_queue_for_deployment(level == self.L2_CACHE)
+        self._init_queue_for_deployment(level == types.services.CacheLevel.L2)
         return self._execute_queue()
 
-    def _init_queue_for_deployment(self, forLevel2: bool = False) -> None:
-        if forLevel2 is False:
+    def _init_queue_for_deployment(self, cache_l2: bool = False) -> None:
+        if cache_l2 is False:
             self._queue = [
                 Operation.CREATE,
                 Operation.CONFIGURE,
@@ -498,14 +498,14 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
         except Exception as e:
             return self._error(e)
 
-    def move_to_cache(self, level: int) -> types.states.TaskState:
+    def move_to_cache(self, level: types.services.CacheLevel) -> types.states.TaskState:
         """
         Moves machines between cache levels
         """
         if Operation.REMOVE in self._queue:
             return types.states.TaskState.RUNNING
 
-        if level == self.L1_CACHE:
+        if level == types.services.CacheLevel.L1:
             self._queue = [Operation.START, Operation.FINISH]
         else:
             self._queue = [Operation.START, Operation.SUSPEND, Operation.FINISH]

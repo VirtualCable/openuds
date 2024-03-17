@@ -648,7 +648,7 @@ class ServicePool(UUIDModel, TaggingMixin):
         Returns:
             A list of db records (userService) with assinged user services
         """
-        return self.userServices.filter(cache_level=0)
+        return self.userServices.filter(cache_level=types.services.CacheLevel.NONE)
 
     def erroneous_user_services(self) -> 'models.QuerySet[UserService]':
         """

@@ -30,12 +30,10 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import pickle
 import typing
 
 from tests.utils.test import UDSTestCase
 from uds.core.environment import Environment
-from uds.core.util import autoserializable
 
 from uds.services.OVirt.publication import OVirtPublication as Publication
 

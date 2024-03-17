@@ -44,7 +44,7 @@ from django.db import models
 from uds.core.util import calendar
 from uds.core.util import log
 from uds.core.managers.userservice import UserServiceManager
-from uds.core import services, types, consts
+from uds.core import types, consts
 
 from .calendar import Calendar
 from .uuid_model import UUIDModel
@@ -195,9 +195,9 @@ class CalendarAction(UUIDModel):
                 UserServiceManager().get_cache_state_filter(
                     self.service_pool,
                     (
-                        services.UserService.L1_CACHE
+                        types.services.CacheLevel.L1
                         if self.action == consts.calendar.CALENDAR_ACTION_CLEAN_CACHE_L1['id']
-                        else services.UserService.L2_CACHE
+                        else types.services.CacheLevel.L2
                     ),
                 )
             ):

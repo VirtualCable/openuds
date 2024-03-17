@@ -45,7 +45,7 @@ from ...utils.generators import limited_iterator
 # We use transactions on some related methods (storage access, etc...)
 class TestProxmovLinkedService(UDSTransactionTestCase):
     def setUp(self) -> None:
-        # Set machine state for fixture to started
+        # Set machine state for fixture to stopped
         fixtures.VMS_INFO = [
             fixtures.VMS_INFO[i]._replace(status='stopped') for i in range(len(fixtures.VMS_INFO))
         ]

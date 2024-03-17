@@ -31,8 +31,10 @@
 import logging
 import typing
 import collections.abc
+from unittest import mock
 
 from django.db import models
+from uds.core import ui
 
 logger = logging.getLogger(__name__)
 
@@ -161,7 +163,7 @@ class MustBeOfType:
     def __repr__(self) -> str:
         return self.__str__()
 
-def id_from_list(lst: list[T], attribute: str, value: typing.Any) -> T:
+def find_attr_in_list(lst: list[T], attribute: str, value: typing.Any) -> T:
     """
     Returns an item from a list of items
     """
@@ -169,3 +171,15 @@ def id_from_list(lst: list[T], attribute: str, value: typing.Any) -> T:
         if getattr(item, attribute) == value:
             return item
     raise ValueError(f'Item with id {value} not found in list')
+
+def check_userinterface_values(obj: ui.UserInterface, values: ui.gui.ValuesDictType) -> None:
+    """
+    Checks that a user interface object has the values specified
+    """
+    for k, v in values.items():
+        if isinstance(v, MustBeOfType):
+            assert isinstance(getattr(obj, k), v._kind)
+        elif v == mock.ANY:
+            pass
+        else:
+            assert getattr(obj, k) == v

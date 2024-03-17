@@ -38,7 +38,7 @@ from tests.utils.test import UDSTransactionTestCase
 from uds.core.environment import Environment
 
 
-from uds.services.OVirt.deployment import Operation as Operation, OVirtLinkedUserService
+from uds.services.OVirt.deployment_linked import Operation as Operation, OVirtLinkedUserService
 
 # if not data.startswith(b'v'):
 #     return super().unmarshal(data)

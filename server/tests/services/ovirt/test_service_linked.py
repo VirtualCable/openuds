@@ -40,6 +40,18 @@ from ...utils.test import UDSTestCase
 
 class TestProxmovLinkedService(UDSTestCase):
 
+    def test_service_linked_data(self) -> None:
+        """
+        Test the linked service data is loaded correctly from fixture
+        """
+        service = fixtures.create_linked_service()
+        utils.check_userinterface_values(service, fixtures.SERVICE_VALUES_DICT)
+        
+        self.assertEqual(service.get_macs_range(), service.provider().get_macs_range())
+        self.assertEqual(service.get_basename(), service.basename.value)
+        self.assertEqual(service.get_lenname(), service.lenname.value)
+        self.assertEqual(service.get_display(), service.display.value)
+
     def test_service_is_available(self) -> None:
         """
         Test the provider
@@ -64,7 +76,7 @@ class TestProxmovLinkedService(UDSTestCase):
         with fixtures.patch_provider_api() as _api:
             service = fixtures.create_linked_service()
 
-            storage = utils.id_from_list(fixtures.STORAGES_INFO, 'id', service.datastore.value)
+            storage = utils.find_attr_in_list(fixtures.STORAGES_INFO, 'id', service.datastore.value)
             # Ensure available is greater that configured on service
             old_available = storage.available  # For future tests to restore it
             try:
@@ -75,7 +87,7 @@ class TestProxmovLinkedService(UDSTestCase):
                 storage.available = (service.reserved_storage_gb.value - 1) * 1024 * 1024 * 1024
                 with self.assertRaises(Exception):
                     service.verify_free_storage()
-            finally:                
+            finally:
                 storage.available = old_available
 
     def test_sanitized_name(self) -> None:
@@ -99,4 +111,39 @@ class TestProxmovLinkedService(UDSTestCase):
                 service.datastore.value,
                 service.display.value,
             )
-            
+
+    def test_deploy_from_template(self) -> None:
+        with fixtures.patch_provider_api() as api:
+            service = fixtures.create_linked_service()
+            # Ensure that the template is deployed
+            service.deploy_from_template('test', 'test comments', fixtures.TEMPLATES_INFO[0].id)
+            api.deploy_from_template.assert_called_with(
+                'test',
+                'test comments',
+                fixtures.TEMPLATES_INFO[0].id,
+                service.cluster.value,
+                service.display.value,
+                service.usb.value,
+                service.memory.value,
+                service.guaranteed_memory.value,
+            )
+
+    def test_fix_usb(self) -> None:
+        with fixtures.patch_provider_api() as api:
+            service = fixtures.create_linked_service()
+            # first, with native, should call fix_usb
+            service.usb.value = 'native'
+            service.fix_usb(fixtures.VMS_INFO[0].id)
+            api.fix_usb.assert_called_with(service.machine.value)
+            # Now, with "disabled" should not call fix_usb
+            api.fix_usb.reset_mock()
+            service.usb.value = 'disabled'
+            service.fix_usb(fixtures.VMS_INFO[0].id)
+            api.fix_usb.assert_not_called()
+
+    def test_get_console_connection(self) -> None:
+        with fixtures.patch_provider_api() as api:
+            service = fixtures.create_linked_service()
+            # Ensure that the console connection is retrieved
+            service.get_console_connection(service.machine.value)
+            api.get_console_connection_info.assert_called_with(service.machine.value)

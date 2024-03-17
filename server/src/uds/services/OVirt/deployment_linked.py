@@ -52,6 +52,10 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+MAX_CHECK_COUNT: typing.Final[int] = (
+    20  # If in suggested_delay * MAX_CHECK_COUNT we are still in same state, we will resign and return error
+)
+
 
 class Operation(enum.IntEnum):
     """
@@ -86,6 +90,13 @@ UP_STATES: typing.Final[set[ov_types.VMStatus]] = {
     ov_types.VMStatus.RESTORING_STATE,
 }
 
+DOWN_STATES: typing.Final[set[ov_types.VMStatus]] = {
+    ov_types.VMStatus.DOWN,
+    ov_types.VMStatus.POWERING_DOWN,
+    ov_types.VMStatus.SUSPENDED,
+    ov_types.VMStatus.PAUSED,
+}
+
 
 class OVirtLinkedUserService(services.UserService, autoserializable.AutoSerializable):
     """
@@ -108,6 +119,22 @@ class OVirtLinkedUserService(services.UserService, autoserializable.AutoSerializ
     _vmid = autoserializable.StringField(default='')
     _reason = autoserializable.StringField(default='')
     _queue = autoserializable.ListField[Operation]()
+
+    # helpers
+    def _get_checks_counter(self) -> int:
+        with self.storage.as_dict() as data:
+            return data.get('exec_count', 0)
+
+    def _set_checks_counter(self, value: int) -> None:
+        with self.storage.as_dict() as data:
+            data['exec_count'] = value
+
+    def _inc_checks_counter(self, info: typing.Optional[str] = None) -> typing.Optional[types.states.TaskState]:
+        count = self._get_checks_counter() + 1
+        self._set_checks_counter(count)
+        if count > MAX_CHECK_COUNT:
+            return self._error(f'Max checks reached on {info or "unknown"}')
+        return None
 
     # Utility overrides for type checking...
     def service(self) -> 'OVirtLinkedService':
@@ -274,7 +301,7 @@ if sys.platform == 'win32':
         """
         Deploys an service instance for cache
         """
-        self._init_queue_for_deploy(level == self.L2_CACHE)
+        self._init_queue_for_deploy(level == types.services.CacheLevel.L2)
         return self._execute_queue()
 
     def _init_queue_for_deploy(self, for_level_2: bool = False) -> None:
@@ -299,6 +326,10 @@ if sys.platform == 'win32':
             self._name,
             check_state,
         )
+
+        if (check_result := self._inc_checks_counter('check_machine_state')) is not None:
+            return check_result
+
         vm_info = self.service().provider().api.get_machine_info(self._vmid)
         if vm_info.status == ov_types.VMStatus.UNKNOWN:
             return self._error('Machine not found')
@@ -355,31 +386,20 @@ if sys.platform == 'win32':
         if op == Operation.FINISH:
             return types.states.TaskState.FINISHED
 
-        fncs: dict[Operation, typing.Optional[collections.abc.Callable[[], str]]] = {
-            Operation.CREATE: self._create,
-            Operation.RETRY: self._retry,
-            Operation.START: self._start_machine,
-            Operation.STOP: self._stop_machine,
-            Operation.SUSPEND: self._suspend_machine,
-            Operation.WAIT: self._wait,
-            Operation.REMOVE: self._remove,
-            Operation.CHANGEMAC: self._change_mac,
-        }
+        # Reset checking count (for checks)
+        self._set_checks_counter(0)
 
         try:
-            operation_runner: typing.Optional[collections.abc.Callable[[], str]] = fncs.get(op, None)
+            operation_runner = EXECUTORS[op]
 
-            if operation_runner is None:
-                return self._error(f'Unknown operation found at execution queue ({op})')
-
-            operation_runner()
+            operation_runner(self)
 
             return types.states.TaskState.RUNNING
         except Exception as e:
             return self._error(e)
 
     # Queue execution methods
-    def _retry(self) -> types.states.TaskState:
+    def _retry(self) -> None:
         """
         Used to retry an operation
         In fact, this will not be never invoked, unless we push it twice, because
@@ -387,15 +407,15 @@ if sys.platform == 'win32':
 
         At executeQueue this return value will be ignored, and it will only be used at check_state
         """
-        return types.states.TaskState.FINISHED
+        return
 
-    def _wait(self) -> types.states.TaskState:
+    def _wait(self) -> None:
         """
         Executes opWait, it simply waits something "external" to end
         """
-        return types.states.TaskState.RUNNING
+        return
 
-    def _create(self) -> str:
+    def _create(self) -> None:
         """
         Deploys a machine from template for user/cache
         """
@@ -413,9 +433,7 @@ if sys.platform == 'win32':
 
         self._vmid = self.service().deploy_from_template(name, comments, template_id).id
 
-        return types.states.TaskState.RUNNING
-
-    def _remove(self) -> str:
+    def _remove(self) -> None:
         """
         Removes a machine from system
         """
@@ -429,9 +447,7 @@ if sys.platform == 'win32':
         else:
             self.service().provider().api.remove_machine(self._vmid)
 
-        return types.states.TaskState.RUNNING
-
-    def _start_machine(self) -> str:
+    def _start_machine(self) -> None:
         """
         Powers on the machine
         """
@@ -440,14 +456,13 @@ if sys.platform == 'win32':
         if vminfo.status == ov_types.VMStatus.UNKNOWN:
             raise Exception('Machine not found')
 
-        if vminfo.status not in UP_STATES:
-            self._push_front_op(Operation.RETRY)
-        else:
-            self.service().provider().api.start_machine(self._vmid)
+        if vminfo.status in UP_STATES:
+            # Already started, return
+            return
 
-        return types.states.TaskState.RUNNING
+        self.service().provider().api.start_machine(self._vmid)
 
-    def _stop_machine(self) -> str:
+    def _stop_machine(self) -> None:
         """
         Powers off the machine
         """
@@ -456,17 +471,12 @@ if sys.platform == 'win32':
         if vminfo.status == ov_types.VMStatus.UNKNOWN:
             raise Exception('Machine not found')
 
-        if vminfo.status == ov_types.VMStatus.DOWN:  # Already stoped, return
-            return types.states.TaskState.RUNNING
+        if vminfo.status in DOWN_STATES:
+            return
 
-        if vminfo.status not in UP_STATES:
-            self._push_front_op(Operation.RETRY)
-        else:
-            self.service().provider().api.stop_machine(self._vmid)
+        self.service().provider().api.stop_machine(self._vmid)
 
-        return types.states.TaskState.RUNNING
-
-    def _suspend_machine(self) -> str:
+    def _suspend_machine(self) -> None:
         """
         Suspends the machine
         """
@@ -475,8 +485,8 @@ if sys.platform == 'win32':
         if vminfo.status == ov_types.VMStatus.UNKNOWN:
             raise Exception('Machine not found')
 
-        if vminfo.status == ov_types.VMStatus.SUSPENDED:  # Already suspended, return
-            return types.states.TaskState.RUNNING
+        if vminfo.status in DOWN_STATES:  # Already in an state that is not up,
+            return
 
         if vminfo.status not in UP_STATES:
             self._push_front_op(
@@ -485,9 +495,7 @@ if sys.platform == 'win32':
         else:
             self.service().provider().api.suspend_machine(self._vmid)
 
-        return types.states.TaskState.RUNNING
-
-    def _change_mac(self) -> str:
+    def _change_mac(self) -> None:
         """
         Changes the mac of the first nic
         """
@@ -495,9 +503,23 @@ if sys.platform == 'win32':
         # Fix usb if needed
         self.service().fix_usb(self._vmid)
 
+    # Check methods
+    def _retry_checker(self) -> types.states.TaskState:
+        """
+        Used to retry an operation
+        In fact, this will not be never invoked, unless we push it twice, because
+        check_state method will "pop" first item when a check operation returns types.states.DeployState.FINISHED
+
+        At executeQueue this return value will be ignored, and it will only be used at check_state
+        """
+        return types.states.TaskState.FINISHED
+
+    def _wait_checker(self) -> types.states.TaskState:
+        """
+        Executes opWait, it simply waits something "external" to end
+        """
         return types.states.TaskState.RUNNING
 
-    # Check methods
     def _create_checker(self) -> types.states.TaskState:
         """
         Checks the state of a deploy for an user or cache
@@ -514,15 +536,13 @@ if sys.platform == 'win32':
         """
         Checks if machine has stoped
         """
-        return self._check_machine_state([ov_types.VMStatus.DOWN])
+        return self._check_machine_state(DOWN_STATES)
 
     def _suspend_checker(self) -> types.states.TaskState:
         """
-        Check if the machine has suspended
+        Check if the machine has suspended, or something like that
         """
-        return self._check_machine_state(
-            [ov_types.VMStatus.SUSPENDED, ov_types.VMStatus.DOWN]
-        )  # Down is also valid for us
+        return self._check_machine_state(DOWN_STATES)
 
     def _remove_checker(self) -> types.states.TaskState:
         """
@@ -551,26 +571,10 @@ if sys.platform == 'win32':
         if op == Operation.FINISH:
             return types.states.TaskState.FINISHED
 
-        fncs: dict[Operation, typing.Optional[collections.abc.Callable[[], types.states.TaskState]]] = {
-            Operation.CREATE: self._create_checker,
-            Operation.RETRY: self._retry,
-            Operation.WAIT: self._wait,
-            Operation.START: self._start_checker,
-            Operation.STOP: self._stop_checker,
-            Operation.SUSPEND: self._suspend_checker,
-            Operation.REMOVE: self._remove_checker,
-            Operation.CHANGEMAC: self._mac_checker,
-        }
-
         try:
-            operation_checker: typing.Optional[
-                typing.Optional[collections.abc.Callable[[], types.states.TaskState]]
-            ] = fncs.get(op, None)
+            operation_checker = CHECKERS[op]
 
-            if operation_checker is None:
-                return self._error(f'Unknown operation found at check queue ({op})')
-
-            state = operation_checker()
+            state = operation_checker(self)
             if state == types.states.TaskState.FINISHED:
                 self._pop_current_op()  # Remove runing op
                 return self._execute_queue()
@@ -586,7 +590,7 @@ if sys.platform == 'win32':
         if Operation.REMOVE in self._queue:
             return types.states.TaskState.RUNNING
 
-        if level == self.L1_CACHE:
+        if level == types.services.CacheLevel.L1:
             self._queue = [Operation.START, Operation.FINISH]
         else:
             self._queue = [Operation.START, Operation.SUSPEND, Operation.FINISH]
@@ -665,3 +669,27 @@ if sys.platform == 'win32':
             self._vmid,
             [OVirtLinkedUserService._op2str(op) for op in self._queue],
         )
+
+
+EXECUTORS: dict[Operation, collections.abc.Callable[[OVirtLinkedUserService], None]] = {
+    Operation.CREATE: OVirtLinkedUserService._create,
+    Operation.RETRY: OVirtLinkedUserService._retry,
+    Operation.START: OVirtLinkedUserService._start_machine,
+    Operation.STOP: OVirtLinkedUserService._stop_machine,
+    Operation.SUSPEND: OVirtLinkedUserService._suspend_machine,
+    Operation.WAIT: OVirtLinkedUserService._wait,
+    Operation.REMOVE: OVirtLinkedUserService._remove,
+    Operation.CHANGEMAC: OVirtLinkedUserService._change_mac,
+}
+
+
+CHECKERS: dict[Operation, collections.abc.Callable[[OVirtLinkedUserService], types.states.TaskState]] = {
+    Operation.CREATE: OVirtLinkedUserService._create_checker,
+    Operation.RETRY: OVirtLinkedUserService._retry_checker,
+    Operation.WAIT: OVirtLinkedUserService._wait_checker,
+    Operation.START: OVirtLinkedUserService._start_checker,
+    Operation.STOP: OVirtLinkedUserService._stop_checker,
+    Operation.SUSPEND: OVirtLinkedUserService._suspend_checker,
+    Operation.REMOVE: OVirtLinkedUserService._remove_checker,
+    Operation.CHANGEMAC: OVirtLinkedUserService._mac_checker,
+}

@@ -108,3 +108,9 @@ class ReadyStatus(enum.IntEnum):
         Returns the code as a percentage (0-100)
         """
         return 25 * self.value
+
+
+class CacheLevel(enum.IntEnum):
+    NONE = 0  # : Constant for User cache level (no cache at all)
+    L1 = 1  # : Constant for Cache of level 1
+    L2 = 2  # : Constant for Cache of level 2

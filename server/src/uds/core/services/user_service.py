@@ -109,10 +109,6 @@ class UserService(Environmentable, Serializable):
         method error_reason can be called multiple times, including
         serializations in middle, so remember to include reason of error in serializations
     """
-    USER: int = 0  # : Constant for User cache level
-    L1_CACHE = 1  # : Constant for Cache of level 1
-    L2_CACHE = 2  # : Constant for Cache of level 2
-
     # : Suggested time for deployment finishing, in seconds
     # : This allows the manager to, if deployment is no done in 1 step, re-check
     # : the deployment once this time has passed, i.e. KVM COW deployment takes
@@ -351,7 +347,7 @@ class UserService(Environmentable, Serializable):
         """
         return types.states.TaskState.FINISHED
 
-    def deploy_for_cache(self, level: int) -> types.states.TaskState:
+    def deploy_for_cache(self, level: types.services.CacheLevel) -> types.states.TaskState:
         """
         Deploys a user deployment as cache.
 
@@ -465,7 +461,7 @@ class UserService(Environmentable, Serializable):
         """
         pass
 
-    def move_to_cache(self, level: int) -> types.states.TaskState:
+    def move_to_cache(self, level: types.services.CacheLevel) -> types.states.TaskState:
         """
         This method is invoked whenever the core needs to move from the current
         cache level to a new cache level an user deployment.

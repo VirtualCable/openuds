@@ -199,18 +199,18 @@ class OpenStackLiveUserService(
         Deploys an service instance for an user.
         """
         logger.debug('Deploying for user')
-        self._init_queue_for_deploy(False)
+        self._init_queue_for_deploy(types.services.CacheLevel.NONE)
         return self._execute_queue()
 
-    def deploy_for_cache(self, level: int) -> types.states.TaskState:
+    def deploy_for_cache(self, level: types.services.CacheLevel) -> types.states.TaskState:
         """
         Deploys an service instance for cache
         """
         self._init_queue_for_deploy(level)
         return self._execute_queue()
 
-    def _init_queue_for_deploy(self, level: int) -> None:
-        if level in (self.USER, self.L1_CACHE):
+    def _init_queue_for_deploy(self, level: types.services.CacheLevel) -> None:
+        if level in (types.services.CacheLevel.NONE, types.services.CacheLevel.L1):
             self._queue = [Operation.CREATE, Operation.FINISH]
         else:
             self._queue = [Operation.CREATE, Operation.WAIT, Operation.SUSPEND, Operation.FINISH]
@@ -459,14 +459,14 @@ class OpenStackLiveUserService(
         except Exception as e:
             return self._error(e)
 
-    def move_to_cache(self, level: int) -> types.states.TaskState:
+    def move_to_cache(self, level: types.services.CacheLevel) -> types.states.TaskState:
         """
         Moves machines between cache levels
         """
         if Operation.REMOVE in self._queue:
             return types.states.TaskState.RUNNING
 
-        if level == self.L1_CACHE:
+        if level == types.services.CacheLevel.L1:
             self._queue = [Operation.START, Operation.FINISH]
         else:  # Currently L2 is not supported
             self._queue = [Operation.START, Operation.SUSPEND, Operation.FINISH]

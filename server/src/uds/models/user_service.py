@@ -567,7 +567,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         """
         self.remove_or_cancel()
 
-    def move_to_level(self, cacheLevel: int) -> None:
+    def move_to_level(self, cacheLevel: types.services.CacheLevel) -> None:
         """
         Moves cache items betwen levels, managed directly
 
