@@ -46,6 +46,7 @@ class TestOVirtProvider(UDSTransactionTestCase):
         """
         provider = fixtures.create_provider()  # Will not use client api, so no need to patch it
 
+        self.assertEqual(provider.ovirt_version.as_str(), fixtures.PROVIDER_VALUES_DICT['ovirt_version'])
         self.assertEqual(provider.host.as_str(), fixtures.PROVIDER_VALUES_DICT['host'])
         self.assertEqual(provider.port.as_int(), fixtures.PROVIDER_VALUES_DICT['port'])
         self.assertEqual(provider.username.as_str(), fixtures.PROVIDER_VALUES_DICT['username'])
@@ -106,7 +107,6 @@ class TestOVirtProvider(UDSTransactionTestCase):
     def test_provider_is_available(self) -> None:
         """
         Test the provider is_available
-        Thi is "specieal" because it uses cache
         """
         with fixtures.patch_provider_api() as api:
             provider = fixtures.create_provider()

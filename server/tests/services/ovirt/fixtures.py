@@ -159,52 +159,52 @@ CONSOLE_CONNECTION_INFO: types.services.ConsoleConnectionInfo = types.services.C
 # without the need of a real OpenStack environment
 # all methods that returns None are provided by the auto spec mock
 CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
-    AutoSpecMethodInfo(client.Client.test, return_value=True),
-    AutoSpecMethodInfo(client.Client.list_machines, return_value=VMS_INFO),
+    AutoSpecMethodInfo(client.Client.test, returns=True),
+    AutoSpecMethodInfo(client.Client.list_machines, returns=VMS_INFO),
     AutoSpecMethodInfo(
         client.Client.get_machine_info,
-        lambda machine_id, **kwargs: get_id(VMS_INFO, machine_id),  # pyright: ignore
+        returns=lambda machine_id, **kwargs: get_id(VMS_INFO, machine_id),  # pyright: ignore
     ),
-    AutoSpecMethodInfo(client.Client.list_clusters, return_value=CLUSTERS_INFO),
+    AutoSpecMethodInfo(client.Client.list_clusters, returns=CLUSTERS_INFO),
     AutoSpecMethodInfo(
         client.Client.get_cluster_info,
-        lambda cluster_id, **kwargs: get_id(CLUSTERS_INFO, cluster_id),  # pyright: ignore
+        returns=lambda cluster_id, **kwargs: get_id(CLUSTERS_INFO, cluster_id),  # pyright: ignore
     ),
     AutoSpecMethodInfo(
         client.Client.get_datacenter_info,
-        lambda datacenter_id, **kwargs: get_id(  # pyright: ignore
+        returns=lambda datacenter_id, **kwargs: get_id(  # pyright: ignore
             DATACENTERS_INFO,
             datacenter_id,  # pyright: ignore
         ),
     ),
     AutoSpecMethodInfo(
         client.Client.get_storage_info,
-        lambda storage_id, **kwargs: get_id(STORAGES_INFO, storage_id),  # pyright: ignore
+        returns=lambda storage_id, **kwargs: get_id(STORAGES_INFO, storage_id),  # pyright: ignore
     ),
     AutoSpecMethodInfo(
         client.Client.create_template,
-        return_value=lambda *args, **kwargs: random.choice(TEMPLATES_INFO),  # pyright: ignore
+        returns=lambda *args, **kwargs: random.choice(TEMPLATES_INFO),  # pyright: ignore
     ),
     AutoSpecMethodInfo(
         client.Client.get_template_info,
-        lambda template_id, **kwargs: get_id(TEMPLATES_INFO, template_id),  # pyright: ignore
+        returns=lambda template_id, **kwargs: get_id(TEMPLATES_INFO, template_id),  # pyright: ignore
     ),
     AutoSpecMethodInfo(
         client.Client.deploy_from_template,
-        return_value=lambda *args, **kwargs: random.choice(VMS_INFO),  # pyright: ignore
+        returns=lambda *args, **kwargs: random.choice(VMS_INFO),  # pyright: ignore
     ),
-    AutoSpecMethodInfo(client.Client.list_snapshots, return_value=SNAPSHOTS_INFO),
+    AutoSpecMethodInfo(client.Client.list_snapshots, returns=SNAPSHOTS_INFO),
     AutoSpecMethodInfo(
         client.Client.get_snapshot_info,
-        return_value=lambda snapshot_id, **kwargs: get_id(SNAPSHOTS_INFO, snapshot_id),  # pyright: ignore
+        returns=lambda snapshot_id, **kwargs: get_id(SNAPSHOTS_INFO, snapshot_id),  # pyright: ignore
     ),
     AutoSpecMethodInfo(
         client.Client.get_console_connection_info,
-        return_value=CONSOLE_CONNECTION_INFO,
+        returns=CONSOLE_CONNECTION_INFO,
     ),
     AutoSpecMethodInfo(
         client.Client.create_snapshot,
-        return_value=lambda *args, **kwargs: random.choice(SNAPSHOTS_INFO),  # pyright: ignore
+        returns=lambda *args, **kwargs: random.choice(SNAPSHOTS_INFO),  # pyright: ignore
     ),
     # connect returns None
     # Test method
@@ -218,7 +218,7 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
 PROVIDER_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
     'ovirt_version': '4',
     'host': 'host.example.com',
-    'port': '443',  # '443' is the default value
+    'port': 443,  # '443' is the default value
     'username': 'admin@ovirt@internalsso',
     'password': 'the_testing_pass',
     'concurrent_creation_limit': 33,
@@ -254,11 +254,10 @@ def patch_provider_api(
     **kwargs: typing.Any,
 ) -> typing.Generator[mock.Mock, None, None]:
     client = create_client_mock()
-    try:
-        mock.patch('uds.services.OVirt.provider.OVirtProvider.api', returns=client).start()
+    # api is a property, patch it correctly
+    with mock.patch('uds.services.OVirt.provider.OVirtProvider.api', new_callable=mock.PropertyMock, **kwargs) as api:
+        api.return_value = client
         yield client
-    finally:
-        mock.patch.stopall()
 
 
 def create_provider(**kwargs: typing.Any) -> 'provider.OVirtProvider':

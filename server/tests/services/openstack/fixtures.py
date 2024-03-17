@@ -242,72 +242,72 @@ def get_id(iterable: typing.Iterable[T], id: str) -> T:
 # The idea behind this is to allow testing the provider, service and deployment classes
 # without the need of a real OpenStack environment
 CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
-    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_flavors, return_value=FLAVORS_LIST),
+    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_flavors, returns=FLAVORS_LIST),
     AutoSpecMethodInfo(
-        openstack_client.OpenstackClient.list_availability_zones, return_value=AVAILABILITY_ZONES_LIST
+        openstack_client.OpenstackClient.list_availability_zones, returns=AVAILABILITY_ZONES_LIST
     ),
-    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_projects, return_value=PROJECTS_LIST),
-    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_regions, return_value=REGIONS_LIST),
-    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_servers, return_value=SERVERS_LIST),
-    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_images, return_value=IMAGES_LIST),
-    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_volume_types, return_value=VOLUMES_TYPE_LIST),
-    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_volumes, return_value=VOLUMES_LIST),
+    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_projects, returns=PROJECTS_LIST),
+    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_regions, returns=REGIONS_LIST),
+    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_servers, returns=SERVERS_LIST),
+    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_images, returns=IMAGES_LIST),
+    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_volume_types, returns=VOLUMES_TYPE_LIST),
+    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_volumes, returns=VOLUMES_LIST),
     AutoSpecMethodInfo(
-        openstack_client.OpenstackClient.list_volume_snapshots, return_value=VOLUME_SNAPSHOTS_LIST
+        openstack_client.OpenstackClient.list_volume_snapshots, returns=VOLUME_SNAPSHOTS_LIST
     ),
-    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_networks, return_value=NETWORKS_LIST),
-    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_ports, return_value=PORTS_LIST),
+    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_networks, returns=NETWORKS_LIST),
+    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_ports, returns=PORTS_LIST),
     AutoSpecMethodInfo(
-        openstack_client.OpenstackClient.list_security_groups, return_value=SECURITY_GROUPS_LIST
+        openstack_client.OpenstackClient.list_security_groups, returns=SECURITY_GROUPS_LIST
     ),
     AutoSpecMethodInfo(
         openstack_client.OpenstackClient.get_server,
-        return_value=lambda server_id: get_id(SERVERS_LIST, server_id),  # pyright: ignore
+        returns=lambda server_id: get_id(SERVERS_LIST, server_id),  # pyright: ignore
     ),  # pyright: ignore
     AutoSpecMethodInfo(
         openstack_client.OpenstackClient.get_volume,
-        return_value=lambda volume_id: get_id(VOLUMES_LIST, volume_id),  # pyright: ignore
+        returns=lambda volume_id: get_id(VOLUMES_LIST, volume_id),  # pyright: ignore
     ),  # pyright: ignore
     AutoSpecMethodInfo(
         openstack_client.OpenstackClient.get_volume_snapshot,
-        return_value=lambda snapshot_id: get_id(VOLUME_SNAPSHOTS_LIST, snapshot_id),  # pyright: ignore
+        returns=lambda snapshot_id: get_id(VOLUME_SNAPSHOTS_LIST, snapshot_id),  # pyright: ignore
     ),  # pyright: ignore
     AutoSpecMethodInfo(
         openstack_client.OpenstackClient.update_snapshot,
-        return_value=lambda snapshot_id, name, description: get_id(  # pyright: ignore
+        returns=lambda snapshot_id, name, description: get_id(  # pyright: ignore
             VOLUME_SNAPSHOTS_LIST, snapshot_id  # pyright: ignore
         ),
     ),
     AutoSpecMethodInfo(
         openstack_client.OpenstackClient.create_volume_snapshot,
-        return_value=lambda volume_id, name, description: random.choice(  # pyright: ignore
+        returns=lambda volume_id, name, description: random.choice(  # pyright: ignore
             VOLUME_SNAPSHOTS_LIST,
         ),
     ),
     AutoSpecMethodInfo(
         openstack_client.OpenstackClient.create_volume_from_snapshot,
-        return_value=lambda snapshot_id, name, description: get_id(  # pyright: ignore
+        returns=lambda snapshot_id, name, description: get_id(  # pyright: ignore
             VOLUMES_LIST, f'vid{len(VOLUMES_LIST) + 1}'
         ),
     ),
     AutoSpecMethodInfo(
         openstack_client.OpenstackClient.create_server_from_snapshot,
-        return_value=lambda *args, **kwargs: random.choice(SERVERS_LIST),  # pyright: ignore
+        returns=lambda *args, **kwargs: random.choice(SERVERS_LIST),  # pyright: ignore
     ),
     AutoSpecMethodInfo(
         openstack_client.OpenstackClient.test_connection,
-        return_value=True,
+        returns=True,
     ),
     AutoSpecMethodInfo(
         openstack_client.OpenstackClient.is_available,
-        return_value=True,
+        returns=True,
     ),
     # connect returns None
     # Test method
-    # AutoSpecMethodInfo(client.Client.list_projects, return_value=True),
+    # AutoSpecMethodInfo(client.Client.list_projects, returns=True),
     # AutoSpecMethodInfo(
     #    client.ProxmoxClient.get_node_stats,
-    #    return_value=lambda node, **kwargs: next(filter(lambda n: n.name == node, NODE_STATS)),  # pyright: ignore
+    #    returns=lambda node, **kwargs: next(filter(lambda n: n.name == node, NODE_STATS)),  # pyright: ignore
     # ),
 ]
 

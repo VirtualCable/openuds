@@ -271,88 +271,88 @@ CONSOLE_CONNECTION_INFO: typing.Final[types.services.ConsoleConnectionInfo] = (
 CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     # connect returns None
     # Test method
-    AutoSpecMethodInfo(client.ProxmoxClient.test, return_value=True),
+    AutoSpecMethodInfo(client.ProxmoxClient.test, returns=True),
     # get_cluster_info
-    AutoSpecMethodInfo(client.ProxmoxClient.get_cluster_info, return_value=CLUSTER_INFO),
+    AutoSpecMethodInfo(client.ProxmoxClient.get_cluster_info, returns=CLUSTER_INFO),
     # get_next_vmid
-    AutoSpecMethodInfo(client.ProxmoxClient.get_next_vmid, return_value=1),
+    AutoSpecMethodInfo(client.ProxmoxClient.get_next_vmid, returns=1),
     # is_vmid_available
-    AutoSpecMethodInfo(client.ProxmoxClient.is_vmid_available, return_value=True),
+    AutoSpecMethodInfo(client.ProxmoxClient.is_vmid_available, returns=True),
     # get_node_networks, not called never (ensure it's not called by mistake)
     # list_node_gpu_devices
-    AutoSpecMethodInfo(client.ProxmoxClient.list_node_gpu_devices, return_value=['gpu_dev_1', 'gpu_dev_2']),
+    AutoSpecMethodInfo(client.ProxmoxClient.list_node_gpu_devices, returns=['gpu_dev_1', 'gpu_dev_2']),
     # list_node_vgpus
-    AutoSpecMethodInfo(client.ProxmoxClient.list_node_vgpus, return_value=VGPUS),
+    AutoSpecMethodInfo(client.ProxmoxClient.list_node_vgpus, returns=VGPUS),
     # node_has_vgpus_available
-    AutoSpecMethodInfo(client.ProxmoxClient.node_has_vgpus_available, return_value=True),
+    AutoSpecMethodInfo(client.ProxmoxClient.node_has_vgpus_available, returns=True),
     # get_best_node_for_machine
-    AutoSpecMethodInfo(client.ProxmoxClient.get_best_node_for_machine, return_value=NODE_STATS[0]),
+    AutoSpecMethodInfo(client.ProxmoxClient.get_best_node_for_machine, returns=NODE_STATS[0]),
     # clone_machine
-    AutoSpecMethodInfo(client.ProxmoxClient.clone_machine, return_value=VM_CREATION_RESULT),
+    AutoSpecMethodInfo(client.ProxmoxClient.clone_machine, returns=VM_CREATION_RESULT),
     # list_ha_groups
-    AutoSpecMethodInfo(client.ProxmoxClient.list_ha_groups, return_value=HA_GROUPS),
+    AutoSpecMethodInfo(client.ProxmoxClient.list_ha_groups, returns=HA_GROUPS),
     # enable_machine_ha return None
     # disable_machine_ha return None
     # set_protection return None
     # get_guest_ip_address
-    AutoSpecMethodInfo(client.ProxmoxClient.get_guest_ip_address, return_value=GUEST_IP_ADDRESS),
+    AutoSpecMethodInfo(client.ProxmoxClient.get_guest_ip_address, returns=GUEST_IP_ADDRESS),
     # remove_machine
-    AutoSpecMethodInfo(client.ProxmoxClient.remove_machine, return_value=UPID),
+    AutoSpecMethodInfo(client.ProxmoxClient.remove_machine, returns=UPID),
     # list_snapshots
-    AutoSpecMethodInfo(client.ProxmoxClient.list_snapshots, return_value=SNAPSHOTS_INFO),
+    AutoSpecMethodInfo(client.ProxmoxClient.list_snapshots, returns=SNAPSHOTS_INFO),
     # supports_snapshot
-    AutoSpecMethodInfo(client.ProxmoxClient.supports_snapshot, return_value=True),
+    AutoSpecMethodInfo(client.ProxmoxClient.supports_snapshot, returns=True),
     # create_snapshot
-    AutoSpecMethodInfo(client.ProxmoxClient.create_snapshot, return_value=UPID),
+    AutoSpecMethodInfo(client.ProxmoxClient.create_snapshot, returns=UPID),
     # remove_snapshot
-    AutoSpecMethodInfo(client.ProxmoxClient.remove_snapshot, return_value=UPID),
+    AutoSpecMethodInfo(client.ProxmoxClient.remove_snapshot, returns=UPID),
     # restore_snapshot
-    AutoSpecMethodInfo(client.ProxmoxClient.restore_snapshot, return_value=UPID),
+    AutoSpecMethodInfo(client.ProxmoxClient.restore_snapshot, returns=UPID),
     # get_task
-    AutoSpecMethodInfo(client.ProxmoxClient.get_task, return_value=TASK_STATUS),
+    AutoSpecMethodInfo(client.ProxmoxClient.get_task, returns=TASK_STATUS),
     # list_machines
-    AutoSpecMethodInfo(client.ProxmoxClient.list_machines, return_value=VMS_INFO),
+    AutoSpecMethodInfo(client.ProxmoxClient.list_machines, returns=VMS_INFO),
     # get_machine_pool_info
     AutoSpecMethodInfo(
         client.ProxmoxClient.get_machine_pool_info,
-        return_value=lambda vmid, poolid, **kwargs: VMS_INFO[vmid - 1],  # pyright: ignore
+        returns=lambda vmid, poolid, **kwargs: VMS_INFO[vmid - 1],  # pyright: ignore
     ),
     # get_machine_info
     AutoSpecMethodInfo(
         client.ProxmoxClient.get_machine_info,
-        return_value=lambda vmid, *args, **kwargs: VMS_INFO[vmid - 1],  # pyright: ignore
+        returns=lambda vmid, *args, **kwargs: VMS_INFO[vmid - 1],  # pyright: ignore
     ),
     # get_machine_configuration
     AutoSpecMethodInfo(
         client.ProxmoxClient.get_machine_configuration,
-        return_value=lambda vmid, **kwargs: VMS_CONFIGURATION[vmid - 1],  # pyright: ignore
+        returns=lambda vmid, **kwargs: VMS_CONFIGURATION[vmid - 1],  # pyright: ignore
     ),
     # enable_machine_ha return None
     # start_machine
-    AutoSpecMethodInfo(client.ProxmoxClient.start_machine, return_value=UPID),
+    AutoSpecMethodInfo(client.ProxmoxClient.start_machine, returns=UPID),
     # stop_machine
-    AutoSpecMethodInfo(client.ProxmoxClient.stop_machine, return_value=UPID),
+    AutoSpecMethodInfo(client.ProxmoxClient.stop_machine, returns=UPID),
     # reset_machine
-    AutoSpecMethodInfo(client.ProxmoxClient.reset_machine, return_value=UPID),
+    AutoSpecMethodInfo(client.ProxmoxClient.reset_machine, returns=UPID),
     # suspend_machine
-    AutoSpecMethodInfo(client.ProxmoxClient.suspend_machine, return_value=UPID),
+    AutoSpecMethodInfo(client.ProxmoxClient.suspend_machine, returns=UPID),
     # resume_machine
-    AutoSpecMethodInfo(client.ProxmoxClient.resume_machine, return_value=UPID),
+    AutoSpecMethodInfo(client.ProxmoxClient.resume_machine, returns=UPID),
     # shutdown_machine
-    AutoSpecMethodInfo(client.ProxmoxClient.shutdown_machine, return_value=UPID),
+    AutoSpecMethodInfo(client.ProxmoxClient.shutdown_machine, returns=UPID),
     # convert_to_template
-    AutoSpecMethodInfo(client.ProxmoxClient.convert_to_template, return_value=UPID),
+    AutoSpecMethodInfo(client.ProxmoxClient.convert_to_template, returns=UPID),
     # get_storage
     AutoSpecMethodInfo(
         client.ProxmoxClient.get_storage,
-        return_value=lambda storage, node, **kwargs: next(  # pyright: ignore
+        returns=lambda storage, node, **kwargs: next(  # pyright: ignore
             filter(lambda s: s.storage == storage, STORAGES)  # pyright: ignore
         ),  # pyright: ignore
     ),
     # list_storages
     AutoSpecMethodInfo(
         client.ProxmoxClient.list_storages,
-        return_value=lambda node, **kwargs: (  # pyright: ignore
+        returns=lambda node, **kwargs: (  # pyright: ignore
             (list(filter(lambda s: s.node == node, STORAGES)))  # pyright: ignore
             if node is not None
             else STORAGES  # pyright: ignore
@@ -361,23 +361,23 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     # get_node_stats
     AutoSpecMethodInfo(
         client.ProxmoxClient.get_node_stats,
-        return_value=lambda node, **kwargs: next(  # pyright: ignore
+        returns=lambda node, **kwargs: next(  # pyright: ignore
             filter(lambda n: n.name == node, NODE_STATS)  # pyright: ignore
         ),
     ),
     # list_pools
-    AutoSpecMethodInfo(client.ProxmoxClient.list_pools, return_value=POOLS),
+    AutoSpecMethodInfo(client.ProxmoxClient.list_pools, returns=POOLS),
     # get_pool_info
     AutoSpecMethodInfo(
         client.ProxmoxClient.get_pool_info,
-        return_value=lambda poolid, **kwargs: next(  # pyright: ignore
+        returns=lambda poolid, **kwargs: next(  # pyright: ignore
             filter(lambda p: p.poolid == poolid, POOLS)  # pyright: ignore
         ),
     ),
     # get_console_connection
-    AutoSpecMethodInfo(client.ProxmoxClient.get_console_connection, return_value=CONSOLE_CONNECTION_INFO),
+    AutoSpecMethodInfo(client.ProxmoxClient.get_console_connection, returns=CONSOLE_CONNECTION_INFO),
     # journal
-    AutoSpecMethodInfo(client.ProxmoxClient.journal, return_value=['journal line 1', 'journal line 2']),
+    AutoSpecMethodInfo(client.ProxmoxClient.journal, returns=['journal line 1', 'journal line 2']),
 ]
 
 PROVIDER_VALUES_DICT: typing.Final[gui.ValuesDictType] = {

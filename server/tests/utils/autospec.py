@@ -36,7 +36,7 @@ from unittest import mock
 @dataclasses.dataclass
 class AutoSpecMethodInfo:
     name: str|typing.Callable[..., typing.Any]
-    return_value: typing.Any = None  # Can be a callable or a value
+    returns: typing.Any = None  # Can be a callable or a value
     
     
 def autospec(cls: type, metods_info: collections.abc.Iterable[AutoSpecMethodInfo], **kwargs: typing.Any) -> mock.Mock:
@@ -54,9 +54,9 @@ def autospec(cls: type, metods_info: collections.abc.Iterable[AutoSpecMethodInfo
         # Set the return value for the method or the side_effect
         name = method_info.name if isinstance(method_info.name, str) else method_info.name.__name__
         mck = getattr(obj, name)
-        if callable(method_info.return_value):
-            mck.side_effect = method_info.return_value
+        if callable(method_info.returns):
+            mck.side_effect = method_info.returns
         else:
-            mck.return_value = method_info.return_value
+            mck.return_value = method_info.returns
             
     return obj
