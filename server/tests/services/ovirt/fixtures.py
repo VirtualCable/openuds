@@ -159,6 +159,7 @@ CONSOLE_CONNECTION_INFO: types.services.ConsoleConnectionInfo = types.services.C
 # without the need of a real OpenStack environment
 # all methods that returns None are provided by the auto spec mock
 CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
+    AutoSpecMethodInfo(client.Client.test, return_value=True),
     AutoSpecMethodInfo(client.Client.list_machines, return_value=VMS_INFO),
     AutoSpecMethodInfo(
         client.Client.get_machine_info,
@@ -216,7 +217,8 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
 
 PROVIDER_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
     'ovirt_version': '4',
-    'host': 'hoet.example.com',
+    'host': 'host.example.com',
+    'port': '443',  # '443' is the default value
     'username': 'admin@ovirt@internalsso',
     'password': 'the_testing_pass',
     'concurrent_creation_limit': 33,
@@ -259,7 +261,7 @@ def patch_provider_api(
         mock.patch.stopall()
 
 
-def create_provider(**kwargs: typing.Any) -> provider.OVirtProvider:
+def create_provider(**kwargs: typing.Any) -> 'provider.OVirtProvider':
     """
     Create a provider
     """

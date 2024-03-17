@@ -112,6 +112,14 @@ class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-publi
         tooltip=_('oVirt Server IP or Hostname'),
         required=True,
     )
+    port = gui.NumericField(
+        length=5,
+        label=_('Port'),
+        order=2,
+        tooltip=_('oVirt Server Port'),
+        required=True,
+        default=443,
+    )
     username = gui.TextField(
         length=32,
         label=_('Username'),
@@ -154,6 +162,7 @@ class OVirtProvider(services.ServiceProvider):  # pylint: disable=too-many-publi
         if self._api is None:
             self._api = client.Client(
                 self.host.value,
+                self.port.value,
                 self.username.value,
                 self.password.value,
                 self.timeout.value,

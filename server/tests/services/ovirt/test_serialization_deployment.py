@@ -38,7 +38,7 @@ from tests.utils.test import UDSTransactionTestCase
 from uds.core.environment import Environment
 
 
-from uds.services.OVirt.deployment import Operation as Operation, OVirtLinkedDeployment as Deployment
+from uds.services.OVirt.deployment import Operation as Operation, OVirtLinkedUserService
 
 # if not data.startswith(b'v'):
 #     return super().unmarshal(data)
@@ -78,8 +78,8 @@ SERIALIZED_DEPLOYMENT_DATA: typing.Final[typing.Mapping[str, bytes]] = {
 LAST_VERSION: typing.Final[str] = sorted(SERIALIZED_DEPLOYMENT_DATA.keys(), reverse=True)[0]
 
 
-class OvirtDeploymentSerializationTest(UDSTransactionTestCase):
-    def check(self, version: str, instance: Deployment) -> None:
+class OvirtOVirtLinkedUserServiceSerializationTest(UDSTransactionTestCase):
+    def check(self, version: str, instance: OVirtLinkedUserService) -> None:
         self.assertEqual(instance._name, 'name')
         self.assertEqual(instance._ip, 'ip')
         self.assertEqual(instance._mac, 'mac')
@@ -91,8 +91,8 @@ class OvirtDeploymentSerializationTest(UDSTransactionTestCase):
         # queue is kept on "storage", so we need always same environment
         environment = Environment.testing_environment()
 
-        def _create_instance(unmarshal_data: 'bytes|None' = None) -> Deployment:
-            instance = Deployment(environment=environment, service=None)  # type: ignore
+        def _create_instance(unmarshal_data: 'bytes|None' = None) -> OVirtLinkedUserService:
+            instance = OVirtLinkedUserService(environment=environment, service=None)  # type: ignore
             if unmarshal_data:
                 instance.unmarshal(unmarshal_data)
             return instance
@@ -122,8 +122,8 @@ class OvirtDeploymentSerializationTest(UDSTransactionTestCase):
         # Store queue
         environment.storage.save_pickled('queue', TEST_QUEUE)
 
-        def _create_instance(unmarshal_data: 'bytes|None' = None) -> Deployment:
-            instance = Deployment(environment=environment, service=None)  # type: ignore
+        def _create_instance(unmarshal_data: 'bytes|None' = None) -> OVirtLinkedUserService:
+            instance = OVirtLinkedUserService(environment=environment, service=None)  # type: ignore
             if unmarshal_data:
                 instance.unmarshal(unmarshal_data)
             return instance
@@ -167,6 +167,6 @@ class OvirtDeploymentSerializationTest(UDSTransactionTestCase):
         # This test is designed to ensure that all fields are autoserializable
         # If some field is added or removed, this tests will warn us about it to fix the rest of the related tests
         with Environment.temporary_environment() as env:
-            instance = Deployment(environment=env, service=None)  # type: ignore
+            instance = OVirtLinkedUserService(environment=env, service=None)  # type: ignore
 
             self.assertSetEqual(set(f[0] for f in instance._autoserializable_fields()), EXPECTED_FIELDS)

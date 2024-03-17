@@ -82,6 +82,7 @@ class Client:
     """
 
     _host: str
+    _port: int
     _username: str
     _password: str
     _timeout: int
@@ -105,7 +106,7 @@ class Client:
         if self._api is None:
             try:
                 self._api = ovirtsdk4.Connection(
-                    url='https://' + self._host + '/ovirt-engine/api',
+                    url='https://' + self._host + (f':{self._port}' if self._port != 443 else '') + '/ovirt-engine/api',
                     username=self._username,
                     password=self._password,
                     timeout=self._timeout,
@@ -121,12 +122,14 @@ class Client:
     def __init__(
         self,
         host: str,
+        port: int,
         username: str,
         password: str,
         timeout: int,
         cache: 'Cache',
     ):
         self._host = host
+        self._port = port
         self._username = username
         self._password = password
         self._timeout = int(timeout)
