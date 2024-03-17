@@ -35,7 +35,6 @@ import typing
 
 from . import constants
 
-
 def random_string(size: int = 6, chars: typing.Optional[str] = None) -> str:
     chars = chars or constants.STRING_CHARS
     return ''.join(

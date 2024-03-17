@@ -37,6 +37,9 @@ from django.db import models
 logger = logging.getLogger(__name__)
 
 
+T = typing.TypeVar('T')
+
+
 def compare_dicts(
     expected: collections.abc.Mapping[str, typing.Any],
     actual: collections.abc.Mapping[str, typing.Any],
@@ -53,7 +56,7 @@ def compare_dicts(
     ignore_keys_startswith = ignore_keys_startswith or []
     ignore_values_startswith = ignore_values_startswith or []
 
-    errors = []
+    errors:list[tuple[str, str]] = []
 
     for k, v in expected.items():
         if k in ignore_keys:
@@ -141,7 +144,7 @@ def random_hostname() -> str:
 # Just compare types
 # This is a simple class that returns true if the types of the two objects are the same
 class MustBeOfType:
-    _kind: type
+    _kind: type[typing.Any]
     
     def __init__(self, kind: type) -> None:
         self._kind = kind
@@ -158,3 +161,11 @@ class MustBeOfType:
     def __repr__(self) -> str:
         return self.__str__()
 
+def id_from_list(lst: list[T], attribute: str, value: typing.Any) -> T:
+    """
+    Returns an item from a list of items
+    """
+    for item in lst:
+        if getattr(item, attribute) == value:
+            return item
+    raise ValueError(f'Item with id {value} not found in list')

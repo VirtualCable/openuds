@@ -41,13 +41,13 @@ from uds.core.util import validators, fields
 from uds.core.ui import gui
 
 from .publication import OVirtPublication
-from .deployment import OVirtLinkedUserService
+from .deployment_linked import OVirtLinkedUserService
 from . import helpers
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from .provider import OVirtProvider
-    
+
 
 from .ovirt import types as ov_types
 
@@ -246,9 +246,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         free_storage_gb = info.available / (1024 * 1024 * 1024)
         if free_storage_gb < self.reserved_storage_gb.value:
             raise Exception(
-                'Not enough free space available: (Needs at least {0} GB and there is only {1} GB '.format(
-                    self.reserved_storage_gb.as_int(), free_storage_gb
-                )
+                f'Not enough free space available: Needs at least {self.reserved_storage_gb.value} GB but only {free_storage_gb} GB is available.'
             )
 
     def sanitized_name(self, name: str) -> str:
@@ -256,9 +254,6 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         Ovirt only allows machine names with [a-zA-Z0-9_-]
         """
         return re.sub("[^a-zA-Z0-9_-]", "_", name)
-
-    class TemplateInfo:
-        pass
 
     def make_template(self, name: str, comments: str) -> ov_types.TemplateInfo:
         """

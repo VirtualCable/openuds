@@ -396,7 +396,7 @@ PROVIDER_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
 SERVICE_LINKED_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
     'pool': POOLS[0].poolid,
     'ha': HA_GROUPS[0],
-    'soft_shutdown': False,
+    'try_soft_shutdown': False,
     'machine': VMS_INFO[0].vmid,
     'datastore': STORAGES[0].storage,
     'gpu': VGPUS[0].type,

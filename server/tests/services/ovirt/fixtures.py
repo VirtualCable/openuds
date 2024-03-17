@@ -45,9 +45,9 @@ from ...utils.autospec import autospec, AutoSpecMethodInfo
 
 from uds.services.OVirt import (
     provider,
-    service,
+    service_linked,
     publication,
-    deployment,
+    deployment_linked,
 )
 from uds.services.OVirt.ovirt import client, types as ov_types
 
@@ -79,7 +79,7 @@ STORAGES_INFO: list[ov_types.StorageInfo] = [
         id=f'stid-{i}',
         name=f'storage-{i}',
         type=from_enum(ov_types.StorageType, i),
-        available=i * 1024 * 1024 * 1024,
+        available=(i+4) * 1024 * 1024 * 1024,  # So all storages has enough space
         used=i * 1024 * 1024 * 1024 // 2,
         status=from_list([ov_types.StorageStatus.ACTIVE, ov_types.StorageStatus.INACTIVE], i),
     )
@@ -228,12 +228,12 @@ PROVIDER_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
 }
 
 SERVICE_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
-    'cluster': '5a5e5021-00d9-031e-0132-000000000044',
-    'datastore': 'dd30d1d7-3c8d-4c47-ad95-6b572f635091',
+    'cluster': CLUSTERS_INFO[0].id,
+    'datastore': STORAGES_INFO[0].id,
     'reserved_storage_gb': 2,
-    'machine': '78877a7e-005f-4418-a26a-9027a41a32a4',
+    'machine': VMS_INFO[0].id,
     'memory': 256,
-    'guaranteed_memory': 128,
+    'guaranteed_memory': 256,
     'usb': 'native',
     'display': 'spice',
     'basename': 'noso',
@@ -273,7 +273,7 @@ def create_provider(**kwargs: typing.Any) -> 'provider.OVirtProvider':
     )
 
 
-def create_linked_service(provider: provider.OVirtProvider, **kwargs: typing.Any) -> service.OVirtLinkedService:
+def create_linked_service(provider: typing.Optional[provider.OVirtProvider] = None, **kwargs: typing.Any) -> 'service_linked.OVirtLinkedService':
     """
     Create a service
     """
@@ -281,15 +281,15 @@ def create_linked_service(provider: provider.OVirtProvider, **kwargs: typing.Any
     values.update(kwargs)
 
     uuid_ = str(uuid.uuid4())
-    return service.OVirtLinkedService(
-        provider=provider,
+    return service_linked.OVirtLinkedService(
+        provider=provider or create_provider(),
         environment=environment.Environment.private_environment(uuid),
         values=values,
         uuid=uuid_,
     )
 
 
-def create_publication(service: service.OVirtLinkedService) -> publication.OVirtPublication:
+def create_publication(service: 'service_linked.OVirtLinkedService') -> publication.OVirtPublication:
     """
     Create a publication
     """
@@ -304,14 +304,14 @@ def create_publication(service: service.OVirtLinkedService) -> publication.OVirt
 
 
 def create_linked_userservice(
-    service: service.OVirtLinkedService,
+    service: 'service_linked.OVirtLinkedService',
     publication: typing.Optional[publication.OVirtPublication] = None,
-) -> deployment.OVirtLinkedUserService:
+) -> 'deployment_linked.OVirtLinkedUserService':
     """
     Create a linked user service
     """
     uuid_ = str(uuid.uuid4())
-    return deployment.OVirtLinkedUserService(
+    return deployment_linked.OVirtLinkedUserService(
         environment=environment.Environment.private_environment(uuid_),
         service=service,
         publication=publication or create_publication(service),

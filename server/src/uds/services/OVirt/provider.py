@@ -40,7 +40,7 @@ from uds.core.util import validators, fields
 from uds.core.util.decorators import cached
 
 from .ovirt import client
-from .service import OVirtLinkedService
+from .service_linked import OVirtLinkedService
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:

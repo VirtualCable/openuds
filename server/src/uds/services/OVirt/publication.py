@@ -44,7 +44,7 @@ from .ovirt import types as ov_types
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from .service import OVirtLinkedService
+    from .service_linked import OVirtLinkedService
 
 logger = logging.getLogger(__name__)
 

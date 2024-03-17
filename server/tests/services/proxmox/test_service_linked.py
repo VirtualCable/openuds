@@ -39,6 +39,17 @@ from ...utils.test import UDSTestCase
 
 
 class TestProxmovLinkedService(UDSTestCase):
+    def test_service_data(self) -> None:
+        service = fixtures.create_service_linked()
+
+        self.assertEqual(service.pool.value, fixtures.SERVICE_LINKED_VALUES_DICT['pool'])
+        self.assertEqual(service.ha.value, fixtures.SERVICE_LINKED_VALUES_DICT['ha'])
+        self.assertEqual(service.try_soft_shutdown.value, fixtures.SERVICE_LINKED_VALUES_DICT['try_soft_shutdown'])
+        self.assertEqual(service.machine.as_int(), fixtures.SERVICE_LINKED_VALUES_DICT['machine'])
+        self.assertEqual(service.datastore.value, fixtures.SERVICE_LINKED_VALUES_DICT['datastore'])
+        self.assertEqual(service.gpu.value, fixtures.SERVICE_LINKED_VALUES_DICT['gpu'])
+        self.assertEqual(service.basename.value, fixtures.SERVICE_LINKED_VALUES_DICT['basename'])
+        self.assertEqual(service.lenname.value, fixtures.SERVICE_LINKED_VALUES_DICT['lenname'])
 
     def test_service_is_available(self) -> None:
         """

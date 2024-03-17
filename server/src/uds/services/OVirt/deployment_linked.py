@@ -48,7 +48,7 @@ if typing.TYPE_CHECKING:
     from uds import models
 
     from .publication import OVirtPublication
-    from .service import OVirtLinkedService
+    from .service_linked import OVirtLinkedService
 
 logger = logging.getLogger(__name__)
 
