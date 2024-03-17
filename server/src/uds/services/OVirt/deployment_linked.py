@@ -39,6 +39,7 @@ import typing
 from uds.core import consts, services, types
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.util import autoserializable, log
+from uds.core.util.model import sql_stamp_seconds
 
 from .jobs import OVirtDeferredRemoval
 from .ovirt import types as ov_types
@@ -72,6 +73,7 @@ class Operation(enum.IntEnum):
     FINISH = 7
     RETRY = 8
     CHANGEMAC = 9
+    GRACEFUL_STOP = 10
 
     opUnknown = 99
 
@@ -297,7 +299,7 @@ if sys.platform == 'win32':
         self._init_queue_for_deploy(False)
         return self._execute_queue()
 
-    def deploy_for_cache(self, level: int) -> types.states.TaskState:
+    def deploy_for_cache(self, level: types.services.CacheLevel) -> types.states.TaskState:
         """
         Deploys an service instance for cache
         """
@@ -390,7 +392,7 @@ if sys.platform == 'win32':
         self._set_checks_counter(0)
 
         try:
-            operation_runner = EXECUTORS[op]
+            operation_runner = _EXECUTORS[op]
 
             operation_runner(self)
 
@@ -476,6 +478,28 @@ if sys.platform == 'win32':
 
         self.service().provider().api.stop_machine(self._vmid)
 
+    def _gracely_stop(self) -> None:
+        """
+        Tries to stop machine using qemu guest tools
+        If it takes too long to stop, or qemu guest tools are not installed,
+        will use "power off" "a las bravas"
+        """
+        self._task = ''
+        shutdown = -1  # Means machine already stopped
+        try:
+            vm_info = self.service().provider().api.get_machine_info(self._vmid)
+            if vm_info.status == ov_types.VMStatus.UNKNOWN:
+                raise Exception('Not found')
+        except Exception as e:
+            raise Exception('Machine not found on stop machine') from e
+
+        if vm_info.status in UP_STATES:
+            self.service().provider().api.shutdown_machine(self._vmid)
+            shutdown = sql_stamp_seconds()
+
+        logger.debug('Stoped vm using guest tools')
+        self.storage.save_pickled('shutdown', shutdown)
+
     def _suspend_machine(self) -> None:
         """
         Suspends the machine
@@ -558,6 +582,40 @@ if sys.platform == 'win32':
         """
         return types.states.TaskState.FINISHED
 
+    def _graceful_stop_checker(self) -> types.states.TaskState:
+        """
+        Check if the machine has gracely stopped (timed shutdown)
+        """
+        with self.storage.as_dict() as data:
+            shutdown_start = data.get('shutdown', -1)
+        logger.debug('Shutdown start: %s', shutdown_start)
+        if shutdown_start < 0:  # Was already stopped
+            # Machine is already stop
+            logger.debug('Machine WAS stopped')
+            return types.states.TaskState.FINISHED
+
+        if shutdown_start == 0:  # Was shut down a las bravas
+            logger.debug('Macine DO NOT HAVE guest tools')
+            return self._stop_checker()
+
+        logger.debug('Checking State')
+        # Check if machine is already stopped
+        if self.service().provider().api.get_machine_info(self._vmid).status in DOWN_STATES:
+            return types.states.TaskState.FINISHED  # It's stopped
+
+        logger.debug('State is running')
+        if sql_stamp_seconds() - shutdown_start > consts.os.MAX_GUEST_SHUTDOWN_WAIT:
+            logger.debug('Time is consumed, falling back to stop')
+            self.do_log(
+                log.LogLevel.ERROR,
+                f'Could not shutdown machine using soft power off in time ({consts.os.MAX_GUEST_SHUTDOWN_WAIT} seconds). Powering off.',
+            )
+            # Not stopped by guest in time, but must be stopped normally
+            self.storage.save_pickled('shutdown', 0)
+            self._stop_machine()  # Launch "hard" stop
+
+        return types.states.TaskState.RUNNING
+
     def check_state(self) -> types.states.TaskState:
         """
         Check what operation is going on, and acts acordly to it
@@ -572,7 +630,7 @@ if sys.platform == 'win32':
             return types.states.TaskState.FINISHED
 
         try:
-            operation_checker = CHECKERS[op]
+            operation_checker = _CHECKERS[op]
 
             state = operation_checker(self)
             if state == types.states.TaskState.FINISHED:
@@ -624,11 +682,16 @@ if sys.platform == 'win32':
         if op == Operation.ERROR:
             return self._error('Machine is already in error state!')
 
+        # Take into account the try to stop gracefully
+        graceful_stop: list[Operation] = (
+            [] if not self.service().try_graceful_shutdown() else [Operation.GRACEFUL_STOP]
+        )
+
         if op in (Operation.FINISH, Operation.WAIT):
-            self._queue = [Operation.STOP, Operation.REMOVE, Operation.FINISH]
+            self._queue = graceful_stop + [Operation.STOP, Operation.REMOVE, Operation.FINISH]
             return self._execute_queue()
 
-        self._queue = [op, Operation.STOP, Operation.REMOVE, Operation.FINISH]
+        self._queue = [op] + graceful_stop + [Operation.STOP, Operation.REMOVE, Operation.FINISH]
         # Do not execute anything.here, just continue normally
         return types.states.TaskState.RUNNING
 
@@ -671,11 +734,12 @@ if sys.platform == 'win32':
         )
 
 
-EXECUTORS: dict[Operation, collections.abc.Callable[[OVirtLinkedUserService], None]] = {
+_EXECUTORS: dict[Operation, collections.abc.Callable[[OVirtLinkedUserService], None]] = {
     Operation.CREATE: OVirtLinkedUserService._create,
     Operation.RETRY: OVirtLinkedUserService._retry,
     Operation.START: OVirtLinkedUserService._start_machine,
     Operation.STOP: OVirtLinkedUserService._stop_machine,
+    Operation.GRACEFUL_STOP: OVirtLinkedUserService._gracely_stop,
     Operation.SUSPEND: OVirtLinkedUserService._suspend_machine,
     Operation.WAIT: OVirtLinkedUserService._wait,
     Operation.REMOVE: OVirtLinkedUserService._remove,
@@ -683,12 +747,13 @@ EXECUTORS: dict[Operation, collections.abc.Callable[[OVirtLinkedUserService], No
 }
 
 
-CHECKERS: dict[Operation, collections.abc.Callable[[OVirtLinkedUserService], types.states.TaskState]] = {
+_CHECKERS: dict[Operation, collections.abc.Callable[[OVirtLinkedUserService], types.states.TaskState]] = {
     Operation.CREATE: OVirtLinkedUserService._create_checker,
     Operation.RETRY: OVirtLinkedUserService._retry_checker,
     Operation.WAIT: OVirtLinkedUserService._wait_checker,
     Operation.START: OVirtLinkedUserService._start_checker,
     Operation.STOP: OVirtLinkedUserService._stop_checker,
+    Operation.GRACEFUL_STOP: OVirtLinkedUserService._graceful_stop_checker,
     Operation.SUSPEND: OVirtLinkedUserService._suspend_checker,
     Operation.REMOVE: OVirtLinkedUserService._remove_checker,
     Operation.CHANGEMAC: OVirtLinkedUserService._mac_checker,

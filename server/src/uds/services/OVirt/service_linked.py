@@ -137,6 +137,8 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         old_field_name='minSpaceGB',
     )
 
+    try_soft_shutdown = fields.soft_shutdown_field()
+    
     machine = gui.ChoiceField(
         label=_("Base Machine"),
         order=110,
@@ -344,3 +346,6 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
 
     def is_avaliable(self) -> bool:
         return self.provider().is_available()
+
+    def try_graceful_shutdown(self) -> bool:
+        return self.try_soft_shutdown.as_bool()

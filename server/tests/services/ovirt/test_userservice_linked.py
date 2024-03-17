@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+from uds import models
 from uds.core import types
 
 from uds.services.OVirt.deployment_linked import Operation
@@ -50,10 +51,11 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
             vm.status = ov_types.VMStatus.DOWN
 
     def test_max_check_works(self) -> None:
+        # Tests that the userservice does not gets stuck in a loop if cannot complete some operation
         with fixtures.patch_provider_api() as _api:
             userservice = fixtures.create_linked_userservice()
 
-            state = userservice.deploy_for_cache(level=1)
+            state = userservice.deploy_for_cache(level=types.services.CacheLevel.L1)
 
             for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
                 state = userservice.check_state()
@@ -65,7 +67,7 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
 
     def test_userservice_linked_cache_l1(self) -> None:
         """
-        Test the user service
+        Test the user service for cache l1
         """
         with fixtures.patch_provider_api() as api:
             userservice = fixtures.create_linked_userservice()
@@ -75,7 +77,7 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
 
             _publication = userservice.publication()
 
-            state = userservice.deploy_for_cache(level=1)
+            state = userservice.deploy_for_cache(level=types.services.CacheLevel.L1)
 
             self.assertEqual(state, types.states.TaskState.RUNNING)
 
@@ -87,6 +89,7 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
                     vm = utils.find_attr_in_list(fixtures.VMS_INFO, 'id', userservice._vmid)
                     vm.status = ov_types.VMStatus.UP
                 state = userservice.check_state()
+                
 
             self.assertEqual(state, types.states.TaskState.FINISHED)
 
@@ -107,7 +110,7 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
 
     def test_userservice_linked_cache_l2(self) -> None:
         """
-        Test the user service
+        Test the user service for cache level 2
         """
         with fixtures.patch_provider_api() as api:
             userservice = fixtures.create_linked_userservice()
@@ -117,7 +120,7 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
 
             _publication = userservice.publication()
 
-            state = userservice.deploy_for_cache(level=2)
+            state = userservice.deploy_for_cache(level=types.services.CacheLevel.L2)
 
             self.assertEqual(state, types.states.TaskState.RUNNING)
 
@@ -134,7 +137,7 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
                     vm.status = ov_types.VMStatus.SUSPENDED
                 state = userservice.check_state()
                 
-                # If first item in queue is WAIT, we must "simulate" the wake up
+                # If first item in queue is WAIT, we must "simulate" the wake up from os manager
                 if userservice._queue[0] == Operation.WAIT:
                     state = userservice.process_ready_from_os_manager(None)
 
@@ -154,3 +157,96 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
             api.update_machine_mac.assert_called()
             api.fix_usb.assert_called()
             api.start_machine.assert_called()
+
+    def test_userservice_linked_user(self) -> None:
+        """
+        Test the user service for user deployment
+        """
+        with fixtures.patch_provider_api() as api:
+            userservice = fixtures.create_linked_userservice()
+
+            service = userservice.service()
+            service.usb.value = 'native'  # With usb
+
+            _publication = userservice.publication()
+
+            state = userservice.deploy_for_user(models.User())
+
+            self.assertEqual(state, types.states.TaskState.RUNNING)
+
+            # Ensure that in the event of failure, we don't loop forever
+            for counter in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
+                # this user service expects the machine to be started at some point, so after a few iterations, we set it to started
+                # note that the user service has a counter for max "recheck" without any success, and if reached, it will fail
+                if counter == 12:
+                    vm = utils.find_attr_in_list(fixtures.VMS_INFO, 'id', userservice._vmid)
+                    vm.status = ov_types.VMStatus.UP
+                state = userservice.check_state()
+
+            self.assertEqual(state, types.states.TaskState.FINISHED)
+
+            self.assertEqual(userservice._name[: len(service.get_basename())], service.get_basename())
+            self.assertEqual(len(userservice._name), len(service.get_basename()) + service.get_lenname())
+            
+            # Assarts has an vmid
+            self.assertTrue(bool(userservice._vmid))
+
+            # Assert several deploy api methods has been called, no matter args
+            # tested on other tests
+            api.get_storage_info.assert_called()
+            api.deploy_from_template.assert_called()
+            api.get_machine_info.assert_called()
+            api.update_machine_mac.assert_called()
+            api.fix_usb.assert_called()
+            api.start_machine.assert_called()
+
+    def test_userservice_cancel(self) -> None:
+        """
+        Test the user service
+        """
+        with fixtures.patch_provider_api() as _api:
+            for graceful in [True, False]:
+                userservice = fixtures.create_linked_userservice()
+                service = userservice.service()
+                service.try_soft_shutdown.value = graceful
+                publication = userservice.publication()
+                publication._vmid = '1'
+
+                # Set machine state for fixture to started
+                fixtures.VMS_INFO = [
+                    fixtures.VMS_INFO[i]._replace(status='running') for i in range(len(fixtures.VMS_INFO))
+                ]
+
+                state = userservice.deploy_for_user(models.User())
+
+                self.assertEqual(state, types.states.TaskState.RUNNING)
+
+                current_op = userservice._get_current_op()
+
+                # Invoke cancel
+                state = userservice.cancel()
+
+                self.assertEqual(state, types.states.TaskState.RUNNING)
+
+                self.assertEqual(
+                    userservice._queue,
+                    [current_op]
+                    + ([Operation.GRACEFUL_STOP] if graceful else [])
+                    + [Operation.STOP, Operation.REMOVE, Operation.FINISH],
+                )
+
+                for counter in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
+                    state = userservice.check_state()
+                    if counter > 5:
+                        # Set machine state for fixture to stopped
+                        fixtures.VMS_INFO = [
+                            fixtures.VMS_INFO[i]._replace(status='stopped')
+                            for i in range(len(fixtures.VMS_INFO))
+                        ]
+
+                self.assertEqual(state, types.states.TaskState.FINISHED)
+
+                if graceful:
+                    _api.shutdown_machine.assert_called()
+                else:
+                    _api.stop_machine.assert_called()

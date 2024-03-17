@@ -260,8 +260,8 @@ if sys.platform == 'win32':
         self._init_queue_for_deploy(level == types.services.CacheLevel.L2)
         return self._execute_queue()
 
-    def _init_queue_for_deploy(self, forLevel2: bool = False) -> None:
-        if forLevel2 is False:
+    def _init_queue_for_deploy(self, cache_l2: bool = False) -> None:
+        if cache_l2 is False:
             self._queue = [Operation.CREATE, Operation.GET_MAC, Operation.START, Operation.FINISH]
         else:
             self._queue = [
@@ -365,9 +365,9 @@ if sys.platform == 'win32':
 
     def _wait_checker(self) -> types.states.TaskState:
         """
-        This method is not used, because wait operation is never used
+        Wait checker waits forever, until something external wakes it up
         """
-        return types.states.TaskState.FINISHED
+        return types.states.TaskState.RUNNING
 
     def _create(self) -> None:
         """

@@ -62,7 +62,7 @@ class TestOpenstackLiveDeployment(UDSTransactionTestCase):
                     publication._template_id = 'snap1'
 
                     if to_test == 'cache':
-                        state = userservice.deploy_for_cache(level=1)
+                        state = userservice.deploy_for_cache(level=types.services.CacheLevel.L1)
                     else:
                         state = userservice.deploy_for_user(models.User())
 

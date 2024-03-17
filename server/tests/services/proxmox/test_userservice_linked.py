@@ -61,7 +61,7 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
             publication = userservice.publication()
             publication._vmid = '1'
 
-            state = userservice.deploy_for_cache(level=1)
+            state = userservice.deploy_for_cache(level=types.services.CacheLevel.L1)
 
             self.assertEqual(state, types.states.TaskState.RUNNING)
 
@@ -114,12 +114,16 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
             publication = userservice.publication()
             publication._vmid = '1'
 
-            state = userservice.deploy_for_cache(level=2)
+            state = userservice.deploy_for_cache(level=types.services.CacheLevel.L2)
 
             self.assertEqual(state, types.states.TaskState.RUNNING)
 
             for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
                 state = userservice.check_state()
+                
+                # If first item in queue is WAIT, we must "simulate" the wake up from os manager
+                if userservice._queue[0] == Operation.WAIT:
+                    state = userservice.process_ready_from_os_manager(None)
 
             self.assertEqual(state, types.states.TaskState.FINISHED)
 

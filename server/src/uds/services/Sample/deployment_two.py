@@ -297,7 +297,7 @@ class SampleUserServiceTwo(services.UserService):
 
         return types.states.TaskState.RUNNING
 
-    def deploy_for_cache(self, level: int) -> types.states.TaskState:
+    def deploy_for_cache(self, level: types.services.CacheLevel) -> types.states.TaskState:
         """
         Deploys a user deployment as cache.
 

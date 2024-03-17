@@ -108,7 +108,7 @@ class TestUserService(services.UserService):
         self.data.count = 3
         return types.states.TaskState.RUNNING
     
-    def deploy_for_cache(self, level: int) -> types.states.TaskState:
+    def deploy_for_cache(self, level: types.services.CacheLevel) -> types.states.TaskState:
         logger.info('Deploying for cache %s %s', level, self.data)
         self.data.count = 3
         return types.states.TaskState.RUNNING

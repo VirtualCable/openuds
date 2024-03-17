@@ -184,7 +184,7 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
         self._init_queue_for_deploy()
         return self._execute_queue()
 
-    def deploy_for_cache(self, level: int) -> types.states.TaskState:
+    def deploy_for_cache(self, level: types.services.CacheLevel) -> types.states.TaskState:
         """
         Deploys an service instance for cache
         """
