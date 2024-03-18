@@ -31,12 +31,12 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import abc
-import enum
 import logging
 import typing
 import collections.abc
 
 from uds.core import services, types
+from uds.core.types.services import FixedOperation as Operation
 from uds.core.util import log, autoserializable
 
 # Not imported at runtime, just for type checking
@@ -46,30 +46,6 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-
-class Operation(enum.IntEnum):
-    CREATE = 0
-    START = 1
-    STOP = 2
-    REMOVE = 3
-    WAIT = 4
-    ERROR = 5
-    FINISH = 6
-    RETRY = 7
-    SNAPSHOT_CREATE = 8  # to recall process_snapshot
-    SNAPSHOT_RECOVER = 9  # to recall process_snapshot
-    PROCESS_TOKEN = 10
-    SOFT_SHUTDOWN = 11
-
-    NOP = 98
-    UNKNOWN = 99
-
-    @staticmethod
-    def from_int(value: int) -> 'Operation':
-        try:
-            return Operation(value)
-        except ValueError:
-            return Operation.UNKNOWN
 
 
 class FixedUserService(services.UserService, autoserializable.AutoSerializable, abc.ABC):

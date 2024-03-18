@@ -186,7 +186,7 @@ class Publication(Environmentable, Serializable):
         return self._uuid
 
     @abc.abstractmethod
-    def publish(self) -> types.states.State:
+    def publish(self) -> types.states.TaskState:
         """
         This method is invoked whenever the administrator requests a new publication.
 
@@ -222,7 +222,7 @@ class Publication(Environmentable, Serializable):
         raise NotImplementedError(f'publish method for class {self.__class__.__name__} not provided! ')
 
     @abc.abstractmethod
-    def check_state(self) -> types.states.State:
+    def check_state(self) -> types.states.TaskState:
         """
         This is a task method. As that, the expected return values are
         State values RUNNING, FINISHED or ERROR.
@@ -275,7 +275,7 @@ class Publication(Environmentable, Serializable):
         return 'unknown'
 
     @abc.abstractmethod
-    def destroy(self) -> types.states.State:
+    def destroy(self) -> types.states.TaskState:
         """
         This is a task method. As that, the expected return values are
         State values RUNNING, FINISHED or ERROR.
@@ -296,7 +296,7 @@ class Publication(Environmentable, Serializable):
         raise NotImplementedError(f'destroy method for class {self.__class__.__name__} not provided!')
 
     @abc.abstractmethod
-    def cancel(self) -> types.states.State:
+    def cancel(self) -> types.states.TaskState:
         """
         This is a task method. As that, the expected return values are
         State values RUNNING, FINISHED or ERROR.

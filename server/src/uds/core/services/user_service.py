@@ -581,12 +581,13 @@ class UserService(Environmentable, Serializable):
         """
         return cls.cancel != UserService.cancel
 
-    def reset(self) -> None:
+    def reset(self) -> types.states.TaskState:
         """
         This method is invoked for "reset" an user service
         This method is not intended to be a task right now, (so its one step method)
         base method does nothing
         """
+        return types.states.TaskState.FINISHED
 
     def get_connection_data(self) -> typing.Optional[types.services.ConnectionData]:
         """

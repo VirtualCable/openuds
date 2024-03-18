@@ -41,6 +41,7 @@ from uds.core.jobs.delayed_task import DelayedTask
 from uds.core.jobs.delayed_task_runner import DelayedTaskRunner
 from uds.core.util.config import GlobalConfig
 from uds.core.services.exceptions import PublishException
+from uds.core import types
 from uds.core.types.states import State
 from uds.core.util import log
 
@@ -157,19 +158,19 @@ class PublicationFinishChecker(DelayedTask):
     @staticmethod
     def state_updater(
         publication: ServicePoolPublication,
-        publicationInstance: 'services.Publication',
-        state: str,
+        publication_instance: 'services.Publication',
+        exec_result: types.states.TaskState,
     ) -> None:
         """
         Checks the value returned from invocation to publish or checkPublishingState, updating the servicePoolPub database object
         Return True if it has to continue checking, False if finished
         """
         try:
-            prevState: str = publication.state
-            checkLater: bool = False
-            if State.from_str(state).is_finished():
+            publication_state = types.states.State.from_str(publication.state)
+            check_later: bool = False
+            if exec_result.is_finished():
                 # Now we mark, if it exists, the previous usable publication as "Removable"
-                if State.from_str(prevState).is_preparing():
+                if publication_state.is_preparing():
                     old: ServicePoolPublication
                     for old in publication.deployed_service.publications.filter(
                         state=State.USABLE
@@ -178,13 +179,7 @@ class PublicationFinishChecker(DelayedTask):
 
                         osm = publication.deployed_service.osmanager
                         # If os manager says "machine is persistent", do not tray to delete "previous version" assigned machines
-                        doPublicationCleanup = (
-                            True
-                            if osm is None
-                            else not osm.get_instance().is_persistent()
-                        )
-
-                        if doPublicationCleanup:
+                        if osm is None or osm.get_instance().is_persistent() is False:
                             pc = PublicationOldMachinesCleaner(old.id)
                             pc.register(
                                 GlobalConfig.SESSION_EXPIRE_TIME.as_int(True) * 3600,
@@ -200,26 +195,26 @@ class PublicationFinishChecker(DelayedTask):
                             )
 
                     publication.set_state(State.USABLE)
-                elif State.from_str(prevState).is_removing():
+                elif publication_state.is_removing():
                     publication.set_state(State.REMOVED)
                 else:  # State is canceling
                     publication.set_state(State.CANCELED)
                 # Mark all previous publications deployed services as removables
                 # and make this usable
-                publicationInstance.finish()
-                publication.update_data(publicationInstance)
-            elif State.from_str(state).is_errored():
-                publication.update_data(publicationInstance)
+                publication_instance.finish()
+                publication.update_data(publication_instance)
+            elif exec_result.is_errored():
+                publication.update_data(publication_instance)
                 publication.set_state(State.ERROR)
             else:
-                checkLater = True  # The task is running
-                publication.update_data(publicationInstance)
+                check_later = True  # The task is running
+                publication.update_data(publication_instance)
 
-            if checkLater:
-                PublicationFinishChecker.check_later(publication, publicationInstance)
+            if check_later:
+                PublicationFinishChecker.check_later(publication, publication_instance)
         except Exception:
             logger.exception('At checkAndUpdate for publication')
-            PublicationFinishChecker.check_later(publication, publicationInstance)
+            PublicationFinishChecker.check_later(publication, publication_instance)
 
     @staticmethod
     def check_later(
@@ -252,7 +247,7 @@ class PublicationFinishChecker(DelayedTask):
                 try:
                     state = publicationInstance.check_state()
                 except Exception:
-                    state = State.ERROR
+                    state = types.states.TaskState.ERROR
                 PublicationFinishChecker.state_updater(
                     publication, publicationInstance, state
                 )
@@ -282,21 +277,21 @@ class PublicationManager(metaclass=singleton.Singleton):
         )  # Singleton pattern will return always the same instance
 
     def publish(
-        self, servicePool: ServicePool, changeLog: typing.Optional[str] = None
+        self, servicepool: ServicePool, changeLog: typing.Optional[str] = None
     ) -> None:
         """
         Initiates the publication of a service pool, or raises an exception if this cannot be done
         :param servicePool: Service pool object (db object)
         :param changeLog: if not None, store change log string on "change log" table
         """
-        if servicePool.publications.filter(state__in=State.PUBLISH_STATES).count() > 0:
+        if servicepool.publications.filter(state__in=State.PUBLISH_STATES).count() > 0:
             raise PublishException(
                 _(
                     'Already publishing. Wait for previous publication to finish and try again'
                 )
             )
 
-        if servicePool.is_in_maintenance():
+        if servicepool.is_in_maintenance():
             raise PublishException(
                 _('Service is in maintenance mode and new publications are not allowed')
             )
@@ -304,15 +299,15 @@ class PublicationManager(metaclass=singleton.Singleton):
         publication: typing.Optional[ServicePoolPublication] = None
         try:
             now = sql_datetime()
-            publication = servicePool.publications.create(
+            publication = servicepool.publications.create(
                 state=State.LAUNCHING,
                 state_date=now,
                 publish_date=now,
-                revision=servicePool.current_pub_revision,
+                revision=servicepool.current_pub_revision,
             )
             if changeLog:
-                servicePool.changelog.create(
-                    revision=servicePool.current_pub_revision, log=changeLog, stamp=now
+                servicepool.changelog.create(
+                    revision=servicepool.current_pub_revision, log=changeLog, stamp=now
                 )
             if publication:
                 DelayedTaskRunner.runner().insert(

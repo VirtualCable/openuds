@@ -152,9 +152,11 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
 
         return types.states.TaskState.FINISHED
 
-    def reset(self) -> None:
+    def reset(self) -> types.states.TaskState:
         if self._vmid != '':
             self.service().resetMachine(self._vmid)
+            
+        return types.states.TaskState.FINISHED
 
     def get_console_connection(self) -> typing.Optional[types.services.ConsoleConnectionInfo]:
         return self.service().get_console_connection(self._vmid)

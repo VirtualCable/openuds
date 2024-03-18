@@ -85,7 +85,7 @@ class XenPublication(Publication, autoserializable.AutoSerializable):
         
         self.mark_for_upgrade()   # Force upgrade asap
 
-    def publish(self) -> types.states.State:
+    def publish(self) -> types.states.TaskState:
         """
         Realizes the publication of the service
         """
@@ -104,19 +104,19 @@ class XenPublication(Publication, autoserializable.AutoSerializable):
         except Exception as e:
             self._state = 'error'
             self._reason = str(e)
-            return types.states.State.ERROR
+            return types.states.TaskState.ERROR
 
-        return types.states.State.RUNNING
+        return types.states.TaskState.RUNNING
 
-    def check_state(self) -> types.states.State:
+    def check_state(self) -> types.states.TaskState:
         """
         Checks state of publication creation
         """
         if self._state == 'finished':
-            return types.states.State.FINISHED
+            return types.states.TaskState.FINISHED
 
         if self._state == 'error':
-            return types.states.State.ERROR
+            return types.states.TaskState.ERROR
 
         try:
             state, result = self.service().check_task_finished(self._task)
@@ -128,33 +128,33 @@ class XenPublication(Publication, autoserializable.AutoSerializable):
                     return self.destroy()
 
                 self.service().convert_to_template(self._template_id)
-                return types.states.State.FINISHED
+                return types.states.TaskState.FINISHED
         except Exception as e:
             self._state = 'error'
             self._reason = str(e)
-            return types.states.State.ERROR
+            return types.states.TaskState.ERROR
 
-        return types.states.State.RUNNING
+        return types.states.TaskState.RUNNING
 
     def error_reason(self) -> str:
         return self._reason
 
-    def destroy(self) -> types.states.State:
+    def destroy(self) -> types.states.TaskState:
         # We do not do anything else to destroy this instance of publication
         if self._state == 'ok':
             self._destroy_after = True
-            return types.states.State.RUNNING
+            return types.states.TaskState.RUNNING
 
         try:
             self.service().remove_template(self._template_id)
         except Exception as e:
             self._state = 'error'
             self._reason = str(e)
-            return types.states.State.ERROR
+            return types.states.TaskState.ERROR
 
-        return types.states.State.FINISHED
+        return types.states.TaskState.FINISHED
 
-    def cancel(self) -> types.states.State:
+    def cancel(self) -> types.states.TaskState:
         return self.destroy()
 
     # Here ends the publication needed methods.

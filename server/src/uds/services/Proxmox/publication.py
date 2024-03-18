@@ -86,7 +86,7 @@ class ProxmoxPublication(services.Publication, autoserializable.AutoSerializable
 
         self.mark_for_upgrade()  # Flag so manager can save it again with new format
 
-    def publish(self) -> types.states.State:
+    def publish(self) -> types.states.TaskState:
         """
         If no space is available, publication will fail with an error
         """
@@ -99,36 +99,36 @@ class ProxmoxPublication(services.Publication, autoserializable.AutoSerializable
             task = self.service().clone_machine(self._name, comments)
             self._vmid = str(task.vmid)
             self._task = ','.join((task.upid.node, task.upid.upid))
-            self._state = types.states.State.RUNNING
+            self._state = types.states.TaskState.RUNNING
             self._operation = 'p'  # Publishing
             self._destroy_after = False
-            return types.states.State.RUNNING
+            return types.states.TaskState.RUNNING
         except Exception as e:
             logger.exception('Caught exception %s', e)
             self._reason = str(e)
-            return types.states.State.ERROR
+            return types.states.TaskState.ERROR
 
-    def check_state(self) -> types.states.State:
-        if self._state != types.states.State.RUNNING:
-            return types.states.State.from_str(self._state)
+    def check_state(self) -> types.states.TaskState:
+        if self._state != types.states.TaskState.RUNNING:
+            return types.states.TaskState.from_str(self._state)
         node, upid = self._task.split(',')
         try:
             task = self.service().provider().get_task_info(node, upid)
             if task.is_running():
-                return types.states.State.RUNNING
+                return types.states.TaskState.RUNNING
         except Exception as e:
             logger.exception('Proxmox publication')
-            self._state = types.states.State.ERROR
+            self._state = types.states.TaskState.ERROR
             self._reason = str(e)
             return self._state
 
         if task.is_errored():
             self._reason = task.exitstatus
-            self._state = types.states.State.ERROR
+            self._state = types.states.TaskState.ERROR
         else:  # Finished
             if self._destroy_after:
                 return self.destroy()
-            self._state = types.states.State.FINISHED
+            self._state = types.states.TaskState.FINISHED
             if self._operation == 'p':  # not Destroying
                 # Disable Protection (removal)
                 self.service().provider().set_protection(int(self._vmid), protection=False)
@@ -149,20 +149,20 @@ class ProxmoxPublication(services.Publication, autoserializable.AutoSerializable
         self._task = ''
         self._destroy_after = False
 
-    def destroy(self) -> types.states.State:
+    def destroy(self) -> types.states.TaskState:
         if (
-            self._state == types.states.State.RUNNING and self._destroy_after is False
+            self._state == types.states.TaskState.RUNNING and self._destroy_after is False
         ):  # If called destroy twice, will BREAK STOP publication
             self._destroy_after = True
-            return types.states.State.RUNNING
+            return types.states.TaskState.RUNNING
 
-        self._state = types.states.State.RUNNING
+        self._state = types.states.TaskState.RUNNING
         self._operation = 'd'
         self._destroy_after = False
         try:
             task = self.service().remove_machine(self.machine())
             self._task = ','.join((task.node, task.upid))
-            return types.states.State.RUNNING
+            return types.states.TaskState.RUNNING
         except Exception as e:
             self._reason = str(e)  # Store reason of error
             logger.warning(
@@ -170,9 +170,9 @@ class ProxmoxPublication(services.Publication, autoserializable.AutoSerializable
                 self.machine(),
                 e,
             )
-            return types.states.State.ERROR
+            return types.states.TaskState.ERROR
 
-    def cancel(self) -> types.states.State:
+    def cancel(self) -> types.states.TaskState:
         return self.destroy()
 
     def error_reason(self) -> str:

@@ -127,13 +127,14 @@ class OVirtLinkedUserService(services.UserService, autoserializable.AutoSerializ
         with self.storage.as_dict() as data:
             return data.get('exec_count', 0)
 
-    def _set_checks_counter(self, value: int) -> None:
+    def _reset_checks_counter(self) -> None:
         with self.storage.as_dict() as data:
-            data['exec_count'] = value
+            data['exec_count'] = 0
 
     def _inc_checks_counter(self, info: typing.Optional[str] = None) -> typing.Optional[types.states.TaskState]:
-        count = self._get_checks_counter() + 1
-        self._set_checks_counter(count)
+        with self.storage.as_dict() as data:
+            count = data.get('exec_count', 0)
+            data['exec_count'] = count + 1
         if count > MAX_CHECK_COUNT:
             return self._error(f'Max checks reached on {info or "unknown"}')
         return None
@@ -252,12 +253,14 @@ class OVirtLinkedUserService(services.UserService, autoserializable.AutoSerializ
 
         return types.states.TaskState.FINISHED
 
-    def reset(self) -> None:
+    def reset(self) -> types.states.TaskState:
         """
         o oVirt, reset operation just shutdowns it until v3 support is removed
         """
         if self._vmid != '':
             self.service().provider().api.stop_machine(self._vmid)
+            
+        return types.states.TaskState.FINISHED
 
     def get_console_connection(
         self,
@@ -329,9 +332,6 @@ if sys.platform == 'win32':
             check_states,
         )
 
-        if (check_result := self._inc_checks_counter('check_machine_state')) is not None:
-            return check_result
-
         vm_info = self.service().provider().api.get_machine_info(self._vmid)
         
         if vm_info.status == ov_types.VMStatus.UNKNOWN and ov_types.VMStatus.UNKNOWN not in check_states:
@@ -387,7 +387,7 @@ if sys.platform == 'win32':
             return types.states.TaskState.FINISHED
 
         # Reset checking count (for checks)
-        self._set_checks_counter(0)
+        self._reset_checks_counter()
 
         try:
             operation_runner = _EXECUTORS[op]
@@ -627,6 +627,12 @@ if sys.platform == 'win32':
 
         if op == Operation.FINISH:
             return types.states.TaskState.FINISHED
+        
+        if op != Operation.WAIT:
+            # If not waiting, check if we are in a loop
+            ret = self._inc_checks_counter(str(op))
+            if ret is not None:
+                return ret
 
         try:
             operation_checker = _CHECKERS[op]

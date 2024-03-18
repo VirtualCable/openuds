@@ -84,7 +84,7 @@ class OpenStackUserServiceFixed(FixedUserService, autoserializable.AutoSerializa
         self.cache.put('ready', '1')
         return types.states.TaskState.FINISHED
 
-    def reset(self) -> None:
+    def reset(self) -> types.states.TaskState:
         """
         OpenStack, reset operation
         """
@@ -93,6 +93,8 @@ class OpenStackUserServiceFixed(FixedUserService, autoserializable.AutoSerializa
                 self.service().api.reset_server(self._vmid)
             except Exception:  # nosec: if cannot reset, ignore it
                 pass  # If could not reset, ignore it...
+        
+        return types.states.TaskState.FINISHED
 
     def process_ready_from_os_manager(self, data: typing.Any) -> types.states.TaskState:
         return types.states.TaskState.FINISHED

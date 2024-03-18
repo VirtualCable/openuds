@@ -85,7 +85,7 @@ class OpenStackLivePublication(Publication, autoserializable.AutoSerializable):
 
         self.mark_for_upgrade()  # This will force remarshalling
 
-    def publish(self) -> types.states.State:
+    def publish(self) -> types.states.TaskState:
         """
         Realizes the publication of the service
         """
@@ -104,19 +104,19 @@ class OpenStackLivePublication(Publication, autoserializable.AutoSerializable):
             logger.exception('Got exception')
             self._status = 'error'
             self._reason = 'Got error {}'.format(e)
-            return types.states.State.ERROR
+            return types.states.TaskState.ERROR
 
-        return types.states.State.RUNNING
+        return types.states.TaskState.RUNNING
 
-    def check_state(self) -> types.states.State:
+    def check_state(self) -> types.states.TaskState:
         """
         Checks state of publication creation
         """
         if self._status == openstack_types.SnapshotStatus.ERROR:
-            return types.states.State.ERROR
+            return types.states.TaskState.ERROR
 
         if self._status ==  openstack_types.SnapshotStatus.AVAILABLE:
-            return types.states.State.FINISHED
+            return types.states.TaskState.FINISHED
 
         try:
             self._status = self.service().get_template(self._template_id).status  # For next check
@@ -125,34 +125,34 @@ class OpenStackLivePublication(Publication, autoserializable.AutoSerializable):
                 self._destroy_after = False
                 return self.destroy()
 
-            return types.states.State.RUNNING
+            return types.states.TaskState.RUNNING
         except Exception as e:
             self._status = 'error'
             self._reason = str(e)
-            return types.states.State.ERROR
+            return types.states.TaskState.ERROR
 
     def error_reason(self) -> str:
         return self._reason
 
-    def destroy(self) -> types.states.State:
+    def destroy(self) -> types.states.TaskState:
         # We do not do anything else to destroy this instance of publication
         if self._status == 'error':
-            return types.states.State.ERROR  # Nothing to cancel
+            return types.states.TaskState.ERROR  # Nothing to cancel
 
         if self._status == 'creating':
             self._destroy_after = True
-            return types.states.State.RUNNING
+            return types.states.TaskState.RUNNING
 
         try:
             self.service().remove_template(self._template_id)
         except Exception as e:
             self._status = 'error'
             self._reason = str(e)
-            return types.states.State.ERROR
+            return types.states.TaskState.ERROR
 
-        return types.states.State.FINISHED
+        return types.states.TaskState.FINISHED
 
-    def cancel(self) -> types.states.State:
+    def cancel(self) -> types.states.TaskState:
         return self.destroy()
 
     # Here ends the publication needed methods.

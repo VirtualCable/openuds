@@ -31,12 +31,12 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import abc
-import enum
 import logging
 import typing
 import collections.abc
 
 from uds.core import services, types, consts
+from uds.core.types.services import Operation
 from uds.core.util import log, autoserializable
 
 # Not imported at runtime, just for type checking
@@ -45,36 +45,6 @@ if typing.TYPE_CHECKING:
     from . import dynamic_service
 
 logger = logging.getLogger(__name__)
-
-
-class Operation(enum.IntEnum):
-    INITIALIZE = 1000
-    CREATE = 1001
-    CREATE_COMPLETED = 1002
-    START = 1003
-    START_COMPLETED = 1004
-    STOP = 1005  # This is a "hard" shutdown, likes a power off
-    STOP_COMPLETED = 1006
-    SHUTDOWN = 1007  # This is a "soft" shutdown
-    SHUTDOWN_COMPLETED = 1008
-    SUSPEND = 1009  # If not provided, Suppend is a "soft" shutdown
-    SUSPEND_COMPLETED = 1010
-    REMOVE = 1011
-    REMOVE_COMPLETED = 1012
-    RETRY = 1016
-    WAIT = 1013
-    NOP = 1014
-
-    ERROR = 9000
-    FINISH = 9900
-    UNKNOWN = 9999
-
-    @staticmethod
-    def from_int(value: int) -> 'Operation':
-        try:
-            return Operation(value)
-        except ValueError:
-            return Operation.UNKNOWN
 
 
 class DynamicUserService(services.UserService, autoserializable.AutoSerializable, abc.ABC):
@@ -86,14 +56,17 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     suggested_delay = 5
 
     # Some customization fields
+    # If ip can be manually overriden
     can_set_ip: typing.ClassVar[bool] = False
-    max_state_checks: typing.ClassVar[int] = 20  # By default, with a delay of 5 seconds, this is 100 seconds
+    # How many times we will check for a state before giving up
+    max_state_checks: typing.ClassVar[int] = 20
+    # If keep_state_sets_error is true, and an error occurs, the machine is set to FINISHED instead of ERROR
+    keep_state_sets_error: typing.ClassVar[bool] = False
 
     _name = autoserializable.StringField(default='')
     _mac = autoserializable.StringField(default='')
     _vmid = autoserializable.StringField(default='')
     _reason = autoserializable.StringField(default='')
-    _task = autoserializable.StringField(default='')
     _queue = autoserializable.ListField[Operation]()  # Default is empty list
 
     # Note that even if SNAPHSHOT operations are in middel
@@ -178,12 +151,18 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         logger.debug('Setting error state, reason: %s', reason)
         self.do_log(log.LogLevel.ERROR, reason)
 
-        if self._vmid and self.service().keep_on_error() is False:
-            try:
-                # TODO: Remove VM using service or put it on a "to be removed" queue for a parallel job
-                self._vmid = ''
-            except Exception as e:
-                logger.exception('Exception removing machine: %s', e)
+        if self._vmid:
+            if self.service().keep_on_error() is False:
+                try:
+                    # TODO: Remove VM using service or put it on a "to be removed" queue for a parallel job
+                    self._vmid = ''
+                except Exception as e:
+                    logger.exception('Exception removing machine: %s', e)
+            else:
+                logger.debug('Keep on error is enabled, not removing machine')
+                if self.keep_state_sets_error is False:
+                    self._queue = [Operation.FINISH]
+                return types.states.TaskState.FINISHED
 
         self._queue = [Operation.ERROR]
         self._reason = reason
@@ -213,15 +192,18 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
 
     @typing.final
     def get_unique_id(self) -> str:
+        # Provide self to the service, so it can some of our methods to generate the unique id
+        # (for example, own mac generator, that will autorelease the mac as soon as the machine is removed)
         if not self._mac:
-            self._mac = self.service().get_machine_mac(self._vmid) or ''
+            self._mac = self.service().get_machine_mac(self, self._vmid) or ''
         return self._mac
 
     @typing.final
     def get_ip(self) -> str:
+        # Provide self to the service, so it can some of our methods to generate the unique id
         try:
             if self._vmid:
-                return self.service().get_machine_ip(self._vmid)
+                return self.service().get_machine_ip(self, self._vmid)
         except Exception:
             logger.warning('Error obtaining IP for %s: %s', self.__class__.__name__, self._vmid, exc_info=True)
             pass
@@ -245,6 +227,28 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         return self._execute_queue()
 
     @typing.final
+    def set_ready(self) -> types.states.TaskState:
+        # If already ready, return finished
+        if self.cache.get('ready') == '1':
+            return types.states.TaskState.FINISHED
+
+        try:
+            if self.service().is_machine_running(self, self._vmid):
+                self.cache.put('ready', '1')
+                return types.states.TaskState.FINISHED
+
+            self._queue = [Operation.START, Operation.START_COMPLETED, Operation.FINISH]
+            return self._execute_queue()
+        except Exception as e:
+            return self._error(f'Error on setReady: {e}')
+
+    def reset(self) -> types.states.TaskState:
+        if self._vmid != '':
+            self._queue = [Operation.RESET, Operation.RESET_COMPLETED, Operation.FINISH]
+
+        return types.states.TaskState.FINISHED
+
+    @typing.final
     def _execute_queue(self) -> types.states.TaskState:
         self._debug('execute_queue')
         op = self._current_op()
@@ -257,16 +261,55 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
 
         try:
             self._reset_checks_counter()  # Reset checks counter
-            operation_runner = _EXEC_FNCS[op]
 
-            # Invoke using instance, we have overrided methods
-            # and we want to use the overrided ones
-            getattr(self, operation_runner.__name__)()
+            # For custom operations, we will call the only one method
+            if op.is_custom():
+                self.op_custom(op)
+            else:
+                operation_runner = _EXECUTORS[op]
+
+                # Invoke using instance, we have overrided methods
+                # and we want to use the overrided ones
+                getattr(self, operation_runner.__name__)()
 
             return types.states.TaskState.RUNNING
         except Exception as e:
             logger.exception('Unexpected FixedUserService exception: %s', e)
             return self._error(str(e))
+
+    def check_state(self) -> types.states.TaskState:
+        """
+        Check what operation is going on, and acts acordly to it
+        """
+        self._debug('check_state')
+        op = self._current_op()
+
+        if op == Operation.ERROR:
+            return types.states.TaskState.ERROR
+
+        if op == Operation.FINISH:
+            return types.states.TaskState.FINISHED
+
+        if op != Operation.WAIT:
+            # All operations except WAIT will check against checks counter
+            state = self._inc_checks_counter(self._op2str(op))
+            if state is not None:
+                return state  # Error, Finished or None
+
+        try:
+            if op.is_custom():
+                state = self.op_custom_checker(op)
+            else:
+                state = _CHECKERS[op](self)
+
+            if state == types.states.TaskState.FINISHED:
+                # Remove runing op
+                self._queue.pop(0)
+                return self._execute_queue()
+
+            return state
+        except Exception as e:
+            return self._error(e)
 
     # Execution methods
     # Every Operation has an execution method and a check method
@@ -292,7 +335,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         This method is called when the service is started
         """
-        pass
+        self.service().start_machine(self, self._vmid)
 
     def op_start_completed(self) -> None:
         """
@@ -302,9 +345,9 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
 
     def op_stop(self) -> None:
         """
-        This method is called when the service is stopped
+        This method is called for stopping the service
         """
-        pass
+        self.service().stop_machine(self, self._vmid)
 
     def op_stop_completed(self) -> None:
         """
@@ -314,34 +357,46 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
 
     def op_shutdown(self) -> None:
         """
-        This method is called when the service is shutdown
+        This method is called for shutdown the service
         """
-        self.op_stop()  # By default, shutdown is a stop
+        self.service().shutdown_machine(self, self._vmid)
 
     def op_shutdown_completed(self) -> None:
         """
         This method is called when the service shutdown is completed
         """
-        self.op_stop_completed()
+        pass
 
     def op_suspend(self) -> None:
         """
-        This method is called when the service is suspended
+        This method is called for suspend the service
         """
-        # Note that by default suspend is "shutdown" and not "stop" because we 
-        self.op_shutdown()  
+        # Note that by default suspend is "shutdown" and not "stop" because we
+        self.service().suspend_machine(self, self._vmid)
 
     def op_suspend_completed(self) -> None:
         """
         This method is called when the service suspension is completed
         """
-        self.op_shutdown_completed()
+        pass
+
+    def op_reset(self) -> None:
+        """
+        This method is called when the service is reset
+        """
+        pass
+
+    def op_reset_completed(self) -> None:
+        """
+        This method is called when the service reset is completed
+        """
+        self.service().reset_machine(self, self._vmid)
 
     def op_remove(self) -> None:
         """
         This method is called when the service is removed
         """
-        pass
+        self.service().remove_machine(self, self._vmid)
 
     def op_remove_completed(self) -> None:
         """
@@ -349,21 +404,24 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         pass
 
-    def op_retry(self) -> None:
-        """
-        This method is called when the service is retried
-        """
-        pass
-
     def op_wait(self) -> None:
         """
         This method is called when the service is waiting
+        Basically, will stop the execution of the queue until something external changes it (i.e. poping from the queue)
+        Executor does nothing
         """
         pass
 
     def op_nop(self) -> None:
         """
         This method is called when the service is doing nothing
+        This does nothing, as it's a NOP operation
+        """
+        pass
+
+    def op_custom(self, operation: Operation) -> None:
+        """
+        This method is called when the service is doing a custom operation
         """
         pass
 
@@ -435,6 +493,12 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         return types.states.TaskState.FINISHED
 
+    def op_reset_checker(self) -> types.states.TaskState:
+        """
+        This method is called to check if the service is reset
+        """
+        return types.states.TaskState.FINISHED
+
     def op_remove_checker(self) -> types.states.TaskState:
         """
         This method is called to check if the service is removed
@@ -447,17 +511,23 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         return types.states.TaskState.FINISHED
 
-    def op_retry_checker(self) -> types.states.TaskState:
-        """
-        This method is called to check if the service is retried
-        """
-        return types.states.TaskState.FINISHED
-
     def op_wait_checker(self) -> types.states.TaskState:
         """
         Wait will remain in the same state until something external changes it (i.e. poping from the queue)
         """
         return types.states.TaskState.RUNNING
+
+    def op_nop_checker(self) -> types.states.TaskState:
+        """
+        This method is called to check if the service is doing nothing
+        """
+        return types.states.TaskState.FINISHED
+
+    def op_custom_checker(self, operation: Operation) -> types.states.TaskState:
+        """
+        This method is called to check if the service is doing a custom operation
+        """
+        return types.states.TaskState.FINISHED
 
     # ERROR, FINISH and UNKNOWN are not here, as they are final states not needing to be checked
 
@@ -467,13 +537,12 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
 
     def _debug(self, txt: str) -> None:
         logger.debug(
-            'Queue at %s for %s: %s, mac:%s, vmId:%s, task:%s',
+            'Queue at %s for %s: %s, mac:%s, vmId:%s',
             txt,
             self._name,
             [DynamicUserService._op2str(op) for op in self._queue],
             self._mac,
             self._vmid,
-            self._task,
         )
 
 
@@ -482,7 +551,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
 # Basically, all methods starting with _ are final, and all other are overridable
 # We use __name__ later to use them, so we can use type checking and invoke them via instance
 # Note that ERROR and FINISH are not here, as they final states not needing to be executed
-_EXEC_FNCS: typing.Final[
+_EXECUTORS: typing.Final[
     collections.abc.Mapping[Operation, collections.abc.Callable[[DynamicUserService], None]]
 ] = {
     Operation.INITIALIZE: DynamicUserService.op_initialize,
@@ -498,13 +567,12 @@ _EXEC_FNCS: typing.Final[
     Operation.SUSPEND_COMPLETED: DynamicUserService.op_suspend_completed,
     Operation.REMOVE: DynamicUserService.op_remove,
     Operation.REMOVE_COMPLETED: DynamicUserService.op_remove_completed,
-    Operation.RETRY: DynamicUserService.op_retry,
     Operation.WAIT: DynamicUserService.op_wait,
     Operation.NOP: DynamicUserService.op_nop,
 }
 
 # Same af before, but for check methods
-_CHECK_FNCS: typing.Final[
+_CHECKERS: typing.Final[
     collections.abc.Mapping[Operation, collections.abc.Callable[[DynamicUserService], types.states.TaskState]]
 ] = {
     Operation.INITIALIZE: DynamicUserService.op_initialize_checker,
@@ -520,6 +588,6 @@ _CHECK_FNCS: typing.Final[
     Operation.SUSPEND_COMPLETED: DynamicUserService.op_suspend_completed_checker,
     Operation.REMOVE: DynamicUserService.op_remove_checker,
     Operation.REMOVE_COMPLETED: DynamicUserService.op_remove_completed_checker,
-    Operation.RETRY: DynamicUserService.op_retry_checker,
     Operation.WAIT: DynamicUserService.op_wait_checker,
+    Operation.NOP: DynamicUserService.op_nop_checker,
 }

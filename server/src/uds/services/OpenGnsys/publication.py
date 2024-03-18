@@ -55,23 +55,23 @@ class OpenGnsysPublication(Publication, autoserializable.AutoSerializable):
     def service(self) -> 'OGService':
         return typing.cast('OGService', super().service())
 
-    def publish(self) -> types.states.State:
+    def publish(self) -> types.states.TaskState:
         """
         Realizes the publication of the service, on OpenGnsys, does nothing
         """
-        return types.states.State.FINISHED
+        return types.states.TaskState.FINISHED
 
-    def check_state(self) -> types.states.State:
+    def check_state(self) -> types.states.TaskState:
         """
         Checks state of publication creation
         """
-        return types.states.State.FINISHED
+        return types.states.TaskState.FINISHED
 
     def error_reason(self) -> str:
         return 'No error possible :)'
 
-    def destroy(self) -> types.states.State:
-        return types.states.State.FINISHED
+    def destroy(self) -> types.states.TaskState:
+        return types.states.TaskState.FINISHED
 
-    def cancel(self) -> types.states.State:
+    def cancel(self) -> types.states.TaskState:
         return self.destroy()

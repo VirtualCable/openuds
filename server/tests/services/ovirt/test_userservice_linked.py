@@ -59,6 +59,8 @@ class TestOVirtLinkedService(UDSTransactionTestCase):
 
             for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
                 state = userservice.check_state()
+                # Ensure machine status is always DOWN, so the test does not end
+                utils.find_attr_in_list(fixtures.VMS_INFO, 'id', userservice._vmid).status = ov_types.VMStatus.DOWN
 
             self.assertEqual(state, types.states.TaskState.ERROR)
             self.assertGreater(

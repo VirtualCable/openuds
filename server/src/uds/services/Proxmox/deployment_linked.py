@@ -200,7 +200,7 @@ class ProxmoxUserserviceLinked(services.UserService, autoserializable.AutoSerial
         self.cache.put('ready', '1')
         return types.states.TaskState.FINISHED
 
-    def reset(self) -> None:
+    def reset(self) -> types.states.TaskState:
         """
         o Proxmox, reset operation just shutdowns it until v3 support is removed
         """
@@ -209,6 +209,8 @@ class ProxmoxUserserviceLinked(services.UserService, autoserializable.AutoSerial
                 self.service().provider().reset_machine(int(self._vmid))
             except Exception:  # nosec: if cannot reset, ignore it
                 pass  # If could not reset, ignore it...
+                
+        return types.states.TaskState.FINISHED
 
     def get_console_connection(
         self,

@@ -600,11 +600,20 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         operations_logger.info('Reseting %s', user_service)
 
-        userServiceInstance = user_service.get_instance()
+        userservice_instance = user_service.get_instance()
         try:
-            userServiceInstance.reset()
+            state = userservice_instance.reset()
         except Exception:
             logger.exception('Reseting service')
+            return
+            
+        logger.debug('State: %s', state)
+        
+        if state == types.states.TaskState.FINISHED:
+            user_service.update_data(userservice_instance)
+            return
+        
+        UserServiceOpChecker.make_unique(user_service, userservice_instance, state)
 
     def notify_preconnect(self, user_service: UserService, info: types.connections.ConnectionData) -> None:
         try:

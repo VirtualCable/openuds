@@ -84,9 +84,11 @@ class XenFixedUserService(FixedUserService, autoserializable.AutoSerializable):
 
         return types.states.TaskState.FINISHED
 
-    def reset(self) -> None:
+    def reset(self) -> types.states.TaskState:
         if self._vmid:
             self.service().reset_machine(self._vmid)  # Reset in sync
+            
+        return types.states.TaskState.FINISHED
 
     def process_ready_from_os_manager(self, data: typing.Any) -> types.states.TaskState:
         return types.states.TaskState.FINISHED

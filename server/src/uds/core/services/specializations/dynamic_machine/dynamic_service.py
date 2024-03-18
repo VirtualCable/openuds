@@ -39,7 +39,8 @@ from uds.core.util import fields, validators
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    # from .dynamic_userservice import DynamicUserService
+    from .dynamic_userservice import DynamicUserService
+
     pass
 
 logger = logging.getLogger(__name__)
@@ -109,9 +110,16 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
 
     def get_lenname(self) -> int:
         return self.lenname.value
+    
+    def sanitize_machine_name(self, name: str) -> str:
+        """
+        Sanitize machine name
+        Override it to provide a custom name sanitizer
+        """
+        return name
 
     @abc.abstractmethod
-    def get_machine_ip(self, machine_id: str) -> str:
+    def get_machine_ip(self, userservice_instance: 'DynamicUserService', machine_id: str) -> str:
         """
         Returns the ip of the machine
         If cannot be obtained, MUST raise an exception
@@ -119,10 +127,81 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         ...
 
     @abc.abstractmethod
-    def get_machine_mac(self, machine_id: str) -> str:
+    def get_machine_mac(self, userservice_instance: 'DynamicUserService', machine_id: str) -> str:
         """
         Returns the mac of the machine
         If cannot be obtained, MUST raise an exception
+        """
+        ...
+
+    @abc.abstractmethod
+    def is_machine_running(self, userservice_instance: 'DynamicUserService', machine_id: str) -> bool:
+        """
+        Returns if the machine is running
+        """
+        ...
+
+    def is_machine_stopped(self, userservice_instance: 'DynamicUserService', machine_id: str) -> bool:
+        """
+        Returns if the machine is stopped
+        """
+        return not self.is_machine_running(userservice_instance, machine_id)
+
+    def is_machine_suspended(self, userservice_instance: 'DynamicUserService', machine_id: str) -> bool:
+        """
+        Returns if the machine is suspended
+        """
+        return self.is_machine_stopped(userservice_instance, machine_id)
+    
+    @abc.abstractmethod
+    def create_machine(self, userservice_instance: 'DynamicUserService') -> str:
+        """
+        Creates a new machine
+        Note that this must, in instance, or invoke somthing of the userservice
+        or operate by itself on userservice_instance
+        """
+        ...
+
+    @abc.abstractmethod
+    def start_machine(self, userservice_instance: 'DynamicUserService', machine_id: str) -> None:
+        """
+        Starts the machine
+        """
+        ...
+
+    @abc.abstractmethod
+    def stop_machine(self, userservice_instance: 'DynamicUserService', machine_id: str) -> None:
+        """
+        Stops the machine
+        """
+        ...
+
+    def shutdown_machine(self, userservice_instance: 'DynamicUserService', machine_id: str) -> None:
+        """
+        Shutdowns the machine
+        Defaults to stop_machine
+        """
+        self.stop_machine(userservice_instance, machine_id)
+
+    @abc.abstractmethod
+    def reset_machine(self, userservice_instance: 'DynamicUserService', machine_id: str) -> None:
+        """
+        Resets the machine
+        """
+        ...
+
+    def suspend_machine(self, userservice_instance: 'DynamicUserService', machine_id: str) -> None:
+        """
+        Suspends the machine
+        Defaults to shutdown_machine.
+        Can be overriden if the service supports suspending.
+        """
+        self.shutdown_machine(userservice_instance, machine_id)
+
+    @abc.abstractmethod
+    def remove_machine(self, muserservice_instance: 'DynamicUserService', achine_id: str) -> None:
+        """
+        Removes the machine
         """
         ...
 

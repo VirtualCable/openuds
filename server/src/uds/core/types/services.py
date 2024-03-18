@@ -114,3 +114,97 @@ class CacheLevel(enum.IntEnum):
     NONE = 0  # : Constant for User cache level (no cache at all)
     L1 = 1  # : Constant for Cache of level 1
     L2 = 2  # : Constant for Cache of level 2
+
+
+class Operation(enum.IntEnum):
+    """
+    Generic Operation type, to be used as a "status" for operations on userservices
+
+    Notes:
+      * We set all numbers to VERY HIGH, so we can use the same class for all services
+      * Note that we will need to "translate" old values to new ones on the service,
+      * Adapting existing services to this, will probably need a migration
+    """
+
+    INITIALIZE = 1000
+    CREATE = 1001
+    CREATE_COMPLETED = 1002
+    START = 1003
+    START_COMPLETED = 1004
+    STOP = 1005  # This is a "hard" shutdown, likes a power off
+    STOP_COMPLETED = 1006
+    SHUTDOWN = 1007  # This is a "soft" shutdown
+    SHUTDOWN_COMPLETED = 1008
+    SUSPEND = 1009  # If not provided, Suppend is a "soft" shutdown
+    SUSPEND_COMPLETED = 1010
+    RESET = 1011
+    RESET_COMPLETED = 1012
+    REMOVE = 1013
+    REMOVE_COMPLETED = 1014
+    
+    WAIT = 1100
+    NOP = 1101
+
+    ERROR = 9000
+    FINISH = 9900
+    UNKNOWN = 9999
+
+    # Some custom values, jut in case anyone needs them
+    # For example, on a future, all fixed userservice will be moved
+    # to this model, and we will need to "translate" the old values to the new ones
+    # So we will translate, for example SNAPSHOT_CREATE to CUSTOM_1, etc..
+    CUSTOM_1 = 20001
+    CUSTOM_2 = 20002
+    CUSTOM_3 = 20003
+    CUSTOM_4 = 20004
+    CUSTOM_5 = 20005
+    CUSTOM_6 = 20006
+    CUSTOM_7 = 20007
+    CUSTOM_8 = 20008
+    CUSTOM_9 = 20009
+
+    def is_custom(self) -> bool:
+        """
+        Returns if the operation is a custom one
+        """
+        return self.value >= Operation.CUSTOM_1.value
+
+    @staticmethod
+    def from_int(value: int) -> 'Operation':
+        try:
+            return Operation(value)
+        except ValueError:
+            return Operation.UNKNOWN
+        
+    def as_str(self) -> str:
+        return self.name
+
+
+# FixedOperation, currently used on FixedServices
+# Will evolve to Operation on future
+class FixedOperation(enum.IntEnum):
+    CREATE = 0
+    START = 1
+    STOP = 2
+    REMOVE = 3
+    WAIT = 4
+    ERROR = 5
+    FINISH = 6
+    RETRY = 7
+    SNAPSHOT_CREATE = 8  # to recall process_snapshot
+    SNAPSHOT_RECOVER = 9  # to recall process_snapshot
+    PROCESS_TOKEN = 10
+    SOFT_SHUTDOWN = 11
+
+    NOP = 98
+    UNKNOWN = 99
+
+    @staticmethod
+    def from_int(value: int) -> 'FixedOperation':
+        try:
+            return FixedOperation(value)
+        except ValueError:
+            return FixedOperation.UNKNOWN
+
+    def as_str(self) -> str:
+        return self.name

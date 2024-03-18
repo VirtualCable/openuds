@@ -88,7 +88,7 @@ class OVirtPublication(Publication, autoserializable.AutoSerializable):
         self._destroy_after = destroy_after == 't'
         self.mark_for_upgrade()  # Mark so manager knows it has to be saved again
 
-    def publish(self) -> types.states.State:
+    def publish(self) -> types.states.TaskState:
         """
         Realizes the publication of the service
         """
@@ -107,19 +107,19 @@ class OVirtPublication(Publication, autoserializable.AutoSerializable):
         except Exception as e:
             self._state = 'error'
             self._reason = str(e)
-            return types.states.State.ERROR
+            return types.states.TaskState.ERROR
 
-        return types.states.State.RUNNING
+        return types.states.TaskState.RUNNING
 
-    def check_state(self) -> types.states.State:
+    def check_state(self) -> types.states.TaskState:
         """
         Checks state of publication creation
         """
         if self._state == 'ok':
-            return types.states.State.FINISHED
+            return types.states.TaskState.FINISHED
 
         if self._state == 'error':
-            return types.states.State.ERROR
+            return types.states.TaskState.ERROR
 
         try:
             status = self.service().provider().api.get_template_info(self._template_id).status
@@ -132,26 +132,26 @@ class OVirtPublication(Publication, autoserializable.AutoSerializable):
                 if self._destroy_after:
                     self._destroy_after = False
                     return self.destroy()
-                return types.states.State.FINISHED
+                return types.states.TaskState.FINISHED
 
         except Exception as e:
             self._state = 'error'
             self._reason = str(e)
-            return types.states.State.ERROR
+            return types.states.TaskState.ERROR
 
-        return types.states.State.RUNNING
+        return types.states.TaskState.RUNNING
 
     def error_reason(self) -> str:
         """
         If a publication produces an error, here we must notify the reason why
         it happened. This will be called just after publish or check_state
-        if they return types.states.State.ERROR
+        if they return types.states.TaskState.ERROR
 
         Returns an string, in our case, set at check_state
         """
         return self._reason
 
-    def destroy(self) -> types.states.State:
+    def destroy(self) -> types.states.TaskState:
         """
         This is called once a publication is no more needed.
 
@@ -159,24 +159,24 @@ class OVirtPublication(Publication, autoserializable.AutoSerializable):
         removing created "external" data (environment gets cleaned by core),
         etc..
 
-        The retunred value is the same as when publishing, types.states.State.RUNNING,
-        types.states.State.FINISHED or types.states.State.ERROR.
+        The retunred value is the same as when publishing, types.states.TaskState.RUNNING,
+        types.states.TaskState.FINISHED or types.states.TaskState.ERROR.
         """
         # We do not do anything else to destroy this instance of publication
         if self._state == 'locked':
             self._destroy_after = True
-            return types.states.State.RUNNING
+            return types.states.TaskState.RUNNING
 
         try:
             self.service().provider().api.remove_template(self._template_id)
         except Exception as e:
             self._state = 'error'
             self._reason = str(e)
-            return types.states.State.ERROR
+            return types.states.TaskState.ERROR
 
-        return types.states.State.FINISHED
+        return types.states.TaskState.FINISHED
 
-    def cancel(self) -> types.states.State:
+    def cancel(self) -> types.states.TaskState:
         """
         Do same thing as destroy
         """

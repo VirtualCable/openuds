@@ -159,9 +159,11 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
 
         return types.states.TaskState.FINISHED
 
-    def reset(self) -> None:
+    def reset(self) -> types.states.TaskState:
         if self._vmid:
             self.service().reset_machine(self._vmid)  # Reset in sync
+            
+        return types.states.TaskState.FINISHED
 
     def process_ready_from_os_manager(self, data: typing.Any) -> types.states.TaskState:
         # Here we will check for suspending the VM (when full ready)
