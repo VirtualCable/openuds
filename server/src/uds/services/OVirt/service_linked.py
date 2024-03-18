@@ -112,7 +112,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         fills={
             'callback_name': 'ovFillResourcesFromCluster',
             'function': helpers.get_resources,
-            'parameters': ['cluster', 'parent_uuid'],
+            'parameters': ['cluster', 'prov_uuid'],
         },
         tooltip=_("Cluster to contain services"),
         required=True,
@@ -197,7 +197,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
     basename = fields.basename_field(order=115, tab=_('Machine'))
     lenname = fields.lenname_field(order=116, tab=_('Machine'))
 
-    parent_uuid = gui.HiddenField()
+    prov_uuid = gui.HiddenField()
 
     def initialize(self, values: 'types.core.ValuesType') -> None:
         """
@@ -221,7 +221,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         # Here we have to use "default values", cause values aren't used at form initialization
         # This is that value is always '', so if we want to change something, we have to do it
         # at defValue
-        self.parent_uuid.value = self.provider().get_uuid()
+        self.prov_uuid.value = self.provider().get_uuid()
 
         # This is not the same case, values is not the "value" of the field, but
         # the list of values shown because this is a "ChoiceField"

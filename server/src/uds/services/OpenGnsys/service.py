@@ -100,7 +100,7 @@ class OGService(services.Service):
         fills={
             'callback_name': 'OgFillOuData',
             'function': helpers.get_resources,
-            'parameters': ['parent_uuid', 'ou'],
+            'parameters': ['prov_uuid', 'ou'],
         },
         tooltip=_('Organizational Unit'),
         required=True,
@@ -148,7 +148,7 @@ class OGService(services.Service):
 
     services_limit = fields.services_limit_field()
 
-    parent_uuid = gui.HiddenField(value=None)
+    prov_uuid = gui.HiddenField(value=None)
 
     def init_gui(self) -> None:
         """
@@ -157,7 +157,7 @@ class OGService(services.Service):
         ous = [gui.choice_item(r['id'], r['name']) for r in self.provider().api.list_of_ous()]
         self.ou.set_choices(ous)
 
-        self.parent_uuid.value = self.provider().db_obj().uuid
+        self.prov_uuid.value = self.provider().db_obj().uuid
 
     def provider(self) -> 'OGProvider':
         return typing.cast('OGProvider', super().provider())

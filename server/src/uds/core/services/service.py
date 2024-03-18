@@ -319,7 +319,7 @@ class Service(Module):
             f'The class {self.__class__.__name__} has been marked as manually asignable but no requestServicesForAssignetion provided!!!'
         )
 
-    def mac_generator(self) -> typing.Optional['UniqueMacGenerator']:
+    def mac_generator(self) -> 'UniqueMacGenerator':
         """
         Utility method to access provided macs generator (inside environment)
 
@@ -327,7 +327,7 @@ class Service(Module):
         """
         return typing.cast('UniqueMacGenerator', self.id_generator('mac'))
 
-    def name_generator(self) -> typing.Optional['UniqueNameGenerator']:
+    def name_generator(self) -> 'UniqueNameGenerator':
         """
         Utility method to access provided names generator (inside environment)
 

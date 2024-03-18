@@ -262,7 +262,7 @@ SERVICE_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
     'display': 'spice',
     'basename': 'noso',
     'lenname': 5,
-    'parent_uuid': '',
+    'prov_uuid': '',
 }
 
 

@@ -47,7 +47,7 @@ logger = logging.getLogger(__name__)
 def get_resources(parameters: typing.Any) -> types.ui.CallbackResultType:
     logger.debug('Parameters received by getResources Helper: %s', parameters)
     provider = typing.cast(
-        'OGProvider', models.Provider.objects.get(id=parameters['parent_uuid']).get_instance()
+        'OGProvider', models.Provider.objects.get(id=parameters['prov_uuid']).get_instance()
     )
 
     api = provider.api

@@ -328,7 +328,7 @@ def validate_email(email: str) -> str:
     return email
 
 
-def validate_basename(baseName: str, length: int = -1) -> str:
+def validate_basename(basename: str, length: int = -1) -> str:
     """ "Checks if the basename + length is valid for services. Raises an exception if not valid"
 
     Arguments:
@@ -342,19 +342,19 @@ def validate_basename(baseName: str, length: int = -1) -> str:
     Returns:
         None -- [description]
     """
-    if re.match(r'^[a-zA-Z0-9][a-zA-Z0-9-]*$', baseName) is None:
+    if re.match(r'^[a-zA-Z0-9][a-zA-Z0-9-]*$', basename) is None:
         raise exceptions.ui.ValidationError(_('The basename is not a valid for a hostname'))
 
     if length == 0:
         raise exceptions.ui.ValidationError(_('The length of basename plus length must be greater than 0'))
 
-    if length != -1 and len(baseName) + length > 15:
+    if length != -1 and len(basename) + length > 15:
         raise exceptions.ui.ValidationError(_('The length of basename plus length must not be greater than 15'))
 
-    if baseName.isdigit():
+    if basename.isdigit():
         raise exceptions.ui.ValidationError(_('The machine name can\'t be only numbers'))
 
-    return baseName
+    return basename
 
 
 def validate_json(json_data: typing.Optional[str]) -> typing.Any:
