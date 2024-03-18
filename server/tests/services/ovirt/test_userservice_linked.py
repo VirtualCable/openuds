@@ -44,7 +44,7 @@ from ...utils.generators import limited_iterator
 
 
 # We use transactions on some related methods (storage access, etc...)
-class TestProxmovLinkedService(UDSTransactionTestCase):
+class TestOVirtLinkedService(UDSTransactionTestCase):
     def setUp(self) -> None:
         # Set machine state for fixture to
         for vm in fixtures.VMS_INFO:
@@ -89,13 +89,12 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
                     vm = utils.find_attr_in_list(fixtures.VMS_INFO, 'id', userservice._vmid)
                     vm.status = ov_types.VMStatus.UP
                 state = userservice.check_state()
-                
 
             self.assertEqual(state, types.states.TaskState.FINISHED)
 
             self.assertEqual(userservice._name[: len(service.get_basename())], service.get_basename())
             self.assertEqual(len(userservice._name), len(service.get_basename()) + service.get_lenname())
-            
+
             # Assarts has an vmid
             self.assertTrue(bool(userservice._vmid))
 
@@ -136,7 +135,7 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
                     vm = utils.find_attr_in_list(fixtures.VMS_INFO, 'id', userservice._vmid)
                     vm.status = ov_types.VMStatus.SUSPENDED
                 state = userservice.check_state()
-                
+
                 # If first item in queue is WAIT, we must "simulate" the wake up from os manager
                 if userservice._queue[0] == Operation.WAIT:
                     state = userservice.process_ready_from_os_manager(None)
@@ -145,7 +144,7 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
 
             self.assertEqual(userservice._name[: len(service.get_basename())], service.get_basename())
             self.assertEqual(len(userservice._name), len(service.get_basename()) + service.get_lenname())
-            
+
             # Assarts has an vmid
             self.assertTrue(bool(userservice._vmid))
 
@@ -187,7 +186,7 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
 
             self.assertEqual(userservice._name[: len(service.get_basename())], service.get_basename())
             self.assertEqual(len(userservice._name), len(service.get_basename()) + service.get_lenname())
-            
+
             # Assarts has an vmid
             self.assertTrue(bool(userservice._vmid))
 
@@ -204,22 +203,25 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
         """
         Test the user service
         """
-        with fixtures.patch_provider_api() as _api:
+        with fixtures.patch_provider_api() as api:
             for graceful in [True, False]:
                 userservice = fixtures.create_linked_userservice()
                 service = userservice.service()
                 service.try_soft_shutdown.value = graceful
-                publication = userservice.publication()
-                publication._vmid = '1'
-
-                # Set machine state for fixture to started
-                fixtures.VMS_INFO = [
-                    fixtures.VMS_INFO[i]._replace(status='running') for i in range(len(fixtures.VMS_INFO))
-                ]
+                _publication = userservice.publication()
 
                 state = userservice.deploy_for_user(models.User())
 
+                # This is one of the "wrost" cases (once CREATE is done i mean)
+                # if cancelled/destroyed while CREATE, the operation is even easier, because
+                # create will finish with machine stopped, and then, the machine will be removed
                 self.assertEqual(state, types.states.TaskState.RUNNING)
+                # skip create and use next in queue
+                userservice._queue.pop(0)  # Remove create
+                # And ensure vm is up
+                utils.find_attr_in_list(fixtures.VMS_INFO, 'id', userservice._vmid).status = (
+                    ov_types.VMStatus.UP
+                )
 
                 current_op = userservice._get_current_op()
 
@@ -235,18 +237,20 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
                     + [Operation.STOP, Operation.REMOVE, Operation.FINISH],
                 )
 
+                counter = 0
                 for counter in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
                     state = userservice.check_state()
-                    if counter > 5:
-                        # Set machine state for fixture to stopped
-                        fixtures.VMS_INFO = [
-                            fixtures.VMS_INFO[i]._replace(status='stopped')
-                            for i in range(len(fixtures.VMS_INFO))
-                        ]
+                    # Ensure that, after a few iterations, the machine is removed (state is UNKNOWN)
+                    # if counter == 5:
+                    #     utils.find_attr_in_list(fixtures.VMS_INFO, 'id', userservice._vmid).status = ov_types.VMStatus.UNKNOWN
 
-                self.assertEqual(state, types.states.TaskState.FINISHED)
+                self.assertEqual(
+                    state, types.states.TaskState.FINISHED, f'Graceful: {graceful}, Counter: {counter}'
+                )
 
                 if graceful:
-                    _api.shutdown_machine.assert_called()
+                    api.shutdown_machine.assert_called()
                 else:
-                    _api.stop_machine.assert_called()
+                    api.stop_machine.assert_called()
+
+                api.remove_machine.assert_called()

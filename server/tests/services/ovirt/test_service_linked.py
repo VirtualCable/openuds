@@ -133,7 +133,7 @@ class TestProxmovLinkedService(UDSTestCase):
             service = fixtures.create_linked_service()
             # first, with native, should call fix_usb
             service.usb.value = 'native'
-            service.fix_usb(fixtures.VMS_INFO[0].id)
+            service.fix_usb(service.machine.value)
             api.fix_usb.assert_called_with(service.machine.value)
             # Now, with "disabled" should not call fix_usb
             api.fix_usb.reset_mock()

@@ -71,6 +71,10 @@ def get_id(iterable: typing.Iterable[T], id: str) -> T:
     except StopIteration:
         raise ValueError(f'Id {id} not found in iterable') from None
 
+# Set state helper
+def set_attr(obj: T, name: str, value: typing.Any) -> T:
+    setattr(obj, name, value)
+    return obj
 
 GUEST_IP_ADDRESS: str = '1.0.0.1'
 
@@ -206,6 +210,26 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
         client.Client.create_snapshot,
         returns=lambda *args, **kwargs: random.choice(SNAPSHOTS_INFO),  # pyright: ignore
     ),
+    AutoSpecMethodInfo(
+        client.Client.start_machine,
+        returns=lambda machine_id, **kwargs: set_attr(get_id(VMS_INFO, machine_id), 'status', ov_types.VMStatus.UP),  # pyright: ignore
+    ),
+    AutoSpecMethodInfo(
+        client.Client.stop_machine,
+        returns=lambda machine_id, **kwargs: set_attr(get_id(VMS_INFO, machine_id), 'status', ov_types.VMStatus.DOWN),  # pyright: ignore
+    ),
+    AutoSpecMethodInfo(
+        client.Client.shutdown_machine,
+        returns=lambda machine_id, **kwargs: set_attr(get_id(VMS_INFO, machine_id), 'status', ov_types.VMStatus.DOWN),  # pyright: ignore
+    ),
+    AutoSpecMethodInfo(
+        client.Client.remove_machine,
+        returns=lambda machine_id, **kwargs: set_attr(get_id(VMS_INFO, machine_id), 'status', ov_types.VMStatus.UNKNOWN),  # pyright: ignore
+    ),
+    AutoSpecMethodInfo(
+        client.Client.suspend_machine,
+        returns=lambda machine_id, **kwargs: set_attr(get_id(VMS_INFO, machine_id), 'status', ov_types.VMStatus.SUSPENDED),  # pyright: ignore
+    ),    
     # connect returns None
     # Test method
     # AutoSpecMethodInfo(client.Client.list_projects, returns=True),

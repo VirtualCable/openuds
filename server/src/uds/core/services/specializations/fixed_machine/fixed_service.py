@@ -63,7 +63,8 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
     # : In our case, we do no need a publication, so this is None
     # publication_type = None
     # : Types of deploys (services in cache and/or assigned to users)
-    # Ensure to provide this on inherited classes
+    # Every service must have overrided FixedUserService with it's own implementation
+    # so this needs to be overrided
     # user_service_type = FixedUserService
 
     # allowed_protocols = types.transports.Protocol.generic_vdi(types.transports.Protocol.SPICE)

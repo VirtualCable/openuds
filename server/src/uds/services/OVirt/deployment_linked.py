@@ -320,28 +320,26 @@ if sys.platform == 'win32':
             ]
 
     def _check_machine_state(
-        self, check_state: collections.abc.Iterable[ov_types.VMStatus]
+        self, check_states: collections.abc.Iterable[ov_types.VMStatus]
     ) -> types.states.TaskState:
         logger.debug(
             'Checking that state of machine %s (%s) is %s',
             self._vmid,
             self._name,
-            check_state,
+            check_states,
         )
 
         if (check_result := self._inc_checks_counter('check_machine_state')) is not None:
             return check_result
 
         vm_info = self.service().provider().api.get_machine_info(self._vmid)
-        if vm_info.status == ov_types.VMStatus.UNKNOWN:
+        
+        if vm_info.status == ov_types.VMStatus.UNKNOWN and ov_types.VMStatus.UNKNOWN not in check_states:
             return self._error('Machine not found')
 
         ret = types.states.TaskState.RUNNING
-        # if iterable...
-        for cks in check_state:
-            if vm_info.status == cks:
-                ret = types.states.TaskState.FINISHED
-                break
+        if vm_info.status in check_states:
+            ret = types.states.TaskState.FINISHED
 
         return ret
 
@@ -484,7 +482,6 @@ if sys.platform == 'win32':
         If it takes too long to stop, or qemu guest tools are not installed,
         will use "power off" "a las bravas"
         """
-        self._task = ''
         shutdown = -1  # Means machine already stopped
         try:
             vm_info = self.service().provider().api.get_machine_info(self._vmid)
@@ -493,12 +490,14 @@ if sys.platform == 'win32':
         except Exception as e:
             raise Exception('Machine not found on stop machine') from e
 
+        # If machine is already stopped, shutdown will be -1 so checker will end soon
         if vm_info.status in UP_STATES:
             self.service().provider().api.shutdown_machine(self._vmid)
-            shutdown = sql_stamp_seconds()
+            shutdown = sql_stamp_seconds()  # Setup shutdown time
 
         logger.debug('Stoped vm using guest tools')
-        self.storage.save_pickled('shutdown', shutdown)
+        with self.storage.as_dict() as data:
+            data['shutdown'] = shutdown
 
     def _suspend_machine(self) -> None:
         """
