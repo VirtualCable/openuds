@@ -196,6 +196,12 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         self._queue = self._create_queue.copy()
         return self._execute_queue()
 
+    @typing.final
+    def assign(self, vmid: str) -> types.states.TaskState:
+        logger.debug('Assigning from VM {}'.format(vmid))
+        self._vmid = vmid
+        self._queue = FixedUserService._assign_queue.copy()  # copy is needed to avoid modifying class var
+        return self._execute_queue()
 
     @typing.final
     def _execute_queue(self) -> types.states.TaskState:
@@ -210,7 +216,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
 
         try:
             operation_runner = _EXEC_FNCS[op]
-            
+
             # Invoke using instance, we have overrided methods
             # and we want to use the overrided ones
             getattr(self, operation_runner.__name__)()
@@ -371,7 +377,6 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         try:
             check_function = _CHECK_FNCS[op]
 
-
             # Invoke using instance, we have overrided methods
             # and we want to use the overrided ones
             state = typing.cast(types.states.TaskState, getattr(self, check_function.__name__)())
@@ -465,7 +470,9 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
 # Operations, duwe to the fact that can be overrided some of them, must be invoked via instance
 # We use __name__ later to use them, so we can use type checking and invoke them via instance instead of class
 # Note that ERROR and FINISH are not here, as they final states not needing to be executed
-_EXEC_FNCS: typing.Final[collections.abc.Mapping[Operation, collections.abc.Callable[[FixedUserService], None]]] = {
+_EXEC_FNCS: typing.Final[
+    collections.abc.Mapping[Operation, collections.abc.Callable[[FixedUserService], None]]
+] = {
     Operation.CREATE: FixedUserService._create,
     Operation.RETRY: FixedUserService._retry,
     Operation.START: FixedUserService.start_machine,

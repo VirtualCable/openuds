@@ -316,25 +316,26 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         This method is called when the service is shutdown
         """
-        pass
+        self.op_stop()  # By default, shutdown is a stop
 
     def op_shutdown_completed(self) -> None:
         """
         This method is called when the service shutdown is completed
         """
-        pass
+        self.op_stop_completed()
 
     def op_suspend(self) -> None:
         """
         This method is called when the service is suspended
         """
-        pass
+        # Note that by default suspend is "shutdown" and not "stop" because we 
+        self.op_shutdown()  
 
     def op_suspend_completed(self) -> None:
         """
         This method is called when the service suspension is completed
         """
-        pass
+        self.op_shutdown_completed()
 
     def op_remove(self) -> None:
         """
