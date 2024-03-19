@@ -122,7 +122,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         label=_("Base Machine"),
         order=110,
         tooltip=_('Service base machine'),
-        tab=_('Machine'),
+        tab=types.ui.Tab.MACHINE,
         required=True,
     )
 
@@ -131,7 +131,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         readonly=False,
         order=111,
         tooltip=_('Network used for virtual machines'),
-        tab=_('Machine'),
+        tab=types.ui.Tab.MACHINE,
         required=True,
     )
 
@@ -142,7 +142,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         readonly=False,
         order=112,
         tooltip=_('Memory assigned to machines'),
-        tab=_('Machine'),
+        tab=types.ui.Tab.MACHINE,
         required=True,
     )
 
@@ -153,7 +153,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         readonly=False,
         order=113,
         tooltip=_('Shadow memory multiplier (use with care)'),
-        tab=_('Machine'),
+        tab=types.ui.Tab.MACHINE,
         required=True,
     )
 

@@ -143,7 +143,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         label=_("Base Machine"),
         order=110,
         tooltip=_('Service base machine'),
-        tab=_('Machine'),
+        tab=types.ui.Tab.MACHINE,
         required=True,
     )
 
@@ -155,7 +155,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         readonly=False,
         order=111,
         tooltip=_('Memory assigned to machines'),
-        tab=_('Machine'),
+        tab=types.ui.Tab.MACHINE,
         required=True,
     )
 
@@ -167,7 +167,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         readonly=False,
         order=112,
         tooltip=_('Physical memory guaranteed to machines'),
-        tab=_('Machine'),
+        tab=types.ui.Tab.MACHINE,
         required=True,
         old_field_name='memoryGuaranteed',
     )
@@ -181,7 +181,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
             gui.choice_item('disabled', 'disabled'),
             gui.choice_item('native', 'native'),
         ],
-        tab=_('Machine'),
+        tab=types.ui.Tab.MACHINE,
         default='1',  # Default value is the ID of the choicefield
     )
 
@@ -191,11 +191,11 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         order=114,
         tooltip=_('Display type (only for administration purposes)'),
         choices=[gui.choice_item('spice', 'Spice'), gui.choice_item('vnc', 'Vnc')],
-        tab=_('Machine'),
+        tab=types.ui.Tab.MACHINE,
         default='1',  # Default value is the ID of the choicefield
     )
-    basename = fields.basename_field(order=115, tab=_('Machine'))
-    lenname = fields.lenname_field(order=116, tab=_('Machine'))
+    basename = fields.basename_field(order=115, tab=types.ui.Tab.MACHINE)
+    lenname = fields.lenname_field(order=116, tab=types.ui.Tab.MACHINE)
 
     prov_uuid = gui.HiddenField()
 

@@ -104,7 +104,7 @@ class ProxmoxServiceLinked(services.Service):  # pylint: disable=too-many-public
         label=_("Pool"),
         order=1,
         tooltip=_('Pool that will contain UDS created vms'),
-        # tab=_('Machine'),
+        # tab=types.ui.Tab.MACHINE,
         # required=True,
         default='',
     )
@@ -127,7 +127,7 @@ class ProxmoxServiceLinked(services.Service):  # pylint: disable=too-many-public
             'parameters': ['machine', 'prov_uuid'],
         },
         tooltip=_('Service base machine'),
-        tab=_('Machine'),
+        tab=types.ui.Tab.MACHINE,
         required=True,
     )
 
@@ -136,7 +136,7 @@ class ProxmoxServiceLinked(services.Service):  # pylint: disable=too-many-public
         readonly=False,
         order=111,
         tooltip=_('Storage for publications & machines.'),
-        tab=_('Machine'),
+        tab=types.ui.Tab.MACHINE,
         required=True,
     )
 
@@ -150,7 +150,7 @@ class ProxmoxServiceLinked(services.Service):  # pylint: disable=too-many-public
             '2': _('Only if NOT available'),
         },
         tooltip=_('Storage for publications & machines.'),
-        tab=_('Machine'),
+        tab=types.ui.Tab.MACHINE,
         required=True,
     )
     

@@ -145,7 +145,7 @@ class OpenStackLiveService(services.Service):
         order=4,
         tooltip=_('Base volume for service (restricted by availability zone)'),
         required=True,
-        tab=_('Machine'),
+        tab=types.ui.Tab.MACHINE,
     )
     # volumeType = gui.ChoiceField(label=_('Volume Type'), order=5, tooltip=_('Volume type for service'), required=True)
     network = gui.ChoiceField(
@@ -153,14 +153,14 @@ class OpenStackLiveService(services.Service):
         order=6,
         tooltip=_('Network to attach to this service'),
         required=True,
-        tab=_('Machine'),
+        tab=types.ui.Tab.MACHINE,
     )
     flavor = gui.ChoiceField(
         label=_('Flavor'),
         order=7,
         tooltip=_('Flavor for service'),
         required=True,
-        tab=_('Machine'),
+        tab=types.ui.Tab.MACHINE,
     )
 
     security_groups = gui.MultiChoiceField(
@@ -168,14 +168,14 @@ class OpenStackLiveService(services.Service):
         order=8,
         tooltip=_('Service security groups'),
         required=True,
-        tab=_('Machine'),
+        tab=types.ui.Tab.MACHINE,
         old_field_name='securityGroups',
     )
 
-    basename = fields.basename_field(order=9, tab=_('Machine'))
-    lenname = fields.lenname_field(order=10, tab=_('Machine'))
+    basename = fields.basename_field(order=9, tab=types.ui.Tab.MACHINE)
+    lenname = fields.lenname_field(order=10, tab=types.ui.Tab.MACHINE)
 
-    maintain_on_error = fields.maintain_on_error_field(order=11, tab=_('Machine'))
+    maintain_on_error = fields.maintain_on_error_field(order=11, tab=types.ui.Tab.MACHINE)
 
     prov_uuid = gui.HiddenField()
 

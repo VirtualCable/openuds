@@ -114,7 +114,7 @@ class OpenNebulaLiveService(services.Service):
         label=_("Base Template"),
         order=110,
         tooltip=_('Service base template'),
-        tab=_('Machine'),
+        tab=types.ui.Tab.MACHINE,
         required=True,
     )
 
@@ -123,7 +123,7 @@ class OpenNebulaLiveService(services.Service):
         readonly=False,
         order=111,
         tooltip=_('Base name for clones from this machine'),
-        tab=_('Machine'),
+        tab=types.ui.Tab.MACHINE,
         required=True,
     )
 
@@ -133,7 +133,7 @@ class OpenNebulaLiveService(services.Service):
         default=5,
         order=112,
         tooltip=_('Size of numeric part for the names of these machines'),
-        tab=_('Machine'),
+        tab=types.ui.Tab.MACHINE,
         required=True,
     )
 

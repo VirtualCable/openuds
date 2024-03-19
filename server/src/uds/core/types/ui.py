@@ -44,6 +44,7 @@ class Tab(enum.StrEnum):
     TUNNEL = gettext_noop('Tunnel')
     DISPLAY = gettext_noop('Display')
     MFA = gettext_noop('MFA')
+    MACHINE = gettext_noop('Machine')
 
     @staticmethod
     def from_str(value: typing.Optional[str]) -> typing.Union['Tab', str, None]:

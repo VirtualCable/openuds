@@ -102,7 +102,6 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         """
         return True
 
-    @abc.abstractmethod
     def publish(self) -> types.states.TaskState:
         """ """
         self._queue = self._publish_queue
