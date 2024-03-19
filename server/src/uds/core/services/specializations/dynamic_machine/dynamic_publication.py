@@ -1,218 +1,497 @@
-# # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
-# #
-# # Copyright (c) 2012-2019 Virtual Cable S.L.
-# # All rights reserved.
-# #
-# """
-# Author: Adolfo Gómez, dkmaster at dkmon dot com
-# """
+#
+# Copyright (c) 2012-2019 Virtual Cable S.L.
+# All rights reserved.
+#
+"""
+Author: Adolfo Gómez, dkmaster at dkmon dot com
+"""
 
-# import abc
-# from datetime import datetime
-# import logging
-# import time
-# import typing
+import abc
+import collections.abc
+import logging
+import time
+import typing
 
-# from django.utils.translation import gettext as _
-# from uds.core import services, types
-# from uds.core.types.services import Operation
-# from uds.core.util import autoserializable
+from django.utils.translation import gettext as _
+from uds.core import services, types
+from uds.core.types.services import Operation
+from uds.core.util import autoserializable
 
-# if typing.TYPE_CHECKING:
-#     from .dynamic_service import DynamicService
+if typing.TYPE_CHECKING:
+    from .dynamic_service import DynamicService
 
-# class DynamicPublication(services.Publication, autoserializable.AutoSerializable, abc.ABC):
-#     suggested_delay = 20  # For publications, we can check every 20 seconds
+logger = logging.getLogger(__name__)
 
-#     _name = autoserializable.StringField(default='')
-#     _vm = autoserializable.StringField(default='')
-#     _queue = autoserializable.ListField[Operation]()
 
-#     # Utility overrides for type checking...
-#     def _current_op(self) -> Operation:
-#         if not self._queue:
-#             return Operation.FINISH
+class DynamicPublication(services.Publication, autoserializable.AutoSerializable, abc.ABC):
+    # Very simmilar to DynamicUserService, but with some differences
+    suggested_delay = 20  # For publications, we can check every 20 seconds
 
-#         return self._queue[0]
+    # Some customization fields
+    # How many times we will check for a state before giving up
+    max_state_checks: typing.ClassVar[int] = 20
+    # If must wait untill finish queue for destroying the machine
+    wait_until_finish_to_destroy: typing.ClassVar[bool] = False
+
+    _name = autoserializable.StringField(default='')
+    _vmid = autoserializable.StringField(default='')
+    _queue = autoserializable.ListField[Operation]()
+    _reason = autoserializable.StringField(default='')
+    _is_flagged_for_destroy = autoserializable.BoolField(default=False)
+
+    _publish_queue: typing.ClassVar[list[Operation]] = [
+        Operation.INITIALIZE,
+        Operation.CREATE,
+        Operation.CREATE_COMPLETED,
+        Operation.FINISH,
+    ]
+    _destroy_queue: typing.ClassVar[list[Operation]] = [
+        Operation.REMOVE,
+        Operation.REMOVE_COMPLETED,
+        Operation.FINISH,
+    ]
+
+    # Utility overrides for type checking...
+    def _reset_checks_counter(self) -> None:
+        with self.storage.as_dict() as data:
+            data['exec_count'] = 0
+
+    def _inc_checks_counter(self, info: typing.Optional[str] = None) -> typing.Optional[types.states.TaskState]:
+        with self.storage.as_dict() as data:
+            count = data.get('exec_count', 0) + 1
+            data['exec_count'] = count
+        if count > self.max_state_checks:
+            return self._error(f'Max checks reached on {info or "unknown"}')
+        return None
+
+    def _current_op(self) -> Operation:
+        if not self._queue:
+            return Operation.FINISH
+
+        return self._queue[0]
+
+    def _error(self, reason: typing.Union[str, Exception]) -> types.states.TaskState:
+        """
+        Internal method to set object as error state
+
+        Returns:
+            State.ERROR, so we can do "return self._error(reason)"
+        """
+        reason = str(reason)
+        logger.error(reason)
+
+        if self._vmid:
+            try:
+                # TODO: Remove VM using service or put it on a "to be removed" queue for a parallel job
+                self._vmid = ''
+            except Exception as e:
+                logger.exception('Exception removing machine: %s', e)
+
+        self._queue = [Operation.ERROR]
+        self._reason = reason
+        return types.states.TaskState.ERROR
+
+    def service(self) -> 'DynamicService':
+        return typing.cast('DynamicService', super().service())
+
+    def check_space(self) -> bool:
+        """
+        If the service needs to check space before publication, it should override this method
+        """
+        return True
+
+    @abc.abstractmethod
+    def publish(self) -> types.states.TaskState:
+        """ """
+        self._queue = self._publish_queue
+        return self._execute_queue()
+
+    def _execute_queue(self) -> types.states.TaskState:
+        op = self._current_op()
+
+        if op == Operation.ERROR:
+            return types.states.TaskState.ERROR
+
+        if op == Operation.FINISH:
+            return types.states.TaskState.FINISHED
+
+        try:
+            self._reset_checks_counter()  # Reset checks counter
+
+            # For custom operations, we will call the only one method
+            if op.is_custom():
+                self.op_custom(op)
+            else:
+                operation_runner = _EXECUTORS[op]
+
+                # Invoke using instance, we have overrided methods
+                # and we want to use the overrided ones
+                getattr(self, operation_runner.__name__)()
+
+            return types.states.TaskState.RUNNING
+        except Exception as e:
+            logger.exception('Unexpected FixedUserService exception: %s', e)
+            return self._error(str(e))
+
+    def check_state(self) -> types.states.TaskState:
+        """
+        Check what operation is going on, and acts acordly to it
+        """
+        self._debug('check_state')
+        op = self._current_op()
+
+        if op == Operation.ERROR:
+            return types.states.TaskState.ERROR
+
+        if op == Operation.FINISH:
+            if self.wait_until_finish_to_destroy and self._is_flagged_for_destroy:
+                self._is_flagged_for_destroy = False
+                self._queue = [Operation.FINISH]  # For destroy to start "clean"
+                return self.destroy()
+            return types.states.TaskState.FINISHED
+
+        if op != Operation.WAIT:
+            # All operations except WAIT will check against checks counter
+            state = self._inc_checks_counter(self._op2str(op))
+            if state is not None:
+                return state  # Error, Finished or None
+
+        try:
+            if op.is_custom():
+                state = self.op_custom_checker(op)
+            else:
+                state = _CHECKERS[op](self)
+
+            if state == types.states.TaskState.FINISHED:
+                # Remove runing op
+                self._queue.pop(0)
+                return self._execute_queue()
+
+            return state
+        except Exception as e:
+            return self._error(e)
+
+
+    @typing.final
+    def destroy(self) -> types.states.TaskState:
+        """
+        Destroys the publication (or cancels it if it's in the middle of a creation process)
+        """
+        self._is_flagged_for_destroy = False  # Reset flag
+        op = self._current_op()
+
+        if op == Operation.ERROR:
+            return self._error('Machine is already in error state!')
+
+        # If a "paused" state, reset queue to destroy
+        if op == Operation.FINISH:
+            self._queue = self._destroy_queue
+            return self._execute_queue()
+
+        # If must wait until finish, flag for destroy and wait
+        if self.wait_until_finish_to_destroy:
+            self._is_flagged_for_destroy = True
+        else:
+            # If other operation, wait for finish before destroying
+            self._queue = [op] + self._destroy_queue
+            # Do not execute anything.here, just continue normally
+        return types.states.TaskState.RUNNING
     
-#     def service(self) -> 'DynamicService':
-#         return typing.cast('DynamicService', super().service())
-    
-#     def check_space(self) -> bool:
-#         """
-#         If the service needs to check space before publication, it should override this method
-#         """
-#         return True
+    def error_reason(self) -> str:
+        return self._reason
 
-#     def publish(self) -> types.states.TaskState:
-#         """
-#         """
-#         try:
-#             # First we should create a full clone, so base machine do not get fullfilled with "garbage" delta disks...
-#             self._name = self.service().sanitize_machine_name(
-#                 'UDS Pub'
-#                 + ' '
-#                 + self.servicepool_name()
-#                 + "-"
-#                 + str(self.revision())  # plus current time, to avoid name collisions
-#                 + "-"
-#                 + f'{int(time.time())%256:2X}'
-#             )
-#             comments = _('UDS Publication for {0} created at {1}').format(
-#                 self.servicepool_name(), str(datetime.now()).split('.')[0]
-#             )
-#             self._state = types.states.State.RUNNING
-#             self._operation = 'p'  # Publishing
-#             self._destroy_after = False
-#             return types.states.TaskState.RUNNING
-#         except Exception as e:
-#             logger.exception('Caught exception %s', e)
-#             self._reason = str(e)
-#             return types.states.TaskState.ERROR
-        
-#     def _execute_queue(self) -> types.states.TaskState:
-#         op = self._current_op()
-        
-#         if op == Operation.ERROR:
-#             return types.states.TaskState.ERROR
+    # Execution methods
+    # Every Operation has an execution method and a check method
+    def op_initialize(self) -> None:
+        """
+        This method is called when the service is initialized
+        """
+        if self.check_space() is False:
+            raise Exception('Not enough space to publish')
 
-#         if op == Operation.FINISH:
-#             return types.states.TaskState.FINISHED
-        
+        # First we should create a full clone, so base machine do not get fullfilled with "garbage" delta disks...
+        # Add a number based on current time to avoid collisions
+        self._name = self.service().sanitize_machine_name(
+            f'UDS-Pub {self.servicepool_name()}-{int(time.time())%256:2X} {self.revision()}'
+        )
+        self._is_flagged_for_destroy = False
 
-#     def check_state(
-#         self,
-#     ) -> types.states.State:  # pylint: disable = too-many-branches,too-many-return-statements
-#         if self._state != types.states.State.RUNNING:
-#             return types.states.State.from_str(self._state)
+    @abc.abstractmethod
+    def op_create(self) -> None:
+        """
+        This method is called when the service is created
+        At least, we must provide this method
+        """
+        ...
 
-#         task = self.service().get_task_info(self._task)
-#         trans: typing.Dict[str, str] = {
-#             VMWTask.ERROR: types.states.State.ERROR,
-#             VMWTask.RUNNING: types.states.State.RUNNING,
-#             VMWTask.FINISHED: types.states.State.FINISHED,
-#             VMWTask.UNKNOWN_TASK: types.states.State.ERROR,
-#         }
-#         reasons: typing.Dict[str, str] = {
-#             VMWTask.ERROR: 'Error',
-#             VMWTask.RUNNING: 'Already running',
-#             VMWTask.FINISHED: 'Finished',
-#             VMWTask.UNKNOWN_TASK: 'Task not known by VC',
-#         }
+    def op_create_completed(self) -> None:
+        """
+        This method is called when the service creation is completed
+        """
+        pass
 
-#         try:
-#             st = task.state() or VMWTask.UNKNOWN_TASK
-#         except TypeError as e:
-#             logger.exception(
-#                 'Catch exception invoking vmware, delaying request: %s %s',
-#                 e.__class__,
-#                 e,
-#             )
-#             return types.states.State.from_str(self._state)
-#         except Exception as e:
-#             logger.exception('Catch exception invoking vmware: %s %s', e.__class__, e)
-#             self._state = types.states.State.ERROR
-#             self._reason = str(e)
-#             return self._state
-#         self._reason = reasons[st]
-#         self._state = trans[st]
-#         if self._state == types.states.State.ERROR:
-#             self._reason = task.result() or 'Publication not found!'
-#         elif self._state == types.states.State.FINISHED:
-#             if self._operation == 'x':  # Destroying snapshot
-#                 return self._remove_machine()
-#             if self._operation == 'p':
-#                 self._vm = str(task.result() or '')
-#                 # Now make snapshot
-#                 if self._destroy_after:
-#                     return self.destroy()
+    def op_start(self) -> None:
+        """
+        This method is called when the service is started
+        """
+        self.service().start_machine(self, self._vmid)
 
-#                 if self.isFullCloner() is True:  # If full cloner is our father
-#                     self._snapshot = ''
-#                     self._task = ''
-#                     self._state = types.states.State.FINISHED
-#                     return self._state
+    def op_start_completed(self) -> None:
+        """
+        This method is called when the service start is completed
+        """
+        pass
 
-#                 try:
-#                     comments = 'UDS Snapshot created at ' + str(datetime.now())
-#                     self._task = self.service().create_snapshot(self._vm, SNAPNAME, comments)
-#                     self._state = types.states.State.RUNNING
-#                     self._operation = 's'  # Snapshoting
-#                 except Exception as e:
-#                     self._state = types.states.State.ERROR
-#                     self._reason = str(e)
-#                     logger.exception('Exception caught creating snapshot')
-#             elif self._operation == 's':
-#                 self._snapshot = task.result() or ''
-#                 if (
-#                     self._destroy_after
-#                 ):  # If publishing and was canceled or destroyed before finishing, do it now
-#                     return self.destroy()
-#             else:
-#                 self._snapshot = ''
-#         return types.states.State.from_str(self._state)
+    def op_stop(self) -> None:
+        """
+        This method is called for stopping the service
+        """
+        self.service().stop_machine(self, self._vmid)
 
-#     def finish(self) -> None:
-#         self._task = ''
-#         self._destroy_after = False
+    def op_stop_completed(self) -> None:
+        """
+        This method is called when the service stop is completed
+        """
+        pass
 
-#     def destroy(self) -> types.states.State:
-#         if (
-#             self._state == types.states.State.RUNNING and self._destroy_after is False
-#         ):  # If called destroy twice, will BREAK STOP publication
-#             self._destroy_after = True
-#             return types.states.State.RUNNING
-#         self._destroy_after = False
-#         # if self.snapshot != '':
-#         #    return self.__removeSnapshot()
-#         return self._remove_machine()
+    def op_shutdown(self) -> None:
+        """
+        This method is called for shutdown the service
+        """
+        self.service().shutdown_machine(self, self._vmid)
 
-#     def cancel(self) -> types.states.State:
-#         return self.destroy()
+    def op_shutdown_completed(self) -> None:
+        """
+        This method is called when the service shutdown is completed
+        """
+        pass
 
-#     def error_reason(self) -> str:
-#         return self._reason
+    def op_suspend(self) -> None:
+        """
+        This method is called for suspend the service
+        """
+        # Note that by default suspend is "shutdown" and not "stop" because we
+        self.service().suspend_machine(self, self._vmid)
 
-#     def snapshot_reference(self) -> str:
-#         return self.service().provider().get_current_snapshot(self._vm) or 'invalid-snapshot'
-#         # return self.snapshot
+    def op_suspend_completed(self) -> None:
+        """
+        This method is called when the service suspension is completed
+        """
+        pass
 
-#     def machine_reference(self) -> str:
-#         return self._vm
+    def op_reset(self) -> None:
+        """
+        This method is called when the service is reset
+        """
+        pass
 
-#     def _remove_machine(self) -> types.states.State:
-#         if not self._vm:
-#             logger.error("Machine reference not found!!")
-#             return types.states.State.ERROR
-#         try:
-#             self._task = self.service().remove_machine(self._vm)
-#             self._state = types.states.State.RUNNING
-#             self._operation = 'd'
-#             self._destroy_after = False
-#             return types.states.State.RUNNING
-#         except Exception as e:
-#             # logger.exception("Caught exception at __removeMachine %s:%s", e.__class__, e)
-#             logger.error('Error removing machine: %s', e)
-#             self._reason = str(e)
-#             return types.states.State.ERROR
+    def op_reset_completed(self) -> None:
+        """
+        This method is called when the service reset is completed
+        """
+        self.service().reset_machine(self, self._vmid)
 
-#     def unmarshal(self, data: bytes) -> None:
-#         if autoserializable.is_autoserializable_data(data):
-#             return super().unmarshal(data)
+    def op_remove(self) -> None:
+        """
+        This method is called when the service is removed
+        By default, we need a remove machine on the service, use it
+        """
+        self.service().remove_machine(self, self._vmid)
 
-#         _auto_data = OldSerialData()
-#         _auto_data.unmarshal(data)
+    def op_remove_completed(self) -> None:
+        """
+        This method is called when the service removal is completed
+        """
+        pass
 
-#         # Fill own data from restored data
-#         self._name = _auto_data._name
-#         self._vm = _auto_data._vm
-#         self._snapshot = _auto_data._snapshot
-#         self._task = _auto_data._task
-#         self._state = _auto_data._state
-#         self._operation = _auto_data._operation
-#         self._destroy_after = _auto_data._destroyAfter
-#         self._reason = _auto_data._reason
+    def op_wait(self) -> None:
+        """
+        This method is called when the service is waiting
+        Basically, will stop the execution of the queue until something external changes it (i.e. poping from the queue)
+        Executor does nothing
+        """
+        pass
 
-#         # Flag for upgrade
-#         self.mark_for_upgrade(True)
+    def op_nop(self) -> None:
+        """
+        This method is called when the service is doing nothing
+        This does nothing, as it's a NOP operation
+        """
+        pass
+
+    def op_custom(self, operation: Operation) -> None:
+        """
+        This method is called when the service is doing a custom operation
+        """
+        pass
+
+    # ERROR, FINISH and UNKNOWN are not here, as they are final states not needing to be executed
+
+    def op_initialize_checker(self) -> types.states.TaskState:
+        """
+        This method is called to check if the service is initialized
+        """
+        return types.states.TaskState.FINISHED
+
+    def op_create_checker(self) -> types.states.TaskState:
+        """
+        This method is called to check if the service is created
+        """
+        return types.states.TaskState.FINISHED
+
+    def op_create_completed_checker(self) -> types.states.TaskState:
+        """
+        This method is called to check if the service creation is completed
+        """
+        return types.states.TaskState.FINISHED
+
+    def op_start_checker(self) -> types.states.TaskState:
+        """
+        This method is called to check if the service is started
+        """
+        return types.states.TaskState.FINISHED
+
+    def op_start_completed_checker(self) -> types.states.TaskState:
+        """
+        This method is called to check if the service start is completed
+        """
+        return types.states.TaskState.FINISHED
+
+    def op_stop_checker(self) -> types.states.TaskState:
+        """
+        This method is called to check if the service is stopped
+        """
+        return types.states.TaskState.FINISHED
+
+    def op_stop_completed_checker(self) -> types.states.TaskState:
+        """
+        This method is called to check if the service stop is completed
+        """
+        return types.states.TaskState.FINISHED
+
+    def op_shutdown_checker(self) -> types.states.TaskState:
+        """
+        This method is called to check if the service is shutdown
+        """
+        return types.states.TaskState.FINISHED
+
+    def op_shutdown_completed_checker(self) -> types.states.TaskState:
+        """
+        This method is called to check if the service shutdown is completed
+        """
+        return types.states.TaskState.FINISHED
+
+    def op_suspend_checker(self) -> types.states.TaskState:
+        """
+        This method is called to check if the service is suspended
+        """
+        return types.states.TaskState.FINISHED
+
+    def op_suspend_completed_checker(self) -> types.states.TaskState:
+        """
+        This method is called to check if the service suspension is completed
+        """
+        return types.states.TaskState.FINISHED
+
+    def op_reset_checker(self) -> types.states.TaskState:
+        """
+        This method is called to check if the service is reset
+        """
+        return types.states.TaskState.FINISHED
+
+    def op_remove_checker(self) -> types.states.TaskState:
+        """
+        This method is called to check if the service is removed
+        """
+        return types.states.TaskState.FINISHED
+
+    def op_remove_completed_checker(self) -> types.states.TaskState:
+        """
+        This method is called to check if the service removal is completed
+        """
+        return types.states.TaskState.FINISHED
+
+    def op_wait_checker(self) -> types.states.TaskState:
+        """
+        Wait will remain in the same state until something external changes it (i.e. poping from the queue)
+        """
+        return types.states.TaskState.RUNNING
+
+    def op_nop_checker(self) -> types.states.TaskState:
+        """
+        This method is called to check if the service is doing nothing
+        """
+        return types.states.TaskState.FINISHED
+
+    def op_custom_checker(self, operation: Operation) -> types.states.TaskState:
+        """
+        This method is called to check if the service is doing a custom operation
+        """
+        return types.states.TaskState.FINISHED
+
+    # ERROR, FINISH and UNKNOWN are not here, as they are final states not needing to be checked
+
+    @staticmethod
+    def _op2str(op: Operation) -> str:
+        return op.name
+
+    def _debug(self, txt: str) -> None:
+        logger.debug(
+            'Queue at %s for %s: %s, mac:%s, vmId:%s',
+            txt,
+            self._name,
+            [DynamicPublication._op2str(op) for op in self._queue],
+            self._vmid,
+        )
+
+    def get_template_id(self) -> str:
+        return self._vmid
+
+
+# This is a map of operations to methods
+# Operations, duwe to the fact that can be overrided some of them, must be invoked via instance
+# Basically, all methods starting with _ are final, and all other are overridable
+# We use __name__ later to use them, so we can use type checking and invoke them via instance
+# Note that ERROR and FINISH are not here, as they final states not needing to be executed
+_EXECUTORS: typing.Final[
+    collections.abc.Mapping[Operation, collections.abc.Callable[[DynamicPublication], None]]
+] = {
+    Operation.INITIALIZE: DynamicPublication.op_initialize,
+    Operation.CREATE: DynamicPublication.op_create,
+    Operation.CREATE_COMPLETED: DynamicPublication.op_create_completed,
+    Operation.START: DynamicPublication.op_start,
+    Operation.START_COMPLETED: DynamicPublication.op_start_completed,
+    Operation.STOP: DynamicPublication.op_stop,
+    Operation.STOP_COMPLETED: DynamicPublication.op_stop_completed,
+    Operation.SHUTDOWN: DynamicPublication.op_shutdown,
+    Operation.SHUTDOWN_COMPLETED: DynamicPublication.op_shutdown_completed,
+    Operation.SUSPEND: DynamicPublication.op_suspend,
+    Operation.SUSPEND_COMPLETED: DynamicPublication.op_suspend_completed,
+    Operation.REMOVE: DynamicPublication.op_remove,
+    Operation.REMOVE_COMPLETED: DynamicPublication.op_remove_completed,
+    Operation.WAIT: DynamicPublication.op_wait,
+    Operation.NOP: DynamicPublication.op_nop,
+}
+
+# Same af before, but for check methods
+_CHECKERS: typing.Final[
+    collections.abc.Mapping[Operation, collections.abc.Callable[[DynamicPublication], types.states.TaskState]]
+] = {
+    Operation.INITIALIZE: DynamicPublication.op_initialize_checker,
+    Operation.CREATE: DynamicPublication.op_create_checker,
+    Operation.CREATE_COMPLETED: DynamicPublication.op_create_completed_checker,
+    Operation.START: DynamicPublication.op_start_checker,
+    Operation.START_COMPLETED: DynamicPublication.op_start_completed_checker,
+    Operation.STOP: DynamicPublication.op_stop_checker,
+    Operation.STOP_COMPLETED: DynamicPublication.op_stop_completed_checker,
+    Operation.SHUTDOWN: DynamicPublication.op_shutdown_checker,
+    Operation.SHUTDOWN_COMPLETED: DynamicPublication.op_shutdown_completed_checker,
+    Operation.SUSPEND: DynamicPublication.op_suspend_checker,
+    Operation.SUSPEND_COMPLETED: DynamicPublication.op_suspend_completed_checker,
+    Operation.REMOVE: DynamicPublication.op_remove_checker,
+    Operation.REMOVE_COMPLETED: DynamicPublication.op_remove_completed_checker,
+    Operation.WAIT: DynamicPublication.op_wait_checker,
+    Operation.NOP: DynamicPublication.op_nop_checker,
+}

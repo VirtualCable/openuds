@@ -40,8 +40,7 @@ from uds.core.util import fields, validators
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from .dynamic_userservice import DynamicUserService
-
-    pass
+    from .dynamic_publication import DynamicPublication
 
 logger = logging.getLogger(__name__)
 
@@ -110,7 +109,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
 
     def get_lenname(self) -> int:
         return self.lenname.value
-    
+
     def sanitize_machine_name(self, name: str) -> str:
         """
         Sanitize machine name
@@ -119,7 +118,9 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         return name
 
     @abc.abstractmethod
-    def get_machine_ip(self, userservice_instance: 'DynamicUserService', machine_id: str) -> str:
+    def get_machine_ip(
+        self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str
+    ) -> str:
         """
         Returns the ip of the machine
         If cannot be obtained, MUST raise an exception
@@ -127,7 +128,9 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         ...
 
     @abc.abstractmethod
-    def get_machine_mac(self, userservice_instance: 'DynamicUserService', machine_id: str) -> str:
+    def get_machine_mac(
+        self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str
+    ) -> str:
         """
         Returns the mac of the machine
         If cannot be obtained, MUST raise an exception
@@ -135,75 +138,93 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         ...
 
     @abc.abstractmethod
-    def is_machine_running(self, userservice_instance: 'DynamicUserService', machine_id: str) -> bool:
+    def is_machine_running(
+        self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str
+    ) -> bool:
         """
-        Returns if the machine is running
+        Returns if the machine is ready and running
         """
         ...
 
-    def is_machine_stopped(self, userservice_instance: 'DynamicUserService', machine_id: str) -> bool:
+    def is_machine_stopped(
+        self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str
+    ) -> bool:
         """
         Returns if the machine is stopped
         """
-        return not self.is_machine_running(userservice_instance, machine_id)
+        return not self.is_machine_running(caller_instance, machine_id)
 
-    def is_machine_suspended(self, userservice_instance: 'DynamicUserService', machine_id: str) -> bool:
+    def is_machine_suspended(
+        self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str
+    ) -> bool:
         """
         Returns if the machine is suspended
         """
-        return self.is_machine_stopped(userservice_instance, machine_id)
-    
-    @abc.abstractmethod
-    def create_machine(self, userservice_instance: 'DynamicUserService') -> str:
-        """
-        Creates a new machine
-        Note that this must, in instance, or invoke somthing of the userservice
-        or operate by itself on userservice_instance
-        """
-        ...
+        return self.is_machine_stopped(caller_instance, machine_id)
 
     @abc.abstractmethod
-    def start_machine(self, userservice_instance: 'DynamicUserService', machine_id: str) -> None:
+    def start_machine(
+        self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str
+    ) -> typing.Any:
         """
         Starts the machine
+        Can return a task, or None if no task is returned
         """
         ...
 
     @abc.abstractmethod
-    def stop_machine(self, userservice_instance: 'DynamicUserService', machine_id: str) -> None:
+    def stop_machine(self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str) -> typing.Any:
         """
         Stops the machine
+        Can return a task, or None if no task is returned
         """
         ...
 
-    def shutdown_machine(self, userservice_instance: 'DynamicUserService', machine_id: str) -> None:
+    def shutdown_machine(
+        self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str
+    ) -> typing.Any:
         """
         Shutdowns the machine
         Defaults to stop_machine
+        Can return a task, or None if no task is returned
         """
-        self.stop_machine(userservice_instance, machine_id)
+        return self.stop_machine(caller_instance, machine_id)
 
-    @abc.abstractmethod
-    def reset_machine(self, userservice_instance: 'DynamicUserService', machine_id: str) -> None:
+    def reset_machine(
+        self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str
+    ) -> typing.Any:
         """
         Resets the machine
+        Can return a task, or None if no task is returned
         """
-        ...
+        # Default is to stop "hard"
+        return self.stop_machine(caller_instance, machine_id)
 
-    def suspend_machine(self, userservice_instance: 'DynamicUserService', machine_id: str) -> None:
+    def suspend_machine(
+        self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str
+    ) -> typing.Any:
         """
         Suspends the machine
         Defaults to shutdown_machine.
         Can be overriden if the service supports suspending.
         """
-        self.shutdown_machine(userservice_instance, machine_id)
+        return self.shutdown_machine(caller_instance, machine_id)
 
     @abc.abstractmethod
-    def remove_machine(self, muserservice_instance: 'DynamicUserService', achine_id: str) -> None:
+    def remove_machine(
+        self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str
+    ) -> typing.Any:
         """
-        Removes the machine
+        Removes the machine, or queues it for removal, or whatever :)
         """
         ...
 
     def keep_on_error(self) -> bool:
-        return self.maintain_on_error.value
+        if self.has_field('maintain_on_error'):  # If has been defined on own class...
+            return self.maintain_on_error.value
+        return False
+    
+    def try_graceful_shutdown(self) -> bool:
+        if self.has_field('try_soft_shutdown'):
+            return self.try_soft_shutdown.value
+        return False

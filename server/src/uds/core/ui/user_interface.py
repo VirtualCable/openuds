@@ -1757,6 +1757,13 @@ class UserInterface(metaclass=UserInterfaceType):
                 field_names_translations[fld_old_field_name] = fld_name
 
         return field_names_translations
+    
+    def has_field(self, field_name: str) -> bool:
+        """
+        So we can check against field existence on "own" instance
+        If not redeclared in derived class, it will return False
+        """
+        return field_name in self._gui
 
 
 # Dictionaries used to encode/decode fields to be stored on database

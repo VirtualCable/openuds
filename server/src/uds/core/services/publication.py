@@ -295,7 +295,6 @@ class Publication(Environmentable, Serializable):
         """
         raise NotImplementedError(f'destroy method for class {self.__class__.__name__} not provided!')
 
-    @abc.abstractmethod
     def cancel(self) -> types.states.TaskState:
         """
         This is a task method. As that, the expected return values are
@@ -313,8 +312,9 @@ class Publication(Environmentable, Serializable):
                all exceptions, and never raise an exception from these methods
                to the core. Take that into account and handle exceptions inside
                this method.
+        Defaults to calling destroy method (previously was fully abstract, but this is a good default)
         """
-        raise NotImplementedError(f'cancel method for class {self.__class__.__name__} not provided!')
+        return self.destroy()
 
     def __str__(self) -> str:
         """

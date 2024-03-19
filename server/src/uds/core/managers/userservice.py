@@ -179,7 +179,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
             in_use=False,
         )
 
-    def create_cache_for(self, publication: ServicePoolPublication, cache_level: types.services.CacheLevel) -> UserService:
+    def create_cache_for(
+        self, publication: ServicePoolPublication, cache_level: types.services.CacheLevel
+    ) -> UserService:
         """
         Creates a new cache for the deployed service publication at level indicated
         """
@@ -314,20 +316,18 @@ class UserServiceManager(metaclass=singleton.Singleton):
         operations_logger.info('Canceling userService %s', user_service.name)
         user_service_instance = user_service.get_instance()
 
-        if (
-            not user_service_instance.supports_cancel()
-        ):  # Does not supports cancel, but destroy, so mark it for "later" destroy
-            # State is kept, just mark it for destroy after finished preparing
-            user_service.destroy_after = True
-        else:
-            user_service.set_state(State.CANCELING)
-            # We simply notify service that it should cancel operation
-            state = user_service_instance.cancel()
+        # We have fixed cancelling
+        # previuously, we only allows cancelling if cancel method
+        # was overrided, but now, we invoke cancel in any case
+        # And will let the service to decide if it can cancel, delay it or whatever
+        user_service.set_state(State.CANCELING)
+        # We simply notify service that it should cancel operation
+        state = user_service_instance.cancel()
 
-            # Data will be serialized on makeUnique process
-            # If cancel is not supported, base cancel always returns "FINISHED", and
-            # opchecker will set state to "removable"
-            UserServiceOpChecker.make_unique(user_service, user_service_instance, state)
+        # Data will be serialized on makeUnique process
+        # If cancel is not supported, base cancel always returns "FINISHED", and
+        # opchecker will set state to "removable"
+        UserServiceOpChecker.make_unique(user_service, user_service_instance, state)
 
     def remove(self, userservice: UserService) -> None:
         """
@@ -606,13 +606,13 @@ class UserServiceManager(metaclass=singleton.Singleton):
         except Exception:
             logger.exception('Reseting service')
             return
-            
+
         logger.debug('State: %s', state)
-        
+
         if state == types.states.TaskState.FINISHED:
             user_service.update_data(userservice_instance)
             return
-        
+
         UserServiceOpChecker.make_unique(user_service, userservice_instance, state)
 
     def notify_preconnect(self, user_service: UserService, info: types.connections.ConnectionData) -> None:
@@ -698,7 +698,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         if kind in 'A':  # This is an assigned service
             logger.debug('Getting A service %s', uuid_user_service)
             userservice = UserService.objects.get(uuid=uuid_user_service, user=user)
-            typing.cast(UserService, userservice).deployed_service.validate_user(user)  # pyright: ignore reportGeneralTypeIssues  # Mypy thinks that userservice is None
+            userservice.deployed_service.validate_user(user)
         else:
             try:
                 service_pool: ServicePool = ServicePool.objects.get(uuid=uuid_user_service)
@@ -752,7 +752,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
             )
 
         # Early log of "access try" so we can imagine what is going on
-        user_service.set_connection_source(types.connections.ConnectionSource(src_ip, client_hostname or src_ip))
+        user_service.set_connection_source(
+            types.connections.ConnectionSource(src_ip, client_hostname or src_ip)
+        )
 
         if user_service.is_in_maintenance():
             raise ServiceInMaintenanceMode()
@@ -793,7 +795,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         if not validate_with_test:
             # traceLogger.info('GOT service "{}" for user "{}" with transport "{}" (NOT TESTED)'.format(userService.name, userName, trans.name))
             return None, user_service, None, transport, None
-        
+
         service_status: types.services.ReadyStatus = types.services.ReadyStatus.USERSERVICE_NOT_READY
         ip = 'unknown'
         # Test if the service is ready

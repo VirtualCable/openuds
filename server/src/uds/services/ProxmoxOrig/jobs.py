@@ -40,60 +40,41 @@ from uds.core.util.unique_id_generator import UniqueIDGenerator
 from . import provider
 from . import client
 
-# Note that even reseting, UDS will get always a FREE vmid, so even if the machine is already in use
-# (and removed from used db), it will not be reused until it has dissapeared from the proxmox server
-MAX_VMID_LIFE_SECS: typing.Final[int] = 365 * 24 * 60 * 60 * 3  # 3 years for "reseting"
+MAX_VMID_LIFE_SECS = 365 * 24 * 60 * 60 * 3  # 3 years for "reseting"
 
 logger = logging.getLogger(__name__)
 
 
-class ProxmoxDeferredRemoval(jobs.Job):
-    frecuency = 60 * 3  # Once every NN minutes
+class ProxmoxDeferredRemovalOrig(jobs.Job):
+    frecuency = 60 * 5  # Once every NN minutes
     friendly_name = 'Proxmox removal'
     counter = 0
-    
-    def get_vmid_stored_data_from(self, data: bytes) -> typing.Tuple[int, bool]:
-        vmdata = data.decode()
-        if ':' in vmdata:
-            vmid, try_graceful_shutdown_s = vmdata.split(':')
-            try_graceful_shutdown = try_graceful_shutdown_s == 'y'
-        else:
-            vmid = vmdata
-            try_graceful_shutdown = False
-        return int(vmid), try_graceful_shutdown
-        
 
     @staticmethod
-    def remove(provider_instance: 'provider.ProxmoxProvider', vmid: int, try_graceful_shutdown: bool) -> None:
-        def storeDeferredRemoval() -> None:
-            provider_instance.storage.save_to_db('tr' + str(vmid), f'{vmid}:{"y" if try_graceful_shutdown else "n"}', attr1='tRm')
-        ProxmoxDeferredRemoval.counter += 1
-        logger.debug('Adding %s from %s to defeffed removal process', vmid, provider_instance)
+    def remove(providerInstance: 'provider.ProxmoxProvider', vmId: int) -> None:
+        logger.debug(
+            'Adding %s from %s to defeffed removal process', vmId, providerInstance
+        )
+        ProxmoxDeferredRemovalOrig.counter += 1
         try:
             # First check state & stop machine if needed
-            vminfo = provider_instance.get_machine_info(vmid)
-            if vminfo.status == 'running':
-                if try_graceful_shutdown:
-                    # If running vm,  simply try to shutdown 
-                    provider_instance.shutdown_machine(vmid)
-                    # Store for later removal
-                else: 
-                    # If running vm,  simply stops it and wait for next
-                    provider_instance.stop_machine(vmid)
-                    
-                storeDeferredRemoval()
-                return
+            vmInfo = providerInstance.get_machine_info(vmId)
+            if vmInfo.status == 'running':
+                # If running vm,  simply stops it and wait for next
+                ProxmoxDeferredRemovalOrig.waitForTaskFinish(
+                    providerInstance, providerInstance.stop_machine(vmId)
+                )
 
-            provider_instance.remove_machine(vmid)  # Try to remove, launch removal, but check later
-            storeDeferredRemoval()
-            
+            ProxmoxDeferredRemovalOrig.waitForTaskFinish(
+                providerInstance, providerInstance.remove_machine(vmId)
+            )
         except client.ProxmoxNotFound:
             return  # Machine does not exists
         except Exception as e:
-            storeDeferredRemoval()
+            providerInstance.storage.save_to_db('tr' + str(vmId), str(vmId), attr1='tRm')
             logger.info(
                 'Machine %s could not be removed right now, queued for later: %s',
-                vmid,
+                vmId,
                 e,
             )
 
@@ -101,10 +82,13 @@ class ProxmoxDeferredRemoval(jobs.Job):
     def waitForTaskFinish(
         providerInstance: 'provider.ProxmoxProvider',
         upid: 'client.types.UPID',
-        maxWait: int = 30,  # 30 * 0.3 = 9 seconds
+        maxWait: int = 30,
     ) -> bool:
         counter = 0
-        while providerInstance.get_task_info(upid.node, upid.upid).is_running() and counter < maxWait:
+        while (
+            providerInstance.get_task_info(upid.node, upid.upid).is_running()
+            and counter < maxWait
+        ):
             time.sleep(0.3)
             counter += 1
 
@@ -123,35 +107,39 @@ class ProxmoxDeferredRemoval(jobs.Job):
                 provider.ProxmoxProvider, dbProvider.get_instance()
             )
 
-            for data in storage.filter('tRm'):
-                vmid, _try_graceful_shutdown = self.get_vmid_stored_data_from(data[1])
-                # In fact, here, _try_graceful_shutdown is not used, but we keep it for mayby future use
-                # The soft shutdown has already being initiated by the remove method
-                   
+            for i in storage.filter('tRm'):
+                vmId = int(i[1].decode())
+
                 try:
-                    vmInfo = instance.get_machine_info(vmid)
-                    logger.debug('Found %s for removal %s', vmid, data)
+                    vmInfo = instance.get_machine_info(vmId)
+                    logger.debug('Found %s for removal %s', vmId, i)
                     # If machine is powered on, tries to stop it
                     # tries to remove in sync mode
                     if vmInfo.status == 'running':
-                        ProxmoxDeferredRemoval.waitForTaskFinish(instance, instance.stop_machine(vmid))
+                        ProxmoxDeferredRemovalOrig.waitForTaskFinish(
+                            instance, instance.stop_machine(vmId)
+                        )
                         return
 
-                    if vmInfo.status == 'stopped':  # Machine exists, try to remove it now
-                        ProxmoxDeferredRemoval.waitForTaskFinish(instance, instance.remove_machine(vmid))
+                    if (
+                        vmInfo.status == 'stopped'
+                    ):  # Machine exists, try to remove it now
+                        ProxmoxDeferredRemovalOrig.waitForTaskFinish(
+                            instance, instance.remove_machine(vmId)
+                        )
 
                     # It this is reached, remove check
-                    storage.remove('tr' + str(vmid))
+                    storage.remove('tr' + str(vmId))
                 except client.ProxmoxNotFound:
-                    storage.remove('tr' + str(vmid))  # VM does not exists anymore
+                    storage.remove('tr' + str(vmId))  # VM does not exists anymore
                 except Exception as e:  # Any other exception wil be threated again
                     # instance.log('Delayed removal of %s has failed: %s. Will retry later', vmId, e)
-                    logger.error('Delayed removal of %s failed: %s', data, e)
+                    logger.error('Delayed removal of %s failed: %s', i, e)
 
         logger.debug('Deferred removal for proxmox finished')
 
 
-class ProxmoxVmidReleaser(jobs.Job):
+class ProxmoxVmidReleaserOrig(jobs.Job):
     frecuency = 60 * 60 * 24 * 30  # Once a month
     friendly_name = 'Proxmox maintenance'
 

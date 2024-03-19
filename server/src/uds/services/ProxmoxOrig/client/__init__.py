@@ -562,8 +562,8 @@ class ProxmoxClient:
             self._get(f'nodes/{node}/tasks/{urllib.parse.quote(upid)}/status', node=node)
         )
 
-    @cached('vms', CACHE_DURATION, key_helper=caching_key_helper)
     @ensure_connected
+    @cached('vms', CACHE_DURATION, key_helper=caching_key_helper)
     def list_machines(
         self, node: typing.Union[None, str, collections.abc.Iterable[str]] = None, **kwargs: typing.Any
     ) -> list[types.VMInfo]:
@@ -583,8 +583,8 @@ class ProxmoxClient:
 
         return sorted(result, key=lambda x: '{}{}'.format(x.node, x.name))
 
-    @cached('vmip', CACHE_INFO_DURATION, key_helper=caching_key_helper)
     @ensure_connected
+    @cached('vmip', CACHE_INFO_DURATION, key_helper=caching_key_helper)
     def get_machine_pool_info(self, vmid: int, poolid: typing.Optional[str], **kwargs: typing.Any) -> types.VMInfo:
         # try to locate machine in pool
         node = None

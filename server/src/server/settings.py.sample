@@ -465,6 +465,11 @@ LOGGING = {
             'level': LOGLEVEL,
             'propagate': False,
         },
+        'uds.core.services': {
+            'handlers': ['servicesFile'],
+            'level': LOGLEVEL,
+            'propagate': False,
+        },
         # Custom Auth log
         'authLog': {
             'handlers': ['authFile'],

@@ -33,14 +33,11 @@ import re
 import typing
 
 from django.utils.translation import gettext_noop as _
-from uds.core import types
-from uds.core.services.specializations.dynamic_machine.dynamic_publication import DynamicPublication
-from uds.core.services.specializations.dynamic_machine.dynamic_service import DynamicService
-from uds.core.services.specializations.dynamic_machine.dynamic_userservice import DynamicUserService
+from uds.core import services, types
 from uds.core.ui import gui
 from uds.core.util import validators, log, fields
 
-from . import helpers, jobs
+from . import helpers
 from .deployment_linked import ProxmoxUserserviceLinked
 from .publication import ProxmoxPublication
 
@@ -48,14 +45,11 @@ from .publication import ProxmoxPublication
 if typing.TYPE_CHECKING:
     from . import client
     from .provider import ProxmoxProvider
-    from uds.core.services.specializations.dynamic_machine.dynamic_publication import DynamicPublication
-    from uds.core.services.specializations.dynamic_machine.dynamic_service import DynamicService
-    from uds.core.services.specializations.dynamic_machine.dynamic_userservice import DynamicUserService
 
 logger = logging.getLogger(__name__)
 
 
-class ProxmoxServiceLinked(DynamicService):
+class ProxmoxServiceLinked(services.Service):  # pylint: disable=too-many-public-methods
     """
     Proxmox Linked clones service. This is based on creating a template from selected vm, and then use it to
     """
@@ -65,7 +59,7 @@ class ProxmoxServiceLinked(DynamicService):
     # : mark it as _ (using gettext_noop)
     type_name = _('Proxmox Linked Clone')
     # : Type used internally to identify this provider, must not be modified once created
-    type_type = 'ProxmoxLinkedService'
+    type_type = 'ProxmoxLinkedServiceOrig'
     # : Description shown at administration interface for this provider
     type_description = _('Proxmox Services based on templates and COW')
     # : Icon file used as icon for this provider. This string will be translated
@@ -121,9 +115,9 @@ class ProxmoxServiceLinked(DynamicService):
         tooltip=_('Select if HA is enabled and HA group for machines of this service'),
         readonly=True,
     )
-
+    
     try_soft_shutdown = fields.soft_shutdown_field()
-
+    
     machine = gui.ChoiceField(
         label=_("Base Machine"),
         order=110,
@@ -159,12 +153,12 @@ class ProxmoxServiceLinked(DynamicService):
         tab=_('Machine'),
         required=True,
     )
-
-    basename = DynamicService.basename
-    lenname = DynamicService.lenname
+    
+    basename = fields.basename_field(order=115)
+    lenname = fields.lenname_field(order=116)
 
     prov_uuid = gui.HiddenField(value=None)
-
+    
     def initialize(self, values: 'types.core.ValuesType') -> None:
         if values:
             self.basename.value = validators.validate_basename(
@@ -236,7 +230,7 @@ class ProxmoxServiceLinked(DynamicService):
         config = self.provider().get_machine_configuration(vmid)
         return config.networks[0].mac.lower()
 
-    def xremove_machine(self, vmid: int) -> 'client.types.UPID':
+    def remove_machine(self, vmid: int) -> 'client.types.UPID':
         # First, remove from HA if needed
         try:
             self.disable_machine_ha(vmid)
@@ -275,34 +269,10 @@ class ProxmoxServiceLinked(DynamicService):
     def try_graceful_shutdown(self) -> bool:
         return self.try_soft_shutdown.as_bool()
 
-    def get_console_connection(self, machine_id: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
+    def get_console_connection(
+        self, machine_id: str
+    ) -> typing.Optional[types.services.ConsoleConnectionInfo]:
         return self.provider().get_console_connection(machine_id)
 
     def is_avaliable(self) -> bool:
         return self.provider().is_available()
-
-    def get_machine_ip(self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str) -> str:
-        return self.provider().get_guest_ip_address(int(machine_id))
-    
-    def get_machine_mac(self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str) -> str:
-        return self.get_nic_mac(int(machine_id))
-    
-    def start_machine(self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str) -> None:
-        self.provider().start_machine(int(machine_id))
-        
-    def stop_machine(self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str) -> None:
-        self.provider().stop_machine(int(machine_id))
-
-    def is_machine_running(
-        self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str
-    ) -> bool:
-        # Raise an exception if fails to get machine info
-        vminfo = self.get_machine_info(int(machine_id))
-
-        return vminfo.status != 'stopped'
-
-    def remove_machine(self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str) -> None:
-        # All removals are deferred, so we can do it async
-        # Try to stop it if already running... Hard stop
-        self.stop_machine(caller_instance, machine_id)
-        jobs.ProxmoxDeferredRemoval.remove(self.provider(), int(machine_id), self.try_graceful_shutdown())

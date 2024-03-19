@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import abc
 import typing
 
 from uds.core import types
@@ -46,7 +47,7 @@ if typing.TYPE_CHECKING:
     from uds.core.util.unique_name_generator import UniqueNameGenerator
 
 
-class UserService(Environmentable, Serializable):
+class UserService(Environmentable, Serializable, abc.ABC):
     """
     Interface for user services.
 
@@ -257,6 +258,7 @@ class UserService(Environmentable, Serializable):
         """
         return typing.cast('UniqueGIDGenerator', self.id_generator('id'))
 
+    @abc.abstractmethod
     def get_unique_id(self) -> str:
         """
         Obtains an unique id for this deployed service, you MUST override this
@@ -266,7 +268,7 @@ class UserService(Environmentable, Serializable):
             An unique identifier for this object, that is an string and must be
             unique.
         """
-        raise NotImplementedError('Base getUniqueId for User Deployment called!!!')
+        raise NotImplementedError(f'get_unique_id method for class {self.__class__.__name__} not provided!')
 
     def process_ready_from_os_manager(self, data: typing.Any) -> types.states.TaskState:
         """
@@ -296,6 +298,7 @@ class UserService(Environmentable, Serializable):
         """
         return types.states.TaskState.FINISHED
 
+    @abc.abstractmethod
     def get_ip(self) -> str:
         """
         All services are "IP" services, so this method is a MUST
@@ -305,13 +308,14 @@ class UserService(Environmentable, Serializable):
             The needed ip to let the user connect to the his deployed service.
             This ip will be managed by transports, without IP there is no connection
         """
-        raise Exception('Base getIp for User Deployment got called!!!')
+        raise NotImplementedError(f'get_ip method for class {self.__class__.__name__} not provided!')
 
     def set_ip(self, ip: str) -> None:
         """
         This is an utility method, invoked by some os manager to notify what they thinks is the ip for this service.
         If you assign the service IP by your own methods, do not override this
         """
+        pass
 
     def set_ready(self) -> types.states.TaskState:
         """
@@ -347,6 +351,7 @@ class UserService(Environmentable, Serializable):
         """
         return types.states.TaskState.FINISHED
 
+    @abc.abstractmethod
     def deploy_for_cache(self, level: types.services.CacheLevel) -> types.states.TaskState:
         """
         Deploys a user deployment as cache.
@@ -386,6 +391,7 @@ class UserService(Environmentable, Serializable):
         """
         raise Exception(f'Base deploy for cache invoked! for class {self.__class__.__name__}')
 
+    @abc.abstractmethod
     def deploy_for_user(self, user: 'models.User') -> types.states.TaskState:
         """
         Deploys an service instance for an user.
@@ -421,6 +427,7 @@ class UserService(Environmentable, Serializable):
         """
         raise NotImplementedError(f'Base deploy for user invoked! for class {self.__class__.__name__}')
 
+    @abc.abstractmethod
     def check_state(self) -> types.states.TaskState:
         """
         This is a task method. As that, the expected return values are
@@ -537,6 +544,7 @@ class UserService(Environmentable, Serializable):
         """
         return 'unknown'
 
+    @abc.abstractmethod
     def destroy(self) -> types.states.TaskState:
         """
         This is a task method. As that, the excepted return values are
@@ -571,15 +579,11 @@ class UserService(Environmentable, Serializable):
                all exceptions, and never raise an exception from these methods
                to the core. Take that into account and handle exceptions inside
                this method.
+        
+        Defaults to calling destroy, but can be overriden to provide a more
+        controlled way of cancelling the operation.
         """
-        return types.states.TaskState.RUNNING
-
-    @classmethod
-    def supports_cancel(cls: type['UserService']) -> bool:
-        """
-        Helper to query if a class is custom (implements getJavascript method)
-        """
-        return cls.cancel != UserService.cancel
+        return self.destroy()
 
     def reset(self) -> types.states.TaskState:
         """

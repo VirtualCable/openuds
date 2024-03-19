@@ -28,13 +28,14 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from datetime import datetime
+import datetime
 import time
 import logging
 import typing
 
 from django.utils.translation import gettext as _
-from uds.core import services, types
+from uds.core import types
+from uds.core.services.specializations.dynamic_machine.dynamic_publication import DynamicPublication
 from uds.core.util import autoserializable
 
 # Not imported at runtime, just for type checking
@@ -44,17 +45,15 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class ProxmoxPublication(services.Publication, autoserializable.AutoSerializable):
+class ProxmoxPublication(DynamicPublication, autoserializable.AutoSerializable):
 
     suggested_delay = 20
 
-    _name = autoserializable.StringField(default='')
-    _vmid = autoserializable.StringField(default='')
+    # Some customization fields
+    # If must wait untill finish queue for destroying the machine
+    wait_until_finish_to_destroy = True
+
     _task = autoserializable.StringField(default='')
-    _state = autoserializable.StringField(default='')
-    _operation = autoserializable.StringField(default='')
-    _destroy_after = autoserializable.BoolField(default=False)
-    _reason = autoserializable.StringField(default='')
 
     # Utility overrides for type checking...
     def service(self) -> 'ProxmoxServiceLinked':
@@ -74,104 +73,63 @@ class ProxmoxPublication(services.Publication, autoserializable.AutoSerializable
                 self._name,
                 self._vmid,
                 self._task,
-                self._state,
-                self._operation,
+                _state,
+                _operation,
                 destroy_after,
                 self._reason,
             ) = vals[1:]
         else:
             raise ValueError('Invalid data format')
 
-        self._destroy_after = destroy_after != ''
+        self._queue = (
+            # If removing
+            [
+                types.services.Operation.REMOVE,
+                types.services.Operation.REMOVE_COMPLETED,
+                types.services.Operation.FINISH,
+            ]
+            if _operation == 'd'
+            # If publishing, must have finished for sure
+            else [types.services.Operation.FINISH]
+        )
+        self._is_flagged_for_destroy = destroy_after != ''
 
         self.mark_for_upgrade()  # Flag so manager can save it again with new format
+        
+    def op_create(self) -> None:
+        # First we should create a full clone, so base machine do not get fullfilled with "garbage" delta disks...
+        comments = _('UDS Publication for {0} created at {1}').format(
+            self.servicepool_name(), str(datetime.datetime.now()).split('.')[0]
+        )
+        task = self.service().clone_machine(self._name, comments)
+        self._vmid = str(task.vmid)
+        self._task = ','.join((task.upid.node, task.upid.upid))
 
-    def publish(self) -> types.states.TaskState:
-        """
-        If no space is available, publication will fail with an error
-        """
-        try:
-            # First we should create a full clone, so base machine do not get fullfilled with "garbage" delta disks...
-            self._name = 'UDS ' + _('Publication') + ' ' + self.servicepool_name() + "-" + str(self.revision())
-            comments = _('UDS Publication for {0} created at {1}').format(
-                self.servicepool_name(), str(datetime.now()).split('.')[0]
-            )
-            task = self.service().clone_machine(self._name, comments)
-            self._vmid = str(task.vmid)
-            self._task = ','.join((task.upid.node, task.upid.upid))
-            self._state = types.states.TaskState.RUNNING
-            self._operation = 'p'  # Publishing
-            self._destroy_after = False
-            return types.states.TaskState.RUNNING
-        except Exception as e:
-            logger.exception('Caught exception %s', e)
-            self._reason = str(e)
-            return types.states.TaskState.ERROR
-
-    def check_state(self) -> types.states.TaskState:
-        if self._state != types.states.TaskState.RUNNING:
-            return types.states.TaskState.from_str(self._state)
+    def op_create_checker(self) -> types.states.TaskState:
         node, upid = self._task.split(',')
-        try:
-            task = self.service().provider().get_task_info(node, upid)
-            if task.is_running():
-                return types.states.TaskState.RUNNING
-        except Exception as e:
-            logger.exception('Proxmox publication')
-            self._state = types.states.TaskState.ERROR
-            self._reason = str(e)
-            return self._state
+        task = self.service().provider().get_task_info(node, upid)
+        if task.is_running():
+            return types.states.TaskState.RUNNING
 
         if task.is_errored():
-            self._reason = task.exitstatus
-            self._state = types.states.TaskState.ERROR
-        else:  # Finished
-            if self._destroy_after:
-                return self.destroy()
-            self._state = types.states.TaskState.FINISHED
-            if self._operation == 'p':  # not Destroying
-                # Disable Protection (removal)
-                self.service().provider().set_protection(int(self._vmid), protection=False)
-                time.sleep(0.5)  # Give some tome to proxmox. We have observed some concurrency issues
-                # And add it to HA if
-                self.service().enable_machine_ha(int(self._vmid))
-                time.sleep(0.5)
-                # Mark vm as template
-                self.service().provider().create_template(int(self._vmid))
+            return self._error(task.exitstatus)
 
-                # This seems to cause problems on Proxmox
-                # makeTemplate --> setProtection (that calls "config"). Seems that the HD dissapears...
-                # Seems a concurrency problem?
+        return types.states.TaskState.FINISHED
 
-        return self._state
-
-    def finish(self) -> None:
-        self._task = ''
-        self._destroy_after = False
-
-    def destroy(self) -> types.states.TaskState:
-        if (
-            self._state == types.states.TaskState.RUNNING and self._destroy_after is False
-        ):  # If called destroy twice, will BREAK STOP publication
-            self._destroy_after = True
-            return types.states.TaskState.RUNNING
-
-        self._state = types.states.TaskState.RUNNING
-        self._operation = 'd'
-        self._destroy_after = False
-        try:
-            task = self.service().remove_machine(self.machine())
-            self._task = ','.join((task.node, task.upid))
-            return types.states.TaskState.RUNNING
-        except Exception as e:
-            self._reason = str(e)  # Store reason of error
-            logger.warning(
-                'Problem destroying publication %s: %s. Please, check machine state On Proxmox',
-                self.machine(),
-                e,
-            )
-            return types.states.TaskState.ERROR
-
+    def op_create_completed(self) -> None:
+        # Complete the creation, disabling ha protection and adding to HA and marking as template
+        self.service().provider().set_protection(int(self._vmid), protection=False)
+        time.sleep(0.5)  # Give some tome to proxmox. We have observed some concurrency issues
+        # And add it to HA if needed (decided by service configuration)
+        self.service().enable_machine_ha(int(self._vmid))
+        # Wait a bit, if too fast, proxmox fails.. (Have not tested on 8.x, but previous versions failed if too fast..)
+        time.sleep(0.5)
+        # Mark vm as template
+        self.service().provider().create_template(int(self._vmid))
+        
+    def op_remove(self) -> None:
+        self.service().remove_machine(self, self._vmid)
+        
     def cancel(self) -> types.states.TaskState:
         return self.destroy()
 
