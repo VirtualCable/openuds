@@ -47,7 +47,6 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-
 class FixedUserService(services.UserService, autoserializable.AutoSerializable, abc.ABC):
     """
     This class represents a fixed user service, that is, a service that is assigned to an user
