@@ -130,11 +130,5 @@ class ProxmoxPublication(DynamicPublication, autoserializable.AutoSerializable):
     def op_remove(self) -> None:
         self.service().remove_machine(self, self._vmid)
         
-    def cancel(self) -> types.states.TaskState:
-        return self.destroy()
-
-    def error_reason(self) -> str:
-        return self._reason
-
     def machine(self) -> int:
         return int(self._vmid)

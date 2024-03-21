@@ -359,11 +359,11 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             return self._error('Machine is already in error state!')
 
         shutdown_operations: list[Operation] = [] if not self.service().try_graceful_shutdown() else [Operation.SHUTDOWN, Operation.SHUTDOWN_COMPLETED]
-        destroy_operations = shutdown_operations + self._destroy_queue
+        destroy_operations = shutdown_operations + self._destroy_queue  # copy is not needed due to list concatenation
 
         # If a "paused" state, reset queue to destroy
         if op in (Operation.FINISH, Operation.WAIT):
-            self._queue[:] = destroy_operations
+            self._set_queue(destroy_operations)
             return self._execute_queue()
 
         # If must wait until finish, flag for destroy and wait
@@ -371,7 +371,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             self._is_flagged_for_destroy = True
         else:
             # If other operation, wait for finish before destroying
-            self._queue = [op] + destroy_operations
+            self._set_queue([op] + destroy_operations)
             # Do not execute anything.here, just continue normally
         return types.states.TaskState.RUNNING
 
@@ -661,9 +661,8 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
 
 
 # This is a map of operations to methods
-# Operations, duwe to the fact that can be overrided some of them, must be invoked via instance
-# Basically, all methods starting with _ are final, and all other are overridable
-# We use __name__ later to use them, so we can use type checking and invoke them via instance
+# Operation methods, due to the fact that can be overrided, must be invoked via instance
+# We use getattr(FNC.__name__, ...) to use them, so we can use type checking and invoke them via instance
 # Note that ERROR and FINISH are not here, as they final states not needing to be executed
 _EXECUTORS: typing.Final[
     collections.abc.Mapping[Operation, collections.abc.Callable[[DynamicUserService], None]]

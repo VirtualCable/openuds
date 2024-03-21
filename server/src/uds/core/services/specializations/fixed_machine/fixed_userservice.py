@@ -170,6 +170,13 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         # copy is needed to avoid modifying class var, and access using instance allowing to get, if provided, overriden queue
         self._queue = self._create_queue.copy()
         return self._execute_queue()
+    
+    @typing.final
+    def deploy_for_cache(self, level: types.services.CacheLevel) -> types.states.TaskState:
+        """
+        Fixed Userservice does not provided "cached" elements
+        """
+        return self._error('Cache not supported')
 
     @typing.final
     def assign(self, vmid: str) -> types.states.TaskState:

@@ -402,7 +402,9 @@ SERVICE_LINKED_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
     'gpu': VGPUS[0].type,
     'basename': 'base',
     'lenname': 4,
+    'prov_uuid': '',
 }
+
 
 SERVICE_FIXED_VALUES_DICT: gui.ValuesDictType = {
     'token': '',

@@ -36,19 +36,25 @@ from uds.core import types
 
 from . import fixtures
 
-from ...utils.test import UDSTestCase
+from ...utils.test import UDSTransactionTestCase
 from ...utils import MustBeOfType
+from ...utils.generators import limited_iterator
 
 
-class TestProxmovPublication(UDSTestCase):
+# USe transactional, used by publication access to db on "removal"
+class TestProxmovPublication(UDSTransactionTestCase):
 
     def test_publication(self) -> None:
         with fixtures.patch_provider_api() as api:
             publication = fixtures.create_publication()
 
             state = publication.publish()
+            # Wait until  types.services.Operation.CREATE_COMPLETED
+            for _ in limited_iterator(lambda: publication._queue[0] != types.services.Operation.CREATE_COMPLETED, 10):
+                state = publication.check_state()
+            
             self.assertEqual(state, types.states.State.RUNNING)
-            api.clone_machine.assert_called_with(
+            api.clone_machine.assert_called_once_with(
                 publication.service().machine.as_int(),
                 MustBeOfType(int),
                 MustBeOfType(str),
@@ -59,61 +65,77 @@ class TestProxmovPublication(UDSTestCase):
                 publication.service().pool.value,
                 None,
             )
-            running_task = fixtures.TASK_STATUS._replace(status='running')
-
-            api.get_task.return_value = running_task
-            state = publication.check_state()
-            self.assertEqual(state, types.states.State.RUNNING)
-            # Now ensure task is finished
-            api.get_task.return_value = fixtures.TASK_STATUS._replace(status='stopped', exitstatus='OK')
+            # And should end in next call
             self.assertEqual(publication.check_state(), types.states.State.FINISHED)
-            # Now, error
-            publication._state = types.states.State.RUNNING
+            # Must have vmid, and must match machine() result
+            self.assertEqual(publication.machine(), int(publication._vmid))
+            
+            
+    def test_publication_error(self) -> None:
+        with fixtures.patch_provider_api() as api:
+            publication = fixtures.create_publication()
+
+            # Ensure state check returns error
             api.get_task.return_value = fixtures.TASK_STATUS._replace(
                 status='stopped', exitstatus='ERROR, BOOM!'
             )
-            self.assertEqual(publication.check_state(), types.states.State.ERROR)
+
+            state = publication.publish()
+            self.assertEqual(state, types.states.State.RUNNING, f'State is not running: publication._queue={publication._queue}')
+            
+            # Wait until  types.services.Operation.CREATE_COMPLETED
+            for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, 128):
+                state = publication.check_state()
+            
+            try:
+                api.clone_machine.assert_called_once_with(
+                    publication.service().machine.as_int(),
+                    MustBeOfType(int),
+                    MustBeOfType(str),
+                    MustBeOfType(str),
+                    False,
+                    None,
+                    publication.service().datastore.value,
+                    publication.service().pool.value,
+                    None,
+                )
+            except AssertionError:
+                self.fail(f'Clone machine not called: {api.mock_calls}  //  {publication._queue}')
+            self.assertEqual(state, types.states.State.ERROR)
             self.assertEqual(publication.error_reason(), 'ERROR, BOOM!')
 
-            publication._vmid = str(fixtures.VMS_INFO[0].vmid)
-            self.assertEqual(publication.machine(), fixtures.VMS_INFO[0].vmid)
 
     def test_publication_destroy(self) -> None:
         vmid = str(fixtures.VMS_INFO[0].vmid)
         with fixtures.patch_provider_api() as api:
             publication = fixtures.create_publication()
+
             # Destroy
-            publication._state = types.states.State.RUNNING
             publication._vmid = vmid
             state = publication.destroy()
             self.assertEqual(state, types.states.State.RUNNING)
-            self.assertEqual(publication._destroy_after, True)
+            api.remove_machine.assert_called_once_with(publication.machine())
 
-            # Now, destroy again
+            # Now, destroy again, should do nothing more
             state = publication.destroy()
-            publication._vmid = vmid
-            self.assertEqual(state, types.states.State.RUNNING)
-            self.assertEqual(publication._destroy_after, False)
-            self.assertEqual(publication._operation, 'd')
-            self.assertEqual(publication._state, types.states.State.RUNNING)
-            api.remove_machine.assert_called_with(publication.service().machine.as_int())
+            # Should not call again
+            api.remove_machine.assert_called_once_with(publication.machine())
 
-            # Now, repeat with finished state at the very beginning
-            api.remove_machine.reset_mock()
-            publication._state = types.states.State.FINISHED
+            self.assertEqual(state, types.states.State.RUNNING)
+
+
+    def test_publication_destroy_error(self) -> None:
+        vmid = str(fixtures.VMS_INFO[0].vmid)
+        with fixtures.patch_provider_api() as api:
+            publication = fixtures.create_publication()
+
+            # Now, destroy in fact will not return error, because it will
+            # queue the operation if failed, but api.remove_machine will be called anyway
+            publication._vmid = vmid
+            api.remove_machine.side_effect = Exception('BOOM!')
             publication._vmid = vmid
             self.assertEqual(publication.destroy(), types.states.State.RUNNING)
-            self.assertEqual(publication._destroy_after, False)
-            self.assertEqual(publication._operation, 'd')
-            self.assertEqual(publication._state, types.states.State.RUNNING)
-            api.remove_machine.assert_called_with(publication.service().machine.as_int())
-
-            # And now, with error
-            api.remove_machine.side_effect = Exception('BOOM!')
-            publication._state = types.states.State.FINISHED
-            publication._vmid = vmid
-            self.assertEqual(publication.destroy(), types.states.State.ERROR)
-            self.assertEqual(publication.error_reason(), 'BOOM!')
+            api.remove_machine.assert_called_once_with(publication.machine())
 
             # Ensure cancel calls destroy
             with mock.patch.object(publication, 'destroy') as destroy:

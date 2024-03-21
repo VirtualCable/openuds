@@ -288,10 +288,12 @@ class ProxmoxServiceLinked(DynamicService):
         return self.get_nic_mac(int(machine_id))
     
     def start_machine(self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str) -> None:
-        self.provider().start_machine(int(machine_id))
+        if not self.is_machine_running(caller_instance, machine_id):
+            self.provider().start_machine(int(machine_id))
         
     def stop_machine(self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str) -> None:
-        self.provider().stop_machine(int(machine_id))
+        if self.is_machine_running(caller_instance, machine_id):
+            self.provider().stop_machine(int(machine_id))
 
     def is_machine_running(
         self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str
@@ -304,5 +306,4 @@ class ProxmoxServiceLinked(DynamicService):
     def remove_machine(self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str) -> None:
         # All removals are deferred, so we can do it async
         # Try to stop it if already running... Hard stop
-        self.stop_machine(caller_instance, machine_id)
         jobs.ProxmoxDeferredRemoval.remove(self.provider(), int(machine_id), self.try_graceful_shutdown())

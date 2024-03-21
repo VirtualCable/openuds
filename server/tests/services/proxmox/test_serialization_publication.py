@@ -30,12 +30,12 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import pickle
 import typing
 
 from tests.utils.test import UDSTestCase
+
+from uds.core import types
 from uds.core.environment import Environment
-from uds.core.util import autoserializable
 
 from uds.services.Proxmox.publication import ProxmoxPublication as Publication
 
@@ -57,20 +57,19 @@ from uds.services.Proxmox.publication import ProxmoxPublication as Publication
 #     ) = vals[1:]
 # else:
 #     raise ValueError('Invalid data format')
-    
+
 # self._destroy_after = destroy_after != ''
 EXPECTED_FIELDS: typing.Final[set[str]] = {
     '_name',
     '_vmid',
     '_task',
-    '_state',
-    '_operation',
-    '_destroy_after',
+    '_queue',
+    '_is_flagged_for_destroy',
     '_reason',
 }
 
 
-SERIALIZED_PUBLICATION_DATA: typing.Final[bytes] = b'v1\tname\tvm\ttask\tstate\toperation\ty\treason'
+SERIALIZED_PUBLICATION_DATA: typing.Final[bytes] = b'v1\tname\tvm\ttask\tstate\td\ty\treason'
 
 
 class ProxmoxPublicationSerializationTest(UDSTestCase):
@@ -78,9 +77,18 @@ class ProxmoxPublicationSerializationTest(UDSTestCase):
         self.assertEqual(instance._name, 'name')
         self.assertEqual(instance._vmid, 'vm')
         self.assertEqual(instance._task, 'task')
-        self.assertEqual(instance._state, 'state')
-        self.assertEqual(instance._operation, 'operation')
-        self.assertTrue(instance._destroy_after)
+        # State is not used anymore on current publication, (it's the current queue top operation)
+        # self.assertEqual(instance._state, 'state')
+        self.assertEqual(
+            instance._queue,
+            [
+                types.services.Operation.REMOVE,
+                types.services.Operation.REMOVE_COMPLETED,
+                types.services.Operation.FINISH,
+            ],
+        )
+
+        self.assertTrue(instance._is_flagged_for_destroy)
         self.assertEqual(instance._reason, 'reason')
 
     def test_marshaling(self) -> None:

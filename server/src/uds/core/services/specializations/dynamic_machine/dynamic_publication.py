@@ -104,10 +104,12 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
 
     def publish(self) -> types.states.TaskState:
         """ """
-        self._queue = self._publish_queue
+        self._queue = self._publish_queue.copy()
+        self._debug('publish')
         return self._execute_queue()
 
     def _execute_queue(self) -> types.states.TaskState:
+        self._debug('execute_queue')
         op = self._current_op()
 
         if op == Operation.ERROR:
@@ -123,10 +125,9 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
             if op.is_custom():
                 self.op_custom(op)
             else:
-                operation_runner = _EXECUTORS[op]
-
                 # Invoke using instance, we have overrided methods
                 # and we want to use the overrided ones
+                operation_runner = _EXECUTORS[op]
                 getattr(self, operation_runner.__name__)()
 
             return types.states.TaskState.RUNNING
@@ -161,8 +162,10 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
             if op.is_custom():
                 state = self.op_custom_checker(op)
             else:
-                state = _CHECKERS[op](self)
-
+                # Invoke using instance, we have overrided methods
+                # and we want to use the overrided ones
+                operation_checker = _CHECKERS[op]
+                state = getattr(self, operation_checker.__name__)()
             if state == types.states.TaskState.FINISHED:
                 # Remove runing op
                 self._queue.pop(0)
@@ -172,7 +175,6 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         except Exception as e:
             return self._error(e)
 
-
     @typing.final
     def destroy(self) -> types.states.TaskState:
         """
@@ -180,13 +182,17 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         """
         self._is_flagged_for_destroy = False  # Reset flag
         op = self._current_op()
+        
+        # If already removing, do nothing
+        if op == Operation.REMOVE:
+            return types.states.TaskState.RUNNING
 
         if op == Operation.ERROR:
             return self._error('Machine is already in error state!')
 
         # If a "paused" state, reset queue to destroy
         if op == Operation.FINISH:
-            self._queue = self._destroy_queue
+            self._queue = self._destroy_queue.copy()
             return self._execute_queue()
 
         # If must wait until finish, flag for destroy and wait
@@ -194,10 +200,18 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
             self._is_flagged_for_destroy = True
         else:
             # If other operation, wait for finish before destroying
-            self._queue = [op] + self._destroy_queue
+            self._queue = [op] + self._destroy_queue  # Copy not needed, will be copied anyway due to list concatenation
             # Do not execute anything.here, just continue normally
         return types.states.TaskState.RUNNING
     
+    def cancel(self) -> types.states.TaskState:
+        """
+        Cancels the publication (or cancels it if it's in the middle of a creation process)
+        This can be overriden, just in case we need some special handling
+        """
+        return self.destroy()
+
+    @typing.final
     def error_reason(self) -> str:
         return self._reason
 
@@ -206,6 +220,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
     def op_initialize(self) -> None:
         """
         This method is called when the service is initialized
+        Default initialization method sets the name and flags the service as not destroyed
         """
         if self.check_space() is False:
             raise Exception('Not enough space to publish')
@@ -438,7 +453,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
 
     def _debug(self, txt: str) -> None:
         logger.debug(
-            'Queue at %s for %s: %s, mac:%s, vmId:%s',
+            'Queue at %s for %s: %s, vmid:%s',
             txt,
             self._name,
             [DynamicPublication._op2str(op) for op in self._queue],
@@ -450,9 +465,8 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
 
 
 # This is a map of operations to methods
-# Operations, duwe to the fact that can be overrided some of them, must be invoked via instance
-# Basically, all methods starting with _ are final, and all other are overridable
-# We use __name__ later to use them, so we can use type checking and invoke them via instance
+# Operation methods, due to the fact that can be overrided, must be invoked via instance
+# We use getattr(FNC.__name__, ...) to use them, so we can use type checking and invoke them via instance
 # Note that ERROR and FINISH are not here, as they final states not needing to be executed
 _EXECUTORS: typing.Final[
     collections.abc.Mapping[Operation, collections.abc.Callable[[DynamicPublication], None]]

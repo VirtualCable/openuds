@@ -65,7 +65,7 @@ class ProxmoxDeferredRemoval(jobs.Job):
 
     @staticmethod
     def remove(provider_instance: 'provider.ProxmoxProvider', vmid: int, try_graceful_shutdown: bool) -> None:
-        def storeDeferredRemoval() -> None:
+        def store_for_deferred_removal() -> None:
             provider_instance.storage.save_to_db('tr' + str(vmid), f'{vmid}:{"y" if try_graceful_shutdown else "n"}', attr1='tRm')
         ProxmoxDeferredRemoval.counter += 1
         logger.debug('Adding %s from %s to defeffed removal process', vmid, provider_instance)
@@ -81,16 +81,16 @@ class ProxmoxDeferredRemoval(jobs.Job):
                     # If running vm,  simply stops it and wait for next
                     provider_instance.stop_machine(vmid)
                     
-                storeDeferredRemoval()
+                store_for_deferred_removal()
                 return
 
             provider_instance.remove_machine(vmid)  # Try to remove, launch removal, but check later
-            storeDeferredRemoval()
+            store_for_deferred_removal()
             
         except client.ProxmoxNotFound:
             return  # Machine does not exists
         except Exception as e:
-            storeDeferredRemoval()
+            store_for_deferred_removal()
             logger.info(
                 'Machine %s could not be removed right now, queued for later: %s',
                 vmid,
