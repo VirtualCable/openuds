@@ -35,7 +35,7 @@ import typing
 
 from django.utils.translation import gettext as _
 from uds.core import types
-from uds.core.services.specializations.dynamic_machine.dynamic_publication import DynamicPublication
+from uds.core.services.generics.dynamic_machine.dynamic_publication import DynamicPublication
 from uds.core.util import autoserializable
 
 # Not imported at runtime, just for type checking

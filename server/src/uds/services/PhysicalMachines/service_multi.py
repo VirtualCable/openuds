@@ -327,7 +327,7 @@ class IPMachinesService(IPServiceBase):
             self.storage.save_pickled(host.host, now)
             return ipmachine_instance.assign(host.as_identifier())
 
-        return ipmachine_instance.error('IP already assigned')
+        return ipmachine_instance._error('IP already assigned')
 
     def process_login(self, id: str, remote_login: bool) -> None:
         '''

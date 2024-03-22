@@ -58,8 +58,8 @@ class TestOpenstackLiveService(UDSTransactionTestCase):
                 userservice.db_obj = mock.MagicMock(return_value=userservice_db)
                 # Test Deploy for cache, should raise Exception due
                 # to the fact fixed services cannot have cached items
-                with self.assertRaises(Exception):
-                    userservice.deploy_for_cache(level=types.services.CacheLevel.L1)
+                state = userservice.deploy_for_cache(level=types.services.CacheLevel.L1)
+                self.assertEqual(state, types.states.TaskState.ERROR)
 
                 state = userservice.deploy_for_user(models.User())
 

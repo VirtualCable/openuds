@@ -35,8 +35,8 @@ import typing
 from django.utils.translation import gettext_noop as _
 
 from uds.core import services, types
-from uds.core.services.specializations.fixed_machine.fixed_service import FixedService
-from uds.core.services.specializations.fixed_machine.fixed_userservice import FixedUserService
+from uds.core.services.generics.fixed_machine.fixed_service import FixedService
+from uds.core.services.generics.fixed_machine.fixed_userservice import FixedUserService
 from uds.core.ui import gui
 from uds.core.util import log
 

@@ -34,7 +34,7 @@ import logging
 import typing
 
 from uds.core import types
-from uds.core.services.specializations.fixed_machine.fixed_userservice import FixedUserService, Operation
+from uds.core.services.generics.fixed_machine.fixed_userservice import FixedUserService, Operation
 from uds.core.util import log, autoserializable
 
 from . import xen_client

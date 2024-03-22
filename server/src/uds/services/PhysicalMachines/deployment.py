@@ -136,6 +136,9 @@ class IPMachineUserService(services.UserService, autoserializable.AutoSerializab
     def deploy_for_user(self, user: 'models.User') -> types.states.TaskState:
         logger.debug("Starting deploy of %s for user %s", self._ip, user)
         return self._deploy()
+    
+    def deploy_for_cache(self, level: types.services.CacheLevel) -> types.states.TaskState:
+        return self._error('Cache deploy not supported')
 
     def assign(self, ip: str) -> types.states.TaskState:
         logger.debug('Assigning from assignable with ip %s', ip)
@@ -148,7 +151,7 @@ class IPMachineUserService(services.UserService, autoserializable.AutoSerializab
                 dbService.save()
         return self._state
 
-    def error(self, reason: str) -> types.states.TaskState:
+    def _error(self, reason: str) -> types.states.TaskState:
         self._state = types.states.TaskState.ERROR
         self._ip = ''
         self._reason = reason

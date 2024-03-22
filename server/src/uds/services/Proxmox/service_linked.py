@@ -34,9 +34,9 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 from uds.core import types
-from uds.core.services.specializations.dynamic_machine.dynamic_publication import DynamicPublication
-from uds.core.services.specializations.dynamic_machine.dynamic_service import DynamicService
-from uds.core.services.specializations.dynamic_machine.dynamic_userservice import DynamicUserService
+from uds.core.services.generics.dynamic_machine.dynamic_publication import DynamicPublication
+from uds.core.services.generics.dynamic_machine.dynamic_service import DynamicService
+from uds.core.services.generics.dynamic_machine.dynamic_userservice import DynamicUserService
 from uds.core.ui import gui
 from uds.core.util import validators, log, fields
 
@@ -48,9 +48,9 @@ from .publication import ProxmoxPublication
 if typing.TYPE_CHECKING:
     from . import client
     from .provider import ProxmoxProvider
-    from uds.core.services.specializations.dynamic_machine.dynamic_publication import DynamicPublication
-    from uds.core.services.specializations.dynamic_machine.dynamic_service import DynamicService
-    from uds.core.services.specializations.dynamic_machine.dynamic_userservice import DynamicUserService
+    from uds.core.services.generics.dynamic_machine.dynamic_publication import DynamicPublication
+    from uds.core.services.generics.dynamic_machine.dynamic_service import DynamicService
+    from uds.core.services.generics.dynamic_machine.dynamic_userservice import DynamicUserService
 
 logger = logging.getLogger(__name__)
 
