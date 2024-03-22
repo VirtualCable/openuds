@@ -90,7 +90,7 @@ HEADER_ENCRYPTED: typing.Final[bytes] = b'MGEAS1'
 CRC_SIZE: typing.Final[int] = 4
 
 # Packing data struct
-pack_struct = struct.Struct('<HHI')
+PACKED_LENGHS: typing.Final[struct.Struct] = struct.Struct('<HHI')
 
 
 # Helper functions
@@ -121,16 +121,36 @@ def is_autoserializable_data(data: bytes) -> bool:
 
 @dataclasses.dataclass(slots=True)
 class _MarshalInfo:
+    """
+    This class is used to store field data for marshalling and unmarshalling
+
+    # Serialized data is :
+    # 2 bytes -> name length, little endian
+    # 2 bytes -> type name length, little endian
+    # 4 bytes -> data length, little endian
+    # (Previous is defined by PACKED_LENGHS struct)
+    # n bytes -> name
+    # n bytes -> type name
+    # n bytes -> data
+
+    """
+
     name: str
     type_name: str
     value: bytes
 
     def marshal(self) -> bytes:
-        """Field data marshalling"""
+        """Field data marshalling
+
+        Returns:
+            Marshalled field as bytes
+        """
+        encoded_name = self.name.encode()
+        encoded_type_name = self.type_name.encode()
         return (
-            pack_struct.pack(len(self.name.encode()), len(self.type_name.encode()), len(self.value))
-            + self.name.encode()
-            + self.type_name.encode()
+            PACKED_LENGHS.pack(len(encoded_name), len(encoded_type_name), len(self.value))
+            + encoded_name
+            + encoded_type_name
             + self.value
         )
 
@@ -138,23 +158,15 @@ class _MarshalInfo:
     def unmarshal(data: bytes) -> typing.Tuple['_MarshalInfo', bytes]:
         """Field data unmarshalling
 
-            # Serialized data is:
-            # 2 bytes -> name length
-            # 2 bytes -> type name length
-            # 4 bytes -> data length
-            # n bytes -> name
-            # n bytes -> type name
-            # n bytes -> data
-
         Args:
             data: Data to unmarshal
 
         Returns:
             unmarshalled field and remaining data
-            
+
         """
         # Extract name length, type name length and data length
-        name_len, type_name_len, data_len = pack_struct.unpack(data[:8])
+        name_len, type_name_len, data_len = PACKED_LENGHS.unpack(data[:8])
         # Extract name, type name and data
         name, type_name, value = (
             data[8 : 8 + name_len].decode(),
