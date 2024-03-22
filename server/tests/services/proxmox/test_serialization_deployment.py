@@ -33,13 +33,17 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import pickle
 import typing
 
+from uds.core import environment, types
+from uds.services.Proxmox.deployment_linked import (
+    OldOperation as OldOperation,
+    ProxmoxUserserviceLinked as Deployment,
+)
+
+
 # We use storage, so we need transactional tests
 from ...utils.test import UDSTransactionTestCase
 from ...utils import fake
-
-from uds.core.environment import Environment
-
-from uds.services.Proxmox.deployment_linked import Operation as Operation, ProxmoxUserserviceLinked as Deployment
+from . import fixtures
 
 
 # if not data.startswith(b'v'):
@@ -53,11 +57,12 @@ from uds.services.Proxmox.deployment_linked import Operation as Operation, Proxm
 #     self._task = vals[4].decode('utf8')
 #     self._vmid = vals[5].decode('utf8')
 #     self._reason = vals[6].decode('utf8')
-#     self._queue = [Operation.from_int(i) for i in pickle.loads(vals[7])]  # nosec: controled data
+#     self._queue = [OldOperation.from_int(i) for i in pickle.loads(vals[7])]  # nosec: controled data
 
 # self.flag_for_upgrade()  # Flag so manager can save it again with new format
 
-EXPECTED_FIELDS: typing.Final[set[str]] = {
+# Note that new implementation can hold more fields than ours, so we need to check only the ones we need
+EXPECTED_OWN_FIELDS: typing.Final[set[str]] = {
     '_name',
     '_ip',
     '_mac',
@@ -67,11 +72,14 @@ EXPECTED_FIELDS: typing.Final[set[str]] = {
     '_queue',
 }
 
-TEST_QUEUE: typing.Final[list[Operation]] = [
-    Operation.CREATE,
-    Operation.REMOVE,
-    Operation.RETRY,
+# Old queue content and format
+TEST_QUEUE: typing.Final[list[OldOperation]] = [
+    OldOperation.CREATE,
+    OldOperation.REMOVE,
+    OldOperation.RETRY,
 ]
+
+TEST_QUEUE_NEW: typing.Final[list[types.services.Operation]] = [i.to_operation() for i in TEST_QUEUE]
 
 SERIALIZED_DEPLOYMENT_DATA: typing.Final[typing.Mapping[str, bytes]] = {
     'v1': b'v1\x01name\x01ip\x01mac\x01task\x01vmid\x01reason\x01' + pickle.dumps(TEST_QUEUE, protocol=0),
@@ -88,14 +96,11 @@ class ProxmoxDeploymentSerializationTest(UDSTransactionTestCase):
         self.assertEqual(instance._task, 'task')
         self.assertEqual(instance._vmid, 'vmid')
         self.assertEqual(instance._reason, 'reason')
-        self.assertEqual(instance._queue, TEST_QUEUE)
+        self.assertEqual(instance._queue, TEST_QUEUE_NEW)
 
     def test_marshaling(self) -> None:
-        # queue is kept on "storage", so we need always same environment
-        environment = Environment.testing_environment()
-
         def _create_instance(unmarshal_data: 'bytes|None' = None) -> Deployment:
-            instance = Deployment(environment=environment, service=fake.fake_service())
+            instance = fixtures.create_userservice_linked()
             if unmarshal_data:
                 instance.unmarshal(unmarshal_data)
             return instance
@@ -120,56 +125,57 @@ class ProxmoxDeploymentSerializationTest(UDSTransactionTestCase):
             self.check(version, instance)
 
     def test_marshaling_queue(self) -> None:
-        # queue is kept on "storage", so we need always same environment
-        environment = Environment.testing_environment()
-        # Store queue
-        environment.storage.save_pickled('queue', TEST_QUEUE)
-
         def _create_instance(unmarshal_data: 'bytes|None' = None) -> Deployment:
-            instance = Deployment(environment=environment, service=fake.fake_service())
+            instance = fixtures.create_userservice_linked()
+            instance.env.storage.save_pickled('queue', TEST_QUEUE)
             if unmarshal_data:
                 instance.unmarshal(unmarshal_data)
             return instance
 
         instance = _create_instance(SERIALIZED_DEPLOYMENT_DATA[LAST_VERSION])
-        self.assertEqual(instance._queue, TEST_QUEUE)
+        self.assertEqual(instance._queue, TEST_QUEUE_NEW)
 
-        instance._queue = [
-            Operation.CREATE,
-            Operation.FINISH,
-        ]
+        # Ensure that has been imported already
+        self.assertEqual(instance._queue_has_new_format, True)
+
+        # Now, access current operation, that will trigger the upgrade
+        instance._current_op()
+        self.assertEqual(instance._queue_has_new_format, True)
+
+        # And essure quee is as new format should be
+        self.assertEqual(instance._queue, TEST_QUEUE_NEW)
+
+        # Marshal and check again
         marshaled_data = instance.marshal()
+
+        # Now, format is new, so we can't check it with old format
+        self.assertEqual(marshaled_data.startswith(b'v'), False)
 
         instance = _create_instance(marshaled_data)
         self.assertEqual(
             instance._queue,
-            [Operation.CREATE, Operation.FINISH],
+            TEST_QUEUE_NEW,
         )
+        self.assertEqual(instance._queue_has_new_format, True)
+
         # Append something remarshall and check
-        instance._queue.insert(0, Operation.RETRY)
+        instance._queue.insert(0, types.services.Operation.RESET)
         marshaled_data = instance.marshal()
         instance = _create_instance(marshaled_data)
         self.assertEqual(
             instance._queue,
-            [
-                Operation.RETRY,
-                Operation.CREATE,
-                Operation.FINISH,
-            ],
+            [types.services.Operation.RESET] + TEST_QUEUE_NEW,
         )
-        # Remove something remarshall and check
-        instance._queue.pop(0)
-        marshaled_data = instance.marshal()
-        instance = _create_instance(marshaled_data)
-        self.assertEqual(
-            instance._queue,
-            [Operation.CREATE, Operation.FINISH],
-        )
+        self.assertEqual(instance._queue_has_new_format, True)
 
     def test_autoserialization_fields(self) -> None:
         # This test is designed to ensure that all fields are autoserializable
         # If some field is added or removed, this tests will warn us about it to fix the rest of the related tests
-        with Environment.temporary_environment() as env:
+        with environment.Environment.temporary_environment() as env:
             instance = Deployment(environment=env, service=fake.fake_service())
 
-            self.assertSetEqual(set(f[0] for f in instance._autoserializable_fields()), EXPECTED_FIELDS)
+            self.assertTrue(
+                EXPECTED_OWN_FIELDS <= set(f[0] for f in instance._autoserializable_fields()),
+                'Missing fields: '
+                + str(EXPECTED_OWN_FIELDS - set(f[0] for f in instance._autoserializable_fields())),
+            )

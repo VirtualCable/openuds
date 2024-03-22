@@ -144,7 +144,11 @@ class Operation(enum.IntEnum):
     
     WAIT = 1100
     NOP = 1101
+    
+    # Custom validations
+    DESTROY_VALIDATOR = 1102  # Check if the userservice has an vmid to stop destroying it if needed
 
+    # Final operations
     ERROR = 9000
     FINISH = 9900
     UNKNOWN = 9999

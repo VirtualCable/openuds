@@ -146,22 +146,6 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         """
         ...
 
-    def is_machine_stopped(
-        self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str
-    ) -> bool:
-        """
-        Returns if the machine is stopped
-        """
-        return not self.is_machine_running(caller_instance, machine_id)
-
-    def is_machine_suspended(
-        self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str
-    ) -> bool:
-        """
-        Returns if the machine is suspended
-        """
-        return self.is_machine_stopped(caller_instance, machine_id)
-
     @abc.abstractmethod
     def start_machine(
         self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str

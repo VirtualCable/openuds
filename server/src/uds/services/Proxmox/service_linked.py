@@ -288,12 +288,33 @@ class ProxmoxServiceLinked(DynamicService):
         return self.get_nic_mac(int(machine_id))
     
     def start_machine(self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str) -> None:
-        if not self.is_machine_running(caller_instance, machine_id):
-            self.provider().start_machine(int(machine_id))
+        if isinstance(caller_instance, ProxmoxUserserviceLinked):
+            if not self.is_machine_running(caller_instance, machine_id):  # If not running, start it
+                caller_instance._task = ''
+            else:
+                caller_instance._store_task(self.provider().start_machine(int(machine_id)))
+        else:
+            raise Exception('Invalid caller instance (publication) for start_machine()')
         
     def stop_machine(self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str) -> None:
-        if self.is_machine_running(caller_instance, machine_id):
-            self.provider().stop_machine(int(machine_id))
+        if isinstance(caller_instance, ProxmoxUserserviceLinked):
+            if self.is_machine_running(caller_instance, machine_id):
+                caller_instance._store_task(self.provider().stop_machine(int(machine_id)))
+            else:
+                caller_instance._task = ''
+        else:
+            raise Exception('Invalid caller instance (publication) for stop_machine()')
+        
+    def shutdown_machine(
+        self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str
+    ) -> None:
+        if isinstance(caller_instance, ProxmoxUserserviceLinked):
+            if self.is_machine_running(caller_instance, machine_id):
+                caller_instance._store_task(self.provider().shutdown_machine(int(machine_id)))
+            else:
+                caller_instance._task = ''
+        else:
+            raise Exception('Invalid caller instance (publication) for shutdown_machine()')
 
     def is_machine_running(
         self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str

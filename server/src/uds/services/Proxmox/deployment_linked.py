@@ -35,7 +35,7 @@ import enum
 import logging
 import typing
 
-from uds.core import types
+from uds.core import types, consts
 from uds.core.services.specializations.dynamic_machine.dynamic_userservice import DynamicUserService, Operation
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.util import autoserializable
@@ -103,7 +103,7 @@ class OldOperation(enum.IntEnum):
 # UP_STATES = ('up', 'reboot_in_progress', 'powering_up', 'restoring_state')
 
 
-class ProxmoxUserserviceLinked(DynamicUserService, autoserializable.AutoSerializable):
+class ProxmoxUserserviceLinked(DynamicUserService):
     """
     This class generates the user consumable elements of the service tree.
 
@@ -115,19 +115,7 @@ class ProxmoxUserserviceLinked(DynamicUserService, autoserializable.AutoSerializ
 
     """
 
-    # : Recheck every this seconds by default (for task methods)
-    suggested_delay = 12
-
     _task = autoserializable.StringField(default='')
-
-    # own vars
-    # _name: str
-    # _ip: str
-    # _mac: str
-    # _task: str
-    # _vmid: str
-    # _reason: str
-    # _queue: list[int]
 
     def _store_task(self, upid: 'client.types.UPID') -> None:
         self._task = ','.join([upid.node, upid.upid])
@@ -135,6 +123,26 @@ class ProxmoxUserserviceLinked(DynamicUserService, autoserializable.AutoSerializ
     def _retrieve_task(self) -> tuple[str, str]:
         vals = self._task.split(',')
         return (vals[0], vals[1])
+    
+    def _check_task_finished(self) -> types.states.TaskState:
+        if self._task == '':
+            return types.states.TaskState.FINISHED
+
+        node, upid = self._retrieve_task()
+
+        try:
+            task = self.service().provider().get_task_info(node, upid)
+        except client.ProxmoxConnectionError:
+            return types.states.TaskState.RUNNING  # Try again later
+
+        if task.is_errored():
+            return self._error(task.exitstatus)
+
+        if task.is_completed():
+            return types.states.TaskState.FINISHED
+
+        return types.states.TaskState.RUNNING
+    
 
     def service(self) -> 'ProxmoxServiceLinked':
         return typing.cast('ProxmoxServiceLinked', super().service())
@@ -160,30 +168,54 @@ class ProxmoxUserserviceLinked(DynamicUserService, autoserializable.AutoSerializ
             self._task = vals[4].decode('utf8')
             self._vmid = vals[5].decode('utf8')
             self._reason = vals[6].decode('utf8')
-            self._queue = [Operation.from_int(i) for i in pickle.loads(vals[7])]  # nosec: controled data
+            # Load from old format and convert to new one directly
+            self._queue = [
+                OldOperation.from_int(i).to_operation() for i in pickle.loads(vals[7])
+            ]  # nosec: controled data
+            # Also, mark as it is using new queue format
+            self._queue_has_new_format = True
 
         self.mark_for_upgrade()  # Flag so manager can save it again with new format
 
     def op_reset(self) -> None:
         if self._vmid:
             self.service().provider().reset_machine(int(self._vmid))
+            
+    # No need for op_reset_checker
 
     def op_create(self) -> None:
-        return super().op_create()
+        template_id = self.publication().machine()
+        name = self.get_name()
+        if name == consts.NO_MORE_NAMES:
+            raise Exception(
+                'No more names available for this service. (Increase digits for this service to fix)'
+            )
 
+        comments = 'UDS Linked clone'
+        task_result = self.service().clone_machine(name, comments, template_id)
+        self._store_task(task_result.upid)
+        self._vmid = str(task_result.vmid)
+
+    def op_create_checker(self) -> types.states.TaskState:
+        return self._check_task_finished()
+        
     def op_create_completed(self) -> None:
-        # Retreive network info and store it
-        return super().op_create_completed()
+        # Set mac
+        try:
+            # Note: service will only enable ha if it is configured to do so
+            self.service().enable_machine_ha(int(self._vmid), True)  # Enable HA before continuing here
 
-    def op_start(self) -> None:
-        return super().op_start()
+            # Set vm mac address now on first interface
+            self.service().provider().set_machine_mac(int(self._vmid), self.get_unique_id())
+        except client.ProxmoxConnectionError:
+            self._retry_again()  # Push nop to front of queue, so it is consumed instead of this one
+            return
+        except Exception as e:
+            logger.exception('Setting HA and MAC on proxmox')
+            raise Exception(f'Error setting MAC and HA on proxmox: {e}') from e
 
-    def op_stop(self) -> None:
-        return super().op_stop()
-
-    def op_shutdown(self) -> None:
-        return super().op_shutdown()
-    
+    # No need for op_create_completed_checker
+        
     def get_console_connection(
         self,
     ) -> typing.Optional[types.services.ConsoleConnectionInfo]:

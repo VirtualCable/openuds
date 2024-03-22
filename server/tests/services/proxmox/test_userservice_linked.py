@@ -34,7 +34,7 @@ from unittest import mock
 
 from uds import models
 from uds.core import types
-from uds.services.Proxmox.deployment_linked import Operation
+
 
 from . import fixtures
 
@@ -49,7 +49,6 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
         fixtures.VMS_INFO = [
             fixtures.VMS_INFO[i]._replace(status='stopped') for i in range(len(fixtures.VMS_INFO))
         ]
-        
 
     def test_userservice_linked_cache_l1(self) -> None:
         """
@@ -120,9 +119,9 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
 
             for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
                 state = userservice.check_state()
-                
+
                 # If first item in queue is WAIT, we must "simulate" the wake up from os manager
-                if userservice._queue[0] == Operation.WAIT:
+                if userservice._queue[0] == types.services.Operation.WAIT:
                     state = userservice.process_ready_from_os_manager(None)
 
             self.assertEqual(state, types.states.TaskState.FINISHED)
@@ -152,8 +151,8 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
 
             api.set_machine_mac.assert_called_with(vmid, userservice._mac)
             api.get_machine_pool_info.assert_called_with(vmid, service.pool.value, force=True)
-            # Now, called should not have been called because machine is running
-            # api.start_machine.assert_called_with(vmid)
+            # Now, start should have been called
+            api.start_machine.assert_called_with(vmid)
             # Stop machine should have been called
             api.shutdown_machine.assert_called_with(vmid)
 
@@ -175,7 +174,11 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
             for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
                 state = userservice.check_state()
 
-            self.assertEqual(state, types.states.TaskState.FINISHED)
+            self.assertEqual(
+                state,
+                types.states.TaskState.FINISHED,
+                f'Queue: {userservice._queue}, reason: {userservice._reason}, extra_info: {userservice._error_debug_info}',
+            )
 
             self.assertEqual(userservice._name[: len(service.get_basename())], service.get_basename())
             self.assertEqual(len(userservice._name), len(service.get_basename()) + service.get_lenname())
@@ -202,15 +205,15 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
             api.set_machine_mac.assert_called_with(vmid, userservice._mac)
             api.get_machine_pool_info.assert_called_with(vmid, service.pool.value, force=True)
             api.start_machine.assert_called_with(vmid)
-            
+
             # Set ready state with the valid machine
             state = userservice.set_ready()
             # Machine is stopped, so task must be RUNNING (opossed to FINISHED)
             self.assertEqual(state, types.states.TaskState.RUNNING)
-            
+
             for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=32):
                 state = userservice.check_state()
-                
+
             # Should be finished now
             self.assertEqual(state, types.states.TaskState.FINISHED)
 
@@ -218,7 +221,7 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
         """
         Test the user service
         """
-        with fixtures.patch_provider_api() as _api:
+        with fixtures.patch_provider_api() as api:
             for graceful in [True, False]:
                 userservice = fixtures.create_userservice_linked()
                 service = userservice.service()
@@ -235,19 +238,42 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
 
                 self.assertEqual(state, types.states.TaskState.RUNNING)
 
-                current_op = userservice._get_current_op()
-
                 # Invoke cancel
+                api.reset_mock()
                 state = userservice.cancel()
 
                 self.assertEqual(state, types.states.TaskState.RUNNING)
+                # Ensure DESTROY_VALIDATOR is in the queue
+                self.assertIn(types.services.Operation.DESTROY_VALIDATOR, userservice._queue)
+                
+                for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
+                    state = userservice.check_state()
+                    
+                # Now, should be finished without any problem, no call to api should have been done
+                self.assertEqual(state, types.states.TaskState.FINISHED)
+                self.assertEqual(len(api.mock_calls), 0)
+                
+                # Now again, but process check_queue a couple of times before cancel
+                # we we have an _vmid
+                state = userservice.deploy_for_user(models.User())
+                self.assertEqual(state, types.states.TaskState.RUNNING)
+                for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
+                    state = userservice.check_state()
+                    if userservice._vmid:
+                        break
 
-                self.assertEqual(
-                    userservice._queue,
-                    [current_op]
-                    + ([Operation.GRACEFUL_STOP] if graceful else [])
-                    + [Operation.STOP, Operation.REMOVE, Operation.FINISH],
-                )
+                current_op = userservice._current_op()
+                state = userservice.cancel()
+                self.assertEqual(state, types.states.TaskState.RUNNING)
+                self.assertEqual(userservice._queue[0], current_op)
+                if graceful:
+                    self.assertIn(types.services.Operation.SHUTDOWN, userservice._queue)
+                    self.assertIn(types.services.Operation.SHUTDOWN_COMPLETED, userservice._queue)
+
+                self.assertIn(types.services.Operation.STOP, userservice._queue)
+                self.assertIn(types.services.Operation.STOP_COMPLETED, userservice._queue)
+                self.assertIn(types.services.Operation.REMOVE, userservice._queue)
+                self.assertIn(types.services.Operation.REMOVE_COMPLETED, userservice._queue)
 
                 for counter in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
                     state = userservice.check_state()
@@ -261,6 +287,6 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
                 self.assertEqual(state, types.states.TaskState.FINISHED)
 
                 if graceful:
-                    _api.shutdown_machine.assert_called()
+                    api.shutdown_machine.assert_called()
                 else:
-                    _api.stop_machine.assert_called()
+                    api.stop_machine.assert_called()

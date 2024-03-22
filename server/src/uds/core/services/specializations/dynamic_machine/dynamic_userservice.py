@@ -31,6 +31,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import abc
+import functools
 import logging
 import typing
 import collections.abc
@@ -47,14 +48,24 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+# Decorator that tests that _vmid is not empty
+# Used by some default methods that require a vmid to work
+def must_have_vmid(fnc: typing.Callable[[typing.Any], None]) -> typing.Callable[['DynamicUserService'], None]:
+    
+    @functools.wraps(fnc)
+    def wrapper(self: 'DynamicUserService') -> None:
+        if self._vmid == '':
+            raise Exception(f'No machine id on {self._name} for {fnc}')
+        return fnc(self)
+
+    return wrapper
 
 class DynamicUserService(services.UserService, autoserializable.AutoSerializable, abc.ABC):
     """
     This class represents a fixed user service, that is, a service that is assigned to an user
     and that will be always the from a "fixed" machine, that is, a machine that is not created.
     """
-
-    suggested_delay = 5
+    suggested_delay = 8
 
     # Some customization fields
     # If ip can be manually overriden
@@ -68,12 +79,16 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
 
     _name = autoserializable.StringField(default='')
     _mac = autoserializable.StringField(default='')
+    _ip = autoserializable.StringField(default='')
     _vmid = autoserializable.StringField(default='')
     _reason = autoserializable.StringField(default='')
     _queue = autoserializable.ListField[Operation]()  # Default is empty list
     _is_flagged_for_destroy = autoserializable.BoolField(default=False)
     # In order to allow migrating from old data, we will mark if the _queue has our format or the old one
     _queue_has_new_format = autoserializable.BoolField(default=False)
+
+    # Extra info, not serializable, to keep information in case of exception and debug it
+    _error_debug_info: typing.Optional[str] = None
 
     # Note that even if SNAPHSHOT operations are in middel
     # implementations may opt to no have snapshots at all
@@ -130,9 +145,9 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     def _current_op(self) -> Operation:
         """
         Get the current operation from the queue
-        
+
         Checks that the queue is upgraded, and if not, migrates it
-        Note: 
+        Note:
           This method will be here for a while, to ensure future compat with old data.
           Eventually, this mechanincs will be removed, but no date is set for that.
           There is almos not penalty on keeping this here, as it's only an small check
@@ -141,12 +156,12 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         if self._queue_has_new_format is False:
             self.migrate_old_queue()
             self._queue_has_new_format = True
-            
+
         if not self._queue:
             return Operation.FINISH
 
         return self._queue[0]
-    
+
     def _set_queue(self, queue: list[Operation]) -> None:
         """
         Sets the queue of tasks to be executed
@@ -154,7 +169,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         self._queue = queue
         self._queue_has_new_format = True
-        
+
     def _retry_again(self) -> types.states.TaskState:
         """
         Retries the current operation
@@ -181,6 +196,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         Returns:
             State.ERROR, so we can do "return self._error(reason)"
         """
+        self._error_debug_info = self._debug(repr(reason))
         reason = str(reason)
         logger.debug('Setting error state, reason: %s', reason)
         self.do_log(log.LogLevel.ERROR, reason)
@@ -305,7 +321,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             return types.states.TaskState.RUNNING
         except Exception as e:
             logger.exception('Unexpected FixedUserService exception: %s', e)
-            return self._error(str(e))
+            return self._error(e)
 
     def check_state(self) -> types.states.TaskState:
         """
@@ -336,7 +352,8 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             if op.is_custom():
                 state = self.op_custom_checker(op)
             else:
-                state = _CHECKERS[op](self)
+                operation_checker = _CHECKERS[op]
+                state = getattr(self, operation_checker.__name__)()
 
             if state == types.states.TaskState.FINISHED:
                 # Remove finished operation from queue
@@ -346,7 +363,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             return state
         except Exception as e:
             return self._error(e)
-        
+
     @typing.final
     def destroy(self) -> types.states.TaskState:
         """
@@ -358,8 +375,14 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         if op == Operation.ERROR:
             return self._error('Machine is already in error state!')
 
-        shutdown_operations: list[Operation] = [] if not self.service().try_graceful_shutdown() else [Operation.SHUTDOWN, Operation.SHUTDOWN_COMPLETED]
-        destroy_operations = shutdown_operations + self._destroy_queue  # copy is not needed due to list concatenation
+        shutdown_operations: list[Operation] = (
+            []
+            if not self.service().try_graceful_shutdown()
+            else [Operation.SHUTDOWN, Operation.SHUTDOWN_COMPLETED]
+        )
+        destroy_operations = (
+            [Operation.DESTROY_VALIDATOR] + shutdown_operations + self._destroy_queue
+        )  # copy is not needed due to list concatenation
 
         # If a "paused" state, reset queue to destroy
         if op in (Operation.FINISH, Operation.WAIT):
@@ -374,7 +397,6 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             self._set_queue([op] + destroy_operations)
             # Do not execute anything.here, just continue normally
         return types.states.TaskState.RUNNING
-
 
     # Execution methods
     # Every Operation has an execution method and a check method
@@ -396,6 +418,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         pass
 
+    @must_have_vmid
     def op_start(self) -> None:
         """
         This method is called when the service is started
@@ -408,6 +431,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         pass
 
+    @must_have_vmid
     def op_stop(self) -> None:
         """
         This method is called for stopping the service
@@ -420,6 +444,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         pass
 
+    @must_have_vmid
     def op_shutdown(self) -> None:
         """
         This method is called for shutdown the service
@@ -429,10 +454,10 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         if not is_running:
             # Already stopped, just finish
             return
-        
+
         self.service().shutdown_machine(self, self._vmid)
         shutdown_stamp = sql_stamp_seconds()
-        
+
         with self.storage.as_dict() as data:
             data['shutdown'] = shutdown_stamp
 
@@ -442,12 +467,13 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         pass
 
+    @must_have_vmid
     def op_suspend(self) -> None:
         """
         This method is called for suspend the service
         """
         # Note that by default suspend is "shutdown" and not "stop" because we
-        self.service().suspend_machine(self, self._vmid)
+        self.op_shutdown()
 
     def op_suspend_completed(self) -> None:
         """
@@ -455,18 +481,20 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         pass
 
+    @must_have_vmid
     def op_reset(self) -> None:
         """
         This method is called when the service is reset
         """
-        pass
+        self.service().reset_machine(self, self._vmid)
 
     def op_reset_completed(self) -> None:
         """
         This method is called when the service reset is completed
         """
-        self.service().reset_machine(self, self._vmid)
+        pass
 
+    @must_have_vmid
     def op_remove(self) -> None:
         """
         This method is called when the service is removed
@@ -493,6 +521,15 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         This does nothing, as it's a NOP operation
         """
         pass
+    
+    def op_destroy_validator(self) -> None:
+        """
+        This method is called to check if the userservice has an vmid to stop destroying it if needed
+        """
+        # If does not have vmid, we can finish right now
+        if self._vmid == '':
+            self._set_queue([Operation.FINISH])  # so we can finish right now
+            return
 
     def op_custom(self, operation: Operation) -> None:
         """
@@ -524,7 +561,10 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         This method is called to check if the service is started
         """
-        return types.states.TaskState.FINISHED
+        if self.service().is_machine_running(self, self._vmid):
+            return types.states.TaskState.FINISHED
+        
+        return types.states.TaskState.RUNNING
 
     def op_start_completed_checker(self) -> types.states.TaskState:
         """
@@ -536,7 +576,9 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         This method is called to check if the service is stopped
         """
-        return types.states.TaskState.FINISHED
+        if self.service().is_machine_running(self, self._vmid) is False:
+            return types.states.TaskState.FINISHED
+        return types.states.TaskState.RUNNING
 
     def op_stop_completed_checker(self) -> types.states.TaskState:
         """
@@ -552,7 +594,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         with self.storage.as_dict() as data:
             shutdown_start = data.get('shutdown', -1)
         logger.debug('Shutdown start: %s', shutdown_start)
-        
+
         if shutdown_start < 0:  # Was already stopped
             # Machine is already stop
             logger.debug('Machine WAS stopped')
@@ -592,7 +634,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         This method is called to check if the service is suspended
         """
-        return types.states.TaskState.FINISHED
+        return self.op_shutdown_checker()
 
     def op_suspend_completed_checker(self) -> types.states.TaskState:
         """
@@ -629,6 +671,13 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         This method is called to check if the service is doing nothing
         """
         return types.states.TaskState.FINISHED
+    
+    def op_destroy_validator_checker(self) -> types.states.TaskState:
+        """
+        This method is called to check if the userservice has an vmid to stop destroying it if needed
+        """
+        # If does not have vmid, we can finish right now
+        return types.states.TaskState.FINISHED  # If we are here, we have a vmid
 
     def op_custom_checker(self, operation: Operation) -> types.states.TaskState:
         """
@@ -637,7 +686,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         return types.states.TaskState.FINISHED
 
     # ERROR, FINISH and UNKNOWN are not here, as they are final states not needing to be checked
-    
+
     def migrate_old_queue(self) -> None:
         """
         If format has to be converted, override this method and do the conversion here
@@ -649,15 +698,8 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     def _op2str(op: Operation) -> str:
         return op.name
 
-    def _debug(self, txt: str) -> None:
-        logger.debug(
-            'Queue at %s for %s: %s, mac:%s, vmId:%s',
-            txt,
-            self._name,
-            [DynamicUserService._op2str(op) for op in self._queue],
-            self._mac,
-            self._vmid,
-        )
+    def _debug(self, txt: str) -> str:
+        return f'Queue at {txt} for {self._name}: {", ".join([DynamicUserService._op2str(op) for op in self._queue])}, mac:{self._mac}, vmId:{self._vmid}'
 
 
 # This is a map of operations to methods
@@ -682,6 +724,7 @@ _EXECUTORS: typing.Final[
     Operation.REMOVE_COMPLETED: DynamicUserService.op_remove_completed,
     Operation.WAIT: DynamicUserService.op_wait,
     Operation.NOP: DynamicUserService.op_nop,
+    Operation.DESTROY_VALIDATOR: DynamicUserService.op_destroy_validator,
 }
 
 # Same af before, but for check methods
@@ -703,4 +746,5 @@ _CHECKERS: typing.Final[
     Operation.REMOVE_COMPLETED: DynamicUserService.op_remove_completed_checker,
     Operation.WAIT: DynamicUserService.op_wait_checker,
     Operation.NOP: DynamicUserService.op_nop_checker,
+    Operation.DESTROY_VALIDATOR: DynamicUserService.op_destroy_validator_checker,
 }

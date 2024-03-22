@@ -57,11 +57,12 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
             # patch userservice db_obj() method to return a mock
             userservice_db = mock.MagicMock()
             userservice.db_obj = mock.MagicMock(return_value=userservice_db)
-            # Test Deploy for cache, should raise Exception due
+            # Test Deploy for cache, should set to error due
             # to the fact fixed services cannot have cached items
-            with self.assertRaises(Exception):
-                userservice.deploy_for_cache(level=types.services.CacheLevel.L1)
+            state = userservice.deploy_for_cache(level=types.services.CacheLevel.L1)
+            self.assertEqual(state, types.states.TaskState.ERROR)
 
+            # Test Deploy for user
             state = userservice.deploy_for_user(models.User())
 
             self.assertEqual(state, types.states.TaskState.RUNNING)
