@@ -36,7 +36,7 @@ from unittest import mock
 
 from uds import models
 from uds.core import services, types
-from uds.core.services.specializations.fixed_machine import (
+from uds.core.services.generics.fixed_machine import (
     fixed_service,
     fixed_userservice,
 )

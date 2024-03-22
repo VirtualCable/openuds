@@ -43,6 +43,8 @@ from ...utils.generators import limited_iterator
 
 # We use transactions on some related methods (storage access, etc...)
 class TestProxmovLinkedService(UDSTransactionTestCase):
+    def setUp(self) -> None:
+        fixtures.set_all_vm_state('stopped')
 
     def test_userservice_fixed_user(self) -> None:
         """
@@ -67,7 +69,7 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
 
             self.assertEqual(state, types.states.TaskState.RUNNING)
 
-            while state == types.states.TaskState.RUNNING:
+            for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
                 state = userservice.check_state()
 
             self.assertEqual(state, types.states.TaskState.FINISHED)
@@ -93,9 +95,17 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
             with service._assigned_machines_access() as assigned_machines:
                 self.assertEqual(assigned_machines, set())
             
-            # set_ready, machine is "stopped" in this test, so must return RUNNING
+            # set_ready, machine is "started", set by mock fixture with the start invokation
             state = userservice.set_ready()
-            self.assertEqual(state, types.states.TaskState.RUNNING)
+            self.assertEqual(state, types.states.TaskState.FINISHED)
+            
+            # Set vm state to stopped
+            fixtures.set_all_vm_state('stopped')
+            # Anc clear userservice cache
+            userservice.cache.clear()
+            
+            state = userservice.set_ready()
+            self.assertEqual(state, types.states.TaskState.RUNNING)  # Now running
             
             for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=32):
                 state = userservice.check_state()

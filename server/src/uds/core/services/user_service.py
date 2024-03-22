@@ -392,7 +392,7 @@ class UserService(Environmentable, Serializable, abc.ABC):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise Exception(f'Base deploy for cache invoked! for class {self.__class__.__name__}')
+        raise NotImplementedError(f'Base deploy for user invoked! for class {self.__class__.__name__}')
 
     @abc.abstractmethod
     def deploy_for_user(self, user: 'models.User') -> types.states.TaskState:

@@ -268,6 +268,7 @@ CONSOLE_CONNECTION_INFO: typing.Final[types.services.ConsoleConnectionInfo] = (
     )
 )
 
+
 def replace_vm_info(vmid: int, **kwargs: typing.Any) -> client.types.UPID:
     """
     Set the values of VMS_INFO[vmid - 1]
@@ -277,8 +278,10 @@ def replace_vm_info(vmid: int, **kwargs: typing.Any) -> client.types.UPID:
             VMS_INFO[i] = VMS_INFO[i]._replace(**kwargs)
     return UPID
 
+
 def replacer_vm_info(**kwargs: typing.Any) -> typing.Callable[..., client.types.UPID]:
     return functools.partial(replace_vm_info, **kwargs)
+
 
 # Methods that returns None or "internal" methods are not tested
 CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
@@ -549,3 +552,10 @@ def create_userservice_linked(
         publication=publication or create_publication(),
         uuid=uuid_,
     )
+
+
+# Other helpers
+def set_all_vm_state(state: str) -> None:
+    # Set machine state for fixture to stopped
+    for i in range(len(VMS_INFO)):
+        VMS_INFO[i] = VMS_INFO[i]._replace(status=state)
