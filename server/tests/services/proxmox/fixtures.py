@@ -31,6 +31,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import contextlib
+import functools
 import typing
 import datetime
 
@@ -267,6 +268,18 @@ CONSOLE_CONNECTION_INFO: typing.Final[types.services.ConsoleConnectionInfo] = (
     )
 )
 
+def replace_vm_info(vmid: int, **kwargs: typing.Any) -> client.types.UPID:
+    """
+    Set the values of VMS_INFO[vmid - 1]
+    """
+    for i in range(len(VMS_INFO)):
+        if VMS_INFO[i].vmid == vmid:
+            VMS_INFO[i] = VMS_INFO[i]._replace(**kwargs)
+    return UPID
+
+def replacer_vm_info(**kwargs: typing.Any) -> typing.Callable[..., client.types.UPID]:
+    return functools.partial(replace_vm_info, **kwargs)
+
 # Methods that returns None or "internal" methods are not tested
 CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     # connect returns None
@@ -329,19 +342,19 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     ),
     # enable_machine_ha return None
     # start_machine
-    AutoSpecMethodInfo(client.ProxmoxClient.start_machine, returns=UPID),
+    AutoSpecMethodInfo(client.ProxmoxClient.start_machine, returns=replacer_vm_info(status='running')),
     # stop_machine
-    AutoSpecMethodInfo(client.ProxmoxClient.stop_machine, returns=UPID),
+    AutoSpecMethodInfo(client.ProxmoxClient.stop_machine, returns=replacer_vm_info(status='stopped')),
     # reset_machine
-    AutoSpecMethodInfo(client.ProxmoxClient.reset_machine, returns=UPID),
+    AutoSpecMethodInfo(client.ProxmoxClient.reset_machine, returns=replacer_vm_info(status='stopped')),
     # suspend_machine
-    AutoSpecMethodInfo(client.ProxmoxClient.suspend_machine, returns=UPID),
+    AutoSpecMethodInfo(client.ProxmoxClient.suspend_machine, returns=replacer_vm_info(status='suspended')),
     # resume_machine
-    AutoSpecMethodInfo(client.ProxmoxClient.resume_machine, returns=UPID),
+    AutoSpecMethodInfo(client.ProxmoxClient.resume_machine, returns=replacer_vm_info(status='running')),
     # shutdown_machine
-    AutoSpecMethodInfo(client.ProxmoxClient.shutdown_machine, returns=UPID),
+    AutoSpecMethodInfo(client.ProxmoxClient.shutdown_machine, returns=replacer_vm_info(status='stopped')),
     # convert_to_template
-    AutoSpecMethodInfo(client.ProxmoxClient.convert_to_template, returns=UPID),
+    AutoSpecMethodInfo(client.ProxmoxClient.convert_to_template, returns=replacer_vm_info(template=True)),
     # get_storage
     AutoSpecMethodInfo(
         client.ProxmoxClient.get_storage,

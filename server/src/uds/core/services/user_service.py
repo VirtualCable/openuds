@@ -291,10 +291,13 @@ class UserService(Environmentable, Serializable, abc.ABC):
         if State.RUNNING is returned, the :py:meth:.check_state method will be
         used to check when this process has finished.
 
-        :note: All task methods, like this one, are expected to handle
+        Note: All task methods, like this one, are expected to handle
                all exceptions, and never raise an exception from these methods
                to the core. Take that into account and handle exceptions inside
                this method.
+               
+        Note: Currently, on 4.0, data contains nothing at all (is an empty string)
+        
         """
         return types.states.TaskState.FINISHED
 

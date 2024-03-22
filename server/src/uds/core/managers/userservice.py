@@ -680,6 +680,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 State.PREPARING,
             ):  # We don't want to get active deleting or deleted machines...
                 user_service.set_state(State.PREPARING)
+                # Make unique will make sure that we do not have same machine twice
                 UserServiceOpChecker.make_unique(user_service, userServiceInstance, state)
             user_service.save(update_fields=['os_state'])
         except Exception as e:

@@ -68,7 +68,7 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
             for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
                 state = userservice.check_state()
 
-            self.assertEqual(state, types.states.TaskState.FINISHED)
+            self.assertEqual(state, types.states.TaskState.FINISHED, userservice._error_debug_info)
 
             self.assertEqual(userservice._name[: len(service.get_basename())], service.get_basename())
             self.assertEqual(len(userservice._name), len(service.get_basename()) + service.get_lenname())
@@ -105,11 +105,6 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
             service = userservice.service()
             service.ha.value = '__'  # Disabled
 
-            # Set machine state for fixture to started
-            fixtures.VMS_INFO = [
-                fixtures.VMS_INFO[i]._replace(status='running') for i in range(len(fixtures.VMS_INFO))
-            ]
-
             publication = userservice.publication()
             publication._vmid = '1'
 
@@ -122,7 +117,7 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
 
                 # If first item in queue is WAIT, we must "simulate" the wake up from os manager
                 if userservice._queue[0] == types.services.Operation.WAIT:
-                    state = userservice.process_ready_from_os_manager(None)
+                    userservice.process_ready_from_os_manager(None)
 
             self.assertEqual(state, types.states.TaskState.FINISHED)
 

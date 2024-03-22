@@ -123,7 +123,7 @@ class ProxmoxUserserviceLinked(DynamicUserService):
     def _retrieve_task(self) -> tuple[str, str]:
         vals = self._task.split(',')
         return (vals[0], vals[1])
-    
+
     def _check_task_finished(self) -> types.states.TaskState:
         if self._task == '':
             return types.states.TaskState.FINISHED
@@ -142,7 +142,6 @@ class ProxmoxUserserviceLinked(DynamicUserService):
             return types.states.TaskState.FINISHED
 
         return types.states.TaskState.RUNNING
-    
 
     def service(self) -> 'ProxmoxServiceLinked':
         return typing.cast('ProxmoxServiceLinked', super().service())
@@ -180,7 +179,7 @@ class ProxmoxUserserviceLinked(DynamicUserService):
     def op_reset(self) -> None:
         if self._vmid:
             self.service().provider().reset_machine(int(self._vmid))
-            
+
     # No need for op_reset_checker
 
     def op_create(self) -> None:
@@ -198,7 +197,7 @@ class ProxmoxUserserviceLinked(DynamicUserService):
 
     def op_create_checker(self) -> types.states.TaskState:
         return self._check_task_finished()
-        
+
     def op_create_completed(self) -> None:
         # Set mac
         try:
@@ -215,7 +214,7 @@ class ProxmoxUserserviceLinked(DynamicUserService):
             raise Exception(f'Error setting MAC and HA on proxmox: {e}') from e
 
     # No need for op_create_completed_checker
-        
+
     def get_console_connection(
         self,
     ) -> typing.Optional[types.services.ConsoleConnectionInfo]:

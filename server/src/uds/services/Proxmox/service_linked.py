@@ -58,6 +58,9 @@ logger = logging.getLogger(__name__)
 class ProxmoxServiceLinked(DynamicService):
     """
     Proxmox Linked clones service. This is based on creating a template from selected vm, and then use it to
+    
+    Notes:
+      * We do not suspend machines, we try to shutdown them gracefully
     """
 
     # : Name to show the administrator. This string will be translated BEFORE
@@ -289,7 +292,7 @@ class ProxmoxServiceLinked(DynamicService):
     
     def start_machine(self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str) -> None:
         if isinstance(caller_instance, ProxmoxUserserviceLinked):
-            if not self.is_machine_running(caller_instance, machine_id):  # If not running, start it
+            if self.is_machine_running(caller_instance, machine_id):  # If running, skip
                 caller_instance._task = ''
             else:
                 caller_instance._store_task(self.provider().start_machine(int(machine_id)))

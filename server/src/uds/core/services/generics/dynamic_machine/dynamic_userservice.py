@@ -48,10 +48,11 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 # Decorator that tests that _vmid is not empty
 # Used by some default methods that require a vmid to work
 def must_have_vmid(fnc: typing.Callable[[typing.Any], None]) -> typing.Callable[['DynamicUserService'], None]:
-    
+
     @functools.wraps(fnc)
     def wrapper(self: 'DynamicUserService') -> None:
         if self._vmid == '':
@@ -60,11 +61,13 @@ def must_have_vmid(fnc: typing.Callable[[typing.Any], None]) -> typing.Callable[
 
     return wrapper
 
+
 class DynamicUserService(services.UserService, autoserializable.AutoSerializable, abc.ABC):
     """
     This class represents a fixed user service, that is, a service that is assigned to an user
     and that will be always the from a "fixed" machine, that is, a machine that is not created.
     """
+
     suggested_delay = 8
 
     # Some customization fields
@@ -275,6 +278,17 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         else:
             self._set_queue(self._create_queue_l2_cache.copy())
         return self._execute_queue()
+
+    @typing.final
+    def process_ready_from_os_manager(self, data: typing.Any) -> types.states.TaskState:
+        # Eat the WAIT operation if it is in the queue
+        # At most, we will have one WAIT operation in the queue
+        if Operation.WAIT in self._queue:
+            self._queue.remove(Operation.WAIT)
+            # And keep processing
+            return self._execute_queue()
+
+        return types.states.TaskState.FINISHED
 
     @typing.final
     def set_ready(self) -> types.states.TaskState:
@@ -521,7 +535,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         This does nothing, as it's a NOP operation
         """
         pass
-    
+
     def op_destroy_validator(self) -> None:
         """
         This method is called to check if the userservice has an vmid to stop destroying it if needed
@@ -563,7 +577,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         if self.service().is_machine_running(self, self._vmid):
             return types.states.TaskState.FINISHED
-        
+
         return types.states.TaskState.RUNNING
 
     def op_start_completed_checker(self) -> types.states.TaskState:
@@ -671,7 +685,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         This method is called to check if the service is doing nothing
         """
         return types.states.TaskState.FINISHED
-    
+
     def op_destroy_validator_checker(self) -> types.states.TaskState:
         """
         This method is called to check if the userservice has an vmid to stop destroying it if needed

@@ -679,9 +679,10 @@ class ProxmoxClient:
 
     @ensure_connected
     def suspend_machine(self, vmid: int, node: typing.Optional[str] = None) -> types.UPID:
-        # if exitstatus is "OK" or contains "already running", all is fine
-        node = node or self.get_machine_info(vmid).node
-        return types.UPID.from_dict(self._post(f'nodes/{node}/qemu/{vmid}/status/suspend', node=node))
+        # Note: Suspend, in fact, invoques sets the machine state to "paused"
+        return self.shutdown_machine(vmid, node)
+        # node = node or self.get_machine_info(vmid).node
+        # return types.UPID.from_dict(self._post(f'nodes/{node}/qemu/{vmid}/status/suspend', node=node))
 
     @ensure_connected
     def shutdown_machine(self, vmid: int, node: typing.Optional[str] = None) -> types.UPID:
