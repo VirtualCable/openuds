@@ -154,9 +154,9 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
 
         if op != Operation.WAIT:
             # All operations except WAIT will check against checks counter
-            state = self._inc_checks_counter(self._op2str(op))
-            if state is not None:
-                return state  # Error, Finished or None
+            counter_state = self._inc_checks_counter(self._op2str(op))
+            if counter_state is not None:
+                return counter_state  # Error, Finished or None
 
         try:
             if op.is_custom():
