@@ -32,8 +32,6 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import datetime
-import typing
-import collections.abc
 
 from ...fixtures.stats_counters import create_stats_counters
 
