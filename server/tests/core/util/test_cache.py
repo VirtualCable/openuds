@@ -34,7 +34,6 @@
 # We use commit/rollback
 from ...utils.test import UDSTransactionTestCase
 from uds.core.util.cache import Cache
-from uds.core.util.decorators import cached
 import time
 
 # Some random chars, that include unicode non-ascci chars

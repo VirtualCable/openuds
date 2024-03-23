@@ -44,7 +44,7 @@ from uds.core.util.model import sql_stamp_seconds
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from . import dynamic_service
+    from . import service
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +52,6 @@ logger = logging.getLogger(__name__)
 # Decorator that tests that _vmid is not empty
 # Used by some default methods that require a vmid to work
 def must_have_vmid(fnc: typing.Callable[[typing.Any], None]) -> typing.Callable[['DynamicUserService'], None]:
-
     @functools.wraps(fnc)
     def wrapper(self: 'DynamicUserService') -> None:
         if self._vmid == '':
@@ -71,8 +70,8 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     suggested_delay = 8
 
     # Some customization fields
-    # If ip can be manually overriden
-    can_set_ip: typing.ClassVar[bool] = False
+    # If ip can be manually overriden, normally True... (set by actor, for example)
+    can_set_ip: typing.ClassVar[bool] = True
     # How many times we will check for a state before giving up
     max_state_checks: typing.ClassVar[int] = 20
     # If keep_state_sets_error is true, and an error occurs, the machine is set to FINISHED instead of ERROR
@@ -223,8 +222,8 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
 
     # Utility overrides for type checking...
     # Probably, overriden again on child classes
-    def service(self) -> 'dynamic_service.DynamicService':
-        return typing.cast('dynamic_service.DynamicService', super().service())
+    def service(self) -> 'service.DynamicService':
+        return typing.cast('service.DynamicService', super().service())
 
     @typing.final
     def get_name(self) -> str:
@@ -253,14 +252,14 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
 
     @typing.final
     def get_ip(self) -> str:
-        # Provide self to the service, so it can some of our methods to generate the unique id
-        try:
-            if self._vmid:
-                return self.service().get_machine_ip(self, self._vmid)
-        except Exception:
-            logger.warning('Error obtaining IP for %s: %s', self.__class__.__name__, self._vmid, exc_info=True)
-            pass
-        return ''
+        if self._ip == '':
+            try:
+                if self._vmid:
+                    # Provide self to the service, so it can use some of our methods for whaterever it needs
+                    self._ip = self.service().get_machine_ip(self, self._vmid)
+            except Exception:
+                logger.warning('Error obtaining IP for %s: %s', self.__class__.__name__, self._vmid, exc_info=True)
+        return self._ip
 
     @typing.final
     def deploy_for_user(self, user: 'models.User') -> types.states.TaskState:
@@ -337,6 +336,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             logger.exception('Unexpected FixedUserService exception: %s', e)
             return self._error(e)
 
+    @typing.final
     def check_state(self) -> types.states.TaskState:
         """
         Check what operation is going on, and acts acordly to it

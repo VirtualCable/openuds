@@ -43,7 +43,7 @@ from ...utils.generators import limited_iterator
 
 
 # We use transactions on some related methods (storage access, etc...)
-class TestProxmovLinkedService(UDSTransactionTestCase):
+class TestProxmovLinkedUserService(UDSTransactionTestCase):
     def setUp(self) -> None:
         fixtures.set_all_vm_state('stopped')
 
@@ -237,14 +237,14 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
                 self.assertEqual(state, types.states.TaskState.RUNNING)
                 # Ensure DESTROY_VALIDATOR is in the queue
                 self.assertIn(types.services.Operation.DESTROY_VALIDATOR, userservice._queue)
-                
+
                 for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
                     state = userservice.check_state()
-                    
+
                 # Now, should be finished without any problem, no call to api should have been done
                 self.assertEqual(state, types.states.TaskState.FINISHED)
                 self.assertEqual(len(api.mock_calls), 0)
-                
+
                 # Now again, but process check_queue a couple of times before cancel
                 # we we have an _vmid
                 state = userservice.deploy_for_user(models.User())
@@ -282,3 +282,9 @@ class TestProxmovLinkedService(UDSTransactionTestCase):
                     api.shutdown_machine.assert_called()
                 else:
                     api.stop_machine.assert_called()
+
+    def test_userservice_basics(self) -> None:
+        with fixtures.patch_provider_api() as _api:
+            userservice = fixtures.create_userservice_linked()
+            userservice.set_ip('1.2.3.4')
+            self.assertEqual(userservice.get_ip(), '1.2.3.4')

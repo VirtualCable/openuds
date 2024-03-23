@@ -10,6 +10,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 
 import abc
 import collections.abc
+import functools
 import logging
 import time
 import typing
@@ -20,9 +21,21 @@ from uds.core.types.services import Operation
 from uds.core.util import autoserializable
 
 if typing.TYPE_CHECKING:
-    from .dynamic_service import DynamicService
+    from .service import DynamicService
 
 logger = logging.getLogger(__name__)
+
+
+# Decorator that tests that _vmid is not empty
+# Used by some default methods that require a vmid to work
+def must_have_vmid(fnc: typing.Callable[[typing.Any], None]) -> typing.Callable[['DynamicPublication'], None]:
+    @functools.wraps(fnc)
+    def wrapper(self: 'DynamicPublication') -> None:
+        if self._vmid == '':
+            raise Exception(f'No machine id on {self._name} for {fnc}')
+        return fnc(self)
+
+    return wrapper
 
 
 class DynamicPublication(services.Publication, autoserializable.AutoSerializable, abc.ABC):
@@ -102,12 +115,6 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         """
         return True
 
-    def publish(self) -> types.states.TaskState:
-        """ """
-        self._queue = self._publish_queue.copy()
-        self._debug('publish')
-        return self._execute_queue()
-
     def _execute_queue(self) -> types.states.TaskState:
         self._debug('execute_queue')
         op = self._current_op()
@@ -135,6 +142,14 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
             logger.exception('Unexpected FixedUserService exception: %s', e)
             return self._error(str(e))
 
+    @typing.final
+    def publish(self) -> types.states.TaskState:
+        """ """
+        self._queue = self._publish_queue.copy()
+        self._debug('publish')
+        return self._execute_queue()
+
+    @typing.final
     def check_state(self) -> types.states.TaskState:
         """
         Check what operation is going on, and acts acordly to it
@@ -246,6 +261,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         """
         pass
 
+    @must_have_vmid
     def op_start(self) -> None:
         """
         This method is called when the service is started
@@ -258,6 +274,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         """
         pass
 
+    @must_have_vmid
     def op_stop(self) -> None:
         """
         This method is called for stopping the service
@@ -270,6 +287,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         """
         pass
 
+    @must_have_vmid
     def op_shutdown(self) -> None:
         """
         This method is called for shutdown the service
@@ -282,31 +300,6 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         """
         pass
 
-    def op_suspend(self) -> None:
-        """
-        This method is called for suspend the service
-        """
-        # Note that by default suspend is "shutdown" and not "stop" because we
-        self.service().suspend_machine(self, self._vmid)
-
-    def op_suspend_completed(self) -> None:
-        """
-        This method is called when the service suspension is completed
-        """
-        pass
-
-    def op_reset(self) -> None:
-        """
-        This method is called when the service is reset
-        """
-        pass
-
-    def op_reset_completed(self) -> None:
-        """
-        This method is called when the service reset is completed
-        """
-        self.service().reset_machine(self, self._vmid)
-
     def op_remove(self) -> None:
         """
         This method is called when the service is removed
@@ -317,14 +310,6 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
     def op_remove_completed(self) -> None:
         """
         This method is called when the service removal is completed
-        """
-        pass
-
-    def op_wait(self) -> None:
-        """
-        This method is called when the service is waiting
-        Basically, will stop the execution of the queue until something external changes it (i.e. poping from the queue)
-        Executor does nothing
         """
         pass
 
@@ -397,24 +382,6 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         """
         return types.states.TaskState.FINISHED
 
-    def op_suspend_checker(self) -> types.states.TaskState:
-        """
-        This method is called to check if the service is suspended
-        """
-        return types.states.TaskState.FINISHED
-
-    def op_suspend_completed_checker(self) -> types.states.TaskState:
-        """
-        This method is called to check if the service suspension is completed
-        """
-        return types.states.TaskState.FINISHED
-
-    def op_reset_checker(self) -> types.states.TaskState:
-        """
-        This method is called to check if the service is reset
-        """
-        return types.states.TaskState.FINISHED
-
     def op_remove_checker(self) -> types.states.TaskState:
         """
         This method is called to check if the service is removed
@@ -426,12 +393,6 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         This method is called to check if the service removal is completed
         """
         return types.states.TaskState.FINISHED
-
-    def op_wait_checker(self) -> types.states.TaskState:
-        """
-        Wait will remain in the same state until something external changes it (i.e. poping from the queue)
-        """
-        return types.states.TaskState.RUNNING
 
     def op_nop_checker(self) -> types.states.TaskState:
         """
@@ -446,6 +407,14 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         return types.states.TaskState.FINISHED
 
     # ERROR, FINISH and UNKNOWN are not here, as they are final states not needing to be checked
+    
+    # We use same operation type for Publication and UserService. We add "unsupported" to
+    # cover not defined operations (will raise an exception)
+    def op_unsupported(self) -> None:
+        raise Exception('Operation not defined')
+    
+    def op_unsupported_checker(self) -> types.states.TaskState:
+        raise Exception('Operation not defined')
 
     @staticmethod
     def _op2str(op: Operation) -> str:
@@ -480,11 +449,11 @@ _EXECUTORS: typing.Final[
     Operation.STOP_COMPLETED: DynamicPublication.op_stop_completed,
     Operation.SHUTDOWN: DynamicPublication.op_shutdown,
     Operation.SHUTDOWN_COMPLETED: DynamicPublication.op_shutdown_completed,
-    Operation.SUSPEND: DynamicPublication.op_suspend,
-    Operation.SUSPEND_COMPLETED: DynamicPublication.op_suspend_completed,
+    Operation.SUSPEND: DynamicPublication.op_unsupported,
+    Operation.SUSPEND_COMPLETED: DynamicPublication.op_unsupported,
     Operation.REMOVE: DynamicPublication.op_remove,
     Operation.REMOVE_COMPLETED: DynamicPublication.op_remove_completed,
-    Operation.WAIT: DynamicPublication.op_wait,
+    Operation.WAIT: DynamicPublication.op_unsupported,
     Operation.NOP: DynamicPublication.op_nop,
 }
 
@@ -501,10 +470,10 @@ _CHECKERS: typing.Final[
     Operation.STOP_COMPLETED: DynamicPublication.op_stop_completed_checker,
     Operation.SHUTDOWN: DynamicPublication.op_shutdown_checker,
     Operation.SHUTDOWN_COMPLETED: DynamicPublication.op_shutdown_completed_checker,
-    Operation.SUSPEND: DynamicPublication.op_suspend_checker,
-    Operation.SUSPEND_COMPLETED: DynamicPublication.op_suspend_completed_checker,
+    Operation.SUSPEND: DynamicPublication.op_unsupported_checker,
+    Operation.SUSPEND_COMPLETED: DynamicPublication.op_unsupported_checker,
     Operation.REMOVE: DynamicPublication.op_remove_checker,
     Operation.REMOVE_COMPLETED: DynamicPublication.op_remove_completed_checker,
-    Operation.WAIT: DynamicPublication.op_wait_checker,
+    Operation.WAIT: DynamicPublication.op_unsupported_checker,
     Operation.NOP: DynamicPublication.op_nop_checker,
 }

@@ -36,7 +36,7 @@ import logging
 import typing
 
 from uds.core import types, consts
-from uds.core.services.generics.dynamic_machine.dynamic_userservice import DynamicUserService, Operation
+from uds.core.services.generics.dynamic.userservice import DynamicUserService, Operation
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.util import autoserializable
 

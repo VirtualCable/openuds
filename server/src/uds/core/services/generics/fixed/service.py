@@ -41,7 +41,7 @@ from uds.core.ui import gui
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from .fixed_userservice import FixedUserService
+    from .userservice import FixedUserService
 
 logger = logging.getLogger(__name__)
 

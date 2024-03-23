@@ -35,8 +35,8 @@ import collections.abc
 from django.utils.translation import gettext_noop as _
 
 from uds.core import consts, services, types
-from uds.core.services.generics.fixed_machine.fixed_service import FixedService
-from uds.core.services.generics.fixed_machine.fixed_userservice import FixedUserService
+from uds.core.services.generics.fixed.service import FixedService
+from uds.core.services.generics.fixed.userservice import FixedUserService
 from uds.core.ui import gui
 from uds.core.util import log
 from uds.core.util.decorators import cached

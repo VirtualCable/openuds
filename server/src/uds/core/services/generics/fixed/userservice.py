@@ -42,7 +42,7 @@ from uds.core.util import log, autoserializable
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from . import fixed_service
+    from . import service
 
 logger = logging.getLogger(__name__)
 
@@ -136,8 +136,8 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
 
     # Utility overrides for type checking...
     # Probably, overriden again on child classes
-    def service(self) -> 'fixed_service.FixedService':
-        return typing.cast('fixed_service.FixedService', super().service())
+    def service(self) -> 'service.FixedService':
+        return typing.cast('service.FixedService', super().service())
 
     @typing.final
     def get_name(self) -> str:

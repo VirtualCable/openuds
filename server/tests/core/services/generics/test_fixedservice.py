@@ -36,9 +36,9 @@ from unittest import mock
 
 from uds import models
 from uds.core import services, types
-from uds.core.services.generics.fixed_machine import (
-    fixed_service,
-    fixed_userservice,
+from uds.core.services.generics.fixed import (
+    service,
+    userservice,
 )
 from uds.core.ui.user_interface import gui
 
@@ -47,7 +47,7 @@ from ....utils.test import UDSTestCase
 
 @dataclasses.dataclass
 class FixedServiceIterationInfo:
-    queue: list[fixed_userservice.Operation]
+    queue: list[userservice.Operation]
     service_calls: list[mock._Call] = dataclasses.field(default_factory=list)
     user_service_calls: list[mock._Call] = dataclasses.field(default_factory=list)
     state: str = types.states.TaskState.RUNNING
@@ -60,11 +60,11 @@ EXPECTED_DEPLOY_ITERATIONS_INFO: typing.Final[list[FixedServiceIterationInfo]] =
     # Initial state for queue
     FixedServiceIterationInfo(
         queue=[
-            fixed_userservice.Operation.CREATE,
-            fixed_userservice.Operation.SNAPSHOT_CREATE,
-            fixed_userservice.Operation.PROCESS_TOKEN,
-            fixed_userservice.Operation.START,
-            fixed_userservice.Operation.FINISH,
+            userservice.Operation.CREATE,
+            userservice.Operation.SNAPSHOT_CREATE,
+            userservice.Operation.PROCESS_TOKEN,
+            userservice.Operation.START,
+            userservice.Operation.FINISH,
         ],
         service_calls=[
             mock.call.get_and_assign_machine(),
@@ -76,12 +76,12 @@ EXPECTED_DEPLOY_ITERATIONS_INFO: typing.Final[list[FixedServiceIterationInfo]] =
     # (this is what our testing example does, but maybe it's not the best approach for all services)
     FixedServiceIterationInfo(
         queue=[
-            fixed_userservice.Operation.NOP,
-            fixed_userservice.Operation.STOP,
-            fixed_userservice.Operation.SNAPSHOT_CREATE,
-            fixed_userservice.Operation.PROCESS_TOKEN,
-            fixed_userservice.Operation.START,
-            fixed_userservice.Operation.FINISH,
+            userservice.Operation.NOP,
+            userservice.Operation.STOP,
+            userservice.Operation.SNAPSHOT_CREATE,
+            userservice.Operation.PROCESS_TOKEN,
+            userservice.Operation.START,
+            userservice.Operation.FINISH,
         ],
         service_calls=[
             mock.call.process_snapshot(False, mock.ANY),
@@ -89,21 +89,21 @@ EXPECTED_DEPLOY_ITERATIONS_INFO: typing.Final[list[FixedServiceIterationInfo]] =
     ),
     FixedServiceIterationInfo(
         queue=[
-            fixed_userservice.Operation.STOP,
-            fixed_userservice.Operation.SNAPSHOT_CREATE,
-            fixed_userservice.Operation.PROCESS_TOKEN,
-            fixed_userservice.Operation.START,
-            fixed_userservice.Operation.FINISH,
+            userservice.Operation.STOP,
+            userservice.Operation.SNAPSHOT_CREATE,
+            userservice.Operation.PROCESS_TOKEN,
+            userservice.Operation.START,
+            userservice.Operation.FINISH,
         ],
         user_service_calls=[mock.call._stop_machine()],
     ),
     # The current operation is snapshot, so check previous operation (Finished) and then process snapshot
     FixedServiceIterationInfo(
         queue=[
-            fixed_userservice.Operation.SNAPSHOT_CREATE,
-            fixed_userservice.Operation.PROCESS_TOKEN,
-            fixed_userservice.Operation.START,
-            fixed_userservice.Operation.FINISH,
+            userservice.Operation.SNAPSHOT_CREATE,
+            userservice.Operation.PROCESS_TOKEN,
+            userservice.Operation.START,
+            userservice.Operation.FINISH,
         ],
         service_calls=[
             mock.call.process_snapshot(False, mock.ANY),
@@ -112,16 +112,16 @@ EXPECTED_DEPLOY_ITERATIONS_INFO: typing.Final[list[FixedServiceIterationInfo]] =
     ),
     FixedServiceIterationInfo(
         queue=[
-            fixed_userservice.Operation.PROCESS_TOKEN,
-            fixed_userservice.Operation.START,
-            fixed_userservice.Operation.FINISH,
+            userservice.Operation.PROCESS_TOKEN,
+            userservice.Operation.START,
+            userservice.Operation.FINISH,
         ],
         user_service_calls=[mock.call.db_obj()],
     ),
     FixedServiceIterationInfo(
         queue=[
-            fixed_userservice.Operation.START,
-            fixed_userservice.Operation.FINISH,
+            userservice.Operation.START,
+            userservice.Operation.FINISH,
         ],
         user_service_calls=[mock.call._start_machine()],
     ),
@@ -129,7 +129,7 @@ EXPECTED_DEPLOY_ITERATIONS_INFO: typing.Final[list[FixedServiceIterationInfo]] =
     # (or if queue is empty, but that's not the case here)
     FixedServiceIterationInfo(
         queue=[
-            fixed_userservice.Operation.FINISH,
+            userservice.Operation.FINISH,
         ],
         user_service_calls=[mock.call._start_checker()],
         state=types.states.TaskState.FINISHED,
@@ -139,22 +139,22 @@ EXPECTED_DEPLOY_ITERATIONS_INFO: typing.Final[list[FixedServiceIterationInfo]] =
 EXPECTED_REMOVAL_ITERATIONS_INFO: typing.Final[list[FixedServiceIterationInfo]] = [
     FixedServiceIterationInfo(
         queue=[
-            fixed_userservice.Operation.REMOVE,
-            fixed_userservice.Operation.SNAPSHOT_RECOVER,
-            fixed_userservice.Operation.FINISH,
+            userservice.Operation.REMOVE,
+            userservice.Operation.SNAPSHOT_RECOVER,
+            userservice.Operation.FINISH,
         ],
         service_calls=[mock.call.remove_and_free_machine('assigned')],
     ),
     FixedServiceIterationInfo(
         queue=[
-            fixed_userservice.Operation.SNAPSHOT_RECOVER,
-            fixed_userservice.Operation.FINISH,
+            userservice.Operation.SNAPSHOT_RECOVER,
+            userservice.Operation.FINISH,
         ],
         service_calls=[mock.call.process_snapshot(True, mock.ANY)],
     ),
     FixedServiceIterationInfo(
         queue=[
-            fixed_userservice.Operation.FINISH,
+            userservice.Operation.FINISH,
         ],
         state=types.states.TaskState.FINISHED,
     ),
@@ -222,11 +222,11 @@ class FixedServiceTest(UDSTestCase):
         service.mock.reset_mock()
         userservice.mock.reset_mock()
 
-    def test_fixed_service_deploy(self) -> None:
+    def test_service_deploy(self) -> None:
         _prov, service, userservice = self.create_elements()
         self.check_iterations(service, userservice, EXPECTED_DEPLOY_ITERATIONS_INFO, removal=False)
         
-    def test_fixed_service_deploy_no_machine(self) -> None:
+    def test_service_deploy_no_machine(self) -> None:
         _prov, service, userservice = self.create_elements()
         service.available_machines_number = 2
         self.deploy_service(service, userservice)  # Should be deployed without issues
@@ -234,7 +234,7 @@ class FixedServiceTest(UDSTestCase):
         # And now, should fail to deploy again
         self.assertRaises(Exception, self.deploy_service, service, userservice)
 
-    def test_fixed_service_removal(self) -> None:
+    def test_service_removal(self) -> None:
         _prov, service, userservice = self.create_elements()
 
         # Ensure fully deployed state for userservice
@@ -244,7 +244,7 @@ class FixedServiceTest(UDSTestCase):
         self.check_iterations(service, userservice, EXPECTED_REMOVAL_ITERATIONS_INFO, removal=True)
 
 
-class FixedTestingUserService(fixed_userservice.FixedUserService):
+class FixedTestingUserService(userservice.FixedUserService):
     mock: 'mock.Mock' = mock.MagicMock()
 
     def start_machine(self) -> None:
@@ -266,14 +266,14 @@ class FixedTestingUserService(fixed_userservice.FixedUserService):
         return None
 
 
-class FixedTestingService(fixed_service.FixedService):
+class FixedTestingService(service.FixedService):
     type_name = 'Fixed Service'
     type_type = 'FixedService'
     type_description = 'Fixed Service description'
 
-    token = fixed_service.FixedService.token
-    snapshot_type = fixed_service.FixedService.snapshot_type
-    machines = fixed_service.FixedService.machines
+    token = service.FixedService.token
+    snapshot_type = service.FixedService.snapshot_type
+    machines = service.FixedService.machines
 
     user_service_type = FixedTestingUserService
     first_process_called = False
@@ -281,15 +281,15 @@ class FixedTestingService(fixed_service.FixedService):
 
     mock: 'mock.Mock' = mock.MagicMock()
 
-    def process_snapshot(self, remove: bool, userservice_instance: fixed_userservice.FixedUserService) -> None:
+    def process_snapshot(self, remove: bool, userservice_instance: userservice.FixedUserService) -> None:
         self.mock.process_snapshot(remove, userservice_instance)
         if not remove and not self.first_process_called:
             # We want to call start, then snapshot, again
             # As we have snapshot on top of queue, we need to insert NOP -> STOP
             # This way, NOP will be consumed right now, then start will be called and then
             # this will be called again
-            userservice_instance._push_front_op(fixed_userservice.Operation.STOP)
-            userservice_instance._push_front_op(fixed_userservice.Operation.NOP)
+            userservice_instance._push_front_op(userservice.Operation.STOP)
+            userservice_instance._push_front_op(userservice.Operation.NOP)
             self.first_process_called = True
 
     def get_machine_name(self, vmid: str) -> str:
