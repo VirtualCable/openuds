@@ -42,7 +42,7 @@ from ...utils.generators import limited_iterator
 
 
 # We use transactions on some related methods (storage access, etc...)
-class TestOpenstackLiveService(UDSTransactionTestCase):
+class TestOpenstackFixedService(UDSTransactionTestCase):
 
     def test_userservice_fixed_user(self) -> None:
         """
