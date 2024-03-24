@@ -85,30 +85,15 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
     ]
 
     @typing.final
-    def _get_current_op(self) -> Operation:
+    def _current_op(self) -> Operation:
         if not self._queue:
             return Operation.FINISH
 
         return self._queue[0]
 
     @typing.final
-    def _pop_current_op(self) -> Operation:
-        if not self._queue:
-            return Operation.FINISH
-
-        return self._queue.pop(0)
-
-    @typing.final
-    def _push_front_op(self, op: Operation) -> None:
-        self._queue.insert(0, op)
-
-    @typing.final
-    def _push_back_op(self, op: Operation) -> None:
-        self._queue.append(op)
-
-    @typing.final
     def _retry_later(self) -> str:
-        self._push_front_op(Operation.RETRY)
+        self._queue.insert(0, Operation.RETRY)
         return types.states.TaskState.RUNNING
 
     def _error(self, reason: typing.Union[str, Exception]) -> types.states.TaskState:
@@ -188,7 +173,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
     @typing.final
     def _execute_queue(self) -> types.states.TaskState:
         self._debug('executeQueue')
-        op = self._get_current_op()
+        op = self._current_op()
 
         if op == Operation.ERROR:
             return types.states.TaskState.ERROR
@@ -348,7 +333,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         Check what operation is going on, and acts acordly to it
         """
         self._debug('check_state')
-        op = self._get_current_op()
+        op = self._current_op()
 
         if op == Operation.ERROR:
             return types.states.TaskState.ERROR
@@ -364,7 +349,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             state = typing.cast(types.states.TaskState, getattr(self, check_function.__name__)())
 
             if state == types.states.TaskState.FINISHED:
-                self._pop_current_op()  # Remove runing op, till now only was "peek"
+                self._queue.pop(0)  # Remove finished op
                 return self._execute_queue()
 
             return state

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2022 Virtual Cable S.L.U.
+# Copyright (c) 2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -27,22 +27,19 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Authot: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import dataclasses
 import typing
-import collections.abc
 from unittest import mock
 
 from uds import models
-from uds.core import services, types
+from uds.core import types
 from uds.core.services.generics.fixed import (
-    service,
     userservice,
 )
-from uds.core.ui.user_interface import gui
-
 from ....utils.test import UDSTestCase
+from . import fixtures
 
 
 @dataclasses.dataclass
@@ -164,18 +161,18 @@ EXPECTED_REMOVAL_ITERATIONS_INFO: typing.Final[list[FixedServiceIterationInfo]] 
 class FixedServiceTest(UDSTestCase):
     def create_elements(
         self,
-    ) -> tuple['FixedTestingProvider', 'FixedTestingService', 'FixedTestingUserService']:
+    ) -> tuple['fixtures.FixedTestingProvider', 'fixtures.FixedTestingService', 'fixtures.FixedTestingUserService']:
         environment = self.create_environment()
-        prov = FixedTestingProvider(environment=environment)
-        service = FixedTestingService(environment=environment, provider=prov)
-        user_service = FixedTestingUserService(environment=environment, service=service)
+        prov = fixtures.FixedTestingProvider(environment=environment)
+        service = fixtures.FixedTestingService(environment=environment, provider=prov)
+        user_service = fixtures.FixedTestingUserService(environment=environment, service=service)
 
         return prov, service, user_service
 
     def check_iterations(
         self,
-        service: 'FixedTestingService',
-        userservice: 'FixedTestingUserService',
+        service: 'fixtures.FixedTestingService',
+        userservice: 'fixtures.FixedTestingUserService',
         iterations: list[FixedServiceIterationInfo],
         removal: bool,
     ) -> None:
@@ -212,7 +209,7 @@ class FixedServiceTest(UDSTestCase):
             )
 
     def deploy_service(
-        self, service: 'FixedTestingService', userservice: 'FixedTestingUserService', max_iterations: int = 100
+        self, service: 'fixtures.FixedTestingService', userservice: 'fixtures.FixedTestingUserService', max_iterations: int = 100
     ) -> None:
         if userservice.deploy_for_user(models.User()) != types.states.TaskState.FINISHED:
             while userservice.check_state() != types.states.TaskState.FINISHED and max_iterations > 0:
@@ -244,103 +241,3 @@ class FixedServiceTest(UDSTestCase):
         self.check_iterations(service, userservice, EXPECTED_REMOVAL_ITERATIONS_INFO, removal=True)
 
 
-class FixedTestingUserService(userservice.FixedUserService):
-    mock: 'mock.Mock' = mock.MagicMock()
-
-    def start_machine(self) -> None:
-        self.mock._start_machine()
-
-    def stop_machine(self) -> None:
-        self.mock._stop_machine()
-
-    def start_checker(self) -> types.states.TaskState:
-        self.mock._start_checker()
-        return types.states.TaskState.FINISHED
-
-    def stop_checker(self) -> types.states.TaskState:
-        self.mock._stop_checker()
-        return types.states.TaskState.FINISHED
-
-    def db_obj(self) -> typing.Any:
-        self.mock.db_obj()
-        return None
-
-
-class FixedTestingService(service.FixedService):
-    type_name = 'Fixed Service'
-    type_type = 'FixedService'
-    type_description = 'Fixed Service description'
-
-    token = service.FixedService.token
-    snapshot_type = service.FixedService.snapshot_type
-    machines = service.FixedService.machines
-
-    user_service_type = FixedTestingUserService
-    first_process_called = False
-    available_machines_number = 1
-
-    mock: 'mock.Mock' = mock.MagicMock()
-
-    def process_snapshot(self, remove: bool, userservice_instance: userservice.FixedUserService) -> None:
-        self.mock.process_snapshot(remove, userservice_instance)
-        if not remove and not self.first_process_called:
-            # We want to call start, then snapshot, again
-            # As we have snapshot on top of queue, we need to insert NOP -> STOP
-            # This way, NOP will be consumed right now, then start will be called and then
-            # this will be called again
-            userservice_instance._push_front_op(userservice.Operation.STOP)
-            userservice_instance._push_front_op(userservice.Operation.NOP)
-            self.first_process_called = True
-
-    def get_machine_name(self, vmid: str) -> str:
-        self.mock.get_machine_name(vmid)
-        return f'Machine {vmid}'
-
-    def get_and_assign_machine(self) -> str:
-        self.mock.get_and_assign_machine()
-        if self.available_machines_number <= 0:
-            raise Exception('No machine available')
-        self.available_machines_number -= 1
-        self.assigned_machine = 'assigned'
-        return self.assigned_machine
-
-    def remove_and_free_machine(self, vmid: str) -> str:
-        self.mock.remove_and_free_machine(vmid)
-        self.assigned_machine = ''
-        return types.states.TaskState.FINISHED
-
-    def get_first_network_mac(self, vmid: str) -> str:
-        self.mock.get_first_network_mac(vmid)
-        return '00:00:00:00:00:00'
-
-    def get_guest_ip_address(self, vmid: str) -> str:
-        self.mock.get_guest_ip_address(vmid)
-        return '10.0.0.10'
-
-    def enumerate_assignables(self) -> collections.abc.Iterable[types.ui.ChoiceItem]:
-        """
-        Returns a list of tuples with the id and the name of the assignables
-        """
-        self.mock.enumerate_assignables()
-        return [
-            gui.choice_item('1', 'Machine 1'),
-            gui.choice_item('2', 'Machine 2'),
-            gui.choice_item('3', 'Machine 3'),
-        ]
-
-    def assign_from_assignables(
-        self, assignable_id: str, user: 'models.User', userservice_instance: 'services.UserService'
-    ) -> types.states.TaskState:
-        """
-        Assigns a machine from the assignables
-        """
-        self.mock.assign_from_assignables(assignable_id, user, userservice_instance)
-        return types.states.TaskState.FINISHED
-
-
-class FixedTestingProvider(services.provider.ServiceProvider):
-    type_name = 'Fixed Provider'
-    type_type = 'FixedProvider'
-    type_description = 'Fixed Provider description'
-
-    offers = [FixedTestingService]
