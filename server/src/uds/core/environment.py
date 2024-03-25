@@ -170,7 +170,7 @@ class Environment:
         Obtains an environment with an unique identifier
         @return: An environment with an unique identifier
         """
-        return Environment('#_#' + str(id(owner)) + '#^#')
+        return Environment('#_#' + str(owner) + '#^#')
 
     @staticmethod
     def temporary_environment() -> 'Environment':

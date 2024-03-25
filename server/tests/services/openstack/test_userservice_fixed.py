@@ -40,6 +40,8 @@ from . import fixtures
 from ...utils.test import UDSTransactionTestCase
 from ...utils.generators import limited_iterator
 
+from uds.services.OpenStack.openstack import types as openstack_types
+
 
 # We use transactions on some related methods (storage access, etc...)
 class TestOpenstackFixedService(UDSTransactionTestCase):
@@ -92,6 +94,10 @@ class TestOpenstackFixedService(UDSTransactionTestCase):
                     self.assertEqual(set(), assigned_machines)
 
                 # set_ready, machine is "stopped" in this test, so must return RUNNING
+                # ensure cache is empty, may affect from other tests
+                userservice.cache.clear()
+                # Also that machine is stopped
+                fixtures.get_id(fixtures.SERVERS_LIST, userservice._vmid).power_state = openstack_types.PowerState.SHUTDOWN
                 state = userservice.set_ready()
                 self.assertEqual(state, types.states.TaskState.RUNNING)
 

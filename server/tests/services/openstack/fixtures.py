@@ -115,7 +115,7 @@ SERVERS_LIST: list[openstack_types.ServerInfo] = [
         fault=None,
         admin_pass='',
     )
-    for n in range(1, 16)
+    for n in range(1, 32)
 ]
 
 IMAGES_LIST: list[openstack_types.ImageInfo] = [
@@ -359,7 +359,7 @@ SERVICES_FIXED_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
     'token': 'token',
     'region': random.choice(REGIONS_LIST).id,
     'project': random.choice(PROJECTS_LIST).id,
-    'machines': [i.id for i in random.sample(SERVERS_LIST, 4)],
+    'machines': [i.id for i in random.sample(SERVERS_LIST, 10)],
     # 'prov_uuid': str(uuid.uuid4()),  # Not stored on db, so not needed
 }
 
