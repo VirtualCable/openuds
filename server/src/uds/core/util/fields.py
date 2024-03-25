@@ -339,7 +339,7 @@ def soft_shutdown_field(
         default=False,
         order=order,
         tooltip=_(
-            'If active, UDS will try to shutdown (soft) the machine. Will delay 90 seconds the power off of hanged machines.'
+            'If active, UDS will try to shutdown (soft) the machine. May delay around 2 minutes the power off of hanged machines.'
         ),
         tab=tab,
         old_field_name=old_field_name,

@@ -161,13 +161,13 @@ EXPECTED_REMOVAL_ITERATIONS_INFO: typing.Final[list[FixedServiceIterationInfo]] 
 class FixedServiceTest(UDSTestCase):
     def create_elements(
         self,
-    ) -> tuple['fixtures.FixedTestingProvider', 'fixtures.FixedTestingService', 'fixtures.FixedTestingUserService']:
-        environment = self.create_environment()
-        prov = fixtures.FixedTestingProvider(environment=environment)
-        service = fixtures.FixedTestingService(environment=environment, provider=prov)
-        user_service = fixtures.FixedTestingUserService(environment=environment, service=service)
-
-        return prov, service, user_service
+    ) -> tuple[
+        'fixtures.FixedTestingProvider', 'fixtures.FixedTestingService', 'fixtures.FixedTestingUserService'
+    ]:
+        provider = fixtures.create_fixed_provider()
+        service = fixtures.create_fixed_service(provider=provider)
+        user_service = fixtures.create_fixed_user_service(service=service)
+        return provider, service, user_service
 
     def check_iterations(
         self,
@@ -192,24 +192,31 @@ class FixedServiceTest(UDSTestCase):
             else:
                 state = userservice.check_state()
             self.assertEqual(state, iteration.state, f'Iteration {iteration} {state}')
+            # Assert queues are the same, and if not, show the difference ONLY
+            diff = [x for x in iteration.queue if x not in userservice._queue]
             self.assertEqual(
                 userservice._queue,
                 iteration.queue,
-                f'Iteration {iteration} {userservice._queue} {iteration.queue}',
+                f'Iteration {iteration} {diff}',
             )
+            diff_mock_calls = [x for x in iteration.service_calls if x not in service.mock.mock_calls]
             self.assertEqual(
                 service.mock.mock_calls,
                 iteration.service_calls,
-                f'Iteration {iteration} {userservice._queue}',
+                f'Iteration {iteration} {diff_mock_calls}',
             )
+            diff_mock_calls = [x for x in iteration.user_service_calls if x not in userservice.mock.mock_calls]
             self.assertEqual(
                 userservice.mock.mock_calls,
                 iteration.user_service_calls,
-                f'Iteration {iteration} {userservice._queue}',
+                f'Iteration {iteration} {diff_mock_calls}',
             )
 
     def deploy_service(
-        self, service: 'fixtures.FixedTestingService', userservice: 'fixtures.FixedTestingUserService', max_iterations: int = 100
+        self,
+        service: 'fixtures.FixedTestingService',
+        userservice: 'fixtures.FixedTestingUserService',
+        max_iterations: int = 100,
     ) -> None:
         if userservice.deploy_for_user(models.User()) != types.states.TaskState.FINISHED:
             while userservice.check_state() != types.states.TaskState.FINISHED and max_iterations > 0:
@@ -222,7 +229,7 @@ class FixedServiceTest(UDSTestCase):
     def test_service_deploy(self) -> None:
         _prov, service, userservice = self.create_elements()
         self.check_iterations(service, userservice, EXPECTED_DEPLOY_ITERATIONS_INFO, removal=False)
-        
+
     def test_service_deploy_no_machine(self) -> None:
         _prov, service, userservice = self.create_elements()
         service.available_machines_number = 2
@@ -239,5 +246,3 @@ class FixedServiceTest(UDSTestCase):
 
         # Userservice is in deployed state, so we can remove it
         self.check_iterations(service, userservice, EXPECTED_REMOVAL_ITERATIONS_INFO, removal=True)
-
-

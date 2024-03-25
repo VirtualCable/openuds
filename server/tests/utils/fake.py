@@ -29,10 +29,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-import random
 import uuid
-import typing
-import collections.abc
 
 from uds.core import services, environment
 

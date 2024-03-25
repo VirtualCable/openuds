@@ -411,6 +411,9 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             self._set_queue([op] + destroy_operations)
             # Do not execute anything.here, just continue normally
         return types.states.TaskState.RUNNING
+    
+    def error_reason(self) -> str:
+        return self._reason
 
     # Execution methods
     # Every Operation has an execution method and a check method
@@ -420,6 +423,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         pass
 
+    @abc.abstractmethod
     def op_create(self) -> None:
         """
         This method is called when the service is created
@@ -539,6 +543,8 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     def op_destroy_validator(self) -> None:
         """
         This method is called to check if the userservice has an vmid to stop destroying it if needed
+        As it is inserted in the destroy queue as first step, if no vmid is present, it will finish right now
+        Note that can be overrided to do something else
         """
         # If does not have vmid, we can finish right now
         if self._vmid == '':
@@ -661,6 +667,12 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         This method is called to check if the service is reset
         """
         return types.states.TaskState.FINISHED
+    
+    def op_reset_completed_checker(self) -> types.states.TaskState:
+        """
+        This method is called to check if the service reset is completed
+        """
+        return types.states.TaskState.FINISHED
 
     def op_remove_checker(self) -> types.states.TaskState:
         """
@@ -734,6 +746,8 @@ _EXECUTORS: typing.Final[
     Operation.SHUTDOWN_COMPLETED: DynamicUserService.op_shutdown_completed,
     Operation.SUSPEND: DynamicUserService.op_suspend,
     Operation.SUSPEND_COMPLETED: DynamicUserService.op_suspend_completed,
+    Operation.RESET: DynamicUserService.op_reset,
+    Operation.RESET_COMPLETED: DynamicUserService.op_reset_completed,
     Operation.REMOVE: DynamicUserService.op_remove,
     Operation.REMOVE_COMPLETED: DynamicUserService.op_remove_completed,
     Operation.WAIT: DynamicUserService.op_wait,
@@ -756,6 +770,8 @@ _CHECKERS: typing.Final[
     Operation.SHUTDOWN_COMPLETED: DynamicUserService.op_shutdown_completed_checker,
     Operation.SUSPEND: DynamicUserService.op_suspend_checker,
     Operation.SUSPEND_COMPLETED: DynamicUserService.op_suspend_completed_checker,
+    Operation.RESET: DynamicUserService.op_reset_checker,
+    Operation.RESET_COMPLETED: DynamicUserService.op_reset_completed_checker,
     Operation.REMOVE: DynamicUserService.op_remove_checker,
     Operation.REMOVE_COMPLETED: DynamicUserService.op_remove_completed_checker,
     Operation.WAIT: DynamicUserService.op_wait_checker,

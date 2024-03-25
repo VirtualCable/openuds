@@ -54,6 +54,9 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
     _reason = autoserializable.StringField(default='')
     _is_flagged_for_destroy = autoserializable.BoolField(default=False)
 
+    # Extra info, not serializable, to keep information in case of exception and debug it
+    _error_debug_info: typing.Optional[str] = None
+
     _publish_queue: typing.ClassVar[list[Operation]] = [
         Operation.INITIALIZE,
         Operation.CREATE,
@@ -92,6 +95,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         Returns:
             State.ERROR, so we can do "return self._error(reason)"
         """
+        self._error_debug_info = self._debug(repr(reason))
         reason = str(reason)
         logger.error(reason)
 
@@ -197,7 +201,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         """
         self._is_flagged_for_destroy = False  # Reset flag
         op = self._current_op()
-        
+
         # If already removing, do nothing
         if op == Operation.REMOVE:
             return types.states.TaskState.RUNNING
@@ -215,10 +219,12 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
             self._is_flagged_for_destroy = True
         else:
             # If other operation, wait for finish before destroying
-            self._queue = [op] + self._destroy_queue  # Copy not needed, will be copied anyway due to list concatenation
+            self._queue = [
+                op
+            ] + self._destroy_queue  # Copy not needed, will be copied anyway due to list concatenation
             # Do not execute anything.here, just continue normally
         return types.states.TaskState.RUNNING
-    
+
     def cancel(self) -> types.states.TaskState:
         """
         Cancels the publication (or cancels it if it's in the middle of a creation process)
@@ -320,6 +326,17 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         """
         pass
 
+    def op_destroy_validator(self) -> None:
+        """
+        This method is called to check if the userservice has an vmid to stop destroying it if needed
+        As it is inserted in the destroy queue as first step, if no vmid is present, it will finish right now
+        Note that can be overrided to do something else
+        """
+        # If does not have vmid, we can finish right now
+        if self._vmid == '':
+            self._queue[:] = [Operation.FINISH]  # so we can finish right now
+            return
+
     def op_custom(self, operation: Operation) -> None:
         """
         This method is called when the service is doing a custom operation
@@ -350,6 +367,9 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         """
         This method is called to check if the service is started
         """
+        if self.service().is_machine_running(self, self._vmid):
+            return types.states.TaskState.FINISHED
+
         return types.states.TaskState.FINISHED
 
     def op_start_completed_checker(self) -> types.states.TaskState:
@@ -362,6 +382,9 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         """
         This method is called to check if the service is stopped
         """
+        if self.service().is_machine_running(self, self._vmid) is False:
+            return types.states.TaskState.FINISHED
+
         return types.states.TaskState.FINISHED
 
     def op_stop_completed_checker(self) -> types.states.TaskState:
@@ -400,6 +423,12 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         """
         return types.states.TaskState.FINISHED
 
+    def op_destroy_validator_checker(self) -> types.states.TaskState:
+        """
+        This method is called to check if the service is validating the destroy operation
+        """
+        return types.states.TaskState.FINISHED
+
     def op_custom_checker(self, operation: Operation) -> types.states.TaskState:
         """
         This method is called to check if the service is doing a custom operation
@@ -407,12 +436,12 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         return types.states.TaskState.FINISHED
 
     # ERROR, FINISH and UNKNOWN are not here, as they are final states not needing to be checked
-    
+
     # We use same operation type for Publication and UserService. We add "unsupported" to
     # cover not defined operations (will raise an exception)
     def op_unsupported(self) -> None:
         raise Exception('Operation not defined')
-    
+
     def op_unsupported_checker(self) -> types.states.TaskState:
         raise Exception('Operation not defined')
 
@@ -451,10 +480,13 @@ _EXECUTORS: typing.Final[
     Operation.SHUTDOWN_COMPLETED: DynamicPublication.op_shutdown_completed,
     Operation.SUSPEND: DynamicPublication.op_unsupported,
     Operation.SUSPEND_COMPLETED: DynamicPublication.op_unsupported,
+    Operation.RESET: DynamicPublication.op_unsupported,
+    Operation.RESET_COMPLETED: DynamicPublication.op_unsupported,
     Operation.REMOVE: DynamicPublication.op_remove,
     Operation.REMOVE_COMPLETED: DynamicPublication.op_remove_completed,
     Operation.WAIT: DynamicPublication.op_unsupported,
     Operation.NOP: DynamicPublication.op_nop,
+    Operation.DESTROY_VALIDATOR: DynamicPublication.op_destroy_validator,
 }
 
 # Same af before, but for check methods
@@ -472,8 +504,11 @@ _CHECKERS: typing.Final[
     Operation.SHUTDOWN_COMPLETED: DynamicPublication.op_shutdown_completed_checker,
     Operation.SUSPEND: DynamicPublication.op_unsupported_checker,
     Operation.SUSPEND_COMPLETED: DynamicPublication.op_unsupported_checker,
+    Operation.RESET: DynamicPublication.op_unsupported_checker,
+    Operation.RESET_COMPLETED: DynamicPublication.op_unsupported_checker,
     Operation.REMOVE: DynamicPublication.op_remove_checker,
     Operation.REMOVE_COMPLETED: DynamicPublication.op_remove_completed_checker,
     Operation.WAIT: DynamicPublication.op_unsupported_checker,
     Operation.NOP: DynamicPublication.op_nop_checker,
+    Operation.DESTROY_VALIDATOR: DynamicPublication.op_destroy_validator_checker,
 }
