@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
 from unittest import mock
 
 
@@ -55,8 +56,9 @@ class TestProxmovLinkedService(UDSTestCase):
         """
         Test the provider
         """
-        with fixtures.patch_provider_api() as api:
-            service = fixtures.create_service_linked()
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider._api())
+            service = fixtures.create_service_linked(provider=provider)
 
             self.assertTrue(service.is_avaliable())
             api.test.assert_called_with()
@@ -72,8 +74,9 @@ class TestProxmovLinkedService(UDSTestCase):
             api.test.assert_called_with()
 
     def test_service_methods_1(self) -> None:
-        with fixtures.patch_provider_api() as api:
-            service = fixtures.create_service_linked()
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider._api())
+            service = fixtures.create_service_linked(provider=provider)
 
             # Sanitized name
             self.assertEqual(service.sanitized_name('a.b.c$m1%233 2'), 'a-b-c-m1-233-2')
@@ -120,8 +123,9 @@ class TestProxmovLinkedService(UDSTestCase):
             api.enable_machine_ha.assert_called_with(1, True, service.ha.value)
 
     def test_service_methods_2(self) -> None:
-        with fixtures.patch_provider_api() as api:
-            service = fixtures.create_service_linked()
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider._api())
+            service = fixtures.create_service_linked(provider=provider)
 
             # Disable HA
             service.disable_machine_ha(1)

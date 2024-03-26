@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
 from unittest import mock
 
 from uds.core import types
@@ -45,8 +46,10 @@ from ...utils.generators import limited_iterator
 class TestProxmovPublication(UDSTransactionTestCase):
 
     def test_publication(self) -> None:
-        with fixtures.patch_provider_api() as api:
-            publication = fixtures.create_publication()
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider._api())
+            service = fixtures.create_service_linked(provider=provider)
+            publication = fixtures.create_publication(service=service)
 
             state = publication.publish()
             # Wait until  types.services.Operation.CREATE_COMPLETED
@@ -72,8 +75,10 @@ class TestProxmovPublication(UDSTransactionTestCase):
             
             
     def test_publication_error(self) -> None:
-        with fixtures.patch_provider_api() as api:
-            publication = fixtures.create_publication()
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider._api())
+            service = fixtures.create_service_linked(provider=provider)
+            publication = fixtures.create_publication(service=service)
 
             # Ensure state check returns error
             api.get_task.return_value = fixtures.TASK_STATUS._replace(
@@ -107,8 +112,10 @@ class TestProxmovPublication(UDSTransactionTestCase):
 
     def test_publication_destroy(self) -> None:
         vmid = str(fixtures.VMS_INFO[0].vmid)
-        with fixtures.patch_provider_api() as api:
-            publication = fixtures.create_publication()
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider._api())
+            service = fixtures.create_service_linked(provider=provider)
+            publication = fixtures.create_publication(service=service)
 
             # Destroy
             publication._vmid = vmid
@@ -126,8 +133,10 @@ class TestProxmovPublication(UDSTransactionTestCase):
 
     def test_publication_destroy_error(self) -> None:
         vmid = str(fixtures.VMS_INFO[0].vmid)
-        with fixtures.patch_provider_api() as api:
-            publication = fixtures.create_publication()
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider._api())
+            service = fixtures.create_service_linked(provider=provider)
+            publication = fixtures.create_publication(service=service)
 
             # Now, destroy in fact will not return error, because it will
             # queue the operation if failed, but api.remove_machine will be called anyway

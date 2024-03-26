@@ -30,8 +30,8 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
 from unittest import mock
-from uds import models
 
 from uds.core import types, ui, environment
 from uds.services.Proxmox.provider import ProxmoxProvider
@@ -78,41 +78,33 @@ class TestProxmoxProvider(UDSTransactionTestCase):
         """
         Test the provider
         """
-        with fixtures.patch_provider_api() as api:
-            # Fist, true result
-            result = ProxmoxProvider.test(
-                environment.Environment.temporary_environment(), fixtures.PROVIDER_VALUES_DICT
-            )
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider._api())
+            for ret_val in [True, False]:
+                api.test.reset_mock()
+                # Mock test_connection to return ret_val
+                with mock.patch(
+                    'uds.services.Proxmox.provider.ProxmoxProvider.test_connection', return_value=ret_val
+                ):
+                    result = ProxmoxProvider.test(
+                        environment.Environment.temporary_environment(), fixtures.PROVIDER_VALUES_DICT
+                    )
+                self.assertIsInstance(result, types.core.TestResult)
+                self.assertEqual(result.success, ret_val)
+                self.assertIsInstance(result.error, str)
 
-            # Ensure test is called
-            api.test.assert_called_once_with()
-
-            self.assertIsInstance(result, types.core.TestResult)
-            self.assertEqual(result.success, True)
-            self.assertIsInstance(result.error, str)
-
-            # Now, return false
-            api.test.return_value = False
-            api.test.reset_mock()
-
-            result = ProxmoxProvider.test(
-                environment.Environment.temporary_environment(), fixtures.PROVIDER_VALUES_DICT
-            )
-
-            # Ensure test is called
-            api.test.assert_called_once_with()
-
-            self.assertIsInstance(result, types.core.TestResult)
-            self.assertEqual(result.success, False)
-            self.assertIsInstance(result.error, str)
+                # Now, ensure test_connection calls api.test
+                provider.test_connection()
+                # Ensure test is called
+                api.test.assert_called_once_with()
 
     def test_provider_is_available(self) -> None:
         """
         Test the provider is_available
         Thi is "specieal" because it uses cache
         """
-        with fixtures.patch_provider_api() as api:
-            provider = fixtures.create_provider()
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider._api())
 
             # Fist, true result
             self.assertEqual(provider.is_available(), True)
@@ -133,8 +125,8 @@ class TestProxmoxProvider(UDSTransactionTestCase):
         """
         Test the provider methods
         """
-        with fixtures.patch_provider_api() as api:
-            provider = fixtures.create_provider()
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider._api())
 
             self.assertEqual(provider.test_connection(), True)
             api.test.assert_called_once_with()
@@ -163,8 +155,9 @@ class TestProxmoxProvider(UDSTransactionTestCase):
         """
         Test the provider methods
         """
-        with fixtures.patch_provider_api() as api:
-            provider = fixtures.create_provider()
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider._api())
+
             self.assertEqual(
                 provider.get_storage_info(fixtures.STORAGES[2].storage, fixtures.STORAGES[2].node),
                 fixtures.STORAGES[2],
@@ -194,8 +187,9 @@ class TestProxmoxProvider(UDSTransactionTestCase):
         """
         Test the provider methods
         """
-        with fixtures.patch_provider_api() as api:
-            provider = fixtures.create_provider()
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider._api())
+
             self.assertEqual(
                 provider.get_pool_info(fixtures.POOLS[2].poolid, retrieve_vm_names=True, force=True),
                 fixtures.POOLS[2],
@@ -236,8 +230,9 @@ class TestProxmoxProvider(UDSTransactionTestCase):
         """
         Test the provider methods
         """
-        with fixtures.patch_provider_api() as api:
-            provider = fixtures.create_provider()
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider._api())
+
             self.assertEqual(provider.shutdown_machine(1), fixtures.UPID)
             api.shutdown_machine.assert_called_once_with(1)
 
@@ -266,8 +261,8 @@ class TestProxmoxProvider(UDSTransactionTestCase):
         """
         Test the provider methods
         """
-        with fixtures.patch_provider_api() as api:
-            provider = fixtures.create_provider()
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider._api())
 
             self.assertEqual(provider.get_console_connection('1'), fixtures.CONSOLE_CONNECTION_INFO)
             api.get_console_connection.assert_called_once_with(1, None)
@@ -298,26 +293,30 @@ class TestProxmoxProvider(UDSTransactionTestCase):
         """
         from uds.services.Proxmox.helpers import get_storage, get_machines
 
-        with fixtures.patch_provider_api() as _api:
-            provider = fixtures.create_provider()
-            # Ensure exists on db
-            db_provider = models.Provider.objects.create(
-                name='test proxmox provider',
-                comments='test comments',
-                data_type=provider.type_type,
-                data=provider.serialize(),
-            )
+        with fixtures.patched_provider() as provider:
 
-            # Test get_storage
-            vm_info = provider.get_machine_info(1)
-            h_storage = get_storage({'prov_uuid': db_provider.uuid, 'machine': '1'})
-            self.assertEqual(
-                list(map(lambda x: x['id'], h_storage[0]['choices'],)),
-                list(map(lambda x: x.storage, filter(lambda x: x.node == vm_info.node, fixtures.STORAGES))),
-            )
-            h_machines = get_machines({'prov_uuid': db_provider.uuid, 'pool': fixtures.POOLS[0].poolid})
-            # Test get_machines
-            self.assertEqual(
-                list(map(lambda x: x['id'], h_machines[0]['choices'],)),
-                list(map(lambda x: str(x.vmid), fixtures.POOLS[0].members)),
-            )
+            # Patch get_provider to return te ProxmoxProvider instance (provider)
+            with mock.patch('uds.services.Proxmox.helpers.get_provider', return_value=provider):
+                # Test get_storage
+                vm_info = provider.get_machine_info(1)
+                h_storage = get_storage({'prov_uuid': 'test', 'machine': '1'})
+                self.assertEqual(
+                    list(
+                        map(
+                            lambda x: x['id'],
+                            h_storage[0]['choices'],
+                        )
+                    ),
+                    list(map(lambda x: x.storage, filter(lambda x: x.node == vm_info.node, fixtures.STORAGES))),
+                )
+                h_machines = get_machines({'prov_uuid': 'test', 'pool': fixtures.POOLS[0].poolid})
+                # Test get_machines
+                self.assertEqual(
+                    list(
+                        map(
+                            lambda x: x['id'],
+                            h_machines[0]['choices'],
+                        )
+                    ),
+                    list(map(lambda x: str(x.vmid), fixtures.POOLS[0].members)),
+                )

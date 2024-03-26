@@ -45,8 +45,9 @@ class TestProxmovFixedService(UDSTransactionTestCase):
         """
         Test the provider
         """
-        with fixtures.patch_provider_api() as api:
-            service = fixtures.create_service_fixed()
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider._api())
+            service = fixtures.create_service_fixed(provider=provider)
 
             self.assertTrue(service.is_avaliable())
             api.test.assert_called_with()
@@ -62,8 +63,8 @@ class TestProxmovFixedService(UDSTransactionTestCase):
             api.test.assert_called_with()
 
     def test_service_methods_1(self) -> None:
-        with fixtures.patch_provider_api():
-            service = fixtures.create_service_fixed()
+        with fixtures.patched_provider() as provider:
+            service = fixtures.create_service_fixed(provider=provider)
 
             self.assertEqual(service.get_machine_info(2).name, fixtures.VMS_INFO[1].name)
 
@@ -108,8 +109,8 @@ class TestProxmovFixedService(UDSTransactionTestCase):
                 self.assertEqual(assigned_machines, set([vmid, vmid2]))
 
     def test_service_methods_2(self) -> None:
-        with fixtures.patch_provider_api():
-            service = fixtures.create_service_fixed()
+        with fixtures.patched_provider() as provider:
+            service = fixtures.create_service_fixed(provider=provider)
 
             # Get machine name
             self.assertEqual(service.get_machine_name('1'), fixtures.VMS_INFO[0].name)
@@ -134,8 +135,9 @@ class TestProxmovFixedService(UDSTransactionTestCase):
                 self.assertEqual(assigned_machines, set())
 
     def test_process_snapshot(self) -> None:
-        with fixtures.patch_provider_api() as api:
-            service = fixtures.create_service_fixed()
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider._api())
+            service = fixtures.create_service_fixed(provider=provider)
 
             vmid = typing.cast(list[str], fixtures.SERVICE_FIXED_VALUES_DICT['machines'])[0]
             userservice_instance = mock.MagicMock()

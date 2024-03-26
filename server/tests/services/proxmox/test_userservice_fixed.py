@@ -50,9 +50,9 @@ class TestProxmoxFixedUserService(UDSTransactionTestCase):
         """
         Test the user service
         """
-        with fixtures.patch_provider_api() as _api:
-            userservice = fixtures.create_userservice_fixed()
-            service = userservice.service()
+        with fixtures.patched_provider() as provider:
+            service = fixtures.create_service_fixed(provider=provider)
+            userservice = fixtures.create_userservice_fixed(service=service)
             with service._assigned_machines_access() as assigned_machines:
                 self.assertEqual(assigned_machines, set())
 

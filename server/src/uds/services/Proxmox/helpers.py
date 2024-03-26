@@ -36,16 +36,19 @@ from uds.core import types
 from uds.core.ui.user_interface import gui
 from uds import models
 
+if typing.TYPE_CHECKING:
+    from .provider import ProxmoxProvider
+
 logger = logging.getLogger(__name__)
 
-
-def get_storage(parameters: typing.Any) -> types.ui.CallbackResultType:
-    from .provider import ProxmoxProvider  # pylint: disable=import-outside-toplevel
-
-    logger.debug('Parameters received by getResources Helper: %s', parameters)
-    provider = typing.cast(
+def get_provider(parameters: typing.Any) -> 'ProxmoxProvider':
+    return typing.cast(
         ProxmoxProvider, models.Provider.objects.get(uuid=parameters['prov_uuid']).get_instance()
     )
+
+def get_storage(parameters: typing.Any) -> types.ui.CallbackResultType:
+    logger.debug('Parameters received by getResources Helper: %s', parameters)
+    provider = get_provider(parameters)
 
     # Obtains datacenter from cluster
     try:
@@ -74,12 +77,8 @@ def get_storage(parameters: typing.Any) -> types.ui.CallbackResultType:
 
 
 def get_machines(parameters: typing.Any) -> types.ui.CallbackResultType:
-    from .provider import ProxmoxProvider  # pylint: disable=import-outside-toplevel
-
     logger.debug('Parameters received by getResources Helper: %s', parameters)
-    provider = typing.cast(
-        ProxmoxProvider, models.Provider.objects.get(uuid=parameters['prov_uuid']).get_instance()
-    )
+    provider = get_provider(parameters)
 
     # Obtains datacenter from cluster
     try:

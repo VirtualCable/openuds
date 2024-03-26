@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
 from unittest import mock
 
 from uds import models
@@ -51,9 +52,10 @@ class TestProxmovLinkedUserService(UDSTransactionTestCase):
         """
         Test the user service
         """
-        with fixtures.patch_provider_api() as api:
-            userservice = fixtures.create_userservice_linked()
-            service = userservice.service()
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider._api())
+            service = fixtures.create_service_linked(provider=provider)
+            userservice = fixtures.create_userservice_linked(service=service)
             publication = userservice.publication()
             publication._vmid = '1'
 
@@ -97,9 +99,10 @@ class TestProxmovLinkedUserService(UDSTransactionTestCase):
         """
         Test the user service
         """
-        with fixtures.patch_provider_api() as api:
-            userservice = fixtures.create_userservice_linked()
-            service = userservice.service()
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider._api())
+            service = fixtures.create_service_linked(provider=provider)
+            userservice = fixtures.create_userservice_linked(service=service)
             service.ha.value = '__'  # Disabled
 
             publication = userservice.publication()
@@ -152,9 +155,10 @@ class TestProxmovLinkedUserService(UDSTransactionTestCase):
         """
         Test the user service
         """
-        with fixtures.patch_provider_api() as api:
-            userservice = fixtures.create_userservice_linked()
-            service = userservice.service()
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider._api())
+            service = fixtures.create_service_linked(provider=provider)
+            userservice = fixtures.create_userservice_linked(service=service)
 
             publication = userservice.publication()
             publication._vmid = '1'
@@ -213,10 +217,11 @@ class TestProxmovLinkedUserService(UDSTransactionTestCase):
         """
         Test the user service
         """
-        with fixtures.patch_provider_api() as api:
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider._api())
             for graceful in [True, False]:
-                userservice = fixtures.create_userservice_linked()
-                service = userservice.service()
+                service = fixtures.create_service_linked(provider=provider)
+                userservice = fixtures.create_userservice_linked(service=service)
                 service.try_soft_shutdown.value = graceful
                 publication = userservice.publication()
                 publication._vmid = '1'
@@ -284,7 +289,7 @@ class TestProxmovLinkedUserService(UDSTransactionTestCase):
                     api.stop_machine.assert_called()
 
     def test_userservice_basics(self) -> None:
-        with fixtures.patch_provider_api() as _api:
+        with fixtures.patched_provider():
             userservice = fixtures.create_userservice_linked()
             userservice.set_ip('1.2.3.4')
             self.assertEqual(userservice.get_ip(), '1.2.3.4')

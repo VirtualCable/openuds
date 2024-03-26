@@ -439,16 +439,14 @@ def create_client_mock() -> mock.Mock:
 
 
 @contextlib.contextmanager
-def patch_provider_api(
+def patched_provider(
     **kwargs: typing.Any,
-) -> typing.Generator[mock.Mock, None, None]:
+) -> typing.Generator[provider.ProxmoxProvider, None, None]:
     client = create_client_mock()
-    try:
-        mock.patch('uds.services.Proxmox.provider.ProxmoxProvider._api', return_value=client).start()
-        yield client
-    finally:
-        mock.patch.stopall()
-
+    provider = create_provider(**kwargs)
+    with mock.patch.object(provider, '_api') as api:
+        api.return_value = client
+        yield provider
 
 def create_provider(**kwargs: typing.Any) -> provider.ProxmoxProvider:
     """
