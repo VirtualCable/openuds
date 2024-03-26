@@ -216,12 +216,3 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
 
     def get_machine_name(self, vmid: str) -> str:
         return self.provider().get_machine_info(int(vmid)).name or ''
-
-    def remove_and_free_machine(self, vmid: str) -> str:
-        try:
-            with self._assigned_machines_access() as assigned_vms:
-                assigned_vms.remove(vmid)
-            return types.states.State.FINISHED
-        except Exception as e:
-            logger.warning('Cound not save assigned machines on fixed pool: %s', e)
-            raise

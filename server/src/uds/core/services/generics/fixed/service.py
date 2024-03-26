@@ -177,13 +177,15 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         """
         raise NotImplementedError()
 
-    @abc.abstractmethod
+    # default implementation, should be sufficient for most cases
     def remove_and_free_machine(self, vmid: str) -> str:
-        """
-        Removes and frees a machine
-        Returns an state (State.FINISHED is nothing to do left)
-        """
-        raise NotImplementedError()
+        try:
+            with self._assigned_machines_access() as assigned:
+                assigned.remove(vmid)
+            return types.states.State.FINISHED
+        except Exception as e:
+            logger.warning('Cound not save assigned machines on fixed pool: %s', e)
+            raise
 
     @abc.abstractmethod
     def get_first_network_mac(self, vmid: str) -> str:
