@@ -309,9 +309,9 @@ class OpenNebulaLiveService(services.Service):
         return self.provider().get_console_connection(machineId)
 
     def desktop_login(
-        self, machine_id: str, username: str, password: str, domain: str
+        self, vmid: str, username: str, password: str, domain: str
     ) -> typing.Optional[types.services.ConsoleConnectionInfo]:
-        return self.provider().desktop_login(machine_id, username, password, domain)
+        return self.provider().desktop_login(vmid, username, password, domain)
 
     def is_avaliable(self) -> bool:
         return self.provider().is_available()

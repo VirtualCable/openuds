@@ -268,7 +268,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         logger.debug('Task for cloneForTemplate: %s', task)
         return task
 
-    def convert_to_template(self, machine_id: str, shadow_multiplier: int = 4) -> None:
+    def convert_to_template(self, vmid: str, shadow_multiplier: int = 4) -> None:
         """
         Publish the machine (makes a template from it so we can create COWs) and returns the template id of
         the creating machine
@@ -283,7 +283,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         Returns
             Raises an exception if operation could not be acomplished, or returns the id of the template being created.
         """
-        self._get_api().convert_to_template(machine_id, shadow_multiplier)
+        self._get_api().convert_to_template(vmid, shadow_multiplier)
 
     def remove_template(self, templateId: str) -> None:
         """
@@ -311,27 +311,27 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         """
         return self._get_api().start_deploy_from_template(template_id, name)
 
-    def get_machine_power_state(self, machine_id: str) -> str:
+    def get_machine_power_state(self, vmid: str) -> str:
         """
         Returns current machine power state
         """
-        return self._get_api().get_machine_power_state(machine_id)
+        return self._get_api().get_machine_power_state(vmid)
 
-    def get_machine_name(self, machine_id: str) -> str:
-        return self._get_api().get_machine_info(machine_id).get('name_label', '')
+    def get_machine_name(self, vmid: str) -> str:
+        return self._get_api().get_machine_info(vmid).get('name_label', '')
 
     def list_folders(self) -> list[str]:
         return self._get_api().list_folders()
 
-    def get_machine_folder(self, machine_id: str) -> str:
-        return self._get_api().get_machine_folder(machine_id)
+    def get_machine_folder(self, vmid: str) -> str:
+        return self._get_api().get_machine_folder(vmid)
 
     def get_machines_from_folder(
         self, folder: str, retrieve_names: bool = False
     ) -> list[dict[str, typing.Any]]:
         return self._get_api().get_machines_from_folder(folder, retrieve_names)
 
-    def start_machine(self, machine_id: str, as_async: bool = True) -> typing.Optional[str]:
+    def start_machine(self, vmid: str, as_async: bool = True) -> typing.Optional[str]:
         """
         Tries to start a machine. No check is done, it is simply requested to XenServer.
 
@@ -342,9 +342,9 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
 
         Returns:
         """
-        return self._get_api().start_machine(machine_id, as_async)
+        return self._get_api().start_machine(vmid, as_async)
 
-    def stop_machine(self, machine_id: str, as_async: bool = True) -> typing.Optional[str]:
+    def stop_machine(self, vmid: str, as_async: bool = True) -> typing.Optional[str]:
         """
         Tries to start a machine. No check is done, it is simply requested to XenServer
 
@@ -353,9 +353,9 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
 
         Returns:
         """
-        return self._get_api().stop_machine(machine_id, as_async)
+        return self._get_api().stop_machine(vmid, as_async)
 
-    def reset_machine(self, machine_id: str, as_async: bool = True) -> typing.Optional[str]:
+    def reset_machine(self, vmid: str, as_async: bool = True) -> typing.Optional[str]:
         """
         Tries to start a machine. No check is done, it is simply requested to XenServer
 
@@ -364,9 +364,9 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
 
         Returns:
         """
-        return self._get_api().reset_machine(machine_id, as_async)
+        return self._get_api().reset_machine(vmid, as_async)
 
-    def can_suspend_machine(self, machine_id: str) -> bool:
+    def can_suspend_machine(self, vmid: str) -> bool:
         """
         The machine can be suspended only when "suspend" is in their operations list (mush have xentools installed)
 
@@ -376,9 +376,9 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         Returns:
             True if the machien can be suspended
         """
-        return self._get_api().can_suspend_machine(machine_id)
+        return self._get_api().can_suspend_machine(vmid)
 
-    def suspend_machine(self, machine_id: str, as_async: bool = True) -> typing.Optional[str]:
+    def suspend_machine(self, vmid: str, as_async: bool = True) -> typing.Optional[str]:
         """
         Tries to start a machine. No check is done, it is simply requested to XenServer
 
@@ -387,9 +387,9 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
 
         Returns:
         """
-        return self._get_api().suspend_machine(machine_id, as_async)
+        return self._get_api().suspend_machine(vmid, as_async)
 
-    def resume_machine(self, machine_id: str, as_async: bool = True) -> typing.Optional[str]:
+    def resume_machine(self, vmid: str, as_async: bool = True) -> typing.Optional[str]:
         """
         Tries to start a machine. No check is done, it is simply requested to XenServer
 
@@ -398,9 +398,9 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
 
         Returns:
         """
-        return self._get_api().resume_machine(machine_id, as_async)
+        return self._get_api().resume_machine(vmid, as_async)
 
-    def shutdown_machine(self, machine_id: str, as_async: bool = True) -> typing.Optional[str]:
+    def shutdown_machine(self, vmid: str, as_async: bool = True) -> typing.Optional[str]:
         """
         Tries to start a machine. No check is done, it is simply requested to XenServer
 
@@ -409,9 +409,9 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
 
         Returns:
         """
-        return self._get_api().shutdown_machine(machine_id, as_async)
+        return self._get_api().shutdown_machine(vmid, as_async)
 
-    def remove_machine(self, machine_id: str) -> None:
+    def remove_machine(self, vmid: str) -> None:
         """
         Tries to delete a machine. No check is done, it is simply requested to XenServer
 
@@ -420,22 +420,22 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
 
         Returns:
         """
-        self._get_api().remove_machine(machine_id)
+        self._get_api().remove_machine(vmid)
 
-    def configure_machine(self, machine_id: str, netId: str, mac: str, memory: int) -> None:
-        self._get_api().configure_machine(machine_id, mac={'network': netId, 'mac': mac}, memory=memory)
+    def configure_machine(self, vmid: str, netId: str, mac: str, memory: int) -> None:
+        self._get_api().configure_machine(vmid, mac={'network': netId, 'mac': mac}, memory=memory)
 
-    def provision_machine(self, machine_id: str, as_async: bool = True) -> str:
-        return self._get_api().provision_machine(machine_id, as_async=as_async)
+    def provision_machine(self, vmid: str, as_async: bool = True) -> str:
+        return self._get_api().provision_machine(vmid, as_async=as_async)
 
-    def get_first_ip(self, machine_id: str) -> str:
-        return self._get_api().get_first_ip(machine_id)
+    def get_first_ip(self, vmid: str) -> str:
+        return self._get_api().get_first_ip(vmid)
 
-    def get_first_mac(self, machine_id: str) -> str:
-        return self._get_api().get_first_mac(machine_id)
+    def get_first_mac(self, vmid: str) -> str:
+        return self._get_api().get_first_mac(vmid)
 
-    def create_snapshot(self, machine_id: str, name: str) -> str:
-        return self._get_api().create_snapshot(machine_id, name)
+    def create_snapshot(self, vmid: str, name: str) -> str:
+        return self._get_api().create_snapshot(vmid, name)
 
     def restore_snapshot(self, snapshot_id: str) -> str:
         return self._get_api().restore_snapshot(snapshot_id)
@@ -443,8 +443,8 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
     def remove_snapshot(self, snapshot_id: str) -> str:
         return self._get_api().remove_snapshot(snapshot_id)
 
-    def list_snapshots(self, machine_id: str, full_info: bool = False) -> list[dict[str, typing.Any]]:
-        return self._get_api().list_snapshots(machine_id)
+    def list_snapshots(self, vmid: str, full_info: bool = False) -> list[dict[str, typing.Any]]:
+        return self._get_api().list_snapshots(vmid)
 
     def get_macs_range(self) -> str:
         return self.macs_range.value

@@ -255,10 +255,10 @@ class ProxmoxProvider(services.ServiceProvider):
 
     def get_console_connection(
         self,
-        machine_id: str,
+        vmid: str,
         node: typing.Optional[str] = None,
     ) -> typing.Optional[types.services.ConsoleConnectionInfo]:
-        return self._api().get_console_connection(int(machine_id), node)
+        return self._api().get_console_connection(int(vmid), node)
 
     def get_new_vmid(self) -> int:
         MAX_RETRIES: typing.Final[int] = 512  # So we don't loop forever, just in case...

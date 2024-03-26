@@ -166,11 +166,11 @@ class Client:
             ]
 
     @decorators.cached(prefix='o-vm', timeout=consts.cache.SMALLEST_CACHE_TIMEOUT, key_helper=_key_helper)
-    def get_machine_info(self, machine_id: str, **kwargs: typing.Any) -> ov_types.VMInfo:
+    def get_machine_info(self, vmid: str, **kwargs: typing.Any) -> ov_types.VMInfo:
         with _access_lock():
             try:
                 return ov_types.VMInfo.from_data(
-                    typing.cast(typing.Any, self.api.system_service().vms_service().service(machine_id).get())
+                    typing.cast(typing.Any, self.api.system_service().vms_service().service(vmid).get())
                 )
             except Exception:
                 return ov_types.VMInfo.missing()
@@ -261,7 +261,7 @@ class Client:
         self,
         name: str,
         comments: str,
-        machine_id: str,
+        vmid: str,
         cluster_id: str,
         storage_id: str,
         display_type: str,
@@ -284,7 +284,7 @@ class Client:
             "n: %s, c: %s, vm: %s, cl: %s, st: %s, dt: %s",
             name,
             comments,
-            machine_id,
+            vmid,
             cluster_id,
             storage_id,
             display_type,
@@ -294,7 +294,7 @@ class Client:
             # cluster = ov.clusters_service().service('00000002-0002-0002-0002-0000000002e4') # .get()
             # vm = ov.vms_service().service('e7ff4e00-b175-4e80-9c1f-e50a5e76d347') # .get()
 
-            vms: typing.Any = self.api.system_service().vms_service().service(machine_id)
+            vms: typing.Any = self.api.system_service().vms_service().service(vmid)
 
             cluster: typing.Any = typing.cast(
                 typing.Any, self.api.system_service().clusters_service().service(cluster_id).get()
@@ -418,12 +418,12 @@ class Client:
     @decorators.cached(
         prefix='o-templates', timeout=consts.cache.SMALLEST_CACHE_TIMEOUT, key_helper=_key_helper
     )
-    def list_snapshots(self, machine_id: str) -> list[ov_types.SnapshotInfo]:
+    def list_snapshots(self, vmid: str) -> list[ov_types.SnapshotInfo]:
         """
         Lists the snapshots of the given machine
         """
         with _access_lock():
-            vm_service: typing.Any = self.api.system_service().vms_service().service(machine_id)
+            vm_service: typing.Any = self.api.system_service().vms_service().service(vmid)
 
             if vm_service.get() is None:
                 raise Exception('Machine not found')
@@ -434,12 +434,12 @@ class Client:
             ]
 
     @decorators.cached(prefix='o-snapshot', timeout=consts.cache.SMALLEST_CACHE_TIMEOUT, key_helper=_key_helper)
-    def get_snapshot_info(self, machine_id: str, snapshot_id: str) -> ov_types.SnapshotInfo:
+    def get_snapshot_info(self, vmid: str, snapshot_id: str) -> ov_types.SnapshotInfo:
         """
         Returns the snapshot info for the given snapshot id
         """
         with _access_lock():
-            vm_service: typing.Any = self.api.system_service().vms_service().service(machine_id)
+            vm_service: typing.Any = self.api.system_service().vms_service().service(vmid)
 
             if vm_service.get() is None:
                 raise Exception('Machine not found')
@@ -452,13 +452,13 @@ class Client:
             )
 
     def create_snapshot(
-        self, machine_id: str, snapshot_name: str, snapshot_description: str
+        self, vmid: str, snapshot_name: str, snapshot_description: str
     ) -> ov_types.SnapshotInfo:
         """
         Creates a snapshot of the machine with the given name and description
         """
         with _access_lock():
-            vm_service: typing.Any = self.api.system_service().vms_service().service(machine_id)
+            vm_service: typing.Any = self.api.system_service().vms_service().service(vmid)
 
             if vm_service.get() is None:
                 raise Exception('Machine not found')
@@ -468,19 +468,19 @@ class Client:
             )
             return ov_types.SnapshotInfo.from_data(vm_service.snapshots_service().add(snapshot))
 
-    def remove_snapshot(self, machine_id: str, snapshot_id: str) -> None:
+    def remove_snapshot(self, vmid: str, snapshot_id: str) -> None:
         """
         Removes the snapshot with the given id
         """
         with _access_lock():
-            vm_service: typing.Any = self.api.system_service().vms_service().service(machine_id)
+            vm_service: typing.Any = self.api.system_service().vms_service().service(vmid)
 
             if vm_service.get() is None:
                 raise Exception('Machine not found')
 
             vm_service.snapshots_service().service(snapshot_id).remove()
 
-    def start_machine(self, machine_id: str) -> None:
+    def start_machine(self, vmid: str) -> None:
         """
         Tries to start a machine. No check is done, it is simply requested to oVirt.
 
@@ -492,65 +492,65 @@ class Client:
         Returns:
         """
         with _access_lock():
-            vm_service: typing.Any = self.api.system_service().vms_service().service(machine_id)
+            vm_service: typing.Any = self.api.system_service().vms_service().service(vmid)
 
             if vm_service.get() is None:
                 raise Exception('Machine not found')
 
             vm_service.start()
 
-    def stop_machine(self, machine_id: str) -> None:
+    def stop_machine(self, vmid: str) -> None:
         """
         Tries to stop a machine. No check is done, it is simply requested to oVirt
 
         Args:
-            machine_id: Id of the machine
+            vmid: Id of the machine
 
         Returns:
         """
         with _access_lock():
-            vm_service: typing.Any = self.api.system_service().vms_service().service(machine_id)
+            vm_service: typing.Any = self.api.system_service().vms_service().service(vmid)
 
             if vm_service.get() is None:
                 raise Exception('Machine not found')
 
             vm_service.stop()
             
-    def shutdown_machine(self, machine_id: str) -> None:
+    def shutdown_machine(self, vmid: str) -> None:
         """
         Tries to shutdown a machine. No check is done, it is simply requested to oVirt
 
         Args:
-            machine_id: Id of the machine
+            vmid: Id of the machine
 
         Returns:
         """
         with _access_lock():
-            vm_service: typing.Any = self.api.system_service().vms_service().service(machine_id)
+            vm_service: typing.Any = self.api.system_service().vms_service().service(vmid)
 
             if vm_service.get() is None:
                 raise Exception('Machine not found')
 
             vm_service.shutdown()
 
-    def suspend_machine(self, machine_id: str) -> None:
+    def suspend_machine(self, vmid: str) -> None:
         """
         Tries to suspend a machine. No check is done, it is simply requested to oVirt
 
         Args:
-            machine_id: Id of the machine
+            vmid: Id of the machine
 
         Returns:
         """
         with _access_lock():
-            vmService: typing.Any = self.api.system_service().vms_service().service(machine_id)
+            vmService: typing.Any = self.api.system_service().vms_service().service(vmid)
 
             if vmService.get() is None:
                 raise Exception('Machine not found')
 
             vmService.suspend()
 
-    def remove_machine(self, machine_id: str) -> None:
+    def remove_machine(self, vmid: str) -> None:
         """
         Tries to delete a machine. No check is done, it is simply requested to oVirt
 
@@ -560,20 +560,20 @@ class Client:
         Returns:
         """
         with _access_lock():
-            vm_service: typing.Any = self.api.system_service().vms_service().service(machine_id)
+            vm_service: typing.Any = self.api.system_service().vms_service().service(vmid)
 
             if vm_service.get() is None:
                 raise Exception('Machine not found')
 
             vm_service.remove()
 
-    def update_machine_mac(self, machine_id: str, mac: str) -> None:
+    def update_machine_mac(self, vmid: str, mac: str) -> None:
         """
         Changes the mac address of first nic of the machine to the one specified
         """
         with _access_lock():
             try:
-                vm_service: typing.Any = self.api.system_service().vms_service().service(machine_id)
+                vm_service: typing.Any = self.api.system_service().vms_service().service(vmid)
 
                 if vm_service.get() is None:
                     raise Exception('Machine not found')
@@ -585,23 +585,23 @@ class Client:
             except IndexError:
                 raise Exception('Machine do not have network interfaces!!')
 
-    def fix_usb(self, machine_id: str) -> None:
+    def fix_usb(self, vmid: str) -> None:
         # Fix for usb support
         with _access_lock():
             usb = ovirtsdk4.types.Usb(enabled=True, type=ovirtsdk4.types.UsbType.NATIVE)
-            vms: typing.Any = self.api.system_service().vms_service().service(machine_id)
+            vms: typing.Any = self.api.system_service().vms_service().service(vmid)
             vmu = ovirtsdk4.types.Vm(usb=usb)
             vms.update(vmu)
 
     def get_console_connection_info(
-        self, machine_id: str
+        self, vmid: str
     ) -> typing.Optional[types.services.ConsoleConnectionInfo]:
         """
         Gets the connetion info for the specified machine
         """
         with _access_lock():
             try:
-                vm_service: typing.Any = self.api.system_service().vms_service().service(machine_id)
+                vm_service: typing.Any = self.api.system_service().vms_service().service(vmid)
                 vm = vm_service.get()
 
                 if vm is None:

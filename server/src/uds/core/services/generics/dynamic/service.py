@@ -119,7 +119,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
 
     @abc.abstractmethod
     def get_machine_ip(
-        self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str
+        self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str
     ) -> str:
         """
         Returns the ip of the machine
@@ -129,7 +129,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
 
     @abc.abstractmethod
     def get_machine_mac(
-        self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str
+        self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str
     ) -> str:
         """
         Returns the mac of the machine
@@ -139,7 +139,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
 
     @abc.abstractmethod
     def is_machine_running(
-        self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str
+        self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str
     ) -> bool:
         """
         Returns if the machine is ready and running
@@ -148,7 +148,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
 
     @abc.abstractmethod
     def start_machine(
-        self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str
+        self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str
     ) -> None:
         """
         Starts the machine
@@ -157,7 +157,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         ...
 
     @abc.abstractmethod
-    def stop_machine(self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str) -> None:
+    def stop_machine(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
         """
         Stops the machine
         Can return a task, or None if no task is returned
@@ -165,38 +165,38 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         ...
 
     def shutdown_machine(
-        self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str
+        self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str
     ) -> None:
         """
         Shutdowns the machine
         Defaults to stop_machine
         Can return a task, or None if no task is returned
         """
-        return self.stop_machine(caller_instance, machine_id)
+        return self.stop_machine(caller_instance, vmid)
 
     def reset_machine(
-        self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str
+        self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str
     ) -> None:
         """
         Resets the machine
         Can return a task, or None if no task is returned
         """
         # Default is to stop "hard"
-        return self.stop_machine(caller_instance, machine_id)
+        return self.stop_machine(caller_instance, vmid)
 
     def suspend_machine(
-        self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str
+        self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str
     ) -> None:
         """
         Suspends the machine
         Defaults to shutdown_machine.
         Can be overriden if the service supports suspending.
         """
-        return self.shutdown_machine(caller_instance, machine_id)
+        return self.shutdown_machine(caller_instance, vmid)
 
     @abc.abstractmethod
     def remove_machine(
-        self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str
+        self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str
     ) -> None:
         """
         Removes the machine, or queues it for removal, or whatever :)

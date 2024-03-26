@@ -162,8 +162,8 @@ class OGService(services.Service):
     def provider(self) -> 'OGProvider':
         return typing.cast('OGProvider', super().provider())
 
-    def status(self, machine_id: str) -> typing.Any:
-        return self.provider().status(machine_id)
+    def status(self, vmid: str) -> typing.Any:
+        return self.provider().status(vmid)
 
     def reserve(self) -> typing.Any:
         return self.provider().reserve(
@@ -173,22 +173,22 @@ class OGService(services.Service):
             self.max_reserve_hours.as_int(),
         )
 
-    def unreserve(self, machine_id: str) -> None:
-        self.provider().unreserve(machine_id)
+    def unreserve(self, vmid: str) -> None:
+        self.provider().unreserve(vmid)
 
-    def notify_endpoints(self, machine_id: str, token: str, uuid: str) -> None:
+    def notify_endpoints(self, vmid: str, token: str, uuid: str) -> None:
         self.provider().notify_endpoints(
-            machine_id,
+            vmid,
             self.get_login_notify_url(uuid, token),
             self.get_logout_notify_url(uuid, token),
             self.get_relase_url(uuid, token),
         )
 
-    def notify_deadline(self, machine_id: str, deadLine: typing.Optional[int]) -> None:
-        self.provider().notify_deadline(machine_id, deadLine)
+    def notify_deadline(self, vmid: str, deadLine: typing.Optional[int]) -> None:
+        self.provider().notify_deadline(vmid, deadLine)
 
-    def power_on(self, machine_id: str) -> None:
-        self.provider().power_on(machine_id, self.image.value)
+    def power_on(self, vmid: str) -> None:
+        self.provider().power_on(vmid, self.image.value)
 
     def _notify_url(self, uuid: str, token: str, message: str) -> str:
         # The URL is "GET messages URL".

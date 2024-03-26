@@ -316,7 +316,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         """
         return self.provider().stop_machine(machineId, asnc)
 
-    def reset_machine(self, machine_id: str, asnc: bool = True) -> typing.Optional[str]:
+    def reset_machine(self, vmid: str, asnc: bool = True) -> typing.Optional[str]:
         """
         Tries to stop a machine. No check is done, it is simply requested to Xen
 
@@ -325,7 +325,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
 
         Returns:
         """
-        return self.provider().reset_machine(machine_id, asnc)
+        return self.provider().reset_machine(vmid, asnc)
 
     def can_suspend_machine(self, machineId: str) -> bool:
         """
@@ -372,11 +372,11 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         """
         self.provider().remove_machine(machineId)
 
-    def configure_machine(self, machine_id: str, mac: str) -> None:
-        self.provider().configure_machine(machine_id, self.network.value, mac, self.memory.value)
+    def configure_machine(self, vmid: str, mac: str) -> None:
+        self.provider().configure_machine(vmid, self.network.value, mac, self.memory.value)
 
-    def provision_machine(self, machine_id: str, as_async: bool = True) -> str:
-        return self.provider().provision_machine(machine_id, as_async)
+    def provision_machine(self, vmid: str, as_async: bool = True) -> str:
+        return self.provider().provision_machine(vmid, as_async)
 
     def get_macs_range(self) -> str:
         """

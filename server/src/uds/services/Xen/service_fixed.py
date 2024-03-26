@@ -110,7 +110,7 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
     def provider(self) -> 'XenProvider':
         return typing.cast('XenProvider', super().provider())
 
-    def get_machine_power_state(self, machine_id: str) -> str:
+    def get_machine_power_state(self, vmid: str) -> str:
         """
         Invokes getMachineState from parent provider
 
@@ -120,9 +120,9 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
         Returns:
             one of this values:
         """
-        return self.provider().get_machine_power_state(machine_id)
+        return self.provider().get_machine_power_state(vmid)
 
-    def start_machine(self, machine_id: str) -> typing.Optional[str]:
+    def start_machine(self, vmid: str) -> typing.Optional[str]:
         """
         Tries to start a machine. No check is done, it is simply requested to Xen.
 
@@ -133,9 +133,9 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
 
         Returns:
         """
-        return self.provider().start_machine(machine_id)
+        return self.provider().start_machine(vmid)
 
-    def stop_machine(self, machine_id: str) -> typing.Optional[str]:
+    def stop_machine(self, vmid: str) -> typing.Optional[str]:
         """
         Tries to stop a machine. No check is done, it is simply requested to Xen
 
@@ -144,21 +144,21 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
 
         Returns:
         """
-        return self.provider().stop_machine(machine_id)
+        return self.provider().stop_machine(vmid)
 
-    def reset_machine(self, machine_id: str) -> typing.Optional[str]:
+    def reset_machine(self, vmid: str) -> typing.Optional[str]:
         """
         Tries to stop a machine. No check is done, it is simply requested to Xen
 
         Args:
-            machine_id: Id of the machine
+            vmid: Id of the machine
 
         Returns:
         """
-        return self.provider().reset_machine(machine_id)
+        return self.provider().reset_machine(vmid)
 
-    def shutdown_machine(self, machine_id: str) -> typing.Optional[str]:
-        return self.provider().shutdown_machine(machine_id)
+    def shutdown_machine(self, vmid: str) -> typing.Optional[str]:
+        return self.provider().shutdown_machine(vmid)
 
     def check_task_finished(self, task: str) -> tuple[bool, str]:
         return self.provider().check_task_finished(task)

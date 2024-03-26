@@ -167,7 +167,7 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     AutoSpecMethodInfo(client.Client.list_machines, returns=VMS_INFO),
     AutoSpecMethodInfo(
         client.Client.get_machine_info,
-        returns=lambda machine_id, **kwargs: get_id(VMS_INFO, machine_id),  # pyright: ignore
+        returns=lambda vmid, **kwargs: get_id(VMS_INFO, vmid),  # pyright: ignore
     ),
     AutoSpecMethodInfo(client.Client.list_clusters, returns=CLUSTERS_INFO),
     AutoSpecMethodInfo(
@@ -212,23 +212,23 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     ),
     AutoSpecMethodInfo(
         client.Client.start_machine,
-        returns=lambda machine_id, **kwargs: set_attr(get_id(VMS_INFO, machine_id), 'status', ov_types.VMStatus.UP),  # pyright: ignore
+        returns=lambda vmid, **kwargs: set_attr(get_id(VMS_INFO, vmid), 'status', ov_types.VMStatus.UP),  # pyright: ignore
     ),
     AutoSpecMethodInfo(
         client.Client.stop_machine,
-        returns=lambda machine_id, **kwargs: set_attr(get_id(VMS_INFO, machine_id), 'status', ov_types.VMStatus.DOWN),  # pyright: ignore
+        returns=lambda vmid, **kwargs: set_attr(get_id(VMS_INFO, vmid), 'status', ov_types.VMStatus.DOWN),  # pyright: ignore
     ),
     AutoSpecMethodInfo(
         client.Client.shutdown_machine,
-        returns=lambda machine_id, **kwargs: set_attr(get_id(VMS_INFO, machine_id), 'status', ov_types.VMStatus.DOWN),  # pyright: ignore
+        returns=lambda vmid, **kwargs: set_attr(get_id(VMS_INFO, vmid), 'status', ov_types.VMStatus.DOWN),  # pyright: ignore
     ),
     AutoSpecMethodInfo(
         client.Client.remove_machine,
-        returns=lambda machine_id, **kwargs: set_attr(get_id(VMS_INFO, machine_id), 'status', ov_types.VMStatus.UNKNOWN),  # pyright: ignore
+        returns=lambda vmid, **kwargs: set_attr(get_id(VMS_INFO, vmid), 'status', ov_types.VMStatus.UNKNOWN),  # pyright: ignore
     ),
     AutoSpecMethodInfo(
         client.Client.suspend_machine,
-        returns=lambda machine_id, **kwargs: set_attr(get_id(VMS_INFO, machine_id), 'status', ov_types.VMStatus.SUSPENDED),  # pyright: ignore
+        returns=lambda vmid, **kwargs: set_attr(get_id(VMS_INFO, vmid), 'status', ov_types.VMStatus.SUSPENDED),  # pyright: ignore
     ),    
     # connect returns None
     # Test method

@@ -246,17 +246,17 @@ class OpenGnsysClient:
         }
 
     @ensure_connected
-    def unreserve(self, machine_id: str) -> None:
+    def unreserve(self, vmid: str) -> None:
         # This method releases the previous reservation
         # Invoked every time we need to release a reservation (i mean, if a reservation is done, this will be called with the obtained id from that reservation)
-        ou, lab, client = machine_id.split('.')
+        ou, lab, client = vmid.split('.')
         error_message = 'Unreserving client {} in lab {} in ou {}'.format(client, lab, ou)
         self._delete(urls.UNRESERVE.format(ou=ou, lab=lab, client=client), error_message=error_message)
 
     @ensure_connected
-    def power_on(self, machine_id: str, image: str) -> None:
+    def power_on(self, vmid: str, image: str) -> None:
         # This method ask to poweron a machine to openGnsys
-        ou, lab, client = machine_id.split('.')
+        ou, lab, client = vmid.split('.')
         try:
             data = {
                 'image': image,
@@ -267,11 +267,11 @@ class OpenGnsysClient:
                 error_message=f'Powering on client {client} in lab {lab} in ou {ou}',
             )
         except Exception as e:  # For now, if this fails, ignore it to keep backwards compat
-            logger.error('Error powering on machine %s: %s', machine_id, e)
+            logger.error('Error powering on machine %s: %s', vmid, e)
 
     @ensure_connected
-    def notify_endpoints(self, machine_id: str, login_url: str, logout_url: str, release_url: str) -> None:
-        ou, lab, client = machine_id.split('.')
+    def notify_endpoints(self, vmid: str, login_url: str, logout_url: str, release_url: str) -> None:
+        ou, lab, client = vmid.split('.')
         data = {'urlLogin': login_url, 'urlLogout': logout_url, 'urlRelease': release_url}
 
         self._post(
@@ -279,8 +279,8 @@ class OpenGnsysClient:
         )
 
     @ensure_connected
-    def notify_deadline(self, machine_id: str, dead_line: typing.Optional[int]) -> None:
-        ou, lab, client = machine_id.split('.')
+    def notify_deadline(self, vmid: str, dead_line: typing.Optional[int]) -> None:
+        ou, lab, client = vmid.split('.')
         dead_line = dead_line or 0
         data = {'deadLine': dead_line}
 

@@ -47,7 +47,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def get_machine_state(api: 'client.OpenNebulaClient', machine_id: str) -> types.VmState:
+def get_machine_state(api: 'client.OpenNebulaClient', vmid: str) -> types.VmState:
     '''
     Returns the state of the machine
     This method do not uses cache at all (it always tries to get machine state from OpenNebula server)
@@ -59,9 +59,9 @@ def get_machine_state(api: 'client.OpenNebulaClient', machine_id: str) -> types.
         one of the on.VmState Values
     '''
     try:
-        return api.get_machine_state(machine_id)
+        return api.get_machine_state(vmid)
     except Exception as e:
-        logger.error('Error obtaining machine state for %s on OpenNebula: %s', machine_id, e)
+        logger.error('Error obtaining machine state for %s on OpenNebula: %s', vmid, e)
 
     return types.VmState.UNKNOWN
 
@@ -78,7 +78,7 @@ def get_machine_substate(api: 'client.OpenNebulaClient', machineId: str) -> int:
     return types.VmState.UNKNOWN.value
 
 
-def start_machine(api: 'client.OpenNebulaClient', machine_id: str) -> None:
+def start_machine(api: 'client.OpenNebulaClient', vmid: str) -> None:
     '''
     Tries to start a machine. No check is done, it is simply requested to OpenNebula.
 
@@ -90,13 +90,13 @@ def start_machine(api: 'client.OpenNebulaClient', machine_id: str) -> None:
     Returns:
     '''
     try:
-        api.set_machine_state(machine_id, 'resume')
+        api.set_machine_state(vmid, 'resume')
     except Exception:
         # MAybe the machine is already running. If we get error here, simply ignore it for now...
         pass
 
 
-def stop_machine(api: 'client.OpenNebulaClient', machine_id: str) -> None:
+def stop_machine(api: 'client.OpenNebulaClient', vmid: str) -> None:
     '''
     Tries to start a machine. No check is done, it is simply requested to OpenNebula
 
@@ -106,12 +106,12 @@ def stop_machine(api: 'client.OpenNebulaClient', machine_id: str) -> None:
     Returns:
     '''
     try:
-        api.set_machine_state(machine_id, 'poweroff-hard')
+        api.set_machine_state(vmid, 'poweroff-hard')
     except Exception as e:
-        logger.error('Error powering off %s on OpenNebula: %s', machine_id, e)
+        logger.error('Error powering off %s on OpenNebula: %s', vmid, e)
 
 
-def suspend_machine(api: 'client.OpenNebulaClient', machine_id: str) -> None:
+def suspend_machine(api: 'client.OpenNebulaClient', vmid: str) -> None:
     '''
     Tries to suspend a machine. No check is done, it is simply requested to OpenNebula
 
@@ -121,12 +121,12 @@ def suspend_machine(api: 'client.OpenNebulaClient', machine_id: str) -> None:
     Returns:
     '''
     try:
-        api.set_machine_state(machine_id, 'suspend')
+        api.set_machine_state(vmid, 'suspend')
     except Exception as e:
-        logger.error('Error suspending %s on OpenNebula: %s', machine_id, e)
+        logger.error('Error suspending %s on OpenNebula: %s', vmid, e)
 
 
-def shutdown_machine(api: 'client.OpenNebulaClient', machine_id: str) -> None:
+def shutdown_machine(api: 'client.OpenNebulaClient', vmid: str) -> None:
     '''
     Tries to "gracefully" shutdown a machine. No check is done, it is simply requested to OpenNebula
 
@@ -136,9 +136,9 @@ def shutdown_machine(api: 'client.OpenNebulaClient', machine_id: str) -> None:
     Returns:
     '''
     try:
-        api.set_machine_state(machine_id, 'poweroff')
+        api.set_machine_state(vmid, 'poweroff')
     except Exception as e:
-        logger.error('Error shutting down %s on OpenNebula: %s', machine_id, e)
+        logger.error('Error shutting down %s on OpenNebula: %s', vmid, e)
 
 
 def reset_machine(api: 'client.OpenNebulaClient', machineId: str) -> None:
@@ -196,14 +196,14 @@ def enumerate_machines(
 
 def get_network_info(
     api: 'client.OpenNebulaClient',
-    machine_id: str,
+    vmid: str,
     networkId: typing.Optional[str] = None,
 ) -> tuple[str, str]:
     '''
     Get the MAC and the IP for the network and machine. If network is None, for the first network
     '''
     # md = minidom.parseString(api.call('vm.info', int(machineId)))
-    md: typing.Any = minidom.parseString(api.VMInfo(machine_id).xml or '')  # pyright: ignore[reportUnknownMemberType]
+    md: typing.Any = minidom.parseString(api.VMInfo(vmid).xml or '')  # pyright: ignore[reportUnknownMemberType]
     node = md
 
     try:

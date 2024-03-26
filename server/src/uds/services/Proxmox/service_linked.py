@@ -278,56 +278,56 @@ class ProxmoxServiceLinked(DynamicService):
     def try_graceful_shutdown(self) -> bool:
         return self.try_soft_shutdown.as_bool()
 
-    def get_console_connection(self, machine_id: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
-        return self.provider().get_console_connection(machine_id)
+    def get_console_connection(self, vmid: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
+        return self.provider().get_console_connection(vmid)
 
     def is_avaliable(self) -> bool:
         return self.provider().is_available()
 
-    def get_machine_ip(self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str) -> str:
-        return self.provider().get_guest_ip_address(int(machine_id))
+    def get_machine_ip(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> str:
+        return self.provider().get_guest_ip_address(int(vmid))
     
-    def get_machine_mac(self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str) -> str:
-        return self.get_nic_mac(int(machine_id))
+    def get_machine_mac(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> str:
+        return self.get_nic_mac(int(vmid))
     
-    def start_machine(self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str) -> None:
+    def start_machine(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
         if isinstance(caller_instance, ProxmoxUserserviceLinked):
-            if self.is_machine_running(caller_instance, machine_id):  # If running, skip
+            if self.is_machine_running(caller_instance, vmid):  # If running, skip
                 caller_instance._task = ''
             else:
-                caller_instance._store_task(self.provider().start_machine(int(machine_id)))
+                caller_instance._store_task(self.provider().start_machine(int(vmid)))
         else:
             raise Exception('Invalid caller instance (publication) for start_machine()')
         
-    def stop_machine(self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str) -> None:
+    def stop_machine(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
         if isinstance(caller_instance, ProxmoxUserserviceLinked):
-            if self.is_machine_running(caller_instance, machine_id):
-                caller_instance._store_task(self.provider().stop_machine(int(machine_id)))
+            if self.is_machine_running(caller_instance, vmid):
+                caller_instance._store_task(self.provider().stop_machine(int(vmid)))
             else:
                 caller_instance._task = ''
         else:
             raise Exception('Invalid caller instance (publication) for stop_machine()')
         
     def shutdown_machine(
-        self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str
+        self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str
     ) -> None:
         if isinstance(caller_instance, ProxmoxUserserviceLinked):
-            if self.is_machine_running(caller_instance, machine_id):
-                caller_instance._store_task(self.provider().shutdown_machine(int(machine_id)))
+            if self.is_machine_running(caller_instance, vmid):
+                caller_instance._store_task(self.provider().shutdown_machine(int(vmid)))
             else:
                 caller_instance._task = ''
         else:
             raise Exception('Invalid caller instance (publication) for shutdown_machine()')
 
     def is_machine_running(
-        self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str
+        self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str
     ) -> bool:
         # Raise an exception if fails to get machine info
-        vminfo = self.get_machine_info(int(machine_id))
+        vminfo = self.get_machine_info(int(vmid))
 
         return vminfo.status != 'stopped'
 
-    def remove_machine(self, caller_instance: 'DynamicUserService | DynamicPublication', machine_id: str) -> None:
+    def remove_machine(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
         # All removals are deferred, so we can do it async
         # Try to stop it if already running... Hard stop
-        jobs.ProxmoxDeferredRemoval.remove(self.provider(), int(machine_id), self.try_graceful_shutdown())
+        jobs.ProxmoxDeferredRemoval.remove(self.provider(), int(vmid), self.try_graceful_shutdown())

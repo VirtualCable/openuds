@@ -238,14 +238,14 @@ class OGProvider(ServiceProvider):
     def reserve(self, ou: str, image: str, lab: int = 0, maxtime: int = 0) -> typing.Any:
         return self.api.reserve(ou, image, lab, maxtime)
 
-    def unreserve(self, machine_id: str) -> None:
-        self.api.unreserve(machine_id)
+    def unreserve(self, vmid: str) -> None:
+        self.api.unreserve(vmid)
 
-    def power_on(self, machine_id: str, image: str) -> None:
-        self.api.power_on(machine_id, image)
+    def power_on(self, vmid: str, image: str) -> None:
+        self.api.power_on(vmid, image)
 
-    def notify_endpoints(self, machine_id: str, login_url: str, logout_url: str, release_url: str) -> None:
-        self.api.notify_endpoints(machine_id, login_url, logout_url, release_url)
+    def notify_endpoints(self, vmid: str, login_url: str, logout_url: str, release_url: str) -> None:
+        self.api.notify_endpoints(vmid, login_url, logout_url, release_url)
 
     def notify_deadline(self, machineId: str, deadLine: typing.Optional[int]) -> None:
         self.api.notify_deadline(machineId, deadLine)

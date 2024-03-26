@@ -312,10 +312,10 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
             int(self.guaranteed_memory.value),
         )
 
-    def fix_usb(self, machine_id: str) -> None:
+    def fix_usb(self, vmid: str) -> None:
         # If has usb, upgrade vm to add it now
         if self.usb.value in ('native',):
-            self.provider().api.fix_usb(machine_id)
+            self.provider().api.fix_usb(vmid)
 
     def get_macs_range(self) -> str:
         """
@@ -341,8 +341,8 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         """
         return self.display.value
 
-    def get_console_connection(self, machine_id: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
-        return self.provider().api.get_console_connection_info(machine_id)
+    def get_console_connection(self, vmid: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
+        return self.provider().api.get_console_connection_info(vmid)
 
     def is_avaliable(self) -> bool:
         return self.provider().is_available()

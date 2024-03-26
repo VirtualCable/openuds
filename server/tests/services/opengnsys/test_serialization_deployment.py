@@ -73,7 +73,7 @@ TEST_QUEUE: typing.Final[list[deployment.Operation]] = [
 ]
 
 SERIALIZED_DEPLOYMENT_DATA: typing.Final[typing.Mapping[str, bytes]] = {
-    'v1': b'v1\x01name\x01ip\x01mac\x01machine_id\x01reason\x011234567\x01' + pickle.dumps(TEST_QUEUE, protocol=0),
+    'v1': b'v1\x01name\x01ip\x01mac\x01vmid\x01reason\x011234567\x01' + pickle.dumps(TEST_QUEUE, protocol=0),
 }
 LAST_VERSION: typing.Final[str] = sorted(SERIALIZED_DEPLOYMENT_DATA.keys(), reverse=True)[0]
 
@@ -82,7 +82,7 @@ class OpenGnsysDeploymentSerializationTest(UDSTransactionTestCase):
         self.assertEqual(instance._name, 'name')
         self.assertEqual(instance._ip, 'ip')
         self.assertEqual(instance._mac, 'mac')
-        self.assertEqual(instance._machine_id, 'machine_id')
+        self.assertEqual(instance._machine_id, 'vmid')
         self.assertEqual(instance._reason, 'reason')
         self.assertEqual(instance._stamp, 1234567)
         self.assertEqual(instance._queue, TEST_QUEUE)

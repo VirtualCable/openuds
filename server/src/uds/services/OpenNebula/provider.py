@@ -270,15 +270,15 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
         '''
         return on.vm.get_network_info(self.api, machineId, networkId)
 
-    def get_console_connection(self, machine_id: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
-        console_connection_info = on.vm.get_console_connection(self.api, machine_id)
+    def get_console_connection(self, vmid: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
+        console_connection_info = on.vm.get_console_connection(self.api, vmid)
 
         if console_connection_info is None:
             raise Exception('Invalid console connection on OpenNebula!!!')
         
         return console_connection_info
 
-    def desktop_login(self, machine_id: str, username: str, password: str, domain: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
+    def desktop_login(self, vmid: str, username: str, password: str, domain: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
         '''
         Not provided by OpenNebula API right now
         '''
