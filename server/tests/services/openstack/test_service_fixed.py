@@ -30,9 +30,12 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
 from uds import models
 from uds.core import types
+from unittest import mock
 from . import fixtures
+
 
 from ...utils.test import UDSTransactionTestCase
 
@@ -43,8 +46,9 @@ class TestProxmovFixedService(UDSTransactionTestCase):
         """
         Test the service
         """
-        for prov in (fixtures.create_provider_legacy(), fixtures.create_provider()):
-            with fixtures.patch_provider_api(legacy=prov.legacy) as api:
+        for patcher in (fixtures.patched_provider, fixtures.patched_provider_legacy):
+            with patcher() as prov:
+                api = typing.cast(mock.MagicMock, prov.api())
                 service = fixtures.create_fixed_service(prov)  # Will use provider patched api
                 userservice = fixtures.create_fixed_userservice(service)
 

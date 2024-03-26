@@ -30,8 +30,10 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
 from uds import models
 from uds.core import types
+from unittest import mock
 
 from uds.services.OpenStack.openstack import types as openstack_types
 from uds.services.OpenStack.deployment import Operation
@@ -54,8 +56,9 @@ class TestOpenstackLiveDeployment(UDSTransactionTestCase):
         """
         # Deploy for cache and deploy for user are the same, so we will test both at the same time
         for to_test in ['cache', 'user']:
-            for prov in (fixtures.create_provider_legacy(), fixtures.create_provider()):
-                with fixtures.patch_provider_api(legacy=prov.legacy) as api:
+            for patcher in (fixtures.patched_provider, fixtures.patched_provider_legacy):
+                with patcher() as prov:
+                    api = typing.cast(mock.MagicMock, prov.api())
                     service = fixtures.create_live_service(prov)
                     userservice = fixtures.create_live_userservice(service=service)
                     publication = userservice.publication()
@@ -117,8 +120,8 @@ class TestOpenstackLiveDeployment(UDSTransactionTestCase):
         """
         Test the user service
         """
-        for prov in (fixtures.create_provider_legacy(), fixtures.create_provider()):
-            with fixtures.patch_provider_api(legacy=prov.legacy) as _api:
+        for patcher in (fixtures.patched_provider, fixtures.patched_provider_legacy):
+            with patcher() as prov:
                 service = fixtures.create_live_service(prov)
                 userservice = fixtures.create_live_userservice(service=service)
                 publication = userservice.publication()
@@ -161,8 +164,8 @@ class TestOpenstackLiveDeployment(UDSTransactionTestCase):
         Test the user service
         """
         for keep_on_error in (True, False):
-            for prov in (fixtures.create_provider_legacy(), fixtures.create_provider()):
-                with fixtures.patch_provider_api(legacy=prov.legacy) as _api:
+            for patcher in (fixtures.patched_provider, fixtures.patched_provider_legacy):
+                with patcher() as prov:
                     service = fixtures.create_live_service(prov, maintain_on_error=keep_on_error)
                     userservice = fixtures.create_live_userservice(service=service)
                     publication = userservice.publication()
@@ -195,8 +198,9 @@ class TestOpenstackLiveDeployment(UDSTransactionTestCase):
         This test will have keep on error active, and will create incorrectly
         so vm will be deleted and put on error state
         """
-        for prov in (fixtures.create_provider_legacy(), fixtures.create_provider()):
-            with fixtures.patch_provider_api(legacy=prov.legacy) as api:
+        for patcher in (fixtures.patched_provider, fixtures.patched_provider_legacy):
+            with patcher() as prov:
+                api = typing.cast(mock.MagicMock, prov.api())
                 service = fixtures.create_live_service(prov, maintain_on_eror=True)
                 userservice = fixtures.create_live_userservice(service=service)
                 publication = userservice.publication()

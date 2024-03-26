@@ -50,8 +50,8 @@ class TestOpenstackFixedService(UDSTransactionTestCase):
         """
         Test the user service
         """
-        for prov in (fixtures.create_provider_legacy(), fixtures.create_provider()):
-            with fixtures.patch_provider_api(legacy=prov.legacy) as _api:
+        for patcher in (fixtures.patched_provider, fixtures.patched_provider_legacy):
+            with patcher() as prov:
                 service = fixtures.create_fixed_service(prov)  # Will use provider patched api
                 userservice = fixtures.create_fixed_userservice(service)
 
@@ -97,7 +97,9 @@ class TestOpenstackFixedService(UDSTransactionTestCase):
                 # ensure cache is empty, may affect from other tests
                 userservice.cache.clear()
                 # Also that machine is stopped
-                fixtures.get_id(fixtures.SERVERS_LIST, userservice._vmid).power_state = openstack_types.PowerState.SHUTDOWN
+                fixtures.get_id(fixtures.SERVERS_LIST, userservice._vmid).power_state = (
+                    openstack_types.PowerState.SHUTDOWN
+                )
                 state = userservice.set_ready()
                 self.assertEqual(state, types.states.TaskState.RUNNING)
 

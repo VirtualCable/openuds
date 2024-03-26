@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
 import random
 from unittest import mock
 
@@ -49,18 +50,18 @@ class TestOpenstackProvider(UDSTransactionTestCase):
         """
         Test the provider
         """
-        with fixtures.patch_provider_api() as client:
-            provider = fixtures.create_provider()  # Will not use client api, so no need to patch it
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider.api())
 
             self.assertEqual(provider.test_connection(), types.core.TestResult(True, mock.ANY))
             # Ensure test_connection is called
-            client.test_connection.assert_called_once()
+            api.test_connection.assert_called_once()
 
             self.assertEqual(provider.is_available(), True)
-            client.is_available.assert_called_once()
+            api.is_available.assert_called_once()
 
             # Clear mock calls
-            client.reset_mock()
+            api.reset_mock()
             OpenStackProvider.test(
                 env=environment.Environment.testing_environment(), data=fixtures.PROVIDER_VALUES_DICT
             )
@@ -69,18 +70,18 @@ class TestOpenstackProvider(UDSTransactionTestCase):
         """
         Test the provider
         """
-        with fixtures.patch_provider_api(legacy=True) as client:
-            provider = fixtures.create_provider_legacy()  # Will not use client api, so no need to patch it
+        with fixtures.patched_provider_legacy() as provider:
+            api = typing.cast(mock.MagicMock, provider.api())
 
             self.assertEqual(provider.test_connection(), types.core.TestResult(True, mock.ANY))
             # Ensure test_connection is called
-            client.test_connection.assert_called_once()
+            api.test_connection.assert_called_once()
 
             self.assertEqual(provider.is_available(), True)
-            client.is_available.assert_called_once()
+            api.is_available.assert_called_once()
 
             # Clear mock calls
-            client.reset_mock()
+            api.reset_mock()
             OpenStackProviderLegacy.test(
                 env=environment.Environment.testing_environment(), data=fixtures.PROVIDER_VALUES_DICT
             )
@@ -91,8 +92,8 @@ class TestOpenstackProvider(UDSTransactionTestCase):
         """
         from uds.services.OpenStack.helpers import get_machines, get_resources, get_volumes
 
-        for prov in (fixtures.create_provider_legacy(), fixtures.create_provider()):
-            with fixtures.patch_provider_api(legacy=prov.legacy) as _api:
+        for patcher in (fixtures.patched_provider, fixtures.patched_provider_legacy):
+            with patcher() as prov:
                 # Ensure exists on db
                 db_provider = models.Provider.objects.create(
                     name='test proxmox provider',
@@ -107,25 +108,30 @@ class TestOpenstackProvider(UDSTransactionTestCase):
                     'region': random.choice(fixtures.REGIONS_LIST).id,
                 }
                 # Test get_storage
-                h_machines = get_machines(parameters)
-                self.assertEqual(len(h_machines), 1)
-                self.assertEqual(h_machines[0]['name'], 'machines')
-                self.assertEqual(sorted(i['id'] for i in h_machines[0]['choices']), sorted(i.id for i in fixtures.SERVERS_LIST))
-                
-                h_resources = get_resources(parameters)
-                # [{'name': 'availability_zone', 'choices': [...]}, {'name': 'network', 'choices': [...]}, {'name': 'flavor', 'choices': [...]}, {'name': 'security_groups', 'choices': [...]}]
-                self.assertEqual(len(h_resources), 4)
-                self.assertEqual(sorted(i['name'] for i in h_resources), ['availability_zone', 'flavor', 'network', 'security_groups'])
-                def _get_choices_for(name: str) -> list[str]:
-                    return [i['id'] for i in next(i for i in h_resources if i['name'] == name)['choices']]
-                
-                self.assertEqual(sorted(_get_choices_for('availability_zone')), sorted(i.id for i in fixtures.AVAILABILITY_ZONES_LIST))
-                self.assertEqual(sorted(_get_choices_for('network')), sorted(i.id for i in fixtures.NETWORKS_LIST))
-                self.assertEqual(sorted(_get_choices_for('flavor')), sorted(i.id for i in fixtures.FLAVORS_LIST if not i.disabled))
-                self.assertEqual(sorted(_get_choices_for('security_groups')), sorted(i.id for i in fixtures.SECURITY_GROUPS_LIST))
-                
-                # [{'name': 'volume', 'choices': [...]}]
-                h_volumes = get_volumes(parameters)
-                self.assertEqual(len(h_volumes), 1)
-                self.assertEqual(h_volumes[0]['name'], 'volume')
-                self.assertEqual(sorted(i['id'] for i in h_volumes[0]['choices']), sorted(i.id for i in fixtures.VOLUMES_LIST))
+                # Helpers need a bit more patching to work
+                # We must patch get_api(parameters: dict[str, str]) -> tuple[openstack_client.OpenstackClient, bool]:
+                with mock.patch('uds.services.OpenStack.helpers.get_api') as get_api:
+                    get_api.return_value = (prov.api(), False)
+                    
+                    h_machines = get_machines(parameters)
+                    self.assertEqual(len(h_machines), 1)
+                    self.assertEqual(h_machines[0]['name'], 'machines')
+                    self.assertEqual(sorted(i['id'] for i in h_machines[0]['choices']), sorted(i.id for i in fixtures.SERVERS_LIST))
+                    
+                    h_resources = get_resources(parameters)
+                    # [{'name': 'availability_zone', 'choices': [...]}, {'name': 'network', 'choices': [...]}, {'name': 'flavor', 'choices': [...]}, {'name': 'security_groups', 'choices': [...]}]
+                    self.assertEqual(len(h_resources), 4)
+                    self.assertEqual(sorted(i['name'] for i in h_resources), ['availability_zone', 'flavor', 'network', 'security_groups'])
+                    def _get_choices_for(name: str) -> list[str]:
+                        return [i['id'] for i in next(i for i in h_resources if i['name'] == name)['choices']]
+                    
+                    self.assertEqual(sorted(_get_choices_for('availability_zone')), sorted(i.id for i in fixtures.AVAILABILITY_ZONES_LIST))
+                    self.assertEqual(sorted(_get_choices_for('network')), sorted(i.id for i in fixtures.NETWORKS_LIST))
+                    self.assertEqual(sorted(_get_choices_for('flavor')), sorted(i.id for i in fixtures.FLAVORS_LIST if not i.disabled))
+                    self.assertEqual(sorted(_get_choices_for('security_groups')), sorted(i.id for i in fixtures.SECURITY_GROUPS_LIST))
+                    
+                    # [{'name': 'volume', 'choices': [...]}]
+                    h_volumes = get_volumes(parameters)
+                    self.assertEqual(len(h_volumes), 1)
+                    self.assertEqual(h_volumes[0]['name'], 'volume')
+                    self.assertEqual(sorted(i['id'] for i in h_volumes[0]['choices']), sorted(i.id for i in fixtures.VOLUMES_LIST))
