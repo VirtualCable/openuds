@@ -28,8 +28,10 @@
 '''
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+import json
 import typing
 import re
+import collections.abc
 
 from uds.core.consts.system import VERSION
 from uds.core.util.model import sql_stamp_seconds
@@ -42,6 +44,7 @@ def rest_result(result: typing.Any, **kwargs: typing.Any) -> dict[str, typing.An
     # A common possible value in kwargs is "error"
     return {'result': result, 'stamp': sql_stamp_seconds(), 'version': VERSION, **kwargs}
 
+
 def camel_and_snake_case_from(text: str) -> tuple[str, str]:
     '''
     Returns a tuple with the camel case and snake case of a text
@@ -51,5 +54,22 @@ def camel_and_snake_case_from(text: str) -> tuple[str, str]:
     # And snake case to camel case (first letter lower case, rest upper case)
     camel_case_name = ''.join(x.capitalize() for x in snake_case_name.split('_'))
     camel_case_name = camel_case_name[0].lower() + camel_case_name[1:]
-    
+
     return camel_case_name, snake_case_name
+
+
+def to_incremental_json(
+    source: collections.abc.Generator[typing.Any, None, None]
+) -> typing.Generator[str, None, None]:
+    '''
+    Converts a generator to a json incremental string
+    '''
+    yield '['
+    first = True
+    for item in source:
+        if first:
+            first = False
+        else:
+            yield ','
+        yield json.dumps(item)
+    yield ']'

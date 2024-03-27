@@ -31,9 +31,7 @@
 """
 # pylint: disable=too-many-public-methods
 
-import fnmatch
 import logging
-import re
 import typing
 import collections.abc
 
@@ -189,58 +187,6 @@ class ModelHandler(BaseModelHandler):
 
     # End overridable
 
-    def extract_filter(self) -> None:
-        # Extract filter from params if present
-        self.fltr = None
-        if 'filter' in self._params:
-            self.fltr = self._params['filter']
-            del self._params['filter']  # Remove parameter
-            logger.debug('Found a filter expression (%s)', self.fltr)
-
-    def filter(self, data: typing.Any) -> typing.Any:
-        # Right now, filtering only supports a single filter, in a future
-        # we may improve it
-        if self.fltr is None:
-            return data
-
-        # Filtering a non iterable (list or tuple)
-        if not isinstance(data, collections.abc.Iterable):
-            return data
-
-        logger.debug('data: %s, fltr: %s', typing.cast(typing.Any, data), self.fltr)
-        try:
-            fld, pattern = self.fltr.split('=')
-            s, e = '', ''
-            if pattern[0] == '^':
-                pattern = pattern[1:]
-                s = '^'
-            if pattern[-1] == '$':
-                pattern = pattern[:-1]
-                e = '$'
-
-            r = re.compile(s + fnmatch.translate(pattern) + e, re.RegexFlag.IGNORECASE)
-
-            def fltr_function(item: typing.Any) -> bool:
-                if not isinstance(item, dict):
-                    return False
-                try:
-                    if fld not in item or r.match(typing.cast(dict[str, typing.Any], item)[fld]) is None:
-                        return False
-                except Exception:
-                    return False
-                return True
-
-            res: list[dict[str, typing.Any]] = list(
-                filter(fltr_function, typing.cast(collections.abc.Iterable[dict[str, typing.Any]], data))
-            )
-
-            logger.debug('After filtering: %s', res)
-            return res
-        except Exception as e:
-            logger.exception('Exception:')
-            logger.info('Filtering expression %s is invalid!', self.fltr)
-            raise exceptions.rest.RequestError(f'Filtering expression {self.fltr} is invalid') from e
-
     # Helper to process detail
     # Details can be managed (writen) by any user that has MANAGEMENT permission over parent
     def process_detail(self) -> typing.Any:
@@ -338,9 +284,7 @@ class ModelHandler(BaseModelHandler):
         """
         Wraps real get method so we can process filters if they exists
         """
-        # Extract filter from params if present
-        self.extract_filter()
-        return self.filter(self.process_get())
+        return self.process_get()
 
     #  pylint: disable=too-many-return-statements
     def process_get(self) -> typing.Any:

@@ -56,6 +56,7 @@ logger = logging.getLogger(__name__)
 
 __all__ = ['Handler', 'Dispatcher']
 
+
 @dataclasses.dataclass(frozen=True)
 class HandlerNode:
     """
@@ -65,13 +66,13 @@ class HandlerNode:
     name: str
     handler: typing.Optional[type[Handler]]
     children: collections.abc.MutableMapping[str, 'HandlerNode']
-    
+
     def __str__(self) -> str:
         return f'HandlerNode({self.name}, {self.handler}, {self.children})'
-    
+
     def __repr__(self) -> str:
         return str(self)
-    
+
     def tree(self, level: int = 0) -> str:
         """
         Returns a string representation of the tree
@@ -88,10 +89,12 @@ class Dispatcher(View):
     """
 
     # This attribute will contain all paths--> handler relations, filled at Initialized method
-    services: typing.ClassVar[HandlerNode] = HandlerNode('', None, {}) 
+    services: typing.ClassVar[HandlerNode] = HandlerNode('', None, {})
 
-    @method_decorator(csrf_exempt) 
-    def dispatch(self, request: 'http.request.HttpRequest', *args: typing.Any, **kwargs: typing.Any) -> 'http.HttpResponse':
+    @method_decorator(csrf_exempt)
+    def dispatch(
+        self, request: 'http.request.HttpRequest', *args: typing.Any, **kwargs: typing.Any
+    ) -> 'http.HttpResponse':
         """
         Processes the REST request and routes it wherever it needs to be routed
         """
@@ -183,8 +186,19 @@ class Dispatcher(View):
         try:
             response = operation()
 
-            if not handler.raw:  # Raw handlers will return an HttpResponse Object
-                response = processor.get_response(response)
+            # If response is an HttpResponse object, return it directly
+            if not isinstance(response, http.HttpResponse):
+                # If it is a generator, produce an streamed incremental response
+                if isinstance(response, collections.abc.Generator):
+                    response = typing.cast(
+                        'http.HttpResponse',
+                        http.StreamingHttpResponse(
+                            processor.as_incremental(response),
+                            content_type="application/json",
+                        ),
+                    )
+                else:
+                    response = processor.get_response(response)                
             # Set response headers
             response['UDS-Version'] = f'{consts.system.VERSION};{consts.system.VERSION_STAMP}'
             for k, val in handler.headers().items():
@@ -249,9 +263,7 @@ class Dispatcher(View):
         if name not in service_node.children:
             service_node.children[name] = HandlerNode(name, None, {})
 
-        service_node.children[name] = dataclasses.replace(
-            service_node.children[name], handler=type_
-        )
+        service_node.children[name] = dataclasses.replace(service_node.children[name], handler=type_)
 
     # Initializes the dispatchers
     @staticmethod
@@ -278,6 +290,7 @@ class Dispatcher(View):
             module_name=module_name,
             checker=checker,
             package_name='methods',
-        )       
+        )
+
 
 Dispatcher.initialize()

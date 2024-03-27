@@ -58,7 +58,6 @@ class Handler:
     REST requests handler base class
     """
 
-    raw: typing.ClassVar[bool] = False  # If true, Handler will return directly an HttpResponse Object
     name: typing.ClassVar[typing.Optional[str]] = (
         None  # If name is not used, name will be the class name in lower case
     )

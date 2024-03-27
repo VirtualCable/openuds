@@ -42,6 +42,8 @@ from django.utils.functional import Promise as DjangoPromise
 
 from uds.core import consts
 
+from .utils import to_incremental_json
+
 # from xml_marshaller import xml_marshaller
 
 logger = logging.getLogger(__name__)
@@ -96,6 +98,12 @@ class ContentProcessor:
         """
         return str(obj)
 
+    def as_incremental(self, obj: typing.Any) -> collections.abc.Iterable[bytes]:
+        """
+        Renders an obj to the specific type, but in an incremental way (if possible)
+        """
+        yield self.render(obj).encode('utf8')
+
     @staticmethod
     def process_for_render(obj: typing.Any) -> typing.Any:
         """
@@ -103,18 +111,24 @@ class ContentProcessor:
         """
         if obj is None or isinstance(obj, (bool, int, float, str)):
             return obj
-        
+
         if isinstance(obj, DjangoPromise):
             return str(obj)  # This is for translations
 
         if isinstance(obj, dict):
-            return {k: ContentProcessor.process_for_render(v) for k, v in typing.cast(dict[str, typing.Any], obj).items()}
-        
+            return {
+                k: ContentProcessor.process_for_render(v)
+                for k, v in typing.cast(dict[str, typing.Any], obj).items()
+            }
+
         if isinstance(obj, bytes):
             return obj.decode('utf-8')
 
         if isinstance(obj, collections.abc.Iterable):
-            return [ContentProcessor.process_for_render(v) for v in typing.cast(collections.abc.Iterable[typing.Any], obj)]
+            return [
+                ContentProcessor.process_for_render(v)
+                for v in typing.cast(collections.abc.Iterable[typing.Any], obj)
+            ]
 
         if isinstance(obj, (datetime.datetime,)):  # Datetime as timestamp
             return int(time.mktime(obj.timetuple()))
@@ -165,6 +179,10 @@ class JsonProcessor(MarshallerProcessor):
     mime_type: typing.ClassVar[str] = 'application/json'
     extensions: typing.ClassVar[collections.abc.Iterable[str]] = ['json']
     marshaller: typing.ClassVar[typing.Any] = json
+
+    def as_incremental(self, obj: typing.Any) -> collections.abc.Iterable[bytes]:
+        for i in to_incremental_json(obj):
+            yield i.encode('utf8')
 
 
 # ---------------
