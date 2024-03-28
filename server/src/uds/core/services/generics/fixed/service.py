@@ -90,7 +90,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         tooltip=_(
             'If active, UDS will try to create an snapshot (if one already does not exists) before accessing a machine, and restore it after usage.'
         ),
-        tab=_('Machines'),
+        tab=types.ui.Tab.MACHINE,
         old_field_name='useSnapshots',
     )
 
@@ -102,7 +102,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         tooltip=_(
             'If active, UDS will try to create an snapshot (if one already does not exists) before accessing a machine, and restore it after usage.'
         ),
-        tab=_('Machines'),
+        tab=types.ui.Tab.MACHINE,
         choices=[
             gui.choice_item('no', _('No snapshot')),
             gui.choice_item('stop', _('Recover snapshot and stop machine')),
@@ -116,7 +116,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         order=21,
         tooltip=_('Machines for this service'),
         required=True,
-        tab=_('Machines'),
+        tab=types.ui.Tab.MACHINE,
         rows=10,
     )
     
