@@ -83,6 +83,8 @@ class TestProxmoxProvider(UDSTransactionTestCase):
             for ret_val in [True, False]:
                 api.test.reset_mock()
                 # Mock test_connection to return ret_val
+                # Note that we must patch the class method, not the instance method
+                # Because a new instance is created on test
                 with mock.patch(
                     'uds.services.Proxmox.provider.ProxmoxProvider.test_connection', return_value=ret_val
                 ):
