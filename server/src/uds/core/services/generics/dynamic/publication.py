@@ -44,7 +44,10 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
 
     # Some customization fields
     # How many times we will check for a state before giving up
-    max_state_checks: typing.ClassVar[int] = 20
+    # Publications can take a long time, so we will check it for a long time
+    # as long as a couple of hours by default with our suggested delay
+    max_state_checks: typing.ClassVar[int] = 7200 // suggested_delay
+    
     # If must wait untill finish queue for destroying the machine
     wait_until_finish_to_destroy: typing.ClassVar[bool] = False
 

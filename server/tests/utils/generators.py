@@ -69,6 +69,7 @@ def random_mac() -> str:
 def limited_iterator(check: typing.Callable[[], bool], limit: int = 128) -> typing.Generator[int, None, None]:
     """
     Limit an iterator to a number of elements
+    Will continue until limit is reached or check() returns False
     """
     current = 0
     while current < limit and check():
