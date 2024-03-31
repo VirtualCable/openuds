@@ -93,4 +93,4 @@ class ModuleFactory(Factory[T]):
         Inserts an object into the factory.
         '''
         # logger.debug('Adding %s as %s', type_.type(), type_.__module__)
-        super().register(type_.get_type().lower(), type_)
+        super().register(type_.mod_type().lower(), type_)

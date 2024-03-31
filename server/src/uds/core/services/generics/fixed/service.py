@@ -132,14 +132,14 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
                 raise exceptions.ui.ValidationError(gettext('We need at least a machine'))
 
             # Remove machines not in values from "assigned" set
-            with self._assigned_machines_access() as assigned_vms:
+            with self._assigned_access() as assigned_vms:
                 assigned_vms &= set(self.machines.as_list())
             self.token.value = self.token.value.strip()
         # Recover userservice
         self.userservices_limit = len(self.machines.as_list())
         
     @contextlib.contextmanager
-    def _assigned_machines_access(self) -> collections.abc.Generator[set[str], None, None]:
+    def _assigned_access(self) -> collections.abc.Generator[set[str], None, None]:
         with self.storage.as_dict(atomic=True) as d:
             machines: set[str] = d.get('vms', set())
             initial_machines = machines.copy()  # for comparison later
@@ -163,24 +163,27 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         return
 
     @abc.abstractmethod
-    def get_machine_name(self, vmid: str) -> str:
+    def get_name(self, vmid: str) -> str:
         """
         Returns the machine name for the given vmid
         """
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def get_and_assign_machine(self) -> str:
+    def get_and_assign(self) -> str:
         """
         Gets automatically an assigns a machine
-        Returns the id of the assigned machine
+        Returns the id of the assigned machine, or raises an exception if no machine is available
+        
+        Note:
+            This is used when deploying a machine for an user
         """
         raise NotImplementedError()
 
     # default implementation, should be sufficient for most cases
-    def remove_and_free_machine(self, vmid: str) -> str:
+    def remove_and_free(self, vmid: str) -> str:
         try:
-            with self._assigned_machines_access() as assigned:
+            with self._assigned_access() as assigned:
                 assigned.remove(vmid)
             return types.states.State.FINISHED
         except Exception as e:

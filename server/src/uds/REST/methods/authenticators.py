@@ -174,8 +174,8 @@ class Authenticators(ModelHandler):
                     'mfa_id': item.mfa.uuid if item.mfa else '',
                     'small_name': item.small_name,
                     'users_count': item.users.count(),
-                    'type': type_.get_type(),
-                    'type_name': type_.name(),
+                    'type': type_.mod_type(),
+                    'type_name': type_.mod_name(),
                     'type_info': self.type_as_dict(type_),
                     'permission': permissions.effective_permissions(self._user, item),
                 }

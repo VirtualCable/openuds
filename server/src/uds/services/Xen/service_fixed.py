@@ -174,7 +174,7 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
             for machine in self.provider().get_machines_from_folder(self.folder.value, retrieve_names=True)
         }
 
-        with self._assigned_machines_access() as assigned_vms:
+        with self._assigned_access() as assigned_vms:
             return [
                 gui.choice_item(k, vms[k])
                 for k in self.machines.as_list()
@@ -186,7 +186,7 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
         self, assignable_id: str, user: 'models.User', userservice_instance: 'services.UserService'
     ) -> types.states.TaskState:
         xen_userservice_instance = typing.cast(XenFixedUserService, userservice_instance)
-        with self._assigned_machines_access() as assigned_vms:
+        with self._assigned_access() as assigned_vms:
             if assignable_id not in assigned_vms:
                 assigned_vms.add(assignable_id)
                 return xen_userservice_instance.assign(assignable_id)
@@ -222,9 +222,9 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
                 except Exception as e:
                     self.do_log(log.LogLevel.WARNING, 'Could not create SNAPSHOT for this VM. ({})'.format(e))
 
-    def get_and_assign_machine(self) -> str:
+    def get_and_assign(self) -> str:
         found_vmid: typing.Optional[str] = None
-        with self._assigned_machines_access() as assigned_vms:
+        with self._assigned_access() as assigned_vms:
             try:
                 for checking_vmid in self.machines.as_list():
                     if checking_vmid not in assigned_vms:  # Not assigned
@@ -258,12 +258,12 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
     def get_guest_ip_address(self, vmid: str) -> str:
         return self.provider().get_first_ip(vmid)
 
-    def get_machine_name(self, vmid: str) -> str:
+    def get_name(self, vmid: str) -> str:
         return self.provider().get_machine_name(vmid)
 
-    def remove_and_free_machine(self, vmid: str) -> str:
+    def remove_and_free(self, vmid: str) -> str:
         try:
-            with self._assigned_machines_access() as assigned_vms:
+            with self._assigned_access() as assigned_vms:
                 assigned_vms.remove(vmid)
             return types.states.State.FINISHED
         except Exception as e:

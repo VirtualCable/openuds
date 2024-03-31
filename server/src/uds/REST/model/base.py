@@ -267,8 +267,8 @@ class BaseModelHandler(Handler):
         Returns a dictionary describing the type (the name, the icon, description, etc...)
         """
         res = types.rest.TypeInfo(
-            name=_(type_.name()),
-            type=type_.get_type(),
+            name=_(type_.mod_name()),
+            type=type_.mod_type(),
             description=_(type_.description()),
             icon=type_.icon64().replace('\n', ''),
             extra=self.type_info(type_),

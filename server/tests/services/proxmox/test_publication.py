@@ -43,7 +43,7 @@ from ...utils.generators import limited_iterator
 
 
 # USe transactional, used by publication access to db on "removal"
-class TestProxmovPublication(UDSTransactionTestCase):
+class TestProxmoxPublication(UDSTransactionTestCase):
 
     def test_publication(self) -> None:
         with fixtures.patched_provider() as provider:

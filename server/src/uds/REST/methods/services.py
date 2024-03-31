@@ -101,7 +101,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             'tags': [tag.tag for tag in item.tags.all()],
             'comments': item.comments,
             'type': item.data_type,
-            'type_name': _(itemType.name()),
+            'type_name': _(itemType.mod_name()),
             'deployed_services_count': item.deployedServices.count(),
             'user_services_count': models.UserService.objects.filter(deployed_service__service=item)
             .exclude(state__in=State.INFO_STATES)
@@ -254,8 +254,8 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         if for_type is None:
             offers = [
                 {
-                    'name': _(t.name()),
-                    'type': t.get_type(),
+                    'name': _(t.mod_name()),
+                    'type': t.mod_type(),
                     'description': _(t.description()),
                     'icon': t.icon64().replace('\n', ''),
                 }
@@ -263,11 +263,11 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             ]
         else:
             for t in parent.get_type().get_provided_services():
-                if for_type == t.get_type():
+                if for_type == t.mod_type():
                     offers = [
                         {
-                            'name': _(t.name()),
-                            'type': t.get_type(),
+                            'name': _(t.mod_name()),
+                            'type': t.mod_type(),
                             'description': _(t.description()),
                             'icon': t.icon64().replace('\n', ''),
                         }

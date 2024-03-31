@@ -28,13 +28,9 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
-import collections.abc
 import datetime
 import logging
 
-from uds.core.consts.actor import UNMANAGED
-from uds.core.consts.actor import MANAGED
 from uds.core.util.stats import counters
 
 from ..utils import rest

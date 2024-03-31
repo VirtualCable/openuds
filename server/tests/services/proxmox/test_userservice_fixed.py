@@ -53,7 +53,7 @@ class TestProxmoxFixedUserService(UDSTransactionTestCase):
         with fixtures.patched_provider() as provider:
             service = fixtures.create_service_fixed(provider=provider)
             userservice = fixtures.create_userservice_fixed(service=service)
-            with service._assigned_machines_access() as assigned_machines:
+            with service._assigned_access() as assigned_machines:
                 self.assertEqual(assigned_machines, set())
 
             # patch userservice db_obj() method to return a mock
@@ -78,7 +78,7 @@ class TestProxmoxFixedUserService(UDSTransactionTestCase):
             userservice_db.set_in_use.assert_called_once_with(True)
 
             # vmid should have been assigned, so it must be in the assigned machines
-            with service._assigned_machines_access() as assigned_machines:
+            with service._assigned_access() as assigned_machines:
                 self.assertEqual({userservice._vmid}, assigned_machines)
             
             # Now, let's release the service
@@ -92,7 +92,7 @@ class TestProxmoxFixedUserService(UDSTransactionTestCase):
             self.assertEqual(state, types.states.TaskState.FINISHED)
             
             # must be empty now
-            with service._assigned_machines_access() as assigned_machines:
+            with service._assigned_access() as assigned_machines:
                 self.assertEqual(assigned_machines, set())
             
             # set_ready, machine is "started", set by mock fixture with the start invokation

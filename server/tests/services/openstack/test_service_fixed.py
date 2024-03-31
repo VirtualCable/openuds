@@ -40,7 +40,7 @@ from . import fixtures
 from ...utils.test import UDSTransactionTestCase
 
 
-class TestProxmovFixedService(UDSTransactionTestCase):
+class TestOpenstackFixedService(UDSTransactionTestCase):
 
     def test_service_fixed(self) -> None:
         """
@@ -101,7 +101,7 @@ class TestProxmovFixedService(UDSTransactionTestCase):
                 api.get_server.reset_mock()
                 # Now get_and_assign_machine as much as remaining machines
                 for _ in range(remaining):
-                    vm = service.get_and_assign_machine()
+                    vm = service.get_and_assign()
                     self.assertIn(vm, assignables)
 
                 # enumarate_assignables should return an empty list now
@@ -111,4 +111,4 @@ class TestProxmovFixedService(UDSTransactionTestCase):
                 self.assertEqual(api.get_server.call_count, remaining)
 
                 # And a new try, should raise an exception
-                self.assertRaises(Exception, service.get_and_assign_machine)
+                self.assertRaises(Exception, service.get_and_assign)

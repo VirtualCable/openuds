@@ -88,8 +88,8 @@ class Providers(ModelHandler):
         # Icon can have a lot of data (1-2 Kbytes), but it's not expected to have a lot of services providers, and even so, this will work fine
         offers = [
             {
-                'name': gettext(t.name()),
-                'type': t.get_type(),
+                'name': gettext(t.mod_name()),
+                'type': t.mod_type(),
                 'description': gettext(t.description()),
                 'icon': t.icon64().replace('\n', ''),
             }
@@ -106,8 +106,8 @@ class Providers(ModelHandler):
             .count(),
             'maintenance_mode': item.maintenance_mode,
             'offers': offers,
-            'type': type_.get_type(),
-            'type_name': type_.name(),
+            'type': type_.mod_type(),
+            'type_name': type_.mod_name(),
             'comments': item.comments,
             'permission': permissions.effective_permissions(self._user, item),
         }

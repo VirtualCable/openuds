@@ -102,10 +102,10 @@ class TestProxmovFixedService(UDSTransactionTestCase):
             # Get and assign machine
             # will try to assign FIRST FREE machine, that is the second one
             vmid2: str = typing.cast(list[str], fixtures.SERVICE_FIXED_VALUES_DICT['machines'])[1]
-            self.assertEqual(service.get_and_assign_machine(), vmid2)
+            self.assertEqual(service.get_and_assign(), vmid2)
 
             # Now two machies should be assigned
-            with service._assigned_machines_access() as assigned_machines:
+            with service._assigned_access() as assigned_machines:
                 self.assertEqual(assigned_machines, set([vmid, vmid2]))
 
     def test_service_methods_2(self) -> None:
@@ -113,7 +113,7 @@ class TestProxmovFixedService(UDSTransactionTestCase):
             service = fixtures.create_service_fixed(provider=provider)
 
             # Get machine name
-            self.assertEqual(service.get_machine_name('1'), fixtures.VMS_INFO[0].name)
+            self.assertEqual(service.get_name('1'), fixtures.VMS_INFO[0].name)
 
             # Get first network mac
             self.assertEqual(
@@ -125,13 +125,13 @@ class TestProxmovFixedService(UDSTransactionTestCase):
 
             # Remove and free machine
             # Fist, assign a machine
-            vmid = service.get_and_assign_machine()
-            with service._assigned_machines_access() as assigned_machines:               
+            vmid = service.get_and_assign()
+            with service._assigned_access() as assigned_machines:               
                 self.assertEqual(assigned_machines, set([vmid]))
 
             # And now free it                
-            self.assertEqual(service.remove_and_free_machine(vmid), types.states.State.FINISHED)
-            with service._assigned_machines_access() as assigned_machines:
+            self.assertEqual(service.remove_and_free(vmid), types.states.State.FINISHED)
+            with service._assigned_access() as assigned_machines:
                 self.assertEqual(assigned_machines, set())
 
     def test_process_snapshot(self) -> None:

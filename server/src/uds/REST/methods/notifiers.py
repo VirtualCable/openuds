@@ -122,7 +122,7 @@ class Notifiers(ModelHandler):
             'enabled': item.enabled,
             'tags': [tag.tag for tag in item.tags.all()],
             'comments': item.comments,
-            'type': type_.get_type(),
-            'type_name': type_.name(),
+            'type': type_.mod_type(),
+            'type_name': type_.mod_name(),
             'permission': permissions.effective_permissions(self._user, item),
         }

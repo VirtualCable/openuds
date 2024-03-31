@@ -414,7 +414,7 @@ class Transports(DetailHandler):
                 'type': get_type(i),
                 'comments': i.comments,
                 'priority': i.priority,
-                'trans_type': _(i.get_type().name()),
+                'trans_type': _(i.get_type().mod_name()),
             }
             for i in parent.transports.all()
             if get_type(i)

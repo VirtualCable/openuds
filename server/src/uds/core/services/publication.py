@@ -320,4 +320,4 @@ class Publication(Environmentable, Serializable):
         """
         String method, mainly used for debugging purposes
         """
-        return f'{self.__class__.__name__}({self._service.name})'
+        return f'{self.__class__.__name__}({self._service.mod_name})'

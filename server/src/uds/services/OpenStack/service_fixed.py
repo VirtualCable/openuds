@@ -149,7 +149,7 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
             server.id: server.name for server in self.api.list_servers() if not server.name.startswith('UDS-')
         }
 
-        with self._assigned_machines_access() as assigned_servers:
+        with self._assigned_access() as assigned_servers:
             return [
                 gui.choice_item(k, servers[k])
                 for k in self.machines.as_list()
@@ -161,7 +161,7 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
         self, assignable_id: str, user: 'models.User', userservice_instance: 'services.UserService'
     ) -> types.states.TaskState:
         openstack_userservice_instance = typing.cast(OpenStackUserServiceFixed, userservice_instance)
-        with self._assigned_machines_access() as assigned:
+        with self._assigned_access() as assigned:
             if assignable_id not in assigned:
                 assigned.add(assignable_id)
                 return openstack_userservice_instance.assign(assignable_id)
@@ -171,10 +171,10 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
     def process_snapshot(self, remove: bool, userservice_instance: FixedUserService) -> None:
         return  # No snapshots support
 
-    def get_and_assign_machine(self) -> str:
+    def get_and_assign(self) -> str:
         found_vmid: typing.Optional[str] = None
         try:
-            with self._assigned_machines_access() as assigned:
+            with self._assigned_access() as assigned:
                 for checking_vmid in self.machines.as_list():
                     if checking_vmid not in assigned:  # Not already assigned
                         try:
@@ -209,12 +209,12 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
     def get_guest_ip_address(self, vmid: str) -> str:
         return self.api.get_server(vmid).addresses[0].ip
 
-    def get_machine_name(self, vmid: str) -> str:
+    def get_name(self, vmid: str) -> str:
         return self.api.get_server(vmid).name
 
-    def remove_and_free_machine(self, vmid: str) -> str:
+    def remove_and_free(self, vmid: str) -> str:
         try:
-            with self._assigned_machines_access() as assigned:
+            with self._assigned_access() as assigned:
                 assigned.remove(vmid)
             return types.states.State.FINISHED
         except Exception as e:

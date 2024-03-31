@@ -60,7 +60,7 @@ class ServiceProviderFactory(factory.ModuleFactory[ServiceProvider]):
         # We will check that if service provided by "provider" needs
         # cache, but service do not provides publication_type,
         # that service will not be registered and it will be informed
-        type_name = type_.get_type().lower()
+        type_name = type_.mod_type().lower()
 
         if type_name in self.providers():
             logger.debug('%s already registered as Service Provider', type_)

@@ -96,11 +96,11 @@ class FixedTestingService(fixed_service.FixedService):
             userservice_instance._queue.insert(0, types.services.FixedOperation.NOP)
             self.first_process_called = True
 
-    def get_machine_name(self, vmid: str) -> str:
+    def get_name(self, vmid: str) -> str:
         self.mock.get_machine_name(vmid)
         return f'Machine {vmid}'
 
-    def get_and_assign_machine(self) -> str:
+    def get_and_assign(self) -> str:
         self.mock.get_and_assign_machine()
         if self.available_machines_number <= 0:
             raise Exception('No machine available')
@@ -108,7 +108,7 @@ class FixedTestingService(fixed_service.FixedService):
         self.assigned_machine = 'assigned'
         return self.assigned_machine
 
-    def remove_and_free_machine(self, vmid: str) -> str:
+    def remove_and_free(self, vmid: str) -> str:
         self.mock.remove_and_free_machine(vmid)
         self.assigned_machine = ''
         return types.states.TaskState.FINISHED

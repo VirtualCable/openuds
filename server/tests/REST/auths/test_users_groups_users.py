@@ -28,7 +28,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import time
 import typing
 import collections.abc
 import functools
@@ -83,7 +82,7 @@ class UsersTest(rest.test.RESTActorTestCase):
         fields: list[collections.abc.Mapping[str, typing.Any]] = tableinfo['fields']
         self.assertTrue(
             functools.reduce(
-                lambda x, y: x and y,
+                lambda x, y: x and y,  # pyright: ignore
                 map(
                     lambda f: next(iter(f.keys()))
                     in (

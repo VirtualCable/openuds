@@ -109,7 +109,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
 
         if self._vmid:
             try:
-                self.service().remove_and_free_machine(self._vmid)
+                self.service().remove_and_free(self._vmid)
                 self.service().process_snapshot(remove=True, userservice_instance=self)
                 self._vmid = ''
             except Exception as e:
@@ -151,7 +151,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         Deploys an service instance for an user.
         """
         logger.debug('Deploying for user')
-        self._vmid = self.service().get_and_assign_machine()
+        self._vmid = self.service().get_and_assign()
         # copy is needed to avoid modifying class var, and access using instance allowing to get, if provided, overriden queue
         self._queue = self._create_queue.copy()
         return self._execute_queue()
@@ -224,7 +224,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         Deploys a machine from template for user/cache
         """
         self._mac = self.service().get_first_network_mac(self._vmid) or ''
-        self._name = self.service().get_machine_name(self._vmid) or f'VM-{self._vmid}'
+        self._name = self.service().get_name(self._vmid) or f'VM-{self._vmid}'
 
     @typing.final
     def _snapshot_create(self) -> None:
@@ -253,7 +253,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         """
         Removes the snapshot if needed and releases the machine again
         """
-        self.service().remove_and_free_machine(self._vmid)
+        self.service().remove_and_free(self._vmid)
 
     # Check methods
     def create_checker(self) -> types.states.TaskState:

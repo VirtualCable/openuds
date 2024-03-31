@@ -214,7 +214,7 @@ class Module(UserInterface, Environmentable, Serializable, abc.ABC):
         """
 
     @classmethod
-    def name(cls: type['Module']) -> str:
+    def mod_name(cls: type['Module']) -> str:
         """
         Returns "translated" type_name, using gettext for transforming
         cls.type_name
@@ -228,7 +228,7 @@ class Module(UserInterface, Environmentable, Serializable, abc.ABC):
         return _(cls.type_name)
 
     @classmethod
-    def get_type(cls: type['Module']) -> str:
+    def mod_type(cls: type['Module']) -> str:
         """
         Returns type_type
 

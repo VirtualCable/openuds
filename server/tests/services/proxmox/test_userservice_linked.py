@@ -44,7 +44,7 @@ from ...utils.generators import limited_iterator
 
 
 # We use transactions on some related methods (storage access, etc...)
-class TestProxmovLinkedUserService(UDSTransactionTestCase):
+class TestProxmoxLinkedUserService(UDSTransactionTestCase):
     def setUp(self) -> None:
         fixtures.set_all_vm_state('stopped')
 

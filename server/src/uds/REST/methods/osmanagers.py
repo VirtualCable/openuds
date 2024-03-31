@@ -70,8 +70,8 @@ class OsManagers(ModelHandler):
             'name': osm.name,
             'tags': [tag.tag for tag in osm.tags.all()],
             'deployed_count': osm.deployedServices.count(),
-            'type': type_.get_type(),
-            'type_name': type_.name(),
+            'type': type_.mod_type(),
+            'type_name': type_.mod_name(),
             'servicesTypes': [
                 type_.servicesType
             ],  # A list for backward compatibility. TODO: To be removed when admin interface is changed

@@ -44,7 +44,7 @@ from uds.services.OpenStack.openstack import types as openstack_types
 
 
 # We use transactions on some related methods (storage access, etc...)
-class TestOpenstackFixedService(UDSTransactionTestCase):
+class TestOpenstackFixedUserService(UDSTransactionTestCase):
 
     def test_userservice_fixed_user(self) -> None:
         """
@@ -76,7 +76,7 @@ class TestOpenstackFixedService(UDSTransactionTestCase):
                 userservice_db.set_in_use.assert_called_once_with(True)
 
                 # vmid should have been assigned, so it must be in the assigned machines
-                with service._assigned_machines_access() as assigned_machines:
+                with service._assigned_access() as assigned_machines:
                     self.assertEqual({userservice._vmid}, assigned_machines)
 
                 # Now, let's release the service
@@ -90,7 +90,7 @@ class TestOpenstackFixedService(UDSTransactionTestCase):
                 self.assertEqual(state, types.states.TaskState.FINISHED)
 
                 # must be empty now
-                with service._assigned_machines_access() as assigned_machines:
+                with service._assigned_access() as assigned_machines:
                     self.assertEqual(set(), assigned_machines)
 
                 # set_ready, machine is "stopped" in this test, so must return RUNNING
