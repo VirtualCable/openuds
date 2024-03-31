@@ -40,9 +40,8 @@ import functools
 import logging
 
 from uds import models
-from uds.core import types, exceptions
+from uds.core import types
 from uds.core.managers import servers
-from uds.core.util import storage
 
 from ...fixtures import servers as servers_fixtures
 from ...fixtures import services as services_fixtures
@@ -68,11 +67,11 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
         # Manager is a singleton, clear counters
         # self.manager.clearCounters()
 
-        for i in range(NUM_USERSERVICES):
+        for _ in range(NUM_USERSERVICES):
             # So we have 8 userservices, each one with a different user
             self.user_services.extend(services_fixtures.create_db_cache_userservices())
 
-        self.registered_servers_group = servers_fixtures.createServerGroup(
+        self.registered_servers_group = servers_fixtures.create_server_group(
             type=types.servers.ServerType.UNMANAGED, subtype='test', num_servers=NUM_REGISTEREDSERVERS
         )
         # commodity call to assign
@@ -168,7 +167,7 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
 
                 # # Remove it, should decrement counter
                 for i in range(32, -1, -1):  # Deletes 33 times
-                    res = self.manager.release(userService, self.registered_servers_group)
+                    _res = self.manager.release(userService, self.registered_servers_group)
 
             self.assertEqual(len(self.registered_servers_group.properties), 0)
 

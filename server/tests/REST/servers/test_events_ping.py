@@ -58,7 +58,7 @@ class ServerEventsPingTest(rest.test.RESTTestCase):
 
     def setUp(self) -> None:
         super().setUp()
-        self.server = servers_fixtures.createServer()
+        self.server = servers_fixtures.create_server()
 
     def test_event_ping_with_stats(self) -> None:
         # Ping event

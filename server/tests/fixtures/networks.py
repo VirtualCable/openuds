@@ -28,9 +28,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
-import collections.abc
-
 
 from uds import models
 
@@ -38,7 +35,7 @@ from uds import models
 glob = {'network_id': 1}
 
 
-def createNetwork() -> models.Network:
+def create_network() -> models.Network:
     return models.Network.create(
         'Network %d' % glob['network_id'],
         '192.168.{n}.0-192.168.{n}.255'.format(n=glob['network_id']),

@@ -29,7 +29,6 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import collections.abc
 import random  # nosec: testing only
 
 from uds import models

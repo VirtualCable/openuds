@@ -56,7 +56,7 @@ class ServerTestTest(rest.test.RESTTestCase):
         """
         Test server rest api registration
         """
-        server = servers_fixtures.createServer()
+        server = servers_fixtures.create_server()
         response = self.client.rest_post(
             'servers/test',
             data={

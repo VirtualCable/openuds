@@ -81,7 +81,7 @@ class PermissionsTest(UDSTestCase):
         self.service = self.servicePool.service
         self.provider = self.service.provider
 
-        self.network = network_fixtures.createNetwork()
+        self.network = network_fixtures.create_network()
 
     def doTestUserPermissions(self, obj: 'Model', user: models.User) -> None:
         permissions.add_user_permission(user, obj, uds.core.types.permissions.PermissionType.NONE)

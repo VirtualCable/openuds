@@ -55,7 +55,7 @@ class ServerEventsLoginLogoutTest(rest.test.RESTTestCase):
 
     def setUp(self) -> None:
         super().setUp()
-        self.server = servers_fixtures.createServer()
+        self.server = servers_fixtures.create_server()
 
     def test_login(self) -> None:
         # REST path: servers/notify  (/uds/rest/...)

@@ -100,6 +100,48 @@ class DynamicPublicationTest(UDSTestCase):
         publication = fixtures.create_dynamic_publication_queue(service)
         self.check_iterations(service, publication, EXPECTED_DEPLOY_ITERATIONS_INFO)
 
+    def test_publication_fails_on_initialize(self) -> None:
+        service = fixtures.create_dynamic_service()
+        publication = fixtures.create_dynamic_publication(service)
+        # Mock op_initialize and make it fail with an exception
+        with mock.patch.object(publication, 'op_initialize', side_effect=Exception('Test')):
+            state = publication.publish()
+            self.assertEqual(state, types.states.TaskState.ERROR)
+            # Check that the reason is the exception
+            self.assertEqual(publication._reason, 'Test')
+            # Check that the queue is empty (only ERROR operation)
+            self.assertEqual(publication._queue, [types.services.Operation.ERROR])
+
+    def test_publication_fails_on_create(self) -> None:
+        service = fixtures.create_dynamic_service()
+        publication = fixtures.create_dynamic_publication(service)
+        # Mock op_create and make it fail with an exception
+        with mock.patch.object(publication, 'op_create', side_effect=Exception('Test')):
+            state = publication.publish()  # Firt iteration is INITIALIZE
+            self.assertEqual(state, types.states.TaskState.RUNNING)  # Should work
+            state = publication.check_state()  # Second iteration is CREATE
+            self.assertEqual(state, types.states.TaskState.ERROR)
+            # Check that the reason is the exception
+            self.assertEqual(publication._reason, 'Test')
+            # Check that the queue is empty (only ERROR operation)
+            self.assertEqual(publication._queue, [types.services.Operation.ERROR])
+
+    def test_publication_fails_on_create_completed(self) -> None:
+        service = fixtures.create_dynamic_service()
+        publication = fixtures.create_dynamic_publication(service)
+        # Mock op_create_completed and make it fail with an exception
+        with mock.patch.object(publication, 'op_create_completed', side_effect=Exception('Test')):
+            state = publication.publish()
+            self.assertEqual(state, types.states.TaskState.RUNNING)  # Should work
+            state = publication.check_state()
+            self.assertEqual(state, types.states.TaskState.RUNNING)  # Should work
+            state = publication.check_state()
+            self.assertEqual(state, types.states.TaskState.ERROR)
+            # Check that the reason is the exception
+            self.assertEqual(publication._reason, 'Test')
+            # Check that the queue is empty (only ERROR operation)
+            self.assertEqual(publication._queue, [types.services.Operation.ERROR])
+
 
 EXPECTED_DEPLOY_ITERATIONS_INFO: typing.Final[list[DynamicPublicationIterationInfo]] = [
     # Initial state for queue

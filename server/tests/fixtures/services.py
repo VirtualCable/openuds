@@ -30,7 +30,6 @@
 """
 import datetime
 import typing
-import collections.abc
 
 from uds import models
 from uds.core import environment, types
@@ -122,8 +121,6 @@ def create_db_servicepool(
     transports: typing.Optional[list[models.Transport]] = None,
     servicePoolGroup: typing.Optional[models.ServicePoolGroup] = None,
 ) -> models.ServicePool:
-    from uds.services.Test.service import TestServiceCache, TestServiceNoCache
-    from uds.osmanagers.Test import TestOSManager
 
     service_pool: 'models.ServicePool' = service.deployedServices.create(
         name='Service pool %d' % (glob['service_pool_id']),
@@ -229,9 +226,6 @@ def create_db_one_cache_userservice(
     groups: list['models.Group'],
     type_: typing.Union[typing.Literal['managed'], typing.Literal['unmanaged']],
 ) -> 'models.UserService':
-    from uds.services.Test.service import TestServiceCache, TestServiceNoCache
-    from uds.osmanagers.Test import TestOSManager
-    from uds.transports.Test import TestTransport
 
     service = create_db_service(provider)
 

@@ -29,7 +29,6 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import collections.abc
 
 from uds import models
 from uds.core import types
@@ -38,7 +37,7 @@ import datetime
 from ..utils import generators
 
 
-def createServer(
+def create_server(
     type: 'types.servers.ServerType' = types.servers.ServerType.SERVER,
     subtype: typing.Optional[str] = None,
     version: typing.Optional[str] = None,
@@ -62,7 +61,7 @@ def createServer(
     )
 
 
-def createServerGroup(
+def create_server_group(
     type: 'types.servers.ServerType' = types.servers.ServerType.SERVER,
     subtype: typing.Optional[str] = None,
     version: typing.Optional[str] = None,
@@ -80,8 +79,8 @@ def createServerGroup(
         host=host or '',
         port=port,
     )
-    for i in range(num_servers):
-        server = createServer(type, subtype=subtype, version=version, ip=ip, listen_port=listen_port)
+    for _ in range(num_servers):
+        server = create_server(type, subtype=subtype, version=version, ip=ip, listen_port=listen_port)
         rsg.servers.add(server)
 
     return rsg

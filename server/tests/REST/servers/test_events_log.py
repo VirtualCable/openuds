@@ -55,7 +55,7 @@ class ServerEventsLogTest(rest.test.RESTTestCase):
         #     'level': 'debug|info'|'warning'|'error',
         #     'message': 'message',
         # }
-        server = servers_fixtures.createServer()
+        server = servers_fixtures.create_server()
         userService = self.user_service_managed
 
         with mock.patch('uds.core.managers.log.manager.LogManager.log') as the_log:
@@ -91,7 +91,7 @@ class ServerEventsLogTest(rest.test.RESTTestCase):
             )
 
     def test_event_log_fail(self) -> None:
-        server = servers_fixtures.createServer()
+        server = servers_fixtures.create_server()
         data = {
             'token': server.token,
             'type': 'log',
