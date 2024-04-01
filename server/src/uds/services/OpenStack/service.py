@@ -294,7 +294,7 @@ class OpenStackLiveService(services.Service):
         vminfo = self.api.get_server(vmid)
         return vminfo.power_state
 
-    def start_machine(self, machineId: str) -> None:
+    def start_machine(self, vmid: str) -> None:
         """
         Tries to start a machine. No check is done, it is simply requested to OpenStack.
 
@@ -306,12 +306,12 @@ class OpenStackLiveService(services.Service):
         Returns:
         """
         # if already running, do nothing
-        if self.get_machine_power_state(machineId) == openstack_types.PowerState.RUNNING:
+        if self.get_machine_power_state(vmid) == openstack_types.PowerState.RUNNING:
             return
         
-        self.api.start_server(machineId)
+        self.api.start_server(vmid)
 
-    def stop_machine(self, machineId: str) -> None:
+    def stop_machine(self, vmid: str) -> None:
         """
         Tries to stop a machine. No check is done, it is simply requested to OpenStack
 
@@ -321,12 +321,12 @@ class OpenStackLiveService(services.Service):
         Returns:
         """
         # If already stopped, do nothing
-        if self.get_machine_power_state(machineId) == openstack_types.PowerState.SHUTDOWN:
+        if self.get_machine_power_state(vmid) == openstack_types.PowerState.SHUTDOWN:
             return
         
-        self.api.stop_server(machineId)
+        self.api.stop_server(vmid)
 
-    def reset_machine(self, machineId: str) -> None:
+    def reset_machine(self, vmid: str) -> None:
         """
         Tries to stop a machine. No check is done, it is simply requested to OpenStack
 
@@ -335,9 +335,9 @@ class OpenStackLiveService(services.Service):
 
         Returns:
         """
-        self.api.reset_server(machineId)
+        self.api.reset_server(vmid)
 
-    def suspend_machine(self, machineId: str) -> None:
+    def suspend_machine(self, vmid: str) -> None:
         """
         Tries to suspend a machine. No check is done, it is simply requested to OpenStack
 
@@ -347,11 +347,11 @@ class OpenStackLiveService(services.Service):
         Returns:
         """
         # If not running, do nothing
-        if self.get_machine_power_state(machineId) != openstack_types.PowerState.RUNNING:
+        if self.get_machine_power_state(vmid) != openstack_types.PowerState.RUNNING:
             return
-        self.api.suspend_server(machineId)
+        self.api.suspend_server(vmid)
 
-    def resume_machine(self, machineid: str) -> None:
+    def resume_machine(self, vmid: str) -> None:
         """
         Tries to start a machine. No check is done, it is simply requested to OpenStack
 
@@ -361,9 +361,9 @@ class OpenStackLiveService(services.Service):
         Returns:
         """
         # If not suspended, do nothing
-        if self.get_machine_power_state(machineid) != openstack_types.PowerState.SUSPENDED:
+        if self.get_machine_power_state(vmid) != openstack_types.PowerState.SUSPENDED:
             return
-        self.api.resume_server(machineid)
+        self.api.resume_server(vmid)
 
     def delete_machine(self, vmid: str) -> None:
         """
@@ -398,7 +398,7 @@ class OpenStackLiveService(services.Service):
     def is_avaliable(self) -> bool:
         return self.provider().is_available()
 
-    def can_clean_errored_userservices(self) -> bool:
+    def allows_errored_userservice_cleanup(self) -> bool:
         return not self.maintain_on_error.value
 
     def keep_on_error(self) -> bool:

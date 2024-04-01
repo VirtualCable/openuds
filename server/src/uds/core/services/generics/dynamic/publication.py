@@ -275,7 +275,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         """
         This method is called when the service is started
         """
-        self.service().start_machine(self, self._vmid)
+        self.service().start(self, self._vmid)
 
     def op_start_completed(self) -> None:
         """
@@ -288,7 +288,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         """
         This method is called for stopping the service
         """
-        self.service().stop_machine(self, self._vmid)
+        self.service().stop(self, self._vmid)
 
     def op_stop_completed(self) -> None:
         """
@@ -301,7 +301,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         """
         This method is called for shutdown the service
         """
-        self.service().shutdown_machine(self, self._vmid)
+        self.service().shutdown(self, self._vmid)
 
     def op_shutdown_completed(self) -> None:
         """
@@ -314,7 +314,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         This method is called when the service is removed
         By default, we need a remove machine on the service, use it
         """
-        self.service().remove_machine(self, self._vmid)
+        self.service().remove(self, self._vmid)
 
     def op_remove_completed(self) -> None:
         """
@@ -370,7 +370,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         """
         This method is called to check if the service is started
         """
-        if self.service().is_machine_running(self, self._vmid):
+        if self.service().is_running(self, self._vmid):
             return types.states.TaskState.FINISHED
 
         return types.states.TaskState.FINISHED
@@ -385,7 +385,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         """
         This method is called to check if the service is stopped
         """
-        if self.service().is_machine_running(self, self._vmid) is False:
+        if self.service().is_running(self, self._vmid) is False:
             return types.states.TaskState.FINISHED
 
         return types.states.TaskState.FINISHED

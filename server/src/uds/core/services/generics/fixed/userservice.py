@@ -104,7 +104,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             State.ERROR, so we can do "return self._error(reason)"
         """
         reason = str(reason)
-        logger.debug('Setting error state, reason: %s', reason)
+        logger.debug('Setting error state, reason: %s (%s)', reason, self._queue, stack_info=True)
         self.do_log(log.LogLevel.ERROR, reason)
 
         if self._vmid:
@@ -161,7 +161,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         """
         Fixed Userservice does not provided "cached" elements
         """
-        return self._error('Cache not supported')
+        return self._error('Cache for fixed userservices not supported')
 
     @typing.final
     def assign(self, vmid: str) -> types.states.TaskState:

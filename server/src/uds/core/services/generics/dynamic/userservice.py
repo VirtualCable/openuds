@@ -204,9 +204,9 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         self.do_log(log.LogLevel.ERROR, reason)
 
         if self._vmid:
-            if self.service().keep_on_error() is False:
+            if self.service().should_maintain_on_error() is False:
                 try:
-                    self.service().remove_machine(self, self._vmid)
+                    self.service().remove(self, self._vmid)
                     self._vmid = ''
                 except Exception as e:
                     logger.exception('Exception removing machine: %s', e)
@@ -247,7 +247,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         # Provide self to the service, so it can some of our methods to generate the unique id
         # (for example, own mac generator, that will autorelease the mac as soon as the machine is removed)
         if not self._mac:
-            self._mac = self.service().get_machine_mac(self, self._vmid) or ''
+            self._mac = self.service().get_mac(self, self._vmid) or ''
         return self._mac
 
     @typing.final
@@ -256,7 +256,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             try:
                 if self._vmid:
                     # Provide self to the service, so it can use some of our methods for whaterever it needs
-                    self._ip = self.service().get_machine_ip(self, self._vmid)
+                    self._ip = self.service().get_ip(self, self._vmid)
             except Exception:
                 logger.warning('Error obtaining IP for %s: %s', self.__class__.__name__, self._vmid, exc_info=True)
         return self._ip
@@ -293,7 +293,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     def set_ready(self) -> types.states.TaskState:
         # If already ready, return finished
         try:
-            if self.cache.get('ready') == '1' or self.service().is_machine_running(self, self._vmid):
+            if self.cache.get('ready') == '1' or self.service().is_running(self, self._vmid):
                 self._set_queue([Operation.START_COMPLETED, Operation.FINISH])
             else:
                 self._set_queue([Operation.START, Operation.START_COMPLETED, Operation.FINISH])
@@ -441,7 +441,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         This method is called when the service is started
         """
-        self.service().start_machine(self, self._vmid)
+        self.service().start(self, self._vmid)
 
     def op_start_completed(self) -> None:
         """
@@ -454,7 +454,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         This method is called for stopping the service
         """
-        self.service().stop_machine(self, self._vmid)
+        self.service().stop(self, self._vmid)
 
     def op_stop_completed(self) -> None:
         """
@@ -468,12 +468,12 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         This method is called for shutdown the service
         """
         shutdown_stamp = -1
-        is_running = self.service().is_machine_running(self, self._vmid)
+        is_running = self.service().is_running(self, self._vmid)
         if not is_running:
             # Already stopped, just finish
             return
 
-        self.service().shutdown_machine(self, self._vmid)
+        self.service().shutdown(self, self._vmid)
         shutdown_stamp = sql_stamp_seconds()
 
         with self.storage.as_dict() as data:
@@ -504,7 +504,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         This method is called when the service is reset
         """
-        self.service().reset_machine(self, self._vmid)
+        self.service().reset(self, self._vmid)
 
     def op_reset_completed(self) -> None:
         """
@@ -517,7 +517,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         This method is called when the service is removed
         """
-        self.service().remove_machine(self, self._vmid)
+        self.service().remove(self, self._vmid)
 
     def op_remove_completed(self) -> None:
         """
@@ -581,7 +581,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         This method is called to check if the service is started
         """
-        if self.service().is_machine_running(self, self._vmid):
+        if self.service().is_running(self, self._vmid):
             return types.states.TaskState.FINISHED
 
         return types.states.TaskState.RUNNING
@@ -596,7 +596,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         This method is called to check if the service is stopped
         """
-        if self.service().is_machine_running(self, self._vmid) is False:
+        if self.service().is_running(self, self._vmid) is False:
             return types.states.TaskState.FINISHED
         return types.states.TaskState.RUNNING
 
@@ -622,7 +622,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
 
         logger.debug('Checking State')
         # Check if machine is already stopped  (As soon as it is not running, we will consider it stopped)
-        if self.service().is_machine_running(self, self._vmid) is False:
+        if self.service().is_running(self, self._vmid) is False:
             return types.states.TaskState.FINISHED
 
         logger.debug('State is running')

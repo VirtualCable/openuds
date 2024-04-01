@@ -85,7 +85,7 @@ class StuckCleaner(Job):
             yield from q.filter(state=State.PREPARING)
 
         for servicepool in servicePoolswithStucks:
-            if servicepool.service.get_instance().can_clean_errored_userservices() is False:
+            if servicepool.service.get_instance().allows_errored_userservice_cleanup() is False:
                 continue
             # logger.debug('Searching for stuck states for %s', servicePool.name)
             for stuck in _retrieve_stuck_user_services(servicepool):

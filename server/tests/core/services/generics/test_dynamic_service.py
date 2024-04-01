@@ -111,8 +111,8 @@ class DynamicServiceTest(UDSTestCase):
             state = userservice.check_state()
 
         self.assertEqual(state, types.states.TaskState.FINISHED)
-        service.mock.start_machine.assert_called_once_with(userservice, userservice._vmid)
-        service.mock.is_machine_running.assert_called_once_with(userservice, userservice._vmid)
+        service.mock.start.assert_called_once_with(userservice, userservice._vmid)
+        service.mock.is_running.assert_called_once_with(userservice, userservice._vmid)
 
     def test_userservice_deploy_for_cache_l1(self) -> None:
         service = fixtures.create_dynamic_service()
@@ -125,8 +125,8 @@ class DynamicServiceTest(UDSTestCase):
             state = userservice.check_state()
 
         self.assertEqual(state, types.states.TaskState.FINISHED)
-        service.mock.start_machine.assert_called_once_with(userservice, userservice._vmid)
-        service.mock.is_machine_running.assert_called_once_with(userservice, userservice._vmid)
+        service.mock.start.assert_called_once_with(userservice, userservice._vmid)
+        service.mock.is_running.assert_called_once_with(userservice, userservice._vmid)
 
     def test_userservice_deploy_for_cache_l2(self) -> None:
         service = fixtures.create_dynamic_service()
@@ -143,15 +143,15 @@ class DynamicServiceTest(UDSTestCase):
                 state = userservice.check_state()
 
         self.assertEqual(state, types.states.TaskState.FINISHED)
-        service.mock.start_machine.assert_called_once_with(userservice, userservice._vmid)
-        # is_machine_running must has been called 3 times:
+        service.mock.start.assert_called_once_with(userservice, userservice._vmid)
+        # is_running must has been called 3 times:
         # * for start check
         # * for suspend check before suspend (to ensure it's running)
         # * for check_suspend after suspend
-        self.assertEqual(service.mock.is_machine_running.call_count, 3)
-        service.mock.is_machine_running.assert_called_with(userservice, userservice._vmid)
+        self.assertEqual(service.mock.is_running.call_count, 3)
+        service.mock.is_running.assert_called_with(userservice, userservice._vmid)
         # And shutdown must be called once
-        service.mock.shutdown_machine.assert_called_once_with(userservice, userservice._vmid)
+        service.mock.shutdown.assert_called_once_with(userservice, userservice._vmid)
 
     def test_userservice_removal(self) -> None:
         service = fixtures.create_dynamic_service()
@@ -178,15 +178,15 @@ class DynamicServiceTest(UDSTestCase):
             state = userservice.check_state()
 
         self.assertEqual(state, types.states.TaskState.FINISHED)
-        service.mock.stop_machine.assert_called_once_with(userservice, userservice._vmid)
-        service.mock.is_machine_running.assert_called_once_with(userservice, userservice._vmid)
-        service.mock.remove_machine.assert_called_once_with(userservice, userservice._vmid)
+        service.mock.stop.assert_called_once_with(userservice, userservice._vmid)
+        service.mock.is_running.assert_called_once_with(userservice, userservice._vmid)
+        service.mock.remove.assert_called_once_with(userservice, userservice._vmid)
         
     def test_userservice_maintain_on_error_no_created(self) -> None:
         service = fixtures.create_dynamic_service(maintain_on_error=True)
         userservice = fixtures.create_dynamic_userservice(service)
-        self.assertFalse(service.can_clean_errored_userservices())
-        self.assertTrue(service.keep_on_error())
+        self.assertFalse(service.allows_errored_userservice_cleanup())
+        self.assertTrue(service.should_maintain_on_error())
         
         state = userservice.deploy_for_user(models.User())
         self.assertEqual(state, types.states.TaskState.RUNNING)
@@ -199,8 +199,8 @@ class DynamicServiceTest(UDSTestCase):
     def test_userservice_maintain_on_error_created(self) -> None:
         service = fixtures.create_dynamic_service(maintain_on_error=True)
         userservice = fixtures.create_dynamic_userservice(service)
-        self.assertFalse(service.can_clean_errored_userservices())
-        self.assertTrue(service.keep_on_error())
+        self.assertFalse(service.allows_errored_userservice_cleanup())
+        self.assertTrue(service.should_maintain_on_error())
         
         state = userservice.deploy_for_user(models.User())
         self.assertEqual(state, types.states.TaskState.RUNNING)
@@ -226,7 +226,7 @@ class DynamicServiceTest(UDSTestCase):
         for _ in limited_iterator(lambda: state != types.states.TaskState.FINISHED, limit=128):
             state = userservice.check_state()
             
-        # Now, destroy it. Should call shutdown_machine instead of stop_machine
+        # Now, destroy it. Should call shutdown instead of stop
         service.mock.reset_mock()
         userservice.mock.reset_mock()
         
@@ -236,7 +236,7 @@ class DynamicServiceTest(UDSTestCase):
             
         self.assertEqual(state, types.states.TaskState.FINISHED)
         
-        service.mock.shutdown_machine.assert_called_once_with(userservice, userservice._vmid)
+        service.mock.shutdown.assert_called_once_with(userservice, userservice._vmid)
         
         
 
@@ -261,35 +261,35 @@ EXPECTED_DEPLOY_ITERATIONS_INFO: typing.Final[list[DynamicServiceIterationInfo]]
         queue=fixtures.ALL_TESTEABLE_OPERATIONS[3:],
         user_service_calls=[call.create_completed_checker()],
         service_calls=[
-            call.start_machine(MustBeOfType(fixtures.DynamicTestingUserServiceQueue), MustBeOfType(str))
+            call.start(MustBeOfType(fixtures.DynamicTestingUserServiceQueue), MustBeOfType(str))
         ],
     ),
     DynamicServiceIterationInfo(  # 5, START_COMPLETED
         queue=fixtures.ALL_TESTEABLE_OPERATIONS[4:],
         user_service_calls=[call.start_completed()],
         service_calls=[
-            call.is_machine_running(MustBeOfType(fixtures.DynamicTestingUserServiceQueue), MustBeOfType(str))
+            call.is_running(MustBeOfType(fixtures.DynamicTestingUserServiceQueue), MustBeOfType(str))
         ],
     ),
     DynamicServiceIterationInfo(  # 6, STOP
         queue=fixtures.ALL_TESTEABLE_OPERATIONS[5:],
         user_service_calls=[call.start_completed_checker()],
         service_calls=[
-            call.stop_machine(MustBeOfType(fixtures.DynamicTestingUserServiceQueue), MustBeOfType(str))
+            call.stop(MustBeOfType(fixtures.DynamicTestingUserServiceQueue), MustBeOfType(str))
         ],
     ),
     DynamicServiceIterationInfo(  # 7, STOP_COMPLETED
         queue=fixtures.ALL_TESTEABLE_OPERATIONS[6:],
         user_service_calls=[call.stop_completed()],
         service_calls=[
-            call.is_machine_running(MustBeOfType(fixtures.DynamicTestingUserServiceQueue), MustBeOfType(str))
+            call.is_running(MustBeOfType(fixtures.DynamicTestingUserServiceQueue), MustBeOfType(str))
         ],
     ),
     DynamicServiceIterationInfo(  # 8, SHUTDOWN
         queue=fixtures.ALL_TESTEABLE_OPERATIONS[7:],
         user_service_calls=[call.stop_completed_checker()],
         service_calls=[
-            call.is_machine_running(MustBeOfType(fixtures.DynamicTestingUserServiceQueue), MustBeOfType(str)),
+            call.is_running(MustBeOfType(fixtures.DynamicTestingUserServiceQueue), MustBeOfType(str)),
         ],
     ),
     DynamicServiceIterationInfo(  # 9, SHUTDOWN_COMPLETED
@@ -310,9 +310,9 @@ EXPECTED_DEPLOY_ITERATIONS_INFO: typing.Final[list[DynamicServiceIterationInfo]]
         queue=fixtures.ALL_TESTEABLE_OPERATIONS[11:],
         user_service_calls=[call.suspend_completed_checker()],
         service_calls=[
-            call.reset_machine(MustBeOfType(fixtures.DynamicTestingUserServiceQueue), MustBeOfType(str)),
+            call.reset(MustBeOfType(fixtures.DynamicTestingUserServiceQueue), MustBeOfType(str)),
             # In turn, calls stop by default
-            call.stop_machine(MustBeOfType(fixtures.DynamicTestingUserServiceQueue), MustBeOfType(str)),
+            call.stop(MustBeOfType(fixtures.DynamicTestingUserServiceQueue), MustBeOfType(str)),
         ],
     ),
     DynamicServiceIterationInfo(  # 13, RESET_COMPLETED
@@ -323,7 +323,7 @@ EXPECTED_DEPLOY_ITERATIONS_INFO: typing.Final[list[DynamicServiceIterationInfo]]
         queue=fixtures.ALL_TESTEABLE_OPERATIONS[13:],
         user_service_calls=[call.reset_completed_checker()],
         service_calls=[
-            call.remove_machine(MustBeOfType(fixtures.DynamicTestingUserServiceQueue), MustBeOfType(str))
+            call.remove(MustBeOfType(fixtures.DynamicTestingUserServiceQueue), MustBeOfType(str))
         ],
     ),
     DynamicServiceIterationInfo(  # 15, REMOVE_COMPLETED

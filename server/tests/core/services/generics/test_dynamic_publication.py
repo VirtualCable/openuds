@@ -163,35 +163,35 @@ EXPECTED_DEPLOY_ITERATIONS_INFO: typing.Final[list[DynamicPublicationIterationIn
         queue=fixtures.PUB_TESTEABLE_OPERATIONS[3:],
         user_service_calls=[call.create_completed_checker()],
         service_calls=[
-            call.start_machine(MustBeOfType(fixtures.DynamicTestingPublicationQueue), MustBeOfType(str))
+            call.start(MustBeOfType(fixtures.DynamicTestingPublicationQueue), MustBeOfType(str))
         ],
     ),
     DynamicPublicationIterationInfo(  # 5, START_COMPLETED
         queue=fixtures.PUB_TESTEABLE_OPERATIONS[4:],
         user_service_calls=[call.start_completed()],
         service_calls=[
-            call.is_machine_running(MustBeOfType(fixtures.DynamicTestingPublicationQueue), MustBeOfType(str))
+            call.is_running(MustBeOfType(fixtures.DynamicTestingPublicationQueue), MustBeOfType(str))
         ],
     ),
     DynamicPublicationIterationInfo(  # 6, STOP
         queue=fixtures.PUB_TESTEABLE_OPERATIONS[5:],
         user_service_calls=[call.start_completed_checker()],
         service_calls=[
-            call.stop_machine(MustBeOfType(fixtures.DynamicTestingPublicationQueue), MustBeOfType(str))
+            call.stop(MustBeOfType(fixtures.DynamicTestingPublicationQueue), MustBeOfType(str))
         ],
     ),
     DynamicPublicationIterationInfo(  # 7, STOP_COMPLETED
         queue=fixtures.PUB_TESTEABLE_OPERATIONS[6:],
         user_service_calls=[call.stop_completed()],
         service_calls=[
-            call.is_machine_running(MustBeOfType(fixtures.DynamicTestingPublicationQueue), MustBeOfType(str))
+            call.is_running(MustBeOfType(fixtures.DynamicTestingPublicationQueue), MustBeOfType(str))
         ],
     ),
     DynamicPublicationIterationInfo(  # 8, SHUTDOWN
         queue=fixtures.PUB_TESTEABLE_OPERATIONS[7:],
         user_service_calls=[call.stop_completed_checker()],
         service_calls=[
-            call.shutdown_machine(MustBeOfType(fixtures.DynamicTestingPublicationQueue), MustBeOfType(str)),
+            call.shutdown(MustBeOfType(fixtures.DynamicTestingPublicationQueue), MustBeOfType(str)),
         ],
     ),
     DynamicPublicationIterationInfo(  # 9, SHUTDOWN_COMPLETED
@@ -202,7 +202,7 @@ EXPECTED_DEPLOY_ITERATIONS_INFO: typing.Final[list[DynamicPublicationIterationIn
         queue=fixtures.PUB_TESTEABLE_OPERATIONS[9:],
         user_service_calls=[call.shutdown_completed_checker()],
         service_calls=[
-            call.remove_machine(MustBeOfType(fixtures.DynamicTestingPublicationQueue), MustBeOfType(str))
+            call.remove(MustBeOfType(fixtures.DynamicTestingPublicationQueue), MustBeOfType(str))
         ],
     ),
     DynamicPublicationIterationInfo(  # 11, REMOVE_COMPLETED

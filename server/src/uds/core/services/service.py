@@ -270,7 +270,7 @@ class Service(Module):
         """
         return True
     
-    def can_clean_errored_userservices(self) -> bool:
+    def allows_errored_userservice_cleanup(self) -> bool:
         """
         Returns if this service can clean errored services. This is used to check if a service can be cleaned
         from the stuck cleaner job, for example. By default, this method returns True.

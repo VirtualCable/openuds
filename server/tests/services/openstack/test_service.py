@@ -113,5 +113,5 @@ class TestOpenstackService(UDSTransactionTestCase):
 
                 self.assertEqual(service.get_basename(), service.basename.value)
                 self.assertEqual(service.get_lenname(), service.lenname.value)
-                self.assertEqual(service.can_clean_errored_userservices(), not service.maintain_on_error.value)
+                self.assertEqual(service.allows_errored_userservice_cleanup(), not service.maintain_on_error.value)
                 self.assertEqual(service.keep_on_error(), service.maintain_on_error.value)

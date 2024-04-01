@@ -440,76 +440,76 @@ class DynamicTestingService(dynamic_service.DynamicService):
 
     machine_running_flag: bool = False
 
-    def get_machine_ip(
+    def get_ip(
         self,
         caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
         vmid: str,
     ) -> str:
-        self.mock.get_machine_ip(caller_instance, vmid)
+        self.mock.get_ip(caller_instance, vmid)
         return '1.2.3.4'
 
-    def get_machine_mac(
+    def get_mac(
         self,
         caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
         vmid: str,
     ) -> str:
-        self.mock.get_machine_mac(caller_instance, vmid)
+        self.mock.get_mac(caller_instance, vmid)
         return '02:04:06:08:0A:0C'
 
-    def is_machine_running(
+    def is_running(
         self,
         caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
         vmid: str,
     ) -> bool:
-        self.mock.is_machine_running(caller_instance, vmid)
+        self.mock.is_running(caller_instance, vmid)
         return self.machine_running_flag
 
-    def start_machine(
+    def start(
         self,
         caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
         vmid: str,
     ) -> None:
-        self.mock.start_machine(caller_instance, vmid)
+        self.mock.start(caller_instance, vmid)
         self.machine_running_flag = True
 
-    def stop_machine(
+    def stop(
         self,
         caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
         vmid: str,
     ) -> None:
-        self.mock.stop_machine(caller_instance, vmid)
+        self.mock.stop(caller_instance, vmid)
         self.machine_running_flag = False
 
-    def shutdown_machine(
+    def shutdown(
         self,
         caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
         vmid: str,
     ) -> None:
-        self.mock.shutdown_machine(caller_instance, vmid)
+        self.mock.shutdown(caller_instance, vmid)
         self.machine_running_flag = False
 
-    def remove_machine(
+    def remove(
         self,
         caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
         vmid: str,
     ) -> None:
-        self.mock.remove_machine(caller_instance, vmid)
+        self.mock.remove(caller_instance, vmid)
         self.machine_running_flag = False
 
-    def reset_machine(
+    def reset(
         self,
         caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
         vmid: str,
     ) -> None:
-        self.mock.reset_machine(caller_instance, vmid)
-        super().reset_machine(caller_instance, vmid)
+        self.mock.reset(caller_instance, vmid)
+        super().reset(caller_instance, vmid)  # Call parent reset, that in order invokes stop
 
-    def suspend_machine(
+    def suspend(
         self,
         caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
         vmid: str,
     ) -> None:
-        self.mock.suspend_machine(caller_instance, vmid)
+        self.mock.suspend(caller_instance, vmid)
         self.machine_running_flag = False
 
 

@@ -184,11 +184,14 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
     def remove_and_free(self, vmid: str) -> str:
         try:
             with self._assigned_access() as assigned:
-                assigned.remove(vmid)
+                # In error situations, due to the "process_snapshot" post runasign, the element could be already removed
+                # So we need to check if it's there
+                if vmid in assigned:
+                    assigned.remove(vmid)  
             return types.states.State.FINISHED
         except Exception as e:
-            logger.warning('Cound not save assigned machines on fixed pool: %s', e)
-            raise
+            logger.error('Error processing remove and free: %s', e)
+            raise Exception(f'Error processing remove and free: {e} on {vmid}') from e
 
     @abc.abstractmethod
     def get_first_network_mac(self, vmid: str) -> str:
