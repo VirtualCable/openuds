@@ -400,7 +400,7 @@ def create_provider(**kwargs: typing.Any) -> provider.OpenStackProvider:
 
     uuid_ = str(uuid.uuid4())
     return provider.OpenStackProvider(
-        environment=environment.Environment.private_environment(uuid), values=values, uuid=uuid_
+        environment=environment.Environment.private_environment(uuid_), values=values, uuid=uuid_
     )
 
 
@@ -413,7 +413,7 @@ def create_provider_legacy(**kwargs: typing.Any) -> provider_legacy.OpenStackPro
 
     uuid_ = str(uuid.uuid4())
     return provider_legacy.OpenStackProviderLegacy(
-        environment=environment.Environment.private_environment(uuid), values=values, uuid=uuid_
+        environment=environment.Environment.private_environment(uuid_), values=values, uuid=uuid_
     )
 
 
@@ -427,7 +427,7 @@ def create_live_service(provider: AnyOpenStackProvider, **kwargs: typing.Any) ->
     uuid_ = str(uuid.uuid4())
     return service.OpenStackLiveService(
         provider=provider,
-        environment=environment.Environment.private_environment(uuid),
+        environment=environment.Environment.private_environment(uuid_),
         values=values,
         uuid=uuid_,
     )

@@ -200,7 +200,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         self._error_debug_info = self._debug(repr(reason))
         reason = str(reason)
-        logger.debug('Setting error state, reason: %s', reason)
+        logger.debug('Setting error state, reason: %s (%s)', reason, self._queue, stack_info=True, stacklevel=3)
         self.do_log(log.LogLevel.ERROR, reason)
 
         if self._vmid:

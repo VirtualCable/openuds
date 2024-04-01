@@ -104,7 +104,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             State.ERROR, so we can do "return self._error(reason)"
         """
         reason = str(reason)
-        logger.debug('Setting error state, reason: %s (%s)', reason, self._queue, stack_info=True)
+        logger.debug('Setting error state, reason: %s (%s)', reason, self._queue, stack_info=True, stacklevel=3)
         self.do_log(log.LogLevel.ERROR, reason)
 
         if self._vmid:
