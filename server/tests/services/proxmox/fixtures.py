@@ -276,6 +276,7 @@ def replace_vm_info(vmid: int, **kwargs: typing.Any) -> client.types.UPID:
     for i in range(len(VMS_INFO)):
         if VMS_INFO[i].vmid == vmid:
             VMS_INFO[i] = VMS_INFO[i]._replace(**kwargs)
+            break
     return UPID
 
 
@@ -363,7 +364,7 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
         client.ProxmoxClient.get_storage,
         returns=lambda storage, node, **kwargs: next(  # pyright: ignore
             filter(lambda s: s.storage == storage, STORAGES)  # pyright: ignore
-        ),  # pyright: ignore
+        ),
     ),
     # list_storages
     AutoSpecMethodInfo(

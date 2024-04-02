@@ -39,7 +39,7 @@ from . import fixtures
 from ...utils.test import UDSTransactionTestCase
 
 
-class TestProxmovFixedService(UDSTransactionTestCase):
+class TestProxmoxFixedService(UDSTransactionTestCase):
 
     def test_service_is_available(self) -> None:
         """

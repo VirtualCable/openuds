@@ -202,7 +202,7 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
             api.get_machine_pool_info.assert_called_with(vmid, service.pool.value, force=True)
             api.start_machine.assert_called_with(vmid)
 
-            # Ensure vm is stopped
+            # Ensure vm is stopped, because deployment should have started it (as api.start_machine was called)
             fixtures.replace_vm_info(vmid, status='stopped')
             # Set ready state with the valid machine
             state = userservice.set_ready()
