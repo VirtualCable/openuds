@@ -157,6 +157,8 @@ class Operation(enum.IntEnum):
     # For example, on a future, all fixed userservice will be moved
     # to this model, and we will need to "translate" the old values to the new ones
     # So we will translate, for example SNAPSHOT_CREATE to CUSTOM_1, etc..
+    # Fixed user services does not allows custom operations, we use them
+    # to alias some fixed operations (like snapshot create, recover, etc..)
     CUSTOM_1 = 20001
     CUSTOM_2 = 20002
     CUSTOM_3 = 20003
@@ -166,6 +168,11 @@ class Operation(enum.IntEnum):
     CUSTOM_7 = 20007
     CUSTOM_8 = 20008
     CUSTOM_9 = 20009
+    
+    # Some alias for Fixed Services
+    SNAPSHOT_CREATE = CUSTOM_7
+    SNAPSHOT_RECOVER = CUSTOM_8
+    PROCESS_TOKEN = CUSTOM_9
 
     def is_custom(self) -> bool:
         """
@@ -183,32 +190,3 @@ class Operation(enum.IntEnum):
     def as_str(self) -> str:
         return self.name
 
-
-# FixedOperation, currently used on FixedServices
-# Will evolve to Operation on future
-class FixedOperation(enum.IntEnum):
-    CREATE = 0
-    START = 1
-    STOP = 2
-    REMOVE = 3
-    WAIT = 4   # Here for compat, in fact, fixed services never waits
-    ERROR = 5
-    FINISH = 6
-    RETRY = 7
-    SNAPSHOT_CREATE = 8  # to recall process_snapshot
-    SNAPSHOT_RECOVER = 9  # to recall process_snapshot
-    PROCESS_TOKEN = 10
-    SHUTDOWN = 11
-
-    NOP = 98
-    UNKNOWN = 99
-
-    @staticmethod
-    def from_int(value: int) -> 'FixedOperation':
-        try:
-            return FixedOperation(value)
-        except ValueError:
-            return FixedOperation.UNKNOWN
-
-    def as_str(self) -> str:
-        return self.name

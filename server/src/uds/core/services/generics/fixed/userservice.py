@@ -36,7 +36,7 @@ import typing
 import collections.abc
 
 from uds.core import services, types
-from uds.core.types.services import FixedOperation as Operation
+from uds.core.types.services import Operation
 from uds.core.util import log, autoserializable
 
 # Not imported at runtime, just for type checking
@@ -107,7 +107,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
 
     @typing.final
     def _retry_later(self) -> str:
-        self._queue.insert(0, Operation.RETRY)
+        self._queue.insert(0, Operation.NOP)
         return types.states.TaskState.RUNNING
 
     def _error(self, reason: typing.Union[str, Exception]) -> types.states.TaskState:
@@ -231,7 +231,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             return counter_state  # Error or None
 
         try:
-            check_function = _CHECKERS[op]
+            check_function = _CHECKERS[op]  # If some operation not supported, will raise exception
 
             # Invoke using instance, we have overrided methods
             # and we want to use the overrided ones
@@ -245,17 +245,6 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         except Exception as e:
             logger.exception('Unexpected UserService check exception: %s', e)
             return self._error(str(e))
-
-    @typing.final
-    def op_retry(self) -> None:
-        """
-        Used to retry an operation
-        In fact, this will not be never invoked, unless we push it twice, because
-        check_state method will "pop" first item when a check operation returns State.FINISHED
-
-        At executeQueue this return value will be ignored, and it will only be used at check_state
-        """
-        pass
 
     @typing.final
     def op_nop(self) -> None:
@@ -324,9 +313,6 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         """
         Checks the state of a token processing
         """
-        return types.states.TaskState.FINISHED
-
-    def op_retry_checker(self) -> types.states.TaskState:
         return types.states.TaskState.FINISHED
 
     def op_nop_checker(self) -> types.states.TaskState:
@@ -413,22 +399,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
 
     @staticmethod
     def _op2str(op: Operation) -> str:
-        return {
-            Operation.CREATE: 'create',
-            Operation.START: 'start',
-            Operation.STOP: 'stop',
-            Operation.REMOVE: 'remove',
-            Operation.WAIT: 'wait',
-            Operation.ERROR: 'error',
-            Operation.FINISH: 'finish',
-            Operation.RETRY: 'retry',
-            Operation.SNAPSHOT_CREATE: 'snapshot_create',
-            Operation.SNAPSHOT_RECOVER: 'snapshot_recover',
-            Operation.PROCESS_TOKEN: 'process_token',
-            Operation.SHUTDOWN: 'soft_shutdown',
-            Operation.NOP: 'nop',
-            Operation.UNKNOWN: 'unknown',
-        }.get(op, '????')
+        return op.name
 
     def _debug(self, txt: str) -> None:
         # logger.debug('_name {0}: {1}'.format(txt, self._name))
@@ -454,7 +425,6 @@ _EXECUTORS: typing.Final[
     collections.abc.Mapping[Operation, collections.abc.Callable[[FixedUserService], None]]
 ] = {
     Operation.CREATE: FixedUserService.op_create,
-    Operation.RETRY: FixedUserService.op_retry,
     Operation.START: FixedUserService.op_start,
     Operation.STOP: FixedUserService.op_stop,
     Operation.WAIT: FixedUserService.op_nop,  # Fixed assigned services has no cache 2, so no need to wait
@@ -471,7 +441,6 @@ _CHECKERS: typing.Final[
     collections.abc.Mapping[Operation, collections.abc.Callable[[FixedUserService], types.states.TaskState]]
 ] = {
     Operation.CREATE: FixedUserService.op_create_checker,
-    Operation.RETRY: FixedUserService.op_retry_checker,
     Operation.WAIT: FixedUserService.op_nop_checker,  # Fixed assigned services has no cache 2, so no need to wait
     Operation.START: FixedUserService.op_start_checker,
     Operation.STOP: FixedUserService.op_stop_checker,

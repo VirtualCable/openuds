@@ -378,6 +378,7 @@ def patched_provider(
     client = create_client_mock()
     provider = create_provider(**kwargs)
     with mock.patch.object(provider, 'api') as api:
+        provider.do_log = mock.MagicMock()  # Avoid logging
         api.return_value = client
         yield provider
 

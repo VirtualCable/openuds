@@ -92,8 +92,8 @@ class FixedTestingService(fixed_service.FixedService):
             # As we have snapshot on top of queue, we need to insert NOP -> STOP
             # This way, NOP will be consumed right now, then start will be called and then
             # this will be called again
-            userservice_instance._queue.insert(0, types.services.FixedOperation.STOP)
-            userservice_instance._queue.insert(0, types.services.FixedOperation.NOP)
+            userservice_instance._queue.insert(0, types.services.Operation.STOP)
+            userservice_instance._queue.insert(0, types.services.Operation.NOP)
             self.first_process_called = True
 
     def get_name(self, vmid: str) -> str:
