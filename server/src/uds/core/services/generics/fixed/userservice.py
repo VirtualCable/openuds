@@ -35,7 +35,7 @@ import logging
 import typing
 import collections.abc
 
-from uds.core import services, types
+from uds.core import consts, services, types
 from uds.core.types.services import Operation
 from uds.core.util import log, autoserializable
 
@@ -110,6 +110,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         self._queue.insert(0, Operation.NOP)
         return types.states.TaskState.RUNNING
 
+    @typing.final
     def _error(self, reason: typing.Union[str, Exception]) -> types.states.TaskState:
         """
         Internal method to set object as error state
@@ -122,12 +123,17 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         self.do_log(log.LogLevel.ERROR, reason)
 
         if self._vmid:
-            try:
-                self.service().remove_and_free(self._vmid)
-                self.service().process_snapshot(remove=True, userservice_instance=self)
-                self._vmid = ''
-            except Exception as e:
-                logger.exception('Exception removing machine: %s', e)
+            if self.service().should_maintain_on_error() is False:
+                try:
+                    self.service().remove_and_free(self._vmid)
+                    self.service().process_snapshot(remove=True, userservice_instance=self)
+                    self._vmid = ''
+                except Exception as e:
+                    logger.exception('Exception removing machine: %s', e)
+            else:
+                logger.debug('Keep on error is enabled, not removing machine')
+                self._queue = [Operation.FINISH]
+                return types.states.TaskState.FINISHED
 
         self._queue = [Operation.ERROR]
         self._reason = reason
@@ -176,6 +182,20 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         Fixed Userservice does not provided "cached" elements
         """
         return self._error('Cache for fixed userservices not supported')
+
+    def set_ready(self) -> types.states.TaskState:
+        # If already ready, return finished
+        try:
+            if self.cache.get('ready', '0') == '1':
+                self._queue = [Operation.FINISH]
+            elif self.service().is_ready(self._vmid):
+                self.cache.put('ready', '1', consts.cache.SHORT_CACHE_TIMEOUT // 2)  # short cache timeout
+                self._queue = [Operation.FINISH]
+            else:
+                self._queue = [Operation.START, Operation.START_COMPLETED, Operation.FINISH]
+        except Exception as e:
+            return self._error(f'Error on setReady: {e}')
+        return self._execute_queue()
 
     @typing.final
     def assign(self, vmid: str) -> types.states.TaskState:

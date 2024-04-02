@@ -246,3 +246,41 @@ class FixedServiceTest(UDSTestCase):
 
         # Userservice is in deployed state, so we can remove it
         self.check_iterations(service, userservice, EXPECTED_REMOVAL_ITERATIONS_INFO, removal=True)
+        
+    def test_service_set_ready(self) -> None:
+        _prov, service, userservice = self.create_elements()
+        self.deploy_service(service, userservice)
+        # Call for set_ready
+        self.assertEqual(userservice.set_ready(), types.states.TaskState.FINISHED)
+        # is_ready should have been called
+        service.mock.is_ready.assert_called_once()
+
+    def test_service_random_machine_list(self) -> None:
+        _prov, service, _userservice = self.create_elements()
+        service.machines.value = [f'machine{i}' for i in range(10)]
+        for randomized in (True, False):
+            service.randomize.value = randomized
+            machines_list = service.sorted_assignables_list()
+            if randomized:
+                self.assertNotEqual(machines_list, service.machines.value)
+                self.assertEqual(len(service.machines.value), len(machines_list))
+                self.assertEqual(sorted(service.machines.value), sorted(machines_list))
+            else:
+                self.assertEqual(machines_list, service.machines.value)
+
+    def test_service_keep_on_error(self) -> None:
+        for maintain_on_error in (True, False):
+            _prov, service, userservice = self.create_elements()
+            service.machines.value = [f'machine{i}' for i in range(10)]
+            service.maintain_on_error.value = maintain_on_error
+            self.deploy_service(service, userservice)
+            self.assertEqual(userservice.check_state(), types.states.TaskState.FINISHED)
+            
+            # Now, ensure that we will raise an exception, overriding is_ready of service
+            service.is_ready = mock.MagicMock(side_effect=Exception('Error'))
+            if maintain_on_error is False:
+                self.assertEqual(userservice.set_ready(), types.states.TaskState.ERROR)
+            else:
+                self.assertEqual(userservice.set_ready(), types.states.TaskState.FINISHED)
+            
+

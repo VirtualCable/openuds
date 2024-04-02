@@ -38,6 +38,7 @@ import collections.abc
 from django.utils.translation import gettext_noop as _, gettext
 from uds.core import services, types, exceptions
 from uds.core.ui import gui
+from uds.core.util import fields
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -124,10 +125,14 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
     # Randomize machine assignation isntead of linear
     randomize = gui.CheckBoxField(
         label=_('Randomize machine assignation'),
-        order=33,
+        order=100,
         default=True,
         tooltip=_('If active, UDS will assign machines in a random way, instead of linear'),
-        tab=types.ui.Tab.MACHINE,
+        tab=types.ui.Tab.ADVANCED,
+    )
+    maintain_on_error = fields.maintain_on_error_field(
+        order=101,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     def initialize(self, values: 'types.core.ValuesType') -> None:
@@ -191,17 +196,24 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         raise NotImplementedError()
 
     # default implementation, should be sufficient for most cases
-    def remove_and_free(self, vmid: str) -> str:
+    def remove_and_free(self, vmid: str) -> types.states.TaskState:
         try:
             with self._assigned_access() as assigned:
                 # In error situations, due to the "process_snapshot" post runasign, the element could be already removed
                 # So we need to check if it's there
                 if vmid in assigned:
                     assigned.remove(vmid)
-            return types.states.State.FINISHED
+            return types.states.TaskState.FINISHED
         except Exception as e:
             logger.error('Error processing remove and free: %s', e)
             raise Exception(f'Error processing remove and free: {e} on {vmid}') from e
+        
+    def is_ready(self, vmid: str) -> bool:
+        """
+        Returns if the machine is ready for usage
+        Defaults to True
+        """
+        return True
 
     @abc.abstractmethod
     def get_first_network_mac(self, vmid: str) -> str:
@@ -231,7 +243,6 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         """
         raise NotImplementedError()
 
-    @typing.final
     def sorted_assignables_list(self, alternate_field_name: typing.Optional[str] = None) -> list[str]:
         """
         Randomizes the assignation of machines if needed
@@ -249,3 +260,8 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
             return random.sample(machines.as_list(), len(machines.as_list()))
 
         return machines.as_list()
+
+    def should_maintain_on_error(self) -> bool:
+        if self.has_field('maintain_on_error'):  # If has been defined on own class...
+            return self.maintain_on_error.value
+        return False

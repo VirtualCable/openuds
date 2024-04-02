@@ -238,6 +238,21 @@ class DynamicServiceTest(UDSTestCase):
         
         service.mock.shutdown.assert_called_once_with(userservice, userservice._vmid)
         
+    def test_service_set_ready(self) -> None:
+        service = fixtures.create_dynamic_service()
+        userservice = fixtures.create_dynamic_userservice(service)
+        
+        # full deploy
+        state = userservice.deploy_for_user(models.User())
+        self.assertEqual(state, types.states.TaskState.RUNNING)
+        for _ in limited_iterator(lambda: state != types.states.TaskState.FINISHED, limit=128):
+            state = userservice.check_state()
+
+        # Call for set_ready
+        service.mock.reset_mock()
+        self.assertEqual(userservice.set_ready(), types.states.TaskState.FINISHED)
+        # is_ready should have been called
+        service.mock.is_running.assert_called_once()
         
 
 

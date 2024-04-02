@@ -191,6 +191,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         return self.name_generator().get(self.service().get_basename(), self.service().get_lenname())
 
+    @typing.final
     def _error(self, reason: typing.Union[str, Exception]) -> types.states.TaskState:
         """
         Internal method to set object as error state
@@ -209,11 +210,12 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
                     self.service().remove(self, self._vmid)
                     self._vmid = ''
                 except Exception as e:
-                    logger.exception('Exception removing machine: %s', e)
+                    logger.exception('Exception removing machine %s: %s', self._vmid, e)
+                    self._vmid = ''
+                    self.do_log(log.LogLevel.ERROR, f'Error removing machine: {e}')
             else:
                 logger.debug('Keep on error is enabled, not removing machine')
-                if self.keep_state_sets_error is False:
-                    self._set_queue([Operation.FINISH])
+                self._set_queue([Operation.FINISH] if self.keep_state_sets_error else [Operation.ERROR])
                 return types.states.TaskState.FINISHED
 
         self._set_queue([Operation.ERROR])
@@ -258,7 +260,9 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
                     # Provide self to the service, so it can use some of our methods for whaterever it needs
                     self._ip = self.service().get_ip(self, self._vmid)
             except Exception:
-                logger.warning('Error obtaining IP for %s: %s', self.__class__.__name__, self._vmid, exc_info=True)
+                logger.warning(
+                    'Error obtaining IP for %s: %s', self.__class__.__name__, self._vmid, exc_info=True
+                )
         return self._ip
 
     @typing.final
@@ -293,8 +297,11 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     def set_ready(self) -> types.states.TaskState:
         # If already ready, return finished
         try:
-            if self.cache.get('ready') == '1' or self.service().is_running(self, self._vmid):
-                self._set_queue([Operation.START_COMPLETED, Operation.FINISH])
+            if self.cache.get('ready', '0') == '1':
+                self._set_queue([Operation.FINISH])
+            elif self.service().is_running(self, self._vmid):
+                self.cache.put('ready', '1', consts.cache.SHORT_CACHE_TIMEOUT // 2)  # short cache timeout
+                self._set_queue([Operation.FINISH])
             else:
                 self._set_queue([Operation.START, Operation.START_COMPLETED, Operation.FINISH])
         except Exception as e:
@@ -411,7 +418,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             self._set_queue([op] + destroy_operations)
             # Do not execute anything.here, just continue normally
         return types.states.TaskState.RUNNING
-    
+
     def error_reason(self) -> str:
         return self._reason
 
@@ -667,7 +674,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         This method is called to check if the service is reset
         """
         return types.states.TaskState.FINISHED
-    
+
     def op_reset_completed_checker(self) -> types.states.TaskState:
         """
         This method is called to check if the service reset is completed

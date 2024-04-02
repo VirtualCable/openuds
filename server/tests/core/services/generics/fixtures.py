@@ -78,6 +78,8 @@ class FixedTestingService(fixed_service.FixedService):
     token = fixed_service.FixedService.token
     snapshot_type = fixed_service.FixedService.snapshot_type
     machines = fixed_service.FixedService.machines
+    randomize = fixed_service.FixedService.randomize
+    maintain_on_error = fixed_service.FixedService.maintain_on_error
 
     user_service_type = FixedTestingUserService
     first_process_called = False
@@ -108,10 +110,14 @@ class FixedTestingService(fixed_service.FixedService):
         self.assigned_machine = 'assigned'
         return self.assigned_machine
 
-    def remove_and_free(self, vmid: str) -> str:
+    def remove_and_free(self, vmid: str) -> types.states.TaskState:
         self.mock.remove_and_free_machine(vmid)
         self.assigned_machine = ''
         return types.states.TaskState.FINISHED
+    
+    def is_ready(self, vmid: str) -> bool:
+        self.mock.is_ready(vmid)
+        return True
 
     def get_first_network_mac(self, vmid: str) -> str:
         self.mock.get_first_network_mac(vmid)
@@ -511,7 +517,7 @@ class DynamicTestingService(dynamic_service.DynamicService):
     ) -> None:
         self.mock.suspend(caller_instance, vmid)
         self.machine_running_flag = False
-
+        
 
 class DynamicTestingPublication(dynamic_publication.DynamicPublication):
     mock: 'mock.Mock' = mock.MagicMock()
