@@ -31,8 +31,6 @@
 import logging
 import typing
 
-from django.urls import reverse
-
 from uds.core.services.provider_factory import ServiceProviderFactory
 
 from tests.utils.test import UDSTestCase
@@ -59,7 +57,7 @@ class TestServices(UDSTestCase):
     """
 
     def test_providers_loads_correctly(self) -> None:
-        from uds import services  # ensure transports are registered
+        from uds import services  # pyright: ignore  # ensure transports are registered
 
         factory = ServiceProviderFactory()
         for provider in MUST_HAVE:

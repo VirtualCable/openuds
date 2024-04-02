@@ -28,6 +28,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import random  # Not for cryptographic purposes, just to randomize the assignation of machines
 import abc
 import contextlib
 import logging
@@ -86,7 +87,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
     use_snapshots = gui.CheckBoxField(
         label=_('Use snapshots'),
         default=False,
-        order=22,
+        order=30,
         tooltip=_(
             'If active, UDS will try to create an snapshot (if one already does not exists) before accessing a machine, and restore it after usage.'
         ),
@@ -97,7 +98,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
     # This one replaces use_snapshots, and is used to select the snapshot type (No snapshot, recover snapshot and stop machine, recover snapshot and start machine)
     snapshot_type = gui.ChoiceField(
         label=_('Snapshot type'),
-        order=22,
+        order=31,
         default='0',
         tooltip=_(
             'If active, UDS will try to create an snapshot (if one already does not exists) before accessing a machine, and restore it after usage.'
@@ -113,13 +114,22 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
     # Keep name as "machine" so we can use VCHelpers.getMachines
     machines = gui.MultiChoiceField(
         label=_("Machines"),
-        order=21,
+        order=32,
         tooltip=_('Machines for this service'),
         required=True,
         tab=types.ui.Tab.MACHINE,
         rows=10,
     )
-    
+
+    # Randomize machine assignation isntead of linear
+    randomize = gui.CheckBoxField(
+        label=_('Randomize machine assignation'),
+        order=33,
+        default=True,
+        tooltip=_('If active, UDS will assign machines in a random way, instead of linear'),
+        tab=types.ui.Tab.MACHINE,
+    )
+
     def initialize(self, values: 'types.core.ValuesType') -> None:
         """
         Fixed token value, ensure we have at least one machine,
@@ -137,7 +147,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
             self.token.value = self.token.value.strip()
         # Recover userservice
         self.userservices_limit = len(self.machines.as_list())
-        
+
     @contextlib.contextmanager
     def _assigned_access(self) -> collections.abc.Generator[set[str], None, None]:
         with self.storage.as_dict(atomic=True) as d:
@@ -174,7 +184,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         """
         Gets automatically an assigns a machine
         Returns the id of the assigned machine, or raises an exception if no machine is available
-        
+
         Note:
             This is used when deploying a machine for an user
         """
@@ -187,7 +197,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
                 # In error situations, due to the "process_snapshot" post runasign, the element could be already removed
                 # So we need to check if it's there
                 if vmid in assigned:
-                    assigned.remove(vmid)  
+                    assigned.remove(vmid)
             return types.states.State.FINISHED
         except Exception as e:
             logger.error('Error processing remove and free: %s', e)
@@ -220,3 +230,22 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         Assigns a machine from the assignables
         """
         raise NotImplementedError()
+
+    @typing.final
+    def sorted_assignables_list(self, alternate_field_name: typing.Optional[str] = None) -> list[str]:
+        """
+        Randomizes the assignation of machines if needed
+        """
+        if self.has_field('machines') is False:
+            if not alternate_field_name:
+                raise ValueError('machines field not found')
+            if self.has_field(alternate_field_name) is False:
+                raise ValueError(f'Alternate field {alternate_field_name} not found')
+            machines = typing.cast(gui.MultiChoiceField, getattr(self, alternate_field_name))
+        else:
+            machines = self.machines
+
+        if hasattr(self, 'randomize') and self.randomize.value is True:
+            return random.sample(machines.as_list(), len(machines.as_list()))
+
+        return machines.as_list()

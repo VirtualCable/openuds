@@ -102,6 +102,7 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
     )
 
     machines = FixedService.machines
+    randomize = FixedService.randomize
 
     prov_uuid = gui.HiddenField()
 
@@ -175,7 +176,7 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
         found_vmid: typing.Optional[str] = None
         try:
             with self._assigned_access() as assigned:
-                for checking_vmid in self.machines.as_list():
+                for checking_vmid in self.sorted_assignables_list():
                     if checking_vmid not in assigned:  # Not already assigned
                         try:
                             # Invoke to check it exists, do not need to store the result

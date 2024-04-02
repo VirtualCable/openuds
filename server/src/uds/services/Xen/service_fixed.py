@@ -94,6 +94,7 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
     )
     machines = FixedService.machines
     use_snapshots = FixedService.use_snapshots
+    randomize = FixedService.randomize
 
     prov_uuid = gui.HiddenField(value=None)
 
@@ -226,7 +227,7 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
         found_vmid: typing.Optional[str] = None
         with self._assigned_access() as assigned_vms:
             try:
-                for checking_vmid in self.machines.as_list():
+                for checking_vmid in self.sorted_assignables_list():
                     if checking_vmid not in assigned_vms:  # Not assigned
                         # Check that the machine exists...
                         try:
