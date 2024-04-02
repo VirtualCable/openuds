@@ -96,7 +96,7 @@ class XenFixedUserService(FixedUserService, autoserializable.AutoSerializable):
     def error(self, reason: str) -> types.states.TaskState:
         return self._error(reason)
 
-    def start_machine(self) -> None:
+    def op_start(self) -> None:
         try:
             state = self.service().get_machine_power_state(self._vmid)
         except Exception as e:
@@ -105,7 +105,7 @@ class XenFixedUserService(FixedUserService, autoserializable.AutoSerializable):
         if state != xen_client.XenPowerState.running:
             self._task = self.service().start_machine(self._vmid) or ''
 
-    def stop_machine(self) -> None:
+    def op_stop(self) -> None:
         try:
             state = self.service().get_machine_power_state(self._vmid)
         except Exception as e:
@@ -135,25 +135,25 @@ class XenFixedUserService(FixedUserService, autoserializable.AutoSerializable):
         return types.states.TaskState.RUNNING
 
     # Check methods
-    def create_checker(self) -> types.states.TaskState:
+    def op_create_checker(self) -> types.states.TaskState:
         """
         Checks the state of a deploy for an user or cache
         """
         return types.states.TaskState.FINISHED
 
-    def start_checker(self) -> types.states.TaskState:
+    def op_start_checker(self) -> types.states.TaskState:
         """
         Checks if machine has started
         """
         return self._check_task_finished()
 
-    def stop_checker(self) -> types.states.TaskState:
+    def op_stop_checker(self) -> types.states.TaskState:
         """
         Checks if machine has stoped
         """
         return self._check_task_finished()
 
-    def removed_checker(self) -> types.states.TaskState:
+    def op_removed_checker(self) -> types.states.TaskState:
         """
         Checks if a machine has been removed
         """

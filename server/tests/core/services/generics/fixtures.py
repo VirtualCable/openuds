@@ -51,18 +51,18 @@ if typing.TYPE_CHECKING:
 class FixedTestingUserService(fixed_userservice.FixedUserService):
     mock: 'mock.Mock' = mock.MagicMock()
 
-    def start_machine(self) -> None:
-        self.mock._start_machine()
+    def op_start(self) -> None:
+        self.mock.op_start()
 
-    def stop_machine(self) -> None:
-        self.mock._stop_machine()
+    def op_stop(self) -> None:
+        self.mock.op_stop()
 
-    def start_checker(self) -> types.states.TaskState:
-        self.mock._start_checker()
+    def op_start_checker(self) -> types.states.TaskState:
+        self.mock.op_start_checker()
         return types.states.TaskState.FINISHED
 
-    def stop_checker(self) -> types.states.TaskState:
-        self.mock._stop_checker()
+    def op_stop_checker(self) -> types.states.TaskState:
+        self.mock.op_stop_checker()
         return types.states.TaskState.FINISHED
 
     def db_obj(self) -> typing.Any:

@@ -191,14 +191,14 @@ class FixedOperation(enum.IntEnum):
     START = 1
     STOP = 2
     REMOVE = 3
-    WAIT = 4
+    WAIT = 4   # Here for compat, in fact, fixed services never waits
     ERROR = 5
     FINISH = 6
     RETRY = 7
     SNAPSHOT_CREATE = 8  # to recall process_snapshot
     SNAPSHOT_RECOVER = 9  # to recall process_snapshot
     PROCESS_TOKEN = 10
-    SOFT_SHUTDOWN = 11
+    SHUTDOWN = 11
 
     NOP = 98
     UNKNOWN = 99

@@ -360,7 +360,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             # All operations except WAIT will check against checks counter
             counter_state = self._inc_checks_counter(self._op2str(op))
             if counter_state is not None:
-                return counter_state  # Error, Finished or None
+                return counter_state  # Error, Finished or None (eror can return Finished too)
 
         try:
             if op.is_custom():

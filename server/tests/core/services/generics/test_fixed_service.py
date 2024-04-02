@@ -92,7 +92,7 @@ EXPECTED_DEPLOY_ITERATIONS_INFO: typing.Final[list[FixedServiceIterationInfo]] =
             userservice.Operation.START,
             userservice.Operation.FINISH,
         ],
-        user_service_calls=[mock.call._stop_machine()],
+        user_service_calls=[mock.call.op_stop()],
     ),
     # The current operation is snapshot, so check previous operation (Finished) and then process snapshot
     FixedServiceIterationInfo(
@@ -105,7 +105,7 @@ EXPECTED_DEPLOY_ITERATIONS_INFO: typing.Final[list[FixedServiceIterationInfo]] =
         service_calls=[
             mock.call.process_snapshot(False, mock.ANY),
         ],
-        user_service_calls=[mock.call._stop_checker()],
+        user_service_calls=[mock.call.op_stop_checker()],
     ),
     FixedServiceIterationInfo(
         queue=[
@@ -120,7 +120,7 @@ EXPECTED_DEPLOY_ITERATIONS_INFO: typing.Final[list[FixedServiceIterationInfo]] =
             userservice.Operation.START,
             userservice.Operation.FINISH,
         ],
-        user_service_calls=[mock.call._start_machine()],
+        user_service_calls=[mock.call.op_start()],
     ),
     # When in queue is only finish, it's the last iteration
     # (or if queue is empty, but that's not the case here)
@@ -128,7 +128,7 @@ EXPECTED_DEPLOY_ITERATIONS_INFO: typing.Final[list[FixedServiceIterationInfo]] =
         queue=[
             userservice.Operation.FINISH,
         ],
-        user_service_calls=[mock.call._start_checker()],
+        user_service_calls=[mock.call.op_start_checker()],
         state=types.states.TaskState.FINISHED,
     ),
 ]
@@ -178,7 +178,7 @@ class FixedServiceTest(UDSTestCase):
     ) -> None:
         first: bool = True
 
-        for iteration in iterations:
+        for num, iteration in enumerate(iterations, start=1):
             # Clear mocks
             service.mock.reset_mock()
             userservice.mock.reset_mock()
@@ -197,19 +197,19 @@ class FixedServiceTest(UDSTestCase):
             self.assertEqual(
                 userservice._queue,
                 iteration.queue,
-                f'Iteration {iteration} {diff}',
+                f'Iteration {num} {iteration} {diff}',
             )
             diff_mock_calls = [x for x in iteration.service_calls if x not in service.mock.mock_calls]
             self.assertEqual(
                 service.mock.mock_calls,
                 iteration.service_calls,
-                f'Iteration {iteration} {diff_mock_calls}',
+                f'Iteration {num} {iteration} {diff_mock_calls}',
             )
             diff_mock_calls = [x for x in iteration.user_service_calls if x not in userservice.mock.mock_calls]
             self.assertEqual(
                 userservice.mock.mock_calls,
                 iteration.user_service_calls,
-                f'Iteration {iteration} {diff_mock_calls}',
+                f'Iteration {num} {iteration} {diff_mock_calls}',
             )
 
     def deploy_service(

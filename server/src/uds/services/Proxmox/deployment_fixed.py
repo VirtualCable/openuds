@@ -108,7 +108,7 @@ class ProxmoxUserServiceFixed(FixedUserService, autoserializable.AutoSerializabl
     def error(self, reason: str) -> types.states.TaskState:
         return self._error(reason)
 
-    def start_machine(self) -> None:
+    def op_start(self) -> None:
         try:
             vminfo = self.service().get_machine_info(int(self._vmid))
         except client.ProxmoxConnectionError:
@@ -141,7 +141,7 @@ class ProxmoxUserServiceFixed(FixedUserService, autoserializable.AutoSerializabl
         return types.states.TaskState.RUNNING
 
     # Check methods
-    def start_checker(self) -> types.states.TaskState:
+    def op_start_checker(self) -> types.states.TaskState:
         """
         Checks if machine has started
         """

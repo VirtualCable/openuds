@@ -53,7 +53,9 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
     and that will be always the from a "fixed" machine, that is, a machine that is not created.
     """
 
-    suggested_delay = 4
+    suggested_delay = 8
+    # How many times we will check for a state before giving up
+    max_state_checks: typing.ClassVar[int] = 20
 
     _name = autoserializable.StringField(default='')
     _mac = autoserializable.StringField(default='')
@@ -90,6 +92,18 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             return Operation.FINISH
 
         return self._queue[0]
+
+    def _reset_checks_counter(self) -> None:
+        with self.storage.as_dict() as data:
+            data['exec_count'] = 0
+
+    def _inc_checks_counter(self, info: typing.Optional[str] = None) -> typing.Optional[types.states.TaskState]:
+        with self.storage.as_dict() as data:
+            count = data.get('exec_count', 0) + 1
+            data['exec_count'] = count
+        if count > self.max_state_checks:
+            return self._error(f'Max checks reached on {info or "unknown"}')
+        return None
 
     @typing.final
     def _retry_later(self) -> str:
@@ -155,7 +169,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         # copy is needed to avoid modifying class var, and access using instance allowing to get, if provided, overriden queue
         self._queue = self._create_queue.copy()
         return self._execute_queue()
-    
+
     @typing.final
     def deploy_for_cache(self, level: types.services.CacheLevel) -> types.states.TaskState:
         """
@@ -182,7 +196,9 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             return types.states.TaskState.FINISHED
 
         try:
-            operation_runner = _EXEC_FNCS[op]
+            self._reset_checks_counter()  # Reset checks counter
+
+            operation_runner = _EXECUTORS[op]
 
             # Invoke using instance, we have overrided methods
             # and we want to use the overrided ones
@@ -192,140 +208,6 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         except Exception as e:
             logger.exception('Unexpected FixedUserService exception: %s', e)
             return self._error(str(e))
-
-    @typing.final
-    def _retry(self) -> None:
-        """
-        Used to retry an operation
-        In fact, this will not be never invoked, unless we push it twice, because
-        check_state method will "pop" first item when a check operation returns State.FINISHED
-
-        At executeQueue this return value will be ignored, and it will only be used at check_state
-        """
-        pass
-
-    @typing.final
-    def _wait(self) -> None:
-        """
-        Executes opWait, it simply waits something "external" to end
-        """
-        pass
-
-    @typing.final
-    def _nop(self) -> None:
-        """
-        Executes opWait, it simply waits something "external" to end
-        """
-        pass
-
-    @typing.final
-    def _create(self) -> None:
-        """
-        Deploys a machine from template for user/cache
-        """
-        self._mac = self.service().get_first_network_mac(self._vmid) or ''
-        self._name = self.service().get_name(self._vmid) or f'VM-{self._vmid}'
-
-    @typing.final
-    def _snapshot_create(self) -> None:
-        """
-        Creates a snapshot if needed
-        """
-        # Try to process snaptshots if needed
-        self.service().process_snapshot(remove=False, userservice_instance=self)
-
-    @typing.final
-    def _snapshot_recover(self) -> None:
-        """
-        Recovers a snapshot if needed
-        """
-        self.service().process_snapshot(remove=True, userservice_instance=self)
-
-    @typing.final
-    def _process_token(self) -> None:
-        # If not to be managed by a token, "autologin" user
-        if not self.service().get_token():
-            userservice = self.db_obj()
-            if userservice:
-                userservice.set_in_use(True)
-
-    def remove(self) -> None:
-        """
-        Removes the snapshot if needed and releases the machine again
-        """
-        self.service().remove_and_free(self._vmid)
-
-    # Check methods
-    def create_checker(self) -> types.states.TaskState:
-        """
-        Checks the state of a deploy for an user or cache
-        """
-        return types.states.TaskState.FINISHED
-
-    def snapshot_create_checker(self) -> types.states.TaskState:
-        """
-        Checks the state of a snapshot creation
-        """
-        return types.states.TaskState.FINISHED
-
-    def snapshot_recover_checker(self) -> types.states.TaskState:
-        """
-        Checks the state of a snapshot recovery
-        """
-        return types.states.TaskState.FINISHED
-
-    def process_token_checker(self) -> types.states.TaskState:
-        """
-        Checks the state of a token processing
-        """
-        return types.states.TaskState.FINISHED
-
-    def retry_checker(self) -> types.states.TaskState:
-        return types.states.TaskState.FINISHED
-
-    def wait_checker(self) -> types.states.TaskState:
-        return types.states.TaskState.FINISHED
-
-    def nop_checker(self) -> types.states.TaskState:
-        return types.states.TaskState.FINISHED
-
-    def start_machine(self) -> None:
-        """
-        Override this method to start the machine if needed
-        """
-        pass
-
-    def start_checker(self) -> types.states.TaskState:
-        """
-        Checks if machine has started
-        """
-        return types.states.TaskState.FINISHED
-
-    def stop_machine(self) -> None:
-        """
-        Override this method to stop the machine if needed
-        """
-        pass
-
-    def stop_checker(self) -> types.states.TaskState:
-        """
-        Checks if machine has stoped
-        """
-        return types.states.TaskState.FINISHED
-
-    # Not abstract methods, defaults to stop machine
-    def soft_shutdown_machine(self) -> None:
-        """ """
-        return self.stop_machine()  # Default is to stop the machine
-
-    def soft_shutdown_checker(self) -> types.states.TaskState:
-        return self.stop_checker()  # Default is to check if machine has stopped
-
-    def removed_checker(self) -> types.states.TaskState:
-        """
-        Checks if a machine has been removed
-        """
-        return types.states.TaskState.FINISHED
 
     @typing.final
     def check_state(self) -> types.states.TaskState:
@@ -341,8 +223,15 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         if op == Operation.FINISH:
             return types.states.TaskState.FINISHED
 
+        # All operations except WAIT will check against checks counter
+        # but, due to the fact that WAIT is a NOP, we will not check for WAIT operations
+        # (not present on fixed services, because do not have cache 2, so no need to wait)
+        counter_state = self._inc_checks_counter(self._op2str(op))
+        if counter_state is not None:
+            return counter_state  # Error or None
+
         try:
-            check_function = _CHECK_FNCS[op]
+            check_function = _CHECKERS[op]
 
             # Invoke using instance, we have overrided methods
             # and we want to use the overrided ones
@@ -356,6 +245,130 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         except Exception as e:
             logger.exception('Unexpected UserService check exception: %s', e)
             return self._error(str(e))
+
+    @typing.final
+    def op_retry(self) -> None:
+        """
+        Used to retry an operation
+        In fact, this will not be never invoked, unless we push it twice, because
+        check_state method will "pop" first item when a check operation returns State.FINISHED
+
+        At executeQueue this return value will be ignored, and it will only be used at check_state
+        """
+        pass
+
+    @typing.final
+    def op_nop(self) -> None:
+        """
+        Executes opWait, it simply waits something "external" to end
+        """
+        pass
+
+    @typing.final
+    def op_create(self) -> None:
+        """
+        Deploys a machine from template for user/cache
+        """
+        self._mac = self.service().get_first_network_mac(self._vmid) or ''
+        self._name = self.service().get_name(self._vmid) or f'VM-{self._vmid}'
+
+    @typing.final
+    def op_snapshot_create(self) -> None:
+        """
+        Creates a snapshot if needed
+        """
+        # Try to process snaptshots if needed
+        self.service().process_snapshot(remove=False, userservice_instance=self)
+
+    @typing.final
+    def op_snapshot_recover(self) -> None:
+        """
+        Recovers a snapshot if needed
+        """
+        self.service().process_snapshot(remove=True, userservice_instance=self)
+
+    @typing.final
+    def op_process_tocken(self) -> None:
+        # If not to be managed by a token, "autologin" user
+        if not self.service().get_token():
+            userservice = self.db_obj()
+            if userservice:
+                userservice.set_in_use(True)
+
+    def op_remove(self) -> None:
+        """
+        Removes the snapshot if needed and releases the machine again
+        """
+        self.service().remove_and_free(self._vmid)
+
+    # Check methods
+    def op_create_checker(self) -> types.states.TaskState:
+        """
+        Checks the state of a deploy for an user or cache
+        """
+        return types.states.TaskState.FINISHED
+
+    def op_snapshot_create_checker(self) -> types.states.TaskState:
+        """
+        Checks the state of a snapshot creation
+        """
+        return types.states.TaskState.FINISHED
+
+    def op_snapshot_recover_checker(self) -> types.states.TaskState:
+        """
+        Checks the state of a snapshot recovery
+        """
+        return types.states.TaskState.FINISHED
+
+    def op_process_token_checker(self) -> types.states.TaskState:
+        """
+        Checks the state of a token processing
+        """
+        return types.states.TaskState.FINISHED
+
+    def op_retry_checker(self) -> types.states.TaskState:
+        return types.states.TaskState.FINISHED
+
+    def op_nop_checker(self) -> types.states.TaskState:
+        return types.states.TaskState.FINISHED
+
+    def op_start(self) -> None:
+        """
+        Override this method to start the machine if needed
+        """
+        pass
+
+    def op_start_checker(self) -> types.states.TaskState:
+        """
+        Checks if machine has started
+        """
+        return types.states.TaskState.FINISHED
+
+    def op_stop(self) -> None:
+        """
+        Override this method to stop the machine if needed
+        """
+        pass
+
+    def op_stop_checker(self) -> types.states.TaskState:
+        """
+        Checks if machine has stoped
+        """
+        return types.states.TaskState.FINISHED
+
+    # Not abstract methods, defaults to stop machine
+    def op_shutdown(self) -> None:
+        """ """
+        return self.op_stop()  # Default is to stop the machine
+
+    def op_shutdown_checker(self) -> types.states.TaskState:
+        return self.op_stop_checker()  # Default is to check if machine has stopped
+
+    def op_removed_checker(self) -> types.states.TaskState:
+        """
+        Checks if a machine has been removed
+        """
+        return types.states.TaskState.FINISHED
 
     @typing.final
     def finish(self) -> None:
@@ -412,7 +425,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             Operation.SNAPSHOT_CREATE: 'snapshot_create',
             Operation.SNAPSHOT_RECOVER: 'snapshot_recover',
             Operation.PROCESS_TOKEN: 'process_token',
-            Operation.SOFT_SHUTDOWN: 'soft_shutdown',
+            Operation.SHUTDOWN: 'soft_shutdown',
             Operation.NOP: 'nop',
             Operation.UNKNOWN: 'unknown',
         }.get(op, '????')
@@ -437,35 +450,35 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
 # Operations, duwe to the fact that can be overrided some of them, must be invoked via instance
 # We use __name__ later to use them, so we can use type checking and invoke them via instance instead of class
 # Note that ERROR and FINISH are not here, as they final states not needing to be executed
-_EXEC_FNCS: typing.Final[
+_EXECUTORS: typing.Final[
     collections.abc.Mapping[Operation, collections.abc.Callable[[FixedUserService], None]]
 ] = {
-    Operation.CREATE: FixedUserService._create,
-    Operation.RETRY: FixedUserService._retry,
-    Operation.START: FixedUserService.start_machine,
-    Operation.STOP: FixedUserService.stop_machine,
-    Operation.WAIT: FixedUserService._wait,
-    Operation.REMOVE: FixedUserService.remove,
-    Operation.SNAPSHOT_CREATE: FixedUserService._snapshot_create,
-    Operation.SNAPSHOT_RECOVER: FixedUserService._snapshot_recover,
-    Operation.PROCESS_TOKEN: FixedUserService._process_token,
-    Operation.SOFT_SHUTDOWN: FixedUserService.soft_shutdown_machine,
-    Operation.NOP: FixedUserService._nop,
+    Operation.CREATE: FixedUserService.op_create,
+    Operation.RETRY: FixedUserService.op_retry,
+    Operation.START: FixedUserService.op_start,
+    Operation.STOP: FixedUserService.op_stop,
+    Operation.WAIT: FixedUserService.op_nop,  # Fixed assigned services has no cache 2, so no need to wait
+    Operation.REMOVE: FixedUserService.op_remove,
+    Operation.SNAPSHOT_CREATE: FixedUserService.op_snapshot_create,
+    Operation.SNAPSHOT_RECOVER: FixedUserService.op_snapshot_recover,
+    Operation.PROCESS_TOKEN: FixedUserService.op_process_tocken,
+    Operation.SHUTDOWN: FixedUserService.op_shutdown,
+    Operation.NOP: FixedUserService.op_nop,
 }
 
 # Same af before, but for check methods
-_CHECK_FNCS: typing.Final[
+_CHECKERS: typing.Final[
     collections.abc.Mapping[Operation, collections.abc.Callable[[FixedUserService], types.states.TaskState]]
 ] = {
-    Operation.CREATE: FixedUserService.create_checker,
-    Operation.RETRY: FixedUserService.retry_checker,
-    Operation.WAIT: FixedUserService.wait_checker,
-    Operation.START: FixedUserService.start_checker,
-    Operation.STOP: FixedUserService.stop_checker,
-    Operation.REMOVE: FixedUserService.removed_checker,
-    Operation.SNAPSHOT_CREATE: FixedUserService.snapshot_create_checker,
-    Operation.SNAPSHOT_RECOVER: FixedUserService.snapshot_recover_checker,
-    Operation.PROCESS_TOKEN: FixedUserService.process_token_checker,
-    Operation.SOFT_SHUTDOWN: FixedUserService.soft_shutdown_checker,
-    Operation.NOP: FixedUserService.nop_checker,
+    Operation.CREATE: FixedUserService.op_create_checker,
+    Operation.RETRY: FixedUserService.op_retry_checker,
+    Operation.WAIT: FixedUserService.op_nop_checker,  # Fixed assigned services has no cache 2, so no need to wait
+    Operation.START: FixedUserService.op_start_checker,
+    Operation.STOP: FixedUserService.op_stop_checker,
+    Operation.REMOVE: FixedUserService.op_removed_checker,
+    Operation.SNAPSHOT_CREATE: FixedUserService.op_snapshot_create_checker,
+    Operation.SNAPSHOT_RECOVER: FixedUserService.op_snapshot_recover_checker,
+    Operation.PROCESS_TOKEN: FixedUserService.op_process_token_checker,
+    Operation.SHUTDOWN: FixedUserService.op_shutdown_checker,
+    Operation.NOP: FixedUserService.op_nop_checker,
 }
