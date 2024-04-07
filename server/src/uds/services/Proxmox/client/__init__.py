@@ -42,6 +42,7 @@ import requests
 from uds.core import consts, types as core_types
 from uds.core.util import security
 from uds.core.util.decorators import cached, ensure_connected
+from uds.core.services.generics import exceptions
 
 from . import types
 
@@ -60,19 +61,19 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class ProxmoxError(Exception):
+class ProxmoxError(exceptions.Error):
     pass
 
 
-class ProxmoxConnectionError(ProxmoxError):
+class ProxmoxConnectionError(exceptions.RetryableError):
     pass
 
 
-class ProxmoxAuthError(ProxmoxError):
+class ProxmoxAuthError(exceptions.FatalError):
     pass
 
 
-class ProxmoxNotFound(ProxmoxError):
+class ProxmoxNotFound(exceptions.NotFoundError):
     pass
 
 
@@ -137,10 +138,10 @@ class ProxmoxClient:
             logger.debug('Error on request %s: %s', response.status_code, response.content)
             error_message = 'Status code {}'.format(response.status_code)
             if response.status_code == 595:
-                raise ProxmoxNodeUnavailableError()
+                raise ProxmoxNodeUnavailableError(response.content.decode('utf8'))
 
             if response.status_code == 403:
-                raise ProxmoxAuthError()
+                raise ProxmoxAuthError(response.content.decode('utf8'))
 
             if response.status_code == 400:
                 try:
@@ -155,7 +156,7 @@ class ProxmoxClient:
                     logger.error('Proxmox error 500:')
                     for line in journal:
                         logger.error(' * %s', line)
-                        
+
                     error_message = f'Error 500 on request: {" ## ".join(journal)}'
                 except Exception:
                     pass  # If we can't get journal, just use default message
@@ -178,7 +179,7 @@ class ProxmoxClient:
 
             logger.debug('GET result to %s: %s -- %s', path, result.status_code, result.content)
         except requests.ConnectionError as e:
-            raise ProxmoxConnectionError(e)
+            raise ProxmoxConnectionError(str(e))
 
         return self.ensure_correct(result, node=node)
 
@@ -200,7 +201,7 @@ class ProxmoxClient:
 
             logger.debug('POST result to %s: %s -- %s', path, result.status_code, result.content)
         except requests.ConnectionError as e:
-            raise ProxmoxConnectionError(e)
+            raise ProxmoxConnectionError(str(e))
 
         return self.ensure_correct(result, node=node)
 
@@ -228,7 +229,7 @@ class ProxmoxClient:
                 result.headers,
             )
         except requests.ConnectionError as e:
-            raise ProxmoxConnectionError(e)
+            raise ProxmoxConnectionError(str(e))
 
         return self.ensure_correct(result, node=node)
 
@@ -251,7 +252,7 @@ class ProxmoxClient:
                 timeout=self._timeout,
             )
             if not result.ok:
-                raise ProxmoxAuthError()
+                raise ProxmoxAuthError(result.content.decode('utf8'))
             data = result.json()['data']
             self._ticket = data['ticket']
             self._csrf = data['CSRFPreventionToken']
@@ -259,7 +260,7 @@ class ProxmoxClient:
             if self.cache:
                 self.cache.put(self._host + 'conn', (self._ticket, self._csrf), validity=1800)  # 30 minutes
         except requests.RequestException as e:
-            raise ProxmoxConnectionError from e
+            raise ProxmoxConnectionError(str(e)) from e
 
     def test(self) -> bool:
         try:
@@ -310,7 +311,9 @@ class ProxmoxClient:
         ]
 
     @ensure_connected
-    def node_has_vgpus_available(self, node: str, vgpu_type: typing.Optional[str], **kwargs: typing.Any) -> bool:
+    def node_has_vgpus_available(
+        self, node: str, vgpu_type: typing.Optional[str], **kwargs: typing.Any
+    ) -> bool:
         return any(
             gpu.available and (vgpu_type is None or gpu.type == vgpu_type) for gpu in self.list_node_vgpus(node)
         )
@@ -422,7 +425,9 @@ class ProxmoxClient:
         return types.VmCreationResult(
             node=use_node,
             vmid=new_vmid,
-            upid=types.UPID.from_dict(self._post(f'nodes/{src_node}/qemu/{vmid}/clone', data=params, node=src_node)),
+            upid=types.UPID.from_dict(
+                self._post(f'nodes/{src_node}/qemu/{vmid}/clone', data=params, node=src_node)
+            ),
         )
 
     @ensure_connected
@@ -585,7 +590,9 @@ class ProxmoxClient:
 
     @cached('vmip', CACHE_INFO_DURATION, key_helper=caching_key_helper)
     @ensure_connected
-    def get_machine_pool_info(self, vmid: int, poolid: typing.Optional[str], **kwargs: typing.Any) -> types.VMInfo:
+    def get_machine_pool_info(
+        self, vmid: int, poolid: typing.Optional[str], **kwargs: typing.Any
+    ) -> types.VMInfo:
         # try to locate machine in pool
         node = None
         if poolid:
@@ -604,7 +611,9 @@ class ProxmoxClient:
 
     @ensure_connected
     @cached('vmin', CACHE_INFO_DURATION, key_helper=caching_key_helper)
-    def get_machine_info(self, vmid: int, node: typing.Optional[str] = None, **kwargs: typing.Any) -> types.VMInfo:
+    def get_machine_info(
+        self, vmid: int, node: typing.Optional[str] = None, **kwargs: typing.Any
+    ) -> types.VMInfo:
         nodes = [types.Node(node, False, False, 0, '', '', '')] if node else self.get_cluster_info().nodes
         any_node_is_down = False
         for n in nodes:
@@ -620,9 +629,9 @@ class ProxmoxClient:
                 pass  # Any other error, ignore this node (not found in that node)
 
         if any_node_is_down:
-            raise ProxmoxNodeUnavailableError()
+            raise ProxmoxNodeUnavailableError('All nodes are down or not available')
 
-        raise ProxmoxNotFound()
+        raise ProxmoxNotFound(f'VM {vmid} not found')
 
     @ensure_connected
     def get_machine_configuration(
@@ -748,7 +757,9 @@ class ProxmoxClient:
 
     @ensure_connected
     @cached('pool', CACHE_DURATION, key_helper=caching_key_helper)
-    def get_pool_info(self, pool_id: str, retrieve_vm_names: bool = False, **kwargs: typing.Any) -> types.PoolInfo:
+    def get_pool_info(
+        self, pool_id: str, retrieve_vm_names: bool = False, **kwargs: typing.Any
+    ) -> types.PoolInfo:
         pool_info = types.PoolInfo.from_dict(self._get(f'pools/{pool_id}')['data'])
         if retrieve_vm_names:
             for i in range(len(pool_info.members)):

@@ -1,7 +1,12 @@
 from uds.core import exceptions as core_exceptions
 
+class Error(core_exceptions.UDSException):
+    """
+    Base exception for this module
+    """
+    pass
 
-class RetryableError(core_exceptions.UDSException):
+class RetryableError(Error):
     """
     Exception that is raised when an error is detected that can be retried
     """
@@ -10,7 +15,7 @@ class RetryableError(core_exceptions.UDSException):
         super().__init__(message)
 
 
-class FatalError(core_exceptions.UDSException):
+class FatalError(Error):
     """
     Exception that is raised when an error is detected that can't be retried
     """
@@ -19,7 +24,7 @@ class FatalError(core_exceptions.UDSException):
         super().__init__(message)
 
 
-class NotFoundError(core_exceptions.UDSException):
+class NotFoundError(Error):
     """
     Exception that is raised when an object is not found
     """

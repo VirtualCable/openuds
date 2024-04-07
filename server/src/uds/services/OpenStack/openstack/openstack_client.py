@@ -39,6 +39,7 @@ import collections.abc
 from django.utils.translation import gettext as _
 from uds.core import consts
 
+from uds.core.services.generics import exceptions
 from uds.core.util import security, cache, decorators
 
 from . import types as openstack_types
@@ -237,6 +238,8 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
     ) -> typing.Any:
         cache_key = ''.join(endpoints_types)
         found_endpoints = self._get_endpoints_iterable(cache_key, *endpoints_types)
+        
+        retrayable = False
 
         for i, endpoint in enumerate(found_endpoints):
             try:
@@ -255,7 +258,12 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
                 logger.debug('Result: %s', r.content)
                 return r
             except Exception as e:
+                if isinstance(e, (requests.exceptions.Timeout, requests.exceptions.ConnectionError)):
+                    retrayable = True  # Endpoint is down, can retry if none is working
+                
                 if i == len(found_endpoints) - 1:
+                    if retrayable:
+                        raise exceptions.RetryableError('All endpoints failed') from e  # With last exception
                     raise e
                 logger.warning('Error requesting %s: %s', endpoint + path, e)
                 self.cache.remove(cache_key)
