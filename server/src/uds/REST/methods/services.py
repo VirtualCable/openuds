@@ -303,7 +303,8 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                         'tooltip': _('Kind of service counting for calculating if MAX is reached'),
                         'type': types.ui.FieldType.CHOICE,
                         'readonly': False,
-                        'order': 101,
+                        'order': 110,
+                        'tab': types.ui.Tab.ADVANCED,
                     },
                 )
 

@@ -331,7 +331,7 @@ def remove_duplicates_field(
 
 def soft_shutdown_field(
     order: int = 103,
-    tab: 'types.ui.Tab|str|None' = None,
+    tab: 'types.ui.Tab|str|None' = types.ui.Tab.ADVANCED,
     old_field_name: typing.Optional[str] = None,
 ) -> ui.gui.CheckBoxField:
     return ui.gui.CheckBoxField(

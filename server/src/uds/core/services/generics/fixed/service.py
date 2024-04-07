@@ -85,10 +85,20 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         readonly=False,
     )
 
+    # Keep name as "machine" so we can use VCHelpers.getMachines
+    machines = gui.MultiChoiceField(
+        label=_("Machines"),
+        order=30,
+        tooltip=_('Machines for this service'),
+        required=True,
+        tab=types.ui.Tab.MACHINE,
+        rows=10,
+    )
+
     use_snapshots = gui.CheckBoxField(
         label=_('Use snapshots'),
         default=False,
-        order=30,
+        order=33,
         tooltip=_(
             'If active, UDS will try to create an snapshot (if one already does not exists) before accessing a machine, and restore it after usage.'
         ),
@@ -99,7 +109,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
     # This one replaces use_snapshots, and is used to select the snapshot type (No snapshot, recover snapshot and stop machine, recover snapshot and start machine)
     snapshot_type = gui.ChoiceField(
         label=_('Snapshot type'),
-        order=31,
+        order=36,
         default='0',
         tooltip=_(
             'If active, UDS will try to create an snapshot (if one already does not exists) before accessing a machine, and restore it after usage.'
@@ -112,16 +122,6 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         ],
     )
 
-    # Keep name as "machine" so we can use VCHelpers.getMachines
-    machines = gui.MultiChoiceField(
-        label=_("Machines"),
-        order=32,
-        tooltip=_('Machines for this service'),
-        required=True,
-        tab=types.ui.Tab.MACHINE,
-        rows=10,
-    )
-
     # Randomize machine assignation isntead of linear
     randomize = gui.CheckBoxField(
         label=_('Randomize machine assignation'),
@@ -131,7 +131,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         tab=types.ui.Tab.ADVANCED,
     )
     maintain_on_error = fields.maintain_on_error_field(
-        order=101,
+        order=103,
         tab=types.ui.Tab.ADVANCED,
     )
 
