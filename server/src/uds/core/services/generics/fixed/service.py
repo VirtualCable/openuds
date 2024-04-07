@@ -163,17 +163,15 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
             if machines != initial_machines:
                 d['vms'] = machines  # Store it
 
-    def process_snapshot(self, remove: bool, userservice_instance: 'FixedUserService') -> None:
+    def snapshot_creation(self, userservice_instance: 'FixedUserService') -> None:
         """
-        Processes snapshot creation if needed for this service
-        Defaults to do nothing
-
-        Args:
-            remove (bool): If True, called from "remove" action, else called from "create" action
-
-        returns:
-            None
-            If needs to notify an error, raise an exception
+        Creates a snapshot for the machine
+        """
+        return
+    
+    def snapshot_recovery(self, userservice_instance: 'FixedUserService') -> None:
+        """
+        Removes the snapshot for the machine
         """
         return
 
@@ -199,7 +197,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
     def remove_and_free(self, vmid: str) -> types.states.TaskState:
         try:
             with self._assigned_access() as assigned:
-                # In error situations, due to the "process_snapshot" post runasign, the element could be already removed
+                # In error situations, due to the "recover_snapshot" post runasign, the element could be already removed
                 # So we need to check if it's there
                 if vmid in assigned:
                     assigned.remove(vmid)

@@ -94,9 +94,6 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     # Extra info, not serializable, to keep information in case of exception and debug it
     _error_debug_info: typing.Optional[str] = None
 
-    # Note that even if SNAPHSHOT operations are in middel
-    # implementations may opt to no have snapshots at all
-    # In this case, the process_snapshot method will do nothing
     _create_queue: typing.ClassVar[list[Operation]] = [
         Operation.INITIALIZE,
         Operation.CREATE,

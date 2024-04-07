@@ -87,9 +87,9 @@ class FixedTestingService(fixed_service.FixedService):
 
     mock: 'mock.Mock' = mock.MagicMock()
 
-    def process_snapshot(self, remove: bool, userservice_instance: fixed_userservice.FixedUserService) -> None:
-        self.mock.process_snapshot(remove, userservice_instance)
-        if not remove and not self.first_process_called:
+    def snapshot_creation(self, userservice_instance: fixed_userservice.FixedUserService) -> None:
+        self.mock.snapshot_creation(userservice_instance)
+        if not self.first_process_called:
             # We want to call start, then snapshot, again
             # As we have snapshot on top of queue, we need to insert NOP -> STOP
             # This way, NOP will be consumed right now, then start will be called and then
@@ -97,6 +97,9 @@ class FixedTestingService(fixed_service.FixedService):
             userservice_instance._queue.insert(0, types.services.Operation.STOP)
             userservice_instance._queue.insert(0, types.services.Operation.NOP)
             self.first_process_called = True
+
+    def snapshot_recovery(self, userservice_instance: fixed_userservice.FixedUserService) -> None:
+        self.mock.snapshot_recovery(userservice_instance)
 
     def get_name(self, vmid: str) -> str:
         self.mock.get_machine_name(vmid)

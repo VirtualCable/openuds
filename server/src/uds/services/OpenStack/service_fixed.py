@@ -36,7 +36,6 @@ from django.utils.translation import gettext_noop as _
 
 from uds.core import services, types
 from uds.core.services.generics.fixed.service import FixedService
-from uds.core.services.generics.fixed.userservice import FixedUserService
 from uds.core.ui import gui
 from uds.core.util import log
 
@@ -169,9 +168,6 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
 
         return openstack_userservice_instance.error('VM not available!')
 
-    def process_snapshot(self, remove: bool, userservice_instance: FixedUserService) -> None:
-        return  # No snapshots support
-
     def get_and_assign(self) -> str:
         found_vmid: typing.Optional[str] = None
         try:
@@ -213,11 +209,11 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
     def get_name(self, vmid: str) -> str:
         return self.api.get_server(vmid).name
 
-    def remove_and_free(self, vmid: str) -> str:
+    def remove_and_free(self, vmid: str) -> types.states.TaskState:
         try:
             with self._assigned_access() as assigned:
                 assigned.remove(vmid)
-            return types.states.State.FINISHED
+            return types.states.TaskState.FINISHED
         except Exception as e:
             logger.warning('Cound not save assigned machines on fixed pool: %s', e)
             raise

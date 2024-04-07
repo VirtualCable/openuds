@@ -68,7 +68,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
 
     # Note that even if SNAPHSHOT operations are in middel
     # implementations may opt to no have snapshots at all
-    # In this case, the process_snapshot method will do nothing
+    # In this case, the default service snapshot methods will handle this (default to do nothing)
     _create_queue: typing.ClassVar[list[Operation]] = [
         Operation.CREATE,
         Operation.SNAPSHOT_CREATE,
@@ -128,7 +128,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             if self.service().should_maintain_on_error() is False:
                 try:
                     self.service().remove_and_free(self._vmid)
-                    self.service().process_snapshot(remove=True, userservice_instance=self)
+                    self.service().snapshot_recovery(userservice_instance=self)
                     self._vmid = ''
                 except Exception as e:
                     logger.exception('Exception removing machine: %s', e)
@@ -304,14 +304,14 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         Creates a snapshot if needed
         """
         # Try to process snaptshots if needed
-        self.service().process_snapshot(remove=False, userservice_instance=self)
+        self.service().snapshot_creation(userservice_instance=self)
 
     @typing.final
     def op_snapshot_recover(self) -> None:
         """
         Recovers a snapshot if needed
         """
-        self.service().process_snapshot(remove=True, userservice_instance=self)
+        self.service().snapshot_recovery(userservice_instance=self)
 
     @typing.final
     def op_process_tocken(self) -> None:

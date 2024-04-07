@@ -145,14 +145,14 @@ class TestProxmoxFixedService(UDSTransactionTestCase):
 
             # Create snapshot
             api.list_snapshots.return_value = []
-            service.process_snapshot(False, userservice_instance)
+            service.snapshot_creation(userservice_instance)
             api.list_snapshots.assert_called_with(int(vmid), None)
             api.create_snapshot.assert_called_with(int(vmid), None, 'UDS Snapshot', None)
 
             # Skip snapshot creation
             api.reset_mock()
             api.list_snapshots.return_value = fixtures.SNAPSHOTS_INFO
-            service.process_snapshot(False, userservice_instance)
+            service.snapshot_recovery(userservice_instance)
             api.list_snapshots.assert_called_with(int(vmid), None)
             api.create_snapshot.assert_not_called()
 
@@ -160,7 +160,7 @@ class TestProxmoxFixedService(UDSTransactionTestCase):
             # First, no snapshots, so no restore
             api.reset_mock()
             api.list_snapshots.return_value = []
-            service.process_snapshot(True, userservice_instance)
+            service.snapshot_creation(userservice_instance)
             api.list_snapshots.assert_called_with(int(vmid), None)
             # no snapshots, so no restore
             api.restore_snapshot.assert_not_called()
@@ -168,7 +168,7 @@ class TestProxmoxFixedService(UDSTransactionTestCase):
             # Reset and add snapshot
             api.reset_mock()
             api.list_snapshots.return_value = fixtures.SNAPSHOTS_INFO
-            service.process_snapshot(True, userservice_instance)
+            service.snapshot_recovery(userservice_instance)
             api.list_snapshots.assert_called_with(int(vmid), None)
             # restore snapshot
             api.restore_snapshot.assert_called_with(int(vmid), None, fixtures.SNAPSHOTS_INFO[0].name)

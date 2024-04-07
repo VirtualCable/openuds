@@ -147,34 +147,36 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
 
         return proxmox_service_instance.error('VM not available!')
 
-    def process_snapshot(self, remove: bool, userservice_instance: FixedUserService) -> None:
+    def snapshot_creation(self, userservice_instance: FixedUserService) -> None:
         userservice_instance = typing.cast(ProxmoxUserServiceFixed, userservice_instance)
         if self.use_snapshots.as_bool():
             vmid = int(userservice_instance._vmid)
-            if remove:
-                try:
-                    # try to revert to snapshot
-                    snapshot = self.provider().get_current_snapshot(vmid)
-                    if snapshot:
-                        userservice_instance._store_task(
-                            self.provider().restore_snapshot(vmid, name=snapshot.name)
-                        )
-                except Exception as e:
-                    self.do_log(log.LogLevel.WARNING, 'Could not restore SNAPSHOT for this VM. ({})'.format(e))
+            logger.debug('Using snapshots')
+            # If no snapshot exists for this vm, try to create one for it on background
+            # Lauch an snapshot. We will not wait for it to finish, but instead let it run "as is"
+            try:
+                if not self.provider().get_current_snapshot(vmid):
+                    logger.debug('No current snapshot')
+                    self.provider().create_snapshot(
+                        vmid,
+                        name='UDS Snapshot',
+                    )
+            except Exception as e:
+                self.do_log(log.LogLevel.WARNING, 'Could not create SNAPSHOT for this VM. ({})'.format(e))
 
-            else:
-                logger.debug('Using snapshots')
-                # If no snapshot exists for this vm, try to create one for it on background
-                # Lauch an snapshot. We will not wait for it to finish, but instead let it run "as is"
-                try:
-                    if not self.provider().get_current_snapshot(vmid):
-                        logger.debug('No current snapshot')
-                        self.provider().create_snapshot(
-                            vmid,
-                            name='UDS Snapshot',
-                        )
-                except Exception as e:
-                    self.do_log(log.LogLevel.WARNING, 'Could not create SNAPSHOT for this VM. ({})'.format(e))
+    def snapshot_recovery(self, userservice_instance: FixedUserService) -> None:
+        userservice_instance = typing.cast(ProxmoxUserServiceFixed, userservice_instance)
+        if self.use_snapshots.as_bool():
+            vmid = int(userservice_instance._vmid)
+            try:
+                # try to revert to snapshot
+                snapshot = self.provider().get_current_snapshot(vmid)
+                if snapshot:
+                    userservice_instance._store_task(
+                        self.provider().restore_snapshot(vmid, name=snapshot.name)
+                    )
+            except Exception as e:
+                self.do_log(log.LogLevel.WARNING, 'Could not restore SNAPSHOT for this VM. ({})'.format(e))
 
     def get_and_assign(self) -> str:
         found_vmid: typing.Optional[str] = None

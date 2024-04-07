@@ -194,7 +194,7 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
 
         return xen_userservice_instance.error('VM not available!')
 
-    def process_snapshot(self, remove: bool, userservice_instance: FixedUserService) -> None:
+    def snapshot_creation(self, userservice_instance: FixedUserService) -> None:
         userservice_instance = typing.cast(XenFixedUserService, userservice_instance)
         if self.use_snapshots.as_bool():
             vmid = userservice_instance._vmid
@@ -202,26 +202,33 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
             snapshots = [i['id'] for i in self.provider().list_snapshots(vmid)]
             snapshot = snapshots[0] if snapshots else None
 
-            if remove and snapshot:
+            logger.debug('Using snapshots')
+            # If no snapshot exists for this vm, try to create one for it on background
+            # Lauch an snapshot. We will not wait for it to finish, but instead let it run "as is"
+            try:
+                if not snapshot:  # No snapshot, try to create one
+                    logger.debug('Not current snapshot')
+                    # We don't need the snapshot nor the task, will simply restore to newer snapshot on remove
+                    self.provider().create_snapshot(
+                        vmid,
+                        name='UDS Snapshot',
+                    )
+            except Exception as e:
+                self.do_log(log.LogLevel.WARNING, 'Could not create SNAPSHOT for this VM. ({})'.format(e))
+
+    def snapshot_recovery(self, userservice_instance: FixedUserService) -> None:
+        userservice_instance = typing.cast(XenFixedUserService, userservice_instance)
+        if self.use_snapshots.as_bool():
+            vmid = userservice_instance._vmid
+
+            snapshots = [i['id'] for i in self.provider().list_snapshots(vmid)]
+            snapshot = snapshots[0] if snapshots else None
+
+            if snapshot:
                 try:
                     userservice_instance._task = self.provider().restore_snapshot(snapshot['id'])
                 except Exception as e:
                     self.do_log(log.LogLevel.WARNING, 'Could not restore SNAPSHOT for this VM. ({})'.format(e))
-
-            else:
-                logger.debug('Using snapshots')
-                # If no snapshot exists for this vm, try to create one for it on background
-                # Lauch an snapshot. We will not wait for it to finish, but instead let it run "as is"
-                try:
-                    if not snapshot:  # No snapshot, try to create one
-                        logger.debug('Not current snapshot')
-                        # We don't need the snapshot nor the task, will simply restore to newer snapshot on remove
-                        self.provider().create_snapshot(
-                            vmid,
-                            name='UDS Snapshot',
-                        )
-                except Exception as e:
-                    self.do_log(log.LogLevel.WARNING, 'Could not create SNAPSHOT for this VM. ({})'.format(e))
 
     def get_and_assign(self) -> str:
         found_vmid: typing.Optional[str] = None
@@ -262,11 +269,11 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
     def get_name(self, vmid: str) -> str:
         return self.provider().get_machine_name(vmid)
 
-    def remove_and_free(self, vmid: str) -> str:
+    def remove_and_free(self, vmid: str) -> types.states.TaskState:
         try:
             with self._assigned_access() as assigned_vms:
                 assigned_vms.remove(vmid)
-            return types.states.State.FINISHED
+            return types.states.TaskState.FINISHED
         except Exception as e:
             logger.warning('Cound not save assigned machines on fixed pool: %s', e)
             raise

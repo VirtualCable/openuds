@@ -471,14 +471,12 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
     def _op2str(op: Operation) -> str:
         return op.name
 
-    def _debug(self, txt: str) -> None:
+    def _debug(self, txt: str) -> str:
+        msg = f'Queue at {txt} for {self._name}: {self._queue}, vmid:{self._vmid}'
         logger.debug(
-            'Queue at %s for %s: %s, vmid:%s',
-            txt,
-            self._name,
-            [DynamicPublication._op2str(op) for op in self._queue],
-            self._vmid,
+            msg,
         )
+        return msg
 
     def get_template_id(self) -> str:
         return self._vmid
