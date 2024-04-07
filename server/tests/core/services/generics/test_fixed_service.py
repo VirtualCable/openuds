@@ -81,7 +81,7 @@ EXPECTED_DEPLOY_ITERATIONS_INFO: typing.Final[list[FixedServiceIterationInfo]] =
             userservice.Operation.FINISH,
         ],
         service_calls=[
-            mock.call.snapshot_recovery(mock.ANY),
+            mock.call.snapshot_creation(mock.ANY),
         ],
     ),
     FixedServiceIterationInfo(
@@ -103,7 +103,7 @@ EXPECTED_DEPLOY_ITERATIONS_INFO: typing.Final[list[FixedServiceIterationInfo]] =
             userservice.Operation.FINISH,
         ],
         service_calls=[
-            mock.call.snapshot_recovery(mock.ANY),
+            mock.call.snapshot_creation(mock.ANY),
         ],
         user_service_calls=[mock.call.op_stop_checker()],
     ),
@@ -147,7 +147,7 @@ EXPECTED_REMOVAL_ITERATIONS_INFO: typing.Final[list[FixedServiceIterationInfo]] 
             userservice.Operation.SNAPSHOT_RECOVER,
             userservice.Operation.FINISH,
         ],
-        service_calls=[mock.call.snapshot_creation(mock.ANY)],
+        service_calls=[mock.call.snapshot_recovery(mock.ANY)],
     ),
     FixedServiceIterationInfo(
         queue=[
