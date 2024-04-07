@@ -108,7 +108,7 @@ class LogManager(metaclass=singleton.Singleton):
         level: int,
         message: str,
         source: str,
-        logName: typing.Optional[str] = None,
+        log_name: typing.Optional[str] = None,
     ) -> None:
         """
         Do the logging for the requested object.
@@ -121,12 +121,12 @@ class LogManager(metaclass=singleton.Singleton):
             else LogObjectType.SYSLOG
         )
         objectId = getattr(db_object, 'id', -1)
-        logName = logName or ''
+        log_name = log_name or ''
 
         if owner_type is not None:
             try:
                 self._log(
-                    owner_type, objectId, level, message, source, logName
+                    owner_type, objectId, level, message, source, log_name
                 )
             except Exception as e:
                 logger.error('Error logging %s.%s-%s %s: %s (%s)', db_object.__class__, objectId, source, level, message, e)

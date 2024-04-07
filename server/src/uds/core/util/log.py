@@ -179,16 +179,16 @@ def log_use(
 
 
 def log(
-    wichObject: typing.Optional['Model'],
+    db_object: typing.Optional['Model'],
     level: LogLevel,
     message: str,
     source: LogSource = LogSource.UNKNOWN,
-    logName: typing.Optional[str] = None,
+    log_name: typing.Optional[str] = None,
 ) -> None:
     # pylint: disable=import-outside-toplevel
     from uds.core.managers.log import LogManager
 
-    LogManager.manager().log(wichObject, level, message, source, logName)
+    LogManager.manager().log(db_object, level, message, source, log_name)
 
 
 def get_logs(wichObject: typing.Optional['Model'], limit: int = -1) -> list[dict[str, typing.Any]]:

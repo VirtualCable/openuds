@@ -20,6 +20,8 @@ from uds.core import services, types
 from uds.core.types.services import Operation
 from uds.core.util import autoserializable
 
+from .. import exceptions
+
 if typing.TYPE_CHECKING:
     from .service import DynamicService
 
@@ -32,7 +34,7 @@ def must_have_vmid(fnc: typing.Callable[[typing.Any], None]) -> typing.Callable[
     @functools.wraps(fnc)
     def wrapper(self: 'DynamicPublication') -> None:
         if self._vmid == '':
-            raise Exception(f'No machine id on {self._name} for {fnc}')
+            raise exceptions.FatalError(f'No machine id on {self._name} for {fnc}')
         return fnc(self)
 
     return wrapper
@@ -113,14 +115,14 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         self._reason = reason
         return types.states.TaskState.ERROR
 
-    def service(self) -> 'DynamicService':
-        return typing.cast('DynamicService', super().service())
-
-    def check_space(self) -> bool:
+    def _retry_later(self) -> types.states.TaskState:
         """
-        If the service needs to check space before publication, it should override this method
+        Retries the current operation
+        For this, we insert a NOP that will be consumed instead of the current operationç
+        by the queue runner
         """
-        return True
+        self._queue.insert(0, Operation.NOP)
+        return types.states.TaskState.RUNNING
 
     def _execute_queue(self) -> types.states.TaskState:
         self._debug('execute_queue')
@@ -145,9 +147,21 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
                 getattr(self, operation_runner.__name__)()
 
             return types.states.TaskState.RUNNING
+        except exceptions.RetryableError as e:
+            # This is a retryable error, so we will retry later
+            return self._retry_later()
         except Exception as e:
             logger.exception('Unexpected FixedUserService exception: %s', e)
             return self._error(str(e))
+
+    def service(self) -> 'DynamicService':
+        return typing.cast('DynamicService', super().service())
+
+    def check_space(self) -> bool:
+        """
+        If the service needs to check space before publication, it should override this method
+        """
+        return True
 
     @typing.final
     def publish(self) -> types.states.TaskState:
@@ -194,6 +208,11 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
                 return self._execute_queue()
 
             return state
+        except exceptions.RetryableError as e:
+            # This is a retryable error, so we will retry later
+            # We don not need to push a NOP here, as we will retry the same operation checking again
+            # And it has not been removed from the queue
+            return types.states.TaskState.RUNNING
         except Exception as e:
             return self._error(e)
 

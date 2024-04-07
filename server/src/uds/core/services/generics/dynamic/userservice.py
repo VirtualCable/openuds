@@ -41,6 +41,8 @@ from uds.core.types.services import Operation
 from uds.core.util import log, autoserializable
 from uds.core.util.model import sql_stamp_seconds
 
+from .. import exceptions
+
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
@@ -55,7 +57,7 @@ def must_have_vmid(fnc: typing.Callable[[typing.Any], None]) -> typing.Callable[
     @functools.wraps(fnc)
     def wrapper(self: 'DynamicUserService') -> None:
         if self._vmid == '':
-            raise Exception(f'No machine id on {self._name} for {fnc}')
+            raise exceptions.FatalError(f'No machine id on {self._name} for {fnc}')
         return fnc(self)
 
     return wrapper
@@ -172,7 +174,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         self._queue = queue
         self._queue_has_new_format = True
 
-    def _retry_again(self) -> types.states.TaskState:
+    def _retry_later(self) -> types.states.TaskState:
         """
         Retries the current operation
         For this, we insert a NOP that will be consumed instead of the current operationç
@@ -221,6 +223,38 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         self._set_queue([Operation.ERROR])
         self._reason = reason
         return types.states.TaskState.ERROR
+
+    @typing.final
+    def _execute_queue(self) -> types.states.TaskState:
+        self._debug('execute_queue')
+        op = self._current_op()
+
+        if op == Operation.ERROR:
+            return types.states.TaskState.ERROR
+
+        if op == Operation.FINISH:
+            return types.states.TaskState.FINISHED
+
+        try:
+            self._reset_checks_counter()  # Reset checks counter
+
+            # For custom operations, we will call the only one method
+            if op.is_custom():
+                self.op_custom(op)
+            else:
+                operation_runner = _EXECUTORS[op]
+
+                # Invoke using instance, we have overrided methods
+                # and we want to use the overrided ones
+                getattr(self, operation_runner.__name__)()
+
+            return types.states.TaskState.RUNNING
+        except exceptions.RetryableError as e:
+            # This is a retryable error, so we will retry later
+            return self._retry_later()
+        except Exception as e:
+            logger.exception('Unexpected FixedUserService exception: %s', e)
+            return self._error(e)
 
     # Utility overrides for type checking...
     # Probably, overriden again on child classes
@@ -315,35 +349,6 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         return types.states.TaskState.FINISHED
 
     @typing.final
-    def _execute_queue(self) -> types.states.TaskState:
-        self._debug('execute_queue')
-        op = self._current_op()
-
-        if op == Operation.ERROR:
-            return types.states.TaskState.ERROR
-
-        if op == Operation.FINISH:
-            return types.states.TaskState.FINISHED
-
-        try:
-            self._reset_checks_counter()  # Reset checks counter
-
-            # For custom operations, we will call the only one method
-            if op.is_custom():
-                self.op_custom(op)
-            else:
-                operation_runner = _EXECUTORS[op]
-
-                # Invoke using instance, we have overrided methods
-                # and we want to use the overrided ones
-                getattr(self, operation_runner.__name__)()
-
-            return types.states.TaskState.RUNNING
-        except Exception as e:
-            logger.exception('Unexpected FixedUserService exception: %s', e)
-            return self._error(e)
-
-    @typing.final
     def check_state(self) -> types.states.TaskState:
         """
         Check what operation is going on, and acts acordly to it
@@ -382,6 +387,11 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
                 return self._execute_queue()
 
             return state
+        except exceptions.RetryableError as e:
+            # This is a retryable error, so we will retry later
+            # We don not need to push a NOP here, as we will retry the same operation checking again
+            # And it has not been removed from the queue
+            return types.states.TaskState.RUNNING
         except Exception as e:
             return self._error(e)
 

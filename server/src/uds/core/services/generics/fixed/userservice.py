@@ -39,6 +39,8 @@ from uds.core import consts, services, types
 from uds.core.types.services import Operation
 from uds.core.util import log, autoserializable
 
+from .. import exceptions
+
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
@@ -106,7 +108,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         return None
 
     @typing.final
-    def _retry_later(self) -> str:
+    def _retry_later(self) -> types.states.TaskState:
         self._queue.insert(0, Operation.NOP)
         return types.states.TaskState.RUNNING
 
@@ -139,6 +141,34 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         self._reason = reason
         return types.states.TaskState.ERROR
 
+    @typing.final
+    def _execute_queue(self) -> types.states.TaskState:
+        self._debug('executeQueue')
+        op = self._current_op()
+
+        if op == Operation.ERROR:
+            return types.states.TaskState.ERROR
+
+        if op == Operation.FINISH:
+            return types.states.TaskState.FINISHED
+
+        try:
+            self._reset_checks_counter()  # Reset checks counter
+
+            operation_runner = _EXECUTORS[op]
+
+            # Invoke using instance, we have overrided methods
+            # and we want to use the overrided ones
+            getattr(self, operation_runner.__name__)()
+
+            return types.states.TaskState.RUNNING
+        except exceptions.RetryableError as e:
+            # This is a retryable error, so we will retry later
+            return self._retry_later()
+        except Exception as e:
+            logger.exception('Unexpected FixedUserService exception: %s', e)
+            return self._error(str(e))
+
     # Utility overrides for type checking...
     # Probably, overriden again on child classes
     def service(self) -> 'service.FixedService':
@@ -161,6 +191,9 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         try:
             if self._vmid:
                 return self.service().get_guest_ip_address(self._vmid)
+        except exceptions.NotFoundError:
+            self.do_log(log.LogLevel.ERROR, f'Machine not found: {self._vmid}::{self._name}')
+            
         except Exception:
             pass
         return ''
@@ -193,6 +226,8 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
                 self._queue = [Operation.FINISH]
             else:
                 self._queue = [Operation.START, Operation.START_COMPLETED, Operation.FINISH]
+        except exceptions.NotFoundError:
+            return self._error('Machine not found')
         except Exception as e:
             return self._error(f'Error on setReady: {e}')
         return self._execute_queue()
@@ -203,31 +238,6 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         self._vmid = vmid
         self._queue = FixedUserService._assign_queue.copy()  # copy is needed to avoid modifying class var
         return self._execute_queue()
-
-    @typing.final
-    def _execute_queue(self) -> types.states.TaskState:
-        self._debug('executeQueue')
-        op = self._current_op()
-
-        if op == Operation.ERROR:
-            return types.states.TaskState.ERROR
-
-        if op == Operation.FINISH:
-            return types.states.TaskState.FINISHED
-
-        try:
-            self._reset_checks_counter()  # Reset checks counter
-
-            operation_runner = _EXECUTORS[op]
-
-            # Invoke using instance, we have overrided methods
-            # and we want to use the overrided ones
-            getattr(self, operation_runner.__name__)()
-
-            return types.states.TaskState.RUNNING
-        except Exception as e:
-            logger.exception('Unexpected FixedUserService exception: %s', e)
-            return self._error(str(e))
 
     @typing.final
     def check_state(self) -> types.states.TaskState:
@@ -262,6 +272,13 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
                 return self._execute_queue()
 
             return state
+        except exceptions.RetryableError as e:
+            # This is a retryable error, so we will retry later
+            # We don not need to push a NOP here, as we will retry the same operation checking again
+            # And it has not been removed from the queue
+            return types.states.TaskState.RUNNING
+        except exceptions.NotFoundError as e:
+            return self._error(f'Machine not found ({e})')
         except Exception as e:
             logger.exception('Unexpected UserService check exception: %s', e)
             return self._error(str(e))
@@ -269,7 +286,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
     @typing.final
     def op_nop(self) -> None:
         """
-        Executes opWait, it simply waits something "external" to end
+        Does nothing
         """
         pass
 
