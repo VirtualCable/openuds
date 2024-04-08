@@ -159,7 +159,7 @@ class HTML5VNCTransport(transports.Transport):
 
     def get_link(
         self,
-        userService: 'models.UserService',
+        userservice: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
         os: 'types.os.DetectedOsInfo',

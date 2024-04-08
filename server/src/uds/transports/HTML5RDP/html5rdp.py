@@ -394,7 +394,7 @@ class HTML5RDPTransport(transports.Transport):
 
     def get_link(
         self,
-        userService: 'models.UserService',
+        userservice: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
         os: 'types.os.DetectedOsInfo',  # pylint: disable=unused-argument
@@ -402,7 +402,7 @@ class HTML5RDPTransport(transports.Transport):
         password: str,
         request: 'ExtendedHttpRequestWithUser',  # pylint: disable=unused-argument
     ) -> str:
-        credsInfo = self.get_connection_info(userService, user, password)
+        credsInfo = self.get_connection_info(userservice, user, password)
         username, password, domain = (
             credsInfo.username,
             credsInfo.password,
@@ -433,7 +433,7 @@ class HTML5RDPTransport(transports.Transport):
             'disable-paste': as_txt(self.enable_clipboard.value in ('dis-paste', 'disabled')),
             'create-drive-path': 'true',
             'ticket-info': {
-                'userService': userService.uuid,
+                'userService': userservice.uuid,
                 'user': user.uuid,
                 'service_type': types.services.ServiceType.VDI,
             },
@@ -492,7 +492,7 @@ class HTML5RDPTransport(transports.Transport):
 
         onw = f'&o_n_w={transport.uuid}'
         if self.force_new_window.value == consts.TRUE_STR:
-            onw = f'&o_n_w={userService.deployed_service.uuid}'
+            onw = f'&o_n_w={userservice.deployed_service.uuid}'
         elif self.force_new_window.value == 'overwrite':
             onw = '&o_s_w=yes'
         path = self.custom_glyptodon_path.value if self.use_glyptodon.as_bool() else '/guacamole'

@@ -176,7 +176,7 @@ class HTML5SSHTransport(transports.Transport):
 
     def get_link(
         self,
-        userService: 'models.UserService',  # pylint: disable=unused-argument
+        userservice: 'models.UserService',  # pylint: disable=unused-argument
         transport: 'models.Transport',
         ip: str,
         os: 'types.os.DetectedOsInfo',  # pylint: disable=unused-argument

@@ -99,7 +99,7 @@ class TestTransport(transports.Transport):
 
     def get_link(
         self,
-        userService: 'models.UserService',
+        userservice: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
         os: 'types.os.DetectedOsInfo',
@@ -110,7 +110,7 @@ class TestTransport(transports.Transport):
 
         # Fix username/password acording to os manager
         username: str = user.get_username_for_auth()
-        username, password = userService.process_user_password(username, password)
+        username, password = userservice.process_user_password(username, password)
 
         url = self.test_url.value.replace('_IP_', ip).replace('_USER_', username)
 

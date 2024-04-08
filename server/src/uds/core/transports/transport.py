@@ -286,18 +286,18 @@ class Transport(Module):
 
     def get_script(
         self,
-        osName: str,
+        osname: str,
         type: typing.Literal['tunnel', 'direct'],
         params: collections.abc.Mapping[str, typing.Any],
     ) -> types.transports.TransportScript:
         """
         Returns a script for the given os and type
         """
-        return self.get_relative_script(f'scripts/{osName.lower()}/{type}.py', params)
+        return self.get_relative_script(f'scripts/{osname.lower()}/{type}.py', params)
 
     def get_link(
         self,
-        userService: 'models.UserService',
+        userservice: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
         os: 'types.os.DetectedOsInfo',  # pylint: disable=redefined-outer-name
