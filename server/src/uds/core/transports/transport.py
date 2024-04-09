@@ -30,23 +30,23 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import sys
 import codecs
-import logging
-import typing
 import collections.abc
+import logging
+import sys
+import typing
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import types, consts
+from uds import models
+from uds.core import consts, types
 from uds.core.module import Module
 from uds.core.util import net
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.types.requests import ExtendedHttpRequestWithUser
     from uds.core.environment import Environment
-    from uds import models
+    from uds.core.types.requests import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
 
@@ -310,3 +310,28 @@ class Transport(Module):
         If transport provides own link, this method provides the link itself
         """
         return 'https://www.udsenterprise.com'
+
+    def update_link_window(
+        self,
+        link: str,
+        *,
+        on_same_window: bool = False,
+        on_new_window: bool = False,
+        uuid: typing.Optional[str] = None,
+        default_uuid: typing.Optional[str] = None,
+    ) -> str:
+        uuid = uuid or self.get_uuid()
+        default_uuid = default_uuid or self.get_uuid()
+
+        amp = '&' if '?' in link else '?'
+
+        if not on_new_window and not on_same_window:
+            return f'{link}{amp}{consts.transports.ON_SAME_WINDOW_VAR}={default_uuid}'
+
+        if on_same_window:
+            return f'{link}{amp}{consts.transports.ON_SAME_WINDOW_VAR}=yes'
+
+        # Must be on new window
+        return f'{link}{amp}{consts.transports.ON_NEW_WINDOW_VAR}={uuid}'
+
+        return link

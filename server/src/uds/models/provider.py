@@ -87,8 +87,6 @@ class Provider(ManagedObjectModel, TaggingMixin):
         prov: 'ServiceProvider' = typing.cast(
             'ServiceProvider', super().get_instance(values=values)
         )
-        # Set uuid
-        prov.set_uuid(self.uuid)
         return prov
 
     def is_in_maintenance(self) -> bool:

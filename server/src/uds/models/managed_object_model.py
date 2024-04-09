@@ -112,6 +112,7 @@ class ManagedObjectModel(UUIDModel):
 
         env = self.get_environment()
         obj = klass(env, values)
+        obj.set_uuid(self.uuid)   # Set the uuid of the object to the one stored in the database
         self.deserialize(obj, values)
 
         self._cached_instance = obj

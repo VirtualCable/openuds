@@ -30,47 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-# pyright: reportUnusedImport=false
-import time
 import typing
-from datetime import datetime
 
-from . import actor, auth, cache, calendar, images, net, os, system, ticket, rest, services, transports
-
-# Date related constants
-NEVER: typing.Final[datetime] = datetime(1972, 7, 1)
-NEVER_UNIX: typing.Final[int] = int(time.mktime(NEVER.timetuple()))
-
-# Unknown mac address "magic" value
-MAC_UNKNOWN: typing.Final[str] = '00:00:00:00:00:00'
-
-# REST Related constants
-OK: typing.Final[str] = 'ok'  # Constant to be returned when result is just "operation complete successfully"
-
-# For conversion to boolean
-BOOL_TRUE_VALUES: typing.Final[typing.Set[typing.Union[bool, str, bytes, int]]] = {
-    True,
-    'TRUE',
-    'True',
-    b'true',
-    b'True',
-    b'TRUE',
-    1,
-    '1',
-    b'1',
-    'true',
-    'YES',
-    'Yes',
-    'yes',
-    'ENABLED',
-    'Enabled',
-    'enabled',
-}
-TRUE_STR: typing.Final[str] = 'true'
-FALSE_STR: typing.Final[str] = 'false'
-
-# Constant to mark an "UNLIMITED" value
-UNLIMITED: typing.Final[int] = -1
-
-# Constant marking no more names available
-NO_MORE_NAMES: typing.Final[str] = 'NO-NAME-ERROR'
+ON_NEW_WINDOW_VAR: typing.Final[str] = 'o_n_w'
+ON_SAME_WINDOW_VAR: typing.Final[str] = 'o_s_w'

@@ -70,7 +70,7 @@ class HTML5SSHTransport(transports.Transport):
 
     tunnel = fields.tunnel_field()
 
-    useGlyptodonTunnel = HTML5RDPTransport.use_glyptodon
+    use_glyptodon = HTML5RDPTransport.use_glyptodon
 
     username = gui.TextField(
         label=_('Username'),
@@ -225,16 +225,14 @@ class HTML5SSHTransport(transports.Transport):
         scrambler = CryptoManager().random_string(32)
         ticket = models.TicketStore.create(params, validity=self.ticket_validity.as_int())
 
-        onw = ''
-        if self.force_new_window.value == 'true':
-            onw = 'o_n_w={}'
+        onw = f'&{consts.transports.ON_NEW_WINDOW_VAR}={transport.uuid}'
+        if self.force_new_window.value == consts.TRUE_STR:
+            onw = f'&{consts.transports.ON_NEW_WINDOW_VAR}={userservice.deployed_service.uuid}'
         elif self.force_new_window.value == 'overwrite':
-            onw = 'o_s_w=yes'
-        onw = onw.format(hash(transport.name))
-
-        path = self.custom_glyptodon_path.value if self.useGlyptodonTunnel.as_bool() else '/guacamole'
+            onw = f'&{consts.transports.ON_SAME_WINDOW_VAR}=yes'
+        path = self.custom_glyptodon_path.value if self.use_glyptodon.as_bool() else '/guacamole'
         # Remove trailing /
         path = path.rstrip('/')
 
         tunnel_server = fields.get_tunnel_from_field(self.tunnel)
-        return str(f'https://{tunnel_server.host}:{tunnel_server.port}{path}/#/?data={ticket}.{scrambler}{onw}')
+        return f'https://{tunnel_server.host}:{tunnel_server.port}{path}/#/?data={ticket}.{scrambler}{onw}'

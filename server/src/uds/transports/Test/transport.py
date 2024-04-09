@@ -84,13 +84,8 @@ class TestTransport(transports.Transport):
         if not values:
             return
         # Strip spaces
-        if not (
-            self.test_url.value.startswith('http://')
-            or self.test_url.value.startswith('https://')
-        ):
-            raise exceptions.ui.ValidationError(
-                _('The url must be http or https')
-            )
+        if not (self.test_url.value.startswith('http://') or self.test_url.value.startswith('https://')):
+            raise exceptions.ui.ValidationError(_('The url must be http or https'))
 
     # Same check as normal RDP transport
     def is_ip_allowed(self, userservice: 'models.UserService', ip: str) -> bool:
@@ -112,11 +107,10 @@ class TestTransport(transports.Transport):
         username: str = user.get_username_for_auth()
         username, password = userservice.process_user_password(username, password)
 
-        url = self.test_url.value.replace('_IP_', ip).replace('_USER_', username)
-
-        onw = (
-            '&o_n_w={}'.format(hash(transport.name))
-            if self.force_new_window.as_bool()
-            else ''
+        url = self.update_link_window(
+            self.test_url.value.replace('_IP_', ip).replace('_USER_', username),
+            on_same_window=False,
+            on_new_window=self.force_new_window.as_bool(),
         )
-        return str("{}{}".format(url, onw))
+
+        return url

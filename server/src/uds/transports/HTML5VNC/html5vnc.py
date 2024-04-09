@@ -197,12 +197,14 @@ class HTML5VNCTransport(transports.Transport):
         scrambler = CryptoManager().random_string(32)
         ticket = models.TicketStore.create(params, validity=self.ticket_validity.as_int())
 
-        onw = ''
-        if self.force_new_window.value == 'true':
-            onw = 'o_n_w={}'
+        onw = f'&{consts.transports.ON_NEW_WINDOW_VAR}={transport.uuid}'
+        if self.force_new_window.value == consts.TRUE_STR:
+            onw = f'&{consts.transports.ON_NEW_WINDOW_VAR}={userservice.deployed_service.uuid}'
         elif self.force_new_window.value == 'overwrite':
-            onw = 'o_s_w=yes'
-        onw = onw.format(hash(transport.name))
+            onw = f'&{consts.transports.ON_SAME_WINDOW_VAR}=yes'
+        path = self.custom_glyptodon_path.value if self.use_glyptodon.as_bool() else '/guacamole'
+        # Remove trailing /
+        path = path.rstrip('/')
 
         path = self.custom_glyptodon_path.value if self.use_glyptodon.as_bool() else '/guacamole'
         # Remove trailing /

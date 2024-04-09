@@ -490,11 +490,11 @@ class HTML5RDPTransport(transports.Transport):
 
         ticket = models.TicketStore.create(params, validity=self.ticket_validity.as_int())
 
-        onw = f'&o_n_w={transport.uuid}'
+        onw = f'&{consts.transports.ON_NEW_WINDOW_VAR}={transport.uuid}'
         if self.force_new_window.value == consts.TRUE_STR:
-            onw = f'&o_n_w={userservice.deployed_service.uuid}'
+            onw = f'&{consts.transports.ON_NEW_WINDOW_VAR}={userservice.deployed_service.uuid}'
         elif self.force_new_window.value == 'overwrite':
-            onw = '&o_s_w=yes'
+            onw = f'&{consts.transports.ON_SAME_WINDOW_VAR}=yes'
         path = self.custom_glyptodon_path.value if self.use_glyptodon.as_bool() else '/guacamole'
         # Remove trailing /
         path = path.rstrip('/')

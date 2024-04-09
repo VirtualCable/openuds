@@ -72,28 +72,33 @@ class URLCustomTransport(transports.Transport):
         old_field_name='urlPattern',  # Allows compat with old versions
     )
 
-    force_new_window = gui.CheckBoxField(
-        label=_('Force new HTML Window'),
+    force_new_window = gui.ChoiceField(
         order=91,
-        tooltip=_(
-            'If checked, every connection will try to open its own window instead of reusing the "global" one.'
-        ),
-        default=False,
+        label=_('Force new HTML Window'),
+        tooltip=_('Select windows behavior for opening URL'),
+        required=True,
+        choices=[
+            gui.choice_item(
+                'false',
+                _('Open every connection on the same window, but keeps UDS window.'),
+            ),
+            gui.choice_item('true', _('Force every connection to be opened on a new window.')),
+            gui.choice_item(
+                'overwrite',
+                _('Override UDS window and replace it with the connection.'),
+            ),
+        ],
+        default='true',
         tab=types.ui.Tab.ADVANCED,
-        old_field_name='forceNewWindow',  # Allows compat with old versions
+        old_field_name='forceNewWindow',
     )
 
     def initialize(self, values: 'types.core.ValuesType') -> None:
         if not values:
             return
         # Strip spaces
-        if not (
-            self.url_pattern.value.startswith('http://')
-            or self.url_pattern.value.startswith('https://')
-        ):
-            raise exceptions.ui.ValidationError(
-                _('The url must be http or https')
-            )
+        if not (self.url_pattern.value.startswith('http://') or self.url_pattern.value.startswith('https://')):
+            raise exceptions.ui.ValidationError(_('The url must be http or https'))
 
     # Same check as normal RDP transport
     def is_ip_allowed(self, userservice: 'models.UserService', ip: str) -> bool:
@@ -115,11 +120,10 @@ class URLCustomTransport(transports.Transport):
         username: str = user.get_username_for_auth()
         username, password = userservice.process_user_password(username, password)
 
-        url = self.url_pattern.value.replace('_IP_', ip).replace('_USER_', username)
-
-        onw = (
-            '&o_n_w={}'.format(hash(transport.name))
-            if self.force_new_window.as_bool()
-            else ''
+        return self.update_link_window(
+            self.url_pattern.value.replace('_IP_', ip).replace('_USER_', username),
+            on_same_window=self.force_new_window.value == 'overwrite',
+            on_new_window=self.force_new_window.value == 'true',
+            uuid=userservice.service_pool.uuid if self.force_new_window.value == 'true' else None,
+            default_uuid=userservice.service_pool.uuid,
         )
-        return str("{}{}".format(url, onw))
