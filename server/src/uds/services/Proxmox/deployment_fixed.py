@@ -112,7 +112,7 @@ class ProxmoxUserServiceFixed(FixedUserService, autoserializable.AutoSerializabl
         try:
             vminfo = self.service().get_machine_info(int(self._vmid))
         except client.ProxmoxConnectionError:
-            self._retry_later()
+            self.retry_later()
             return
         except Exception as e:
             raise Exception('Machine not found on start machine') from e

@@ -168,7 +168,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         Creates a snapshot for the machine
         """
         return
-    
+
     def snapshot_recovery(self, userservice_instance: 'FixedUserService') -> None:
         """
         Removes the snapshot for the machine
@@ -205,7 +205,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         except Exception as e:
             logger.error('Error processing remove and free: %s', e)
             raise Exception(f'Error processing remove and free: {e} on {vmid}') from e
-        
+
     def is_ready(self, vmid: str) -> bool:
         """
         Returns if the machine is ready for usage
@@ -258,6 +258,13 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
             return random.sample(machines.as_list(), len(machines.as_list()))
 
         return machines.as_list()
+
+    def allows_errored_userservice_cleanup(self) -> bool:
+        """
+        Returns if this service can clean errored services. This is used to check if a service can be cleaned
+        from the stuck cleaner job, for example.
+        """
+        return not self.should_maintain_on_error()
 
     def should_maintain_on_error(self) -> bool:
         if self.has_field('maintain_on_error'):  # If has been defined on own class...

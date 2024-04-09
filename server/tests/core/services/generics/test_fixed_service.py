@@ -39,6 +39,7 @@ from uds.core.services.generics.fixed import (
     userservice,
 )
 from ....utils.test import UDSTestCase
+from ....utils.generators import limited_iterator
 from . import fixtures
 
 
@@ -283,4 +284,78 @@ class FixedServiceTest(UDSTestCase):
             else:
                 self.assertEqual(userservice.set_ready(), types.states.TaskState.FINISHED)
             
+    def test_userservice_maintain_on_error_no_created(self) -> None:
+        _prov, service, userservice = self.create_elements()
+        service.maintain_on_error.value = True
+        self.assertFalse(service.allows_errored_userservice_cleanup())
+        self.assertTrue(service.should_maintain_on_error())
 
+        # Force failure
+        # patch userservice op_start_checker to raise an exception
+        with mock.patch.object(userservice, 'op_start_checker', side_effect=Exception('Error')):
+            userservice._queue = [types.services.Operation.START]
+            userservice._vmid = ''
+            self.assertEqual(userservice.check_state(), types.states.TaskState.ERROR)
+            self.assertEqual(userservice.error_reason(), 'Error')
+
+    def test_userservice_maintain_on_error_created(self) -> None:
+        _prov, service, userservice = self.create_elements()
+        service.maintain_on_error.value = True
+        self.assertFalse(service.allows_errored_userservice_cleanup())
+        self.assertTrue(service.should_maintain_on_error())
+
+        # Force failure
+        # patch userservice op_start_checker to raise an exception, but with a vmid
+        with mock.patch.object(userservice, 'op_start_checker', side_effect=Exception('Error')):
+            userservice._queue = [types.services.Operation.START]
+            userservice._vmid = 'vmid'
+            self.assertEqual(userservice.check_state(), types.states.TaskState.FINISHED)
+
+    def test_userservice_max_retries_executor(self) -> None:
+        _prov, _service, userservice = self.create_elements()
+        # Patch userservice op_start to call retry_later()
+        with mock.patch.object(userservice, 'op_start', side_effect=userservice.retry_later):
+            userservice._queue = [
+                types.services.Operation.NOP,
+                types.services.Operation.START,
+                types.services.Operation.START,
+                types.services.Operation.FINISH,
+            ]
+
+            fixtures.FixedTestingUserService.max_retries = 5
+
+            state = types.states.TaskState.RUNNING
+            counter = 0
+            for counter in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
+                if counter == 5:
+                    # Replace the first item in queue to NOP, so next check will fail
+                    userservice._queue[0] = types.services.Operation.NOP
+                state = userservice.check_state()
+
+            self.assertEqual(userservice.check_state(), types.states.TaskState.ERROR)
+            self.assertEqual(userservice.error_reason(), 'Max retries reached')
+            self.assertEqual(counter, 11)  # 4 retries + 5 retries after reset + 1 of the reset itself + 1 of initial NOP
+
+    def test_userservice_max_retries_checker(self) -> None:
+        _prov, _service, userservice = self.create_elements()
+        # Patch userservice op_start to call retry_later()
+        with mock.patch.object(userservice, 'op_start_checker', side_effect=userservice.retry_later):
+            userservice._queue = [
+                types.services.Operation.START,
+                types.services.Operation.START,
+                types.services.Operation.FINISH,
+            ]
+
+            fixtures.FixedTestingUserService.max_retries = 5
+
+            state = types.states.TaskState.RUNNING
+            counter = 0
+            for counter in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
+                if counter == 4:
+                    # Replace the first item in queue to NOP, so next check will fail
+                    userservice._queue[0] = types.services.Operation.NOP
+                state = userservice.check_state()
+
+            self.assertEqual(userservice.check_state(), types.states.TaskState.ERROR)
+            self.assertIsInstance(userservice.error_reason(), str)
+            self.assertEqual(counter, 10)  # 4 retries + 5 retries after reset + 1 of the reset itself

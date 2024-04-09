@@ -16,7 +16,7 @@ import time
 import typing
 
 from django.utils.translation import gettext as _
-from uds.core import services, types
+from uds.core import services, types, consts
 from uds.core.types.services import Operation
 from uds.core.util import autoserializable
 
@@ -42,15 +42,17 @@ def must_have_vmid(fnc: typing.Callable[[typing.Any], None]) -> typing.Callable[
 
 class DynamicPublication(services.Publication, autoserializable.AutoSerializable, abc.ABC):
     # Very simmilar to DynamicUserService, but with some differences
-    suggested_delay = 20  # For publications, we can check every 20 seconds
+    suggested_delay = consts.services.PUB_SUGGESTED_CHECK_INTERVAL
 
     # Some customization fields
     # How many times we will check for a state before giving up
     # Publications can take a long time, so we will check it for a long time
     # as long as a couple of hours by default with our suggested delay
-    max_state_checks: typing.ClassVar[int] = 7200 // suggested_delay
-    
-    # If must wait untill finish queue for destroying the machine
+    max_state_checks: typing.ClassVar[int] = consts.services.PUB_MAX_STATE_CHECKS
+    # How many "retries" operation on same state will be allowed before giving up
+    max_retries: typing.ClassVar[int] = consts.services.MAX_RETRIES
+
+    # If must wait until finish queue for destroying the machine
     wait_until_finish_to_destroy: typing.ClassVar[bool] = False
 
     _name = autoserializable.StringField(default='')
@@ -75,10 +77,12 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
     ]
 
     # Utility overrides for type checking...
+    @typing.final
     def _reset_checks_counter(self) -> None:
         with self.storage.as_dict() as data:
             data['exec_count'] = 0
 
+    @typing.final
     def _inc_checks_counter(self, info: typing.Optional[str] = None) -> typing.Optional[types.states.TaskState]:
         with self.storage.as_dict() as data:
             count = data.get('exec_count', 0) + 1
@@ -87,12 +91,38 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
             return self._error(f'Max checks reached on {info or "unknown"}')
         return None
 
+    @typing.final
+    def _reset_retries_counter(self) -> None:
+        with self.storage.as_dict() as data:
+            data['retries'] = 0
+
+    @typing.final
+    def _inc_retries_counter(self) -> typing.Optional[types.states.TaskState]:
+        with self.storage.as_dict() as data:
+            retries = data.get('retries', 0) + 1
+            data['retries'] = retries
+
+        if retries > self.max_retries:  # Use self to access class variables, so we can override them on subclasses
+            return self._error(f'Max retries reached')
+
+        return None
+
+    @typing.final
     def _current_op(self) -> Operation:
         if not self._queue:
             return Operation.FINISH
 
         return self._queue[0]
 
+    @typing.final
+    def _set_queue(self, queue: list[Operation]) -> None:
+        """
+        Sets the queue of tasks to be executed
+        Ensures that we mark it as new format
+        """
+        self._queue = queue
+
+    @typing.final
     def _error(self, reason: typing.Union[str, Exception]) -> types.states.TaskState:
         """
         Internal method to set object as error state
@@ -115,15 +145,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         self._reason = reason
         return types.states.TaskState.ERROR
 
-    def _retry_later(self) -> types.states.TaskState:
-        """
-        Retries the current operation
-        For this, we insert a NOP that will be consumed instead of the current operationç
-        by the queue runner
-        """
-        self._queue.insert(0, Operation.NOP)
-        return types.states.TaskState.RUNNING
-
+    @typing.final
     def _execute_queue(self) -> types.states.TaskState:
         self._debug('execute_queue')
         op = self._current_op()
@@ -149,10 +171,25 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
             return types.states.TaskState.RUNNING
         except exceptions.RetryableError as e:
             # This is a retryable error, so we will retry later
-            return self._retry_later()
+            return self.retry_later()
         except Exception as e:
             logger.exception('Unexpected FixedUserService exception: %s', e)
             return self._error(str(e))
+
+    @typing.final
+    def retry_later(self) -> types.states.TaskState:
+        """
+        Retries the current operation
+        For this, we insert a RETRY that will be:
+            - If used from a "executor" method, will invoke the "retry_checker" method
+            - If used from a "checker" method, will be consumed, and the operation will be retried
+        In any case, if we overpass the max retries, we will set the machine to error state
+        """
+        if self._inc_retries_counter() is not None:
+            return self._error('Max retries reached')
+        self._queue.insert(0, Operation.RETRY)
+        return types.states.TaskState.FINISHED
+
 
     def service(self) -> 'DynamicService':
         return typing.cast('DynamicService', super().service())
@@ -204,7 +241,10 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
                 state = getattr(self, operation_checker.__name__)()
             if state == types.states.TaskState.FINISHED:
                 # Remove runing op
-                self._queue.pop(0)
+                top_op = self._queue.pop(0)  # May have inserted a RETRY, check it
+                # And reset retries counter
+                if top_op != Operation.RETRY:
+                    self._reset_retries_counter()
                 return self._execute_queue()
 
             return state
@@ -445,6 +485,13 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         """
         return types.states.TaskState.FINISHED
 
+    @typing.final
+    def op_retry_checker(self) -> types.states.TaskState:
+        # If max retrieas has beeen reached, error should already have been set
+        if self._queue[0] == Operation.ERROR:
+            return types.states.TaskState.ERROR
+        return types.states.TaskState.FINISHED
+
     def op_destroy_validator_checker(self) -> types.states.TaskState:
         """
         This method is called to check if the service is validating the destroy operation
@@ -507,6 +554,7 @@ _EXECUTORS: typing.Final[
     Operation.WAIT: DynamicPublication.op_unsupported,
     Operation.NOP: DynamicPublication.op_nop,
     Operation.DESTROY_VALIDATOR: DynamicPublication.op_destroy_validator,
+    # Retry operation has no executor, look "retry_later" method
 }
 
 # Same af before, but for check methods
@@ -531,4 +579,6 @@ _CHECKERS: typing.Final[
     Operation.WAIT: DynamicPublication.op_unsupported_checker,
     Operation.NOP: DynamicPublication.op_nop_checker,
     Operation.DESTROY_VALIDATOR: DynamicPublication.op_destroy_validator_checker,
+    # Retry operation can be inserted by a executor, so it will need a checker
+    Operation.RETRY: DynamicPublication.op_retry_checker,
 }

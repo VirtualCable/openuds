@@ -35,6 +35,8 @@ from unittest import mock
 from unittest.mock import call
 
 from uds.core import types
+
+from ....utils.generators import limited_iterator
 from ....utils.test import UDSTestCase
 from ....utils import MustBeOfType
 
@@ -142,6 +144,53 @@ class DynamicPublicationTest(UDSTestCase):
             # Check that the queue is empty (only ERROR operation)
             self.assertEqual(publication._queue, [types.services.Operation.ERROR])
 
+    def test_publication_max_retries_executor(self) -> None:
+        service = fixtures.create_dynamic_service()
+        publication = fixtures.create_dynamic_publication(service)
+        publication._queue = [
+            types.services.Operation.NOP,
+            types.services.Operation.CUSTOM_3,
+            types.services.Operation.CUSTOM_3,
+            types.services.Operation.FINISH,
+        ]
+
+        fixtures.DynamicTestingPublication.max_retries = 5
+
+        state = types.states.TaskState.RUNNING
+        counter = 0
+        for counter in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
+            if counter == 5:
+                # Replace the first item in queue to NOP, so next check will fail
+                publication._queue[0] = types.services.Operation.NOP
+            state = publication.check_state()
+
+        self.assertEqual(publication.check_state(), types.states.TaskState.ERROR)
+        self.assertEqual(publication.error_reason(), 'Max retries reached')
+        self.assertEqual(counter, 11)  # 4 retries + 5 retries after reset + 1 of the reset itself + 1 of initial NOP
+
+    def test_publication_max_retries_checker(self) -> None:
+        service = fixtures.create_dynamic_service()
+        publication = fixtures.create_dynamic_publication(service)
+        publication._queue = [
+            types.services.Operation.CUSTOM_3,
+            types.services.Operation.CUSTOM_3,
+            types.services.Operation.FINISH,
+        ]
+
+        fixtures.DynamicTestingPublication.max_retries = 5
+
+        state = types.states.TaskState.RUNNING
+        counter = 0
+        for counter in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
+            if counter == 4:
+                # Replace the first item in queue to NOP, so next check will fail
+                publication._queue[0] = types.services.Operation.NOP
+            state = publication.check_state()
+
+        self.assertEqual(publication.check_state(), types.states.TaskState.ERROR)
+        self.assertEqual(publication.error_reason(), 'Max retries reached')
+        self.assertEqual(counter, 10)  # 4 retries + 5 retries after reset + 1 of the reset itself
+    
 
 EXPECTED_DEPLOY_ITERATIONS_INFO: typing.Final[list[DynamicPublicationIterationInfo]] = [
     # Initial state for queue

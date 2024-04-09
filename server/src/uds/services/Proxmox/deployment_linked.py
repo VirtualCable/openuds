@@ -207,7 +207,7 @@ class ProxmoxUserserviceLinked(DynamicUserService):
             # Set vm mac address now on first interface
             self.service().provider().set_machine_mac(int(self._vmid), self.get_unique_id())
         except client.ProxmoxConnectionError:
-            self._retry_later()  # Push nop to front of queue, so it is consumed instead of this one
+            self.retry_later()  # Push nop to front of queue, so it is consumed instead of this one
             return
         except Exception as e:
             logger.exception('Setting HA and MAC on proxmox')

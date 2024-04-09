@@ -58,6 +58,8 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
     suggested_delay = 8
     # How many times we will check for a state before giving up
     max_state_checks: typing.ClassVar[int] = 20
+    # How many "retries" operation on same state will be allowed before giving up
+    max_retries: typing.ClassVar[int] = consts.services.MAX_RETRIES
 
     _name = autoserializable.StringField(default='')
     _mac = autoserializable.StringField(default='')
@@ -95,10 +97,20 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
 
         return self._queue[0]
 
+    @typing.final
+    def _set_queue(self, queue: list[Operation]) -> None:
+        """
+        Sets the queue of tasks to be executed
+        Ensures that we mark it as new format
+        """
+        self._queue = queue
+
+    @typing.final
     def _reset_checks_counter(self) -> None:
         with self.storage.as_dict() as data:
             data['exec_count'] = 0
 
+    @typing.final
     def _inc_checks_counter(self, info: typing.Optional[str] = None) -> typing.Optional[types.states.TaskState]:
         with self.storage.as_dict() as data:
             count = data.get('exec_count', 0) + 1
@@ -108,9 +120,20 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         return None
 
     @typing.final
-    def _retry_later(self) -> types.states.TaskState:
-        self._queue.insert(0, Operation.NOP)
-        return types.states.TaskState.RUNNING
+    def _reset_retries_counter(self) -> None:
+        with self.storage.as_dict() as data:
+            data['retries'] = 0
+
+    @typing.final
+    def _inc_retries_counter(self) -> typing.Optional[types.states.TaskState]:
+        with self.storage.as_dict() as data:
+            retries = data.get('retries', 0) + 1
+            data['retries'] = retries
+
+        if retries > self.max_retries:  # get "own class" max retries
+            return self._error(f'Max retries reached')
+
+        return None
 
     @typing.final
     def _error(self, reason: typing.Union[str, Exception]) -> types.states.TaskState:
@@ -164,10 +187,24 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             return types.states.TaskState.RUNNING
         except exceptions.RetryableError as e:
             # This is a retryable error, so we will retry later
-            return self._retry_later()
+            return self.retry_later()
         except Exception as e:
             logger.exception('Unexpected FixedUserService exception: %s', e)
             return self._error(str(e))
+
+    @typing.final
+    def retry_later(self) -> types.states.TaskState:
+        """
+        Retries the current operation
+        For this, we insert a RETRY that will be:
+            - If used from a "executor" method, will invoke the "retry_checker" method
+            - If used from a "checker" method, will be consumed, and the operation will be retried
+        In any case, if we overpass the max retries, we will set the machine to error state
+        """
+        if self._inc_retries_counter() is not None:
+            return self._error('Max retries reached')
+        self._queue.insert(0, Operation.RETRY)
+        return types.states.TaskState.FINISHED
 
     # Utility overrides for type checking...
     # Probably, overriden again on child classes
@@ -193,7 +230,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
                 return self.service().get_guest_ip_address(self._vmid)
         except exceptions.NotFoundError:
             self.do_log(log.LogLevel.ERROR, f'Machine not found: {self._vmid}::{self._name}')
-            
+
         except Exception:
             pass
         return ''
@@ -268,7 +305,10 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             state = typing.cast(types.states.TaskState, getattr(self, check_function.__name__)())
 
             if state == types.states.TaskState.FINISHED:
-                self._queue.pop(0)  # Remove finished op
+                top_op = self._queue.pop(0)  # Remove finished op
+                # And reset retries counter, if needed
+                if top_op != Operation.RETRY:
+                    self._reset_retries_counter()
                 return self._execute_queue()
 
             return state
@@ -353,6 +393,13 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         return types.states.TaskState.FINISHED
 
     def op_nop_checker(self) -> types.states.TaskState:
+        return types.states.TaskState.FINISHED
+
+    @typing.final
+    def op_retry_checker(self) -> types.states.TaskState:
+        # If max retrieas has beeen reached, error should already have been set
+        if self._queue[0] == Operation.ERROR:
+            return types.states.TaskState.ERROR
         return types.states.TaskState.FINISHED
 
     def op_start(self) -> None:
@@ -464,13 +511,13 @@ _EXECUTORS: typing.Final[
     Operation.CREATE: FixedUserService.op_create,
     Operation.START: FixedUserService.op_start,
     Operation.STOP: FixedUserService.op_stop,
-    Operation.WAIT: FixedUserService.op_nop,  # Fixed assigned services has no cache 2, so no need to wait
     Operation.REMOVE: FixedUserService.op_remove,
     Operation.SNAPSHOT_CREATE: FixedUserService.op_snapshot_create,
     Operation.SNAPSHOT_RECOVER: FixedUserService.op_snapshot_recover,
     Operation.PROCESS_TOKEN: FixedUserService.op_process_tocken,
     Operation.SHUTDOWN: FixedUserService.op_shutdown,
     Operation.NOP: FixedUserService.op_nop,
+    # Retry operation has no executor, look "retry_later" method
 }
 
 # Same af before, but for check methods
@@ -478,7 +525,6 @@ _CHECKERS: typing.Final[
     collections.abc.Mapping[Operation, collections.abc.Callable[[FixedUserService], types.states.TaskState]]
 ] = {
     Operation.CREATE: FixedUserService.op_create_checker,
-    Operation.WAIT: FixedUserService.op_nop_checker,  # Fixed assigned services has no cache 2, so no need to wait
     Operation.START: FixedUserService.op_start_checker,
     Operation.STOP: FixedUserService.op_stop_checker,
     Operation.REMOVE: FixedUserService.op_removed_checker,
@@ -487,4 +533,6 @@ _CHECKERS: typing.Final[
     Operation.PROCESS_TOKEN: FixedUserService.op_process_token_checker,
     Operation.SHUTDOWN: FixedUserService.op_shutdown_checker,
     Operation.NOP: FixedUserService.op_nop_checker,
+    # Retry operation can be inserted by a executor, so it will need a checker
+    Operation.RETRY: FixedUserService.op_retry_checker,
 }

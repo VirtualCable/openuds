@@ -69,13 +69,15 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     and that will be always the from a "fixed" machine, that is, a machine that is not created.
     """
 
-    suggested_delay = 8
+    suggested_delay = consts.services.SUGGESTED_CHECK_INTERVAL
 
     # Some customization fields
     # If ip can be manually overriden, normally True... (set by actor, for example)
     can_set_ip: typing.ClassVar[bool] = True
     # How many times we will check for a state before giving up
     max_state_checks: typing.ClassVar[int] = 20
+    # How many "retries" operation on same state will be allowed before giving up
+    max_retries: typing.ClassVar[int] = consts.services.MAX_RETRIES
     # If keep_state_sets_error is true, and an error occurs, the machine is set to FINISHED instead of ERROR
     keep_state_sets_error: typing.ClassVar[bool] = False
     # If must wait untill finish queue for destroying the machine
@@ -131,10 +133,12 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         Operation.FINISH,
     ]
 
+    @typing.final
     def _reset_checks_counter(self) -> None:
         with self.storage.as_dict() as data:
             data['exec_count'] = 0
 
+    @typing.final
     def _inc_checks_counter(self, info: typing.Optional[str] = None) -> typing.Optional[types.states.TaskState]:
         with self.storage.as_dict() as data:
             count = data.get('exec_count', 0) + 1
@@ -143,6 +147,23 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             return self._error(f'Max checks reached on {info or "unknown"}')
         return None
 
+    @typing.final
+    def _reset_retries_counter(self) -> None:
+        with self.storage.as_dict() as data:
+            data['retries'] = 0
+
+    @typing.final
+    def _inc_retries_counter(self) -> typing.Optional[types.states.TaskState]:
+        with self.storage.as_dict() as data:
+            retries = data.get('retries', 0) + 1
+            data['retries'] = retries
+
+        if retries > self.max_retries:  # get "own class" max retries
+            return self._error(f'Max retries reached')
+
+        return None
+
+    @typing.final
     def _current_op(self) -> Operation:
         """
         Get the current operation from the queue
@@ -163,6 +184,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
 
         return self._queue[0]
 
+    @typing.final
     def _set_queue(self, queue: list[Operation]) -> None:
         """
         Sets the queue of tasks to be executed
@@ -171,15 +193,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         self._queue = queue
         self._queue_has_new_format = True
 
-    def _retry_later(self) -> types.states.TaskState:
-        """
-        Retries the current operation
-        For this, we insert a NOP that will be consumed instead of the current operationç
-        by the queue runner
-        """
-        self._queue.insert(0, Operation.NOP)
-        return types.states.TaskState.RUNNING
-
+    @typing.final
     def _generate_name(self) -> str:
         """
         Can be overriden. Generates a unique name for the machine.
@@ -248,10 +262,25 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             return types.states.TaskState.RUNNING
         except exceptions.RetryableError as e:
             # This is a retryable error, so we will retry later
-            return self._retry_later()
+            return self.retry_later()
         except Exception as e:
             logger.exception('Unexpected FixedUserService exception: %s', e)
             return self._error(e)
+
+    @typing.final
+    def retry_later(self) -> types.states.TaskState:
+        """
+        Retries the current operation
+        For this, we insert a RETRY that will be:
+            - If used from a "executor" method, will invoke the "retry_checker" method
+            - If used from a "checker" method, will be consumed, and the operation will be retried
+        In any case, if we overpass the max retries, we will set the machine to error state
+        """
+        if self._inc_retries_counter() is not None:
+            return self._error('Max retries reached')
+        self._queue.insert(0, Operation.RETRY)
+        return types.states.TaskState.FINISHED
+
 
     # Utility overrides for type checking...
     # Probably, overriden again on child classes
@@ -380,7 +409,9 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
 
             if state == types.states.TaskState.FINISHED:
                 # Remove finished operation from queue
-                self._queue.pop(0)
+                top_op = self._queue.pop(0)
+                if top_op != Operation.RETRY:
+                    self._reset_retries_counter()
                 return self._execute_queue()
 
             return state
@@ -553,7 +584,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         This does nothing, as it's a NOP operation
         """
         pass
-
+    
     def op_destroy_validator(self) -> None:
         """
         This method is called to check if the userservice has an vmid to stop destroying it if needed
@@ -706,10 +737,18 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         return types.states.TaskState.RUNNING
 
+    @typing.final
     def op_nop_checker(self) -> types.states.TaskState:
         """
         This method is called to check if the service is doing nothing
         """
+        return types.states.TaskState.FINISHED
+    
+    @typing.final
+    def op_retry_checker(self) -> types.states.TaskState:
+        # If max retrieas has beeen reached, error should already have been set
+        if self._queue[0] == Operation.ERROR:
+            return types.states.TaskState.ERROR
         return types.states.TaskState.FINISHED
 
     def op_destroy_validator_checker(self) -> types.states.TaskState:
@@ -767,6 +806,7 @@ _EXECUTORS: typing.Final[
     Operation.WAIT: DynamicUserService.op_wait,
     Operation.NOP: DynamicUserService.op_nop,
     Operation.DESTROY_VALIDATOR: DynamicUserService.op_destroy_validator,
+    # Retry operation has no executor, look "retry_later" method
 }
 
 # Same af before, but for check methods
@@ -791,4 +831,6 @@ _CHECKERS: typing.Final[
     Operation.WAIT: DynamicUserService.op_wait_checker,
     Operation.NOP: DynamicUserService.op_nop_checker,
     Operation.DESTROY_VALIDATOR: DynamicUserService.op_destroy_validator_checker,
+    # Retry operation can be inserted by a executor, so it will need a checker
+    Operation.RETRY: DynamicUserService.op_retry_checker,
 }

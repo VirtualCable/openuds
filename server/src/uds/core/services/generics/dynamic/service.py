@@ -211,12 +211,9 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
     def allows_errored_userservice_cleanup(self) -> bool:
         """
         Returns if this service can clean errored services. This is used to check if a service can be cleaned
-        from the stuck cleaner job, for example. By default, this method returns True.
+        from the stuck cleaner job, for example.
         """
-        if self.has_field('maintain_on_error'):
-            return not self.maintain_on_error.value
-
-        return True
+        return not self.should_maintain_on_error()
 
     def try_graceful_shutdown(self) -> bool:
         if self.has_field('try_soft_shutdown'):

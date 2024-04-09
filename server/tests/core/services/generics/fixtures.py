@@ -65,6 +65,23 @@ class FixedTestingUserService(fixed_userservice.FixedUserService):
         self.mock.op_stop_checker()
         return types.states.TaskState.FINISHED
 
+    # Exception raiser for tests
+    def op_custom(self, operation: types.services.Operation) -> None:
+        if operation == types.services.Operation.CUSTOM_1:
+            raise Exception('CUSTOM_1')
+        
+        if operation == types.services.Operation.CUSTOM_3:
+            self.retry_later()  # In this case, will not return it, but should work fine
+
+    def op_custom_checker(self, operation: dynamic_userservice.Operation) -> types.states.TaskState:
+        if operation == types.services.Operation.CUSTOM_1:
+            raise Exception('CUSTOM_1')
+        # custom 2 will be for testing retry_later
+        if operation == types.services.Operation.CUSTOM_2:
+            return self.retry_later()
+            
+        return types.states.TaskState.FINISHED
+
     def db_obj(self) -> typing.Any:
         self.mock.db_obj()
         return None
@@ -394,7 +411,7 @@ class DynamicTestingUserServiceQueue(dynamic_userservice.DynamicUserService):
         self.mock.wait_checker()
         return types.states.TaskState.FINISHED  # Ensure we finish right now for wait
 
-    def op_nop_checker(self) -> types.states.TaskState:
+    def op_nop_checker(self) -> types.states.TaskState:  # type: ignore  # overriding a final method
         self.mock.nop_checker()
         return types.states.TaskState.FINISHED
 
@@ -427,10 +444,17 @@ class DynamicTestingUserService(dynamic_userservice.DynamicUserService):
     def op_custom(self, operation: types.services.Operation) -> None:
         if operation == types.services.Operation.CUSTOM_1:
             raise Exception('CUSTOM_1')
+        
+        if operation == types.services.Operation.CUSTOM_3:
+            self.retry_later()  # In this case, will not return it, but should work fine
 
     def op_custom_checker(self, operation: dynamic_userservice.Operation) -> types.states.TaskState:
         if operation == types.services.Operation.CUSTOM_1:
             raise Exception('CUSTOM_1')
+        # custom 2 will be for testing retry_later
+        if operation == types.services.Operation.CUSTOM_2:
+            return self.retry_later()
+            
         return types.states.TaskState.FINISHED
 
 
@@ -528,6 +552,20 @@ class DynamicTestingPublication(dynamic_publication.DynamicPublication):
     def op_create(self) -> None:
         self.mock.op_create()
 
+    # Exception raiser for tests
+    def op_custom(self, operation: types.services.Operation) -> None:
+        self.mock.custom(operation)
+        if operation == types.services.Operation.CUSTOM_3:
+            self.retry_later()  # In this case, will not return it, but should work fine
+
+    def op_custom_checker(self, operation: dynamic_userservice.Operation) -> types.states.TaskState:
+        self.mock.custom_checker(operation)
+        # custom 2 will be for testing retry_later
+        if operation == types.services.Operation.CUSTOM_2:
+            return self.retry_later()
+            
+        return types.states.TaskState.FINISHED
+
 
 class DynamicTestingPublicationQueue(dynamic_publication.DynamicPublication):
     mock: 'mock.Mock' = mock.MagicMock()
@@ -565,6 +603,8 @@ class DynamicTestingPublicationQueue(dynamic_publication.DynamicPublication):
 
     def op_custom(self, operation: types.services.Operation) -> None:
         self.mock.custom(operation)
+
+
 
     def op_initialize_checker(self) -> types.states.TaskState:
         self.mock.initialize_checker()

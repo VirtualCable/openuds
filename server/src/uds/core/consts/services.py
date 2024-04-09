@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2023 Virtual Cable S.L.U.
+# Copyright (c) 2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,47 +30,12 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-# pyright: reportUnusedImport=false
-import time
 import typing
-from datetime import datetime
 
-from . import actor, auth, cache, calendar, images, net, os, system, ticket, rest, services
+SUGGESTED_CHECK_INTERVAL: typing.Final[int] = 10  # In seconds
+MAX_RETRIES: typing.Final[int] = 7 * 24 * 60 // SUGGESTED_CHECK_INTERVAL  # 7 days
+MAX_STATE_CHECKS: typing.Final[int] = 32  # Max number of state checks before giving up
 
-# Date related constants
-NEVER: typing.Final[datetime] = datetime(1972, 7, 1)
-NEVER_UNIX: typing.Final[int] = int(time.mktime(NEVER.timetuple()))
-
-# Unknown mac address "magic" value
-MAC_UNKNOWN: typing.Final[str] = '00:00:00:00:00:00'
-
-# REST Related constants
-OK: typing.Final[str] = 'ok'  # Constant to be returned when result is just "operation complete successfully"
-
-# For conversion to boolean
-BOOL_TRUE_VALUES: typing.Final[typing.Set[typing.Union[bool, str, bytes, int]]] = {
-    True,
-    'TRUE',
-    'True',
-    b'true',
-    b'True',
-    b'TRUE',
-    1,
-    '1',
-    b'1',
-    'true',
-    'YES',
-    'Yes',
-    'yes',
-    'ENABLED',
-    'Enabled',
-    'enabled',
-}
-TRUE_STR: typing.Final[str] = 'true'
-FALSE_STR: typing.Final[str] = 'false'
-
-# Constant to mark an "UNLIMITED" value
-UNLIMITED: typing.Final[int] = -1
-
-# Constant marking no more names available
-NO_MORE_NAMES: typing.Final[str] = 'NO-NAME-ERROR'
+PUB_SUGGESTED_CHECK_INTERVAL: typing.Final[int] = 20  # In seconds
+PUB_MAX_RETRIES: typing.Final[int] = 7 * 24 * 60 // PUB_SUGGESTED_CHECK_INTERVAL  # 7 days
+PUB_MAX_STATE_CHECKS: typing.Final[int] = 7200 // PUB_SUGGESTED_CHECK_INTERVAL  # 2 hours for a single state at mos
