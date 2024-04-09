@@ -143,7 +143,7 @@ def post(
     ):
         res = copy.deepcopy(RESERVE)
         res['name'] += str(random.randint(5000, 100000))  # nosec: for testing pourposes
-        res['mac'] = ''.join(random.choice('0123456789ABCDEF') for _ in range(12))  # nosec: for testing pourposes
+        res['mac'] = ''.join(random.choices('0123456789ABCDEF', k=12))  # nosec: for testing pourposes
         res['ip'] = '1.2.3.4'
         return res
 

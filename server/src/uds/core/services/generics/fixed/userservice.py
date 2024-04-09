@@ -116,7 +116,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             count = data.get('exec_count', 0) + 1
             data['exec_count'] = count
         if count > self.max_state_checks:
-            return self._error(f'Max checks reached on {info or "unknown"}')
+            return self.error(f'Max checks reached on {info or "unknown"}')
         return None
 
     @typing.final
@@ -131,12 +131,12 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             data['retries'] = retries
 
         if retries > self.max_retries:  # get "own class" max retries
-            return self._error(f'Max retries reached')
+            return self.error(f'Max retries reached')
 
         return None
 
     @typing.final
-    def _error(self, reason: typing.Union[str, Exception]) -> types.states.TaskState:
+    def error(self, reason: typing.Union[str, Exception]) -> types.states.TaskState:
         """
         Internal method to set object as error state
 
@@ -190,7 +190,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             return self.retry_later()
         except Exception as e:
             logger.exception('Unexpected FixedUserService exception: %s', e)
-            return self._error(str(e))
+            return self.error(str(e))
 
     @typing.final
     def retry_later(self) -> types.states.TaskState:
@@ -202,7 +202,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         In any case, if we overpass the max retries, we will set the machine to error state
         """
         if self._inc_retries_counter() is not None:
-            return self._error('Max retries reached')
+            return self.error('Max retries reached')
         self._queue.insert(0, Operation.RETRY)
         return types.states.TaskState.FINISHED
 
@@ -251,7 +251,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         """
         Fixed Userservice does not provided "cached" elements
         """
-        return self._error('Cache for fixed userservices not supported')
+        return self.error('Cache for fixed userservices not supported')
 
     def set_ready(self) -> types.states.TaskState:
         # If already ready, return finished
@@ -264,9 +264,9 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             else:
                 self._queue = [Operation.START, Operation.START_COMPLETED, Operation.FINISH]
         except exceptions.NotFoundError:
-            return self._error('Machine not found')
+            return self.error('Machine not found')
         except Exception as e:
-            return self._error(f'Error on setReady: {e}')
+            return self.error(f'Error on setReady: {e}')
         return self._execute_queue()
 
     @typing.final
@@ -318,10 +318,10 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             # And it has not been removed from the queue
             return types.states.TaskState.RUNNING
         except exceptions.NotFoundError as e:
-            return self._error(f'Machine not found ({e})')
+            return self.error(f'Machine not found ({e})')
         except Exception as e:
             logger.exception('Unexpected UserService check exception: %s', e)
-            return self._error(str(e))
+            return self.error(e)
 
     @typing.final
     def op_nop(self) -> None:

@@ -81,7 +81,7 @@ class ProxmoxUserServiceFixed(FixedUserService, autoserializable.AutoSerializabl
         except client.ProxmoxConnectionError:
             raise  # If connection fails, let it fail on parent
         except Exception as e:
-            return self._error(f'Machine not found: {e}')
+            return self.error(f'Machine not found: {e}')
 
         if vminfo.status == 'stopped':
             self._queue = [Operation.START, Operation.FINISH]
@@ -104,9 +104,6 @@ class ProxmoxUserServiceFixed(FixedUserService, autoserializable.AutoSerializabl
 
     def process_ready_from_os_manager(self, data: typing.Any) -> types.states.TaskState:
         return types.states.TaskState.FINISHED
-
-    def error(self, reason: str) -> types.states.TaskState:
-        return self._error(reason)
 
     def op_start(self) -> None:
         try:
@@ -133,7 +130,7 @@ class ProxmoxUserServiceFixed(FixedUserService, autoserializable.AutoSerializabl
             return types.states.TaskState.RUNNING  # Try again later
 
         if task.is_errored():
-            return self._error(task.exitstatus)
+            return self.error(task.exitstatus)
 
         if task.is_completed():
             return types.states.TaskState.FINISHED

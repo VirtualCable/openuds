@@ -60,6 +60,9 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
     needs_osmanager = False  # If the service needs a s.o. manager (managers are related to agents provided by services, i.e. virtual machines with agent)
     must_assign_manually = False  # If true, the system can't do an automatic assignation of a deployed user service from this service
     # can_reset = True
+    
+    # If machine has an alternate field with it, it will be used instead of "machines" field
+    alternate_machines_field: typing.Optional[str] = None
 
     # : Types of publications (preparated data for deploys)
     # : In our case, we do no need a publication, so this is None
@@ -232,27 +235,30 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         """
         raise NotImplementedError()
 
-    @abc.abstractmethod
     def assign_from_assignables(
         self, assignable_id: str, user: 'models.User', userservice_instance: 'services.UserService'
     ) -> types.states.TaskState:
         """
         Assigns a machine from the assignables
+        Default implementation NEEDS machines field to be present!!
         """
-        raise NotImplementedError()
+        fixed_instance = typing.cast('FixedUserService', userservice_instance)
+        machines = typing.cast(gui.MultiChoiceField, getattr(self, self.alternate_machines_field or 'machines' ))
+        with self._assigned_access() as assigned_vms:
+            if assignable_id not in assigned_vms and assignable_id in machines.as_list():
+                assigned_vms.add(assignable_id)
+                return fixed_instance.assign(assignable_id)
 
-    def sorted_assignables_list(self, alternate_field_name: typing.Optional[str] = None) -> list[str]:
+        return fixed_instance.error(f'{assignable_id} not available!')
+
+    def sorted_assignables_list(self) -> list[str]:
         """
         Randomizes the assignation of machines if needed
         """
-        if self.has_field('machines') is False:
-            if not alternate_field_name:
-                raise ValueError('machines field not found')
-            if self.has_field(alternate_field_name) is False:
-                raise ValueError(f'Alternate field {alternate_field_name} not found')
-            machines = typing.cast(gui.MultiChoiceField, getattr(self, alternate_field_name))
-        else:
-            machines = self.machines
+        fld_name = self.alternate_machines_field or 'machines'
+        if self.has_field(fld_name) is False:
+            raise ValueError(f'machines field {fld_name} not found')
+        machines = typing.cast(gui.MultiChoiceField, getattr(self, fld_name))
 
         if hasattr(self, 'randomize') and self.randomize.value is True:
             return random.sample(machines.as_list(), len(machines.as_list()))

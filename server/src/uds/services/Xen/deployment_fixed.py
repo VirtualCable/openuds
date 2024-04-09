@@ -93,9 +93,6 @@ class XenFixedUserService(FixedUserService, autoserializable.AutoSerializable):
     def process_ready_from_os_manager(self, data: typing.Any) -> types.states.TaskState:
         return types.states.TaskState.FINISHED
 
-    def error(self, reason: str) -> types.states.TaskState:
-        return self._error(reason)
-
     def op_start(self) -> None:
         try:
             state = self.service().get_machine_power_state(self._vmid)

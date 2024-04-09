@@ -445,7 +445,7 @@ class ServerManager(metaclass=singleton.Singleton):
     def sorted_server_list(
         self,
         serverGroup: 'models.ServerGroup',
-        excludeServersUUids: typing.Optional[typing.Set[str]] = None,
+        excluded_servers_uuids: typing.Optional[typing.Set[str]] = None,
     ) -> list['models.Server']:
         """
         Returns a list of servers sorted by usage
@@ -460,8 +460,8 @@ class ServerManager(metaclass=singleton.Singleton):
             now = model_utils.sql_datetime()
             fltrs = serverGroup.servers.filter(maintenance_mode=False)
             fltrs = fltrs.filter(Q(locked_until=None) | Q(locked_until__lte=now))  # Only unlocked servers
-            if excludeServersUUids:
-                fltrs = fltrs.exclude(uuid__in=excludeServersUUids)
+            if excluded_servers_uuids:
+                fltrs = fltrs.exclude(uuid__in=excluded_servers_uuids)
 
             # Get the stats for all servers, but in parallel
             serverStats = self.get_server_stats(fltrs)

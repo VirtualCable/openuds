@@ -34,7 +34,7 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import services, types
+from uds.core import types
 from uds.core.services.generics.fixed.service import FixedService
 from uds.core.ui import gui
 from uds.core.util import log
@@ -44,7 +44,6 @@ from .deployment_fixed import OpenStackUserServiceFixed
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds import models
     from .openstack import openstack_client
 
     from .provider import OpenStackProvider
@@ -156,17 +155,6 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
                 if k not in assigned_servers
                 and k in servers  # Only machines not assigned, and that exists on provider will be available
             ]
-
-    def assign_from_assignables(
-        self, assignable_id: str, user: 'models.User', userservice_instance: 'services.UserService'
-    ) -> types.states.TaskState:
-        openstack_userservice_instance = typing.cast(OpenStackUserServiceFixed, userservice_instance)
-        with self._assigned_access() as assigned:
-            if assignable_id not in assigned:
-                assigned.add(assignable_id)
-                return openstack_userservice_instance.assign(assignable_id)
-
-        return openstack_userservice_instance.error('VM not available!')
 
     def get_and_assign(self) -> str:
         found_vmid: typing.Optional[str] = None

@@ -75,7 +75,7 @@ class OpenStackUserServiceFixed(FixedUserService, autoserializable.AutoSerializa
         try:
             server_info = self.service().api.get_server(self._vmid)
         except Exception as e:
-            return self._error(f'Machine not found: {e}')
+            return self.error(f'Machine not found: {e}')
 
         if server_info.power_state == openstack_types.PowerState.SHUTDOWN:
             self._queue = [Operation.START, Operation.FINISH]
@@ -98,9 +98,6 @@ class OpenStackUserServiceFixed(FixedUserService, autoserializable.AutoSerializa
 
     def process_ready_from_os_manager(self, data: typing.Any) -> types.states.TaskState:
         return types.states.TaskState.FINISHED
-
-    def error(self, reason: str) -> types.states.TaskState:
-        return self._error(reason)
 
     def op_start(self) -> None:
         try:
