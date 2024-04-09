@@ -50,6 +50,7 @@ class TestOpenstackFixedUserService(UDSTransactionTestCase):
         """
         Test the user service
         """
+        fixtures.set_all_vms_status(openstack_types.ServerStatus.ACTIVE)
         for patcher in (fixtures.patched_provider, fixtures.patched_provider_legacy):
             with patcher() as prov:
                 service = fixtures.create_fixed_service(prov)  # Will use provider patched api

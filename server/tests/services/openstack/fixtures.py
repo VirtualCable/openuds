@@ -236,6 +236,10 @@ def get_id(iterable: typing.Iterable[T], id: str) -> T:
         return next(filter(lambda x: x.id == id, iterable))  # type: ignore
     except StopIteration:
         raise ValueError(f'Id {id} not found in iterable') from None
+    
+def set_all_vms_status(status: openstack_types.ServerStatus) -> None:
+    for vm in SERVERS_LIST:
+        vm.status = status
 
 
 # Methods that returns None or "internal" methods are not tested
