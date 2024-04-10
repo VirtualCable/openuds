@@ -50,6 +50,7 @@ if typing.TYPE_CHECKING:
 
 useLogger = logging.getLogger('useLog')
 
+
 # Pattern for look for date and time in this format: 2023-04-20 04:03:08,776 (and trailing spaces)
 # This is the format used by python logging module
 DATETIME_PATTERN: typing.Final[typing.Pattern[str]] = re.compile(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) *')
@@ -76,7 +77,8 @@ class LogLevel(enum.IntEnum):
     def from_str(level: str) -> 'LogLevel':
         try:
             return LogLevel[level.upper()]
-        except KeyError:
+        except Exception:
+            # logger.error('Error getting log level from string: %s', e)
             return LogLevel.OTHER
 
     @staticmethod
