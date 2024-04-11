@@ -37,6 +37,7 @@ from django.utils import timezone
 
 from uds.core.util import os_detector as OsDetector
 from uds.core.util.config import GlobalConfig
+from uds.core.util.state import State
 from uds.core.auths.auth import AUTHORIZED_KEY, EXPIRY_KEY, ROOT_ID, USER_KEY, getRootUser, webLogout
 from uds.core.util.request import (
     setRequest,
@@ -170,6 +171,8 @@ class GlobalRequestMiddleware:
                     user = getRootUser()
                 else:
                     user = User.objects.get(pk=user_id)
+                    if user.state != State.ACTIVE:
+                        user = None  # If inactive, user is None
             except User.DoesNotExist:
                 user = None
 

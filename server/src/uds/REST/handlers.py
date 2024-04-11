@@ -36,6 +36,7 @@ from django.contrib.sessions.backends.base import SessionBase
 from django.contrib.sessions.backends.db import SessionStore
 
 from uds.core.util.config import GlobalConfig
+from uds.core.util.state import State
 from uds.core.auths.auth import getRootUser
 from uds.core.util import net
 from uds.models import Authenticator, User
@@ -166,7 +167,7 @@ class Handler:
             except Exception:  # Couldn't authenticate
                 self._authToken = None
                 self._session = None
-
+                
             if self._authToken is None:
                 raise AccessDenied()
 
@@ -179,6 +180,10 @@ class Handler:
             self._user = self.getUser()
         else:
             self._user = User()  # Empty user for non authenticated handlers
+            self._user.state = State.ACTIVE
+
+        if self._user.state != State.ACTIVE:
+            raise AccessDenied()
 
 
     def headers(self) -> typing.Dict[str, str]:
