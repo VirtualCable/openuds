@@ -36,13 +36,12 @@ import codecs
 from django.contrib.sessions.backends.base import SessionBase
 from django.contrib.sessions.backends.db import SessionStore
 
-from uds.core import consts
+from uds.core import consts, types
 from uds.core.util.config import GlobalConfig
 from uds.core.auths.auth import root_user
 from uds.core.util import net
 from uds.models import Authenticator, User
 from uds.core.managers.crypto import CryptoManager
-from uds.core.util.state import State
 
 from ..core.exceptions.rest import AccessDenied
 
@@ -145,10 +144,9 @@ class Handler:
                 # Maybe the user was deleted, so access is denied
                 raise AccessDenied() from e
         else:
-            # self._user = User()  # Empty user for non authenticated handlers
-            raise AccessDenied()
+            self._user = User()  # Empty user for non authenticated handlers
 
-        if self._user and self._user.state != State.ACTIVE:
+        if self._user and self._user.state != types.states.State.ACTIVE:
             raise AccessDenied()
 
     def headers(self) -> dict[str, str]:

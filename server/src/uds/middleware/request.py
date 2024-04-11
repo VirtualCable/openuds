@@ -37,13 +37,12 @@ from django.utils import timezone
 
 from uds.core.util import os_detector as OsDetector
 from uds.core.util.config import GlobalConfig
-from uds.core import consts
+from uds.core import consts, types
 from uds.core.auths.auth import (
     root_user,
     web_logout,
 )
 from uds.models import User
-from uds.core.util.state import State
 
 
 from . import builder
@@ -121,7 +120,7 @@ def _get_user(request: 'ExtendedHttpRequest') -> None:
                 user = User.objects.get(pk=user_id)
         except User.DoesNotExist:
             user = None
-    if user and user.state != State.ACTIVE:
+    if user and user.state != types.states.State.ACTIVE:
         user = None
 
     logger.debug('User at Middleware: %s %s', user_id, user)
