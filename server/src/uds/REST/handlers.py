@@ -42,6 +42,7 @@ from uds.core.auths.auth import root_user
 from uds.core.util import net
 from uds.models import Authenticator, User
 from uds.core.managers.crypto import CryptoManager
+from uds.core.util.state import State
 
 from ..core.exceptions.rest import AccessDenied
 
@@ -144,7 +145,11 @@ class Handler:
                 # Maybe the user was deleted, so access is denied
                 raise AccessDenied() from e
         else:
-            self._user = User()  # Empty user for non authenticated handlers
+            # self._user = User()  # Empty user for non authenticated handlers
+            raise AccessDenied()
+
+        if self._user and self._user.state != State.ACTIVE:
+            raise AccessDenied()
 
     def headers(self) -> dict[str, str]:
         """

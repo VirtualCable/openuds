@@ -43,6 +43,8 @@ from uds.core.auths.auth import (
     web_logout,
 )
 from uds.models import User
+from uds.core.util.state import State
+
 
 from . import builder
 
@@ -119,6 +121,8 @@ def _get_user(request: 'ExtendedHttpRequest') -> None:
                 user = User.objects.get(pk=user_id)
         except User.DoesNotExist:
             user = None
+    if user and user.state != State.ACTIVE:
+        user = None
 
     logger.debug('User at Middleware: %s %s', user_id, user)
 
