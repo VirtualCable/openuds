@@ -145,6 +145,7 @@ class Handler:
                 raise AccessDenied() from e
         else:
             self._user = User()  # Empty user for non authenticated handlers
+            self._user.state = types.states.State.ACTIVE  # Ensure it's active
 
         if self._user and self._user.state != types.states.State.ACTIVE:
             raise AccessDenied()

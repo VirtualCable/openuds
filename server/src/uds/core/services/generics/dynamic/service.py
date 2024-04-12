@@ -134,6 +134,9 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         """
         Returns the mac of the machine
         If cannot be obtained, MUST raise an exception
+        Note:
+           vmid can be '' if we are requesting a new mac (on some services, where UDS generate the machines MAC)
+           If the service does not support this, it can raise an exception
         """
         ...
 
@@ -195,7 +198,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         return self.shutdown(caller_instance, vmid)
 
     @abc.abstractmethod
-    def remove(
+    def delete(
         self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str
     ) -> None:
         """

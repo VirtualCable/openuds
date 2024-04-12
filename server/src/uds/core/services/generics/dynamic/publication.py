@@ -373,7 +373,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         This method is called when the service is removed
         By default, we need a remove machine on the service, use it
         """
-        self.service().remove(self, self._vmid)
+        self.service().delete(self, self._vmid)
 
     def op_remove_completed(self) -> None:
         """

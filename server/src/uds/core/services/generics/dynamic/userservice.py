@@ -220,7 +220,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         if self._vmid:
             if self.service().should_maintain_on_error() is False:
                 try:
-                    self.service().remove(self, self._vmid)
+                    self.service().delete(self, self._vmid)
                     self._vmid = ''
                 except Exception as e:
                     logger.exception('Exception removing machine %s: %s', self._vmid, e)
@@ -308,6 +308,8 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     def get_unique_id(self) -> str:
         # Provide self to the service, so it can some of our methods to generate the unique id
         # (for example, own mac generator, that will autorelease the mac as soon as the machine is removed)
+        # Note that get_mac is used for creating a new mac, returning the one of the vm or whatever
+        # This is responsibility of the service, not of the user service
         if not self._mac:
             self._mac = self.service().get_mac(self, self._vmid) or ''
         return self._mac
@@ -486,7 +488,8 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         This method is called when the service is started
         """
-        self.service().start(self, self._vmid)
+        if not self.service().is_running(self, self._vmid):
+            self.service().start(self, self._vmid)
 
     def op_start_completed(self) -> None:
         """
@@ -499,7 +502,8 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         This method is called for stopping the service
         """
-        self.service().stop(self, self._vmid)
+        if self.service().is_running(self, self._vmid):
+            self.service().stop(self, self._vmid)
 
     def op_stop_completed(self) -> None:
         """
@@ -513,8 +517,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         This method is called for shutdown the service
         """
         shutdown_stamp = -1
-        is_running = self.service().is_running(self, self._vmid)
-        if not is_running:
+        if not self.service().is_running(self, self._vmid):
             # Already stopped, just finish
             return
 
@@ -562,7 +565,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         This method is called when the service is removed
         """
-        self.service().remove(self, self._vmid)
+        self.service().delete(self, self._vmid)
 
     def op_remove_completed(self) -> None:
         """

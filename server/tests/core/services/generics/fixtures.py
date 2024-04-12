@@ -459,9 +459,9 @@ class DynamicTestingUserService(dynamic_userservice.DynamicUserService):
 
 
 class DynamicTestingService(dynamic_service.DynamicService):
-    type_name = 'Dynamic Service'
-    type_type = 'DynamicService'
-    type_description = 'Dynamic Service description'
+    type_name = 'Dynamic Service Testing'
+    type_type = 'DynamicServiceTesting'
+    type_description = 'Dynamic Service Testing description'
 
     user_service_type = DynamicTestingUserServiceQueue
 
@@ -471,7 +471,7 @@ class DynamicTestingService(dynamic_service.DynamicService):
     maintain_on_error = dynamic_service.DynamicService.maintain_on_error
     try_soft_shutdown = dynamic_service.DynamicService.try_soft_shutdown
 
-    machine_running_flag: bool = False
+    machine_running_flag: bool = True
 
     def get_ip(
         self,
@@ -521,7 +521,7 @@ class DynamicTestingService(dynamic_service.DynamicService):
         self.mock.shutdown(caller_instance, vmid)
         self.machine_running_flag = False
 
-    def remove(
+    def delete(
         self,
         caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
         vmid: str,

@@ -128,7 +128,7 @@ class ProxmoxPublication(DynamicPublication, autoserializable.AutoSerializable):
         self.service().provider().create_template(int(self._vmid))
         
     def op_remove(self) -> None:
-        self.service().remove(self, self._vmid)
+        self.service().delete(self, self._vmid)
         
     def machine(self) -> int:
         return int(self._vmid)
