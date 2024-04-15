@@ -33,6 +33,18 @@ import collections.abc
 
 
 def is_list(obj: typing.Any) -> list[typing.Any]:
+    """
+    Checks if the given object is a list or can be converted into a list.
+
+    Args:
+        obj (Any): The object to check.
+
+    Returns:
+        list[Any]: If the object is a list, it is returned as is. 
+                   If the object is a string or bytes, it is wrapped in a list and returned. 
+                   If the object is not iterable, a list containing the object is returned.
+
+    """
     if not obj:
         return []
 
@@ -55,7 +67,7 @@ def is_iterable(obj: typing.Any) -> typing.Generator[typing.Any, None, None]:
         typing.Generator[T, None, None]: Iterable object
 
     Yields:
-        Iterator[typing.Generator[T, None, None]]: Iterator of the object
+        Iterator[typing.Generator[T, None, None]]: The object itself or the objects as iterated
     """
     if not obj:
         return
