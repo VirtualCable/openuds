@@ -209,11 +209,11 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
 
         return str(found_vmid)
 
-    def get_first_network_mac(self, vmid: str) -> str:
+    def get_mac(self, vmid: str) -> str:
         config = self.provider().get_machine_configuration(int(vmid))
         return config.networks[0].mac.lower()
 
-    def get_guest_ip_address(self, vmid: str) -> str:
+    def get_ip(self, vmid: str) -> str:
         return self.provider().get_guest_ip_address(int(vmid))
 
     def get_name(self, vmid: str) -> str:

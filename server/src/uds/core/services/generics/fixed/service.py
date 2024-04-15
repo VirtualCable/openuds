@@ -217,14 +217,14 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         return True
 
     @abc.abstractmethod
-    def get_first_network_mac(self, vmid: str) -> str:
+    def get_mac(self, vmid: str) -> str:
         """If no mac, return empty string
         Returns the first network mac of the machine
         """
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def get_guest_ip_address(self, vmid: str) -> str:
+    def get_ip(self, vmid: str) -> str:
         """Returns the guest ip address of the machine"""
         raise NotImplementedError()
 

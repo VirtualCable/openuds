@@ -73,7 +73,7 @@ class FixedTestingUserService(fixed_userservice.FixedUserService):
         if operation == types.services.Operation.CUSTOM_3:
             self.retry_later()  # In this case, will not return it, but should work fine
 
-    def op_custom_checker(self, operation: dynamic_userservice.Operation) -> types.states.TaskState:
+    def op_custom_checker(self, operation: types.services.Operation) -> types.states.TaskState:
         if operation == types.services.Operation.CUSTOM_1:
             raise Exception('CUSTOM_1')
         # custom 2 will be for testing retry_later
@@ -139,11 +139,11 @@ class FixedTestingService(fixed_service.FixedService):
         self.mock.is_ready(vmid)
         return True
 
-    def get_first_network_mac(self, vmid: str) -> str:
+    def get_mac(self, vmid: str) -> str:
         self.mock.get_first_network_mac(vmid)
         return '00:00:00:00:00:00'
 
-    def get_guest_ip_address(self, vmid: str) -> str:
+    def get_ip(self, vmid: str) -> str:
         self.mock.get_guest_ip_address(vmid)
         return '10.0.0.10'
 
@@ -448,7 +448,7 @@ class DynamicTestingUserService(dynamic_userservice.DynamicUserService):
         if operation == types.services.Operation.CUSTOM_3:
             self.retry_later()  # In this case, will not return it, but should work fine
 
-    def op_custom_checker(self, operation: dynamic_userservice.Operation) -> types.states.TaskState:
+    def op_custom_checker(self, operation: types.services.Operation) -> types.states.TaskState:
         if operation == types.services.Operation.CUSTOM_1:
             raise Exception('CUSTOM_1')
         # custom 2 will be for testing retry_later
@@ -558,7 +558,7 @@ class DynamicTestingPublication(dynamic_publication.DynamicPublication):
         if operation == types.services.Operation.CUSTOM_3:
             self.retry_later()  # In this case, will not return it, but should work fine
 
-    def op_custom_checker(self, operation: dynamic_userservice.Operation) -> types.states.TaskState:
+    def op_custom_checker(self, operation: types.services.Operation) -> types.states.TaskState:
         self.mock.custom_checker(operation)
         # custom 2 will be for testing retry_later
         if operation == types.services.Operation.CUSTOM_2:

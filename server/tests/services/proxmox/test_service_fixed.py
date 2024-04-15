@@ -117,11 +117,11 @@ class TestProxmoxFixedService(UDSTransactionTestCase):
 
             # Get first network mac
             self.assertEqual(
-                service.get_first_network_mac('1'), fixtures.VMS_CONFIGURATION[0].networks[0].mac.lower()
+                service.get_mac('1'), fixtures.VMS_CONFIGURATION[0].networks[0].mac.lower()
             )
 
             # Get guest ip address
-            self.assertEqual(service.get_guest_ip_address('1'), fixtures.GUEST_IP_ADDRESS)
+            self.assertEqual(service.get_ip('1'), fixtures.GUEST_IP_ADDRESS)
 
             # Remove and free machine
             # Fist, assign a machine

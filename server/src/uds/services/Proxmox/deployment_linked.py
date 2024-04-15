@@ -36,7 +36,7 @@ import logging
 import typing
 
 from uds.core import types, consts
-from uds.core.services.generics.dynamic.userservice import DynamicUserService, Operation
+from uds.core.services.generics.dynamic.userservice import DynamicUserService
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.util import autoserializable
 
@@ -53,7 +53,7 @@ logger = logging.getLogger(__name__)
 
 class OldOperation(enum.IntEnum):
     """
-    Operation codes for Proxmox deployment
+    OldOperation codes for Proxmox deployment
     """
 
     CREATE = 0
@@ -77,20 +77,20 @@ class OldOperation(enum.IntEnum):
         except ValueError:
             return OldOperation.UNKNOWN
 
-    def to_operation(self) -> 'Operation':
+    def to_operation(self) -> 'types.services.Operation':
         return {
-            OldOperation.CREATE: Operation.CREATE,
-            OldOperation.START: Operation.START,
-            OldOperation.STOP: Operation.STOP,
-            OldOperation.SHUTDOWN: Operation.SHUTDOWN,
-            OldOperation.REMOVE: Operation.REMOVE,
-            OldOperation.WAIT: Operation.WAIT,
-            OldOperation.ERROR: Operation.ERROR,
-            OldOperation.FINISH: Operation.FINISH,
-            OldOperation.RETRY: Operation.NOP,
-            OldOperation.GET_MAC: Operation.START_COMPLETED,
-            OldOperation.GRACEFUL_STOP: Operation.SHUTDOWN,
-            OldOperation.UNKNOWN: Operation.UNKNOWN,
+            OldOperation.CREATE: types.services.Operation.CREATE,
+            OldOperation.START: types.services.Operation.START,
+            OldOperation.STOP: types.services.Operation.STOP,
+            OldOperation.SHUTDOWN: types.services.Operation.SHUTDOWN,
+            OldOperation.REMOVE: types.services.Operation.REMOVE,
+            OldOperation.WAIT: types.services.Operation.WAIT,
+            OldOperation.ERROR: types.services.Operation.ERROR,
+            OldOperation.FINISH: types.services.Operation.FINISH,
+            OldOperation.RETRY: types.services.Operation.NOP,
+            OldOperation.GET_MAC: types.services.Operation.START_COMPLETED,
+            OldOperation.GRACEFUL_STOP: types.services.Operation.SHUTDOWN,
+            OldOperation.UNKNOWN: types.services.Operation.UNKNOWN,
         }[self]
 
 

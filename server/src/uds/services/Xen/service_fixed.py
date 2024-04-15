@@ -260,10 +260,10 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
 
         return str(found_vmid)
 
-    def get_first_network_mac(self, vmid: str) -> str:
+    def get_mac(self, vmid: str) -> str:
         return self.provider().get_first_mac(vmid)
 
-    def get_guest_ip_address(self, vmid: str) -> str:
+    def get_ip(self, vmid: str) -> str:
         return self.provider().get_first_ip(vmid)
 
     def get_name(self, vmid: str) -> str:

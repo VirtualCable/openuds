@@ -227,7 +227,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
     def get_ip(self) -> str:
         try:
             if self._vmid:
-                return self.service().get_guest_ip_address(self._vmid)
+                return self.service().get_ip(self._vmid)
         except exceptions.NotFoundError:
             self.do_log(log.LogLevel.ERROR, f'Machine not found: {self._vmid}::{self._name}')
 
@@ -335,7 +335,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         """
         Deploys a machine from template for user/cache
         """
-        self._mac = self.service().get_first_network_mac(self._vmid) or ''
+        self._mac = self.service().get_mac(self._vmid) or ''
         self._name = self.service().get_name(self._vmid) or f'VM-{self._vmid}'
 
     @typing.final

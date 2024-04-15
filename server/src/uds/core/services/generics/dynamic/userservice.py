@@ -37,7 +37,6 @@ import typing
 import collections.abc
 
 from uds.core import services, types, consts
-from uds.core.types.services import Operation
 from uds.core.util import log, autoserializable
 from uds.core.util.model import sql_stamp_seconds
 
@@ -88,7 +87,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     _ip = autoserializable.StringField(default='')
     _vmid = autoserializable.StringField(default='')
     _reason = autoserializable.StringField(default='')
-    _queue = autoserializable.ListField[Operation]()  # Default is empty list
+    _queue = autoserializable.ListField[types.services.Operation]()  # Default is empty list
     _is_flagged_for_destroy = autoserializable.BoolField(default=False)
     # In order to allow migrating from old data, we will mark if the _queue has our format or the old one
     _queue_has_new_format = autoserializable.BoolField(default=False)
@@ -96,41 +95,41 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     # Extra info, not serializable, to keep information in case of exception and debug it
     _error_debug_info: typing.Optional[str] = None
 
-    _create_queue: typing.ClassVar[list[Operation]] = [
-        Operation.INITIALIZE,
-        Operation.CREATE,
-        Operation.CREATE_COMPLETED,
-        Operation.START,
-        Operation.START_COMPLETED,
-        Operation.FINISH,
+    _create_queue: typing.ClassVar[list[types.services.Operation]] = [
+        types.services.Operation.INITIALIZE,
+        types.services.Operation.CREATE,
+        types.services.Operation.CREATE_COMPLETED,
+        types.services.Operation.START,
+        types.services.Operation.START_COMPLETED,
+        types.services.Operation.FINISH,
     ]
-    _create_queue_l1_cache: typing.ClassVar[list[Operation]] = [
-        Operation.INITIALIZE,
-        Operation.CREATE,
-        Operation.CREATE_COMPLETED,
-        Operation.START,
-        Operation.START_COMPLETED,
-        Operation.FINISH,
+    _create_queue_l1_cache: typing.ClassVar[list[types.services.Operation]] = [
+        types.services.Operation.INITIALIZE,
+        types.services.Operation.CREATE,
+        types.services.Operation.CREATE_COMPLETED,
+        types.services.Operation.START,
+        types.services.Operation.START_COMPLETED,
+        types.services.Operation.FINISH,
     ]
 
-    _create_queue_l2_cache: typing.ClassVar[list[Operation]] = [
-        Operation.INITIALIZE,
-        Operation.CREATE,
-        Operation.CREATE_COMPLETED,
-        Operation.START,
-        Operation.START_COMPLETED,
-        Operation.WAIT,
-        Operation.SUSPEND,
-        Operation.SUSPEND_COMPLETED,
-        Operation.FINISH,
+    _create_queue_l2_cache: typing.ClassVar[list[types.services.Operation]] = [
+        types.services.Operation.INITIALIZE,
+        types.services.Operation.CREATE,
+        types.services.Operation.CREATE_COMPLETED,
+        types.services.Operation.START,
+        types.services.Operation.START_COMPLETED,
+        types.services.Operation.WAIT,
+        types.services.Operation.SUSPEND,
+        types.services.Operation.SUSPEND_COMPLETED,
+        types.services.Operation.FINISH,
     ]
     # If gracefull_stop, will prepend a soft_shutdown
-    _destroy_queue: typing.ClassVar[list[Operation]] = [
-        Operation.STOP,
-        Operation.STOP_COMPLETED,
-        Operation.REMOVE,
-        Operation.REMOVE_COMPLETED,
-        Operation.FINISH,
+    _destroy_queue: typing.ClassVar[list[types.services.Operation]] = [
+        types.services.Operation.STOP,
+        types.services.Operation.STOP_COMPLETED,
+        types.services.Operation.REMOVE,
+        types.services.Operation.REMOVE_COMPLETED,
+        types.services.Operation.FINISH,
     ]
 
     @typing.final
@@ -164,7 +163,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         return None
 
     @typing.final
-    def _current_op(self) -> Operation:
+    def _current_op(self) -> types.services.Operation:
         """
         Get the current operation from the queue
 
@@ -180,12 +179,12 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             self._queue_has_new_format = True
 
         if not self._queue:
-            return Operation.FINISH
+            return types.services.Operation.FINISH
 
         return self._queue[0]
 
     @typing.final
-    def _set_queue(self, queue: list[Operation]) -> None:
+    def _set_queue(self, queue: list[types.services.Operation]) -> None:
         """
         Sets the queue of tasks to be executed
         Ensures that we mark it as new format
@@ -228,10 +227,10 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
                     self.do_log(log.LogLevel.ERROR, f'Error removing machine: {e}')
             else:
                 logger.debug('Keep on error is enabled, not removing machine')
-                self._set_queue([Operation.FINISH] if self.keep_state_sets_error else [Operation.ERROR])
+                self._set_queue([types.services.Operation.FINISH] if self.keep_state_sets_error else [types.services.Operation.ERROR])
                 return types.states.TaskState.FINISHED
 
-        self._set_queue([Operation.ERROR])
+        self._set_queue([types.services.Operation.ERROR])
         self._reason = reason
         return types.states.TaskState.ERROR
 
@@ -240,10 +239,10 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         self._debug('execute_queue')
         op = self._current_op()
 
-        if op == Operation.ERROR:
+        if op == types.services.Operation.ERROR:
             return types.states.TaskState.ERROR
 
-        if op == Operation.FINISH:
+        if op == types.services.Operation.FINISH:
             return types.states.TaskState.FINISHED
 
         try:
@@ -278,7 +277,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         if self._inc_retries_counter() is not None:
             return self._error('Max retries reached')
-        self._queue.insert(0, Operation.RETRY)
+        self._queue.insert(0, types.services.Operation.RETRY)
         return types.states.TaskState.FINISHED
 
 
@@ -348,8 +347,8 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     def process_ready_from_os_manager(self, data: typing.Any) -> types.states.TaskState:
         # Eat the WAIT operation if it is in the queue
         # At most, we will have one WAIT operation in the queue
-        if Operation.WAIT in self._queue:
-            self._queue.remove(Operation.WAIT)
+        if types.services.Operation.WAIT in self._queue:
+            self._queue.remove(types.services.Operation.WAIT)
             # And keep processing
             return self._execute_queue()
 
@@ -360,19 +359,19 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         # If already ready, return finished
         try:
             if self.cache.get('ready', '0') == '1':
-                self._set_queue([Operation.FINISH])
+                self._set_queue([types.services.Operation.FINISH])
             elif self.service().is_running(self, self._vmid):
                 self.cache.put('ready', '1', consts.cache.SHORT_CACHE_TIMEOUT // 2)  # short cache timeout
-                self._set_queue([Operation.FINISH])
+                self._set_queue([types.services.Operation.FINISH])
             else:
-                self._set_queue([Operation.START, Operation.START_COMPLETED, Operation.FINISH])
+                self._set_queue([types.services.Operation.START, types.services.Operation.START_COMPLETED, types.services.Operation.FINISH])
         except Exception as e:
             return self._error(f'Error on setReady: {e}')
         return self._execute_queue()
 
     def reset(self) -> types.states.TaskState:
         if self._vmid != '':
-            self._set_queue([Operation.RESET, Operation.RESET_COMPLETED, Operation.FINISH])
+            self._set_queue([types.services.Operation.RESET, types.services.Operation.RESET_COMPLETED, types.services.Operation.FINISH])
 
         return types.states.TaskState.FINISHED
 
@@ -384,19 +383,19 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         self._debug('check_state')
         op = self._current_op()
 
-        if op == Operation.ERROR:
+        if op == types.services.Operation.ERROR:
             return types.states.TaskState.ERROR
 
-        if op == Operation.FINISH:
+        if op == types.services.Operation.FINISH:
             # If has a deferred destroy, do it now
             if self.wait_until_finish_to_destroy and self._is_flagged_for_destroy:
                 self._is_flagged_for_destroy = False
                 # Simply ensures nothing is left on queue and returns FINISHED
-                self._set_queue([Operation.FINISH])
+                self._set_queue([types.services.Operation.FINISH])
                 return self.destroy()
             return types.states.TaskState.FINISHED
 
-        if op != Operation.WAIT:
+        if op != types.services.Operation.WAIT:
             # All operations except WAIT will check against checks counter
             counter_state = self._inc_checks_counter(self._op2str(op))
             if counter_state is not None:
@@ -412,7 +411,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             if state == types.states.TaskState.FINISHED:
                 # Remove finished operation from queue
                 top_op = self._queue.pop(0)
-                if top_op != Operation.RETRY:
+                if top_op != types.services.Operation.RETRY:
                     self._reset_retries_counter()
                 return self._execute_queue()
 
@@ -433,20 +432,20 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         self._is_flagged_for_destroy = False  # Reset
         op = self._current_op()
 
-        if op == Operation.ERROR:
+        if op == types.services.Operation.ERROR:
             return self._error('Machine is already in error state!')
 
-        shutdown_operations: list[Operation] = (
+        shutdown_operations: list[types.services.Operation] = (
             []
             if not self.service().try_graceful_shutdown()
-            else [Operation.SHUTDOWN, Operation.SHUTDOWN_COMPLETED]
+            else [types.services.Operation.SHUTDOWN, types.services.Operation.SHUTDOWN_COMPLETED]
         )
         destroy_operations = (
-            [Operation.DESTROY_VALIDATOR] + shutdown_operations + self._destroy_queue
+            [types.services.Operation.DESTROY_VALIDATOR] + shutdown_operations + self._destroy_queue
         )  # copy is not needed due to list concatenation
 
         # If a "paused" state, reset queue to destroy
-        if op in (Operation.FINISH, Operation.WAIT):
+        if op in (types.services.Operation.FINISH, types.services.Operation.WAIT):
             self._set_queue(destroy_operations)
             return self._execute_queue()
 
@@ -463,7 +462,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         return self._reason
 
     # Execution methods
-    # Every Operation has an execution method and a check method
+    # Every types.services.Operation has an execution method and a check method
     def op_initialize(self) -> None:
         """
         This method is called when the service is initialized
@@ -596,10 +595,10 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         # If does not have vmid, we can finish right now
         if self._vmid == '':
-            self._set_queue([Operation.FINISH])  # so we can finish right now
+            self._set_queue([types.services.Operation.FINISH])  # so we can finish right now
             return
 
-    def op_custom(self, operation: Operation) -> None:
+    def op_custom(self, operation: types.services.Operation) -> None:
         """
         This method is called when the service is doing a custom operation
         """
@@ -684,9 +683,9 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             with self.storage.as_dict() as data:
                 data['shutdown'] = -1
             # If stop is in queue, mark this as finished, else, add it to queue just after first (our) operation
-            if Operation.STOP not in self._queue:
+            if types.services.Operation.STOP not in self._queue:
                 # After current operation, add stop
-                self._queue.insert(1, Operation.STOP)
+                self._queue.insert(1, types.services.Operation.STOP)
             return types.states.TaskState.FINISHED
 
         # Not finished yet
@@ -750,7 +749,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     @typing.final
     def op_retry_checker(self) -> types.states.TaskState:
         # If max retrieas has beeen reached, error should already have been set
-        if self._queue[0] == Operation.ERROR:
+        if self._queue[0] == types.services.Operation.ERROR:
             return types.states.TaskState.ERROR
         return types.states.TaskState.FINISHED
 
@@ -761,7 +760,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         # If does not have vmid, we can finish right now
         return types.states.TaskState.FINISHED  # If we are here, we have a vmid
 
-    def op_custom_checker(self, operation: Operation) -> types.states.TaskState:
+    def op_custom_checker(self, operation: types.services.Operation) -> types.states.TaskState:
         """
         This method is called to check if the service is doing a custom operation
         """
@@ -777,7 +776,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         pass
 
     @staticmethod
-    def _op2str(op: Operation) -> str:
+    def _op2str(op: types.services.Operation) -> str:
         return op.name
 
     def _debug(self, txt: str) -> str:
@@ -785,55 +784,55 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
 
 
 # This is a map of operations to methods
-# Operation methods, due to the fact that can be overrided, must be invoked via instance
+# types.services.Operation methods, due to the fact that can be overrided, must be invoked via instance
 # We use getattr(FNC.__name__, ...) to use them, so we can use type checking and invoke them via instance
 # Note that ERROR and FINISH are not here, as they final states not needing to be executed
 _EXECUTORS: typing.Final[
-    collections.abc.Mapping[Operation, collections.abc.Callable[[DynamicUserService], None]]
+    collections.abc.Mapping[types.services.Operation, collections.abc.Callable[[DynamicUserService], None]]
 ] = {
-    Operation.INITIALIZE: DynamicUserService.op_initialize,
-    Operation.CREATE: DynamicUserService.op_create,
-    Operation.CREATE_COMPLETED: DynamicUserService.op_create_completed,
-    Operation.START: DynamicUserService.op_start,
-    Operation.START_COMPLETED: DynamicUserService.op_start_completed,
-    Operation.STOP: DynamicUserService.op_stop,
-    Operation.STOP_COMPLETED: DynamicUserService.op_stop_completed,
-    Operation.SHUTDOWN: DynamicUserService.op_shutdown,
-    Operation.SHUTDOWN_COMPLETED: DynamicUserService.op_shutdown_completed,
-    Operation.SUSPEND: DynamicUserService.op_suspend,
-    Operation.SUSPEND_COMPLETED: DynamicUserService.op_suspend_completed,
-    Operation.RESET: DynamicUserService.op_reset,
-    Operation.RESET_COMPLETED: DynamicUserService.op_reset_completed,
-    Operation.REMOVE: DynamicUserService.op_remove,
-    Operation.REMOVE_COMPLETED: DynamicUserService.op_remove_completed,
-    Operation.WAIT: DynamicUserService.op_wait,
-    Operation.NOP: DynamicUserService.op_nop,
-    Operation.DESTROY_VALIDATOR: DynamicUserService.op_destroy_validator,
+    types.services.Operation.INITIALIZE: DynamicUserService.op_initialize,
+    types.services.Operation.CREATE: DynamicUserService.op_create,
+    types.services.Operation.CREATE_COMPLETED: DynamicUserService.op_create_completed,
+    types.services.Operation.START: DynamicUserService.op_start,
+    types.services.Operation.START_COMPLETED: DynamicUserService.op_start_completed,
+    types.services.Operation.STOP: DynamicUserService.op_stop,
+    types.services.Operation.STOP_COMPLETED: DynamicUserService.op_stop_completed,
+    types.services.Operation.SHUTDOWN: DynamicUserService.op_shutdown,
+    types.services.Operation.SHUTDOWN_COMPLETED: DynamicUserService.op_shutdown_completed,
+    types.services.Operation.SUSPEND: DynamicUserService.op_suspend,
+    types.services.Operation.SUSPEND_COMPLETED: DynamicUserService.op_suspend_completed,
+    types.services.Operation.RESET: DynamicUserService.op_reset,
+    types.services.Operation.RESET_COMPLETED: DynamicUserService.op_reset_completed,
+    types.services.Operation.REMOVE: DynamicUserService.op_remove,
+    types.services.Operation.REMOVE_COMPLETED: DynamicUserService.op_remove_completed,
+    types.services.Operation.WAIT: DynamicUserService.op_wait,
+    types.services.Operation.NOP: DynamicUserService.op_nop,
+    types.services.Operation.DESTROY_VALIDATOR: DynamicUserService.op_destroy_validator,
     # Retry operation has no executor, look "retry_later" method
 }
 
 # Same af before, but for check methods
 _CHECKERS: typing.Final[
-    collections.abc.Mapping[Operation, collections.abc.Callable[[DynamicUserService], types.states.TaskState]]
+    collections.abc.Mapping[types.services.Operation, collections.abc.Callable[[DynamicUserService], types.states.TaskState]]
 ] = {
-    Operation.INITIALIZE: DynamicUserService.op_initialize_checker,
-    Operation.CREATE: DynamicUserService.op_create_checker,
-    Operation.CREATE_COMPLETED: DynamicUserService.op_create_completed_checker,
-    Operation.START: DynamicUserService.op_start_checker,
-    Operation.START_COMPLETED: DynamicUserService.op_start_completed_checker,
-    Operation.STOP: DynamicUserService.op_stop_checker,
-    Operation.STOP_COMPLETED: DynamicUserService.op_stop_completed_checker,
-    Operation.SHUTDOWN: DynamicUserService.op_shutdown_checker,
-    Operation.SHUTDOWN_COMPLETED: DynamicUserService.op_shutdown_completed_checker,
-    Operation.SUSPEND: DynamicUserService.op_suspend_checker,
-    Operation.SUSPEND_COMPLETED: DynamicUserService.op_suspend_completed_checker,
-    Operation.RESET: DynamicUserService.op_reset_checker,
-    Operation.RESET_COMPLETED: DynamicUserService.op_reset_completed_checker,
-    Operation.REMOVE: DynamicUserService.op_remove_checker,
-    Operation.REMOVE_COMPLETED: DynamicUserService.op_remove_completed_checker,
-    Operation.WAIT: DynamicUserService.op_wait_checker,
-    Operation.NOP: DynamicUserService.op_nop_checker,
-    Operation.DESTROY_VALIDATOR: DynamicUserService.op_destroy_validator_checker,
+    types.services.Operation.INITIALIZE: DynamicUserService.op_initialize_checker,
+    types.services.Operation.CREATE: DynamicUserService.op_create_checker,
+    types.services.Operation.CREATE_COMPLETED: DynamicUserService.op_create_completed_checker,
+    types.services.Operation.START: DynamicUserService.op_start_checker,
+    types.services.Operation.START_COMPLETED: DynamicUserService.op_start_completed_checker,
+    types.services.Operation.STOP: DynamicUserService.op_stop_checker,
+    types.services.Operation.STOP_COMPLETED: DynamicUserService.op_stop_completed_checker,
+    types.services.Operation.SHUTDOWN: DynamicUserService.op_shutdown_checker,
+    types.services.Operation.SHUTDOWN_COMPLETED: DynamicUserService.op_shutdown_completed_checker,
+    types.services.Operation.SUSPEND: DynamicUserService.op_suspend_checker,
+    types.services.Operation.SUSPEND_COMPLETED: DynamicUserService.op_suspend_completed_checker,
+    types.services.Operation.RESET: DynamicUserService.op_reset_checker,
+    types.services.Operation.RESET_COMPLETED: DynamicUserService.op_reset_completed_checker,
+    types.services.Operation.REMOVE: DynamicUserService.op_remove_checker,
+    types.services.Operation.REMOVE_COMPLETED: DynamicUserService.op_remove_completed_checker,
+    types.services.Operation.WAIT: DynamicUserService.op_wait_checker,
+    types.services.Operation.NOP: DynamicUserService.op_nop_checker,
+    types.services.Operation.DESTROY_VALIDATOR: DynamicUserService.op_destroy_validator_checker,
     # Retry operation can be inserted by a executor, so it will need a checker
-    Operation.RETRY: DynamicUserService.op_retry_checker,
+    types.services.Operation.RETRY: DynamicUserService.op_retry_checker,
 }

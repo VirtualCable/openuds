@@ -173,7 +173,7 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
                                 log.LogLevel.WARNING, 'Machine {} not accesible'.format(found_vmid)
                             )
                             logger.warning(
-                                'The service has machines that cannot be checked on proxmox (connection error or machine has been deleted): %s',
+                                'The service has machines that cannot be checked on openstack (connection error or machine has been deleted): %s',
                                 found_vmid,
                             )
 
@@ -188,10 +188,10 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
 
         return found_vmid
 
-    def get_first_network_mac(self, vmid: str) -> str:
+    def get_mac(self, vmid: str) -> str:
         return self.api.get_server(vmid).addresses[0].mac
 
-    def get_guest_ip_address(self, vmid: str) -> str:
+    def get_ip(self, vmid: str) -> str:
         return self.api.get_server(vmid).addresses[0].ip
 
     def get_name(self, vmid: str) -> str:
