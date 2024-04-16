@@ -165,7 +165,7 @@ class Client:
                 for vm in typing.cast(list[typing.Any], self.api.system_service().vms_service().list())
             ]
 
-    @decorators.cached(prefix='o-vm', timeout=consts.cache.SMALLEST_CACHE_TIMEOUT, key_helper=_key_helper)
+    @decorators.cached(prefix='o-vm', timeout=consts.cache.SHORTEST_CACHE_TIMEOUT, key_helper=_key_helper)
     def get_machine_info(self, vmid: str, **kwargs: typing.Any) -> ov_types.VMInfo:
         with _access_lock():
             try:
@@ -416,7 +416,7 @@ class Client:
             # This returns nothing, if it fails it raises an exception
 
     @decorators.cached(
-        prefix='o-templates', timeout=consts.cache.SMALLEST_CACHE_TIMEOUT, key_helper=_key_helper
+        prefix='o-templates', timeout=consts.cache.SHORTEST_CACHE_TIMEOUT, key_helper=_key_helper
     )
     def list_snapshots(self, vmid: str) -> list[ov_types.SnapshotInfo]:
         """
@@ -433,7 +433,7 @@ class Client:
                 for s in typing.cast(list[typing.Any], vm_service.snapshots_service().list())
             ]
 
-    @decorators.cached(prefix='o-snapshot', timeout=consts.cache.SMALLEST_CACHE_TIMEOUT, key_helper=_key_helper)
+    @decorators.cached(prefix='o-snapshot', timeout=consts.cache.SHORTEST_CACHE_TIMEOUT, key_helper=_key_helper)
     def get_snapshot_info(self, vmid: str, snapshot_id: str) -> ov_types.SnapshotInfo:
         """
         Returns the snapshot info for the given snapshot id
