@@ -278,6 +278,9 @@ def is_valid_host(value: str) -> bool:
     return is_valid_ip(value) or is_valid_fqdn(value)
 
 
+def is_valid_mac(value: str) -> bool:
+    return re.match(r'^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$', value) is not None
+
 def test_connectivity(host: str, port: int, timeout: float = 4) -> bool:
     try:
         logger.debug('Checking connection to %s:%s with %s seconds timeout', host, port, timeout)

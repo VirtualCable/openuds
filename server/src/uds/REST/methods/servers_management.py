@@ -37,7 +37,7 @@ from django.utils.translation import gettext_lazy as _
 
 from uds import models
 from uds.core import consts, types, ui
-from uds.core.util import permissions, ensure
+from uds.core.util import net, permissions, ensure
 from uds.core.util.model import sql_datetime, process_uuid
 from uds.core.exceptions.rest import NotFound, RequestError
 from uds.REST.model import DetailHandler, ModelHandler
@@ -127,7 +127,7 @@ class ServersServers(DetailHandler):
                     'hostname': i.hostname,
                     'ip': i.ip,
                     'listen_port': i.listen_port,
-                    'mac': i.mac if not multi or i.mac != consts.MAC_UNKNOWN else '',
+                    'mac': i.mac if not multi and i.mac != consts.MAC_UNKNOWN else '',
                     'maintenance_mode': i.maintenance_mode,
                 }
                 res.append(val)
@@ -149,22 +149,32 @@ class ServersServers(DetailHandler):
 
     def get_fields(self, parent: 'Model') -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.ServerGroup)
-        return [
-            {
-                'hostname': {
-                    'title': _('Hostname'),
-                }
-            },
-            {'ip': {'title': _('Ip')}},
-            {'mac': {'title': _('Mac')}},
-            {
-                'maintenance_mode': {
-                    'title': _('State'),
-                    'type': 'dict',
-                    'dict': {True: _('Maintenance'), False: _('Normal')},
-                }
-            },
-        ]
+        return (
+            [
+                {
+                    'hostname': {
+                        'title': _('Hostname'),
+                    }
+                },
+                {'ip': {'title': _('Ip')}},
+            ]  # If not managed, we can show mac, else listen port (related to UDS Server)
+            + (
+                [
+                    {'mac': {'title': _('Mac')}},
+                ]
+                if not parent.is_managed()
+                else [{'listen_port': {'title': _('Port')}}]
+            )
+            + [
+                {
+                    'maintenance_mode': {
+                        'title': _('State'),
+                        'type': 'dict',
+                        'dict': {True: _('Maintenance'), False: _('Normal')},
+                    }
+                },
+            ]
+        )
 
     def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
         return types.ui.RowStyleInfo(prefix='row-maintenance-', field='maintenance_mode')
@@ -194,11 +204,11 @@ class ServersServers(DetailHandler):
                         'order': 101,  # At end
                     },
                     {
-                        'name': 'listen_port',
-                        'value': 0,
-                        'label': gettext('Port'),
-                        'tooltip': gettext('Port of server. 0 means "service default"'),
-                        'type': types.ui.FieldType.NUMERIC,
+                        'name': 'mac',
+                        'value': '',
+                        'label': gettext('Server MAC'),
+                        'tooltip': gettext('Optional MAC address of the server'),
+                        'type': types.ui.FieldType.TEXT,
                         'order': 102,  # At end
                     },
                     {
@@ -241,12 +251,17 @@ class ServersServers(DetailHandler):
         if item is None:
             # Create new, depending on server type
             if parent.type == types.servers.ServerType.UNMANAGED:
+                # Ensure mac is emty or valid
+                mac: str = self._params['mac'].strip().upper()
+                if mac and not net.is_valid_mac(mac):
+                    raise self.invalid_request_response('Invalid MAC address')
                 # Create a new one, and add it to group
                 server = models.Server.objects.create(
                     ip_from='::1',
                     ip=self._params['ip'],
                     hostname=self._params['hostname'],
-                    listen_port=self._params['listen_port'] or 0,
+                    listen_port=0,
+                    mac=mac,
                     type=parent.type,
                     subtype=parent.subtype,
                     stamp=sql_datetime(),
@@ -267,13 +282,25 @@ class ServersServers(DetailHandler):
                     raise self.invalid_item_response() from None
                 pass
         else:
-            try:
-                server = models.Server.objects.get(uuid=process_uuid(item))
-                parent.servers.add(server)
-            except Exception:
-                raise self.invalid_item_response() from None
+            if parent.type == types.servers.ServerType.UNMANAGED:
+                mac: str = self._params['mac'].strip().upper()
+                if mac and not net.is_valid_mac(mac):
+                    raise self.invalid_request_response('Invalid MAC address')
+                try:
+                    models.Server.objects.filter(uuid=process_uuid(item)).update(
+                        ip=self._params['ip'],
+                        hostname=self._params['hostname'],
+                        mac=mac,
+                    )
+                except Exception:
+                    raise self.invalid_item_response() from None
 
-            raise self.invalid_request_response() from None
+            else:
+                try:
+                    server = models.Server.objects.get(uuid=process_uuid(item))
+                    parent.servers.add(server)
+                except Exception:
+                    raise self.invalid_item_response() from None
 
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, models.ServerGroup)

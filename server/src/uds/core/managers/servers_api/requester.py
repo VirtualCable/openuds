@@ -63,9 +63,10 @@ def restrain_server(func: collections.abc.Callable[..., typing.Any]) -> collecti
         try:
             return func(self, *args, **kwargs)
         except Exception as e:
-            logger.error('Error executing %s: %s', func.__name__, e)
+            restrained_until = sql_datetime() + datetime.timedelta(seconds=consts.system.FAILURE_TIMEOUT)
+            logger.exception('Error executing %s: %s. Server restrained until %s', func.__name__, e, restrained_until)
             self.server.set_restrained_until(
-                sql_datetime() + datetime.timedelta(seconds=consts.system.FAILURE_TIMEOUT)
+                restrained_until
             )  # Block server for a while
             return False
 

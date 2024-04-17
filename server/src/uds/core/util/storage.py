@@ -396,10 +396,10 @@ class Storage:
         for v in query:  # @UndefinedVariable
             yield (v.key, codecs.decode(v.data.encode(), 'base64'), v.attr1)
 
-    def filter_unpickle(
-        self, attr1: typing.Optional[str] = None, forUpdate: bool = False
+    def filter_unpickle_by_attr(
+        self, attr1: typing.Optional[str] = None, for_update: bool = False
     ) -> collections.abc.Iterable[tuple[str, typing.Any, 'str|None']]:
-        for v in self.filter(attr1, forUpdate):
+        for v in self.filter(attr1, for_update):
             yield (v[0], pickle.loads(v[1]), v[2])  # nosec: secure pickle load
 
     def clear(self) -> None:

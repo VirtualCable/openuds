@@ -47,12 +47,12 @@ def resolve(hostname: str, rdtype: typing.Optional[str] = None) -> list[str]:
         for i in ('A', 'AAAA'):
             try:
                 ips.extend([str(ip) for ip in typing.cast(collections.abc.Iterable[typing.Any], dns.resolver.resolve(hostname, i))])
-            except dns.resolver.NXDOMAIN:
+            except (dns.resolver.NXDOMAIN, dns.resolver.NoAnswer):
                 pass
     else:
         try:
             ips.extend([str(ip) for ip in typing.cast(collections.abc.Iterable[typing.Any], dns.resolver.resolve(hostname, rdtype))])
-        except dns.resolver.NXDOMAIN:
+        except (dns.resolver.NXDOMAIN, dns.resolver.NoAnswer):  # Ignore NoAnswer, that is, the record does not exists
             pass
     return ips
 
@@ -63,5 +63,5 @@ def reverse_resolve(ip: str) -> list[str]:
     """
     try:
         return[str(i).rstrip('.') for i in typing.cast(collections.abc.Iterable[typing.Any], dns.resolver.query(dns.reversename.from_address(ip).to_text(), 'PTR'))]
-    except dns.resolver.NXDOMAIN:
+    except (dns.resolver.NXDOMAIN, dns.resolver.NoAnswer):
         return []

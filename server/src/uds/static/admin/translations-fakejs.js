@@ -167,6 +167,7 @@ gettext("Exit maintenance mode?");
 gettext("Enter maintenance mode?");
 gettext("Maintenance mode for");
 gettext("New server");
+gettext("Edit server");
 gettext("Remove server from server group");
 gettext("Information");
 gettext("New service");
