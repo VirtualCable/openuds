@@ -69,23 +69,21 @@ class PublicationOldMachinesCleaner(DelayedTask):
 
     def run(self) -> None:
         try:
-            servicePoolPub: ServicePoolPublication = ServicePoolPublication.objects.get(
-                pk=self._id
-            )
+            servicePoolPub: ServicePoolPublication = ServicePoolPublication.objects.get(pk=self._id)
             if servicePoolPub.state != State.REMOVABLE:
                 logger.info('Already removed')
 
             now = sql_datetime()
-            activePub: typing.Optional[
-                ServicePoolPublication
-            ] = servicePoolPub.deployed_service.active_publication()
-            servicePoolPub.deployed_service.userServices.filter(in_use=True).update(
-                in_use=False, state_date=now
+            current_publication: typing.Optional[ServicePoolPublication] = (
+                servicePoolPub.deployed_service.active_publication()
             )
-            servicePoolPub.deployed_service.mark_old_userservices_as_removable(activePub)
-        except (
-            Exception
-        ):  #  nosec: Removed publication, no problem at all, just continue
+
+            if current_publication:
+                servicePoolPub.deployed_service.userServices.filter(in_use=True).exclude(
+                    publication=current_publication
+                ).update(in_use=False, state_date=now)
+                servicePoolPub.deployed_service.mark_old_userservices_as_removable(current_publication)
+        except Exception:  #  nosec: Removed publication, no problem at all, just continue
             pass
 
 
@@ -104,9 +102,7 @@ class PublicationLauncher(DelayedTask):
         try:
             now = sql_datetime()
             with transaction.atomic():
-                servicePoolPub = ServicePoolPublication.objects.select_for_update().get(
-                    pk=self._publicationId
-                )
+                servicePoolPub = ServicePoolPublication.objects.select_for_update().get(pk=self._publicationId)
                 if not servicePoolPub:
                     raise ServicePool.DoesNotExist()
                 if (
@@ -121,12 +117,7 @@ class PublicationLauncher(DelayedTask):
             servicePool.current_pub_revision += 1
             servicePool.set_value(
                 'toBeReplacedIn',
-                serialize(
-                    now
-                    + datetime.timedelta(
-                        hours=GlobalConfig.SESSION_EXPIRE_TIME.as_int(True)
-                    )
-                ),
+                serialize(now + datetime.timedelta(hours=GlobalConfig.SESSION_EXPIRE_TIME.as_int(True))),
             )
             servicePool.save()
             PublicationFinishChecker.state_updater(servicePoolPub, pi, state)
@@ -172,9 +163,7 @@ class PublicationFinishChecker(DelayedTask):
                 # Now we mark, if it exists, the previous usable publication as "Removable"
                 if publication_state.is_preparing():
                     old: ServicePoolPublication
-                    for old in publication.deployed_service.publications.filter(
-                        state=State.USABLE
-                    ):
+                    for old in publication.deployed_service.publications.filter(state=State.USABLE):
                         old.set_state(State.REMOVABLE)
 
                         osm = publication.deployed_service.osmanager
@@ -186,13 +175,9 @@ class PublicationFinishChecker(DelayedTask):
                                 'pclean-' + str(old.id),
                                 True,
                             )
-                            publication.deployed_service.mark_old_userservices_as_removable(
-                                publication
-                            )
+                            publication.deployed_service.mark_old_userservices_as_removable(publication)
                         else:  # Remove only cache services, not assigned
-                            publication.deployed_service.mark_old_userservices_as_removable(
-                                publication, True
-                            )
+                            publication.deployed_service.mark_old_userservices_as_removable(publication, True)
 
                     publication.set_state(State.USABLE)
                 elif publication_state.is_removing():
@@ -217,9 +202,7 @@ class PublicationFinishChecker(DelayedTask):
             PublicationFinishChecker.check_later(publication, publication_instance)
 
     @staticmethod
-    def check_later(
-        publication: ServicePoolPublication, publicationInstance: 'services.Publication'
-    ) -> None:
+    def check_later(publication: ServicePoolPublication, publicationInstance: 'services.Publication') -> None:
         """
         Inserts a task in the delayedTaskRunner so we can check the state of this publication
         @param dps: Database object for ServicePoolPublication
@@ -234,23 +217,17 @@ class PublicationFinishChecker(DelayedTask):
     def run(self) -> None:
         logger.debug('Checking publication finished %s', self._publishId)
         try:
-            publication: ServicePoolPublication = ServicePoolPublication.objects.get(
-                pk=self._publishId
-            )
+            publication: ServicePoolPublication = ServicePoolPublication.objects.get(pk=self._publishId)
             if publication.state != self._state:
                 logger.debug('Task overrided by another task (state of item changed)')
             else:
                 publicationInstance = publication.get_instance()
-                logger.debug(
-                    "publication instance class: %s", publicationInstance.__class__
-                )
+                logger.debug("publication instance class: %s", publicationInstance.__class__)
                 try:
                     state = publicationInstance.check_state()
                 except Exception:
                     state = types.states.TaskState.ERROR
-                PublicationFinishChecker.state_updater(
-                    publication, publicationInstance, state
-                )
+                PublicationFinishChecker.state_updater(publication, publicationInstance, state)
         except Exception as e:
             logger.debug(
                 'Deployed service not found (erased from database) %s : %s',
@@ -272,13 +249,9 @@ class PublicationManager(metaclass=singleton.Singleton):
         """
         Returns the singleton to this manager
         """
-        return (
-            PublicationManager()
-        )  # Singleton pattern will return always the same instance
+        return PublicationManager()  # Singleton pattern will return always the same instance
 
-    def publish(
-        self, servicepool: ServicePool, changeLog: typing.Optional[str] = None
-    ) -> None:
+    def publish(self, servicepool: ServicePool, changeLog: typing.Optional[str] = None) -> None:
         """
         Initiates the publication of a service pool, or raises an exception if this cannot be done
         :param servicePool: Service pool object (db object)
@@ -286,15 +259,11 @@ class PublicationManager(metaclass=singleton.Singleton):
         """
         if servicepool.publications.filter(state__in=State.PUBLISH_STATES).count() > 0:
             raise PublishException(
-                _(
-                    'Already publishing. Wait for previous publication to finish and try again'
-                )
+                _('Already publishing. Wait for previous publication to finish and try again')
             )
 
         if servicepool.is_in_maintenance():
-            raise PublishException(
-                _('Service is in maintenance mode and new publications are not allowed')
-            )
+            raise PublishException(_('Service is in maintenance mode and new publications are not allowed'))
 
         publication: typing.Optional[ServicePoolPublication] = None
         try:
@@ -322,17 +291,13 @@ class PublicationManager(metaclass=singleton.Singleton):
                     logger.info('Could not delete %s', publication)
             raise PublishException(str(e)) from e
 
-    def cancel(
-        self, publication: ServicePoolPublication
-    ) -> ServicePoolPublication:
+    def cancel(self, publication: ServicePoolPublication) -> ServicePoolPublication:
         """
         Invoked to cancel a publication.
         Double invokation (i.e. invokation over a "cancelling" item) will lead to a "forced" cancellation (unclean)
         :param servicePoolPub: Service pool publication (db object for a publication)
         """
-        publication = ServicePoolPublication.objects.get(
-            pk=publication.id
-        )  # Reloads publication from db
+        publication = ServicePoolPublication.objects.get(pk=publication.id)  # Reloads publication from db
         if publication.state not in State.PUBLISH_STATES:
             if publication.state == State.CANCELING:  # Double cancel
                 logger.info('Double cancel invoked for a publication')
@@ -357,16 +322,12 @@ class PublicationManager(metaclass=singleton.Singleton):
             pubInstance = publication.get_instance()
             state = pubInstance.cancel()
             publication.set_state(State.CANCELING)
-            PublicationFinishChecker.state_updater(
-                publication, pubInstance, state
-            )
+            PublicationFinishChecker.state_updater(publication, pubInstance, state)
             return publication
         except Exception as e:
             raise PublishException(str(e)) from e
 
-    def unpublish(
-        self, servicepool_publication: ServicePoolPublication
-    ) -> None:
+    def unpublish(self, servicepool_publication: ServicePoolPublication) -> None:
         """
         Unpublishes an active (usable) or removable publication
         :param servicePoolPub: Publication to unpublish
@@ -377,15 +338,11 @@ class PublicationManager(metaclass=singleton.Singleton):
         ):
             raise PublishException(_('Can\'t unpublish non usable publication'))
         if servicepool_publication.userServices.exclude(state__in=State.INFO_STATES).count() > 0:
-            raise PublishException(
-                _('Can\'t unpublish publications with services in process')
-            )
+            raise PublishException(_('Can\'t unpublish publications with services in process'))
         try:
             pubInstance = servicepool_publication.get_instance()
             state = pubInstance.destroy()
             servicepool_publication.set_state(State.REMOVING)
-            PublicationFinishChecker.state_updater(
-                servicepool_publication, pubInstance, state
-            )
+            PublicationFinishChecker.state_updater(servicepool_publication, pubInstance, state)
         except Exception as e:
             raise PublishException(str(e)) from e

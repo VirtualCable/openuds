@@ -33,7 +33,6 @@
 """
 import logging
 import typing
-import collections.abc
 
 # We use commit/rollback
 from ...utils.test import UDSTestCase
@@ -42,8 +41,9 @@ from uds.core import types, consts
 from uds.core.ui.user_interface import UserInterface
 from unittest import mock
 
-from ...fixtures.user_interface import (
+from .fixtures import (
     TestingUserInterface,
+    TestingOldUserInterface,
     DEFAULTS,
     TestingUserInterfaceFieldName,
     TestingUserInterfaceFieldNameOrig,
@@ -150,16 +150,18 @@ class UserinterfaceTest(UDSTestCase):
     def test_old_serialization(self) -> None:
         # This test is to ensure that old serialized data can be loaded
         # This data is from a
-        ui = TestingUserInterface()
+        ui = TestingOldUserInterface()
         data = old_serialize_form(ui)
         ui2 = TestingUserInterface()
+        ui2.randomize_values()  # Ensure data is different
         ui2.deserialize_from_old_format(data)
 
-        self.assertEqual(ui, ui2)
+        self.assertEqual(ui2, ui)  # Important, TestingUserInterface has __eq__ method, but TestingOldUserInterface has not
         self.ensure_values_fine(ui2)
 
         # Now deserialize old data with new method, (will internally call oldUnserializeForm)
         ui3 = TestingUserInterface()
+        ui3.randomize_values()  # Ensure data is different
         self.assertTrue(ui3.deserialize_fields(data))  # Should need upgrade
 
         self.assertEqual(ui, ui3)
@@ -171,6 +173,7 @@ class UserinterfaceTest(UDSTestCase):
         ui = TestingUserInterface()
         data = ui.serialize_fields()
         ui2 = TestingUserInterface()
+        ui2.randomize_values()  # Ensure data is different
         self.assertFalse(ui2.deserialize_fields(data))  # Should not need upgrade
 
         self.assertEqual(ui, ui2)

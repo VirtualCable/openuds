@@ -1684,9 +1684,13 @@ class UserInterface(metaclass=UserInterfaceType):
             if not values:  # Has nothing
                 return
 
+            field_names_translations: dict[str, str] = self._get_fieldname_translations()
+            
             for txt in values.split(FIELD_SEPARATOR):
                 kb, v = txt.split(NAME_VALUE_SEPARATOR)
                 k = kb.decode('utf8')  # Convert name to string
+                # convert to new name if needed
+                k = field_names_translations.get(k, k)
                 if k in self._gui:
                     try:
                         if v.startswith(MULTIVALUE_FIELD):
