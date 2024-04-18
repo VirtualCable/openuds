@@ -74,10 +74,11 @@ class PublicationOldMachinesCleaner(DelayedTask):
             activePub: typing.Optional[ServicePoolPublication] = (
                 servicePoolPub.deployed_service.activePublication()
             )
-            servicePoolPub.deployed_service.userServices.filter(in_use=True).exclude(
-                publication=activePub
-            ).update(in_use=False, state_date=now)
-            servicePoolPub.deployed_service.markOldUserServicesAsRemovables(activePub)
+            if activePub:
+                servicePoolPub.deployed_service.userServices.filter(in_use=True).exclude(
+                    publication=activePub
+                ).update(in_use=False, state_date=now)
+                servicePoolPub.deployed_service.markOldUserServicesAsRemovables(activePub)
         except Exception:
             pass
             # Removed publication, no problem at all, just continue
