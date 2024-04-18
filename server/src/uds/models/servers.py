@@ -34,6 +34,7 @@ import typing
 import collections.abc
 
 from django.db import models
+from django.db.models import Q
 
 from uds.core import consts, types
 from uds.core.consts import MAC_UNKNOWN
@@ -107,7 +108,7 @@ class ServerGroup(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     def server_type(self, value: types.servers.ServerType) -> None:
         """Sets the server type of this server"""
         self.type = value
-        
+
     def is_managed(self) -> bool:
         """Returns if this server group is managed or not"""
         return self.server_type != types.servers.ServerType.UNMANAGED
@@ -120,8 +121,36 @@ class ServerGroup(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     def __str__(self) -> str:
         return self.name
 
+    def search(self, ip_or_host_or_mac: str) -> typing.Optional['Server']:
+        """Locates a server by ip or hostname
 
-def create_token() -> str:
+        It uses reverse dns lookup if ip_or_host is an ip and not found on database
+        to try to locate the server by hostname
+
+        Args:
+            ip_or_host: Ip or hostname to search for
+
+        Returns:
+            The server found, or None if not found
+        """
+        found = self.servers.filter(
+            Q(ip=ip_or_host_or_mac) | Q(hostname=ip_or_host_or_mac) | Q(mac=ip_or_host_or_mac)
+        )
+        if found:
+            return found[0]
+        # If not found, try to resolve ip_or_host and search again
+        try:
+            ip = resolver.resolve(ip_or_host_or_mac)[0]
+            found = Server.objects.filter(Q(ip=ip) | Q(hostname=ip))
+            if found:
+                return found[0]
+        except Exception:
+            pass
+        return None
+
+
+
+def _create_token() -> str:
     return secrets.token_urlsafe(36)
 
 
@@ -154,7 +183,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     listen_port = models.IntegerField(default=consts.net.SERVER_DEFAULT_LISTEN_PORT)
 
     # Token identifies de Registered Server (for API use, it's like the "secret" on other systems)
-    token = models.CharField(max_length=48, db_index=True, unique=True, default=create_token)
+    token = models.CharField(max_length=48, db_index=True, unique=True, default=_create_token)
     # Simple info field of when the registered server was created or revalidated
     stamp = models.DateTimeField()
 
@@ -176,7 +205,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     # But used on other servers, so we can disable them for maintenance
     maintenance_mode = models.BooleanField(default=False, db_index=True)
 
-    # If server is locked, since when is it locked.
+    # If server is locked, until when is it locked.
     # This is used, for example, to allow one time use servers until the lock is released
     # (i.e. if a server is 1-1 machine, and we want to allow only one connection to it)
     locked_until = models.DateTimeField(null=True, blank=True, default=None, db_index=True)
@@ -261,13 +290,21 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
             statsDict['stamp'] = sql_stamp()
             self.properties['stats'] = statsDict
 
+    def lock(self, duration: typing.Optional[datetime.timedelta]) -> None:
+        """Locks this server for a duration"""
+        if duration is None:
+            self.locked_until = None
+        else:
+            self.locked_until = sql_datetime() + duration
+        self.save(update_fields=['locked_until'])
+
     def interpolate_new_assignation(self) -> None:
         """Interpolates, with current stats, the addition of a new user"""
         stats = self.stats
         if stats and stats.is_valid:  # If rae invalid, do not waste time recalculating
             # Avoid replacing current "stamp" value, this is just a "simulation"
             self.properties['stats'] = stats.adjust(users_increment=1).as_dict()
-            
+
     def interpolate_new_release(self) -> None:
         """Interpolates, with current stats, the release of a user"""
         stats = self.stats
@@ -306,7 +343,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
 
     @staticmethod
     def create_token() -> str:
-        return create_token()  # Return global function
+        return _create_token()  # Return global function
 
     @staticmethod
     def validate_token(
@@ -342,27 +379,6 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         except Server.MultipleObjectsReturned:
             raise Exception('Multiple objects returned for token')
         return False
-
-    @staticmethod
-    def search(ip_or_host: str) -> typing.Optional['Server']:
-        """Locates a server by ip or hostname
-
-        It uses reverse dns lookup if ip_or_host is an ip and not found on database
-        to try to locate the server by hostname
-
-        Args:
-            ip_or_host: Ip or hostname to search for
-
-        Returns:
-            The server found, or None if not found
-        """
-        if net.is_valid_ip(ip_or_host):
-            found = Server.objects.filter(ip=ip_or_host).first()
-            if not found:  # Try reverse dns lookup
-                found = Server.objects.filter(hostname__in=resolver.reverse_resolve(ip_or_host)).first()
-        else:
-            found = Server.objects.filter(hostname=ip_or_host).first()
-        return found
 
     def set_actor_version(self, userService: 'UserService') -> None:
         """Sets the actor version of this server to the userService"""

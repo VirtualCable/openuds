@@ -68,11 +68,13 @@ class RDSProvider(services.ServiceProvider):
     adCertificate = gui.TextField(label='')
 
     # This value is the new server group that contains the "ipList"
-    serverGroup = gui.ChoiceField(label='')
+    server_group = gui.ChoiceField(label='')
 
+    def post_migrate(self) -> None:
+        pass
 
 def migrate(apps: typing.Any, schema_editor: typing.Any) -> None:
-    _migrator.migrate(apps, 'Provider', RDSProvider, RDS_SUBTYPE, 'ipList')
+    _migrator.migrate(apps, 'Provider', RDSProvider, RDS_SUBTYPE, 'ipList', 'RDS Server Group')
 
 
 def rollback(apps: typing.Any, schema_editor: typing.Any) -> None:

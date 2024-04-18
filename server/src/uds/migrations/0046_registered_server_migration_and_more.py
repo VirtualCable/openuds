@@ -75,12 +75,12 @@ def rollback_old_data(apps: typing.Any, schema_editor: typing.Any) -> None:
             hostname=server.hostname,
             token=server.token,
             stamp=server.stamp,
-            mac=server.data['mac'],
-            pre_command=server.data['pre_command'],
-            post_command=server.data['post_command'],
-            runonce_command=server.data['runonce_command'],
-            log_level=server.data['log_level'],
-            custom=server.data['custom'],
+            mac=server.data.get('mac', ''),
+            pre_command=server.data.get('pre_command', ''),
+            post_command=server.data.get('post_command', ''),
+            runonce_command=server.data.get('runonce_command', ''),
+            log_level=server.data.get('log_level', 50000),
+            custom=server.data.get('custom', ''),
         )
         # Delete the server
         server.delete()
@@ -167,7 +167,7 @@ class Migration(migrations.Migration):
             name="token",
             field=models.CharField(
                 db_index=True,
-                default=uds.models.servers.create_token,
+                default=uds.models.servers._create_token,
                 max_length=48,
                 unique=True,
             ),

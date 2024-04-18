@@ -245,10 +245,10 @@ class Users(DetailHandler):
             raise self.invalid_item_response() from None
         except IntegrityError:  # Duplicate key probably
             raise exceptions.rest.RequestError(_('User already exists (duplicate key error)')) from None
-        except exceptions.auth.AuthenticatorException as e:
-            raise exceptions.rest.RequestError(str(e)) from e
         except ValidationError as e:
             raise exceptions.rest.RequestError(str(e.message)) from e
+        except exceptions.auth.AuthenticatorException as e:
+            raise exceptions.rest.RequestError(str(e)) from e
         except exceptions.rest.RequestError:  # pylint: disable=try-except-raise
             raise  # Re-raise
         except Exception as e:

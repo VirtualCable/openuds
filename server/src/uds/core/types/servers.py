@@ -39,6 +39,7 @@ from django.utils.translation import gettext as _
 from uds.core import consts
 from uds.core.util import ensure, singleton
 
+IP_SUBTYPE: typing.Final[str] = 'ip'
 
 class ServerType(enum.IntEnum):
     TUNNEL = 1
@@ -110,7 +111,7 @@ class ServerSubtype(metaclass=singleton.Singleton):
 # I.e. "linuxapp" will be registered by the Linux Applications Provider
 # The main usage of this subtypes is to allow to group servers by type, and to allow to filter by type
 ServerSubtype.manager().register(
-    ServerType.UNMANAGED, 'ip', 'Unmanaged IP Server', consts.images.DEFAULT_IMAGE_BASE64, False
+    ServerType.UNMANAGED, IP_SUBTYPE, 'Unmanaged IP Server', consts.images.DEFAULT_IMAGE_BASE64, False
 )
 
 

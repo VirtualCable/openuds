@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2023 Virtual Cable S.L.U.
+# Copyright (c) 2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -33,7 +33,8 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 
 from .common import UDSException
 
-class ValidationError(UDSException):
+class InsufficientResourcesException(UDSException):
     """
-    Exception used to indicate that the params assigned are invalid
+    Exception used to indicate that we have not enough resources to provide a service
     """
+

@@ -37,28 +37,27 @@ from django.utils.translation import gettext_lazy as _, gettext
 
 from uds.core.ui import gui
 from uds.core.util import net
-from uds.core import exceptions, types
+from uds.core import exceptions, types, services
+from uds.core.util import security
 
 from .deployment import IPMachineUserService
-from .service_base import IPServiceBase
-from .types import HostInfo
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    pass
+    from . import provider
 
 logger = logging.getLogger(__name__)
 
 
-class IPSingleMachineService(IPServiceBase):
+class IPSingleMachineService(services.Service):
     # Gui
     host = gui.TextField(
         length=64,
-        label=_('Machine IP'),
+        label=_('Machine IP (and possibly MAC)'),
         order=1,
         tooltip=_('Machine IP'),
         required=True,
-        old_field_name='ip'
+        old_field_name='ip',
     )
 
     # Description of service
@@ -76,34 +75,48 @@ class IPSingleMachineService(IPServiceBase):
 
     services_type_provided = types.services.ServiceType.VDI
 
+    def get_host_mac(self) -> typing.Tuple[str, str]:
+        if ';' in self.host.as_str():
+            return typing.cast(tuple[str, str], tuple(self.host.as_str().split(';', 2)[:2]))
+        return self.host.as_str(), ''
 
     def initialize(self, values: 'types.core.ValuesType') -> None:
         if values is None:
             return
-        
-        if ';' in self.host.as_str():
-            host, _mac = self.host.as_str().split(';')
-        else:
-            host = self.host.as_str()
-            _mac = ''
+
+        host, mac = self.get_host_mac()
 
         if not net.is_valid_host(host):
-            raise exceptions.ui.ValidationError(
-                gettext('Invalid server used: "{}"'.format(self.host.value))
-            )
+            raise exceptions.ui.ValidationError(gettext('Invalid server used: "{}"'.format(self.host.value)))
 
-    def get_unassigned_host(self) -> typing.Optional['HostInfo']:
-        host: typing.Optional[HostInfo] = None
-        try:
-            counter = self.storage.read_pickled('counter')
-            counter = counter + 1 if counter is not None else 1
-            self.storage.save_pickled('counter', counter)
-            host = HostInfo(self.host.value, order=str(counter))
-        except Exception:
-            host = None
-            logger.exception("Exception at get_unassigned_host")
+        if mac and not net.is_valid_mac(mac):
+            raise exceptions.ui.ValidationError(gettext('Invalid MAC address used: "{}"'.format(mac)))
 
-        return host
+    def get_unassigned_host(self) -> typing.Optional[tuple[str, str]]:
+        return self.get_host_mac()
 
-    def unassign_host(self, host: 'HostInfo') -> None:
-        pass
+    def provider(self) -> 'provider.PhysicalMachinesProvider':
+        return typing.cast('provider.PhysicalMachinesProvider', super().provider())
+
+    def wakeup(self, verify_ssl: bool = False) -> None:
+        host, mac = self.get_host_mac()
+        if mac:
+            wake_on_land_endpoint = self.provider().wake_on_lan_endpoint(host, mac)
+            if wake_on_land_endpoint:
+                logger.info('Launching WOL: %s', wake_on_land_endpoint)
+                try:
+                    security.secure_requests_session(verify=verify_ssl).get(wake_on_land_endpoint)
+                    # logger.debug('Result: %s', result)
+                except Exception as e:
+                    logger.error('Error on WOL: %s', e)
+
+    def get_counter_and_inc(self) -> int:
+        with self.storage.as_dict() as storage:
+            counter = storage.get('counter', 0)
+            storage['counter'] = counter + 1
+            return counter
+
+    # Phisical machines does not have "real" providers, so
+    # always is available
+    def is_avaliable(self) -> bool:
+        return True

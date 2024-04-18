@@ -32,16 +32,12 @@
 """
 import configparser
 import logging
-import typing
 
 from django.utils.translation import gettext_noop as _
 
 from uds.core import exceptions, services, types
 from uds.core.ui.user_interface import gui
 from uds.core.util import log, net, resolver
-
-if typing.TYPE_CHECKING:
-    from .service_base import HostInfo
 
 logger = logging.getLogger(__name__)
 
@@ -112,7 +108,7 @@ class PhysicalMachinesProvider(services.ServiceProvider):
 
     offers = [IPMachinesService, IPSingleMachineService]
 
-    def wake_on_lan_endpoint(self, host: 'HostInfo') -> str:
+    def wake_on_lan_endpoint(self, host: str, mac: str) -> str:
         """Tries to get WOL server for indicated IP
 
         Args:
@@ -121,31 +117,25 @@ class PhysicalMachinesProvider(services.ServiceProvider):
         Returns:
             str: URL of WOL server or empty ('') if no server for the ip is found
         """
-        if not self.config.value or not host.host or not host.mac:
+        if not self.config.value or not host or not mac:
             return ''
 
         # If host is a hostname, try to resolve it
-        ip = host.host
-        if not net.ip_to_long(ip).version:
+        if not net.ip_to_long(host).version:
             # Try to resolve name...
             try:
-                # Prefer ipv4
-                ip = resolver.resolve(host.host)[0]
-            except Exception:
-                # Try ipv6
-                try:
-                    ip = resolver.resolve(host.host)[0]
-                except Exception as e:
-                    self.do_log(log.LogLevel.WARNING, f'Name {ip} could not be resolved')
-                    logger.warning('Name %s could not be resolved (%s)', ip, e)
-                    return ''
+                host = resolver.resolve(host)[0]
+            except Exception as e:
+                self.do_log(log.LogLevel.WARNING, f'Name {host} could not be resolved')
+                logger.warning('Name %s could not be resolved (%s)', host, e)
+                return ''
 
         try:
             config = configparser.ConfigParser()
             config.read_string(self.config.value)
             for key in config['wol']:
-                if net.contains(key, ip):
-                    return config['wol'][key].replace('{MAC}', host.mac).replace('{IP}', ip)
+                if net.contains(key, host):
+                    return config['wol'][key].replace('{MAC}', mac).replace('{IP}', host)
 
         except Exception as e:
             logger.error('Error parsing advanced configuration: %s', e)

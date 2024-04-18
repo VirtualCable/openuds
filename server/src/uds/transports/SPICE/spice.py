@@ -92,7 +92,7 @@ class SPICETransport(BaseSpiceTransport):
 
         logger.debug('Connection data: %s', con)
         if not con:
-            raise exceptions.service.TransportError('No console connection data')
+            raise exceptions.transport.TransportError('No console connection data')
 
         port: str = str(con.port) or '-1'
         secure_port: str = str(con.secure_port) or '-1'

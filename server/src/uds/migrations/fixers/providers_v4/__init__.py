@@ -29,14 +29,16 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-from . import rds
+from . import rds, physical_machine_multiple
 
-ALL: typing.Final = (rds,)
+ALL: typing.Final = (rds, physical_machine_multiple)
+
 
 def migrate(apps: typing.Any, schema_editor: typing.Any) -> None:
     for i in ALL:
         i.migrate(apps, schema_editor)
 
+
 def rollback(apps: typing.Any, schema_editor: typing.Any) -> None:
     for i in reversed(ALL):
-       i.rollback(apps, schema_editor)
+        i.rollback(apps, schema_editor)

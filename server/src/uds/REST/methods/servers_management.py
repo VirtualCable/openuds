@@ -349,6 +349,7 @@ class ServersGroups(ModelHandler):
         {'type_name': {'title': _('Type')}},
         {'type': {'title': '', 'visible': False}},
         {'subtype': {'title': _('Subtype')}},
+        {'servers_count': {'title': _('Servers')}},
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 

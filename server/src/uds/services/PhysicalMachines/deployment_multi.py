@@ -39,7 +39,7 @@ from uds.core.util import autoserializable, auto_attributes
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from .service_single import IPSingleMachineService
+    from .service_multi import IPMachinesService
 
 logger = logging.getLogger(__name__)
 
@@ -57,66 +57,80 @@ class OldIPSerialData(auto_attributes.AutoAttributes):
         self._state = types.states.TaskState.FINISHED
 
 
-class IPMachineUserService(services.UserService, autoserializable.AutoSerializable):
+class IPMachinesUserService(services.UserService, autoserializable.AutoSerializable):
     suggested_delay = 10
 
     _ip = autoserializable.StringField(default='')
-    _reason = autoserializable.StringField(default='')
-    _state = autoserializable.StringField(default=types.states.TaskState.FINISHED)
-    _name = autoserializable.StringField(default='')
+    _mac = autoserializable.StringField(default='')
+    _vmid = autoserializable.StringField(default='')
+    _reason = autoserializable.StringField(default='')  # If != '', this is the error message and state is ERROR
 
     # Utility overrides for type checking...
-    def service(self) -> 'IPSingleMachineService':
-        return typing.cast('IPSingleMachineService', super().service())
+    def service(self) -> 'IPMachinesService':
+        return typing.cast('IPMachinesService', super().service())
 
     def set_ip(self, ip: str) -> None:
         logger.debug('Setting IP to %s (ignored)', ip)
 
     def get_ip(self) -> str:
-        # If single machine, ip is IP~counter,
-        # If multiple and has a ';' on IP, the values is IP;MAC
-        return self.service().get_host_mac()[0]
+        return self._ip
 
     def get_name(self) -> str:
-        if not self._name:
-            # Generate a name with the IP + simple counter
-            self._name = f'{self.get_ip()}{self.service().get_counter_and_inc()}'
-        return self._name
-
-    def get_unique_id(self) -> str:
-        return self._name
-
-    def set_ready(self) -> types.states.TaskState:
         # If single machine, ip is IP~counter,
         # If multiple and has a ';' on IP, the values is IP;MAC
-        self.service().wakeup()
-        self._state = types.states.TaskState.FINISHED
-        return self._state
+        return self.get_ip()
 
-    def _deploy(self) -> types.states.TaskState:
-        # If not to be managed by a token, autologin user
-        userService = self.db_obj()
-        if userService:
-            userService.set_in_use(True)
+    def get_unique_id(self) -> str:
+        if not self._mac:
+            return self._ip
+        return self._mac
 
-        self._state = types.states.TaskState.FINISHED
-        return self._state
+    def set_ready(self) -> types.states.TaskState:
+        self.service().wakeup(self._ip, self._mac)
+        return types.states.TaskState.FINISHED
 
     def deploy_for_user(self, user: 'models.User') -> types.states.TaskState:
         logger.debug("Starting deploy of %s for user %s", self._ip, user)
-        return self._deploy()
+        self._vmid = self.service().get_unassigned()
+        self._ip, self._mac = self.service().get_host_mac(self._vmid)
+
+        # If not to be managed by a token, autologin user
+        if not self.service().get_token():
+            userservice = self.db_obj()
+            if userservice:
+                userservice.set_in_use(True)
+
+        return types.states.TaskState.FINISHED
 
     def deploy_for_cache(self, level: types.services.CacheLevel) -> types.states.TaskState:
         return self._error('Cache deploy not supported')
 
+    def assign(self, vmid: str) -> types.states.TaskState:
+        logger.debug('Assigning from assignable with id %s', vmid)
+        self._vmid = vmid
+        # Update ip & mac
+        self._ip, self._mac = self.service().get_host_mac(vmid)
+
+        if not self.service().get_token():
+            dbService = self.db_obj()
+            if dbService:
+                dbService.set_in_use(True)
+                dbService.save()
+        return types.states.TaskState.FINISHED
+
     def _error(self, reason: str) -> types.states.TaskState:
-        self._state = types.states.TaskState.ERROR
+        if self._vmid:
+            self.service().unassign(self._vmid)
+        self._vmid = ''
         self._ip = ''
-        self._reason = reason
-        return self._state
+        self._mac = ''
+        self._reason = reason or 'Unknown error'
+        return types.states.TaskState.ERROR
 
     def check_state(self) -> types.states.TaskState:
-        return types.states.TaskState.from_str(self._state)
+        if self._reason:
+            return types.states.TaskState.ERROR
+        return types.states.TaskState.FINISHED
 
     def error_reason(self) -> str:
         """
@@ -126,8 +140,12 @@ class IPMachineUserService(services.UserService, autoserializable.AutoSerializab
         return self._reason
 
     def destroy(self) -> types.states.TaskState:
-        self._state = types.states.TaskState.FINISHED
-        return self._state
+        if self._vmid:
+            self.service().unassign(self._vmid)
+        self._vmid = ''
+        self._ip = ''
+        self._mac = ''
+        return types.states.TaskState.FINISHED
 
     def cancel(self) -> types.states.TaskState:
         return self.destroy()
@@ -140,9 +158,17 @@ class IPMachineUserService(services.UserService, autoserializable.AutoSerializab
         _auto_data.unmarshal(data)
 
         # Fill own data from restored data
-        self._ip = _auto_data._ip
+        ip_mac = _auto_data._ip.split('~')[0]
+        if ';' in ip_mac:
+            self._ip, self._mac = ip_mac.split(';', 2)[:2]
+        else:
+            self._ip = ip_mac
+            self._mac = ''
         self._reason = _auto_data._reason
-        self._state = _auto_data._state
+        state = _auto_data._state
+        # Ensure error is set if _reason is set
+        if state == types.states.TaskState.ERROR and self._reason == '':
+            self._reason = 'Unknown error'
 
         # Flag for upgrade
         self.mark_for_upgrade(True)

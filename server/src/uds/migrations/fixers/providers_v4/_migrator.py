@@ -36,7 +36,7 @@ import typing
 import dns.resolver
 import dns.reversename
 
-from uds.core import types
+from uds.core import consts, types
 from uds.core.environment import Environment
 from uds.core.util import validators
 
@@ -45,10 +45,24 @@ logger = logging.getLogger(__name__)
 
 if typing.TYPE_CHECKING:
     import uds.models
+    from uds.core.serializable import Serializable
 
+    class TypeTestingClass(Serializable):
+        server_group: typing.Any
+        
+        def post_migrate(self) -> None:
+            pass
+        
+def _get_environment(record: typing.Any) -> Environment:
+    """
+    Returns an environment valid for the record this object represents
+    """
+    return Environment.environment_for_table_record(record._meta.verbose_name or record._meta.db_table, record.id)
+        
 
 def migrate(
-    apps: typing.Any, model: typing.Literal['Provider', 'Service'], DataType: typing.Any, subtype: str, ipListAttr: str
+    apps: typing.Any, model: typing.Literal['Provider', 'Service'], data_type: typing.Any, subtype: str, ip_list_attr: str,
+    server_group_prefix: str,
 ) -> None:
     try:
         Table: type['uds.models.ManagedObjectModel'] = apps.get_model('uds', model)
@@ -59,55 +73,61 @@ def migrate(
         # For testing
         # from uds.models import Provider, Server, ServerGroup
 
-        for record in Table.objects.filter(data_type=DataType.type_type):  # pyright: ignore
+        for record in Table.objects.filter(data_type=data_type.type_type):  # pyright: ignore
             # Extract data
-            obj = DataType(Environment(record.uuid), None)
+            obj: 'TypeTestingClass' = data_type(_get_environment(record), None)
             obj.deserialize(record.data)
 
-            servers: list[str] = getattr(obj, ipListAttr).value
+            servers: list[str] = getattr(obj, ip_list_attr).value
+            # Clean up
+            getattr(obj, ip_list_attr).value = []
             # Clean up servers, removing empty ones
             servers = [s.strip() for s in servers if s.strip()]
             # Try dns lookup if servers contains hostnames
-            server_ip_hostname: list[tuple[str, str]] = []
+            server_ip_hostname_mac: list[tuple[str, str, str]] = []
             for server in servers:
+                mac = consts.MAC_UNKNOWN
                 try:
+                    if ';' in server:
+                        server, mac = server.split(';')[:2]
                     validators.validate_ip(server)
                     # Is Pure IP, try to get hostname
                     try:
                         answers = typing.cast(list[typing.Any], dns.resolver.resolve(dns.reversename.from_address(server), 'PTR'))
-                        server_ip_hostname.append((server, str(answers[0]).rstrip('.')))
+                        server_ip_hostname_mac.append((server, str(answers[0]).rstrip('.'), mac))
                     except Exception:
                         # No problem, no reverse dns, hostname is the same as IP
-                        server_ip_hostname.append((server, server))
+                        server_ip_hostname_mac.append((server, server, mac))
                 except Exception:
                     # Not pure IP, try to resolve it and get first IP
                     try:
                         answers = typing.cast(list[typing.Any], dns.resolver.resolve(server, 'A'))
-                        server_ip_hostname.append((str(answers[0]), server))
+                        server_ip_hostname_mac.append((str(answers[0]), server, mac))
                     except Exception:
                         # Try AAAA
                         try:
                             answers = typing.cast(list[typing.Any], dns.resolver.resolve(server, 'AAAA'))
-                            server_ip_hostname.append((str(answers[0]), server))
+                            server_ip_hostname_mac.append((str(answers[0]), server, mac))
                         except Exception:
                             # Not found, continue, but do not add to servers and log it
                             logger.error('Server %s on %s not found on DNS', server, record.name)
 
             registeredServerGroup = ServerGroup.objects.create(
-                name=f'RDS Server Group for {record.name}',
+                name=f'{server_group_prefix} for {record.name}',
                 comments='Migrated from {}'.format(record.name),
                 type=types.servers.ServerType.UNMANAGED,
                 subtype=subtype,
             )
             # Create Registered Servers for IP (individual) and add them to the group
-            for svr in server_ip_hostname:
+            for ip, hostname, mac in server_ip_hostname_mac:
                 registeredServerGroup.servers.create(
                     token=secrets.token_urlsafe(36),
                     username='migration',
-                    ip_from=svr[0],
-                    ip=svr[0],
+                    ip_from='127.0.0.1',
+                    ip=ip,
                     os_type=types.os.KnownOS.WINDOWS.os_name(),
-                    hostname=svr[1],
+                    hostname=hostname,
+                    mac=mac,
                     listen_port=0,
                     type=types.servers.ServerType.UNMANAGED,
                     subtype=subtype,
@@ -115,18 +135,20 @@ def migrate(
                 )
             # Set server group on provider
             logger.info('Setting server group %s on provider %s', registeredServerGroup.name, record.name)
-            obj.serverGroup.value = registeredServerGroup.uuid
+            obj.server_group.value = registeredServerGroup.uuid
+            # Now, execute post_migrate of obj
+            obj.post_migrate()
             # Save record
             record.data = obj.serialize()
             record.save(update_fields=['data'])
 
     except Exception as e:
         print(e)
-        logger.exception('Exception found while migrating HTML5RDP transports')
+        logger.exception(f'Exception found while migrating {data_type.type_type}')
 
-def rollback(apps: typing.Any, model: typing.Literal['Provider', 'Service'], DataType: typing.Any, subtype: str, ipListAttr: str) -> None:
+def rollback(apps: typing.Any, model: typing.Literal['Provider', 'Service'], DataType: typing.Any, subtype: str, ip_list_attr: str) -> None:
     """
-    "Un-Migrates" an new tunnel transport to an old one (without tunnelServer)
+    "Un-Migrates" to an old one
     """
     try:
         Table: type['uds.models.ManagedObjectModel'] = apps.get_model('uds', model)
@@ -142,8 +164,8 @@ def rollback(apps: typing.Any, model: typing.Literal['Provider', 'Service'], Dat
             obj.deserialize(record.data)
             # Guacamole server is https://<host>:<port>
             # Other tunnels are <host>:<port>
-            iplist = getattr(obj, ipListAttr)
-            rsg = ServerGroup.objects.get(uuid=obj.serverGroup.value)
+            iplist = getattr(obj, ip_list_attr)
+            rsg = ServerGroup.objects.get(uuid=obj.server_group.value)
             iplist.value=[i.ip for i in rsg.servers.all()]
             # Remove registered servers
             for i in rsg.servers.all():
