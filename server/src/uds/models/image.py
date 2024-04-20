@@ -28,6 +28,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+# pyright: reportUnknownMemberType=false, reportAttributeAccessIssue=false,reportUnknownArgumentType=false
 import io
 import base64
 import logging
