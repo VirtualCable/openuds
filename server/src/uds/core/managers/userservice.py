@@ -106,12 +106,12 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         Checks if the maximum number of user services for this service has been reached
         """
-        serviceInstance = service.get_instance()
+        service_instance = service.get_instance()
         # Early return, so no database count is needed
-        if serviceInstance.userservices_limit == consts.UNLIMITED:
+        if service_instance.userservices_limit == consts.UNLIMITED:
             return False
 
-        if self.get_existing_user_services(service) >= serviceInstance.userservices_limit:
+        if self.get_existing_user_services(service) >= service_instance.userservices_limit:
             return True
 
         return False

@@ -150,25 +150,4 @@ class IPMachinesUserService(services.UserService, autoserializable.AutoSerializa
     def cancel(self) -> types.states.TaskState:
         return self.destroy()
 
-    def unmarshal(self, data: bytes) -> None:
-        if autoserializable.is_autoserializable_data(data):
-            return super().unmarshal(data)
-
-        _auto_data = OldIPSerialData()
-        _auto_data.unmarshal(data)
-
-        # Fill own data from restored data
-        ip_mac = _auto_data._ip.split('~')[0]
-        if ';' in ip_mac:
-            self._ip, self._mac = ip_mac.split(';', 2)[:2]
-        else:
-            self._ip = ip_mac
-            self._mac = ''
-        self._reason = _auto_data._reason
-        state = _auto_data._state
-        # Ensure error is set if _reason is set
-        if state == types.states.TaskState.ERROR and self._reason == '':
-            self._reason = 'Unknown error'
-
-        # Flag for upgrade
-        self.mark_for_upgrade(True)
+    # Data is migrated on migration 0046, so no unmarshall is needed

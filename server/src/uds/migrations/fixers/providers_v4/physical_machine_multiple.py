@@ -29,19 +29,45 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import base64
 import datetime
 import logging
 import typing
 import pickle  # nosec: pickle is used for legacy data transition
 
-from uds.core import services
+from uds.core import services, types
 from uds.core.ui import gui
+from uds.core.util import auto_attributes, autoserializable
 
 from . import _migrator
 
 logger = logging.getLogger(__name__)
 
+if typing.TYPE_CHECKING:
+    import uds.models
+
 IP_SUBTYPE: typing.Final[str] = 'ip'
+
+
+class OldIPSerialData(auto_attributes.AutoAttributes):
+    _ip: str
+    _reason: str
+    _state: str
+
+    def __init__(self) -> None:
+        auto_attributes.AutoAttributes.__init__(self, ip=str, reason=str, state=str)
+        self._ip = ''
+        self._reason = ''
+        self._state = types.states.TaskState.FINISHED
+
+
+class NewIpSerialData(autoserializable.AutoSerializable):
+    suggested_delay = 10
+
+    _ip = autoserializable.StringField(default='')
+    _mac = autoserializable.StringField(default='')
+    _vmid = autoserializable.StringField(default='')
+    _reason = autoserializable.StringField(default='')  # If != '', this is the error message and state is ERROR
 
 
 class IPMachinesService(services.Service):
@@ -96,14 +122,15 @@ class IPMachinesService(services.Service):
                 self.useRandomIp = gui.as_bool(values[6].decode())
 
     # Note that will be marshalled as new format, so we don't need to care about old format in code anymore :)
-    def post_migrate(self) -> None:
+    def post_migrate(self, apps: typing.Any, record: typing.Any) -> None:
         from uds.core.util import fields
 
         FOREVER: typing.Final[datetime.timedelta] = datetime.timedelta(days=365 * 20)
         now = datetime.datetime.now()
         server_group = fields.get_server_group_from_field(self.server_group)
+        
         for server in server_group.servers.all():
-            
+
             locked = self.storage.read_pickled(server.ip)
             # print(f'Locked: {locked} for {server.ip}')
             if not locked:
@@ -120,13 +147,11 @@ class IPMachinesService(services.Service):
                 if bool(locked):
                     # print(f'Locking {server.ip} forever due to maxSessionForMachine=0')
                     server.lock(FOREVER)  # Almost forever
-                    server.save(update_fields=['locked_until'])
                 continue  # Not locked, continue
 
             if not isinstance(locked, int):
                 # print(f'Locking {server.ip} due to not being an int (very old data)')
                 server.lock(FOREVER)
-                server.save(update_fields=['locked_until'])
                 continue
 
             if not bool(locked) or locked < now.timestamp() - self.maxSessionForMachine.value * 3600:
@@ -136,6 +161,54 @@ class IPMachinesService(services.Service):
             # Lock for until locked time, where locked is a timestamp
             # print(f'Locking {server.ip} until {datetime.datetime.fromtimestamp(locked)}')
             server.lock(datetime.timedelta(seconds=locked - now.timestamp()))
+
+        Service: 'type[uds.models.Service]' = apps.get_model('uds', 'Service')
+        ServicePool: 'type[uds.models.ServicePool]' = apps.get_model('uds', 'ServicePool')
+
+        assigned_servers: set[str] = set()
+        for servicepool in ServicePool.objects.filter(service=Service.objects.get(uuid=record.uuid)):
+            for userservice in servicepool.userServices.all():
+                new_data = NewIpSerialData()
+                try:
+                    auto_data = OldIPSerialData()
+                    auto_data.unmarshal(base64.b64decode(userservice.data))
+                    # Fill own data from restored data
+                    ip_mac = auto_data._ip.split('~')[0]
+                    if ';' in ip_mac:
+                        new_data._ip, new_data._mac = ip_mac.split(';', 2)[:2]
+                    else:
+                        new_data._ip = ip_mac
+                        new_data._mac = ''
+                    new_data._reason = auto_data._reason
+                    state = auto_data._state
+                    # Ensure error is set if _reason is set
+                    if state == types.states.TaskState.ERROR and new_data._reason == '':
+                        new_data._reason = 'Unknown error'
+
+                    # Reget vmid if needed
+                    if not new_data._reason and userservice.state == types.states.State.USABLE:
+                        new_data._vmid = ''
+                        for server in server_group.servers.all():
+                            if server.ip == new_data._ip and server.uuid not in assigned_servers:
+                                new_data._vmid = server.uuid
+                                assigned_servers.add(server.uuid)
+                                # Ensure locked, relock if needed
+                                if not server.locked_until or server.locked_until < now:
+                                    if self.maxSessionForMachine.value <= 0:
+                                        server.lock(FOREVER)
+                                    else:
+                                        server.lock(datetime.timedelta(hours=self.maxSessionForMachine.value))
+                                break
+                        if not new_data._vmid:
+                            new_data._reason = f'Migrated machine not found for {new_data._ip}'
+                except Exception as e:  # Invalid serialized record, record new format with error
+                    new_data._ip = ''
+                    new_data._mac = ''
+                    new_data._vmid = ''
+                    new_data._reason = f'Error migrating: {e}'[:320]
+
+                userservice.data = new_data.serialize()
+                userservice.save(update_fields=['data'])
 
 
 def migrate(apps: typing.Any, schema_editor: typing.Any) -> None:

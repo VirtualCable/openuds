@@ -319,10 +319,10 @@ class PublicationManager(metaclass=singleton.Singleton):
             return publication
 
         try:
-            pubInstance = publication.get_instance()
-            state = pubInstance.cancel()
+            pub_instance = publication.get_instance()
+            state = pub_instance.cancel()
             publication.set_state(State.CANCELING)
-            PublicationFinishChecker.state_updater(publication, pubInstance, state)
+            PublicationFinishChecker.state_updater(publication, pub_instance, state)
             return publication
         except Exception as e:
             raise PublishException(str(e)) from e

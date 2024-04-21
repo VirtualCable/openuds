@@ -50,7 +50,7 @@ if typing.TYPE_CHECKING:
     class TypeTestingClass(Serializable):
         server_group: typing.Any
         
-        def post_migrate(self) -> None:
+        def post_migrate(self, apps: typing.Any, record: typing.Any) -> None:
             pass
         
 def _get_environment(record: typing.Any) -> Environment:
@@ -137,7 +137,7 @@ def migrate(
             logger.info('Setting server group %s on provider %s', registeredServerGroup.name, record.name)
             obj.server_group.value = registeredServerGroup.uuid
             # Now, execute post_migrate of obj
-            obj.post_migrate()
+            obj.post_migrate(apps, record)
             # Save record
             record.data = obj.serialize()
             record.save(update_fields=['data'])

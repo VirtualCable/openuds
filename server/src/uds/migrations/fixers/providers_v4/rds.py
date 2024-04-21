@@ -70,7 +70,7 @@ class RDSProvider(services.ServiceProvider):
     # This value is the new server group that contains the "ipList"
     server_group = gui.ChoiceField(label='')
 
-    def post_migrate(self) -> None:
+    def post_migrate(self, apps: typing.Any, record: typing.Any) -> None:
         pass
 
 def migrate(apps: typing.Any, schema_editor: typing.Any) -> None:
