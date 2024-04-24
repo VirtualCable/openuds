@@ -125,7 +125,7 @@ class WinDomainOsManager(WindowsOsManager):
         order=10,
         tooltip=_('If checked,  a ssl connection to Active Directory will be used'),
         tab=_('Advanced'),
-        defvalue=gui.TRUE,
+        defvalue=gui.FALSE,
     )
 
     # Inherits base "onLogout"
