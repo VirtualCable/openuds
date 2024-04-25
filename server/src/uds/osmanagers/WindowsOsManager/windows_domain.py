@@ -122,7 +122,7 @@ class WinDomainOsManager(WindowsOsManager):
         order=10,
         tooltip=_('If checked,  a ssl connection to Active Directory will be used'),
         tab=types.ui.Tab.ADVANCED,
-        default=True,
+        default=False,
         old_field_name='ssl',
     )
     timeout = fields.timeout_field(order=11, default=10, tab=types.ui.Tab.ADVANCED)

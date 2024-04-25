@@ -27,13 +27,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import collections.abc
 import datetime
-import functools
 import itertools
 import random
 import typing
@@ -102,7 +99,7 @@ class TestGetServicesData(UDSTransactionTestCase):
     def test_get_services_data(self) -> None:
         # Create 10 services, for this user
         service_pools: list[models.ServicePool] = []
-        for i in range(10):
+        for _i in range(10):
             service_pools.append(
                 fixtures_services.create_db_cache_userservices(
                     count=1, user=self.user, groups=self.groups
@@ -244,13 +241,12 @@ class TestGetServicesData(UDSTransactionTestCase):
             )
 
         data = services.get_services_info_dict(self.request)
-        now = datetime.datetime.now()
 
         result_services: typing.Final[list[dict[str, typing.Any]]] = data['services']
         self.assertEqual(len(result_services), 20)  # 10 metas and 10 normal pools
         # Some checks are ommited, because are already tested in other tests
 
-        self.assertEqual(len(list(filter(lambda x: x['is_meta'], result_services))), 10)
+        self.assertEqual(len(list(filter(lambda x: bool(x['is_meta']), result_services))), 10)
         self.assertEqual(len(list(filter(lambda x: not x['is_meta'], result_services))), 10)
 
     def _generate_metapool_with_transports(
@@ -258,7 +254,7 @@ class TestGetServicesData(UDSTransactionTestCase):
         add_random_transports: bool
     ) -> tuple[list[models.ServicePool], models.MetaPool]:
         service_pools: list[models.ServicePool] = []
-        for i in range(count):
+        for _i in range(count):
             pool = fixtures_services.create_db_cache_userservices(
                 count=1, user=self.user, groups=self.groups
             )[0].deployed_service
@@ -319,7 +315,7 @@ class TestGetServicesData(UDSTransactionTestCase):
         
 
     def test_meta_label_grouping(self) -> None:
-        pools, meta = self._generate_metapool_with_transports(
+        pools, _meta = self._generate_metapool_with_transports(
             10, types.pools.TransportSelectionPolicy.LABEL,  # Group by common transports
             add_random_transports=False
         )

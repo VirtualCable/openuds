@@ -28,14 +28,10 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import copy
 import typing
 import collections.abc
-import datetime
-import random
 
 from uds import models
-from uds.models.calendar_rule import FrequencyInfo
 
 
 # fixtures for calendars and calendar rules

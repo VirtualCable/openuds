@@ -189,7 +189,7 @@ class IPMachinesService(services.Service):
                     if not new_data._reason and userservice.state == types.states.State.USABLE:
                         new_data._vmid = ''
                         for server in server_group.servers.all():
-                            if server.ip == new_data._ip and server.uuid not in assigned_servers:
+                            if (server.ip == new_data._ip or server.hostname == new_data._ip) and server.uuid not in assigned_servers:
                                 new_data._vmid = server.uuid
                                 assigned_servers.add(server.uuid)
                                 # Ensure locked, relock if needed

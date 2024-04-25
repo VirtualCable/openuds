@@ -261,13 +261,14 @@ def lenname_field(order: int = 33, tab: 'types.ui.Tab|str|None' = None) -> ui.gu
 # Max preparing services field
 def concurrent_creation_limit_field(
     order: int = 50,
+    default: int = 30,
     tab: 'types.ui.Tab|str|None' = types.ui.Tab.ADVANCED,
 ) -> ui.gui.NumericField:
     # Advanced tab
     return ui.gui.NumericField(
         length=3,
         label=_('Creation concurrency'),
-        default=30,
+        default=default,
         min_value=1,
         max_value=65536,
         order=order,
@@ -280,12 +281,13 @@ def concurrent_creation_limit_field(
 
 def concurrent_removal_limit_field(
     order: int = 51,
+    default: int = 15,
     tab: 'types.ui.Tab|str|None' = types.ui.Tab.ADVANCED,
 ) -> ui.gui.NumericField:
     return ui.gui.NumericField(
         length=3,
         label=_('Removal concurrency'),
-        default=15,
+        default=default,
         min_value=1,
         max_value=65536,
         order=order,
