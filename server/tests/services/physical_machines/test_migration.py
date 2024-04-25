@@ -34,10 +34,20 @@ import typing
 import datetime
 from unittest import mock
 
+from uds import models
+from uds.core import consts, types
+from uds.core.util import fields
+
 from ...utils.test import UDSTransactionTestCase
 
-from uds import models
 from uds.migrations.fixers.providers_v4 import physical_machine_multiple
+
+from uds.services.PhysicalMachines import (
+    service_single,
+    service_multi,
+    deployment,
+    deployment_multi,
+)
 
 # Data from 3.6 version
 
@@ -73,6 +83,9 @@ SERVICES_DATA: typing.Final[list[dict[str, typing.Any]]] = [
         'token': None,
     },
 ]
+
+SINGLE_IP_SERVICE_IDX: typing.Final[int] = 1
+MULTIPLE_IP_SERVICE_IDX: typing.Final[int] = 0
 
 SERVICEPOOLS_DATA: typing.Final[list[dict[str, typing.Any]]] = [
     {
@@ -129,6 +142,8 @@ SERVICEPOOLS_DATA: typing.Final[list[dict[str, typing.Any]]] = [
     },
 ]
 
+SINGLE_IP_SERVICEPOOL_IDX: typing.Final[int] = 1
+MULTIPLE_IP_SERVICEPOOL_IDX: typing.Final[int] = 0
 
 USERSERVICES_DATA: typing.Final[list[dict[str, typing.Any]]] = [
     {
@@ -136,8 +151,8 @@ USERSERVICES_DATA: typing.Final[list[dict[str, typing.Any]]] = [
         'uuid': 'f1ac7d5-58c8-55c3-8bab-24ea1ed40be5',
         'deployed_service_id': 100,
         'publication_id': None,
-        'unique_id': 'dc.dkmon.local',
-        'friendly_name': 'dc.dkmon.local',
+        'unique_id': 'localhost',
+        'friendly_name': 'localhost',
         'state': 'U',
         'os_state': 'U',
         'state_date': datetime.datetime(2024, 4, 25, 2, 51, 13),
@@ -200,7 +215,7 @@ STORAGE_DATA: typing.Final[list[dict[str, typing.Any]]] = [
     {
         'owner': 't-service-144',
         'key': '848d16fb421048c690c9761c11dc1699',
-        'data': 'gASVQwAAAAAAAABdlCiMDTE3Mi4yNy4xLjI1fjCUjA0xNzIuMjcuMS4yNn4xlIwNMTcyLjI3LjEu\nMjd+MpSMC2xvY2FsaG9zdH4zlGUu\n',
+        'data': 'gASVVQAAAAAAAABdlCiMDTE3Mi4yNy4xLjI1fjCUjA0xNzIuMjcuMS4yNn4xlIwNMTcyLjI3LjEuMjd+MpSMHWxvY2FsaG9zdDswMToyMzo0NTo2Nzo4OTpBQn4zlGUu\n',
         'attr1': '',
     },
     {'owner': 't-service-142', 'key': 'b6ac33477ae0a82fa2681c4d398d88d7', 'data': 'gARLAS4=\n', 'attr1': ''},
@@ -251,7 +266,7 @@ class TestPhysicalMigration(UDSTransactionTestCase):
         """
         # We have 2 services:
         # - Single IP
-        #  - IP is localhost, should be migrated to (localhost, 127.0.0.1)
+        #  - IP is localhost, should be migrated to localhost
         #  - One service pool
         #  - One user service
         # - Multiple IP
@@ -267,13 +282,55 @@ class TestPhysicalMigration(UDSTransactionTestCase):
         #    - 172.27.1.25
         #    - 172.27.1.26
         #    - 172.27.1.27
-        #    - localhost
+        #    - localhost;01:23:45:67:89:AB
         #  - One service pool
         #  - Two user services
-        #    * First one, is from an already unexisting machine "172.27.1.15" (removed from the list BEFORE migration)
+        #    * First one, is localhost
         #    * Second one is 172.27.1.26
 
         # First, proceed to migration of data
         physical_machine_multiple.migrate(self.apps_mock(), None)
 
         # Now check that data has been migrated correctly
+        # Single ip
+        single_ip = typing.cast('service_single.IPSingleMachineService', models.Service.objects.get(uuid=SERVICES_DATA[SINGLE_IP_SERVICE_IDX]['uuid']).get_instance())
+        self.assertEqual(single_ip.host.value, 'localhost')
+        
+        # Multiple ip
+        multi_ip = typing.cast('service_multi.IPMachinesService', models.Service.objects.get(uuid=SERVICES_DATA[MULTIPLE_IP_SERVICE_IDX]['uuid']).get_instance())
+        server_group = fields.get_server_group_from_field(multi_ip.server_group)
+        self.assertEqual(server_group.name, 'Physical Machines Server Group for Multiple IPS')
+        ips_to_check = {'172.27.1.25', '172.27.1.26', '172.27.1.27', '127.0.0.1'}
+        for server in server_group.servers.all():
+            self.assertEqual(server.server_type, types.servers.ServerType.UNMANAGED, f'Invalid server type for {server.ip}')
+            self.assertIn(server.ip, ips_to_check, f'Invalid server ip {server.ip}: {ips_to_check}')
+            ips_to_check.remove(server.ip)
+            # Ensure has a hostname, and MAC is empty
+            self.assertNotEqual(server.hostname, '')
+            
+            # Localhost has a MAC, rest of servers have MAC_UNKNOWN (empty equivalent)
+            # Also, should have 127.0.0.1 as ip if localhost
+            if server.hostname == 'localhost':
+                self.assertEqual(server.ip, '127.0.0.1')
+                self.assertEqual(server.mac, '01:23:45:67:89:AB')
+            else:
+                self.assertEqual(server.mac, consts.MAC_UNKNOWN)
+            
+            # If is 172.27.1.26 ensure is locked
+            if server.ip == '172.27.1.26' or server.hostname == 'localhost':
+                self.assertTrue(server.locked_until is not None and server.locked_until > datetime.datetime.now(), f'Server {server.ip} is not locked')
+            else:
+                self.assertIsNone(server.locked_until, f'Server {server.ip} is locked')
+                
+        # Ensure all ips have been checked
+        self.assertEqual(len(ips_to_check), 0)
+        
+        # Now, check UserServices
+        for userservice_data in USERSERVICES_DATA:
+            # Get the user service
+            if userservice_data['deployed_service_id'] == SERVICEPOOLS_DATA[SINGLE_IP_SERVICEPOOL_IDX]['id']:
+                userservice = typing.cast('deployment.IPMachineUserService', models.UserService.objects.get(uuid=userservice_data['uuid']).get_instance())
+                self.assertEqual(userservice._ip, 'dc.dkmon.local~1')  # Same as original data
+            else:
+                userservice = typing.cast('deployment_multi.IPMachinesUserService', models.UserService.objects.get(uuid=userservice_data['uuid']).get_instance())
+                self.assertEqual(userservice._ip, userservice_data['unique_id'], f'Invalid IP for {userservice_data["unique_id"]}: {userservice._ip}')

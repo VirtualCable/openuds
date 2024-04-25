@@ -45,13 +45,6 @@ from uds.models.config import Config as DBConfig
 
 logger = logging.getLogger(__name__)
 
-_for_saving_later: list[tuple['Config.Value', typing.Any]] = []
-_for_recovering_later: list['Config.Value'] = []
-_is_migrating: bool = False
-
-# For custom params (for choices mainly)
-_config_params: dict[str, typing.Any] = {}
-
 # Pair of section/value removed from current UDS version
 # Note: As of version 4.0, all previous REMOVED values has been moved to migration script 0043
 REMOVED_CONFIG_ELEMENTS = {
@@ -72,7 +65,22 @@ REMOVED_CONFIG_ELEMENTS = {
     ),
 }
 
+
 class Config:
+    # Global configuration values
+    _for_saving_later: typing.ClassVar[list[tuple['Config.Value', typing.Any]]] = []
+    _for_recovering_later: typing.ClassVar[list['Config.Value']] = []
+
+    # For custom params (for choices mainly)
+    _config_params: typing.ClassVar[dict[str, typing.Any]] = {}
+
+    # If we are migrating, we do not want to access database
+    _is_migrating: typing.ClassVar[bool] = False
+
+    # If initialization has been done
+    _initialization_finished: typing.ClassVar[bool] = False
+
+
     # Fields types, so inputs get more "beautiful"
     class FieldType(enum.IntEnum):
         UNKNOWN = -1
@@ -134,7 +142,7 @@ class Config:
             return self._section_name
 
     class Value:
-        _section: 'Config.Section' 
+        _section: 'Config.Section'
         _type: int
         _key: str
         _default: str
@@ -158,12 +166,12 @@ class Config:
             logger.debug(self)
 
         def get(self, force: bool = False) -> str:
-            if apps.ready and _is_migrating is False:
+            if apps.ready and Config._is_migrating is False:
                 if not GlobalConfig.isInitialized():
                     logger.debug('Initializing configuration & updating db values')
                     GlobalConfig.initialize()
             else:
-                _for_recovering_later.append(self)
+                Config._for_recovering_later.append(self)
                 return self._default
 
             try:
@@ -194,7 +202,7 @@ class Config:
             return self._data
 
         def set_params(self, params: typing.Any) -> None:
-            _config_params[self._section.name() + self._key] = params
+            Config._config_params[self._section.name() + self._key] = params
 
         def as_int(self, force: bool = False) -> int:
             try:
@@ -219,7 +227,7 @@ class Config:
             if self.get(force) == '0':
                 return False
             return True
-        
+
         def as_str(self, force: bool = False) -> str:
             return self.get(force)
 
@@ -233,14 +241,14 @@ class Config:
             return self._type
 
         def get_params(self) -> typing.Any:
-            return _config_params.get(self._section.name() + self._key, None)
+            return Config._config_params.get(self._section.name() + self._key, None)
 
         def get_help(self) -> str:
             return gettext(self._help)
 
         def set(self, value: typing.Union[str, bool, int]) -> None:
-            if GlobalConfig.isInitialized() is False or _is_migrating is True:
-                _for_saving_later.append((self, value))
+            if GlobalConfig.isInitialized() is False or Config._is_migrating is True:
+                Config._for_saving_later.append((self, value))
                 return
 
             if isinstance(value, bool):
@@ -311,9 +319,7 @@ class Config:
     def update(section: 'Config.SectionType', key: str, value: str, check_type: bool = False) -> bool:
         # If cfg value does not exists, simply ignore request
         try:
-            cfg: DBConfig = DBConfig.objects.filter(section=section, key=key)[
-                0
-            ]
+            cfg: DBConfig = DBConfig.objects.filter(section=section, key=key)[0]
             if check_type and cfg.field_type in (
                 Config.FieldType.READ,
                 Config.FieldType.HIDDEN,
@@ -772,16 +778,14 @@ class GlobalConfig:
         help=_('Enable VNC menu for user services'),
     )
 
-    _initDone = False
-
     @staticmethod
     def isInitialized() -> bool:
-        return GlobalConfig._initDone
+        return Config._initialization_finished
 
     @staticmethod
     def initialize() -> None:
-        if GlobalConfig._initDone is False:
-            GlobalConfig._initDone = True
+        if Config._initialization_finished is False:
+            Config._initialization_finished = True
             try:
                 # Tries to initialize database data for global config so it is stored asap and get cached for use
                 for v in GlobalConfig.__dict__.values():
@@ -789,16 +793,16 @@ class GlobalConfig:
                         v.get()
                         logger.debug('Initialized global config value %s=%s', v.key(), v.get())
 
-                for c in _for_recovering_later:
+                for c in Config._for_recovering_later:
                     logger.debug('Get later: %s', c)
                     c.get()
 
-                _for_recovering_later[:] = []  # pyright: ignore[reportUnknownArgumentType]
+                Config._for_recovering_later[:] = []  # pyright: ignore[reportUnknownArgumentType]
 
-                for c, v in _for_saving_later:
+                for c, v in Config._for_saving_later:
                     logger.debug('Saving delayed value: %s', c)
                     c.set(v)
-                _for_saving_later[:] = []  # pyright: ignore[reportUnknownArgumentType]
+                Config._for_saving_later[:] = []  # pyright: ignore[reportUnknownArgumentType]
 
                 # Process some global config parameters
                 # GlobalConfig.UDS_THEME.setParams(['html5', 'semantic'])
@@ -810,14 +814,12 @@ class GlobalConfig:
 # Signals for avoid saving config values on migrations
 def _pre_migrate(sender: typing.Any, **kwargs: typing.Any) -> None:
     # logger.info('Migrating database, AVOID saving config values')
-    global _is_migrating
-    _is_migrating = True
+    Config._is_migrating = True
 
 
 def _post_migrate(sender: typing.Any, **kwargs: typing.Any) -> None:
     # logger.info('Migration DONE, ALLOWING saving config values')
-    global _is_migrating
-    _is_migrating = False
+    Config._is_migrating = False
 
 
 signals.pre_migrate.connect(_pre_migrate)

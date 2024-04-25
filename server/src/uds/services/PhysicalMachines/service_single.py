@@ -50,16 +50,6 @@ logger = logging.getLogger(__name__)
 
 
 class IPSingleMachineService(services.Service):
-    # Gui
-    host = gui.TextField(
-        length=64,
-        label=_('Machine IP (and possibly MAC)'),
-        order=1,
-        tooltip=_('Machine IP'),
-        required=True,
-        old_field_name='ip',
-    )
-
     # Description of service
     type_name = _('Static Single IP')
     type_type = 'IPSingleMachineService'
@@ -74,6 +64,17 @@ class IPSingleMachineService(services.Service):
     user_service_type = IPMachineUserService
 
     services_type_provided = types.services.ServiceType.VDI
+    
+    # Gui
+    host = gui.TextField(
+        length=64,
+        label=_('Host IP/FQDN'),
+        order=1,
+        tooltip=_('IP or FQDN of the server to connect to. Can include MAC address separated by ";" after the IP/Hostname'),
+        required=True,
+        old_field_name='ip',
+    )
+
 
     def get_host_mac(self) -> typing.Tuple[str, str]:
         if ';' in self.host.as_str():
