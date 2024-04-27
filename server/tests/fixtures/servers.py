@@ -47,8 +47,8 @@ def create_server(
 ) -> 'models.Server':
     # Token is created by default on record creation
     return models.Server.objects.create(
-        username=generators.random_string(),
-        ip_from=ip or '127.0.0.1',
+        register_username=generators.random_string(),
+        register_ip=ip or '127.0.0.1',
         ip=ip or '127.0.0.1',
         hostname=generators.random_string(),
         listen_port=listen_port,

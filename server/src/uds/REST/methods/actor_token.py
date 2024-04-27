@@ -78,9 +78,9 @@ class ActorTokens(ModelHandler):
             log_level = LogLevel(log_level_int).name
         return {
             'id': item.token,
-            'name': str(_('Token isued by {} from {}')).format(item.username, item.hostname or item.ip),
+            'name': str(_('Token isued by {} from {}')).format(item.register_username, item.hostname or item.ip),
             'stamp': item.stamp,
-            'username': item.username,
+            'username': item.register_username,
             'ip': item.ip,
             'host': f'{item.ip} - {data.get("mac")}',
             'hostname': item.hostname,

@@ -166,9 +166,9 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     """
 
     # Username that registered the server
-    username = models.CharField(max_length=128)
+    register_username = models.CharField(max_length=128)
     # Ip from where the server was registered, can be IPv4 or IPv6
-    ip_from = models.CharField(max_length=consts.system.MAX_IPV6_LENGTH)
+    register_ip = models.CharField(max_length=consts.system.MAX_IPV6_LENGTH)
     # Ip of the server, can be IPv4 or IPv6 (used to communicate with it)
     ip = models.CharField(max_length=consts.system.MAX_IPV6_LENGTH)
 
@@ -413,7 +413,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         return f'https://{pre}{self.ip}{post}:{self.listen_port}/{self.server_type.path()}/v1/{path}'
 
     def __str__(self) -> str:
-        return f'<RegisterdServer {self.token} of type {self.server_type.name} created on {self.stamp} by {self.username} from {self.ip}/{self.hostname}>'
+        return f'<RegisterdServer {self.token} of type {self.server_type.name} created on {self.stamp} by {self.register_username} from {self.ip}/{self.hostname}>'
 
 
 properties.PropertiesMixin.setup_signals(Server)

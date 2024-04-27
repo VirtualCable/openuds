@@ -101,10 +101,10 @@ class ServerRegisterBase(Handler):
             serverToken = serverTokens[0]
             # Update parameters
             # serverToken.hostname = self._params['hostname'] 
-            serverToken.username = self._user.pretty_name
+            serverToken.register_username = self._user.pretty_name
             serverToken.certificate = certificate
             # Ensure we do not store zone if IPv6 and present
-            serverToken.ip_from = self._request.ip.split('%')[0]
+            serverToken.register_ip = self._request.ip.split('%')[0]
             serverToken.listen_port = port
             serverToken.ip = ip
             serverToken.stamp = now
@@ -116,8 +116,8 @@ class ServerRegisterBase(Handler):
         except Exception:
             try:
                 serverToken = models.Server.objects.create(
-                    username=self._user.pretty_name,
-                    ip_from=self._request.ip.split('%')[0],  # Ensure we do not store zone if IPv6 and present
+                    register_username=self._user.pretty_name,
+                    register_ip=self._request.ip.split('%')[0],  # Ensure we do not store zone if IPv6 and present
                     ip=ip,
                     listen_port=port,
                     hostname=self._params['hostname'],

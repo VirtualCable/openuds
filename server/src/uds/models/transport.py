@@ -64,7 +64,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
     # Label, to group transports on meta pools
     label = models.CharField(max_length=32, default='', db_index=True)
 
-    serverGroup = models.ForeignKey(
+    server_group = models.ForeignKey(
         'ServerGroup',
         related_name='transports',
         null=True,

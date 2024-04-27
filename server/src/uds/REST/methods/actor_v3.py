@@ -282,8 +282,8 @@ class Register(ActorV3Action):
         # This means that we can invoke its API from user_service, but not from server (The actor token is transformed as soon as initialized to a user service token)
         if actor_token:
             # Update parameters
-            actor_token.username = self._user.pretty_name
-            actor_token.ip_from = self._request.ip
+            actor_token.register_username = self._user.pretty_name
+            actor_token.register_ip = self._request.ip
             actor_token.ip = self._params['ip']
             actor_token.hostname = self._params['hostname']
             actor_token.log_level = self._params['log_level']
@@ -301,8 +301,8 @@ class Register(ActorV3Action):
 
         if not found:
             kwargs = {
-                'username': self._user.pretty_name,
-                'ip_from': self._request.ip,
+                'register_username': self._user.pretty_name,
+                'register_ip': self._request.ip,
                 'ip': self._params['ip'],
                 'hostname': self._params['hostname'],
                 'log_level': self._params['log_level'],

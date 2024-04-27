@@ -33,8 +33,8 @@ def migrate_old_data(apps: typing.Any, schema_editor: typing.Any) -> None:
         # Now append actors to registered servers, with "unknown" os type (legacy)
         for token in ActorToken.objects.all():
             Server.objects.create(
-                username=token.username,
-                ip_from=token.ip_from,
+                register_username=token.username,
+                register_ip=token.ip_from,
                 ip=token.ip,
                 hostname=token.hostname,
                 token=token.token,
@@ -69,8 +69,8 @@ def rollback_old_data(apps: typing.Any, schema_editor: typing.Any) -> None:
         if not server.data:
             continue  # Skip servers without data, they are not actors!!
         ActorToken.objects.create(
-            username=server.username,
-            ip_from=server.ip_from,
+            username=server.register_username,
+            ip_from=server.register_ip,
             ip=server.ip,
             hostname=server.hostname,
             token=server.token,
@@ -127,6 +127,16 @@ class Migration(migrations.Migration):
             'TunnelToken',
             'Server',
         ),
+        migrations.RenameField(
+            model_name="server",
+            old_name="ip_from",
+            new_name="register_ip",
+        ),
+        migrations.RenameField(
+            model_name="server",
+            old_name="username",
+            new_name="register_username",
+        ),        
         migrations.CreateModel(
             name="ServerGroup",
             fields=[
@@ -269,7 +279,7 @@ class Migration(migrations.Migration):
         # Add server group to transports
         migrations.AddField(
             model_name="transport",
-            name="serverGroup",
+            name="server_group",
             field=models.ForeignKey(
                 null=True,
                 on_delete=django.db.models.deletion.SET_NULL,

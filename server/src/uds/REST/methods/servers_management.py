@@ -75,9 +75,9 @@ class ServersTokens(ModelHandler):
         item = typing.cast('models.Server', item)  # We will receive for sure
         return {
             'id': item.uuid,
-            'name': str(_('Token isued by {} from {}')).format(item.username, item.ip),
+            'name': str(_('Token isued by {} from {}')).format(item.register_username, item.ip),
             'stamp': item.stamp,
-            'username': item.username,
+            'username': item.register_username,
             'ip': item.ip,
             'hostname': item.hostname,
             'listen_port': item.listen_port,
@@ -257,7 +257,8 @@ class ServersServers(DetailHandler):
                     raise self.invalid_request_response('Invalid MAC address')
                 # Create a new one, and add it to group
                 server = models.Server.objects.create(
-                    ip_from='::1',
+                    register_username=self._user.name,
+                    register_ip=self._request.ip,
                     ip=self._params['ip'],
                     hostname=self._params['hostname'],
                     listen_port=0,
@@ -288,6 +289,9 @@ class ServersServers(DetailHandler):
                     raise self.invalid_request_response('Invalid MAC address')
                 try:
                     models.Server.objects.filter(uuid=process_uuid(item)).update(
+                        # Update register info also on update
+                        register_username=self._user.name,
+                        register_ip=self._request.ip,
                         ip=self._params['ip'],
                         hostname=self._params['hostname'],
                         mac=mac,

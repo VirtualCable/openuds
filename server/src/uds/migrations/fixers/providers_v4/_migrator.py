@@ -122,8 +122,8 @@ def migrate(
             for ip, hostname, mac in server_ip_hostname_mac:
                 registeredServerGroup.servers.create(
                     token=secrets.token_urlsafe(36),
-                    username='migration',
-                    ip_from='127.0.0.1',
+                    register_username='migration',
+                    register_ip='127.0.0.1',
                     ip=ip,
                     os_type=types.os.KnownOS.WINDOWS.os_name(),
                     hostname=hostname,

@@ -120,7 +120,6 @@ def server_group_field(
             _server_group_values, valid_types, subtype
         ),  # So it gets evaluated at runtime
         tab=tab,
-        old_field_name='serverGroup',
     )
 
 

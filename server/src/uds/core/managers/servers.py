@@ -203,7 +203,7 @@ class ServerManager(metaclass=singleton.Singleton):
             service_type: Type of service to assign
             min_memory_mb: Minimum memory required for server in MB, does not apply to unmanaged servers
             lock_interval: If not None, lock server for this time
-            server: If not None, use this server instead of selecting one from serverGroup. (Used on manual assign)
+            server: If not None, use this server instead of selecting one from server_group. (Used on manual assign)
             excluded_servers_uuids: If not None, exclude this servers from selection. Used in case we check the availability of a server
                                  with some external method and we want to exclude it from selection because it has already failed.
 
@@ -280,24 +280,24 @@ class ServerManager(metaclass=singleton.Singleton):
             # Update counter
             info = types.servers.ServerCounter(info.server_uuid, info.counter + 1)
             props[prop_name] = info
-            bestServer = models.Server.objects.get(uuid=info.server_uuid)
+            best_server = models.Server.objects.get(uuid=info.server_uuid)
 
             # Ensure next assignation will have updated stats
             # This is a simple simulation on cached stats, will be updated on next stats retrieval
             # (currently, cache time is 1 minute)
-            bestServer.interpolate_new_assignation()
+            best_server.interpolate_new_assignation()
 
         # Notify assgination in every case, even if reassignation to same server is made
         # This lets the server to keep track, if needed, of multi-assignations
-        self.notify_assign(bestServer, userservice, service_type, info.counter)
+        self.notify_assign(best_server, userservice, service_type, info.counter)
         return info
 
     def release(
         self,
-        userService: 'models.UserService',
-        serverGroup: 'models.ServerGroup',
+        userservice: 'models.UserService',
+        server_group: 'models.ServerGroup',
         unlock: bool = False,
-        userUuid: typing.Optional[str] = None,
+        user_uuid: typing.Optional[str] = None,
     ) -> types.servers.ServerCounter:
         """
         Unassigns a server from an user
@@ -308,13 +308,13 @@ class ServerManager(metaclass=singleton.Singleton):
             unlock: If True, unlock server, even if it has more users assigned to it
             userUuid: If not None, use this uuid instead of userService.user.uuid
         """
-        userUuid = userUuid if userUuid else userService.user.uuid if userService.user else None
+        user_uuid = user_uuid if user_uuid else userservice.user.uuid if userservice.user else None
 
-        if userUuid is None:
+        if user_uuid is None:
             return types.servers.ServerCounter.null()  # No user is assigned to this service, nothing to do
 
-        prop_name = self.property_name(userService.user)
-        with serverGroup.properties as props:
+        prop_name = self.property_name(userservice.user)
+        with server_group.properties as props:
             with transaction.atomic():
                 resetCounter = False
                 # ServerCounterType
@@ -353,39 +353,39 @@ class ServerManager(metaclass=singleton.Singleton):
             # (currently, cache time is 1 minute)
             server.interpolate_new_release()
 
-            self.notify_release(server, userService)
+            self.notify_release(server, userservice)
 
         return types.servers.ServerCounter(serverCounter.server_uuid, serverCounter.counter - 1)
 
     def notify_preconnect(
         self,
-        serverGroup: 'models.ServerGroup',
-        userService: 'models.UserService',
+        server_group: 'models.ServerGroup',
+        userservice: 'models.UserService',
         info: types.connections.ConnectionData,
         server: typing.Optional[
             'models.Server'
-        ] = None,  # Forced server instead of selecting one from serverGroup
+        ] = None,  # Forced server instead of selecting one from server_group
     ) -> None:
         """
         Notifies preconnect to server
         """
         if not server:
-            server = self.server_assignation_for(userService, serverGroup)
+            server = self.server_assignation_for(userservice, server_group)
 
         if server:
-            requester.ServerApiRequester(server).notify_preconnect(userService, info)
+            requester.ServerApiRequester(server).notify_preconnect(userservice, info)
 
     def notify_assign(
         self,
         server: 'models.Server',
-        userService: 'models.UserService',
-        serviceType: types.services.ServiceType,
+        userservice: 'models.UserService',
+        service_type: types.services.ServiceType,
         counter: int,
     ) -> None:
         """
         Notifies assign to server
         """
-        requester.ServerApiRequester(server).notify_assign(userService, serviceType, counter)
+        requester.ServerApiRequester(server).notify_assign(userservice, service_type, counter)
 
     def notify_release(
         self,
@@ -397,19 +397,19 @@ class ServerManager(metaclass=singleton.Singleton):
         """
         requester.ServerApiRequester(server).notify_release(userService)
 
-    def assignation_info(self, serverGroup: 'models.ServerGroup') -> dict[str, int]:
+    def assignation_info(self, server_group: 'models.ServerGroup') -> dict[str, int]:
         """
         Get usage information for a server group
 
         Args:
-            serverGroup: Server group to get current usage from
+            server_group: Server group to get current usage from
 
         Returns:
             Dict of current usage (user uuid, counter for assignations to that user)
 
         """
         res: dict[str, int] = {}
-        for k, v in serverGroup.properties.items():
+        for k, v in server_group.properties.items():
             if k.startswith(self.BASE_PROPERTY_NAME):
                 kk = k[len(self.BASE_PROPERTY_NAME) :]  # Skip base name
                 res[kk] = res.get(kk, 0) + v[1]
@@ -417,24 +417,24 @@ class ServerManager(metaclass=singleton.Singleton):
 
     def server_assignation_for(
         self,
-        userService: 'models.UserService',
-        serverGroup: 'models.ServerGroup',
+        userservice: 'models.UserService',
+        server_group: 'models.ServerGroup',
     ) -> typing.Optional['models.Server']:
         """
         Returns the server assigned to an user service
 
         Args:
             userService: User service to get server from
-            serverGroup: Server group to get server from
+            server_group: Server group to get server from
 
         Returns:
             Server assigned to user service, or None if no server is assigned
         """
-        if not userService.user:
+        if not userservice.user:
             raise exceptions.UDSException(_('No user assigned to service'))
 
-        prop_name = self.property_name(userService.user)
-        with serverGroup.properties as props:
+        prop_name = self.property_name(userservice.user)
+        with server_group.properties as props:
             info: typing.Optional[types.servers.ServerCounter] = types.servers.ServerCounter.from_iterable(
                 props.get(prop_name)
             )
@@ -444,21 +444,21 @@ class ServerManager(metaclass=singleton.Singleton):
 
     def sorted_server_list(
         self,
-        serverGroup: 'models.ServerGroup',
+        server_group: 'models.ServerGroup',
         excluded_servers_uuids: typing.Optional[typing.Set[str]] = None,
     ) -> list['models.Server']:
         """
         Returns a list of servers sorted by usage
 
         Args:
-            serverGroup: Server group to get servers from
+            server_group: Server group to get servers from
 
         Returns:
             List of servers sorted by usage
         """
         with transaction.atomic():
             now = model_utils.sql_datetime()
-            fltrs = serverGroup.servers.filter(maintenance_mode=False)
+            fltrs = server_group.servers.filter(maintenance_mode=False)
             fltrs = fltrs.filter(Q(locked_until=None) | Q(locked_until__lte=now))  # Only unlocked servers
             if excluded_servers_uuids:
                 fltrs = fltrs.exclude(uuid__in=excluded_servers_uuids)
@@ -468,23 +468,23 @@ class ServerManager(metaclass=singleton.Singleton):
         # Sort by weight, lower first (lower is better)
         return [s[1] for s in sorted(serverStats, key=lambda x: x[0].weight() if x[0] else 999999999)]
 
-    def perform_maintenance(self, serverGroup: 'models.ServerGroup') -> None:
+    def perform_maintenance(self, server_group: 'models.ServerGroup') -> None:
         """Realizes maintenance on server group
 
         Maintenace operations include:
             * Clean up removed users from server counters
 
         Args:
-            serverGroup: Server group to realize maintenance on
+            server_group: Server group to realize maintenance on
         """
-        for k, _ in serverGroup.properties.items():
+        for k, _ in server_group.properties.items():
             if k.startswith(self.BASE_PROPERTY_NAME):
                 uuid = k[len(self.BASE_PROPERTY_NAME) :]
                 try:
                     models.User.objects.get(uuid=uuid)
                 except Exception:
                     # User does not exists, remove it from counters
-                    del serverGroup.properties[k]
+                    del server_group.properties[k]
 
     def process_event(self, server: 'models.Server', data: dict[str, typing.Any]) -> typing.Any:
         """
