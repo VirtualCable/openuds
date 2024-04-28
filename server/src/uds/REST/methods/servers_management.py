@@ -258,7 +258,7 @@ class ServersServers(DetailHandler):
                     raise self.invalid_request_response('Invalid MAC address')
                 # Create a new one, and add it to group
                 server = models.Server.objects.create(
-                    register_username=self._user.name,
+                    register_username=self._user.pretty_name,
                     register_ip=self._request.ip,
                     ip=self._params['ip'],
                     hostname=self._params['hostname'],
@@ -291,7 +291,7 @@ class ServersServers(DetailHandler):
                 try:
                     models.Server.objects.filter(uuid=process_uuid(item)).update(
                         # Update register info also on update
-                        register_username=self._user.name,
+                        register_username=self._user.pretty_name,
                         register_ip=self._request.ip,
                         hostname=self._params['hostname'],
                         ip=self._params['ip'],
@@ -379,7 +379,7 @@ class ServersServers(DetailHandler):
             try:
                 if parent.servers.filter(Q(ip=ip) | Q(hostname=hostname)).count() == 0:
                     server = models.Server.objects.create(
-                        register_username=self._user.name,
+                        register_username=self._user.pretty_name,
                         register_ip=self._request.ip,
                         ip=ip,
                         hostname=hostname,

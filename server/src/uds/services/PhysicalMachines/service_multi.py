@@ -176,6 +176,7 @@ class IPMachinesService(services.Service):
             random.shuffle(list_of_servers)  # Reorder the list randomly if required
         for server in list_of_servers:
             if server.locked_until is None or server.locked_until < sql_now():
+                server.lock(self.get_max_lock_time())
                 return server.uuid
         raise exceptions.services.InsufficientResourcesException()
 

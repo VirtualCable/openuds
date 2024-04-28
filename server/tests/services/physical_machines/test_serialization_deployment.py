@@ -9,6 +9,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # We use commit/rollback
+from unittest import mock
 
 from tests.utils.test import UDSTestCase
 from uds.core.util import autoserializable
@@ -27,12 +28,12 @@ class IPMachineUserServiceSerializationTest(UDSTestCase):
 
         def _check_fields(instance: deployment.IPMachineUserService) -> None:
             self.assertEqual(instance._ip, '1.1.1.1')
-            self.assertEqual(instance._state, 'state')
             self.assertEqual(instance._reason, 'reason')
 
         data = obj.marshal()
 
         instance = deployment.IPMachineUserService(environment=Environment.testing_environment(), service=None)  # type: ignore  # service is not used
+        instance.db_obj = mock.MagicMock()
         instance.unmarshal(data)
 
         marshaled_data = instance.marshal()

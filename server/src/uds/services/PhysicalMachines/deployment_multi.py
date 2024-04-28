@@ -30,6 +30,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import hashlib
 import logging
 import typing
 
@@ -69,6 +70,12 @@ class IPMachinesUserService(services.UserService, autoserializable.AutoSerializa
     def service(self) -> 'IPMachinesService':
         return typing.cast('IPMachinesService', super().service())
 
+    def _set_in_use(self) -> None:
+        if not self.service().get_token():
+            userservice = self.db_obj()
+            if userservice:
+                userservice.set_in_use(True)
+
     def set_ip(self, ip: str) -> None:
         logger.debug('Setting IP to %s (ignored)', ip)
 
@@ -76,14 +83,11 @@ class IPMachinesUserService(services.UserService, autoserializable.AutoSerializa
         return self._ip
 
     def get_name(self) -> str:
-        # If single machine, ip is IP~counter,
-        # If multiple and has a ';' on IP, the values is IP;MAC
         return self.get_ip()
 
     def get_unique_id(self) -> str:
-        if not self._mac:
-            return self._ip
-        return self._mac
+        # Generate a 16 chars string mixing up all _vmid chars
+        return hashlib.shake_128(self._vmid.encode('utf8')).hexdigest(8)
 
     def set_ready(self) -> types.states.TaskState:
         self.service().wakeup(self._ip, self._mac)
@@ -92,13 +96,10 @@ class IPMachinesUserService(services.UserService, autoserializable.AutoSerializa
     def deploy_for_user(self, user: 'models.User') -> types.states.TaskState:
         logger.debug("Starting deploy of %s for user %s", self._ip, user)
         self._vmid = self.service().get_unassigned()
+
         self._ip, self._mac = self.service().get_host_mac(self._vmid)
 
-        # If not to be managed by a token, autologin user
-        if not self.service().get_token():
-            userservice = self.db_obj()
-            if userservice:
-                userservice.set_in_use(True)
+        self._set_in_use()
 
         return types.states.TaskState.FINISHED
 
@@ -111,11 +112,8 @@ class IPMachinesUserService(services.UserService, autoserializable.AutoSerializa
         # Update ip & mac
         self._ip, self._mac = self.service().get_host_mac(vmid)
 
-        if not self.service().get_token():
-            dbService = self.db_obj()
-            if dbService:
-                dbService.set_in_use(True)
-                dbService.save()
+        self._set_in_use()
+
         return types.states.TaskState.FINISHED
 
     def _error(self, reason: str) -> types.states.TaskState:

@@ -62,7 +62,6 @@ class IPMachineUserService(services.UserService, autoserializable.AutoSerializab
 
     _ip = autoserializable.StringField(default='')
     _reason = autoserializable.StringField(default='')
-    _state = autoserializable.StringField(default=types.states.TaskState.FINISHED)
     _name = autoserializable.StringField(default='')
 
     # Utility overrides for type checking...
@@ -80,18 +79,17 @@ class IPMachineUserService(services.UserService, autoserializable.AutoSerializab
     def get_name(self) -> str:
         if not self._name:
             # Generate a name with the IP + simple counter
-            self._name = f'{self.get_ip()}{self.service().get_counter_and_inc()}'
+            self._name = f'{self.get_ip()}:{self.service().get_counter_and_inc()}'
         return self._name
 
     def get_unique_id(self) -> str:
-        return self._name
+        return self.get_name()
 
     def set_ready(self) -> types.states.TaskState:
         # If single machine, ip is IP~counter,
         # If multiple and has a ';' on IP, the values is IP;MAC
         self.service().wakeup()
-        self._state = types.states.TaskState.FINISHED
-        return self._state
+        return types.states.TaskState.FINISHED
 
     def _deploy(self) -> types.states.TaskState:
         # If not to be managed by a token, autologin user
@@ -99,8 +97,7 @@ class IPMachineUserService(services.UserService, autoserializable.AutoSerializab
         if userService:
             userService.set_in_use(True)
 
-        self._state = types.states.TaskState.FINISHED
-        return self._state
+        return types.states.TaskState.FINISHED
 
     def deploy_for_user(self, user: 'models.User') -> types.states.TaskState:
         logger.debug("Starting deploy of %s for user %s", self._ip, user)
@@ -110,13 +107,14 @@ class IPMachineUserService(services.UserService, autoserializable.AutoSerializab
         return self._error('Cache deploy not supported')
 
     def _error(self, reason: str) -> types.states.TaskState:
-        self._state = types.states.TaskState.ERROR
         self._ip = ''
-        self._reason = reason
-        return self._state
+        self._reason = reason or 'Unknown error'
+        return types.states.TaskState.ERROR
 
     def check_state(self) -> types.states.TaskState:
-        return types.states.TaskState.from_str(self._state)
+        if self._reason:
+            return types.states.TaskState.ERROR
+        return types.states.TaskState.FINISHED
 
     def error_reason(self) -> str:
         """
@@ -126,8 +124,9 @@ class IPMachineUserService(services.UserService, autoserializable.AutoSerializab
         return self._reason
 
     def destroy(self) -> types.states.TaskState:
-        self._state = types.states.TaskState.FINISHED
-        return self._state
+        self._ip = ''
+        self._reason = ''
+        return types.states.TaskState.FINISHED
 
     def cancel(self) -> types.states.TaskState:
         return self.destroy()
@@ -141,8 +140,10 @@ class IPMachineUserService(services.UserService, autoserializable.AutoSerializab
 
         # Fill own data from restored data
         self._ip = _auto_data._ip
+        self._name = self.db_obj().name or ''  # If has a name, use it, else, use the generated one
         self._reason = _auto_data._reason
-        self._state = _auto_data._state
+        if _auto_data._state == types.states.TaskState.ERROR:
+            self._reason = self._reason or 'Unknown error'
 
         # Flag for upgrade
         self.mark_for_upgrade(True)

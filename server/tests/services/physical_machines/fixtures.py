@@ -34,11 +34,19 @@ import datetime
 import typing
 import uuid
 
+from unittest import mock
+
 from uds import models
 from uds.core import environment, types
 from uds.core.ui.user_interface import gui
 
-from uds.services.PhysicalMachines import provider, service_single, service_multi
+from uds.services.PhysicalMachines import (
+    provider,
+    service_single,
+    service_multi,
+    deployment as deployment_single,
+    deployment_multi,
+)
 
 SERVER_GROUP_IPS_MACS: typing.Final[list[tuple[str, str]]] = [
     (f'127.0.1.{x}', f'{x:02x}:22:{x*2:02x}:44:{x*4:02x}:66') for x in range(1, 32)
@@ -178,3 +186,43 @@ def create_service_multi(
     )
 
     return service_instance
+
+
+def create_userservice_single(
+    service: typing.Optional[service_single.IPSingleMachineService] = None, **kwargs: typing.Any
+) -> deployment_single.IPMachineUserService:
+    """
+    Create a user service
+    """
+    uuid_ = str(uuid.uuid4())
+
+    userservice_instance = deployment_single.IPMachineUserService(
+        environment=environment.Environment.private_environment(uuid_),
+        service=service or create_service_single(),
+        publication=None,
+        uuid=uuid_,
+    )
+
+    userservice_instance.db_obj = mock.MagicMock()
+
+    return userservice_instance
+
+
+def create_userservice_multi(
+    service: typing.Optional[service_single.IPSingleMachineService] = None, **kwargs: typing.Any
+) -> deployment_multi.IPMachinesUserService:
+    """
+    Create a user service
+    """
+    uuid_ = str(uuid.uuid4())
+
+    userservice_instance = deployment_multi.IPMachinesUserService(
+        environment=environment.Environment.private_environment(uuid_),
+        service=service or create_service_multi(),
+        publication=None,
+        uuid=uuid_,
+    )
+
+    userservice_instance.db_obj = mock.MagicMock()
+
+    return userservice_instance

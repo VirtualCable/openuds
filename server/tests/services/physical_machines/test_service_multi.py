@@ -178,8 +178,9 @@ class TestServiceMulti(UDSTransactionTestCase):
             unassigned_uuid = service.get_unassigned()
             # Must be the first server
             self.assertEqual(unassigned_uuid, server.uuid, f'Error on element {num}')  # type: ignore  # if first is None,raises error
-            # Lock it, so it's not returned again
-            service.lock_server(unassigned_uuid)
+            # Ensure it's locked
+            server.refresh_from_db()
+            self.assertIsNotNone(server.locked_until)
 
         # Now, randomized, we must no receive same servers
         service.randomize_host.value = True
@@ -191,18 +192,21 @@ class TestServiceMulti(UDSTransactionTestCase):
         count = 0
         for count in range(128):
             unassigned_uuid = service.get_unassigned()
-            self.assertNotEqual(unassigned_uuid, server_list[0].uuid)
+            # unlock the server, for next iteration or test
+            service.unlock_server(unassigned_uuid)
             if unassigned_uuid != server_list[0].uuid:
                 break
 
         if count == 127:
             self.fail('Randomized server selection failed')
 
+        # Unres
+
         # Now ensure we can lock all servers
         for num in range(len(server_list)):
             unassigned_uuid = service.get_unassigned()
             self.assertIsNotNone(unassigned_uuid)
-            service.lock_server(unassigned_uuid)
+            self.assertTrue(models.Server.objects.get(uuid=unassigned_uuid).locked_until is not None)
 
     def test_enumerate_assignables(self) -> None:
         service = fixtures.create_service_multi()
