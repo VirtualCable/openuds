@@ -132,7 +132,6 @@ class IPMachinesService(services.Service):
     uses_cache = False  # Cache are running machine awaiting to be assigned
     uses_cache_l2 = False  # L2 Cache are running machines in suspended state
     needs_osmanager = False  # If the service needs a s.o. manager (managers are related to agents provided by services itselfs, i.e. virtual machines with agent)
-    must_assign_manually = False  # If true, the system can't do an automatic assignation of a deployed user service from this service
 
     user_service_type = IPMachinesUserService
 
@@ -149,7 +148,7 @@ class IPMachinesService(services.Service):
     def enumerate_assignables(self) -> collections.abc.Iterable[types.ui.ChoiceItem]:
         now = sql_now()
         return [
-            gui.choice_item(f'{server.host}|{server.mac}', server.uuid)
+            gui.choice_item(server.uuid, f'{server.host}|{server.mac}')
             for server in fields.get_server_group_from_field(self.server_group).servers.all()
             if server.locked_until is None or server.locked_until < now
         ]
@@ -163,13 +162,11 @@ class IPMachinesService(services.Service):
         server: 'models.Server' = models.Server.objects.get(uuid=assignable_id)
         ipmachine_instance: IPMachinesUserService = typing.cast(IPMachinesUserService, userservice_instance)
         if server.locked_until is None or server.locked_until < sql_now():
-            # Lock the server for 10 year right now...
-            server.locked_until = sql_now() + datetime.timedelta(days=365)
+            self.lock_server(server.uuid)
+            return ipmachine_instance.assign(server.uuid)
 
-            return ipmachine_instance.assign(server.host)
+        return ipmachine_instance._error('Host already assigned')
 
-        return ipmachine_instance._error('IP already assigned')
-    
     def get_unassigned(self) -> str:
         '''
         Returns an unassigned machine
@@ -177,11 +174,11 @@ class IPMachinesService(services.Service):
         list_of_servers = list(fields.get_server_group_from_field(self.server_group).servers.all())
         if self.randomize_host.as_bool() is True:
             random.shuffle(list_of_servers)  # Reorder the list randomly if required
-            for server in list_of_servers:
-                if server.locked_until is None or server.locked_until < sql_now():
-                    return server.uuid
+        for server in list_of_servers:
+            if server.locked_until is None or server.locked_until < sql_now():
+                return server.uuid
         raise exceptions.services.InsufficientResourcesException()
-    
+
     def get_host_mac(self, server_uuid: str) -> typing.Tuple[str, str]:
         server = models.Server.objects.get(uuid=server_uuid)
         return server.host, server.mac
@@ -208,7 +205,10 @@ class IPMachinesService(services.Service):
         # Maybe, an user has logged in on an unassigned machine
         # if lockForExternalAccess is enabled, we must lock it
         if self.lock_on_external_access.as_bool() is True:
-            self.do_log(types.log.LogLevel.DEBUG, f'External login detected for {id}, locking machine for {self.get_max_lock_time()} or until logout')
+            self.do_log(
+                types.log.LogLevel.DEBUG,
+                f'External login detected for {id}, locking machine for {self.get_max_lock_time()} or until logout',
+            )
             self.lock_server(id)
 
     def process_logout(self, id: str, remote_login: bool) -> None:
@@ -255,4 +255,3 @@ class IPMachinesService(services.Service):
     # always is available
     def is_avaliable(self) -> bool:
         return True
-

@@ -58,7 +58,6 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
     uses_cache = False  # Cache are running machine awaiting to be assigned
     uses_cache_l2 = False  # L2 Cache are running machines in suspended state
     needs_osmanager = False  # If the service needs a s.o. manager (managers are related to agents provided by services, i.e. virtual machines with agent)
-    must_assign_manually = False  # If true, the system can't do an automatic assignation of a deployed user service from this service
     # can_reset = True
     
     # If machine has an alternate field with it, it will be used instead of "machines" field

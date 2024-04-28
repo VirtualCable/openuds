@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import random
 from unittest import mock
 
 from uds import models
@@ -51,9 +52,12 @@ class TestServiceMulti(UDSTransactionTestCase):
         self.assertTrue(server_group.servers.count() > 0)
         self.assertEqual(service.port.value, fixtures.SERVICE_MULTI_VALUES_DICT['port'])
         self.assertEqual(
-            service.ignore_minutes_on_failure.value, fixtures.SERVICE_MULTI_VALUES_DICT['ignore_minutes_on_failure']
+            service.ignore_minutes_on_failure.value,
+            fixtures.SERVICE_MULTI_VALUES_DICT['ignore_minutes_on_failure'],
         )
-        self.assertEqual(service.max_session_hours.value, fixtures.SERVICE_MULTI_VALUES_DICT['max_session_hours'])
+        self.assertEqual(
+            service.max_session_hours.value, fixtures.SERVICE_MULTI_VALUES_DICT['max_session_hours']
+        )
         self.assertEqual(
             service.lock_on_external_access.value, fixtures.SERVICE_MULTI_VALUES_DICT['lock_on_external_access']
         )
@@ -163,3 +167,73 @@ class TestServiceMulti(UDSTransactionTestCase):
         service.unlock_server(server.uuid)
         server.refresh_from_db()
         self.assertIsNone(server.locked_until)
+
+    def test_get_unassigned(self) -> None:
+        service = fixtures.create_service_multi()
+        # Without random host
+        service.randomize_host.value = False
+        server_list = list(fields.get_server_group_from_field(service.server_group).servers.all())
+
+        for num, server in enumerate(server_list, 1):
+            unassigned_uuid = service.get_unassigned()
+            # Must be the first server
+            self.assertEqual(unassigned_uuid, server.uuid, f'Error on element {num}')  # type: ignore  # if first is None,raises error
+            # Lock it, so it's not returned again
+            service.lock_server(unassigned_uuid)
+
+        # Now, randomized, we must no receive same servers
+        service.randomize_host.value = True
+        # unlock all servers
+        for server in server_list:
+            service.unlock_server(server.uuid)
+
+        # Now, execute at most 128 iterations, if we get first server all times, it's a problem
+        count = 0
+        for count in range(128):
+            unassigned_uuid = service.get_unassigned()
+            self.assertNotEqual(unassigned_uuid, server_list[0].uuid)
+            if unassigned_uuid != server_list[0].uuid:
+                break
+
+        if count == 127:
+            self.fail('Randomized server selection failed')
+
+        # Now ensure we can lock all servers
+        for num in range(len(server_list)):
+            unassigned_uuid = service.get_unassigned()
+            self.assertIsNotNone(unassigned_uuid)
+            service.lock_server(unassigned_uuid)
+
+    def test_enumerate_assignables(self) -> None:
+        service = fixtures.create_service_multi()
+        server_group = fields.get_server_group_from_field(service.server_group)
+        server_list = list(server_group.servers.all())
+
+        # lock 4 random servers, and remove them from the list
+        locked_servers = random.sample(server_list, 4)
+        for server in locked_servers:
+            service.lock_server(server.uuid)
+            server_list.remove(server)
+
+        assignables = {i['id'] for i in service.enumerate_assignables()}
+        self.assertEqual(assignables, {i.uuid for i in server_list})
+
+    def test_assign_from_asignables(self) -> None:
+        service = fixtures.create_service_multi()
+        server_group = fields.get_server_group_from_field(service.server_group)
+        server_list = list(server_group.servers.all())
+
+        # lock 4 random servers, and remove them from the list
+        locked_servers = random.sample(server_list, 4)
+        for server in locked_servers:
+            service.lock_server(server.uuid)
+            server_list.remove(server)
+
+        for server in server_list:
+            # Assign a server
+            userservice_mock = mock.MagicMock()
+            service.assign_from_assignables(server.uuid, mock.Mock(), userservice_mock)
+            userservice_mock.assign.assert_called_once_with(server.uuid)
+            # Ensure is locked
+            server.refresh_from_db()
+            self.assertIsNotNone(server.locked_until)

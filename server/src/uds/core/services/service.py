@@ -160,15 +160,6 @@ class Service(Module):
     # : If the service needs a o.s. manager (see os managers section)
     needs_osmanager: bool = False
 
-    # : If the service can be autoassigned or needs to be assigned by administrator
-    # : Not all services are for assigning it. Thing, i.e., a Service that manages
-    # : a number of Server. The desired behavior will be to let administrator
-    # : the service to a user in the administration interface, an not the system
-    # : to assign the service automatically. If this is true, the core will not
-    # : assign the service automatically, so if the user do not have a consumable
-    # : assigned, the user will never get one (of this kind, of course)
-    must_assign_manually: typing.ClassVar[bool] = False
-
     # : Types of publications (preparated data for deploys)
     # : If you provide this, UDS will assume that the service needs a preparation.
     # : If not provided (it is None), UDS will assume that service do not needs
@@ -306,18 +297,6 @@ class Service(Module):
                 self.userservices_limit = consts.UNLIMITED
 
         # Keep untouched if services_limit is not present
-
-    def user_services_for_assignation(self, **kwargs: typing.Any) -> collections.abc.Iterable['UserService']:
-        """
-        override this if mustAssignManualy is True
-        @params kwargs: Named arguments
-        @return an iterable with the services that we can assign  manually (they must be of type UserDeployment)
-        We will access the returned iterable in "name" basis. This means that the service will be assigned by "name", so be care that every single service
-        name returned is unique :-)
-        """
-        raise Exception(
-            f'The class {self.__class__.__name__} has been marked as manually asignable but no requestServicesForAssignetion provided!!!'
-        )
 
     def mac_generator(self) -> 'UniqueMacGenerator':
         """

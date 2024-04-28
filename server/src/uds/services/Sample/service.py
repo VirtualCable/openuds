@@ -104,9 +104,6 @@ class ServiceOne(services.Service):
     # : If the service needs a s.o. manager (managers are related to agents
     # : provided by services itselfs, i.e. virtual machines with actors)
     needs_osmanager = False
-    # : If true, the system can't do an automatic assignation of a deployed user
-    # : service from this service
-    must_assign_manually = False
 
     # : Types of publications (preparated data for deploys)
     # : In our case, we do no need a publication, so this is None
@@ -212,7 +209,6 @@ class ServiceTwo(services.Service):
     cache_tooltip_l2 = _('L2 cache for dummy elements')
 
     needs_osmanager = False
-    must_assign_manually = False
 
     # : Types of publications. In this case, we will include a publication
     # : type for this one

@@ -96,12 +96,5 @@ class ServiceProviderFactory(factory.ModuleFactory[ServiceProvider]):
             s
             for p in self.providers().values()
             for s in p.offers
-            if s.publication_type is None and s.must_assign_manually is False
+            if s.publication_type is None
         ]
-        # old code :-)
-        # res = []
-        # for p in self.providers().values():
-        #     for s in p.offers:
-        #         if s.publication_type is None and s.must_assign_manually is False:
-        #             res.append(s)
-        # return res

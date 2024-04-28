@@ -65,7 +65,6 @@ class TestServiceNoCache(services.Service):
     cache_tooltip_l2 = _('None')
 
     needs_osmanager = False
-    must_assign_manually = False
 
     publication_type = None
     user_service_type = TestUserService
@@ -97,7 +96,6 @@ class TestServiceCache(services.Service):
     cache_tooltip_l2 = _('L2 cache for dummy elements')
 
     needs_osmanager = False
-    must_assign_manually = False
 
     # : Types of publications. In this case, we will include a publication
     # : type for this one
