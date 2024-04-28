@@ -40,3 +40,10 @@ GUI: typing.Final[str] = 'gui'
 LOG: typing.Final[str] = 'log'
 
 SYSTEM: typing.Final[str] = 'system'  # Defined on system class, here for reference
+
+
+class _NotFound:
+    pass
+
+
+NOT_FOUND: typing.Final[_NotFound] = _NotFound()

@@ -32,6 +32,7 @@
 import logging
 import typing
 
+from django.db.models import Q
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
@@ -108,7 +109,7 @@ class ServersTokens(ModelHandler):
 
 # REST API For servers (except tunnel servers nor actors)
 class ServersServers(DetailHandler):
-    custom_methods = ['maintenance']
+    custom_methods = ['maintenance', 'importcsv']
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = typing.cast('models.ServerGroup', parent)  # We will receive for sure
@@ -331,6 +332,74 @@ class ServersServers(DetailHandler):
         item.maintenance_mode = not item.maintenance_mode
         item.save()
         return 'ok'
+
+    def importcsv(self, parent: 'Model') -> typing.Any:
+        """
+        We receive a json with string[][] format with the data.
+        Has no header, only the data.
+        """
+        parent = ensure.is_instance(parent, models.ServerGroup)
+        data: list[list[str]] = self._params.get('data', [])
+        logger.debug('Data received: %s', data)
+        # String lines can have 1, 2 or 3 fields.
+        # if 1, it's a IP
+        # if 2, it's a IP and a hostname. Hostame can be empty, in this case, it will be the same as IP
+        # if 3, it's a IP, a hostname and a MAC. MAC can be empty, in this case, it will be UNKNOWN
+        # if ip is empty and has a hostname, it will be kept, but if it has no hostname, it will be skipped
+        # If the IP is invalid and has no hostname, it will be skipped
+        import_errors: list[str] = []
+        for line_number, row in enumerate(data, 1):
+            if len(row) == 0:
+                continue
+            ip = row[0].strip()
+            hostname = ip
+            mac = consts.MAC_UNKNOWN
+            if len(row) > 1:
+                hostname = row[1].strip()
+            if len(row) > 2:
+                mac = row[2].strip().upper().strip() or consts.MAC_UNKNOWN
+                if mac and not net.is_valid_mac(mac):
+                    import_errors.append(f'Line {line_number}: MAC {mac} is invalid, skipping')
+                    continue  # skip invalid macs
+            if ip and not net.is_valid_ip(ip):
+                import_errors.append(f'Line {line_number}: IP {ip} is invalid, skipping')
+                continue  # skip invalid ips if not empty
+            # Must have at least a valid ip or a valid hostname
+            if not ip and not hostname:
+                import_errors.append(f'Line {line_number}: No IP or hostname, skipping')
+                continue
+
+            if hostname != ip and not net.is_valid_host(hostname):
+                # Log it has been skipped
+                import_errors.append(f'Line {line_number}: Hostname {hostname} is invalid, skipping')
+                continue  # skip invalid hostnames
+
+            # Seems valid, create server if not exists already (by ip OR hostname)
+            logger.debug('Creating server with ip %s, hostname %s and mac %s', ip, hostname, mac)
+            try:
+                if parent.servers.filter(Q(ip=ip) | Q(hostname=hostname)).count() == 0:
+                    server = models.Server.objects.create(
+                        register_username=self._user.name,
+                        register_ip=self._request.ip,
+                        ip=ip,
+                        hostname=hostname,
+                        listen_port=0,
+                        mac=mac,
+                        type=parent.type,
+                        subtype=parent.subtype,
+                        stamp=sql_now(),
+                    )
+                    parent.servers.add(server)  # And register it on group
+                else:
+                    # Log it has been skipped
+                    import_errors.append(
+                        f'Line {line_number}: duplicated server, skipping'
+                    )
+            except Exception as e:
+                import_errors.append(f'Error creating server on line {line_number}: {str(e)}')
+                logger.exception('Error creating server on line %s', line_number)
+
+        return import_errors
 
 
 class ServersGroups(ModelHandler):

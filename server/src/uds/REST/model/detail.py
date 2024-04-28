@@ -101,6 +101,7 @@ class DetailHandler(BaseModelHandler):
         """
         # Parent init not invoked because their methos are not used on detail handlers (only on parent handlers..)
         self._parent = parent_handler
+        self._request = parent_handler._request
         self._path = path
         self._params = params
         self._args = list(args)
@@ -123,7 +124,7 @@ class DetailHandler(BaseModelHandler):
                         return operation(parent)
                     return operation(parent, arg)
 
-        return None
+        return consts.rest.NOT_FOUND
 
     # pylint: disable=too-many-branches,too-many-return-statements
     def get(self) -> typing.Any:
@@ -141,7 +142,7 @@ class DetailHandler(BaseModelHandler):
 
         # if has custom methods, look for if this request matches any of them
         r = self._check_is_custom_method(self._args[0], parent)
-        if r is not None:
+        if r is not consts.rest.NOT_FOUND:
             return r
 
         if nArgs == 1:
@@ -194,6 +195,12 @@ class DetailHandler(BaseModelHandler):
         logger.debug('Detail args for PUT: %s, %s', self._args, self._params)
 
         parent: models.Model = self._kwargs['parent']
+
+        # if has custom methods, look for if this request matches any of them
+        if len(self._args) > 0:
+            r = self._check_is_custom_method(self._args[1], parent)
+            if r is not consts.rest.NOT_FOUND:
+                return r
 
         # Create new item unless 1 param received (the id of the item to modify)
         item = None

@@ -159,7 +159,11 @@ class MarshallerProcessor(ContentProcessor):
 
             res = self.marshaller.loads(self._request.body.decode('utf8'))
             logger.debug('Unmarshalled content: %s', res)
-            return res
+
+            if not isinstance(res, dict):
+                raise ParametersException('Invalid content')
+
+            return typing.cast(dict[str, typing.Any], res)
         except Exception as e:
             logger.exception('parsing %s: %s', self.mime_type, self._request.body.decode('utf8'))
             raise ParametersException(str(e))
