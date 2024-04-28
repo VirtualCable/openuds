@@ -119,7 +119,7 @@ class IPMachinesService(services.Service):
             if values[0] in (b'v6', b'v7'):
                 self.lockByExternalAccess.value = gui.as_bool(values[5].decode())
             if values[0] in (b'v7',):
-                self.useRandomIp = gui.as_bool(values[6].decode())
+                self.useRandomIp.value = gui.as_bool(values[6].decode())
 
     # Note that will be marshalled as new format, so we don't need to care about old format in code anymore :)
     def post_migrate(self, apps: typing.Any, record: typing.Any) -> None:

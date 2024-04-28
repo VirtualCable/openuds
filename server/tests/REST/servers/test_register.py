@@ -62,7 +62,7 @@ class ServerRegisterTest(rest.test.RESTTestCase):
             'subtype': crypto.CryptoManager.manager().random_string(10),
             'os': '',  # To be set on tests
             'hostname': 'test',
-            'log_level': log.LogLevel.INFO.value,
+            'log_level': types.log.LogLevel.INFO.value,
             'mac': random_mac(),
         }
         self.login(as_admin=False)  # As staff

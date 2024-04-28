@@ -44,7 +44,7 @@ from uds.core.managers.userservice import UserServiceManager
 from uds.core.util import log, security
 from uds.core.util.cache import Cache
 from uds.core.util.config import GlobalConfig
-from uds.core.util.model import sql_datetime
+from uds.core.util.model import sql_now
 from uds.core.types.states import State
 from uds.models import Server, Service, TicketStore, UserService
 from uds.models.service import ServiceTokenAlias
@@ -194,23 +194,23 @@ class ActorV3Action(Handler):
             # ensure idsLists has upper and lower versions for case sensitive databases
             idsList = fix_list_of_ids(idsList)
 
-            validId: typing.Optional[str] = service.get_valid_id(idsList)
+            service_id: typing.Optional[str] = service.get_valid_id(idsList)
 
             is_remote = self._params.get('session_type', '')[:4] in ('xrdp', 'RDP-')
 
             # Must be valid
             if action in (NotifyActionType.LOGIN, NotifyActionType.LOGOUT):
-                if not validId:  # For login/logout, we need a valid id
+                if not service_id:  # For login/logout, we need a valid id
                     raise Exception()
                 # Notify Service that someone logged in/out
 
                 if action == NotifyActionType.LOGIN:
                     # Try to guess if this is a remote session
-                    service.process_login(validId, remote_login=is_remote)
+                    service.process_login(service_id, remote_login=is_remote)
                 elif action == NotifyActionType.LOGOUT:
-                    service.process_logout(validId, remote_login=is_remote)
+                    service.process_logout(service_id, remote_login=is_remote)
             elif action == NotifyActionType.DATA:
-                service.notify_data(validId, self._params['data'])
+                service.notify_data(service_id, self._params['data'])
             else:
                 raise Exception('Invalid action')
 
@@ -294,7 +294,7 @@ class Register(ActorV3Action):
                 'run_once_command': self._params['run_once_command'],
                 'custom': self._params.get('custom', ''),
             })
-            actor_token.stamp = sql_datetime()
+            actor_token.stamp = sql_now()
             actor_token.save()
             logger.info('Registered actor %s', self._params)
             found = True
@@ -318,7 +318,7 @@ class Register(ActorV3Action):
                 'version': '',
                 'os_type': self._params.get('os', types.os.KnownOS.UNKNOWN.os_name()),
                 'mac': self._params['mac'],
-                'stamp': sql_datetime(),
+                'stamp': sql_now(),
             }
 
             actor_token = Server.objects.create(**kwargs)
@@ -704,14 +704,14 @@ class Log(ActorV3Action):
         userservice = self.get_userservice()
         if userservice.actor_version < '4.0.0':
             # Adjust loglevel to own, we start on 10000 for OTHER, and received is 0 for OTHER
-            level = log.LogLevel.from_int(int(self._params['level']) + 10000)
+            level = types.log.LogLevel.from_int(int(self._params['level']) + 10000)
         else:
-            level = log.LogLevel.from_int(int(self._params['level']))
+            level = types.log.LogLevel.from_int(int(self._params['level']))
         log.log(
             userservice,
             level,
             self._params['message'],
-            log.LogSource.ACTOR,
+            types.log.LogSource.ACTOR,
         )
 
         return ActorV3Action.actor_result('ok')

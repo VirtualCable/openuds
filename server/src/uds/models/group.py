@@ -41,7 +41,7 @@ from uds.core.util import log
 from .uuid_model import UUIDModel
 from .authenticator import Authenticator
 from .user import User
-from ..core.util.model import sql_datetime
+from ..core.util.model import sql_now
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -69,7 +69,7 @@ class Group(UUIDModel):
     # if it is false, the user must belong to ALL of the groups to be considered as belonging to this group
     meta_if_any = models.BooleanField(default=False)
     groups: 'models.ManyToManyField[Group, Group]' = models.ManyToManyField('self', symmetrical=False)
-    created = models.DateTimeField(default=sql_datetime, blank=True)
+    created = models.DateTimeField(default=sql_now, blank=True)
     skip_mfa = models.CharField(max_length=1, default=State.INACTIVE, db_index=True)
 
     # "fake" declarations for type checking

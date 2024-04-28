@@ -37,7 +37,7 @@ import collections.abc
 
 from uds.core import services, types
 from uds.core.managers.crypto import CryptoManager
-from uds.core.util import log, autoserializable
+from uds.core.util import autoserializable
 from uds.core.util.model import sql_stamp_seconds
 
 # Not imported at runtime, just for type checking
@@ -234,7 +234,7 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
             types.states.DeployState.ERROR, so we can do "return self.__error(reason)"
         """
         logger.debug('Setting error state, reason: %s', reason)
-        self.do_log(log.LogLevel.ERROR, reason)
+        self.do_log(types.log.LogLevel.ERROR, reason)
 
         if self._machine_id:
             try:
@@ -315,7 +315,7 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
         self._stamp = sql_stamp_seconds()
 
         self.do_log(
-            log.LogLevel.INFO,
+            types.log.LogLevel.INFO,
             f'Reserved machine {self._name}: id: {self._machine_id}, mac: {self._mac}, ip: {self._ip}',
         )
 

@@ -34,10 +34,11 @@ import os
 import logging
 import logging.handlers
 import typing
-import enum
 import re
 
 from django.apps import apps
+
+from uds.core.types.log import LogLevel, LogSource
 
 try:
     from systemd import journal
@@ -57,85 +58,6 @@ DATETIME_PATTERN: typing.Final[typing.Pattern[str]] = re.compile(r'(\d{4}-\d{2}-
 # Pattern for removing the LOGLEVEL from the log line beginning
 LOGLEVEL_PATTERN: typing.Final[typing.Pattern[str]] = re.compile(r'^(DEBUG|INFO|WARNING|ERROR|CRITICAL) *')
 
-
-
-class LogLevel(enum.IntEnum):
-    OTHER = 10000
-    DEBUG = 20000
-    INFO = 30000
-    WARNING = 40000
-    ERROR = 50000
-    CRITICAL = 60000
-
-    def __str__(self) -> str:
-        return self.name
-
-    def __repr__(self) -> str:
-        return self.name
-
-    @staticmethod
-    def from_str(level: str) -> 'LogLevel':
-        try:
-            return LogLevel[level.upper()]
-        except Exception:
-            # logger.error('Error getting log level from string: %s', e)
-            return LogLevel.OTHER
-
-    @staticmethod
-    def from_int(level: int) -> 'LogLevel':
-        try:
-            return LogLevel(level)
-        except ValueError:
-            return LogLevel.OTHER
-
-    @staticmethod
-    def from_actor_level(level: int) -> 'LogLevel':
-        """
-        Returns the log level for actor log level
-        """
-        return [LogLevel.DEBUG, LogLevel.INFO, LogLevel.ERROR, LogLevel.CRITICAL][level % 4]
-
-    @staticmethod
-    def from_logging_level(level: int) -> 'LogLevel':
-        """
-        Returns the log level for logging log level
-        """
-        return [
-            LogLevel.OTHER,
-            LogLevel.DEBUG,
-            LogLevel.INFO,
-            LogLevel.WARNING,
-            LogLevel.ERROR,
-            LogLevel.CRITICAL,
-        ][level // 10]
-
-    # Return all Log levels as tuples of (level value, level name)
-    @staticmethod
-    def all() -> list[tuple[int, str]]:
-        return [(level.value, level.name) for level in LogLevel]
-
-    # Rteturns "interesting" log levels
-    @staticmethod
-    def interesting() -> list[tuple[int, str]]:
-        """Returns "interesting" log levels
-        
-        Interesting log levels are those that are ABOBE INFO level (that is, errors, etc..)
-        """
-        return [(level.value, level.name) for level in LogLevel if level.value > LogLevel.INFO.value]
-
-
-class LogSource(enum.StrEnum):
-    INTERNAL = 'internal'
-    ACTOR = 'actor'
-    TRANSPORT = 'transport'
-    OSMANAGER = 'osmanager'
-    UNKNOWN = 'unknown'
-    WEB = 'web'
-    ADMIN = 'admin'
-    SERVICE = 'service'
-    SERVER = 'server'
-    REST = 'rest'
-    LOGS = 'logs'
 
 
 def log_use(

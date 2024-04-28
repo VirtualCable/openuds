@@ -43,7 +43,7 @@ from dateutil import rrule as rules
 
 from .uuid_model import UUIDModel
 from .calendar import Calendar
-from ..core.util.model import sql_datetime
+from ..core.util.model import sql_now
 
 
 logger = logging.getLogger(__name__)
@@ -188,7 +188,7 @@ class CalendarRule(UUIDModel):
 
     def save(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         logger.debug('Saving...')
-        self.calendar.modified = sql_datetime()
+        self.calendar.modified = sql_now()
 
         super().save(*args, **kwargs)
         # Ensure saves associated calendar, so next execution of actions is updated with rule values

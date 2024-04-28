@@ -36,9 +36,9 @@ import typing
 from uds.core.managers.task import BaseThread
 
 from uds.models import Notifier, Notification
-from uds.core import consts
-from uds.core.util.model import sql_datetime
-from .provider import Notifier as NotificationProviderModule, LogLevel
+from uds.core import consts, types
+from uds.core.util.model import sql_now
+from .provider import Notifier as NotificationProviderModule
 from .config import DO_NOT_REPEAT
 
 logger = logging.getLogger(__name__)
@@ -76,7 +76,7 @@ class MessageProcessorThread(BaseThread):
         while self._keep_running:
             # Locate all notifications from "persistent" and try to process them
             # If no notification can be fully resolved, it will be kept in the database
-            not_before = sql_datetime() - datetime.timedelta(
+            not_before = sql_now() - datetime.timedelta(
                 seconds=DO_NOT_REPEAT.as_int()
             )
             for n in Notification.get_persistent_queryset().all():
@@ -130,7 +130,7 @@ class MessageProcessorThread(BaseThread):
                             p.notify(
                                 n.group,
                                 n.identificator,
-                                LogLevel.from_int(n.level),
+                                types.log.LogLevel.from_int(n.level),
                                 n.message,
                             )
                         except Exception:

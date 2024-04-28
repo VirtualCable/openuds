@@ -38,7 +38,6 @@ from uds.core import consts, services, types
 from uds.core.services.generics.fixed.service import FixedService
 from uds.core.services.generics.fixed.userservice import FixedUserService
 from uds.core.ui import gui
-from uds.core.util import log
 from uds.core.util.decorators import cached
 
 from . import helpers
@@ -214,7 +213,7 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
                         name='UDS Snapshot',
                     )
             except Exception as e:
-                self.do_log(log.LogLevel.WARNING, 'Could not create SNAPSHOT for this VM. ({})'.format(e))
+                self.do_log(types.log.LogLevel.WARNING, 'Could not create SNAPSHOT for this VM. ({})'.format(e))
 
     def snapshot_recovery(self, userservice_instance: FixedUserService) -> None:
         userservice_instance = typing.cast(XenFixedUserService, userservice_instance)
@@ -228,7 +227,7 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
                 try:
                     userservice_instance._task = self.provider().restore_snapshot(snapshot['id'])
                 except Exception as e:
-                    self.do_log(log.LogLevel.WARNING, 'Could not restore SNAPSHOT for this VM. ({})'.format(e))
+                    self.do_log(types.log.LogLevel.WARNING, 'Could not restore SNAPSHOT for this VM. ({})'.format(e))
 
     def get_and_assign(self) -> str:
         found_vmid: typing.Optional[str] = None
@@ -243,7 +242,7 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
                             break
                         except Exception:  # Notifies on log, but skipt it
                             self.provider().do_log(
-                                log.LogLevel.WARNING, 'Machine {} not accesible'.format(found_vmid)
+                                types.log.LogLevel.WARNING, 'Machine {} not accesible'.format(found_vmid)
                             )
                             logger.warning(
                                 'The service has machines that cannot be checked on xen (connection error or machine has been deleted): %s',

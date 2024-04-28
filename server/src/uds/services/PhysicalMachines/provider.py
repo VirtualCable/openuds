@@ -37,7 +37,7 @@ from django.utils.translation import gettext_noop as _
 
 from uds.core import exceptions, services, types
 from uds.core.ui.user_interface import gui
-from uds.core.util import log, net, resolver
+from uds.core.util import net, resolver
 
 logger = logging.getLogger(__name__)
 
@@ -126,7 +126,7 @@ class PhysicalMachinesProvider(services.ServiceProvider):
             try:
                 host = resolver.resolve(host)[0]
             except Exception as e:
-                self.do_log(log.LogLevel.WARNING, f'Name {host} could not be resolved')
+                self.do_log(types.log.LogLevel.WARNING, f'Name {host} could not be resolved')
                 logger.warning('Name %s could not be resolved (%s)', host, e)
                 return ''
 

@@ -37,7 +37,7 @@ import pickle  # nosec: not insecure, we are loading our own data
 import typing
 
 from uds.core import consts, services, types
-from uds.core.util import autoserializable, log
+from uds.core.util import autoserializable
 
 from .openstack import types as openstack_types
 
@@ -175,7 +175,7 @@ class OpenStackLiveUserService(
 
             self.cache.put('ready', '1')
         except Exception as e:
-            self.do_log(log.LogLevel.ERROR, 'Error on setReady: {}'.format(e))
+            self.do_log(types.log.LogLevel.ERROR, 'Error on setReady: {}'.format(e))
             # Treat as operation done, maybe the machine is ready and we can continue
 
         return types.states.TaskState.FINISHED
@@ -267,7 +267,7 @@ class OpenStackLiveUserService(
         self._queue = [Operation.ERROR]
         self._reason = str(reason)
 
-        self.do_log(log.LogLevel.ERROR, self._reason)
+        self.do_log(types.log.LogLevel.ERROR, self._reason)
 
         if self._vmid:
             # Creating machines should be deleted on error
@@ -278,7 +278,7 @@ class OpenStackLiveUserService(
                     logger.warning('Can\t set machine %s state to stopped', self._vmid)
             else:
                 self.do_log(
-                    log.LogLevel.INFO, 'Keep on error is enabled, machine will not be marked for deletion'
+                    types.log.LogLevel.INFO, 'Keep on error is enabled, machine will not be marked for deletion'
                 )
                 # Fix queue to FINISH and return it
                 self._queue = [Operation.FINISH]

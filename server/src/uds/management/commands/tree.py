@@ -42,7 +42,7 @@ from django.core.management.base import BaseCommand
 
 from uds.core.util import log, model, config
 from uds import models
-from uds.core.types.states import State
+from uds.core import types
 
 
 logger = logging.getLogger(__name__)
@@ -136,7 +136,7 @@ class Command(BaseCommand):
             return f'{cntr:02d}.-{s}'
 
         max_items = int(options['maxitems'])
-        now = model.sql_datetime()
+        now = model.sql_now()
 
         tree: dict[str, typing.Any] = {}
         try:
@@ -155,10 +155,10 @@ class Command(BaseCommand):
                         userservices: dict[str, typing.Any] = {}
                         fltr = service_pool.userServices.all()
                         if not options['alluserservices']:
-                            fltr = fltr.filter(state=State.ERROR)
+                            fltr = fltr.filter(state=types.states.State.ERROR)
                         for item in fltr[:max_items]:  # at most max_items items
                             logs = [
-                                f'{l["date"]}: {log.LogLevel.from_int(l["level"])} [{l["source"]}] - {l["message"]}'
+                                f'{l["date"]}: {types.log.LogLevel.from_int(l["level"])} [{l["source"]}] - {l["message"]}'
                                 for l in log.get_logs(item)
                             ]
                             userservices[item.friendly_name] = {
@@ -166,8 +166,8 @@ class Command(BaseCommand):
                                     'id': item.uuid,
                                     'unique_id': item.unique_id,
                                     'friendly_name': item.friendly_name,
-                                    'state': State.from_str(item.state).localized,
-                                    'os_state': State.from_str(item.os_state).localized,
+                                    'state': types.states.State.from_str(item.state).localized,
+                                    'os_state': types.states.State.from_str(item.os_state).localized,
                                     'state_date': item.state_date,
                                     'creation_date': item.creation_date,
                                     'revision': item.publication and item.publication.revision or '',

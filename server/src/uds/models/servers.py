@@ -39,8 +39,8 @@ from django.db.models import Q
 from uds.core import consts, types
 from uds.core.consts import MAC_UNKNOWN
 from uds.core.types.requests import ExtendedHttpRequest
-from uds.core.util import log, net, properties, resolver
-from uds.core.util.model import sql_stamp, sql_datetime
+from uds.core.util import net, properties, resolver
+from uds.core.util.model import sql_stamp, sql_now
 
 from .tag import TaggingMixin
 from .uuid_model import UUIDModel
@@ -141,9 +141,9 @@ class ServerGroup(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         # If not found, try to resolve ip_or_host and search again
         try:
             ip = resolver.resolve(ip_or_host_or_mac)[0]
-            found = Server.objects.filter(Q(ip=ip) | Q(hostname=ip))
-            if found:
-                return found[0]
+            found_2 = Server.objects.filter(Q(ip=ip) | Q(hostname=ip))
+            if found_2:
+                return found_2[0]
         except Exception:
             pass
         return None
@@ -219,7 +219,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     certificate = models.TextField(default='', blank=True)
 
     # Log level, so we can filter messages for this server
-    log_level = models.IntegerField(default=log.LogLevel.ERROR.value)
+    log_level = models.IntegerField(default=types.log.LogLevel.ERROR.value)
 
     # Extra data, for server type custom data use (i.e. actor keeps command related data here)
     data: typing.Any = models.JSONField(null=True, blank=True, default=None)
@@ -295,7 +295,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         if duration is None:
             self.locked_until = None
         else:
-            self.locked_until = sql_datetime() + duration
+            self.locked_until = sql_now() + duration
         self.save(update_fields=['locked_until'])
 
     def interpolate_new_assignation(self) -> None:
@@ -319,7 +319,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         If it is not available, we return False, otherwise True
         """
         restrainedUntil = datetime.datetime.fromtimestamp(self.properties.get('available', consts.NEVER_UNIX))
-        return restrainedUntil > sql_datetime()
+        return restrainedUntil > sql_now()
 
     def set_restrained_until(self, value: typing.Optional[datetime.datetime] = None) -> None:
         """Sets the availability of this server

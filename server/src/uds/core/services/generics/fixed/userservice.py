@@ -37,7 +37,7 @@ import collections.abc
 
 from uds.core import consts, services, types
 from uds.core.types.services import Operation
-from uds.core.util import log, autoserializable
+from uds.core.util import autoserializable
 
 from .. import exceptions
 
@@ -145,7 +145,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         """
         reason = str(reason)
         logger.debug('Setting error state, reason: %s (%s)', reason, self._queue, stack_info=True, stacklevel=3)
-        self.do_log(log.LogLevel.ERROR, reason)
+        self.do_log(types.log.LogLevel.ERROR, reason)
 
         if self._vmid:
             if self.service().should_maintain_on_error() is False:
@@ -229,7 +229,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             if self._vmid:
                 return self.service().get_ip(self._vmid)
         except exceptions.NotFoundError:
-            self.do_log(log.LogLevel.ERROR, f'Machine not found: {self._vmid}::{self._name}')
+            self.do_log(types.log.LogLevel.ERROR, f'Machine not found: {self._vmid}::{self._name}')
 
         except Exception:
             pass

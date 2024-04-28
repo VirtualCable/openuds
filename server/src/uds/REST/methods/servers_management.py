@@ -38,7 +38,7 @@ from django.utils.translation import gettext_lazy as _
 from uds import models
 from uds.core import consts, types, ui
 from uds.core.util import net, permissions, ensure
-from uds.core.util.model import sql_datetime, process_uuid
+from uds.core.util.model import sql_now, process_uuid
 from uds.core.exceptions.rest import NotFound, RequestError
 from uds.REST.model import DetailHandler, ModelHandler
 
@@ -247,12 +247,12 @@ class ServersServers(DetailHandler):
         parent = ensure.is_instance(parent, models.ServerGroup)
         # Item is the uuid of the server to add
         server: typing.Optional['models.Server'] = None  # Avoid warning on reference before assignment
-
+        mac: str = ''
         if item is None:
             # Create new, depending on server type
             if parent.type == types.servers.ServerType.UNMANAGED:
                 # Ensure mac is emty or valid
-                mac: str = self._params['mac'].strip().upper()
+                mac = self._params['mac'].strip().upper()
                 if mac and not net.is_valid_mac(mac):
                     raise self.invalid_request_response('Invalid MAC address')
                 # Create a new one, and add it to group
@@ -265,7 +265,7 @@ class ServersServers(DetailHandler):
                     mac=mac,
                     type=parent.type,
                     subtype=parent.subtype,
-                    stamp=sql_datetime(),
+                    stamp=sql_now(),
                 )
                 # Add to group
                 parent.servers.add(server)
@@ -284,7 +284,7 @@ class ServersServers(DetailHandler):
                 pass
         else:
             if parent.type == types.servers.ServerType.UNMANAGED:
-                mac: str = self._params['mac'].strip().upper()
+                mac = self._params['mac'].strip().upper()
                 if mac and not net.is_valid_mac(mac):
                     raise self.invalid_request_response('Invalid MAC address')
                 try:
@@ -292,9 +292,10 @@ class ServersServers(DetailHandler):
                         # Update register info also on update
                         register_username=self._user.name,
                         register_ip=self._request.ip,
-                        ip=self._params['ip'],
                         hostname=self._params['hostname'],
+                        ip=self._params['ip'],
                         mac=mac,
+                        stamp=sql_now(),  # Modified now
                     )
                 except Exception:
                     raise self.invalid_item_response() from None

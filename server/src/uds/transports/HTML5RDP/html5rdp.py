@@ -40,7 +40,7 @@ from uds import models
 from uds.core import transports, types, ui, consts
 from uds.core.managers.crypto import CryptoManager
 from uds.core.util import fields
-from uds.core.util.model import sql_datetime
+from uds.core.util.model import sql_now
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -458,7 +458,7 @@ class HTML5RDPTransport(transports.Transport):
                 + '_'
                 + sanitize(user.name)
                 + '/'
-                + sql_datetime().strftime('%Y%m%d-%H%M')
+                + sql_now().strftime('%Y%m%d-%H%M')
             )
             params['create-recording-path'] = 'true'
 

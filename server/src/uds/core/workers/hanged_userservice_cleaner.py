@@ -33,10 +33,11 @@ from datetime import timedelta
 import logging
 
 from django.db.models import Q, Count
+
+from uds.core import types
 from uds.core.util.config import GlobalConfig
 from uds.models import ServicePool, UserService
-from uds.core.util.model import sql_datetime
-from uds.core.types.states import State
+from uds.core.util.model import sql_now
 from uds.core.jobs import Job
 from uds.core.util import log
 
@@ -49,15 +50,15 @@ class HangedCleaner(Job):
     friendly_name = 'Hanged services checker'
 
     def run(self) -> None:
-        now = sql_datetime()
+        now = sql_now()
         since_state = now - timedelta(
             seconds=GlobalConfig.MAX_INITIALIZING_TIME.as_int()
         )
         since_removing = now - timedelta(seconds=GlobalConfig.MAX_REMOVAL_TIME.as_int())
         # Filter for locating machine not ready
-        flt = Q(state_date__lt=since_state, state=State.PREPARING) | Q(
-            state_date__lt=since_state, state=State.USABLE, os_state=State.PREPARING
-        ) | Q(state_date__lt=since_removing, state__in=[State.REMOVING, State.CANCELING])
+        flt = Q(state_date__lt=since_state, state=types.states.State.PREPARING) | Q(
+            state_date__lt=since_state, state=types.states.State.USABLE, os_state=types.states.State.PREPARING
+        ) | Q(state_date__lt=since_removing, state__in=[types.states.State.REMOVING, types.states.State.CANCELING])
 
         servicepools_with_hanged = (
             ServicePool.objects.annotate(
@@ -66,22 +67,22 @@ class HangedCleaner(Job):
                     # Rewrited Filter for servicePool
                     filter=Q(
                         userServices__state_date__lt=since_state,
-                        userServices__state=State.PREPARING,
+                        userServices__state=types.states.State.PREPARING,
                     )
                     | Q(
                         userServices__state_date__lt=since_state,
-                        userServices__state=State.USABLE,
-                        userServices__os_state=State.PREPARING,
+                        userServices__state=types.states.State.USABLE,
+                        userServices__os_state=types.states.State.PREPARING,
                     )
                     | Q(
                         userServices__state_date__lt=since_removing,
-                        userServices__state__in=[State.REMOVING, State.CANCELING],
+                        userServices__state__in=[types.states.State.REMOVING, types.states.State.CANCELING],
                     ),
                 )
             )
             .exclude(hanged=0)
             .exclude(service__provider__maintenance_mode=True)
-            .filter(state=State.ACTIVE)
+            .filter(state=types.states.State.ACTIVE)
         )
 
         # Type
@@ -95,30 +96,30 @@ class HangedCleaner(Job):
                     continue
                 logger.debug('Found hanged service %s', us)
                 if (
-                    us.state in [State.REMOVING, State.CANCELING]
+                    us.state in [types.states.State.REMOVING, types.states.State.CANCELING]
                 ):  # Removing too long, remark it as removable
                     log.log(
                         us,
-                        log.LogLevel.ERROR,
+                        types.log.LogLevel.ERROR,
                         'User Service hanged on removal process. Restarting removal.',
-                        log.LogSource.INTERNAL,
+                        types.log.LogSource.INTERNAL,
                     )
                     log.log(
                         servicePool,
-                        log.LogLevel.ERROR,
+                        types.log.LogLevel.ERROR,
                         f'User service {us.friendly_name} hanged on removal. Restarting removal.',
                     )
                     us.release()  # Mark it again as removable, and let's see
                 else:
                     log.log(
                         us,
-                        log.LogLevel.ERROR,
+                        types.log.LogLevel.ERROR,
                         'User Service seems to be hanged. Removing it.',
-                        log.LogSource.INTERNAL,
+                        types.log.LogSource.INTERNAL,
                     )
                     log.log(
                         servicePool,
-                        log.LogLevel.ERROR,
+                        types.log.LogLevel.ERROR,
                         f'Removing user service {us.friendly_name} because it seems to be hanged'
                     )
                     us.release_or_cancel()

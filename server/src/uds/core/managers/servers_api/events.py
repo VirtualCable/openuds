@@ -38,25 +38,25 @@ from django.conf import settings
 from uds import models
 from uds.core import consts, osmanagers, types
 from uds.core.util import log
-from uds.core.util.model import sql_datetime
+from uds.core.util.model import sql_now
 from uds.REST.utils import rest_result
 
 logger = logging.getLogger(__name__)
 
 
 def process_log(server: 'models.Server', data: dict[str, typing.Any]) -> typing.Any:
-    # Log level is an string, as in log.LogLevel
+    # Log level is an string, as in types.log.LogLevel
     if data.get('userservice_uuid', None):  # Log for an user service
         try:
             userService = models.UserService.objects.get(uuid=data['userservice_uuid'])
             log.log(
-                userService, log.LogLevel.from_str(data['level']), data['message'], source=log.LogSource.SERVER
+                userService, types.log.LogLevel.from_str(data['level']), data['message'], source=types.log.LogSource.SERVER
             )
             return rest_result(consts.OK)
         except models.UserService.DoesNotExist:
             pass  # If not found, log on server
 
-    log.log(server, log.LogLevel.from_str(data['level']), data['message'], source=log.LogSource.SERVER)
+    log.log(server, types.log.LogLevel.from_str(data['level']), data['message'], source=types.log.LogSource.SERVER)
 
     return rest_result(consts.OK)
 
@@ -150,7 +150,7 @@ def process_ping(server: 'models.Server', data: dict[str, typing.Any]) -> typing
     if 'stats' in data:
         server.stats = types.servers.ServerStats.from_dict(data['stats'])
         # Set stats on server
-    server.last_ping = sql_datetime()
+    server.last_ping = sql_now()
 
     return rest_result(consts.OK)
 

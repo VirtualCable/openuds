@@ -49,7 +49,7 @@ from uds.core.managers.crypto import CryptoManager
 from uds.core.types.requests import ExtendedHttpRequest
 from uds.core.ui import gui
 from uds.core.util import security, decorators, auth as auth_utils
-from uds.core.util.model import sql_datetime
+from uds.core.util.model import sql_now
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -551,9 +551,9 @@ class SAMLAuthenticator(auths.Authenticator):
                 ),
                 # This is a date of end of validity
                 'metadataValidUntil': (
-                    sql_datetime() + datetime.timedelta(days=self.metadata_validity_duration.as_int())
+                    sql_now() + datetime.timedelta(days=self.metadata_validity_duration.as_int())
                     if self.metadata_cache_duration.value > 0
-                    else sql_datetime() + datetime.timedelta(days=365 * 10)
+                    else sql_now() + datetime.timedelta(days=365 * 10)
                 ),
                 'nameIdEncrypted': self.use_name_id_encrypted.as_bool(),
                 'authnRequestsSigned': self.use_authn_requests_signed.as_bool(),

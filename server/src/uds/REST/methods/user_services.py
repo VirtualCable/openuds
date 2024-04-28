@@ -224,7 +224,7 @@ class AssignedService(DetailHandler):
         else:
             raise self.invalid_item_response(_('Item is not removable'))
 
-        log.log(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
+        log.log(parent, types.log.LogLevel.INFO, logStr, types.log.LogSource.ADMIN)
 
     # Only owner is allowed to change right now
     def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
@@ -253,7 +253,7 @@ class AssignedService(DetailHandler):
         userService.save()
 
         # Log change
-        log.log(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
+        log.log(parent, types.log.LogLevel.INFO, logStr, types.log.LogSource.ADMIN)
 
     def reset(self, parent: 'models.ServicePool', item: str) -> typing.Any:
         userService = parent.userServices.get(uuid=process_uuid(item))
@@ -376,9 +376,9 @@ class Groups(DetailHandler):
         parent.assignedGroups.add(group)
         log.log(
             parent,
-            log.LogLevel.INFO,
+            types.log.LogLevel.INFO,
             f'Added group {group.pretty_name} by {self._user.pretty_name}',
-            log.LogSource.ADMIN,
+            types.log.LogSource.ADMIN,
         )
 
     def delete_item(self, parent: 'Model', item: str) -> None:
@@ -387,9 +387,9 @@ class Groups(DetailHandler):
         parent.assignedGroups.remove(group)
         log.log(
             parent,
-            log.LogLevel.INFO,
+            types.log.LogLevel.INFO,
             f'Removed group {group.pretty_name} by {self._user.pretty_name}',
-            log.LogSource.ADMIN,
+            types.log.LogSource.ADMIN,
         )
 
 
@@ -438,9 +438,9 @@ class Transports(DetailHandler):
         parent.transports.add(transport)
         log.log(
             parent,
-            log.LogLevel.INFO,
+            types.log.LogLevel.INFO,
             f'Added transport {transport.name} by {self._user.pretty_name}',
-            log.LogSource.ADMIN,
+            types.log.LogSource.ADMIN,
         )
 
     def delete_item(self, parent: 'Model', item: str) -> None:
@@ -449,9 +449,9 @@ class Transports(DetailHandler):
         parent.transports.remove(transport)
         log.log(
             parent,
-            log.LogLevel.INFO,
+            types.log.LogLevel.INFO,
             f'Removed transport {transport.name} by {self._user.pretty_name}',
-            log.LogSource.ADMIN,
+            types.log.LogSource.ADMIN,
         )
 
 
@@ -482,9 +482,9 @@ class Publications(DetailHandler):
 
         log.log(
             parent,
-            log.LogLevel.INFO,
+            types.log.LogLevel.INFO,
             f'Initiated publication v{parent.current_pub_revision} by {self._user.pretty_name}',
-            log.LogSource.ADMIN,
+            types.log.LogSource.ADMIN,
         )
 
         return self.success()
@@ -512,9 +512,9 @@ class Publications(DetailHandler):
 
         log.log(
             parent,
-            log.LogLevel.INFO,
+            types.log.LogLevel.INFO,
             f'Canceled publication v{parent.current_pub_revision} by {self._user.pretty_name}',
-            log.LogSource.ADMIN,
+            types.log.LogSource.ADMIN,
         )
 
         return self.success()

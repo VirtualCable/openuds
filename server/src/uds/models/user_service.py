@@ -39,7 +39,7 @@ from django.db.models import signals
 from uds.core import types, consts
 from uds.core.environment import Environment
 from uds.core.util import log, properties
-from uds.core.util.model import sql_datetime
+from uds.core.util.model import sql_now
 from uds.core.types.states import State
 from uds.models.service_pool import ServicePool
 from uds.models.service_pool_publication import ServicePoolPublication
@@ -408,7 +408,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
 
         """
         if state != self.state:
-            self.state_date = sql_datetime()
+            self.state_date = sql_now()
             self.state = state
             self.save(update_fields=['state', 'state_date'])
 
@@ -423,7 +423,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
 
         """
         if state != self.os_state:
-            self.state_date = sql_datetime()
+            self.state_date = sql_now()
             self.os_state = state
             self.save(update_fields=['os_state', 'state_date'])
 
@@ -435,7 +435,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
             user: User to assing to (db record)
         """
         self.cache_level = 0
-        self.state_date = sql_datetime()
+        self.state_date = sql_now()
         self.user = user
         self.save(update_fields=['cache_level', 'state_date', 'user'])
 
@@ -452,7 +452,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         from uds.core.managers.userservice import UserServiceManager
 
         self.in_use = inUse
-        self.in_use_date = sql_datetime()
+        self.in_use_date = sql_now()
         self.save(update_fields=['in_use', 'in_use_date'])
 
         # Start/stop accounting
@@ -618,8 +618,8 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         )
 
     # Utility for logging
-    def log(self, message: str, level: log.LogLevel = log.LogLevel.INFO) -> None:
-        log.log(self, level, message, log.LogSource.INTERNAL)
+    def log(self, message: str, level: types.log.LogLevel = types.log.LogLevel.INFO) -> None:
+        log.log(self, level, message, types.log.LogSource.INTERNAL)
 
     def test_connectivity(self, host: str, port: 'str|int', timeout:int=4) -> bool:
         return self.deployed_service.test_connectivity(host, port, timeout)

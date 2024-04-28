@@ -37,7 +37,7 @@ import typing
 import collections.abc
 
 from uds.core import services, consts, types
-from uds.core.util import log, autoserializable
+from uds.core.util import autoserializable
 
 from . import on
 
@@ -147,7 +147,7 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
 
             self.cache.put('ready', '1')
         except Exception as e:
-            self.do_log(log.LogLevel.ERROR, 'Error on setReady: {}'.format(e))
+            self.do_log(types.log.LogLevel.ERROR, 'Error on setReady: {}'.format(e))
             # Treat as operation done, maybe the machine is ready and we can continue
 
         return types.states.TaskState.FINISHED
@@ -252,7 +252,7 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
         """
         reason = str(reason)
         logger.debug('Setting error state, reason: %s', reason)
-        self.do_log(log.LogLevel.ERROR, reason)
+        self.do_log(types.log.LogLevel.ERROR, reason)
 
         if self._vmid:  # Powers off & delete it
             try:

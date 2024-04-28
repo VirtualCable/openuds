@@ -38,7 +38,7 @@ from django.utils.translation import gettext_lazy as _
 from uds import models
 from uds.core import consts, types
 from uds.core.exceptions import rest as rest_exceptions
-from uds.core.util import decorators, validators, log, model
+from uds.core.util import decorators, validators, model
 from uds.REST import Handler
 from uds.REST.utils import rest_result
 
@@ -50,7 +50,7 @@ logger = logging.getLogger(__name__)
 class ServerRegisterBase(Handler):
     def post(self) -> collections.abc.MutableMapping[str, typing.Any]:
         serverToken: models.Server
-        now = model.sql_datetime()
+        now = model.sql_now()
         ip = self._params.get('ip', self.request.ip)
         if ':' in ip:
             # If zone is present, remove it
@@ -122,7 +122,7 @@ class ServerRegisterBase(Handler):
                     listen_port=port,
                     hostname=self._params['hostname'],
                     certificate=certificate,
-                    log_level=self._params.get('log_level', log.LogLevel.INFO.value),
+                    log_level=self._params.get('log_level', types.log.LogLevel.INFO.value),
                     stamp=now,
                     type=self._params['type'],
                     subtype=self._params.get('subtype', ''),  # Optional

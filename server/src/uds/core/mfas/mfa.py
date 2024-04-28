@@ -44,7 +44,7 @@ from django.utils.translation import gettext_noop as _
 from uds.core import exceptions, types
 from uds.core.ui import gui
 from uds.core.module import Module
-from uds.core.util.model import sql_datetime
+from uds.core.util.model import sql_now
 from uds.models.network import Network
 
 if typing.TYPE_CHECKING:
@@ -230,7 +230,7 @@ class MFA(Module):
         Internal method to put the data into storage
         """
         storageKey = request.ip + userId
-        self.storage.save_pickled(storageKey, (sql_datetime(), code))
+        self.storage.save_pickled(storageKey, (sql_now(), code))
 
     def process(
         self,
@@ -267,7 +267,7 @@ class MFA(Module):
         try:
             if data and validity:
                 # if we have a stored code, check if it's still valid
-                if data[0] + datetime.timedelta(seconds=validity) > sql_datetime():
+                if data[0] + datetime.timedelta(seconds=validity) > sql_now():
                     # if it's still valid, just return without sending a new one
                     return MFA.RESULT.OK
         except Exception:
@@ -320,7 +320,7 @@ class MFA(Module):
             data = self._get_data(request, userId)
             if data and len(data) == 2:
                 validity = validity if validity is not None else 0
-                if validity > 0 and data[0] + datetime.timedelta(seconds=validity) < sql_datetime():
+                if validity > 0 and data[0] + datetime.timedelta(seconds=validity) < sql_now():
                     # if it is no more valid, raise an error
                     # Remove stored code and raise error
                     self._remove_data(request, userId)

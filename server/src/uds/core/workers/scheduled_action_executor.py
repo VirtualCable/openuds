@@ -34,7 +34,7 @@ import logging
 from uds.core import types
 
 from uds.models import CalendarAction
-from uds.core.util.model import sql_datetime
+from uds.core.util.model import sql_now
 from uds.core.jobs import Job
 
 logger = logging.getLogger(__name__)
@@ -49,7 +49,7 @@ class ScheduledAction(Job):
         for configuredAction in CalendarAction.objects.filter(
             service_pool__service__provider__maintenance_mode=False,  # Avoid maintenance
             service_pool__state=types.states.State.ACTIVE,  # Avoid Non active pools
-            next_execution__lt=sql_datetime(),
+            next_execution__lt=sql_now(),
         ).order_by('next_execution'):
             logger.info(
                 'Executing calendar action %s.%s (%s)',

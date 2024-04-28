@@ -110,9 +110,9 @@ class AccessCalendars(DetailHandler):
 
         log.log(
             parent,
-            log.LogLevel.INFO,
+            types.log.LogLevel.INFO,
             f'{"Added" if uuid is None else "Updated"} access calendar {calendar.name}/{access} by {self._user.pretty_name}',
-            log.LogSource.ADMIN,
+            types.log.LogSource.ADMIN,
         )
 
     def delete_item(self, parent: 'Model', item: str) -> None:
@@ -121,7 +121,7 @@ class AccessCalendars(DetailHandler):
         logStr = f'Removed access calendar {calendarAccess.calendar.name} by {self._user.pretty_name}'
         calendarAccess.delete()
 
-        log.log(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
+        log.log(parent, types.log.LogLevel.INFO, logStr, types.log.LogSource.ADMIN)
 
 
 class ActionsCalendars(DetailHandler):
@@ -222,7 +222,7 @@ class ActionsCalendars(DetailHandler):
                 params=params,
             )
 
-        log.log(parent, log.LogLevel.INFO, log_string, log.LogSource.ADMIN)
+        log.log(parent, types.log.LogLevel.INFO, log_string, types.log.LogSource.ADMIN)
 
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, models.ServicePool)
@@ -236,7 +236,7 @@ class ActionsCalendars(DetailHandler):
 
         calendarAction.delete()
 
-        log.log(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
+        log.log(parent, types.log.LogLevel.INFO, logStr, types.log.LogSource.ADMIN)
 
     def execute(self, parent: 'Model', item: str) -> typing.Any:
         parent = ensure.is_instance(parent, models.ServicePool)
@@ -252,7 +252,7 @@ class ActionsCalendars(DetailHandler):
             f'{calendarAction.params}" by {self._user.pretty_name}'
         )
 
-        log.log(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
+        log.log(parent, types.log.LogLevel.INFO, logStr, types.log.LogSource.ADMIN)
         calendarAction.execute()
 
         return self.success()

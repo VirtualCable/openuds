@@ -40,7 +40,7 @@ from django.utils.translation import gettext_noop as _
 
 from uds.core import messaging, exceptions, types
 from uds.core.ui import gui
-from uds.core.util.model import sql_datetime
+from uds.core.util.model import sql_now
 from uds.core.util.utils import ignore_exceptions
 
 from . import telegram
@@ -162,7 +162,7 @@ class TelegramNotifier(messaging.Notifier):
             return  # no access token, no messages
         # Time of last retrieve
         last_check: typing.Optional[datetime.datetime] = self.storage.read_pickled('last_check')
-        now = sql_datetime()
+        now = sql_now()
 
         # If last check is not set, we will set it to now
         if last_check is None:

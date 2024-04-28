@@ -41,7 +41,7 @@ from django.db import transaction, DatabaseError, connections
 from django.db.models import Q
 
 from uds.models import Scheduler as DBScheduler
-from uds.core.util.model import sql_datetime
+from uds.core.util.model import sql_now
 from uds.core.types.states import State
 from .jobs_factory import JobsFactory
 
@@ -107,7 +107,7 @@ class JobThread(threading.Thread):
             DBScheduler.objects.select_for_update().filter(id=self._db_job_id).update(
                 state=State.FOR_EXECUTE,
                 owner_server='',
-                next_execution=sql_datetime() + timedelta(seconds=self._freq),
+                next_execution=sql_now() + timedelta(seconds=self._freq),
             )
 
 
@@ -150,7 +150,7 @@ class Scheduler:
         """
         jobInstance = None
         try:
-            now = sql_datetime()  # Datetimes are based on database server times
+            now = sql_now()  # Datetimes are based on database server times
             fltr = Q(state=State.FOR_EXECUTE) & (
                 Q(last_execution__gt=now) | Q(next_execution__lt=now)
             )
@@ -206,7 +206,7 @@ class Scheduler:
                 owner_server=''
             )  # @UndefinedVariable
             DBScheduler.objects.select_for_update().filter(
-                last_execution__lt=sql_datetime() - timedelta(minutes=15),
+                last_execution__lt=sql_now() - timedelta(minutes=15),
                 state=State.RUNNING,
             ).update(
                 owner_server='', state=State.FOR_EXECUTE

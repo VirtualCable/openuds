@@ -35,7 +35,7 @@ import logging
 
 from django.db import models, transaction
 
-from ..core.util.model import sql_datetime
+from ..core.util.model import sql_now
 
 
 logger = logging.getLogger(__name__)
@@ -69,14 +69,14 @@ class Cache(models.Model):
         """
         Purges the cache items that are no longer vaild.
         """
-        now = sql_datetime()
+        now = sql_now()
         with transaction.atomic():
             for v in Cache.objects.all():
                 if now > v.created + timedelta(seconds=v.validity):
                     v.delete()
 
     def __str__(self) -> str:
-        if sql_datetime() > (self.created + timedelta(seconds=self.validity)):
+        if sql_now() > (self.created + timedelta(seconds=self.validity)):
             expired = "Expired"
         else:
             expired = "Active"

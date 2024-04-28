@@ -42,9 +42,8 @@ from uds import models
 from uds.core import exceptions, types, services
 from uds.core.ui import gui
 from uds.core.util import fields
-from uds.core.util.model import sql_datetime
+from uds.core.util.model import sql_now
 from uds.core.util import security
-from uds.core import services
 
 from .deployment_multi import IPMachinesUserService
 
@@ -148,7 +147,7 @@ class IPMachinesService(services.Service):
         return datetime.timedelta(hours=self.max_session_hours.value)
 
     def enumerate_assignables(self) -> collections.abc.Iterable[types.ui.ChoiceItem]:
-        now = sql_datetime()
+        now = sql_now()
         return [
             gui.choice_item(f'{server.host}|{server.mac}', server.uuid)
             for server in fields.get_server_group_from_field(self.server_group).servers.all()
@@ -163,9 +162,9 @@ class IPMachinesService(services.Service):
     ) -> types.states.TaskState:
         server: 'models.Server' = models.Server.objects.get(uuid=assignable_id)
         ipmachine_instance: IPMachinesUserService = typing.cast(IPMachinesUserService, userservice_instance)
-        if server.locked_until is None or server.locked_until < sql_datetime():
+        if server.locked_until is None or server.locked_until < sql_now():
             # Lock the server for 10 year right now...
-            server.locked_until = sql_datetime() + datetime.timedelta(days=365)
+            server.locked_until = sql_now() + datetime.timedelta(days=365)
 
             return ipmachine_instance.assign(server.host)
 
@@ -179,7 +178,7 @@ class IPMachinesService(services.Service):
         if self.randomize_host.as_bool() is True:
             random.shuffle(list_of_servers)  # Reorder the list randomly if required
             for server in list_of_servers:
-                if server.locked_until is None or server.locked_until < sql_datetime():
+                if server.locked_until is None or server.locked_until < sql_now():
                     return server.uuid
         raise exceptions.services.InsufficientResourcesException()
     
@@ -187,14 +186,14 @@ class IPMachinesService(services.Service):
         server = models.Server.objects.get(uuid=server_uuid)
         return server.host, server.mac
 
-    def assign(self, server_uuid: str) -> None:
+    def lock_server(self, server_uuid: str) -> None:
         try:
             server = models.Server.objects.get(uuid=server_uuid)
             server.lock(self.get_max_lock_time())
         except models.Server.DoesNotExist:
             pass
 
-    def unassign(self, server_uuid: str) -> None:
+    def unlock_server(self, server_uuid: str) -> None:
         try:
             server = models.Server.objects.get(uuid=server_uuid)
             server.lock(None)
@@ -209,13 +208,14 @@ class IPMachinesService(services.Service):
         # Maybe, an user has logged in on an unassigned machine
         # if lockForExternalAccess is enabled, we must lock it
         if self.lock_on_external_access.as_bool() is True:
-            self.assign(id)
+            self.do_log(types.log.LogLevel.DEBUG, f'External login detected for {id}, locking machine for {self.get_max_lock_time()} or until logout')
+            self.lock_server(id)
 
     def process_logout(self, id: str, remote_login: bool) -> None:
         '''
         Process logout for a machine and release it.
         '''
-        self.unassign(id)
+        self.unlock_server(id)
 
     def notify_initialization(self, id: str) -> None:
         '''
@@ -223,7 +223,7 @@ class IPMachinesService(services.Service):
         Normally, this means that it's free
         '''
         logger.debug('Notify initialization for %s: %s', self, id)
-        self.unassign(id)
+        self.unlock_server(id)
 
     # Used by actor API. look parent documentation
     def get_valid_id(self, ids: collections.abc.Iterable[str]) -> typing.Optional[str]:

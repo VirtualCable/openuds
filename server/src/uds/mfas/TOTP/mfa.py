@@ -39,7 +39,7 @@ import qrcode
 from django.utils.translation import gettext_noop as _, gettext
 
 from uds import models
-from uds.core.util.model import sql_datetime
+from uds.core.util.model import sql_now
 from uds.core import mfas, exceptions, types
 from uds.core.ui import gui
 
@@ -200,7 +200,7 @@ class TOTP_MFA(mfas.MFA):
 
         # Validate code
         if not self.get_totp(userId, username).verify(
-            code, valid_window=self.valid_window.as_int(), for_time=sql_datetime()
+            code, valid_window=self.valid_window.as_int(), for_time=sql_now()
         ):
             raise exceptions.auth.MFAError(gettext('Invalid code'))
 

@@ -142,7 +142,7 @@ class Migration(migrations.Migration):
                         max_length=128,
                     ),
                 ),
-                ("start", models.DateTimeField(default=uds.core.util.model.sql_datetime)),
+                ("start", models.DateTimeField(default=uds.core.util.model.sql_now)),
                 ("end", models.DateTimeField(blank=True, null=True)),
             ],
             options={

@@ -121,9 +121,9 @@ class ServiceCacheUpdater(Job):
         remaining_restraing_time = servicepool.remaining_restraint_time()
         log.log(
             servicepool,
-            log.LogLevel.WARNING,
+            types.log.LogLevel.WARNING,
             f'Service Pool is restrained due to excesive errors (will be available in {remaining_restraing_time} seconds)',
-            log.LogSource.INTERNAL,
+            types.log.LogSource.INTERNAL,
         )
         logger.info(
             '%s will be restrained during %s seconds. Will check this later',
@@ -308,9 +308,9 @@ class ServiceCacheUpdater(Job):
         except MaxServicesReachedError:
             log.log(
                 servicepool_stats.servicepool,
-                log.LogLevel.ERROR,
+                types.log.LogLevel.ERROR,
                 'Max number of services reached for this service',
-                log.LogSource.INTERNAL,
+                types.log.LogSource.INTERNAL,
             )
             logger.warning(
                 'Max user services reached for %s: %s. Cache not created',

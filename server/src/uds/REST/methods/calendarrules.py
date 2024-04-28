@@ -39,7 +39,7 @@ from django.utils.translation import gettext as _
 
 from uds.core import exceptions
 from uds.core.util import ensure, permissions
-from uds.core.util.model import process_uuid, sql_datetime
+from uds.core.util.model import process_uuid, sql_now
 from uds.models.calendar import Calendar
 from uds.models.calendar_rule import CalendarRule, FrequencyInfo
 from uds.REST.model import DetailHandler
@@ -158,7 +158,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
         logger.debug('Deleting rule %s from %s', item, parent)
         try:
             calRule = parent.rules.get(uuid=process_uuid(item))
-            calRule.calendar.modified = sql_datetime()
+            calRule.calendar.modified = sql_now()
             calRule.calendar.save()
             calRule.delete()
         except Exception as e:

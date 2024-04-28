@@ -39,7 +39,7 @@ import typing
 from uds.core import types
 from uds.core.util import singleton
 from uds.core.util.config import GlobalConfig
-from uds.core.util.model import sql_datetime, sql_stamp_seconds
+from uds.core.util.model import sql_now, sql_stamp_seconds
 from uds.models import StatsCounters, StatsCountersAccum, StatsEvents
 
 if typing.TYPE_CHECKING:
@@ -85,7 +85,7 @@ class StatsManager(metaclass=singleton.Singleton):
         model: type[typing.Union['StatsCounters', 'StatsEvents', 'StatsCountersAccum']],
     ) -> None:
         minTime = time.mktime(
-            (sql_datetime() - datetime.timedelta(days=GlobalConfig.STATS_DURATION.as_int())).timetuple()
+            (sql_now() - datetime.timedelta(days=GlobalConfig.STATS_DURATION.as_int())).timetuple()
         )
         model.objects.filter(stamp__lt=minTime).delete()
 
@@ -115,7 +115,7 @@ class StatsManager(metaclass=singleton.Singleton):
             Nothing
         """
         if stamp is None:
-            stamp = sql_datetime()
+            stamp = sql_now()
 
         # To Unix epoch
         stampInt = int(time.mktime(stamp.timetuple()))  # pylint: disable=maybe-no-member
@@ -188,7 +188,7 @@ class StatsManager(metaclass=singleton.Singleton):
         if since is None:
             if points is None:
                 points = 100  # If since is not specified, we need at least points, get a default
-            since = sql_datetime() - datetime.timedelta(seconds=intervalType.seconds() * points)
+            since = sql_now() - datetime.timedelta(seconds=intervalType.seconds() * points)
 
         if isinstance(since, datetime.datetime):
             since = int(since.timestamp())

@@ -111,9 +111,9 @@ class WinRandomPassManager(WindowsOsManager):
             userservice.store_value('winOsRandomPass', rnd_password)
             log.log(
                 userservice,
-                log.LogLevel.INFO,
+                types.log.LogLevel.INFO,
                 f'Password set to "{rnd_password}"',
-                log.LogSource.OSMANAGER,
+                types.log.LogSource.OSMANAGER,
             )
         return rnd_password
 

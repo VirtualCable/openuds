@@ -39,7 +39,7 @@ import collections.abc
 from uds.core import types, consts
 
 from uds.core.util import security, cache
-from uds.core.util.model import sql_datetime
+from uds.core.util.model import sql_now
 
 
 if typing.TYPE_CHECKING:
@@ -63,7 +63,7 @@ def restrain_server(func: collections.abc.Callable[..., typing.Any]) -> collecti
         try:
             return func(self, *args, **kwargs)
         except Exception as e:
-            restrained_until = sql_datetime() + datetime.timedelta(seconds=consts.system.FAILURE_TIMEOUT)
+            restrained_until = sql_now() + datetime.timedelta(seconds=consts.system.FAILURE_TIMEOUT)
             logger.exception('Error executing %s: %s. Server restrained until %s', func.__name__, e, restrained_until)
             self.server.set_restrained_until(
                 restrained_until

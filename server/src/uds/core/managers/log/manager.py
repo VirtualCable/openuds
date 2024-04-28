@@ -34,7 +34,7 @@ import typing
 import logging
 
 from uds.core.util import singleton
-from uds.core.util.model import sql_datetime
+from uds.core.util.model import sql_now
 from uds.models.log import Log
 # from uds.core.workers.log
 
@@ -74,7 +74,7 @@ class LogManager(metaclass=singleton.Singleton):
             Log.objects.create(
                 owner_type=owner_type.value,
                 owner_id=owner_id,
-                created=sql_datetime(),
+                created=sql_now(),
                 source=source,
                 level=level,
                 data=message,

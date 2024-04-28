@@ -39,9 +39,9 @@ import typing
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
-from uds.core.types.log import LogObjectType
+from uds.core import types
 from uds.core.ui import gui
-from uds.core.util import dateutils, log
+from uds.core.util import dateutils
 from uds.models import Log
 
 from .base import ListReport
@@ -88,8 +88,8 @@ class ListReportAuditCSV(ListReport):
         for i in Log.objects.filter(
             created__gte=start,
             created__lte=end,
-            source=log.LogSource.REST,
-            owner_type=LogObjectType.SYSLOG,
+            source=types.log.LogSource.REST,
+            owner_type=types.log.LogObjectType.SYSLOG,
         ).order_by('-created'):
             # extract user, method, response_code and request from data field
             m = rx.match(i.data)

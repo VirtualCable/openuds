@@ -37,7 +37,6 @@ from django.utils.translation import gettext_noop as _
 from uds.core import types
 from uds.core.services.generics.fixed.service import FixedService
 from uds.core.ui import gui
-from uds.core.util import log
 
 from . import helpers
 from .deployment_fixed import OpenStackUserServiceFixed
@@ -170,7 +169,7 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
                             break
                         except Exception:  # Notifies on log, but skipt it
                             self.provider().do_log(
-                                log.LogLevel.WARNING, 'Machine {} not accesible'.format(found_vmid)
+                                types.log.LogLevel.WARNING, 'Machine {} not accesible'.format(found_vmid)
                             )
                             logger.warning(
                                 'The service has machines that cannot be checked on openstack (connection error or machine has been deleted): %s',

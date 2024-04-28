@@ -40,7 +40,7 @@ from uds.core.util import log, storage, properties
 
 from .authenticator import Authenticator
 from ..core.consts import NEVER
-from ..core.util.model import sql_datetime
+from ..core.util.model import sql_now
 from .uuid_model import UUIDModel
 
 # Not imported at runtime, just for type checking
@@ -72,7 +72,7 @@ class User(UUIDModel, properties.PropertiesMixin):
     is_admin = models.BooleanField(default=False)  # is true, this is a super-admin
     last_access = models.DateTimeField(default=NEVER)
     parent = models.CharField(max_length=50, default=None, null=True)
-    created = models.DateTimeField(default=sql_datetime, blank=True)
+    created = models.DateTimeField(default=sql_now, blank=True)
 
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager["User"]'
@@ -128,7 +128,7 @@ class User(UUIDModel, properties.PropertiesMixin):
         """
         Updates the last access for this user with the current time of the sql server
         """
-        self.last_access = sql_datetime()
+        self.last_access = sql_now()
         self.save(update_fields=['last_access'])
 
     def logout(self, request: 'ExtendedHttpRequest') -> types.auth.AuthenticationResult:

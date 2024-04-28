@@ -38,7 +38,6 @@ from uds.core import services, types
 from uds.core.services.generics.fixed.service import FixedService
 from uds.core.services.generics.fixed.userservice import FixedUserService
 from uds.core.ui import gui
-from uds.core.util import log
 
 from . import helpers
 from .deployment_fixed import ProxmoxUserServiceFixed
@@ -162,7 +161,7 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
                         name='UDS Snapshot',
                     )
             except Exception as e:
-                self.do_log(log.LogLevel.WARNING, 'Could not create SNAPSHOT for this VM. ({})'.format(e))
+                self.do_log(types.log.LogLevel.WARNING, 'Could not create SNAPSHOT for this VM. ({})'.format(e))
 
     def snapshot_recovery(self, userservice_instance: FixedUserService) -> None:
         userservice_instance = typing.cast(ProxmoxUserServiceFixed, userservice_instance)
@@ -176,7 +175,7 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
                         self.provider().restore_snapshot(vmid, name=snapshot.name)
                     )
             except Exception as e:
-                self.do_log(log.LogLevel.WARNING, 'Could not restore SNAPSHOT for this VM. ({})'.format(e))
+                self.do_log(types.log.LogLevel.WARNING, 'Could not restore SNAPSHOT for this VM. ({})'.format(e))
 
     def get_and_assign(self) -> str:
         found_vmid: typing.Optional[str] = None
@@ -191,7 +190,7 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
                             break
                         except Exception:  # Notifies on log, but skipt it
                             self.provider().do_log(
-                                log.LogLevel.WARNING, 'Machine {} not accesible'.format(found_vmid)
+                                types.log.LogLevel.WARNING, 'Machine {} not accesible'.format(found_vmid)
                             )
                             logger.warning(
                                 'The service has machines that cannot be checked on proxmox (connection error or machine has been deleted): %s',

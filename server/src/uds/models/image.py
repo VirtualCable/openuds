@@ -29,6 +29,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # pyright: reportUnknownMemberType=false, reportAttributeAccessIssue=false,reportUnknownArgumentType=false
+# mypy: disable-error-code="attr-defined, no-untyped-call"
 import io
 import base64
 import logging
@@ -42,7 +43,7 @@ from django.http import HttpResponse
 
 
 from .uuid_model import UUIDModel
-from uds.core.util.model import sql_datetime
+from uds.core.util.model import sql_now
 from uds.core import consts
 
 logger = logging.getLogger(__name__)
@@ -194,7 +195,7 @@ class Image(UUIDModel):
         return HttpResponse(self.thumb, content_type='image/png')
 
     def save(self, *args: typing.Any, **kwargs: typing.Any) -> None:
-        self.stamp = sql_datetime()
+        self.stamp = sql_now()
         return super().save(*args, **kwargs)
 
     def __str__(self) -> str:

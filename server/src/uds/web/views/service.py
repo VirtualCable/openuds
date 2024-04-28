@@ -36,6 +36,7 @@ import collections.abc
 from django.http import HttpResponse
 from django.views.decorators.cache import cache_page, never_cache
 
+from uds.core import types
 from uds.core.auths.auth import web_login_required, web_password
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.types.requests import ExtendedHttpRequest
@@ -199,11 +200,11 @@ def action(request: 'ExtendedHttpRequestWithUser', service_id: str, action_strin
             rebuild = True
             log.log(
                 userService.deployed_service,
-                log.LogLevel.INFO,
+                types.log.LogLevel.INFO,
                 "Removing User Service {} as requested by {} from {}".format(
                     userService.friendly_name, request.user.pretty_name, request.ip
                 ),
-                log.LogSource.WEB,
+                types.log.LogSource.WEB,
             )
             UserServiceManager().request_logoff(userService)
             userService.release()
@@ -215,11 +216,11 @@ def action(request: 'ExtendedHttpRequestWithUser', service_id: str, action_strin
             rebuild = True
             log.log(
                 userService.deployed_service,
-                log.LogLevel.INFO,
+                types.log.LogLevel.INFO,
                 "Reseting User Service {} as requested by {} from {}".format(
                     userService.friendly_name, request.user.pretty_name, request.ip
                 ),
-                log.LogSource.WEB,
+                types.log.LogSource.WEB,
             )
             # UserServiceManager().requestLogoff(userService)
             UserServiceManager().reset(userService)

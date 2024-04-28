@@ -32,7 +32,7 @@ import logging
 
 from unittest import mock
 
-from uds.core.util import log
+from uds.core import types
 
 from ...utils import rest
 from ...fixtures import servers as servers_fixtures
@@ -71,7 +71,7 @@ class ServerEventsLogTest(rest.test.RESTTestCase):
             )
             self.assertEqual(response.status_code, 200)
             # First call shout have
-            the_log.assert_any_call(server, log.LogLevel.INFO, 'test message', log.LogSource.SERVER, None)
+            the_log.assert_any_call(server, types.log.LogLevel.INFO, 'test message', types.log.LogSource.SERVER, None)
 
             # Now notify to an userService
             response = self.client.rest_post(
@@ -87,7 +87,7 @@ class ServerEventsLogTest(rest.test.RESTTestCase):
 
             self.assertEqual(response.status_code, 200)
             the_log.assert_any_call(
-                userService, log.LogLevel.INFO, 'test message userservice', log.LogSource.SERVER, None
+                userService, types.log.LogLevel.INFO, 'test message userservice', types.log.LogSource.SERVER, None
             )
 
     def test_event_log_fail(self) -> None:

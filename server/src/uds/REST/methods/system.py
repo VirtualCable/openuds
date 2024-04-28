@@ -41,7 +41,7 @@ from uds import models
 from uds.core import exceptions, types
 from uds.core.util import permissions
 from uds.core.util.cache import Cache
-from uds.core.util.model import process_uuid, sql_datetime
+from uds.core.util.model import process_uuid, sql_now
 from uds.core.types.states import State
 from uds.core.util.stats import counters
 from uds.REST import Handler
@@ -69,7 +69,7 @@ def get_servicepools_counters(
         cacheKey = (
             (servicePool and str(servicePool.id) or 'all') + str(counter_type) + str(POINTS) + str(since_days)
         )
-        to = sql_datetime()
+        to = sql_now()
         since: datetime.datetime = to - datetime.timedelta(days=since_days)
 
         cachedValue: typing.Optional[bytes] = cache.get(cacheKey)

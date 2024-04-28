@@ -39,7 +39,7 @@ import collections.abc
 
 from django.utils.translation import gettext_noop as _
 from uds.core.ui import gui
-from uds.core import exceptions
+from uds.core import exceptions, types
 from uds.core.util import log
 
 from .linux_osmanager import LinuxOsManager
@@ -91,9 +91,9 @@ class LinuxRandomPassManager(LinuxOsManager):
             service.store_value('linOsRandomPass', randomPass)
             log.log(
                 service,
-                log.LogLevel.INFO,
+                types.log.LogLevel.INFO,
                 f'Password set to "{randomPass}"',
-                log.LogSource.OSMANAGER,
+                types.log.LogSource.OSMANAGER,
             )
 
         return randomPass

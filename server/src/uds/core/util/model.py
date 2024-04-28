@@ -87,7 +87,7 @@ class TimeTrack:
         return date
 
     @staticmethod
-    def sql_datetime() -> datetime.datetime:
+    def sql_now() -> datetime.datetime:
         now = datetime.datetime.now()
         with TimeTrack.lock:
             diff = now - TimeTrack.last_check
@@ -102,11 +102,11 @@ class TimeTrack:
         return TimeTrack.cached_time + (now - TimeTrack.last_check)
 
 
-def sql_datetime() -> datetime.datetime:
+def sql_now() -> datetime.datetime:
     """Returns the current date/time of the database server.
     Has been updated to use TimeTrack, which reduces the queries to database to get the current time
     """
-    return TimeTrack.sql_datetime()
+    return TimeTrack.sql_now()
 
 
 def sql_stamp_seconds() -> int:
@@ -115,7 +115,7 @@ def sql_stamp_seconds() -> int:
     Returns:
         int: Unix timestamp
     """
-    return int(mktime(sql_datetime().timetuple()))
+    return int(mktime(sql_now().timetuple()))
 
 
 def sql_stamp() -> float:
@@ -124,7 +124,7 @@ def sql_stamp() -> float:
     Returns:
         float: Unix timestamp
     """
-    return float(mktime(sql_datetime().timetuple())) + sql_datetime().microsecond / 1000000.0
+    return float(mktime(sql_now().timetuple())) + sql_now().microsecond / 1000000.0
 
 
 def generate_uuid(obj: typing.Any = None) -> str:

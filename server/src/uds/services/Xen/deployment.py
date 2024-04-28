@@ -36,7 +36,7 @@ import typing
 import collections.abc
 
 from uds.core import services, consts, types
-from uds.core.util import autoserializable, log
+from uds.core.util import autoserializable
 
 from .xen_client import XenPowerState
 
@@ -154,7 +154,7 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
             self.cache.put('ready', '1', 30)
         except Exception as e:
             # On case of exception, log an an error and return as if the operation was executed
-            self.do_log(log.LogLevel.ERROR, 'Error setting machine state: {}'.format(e))
+            self.do_log(types.log.LogLevel.ERROR, 'Error setting machine state: {}'.format(e))
             # return self.__error('Machine is not available anymore')
 
         return types.states.TaskState.FINISHED
@@ -231,7 +231,7 @@ class XenLinkedDeployment(services.UserService, autoserializable.AutoSerializabl
 
     def _error(self, reason: typing.Any) -> types.states.TaskState:
         logger.debug('Setting error state, reason: %s', reason)
-        self.do_log(log.LogLevel.ERROR, reason)
+        self.do_log(types.log.LogLevel.ERROR, reason)
 
         if self._vmid != '':  # Powers off and delete VM
             try:

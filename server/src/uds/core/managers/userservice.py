@@ -50,7 +50,7 @@ from uds.core.services.exceptions import (
 )
 from uds.core.util import log, singleton
 from uds.core.util.decorators import cached
-from uds.core.util.model import sql_datetime
+from uds.core.util.model import sql_now
 from uds.core.types.states import State
 from uds.core.util.stats import events
 from uds.models import MetaPool, ServicePool, ServicePoolPublication, Transport, User, UserService
@@ -124,7 +124,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         # Checks if userservices_limit has been reached and if so, raises an exception
         self._check_user_services_limit_reached(publication.deployed_service)
-        now = sql_datetime()
+        now = sql_now()
         return publication.userServices.create(
             cache_level=cacheLevel,
             state=State.PREPARING,
@@ -144,7 +144,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         Private method to instatiate an assigned element at database with default state
         """
         self._check_user_services_limit_reached(publication.deployed_service)
-        now = sql_datetime()
+        now = sql_now()
         return publication.userServices.create(
             cache_level=0,
             state=State.PREPARING,
@@ -166,7 +166,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         an UserService with no publications, and create them from an ServicePool
         """
         self._check_user_services_limit_reached(service_pool)
-        now = sql_datetime()
+        now = sql_now()
         return service_pool.userServices.create(
             cache_level=0,
             state=State.PREPARING,
@@ -509,9 +509,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
             ):  # cacheUpdater will drop unnecesary L1 machines, so it's not neccesary to check against inCacheL1
                 log.log(
                     service_pool,
-                    log.LogLevel.WARNING,
+                    types.log.LogLevel.WARNING,
                     f'Max number of services reached: {service_pool.max_srvs}',
-                    log.LogSource.INTERNAL,
+                    types.log.LogSource.INTERNAL,
                 )
                 raise MaxServicesReachedError()
 
@@ -805,9 +805,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
             service_status = types.services.ReadyStatus.USERSERVICE_NO_IP
             log.log(
                 user_service,
-                log.LogLevel.INFO,
+                types.log.LogLevel.INFO,
                 f"User {user.pretty_name} from {src_ip} has initiated access",
-                log.LogSource.WEB,
+                types.log.LogSource.WEB,
             )
             # If ready, show transport for this service, if also ready ofc
             userServiceInstance = user_service.get_instance()
@@ -819,9 +819,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 service_status = types.services.ReadyStatus.USERSERVICE_INVALID_UUID
                 log.log(
                     user_service,
-                    log.LogLevel.WARNING,
+                    types.log.LogLevel.WARNING,
                     f'User service is not accessible due to invalid UUID (user: {user.pretty_name}, ip: {ip})',
-                    log.LogSource.TRANSPORT,
+                    types.log.LogSource.TRANSPORT,
                 )
                 logger.debug('UUID check failed for user service %s', user_service)
             else:
@@ -837,7 +837,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
                     service_status = types.services.ReadyStatus.TRANSPORT_NOT_READY
                     transportInstance = transport.get_instance()
                     if transportInstance.is_ip_allowed(user_service, ip):
-                        log.log(user_service, log.LogLevel.INFO, "User service ready", log.LogSource.WEB)
+                        log.log(
+                            user_service, types.log.LogLevel.INFO, "User service ready", types.log.LogSource.WEB
+                        )
                         self.notify_preconnect(
                             user_service,
                             transportInstance.get_connection_info(user_service, user, ''),
@@ -858,7 +860,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                         )
 
                     message = transportInstance.get_available_error_msg(user_service, ip)
-                    log.log(user_service, log.LogLevel.WARNING, message, log.LogSource.TRANSPORT)
+                    log.log(user_service, types.log.LogLevel.WARNING, message, types.log.LogSource.TRANSPORT)
                     logger.debug(
                         'Transport is not ready for user service %s: %s',
                         user_service,
@@ -869,9 +871,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
         else:
             log.log(
                 user_service,
-                log.LogLevel.WARNING,
+                types.log.LogLevel.WARNING,
                 f'User {user.pretty_name} from {src_ip} tried to access, but service was not ready',
-                log.LogSource.WEB,
+                types.log.LogSource.WEB,
             )
 
         trace_logger.error(
@@ -1059,8 +1061,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         log.log(
             meta,
-            log.LogLevel.WARNING,
+            types.log.LogLevel.WARNING,
             f'No user service accessible from device (ip {srcIp}, os: {os.os.name})',
-            log.LogSource.SERVICE,
+            types.log.LogSource.SERVICE,
         )
         raise InvalidServiceException(_('The service is not accessible from this device'))

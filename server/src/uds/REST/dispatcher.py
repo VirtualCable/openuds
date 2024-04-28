@@ -41,7 +41,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import View
 
-from uds.core import consts, exceptions
+from uds.core import consts, exceptions, types
 from uds.core.util import modfinder
 
 from . import processors, log
@@ -164,20 +164,20 @@ class Dispatcher(View):
             logger.debug('Path: %s', full_path)
             logger.debug('Error: %s', e)
 
-            log.log_operation(handler, 400, log.LogLevel.ERROR)
+            log.log_operation(handler, 400, types.log.LogLevel.ERROR)
             return http.HttpResponseBadRequest(
                 f'Invalid parameters invoking {full_path}: {e}',
                 content_type="text/plain",
             )
         except AttributeError:
             allowed_methods: list[str] = [n for n in ['get', 'post', 'put', 'delete'] if hasattr(handler, n)]
-            log.log_operation(handler, 405, log.LogLevel.ERROR)
+            log.log_operation(handler, 405, types.log.LogLevel.ERROR)
             return http.HttpResponseNotAllowed(allowed_methods, content_type="text/plain")
         except exceptions.rest.AccessDenied:
-            log.log_operation(handler, 403, log.LogLevel.ERROR)
+            log.log_operation(handler, 403, types.log.LogLevel.ERROR)
             return http.HttpResponseForbidden('access denied', content_type="text/plain")
         except Exception:
-            log.log_operation(handler, 500, log.LogLevel.ERROR)
+            log.log_operation(handler, 500, types.log.LogLevel.ERROR)
             logger.exception('error accessing attribute')
             logger.debug('Getting attribute %s for %s', http_method, full_path)
             return http.HttpResponseServerError('Unexcepected error', content_type="text/plain")
@@ -206,28 +206,28 @@ class Dispatcher(View):
 
             # Log de operation on the audit log for admin
             # Exceptiol will also be logged, but with ERROR level
-            log.log_operation(handler, response.status_code, log.LogLevel.INFO)
+            log.log_operation(handler, response.status_code, types.log.LogLevel.INFO)
             return response
         except exceptions.rest.RequestError as e:
-            log.log_operation(handler, 400, log.LogLevel.ERROR)
+            log.log_operation(handler, 400, types.log.LogLevel.ERROR)
             return http.HttpResponseBadRequest(str(e), content_type="text/plain")
         except exceptions.rest.ResponseError as e:
-            log.log_operation(handler, 500, log.LogLevel.ERROR)
+            log.log_operation(handler, 500, types.log.LogLevel.ERROR)
             return http.HttpResponseServerError(str(e), content_type="text/plain")
         except exceptions.rest.NotSupportedError as e:
-            log.log_operation(handler, 501, log.LogLevel.ERROR)
+            log.log_operation(handler, 501, types.log.LogLevel.ERROR)
             return http.HttpResponseBadRequest(str(e), content_type="text/plain")
         except exceptions.rest.AccessDenied as e:
-            log.log_operation(handler, 403, log.LogLevel.ERROR)
+            log.log_operation(handler, 403, types.log.LogLevel.ERROR)
             return http.HttpResponseForbidden(str(e), content_type="text/plain")
         except exceptions.rest.NotFound as e:
-            log.log_operation(handler, 404, log.LogLevel.ERROR)
+            log.log_operation(handler, 404, types.log.LogLevel.ERROR)
             return http.HttpResponseNotFound(str(e), content_type="text/plain")
         except exceptions.rest.HandlerError as e:
-            log.log_operation(handler, 500, log.LogLevel.ERROR)
+            log.log_operation(handler, 500, types.log.LogLevel.ERROR)
             return http.HttpResponseBadRequest(str(e), content_type="text/plain")
         except Exception as e:
-            log.log_operation(handler, 500, log.LogLevel.ERROR)
+            log.log_operation(handler, 500, types.log.LogLevel.ERROR)
             # Get ecxeption backtrace
             trace_back = traceback.format_exc()
             logger.error('Exception processing request: %s', full_path)

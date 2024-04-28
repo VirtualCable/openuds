@@ -36,7 +36,7 @@ import typing
 
 from uds.core import jobs
 from uds import models
-from uds.core.util.model import sql_datetime
+from uds.core.util.model import sql_now
 
 from .provider import OGProvider
 from .service import OGService
@@ -66,7 +66,7 @@ class OpenGnsysMaintainer(jobs.Job):
             service: models.Service
             for service in provider.services.all():
                 instance: OGService = typing.cast(OGService, service.get_instance())
-                since = sql_datetime() - datetime.timedelta(
+                since = sql_now() - datetime.timedelta(
                     hours=instance.max_reserve_hours.as_int() - 8
                 )  # If less than 8 hours of reservation...
                 # Now mark for removal every CACHED service that is about to expire its reservation on OpenGnsys

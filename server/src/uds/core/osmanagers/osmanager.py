@@ -262,9 +262,9 @@ class OSManager(Module):
 
         log.log(
             userservice,
-            log.LogLevel.INFO,
+            types.log.LogLevel.INFO,
             f'User {username} has logged in',
-            log.LogSource.OSMANAGER,
+            types.log.LogSource.OSMANAGER,
         )
 
         log.log_use(
@@ -326,9 +326,9 @@ class OSManager(Module):
 
         log.log(
             userservice,
-            log.LogLevel.INFO,
+            types.log.LogLevel.INFO,
             f'User {username} has logged out',
-            log.LogSource.OSMANAGER,
+            types.log.LogSource.OSMANAGER,
         )
 
         log.log_use(

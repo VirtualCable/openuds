@@ -35,7 +35,7 @@ import typing
 
 from uds.core import types
 from uds.core.services.generics.fixed.userservice import FixedUserService, Operation
-from uds.core.util import log, autoserializable
+from uds.core.util import autoserializable
 
 from . import xen_client
 
@@ -79,7 +79,7 @@ class XenFixedUserService(FixedUserService, autoserializable.AutoSerializable):
             self.cache.put('ready', '1', 30)
         except Exception as e:
             # On case of exception, log an an error and return as if the operation was executed
-            self.do_log(log.LogLevel.ERROR, 'Error setting machine state: {}'.format(e))
+            self.do_log(types.log.LogLevel.ERROR, 'Error setting machine state: {}'.format(e))
             # return self.__error('Machine is not available anymore')
 
         return types.states.TaskState.FINISHED

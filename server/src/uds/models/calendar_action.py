@@ -42,13 +42,12 @@ from django.utils.translation import gettext_lazy as _
 from django.db import models
 
 from uds.core.util import calendar
-from uds.core.util import log
 from uds.core.managers.userservice import UserServiceManager
 from uds.core import types, consts
 
 from .calendar import Calendar
 from .uuid_model import UUIDModel
-from ..core.util.model import sql_datetime
+from ..core.util.model import sql_now
 from .service_pool import ServicePool
 from .transport import Transport
 from .authenticator import Authenticator
@@ -136,7 +135,7 @@ class CalendarAction(UUIDModel):
             )
             return
 
-        self.last_execution = sql_datetime()
+        self.last_execution = sql_now()
         params = json.loads(self.params)
 
         should_save_servicepool = save
@@ -175,7 +174,7 @@ class CalendarAction(UUIDModel):
 
         def _remove_stuck_userservice() -> None:
             # 1.- Remove stuck assigned services (Ignore "creating ones", just for created)
-            since = sql_datetime() - datetime.timedelta(hours=_numeric_value('hours'))
+            since = sql_now() - datetime.timedelta(hours=_numeric_value('hours'))
             for userService in self.service_pool.assigned_user_services().filter(
                 state_date__lt=since, state=types.states.State.USABLE
             ):
@@ -273,7 +272,7 @@ class CalendarAction(UUIDModel):
 
                 self.service_pool.log(
                     f'Executed action {description} [{self.pretty_params}]',
-                    level=log.LogLevel.INFO,
+                    level=types.log.LogLevel.INFO,
                 )
             except Exception:
                 self.service_pool.log(f'Error executing scheduled action {description} [{self.pretty_params}]')
@@ -286,7 +285,7 @@ class CalendarAction(UUIDModel):
             self.save()
 
     def save(self, *args: typing.Any, **kwargs: typing.Any) -> None:
-        last_execution = self.last_execution or sql_datetime()
+        last_execution = self.last_execution or sql_now()
         possibleNext = calendar.CalendarChecker(self.calendar).next_event(
             check_from=last_execution - self.offset, start_event=self.at_start
         )

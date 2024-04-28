@@ -224,14 +224,14 @@ class ServiceProvider(module.Module):
 
         return ret_val
 
-    def do_log(self, level: log.LogLevel, message: str) -> None:
+    def do_log(self, level: 'types.log.LogLevel', message: str) -> None:
         """
         Logs a message with requested level associated with this service
         """
         from uds.models import Provider as DBProvider  # pylint: disable=import-outside-toplevel
 
         if self.get_uuid():
-            log.log(DBProvider.objects.get(uuid=self.get_uuid()), level, message, log.LogSource.SERVICE)
+            log.log(DBProvider.objects.get(uuid=self.get_uuid()), level, message, types.log.LogSource.SERVICE)
 
     def __str__(self) -> str:
         """

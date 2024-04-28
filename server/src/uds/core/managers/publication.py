@@ -46,7 +46,7 @@ from uds.core.types.states import State
 from uds.core.util import log
 
 from uds.models import ServicePoolPublication, ServicePool
-from uds.core.util.model import sql_datetime
+from uds.core.util.model import sql_now
 
 from uds.core.util import singleton
 
@@ -73,7 +73,7 @@ class PublicationOldMachinesCleaner(DelayedTask):
             if servicePoolPub.state != State.REMOVABLE:
                 logger.info('Already removed')
 
-            now = sql_datetime()
+            now = sql_now()
             current_publication: typing.Optional[ServicePoolPublication] = (
                 servicePoolPub.deployed_service.active_publication()
             )
@@ -100,7 +100,7 @@ class PublicationLauncher(DelayedTask):
         logger.debug('Publishing')
         servicePoolPub: typing.Optional[ServicePoolPublication] = None
         try:
-            now = sql_datetime()
+            now = sql_now()
             with transaction.atomic():
                 servicePoolPub = ServicePoolPublication.objects.select_for_update().get(pk=self._publicationId)
                 if not servicePoolPub:
@@ -267,7 +267,7 @@ class PublicationManager(metaclass=singleton.Singleton):
 
         publication: typing.Optional[ServicePoolPublication] = None
         try:
-            now = sql_datetime()
+            now = sql_now()
             publication = servicepool.publications.create(
                 state=State.LAUNCHING,
                 state_date=now,
@@ -303,9 +303,9 @@ class PublicationManager(metaclass=singleton.Singleton):
                 logger.info('Double cancel invoked for a publication')
                 log.log(
                     publication.deployed_service,
-                    log.LogLevel.WARNING,
+                    types.log.LogLevel.WARNING,
                     'Forced cancel on publication, you must check uncleaned resources manually',
-                    log.LogSource.ADMIN,
+                    types.log.LogSource.ADMIN,
                 )
                 publication.set_state(State.CANCELED)
                 publication.save()

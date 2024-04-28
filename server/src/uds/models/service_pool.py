@@ -42,7 +42,7 @@ from uds.core import consts, exceptions, types
 from uds.core.environment import Environment
 from uds.core.services.exceptions import InvalidServiceException
 from uds.core.util import calendar, log, serializer
-from uds.core.util.model import sql_datetime
+from uds.core.util.model import sql_now
 
 from .account import Account
 from .group import Group
@@ -223,7 +223,7 @@ class ServicePool(UUIDModel, TaggingMixin):
                 ServicePool.objects.none()
             )  # Do not perform any restraint check if we set the globalconfig to 0 (or less)
 
-        date = sql_datetime() - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.as_int())
+        date = sql_now() - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.as_int())
         min_ = GlobalConfig.RESTRAINT_COUNT.as_int()
 
         res: list[dict[str, typing.Any]] = []
@@ -272,7 +272,7 @@ class ServicePool(UUIDModel, TaggingMixin):
         if GlobalConfig.RESTRAINT_TIME.as_int() <= 0:
             return False  # Do not perform any restraint check if we set the globalconfig to 0 (or less)
 
-        date = sql_datetime() - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.as_int())
+        date = sql_now() - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.as_int())
         if (
             self.userServices.filter(state=types.states.State.ERROR, state_date__gt=date).count()
             >= GlobalConfig.RESTRAINT_COUNT.as_int()
@@ -287,14 +287,14 @@ class ServicePool(UUIDModel, TaggingMixin):
         if GlobalConfig.RESTRAINT_TIME.as_int() <= 0:
             return 0
 
-        date = sql_datetime() - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.as_int())
+        date = sql_now() - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.as_int())
         count = self.userServices.filter(state=types.states.State.ERROR, state_date__gt=date).count()
         if count < GlobalConfig.RESTRAINT_COUNT.as_int():
             return 0
 
         return GlobalConfig.RESTRAINT_TIME.as_int() - int(
             (
-                sql_datetime()
+                sql_now()
                 - self.userServices.filter(state=types.states.State.ERROR, state_date__gt=date)
                 .latest('state_date')
                 .state_date
@@ -347,7 +347,7 @@ class ServicePool(UUIDModel, TaggingMixin):
         Checks if the access for a service pool is allowed or not (based esclusively on associated calendars)
         """
         if check_datetime is None:
-            check_datetime = sql_datetime()
+            check_datetime = sql_now()
 
         access = self.fallbackAccess
         # Let's see if we can access by current datetime
@@ -368,7 +368,7 @@ class ServicePool(UUIDModel, TaggingMixin):
             typing.Optional[int] -- [Returns deadline in secods. If no deadline (forever), will return None]
         """
         if check_datetime is None:
-            check_datetime = sql_datetime()
+            check_datetime = sql_now()
 
         if self.is_access_allowed(check_datetime) is False:
             return -1
@@ -425,7 +425,7 @@ class ServicePool(UUIDModel, TaggingMixin):
 
         """
         self.state = state
-        self.state_date = sql_datetime()
+        self.state_date = sql_now()
         if save:
             self.save()
 
@@ -467,7 +467,7 @@ class ServicePool(UUIDModel, TaggingMixin):
         Args:
             activePub: Active publication used as "current" publication to make checks
         """
-        now = sql_datetime()
+        now = sql_now()
         nonActivePub: 'ServicePoolPublication'
         userService: 'UserService'
 
@@ -684,8 +684,8 @@ class ServicePool(UUIDModel, TaggingMixin):
         return bool(self.service) and self.service.test_connectivity(host, port, timeout)
 
     # Utility for logging
-    def log(self, message: str, level: log.LogLevel = log.LogLevel.INFO) -> None:
-        log.log(self, level, message, log.LogSource.INTERNAL)
+    def log(self, message: str, level: types.log.LogLevel = types.log.LogLevel.INFO) -> None:
+        log.log(self, level, message, types.log.LogSource.INTERNAL)
 
     @staticmethod
     def pre_delete(sender: typing.Any, **kwargs: typing.Any) -> None:  # pylint: disable=unused-argument

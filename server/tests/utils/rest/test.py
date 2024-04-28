@@ -28,11 +28,10 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import collections.abc
 import typing
 
 from uds import models
-from uds.core import consts
+from uds.core import consts, types
 from uds.core.util import log
 
 from ...fixtures import authenticators as authenticators_fixtures
@@ -86,10 +85,10 @@ class RESTTestCase(test.UDSTransactionTestCase):
         )
 
         for user in self.users:
-            log.log(user, log.LogLevel.DEBUG, f'Debug Log for {user.name}')
-            log.log(user, log.LogLevel.INFO, f'Info Log for {user.name}')
-            log.log(user, log.LogLevel.WARNING, f'Warning Log for {user.name}')
-            log.log(user, log.LogLevel.ERROR, f'Error Log for {user.name}')
+            log.log(user, types.log.LogLevel.DEBUG, f'Debug Log for {user.name}')
+            log.log(user, types.log.LogLevel.INFO, f'Info Log for {user.name}')
+            log.log(user, types.log.LogLevel.WARNING, f'Warning Log for {user.name}')
+            log.log(user, types.log.LogLevel.ERROR, f'Error Log for {user.name}')
 
         self.provider = services_fixtures.create_db_provider()
 

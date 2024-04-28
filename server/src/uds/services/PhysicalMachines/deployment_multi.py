@@ -120,7 +120,7 @@ class IPMachinesUserService(services.UserService, autoserializable.AutoSerializa
 
     def _error(self, reason: str) -> types.states.TaskState:
         if self._vmid:
-            self.service().unassign(self._vmid)
+            self.service().unlock_server(self._vmid)
         self._vmid = ''
         self._ip = ''
         self._mac = ''
@@ -141,7 +141,7 @@ class IPMachinesUserService(services.UserService, autoserializable.AutoSerializa
 
     def destroy(self) -> types.states.TaskState:
         if self._vmid:
-            self.service().unassign(self._vmid)
+            self.service().unlock_server(self._vmid)
         self._vmid = ''
         self._ip = ''
         self._mac = ''

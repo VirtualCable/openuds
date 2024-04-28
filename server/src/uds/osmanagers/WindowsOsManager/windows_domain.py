@@ -275,9 +275,9 @@ class WinDomainOsManager(WindowsOsManager):
                 logger.warning('Could not find _ldap._tcp.%s', self.domain.as_str())
                 log.log(
                     userservice,
-                    log.LogLevel.WARNING,
+                    types.log.LogLevel.WARNING,
                     f'Could not remove machine from domain (_ldap._tcp.{self.domain.as_str()} not found)',
-                    log.LogSource.OSMANAGER,
+                    types.log.LogSource.OSMANAGER,
                 )
             except ldaputil.ALREADY_EXISTS:  # pyright: ignore
                 # Already added this machine to this group, pass
@@ -291,7 +291,7 @@ class WinDomainOsManager(WindowsOsManager):
                 # logger.exception('Ldap Exception caught')
 
         if error:
-            log.log(userservice, log.LogLevel.WARNING, error, log.LogSource.OSMANAGER)
+            log.log(userservice, types.log.LogLevel.WARNING, error, types.log.LogSource.OSMANAGER)
             logger.error(error)
 
     def release(self, userservice: 'UserService') -> None:
@@ -305,9 +305,9 @@ class WinDomainOsManager(WindowsOsManager):
             # logger.info('Releasing from a not FQDN domain is not supported')
             log.log(
                 userservice,
-                log.LogLevel.INFO,
+                types.log.LogLevel.INFO,
                 "Removing a domain machine form a non FQDN domain is not supported.",
-                log.LogSource.OSMANAGER,
+                types.log.LogSource.OSMANAGER,
             )
             return
 
@@ -317,27 +317,27 @@ class WinDomainOsManager(WindowsOsManager):
             logger.warning('Could not find _ldap._tcp.%s', self.domain.as_str())
             log.log(
                 userservice,
-                log.LogLevel.WARNING,
+                types.log.LogLevel.WARNING,
                 f'Could not remove machine from domain (_ldap._tcp.{self.domain.as_str()} not found)',
-                log.LogSource.OSMANAGER,
+                types.log.LogSource.OSMANAGER,
             )
             return
         except ldaputil.LDAPError as e:
             # logger.exception('Ldap Exception caught')
             log.log(
                 userservice,
-                log.LogLevel.WARNING,
+                types.log.LogLevel.WARNING,
                 f'Could not remove machine from domain ({e})',
-                log.LogSource.OSMANAGER,
+                types.log.LogSource.OSMANAGER,
             )
             return
         except Exception as e:
             # logger.exception('Exception caught')
             log.log(
                 userservice,
-                log.LogLevel.WARNING,
+                types.log.LogLevel.WARNING,
                 f'Could not remove machine from domain ({e})',
-                log.LogSource.OSMANAGER,
+                types.log.LogSource.OSMANAGER,
             )
             return
 

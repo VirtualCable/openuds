@@ -36,7 +36,7 @@ import collections.abc
 from django.db import transaction
 from uds.core.util.config import GlobalConfig
 from uds.models import ServicePool, UserService
-from uds.core.util.model import sql_datetime
+from uds.core.util.model import sql_now
 from uds.core.types.states import State
 from uds.core.jobs import Job
 
@@ -53,7 +53,7 @@ class DeployedServiceInfoItemsCleaner(Job):
     friendly_name = 'Deployed Service Info Cleaner'
 
     def run(self) -> None:
-        removeFrom = sql_datetime() - timedelta(
+        removeFrom = sql_now() - timedelta(
             seconds=GlobalConfig.KEEP_INFO_TIME.as_int()
         )
         ServicePool.objects.filter(
@@ -91,13 +91,13 @@ class DeployedServiceRemover(Job):
             userService.cancel()
         # Nice start of removal, maybe we need to do some limitation later, but there should not be too much services nor publications cancelable at once
         service_pool.state = State.REMOVING
-        service_pool.state_date = sql_datetime()  # Now
+        service_pool.state_date = sql_now()  # Now
         service_pool.name += ' (removed)'
         service_pool.save(update_fields=['state', 'state_date', 'name'])
 
     def continue_removal_of(self, servicePool: ServicePool) -> None:
         # get current time
-        now = sql_datetime()
+        now = sql_now()
 
         # Recheck that there is no publication created just after "startRemovalOf"
         try:
@@ -194,9 +194,9 @@ class DeployedServiceRemover(Job):
         for servicepool in already_removing_servicepools:
             try:
                 if servicepool.state_date.year == 1972:
-                    servicepool.state_date = sql_datetime()
+                    servicepool.state_date = sql_now()
                     servicepool.save(update_fields=['state_date'])
-                if servicepool.state_date < sql_datetime() - timedelta(
+                if servicepool.state_date < sql_now() - timedelta(
                     seconds=MAX_REMOVING_TIME
                 ):
                     self.force_removal_of(servicepool)  # Force removal

@@ -77,7 +77,7 @@ class TokenInfo:
         return TokenInfo(
             access_token=dct['access_token'],
             token_type=dct['token_type'],
-            expires=model.sql_datetime() + datetime.timedelta(seconds=dct['expires_in'] - 10),
+            expires=model.sql_now() + datetime.timedelta(seconds=dct['expires_in'] - 10),
             refresh_token=dct['refresh_token'],
             scope=dct['scope'],
             info=dct.get('info', {}),
@@ -560,7 +560,7 @@ class OAuth2Authenticator(auths.Authenticator):
         token = TokenInfo(
             access_token=parameters.get_params.get('access_token', ''),
             token_type=parameters.get_params.get('token_type', ''),
-            expires=model.sql_datetime()
+            expires=model.sql_now()
             + datetime.timedelta(seconds=int(parameters.get_params.get('expires_in', 0))),
             refresh_token=parameters.get_params.get('refresh_token', ''),
             scope=parameters.get_params.get('scope', ''),

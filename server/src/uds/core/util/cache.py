@@ -38,7 +38,7 @@ import logging
 
 from django.db import transaction
 from uds.models.cache import Cache as DBCache
-from uds.core.util.model import sql_datetime
+from uds.core.util.model import sql_now
 from uds.core.util import serializer
 from uds.core import consts
 
@@ -74,7 +74,7 @@ class Cache:
         return hash_key(self._owner.encode() + key)
 
     def get(self, skey: typing.Union[str, bytes], default: typing.Any = None) -> typing.Any:
-        now = sql_datetime()
+        now = sql_now()
         # logger.debug('Requesting key "%s" for cache "%s"', skey, self._owner)
         try:
             key = self._get_key(skey)
@@ -159,7 +159,7 @@ class Cache:
             validity = consts.cache.DEFAULT_CACHE_TIMEOUT
         key = self._get_key(skey)
         strValue = Cache._serializer(value)
-        now = sql_datetime()
+        now = sql_now()
         # Remove existing if any and create a new one
         with transaction.atomic():
             try:
@@ -200,7 +200,7 @@ class Cache:
         try:
             key = self._get_key(skey)
             c = DBCache.objects.get(pk=key)
-            c.created = sql_datetime()
+            c.created = sql_now()
             c.save()
         except DBCache.DoesNotExist:
             logger.debug('Can\'t refresh cache key %s because it doesn\'t exists', skey)

@@ -38,7 +38,7 @@ from uds.core.services.generics.dynamic.publication import DynamicPublication
 from uds.core.services.generics.dynamic.service import DynamicService
 from uds.core.services.generics.dynamic.userservice import DynamicUserService
 from uds.core.ui import gui
-from uds.core.util import validators, log, fields
+from uds.core.util import validators, fields
 
 from . import helpers, jobs
 from .deployment_linked import ProxmoxUserserviceLinked
@@ -245,7 +245,7 @@ class ProxmoxServiceLinked(DynamicService):
             self.disable_machine_ha(vmid)
         except Exception as e:
             logger.warning('Exception disabling HA for vm %s: %s', vmid, e)
-            self.do_log(level=log.LogLevel.WARNING, message=f'Exception disabling HA for vm {vmid}: {e}')
+            self.do_log(level=types.log.LogLevel.WARNING, message=f'Exception disabling HA for vm {vmid}: {e}')
 
         # And remove it
         return self.provider().remove_machine(vmid)

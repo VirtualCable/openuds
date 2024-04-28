@@ -48,7 +48,7 @@ from uds.core.services.exceptions import (
 )
 from uds.core.util import html
 from uds.core.util.config import GlobalConfig
-from uds.core.util.model import sql_datetime
+from uds.core.util.model import sql_now
 from uds.models import MetaPool, Network, ServicePool, ServicePoolGroup, TicketStore, Transport
 
 # Not imported at runtime, just for type checking
@@ -129,7 +129,7 @@ def get_services_info_dict(
     available_metapools = list(
         MetaPool.metapools_for_groups(groups, request.user)
     )  # Pass in user to get "number_assigned" to optimize
-    now = sql_datetime()
+    now = sql_now()
 
     # Information for administrators
     nets = ''

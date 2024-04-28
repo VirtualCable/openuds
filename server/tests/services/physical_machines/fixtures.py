@@ -30,20 +30,20 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import contextlib
+import datetime
 import typing
 import uuid
 
-from unittest import mock
-
 from uds import models
-from uds.core import types
+from uds.core import environment, types
 from uds.core.ui.user_interface import gui
 
-SERVER_GROUP_IPS = [
-    f'127.0.1.{x}' for x in range(1, 32)
+from uds.services.PhysicalMachines import provider, service_single, service_multi
+
+SERVER_GROUP_IPS_MACS: typing.Final[list[tuple[str, str]]] = [
+    (f'127.0.1.{x}', f'{x:02x}:22:{x*2:02x}:44:{x*4:02x}:66') for x in range(1, 32)
 ]
-    
+
 
 PROVIDER_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
     'config': '[wol]\n127.0.0.1/16=http://127.0.0.1:8000/test',
@@ -65,46 +65,29 @@ SERVICE_MULTI_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
     'randomize_host': True,
 }
 
-def create_server_group():
+
+def create_server_group() -> models.ServerGroup:
     server_group = models.ServerGroup.objects.create(
         name='Test Server Group',
         type=types.servers.ServerType.UNMANAGED,
         subtype=types.servers.IP_SUBTYPE,
     )
-    for ip in SERVER_GROUP_IPS:
-        models.Server.objects.create(
-            username='test',
-            name=ip,
+    for ip, mac in SERVER_GROUP_IPS_MACS:
+        server = models.Server.objects.create(
+            register_username='test',
+            register_ip='127.0.0.1',
+            type=types.servers.ServerType.UNMANAGED,
             ip=ip,
-            group=server_group,
+            mac=mac,
+            hostname=f'test-{ip}',
+            stamp=datetime.datetime.now(),
         )
-    
-    
+        server.groups.set([server_group])
 
-@contextlib.contextmanager
-def patched_provider(
-    **kwargs: typing.Any,
-) -> typing.Generator[provider.OpenStackProvider, None, None]:
-    client = create_client_mock()
-    provider = create_provider(**kwargs)
-    with mock.patch.object(provider, 'api') as api:
-        provider.do_log = mock.MagicMock()  # Avoid logging
-        api.return_value = client
-        yield provider
+    return server_group
 
 
-@contextlib.contextmanager
-def patched_provider_legacy(
-    **kwargs: typing.Any,
-) -> typing.Generator[provider_legacy.OpenStackProviderLegacy, None, None]:
-    client = create_client_mock()
-    provider = create_provider_legacy(**kwargs)
-    with mock.patch.object(provider, 'api') as api:
-        api.return_value = client
-        yield provider
-
-
-def create_provider(**kwargs: typing.Any) -> provider.OpenStackProvider:
+def create_provider(**kwargs: typing.Any) -> provider.PhysicalMachinesProvider:
     """
     Create a provider
     """
@@ -112,100 +95,86 @@ def create_provider(**kwargs: typing.Any) -> provider.OpenStackProvider:
     values.update(kwargs)
 
     uuid_ = str(uuid.uuid4())
-    return provider.OpenStackProvider(
+    prov_instance = provider.PhysicalMachinesProvider(
         environment=environment.Environment.private_environment(uuid_), values=values, uuid=uuid_
     )
-
-
-def create_provider_legacy(**kwargs: typing.Any) -> provider_legacy.OpenStackProviderLegacy:
-    """
-    Create a provider legacy
-    """
-    values = PROVIDER_LEGACY_VALUES_DICT.copy()
-    values.update(kwargs)
-
-    uuid_ = str(uuid.uuid4())
-    return provider_legacy.OpenStackProviderLegacy(
-        environment=environment.Environment.private_environment(uuid_), values=values, uuid=uuid_
+    # Create a DB provider for this
+    models.Provider.objects.create(
+        uuid=uuid_,
+        name='Test Provider',
+        data_type=prov_instance.mod_type(),
+        data=prov_instance.serialize(),
     )
 
+    return prov_instance
 
-def create_live_service(provider: AnyOpenStackProvider, **kwargs: typing.Any) -> service.OpenStackLiveService:
+
+def create_service_single(
+    prov: typing.Optional[provider.PhysicalMachinesProvider] = None, **kwargs: typing.Any
+) -> service_single.IPSingleMachineService:
     """
     Create a service
     """
-    values = SERVICE_VALUES_DICT.copy()
+    values = SERVICE_SINGLE_VALUES_DICT.copy()
     values.update(kwargs)
 
     uuid_ = str(uuid.uuid4())
-    return service.OpenStackLiveService(
-        provider=provider,
+
+    if prov is None:
+        prov = create_provider()
+
+    service_instance = service_single.IPSingleMachineService(
+        provider=prov,
         environment=environment.Environment.private_environment(uuid_),
         values=values,
         uuid=uuid_,
     )
 
-
-def create_publication(service: service.OpenStackLiveService) -> publication.OpenStackLivePublication:
-    """
-    Create a publication
-    """
-    uuid_ = str(uuid.uuid4())
-    return publication.OpenStackLivePublication(
-        environment=environment.Environment.private_environment(uuid_),
-        service=service,
-        revision=1,
-        servicepool_name='servicepool_name',
+    # Create a DB service for this
+    models.Service.objects.create(
         uuid=uuid_,
+        name='Test Service',
+        data_type=service_instance.mod_type(),
+        data=service_instance.serialize(),
+        provider=prov.db_obj(),
     )
 
-
-def create_live_userservice(
-    service: service.OpenStackLiveService,
-    publication: typing.Optional[publication.OpenStackLivePublication] = None,
-) -> deployment.OpenStackLiveUserService:
-    """
-    Create a linked user service
-    """
-    uuid_ = str(uuid.uuid4())
-    return deployment.OpenStackLiveUserService(
-        environment=environment.Environment.private_environment(uuid_),
-        service=service,
-        publication=publication or create_publication(service),
-        uuid=uuid_,
-    )
+    return service_instance
 
 
-def create_fixed_service(
-    provider: AnyOpenStackProvider, **kwargs: typing.Any
-) -> service_fixed.OpenStackServiceFixed:
+def create_service_multi(
+    prov: typing.Optional[provider.PhysicalMachinesProvider] = None, **kwargs: typing.Any
+) -> service_multi.IPMachinesService:
     """
-    Create a fixed service
+    Create a service
     """
-    values = SERVICES_FIXED_VALUES_DICT.copy()
+    # Create a server group, and add it to the kwargs if
+    server_group = create_server_group()
+    if 'server_group' not in kwargs:
+        kwargs['server_group'] = server_group.uuid
+
+    values = SERVICE_MULTI_VALUES_DICT.copy()
     values.update(kwargs)
 
     uuid_ = str(uuid.uuid4())
-    return service_fixed.OpenStackServiceFixed(
-        provider=provider,
+
+    if prov is None:
+        prov = create_provider()
+
+    service_instance = service_multi.IPMachinesService(
+        provider=prov,
         environment=environment.Environment.private_environment(uuid_),
         values=values,
         uuid=uuid_,
     )
 
-
-# Fixed has no publications
-
-
-def create_fixed_userservice(
-    service: service_fixed.OpenStackServiceFixed,
-) -> deployment_fixed.OpenStackUserServiceFixed:
-    """
-    Create a linked user service
-    """
-    uuid_ = str(uuid.uuid4())
-    return deployment_fixed.OpenStackUserServiceFixed(
-        environment=environment.Environment.private_environment(uuid_),
-        service=service,
+    # Create a DB service for this
+    models.Service.objects.create(
         uuid=uuid_,
+        name='Test Service',
+        data_type=service_instance.mod_type(),
+        data=service_instance.serialize(),
+        provider=prov.db_obj(),
     )
+
+    return service_instance

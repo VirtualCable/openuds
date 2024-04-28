@@ -77,7 +77,7 @@ class HangedCleanerTest(UDSTestCase):
                 us.state = State.USABLE
                 us.os_state = State.USABLE
 
-            us.state_date = model.sql_datetime() - datetime.timedelta(
+            us.state_date = model.sql_now() - datetime.timedelta(
                 seconds=MAX_INIT + 1
             )
             us.save(update_fields=['state', 'os_state', 'state_date'])

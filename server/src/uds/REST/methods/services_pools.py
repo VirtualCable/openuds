@@ -44,7 +44,7 @@ from uds.core.ui import gui
 from uds.core.consts.images import DEFAULT_THUMB_BASE64
 from uds.core.util import log, permissions, ensure
 from uds.core.util.config import GlobalConfig
-from uds.core.util.model import sql_datetime, process_uuid
+from uds.core.util.model import sql_now, process_uuid
 from uds.core.types.states import State
 from uds.models import Account, Image, OSManager, Service, ServicePool, ServicePoolGroup, User
 from uds.REST.model import ModelHandler
@@ -130,7 +130,7 @@ class ServicesPools(ModelHandler):
         self, *args: typing.Any, **kwargs: typing.Any
     ) -> typing.Generator[types.rest.ItemDictType, None, None]:
         # Optimized query, due that there is a lot of info needed for theee
-        d = sql_datetime() - datetime.timedelta(seconds=GlobalConfig.RESTRAINT_TIME.as_int())
+        d = sql_now() - datetime.timedelta(seconds=GlobalConfig.RESTRAINT_TIME.as_int())
         return super().get_items(
             overview=kwargs.get('overview', True),
             query=(

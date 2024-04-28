@@ -163,12 +163,12 @@ class ModelAccountTest(UDSTestCase):
             usage.start = consts.NEVER
             usage.save(update_fields=['start'])
             self.assertEqual(usage.elapsed_seconds, 0)
-            usage.start = model.sql_datetime()
+            usage.start = model.sql_now()
             usage.end = consts.NEVER
             usage.save(update_fields=['start', 'end'])
             self.assertEqual(usage.elapsed_seconds, 0)
             # Now end is before start
-            usage.start = model.sql_datetime()
+            usage.start = model.sql_now()
             usage.end = usage.start - datetime.timedelta(seconds=1)
             usage.save(update_fields=['start', 'end'])
             self.assertEqual(usage.elapsed_seconds, 0)

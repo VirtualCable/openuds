@@ -39,7 +39,7 @@ from django.db import models
 from uds.core.managers.crypto import CryptoManager
 
 from .uuid_model import UUIDModel
-from uds.core.util.model import sql_datetime
+from uds.core.util.model import sql_now
 from uds.core import consts
 
 from .user import User
@@ -108,7 +108,7 @@ class TicketStore(UUIDModel):
 
         return TicketStore.objects.create(
             uuid=TicketStore.generate_uuid(),
-            stamp=sql_datetime(),
+            stamp=sql_now(),
             data=data,
             validity=validity,
             owner=owner,
@@ -134,7 +134,7 @@ class TicketStore(UUIDModel):
 
             t = TicketStore.objects.get(uuid=uuid, owner=owner)
             validity = datetime.timedelta(seconds=t.validity)
-            now = sql_datetime()
+            now = sql_now()
 
             logger.debug('Ticket validity: %s %s', t.stamp + validity, now)
             if t.stamp + validity < now:
@@ -206,7 +206,7 @@ class TicketStore(UUIDModel):
     ) -> None:
         try:
             t = TicketStore.objects.get(uuid=uuid, owner=owner)
-            t.stamp = sql_datetime()
+            t.stamp = sql_now()
             if validity:
                 t.validity = validity
             t.save(update_fields=['validity', 'stamp'])
@@ -283,7 +283,7 @@ class TicketStore(UUIDModel):
 
     @staticmethod
     def cleanup() -> None:
-        now = sql_datetime()
+        now = sql_now()
         for v in TicketStore.objects.all():
             if now > v.stamp + datetime.timedelta(
                 seconds=v.validity + 600

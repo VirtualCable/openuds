@@ -34,12 +34,13 @@ from datetime import timedelta
 
 from django.db.models import Q, Count
 
+from uds.core import types
 from uds.core.jobs import Job
 from uds.core.util import log
 from uds.core.util.config import GlobalConfig
 from uds.core.types.states import State
 from uds.models import ServicePool
-from uds.core.util.model import sql_datetime
+from uds.core.util.model import sql_now
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +51,7 @@ class AssignedAndUnused(Job):
     friendly_name = 'Unused services checker'
 
     def run(self) -> None:
-        since_state = sql_datetime() - timedelta(
+        since_state = sql_now() - timedelta(
             seconds=GlobalConfig.CHECK_UNUSED_TIME.as_int()
         )
         # Locate service pools with pending assigned service in use
@@ -93,8 +94,8 @@ class AssignedAndUnused(Job):
                     )
                     log.log(
                         us,
-                        log.LogLevel.INFO,
-                        source=log.LogSource.SERVER,
+                        types.log.LogLevel.INFO,
+                        source=types.log.LogSource.SERVER,
                         message='Removing unused assigned service',
                     )
                     us.release()

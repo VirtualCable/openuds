@@ -58,7 +58,7 @@ class DeployedServiceStatsCollector(Job):
         service_pool_to_check: collections.abc.Iterable[
             models.ServicePool
         ] = models.ServicePool.objects.filter(state=State.ACTIVE).iterator()
-        stamp = model.sql_datetime()
+        stamp = model.sql_now()
         # Global counters
         totalAssigned, totalInUse, totalCached = 0, 0, 0
         for servicePool in service_pool_to_check:

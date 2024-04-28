@@ -33,35 +33,26 @@ Provides useful functions for authenticating, used by web interface.
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import base64
+import codecs
+import collections.abc
 import logging
 import typing
-import collections.abc
-import codecs
-
 from functools import wraps
-from django.http import (
-    HttpResponseRedirect,
-    HttpResponseForbidden,
-    HttpResponse,
-    HttpRequest,
-)
-from django.utils.translation import get_language
-from django.urls import reverse
 
+from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, HttpResponseRedirect
+from django.urls import reverse
+from django.utils.translation import get_language
 from django.utils.translation import gettext as _
 
-from uds.core import auths, types, exceptions, consts
+from uds import models
+from uds.core import auths, consts, exceptions, types
+from uds.core.auths import Authenticator as AuthenticatorInstance
+from uds.core.managers.crypto import CryptoManager
 from uds.core.types.requests import ExtendedHttpRequest
-from uds.core.util import log
-from uds.core.util import net
-from uds.core.util import config
+from uds.core.types.states import State
+from uds.core.util import config, log, net
 from uds.core.util.config import GlobalConfig
 from uds.core.util.stats import events
-from uds.core.types.states import State
-from uds.core.managers.crypto import CryptoManager
-from uds.core.auths import Authenticator as AuthenticatorInstance
-
-from uds import models
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -396,9 +387,7 @@ def web_login(
     Helper function to, once the user is authenticated, store the information at the user session.
     @return: Always returns True
     """
-    from uds import (  # pylint: disable=import-outside-toplevel  # to avoid circular imports
-        REST,
-    )
+    from uds import REST  # pylint: disable=import-outside-toplevel  # to avoid circular imports
 
     if user.id != consts.auth.ROOT_ID:  # If not ROOT user (this user is not inside any authenticator)
         manager_id = user.manager.id
@@ -515,12 +504,12 @@ def log_login(
             ]
         )
     )
-    level = log.LogLevel.INFO if log_string == 'Logged in' else log.LogLevel.ERROR
+    level = types.log.LogLevel.INFO if log_string == 'Logged in' else types.log.LogLevel.ERROR
     log.log(
         authenticator,
         level,
         f'user {userName} has {log_string} from {request.ip} where os is {request.os.os.name}',
-        log.LogSource.WEB,
+        types.log.LogSource.WEB,
     )
 
     try:
@@ -530,7 +519,7 @@ def log_login(
             user,
             level,
             f'{log_string} from {request.ip} where OS is {request.os.os.name}',
-            log.LogSource.WEB,
+            types.log.LogSource.WEB,
         )
     except Exception:  # nosec: root user is not on any authenticator, will fail with an exception we can ingore
         logger.info('Root %s from %s where OS is %s', log_string, request.ip, request.os.os.name)
@@ -541,10 +530,10 @@ def log_logout(request: 'ExtendedHttpRequest') -> None:
         if request.user.manager.id:
             log.log(
                 request.user.manager,
-                log.LogLevel.INFO,
+                types.log.LogLevel.INFO,
                 f'user {request.user.name} has logged out from {request.ip}',
-                log.LogSource.WEB,
+                types.log.LogSource.WEB,
             )
-            log.log(request.user, log.LogLevel.INFO, f'has logged out from {request.ip}', log.LogSource.WEB)
+            log.log(request.user, types.log.LogLevel.INFO, f'has logged out from {request.ip}', types.log.LogSource.WEB)
         else:
             logger.info('Root has logged out from %s', request.ip)

@@ -119,9 +119,9 @@ class LinuxOsManager(osmanagers.OSManager):
         if self.is_removable_on_logout(userservice):
             log.log(
                 userservice,
-                log.LogLevel.INFO,
+                types.log.LogLevel.INFO,
                 'Unused user service for too long. Removing due to OS Manager parameters.',
-                log.LogSource.OSMANAGER,
+                types.log.LogSource.OSMANAGER,
             )
             userservice.remove()
 

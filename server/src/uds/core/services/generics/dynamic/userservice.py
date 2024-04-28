@@ -37,7 +37,7 @@ import typing
 import collections.abc
 
 from uds.core import services, types, consts
-from uds.core.util import log, autoserializable
+from uds.core.util import autoserializable
 from uds.core.util.model import sql_stamp_seconds
 
 from .. import exceptions
@@ -214,7 +214,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         self._error_debug_info = self._debug(repr(reason))
         reason = str(reason)
         logger.debug('Setting error state, reason: %s (%s)', reason, self._queue, stack_info=True, stacklevel=3)
-        self.do_log(log.LogLevel.ERROR, reason)
+        self.do_log(types.log.LogLevel.ERROR, reason)
 
         if self._vmid:
             if self.service().should_maintain_on_error() is False:
@@ -224,7 +224,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
                 except Exception as e:
                     logger.exception('Exception removing machine %s: %s', self._vmid, e)
                     self._vmid = ''
-                    self.do_log(log.LogLevel.ERROR, f'Error removing machine: {e}')
+                    self.do_log(types.log.LogLevel.ERROR, f'Error removing machine: {e}')
             else:
                 logger.debug('Keep on error is enabled, not removing machine')
                 self._set_queue([types.services.Operation.FINISH] if self.keep_state_sets_error else [types.services.Operation.ERROR])
@@ -676,7 +676,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         if sql_stamp_seconds() - shutdown_start > consts.os.MAX_GUEST_SHUTDOWN_WAIT:
             logger.debug('Time is consumed, falling back to stop on vmid %s', self._vmid)
             self.do_log(
-                log.LogLevel.ERROR,
+                types.log.LogLevel.ERROR,
                 f'Could not shutdown machine using soft power off in time ({consts.os.MAX_GUEST_SHUTDOWN_WAIT} seconds). Powering off.',
             )
             # Not stopped by guest in time, but must be stopped normally

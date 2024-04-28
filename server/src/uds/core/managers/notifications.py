@@ -35,8 +35,8 @@ import typing
 from django.apps import apps
 from django.db import connections
 
+from uds.core import types
 from uds.core.util import singleton
-from uds.core.util.log import LogLevel
 
 if typing.TYPE_CHECKING:
     pass
@@ -73,7 +73,7 @@ class NotificationsManager(metaclass=singleton.Singleton):
     def manager() -> 'NotificationsManager':
         return NotificationsManager()  # Singleton pattern will return always the same instance
 
-    def notify(self, group: str, identificator: str, level: LogLevel, message: str, *args: typing.Any) -> None:
+    def notify(self, group: str, identificator: str, level: types.log.LogLevel, message: str, *args: typing.Any) -> None:
         from uds.models.notifications import Notification  # pylint: disable=import-outside-toplevel
 
         # Due to use of local db, we must ensure that it exists (and cannot do it on ready)

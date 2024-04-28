@@ -35,9 +35,9 @@ import collections.abc
 
 from django.db.models import Q, Count
 
+from uds.core import types
 from uds.models import ServicePool, UserService
-from uds.core.util.model import sql_datetime
-from uds.core.types.states import State
+from uds.core.util.model import sql_now
 from uds.core.jobs import Job
 from uds.core.util import log
 
@@ -56,7 +56,7 @@ class StuckCleaner(Job):
     friendly_name = 'Stuck States cleaner'
 
     def run(self) -> None:
-        since_state: datetime = sql_datetime() - timedelta(seconds=MAX_STUCK_TIME)
+        since_state: datetime = sql_now() - timedelta(seconds=MAX_STUCK_TIME)
         # Filter for locating machine stuck on removing, cancelling, etc..
         # Locate service pools with pending assigned service in use
         servicePoolswithStucks = (
@@ -66,13 +66,13 @@ class StuckCleaner(Job):
                     filter=Q(userServices__state_date__lt=since_state)
                     & (
                         Q(
-                            userServices__state=State.PREPARING,
+                            userServices__state=types.states.State.PREPARING,
                         )
-                        | ~Q(userServices__state__in=State.INFO_STATES + State.VALID_STATES)
+                        | ~Q(userServices__state__in=types.states.State.INFO_STATES + types.states.State.VALID_STATES)
                     ),
                 )
             )
-            .filter(service__provider__maintenance_mode=False, state=State.ACTIVE)
+            .filter(service__provider__maintenance_mode=False, state=types.states.State.ACTIVE)
             .exclude(stuckCount=0)
         )
 
@@ -81,8 +81,8 @@ class StuckCleaner(Job):
             q = servicePool.userServices.filter(state_date__lt=since_state)
             # Get all that are not in valid or info states, AND the ones that are "PREPARING" with
             # "destroy_after" property set (exists) (that means that are waiting to be destroyed after initializations)
-            yield from q.exclude(state__in=State.INFO_STATES + State.VALID_STATES)
-            yield from q.filter(state=State.PREPARING)
+            yield from q.exclude(state__in=types.states.State.INFO_STATES + types.states.State.VALID_STATES)
+            yield from q.filter(state=types.states.State.PREPARING)
 
         for servicepool in servicePoolswithStucks:
             if servicepool.service.get_instance().allows_errored_userservice_cleanup() is False:
@@ -92,7 +92,7 @@ class StuckCleaner(Job):
                 logger.debug('Found stuck user service %s', stuck)
                 log.log(
                     servicepool,
-                    log.LogLevel.ERROR,
+                    types.log.LogLevel.ERROR,
                     f'User service {stuck.name} has been hard removed because it\'s stuck',
                 )
                 # stuck.set_state(State.ERROR)

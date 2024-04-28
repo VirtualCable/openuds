@@ -227,12 +227,12 @@ class UserService(Environmentable, Serializable, abc.ABC):
     def get_uuid(self) -> str:
         return self._uuid
 
-    def do_log(self, level: log.LogLevel, message: str) -> None:
+    def do_log(self, level: types.log.LogLevel, message: str) -> None:
         """
         Logs a message with requested level associated with this user deployment
         """
         if self._db_obj:
-            log.log(self._db_obj, level, message, log.LogSource.SERVICE)
+            log.log(self._db_obj, level, message, types.log.LogSource.SERVICE)
 
     def mac_generator(self) -> 'UniqueMacGenerator':
         """

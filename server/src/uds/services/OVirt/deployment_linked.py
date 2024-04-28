@@ -38,7 +38,7 @@ import typing
 
 from uds.core import consts, services, types
 from uds.core.managers.userservice import UserServiceManager
-from uds.core.util import autoserializable, log
+from uds.core.util import autoserializable
 from uds.core.util.model import sql_stamp_seconds
 
 from .jobs import OVirtDeferredRemoval
@@ -248,7 +248,7 @@ class OVirtLinkedUserService(services.UserService, autoserializable.AutoSerializ
 
             self.cache.put('ready', '1')
         except Exception as e:
-            self.do_log(log.LogLevel.ERROR, f'Error on setReady: {e}')
+            self.do_log(types.log.LogLevel.ERROR, f'Error on setReady: {e}')
             # Treat as operation done, maybe the machine is ready and we can continue
 
         return types.states.TaskState.FINISHED
@@ -367,7 +367,7 @@ if sys.platform == 'win32':
         """
         reason = str(reason)
         logger.debug('Setting error state, reason: %s', reason)
-        self.do_log(log.LogLevel.ERROR, reason)
+        self.do_log(types.log.LogLevel.ERROR, reason)
 
         if self._vmid != '':  # Powers off
             OVirtDeferredRemoval.remove(self.service().provider(), self._vmid)
@@ -606,7 +606,7 @@ if sys.platform == 'win32':
         if sql_stamp_seconds() - shutdown_start > consts.os.MAX_GUEST_SHUTDOWN_WAIT:
             logger.debug('Time is consumed, falling back to stop')
             self.do_log(
-                log.LogLevel.ERROR,
+                types.log.LogLevel.ERROR,
                 f'Could not shutdown machine using soft power off in time ({consts.os.MAX_GUEST_SHUTDOWN_WAIT} seconds). Powering off.',
             )
             # Not stopped by guest in time, but must be stopped normally

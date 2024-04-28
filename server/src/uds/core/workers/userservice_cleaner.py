@@ -38,7 +38,7 @@ from django.db import transaction
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.util.config import GlobalConfig
 from uds.models import UserService
-from uds.core.util.model import sql_datetime
+from uds.core.util.model import sql_now
 from uds.core.types.states import State
 from uds.core.jobs import Job
 
@@ -58,7 +58,7 @@ class UserServiceInfoItemsCleaner(Job):
     friendly_name = 'User Service Info Cleaner'
 
     def run(self) -> None:
-        remove_since = sql_datetime() - timedelta(seconds=GlobalConfig.KEEP_INFO_TIME.as_int(True))
+        remove_since = sql_now() - timedelta(seconds=GlobalConfig.KEEP_INFO_TIME.as_int(True))
         logger.debug('Removing information user services from %s', remove_since)
         with transaction.atomic():
             UserService.objects.select_for_update().filter(
@@ -80,7 +80,7 @@ class UserServiceRemover(Job):
         manager = UserServiceManager()
 
         with transaction.atomic():
-            removeFrom = sql_datetime() - timedelta(
+            removeFrom = sql_now() - timedelta(
                 seconds=10
             )  # We keep at least 10 seconds the machine before removing it, so we avoid connections errors
             candidates: collections.abc.Iterable[UserService] = UserService.objects.filter(
