@@ -97,7 +97,7 @@ def migrate(
                         server_ip_hostname_mac.append((server, str(answers[0]).rstrip('.'), mac))
                     except Exception:
                         # No problem, no reverse dns, hostname is the same as IP
-                        server_ip_hostname_mac.append((server, server, mac))
+                        server_ip_hostname_mac.append((server, '', mac))
                 except Exception:
                     # Not pure IP, try to resolve it and get first IP
                     try:

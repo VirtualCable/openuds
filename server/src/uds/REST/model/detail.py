@@ -197,7 +197,7 @@ class DetailHandler(BaseModelHandler):
         parent: models.Model = self._kwargs['parent']
 
         # if has custom methods, look for if this request matches any of them
-        if len(self._args) > 0:
+        if len(self._args) > 1:
             r = self._check_is_custom_method(self._args[1], parent)
             if r is not consts.rest.NOT_FOUND:
                 return r

@@ -32,7 +32,6 @@
 import logging
 import typing
 
-from django.db.models import Q
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
@@ -114,9 +113,7 @@ class ServersServers(DetailHandler):
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = typing.cast('models.ServerGroup', parent)  # We will receive for sure
         try:
-            multi = False
             if item is None:
-                multi = True
                 q = parent.servers.all()
             else:
                 q = parent.servers.filter(uuid=process_uuid(item))
@@ -128,11 +125,11 @@ class ServersServers(DetailHandler):
                     'hostname': i.hostname,
                     'ip': i.ip,
                     'listen_port': i.listen_port,
-                    'mac': i.mac if not multi and i.mac != consts.MAC_UNKNOWN else '',
+                    'mac': i.mac if i.mac != consts.MAC_UNKNOWN else '',
                     'maintenance_mode': i.maintenance_mode,
                 }
                 res.append(val)
-            if multi:
+            if item is None:
                 return res
             if not i:
                 raise Exception('Item not found')
@@ -351,11 +348,11 @@ class ServersServers(DetailHandler):
         for line_number, row in enumerate(data, 1):
             if len(row) == 0:
                 continue
-            ip = row[0].strip()
-            hostname = ip
+            hostname = row[0].strip()
+            ip = ''
             mac = consts.MAC_UNKNOWN
             if len(row) > 1:
-                hostname = row[1].strip()
+                ip = row[1].strip()
             if len(row) > 2:
                 mac = row[2].strip().upper().strip() or consts.MAC_UNKNOWN
                 if mac and not net.is_valid_mac(mac):
@@ -369,7 +366,7 @@ class ServersServers(DetailHandler):
                 import_errors.append(f'Line {line_number}: No IP or hostname, skipping')
                 continue
 
-            if hostname != ip and not net.is_valid_host(hostname):
+            if hostname and not net.is_valid_host(hostname):
                 # Log it has been skipped
                 import_errors.append(f'Line {line_number}: Hostname {hostname} is invalid, skipping')
                 continue  # skip invalid hostnames
@@ -377,7 +374,12 @@ class ServersServers(DetailHandler):
             # Seems valid, create server if not exists already (by ip OR hostname)
             logger.debug('Creating server with ip %s, hostname %s and mac %s', ip, hostname, mac)
             try:
-                if parent.servers.filter(Q(ip=ip) | Q(hostname=hostname)).count() == 0:
+                q = parent.servers.all()
+                if ip != '':
+                    q = q.filter(ip=ip)
+                if hostname != '':
+                    q = q.filter(hostname=hostname)
+                if q.count() == 0:
                     server = models.Server.objects.create(
                         register_username=self._user.pretty_name,
                         register_ip=self._request.ip,
@@ -392,9 +394,7 @@ class ServersServers(DetailHandler):
                     parent.servers.add(server)  # And register it on group
                 else:
                     # Log it has been skipped
-                    import_errors.append(
-                        f'Line {line_number}: duplicated server, skipping'
-                    )
+                    import_errors.append(f'Line {line_number}: duplicated server, skipping')
             except Exception as e:
                 import_errors.append(f'Error creating server on line {line_number}: {str(e)}')
                 logger.exception('Error creating server on line %s', line_number)

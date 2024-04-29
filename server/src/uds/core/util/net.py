@@ -266,11 +266,9 @@ def is_valid_ip(value: str, version: typing.Literal[0, 4, 6] = 0) -> bool:
 
 def is_valid_fqdn(value: str) -> bool:
     return (
-        re.match(
-            r'^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$',
-            value,
-        )
-        is not None
+        re.match(r'^(?!:\/\/)(?=.{1,255}$)((.{1,63}\.){1,127}(?![0-9]*$)[a-z0-9-]+\.?)$', value, re.IGNORECASE)
+        is not None  # Allow for non qualified domain names (such as localhost, host1, etc)
+        or re.match(r'^[a-z0-9-]+$', value, re.IGNORECASE) is not None
     )
 
 
@@ -280,6 +278,7 @@ def is_valid_host(value: str) -> bool:
 
 def is_valid_mac(value: str) -> bool:
     return re.match(r'^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$', value) is not None
+
 
 def test_connectivity(host: str, port: int, timeout: float = 4) -> bool:
     try:
