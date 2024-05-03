@@ -163,7 +163,7 @@ class MustBeOfType:
     def __repr__(self) -> str:
         return self.__str__()
 
-def find_attr_in_list(lst: list[T], attribute: str, value: typing.Any) -> T:
+def search_item_by_attr(lst: list[T], attribute: str, value: typing.Any) -> T:
     """
     Returns an item from a list of items
     """
@@ -171,6 +171,12 @@ def find_attr_in_list(lst: list[T], attribute: str, value: typing.Any) -> T:
         if getattr(item, attribute) == value:
             return item
     raise ValueError(f'Item with id {value} not found in list')
+
+def filter_list_by_attr(lst: list[T], attribute: str, value: typing.Any) -> list[T]:
+    """
+    Returns a list of items from a list of items
+    """
+    return [item for item in lst if getattr(item, attribute) == value]
 
 def check_userinterface_values(obj: ui.UserInterface, values: ui.gui.ValuesDictType) -> None:
     """

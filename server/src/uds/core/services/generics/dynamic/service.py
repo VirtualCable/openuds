@@ -186,16 +186,6 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         # Default is to stop "hard"
         return self.stop(caller_instance, vmid)
 
-    def suspend(
-        self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str
-    ) -> None:
-        """
-        Suspends the machine
-        Defaults to shutdown_machine.
-        Can be overriden if the service supports suspending.
-        """
-        return self.shutdown(caller_instance, vmid)
-
     @abc.abstractmethod
     def delete(
         self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str

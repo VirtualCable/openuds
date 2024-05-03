@@ -60,7 +60,7 @@ class TestOVirtLinkedService(UDSTransactionTestCase):
             for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
                 state = userservice.check_state()
                 # Ensure machine status is always DOWN, so the test does not end
-                utils.find_attr_in_list(fixtures.VMS_INFO, 'id', userservice._vmid).status = ov_types.VMStatus.DOWN
+                utils.search_item_by_attr(fixtures.VMS_INFO, 'id', userservice._vmid).status = ov_types.VMStatus.DOWN
 
             self.assertEqual(state, types.states.TaskState.ERROR)
             self.assertGreater(
@@ -88,7 +88,7 @@ class TestOVirtLinkedService(UDSTransactionTestCase):
                 # this user service expects the machine to be started at some point, so after a few iterations, we set it to started
                 # note that the user service has a counter for max "recheck" without any success, and if reached, it will fail
                 if counter == 12:
-                    vm = utils.find_attr_in_list(fixtures.VMS_INFO, 'id', userservice._vmid)
+                    vm = utils.search_item_by_attr(fixtures.VMS_INFO, 'id', userservice._vmid)
                     vm.status = ov_types.VMStatus.UP
                 state = userservice.check_state()
 
@@ -130,11 +130,11 @@ class TestOVirtLinkedService(UDSTransactionTestCase):
                 # this user service expects the machine to be started at some point, so after a few iterations, we set it to started
                 # note that the user service has a counter for max "recheck" without any success, and if reached, it will fail
                 if counter == 12:
-                    vm = utils.find_attr_in_list(fixtures.VMS_INFO, 'id', userservice._vmid)
+                    vm = utils.search_item_by_attr(fixtures.VMS_INFO, 'id', userservice._vmid)
                     vm.status = ov_types.VMStatus.UP
                 # Again, machine will be suspended for L2, so we set it to suspended after a few iterations more
                 if counter == 24:
-                    vm = utils.find_attr_in_list(fixtures.VMS_INFO, 'id', userservice._vmid)
+                    vm = utils.search_item_by_attr(fixtures.VMS_INFO, 'id', userservice._vmid)
                     vm.status = ov_types.VMStatus.SUSPENDED
                 state = userservice.check_state()
 
@@ -180,7 +180,7 @@ class TestOVirtLinkedService(UDSTransactionTestCase):
                 # this user service expects the machine to be started at some point, so after a few iterations, we set it to started
                 # note that the user service has a counter for max "recheck" without any success, and if reached, it will fail
                 if counter == 12:
-                    vm = utils.find_attr_in_list(fixtures.VMS_INFO, 'id', userservice._vmid)
+                    vm = utils.search_item_by_attr(fixtures.VMS_INFO, 'id', userservice._vmid)
                     vm.status = ov_types.VMStatus.UP
                 state = userservice.check_state()
 
@@ -221,7 +221,7 @@ class TestOVirtLinkedService(UDSTransactionTestCase):
                 # skip create and use next in queue
                 userservice._queue.pop(0)  # Remove create
                 # And ensure vm is up
-                utils.find_attr_in_list(fixtures.VMS_INFO, 'id', userservice._vmid).status = (
+                utils.search_item_by_attr(fixtures.VMS_INFO, 'id', userservice._vmid).status = (
                     ov_types.VMStatus.UP
                 )
 
@@ -244,7 +244,7 @@ class TestOVirtLinkedService(UDSTransactionTestCase):
                     state = userservice.check_state()
                     # Ensure that, after a few iterations, the machine is removed (state is UNKNOWN)
                     # if counter == 5:
-                    #     utils.find_attr_in_list(fixtures.VMS_INFO, 'id', userservice._vmid).status = ov_types.VMStatus.UNKNOWN
+                    #     utils.search_item_by_attr(fixtures.VMS_INFO, 'id', userservice._vmid).status = ov_types.VMStatus.UNKNOWN
 
                 self.assertEqual(
                     state, types.states.TaskState.FINISHED, f'Graceful: {graceful}, Counter: {counter}'

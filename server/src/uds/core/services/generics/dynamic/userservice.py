@@ -132,6 +132,17 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         types.services.Operation.FINISH,
     ]
 
+    _move_to_l1_queue: typing.ClassVar[list[types.services.Operation]] = [
+        types.services.Operation.START,
+        types.services.Operation.FINISH,
+    ]
+
+    _move_to_l2_queue: typing.ClassVar[list[types.services.Operation]] = [
+        types.services.Operation.SUSPEND,
+        types.services.Operation.SUSPEND_COMPLETED,
+        types.services.Operation.FINISH,
+    ]
+
     @typing.final
     def _reset_checks_counter(self) -> None:
         with self.storage.as_dict() as data:
@@ -227,7 +238,11 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
                     self.do_log(types.log.LogLevel.ERROR, f'Error removing machine: {e}')
             else:
                 logger.debug('Keep on error is enabled, not removing machine')
-                self._set_queue([types.services.Operation.FINISH] if self.keep_state_sets_error else [types.services.Operation.ERROR])
+                self._set_queue(
+                    [types.services.Operation.FINISH]
+                    if self.keep_state_sets_error
+                    else [types.services.Operation.ERROR]
+                )
                 return types.states.TaskState.FINISHED
 
         self._set_queue([types.services.Operation.ERROR])
@@ -279,7 +294,6 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             return self._error('Max retries reached')
         self._queue.insert(0, types.services.Operation.RETRY)
         return types.states.TaskState.FINISHED
-
 
     # Utility overrides for type checking...
     # Probably, overriden again on child classes
@@ -344,6 +358,14 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         return self._execute_queue()
 
     @typing.final
+    def move_to_cache(self, level: types.services.CacheLevel) -> types.states.TaskState:
+        if level == types.services.CacheLevel.L1:
+            self._set_queue(self._move_to_l1_queue.copy())
+        else:
+            self._set_queue(self._move_to_l2_queue.copy())
+        return self._execute_queue()
+
+    @typing.final
     def process_ready_from_os_manager(self, data: typing.Any) -> types.states.TaskState:
         # Eat the WAIT operation if it is in the queue
         # At most, we will have one WAIT operation in the queue
@@ -364,14 +386,26 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
                 self.cache.put('ready', '1', consts.cache.SHORT_CACHE_TIMEOUT // 2)  # short cache timeout
                 self._set_queue([types.services.Operation.FINISH])
             else:
-                self._set_queue([types.services.Operation.START, types.services.Operation.START_COMPLETED, types.services.Operation.FINISH])
+                self._set_queue(
+                    [
+                        types.services.Operation.START,
+                        types.services.Operation.START_COMPLETED,
+                        types.services.Operation.FINISH,
+                    ]
+                )
         except Exception as e:
             return self._error(f'Error on setReady: {e}')
         return self._execute_queue()
 
     def reset(self) -> types.states.TaskState:
         if self._vmid != '':
-            self._set_queue([types.services.Operation.RESET, types.services.Operation.RESET_COMPLETED, types.services.Operation.FINISH])
+            self._set_queue(
+                [
+                    types.services.Operation.RESET,
+                    types.services.Operation.RESET_COMPLETED,
+                    types.services.Operation.FINISH,
+                ]
+            )
 
         return types.states.TaskState.FINISHED
 
@@ -586,7 +620,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         This does nothing, as it's a NOP operation
         """
         pass
-    
+
     def op_destroy_validator(self) -> None:
         """
         This method is called to check if the userservice has an vmid to stop destroying it if needed
@@ -745,7 +779,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         This method is called to check if the service is doing nothing
         """
         return types.states.TaskState.FINISHED
-    
+
     @typing.final
     def op_retry_checker(self) -> types.states.TaskState:
         # If max retrieas has beeen reached, error should already have been set
@@ -813,7 +847,9 @@ _EXECUTORS: typing.Final[
 
 # Same af before, but for check methods
 _CHECKERS: typing.Final[
-    collections.abc.Mapping[types.services.Operation, collections.abc.Callable[[DynamicUserService], types.states.TaskState]]
+    collections.abc.Mapping[
+        types.services.Operation, collections.abc.Callable[[DynamicUserService], types.states.TaskState]
+    ]
 ] = {
     types.services.Operation.INITIALIZE: DynamicUserService.op_initialize_checker,
     types.services.Operation.CREATE: DynamicUserService.op_create_checker,

@@ -102,7 +102,9 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
             retries = data.get('retries', 0) + 1
             data['retries'] = retries
 
-        if retries > self.max_retries:  # Use self to access class variables, so we can override them on subclasses
+        if (
+            retries > self.max_retries
+        ):  # Use self to access class variables, so we can override them on subclasses
             return self._error(f'Max retries reached')
 
         return None
@@ -189,7 +191,6 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
             return self._error('Max retries reached')
         self._queue.insert(0, Operation.RETRY)
         return types.states.TaskState.FINISHED
-
 
     def service(self) -> 'DynamicService':
         return typing.cast('DynamicService', super().service())

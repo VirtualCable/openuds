@@ -76,7 +76,7 @@ class TestProxmovLinkedService(UDSTestCase):
         with fixtures.patch_provider_api() as _api:
             service = fixtures.create_linked_service()
 
-            storage = utils.find_attr_in_list(fixtures.STORAGES_INFO, 'id', service.datastore.value)
+            storage = utils.search_item_by_attr(fixtures.STORAGES_INFO, 'id', service.datastore.value)
             # Ensure available is greater that configured on service
             old_available = storage.available  # For future tests to restore it
             try:

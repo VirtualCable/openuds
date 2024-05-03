@@ -34,11 +34,13 @@ import typing
 
 
 # Default timeouts, in seconds
-DEFAULT_CACHE_TIMEOUT: typing.Final[int] = 60 * 3  # 3 minutes
-LONG_CACHE_TIMEOUT: typing.Final[int] = DEFAULT_CACHE_TIMEOUT * 20  # 1 hour
-EXTREME_CACHE_TIMEOUT: typing.Final[int] = LONG_CACHE_TIMEOUT * 24  # 1 day
-SHORT_CACHE_TIMEOUT: typing.Final[int] = DEFAULT_CACHE_TIMEOUT // 3  # 1 minute
-SHORTEST_CACHE_TIMEOUT: typing.Final[int] = 3  # 3 seconds
+BASE_CACHE_TIMEOUT: typing.Final[int] = 3  # 3 seconds
+
+DEFAULT_CACHE_TIMEOUT: typing.Final[int] = BASE_CACHE_TIMEOUT * 60  # 3 minutes
+LONG_CACHE_TIMEOUT: typing.Final[int] = BASE_CACHE_TIMEOUT * 60 * 60  # 1 hour
+EXTREME_CACHE_TIMEOUT: typing.Final[int] = BASE_CACHE_TIMEOUT * 60 * 60 * 24  # 1 day
+SHORT_CACHE_TIMEOUT: typing.Final[int] = BASE_CACHE_TIMEOUT * 20  # 1 minute
+SHORTEST_CACHE_TIMEOUT: typing.Final[int] = BASE_CACHE_TIMEOUT  # 6 seconds
 
 # Used to mark a cache as not found
 # use "cache.get(..., default=CACHE_NOT_FOUND)" to check if a cache is non existing instead of real None value
