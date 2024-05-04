@@ -135,12 +135,8 @@ class ProxmoxDeploymentSerializationTest(UDSTransactionTestCase):
         instance = _create_instance(SERIALIZED_DEPLOYMENT_DATA[LAST_VERSION])
         self.assertEqual(instance._queue, TEST_QUEUE_NEW)
 
-        # Ensure that has been imported already
-        self.assertEqual(instance._queue_has_new_format, True)
-
         # Now, access current operation, that will trigger the upgrade
         instance._current_op()
-        self.assertEqual(instance._queue_has_new_format, True)
 
         # And essure quee is as new format should be
         self.assertEqual(instance._queue, TEST_QUEUE_NEW)
@@ -156,7 +152,6 @@ class ProxmoxDeploymentSerializationTest(UDSTransactionTestCase):
             instance._queue,
             TEST_QUEUE_NEW,
         )
-        self.assertEqual(instance._queue_has_new_format, True)
 
         # Append something remarshall and check
         instance._queue.insert(0, types.services.Operation.RESET)
@@ -166,7 +161,6 @@ class ProxmoxDeploymentSerializationTest(UDSTransactionTestCase):
             instance._queue,
             [types.services.Operation.RESET] + TEST_QUEUE_NEW,
         )
-        self.assertEqual(instance._queue_has_new_format, True)
 
     def test_autoserialization_fields(self) -> None:
         # This test is designed to ensure that all fields are autoserializable

@@ -171,8 +171,6 @@ class ProxmoxUserserviceLinked(DynamicUserService):
             self._queue = [
                 OldOperation.from_int(i).to_operation() for i in pickle.loads(vals[7])
             ]  # nosec: controled data
-            # Also, mark as it is using new queue format
-            self._queue_has_new_format = True
 
         self.mark_for_upgrade()  # Flag so manager can save it again with new format
 
@@ -238,9 +236,3 @@ class ProxmoxUserserviceLinked(DynamicUserService):
             UserServiceManager().send_script(self.db_obj(), script)
         except Exception as e:
             logger.info('Exception sending loggin to %s: %s', self.db_obj(), e)
-
-    def migrate_old_queue(self) -> None:
-        """
-        Migrates the old queue to the new one
-        """
-        self._queue = [OldOperation.from_int(i).to_operation() for i in self._queue]

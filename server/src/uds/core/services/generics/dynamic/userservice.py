@@ -89,8 +89,6 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     _reason = autoserializable.StringField(default='')
     _queue = autoserializable.ListField[types.services.Operation]()  # Default is empty list
     _is_flagged_for_destroy = autoserializable.BoolField(default=False)
-    # In order to allow migrating from old data, we will mark if the _queue has our format or the old one
-    _queue_has_new_format = autoserializable.BoolField(default=False)
 
     # Extra info, not serializable, to keep information in case of exception and debug it
     _error_debug_info: typing.Optional[str] = None
@@ -185,10 +183,6 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
           There is almos not penalty on keeping this here, as it's only an small check
           We also could have used marshal/unmarshal, but this is more clear and easy to maintain
         """
-        if self._queue_has_new_format is False:
-            self.migrate_old_queue()
-            self._queue_has_new_format = True
-
         if not self._queue:
             return types.services.Operation.FINISH
 
@@ -201,7 +195,6 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         Ensures that we mark it as new format
         """
         self._queue = queue
-        self._queue_has_new_format = True
 
     @typing.final
     def _generate_name(self) -> str:
@@ -801,13 +794,6 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         return types.states.TaskState.FINISHED
 
     # ERROR, FINISH and UNKNOWN are not here, as they are final states not needing to be checked
-
-    def migrate_old_queue(self) -> None:
-        """
-        If format has to be converted, override this method and do the conversion here
-        Remember to replace self_queue with the new one
-        """
-        pass
 
     @staticmethod
     def _op2str(op: types.services.Operation) -> str:
