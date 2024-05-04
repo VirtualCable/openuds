@@ -176,7 +176,7 @@ def filter_list_by_attr(lst: list[T], attribute: str, value: typing.Any) -> list
     """
     Returns a list of items from a list of items
     """
-    return [item for item in lst if getattr(item, attribute) == value]
+    return [item for item in lst if getattr(item, attribute) == value or value is None]
 
 def check_userinterface_values(obj: ui.UserInterface, values: ui.gui.ValuesDictType) -> None:
     """
