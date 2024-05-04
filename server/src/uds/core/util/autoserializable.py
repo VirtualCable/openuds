@@ -200,7 +200,7 @@ class _SerializableField(typing.Generic[T]):
     def __get__(
         self,
         instance: 'AutoSerializable',
-        objtype: typing.Optional['type[AutoSerializable]'] = None,
+        _objtype: typing.Optional['type[AutoSerializable]'] = None,
     ) -> T:
         """Get field value
 
@@ -209,7 +209,9 @@ class _SerializableField(typing.Generic[T]):
 
         """
         if hasattr(instance, '_fields'):
-            return getattr(instance, '_fields').get(self.name, self._default())
+            if self.name in getattr(instance, '_fields'):
+                return getattr(instance, '_fields')[self.name]
+            
         if self.default is None:
             raise AttributeError(f"Field {self.name} is not set")
         # Set default using setter
@@ -604,6 +606,9 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
         return ', '.join(
             [f"{k}={v.obj_type.__name__}({v.__get__(self)})" for k, v in self._autoserializable_fields()]
         )
+        
+    def as_dict(self) -> dict[str, typing.Any]:
+        return {k: v.__get__(self) for k, v in self._autoserializable_fields()}
 
 
 class AutoSerializableCompressed(AutoSerializable):

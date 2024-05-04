@@ -31,7 +31,6 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import collections.abc
 import dataclasses
 import typing
 
@@ -184,6 +183,19 @@ class AutoSerializable(UDSTestCase):
 
     def test_auto_serializable_base_encrypted(self) -> None:
         self.basic_check(AutoSerializableClass, AutoSerializableEncryptedClass)
+        
+    def test_default_list_field(self) -> None:
+        a = AutoSerializableClass()
+        self.assertEqual(a.list_field, [1, 2, 3])
+        
+        class SimpleListFieldDefault(autoserializable.AutoSerializable):
+            list_field = autoserializable.ListField[int]()
+            
+        b = SimpleListFieldDefault()
+        b.list_field.clear()
+        b.list_field.append(1)
+        b.list_field.append(2)
+        self.assertEqual(b.list_field, [1, 2])
 
     def test_auto_serializable_derived(self) -> None:
         instance = DerivedAutoSerializableClass()
