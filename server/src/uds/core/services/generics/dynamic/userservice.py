@@ -56,7 +56,10 @@ def must_have_vmid(fnc: typing.Callable[[typing.Any], None]) -> typing.Callable[
     @functools.wraps(fnc)
     def wrapper(self: 'DynamicUserService') -> None:
         if self._vmid == '':
-            raise exceptions.FatalError(f'No machine id on {self._name} for {fnc}')
+            # Change current operation to NOP and return
+            # This is so we do not invoque the "checker" method again an nonexisent vmid
+            self._queue[0] = types.services.Operation.NOP
+            return  # May not have an vmid on some situations (as first copying disks, and so on)
         return fnc(self)
 
     return wrapper
@@ -125,8 +128,8 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     _destroy_queue: typing.ClassVar[list[types.services.Operation]] = [
         types.services.Operation.STOP,
         types.services.Operation.STOP_COMPLETED,
-        types.services.Operation.REMOVE,
-        types.services.Operation.REMOVE_COMPLETED,
+        types.services.Operation.DELETE,
+        types.services.Operation.DELETE_COMPLETED,
         types.services.Operation.FINISH,
     ]
 
@@ -623,7 +626,6 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         # If does not have vmid, we can finish right now
         if self._vmid == '':
             self._set_queue([types.services.Operation.FINISH])  # so we can finish right now
-            return
 
     def op_custom(self, operation: types.services.Operation) -> None:
         """
@@ -823,8 +825,8 @@ _EXECUTORS: typing.Final[
     types.services.Operation.SUSPEND_COMPLETED: DynamicUserService.op_suspend_completed,
     types.services.Operation.RESET: DynamicUserService.op_reset,
     types.services.Operation.RESET_COMPLETED: DynamicUserService.op_reset_completed,
-    types.services.Operation.REMOVE: DynamicUserService.op_remove,
-    types.services.Operation.REMOVE_COMPLETED: DynamicUserService.op_remove_completed,
+    types.services.Operation.DELETE: DynamicUserService.op_remove,
+    types.services.Operation.DELETE_COMPLETED: DynamicUserService.op_remove_completed,
     types.services.Operation.WAIT: DynamicUserService.op_wait,
     types.services.Operation.NOP: DynamicUserService.op_nop,
     types.services.Operation.DESTROY_VALIDATOR: DynamicUserService.op_destroy_validator,
@@ -850,8 +852,8 @@ _CHECKERS: typing.Final[
     types.services.Operation.SUSPEND_COMPLETED: DynamicUserService.op_suspend_completed_checker,
     types.services.Operation.RESET: DynamicUserService.op_reset_checker,
     types.services.Operation.RESET_COMPLETED: DynamicUserService.op_reset_completed_checker,
-    types.services.Operation.REMOVE: DynamicUserService.op_remove_checker,
-    types.services.Operation.REMOVE_COMPLETED: DynamicUserService.op_remove_completed_checker,
+    types.services.Operation.DELETE: DynamicUserService.op_remove_checker,
+    types.services.Operation.DELETE_COMPLETED: DynamicUserService.op_remove_completed_checker,
     types.services.Operation.WAIT: DynamicUserService.op_wait_checker,
     types.services.Operation.NOP: DynamicUserService.op_nop_checker,
     types.services.Operation.DESTROY_VALIDATOR: DynamicUserService.op_destroy_validator_checker,

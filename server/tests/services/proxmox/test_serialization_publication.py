@@ -82,8 +82,8 @@ class ProxmoxPublicationSerializationTest(UDSTestCase):
         self.assertEqual(
             instance._queue,
             [
-                types.services.Operation.REMOVE,
-                types.services.Operation.REMOVE_COMPLETED,
+                types.services.Operation.DELETE,
+                types.services.Operation.DELETE_COMPLETED,
                 types.services.Operation.FINISH,
             ],
         )

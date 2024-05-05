@@ -139,8 +139,8 @@ class Operation(enum.IntEnum):
     SUSPEND_COMPLETED = 1010
     RESET = 1011
     RESET_COMPLETED = 1012
-    REMOVE = 1013
-    REMOVE_COMPLETED = 1014
+    DELETE = 1013
+    DELETE_COMPLETED = 1014
     
     WAIT = 1100  # This is a "wait" operation, used to wait for something to happen
     NOP = 1101

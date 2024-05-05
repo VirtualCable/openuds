@@ -84,8 +84,8 @@ class ProxmoxPublication(DynamicPublication, autoserializable.AutoSerializable):
         self._queue = (
             # If removing
             [
-                types.services.Operation.REMOVE,
-                types.services.Operation.REMOVE_COMPLETED,
+                types.services.Operation.DELETE,
+                types.services.Operation.DELETE_COMPLETED,
                 types.services.Operation.FINISH,
             ]
             if _operation == 'd'

@@ -79,7 +79,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         Operation.FINISH,
     ]
     _destroy_queue: typing.ClassVar[list[Operation]] = [
-        Operation.REMOVE,
+        Operation.DELETE,
         Operation.SNAPSHOT_RECOVER,
         Operation.FINISH,
     ]
@@ -511,7 +511,7 @@ _EXECUTORS: typing.Final[
     Operation.CREATE: FixedUserService.op_create,
     Operation.START: FixedUserService.op_start,
     Operation.STOP: FixedUserService.op_stop,
-    Operation.REMOVE: FixedUserService.op_remove,
+    Operation.DELETE: FixedUserService.op_remove,
     Operation.SNAPSHOT_CREATE: FixedUserService.op_snapshot_create,
     Operation.SNAPSHOT_RECOVER: FixedUserService.op_snapshot_recover,
     Operation.PROCESS_TOKEN: FixedUserService.op_process_tocken,
@@ -527,7 +527,7 @@ _CHECKERS: typing.Final[
     Operation.CREATE: FixedUserService.op_create_checker,
     Operation.START: FixedUserService.op_start_checker,
     Operation.STOP: FixedUserService.op_stop_checker,
-    Operation.REMOVE: FixedUserService.op_removed_checker,
+    Operation.DELETE: FixedUserService.op_removed_checker,
     Operation.SNAPSHOT_CREATE: FixedUserService.op_snapshot_create_checker,
     Operation.SNAPSHOT_RECOVER: FixedUserService.op_snapshot_recover_checker,
     Operation.PROCESS_TOKEN: FixedUserService.op_process_token_checker,

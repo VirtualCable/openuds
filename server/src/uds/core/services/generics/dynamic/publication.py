@@ -71,8 +71,8 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         Operation.FINISH,
     ]
     _destroy_queue: typing.ClassVar[list[Operation]] = [
-        Operation.REMOVE,
-        Operation.REMOVE_COMPLETED,
+        Operation.DELETE,
+        Operation.DELETE_COMPLETED,
         Operation.FINISH,
     ]
 
@@ -266,7 +266,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         op = self._current_op()
 
         # If already removing, do nothing
-        if op == Operation.REMOVE:
+        if op == Operation.DELETE:
             return types.states.TaskState.RUNNING
 
         if op == Operation.ERROR:
@@ -550,8 +550,8 @@ _EXECUTORS: typing.Final[
     Operation.SUSPEND_COMPLETED: DynamicPublication.op_unsupported,
     Operation.RESET: DynamicPublication.op_unsupported,
     Operation.RESET_COMPLETED: DynamicPublication.op_unsupported,
-    Operation.REMOVE: DynamicPublication.op_remove,
-    Operation.REMOVE_COMPLETED: DynamicPublication.op_remove_completed,
+    Operation.DELETE: DynamicPublication.op_remove,
+    Operation.DELETE_COMPLETED: DynamicPublication.op_remove_completed,
     Operation.WAIT: DynamicPublication.op_unsupported,
     Operation.NOP: DynamicPublication.op_nop,
     Operation.DESTROY_VALIDATOR: DynamicPublication.op_destroy_validator,
@@ -575,8 +575,8 @@ _CHECKERS: typing.Final[
     Operation.SUSPEND_COMPLETED: DynamicPublication.op_unsupported_checker,
     Operation.RESET: DynamicPublication.op_unsupported_checker,
     Operation.RESET_COMPLETED: DynamicPublication.op_unsupported_checker,
-    Operation.REMOVE: DynamicPublication.op_remove_checker,
-    Operation.REMOVE_COMPLETED: DynamicPublication.op_remove_completed_checker,
+    Operation.DELETE: DynamicPublication.op_remove_checker,
+    Operation.DELETE_COMPLETED: DynamicPublication.op_remove_completed_checker,
     Operation.WAIT: DynamicPublication.op_unsupported_checker,
     Operation.NOP: DynamicPublication.op_nop_checker,
     Operation.DESTROY_VALIDATOR: DynamicPublication.op_destroy_validator_checker,

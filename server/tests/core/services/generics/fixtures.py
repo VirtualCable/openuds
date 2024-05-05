@@ -215,8 +215,8 @@ ALL_TESTEABLE_OPERATIONS = [
     types.services.Operation.SUSPEND_COMPLETED,
     types.services.Operation.RESET,
     types.services.Operation.RESET_COMPLETED,
-    types.services.Operation.REMOVE,
-    types.services.Operation.REMOVE_COMPLETED,
+    types.services.Operation.DELETE,
+    types.services.Operation.DELETE_COMPLETED,
     types.services.Operation.WAIT,
     types.services.Operation.NOP,
     types.services.Operation.DESTROY_VALIDATOR,
@@ -242,8 +242,8 @@ PUB_TESTEABLE_OPERATIONS = [
     types.services.Operation.STOP_COMPLETED,  # 7
     types.services.Operation.SHUTDOWN,  # 8
     types.services.Operation.SHUTDOWN_COMPLETED,  # 9
-    types.services.Operation.REMOVE,  # 10
-    types.services.Operation.REMOVE_COMPLETED,  # 11
+    types.services.Operation.DELETE,  # 10
+    types.services.Operation.DELETE_COMPLETED,  # 11
     types.services.Operation.NOP,  # 12
     types.services.Operation.DESTROY_VALIDATOR,  # 13
     types.services.Operation.CUSTOM_1,  # 14

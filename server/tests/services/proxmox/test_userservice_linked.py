@@ -271,8 +271,8 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
 
                 self.assertIn(types.services.Operation.STOP, userservice._queue)
                 self.assertIn(types.services.Operation.STOP_COMPLETED, userservice._queue)
-                self.assertIn(types.services.Operation.REMOVE, userservice._queue)
-                self.assertIn(types.services.Operation.REMOVE_COMPLETED, userservice._queue)
+                self.assertIn(types.services.Operation.DELETE, userservice._queue)
+                self.assertIn(types.services.Operation.DELETE_COMPLETED, userservice._queue)
 
                 for counter in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
                     state = userservice.check_state()

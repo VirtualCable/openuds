@@ -83,7 +83,7 @@ class OldOperation(enum.IntEnum):
             OldOperation.START: types.services.Operation.START,
             OldOperation.STOP: types.services.Operation.STOP,
             OldOperation.SHUTDOWN: types.services.Operation.SHUTDOWN,
-            OldOperation.REMOVE: types.services.Operation.REMOVE,
+            OldOperation.REMOVE: types.services.Operation.DELETE,
             OldOperation.WAIT: types.services.Operation.WAIT,
             OldOperation.ERROR: types.services.Operation.ERROR,
             OldOperation.FINISH: types.services.Operation.FINISH,

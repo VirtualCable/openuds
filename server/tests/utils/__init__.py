@@ -170,7 +170,7 @@ def search_item_by_attr(lst: list[T], attribute: str, value: typing.Any) -> T:
     for item in lst:
         if getattr(item, attribute) == value:
             return item
-    raise ValueError(f'Item with id {value} not found in list')
+    raise ValueError(f'Item with {attribute}=="{value}" not found in list {str(lst)[:100]}')
 
 def filter_list_by_attr(lst: list[T], attribute: str, value: typing.Any) -> list[T]:
     """
