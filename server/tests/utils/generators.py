@@ -66,13 +66,13 @@ def random_mac() -> str:
     return ':'.join(random_string(2, '0123456789ABCDEF') for _ in range(6))
 
 
-def limited_iterator(check: typing.Callable[[], bool], limit: int = 128) -> typing.Generator[int, None, None]:
+def limited_iterator(until_checker: typing.Callable[[], bool], limit: int = 128) -> typing.Generator[int, None, None]:
     """
     Limit an iterator to a number of elements
     Will continue until limit is reached or check() returns False
     """
     current = 0
-    while current < limit and check():
+    while current < limit and until_checker():
         yield current
         current += 1
 
@@ -80,4 +80,4 @@ def limited_iterator(check: typing.Callable[[], bool], limit: int = 128) -> typi
         return
 
     # Limit reached, raise an exception
-    raise Exception(f'Limit reached: {current}/{limit}: {check()}')
+    raise Exception(f'Limit reached: {current}/{limit}: {until_checker()}')
