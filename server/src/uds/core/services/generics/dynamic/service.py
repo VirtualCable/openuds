@@ -109,7 +109,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
     def get_lenname(self) -> int:
         return self.lenname.value
 
-    def sanitize_machine_name(self, name: str) -> str:
+    def sanitized_name(self, name: str) -> str:
         """
         Sanitize machine name
         Override it to provide a custom name sanitizer

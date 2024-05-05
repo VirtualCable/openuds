@@ -311,8 +311,8 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
 
         # First we should create a full clone, so base machine do not get fullfilled with "garbage" delta disks...
         # Add a number based on current time to avoid collisions
-        self._name = self.service().sanitize_machine_name(
-            f'UDS-Pub {self.servicepool_name()}-{int(time.time())%256:2X} {self.revision()}'
+        self._name = self.service().sanitized_name(
+            f'UDS-Pub-{self.servicepool_name()}-{int(time.time())%256:2X}-{self.revision()}'
         )
         self._is_flagged_for_destroy = False
 
