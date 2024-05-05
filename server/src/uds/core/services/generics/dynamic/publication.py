@@ -50,7 +50,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
     # as long as a couple of hours by default with our suggested delay
     max_state_checks: typing.ClassVar[int] = consts.services.PUB_MAX_STATE_CHECKS
     # How many "retries" operation on same state will be allowed before giving up
-    max_retries: typing.ClassVar[int] = consts.services.MAX_RETRIES
+    max_retries: typing.ClassVar[int] = consts.services.PUB_MAX_RETRIES
 
     # If must wait until finish queue for destroying the machine
     wait_until_finish_to_destroy: typing.ClassVar[bool] = False

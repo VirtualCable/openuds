@@ -36,6 +36,6 @@ SUGGESTED_CHECK_INTERVAL: typing.Final[int] = 10  # In seconds
 MAX_RETRIES: typing.Final[int] = 7 * 24 * 60 // SUGGESTED_CHECK_INTERVAL  # 7 days
 MAX_STATE_CHECKS: typing.Final[int] = 32  # Max number of state checks before giving up
 
-PUB_SUGGESTED_CHECK_INTERVAL: typing.Final[int] = 20  # In seconds
+PUB_SUGGESTED_CHECK_INTERVAL: typing.Final[int] = 30  # In seconds
 PUB_MAX_RETRIES: typing.Final[int] = 7 * 24 * 60 // PUB_SUGGESTED_CHECK_INTERVAL  # 7 days
 PUB_MAX_STATE_CHECKS: typing.Final[int] = 7200 // PUB_SUGGESTED_CHECK_INTERVAL  # 2 hours for a single state at most
