@@ -167,3 +167,4 @@
 .python-version
 
 target/
+server/test-vars.ini

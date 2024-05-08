@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2024 Virtual Cable S.L.U.
+# Copyright (c) 2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -26,22 +25,40 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+# pyright: reportUnknownMemberType=false
 import typing
+import logging
+import configparser
+
+logger = logging.getLogger(__name__)
+
+# VARS is {SECTION: {VARIABLE: VALUE}}
+config: configparser.ConfigParser = configparser.ConfigParser()
+
+VAR_FILE: typing.Final[str] = 'test-vars.ini'
 
 
-# Default timeouts, in seconds
-BASE_CACHE_TIMEOUT: typing.Final[int] = 3  # 3 seconds
+def load() -> None:
+    if config.sections():
+        return
 
-DEFAULT_CACHE_TIMEOUT: typing.Final[int] = BASE_CACHE_TIMEOUT * 60  # 3 minutes
-LONG_CACHE_TIMEOUT: typing.Final[int] = BASE_CACHE_TIMEOUT * 60 * 60  # 1 hour
-EXTREME_CACHE_TIMEOUT: typing.Final[int] = BASE_CACHE_TIMEOUT * 60 * 60 * 24  # 1 day
-SHORT_CACHE_TIMEOUT: typing.Final[int] = BASE_CACHE_TIMEOUT * 20  # 1 minute
-SHORTEST_CACHE_TIMEOUT: typing.Final[int] = BASE_CACHE_TIMEOUT  # 3 seconds
+    try:
+        config.read(VAR_FILE)
+    except configparser.Error:
+        pass  # Ignore errors, no vars will be loaded
 
-# Used to mark a cache as not found
-# use "cache.get(..., default=CACHE_NOT_FOUND)" to check if a cache is non existing instead of real None value
-CACHE_NOT_FOUND: typing.Final[object] = object()
+
+def get_vars(section: str) -> typing.Dict[str, str]:
+    load()  # Ensure vars are loaded
+
+    try:
+        v = dict(config[section])
+        if v.get('enabled', 'false') == 'false':
+            logger.info('Section %s is disabled (use enabled=true to enable it on %s file)', section, VAR_FILE)
+            return {}  # If section is disabled, return empty dict
+        return v
+    except KeyError:
+        return {}

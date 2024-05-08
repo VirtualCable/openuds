@@ -30,7 +30,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # pyright: reportUnknownMemberType=false
 import typing
-import collections.abc
 import logging
 
 from django.test import TestCase, TransactionTestCase
@@ -51,8 +50,6 @@ class UDSHttpResponse(HttpResponse):
     """
     Custom response class to be able to access the response content
     """
-
-    url: str
 
     def __init__(self, content: bytes, *args: typing.Any, **kwargs: typing.Any) -> None:
         super().__init__(content, *args, **kwargs)
