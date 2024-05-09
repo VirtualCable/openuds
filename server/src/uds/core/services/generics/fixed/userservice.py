@@ -262,7 +262,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
                 self.cache.put('ready', '1', consts.cache.SHORT_CACHE_TIMEOUT // 2)  # short cache timeout
                 self._queue = [Operation.FINISH]
             else:
-                self._queue = [Operation.START, Operation.START_COMPLETED, Operation.FINISH]
+                self._queue = [Operation.START, Operation.FINISH]
         except exceptions.NotFoundError:
             return self.error('Machine not found')
         except Exception as e:
