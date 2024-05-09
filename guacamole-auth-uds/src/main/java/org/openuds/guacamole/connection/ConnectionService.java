@@ -174,6 +174,10 @@ public class ConnectionService {
     public GuacamoleConfiguration getConnectionConfiguration(String data)
             throws GuacamoleException {
 
+        // Clean up data { and } characters
+        // sample valid data: nsgxslnuqvsoyvr8hacmjlezgmyjcjxvbpxiiqgs.ERg5gP0uq10WrnrqpttJJgqWSAFXpR7F
+        data = data.replace("{", "").replace("}", "");
+
         logger.debug("Retrieving/validating connection configuration using data from \"{}\"...", data);
 
         // Build URI of remote service from the base URI and given data
