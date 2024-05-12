@@ -252,26 +252,23 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
             api.convert_to_template(machineId, self.shadow.value)
 
     def start_deploy_from_template(self, name: str, comments: str, template_opaque_ref: str) -> str:
-        """
-        Deploys a virtual machine on selected cluster from selected template
+            """
+            Deploys a virtual machine on selected cluster from selected template
 
-        Args:
-            name: Name (sanitized) of the machine
-            comments: Comments for machine
-            templateId: Id of the template to deploy from
-            displayType: 'vnc' or 'spice'. Display to use ad Xen admin interface
-            memoryMB: Memory requested for machine, in MB
-            guaranteedMB: Minimum memory guaranteed for this machine
+            Args:
+                name (str): Name (sanitized) of the machine
+                comments (str): Comments for machine
+                template_opaque_ref (str): Opaque reference of the template to deploy from
 
-        Returns:
-            Id of the machine being created form template
-        """
-        logger.debug('Deploying from template %s machine %s', template_opaque_ref, name)
+            Returns:
+                str: Id of the task created for this operation
+            """
+            logger.debug('Deploying from template %s machine %s', template_opaque_ref, name)
 
-        with self.provider().get_connection() as api:
-            self.has_datastore_space()
+            with self.provider().get_connection() as api:
+                self.has_datastore_space()
 
-            return api.start_deploy_from_template(template_opaque_ref, name)
+                return api.start_deploy_from_template(template_opaque_ref, name)
 
     def remove_template(self, template_opaque_ref: str) -> None:
         """
