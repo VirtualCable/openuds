@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014-2023 Virtual Cable S.L.U.
+# Copyright (c) 2014-2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -25,17 +25,22 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-import ssl
+"""
+Author: Adolfo Gómez, dkmaster at dkmon dot com
+"""
+
 import xmlrpc.client
 import logging
 import typing
 
 from uds.core import consts
-
 from uds.core.util.decorators import cached
+from uds.core.util import security
 
 import XenAPI  # pyright: ignore
 
+from . import types as xen_types
+from . import exceptions
 
 logger = logging.getLogger(__name__)
 
@@ -43,67 +48,8 @@ TAG_TEMPLATE = "uds-template"
 TAG_MACHINE = "uds-machine"
 
 
-class XenFault(Exception):
-    pass
-
-
 def cache_key_helper(server_api: 'XenServer') -> str:
     return server_api._url  # pyright: ignore[reportPrivateUsage]
-
-
-class XenFailure(XenAPI.Failure, XenFault):
-    exBadVmPowerState = 'VM_BAD_POWER_STATE'
-    exVmMissingPVDrivers = 'VM_MISSING_PV_DRIVERS'
-    exHandleInvalid = 'HANDLE_INVALID'
-    exHostIsSlave = 'HOST_IS_SLAVE'
-    exSRError = 'SR_BACKEND_FAILURE_44'
-
-    def __init__(self, details: typing.Optional[list[typing.Any]] = None):
-        details = [] if details is None else details
-        super(XenFailure, self).__init__(details)
-
-    def isHandleInvalid(self) -> bool:
-        return typing.cast(typing.Any, self.details[0]) == XenFailure.exHandleInvalid
-
-    def needs_xen_tools(self) -> bool:
-        return typing.cast(typing.Any, self.details[0]) == XenFailure.exVmMissingPVDrivers
-
-    def bad_power_state(self) -> bool:
-        return typing.cast(typing.Any, self.details[0]) == XenFailure.exBadVmPowerState
-
-    def is_slave(self) -> bool:
-        return typing.cast(typing.Any, self.details[0]) == XenFailure.exHostIsSlave
-
-    def as_human_readable(self) -> str:
-        try:
-            error_list = {
-                XenFailure.exBadVmPowerState: 'Machine state is invalid for requested operation (needs {2} and state is {3})',
-                XenFailure.exVmMissingPVDrivers: 'Machine needs Xen Server Tools to allow requested operation',
-                XenFailure.exHostIsSlave: 'The connected host is an slave, try to connect to {1}',
-                XenFailure.exSRError: 'Error on SR: {2}',
-                XenFailure.exHandleInvalid: 'Invalid reference to {1}',
-            }
-            err = error_list.get(typing.cast(typing.Any, self.details[0]), 'Error {0}')
-
-            return err.format(*typing.cast(list[typing.Any], self.details))
-        except Exception:
-            return 'Unknown exception: {0}'.format(self.details)
-
-    def __str__(self) -> str:
-        return self.as_human_readable()
-
-
-class XenException(XenFault):
-    def __init__(self, message: typing.Any):
-        XenFault.__init__(self, message)
-        logger.debug('Exception create: %s', message)
-
-
-class XenPowerState:  # pylint: disable=too-few-public-methods
-    halted: str = 'Halted'
-    running: str = 'Running'
-    suspended: str = 'Suspended'
-    paused: str = 'Paused'
 
 
 class XenServer:  # pylint: disable=too-many-public-methods
@@ -129,14 +75,14 @@ class XenServer:  # pylint: disable=too-many-public-methods
         port: int,
         username: str,
         password: str,
-        useSSL: bool = False,
-        verifySSL: bool = False,
+        ssl: bool = False,
+        verify_ssl: bool = False,
     ):
         self._originalHost = self._host = host
         self._host_backup = host_backup or ''
         self._port = str(port)
-        self._use_ssl = bool(useSSL)
-        self._verify_ssl = bool(verifySSL)
+        self._use_ssl = bool(ssl)
+        self._verify_ssl = bool(verify_ssl)
         self._protocol = 'http' + ('s' if self._use_ssl else '') + '://'
         self._url = ''
         self._logged_in = False
@@ -149,12 +95,9 @@ class XenServer:  # pylint: disable=too-many-public-methods
     def to_mb(number: typing.Union[str, int]) -> int:
         return int(number) // (1024 * 1024)
 
-    def check_login(self) -> bool:
-        if not self._logged_in:
-            self.login(swithc_to_master=True)
-        return self._logged_in
-
-    def get_xenapi_property(self, prop: str) -> typing.Any:
+    # Properties to access private vars
+    # p
+    def _get_xenapi_property(self, prop: str) -> typing.Any:
         if not self.check_login():
             raise Exception("Can't log in")
         return getattr(self._session.xenapi, prop)
@@ -162,50 +105,48 @@ class XenServer:  # pylint: disable=too-many-public-methods
     # Properties to fast access XenApi classes
     @property
     def Async(self) -> typing.Any:
-        return self.get_xenapi_property('Async')
+        return self._get_xenapi_property('Async')
 
     @property
     def task(self) -> typing.Any:
-        return self.get_xenapi_property('task')
+        return self._get_xenapi_property('task')
 
     @property
     def VM(self) -> typing.Any:
-        return self.get_xenapi_property('VM')
+        return self._get_xenapi_property('VM')
 
     @property
     def SR(self) -> typing.Any:
-        return self.get_xenapi_property('SR')
+        return self._get_xenapi_property('SR')
 
     @property
     def pool(self) -> typing.Any:
-        return self.get_xenapi_property('pool')
+        return self._get_xenapi_property('pool')
 
     @property
     def host(self) -> typing.Any:  # Host
-        return self.get_xenapi_property('host')
+        return self._get_xenapi_property('host')
 
     @property
     def network(self) -> typing.Any:  # Networks
-        return self.get_xenapi_property('network')
+        return self._get_xenapi_property('network')
 
     @property
     def VIF(self) -> typing.Any:  # Virtual Interface
-        return self.get_xenapi_property('VIF')
+        return self._get_xenapi_property('VIF')
 
     @property
     def VDI(self) -> typing.Any:  # Virtual Disk Image
-        return self.get_xenapi_property('VDI')
+        return self._get_xenapi_property('VDI')
 
     @property
     def VBD(self) -> typing.Any:  # Virtual Block Device
-        return self.get_xenapi_property('VBD')
+        return self._get_xenapi_property('VBD')
 
     @property
     def VM_guest_metrics(self) -> typing.Any:
-        return self.get_xenapi_property('VM_guest_metrics')
+        return self._get_xenapi_property('VM_guest_metrics')
 
-    # Properties to access private vars
-    # p
     def has_pool(self) -> bool:
         return self.check_login() and bool(self._pool_name)
 
@@ -215,7 +156,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
         return self.pool.get_name_label(pool)
 
     # Login/Logout
-    def login(self, swithc_to_master: bool = False, backup_checked: bool = False) -> None:
+    def login(self, switch_to_master: bool = False, backup_checked: bool = False) -> None:
         try:
             # We recalculate here url, because we can "switch host" on any moment
             self._url = self._protocol + self._host + ':' + self._port
@@ -223,33 +164,30 @@ class XenServer:  # pylint: disable=too-many-public-methods
             transport = None
 
             if self._use_ssl:
-                context = ssl.SSLContext(ssl.PROTOCOL_TLS)
-                if self._verify_ssl is False:
-                    context.verify_mode = ssl.CERT_NONE
-                else:
-                    context.verify_mode = ssl.CERT_REQUIRED
-                    context.check_hostname = True
+                context = security.create_client_sslcontext(verify=self._verify_ssl)
                 transport = xmlrpc.client.SafeTransport(context=context)
                 logger.debug('Transport: %s', transport)
 
             self._session = XenAPI.Session(self._url, transport=transport)
-            self._session.xenapi.login_with_password(self._username, self._password)
+            self._session.xenapi.login_with_password(
+                self._username, self._password, '', 'UDS XenServer Connector'
+            )
             self._logged_in = True
             self._api_version = self._session.API_version
             self._pool_name = str(self.get_pool_name())
         except (
             XenAPI.Failure
         ) as e:  # XenAPI.Failure: ['HOST_IS_SLAVE', '172.27.0.29'] indicates that this host is an slave of 172.27.0.29, connect to it...
-            if swithc_to_master and e.details[0] == 'HOST_IS_SLAVE':
+            if switch_to_master and e.details[0] == 'HOST_IS_SLAVE':
                 logger.info(
                     '%s is an Slave, connecting to master at %s',
                     self._host,
-                    typing.cast(typing.Any, e.details[1])
+                    typing.cast(typing.Any, e.details[1]),
                 )
                 self._host = e.details[1]
                 self.login(backup_checked=backup_checked)
             else:
-                raise XenFailure(e.details)
+                raise exceptions.XenFailure(e.details)
         except Exception:
             if self._host == self._host_backup or not self._host_backup or backup_checked:
                 logger.exception('Connection to master server is broken and backup connection unavailable.')
@@ -258,14 +196,25 @@ class XenServer:  # pylint: disable=too-many-public-methods
             self._host = self._host_backup
             self.login(backup_checked=True)
 
-    def test(self) -> None:
-        self.login(False)
-
     def logout(self) -> None:
-        self._session.logout()
+        if self._logged_in:
+            try:
+                self._session.logout()
+            except Exception as e:
+                logger.warning('Error logging out: %s', e)
+            self._session = None
+
         self._logged_in = False
         self._session = None
         self._pool_name = self._api_version = ''
+
+    def check_login(self) -> bool:
+        if not self._logged_in:
+            self.login(switch_to_master=True)
+        return self._logged_in
+
+    def test(self) -> None:
+        self.login(False)
 
     def get_host(self) -> str:
         return self._host
@@ -273,198 +222,126 @@ class XenServer:  # pylint: disable=too-many-public-methods
     def set_host(self, host: str) -> None:
         self._host = host
 
-    def get_task_info(self, task: str) -> dict[str, typing.Any]:
-        progress = 0
-        result: typing.Any = None
-        destroy_task = False
+    def get_task_info(self, task_opaque_ref: str) -> xen_types.TaskInfo:
         try:
-            status = self.task.get_status(task)
-            logger.debug('Task %s in state %s', task, status)
-            if status == 'pending':
-                status = 'running'
-                progress = int(self.task.get_progress(task) * 100)
-            elif status == 'success':
-                result = self.task.get_result(task)
-                destroy_task = True
-            elif status == 'failure':
-                result = XenFailure(self.task.get_error_info(task))
-                destroy_task = True
+            task_info = xen_types.TaskInfo.from_dict(self.task.get_record(task_opaque_ref), task_opaque_ref)
         except XenAPI.Failure as e:
-            logger.debug('XenServer Failure: %s', typing.cast(str, e.details[0]))
             if e.details[0] == 'HANDLE_INVALID':
-                result = None
-                status = 'unknown'
-                progress = 0
-            else:
-                destroy_task = True
-                result = typing.cast(str, e.details[0])
-                status = 'failure'
-        except ConnectionError as e:
-            logger.debug('Connection error: %s', e)
-            result = 'Connection error'
-            status = 'failure'
-        except Exception as e:
-            logger.exception('Unexpected exception!')
-            result = str(e)
-            status = 'failure'
-
-        # Removes <value></value> if present
-        if result and not isinstance(result, XenFailure) and result.startswith('<value>'):
-            result = result[7:-8]
-
-        if destroy_task:
-            try:
-                self.task.destroy(task)
-            except Exception as e:
-                logger.warning('Destroy task %s returned error %s', task, str(e))
-
-        return {'result': result, 'progress': progress, 'status': str(status), 'connection_error': True}
+                return xen_types.TaskInfo.unknown_task(task_opaque_ref)
+            raise exceptions.XenFailure(e.details)
+        
+        return task_info
 
     @cached(prefix='xen_srs', timeout=consts.cache.DEFAULT_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def list_srs(self) -> list[dict[str, typing.Any]]:
-        return_list: list[dict[str, typing.Any]] = []
-        for srId in self.SR.get_all():
-            # Only valid SR shared, non iso
-            name_label = self.SR.get_name_label(srId)
-            # Skip non valid...
-            if self.SR.get_content_type(srId) == 'iso' or self.SR.get_shared(srId) is False or name_label == '':
-                continue
+    def list_srs(self) -> list[xen_types.StorageInfo]:
+        return_list: list[xen_types.StorageInfo] = []
+        for sr_id, sr_raw in typing.cast(dict[str, typing.Any], self.SR.get_all_records()).items():
+            sr = xen_types.StorageInfo.from_dict(sr_raw, sr_id)
+            if sr.is_usable():
+                return_list.append(sr)
 
-            valid = True
-            allowed_ops = self.SR.get_allowed_operations(srId)
-            for v in ['vdi_create', 'vdi_clone', 'vdi_snapshot', 'vdi_destroy']:
-                if v not in allowed_ops:
-                    valid = False
-
-            if valid:
-                return_list.append(
-                    {
-                        'id': srId,
-                        'name': name_label,
-                        'size': XenServer.to_mb(self.SR.get_physical_size(srId)),
-                        'used': XenServer.to_mb(self.SR.get_physical_utilisation(srId)),
-                    }
-                )
         return return_list
 
     @cached(prefix='xen_sr', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def get_sr_info(self, srid: str) -> dict[str, typing.Any]:
-        return {
-            'id': srid,
-            'name': self.SR.get_name_label(srid),
-            'size': XenServer.to_mb(self.SR.get_physical_size(srid)),
-            'used': XenServer.to_mb(self.SR.get_physical_utilisation(srid)),
-        }
+    def get_sr_info(self, sr_opaque_ref: str) -> xen_types.StorageInfo:
+        return xen_types.StorageInfo.from_dict(self.SR.get_record(sr_opaque_ref), sr_opaque_ref)
 
     @cached(prefix='xen_nets', timeout=consts.cache.DEFAULT_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def list_networks(self, **kwargs: typing.Any) -> list[dict[str, typing.Any]]:
-        return_list: list[dict[str, typing.Any]] = []
-        for netId in self.network.get_all():
-            if self.network.get_other_config(netId).get('is_host_internal_management_network', False) is False:
-                return_list.append(
-                    {
-                        'id': netId,
-                        'name': self.network.get_name_label(netId),
-                    }
-                )
+    def list_networks(self, **kwargs: typing.Any) -> list[xen_types.NetworkInfo]:
+        return_list: list[xen_types.NetworkInfo] = []
+        for netid in self.network.get_all():
+            netinfo = xen_types.NetworkInfo.from_dict(self.network.get_record(netid), netid)
+            if netinfo.is_host_internal_management_network is False:
+                return_list.append(netinfo)
 
         return return_list
 
     @cached(prefix='xen_net', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def get_network_info(self, net_id: str) -> dict[str, typing.Any]:
-        return {'id': net_id, 'name': self.network.get_name_label(net_id)}
+    def get_network_info(self, network_opaque_ref: str) -> xen_types.NetworkInfo:
+        return xen_types.NetworkInfo.from_dict(self.network.get_record(network_opaque_ref), network_opaque_ref)
 
     @cached(prefix='xen_vms', timeout=consts.cache.DEFAULT_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def list_machines(self) -> list[dict[str, typing.Any]]:
-        return_list: list[dict[str, typing.Any]] = []
-        try:
-            vms = self.VM.get_all()
-            for vm in vms:
-                try:
-                    # if self.VM.get_is_a_template(vm):  #  Sample set_tags, easy..
-                    #     self.VM.set_tags(vm, ['template'])
-                    #     continue
-                    if self.VM.get_is_control_domain(vm) or self.VM.get_is_a_template(vm):
-                        continue
+    def list_vms(self) -> list[xen_types.VMInfo]:
+        return_list: list[xen_types.VMInfo] = []
 
-                    return_list.append({'id': vm, 'name': self.VM.get_name_label(vm)})
-                except Exception as e:
-                    logger.warning('VM %s returned error %s', vm, str(e))
-                    continue
+        try:
+            for vm_id, vm_raw in typing.cast(dict[str, typing.Any], self.VM.get_all_records()).items():
+                vm = xen_types.VMInfo.from_dict(vm_raw, vm_id)
+                if vm.is_usable():
+                    return_list.append(vm)
             return return_list
         except XenAPI.Failure as e:
-            raise XenFailure(e.details)
+            raise exceptions.XenFailure(e.details)
         except Exception as e:
-            raise XenException(str(e))
-
-    def get_machine_power_state(self, vmId: str) -> str:
-        try:
-            power_state = self.VM.get_power_state(vmId)
-            logger.debug('Power state of %s: %s', vmId, power_state)
-            return power_state
-        except XenAPI.Failure as e:
-            raise XenFailure(e.details)
+            raise exceptions.XenException(str(e))
 
     @cached(prefix='xen_vm', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def get_machine_info(self, vmid: str, **kwargs: typing.Any) -> dict[str, typing.Any]:
+    def get_vm_info(self, vm_opaque_ref: str, **kwargs: typing.Any) -> xen_types.VMInfo:
         try:
-            return self.VM.get_record(vmid)
+            return xen_types.VMInfo.from_dict(self.VM.get_record(vm_opaque_ref), vm_opaque_ref)
         except XenAPI.Failure as e:
-            raise XenFailure(e.details)
+            raise exceptions.XenFailure(e.details)
 
     @cached(prefix='xen_vm_f', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def get_machine_folder(self, vmid: str, **kwargs: typing.Any) -> str:
+    def get_vm_folder(self, vmid: str, **kwargs: typing.Any) -> str:
         try:
             other_config = self.VM.get_other_config(vmid)
             return other_config.get('folder', '')
         except XenAPI.Failure as e:
-            raise XenFailure(e.details)
+            raise exceptions.XenFailure(e.details)
 
-    def start_machine(self, vmId: str, as_async: bool = True) -> typing.Optional[str]:
-        vmState = self.get_machine_power_state(vmId)
-        if vmState == XenPowerState.running:
-            return None  # Already powered on
-
-        if vmState == XenPowerState.suspended:
-            return self.resume_machine(vmId, as_async)
-        return (self.Async if as_async else self).VM.start(vmId, False, False)
-
-    def stop_machine(self, vmid: str, as_async: bool = True) -> typing.Optional[str]:
-        vmState = self.get_machine_power_state(vmid)
-        if vmState in (XenPowerState.suspended, XenPowerState.halted):
-            return None  # Already powered off
-        return (self.Async if as_async else self).VM.hard_shutdown(vmid)
-
-    def reset_machine(self, vmid: str, as_async: bool = True) -> typing.Optional[str]:
-        vmState = self.get_machine_power_state(vmid)
-        if vmState in (XenPowerState.suspended, XenPowerState.halted):
-            return None  # Already powered off, cannot reboot
-        return (self.Async if as_async else self).VM.hard_reboot(vmid)
-
-    def can_suspend_machine(self, vmid: str) -> bool:
-        operations = self.VM.get_allowed_operations(vmid)
-        logger.debug('Operations: %s', operations)
-        return 'suspend' in operations
-
-    def suspend_machine(self, vmid: str, as_async: bool = True) -> typing.Optional[str]:
-        vm_state = self.get_machine_power_state(vmid)
-        if vm_state == XenPowerState.suspended:
+    def start_vm(self, vm_opaque_ref: str, as_async: bool = True) -> typing.Optional[str]:
+        vminfo = self.get_vm_info(vm_opaque_ref)
+        if vminfo.power_state.is_running():
             return None
-        return (self.Async if as_async else self).VM.suspend(vmid)
 
-    def resume_machine(self, vmid: str, as_async: bool = True) -> typing.Optional[str]:
-        vm_state = self.get_machine_power_state(vmid)
-        if vm_state != XenPowerState.suspended:
+        if vminfo.power_state == xen_types.PowerState.SUSPENDED:
+            return self.resume_vm(vm_opaque_ref, as_async)
+
+        return (self.Async if as_async else self).VM.start(vm_opaque_ref, False, False)
+
+    def stop_vm(self, vm_opaque_ref: str, as_async: bool = True) -> typing.Optional[str]:
+        vminfo = self.get_vm_info(vm_opaque_ref)
+        if vminfo.power_state.is_stopped():
             return None
-        return (self.Async if as_async else self).VM.resume(vmid, False, False)
 
-    def shutdown_machine(self, vmid: str, as_async: bool = True) -> typing.Optional[str]:
-        vm_state = self.get_machine_power_state(vmid)
-        if vm_state in (XenPowerState.suspended, XenPowerState.halted):
+        return (self.Async if as_async else self).VM.hard_shutdown(vm_opaque_ref)
+
+    def reset_vm(self, vm_opaque_ref: str, as_async: bool = True) -> typing.Optional[str]:
+        vminfo = self.get_vm_info(vm_opaque_ref)
+        if vminfo.power_state.is_stopped():
             return None
-        return (self.Async if as_async else self).VM.clean_shutdown(vmid)
 
-    def clone_machine(self, vmId: str, target_name: str, target_sr: typing.Optional[str] = None) -> str:
+        return (self.Async if as_async else self).VM.hard_reboot(vm_opaque_ref)
+
+    def suspend_vm(self, vm_opaque_ref: str, as_async: bool = True) -> typing.Optional[str]:
+        vminfo = self.get_vm_info(vm_opaque_ref)
+        if vminfo.power_state.is_stopped():
+            return None
+
+        if vminfo.supports_suspend() is False:
+            # Shutdown machine if it can't be suspended
+            return self.shutdown_vm(vm_opaque_ref, as_async)
+
+        return (self.Async if as_async else self).VM.suspend(vm_opaque_ref)
+
+    def resume_vm(self, vm_opaque_ref: str, as_async: bool = True) -> typing.Optional[str]:
+        vminfo = self.get_vm_info(vm_opaque_ref)
+        if vminfo.power_state.is_running():
+            return None
+
+        if vminfo.power_state.is_suspended() is False:
+            return self.start_vm(vm_opaque_ref, as_async)
+
+        return (self.Async if as_async else self).VM.resume(vm_opaque_ref, False, False)
+
+    def shutdown_vm(self, vm_opaque_ref: str, as_async: bool = True) -> typing.Optional[str]:
+        vminfo = self.get_vm_info(vm_opaque_ref)
+        if vminfo.power_state.is_stopped():
+            return None
+        return (self.Async if as_async else self).VM.clean_shutdown(vm_opaque_ref)
+
+    def clone_vm(self, vm_opaque_ref: str, target_name: str, target_sr: typing.Optional[str] = None) -> str:
         """
         If target_sr is NONE:
             Clones the specified VM, making a new VM.
@@ -477,24 +354,28 @@ class XenServer:  # pylint: disable=too-many-public-methods
             'full disks' - i.e. not part of a CoW chain.
         This function can only be called when the VM is in the Halted State.
         """
-        logger.debug('Cloning VM %s to %s on sr %s', vmId, target_name, target_sr)
-        operations = self.VM.get_allowed_operations(vmId)
+        logger.debug('Cloning VM %s to %s on sr %s', vm_opaque_ref, target_name, target_sr)
+        operations = self.VM.get_allowed_operations(vm_opaque_ref)
         logger.debug('Allowed operations: %s', operations)
 
         try:
             if target_sr:
                 if 'copy' not in operations:
-                    raise XenException('Copy is not supported for this machine (maybe it\'s powered on?)')
-                task = self.Async.VM.copy(vmId, target_name, target_sr)
+                    raise exceptions.XenException(
+                        'Copy is not supported for this machine (maybe it\'s powered on?)'
+                    )
+                task = self.Async.VM.copy(vm_opaque_ref, target_name, target_sr)
             else:
                 if 'clone' not in operations:
-                    raise XenException('Clone is not supported for this machine (maybe it\'s powered on?)')
-                task = self.Async.VM.clone(vmId, target_name)
+                    raise exceptions.XenException(
+                        'Clone is not supported for this machine (maybe it\'s powered on?)'
+                    )
+                task = self.Async.VM.clone(vm_opaque_ref, target_name)
             return task
         except XenAPI.Failure as e:
-            raise XenFailure(e.details)
+            raise exceptions.XenFailure(e.details)
 
-    def remove_machine(self, vmid: str) -> None:
+    def delete_vm(self, vmid: str) -> None:
         logger.debug('Removing machine')
         vdis_to_delete: list[str] = []
         for vdb in self.VM.get_VBDs(vmid):
@@ -516,10 +397,10 @@ class XenServer:  # pylint: disable=too-many-public-methods
         for vdi in vdis_to_delete:
             self.VDI.destroy(vdi)
 
-    def configure_machine(
+    def configure_vm(
         self,
         vmid: str,
-        mac: typing.Optional[dict[str, str]] = None,
+        net_info: typing.Optional[dict[str, str]] = None,
         memory: typing.Optional[typing.Union[str, int]] = None,
     ) -> None:
         """
@@ -532,16 +413,16 @@ class XenServer:  # pylint: disable=too-many-public-methods
 
         # If requested mac address change
         try:
-            if mac is not None:
+            if net_info is not None:
                 all_VIFs: list[str] = self.VM.get_VIFs(vmid)
                 if not all_VIFs:
-                    raise XenException('No Network interfaces found!')
+                    raise exceptions.XenException('No Network interfaces found!')
                 found = (all_VIFs[0], self.VIF.get_record(all_VIFs[0]))
                 for vifId in all_VIFs:
                     vif = self.VIF.get_record(vifId)
                     logger.info('VIF: %s', vif)
 
-                    if vif['network'] == mac['network']:
+                    if vif['network'] == net_info['network']:
                         found = (vifId, vif)
                         break
 
@@ -549,8 +430,8 @@ class XenServer:  # pylint: disable=too-many-public-methods
                 vifId, vif = found
                 self.VIF.destroy(vifId)
 
-                vif['MAC'] = mac['mac']
-                vif['network'] = mac['network']
+                vif['MAC'] = net_info['mac']
+                vif['network'] = net_info['network']
                 vif['MAC_autogenerated'] = False
                 self.VIF.create(vif)
 
@@ -561,7 +442,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
                 memory = str(int(memory) * 1024 * 1024)
                 self.VM.set_memory_limits(vmid, memory, memory, memory, memory)
         except XenAPI.Failure as e:
-            raise XenFailure(e.details)
+            raise exceptions.XenFailure(e.details)
 
     def get_first_ip(
         self, vmid: str, ip_type: typing.Optional[typing.Union[typing.Literal['4'], typing.Literal['6']]] = None
@@ -584,7 +465,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
                     return networks[net_name]
             return ''
         except XenAPI.Failure as e:
-            raise XenFailure(e.details)
+            raise exceptions.XenFailure(e.details)
 
     def get_first_mac(self, vmid: str) -> str:
         """Returns the first MAC of the machine, or '' if not found"""
@@ -595,9 +476,9 @@ class XenServer:  # pylint: disable=too-many-public-methods
             vif = self.VIF.get_record(vifs[0])
             return vif['MAC']
         except XenAPI.Failure as e:
-            raise XenFailure(e.details)
+            raise exceptions.XenFailure(e.details)
 
-    def provision_machine(self, vmid: str, as_async: bool = True) -> str:
+    def provision_vm(self, vmid: str, as_async: bool = True) -> str:
         tags = self.VM.get_tags(vmid)
         try:
             del tags[tags.index(TAG_TEMPLATE)]
@@ -614,22 +495,24 @@ class XenServer:  # pylint: disable=too-many-public-methods
         try:
             return self.Async.VM.snapshot(vmid, name)
         except XenAPI.Failure as e:
-            raise XenFailure(e.details)
+            raise exceptions.XenFailure(e.details)
 
     def restore_snapshot(self, snapshot_id: str) -> str:
         try:
             return self.Async.VM.snapshot_revert(snapshot_id)
         except XenAPI.Failure as e:
-            raise XenFailure(e.details)
+            raise exceptions.XenFailure(e.details)
 
     def remove_snapshot(self, snapshot_id: str) -> str:
         try:
             return self.Async.VM.destroy(snapshot_id)
         except XenAPI.Failure as e:
-            raise XenFailure(e.details)
+            raise exceptions.XenFailure(e.details)
 
     @cached(prefix='xen_snapshots', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def list_snapshots(self, vmid: str, full_info: bool = False, **kwargs: typing.Any) -> list[dict[str, typing.Any]]:
+    def list_snapshots(
+        self, vmid: str, full_info: bool = True, **kwargs: typing.Any
+    ) -> list[xen_types.VMInfo]:
         """Returns a list of snapshots for the specified VM, sorted by snapshot_time in descending order.
         (That is, the most recent snapshot is first in the list.)
 
@@ -638,27 +521,21 @@ class XenServer:  # pylint: disable=too-many-public-methods
              full_info: If True, return full information about each snapshot. If False, return only the snapshot ID
 
          Returns:
-             A list of dictionaries, each containing the following keys:
-                 id: The snapshot ID.
-                 name: The snapshot name.
+                A list of snapshots for the specified VM, sorted by snapshot_time in descending order.
         """
         try:
             snapshots = self.VM.get_snapshots(vmid)
+            
             if not full_info:
-                return [{'id': snapshot for snapshot in snapshots}]
+                return [xen_types.VMInfo.empty(snapshot) for snapshot in snapshots]
+            
             # Return full info, thatis, name, id and snapshot_time
-            return_list: list[dict[str, typing.Any]] = []
-            for snapshot in snapshots:
-                return_list.append(
-                    {
-                        'id': snapshot,
-                        'name': self.VM.get_name_label(snapshot),
-                        'snapshot_time': self.VM.get_snapshot_time(snapshot),
-                    }
-                )
-            return sorted(return_list, key=lambda x: x['snapshot_time'], reverse=True)
+            return sorted([
+                self.get_vm_info(snapshot)
+                for snapshot in snapshots
+            ], key=lambda x: x.snapshot_time, reverse=True)
         except XenAPI.Failure as e:
-            raise XenFailure(e.details)
+            raise exceptions.XenFailure(e.details)
 
     @cached(prefix='xen_folders', timeout=consts.cache.LONG_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def list_folders(self, **kwargs: typing.Any) -> list[str]:
@@ -668,22 +545,16 @@ class XenServer:  # pylint: disable=too-many-public-methods
             A list of 'folders' (organizations, str) in the XenServer
         """
         folders: set[str] = set('/')  # Add root folder for machines without folder
-        for vm in self.list_machines():
-            other_config = self.VM.get_other_config(vm['id'])
-            folder: typing.Optional[str] = other_config.get('folder')
-            if folder:
-                folders.add(folder)
+        for vm in self.list_vms():
+            if vm.folder:
+                folders.add(vm.folder)
+
         return sorted(folders)
 
-    def get_machines_from_folder(
-        self, folder: str, retrieve_names: bool = False
-    ) -> list[dict[str, typing.Any]]:
-        result_list: list[dict[str, typing.Any]] = []
-        for vm in self.list_machines():
-            other_config = self.VM.get_other_config(vm['id'])
-            if other_config.get('folder', '/') == folder:
-                if retrieve_names:
-                    vm['name'] = self.VM.get_name_label(vm['id'])
+    def list_vms_from_folder(self, folder: str) -> list[xen_types.VMInfo]:
+        result_list: list[xen_types.VMInfo] = []
+        for vm in self.list_vms():
+            if vm.folder == folder:
                 result_list.append(vm)
         return result_list
 
@@ -692,7 +563,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
             operations = self.VM.get_allowed_operations(vmId)
             logger.debug('Allowed operations: %s', operations)
             if 'make_into_template' not in operations:
-                raise XenException('Convert in template is not supported for this machine')
+                raise exceptions.XenException('Convert in template is not supported for this machine')
             self.VM.set_is_a_template(vmId, True)
 
             # Apply that is an "UDS Template" taggint it
@@ -710,13 +581,13 @@ class XenServer:  # pylint: disable=too-many-public-methods
             except Exception:  # nosec: Can't set shadowMultiplier, nothing happens
                 pass
         except XenAPI.Failure as e:
-            raise XenFailure(e.details)
+            raise exceptions.XenFailure(e.details)
 
-    def remove_template(self, templateId: str) -> None:
-        self.remove_machine(templateId)
+    def delete_template(self, template_opaque_ref: str) -> None:
+        self.delete_vm(template_opaque_ref)
 
-    def start_deploy_from_template(self, templateId: str, target_name: str) -> str:
+    def start_deploy_from_template(self, template_opaque_ref: str, target_name: str) -> str:
         """
         After cloning template, we must deploy the VM so it's a full usable VM
         """
-        return self.clone_machine(templateId, target_name)
+        return self.clone_vm(template_opaque_ref, target_name)

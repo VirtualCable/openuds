@@ -37,7 +37,7 @@ from uds.core import types
 from uds.core.services.generics.fixed.userservice import FixedUserService, Operation
 from uds.core.util import autoserializable
 
-from . import xen_client
+from .xen import types as xen_types, exceptions as xen_exceptions
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -72,7 +72,7 @@ class XenFixedUserService(FixedUserService, autoserializable.AutoSerializable):
         try:
             state = self.service().get_machine_power_state(self._vmid)
 
-            if state != xen_client.XenPowerState.running:
+            if state != xen_types.PowerState.RUNNING:
                 self._queue = [Operation.START, Operation.FINISH]
                 return self._execute_queue()
 
@@ -99,8 +99,8 @@ class XenFixedUserService(FixedUserService, autoserializable.AutoSerializable):
         except Exception as e:
             raise Exception('Machine not found on start machine') from e
 
-        if state != xen_client.XenPowerState.running:
-            self._task = self.service().start_machine(self._vmid) or ''
+        if state != xen_types.PowerState.RUNNING:
+            self._task = self.service().start_vm(self._vmid) or ''
 
     def op_stop(self) -> None:
         try:
@@ -108,9 +108,9 @@ class XenFixedUserService(FixedUserService, autoserializable.AutoSerializable):
         except Exception as e:
             raise Exception('Machine not found on stop machine') from e
 
-        if state == xen_client.XenPowerState.running:
+        if state == xen_types.PowerState.RUNNING:
             logger.debug('Stopping machine %s', self._vmid)
-            self._task = self.service().stop_machine(self._vmid) or ''
+            self._task = self.service().stop_vm(self._vmid) or ''
 
     # Check methods
     def _check_task_finished(self) -> types.states.TaskState:
@@ -119,7 +119,7 @@ class XenFixedUserService(FixedUserService, autoserializable.AutoSerializable):
 
         try:
             finished, _per = self.service().check_task_finished(self._task)
-        except xen_client.XenFailure:
+        except xen_exceptions.XenFailure:
             return types.states.TaskState.RUNNING  # Try again later
         except Exception as e:  # Failed for some other reason
             if isinstance(e.args[0], dict) and 'error_connection' in e.args[0]:

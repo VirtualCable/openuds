@@ -33,8 +33,9 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
-from uds.core import services, exceptions, types
-from uds.core.util import fields, validators
+from uds.core import exceptions, types
+from uds.core.services.generics.dynamic.service import DynamicService
+from uds.core.util import validators
 from uds.core.ui import gui
 
 from .publication import XenPublication
@@ -43,15 +44,15 @@ from .deployment import XenLinkedDeployment
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from .provider import XenProvider
+    from uds.core.services.generics.dynamic.publication import DynamicPublication
+    from uds.core.services.generics.dynamic.userservice import DynamicUserService
 
 logger = logging.getLogger(__name__)
 
 
-class XenLinkedService(services.Service):  # pylint: disable=too-many-public-methods
+class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-methods
     """
     Xen Linked clones service. This is based on creating a template from selected vm, and then use it to
-
-
     """
 
     # : Name to show the administrator. This string will be translated BEFORE
@@ -154,8 +155,13 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         required=True,
     )
 
-    basename = fields.basename_field(order=114)
-    lenname = fields.lenname_field(order=115)
+    remove_duplicates = DynamicService.remove_duplicates
+
+    maintain_on_error = DynamicService.maintain_on_error
+    try_soft_shutdown = DynamicService.try_soft_shutdown
+
+    basename = DynamicService.basename
+    lenname = DynamicService.lenname
 
     def initialize(self, values: types.core.ValuesType) -> None:
         """
@@ -178,41 +184,34 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         # This is that value is always '', so if we want to change something, we have to do it
         # at defValue
 
-        machines_list = [gui.choice_item(m['id'], m['name']) for m in self.provider().list_machines()]
-
-        storages_list: list[types.ui.ChoiceItem] = []
-        for storage in self.provider().list_storages():
-            space, free = (
-                storage['size'] / 1024,
-                (storage['size'] - storage['used']) / 1024,
-            )
-            storages_list.append(
-                gui.choice_item(
-                    storage['id'],
-                    "%s (%4.2f Gb/%4.2f Gb)" % (storage['name'], space, free),
+        with self.provider().get_connection() as api:
+            machines_list = [gui.choice_item(m.opaque_ref, m.name) for m in api.list_vms()]
+            storages_list: list[types.ui.ChoiceItem] = []
+            for storage in api.list_srs():
+                space, free = (
+                    storage.physical_size / 1024,
+                    (storage.physical_size - storage.physical_utilisation) / 1024,
                 )
-            )
-
-        network_list = [gui.choice_item(net['id'], net['name']) for net in self.provider().get_networks()]
+                storages_list.append(
+                    gui.choice_item(storage.opaque_ref, f'{storage.name} ({space:.2f} Gb/{free:.2f} Gb)')
+                )
+            network_list = [gui.choice_item(net.opaque_ref, net.name) for net in api.list_networks()]
 
         self.machine.set_choices(machines_list)
         self.datastore.set_choices(storages_list)
         self.network.set_choices(network_list)
 
-    def check_task_finished(self, task: str) -> tuple[bool, str]:
-        return self.provider().check_task_finished(task)
-
     def has_datastore_space(self) -> None:
-        # Get storages for that datacenter
-        info = self.provider().get_storage_info(self.datastore.value)
-        logger.debug('Checking datastore space for %s: %s', self.datastore.value, info)
-        availableGB = (info['size'] - info['used']) / 1024
-        if availableGB < self.min_space_gb.as_int():
-            raise Exception(
-                'Not enough free space available: (Needs at least {} GB and there is only {} GB '.format(
-                    self.min_space_gb.as_int(), availableGB
+        with self.provider().get_connection() as api:
+            info = api.get_sr_info(self.datastore.value)
+            logger.debug('Checking datastore space for %s: %s', self.datastore.value, info)
+            availableGB = (info.physical_size - info.physical_utilisation) // 1024
+            if availableGB < self.min_space_gb.as_int():
+                raise Exception(
+                    'Not enough free space available: (Needs at least {} GB and there is only {} GB '.format(
+                        self.min_space_gb.as_int(), availableGB
+                    )
                 )
-            )
 
     def sanitized_name(self, name: str) -> str:
         """
@@ -240,18 +239,19 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
             self.datastore.value,
         )
 
-        # Checks datastore available space, raises exeception in no min available
-        self.has_datastore_space()
+        with self.provider().get_connection() as api:
+            self.has_datastore_space()
 
-        return self.provider().clone_for_template(name, comments, self.machine.value, self.datastore.value)
+            return api.clone_vm(self.machine.value, name, self.datastore.value)
 
     def convert_to_template(self, machineId: str) -> None:
         """
         converts machine to template
         """
-        self.provider().convert_to_template(machineId, self.shadow.value)
+        with self.provider().get_connection() as api:
+            api.convert_to_template(machineId, self.shadow.value)
 
-    def start_deploy_from_template(self, name: str, comments: str, templateId: str) -> str:
+    def start_deploy_from_template(self, name: str, comments: str, template_opaque_ref: str) -> str:
         """
         Deploys a virtual machine on selected cluster from selected template
 
@@ -266,129 +266,72 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         Returns:
             Id of the machine being created form template
         """
-        logger.debug('Deploying from template %s machine %s', templateId, name)
-        self.has_datastore_space()
+        logger.debug('Deploying from template %s machine %s', template_opaque_ref, name)
 
-        return self.provider().start_deploy_from_template(name, comments, templateId)
+        with self.provider().get_connection() as api:
+            self.has_datastore_space()
 
-    def remove_template(self, templateId: str) -> None:
+            return api.start_deploy_from_template(template_opaque_ref, name)
+
+    def remove_template(self, template_opaque_ref: str) -> None:
         """
         invokes removeTemplate from parent provider
         """
-        self.provider().remove_template(templateId)
+        with self.provider().get_connection() as api:
+            api.delete_template(template_opaque_ref)
 
-    def get_machine_power_state(self, machineId: str) -> str:
+    def configure_machine(self, vm_opaque_ref: str, mac: str) -> None:
+        with self.provider().get_connection() as api:
+            api.configure_vm(
+                vm_opaque_ref, net_info={'network': self.network.value, 'mac': mac}, memory=self.memory.value
+            )
+
+    def get_ip(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> str:
         """
-        Invokes getMachineState from parent provider
-
-        Args:
-            machineId: If of the machine to get state
-
-        Returns:
-            one of this values:
+        Returns the ip of the machine
+        If cannot be obtained, MUST raise an exception
         """
-        return self.provider().get_machine_power_state(machineId)
+        return ''  # No ip will be get, UDS will assign one (from actor)
 
-    def start_machine(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
+    def get_mac(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> str:
         """
-        Tries to start a machine. No check is done, it is simply requested to Xen.
-
-        This start also "resume" suspended/paused machines
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
+        For
         """
-        return self.provider().start_machine(machineId, asnc)
+        return self.mac_generator().get(self.provider().get_macs_range())
 
-    def stop_machine(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
+    def is_running(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> bool:
         """
-        Tries to stop a machine. No check is done, it is simply requested to Xen
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
+        Returns if the machine is ready and running
         """
-        return self.provider().stop_machine(machineId, asnc)
+        with self.provider().get_connection() as api:
+            vminfo = api.get_vm_info(vmid)
+            if vminfo.power_state.is_running():
+                return True
+            return False
 
-    def reset_machine(self, vmid: str, asnc: bool = True) -> typing.Optional[str]:
+    def start(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
         """
-        Tries to stop a machine. No check is done, it is simply requested to Xen
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
+        Starts the machine
+        Can return a task, or None if no task is returned
         """
-        return self.provider().reset_machine(vmid, asnc)
+        with self.provider().get_connection() as api:
+            api.start_vm(vmid, as_async=False)
 
-    def can_suspend_machine(self, machineId: str) -> bool:
+    def stop(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
         """
-        The machine can be suspended only when "suspend" is in their operations list (mush have xentools installed)
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-            True if the machien can be suspended
+        Stops the machine
+        Can return a task, or None if no task is returned
         """
-        return self.provider().can_suspend_machine(machineId)
+        with self.provider().get_connection() as api:
+            api.stop_vm(vmid, as_async=False)
 
-    def suspend_machine(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
+    def shutdown(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
+        with self.provider().get_connection() as api:
+            api.shutdown_vm(vmid, as_async=False)
+
+    def delete(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
         """
-        Tries to suspend a machine. No check is done, it is simply requested to Xen
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
+        Removes the machine, or queues it for removal, or whatever :)
         """
-        return self.provider().suspend_machine(machineId, asnc)
-
-    def resume_machine(self, machineId: str, asnc: bool = True) -> typing.Optional[str]:
-        """
-        Tries to resume a machine. No check is done, it is simply requested to Xen
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        return self.provider().suspend_machine(machineId, asnc)
-
-    def remove_machine(self, machineId: str) -> None:
-        """
-        Tries to delete a machine. No check is done, it is simply requested to Xen
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        self.provider().remove_machine(machineId)
-
-    def configure_machine(self, vmid: str, mac: str) -> None:
-        self.provider().configure_machine(vmid, self.network.value, mac, self.memory.value)
-
-    def provision_machine(self, vmid: str, as_async: bool = True) -> str:
-        return self.provider().provision_machine(vmid, as_async)
-
-    def get_macs_range(self) -> str:
-        """
-        Returns de selected mac range
-        """
-        return self.provider().get_macs_range()
-
-    def get_basename(self) -> str:
-        """
-        Returns the base name
-        """
-        return self.basename.value
-
-    def get_lenname(self) -> int:
-        """
-        Returns the length of numbers part
-        """
-        return int(self.lenname.value)
+        with self.provider().get_connection() as api:
+            api.delete_vm(vmid)

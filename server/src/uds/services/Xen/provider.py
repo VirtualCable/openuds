@@ -28,9 +28,9 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import contextlib
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
@@ -42,7 +42,7 @@ from uds.core.util import fields
 
 from .service import XenLinkedService
 from .service_fixed import XenFixedService
-from .xen_client import XenServer
+from .xen import client
 
 # from uds.core.util import validators
 
@@ -137,18 +137,19 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         old_field_name='hostBackup',
     )
 
-    _api: typing.Optional[XenServer]
+    _cached_api: typing.Optional[client.XenServer]
+    _use_count: int = 0
 
     # XenServer engine, right now, only permits a connection to one server and only one per instance
     # If we want to connect to more than one server, we need keep locked access to api, change api server, etc..
     # We have implemented an "exclusive access" client that will only connect to one server at a time (using locks)
     # and this way all will be fine
-    def _get_api(self, force: bool = False) -> XenServer:
+    def _api(self) -> client.XenServer:
         """
         Returns the connection API object for XenServer (using XenServersdk)
         """
-        if not self._api or force:
-            self._api = XenServer(
+        if not self._cached_api:
+            self._cached_api = client.XenServer(
                 self.host.value,
                 self.host_backup.value,
                 443,
@@ -158,7 +159,21 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
                 self.verify_ssl.as_bool(),
             )
 
-        return self._api
+        return self._cached_api
+    
+    @contextlib.contextmanager
+    def get_connection(self) -> typing.Iterator[client.XenServer]:
+        """
+        Context manager for XenServer API
+        """
+        self._use_count += 1
+        try:
+            yield self._api()
+        finally:
+            self._use_count -= 1
+            if self._use_count == 0 and self._cached_api:
+                self._cached_api.logout()
+                self._cached_api = None
 
     # There is more fields type, but not here the best place to cover it
     def initialize(self, values: 'types.core.ValuesType') -> None:
@@ -167,7 +182,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         """
 
         # Just reset _api connection variable
-        self._api = None
+        self._cached_api = None
 
     def test_connection(self) -> None:
         """
@@ -177,274 +192,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
 
             True if all went fine, false if id didn't
         """
-        self._get_api().test()
-
-    def check_task_finished(self, task: typing.Optional[str]) -> tuple[bool, str]:
-        """
-        Checks a task state.
-        Returns None if task is Finished
-        Returns a number indicating % of completion if running
-        Raises an exception with status else ('cancelled', 'unknown', 'failure')
-        """
-        if not task:
-            return True, ''
-
-        ts = self._get_api().get_task_info(task)
-        logger.debug('Task status: %s', ts)
-        if ts['status'] == 'running':
-            return False, ts['progress']
-        if ts['status'] == 'success':
-            return True, ts['result']
-
-        # Any other state, raises an exception
-        raise Exception(ts)  # Should be error message
-
-    def list_machines(self, force: bool = False) -> list[collections.abc.MutableMapping[str, typing.Any]]:
-        """
-        Obtains the list of machines inside XenServer.
-        Machines starting with UDS are filtered out
-
-        Args:
-            force: If true, force to update the cache, if false, tries to first
-            get data from cache and, if valid, return this.
-
-        Returns
-            An array of dictionaries, containing:
-                'name'
-                'id'
-                'cluster_id'
-        """
-
-        return [m for m in self._get_api().list_machines() if m['name'][:3] != 'UDS']
-
-    def list_storages(self, force: bool = False) -> list[dict[str, typing.Any]]:
-        """
-        Obtains the list of storages inside XenServer.
-
-        Args:
-            force: If true, force to update the cache, if false, tries to first
-            get data from cache and, if valid, return this.
-
-        Returns
-            An array of dictionaries, containing:
-                'name'
-                'id'
-                'size'
-                'used'
-        """
-        return self._get_api().list_srs()
-
-    def get_storage_info(
-        self, storageId: str, force: bool = False
-    ) -> collections.abc.MutableMapping[str, typing.Any]:
-        """
-        Obtains the storage info
-
-        Args:
-            storageId: Id of the storage to get information about it
-            force: If true, force to update the cache, if false, tries to first
-            get data from cache and, if valid, return this.
-
-        Returns
-
-            A dictionary with following values
-               'id' -> Storage id
-               'name' -> Storage name
-               'type' -> Storage type ('data', 'iso')
-               'available' -> Space available, in bytes
-               'used' -> Space used, in bytes
-               # 'active' -> True or False --> This is not provided by api?? (api.storagedomains.get)
-
-        """
-        return self._get_api().get_sr_info(storageId)
-
-    def get_networks(
-        self, force: bool = False
-    ) -> collections.abc.Iterable[collections.abc.MutableMapping[str, typing.Any]]:
-        return self._get_api().list_networks()
-
-    def clone_for_template(self, name: str, comments: str, machineId: str, sr: str) -> str:
-        task = self._get_api().clone_machine(machineId, name, sr)
-        logger.debug('Task for cloneForTemplate: %s', task)
-        return task
-
-    def convert_to_template(self, vmid: str, shadow_multiplier: int = 4) -> None:
-        """
-        Publish the machine (makes a template from it so we can create COWs) and returns the template id of
-        the creating machine
-
-        Args:
-            name: Name of the machine (care, only ascii characters and no spaces!!!)
-            machineId: id of the machine to be published
-            clusterId: id of the cluster that will hold the machine
-            storageId: id of the storage tuat will contain the publication AND linked clones
-            displayType: type of display (for XenServer admin interface only)
-
-        Returns
-            Raises an exception if operation could not be acomplished, or returns the id of the template being created.
-        """
-        self._get_api().convert_to_template(vmid, shadow_multiplier)
-
-    def remove_template(self, templateId: str) -> None:
-        """
-        Removes a template from XenServer server
-
-        Returns nothing, and raises an Exception if it fails
-        """
-        self._get_api().remove_template(templateId)
-
-    def start_deploy_from_template(self, name: str, comments: str, template_id: str) -> str:
-        """
-        Deploys a virtual machine on selected cluster from selected template
-
-        Args:
-            name: Name (sanitized) of the machine
-            comments: Comments for machine
-            templateId: Id of the template to deploy from
-            clusterId: Id of the cluster to deploy to
-            displayType: 'vnc' or 'spice'. Display to use ad XenServer admin interface
-            memoryMB: Memory requested for machine, in MB
-            guaranteedMB: Minimum memory guaranteed for this machine
-
-        Returns:
-            Id of the machine being created form template
-        """
-        return self._get_api().start_deploy_from_template(template_id, name)
-
-    def get_machine_power_state(self, vmid: str) -> str:
-        """
-        Returns current machine power state
-        """
-        return self._get_api().get_machine_power_state(vmid)
-
-    def get_machine_name(self, vmid: str) -> str:
-        return self._get_api().get_machine_info(vmid).get('name_label', '')
-
-    def list_folders(self) -> list[str]:
-        return self._get_api().list_folders()
-
-    def get_machine_folder(self, vmid: str) -> str:
-        return self._get_api().get_machine_folder(vmid)
-
-    def get_machines_from_folder(
-        self, folder: str, retrieve_names: bool = False
-    ) -> list[dict[str, typing.Any]]:
-        return self._get_api().get_machines_from_folder(folder, retrieve_names)
-
-    def start_machine(self, vmid: str, as_async: bool = True) -> typing.Optional[str]:
-        """
-        Tries to start a machine. No check is done, it is simply requested to XenServer.
-
-        This start also "resume" suspended/paused machines
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        return self._get_api().start_machine(vmid, as_async)
-
-    def stop_machine(self, vmid: str, as_async: bool = True) -> typing.Optional[str]:
-        """
-        Tries to start a machine. No check is done, it is simply requested to XenServer
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        return self._get_api().stop_machine(vmid, as_async)
-
-    def reset_machine(self, vmid: str, as_async: bool = True) -> typing.Optional[str]:
-        """
-        Tries to start a machine. No check is done, it is simply requested to XenServer
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        return self._get_api().reset_machine(vmid, as_async)
-
-    def can_suspend_machine(self, vmid: str) -> bool:
-        """
-        The machine can be suspended only when "suspend" is in their operations list (mush have xentools installed)
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-            True if the machien can be suspended
-        """
-        return self._get_api().can_suspend_machine(vmid)
-
-    def suspend_machine(self, vmid: str, as_async: bool = True) -> typing.Optional[str]:
-        """
-        Tries to start a machine. No check is done, it is simply requested to XenServer
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        return self._get_api().suspend_machine(vmid, as_async)
-
-    def resume_machine(self, vmid: str, as_async: bool = True) -> typing.Optional[str]:
-        """
-        Tries to start a machine. No check is done, it is simply requested to XenServer
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        return self._get_api().resume_machine(vmid, as_async)
-
-    def shutdown_machine(self, vmid: str, as_async: bool = True) -> typing.Optional[str]:
-        """
-        Tries to start a machine. No check is done, it is simply requested to XenServer
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        return self._get_api().shutdown_machine(vmid, as_async)
-
-    def remove_machine(self, vmid: str) -> None:
-        """
-        Tries to delete a machine. No check is done, it is simply requested to XenServer
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        self._get_api().remove_machine(vmid)
-
-    def configure_machine(self, vmid: str, netId: str, mac: str, memory: int) -> None:
-        self._get_api().configure_machine(vmid, mac={'network': netId, 'mac': mac}, memory=memory)
-
-    def provision_machine(self, vmid: str, as_async: bool = True) -> str:
-        return self._get_api().provision_machine(vmid, as_async=as_async)
-
-    def get_first_ip(self, vmid: str) -> str:
-        return self._get_api().get_first_ip(vmid)
-
-    def get_first_mac(self, vmid: str) -> str:
-        return self._get_api().get_first_mac(vmid)
-
-    def create_snapshot(self, vmid: str, name: str) -> str:
-        return self._get_api().create_snapshot(vmid, name)
-
-    def restore_snapshot(self, snapshot_id: str) -> str:
-        return self._get_api().restore_snapshot(snapshot_id)
-
-    def remove_snapshot(self, snapshot_id: str) -> str:
-        return self._get_api().remove_snapshot(snapshot_id)
-
-    def list_snapshots(self, vmid: str, full_info: bool = False) -> list[dict[str, typing.Any]]:
-        return self._get_api().list_snapshots(vmid)
+        self._api().test()
 
     def get_macs_range(self) -> str:
         return self.macs_range.value

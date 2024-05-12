@@ -104,25 +104,13 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
         # This is that value is always '', so if we want to change something, we have to do it
         # at defValue
         self.prov_uuid.value = self.provider().get_uuid()
-
-        self.folder.set_choices([gui.choice_item(folder, folder) for folder in self.provider().list_folders()])
+        with self.provider().get_connection() as api:
+            self.folder.set_choices([gui.choice_item(folder, folder) for folder in api.list_folders()])
 
     def provider(self) -> 'XenProvider':
         return typing.cast('XenProvider', super().provider())
 
-    def get_machine_power_state(self, vmid: str) -> str:
-        """
-        Invokes getMachineState from parent provider
-
-        Args:
-            machineId: If of the machine to get state
-
-        Returns:
-            one of this values:
-        """
-        return self.provider().get_machine_power_state(vmid)
-
-    def start_machine(self, vmid: str) -> typing.Optional[str]:
+    def start_vm(self, vmid: str) -> typing.Optional[str]:
         """
         Tries to start a machine. No check is done, it is simply requested to Xen.
 
@@ -133,9 +121,10 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
 
         Returns:
         """
-        return self.provider().start_machine(vmid)
+        with self.provider().get_connection() as api:
+            api.start_vm(vmid)
 
-    def stop_machine(self, vmid: str) -> typing.Optional[str]:
+    def stop_vm(self, vmid: str) -> typing.Optional[str]:
         """
         Tries to stop a machine. No check is done, it is simply requested to Xen
 
@@ -144,7 +133,8 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
 
         Returns:
         """
-        return self.provider().stop_machine(vmid)
+        with self.provider().get_connection() as api:
+            return api.stop_vm(vmid)
 
     def reset_machine(self, vmid: str) -> typing.Optional[str]:
         """
@@ -155,13 +145,13 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
 
         Returns:
         """
-        return self.provider().reset_machine(vmid)
+        with self.provider().get_connection() as api:
+            return api.reset_vm(vmid)
 
     def shutdown_machine(self, vmid: str) -> typing.Optional[str]:
+        with self.provider().get_connection() as api:
+            return api.shutdown_vm(vmid)
         return self.provider().shutdown_machine(vmid)
-
-    def check_task_finished(self, task: str) -> tuple[bool, str]:
-        return self.provider().check_task_finished(task)
 
     @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def is_avaliable(self) -> bool:
@@ -169,18 +159,18 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
 
     def enumerate_assignables(self) -> collections.abc.Iterable[types.ui.ChoiceItem]:
         # Obtain machines names and ids for asignables
-        vms: dict[str, str] = {
-            machine['id']: machine['name']
-            for machine in self.provider().get_machines_from_folder(self.folder.value, retrieve_names=True)
-        }
+        with self.provider().get_connection() as api:
+            vms: dict[str, str] = {
+                machine.opaque_ref: machine.name for machine in api.list_vms_from_folder(self.folder.value)
+            }
 
-        with self._assigned_access() as assigned_vms:
-            return [
-                gui.choice_item(k, vms[k])
-                for k in self.machines.as_list()
-                if k not in assigned_vms
-                and k in vms  # Only machines not assigned, and that exists on provider will be available
-            ]
+            with self._assigned_access() as assigned_vms:
+                return [
+                    gui.choice_item(k, vms[k])
+                    for k in self.machines.as_list()
+                    if k not in assigned_vms
+                    and k in vms  # Only machines not assigned, and that exists on provider will be available
+                ]
 
     def assign_from_assignables(
         self, assignable_id: str, user: 'models.User', userservice_instance: 'services.UserService'
@@ -195,64 +185,68 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
 
     def snapshot_creation(self, userservice_instance: FixedUserService) -> None:
         userservice_instance = typing.cast(XenFixedUserService, userservice_instance)
-        if self.use_snapshots.as_bool():
-            vmid = userservice_instance._vmid
+        with self.provider().get_connection() as api:
+            if self.use_snapshots.as_bool():
+                vmid = userservice_instance._vmid
+                
+                snapshots = api.list_snapshots(vmid, full_info=False)  # Only need ids, to check if there is any snapshot
 
-            snapshots = [i['id'] for i in self.provider().list_snapshots(vmid)]
-            snapshot = snapshots[0] if snapshots else None
-
-            logger.debug('Using snapshots')
-            # If no snapshot exists for this vm, try to create one for it on background
-            # Lauch an snapshot. We will not wait for it to finish, but instead let it run "as is"
-            try:
-                if not snapshot:  # No snapshot, try to create one
-                    logger.debug('Not current snapshot')
-                    # We don't need the snapshot nor the task, will simply restore to newer snapshot on remove
-                    self.provider().create_snapshot(
-                        vmid,
-                        name='UDS Snapshot',
-                    )
-            except Exception as e:
-                self.do_log(types.log.LogLevel.WARNING, 'Could not create SNAPSHOT for this VM. ({})'.format(e))
+                logger.debug('Using snapshots')
+                # If no snapshot exists for this vm, try to create one for it on background
+                # Lauch an snapshot. We will not wait for it to finish, but instead let it run "as is"
+                try:
+                    if not snapshots:  # No snapshot, try to create one
+                        logger.debug('Not current snapshot')
+                        # We don't need the snapshot nor the task, will simply restore to newer snapshot on remove
+                        api.create_snapshot(
+                            vmid,
+                            name='UDS Snapshot',
+                        )
+                except Exception as e:
+                    self.do_log(types.log.LogLevel.WARNING, 'Could not create SNAPSHOT for this VM. ({})'.format(e))
 
     def snapshot_recovery(self, userservice_instance: FixedUserService) -> None:
         userservice_instance = typing.cast(XenFixedUserService, userservice_instance)
-        if self.use_snapshots.as_bool():
-            vmid = userservice_instance._vmid
+        with self.provider().get_connection() as api:
+            if self.use_snapshots.as_bool():
+                vmid = userservice_instance._vmid
 
-            snapshots = [i['id'] for i in self.provider().list_snapshots(vmid)]
-            snapshot = snapshots[0] if snapshots else None
+                snapshots = api.list_snapshots(vmid)
 
-            if snapshot:
-                try:
-                    userservice_instance._task = self.provider().restore_snapshot(snapshot['id'])
-                except Exception as e:
-                    self.do_log(types.log.LogLevel.WARNING, 'Could not restore SNAPSHOT for this VM. ({})'.format(e))
+                if snapshots:
+                    try:
+                        # 0 is most recent snapshot
+                        userservice_instance._task = api.restore_snapshot(snapshots[0].opaque_ref)
+                    except Exception as e:
+                        self.do_log(
+                            types.log.LogLevel.WARNING, 'Could not restore SNAPSHOT for this VM. ({})'.format(e)
+                        )
 
     def get_and_assign(self) -> str:
         found_vmid: typing.Optional[str] = None
-        with self._assigned_access() as assigned_vms:
-            try:
-                for checking_vmid in self.sorted_assignables_list():
-                    if checking_vmid not in assigned_vms:  # Not assigned
-                        # Check that the machine exists...
-                        try:
-                            _vm_name = self.provider().get_machine_name(checking_vmid)
-                            found_vmid = checking_vmid
-                            break
-                        except Exception:  # Notifies on log, but skipt it
-                            self.provider().do_log(
-                                types.log.LogLevel.WARNING, 'Machine {} not accesible'.format(found_vmid)
-                            )
-                            logger.warning(
-                                'The service has machines that cannot be checked on xen (connection error or machine has been deleted): %s',
-                                found_vmid,
-                            )
+        with self.provider().get_connection() as api:
+            with self._assigned_access() as assigned_vms:
+                try:
+                    for checking_vmid in self.sorted_assignables_list():
+                        if checking_vmid not in assigned_vms:  # Not assigned
+                            # Check that the machine exists...
+                            try:
+                                api.get_vm_info(checking_vmid)  # Will raise an exception if not exists
+                                found_vmid = checking_vmid
+                                break
+                            except Exception:  # Notifies on log, but skipt it
+                                self.provider().do_log(
+                                    types.log.LogLevel.WARNING, 'Machine {} not accesible'.format(found_vmid)
+                                )
+                                logger.warning(
+                                    'The service has machines that cannot be checked on xen (connection error or machine has been deleted): %s',
+                                    found_vmid,
+                                )
 
-                if found_vmid:
-                    assigned_vms.add(str(found_vmid))
-            except Exception:  #
-                raise Exception('No machine available')
+                    if found_vmid:
+                        assigned_vms.add(str(found_vmid))
+                except Exception:  #
+                    raise Exception('No machine available')
 
         if not found_vmid:
             raise Exception('All machines from list already assigned.')
@@ -260,13 +254,16 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
         return str(found_vmid)
 
     def get_mac(self, vmid: str) -> str:
-        return self.provider().get_first_mac(vmid)
+        with self.provider().get_connection() as conn:
+            return conn.get_first_mac(vmid)
 
     def get_ip(self, vmid: str) -> str:
-        return self.provider().get_first_ip(vmid)
+        with self.provider().get_connection() as conn:
+            return conn.get_first_ip(vmid)
 
     def get_name(self, vmid: str) -> str:
-        return self.provider().get_machine_name(vmid)
+        with self.provider().get_connection() as conn:
+            return conn.get_vm_info(vmid).name
 
     def remove_and_free(self, vmid: str) -> types.states.TaskState:
         try:

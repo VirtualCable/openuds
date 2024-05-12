@@ -80,8 +80,8 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     max_state_checks: typing.ClassVar[int] = 20
     # How many "retries" operation on same state will be allowed before giving up
     max_retries: typing.ClassVar[int] = consts.services.MAX_RETRIES
-    # If keep_state_sets_error is true, and an error occurs, the machine is set to FINISHED instead of ERROR
-    keep_state_sets_error: typing.ClassVar[bool] = False
+    # If store_error_as_finished is true, and an error occurs, the machine is set to FINISHED instead of ERROR
+    store_error_as_finished: typing.ClassVar[bool] = False
     # If must wait untill finish queue for destroying the machine
     wait_until_finish_to_destroy: typing.ClassVar[bool] = False
 
@@ -236,7 +236,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
                 logger.debug('Keep on error is enabled, not removing machine')
                 self._set_queue(
                     [types.services.Operation.FINISH]
-                    if self.keep_state_sets_error
+                    if self.store_error_as_finished
                     else [types.services.Operation.ERROR]
                 )
                 return types.states.TaskState.FINISHED
