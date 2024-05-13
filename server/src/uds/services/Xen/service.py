@@ -244,12 +244,12 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
 
             return api.clone_vm(self.machine.value, name, self.datastore.value)
 
-    def convert_to_template(self, machineId: str) -> None:
+    def convert_to_template(self, vm_opaque_ref: str) -> None:
         """
         converts machine to template
         """
         with self.provider().get_connection() as api:
-            api.convert_to_template(machineId, self.shadow.value)
+            api.convert_to_template(vm_opaque_ref, self.shadow.value)
 
     def start_deploy_from_template(self, name: str, comments: str, template_opaque_ref: str) -> str:
             """

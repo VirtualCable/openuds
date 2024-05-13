@@ -35,7 +35,7 @@ import typing
 
 from django.utils.translation import gettext as _
 from uds.core import types
-from uds.core.services import Publication
+from uds.core.services.generics.dynamic.publication import DynamicPublication
 from uds.core.util import autoserializable
 
 # Not imported at runtime, just for type checking
@@ -45,16 +45,11 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class XenPublication(Publication, autoserializable.AutoSerializable):
+class XenPublication(DynamicPublication, autoserializable.AutoSerializable):
     suggested_delay = (
         20  # : Suggested recheck time if publication is unfinished in seconds
     )
 
-    _name = autoserializable.StringField(default='')
-    _reason = autoserializable.StringField(default='')
-    _destroy_after = autoserializable.BoolField(default=False)
-    _template_id = autoserializable.StringField(default='')
-    _state = autoserializable.StringField(default='')
     _task = autoserializable.StringField(default='')
 
     def service(self) -> 'XenLinkedService':
@@ -74,14 +69,15 @@ class XenPublication(Publication, autoserializable.AutoSerializable):
                 self._name,
                 self._reason,
                 destroy_after,
-                self._template_id,
-                self._state,
+                self._vmid,
+                state,
                 self._task,
             ) = vals[1:]
         else:
             raise ValueError('Invalid data format')
             
-        self._destroy_after = destroy_after == 't'
+        self._is_flagged_for_destroy = destroy_after == 't'
+        self._queue
         
         self.mark_for_upgrade()   # Force upgrade asap
 
@@ -122,12 +118,12 @@ class XenPublication(Publication, autoserializable.AutoSerializable):
             state, result = self.service().check_task_finished(self._task)
             if state:  # Finished
                 self._state = 'finished'
-                self._template_id = result
+                self._vmid = result
                 if self._destroy_after:
                     self._destroy_after = False
                     return self.destroy()
 
-                self.service().convert_to_template(self._template_id)
+                self.service().convert_to_template(self._vmid)
                 return types.states.TaskState.FINISHED
         except Exception as e:
             self._state = 'error'
@@ -146,7 +142,7 @@ class XenPublication(Publication, autoserializable.AutoSerializable):
             return types.states.TaskState.RUNNING
 
         try:
-            self.service().remove_template(self._template_id)
+            self.service().remove_template(self._vmid)
         except Exception as e:
             self._state = 'error'
             self._reason = str(e)
@@ -165,4 +161,4 @@ class XenPublication(Publication, autoserializable.AutoSerializable):
         """
         Returns the template id associated with the publication
         """
-        return self._template_id
+        return self._vmid

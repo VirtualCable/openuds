@@ -138,7 +138,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
 
         if self._vmid:
             try:
-                # TODO: Remove VM using service or put it on a "to be removed" queue for a parallel job
+                self.service().delete(self, self._vmid)
                 self._vmid = ''
             except Exception as e:
                 logger.exception('Exception removing machine: %s', e)
