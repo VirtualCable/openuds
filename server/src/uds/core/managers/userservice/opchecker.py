@@ -164,7 +164,8 @@ class UpdateFromPreparing(StateUpdater):
         state = (
             State.REMOVABLE
         )  # By default, if not valid publication, service will be marked for removal on preparation finished
-        if self.userService.isValidPublication():
+        osManager = self.userServiceInstance.osmanager()
+        if self.userService.isValidPublication() or (osManager and osManager.isPersistent()):
             logger.debug('Publication is valid for %s', self.userService.friendly_name)
             state = self.checkOsManagerRelated()
 
