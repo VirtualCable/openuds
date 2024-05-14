@@ -34,10 +34,8 @@ import logging
 import typing
 
 from uds.core import types
-from uds.core.services.generics.fixed.userservice import FixedUserService, Operation
+from uds.core.services.generics.fixed.userservice import FixedUserService
 from uds.core.util import autoserializable
-
-from .xen import types as xen_types, exceptions as xen_exceptions
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -65,25 +63,6 @@ class XenFixedUserService(FixedUserService, autoserializable.AutoSerializable):
     def service(self) -> 'service_fixed.XenFixedService':
         return typing.cast('service_fixed.XenFixedService', super().service())
 
-    def set_ready(self) -> types.states.TaskState:
-        if self.cache.get('ready') == '1':
-            return types.states.TaskState.FINISHED
-
-        try:
-            state = self.service().get_machine_power_state(self._vmid)
-
-            if state != xen_types.PowerState.RUNNING:
-                self._queue = [Operation.START, Operation.FINISH]
-                return self._execute_queue()
-
-            self.cache.put('ready', '1', 30)
-        except Exception as e:
-            # On case of exception, log an an error and return as if the operation was executed
-            self.do_log(types.log.LogLevel.ERROR, 'Error setting machine state: {}'.format(e))
-            # return self.__error('Machine is not available anymore')
-
-        return types.states.TaskState.FINISHED
-
     def reset(self) -> types.states.TaskState:
         if self._vmid:
             self.service().reset_machine(self._vmid)  # Reset in sync
@@ -94,41 +73,24 @@ class XenFixedUserService(FixedUserService, autoserializable.AutoSerializable):
         return types.states.TaskState.FINISHED
 
     def op_start(self) -> None:
-        try:
-            state = self.service().get_machine_power_state(self._vmid)
-        except Exception as e:
-            raise Exception('Machine not found on start machine') from e
-
-        if state != xen_types.PowerState.RUNNING:
-            self._task = self.service().start_vm(self._vmid) or ''
+        self._task = self.service().start_vm(self._vmid)
 
     def op_stop(self) -> None:
-        try:
-            state = self.service().get_machine_power_state(self._vmid)
-        except Exception as e:
-            raise Exception('Machine not found on stop machine') from e
-
-        if state == xen_types.PowerState.RUNNING:
-            logger.debug('Stopping machine %s', self._vmid)
-            self._task = self.service().stop_vm(self._vmid) or ''
+        self._task = self.service().stop_vm(self._vmid)
 
     # Check methods
     def _check_task_finished(self) -> types.states.TaskState:
         if self._task == '':
             return types.states.TaskState.FINISHED
 
-        try:
-            finished, _per = self.service().check_task_finished(self._task)
-        except xen_exceptions.XenFailure:
-            return types.states.TaskState.RUNNING  # Try again later
-        except Exception as e:  # Failed for some other reason
-            if isinstance(e.args[0], dict) and 'error_connection' in e.args[0]:
-                return types.states.TaskState.RUNNING  # Try again later
-            raise e
-
-        if finished:
-            return types.states.TaskState.FINISHED
-
+        with self.service().provider().get_connection() as api:
+            task_info = api.get_task_info(self._task)
+            if task_info.is_failure():
+                raise Exception(task_info.result)  # Will set error state
+            
+            if task_info.is_success():
+                return types.states.TaskState.FINISHED
+    
         return types.states.TaskState.RUNNING
 
     # Check methods

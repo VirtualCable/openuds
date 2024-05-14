@@ -48,11 +48,11 @@ TAG_TEMPLATE = "uds-template"
 TAG_MACHINE = "uds-machine"
 
 
-def cache_key_helper(server_api: 'XenServer') -> str:
+def cache_key_helper(server_api: 'XenClient') -> str:
     return server_api._url  # pyright: ignore[reportPrivateUsage]
 
 
-class XenServer:  # pylint: disable=too-many-public-methods
+class XenClient:  # pylint: disable=too-many-public-methods
     _originalHost: str
     _host: str
     _host_backup: str
@@ -216,12 +216,6 @@ class XenServer:  # pylint: disable=too-many-public-methods
     def test(self) -> None:
         self.login(False)
 
-    def get_host(self) -> str:
-        return self._host
-
-    def set_host(self, host: str) -> None:
-        self._host = host
-
     def get_task_info(self, task_opaque_ref: str) -> xen_types.TaskInfo:
         try:
             task_info = xen_types.TaskInfo.from_dict(self.task.get_record(task_opaque_ref), task_opaque_ref)
@@ -229,7 +223,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
             if e.details[0] == 'HANDLE_INVALID':
                 return xen_types.TaskInfo.unknown_task(task_opaque_ref)
             raise exceptions.XenFailure(e.details)
-        
+
         return task_info
 
     @cached(prefix='xen_srs', timeout=consts.cache.DEFAULT_CACHE_TIMEOUT, key_helper=cache_key_helper)
@@ -290,7 +284,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
         except XenAPI.Failure as e:
             raise exceptions.XenFailure(e.details)
 
-    def start_vm(self, vm_opaque_ref: str, as_async: bool = True) -> typing.Optional[str]:
+    def _start_vm(self, vm_opaque_ref: str, as_async: bool = True) -> typing.Optional[str]:
         vminfo = self.get_vm_info(vm_opaque_ref)
         if vminfo.power_state.is_running():
             return None
@@ -300,32 +294,32 @@ class XenServer:  # pylint: disable=too-many-public-methods
 
         return (self.Async if as_async else self).VM.start(vm_opaque_ref, False, False)
 
-    def stop_vm(self, vm_opaque_ref: str, as_async: bool = True) -> typing.Optional[str]:
+    def _stop_vm(self, vm_opaque_ref: str, as_async: bool = True) -> typing.Optional[str]:
         vminfo = self.get_vm_info(vm_opaque_ref)
         if vminfo.power_state.is_stopped():
             return None
 
         return (self.Async if as_async else self).VM.hard_shutdown(vm_opaque_ref)
 
-    def reset_vm(self, vm_opaque_ref: str, as_async: bool = True) -> typing.Optional[str]:
+    def _reset_vm(self, vm_opaque_ref: str, as_async: bool = True) -> typing.Optional[str]:
         vminfo = self.get_vm_info(vm_opaque_ref)
         if vminfo.power_state.is_stopped():
             return None
 
         return (self.Async if as_async else self).VM.hard_reboot(vm_opaque_ref)
 
-    def suspend_vm(self, vm_opaque_ref: str, as_async: bool = True) -> typing.Optional[str]:
+    def _suspend_vm(self, vm_opaque_ref: str, as_async: bool = True) -> typing.Optional[str]:
         vminfo = self.get_vm_info(vm_opaque_ref)
         if vminfo.power_state.is_stopped():
             return None
 
         if vminfo.supports_suspend() is False:
             # Shutdown machine if it can't be suspended
-            return self.shutdown_vm(vm_opaque_ref, as_async)
+            return self._shutdown_vm(vm_opaque_ref, as_async)
 
         return (self.Async if as_async else self).VM.suspend(vm_opaque_ref)
 
-    def resume_vm(self, vm_opaque_ref: str, as_async: bool = True) -> typing.Optional[str]:
+    def _resume_vm(self, vm_opaque_ref: str, as_async: bool = True) -> typing.Optional[str]:
         vminfo = self.get_vm_info(vm_opaque_ref)
         if vminfo.power_state.is_running():
             return None
@@ -335,11 +329,47 @@ class XenServer:  # pylint: disable=too-many-public-methods
 
         return (self.Async if as_async else self).VM.resume(vm_opaque_ref, False, False)
 
-    def shutdown_vm(self, vm_opaque_ref: str, as_async: bool = True) -> typing.Optional[str]:
+    def _shutdown_vm(self, vm_opaque_ref: str, as_async: bool = True) -> typing.Optional[str]:
         vminfo = self.get_vm_info(vm_opaque_ref)
         if vminfo.power_state.is_stopped():
             return None
         return (self.Async if as_async else self).VM.clean_shutdown(vm_opaque_ref)
+
+    def start_vm(self, vm_opaque_ref: str, as_async: bool = True) -> str:
+        return typing.cast(str, self._start_vm(vm_opaque_ref, as_async))  # We know it's not None on async
+
+    def start_vm_sync(self, vm_opaque_ref: str) -> None:
+        self._start_vm(vm_opaque_ref, False)
+
+    def stop_vm(self, vm_opaque_ref: str, as_async: bool = True) -> str:
+        return typing.cast(str, self._stop_vm(vm_opaque_ref, as_async))
+
+    def stop_vm_sync(self, vm_opaque_ref: str) -> None:
+        self._stop_vm(vm_opaque_ref, False)
+
+    def reset_vm(self, vm_opaque_ref: str, as_async: bool = True) -> str:
+        return typing.cast(str, self._reset_vm(vm_opaque_ref, as_async))
+
+    def reset_vm_sync(self, vm_opaque_ref: str) -> None:
+        self._reset_vm(vm_opaque_ref, False)
+
+    def suspend_vm(self, vm_opaque_ref: str, as_async: bool = True) -> str:
+        return typing.cast(str, self._suspend_vm(vm_opaque_ref, as_async))
+
+    def suspend_vm_sync(self, vm_opaque_ref: str) -> None:
+        self._suspend_vm(vm_opaque_ref, False)
+
+    def resume_vm(self, vm_opaque_ref: str, as_async: bool = True) -> str:
+        return typing.cast(str, self._resume_vm(vm_opaque_ref, as_async))
+
+    def resume_vm_sync(self, vm_opaque_ref: str) -> None:
+        self._resume_vm(vm_opaque_ref, False)
+
+    def shutdown_vm(self, vm_opaque_ref: str, as_async: bool = True) -> str:
+        return typing.cast(str, self._shutdown_vm(vm_opaque_ref, as_async))
+
+    def shutdown_vm_sync(self, vm_opaque_ref: str) -> None:
+        self._shutdown_vm(vm_opaque_ref, False)
 
     def clone_vm(self, vm_opaque_ref: str, target_name: str, target_sr: typing.Optional[str] = None) -> str:
         """
@@ -510,9 +540,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
             raise exceptions.XenFailure(e.details)
 
     @cached(prefix='xen_snapshots', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def list_snapshots(
-        self, vmid: str, full_info: bool = True, **kwargs: typing.Any
-    ) -> list[xen_types.VMInfo]:
+    def list_snapshots(self, vmid: str, full_info: bool = True, **kwargs: typing.Any) -> list[xen_types.VMInfo]:
         """Returns a list of snapshots for the specified VM, sorted by snapshot_time in descending order.
         (That is, the most recent snapshot is first in the list.)
 
@@ -525,15 +553,16 @@ class XenServer:  # pylint: disable=too-many-public-methods
         """
         try:
             snapshots = self.VM.get_snapshots(vmid)
-            
+
             if not full_info:
                 return [xen_types.VMInfo.empty(snapshot) for snapshot in snapshots]
-            
+
             # Return full info, thatis, name, id and snapshot_time
-            return sorted([
-                self.get_vm_info(snapshot)
-                for snapshot in snapshots
-            ], key=lambda x: x.snapshot_time, reverse=True)
+            return sorted(
+                [self.get_vm_info(snapshot) for snapshot in snapshots],
+                key=lambda x: x.snapshot_time,
+                reverse=True,
+            )
         except XenAPI.Failure as e:
             raise exceptions.XenFailure(e.details)
 

@@ -77,87 +77,44 @@ class XenPublication(DynamicPublication, autoserializable.AutoSerializable):
             raise ValueError('Invalid data format')
             
         self._is_flagged_for_destroy = destroy_after == 't'
+        if state == 'finished':
+            self._set_queue([types.services.Operation.FINISH])
+        elif state == 'error':
+            self._set_queue([types.services.Operation.ERROR])
+        else:  # Running
+            self._set_queue([types.services.Operation.CREATE, types.services.Operation.FINISH])
         self._queue
         
         self.mark_for_upgrade()   # Force upgrade asap
-
-    def publish(self) -> types.states.TaskState:
-        """
-        Realizes the publication of the service
-        """
+        
+    def op_create(self) -> None:
         self._name = self.service().sanitized_name(
             'UDS Pub ' + self.servicepool_name() + "-" + str(self.revision())
         )
         comments = _('UDS pub for {0} at {1}').format(
             self.servicepool_name(), str(datetime.now()).split('.')[0]
         )
-        self._reason = ''  # No error, no reason for it
-        self._destroy_after = False
-        self._state = 'ok'
 
-        try:
-            self._task = self.service().start_deploy_of_template(self._name, comments)
-        except Exception as e:
-            self._state = 'error'
-            self._reason = str(e)
-            return types.states.TaskState.ERROR
-
-        return types.states.TaskState.RUNNING
-
-    def check_state(self) -> types.states.TaskState:
+        self._task = self.service().start_deploy_of_template(self._name, comments)
+        
+    def op_create_checker(self) -> types.states.TaskState:
         """
         Checks state of publication creation
         """
-        if self._state == 'finished':
-            return types.states.TaskState.FINISHED
-
-        if self._state == 'error':
-            return types.states.TaskState.ERROR
-
-        try:
-            state, result = self.service().check_task_finished(self._task)
-            if state:  # Finished
-                self._state = 'finished'
-                self._vmid = result
-                if self._destroy_after:
-                    self._destroy_after = False
-                    return self.destroy()
-
+        with  self.service().provider().get_connection() as api:
+            task_info = api.get_task_info(self._task)
+            if task_info.is_done():
+                self._vmid = task_info.result
                 self.service().convert_to_template(self._vmid)
                 return types.states.TaskState.FINISHED
-        except Exception as e:
-            self._state = 'error'
-            self._reason = str(e)
-            return types.states.TaskState.ERROR
 
         return types.states.TaskState.RUNNING
-
-    def error_reason(self) -> str:
-        return self._reason
-
-    def destroy(self) -> types.states.TaskState:
-        # We do not do anything else to destroy this instance of publication
-        if self._state == 'ok':
-            self._destroy_after = True
-            return types.states.TaskState.RUNNING
-
-        try:
-            self.service().remove_template(self._vmid)
-        except Exception as e:
-            self._state = 'error'
-            self._reason = str(e)
-            return types.states.TaskState.ERROR
-
-        return types.states.TaskState.FINISHED
-
-    def cancel(self) -> types.states.TaskState:
-        return self.destroy()
 
     # Here ends the publication needed methods.
     # Methods provided below are specific for this publication type
     # and will be used by user deployments that uses this kind of publication
 
-    def getTemplateId(self) -> str:
+    def get_template_id(self) -> str:
         """
         Returns the template id associated with the publication
         """

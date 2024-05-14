@@ -90,7 +90,7 @@ class OldOperation(enum.IntEnum):
         }.get(self, types.services.Operation.UNKNOWN)
 
 
-class XenLinkedDeployment(DynamicUserService, autoserializable.AutoSerializable):
+class XenLinkedUserService(DynamicUserService, autoserializable.AutoSerializable):
     _task = autoserializable.StringField(default='')
 
     def initialize(self) -> None:
@@ -118,38 +118,17 @@ class XenLinkedDeployment(DynamicUserService, autoserializable.AutoSerializable)
             self._vmid = vals[4].decode('utf8')
             self._reason = vals[5].decode('utf8')
             self._queue = [
-                i.as_operation() for i in pickle.loads(vals[6])
+                i.as_operation() for i in typing.cast(list[OldOperation], pickle.loads(vals[6]))
             ]  # nosec: not insecure, we are loading our own data
             self._task = vals[7].decode('utf8')
 
         self.mark_for_upgrade()  # Force upgrade
 
-    def _init_queue_for_deployment(self, cache_l2: bool = False) -> None:
-        if cache_l2 is False:
-            self._queue = [
-                OldOperation.CREATE,
-                OldOperation.CONFIGURE,
-                OldOperation.PROVISION,
-                OldOperation.START,
-                OldOperation.FINISH,
-            ]
-        else:
-            self._queue = [
-                OldOperation.CREATE,
-                OldOperation.CONFIGURE,
-                OldOperation.PROVISION,
-                OldOperation.START,
-                OldOperation.WAIT,
-                OldOperation.WAIT_SUSPEND,
-                OldOperation.SUSPEND,
-                OldOperation.FINISH,
-            ]
-
     def op_create(self) -> None:
         """
         Deploys a machine from template for user/cache
         """
-        template_id = self.publication().getTemplateId()
+        template_id = self.publication().get_template_id()
         name = self.get_name()
         if name == consts.NO_MORE_NAMES:
             raise Exception(

@@ -39,7 +39,7 @@ from uds.core.util import validators
 from uds.core.ui import gui
 
 from .publication import XenPublication
-from .deployment import XenLinkedDeployment
+from .deployment import XenLinkedUserService
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -93,7 +93,7 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
     # : In our case, we do no need a publication, so this is None
     publication_type = XenPublication
     # : Types of deploys (services in cache and/or assigned to users)
-    user_service_type = XenLinkedDeployment
+    user_service_type = XenLinkedUserService
 
     services_type_provided = types.services.ServiceType.VDI
 

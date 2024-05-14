@@ -38,6 +38,7 @@ from uds.core.services.generics import exceptions
 
 logger = logging.getLogger(__name__)
 
+
 class XenFault(exceptions.Error):
     pass
 
@@ -90,3 +91,7 @@ class XenException(XenFault):
         logger.debug('Exception create: %s', message)
 
 
+class XenNotFoundError(XenException, exceptions.NotFoundError):
+    def __init__(self, message: typing.Any):
+        XenException.__init__(self, message)
+        logger.debug('Not found exception create: %s', message)

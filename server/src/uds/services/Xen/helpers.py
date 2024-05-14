@@ -47,14 +47,18 @@ def get_machines(parameters: typing.Any) -> types.ui.CallbackResultType:
         XenProvider, models.Provider.objects.get(uuid=parameters['prov_uuid']).get_instance()
     )
 
-    try:
-        machines = [m for m in provider.get_machines_from_folder(parameters['folder'], retrieve_names=True) if not m.get('name', '').startswith('UDS')]
-    except Exception:
-        return []
+    with provider.get_connection() as api:
+        try:
+            vms = sorted(
+                [m for m in api.list_vms_from_folder(parameters['folder']) if not m.name.startswith('UDS')],
+                key=lambda x: x.name,
+            )
+        except Exception:
+            return []
 
     return [
         {
             'name': 'machines',
-            'choices': [gui.choice_item(machine['id'], machine['name']) for machine in machines],
+            'choices': [gui.choice_item(vm.opaque_ref, vm.name) for vm in vms],
         }
     ]

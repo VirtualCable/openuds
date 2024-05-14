@@ -137,19 +137,19 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         old_field_name='hostBackup',
     )
 
-    _cached_api: typing.Optional[client.XenServer]
+    _cached_api: typing.Optional[client.XenClient]
     _use_count: int = 0
 
     # XenServer engine, right now, only permits a connection to one server and only one per instance
     # If we want to connect to more than one server, we need keep locked access to api, change api server, etc..
     # We have implemented an "exclusive access" client that will only connect to one server at a time (using locks)
     # and this way all will be fine
-    def _api(self) -> client.XenServer:
+    def _api(self) -> client.XenClient:
         """
         Returns the connection API object for XenServer (using XenServersdk)
         """
         if not self._cached_api:
-            self._cached_api = client.XenServer(
+            self._cached_api = client.XenClient(
                 self.host.value,
                 self.host_backup.value,
                 443,
@@ -162,7 +162,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         return self._cached_api
     
     @contextlib.contextmanager
-    def get_connection(self) -> typing.Iterator[client.XenServer]:
+    def get_connection(self) -> typing.Iterator[client.XenClient]:
         """
         Context manager for XenServer API
         """

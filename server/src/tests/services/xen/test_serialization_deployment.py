@@ -33,47 +33,28 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import pickle
 import typing
 
+from uds.core.environment import Environment
+from uds.core import types
+
 # We use storage, so we need transactional tests
 from tests.utils.test import UDSTransactionTestCase
-from uds.core.environment import Environment
 
+from . import fixtures
 
-from uds.services.Xen.deployment import Operation as Operation, XenLinkedDeployment as Deployment
+from uds.services.Xen.deployment import OldOperation, XenLinkedUserService as Deployment
 
-# if not data.startswith(b'v'):
-#     return super().unmarshal(data)
-
-# vals = data.split(b'\1')
-# logger.debug('Values: %s', vals)
-# if vals[0] == b'v1':
-#     self._name = vals[1].decode('utf8')
-#     self._ip = vals[2].decode('utf8')
-#     self._mac = vals[3].decode('utf8')
-#     self._vmid = vals[4].decode('utf8')
-#     self._reason = vals[5].decode('utf8')
-#     self._queue = pickle.loads(vals[6])  # nosec: not insecure, we are loading our own data
-#     self._task = vals[7].decode('utf8')
-
-# self.flag_for_upgrade()  # Force upgrade
-
-EXPECTED_FIELDS: typing.Final[set[str]] = {
-    '_name',
-    '_ip',
-    '_mac',
-    '_vmid',
-    '_reason',
-    '_queue',
-    '_task',
-}
-
-TEST_QUEUE: typing.Final[list[Operation]] = [
-    Operation.CREATE,
-    Operation.REMOVE,
-    Operation.RETRY,
+TEST_QUEUE_OLD: typing.Final[list[OldOperation]] = [
+    OldOperation.CREATE,
+    OldOperation.REMOVE,
+    OldOperation.RETRY,
 ]
 
+TEST_QUEUE: typing.Final[list[types.services.Operation]] = [i.as_operation() for i in TEST_QUEUE_OLD]
+
 SERIALIZED_DEPLOYMENT_DATA: typing.Final[typing.Mapping[str, bytes]] = {
-    'v1': b'v1\x01name\x01ip\x01mac\x01vmid\x01reason\x01' + pickle.dumps(TEST_QUEUE, protocol=0) + b'\x01task',
+    'v1': b'v1\x01name\x01ip\x01mac\x01vmid\x01reason\x01'
+    + pickle.dumps(TEST_QUEUE_OLD, protocol=0)
+    + b'\x01task',
 }
 
 LAST_VERSION: typing.Final[str] = sorted(SERIALIZED_DEPLOYMENT_DATA.keys(), reverse=True)[0]
@@ -122,10 +103,10 @@ class XenDeploymentSerializationTest(UDSTransactionTestCase):
         # queue is kept on "storage", so we need always same environment
         environment = Environment.testing_environment()
         # Store queue
-        environment.storage.save_pickled('queue', TEST_QUEUE)
+        environment.storage.save_pickled('queue', TEST_QUEUE_OLD)
 
         def _create_instance(unmarshal_data: 'bytes|None' = None) -> Deployment:
-            instance = Deployment(environment=environment, service=None)  # type: ignore  # service is not used
+            instance = fixtures.create_userservice_linked()
             if unmarshal_data:
                 instance.unmarshal(unmarshal_data)
             return instance
@@ -134,26 +115,26 @@ class XenDeploymentSerializationTest(UDSTransactionTestCase):
         self.assertEqual(instance._queue, TEST_QUEUE)
 
         instance._queue = [
-            Operation.CREATE,
-            Operation.FINISH,
+            types.services.Operation.CREATE,
+            types.services.Operation.FINISH,
         ]
         marshaled_data = instance.marshal()
 
         instance = _create_instance(marshaled_data)
         self.assertEqual(
             instance._queue,
-            [Operation.CREATE, Operation.FINISH],
+            [types.services.Operation.CREATE, types.services.Operation.FINISH],
         )
         # Append something remarshall and check
-        instance._queue.insert(0, Operation.RETRY)
+        instance._queue.insert(0, types.services.Operation.RETRY)
         marshaled_data = instance.marshal()
         instance = _create_instance(marshaled_data)
         self.assertEqual(
             instance._queue,
             [
-                Operation.RETRY,
-                Operation.CREATE,
-                Operation.FINISH,
+                types.services.Operation.RETRY,
+                types.services.Operation.CREATE,
+                types.services.Operation.FINISH,
             ],
         )
         # Remove something remarshall and check
@@ -162,13 +143,5 @@ class XenDeploymentSerializationTest(UDSTransactionTestCase):
         instance = _create_instance(marshaled_data)
         self.assertEqual(
             instance._queue,
-            [Operation.CREATE, Operation.FINISH],
+            [types.services.Operation.CREATE, types.services.Operation.FINISH],
         )
-
-    def test_autoserialization_fields(self) -> None:
-        # This test is designed to ensure that all fields are autoserializable
-        # If some field is added or removed, this tests will warn us about it to fix the rest of the related tests
-        with Environment.temporary_environment() as env:
-            instance = Deployment(environment=env, service=None)  # type: ignore  # service is not used
-
-            self.assertSetEqual(set(f[0] for f in instance._autoserializable_fields()), EXPECTED_FIELDS)

@@ -30,6 +30,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import collections.abc
 import typing
+import functools
 import dataclasses
 from unittest import mock
 
@@ -37,6 +38,8 @@ from unittest import mock
 class AutoSpecMethodInfo:
     name: str|typing.Callable[..., typing.Any]
     returns: typing.Any = None  # Can be a callable or a value
+    partial_args: typing.Tuple[typing.Any, ...] = ()
+    partial_kwargs: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
     
     
 def autospec(cls: type, metods_info: collections.abc.Iterable[AutoSpecMethodInfo], **kwargs: typing.Any) -> mock.Mock:
@@ -55,7 +58,8 @@ def autospec(cls: type, metods_info: collections.abc.Iterable[AutoSpecMethodInfo
         name = method_info.name if isinstance(method_info.name, str) else method_info.name.__name__
         mck = getattr(obj, name)
         if callable(method_info.returns):
-            mck.side_effect = method_info.returns
+            mck.side_effect = functools.partial(method_info.returns, *method_info.partial_args, **method_info.partial_kwargs)
+            #mck.side_effect = method_info.returns
         else:
             mck.return_value = method_info.returns
             

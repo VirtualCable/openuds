@@ -54,13 +54,13 @@ logger = logging.getLogger(__name__)
 
 class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
     """
-    Represents a Proxmox service based on fixed machines.
+    Represents a Xen service based on fixed machines.
     This service requires the qemu agent to be installed on the machines.
     """
 
-    type_name = _('Proxmox Fixed Machines')
-    type_type = 'ProxmoxFixedService'
-    type_description = _('Proxmox Services based on fixed machines. Needs qemu agent installed on machines.')
+    type_name = _('Xen Fixed Machines')
+    type_type = 'XenFixedService'
+    type_description = _('Xen Services based on fixed machines. Needs xen agent installed on machines.')
     icon_file = 'service.png'
 
     can_reset = True
@@ -88,7 +88,7 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
         },
         tooltip=_('Folder containing base machines'),
         required=True,
-        tab=_('Machines'),
+        tab=types.ui.Tab.MACHINE,
         old_field_name='resourcePool',
     )
     machines = FixedService.machines
@@ -110,7 +110,7 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
     def provider(self) -> 'XenProvider':
         return typing.cast('XenProvider', super().provider())
 
-    def start_vm(self, vmid: str) -> typing.Optional[str]:
+    def start_vm(self, vmid: str) -> str:
         """
         Tries to start a machine. No check is done, it is simply requested to Xen.
 
@@ -122,9 +122,11 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
         Returns:
         """
         with self.provider().get_connection() as api:
-            api.start_vm(vmid)
+            if api.get_vm_info(vmid).power_state.is_running():
+                return ''  # Already running
+            return api.start_vm(vmid)
 
-    def stop_vm(self, vmid: str) -> typing.Optional[str]:
+    def stop_vm(self, vmid: str) -> str:
         """
         Tries to stop a machine. No check is done, it is simply requested to Xen
 
@@ -134,9 +136,13 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
         Returns:
         """
         with self.provider().get_connection() as api:
-            return api.stop_vm(vmid)
+            if api.get_vm_info(vmid).power_state.is_running():
+                return api.stop_vm(vmid)
+        
+        return ''  # Already stopped
+            
 
-    def reset_machine(self, vmid: str) -> typing.Optional[str]:
+    def reset_machine(self, vmid: str) -> str:
         """
         Tries to stop a machine. No check is done, it is simply requested to Xen
 
@@ -146,12 +152,17 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
         Returns:
         """
         with self.provider().get_connection() as api:
-            return api.reset_vm(vmid)
+            if api.get_vm_info(vmid).power_state.is_running():
+                return api.reset_vm(vmid)
+        
+        return ''  # Already stopped, no reset needed
 
-    def shutdown_machine(self, vmid: str) -> typing.Optional[str]:
+    def shutdown_machine(self, vmid: str) -> str:
         with self.provider().get_connection() as api:
-            return api.shutdown_vm(vmid)
-        return self.provider().shutdown_machine(vmid)
+            if api.get_vm_info(vmid).power_state.is_running():              
+                return api.shutdown_vm(vmid)
+            
+        return ''  # Already stopped
 
     @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def is_avaliable(self) -> bool:

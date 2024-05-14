@@ -30,62 +30,32 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import pickle
 import typing
 
 from tests.utils.test import UDSTestCase
+from uds.core import types
 from uds.core.environment import Environment
-from uds.core.util import autoserializable
 
-from uds.services.Xen.publication import XenPublication as Publication
-
-
-# if not data.startswith(b'v'):
-#     return super().unmarshal(data)
-    
-# # logger.debug('Data: {0}'.format(data))
-# vals = data.decode('utf8').split('\t')
-# if vals[0] == 'v1':
-#     (
-#         self._name,
-#         self._reason,
-#         destroy_after,
-#         self._template_id,
-#         self._state,
-#         self._task,
-#     ) = vals[1:]
-# else:
-#     raise ValueError('Invalid data format')
-    
-# self._destroy_after = destroy_after == 't'
-
-# self.flag_for_upgrade()   # Force upgrade asap
-EXPECTED_FIELDS: typing.Final[set[str]] = {
-    '_name',
-    '_reason',
-    '_destroy_after',
-    '_template_id',
-    '_state',
-    '_task',
-}
+from uds.services.Xen.publication import XenPublication as XenPublication
 
 
-SERIALIZED_PUBLICATION_DATA: typing.Final[bytes] = b'v1\tname\treason\tt\ttemplate_id\tstate\ttask'
+
+SERIALIZED_PUBLICATION_DATA: typing.Final[bytes] = b'v1\tname\treason\tt\ttemplate_id\tok\ttask'
 
 
 class XenPublicationSerializationTest(UDSTestCase):
-    def check(self, instance: Publication) -> None:
+    def check(self, instance: XenPublication) -> None:
         self.assertEqual(instance._name, 'name')
         self.assertEqual(instance._reason, 'reason')
-        self.assertTrue(instance._destroy_after)
-        self.assertEqual(instance._template_id, 'template_id')
-        self.assertEqual(instance._state, 'state')
+        self.assertTrue(instance._is_flagged_for_destroy)
+        self.assertEqual(instance._vmid, 'template_id')
         self.assertEqual(instance._task, 'task')
+        self.assertEqual(instance._queue, [types.services.Operation.CREATE, types.services.Operation.FINISH])
 
     def test_marshaling(self) -> None:
         environment = Environment.testing_environment()
 
-        instance = Publication(environment=environment, service=None)  # type: ignore
+        instance = XenPublication(environment=environment, service=None)  # type: ignore
         instance.unmarshal(SERIALIZED_PUBLICATION_DATA)
         self.check(instance)
         # Ensure remarshalled flag is set
@@ -97,16 +67,9 @@ class XenPublicationSerializationTest(UDSTestCase):
         # Ensure fields has been marshalled using new format
         self.assertFalse(marshaled_data.startswith(b'\1'))
         # Reunmarshall again and check that remarshalled flag is not set
-        instance = Publication(environment=environment, service=None)  # type: ignore
+        instance = XenPublication(environment=environment, service=None)  # type: ignore
         instance.unmarshal(marshaled_data)
         self.assertFalse(instance.needs_upgrade())
 
         # Check that data is correct
         self.check(instance)
-
-    def test_autoserialization_fields(self) -> None:
-        # This test is designed to ensure that all fields are autoserializable
-        # If some field is added or removed, this tests will warn us about it to fix the rest of the related tests
-        with Environment.temporary_environment() as env:
-            instance = Publication(environment=env, service=None)  # type: ignore
-            self.assertSetEqual(set(f[0] for f in instance._autoserializable_fields()), EXPECTED_FIELDS)
