@@ -44,17 +44,17 @@ class PowerState(enum.StrEnum):
     # Internal UNKNOW state
     UNKNOW = 'Unknow'
 
-    def is_running(self):
+    def is_running(self) -> bool:
         return self == PowerState.RUNNING
 
-    def is_stopped(self):
+    def is_stopped(self) -> bool:
         return self in (PowerState.HALTED, PowerState.SUSPENDED)
 
-    def is_suspended(self):
+    def is_suspended(self) -> bool:
         return self == PowerState.SUSPENDED
 
     @staticmethod
-    def from_str(value: str):
+    def from_str(value: str) -> 'PowerState':
         try:
             return PowerState(value.capitalize())
         except ValueError:
@@ -80,17 +80,17 @@ class TaskStatus(enum.StrEnum):
     # Internal UNKNOW state
     UNKNOW = 'unknow'
 
-    def is_done(self):
+    def is_done(self) -> bool:
         return self in (TaskStatus.SUCCESS, TaskStatus.FAILURE, TaskStatus.CANCELLED)
 
-    def is_success(self):
+    def is_success(self) -> bool:
         return self == TaskStatus.SUCCESS
 
-    def is_failure(self):
+    def is_failure(self) -> bool:
         return self == TaskStatus.FAILURE
 
     @staticmethod
-    def from_str(value: str):
+    def from_str(value: str) -> 'TaskStatus':
         try:
             return TaskStatus(value.lower())
         except ValueError:
@@ -147,7 +147,7 @@ class StorageOperations(enum.StrEnum):
     UNKNOW = 'unknow'
 
     @staticmethod
-    def from_str(value: str):
+    def from_str(value: str) -> 'StorageOperations':
         try:
             return StorageOperations(value.lower())
         except ValueError:
@@ -277,7 +277,7 @@ class VMOperations(enum.StrEnum):
     UNKNOW = 'unknow'
 
     @staticmethod
-    def from_str(value: str):
+    def from_str(value: str) -> 'VMOperations':
         try:
             return VMOperations(value.lower())
         except ValueError:

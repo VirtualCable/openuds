@@ -30,9 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import time
 import threading
-from tracemalloc import stop
 import typing
 from unittest import mock
 

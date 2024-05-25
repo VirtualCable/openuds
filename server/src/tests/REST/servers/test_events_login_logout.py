@@ -28,20 +28,12 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
-import collections.abc
 import logging
 
-from unittest import mock
-
 from uds import models
-from uds.core.util import log
 
-from ...utils import rest, random_ip_v4, random_ip_v6, random_mac
+from ...utils import rest
 from ...fixtures import servers as servers_fixtures
-
-if typing.TYPE_CHECKING:
-    from ...utils.test import UDSHttpResponse
 
 logger = logging.getLogger(__name__)
 

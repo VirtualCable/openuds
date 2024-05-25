@@ -30,8 +30,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import collections.abc
-import logging
 
 from ...utils.test import UDSTestCase
 from ...fixtures import authenticators as authenticators_fixtures
