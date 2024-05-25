@@ -30,13 +30,11 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import pickle
 import typing
 
 # We use commit/rollback
 
 from tests.utils.test import UDSTestCase
-from uds.core.util import autoserializable
 from uds.core.environment import Environment
 
 

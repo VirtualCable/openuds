@@ -1,7 +1,7 @@
 """
 Created on Nov 15, 2012-2019
 
-@author: dkmaster
+Author: dkmaster
 """
 
 import logging

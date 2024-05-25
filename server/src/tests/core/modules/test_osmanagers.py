@@ -26,12 +26,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
 
-from django.urls import reverse
 
 from uds.core.osmanagers.osmfactory import OSManagersFactory
 
@@ -57,7 +56,7 @@ class TestOsManagers(UDSTestCase):
     """
 
     def test_osmanagers_loads_correctly(self) -> None:
-        from uds import osmanagers  # ensure transports are registered
+        from uds import osmanagers  # type: ignore  # ensure transports are registered
 
         factory = OSManagersFactory()
         for osmanager in MUST_HAVE:

@@ -29,8 +29,6 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
-import collections.abc
 import logging
 
 from uds.models import Network

@@ -30,7 +30,7 @@
 """
 Created on Jul 29, 2011
 
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 
 """
 import urllib.parse

@@ -26,7 +26,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 import collections.abc
@@ -39,6 +39,8 @@ from ...utils import rest
 from ...fixtures import rest as rest_fixtures
 
 logger = logging.getLogger(__name__)
+
+MUST_HAVE_FIELDS: typing.Final = {'name', 'role', 'real_name', 'comments', 'state', 'last_access'}
 
 
 class UsersTest(rest.test.RESTActorTestCase):
@@ -80,20 +82,16 @@ class UsersTest(rest.test.RESTActorTestCase):
 
         # Ensure at least name, role, real_name comments, state and last_access are present on tableinfo['fields']
         fields: list[collections.abc.Mapping[str, typing.Any]] = tableinfo['fields']
+
         self.assertTrue(
             functools.reduce(
                 lambda x, y: x and y,  # pyright: ignore
-                map(
-                    lambda f: next(iter(f.keys()))
-                    in (
-                        'name',
-                        'role',
-                        'real_name',
-                        'comments',
-                        'state',
-                        'last_access',
+                typing.cast(
+                    typing.Iterable[bool],
+                    map(
+                        lambda f: next(iter(f.keys())) in MUST_HAVE_FIELDS,
+                        fields,
                     ),
-                    fields,
                 ),
             )
         )

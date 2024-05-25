@@ -41,7 +41,7 @@ import functools
 import logging
 
 from uds import models
-from uds.core import types, exceptions
+from uds.core import types
 from uds.core.managers import servers
 
 from ...fixtures import servers as servers_fixtures
@@ -74,7 +74,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
         # Manager is a singleton, clear counters
         # self.manager.clearCounters()
 
-        for i in range(NUM_USERSERVICES):
+        for _ in range(NUM_USERSERVICES):
             # So we have 8 userservices, each one with a different user
             self.user_services.extend(services_fixtures.create_db_cache_userservices())
 
@@ -115,7 +115,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
                 # Get first argument from call to init on serverApiRequester
                 server = mockServerApiRequester.call_args[0][0]
                 logger.debug('Getting stats for %s', server.host)
-                return (get_stats or (lambda x: self.server_stats.get(x.uuid)))(server)
+                return (get_stats or (lambda x: self.server_stats.get(x.uuid)))(server)  # pyright: ignore
 
             # return_value returns the instance of the mock
             mockServerApiRequester.return_value.get_stats.side_effect = _get_stats
@@ -209,7 +209,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
 
                 # # Remove it, should decrement counter
                 for i in range(32, -1, -1):  # Deletes 33 times
-                    res = self.manager.release(userService, self.registered_servers_group)
+                    _res = self.manager.release(userService, self.registered_servers_group)
 
             self.assertEqual(len(self.registered_servers_group.properties), 0)
 

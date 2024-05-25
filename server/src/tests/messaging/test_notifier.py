@@ -29,8 +29,6 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
-import collections.abc
 import logging
 
 
@@ -38,10 +36,6 @@ from uds.core import messaging
 
 from ..fixtures import notifiers as notifiers_fixtures
 from ..utils.test import UDSTestCase
-
-if typing.TYPE_CHECKING:
-    from uds import models
-
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +56,7 @@ class EmailNotifierTest(UDSTestCase):
             port=1025,
         )
         self.smtp_server.start()  # type: ignore
-        
+
     def tearDown(self) -> None:
         # Stop smtp debug server
         self.smtp_server.stop()
@@ -72,9 +66,7 @@ class EmailNotifierTest(UDSTestCase):
         Test email notifier
         """
         notifier = notifiers_fixtures.createEmailNotifier(
-            host='localhost',
-            port=self.smtp_server.port,
-            enableHtml=False
+            host='localhost', port=self.smtp_server.port, enableHtml=False
         )
 
         notifier.get_instance().notify(
@@ -83,4 +75,3 @@ class EmailNotifierTest(UDSTestCase):
             messaging.LogLevel.CRITICAL,
             'Test message cañón',
         )
-

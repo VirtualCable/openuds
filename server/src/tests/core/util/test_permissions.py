@@ -29,10 +29,9 @@
 
 
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import collections.abc
 import uds.core.types.permissions
 
 from django.db.models import Model

@@ -34,8 +34,6 @@ import typing
 from tests.utils.test import UDSTestCase
 from uds.core.environment import Environment
 
-from django.conf import settings
-
 
 from uds.osmanagers.WindowsOsManager import windows as osmanager
 
@@ -83,9 +81,7 @@ class WindowsOsManagerSerialTest(UDSTestCase):
     def test_marshaling(self) -> None:
         # Unmarshall last version, remarshall and check that is marshalled using new marshalling format
         LAST_VERSION = 'v{}'.format(len(SERIALIZED_OSMANAGER_DATA))
-        instance = osmanager.WindowsOsManager(
-            environment=Environment.testing_environment()
-        )
+        instance = osmanager.WindowsOsManager(environment=Environment.testing_environment())
         instance.unmarshal(SERIALIZED_OSMANAGER_DATA[LAST_VERSION])
         marshaled_data = instance.marshal()
 
@@ -96,9 +92,7 @@ class WindowsOsManagerSerialTest(UDSTestCase):
         # Ensure fields has been marshalled using new format
         self.assertFalse(marshaled_data.startswith(b'v'))
         # Reunmarshall again and check that remarshalled flag is not set
-        instance = osmanager.WindowsOsManager(
-            environment=Environment.testing_environment()
-        )
+        instance = osmanager.WindowsOsManager(environment=Environment.testing_environment())
         instance.unmarshal(marshaled_data)
         self.assertFalse(instance.needs_upgrade())
 

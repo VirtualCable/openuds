@@ -27,26 +27,25 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
-import collections.abc
-import logging
+# import typing
+# import logging
 
-from uds import models
-from ...fixtures import authenticators as authenticators_fixtures
-from ...fixtures import services as services_fixtures
-from ...fixtures import images as images_fixtures
-from ...fixtures import networks as networks_fixtures
-from ...fixtures import notifiers as notifiers_fixtures
-from ...fixtures import stats_counters as stats_counters_fixtures
+# from uds import models
+# from ...fixtures import authenticators as authenticators_fixtures
+# from ...fixtures import services as services_fixtures
+# from ...fixtures import images as images_fixtures
+# from ...fixtures import networks as networks_fixtures
+# from ...fixtures import notifiers as notifiers_fixtures
+# from ...fixtures import stats_counters as stats_counters_fixtures
 
-from ...utils.test import UDSTestCase
+# from ...utils.test import UDSTestCase
 
-if typing.TYPE_CHECKING:
-    pass
+# if typing.TYPE_CHECKING:
+#     pass
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
 
-class ModelXXTest(UDSTestCase):
-    pass
+# class ModelXXTest(UDSTestCase):
+#     pass

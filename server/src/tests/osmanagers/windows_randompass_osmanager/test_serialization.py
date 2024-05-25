@@ -36,8 +36,6 @@ from tests.utils.test import UDSTestCase
 from uds.core.environment import Environment
 from uds.core.managers.crypto import CryptoManager
 
-from django.conf import settings
-
 
 from uds.osmanagers.WindowsOsManager import windows_random as osmanager
 

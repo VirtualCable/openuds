@@ -26,16 +26,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import collections.abc
 import logging
 
 from uds import models
 from uds.core import types, consts
 from uds.core.managers import crypto
-from uds.core.util import log
 
 
 from ...utils import rest, random_ip_v4, random_ip_v6, random_mac, random_hostname

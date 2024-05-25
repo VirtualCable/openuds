@@ -30,6 +30,6 @@
 """
 Core of UDS.
 This package contains all core-related code for UDS
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 

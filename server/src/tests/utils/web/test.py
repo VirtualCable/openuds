@@ -26,12 +26,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-import logging
 import typing
-import collections.abc
 
 from uds import models
 
@@ -53,9 +51,7 @@ class WEBTestCase(test.UDSTransactionTestCase):
         # Set up data for REST Test cases
         # First, the authenticator related
         self.auth = authenticators_fixtures.create_db_authenticator()
-        self.groups = authenticators_fixtures.create_db_groups(
-            self.auth, NUMBER_OF_ITEMS_TO_CREATE
-        )
+        self.groups = authenticators_fixtures.create_db_groups(self.auth, NUMBER_OF_ITEMS_TO_CREATE)
         # Create some users, one admin, one staff and one user
         self.admins = authenticators_fixtures.create_db_users(
             self.auth,
@@ -75,30 +71,25 @@ class WEBTestCase(test.UDSTransactionTestCase):
 
         self.provider = service_fixtures.create_db_provider()
 
-    def do_login(self, username: str, password: str, authid: str, check: bool = False) -> 'test.UDSHttpResponse':
-        response = typing.cast(
-            'test.UDSHttpResponse',
-            self.client.post(
-                '/uds/page/login',
-                {
-                    'user': username,
-                    'password': password,
-                    'authenticator': authid,
-                },
-            ),
+    def do_login(
+        self, username: str, password: str, authid: str, check: bool = False
+    ) -> 'test.UDSHttpResponse':
+        response = self.client.post(
+            '/uds/page/login',
+            {
+                'user': username,
+                'password': password,
+                'authenticator': authid,
+            },
         )
         if check:
             self.assertRedirects(response, '/uds/page/services', status_code=302, target_status_code=200)
         return response
 
-    def login(
-        self, user: typing.Optional[models.User] = None, as_admin: bool = True
-    ) -> models.User:
-    
+    def login(self, user: typing.Optional[models.User] = None, as_admin: bool = True) -> models.User:
         '''
         Login as specified user or first admin
         '''
         user = user or (self.admins[0] if as_admin else self.staffs[0])
         self.do_login(user.name, user.name, user.manager.uuid)
         return user
-

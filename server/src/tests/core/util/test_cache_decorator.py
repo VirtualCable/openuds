@@ -29,7 +29,7 @@
 
 
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # We use commit/rollback
 import typing

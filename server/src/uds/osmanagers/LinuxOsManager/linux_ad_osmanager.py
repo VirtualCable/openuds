@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-@author: Alexander Burmatov,  thatman at altlinux dot org
+Author: Alexander Burmatov,  thatman at altlinux dot org
 """
 import logging
 import typing

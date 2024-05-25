@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2022 Virtual Cable S.L.U.
+# Copyright (c) 2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -27,21 +27,21 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
-import collections.abc
-import logging
+# import typing
+# import collections.abc
+# import logging
 
 
-from uds.core import messaging
+# from uds.core import messaging
 
-from ...utils.test import UDSTestCase
-from ...fixtures.images import createImage
+# from ...utils.test import UDSTestCase
+# from ...fixtures.images import createImage
 
-if typing.TYPE_CHECKING:
-    from uds import models
+# if typing.TYPE_CHECKING:
+#     from uds import models
 
 
-class ModelImageTest(UDSTestCase):
-    pass
+# class ModelImageTest(UDSTestCase):
+#     pass

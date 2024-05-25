@@ -31,7 +31,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import contextlib
-import functools
 import random
 import typing
 import datetime
@@ -40,7 +39,7 @@ from unittest import mock
 import uuid
 
 from tests.utils import search_item_by_attr
-from uds.core import types, environment
+from uds.core import environment
 from uds.core.ui.user_interface import gui
 
 from ...utils.autospec import autospec, AutoSpecMethodInfo

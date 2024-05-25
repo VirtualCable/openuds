@@ -26,25 +26,20 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import random
 import typing
-import collections.abc
-from unittest import mock
 
 from uds.core import types, consts
-from uds.core.util import log
 from uds.core.util.model import sql_stamp
 
 from ...fixtures import servers as servers_fixtures
-from ...utils import random_ip_v4, random_ip_v6, random_mac, rest
+from ...utils import rest
 
 if typing.TYPE_CHECKING:
     from uds import models
-
-    from ...utils.test import UDSHttpResponse
 
 logger = logging.getLogger(__name__)
 
@@ -118,7 +113,9 @@ class ServerEventsPingTest(rest.test.RESTTestCase):
         # Ensure stat is valid right now
         statsResponse = types.servers.ServerStats.from_dict(server_stats)
         self.assertTrue(statsResponse.is_valid)
-        statsResponse = types.servers.ServerStats.from_dict(server_stats, stamp=sql_stamp() - consts.cache.DEFAULT_CACHE_TIMEOUT - 1)
+        statsResponse = types.servers.ServerStats.from_dict(
+            server_stats, stamp=sql_stamp() - consts.cache.DEFAULT_CACHE_TIMEOUT - 1
+        )
         self.assertFalse(statsResponse.is_valid)
 
     def test_event_ping_without_stats(self) -> None:

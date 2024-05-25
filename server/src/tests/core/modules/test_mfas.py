@@ -26,7 +26,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
@@ -54,7 +54,7 @@ class TestMFAs(UDSTestCase):
     """
 
     def test_mfas_loads_correctly(self) -> None:
-        from uds import mfas  # ensure transports are registered
+        from uds import mfas  # type: ignore  # ensure transports are registered
 
         factory = MFAsFactory()
         for mfa in MUST_HAVE:

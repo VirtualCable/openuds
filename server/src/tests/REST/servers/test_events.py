@@ -26,21 +26,21 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
-import collections.abc
+# import typing
 import logging
 
-from unittest import mock
+# from unittest import mock
 
-from uds.core.util import log
+# from uds.core.util import log
 
-from ...utils import rest, random_ip_v4, random_ip_v6, random_mac
-from ...fixtures import servers as servers_fixtures
+from ...utils import rest  # , random_ip_v4, random_ip_v6, random_mac
 
-if typing.TYPE_CHECKING:
-    from ...utils.test import UDSHttpResponse
+# from ...fixtures import servers as servers_fixtures
+
+# if typing.TYPE_CHECKING:
+#     from ...utils.test import UDSHttpResponse
 
 logger = logging.getLogger(__name__)
 

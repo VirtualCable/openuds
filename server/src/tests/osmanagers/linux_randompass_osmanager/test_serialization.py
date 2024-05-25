@@ -35,8 +35,6 @@ import codecs
 from tests.utils.test import UDSTestCase
 from uds.core.environment import Environment
 
-from django.conf import settings
-
 
 from uds.osmanagers.LinuxOsManager import linux_randompass_osmanager as osmanager
 

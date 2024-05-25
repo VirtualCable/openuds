@@ -28,22 +28,15 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
-import collections.abc
 import os.path
-import sys
 
 # We use commit/rollback
 from ...utils.web.test import WEBTestCase
 from django.urls import reverse
 from uds.core.managers.downloads import DownloadsManager
 
-from uds.core.util.config import GlobalConfig
-
-if typing.TYPE_CHECKING:
-    from django.http import HttpResponse
 
 class DownloadsManagerTest(WEBTestCase):
     filePath: str = ''
@@ -55,9 +48,7 @@ class DownloadsManagerTest(WEBTestCase):
 
         super().setUpClass()
 
-        cls.filePath = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 'downloadable.txt'
-        )
+        cls.filePath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloadable.txt')
         cls.manager = downloads_manager()
 
     def test_downloads(self) -> None:
@@ -89,17 +80,13 @@ class DownloadsManagerTest(WEBTestCase):
             self.login(as_admin=True)
 
             # This will fail, no user has logged in
-            self.client.get(
-                reverse('utility.downloader', kwargs={'download_id': knownUuid})
-            )
+            self.client.get(reverse('utility.downloader', kwargs={'download_id': knownUuid}))
             # Remove last '/' for redirect check. URL redirection will not contain it
             # Commented because i don't know why when executed in batch returns the last '/', and alone don't
             # self.assertRedirects(response, reverse('uds.web.views.login'), fetch_redirect_response=False)
 
             # And try to download again
-            response = self.client.get(
-                reverse('utility.downloader', kwargs={'download_id': knownUuid})
-            )
+            response = self.client.get(reverse('utility.downloader', kwargs={'download_id': knownUuid}))
             self.assertEqual(
                 response.get('Content-Type'),
                 mimeType,

@@ -28,8 +28,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
-@author: Alexander Burmatov,  thatman at altlinux dot org
+Author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Alexander Burmatov,  thatman at altlinux dot org
 """
 import typing
 import collections.abc

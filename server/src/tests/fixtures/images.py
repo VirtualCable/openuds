@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # -*- coding: utf-8 -*-
 
@@ -58,10 +58,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import collections.abc
 import logging
 import datetime
 
@@ -368,7 +367,7 @@ def createImage(use_big: bool = False) -> 'models.Image':
         stamp=datetime.datetime.now(),
     )
 
-    image.storeImageFromBase64(big if use_big else small)
+    image.storeImageFromBase64(big if use_big else small)   # type: ignore
     image.save()
     
     return image

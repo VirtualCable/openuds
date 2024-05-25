@@ -27,14 +27,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
-import typing
-import collections.abc
 
 from uds import models
-from uds.core.util import properties
 
 from ...fixtures import services as services_fixtures
 from ...utils.test import UDSTestCase
@@ -50,7 +47,7 @@ class PropertiesTest(UDSTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.user_services = []
-        for i in range(NUM_USERSERVICES):
+        for _ in range(NUM_USERSERVICES):
             # So we have 8 userservices, each one with a different user
             self.user_services.extend(services_fixtures.create_db_cache_userservices())
 

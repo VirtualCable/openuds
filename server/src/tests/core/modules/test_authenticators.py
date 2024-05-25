@@ -26,12 +26,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
 
-from django.urls import reverse
 
 from uds.core.auths.authfactory import AuthsFactory
 
@@ -59,7 +58,7 @@ class TestAuthenticators(UDSTestCase):
     """
 
     def test_authenticators_loads_correctly(self) -> None:
-        from uds import auths  # ensure transports are registered
+        from uds import auths  # type: ignore  # ensure transports are registered
 
         factory = AuthsFactory()
         for auth in MUST_HAVE:
