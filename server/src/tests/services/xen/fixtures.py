@@ -74,9 +74,9 @@ DEF_SRS_INFO: typing.Final[list[xen_types.StorageInfo]] = [
         ],
         VDIs=[],
         PBDs=[],
-        virtual_allocation=i * 1024 * 1024,
-        physical_utilisation=i * 1024 * 1024,
-        physical_size=i * 1024 * 1024 * 1024,
+        virtual_allocation=(i + 32) * 1024,
+        physical_utilisation=i * 1024,
+        physical_size=(i + 32) * 1024,
         type='',
         content_type='',
         shared=True,
@@ -120,9 +120,9 @@ DEF_VMS_INFO: typing.Final[list[xen_types.VMInfo]] = [
             xen_types.VMOperations.COPY,
             xen_types.VMOperations.SNAPSHOT,
         ],
-        folder=f'/test_folder_{i//4}',
+        folder=f'/test_folder_{i//6}',
     )
-    for i in range(16)
+    for i in range(24)
 ]
 
 DEF_TASK_INFO: typing.Final[xen_types.TaskInfo] = xen_types.TaskInfo(
@@ -386,10 +386,10 @@ PROVIDER_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
 
 
 SERVICE_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
-    'datastore': 'OpaqueRef:b2143f92-e234-445c-ad3a-8582f8b893b6',
+    'datastore': random.choice(SRS_INFO).opaque_ref,
     'min_space_gb': 32,
-    'machine': 'OpaqueRef:dd22df22-f243-4ec4-8b6f-6f31942f4c58',
-    'network': 'OpaqueRef:e623a082-01b7-4d4f-a777-6689387e6fd9',
+    'machine': random.choice(VMS_INFO).opaque_ref,
+    'network': random.choice(NETWORKS_INFO).opaque_ref,
     'memory': 256,
     'shadow': 4,
     'remove_duplicates': True,
@@ -402,11 +402,8 @@ SERVICE_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
 
 SERVICE_FIXED_VALUES_DICT: gui.ValuesDictType = {
     'token': 'TEST_TOKEN_XEN',
-    'folder': '/Fixed Pool',
-    'machines': [
-        'OpaqueRef:f2fa4939-9953-4d65-b5d0-153f867dad32',
-        'OpaqueRef:812d6b43-dadb-4b18-a749-aba6f2122d75',
-    ],
+    'folder': FOLDERS[0],
+    'machines': random.sample([i.opaque_ref for i in VMS_INFO if i.folder == FOLDERS[0]], 2),
     'use_snapshots': True,
     'randomize': True,
     'prov_uuid': '',
@@ -426,8 +423,9 @@ def patched_provider(
 ) -> typing.Generator[provider.XenProvider, None, None]:
     client = create_client_mock()
     provider = create_provider(**kwargs)
-    provider._cached_api = client
-    yield provider
+    with mock.patch('uds.services.Xen.provider.XenProvider._api', new_callable=mock.PropertyMock) as api:
+        api.return_value = client
+        yield provider
 
 
 def create_provider(**kwargs: typing.Any) -> provider.XenProvider:

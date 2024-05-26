@@ -204,7 +204,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
     @typing.final
     def publish(self) -> types.states.TaskState:
         """ """
-        self._queue = self._publish_queue.copy()
+        self._queue[:] = self._publish_queue.copy()
         self._debug('publish')
         return self._execute_queue()
 

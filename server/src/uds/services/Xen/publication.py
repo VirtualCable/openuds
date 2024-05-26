@@ -88,9 +88,7 @@ class XenPublication(DynamicPublication, autoserializable.AutoSerializable):
         self.mark_for_upgrade()   # Force upgrade asap
         
     def op_create(self) -> None:
-        self._name = self.service().sanitized_name(
-            'UDS Pub ' + self.servicepool_name() + "-" + str(self.revision())
-        )
+        # Name created by DynamicPublication
         comments = _('UDS pub for {0} at {1}').format(
             self.servicepool_name(), str(datetime.now()).split('.')[0]
         )
@@ -103,10 +101,12 @@ class XenPublication(DynamicPublication, autoserializable.AutoSerializable):
         """
         with  self.service().provider().get_connection() as api:
             task_info = api.get_task_info(self._task)
-            if task_info.is_done():
+            if task_info.is_success():
                 self._vmid = task_info.result
                 self.service().convert_to_template(self._vmid)
                 return types.states.TaskState.FINISHED
+            elif task_info.is_failure():
+                return self._error(task_info.result)
 
         return types.states.TaskState.RUNNING
 

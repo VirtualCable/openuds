@@ -34,11 +34,10 @@ import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import consts, services, types
+from uds.core import services, types
 from uds.core.services.generics.fixed.service import FixedService
 from uds.core.services.generics.fixed.userservice import FixedUserService
 from uds.core.ui import gui
-from uds.core.util.decorators import cached
 
 from . import helpers
 from .deployment_fixed import XenFixedUserService
@@ -142,7 +141,7 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
         return ''  # Already stopped
             
 
-    def reset_machine(self, vmid: str) -> str:
+    def reset_vm(self, vmid: str) -> str:
         """
         Tries to stop a machine. No check is done, it is simply requested to Xen
 
@@ -157,14 +156,13 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
         
         return ''  # Already stopped, no reset needed
 
-    def shutdown_machine(self, vmid: str) -> str:
+    def shutdown_vm(self, vmid: str) -> str:
         with self.provider().get_connection() as api:
             if api.get_vm_info(vmid).power_state.is_running():              
                 return api.shutdown_vm(vmid)
             
         return ''  # Already stopped
 
-    @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def is_avaliable(self) -> bool:
         return self.provider().is_available()
 
