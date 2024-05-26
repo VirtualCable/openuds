@@ -95,3 +95,8 @@ class XenNotFoundError(XenException, exceptions.NotFoundError):
     def __init__(self, message: typing.Any):
         XenException.__init__(self, message)
         logger.debug('Not found exception create: %s', message)
+
+class XenFatalError(XenException, exceptions.FatalError):
+    def __init__(self, message: typing.Any):
+        XenException.__init__(self, message)
+        logger.debug('Fatal exception create: %s', message)

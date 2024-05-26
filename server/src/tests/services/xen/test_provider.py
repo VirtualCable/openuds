@@ -36,6 +36,7 @@ from unittest import mock
 
 from uds.core import types, ui, environment
 from uds.services.Xen.provider import XenProvider
+from uds.services.Xen.xen import types as xen_types
 
 from . import fixtures
 
@@ -164,16 +165,63 @@ class TestXenProvider(UDSTransactionTestCase):
             VM = random.choice(fixtures.VMS_INFO)
             self.assertEqual(api.get_vm_info(VM.opaque_ref), VM)
 
-            # Test state changer, start_vm, start_vm_sync, ...
-            self.assertEqual(api.start_vm(VM.opaque_ref), fixtures.CHANGE_STATE_OPAQUE_REF)
+            # Test power state changers, start_vm, start_vm_sync, ...
+            VM.power_state = xen_types.PowerState.HALTED
+            self.assertEqual(api.start_vm(VM.opaque_ref), fixtures.GENERAL_OPAQUE_REF)
+            self.assertEqual(VM.power_state, xen_types.PowerState.RUNNING)
+            VM.power_state = xen_types.PowerState.HALTED
             self.assertIsNone(api.start_vm_sync(VM.opaque_ref))
-            self.assertEqual(api.stop_vm(VM.opaque_ref), fixtures.CHANGE_STATE_OPAQUE_REF)
+            self.assertEqual(VM.power_state, xen_types.PowerState.RUNNING)
+            
+            VM.power_state = xen_types.PowerState.RUNNING
+            self.assertEqual(api.stop_vm(VM.opaque_ref), fixtures.GENERAL_OPAQUE_REF)
+            self.assertEqual(VM.power_state, xen_types.PowerState.HALTED)
+            VM.power_state = xen_types.PowerState.RUNNING
             self.assertIsNone(api.stop_vm_sync(VM.opaque_ref))
-            self.assertEqual(api.suspend_vm(VM.opaque_ref), fixtures.CHANGE_STATE_OPAQUE_REF)
+            self.assertEqual(VM.power_state, xen_types.PowerState.HALTED)
+
+            VM.power_state = xen_types.PowerState.RUNNING            
+            self.assertEqual(api.suspend_vm(VM.opaque_ref), fixtures.GENERAL_OPAQUE_REF)
+            self.assertEqual(VM.power_state, xen_types.PowerState.SUSPENDED)
+            VM.power_state = xen_types.PowerState.RUNNING
             self.assertIsNone(api.suspend_vm_sync(VM.opaque_ref))
-            self.assertEqual(api.resume_vm(VM.opaque_ref), fixtures.CHANGE_STATE_OPAQUE_REF)
+            self.assertEqual(VM.power_state, xen_types.PowerState.SUSPENDED)
+
+            # VM.power_state = xen_types.PowerState.SUSPENDED
+            self.assertEqual(api.resume_vm(VM.opaque_ref), fixtures.GENERAL_OPAQUE_REF)
+            self.assertEqual(VM.power_state, xen_types.PowerState.RUNNING)
+            VM.power_state = xen_types.PowerState.SUSPENDED
             self.assertIsNone(api.resume_vm_sync(VM.opaque_ref))
-            self.assertEqual(api.reset_vm(VM.opaque_ref), fixtures.CHANGE_STATE_OPAQUE_REF)
+            self.assertEqual(VM.power_state, xen_types.PowerState.RUNNING)
+
+            VM.power_state = xen_types.PowerState.RUNNING
+            self.assertEqual(api.reset_vm(VM.opaque_ref), fixtures.GENERAL_OPAQUE_REF)
+            self.assertEqual(VM.power_state, xen_types.PowerState.RUNNING)
             self.assertIsNone(api.reset_vm_sync(VM.opaque_ref))
-            self.assertEqual(api.shutdown_vm(VM.opaque_ref), fixtures.CHANGE_STATE_OPAQUE_REF)
+            self.assertEqual(VM.power_state, xen_types.PowerState.RUNNING)
+
+            #VM.power_state = xen_types.PowerState.RUNNING
+            self.assertEqual(api.shutdown_vm(VM.opaque_ref), fixtures.GENERAL_OPAQUE_REF)
+            self.assertEqual(VM.power_state, xen_types.PowerState.HALTED)
+            VM.power_state = xen_types.PowerState.RUNNING
             self.assertIsNone(api.shutdown_vm_sync(VM.opaque_ref))
+            self.assertEqual(VM.power_state, xen_types.PowerState.HALTED)
+            
+            self.assertEqual(api.clone_vm(VM.opaque_ref, 'new_name'), fixtures.GENERAL_OPAQUE_REF)
+            
+            # delete_vm is default, so no need to test it
+            # configure_vm is default, so no need to test it
+            
+            self.assertEqual(api.get_first_ip(VM.opaque_ref), fixtures.GENERAL_IP)
+            self.assertEqual(api.get_first_mac(VM.opaque_ref), fixtures.GENERAL_MAC)
+            self.assertEqual(api.provision_vm(VM.opaque_ref), fixtures.GENERAL_OPAQUE_REF)
+            self.assertEqual(api.create_snapshot(VM.opaque_ref, 'snapshot_name'), fixtures.GENERAL_OPAQUE_REF)
+            self.assertEqual(api.delete_snapshot('snapshot_id'), fixtures.GENERAL_OPAQUE_REF)
+            self.assertEqual(api.restore_snapshot('snapshot_id'), fixtures.GENERAL_OPAQUE_REF)
+            self.assertEqual(api.list_snapshots(VM.opaque_ref), fixtures.VMS_INFO)
+            self.assertEqual(api.list_folders(), fixtures.FOLDERS)
+            
+            FOLDER = VM.folder
+            VMS_IN_FOLDER = [vm for vm in fixtures.VMS_INFO if vm.folder == FOLDER]
+            self.assertEqual(api.list_vms_in_folder(FOLDER), VMS_IN_FOLDER)
+            self.assertEqual(api.start_deploy_from_template(VM.opaque_ref, 'new-name'), fixtures.GENERAL_OPAQUE_REF)

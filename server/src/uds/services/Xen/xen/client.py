@@ -404,6 +404,14 @@ class XenClient:  # pylint: disable=too-many-public-methods
             Instead, copy guarantees that the disk images of the newly created VM will be
             'full disks' - i.e. not part of a CoW chain.
         This function can only be called when the VM is in the Halted State.
+        
+        Args:
+            vm_opaque_ref: The VM to clone
+            target_name: The name of the new VM
+            target_sr: The storage repository where the new VM will be stored. If None, the VM will be cloned
+        
+        Returns:
+            The task id of the operation
         """
         logger.debug('Cloning VM %s to %s on sr %s', vm_opaque_ref, target_name, target_sr)
         operations = self.VM.get_allowed_operations(vm_opaque_ref)
@@ -412,13 +420,13 @@ class XenClient:  # pylint: disable=too-many-public-methods
         try:
             if target_sr:
                 if 'copy' not in operations:
-                    raise exceptions.XenException(
+                    raise exceptions.XenFatalError(
                         'Copy is not supported for this machine (maybe it\'s powered on?)'
                     )
                 task = self.Async.VM.copy(vm_opaque_ref, target_name, target_sr)
             else:
                 if 'clone' not in operations:
-                    raise exceptions.XenException(
+                    raise exceptions.XenFatalError(
                         'Clone is not supported for this machine (maybe it\'s powered on?)'
                     )
                 task = self.Async.VM.clone(vm_opaque_ref, target_name)
@@ -529,7 +537,7 @@ class XenClient:  # pylint: disable=too-many-public-methods
         except XenAPI.Failure as e:
             raise exceptions.XenFailure(e.details)
 
-    def provision_vm(self, vmid: str, as_async: bool = True) -> str:
+    def provision_vm(self, vmid: str) -> str:
         tags = self.VM.get_tags(vmid)
         try:
             del tags[tags.index(TAG_TEMPLATE)]
@@ -538,8 +546,6 @@ class XenClient:  # pylint: disable=too-many-public-methods
         tags.append(TAG_MACHINE)
         self.VM.set_tags(vmid, tags)
 
-        if as_async:
-            return self.Async.VM.provision(vmid)
         return self.VM.provision(vmid)
 
     def create_snapshot(self, vmid: str, name: str) -> str:
@@ -554,7 +560,7 @@ class XenClient:  # pylint: disable=too-many-public-methods
         except XenAPI.Failure as e:
             raise exceptions.XenFailure(e.details)
 
-    def remove_snapshot(self, snapshot_id: str) -> str:
+    def delete_snapshot(self, snapshot_id: str) -> str:
         try:
             return self.Async.VM.destroy(snapshot_id)
         except XenAPI.Failure as e:
@@ -601,7 +607,7 @@ class XenClient:  # pylint: disable=too-many-public-methods
 
         return sorted(folders)
 
-    def list_vms_from_folder(self, folder: str) -> list[xen_types.VMInfo]:
+    def list_vms_in_folder(self, folder: str) -> list[xen_types.VMInfo]:
         result_list: list[xen_types.VMInfo] = []
         for vm in self.list_vms():
             if vm.folder == folder:

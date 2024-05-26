@@ -172,7 +172,7 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
         # Obtain machines names and ids for asignables
         with self.provider().get_connection() as api:
             vms: dict[str, str] = {
-                machine.opaque_ref: machine.name for machine in api.list_vms_from_folder(self.folder.value)
+                machine.opaque_ref: machine.name for machine in api.list_vms_in_folder(self.folder.value)
             }
 
             with self._assigned_access() as assigned_vms:

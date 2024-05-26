@@ -38,7 +38,7 @@ import datetime
 from unittest import mock
 import uuid
 
-from tests.utils import search_item_by_attr
+from tests.utils import search_item_by_attr, filter_list_by_attr
 from uds.core import environment
 from uds.core.ui.user_interface import gui
 
@@ -56,21 +56,11 @@ from uds.services.Xen import (
 from uds.services.Xen.xen import types as xen_types, exceptions as xen_exceptions, client
 
 DEF_POOL_NAME: typing.Final[str] = 'TEST_pool_NAME'
-DEF_CHANGE_STATE_OPAQUE_REF: typing.Final[str] = 'OpaqueRef:12345678-cdef-abcd-1234-1234567890ab'
+DEF_GENERAL_OPAQUE_REF: typing.Final[str] = 'OpaqueRef:12345678-cdef-abcd-1234-1234567890ab'
+DEF_GENERAL_IP: typing.Final[str] = '10.11.12.13'
+DEF_GENERAL_MAC: typing.Final[str] = '02:04:06:08:0A:0C'
 
-DEF_TASK_INFO = xen_types.TaskInfo(
-    opaque_ref='OpaqueRef:12345678-1234-1234-1234-1234567890ab',
-    uuid='12345678-1234-1234-1234-1234567890ab',
-    name='test_task',
-    description='Test task description',
-    created=datetime.datetime(2024, 1, 1, 0, 0, 0),
-    finished=datetime.datetime(2024, 1, 1, 0, 0, 0),
-    status=xen_types.TaskStatus.SUCCESS,
-    result='Test task result',
-    progress=100,
-)
-
-DEF_SRS_INFO = [
+DEF_SRS_INFO: typing.Final[list[xen_types.StorageInfo]] = [
     xen_types.StorageInfo(
         opaque_ref=f'OpaqueRef:12345678-1234-1234-1234-1234567890{i:02x}',
         uuid=f'12345678-1234-1234-1234-1234567890{i:02x}',
@@ -94,7 +84,7 @@ DEF_SRS_INFO = [
     for i in range(8)
 ]
 
-DEF_NETWORKS_INFO = [
+DEF_NETWORKS_INFO: typing.Final[list[xen_types.NetworkInfo]] = [
     xen_types.NetworkInfo(
         opaque_ref=f'OpaqueRef:12345678-1234-1234-1234-1234567890{i:02x}',
         uuid=f'12345678-1234-1234-1234-1234567890{i:02x}',
@@ -112,7 +102,7 @@ DEF_NETWORKS_INFO = [
     for i in range(8)
 ]
 
-DEF_VMS_INFO = [
+DEF_VMS_INFO: typing.Final[list[xen_types.VMInfo]] = [
     xen_types.VMInfo(
         opaque_ref=f'OpaqueRef:12345678-1234-1234-1234-1234567890{i:02x}',
         uuid=f'12345678-1234-1234-1234-1234567890{i:02x}',
@@ -135,9 +125,26 @@ DEF_VMS_INFO = [
     for i in range(16)
 ]
 
+DEF_TASK_INFO: typing.Final[xen_types.TaskInfo] = xen_types.TaskInfo(
+    opaque_ref='OpaqueRef:12345678-1234-1234-1234-1234567890ab',
+    uuid='12345678-1234-1234-1234-1234567890ab',
+    name='test_task',
+    description='Test task description',
+    created=datetime.datetime(2024, 1, 1, 0, 0, 0),
+    finished=datetime.datetime(2024, 1, 1, 0, 0, 0),
+    status=xen_types.TaskStatus.SUCCESS,
+    result=DEF_VMS_INFO[0].opaque_ref,
+    progress=100,
+)
+
+DEF_FOLDERS: list[str] = list(set(vm.folder for vm in DEF_VMS_INFO))
+
 POOL_NAME = DEF_POOL_NAME
-CHANGE_STATE_OPAQUE_REF = DEF_CHANGE_STATE_OPAQUE_REF
+GENERAL_OPAQUE_REF = DEF_GENERAL_OPAQUE_REF
+FOLDERS = DEF_FOLDERS
 TASK_INFO = DEF_TASK_INFO
+GENERAL_IP = DEF_GENERAL_IP
+GENERAL_MAC = DEF_GENERAL_MAC
 
 SRS_INFO = DEF_SRS_INFO.copy()
 NETWORKS_INFO = DEF_NETWORKS_INFO.copy()
@@ -149,15 +156,18 @@ def reset_data() -> None:
     Initialize default values for the module variables
     """
     # Import non local variables
-    global TASK_INFO, POOL_NAME, CHANGE_STATE_OPAQUE_REF
+    global TASK_INFO, POOL_NAME, GENERAL_OPAQUE_REF, GENERAL_IP, GENERAL_MAC
 
     TASK_INFO = DEF_TASK_INFO
     POOL_NAME = DEF_POOL_NAME
-    CHANGE_STATE_OPAQUE_REF = DEF_CHANGE_STATE_OPAQUE_REF
+    GENERAL_OPAQUE_REF = DEF_GENERAL_OPAQUE_REF
+    GENERAL_IP = DEF_GENERAL_IP
+    GENERAL_MAC = DEF_GENERAL_MAC
     
     SRS_INFO[:] = DEF_SRS_INFO
     NETWORKS_INFO[:] = DEF_NETWORKS_INFO
     VMS_INFO[:] = DEF_VMS_INFO
+    DEF_FOLDERS[:] = list(set(vm.folder for vm in DEF_VMS_INFO))
 
 
 T = typing.TypeVar('T')
@@ -192,6 +202,20 @@ def search_by_attr(lst: list[T], attribute: str, value: typing.Any, **kwargs: ty
         return search_item_by_attr(lst, attribute, value)
     except ValueError:
         raise xen_exceptions.XenNotFoundError(f'Item with {attribute}=="{value}" not found in list')
+
+def set_vm_state(is_async: bool, state: xen_types.PowerState, vmid: str) -> 'str|None':
+    """
+    Set the power state of a VM
+    """
+    try:
+        vm = search_item_by_attr(VMS_INFO, 'opaque_ref', vmid)
+        vm.power_state = state
+    except ValueError:
+        raise xen_exceptions.XenNotFoundError(f'Item with opaque_ref=="{vmid}" not found in list')
+    
+    if is_async:
+        return None
+    return GENERAL_OPAQUE_REF
 
 
 # Methods that returns None or "internal" methods are not tested
@@ -243,23 +267,27 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     ),
     AutoSpecMethodInfo(
         client.XenClient.start_vm,
-        returns=CHANGE_STATE_OPAQUE_REF,
+        returns=set_vm_state,
+        partial_args=(False, xen_types.PowerState.RUNNING),
     ),
     AutoSpecMethodInfo(
         client.XenClient.start_vm_sync,
-        returns=None,
+        returns=set_vm_state,
+        partial_args=(True, xen_types.PowerState.RUNNING),
     ),
     AutoSpecMethodInfo(
         client.XenClient.stop_vm,
-        returns=CHANGE_STATE_OPAQUE_REF,
+        returns=set_vm_state,
+        partial_args=(False, xen_types.PowerState.HALTED),
     ),
     AutoSpecMethodInfo(
         client.XenClient.stop_vm_sync,
-        returns=None,
+        returns=set_vm_state,
+        partial_args=(True, xen_types.PowerState.HALTED),
     ),
     AutoSpecMethodInfo(
         client.XenClient.reset_vm,
-        returns=CHANGE_STATE_OPAQUE_REF,
+        returns=GENERAL_OPAQUE_REF,
     ),
     AutoSpecMethodInfo(
         client.XenClient.reset_vm_sync,
@@ -267,30 +295,80 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     ),
     AutoSpecMethodInfo(
         client.XenClient.suspend_vm,
-        returns=CHANGE_STATE_OPAQUE_REF,
+        returns=set_vm_state,
+        partial_args=(False, xen_types.PowerState.SUSPENDED),
     ),
     AutoSpecMethodInfo(
         client.XenClient.suspend_vm_sync,
-        returns=None,
+        returns=set_vm_state,
+        partial_args=(True, xen_types.PowerState.SUSPENDED),
     ),
     AutoSpecMethodInfo(
         client.XenClient.resume_vm,
-        returns=CHANGE_STATE_OPAQUE_REF,
+        returns=set_vm_state,
+        partial_args=(False, xen_types.PowerState.RUNNING),
     ),
     AutoSpecMethodInfo(
         client.XenClient.resume_vm_sync,
-        returns=None,
+        returns=set_vm_state,
+        partial_args=(True, xen_types.PowerState.RUNNING),
     ),
     AutoSpecMethodInfo(
         client.XenClient.shutdown_vm,
-        returns=CHANGE_STATE_OPAQUE_REF,
+        returns=set_vm_state,
+        partial_args=(False, xen_types.PowerState.HALTED),
     ),
     AutoSpecMethodInfo(
         client.XenClient.shutdown_vm_sync,
-        returns=None,
+        returns=set_vm_state,
+        partial_args=(True, xen_types.PowerState.HALTED),
     ),
-    
-    
+    AutoSpecMethodInfo(
+        client.XenClient.clone_vm,
+        returns=GENERAL_OPAQUE_REF,
+    ),
+    AutoSpecMethodInfo(
+        client.XenClient.get_first_ip,
+        returns=GENERAL_IP,
+    ),
+    AutoSpecMethodInfo(
+        client.XenClient.get_first_mac,
+        returns=GENERAL_MAC,
+    ),
+    AutoSpecMethodInfo(
+        client.XenClient.provision_vm,
+        returns=GENERAL_OPAQUE_REF,        
+    ),
+    AutoSpecMethodInfo(
+        client.XenClient.create_snapshot,
+        returns=GENERAL_OPAQUE_REF,
+    ),
+    AutoSpecMethodInfo(
+        client.XenClient.delete_snapshot,
+        returns=GENERAL_OPAQUE_REF,
+    ),
+    AutoSpecMethodInfo(
+        client.XenClient.restore_snapshot,
+        returns=GENERAL_OPAQUE_REF,
+    ),
+    # Returns vms as snapshots. As we are not going to really use them, we can return the same as VMS_INFO
+    AutoSpecMethodInfo(
+        client.XenClient.list_snapshots,
+        returns=VMS_INFO
+    ),
+    AutoSpecMethodInfo(
+        client.XenClient.list_folders,
+        returns=FOLDERS,
+    ),
+    AutoSpecMethodInfo(
+        client.XenClient.list_vms_in_folder,
+        returns=filter_list_by_attr,
+        partial_args=(VMS_INFO, 'folder'),
+    ),
+    AutoSpecMethodInfo(
+        client.XenClient.start_deploy_from_template,
+        returns=GENERAL_OPAQUE_REF,
+    ),
 ]
 
 PROVIDER_VALUES_DICT: typing.Final[gui.ValuesDictType] = {

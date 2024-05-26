@@ -149,7 +149,7 @@ class XenLinkedUserService(DynamicUserService, autoserializable.AutoSerializable
         Provisions machine & changes the mac of the indicated nic
         """
         with self.service().provider().get_connection() as api:
-            api.provision_vm(self._vmid, False)  # Let's try this in "sync" mode, this must be fast enough
+            api.provision_vm(self._vmid)  # Let's try this in "sync" mode, this must be fast enough
             self.service().configure_machine(self._vmid, self.get_unique_id())
 
     def op_create_checker(self) -> types.states.TaskState:
