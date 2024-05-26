@@ -223,7 +223,7 @@ class VMOperations(enum.StrEnum):
         create_vtpm 	Creating and adding a VTPM to this VM
     """
 
-    SNAPSHOOT = 'snapshot'
+    SNAPSHOT = 'snapshot'
     CLONE = 'clone'
     COPY = 'copy'
     CREATE_TEMPLATE = 'create_template'
@@ -259,9 +259,9 @@ class VMOperations(enum.StrEnum):
     CHANGING_MEMORY_LIMITS = 'changing_memory_limits'
     CHANGING_SHADOW_MEMORY = 'changing_shadow_memory'
     CHANGING_SHADOW_MEMORY_LIVE = 'changing_shadow_memory_live'
-    CHANGING_VCPUS = 'changing_VCPUs'
-    CHANGING_VCPUS_LIVE = 'changing_VCPUs_live'
-    CHANGING_NVRAM = 'changing_NVRAM'
+    CHANGING_VCPUS = 'changing_vcpus'
+    CHANGING_VCPUS_LIVE = 'changing_vcpus_live'
+    CHANGING_NVRAM = 'changing_nvram'
     ASSERT_OPERATION_VALID = 'assert_operation_valid'
     DATA_SOURCE_OP = 'data_source_op'
     UPDATE_ALLOWED_OPERATIONS = 'update_allowed_operations'

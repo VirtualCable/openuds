@@ -55,6 +55,9 @@ from uds.services.Xen import (
 
 from uds.services.Xen.xen import types as xen_types, exceptions as xen_exceptions, client
 
+DEF_POOL_NAME: typing.Final[str] = 'TEST_pool_NAME'
+DEF_CHANGE_STATE_OPAQUE_REF: typing.Final[str] = 'OpaqueRef:12345678-cdef-abcd-1234-1234567890ab'
+
 DEF_TASK_INFO = xen_types.TaskInfo(
     opaque_ref='OpaqueRef:12345678-1234-1234-1234-1234567890ab',
     uuid='12345678-1234-1234-1234-1234567890ab',
@@ -91,19 +94,74 @@ DEF_SRS_INFO = [
     for i in range(8)
 ]
 
-SRS_INFO = DEF_SRS_INFO
+DEF_NETWORKS_INFO = [
+    xen_types.NetworkInfo(
+        opaque_ref=f'OpaqueRef:12345678-1234-1234-1234-1234567890{i:02x}',
+        uuid=f'12345678-1234-1234-1234-1234567890{i:02x}',
+        name=f'test_network{i:02x}',
+        description=f'Test network description {i:02x}',
+        managed=True,
+        VIFs=[],
+        PIFs=[],
+        is_guest_installer_network=False,
+        is_host_internal_management_network=False,
+        ip_begin=f'10.0.0.{i}',
+        ip_end=f'10.0.0.{i + 1}',
+        netmask='255.255.0.0',
+    )
+    for i in range(8)
+]
+
+DEF_VMS_INFO = [
+    xen_types.VMInfo(
+        opaque_ref=f'OpaqueRef:12345678-1234-1234-1234-1234567890{i:02x}',
+        uuid=f'12345678-1234-1234-1234-1234567890{i:02x}',
+        name=f'test_vm{i:02x}',
+        description=f'Test VM description {i:02x}',
+        power_state=xen_types.PowerState.RUNNING,
+        is_control_domain=False,
+        is_a_template=False,
+        snapshot_time=datetime.datetime(2024, 1, 1, 0, 0, 0),
+        # For testing, snapshot refers to itself 3 times, just for testing...
+        snapshots=[f'OpaqueRef:12345678-1234-1234-1234-1234567890{i:02x}'] * 3,
+        allowed_operations=[
+            xen_types.VMOperations.START,
+            xen_types.VMOperations.CLONE,
+            xen_types.VMOperations.COPY,
+            xen_types.VMOperations.SNAPSHOT,
+        ],
+        folder=f'/test_folder_{i//4}',
+    )
+    for i in range(16)
+]
+
+POOL_NAME = DEF_POOL_NAME
+CHANGE_STATE_OPAQUE_REF = DEF_CHANGE_STATE_OPAQUE_REF
 TASK_INFO = DEF_TASK_INFO
 
+SRS_INFO = DEF_SRS_INFO.copy()
+NETWORKS_INFO = DEF_NETWORKS_INFO.copy()
+VMS_INFO = DEF_VMS_INFO.copy()
 
-def initialize_defaults() -> None:
+
+def reset_data() -> None:
     """
     Initialize default values for the module variables
     """
-    global TASK_INFO, SRS_INFO
+    # Import non local variables
+    global TASK_INFO, POOL_NAME, CHANGE_STATE_OPAQUE_REF
+
     TASK_INFO = DEF_TASK_INFO
-    SRS_INFO = DEF_SRS_INFO
+    POOL_NAME = DEF_POOL_NAME
+    CHANGE_STATE_OPAQUE_REF = DEF_CHANGE_STATE_OPAQUE_REF
+    
+    SRS_INFO[:] = DEF_SRS_INFO
+    NETWORKS_INFO[:] = DEF_NETWORKS_INFO
+    VMS_INFO[:] = DEF_VMS_INFO
+
 
 T = typing.TypeVar('T')
+
 
 def random_from_list(lst: list[T], *args: typing.Any, **kwargs: typing.Any) -> T:
     """
@@ -144,7 +202,7 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     ),
     AutoSpecMethodInfo(
         client.XenClient.get_pool_name,
-        returns='TEST_pool_NAME',
+        returns=POOL_NAME,
     ),
     # Default login and logout, skip them
     AutoSpecMethodInfo(
@@ -159,22 +217,92 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     AutoSpecMethodInfo(
         client.XenClient.list_srs,
         returns=SRS_INFO,
-    ),    
+    ),
     AutoSpecMethodInfo(
         client.XenClient.get_sr_info,
         returns=search_by_attr,
         partial_args=(SRS_INFO, 'opaque_ref'),
     ),
+    AutoSpecMethodInfo(
+        client.XenClient.list_networks,
+        returns=NETWORKS_INFO,
+    ),
+    AutoSpecMethodInfo(
+        client.XenClient.get_network_info,
+        returns=search_by_attr,
+        partial_args=(NETWORKS_INFO, 'opaque_ref'),
+    ),
+    AutoSpecMethodInfo(
+        client.XenClient.list_vms,
+        returns=VMS_INFO,
+    ),
+    AutoSpecMethodInfo(
+        client.XenClient.get_vm_info,
+        returns=search_by_attr,
+        partial_args=(VMS_INFO, 'opaque_ref'),
+    ),
+    AutoSpecMethodInfo(
+        client.XenClient.start_vm,
+        returns=CHANGE_STATE_OPAQUE_REF,
+    ),
+    AutoSpecMethodInfo(
+        client.XenClient.start_vm_sync,
+        returns=None,
+    ),
+    AutoSpecMethodInfo(
+        client.XenClient.stop_vm,
+        returns=CHANGE_STATE_OPAQUE_REF,
+    ),
+    AutoSpecMethodInfo(
+        client.XenClient.stop_vm_sync,
+        returns=None,
+    ),
+    AutoSpecMethodInfo(
+        client.XenClient.reset_vm,
+        returns=CHANGE_STATE_OPAQUE_REF,
+    ),
+    AutoSpecMethodInfo(
+        client.XenClient.reset_vm_sync,
+        returns=None,
+    ),
+    AutoSpecMethodInfo(
+        client.XenClient.suspend_vm,
+        returns=CHANGE_STATE_OPAQUE_REF,
+    ),
+    AutoSpecMethodInfo(
+        client.XenClient.suspend_vm_sync,
+        returns=None,
+    ),
+    AutoSpecMethodInfo(
+        client.XenClient.resume_vm,
+        returns=CHANGE_STATE_OPAQUE_REF,
+    ),
+    AutoSpecMethodInfo(
+        client.XenClient.resume_vm_sync,
+        returns=None,
+    ),
+    AutoSpecMethodInfo(
+        client.XenClient.shutdown_vm,
+        returns=CHANGE_STATE_OPAQUE_REF,
+    ),
+    AutoSpecMethodInfo(
+        client.XenClient.shutdown_vm_sync,
+        returns=None,
+    ),
+    
+    
 ]
 
 PROVIDER_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
     'host': 'test.example.com',
+    'port': 443,
     'username': 'root',
     'password': 'some_test_password',
     'concurrent_creation_limit': 18,
     'concurrent_removal_limit': 7,
     'macs_range': '02:99:00:00:00:00-02:AA:00:FF:FF:FF',
     'verify_ssl': True,
+    'timeout': 30,
     'host_backup': 'test_backup.example.com',
 }
 
@@ -220,9 +348,8 @@ def patched_provider(
 ) -> typing.Generator[provider.XenProvider, None, None]:
     client = create_client_mock()
     provider = create_provider(**kwargs)
-    with mock.patch.object(provider, '_api') as api:
-        api.return_value = client
-        yield provider
+    provider._cached_api = client
+    yield provider
 
 
 def create_provider(**kwargs: typing.Any) -> provider.XenProvider:

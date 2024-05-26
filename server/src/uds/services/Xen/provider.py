@@ -106,6 +106,14 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         tooltip=_('XenServer Server IP or Hostname'),
         required=True,
     )
+    port = gui.NumericField(
+        length=5,
+        label=_('Port'),
+        default=443,
+        order=2,
+        tooltip=_('XenServer Server Port'),
+        required=True,
+    )
     username = gui.TextField(
         length=32,
         label=_('Username'),
@@ -126,6 +134,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
 
     macs_range = fields.macs_range_field(default='02:46:00:00:00:00-02:46:00:FF:FF:FF')
     verify_ssl = fields.verify_ssl_field(old_field_name='verifySSL')
+    timeout = fields.timeout_field()
 
     host_backup = gui.TextField(
         length=64,
@@ -144,6 +153,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
     # If we want to connect to more than one server, we need keep locked access to api, change api server, etc..
     # We have implemented an "exclusive access" client that will only connect to one server at a time (using locks)
     # and this way all will be fine
+    @property
     def _api(self) -> client.XenClient:
         """
         Returns the connection API object for XenServer (using XenServersdk)
@@ -152,15 +162,16 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
             self._cached_api = client.XenClient(
                 self.host.value,
                 self.host_backup.value,
-                443,
+                self.port.value,
                 self.username.value,
                 self.password.value,
                 True,
                 self.verify_ssl.as_bool(),
+                self.timeout.value,
             )
 
         return self._cached_api
-    
+
     @contextlib.contextmanager
     def get_connection(self) -> typing.Iterator[client.XenClient]:
         """
@@ -168,7 +179,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         """
         self._use_count += 1
         try:
-            yield self._api()
+            yield self._api
         finally:
             self._use_count -= 1
             if self._use_count == 0 and self._cached_api:
@@ -192,7 +203,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
 
             True if all went fine, false if id didn't
         """
-        self._api().test()
+        self._api.test()
 
     def get_macs_range(self) -> str:
         return self.macs_range.value

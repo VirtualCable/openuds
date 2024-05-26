@@ -51,6 +51,27 @@ TAG_MACHINE = "uds-machine"
 def cache_key_helper(server_api: 'XenClient') -> str:
     return server_api._url  # pyright: ignore[reportPrivateUsage]
 
+class SafeTimeoutTransport(xmlrpc.client.SafeTransport):
+    _timeout: int = 0
+    
+    def set_timeout(self, timeout: int) -> None:
+        self._timeout = timeout
+
+    def make_connection(self, host: typing.Any) -> typing.Any:
+        conn = super().make_connection(host)
+        conn.timeout = self._timeout
+        return conn
+
+class TimeoutTransport(xmlrpc.client.Transport):
+    _timeout: int = 0
+
+    def set_timeout(self, timeout: int) -> None:
+        self._timeout = timeout
+
+    def make_connection(self, host: typing.Any) -> typing.Any:
+        conn = super().make_connection(host)
+        conn.timeout = self._timeout
+        return conn
 
 class XenClient:  # pylint: disable=too-many-public-methods
     _originalHost: str
@@ -59,6 +80,7 @@ class XenClient:  # pylint: disable=too-many-public-methods
     _port: str
     _use_ssl: bool
     _verify_ssl: bool
+    _timeout: int
     _protocol: str
     _url: str
     _logged_in: bool
@@ -77,12 +99,14 @@ class XenClient:  # pylint: disable=too-many-public-methods
         password: str,
         ssl: bool = False,
         verify_ssl: bool = False,
+        timeout: int = 10,
     ):
         self._originalHost = self._host = host
         self._host_backup = host_backup or ''
         self._port = str(port)
         self._use_ssl = bool(ssl)
         self._verify_ssl = bool(verify_ssl)
+        self._timeout = timeout
         self._protocol = 'http' + ('s' if self._use_ssl else '') + '://'
         self._url = ''
         self._logged_in = False
@@ -165,7 +189,12 @@ class XenClient:  # pylint: disable=too-many-public-methods
 
             if self._use_ssl:
                 context = security.create_client_sslcontext(verify=self._verify_ssl)
-                transport = xmlrpc.client.SafeTransport(context=context)
+                transport = SafeTimeoutTransport(context=context)
+                transport.set_timeout(self._timeout)
+                logger.debug('Transport: %s', transport)
+            else:
+                transport = TimeoutTransport()
+                transport.set_timeout(self._timeout)
                 logger.debug('Transport: %s', transport)
 
             self._session = XenAPI.Session(self._url, transport=transport)
@@ -273,14 +302,6 @@ class XenClient:  # pylint: disable=too-many-public-methods
     def get_vm_info(self, vm_opaque_ref: str, **kwargs: typing.Any) -> xen_types.VMInfo:
         try:
             return xen_types.VMInfo.from_dict(self.VM.get_record(vm_opaque_ref), vm_opaque_ref)
-        except XenAPI.Failure as e:
-            raise exceptions.XenFailure(e.details)
-
-    @cached(prefix='xen_vm_f', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def get_vm_folder(self, vmid: str, **kwargs: typing.Any) -> str:
-        try:
-            other_config = self.VM.get_other_config(vmid)
-            return other_config.get('folder', '')
         except XenAPI.Failure as e:
             raise exceptions.XenFailure(e.details)
 
