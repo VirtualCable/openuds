@@ -47,7 +47,7 @@ from uds.services.Xen.xen import types as xen_types
 class TestXenPublication(UDSTransactionTestCase):
     def setUp(self) -> None:
         super().setUp()
-        fixtures.reset_data()
+        fixtures.clean()
 
     def test_publication(self) -> None:
         with fixtures.patched_provider() as provider:

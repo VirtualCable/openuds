@@ -137,9 +137,8 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
         with self.provider().get_connection() as api:
             if api.get_vm_info(vmid).power_state.is_running():
                 return api.stop_vm(vmid)
-        
+
         return ''  # Already stopped
-            
 
     def reset_vm(self, vmid: str) -> str:
         """
@@ -153,14 +152,14 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
         with self.provider().get_connection() as api:
             if api.get_vm_info(vmid).power_state.is_running():
                 return api.reset_vm(vmid)
-        
+
         return ''  # Already stopped, no reset needed
 
     def shutdown_vm(self, vmid: str) -> str:
         with self.provider().get_connection() as api:
-            if api.get_vm_info(vmid).power_state.is_running():              
+            if api.get_vm_info(vmid).power_state.is_running():
                 return api.shutdown_vm(vmid)
-            
+
         return ''  # Already stopped
 
     def is_avaliable(self) -> bool:
@@ -197,8 +196,10 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
         with self.provider().get_connection() as api:
             if self.use_snapshots.as_bool():
                 vmid = userservice_instance._vmid
-                
-                snapshots = api.list_snapshots(vmid, full_info=False)  # Only need ids, to check if there is any snapshot
+
+                snapshots = api.list_snapshots(
+                    vmid, full_info=False
+                )  # Only need ids, to check if there is any snapshot
 
                 logger.debug('Using snapshots')
                 # If no snapshot exists for this vm, try to create one for it on background
@@ -212,7 +213,9 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
                             name='UDS Snapshot',
                         )
                 except Exception as e:
-                    self.do_log(types.log.LogLevel.WARNING, 'Could not create SNAPSHOT for this VM. ({})'.format(e))
+                    self.do_log(
+                        types.log.LogLevel.WARNING, 'Could not create SNAPSHOT for this VM. ({})'.format(e)
+                    )
 
     def snapshot_recovery(self, userservice_instance: FixedUserService) -> None:
         userservice_instance = typing.cast(XenFixedUserService, userservice_instance)
@@ -220,7 +223,7 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
             if self.use_snapshots.as_bool():
                 vmid = userservice_instance._vmid
 
-                snapshots = api.list_snapshots(vmid)
+                snapshots = api.list_snapshots(vmid, full_info=True)  # We need full info to restore it
 
                 if snapshots:
                     try:
@@ -274,11 +277,8 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
         with self.provider().get_connection() as conn:
             return conn.get_vm_info(vmid).name
 
-    def remove_and_free(self, vmid: str) -> types.states.TaskState:
-        try:
-            with self._assigned_access() as assigned_vms:
-                assigned_vms.remove(vmid)
-            return types.states.TaskState.FINISHED
-        except Exception as e:
-            logger.warning('Cound not save assigned machines on fixed pool: %s', e)
-            raise
+    # default remove_and_free is ok
+
+    def is_ready(self, vmid: str) -> bool:
+        with self.provider().get_connection() as conn:
+            return conn.get_vm_info(vmid).power_state.is_running()

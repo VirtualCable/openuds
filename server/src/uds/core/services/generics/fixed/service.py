@@ -156,7 +156,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         self.userservices_limit = len(self.machines.as_list())
 
     @contextlib.contextmanager
-    def _assigned_access(self) -> collections.abc.Generator[set[str], None, None]:
+    def _assigned_access(self) -> typing.Iterator[set[str]]:
         with self.storage.as_dict(atomic=True) as d:
             machines: set[str] = d.get('vms', set())
             initial_machines = machines.copy()  # for comparison later

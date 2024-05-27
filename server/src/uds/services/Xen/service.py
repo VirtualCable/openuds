@@ -41,6 +41,8 @@ from uds.core.ui import gui
 from .publication import XenPublication
 from .deployment import XenLinkedUserService
 
+from .xen import exceptions as xen_exceptions
+
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from .provider import XenProvider
@@ -207,11 +209,14 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
             logger.debug('Checking datastore space for %s: %s', self.datastore.value, info)
             availableGB = (info.physical_size - info.physical_utilisation) // 1024
             if availableGB < self.min_space_gb.as_int():
-                raise Exception(
+                raise xen_exceptions.XenFatalError(
                     'Not enough free space available: (Needs at least {} GB and there is only {} GB '.format(
                         self.min_space_gb.as_int(), availableGB
                     )
                 )
+
+    def is_avaliable(self) -> bool:
+        return self.provider().is_available()
 
     def sanitized_name(self, name: str) -> str:
         """
@@ -251,26 +256,26 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
         with self.provider().get_connection() as api:
             api.convert_to_template(vm_opaque_ref, self.shadow.value)
 
-    def start_deploy_from_template(self, name: str, comments: str, template_opaque_ref: str) -> str:
-            """
-            Deploys a virtual machine on selected cluster from selected template
+    def start_deploy_from_template(self, template_opaque_ref: str, *, name: str, comments: str) -> str:
+        """
+        Deploys a virtual machine on selected cluster from selected template
 
-            Args:
-                name (str): Name (sanitized) of the machine
-                comments (str): Comments for machine
-                template_opaque_ref (str): Opaque reference of the template to deploy from
+        Args:
+            name (str): Name (sanitized) of the machine
+            comments (str): Comments for machine
+            template_opaque_ref (str): Opaque reference of the template to deploy from
 
-            Returns:
-                str: Id of the task created for this operation
-            """
-            logger.debug('Deploying from template %s machine %s', template_opaque_ref, name)
+        Returns:
+            str: Id of the task created for this operation
+        """
+        logger.debug('Deploying from template %s machine %s', template_opaque_ref, name)
 
-            with self.provider().get_connection() as api:
-                self.has_datastore_space()
+        with self.provider().get_connection() as api:
+            self.has_datastore_space()
 
-                return api.start_deploy_from_template(template_opaque_ref, name)
+            return api.start_deploy_from_template(template_opaque_ref, name)
 
-    def remove_template(self, template_opaque_ref: str) -> None:
+    def delete_template(self, template_opaque_ref: str) -> None:
         """
         invokes removeTemplate from parent provider
         """
@@ -312,7 +317,7 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
         Can return a task, or None if no task is returned
         """
         with self.provider().get_connection() as api:
-            api.start_vm(vmid, as_async=False)
+            api.start_vm(vmid)
 
     def stop(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
         """
@@ -320,11 +325,11 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
         Can return a task, or None if no task is returned
         """
         with self.provider().get_connection() as api:
-            api.stop_vm(vmid, as_async=False)
+            api.stop_vm(vmid)
 
     def shutdown(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
         with self.provider().get_connection() as api:
-            api.shutdown_vm(vmid, as_async=False)
+            api.shutdown_vm(vmid)
 
     def delete(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
         """

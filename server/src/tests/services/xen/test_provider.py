@@ -144,7 +144,7 @@ class TestXenProvider(UDSTransactionTestCase):
         """
         Test the provider
         """
-        fixtures.reset_data()
+        fixtures.clean()
 
         with fixtures.patched_provider() as provider:
             api = provider._api  # typing.cast(mock.MagicMock, provider._api)

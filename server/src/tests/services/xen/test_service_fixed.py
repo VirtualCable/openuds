@@ -34,7 +34,7 @@ import random
 import typing
 from unittest import mock
 
-from uds.core import types, ui
+from uds.core import ui
 from . import fixtures
 
 from ...utils.test import UDSTransactionTestCase
@@ -42,10 +42,10 @@ from ...utils.test import UDSTransactionTestCase
 from uds.services.Xen.xen import types as xen_types
 
 
-class TestProxmoxFixedService(UDSTransactionTestCase):
+class TestXenFixedService(UDSTransactionTestCase):
     def setUp(self) -> None:
         super().setUp()
-        fixtures.reset_data()
+        fixtures.clean()
 
     def test_service_is_available(self) -> None:
         """
@@ -68,7 +68,7 @@ class TestProxmoxFixedService(UDSTransactionTestCase):
             self.assertFalse(service.is_avaliable())
             api.test.assert_called_with()
 
-    def test_service_methods_1(self) -> None:
+    def test_service_vm_methods(self) -> None:
         with fixtures.patched_provider() as provider:
             service = fixtures.create_service_fixed(provider=provider)
             VM = random.choice(fixtures.VMS_INFO)
@@ -126,6 +126,21 @@ class TestProxmoxFixedService(UDSTransactionTestCase):
                     userservice_instance.error.return_value,
                 )
 
+    def test_remove_and_free(self) -> None:
+        with fixtures.patched_provider() as provider:
+            service = fixtures.create_service_fixed(provider=provider)
+
+            with mock.patch.object(service, '_assigned_access') as assigned_access:
+                assigned_mock = mock.MagicMock()
+                assigned_access.return_value.__enter__.return_value = assigned_mock
+                service.remove_and_free('123')
+                assigned_mock.__contains__.assert_called_with('123')
+                assigned_mock.reset_mock()
+                assigned_mock.__contains__.return_value = True
+                service.remove_and_free('123')
+                assigned_mock.remove.assert_called_with('123')
+                assigned_mock.remove.assert_called_with('123')
+
     def test_process_snapshot(self) -> None:
         with fixtures.patched_provider() as provider:
             api = typing.cast(mock.MagicMock, provider._api)
@@ -138,14 +153,14 @@ class TestProxmoxFixedService(UDSTransactionTestCase):
             # Create snapshot
             api.list_snapshots.return_value = []
             service.snapshot_creation(userservice_instance)
-            api.list_snapshots.assert_called_with(int(vmid), None)
-            api.create_snapshot.assert_called_with(int(vmid), None, 'UDS Snapshot', None)
+            api.list_snapshots.assert_called_with(vmid, full_info=False)
+            api.create_snapshot.assert_called_with(vmid, 'UDS Snapshot')
 
             # Skip snapshot creation
             api.reset_mock()
-            api.list_snapshots.return_value = fixtures.SNAPSHOTS_INFO
+            api.list_snapshots.return_value = fixtures.VMS_INFO
             service.snapshot_recovery(userservice_instance)
-            api.list_snapshots.assert_called_with(int(vmid), None)
+            api.list_snapshots.assert_called_with(vmid, full_info=True)
             api.create_snapshot.assert_not_called()
 
             # Restore snapshot on exit
@@ -153,14 +168,14 @@ class TestProxmoxFixedService(UDSTransactionTestCase):
             api.reset_mock()
             api.list_snapshots.return_value = []
             service.snapshot_creation(userservice_instance)
-            api.list_snapshots.assert_called_with(int(vmid), None)
+            api.list_snapshots.assert_called_with(vmid, False)
             # no snapshots, so no restore
             api.restore_snapshot.assert_not_called()
 
             # Reset and add snapshot
             api.reset_mock()
-            api.list_snapshots.return_value = fixtures.SNAPSHOTS_INFO
+            api.list_snapshots.return_value = fixtures.VMS_INFO
             service.snapshot_recovery(userservice_instance)
-            api.list_snapshots.assert_called_with(int(vmid), None)
-            # restore snapshot
-            api.restore_snapshot.assert_called_with(int(vmid), None, fixtures.SNAPSHOTS_INFO[0].name)
+            api.list_snapshots.assert_called_with(vmid, full_info=True)
+            # restore snapshot, as this is a test, in fact the SNAPSHOTS are the same as the VMS
+            api.restore_snapshot.assert_called_with(fixtures.VMS_INFO[0].opaque_ref)

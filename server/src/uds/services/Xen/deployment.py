@@ -140,7 +140,7 @@ class XenLinkedUserService(DynamicUserService, autoserializable.AutoSerializable
         )  # oVirt don't let us to create machines with more than 15 chars!!!
         comments = 'UDS Linked clone'
 
-        self._task = self.service().start_deploy_from_template(name, comments, template_id)
+        self._task = self.service().start_deploy_from_template(template_id, name=name, comments=comments)
         if not self._task:
             raise Exception('Can\'t create machine')
 

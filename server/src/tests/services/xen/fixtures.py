@@ -31,6 +31,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import contextlib
+import dataclasses
 import random
 import typing
 import datetime
@@ -83,6 +84,23 @@ DEF_SRS_INFO: typing.Final[list[xen_types.StorageInfo]] = [
     )
     for i in range(8)
 ]
+
+LOW_SPACE_SR_INFO: typing.Final[xen_types.StorageInfo] = xen_types.StorageInfo(
+    opaque_ref='OpaqueRef:12345678-1234-1234-1234-1234567890ff',
+    uuid='12345678-1234-1234-1234-1234567890ff',
+    name='low_space_sr',
+    description='Low space SR description',
+    allowed_operations=[],
+    VDIs=[],
+    PBDs=[],
+    virtual_allocation=32 * 1024,
+    physical_utilisation=32 * 1024,
+    physical_size=32 * 1024,
+    type='',
+    content_type='',
+    shared=True,
+)
+
 
 DEF_NETWORKS_INFO: typing.Final[list[xen_types.NetworkInfo]] = [
     xen_types.NetworkInfo(
@@ -141,29 +159,29 @@ DEF_FOLDERS: list[str] = list(set(vm.folder for vm in DEF_VMS_INFO))
 
 POOL_NAME = DEF_POOL_NAME
 GENERAL_OPAQUE_REF = DEF_GENERAL_OPAQUE_REF
-FOLDERS = DEF_FOLDERS
-TASK_INFO = DEF_TASK_INFO
+TASK_INFO = dataclasses.replace(DEF_TASK_INFO)  # Copy the object
 GENERAL_IP = DEF_GENERAL_IP
 GENERAL_MAC = DEF_GENERAL_MAC
 
 SRS_INFO = DEF_SRS_INFO.copy()
 NETWORKS_INFO = DEF_NETWORKS_INFO.copy()
 VMS_INFO = DEF_VMS_INFO.copy()
+FOLDERS = DEF_FOLDERS.copy()
 
 
-def reset_data() -> None:
+def clean() -> None:
     """
     Initialize default values for the module variables
     """
     # Import non local variables
     global TASK_INFO, POOL_NAME, GENERAL_OPAQUE_REF, GENERAL_IP, GENERAL_MAC
 
-    TASK_INFO = DEF_TASK_INFO
+    TASK_INFO = dataclasses.replace(DEF_TASK_INFO)
     POOL_NAME = DEF_POOL_NAME
     GENERAL_OPAQUE_REF = DEF_GENERAL_OPAQUE_REF
     GENERAL_IP = DEF_GENERAL_IP
     GENERAL_MAC = DEF_GENERAL_MAC
-    
+
     SRS_INFO[:] = DEF_SRS_INFO
     NETWORKS_INFO[:] = DEF_NETWORKS_INFO
     VMS_INFO[:] = DEF_VMS_INFO
@@ -203,6 +221,7 @@ def search_by_attr(lst: list[T], attribute: str, value: typing.Any, **kwargs: ty
     except ValueError:
         raise xen_exceptions.XenNotFoundError(f'Item with {attribute}=="{value}" not found in list')
 
+
 def set_vm_state(is_async: bool, state: xen_types.PowerState, vmid: str) -> 'str|None':
     """
     Set the power state of a VM
@@ -212,11 +231,21 @@ def set_vm_state(is_async: bool, state: xen_types.PowerState, vmid: str) -> 'str
         vm.power_state = state
     except ValueError:
         raise xen_exceptions.XenNotFoundError(f'Item with opaque_ref=="{vmid}" not found in list')
-    
+
     if is_async:
         return None
     return GENERAL_OPAQUE_REF
 
+
+def set_all_vm_state(state: xen_types.PowerState) -> None:
+    """
+    Set the power state of all VMs
+    """
+    for vm in VMS_INFO:
+        vm.power_state = state
+
+def task_info(*args: typing.Any, **kwargs: typing.Any) -> xen_types.TaskInfo:
+    return TASK_INFO
 
 # Methods that returns None or "internal" methods are not tested
 CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
@@ -236,7 +265,7 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     # Default test, skip it
     AutoSpecMethodInfo(
         client.XenClient.get_task_info,
-        returns=TASK_INFO,
+        returns=task_info,
     ),
     AutoSpecMethodInfo(
         client.XenClient.list_srs,
@@ -337,7 +366,7 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     ),
     AutoSpecMethodInfo(
         client.XenClient.provision_vm,
-        returns=GENERAL_OPAQUE_REF,        
+        returns=GENERAL_OPAQUE_REF,
     ),
     AutoSpecMethodInfo(
         client.XenClient.create_snapshot,
@@ -352,10 +381,7 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
         returns=GENERAL_OPAQUE_REF,
     ),
     # Returns vms as snapshots. As we are not going to really use them, we can return the same as VMS_INFO
-    AutoSpecMethodInfo(
-        client.XenClient.list_snapshots,
-        returns=VMS_INFO
-    ),
+    AutoSpecMethodInfo(client.XenClient.list_snapshots, returns=VMS_INFO),
     AutoSpecMethodInfo(
         client.XenClient.list_folders,
         returns=FOLDERS,

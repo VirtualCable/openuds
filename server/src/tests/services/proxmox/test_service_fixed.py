@@ -172,3 +172,18 @@ class TestProxmoxFixedService(UDSTransactionTestCase):
             api.list_snapshots.assert_called_with(int(vmid), None)
             # restore snapshot
             api.restore_snapshot.assert_called_with(int(vmid), None, fixtures.SNAPSHOTS_INFO[0].name)
+
+    def test_remove_and_free(self) -> None:
+        with fixtures.patched_provider() as provider:
+            service = fixtures.create_service_fixed(provider=provider)
+
+            with mock.patch.object(service, '_assigned_access') as assigned_access:
+                assigned_mock = mock.MagicMock()
+                assigned_access.return_value.__enter__.return_value = assigned_mock
+                service.remove_and_free('123')
+                assigned_mock.__contains__.assert_called_with('123')
+                assigned_mock.reset_mock()
+                assigned_mock.__contains__.return_value = True
+                service.remove_and_free('123')
+                assigned_mock.remove.assert_called_with('123')
+                assigned_mock.remove.assert_called_with('123')

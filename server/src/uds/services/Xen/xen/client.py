@@ -311,7 +311,10 @@ class XenClient:  # pylint: disable=too-many-public-methods
             return None
 
         if vminfo.power_state == xen_types.PowerState.SUSPENDED:
-            return self.resume_vm(vm_opaque_ref, as_async)
+            if as_async:
+                return self.resume_vm(vm_opaque_ref)
+            else:
+                return self.resume_vm_sync(vm_opaque_ref)
 
         return (self.Async if as_async else self).VM.start(vm_opaque_ref, False, False)
 
@@ -346,7 +349,10 @@ class XenClient:  # pylint: disable=too-many-public-methods
             return None
 
         if vminfo.power_state.is_suspended() is False:
-            return self.start_vm(vm_opaque_ref, as_async)
+            if as_async:
+                return self.start_vm(vm_opaque_ref)
+            else:
+                return self.start_vm_sync(vm_opaque_ref)
 
         return (self.Async if as_async else self).VM.resume(vm_opaque_ref, False, False)
 
@@ -356,38 +362,38 @@ class XenClient:  # pylint: disable=too-many-public-methods
             return None
         return (self.Async if as_async else self).VM.clean_shutdown(vm_opaque_ref)
 
-    def start_vm(self, vm_opaque_ref: str, as_async: bool = True) -> str:
-        return typing.cast(str, self._start_vm(vm_opaque_ref, as_async))  # We know it's not None on async
+    def start_vm(self, vm_opaque_ref: str) -> str:
+        return typing.cast(str, self._start_vm(vm_opaque_ref, True))  # We know it's not None on async
 
     def start_vm_sync(self, vm_opaque_ref: str) -> None:
         self._start_vm(vm_opaque_ref, False)
 
-    def stop_vm(self, vm_opaque_ref: str, as_async: bool = True) -> str:
-        return typing.cast(str, self._stop_vm(vm_opaque_ref, as_async))
+    def stop_vm(self, vm_opaque_ref: str) -> str:
+        return typing.cast(str, self._stop_vm(vm_opaque_ref, True))
 
     def stop_vm_sync(self, vm_opaque_ref: str) -> None:
         self._stop_vm(vm_opaque_ref, False)
 
-    def reset_vm(self, vm_opaque_ref: str, as_async: bool = True) -> str:
-        return typing.cast(str, self._reset_vm(vm_opaque_ref, as_async))
+    def reset_vm(self, vm_opaque_ref: str) -> str:
+        return typing.cast(str, self._reset_vm(vm_opaque_ref, True))
 
     def reset_vm_sync(self, vm_opaque_ref: str) -> None:
         self._reset_vm(vm_opaque_ref, False)
 
-    def suspend_vm(self, vm_opaque_ref: str, as_async: bool = True) -> str:
-        return typing.cast(str, self._suspend_vm(vm_opaque_ref, as_async))
+    def suspend_vm(self, vm_opaque_ref: str) -> str:
+        return typing.cast(str, self._suspend_vm(vm_opaque_ref, True))
 
     def suspend_vm_sync(self, vm_opaque_ref: str) -> None:
         self._suspend_vm(vm_opaque_ref, False)
 
-    def resume_vm(self, vm_opaque_ref: str, as_async: bool = True) -> str:
-        return typing.cast(str, self._resume_vm(vm_opaque_ref, as_async))
+    def resume_vm(self, vm_opaque_ref: str) -> str:
+        return typing.cast(str, self._resume_vm(vm_opaque_ref, True))
 
     def resume_vm_sync(self, vm_opaque_ref: str) -> None:
         self._resume_vm(vm_opaque_ref, False)
 
-    def shutdown_vm(self, vm_opaque_ref: str, as_async: bool = True) -> str:
-        return typing.cast(str, self._shutdown_vm(vm_opaque_ref, as_async))
+    def shutdown_vm(self, vm_opaque_ref: str) -> str:
+        return typing.cast(str, self._shutdown_vm(vm_opaque_ref, True))
 
     def shutdown_vm_sync(self, vm_opaque_ref: str) -> None:
         self._shutdown_vm(vm_opaque_ref, False)
