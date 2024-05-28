@@ -36,7 +36,7 @@ from uds.core.util import log
 
 from ...fixtures import authenticators as authenticators_fixtures
 from ...fixtures import services as services_fixtures
-from .. import constants, generators, rest, test
+from .. import constants, helpers, rest, test
 
 NUMBER_OF_ITEMS_TO_CREATE = 4
 
@@ -154,14 +154,14 @@ class RESTActorTestCase(RESTTestCase):
     def register_data(self, chars: typing.Optional[str] = None) -> dict[str, str]:
         # Data for registration
         return {
-            'username': generators.random_string(size=12, chars=chars)
+            'username': helpers.random_string(size=12, chars=chars)
             + '@AUTH'
-            + generators.random_string(size=12, chars=chars),
-            'hostname': generators.random_string(size=48, chars=chars),
-            'ip': generators.random_ip(),
-            'mac': generators.random_mac(),
-            'pre_command': generators.random_string(size=64, chars=chars),
-            'run_once_command': generators.random_string(size=64, chars=chars),
-            'post_command': generators.random_string(size=64, chars=chars),
+            + helpers.random_string(size=12, chars=chars),
+            'hostname': helpers.random_string(size=48, chars=chars),
+            'ip': helpers.random_ip(),
+            'mac': helpers.random_mac(),
+            'pre_command': helpers.random_string(size=64, chars=chars),
+            'run_once_command': helpers.random_string(size=64, chars=chars),
+            'post_command': helpers.random_string(size=64, chars=chars),
             'log_level': '0',
         }

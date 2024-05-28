@@ -39,7 +39,7 @@ from . import fixtures
 
 from ...utils.test import UDSTransactionTestCase
 from ...utils import MustBeOfType
-from ...utils.generators import limited_iterator
+from ...utils.helpers import limited_iterator
 
 from uds.services.Xen.xen import types as xen_types
 

@@ -30,10 +30,14 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
 import random
-import uuid
+import time
 import typing
+import uuid
+import logging
 
 from . import constants
+
+logger = logging.getLogger('test')
 
 def random_string(size: int = 6, chars: typing.Optional[str] = None) -> str:
     chars = chars or constants.STRING_CHARS
@@ -66,7 +70,9 @@ def random_mac() -> str:
     return ':'.join(random_string(2, '0123456789ABCDEF') for _ in range(6))
 
 
-def limited_iterator(until_checker: typing.Callable[[], bool], limit: int = 128) -> typing.Generator[int, None, None]:
+def limited_iterator(
+    until_checker: typing.Callable[[], bool], limit: int = 128
+) -> typing.Generator[int, None, None]:
     """
     Limit an iterator to a number of elements
     Will continue until limit is reached or check() returns False
@@ -81,3 +87,15 @@ def limited_iterator(until_checker: typing.Callable[[], bool], limit: int = 128)
 
     # Limit reached, raise an exception
     raise Exception(f'Limit reached: {current}/{limit}: {until_checker()}')
+
+
+def waiter(checker: typing.Callable[[], bool], timeout: int = 64, msg: typing.Optional[str] = None) -> None:
+    start_time = time.time()
+    for _ in limited_iterator(lambda: time.time() - start_time < timeout):
+        if checker():
+            break
+        logger.info('Waiting for %s: %s', msg or 'operation', time.time() - start_time)
+        time.sleep(2)
+
+    if msg:
+        logger.info('%s. Elapsed time: %s', msg, time.time() - start_time)

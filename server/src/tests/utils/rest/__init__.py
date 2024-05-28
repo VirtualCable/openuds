@@ -40,7 +40,7 @@ from django.test.client import Client
 from . import test  # pyright: ignore
 from . import assertions  # pyright: ignore
 
-from .. import generators
+from .. import helpers
 
 
 # Calls REST login
@@ -106,27 +106,27 @@ def random_value(
         return value
 
     if field_type in [str, typing.Optional[str]]:
-        return generators.random_utf8_string()
+        return helpers.random_utf8_string()
     if field_type in [bool, typing.Optional[bool]]:
         return random.choice([True, False])  # nosec
     if field_type in [int, typing.Optional[int]]:
-        return generators.random_int()
+        return helpers.random_int()
     if field_type in [uuid_type, typing.Optional[uuid_type]]:
-        return generators.random_uuid()
+        return helpers.random_uuid()
     if isinstance(field_type, tuple):
         return random.choice(field_type)  # nosec
     if field_type == list[str]:
-        return [generators.random_string() for _ in range(generators.random_int(1, 10))]
+        return [helpers.random_string() for _ in range(helpers.random_int(1, 10))]
     if field_type == list[uuid_type]:
-        return [generators.random_uuid() for _ in range(generators.random_int(1, 10))]
+        return [helpers.random_uuid() for _ in range(helpers.random_int(1, 10))]
     if field_type == list[int]:
-        return [generators.random_int() for _ in range(generators.random_int(1, 10))]
+        return [helpers.random_int() for _ in range(helpers.random_int(1, 10))]
     if field_type == list[bool]:
-        return [random.choice([True, False]) for _ in range(generators.random_int(1, 10))]  # nosec: test values
+        return [random.choice([True, False]) for _ in range(helpers.random_int(1, 10))]  # nosec: test values
     if field_type == list[tuple[str, str]]:
         return [
-            (generators.random_utf8_string(), generators.random_utf8_string())
-            for _ in range(generators.random_int(1, 10))
+            (helpers.random_utf8_string(), helpers.random_utf8_string())
+            for _ in range(helpers.random_int(1, 10))
         ]
 
     return None

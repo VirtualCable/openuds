@@ -34,7 +34,7 @@ import typing
 from uds import models
 from uds.core import environment, types
 
-from ..utils import generators
+from ..utils import helpers
 
 # Counters so we can reinvoke the same method and generate new data
 glob = {
@@ -76,7 +76,7 @@ def create_db_service(provider: models.Provider, use_caching_version: bool = Tru
         else TestServiceNoCache(
             environment.Environment(str(glob['service_id'])), provider.get_instance()
         ).serialize(),
-        token=generators.random_string(16) + str(glob['service_id']),
+        token=helpers.random_string(16) + str(glob['service_id']),
     )
     glob['service_id'] += 1  # In case we generate a some more services elsewhere
 
@@ -181,14 +181,14 @@ def create_db_userservice(
     user_service: 'models.UserService' = service_pool.userServices.create(
         friendly_name='user-service-{}'.format(glob['user_service_id']),
         publication=publication,
-        unique_id=generators.random_mac(),
+        unique_id=helpers.random_mac(),
         state=types.states.State.USABLE,
         os_state=types.states.State.USABLE,
         state_date=datetime.datetime.now(),
         creation_date=datetime.datetime.now() - datetime.timedelta(minutes=30),
         user=user,
-        src_hostname=generators.random_string(32),
-        src_ip=generators.random_ip(),
+        src_hostname=helpers.random_string(32),
+        src_ip=helpers.random_ip(),
     )
     glob['user_service_id'] += 1
     return user_service

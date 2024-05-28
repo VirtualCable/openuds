@@ -30,6 +30,8 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # pyright: reportUnknownMemberType=false
 import typing
+import os
+import os.path
 import logging
 import configparser
 
@@ -46,7 +48,12 @@ def load() -> None:
         return
 
     try:
-        config.read(VAR_FILE)
+        # If exists on current folder, use it
+        if os.path.exists(VAR_FILE):
+            config.read(VAR_FILE)
+        # if exists on parent folder, use it
+        elif os.path.exists(os.path.join('..', VAR_FILE)):
+            config.read(os.path.join('..', VAR_FILE))
     except configparser.Error:
         pass  # Ignore errors, no vars will be loaded
 

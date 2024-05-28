@@ -33,6 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import typing
 from unittest import mock
 
+from tests.utils import MustBeOfType
 from uds import models
 from uds.core import types
 
@@ -40,7 +41,7 @@ from uds.core import types
 from . import fixtures
 
 from ...utils.test import UDSTransactionTestCase
-from ...utils.generators import limited_iterator
+from ...utils.helpers import limited_iterator
 
 from uds.services.Xen.xen import types as xen_types
 
@@ -74,30 +75,13 @@ class TestXenLinkedUserService(UDSTransactionTestCase):
             self.assertEqual(userservice._name[: len(service.get_basename())], service.get_basename())
             self.assertEqual(len(userservice._name), len(service.get_basename()) + service.get_lenname())
 
-            vmid = int(userservice._vmid)
+            # api.start_deploy_from_template, api.provision_vm, api.start_vm and api.get_vm_info should have been called
+            api.start_deploy_from_template.assert_called_with(publication._vmid, MustBeOfType(str))
+            api.provision_vm.assert_called_with(userservice._vmid)
+            api.configure_vm.assert_called_with(userservice._vmid, MustBeOfType(dict), MustBeOfType(int))
+            api.start_vm.assert_called_with(userservice._vmid)
 
-            api.clone_machine.assert_called_with(
-                publication.machine(),
-                mock.ANY,
-                userservice._name,
-                mock.ANY,
-                True,
-                None,
-                service.datastore.value,
-                service.pool.value,
-                None,
-            )
-
-            # api.get_task should have been invoked at least once
-            self.assertTrue(api.get_task.called)
-
-            api.enable_machine_ha.assert_called()
-
-            api.set_machine_mac.assert_called_with(vmid, userservice._mac)
-            api.get_machine_pool_info.assert_called_with(vmid, service.pool.value, force=True)
-            api.start_machine.assert_called_with(vmid)
-
-    def test_userservice_linked_cache_l2_no_ha(self) -> None:
+    def test_userservice_linked_cache_l2(self) -> None:
         """
         Test the user service
         """
@@ -105,7 +89,6 @@ class TestXenLinkedUserService(UDSTransactionTestCase):
             api = typing.cast(mock.MagicMock, provider._api)
             service = fixtures.create_service_linked(provider=provider)
             userservice = fixtures.create_userservice_linked(service=service)
-            service.ha.value = '__'  # Disabled
 
             publication = userservice.publication()
             publication._vmid = '1'
@@ -126,33 +109,13 @@ class TestXenLinkedUserService(UDSTransactionTestCase):
             self.assertEqual(userservice._name[: len(service.get_basename())], service.get_basename())
             self.assertEqual(len(userservice._name), len(service.get_basename()) + service.get_lenname())
 
-            vmid = int(userservice._vmid)
-
-            api.clone_machine.assert_called_with(
-                publication.machine(),
-                mock.ANY,
-                userservice._name,
-                mock.ANY,
-                True,
-                None,
-                service.datastore.value,
-                service.pool.value,
-                None,
-            )
-
-            # api.get_task should have been invoked at least once
-            self.assertTrue(api.get_task.called)
-
-            # Shoud not have been called since HA is disabled
-            api.enable_machine_ha.assert_not_called()
-
-            api.set_machine_mac.assert_called_with(vmid, userservice._mac)
-            api.get_machine_pool_info.assert_called_with(vmid, service.pool.value, force=True)
-            # Now, start should have been called
-            api.start_machine.assert_called_with(vmid)
-            # Stop machine should have been called
-            api.shutdown_machine.assert_called_with(vmid)
-
+            # api.start_deploy_from_template, api.provision_vm, api.start_vm and api.get_vm_info should have been called
+            api.start_deploy_from_template.assert_called_with(publication._vmid, MustBeOfType(str))
+            api.provision_vm.assert_called_with(userservice._vmid)
+            api.configure_vm.assert_called_with(userservice._vmid, MustBeOfType(dict), MustBeOfType(int))
+            api.start_vm.assert_called_with(userservice._vmid)
+            api.shutdown_vm.assert_called_with(userservice._vmid)
+            
     def test_userservice_linked_user(self) -> None:
         """
         Test the user service
@@ -181,31 +144,14 @@ class TestXenLinkedUserService(UDSTransactionTestCase):
             self.assertEqual(userservice._name[: len(service.get_basename())], service.get_basename())
             self.assertEqual(len(userservice._name), len(service.get_basename()) + service.get_lenname())
 
-            vmid = int(userservice._vmid)
-
-            api.clone_machine.assert_called_with(
-                publication.machine(),
-                mock.ANY,
-                userservice._name,
-                mock.ANY,
-                True,
-                None,
-                service.datastore.value,
-                service.pool.value,
-                None,
-            )
-
-            # api.get_task should have been invoked at least once
-            self.assertTrue(api.get_task.called)
-
-            api.enable_machine_ha.assert_called()
-
-            api.set_machine_mac.assert_called_with(vmid, userservice._mac)
-            api.get_machine_pool_info.assert_called_with(vmid, service.pool.value, force=True)
-            api.start_machine.assert_called_with(vmid)
+            # api.start_deploy_from_template, api.provision_vm, api.start_vm and api.get_vm_info should have been called
+            api.start_deploy_from_template.assert_called_with(publication._vmid, MustBeOfType(str))
+            api.provision_vm.assert_called_with(userservice._vmid)
+            api.configure_vm.assert_called_with(userservice._vmid, MustBeOfType(dict), MustBeOfType(int))
+            api.start_vm.assert_called_with(userservice._vmid)
 
             # Ensure vm is stopped, because deployment should have started it (as api.start_machine was called)
-            fixtures.replace_vm_info(vmid, status='stopped')
+            api.stop_vm(userservice._vmid)
             # Set ready state with the valid machine
             state = userservice.set_ready()
             # Machine is stopped, so task must be RUNNING (opossed to FINISHED)
@@ -229,11 +175,8 @@ class TestXenLinkedUserService(UDSTransactionTestCase):
                 service.try_soft_shutdown.value = graceful
                 publication = userservice.publication()
                 publication._vmid = '1'
-
-                # Set machine state for fixture to started
-                fixtures.VMS_INFO = [
-                    fixtures.VMS_INFO[i]._replace(status='running') for i in range(len(fixtures.VMS_INFO))
-                ]
+                
+                fixtures.set_all_vm_state(xen_types.PowerState.RUNNING)
 
                 state = userservice.deploy_for_user(models.User())
 
@@ -279,18 +222,14 @@ class TestXenLinkedUserService(UDSTransactionTestCase):
                 for counter in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
                     state = userservice.check_state()
                     if counter > 5:
-                        # Set machine state for fixture to stopped
-                        fixtures.VMS_INFO = [
-                            fixtures.VMS_INFO[i]._replace(status='stopped')
-                            for i in range(len(fixtures.VMS_INFO))
-                        ]
+                        fixtures.set_all_vm_state(xen_types.PowerState.HALTED)
 
                 self.assertEqual(state, types.states.TaskState.FINISHED)
 
                 if graceful:
-                    api.shutdown_machine.assert_called()
+                    api.shutdown_vm.assert_called()
                 else:
-                    api.stop_machine.assert_called()
+                    api.stop_vm.assert_called()
 
     def test_userservice_basics(self) -> None:
         with fixtures.patched_provider():

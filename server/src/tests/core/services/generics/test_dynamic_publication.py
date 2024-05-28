@@ -36,7 +36,7 @@ from unittest.mock import call
 
 from uds.core import types
 
-from ....utils.generators import limited_iterator
+from ....utils.helpers import limited_iterator
 from ....utils.test import UDSTestCase
 from ....utils import MustBeOfType
 

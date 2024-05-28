@@ -38,7 +38,7 @@ from uds import models
 from uds.core import types
 from ....utils.test import UDSTestCase
 from ....utils import MustBeOfType
-from ....utils.generators import limited_iterator
+from ....utils.helpers import limited_iterator
 from . import fixtures
 
 

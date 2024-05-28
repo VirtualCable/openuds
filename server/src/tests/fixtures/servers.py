@@ -34,7 +34,7 @@ from uds import models
 from uds.core import types
 import datetime
 
-from ..utils import generators
+from ..utils import helpers
 
 
 def create_server(
@@ -47,10 +47,10 @@ def create_server(
 ) -> 'models.Server':
     # Token is created by default on record creation
     return models.Server.objects.create(
-        register_username=generators.random_string(),
+        register_username=helpers.random_string(),
         register_ip=ip or '127.0.0.1',
         ip=ip or '127.0.0.1',
-        hostname=generators.random_string(),
+        hostname=helpers.random_string(),
         listen_port=listen_port,
         stamp=datetime.datetime.now(),
         type=type,
@@ -72,8 +72,8 @@ def create_server_group(
     num_servers: int = 1,
 ) -> models.ServerGroup:
     rsg = models.ServerGroup.objects.create(
-        name=generators.random_string(),
-        comments=generators.random_string(),
+        name=helpers.random_string(),
+        comments=helpers.random_string(),
         type=type,
         subtype=subtype or '',
         host=host or '',

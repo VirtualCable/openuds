@@ -40,7 +40,7 @@ from . import fixtures
 
 from ... import utils
 from ...utils.test import UDSTransactionTestCase
-from ...utils.generators import limited_iterator
+from ...utils.helpers import limited_iterator
 
 
 # We use transactions on some related methods (storage access, etc...)

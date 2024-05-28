@@ -97,7 +97,7 @@ class XenClient:  # pylint: disable=too-many-public-methods
         port: int,
         username: str,
         password: str,
-        ssl: bool = False,
+        ssl: bool = True,
         verify_ssl: bool = False,
         timeout: int = 10,
     ):
@@ -123,7 +123,7 @@ class XenClient:  # pylint: disable=too-many-public-methods
     # p
     def _get_xenapi_property(self, prop: str) -> typing.Any:
         if not self.check_login():
-            raise Exception("Can't log in")
+            raise Exception("Can't login")
         return getattr(self._session.xenapi, prop)
 
     # Properties to fast access XenApi classes
@@ -172,12 +172,17 @@ class XenClient:  # pylint: disable=too-many-public-methods
         return self._get_xenapi_property('VM_guest_metrics')
 
     def has_pool(self) -> bool:
-        return self.check_login() and bool(self._pool_name)
+        self.check_login()
+        return bool(self._pool_name)
 
     @cached(prefix='xen_pool', timeout=consts.cache.LONG_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def get_pool_name(self) -> str:
-        pool = self.pool.get_all()[0]
-        return self.pool.get_name_label(pool)
+    def get_pool_name(self, **kwargs: typing.Any) -> str:
+        try:
+            pool = self.pool.get_all()[0]
+            return self.pool.get_name_label(pool)
+        except Exception:
+            return ''
+            
 
     # Login/Logout
     def login(self, switch_to_master: bool = False, backup_checked: bool = False) -> None:
@@ -203,7 +208,7 @@ class XenClient:  # pylint: disable=too-many-public-methods
             )
             self._logged_in = True
             self._api_version = self._session.API_version
-            self._pool_name = str(self.get_pool_name())
+            self._pool_name = self.get_pool_name(force=True)
         except (
             XenAPI.Failure
         ) as e:  # XenAPI.Failure: ['HOST_IS_SLAVE', '172.27.0.29'] indicates that this host is an slave of 172.27.0.29, connect to it...
@@ -442,6 +447,7 @@ class XenClient:  # pylint: disable=too-many-public-methods
 
     def delete_vm(self, vmid: str) -> None:
         logger.debug('Removing machine')
+        # VDIS are not automatically deleted, so we must delete them first
         vdis_to_delete: list[str] = []
         for vdb in self.VM.get_VBDs(vmid):
             vdi = ''
