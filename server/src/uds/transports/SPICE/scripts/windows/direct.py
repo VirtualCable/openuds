@@ -25,7 +25,7 @@ if executable is None:
     Please, install appropriate package for your system.
 </p>
 <p>
-    <a href="http://virt-manager.org/download/">Open download page</a>
+    <a href="https://virt-manager.org/download">Open download page</a>
 </p>
 '''
     )
