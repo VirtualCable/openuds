@@ -34,6 +34,10 @@ import enum
 import dataclasses
 import typing
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class PowerState(enum.StrEnum):
     HALTED = 'Halted'
@@ -52,6 +56,9 @@ class PowerState(enum.StrEnum):
 
     def is_suspended(self) -> bool:
         return self == PowerState.SUSPENDED
+    
+    def is_paused(self) -> bool:
+        return self == PowerState.PAUSED
 
     @staticmethod
     def from_str(value: str) -> 'PowerState':
@@ -351,6 +358,8 @@ class VMInfo:
 
         other_config = typing.cast(dict[str, str], data.get('other_config', {}))
 
+        logger.debug('data: %s', data)
+
         return VMInfo(
             opaque_ref=opaque_ref,
             uuid=data['uuid'],
@@ -389,6 +398,10 @@ class VMInfo:
 
     def supports_suspend(self) -> bool:
         return VMOperations.SUSPEND in self.allowed_operations
+    
+    def supports_clean_shutdown(self) -> bool:
+        return VMOperations.CLEAN_SHUTDOWN in self.allowed_operations
+
 
 @dataclasses.dataclass
 class NetworkInfo:
@@ -399,14 +412,14 @@ class NetworkInfo:
     managed: bool
     VIFs: list[str]  # List of VIFs opaques
     PIFs: list[str]  # List of PIFs opaques
-    
+
     # Other useful configuration
     is_guest_installer_network: bool
     is_host_internal_management_network: bool
     ip_begin: str
     ip_end: str
     netmask: str
-    
+
     @staticmethod
     def from_dict(data: dict[str, typing.Any], opaque_ref: str) -> 'NetworkInfo':
         other_config = typing.cast(dict[str, typing.Any], data.get('other_config', {}))
@@ -425,7 +438,7 @@ class NetworkInfo:
             ip_end=other_config.get('ip_end', ''),
             netmask=other_config.get('netmask', ''),
         )
-    
+
 
 @dataclasses.dataclass
 class TaskInfo:

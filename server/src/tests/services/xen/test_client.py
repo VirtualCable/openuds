@@ -40,7 +40,7 @@ import typing
 
 from uds.services.Xen.xen import (
     types as xen_types,
-    # exceptions as xen_exceptions,
+    exceptions as xen_exceptions,
     client as xen_client,
 )
 
@@ -103,10 +103,11 @@ class TestAzureClient(UDSTransactionTestCase):
         """
         Returns VDI opaque ref list
         """
+        custom_str = str(int(time.time() * 1000000) % 1000000)
         created_disks: list[str] = []
-        for _ in range(number_of_disks):
+        for n in range(number_of_disks):
             VDI_RECORD: dict[str, typing.Any] = {
-                'name_label': 'TEST_EMPTY_DISK',
+                'name_label': f'TEST_EMPTY_DISK_{custom_str}_{n}',
                 'name_description': 'Tesging empty disk',
                 'SR': self.sr.opaque_ref,
                 'virtual_size': str(10 * 1024),  # 10 MB
@@ -208,6 +209,13 @@ class TestAzureClient(UDSTransactionTestCase):
         try:
             yield vm_opaque_ref
         finally:
+            # If started, stop it before destroying
+            if self.xclient.get_vm_info(vm_opaque_ref).power_state.is_running():
+                self.xclient.stop_vm(vm_opaque_ref)
+                helpers.waiter(
+                    lambda: self.xclient.get_vm_info(vm_opaque_ref, force=True).power_state.is_stopped()
+                )
+
             self.xclient._session.xenapi.VM.destroy(vm_opaque_ref)
 
     @contextlib.contextmanager
@@ -223,7 +231,7 @@ class TestAzureClient(UDSTransactionTestCase):
                     vm_opaque_ref=vm_opaque_ref, network_opaque_ref=self.net.opaque_ref, user_device=0
                 )
 
-                yield self.xclient.get_vm_info(vm_opaque_ref)
+                yield self.xclient.get_vm_info(vm_opaque_ref, force=True)
 
     def test_has_pool(self):
         # If has pool
@@ -296,9 +304,21 @@ class TestAzureClient(UDSTransactionTestCase):
             self.assertEqual(vm_info.opaque_ref.upper(), vm.opaque_ref.upper())
             self.assertEqual(vm_info.name, vm.name)
 
-    def test_start_stop_vm(self):
-        # Tests start vm async and sync (start_vm and start_vm_sync)
-        # Ensure we have at least one vm to test
+    def test_start_stop_reset_vm(self):
+
+        non_existing_vm = 'OpaqueRef:non-existing-vm'
+        with self.assertRaises(xen_exceptions.XenNotFoundError):
+            self.xclient.start_vm(non_existing_vm)
+
+        with self.assertRaises(xen_exceptions.XenNotFoundError):
+            self.xclient.start_vm_sync(non_existing_vm)
+
+        with self.assertRaises(xen_exceptions.XenNotFoundError):
+            self.xclient.stop_vm(non_existing_vm)
+
+        with self.assertRaises(xen_exceptions.XenNotFoundError):
+            self.xclient.stop_vm_sync(non_existing_vm)
+
         with self._create_test_vm() as vm:
             # Start VM, should be a task
             task_id = self.xclient.start_vm(vm.opaque_ref)
@@ -316,6 +336,17 @@ class TestAzureClient(UDSTransactionTestCase):
             # Should be stopped now
             self.assertTrue(self.xclient.get_vm_info(vm.opaque_ref, force=True).power_state.is_stopped())
 
+            # Reset should be a task, and start again the vm if stopped, so it will be running
+            task_id = self.xclient.reset_vm(vm.opaque_ref)
+            self.assertIsInstance(task_id, str)
+            # Wait task to finish
+            helpers.waiter(lambda: self.xclient.get_task_info(task_id).is_done())
+
+            # Should be running now
+            self.assertTrue(self.xclient.get_vm_info(vm.opaque_ref, force=True).power_state.is_running())
+
+        # Again for sync methods
+        with self._create_test_vm() as vm:
             # Start VM sync
             self.xclient.start_vm_sync(vm.opaque_ref)
             # Should be running now
@@ -325,3 +356,83 @@ class TestAzureClient(UDSTransactionTestCase):
             self.xclient.stop_vm_sync(vm.opaque_ref)
             # Should be stopped now
             self.assertTrue(self.xclient.get_vm_info(vm.opaque_ref, force=True).power_state.is_stopped())
+
+            # Reset sync
+            self.xclient.reset_vm_sync(vm.opaque_ref)
+            # Should be running now
+            self.assertTrue(self.xclient.get_vm_info(vm.opaque_ref, force=True).power_state.is_running())
+
+    def test_suspend_resume_shutdown_vm(self):
+        non_existing_vm = 'OpaqueRef:non-existing-vm'
+        with self.assertRaises(xen_exceptions.XenNotFoundError):
+            self.xclient.suspend_vm(non_existing_vm)
+
+        with self.assertRaises(xen_exceptions.XenNotFoundError):
+            self.xclient.suspend_vm_sync(non_existing_vm)
+
+        with self.assertRaises(xen_exceptions.XenNotFoundError):
+            self.xclient.resume_vm(non_existing_vm)
+
+        with self.assertRaises(xen_exceptions.XenNotFoundError):
+            self.xclient.resume_vm_sync(non_existing_vm)
+
+        with self.assertRaises(xen_exceptions.XenNotFoundError):
+            self.xclient.shutdown_vm(non_existing_vm)
+
+        with self.assertRaises(xen_exceptions.XenNotFoundError):
+            self.xclient.shutdown_vm_sync(non_existing_vm)
+
+        with self._create_test_vm() as vm:
+            # Start VM, should be a task
+            task_id = self.xclient.start_vm(vm.opaque_ref)
+            self.assertIsInstance(task_id, str)
+            # Wait task to finish
+            helpers.waiter(lambda: self.xclient.get_task_info(task_id).is_done())
+            # Should be running now
+            self.assertTrue(self.xclient.get_vm_info(vm.opaque_ref, force=True).power_state.is_running())
+
+            # Suspend VM, should be a task
+            task_id = self.xclient.suspend_vm(vm.opaque_ref)
+            self.assertIsInstance(task_id, str)
+            # Wait task to finish
+            helpers.waiter(lambda: self.xclient.get_task_info(task_id).is_done())
+            # And until it is really stopped/suspended
+            helpers.waiter(lambda: self.xclient.get_vm_info(vm.opaque_ref, force=True).power_state.is_stopped())
+
+            # Resume VM, should be a task
+            task_id = self.xclient.resume_vm(vm.opaque_ref)
+            self.assertIsInstance(task_id, str)
+            # Wait task to finish
+            helpers.waiter(lambda: self.xclient.get_task_info(task_id).is_done())
+            # And until it is really running
+            helpers.waiter(lambda: self.xclient.get_vm_info(vm.opaque_ref, force=True).power_state.is_running())
+
+            # Shutdown VM, should be a task
+            task_id = self.xclient.shutdown_vm(vm.opaque_ref)
+            self.assertIsInstance(task_id, str)
+            # Wait task to finish
+            helpers.waiter(lambda: self.xclient.get_task_info(task_id).is_done())
+            # And until it is really stopped/suspended
+            helpers.waiter(lambda: self.xclient.get_vm_info(vm.opaque_ref, force=True).power_state.is_stopped())
+
+        # Again for sync methods
+        with self._create_test_vm() as vm:
+            # Start VM sync
+            self.xclient.start_vm_sync(vm.opaque_ref)
+            # Wait until it is really running
+            helpers.waiter(lambda: self.xclient.get_vm_info(vm.opaque_ref, force=True).power_state.is_running())
+
+            # Suspend VM sync
+            self.xclient.suspend_vm_sync(vm.opaque_ref)
+            # Wait until it is really stopped/suspended
+            helpers.waiter(lambda: self.xclient.get_vm_info(vm.opaque_ref, force=True).power_state.is_stopped())
+
+            # Resume VM sync
+            self.xclient.resume_vm_sync(vm.opaque_ref)
+            # Wait until it is really running
+            helpers.waiter(lambda: self.xclient.get_vm_info(vm.opaque_ref, force=True).power_state.is_running())
+
+            # Shutdown VM sync
+            self.xclient.shutdown_vm_sync(vm.opaque_ref)
+            # Wait until it is really stopped/suspended
+            helpers.waiter(lambda: self.xclient.get_vm_info(vm.opaque_ref, force=True).power_state.is_stopped())

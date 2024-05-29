@@ -233,7 +233,10 @@ def cached(
         If `args` and `kwargs` are not provided, all parameters (except `*args` and `**kwargs`) will be used for building the cache key.
 
     Note:
-        The `key_helper` function will receive the first argument of the function (`self`) and must return a string that will be appended to the cache key.
+        * The `key_helper` function will receive the first argument of the function (`self`) and must return a string that will be appended to the cache key.
+        * Also the cached decorator, if no args provided, must be the last decorator unless all underlying decorators uses functools.wraps
+          This is because the decorator will try to infer the parameters from the function signature, 
+          and if the function signature is not available, it will cache the result no matter the parameters.
     """
     from uds.core.util.cache import Cache  # To avoid circular references
 

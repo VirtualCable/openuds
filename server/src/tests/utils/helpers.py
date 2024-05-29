@@ -89,12 +89,12 @@ def limited_iterator(
     raise Exception(f'Limit reached: {current}/{limit}: {until_checker()}')
 
 
-def waiter(checker: typing.Callable[[], bool], timeout: int = 64, msg: typing.Optional[str] = None) -> None:
+def waiter(finish_checker: typing.Callable[[], bool], timeout: int = 64, msg: typing.Optional[str] = None) -> None:
     start_time = time.time()
     for _ in limited_iterator(lambda: time.time() - start_time < timeout):
-        if checker():
+        if finish_checker():
             break
-        logger.info('Waiting for %s: %s', msg or 'operation', time.time() - start_time)
+        # logger.info('Waiting for %s: %s', msg or 'operation', time.time() - start_time)
         time.sleep(2)
 
     if msg:
