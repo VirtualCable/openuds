@@ -256,7 +256,7 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
         with self.provider().get_connection() as api:
             api.convert_to_template(vm_opaque_ref, self.shadow.value)
 
-    def start_deploy_from_template(self, template_opaque_ref: str, *, name: str, comments: str) -> str:
+    def deploy_from_template(self, template_opaque_ref: str, *, name: str, comments: str) -> str:
         """
         Deploys a virtual machine on selected cluster from selected template
 
@@ -273,7 +273,7 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
         with self.provider().get_connection() as api:
             self.has_datastore_space()
 
-            return api.start_deploy_from_template(template_opaque_ref, name)
+            return api.deploy_from_template(template_opaque_ref, name)
 
     def delete_template(self, template_opaque_ref: str) -> None:
         """
@@ -282,10 +282,10 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
         with self.provider().get_connection() as api:
             api.delete_template(template_opaque_ref)
 
-    def configure_machine(self, vm_opaque_ref: str, mac: str) -> None:
+    def configure_vm(self, vm_opaque_ref: str, mac: str) -> None:
         with self.provider().get_connection() as api:
             api.configure_vm(
-                vm_opaque_ref, net_info={'network': self.network.value, 'mac': mac}, memory=self.memory.value
+                vm_opaque_ref, mac_info={'network': self.network.value, 'mac': mac}, memory=self.memory.value
             )
 
     def get_ip(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> str:

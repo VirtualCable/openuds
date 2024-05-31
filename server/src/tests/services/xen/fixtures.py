@@ -132,6 +132,8 @@ DEF_VMS_INFO: typing.Final[list[xen_types.VMInfo]] = [
         snapshot_time=datetime.datetime(2024, 1, 1, 0, 0, 0),
         # For testing, snapshot refers to itself 3 times, just for testing...
         snapshots=[f'OpaqueRef:12345678-1234-1234-1234-1234567890{i:02x}'] * 3,
+        VIFs=[],
+        VBDs=[],
         allowed_operations=[
             xen_types.VMOperations.START,
             xen_types.VMOperations.CLONE,
@@ -153,6 +155,7 @@ DEF_TASK_INFO: typing.Final[xen_types.TaskInfo] = xen_types.TaskInfo(
     status=xen_types.TaskStatus.SUCCESS,
     result=DEF_VMS_INFO[0].opaque_ref,
     progress=100,
+    error_info=[],
 )
 
 DEF_FOLDERS: list[str] = list(set(vm.folder for vm in DEF_VMS_INFO))
@@ -392,7 +395,7 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
         partial_args=(VMS_INFO, 'folder'),
     ),
     AutoSpecMethodInfo(
-        client.XenClient.start_deploy_from_template,
+        client.XenClient.deploy_from_template,
         returns=GENERAL_OPAQUE_REF,
     ),
 ]

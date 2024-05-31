@@ -120,8 +120,8 @@ class TestXenLinkedService(UDSTestCase):
             api = typing.cast(mock.MagicMock, provider._api)
             service = fixtures.create_service_linked(provider=provider)
 
-            service.start_deploy_from_template('template_opaque_ref', name='name', comments='comments')
-            api.start_deploy_from_template.assert_called_with('template_opaque_ref', 'name')
+            service.deploy_from_template('template_opaque_ref', name='name', comments='comments')
+            api.deploy_from_template.assert_called_with('template_opaque_ref', 'name')
 
     def test_delete_template(self) -> None:
         with fixtures.patched_provider() as provider:
@@ -136,10 +136,10 @@ class TestXenLinkedService(UDSTestCase):
             api = typing.cast(mock.MagicMock, provider._api)
             service = fixtures.create_service_linked(provider=provider)
 
-            service.configure_machine('vm_opaque_ref', '00:01:02:03:04:05')
+            service.configure_vm('vm_opaque_ref', '00:01:02:03:04:05')
             api.configure_vm.assert_called_once_with(
                 'vm_opaque_ref',
-                net_info={'network': service.network.value, 'mac': '00:01:02:03:04:05'},
+                mac_info={'network': service.network.value, 'mac': '00:01:02:03:04:05'},
                 memory=service.memory.value,
             )
 

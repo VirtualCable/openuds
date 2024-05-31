@@ -344,6 +344,8 @@ class VMInfo:
     is_a_template: bool
     snapshot_time: datetime.datetime
     snapshots: list[str]
+    VIFs: list[str]  # List of VIFs UUIDs
+    VBDs: list[str]  # List of VDBs UUIDs
     allowed_operations: typing.List[VMOperations]
 
     # Other useful configuration
@@ -370,6 +372,8 @@ class VMInfo:
             is_a_template=data['is_a_template'],
             snapshot_time=snapshot_time,
             snapshots=typing.cast(list[str], data.get('snapshots', [])),
+            VIFs=typing.cast(list[str], data.get('VIFs', [])),
+            VBDs=typing.cast(list[str], data.get('VBDs', [])),
             allowed_operations=[VMOperations.from_str(op) for op in data['allowed_operations']],
             folder=other_config.get('folder', ''),
         )
@@ -386,6 +390,8 @@ class VMInfo:
             is_a_template=False,
             snapshot_time=datetime.datetime.now(),
             snapshots=[],
+            VIFs=[],
+            VBDs=[],
             allowed_operations=[],
             folder='',
         )
@@ -451,6 +457,7 @@ class TaskInfo:
     status: TaskStatus
     result: str
     progress: float
+    error_info: list[str]
 
     @staticmethod
     def from_dict(data: dict[str, typing.Any], opaque_ref: str) -> 'TaskInfo':
@@ -477,6 +484,7 @@ class TaskInfo:
             status=TaskStatus.from_str(data['status']),
             result=result,
             progress=float(data['progress']),
+            error_info=typing.cast(list[str], data.get('error_info', [])),
         )
 
     @staticmethod
@@ -486,11 +494,12 @@ class TaskInfo:
             uuid='',
             name='Unknown',
             description='Unknown task',
-            created=datetime.datetime.now(),
-            finished=datetime.datetime.now(),
+            created=datetime.datetime.now(datetime.timezone.utc),
+            finished=datetime.datetime.now(datetime.timezone.utc),
             status=TaskStatus.UNKNOW,
             result='',
-            progress=0.0,
+            progress=1.0,
+            error_info=[],
         )
 
     def is_done(self) -> bool:
@@ -501,3 +510,8 @@ class TaskInfo:
 
     def is_failure(self) -> bool:
         return self.status.is_failure()
+
+
+class MacTypeSetter(typing.TypedDict):
+    mac: str
+    network: str

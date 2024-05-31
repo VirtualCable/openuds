@@ -224,4 +224,4 @@ class TestXenProvider(UDSTransactionTestCase):
             FOLDER = VM.folder
             VMS_IN_FOLDER = [vm for vm in fixtures.VMS_INFO if vm.folder == FOLDER]
             self.assertEqual(api.list_vms_in_folder(FOLDER), VMS_IN_FOLDER)
-            self.assertEqual(api.start_deploy_from_template(VM.opaque_ref, 'new-name'), fixtures.GENERAL_OPAQUE_REF)
+            self.assertEqual(api.deploy_from_template(VM.opaque_ref, 'new-name'), fixtures.GENERAL_OPAQUE_REF)

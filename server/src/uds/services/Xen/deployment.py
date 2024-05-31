@@ -140,7 +140,7 @@ class XenLinkedUserService(DynamicUserService, autoserializable.AutoSerializable
         )  # oVirt don't let us to create machines with more than 15 chars!!!
         comments = 'UDS Linked clone'
 
-        self._task = self.service().start_deploy_from_template(template_id, name=name, comments=comments)
+        self._task = self.service().deploy_from_template(template_id, name=name, comments=comments)
         if not self._task:
             raise Exception('Can\'t create machine')
 
@@ -150,7 +150,7 @@ class XenLinkedUserService(DynamicUserService, autoserializable.AutoSerializable
         """
         with self.service().provider().get_connection() as api:
             api.provision_vm(self._vmid)  # Let's try this in "sync" mode, this must be fast enough
-            self.service().configure_machine(self._vmid, self.get_unique_id())
+            self.service().configure_vm(self._vmid, self.get_unique_id())
 
     def op_create_checker(self) -> types.states.TaskState:
         """
