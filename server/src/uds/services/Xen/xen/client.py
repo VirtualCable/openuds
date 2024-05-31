@@ -235,10 +235,10 @@ class XenClient:  # pylint: disable=too-many-public-methods
     def logout(self) -> None:
         if self._logged_in:
             try:
-                self._session.logout()
+                self._session.xenapi.logout()
+                self._session.transport.close()
             except Exception as e:
                 logger.warning('Error logging out: %s', e)
-            self._session = None
 
         self._logged_in = False
         self._session = None

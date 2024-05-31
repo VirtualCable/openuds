@@ -98,6 +98,9 @@ class TestXenClient(UDSTransactionTestCase):
         if sr is None:
             self.skipTest(f'No SR found (by name) with name {v["sr"]}')
         self.sr = sr
+        
+    def tearDown(self) -> None:
+        self.xclient.logout()  # Ensure we logout
 
     @contextlib.contextmanager
     def _create_empty_disk(
