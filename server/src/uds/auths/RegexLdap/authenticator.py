@@ -497,7 +497,7 @@ class RegexLdap(auths.Authenticator):
         try:
             if (
                 len(
-                    ensure.is_list(
+                    ensure.as_list(
                         con.search_ext_s(  # pyright: ignore reportUnknownMemberType
                             base=self.ldap_base.as_str(),
                             scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportUnknownMemberType
@@ -520,7 +520,7 @@ class RegexLdap(auths.Authenticator):
         try:
             if (
                 len(
-                    ensure.is_list(
+                    ensure.as_list(
                         con.search_ext_s(  # pyright: ignore reportUnknownMemberType
                             base=self.ldap_base.as_str(),
                             scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportUnknownMemberType
@@ -546,7 +546,7 @@ class RegexLdap(auths.Authenticator):
             try:
                 if (
                     len(
-                        ensure.is_list(
+                        ensure.as_list(
                             con.search_ext_s(  # pyright: ignore reportUnknownMemberType
                                 base=self.ldap_base.as_str(),
                                 scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportUnknownMemberType

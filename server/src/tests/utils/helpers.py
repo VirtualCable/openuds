@@ -45,7 +45,6 @@ def random_string(size: int = 6, chars: typing.Optional[str] = None) -> str:
         random.choice(chars) for _ in range(size)  # nosec: Not used for cryptography, just for testing
     )
 
-
 def random_utf8_string(size: int = 6) -> str:
     # Generate a random utf-8 string of length "length"
     # some utf-8 non ascii chars are generated, but not all of them
@@ -66,8 +65,18 @@ def random_ip() -> str:
     )
 
 
-def random_mac() -> str:
-    return ':'.join(random_string(2, '0123456789ABCDEF') for _ in range(6))
+def random_mac(mac_range: typing.Optional[str] = None) -> str:
+    if not mac_range:
+        return ':'.join(random_string(2, '0123456789ABCDEF') for _ in range(6))
+    else: # Mac range is like 00:15:5D:10:00:00-00:15:5D:FF:FF:FF
+        start, end = mac_range.split('-')
+        # Convert to integers
+        start = start.split(':')
+        end = end.split(':')
+        start_n = int(''.join(start), 16)
+        end_n = int(''.join(end), 16)
+        mac = random.randint(start_n, end_n)
+        return ':'.join(f'{mac:012X}'[i:i + 2] for i in range(0, 12, 2))
 
 
 def limited_iterator(

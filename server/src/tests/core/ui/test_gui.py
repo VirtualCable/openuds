@@ -78,10 +78,10 @@ class GuiTest(UDSTestCase):
         # 1. Empty list
         # 2.- single string
         # 3.- A list of strings
-        self.assertEqual(ensure.is_list([]), [])
-        self.assertEqual(ensure.is_list('aaaa'), ['aaaa'])
-        self.assertEqual(ensure.is_list(['a', 'b']), ['a', 'b'])
-        self.assertEqual(ensure.is_list(1), [1])
+        self.assertEqual(ensure.as_list([]), [])
+        self.assertEqual(ensure.as_list('aaaa'), ['aaaa'])
+        self.assertEqual(ensure.as_list(['a', 'b']), ['a', 'b'])
+        self.assertEqual(ensure.as_list(1), [1])
 
     def test_choice_image(self) -> None:
         # id, text, and base64 image

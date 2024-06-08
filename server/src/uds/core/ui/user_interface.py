@@ -1552,7 +1552,7 @@ class UserInterface(metaclass=UserInterfaceType):
         fields: gui.ValuesDictType = {}
         for fld, fld_gui in self._gui.items():
             if fld_gui.is_type(types.ui.FieldType.EDITABLELIST, types.ui.FieldType.MULTICHOICE):
-                fields[fld] = ensure.is_list(fld_gui.value)
+                fields[fld] = ensure.as_list(fld_gui.value)
             else:
                 fields[fld] = fld_gui.value
         logger.debug('Values Dict: %s', fields)

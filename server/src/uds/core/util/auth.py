@@ -104,7 +104,7 @@ def process_regex_field(
                 if '+' in attr_name:
                     attrs_list = attr_name.split('+')
                     # Check all attributes are present, and has only one value
-                    attrs_values = [ensure.is_list(attributes.get(a, [''])) for a in attrs_list]
+                    attrs_values = [ensure.as_list(attributes.get(a, [''])) for a in attrs_list]
                     if not all([len(v) <= 1 for v in attrs_values]):
                         logger.warning(
                             'Attribute %s do not has exactly one value, skipping %s', attr_name, line
@@ -115,9 +115,9 @@ def process_regex_field(
                 elif '**' in attr_name:
                     # Prepend the value after : to attribute value before :
                     attr, prependable = attr_name.split('**')
-                    val = [prependable + a for a in ensure.is_list(attributes.get(attr, []))]
+                    val = [prependable + a for a in ensure.as_list(attributes.get(attr, []))]
                 else:
-                    val = ensure.is_list(attributes.get(attr_name, []))
+                    val = ensure.as_list(attributes.get(attr_name, []))
                 return val
             except Exception as e:
                 logger.warning('Error processing attribute %s (%s): %s', attr_name, attributes, e)

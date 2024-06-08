@@ -631,7 +631,7 @@ class XenClient:  # pylint: disable=too-many-public-methods
         snapshots = self.VM.get_snapshots(vm_opaque_ref)
 
         if not full_info:
-            return [xen_types.VMInfo.empty(snapshot) for snapshot in snapshots]
+            return [xen_types.VMInfo.null(snapshot) for snapshot in snapshots]
 
         # Return full info, thatis, name, id and snapshot_time
         return sorted(

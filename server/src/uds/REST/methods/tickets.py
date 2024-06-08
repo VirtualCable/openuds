@@ -174,7 +174,7 @@ class Tickets(Handler):
             # Some machines needs password, depending on configuration
 
             groupIds: list[str] = []
-            for groupName in ensure.is_list(self.get_param('groups')):
+            for groupName in ensure.as_list(self.get_param('groups')):
                 try:
                     groupIds.append(auth.groups.get(name=groupName).uuid or '')
                 except Exception:

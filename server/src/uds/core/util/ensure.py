@@ -32,7 +32,7 @@ import typing
 import collections.abc
 
 
-def is_list(obj: typing.Any) -> list[typing.Any]:
+def as_list(obj: typing.Any) -> list[typing.Any]:
     """
     Checks if the given object is a list or can be converted into a list.
 
@@ -40,24 +40,27 @@ def is_list(obj: typing.Any) -> list[typing.Any]:
         obj (Any): The object to check.
 
     Returns:
-        list[Any]: If the object is a list, it is returned as is. 
-                   If the object is a string or bytes, it is wrapped in a list and returned. 
+        list[Any]: If the object is a list, it is returned as is.
+                   If the object is a string or bytes, it is wrapped in a list and returned.
                    If the object is not iterable, a list containing the object is returned.
 
     """
-    if not obj:
+    if obj is None:
         return []
 
-    if isinstance(obj, (str, bytes)):
+    if isinstance(obj, (str, bytes, dict)):
         return [obj]
 
+    if isinstance(obj, list):
+        return typing.cast(list[typing.Any], obj)
+    
     try:
         return list(obj)
     except Exception:  # Not iterable (list will fail)
         return [obj]
 
 
-def is_iterable(obj: typing.Any) -> typing.Generator[typing.Any, None, None]:
+def as_iterable(obj: typing.Any) -> typing.Generator[typing.Any, None, None]:
     """Returns an iterable object from a single object or a list of objects
 
     Args:
@@ -72,7 +75,7 @@ def is_iterable(obj: typing.Any) -> typing.Generator[typing.Any, None, None]:
     if not obj:
         return
 
-    if isinstance(obj, (str, bytes)):
+    if isinstance(obj, (str, bytes, dict)):
         yield obj
     else:
         if isinstance(obj, collections.abc.Iterable):

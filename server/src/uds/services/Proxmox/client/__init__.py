@@ -332,7 +332,7 @@ class ProxmoxClient:
             minMemory (int, optional): Minimum memory required. Defaults to 0.
             mustHaveVGPUS (typing.Optional[bool], optional): If the node must have VGPUS. True, False or None (don't care). Defaults to None.
         '''
-        best = types.NodeStats.empty()
+        best = types.NodeStats.null()
         node: types.NodeStats
 
         # Function to calculate the weight of a node

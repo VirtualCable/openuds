@@ -213,7 +213,7 @@ def validate_path(
     return path
 
 
-def validate_port(port: typing.Union[str, int], field_name: typing.Optional[str] = None) -> int:
+def validate_port(port: typing.Union[str, int], *, field_name: typing.Optional[str] = None, valid_default: typing.Optional[int] = None) -> int:
     """
     Validates that a port number is valid
 
@@ -226,6 +226,8 @@ def validate_port(port: typing.Union[str, int], field_name: typing.Optional[str]
     Raises:
         exceptions.ValidationException: if port is not valid
     """
+    if valid_default is not None and port == valid_default:
+        return valid_default
     return validate_numeric(port, min_value=1, max_value=65535, field_name=field_name or 'Port')
 
 

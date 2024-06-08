@@ -507,7 +507,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         try:
             if (
                 len(
-                    ensure.is_list(
+                    ensure.as_list(
                         con.search_ext_s(  # pyright: ignore reportGeneralTypeIssues
                             base=self.ldap_base.as_str(),
                             scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportGeneralTypeIssues
@@ -522,7 +522,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
 
             if (
                 len(
-                    ensure.is_list(
+                    ensure.as_list(
                         con.search_ext_s(  # pyright: ignore reportGeneralTypeIssues
                             base=self.ldap_base.as_str(),
                             scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportGeneralTypeIssues
@@ -537,7 +537,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
 
             if (
                 len(
-                    ensure.is_list(
+                    ensure.as_list(
                         con.search_ext_s(  # pyright: ignore reportGeneralTypeIssues
                             base=self.ldap_base.as_str(),
                             scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportGeneralTypeIssues
@@ -554,7 +554,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
 
             if (
                 len(
-                    ensure.is_list(
+                    ensure.as_list(
                         con.search_ext_s(  # pyright: ignore reportGeneralTypeIssues
                             base=self.ldap_base.as_str(),
                             scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportGeneralTypeIssues
@@ -571,7 +571,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
 
             if (
                 len(
-                    ensure.is_list(
+                    ensure.as_list(
                         con.search_ext_s(  # pyright: ignore reportGeneralTypeIssues
                             base=self.ldap_base.as_str(),
                             scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportGeneralTypeIssues
@@ -588,7 +588,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                     )
                 )
 
-            res = ensure.is_list(
+            res = ensure.as_list(
                 con.search_ext_s(  # pyright: ignore reportGeneralTypeIssues
                     base=self.ldap_base.as_str(),
                     scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportGeneralTypeIssues

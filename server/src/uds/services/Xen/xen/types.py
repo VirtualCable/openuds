@@ -379,7 +379,7 @@ class VMInfo:
         )
 
     @staticmethod
-    def empty(opaque_ref: str) -> 'VMInfo':
+    def null(opaque_ref: str) -> 'VMInfo':
         return VMInfo(
             opaque_ref=opaque_ref,
             uuid='',

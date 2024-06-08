@@ -243,7 +243,7 @@ class ServerStats:
         }
 
     @staticmethod
-    def empty() -> 'ServerStats':
+    def null() -> 'ServerStats':
         return ServerStats()
 
     def __str__(self) -> str:
@@ -261,7 +261,7 @@ class ServerCounter(typing.NamedTuple):
         if data is None:
             return None
         
-        return ServerCounter(*ensure.is_iterable(data))
+        return ServerCounter(*ensure.as_iterable(data))
 
     @staticmethod
     def null() -> 'ServerCounter':

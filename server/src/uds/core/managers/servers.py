@@ -175,7 +175,7 @@ class ServerManager(metaclass=singleton.Singleton):
             self.increment_unmanaged_usage(best_with_counter[0].uuid)
             best = (
                 best_with_counter[0],
-                types.servers.ServerStats.empty(),
+                types.servers.ServerStats.null(),
             )
 
         # If best was locked, notify it (will be notified again on assign)

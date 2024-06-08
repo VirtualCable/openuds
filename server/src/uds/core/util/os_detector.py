@@ -83,30 +83,30 @@ def detect_os(
                 break
     else:
         # Try to detect browser from User-Agent
-        match = None
+        found = None
 
         browser_type = None
         for browser_type, rules in consts.os.BROWSER_RULES.items():
             must, must_not = rules
 
             for must_re in consts.os.BROWSERS_RE[must]:
-                match = must_re.search(ua)
-                if match is None:
+                found = must_re.search(ua)
+                if found is None:
                     continue
                 # Check against no maching rules
                 for mustNotREs in must_not:
                     for cre in consts.os.BROWSERS_RE[mustNotREs]:
                         if cre.search(ua) is not None:
-                            match = None
+                            found = None
                             break
-                    if match is None:
+                    if found is None:
                         break
-                if match is not None:
+                if found is not None:
                     break
-            if match is not None:
+            if found is not None:
                 break
 
-        if match is not None:
+        if found is not None:
             res.browser = browser_type or types.os.KnownBrowser.OTHER
             res.version = '0.0'
 

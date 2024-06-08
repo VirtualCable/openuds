@@ -72,7 +72,7 @@ def checkResult(lst: typing.Any) -> tuple[collections.abc.Mapping[str, typing.An
     return xml2dict.parse(checkResultRaw(lst)), lst[1]
 
 
-as_iterable = ensure.is_iterable
+as_iterable = ensure.as_iterable
 
 
 class OpenNebulaClient:  # pylint: disable=too-many-public-methods
