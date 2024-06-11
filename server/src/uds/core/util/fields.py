@@ -346,9 +346,33 @@ def soft_shutdown_field(
         old_field_name=old_field_name,
     )
 
+def soft_reset_field(
+    order: int = 104,
+    tab: 'types.ui.Tab|str|None' = types.ui.Tab.ADVANCED,
+    old_field_name: typing.Optional[str] = None,
+) -> ui.gui.ChoiceField:
+    """
+    Returns a field to select the type of reset to perform
+    soft: Soft reset
+    hard: Hard reset
+    """
+    return ui.gui.ChoiceField(
+        label=_('Reset type'),
+        order=order,
+        tooltip=_('Type of reset to perform'),
+        choices=[
+            ui.gui.choice_item('soft', _('Soft reset')),
+            ui.gui.choice_item('hard', _('Hard reset')),
+        ],
+        tab=tab,
+        default='hard',
+        old_field_name=old_field_name,
+    )
+        
+        
 
 def maintain_on_error_field(
-    order: int = 104,
+    order: int = 105,
     tab: 'types.ui.Tab|str|None' = types.ui.Tab.ADVANCED,
     old_field_name: typing.Optional[str] = None,
 ) -> ui.gui.CheckBoxField:
