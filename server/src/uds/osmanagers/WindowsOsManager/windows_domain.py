@@ -109,7 +109,7 @@ class WinDomainOsManager(WindowsOsManager):
     )
 
     server_hint = gui.TextField(
-        length=64,
+        length=512,
         label=_('Server Hint'),
         order=9,
         tooltip=_(
@@ -155,7 +155,19 @@ class WinDomainOsManager(WindowsOsManager):
 
     def _get_server_list(self) -> collections.abc.Iterable[tuple[str, int]]:
         if self.server_hint.as_str() != '':
-            yield (self.server_hint.as_str(), 389)
+            # Split by commas
+            for i in self.server_hint.as_str().split(','):
+                match i.strip():
+                    case '':
+                        continue
+                    case '#':
+                        return
+                    case _:
+                        if ':' in i:
+                            host, port = i.split(':')
+                            yield (host, int(port))
+                        else:
+                            yield (i, 389)
 
         server: typing.Any
 
