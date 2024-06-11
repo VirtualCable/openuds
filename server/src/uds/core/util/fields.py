@@ -346,6 +346,7 @@ def soft_shutdown_field(
         old_field_name=old_field_name,
     )
 
+
 def soft_reset_field(
     order: int = 104,
     tab: 'types.ui.Tab|str|None' = types.ui.Tab.ADVANCED,
@@ -368,8 +369,7 @@ def soft_reset_field(
         default='hard',
         old_field_name=old_field_name,
     )
-        
-        
+
 
 def maintain_on_error_field(
     order: int = 105,
