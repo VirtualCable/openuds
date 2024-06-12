@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-UDS Service modules interfaces and classes.
+UDS Service generics modules interfaces and classes.
 
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """

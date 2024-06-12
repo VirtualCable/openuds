@@ -331,6 +331,18 @@ class Storage:
 
     def read(self, skey: typing.Union[str, bytes]) -> typing.Optional[typing.Union[str, bytes]]:
         return self.read_from_db(skey)
+    
+    def read_string(self, skey: typing.Union[str, bytes]) -> typing.Optional[str]:
+        data = self.read(skey)
+        if isinstance(data, bytes):
+            return data.decode('utf-8')
+        return data
+    
+    def read_bytes(self, skey: typing.Union[str, bytes]) -> typing.Optional[bytes]:
+        data = self.read(skey)
+        if isinstance(data, str):
+            return data.encode('utf-8')
+        return data
 
     def read_pickled(self, skey: typing.Union[str, bytes]) -> typing.Any:
         v = self.read_from_db(skey, True)
