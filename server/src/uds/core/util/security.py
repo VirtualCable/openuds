@@ -126,29 +126,29 @@ def create_client_sslcontext(verify: bool = True) -> ssl.SSLContext:
     Returns:
         A SSLContext object.
     """
-    sslContext = ssl.create_default_context(
+    ssl_context = ssl.create_default_context(
         purpose=ssl.Purpose.SERVER_AUTH, cafile=certifi.where()
     )
     if not verify:
-        sslContext.check_hostname = False
-        sslContext.verify_mode = ssl.VerifyMode.CERT_NONE
+        ssl_context.check_hostname = False
+        ssl_context.verify_mode = ssl.VerifyMode.CERT_NONE
 
     # Disable TLS1.0 and TLS1.1, SSLv2 and SSLv3 are disabled by default
     # Next line is deprecated in Python 3.7
     # sslContext.options |= ssl.OP_NO_TLSv1 | ssl.OP_NO_TLSv1_1 | ssl.OP_NO_SSLv2 | ssl.OP_NO_SSLv3
     if hasattr(settings, 'SECURE_MIN_TLS_VERSION') and settings.SECURE_MIN_TLS_VERSION:
         # format is "1.0, 1.1, 1.2 or 1.3", convert to ssl.TLSVersion.TLSv1_0, ssl.TLSVersion.TLSv1_1, ssl.TLSVersion.TLSv1_2 or ssl.TLSVersion.TLSv1_3
-        sslContext.minimum_version = getattr(
+        ssl_context.minimum_version = getattr(
             ssl.TLSVersion, 'TLSv' + settings.SECURE_MIN_TLS_VERSION.replace('.', '_')
         )
     else:
-        sslContext.minimum_version = ssl.TLSVersion.TLSv1_2
+        ssl_context.minimum_version = ssl.TLSVersion.TLSv1_2
 
-    sslContext.maximum_version = ssl.TLSVersion.MAXIMUM_SUPPORTED
+    ssl_context.maximum_version = ssl.TLSVersion.MAXIMUM_SUPPORTED
     if hasattr(settings, 'SECURE_CIPHERS') and settings.SECURE_CIPHERS:
-        sslContext.set_ciphers(settings.SECURE_CIPHERS)
+        ssl_context.set_ciphers(settings.SECURE_CIPHERS)
 
-    return sslContext
+    return ssl_context
 
 
 def check_certificate_matches_private_key(*, cert: str, key: str) -> bool:
