@@ -196,6 +196,15 @@ class AutoSerializable(UDSTestCase):
         b.list_field.append(1)
         b.list_field.append(2)
         self.assertEqual(b.list_field, [1, 2])
+        
+        b.list_field = [0]
+        self.assertEqual(b.list_field, [0])
+        b.list_field.append(1)
+        marshalled_data = b.marshal()
+        bb = SimpleListFieldDefault()
+        bb.unmarshal(marshalled_data)
+        self.assertEqual(bb.list_field, [0, 1])
+        
 
     def test_auto_serializable_derived(self) -> None:
         instance = DerivedAutoSerializableClass()

@@ -136,7 +136,7 @@ class ProxmoxUserserviceLinked(DynamicUserService):
             return types.states.TaskState.RUNNING  # Try again later
 
         if task.is_errored():
-            return self._error(task.exitstatus)
+            return self.error(task.exitstatus)
 
         if task.is_completed():
             return types.states.TaskState.FINISHED

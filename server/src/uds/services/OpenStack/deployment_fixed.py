@@ -96,9 +96,6 @@ class OpenStackUserServiceFixed(FixedUserService, autoserializable.AutoSerializa
         
         return types.states.TaskState.FINISHED
 
-    def process_ready_from_os_manager(self, data: typing.Any) -> types.states.TaskState:
-        return types.states.TaskState.FINISHED
-
     def op_start(self) -> None:
         try:
             server_info = self.service().api.get_server(self._vmid)

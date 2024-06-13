@@ -253,6 +253,13 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         """
         return self.error('Cache for fixed userservices not supported')
 
+    def process_ready_from_os_manager(self, data: typing.Any) -> types.states.TaskState:
+        """
+        By default, process ready from os manager will return finished for most of the fixed services
+        So we provide a default implementation here
+        """
+        return types.states.TaskState.FINISHED
+
     def set_ready(self) -> types.states.TaskState:
         # If already ready, return finished
         try:

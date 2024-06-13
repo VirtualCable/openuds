@@ -131,7 +131,7 @@ class Operation(enum.IntEnum):
     CREATE_COMPLETED = 1002
     START = 1003
     START_COMPLETED = 1004
-    STOP = 1005  # This is a "hard" shutdown, likes a power off
+    STOP = 1005  # This is a "hard" shutdown, like a power off
     STOP_COMPLETED = 1006
     SHUTDOWN = 1007  # This is a "soft" shutdown
     SHUTDOWN_COMPLETED = 1008

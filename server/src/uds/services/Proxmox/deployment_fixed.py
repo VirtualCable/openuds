@@ -102,9 +102,6 @@ class ProxmoxUserServiceFixed(FixedUserService, autoserializable.AutoSerializabl
             
         return types.states.TaskState.FINISHED
 
-    def process_ready_from_os_manager(self, data: typing.Any) -> types.states.TaskState:
-        return types.states.TaskState.FINISHED
-
     def op_start(self) -> None:
         try:
             vminfo = self.service().get_machine_info(int(self._vmid))

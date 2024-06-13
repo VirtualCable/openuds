@@ -208,7 +208,7 @@ class _SerializableField(typing.Generic[T]):
             instance {SerializableFields} -- Instance of class with field
 
         """
-        if hasattr(instance, '_fields'):
+        if hasattr(instance, '_fields'): 
             if self.name in getattr(instance, '_fields'):
                 return getattr(instance, '_fields')[self.name]
             
