@@ -154,7 +154,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
     ) -> None:
         """
         Starts the machine
-        Can return a task, or None if no task is returned
+        Returns None. If a task is needed for anything, use the caller_instance to notify
         """
         ...
 
@@ -162,7 +162,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
     def stop(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
         """
         Stops the machine
-        Can return a task, or None if no task is returned
+        Returns None. If a task is needed for anything, use the caller_instance to notify
         """
         ...
 
@@ -170,9 +170,8 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str
     ) -> None:
         """
-        Shutdowns the machine
-        Defaults to stop_machine
-        Can return a task, or None if no task is returned
+        Shutdowns the machine.  Defaults to stop
+        Returns None. If a task is needed for anything, use the caller_instance to notify
         """
         return self.stop(caller_instance, vmid)
 
@@ -181,7 +180,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
     ) -> None:
         """
         Resets the machine
-        Can return a task, or None if no task is returned
+        Returns None. If a task is needed for anything, use the caller_instance to notify
         """
         # Default is to stop "hard"
         return self.stop(caller_instance, vmid)
@@ -192,6 +191,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
     ) -> None:
         """
         Removes the machine, or queues it for removal, or whatever :)
+        Use the caller_instance to notify anything if needed, or to identify caller
         """
         ...
 

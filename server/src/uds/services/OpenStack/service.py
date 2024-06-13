@@ -35,8 +35,9 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import services, types
-from uds.core.util import fields, validators
+from uds.core import types
+from uds.core.services.generics.dynamic.service import DynamicService
+from uds.core.util import validators
 from uds.core.ui import gui
 
 from .publication import OpenStackLivePublication
@@ -54,8 +55,11 @@ if typing.TYPE_CHECKING:
 
     AnyOpenStackProvider: typing.TypeAlias = typing.Union[OpenStackProvider, OpenStackProviderLegacy]
 
+    from uds.core.services.generics.dynamic.userservice import DynamicUserService
+    from uds.core.services.generics.dynamic.publication import DynamicPublication
 
-class OpenStackLiveService(services.Service):
+
+class OpenStackLiveService(DynamicService):
     """
     OpenStack Live Service
     """
@@ -169,15 +173,15 @@ class OpenStackLiveService(services.Service):
         old_field_name='securityGroups',
     )
 
-    basename = fields.basename_field(order=9, tab=types.ui.Tab.MACHINE)
-    lenname = fields.lenname_field(order=10, tab=types.ui.Tab.MACHINE)
+    basename = DynamicService.basename
+    lenname = DynamicService.lenname
 
-    maintain_on_error = fields.maintain_on_error_field(order=11, tab=types.ui.Tab.MACHINE)
+    maintain_on_error = DynamicService.maintain_on_error
 
     prov_uuid = gui.HiddenField()
 
-    _api: typing.Optional['openstack_client.OpenstackClient'] = None
-    
+    cached_api: typing.Optional['openstack_client.OpenstackClient'] = None
+
     # Note: currently, Openstack does not provides a way of specifying how to stop the server
     # At least, i have not found it on the documentation
 
@@ -190,9 +194,6 @@ class OpenStackLiveService(services.Service):
         """
         if values:
             validators.validate_basename(self.basename.value, self.lenname.as_int())
-
-        # self.ov.value = self.provider().serialize()
-        # self.ev.value = self.provider().env.key
 
     def provider(self) -> 'AnyOpenStackProvider':
         return typing.cast('AnyOpenStackProvider', super().provider())
@@ -223,13 +224,49 @@ class OpenStackLiveService(services.Service):
 
     @property
     def api(self) -> 'openstack_client.OpenstackClient':
-        if not self._api:
-            self._api = self.provider().api(projectid=self.project.value, region=self.region.value)
+        if not self.cached_api:
+            self.cached_api = self.provider().api(projectid=self.project.value, region=self.region.value)
 
-        return self._api
+        return self.cached_api
 
     def sanitized_name(self, name: str) -> str:
         return self.provider().sanitized_name(name)
+
+    def get_ip(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> str:
+        return self.api.get_server(vmid).validated().addresses[0].ip
+
+    def get_mac(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> str:
+        return self.api.get_server(vmid).validated().addresses[0].mac
+
+    def is_running(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> bool:
+        return self.api.get_server(vmid).validated().power_state.is_running()
+
+    def start(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
+        if self.api.get_server(vmid).validated().power_state.is_running():
+            return
+        self.api.start_server(vmid)
+
+    def stop(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
+        if self.api.get_server(vmid).validated().power_state.is_stopped():
+            return
+        self.api.stop_server(vmid)
+
+    # Default shutdown is stop
+    # Note that on openstack, stop is "soft", but may fail to stop if no agent is installed or not responding
+    # We can anyway delete de machine even if it is not stopped
+
+    def reset(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
+        # Default is to stop "hard"
+        return self.stop(caller_instance, vmid)
+
+    def delete(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
+        """
+        Removes the machine, or queues it for removal, or whatever :)
+        """
+        if isinstance(caller_instance, OpenStackLiveUserService):
+            self.api.delete_server(vmid)
+        else:
+            self.api.delete_snapshot(vmid)
 
     def make_template(
         self, template_name: str, description: typing.Optional[str] = None
@@ -270,133 +307,5 @@ class OpenStackLiveService(services.Service):
             security_groups_ids=self.security_groups.value,
         )
 
-    def remove_template(self, templateId: str) -> None:
-        """
-        invokes removeTemplate from parent provider
-        """
-        self.api.delete_snapshot(templateId)
-
-    def get_machine_status(self, vmid: str) -> openstack_types.ServerStatus:
-        vminfo = self.api.get_server(vmid)
-        if vminfo.status in (openstack_types.ServerStatus.ERROR, openstack_types.ServerStatus.DELETED):
-            logger.warning(
-                'Got server status %s for %s: %s',
-                vminfo.status,
-                vmid,
-                vminfo.fault,
-            )
-        return vminfo.status
-
-    def get_machine_power_state(self, vmid: str) -> openstack_types.PowerState:
-        vminfo = self.api.get_server(vmid)
-        return vminfo.power_state
-
-    def start_machine(self, vmid: str) -> None:
-        """
-        Tries to start a machine. No check is done, it is simply requested to OpenStack.
-
-        This start also "resume" suspended/paused machines
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        # if already running, do nothing
-        if self.get_machine_power_state(vmid) == openstack_types.PowerState.RUNNING:
-            return
-        
-        self.api.start_server(vmid)
-
-    def stop_machine(self, vmid: str) -> None:
-        """
-        Tries to stop a machine. No check is done, it is simply requested to OpenStack
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        # If already stopped, do nothing
-        if self.get_machine_power_state(vmid) == openstack_types.PowerState.SHUTDOWN:
-            return
-        
-        self.api.stop_server(vmid)
-
-    def reset_machine(self, vmid: str) -> None:
-        """
-        Tries to stop a machine. No check is done, it is simply requested to OpenStack
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        self.api.reset_server(vmid)
-
-    def suspend_machine(self, vmid: str) -> None:
-        """
-        Tries to suspend a machine. No check is done, it is simply requested to OpenStack
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        # If not running, do nothing
-        if self.get_machine_power_state(vmid) != openstack_types.PowerState.RUNNING:
-            return
-        self.api.suspend_server(vmid)
-
-    def resume_machine(self, vmid: str) -> None:
-        """
-        Tries to start a machine. No check is done, it is simply requested to OpenStack
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        # If not suspended, do nothing
-        if self.get_machine_power_state(vmid) != openstack_types.PowerState.SUSPENDED:
-            return
-        self.api.resume_server(vmid)
-
-    def delete_machine(self, vmid: str) -> None:
-        """
-        Tries to delete a machine. No check is done, it is simply requested to OpenStack
-
-        Args:
-            machineId: Id of the machine
-
-        Returns:
-        """
-        self.api.delete_server(vmid)
-
-    def get_server_address(self, vmid: str) -> openstack_types.ServerInfo.AddresInfo:
-        """
-        Gets the mac address of first nic of the machine
-        """
-        vminfo = self.api.get_server(vmid)
-        return vminfo.addresses[0]
-
-    def get_basename(self) -> str:
-        """
-        Returns the base name
-        """
-        return self.basename.value
-
-    def get_lenname(self) -> int:
-        """
-        Returns the length of numbers part
-        """
-        return int(self.lenname.value)
-
     def is_avaliable(self) -> bool:
         return self.provider().is_available()
-
-    def allows_errored_userservice_cleanup(self) -> bool:
-        return not self.maintain_on_error.value
-
-    def keep_on_error(self) -> bool:
-        return self.maintain_on_error.as_bool()

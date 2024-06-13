@@ -36,7 +36,7 @@ from uds.core import types
 from unittest import mock
 
 from uds.services.OpenStack.openstack import types as openstack_types
-from uds.services.OpenStack.deployment import Operation
+from uds.services.OpenStack.deployment import OldOperation
 
 from . import fixtures
 
@@ -114,7 +114,7 @@ class TestOpenstackLiveDeployment(UDSTransactionTestCase):
                     self.assertNotEqual(userservice._ip, '', f'Error on {to_test} deployment')
 
                     # And queue must be finished
-                    self.assertEqual(userservice._queue, [Operation.FINISH], f'Error on {to_test} deployment')
+                    self.assertEqual(userservice._queue, [OldOperation.FINISH], f'Error on {to_test} deployment')
 
     def test_userservice_cancel(self) -> None:
         """
@@ -143,7 +143,7 @@ class TestOpenstackLiveDeployment(UDSTransactionTestCase):
 
                 self.assertEqual(
                     userservice._queue,
-                    [current_op] + [Operation.STOP, Operation.REMOVE, Operation.FINISH],
+                    [current_op] + [OldOperation.STOP, OldOperation.REMOVE, OldOperation.FINISH],
                 )
 
                 counter = 0

@@ -35,6 +35,8 @@ import typing
 import dataclasses
 import enum
 
+from uds.core.services.generics import exceptions
+
 
 class ServerStatus(enum.StrEnum):
     ACTIVE = 'ACTIVE'  # The server is active.
@@ -212,6 +214,17 @@ class ServerInfo:
     access_addr_ipv6: str
     fault: typing.Optional[str]
     admin_pass: str
+    
+    def validated(self) -> 'ServerInfo':
+        """
+        Raises NotFoundError if server is lost
+        
+        Returns:
+            self
+        """
+        if self.status.is_lost():
+            raise exceptions.NotFoundError(f'Server {self.id} is lost')
+        return self
 
     @staticmethod
     def from_dict(d: dict[str, typing.Any]) -> 'ServerInfo':

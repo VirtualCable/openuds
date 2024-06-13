@@ -61,10 +61,10 @@ EXPECTED_FIELDS: typing.Final[set[str]] = {
     '_check_count'
 }
 
-TEST_QUEUE: typing.Final[list[deployment.Operation]] = [
-    deployment.Operation.CREATE,
-    deployment.Operation.REMOVE,
-    deployment.Operation.RETRY,
+TEST_QUEUE: typing.Final[list[deployment.OldOperation]] = [
+    deployment.OldOperation.CREATE,
+    deployment.OldOperation.REMOVE,
+    deployment.OldOperation.RETRY,
 ]
 
 SERIALIZED_DEPLOYMENT_DATA: typing.Final[typing.Mapping[str, bytes]] = {
@@ -128,26 +128,26 @@ class OpenStackDeploymentSerializationTest(UDSTransactionTestCase):
         self.assertEqual(instance._queue, TEST_QUEUE)
 
         instance._queue = [
-            deployment.Operation.CREATE,
-            deployment.Operation.FINISH,
+            deployment.OldOperation.CREATE,
+            deployment.OldOperation.FINISH,
         ]
         marshaled_data = instance.marshal()
 
         instance = _create_instance(marshaled_data)
         self.assertEqual(
             instance._queue,
-            [deployment.Operation.CREATE, deployment.Operation.FINISH],
+            [deployment.OldOperation.CREATE, deployment.OldOperation.FINISH],
         )
         # Append something remarshall and check
-        instance._queue.insert(0, deployment.Operation.RETRY)
+        instance._queue.insert(0, deployment.OldOperation.RETRY)
         marshaled_data = instance.marshal()
         instance = _create_instance(marshaled_data)
         self.assertEqual(
             instance._queue,
             [
-                deployment.Operation.RETRY,
-                deployment.Operation.CREATE,
-                deployment.Operation.FINISH,
+                deployment.OldOperation.RETRY,
+                deployment.OldOperation.CREATE,
+                deployment.OldOperation.FINISH,
             ],
         )
         # Remove something remarshall and check
@@ -156,7 +156,7 @@ class OpenStackDeploymentSerializationTest(UDSTransactionTestCase):
         instance = _create_instance(marshaled_data)
         self.assertEqual(
             instance._queue,
-            [deployment.Operation.CREATE, deployment.Operation.FINISH],
+            [deployment.OldOperation.CREATE, deployment.OldOperation.FINISH],
         )
 
     def test_autoserialization_fields(self) -> None:

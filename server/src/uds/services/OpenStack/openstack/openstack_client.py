@@ -213,16 +213,16 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
     def _get_compute_endpoint(self) -> str:
         return self._get_endpoint_for('compute', 'compute_legacy')
 
-    def _get_endpoints_iterable(self, cache_key: str, *type_: str) -> list[str]:
+    def _get_endpoints_iterable(self, cache_key: str, *types: str) -> list[str]:
         # If endpoint is cached, use it as first endpoint
-        found_endpoints = list(self._get_endpoints_for(*type_))
+        found_endpoints = list(self._get_endpoints_for(*types))
         if self.cache.get(cache_key) in found_endpoints:
             # If cached endpoint is in the list, use it as first endpoint
             found_endpoints = [self.cache.get(cache_key)] + list(
                 set(found_endpoints) - {self.cache.get(cache_key)}
             )
 
-        logger.debug('Endpoints for %s: %s', type_, found_endpoints)
+        logger.debug('Endpoints for %s: %s', types, found_endpoints)
 
         return found_endpoints
 
@@ -239,8 +239,6 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
         cache_key = ''.join(endpoints_types)
         found_endpoints = self._get_endpoints_iterable(cache_key, *endpoints_types)
         
-        retrayable = False
-
         for i, endpoint in enumerate(found_endpoints):
             try:
                 logger.debug(
@@ -258,11 +256,9 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
                 logger.debug('Result: %s', r.content)
                 return r
             except Exception as e:
-                if isinstance(e, (requests.exceptions.Timeout, requests.exceptions.ConnectionError)):
-                    retrayable = True  # Endpoint is down, can retry if none is working
-                
                 if i == len(found_endpoints) - 1:
-                    if retrayable:
+                    # Endpoint is down, can retry if none is working
+                    if isinstance(e, (requests.exceptions.Timeout, requests.exceptions.ConnectionError)):
                         raise exceptions.RetryableError('All endpoints failed') from e  # With last exception
                     raise e
                 logger.warning('Error requesting %s: %s', endpoint + path, e)
@@ -303,6 +299,9 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
             except Exception as e:
                 # If last endpoint, raise exception
                 if i == len(found_endpoints) - 1:
+                    # Endpoint is down, can retry if none is working
+                    if isinstance(e, (requests.exceptions.Timeout, requests.exceptions.ConnectionError)):
+                        raise exceptions.RetryableError('All endpoints failed') from e  # With last exception
                     raise e
                 logger.warning('Error requesting %s: %s (%s)', endpoint + path, e, error_message)
                 self.cache.remove(cache_key)
@@ -570,7 +569,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
     # Very small timeout, so repeated operations will use same data
     # Any cache time less than 5 seconds will be fine, beceuse checks on 
     # openstack are done every 5 seconds
-    @decorators.cached(prefix='svr', timeout=4, key_helper=cache_key_helper)
+    @decorators.cached(prefix='svr', timeout=consts.cache.SHORTEST_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def get_server(self, server_id: str) -> openstack_types.ServerInfo:
         r = self._request_from_endpoint(
             'get',
@@ -753,6 +752,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
 
     def stop_server(self, server_id: str) -> None:
         # this does not returns anything
+        # {"os-resetState": {"state": "error"}}
         self._request_from_endpoint(
             'post',
             endpoints_types=COMPUTE_ENDPOINT_TYPES,
@@ -761,6 +761,21 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
             error_message='Stoping server',
             expects_json=False,
         )
+        
+    def reboot_server(self, server_id: str, hard: bool = True) -> None:
+        # Does not need return value
+        try:
+            type_reboot = 'HARD' if hard else 'SOFT'
+            self._request_from_endpoint(
+                'post',
+                endpoints_types=COMPUTE_ENDPOINT_TYPES,
+                path=f'/servers/{server_id}/action',
+                data=f'{"reboot":{"type":"{type_reboot}"}}',
+                error_message='Rebooting server',
+                expects_json=False,
+            )
+        except Exception:
+            pass
 
     def suspend_server(self, server_id: str) -> None:
         # this does not returns anything
