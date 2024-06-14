@@ -30,6 +30,8 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import functools
 import logging
+import random
+import string
 import typing
 import collections.abc
 
@@ -236,6 +238,7 @@ def basename_field(order: int = 32, tab: 'types.ui.Tab|str|None' = None) -> ui.g
     return ui.gui.TextField(
         label=_('Base Name'),
         order=order,
+        default=lambda: 'UDS' + ''.join(random.choices(string.ascii_uppercase, k=3)),
         tooltip=_('Base name for clones from this service'),
         tab=tab,
         required=True,

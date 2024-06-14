@@ -770,7 +770,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
                 'post',
                 endpoints_types=COMPUTE_ENDPOINT_TYPES,
                 path=f'/servers/{server_id}/action',
-                data=f'{"reboot":{"type":"{type_reboot}"}}',
+                data=f'{{"reboot": {{"type": "{type_reboot}"}}}}',
                 error_message='Rebooting server',
                 expects_json=False,
             )
