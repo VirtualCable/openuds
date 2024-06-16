@@ -41,7 +41,7 @@ from uds.services.OpenStack.openstack import types as openstack_types
 
 from . import fixtures
 
-from tests.utils import MustBeOfType
+#from tests.utils import MustBeOfType
 from ...utils.test import UDSTransactionTestCase
 from ...utils.helpers import limited_iterator
 
@@ -77,26 +77,17 @@ class TestOpenstackLiveDeployment(UDSTransactionTestCase):
             yield userservice, api
 
     def assert_basic_calls(self, userservice: 'OpenStackLiveUserService', api: mock.MagicMock) -> None:
-        return
+        #return
         service = userservice.service()
-        vmid = userservice._vmid
-        # These are the calls that should have been done (some more, like get_task, etc.., but we are not interested in them)
-        api.locate_vms.assert_called_with(
-            userservice.get_vmname(), service.project.value
-        )  # look for duplicate name
-        api.clone_vm.assert_called_with(userservice.publication().get_template_id())  # clone the template
-        api.update_vm.assert_called_with(
-            vmid,
-            name=userservice._name,
-            description=MustBeOfType(str),
-            vcpus=service.num_vcpus.value,
-            vcores=service.cores_per_vcpu.value,
-            enable_cpu_passthrough=True,
-            memory_mb=service.memory.value,
-        )  # update the machine with the required values
-        api.get_vm_info.assert_called_with(vmid)  # for start the machine
-        # Start mayby or mayby not called, if machine is already running, it will not be called
-        # Because we setup our fixtures to have all machines running, this will not be called
+        
+        api().create_server_from_snapshot.assert_called_with(
+            snapshot_id=userservice.publication().get_template_id(),
+            name=userservice.get_vmname(),
+            availability_zone=service.availability_zone.value,
+            flavor_id=service.flavor.value,
+            network_id=service.network.value,
+            security_groups_ids=service.security_groups.value,
+        )        
 
     def test_userservice_linked_cache_l1(self) -> None:
         """
@@ -184,70 +175,61 @@ class TestOpenstackLiveDeployment(UDSTransactionTestCase):
         """
         Test the user service
         """
-        for graceful in [True, False]:
-            with self.setup_data() as (userservice, api):
-                service = userservice.service()
-                service.try_soft_shutdown.value = graceful
+        with self.setup_data() as (userservice, api):
+            state = userservice.deploy_for_user(mock.MagicMock())
+            self.assertEqual(state, types.states.TaskState.RUNNING)
 
-                state = userservice.deploy_for_user(mock.MagicMock())
-                self.assertEqual(state, types.states.TaskState.RUNNING)
+            # Invoke cancel
+            api.reset_mock()
+            state = userservice.cancel()
 
-                # Invoke cancel
-                api.reset_mock()
-                state = userservice.cancel()
+            self.assertEqual(state, types.states.TaskState.RUNNING)
+            # Ensure DESTROY_VALIDATOR is in the queue
+            self.assertIn(types.services.Operation.DESTROY_VALIDATOR, userservice._queue)
 
-                self.assertEqual(state, types.states.TaskState.RUNNING)
-                # Ensure DESTROY_VALIDATOR is in the queue
-                self.assertIn(types.services.Operation.DESTROY_VALIDATOR, userservice._queue)
+            for counter in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
+                state = userservice.check_state()
+                if counter == 8: # Stop so it can continue
+                    fixtures.set_vm_state(userservice._vmid, fixtures.openstack_types.PowerState.SHUTDOWN)
 
-                for counter in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
-                    state = userservice.check_state()
-                    if counter == 8: # Stop so it can continue
-                        fixtures.set_vm_state(userservice._vmid, fixtures.openstack_types.PowerState.SHUTDOWN)
+            # Now, should be finished without any problem, no call to api should have been done
+            self.assertEqual(state, types.states.TaskState.FINISHED, f'State: {state} {userservice._error_debug_info}')
+            api().get_server.assert_called()
+            api().stop_server.assert_called()
+            api().delete_server.assert_called()
+            
+            api().reset_mock()
 
-                # Now, should be finished without any problem, no call to api should have been done
-                self.assertEqual(state, types.states.TaskState.FINISHED, f'State: {state} {userservice._error_debug_info}')
-                api().get_server.assert_called()
-                api().stop_server.assert_called()
-                api().delete_server.assert_called()
+            # Now again, but process check_queue a couple of times before cancel
+            # we we have an _vmid
+            userservice._vmid = ''
+            state = userservice.deploy_for_user(models.User())
+            self.assertNotEqual(userservice._vmid, '')
+            self.assertEqual(
+                state,
+                types.states.TaskState.RUNNING,
+                f'Queue: {userservice._queue} {userservice._error_debug_info} {userservice._reason} {userservice._vmid}',
+            )
+            # Ensure vm is running, so it gets stopped
+            fixtures.set_vm_state(userservice._vmid, fixtures.openstack_types.PowerState.RUNNING)
+            current_op = userservice._current_op()
+            state = userservice.cancel()
+            self.assertEqual(state, types.states.TaskState.RUNNING)
+            self.assertEqual(userservice._queue[0], current_op)
 
-                # Now again, but process check_queue a couple of times before cancel
-                # we we have an _vmid
-                state = userservice.deploy_for_user(models.User())
-                self.assertEqual(state, types.states.TaskState.RUNNING)
-                for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
-                    state = userservice.check_state()
-                    if userservice._vmid:
-                        break
-                self.assertEqual(
-                    state,
-                    types.states.TaskState.RUNNING,
-                    f'Queue: {userservice._queue} {userservice._error_debug_info} {userservice._reason} {userservice._vmid}',
-                )
-                # Ensure vm is running, so it gets stopped
-                fixtures.set_vm_state(userservice._vmid, fixtures.openstack_types.PowerState.RUNNING)
-                current_op = userservice._current_op()
-                state = userservice.cancel()
-                self.assertEqual(state, types.states.TaskState.RUNNING)
-                self.assertEqual(userservice._queue[0], current_op)
-                if graceful:
-                    self.assertIn(types.services.Operation.SHUTDOWN, userservice._queue)
-                    self.assertIn(types.services.Operation.SHUTDOWN_COMPLETED, userservice._queue)
+            self.assertIn(types.services.Operation.STOP, userservice._queue)
+            self.assertIn(types.services.Operation.STOP_COMPLETED, userservice._queue)
+            self.assertIn(types.services.Operation.DELETE, userservice._queue)
+            self.assertIn(types.services.Operation.DELETE_COMPLETED, userservice._queue)
 
-                self.assertIn(types.services.Operation.STOP, userservice._queue)
-                self.assertIn(types.services.Operation.STOP_COMPLETED, userservice._queue)
-                self.assertIn(types.services.Operation.DELETE, userservice._queue)
-                self.assertIn(types.services.Operation.DELETE_COMPLETED, userservice._queue)
+            for counter in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
+                state = userservice.check_state()
+                if counter == 8:
+                    fixtures.set_vm_state(userservice._vmid, fixtures.openstack_types.PowerState.SHUTDOWN)
 
-                for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
-                    state = userservice.check_state()
+            self.assertEqual(state, types.states.TaskState.FINISHED, f'State: {state} {userservice._error_debug_info}')
 
-                self.assertEqual(state, types.states.TaskState.FINISHED)
-
-                if graceful:
-                    api.shutdown_vm.assert_called()
-                else:
-                    api.stop_vm.assert_called()
+            api().stop_server.assert_called()
 
     def test_userservice_basics(self) -> None:
         with self.setup_data() as (userservice, _api):

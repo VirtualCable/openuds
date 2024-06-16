@@ -53,7 +53,7 @@ class OpenStackLivePublication(Publication, autoserializable.AutoSerializable):
 
     _name = autoserializable.StringField(default='')
     _reason = autoserializable.StringField(default='')
-    _template_id = autoserializable.StringField(default='')
+    _vmid = autoserializable.StringField(default='')
     _status = autoserializable.StringField(default='r')
     _destroy_after = autoserializable.BoolField(default=False)
 
@@ -77,7 +77,7 @@ class OpenStackLivePublication(Publication, autoserializable.AutoSerializable):
 
         vals = data.decode('utf8').split('\t')
         if vals[0] == 'v1':
-            (self._name, self._reason, self._template_id, self._status, destroy_after) = vals[1:]
+            (self._name, self._reason, self._vmid, self._status, destroy_after) = vals[1:]
         else:
             raise Exception('Invalid data')
 
@@ -98,7 +98,7 @@ class OpenStackLivePublication(Publication, autoserializable.AutoSerializable):
         try:
             res = self.service().make_template(self._name)
             logger.debug('Publication result: %s', res)
-            self._template_id = res.id
+            self._vmid = res.id
             self._status = res.status
         except Exception as e:
             logger.exception('Got exception')
@@ -119,7 +119,7 @@ class OpenStackLivePublication(Publication, autoserializable.AutoSerializable):
             return types.states.TaskState.FINISHED
 
         try:
-            self._status = self.service().get_template(self._template_id).status  # For next check
+            self._status = self.service().get_template(self._vmid).status  # For next check
 
             if self._destroy_after and self._status == openstack_types.SnapshotStatus.AVAILABLE:
                 self._destroy_after = False
@@ -144,7 +144,7 @@ class OpenStackLivePublication(Publication, autoserializable.AutoSerializable):
             return types.states.TaskState.RUNNING
 
         try:
-            self.service().remove_template(self._template_id)
+            self.service().api.delete_snapshot(self._vmid)
         except Exception as e:
             self._status = 'error'
             self._reason = str(e)
@@ -163,4 +163,4 @@ class OpenStackLivePublication(Publication, autoserializable.AutoSerializable):
         """
         Returns the template id associated with the publication
         """
-        return self._template_id
+        return self._vmid

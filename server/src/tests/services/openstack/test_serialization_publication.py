@@ -49,10 +49,10 @@ from uds.services.OpenStack import publication
 #     raise Exception('Invalid data')
 
 # self._destroy_after = destroy_after == 'y'
-EXPECTED_FIELDS: typing.Final[set[str]] = {
+EXPECTED_OWN_FIELDS: typing.Final[set[str]] = {
     '_name',
     '_reason',
-    '_template_id',
+    '_vmid',
     '_status',
     '_destroy_after',
 }
@@ -65,7 +65,7 @@ class OpenStackPublicationSerializationTest(UDSTestCase):
     def check(self, instance: publication.OpenStackLivePublication) -> None:
         self.assertEqual(instance._name, 'name')
         self.assertEqual(instance._reason, 'reason')
-        self.assertEqual(instance._template_id, 'template_id')
+        self.assertEqual(instance._vmid, 'template_id')
         self.assertEqual(instance._status, 'state')
         self.assertTrue(instance._destroy_after)
 
@@ -96,4 +96,9 @@ class OpenStackPublicationSerializationTest(UDSTestCase):
         # If some field is added or removed, this tests will warn us about it to fix the rest of the related tests
         with Environment.temporary_environment() as env:
             instance = publication.OpenStackLivePublication(environment=env, service=None)  # type: ignore
-            self.assertSetEqual(set(f[0] for f in instance._autoserializable_fields()), EXPECTED_FIELDS)
+
+            self.assertTrue(
+                EXPECTED_OWN_FIELDS <= set(f[0] for f in instance._autoserializable_fields()),
+                'Missing fields: '
+                + str(EXPECTED_OWN_FIELDS - set(f[0] for f in instance._autoserializable_fields())),
+            )

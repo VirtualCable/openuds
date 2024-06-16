@@ -38,6 +38,7 @@ import random
 
 from unittest import mock
 
+from tests.services.ovirt.fixtures import SNAPSHOTS_INFO
 from uds.core import environment, types
 from uds.core.ui.user_interface import gui
 
@@ -448,13 +449,15 @@ def create_publication(service: service.OpenStackLiveService) -> publication.Ope
     Create a publication
     """
     uuid_ = str(uuid.uuid4())
-    return publication.OpenStackLivePublication(
+    pub = publication.OpenStackLivePublication(
         environment=environment.Environment.private_environment(uuid_),
         service=service,
         revision=1,
         servicepool_name='servicepool_name',
         uuid=uuid_,
     )
+    pub._vmid = random_element(SNAPSHOTS_INFO).id
+    return pub
 
 
 def create_live_userservice(

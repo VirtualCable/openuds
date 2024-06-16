@@ -153,13 +153,11 @@ class OpenStackLiveUserService(DynamicUserService, autoserializable.AutoSerializ
         Deploys a machine from template for user/cache
         """
         template_id = self.publication().get_template_id()
-        name = self.get_name()
+        name = self.get_vmname()
         if name == consts.NO_MORE_NAMES:
             raise Exception(
                 'No more names available for this service. (Increase digits for this service to fix)'
             )
-
-        name = self.service().sanitized_name(name)
 
         self._vmid = self.service().deploy_from_template(name, template_id).id
         if not self._vmid:
