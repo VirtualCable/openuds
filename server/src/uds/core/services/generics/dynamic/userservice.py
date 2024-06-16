@@ -37,7 +37,7 @@ import typing
 import collections.abc
 
 from uds.core import services, types, consts
-from uds.core.util import autoserializable
+from uds.core.util import autoserializable, log
 from uds.core.util.model import sql_stamp_seconds
 
 from .. import exceptions
@@ -296,6 +296,23 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     def service(self) -> 'service.DynamicService':
         return typing.cast('service.DynamicService', super().service())
 
+    def get_vmname(self) -> str:
+        """
+        Accesory method to calc the VM name.
+        Default implemetation returns "UDS_" + self.get_name() (or consts.NO_MORE_NAMES if no more names are available)
+
+        Returns:
+            str: The name of the vm (consts.NO_MORE_NAMES if no more names are available)
+
+        Note:
+            Override it if you need a different vm name
+        """
+        name = self.get_name()
+        if name == consts.NO_MORE_NAMES:
+            return consts.NO_MORE_NAMES
+
+        return self.service().sanitized_name(f'UDS_{name}')  # Default implementation
+
     @typing.final
     def get_name(self) -> str:
         if self._name == '':
@@ -491,13 +508,35 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     def error_reason(self) -> str:
         return self._reason
 
+    def remove_duplicated_name(self) -> None:
+        name = self.get_vmname()
+        try:
+            for vmid in self.service().perform_find_duplicated_machines(name, self.get_unique_id()):
+                userservice = self.db_obj()
+                log.log(
+                    userservice.service_pool,
+                    types.log.LogLevel.WARNING,
+                    f'Found duplicated vm {name} with mac {self.get_unique_id()}. Removing it',  # mac is the unique id
+                    types.log.LogSource.SERVICE,
+                )
+                self.service().delete(self, vmid)
+                # Retry again in a while if duplicated machines where found, until we remove all of them
+                self.retry_later()
+        except Exception as e:
+            logger.warning('Locating duplicated machines: %s', e)
+
     # Execution methods
     # Every types.services.Operation has an execution method and a check method
     def op_initialize(self) -> None:
         """
         This method is called when the service is initialized
+
+        By default, tries to locate duplicated machines and remove them.
+
+        If you override this method, you should take care yourself of removing duplicated machines
+        (maybe only calling "remove_duplicated_name" method)
         """
-        pass
+        self.remove_duplicated_name()
 
     @abc.abstractmethod
     def op_create(self) -> None:

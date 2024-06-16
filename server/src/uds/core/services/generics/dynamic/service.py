@@ -29,6 +29,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import abc
+import collections.abc
 import logging
 import typing
 
@@ -115,6 +116,46 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         Override it to provide a custom name sanitizer
         """
         return name
+
+    @abc.abstractmethod
+    def find_duplicated_machines(self, name: str, mac: str) -> collections.abc.Iterable[str]:
+        """
+        Checks if a machine with the same name or mac exists
+        Returns the list with the vmids of the duplicated machines
+        
+        Args:
+            name: Name of the machine
+            mac: Mac of the machine
+            
+        Returns:
+            List of duplicated machines
+            
+        Note:
+            Maybe we can only check name or mac, or both, depending on the service
+        """
+        ...
+
+    @typing.final    
+    def perform_find_duplicated_machines(self, name: str, mac: str) -> collections.abc.Iterable[str]:
+        """
+        Checks if a machine with the same name or mac exists
+        Returns the list with the vmids of the duplicated machines
+        
+        Args:
+            name: Name of the machine
+            mac: Mac of the machine
+            
+        Returns:
+            List of duplicated machines
+            
+        Note:
+            Maybe we can only check name or mac, or both, depending on the service
+        """
+        if self.has_field('remove_duplicates') and self.remove_duplicates.value:
+            return self.find_duplicated_machines(name, mac)
+        
+        # Not removing duplicates, so no duplicates
+        return []
 
     @abc.abstractmethod
     def get_ip(
