@@ -33,7 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 import typing
 
-from uds.core.services import Publication
+from uds.core.services.generics.dynamic.publication import DynamicPublication
 from uds.core import types
 from uds.core.util import autoserializable
 
@@ -46,16 +46,23 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class OpenStackLivePublication(Publication, autoserializable.AutoSerializable):
+class OpenStackLivePublication(DynamicPublication, autoserializable.AutoSerializable):
     """
     This class provides the publication of a oVirtLinkedService
     """
 
-    _name = autoserializable.StringField(default='')
-    _reason = autoserializable.StringField(default='')
-    _vmid = autoserializable.StringField(default='')
-    _status = autoserializable.StringField(default='r')
-    _destroy_after = autoserializable.BoolField(default=False)
+    # _name = autoserializable.StringField(default='')
+    # _vmid = autoserializable.StringField(default='')
+    # _reason = autoserializable.StringField(default='')
+    # _status = autoserializable.StringField(default='r')
+    # _destroy_after = autoserializable.BoolField(default=False)
+
+
+    # _name = autoserializable.StringField(default='')
+    # _vmid = autoserializable.StringField(default='')
+    # _queue = autoserializable.ListField[Operation]()
+    # _reason = autoserializable.StringField(default='')
+    # _is_flagged_for_destroy = autoserializable.BoolField(default=False)
 
     # _name: str = ''
     # _reason: str = ''
@@ -77,87 +84,47 @@ class OpenStackLivePublication(Publication, autoserializable.AutoSerializable):
 
         vals = data.decode('utf8').split('\t')
         if vals[0] == 'v1':
-            (self._name, self._reason, self._vmid, self._status, destroy_after) = vals[1:]
+            (self._name, self._reason, self._vmid, status, destroy_after) = vals[1:]
         else:
             raise Exception('Invalid data')
+        
+        if status == openstack_types.SnapshotStatus.ERROR:
+            self._queue = [types.services.Operation.ERROR]
+        elif status == openstack_types.SnapshotStatus.AVAILABLE:
+            self._queue = [types.services.Operation.FINISH]
+        else:
+            self._queue = [types.services.Operation.CREATE, types.services.Operation.FINISH]
 
-        self._destroy_after = destroy_after == 'y'
+        self._is_flagged_for_destroy = destroy_after == 'y'
 
         self.mark_for_upgrade()  # This will force remarshalling
 
-    def publish(self) -> types.states.TaskState:
+    def op_create(self) -> None:
         """
         Realizes the publication of the service
         """
         self._name = self.service().sanitized_name(
             'UDS-P-' + self.servicepool_name() + "-" + str(self.revision())
         )
-        self._reason = ''  # No error, no reason for it
-        self._destroy_after = False
 
-        try:
-            res = self.service().make_template(self._name)
-            logger.debug('Publication result: %s', res)
-            self._vmid = res.id
-            self._status = res.status
-        except Exception as e:
-            logger.exception('Got exception')
-            self._status = 'error'
-            self._reason = 'Got error {}'.format(e)
-            return types.states.TaskState.ERROR
+        volume_snapshot_info = self.service().make_template(self._name)
+        logger.debug('Publication result: %s', volume_snapshot_info)
+        self._vmid = volume_snapshot_info.id  # In fact is not an vmid, but the volume snapshot id, but this way we can use the same method for all publications
+        if volume_snapshot_info.status == openstack_types.SnapshotStatus.ERROR:
+            raise Exception('Error creating snapshot')
 
-        return types.states.TaskState.RUNNING
-
-    def check_state(self) -> types.states.TaskState:
+    def op_create_checker(self) -> types.states.TaskState:
         """
         Checks state of publication creation
         """
-        if self._status == openstack_types.SnapshotStatus.ERROR:
-            return types.states.TaskState.ERROR
-
-        if self._status ==  openstack_types.SnapshotStatus.AVAILABLE:
+        status = self.service().get_template(self._vmid).status  # For next check
+        if status == openstack_types.SnapshotStatus.AVAILABLE:
             return types.states.TaskState.FINISHED
-
-        try:
-            self._status = self.service().get_template(self._vmid).status  # For next check
-
-            if self._destroy_after and self._status == openstack_types.SnapshotStatus.AVAILABLE:
-                self._destroy_after = False
-                return self.destroy()
-
-            return types.states.TaskState.RUNNING
-        except Exception as e:
-            self._status = 'error'
-            self._reason = str(e)
-            return types.states.TaskState.ERROR
-
-    def error_reason(self) -> str:
-        return self._reason
-
-    def destroy(self) -> types.states.TaskState:
-        # We do not do anything else to destroy this instance of publication
-        if self._status == 'error':
-            return types.states.TaskState.ERROR  # Nothing to cancel
-
-        if self._status == 'creating':
-            self._destroy_after = True
-            return types.states.TaskState.RUNNING
-
-        try:
-            self.service().api.delete_snapshot(self._vmid)
-        except Exception as e:
-            self._status = 'error'
-            self._reason = str(e)
-            return types.states.TaskState.ERROR
-
-        return types.states.TaskState.FINISHED
-
-    def cancel(self) -> types.states.TaskState:
-        return self.destroy()
-
-    # Here ends the publication needed methods.
-    # Methods provided below are specific for this publication
-    # and will be used by user deployments that uses this kind of publication
+        
+        if status == openstack_types.SnapshotStatus.ERROR:
+            raise Exception('Error creating snapshot')
+        
+        return types.states.TaskState.RUNNING
 
     def get_template_id(self) -> str:
         """

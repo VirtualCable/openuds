@@ -32,9 +32,11 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 
-from tests.utils.test import UDSTestCase
 from uds.core.environment import Environment
+from uds.core import types as core_types
 from uds.services.OpenStack import publication
+
+from tests.utils.test import UDSTestCase
 
 # We use commit/rollback
 
@@ -53,8 +55,8 @@ EXPECTED_OWN_FIELDS: typing.Final[set[str]] = {
     '_name',
     '_reason',
     '_vmid',
-    '_status',
-    '_destroy_after',
+    '_queue',
+    '_is_flagged_for_destroy',
 }
 
 
@@ -66,8 +68,8 @@ class OpenStackPublicationSerializationTest(UDSTestCase):
         self.assertEqual(instance._name, 'name')
         self.assertEqual(instance._reason, 'reason')
         self.assertEqual(instance._vmid, 'template_id')
-        self.assertEqual(instance._status, 'state')
-        self.assertTrue(instance._destroy_after)
+        self.assertEqual(instance._queue, [core_types.services.Operation.CREATE, core_types.services.Operation.FINISH])
+        self.assertTrue(instance._is_flagged_for_destroy)
 
     def test_marshaling(self) -> None:
         environment = Environment.testing_environment()
