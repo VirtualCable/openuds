@@ -53,6 +53,20 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
     """
     This class represents a fixed user service, that is, a service that is assigned to an user
     and that will be always the from a "fixed" machine, that is, a machine that is not created.
+
+    Note that only support a subset of operations, that are:
+        - CREATE
+        - START
+        - STOP
+        - DELETE
+        - SNAPSHOT_CREATE
+        - SNAPSHOT_RECOVER
+        - PROCESS_TOKEN
+        - SHUTDOWN
+        - NOP
+        - RETRY
+        - ERROR
+        - FINISH
     """
 
     suggested_delay = 8
