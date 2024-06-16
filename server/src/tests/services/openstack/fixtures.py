@@ -312,6 +312,32 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
         openstack_client.OpenstackClient.is_available,
         returns=True,
     ),
+    AutoSpecMethodInfo(
+        openstack_client.OpenstackClient.start_server,
+        returns=set_vm_state,
+        partial_kwargs={'state': openstack_types.PowerState.RUNNING},
+    ),
+    AutoSpecMethodInfo(
+        openstack_client.OpenstackClient.stop_server,
+        returns=set_vm_state,
+        partial_kwargs={'state': openstack_types.PowerState.SHUTDOWN},
+    ),
+    AutoSpecMethodInfo(
+        openstack_client.OpenstackClient.reboot_server,
+        returns=set_vm_state,
+        partial_kwargs={'state': openstack_types.PowerState.RUNNING},
+    ),
+    AutoSpecMethodInfo(
+        openstack_client.OpenstackClient.suspend_server,
+        returns=set_vm_state,
+        partial_kwargs={'state': openstack_types.PowerState.SUSPENDED},
+    ),
+    AutoSpecMethodInfo(
+        openstack_client.OpenstackClient.resume_server,
+        returns=set_vm_state,
+        partial_kwargs={'state': openstack_types.PowerState.RUNNING},
+    ),
+        
     # connect returns None
     # Test method
     # AutoSpecMethodInfo(client.Client.list_projects, returns=True),

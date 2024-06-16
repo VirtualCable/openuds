@@ -98,7 +98,7 @@ class TestOpenstackFixedUserService(UDSTransactionTestCase):
                 # ensure cache is empty, may affect from other tests
                 userservice.cache.clear()
                 # Also that machine is stopped
-                fixtures.get_id(fixtures.SERVERS_LIST, userservice._vmid).power_state = (
+                fixtures.search_id(fixtures.SERVERS_LIST, userservice._vmid).power_state = (
                     openstack_types.PowerState.SHUTDOWN
                 )
                 state = userservice.set_ready()

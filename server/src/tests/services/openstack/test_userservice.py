@@ -120,12 +120,13 @@ class TestOpenstackLiveDeployment(UDSTransactionTestCase):
 
             for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
                 state = userservice.check_state()
+                
 
                 # If first item in queue is WAIT, we must "simulate" the wake up from os manager
                 if userservice._queue[0] == types.services.Operation.WAIT:
                     userservice.process_ready_from_os_manager(None)
 
-            self.assertEqual(state, types.states.TaskState.FINISHED)
+            self.assertEqual(state, types.states.TaskState.FINISHED, f'Queue: {userservice._queue} {userservice._error_debug_info}')
 
             self.assertEqual(userservice._name[: len(service.get_basename())], service.get_basename())
             self.assertEqual(len(userservice._name), len(service.get_basename()) + service.get_lenname())
@@ -133,7 +134,7 @@ class TestOpenstackLiveDeployment(UDSTransactionTestCase):
             vmid = userservice._vmid
             self.assert_basic_calls(userservice, api)
             # And stop the machine
-            api.shutdown_vm.assert_called_with(vmid)
+            api().stop_server.assert_called_with(vmid)
 
     def test_userservice_linked_user(self) -> None:
         """
@@ -187,10 +188,8 @@ class TestOpenstackLiveDeployment(UDSTransactionTestCase):
             # Ensure DESTROY_VALIDATOR is in the queue
             self.assertIn(types.services.Operation.DESTROY_VALIDATOR, userservice._queue)
 
-            for counter in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
+            for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
                 state = userservice.check_state()
-                if counter == 8: # Stop so it can continue
-                    fixtures.set_vm_state(userservice._vmid, fixtures.openstack_types.PowerState.SHUTDOWN)
 
             # Now, should be finished without any problem, no call to api should have been done
             self.assertEqual(state, types.states.TaskState.FINISHED, f'State: {state} {userservice._error_debug_info}')
@@ -222,10 +221,8 @@ class TestOpenstackLiveDeployment(UDSTransactionTestCase):
             self.assertIn(types.services.Operation.DELETE, userservice._queue)
             self.assertIn(types.services.Operation.DELETE_COMPLETED, userservice._queue)
 
-            for counter in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
+            for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
                 state = userservice.check_state()
-                if counter == 8:
-                    fixtures.set_vm_state(userservice._vmid, fixtures.openstack_types.PowerState.SHUTDOWN)
 
             self.assertEqual(state, types.states.TaskState.FINISHED, f'State: {state} {userservice._error_debug_info}')
 
