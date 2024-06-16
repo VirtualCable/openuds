@@ -41,7 +41,8 @@ from unittest import mock
 from uds.core import environment, types
 from uds.core.ui.user_interface import gui
 
-from ...utils.autospec import autospec, AutoSpecMethodInfo
+from tests.utils.autospec import autospec, AutoSpecMethodInfo
+from tests.utils import search_item_by_attr
 
 from uds.services.OpenStack import (
     provider,
@@ -230,17 +231,20 @@ CONSOLE_CONNECTION_INFO: types.services.ConsoleConnectionInfo = types.services.C
 
 T = typing.TypeVar('T')
 
-
-def get_id(iterable: typing.Iterable[T], id: str) -> T:
-    try:
-        return next(filter(lambda x: x.id == id, iterable))  # type: ignore
-    except StopIteration:
-        raise ValueError(f'Id {id} not found in iterable') from None
-    
 def set_all_vms_status(status: openstack_types.ServerStatus) -> None:
     for vm in SERVERS_LIST:
         vm.status = status
+        
+def search_id(lst: list[T], id: str, *args: typing.Any, **kwargs: typing.Any) -> T:
+    return search_item_by_attr(lst, 'id', id)
 
+def set_vm_state(id: str, state: openstack_types.PowerState, **kwargs: typing.Any) -> str:
+    vm = search_id(SERVERS_LIST, id)
+    vm.power_state = state
+    return str(state) + '_task_uuid'
+
+def random_element(lst: list[T], *args: typing.Any, **kwargs: typing.Any) -> T:
+    return random.choice(lst)
 
 # Methods that returns None or "internal" methods are not tested
 # The idea behind this is to allow testing the provider, service and deployment classes
@@ -266,37 +270,38 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     ),
     AutoSpecMethodInfo(
         openstack_client.OpenstackClient.get_server,
-        returns=lambda server_id: get_id(SERVERS_LIST, server_id),  # pyright: ignore
-    ),  # pyright: ignore
+        returns=search_id,
+        partial_args=(SERVERS_LIST,),
+    ),
     AutoSpecMethodInfo(
         openstack_client.OpenstackClient.get_volume,
-        returns=lambda volume_id: get_id(VOLUMES_LIST, volume_id),  # pyright: ignore
+        returns=search_id,
+        partial_args=(VOLUMES_LIST,),
     ),  # pyright: ignore
     AutoSpecMethodInfo(
         openstack_client.OpenstackClient.get_volume_snapshot,
-        returns=lambda snapshot_id: get_id(VOLUME_SNAPSHOTS_LIST, snapshot_id),  # pyright: ignore
+        returns=search_id,
+        partial_args=(VOLUME_SNAPSHOTS_LIST,),
     ),  # pyright: ignore
     AutoSpecMethodInfo(
         openstack_client.OpenstackClient.update_snapshot,
-        returns=lambda snapshot_id, name, description: get_id(  # pyright: ignore
-            VOLUME_SNAPSHOTS_LIST, snapshot_id  # pyright: ignore
-        ),
+        returns=search_id,
+        partial_args=(VOLUME_SNAPSHOTS_LIST,),
     ),
     AutoSpecMethodInfo(
         openstack_client.OpenstackClient.create_volume_snapshot,
-        returns=lambda volume_id, name, description: random.choice(  # pyright: ignore
-            VOLUME_SNAPSHOTS_LIST,
-        ),
+        returns=random_element,
+        partial_args=(VOLUME_SNAPSHOTS_LIST,),
     ),
     AutoSpecMethodInfo(
         openstack_client.OpenstackClient.create_volume_from_snapshot,
-        returns=lambda snapshot_id, name, description: get_id(  # pyright: ignore
-            VOLUMES_LIST, f'vid{len(VOLUMES_LIST) + 1}'
-        ),
+        returns=random_element,
+        partial_args=(VOLUMES_LIST,),
     ),
     AutoSpecMethodInfo(
         openstack_client.OpenstackClient.create_server_from_snapshot,
-        returns=lambda *args, **kwargs: random.choice(SERVERS_LIST),  # pyright: ignore
+        returns=random_element,
+        partial_args=(SERVERS_LIST,),
     ),
     AutoSpecMethodInfo(
         openstack_client.OpenstackClient.test_connection,

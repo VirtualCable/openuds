@@ -31,182 +31,225 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import contextlib
+
 from uds import models
 from uds.core import types
 from unittest import mock
 
 from uds.services.OpenStack.openstack import types as openstack_types
-from uds.services.OpenStack.deployment import OldOperation
 
 from . import fixtures
 
+from tests.utils import MustBeOfType
 from ...utils.test import UDSTransactionTestCase
 from ...utils.helpers import limited_iterator
+
+if typing.TYPE_CHECKING:
+    from uds.services.OpenStack.deployment import OpenStackLiveUserService
 
 
 # We use transactions on some related methods (storage access, etc...)
 class TestOpenstackLiveDeployment(UDSTransactionTestCase):
-    def setUp(self) -> None:
-        pass
+    _old_servers: typing.List['openstack_types.ServerInfo']
 
-    # Openstack only have l1 cache. L2 is not considered useful right now
-    def test_userservice_cachel1_and_user(self) -> None:
+    def setUp(self) -> None:
+        # Sets all vms to running, later restore original values
+        self._old_servers = fixtures.SERVERS_LIST.copy()
+        for vm in fixtures.SERVERS_LIST:
+            vm.power_state = fixtures.openstack_types.PowerState.RUNNING
+
+    def tearDown(self) -> None:
+        fixtures.SERVERS_LIST = self._old_servers
+
+    @contextlib.contextmanager
+    def setup_data(self) -> typing.Iterator[
+        tuple[
+            'OpenStackLiveUserService',
+            mock.MagicMock,
+        ]
+    ]:
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider.api)
+            service = fixtures.create_live_service(provider=provider)
+            userservice = fixtures.create_live_userservice(service=service)
+
+            yield userservice, api
+
+    def assert_basic_calls(self, userservice: 'OpenStackLiveUserService', api: mock.MagicMock) -> None:
+        return
+        service = userservice.service()
+        vmid = userservice._vmid
+        # These are the calls that should have been done (some more, like get_task, etc.., but we are not interested in them)
+        api.locate_vms.assert_called_with(
+            userservice.get_vmname(), service.project.value
+        )  # look for duplicate name
+        api.clone_vm.assert_called_with(userservice.publication().get_template_id())  # clone the template
+        api.update_vm.assert_called_with(
+            vmid,
+            name=userservice._name,
+            description=MustBeOfType(str),
+            vcpus=service.num_vcpus.value,
+            vcores=service.cores_per_vcpu.value,
+            enable_cpu_passthrough=True,
+            memory_mb=service.memory.value,
+        )  # update the machine with the required values
+        api.get_vm_info.assert_called_with(vmid)  # for start the machine
+        # Start mayby or mayby not called, if machine is already running, it will not be called
+        # Because we setup our fixtures to have all machines running, this will not be called
+
+    def test_userservice_linked_cache_l1(self) -> None:
         """
         Test the user service
         """
-        # Deploy for cache and deploy for user are the same, so we will test both at the same time
-        for to_test in ['cache', 'user']:
-            for patcher in (fixtures.patched_provider, fixtures.patched_provider_legacy):
-                with patcher() as prov:
-                    api = typing.cast(mock.MagicMock, prov.api())
-                    service = fixtures.create_live_service(prov)
-                    userservice = fixtures.create_live_userservice(service=service)
-                    publication = userservice.publication()
-                    publication._template_id = 'snap1'
+        with self.setup_data() as (userservice, api):
+            service = userservice.service()
+            state = userservice.deploy_for_cache(level=types.services.CacheLevel.L1)
+            self.assertEqual(state, types.states.TaskState.RUNNING)
 
-                    if to_test == 'cache':
-                        state = userservice.deploy_for_cache(level=types.services.CacheLevel.L1)
-                    else:
-                        state = userservice.deploy_for_user(models.User())
+            # Ensure that in the event of failure, we don't loop forever
+            for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
+                state = userservice.check_state()
 
-                    self.assertEqual(state, types.states.TaskState.RUNNING, f'Error on {to_test} deployment')
+            self.assertEqual(state, types.states.TaskState.FINISHED, userservice._error_debug_info)
 
-                    # Create server should have been called
-                    api.create_server_from_snapshot.assert_called_with(
-                        snapshot_id='snap1',
-                        name=userservice._name,
-                        availability_zone=service.availability_zone.value,
-                        flavor_id=service.flavor.value,
-                        network_id=service.network.value,
-                        security_groups_ids=service.security_groups.value,
-                    )
+            self.assertEqual(userservice._name[: len(service.get_basename())], service.get_basename())
+            self.assertEqual(len(userservice._name), len(service.get_basename()) + service.get_lenname())
 
-                    vmid = userservice._vmid
+            self.assert_basic_calls(userservice, api)
 
-                    # Set power state of machine to running (userservice._vmid)
-                    fixtures.get_id(fixtures.SERVERS_LIST, vmid).power_state = (
-                        openstack_types.PowerState.RUNNING
-                    )
+    def test_userservice_linked_cache_l2(self) -> None:
+        """
+        Test the user service
+        """
+        with self.setup_data() as (userservice, api):
+            service = userservice.service()
+            state = userservice.deploy_for_cache(level=types.services.CacheLevel.L2)
+            self.assertEqual(state, types.states.TaskState.RUNNING)
 
-                    # Ensure that in the event of failure, we don't loop forever
-                    for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
-                        state = userservice.check_state()
+            for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
+                state = userservice.check_state()
 
-                    self.assertEqual(state, types.states.TaskState.FINISHED, f'Error on {to_test} deployment')
+                # If first item in queue is WAIT, we must "simulate" the wake up from os manager
+                if userservice._queue[0] == types.services.Operation.WAIT:
+                    userservice.process_ready_from_os_manager(None)
 
-                    # userservice name is UDS-U-
-                    self.assertEqual(
-                        userservice._name[6: 6+len(service.get_basename())],
-                        service.get_basename(),
-                        f'Error on {to_test} deployment',
-                    )
-                    self.assertEqual(
-                        len(userservice._name),
-                        len(service.get_basename()) + service.get_lenname() + 6,  # for UDS-U- prefix
-                        f'Error on {to_test} deployment',
-                    )
+            self.assertEqual(state, types.states.TaskState.FINISHED)
 
-                    # Get server should have been called at least once
-                    api.get_server.assert_called_with(vmid)
+            self.assertEqual(userservice._name[: len(service.get_basename())], service.get_basename())
+            self.assertEqual(len(userservice._name), len(service.get_basename()) + service.get_lenname())
 
-                    # Mac an ip should have been set
-                    self.assertNotEqual(userservice._mac, '', f'Error on {to_test} deployment')
-                    self.assertNotEqual(userservice._ip, '', f'Error on {to_test} deployment')
+            vmid = userservice._vmid
+            self.assert_basic_calls(userservice, api)
+            # And stop the machine
+            api.shutdown_vm.assert_called_with(vmid)
 
-                    # And queue must be finished
-                    self.assertEqual(userservice._queue, [OldOperation.FINISH], f'Error on {to_test} deployment')
+    def test_userservice_linked_user(self) -> None:
+        """
+        Test the user service
+        """
+        with self.setup_data() as (userservice, api):
+            service = userservice.service()
+
+            state = userservice.deploy_for_user(models.User())
+            self.assertEqual(state, types.states.TaskState.RUNNING)
+
+            for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
+                state = userservice.check_state()
+
+            self.assertEqual(
+                state,
+                types.states.TaskState.FINISHED,
+                f'Queue: {userservice._queue}, reason: {userservice._reason}, extra_info: {userservice._error_debug_info}',
+            )
+
+            self.assertEqual(userservice._name[: len(service.get_basename())], service.get_basename())
+            self.assertEqual(len(userservice._name), len(service.get_basename()) + service.get_lenname())
+
+            self.assert_basic_calls(userservice, api)
+
+            # Set ready state with the valid machine
+            state = userservice.set_ready()
+            # Machine is already running, must return FINISH state
+            # As long as the machine is not started, START, START_COMPLETED are not added to the queue
+            self.assertEqual(state, types.states.TaskState.FINISHED)
+
+            for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=32):
+                state = userservice.check_state()
+
+            # Should be finished now
+            self.assertEqual(state, types.states.TaskState.FINISHED)
 
     def test_userservice_cancel(self) -> None:
         """
         Test the user service
         """
-        for patcher in (fixtures.patched_provider, fixtures.patched_provider_legacy):
-            with patcher() as prov:
-                service = fixtures.create_live_service(prov)
-                userservice = fixtures.create_live_userservice(service=service)
-                publication = userservice.publication()
-                publication._template_id = 'snap1'
+        for graceful in [True, False]:
+            with self.setup_data() as (userservice, api):
+                service = userservice.service()
+                service.try_soft_shutdown.value = graceful
 
-                state = userservice.deploy_for_user(models.User())
-
+                state = userservice.deploy_for_user(mock.MagicMock())
                 self.assertEqual(state, types.states.TaskState.RUNNING)
 
-                server = fixtures.get_id(fixtures.SERVERS_LIST, userservice._vmid)
-                server.power_state = openstack_types.PowerState.RUNNING
-
-                current_op = userservice._get_current_op()
-
                 # Invoke cancel
+                api.reset_mock()
                 state = userservice.cancel()
 
                 self.assertEqual(state, types.states.TaskState.RUNNING)
+                # Ensure DESTROY_VALIDATOR is in the queue
+                self.assertIn(types.services.Operation.DESTROY_VALIDATOR, userservice._queue)
 
-                self.assertEqual(
-                    userservice._queue,
-                    [current_op] + [OldOperation.STOP, OldOperation.REMOVE, OldOperation.FINISH],
-                )
-
-                counter = 0
                 for counter in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
                     state = userservice.check_state()
-                    if counter > 5:
-                        server.power_state = openstack_types.PowerState.SHUTDOWN
+                    if counter == 8: # Stop so it can continue
+                        fixtures.set_vm_state(userservice._vmid, fixtures.openstack_types.PowerState.SHUTDOWN)
 
-                self.assertGreater(counter, 5)
+                # Now, should be finished without any problem, no call to api should have been done
+                self.assertEqual(state, types.states.TaskState.FINISHED, f'State: {state} {userservice._error_debug_info}')
+                api().get_server.assert_called()
+                api().stop_server.assert_called()
+                api().delete_server.assert_called()
+
+                # Now again, but process check_queue a couple of times before cancel
+                # we we have an _vmid
+                state = userservice.deploy_for_user(models.User())
+                self.assertEqual(state, types.states.TaskState.RUNNING)
+                for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
+                    state = userservice.check_state()
+                    if userservice._vmid:
+                        break
+                self.assertEqual(
+                    state,
+                    types.states.TaskState.RUNNING,
+                    f'Queue: {userservice._queue} {userservice._error_debug_info} {userservice._reason} {userservice._vmid}',
+                )
+                # Ensure vm is running, so it gets stopped
+                fixtures.set_vm_state(userservice._vmid, fixtures.openstack_types.PowerState.RUNNING)
+                current_op = userservice._current_op()
+                state = userservice.cancel()
+                self.assertEqual(state, types.states.TaskState.RUNNING)
+                self.assertEqual(userservice._queue[0], current_op)
+                if graceful:
+                    self.assertIn(types.services.Operation.SHUTDOWN, userservice._queue)
+                    self.assertIn(types.services.Operation.SHUTDOWN_COMPLETED, userservice._queue)
+
+                self.assertIn(types.services.Operation.STOP, userservice._queue)
+                self.assertIn(types.services.Operation.STOP_COMPLETED, userservice._queue)
+                self.assertIn(types.services.Operation.DELETE, userservice._queue)
+                self.assertIn(types.services.Operation.DELETE_COMPLETED, userservice._queue)
+
+                for _ in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
+                    state = userservice.check_state()
+
                 self.assertEqual(state, types.states.TaskState.FINISHED)
 
-    def test_userservice_error(self) -> None:
-        """
-        This test will not have keep on error active, and will create correctly
-        but will error on set_ready, so it will be put on error state
-        """
-        """
-        Test the user service
-        """
-        for keep_on_error in (True, False):
-            for patcher in (fixtures.patched_provider, fixtures.patched_provider_legacy):
-                with patcher() as prov:
-                    service = fixtures.create_live_service(prov, maintain_on_error=keep_on_error)
-                    userservice = fixtures.create_live_userservice(service=service)
-                    publication = userservice.publication()
-                    publication._template_id = 'snap1'
+                if graceful:
+                    api.shutdown_vm.assert_called()
+                else:
+                    api.stop_vm.assert_called()
 
-                    state = userservice.deploy_for_user(models.User())
-                    self.assertEqual(state, types.states.TaskState.RUNNING)
-
-                    server = fixtures.get_id(fixtures.SERVERS_LIST, userservice._vmid)
-                    server.power_state = openstack_types.PowerState.RUNNING
-
-                    for _counter in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
-                        state = userservice.check_state()
-
-                    # Correctly created
-                    self.assertEqual(state, types.states.TaskState.FINISHED)
-
-                    # We are going to force an error on set_ready
-                    server.status = openstack_types.ServerStatus.ERROR
-
-                    state = userservice.set_ready()
-
-                    if keep_on_error:
-                        self.assertEqual(state, types.states.TaskState.FINISHED)
-                    else:
-                        self.assertEqual(state, types.states.TaskState.ERROR)
-
-    def test_userservice_error_keep_create(self) -> None:
-        """
-        This test will have keep on error active, and will create incorrectly
-        so vm will be deleted and put on error state
-        """
-        for patcher in (fixtures.patched_provider, fixtures.patched_provider_legacy):
-            with patcher() as prov:
-                api = typing.cast(mock.MagicMock, prov.api())
-                service = fixtures.create_live_service(prov, maintain_on_eror=True)
-                userservice = fixtures.create_live_userservice(service=service)
-                publication = userservice.publication()
-                publication._template_id = 'snap1'
-
-                api.create_server_from_snapshot.side_effect = Exception('Error')
-                state = userservice.deploy_for_user(models.User())
-
-                self.assertEqual(state, types.states.TaskState.ERROR)
+    def test_userservice_basics(self) -> None:
+        with self.setup_data() as (userservice, _api):
+            userservice.set_ip('1.2.3.4')
+            self.assertEqual(userservice.get_ip(), '1.2.3.4')

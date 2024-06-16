@@ -74,38 +74,38 @@ class TestOpenstackService(UDSTransactionTestCase):
                     network_id=service.network.value,
                     security_groups_ids=service.security_groups.value,
                 )
-                data = service.get_machine_status(fixtures.SERVERS_LIST[0].id)
+                data = service.api.get_server(fixtures.SERVERS_LIST[0].id).status
                 self.assertIsInstance(data, openstack_types.ServerStatus)
                 api.get_server.assert_called_once_with(fixtures.SERVERS_LIST[0].id)
                 # Reset mocks, get server should be called again
                 api.reset_mock()
 
-                data = service.get_machine_power_state(fixtures.SERVERS_LIST[0].id)
+                data = service.api.get_server(fixtures.SERVERS_LIST[0].id).power_state
                 self.assertIsInstance(data, openstack_types.PowerState)
                 api.get_server.assert_called_once_with(fixtures.SERVERS_LIST[0].id)
 
                 server = fixtures.SERVERS_LIST[0]
-                service.start_machine(server.id)
+                service.api.start_server(server.id)
                 
                 server.power_state = openstack_types.PowerState.SHUTDOWN
                 api.start_server.assert_called_once_with(server.id)
 
                 server.power_state = openstack_types.PowerState.RUNNING
-                service.stop_machine(server.id)
+                service.api.stop_server(server.id)
                 api.stop_server.assert_called_once_with(server.id)
 
                 server.power_state = openstack_types.PowerState.RUNNING
-                service.suspend_machine(server.id)
+                service.api.suspend_server(server.id)
                 api.suspend_server.assert_called_once_with(server.id)
 
                 server.power_state = openstack_types.PowerState.SUSPENDED
-                service.resume_machine(server.id)
+                service.api.resume_server(server.id)
                 api.resume_server.assert_called_once_with(server.id)
 
-                service.reset_machine(server.id)
+                service.api.reset_server(server.id)
                 api.reset_server.assert_called_once_with(server.id)
 
-                service.delete_machine(server.id)
+                service.api.delete_server(server.id)
                 api.delete_server.assert_called_once_with(server.id)
 
                 self.assertTrue(service.is_avaliable())
@@ -114,4 +114,4 @@ class TestOpenstackService(UDSTransactionTestCase):
                 self.assertEqual(service.get_basename(), service.basename.value)
                 self.assertEqual(service.get_lenname(), service.lenname.value)
                 self.assertEqual(service.allows_errored_userservice_cleanup(), not service.maintain_on_error.value)
-                self.assertEqual(service.keep_on_error(), service.maintain_on_error.value)
+                self.assertEqual(service.should_maintain_on_error(), service.maintain_on_error.value)

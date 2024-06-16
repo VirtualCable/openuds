@@ -33,9 +33,11 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import pickle
 import typing
 
+from uds.core.environment import Environment
+from uds.core import types as core_types
+
 # We use storage, so we need transactional tests
 from tests.utils.test import UDSTransactionTestCase
-from uds.core.environment import Environment
 
 
 from uds.services.OpenStack import deployment as deployment
@@ -51,24 +53,25 @@ from uds.services.OpenStack import deployment as deployment
 #     self._vmid = vals[4].decode('utf8')
 #     self._reason = vals[5].decode('utf8')
 #     self._queue = pickle.loads(vals[6])  # nosec: not insecure, we are loading our own data
-EXPECTED_FIELDS: typing.Final[set[str]] = {
+EXPECTED_OWN_FIELDS: typing.Final[set[str]] = {
     '_name',
     '_ip',
     '_mac',
     '_vmid',
     '_reason',
     '_queue',
-    '_check_count'
 }
 
-TEST_QUEUE: typing.Final[list[deployment.OldOperation]] = [
+OLD_TEST_QUEUE: typing.Final[list[deployment.OldOperation]] = [
     deployment.OldOperation.CREATE,
     deployment.OldOperation.REMOVE,
     deployment.OldOperation.RETRY,
 ]
 
+TEST_QUEUE = [i.to_operation() for i in OLD_TEST_QUEUE]
+
 SERIALIZED_DEPLOYMENT_DATA: typing.Final[typing.Mapping[str, bytes]] = {
-    'v1': b'v1\x01name\x01ip\x01mac\x01vmid\x01reason\x01' + pickle.dumps(TEST_QUEUE, protocol=0),
+    'v1': b'v1\x01name\x01ip\x01mac\x01vmid\x01reason\x01' + pickle.dumps(OLD_TEST_QUEUE, protocol=0),
 }
 
 LAST_VERSION: typing.Final[str] = sorted(SERIALIZED_DEPLOYMENT_DATA.keys(), reverse=True)[0]
@@ -115,8 +118,6 @@ class OpenStackDeploymentSerializationTest(UDSTransactionTestCase):
     def test_marshaling_queue(self) -> None:
         # queue is kept on "storage", so we need always same environment
         environment = Environment.testing_environment()
-        # Store queue
-        environment.storage.save_pickled('queue', TEST_QUEUE)
 
         def _create_instance(unmarshal_data: 'bytes|None' = None) -> deployment.OpenStackLiveUserService:
             instance = deployment.OpenStackLiveUserService(environment=environment, service=None)  # type: ignore
@@ -125,29 +126,29 @@ class OpenStackDeploymentSerializationTest(UDSTransactionTestCase):
             return instance
 
         instance = _create_instance(SERIALIZED_DEPLOYMENT_DATA[LAST_VERSION])
-        self.assertEqual(instance._queue, TEST_QUEUE)
+        self.assertEqual(instance._queue, TEST_QUEUE)  # Always unmarshalled as new format
 
         instance._queue = [
-            deployment.OldOperation.CREATE,
-            deployment.OldOperation.FINISH,
+            core_types.services.Operation.CREATE,
+            core_types.services.Operation.FINISH,
         ]
         marshaled_data = instance.marshal()
 
         instance = _create_instance(marshaled_data)
         self.assertEqual(
             instance._queue,
-            [deployment.OldOperation.CREATE, deployment.OldOperation.FINISH],
+            [core_types.services.Operation.CREATE, core_types.services.Operation.FINISH],
         )
         # Append something remarshall and check
-        instance._queue.insert(0, deployment.OldOperation.RETRY)
+        instance._queue.insert(0, core_types.services.Operation.RETRY)
         marshaled_data = instance.marshal()
         instance = _create_instance(marshaled_data)
         self.assertEqual(
             instance._queue,
             [
-                deployment.OldOperation.RETRY,
-                deployment.OldOperation.CREATE,
-                deployment.OldOperation.FINISH,
+                core_types.services.Operation.RETRY,
+                core_types.services.Operation.CREATE,
+                core_types.services.Operation.FINISH,
             ],
         )
         # Remove something remarshall and check
@@ -156,7 +157,7 @@ class OpenStackDeploymentSerializationTest(UDSTransactionTestCase):
         instance = _create_instance(marshaled_data)
         self.assertEqual(
             instance._queue,
-            [deployment.OldOperation.CREATE, deployment.OldOperation.FINISH],
+            [core_types.services.Operation.CREATE, core_types.services.Operation.FINISH],
         )
 
     def test_autoserialization_fields(self) -> None:
@@ -165,4 +166,8 @@ class OpenStackDeploymentSerializationTest(UDSTransactionTestCase):
         with Environment.temporary_environment() as env:
             instance = deployment.OpenStackLiveUserService(environment=env, service=None)  # type: ignore
 
-            self.assertSetEqual(set(f[0] for f in instance._autoserializable_fields()), EXPECTED_FIELDS)
+            self.assertTrue(
+                EXPECTED_OWN_FIELDS <= set(f[0] for f in instance._autoserializable_fields()),
+                'Missing fields: '
+                + str(EXPECTED_OWN_FIELDS - set(f[0] for f in instance._autoserializable_fields())),
+            )

@@ -329,7 +329,7 @@ def remove_duplicates_field(
         order=order,
         tooltip=_('If active, found duplicates vApps for this service will be removed'),
         tab=tab,
-        old_field_name=old_field_name,
+        old_field_name=old_field_name or 'removeDuplicates',
     )
 
 

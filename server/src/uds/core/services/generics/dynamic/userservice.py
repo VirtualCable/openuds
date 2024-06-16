@@ -508,7 +508,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     def error_reason(self) -> str:
         return self._reason
 
-    def remove_duplicated_name(self) -> None:
+    def remove_duplicated_names(self) -> None:
         name = self.get_vmname()
         try:
             for vmid in self.service().perform_find_duplicated_machines(name, self.get_unique_id()):
@@ -536,7 +536,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         If you override this method, you should take care yourself of removing duplicated machines
         (maybe only calling "remove_duplicated_name" method)
         """
-        self.remove_duplicated_name()
+        self.remove_duplicated_names()
 
     @abc.abstractmethod
     def op_create(self) -> None:

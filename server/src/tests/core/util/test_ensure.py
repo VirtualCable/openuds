@@ -48,7 +48,8 @@ class EnsureTest(UDSTestCase):
         self.assertEqual(ensure.as_list(1), [1])
         self.assertEqual(ensure.as_list('111'), ['111'])
         self.assertEqual(ensure.as_list(None), [])
-        self.assertEqual(ensure.as_list({}), [])
+        self.assertEqual(ensure.as_list(set()), [])
+        self.assertEqual(ensure.as_list({}), [{}])  # Dict into list of dict
         self.assertEqual(ensure.as_list({1, 2, 3}), [1, 2, 3])
 
 
