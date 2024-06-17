@@ -41,7 +41,7 @@ from django.db.models import Q
 from cryptography.x509 import load_pem_x509_certificate
 
 from uds import models
-from uds.core import types, ui
+from uds.core import types, ui, mfas
 
 if typing.TYPE_CHECKING:
     from cryptography.x509 import Certificate
@@ -438,6 +438,44 @@ def on_logout_field(
         ],
         tab=tab,
         default='keep',
+    )
+
+def allow_skip_mfa_from_networks_field(order: int = 52, tab: 'types.ui.Tab|str|None' = types.ui.Tab.CONFIG) -> ui.gui.MultiChoiceField:    
+    return ui.gui.MultiChoiceField(
+        label=_('Allow skip MFA from networks'),
+        readonly=False,
+        rows=5,
+        order=order,
+        tooltip=_('Users within these networks will not be asked for OTP'),
+        required=False,
+        choices=mfas.LoginAllowed.network_choices(),
+        tab=tab,
+        old_field_name='allow_networks_without_mfa',
+    )
+
+def login_without_mfa_policy_networks_field(order: int = 51, tab: 'types.ui.Tab|str|None' = types.ui.Tab.CONFIG) -> ui.gui.MultiChoiceField:
+    return ui.gui.MultiChoiceField(
+        label=_('MFA policy networks'),
+        readonly=False,
+        rows=5,
+        order=order,
+        tooltip=_('Users within these networks will not be asked for OTP'),
+        required=False,
+        choices=mfas.LoginAllowed.network_choices(),
+        tab=tab,
+        old_field_name='networks',
+    )
+
+def login_without_mfa_policy_field(order: int = 50, tab: 'types.ui.Tab|str|None' = types.ui.Tab.CONFIG) -> ui.gui.ChoiceField:
+    return ui.gui.ChoiceField(
+        label=_('Policy for users without MFA support'),
+        order=order,
+        default='0',
+        tooltip=_('Policy for users without MFA or server failed to ask for MFA'),
+        required=True,
+        choices=mfas.LoginAllowed.choices(),
+        tab=tab,
+        old_field_name='allowLoginWithoutMFA',
     )
 
 

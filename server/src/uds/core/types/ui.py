@@ -45,6 +45,7 @@ class Tab(enum.StrEnum):
     DISPLAY = gettext_noop('Display')
     MFA = gettext_noop('MFA')
     MACHINE = gettext_noop('Machine')
+    CONFIG = gettext_noop('Config')
 
     @staticmethod
     def from_str(value: typing.Optional[str]) -> typing.Union['Tab', str, None]:

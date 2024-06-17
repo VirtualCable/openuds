@@ -39,6 +39,7 @@ import qrcode
 from django.utils.translation import gettext_noop as _, gettext
 
 from uds import models
+from uds.core.util import fields
 from uds.core.util.model import sql_now
 from uds.core import mfas, exceptions, types
 from uds.core.ui import gui
@@ -81,22 +82,11 @@ class TOTP_MFA(mfas.MFA):
         order=31,
         tooltip=_('Number of valid codes before and after the current one'),
         required=True,
-        tab=_('Config'),
+        tab=types.ui.Tab.CONFIG,
         old_field_name='validWindow',
     )
-    networks = gui.MultiChoiceField(
-        label=_('TOTP networks'),
-        readonly=False,
-        rows=5,
-        order=32,
-        tooltip=_('Users within these networks will not be asked for OTP'),
-        required=False,
-        choices=lambda: [
-            gui.choice_item(v.uuid, v.name)
-            for v in models.Network.objects.all().order_by('name')
-        ],
-        tab=_('Config'),
-    )
+
+    allow_skip_mfa_from_networks = fields.allow_skip_mfa_from_networks_field()
 
     def initialize(self, values: 'types.core.ValuesType') -> None:
         return super().initialize(values)
@@ -111,8 +101,10 @@ class TOTP_MFA(mfas.MFA):
         Returns:
             True if we need to ask for OTP
         """
-
-        return not any(request.ip in i for i in models.Network.objects.filter(uuid__in=self.networks.value))
+        return not any(
+            request.ip in i
+            for i in models.Network.objects.filter(uuid__in=self.allow_skip_mfa_from_networks.value)
+        )
 
     def label(self) -> str:
         return gettext('Authentication Code')

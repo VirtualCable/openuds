@@ -35,7 +35,6 @@ import logging
 
 from django.utils.translation import gettext_noop as _, gettext
 
-from uds import models
 from uds.core import mfas, exceptions
 from uds.core.ui import gui
 
@@ -48,6 +47,7 @@ from uds.auths.Radius.client import (
     # NEEDED
 )
 from uds.core.auths.auth import web_password
+from uds.core.util import fields
 
 if typing.TYPE_CHECKING:
     from uds.core.types.requests import ExtendedHttpRequest
@@ -107,40 +107,9 @@ class RadiusOTP(mfas.MFA):
         old_field_name='nasIdentifier',
     )
 
-    response_error_action = gui.ChoiceField(
-        label=_('Radius OTP communication error action'),
-        order=31,
-        default='0',
-        tooltip=_('Action for OTP server communication error'),
-        required=True,
-        choices=mfas.LoginAllowed.choices(),
-        tab=_('Config'),
-        old_field_name='responseErrorAction',
-    )
-
-    networks = gui.MultiChoiceField(
-        label=_('Radius OTP networks'),
-        readonly=False,
-        rows=5,
-        order=32,
-        tooltip=_('Networks for Radius OTP authentication'),
-        required=False,
-        choices=lambda: [
-            gui.choice_item(v.uuid, v.name) for v in models.Network.objects.all().order_by('name')
-        ],
-        tab=_('Config'),
-    )
-
-    allow_login_without_mfa = gui.ChoiceField(
-        label=_('User without defined OTP in server'),
-        order=33,
-        default='0',
-        tooltip=_('Action for user without defined Radius Challenge'),
-        required=True,
-        choices=mfas.LoginAllowed.choices(),
-        tab=_('Config'),
-        old_field_name='allowLoginWithoutMFA',
-    )
+    login_without_mfa_policy = fields.login_without_mfa_policy_field()
+    login_without_mfa_policy_networks = fields.login_without_mfa_policy_networks_field()
+    allow_skip_mfa_from_networks = fields.allow_skip_mfa_from_networks_field()
 
     def radius_client(self) -> client.RadiusClient:
         """Return a new radius client ."""
@@ -152,7 +121,7 @@ class RadiusOTP(mfas.MFA):
         )
 
     def check_result(self, action: str, request: 'ExtendedHttpRequest') -> mfas.MFA.RESULT:
-        if mfas.LoginAllowed.check_action(action, request, self.networks.value):
+        if mfas.LoginAllowed.check_action(action, request, self.login_without_mfa_policy_networks.value):
             return mfas.MFA.RESULT.OK
         raise Exception('User not allowed to login')
 
@@ -183,6 +152,9 @@ class RadiusOTP(mfas.MFA):
         in order to check this, it is neccesary to first validate password (again) with radius server
         and get also radius State value (otp session)
         '''
+        if mfas.LoginAllowed.check_ip_allowed(request, self.login_without_mfa_policy_networks.value):
+            return mfas.MFA.RESULT.ALLOWED
+
         # if we are in a "all-users-otp" policy, avoid this step and go directly to ask for OTP
         if self.all_users_otp.value:
             return mfas.MFA.RESULT.OK
@@ -194,7 +166,7 @@ class RadiusOTP(mfas.MFA):
         except Exception as e:
             logger.error("Exception found connecting to Radius OTP %s: %s", e.__class__, e)
             if not mfas.LoginAllowed.check_action(
-                self.response_error_action.value, request, self.networks.value
+                self.login_without_mfa_policy.value, request, self.login_without_mfa_policy_networks.value
             ):
                 raise Exception(_('Radius OTP connection error')) from e
             logger.warning(
@@ -212,7 +184,7 @@ class RadiusOTP(mfas.MFA):
             )
             # we should not be here: not synchronized user password between auth server and radius server
             # What do we want to do here ??
-            return self.check_result(self.response_error_action.value, request)
+            return self.check_result(self.login_without_mfa_policy.value, request)
 
         if auth_reply.otp_needed == NOT_NEEDED:
             logger.warning(
@@ -220,7 +192,7 @@ class RadiusOTP(mfas.MFA):
                 username,
                 request.ip,
             )
-            return self.check_result(self.allow_login_without_mfa.value, request)
+            return self.check_result(self.login_without_mfa_policy.value, request)
 
         # Store state for later use, related to this user
         request.session[client.STATE_VAR_NAME] = auth_reply.state or b''
@@ -264,7 +236,7 @@ class RadiusOTP(mfas.MFA):
             except Exception as e:
                 logger.error("Exception found connecting to Radius OTP %s: %s", e.__class__, e)
                 if mfas.LoginAllowed.check_action(
-                    self.response_error_action.value, request, self.networks.value
+                    self.login_without_mfa_policy.value, request, self.login_without_mfa_policy_networks.value
                 ):
                     raise Exception(_('Radius OTP connection error')) from e
                 logger.warning(

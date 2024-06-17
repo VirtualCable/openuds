@@ -66,7 +66,9 @@ class LoginAllowed(enum.StrEnum):
     DENIED_IF_IN_NETWORKS = '3'
 
     @staticmethod
-    def check_ip_allowed(request: 'ExtendedHttpRequest', networks: typing.Optional[collections.abc.Iterable[str]] = None) -> bool:
+    def check_ip_allowed(
+        request: 'ExtendedHttpRequest', networks: typing.Optional[collections.abc.Iterable[str]] = None
+    ) -> bool:
         if networks is None:
             return True  # No network restrictions, so we allow
         return any(i.contains(request.ip) for i in Network.objects.filter(uuid__in=list(networks)))
@@ -85,22 +87,36 @@ class LoginAllowed(enum.StrEnum):
             LoginAllowed.ALLOWED: True,
             LoginAllowed.DENIED: False,
             LoginAllowed.ALLOWED_IF_IN_NETWORKS: LoginAllowed.check_ip_allowed(request, networks),
-            LoginAllowed.DENIED_IF_IN_NETWORKS: not LoginAllowed.check_ip_allowed(request, networks)
+            LoginAllowed.DENIED_IF_IN_NETWORKS: not LoginAllowed.check_ip_allowed(request, networks),
         }.get(action, False)
 
     @staticmethod
     def choices(include_global_allowance: bool = True) -> list[types.ui.ChoiceItem]:
-        result = [
-            gui.choice_item(LoginAllowed.ALLOWED.value, gettext('Allow user login')),
-            gui.choice_item(LoginAllowed.DENIED.value, gettext('Deny user login'))
-        ] if include_global_allowance else []
+        result = (
+            [
+                gui.choice_item(LoginAllowed.ALLOWED.value, gettext('Allow user login')),
+                gui.choice_item(LoginAllowed.DENIED.value, gettext('Deny user login')),
+            ]
+            if include_global_allowance
+            else []
+        )
         result.extend(
             [
-                gui.choice_item(LoginAllowed.ALLOWED_IF_IN_NETWORKS.value, gettext('Allow user to login if it IP is in the networks list')),
-                gui.choice_item(LoginAllowed.DENIED_IF_IN_NETWORKS.value, gettext('Deny user to login if it IP is in the networks list')),
+                gui.choice_item(
+                    LoginAllowed.ALLOWED_IF_IN_NETWORKS.value,
+                    gettext('Allow user to login if it IP is in the networks list'),
+                ),
+                gui.choice_item(
+                    LoginAllowed.DENIED_IF_IN_NETWORKS.value,
+                    gettext('Deny user to login if it IP is in the networks list'),
+                ),
             ]
         )
         return result
+
+    @staticmethod
+    def network_choices() -> list[types.ui.ChoiceItem]:
+        return [gui.choice_item(v.uuid, v.name) for v in Network.objects.all().order_by('name')]
 
 
 class MFA(Module):

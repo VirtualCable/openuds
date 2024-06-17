@@ -39,11 +39,10 @@ from email.mime.text import MIMEText
 from django.utils.translation import gettext
 from django.utils.translation import gettext_noop as _
 
-from uds import models
 from uds.core import exceptions, mfas, types
 from uds.core.types.requests import ExtendedHttpRequest
 from uds.core.ui import gui
-from uds.core.util import decorators, validators
+from uds.core.util import decorators, fields, validators
 
 if typing.TYPE_CHECKING:
     from uds.core.types.requests import ExtendedHttpRequest
@@ -105,73 +104,40 @@ class EmailMFA(mfas.MFA):
         length=128,
         default='Verification Code',
         label=_('Subject'),
-        order=3,
+        order=20,
         tooltip=_('Subject of the email'),
         required=True,
-        tab=_('Config'),
+        tab=types.ui.Tab.CONFIG,
         old_field_name='emailSubject',
     )
 
     from_email = gui.TextField(
         length=128,
         label=_('From Email'),
-        order=11,
+        order=21,
         tooltip=_('Email address that will be used as sender'),
         required=True,
-        tab=_('Config'),
+        tab=types.ui.Tab.CONFIG,
         old_field_name='fromEmail',
     )
 
     enable_html = gui.CheckBoxField(
         label=_('Enable HTML'),
-        order=13,
+        order=22,
         tooltip=_('Enable HTML in emails'),
         default=True,
-        tab=_('Config'),
+        tab=types.ui.Tab.CONFIG,
         old_field_name='enableHTML',
     )
 
-    allow_login_without_mfa = gui.ChoiceField(
-        label=_('Policy for users without MFA support'),
-        order=31,
-        default='0',
-        tooltip=_('Action for MFA response error'),
-        required=True,
-        choices=mfas.LoginAllowed.choices(),
-        tab=_('Config'),
-        old_field_name='allowLoginWithoutMFA',
-    )
-
-    allow_skip_mfa_from_networks = gui.MultiChoiceField(
-        label=_('Allow skip MFA from networks'),
-        readonly=False,
-        rows=5,
-        order=32,
-        tooltip=_('Users within these networks will not be asked for OTP'),
-        required=False,
-        choices=lambda: [
-            gui.choice_item(v.uuid, v.name) for v in models.Network.objects.all().order_by('name')
-        ],
-        tab=_('Config'),
-    )
-
-    networks = gui.MultiChoiceField(
-        label=_('Mail OTP Networks'),
-        readonly=False,
-        rows=5,
-        order=32,
-        tooltip=_('Networks for Email OTP authentication'),
-        required=False,
-        choices=lambda: [
-            gui.choice_item(v.uuid, v.name) for v in models.Network.objects.all().order_by('name')
-        ],
-        tab=_('Config'),
-    )
+    login_without_mfa_policy = fields.login_without_mfa_policy_field()
+    login_without_mfa_policy_networks = fields.login_without_mfa_policy_networks_field()
+    allow_skip_mfa_from_networks = fields.allow_skip_mfa_from_networks_field()
 
     mail_txt = gui.TextField(
         length=1024,
         label=_('Mail text'),
-        order=33,
+        order=40,
         lines=4,
         tooltip=_('Text of the email. If empty, a default text will be used')
         + '\n'
@@ -179,14 +145,14 @@ class EmailMFA(mfas.MFA):
         + '{code}, {username}, {justUsername}. {ip}',
         required=True,
         default='',
-        tab=_('Config'),
+        tab=types.ui.Tab.CONFIG,
         old_field_name='mailTxt',
     )
 
     mail_html = gui.TextField(
         length=1024,
         label=_('Mail HTML'),
-        order=34,
+        order=41,
         lines=4,
         tooltip=_('HTML of the email. If empty, a default HTML will be used')
         + '\n'
@@ -195,7 +161,7 @@ class EmailMFA(mfas.MFA):
         + '{code}, {username}, {justUsername}, {ip}',
         required=False,
         default='',
-        tab=_('Config'),
+        tab=types.ui.Tab.CONFIG,
         old_field_name='mailHtml',
     )
 
@@ -228,7 +194,9 @@ class EmailMFA(mfas.MFA):
         return gettext('Check your mail. You will receive an email with the verification code')
 
     def allow_login_without_identifier(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
-        return mfas.LoginAllowed.check_action(self.allow_login_without_mfa.value, request, self.networks.value)
+        return mfas.LoginAllowed.check_action(
+            self.login_without_mfa_policy.value, request, self.login_without_mfa_policy_networks.value
+        )
 
     def label(self) -> str:
         return 'OTP received via email'

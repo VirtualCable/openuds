@@ -40,7 +40,7 @@ import requests.auth
 from uds import models
 from uds.core import mfas, types
 from uds.core.ui import gui
-from uds.core.util import security
+from uds.core.util import fields, security
 
 if typing.TYPE_CHECKING:
     from uds.core.types.requests import ExtendedHttpRequest
@@ -99,7 +99,7 @@ class SMSMFA(mfas.MFA):
     type_description = _('Simple SMS sending MFA using HTTP/HTTPS')
     icon_file = 'sms.png'
 
-    sendingUrl = gui.TextField(
+    url_pattern = gui.TextField(
         length=128,
         label=_('URL pattern for SMS sending'),
         order=1,
@@ -113,9 +113,10 @@ class SMSMFA(mfas.MFA):
         ),
         required=True,
         tab=_('HTTP Server'),
+        old_field_name='sendingUrl',
     )
 
-    ignoreCertificateErrors = gui.CheckBoxField(
+    ignore_certificate_errors = gui.CheckBoxField(
         label=_('Ignore certificate errors'),
         order=2,
         default=False,
@@ -124,18 +125,20 @@ class SMSMFA(mfas.MFA):
             'useful if the server uses a self-signed certificate.'
         ),
         tab=_('HTTP Server'),
+        old_field_name='ignoreCertificateErrors',
     )
 
-    sendingMethod = gui.ChoiceField(
+    http_method = gui.ChoiceField(
         label=_('SMS sending method'),
         order=3,
         tooltip=_('Method for sending SMS'),
         required=True,
         choices=('GET', 'POST', 'PUT'),
         tab=_('HTTP Server'),
+        old_field_name='sendingMethod',
     )
 
-    headersParameters = gui.TextField(
+    headers_parameters = gui.TextField(
         length=4096,
         lines=4,
         label=_('Headers for SMS requests'),
@@ -151,9 +154,10 @@ class SMSMFA(mfas.MFA):
         ),
         required=False,
         tab=_('HTTP Server'),
+        old_field_name='headersParameters',
     )
 
-    sendingParameters = gui.TextField(
+    parameters = gui.TextField(
         length=4096,
         lines=5,
         label=_('Parameters for SMS POST/PUT sending'),
@@ -168,6 +172,7 @@ class SMSMFA(mfas.MFA):
         ),
         required=False,
         tab=_('HTTP Server'),
+        old_field_name='sendingParameters',
     )
 
     encoding = gui.ChoiceField(
@@ -180,7 +185,7 @@ class SMSMFA(mfas.MFA):
         tab=_('HTTP Server'),
     )
 
-    authenticationMethod = gui.ChoiceField(
+    auth_method = gui.ChoiceField(
         label=_('SMS authentication method'),
         order=20,
         tooltip=_('Method for sending SMS'),
@@ -191,18 +196,20 @@ class SMSMFA(mfas.MFA):
             '2': _('HTTP Digest Auth'),
         },
         tab=_('HTTP Authentication'),
+        old_field_name='authenticationMethod',
     )
 
-    authenticationUserOrToken = gui.TextField(
+    auth_user_or_token = gui.TextField(
         length=256,
         label=_('SMS authentication user or token'),
         order=21,
         tooltip=_('User or token for SMS authentication'),
         required=False,
         tab=_('HTTP Authentication'),
+        old_field_name='authenticationUserOrToken',
     )
 
-    authenticationPassword = gui.PasswordField(
+    auth_password = gui.PasswordField(
         length=256,
         label=_('SMS authentication password'),
         order=22,
@@ -211,16 +218,17 @@ class SMSMFA(mfas.MFA):
         tab=_('HTTP Authentication'),
     )
 
-    responseOkRegex = gui.TextField(
+    valid_response_re = gui.TextField(
         length=256,
         label=_('SMS response OK regex'),
         order=30,
         tooltip=_('Regex for SMS response OK. If empty, the response is considered OK if status code is 200.'),
         required=False,
         tab=_('HTTP Response'),
+        old_field_name='responseOkRegex',
     )
 
-    responseErrorAction = gui.ChoiceField(
+    response_error_action = gui.ChoiceField(
         label=_('SMS response error action'),
         order=31,
         default='0',
@@ -232,32 +240,13 @@ class SMSMFA(mfas.MFA):
             '2': _('Allow user to login if its IP is in the networks list'),
             '3': _('Deny user to login if its IP is in the networks list'),
         },
-        tab=_('Config'),
+        tab=types.ui.Tab.CONFIG,
+        old_field_name='responseErrorAction',
     )
 
-    allowLoginWithoutMFA = gui.ChoiceField(
-        label=_('User without MFA policy'),
-        order=33,
-        default='0',
-        tooltip=_('Action for SMS response error'),
-        required=True,
-        choices=mfas.LoginAllowed.choices(),
-        tab=_('Config'),
-    )
-
-    networks = gui.MultiChoiceField(
-        label=_('SMS networks'),
-        readonly=False,
-        rows=5,
-        order=32,
-        tooltip=_('Networks for SMS authentication'),
-        required=False,
-        choices=lambda: [
-            gui.choice_item(v.uuid, v.name)
-            for v in models.Network.objects.all().order_by('name')
-        ],
-        tab=_('Config'),
-    )
+    login_without_mfa_policy = fields.login_without_mfa_policy_field()
+    login_without_mfa_policy_networks = fields.login_without_mfa_policy_networks_field()
+    allow_skip_mfa_from_networks = fields.allow_skip_mfa_from_networks_field()
 
     def initialize(self, values: 'types.core.ValuesType') -> None:
         return super().initialize(values)
@@ -269,7 +258,7 @@ class SMSMFA(mfas.MFA):
         code: str,
         phone: str,
     ) -> str:
-        url = self.sendingUrl.value
+        url = self.url_pattern.value
         url = url.replace('{code}', code)
         url = url.replace('{phone}', phone.replace('+', ''))
         url = url.replace('{+phone}', phone)
@@ -277,31 +266,54 @@ class SMSMFA(mfas.MFA):
         url = url.replace('{justUsername}', userName.split('@')[0])
         return url
 
+    def ask_for_otp(self, request: 'ExtendedHttpRequest') -> bool:
+        """
+        Check if we need to ask for OTP for a given user
+
+        Returns:
+            True if we need to ask for OTP
+        """
+        return not any(request.ip in i for i in models.Network.objects.filter(uuid__in=self.login_without_mfa_policy_networks.value))
+
     def get_session(self) -> requests.Session:
-        session = security.secure_requests_session(verify=self.ignoreCertificateErrors.as_bool())
+        session = security.secure_requests_session(verify=self.ignore_certificate_errors.as_bool())
         # 0 means no authentication
-        if self.authenticationMethod.value == '1':
+        if self.auth_method.value == '1':
             session.auth = requests.auth.HTTPBasicAuth(
-                username=self.authenticationUserOrToken.value,
-                password=self.authenticationPassword.value,
+                username=self.auth_user_or_token.value,
+                password=self.auth_password.value,
             )
-        elif self.authenticationMethod.value == '2':
+        elif self.auth_method.value == '2':
             session.auth = requests.auth.HTTPDigestAuth(
-                self.authenticationUserOrToken.value,
-                self.authenticationPassword.value,
+                self.auth_user_or_token.value,
+                self.auth_password.value,
             )
         # Any other value means no authentication
 
         # Add headers. Headers are in the form of "Header: Value". (without the quotes)
-        if self.headersParameters.value.strip():
-            for header in self.headersParameters.value.split('\n'):
+        if self.headers_parameters.value.strip():
+            for header in self.headers_parameters.value.split('\n'):
                 if header.strip():
                     headerName, headerValue = header.split(':', 1)
                     session.headers[headerName.strip()] = headerValue.strip()
         return session
 
     def allow_login_without_identifier(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
-        return mfas.LoginAllowed.check_action(self.allowLoginWithoutMFA.value, request, self.networks.value)
+        return mfas.LoginAllowed.check_action(self.login_without_mfa_policy.value, request, self.login_without_mfa_policy_networks.value)
+
+    def process(
+        self,
+        request: 'ExtendedHttpRequest',
+        userId: str,
+        username: str,
+        identifier: str,
+        validity: typing.Optional[int] = None,
+    ) -> 'mfas.MFA.RESULT':
+        # if ip allowed to skip mfa, return allowed
+        if mfas.LoginAllowed.check_ip_allowed(request, self.allow_skip_mfa_from_networks.value):
+            return mfas.MFA.RESULT.ALLOWED
+
+        return super().process(request, userId, username, identifier, validity)
 
     def process_response(self, request: 'ExtendedHttpRequest', response: requests.Response) -> mfas.MFA.RESULT:
         logger.debug('Response: %s', response)
@@ -311,22 +323,22 @@ class SMSMFA(mfas.MFA):
                 response.status_code,
                 response.text,
             )
-            if not mfas.LoginAllowed.check_action(self.responseErrorAction.value, request, self.networks.value):
+            if not mfas.LoginAllowed.check_action(self.response_error_action.value, request, self.login_without_mfa_policy_networks.value):
                 raise Exception(_('SMS sending failed'))
             return mfas.MFA.RESULT.ALLOWED  # Allow login, NO MFA code was sent
-        if self.responseOkRegex.value.strip():
+        if self.valid_response_re.value.strip():
             logger.debug(
                 'Checking response OK regex: %s: (%s)',
-                self.responseOkRegex.value,
-                re.search(self.responseOkRegex.value, response.text),
+                self.valid_response_re.value,
+                re.search(self.valid_response_re.value, response.text),
             )
-            if not re.search(self.responseOkRegex.value, response.text or ''):
+            if not re.search(self.valid_response_re.value, response.text or ''):
                 logger.error(
                     'SMS response error: %s',
                     response.text,
                 )
                 if not mfas.LoginAllowed.check_action(
-                    self.responseErrorAction.value, request, self.networks.value
+                    self.response_error_action.value, request, self.login_without_mfa_policy_networks.value
                 ):
                     raise Exception(_('SMS response error'))
                 return mfas.MFA.RESULT.ALLOWED
@@ -342,9 +354,9 @@ class SMSMFA(mfas.MFA):
         phone: str,
     ) -> bytes:
         data = ''
-        if self.sendingParameters.value:
+        if self.parameters.value:
             data = (
-                self.sendingParameters.value.replace('{code}', code)
+                self.parameters.value.replace('{code}', code)
                 .replace('{phone}', phone.replace('+', ''))
                 .replace('{+phone}', phone)
                 .replace('{username}', username)
@@ -400,11 +412,11 @@ class SMSMFA(mfas.MFA):
         phone: str,
     ) -> mfas.MFA.RESULT:
         url = self.build_sms_url(userId, username, code, phone)
-        if self.sendingMethod.value == 'GET':
+        if self.http_method.value == 'GET':
             return self._send_sms_using_get(request, userId, username, url)
-        if self.sendingMethod.value == 'POST':
+        if self.http_method.value == 'POST':
             return self._send_sms_using_post(request, userId, username, url, code, phone)
-        if self.sendingMethod.value == 'PUT':
+        if self.http_method.value == 'PUT':
             return self._send_sms_using_put(request, userId, username, url, code, phone)
         raise Exception('Unknown SMS sending method')
 
