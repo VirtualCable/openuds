@@ -124,6 +124,16 @@ class RadiusOTP(mfas.MFA):
     )
 
     networks = gui.MultiChoiceField(
+        label=_('Radius comms OTP networks'),
+        rdonly=False,
+        rows=5,
+        order=32,
+        tooltip=_('Networks for Radius OTP authentication'),
+        required=False,
+        tab=_('Config'),
+    )
+
+    allow_networks_without_mfa = gui.MultiChoiceField(
         label=_('Radius OTP networks'),
         rdonly=False,
         rows=5,
@@ -155,6 +165,12 @@ class RadiusOTP(mfas.MFA):
     def initClassGui(cls) -> None:
         # Populate the networks list
         cls.networks.setValues(
+            [
+                gui.choiceItem(v.uuid, v.name)  # type: ignore
+                for v in models.Network.objects.all().order_by('name')
+            ]
+        )
+        cls.allow_networks_without_mfa.setValues(
             [
                 gui.choiceItem(v.uuid, v.name)  # type: ignore
                 for v in models.Network.objects.all().order_by('name')
@@ -216,7 +232,7 @@ class RadiusOTP(mfas.MFA):
 
         return not any(
             i.ipInNetwork(request.ip)
-            for i in models.Network.objects.filter(uuid__in=self.networks.value)
+            for i in models.Network.objects.filter(uuid__in=self.allow_networks_without_mfa.value)
         )
 
     def process(
