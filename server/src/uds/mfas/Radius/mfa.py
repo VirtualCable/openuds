@@ -128,7 +128,7 @@ class RadiusOTP(mfas.MFA):
         rdonly=False,
         rows=5,
         order=32,
-        tooltip=_('Networks for Radius OTP authentication'),
+        tooltip=_('Users within these networks will not be asked for OTP'),
         required=False,
         tab=_('Config'),
     )
@@ -206,6 +206,19 @@ class RadiusOTP(mfas.MFA):
         '''
         return gettext('Please enter OTP')
 
+    def askForOTP(self, request: 'ExtendedHttpRequest') -> bool:
+        """
+        Check if we need to ask for OTP for a given user
+
+        Returns:
+            True if we need to ask for OTP
+        """
+
+        return not any(
+            i.ipInNetwork(request.ip)
+            for i in models.Network.objects.filter(uuid__in=self.networks.value)
+        )
+
     def process(
         self,
         request: 'ExtendedHttpRequest',
@@ -219,6 +232,9 @@ class RadiusOTP(mfas.MFA):
         in order to check this, it is neccesary to first validate password (again) with radius server
         and get also radius State value (otp session)
         '''
+        if self.askForOTP(request) is False:
+            return mfas.MFA.RESULT.ALLOWED
+        
         # if we are in a "all-users-otp" policy, avoid this step and go directly to ask for OTP
         if self.all_users_otp.isTrue():
             return mfas.MFA.RESULT.OK
