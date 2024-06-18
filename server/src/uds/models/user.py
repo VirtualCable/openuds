@@ -188,7 +188,7 @@ class User(UUIDModel, properties.PropertiesMixin):
         """
         # If has mfa, remove related data
         if self.manager.mfa:
-            self.manager.mfa.get_instance().reset_data(mfas.MFA.get_user_id(self))
+            self.manager.mfa.get_instance().reset_data(mfas.MFA.get_user_unique_id(self))
 
     @staticmethod
     def pre_delete(sender: typing.Any, **kwargs: typing.Any) -> None:  # pylint: disable=unused-argument

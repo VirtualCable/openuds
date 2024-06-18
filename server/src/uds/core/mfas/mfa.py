@@ -54,6 +54,34 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+# MFA flow:
+# 1.- User logs in
+# 2.- If user has no MFA, login is allowed
+# 3.- If remember_device (stored on DB) is active, and the remember_device cookie is valid, login is allowed
+# 4.- If user has MFA, and remember_device is not active, or the cookie is not valid, MFA is requested
+# 5.- The MFA identifier is requested to the authenticator (phone, email, etc).
+#     - If the identifier is empty, "allow_login_without_identifier" method form MFA is called and processed acordly
+#       - If the method returns True, login is allowed
+#       - If the method returns False, login is denied
+#       - If the method returns None, the MFA is processed with an empty identifier
+# 6.- The process method is called, and the MFA code is sent to the user (or whatever the MFA method does)
+#     - If returns MFA.RESULT.OK, the MFA code was sent, the MFA form is shown to the user with:
+#       - The label of the field to enter the MFA code (label method)
+#       - The HTML to be shown below the MFA code form (html method)
+#     - If returns MFA.RESULT.ALLOWED, the MFA code was not sent, the user does not need to enter the MFA code, login is done
+#     - If raises an error, the MFA code was not sent, and the user is shown an error
+# 7.- The user enters the MFA code, and POSTs the form
+# 8.- The validate method is called with the MFA code and rest of parameters
+#     - If the code is valid, the user is allowed to login (returns)
+#     - If the code is not valid, an exception of type 'exceptions.auth.MFAError' is raised
+#        - The exception message will be shown to the user
+#        - The MFA code will be retried config.GlobalConfig.MAX_LOGIN_TRIES times at most
+# 9.- If the user is allowed to login, the remember_device cookie is set if the user has checked the remember_device checkbox
+#     (this part is in fact done by the login view, but it's part of the MFA flow, just to remember it here)
+
+
+# Note: if the MFA process takes too long, the user will be redirected to the login page, and the process will start again
+
 
 class LoginAllowed(enum.StrEnum):
     """
@@ -363,7 +391,7 @@ class MFA(Module):
         """
 
     @staticmethod
-    def get_user_id(user: 'User') -> str:
+    def get_user_unique_id(user: 'User') -> str:
         """
         Composes an unique, mfa dependant, id for the user (at this time, it's sha3_256 of user + mfa)
         """

@@ -304,10 +304,12 @@ class Authenticator(Module):
         If this method is provided by an authenticator, the user will be allowed to enter a MFA code
         You must return the value used by a MFA provider to identify the user (i.e. email, phone number, etc)
         If not provided, or the return value is '', the user will be allowed to access UDS without MFA
+        only if the mfa itself allows empty mfaIdentifier. (look at mfa base, allow_login_without_identifier)
 
         Note: Field capture will be responsible of provider. Put it on MFA tab of user form.
               Take into consideration that mfaIdentifier will never be invoked if the user has not been
               previously authenticated. (that is, authenticate method has already been called)
+              So, you can store the mfaIdentifier at authenticate method, and return it here for example.
         """
         return ''
 

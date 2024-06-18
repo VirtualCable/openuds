@@ -173,23 +173,26 @@ def mfa(
 
     store: 'storage.Storage' = storage.Storage('mfs')
 
-    mfa_provider = request.user.manager.mfa  # typing.cast('None|models.MFA',
+    mfa_provider = request.user.manager.mfa # Get MFA provider for user
     if not mfa_provider:
         logger.warning('MFA: No MFA provider for user')
         return HttpResponseRedirect(reverse('page.index'))
 
-    mfa_user_id = mfas.MFA.get_user_id(request.user)
+    mfa_user_id = mfas.MFA.get_user_unique_id(request.user)
 
     # Try to get cookie anc check it
     mfa_cookie = request.COOKIES.get(consts.auth.MFA_COOKIE_NAME, None)
     if mfa_cookie and mfa_provider.remember_device > 0:
         stored_user_id: typing.Optional[str]
         created: typing.Optional[datetime.datetime]
-        stored_user_id, created = store.read_pickled(mfa_cookie) or (None, None)
+        stored_data = store.read_pickled(mfa_cookie) or (None, None, None)
+        stored_user_id, created, ip = (stored_data + (None,))[:3]
         if (
             stored_user_id
             and created
             and created + datetime.timedelta(hours=mfa_provider.remember_device) > datetime.datetime.now()
+            # Old stored values do not have ip, so we need to check it
+            and (not ip or ip == request.ip)
         ):
             # Cookie is valid, skip MFA setting authorization
             logger.debug('MFA: Cookie is valid, skipping MFA')
@@ -261,7 +264,7 @@ def mfa(
                     mfa_cookie = CryptoManager().random_string(96)
                     store.save_pickled(
                         mfa_cookie,
-                        (mfa_user_id, now),
+                        (mfa_user_id, now, request.ip),  # MFA will only be valid for this user and this ip
                     )
                     response.set_cookie(
                         consts.auth.MFA_COOKIE_NAME,
@@ -280,6 +283,9 @@ def mfa(
                     # Too many tries, redirect to login error page
                     return errors.error_view(request, types.errors.Error.ACCESS_DENIED)
                 return errors.error_view(request, types.errors.Error.INVALID_MFA_CODE)
+            except Exception as e:
+                logger.error('Error processing MFA: %s', e)
+                return errors.error_view(request, types.errors.Error.UNKNOWN_ERROR)
         else:
             pass  # Will render again the page
     else:
