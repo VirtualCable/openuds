@@ -155,7 +155,7 @@ class ProxmoxServiceLinked(DynamicService):
             '1': _('Only if available'),
             '2': _('Only if NOT available'),
         },
-        tooltip=_('Storage for publications & machines.'),
+        tooltip=_('Checking method for GPU availability'),
         tab=types.ui.Tab.MACHINE,
         required=True,
     )
