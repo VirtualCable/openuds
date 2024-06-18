@@ -40,7 +40,7 @@ if typing.TYPE_CHECKING:
 
 # UDS Version related
 VERSION: typing.Final[str] = '4.0.0'
-VERSION_STAMP: typing.Final[str] = f'{time.strftime("%Y%m%d")}'
+VERSION_STAMP: typing.Final[str] = f'{time.strftime("%Y%m%d")}-devel'
 # Minimal uds client version required to connect to this server
 REQUIRED_CLIENT_VERSION: typing.Final[str] = '3.6.0'
 
