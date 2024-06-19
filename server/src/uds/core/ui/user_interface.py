@@ -1713,17 +1713,21 @@ class UserInterface(metaclass=UserInterfaceType):
             # Values can contain invalid characters, so we log every single char
             # logger.info('Invalid serialization data on {0} {1}'.format(self, values.encode('hex')))
 
-    def gui_description(self) -> list[types.ui.GuiElement]:
+    def gui_description(self, *, skip_init_gui: bool = False) -> list[types.ui.GuiElement]:
         """
         This simple method generates the theGui description needed by the
         administration client, so it can
         represent it at user interface and manage it.
 
         Args:
-            obj: If any, object that will get its "initGui" invoked
-                    This will only happen (not to be None) in Services.
+            skip_init_gui: If True, init_gui will not be called
+            
+        Note:
+            skip_init_gui is used to avoid calling init_gui when we are not going to use the result
+            This is used, for example, when exporting data, generating the tree, etc...
         """
-        self.init_gui()  # We give the "oportunity" to fill necesary theGui data before providing it to client
+        if not skip_init_gui:
+            self.init_gui()  # We give the "oportunity" to fill necesary theGui data before providing it to client
 
         res: list[types.ui.GuiElement] = []
         for key, val in self._gui.items():
