@@ -88,6 +88,8 @@ HEADER_ENCRYPTED: typing.Final[bytes] = b'MGEAS1'
 
 # Size of crc32 checksum
 CRC_SIZE: typing.Final[int] = 4
+# Size of version
+VERSION_SIZE: typing.Final[int] = 2  # 2 bytes for version
 
 # Packing data struct
 PACKED_LENGHS: typing.Final[struct.Struct] = struct.Struct('<HHI')
@@ -471,6 +473,8 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
     """
 
     _fields: dict[str, typing.Any]
+    
+    serialization_version: int = 0  # So autoserializable classes can keep their version if needed
 
     def _autoserializable_fields(self) -> collections.abc.Iterator[tuple[str, _SerializableField[typing.Any]]]:
         """Returns an iterator over all fields in the class, including inherited ones
@@ -540,7 +544,7 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
         # Calculate checksum
         checksum = zlib.crc32(data)
         # Compose header, that is V1_HEADER + checksum (4 bytes, big endian)
-        header = HEADER_BASE + checksum.to_bytes(CRC_SIZE, 'big')
+        header = HEADER_BASE + self.serialization_version.to_bytes(VERSION_SIZE, 'big') + checksum.to_bytes(CRC_SIZE, 'big')
         # Return data processed with header
         return header + self.process_data(header, data)
 
@@ -551,9 +555,11 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
         if data[: len(HEADER_BASE)] != HEADER_BASE:
             raise ValueError('Invalid header')
 
-        header = data[: len(HEADER_BASE) + CRC_SIZE]
+        header = data[: len(HEADER_BASE) + VERSION_SIZE + CRC_SIZE]
+        # extract version
+        self._serialization_version = int.from_bytes(header[len(HEADER_BASE) : len(HEADER_BASE) + VERSION_SIZE], 'big')
         # Extract checksum
-        checksum = int.from_bytes(header[len(HEADER_BASE) : len(HEADER_BASE) + 4], 'big')
+        checksum = int.from_bytes(header[len(HEADER_BASE) + VERSION_SIZE : len(HEADER_BASE) + VERSION_SIZE + CRC_SIZE], 'big')
         # Unprocess data
         data = self.unprocess_data(header, data[len(header) :])
 

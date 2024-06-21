@@ -127,7 +127,7 @@ class ProxmoxPublication(DynamicPublication, autoserializable.AutoSerializable):
         # Mark vm as template
         self.service().provider().create_template(int(self._vmid))
         
-    def op_remove(self) -> None:
+    def op_delete(self) -> None:
         self.service().delete(self, self._vmid)
         
     def machine(self) -> int:

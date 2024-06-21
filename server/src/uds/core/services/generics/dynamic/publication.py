@@ -201,6 +201,10 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         """
         return True
 
+    # overridable, so we can process messages from service
+    def notify(self, message: str, data: typing.Any = None) -> None:
+        pass
+
     @typing.final
     def publish(self) -> types.states.TaskState:
         """ """
@@ -369,14 +373,14 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         """
         pass
 
-    def op_remove(self) -> None:
+    def op_delete(self) -> None:
         """
         This method is called when the service is removed
         By default, we need a remove machine on the service, use it
         """
         self.service().delete(self, self._vmid)
 
-    def op_remove_completed(self) -> None:
+    def op_delete_completed(self) -> None:
         """
         This method is called when the service removal is completed
         """
@@ -468,13 +472,13 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         """
         return types.states.TaskState.FINISHED
 
-    def op_remove_checker(self) -> types.states.TaskState:
+    def op_delete_checker(self) -> types.states.TaskState:
         """
         This method is called to check if the service is removed
         """
         return types.states.TaskState.FINISHED
 
-    def op_remove_completed_checker(self) -> types.states.TaskState:
+    def op_delete_completed_checker(self) -> types.states.TaskState:
         """
         This method is called to check if the service removal is completed
         """
@@ -550,8 +554,8 @@ _EXECUTORS: typing.Final[
     Operation.SUSPEND_COMPLETED: DynamicPublication.op_unsupported,
     Operation.RESET: DynamicPublication.op_unsupported,
     Operation.RESET_COMPLETED: DynamicPublication.op_unsupported,
-    Operation.DELETE: DynamicPublication.op_remove,
-    Operation.DELETE_COMPLETED: DynamicPublication.op_remove_completed,
+    Operation.DELETE: DynamicPublication.op_delete,
+    Operation.DELETE_COMPLETED: DynamicPublication.op_delete_completed,
     Operation.WAIT: DynamicPublication.op_unsupported,
     Operation.NOP: DynamicPublication.op_nop,
     Operation.DESTROY_VALIDATOR: DynamicPublication.op_destroy_validator,
@@ -575,8 +579,8 @@ _CHECKERS: typing.Final[
     Operation.SUSPEND_COMPLETED: DynamicPublication.op_unsupported_checker,
     Operation.RESET: DynamicPublication.op_unsupported_checker,
     Operation.RESET_COMPLETED: DynamicPublication.op_unsupported_checker,
-    Operation.DELETE: DynamicPublication.op_remove_checker,
-    Operation.DELETE_COMPLETED: DynamicPublication.op_remove_completed_checker,
+    Operation.DELETE: DynamicPublication.op_delete_checker,
+    Operation.DELETE_COMPLETED: DynamicPublication.op_delete_completed_checker,
     Operation.WAIT: DynamicPublication.op_unsupported_checker,
     Operation.NOP: DynamicPublication.op_nop_checker,
     Operation.DESTROY_VALIDATOR: DynamicPublication.op_destroy_validator_checker,

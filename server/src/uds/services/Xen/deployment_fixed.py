@@ -109,7 +109,7 @@ class XenFixedUserService(FixedUserService, autoserializable.AutoSerializable):
         """
         return self._check_task_finished()
 
-    def op_removed_checker(self) -> types.states.TaskState:
+    def op_deleted_checker(self) -> types.states.TaskState:
         """
         Checks if a machine has been removed
         """

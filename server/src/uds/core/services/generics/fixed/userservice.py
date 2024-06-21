@@ -375,14 +375,14 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         self.service().snapshot_recovery(userservice_instance=self)
 
     @typing.final
-    def op_process_tocken(self) -> None:
+    def op_process_token(self) -> None:
         # If not to be managed by a token, "autologin" user
         if not self.service().get_token():
             userservice = self.db_obj()
             if userservice:
                 userservice.set_in_use(True)
 
-    def op_remove(self) -> None:
+    def op_delete(self) -> None:
         """
         Removes the snapshot if needed and releases the machine again
         """
@@ -455,7 +455,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
     def op_shutdown_checker(self) -> types.states.TaskState:
         return self.op_stop_checker()  # Default is to check if machine has stopped
 
-    def op_removed_checker(self) -> types.states.TaskState:
+    def op_deleted_checker(self) -> types.states.TaskState:
         """
         Checks if a machine has been removed
         """
@@ -532,10 +532,10 @@ _EXECUTORS: typing.Final[
     Operation.CREATE: FixedUserService.op_create,
     Operation.START: FixedUserService.op_start,
     Operation.STOP: FixedUserService.op_stop,
-    Operation.DELETE: FixedUserService.op_remove,
+    Operation.DELETE: FixedUserService.op_delete,
     Operation.SNAPSHOT_CREATE: FixedUserService.op_snapshot_create,
     Operation.SNAPSHOT_RECOVER: FixedUserService.op_snapshot_recover,
-    Operation.PROCESS_TOKEN: FixedUserService.op_process_tocken,
+    Operation.PROCESS_TOKEN: FixedUserService.op_process_token,
     Operation.SHUTDOWN: FixedUserService.op_shutdown,
     Operation.NOP: FixedUserService.op_nop,
     # Retry operation has no executor, look "retry_later" method
@@ -548,7 +548,7 @@ _CHECKERS: typing.Final[
     Operation.CREATE: FixedUserService.op_create_checker,
     Operation.START: FixedUserService.op_start_checker,
     Operation.STOP: FixedUserService.op_stop_checker,
-    Operation.DELETE: FixedUserService.op_removed_checker,
+    Operation.DELETE: FixedUserService.op_deleted_checker,
     Operation.SNAPSHOT_CREATE: FixedUserService.op_snapshot_create_checker,
     Operation.SNAPSHOT_RECOVER: FixedUserService.op_snapshot_recover_checker,
     Operation.PROCESS_TOKEN: FixedUserService.op_process_token_checker,

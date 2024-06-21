@@ -334,9 +334,9 @@ class DynamicTestingUserServiceQueue(dynamic_userservice.DynamicUserService):
         self.mock.reset_completed()
 
     # Default opremove will call service remove_machine, so will check there
-    # def op_remove(self) -> None:
+    # def op_delete(self) -> None:
 
-    def op_remove_completed(self) -> None:
+    def op_delete_completed(self) -> None:
         self.mock.remove_completed()
 
     def op_wait(self) -> None:
@@ -399,11 +399,11 @@ class DynamicTestingUserServiceQueue(dynamic_userservice.DynamicUserService):
         self.mock.reset_completed_checker()
         return types.states.TaskState.FINISHED
 
-    def op_remove_checker(self) -> types.states.TaskState:
+    def op_delete_checker(self) -> types.states.TaskState:
         self.mock.remove_checker()
         return types.states.TaskState.FINISHED
 
-    def op_remove_completed_checker(self) -> types.states.TaskState:
+    def op_delete_completed_checker(self) -> types.states.TaskState:
         self.mock.remove_completed_checker()
         return types.states.TaskState.FINISHED
 
@@ -592,7 +592,7 @@ class DynamicTestingPublicationQueue(dynamic_publication.DynamicPublication):
     def op_shutdown_completed(self) -> None:
         self.mock.shutdown_completed()
 
-    def op_remove_completed(self) -> None:
+    def op_delete_completed(self) -> None:
         self.mock.remove_completed()
 
     def op_nop(self) -> None:
@@ -630,11 +630,11 @@ class DynamicTestingPublicationQueue(dynamic_publication.DynamicPublication):
         self.mock.shutdown_completed_checker()
         return TaskState.FINISHED
 
-    def op_remove_checker(self) -> types.states.TaskState:
+    def op_delete_checker(self) -> types.states.TaskState:
         self.mock.remove_checker()
         return TaskState.FINISHED
 
-    def op_remove_completed_checker(self) -> types.states.TaskState:
+    def op_delete_completed_checker(self) -> types.states.TaskState:
         self.mock.remove_completed_checker()
         return TaskState.FINISHED
 

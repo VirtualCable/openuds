@@ -72,13 +72,15 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
     # Gui remplates, to be "incorporated" by inherited classes if needed
     base_machine = gui.ChoiceField(
         label=_('Base Machine'),
-        order=10,
+        order=30,
         tooltip=_('Base machine for this service'),
         required=True,
+        tab=types.ui.Tab.MACHINE,
+        old_field_name='machine',
     )
 
-    basename = fields.basename_field(order=11)
-    lenname = fields.lenname_field(order=12)
+    basename = fields.basename_field(order=31, tab=types.ui.Tab.MACHINE)
+    lenname = fields.lenname_field(order=32, tab=types.ui.Tab.MACHINE)
 
     remove_duplicates = fields.remove_duplicates_field(
         order=102,

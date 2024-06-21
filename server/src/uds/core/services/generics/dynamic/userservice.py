@@ -135,6 +135,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
 
     _move_to_l1_queue: typing.ClassVar[list[types.services.Operation]] = [
         types.services.Operation.START,
+        types.services.Operation.START_COMPLETED,
         types.services.Operation.FINISH,
     ]
 
@@ -312,6 +313,10 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             return consts.NO_MORE_NAMES
 
         return self.service().sanitized_name(f'UDS_{name}')  # Default implementation
+    
+    # overridable, to allow receiving notifications from, for example, usersevice
+    def notify(self, message: str, data: typing.Any = None) -> None:
+        pass
 
     @typing.final
     def get_name(self) -> str:
@@ -606,7 +611,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         This method is called for suspend the service
         """
-        # Note that by default suspend is "shutdown" and not "stop" because we
+        # Note that by default suspend is "shutdown" and not "stop" because we want to do clean shutdowns
         self.op_shutdown()
 
     def op_suspend_completed(self) -> None:
@@ -629,13 +634,13 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         pass
 
     @must_have_vmid
-    def op_remove(self) -> None:
+    def op_delete(self) -> None:
         """
         This method is called when the service is removed
         """
         self.service().delete(self, self._vmid)
 
-    def op_remove_completed(self) -> None:
+    def op_delete_completed(self) -> None:
         """
         This method is called when the service removal is completed
         """
@@ -789,13 +794,13 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         return types.states.TaskState.FINISHED
 
-    def op_remove_checker(self) -> types.states.TaskState:
+    def op_delete_checker(self) -> types.states.TaskState:
         """
         This method is called to check if the service is removed
         """
         return types.states.TaskState.FINISHED
 
-    def op_remove_completed_checker(self) -> types.states.TaskState:
+    def op_delete_completed_checker(self) -> types.states.TaskState:
         """
         This method is called to check if the service removal is completed
         """
@@ -864,8 +869,8 @@ _EXECUTORS: typing.Final[
     types.services.Operation.SUSPEND_COMPLETED: DynamicUserService.op_suspend_completed,
     types.services.Operation.RESET: DynamicUserService.op_reset,
     types.services.Operation.RESET_COMPLETED: DynamicUserService.op_reset_completed,
-    types.services.Operation.DELETE: DynamicUserService.op_remove,
-    types.services.Operation.DELETE_COMPLETED: DynamicUserService.op_remove_completed,
+    types.services.Operation.DELETE: DynamicUserService.op_delete,
+    types.services.Operation.DELETE_COMPLETED: DynamicUserService.op_delete_completed,
     types.services.Operation.WAIT: DynamicUserService.op_wait,
     types.services.Operation.NOP: DynamicUserService.op_nop,
     types.services.Operation.DESTROY_VALIDATOR: DynamicUserService.op_destroy_validator,
@@ -891,8 +896,8 @@ _CHECKERS: typing.Final[
     types.services.Operation.SUSPEND_COMPLETED: DynamicUserService.op_suspend_completed_checker,
     types.services.Operation.RESET: DynamicUserService.op_reset_checker,
     types.services.Operation.RESET_COMPLETED: DynamicUserService.op_reset_completed_checker,
-    types.services.Operation.DELETE: DynamicUserService.op_remove_checker,
-    types.services.Operation.DELETE_COMPLETED: DynamicUserService.op_remove_completed_checker,
+    types.services.Operation.DELETE: DynamicUserService.op_delete_checker,
+    types.services.Operation.DELETE_COMPLETED: DynamicUserService.op_delete_completed_checker,
     types.services.Operation.WAIT: DynamicUserService.op_wait_checker,
     types.services.Operation.NOP: DynamicUserService.op_nop_checker,
     types.services.Operation.DESTROY_VALIDATOR: DynamicUserService.op_destroy_validator_checker,
