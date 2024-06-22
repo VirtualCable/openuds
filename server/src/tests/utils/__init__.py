@@ -180,6 +180,13 @@ def filter_list_by_attr(lst: list[T], attribute: str, value: typing.Any, **kwarg
     """
     return [item for item in lst if getattr(item, attribute) == value or value is None]
 
+def filter_list_by_attr_list(lst: list[T], attribute: str, values: list[typing.Any], **kwargs: typing.Any) -> list[T]:
+    """
+    Returns a list of items from a list of items
+    kwargs are not used, just to let use it as partial on fixtures
+    """
+    return [item for item in lst if getattr(item, attribute) in values]
+
 def check_userinterface_values(obj: ui.UserInterface, values: ui.gui.ValuesDictType) -> None:
     """
     Checks that a user interface object has the values specified
