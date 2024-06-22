@@ -448,7 +448,7 @@ def allow_skip_mfa_from_networks_field(order: int = 52, tab: 'types.ui.Tab|str|N
         order=order,
         tooltip=_('Users within these networks will not be asked for OTP'),
         required=False,
-        choices=mfas.LoginAllowed.network_choices(),
+        choices=mfas.LoginAllowed.network_choices,
         tab=tab,
         old_field_name='allow_networks_without_mfa',
     )
@@ -461,7 +461,7 @@ def login_without_mfa_policy_networks_field(order: int = 51, tab: 'types.ui.Tab|
         order=order,
         tooltip=_('Networks where MFA policy will be enforced if required'),
         required=False,
-        choices=mfas.LoginAllowed.network_choices(),
+        choices=mfas.LoginAllowed.network_choices,
         tab=tab,
         old_field_name='networks',
     )
@@ -473,7 +473,7 @@ def login_without_mfa_policy_field(order: int = 50, tab: 'types.ui.Tab|str|None'
         default='0',
         tooltip=_('Policy for users without MFA or server failed to ask for MFA'),
         required=True,
-        choices=mfas.LoginAllowed.choices(),
+        choices=mfas.LoginAllowed.choices,
         tab=tab,
         old_field_name='allowLoginWithoutMFA',
     )

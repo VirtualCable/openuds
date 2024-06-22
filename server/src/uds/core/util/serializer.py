@@ -46,12 +46,12 @@ CURRENT_SERIALIZER_VERSION: typing.Final[bytes] = getattr(settings, 'SERIALIZER_
 
 SERIALIZERS: typing.Final[collections.abc.Mapping[bytes, collections.abc.Callable[[typing.Any], bytes]]] = {
     b'v0': lambda x: x,
-    b'v1': CryptoManager().fast_crypt,
+    b'v1': CryptoManager.manager().fast_crypt,
 }
 
 DESERIALIZERS: typing.Final[collections.abc.Mapping[bytes, collections.abc.Callable[[bytes], bytes]]] = {
     b'v0': lambda x: x,
-    b'v1': CryptoManager().fast_decrypt,
+    b'v1': CryptoManager.manager().fast_decrypt,
 }
 
 

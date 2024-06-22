@@ -97,12 +97,13 @@ PACKED_LENGHS: typing.Final[struct.Struct] = struct.Struct('<HHI')
 
 # Helper functions
 def fernet_key(crypt_key: bytes) -> str:
-    """Generate key from password and seed
+    """Generate fermet key a crypt key
 
     Args:
-        seed: Seed to use (normally header)
+        crypt_key: Crypt key to use
 
-    Note: if password is not set, this will raise an exception
+    Returns:
+        Key valid for Fernet (base64 encoded, 32 bytes long)
     """
     # Generate an URL-Safe base64 encoded 32 bytes key for Fernet
     return base64.b64encode(hashlib.sha256(crypt_key).digest()).decode()
@@ -126,14 +127,15 @@ class _MarshalInfo:
     """
     This class is used to store field data for marshalling and unmarshalling
 
-    # Serialized data is :
-    # 2 bytes -> name length, little endian
-    # 2 bytes -> type name length, little endian
-    # 4 bytes -> data length, little endian
-    # (Previous is defined by PACKED_LENGHS struct)
-    # n bytes -> name
-    # n bytes -> type name
-    # n bytes -> data
+    ## Serialized data is :
+    - 2 bytes -> name length, little endian
+    - 2 bytes -> type name length, little endian
+    - 4 bytes -> data length, little endian
+    
+      (Previous is defined by PACKED_LENGHS struct)
+    - n bytes -> name
+    - n bytes -> type name
+    - n bytes -> data
 
     """
 

@@ -1618,6 +1618,7 @@ class UserInterface(metaclass=UserInterfaceType):
             return True
 
         # For future use, right now we only have one version
+        # Prepared for a possible future versioning of data serialization
         _version = values[len(SERIALIZATION_HEADER) : len(SERIALIZATION_HEADER) + len(SERIALIZATION_VERSION)]
 
         values = values[len(SERIALIZATION_HEADER) + len(SERIALIZATION_VERSION) :]
@@ -1784,7 +1785,7 @@ FIELDS_ENCODERS: typing.Final[
     types.ui.FieldType.TEXT_AUTOCOMPLETE: lambda x: x.value,
     types.ui.FieldType.NUMERIC: lambda x: str(int(gui.as_int(x.value))),
     types.ui.FieldType.PASSWORD: lambda x: (
-        CryptoManager().aes_crypt(x.value.encode('utf8'), UDSK, True).decode()
+        CryptoManager.manager().aes_crypt(x.value.encode('utf8'), UDSK, True).decode()
     ),
     types.ui.FieldType.HIDDEN: (lambda x: None if not x.is_serializable() else x.value),
     types.ui.FieldType.CHOICE: lambda x: x.value,
@@ -1802,7 +1803,7 @@ FIELD_DECODERS: typing.Final[
     types.ui.FieldType.TEXT: lambda x: x,
     types.ui.FieldType.TEXT_AUTOCOMPLETE: lambda x: x,
     types.ui.FieldType.NUMERIC: int,
-    types.ui.FieldType.PASSWORD: lambda x: (CryptoManager().aes_decrypt(x.encode(), UDSK, True).decode()),
+    types.ui.FieldType.PASSWORD: lambda x: (CryptoManager.manager().aes_decrypt(x.encode(), UDSK, True).decode()),
     types.ui.FieldType.HIDDEN: lambda x: x,
     types.ui.FieldType.CHOICE: lambda x: x,
     types.ui.FieldType.MULTICHOICE: lambda x: serializer.deserialize(base64.b64decode(x.encode())),
