@@ -132,17 +132,20 @@ class TestXenPublication(UDSTransactionTestCase):
             api = typing.cast(mock.MagicMock, provider._api)
             service = fixtures.create_service_linked(provider=provider)
             publication = fixtures.create_publication(service=service)
+            
+            service.must_stop_before_deletion = False  # avoid stop before deletion, not needed for this test
 
             # Now, destroy in fact will not return error, because it will
             # queue the operation if failed, but api.remove_machine will be called anyway
             publication._vmid = vmid
             api.delete_vm.side_effect = Exception('BOOM!')
             publication._vmid = vmid
-            # destroy, in Xen, will call delete_vm on invocation (not queued)
-            self.assertEqual(publication.destroy(), types.states.State.ERROR)
-            # delete_vm should have been called twice, one for destroy, one for error to try to remove it
+            # destroy, in Xen, will call delete_vm on invocation (not queued), but deferred delete will enqueue it if errored
+            # wo destroy will end find
+            self.assertEqual(publication.destroy(), types.states.State.RUNNING)
+            # delete_vm should have been called once
             api.delete_vm.assert_called_with(publication.get_template_id())
-            self.assertEqual(api.delete_vm.call_count, 2)
+            self.assertEqual(api.delete_vm.call_count, 1)
 
             # Ensure cancel calls destroy
             with mock.patch.object(publication, 'destroy') as destroy:
