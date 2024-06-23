@@ -177,6 +177,7 @@ class TestOpenstackLiveDeployment(UDSTransactionTestCase):
         Test the user service
         """
         with self.setup_data() as (userservice, api):
+            userservice.service().must_stop_before_deletion = False  # To avoid stop before delete on this test, not needed
             state = userservice.deploy_for_user(mock.MagicMock())
             self.assertEqual(state, types.states.TaskState.RUNNING)
 

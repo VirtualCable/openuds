@@ -187,6 +187,16 @@ class TestXenLinkedService(UDSTestCase):
         with fixtures.patched_provider() as provider:
             api = typing.cast(mock.MagicMock, provider._api)
             service = fixtures.create_service_linked(provider=provider)
-
-            service.delete(mock.MagicMock(), 'vm_opaque_ref')
-            api.delete_vm.assert_called_once_with('vm_opaque_ref')
+            for state in [xen_types.PowerState.HALTED, xen_types.PowerState.RUNNING]:
+                for soft_shutdown in [True, False]:
+                    service.should_try_soft_shutdown = mock.MagicMock(return_value=soft_shutdown)
+                    VM = random.choice(fixtures.VMS_INFO)
+                    VM.power_state = state
+                    service.delete(mock.MagicMock(), VM.opaque_ref)
+                    if state == xen_types.PowerState.RUNNING:
+                        if soft_shutdown:
+                            api.shutdown_vm.assert_called_with(VM.opaque_ref)
+                        else:
+                            api.stop_vm.assert_called_with(VM.opaque_ref)
+                    else:
+                        api.delete_vm.assert_called_with(VM.opaque_ref)

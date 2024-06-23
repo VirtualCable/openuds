@@ -479,12 +479,18 @@ def create_service_linked(
     uuid_ = str(uuid.uuid4())
     values = SERVICE_VALUES_DICT.copy()
     values.update(kwargs)
-    return service.XenLinkedService(
+    srvc = service.XenLinkedService(
         environment=environment.Environment.private_environment(uuid_),
         provider=provider or create_provider(),
         values=values,
         uuid=uuid_,
     )
+    service_db_mock = mock.MagicMock()
+    service_db_mock.uuid = uuid_
+    service_db_mock.name = 'ServiceName'
+    srvc.db_obj = mock.MagicMock()
+    srvc.db_obj.return_value = service_db_mock
+    return srvc
 
 
 def create_service_fixed(

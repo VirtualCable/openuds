@@ -110,6 +110,8 @@ class TestXenPublication(UDSTransactionTestCase):
             api = typing.cast(mock.MagicMock, provider._api)
             service = fixtures.create_service_linked(provider=provider)
             publication = fixtures.create_publication(service=service)
+           
+            service.must_stop_before_deletion = False  # avoid stop before deletion, not needed for this test
 
             # Destroy
             publication._vmid = vmid

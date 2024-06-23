@@ -176,6 +176,8 @@ class TestXenLinkedUserService(UDSTransactionTestCase):
                 publication = userservice.publication()
                 publication._vmid = '1'
                 
+                service.must_stop_before_deletion = False  # avoid stop before deletion, not needed for this test
+                
                 fixtures.set_all_vm_state(xen_types.PowerState.RUNNING)
 
                 state = userservice.deploy_for_user(models.User())

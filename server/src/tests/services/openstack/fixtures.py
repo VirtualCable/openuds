@@ -462,12 +462,18 @@ def create_live_service(provider: AnyOpenStackProvider, **kwargs: typing.Any) ->
     values.update(kwargs)
 
     uuid_ = str(uuid.uuid4())
-    return service.OpenStackLiveService(
+    srvc = service.OpenStackLiveService(
         provider=provider,
         environment=environment.Environment.private_environment(uuid_),
         values=values,
         uuid=uuid_,
     )
+    service_db_mock = mock.MagicMock()
+    service_db_mock.uuid = uuid_
+    service_db_mock.name = 'ServiceName'
+    srvc.db_obj = mock.MagicMock()
+    srvc.db_obj.return_value = service_db_mock
+    return srvc
 
 
 def create_publication(service: service.OpenStackLiveService) -> publication.OpenStackLivePublication:

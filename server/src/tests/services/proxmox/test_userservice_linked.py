@@ -227,6 +227,8 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
                 service.try_soft_shutdown.value = graceful
                 publication = userservice.publication()
                 publication._vmid = '1'
+                
+                service.must_stop_before_deletion = False  # Avoid stopping before deletion, not needed for this test
 
                 # Set machine state for fixture to started
                 fixtures.VMS_INFO = [
