@@ -489,7 +489,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
 
         shutdown_operations: list[types.services.Operation] = (
             []
-            if not self.service().try_graceful_shutdown()
+            if not self.service().should_try_soft_shutdown()
             else [types.services.Operation.SHUTDOWN, types.services.Operation.SHUTDOWN_COMPLETED]
         )
         destroy_operations = (

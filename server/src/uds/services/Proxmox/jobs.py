@@ -46,6 +46,10 @@ MAX_VMID_LIFE_SECS: typing.Final[int] = 365 * 24 * 60 * 60 * 3  # 3 years for "r
 
 logger = logging.getLogger(__name__)
 
+# Job will be here for 4.0, but will be removed in a future
+# The idea is allow using old Removal Job for existing installations
+# but use new DeferredDeletionWorker for new installations
+
 
 class ProxmoxDeferredRemoval(jobs.Job):
     frecuency = 60 * 3  # Once every NN minutes
@@ -63,39 +67,39 @@ class ProxmoxDeferredRemoval(jobs.Job):
         return int(vmid), try_graceful_shutdown
         
 
-    @staticmethod
-    def remove(provider_instance: 'provider.ProxmoxProvider', vmid: int, try_graceful_shutdown: bool) -> None:
-        def store_for_deferred_removal() -> None:
-            provider_instance.storage.save_to_db('tr' + str(vmid), f'{vmid}:{"y" if try_graceful_shutdown else "n"}', attr1='tRm')
-        ProxmoxDeferredRemoval.counter += 1
-        logger.debug('Adding %s from %s to defeffed removal process', vmid, provider_instance)
-        try:
-            # First check state & stop machine if needed
-            vminfo = provider_instance.get_machine_info(vmid)
-            if vminfo.status == 'running':
-                if try_graceful_shutdown:
-                    # If running vm,  simply try to shutdown 
-                    provider_instance.shutdown_machine(vmid)
-                    # Store for later removal
-                else: 
-                    # If running vm,  simply stops it and wait for next
-                    provider_instance.stop_machine(vmid)
+    # @staticmethod
+    # def remove(provider_instance: 'provider.ProxmoxProvider', vmid: int, try_graceful_shutdown: bool) -> None:
+    #     def store_for_deferred_removal() -> None:
+    #         provider_instance.storage.save_to_db('tr' + str(vmid), f'{vmid}:{"y" if try_graceful_shutdown else "n"}', attr1='tRm')
+    #     ProxmoxDeferredRemoval.counter += 1
+    #     logger.debug('Adding %s from %s to defeffed removal process', vmid, provider_instance)
+    #     try:
+    #         # First check state & stop machine if needed
+    #         vminfo = provider_instance.get_machine_info(vmid)
+    #         if vminfo.status == 'running':
+    #             if try_graceful_shutdown:
+    #                 # If running vm,  simply try to shutdown 
+    #                 provider_instance.shutdown_machine(vmid)
+    #                 # Store for later removal
+    #             else: 
+    #                 # If running vm,  simply stops it and wait for next
+    #                 provider_instance.stop_machine(vmid)
                     
-                store_for_deferred_removal()
-                return
+    #             store_for_deferred_removal()
+    #             return
 
-            provider_instance.remove_machine(vmid)  # Try to remove, launch removal, but check later
-            store_for_deferred_removal()
+    #         provider_instance.remove_machine(vmid)  # Try to remove, launch removal, but check later
+    #         store_for_deferred_removal()
             
-        except client.ProxmoxNotFound:
-            return  # Machine does not exists
-        except Exception as e:
-            store_for_deferred_removal()
-            logger.info(
-                'Machine %s could not be removed right now, queued for later: %s',
-                vmid,
-                e,
-            )
+    #     except client.ProxmoxNotFound:
+    #         return  # Machine does not exists
+    #     except Exception as e:
+    #         store_for_deferred_removal()
+    #         logger.info(
+    #             'Machine %s could not be removed right now, queued for later: %s',
+    #             vmid,
+    #             e,
+    #         )
 
     @staticmethod
     def waitForTaskFinish(

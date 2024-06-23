@@ -288,20 +288,20 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
                 vm_opaque_ref, mac_info={'network': self.network.value, 'mac': mac}, memory=self.memory.value
             )
 
-    def get_ip(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> str:
+    def get_ip(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> str:
         """
         Returns the ip of the machine
         If cannot be obtained, MUST raise an exception
         """
         return ''  # No ip will be get, UDS will assign one (from actor)
 
-    def get_mac(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> str:
+    def get_mac(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> str:
         """
         For
         """
         return self.mac_generator().get(self.provider().get_macs_range())
 
-    def is_running(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> bool:
+    def is_running(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> bool:
         """
         Returns if the machine is ready and running
         """
@@ -311,7 +311,7 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
                 return True
             return False
 
-    def start(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
+    def start(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
         """
         Starts the machine
         Can return a task, or None if no task is returned
@@ -319,7 +319,7 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
         with self.provider().get_connection() as api:
             api.start_vm(vmid)
 
-    def stop(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
+    def stop(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
         """
         Stops the machine
         Can return a task, or None if no task is returned
@@ -327,13 +327,15 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
         with self.provider().get_connection() as api:
             api.stop_vm(vmid)
 
-    def shutdown(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
+    def shutdown(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
         with self.provider().get_connection() as api:
             api.shutdown_vm(vmid)
 
-    def delete(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
+    def execute_delete(self, vmid: str) -> None:
         """
         Removes the machine, or queues it for removal, or whatever :)
         """
         with self.provider().get_connection() as api:
             api.delete_vm(vmid)
+
+    # default is_deleted is enough for us, returns always True

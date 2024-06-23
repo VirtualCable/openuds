@@ -57,18 +57,8 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
     uses_cache = False  # Cache are running machine awaiting to be assigned
     uses_cache_l2 = False  # L2 Cache are running machines in suspended state
     needs_osmanager = False  # If the service needs a s.o. manager (managers are related to agents provided by services, i.e. virtual machines with agent)
-    # can_reset = True
 
-    # : Types of publications (preparated data for deploys)
-    # : In our case, we do no need a publication, so this is None
-    # publication_type = None
-    # : Types of deploys (services in cache and/or assigned to users)
-    # Every service must have overrided FixedUserService with it's own implementation
-    # so this needs to be overrided
-    # user_service_type = DynamicUserService
-
-    # allowed_protocols = types.transports.Protocol.generic_vdi(types.transports.Protocol.SPICE)
-    # services_type_provided = types.services.ServiceType.VDI
+    must_stop_before_deletion = True  # If the service must be stopped before deletion    
 
     # Gui remplates, to be "incorporated" by inherited classes if needed
     base_machine = gui.ChoiceField(
@@ -161,7 +151,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         return []
 
     @abc.abstractmethod
-    def get_ip(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> str:
+    def get_ip(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> str:
         """
         Returns the ip of the machine
         If cannot be obtained, MUST raise an exception
@@ -169,7 +159,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         ...
 
     @abc.abstractmethod
-    def get_mac(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> str:
+    def get_mac(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> str:
         """
         Returns the mac of the machine
         If cannot be obtained, MUST raise an exception
@@ -180,14 +170,14 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         ...
 
     @abc.abstractmethod
-    def is_running(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> bool:
+    def is_running(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> bool:
         """
         Returns if the machine is ready and running
         """
         ...
 
     @abc.abstractmethod
-    def start(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
+    def start(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
         """
         Starts the machine
         Returns None. If a task is needed for anything, use the caller_instance to notify
@@ -195,21 +185,21 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         ...
 
     @abc.abstractmethod
-    def stop(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
+    def stop(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
         """
         Stops the machine
         Returns None. If a task is needed for anything, use the caller_instance to notify
         """
         ...
 
-    def shutdown(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
+    def shutdown(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
         """
         Shutdowns the machine.  Defaults to stop
         Returns None. If a task is needed for anything, use the caller_instance to notify
         """
         return self.stop(caller_instance, vmid)
 
-    def reset(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
+    def reset(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
         """
         Resets the machine
         Returns None. If a task is needed for anything, use the caller_instance to notify
@@ -217,19 +207,25 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         # Default is to stop "hard"
         return self.stop(caller_instance, vmid)
 
-    def delete(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
+    def delete(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
         """
         Removes the machine, or queues it for removal, or whatever :)
         Use the caller_instance to notify anything if needed, or to identify caller
         """
         DeferredDeletionWorker.add(self, vmid)
 
+    # Method for deferred deletion
+    # Note the lack of "caller_instance" parameter, this is because the deletion is deferred and
+    # the caller instance could be already deleted
+    @abc.abstractmethod
     def execute_delete(self, vmid: str) -> None:
         """
         Executes the deferred deletion of a machine (normally, call the delete method of the api)
+        This is make abstract to force the implementation of this method, even if not used because
+        you provided a custom delete method, but better to have it implemented
         """
-        raise NotImplementedError('deferred_delete must be implemented')
-
+        ...
+        
     def is_deleted(self, vmid: str) -> bool:
         """
         Checks if the deferred deletion of a machine is done
@@ -249,7 +245,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         """
         return not self.should_maintain_on_error()
 
-    def try_graceful_shutdown(self) -> bool:
+    def should_try_soft_shutdown(self) -> bool:
         if self.has_field('try_soft_shutdown'):
             return self.try_soft_shutdown.value
         return False

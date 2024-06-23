@@ -108,3 +108,9 @@ def waiter(finish_checker: typing.Callable[[], bool], timeout: int = 64, msg: ty
 
     if msg:
         logger.info('%s. Elapsed time: %s', msg, time.time() - start_time)
+
+def returns_true(*args: typing.Any, **kwargs: typing.Any) -> bool:
+    return True
+
+def returns_false(*args: typing.Any, **kwargs: typing.Any) -> bool:
+    return False

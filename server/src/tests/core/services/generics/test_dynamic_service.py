@@ -224,7 +224,7 @@ class DynamicServiceTest(UDSTestCase):
     def test_userservice_try_soft_shutdown(self) -> None:
         service = fixtures.create_dynamic_service(try_soft_shutdown=True)
         userservice = fixtures.create_dynamic_userservice(service)
-        self.assertTrue(service.try_graceful_shutdown())
+        self.assertTrue(service.should_try_soft_shutdown())
 
         # full deploy
         state = userservice.deploy_for_user(models.User())

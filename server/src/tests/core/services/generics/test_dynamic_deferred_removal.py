@@ -42,6 +42,7 @@ from uds.core.workers import deferred_deletion
 from uds.core.services.generics import exceptions as gen_exceptions
 
 from ....utils.test import UDSTransactionTestCase
+from ....utils import helpers
 from . import fixtures
 
 
@@ -52,11 +53,14 @@ class DynamicServiceTest(UDSTransactionTestCase):
         services.factory().insert(fixtures.DynamicTestingProvider)
 
     def set_last_check_expired(self) -> None:
-        for group in [deferred_deletion.TO_DELETE_GROUP, deferred_deletion.DELETING_GROUP]:
+        for group in [
+            deferred_deletion.TO_DELETE_GROUP,
+            deferred_deletion.DELETING_GROUP,
+            deferred_deletion.TO_STOP_GROUP,
+            deferred_deletion.STOPPING_GROUP,
+        ]:
             with deferred_deletion.DeferredDeletionWorker.deferred_storage.as_dict(group) as storage:
-                for key, info in typing.cast(
-                    dict[str, deferred_deletion.DeferredDeletionInfo], storage
-                ).items():
+                for key, info in typing.cast(dict[str, deferred_deletion.DeletionInfo], storage).items():
                     info.last_check = sql_now() - datetime.timedelta(
                         seconds=deferred_deletion.CHECK_INTERVAL * 2
                     )
@@ -69,25 +73,31 @@ class DynamicServiceTest(UDSTransactionTestCase):
     @contextlib.contextmanager
     def patch_for_worker(
         self,
-        group: str,
+        *,
         execute_side_effect: typing.Union[None, typing.Callable[..., None], Exception] = None,
         is_deleted_side_effect: typing.Union[None, typing.Callable[..., bool], Exception] = None,
-    ) -> typing.Iterator[tuple[mock.MagicMock, dict[str, dict[str, deferred_deletion.DeferredDeletionInfo]]]]:
+        is_running: typing.Union[None, typing.Callable[..., bool]] = None,
+        must_stop_before_deletion: bool = False,
+        should_try_soft_shutdown: bool = False,
+    ) -> typing.Iterator[tuple[mock.MagicMock, dict[str, dict[str, deferred_deletion.DeletionInfo]]]]:
         """
         Patch the storage to use a dict instead of the real storage
 
         This is useful to test the worker without touching the real storage
         """
-        dct: dict[str, dict[str, deferred_deletion.DeferredDeletionInfo]] = {}
+        dct: dict[str, dict[str, deferred_deletion.DeletionInfo]] = {}
         instance = mock.MagicMock()
         instance_db_obj = mock.MagicMock(uuid='service1')
         instance_db_obj.get_instance.return_value = instance
         instance.db_obj.return_value = instance_db_obj
         instance.execute_delete.side_effect = execute_side_effect
-        if is_deleted_side_effect == None:
-            instance.is_deleted.return_value = True
-        else:
-            instance.is_deleted.side_effect = is_deleted_side_effect
+        instance.is_deleted.side_effect = is_deleted_side_effect or helpers.returns_true
+
+        instance.must_stop_before_deletion = must_stop_before_deletion
+        instance.should_try_soft_shutdown.return_value = should_try_soft_shutdown
+        instance.is_running.side_effect = is_running or helpers.returns_false
+        instance.stop.return_value = None
+        instance.shutdown.return_value = None
 
         # Patchs uds.models.Service also for get_instance to work
         with mock.patch('uds.models.Service.objects') as objs:
@@ -99,7 +109,7 @@ class DynamicServiceTest(UDSTransactionTestCase):
                 @contextlib.contextmanager
                 def _as_dict(
                     group: str, *args: typing.Any, **kwargs: typing.Any
-                ) -> typing.Iterator[dict[str, deferred_deletion.DeferredDeletionInfo]]:
+                ) -> typing.Iterator[dict[str, deferred_deletion.DeletionInfo]]:
                     if group not in dct:
                         dct[group] = {}
                     yield dct[group]
@@ -108,6 +118,7 @@ class DynamicServiceTest(UDSTransactionTestCase):
                 yield instance, dct
 
     def test_deferred_delete_full_fine_delete(self) -> None:
+        # Tests only delete and is_deleted, no stop and stopping
 
         service = fixtures.create_dynamic_service_for_deferred_deletion()
 
@@ -143,17 +154,19 @@ class DynamicServiceTest(UDSTransactionTestCase):
         # Reset mock
         fixtures.DynamicTestingServiceForDeferredDeletion.mock.reset_mock()
 
-        # No entries into to_delete
+        # No entries into to_delete, nor TO_STOP nor STOPPING
         self.assertEqual(self.count_entries_on_storage(deferred_deletion.TO_DELETE_GROUP), 0)
+        self.assertEqual(self.count_entries_on_storage(deferred_deletion.TO_STOP_GROUP), 0)
+        self.assertEqual(self.count_entries_on_storage(deferred_deletion.STOPPING_GROUP), 0)
 
         # Storage db should have 16 entries
         with deferred_deletion.DeferredDeletionWorker.deferred_storage.as_dict(
             deferred_deletion.DELETING_GROUP
         ) as deleting:
             self.assertEqual(len(deleting), 16)
-            for key, info in typing.cast(dict[str, deferred_deletion.DeferredDeletionInfo], deleting).items():
+            for key, info in typing.cast(dict[str, deferred_deletion.DeletionInfo], deleting).items():
                 now = sql_now()
-                self.assertIsInstance(info, deferred_deletion.DeferredDeletionInfo)
+                self.assertIsInstance(info, deferred_deletion.DeletionInfo)
                 self.assertEqual(key, f'{info.service_uuid}_{info.vmid}')
                 self.assertLessEqual(info.created, now)
                 self.assertLessEqual(info.last_check, now)
@@ -162,13 +175,13 @@ class DynamicServiceTest(UDSTransactionTestCase):
 
         # Instantiate the Job
         job = deferred_deletion.DeferredDeletionWorker(environment=mock.MagicMock())
-        to_delete = job._get_from_storage(deferred_deletion.TO_DELETE_GROUP)
+        to_delete = deferred_deletion.DeletionInfo.get_from_storage(deferred_deletion.TO_DELETE_GROUP)
         # Should be empty, both services and infos
         self.assertEqual(len(to_delete[0]), 0)
         self.assertEqual(len(to_delete[1]), 0)
 
         # Now, get from deleting
-        deleting = job._get_from_storage(deferred_deletion.DELETING_GROUP)
+        deleting = deferred_deletion.DeletionInfo.get_from_storage(deferred_deletion.DELETING_GROUP)
         # Should have o services and infos also, because last_check has been too soon
         self.assertEqual(len(deleting[0]), 0)
         self.assertEqual(len(deleting[1]), 0)
@@ -179,7 +192,9 @@ class DynamicServiceTest(UDSTransactionTestCase):
         # Now, get from deleting again, should have all services and infos
         # OVerride MAX_DELETIONS_AT_ONCE to get only 1 entries
         deferred_deletion.MAX_DELETIONS_AT_ONCE = 1
-        services_1, key_info_1 = job._get_from_storage(deferred_deletion.DELETING_GROUP)
+        services_1, key_info_1 = deferred_deletion.DeletionInfo.get_from_storage(
+            deferred_deletion.DELETING_GROUP
+        )
         self.assertEqual(len(services_1), 1)
         self.assertEqual(len(key_info_1), 1)
         # And should rest only 15 on storage
@@ -188,9 +203,11 @@ class DynamicServiceTest(UDSTransactionTestCase):
         ) as deleting:
             self.assertEqual(len(deleting), 15)
         deferred_deletion.MAX_DELETIONS_AT_ONCE = 16
-        services_2, key_info_2 = job._get_from_storage(deferred_deletion.DELETING_GROUP)
-        self.assertEqual(len(services_2), 8)    # 8 services must be returned
-        self.assertEqual(len(key_info_2), 15)   # And 15 entries
+        services_2, key_info_2 = deferred_deletion.DeletionInfo.get_from_storage(
+            deferred_deletion.DELETING_GROUP
+        )
+        self.assertEqual(len(services_2), 8)  # 8 services must be returned
+        self.assertEqual(len(key_info_2), 15)  # And 15 entries
 
         # Re-store all DELETING_GROUP entries
         with deferred_deletion.DeferredDeletionWorker.deferred_storage.as_dict(
@@ -241,7 +258,7 @@ class DynamicServiceTest(UDSTransactionTestCase):
         self.assertEqual(self.count_entries_on_storage(deferred_deletion.TO_DELETE_GROUP), 1)
 
         job = deferred_deletion.DeferredDeletionWorker(environment=mock.MagicMock())
-        to_delete = job._get_from_storage(deferred_deletion.TO_DELETE_GROUP)
+        to_delete = deferred_deletion.DeletionInfo.get_from_storage(deferred_deletion.TO_DELETE_GROUP)
         # Should be empty, both services and infos
         self.assertEqual(len(to_delete[0]), 0)
         self.assertEqual(len(to_delete[1]), 0)
@@ -250,7 +267,7 @@ class DynamicServiceTest(UDSTransactionTestCase):
         self.set_last_check_expired()
 
         # Now, get from deleting again, should have all services and infos
-        services, key_info = job._get_from_storage(deferred_deletion.TO_DELETE_GROUP)
+        services, key_info = deferred_deletion.DeletionInfo.get_from_storage(deferred_deletion.TO_DELETE_GROUP)
         self.assertEqual(len(services), 1)
         self.assertEqual(len(key_info), 1)
         # now, db should be empty
@@ -278,9 +295,9 @@ class DynamicServiceTest(UDSTransactionTestCase):
             deferred_deletion.DELETING_GROUP
         ) as deleting:
             self.assertEqual(len(deleting), 1)
-            for key, info in typing.cast(dict[str, deferred_deletion.DeferredDeletionInfo], deleting).items():
+            for key, info in typing.cast(dict[str, deferred_deletion.DeletionInfo], deleting).items():
                 now = sql_now()
-                self.assertIsInstance(info, deferred_deletion.DeferredDeletionInfo)
+                self.assertIsInstance(info, deferred_deletion.DeletionInfo)
                 self.assertEqual(key, f'{info.service_uuid}_{info.vmid}')
                 self.assertLessEqual(info.created, now)
                 self.assertLessEqual(info.last_check, now)
@@ -305,6 +322,39 @@ class DynamicServiceTest(UDSTransactionTestCase):
         self.assertEqual(self.count_entries_on_storage(deferred_deletion.DELETING_GROUP), 0)
         self.assertEqual(self.count_entries_on_storage(deferred_deletion.TO_DELETE_GROUP), 0)
 
+    def test_deferred_deletion_is_deleted(self) -> None:
+        for is_deleted in (True, False):
+            with self.patch_for_worker(
+                is_deleted_side_effect=lambda *args: is_deleted,
+            ) as (instance, dct):
+                deferred_deletion.DeferredDeletionWorker.add(instance, 'vmid1', execute_later=False)
+
+                # No entries in TO_DELETE_GROUP
+                self.assertEqual(self.count_entries_on_storage(deferred_deletion.TO_DELETE_GROUP), 0)
+                # One entry in DELETING_GROUP
+                self.assertEqual(self.count_entries_on_storage(deferred_deletion.DELETING_GROUP), 1)
+
+                info = next(iter(dct[deferred_deletion.DELETING_GROUP].values()))
+
+                # Fix last_check
+                self.set_last_check_expired()
+
+                job = deferred_deletion.DeferredDeletionWorker(environment=mock.MagicMock())
+                job.run()
+
+                # Should have called is_deleted once
+                instance.is_deleted.assert_called_once_with('vmid1')
+                # if is_deleted returns True, should have removed the entry
+                if is_deleted:
+                    self.assertEqual(self.count_entries_on_storage(deferred_deletion.TO_DELETE_GROUP), 0)
+                    self.assertEqual(self.count_entries_on_storage(deferred_deletion.DELETING_GROUP), 0)
+                else:
+                    self.assertEqual(self.count_entries_on_storage(deferred_deletion.TO_DELETE_GROUP), 0)
+                    self.assertEqual(self.count_entries_on_storage(deferred_deletion.DELETING_GROUP), 1)
+                    # Also, info should have been updated
+                    self.assertEqual(info.fatal_retries, 0)
+                    self.assertEqual(info.total_retries, 1)
+
     def test_deferred_deletion_fails_add(self) -> None:
         for error in (
             gen_exceptions.RetryableError('error'),
@@ -312,7 +362,6 @@ class DynamicServiceTest(UDSTransactionTestCase):
             gen_exceptions.FatalError('error'),
         ):
             with self.patch_for_worker(
-                deferred_deletion.TO_DELETE_GROUP,
                 execute_side_effect=error,
             ) as (instance, dct):
                 deferred_deletion.DeferredDeletionWorker.add(instance, 'vmid1', execute_later=False)
@@ -376,7 +425,6 @@ class DynamicServiceTest(UDSTransactionTestCase):
             gen_exceptions.FatalError('error'),
         ):
             with self.patch_for_worker(
-                deferred_deletion.DELETING_GROUP,
                 is_deleted_side_effect=error,
             ) as (instance, dct):
                 deferred_deletion.DeferredDeletionWorker.add(instance, 'vmid1', execute_later=False)
@@ -423,3 +471,106 @@ class DynamicServiceTest(UDSTransactionTestCase):
                     # Should have removed the entry
                     self.assertEqual(self.count_entries_on_storage(deferred_deletion.TO_DELETE_GROUP), 0)
                     self.assertEqual(self.count_entries_on_storage(deferred_deletion.DELETING_GROUP), 0)
+
+    def test_deferred_stop(self) -> None:
+
+        # Explanation:
+        # key: running, execute_later, should_try_soft_shutdown
+        # TODELETE, DELETING, TO_STOP, STOPPING, is_running calls, stop calls, shutdown calls
+        # group assignation:
+        # * to TO_STOP  if execute_later is true (#1, #3, #5, #7), because is requested so (and service requires stop)
+        # * to STOPPING if running and execute_later is false (#2, #4). If not running, no need to stop
+        # * to DELETING if not running and execute_later is false (#6, #8). If running, just proceed to delete and store in the deleting group
+        # calls:
+        # * is running is called if no execute_later (#2, #4, #6, #8)
+        # * stop is called if running and not execute_later and not should_try_soft_shutdown (#4)
+        # * shutdown is called if running and not execute_later and should_try_soft_shutdown (#2)
+        COUNTERS_ADD: typing.Final[dict[tuple[bool, bool, bool], tuple[int, int, int, int, int, int, int]]] = {
+            # run   exec  try      TD DE TS ST is st sh
+            (True, True, True):    (0, 0, 1, 0, 0, 0, 0),  # 1
+            (True, False, True):   (0, 0, 0, 1, 1, 0, 1),  # 2
+            (True, True, False):   (0, 0, 1, 0, 0, 0, 0),  # 3
+            (True, False, False):  (0, 0, 0, 1, 1, 1, 0),  # 4
+            (False, True, True):   (0, 0, 1, 0, 0, 0, 0),  # 5
+            (False, False, True):  (0, 1, 0, 0, 1, 0, 0),  # 6
+            (False, True, False):  (0, 0, 1, 0, 0, 0, 0),  # 7
+            (False, False, False): (0, 1, 0, 0, 1, 0, 0),  # 8
+        }
+
+        # Explanation:
+        # key: running, execute_later, should_try_soft_shutdown
+        # TODELETE, DELETING, TO_STOP, STOPPING, is_running calls, stop calls, shutdown calls
+        # group assignation:
+        # * to TO_DELETE is not used in this flow, because as soon as the vm is stopped, is added to this group and PROCESSED
+        #   so, before exiting, it's already in the DELETING group
+        # * to DELETING if not runing and execute_later is false (#6, #8). This is so because if not running. is moved to
+        #   the TODELETE group, and processed inmediately before returning from job run
+        # * to TO_STOP is never moved, because it's the first step and only assigned on "add" method
+        # * to STOPPING will contain 1 item as long as the vm is running (#1, #2, #3, #4)
+        # Note that #6 and #8 are all 0, because the procedure has been completed (remember comes from ADD #6 and #8, that was in DELETING)
+        # calls:
+        # * is running if comes from TO_STOP or STOPPING (#1, #2, #3, #4, #5 and #7)
+        # * stop if running and execute later and not should_try_soft_shutdown (#1, #3, #5)
+        # * shutdown if running and execute later and should_try_soft_shutdown (#2)
+        COUNTERS_JOB: dict[tuple[bool, bool, bool], tuple[int, int, int, int, int, int, int]] = {
+            # run   exec  try      TD DE TS ST is st sh
+            (True, True, True):    (0, 0, 0, 1, 1, 0, 1),  # 1
+            (True, False, True):   (0, 0, 0, 1, 1, 0, 0),  # 2
+            (True, True, False):   (0, 0, 0, 1, 1, 1, 0),  # 3
+            (True, False, False):  (0, 0, 0, 1, 1, 0, 0),  # 4
+            (False, True, True):   (0, 1, 0, 0, 1, 0, 0),  # 5
+            (False, False, True):  (0, 0, 0, 0, 0, 0, 0),  # 6
+            (False, True, False):  (0, 1, 0, 0, 1, 0, 0),  # 7
+            (False, False, False): (0, 0, 0, 0, 0, 0, 0),  # 8
+        }
+
+        for running in (True, False):
+
+            def _running(*args: typing.Any, **kwargs: typing.Any) -> bool:
+                return running
+
+            for should_try_soft_shutdown in (True, False):
+                for execute_later in (True, False):
+                    with self.patch_for_worker(
+                        is_running=_running,
+                        must_stop_before_deletion=True,
+                        should_try_soft_shutdown=should_try_soft_shutdown,
+                    ) as (instance, _dct):
+                        deferred_deletion.DeferredDeletionWorker.add(
+                            instance, 'vmid1', execute_later=execute_later
+                        )
+
+                        self.assertEqual(
+                            COUNTERS_ADD[(running, execute_later, should_try_soft_shutdown)],
+                            (
+                                self.count_entries_on_storage(deferred_deletion.TO_DELETE_GROUP),
+                                self.count_entries_on_storage(deferred_deletion.DELETING_GROUP),
+                                self.count_entries_on_storage(deferred_deletion.TO_STOP_GROUP),
+                                self.count_entries_on_storage(deferred_deletion.STOPPING_GROUP),
+                                instance.is_running.call_count,
+                                instance.stop.call_count,
+                                instance.shutdown.call_count,
+                            ),
+                            f'COUNTERS_ADD {running} {execute_later} --> {COUNTERS_ADD[(running, execute_later, should_try_soft_shutdown)]}',
+                        )
+
+                        # Fix last_check
+                        self.set_last_check_expired()
+
+                        job = deferred_deletion.DeferredDeletionWorker(environment=mock.MagicMock())
+                        instance.reset_mock()
+                        job.run()
+
+                        self.assertEqual(
+                            COUNTERS_JOB[(running, execute_later, should_try_soft_shutdown)],
+                            (
+                                self.count_entries_on_storage(deferred_deletion.TO_DELETE_GROUP),
+                                self.count_entries_on_storage(deferred_deletion.DELETING_GROUP),
+                                self.count_entries_on_storage(deferred_deletion.TO_STOP_GROUP),
+                                self.count_entries_on_storage(deferred_deletion.STOPPING_GROUP),
+                                instance.is_running.call_count,
+                                instance.stop.call_count,
+                                instance.shutdown.call_count,
+                            ),
+                            f'COUNTERS_JOB {running} {execute_later} --> {COUNTERS_JOB[(running, execute_later, should_try_soft_shutdown)]}',
+                        )

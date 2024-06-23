@@ -55,12 +55,14 @@ MAX_DELETIONS_CHECKED_AT_ONCE: typing.Final[int] = MAX_DELETIONS_AT_ONCE * 2
 
 CHECK_INTERVAL: typing.Final[int] = 32  # Check interval, in seconds
 
+TO_STOP_GROUP: typing.Final[str] = 'to_stop'
+STOPPING_GROUP: typing.Final[str] = 'stopping'
 TO_DELETE_GROUP: typing.Final[str] = 'to_delete'
 DELETING_GROUP: typing.Final[str] = 'deleting'
 
 
 @dataclasses.dataclass
-class DeferredDeletionInfo:
+class DeletionInfo:
     vmid: str
     created: datetime.datetime
     last_check: datetime.datetime
@@ -68,57 +70,33 @@ class DeferredDeletionInfo:
     fatal_retries: int = 0  # Fatal error retries
     total_retries: int = 0  # Total retries
 
-
-class DeferredDeletionWorker(Job):
-    frecuency = 32  # Frecuncy for this job, in seconds
-    friendly_name = 'Deferred deletion runner'
-
-    deferred_storage: typing.ClassVar[storage.Storage] = storage.Storage('deferdel_worker')
+    def sync_to_storage(self, group: str) -> None:
+        """
+        Ensures that this object is stored on the storage
+        If exists, it will be updated, if not, it will be created
+        """
+        unique_key = f'{self.service_uuid}_{self.vmid}'
+        with DeferredDeletionWorker.deferred_storage.as_dict(group, atomic=True) as storage_dict:
+            storage_dict[unique_key] = self
 
     @staticmethod
-    def add(service: 'DynamicService', vmid: str, execute_later: bool = False) -> None:
-        # First, try sync deletion
-        unique_key = f'{service.db_obj().uuid}_{vmid}'
-
-        def _add_for_later() -> None:
-            with DeferredDeletionWorker.deferred_storage.as_dict(TO_DELETE_GROUP, atomic=True) as storage_dict:
-                storage_dict[unique_key] = DeferredDeletionInfo(
-                    vmid=vmid,
-                    created=sql_now(),
-                    last_check=sql_now(),
-                    service_uuid=service.db_obj().uuid,
-                )
-
-        if not execute_later:
-            try:
-                service.execute_delete(vmid)
-            except gen_exceptions.NotFoundError:
-                return  # Already removed
-            except Exception as e:
-                logger.warning(
-                    'Could not delete %s from service %s: %s. Retrying later.', vmid, service.db_obj().name, e
-                )
-                _add_for_later()
-                return
-        else:
-            _add_for_later()
-            return
-
-        # Has not been deleted, so we will defer deletion
-        with DeferredDeletionWorker.deferred_storage.as_dict(DELETING_GROUP, atomic=True) as storage_dict:
-            storage_dict[unique_key] = DeferredDeletionInfo(
+    def create_on_storage(group: str, vmid: str, service_uuid: str) -> None:
+        unique_key = f'{service_uuid}_{vmid}'
+        with DeferredDeletionWorker.deferred_storage.as_dict(group, atomic=True) as storage_dict:
+            storage_dict[unique_key] = DeletionInfo(
                 vmid=vmid,
                 created=sql_now(),
                 last_check=sql_now(),
-                service_uuid=service.db_obj().uuid,
+                service_uuid=service_uuid,
             )
 
-    def _get_from_storage(
-        self, storage_name: str
-    ) -> tuple[dict[str, 'DynamicService'], list[tuple[str, DeferredDeletionInfo]]]:
+    @staticmethod
+    def get_from_storage(
+        storage_name: str,
+    ) -> tuple[dict[str, 'DynamicService'], list[tuple[str, 'DeletionInfo']]]:
         # Get all wating deletion, and try it
         count = 0
-        infos: list[tuple[str, DeferredDeletionInfo]] = []
+        infos: list[tuple[str, DeletionInfo]] = []
 
         services: dict[str, 'DynamicService'] = {}
 
@@ -126,7 +104,7 @@ class DeferredDeletionWorker(Job):
         # We do this way to release db locks as soon as possible
         with DeferredDeletionWorker.deferred_storage.as_dict(storage_name, atomic=True) as storage_dict:
             for key, info in sorted(
-                typing.cast(collections.abc.Iterable[tuple[str, DeferredDeletionInfo]], storage_dict.items()),
+                typing.cast(collections.abc.Iterable[tuple[str, DeletionInfo]], storage_dict.items()),
                 key=lambda x: x[1].last_check,
             ):
                 if info.last_check + datetime.timedelta(seconds=CHECK_INTERVAL) > sql_now():
@@ -148,11 +126,51 @@ class DeferredDeletionWorker(Job):
                 del storage_dict[key]  # Remove from storage, being processed
         return services, infos
 
+
+class DeferredDeletionWorker(Job):
+    frecuency = 32  # Frecuncy for this job, in seconds
+    friendly_name = 'Deferred deletion runner'
+
+    deferred_storage: typing.ClassVar[storage.Storage] = storage.Storage('deferdel_worker')
+
+    @staticmethod
+    def add(service: 'DynamicService', vmid: str, execute_later: bool = False) -> None:
+        # If sync, execute now
+        if not execute_later:
+            try:
+                if service.must_stop_before_deletion:
+                    if service.is_running(None, vmid):
+                        if service.should_try_soft_shutdown():
+                            service.shutdown(None, vmid)
+                        else:
+                            service.stop(None, vmid)
+                        DeletionInfo.create_on_storage(STOPPING_GROUP, vmid, service.db_obj().uuid)
+                        return
+
+                service.execute_delete(vmid)
+            except gen_exceptions.NotFoundError:
+                return  # Already removed
+            except Exception as e:
+                logger.warning(
+                    'Could not delete %s from service %s: %s. Retrying later.', vmid, service.db_obj().name, e
+                )
+                DeletionInfo.create_on_storage(TO_DELETE_GROUP, vmid, service.db_obj().uuid)
+                return
+        else:
+            if service.must_stop_before_deletion:
+                DeletionInfo.create_on_storage(TO_STOP_GROUP, vmid, service.db_obj().uuid)
+            else:
+                DeletionInfo.create_on_storage(TO_DELETE_GROUP, vmid, service.db_obj().uuid)
+            return
+
+        # Has not been deleted, so we will defer deletion
+        DeletionInfo.create_on_storage(DELETING_GROUP, vmid, service.db_obj().uuid)
+
     def _process_exception(
         self,
         key: str,
-        info: DeferredDeletionInfo,
-        group: str,
+        info: DeletionInfo,
+        to_group: str,
         services: dict[str, 'DynamicService'],
         e: Exception,
     ) -> None:
@@ -185,24 +203,56 @@ class DeferredDeletionWorker(Job):
                 services[info.service_uuid].db_obj().name,
             )
             return  # Do not readd it
-        with DeferredDeletionWorker.deferred_storage.as_dict(group, atomic=True) as storage_dict:
-            storage_dict[key] = info
+        info.sync_to_storage(to_group)
+
+    def process_to_stop(self) -> None:
+        services, to_stop = DeletionInfo.get_from_storage(TO_STOP_GROUP)
+
+        # Now process waiting stops
+        for key, info in to_stop:
+            try:
+                if services[info.service_uuid].is_running(None, info.vmid):
+                    if services[info.service_uuid].should_try_soft_shutdown():
+                        services[info.service_uuid].shutdown(None, info.vmid)
+                    else:
+                        services[info.service_uuid].stop(None, info.vmid)
+                    info.last_check = sql_now()
+                    info.fatal_retries = info.total_retries = 0
+                    info.sync_to_storage(STOPPING_GROUP)
+                else:
+                    # Do not update last_check to shutdown it asap, was not running after all
+                    info.sync_to_storage(TO_DELETE_GROUP)
+            except Exception as e:
+                self._process_exception(key, info, TO_STOP_GROUP, services, e)
+
+    def process_stopping(self) -> None:
+        services, stopping = DeletionInfo.get_from_storage(STOPPING_GROUP)
+
+        # Now process waiting stops
+        for key, info in stopping:
+            try:
+                if services[info.service_uuid].is_running(None, info.vmid):
+                    info.last_check = sql_now()
+                    info.total_retries += 1
+                    info.sync_to_storage(STOPPING_GROUP)
+                else:
+                    info.last_check = sql_now()
+                    info.fatal_retries = info.total_retries = 0
+                    info.sync_to_storage(TO_DELETE_GROUP)
+            except Exception as e:
+                self._process_exception(key, info, STOPPING_GROUP, services, e)
 
     def process_to_delete(self) -> None:
-        services, to_delete = self._get_from_storage(TO_DELETE_GROUP)
+        services, to_delete = DeletionInfo.get_from_storage(TO_DELETE_GROUP)
 
         # Now process waiting deletions
         for key, info in to_delete:
             try:
                 services[info.service_uuid].execute_delete(info.vmid)
                 # And store it for checking later if it has been deleted, reseting counters
-                with DeferredDeletionWorker.deferred_storage.as_dict(
-                    DELETING_GROUP, atomic=True
-                ) as storage_dict:
-                    info.last_check = sql_now()
-                    info.fatal_retries = 0
-                    info.total_retries = 0
-                    storage_dict[key] = info
+                info.last_check = sql_now()
+                info.fatal_retries = info.total_retries = 0
+                info.sync_to_storage(DELETING_GROUP)
             except Exception as e:
                 self._process_exception(key, info, TO_DELETE_GROUP, services, e)
 
@@ -212,7 +262,7 @@ class DeferredDeletionWorker(Job):
 
         Note: Very similar to process_to_delete, but this one is for objects that are already being deleted
         """
-        services, deleting = self._get_from_storage(DELETING_GROUP)
+        services, deleting = DeletionInfo.get_from_storage(DELETING_GROUP)
 
         # Now process waiting deletions checks
         for key, info in deleting:
@@ -221,13 +271,12 @@ class DeferredDeletionWorker(Job):
                 if not services[info.service_uuid].is_deleted(info.vmid):
                     info.last_check = sql_now()
                     info.total_retries += 1
-                    with DeferredDeletionWorker.deferred_storage.as_dict(
-                        DELETING_GROUP, atomic=True
-                    ) as storage_dict:
-                        storage_dict[key] = info
+                    info.sync_to_storage(DELETING_GROUP)
             except Exception as e:
                 self._process_exception(key, info, DELETING_GROUP, services, e)
 
     def run(self) -> None:
+        self.process_to_stop()
+        self.process_stopping()
         self.process_to_delete()
         self.process_deleting()

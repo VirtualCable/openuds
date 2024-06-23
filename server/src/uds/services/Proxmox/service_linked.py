@@ -33,6 +33,7 @@ import re
 import typing
 
 from django.utils.translation import gettext_noop as _
+
 from uds.core import types
 from uds.core.services.generics.dynamic.publication import DynamicPublication
 from uds.core.services.generics.dynamic.service import DynamicService
@@ -40,7 +41,7 @@ from uds.core.services.generics.dynamic.userservice import DynamicUserService
 from uds.core.ui import gui
 from uds.core.util import validators, fields
 
-from . import helpers, jobs
+from . import helpers
 from .deployment_linked import ProxmoxUserserviceLinked
 from .publication import ProxmoxPublication
 
@@ -272,7 +273,7 @@ class ProxmoxServiceLinked(DynamicService):
     def is_ha_enabled(self) -> bool:
         return self.ha.value != '__'
 
-    def try_graceful_shutdown(self) -> bool:
+    def should_try_soft_shutdown(self) -> bool:
         return self.try_soft_shutdown.as_bool()
 
     def get_console_connection(self, vmid: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
@@ -281,16 +282,16 @@ class ProxmoxServiceLinked(DynamicService):
     def is_avaliable(self) -> bool:
         return self.provider().is_available()
 
-    def get_ip(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> str:
+    def get_ip(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> str:
         return self.provider().get_guest_ip_address(int(vmid))
 
-    def get_mac(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> str:
+    def get_mac(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> str:
         # If vmid is empty, we are requesting a new mac
         if not vmid:
             return self.mac_generator().get(self.get_macs_range())
         return self.get_nic_mac(int(vmid))
 
-    def start(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
+    def start(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
         if isinstance(caller_instance, ProxmoxUserserviceLinked):
             if self.is_running(caller_instance, vmid):  # If running, skip
                 caller_instance._task = ''
@@ -299,7 +300,7 @@ class ProxmoxServiceLinked(DynamicService):
         else:
             raise Exception('Invalid caller instance (publication) for start_machine()')
 
-    def stop(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
+    def stop(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
         if isinstance(caller_instance, ProxmoxUserserviceLinked):
             if self.is_running(caller_instance, vmid):
                 caller_instance._store_task(self.provider().stop_machine(int(vmid)))
@@ -308,7 +309,7 @@ class ProxmoxServiceLinked(DynamicService):
         else:
             raise Exception('Invalid caller instance (publication) for stop_machine()')
 
-    def shutdown(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
+    def shutdown(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
         if isinstance(caller_instance, ProxmoxUserserviceLinked):
             if self.is_running(caller_instance, vmid):
                 caller_instance._store_task(self.provider().shutdown_machine(int(vmid)))
@@ -317,13 +318,13 @@ class ProxmoxServiceLinked(DynamicService):
         else:
             raise Exception('Invalid caller instance (publication) for shutdown_machine()')
 
-    def is_running(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> bool:
+    def is_running(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> bool:
         # Raise an exception if fails to get machine info
         vminfo = self.get_machine_info(int(vmid))
 
         return vminfo.status != 'stopped'
 
-    def delete(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
+    def execute_delete(self, vmid: str) -> None:
         # All removals are deferred, so we can do it async
         # Try to stop it if already running... Hard stop
-        jobs.ProxmoxDeferredRemoval.remove(self.provider(), int(vmid), self.try_graceful_shutdown())
+        self.provider().remove_machine(int(vmid))

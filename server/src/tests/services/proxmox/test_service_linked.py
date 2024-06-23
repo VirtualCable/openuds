@@ -144,7 +144,7 @@ class TestProxmovLinkedService(UDSTestCase):
             self.assertEqual(service.is_ha_enabled(), service.is_ha_enabled())
 
             # Try graceful shutdown
-            self.assertEqual(service.try_graceful_shutdown(), service.try_soft_shutdown.value)
+            self.assertEqual(service.should_try_soft_shutdown(), service.try_soft_shutdown.value)
 
             # Get console connection
             self.assertEqual(service.get_console_connection('1'), fixtures.CONSOLE_CONNECTION_INFO)

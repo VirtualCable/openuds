@@ -475,7 +475,7 @@ class DynamicTestingService(dynamic_service.DynamicService):
 
     def get_ip(
         self,
-        caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
+        caller_instance: typing.Optional[dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication],
         vmid: str,
     ) -> str:
         self.mock.get_ip(caller_instance, vmid)
@@ -483,7 +483,7 @@ class DynamicTestingService(dynamic_service.DynamicService):
 
     def get_mac(
         self,
-        caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
+        caller_instance: typing.Optional[dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication],
         vmid: str,
     ) -> str:
         self.mock.get_mac(caller_instance, vmid)
@@ -491,7 +491,7 @@ class DynamicTestingService(dynamic_service.DynamicService):
 
     def is_running(
         self,
-        caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
+        caller_instance: typing.Optional[dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication],
         vmid: str,
     ) -> bool:
         self.mock.is_running(caller_instance, vmid)
@@ -499,7 +499,7 @@ class DynamicTestingService(dynamic_service.DynamicService):
 
     def start(
         self,
-        caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
+        caller_instance: typing.Optional[dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication],
         vmid: str,
     ) -> None:
         self.mock.start(caller_instance, vmid)
@@ -507,7 +507,7 @@ class DynamicTestingService(dynamic_service.DynamicService):
 
     def stop(
         self,
-        caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
+        caller_instance: typing.Optional[dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication],
         vmid: str,
     ) -> None:
         self.mock.stop(caller_instance, vmid)
@@ -515,7 +515,7 @@ class DynamicTestingService(dynamic_service.DynamicService):
 
     def shutdown(
         self,
-        caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
+        caller_instance: typing.Optional[dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication],
         vmid: str,
     ) -> None:
         self.mock.shutdown(caller_instance, vmid)
@@ -523,15 +523,18 @@ class DynamicTestingService(dynamic_service.DynamicService):
 
     def delete(
         self,
-        caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
+        caller_instance: typing.Optional[dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication],
         vmid: str,
     ) -> None:
         self.mock.remove(caller_instance, vmid)
         self.machine_running_flag = False
 
+    def execute_delete(self, vmid: str) -> None:
+        self.mock.execute_delete(vmid)
+
     def reset(
         self,
-        caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
+        caller_instance: typing.Optional[dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication],
         vmid: str,
     ) -> None:
         self.mock.reset(caller_instance, vmid)
@@ -539,7 +542,7 @@ class DynamicTestingService(dynamic_service.DynamicService):
 
     def suspend(
         self,
-        caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
+        caller_instance: typing.Optional[dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication],
         vmid: str,
     ) -> None:
         self.mock.suspend(caller_instance, vmid)
@@ -653,6 +656,8 @@ class DynamicTestingServiceForDeferredDeletion(dynamic_service.DynamicService):
     type_name = 'Dynamic Deferred Deletion Testing'
     type_type = 'DynamicDeferredServiceTesting'
     type_description = 'Dynamic Service Testing description'
+    
+    must_stop_before_deletion = False
 
     mock: 'mock.Mock' = mock.MagicMock()  # Remember, shared between instances
 
@@ -666,21 +671,21 @@ class DynamicTestingServiceForDeferredDeletion(dynamic_service.DynamicService):
     # Not used, but needed to be implemented due to bein abstract
     def get_ip(
         self,
-        caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
+        caller_instance: typing.Optional[dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication],
         vmid: str,
     ) -> str:
         return ''
 
     def get_mac(
         self,
-        caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
+        caller_instance: typing.Optional[dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication],
         vmid: str,
     ) -> str:
         return ''
 
     def is_running(
         self,
-        caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
+        caller_instance: typing.Optional[dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication],
         vmid: str,
     ) -> bool:
         self.mock.is_running(vmid)
@@ -688,18 +693,17 @@ class DynamicTestingServiceForDeferredDeletion(dynamic_service.DynamicService):
 
     def start(
         self,
-        caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
+        caller_instance: typing.Optional[dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication],
         vmid: str,
     ) -> None:
         self.mock.start(vmid)
 
     def stop(
         self,
-        caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
+        caller_instance: typing.Optional[dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication],
         vmid: str,
     ) -> None:
         self.mock.stop(vmid)
-
 
 
 class DynamicTestingProvider(services.provider.ServiceProvider):
