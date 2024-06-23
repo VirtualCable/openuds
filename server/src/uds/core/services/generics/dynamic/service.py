@@ -37,6 +37,7 @@ from django.utils.translation import gettext_noop as _
 from uds.core import services, types
 from uds.core.ui import gui
 from uds.core.util import fields, validators
+from uds.core.workers.deferred_deletion import DeferredDeletionWorker
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -124,45 +125,43 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         """
         Checks if a machine with the same name or mac exists
         Returns the list with the vmids of the duplicated machines
-        
+
         Args:
             name: Name of the machine
             mac: Mac of the machine
-            
+
         Returns:
             List of duplicated machines
-            
+
         Note:
             Maybe we can only check name or mac, or both, depending on the service
         """
         raise NotImplementedError('find_duplicated_machines must be implemented if remove_duplicates is used!')
 
-    @typing.final    
+    @typing.final
     def perform_find_duplicated_machines(self, name: str, mac: str) -> collections.abc.Iterable[str]:
         """
         Checks if a machine with the same name or mac exists
         Returns the list with the vmids of the duplicated machines
-        
+
         Args:
             name: Name of the machine
             mac: Mac of the machine
-            
+
         Returns:
             List of duplicated machines
-            
+
         Note:
             Maybe we can only check name or mac, or both, depending on the service
         """
         if self.has_field('remove_duplicates') and self.remove_duplicates.value:
             return self.find_duplicated_machines(name, mac)
-        
+
         # Not removing duplicates, so no duplicates
         return []
 
     @abc.abstractmethod
-    def get_ip(
-        self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str
-    ) -> str:
+    def get_ip(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> str:
         """
         Returns the ip of the machine
         If cannot be obtained, MUST raise an exception
@@ -170,9 +169,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         ...
 
     @abc.abstractmethod
-    def get_mac(
-        self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str
-    ) -> str:
+    def get_mac(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> str:
         """
         Returns the mac of the machine
         If cannot be obtained, MUST raise an exception
@@ -183,18 +180,14 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         ...
 
     @abc.abstractmethod
-    def is_running(
-        self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str
-    ) -> bool:
+    def is_running(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> bool:
         """
         Returns if the machine is ready and running
         """
         ...
 
     @abc.abstractmethod
-    def start(
-        self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str
-    ) -> None:
+    def start(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
         """
         Starts the machine
         Returns None. If a task is needed for anything, use the caller_instance to notify
@@ -209,18 +202,14 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         """
         ...
 
-    def shutdown(
-        self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str
-    ) -> None:
+    def shutdown(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
         """
         Shutdowns the machine.  Defaults to stop
         Returns None. If a task is needed for anything, use the caller_instance to notify
         """
         return self.stop(caller_instance, vmid)
 
-    def reset(
-        self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str
-    ) -> None:
+    def reset(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
         """
         Resets the machine
         Returns None. If a task is needed for anything, use the caller_instance to notify
@@ -228,15 +217,25 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         # Default is to stop "hard"
         return self.stop(caller_instance, vmid)
 
-    @abc.abstractmethod
-    def delete(
-        self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str
-    ) -> None:
+    def delete(self, caller_instance: 'DynamicUserService | DynamicPublication', vmid: str) -> None:
         """
         Removes the machine, or queues it for removal, or whatever :)
         Use the caller_instance to notify anything if needed, or to identify caller
         """
-        ...
+        DeferredDeletionWorker.add(self, vmid)
+
+    def execute_delete(self, vmid: str) -> None:
+        """
+        Executes the deferred deletion of a machine (normally, call the delete method of the api)
+        """
+        raise NotImplementedError('deferred_delete must be implemented')
+
+    def is_deleted(self, vmid: str) -> bool:
+        """
+        Checks if the deferred deletion of a machine is done
+        Default implementation is return True always
+        """
+        return True
 
     def should_maintain_on_error(self) -> bool:
         if self.has_field('maintain_on_error'):  # If has been defined on own class...

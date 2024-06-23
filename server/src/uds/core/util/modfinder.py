@@ -188,7 +188,9 @@ def dynamically_load_and_register_modules(
     '''
 
     def _checker(cls: type[T]) -> bool:
-        # Will receive all classes that are subclasses of type_
+        # Will receive all classes that are subclasses of type_ and is not the marked as base
+        # We could have check here if it has subclasses, but we want the versatility of the mark
+        # to allow overriding a service, for example, with some new functionality but not disabling the original one
         return not cls.is_base
 
     dynamically_load_and_register_packages(

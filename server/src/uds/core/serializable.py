@@ -106,6 +106,8 @@ class Serializable:
         """
         des-obfuscates the data and then de-serializes it via unmarshal method
         """
+        if not data:
+            return  # Nothing to do
         self.unmarshal(base64.b64decode(data))
 
     # For remarshalling purposes

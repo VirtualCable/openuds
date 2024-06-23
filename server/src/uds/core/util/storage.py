@@ -33,7 +33,6 @@ import pickle  # nosec: This is e controled pickle use
 import base64
 import hashlib
 import codecs
-from collections.abc import MutableMapping
 import typing
 import collections.abc
 import logging
@@ -80,7 +79,7 @@ def _decode_value(dbk: str, value: typing.Optional[str]) -> tuple[str, typing.An
     return ('', None)
 
 
-class StorageAsDict(MutableMapping[str, typing.Any]):
+class StorageAsDict(dict[str, typing.Any]):
     """
     Accesses storage as dictionary. Much more convenient that old method
     """
@@ -111,7 +110,7 @@ class StorageAsDict(MutableMapping[str, typing.Any]):
     @property
     def _db(self) -> typing.Union[models.QuerySet[DBStorage], models.Manager[DBStorage]]:
         if self._atomic:
-            return DBStorage.objects.select_for_update()
+            return DBStorage.objects.select_for_update(skip_locked=True)
         return DBStorage.objects
 
     @property

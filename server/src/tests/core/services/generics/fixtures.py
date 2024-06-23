@@ -69,7 +69,7 @@ class FixedTestingUserService(fixed_userservice.FixedUserService):
     def op_custom(self, operation: types.services.Operation) -> None:
         if operation == types.services.Operation.CUSTOM_1:
             raise Exception('CUSTOM_1')
-        
+
         if operation == types.services.Operation.CUSTOM_3:
             self.retry_later()  # In this case, will not return it, but should work fine
 
@@ -79,7 +79,7 @@ class FixedTestingUserService(fixed_userservice.FixedUserService):
         # custom 2 will be for testing retry_later
         if operation == types.services.Operation.CUSTOM_2:
             return self.retry_later()
-            
+
         return types.states.TaskState.FINISHED
 
     def db_obj(self) -> typing.Any:
@@ -134,7 +134,7 @@ class FixedTestingService(fixed_service.FixedService):
         self.mock.remove_and_free_machine(vmid)
         self.assigned_machine = ''
         return types.states.TaskState.FINISHED
-    
+
     def is_ready(self, vmid: str) -> bool:
         self.mock.is_ready(vmid)
         return True
@@ -237,7 +237,7 @@ PUB_TESTEABLE_OPERATIONS = [
     types.services.Operation.CREATE,  # 2
     types.services.Operation.CREATE_COMPLETED,  # 3
     types.services.Operation.START,  # 4
-    types.services.Operation.START_COMPLETED, # 5
+    types.services.Operation.START_COMPLETED,  # 5
     types.services.Operation.STOP,  # 6
     types.services.Operation.STOP_COMPLETED,  # 7
     types.services.Operation.SHUTDOWN,  # 8
@@ -444,7 +444,7 @@ class DynamicTestingUserService(dynamic_userservice.DynamicUserService):
     def op_custom(self, operation: types.services.Operation) -> None:
         if operation == types.services.Operation.CUSTOM_1:
             raise Exception('CUSTOM_1')
-        
+
         if operation == types.services.Operation.CUSTOM_3:
             self.retry_later()  # In this case, will not return it, but should work fine
 
@@ -454,7 +454,7 @@ class DynamicTestingUserService(dynamic_userservice.DynamicUserService):
         # custom 2 will be for testing retry_later
         if operation == types.services.Operation.CUSTOM_2:
             return self.retry_later()
-            
+
         return types.states.TaskState.FINISHED
 
 
@@ -544,7 +544,7 @@ class DynamicTestingService(dynamic_service.DynamicService):
     ) -> None:
         self.mock.suspend(caller_instance, vmid)
         self.machine_running_flag = False
-        
+
 
 class DynamicTestingPublication(dynamic_publication.DynamicPublication):
     mock: 'mock.Mock' = mock.MagicMock()
@@ -563,7 +563,7 @@ class DynamicTestingPublication(dynamic_publication.DynamicPublication):
         # custom 2 will be for testing retry_later
         if operation == types.services.Operation.CUSTOM_2:
             return self.retry_later()
-            
+
         return types.states.TaskState.FINISHED
 
 
@@ -604,8 +604,6 @@ class DynamicTestingPublicationQueue(dynamic_publication.DynamicPublication):
     def op_custom(self, operation: types.services.Operation) -> None:
         self.mock.custom(operation)
 
-
-
     def op_initialize_checker(self) -> types.states.TaskState:
         self.mock.initialize_checker()
         return TaskState.FINISHED
@@ -645,10 +643,63 @@ class DynamicTestingPublicationQueue(dynamic_publication.DynamicPublication):
     def op_destroy_validator_checker(self) -> types.states.TaskState:
         self.mock.destroy_validator_checker()
         return TaskState.FINISHED
-    
+
     def op_custom_checker(self, operation: types.services.Operation) -> types.states.TaskState:
         self.mock.custom_checker(operation)
         return TaskState.FINISHED
+
+
+class DynamicTestingServiceForDeferredDeletion(dynamic_service.DynamicService):
+    type_name = 'Dynamic Deferred Deletion Testing'
+    type_type = 'DynamicDeferredServiceTesting'
+    type_description = 'Dynamic Service Testing description'
+
+    mock: 'mock.Mock' = mock.MagicMock()  # Remember, shared between instances
+
+    def execute_delete(self, vmid: str) -> None:
+        self.mock.execute_delete(vmid)
+
+    def is_deleted(self, vmid: str) -> bool:
+        self.mock.is_deleted(vmid)
+        return True
+
+    # Not used, but needed to be implemented due to bein abstract
+    def get_ip(
+        self,
+        caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
+        vmid: str,
+    ) -> str:
+        return ''
+
+    def get_mac(
+        self,
+        caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
+        vmid: str,
+    ) -> str:
+        return ''
+
+    def is_running(
+        self,
+        caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
+        vmid: str,
+    ) -> bool:
+        self.mock.is_running(vmid)
+        raise Exception('Intended exception')
+
+    def start(
+        self,
+        caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
+        vmid: str,
+    ) -> None:
+        self.mock.start(vmid)
+
+    def stop(
+        self,
+        caller_instance: dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication,
+        vmid: str,
+    ) -> None:
+        self.mock.stop(vmid)
+
 
 
 class DynamicTestingProvider(services.provider.ServiceProvider):
@@ -656,7 +707,7 @@ class DynamicTestingProvider(services.provider.ServiceProvider):
     type_type = 'DynamicProvider'
     type_description = 'Dynamic Provider description'
 
-    offers = [DynamicTestingService]
+    offers = [DynamicTestingService, DynamicTestingServiceForDeferredDeletion]
 
 
 def create_dynamic_provider() -> DynamicTestingProvider:
@@ -677,6 +728,23 @@ def create_dynamic_service(
     )
     service.mock.reset_mock()  # Mock is shared between instances, so we need to reset it
     service.machine_running_flag = False
+    service.maintain_on_error.value = maintain_on_error
+    service.try_soft_shutdown.value = try_soft_shutdown
+    return service
+
+
+def create_dynamic_service_for_deferred_deletion(
+    provider: 'DynamicTestingProvider|None' = None,
+    maintain_on_error: bool = False,
+    try_soft_shutdown: bool = False,
+) -> DynamicTestingServiceForDeferredDeletion:
+    uuid_ = str(uuid.uuid4())
+    service = DynamicTestingServiceForDeferredDeletion(
+        provider=provider or create_dynamic_provider(),
+        environment=environment.Environment.private_environment(uuid),
+        uuid=uuid_,
+    )
+    service.mock.reset_mock()  # Mock is shared between instances, so we need to reset it
     service.maintain_on_error.value = maintain_on_error
     service.try_soft_shutdown.value = try_soft_shutdown
     return service
