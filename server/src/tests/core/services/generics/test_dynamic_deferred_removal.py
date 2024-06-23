@@ -132,22 +132,25 @@ class DynamicServiceTest(UDSTransactionTestCase):
         for count, service in enumerate(services):
             instance = typing.cast(fixtures.DynamicTestingServiceForDeferredDeletion, service.get_instance())
             self.assertIsInstance(instance, fixtures.DynamicTestingServiceForDeferredDeletion)
-            instance.delete(mock.MagicMock(), f'vmid_{count}')
-            instance.mock.execute_delete.assert_called_with(f'vmid_{count}')
+            instance.delete(mock.MagicMock(), f'vmid_{count}_1')
+            instance.mock.execute_delete.assert_called_with(f'vmid_{count}_1')
+            # Add a second delete, so can check service caching later
+            instance.delete(mock.MagicMock(), f'vmid_{count}_2')
+            instance.mock.execute_delete.assert_called_with(f'vmid_{count}_2')
 
-        self.assertEqual(fixtures.DynamicTestingServiceForDeferredDeletion.mock.execute_delete.call_count, 8)
+        self.assertEqual(fixtures.DynamicTestingServiceForDeferredDeletion.mock.execute_delete.call_count, 16)
         self.assertEqual(fixtures.DynamicTestingServiceForDeferredDeletion.mock.is_deleted.call_count, 0)
         # Reset mock
         fixtures.DynamicTestingServiceForDeferredDeletion.mock.reset_mock()
 
-        # No entries to_delete
+        # No entries into to_delete
         self.assertEqual(self.count_entries_on_storage(deferred_deletion.TO_DELETE_GROUP), 0)
 
-        # Storage db should have 8 entries
+        # Storage db should have 16 entries
         with deferred_deletion.DeferredDeletionWorker.deferred_storage.as_dict(
             deferred_deletion.DELETING_GROUP
         ) as deleting:
-            self.assertEqual(len(deleting), 8)
+            self.assertEqual(len(deleting), 16)
             for key, info in typing.cast(dict[str, deferred_deletion.DeferredDeletionInfo], deleting).items():
                 now = sql_now()
                 self.assertIsInstance(info, deferred_deletion.DeferredDeletionInfo)
@@ -174,20 +177,20 @@ class DynamicServiceTest(UDSTransactionTestCase):
         self.set_last_check_expired()
 
         # Now, get from deleting again, should have all services and infos
-        # OVerride MAX_DELETIONS_AT_ONCE to get only 4 entries
-        deferred_deletion.MAX_DELETIONS_AT_ONCE = 4
+        # OVerride MAX_DELETIONS_AT_ONCE to get only 1 entries
+        deferred_deletion.MAX_DELETIONS_AT_ONCE = 1
         services_1, key_info_1 = job._get_from_storage(deferred_deletion.DELETING_GROUP)
-        self.assertEqual(len(services_1), 4)
-        self.assertEqual(len(key_info_1), 4)
-        # And should rest only 4 on storage
+        self.assertEqual(len(services_1), 1)
+        self.assertEqual(len(key_info_1), 1)
+        # And should rest only 15 on storage
         with deferred_deletion.DeferredDeletionWorker.deferred_storage.as_dict(
             deferred_deletion.DELETING_GROUP
         ) as deleting:
-            self.assertEqual(len(deleting), 4)
-        # again, should return 4 entries
+            self.assertEqual(len(deleting), 15)
+        deferred_deletion.MAX_DELETIONS_AT_ONCE = 16
         services_2, key_info_2 = job._get_from_storage(deferred_deletion.DELETING_GROUP)
-        self.assertEqual(len(services_2), 4)
-        self.assertEqual(len(key_info_2), 4)
+        self.assertEqual(len(services_2), 8)    # 8 services must be returned
+        self.assertEqual(len(key_info_2), 15)   # And 15 entries
 
         # Re-store all DELETING_GROUP entries
         with deferred_deletion.DeferredDeletionWorker.deferred_storage.as_dict(
@@ -196,19 +199,17 @@ class DynamicServiceTest(UDSTransactionTestCase):
             for info in itertools.chain(key_info_1, key_info_2):
                 deleting[info[0]] = info[1]
 
-        # set MAX_DELETIONS_AT_ONCE to a value bigger than 8
-        deferred_deletion.MAX_DELETIONS_AT_ONCE = 9
+        # set MAX_DELETIONS_AT_ONCE to a value bigger than 16
+        deferred_deletion.MAX_DELETIONS_AT_ONCE = 100
 
         # Now, process all entries normally
         job.run()
 
-        # Should have called is_deleted 8 times
-        self.assertEqual(fixtures.DynamicTestingServiceForDeferredDeletion.mock.is_deleted.call_count, 8)
+        # Should have called is_deleted 16 times
+        self.assertEqual(fixtures.DynamicTestingServiceForDeferredDeletion.mock.is_deleted.call_count, 16)
         # And should have removed all entries from deleting, because is_deleted returns True
-        with deferred_deletion.DeferredDeletionWorker.deferred_storage.as_dict(
-            deferred_deletion.DELETING_GROUP
-        ) as deleting:
-            self.assertEqual(len(deleting), 0)
+        self.assertEqual(self.count_entries_on_storage(deferred_deletion.DELETING_GROUP), 0)
+        self.assertEqual(self.count_entries_on_storage(deferred_deletion.TO_DELETE_GROUP), 0)
 
     def test_deferred_delete_delayed_full(self) -> None:
         service = fixtures.create_dynamic_service_for_deferred_deletion()

@@ -129,13 +129,11 @@ class DeferredDeletionWorker(Job):
                 typing.cast(collections.abc.Iterable[tuple[str, DeferredDeletionInfo]], storage_dict.items()),
                 key=lambda x: x[1].last_check,
             ):
-                service: typing.Optional['DynamicService'] = None
-
                 if info.last_check + datetime.timedelta(seconds=CHECK_INTERVAL) > sql_now():
                     continue
                 try:
                     if info.service_uuid not in services:
-                        service = typing.cast(
+                        services[info.service_uuid] = typing.cast(
                             'DynamicService', Service.objects.get(uuid=info.service_uuid).get_instance()
                         )
                 except Exception as e:
@@ -143,12 +141,8 @@ class DeferredDeletionWorker(Job):
                     del storage_dict[key]
                     continue
 
-                count += 1
-                if count > MAX_DELETIONS_AT_ONCE:
+                if (count := count + 1) > MAX_DELETIONS_AT_ONCE:
                     break
-
-                if service is not None:
-                    services[info.service_uuid] = service
 
                 infos.append((key, info))
                 del storage_dict[key]  # Remove from storage, being processed
