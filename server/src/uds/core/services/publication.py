@@ -31,17 +31,17 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import abc
+import re
 import typing
-from uds.core import types
 
+from uds.core import types
 from uds.core.environment import Environmentable
 from uds.core.serializable import Serializable
 
 if typing.TYPE_CHECKING:
-    from uds.core import services
-    from uds.core import osmanagers
-    from uds.core.environment import Environment
     from uds import models
+    from uds.core import osmanagers, services
+    from uds.core.environment import Environment
 
 
 class Publication(Environmentable, Serializable):
@@ -106,7 +106,7 @@ class Publication(Environmentable, Serializable):
         just after all internal initialization is completed.
         We want to use the env, cache and storage methods outside class. If not called, you must implement your own methods
         cache and storage are "convenient" methods to access _env.cache and _env.storage
-        
+
         Args:
             environment (Environment): Environment of the service
             service (services.Service): Service that owns this publication
@@ -179,8 +179,9 @@ class Publication(Environmentable, Serializable):
 
         This name is set by core, using the administrator provided data
         at administration interface.
+        Removes the macros before returning the name
         """
-        return self._servicepool_name
+        return re.sub(r'\{.*?\}', '', self._servicepool_name).strip()
 
     def get_uuid(self) -> str:
         return self._uuid

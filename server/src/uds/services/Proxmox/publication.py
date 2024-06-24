@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,7 +28,6 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import datetime
 import time
 import logging
 import typing
@@ -95,13 +94,11 @@ class ProxmoxPublication(DynamicPublication, autoserializable.AutoSerializable):
         self._is_flagged_for_destroy = destroy_after != ''
 
         self.mark_for_upgrade()  # Flag so manager can save it again with new format
-        
+
     def op_create(self) -> None:
         # First we should create a full clone, so base machine do not get fullfilled with "garbage" delta disks...
-        comments = _('UDS Publication for {0} created at {1}').format(
-            self.servicepool_name(), str(datetime.datetime.now()).split('.')[0]
-        )
-        task = self.service().clone_machine(self._name, comments)
+        # Name is generated on op_initialize by DynamicPublication
+        task = self.service().clone_machine(self._name, self.generate_annotation())
         self._vmid = str(task.vmid)
         self._task = ','.join((task.upid.node, task.upid.upid))
 
@@ -126,9 +123,9 @@ class ProxmoxPublication(DynamicPublication, autoserializable.AutoSerializable):
         time.sleep(0.5)
         # Mark vm as template
         self.service().provider().create_template(int(self._vmid))
-        
+
     def op_delete(self) -> None:
         self.service().delete(self, self._vmid)
-        
+
     def machine(self) -> int:
         return int(self._vmid)

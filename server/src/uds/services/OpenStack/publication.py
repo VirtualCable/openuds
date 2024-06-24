@@ -103,10 +103,7 @@ class OpenStackLivePublication(DynamicPublication, autoserializable.AutoSerializ
         """
         Realizes the publication of the service
         """
-        self._name = self.service().sanitized_name(
-            'UDS-P-' + self.servicepool_name() + "-" + str(self.revision())
-        )
-
+        # Name is generated on op_initialize by DynamicPublication
         volume_snapshot_info = self.service().make_template(self._name)
         logger.debug('Publication result: %s', volume_snapshot_info)
         self._vmid = volume_snapshot_info.id  # In fact is not an vmid, but the volume snapshot id, but this way we can use the same method for all publications

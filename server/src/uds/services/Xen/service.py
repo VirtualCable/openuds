@@ -30,6 +30,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import re
 import collections.abc
 import typing
 
@@ -221,9 +222,9 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
 
     def sanitized_name(self, name: str) -> str:
         """
-        Xen Seems to allow all kind of names
+        Xen Seems to allow all kind of names, but let's sanitize a bit
         """
-        return name
+        return re.sub(r'([^a-zA-Z0-9_ .-]+)', r'_', name)
     
     def find_duplicates(self, name: str, mac: str) -> collections.abc.Iterable[str]:
         """

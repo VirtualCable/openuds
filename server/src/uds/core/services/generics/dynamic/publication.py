@@ -195,6 +195,19 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
     def service(self) -> 'DynamicService':
         return typing.cast('DynamicService', super().service())
 
+    def generate_name(self) -> str:
+        # Returns a name suitable for the publication
+        if self.service().has_field('basename'):
+            name = time.strftime(f'{self.service().basename.value}-%Y%m%d%H%M%S')
+        else:
+            # Get the service pool name, and remove all {} macros
+            name = self.servicepool_name()
+            
+        return self.service().sanitized_name(f'UDS-Pub-{name}-v{self.revision()}')
+    
+    def generate_annotation(self) -> str:
+        return (f'UDS publication for {self.servicepool_name()} created on {time.strftime("%Y-%m-%d %H:%M:%S")}')
+
     def check_space(self) -> bool:
         """
         If the service needs to check space before publication, it should override this method
@@ -308,16 +321,14 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
     def op_initialize(self) -> None:
         """
         This method is called when the service is initialized
-        Default initialization method sets the name and flags the service as not destroyed
+        Default initialization method sets the name and flags the service as not for destroy after finish (for cancel, i.e.)
         """
         if self.check_space() is False:
             raise Exception('Not enough space to publish')
 
         # First we should create a full clone, so base machine do not get fullfilled with "garbage" delta disks...
         # Add a number based on current time to avoid collisions
-        self._name = self.service().sanitized_name(
-            f'UDS-Pub-{self.servicepool_name()}-{int(time.time())%256:2X}-{self.revision()}'
-        )
+        self._name = self.generate_name()
         self._is_flagged_for_destroy = False
 
     @abc.abstractmethod
