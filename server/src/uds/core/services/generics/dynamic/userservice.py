@@ -306,7 +306,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             str: The name of the vm (consts.NO_MORE_NAMES if no more names are available)
 
         Note:
-            Override it if you need a different vm name
+            Override it if you need a different vm name. It's used to remove duplicates!
         """
         name = self.get_name()
         if name == consts.NO_MORE_NAMES:
@@ -463,7 +463,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             if state == types.states.TaskState.FINISHED:
                 # Remove finished operation from queue
                 top_op = self._queue.pop(0)
-                if top_op != types.services.Operation.RETRY:
+                if top_op != types.services.Operation.RETRY:  # Inserted if a retrayable error occurs on execution queue
                     self._reset_retries_counter()
                 return self._execute_queue()
 
