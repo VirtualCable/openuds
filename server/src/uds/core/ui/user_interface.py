@@ -43,8 +43,8 @@ import time
 import typing
 import collections.abc
 import abc
-from django.conf import settings
 
+from django.conf import settings
 from django.utils.translation import gettext
 
 from uds.core import consts, exceptions, types
@@ -1498,7 +1498,7 @@ class UserInterface(metaclass=UserInterfaceType):
                     fld.value = values[fld_name]
                 else:
                     logger.warning('Field %s.%s not found in values data, ', self.__class__.__name__, fld_name)
-                    if settings.DEBUG:
+                    if getattr(settings, 'DEBUG', False):
                         for caller in itertools.islice(inspect.stack(), 1,  8):
                             logger.warning('  %s:%s:%s', caller.filename, caller.lineno, caller.function)
 

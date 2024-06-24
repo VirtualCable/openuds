@@ -111,7 +111,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         return name
 
     # overridable
-    def find_duplicated_machines(self, name: str, mac: str) -> collections.abc.Iterable[str]:
+    def find_duplicates(self, name: str, mac: str) -> collections.abc.Iterable[str]:
         """
         Checks if a machine with the same name or mac exists
         Returns the list with the vmids of the duplicated machines
@@ -126,10 +126,10 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         Note:
             Maybe we can only check name or mac, or both, depending on the service
         """
-        raise NotImplementedError('find_duplicated_machines must be implemented if remove_duplicates is used!')
+        raise NotImplementedError(f'{self.__class__}: find_duplicates must be implemented if remove_duplicates is used!')
 
     @typing.final
-    def perform_find_duplicated_machines(self, name: str, mac: str) -> collections.abc.Iterable[str]:
+    def perform_find_duplicates(self, name: str, mac: str) -> collections.abc.Iterable[str]:
         """
         Checks if a machine with the same name or mac exists
         Returns the list with the vmids of the duplicated machines
@@ -145,7 +145,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
             Maybe we can only check name or mac, or both, depending on the service
         """
         if self.has_field('remove_duplicates') and self.remove_duplicates.value:
-            return self.find_duplicated_machines(name, mac)
+            return self.find_duplicates(name, mac)
 
         # Not removing duplicates, so no duplicates
         return []

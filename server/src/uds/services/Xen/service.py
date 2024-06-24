@@ -30,6 +30,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import collections.abc
 import typing
 
 from django.utils.translation import gettext_noop as _
@@ -223,6 +224,29 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
         Xen Seems to allow all kind of names
         """
         return name
+    
+    def find_duplicates(self, name: str, mac: str) -> collections.abc.Iterable[str]:
+        """
+        Checks if a machine with the same name or mac exists
+        Returns the list with the vmids of the duplicated machines
+
+        Args:
+            name: Name of the machine
+            mac: Mac of the machine
+
+        Returns:
+            List of duplicated machines
+
+        Note:
+            Maybe we can only check name or mac, or both, depending on the service
+        """
+        with self.provider().get_connection() as api:
+            vms = api.list_vms()
+            return [
+                vm.opaque_ref
+                for vm in vms
+                if vm.name == name
+            ]  # Only check for name, mac is harder to get, so by now, we only check for name
 
     def start_deploy_of_template(self, name: str, comments: str) -> str:
         """

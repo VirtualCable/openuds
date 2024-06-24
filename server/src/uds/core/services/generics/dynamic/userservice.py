@@ -516,7 +516,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     def remove_duplicated_names(self) -> None:
         name = self.get_vmname()
         try:
-            for vmid in self.service().perform_find_duplicated_machines(name, self.get_unique_id()):
+            for vmid in self.service().perform_find_duplicates(name, self.get_unique_id()):
                 userservice = self.db_obj()
                 log.log(
                     userservice.service_pool,
