@@ -87,7 +87,6 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         readonly=False,
     )
 
-    # Keep name as "machine" so we can use VCHelpers.getMachines
     machines = gui.MultiChoiceField(
         label=_("Machines"),
         order=30,

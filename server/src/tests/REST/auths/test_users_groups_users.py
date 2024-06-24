@@ -66,7 +66,7 @@ class UsersTest(rest.test.RESTActorTestCase):
         user: collections.abc.Mapping[str, typing.Any]
         for user in users:
             # Locate the user in the auth
-            self.assertTrue(rest.assertions.assertUserIs(self.auth.users.get(name=user['name']), user))
+            self.assertTrue(rest.assertions.assert_user_is(self.auth.users.get(name=user['name']), user))
 
     def test_users_tableinfo(self) -> None:
         url = f'authenticators/{self.auth.uuid}/users/tableinfo'
@@ -104,7 +104,7 @@ class UsersTest(rest.test.RESTActorTestCase):
             self.assertEqual(response.status_code, 200)
             user = response.json()
             self.assertTrue(
-                rest.assertions.assertUserIs(i, user),
+                rest.assertions.assert_user_is(i, user),
                 'User {} {} is not correct'.format(i, models.User.objects.filter(uuid=i.uuid).values()[0]),
             )
 
@@ -140,7 +140,7 @@ class UsersTest(rest.test.RESTActorTestCase):
 
         # Fix user_dct to remove it for comparison. Meta groups cannot be directly "assigned" to users
         user_dct['groups'] = user_dct['groups'][:-1]
-        self.assertTrue(rest.assertions.assertUserIs(dbusr, user_dct))
+        self.assertTrue(rest.assertions.assert_user_is(dbusr, user_dct))
 
         self.assertEqual(response.status_code, 200)
         # Returns nothing
@@ -169,7 +169,7 @@ class UsersTest(rest.test.RESTActorTestCase):
 
         # Get user from database and ensure values are correct
         dbusr = self.auth.users.get(name=user_dct['name'])
-        self.assertTrue(rest.assertions.assertUserIs(dbusr, user_dct, compare_password=True))
+        self.assertTrue(rest.assertions.assert_user_is(dbusr, user_dct, compare_password=True))
 
     def test_user_delete(self) -> None:
         url = f'authenticators/{self.auth.uuid}/users'

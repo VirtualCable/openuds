@@ -41,7 +41,7 @@ from .. import ensure_data
 logger = logging.getLogger(__name__)
 
 
-def assertUserIs(
+def assert_user_is(
     user: models.User,
     compare_to: collections.abc.Mapping[str, typing.Any],
     compare_uuid: bool=False,
@@ -99,7 +99,7 @@ def assertUserIs(
     return False
 
 
-def assertGroupIs(
+def assert_group_is(
     group: models.Group, compare_to: collections.abc.Mapping[str, typing.Any], compare_uuid: bool=False
 ) -> bool:
     ignore_fields = ['groups', 'users', 'is_meta', 'type', 'pools']
@@ -140,7 +140,7 @@ def assertGroupIs(
     return False
 
 
-def assertServicePoolIs(
+def assert_servicepool_is(
     pool: models.ServicePool,
     compare_to: collections.abc.Mapping[str, typing.Any],
     compare_uuid: bool=False,

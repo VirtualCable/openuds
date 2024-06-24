@@ -67,7 +67,7 @@ class GroupsTest(rest.test.RESTActorTestCase):
             # Locate the group in the auth
             dbgrp = self.auth.groups.get(name=group['name'])
             self.assertTrue(
-                rest.assertions.assertGroupIs(dbgrp, group, compare_uuid=True)
+                rest.assertions.assert_group_is(dbgrp, group, compare_uuid=True)
             )
 
     def test_groups_tableinfo(self) -> None:
@@ -95,7 +95,7 @@ class GroupsTest(rest.test.RESTActorTestCase):
             response = self.client.rest_get(f'{url}/{i.uuid}')
             self.assertEqual(response.status_code, 200)
             group = response.json()
-            self.assertTrue(rest.assertions.assertGroupIs(i, group, compare_uuid=True))
+            self.assertTrue(rest.assertions.assert_group_is(i, group, compare_uuid=True))
 
         # invalid user
         response = self.client.rest_get(f'{url}/invalid')
@@ -112,7 +112,7 @@ class GroupsTest(rest.test.RESTActorTestCase):
 
         self.assertEqual(response.status_code, 200)
         group = models.Group.objects.get(name=group_dct['name'])
-        self.assertTrue(rest.assertions.assertGroupIs(group, group_dct))
+        self.assertTrue(rest.assertions.assert_group_is(group, group_dct))
 
         # Now, will fail because name is already in use
         response = self.client.rest_put(

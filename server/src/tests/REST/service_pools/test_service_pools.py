@@ -65,4 +65,4 @@ class ServicePoolTest(rest.test.RESTTestCase):
         for service_pool in re_pools:
             # Get from DB the service pool
             db_pool = models.ServicePool.objects.get(uuid=service_pool['id'])
-            self.assertTrue(rest.assertions.assertServicePoolIs(db_pool, service_pool))
+            self.assertTrue(rest.assertions.assert_servicepool_is(db_pool, service_pool))
