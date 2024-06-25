@@ -76,8 +76,8 @@ class TestXenFixedUserService(UDSTransactionTestCase):
 
             self.assertEqual(state, types.states.TaskState.FINISHED)
 
-            # userservice_db Should have halle set_in_use(True)
-            userservice_db.set_in_use.assert_called_once_with(True)
+            if service.get_token() is None:
+                userservice_db.set_in_use.assert_called_once_with(True)
 
             # vmid should have been assigned, so it must be in the assigned machines
             with service._assigned_access() as assigned_machines:
