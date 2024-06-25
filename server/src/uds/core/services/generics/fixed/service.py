@@ -274,3 +274,8 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         if self.has_field('maintain_on_error'):  # If has been defined on own class...
             return self.maintain_on_error.value
         return False
+
+    def get_token(self) -> str | None:
+        if self.has_field('token') and self.token.value:
+            return self.token.value
+        return None

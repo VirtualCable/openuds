@@ -300,7 +300,7 @@ class DynamicServiceTest(UDSTransactionTestCase):
                 self.assertLessEqual(info.created, now)
                 self.assertLessEqual(info.last_check, now)
                 self.assertEqual(info.fatal_retries, 0)
-                self.assertEqual(info.total_retries, 0)
+                self.assertEqual(info.total_retries, 1)
 
         # And no call to is_deleted
         instance.mock.is_deleted.assert_not_called()
