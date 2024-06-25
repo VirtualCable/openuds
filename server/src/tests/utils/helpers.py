@@ -114,3 +114,6 @@ def returns_true(*args: typing.Any, **kwargs: typing.Any) -> bool:
 
 def returns_false(*args: typing.Any, **kwargs: typing.Any) -> bool:
     return False
+
+def returns_none(*args: typing.Any, **kwargs: typing.Any) -> typing.Any:
+    return None
