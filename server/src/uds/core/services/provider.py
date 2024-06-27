@@ -187,7 +187,9 @@ class ServiceProvider(module.Module):
         from uds.models.provider import Provider
 
         if self._db_obj is None:
-            self._db_obj = Provider.objects.get(uuid=self._uuid)
+            if not self.get_uuid():
+                return Provider.null()
+            self._db_obj = Provider.objects.get(uuid__iexact=self.get_uuid())
         return self._db_obj
 
     def get_concurrent_creation_limit(self) -> int:

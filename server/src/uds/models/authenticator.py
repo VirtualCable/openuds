@@ -237,13 +237,6 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         return not exists
 
     @staticmethod
-    def null() -> 'Authenticator':
-        """
-        Returns a null authenticator, that is, an authenticator that does nothing
-        """
-        return Authenticator(uuid='')
-
-    @staticmethod
     def all() -> 'models.QuerySet[Authenticator]':
         """
         Returns all authenticators ordered by priority

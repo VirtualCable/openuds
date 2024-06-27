@@ -47,6 +47,7 @@ from uds.core.util import net
 if typing.TYPE_CHECKING:
     from uds.core.environment import Environment
     from uds.core.types.requests import ExtendedHttpRequestWithUser
+    from uds import models
 
 logger = logging.getLogger(__name__)
 
@@ -79,6 +80,8 @@ class Transport(Module):
 
     # For allowing grouping transport on dashboard "new" menu, and maybe other places
     group: typing.ClassVar[types.transports.Grouping] = types.transports.Grouping.DIRECT
+    
+    _db_obj: typing.Optional['models.Transport'] = None
 
     def __init__(self, environment: 'Environment', values: types.core.ValuesType):
         super().__init__(environment, values)
@@ -104,6 +107,19 @@ class Transport(Module):
         """
         Invoked when Transport is deleted
         """
+
+    def db_obj(self) -> 'models.Transport':
+        """
+        Returns the database object for this provider
+        """
+        from uds.models.transport import Transport
+
+        if self._db_obj is None:
+            if not self.get_uuid():
+                return Transport.null()
+            self._db_obj = Transport.objects.get(uuid__iexact=self.get_uuid())
+
+        return self._db_obj
 
     def test_connectivity(
         self,

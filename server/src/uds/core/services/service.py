@@ -238,8 +238,10 @@ class Service(Module):
         """
         from uds.models import Service
 
-        if self._db_obj is None:
-            self._db_obj = Service.objects.get(uuid=self.get_uuid())
+        if not self._db_obj:
+            if not self.get_uuid():
+                return Service.null()
+            self._db_obj = Service.objects.get(uuid__iexact=self.get_uuid())
         return self._db_obj
 
     def provider(self) -> 'services.ServiceProvider':

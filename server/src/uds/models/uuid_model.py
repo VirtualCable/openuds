@@ -40,8 +40,9 @@ from uds.core.util.model import generate_uuid
 
 logger = logging.getLogger(__name__)
 
+T = typing.TypeVar('T', bound='UUIDModel')
 
-class UUIDModel(models.Model):    
+class UUIDModel(models.Model):
     """
     Base abstract model for models that require an uuid
     """
@@ -60,11 +61,22 @@ class UUIDModel(models.Model):
         if not self.uuid:
             self.uuid = generate_uuid()
         elif self.uuid != self.uuid.lower():
-            self.uuid = (
-                self.uuid.lower()
-            )  # If we modify uuid elsewhere, ensure that it's stored in lower case
+            self.uuid = self.uuid.lower()  # If we modify uuid elsewhere, ensure that it's stored in lower case
 
         if 'update_fields' in kwargs:
             kwargs['update_fields'] = list(kwargs['update_fields']) + ['uuid']
 
         models.Model.save(self, *args, **kwargs)
+        
+    @classmethod
+    def null(cls: type[T]) -> 'T':
+        """
+        Returns a null MFA
+        """
+        return cls(uuid='')
+
+    def is_null(self) -> bool:
+        """
+        Returns if this is a null MFA
+        """
+        return self.uuid == ''

@@ -60,9 +60,7 @@ class MFA(ManagedObjectModel, TaggingMixin):  # type: ignore
     # objects: 'models.BaseManager[MFA]'
     authenticators: 'models.manager.RelatedManager[Authenticator]'
 
-    def get_instance(
-        self, values: typing.Optional[dict[str, str]] = None
-    ) -> 'mfas.MFA':
+    def get_instance(self, values: typing.Optional[dict[str, str]] = None) -> 'mfas.MFA':
         return typing.cast('mfas.MFA', super().get_instance(values=values))
 
     def get_type(self) -> type['mfas.MFA']:

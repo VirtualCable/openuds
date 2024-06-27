@@ -81,12 +81,8 @@ class Provider(ManagedObjectModel, TaggingMixin):
 
         return services.factory().lookup(self.data_type) or services.ServiceProvider
 
-    def get_instance(
-        self, values: typing.Optional[dict[str, str]] = None
-    ) -> 'ServiceProvider':
-        prov: 'ServiceProvider' = typing.cast(
-            'ServiceProvider', super().get_instance(values=values)
-        )
+    def get_instance(self, values: typing.Optional[dict[str, str]] = None) -> 'ServiceProvider':
+        prov: 'ServiceProvider' = typing.cast('ServiceProvider', super().get_instance(values=values))
         return prov
 
     def is_in_maintenance(self) -> bool:

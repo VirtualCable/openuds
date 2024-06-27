@@ -48,6 +48,7 @@ logger = logging.getLogger(__name__)
 
 if typing.TYPE_CHECKING:
     from uds.core import types
+    from uds.models.uuid_model import UUIDModel
 
 
 class Module(UserInterface, Environmentable, Serializable, abc.ABC):
@@ -212,6 +213,12 @@ class Module(UserInterface, Environmentable, Serializable, abc.ABC):
         Returns:
             Nothing
         """
+        pass
+    
+    @abc.abstractmethod
+    def db_obj(self) -> 'UUIDModel':
+        ...
+        
 
     @classmethod
     def mod_name(cls: type['Module']) -> str:

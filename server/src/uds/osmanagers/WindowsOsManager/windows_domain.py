@@ -202,7 +202,7 @@ class WinDomainOsManager(WindowsOsManager):
         # And if not possible, try using NON-SSL
         for server in servers:
             ssl = self.use_ssl.as_bool()
-            port = server[1] if not ssl else -1
+            port = server[1] if not ssl and server[1] == 389 else -1
             try:
                 return ldaputil.connection(
                     account,

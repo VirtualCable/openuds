@@ -176,7 +176,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         (see related classes uds.core.util.unique_name_generator and uds.core.util.unique_mac_generator)
         """
         return Environment.environment_for_table_record(
-            self._meta.verbose_name or self._meta.model_name or '',  
+            self._meta.verbose_name or self._meta.model_name or '',
             self.id,
         )
 
@@ -621,7 +621,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
     def log(self, message: str, level: types.log.LogLevel = types.log.LogLevel.INFO) -> None:
         log.log(self, level, message, types.log.LogSource.INTERNAL)
 
-    def test_connectivity(self, host: str, port: 'str|int', timeout:int=4) -> bool:
+    def test_connectivity(self, host: str, port: 'str|int', timeout: int = 4) -> bool:
         return self.deployed_service.test_connectivity(host, port, timeout)
 
     def __str__(self) -> str:

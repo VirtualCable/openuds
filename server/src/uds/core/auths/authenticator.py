@@ -208,9 +208,10 @@ class Authenticator(Module):
         from uds.models import Authenticator  # pylint: disable=import-outside-toplevel
 
         if self._db_obj is None:
-            if not self._uuid:
+            if not self.get_uuid():
                 return Authenticator.null()
-            self._db_obj = Authenticator.objects.get(uuid=self._uuid)
+            # get uuid case insensitive
+            self._db_obj = Authenticator.objects.get(uuid__iexact=self.get_uuid())
         return self._db_obj
 
     def recreate_groups(self, user: 'models.User') -> None:

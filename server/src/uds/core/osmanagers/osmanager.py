@@ -46,7 +46,7 @@ from uds.core.module import Module
 STORAGE_KEY = 'osmk'
 
 if typing.TYPE_CHECKING:
-    from uds.models.user_service import UserService
+    from uds import models
     from uds.core.environment import Environment
 
 
@@ -73,6 +73,8 @@ class OSManager(Module):
     # : Defaults to all. (list or tuple)
     servicesType: types.services.ServiceType = types.services.ServiceType.VDI
 
+    _db_obj: typing.Optional['models.OSManager'] = None
+
     def __init__(self, environment: 'Environment', values: types.core.ValuesType = None):
         super().__init__(environment, values)
         self.initialize(values)
@@ -92,17 +94,32 @@ class OSManager(Module):
 
         Default implementation does nothing
         """
+        pass
 
-    def release(self, userservice: 'UserService') -> None:
+    def release(self, userservice: 'models.UserService') -> None:
         """
         Called by a service that is in Usable state before destroying it so osmanager can release data associated with it
         Only invoked for services that reach the state "removed"
         @return nothing
         """
+        pass
+
+    def db_obj(self) -> 'models.OSManager':
+        """
+        Returns the database object for this provider
+        """
+        from uds.models.osmanager import OSManager
+
+        if self._db_obj is None:
+            if not self.get_uuid():
+                return OSManager.null()
+            self._db_obj = OSManager.objects.get(uuid__iexact=self.get_uuid())
+
+        return self._db_obj
 
     # These methods must be overriden
     def actor_data(
-        self, userservice: 'UserService'  # pylint: disable=unused-argument
+        self, userservice: 'models.UserService'  # pylint: disable=unused-argument
     ) -> collections.abc.MutableMapping[str, typing.Any]:
         """
         This method provides information to actor, so actor can complete os configuration.
@@ -144,7 +161,9 @@ class OSManager(Module):
         """
         return {}
 
-    def check_state(self, userservice: 'UserService') -> types.states.State:  # pylint: disable=unused-argument
+    def check_state(
+        self, userservice: 'models.UserService'
+    ) -> types.states.State:  # pylint: disable=unused-argument
         """
         This method must be overriden so your os manager can respond to requests from system to the current state of the service
         This method will be invoked when:
@@ -157,14 +176,14 @@ class OSManager(Module):
         """
         return State.FINISHED
 
-    def handle_unused(self, userservice: 'UserService') -> None:
+    def handle_unused(self, userservice: 'models.UserService') -> None:
         """
         This will be invoked for every assigned and unused user service that has been in this state at least 1/2 of Globalconfig.CHECK_UNUSED_TIME
         This function can update userService values. Normal operation will be remove machines if this state is not valid
         """
         pass
-    
-    def is_removable_on_logout(self, userservice: 'UserService') -> bool: 
+
+    def is_removable_on_logout(self, userservice: 'models.UserService') -> bool:
         """
         If returns true, when actor notifies "logout", UDS will mark service for removal
         can be overriden
@@ -191,7 +210,7 @@ class OSManager(Module):
 
     def update_credentials(
         self,
-        userservice: 'UserService',  # pylint: disable=unused-argument
+        userservice: 'models.UserService',  # pylint: disable=unused-argument
         username: str,
         password: str,
     ) -> tuple[str, str]:
@@ -216,10 +235,10 @@ class OSManager(Module):
         Invoked when OS Manager is deleted
         """
 
-    def log_known_ip(self, userservice: 'UserService', ip: str) -> None:
+    def log_known_ip(self, userservice: 'models.UserService', ip: str) -> None:
         userservice.log_ip(ip)
 
-    def to_ready(self, userservice: 'UserService') -> None:
+    def to_ready(self, userservice: 'models.UserService') -> None:
         '''
         Resets login counter to 0
         '''
@@ -228,7 +247,7 @@ class OSManager(Module):
         self.ready_notified(userservice)
 
     @staticmethod
-    def logged_in(userservice: 'UserService', username: typing.Optional[str] = None) -> None:
+    def logged_in(userservice: 'models.UserService', username: typing.Optional[str] = None) -> None:
         """
         This method:
           - Add log in event to stats
@@ -284,7 +303,7 @@ class OSManager(Module):
             p['logins_counter'] = counter
 
     @staticmethod
-    def logged_out(userservice: 'UserService', username: typing.Optional[str] = None) -> None:
+    def logged_out(userservice: 'models.UserService', username: typing.Optional[str] = None) -> None:
         """
         This method:
           - Add log in event to stats
@@ -342,7 +361,7 @@ class OSManager(Module):
             userservice.deployed_service.name,
         )
 
-    def ready_notified(self, userservice: 'UserService') -> None:
+    def ready_notified(self, userservice: 'models.UserService') -> None:
         """
         Invoked by actor when userService is ready
         """
