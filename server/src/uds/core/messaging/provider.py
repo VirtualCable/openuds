@@ -39,6 +39,7 @@ from uds.core.module import Module
 if typing.TYPE_CHECKING:
     from uds.core.environment import Environment
     from uds.core import types
+    from uds import models
 
 
 class Notifier(Module):
@@ -72,6 +73,8 @@ class Notifier(Module):
     # : your own :py:meth:uds.core.module.BaseModule.icon method.
     icon_file: typing.ClassVar[str] = 'notifier.png'
 
+    _db_obj: typing.Optional['models.Notifier'] = None
+
     def __init__(self, environment: 'Environment', values: 'types.core.ValuesType') -> None:
         super().__init__(environment, values)
         self.initialize(values)
@@ -92,6 +95,19 @@ class Notifier(Module):
         Default implementation does nothing
         """
         pass
+
+    def db_obj(self) -> 'models.Notifier':
+        """
+        Helper method to access the Authenticator database object
+        """
+        from uds.models import Notifier  # pylint: disable=import-outside-toplevel
+
+        if self._db_obj is None:
+            if not self.get_uuid():
+                return Notifier.null()
+            # get uuid case insensitive
+            self._db_obj = Notifier.objects.get(uuid__iexact=self.get_uuid())
+        return self._db_obj
 
     def notify(self, group: str, identificator: str, level: LogLevel, message: str) -> None:
         """
