@@ -173,19 +173,25 @@ def search_item_by_attr(lst: list[T], attribute: str, value: typing.Any, **kwarg
             return item
     raise ValueError(f'Item with {attribute}=="{value}" not found in list {str(lst)[:100]}')
 
-def filter_list_by_attr(lst: list[T], attribute: str, value: typing.Any, **kwargs: typing.Any) -> list[T]:
+def filter_list_by_attr(lst: list[T], attribute: str, value: typing.Any,*, sorted_by: str = '', **kwargs: typing.Any) -> list[T]:
     """
     Returns a list of items from a list of items
     kwargs are not used, just to let use it as partial on fixtures
     """
-    return [item for item in lst if getattr(item, attribute) == value or value is None]
+    values = [item for item in lst if getattr(item, attribute) == value or value is None]
+    if sorted_by:
+        values.sort(key=lambda x: getattr(x, sorted_by))
+    return values
 
-def filter_list_by_attr_list(lst: list[T], attribute: str, values: list[typing.Any], **kwargs: typing.Any) -> list[T]:
+def filter_list_by_attr_list(lst: list[T], attribute: str, values: list[typing.Any], *, sorted_by: str = '', **kwargs: typing.Any) -> list[T]:
     """
     Returns a list of items from a list of items
     kwargs are not used, just to let use it as partial on fixtures
     """
-    return [item for item in lst if getattr(item, attribute) in values]
+    values = [item for item in lst if getattr(item, attribute) in values]
+    if sorted_by:
+        values.sort(key=lambda x: getattr(x, sorted_by))
+    return values
 
 def check_userinterface_values(obj: ui.UserInterface, values: ui.gui.ValuesDictType) -> None:
     """
