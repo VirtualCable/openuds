@@ -70,8 +70,8 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         old_field_name='machine',
     )
 
-    basename = fields.basename_field(order=31, tab=types.ui.Tab.MACHINE)
-    lenname = fields.lenname_field(order=32, tab=types.ui.Tab.MACHINE)
+    basename = fields.basename_field(order=38, tab=types.ui.Tab.MACHINE)
+    lenname = fields.lenname_field(order=39, tab=types.ui.Tab.MACHINE)
 
     remove_duplicates = fields.remove_duplicates_field(
         order=102,

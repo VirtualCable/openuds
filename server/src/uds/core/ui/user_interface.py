@@ -177,11 +177,16 @@ class gui:
 
     @staticmethod
     def sorted_choices(
-        choices: collections.abc.Iterable[types.ui.ChoiceItem], *, by_id: bool = False, reverse: bool = False
+        choices: collections.abc.Iterable[types.ui.ChoiceItem], *, by_id: bool = False, reverse: bool = False,
+        key: typing.Optional[collections.abc.Callable[[types.ui.ChoiceItem], typing.Any]] = None
     ) -> list[types.ui.ChoiceItem]:
         if by_id:
-            return sorted(choices, key=lambda item: item['id'], reverse=reverse)
-        return sorted(choices, key=lambda item: item['text'].lower(), reverse=reverse)
+            key = lambda item: item['id']
+        elif key is None:
+            key = lambda item: item['text'].lower()
+        else:
+            key = key
+        return sorted(choices, key=key, reverse=reverse)
 
     @staticmethod
     def as_bool(value: typing.Union[str, bytes, bool, int]) -> bool:
