@@ -47,7 +47,7 @@ from .publication import ProxmoxPublication
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from . import client
+    from . import proxmox
     from .provider import ProxmoxProvider
     from uds.core.services.generics.dynamic.publication import DynamicPublication
     from uds.core.services.generics.dynamic.service import DynamicService
@@ -207,7 +207,7 @@ class ProxmoxServiceLinked(DynamicService):
         """
         return re.sub("[^a-zA-Z0-9_-]", "-", name)
 
-    def clone_machine(self, name: str, description: str, vmid: int = -1) -> 'client.types.VmCreationResult':
+    def clone_machine(self, name: str, description: str, vmid: int = -1) -> 'proxmox.types.VmCreationResult':
         name = self.sanitized_name(name)
         pool = self.pool.value or None
         if vmid == -1:  # vmId == -1 if cloning for template
@@ -230,14 +230,14 @@ class ProxmoxServiceLinked(DynamicService):
             must_have_vgpus={'1': True, '2': False}.get(self.gpu.value, None),
         )
 
-    def get_machine_info(self, vmid: int) -> 'client.types.VMInfo':
+    def get_machine_info(self, vmid: int) -> 'proxmox.types.VMInfo':
         return self.provider().get_machine_info(vmid, self.pool.value.strip())
 
     def get_nic_mac(self, vmid: int) -> str:
         config = self.provider().get_machine_configuration(vmid)
         return config.networks[0].mac.lower()
 
-    def xremove_machine(self, vmid: int) -> 'client.types.UPID':
+    def xremove_machine(self, vmid: int) -> 'proxmox.types.UPID':
         # First, remove from HA if needed
         try:
             self.disable_machine_ha(vmid)

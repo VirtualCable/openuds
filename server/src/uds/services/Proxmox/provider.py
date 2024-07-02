@@ -38,7 +38,7 @@ from uds.core.util import validators, fields
 from uds.core.util.decorators import cached
 from uds.core.util.unique_id_generator import UniqueIDGenerator
 
-from . import client
+from . import proxmox
 from .service_linked import ProxmoxServiceLinked
 from .service_fixed import ProxmoxServiceFixed
 
@@ -119,15 +119,15 @@ class ProxmoxProvider(services.ServiceProvider):
     macs_range = fields.macs_range_field(default='52:54:00:00:00:00-52:54:00:FF:FF:FF')
 
     # Own variables
-    _cached_api: typing.Optional[client.ProxmoxClient] = None
+    _cached_api: typing.Optional[proxmox.ProxmoxClient] = None
     _vmid_generator: UniqueIDGenerator
 
-    def _api(self) -> client.ProxmoxClient:
+    def _api(self) -> proxmox.ProxmoxClient:
         """
         Returns the connection API object
         """
         if self._cached_api is None:
-            self._cached_api = client.ProxmoxClient(
+            self._cached_api = proxmox.ProxmoxClient(
                 self.host.value,
                 self.port.as_int(),
                 self.username.value,
@@ -166,29 +166,29 @@ class ProxmoxProvider(services.ServiceProvider):
 
         return self._api().test()
 
-    def list_machines(self, force: bool = False) -> list[client.types.VMInfo]:
+    def list_machines(self, force: bool = False) -> list[proxmox.types.VMInfo]:
         return self._api().list_machines(force=force)
 
-    def get_machine_info(self, vmid: int, poolid: typing.Optional[str] = None) -> client.types.VMInfo:
+    def get_machine_info(self, vmid: int, poolid: typing.Optional[str] = None) -> proxmox.types.VMInfo:
         return self._api().get_machine_pool_info(vmid, poolid, force=True)
 
-    def get_machine_configuration(self, vmid: int) -> client.types.VMConfiguration:
+    def get_machine_configuration(self, vmid: int) -> proxmox.types.VMConfiguration:
         return self._api().get_machine_configuration(vmid, force=True)
 
-    def get_storage_info(self, storageid: str, node: str, force: bool = False) -> client.types.StorageInfo:
+    def get_storage_info(self, storageid: str, node: str, force: bool = False) -> proxmox.types.StorageInfo:
         return self._api().get_storage(storageid, node, force=force)
 
     def list_storages(
         self, node: typing.Optional[str] = None, force: bool = False
-    ) -> list[client.types.StorageInfo]:
+    ) -> list[proxmox.types.StorageInfo]:
         return self._api().list_storages(node=node, content='images', force=force)
 
-    def list_pools(self, force: bool = False) -> list[client.types.PoolInfo]:
+    def list_pools(self, force: bool = False) -> list[proxmox.types.PoolInfo]:
         return self._api().list_pools(force=force)
 
     def get_pool_info(
         self, pool_id: str, retrieve_vm_names: bool = False, force: bool = False
-    ) -> client.types.PoolInfo:
+    ) -> proxmox.types.PoolInfo:
         return self._api().get_pool_info(pool_id, retrieve_vm_names=retrieve_vm_names, force=force)
 
     def create_template(self, vmid: int) -> None:
@@ -204,7 +204,7 @@ class ProxmoxProvider(services.ServiceProvider):
         target_storage: typing.Optional[str] = None,
         target_pool: typing.Optional[str] = None,
         must_have_vgpus: typing.Optional[bool] = None,
-    ) -> client.types.VmCreationResult:
+    ) -> proxmox.types.VmCreationResult:
         return self._api().clone_machine(
             vmid,
             self.get_new_vmid(),
@@ -217,25 +217,25 @@ class ProxmoxProvider(services.ServiceProvider):
             must_have_vgpus,
         )
 
-    def start_machine(self, vmid: int) -> client.types.UPID:
+    def start_machine(self, vmid: int) -> proxmox.types.UPID:
         return self._api().start_machine(vmid)
 
-    def stop_machine(self, vmid: int) -> client.types.UPID:
+    def stop_machine(self, vmid: int) -> proxmox.types.UPID:
         return self._api().stop_machine(vmid)
 
-    def reset_machine(self, vmid: int) -> client.types.UPID:
+    def reset_machine(self, vmid: int) -> proxmox.types.UPID:
         return self._api().reset_machine(vmid)
 
-    def suspend_machine(self, vmId: int) -> client.types.UPID:
+    def suspend_machine(self, vmId: int) -> proxmox.types.UPID:
         return self._api().suspend_machine(vmId)
 
-    def shutdown_machine(self, vmid: int) -> client.types.UPID:
+    def shutdown_machine(self, vmid: int) -> proxmox.types.UPID:
         return self._api().shutdown_machine(vmid)
 
-    def remove_machine(self, vmid: int) -> client.types.UPID:
+    def remove_machine(self, vmid: int) -> proxmox.types.UPID:
         return self._api().remove_machine(vmid)
 
-    def get_task_info(self, node: str, upid: str) -> client.types.TaskStatus:
+    def get_task_info(self, node: str, upid: str) -> proxmox.types.TaskStatus:
         return self._api().get_task(node, upid)
 
     def enable_machine_ha(self, vmid: int, started: bool = False, group: typing.Optional[str] = None) -> None:
@@ -270,7 +270,7 @@ class ProxmoxProvider(services.ServiceProvider):
             # All assigned vmid will be left as unusable on UDS until released by time (3 years)
             # This is not a problem at all, in the rare case that a machine id is released from uds db
             # if it exists when we try to create a new one, we will simply try to get another one
-        raise client.ProxmoxError(f'Could not get a new vmid!!: last tried {vmid}')
+        raise proxmox.ProxmoxError(f'Could not get a new vmid!!: last tried {vmid}')
 
     def get_guest_ip_address(self, vmid: int, node: typing.Optional[str] = None, ip_version: typing.Literal['4', '6', ''] = '') -> str:
         return self._api().get_guest_ip_address(vmid, node, ip_version)
@@ -280,7 +280,7 @@ class ProxmoxProvider(services.ServiceProvider):
 
     def get_current_snapshot(
         self, vmid: int, node: typing.Optional[str] = None
-    ) -> typing.Optional[client.types.SnapshotInfo]:
+    ) -> typing.Optional[proxmox.types.SnapshotInfo]:
         return (
             sorted(
                 filter(lambda x: x.snaptime, self._api().list_snapshots(vmid, node)),
@@ -296,12 +296,12 @@ class ProxmoxProvider(services.ServiceProvider):
         node: typing.Optional[str] = None,
         name: typing.Optional[str] = None,
         description: typing.Optional[str] = None,
-    ) -> client.types.UPID:
+    ) -> proxmox.types.UPID:
         return self._api().create_snapshot(vmid, node, name, description)
 
     def restore_snapshot(
         self, vmid: int, node: typing.Optional[str] = None, name: typing.Optional[str] = None
-    ) -> client.types.UPID:
+    ) -> proxmox.types.UPID:
         """
         In fact snapshot is not optional, but node is and want to keep the same signature as the api
         """

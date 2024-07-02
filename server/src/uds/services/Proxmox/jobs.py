@@ -38,7 +38,7 @@ from uds.core.util.model import sql_stamp_seconds
 from uds.core.util.unique_id_generator import UniqueIDGenerator
 
 from . import provider
-from . import client
+from . import proxmox
 
 # Note that even reseting, UDS will get always a FREE vmid, so even if the machine is already in use
 # (and removed from used db), it will not be reused until it has dissapeared from the proxmox server
@@ -104,7 +104,7 @@ class ProxmoxDeferredRemoval(jobs.Job):
     @staticmethod
     def waitForTaskFinish(
         providerInstance: 'provider.ProxmoxProvider',
-        upid: 'client.types.UPID',
+        upid: 'proxmox.types.UPID',
         maxWait: int = 30,  # 30 * 0.3 = 9 seconds
     ) -> bool:
         counter = 0
@@ -146,7 +146,7 @@ class ProxmoxDeferredRemoval(jobs.Job):
 
                     # It this is reached, remove check
                     storage.remove('tr' + str(vmid))
-                except client.ProxmoxNotFound:
+                except proxmox.ProxmoxNotFound:
                     storage.remove('tr' + str(vmid))  # VM does not exists anymore
                 except Exception as e:  # Any other exception wil be threated again
                     # instance.log('Delayed removal of %s has failed: %s. Will retry later', vmId, e)

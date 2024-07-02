@@ -40,7 +40,7 @@ from uds.core.services.generics.dynamic.userservice import DynamicUserService
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.util import autoserializable
 
-from . import client
+from . import proxmox
 
 
 # Not imported at runtime, just for type checking
@@ -117,7 +117,7 @@ class ProxmoxUserserviceLinked(DynamicUserService):
 
     _task = autoserializable.StringField(default='')
 
-    def _store_task(self, upid: 'client.types.UPID') -> None:
+    def _store_task(self, upid: 'proxmox.types.UPID') -> None:
         self._task = ','.join([upid.node, upid.upid])
 
     def _retrieve_task(self) -> tuple[str, str]:
@@ -132,7 +132,7 @@ class ProxmoxUserserviceLinked(DynamicUserService):
 
         try:
             task = self.service().provider().get_task_info(node, upid)
-        except client.ProxmoxConnectionError:
+        except proxmox.ProxmoxConnectionError:
             return types.states.TaskState.RUNNING  # Try again later
 
         if task.is_errored():
@@ -204,7 +204,7 @@ class ProxmoxUserserviceLinked(DynamicUserService):
 
             # Set vm mac address now on first interface
             self.service().provider().set_machine_mac(int(self._vmid), self.get_unique_id())
-        except client.ProxmoxConnectionError:
+        except proxmox.ProxmoxConnectionError:
             self.retry_later()  # Push nop to front of queue, so it is consumed instead of this one
             return
         except Exception as e:

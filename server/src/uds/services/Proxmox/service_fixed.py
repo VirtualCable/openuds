@@ -46,7 +46,7 @@ from .deployment_fixed import ProxmoxUserServiceFixed
 if typing.TYPE_CHECKING:
     from uds import models
 
-    from . import client
+    from . import proxmox
     from .provider import ProxmoxProvider
 
 logger = logging.getLogger(__name__)
@@ -113,7 +113,7 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
     def provider(self) -> 'ProxmoxProvider':
         return typing.cast('ProxmoxProvider', super().provider())
 
-    def get_machine_info(self, vmId: int) -> 'client.types.VMInfo':
+    def get_machine_info(self, vmId: int) -> 'proxmox.types.VMInfo':
         return self.provider().get_machine_info(vmId, self.pool.value.strip())
 
     def is_avaliable(self) -> bool:

@@ -37,7 +37,7 @@ from uds.core import types
 from uds.core.services.generics.fixed.userservice import FixedUserService, Operation
 from uds.core.util import autoserializable
 
-from . import client
+from . import proxmox
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -61,7 +61,7 @@ class ProxmoxUserServiceFixed(FixedUserService, autoserializable.AutoSerializabl
     # : Recheck every ten seconds by default (for task methods)
     suggested_delay = 4
 
-    def _store_task(self, upid: 'client.types.UPID') -> None:
+    def _store_task(self, upid: 'proxmox.types.UPID') -> None:
         self._task = '\t'.join([upid.node, upid.upid])
 
     def _retrieve_task(self) -> tuple[str, str]:
@@ -78,7 +78,7 @@ class ProxmoxUserServiceFixed(FixedUserService, autoserializable.AutoSerializabl
 
         try:
             vminfo = self.service().get_machine_info(int(self._vmid))
-        except client.ProxmoxConnectionError:
+        except proxmox.ProxmoxConnectionError:
             raise  # If connection fails, let it fail on parent
         except Exception as e:
             return self.error(f'Machine not found: {e}')
@@ -105,7 +105,7 @@ class ProxmoxUserServiceFixed(FixedUserService, autoserializable.AutoSerializabl
     def op_start(self) -> None:
         try:
             vminfo = self.service().get_machine_info(int(self._vmid))
-        except client.ProxmoxConnectionError:
+        except proxmox.ProxmoxConnectionError:
             self.retry_later()
             return
         except Exception as e:
@@ -123,7 +123,7 @@ class ProxmoxUserServiceFixed(FixedUserService, autoserializable.AutoSerializabl
 
         try:
             task = self.service().provider().get_task_info(node, upid)
-        except client.ProxmoxConnectionError:
+        except proxmox.ProxmoxConnectionError:
             return types.states.TaskState.RUNNING  # Try again later
 
         if task.is_errored():
