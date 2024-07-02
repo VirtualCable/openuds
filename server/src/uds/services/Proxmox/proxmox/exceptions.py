@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019-2021 Virtual Cable S.L.U.
+# Copyright (c) 2012-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -23,8 +23,34 @@
 # SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."""
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
+
+from uds.core.services.generics import exceptions
+
+
+class ProxmoxError(exceptions.Error):
+    pass
+
+
+class ProxmoxConnectionError(exceptions.RetryableError):
+    pass
+
+
+class ProxmoxAuthError(exceptions.FatalError):
+    pass
+
+
+class ProxmoxNotFound(exceptions.NotFoundError):
+    pass
+
+
+class ProxmoxNodeUnavailableError(ProxmoxConnectionError):
+    pass
+
+
+class ProxmoxNoGPUError(ProxmoxError):
+    pass
