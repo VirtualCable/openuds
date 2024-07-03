@@ -60,7 +60,6 @@ SECRET_SIZE = 32
 # Disable warnings from urllib for
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-
 try:
     # Ensure that we do not get warnings about self signed certificates and so
     import requests.packages.urllib3  # type: ignore
@@ -107,9 +106,7 @@ def create_self_signed_cert(ip: str) -> tuple[str, str, str]:
         key.private_bytes(
             encoding=serialization.Encoding.PEM,
             format=serialization.PrivateFormat.TraditionalOpenSSL,
-            encryption_algorithm=serialization.BestAvailableEncryption(
-                password.encode()
-            ),
+            encryption_algorithm=serialization.BestAvailableEncryption(password.encode()),
         ).decode(),
         cert.public_bytes(encoding=serialization.Encoding.PEM).decode(),
         password,
@@ -126,9 +123,7 @@ def create_client_sslcontext(verify: bool = True) -> ssl.SSLContext:
     Returns:
         A SSLContext object.
     """
-    ssl_context = ssl.create_default_context(
-        purpose=ssl.Purpose.SERVER_AUTH, cafile=certifi.where()
-    )
+    ssl_context = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=certifi.where())
     if not verify:
         ssl_context.check_hostname = False
         ssl_context.verify_mode = ssl.VerifyMode.CERT_NONE
@@ -167,9 +162,7 @@ def check_certificate_matches_private_key(*, cert: str, key: str) -> bool:
             )
         )
         public_key = (
-            serialization.load_pem_private_key(
-                key.encode(), password=None, backend=default_backend()
-            )
+            serialization.load_pem_private_key(key.encode(), password=None, backend=default_backend())
             .public_key()
             .public_bytes(
                 format=serialization.PublicFormat.PKCS1,
@@ -183,9 +176,7 @@ def check_certificate_matches_private_key(*, cert: str, key: str) -> bool:
         return False
 
 
-def secure_requests_session(
-    *, verify: typing.Union[str, bool] = True
-) -> 'requests.Session':
+def secure_requests_session(*, verify: typing.Union[str, bool] = True) -> 'requests.Session':
     '''
     Generates a requests.Session object with a custom adapter that uses a custom SSLContext.
     This is intended to be used for requests that need to be secure, but not necessarily verified.
@@ -200,7 +191,12 @@ def secure_requests_session(
 
     # Copy verify value
     lverify = verify
-    
+
+    # Disable warnings from urllib for insecure requests
+    # Note that although this is done globaly, on some circunstances, may be overriden later
+    # This will ensure that we do not get warnings about self signed certificates
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
     class UDSHTTPAdapter(requests.adapters.HTTPAdapter):
         def init_poolmanager(self, *args: typing.Any, **kwargs: typing.Any) -> None:
             kwargs["ssl_context"] = create_client_sslcontext(verify=verify is True)
@@ -231,6 +227,7 @@ def secure_requests_session(
     session.headers.update({"User-Agent": consts.system.USER_AGENT})
 
     return session
+
 
 def is_server_certificate_valid(cert: str) -> bool:
     """
