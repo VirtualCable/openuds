@@ -36,15 +36,15 @@ class ProxmoxError(exceptions.Error):
     pass
 
 
-class ProxmoxConnectionError(exceptions.RetryableError):
+class ProxmoxConnectionError(ProxmoxError, exceptions.RetryableError):
     pass
 
 
-class ProxmoxAuthError(exceptions.FatalError):
+class ProxmoxAuthError(ProxmoxError, exceptions.FatalError):
     pass
 
 
-class ProxmoxNotFound(exceptions.NotFoundError):
+class ProxmoxNotFound(ProxmoxError, exceptions.NotFoundError):
     pass
 
 
