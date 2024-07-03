@@ -432,8 +432,11 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
     def op_start_checker(self) -> types.states.TaskState:
         """
         Checks if machine has started
+        Defaults to is_ready method from service
         """
-        return types.states.TaskState.FINISHED
+        if self.service().is_running(self._vmid):
+            return types.states.TaskState.FINISHED
+        return types.states.TaskState.RUNNING
 
     def op_stop(self) -> None:
         """
@@ -444,8 +447,11 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
     def op_stop_checker(self) -> types.states.TaskState:
         """
         Checks if machine has stoped
+        Default to is_ready method from service
         """
-        return types.states.TaskState.FINISHED
+        if not self.service().is_running(self._vmid):
+            return types.states.TaskState.FINISHED
+        return types.states.TaskState.RUNNING
 
     # Not abstract methods, defaults to stop machine
     def op_shutdown(self) -> None:

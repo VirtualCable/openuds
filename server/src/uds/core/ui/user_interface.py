@@ -292,7 +292,7 @@ class gui:
             self,
             label: str,
             type: types.ui.FieldType,
-            old_field_name: typing.Optional[str],
+            old_field_name: types.ui.OldFieldNameType,
             order: int = 0,
             tooltip: str = '',
             length: typing.Optional[int] = None,
@@ -342,11 +342,13 @@ class gui:
         def is_serializable(self) -> bool:
             return True
 
-        def old_field_name(self) -> typing.Optional[str]:
+        def old_field_name(self) -> list[str]:
             """
             Returns the name of the field
             """
-            return self._fields_info.old_field_name
+            if isinstance(self._fields_info.old_field_name, list):
+                return self._fields_info.old_field_name
+            return [self._fields_info.old_field_name] if self._fields_info.old_field_name else []
 
         @property
         def value(self) -> typing.Any:
@@ -505,7 +507,7 @@ class gui:
             value: typing.Optional[str] = None,
             pattern: typing.Union[str, types.ui.FieldPatternType] = types.ui.FieldPatternType.NONE,
             lines: int = 0,
-            old_field_name: typing.Optional[str] = None,
+            old_field_name: types.ui.OldFieldNameType = None,
         ) -> None:
             super().__init__(
                 old_field_name=old_field_name,
@@ -617,7 +619,7 @@ class gui:
                 dict[str, str],
                 None,
             ] = None,
-            old_field_name: typing.Optional[str] = None,
+            old_field_name: types.ui.OldFieldNameType = None,
         ) -> None:
             super().__init__(
                 label=label,
@@ -676,7 +678,7 @@ class gui:
             value: typing.Optional[int] = None,
             min_value: typing.Optional[int] = None,
             max_value: typing.Optional[int] = None,
-            old_field_name: typing.Optional[str] = None,
+            old_field_name: types.ui.OldFieldNameType = None,
         ) -> None:
             super().__init__(
                 old_field_name=old_field_name,
@@ -728,7 +730,7 @@ class gui:
                 typing.Union[collections.abc.Callable[[], datetime.date], datetime.date]
             ] = None,
             value: typing.Optional[typing.Union[str, datetime.date]] = None,
-            old_field_name: typing.Optional[str] = None,
+            old_field_name: types.ui.OldFieldNameType = None,
         ) -> None:
             super().__init__(
                 old_field_name=old_field_name,
@@ -825,7 +827,7 @@ class gui:
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
             default: typing.Union[collections.abc.Callable[[], str], str] = '',
             value: typing.Optional[str] = None,
-            old_field_name: typing.Optional[str] = None,
+            old_field_name: types.ui.OldFieldNameType = None,
         ):
             super().__init__(
                 old_field_name=old_field_name,
@@ -906,7 +908,7 @@ class gui:
             default: typing.Any = None,  # May be also callable
             value: typing.Any = None,
             serializable: bool = False,
-            old_field_name: typing.Optional[str] = None,
+            old_field_name: types.ui.OldFieldNameType = None,
         ) -> None:
             super().__init__(
                 old_field_name=old_field_name,
@@ -960,7 +962,7 @@ class gui:
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
             default: typing.Union[collections.abc.Callable[[], bool], bool] = False,
             value: typing.Optional[bool] = None,
-            old_field_name: typing.Optional[str] = None,
+            old_field_name: types.ui.OldFieldNameType = None,
         ):
             super().__init__(
                 old_field_name=old_field_name,
@@ -1101,7 +1103,7 @@ class gui:
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
             default: typing.Union[collections.abc.Callable[[], str], str, None] = None,
             value: typing.Optional[str] = None,
-            old_field_name: typing.Optional[str] = None,
+            old_field_name: types.ui.OldFieldNameType = None,
         ) -> None:
             super().__init__(
                 old_field_name=old_field_name,
@@ -1168,7 +1170,7 @@ class gui:
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
             default: typing.Union[collections.abc.Callable[[], str], str, None] = None,
             value: typing.Optional[str] = None,
-            old_field_name: typing.Optional[str] = None,
+            old_field_name: types.ui.OldFieldNameType = None,
         ):
             super().__init__(
                 old_field_name=old_field_name,
@@ -1261,7 +1263,7 @@ class gui:
                 collections.abc.Callable[[], str], collections.abc.Callable[[], list[str]], list[str], str, None
             ] = None,
             value: typing.Optional[collections.abc.Iterable[str]] = None,
-            old_field_name: typing.Optional[str] = None,
+            old_field_name: types.ui.OldFieldNameType = None,
         ):
             super().__init__(
                 old_field_name=old_field_name,
@@ -1355,7 +1357,7 @@ class gui:
                 collections.abc.Callable[[], str], collections.abc.Callable[[], list[str]], list[str], str, None
             ] = None,
             value: typing.Optional[collections.abc.Iterable[str]] = None,
-            old_field_name: typing.Optional[str] = None,
+            old_field_name: types.ui.OldFieldNameType = None,
         ) -> None:
             super().__init__(
                 old_field_name=old_field_name,
@@ -1413,7 +1415,7 @@ class gui:
             label: str,
             title: str,
             help: str,
-            old_field_name: typing.Optional[str] = None,
+            old_field_name: types.ui.OldFieldNameType = None,
         ) -> None:
             super().__init__(
                 label=label, default=[title, help], type=types.ui.FieldType.INFO, old_field_name=old_field_name
@@ -1574,8 +1576,8 @@ class UserInterface(metaclass=UserInterfaceType):
 
         # Any unexpected type will raise an exception
         # Note that we always store CURRENT field name, so once migrated forward
-        # we cannot reverse it to original...
-        # if required, we can use field.old_field_name(), but better not
+        # we cannot reverse it to original... (unless we reverse old_field_name to current, and then current to old)
+        # but this is not recommended :)
         fields = [
             (field_name, field.field_type.name, FIELDS_ENCODERS[field.field_type](field))
             for field_name, field in self._all_serializable_fields()
@@ -1645,17 +1647,16 @@ class UserInterface(metaclass=UserInterfaceType):
             field.value = field.default
 
         for field_name, field_type, field_value in fields:
-            if field_name in field_names_translations:
-                field_name = field_names_translations[field_name]  # Convert old field name to new one if needed
+            field_name = field_names_translations.get(field_name, field_name)
             if field_name not in self._gui:
                 logger.warning('Field %s not found in form', field_name)
                 continue
             internal_field_type = self._gui[field_name].field_type
             if internal_field_type not in FIELD_DECODERS:
-                logger.warning('Field %s has no converter', field_name)
+                logger.warning('Field %s has no decoder', field_name)
                 continue
             if field_type != internal_field_type.name:
-                logger.warning('Field %s has different type than expected', field_name)
+                logger.warning('Field %s has different type than expected: %s != %s', field_name, field_type, internal_field_type.name)
                 continue
             self._gui[field_name].value = FIELD_DECODERS[internal_field_type](field_value)
 
@@ -1764,11 +1765,13 @@ class UserInterface(metaclass=UserInterfaceType):
 
     def _get_fieldname_translations(self) -> dict[str, str]:
         # Dict of translations from old_field_name to field_name
+        # Note that if an old_field_name is repeated on different fields, only the FIRST will be used
+        # Also, order of fields is not guaranteed, so we we cannot assure that the first one will be chosen
         field_names_translations: dict[str, str] = {}
         for fld_name, fld in self._all_serializable_fields():
-            fld_old_field_name = fld.old_field_name()
-            if fld_old_field_name and fld_old_field_name != fld_name:
-                field_names_translations[fld_old_field_name] = fld_name
+            for fld_old_field_name in fld.old_field_name():
+                if fld_old_field_name != fld_name:
+                    field_names_translations[fld_old_field_name] = fld_name
 
         return field_names_translations
     

@@ -148,12 +148,14 @@ class ServerManager(metaclass=singleton.Singleton):
 
         stats_and_servers = self.get_server_stats(fltrs)
 
-        def _weight_threshold(stats: 'types.servers.ServerStats') -> float:
+        def _real_weight(stats: 'types.servers.ServerStats') -> float:
             if weight_threshold == 0:
                 return stats.weight()
             # Values under threshold are better, weight is in between 0 and 1, lower is better
             # To values over threshold, we will add 1, so they are always worse than any value under threshold
-            return stats.weight() if stats.weight() < weight_threshold else 1 + stats.weight()
+            # No matter if over threshold is overcalculed, it will be always worse than any value under threshold
+            # and all values over threshold will be affected in the same way
+            return weight_threshold - stats.weight() if stats.weight() < weight_threshold else 1 + stats.weight()
 
         # Now, cachedStats has a list of tuples (stats, server), use it to find the best server
         for stats, server in stats_and_servers:
@@ -166,7 +168,7 @@ class ServerManager(metaclass=singleton.Singleton):
             if best is None:
                 best = (server, stats)
 
-            if _weight_threshold(stats) < _weight_threshold(best[1]):
+            if _real_weight(stats) < _real_weight(best[1]):
                 best = (server, stats)
 
             # stats.weight() < best[1].weight()
@@ -206,6 +208,7 @@ class ServerManager(metaclass=singleton.Singleton):
         lock_interval: typing.Optional[datetime.timedelta] = None,
         server: typing.Optional['models.Server'] = None,  # If not note
         excluded_servers_uuids: typing.Optional[typing.Set[str]] = None,
+        weight_threshold: int = 0,
     ) -> typing.Optional[types.servers.ServerCounter]:
         """
         Select a server for an userservice to be assigned to
@@ -219,6 +222,20 @@ class ServerManager(metaclass=singleton.Singleton):
             server: If not None, use this server instead of selecting one from server_group. (Used on manual assign)
             excluded_servers_uuids: If not None, exclude this servers from selection. Used in case we check the availability of a server
                                  with some external method and we want to exclude it from selection because it has already failed.
+            weight_threshold: If not 0, basically will prefer values below an near this value
+            
+            Note:
+                weight_threshold is used to select a server with a weight as near as possible, without going over, to this value.
+                If none is found, the server with the lowest weight will be selected.
+                If 0, no weight threshold is applied.
+                The calculation is done as follows (with weight_threshold > 0 ofc):
+                   * if weight is below threshold, (threshold - weight) is returned (so nearer to threshold, better)
+                   * if weight is over threshold, 1 + weight is returned (so, all values over threshold are worse than any value under threshold)
+                   that is:
+                    real_weight = weight_threshold - weight if weight < weight_threshold else 1 + weight
+                    
+                The idea behind this is to be able to select a server not fully empty, but also not fully loaded, so it can be used
+                to leave servers empty as soon as possible, but also to not overload servers that are near to be full.
 
         Returns:
             uuid of server assigned
@@ -281,6 +298,7 @@ class ServerManager(metaclass=singleton.Singleton):
                                 now=now,
                                 min_memory_mb=min_memory_mb,
                                 excluded_servers_uuids=excluded_servers_uuids,
+                                weight_threshold=weight_threshold,
                             )
 
                             info = types.servers.ServerCounter(best[0].uuid, 0)

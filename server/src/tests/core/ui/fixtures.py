@@ -319,3 +319,13 @@ class TestingUserInterfaceFieldName(UserInterface):
         default='',  # Will be loaded from orig
         old_field_name='strField',
     )
+
+class TestingUserInterfaceFieldNameSeveral(UserInterface):
+    str2_field = gui.TextField(
+        label='Text Field',
+        order=0,
+        tooltip='This is a text field',
+        required=True,
+        default='',  # Will be loaded from orig
+        old_field_name=['str_field', 'strField'],
+    )

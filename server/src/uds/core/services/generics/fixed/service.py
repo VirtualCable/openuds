@@ -60,7 +60,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
     needs_osmanager = False  # If the service needs a s.o. manager (managers are related to agents provided by services, i.e. virtual machines with agent)
     # can_reset = True
     
-    # If machine has an alternate field with it, it will be used instead of "machines" field
+    # If machines has an alternate field with it, it will be used instead of "machines" field
     alternate_machines_field: typing.Optional[str] = None
 
     # : Types of publications (preparated data for deploys)
@@ -213,6 +213,13 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         Defaults to True
         """
         return True
+    
+    def is_running(self, vmid: str) -> bool:
+        """
+        Returns if the machine is running
+        Defaults to self.is_ready() 
+        """
+        return self.is_ready(vmid)
 
     @abc.abstractmethod
     def get_mac(self, vmid: str) -> str:

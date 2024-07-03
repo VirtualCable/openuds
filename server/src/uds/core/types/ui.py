@@ -36,6 +36,8 @@ import collections.abc
 
 from django.utils.translation import gettext_noop
 
+# Old Field name type
+OldFieldNameType = typing.Union[str,list[str],None]
 
 class Tab(enum.StrEnum):
     ADVANCED = gettext_noop('Advanced')
@@ -144,7 +146,7 @@ class FieldInfo:
     tooltip: str
     order: int
     type: FieldType
-    old_field_name: typing.Optional[str] = None
+    old_field_name: OldFieldNameType = None
     readonly: typing.Optional[bool] = None
     value: typing.Union[collections.abc.Callable[[], typing.Any], typing.Any] = None
     default: typing.Optional[typing.Union[collections.abc.Callable[[], str], str]] = None

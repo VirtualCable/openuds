@@ -46,6 +46,7 @@ from .fixtures import (
     TestingOldUserInterface,
     DEFAULTS,
     TestingUserInterfaceFieldName,
+    TestingUserInterfaceFieldNameSeveral,
     TestingUserInterfaceFieldNameOrig,
 )
 
@@ -156,7 +157,9 @@ class UserinterfaceTest(UDSTestCase):
         ui2.randomize_values()  # Ensure data is different
         ui2.deserialize_from_old_format(data)
 
-        self.assertEqual(ui2, ui)  # Important, TestingUserInterface has __eq__ method, but TestingOldUserInterface has not
+        self.assertEqual(
+            ui2, ui
+        )  # Important, TestingUserInterface has __eq__ method, but TestingOldUserInterface has not
         self.ensure_values_fine(ui2)
 
         # Now deserialize old data with new method, (will internally call oldUnserializeForm)
@@ -183,27 +186,36 @@ class UserinterfaceTest(UDSTestCase):
         # This test is to ensure that new serialized data can be loaded
         # mock logging warning
         ui = TestingUserInterfaceFieldNameOrig()
-        data = ui.serialize_fields()
+        data_ui = ui.serialize_fields()
         ui2 = TestingUserInterfaceFieldName()
-        self.assertFalse(ui2.deserialize_fields(data))  # Should not need upgrade
+        ui3 = TestingUserInterfaceFieldNameSeveral()
 
+        self.assertFalse(ui2.deserialize_fields(data_ui))  # Should not need upgrade
         self.assertEqual(ui.strField.value, ui2.str_field.value)
+
+        # Now, we will try to load data from ui to ui3, that has 2 "old_field_names" on the field
+        self.assertFalse(ui3.deserialize_fields(data_ui))  # Should not need upgrade
+        self.assertEqual(ui.strField.value, ui3.str2_field.value)
+
+        data_ui2 = ui2.serialize_fields()
+        self.assertFalse(ui3.deserialize_fields(data_ui2))  # Should not need upgrade
+        self.assertEqual(ui2.str_field.value, ui3.str2_field.value)
 
         # On current version, we do noallow backwards compatibility, so a warning is issued
         # and the field is not loaded
         with mock.patch('logging.Logger.warning') as mock_warning:
             ui2.str_field.value = 'new value'
-            data = ui2.serialize_fields()  # Should store str_field as strField
+            data_ui = ui2.serialize_fields()  # Should store str_field as strField
 
-            self.assertFalse(ui.deserialize_fields(data))  # Should need upgrade, current format serialized
+            self.assertFalse(ui.deserialize_fields(data_ui))  # Should need upgrade, current format serialized
 
             # Logger.warning should has been called (because there is an unknown field)
             mock_warning.assert_called()
-            
+
             # And field is not loaded
             self.assertNotEqual(ui.strField.value, ui2.str_field.value)
-            
-            # Previously: 
+
+            # Previously:
             # mock_warning.assert_not_called()
 
             # And strField should be loaded from str_field

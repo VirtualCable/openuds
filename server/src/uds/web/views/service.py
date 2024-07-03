@@ -189,17 +189,17 @@ def user_service_status(
 @web_login_required(admin=False)
 @never_cache
 def action(request: 'ExtendedHttpRequestWithUser', service_id: str, action_string: str) -> HttpResponse:
-    userService = UserServiceManager().locate_meta_service(request.user, service_id)
+    userService = UserServiceManager.manager().locate_meta_service(request.user, service_id)
     if not userService:
         userService = UserServiceManager().locate_user_service(request.user, service_id, create=False)
 
     response: typing.Any = None
     rebuild: bool = False
     if userService:
-        if action_string == 'release' and userService.deployed_service.allow_users_remove:
+        if action_string == 'release' and userService.service_pool.allow_users_remove:
             rebuild = True
             log.log(
-                userService.deployed_service,
+                userService.service_pool,
                 types.log.LogLevel.INFO,
                 "Removing User Service {} as requested by {} from {}".format(
                     userService.friendly_name, request.user.pretty_name, request.ip
@@ -210,12 +210,12 @@ def action(request: 'ExtendedHttpRequestWithUser', service_id: str, action_strin
             userService.release()
         elif (
             action_string == 'reset'
-            and userService.deployed_service.allow_users_reset
-            and userService.deployed_service.service.get_type().can_reset
+            and userService.service_pool.allow_users_reset
+            and userService.service_pool.service.get_type().can_reset
         ):
             rebuild = True
             log.log(
-                userService.deployed_service,
+                userService.service_pool,
                 types.log.LogLevel.INFO,
                 "Reseting User Service {} as requested by {} from {}".format(
                     userService.friendly_name, request.user.pretty_name, request.ip
