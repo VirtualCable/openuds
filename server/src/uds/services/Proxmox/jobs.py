@@ -134,7 +134,7 @@ class ProxmoxDeferredRemoval(jobs.Job):
                 # The soft shutdown has already being initiated by the remove method
                    
                 try:
-                    vmInfo = instance.get_machine_info(vmid)
+                    vmInfo = instance.get_vm_info(vmid)
                     logger.debug('Found %s for removal %s', vmid, data)
                     # If machine is powered on, tries to stop it
                     # tries to remove in sync mode

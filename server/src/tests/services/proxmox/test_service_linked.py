@@ -109,7 +109,7 @@ class TestProxmovLinkedService(UDSTestCase):
             )
 
             # Get machine info
-            self.assertEqual(service.get_machine_info(1), fixtures.VMS_INFO[0])
+            self.assertEqual(service.get_vm_info(1), fixtures.VMS_INFO[0])
             api.get_machine_pool_info.assert_called_with(1, service.pool.value, force=True)
 
             # Get nic mac
@@ -119,7 +119,7 @@ class TestProxmovLinkedService(UDSTestCase):
             self.assertEqual(service.provider().remove_machine(1), fixtures.UPID)
 
             # Enable HA
-            service.enable_machine_ha(1, True)
+            service.enable_vm_ha(1, True)
             api.enable_machine_ha.assert_called_with(1, True, service.ha.value)
 
     def test_service_methods_2(self) -> None:
@@ -128,7 +128,7 @@ class TestProxmovLinkedService(UDSTestCase):
             service = fixtures.create_service_linked(provider=provider)
 
             # Disable HA
-            service.disable_machine_ha(1)
+            service.disable_vm_ha(1)
             api.disable_machine_ha.assert_called_with(1)
 
             # Get basename

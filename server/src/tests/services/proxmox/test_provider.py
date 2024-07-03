@@ -139,10 +139,10 @@ class TestProxmoxProvider(UDSTransactionTestCase):
             self.assertEqual(provider.list_machines(), fixtures.VMS_INFO)
             api.list_machines.assert_called_once_with(force=False)
 
-            self.assertEqual(provider.get_machine_info(1), fixtures.VMS_INFO[0])
+            self.assertEqual(provider.get_vm_info(1), fixtures.VMS_INFO[0])
             api.get_machine_pool_info.assert_called_once_with(1, None, force=True)
 
-            self.assertEqual(provider.get_machine_configuration(1), fixtures.VMS_CONFIGURATION[0])
+            self.assertEqual(provider.get_vm_config(1), fixtures.VMS_CONFIGURATION[0])
             api.get_machine_configuration.assert_called_once_with(1, force=True)
 
             self.assertEqual(
@@ -209,7 +209,7 @@ class TestProxmoxProvider(UDSTransactionTestCase):
             api.convert_to_template.assert_called_once_with(1)
 
             self.assertEqual(
-                provider.clone_machine(1, 'name', 'description', True, 'node', 'storage', 'pool', True),
+                provider.clone_vm(1, 'name', 'description', True, 'node', 'storage', 'pool', True),
                 fixtures.VM_CREATION_RESULT,
             )
             api.clone_machine.assert_called_once_with(
@@ -300,7 +300,7 @@ class TestProxmoxProvider(UDSTransactionTestCase):
             # Patch get_provider to return te ProxmoxProvider instance (provider)
             with mock.patch('uds.services.Proxmox.helpers.get_provider', return_value=provider):
                 # Test get_storage
-                vm_info = provider.get_machine_info(1)
+                vm_info = provider.get_vm_info(1)
                 h_storage = get_storage({'prov_uuid': 'test', 'machine': '1'})
                 self.assertEqual(
                     list(

@@ -66,7 +66,7 @@ class TestProxmoxFixedService(UDSTransactionTestCase):
         with fixtures.patched_provider() as provider:
             service = fixtures.create_service_fixed(provider=provider)
 
-            self.assertEqual(service.get_machine_info(2).name, fixtures.VMS_INFO[1].name)
+            self.assertEqual(service.get_vm_info(2).name, fixtures.VMS_INFO[1].name)
 
             # is_available is already tested, so we will skip it
 

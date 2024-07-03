@@ -52,7 +52,7 @@ def get_storage(parameters: typing.Any) -> types.ui.CallbackResultType:
 
     # Obtains datacenter from cluster
     try:
-        vm_info = provider.get_machine_info(int(parameters['machine']))
+        vm_info = provider.get_vm_info(int(parameters['machine']))
     except Exception:
         return []
 

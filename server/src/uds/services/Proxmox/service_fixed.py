@@ -113,8 +113,8 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
     def provider(self) -> 'ProxmoxProvider':
         return typing.cast('ProxmoxProvider', super().provider())
 
-    def get_machine_info(self, vmId: int) -> 'prox_types.VMInfo':
-        return self.provider().get_machine_info(vmId, self.pool.value.strip())
+    def get_vm_info(self, vmId: int) -> 'prox_types.VMInfo':
+        return self.provider().get_vm_info(vmId, self.pool.value.strip())
 
     def is_avaliable(self) -> bool:
         return self.provider().is_available()
@@ -185,7 +185,7 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
                     if checking_vmid not in assigned_vms:  # Not already assigned
                         try:
                             # Invoke to check it exists, do not need to store the result
-                            self.provider().get_machine_info(int(checking_vmid), self.pool.value.strip())
+                            self.provider().get_vm_info(int(checking_vmid), self.pool.value.strip())
                             found_vmid = checking_vmid
                             break
                         except Exception:  # Notifies on log, but skipt it
@@ -209,11 +209,11 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
         return str(found_vmid)
 
     def get_mac(self, vmid: str) -> str:
-        config = self.provider().get_machine_configuration(int(vmid))
+        config = self.provider().get_vm_config(int(vmid))
         return config.networks[0].mac.lower()
 
     def get_ip(self, vmid: str) -> str:
         return self.provider().get_guest_ip_address(int(vmid))
 
     def get_name(self, vmid: str) -> str:
-        return self.provider().get_machine_info(int(vmid)).name or ''
+        return self.provider().get_vm_info(int(vmid)).name or ''

@@ -118,7 +118,7 @@ class ProxmoxPublication(DynamicPublication, autoserializable.AutoSerializable):
         self.service().provider().set_protection(int(self._vmid), protection=False)
         time.sleep(0.5)  # Give some tome to proxmox. We have observed some concurrency issues
         # And add it to HA if needed (decided by service configuration)
-        self.service().enable_machine_ha(int(self._vmid))
+        self.service().enable_vm_ha(int(self._vmid))
         # Wait a bit, if too fast, proxmox fails.. (Have not tested on 8.x, but previous versions failed if too fast..)
         time.sleep(0.5)
         # Mark vm as template

@@ -77,7 +77,7 @@ class ProxmoxUserServiceFixed(FixedUserService, autoserializable.AutoSerializabl
             return types.states.TaskState.FINISHED
 
         try:
-            vminfo = self.service().get_machine_info(int(self._vmid))
+            vminfo = self.service().get_vm_info(int(self._vmid))
         except prox_exceptions.ProxmoxConnectionError:
             raise  # If connection fails, let it fail on parent
         except Exception as e:
@@ -104,7 +104,7 @@ class ProxmoxUserServiceFixed(FixedUserService, autoserializable.AutoSerializabl
 
     def op_start(self) -> None:
         try:
-            vminfo = self.service().get_machine_info(int(self._vmid))
+            vminfo = self.service().get_vm_info(int(self._vmid))
         except prox_exceptions.ProxmoxConnectionError:
             self.retry_later()
             return

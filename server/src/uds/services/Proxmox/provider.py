@@ -169,10 +169,10 @@ class ProxmoxProvider(services.ServiceProvider):
     def list_machines(self, force: bool = False) -> list[prox_types.VMInfo]:
         return self._api().list_machines(force=force)
 
-    def get_machine_info(self, vmid: int, poolid: typing.Optional[str] = None) -> prox_types.VMInfo:
+    def get_vm_info(self, vmid: int, poolid: typing.Optional[str] = None) -> prox_types.VMInfo:
         return self._api().get_machine_pool_info(vmid, poolid, force=True)
 
-    def get_machine_configuration(self, vmid: int) -> prox_types.VMConfiguration:
+    def get_vm_config(self, vmid: int) -> prox_types.VMConfiguration:
         return self._api().get_machine_configuration(vmid, force=True)
 
     def get_storage_info(self, storageid: str, node: str, force: bool = False) -> prox_types.StorageInfo:
@@ -194,7 +194,7 @@ class ProxmoxProvider(services.ServiceProvider):
     def create_template(self, vmid: int) -> None:
         self._api().convert_to_template(vmid)
 
-    def clone_machine(
+    def clone_vm(
         self,
         vmid: int,
         name: str,

@@ -41,6 +41,7 @@ from uds.core.util import ensure, singleton
 
 IP_SUBTYPE: typing.Final[str] = 'ip'
 
+
 class ServerType(enum.IntEnum):
     TUNNEL = 1
     ACTOR = 2
@@ -148,10 +149,12 @@ class ServerStats:
 
     @property
     def cpufree_ratio(self) -> float:
+        # Returns a valuen between 0 and 1, being 1 the best value (no cpu used per user) and 0 the worst
         return (1 - self.cpuused) / (self.current_users + 1)
 
     @property
     def memfree_ratio(self) -> float:
+        # Returns a valuen between 0 and 1, being 1 the best value (no memory used per user) and 0 the worst
         return (self.memtotal - self.memused) / (self.memtotal or 1) / (self.current_users + 1)
 
     @property
@@ -169,17 +172,23 @@ class ServerStats:
 
         return self.stamp > sql_stamp() - consts.cache.DEFAULT_CACHE_TIMEOUT
 
-    def weight(self, minMemory: int = 0) -> float:
+    def weight(self, min_memory: int = 0) -> float:
         # Weights are calculated as:
         # 0.5 * cpu_usage + 0.5 * (1 - mem_free / mem_total) / (current_users + 1)
         # +1 is because this weights the connection of current users + new user
         # Dividing by number of users + 1 gives us a "ratio" of available resources per user when a new user is added
         # Also note that +512 forces that if mem_free is less than 512 MB, this server will be put at the end of the list
-        if self.memtotal - self.memused < minMemory:
+        if self.memtotal - self.memused < min_memory:
             return 1000000000  # At the end of the list
 
         # Lower is better
-        return 1 / ((self.cpufree_ratio * 1.3 + self.memfree_ratio) or 1)
+        # value can be between:
+        # (1 / (1 * 1.3 + 1) - 0.434) * 1.76 ~= 0.0 (worst case, no memory, all cpu)
+        # and
+        # (1 / ((0 * 1.3 + 0) or 1) - 0.434) * 1.76 = 0.566 * 1.76 ~= 1.0 (best case, all memory, no cpu)
+
+        w = (1 / ((self.cpufree_ratio * 1.3 + self.memfree_ratio) or 1) - 0.434) * 1.76
+        return min(max(0.0, w), 1.0)
 
     def adjust(self, users_increment: int) -> 'ServerStats':
         """
@@ -250,6 +259,7 @@ class ServerStats:
         # Human readable
         return f'memory: {self.memused//(1024*1024)}/{self.memtotal//(1024*1024)} cpu: {self.cpuused*100} users: {self.current_users}, weight: {self.weight()}, valid: {self.is_valid}'
 
+
 # ServerCounter must be serializable by json, so
 # we keep it as a NamedTuple instead of a dataclass
 class ServerCounter(typing.NamedTuple):
@@ -257,10 +267,12 @@ class ServerCounter(typing.NamedTuple):
     counter: int
 
     @staticmethod
-    def from_iterable(data: typing.Optional[collections.abc.Iterable[typing.Any]]) -> typing.Optional['ServerCounter']:
+    def from_iterable(
+        data: typing.Optional[collections.abc.Iterable[typing.Any]],
+    ) -> typing.Optional['ServerCounter']:
         if data is None:
             return None
-        
+
         return ServerCounter(*ensure.as_iterable(data))
 
     @staticmethod

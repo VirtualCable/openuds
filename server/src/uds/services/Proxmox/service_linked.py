@@ -39,7 +39,7 @@ from uds.core.services.generics.dynamic.publication import DynamicPublication
 from uds.core.services.generics.dynamic.service import DynamicService
 from uds.core.services.generics.dynamic.userservice import DynamicUserService
 from uds.core.ui import gui
-from uds.core.util import validators, fields
+from uds.core.util import validators
 
 from . import helpers
 from .deployment_linked import ProxmoxUserserviceLinked
@@ -123,7 +123,7 @@ class ProxmoxServiceLinked(DynamicService):
         readonly=True,
     )
 
-    try_soft_shutdown = fields.soft_shutdown_field()
+    try_soft_shutdown = DynamicService.try_soft_shutdown
 
     machine = gui.ChoiceField(
         label=_("Base Machine"),
@@ -211,7 +211,7 @@ class ProxmoxServiceLinked(DynamicService):
         name = self.sanitized_name(name)
         pool = self.pool.value or None
         if vmid == -1:  # vmId == -1 if cloning for template
-            return self.provider().clone_machine(
+            return self.provider().clone_vm(
                 self.machine.as_int(),
                 name,
                 description,
@@ -220,7 +220,7 @@ class ProxmoxServiceLinked(DynamicService):
                 target_pool=pool,
             )
 
-        return self.provider().clone_machine(
+        return self.provider().clone_vm(
             vmid,
             name,
             description,
@@ -230,17 +230,18 @@ class ProxmoxServiceLinked(DynamicService):
             must_have_vgpus={'1': True, '2': False}.get(self.gpu.value, None),
         )
 
-    def get_machine_info(self, vmid: int) -> 'prox_types.VMInfo':
-        return self.provider().get_machine_info(vmid, self.pool.value.strip())
+    def get_vm_info(self, vmid: int) -> 'prox_types.VMInfo':
+        return self.provider().get_vm_info(vmid, self.pool.value.strip())
 
     def get_nic_mac(self, vmid: int) -> str:
-        config = self.provider().get_machine_configuration(vmid)
+        config = self.provider().get_vm_config(vmid)
         return config.networks[0].mac.lower()
 
-    def xremove_machine(self, vmid: int) -> 'prox_types.UPID':
+    # TODO: Remove this method, kept for reference of old code
+    def _xremove_machine(self, vmid: int) -> 'prox_types.UPID':
         # First, remove from HA if needed
         try:
-            self.disable_machine_ha(vmid)
+            self.disable_vm_ha(vmid)
         except Exception as e:
             logger.warning('Exception disabling HA for vm %s: %s', vmid, e)
             self.do_log(level=types.log.LogLevel.WARNING, message=f'Exception disabling HA for vm {vmid}: {e}')
@@ -248,21 +249,15 @@ class ProxmoxServiceLinked(DynamicService):
         # And remove it
         return self.provider().remove_machine(vmid)
 
-    def enable_machine_ha(self, vmid: int, started: bool = False) -> None:
+    def enable_vm_ha(self, vmid: int, started: bool = False) -> None:
         if self.ha.value == '__':
             return
         self.provider().enable_machine_ha(vmid, started, self.ha.value or None)
 
-    def disable_machine_ha(self, vmid: int) -> None:
+    def disable_vm_ha(self, vmid: int) -> None:
         if self.ha.value == '__':
             return
         self.provider().disable_machine_ha(vmid)
-
-    def get_basename(self) -> str:
-        return self.basename.value
-
-    def get_lenname(self) -> int:
-        return int(self.lenname.value)
 
     def get_macs_range(self) -> str:
         """
@@ -272,9 +267,6 @@ class ProxmoxServiceLinked(DynamicService):
 
     def is_ha_enabled(self) -> bool:
         return self.ha.value != '__'
-
-    def should_try_soft_shutdown(self) -> bool:
-        return self.try_soft_shutdown.as_bool()
 
     def get_console_connection(self, vmid: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
         return self.provider().get_console_connection(vmid)
@@ -320,7 +312,7 @@ class ProxmoxServiceLinked(DynamicService):
 
     def is_running(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> bool:
         # Raise an exception if fails to get machine info
-        vminfo = self.get_machine_info(int(vmid))
+        vminfo = self.get_vm_info(int(vmid))
 
         return vminfo.status != 'stopped'
 

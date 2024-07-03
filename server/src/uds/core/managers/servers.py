@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2023 Virtual Cable S.L.U.
+# Copyright (c) 2023-2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -102,7 +102,7 @@ class ServerManager(metaclass=singleton.Singleton):
                 counters[uuid] = counters.get(uuid, 0) + 1
 
     def get_server_stats(
-        self, serversFltr: 'QuerySet[models.Server]'
+        self, severs_filter: 'QuerySet[models.Server]'
     ) -> list[tuple[typing.Optional['types.servers.ServerStats'], 'models.Server']]:
         """
         Returns a list of stats for a list of servers
@@ -120,7 +120,7 @@ class ServerManager(metaclass=singleton.Singleton):
 
         # Retrieve, in parallel, stats for all servers (not restrained)
         with ThreadPoolExecutor(max_workers=10) as executor:
-            for server in serversFltr.select_for_update():
+            for server in severs_filter.select_for_update():
                 if server.is_restrained():
                     continue  # Skip restrained servers
                 executor.submit(_retrieve_stats, server)
@@ -134,6 +134,7 @@ class ServerManager(metaclass=singleton.Singleton):
         now: datetime.datetime,
         min_memory_mb: int = 0,
         excluded_servers_uuids: typing.Optional[typing.Set[str]] = None,
+        weight_threshold: int = 0,  # If not 0, server with weight below and nearer to this value will be selected
     ) -> tuple['models.Server', 'types.servers.ServerStats']:
         """
         Finds the best server for a service
@@ -145,18 +146,30 @@ class ServerManager(metaclass=singleton.Singleton):
         if excluded_servers_uuids:
             fltrs = fltrs.exclude(uuid__in=excluded_servers_uuids)
 
-        serversStats = self.get_server_stats(fltrs)
+        stats_and_servers = self.get_server_stats(fltrs)
+
+        def _weight_threshold(stats: 'types.servers.ServerStats') -> float:
+            if weight_threshold == 0:
+                return stats.weight()
+            # Values under threshold are better, weight is in between 0 and 1, lower is better
+            # To values over threshold, we will add 1, so they are always worse than any value under threshold
+            return stats.weight() if stats.weight() < weight_threshold else 1 + stats.weight()
 
         # Now, cachedStats has a list of tuples (stats, server), use it to find the best server
-        for stats, server in serversStats:
+        for stats, server in stats_and_servers:
             if stats is None:
                 unmanaged_list.append(server)
                 continue
             if min_memory_mb and stats.memused // (1024 * 1024) < min_memory_mb:  # Stats has minMemory in bytes
                 continue
 
-            if best is None or stats.weight() < best[1].weight():
+            if best is None:
                 best = (server, stats)
+
+            if _weight_threshold(stats) < _weight_threshold(best[1]):
+                best = (server, stats)
+
+            # stats.weight() < best[1].weight()
 
         # Cannot be assigned to any server!!
         # If no best, select one from unmanaged
@@ -226,7 +239,9 @@ class ServerManager(metaclass=singleton.Singleton):
             # If server is forced, and server is part of the group, use it
             if server:
                 if (
-                    server.groups.filter(uuid=server_group.uuid).exclude(uuid__in=excluded_servers_uuids).count()  
+                    server.groups.filter(uuid=server_group.uuid)
+                    .exclude(uuid__in=excluded_servers_uuids)
+                    .count()
                     == 0
                 ):
                     raise exceptions.UDSException(_('Server is not part of the group'))
@@ -319,9 +334,9 @@ class ServerManager(metaclass=singleton.Singleton):
                 resetCounter = False
                 # ServerCounterType
 
-                serverCounter: typing.Optional[
-                    types.servers.ServerCounter
-                ] = types.servers.ServerCounter.from_iterable(props.get(prop_name))
+                serverCounter: typing.Optional[types.servers.ServerCounter] = (
+                    types.servers.ServerCounter.from_iterable(props.get(prop_name))
+                )
                 # If no cached value, get server assignation
                 if serverCounter is None:
                     return types.servers.ServerCounter.null()

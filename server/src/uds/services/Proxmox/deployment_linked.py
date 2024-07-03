@@ -201,7 +201,7 @@ class ProxmoxUserserviceLinked(DynamicUserService):
         # Set mac
         try:
             # Note: service will only enable ha if it is configured to do so
-            self.service().enable_machine_ha(int(self._vmid), True)  # Enable HA before continuing here
+            self.service().enable_vm_ha(int(self._vmid), True)  # Enable HA before continuing here
 
             # Set vm mac address now on first interface
             self.service().provider().set_machine_mac(int(self._vmid), self.get_unique_id())
