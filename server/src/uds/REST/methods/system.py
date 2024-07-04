@@ -31,7 +31,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import codecs
-import collections.abc
 import datetime
 import logging
 import pickle  # nosec: pickle is used to cache data, not to load it
@@ -61,43 +60,53 @@ CACHE_TIME = SINCE * 24 * 3600 // POINTS
 
 
 def get_servicepools_counters(
-    servicePool: typing.Optional[models.ServicePool],
+    servicepool: typing.Optional[models.ServicePool],
     counter_type: types.stats.CounterType,
     since_days: int = SINCE,
-) -> list[collections.abc.Mapping[str, typing.Any]]:
+) -> list[dict[str, typing.Any]]:
+    val: list[dict[str, typing.Any]] = []
     try:
-        cacheKey = (
-            (servicePool and str(servicePool.id) or 'all') + str(counter_type) + str(POINTS) + str(since_days)
+        cache_key = (
+            (servicepool and str(servicepool.id) or 'all') + str(counter_type) + str(POINTS) + str(since_days)
         )
         to = sql_now()
         since: datetime.datetime = to - datetime.timedelta(days=since_days)
 
-        cachedValue: typing.Optional[bytes] = cache.get(cacheKey)
-        if not cachedValue:
-            if not servicePool:
+        cached_value: typing.Optional[bytes] = cache.get(cache_key)
+        if not cached_value:
+            if not servicepool:
                 us = models.ServicePool()
                 us.id = -1  # Global stats
             else:
-                us = servicePool
-            val: list[collections.abc.Mapping[str, typing.Any]] = []
-            for x in counters.enumerate_counters(
-                us,
-                counter_type,
-                since=since,
-                to=to,
-                max_intervals=POINTS,
-                use_max=USE_MAX,
-                all=us.id == -1,
-            ):
-                val.append({'stamp': x[0], 'value': int(x[1])})
-            logger.debug('val: %s', val)
+                us = servicepool
+
+            start = datetime.datetime.now()
+            logger.error(' - Getting counters at %s', start)
+            val = [
+                {
+                    'stamp': x[0],
+                    'value': int(x[1]),
+                }
+                for x in counters.enumerate_counters(
+                    us,
+                    counter_type,
+                    since=since,
+                    to=to,
+                    max_intervals=POINTS,
+                    use_max=USE_MAX,
+                    all=us.id == -1,
+                )
+            ]
+            logger.error(' - Getting counters took %s', datetime.datetime.now() - start)
+    
+            # logger.debug('val: %s', val)
             if len(val) >= 2:
-                cache.put(cacheKey, codecs.encode(pickle.dumps(val), 'zip'), CACHE_TIME * 2)
+                cache.put(cache_key, codecs.encode(pickle.dumps(val), 'zip'), CACHE_TIME * 2)
             else:
                 val = [{'stamp': since, 'value': 0}, {'stamp': to, 'value': 0}]
         else:
             val = pickle.loads(
-                codecs.decode(cachedValue, 'zip')
+                codecs.decode(cached_value, 'zip')
             )  # nosec: pickle is used to cache data, not to load it
 
         # return [{'stamp': since + datetime.timedelta(hours=i*10), 'value': i*i*counter_type//4} for i in range(300)]
@@ -194,16 +203,22 @@ class System(Handler):
                 elif self.args[1] == 'cached':
                     return get_servicepools_counters(pool, counters.types.stats.CounterType.CACHED)
                 elif self.args[1] == 'complete':
+                    start = datetime.datetime.now()
+                    logger.error('** Getting assigned services at %s', start)
+                    assigned = get_servicepools_counters(pool, counters.types.stats.CounterType.ASSIGNED)
+                    logger.error(' * Assigned services took %s', datetime.datetime.now() - start)
+                    start = datetime.datetime.now()
+                    logger.error('** Getting inuse services at %s', start)
+                    inuse = get_servicepools_counters(pool, counters.types.stats.CounterType.INUSE)
+                    logger.error(' * Inuse services took %s', datetime.datetime.now() - start)
+                    start = datetime.datetime.now()
+                    logger.error('** Getting cached services at %s', start)
+                    cached = get_servicepools_counters(pool, counters.types.stats.CounterType.CACHED)
+                    logger.error(' * Cached services took %s', datetime.datetime.now() - start)
                     return {
-                        'assigned': get_servicepools_counters(
-                            pool, counters.types.stats.CounterType.ASSIGNED, since_days=7
-                        ),
-                        'inuse': get_servicepools_counters(
-                            pool, counters.types.stats.CounterType.INUSE, since_days=7
-                        ),
-                        'cached': get_servicepools_counters(
-                            pool, counters.types.stats.CounterType.CACHED, since_days=7
-                        ),
+                        'assigned': assigned,
+                        'inuse': inuse,
+                        'cached': cached,
                     }
 
         raise exceptions.rest.RequestError('invalid request')

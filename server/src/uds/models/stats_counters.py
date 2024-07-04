@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+from collections import defaultdict
 import typing
 import collections.abc
 import datetime
@@ -64,30 +65,19 @@ class StatsCounters(models.Model):
 
     @staticmethod
     def get_grouped(
-        owner_type: typing.Union[int, collections.abc.Iterable[int]], counter_type: int, **kwargs: typing.Any
+        owner_type: typing.Union[int, collections.abc.Iterable[int]],
+        counter_type: int,
+        since: typing.Union[None, int, datetime.datetime] = None,
+        to: typing.Union[None, int, datetime.datetime] = None,
+        owner_id: typing.Union[None, int, collections.abc.Iterable[int]] = None,
+        interval: typing.Optional[int] = None,
+        max_intervals: typing.Optional[int] = None,
+        use_max: bool = False,
+        limit: typing.Optional[int] = None,
     ) -> typing.Generator[tuple[int, int], None, None]:
         """
         Returns a QuerySet of counters grouped by owner_type and counter_type
         """
-        if isinstance(owner_type, int):
-            owner_type = [owner_type]
-
-        q = StatsCounters.objects.filter(
-            owner_type__in=owner_type,
-            counter_type=counter_type,
-        )
-
-        if kwargs.get('owner_id'):
-            # If owner_id is a int, we add it to the list
-            if isinstance(kwargs['owner_id'], int):
-                kwargs['owner_id'] = [kwargs['owner_id']]
-
-            q = q.filter(owner_id__in=kwargs['owner_id'])
-
-        if q.count() == 0:
-            return
-
-        since = typing.cast('int', kwargs.get('since'))
         if isinstance(since, datetime.datetime):
             # Convert to unix timestamp
             since = int(since.timestamp())
@@ -97,7 +87,6 @@ class StatsCounters(models.Model):
             if first is None:
                 return  # No data
             since = first.stamp
-        to = typing.cast('int', kwargs.get('to'))
         if isinstance(to, datetime.datetime):
             # Convert to unix timestamp
             to = int(to.timestamp())
@@ -108,41 +97,82 @@ class StatsCounters(models.Model):
                 return
             to = last.stamp
 
-        q = q.filter(stamp__gte=since, stamp__lte=to)
+        q = StatsCounters.objects.filter(counter_type=counter_type, stamp__gte=since, stamp__lte=to)
+
+        if isinstance(owner_type, int):
+            q = q.filter(owner_type=owner_type)
+        else:
+            q = q.filter(owner_type__in=owner_type)
+
+        if owner_id:
+            # If owner_id is a int, we add it to the list
+            if isinstance(owner_id, int):
+                q = q.filter(owner_id=owner_id)
+            else:
+                q = q.filter(owner_id__in=owner_id)
 
         if q.count() == 0:
             return
 
-        interval = kwargs.get('interval') or 600
+        interval = interval or 600
 
         # Max intervals, if present, will adjust interval (that are seconds)
-        max_intervals = kwargs.get('max_intervals') or 0
+        max_intervals = max_intervals or 0
+        start = datetime.datetime.now()
+        logger.error('Getting values at %s', start)
+        values = q.values_list('stamp', 'value')
+        logger.error('Elapsed time: %s', datetime.datetime.now() - start)
         if max_intervals > 0:
-            count = q.count()
+            count = len(values)
             max_intervals = max(min(max_intervals, count), 2)
-            interval = int(to - since) / max_intervals
+            interval = int(to - since) // max_intervals
 
-        if interval > 0:
-            q = q.extra(  # type: ignore # nosec: SQL injection is not possible here
-                select={
-                    'group_by_stamp': f'stamp - (stamp %% {interval})',  # f'{floor}(stamp / {interval}) * {interval}',
-                },
-            )
+        # If interval is 0, we return the values as they are
+        if interval == 0:
+            yield from values
+            return
 
-        fnc = models.Avg('value') if not kwargs.get('use_max') else models.Max('value')
+        # If interval is greater than 0, we group by interval using average or max as requested
+        start = datetime.datetime.now()
+        logger.error('Grouping values at %s', start)
+        result: dict[int, int] = defaultdict(int)
+        for counter, i in enumerate(values, 1):
+            group_by_stamp = i[0] - (i[0] % interval)
+            if use_max:
+                result[group_by_stamp] = max(result[group_by_stamp], i[1])
+            else:
+                result[group_by_stamp] = (result[group_by_stamp] * (counter - 1) + i[1]) // counter
 
-        q = (
-            q.order_by('group_by_stamp')  # type: ignore
-            .values('group_by_stamp')
-            .annotate(
-                value=fnc,
-            )
-        )
-        if kwargs.get('limit'):
-            q = q[: kwargs['limit']]
+        logger.error('Elapsed time: %s', datetime.datetime.now() - start)
 
-        for i in q.values('group_by_stamp', 'value'):
-            yield (int(i['group_by_stamp']), i['value'])
+        start = datetime.datetime.now()
+        logger.error('Yielding values at %s', start)
+        for k, v in result.items():
+            yield (k, v)
+
+        logger.error('Elapsed time: %s', datetime.datetime.now() - start)
+
+        # if interval > 0:
+        #     q = q.extra(  # type: ignore # nosec: SQL injection is not possible here
+        #         select={
+        #             'group_by_stamp': f'stamp - (stamp %% {interval})',  # f'{floor}(stamp / {interval}) * {interval}',
+        #         },
+        #     )
+
+        # fnc = models.Avg('value') if not use_max else models.Max('value')
+
+        # q = (
+        #     q.order_by('group_by_stamp')  # type: ignore
+        #     .values('group_by_stamp')
+        #     .annotate(
+        #         value=fnc,
+        #     )
+        # )
+        # if limit:
+        #     q = q[: limit]
+
+        # for i in q.values('group_by_stamp', 'value'):
+        #     yield (int(i['group_by_stamp']), i['value'])
 
     def __str__(self) -> str:
         return f'{datetime.datetime.fromtimestamp(self.stamp)} - {self.owner_id}:{self.owner_type}:{self.counter_type} {self.value}'

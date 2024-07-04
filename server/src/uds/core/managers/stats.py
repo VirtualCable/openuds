@@ -161,15 +161,15 @@ class StatsManager(metaclass=singleton.Singleton):
             Iterator, containing (date, counter) each element
         """
         # To Unix epoch
-        sinceInt = int(time.mktime(since.timetuple()))
-        toInt = int(time.mktime(to.timetuple()))
+        since_stamp = int(time.mktime(since.timetuple()))
+        to_stamp = int(time.mktime(to.timetuple()))
 
         return StatsCounters.get_grouped(
             ownerType,
             counterType,
             owner_id=ownerIds,
-            since=sinceInt,
-            to=toInt,
+            since=since_stamp,
+            to=to_stamp,
             interval=interval,
             max_intervals=max_intervals,
             limit=limit,

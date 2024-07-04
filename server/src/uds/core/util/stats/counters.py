@@ -170,13 +170,13 @@ def enumerate_counters(
     use_max = kwargs.get('use_max', False)
     type_ = type(obj)
 
-    readFncTbl = _id_retriever.get(type_)
+    read_fnc_tbl = _id_retriever.get(type_)
 
-    if not readFncTbl:
+    if not read_fnc_tbl:
         logger.error('Type %s has no registered stats', type_)
         return
 
-    fnc = readFncTbl.get(counterType)
+    fnc = read_fnc_tbl.get(counterType)
 
     if not fnc:
         logger.error('Type %s has no registerd stats of type %s', type_, counterType)
