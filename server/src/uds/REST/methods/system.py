@@ -54,9 +54,9 @@ cache = Cache('StatsDispatcher')
 
 # Enclosed methods under /stats path
 POINTS = 70
-SINCE = 7  # Days, if higer values used, ensure mysql/mariadb has a bigger sort buffer
+SINCE = 180  # Days, if higer values used, ensure mysql/mariadb has a bigger sort buffer
 USE_MAX = True
-CACHE_TIME = SINCE * 24 * 3600 // POINTS
+CACHE_TIME = 60 * 60  # 1 hour
 
 
 def get_servicepools_counters(
@@ -80,25 +80,38 @@ def get_servicepools_counters(
             else:
                 us = servicepool
 
-            start = datetime.datetime.now()
-            logger.error(' - Getting counters at %s', start)
+            stats = counters.get_accumulated_counters(
+                interval_type=models.StatsCountersAccum.IntervalType.DAY,
+                counter_type=counter_type,
+                owner_type=types.stats.CounterOwnerType.SERVICEPOOL,
+                owner_id=us.id if us.id != -1 else None,
+                since=since,
+                points=since_days,  # One point per hour
+            )
             val = [
                 {
-                    'stamp': x[0],
-                    'value': int(x[1]),
+                    'stamp': x.stamp,
+                    'value': (x.sum // x.count if x.count > 0 else 0) if not USE_MAX else x.max,
                 }
-                for x in counters.enumerate_counters(
-                    us,
-                    counter_type,
-                    since=since,
-                    to=to,
-                    max_intervals=POINTS,
-                    use_max=USE_MAX,
-                    all=us.id == -1,
-                )
+                for x in stats
             ]
-            logger.error(' - Getting counters took %s', datetime.datetime.now() - start)
-    
+            
+            # val = [
+            #     {
+            #         'stamp': x[0],
+            #         'value': int(x[1]),
+            #     }
+            #     for x in counters.enumerate_counters(
+            #         us,
+            #         counter_type,
+            #         since=since,
+            #         to=to,
+            #         max_intervals=POINTS,
+            #         use_max=USE_MAX,
+            #         all=us.id == -1,
+            #     )
+            # ]
+
             # logger.debug('val: %s', val)
             if len(val) >= 2:
                 cache.put(cache_key, codecs.encode(pickle.dumps(val), 'zip'), CACHE_TIME * 2)
@@ -203,18 +216,9 @@ class System(Handler):
                 elif self.args[1] == 'cached':
                     return get_servicepools_counters(pool, counters.types.stats.CounterType.CACHED)
                 elif self.args[1] == 'complete':
-                    start = datetime.datetime.now()
-                    logger.error('** Getting assigned services at %s', start)
                     assigned = get_servicepools_counters(pool, counters.types.stats.CounterType.ASSIGNED)
-                    logger.error(' * Assigned services took %s', datetime.datetime.now() - start)
-                    start = datetime.datetime.now()
-                    logger.error('** Getting inuse services at %s', start)
                     inuse = get_servicepools_counters(pool, counters.types.stats.CounterType.INUSE)
-                    logger.error(' * Inuse services took %s', datetime.datetime.now() - start)
-                    start = datetime.datetime.now()
-                    logger.error('** Getting cached services at %s', start)
                     cached = get_servicepools_counters(pool, counters.types.stats.CounterType.CACHED)
-                    logger.error(' * Cached services took %s', datetime.datetime.now() - start)
                     return {
                         'assigned': assigned,
                         'inuse': inuse,

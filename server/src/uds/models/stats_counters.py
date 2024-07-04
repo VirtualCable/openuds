@@ -118,10 +118,7 @@ class StatsCounters(models.Model):
 
         # Max intervals, if present, will adjust interval (that are seconds)
         max_intervals = max_intervals or 0
-        start = datetime.datetime.now()
-        logger.error('Getting values at %s', start)
         values = q.values_list('stamp', 'value')
-        logger.error('Elapsed time: %s', datetime.datetime.now() - start)
         if max_intervals > 0:
             count = len(values)
             max_intervals = max(min(max_intervals, count), 2)
@@ -133,8 +130,6 @@ class StatsCounters(models.Model):
             return
 
         # If interval is greater than 0, we group by interval using average or max as requested
-        start = datetime.datetime.now()
-        logger.error('Grouping values at %s', start)
         result: dict[int, int] = defaultdict(int)
         for counter, i in enumerate(values, 1):
             group_by_stamp = i[0] - (i[0] % interval)
@@ -143,14 +138,8 @@ class StatsCounters(models.Model):
             else:
                 result[group_by_stamp] = (result[group_by_stamp] * (counter - 1) + i[1]) // counter
 
-        logger.error('Elapsed time: %s', datetime.datetime.now() - start)
-
-        start = datetime.datetime.now()
-        logger.error('Yielding values at %s', start)
         for k, v in result.items():
             yield (k, v)
-
-        logger.error('Elapsed time: %s', datetime.datetime.now() - start)
 
         # if interval > 0:
         #     q = q.extra(  # type: ignore # nosec: SQL injection is not possible here

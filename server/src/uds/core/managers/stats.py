@@ -62,7 +62,7 @@ _REVERSE_FLDS_EQUIV: typing.Final[collections.abc.Mapping[str, str]] = {
 @dataclasses.dataclass
 class AccumStat:
     stamp: int
-    n: int  # Number of elements in this interval
+    count: int  # Number of elements in this interval
     sum: int  # Sum of elements in this interval
     max: int  # Max of elements in this interval
     min: int  # Min of elements in this interval
@@ -198,11 +198,12 @@ class StatsManager(metaclass=singleton.Singleton):
             interval_type=intervalType,
             counter_type=counterType,
             stamp__gte=since,
-        ).order_by('stamp')[0:points]
+        ).order_by('stamp')
         if owner_type is not None:
             query = query.filter(owner_type=owner_type)
         if owner_id is not None:
             query = query.filter(owner_id=owner_id)
+        query = query[:points]
 
         # Yields all data, stamp, n, sum, max, min (stamp, v_count,v_sum,v_max,v_min)
         # Now, get exactly the points we need

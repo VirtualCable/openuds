@@ -202,17 +202,17 @@ def enumerate_counters(
 
 
 def get_accumulated_counters(
-    intervalType: StatsCountersAccum.IntervalType,
-    counterType: types.stats.CounterType,
-    onwer_type: typing.Optional[types.stats.CounterOwnerType] = None,
+    interval_type: StatsCountersAccum.IntervalType,
+    counter_type: types.stats.CounterType,
+    owner_type: typing.Optional[types.stats.CounterOwnerType] = None,
     owner_id: typing.Optional[int] = None,
     since: typing.Optional[typing.Union[datetime.datetime, int]] = None,
     points: typing.Optional[int] = None,
 ) -> typing.Generator[AccumStat, None, None]:
     yield from StatsManager.manager().get_accumulated_counters(
-        intervalType=intervalType,
-        counterType=counterType,
-        owner_type=onwer_type,
+        intervalType=interval_type,
+        counterType=counter_type,
+        owner_type=owner_type,
         owner_id=owner_id,
         since=since,
         points=points,
