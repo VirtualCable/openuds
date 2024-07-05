@@ -45,12 +45,11 @@ from uds.core import exceptions, types
 from uds.core.ui import gui
 from uds.core.module import Module
 from uds.core.util.model import sql_now
-from uds.models.network import Network
+from uds import models
 
 if typing.TYPE_CHECKING:
     from uds.core.environment import Environment
     from uds.core.types.requests import ExtendedHttpRequest
-    from uds.models import User
 
 logger = logging.getLogger(__name__)
 
@@ -99,7 +98,7 @@ class LoginAllowed(enum.StrEnum):
     ) -> bool:
         if networks is None:
             return True  # No network restrictions, so we allow
-        return any(i.contains(request.ip) for i in Network.objects.filter(uuid__in=list(networks)))
+        return any(i.contains(request.ip) for i in models.Network.objects.filter(uuid__in=list(networks)))
 
     @staticmethod
     def check_action(
@@ -144,7 +143,7 @@ class LoginAllowed(enum.StrEnum):
 
     @staticmethod
     def network_choices() -> list[types.ui.ChoiceItem]:
-        return [gui.choice_item(v.uuid, v.name) for v in Network.objects.all().order_by('name')]
+        return [gui.choice_item(v.uuid, v.name) for v in models.Network.objects.all().order_by('name')]
 
 
 class MFA(Module):
@@ -176,6 +175,8 @@ class MFA(Module):
     # : This file should be at same folder as this class is, except if you provide
     # : your own :py:meth:uds.core.module.BaseModule.icon method.
     icon_file: typing.ClassVar[str] = 'mfa.png'
+    
+    _db_obj: 'models.MFA|None' = None
 
     class RESULT(enum.IntEnum):
         """
@@ -204,6 +205,17 @@ class MFA(Module):
 
         Default implementation does nothing
         """
+
+    def db_obj(self) -> 'models.MFA':
+        """
+        Returns the database object for this provider
+        """
+        if self._db_obj is None:
+            if not self.get_uuid():
+                return models.MFA.null()
+            self._db_obj = models.MFA.objects.get(uuid__iexact=self.get_uuid())
+
+        return self._db_obj
 
     def label(self) -> str:
         """
@@ -391,7 +403,7 @@ class MFA(Module):
         """
 
     @staticmethod
-    def get_user_unique_id(user: 'User') -> str:
+    def get_user_unique_id(user: 'models.User') -> str:
         """
         Composes an unique, mfa dependant, id for the user (at this time, it's sha3_256 of user + mfa)
         """
