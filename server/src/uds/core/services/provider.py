@@ -33,6 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 import typing
 
+from uds.core import types
 from uds.core import module, environment, consts
 from uds.core.ui import gui
 
@@ -40,7 +41,6 @@ from uds.core.ui import gui
 if typing.TYPE_CHECKING:
     from .service import Service
     from uds import models
-    from uds.core import types
 
 logger = logging.getLogger(__name__)
 
