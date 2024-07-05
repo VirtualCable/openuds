@@ -38,7 +38,6 @@ import logging
 from django.utils.translation import gettext_noop as _
 from uds.core.module import Module
 from uds.core.ui.user_interface import gui
-from uds.core.util import log
 
 from uds.core import types, consts
 
@@ -262,7 +261,7 @@ class Service(Module):
         Ideally, availability should be cached for a while, so that we don't have to check it every time.
         """
         return True
-    
+
     def allows_errored_userservice_cleanup(self) -> bool:
         """
         Returns if this service can clean errored services. This is used to check if a service can be cleaned
@@ -463,14 +462,13 @@ class Service(Module):
         """
         return False
 
-    def do_log(self, level: types.log.LogLevel, message: str) -> None:
-        """
-        Logs a message with requested level associated with this service
-        """
-        from uds.models import Service as DBService  # pylint: disable=import-outside-toplevel
-
-        if self.get_uuid():
-            log.log(DBService.objects.get(uuid=self.get_uuid()), level, message, types.log.LogSource.SERVICE)
+    def do_log(
+        self,
+        level: 'types.log.LogLevel',
+        message: str,
+        source: 'types.log.LogSource' = types.log.LogSource.SERVICE,
+    ) -> None:
+        return super().do_log(level, message, source)
 
     @classmethod
     def can_assign(cls) -> bool:

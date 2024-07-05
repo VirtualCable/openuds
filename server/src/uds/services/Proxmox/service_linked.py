@@ -47,7 +47,7 @@ from .publication import ProxmoxPublication
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from proxmox import types as prox_types
+    from .proxmox import types as prox_types
     from .provider import ProxmoxProvider
     from uds.core.services.generics.dynamic.publication import DynamicPublication
     from uds.core.services.generics.dynamic.service import DynamicService

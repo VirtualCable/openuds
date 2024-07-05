@@ -314,7 +314,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
 
         return self.service().sanitized_name(f'UDS_{name}')  # Default implementation
     
-    # overridable, to allow receiving notifications from, for example, usersevice
+    # overridable, to allow receiving notifications from, for example, services
     def notify(self, message: str, data: typing.Any = None) -> None:
         pass
 

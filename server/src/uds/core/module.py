@@ -39,7 +39,7 @@ import typing
 from django.utils.translation import gettext as _
 
 from uds.core.ui.user_interface import UserInterface
-from uds.core.util import utils
+from uds.core.util import utils, log
 
 from .environment import Environment, Environmentable
 from .serializable import Serializable
@@ -214,11 +214,33 @@ class Module(UserInterface, Environmentable, Serializable, abc.ABC):
             Nothing
         """
         pass
-    
+
     @abc.abstractmethod
     def db_obj(self) -> 'UUIDModel':
+        """
+        Returns the database object associated with this module.
+        Can return "null()" if no database object is associated with this module.
+        """
         ...
-        
+
+    def do_log(
+        self,
+        level: 'types.log.LogLevel',
+        message: str,
+        source: types.log.LogSource = types.log.LogSource.MODULE,
+    ) -> None:
+        """
+        Logs a message at the level specified.
+
+        Args:
+            level: Level of the message
+            message: Message to log
+        """
+        dbobj = self.db_obj()
+        if dbobj.is_null():
+            logger.error('Trying to log a message for a null object')
+            return
+        log.log(dbobj, level, message, source)
 
     @classmethod
     def mod_name(cls: type['Module']) -> str:
@@ -310,4 +332,3 @@ class Module(UserInterface, Environmentable, Serializable, abc.ABC):
 
     def __str__(self) -> str:
         return "Base Module"
-

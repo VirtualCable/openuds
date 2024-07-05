@@ -157,8 +157,8 @@ class UDSLogHandler(logging.handlers.RotatingFileHandler):
                 msg = LOGLEVEL_PATTERN.sub('', msg)
             return msg
 
-        def notify(msg: str, identificator: str, logLevel: LogLevel) -> None:
-            NotificationsManager.manager().notify('log', identificator, logLevel, msg)
+        def notify(msg: str, identificator: str, loglevel: LogLevel) -> None:
+            NotificationsManager.manager().notify('log', identificator, loglevel, msg)
 
         if apps.ready and record.levelno >= logging.INFO and not UDSLogHandler.emiting:
             try:
