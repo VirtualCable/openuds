@@ -192,7 +192,7 @@ class XenClient:  # pylint: disable=too-many-public-methods
             # We recalculate here url, because we can "switch host" on any moment
             self._url = self._protocol + self._host + ':' + self._port
 
-            transport = None
+            transport: 'SafeTimeoutTransport|TimeoutTransport|None' = None
 
             if self._use_ssl:
                 context = security.create_client_sslcontext(verify=self._verify_ssl)

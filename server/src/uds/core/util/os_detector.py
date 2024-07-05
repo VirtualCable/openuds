@@ -54,25 +54,25 @@ def detect_os(
     # First, try to detect from Sec-Ch-Ua-Platform
     # Remember all Sec... headers are only available on secure connections
     sec_ch_ua_platform = headers.get('Sec-Ch-Ua-Platform')
-    found = types.os.KnownOS.UNKNOWN
+    found_os = types.os.KnownOS.UNKNOWN
 
     if sec_ch_ua_platform is not None:
         # Strip initial and final " chars if present
         sec_ch_ua_platform = sec_ch_ua_platform.strip('"')
         for os in consts.os.KNOWN_OS_LIST:
             if sec_ch_ua_platform in os.value:
-                found = os
+                found_os = os
                 break
     else:  # Try to detect from User-Agent
         ual = ua.lower()
         for os in consts.os.KNOWN_OS_LIST:
             if os.os_name().lower() in ual:
-                found = os
+                found_os = types.os.KnownOS(os)
                 break
 
     # If we found a known OS, store it
-    if found != types.os.KnownOS.UNKNOWN:
-        res.os = found
+    if found_os != types.os.KnownOS.UNKNOWN:
+        res.os = found_os
 
     # Try to detect browser from Sec-Ch-Ua first
     sec_ch_ua = headers.get('Sec-Ch-Ua')
@@ -83,7 +83,7 @@ def detect_os(
                 break
     else:
         # Try to detect browser from User-Agent
-        found = None
+        found: 'None|typing.Match[str]' = None
 
         browser_type = None
         for browser_type, rules in consts.os.BROWSER_RULES.items():

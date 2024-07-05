@@ -114,7 +114,7 @@ class XenRetryableError(XenException, exceptions.RetryableError):
 
 
 @contextlib.contextmanager
-def translator():
+def translator() -> typing.Generator[None, None, None]:
     try:
         yield
     except XenException:
