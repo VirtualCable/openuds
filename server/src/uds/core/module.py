@@ -38,6 +38,7 @@ import typing
 
 from django.utils.translation import gettext as _
 
+from uds.core import types
 from uds.core.ui.user_interface import UserInterface
 from uds.core.util import utils, log
 
@@ -47,7 +48,6 @@ from .serializable import Serializable
 logger = logging.getLogger(__name__)
 
 if typing.TYPE_CHECKING:
-    from uds.core import types
     from uds.models.uuid_model import UUIDModel
 
 
