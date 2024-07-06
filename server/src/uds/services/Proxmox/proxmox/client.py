@@ -427,7 +427,7 @@ class ProxmoxClient:
         except Exception:
             logger.exception('removeFromHA')
 
-    def set_vm_protection(self, vmid: int, node: typing.Optional[str] = None, protection: bool = False) -> None:
+    def set_vm_protection(self, vmid: int, *, node: typing.Optional[str] = None, protection: bool = False) -> None:
         params: list[tuple[str, str]] = [
             ('protection', str(int(protection))),
         ]
@@ -435,7 +435,7 @@ class ProxmoxClient:
         self.do_post(f'nodes/{node}/qemu/{vmid}/config', data=params, node=node)
 
     def get_guest_ip_address(
-        self, vmid: int, node: typing.Optional[str], ip_version: typing.Literal['4', '6', ''] = ''
+        self, vmid: int, *, node: typing.Optional[str] = None, ip_version: typing.Literal['4', '6', ''] = ''
     ) -> str:
         """Returns the guest ip address of the specified machine"""
         try:
@@ -539,7 +539,7 @@ class ProxmoxClient:
             self.do_post(f'nodes/{node}/qemu/{vmid}/snapshot/{name}/rollback', node=node)
         )
 
-    def get_task(self, node: str, upid: str) -> types.TaskStatus:
+    def get_task_info(self, node: str, upid: str) -> types.TaskStatus:
         return types.TaskStatus.from_dict(
             self.do_get(f'nodes/{node}/tasks/{urllib.parse.quote(upid)}/status', node=node)
         )
@@ -564,11 +564,11 @@ class ProxmoxClient:
 
         return sorted(result, key=lambda x: '{}{}'.format(x.node, x.name))
 
-    @cached('vmip', consts.CACHE_INFO_DURATION, key_helper=caching_key_helper)
     def get_vm_pool_info(self, vmid: int, poolid: typing.Optional[str], **kwargs: typing.Any) -> types.VMInfo:
         # try to locate machine in pool
         node = None
         if poolid:
+            # If for an specific pool, try to locate the node where the machine is
             try:
                 for i in self.do_get(f'pools/{poolid}', node=node)['data']['members']:
                     try:
@@ -582,7 +582,6 @@ class ProxmoxClient:
 
         return self.get_vm_info(vmid, node, **kwargs)
 
-    @cached('vmin', consts.CACHE_INFO_DURATION, key_helper=caching_key_helper)
     def get_vm_info(self, vmid: int, node: typing.Optional[str] = None, **kwargs: typing.Any) -> types.VMInfo:
         nodes = [types.Node(node, False, False, 0, '', '', '')] if node else self.get_cluster_info().nodes
         any_node_is_down = False
@@ -604,7 +603,7 @@ class ProxmoxClient:
         raise exceptions.ProxmoxNotFound(f'VM {vmid} not found')
 
     def get_vm_config(
-        self, vmid: int, node: typing.Optional[str] = None, **kwargs: typing.Any
+        self, vmid: int, node: typing.Optional[str] = None
     ) -> types.VMConfiguration:
         node = node or self.get_vm_info(vmid).node
         return types.VMConfiguration.from_dict(
@@ -683,6 +682,7 @@ class ProxmoxClient:
     @cached('storages', consts.CACHE_DURATION, key_helper=caching_key_helper)
     def list_storages(
         self,
+        *,
         node: typing.Union[None, str, collections.abc.Iterable[str]] = None,
         content: typing.Optional[str] = None,
         **kwargs: typing.Any,

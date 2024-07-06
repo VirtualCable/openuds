@@ -398,7 +398,7 @@ CLIENT_METHODS_INFO: list[AutoSpecMethodInfo] = [
     AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.restore_snapshot, returns=UPID),
     # get_task
     AutoSpecMethodInfo(
-        uds.services.Proxmox.proxmox.client.ProxmoxClient.get_task,
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.get_task_info,
         returns=lambda *args, **kwargs: TASK_STATUS,  # pyright: ignore
     ),
     # list_machines
@@ -461,9 +461,9 @@ CLIENT_METHODS_INFO: list[AutoSpecMethodInfo] = [
     # list_storages
     AutoSpecMethodInfo(
         uds.services.Proxmox.proxmox.client.ProxmoxClient.list_storages,
-        returns=lambda node, **kwargs: (  # pyright: ignore
-            (list(filter(lambda s: s.node == node, STORAGES)))  # pyright: ignore
-            if node is not None
+        returns=lambda **kwargs: (  # pyright: ignore[reportUnknownLambdaType]
+            (list(filter(lambda s: s.node == kwargs.get('node') , STORAGES)))  # pyright: ignore
+            if kwargs.get('node') is not None  # pyright: ignore
             else STORAGES  # pyright: ignore
         ),
     ),

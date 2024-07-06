@@ -107,7 +107,7 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
 
         self.pool.set_choices(
             [gui.choice_item('', _('None'))]
-            + [gui.choice_item(p.id, p.id) for p in self.provider().list_pools()]
+            + [gui.choice_item(p.id, p.id) for p in self.provider().api.list_pools()]
         )
 
     def provider(self) -> 'ProxmoxProvider':
@@ -127,7 +127,7 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
         # Only machines that already exists on proxmox and are not already assigned
         vms: dict[int, str] = {}
 
-        for member in self.provider().get_pool_info(self.pool.value.strip(), retrieve_vm_names=True).members:
+        for member in self.provider().api.get_pool_info(self.pool.value.strip(), retrieve_vm_names=True).members:
             vms[member.vmid] = member.vmname
 
         with self._assigned_access() as assigned_vms:
@@ -188,7 +188,7 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
                     if checking_vmid not in assigned_vms:  # Not already assigned
                         try:
                             # Invoke to check it exists, do not need to store the result
-                            self.provider().get_vm_info(int(checking_vmid), self.pool.value.strip())
+                            self.provider().api.get_vm_pool_info(int(checking_vmid), self.pool.value.strip())
                             found_vmid = checking_vmid
                             break
                         except Exception:  # Notifies on log, but skipt it
@@ -212,11 +212,11 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
         return str(found_vmid)
 
     def get_mac(self, vmid: str) -> str:
-        config = self.provider().get_vm_config(int(vmid))
+        config = self.provider().api.get_vm_config(int(vmid))
         return config.networks[0].mac.lower()
 
     def get_ip(self, vmid: str) -> str:
-        return self.provider().get_guest_ip_address(int(vmid))
+        return self.provider().api.get_guest_ip_address(int(vmid))
 
     def get_name(self, vmid: str) -> str:
-        return self.provider().get_vm_info(int(vmid)).name or ''
+        return self.provider().api.get_vm_info(int(vmid)).name or ''

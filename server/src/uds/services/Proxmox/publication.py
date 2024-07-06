@@ -104,7 +104,7 @@ class ProxmoxPublication(DynamicPublication, autoserializable.AutoSerializable):
 
     def op_create_checker(self) -> types.states.TaskState:
         node, upid = self._task.split(',')
-        task = self.service().provider().get_task_info(node, upid)
+        task = self.service().provider().api.get_task_info(node, upid)
         if task.is_running():
             return types.states.TaskState.RUNNING
 
@@ -115,14 +115,14 @@ class ProxmoxPublication(DynamicPublication, autoserializable.AutoSerializable):
 
     def op_create_completed(self) -> None:
         # Complete the creation, disabling ha protection and adding to HA and marking as template
-        self.service().provider().set_protection(int(self._vmid), protection=False)
+        self.service().provider().api.set_vm_protection(int(self._vmid), protection=False)
         time.sleep(0.5)  # Give some tome to proxmox. We have observed some concurrency issues
         # And add it to HA if needed (decided by service configuration)
         self.service().enable_vm_ha(int(self._vmid))
         # Wait a bit, if too fast, proxmox fails.. (Have not tested on 8.x, but previous versions failed if too fast..)
         time.sleep(0.5)
         # Mark vm as template
-        self.service().provider().create_template(int(self._vmid))
+        self.service().provider().api.convert_vm_to_template(int(self._vmid))
 
     def op_delete(self) -> None:
         self.service().delete(self, self._vmid)

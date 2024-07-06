@@ -42,6 +42,10 @@ from ...utils.test import UDSTransactionTestCase
 
 
 class TestProxmoxProvider(UDSTransactionTestCase):
+    def setUp(self) -> None:
+        super().setUp()
+        fixtures.clear()
+
     def test_provider_data(self) -> None:
         """
         Test the provider
@@ -133,24 +137,18 @@ class TestProxmoxProvider(UDSTransactionTestCase):
             self.assertEqual(provider.test_connection(), True)
             api.test.assert_called_once_with()
 
-            self.assertEqual(provider.list_vms(force=True), fixtures.VMS_INFO)
-            api.list_vms.assert_called_once_with(force=True)
-            api.list_vms.reset_mock()
-            self.assertEqual(provider.list_vms(), fixtures.VMS_INFO)
-            api.list_vms.assert_called_once_with(force=False)
+            self.assertEqual(provider.api.list_vms(force=True), fixtures.VMS_INFO)
+            self.assertEqual(provider.api.list_vms(), fixtures.VMS_INFO)
 
-            self.assertEqual(provider.get_vm_info(1), fixtures.VMS_INFO[0])
-            api.get_vm_pool_info.assert_called_once_with(1, None, force=True)
+            self.assertEqual(provider.api.get_vm_info(1), fixtures.VMS_INFO[0])
 
-            self.assertEqual(provider.get_vm_config(1), fixtures.VMS_CONFIGURATION[0])
-            api.get_vm_config.assert_called_once_with(1, force=True)
+            self.assertEqual(provider.api.get_vm_config(1), fixtures.VMS_CONFIGURATION[0])
 
             self.assertEqual(
-                provider.get_storage_info(fixtures.STORAGES[2].storage, fixtures.STORAGES[2].node, force=True),
+                provider.api.get_storage_info(
+                    fixtures.STORAGES[2].storage, fixtures.STORAGES[2].node, force=True
+                ),
                 fixtures.STORAGES[2],
-            )
-            api.get_storage_info.assert_called_once_with(
-                fixtures.STORAGES[2].storage, fixtures.STORAGES[2].node, force=True
             )
 
     def test_provider_methods_2(self) -> None:
@@ -158,32 +156,20 @@ class TestProxmoxProvider(UDSTransactionTestCase):
         Test the provider methods
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider.api)
 
             self.assertEqual(
-                provider.get_storage_info(fixtures.STORAGES[2].storage, fixtures.STORAGES[2].node),
+                provider.api.get_storage_info(fixtures.STORAGES[2].storage, fixtures.STORAGES[2].node),
                 fixtures.STORAGES[2],
             )
-            api.get_storage_info.assert_called_once_with(
-                fixtures.STORAGES[2].storage, fixtures.STORAGES[2].node, force=False
-            )
 
             self.assertEqual(
-                provider.list_storages(fixtures.STORAGES[2].node),
+                provider.api.list_storages(node=fixtures.STORAGES[2].node),
                 list(filter(lambda x: x.node == fixtures.STORAGES[2].node, fixtures.STORAGES)),
             )
-            api.list_storages.assert_called_once_with(
-                node=fixtures.STORAGES[2].node, content='images', force=False
-            )
-            api.list_storages.reset_mock()
-            self.assertEqual(provider.list_storages(), fixtures.STORAGES)
-            api.list_storages.assert_called_once_with(node=None, content='images', force=False)
+            self.assertEqual(provider.api.list_storages(), fixtures.STORAGES)
 
-            self.assertEqual(provider.list_pools(force=True), fixtures.POOLS)
-            api.list_pools.assert_called_once_with(force=True)
-            api.list_pools.reset_mock()
-            self.assertEqual(provider.list_pools(), fixtures.POOLS)
-            api.list_pools.assert_called_once_with(force=False)
+            self.assertEqual(provider.api.list_pools(force=True), fixtures.POOLS)
+            self.assertEqual(provider.api.list_pools(), fixtures.POOLS)
 
     def test_provider_methods3(self) -> None:
         """
@@ -193,20 +179,12 @@ class TestProxmoxProvider(UDSTransactionTestCase):
             api = typing.cast(mock.MagicMock, provider.api)
 
             self.assertEqual(
-                provider.get_pool_info(fixtures.POOLS[2].id, retrieve_vm_names=True, force=True),
+                provider.api.get_pool_info(fixtures.POOLS[2].id, retrieve_vm_names=True, force=True),
                 fixtures.POOLS[2],
             )
-            api.get_pool_info.assert_called_once_with(
-                fixtures.POOLS[2].id, retrieve_vm_names=True, force=True
-            )
-            api.get_pool_info.reset_mock()
-            self.assertEqual(provider.get_pool_info(fixtures.POOLS[2].id), fixtures.POOLS[2])
-            api.get_pool_info.assert_called_once_with(
-                fixtures.POOLS[2].id, retrieve_vm_names=False, force=False
-            )
+            self.assertEqual(provider.api.get_pool_info(fixtures.POOLS[2].id), fixtures.POOLS[2])
 
-            provider.create_template(1)
-            api.convert_vm_to_template.assert_called_once_with(1)
+            provider.api.convert_vm_to_template(1)
 
             self.assertEqual(
                 provider.clone_vm(1, 'name', 'description', True, 'node', 'storage', 'pool', True),
@@ -216,48 +194,34 @@ class TestProxmoxProvider(UDSTransactionTestCase):
                 1, mock.ANY, 'name', 'description', True, 'node', 'storage', 'pool', True
             )
 
-            self.assertEqual(provider.start_machine(1), fixtures.UPID)
-            api.start_vm.assert_called_once_with(1)
+            self.assertEqual(provider.api.start_vm(1), fixtures.UPID)
 
-            self.assertEqual(provider.stop_machine(1), fixtures.UPID)
-            api.stop_vm.assert_called_once_with(1)
+            self.assertEqual(provider.api.stop_vm(1), fixtures.UPID)
 
-            self.assertEqual(provider.reset_machine(1), fixtures.UPID)
-            api.reset_vm.assert_called_once_with(1)
+            self.assertEqual(provider.api.reset_vm(1), fixtures.UPID)
 
-            self.assertEqual(provider.suspend_machine(1), fixtures.UPID)
-            api.suspend_vm.assert_called_once_with(1)
+            self.assertEqual(provider.api.suspend_vm(1), fixtures.UPID)
 
     def test_provider_methods_4(self) -> None:
         """
         Test the provider methods
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider.api)
+            self.assertEqual(provider.api.shutdown_vm(1), fixtures.UPID)
 
-            self.assertEqual(provider.shutdown_machine(1), fixtures.UPID)
-            api.shutdown_vm.assert_called_once_with(1)
+            self.assertEqual(provider.api.delete_vm(1), fixtures.UPID)
 
-            self.assertEqual(provider.delete_vm(1), fixtures.UPID)
-            api.delete_vm.assert_called_once_with(1)
+            self.assertEqual(provider.api.get_task_info('node', 'upid'), fixtures.TASK_STATUS)
 
-            self.assertEqual(provider.get_task_info('node', 'upid'), fixtures.TASK_STATUS)
-            api.get_task.assert_called_once_with('node', 'upid')
+            provider.api.enable_vm_ha(1, True, 'group')
 
-            provider.enable_machine_ha(1, True, 'group')
-            api.enable_vm_ha.assert_called_once_with(1, True, 'group')
+            provider.api.set_vm_net_mac(1, 'mac')
 
-            provider.set_machine_mac(1, 'mac')
-            api.set_vm_net_mac.assert_called_once_with(1, 'mac')
+            provider.api.disable_vm_ha(1)
 
-            provider.disable_machine_ha(1)
-            api.disable_vm_ha.assert_called_once_with(1)
+            provider.api.set_vm_protection(1, node='node', protection=True)
 
-            provider.set_protection(1, 'node', True)
-            api.set_vm_protection.assert_called_once_with(1, 'node', True)
-
-            self.assertEqual(provider.list_ha_groups(), fixtures.HA_GROUPS)
-            api.list_ha_groups.assert_called_once_with()
+            self.assertEqual(provider.api.list_ha_groups(), fixtures.HA_GROUPS)
 
     def test_provider_methods_5(self) -> None:
         """
@@ -272,7 +236,7 @@ class TestProxmoxProvider(UDSTransactionTestCase):
             for i in range(1, 128):
                 self.assertEqual(provider.get_new_vmid(), vmid + i)
 
-            self.assertEqual(provider.get_guest_ip_address(1), fixtures.GUEST_IP_ADDRESS)
+            self.assertEqual(provider.api.get_guest_ip_address(1), fixtures.GUEST_IP_ADDRESS)
 
             self.assertEqual(provider.api.supports_snapshot(1), True)
 

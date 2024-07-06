@@ -167,34 +167,6 @@ class ProxmoxProvider(services.ServiceProvider):
 
         return self.api.test()
 
-    def list_vms(self, force: bool = False) -> list[prox_types.VMInfo]:
-        return self.api.list_vms(force=force)
-
-    def get_vm_info(self, vmid: int, poolid: typing.Optional[str] = None) -> prox_types.VMInfo:
-        return self.api.get_vm_pool_info(vmid, poolid, force=True)
-
-    def get_vm_config(self, vmid: int) -> prox_types.VMConfiguration:
-        return self.api.get_vm_config(vmid, force=True)
-
-    def get_storage_info(self, storageid: str, node: str, force: bool = False) -> prox_types.StorageInfo:
-        return self.api.get_storage_info(storageid, node, force=force)
-
-    def list_storages(
-        self, node: typing.Optional[str] = None, force: bool = False
-    ) -> list[prox_types.StorageInfo]:
-        return self.api.list_storages(node=node, content='images', force=force)
-
-    def list_pools(self, force: bool = False) -> list[prox_types.PoolInfo]:
-        return self.api.list_pools(force=force)
-
-    def get_pool_info(
-        self, pool_id: str, retrieve_vm_names: bool = False, force: bool = False
-    ) -> prox_types.PoolInfo:
-        return self.api.get_pool_info(pool_id, retrieve_vm_names=retrieve_vm_names, force=force)
-
-    def create_template(self, vmid: int) -> None:
-        self.api.convert_vm_to_template(vmid)
-
     def clone_vm(
         self,
         vmid: int,
@@ -218,42 +190,6 @@ class ProxmoxProvider(services.ServiceProvider):
             must_have_vgpus,
         )
 
-    def start_machine(self, vmid: int) -> prox_types.UPID:
-        return self.api.start_vm(vmid)
-
-    def stop_machine(self, vmid: int) -> prox_types.UPID:
-        return self.api.stop_vm(vmid)
-
-    def reset_machine(self, vmid: int) -> prox_types.UPID:
-        return self.api.reset_vm(vmid)
-
-    def suspend_machine(self, vmId: int) -> prox_types.UPID:
-        return self.api.suspend_vm(vmId)
-
-    def shutdown_machine(self, vmid: int) -> prox_types.UPID:
-        return self.api.shutdown_vm(vmid)
-
-    def delete_vm(self, vmid: int) -> prox_types.UPID:
-        return self.api.delete_vm(vmid)
-
-    def get_task_info(self, node: str, upid: str) -> prox_types.TaskStatus:
-        return self.api.get_task(node, upid)
-
-    def enable_machine_ha(self, vmid: int, started: bool = False, group: typing.Optional[str] = None) -> None:
-        self.api.enable_vm_ha(vmid, started, group)
-
-    def set_machine_mac(self, vmid: int, macAddress: str) -> None:
-        self.api.set_vm_net_mac(vmid, macAddress)
-
-    def disable_machine_ha(self, vmid: int) -> None:
-        self.api.disable_vm_ha(vmid)
-
-    def set_protection(self, vmid: int, node: typing.Optional[str] = None, protection: bool = False) -> None:
-        self.api.set_vm_protection(vmid, node, protection)
-
-    def list_ha_groups(self) -> list[str]:
-        return self.api.list_ha_groups()
-
     def get_new_vmid(self) -> int:
         MAX_RETRIES: typing.Final[int] = 512  # So we don't loop forever, just in case...
         vmid = 0
@@ -265,9 +201,6 @@ class ProxmoxProvider(services.ServiceProvider):
             # This is not a problem at all, in the rare case that a machine id is released from uds db
             # if it exists when we try to create a new one, we will simply try to get another one
         raise prox_exceptions.ProxmoxError(f'Could not get a new vmid!!: last tried {vmid}')
-
-    def get_guest_ip_address(self, vmid: int, node: typing.Optional[str] = None, ip_version: typing.Literal['4', '6', ''] = '') -> str:
-        return self.api.get_guest_ip_address(vmid, node, ip_version)
 
     @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def is_available(self) -> bool:

@@ -104,12 +104,12 @@ class ProxmoxDeferredRemoval(jobs.Job):
 
     @staticmethod
     def waitForTaskFinish(
-        providerInstance: 'provider.ProxmoxProvider',
+        provider_instance: 'provider.ProxmoxProvider',
         upid: 'prox_types.UPID',
         maxWait: int = 30,  # 30 * 0.3 = 9 seconds
     ) -> bool:
         counter = 0
-        while providerInstance.get_task_info(upid.node, upid.upid).is_running() and counter < maxWait:
+        while provider_instance.api.get_task_info(upid.node, upid.upid).is_running() and counter < maxWait:
             time.sleep(0.3)
             counter += 1
 
@@ -134,16 +134,16 @@ class ProxmoxDeferredRemoval(jobs.Job):
                 # The soft shutdown has already being initiated by the remove method
                    
                 try:
-                    vmInfo = instance.get_vm_info(vmid)
+                    vm_info = instance.api.get_vm_info(vmid)
                     logger.debug('Found %s for removal %s', vmid, data)
                     # If machine is powered on, tries to stop it
                     # tries to remove in sync mode
-                    if vmInfo.status == 'running':
-                        ProxmoxDeferredRemoval.waitForTaskFinish(instance, instance.stop_machine(vmid))
+                    if vm_info.status.is_running():
+                        ProxmoxDeferredRemoval.waitForTaskFinish(instance, instance.api.stop_vm(vmid))
                         return
 
-                    if vmInfo.status == 'stopped':  # Machine exists, try to remove it now
-                        ProxmoxDeferredRemoval.waitForTaskFinish(instance, instance.delete_vm(vmid))
+                    if not vm_info.status.is_running():  # Machine exists, try to remove it now
+                        ProxmoxDeferredRemoval.waitForTaskFinish(instance, instance.api.delete_vm(vmid))
 
                     # It this is reached, remove check
                     storage.remove('tr' + str(vmid))

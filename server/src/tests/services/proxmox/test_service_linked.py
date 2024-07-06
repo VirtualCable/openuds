@@ -110,13 +110,13 @@ class TestProxmovLinkedService(UDSTestCase):
 
             # Get machine info
             self.assertEqual(service.get_vm_info(1), fixtures.VMS_INFO[0])
-            api.get_vm_pool_info.assert_called_with(1, service.pool.value, force=True)
+            api.get_vm_pool_info.assert_called_with(1, service.pool.value)
 
             # Get nic mac
             self.assertEqual(service.get_nic_mac(1), '00:01:02:03:04:05')
 
             # remove machine, but this is from provider
-            self.assertEqual(service.provider().delete_vm(1), fixtures.UPID)
+            self.assertEqual(service.provider().api.delete_vm(1), fixtures.UPID)
 
             # Enable HA
             service.enable_vm_ha(1, True)

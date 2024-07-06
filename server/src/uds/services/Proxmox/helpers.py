@@ -52,13 +52,13 @@ def get_storage(parameters: typing.Any) -> types.ui.CallbackResultType:
 
     # Obtains machine info, to obtain the node and get the storages
     try:
-        vm_info = provider.get_vm_info(int(parameters['machine']))
+        vm_info = provider.api.get_vm_info(int(parameters['machine']))
     except Exception:
         return []
 
     res: list[types.ui.ChoiceItem] = []
     # Get storages for that datacenter
-    for storage in sorted(provider.list_storages(vm_info.node), key=lambda x: int(not x.shared)):
+    for storage in sorted(provider.api.list_storages(node=vm_info.node), key=lambda x: int(not x.shared)):
         if storage.type in ('lvm', 'iscsi', 'iscsidirect'):
             continue
         space, free = (
@@ -82,7 +82,7 @@ def get_machines(parameters: typing.Any) -> types.ui.CallbackResultType:
 
     # Obtains datacenter from cluster
     try:
-        pool_info = provider.get_pool_info(parameters['pool'], retrieve_vm_names=True)
+        pool_info = provider.api.get_pool_info(parameters['pool'], retrieve_vm_names=True)
     except Exception:
         return []
 

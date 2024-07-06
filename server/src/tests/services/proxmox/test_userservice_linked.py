@@ -87,13 +87,13 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
                 None,
             )
 
-            # api.get_task should have been invoked at least once
-            self.assertTrue(api.get_task.called)
+            # api.get_task_info should have been invoked at least once
+            self.assertTrue(api.get_task_info.called)
 
             api.enable_vm_ha.assert_called()
 
             api.set_vm_net_mac.assert_called_with(vmid, userservice._mac)
-            api.get_vm_pool_info.assert_called_with(vmid, service.pool.value, force=True)
+            api.get_vm_pool_info.assert_called_with(vmid, service.pool.value)
             api.start_vm.assert_called_with(vmid)
 
     def test_userservice_linked_cache_l2_no_ha(self) -> None:
@@ -139,14 +139,14 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
                 None,
             )
 
-            # api.get_task should have been invoked at least once
-            self.assertTrue(api.get_task.called)
+            # api.get_task_info should have been invoked at least once
+            self.assertTrue(api.get_task_info.called)
 
             # Shoud not have been called since HA is disabled
             api.enable_vm_ha.assert_not_called()
 
             api.set_vm_net_mac.assert_called_with(vmid, userservice._mac)
-            api.get_vm_pool_info.assert_called_with(vmid, service.pool.value, force=True)
+            api.get_vm_pool_info.assert_called_with(vmid, service.pool.value)
             # Now, start should have been called
             api.start_vm.assert_called_with(vmid)
             # Stop machine should have been called
@@ -194,13 +194,13 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
                 None,
             )
 
-            # api.get_task should have been invoked at least once
-            self.assertTrue(api.get_task.called)
+            # api.get_task_info should have been invoked at least once
+            self.assertTrue(api.get_task_info.called)
 
             api.enable_vm_ha.assert_called()
 
             api.set_vm_net_mac.assert_called_with(vmid, userservice._mac)
-            api.get_vm_pool_info.assert_called_with(vmid, service.pool.value, force=True)
+            api.get_vm_pool_info.assert_called_with(vmid, service.pool.value)
             api.start_vm.assert_called_with(vmid)
 
             # Ensure vm is stopped, because deployment should have started it (as api.start_machine was called)

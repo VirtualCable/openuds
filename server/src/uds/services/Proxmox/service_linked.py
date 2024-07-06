@@ -185,17 +185,17 @@ class ProxmoxServiceLinked(DynamicService):
         self.machine.set_choices(
             [
                 gui.choice_item(str(m.id), f'{m.node}\\{m.name or m.id} ({m.id})')
-                for m in self.provider().list_vms()
+                for m in self.provider().api.list_vms()
                 if m.name and m.name[:3] != 'UDS'
             ]
         )
         self.pool.set_choices(
             [gui.choice_item('', _('None'))]
-            + [gui.choice_item(p.id, p.id) for p in self.provider().list_pools()]
+            + [gui.choice_item(p.id, p.id) for p in self.provider().api.list_pools()]
         )
         self.ha.set_choices(
             [gui.choice_item('', _('Enabled')), gui.choice_item('__', _('Disabled'))]
-            + [gui.choice_item(group, group) for group in self.provider().list_ha_groups()]
+            + [gui.choice_item(group, group) for group in self.provider().api.list_ha_groups()]
         )
 
     def provider(self) -> 'ProxmoxProvider':
@@ -231,10 +231,10 @@ class ProxmoxServiceLinked(DynamicService):
         )
 
     def get_vm_info(self, vmid: int) -> 'prox_types.VMInfo':
-        return self.provider().get_vm_info(vmid, self.pool.value.strip())
+        return self.provider().api.get_vm_pool_info(vmid, self.pool.value.strip())
 
     def get_nic_mac(self, vmid: int) -> str:
-        config = self.provider().get_vm_config(vmid)
+        config = self.provider().api.get_vm_config(vmid)
         return config.networks[0].mac.lower()
 
     # TODO: Remove this method, kept for reference of old code
@@ -247,17 +247,17 @@ class ProxmoxServiceLinked(DynamicService):
             self.do_log(level=types.log.LogLevel.WARNING, message=f'Exception disabling HA for vm {vmid}: {e}')
 
         # And remove it
-        return self.provider().delete_vm(vmid)
+        return self.provider().api.delete_vm(vmid)
 
     def enable_vm_ha(self, vmid: int, started: bool = False) -> None:
         if self.ha.value == '__':
             return
-        self.provider().enable_machine_ha(vmid, started, self.ha.value or None)
+        self.provider().api.enable_vm_ha(vmid, started, self.ha.value or None)
 
     def disable_vm_ha(self, vmid: int) -> None:
         if self.ha.value == '__':
             return
-        self.provider().disable_machine_ha(vmid)
+        self.provider().api.disable_vm_ha(vmid)
 
     def get_macs_range(self) -> str:
         """
@@ -275,7 +275,7 @@ class ProxmoxServiceLinked(DynamicService):
         return self.provider().is_available()
 
     def get_ip(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> str:
-        return self.provider().get_guest_ip_address(int(vmid))
+        return self.provider().api.get_guest_ip_address(int(vmid))
 
     def get_mac(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> str:
         # If vmid is empty, we are requesting a new mac
@@ -288,14 +288,14 @@ class ProxmoxServiceLinked(DynamicService):
             if self.is_running(caller_instance, vmid):  # If running, skip
                 caller_instance._task = ''
             else:
-                caller_instance._store_task(self.provider().start_machine(int(vmid)))
+                caller_instance._store_task(self.provider().api.start_vm(int(vmid)))
         else:
             raise Exception('Invalid caller instance (publication) for start_machine()')
 
     def stop(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
         if isinstance(caller_instance, ProxmoxUserserviceLinked):
             if self.is_running(caller_instance, vmid):
-                caller_instance._store_task(self.provider().stop_machine(int(vmid)))
+                caller_instance._store_task(self.provider().api.stop_vm(int(vmid)))
             else:
                 caller_instance._task = ''
         else:
@@ -304,7 +304,7 @@ class ProxmoxServiceLinked(DynamicService):
     def shutdown(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
         if isinstance(caller_instance, ProxmoxUserserviceLinked):
             if self.is_running(caller_instance, vmid):
-                caller_instance._store_task(self.provider().shutdown_machine(int(vmid)))
+                caller_instance._store_task(self.provider().api.shutdown_vm(int(vmid)))
             else:
                 caller_instance._task = ''
         else:
@@ -319,4 +319,4 @@ class ProxmoxServiceLinked(DynamicService):
     def execute_delete(self, vmid: str) -> None:
         # All removals are deferred, so we can do it async
         # Try to stop it if already running... Hard stop
-        self.provider().delete_vm(int(vmid))
+        self.provider().api.delete_vm(int(vmid))

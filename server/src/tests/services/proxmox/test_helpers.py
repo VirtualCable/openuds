@@ -70,7 +70,7 @@ class TestProxmoxHelpers(UDSTransactionTestCase):
                     self.assertIsInstance(choice['id'], str)
                     self.assertIsInstance(choice['text'], str)
 
-                api.get_vm_pool_info.assert_called_once()
+                api.get_vm_info.assert_called_once()
                 api.list_storages.assert_called_once()
 
     def test_get_machines(self) -> None:

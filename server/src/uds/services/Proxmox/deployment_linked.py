@@ -132,7 +132,7 @@ class ProxmoxUserserviceLinked(DynamicUserService):
         node, upid = self._retrieve_task()
 
         try:
-            task = self.service().provider().get_task_info(node, upid)
+            task = self.service().provider().api.get_task_info(node, upid)
         except uds.services.Proxmox.proxmox.exceptions.ProxmoxConnectionError:
             return types.states.TaskState.RUNNING  # Try again later
 
@@ -177,7 +177,7 @@ class ProxmoxUserserviceLinked(DynamicUserService):
 
     def op_reset(self) -> None:
         if self._vmid:
-            self.service().provider().reset_machine(int(self._vmid))
+            self.service().provider().api.reset_vm(int(self._vmid))
 
     # No need for op_reset_checker
 
@@ -204,7 +204,7 @@ class ProxmoxUserserviceLinked(DynamicUserService):
             self.service().enable_vm_ha(int(self._vmid), True)  # Enable HA before continuing here
 
             # Set vm mac address now on first interface
-            self.service().provider().set_machine_mac(int(self._vmid), self.get_unique_id())
+            self.service().provider().api.set_vm_net_mac(int(self._vmid), self.get_unique_id())
         except uds.services.Proxmox.proxmox.exceptions.ProxmoxConnectionError:
             self.retry_later()  # Push nop to front of queue, so it is consumed instead of this one
             return
