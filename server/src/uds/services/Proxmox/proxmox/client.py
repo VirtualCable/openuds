@@ -335,16 +335,16 @@ class ProxmoxClient:
         use_pool: typing.Optional[str] = None,
         must_have_vgpus: typing.Optional[bool] = None,
     ) -> types.VmCreationResult:
-        vmInfo = self.get_vm_info(vmid)
+        vminfo = self.get_vm_info(vmid)
 
-        src_node = vmInfo.node
+        src_node = vminfo.node
 
         if not use_node:
             logger.debug('Selecting best node')
             # If storage is not shared, must be done on same as origin
-            if use_storage and self.get_storage_info(use_storage, vmInfo.node).shared:
+            if use_storage and self.get_storage_info(storage=use_storage, node=vminfo.node).shared:
                 node = self.get_best_node_for_vm(
-                    min_memory=-1, must_have_vgpus=must_have_vgpus, mdev_type=vmInfo.vgpu_type
+                    min_memory=-1, must_have_vgpus=must_have_vgpus, mdev_type=vminfo.vgpu_type
                 )
                 if node is None:
                     raise exceptions.ProxmoxError(
@@ -358,13 +358,13 @@ class ProxmoxClient:
         if must_have_vgpus is not None and must_have_vgpus != bool(self.list_node_gpu_devices(use_node)):
             raise exceptions.ProxmoxNoGPUError(f'Node "{use_node}" does not have VGPUS and they are required')
 
-        if self.node_has_vgpus_available(use_node, vmInfo.vgpu_type):
+        if self.node_has_vgpus_available(use_node, vminfo.vgpu_type):
             raise exceptions.ProxmoxNoGPUError(
-                f'Node "{use_node}" does not have free VGPUS of type {vmInfo.vgpu_type} (requred by VM {vmInfo.name})'
+                f'Node "{use_node}" does not have free VGPUS of type {vminfo.vgpu_type} (requred by VM {vminfo.name})'
             )
 
         # From normal vm, disable "linked cloning"
-        if as_linked_clone and not vmInfo.template:
+        if as_linked_clone and not vminfo.template:
             as_linked_clone = False
 
         params: list[tuple[str, str]] = [
@@ -427,7 +427,9 @@ class ProxmoxClient:
         except Exception:
             logger.exception('removeFromHA')
 
-    def set_vm_protection(self, vmid: int, *, node: typing.Optional[str] = None, protection: bool = False) -> None:
+    def set_vm_protection(
+        self, vmid: int, *, node: typing.Optional[str] = None, protection: bool = False
+    ) -> None:
         params: list[tuple[str, str]] = [
             ('protection', str(int(protection))),
         ]
@@ -556,13 +558,23 @@ class ProxmoxClient:
         else:
             node_list = node
 
-        result: list[types.VMInfo] = []
-        for node_name in node_list:
-            for vm in self.do_get(f'nodes/{node_name}/qemu', node=node_name)['data']:
-                vm['node'] = node_name
-                result.append(types.VMInfo.from_dict(vm))
+        # Get all vms from all nodes, better thant getting all vms from each node
+        return sorted(
+            [
+                types.VMInfo.from_dict(vm_info)
+                for vm_info in self.do_get('cluster/resources?type=vm')['data']
+                if vm_info['type'] == 'qemu' and vm_info['node'] in node_list
+            ],
+            key=lambda x: f'{x.node}{x.name}',
+        )
 
-        return sorted(result, key=lambda x: '{}{}'.format(x.node, x.name))
+        # result: list[types.VMInfo] = []
+        # for node_name in node_list:
+        #     for vm in self.do_get(f'nodes/{node_name}/qemu', node=node_name)['data']:
+        #         vm['node'] = node_name
+        #         result.append(types.VMInfo.from_dict(vm))
+
+        # return sorted(result, key=lambda x: '{}{}'.format(x.node, x.name))
 
     def get_vm_pool_info(self, vmid: int, poolid: typing.Optional[str], **kwargs: typing.Any) -> types.VMInfo:
         # try to locate machine in pool
@@ -602,9 +614,7 @@ class ProxmoxClient:
 
         raise exceptions.ProxmoxNotFound(f'VM {vmid} not found')
 
-    def get_vm_config(
-        self, vmid: int, node: typing.Optional[str] = None
-    ) -> types.VMConfiguration:
+    def get_vm_config(self, vmid: int, node: typing.Optional[str] = None) -> types.VMConfiguration:
         node = node or self.get_vm_info(vmid).node
         return types.VMConfiguration.from_dict(
             self.do_get(f'nodes/{node}/qemu/{vmid}/config', node=node)['data']
@@ -674,10 +684,13 @@ class ProxmoxClient:
         return self.start_vm(vmid, node)
 
     @cached('storage', consts.CACHE_DURATION, key_helper=caching_key_helper)
-    def get_storage_info(self, storage: str, node: str, **kwargs: typing.Any) -> types.StorageInfo:
-        return types.StorageInfo.from_dict(
+    def get_storage_info(self, node: str, storage: str, **kwargs: typing.Any) -> types.StorageInfo:
+        storage_info = types.StorageInfo.from_dict(
             self.do_get(f'nodes/{node}/storage/{urllib.parse.quote(storage)}/status', node=node)['data']
         )
+        storage_info.node = node
+        storage_info.storage = storage
+        return storage_info
 
     @cached('storages', consts.CACHE_DURATION, key_helper=caching_key_helper)
     def list_storages(
@@ -688,26 +701,36 @@ class ProxmoxClient:
         **kwargs: typing.Any,
     ) -> list[types.StorageInfo]:
         """We use a list for storage instead of an iterator, so we can cache it..."""
-        nodes: collections.abc.Iterable[str]
+        node_list: set[str]
         if node is None:
-            nodes = [n.name for n in self.get_cluster_info().nodes if n.online]
+            node_list = {n.name for n in self.get_cluster_info().nodes if n.online}
         elif isinstance(node, str):
-            nodes = [node]
+            node_list = set([node])
         else:
-            nodes = node
-        params = '' if not content else '?content={}'.format(urllib.parse.quote(content))
-        result: list[types.StorageInfo] = []
+            node_list = set(node)
 
-        for node_name in nodes:
-            for storage in self.do_get(f'nodes/{node_name}/storage{params}', node=node_name)['data']:
-                storage['node'] = node_name
-                storage['content'] = storage['content'].split(',')
-                result.append(types.StorageInfo.from_dict(storage))
+        return sorted(
+            [
+                types.StorageInfo.from_dict(st_info)
+                for st_info in self.do_get('cluster/resources?type=storage')['data']
+                if st_info['node'] in node_list and (content is None or content in st_info['content'])
+            ],
+            key=lambda x: f'{x.node}{x.storage}',
+        )
 
-        return result
+        # result: list[types.StorageInfo] = []
+
+        # for node_name in nodes:
+        #     for storage in self.do_get(f'nodes/{node_name}/storage{params}', node=node_name)['data']:
+        #         storage['node'] = node_name
+        #         storage['content'] = storage['content'].split(',')
+        #         result.append(types.StorageInfo.from_dict(storage))
+
+        # return result
 
     @cached('nodeStats', consts.CACHE_INFO_DURATION, key_helper=caching_key_helper)
     def get_node_stats(self, **kwargs: typing.Any) -> list[types.NodeStats]:
+        # vm | storage | node | sdn are valid types for cluster/resources
         return [
             types.NodeStats.from_dict(nodeStat)
             for nodeStat in self.do_get('cluster/resources?type=node')['data']

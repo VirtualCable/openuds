@@ -257,7 +257,7 @@ class VMInfo:
     diskread: typing.Optional[int]
     diskwrite: typing.Optional[int]
     vgpu_type: typing.Optional[str]
-    
+
     def validate(self) -> 'VMInfo':
         if self.id < 0:
             raise prox_exceptions.ProxmoxNotFound('VM not found')
@@ -383,21 +383,31 @@ class StorageInfo:
     used: int
     avail: int
     total: int
-    used_fraction: float
 
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'StorageInfo':
+        if 'maxdisk' in dictionary:  # From cluster/resources
+            total = int(dictionary['maxdisk'])
+            used = int(dictionary['disk'])
+            avail = total - used
+            ttype = dictionary.get('plugintype', '')
+            active = dictionary.get('status', '') == 'available'
+        else:  # From nodes/storage
+            total = int(dictionary.get('total', 0))
+            used = int(dictionary.get('used', 0))
+            avail = int(dictionary.get('avail', 0))
+            ttype = dictionary.get('type', '')
+            active = bool(dictionary.get('active', False))
         return StorageInfo(
             node=dictionary.get('node', ''),
             storage=dictionary.get('storage', ''),
-            content=tuple(dictionary.get('content', [])),
-            type=dictionary.get('type', ''),
-            shared=dictionary.get('shared', False),
-            active=dictionary.get('active', False),
-            used=dictionary.get('used', 0),
-            avail=dictionary.get('avail', 0),
-            total=dictionary.get('total', 0),
-            used_fraction=dictionary.get('used_fraction', 0),
+            content=tuple(dictionary.get('content', '').split(',')),
+            type=ttype,
+            shared=bool(dictionary.get('shared', False)),
+            active=active,
+            used=used,
+            avail=avail,
+            total=total,
         )
 
 

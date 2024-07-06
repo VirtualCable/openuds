@@ -59,7 +59,7 @@ def get_storage(parameters: typing.Any) -> types.ui.CallbackResultType:
     res: list[types.ui.ChoiceItem] = []
     # Get storages for that datacenter
     for storage in sorted(provider.api.list_storages(node=vm_info.node), key=lambda x: int(not x.shared)):
-        if storage.type in ('lvm', 'iscsi', 'iscsidirect'):
+        if storage.type in ('lvm', 'iscsi', 'iscsidirect'):  # does not allow differential storage (snapshots, etc.)
             continue
         space, free = (
             storage.avail / 1024 / 1024 / 1024,
