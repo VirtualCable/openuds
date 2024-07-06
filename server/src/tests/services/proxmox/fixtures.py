@@ -107,7 +107,6 @@ DEF_STORAGES: list[prox_types.StorageInfo] = [
         used=1024 * 1024 * 1024 * i * 4,
         avail=1024 * 1024 * 1024 * i * 8,
         total=1024 * 1024 * 1024 * i * 12,
-        used_fraction=1.0,
     )
     for i in range(10)
 ]
