@@ -57,7 +57,7 @@ class TestProxmovLinkedService(UDSTestCase):
         Test the provider
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api())
+            api = typing.cast(mock.MagicMock, provider.api())
             service = fixtures.create_service_linked(provider=provider)
 
             self.assertTrue(service.is_avaliable())
@@ -75,15 +75,15 @@ class TestProxmovLinkedService(UDSTestCase):
 
     def test_service_methods_1(self) -> None:
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api())
+            api = typing.cast(mock.MagicMock, provider.api())
             service = fixtures.create_service_linked(provider=provider)
 
             # Sanitized name
             self.assertEqual(service.sanitized_name('a.b.c$m1%233 2'), 'a-b-c-m1-233-2')
 
             # Clone machine
-            self.assertEqual(service.clone_machine('name', 'description', 1), fixtures.VM_CREATION_RESULT)
-            api.clone_machine.assert_called_with(
+            self.assertEqual(service.clone_vm('name', 'description', 1), fixtures.VM_CREATION_RESULT)
+            api.clone_vm.assert_called_with(
                 1,
                 mock.ANY,
                 'name',
@@ -95,8 +95,8 @@ class TestProxmovLinkedService(UDSTestCase):
                 None,
             )
             # Clone machine, for template
-            self.assertEqual(service.clone_machine('name', 'description'), fixtures.VM_CREATION_RESULT)
-            api.clone_machine.assert_called_with(
+            self.assertEqual(service.clone_vm('name', 'description'), fixtures.VM_CREATION_RESULT)
+            api.clone_vm.assert_called_with(
                 service.machine.as_int(),
                 mock.ANY,
                 'name',
@@ -110,26 +110,26 @@ class TestProxmovLinkedService(UDSTestCase):
 
             # Get machine info
             self.assertEqual(service.get_vm_info(1), fixtures.VMS_INFO[0])
-            api.get_machine_pool_info.assert_called_with(1, service.pool.value, force=True)
+            api.get_vm_pool_info.assert_called_with(1, service.pool.value, force=True)
 
             # Get nic mac
             self.assertEqual(service.get_nic_mac(1), '00:01:02:03:04:05')
 
             # remove machine, but this is from provider
-            self.assertEqual(service.provider().remove_machine(1), fixtures.UPID)
+            self.assertEqual(service.provider().delete_vm(1), fixtures.UPID)
 
             # Enable HA
             service.enable_vm_ha(1, True)
-            api.enable_machine_ha.assert_called_with(1, True, service.ha.value)
+            api.enable_vm_ha.assert_called_with(1, True, service.ha.value)
 
     def test_service_methods_2(self) -> None:
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api())
+            api = typing.cast(mock.MagicMock, provider.api())
             service = fixtures.create_service_linked(provider=provider)
 
             # Disable HA
             service.disable_vm_ha(1)
-            api.disable_machine_ha.assert_called_with(1)
+            api.disable_vm_ha.assert_called_with(1)
 
             # Get basename
             self.assertEqual(service.get_basename(), service.basename.value)

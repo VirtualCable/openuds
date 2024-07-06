@@ -46,14 +46,14 @@ from ...utils.helpers import limited_iterator
 # We use transactions on some related methods (storage access, etc...)
 class TestProxmoxLinkedUserService(UDSTransactionTestCase):
     def setUp(self) -> None:
-        fixtures.set_all_vm_state('stopped')
+        fixtures.clear()
 
     def test_userservice_linked_cache_l1(self) -> None:
         """
         Test the user service
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api())
+            api = typing.cast(mock.MagicMock, provider.api())
             service = fixtures.create_service_linked(provider=provider)
             userservice = fixtures.create_userservice_linked(service=service)
             publication = userservice.publication()
@@ -74,7 +74,7 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
 
             vmid = int(userservice._vmid)
 
-            api.clone_machine.assert_called_with(
+            api.clone_vm.assert_called_with(
                 publication.machine(),
                 mock.ANY,
                 userservice._name,
@@ -89,18 +89,18 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
             # api.get_task should have been invoked at least once
             self.assertTrue(api.get_task.called)
 
-            api.enable_machine_ha.assert_called()
+            api.enable_vm_ha.assert_called()
 
-            api.set_machine_mac.assert_called_with(vmid, userservice._mac)
-            api.get_machine_pool_info.assert_called_with(vmid, service.pool.value, force=True)
-            api.start_machine.assert_called_with(vmid)
+            api.set_vm_net_mac.assert_called_with(vmid, userservice._mac)
+            api.get_vm_pool_info.assert_called_with(vmid, service.pool.value, force=True)
+            api.start_vm.assert_called_with(vmid)
 
     def test_userservice_linked_cache_l2_no_ha(self) -> None:
         """
         Test the user service
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api())
+            api = typing.cast(mock.MagicMock, provider.api())
             service = fixtures.create_service_linked(provider=provider)
             userservice = fixtures.create_userservice_linked(service=service)
             service.ha.value = '__'  # Disabled
@@ -126,7 +126,7 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
 
             vmid = int(userservice._vmid)
 
-            api.clone_machine.assert_called_with(
+            api.clone_vm.assert_called_with(
                 publication.machine(),
                 mock.ANY,
                 userservice._name,
@@ -142,21 +142,21 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
             self.assertTrue(api.get_task.called)
 
             # Shoud not have been called since HA is disabled
-            api.enable_machine_ha.assert_not_called()
+            api.enable_vm_ha.assert_not_called()
 
-            api.set_machine_mac.assert_called_with(vmid, userservice._mac)
-            api.get_machine_pool_info.assert_called_with(vmid, service.pool.value, force=True)
+            api.set_vm_net_mac.assert_called_with(vmid, userservice._mac)
+            api.get_vm_pool_info.assert_called_with(vmid, service.pool.value, force=True)
             # Now, start should have been called
-            api.start_machine.assert_called_with(vmid)
+            api.start_vm.assert_called_with(vmid)
             # Stop machine should have been called
-            api.shutdown_machine.assert_called_with(vmid)
+            api.shutdown_vm.assert_called_with(vmid)
 
     def test_userservice_linked_user(self) -> None:
         """
         Test the user service
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api())
+            api = typing.cast(mock.MagicMock, provider.api())
             service = fixtures.create_service_linked(provider=provider)
             userservice = fixtures.create_userservice_linked(service=service)
 
@@ -181,7 +181,7 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
 
             vmid = int(userservice._vmid)
 
-            api.clone_machine.assert_called_with(
+            api.clone_vm.assert_called_with(
                 publication.machine(),
                 mock.ANY,
                 userservice._name,
@@ -196,11 +196,11 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
             # api.get_task should have been invoked at least once
             self.assertTrue(api.get_task.called)
 
-            api.enable_machine_ha.assert_called()
+            api.enable_vm_ha.assert_called()
 
-            api.set_machine_mac.assert_called_with(vmid, userservice._mac)
-            api.get_machine_pool_info.assert_called_with(vmid, service.pool.value, force=True)
-            api.start_machine.assert_called_with(vmid)
+            api.set_vm_net_mac.assert_called_with(vmid, userservice._mac)
+            api.get_vm_pool_info.assert_called_with(vmid, service.pool.value, force=True)
+            api.start_vm.assert_called_with(vmid)
 
             # Ensure vm is stopped, because deployment should have started it (as api.start_machine was called)
             fixtures.replace_vm_info(vmid, status='stopped')
@@ -220,7 +220,7 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
         Test the user service
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api())
+            api = typing.cast(mock.MagicMock, provider.api())
             for graceful in [True, False]:
                 service = fixtures.create_service_linked(provider=provider)
                 userservice = fixtures.create_userservice_linked(service=service)
@@ -231,9 +231,8 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
                 service.must_stop_before_deletion = False  # Avoid stopping before deletion, not needed for this test
 
                 # Set machine state for fixture to started
-                fixtures.VMS_INFO = [
-                    fixtures.VMS_INFO[i]._replace(status='running') for i in range(len(fixtures.VMS_INFO))
-                ]
+                for vminfo in fixtures.VMS_INFO:
+                    vminfo.status = 'running'
 
                 state = userservice.deploy_for_user(models.User())
 
@@ -280,17 +279,15 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
                     state = userservice.check_state()
                     if counter > 5:
                         # Set machine state for fixture to stopped
-                        fixtures.VMS_INFO = [
-                            fixtures.VMS_INFO[i]._replace(status='stopped')
-                            for i in range(len(fixtures.VMS_INFO))
-                        ]
+                        for vminfo in fixtures.VMS_INFO:
+                            vminfo.status = 'stopped'
 
-                self.assertEqual(state, types.states.TaskState.FINISHED)
+                self.assertEqual(state, types.states.TaskState.FINISHED, f'Extra info: {userservice._error_debug_info} {userservice._reason} {userservice._queue}')
 
                 if graceful:
-                    api.shutdown_machine.assert_called()
+                    api.shutdown_vm.assert_called()
                 else:
-                    api.stop_machine.assert_called()
+                    api.stop_vm.assert_called()
 
     def test_userservice_basics(self) -> None:
         with fixtures.patched_provider():

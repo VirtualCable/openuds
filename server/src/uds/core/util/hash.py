@@ -41,6 +41,11 @@ def hash_key(key: typing.Union[str, bytes]) -> str:
     """
     Returns a hash of the given key
     Return value should be, at most, 64 bytes long (as db field is 64 bytes long)
+    Currently used at least on:
+        * src/uds/core/util/cache.py
+        
+    Note that replacing the algorithm used here will force to invalidate all previous generated
+    entries. In the case of cache, this is not a problem, but in other cases, it could be.
     """
     if isinstance(key, str):
         key = key.encode('utf-8')

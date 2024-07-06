@@ -31,6 +31,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import contextlib
+import copy
 import functools
 import typing
 import datetime
@@ -55,12 +56,12 @@ from uds.services.Proxmox import (
 
 from uds.services.Proxmox.proxmox import types as prox_types
 
-NODES: typing.Final[list[prox_types.Node]] = [
+DEF_NODES: list[prox_types.Node] = [
     prox_types.Node(name='node0', online=True, local=True, nodeid=1, ip='0.0.0.1', level='level', id='id'),
     prox_types.Node(name='node1', online=True, local=True, nodeid=2, ip='0.0.0.2', level='level', id='id'),
 ]
 
-NODE_STATS: typing.Final[list[prox_types.NodeStats]] = [
+DEF_NODE_STATS: list[prox_types.NodeStats] = [
     prox_types.NodeStats(
         name='name',
         status='status',
@@ -90,14 +91,14 @@ NODE_STATS: typing.Final[list[prox_types.NodeStats]] = [
 ]
 
 
-CLUSTER_INFO: typing.Final[prox_types.ClusterInfo] = prox_types.ClusterInfo(
+DEF_CLUSTER_INFO: prox_types.ClusterInfo = prox_types.ClusterInfo(
     cluster=prox_types.Cluster(name='name', version='version', id='id', nodes=2, quorate=1),
-    nodes=NODES,
+    nodes=DEF_NODES,
 )
 
-STORAGES: typing.Final[list[prox_types.StorageInfo]] = [
+DEF_STORAGES: list[prox_types.StorageInfo] = [
     prox_types.StorageInfo(
-        node=NODES[i % len(NODES)].name,
+        node=DEF_NODES[i % len(DEF_NODES)].name,
         storage=f'storage_{i}',
         content=(f'content{i}',) * (i % 3),
         type='images',
@@ -112,7 +113,7 @@ STORAGES: typing.Final[list[prox_types.StorageInfo]] = [
 ]
 
 
-VGPUS: typing.Final[list[prox_types.VGPUInfo]] = [
+DEF_VGPUS: list[prox_types.VGPUInfo] = [
     prox_types.VGPUInfo(
         name='name_1',
         description='description_1',
@@ -136,18 +137,18 @@ VGPUS: typing.Final[list[prox_types.VGPUInfo]] = [
     ),
 ]
 
-HA_GROUPS: typing.Final[list[str]] = [
+DEF_HA_GROUPS: list[str] = [
     'ha_group_1',
     'ha_group_2',
     'ha_group_3',
     'ha_group_4',
 ]
 
-VMS_INFO: list[prox_types.VMInfo] = [
+DEF_VMS_INFO: list[prox_types.VMInfo] = [
     prox_types.VMInfo(
         status='stopped',
         vmid=i,
-        node=NODES[i % len(NODES)].name,
+        node=DEF_NODES[i % len(DEF_NODES)].name,
         template=True,
         agent='agent',
         cpus=1,
@@ -165,12 +166,12 @@ VMS_INFO: list[prox_types.VMInfo] = [
         netout=1,
         diskread=1,
         diskwrite=1,
-        vgpu_type=VGPUS[i % len(VGPUS)].type,
+        vgpu_type=DEF_VGPUS[i % len(DEF_VGPUS)].type,
     )
     for i in range(1, 16)
 ]
 
-VMS_CONFIGURATION: typing.Final[list[prox_types.VMConfiguration]] = [
+DEF_VMS_CONFIGURATION: list[prox_types.VMConfiguration] = [
     prox_types.VMConfiguration(
         name=f'vm_name_{i}',
         vga='cirrus',
@@ -190,26 +191,26 @@ VMS_CONFIGURATION: typing.Final[list[prox_types.VMConfiguration]] = [
 ]
 
 
-UPID: typing.Final[prox_types.UPID] = prox_types.UPID(
-    node=NODES[0].name,
+DEF_UPID: prox_types.UPID = prox_types.UPID(
+    node=DEF_NODES[0].name,
     pid=1,
     pstart=1,
     starttime=datetime.datetime.now(),
     type='type',
-    vmid=VMS_INFO[0].vmid,
+    vmid=DEF_VMS_INFO[0].vmid,
     user='user',
     upid='upid',
 )
 
 
-VM_CREATION_RESULT: typing.Final[prox_types.VmCreationResult] = prox_types.VmCreationResult(
-    node=NODES[0].name,
-    vmid=VMS_INFO[0].vmid,
-    upid=UPID,
+DEF_VM_CREATION_RESULT: prox_types.VmCreationResult = prox_types.VmCreationResult(
+    node=DEF_NODES[0].name,
+    vmid=DEF_VMS_INFO[0].vmid,
+    upid=DEF_UPID,
 )
 
 
-SNAPSHOTS_INFO: typing.Final[list[prox_types.SnapshotInfo]] = [
+DEF_SNAPSHOTS_INFO: list[prox_types.SnapshotInfo] = [
     prox_types.SnapshotInfo(
         name=f'snap_name_{i}',
         description=f'snap desription{i}',
@@ -220,8 +221,8 @@ SNAPSHOTS_INFO: typing.Final[list[prox_types.SnapshotInfo]] = [
     for i in range(10)
 ]
 
-TASK_STATUS = prox_types.TaskStatus(
-    node=NODES[0].name,
+DEF_TASK_STATUS = prox_types.TaskStatus(
+    node=DEF_NODES[0].name,
     pid=1,
     pstart=1,
     starttime=datetime.datetime.now(),
@@ -233,42 +234,81 @@ TASK_STATUS = prox_types.TaskStatus(
     id='id',
 )
 
-POOL_MEMBERS: typing.Final[list[prox_types.PoolMemberInfo]] = [
+DEF_POOL_MEMBERS: list[prox_types.PoolMemberInfo] = [
     prox_types.PoolMemberInfo(
         id=f'id_{i}',
-        node=NODES[i % len(NODES)].name,
-        storage=STORAGES[i % len(STORAGES)].storage,
+        node=DEF_NODES[i % len(DEF_NODES)].name,
+        storage=DEF_STORAGES[i % len(DEF_STORAGES)].storage,
         type='type',
-        vmid=VMS_INFO[i % len(VMS_INFO)].vmid,
-        vmname=VMS_INFO[i % len(VMS_INFO)].name or '',
+        vmid=DEF_VMS_INFO[i % len(DEF_VMS_INFO)].vmid,
+        vmname=DEF_VMS_INFO[i % len(DEF_VMS_INFO)].name or '',
     )
     for i in range(10)
 ]
 
-POOLS: typing.Final[list[prox_types.PoolInfo]] = [
+DEF_POOLS: list[prox_types.PoolInfo] = [
     prox_types.PoolInfo(
         poolid=f'pool_{i}',
         comments=f'comments_{i}',
-        members=POOL_MEMBERS,
+        members=DEF_POOL_MEMBERS,
     )
     for i in range(10)
 ]
 
-GUEST_IP_ADDRESS: typing.Final[str] = '1.0.0.1'
+DEF_GUEST_IP_ADDRESS: str = '1.0.0.1'
 
-CONSOLE_CONNECTION_INFO: typing.Final[types.services.ConsoleConnectionInfo] = (
-    types.services.ConsoleConnectionInfo(
-        type='spice',
-        address=GUEST_IP_ADDRESS,
-        port=5900,
-        secure_port=5901,
-        cert_subject='',
-        ticket=types.services.ConsoleConnectionTicket(value='ticket'),
-        ca='',
-        proxy='',
-        monitors=1,
-    )
+DEF_CONSOLE_CONNECTION_INFO: types.services.ConsoleConnectionInfo = types.services.ConsoleConnectionInfo(
+    type='spice',
+    address=DEF_GUEST_IP_ADDRESS,
+    port=5900,
+    secure_port=5901,
+    cert_subject='',
+    ticket=types.services.ConsoleConnectionTicket(value='ticket'),
+    ca='',
+    proxy='',
+    monitors=1,
 )
+
+# clone values to avoid modifying the original ones
+NODES: list[prox_types.Node] = copy.deepcopy(DEF_NODES)
+NODE_STATS: list[prox_types.NodeStats] = copy.deepcopy(DEF_NODE_STATS)
+CLUSTER_INFO: prox_types.ClusterInfo = copy.deepcopy(DEF_CLUSTER_INFO)
+STORAGES: list[prox_types.StorageInfo] = copy.deepcopy(DEF_STORAGES)
+VGPUS: list[prox_types.VGPUInfo] = copy.deepcopy(DEF_VGPUS)
+HA_GROUPS: list[str] = copy.deepcopy(DEF_HA_GROUPS)
+VMS_INFO: list[prox_types.VMInfo] = copy.deepcopy(DEF_VMS_INFO)
+VMS_CONFIGURATION: list[prox_types.VMConfiguration] = copy.deepcopy(DEF_VMS_CONFIGURATION)
+UPID: prox_types.UPID = copy.deepcopy(DEF_UPID)
+VM_CREATION_RESULT: prox_types.VmCreationResult = copy.deepcopy(DEF_VM_CREATION_RESULT)
+SNAPSHOTS_INFO: list[prox_types.SnapshotInfo] = copy.deepcopy(DEF_SNAPSHOTS_INFO)
+TASK_STATUS: prox_types.TaskStatus = copy.deepcopy(DEF_TASK_STATUS)
+POOLS: list[prox_types.PoolInfo] = copy.deepcopy(DEF_POOLS)
+GUEST_IP_ADDRESS: str = copy.deepcopy(DEF_GUEST_IP_ADDRESS)
+CONSOLE_CONNECTION_INFO: types.services.ConsoleConnectionInfo = copy.deepcopy(DEF_CONSOLE_CONNECTION_INFO)
+
+
+def clear() -> None:
+    """
+    Resets all values to the default ones
+    """
+    global CLUSTER_INFO, UPID, VM_CREATION_RESULT, TASK_STATUS, GUEST_IP_ADDRESS, CONSOLE_CONNECTION_INFO
+
+    NODES[:] = copy.deepcopy(DEF_NODES)
+    NODE_STATS[:] = copy.deepcopy(DEF_NODE_STATS)
+    CLUSTER_INFO = copy.deepcopy(DEF_CLUSTER_INFO)  # pyright: ignore
+    STORAGES[:] = copy.deepcopy(DEF_STORAGES)
+    STORAGES[:] = copy.deepcopy(DEF_STORAGES)
+    VGPUS[:] = copy.deepcopy(DEF_VGPUS)
+    HA_GROUPS[:] = copy.deepcopy(DEF_HA_GROUPS)
+    VMS_INFO[:] = copy.deepcopy(DEF_VMS_INFO)
+    VMS_CONFIGURATION[:] = copy.deepcopy(DEF_VMS_CONFIGURATION)
+    UPID = copy.deepcopy(DEF_UPID)  # pyright: ignore
+    VM_CREATION_RESULT = copy.deepcopy(DEF_VM_CREATION_RESULT)  # pyright: ignore
+    SNAPSHOTS_INFO[:] = copy.deepcopy(DEF_SNAPSHOTS_INFO)
+    TASK_STATUS = copy.deepcopy(DEF_TASK_STATUS)  # pyright: ignore
+    POOLS[:] = copy.deepcopy(DEF_POOLS)
+    GUEST_IP_ADDRESS = copy.deepcopy(DEF_GUEST_IP_ADDRESS)  # pyright: ignore
+    CONSOLE_CONNECTION_INFO = copy.deepcopy(DEF_CONSOLE_CONNECTION_INFO)  # pyright: ignore
 
 
 def replace_vm_info(vmid: int, **kwargs: typing.Any) -> prox_types.UPID:
@@ -277,7 +317,8 @@ def replace_vm_info(vmid: int, **kwargs: typing.Any) -> prox_types.UPID:
     """
     for i in range(len(VMS_INFO)):
         if VMS_INFO[i].vmid == vmid:
-            VMS_INFO[i] = VMS_INFO[i]._replace(**kwargs)
+            for k, v in kwargs.items():
+                setattr(VMS_INFO[i], k, v)
             break
     return UPID
 
@@ -286,39 +327,62 @@ def replacer_vm_info(**kwargs: typing.Any) -> typing.Callable[..., prox_types.UP
     return functools.partial(replace_vm_info, **kwargs)
 
 
+T = typing.TypeVar('T')
+
+
+def returner(value: T, *args: typing.Any, **kwargs: typing.Any) -> typing.Callable[..., T]:
+    def inner(*args: typing.Any, **kwargs: typing.Any) -> T:
+        return value
+
+    return inner
+
+
 # Methods that returns None or "internal" methods are not tested
-CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
+CLIENT_METHODS_INFO: list[AutoSpecMethodInfo] = [
     # connect returns None
     # Test method
     AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.test, returns=True),
     # get_cluster_info
-    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.get_cluster_info, returns=CLUSTER_INFO),
+    AutoSpecMethodInfo(
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.get_cluster_info, returns=CLUSTER_INFO
+    ),
     # get_next_vmid
     AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.get_next_vmid, returns=1),
     # is_vmid_available
     AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.is_vmid_available, returns=True),
     # get_node_networks, not called never (ensure it's not called by mistake)
     # list_node_gpu_devices
-    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.list_node_gpu_devices, returns=['gpu_dev_1', 'gpu_dev_2']),
+    AutoSpecMethodInfo(
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.list_node_gpu_devices,
+        returns=['gpu_dev_1', 'gpu_dev_2'],
+    ),
     # list_node_vgpus
     AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.list_node_vgpus, returns=VGPUS),
     # node_has_vgpus_available
-    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.node_has_vgpus_available, returns=True),
+    AutoSpecMethodInfo(
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.node_has_vgpus_available, returns=True
+    ),
     # get_best_node_for_machine
-    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.get_best_node_for_machine, returns=NODE_STATS[0]),
+    AutoSpecMethodInfo(
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.get_best_node_for_vm, returns=NODE_STATS[0]
+    ),
     # clone_machine
-    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.clone_machine, returns=VM_CREATION_RESULT),
+    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.clone_vm, returns=VM_CREATION_RESULT),
     # list_ha_groups
     AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.list_ha_groups, returns=HA_GROUPS),
     # enable_machine_ha return None
     # disable_machine_ha return None
     # set_protection return None
     # get_guest_ip_address
-    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.get_guest_ip_address, returns=GUEST_IP_ADDRESS),
+    AutoSpecMethodInfo(
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.get_guest_ip_address, returns=GUEST_IP_ADDRESS
+    ),
     # remove_machine
-    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.remove_machine, returns=UPID),
+    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.delete_vm, returns=UPID),
     # list_snapshots
-    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.list_snapshots, returns=SNAPSHOTS_INFO),
+    AutoSpecMethodInfo(
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.list_snapshots, returns=SNAPSHOTS_INFO
+    ),
     # supports_snapshot
     AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.supports_snapshot, returns=True),
     # create_snapshot
@@ -328,42 +392,63 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     # restore_snapshot
     AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.restore_snapshot, returns=UPID),
     # get_task
-    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.get_task, returns=TASK_STATUS),
-    # list_machines
-    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.list_machines, returns=VMS_INFO),
-    # get_machine_pool_info
     AutoSpecMethodInfo(
-        uds.services.Proxmox.proxmox.client.ProxmoxClient.get_machine_pool_info,
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.get_task,
+        returns=lambda *args, **kwargs: TASK_STATUS,  # pyright: ignore
+    ),
+    # list_machines
+    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.list_vms, returns=VMS_INFO),
+    # get_vm_pool_info
+    AutoSpecMethodInfo(
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.get_vm_pool_info,
         returns=lambda vmid, poolid, **kwargs: VMS_INFO[vmid - 1],  # pyright: ignore
     ),
     # get_machine_info
     AutoSpecMethodInfo(
-        uds.services.Proxmox.proxmox.client.ProxmoxClient.get_machine_info,
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.get_vm_info,
         returns=lambda vmid, *args, **kwargs: VMS_INFO[vmid - 1],  # pyright: ignore
     ),
     # get_machine_configuration
     AutoSpecMethodInfo(
-        uds.services.Proxmox.proxmox.client.ProxmoxClient.get_machine_configuration,
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.get_vm_config,
         returns=lambda vmid, **kwargs: VMS_CONFIGURATION[vmid - 1],  # pyright: ignore
     ),
     # enable_machine_ha return None
     # start_machine
-    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.start_machine, returns=replacer_vm_info(status='running')),
+    AutoSpecMethodInfo(
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.start_vm, returns=replacer_vm_info(status='running')
+    ),
     # stop_machine
-    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.stop_machine, returns=replacer_vm_info(status='stopped')),
+    AutoSpecMethodInfo(
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.stop_vm, returns=replacer_vm_info(status='stopped')
+    ),
     # reset_machine
-    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.reset_machine, returns=replacer_vm_info(status='stopped')),
+    AutoSpecMethodInfo(
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.reset_vm, returns=replacer_vm_info(status='stopped')
+    ),
     # suspend_machine
-    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.suspend_machine, returns=replacer_vm_info(status='suspended')),
+    AutoSpecMethodInfo(
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.suspend_vm,
+        returns=replacer_vm_info(status='suspended'),
+    ),
     # resume_machine
-    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.resume_machine, returns=replacer_vm_info(status='running')),
+    AutoSpecMethodInfo(
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.resume_vm,
+        returns=replacer_vm_info(status='running'),
+    ),
     # shutdown_machine
-    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.shutdown_machine, returns=replacer_vm_info(status='stopped')),
+    AutoSpecMethodInfo(
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.shutdown_vm,
+        returns=replacer_vm_info(status='stopped'),
+    ),
     # convert_to_template
-    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.convert_to_template, returns=replacer_vm_info(template=True)),
+    AutoSpecMethodInfo(
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.convert_vm_to_template,
+        returns=replacer_vm_info(template=True),
+    ),
     # get_storage
     AutoSpecMethodInfo(
-        uds.services.Proxmox.proxmox.client.ProxmoxClient.get_storage,
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.get_storage_info,
         returns=lambda storage, node, **kwargs: next(  # pyright: ignore
             filter(lambda s: s.storage == storage, STORAGES)  # pyright: ignore
         ),
@@ -394,12 +479,17 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
         ),
     ),
     # get_console_connection
-    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.get_console_connection, returns=CONSOLE_CONNECTION_INFO),
+    AutoSpecMethodInfo(
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.get_console_connection,
+        returns=CONSOLE_CONNECTION_INFO,
+    ),
     # journal
-    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.journal, returns=['journal line 1', 'journal line 2']),
+    AutoSpecMethodInfo(
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.journal, returns=['journal line 1', 'journal line 2']
+    ),
 ]
 
-PROVIDER_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
+PROVIDER_VALUES_DICT: gui.ValuesDictType = {
     'host': 'host',
     'port': 8006,
     'username': 'username',
@@ -412,7 +502,7 @@ PROVIDER_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
 }
 
 
-SERVICE_LINKED_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
+SERVICE_LINKED_VALUES_DICT: gui.ValuesDictType = {
     'pool': POOLS[0].poolid,
     'ha': HA_GROUPS[0],
     'try_soft_shutdown': False,
@@ -447,9 +537,10 @@ def patched_provider(
 ) -> typing.Generator[provider.ProxmoxProvider, None, None]:
     client = create_client_mock()
     provider = create_provider(**kwargs)
-    with mock.patch.object(provider, '_api') as api:
+    with mock.patch.object(provider, 'api') as api:
         api.return_value = client
         yield provider
+
 
 def create_provider(**kwargs: typing.Any) -> provider.ProxmoxProvider:
     """
@@ -564,5 +655,5 @@ def create_userservice_linked(
 # Other helpers
 def set_all_vm_state(state: str) -> None:
     # Set machine state for fixture to stopped
-    for i in range(len(VMS_INFO)):
-        VMS_INFO[i] = VMS_INFO[i]._replace(status=state)
+    for i in VMS_INFO:
+        i.status = state

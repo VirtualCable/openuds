@@ -185,7 +185,7 @@ class ProxmoxServiceLinked(DynamicService):
         self.machine.set_choices(
             [
                 gui.choice_item(str(m.vmid), f'{m.node}\\{m.name or m.vmid} ({m.vmid})')
-                for m in self.provider().list_machines()
+                for m in self.provider().list_vms()
                 if m.name and m.name[:3] != 'UDS'
             ]
         )
@@ -207,7 +207,7 @@ class ProxmoxServiceLinked(DynamicService):
         """
         return re.sub("[^a-zA-Z0-9_-]", "-", name)
 
-    def clone_machine(self, name: str, description: str, vmid: int = -1) -> 'prox_types.VmCreationResult':
+    def clone_vm(self, name: str, description: str, vmid: int = -1) -> 'prox_types.VmCreationResult':
         name = self.sanitized_name(name)
         pool = self.pool.value or None
         if vmid == -1:  # vmId == -1 if cloning for template
@@ -247,7 +247,7 @@ class ProxmoxServiceLinked(DynamicService):
             self.do_log(level=types.log.LogLevel.WARNING, message=f'Exception disabling HA for vm {vmid}: {e}')
 
         # And remove it
-        return self.provider().remove_machine(vmid)
+        return self.provider().delete_vm(vmid)
 
     def enable_vm_ha(self, vmid: int, started: bool = False) -> None:
         if self.ha.value == '__':
@@ -319,4 +319,4 @@ class ProxmoxServiceLinked(DynamicService):
     def execute_delete(self, vmid: str) -> None:
         # All removals are deferred, so we can do it async
         # Try to stop it if already running... Hard stop
-        self.provider().remove_machine(int(vmid))
+        self.provider().delete_vm(int(vmid))

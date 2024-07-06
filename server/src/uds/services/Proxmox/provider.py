@@ -122,7 +122,7 @@ class ProxmoxProvider(services.ServiceProvider):
     _cached_api: typing.Optional[client.ProxmoxClient] = None
     _vmid_generator: UniqueIDGenerator
 
-    def _api(self) -> client.ProxmoxClient:
+    def api(self) -> client.ProxmoxClient:
         """
         Returns the connection API object
         """
@@ -164,35 +164,35 @@ class ProxmoxProvider(services.ServiceProvider):
             True if all went fine, false if id didn't
         """
 
-        return self._api().test()
+        return self.api().test()
 
-    def list_machines(self, force: bool = False) -> list[prox_types.VMInfo]:
-        return self._api().list_machines(force=force)
+    def list_vms(self, force: bool = False) -> list[prox_types.VMInfo]:
+        return self.api().list_vms(force=force)
 
     def get_vm_info(self, vmid: int, poolid: typing.Optional[str] = None) -> prox_types.VMInfo:
-        return self._api().get_machine_pool_info(vmid, poolid, force=True)
+        return self.api().get_vm_pool_info(vmid, poolid, force=True)
 
     def get_vm_config(self, vmid: int) -> prox_types.VMConfiguration:
-        return self._api().get_machine_configuration(vmid, force=True)
+        return self.api().get_vm_config(vmid, force=True)
 
     def get_storage_info(self, storageid: str, node: str, force: bool = False) -> prox_types.StorageInfo:
-        return self._api().get_storage(storageid, node, force=force)
+        return self.api().get_storage_info(storageid, node, force=force)
 
     def list_storages(
         self, node: typing.Optional[str] = None, force: bool = False
     ) -> list[prox_types.StorageInfo]:
-        return self._api().list_storages(node=node, content='images', force=force)
+        return self.api().list_storages(node=node, content='images', force=force)
 
     def list_pools(self, force: bool = False) -> list[prox_types.PoolInfo]:
-        return self._api().list_pools(force=force)
+        return self.api().list_pools(force=force)
 
     def get_pool_info(
         self, pool_id: str, retrieve_vm_names: bool = False, force: bool = False
     ) -> prox_types.PoolInfo:
-        return self._api().get_pool_info(pool_id, retrieve_vm_names=retrieve_vm_names, force=force)
+        return self.api().get_pool_info(pool_id, retrieve_vm_names=retrieve_vm_names, force=force)
 
     def create_template(self, vmid: int) -> None:
-        self._api().convert_to_template(vmid)
+        self.api().convert_vm_to_template(vmid)
 
     def clone_vm(
         self,
@@ -205,7 +205,7 @@ class ProxmoxProvider(services.ServiceProvider):
         target_pool: typing.Optional[str] = None,
         must_have_vgpus: typing.Optional[bool] = None,
     ) -> prox_types.VmCreationResult:
-        return self._api().clone_machine(
+        return self.api().clone_vm(
             vmid,
             self.get_new_vmid(),
             name,
@@ -218,54 +218,54 @@ class ProxmoxProvider(services.ServiceProvider):
         )
 
     def start_machine(self, vmid: int) -> prox_types.UPID:
-        return self._api().start_machine(vmid)
+        return self.api().start_vm(vmid)
 
     def stop_machine(self, vmid: int) -> prox_types.UPID:
-        return self._api().stop_machine(vmid)
+        return self.api().stop_vm(vmid)
 
     def reset_machine(self, vmid: int) -> prox_types.UPID:
-        return self._api().reset_machine(vmid)
+        return self.api().reset_vm(vmid)
 
     def suspend_machine(self, vmId: int) -> prox_types.UPID:
-        return self._api().suspend_machine(vmId)
+        return self.api().suspend_vm(vmId)
 
     def shutdown_machine(self, vmid: int) -> prox_types.UPID:
-        return self._api().shutdown_machine(vmid)
+        return self.api().shutdown_vm(vmid)
 
-    def remove_machine(self, vmid: int) -> prox_types.UPID:
-        return self._api().remove_machine(vmid)
+    def delete_vm(self, vmid: int) -> prox_types.UPID:
+        return self.api().delete_vm(vmid)
 
     def get_task_info(self, node: str, upid: str) -> prox_types.TaskStatus:
-        return self._api().get_task(node, upid)
+        return self.api().get_task(node, upid)
 
     def enable_machine_ha(self, vmid: int, started: bool = False, group: typing.Optional[str] = None) -> None:
-        self._api().enable_machine_ha(vmid, started, group)
+        self.api().enable_vm_ha(vmid, started, group)
 
     def set_machine_mac(self, vmid: int, macAddress: str) -> None:
-        self._api().set_machine_mac(vmid, macAddress)
+        self.api().set_vm_net_mac(vmid, macAddress)
 
     def disable_machine_ha(self, vmid: int) -> None:
-        self._api().disable_machine_ha(vmid)
+        self.api().disable_vm_ha(vmid)
 
     def set_protection(self, vmid: int, node: typing.Optional[str] = None, protection: bool = False) -> None:
-        self._api().set_protection(vmid, node, protection)
+        self.api().set_vm_protection(vmid, node, protection)
 
     def list_ha_groups(self) -> list[str]:
-        return self._api().list_ha_groups()
+        return self.api().list_ha_groups()
 
     def get_console_connection(
         self,
         vmid: str,
         node: typing.Optional[str] = None,
     ) -> typing.Optional[types.services.ConsoleConnectionInfo]:
-        return self._api().get_console_connection(int(vmid), node)
+        return self.api().get_console_connection(int(vmid), node)
 
     def get_new_vmid(self) -> int:
         MAX_RETRIES: typing.Final[int] = 512  # So we don't loop forever, just in case...
         vmid = 0
         for _ in range(MAX_RETRIES):
             vmid = self._vmid_generator.get(self.start_vmid.as_int(), MAX_VMID)
-            if self._api().is_vmid_available(vmid):
+            if self.api().is_vmid_available(vmid):
                 return vmid
             # All assigned vmid will be left as unusable on UDS until released by time (3 years)
             # This is not a problem at all, in the rare case that a machine id is released from uds db
@@ -273,17 +273,17 @@ class ProxmoxProvider(services.ServiceProvider):
         raise prox_exceptions.ProxmoxError(f'Could not get a new vmid!!: last tried {vmid}')
 
     def get_guest_ip_address(self, vmid: int, node: typing.Optional[str] = None, ip_version: typing.Literal['4', '6', ''] = '') -> str:
-        return self._api().get_guest_ip_address(vmid, node, ip_version)
+        return self.api().get_guest_ip_address(vmid, node, ip_version)
 
     def supports_snapshot(self, vmid: int, node: typing.Optional[str] = None) -> bool:
-        return self._api().supports_snapshot(vmid, node)
+        return self.api().supports_snapshot(vmid, node)
 
     def get_current_snapshot(
         self, vmid: int, node: typing.Optional[str] = None
     ) -> typing.Optional[prox_types.SnapshotInfo]:
         return (
             sorted(
-                filter(lambda x: x.snaptime, self._api().list_snapshots(vmid, node)),
+                filter(lambda x: x.snaptime, self.api().list_snapshots(vmid, node)),
                 key=lambda x: x.snaptime or 0,
                 reverse=True,
             )
@@ -297,7 +297,7 @@ class ProxmoxProvider(services.ServiceProvider):
         name: typing.Optional[str] = None,
         description: typing.Optional[str] = None,
     ) -> prox_types.UPID:
-        return self._api().create_snapshot(vmid, node, name, description)
+        return self.api().create_snapshot(vmid, node, name, description)
 
     def restore_snapshot(
         self, vmid: int, node: typing.Optional[str] = None, name: typing.Optional[str] = None
@@ -305,11 +305,11 @@ class ProxmoxProvider(services.ServiceProvider):
         """
         In fact snapshot is not optional, but node is and want to keep the same signature as the api
         """
-        return self._api().restore_snapshot(vmid, node, name)
+        return self.api().restore_snapshot(vmid, node, name)
 
     @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def is_available(self) -> bool:
-        return self._api().test()
+        return self.api().test()
 
     def get_macs_range(self) -> str:
         return self.macs_range.value

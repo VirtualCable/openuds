@@ -44,7 +44,7 @@ from ...utils.helpers import limited_iterator
 # We use transactions on some related methods (storage access, etc...)
 class TestProxmoxFixedUserService(UDSTransactionTestCase):
     def setUp(self) -> None:
-        fixtures.set_all_vm_state('stopped')
+        fixtures.clear()
 
     def test_userservice_fixed_user(self) -> None:
         """

@@ -190,7 +190,7 @@ class ProxmoxUserserviceLinked(DynamicUserService):
             )
 
         comments = 'UDS Linked clone'
-        task_result = self.service().clone_machine(name, comments, template_id)
+        task_result = self.service().clone_vm(name, comments, template_id)
         self._store_task(task_result.upid)
         self._vmid = str(task_result.vmid)
 

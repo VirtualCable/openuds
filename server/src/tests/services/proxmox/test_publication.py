@@ -44,10 +44,12 @@ from ...utils.helpers import limited_iterator
 
 # USe transactional, used by publication access to db on "removal"
 class TestProxmoxPublication(UDSTransactionTestCase):
+    def setUp(self) -> None:
+        fixtures.clear()
 
     def test_publication(self) -> None:
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api())
+            api = typing.cast(mock.MagicMock, provider.api())
             service = fixtures.create_service_linked(provider=provider)
             publication = fixtures.create_publication(service=service)
 
@@ -57,7 +59,7 @@ class TestProxmoxPublication(UDSTransactionTestCase):
                 state = publication.check_state()
             
             self.assertEqual(state, types.states.State.RUNNING)
-            api.clone_machine.assert_called_once_with(
+            api.clone_vm.assert_called_once_with(
                 publication.service().machine.as_int(),
                 MustBeOfType(int),
                 MustBeOfType(str),
@@ -76,14 +78,13 @@ class TestProxmoxPublication(UDSTransactionTestCase):
             
     def test_publication_error(self) -> None:
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api())
+            api = typing.cast(mock.MagicMock, provider.api())
             service = fixtures.create_service_linked(provider=provider)
             publication = fixtures.create_publication(service=service)
 
             # Ensure state check returns error
-            api.get_task.return_value = fixtures.TASK_STATUS._replace(
-                status='stopped', exitstatus='ERROR, BOOM!'
-            )
+            fixtures.TASK_STATUS.status = 'stopped'
+            fixtures.TASK_STATUS.exitstatus = 'ERROR, BOOM!'
 
             state = publication.publish()
             self.assertEqual(state, types.states.State.RUNNING, f'State is not running: publication._queue={publication._queue}')
@@ -93,7 +94,7 @@ class TestProxmoxPublication(UDSTransactionTestCase):
                 state = publication.check_state()
             
             try:
-                api.clone_machine.assert_called_once_with(
+                api.clone_vm.assert_called_once_with(
                     publication.service().machine.as_int(),
                     MustBeOfType(int),
                     MustBeOfType(str),
@@ -113,7 +114,7 @@ class TestProxmoxPublication(UDSTransactionTestCase):
     def test_publication_destroy(self) -> None:
         vmid = str(fixtures.VMS_INFO[0].vmid)
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api())
+            api = typing.cast(mock.MagicMock, provider.api())
             service = fixtures.create_service_linked(provider=provider)
             publication = fixtures.create_publication(service=service)
             
@@ -123,12 +124,12 @@ class TestProxmoxPublication(UDSTransactionTestCase):
             publication._vmid = vmid
             state = publication.destroy()
             self.assertEqual(state, types.states.State.RUNNING)
-            api.remove_machine.assert_called_once_with(publication.machine())
+            api.delete_vm.assert_called_once_with(publication.machine())
 
             # Now, destroy again, should do nothing more
             state = publication.destroy()
             # Should not call again
-            api.remove_machine.assert_called_once_with(publication.machine())
+            api.delete_vm.assert_called_once_with(publication.machine())
 
             self.assertEqual(state, types.states.State.RUNNING)
 
@@ -136,17 +137,17 @@ class TestProxmoxPublication(UDSTransactionTestCase):
     def test_publication_destroy_error(self) -> None:
         vmid = str(fixtures.VMS_INFO[0].vmid)
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api())
+            api = typing.cast(mock.MagicMock, provider.api())
             service = fixtures.create_service_linked(provider=provider)
             publication = fixtures.create_publication(service=service)
 
             # Now, destroy in fact will not return error, because it will
-            # queue the operation if failed, but api.remove_machine will be called anyway
+            # queue the operation if failed, but api.delete_vm will be called anyway
             publication._vmid = vmid
-            api.remove_machine.side_effect = Exception('BOOM!')
+            api.delete_vm.side_effect = Exception('BOOM!')
             publication._vmid = vmid
             self.assertEqual(publication.destroy(), types.states.State.RUNNING)
-            api.remove_machine.assert_called_once_with(publication.machine())
+            api.delete_vm.assert_called_once_with(publication.machine())
 
             # Ensure cancel calls destroy
             with mock.patch.object(publication, 'destroy') as destroy:

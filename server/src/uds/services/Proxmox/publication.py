@@ -98,7 +98,7 @@ class ProxmoxPublication(DynamicPublication, autoserializable.AutoSerializable):
     def op_create(self) -> None:
         # First we should create a full clone, so base machine do not get fullfilled with "garbage" delta disks...
         # Name is generated on op_initialize by DynamicPublication
-        task = self.service().clone_machine(self._name, self.generate_annotation())
+        task = self.service().clone_vm(self._name, self.generate_annotation())
         self._vmid = str(task.vmid)
         self._task = ','.join((task.upid.node, task.upid.upid))
 

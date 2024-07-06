@@ -50,7 +50,7 @@ def get_storage(parameters: typing.Any) -> types.ui.CallbackResultType:
     logger.debug('Parameters received by getResources Helper: %s', parameters)
     provider = get_provider(parameters)
 
-    # Obtains datacenter from cluster
+    # Obtains machine info, to obtain the node and get the storages
     try:
         vm_info = provider.get_vm_info(int(parameters['machine']))
     except Exception:

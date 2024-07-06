@@ -1,45 +1,15 @@
+import collections.abc
+import dataclasses
 import datetime
 import re
 import typing
-import collections.abc
 
 NETWORK_RE: typing.Final[typing.Pattern[str]] = re.compile(r'([a-zA-Z0-9]+)=([^,]+)')  # May have vla id at end
 
-# Conversor from dictionary to NamedTuple
-CONVERSORS: typing.Final[dict[typing.Any, collections.abc.Callable[[typing.Type[typing.Any]], typing.Any]]] = {
-    str: lambda x: str(x or ''),
-    typing.Optional[str]: lambda x: str(x) if x is not None else None,  # pyright: ignore
-    bool: lambda x: bool(x),
-    typing.Optional[bool]: lambda x: bool(x) if x is not None else None,  # pyright: ignore
-    int: lambda x: int(x or '0'),  # type: ignore
-    typing.Optional[int]: lambda x: int(x or '0') if x is not None else None,  # type: ignore
-    float: lambda x: float(x or '0'),  # type: ignore
-    typing.Optional[float]: lambda x: float(x or '0') if x is not None else None,  # type: ignore
-    datetime.datetime: lambda x: datetime.datetime.fromtimestamp(int(x)),  # type: ignore
-    typing.Optional[datetime.datetime]: lambda x: (
-        datetime.datetime.fromtimestamp(int(x)) if x is not None else None  # type: ignore
-    ),
-}
-
-
-def _from_dict(
-    type: type[typing.NamedTuple],
-    dictionary: collections.abc.MutableMapping[str, typing.Any],
-    extra: typing.Optional[collections.abc.Mapping[str, typing.Any]] = None,
-) -> typing.Any:
-    extra = extra or {}
-    return type(
-        **{
-            k: typing.cast(
-                typing.Callable[..., typing.Any], CONVERSORS.get(type.__annotations__.get(k, str), lambda x: x)
-            )(dictionary.get(k, extra.get(k, None)))
-            for k in type._fields  # pyright: ignore   # _fields is a NamedTuple attribute that contains fields
-        }
-    )
-
 
 # Need to be "NamedTuple"s because we use _fields attribute
-class Cluster(typing.NamedTuple):
+@dataclasses.dataclass
+class Cluster:
     name: str
     version: str
     id: str
@@ -48,10 +18,17 @@ class Cluster(typing.NamedTuple):
 
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'Cluster':
-        return _from_dict(Cluster, dictionary)
+        return Cluster(
+            name=dictionary.get('name', ''),
+            version=dictionary.get('version', ''),
+            id=dictionary.get('id', ''),
+            nodes=dictionary.get('nodes', 0),
+            quorate=dictionary.get('quorate', 0),
+        )
 
 
-class Node(typing.NamedTuple):
+@dataclasses.dataclass
+class Node:
     name: str
     online: bool
     local: bool
@@ -62,10 +39,31 @@ class Node(typing.NamedTuple):
 
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'Node':
-        return _from_dict(Node, dictionary)
+        return Node(
+            name=dictionary.get('name', ''),
+            online=dictionary.get('online', False),
+            local=dictionary.get('local', False),
+            nodeid=dictionary.get('nodeid', 0),
+            ip=dictionary.get('ip', ''),
+            level=dictionary.get('level', ''),
+            id=dictionary.get('id', ''),
+        )
+
+    @staticmethod
+    def null() -> 'Node':
+        return Node(
+            name='',
+            online=False,
+            local=False,
+            nodeid=0,
+            ip='',
+            level='',
+            id='',
+        )
 
 
-class NodeStats(typing.NamedTuple):
+@dataclasses.dataclass
+class NodeStats:
     name: str
     status: str
     uptime: int
@@ -80,8 +78,19 @@ class NodeStats(typing.NamedTuple):
 
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'NodeStats':
-        dictionary['name'] = dictionary['node']
-        return _from_dict(NodeStats, dictionary)
+        return NodeStats(
+            name=dictionary.get('node', ''),
+            status=dictionary.get('status', ''),
+            uptime=dictionary.get('uptime', 0),
+            disk=dictionary.get('disk', 0),
+            maxdisk=dictionary.get('maxdisk', 0),
+            level=dictionary.get('level', ''),
+            id=dictionary.get('id', ''),
+            mem=dictionary.get('mem', 0),
+            maxmem=dictionary.get('maxmem', 0),
+            cpu=dictionary.get('cpu', 0),
+            maxcpu=dictionary.get('maxcpu', 0),
+        )
 
     @staticmethod
     def null() -> 'NodeStats':
@@ -100,7 +109,8 @@ class NodeStats(typing.NamedTuple):
         )
 
 
-class ClusterInfo(typing.NamedTuple):
+@dataclasses.dataclass
+class ClusterInfo:
     cluster: typing.Optional[Cluster]
     nodes: list[Node]
 
@@ -118,7 +128,8 @@ class ClusterInfo(typing.NamedTuple):
         return ClusterInfo(cluster=cluster, nodes=nodes)
 
 
-class UPID(typing.NamedTuple):
+@dataclasses.dataclass
+class UPID:
     node: str
     pid: int
     pstart: int
@@ -144,7 +155,8 @@ class UPID(typing.NamedTuple):
         )
 
 
-class TaskStatus(typing.NamedTuple):
+@dataclasses.dataclass
+class TaskStatus:
     node: str
     pid: int
     pstart: int
@@ -158,7 +170,19 @@ class TaskStatus(typing.NamedTuple):
 
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'TaskStatus':
-        return _from_dict(TaskStatus, dictionary['data'])
+        data = dictionary['data']
+        return TaskStatus(
+            node=data['node'],
+            pid=data['pid'],
+            pstart=data['pstart'],
+            starttime=datetime.datetime.fromtimestamp(data['starttime']),
+            type=data['type'],
+            status=data['status'],
+            exitstatus=data['exitstatus'],
+            user=data['user'],
+            upid=data['upid'],
+            id=dictionary['id'],
+        )
 
     def is_running(self) -> bool:
         return self.status == 'running'
@@ -173,7 +197,8 @@ class TaskStatus(typing.NamedTuple):
         return self.is_finished() and not self.is_completed()
 
 
-class NetworkConfiguration(typing.NamedTuple):
+@dataclasses.dataclass
+class NetworkConfiguration:
     net: str
     type: str
     mac: str
@@ -188,7 +213,8 @@ class NetworkConfiguration(typing.NamedTuple):
         return NetworkConfiguration(net=net, type=type, mac=mac)
 
 
-class VMInfo(typing.NamedTuple):
+@dataclasses.dataclass
+class VMInfo:
     status: str
     vmid: int
     node: str
@@ -226,12 +252,33 @@ class VMInfo(typing.NamedTuple):
             if vgpu_type is not None:
                 break  # Already found it, stop looking
 
-        data = _from_dict(VMInfo, dictionary, {'vgpu_type': vgpu_type})
+        return VMInfo(
+            status=dictionary.get('status', ''),
+            vmid=dictionary.get('vmid', 0),
+            node=dictionary.get('node', ''),
+            template=dictionary.get('template', False),
+            agent=dictionary.get('agent', None),
+            cpus=dictionary.get('cpus', None),
+            lock=dictionary.get('lock', None),
+            disk=dictionary.get('disk', None),
+            maxdisk=dictionary.get('maxdisk', None),
+            mem=dictionary.get('mem', None),
+            maxmem=dictionary.get('maxmem', None),
+            name=dictionary.get('name', None),
+            pid=dictionary.get('pid', None),
+            qmpstatus=dictionary.get('qmpstatus', None),
+            tags=dictionary.get('tags', None),
+            uptime=dictionary.get('uptime', None),
+            netin=dictionary.get('netin', None),
+            netout=dictionary.get('netout', None),
+            diskread=dictionary.get('diskread', None),
+            diskwrite=dictionary.get('diskwrite', None),
+            vgpu_type=vgpu_type,
+        )
 
-        return data
 
-
-class VMConfiguration(typing.NamedTuple):
+@dataclasses.dataclass
+class VMConfiguration:
     name: str
     vga: str
     sockets: int
@@ -244,23 +291,34 @@ class VMConfiguration(typing.NamedTuple):
     template: bool
 
     @staticmethod
-    def from_dict(src: collections.abc.MutableMapping[str, typing.Any]) -> 'VMConfiguration':
+    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'VMConfiguration':
         nets: list[NetworkConfiguration] = []
-        for k in src.keys():
+        for k in dictionary.keys():
             if k[:3] == 'net':
-                nets.append(NetworkConfiguration.from_str(k, src[k]))
+                nets.append(NetworkConfiguration.from_str(k, dictionary[k]))
 
-        src['networks'] = nets
-        return _from_dict(VMConfiguration, src)
+        return VMConfiguration(
+            name=dictionary.get('name', ''),
+            vga=dictionary.get('vga', ''),
+            sockets=dictionary.get('sockets', 0),
+            cores=dictionary.get('cores', 0),
+            vmgenid=dictionary.get('vmgenid', ''),
+            digest=dictionary.get('digest', ''),
+            networks=nets,
+            tpmstate0=dictionary.get('tpmstate0', ''),
+            template=dictionary.get('template', False),
+        )
 
 
-class VmCreationResult(typing.NamedTuple):
+@dataclasses.dataclass
+class VmCreationResult:
     node: str
     vmid: int
     upid: UPID
 
 
-class StorageInfo(typing.NamedTuple):
+@dataclasses.dataclass
+class StorageInfo:
     node: str
     storage: str
     content: tuple[str, ...]
@@ -275,10 +333,22 @@ class StorageInfo(typing.NamedTuple):
 
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'StorageInfo':
-        return _from_dict(StorageInfo, dictionary)
+        return StorageInfo(
+            node=dictionary.get('node', ''),
+            storage=dictionary.get('storage', ''),
+            content=tuple(dictionary.get('content', [])),
+            type=dictionary.get('type', ''),
+            shared=dictionary.get('shared', False),
+            active=dictionary.get('active', False),
+            used=dictionary.get('used', 0),
+            avail=dictionary.get('avail', 0),
+            total=dictionary.get('total', 0),
+            used_fraction=dictionary.get('used_fraction', 0),
+        )
 
 
-class PoolMemberInfo(typing.NamedTuple):
+@dataclasses.dataclass
+class PoolMemberInfo:
     id: str
     node: str
     storage: str
@@ -288,10 +358,18 @@ class PoolMemberInfo(typing.NamedTuple):
 
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'PoolMemberInfo':
-        return _from_dict(PoolMemberInfo, dictionary)
+        return PoolMemberInfo(
+            id=dictionary.get('id', ''),
+            node=dictionary.get('node', ''),
+            storage=dictionary.get('storage', ''),
+            type=dictionary.get('type', ''),
+            vmid=dictionary.get('vmid', 0),
+            vmname=dictionary.get('vmname', ''),
+        )
 
 
-class PoolInfo(typing.NamedTuple):
+@dataclasses.dataclass
+class PoolInfo:
     poolid: str
     comments: str
     members: list[PoolMemberInfo]
@@ -303,13 +381,15 @@ class PoolInfo(typing.NamedTuple):
         else:
             members = []
 
-        dictionary['comments'] = dictionary.get('comments', '')
+        return PoolInfo(
+            poolid=dictionary.get('poolid', ''),
+            comments=dictionary.get('comments', ''),
+            members=members,
+        )
 
-        dictionary['members'] = members
-        return _from_dict(PoolInfo, dictionary=dictionary)
 
-
-class SnapshotInfo(typing.NamedTuple):
+@dataclasses.dataclass
+class SnapshotInfo:
     name: str
     description: str
 
@@ -319,10 +399,17 @@ class SnapshotInfo(typing.NamedTuple):
 
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'SnapshotInfo':
-        return _from_dict(SnapshotInfo, dictionary)
+        return SnapshotInfo(
+            name=dictionary.get('name', ''),
+            description=dictionary.get('description', ''),
+            parent=dictionary.get('parent', None),
+            snaptime=dictionary.get('snaptime', None),
+            vmstate=dictionary.get('vmstate', None),
+        )
 
 
-class VGPUInfo(typing.NamedTuple):
+@dataclasses.dataclass
+class VGPUInfo:
     name: str
     description: str
     device: str
@@ -331,4 +418,10 @@ class VGPUInfo(typing.NamedTuple):
 
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'VGPUInfo':
-        return _from_dict(VGPUInfo, dictionary)
+        return VGPUInfo(
+            name=dictionary.get('name', ''),
+            description=dictionary.get('description', ''),
+            device=dictionary.get('device', ''),
+            available=dictionary.get('available', False),
+            type=dictionary.get('type', ''),
+        )

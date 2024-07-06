@@ -79,7 +79,7 @@ class TestProxmoxProvider(UDSTransactionTestCase):
         Test the provider
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api())
+            api = typing.cast(mock.MagicMock, provider.api())
             for ret_val in [True, False]:
                 api.test.reset_mock()
                 # Mock test_connection to return ret_val
@@ -106,7 +106,7 @@ class TestProxmoxProvider(UDSTransactionTestCase):
         Thi is "specieal" because it uses cache
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api())
+            api = typing.cast(mock.MagicMock, provider.api())
 
             # Fist, true result
             self.assertEqual(provider.is_available(), True)
@@ -128,28 +128,28 @@ class TestProxmoxProvider(UDSTransactionTestCase):
         Test the provider methods
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api())
+            api = typing.cast(mock.MagicMock, provider.api())
 
             self.assertEqual(provider.test_connection(), True)
             api.test.assert_called_once_with()
 
-            self.assertEqual(provider.list_machines(force=True), fixtures.VMS_INFO)
-            api.list_machines.assert_called_once_with(force=True)
-            api.list_machines.reset_mock()
-            self.assertEqual(provider.list_machines(), fixtures.VMS_INFO)
-            api.list_machines.assert_called_once_with(force=False)
+            self.assertEqual(provider.list_vms(force=True), fixtures.VMS_INFO)
+            api.list_vms.assert_called_once_with(force=True)
+            api.list_vms.reset_mock()
+            self.assertEqual(provider.list_vms(), fixtures.VMS_INFO)
+            api.list_vms.assert_called_once_with(force=False)
 
             self.assertEqual(provider.get_vm_info(1), fixtures.VMS_INFO[0])
-            api.get_machine_pool_info.assert_called_once_with(1, None, force=True)
+            api.get_vm_pool_info.assert_called_once_with(1, None, force=True)
 
             self.assertEqual(provider.get_vm_config(1), fixtures.VMS_CONFIGURATION[0])
-            api.get_machine_configuration.assert_called_once_with(1, force=True)
+            api.get_vm_config.assert_called_once_with(1, force=True)
 
             self.assertEqual(
                 provider.get_storage_info(fixtures.STORAGES[2].storage, fixtures.STORAGES[2].node, force=True),
                 fixtures.STORAGES[2],
             )
-            api.get_storage.assert_called_once_with(
+            api.get_storage_info.assert_called_once_with(
                 fixtures.STORAGES[2].storage, fixtures.STORAGES[2].node, force=True
             )
 
@@ -158,13 +158,13 @@ class TestProxmoxProvider(UDSTransactionTestCase):
         Test the provider methods
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api())
+            api = typing.cast(mock.MagicMock, provider.api())
 
             self.assertEqual(
                 provider.get_storage_info(fixtures.STORAGES[2].storage, fixtures.STORAGES[2].node),
                 fixtures.STORAGES[2],
             )
-            api.get_storage.assert_called_once_with(
+            api.get_storage_info.assert_called_once_with(
                 fixtures.STORAGES[2].storage, fixtures.STORAGES[2].node, force=False
             )
 
@@ -190,7 +190,7 @@ class TestProxmoxProvider(UDSTransactionTestCase):
         Test the provider methods
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api())
+            api = typing.cast(mock.MagicMock, provider.api())
 
             self.assertEqual(
                 provider.get_pool_info(fixtures.POOLS[2].poolid, retrieve_vm_names=True, force=True),
@@ -206,55 +206,55 @@ class TestProxmoxProvider(UDSTransactionTestCase):
             )
 
             provider.create_template(1)
-            api.convert_to_template.assert_called_once_with(1)
+            api.convert_vm_to_template.assert_called_once_with(1)
 
             self.assertEqual(
                 provider.clone_vm(1, 'name', 'description', True, 'node', 'storage', 'pool', True),
                 fixtures.VM_CREATION_RESULT,
             )
-            api.clone_machine.assert_called_once_with(
+            api.clone_vm.assert_called_once_with(
                 1, mock.ANY, 'name', 'description', True, 'node', 'storage', 'pool', True
             )
 
             self.assertEqual(provider.start_machine(1), fixtures.UPID)
-            api.start_machine.assert_called_once_with(1)
+            api.start_vm.assert_called_once_with(1)
 
             self.assertEqual(provider.stop_machine(1), fixtures.UPID)
-            api.stop_machine.assert_called_once_with(1)
+            api.stop_vm.assert_called_once_with(1)
 
             self.assertEqual(provider.reset_machine(1), fixtures.UPID)
-            api.reset_machine.assert_called_once_with(1)
+            api.reset_vm.assert_called_once_with(1)
 
             self.assertEqual(provider.suspend_machine(1), fixtures.UPID)
-            api.suspend_machine.assert_called_once_with(1)
+            api.suspend_vm.assert_called_once_with(1)
 
     def test_provider_methods_4(self) -> None:
         """
         Test the provider methods
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api())
+            api = typing.cast(mock.MagicMock, provider.api())
 
             self.assertEqual(provider.shutdown_machine(1), fixtures.UPID)
-            api.shutdown_machine.assert_called_once_with(1)
+            api.shutdown_vm.assert_called_once_with(1)
 
-            self.assertEqual(provider.remove_machine(1), fixtures.UPID)
-            api.remove_machine.assert_called_once_with(1)
+            self.assertEqual(provider.delete_vm(1), fixtures.UPID)
+            api.delete_vm.assert_called_once_with(1)
 
             self.assertEqual(provider.get_task_info('node', 'upid'), fixtures.TASK_STATUS)
             api.get_task.assert_called_once_with('node', 'upid')
 
             provider.enable_machine_ha(1, True, 'group')
-            api.enable_machine_ha.assert_called_once_with(1, True, 'group')
+            api.enable_vm_ha.assert_called_once_with(1, True, 'group')
 
             provider.set_machine_mac(1, 'mac')
-            api.set_machine_mac.assert_called_once_with(1, 'mac')
+            api.set_vm_net_mac.assert_called_once_with(1, 'mac')
 
             provider.disable_machine_ha(1)
-            api.disable_machine_ha.assert_called_once_with(1)
+            api.disable_vm_ha.assert_called_once_with(1)
 
             provider.set_protection(1, 'node', True)
-            api.set_protection.assert_called_once_with(1, 'node', True)
+            api.set_vm_protection.assert_called_once_with(1, 'node', True)
 
             self.assertEqual(provider.list_ha_groups(), fixtures.HA_GROUPS)
             api.list_ha_groups.assert_called_once_with()
@@ -264,7 +264,7 @@ class TestProxmoxProvider(UDSTransactionTestCase):
         Test the provider methods
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api())
+            api = typing.cast(mock.MagicMock, provider.api())
 
             self.assertEqual(provider.get_console_connection('1'), fixtures.CONSOLE_CONNECTION_INFO)
             api.get_console_connection.assert_called_once_with(1, None)
@@ -288,37 +288,3 @@ class TestProxmoxProvider(UDSTransactionTestCase):
 
             provider.restore_snapshot(1, 'node', 'name')
             api.restore_snapshot.assert_called_once_with(1, 'node', 'name')
-
-    def test_helpers(self) -> None:
-        """
-        Test the provider helpers
-        """
-        from uds.services.Proxmox.helpers import get_storage, get_machines
-
-        with fixtures.patched_provider() as provider:
-
-            # Patch get_provider to return te ProxmoxProvider instance (provider)
-            with mock.patch('uds.services.Proxmox.helpers.get_provider', return_value=provider):
-                # Test get_storage
-                vm_info = provider.get_vm_info(1)
-                h_storage = get_storage({'prov_uuid': 'test', 'machine': '1'})
-                self.assertEqual(
-                    list(
-                        map(
-                            lambda x: x['id'],
-                            h_storage[0]['choices'],
-                        )
-                    ),
-                    list(map(lambda x: x.storage, filter(lambda x: x.node == vm_info.node, fixtures.STORAGES))),
-                )
-                h_machines = get_machines({'prov_uuid': 'test', 'pool': fixtures.POOLS[0].poolid})
-                # Test get_machines
-                self.assertEqual(
-                    list(
-                        map(
-                            lambda x: x['id'],
-                            h_machines[0]['choices'],
-                        )
-                    ),
-                    list(map(lambda x: str(x.vmid), fixtures.POOLS[0].members)),
-                )

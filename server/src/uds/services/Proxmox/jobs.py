@@ -143,7 +143,7 @@ class ProxmoxDeferredRemoval(jobs.Job):
                         return
 
                     if vmInfo.status == 'stopped':  # Machine exists, try to remove it now
-                        ProxmoxDeferredRemoval.waitForTaskFinish(instance, instance.remove_machine(vmid))
+                        ProxmoxDeferredRemoval.waitForTaskFinish(instance, instance.delete_vm(vmid))
 
                     # It this is reached, remove check
                     storage.remove('tr' + str(vmid))
