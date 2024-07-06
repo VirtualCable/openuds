@@ -34,7 +34,7 @@ import logging
 import typing
 
 from uds.core import types
-from uds.core.services.generics.fixed.userservice import FixedUserService, Operation
+from uds.core.services.generics.fixed.userservice import FixedUserService
 from uds.core.util import autoserializable
 
 from .proxmox import types as prox_types, exceptions as prox_exceptions
@@ -58,9 +58,6 @@ class ProxmoxUserServiceFixed(FixedUserService, autoserializable.AutoSerializabl
 
     """
 
-    # : Recheck every ten seconds by default (for task methods)
-    suggested_delay = 4
-
     def _store_task(self, upid: 'prox_types.UPID') -> None:
         self._task = '\t'.join([upid.node, upid.upid])
 
@@ -71,24 +68,6 @@ class ProxmoxUserServiceFixed(FixedUserService, autoserializable.AutoSerializabl
     # Utility overrides for type checking...
     def service(self) -> 'service_fixed.ProxmoxServiceFixed':
         return typing.cast('service_fixed.ProxmoxServiceFixed', super().service())
-
-    def set_ready(self) -> types.states.TaskState:
-        if self.cache.get('ready') == '1':
-            return types.states.TaskState.FINISHED
-
-        try:
-            vminfo = self.service().get_vm_info(int(self._vmid))
-        except prox_exceptions.ProxmoxConnectionError:
-            raise  # If connection fails, let it fail on parent
-        except Exception as e:
-            return self.error(f'Machine not found: {e}')
-
-        if vminfo.status == 'stopped':
-            self._queue = [Operation.START, Operation.FINISH]
-            return self._execute_queue()
-
-        self.cache.put('ready', '1')
-        return types.states.TaskState.FINISHED
 
     def reset(self) -> types.states.TaskState:
         """
@@ -103,15 +82,9 @@ class ProxmoxUserServiceFixed(FixedUserService, autoserializable.AutoSerializabl
         return types.states.TaskState.FINISHED
 
     def op_start(self) -> None:
-        try:
-            vminfo = self.service().get_vm_info(int(self._vmid))
-        except prox_exceptions.ProxmoxConnectionError:
-            self.retry_later()
-            return
-        except Exception as e:
-            raise Exception('Machine not found on start machine') from e
+        vminfo = self.service().get_vm_info(int(self._vmid)).validate()
 
-        if vminfo.status == 'stopped':
+        if  not vminfo.status.is_running():
             self._store_task(self.service().provider().api.start_vm(int(self._vmid)))
 
     # Check methods

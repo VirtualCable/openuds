@@ -198,21 +198,11 @@ class ProxmoxUserserviceLinked(DynamicUserService):
         return self._check_task_finished()
 
     def op_create_completed(self) -> None:
-        # Set mac
-        try:
-            # Note: service will only enable ha if it is configured to do so
-            self.service().enable_vm_ha(int(self._vmid), True)  # Enable HA before continuing here
+        # Note: service will only enable ha if it is configured to do so
+        self.service().enable_vm_ha(int(self._vmid), True)  # Enable HA before continuing here
 
-            # Set vm mac address now on first interface
-            self.service().provider().api.set_vm_net_mac(int(self._vmid), self.get_unique_id())
-        except uds.services.Proxmox.proxmox.exceptions.ProxmoxConnectionError:
-            self.retry_later()  # Push nop to front of queue, so it is consumed instead of this one
-            return
-        except Exception as e:
-            logger.exception('Setting HA and MAC on proxmox')
-            raise Exception(f'Error setting MAC and HA on proxmox: {e}') from e
-
-    # No need for op_create_completed_checker
+        # Set vm mac address now on first interface
+        self.service().provider().api.set_vm_net_mac(int(self._vmid), self.get_unique_id())
 
     def get_console_connection(
         self,
@@ -223,7 +213,7 @@ class ProxmoxUserserviceLinked(DynamicUserService):
         self,
         username: str,
         password: str,
-        domain: str = '',  # pylint: disable=unused-argument
+        domain: str = '',
     ) -> None:
         script = (
             'import sys\n'
@@ -234,6 +224,6 @@ class ProxmoxUserserviceLinked(DynamicUserService):
         # Post script to service
         #         operations.writeToPipe("\\\\.\\pipe\\VDSMDPipe", packet, True)
         try:
-            UserServiceManager().send_script(self.db_obj(), script)
+            UserServiceManager.manager().send_script(self.db_obj(), script)
         except Exception as e:
             logger.info('Exception sending loggin to %s: %s', self.db_obj(), e)

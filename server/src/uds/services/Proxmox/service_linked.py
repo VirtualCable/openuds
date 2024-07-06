@@ -290,7 +290,7 @@ class ProxmoxServiceLinked(DynamicService):
             else:
                 caller_instance._store_task(self.provider().api.start_vm(int(vmid)))
         else:
-            raise Exception('Invalid caller instance (publication) for start_machine()')
+            self.provider().api.start_vm(int(vmid))
 
     def stop(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
         if isinstance(caller_instance, ProxmoxUserserviceLinked):
@@ -299,7 +299,7 @@ class ProxmoxServiceLinked(DynamicService):
             else:
                 caller_instance._task = ''
         else:
-            raise Exception('Invalid caller instance (publication) for stop_machine()')
+            self.provider().api.stop_vm(int(vmid))
 
     def shutdown(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
         if isinstance(caller_instance, ProxmoxUserserviceLinked):
@@ -308,13 +308,11 @@ class ProxmoxServiceLinked(DynamicService):
             else:
                 caller_instance._task = ''
         else:
-            raise Exception('Invalid caller instance (publication) for shutdown_machine()')
+            self.provider().api.shutdown_vm(int(vmid))  # Just shutdown it, do not stores anything
 
     def is_running(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> bool:
         # Raise an exception if fails to get machine info
-        vminfo = self.get_vm_info(int(vmid))
-
-        return vminfo.status != 'stopped'
+        return self.get_vm_info(int(vmid)).validate().status.is_running()
 
     def execute_delete(self, vmid: str) -> None:
         # All removals are deferred, so we can do it async
