@@ -60,12 +60,6 @@ class TestXenClient(UDSTransactionTestCase):
     net: xen_types.NetworkInfo
 
     def setUp(self) -> None:
-        """
-        Note that due to the nature of the tests, we will skip them if no azure vars are found
-        Also, we already made some test on every setUp:
-          * connection to azure
-          * resource group info
-        """
         v = vars.get_vars('xen')
         if not v:
             self.skipTest('No xen vars')
@@ -76,7 +70,7 @@ class TestXenClient(UDSTransactionTestCase):
             port=int(v['port']),
             username=v['username'],
             password=v['password'],
-            ssl=True,
+            use_ssl=True,
         )
 
         # As soon as we execute one method of xclient, login will be done, so no need to do it here

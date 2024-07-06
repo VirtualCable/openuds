@@ -452,7 +452,7 @@ def patched_provider(
 ) -> typing.Generator[provider.XenProvider, None, None]:
     client = create_client_mock()
     provider = create_provider(**kwargs)
-    with mock.patch('uds.services.Xen.provider.XenProvider._api', new_callable=mock.PropertyMock) as api:
+    with mock.patch('uds.services.Xen.provider.XenProvider.api', new_callable=mock.PropertyMock) as api:
         api.return_value = client
         yield provider
 

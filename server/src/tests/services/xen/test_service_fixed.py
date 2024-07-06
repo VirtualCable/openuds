@@ -52,7 +52,7 @@ class TestXenFixedService(UDSTransactionTestCase):
         Test the provider
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api)
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_fixed(provider=provider)
 
             self.assertTrue(service.is_avaliable())
@@ -143,7 +143,7 @@ class TestXenFixedService(UDSTransactionTestCase):
 
     def test_process_snapshot(self) -> None:
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api)
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_fixed(provider=provider)
 
             vmid = typing.cast(list[str], fixtures.SERVICE_FIXED_VALUES_DICT['machines'])[0]

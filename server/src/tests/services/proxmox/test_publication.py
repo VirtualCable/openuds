@@ -49,7 +49,7 @@ class TestProxmoxPublication(UDSTransactionTestCase):
 
     def test_publication(self) -> None:
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider.api())
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
             publication = fixtures.create_publication(service=service)
 
@@ -78,7 +78,7 @@ class TestProxmoxPublication(UDSTransactionTestCase):
             
     def test_publication_error(self) -> None:
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider.api())
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
             publication = fixtures.create_publication(service=service)
 
@@ -112,9 +112,9 @@ class TestProxmoxPublication(UDSTransactionTestCase):
 
 
     def test_publication_destroy(self) -> None:
-        vmid = str(fixtures.VMS_INFO[0].vmid)
+        vmid = str(fixtures.VMS_INFO[0].id)
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider.api())
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
             publication = fixtures.create_publication(service=service)
             
@@ -135,9 +135,9 @@ class TestProxmoxPublication(UDSTransactionTestCase):
 
 
     def test_publication_destroy_error(self) -> None:
-        vmid = str(fixtures.VMS_INFO[0].vmid)
+        vmid = str(fixtures.VMS_INFO[0].id)
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider.api())
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
             publication = fixtures.create_publication(service=service)
 

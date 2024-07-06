@@ -57,7 +57,7 @@ class TestProxmovLinkedService(UDSTestCase):
         Test the provider
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider.api())
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
 
             self.assertTrue(service.is_avaliable())
@@ -75,7 +75,7 @@ class TestProxmovLinkedService(UDSTestCase):
 
     def test_service_methods_1(self) -> None:
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider.api())
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
 
             # Sanitized name
@@ -124,7 +124,7 @@ class TestProxmovLinkedService(UDSTestCase):
 
     def test_service_methods_2(self) -> None:
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider.api())
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
 
             # Disable HA

@@ -83,7 +83,7 @@ class TestXenProvider(UDSTransactionTestCase):
         Thi is "specieal" because it uses cache
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api)
+            api = typing.cast(mock.MagicMock, provider.api)
 
             # Fist, true result
             api.test.return_value = True
@@ -107,7 +107,7 @@ class TestXenProvider(UDSTransactionTestCase):
         Test the provider methods
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api)
+            api = typing.cast(mock.MagicMock, provider.api)
 
             with provider.get_connection() as conn:
                 self.assertEqual(conn, api)
@@ -117,7 +117,7 @@ class TestXenProvider(UDSTransactionTestCase):
         Test the provider
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api)
+            api = typing.cast(mock.MagicMock, provider.api)
             for ret_val in [True, False]:
                 api.test.reset_mock()
                 # Mock test_connection to return ret_val
@@ -147,7 +147,7 @@ class TestXenProvider(UDSTransactionTestCase):
         fixtures.clean()
 
         with fixtures.patched_provider() as provider:
-            api = provider._api  # typing.cast(mock.MagicMock, provider._api)
+            api = provider.api  # typing.cast(mock.MagicMock, provider._api)
 
             self.assertEqual(api.has_pool(), True)
             self.assertEqual(api.get_pool_name(), fixtures.POOL_NAME)

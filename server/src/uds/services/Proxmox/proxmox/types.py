@@ -1,10 +1,30 @@
 import collections.abc
 import dataclasses
 import datetime
+import enum
 import re
 import typing
 
+from . import exceptions as prox_exceptions
+
 NETWORK_RE: typing.Final[typing.Pattern[str]] = re.compile(r'([a-zA-Z0-9]+)=([^,]+)')  # May have vla id at end
+
+
+class VMStatus(enum.StrEnum):
+    RUNNING = 'running'
+    STOPPED = 'stopped'
+
+    UNKNOWN = 'unknown'
+
+    def is_running(self) -> bool:
+        return self == VMStatus.RUNNING
+
+    @staticmethod
+    def from_str(value: str) -> 'VMStatus':
+        try:
+            return VMStatus(value)
+        except ValueError:
+            return VMStatus.UNKNOWN
 
 
 # Need to be "NamedTuple"s because we use _fields attribute
@@ -215,8 +235,8 @@ class NetworkConfiguration:
 
 @dataclasses.dataclass
 class VMInfo:
-    status: str
-    vmid: int
+    id: int
+    status: VMStatus
     node: str
     template: bool
 
@@ -237,6 +257,11 @@ class VMInfo:
     diskread: typing.Optional[int]
     diskwrite: typing.Optional[int]
     vgpu_type: typing.Optional[str]
+    
+    def validate(self) -> 'VMInfo':
+        if self.id < 0:
+            raise prox_exceptions.ProxmoxNotFound('VM not found')
+        return self
 
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'VMInfo':
@@ -253,8 +278,8 @@ class VMInfo:
                 break  # Already found it, stop looking
 
         return VMInfo(
-            status=dictionary.get('status', ''),
-            vmid=dictionary.get('vmid', 0),
+            status=VMStatus.from_str(dictionary['status']),
+            id=dictionary.get('vmid', 0),
             node=dictionary.get('node', ''),
             template=dictionary.get('template', False),
             agent=dictionary.get('agent', None),
@@ -275,6 +300,35 @@ class VMInfo:
             diskwrite=dictionary.get('diskwrite', None),
             vgpu_type=vgpu_type,
         )
+
+    @staticmethod
+    def null() -> 'VMInfo':
+        return VMInfo(
+            status=VMStatus.UNKNOWN,
+            id=-1,
+            node='',
+            template=False,
+            agent=None,
+            cpus=None,
+            lock=None,
+            disk=None,
+            maxdisk=None,
+            mem=None,
+            maxmem=None,
+            name=None,
+            pid=None,
+            qmpstatus=None,
+            tags=None,
+            uptime=None,
+            netin=None,
+            netout=None,
+            diskread=None,
+            diskwrite=None,
+            vgpu_type=None,
+        )
+
+    def is_null(self) -> bool:
+        return self.id == -1
 
 
 @dataclasses.dataclass
@@ -370,7 +424,7 @@ class PoolMemberInfo:
 
 @dataclasses.dataclass
 class PoolInfo:
-    poolid: str
+    id: str  # This is in fact the name, must be also unique
     comments: str
     members: list[PoolMemberInfo]
 
@@ -382,10 +436,21 @@ class PoolInfo:
             members = []
 
         return PoolInfo(
-            poolid=dictionary.get('poolid', ''),
+            id=dictionary.get('poolid', ''),
             comments=dictionary.get('comments', ''),
             members=members,
         )
+
+    @staticmethod
+    def null() -> 'PoolInfo':
+        return PoolInfo(
+            id='',
+            comments='',
+            members=[],
+        )
+
+    def is_null(self) -> bool:
+        return self.id == ''
 
 
 @dataclasses.dataclass

@@ -100,14 +100,14 @@ class XenClient:  # pylint: disable=too-many-public-methods
         port: int,
         username: str,
         password: str,
-        ssl: bool = True,
+        use_ssl: bool = True,
         verify_ssl: bool = False,
         timeout: int = 10,
     ):
         self._originalHost = self._host = host
         self._host_backup = host_backup or ''
         self._port = str(port)
-        self._use_ssl = bool(ssl)
+        self._use_ssl = bool(use_ssl)
         self._verify_ssl = bool(verify_ssl)
         self._timeout = timeout
         self._protocol = 'http' + ('s' if self._use_ssl else '') + '://'

@@ -51,7 +51,7 @@ class TestXenPublication(UDSTransactionTestCase):
 
     def test_publication(self) -> None:
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api)
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
             publication = fixtures.create_publication(service=service)
 
@@ -75,7 +75,7 @@ class TestXenPublication(UDSTransactionTestCase):
 
     def test_publication_error(self) -> None:
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api)
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
             publication = fixtures.create_publication(service=service)
 
@@ -107,7 +107,7 @@ class TestXenPublication(UDSTransactionTestCase):
     def test_publication_destroy(self) -> None:
         vmid = str(fixtures.VMS_INFO[0].opaque_ref)
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api)
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
             publication = fixtures.create_publication(service=service)
            
@@ -129,7 +129,7 @@ class TestXenPublication(UDSTransactionTestCase):
     def test_publication_destroy_error(self) -> None:
         vmid = str(fixtures.VMS_INFO[0].opaque_ref)
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api)
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
             publication = fixtures.create_publication(service=service)
             

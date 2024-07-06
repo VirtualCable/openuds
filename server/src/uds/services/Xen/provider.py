@@ -154,7 +154,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
     # We have implemented an "exclusive access" client that will only connect to one server at a time (using locks)
     # and this way all will be fine
     @property
-    def _api(self) -> client.XenClient:
+    def api(self) -> client.XenClient:
         """
         Returns the connection API object for XenServer (using XenServersdk)
         """
@@ -179,7 +179,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         """
         self._use_count += 1
         try:
-            yield self._api
+            yield self.api
         finally:
             self._use_count -= 1
             if self._use_count == 0 and self._cached_api:
@@ -203,7 +203,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
 
             True if all went fine, false if id didn't
         """
-        self._api.test()
+        self.api.test()
 
     def get_macs_range(self) -> str:
         return self.macs_range.value

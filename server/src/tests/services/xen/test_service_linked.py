@@ -65,7 +65,7 @@ class TestXenLinkedService(UDSTestCase):
     def test_has_datastore_space(self) -> None:
         with fixtures.patched_provider() as provider:
             service = fixtures.create_service_linked(provider=provider)
-            api = typing.cast(mock.MagicMock, provider._api)
+            api = typing.cast(mock.MagicMock, provider.api)
 
             # Should not raise any exception
             service.has_datastore_space()
@@ -81,7 +81,7 @@ class TestXenLinkedService(UDSTestCase):
         Test the provider
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api)
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
 
             self.assertTrue(service.is_avaliable())
@@ -99,7 +99,7 @@ class TestXenLinkedService(UDSTestCase):
 
     def test_start_deploy_of_template(self) -> None:
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api)
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
 
             service.start_deploy_of_template('name', 'comments')
@@ -109,7 +109,7 @@ class TestXenLinkedService(UDSTestCase):
 
     def test_convert_to_template(self) -> None:
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api)
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
 
             service.convert_to_template('vm_opaque_ref')
@@ -117,7 +117,7 @@ class TestXenLinkedService(UDSTestCase):
 
     def test_start_deploy_from_template(self) -> None:
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api)
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
 
             service.deploy_from_template('template_opaque_ref', name='name', comments='comments')
@@ -125,7 +125,7 @@ class TestXenLinkedService(UDSTestCase):
 
     def test_delete_template(self) -> None:
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api)
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
 
             service.delete_template('template_opaque_ref')
@@ -133,7 +133,7 @@ class TestXenLinkedService(UDSTestCase):
 
     def test_configure_machine(self) -> None:
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api)
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
 
             service.configure_vm('vm_opaque_ref', '00:01:02:03:04:05')
@@ -153,7 +153,7 @@ class TestXenLinkedService(UDSTestCase):
 
     def test_is_running(self) -> None:
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api)
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
 
             VM = random.choice(fixtures.VMS_INFO)
@@ -185,7 +185,7 @@ class TestXenLinkedService(UDSTestCase):
 
     def test_delete(self) -> None:
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api)
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
             for state in [xen_types.PowerState.HALTED, xen_types.PowerState.RUNNING]:
                 for soft_shutdown in [True, False]:

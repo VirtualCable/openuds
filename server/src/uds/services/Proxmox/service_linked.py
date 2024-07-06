@@ -184,14 +184,14 @@ class ProxmoxServiceLinked(DynamicService):
         # the list of values shown because this is a "ChoiceField"
         self.machine.set_choices(
             [
-                gui.choice_item(str(m.vmid), f'{m.node}\\{m.name or m.vmid} ({m.vmid})')
+                gui.choice_item(str(m.id), f'{m.node}\\{m.name or m.id} ({m.id})')
                 for m in self.provider().list_vms()
                 if m.name and m.name[:3] != 'UDS'
             ]
         )
         self.pool.set_choices(
             [gui.choice_item('', _('None'))]
-            + [gui.choice_item(p.poolid, p.poolid) for p in self.provider().list_pools()]
+            + [gui.choice_item(p.id, p.id) for p in self.provider().list_pools()]
         )
         self.ha.set_choices(
             [gui.choice_item('', _('Enabled')), gui.choice_item('__', _('Disabled'))]
@@ -269,7 +269,7 @@ class ProxmoxServiceLinked(DynamicService):
         return self.ha.value != '__'
 
     def get_console_connection(self, vmid: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
-        return self.provider().get_console_connection(vmid)
+        return self.provider().api.get_console_connection(int(vmid))
 
     def is_avaliable(self) -> bool:
         return self.provider().is_available()

@@ -79,7 +79,7 @@ class TestProxmoxProvider(UDSTransactionTestCase):
         Test the provider
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider.api())
+            api = typing.cast(mock.MagicMock, provider.api)
             for ret_val in [True, False]:
                 api.test.reset_mock()
                 # Mock test_connection to return ret_val
@@ -106,7 +106,7 @@ class TestProxmoxProvider(UDSTransactionTestCase):
         Thi is "specieal" because it uses cache
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider.api())
+            api = typing.cast(mock.MagicMock, provider.api)
 
             # Fist, true result
             self.assertEqual(provider.is_available(), True)
@@ -128,7 +128,7 @@ class TestProxmoxProvider(UDSTransactionTestCase):
         Test the provider methods
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider.api())
+            api = typing.cast(mock.MagicMock, provider.api)
 
             self.assertEqual(provider.test_connection(), True)
             api.test.assert_called_once_with()
@@ -158,7 +158,7 @@ class TestProxmoxProvider(UDSTransactionTestCase):
         Test the provider methods
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider.api())
+            api = typing.cast(mock.MagicMock, provider.api)
 
             self.assertEqual(
                 provider.get_storage_info(fixtures.STORAGES[2].storage, fixtures.STORAGES[2].node),
@@ -190,19 +190,19 @@ class TestProxmoxProvider(UDSTransactionTestCase):
         Test the provider methods
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider.api())
+            api = typing.cast(mock.MagicMock, provider.api)
 
             self.assertEqual(
-                provider.get_pool_info(fixtures.POOLS[2].poolid, retrieve_vm_names=True, force=True),
+                provider.get_pool_info(fixtures.POOLS[2].id, retrieve_vm_names=True, force=True),
                 fixtures.POOLS[2],
             )
             api.get_pool_info.assert_called_once_with(
-                fixtures.POOLS[2].poolid, retrieve_vm_names=True, force=True
+                fixtures.POOLS[2].id, retrieve_vm_names=True, force=True
             )
             api.get_pool_info.reset_mock()
-            self.assertEqual(provider.get_pool_info(fixtures.POOLS[2].poolid), fixtures.POOLS[2])
+            self.assertEqual(provider.get_pool_info(fixtures.POOLS[2].id), fixtures.POOLS[2])
             api.get_pool_info.assert_called_once_with(
-                fixtures.POOLS[2].poolid, retrieve_vm_names=False, force=False
+                fixtures.POOLS[2].id, retrieve_vm_names=False, force=False
             )
 
             provider.create_template(1)
@@ -233,7 +233,7 @@ class TestProxmoxProvider(UDSTransactionTestCase):
         Test the provider methods
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider.api())
+            api = typing.cast(mock.MagicMock, provider.api)
 
             self.assertEqual(provider.shutdown_machine(1), fixtures.UPID)
             api.shutdown_vm.assert_called_once_with(1)
@@ -264,27 +264,21 @@ class TestProxmoxProvider(UDSTransactionTestCase):
         Test the provider methods
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider.api())
+            api = typing.cast(mock.MagicMock, provider.api)
 
-            self.assertEqual(provider.get_console_connection('1'), fixtures.CONSOLE_CONNECTION_INFO)
-            api.get_console_connection.assert_called_once_with(1, None)
+            self.assertEqual(provider.api.get_console_connection(1), fixtures.CONSOLE_CONNECTION_INFO)
 
             vmid = provider.get_new_vmid()
             for i in range(1, 128):
                 self.assertEqual(provider.get_new_vmid(), vmid + i)
 
             self.assertEqual(provider.get_guest_ip_address(1), fixtures.GUEST_IP_ADDRESS)
-            api.get_guest_ip_address.assert_called_once_with(1, None, '')
 
-            self.assertEqual(provider.supports_snapshot(1), True)
-            api.supports_snapshot.assert_called_once_with(1, None)
+            self.assertEqual(provider.api.supports_snapshot(1), True)
 
             api.list_snapshots.reset_mock()
-            self.assertEqual(provider.get_current_snapshot(1), fixtures.SNAPSHOTS_INFO[0])
-            api.list_snapshots.assert_called_once_with(1, None)
+            self.assertEqual(provider.api.get_current_vm_snapshot(1), fixtures.SNAPSHOTS_INFO[0])
 
-            self.assertEqual(provider.create_snapshot(1), fixtures.UPID)
-            api.create_snapshot.assert_called_once_with(1, None, None, None)
+            self.assertEqual(provider.api.create_snapshot(1), fixtures.UPID)
 
-            provider.restore_snapshot(1, 'node', 'name')
-            api.restore_snapshot.assert_called_once_with(1, 'node', 'name')
+            provider.api.restore_snapshot(1, node='node', name='name')

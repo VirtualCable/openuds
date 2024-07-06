@@ -56,7 +56,7 @@ class TestXenLinkedUserService(UDSTransactionTestCase):
         Test the user service
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api)
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
             userservice = fixtures.create_userservice_linked(service=service)
             publication = userservice.publication()
@@ -86,7 +86,7 @@ class TestXenLinkedUserService(UDSTransactionTestCase):
         Test the user service
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api)
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
             userservice = fixtures.create_userservice_linked(service=service)
 
@@ -121,7 +121,7 @@ class TestXenLinkedUserService(UDSTransactionTestCase):
         Test the user service
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api)
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
             userservice = fixtures.create_userservice_linked(service=service)
 
@@ -168,7 +168,7 @@ class TestXenLinkedUserService(UDSTransactionTestCase):
         Test the user service
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider._api)
+            api = typing.cast(mock.MagicMock, provider.api)
             for graceful in [True, False]:
                 service = fixtures.create_service_linked(provider=provider)
                 userservice = fixtures.create_userservice_linked(service=service)

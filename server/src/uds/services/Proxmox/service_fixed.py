@@ -107,17 +107,20 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
 
         self.pool.set_choices(
             [gui.choice_item('', _('None'))]
-            + [gui.choice_item(p.poolid, p.poolid) for p in self.provider().list_pools()]
+            + [gui.choice_item(p.id, p.id) for p in self.provider().list_pools()]
         )
 
     def provider(self) -> 'ProxmoxProvider':
         return typing.cast('ProxmoxProvider', super().provider())
 
-    def get_vm_info(self, vmId: int) -> 'prox_types.VMInfo':
-        return self.provider().get_vm_info(vmId, self.pool.value.strip())
-
     def is_avaliable(self) -> bool:
         return self.provider().is_available()
+
+    def get_vm_info(self, vmid: int) -> 'prox_types.VMInfo':
+        return self.provider().api.get_vm_info(vmid, self.pool.value.strip()).validate()
+    
+    def is_ready(self, vmid: str) -> bool:
+        return self.provider().api.get_vm_info(int(vmid)).validate().status.is_running()
 
     def enumerate_assignables(self) -> collections.abc.Iterable[types.ui.ChoiceItem]:
         # Obtain machines names and ids for asignables
@@ -154,9 +157,9 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
             # If no snapshot exists for this vm, try to create one for it on background
             # Lauch an snapshot. We will not wait for it to finish, but instead let it run "as is"
             try:
-                if not self.provider().get_current_snapshot(vmid):
+                if not self.provider().api.get_current_vm_snapshot(vmid):
                     logger.debug('No current snapshot')
-                    self.provider().create_snapshot(
+                    self.provider().api.create_snapshot(
                         vmid,
                         name='UDS Snapshot',
                     )
@@ -169,10 +172,10 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
             vmid = int(userservice_instance._vmid)
             try:
                 # try to revert to snapshot
-                snapshot = self.provider().get_current_snapshot(vmid)
+                snapshot = self.provider().api.get_current_vm_snapshot(vmid)
                 if snapshot:
                     userservice_instance._store_task(
-                        self.provider().restore_snapshot(vmid, name=snapshot.name)
+                        self.provider().api.restore_snapshot(vmid, name=snapshot.name)
                     )
             except Exception as e:
                 self.do_log(types.log.LogLevel.WARNING, 'Could not restore SNAPSHOT for this VM. ({})'.format(e))

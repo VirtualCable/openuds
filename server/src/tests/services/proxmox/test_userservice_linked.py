@@ -42,6 +42,7 @@ from . import fixtures
 from ...utils.test import UDSTransactionTestCase
 from ...utils.helpers import limited_iterator
 
+from uds.services.Proxmox.proxmox import types as prox_types
 
 # We use transactions on some related methods (storage access, etc...)
 class TestProxmoxLinkedUserService(UDSTransactionTestCase):
@@ -53,7 +54,7 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
         Test the user service
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider.api())
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
             userservice = fixtures.create_userservice_linked(service=service)
             publication = userservice.publication()
@@ -100,7 +101,7 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
         Test the user service
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider.api())
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
             userservice = fixtures.create_userservice_linked(service=service)
             service.ha.value = '__'  # Disabled
@@ -156,7 +157,7 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
         Test the user service
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider.api())
+            api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
             userservice = fixtures.create_userservice_linked(service=service)
 
@@ -220,7 +221,7 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
         Test the user service
         """
         with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider.api())
+            api = typing.cast(mock.MagicMock, provider.api)
             for graceful in [True, False]:
                 service = fixtures.create_service_linked(provider=provider)
                 userservice = fixtures.create_userservice_linked(service=service)
@@ -232,7 +233,7 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
 
                 # Set machine state for fixture to started
                 for vminfo in fixtures.VMS_INFO:
-                    vminfo.status = 'running'
+                    vminfo.status = prox_types.VMStatus.RUNNING
 
                 state = userservice.deploy_for_user(models.User())
 
@@ -280,7 +281,7 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
                     if counter > 5:
                         # Set machine state for fixture to stopped
                         for vminfo in fixtures.VMS_INFO:
-                            vminfo.status = 'stopped'
+                            vminfo.status = prox_types.VMStatus.STOPPED
 
                 self.assertEqual(state, types.states.TaskState.FINISHED, f'Extra info: {userservice._error_debug_info} {userservice._reason} {userservice._queue}')
 

@@ -38,7 +38,7 @@ import logging
 from uds.core import types as core_types
 from uds.core.util import security
 from uds.core.util.cache import Cache
-from uds.core.util.decorators import cached, ensure_connected
+from uds.core.util.decorators import cached
 
 from . import types, consts, exceptions
 
@@ -58,11 +58,13 @@ class ProxmoxClient:
     _port: int
     _credentials: tuple[tuple[str, str], tuple[str, str]]
     _url: str
-    _validate_cert: bool
+    _verify_ssl: bool
     _timeout: int
 
     _ticket: str
     _csrf: str
+
+    _session: typing.Optional[requests.Session] = None
 
     cache: typing.Optional['Cache']
 
@@ -73,13 +75,13 @@ class ProxmoxClient:
         username: str,
         password: str,
         timeout: int = 5,
-        validate_certificate: bool = False,
+        verify_ssl: bool = False,
         cache: typing.Optional['Cache'] = None,
     ) -> None:
         self._host = host
         self._port = port
         self._credentials = (('username', username), ('password', password))
-        self._validate_cert = validate_certificate
+        self._verify_ssl = verify_ssl
         self._timeout = timeout
         self._url = 'https://{}:{}/api2/json/'.format(self._host, self._port)
 
@@ -89,12 +91,57 @@ class ProxmoxClient:
         self._csrf = ''
 
     @property
-    def headers(self) -> dict[str, str]:
-        return {
-            'Accept': 'application/json',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'CSRFPreventionToken': self._csrf,
-        }
+    def session(self) -> requests.Session:
+        if self._session is None:
+            return self.connect()
+        return self._session
+
+    def connect(self, force: bool = False) -> requests.Session:
+        if self._ticket and self._session and not force:
+            return self._session
+
+        self._session = security.secure_requests_session(verify=self._verify_ssl)
+        self._session.headers.update(
+            {
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        )
+
+        def _update_session(ticket: str, csrf: str) -> None:
+            session = typing.cast('requests.Session', self._session)
+            self._ticket = ticket
+            self._csrf = csrf
+            session.headers.update({'CSRFPreventionToken': self._csrf})
+            session.cookies.update(  # pyright: ignore[reportUnknownMemberType]
+                {'PVEAuthCookie': self._ticket},
+            )
+
+        # we could cache this for a while, we know that at least for 30 minutes
+        if self.cache and not force:
+            dc = self.cache.get(self._host + 'conn')
+            if dc:  # Stored on cache
+                _update_session(*dc)  # Set session data, dc has ticket, csrf
+
+        try:
+            result = self._session.post(
+                url=self.get_api_url('access/ticket'),
+                data=self._credentials,
+                timeout=self._timeout,
+            )
+            if not result.ok:
+                raise exceptions.ProxmoxAuthError(result.content.decode('utf8'))
+            data = result.json()['data']
+            ticket = data['ticket']
+            csrf = data['CSRFPreventionToken']
+
+            if self.cache:
+                self.cache.put(self._host + 'conn', (ticket, csrf), validity=1800)  # 30 minutes
+
+            _update_session(ticket, csrf)
+            return self._session
+        except requests.RequestException as e:
+            raise exceptions.ProxmoxConnectionError(str(e)) from e
 
     def ensure_correct(self, response: 'requests.Response', *, node: typing.Optional[str]) -> typing.Any:
         if not response.ok:
@@ -128,15 +175,13 @@ class ProxmoxClient:
 
         return response.json()
 
-    def _compose_url_for(self, path: str) -> str:
+    def get_api_url(self, path: str) -> str:
         return self._url + path
 
-    def _get(self, path: str, *, node: typing.Optional[str] = None) -> typing.Any:
+    def do_get(self, path: str, *, node: typing.Optional[str] = None) -> typing.Any:
         try:
-            result = security.secure_requests_session(verify=self._validate_cert).get(
-                self._compose_url_for(path),
-                headers=self.headers,
-                cookies={'PVEAuthCookie': self._ticket},
+            result = self.session.get(
+                self.get_api_url(path),
                 timeout=self._timeout,
             )
 
@@ -146,7 +191,7 @@ class ProxmoxClient:
 
         return self.ensure_correct(result, node=node)
 
-    def _post(
+    def do_post(
         self,
         path: str,
         data: typing.Optional[collections.abc.Iterable[tuple[str, str]]] = None,
@@ -154,11 +199,9 @@ class ProxmoxClient:
         node: typing.Optional[str] = None,
     ) -> typing.Any:
         try:
-            result = security.secure_requests_session(verify=self._validate_cert).post(
-                self._compose_url_for(path),
+            result = self.session.post(
+                self.get_api_url(path),
                 data=data,  # type: ignore
-                headers=self.headers,
-                cookies={'PVEAuthCookie': self._ticket},
                 timeout=self._timeout,
             )
 
@@ -168,7 +211,7 @@ class ProxmoxClient:
 
         return self.ensure_correct(result, node=node)
 
-    def _delete(
+    def do_delete(
         self,
         path: str,
         data: typing.Optional[collections.abc.Iterable[tuple[str, str]]] = None,
@@ -176,11 +219,9 @@ class ProxmoxClient:
         node: typing.Optional[str] = None,
     ) -> typing.Any:
         try:
-            result = security.secure_requests_session(verify=self._validate_cert).delete(
-                self._compose_url_for(path),
+            result = self.session.delete(
+                self.get_api_url(path),
                 data=data,  # type: ignore
-                headers=self.headers,
-                cookies={'PVEAuthCookie': self._ticket},
                 timeout=self._timeout,
             )
 
@@ -196,35 +237,6 @@ class ProxmoxClient:
 
         return self.ensure_correct(result, node=node)
 
-    def connect(self, force: bool = False) -> None:
-        if self._ticket:
-            return  # Already connected
-
-        # we could cache this for a while, we know that at least for 30 minutes
-        if self.cache and not force:
-            dc = self.cache.get(self._host + 'conn')
-            if dc:  # Stored on cache
-                self._ticket, self._csrf = dc
-                return
-
-        try:
-            result = security.secure_requests_session(verify=self._validate_cert).post(
-                url=self._compose_url_for('access/ticket'),
-                data=self._credentials,
-                headers=self.headers,
-                timeout=self._timeout,
-            )
-            if not result.ok:
-                raise exceptions.ProxmoxAuthError(result.content.decode('utf8'))
-            data = result.json()['data']
-            self._ticket = data['ticket']
-            self._csrf = data['CSRFPreventionToken']
-
-            if self.cache:
-                self.cache.put(self._host + 'conn', (self._ticket, self._csrf), validity=1800)  # 30 minutes
-        except requests.RequestException as e:
-            raise exceptions.ProxmoxConnectionError(str(e)) from e
-
     def test(self) -> bool:
         try:
             self.connect()
@@ -233,47 +245,40 @@ class ProxmoxClient:
             return False
         return True
 
-    @ensure_connected
     @cached('cluster', consts.CACHE_DURATION, key_helper=caching_key_helper)
     def get_cluster_info(self, **kwargs: typing.Any) -> types.ClusterInfo:
-        return types.ClusterInfo.from_dict(self._get('cluster/status'))
+        return types.ClusterInfo.from_dict(self.do_get('cluster/status'))
 
-    @ensure_connected
     def get_next_vmid(self) -> int:
-        return int(self._get('cluster/nextid')['data'])
+        return int(self.do_get('cluster/nextid')['data'])
 
-    @ensure_connected
     def is_vmid_available(self, vmid: int) -> bool:
         try:
-            self._get(f'cluster/nextid?vmid={vmid}')
+            self.do_get(f'cluster/nextid?vmid={vmid}')
         except Exception:  # Not available
             return False
         return True
 
-    @ensure_connected
     @cached('nodeNets', consts.CACHE_DURATION, args=1, kwargs=['node'], key_helper=caching_key_helper)
     def get_node_networks(self, node: str, **kwargs: typing.Any) -> typing.Any:
-        return self._get(f'nodes/{node}/network', node=node)['data']
+        return self.do_get(f'nodes/{node}/network', node=node)['data']
 
     # pylint: disable=unused-argument
-    @ensure_connected
     @cached('nodeGpuDevices', consts.CACHE_DURATION_LONG, key_helper=caching_key_helper)
     def list_node_gpu_devices(self, node: str, **kwargs: typing.Any) -> list[str]:
         return [
             device['id']
-            for device in self._get(f'nodes/{node}/hardware/pci', node=node)['data']
+            for device in self.do_get(f'nodes/{node}/hardware/pci', node=node)['data']
             if device.get('mdev')
         ]
 
-    @ensure_connected
     def list_node_vgpus(self, node: str, **kwargs: typing.Any) -> list[types.VGPUInfo]:
         return [
             types.VGPUInfo.from_dict(gpu)
             for device in self.list_node_gpu_devices(node)
-            for gpu in self._get(f'nodes/{node}/hardware/pci/{device}/mdev', node=node)['data']
+            for gpu in self.do_get(f'nodes/{node}/hardware/pci/{device}/mdev', node=node)['data']
         ]
 
-    @ensure_connected
     def node_has_vgpus_available(
         self, node: str, vgpu_type: typing.Optional[str], **kwargs: typing.Any
     ) -> bool:
@@ -281,7 +286,6 @@ class ProxmoxClient:
             gpu.available and (vgpu_type is None or gpu.type == vgpu_type) for gpu in self.list_node_vgpus(node)
         )
 
-    @ensure_connected
     def get_best_node_for_vm(
         self,
         min_memory: int = 0,
@@ -319,7 +323,6 @@ class ProxmoxClient:
 
         return best if best.status == 'online' else None
 
-    @ensure_connected
     def clone_vm(
         self,
         vmid: int,
@@ -389,16 +392,14 @@ class ProxmoxClient:
             node=use_node,
             vmid=new_vmid,
             upid=types.UPID.from_dict(
-                self._post(f'nodes/{src_node}/qemu/{vmid}/clone', data=params, node=src_node)
+                self.do_post(f'nodes/{src_node}/qemu/{vmid}/clone', data=params, node=src_node)
             ),
         )
 
-    @ensure_connected
     @cached('hagrps', consts.CACHE_DURATION, key_helper=caching_key_helper)
     def list_ha_groups(self, **kwargs: typing.Any) -> list[str]:
-        return [g['group'] for g in self._get('cluster/ha/groups')['data']]
+        return [g['group'] for g in self.do_get('cluster/ha/groups')['data']]
 
-    @ensure_connected
     def enable_vm_ha(self, vmid: int, started: bool = False, group: typing.Optional[str] = None) -> None:
         """
         Enable high availability for a virtual machine.
@@ -408,7 +409,7 @@ class ProxmoxClient:
             started (bool, optional): Whether the virtual machine should be started. Defaults to False.
             group (str, optional): The group to which the virtual machine belongs. Defaults to None.
         """
-        self._post(
+        self.do_post(
             'cluster/ha/resources',
             data=[
                 ('sid', f'vm:{vmid}'),
@@ -420,29 +421,26 @@ class ProxmoxClient:
             + ([('group', group)] if group else []),  # Append ha group if present
         )
 
-    @ensure_connected
     def disable_vm_ha(self, vmid: int) -> None:
         try:
-            self._delete(f'cluster/ha/resources/vm%3A{vmid}')
+            self.do_delete(f'cluster/ha/resources/vm%3A{vmid}')
         except Exception:
             logger.exception('removeFromHA')
 
-    @ensure_connected
     def set_vm_protection(self, vmid: int, node: typing.Optional[str] = None, protection: bool = False) -> None:
         params: list[tuple[str, str]] = [
             ('protection', str(int(protection))),
         ]
         node = node or self.get_vm_info(vmid).node
-        self._post(f'nodes/{node}/qemu/{vmid}/config', data=params, node=node)
+        self.do_post(f'nodes/{node}/qemu/{vmid}/config', data=params, node=node)
 
-    @ensure_connected
     def get_guest_ip_address(
         self, vmid: int, node: typing.Optional[str], ip_version: typing.Literal['4', '6', ''] = ''
     ) -> str:
         """Returns the guest ip address of the specified machine"""
         try:
             node = node or self.get_vm_info(vmid).node
-            ifaces_list: list[dict[str, typing.Any]] = self._get(
+            ifaces_list: list[dict[str, typing.Any]] = self.do_get(
                 f'nodes/{node}/qemu/{vmid}/agent/network-get-interfaces',
                 node=node,
             )['data']['result']
@@ -463,32 +461,41 @@ class ProxmoxClient:
 
         raise exceptions.ProxmoxError('No ip address found for vm {}'.format(vmid))
 
-    @ensure_connected
     def delete_vm(self, vmid: int, node: typing.Optional[str] = None, purge: bool = True) -> types.UPID:
         node = node or self.get_vm_info(vmid).node
-        return types.UPID.from_dict(self._delete(f'nodes/{node}/qemu/{vmid}?purge=1', node=node))
+        return types.UPID.from_dict(self.do_delete(f'nodes/{node}/qemu/{vmid}?purge=1', node=node))
 
-    @ensure_connected
     def list_snapshots(self, vmid: int, node: typing.Optional[str] = None) -> list[types.SnapshotInfo]:
         node = node or self.get_vm_info(vmid).node
         try:
             return [
                 types.SnapshotInfo.from_dict(s)
-                for s in self._get(f'nodes/{node}/qemu/{vmid}/snapshot', node=node)['data']
+                for s in self.do_get(f'nodes/{node}/qemu/{vmid}/snapshot', node=node)['data']
             ]
         except Exception:
             return []  # If we can't get snapshots, just return empty list
 
-    @ensure_connected
+    def get_current_vm_snapshot(
+        self, vmid: int, node: typing.Optional[str] = None
+    ) -> typing.Optional[types.SnapshotInfo]:
+        return (
+            sorted(
+                filter(lambda x: x.snaptime, self.list_snapshots(vmid, node)),
+                key=lambda x: x.snaptime or 0,
+                reverse=True,
+            )
+            + [None]
+        )[0]
+
     @cached('snapshots', consts.CACHE_DURATION, key_helper=caching_key_helper)
     def supports_snapshot(self, vmid: int, node: typing.Optional[str] = None) -> bool:
         # If machine uses tpm, snapshots are not supported
         return not self.get_vm_config(vmid, node).tpmstate0
 
-    @ensure_connected
     def create_snapshot(
         self,
         vmid: int,
+        *,
         node: 'str|None' = None,
         name: typing.Optional[str] = None,
         description: typing.Optional[str] = None,
@@ -504,34 +511,40 @@ class ProxmoxClient:
             ('description', description or f'UDS Snapshot created at {time.strftime("%c")}'),
         ]
         params.append(('snapname', name or ''))
-        return types.UPID.from_dict(self._post(f'nodes/{node}/qemu/{vmid}/snapshot', data=params, node=node))
+        return types.UPID.from_dict(self.do_post(f'nodes/{node}/qemu/{vmid}/snapshot', data=params, node=node))
 
-    @ensure_connected
     def remove_snapshot(
-        self, vmid: int, node: 'str|None' = None, name: typing.Optional[str] = None
+        self,
+        vmid: int,
+        *,
+        node: 'str|None' = None,
+        name: typing.Optional[str] = None,
     ) -> types.UPID:
         node = node or self.get_vm_info(vmid).node
         if name is None:
             raise exceptions.ProxmoxError('Snapshot name is required')
-        return types.UPID.from_dict(self._delete(f'nodes/{node}/qemu/{vmid}/snapshot/{name}', node=node))
+        return types.UPID.from_dict(self.do_delete(f'nodes/{node}/qemu/{vmid}/snapshot/{name}', node=node))
 
-    @ensure_connected
     def restore_snapshot(
-        self, vmid: int, node: 'str|None' = None, name: typing.Optional[str] = None
+        self,
+        vmid: int,
+        *,
+        node: 'str|None' = None,
+        name: typing.Optional[str] = None,
     ) -> types.UPID:
         node = node or self.get_vm_info(vmid).node
         if name is None:
             raise exceptions.ProxmoxError('Snapshot name is required')
-        return types.UPID.from_dict(self._post(f'nodes/{node}/qemu/{vmid}/snapshot/{name}/rollback', node=node))
+        return types.UPID.from_dict(
+            self.do_post(f'nodes/{node}/qemu/{vmid}/snapshot/{name}/rollback', node=node)
+        )
 
-    @ensure_connected
     def get_task(self, node: str, upid: str) -> types.TaskStatus:
         return types.TaskStatus.from_dict(
-            self._get(f'nodes/{node}/tasks/{urllib.parse.quote(upid)}/status', node=node)
+            self.do_get(f'nodes/{node}/tasks/{urllib.parse.quote(upid)}/status', node=node)
         )
 
     @cached('vms', consts.CACHE_DURATION, key_helper=caching_key_helper)
-    @ensure_connected
     def list_vms(
         self, node: typing.Union[None, str, collections.abc.Iterable[str]] = None, **kwargs: typing.Any
     ) -> list[types.VMInfo]:
@@ -545,22 +558,19 @@ class ProxmoxClient:
 
         result: list[types.VMInfo] = []
         for node_name in node_list:
-            for vm in self._get(f'nodes/{node_name}/qemu', node=node_name)['data']:
+            for vm in self.do_get(f'nodes/{node_name}/qemu', node=node_name)['data']:
                 vm['node'] = node_name
                 result.append(types.VMInfo.from_dict(vm))
 
         return sorted(result, key=lambda x: '{}{}'.format(x.node, x.name))
 
     @cached('vmip', consts.CACHE_INFO_DURATION, key_helper=caching_key_helper)
-    @ensure_connected
-    def get_vm_pool_info(
-        self, vmid: int, poolid: typing.Optional[str], **kwargs: typing.Any
-    ) -> types.VMInfo:
+    def get_vm_pool_info(self, vmid: int, poolid: typing.Optional[str], **kwargs: typing.Any) -> types.VMInfo:
         # try to locate machine in pool
         node = None
         if poolid:
             try:
-                for i in self._get(f'pools/{poolid}', node=node)['data']['members']:
+                for i in self.do_get(f'pools/{poolid}', node=node)['data']['members']:
                     try:
                         if i['vmid'] == vmid:
                             node = i['node']
@@ -572,16 +582,13 @@ class ProxmoxClient:
 
         return self.get_vm_info(vmid, node, **kwargs)
 
-    @ensure_connected
     @cached('vmin', consts.CACHE_INFO_DURATION, key_helper=caching_key_helper)
-    def get_vm_info(
-        self, vmid: int, node: typing.Optional[str] = None, **kwargs: typing.Any
-    ) -> types.VMInfo:
+    def get_vm_info(self, vmid: int, node: typing.Optional[str] = None, **kwargs: typing.Any) -> types.VMInfo:
         nodes = [types.Node(node, False, False, 0, '', '', '')] if node else self.get_cluster_info().nodes
         any_node_is_down = False
         for n in nodes:
             try:
-                vm = self._get(f'nodes/{n.name}/qemu/{vmid}/status/current', node=node)['data']
+                vm = self.do_get(f'nodes/{n.name}/qemu/{vmid}/status/current', node=node)['data']
                 vm['node'] = n.name
                 return types.VMInfo.from_dict(vm)
             except exceptions.ProxmoxConnectionError:
@@ -596,14 +603,14 @@ class ProxmoxClient:
 
         raise exceptions.ProxmoxNotFound(f'VM {vmid} not found')
 
-    @ensure_connected
     def get_vm_config(
         self, vmid: int, node: typing.Optional[str] = None, **kwargs: typing.Any
     ) -> types.VMConfiguration:
         node = node or self.get_vm_info(vmid).node
-        return types.VMConfiguration.from_dict(self._get(f'nodes/{node}/qemu/{vmid}/config', node=node)['data'])
+        return types.VMConfiguration.from_dict(
+            self.do_get(f'nodes/{node}/qemu/{vmid}/config', node=node)['data']
+        )
 
-    @ensure_connected
     def set_vm_net_mac(
         self,
         vmid: int,
@@ -613,7 +620,7 @@ class ProxmoxClient:
     ) -> None:
         node = node or self.get_vm_info(vmid).node
         # First, read current configuration and extract network configuration
-        config = self._get(f'nodes/{node}/qemu/{vmid}/config', node=node)['data']
+        config = self.do_get(f'nodes/{node}/qemu/{vmid}/config', node=node)['data']
         if netid not in config:
             # Get first network interface (netX where X is a number)
             netid = next((k for k in config if k.startswith('net') and k[3:].isdigit()), None)
@@ -627,61 +634,52 @@ class ProxmoxClient:
 
         logger.debug('Updating mac address for VM %s: %s=%s', vmid, netid, netdata)
 
-        self._post(
+        self.do_post(
             f'nodes/{node}/qemu/{vmid}/config',
             data=[(netid, netdata)],
             node=node,
         )
 
-    @ensure_connected
     def start_vm(self, vmid: int, node: typing.Optional[str] = None) -> types.UPID:
         # if exitstatus is "OK" or contains "already running", all is fine
         node = node or self.get_vm_info(vmid).node
-        return types.UPID.from_dict(self._post(f'nodes/{node}/qemu/{vmid}/status/start', node=node))
+        return types.UPID.from_dict(self.do_post(f'nodes/{node}/qemu/{vmid}/status/start', node=node))
 
-    @ensure_connected
     def stop_vm(self, vmid: int, node: typing.Optional[str] = None) -> types.UPID:
         node = node or self.get_vm_info(vmid).node
-        return types.UPID.from_dict(self._post(f'nodes/{node}/qemu/{vmid}/status/stop', node=node))
+        return types.UPID.from_dict(self.do_post(f'nodes/{node}/qemu/{vmid}/status/stop', node=node))
 
-    @ensure_connected
     def reset_vm(self, vmid: int, node: typing.Optional[str] = None) -> types.UPID:
         node = node or self.get_vm_info(vmid).node
-        return types.UPID.from_dict(self._post(f'nodes/{node}/qemu/{vmid}/status/reset', node=node))
+        return types.UPID.from_dict(self.do_post(f'nodes/{node}/qemu/{vmid}/status/reset', node=node))
 
-    @ensure_connected
     def suspend_vm(self, vmid: int, node: typing.Optional[str] = None) -> types.UPID:
         # Note: Suspend, in fact, invoques sets the machine state to "paused"
         return self.shutdown_vm(vmid, node)
         # node = node or self.get_machine_info(vmid).node
         # return types.UPID.from_dict(self._post(f'nodes/{node}/qemu/{vmid}/status/suspend', node=node))
 
-    @ensure_connected
     def shutdown_vm(self, vmid: int, node: typing.Optional[str] = None) -> types.UPID:
         # if exitstatus is "OK" or contains "already running", all is fine
         node = node or self.get_vm_info(vmid).node
-        return types.UPID.from_dict(self._post(f'nodes/{node}/qemu/{vmid}/status/shutdown', node=node))
+        return types.UPID.from_dict(self.do_post(f'nodes/{node}/qemu/{vmid}/status/shutdown', node=node))
 
-    @ensure_connected
     def convert_vm_to_template(self, vmid: int, node: typing.Optional[str] = None) -> None:
         node = node or self.get_vm_info(vmid).node
-        self._post(f'nodes/{node}/qemu/{vmid}/template', node=node)
+        self.do_post(f'nodes/{node}/qemu/{vmid}/template', node=node)
         # Ensure cache is reset for this VM (as it is now a template)
         self.get_vm_info(vmid, force=True)
 
     # proxmox has a "resume", but start works for suspended vm so we use it
-    @ensure_connected
     def resume_vm(self, vmid: int, node: typing.Optional[str] = None) -> types.UPID:
         return self.start_vm(vmid, node)
 
-    @ensure_connected
     @cached('storage', consts.CACHE_DURATION, key_helper=caching_key_helper)
     def get_storage_info(self, storage: str, node: str, **kwargs: typing.Any) -> types.StorageInfo:
         return types.StorageInfo.from_dict(
-            self._get(f'nodes/{node}/storage/{urllib.parse.quote(storage)}/status', node=node)['data']
+            self.do_get(f'nodes/{node}/storage/{urllib.parse.quote(storage)}/status', node=node)['data']
         )
 
-    @ensure_connected
     @cached('storages', consts.CACHE_DURATION, key_helper=caching_key_helper)
     def list_storages(
         self,
@@ -701,31 +699,29 @@ class ProxmoxClient:
         result: list[types.StorageInfo] = []
 
         for node_name in nodes:
-            for storage in self._get(f'nodes/{node_name}/storage{params}', node=node_name)['data']:
+            for storage in self.do_get(f'nodes/{node_name}/storage{params}', node=node_name)['data']:
                 storage['node'] = node_name
                 storage['content'] = storage['content'].split(',')
                 result.append(types.StorageInfo.from_dict(storage))
 
         return result
 
-    @ensure_connected
     @cached('nodeStats', consts.CACHE_INFO_DURATION, key_helper=caching_key_helper)
     def get_node_stats(self, **kwargs: typing.Any) -> list[types.NodeStats]:
         return [
-            types.NodeStats.from_dict(nodeStat) for nodeStat in self._get('cluster/resources?type=node')['data']
+            types.NodeStats.from_dict(nodeStat)
+            for nodeStat in self.do_get('cluster/resources?type=node')['data']
         ]
 
-    @ensure_connected
     @cached('pools', consts.CACHE_DURATION // 6, key_helper=caching_key_helper)
     def list_pools(self, **kwargs: typing.Any) -> list[types.PoolInfo]:
-        return [types.PoolInfo.from_dict(poolInfo) for poolInfo in self._get('pools')['data']]
+        return [types.PoolInfo.from_dict(poolInfo) for poolInfo in self.do_get('pools')['data']]
 
-    @ensure_connected
     @cached('pool', consts.CACHE_DURATION, key_helper=caching_key_helper)
     def get_pool_info(
         self, pool_id: str, retrieve_vm_names: bool = False, **kwargs: typing.Any
     ) -> types.PoolInfo:
-        pool_info = types.PoolInfo.from_dict(self._get(f'pools/{pool_id}')['data'])
+        pool_info = types.PoolInfo.from_dict(self.do_get(f'pools/{pool_id}')['data'])
         if retrieve_vm_names:
             for i in range(len(pool_info.members)):
                 try:
@@ -734,7 +730,6 @@ class ProxmoxClient:
                     pool_info.members[i].vmname = f'VM-{pool_info.members[i].vmid}'
         return pool_info
 
-    @ensure_connected
     def get_console_connection(
         self, vmid: int, node: typing.Optional[str] = None
     ) -> typing.Optional[core_types.services.ConsoleConnectionInfo]:
@@ -742,7 +737,7 @@ class ProxmoxClient:
         Gets the connetion info for the specified machine
         """
         node = node or self.get_vm_info(vmid).node
-        res: dict[str, typing.Any] = self._post(f'nodes/{node}/qemu/{vmid}/spiceproxy', node=node)['data']
+        res: dict[str, typing.Any] = self.do_post(f'nodes/{node}/qemu/{vmid}/spiceproxy', node=node)['data']
         return core_types.services.ConsoleConnectionInfo(
             type=res['type'],
             proxy=res['proxy'],
@@ -767,9 +762,8 @@ class ProxmoxClient:
         # 'tls-port': 61000,
         # 'ca': '-----BEGIN CERTIFICATE-----\\n......\\n-----END CERTIFICATE-----\\n'}}
 
-    @ensure_connected
     def journal(self, node: str, lastentries: int = 4, **kwargs: typing.Any) -> list[str]:
         try:
-            return self._get(f'nodes/{node}/journal?lastentries={lastentries}')['data']
+            return self.do_get(f'nodes/{node}/journal?lastentries={lastentries}')['data']
         except Exception:
             return []

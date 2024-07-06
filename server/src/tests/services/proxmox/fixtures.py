@@ -146,8 +146,8 @@ DEF_HA_GROUPS: list[str] = [
 
 DEF_VMS_INFO: list[prox_types.VMInfo] = [
     prox_types.VMInfo(
-        status='stopped',
-        vmid=i,
+        status=prox_types.VMStatus.STOPPED,
+        id=i,
         node=DEF_NODES[i % len(DEF_NODES)].name,
         template=True,
         agent='agent',
@@ -197,7 +197,7 @@ DEF_UPID: prox_types.UPID = prox_types.UPID(
     pstart=1,
     starttime=datetime.datetime.now(),
     type='type',
-    vmid=DEF_VMS_INFO[0].vmid,
+    vmid=DEF_VMS_INFO[0].id,
     user='user',
     upid='upid',
 )
@@ -205,7 +205,7 @@ DEF_UPID: prox_types.UPID = prox_types.UPID(
 
 DEF_VM_CREATION_RESULT: prox_types.VmCreationResult = prox_types.VmCreationResult(
     node=DEF_NODES[0].name,
-    vmid=DEF_VMS_INFO[0].vmid,
+    vmid=DEF_VMS_INFO[0].id,
     upid=DEF_UPID,
 )
 
@@ -240,7 +240,7 @@ DEF_POOL_MEMBERS: list[prox_types.PoolMemberInfo] = [
         node=DEF_NODES[i % len(DEF_NODES)].name,
         storage=DEF_STORAGES[i % len(DEF_STORAGES)].storage,
         type='type',
-        vmid=DEF_VMS_INFO[i % len(DEF_VMS_INFO)].vmid,
+        vmid=DEF_VMS_INFO[i % len(DEF_VMS_INFO)].id,
         vmname=DEF_VMS_INFO[i % len(DEF_VMS_INFO)].name or '',
     )
     for i in range(10)
@@ -248,7 +248,7 @@ DEF_POOL_MEMBERS: list[prox_types.PoolMemberInfo] = [
 
 DEF_POOLS: list[prox_types.PoolInfo] = [
     prox_types.PoolInfo(
-        poolid=f'pool_{i}',
+        id=f'pool_{i}',
         comments=f'comments_{i}',
         members=DEF_POOL_MEMBERS,
     )
@@ -316,7 +316,7 @@ def replace_vm_info(vmid: int, **kwargs: typing.Any) -> prox_types.UPID:
     Set the values of VMS_INFO[vmid - 1]
     """
     for i in range(len(VMS_INFO)):
-        if VMS_INFO[i].vmid == vmid:
+        if VMS_INFO[i].id == vmid:
             for k, v in kwargs.items():
                 setattr(VMS_INFO[i], k, v)
             break
@@ -381,7 +381,12 @@ CLIENT_METHODS_INFO: list[AutoSpecMethodInfo] = [
     AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.delete_vm, returns=UPID),
     # list_snapshots
     AutoSpecMethodInfo(
-        uds.services.Proxmox.proxmox.client.ProxmoxClient.list_snapshots, returns=SNAPSHOTS_INFO
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.list_snapshots, 
+        returns=lambda *args, **kwargs: SNAPSHOTS_INFO, # pyright: ignore[reportUnknownLambdaType]
+    ),
+    AutoSpecMethodInfo(
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.get_current_vm_snapshot,
+        returns=lambda *args, **kwargs: (SNAPSHOTS_INFO + [None])[0],  # pyright: ignore[reportUnknownLambdaType]
     ),
     # supports_snapshot
     AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.supports_snapshot, returns=True),
@@ -475,7 +480,7 @@ CLIENT_METHODS_INFO: list[AutoSpecMethodInfo] = [
     AutoSpecMethodInfo(
         uds.services.Proxmox.proxmox.client.ProxmoxClient.get_pool_info,
         returns=lambda poolid, **kwargs: next(  # pyright: ignore
-            filter(lambda p: p.poolid == poolid, POOLS)  # pyright: ignore
+            filter(lambda p: p.id == poolid, POOLS)  # pyright: ignore
         ),
     ),
     # get_console_connection
@@ -503,10 +508,10 @@ PROVIDER_VALUES_DICT: gui.ValuesDictType = {
 
 
 SERVICE_LINKED_VALUES_DICT: gui.ValuesDictType = {
-    'pool': POOLS[0].poolid,
+    'pool': POOLS[0].id,
     'ha': HA_GROUPS[0],
     'try_soft_shutdown': False,
-    'machine': VMS_INFO[0].vmid,
+    'machine': VMS_INFO[0].id,
     'datastore': STORAGES[0].storage,
     'gpu': VGPUS[0].type,
     'basename': 'base',
@@ -517,8 +522,8 @@ SERVICE_LINKED_VALUES_DICT: gui.ValuesDictType = {
 
 SERVICE_FIXED_VALUES_DICT: gui.ValuesDictType = {
     'token': '',
-    'pool': POOLS[0].poolid,
-    'machines': [str(VMS_INFO[2].vmid), str(VMS_INFO[3].vmid), str(VMS_INFO[4].vmid)],
+    'pool': POOLS[0].id,
+    'machines': [str(VMS_INFO[2].id), str(VMS_INFO[3].id), str(VMS_INFO[4].id)],
     'use_snapshots': True,
     'prov_uuid': '',
 }
@@ -537,9 +542,8 @@ def patched_provider(
 ) -> typing.Generator[provider.ProxmoxProvider, None, None]:
     client = create_client_mock()
     provider = create_provider(**kwargs)
-    with mock.patch.object(provider, 'api') as api:
-        api.return_value = client
-        yield provider
+    provider._cached_api = client 
+    yield provider
 
 
 def create_provider(**kwargs: typing.Any) -> provider.ProxmoxProvider:
@@ -653,7 +657,7 @@ def create_userservice_linked(
 
 
 # Other helpers
-def set_all_vm_state(state: str) -> None:
+def set_all_vm_state(status: prox_types.VMStatus) -> None:
     # Set machine state for fixture to stopped
     for i in VMS_INFO:
-        i.status = state
+        i.status = status

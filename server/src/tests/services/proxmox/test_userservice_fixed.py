@@ -40,6 +40,8 @@ from . import fixtures
 from ...utils.test import UDSTransactionTestCase
 from ...utils.helpers import limited_iterator
 
+from uds.services.Proxmox.proxmox import types as prox_types
+
 
 # We use transactions on some related methods (storage access, etc...)
 class TestProxmoxFixedUserService(UDSTransactionTestCase):
@@ -100,7 +102,7 @@ class TestProxmoxFixedUserService(UDSTransactionTestCase):
             self.assertEqual(state, types.states.TaskState.FINISHED)
             
             # Set vm state to stopped
-            fixtures.set_all_vm_state('stopped')
+            fixtures.set_all_vm_state(prox_types.VMStatus.STOPPED)
             # Anc clear userservice cache
             userservice.cache.clear()
             
