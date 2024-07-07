@@ -85,7 +85,7 @@ class Connection(Handler):
 
         return res
 
-    def serviceList(self) -> dict[str, typing.Any]:
+    def service_list(self) -> dict[str, typing.Any]:
         # We look for services for this authenticator groups. User is logged in in just 1 authenticator, so his groups must coincide with those assigned to ds
         # Ensure user is present on request, used by web views methods
         self._request.user = self._user
@@ -173,10 +173,10 @@ class Connection(Handler):
             logger.exception("Exception")
             return Connection.result(error=str(e))
 
-    def getTicketContent(self, ticketId: str) -> dict[str, typing.Any]:  # pylint: disable=unused-argument
+    def get_ticket_content(self, ticketId: str) -> dict[str, typing.Any]:  # pylint: disable=unused-argument
         return {}
 
-    def getUdsLink(self, idService: str, idTransport: str) -> dict[str, typing.Any]:
+    def get_uds_link(self, idService: str, idTransport: str) -> dict[str, typing.Any]:
         # Returns the UDS link for the user & transport
         self._request.user = self._user
         setattr(self._request, '_cryptedpass', self.session['REST']['password'])
@@ -198,9 +198,9 @@ class Connection(Handler):
         return match(
             self._args,
             error,
-            ((), self.serviceList),
-            (('<ticketId>',), self.getTicketContent),
-            (('<idService>', '<idTransport>', 'udslink'), self.getUdsLink),
+            ((), self.service_list),
+            (('<ticketId>',), self.get_ticket_content),
+            (('<idService>', '<idTransport>', 'udslink'), self.get_uds_link),
             (('<idService>', '<idTransport>', '<skip>'), self.connection),
             (('<idService>', '<idTransport>'), self.connection),
             (('<idService>', '<idTransport>', '<scrambler>', '<hostname>'), self.script),
