@@ -516,9 +516,9 @@ class DynamicServiceTest(UDSTransactionTestCase):
             (True, False, True): (0, 0, 0, 1, 1, 0, 0),  # 2
             (True, True, False): (0, 0, 0, 1, 1, 1, 0),  # 3
             (True, False, False): (0, 0, 0, 1, 1, 0, 0),  # 4
-            (False, True, True): (0, 1, 0, 0, 1, 0, 0),  # 5
+            (False, True, True): (0, 1, 0, 0, 2, 0, 0),  # 5  -- Stop will also ensure that not is running...
             (False, False, True): (0, 0, 0, 0, 0, 0, 0),  # 6
-            (False, True, False): (0, 1, 0, 0, 1, 0, 0),  # 7
+            (False, True, False): (0, 1, 0, 0, 2, 0, 0),  # 7  -- Stop will also ensure that not is running...
             (False, False, False): (0, 0, 0, 0, 0, 0, 0),  # 8
         }
 
@@ -549,7 +549,7 @@ class DynamicServiceTest(UDSTransactionTestCase):
                                 instance.stop.call_count,
                                 instance.shutdown.call_count,
                             ),
-                            f'COUNTERS_ADD {running} {execute_later} --> {COUNTERS_ADD[(running, execute_later, should_try_soft_shutdown)]}',
+                            f'COUNTERS_ADD {running} {execute_later} {should_try_soft_shutdown} --> {COUNTERS_ADD[(running, execute_later, should_try_soft_shutdown)]}',
                         )
 
                         # Fix last_check
@@ -570,7 +570,7 @@ class DynamicServiceTest(UDSTransactionTestCase):
                                 instance.stop.call_count,
                                 instance.shutdown.call_count,
                             ),
-                            f'COUNTERS_JOB {running} {execute_later} --> {COUNTERS_JOB[(running, execute_later, should_try_soft_shutdown)]}',
+                            f'COUNTERS_JOB {running} {execute_later} {should_try_soft_shutdown} --> {COUNTERS_JOB[(running, execute_later, should_try_soft_shutdown)]}',
                         )
 
     def test_stop_retry_stop(self) -> None:

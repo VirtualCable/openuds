@@ -226,7 +226,7 @@ DEF_TASK_STATUS = prox_types.TaskStatus(
     pstart=1,
     starttime=datetime.datetime.now(),
     type='type',
-    status='stopped',
+    status=prox_types.VMStatus.STOPPED,
     exitstatus='OK',
     user='user',
     upid='upid',
@@ -420,30 +420,30 @@ CLIENT_METHODS_INFO: list[AutoSpecMethodInfo] = [
     # enable_machine_ha return None
     # start_machine
     AutoSpecMethodInfo(
-        uds.services.Proxmox.proxmox.client.ProxmoxClient.start_vm, returns=replacer_vm_info(status='running')
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.start_vm, returns=replacer_vm_info(status=prox_types.VMStatus.RUNNING)
     ),
     # stop_machine
     AutoSpecMethodInfo(
-        uds.services.Proxmox.proxmox.client.ProxmoxClient.stop_vm, returns=replacer_vm_info(status='stopped')
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.stop_vm, returns=replacer_vm_info(status=prox_types.VMStatus.STOPPED)
     ),
     # reset_machine
     AutoSpecMethodInfo(
-        uds.services.Proxmox.proxmox.client.ProxmoxClient.reset_vm, returns=replacer_vm_info(status='stopped')
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.reset_vm, returns=replacer_vm_info(status=prox_types.VMStatus.STOPPED)
     ),
     # suspend_machine
     AutoSpecMethodInfo(
         uds.services.Proxmox.proxmox.client.ProxmoxClient.suspend_vm,
-        returns=replacer_vm_info(status='suspended'),
+        returns=replacer_vm_info(status=prox_types.VMStatus.STOPPED),
     ),
     # resume_machine
     AutoSpecMethodInfo(
         uds.services.Proxmox.proxmox.client.ProxmoxClient.resume_vm,
-        returns=replacer_vm_info(status='running'),
+        returns=replacer_vm_info(status=prox_types.VMStatus.RUNNING),
     ),
     # shutdown_machine
     AutoSpecMethodInfo(
         uds.services.Proxmox.proxmox.client.ProxmoxClient.shutdown_vm,
-        returns=replacer_vm_info(status='stopped'),
+        returns=replacer_vm_info(status=prox_types.VMStatus.STOPPED),
     ),
     # convert_to_template
     AutoSpecMethodInfo(

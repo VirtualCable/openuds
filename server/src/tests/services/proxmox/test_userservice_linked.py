@@ -204,7 +204,7 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
             api.start_vm.assert_called_with(vmid)
 
             # Ensure vm is stopped, because deployment should have started it (as api.start_machine was called)
-            fixtures.replace_vm_info(vmid, status='stopped')
+            fixtures.replace_vm_info(vmid, status=prox_types.VMStatus.STOPPED)
             # Set ready state with the valid machine
             state = userservice.set_ready()
             # Machine is stopped, so task must be RUNNING (opossed to FINISHED)
