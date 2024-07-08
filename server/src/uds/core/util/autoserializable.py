@@ -362,9 +362,10 @@ class DictField(_SerializableField[dict[T, V]], dict[T, V]):
     def __init__(
         self,
         default: typing.Union[dict[T, V], collections.abc.Callable[[], dict[T, V]]] = lambda: {},
-        cast: typing.Optional[typing.Callable[[typing.Any], tuple[T, V]]] = None,
+        cast: typing.Optional[typing.Callable[[T, V], tuple[T, V]]] = None,
     ):
         super().__init__(dict, default)
+        self._cast = cast
 
     def marshal(self, instance: 'AutoSerializable') -> bytes:
         # \x01 is the version of this field marshal format, so we can change it in the future
@@ -375,7 +376,7 @@ class DictField(_SerializableField[dict[T, V]], dict[T, V]):
             raise ValueError('Invalid dict data')
         self.__set__(
             instance,
-            dict(self._cast(k, v) for k, v in json.loads(data[1:])) if self._cast else json.loads(data[1:]),
+            dict(self._cast(k, v) for k, v in json.loads(data[1:]).items()) if self._cast else json.loads(data[1:]),
         )
 
 

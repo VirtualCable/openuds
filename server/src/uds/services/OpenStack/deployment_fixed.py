@@ -34,7 +34,7 @@ import logging
 import typing
 
 from uds.core import types
-from uds.core.services.generics.fixed.userservice import FixedUserService, Operation
+from uds.core.services.generics.fixed.userservice import FixedUserService
 from uds.core.util import autoserializable
 
 from .openstack import types as openstack_types
@@ -78,7 +78,7 @@ class OpenStackUserServiceFixed(FixedUserService, autoserializable.AutoSerializa
             return self.error(f'Machine not found: {e}')
 
         if server_info.power_state == openstack_types.PowerState.SHUTDOWN:
-            self._queue = [Operation.START, Operation.FINISH]
+            self._queue = [types.services.Operation.START, types.services.Operation.FINISH]
             return self._execute_queue()
 
         self.cache.put('ready', '1')

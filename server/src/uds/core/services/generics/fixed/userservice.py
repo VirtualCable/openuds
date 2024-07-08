@@ -36,7 +36,6 @@ import typing
 import collections.abc
 
 from uds.core import consts, services, types
-from uds.core.types.services import Operation
 from uds.core.util import autoserializable
 
 from .. import exceptions
@@ -80,39 +79,39 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
     _vmid = autoserializable.StringField(default='')
     _reason = autoserializable.StringField(default='')
     _task = autoserializable.StringField(default='')
-    _queue = autoserializable.ListField[Operation]()  # Default is empty list
+    _queue = autoserializable.ListField[types.services.Operation](cast=types.services.Operation.from_int)
 
     # Note that even if SNAPHSHOT operations are in middel
     # implementations may opt to no have snapshots at all
     # In this case, the default service snapshot methods will handle this (default to do nothing)
-    _create_queue: typing.ClassVar[list[Operation]] = [
-        Operation.CREATE,
-        Operation.SNAPSHOT_CREATE,
-        Operation.PROCESS_TOKEN,
-        Operation.START,
-        Operation.FINISH,
+    _create_queue: typing.ClassVar[list[types.services.Operation]] = [
+        types.services.Operation.CREATE,
+        types.services.Operation.SNAPSHOT_CREATE,
+        types.services.Operation.PROCESS_TOKEN,
+        types.services.Operation.START,
+        types.services.Operation.FINISH,
     ]
-    _destroy_queue: typing.ClassVar[list[Operation]] = [
-        Operation.DELETE,
-        Operation.SNAPSHOT_RECOVER,
-        Operation.FINISH,
+    _destroy_queue: typing.ClassVar[list[types.services.Operation]] = [
+        types.services.Operation.DELETE,
+        types.services.Operation.SNAPSHOT_RECOVER,
+        types.services.Operation.FINISH,
     ]
-    _assign_queue: typing.ClassVar[list[Operation]] = [
-        Operation.CREATE,
-        Operation.SNAPSHOT_CREATE,
-        Operation.PROCESS_TOKEN,
-        Operation.FINISH,
+    _assign_queue: typing.ClassVar[list[types.services.Operation]] = [
+        types.services.Operation.CREATE,
+        types.services.Operation.SNAPSHOT_CREATE,
+        types.services.Operation.PROCESS_TOKEN,
+        types.services.Operation.FINISH,
     ]
 
     @typing.final
-    def _current_op(self) -> Operation:
+    def _current_op(self) -> types.services.Operation:
         if not self._queue:
-            return Operation.FINISH
+            return types.services.Operation.FINISH
 
         return self._queue[0]
 
     @typing.final
-    def _set_queue(self, queue: list[Operation]) -> None:
+    def _set_queue(self, queue: list[types.services.Operation]) -> None:
         """
         Sets the queue of tasks to be executed
         Ensures that we mark it as new format
@@ -171,10 +170,10 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
                     logger.exception('Exception removing machine: %s', e)
             else:
                 logger.debug('Keep on error is enabled, not removing machine')
-                self._queue = [Operation.FINISH]
+                self._queue = [types.services.Operation.FINISH]
                 return types.states.TaskState.FINISHED
 
-        self._queue = [Operation.ERROR]
+        self._queue = [types.services.Operation.ERROR]
         self._reason = reason
         return types.states.TaskState.ERROR
 
@@ -183,10 +182,10 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         self._debug('executeQueue')
         op = self._current_op()
 
-        if op == Operation.ERROR:
+        if op == types.services.Operation.ERROR:
             return types.states.TaskState.ERROR
 
-        if op == Operation.FINISH:
+        if op == types.services.Operation.FINISH:
             return types.states.TaskState.FINISHED
 
         try:
@@ -217,7 +216,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         """
         if self._inc_retries_counter() is not None:
             return self.error('Max retries reached')
-        self._queue.insert(0, Operation.RETRY)
+        self._queue.insert(0, types.services.Operation.RETRY)
         return types.states.TaskState.FINISHED
 
     # Utility overrides for type checking...
@@ -278,12 +277,12 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         # If already ready, return finished
         try:
             if self.cache.get('ready', '0') == '1':
-                self._queue = [Operation.FINISH]
+                self._queue = [types.services.Operation.FINISH]
             elif self.service().is_ready(self._vmid):
                 self.cache.put('ready', '1', consts.cache.SHORT_CACHE_TIMEOUT // 2)  # short cache timeout
-                self._queue = [Operation.FINISH]
+                self._queue = [types.services.Operation.FINISH]
             else:
-                self._queue = [Operation.START, Operation.FINISH]
+                self._queue = [types.services.Operation.START, types.services.Operation.FINISH]
         except exceptions.NotFoundError:
             return self.error('Machine not found')
         except Exception as e:
@@ -305,10 +304,10 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         self._debug('check_state')
         op = self._current_op()
 
-        if op == Operation.ERROR:
+        if op == types.services.Operation.ERROR:
             return types.states.TaskState.ERROR
 
-        if op == Operation.FINISH:
+        if op == types.services.Operation.FINISH:
             return types.states.TaskState.FINISHED
 
         # All operations except WAIT will check against checks counter
@@ -328,7 +327,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             if state == types.states.TaskState.FINISHED:
                 top_op = self._queue.pop(0)  # Remove finished op
                 # And reset retries counter, if needed
-                if top_op != Operation.RETRY:
+                if top_op != types.services.Operation.RETRY:
                     self._reset_retries_counter()
                 return self._execute_queue()
 
@@ -419,7 +418,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
     @typing.final
     def op_retry_checker(self) -> types.states.TaskState:
         # If max retrieas has beeen reached, error should already have been set
-        if self._queue[0] == Operation.ERROR:
+        if self._queue[0] == types.services.Operation.ERROR:
             return types.states.TaskState.ERROR
         return types.states.TaskState.FINISHED
 
@@ -509,7 +508,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         return self.destroy()
 
     @staticmethod
-    def _op2str(op: Operation) -> str:
+    def _op2str(op: types.services.Operation) -> str:
         return op.name
 
     def _debug(self, txt: str) -> None:
@@ -529,37 +528,37 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
 
 
 # This is a map of operations to methods
-# Operations, duwe to the fact that can be overrided some of them, must be invoked via instance
+# types.services.Operations, duwe to the fact that can be overrided some of them, must be invoked via instance
 # We use __name__ later to use them, so we can use type checking and invoke them via instance instead of class
 # Note that ERROR and FINISH are not here, as they final states not needing to be executed
 _EXECUTORS: typing.Final[
-    collections.abc.Mapping[Operation, collections.abc.Callable[[FixedUserService], None]]
+    collections.abc.Mapping[types.services.Operation, collections.abc.Callable[[FixedUserService], None]]
 ] = {
-    Operation.CREATE: FixedUserService.op_create,
-    Operation.START: FixedUserService.op_start,
-    Operation.STOP: FixedUserService.op_stop,
-    Operation.DELETE: FixedUserService.op_delete,
-    Operation.SNAPSHOT_CREATE: FixedUserService.op_snapshot_create,
-    Operation.SNAPSHOT_RECOVER: FixedUserService.op_snapshot_recover,
-    Operation.PROCESS_TOKEN: FixedUserService.op_process_token,
-    Operation.SHUTDOWN: FixedUserService.op_shutdown,
-    Operation.NOP: FixedUserService.op_nop,
+    types.services.Operation.CREATE: FixedUserService.op_create,
+    types.services.Operation.START: FixedUserService.op_start,
+    types.services.Operation.STOP: FixedUserService.op_stop,
+    types.services.Operation.DELETE: FixedUserService.op_delete,
+    types.services.Operation.SNAPSHOT_CREATE: FixedUserService.op_snapshot_create,
+    types.services.Operation.SNAPSHOT_RECOVER: FixedUserService.op_snapshot_recover,
+    types.services.Operation.PROCESS_TOKEN: FixedUserService.op_process_token,
+    types.services.Operation.SHUTDOWN: FixedUserService.op_shutdown,
+    types.services.Operation.NOP: FixedUserService.op_nop,
     # Retry operation has no executor, look "retry_later" method
 }
 
 # Same af before, but for check methods
 _CHECKERS: typing.Final[
-    collections.abc.Mapping[Operation, collections.abc.Callable[[FixedUserService], types.states.TaskState]]
+    collections.abc.Mapping[types.services.Operation, collections.abc.Callable[[FixedUserService], types.states.TaskState]]
 ] = {
-    Operation.CREATE: FixedUserService.op_create_checker,
-    Operation.START: FixedUserService.op_start_checker,
-    Operation.STOP: FixedUserService.op_stop_checker,
-    Operation.DELETE: FixedUserService.op_deleted_checker,
-    Operation.SNAPSHOT_CREATE: FixedUserService.op_snapshot_create_checker,
-    Operation.SNAPSHOT_RECOVER: FixedUserService.op_snapshot_recover_checker,
-    Operation.PROCESS_TOKEN: FixedUserService.op_process_token_checker,
-    Operation.SHUTDOWN: FixedUserService.op_shutdown_checker,
-    Operation.NOP: FixedUserService.op_nop_checker,
+    types.services.Operation.CREATE: FixedUserService.op_create_checker,
+    types.services.Operation.START: FixedUserService.op_start_checker,
+    types.services.Operation.STOP: FixedUserService.op_stop_checker,
+    types.services.Operation.DELETE: FixedUserService.op_deleted_checker,
+    types.services.Operation.SNAPSHOT_CREATE: FixedUserService.op_snapshot_create_checker,
+    types.services.Operation.SNAPSHOT_RECOVER: FixedUserService.op_snapshot_recover_checker,
+    types.services.Operation.PROCESS_TOKEN: FixedUserService.op_process_token_checker,
+    types.services.Operation.SHUTDOWN: FixedUserService.op_shutdown_checker,
+    types.services.Operation.NOP: FixedUserService.op_nop_checker,
     # Retry operation can be inserted by a executor, so it will need a checker
-    Operation.RETRY: FixedUserService.op_retry_checker,
+    types.services.Operation.RETRY: FixedUserService.op_retry_checker,
 }

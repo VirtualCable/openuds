@@ -32,6 +32,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import dataclasses
+import enum
 import typing
 
 from uds.core.util import autoserializable
@@ -40,6 +41,16 @@ from ...utils.test import UDSTestCase
 
 UNICODE_CHARS = 'ñöçóá^(pípè)'
 UNICODE_CHARS_2 = 'ñöçóá^(€íöè)'
+
+
+class EnumTest(enum.IntEnum):
+    VALUE1 = 1
+    VALUE2 = 2
+    VALUE3 = 3
+
+    @staticmethod
+    def from_int(value: int) -> 'EnumTest':
+        return EnumTest(value)
 
 
 @dataclasses.dataclass
@@ -62,7 +73,13 @@ class AutoSerializableClass(autoserializable.AutoSerializable):
     bool_field = autoserializable.BoolField(default=False)
     password_field = autoserializable.PasswordField(default='password')  # nosec: test password
     list_field = autoserializable.ListField[int](default=lambda: [1, 2, 3])
+    # Casting from int to EnumTest on deserialization
+    list_field_with_cast = autoserializable.ListField[EnumTest](
+        default=lambda: [EnumTest.VALUE1, EnumTest.VALUE2, EnumTest.VALUE3], cast=EnumTest.from_int
+    )
     dict_field = autoserializable.DictField[str, int](default=lambda: {'a': 1, 'b': 2, 'c': 3})
+    # Note that due to the dict being serialized as json, the keys are always strings
+    dict_field_with_cast = autoserializable.DictField[EnumTest, EnumTest](cast=lambda k, v: (EnumTest(int(k)), EnumTest(v)))
     obj_dc_field = autoserializable.ObjectField[SerializableDataclass](
         SerializableDataclass, default=lambda: SerializableDataclass(1, '2', 3.0)
     )
@@ -80,7 +97,9 @@ class AutoSerializableCompressedClass(autoserializable.AutoSerializableCompresse
     bool_field = autoserializable.BoolField()
     password_field = autoserializable.PasswordField()
     list_field = autoserializable.ListField[int]()
+    list_field_with_cast = autoserializable.ListField[EnumTest]()
     dict_field = autoserializable.DictField[str, int]()
+    dict_field_with_cast = autoserializable.DictField[EnumTest, EnumTest](cast=lambda k, v: (EnumTest(int(k)), EnumTest(v)))
     obj_dc_field = autoserializable.ObjectField[SerializableDataclass](SerializableDataclass)
     obj_nt_field = autoserializable.ObjectField[SerializableNamedTuple](SerializableNamedTuple)
 
@@ -94,7 +113,9 @@ class AutoSerializableEncryptedClass(autoserializable.AutoSerializableEncrypted)
     bool_field = autoserializable.BoolField()
     password_field = autoserializable.PasswordField()
     list_field = autoserializable.ListField[int]()
+    list_field_with_cast = autoserializable.ListField[EnumTest]()
     dict_field = autoserializable.DictField[str, int]()
+    dict_field_with_cast = autoserializable.DictField[EnumTest, EnumTest](cast=lambda k, v: (EnumTest(int(k)), EnumTest(v)))
     obj_dc_field = autoserializable.ObjectField[SerializableDataclass](SerializableDataclass)
     obj_nt_field = autoserializable.ObjectField[SerializableNamedTuple](SerializableNamedTuple)
 
@@ -140,7 +161,9 @@ class AutoSerializable(UDSTestCase):
         a.bool_field = True
         a.password_field = UNICODE_CHARS_2  # nosec: test password
         a.list_field = [1, 2, 3]
+        a.list_field_with_cast = [EnumTest.VALUE1, EnumTest.VALUE2, EnumTest.VALUE3]
         a.dict_field = {'a': 1, 'b': 2, 'c': 3}
+        a.dict_field_with_cast = {EnumTest.VALUE1: EnumTest.VALUE2, EnumTest.VALUE2: EnumTest.VALUE3}
         a.obj_dc_field = SerializableDataclass(1, '2', 3.0)
         a.obj_nt_field = SerializableNamedTuple(1, '2', 3.0)
 
@@ -161,7 +184,14 @@ class AutoSerializable(UDSTestCase):
             self.assertEqual(i.bool_field, True)
             self.assertEqual(i.password_field, UNICODE_CHARS_2)
             self.assertEqual(i.list_field, [1, 2, 3])
+            self.assertEqual(i.list_field_with_cast, [EnumTest.VALUE1, EnumTest.VALUE2, EnumTest.VALUE3])
+            for vv in i.list_field_with_cast:
+                self.assertIsInstance(vv, EnumTest)
             self.assertEqual(i.dict_field, {'a': 1, 'b': 2, 'c': 3})
+            self.assertEqual(i.dict_field_with_cast, {EnumTest.VALUE1: EnumTest.VALUE2, EnumTest.VALUE2: EnumTest.VALUE3})
+            for kk, vv in i.dict_field_with_cast.items():
+                self.assertIsInstance(kk, EnumTest)
+                self.assertIsInstance(vv, EnumTest)
             self.assertEqual(i.obj_dc_field, SerializableDataclass(1, '2', 3.0))
             self.assertEqual(i.obj_nt_field, SerializableNamedTuple(1, '2', 3.0))
 
@@ -183,20 +213,20 @@ class AutoSerializable(UDSTestCase):
 
     def test_auto_serializable_base_encrypted(self) -> None:
         self.basic_check(AutoSerializableClass, AutoSerializableEncryptedClass)
-        
+
     def test_default_list_field(self) -> None:
         a = AutoSerializableClass()
         self.assertEqual(a.list_field, [1, 2, 3])
-        
+
         class SimpleListFieldDefault(autoserializable.AutoSerializable):
             list_field = autoserializable.ListField[int]()
-            
+
         b = SimpleListFieldDefault()
         b.list_field.clear()
         b.list_field.append(1)
         b.list_field.append(2)
         self.assertEqual(b.list_field, [1, 2])
-        
+
         b.list_field = [0]
         self.assertEqual(b.list_field, [0])
         b.list_field.append(1)
@@ -204,7 +234,6 @@ class AutoSerializable(UDSTestCase):
         bb = SimpleListFieldDefault()
         bb.unmarshal(marshalled_data)
         self.assertEqual(bb.list_field, [0, 1])
-        
 
     def test_auto_serializable_derived(self) -> None:
         instance = DerivedAutoSerializableClass()
@@ -287,7 +316,7 @@ class AutoSerializable(UDSTestCase):
         instance2.float_field = 3.0
         instance2.dict_field = {'a': 11, 'b': 22, 'c': 33}
         instance2.obj_dc_field = SerializableDataclass(11, '22', 33.0)
-        
+
         instance2.unmarshal(data)
 
         self.assertNotEqual(instance2, instance)
