@@ -183,6 +183,9 @@ class StorageAsDict(dict[str, typing.Any]):
     # Optimized methods, avoid re-reading from DB
     def items(self) -> typing.Iterator[tuple[str, typing.Any]]:  # type: ignore   # compatible type
         return iter(_decode_value(i.key, i.data) for i in self._filtered)
+    
+    def keys(self) -> typing.Iterator[str]:  # type: ignore   # compatible type
+        return iter(_decode_value(i.key, i.data)[0] for i in self._filtered)
 
     def values(self) -> typing.Iterator[typing.Any]:  # type: ignore   # compatible type
         return iter(_decode_value(i.key, i.data)[1] for i in self._filtered)

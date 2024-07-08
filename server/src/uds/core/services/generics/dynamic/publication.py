@@ -57,7 +57,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
 
     _name = autoserializable.StringField(default='')
     _vmid = autoserializable.StringField(default='')
-    _queue = autoserializable.ListField[Operation]()
+    _queue = autoserializable.ListField[Operation](cast=Operation.from_int)
     _reason = autoserializable.StringField(default='')
     _is_flagged_for_destroy = autoserializable.BoolField(default=False)
 
@@ -83,12 +83,12 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
             data['exec_count'] = 0
 
     @typing.final
-    def _inc_checks_counter(self, info: typing.Optional[str] = None) -> typing.Optional[types.states.TaskState]:
+    def _inc_checks_counter(self, op: Operation) -> typing.Optional[types.states.TaskState]:
         with self.storage.as_dict() as data:
             count = data.get('exec_count', 0) + 1
             data['exec_count'] = count
         if count > self.max_state_checks:
-            return self._error(f'Max checks reached on {info or "unknown"}')
+            return self._error(f'Max checks reached on {op}')
         return None
 
     @typing.final
@@ -132,7 +132,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         Returns:
             State.ERROR, so we can do "return self._error(reason)"
         """
-        self._error_debug_info = self._debug(repr(reason))
+        self._error_debug_info = self._debug(f'{repr(reason)}  {getattr(reason, "__backtrace__", "")}')
         reason = str(reason)
         logger.error(reason)
 
@@ -175,7 +175,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
             # This is a retryable error, so we will retry later
             return self.retry_later()
         except Exception as e:
-            logger.exception('Unexpected FixedUserService exception: %s', e)
+            logger.debug('Exception on %s: %s', op, e, exc_info=True)
             return self._error(str(e))
 
     @typing.final
@@ -202,11 +202,11 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         else:
             # Get the service pool name, and remove all {} macros
             name = self.servicepool_name()
-            
+
         return self.service().sanitized_name(f'UDS-Pub-{name}-v{self.revision()}')
-    
+
     def generate_annotation(self) -> str:
-        return (f'UDS publication for {self.servicepool_name()} created on {time.strftime("%Y-%m-%d %H:%M:%S")}')
+        return f'UDS publication for {self.servicepool_name()} created on {time.strftime("%Y-%m-%d %H:%M:%S")}'
 
     def check_space(self) -> bool:
         """
@@ -245,7 +245,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
 
         if op != Operation.WAIT:
             # All operations except WAIT will check against checks counter
-            counter_state = self._inc_checks_counter(self._op2str(op))
+            counter_state = self._inc_checks_counter(op)
             if counter_state is not None:
                 return counter_state  # Error, Finished or None
 
@@ -272,6 +272,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
             # And it has not been removed from the queue
             return types.states.TaskState.RUNNING
         except Exception as e:
+            logger.debug('Exception on %s: %s', op, e, exc_info=True)
             return self._error(e)
 
     @typing.final
@@ -530,12 +531,8 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
     def op_unsupported_checker(self) -> types.states.TaskState:
         raise Exception('Operation not defined')
 
-    @staticmethod
-    def _op2str(op: Operation) -> str:
-        return op.name
-
     def _debug(self, txt: str) -> str:
-        msg = f'Queue at {txt} for {self._name}: {self._queue}, vmid:{self._vmid}'
+        msg = f'{txt} on {self._name}: {self._queue}, vmid:{self._vmid}'
         logger.debug(
             msg,
         )

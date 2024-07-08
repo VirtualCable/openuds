@@ -48,12 +48,12 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-MAX_FATAL_ERROR_RETRIES: typing.Final[int] = 8
-MAX_TOTAL_RETRIES: typing.Final[int] = 1024
+MAX_FATAL_ERROR_RETRIES: typing.Final[int] = 16
+MAX_RETRAYABLE_ERROR_RETRIES: typing.Final[int] = 8192   # Max retries before giving up at most 72 hours
 RETRIES_TO_RETRY: typing.Final[int] = (
-    16  # Retries to stop again or to shutdown again in STOPPING_GROUP or DELETING_GROUP
+    32  # Retries to stop again or to shutdown again in STOPPING_GROUP or DELETING_GROUP
 )
-MAX_DELETIONS_AT_ONCE: typing.Final[int] = 16
+MAX_DELETIONS_AT_ONCE: typing.Final[int] = 32
 MAX_DELETIONS_CHECKED_AT_ONCE: typing.Final[int] = MAX_DELETIONS_AT_ONCE * 2
 
 # This interval is how long will take to check again for deletion, stopping, etc...
@@ -121,7 +121,7 @@ class DeletionInfo:
                 key=lambda x: x[1].last_check,
             ):
                 # if max retries reached, remove it
-                if info.total_retries >= MAX_TOTAL_RETRIES:
+                if info.total_retries >= MAX_RETRAYABLE_ERROR_RETRIES:
                     logger.error(
                         'Too many retries deleting %s from service %s, removing from deferred deletion',
                         info.vmid,
@@ -153,13 +153,14 @@ class DeletionInfo:
 
 
 class DeferredDeletionWorker(Job):
-    frecuency = 19  # Frequency for this job, in seconds
+    frecuency = 11  # Frequency for this job, in seconds
     friendly_name = 'Deferred deletion runner'
 
     deferred_storage: typing.ClassVar[storage.Storage] = storage.Storage('deferdel_worker')
 
     @staticmethod
     def add(service: 'DynamicService', vmid: str, execute_later: bool = False) -> None:
+        logger.debug('Adding %s from service %s to deferred deletion', vmid, service.type_name)
         # If sync, execute now
         if not execute_later:
             try:
@@ -221,7 +222,7 @@ class DeferredDeletionWorker(Job):
                 )
                 return  # Do not readd it
         info.total_retries += 1
-        if info.total_retries >= MAX_TOTAL_RETRIES:
+        if info.total_retries >= MAX_RETRAYABLE_ERROR_RETRIES:
             logger.error(
                 'Too many retries deleting %s from service %s, removing from deferred deletion',
                 info.vmid,
@@ -232,6 +233,7 @@ class DeferredDeletionWorker(Job):
 
     def process_to_stop(self) -> None:
         services, to_stop = DeletionInfo.get_from_storage(TO_STOP_GROUP)
+        logger.debug('Processing %s to stop', to_stop)
 
         # Now process waiting stops
         for key, info in to_stop:
@@ -260,6 +262,7 @@ class DeferredDeletionWorker(Job):
 
     def process_stopping(self) -> None:
         services, stopping = DeletionInfo.get_from_storage(STOPPING_GROUP)
+        logger.debug('Processing %s stopping', stopping)
 
         # Now process waiting for finishing stops
         for key, info in stopping:
@@ -285,11 +288,18 @@ class DeferredDeletionWorker(Job):
 
     def process_to_delete(self) -> None:
         services, to_delete = DeletionInfo.get_from_storage(TO_DELETE_GROUP)
+        logger.debug('Processing %s to delete', to_delete)
 
         # Now process waiting deletions
         for key, info in to_delete:
+            service = services[info.service_uuid]
             try:
-                services[info.service_uuid].execute_delete(info.vmid)
+                # If must be stopped before deletion, and is running, put it on to_stop
+                if service.must_stop_before_deletion and service.is_running(None, info.vmid):
+                    info.sync_to_storage(TO_STOP_GROUP)
+                    continue
+
+                service.execute_delete(info.vmid)
                 # And store it for checking later if it has been deleted, reseting counters
                 info.last_check = sql_now()
                 info.retries = 0
@@ -305,6 +315,7 @@ class DeferredDeletionWorker(Job):
         Note: Very similar to process_to_delete, but this one is for objects that are already being deleted
         """
         services, deleting = DeletionInfo.get_from_storage(DELETING_GROUP)
+        logger.debug('Processing %s deleting', deleting)
 
         # Now process waiting for finishing deletions
         for key, info in deleting:

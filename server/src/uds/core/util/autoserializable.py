@@ -131,7 +131,7 @@ class _MarshalInfo:
     - 2 bytes -> name length, little endian
     - 2 bytes -> type name length, little endian
     - 4 bytes -> data length, little endian
-    
+
       (Previous is defined by PACKED_LENGHS struct)
     - n bytes -> name
     - n bytes -> type name
@@ -212,10 +212,10 @@ class _SerializableField(typing.Generic[T]):
             instance {SerializableFields} -- Instance of class with field
 
         """
-        if hasattr(instance, '_fields'): 
+        if hasattr(instance, '_fields'):
             if self.name in getattr(instance, '_fields'):
                 return getattr(instance, '_fields')[self.name]
-            
+
         if self.default is None:
             raise AttributeError(f"Field {self.name} is not set")
         # Set default using setter
@@ -310,16 +310,26 @@ class BoolField(_SerializableField[bool]):
 
 class ListField(_SerializableField[list[T]], list[T]):
     """List field
+    
+    Args:
+        default: Default value for the field. Can be a list or a callable that returns a list.
+        cast: Optional function to cast the values of the list to the desired type. If not provided, the values will be "deserialized" as they are. (see notes)
 
     Note:
         All elements in the list must be serializable in JSON, but can be of different types.
+        In case of serilization of enumerations, they will be serialized as integers or strings.
+        (Take into account this when using enumerations in lists. The values will be compatible, but not the types)
     """
+
+    _cast: typing.Optional[typing.Callable[[typing.Any], T]]
 
     def __init__(
         self,
         default: typing.Union[list[T], collections.abc.Callable[[], list[T]]] = lambda: [],
+        cast: typing.Optional[typing.Callable[[typing.Any], T]] = None,
     ):
         super().__init__(list, default)
+        self._cast = cast
 
     def marshal(self, instance: 'AutoSerializable') -> bytes:
         # \x01 is the version of this field marshal format, so we can change it in the future
@@ -328,19 +338,31 @@ class ListField(_SerializableField[list[T]], list[T]):
     def unmarshal(self, instance: 'AutoSerializable', data: bytes) -> None:
         if data[0] != 1:
             raise ValueError('Invalid list data')
-        self.__set__(instance, json.loads(data[1:]))
+
+        self.__set__(
+            instance, [self._cast(i) for i in json.loads(data[1:])] if self._cast else json.loads(data[1:])
+        )
 
 
 class DictField(_SerializableField[dict[T, V]], dict[T, V]):
     """Dict field
+    
+    Args:
+        default: Default value for the field. Can be a dict or a callable that returns a dict.
+        cast: Optional function to cast the values of the dict to the desired type. If not provided, the values will be "deserialized" as they are. (see notes)
 
     Note:
         All elements in the dict must be serializable.
+        Note that due to the use of json as serialization format, keys Will be converted to strings.
+        Also, values of enumerations will be serialized as integers or strings.
     """
+
+    _cast: typing.Optional[typing.Callable[[T, V], tuple[T, V]]]
 
     def __init__(
         self,
         default: typing.Union[dict[T, V], collections.abc.Callable[[], dict[T, V]]] = lambda: {},
+        cast: typing.Optional[typing.Callable[[typing.Any], tuple[T, V]]] = None,
     ):
         super().__init__(dict, default)
 
@@ -351,7 +373,10 @@ class DictField(_SerializableField[dict[T, V]], dict[T, V]):
     def unmarshal(self, instance: 'AutoSerializable', data: bytes) -> None:
         if data[0] != 1:
             raise ValueError('Invalid dict data')
-        self.__set__(instance, json.loads(data[1:]))
+        self.__set__(
+            instance,
+            dict(self._cast(k, v) for k, v in json.loads(data[1:])) if self._cast else json.loads(data[1:]),
+        )
 
 
 class ObjectField(_SerializableField[T]):
@@ -475,7 +500,7 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
     """
 
     _fields: dict[str, typing.Any]
-    
+
     serialization_version: int = 0  # So autoserializable classes can keep their version if needed
 
     def _autoserializable_fields(self) -> collections.abc.Iterator[tuple[str, _SerializableField[typing.Any]]]:
@@ -546,7 +571,11 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
         # Calculate checksum
         checksum = zlib.crc32(data)
         # Compose header, that is V1_HEADER + checksum (4 bytes, big endian)
-        header = HEADER_BASE + self.serialization_version.to_bytes(VERSION_SIZE, 'big') + checksum.to_bytes(CRC_SIZE, 'big')
+        header = (
+            HEADER_BASE
+            + self.serialization_version.to_bytes(VERSION_SIZE, 'big')
+            + checksum.to_bytes(CRC_SIZE, 'big')
+        )
         # Return data processed with header
         return header + self.process_data(header, data)
 
@@ -559,9 +588,13 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
 
         header = data[: len(HEADER_BASE) + VERSION_SIZE + CRC_SIZE]
         # extract version
-        self._serialization_version = int.from_bytes(header[len(HEADER_BASE) : len(HEADER_BASE) + VERSION_SIZE], 'big')
+        self._serialization_version = int.from_bytes(
+            header[len(HEADER_BASE) : len(HEADER_BASE) + VERSION_SIZE], 'big'
+        )
         # Extract checksum
-        checksum = int.from_bytes(header[len(HEADER_BASE) + VERSION_SIZE : len(HEADER_BASE) + VERSION_SIZE + CRC_SIZE], 'big')
+        checksum = int.from_bytes(
+            header[len(HEADER_BASE) + VERSION_SIZE : len(HEADER_BASE) + VERSION_SIZE + CRC_SIZE], 'big'
+        )
         # Unprocess data
         data = self.unprocess_data(header, data[len(header) :])
 
@@ -614,7 +647,7 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
         return ', '.join(
             [f"{k}={v.obj_type.__name__}({v.__get__(self)})" for k, v in self._autoserializable_fields()]
         )
-        
+
     def as_dict(self) -> dict[str, typing.Any]:
         return {k: v.__get__(self) for k, v in self._autoserializable_fields()}
 

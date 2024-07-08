@@ -201,7 +201,7 @@ class TaskStatus:
             exitstatus=data['exitstatus'],
             user=data['user'],
             upid=data['upid'],
-            id=dictionary['id'],
+            id=data['id'],
         )
 
     def is_running(self) -> bool:
@@ -279,7 +279,7 @@ class VMInfo:
 
         return VMInfo(
             status=VMStatus.from_str(dictionary['status']),
-            id=dictionary.get('vmid', 0),
+            id=int(dictionary.get('vmid', 0)),
             node=dictionary.get('node', ''),
             template=dictionary.get('template', False),
             agent=dictionary.get('agent', None),

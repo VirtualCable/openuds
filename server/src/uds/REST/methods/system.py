@@ -54,7 +54,7 @@ cache = Cache('StatsDispatcher')
 
 # Enclosed methods under /stats path
 POINTS = 70
-SINCE = 180  # Days, if higer values used, ensure mysql/mariadb has a bigger sort buffer
+SINCE = 90  # Days, if higer values used, ensure mysql/mariadb has a bigger sort buffer
 USE_MAX = True
 CACHE_TIME = 60 * 60  # 1 hour
 
@@ -91,7 +91,7 @@ def get_servicepools_counters(
             val = [
                 {
                     'stamp': x.stamp,
-                    'value': (x.sum // x.count if x.count > 0 else 0) if not USE_MAX else x.max,
+                    'value': (x.sum / x.count if x.count > 0 else 0) if not USE_MAX else x.max,
                 }
                 for x in stats
             ]

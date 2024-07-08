@@ -397,7 +397,7 @@ class DynamicServiceTest(UDSTransactionTestCase):
                     self.assertEqual(self.count_entries_on_storage(deferred_deletion.TO_DELETE_GROUP), 1)
                     self.assertEqual(self.count_entries_on_storage(deferred_deletion.DELETING_GROUP), 0)
                     # Test that MAX_TOTAL_RETRIES works fine
-                    deferred_deletion.MAX_TOTAL_RETRIES = 2
+                    deferred_deletion.MAX_RETRAYABLE_ERROR_RETRIES = 2
                     # reset last_check, or it will not retry
                     self.set_last_check_expired()
                     job.run()
@@ -448,7 +448,7 @@ class DynamicServiceTest(UDSTransactionTestCase):
                     self.assertEqual(self.count_entries_on_storage(deferred_deletion.TO_DELETE_GROUP), 0)
                     self.assertEqual(self.count_entries_on_storage(deferred_deletion.DELETING_GROUP), 1)
                     # Test that MAX_TOTAL_RETRIES works fine
-                    deferred_deletion.MAX_TOTAL_RETRIES = 2
+                    deferred_deletion.MAX_RETRAYABLE_ERROR_RETRIES = 2
                     # reset last_check, or it will not retry
                     self.set_last_check_expired()
                     job.run()
@@ -575,7 +575,7 @@ class DynamicServiceTest(UDSTransactionTestCase):
 
     def test_stop_retry_stop(self) -> None:
         deferred_deletion.RETRIES_TO_RETRY = 2
-        deferred_deletion.MAX_TOTAL_RETRIES = 4
+        deferred_deletion.MAX_RETRAYABLE_ERROR_RETRIES = 4
 
         with self.patch_for_worker(
             is_running=helpers.returns_true,
@@ -659,7 +659,7 @@ class DynamicServiceTest(UDSTransactionTestCase):
 
     def test_delete_retry_delete(self) -> None:
         deferred_deletion.RETRIES_TO_RETRY = 2
-        deferred_deletion.MAX_TOTAL_RETRIES = 4
+        deferred_deletion.MAX_RETRAYABLE_ERROR_RETRIES = 4
 
         with self.patch_for_worker(
             is_running=helpers.returns_true,

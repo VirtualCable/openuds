@@ -90,7 +90,8 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     _ip = autoserializable.StringField(default='')
     _vmid = autoserializable.StringField(default='')
     _reason = autoserializable.StringField(default='')
-    _queue = autoserializable.ListField[types.services.Operation]()  # Default is empty list
+    # cast is used to ensure that when data is reloaded, it's casted to the correct type
+    _queue = autoserializable.ListField[types.services.Operation](cast=types.services.Operation.from_int)
     _is_flagged_for_destroy = autoserializable.BoolField(default=False)
 
     # Extra info, not serializable, to keep information in case of exception and debug it
@@ -313,7 +314,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             return consts.NO_MORE_NAMES
 
         return self.service().sanitized_name(f'UDS_{name}')  # Default implementation
-    
+
     # overridable, to allow receiving notifications from, for example, services
     def notify(self, message: str, data: typing.Any = None) -> None:
         pass
@@ -463,7 +464,9 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             if state == types.states.TaskState.FINISHED:
                 # Remove finished operation from queue
                 top_op = self._queue.pop(0)
-                if top_op != types.services.Operation.RETRY:  # Inserted if a retrayable error occurs on execution queue
+                if (
+                    top_op != types.services.Operation.RETRY
+                ):  # Inserted if a retrayable error occurs on execution queue
                     self._reset_retries_counter()
                 return self._execute_queue()
 
