@@ -49,15 +49,18 @@ logger = logging.getLogger(__name__)
 
 
 MAX_FATAL_ERROR_RETRIES: typing.Final[int] = 16
-MAX_RETRAYABLE_ERROR_RETRIES: typing.Final[int] = 8192   # Max retries before giving up at most 72 hours
-RETRIES_TO_RETRY: typing.Final[int] = (
-    32  # Retries to stop again or to shutdown again in STOPPING_GROUP or DELETING_GROUP
-)
+MAX_RETRAYABLE_ERROR_RETRIES: typing.Final[int] = 8192  # Max retries before giving up at most 72 hours
+# Retries to stop again or to shutdown again in STOPPING_GROUP or DELETING_GROUP
+RETRIES_TO_RETRY: typing.Final[int] = 32
 MAX_DELETIONS_AT_ONCE: typing.Final[int] = 32
 
+# For every operation that takes more than this time, multiplay CHECK_INTERVAL by (time / TIME_THRESHOLD)
+TIME_THRESHOLD: typing.Final[int] = 2
+
 # This interval is how long will take to check again for deletion, stopping, etc...
-# That is, once a machine is deleted, every 32 seconds will be check that it has been deleted
-CHECK_INTERVAL: typing.Final[int] = 32  # Check interval, in seconds
+# That is, once a machine is deleted, every CHECK_INTERVAL seconds will be check that it has been deleted
+CHECK_INTERVAL: typing.Final[datetime.timedelta] = datetime.timedelta(seconds=11)  # Check interval
+FATAL_ERROR_INTERVAL_MULTIPLIER: typing.Final[int] = 2  # Multiplier for fatal errors
 
 TO_STOP_GROUP: typing.Final[str] = 'to_stop'
 STOPPING_GROUP: typing.Final[str] = 'stopping'
@@ -65,11 +68,41 @@ TO_DELETE_GROUP: typing.Final[str] = 'to_delete'
 DELETING_GROUP: typing.Final[str] = 'deleting'
 
 
+class ExecutionTime:
+    _start: datetime.datetime
+    _end: datetime.datetime
+
+    def __init__(self) -> None:
+        self._start = datetime.datetime.now()
+        self._end = self._start
+
+    def __enter__(self) -> 'ExecutionTime':
+        return self
+
+    def __exit__(self, exc_type: typing.Any, exc_value: typing.Any, traceback: typing.Any) -> None:
+        self._end = datetime.datetime.now()
+
+    @property
+    def elapsed(self) -> datetime.timedelta:
+        return self._end - self._start
+
+    @staticmethod
+    def from_now() -> 'ExecutionTime':
+        return ExecutionTime()
+
+
+def calc_next(*, fatal: bool = False, interval: datetime.timedelta = CHECK_INTERVAL) -> datetime.datetime:
+    """
+    Returns the next check time for a deletion operation
+    """
+    return sql_now() + (interval * (FATAL_ERROR_INTERVAL_MULTIPLIER if fatal else 1))
+
+
 @dataclasses.dataclass
 class DeletionInfo:
     vmid: str
     created: datetime.datetime
-    last_check: datetime.datetime
+    next_check: datetime.datetime
     service_uuid: str
     fatal_retries: int = 0  # Fatal error retries
     total_retries: int = 0  # Total retries
@@ -91,7 +124,7 @@ class DeletionInfo:
             storage_dict[unique_key] = DeletionInfo(
                 vmid=vmid,
                 created=sql_now(),
-                last_check=sql_now(),
+                next_check=calc_next(),
                 service_uuid=service_uuid,
                 # fatal, total an retries are 0 by default
             )
@@ -114,10 +147,11 @@ class DeletionInfo:
 
         # First, get ownership of to_delete objects to be processed
         # We do this way to release db locks as soon as possible
+        now = sql_now()
         with DeferredDeletionWorker.deferred_storage.as_dict(storage_name, atomic=True) as storage_dict:
             for key, info in sorted(
                 typing.cast(collections.abc.Iterable[tuple[str, DeletionInfo]], storage_dict.items()),
-                key=lambda x: x[1].last_check,
+                key=lambda x: x[1].next_check,
             ):
                 # if max retries reached, remove it
                 if info.total_retries >= MAX_RETRAYABLE_ERROR_RETRIES:
@@ -129,7 +163,7 @@ class DeletionInfo:
                     del storage_dict[key]
                     continue
 
-                if info.last_check + datetime.timedelta(seconds=CHECK_INTERVAL) > sql_now():
+                if info.next_check > now:  # If not time to process yet, skip
                     continue
                 try:
                     if info.service_uuid not in services:
@@ -152,7 +186,7 @@ class DeletionInfo:
 
 
 class DeferredDeletionWorker(Job):
-    frecuency = 11  # Frequency for this job, in seconds
+    frecuency = 7  # Frequency for this job, in seconds
     friendly_name = 'Deferred deletion runner'
 
     deferred_storage: typing.ClassVar[storage.Storage] = storage.Storage('deferdel_worker')
@@ -210,8 +244,9 @@ class DeferredDeletionWorker(Job):
             e,
             ' (will retry)' if is_retryable else '',
         )
-        info.last_check = sql_now()
+
         if not is_retryable:
+            info.next_check = calc_next(fatal=True)
             info.fatal_retries += 1
             if info.fatal_retries >= MAX_FATAL_ERROR_RETRIES:
                 logger.error(
@@ -220,6 +255,7 @@ class DeferredDeletionWorker(Job):
                     services[info.service_uuid].db_obj().name,
                 )
                 return  # Do not readd it
+        info.next_check = calc_next()
         info.total_retries += 1
         if info.total_retries >= MAX_RETRAYABLE_ERROR_RETRIES:
             logger.error(
@@ -251,7 +287,7 @@ class DeferredDeletionWorker(Job):
                         info.retries = 0  # Reset retries
                         service.stop(None, info.vmid)  # Always try to stop it if we have tried before
 
-                    info.last_check = sql_now()
+                    info.next_check = calc_next()
                     info.sync_to_storage(STOPPING_GROUP)
                 else:
                     # Do not update last_check to shutdown it asap, was not running after all
@@ -269,17 +305,17 @@ class DeferredDeletionWorker(Job):
                 info.retries += 1
                 if info.retries > RETRIES_TO_RETRY:
                     # If we have tried to stop it, and it has not stopped, add to stop again
-                    info.last_check = sql_now()
+                    info.next_check = calc_next()
                     info.total_retries += 1
                     info.sync_to_storage(TO_STOP_GROUP)
                     continue
 
                 if services[info.service_uuid].is_running(None, info.vmid):
-                    info.last_check = sql_now()
+                    info.next_check = calc_next()
                     info.total_retries += 1
                     info.sync_to_storage(STOPPING_GROUP)
                 else:
-                    info.last_check = sql_now()
+                    info.next_check = calc_next()
                     info.fatal_retries = info.total_retries = 0
                     info.sync_to_storage(TO_DELETE_GROUP)
             except Exception as e:
@@ -300,7 +336,7 @@ class DeferredDeletionWorker(Job):
 
                 service.execute_delete(info.vmid)
                 # And store it for checking later if it has been deleted, reseting counters
-                info.last_check = sql_now()
+                info.next_check = calc_next()
                 info.retries = 0
                 info.total_retries += 1
                 info.sync_to_storage(DELETING_GROUP)
@@ -322,14 +358,14 @@ class DeferredDeletionWorker(Job):
                 info.retries += 1
                 if info.retries > RETRIES_TO_RETRY:
                     # If we have tried to delete it, and it has not been deleted, add to delete again
-                    info.last_check = sql_now()
+                    info.next_check = calc_next()
                     info.total_retries += 1
                     info.sync_to_storage(TO_DELETE_GROUP)
                     continue
 
                 # If not finished, readd it for later check
                 if not services[info.service_uuid].is_deleted(info.vmid):
-                    info.last_check = sql_now()
+                    info.next_check = calc_next()
                     info.total_retries += 1
                     info.sync_to_storage(DELETING_GROUP)
             except Exception as e:

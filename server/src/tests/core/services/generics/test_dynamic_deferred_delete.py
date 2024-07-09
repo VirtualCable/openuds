@@ -61,7 +61,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
         ]:
             with deferred_deletion.DeferredDeletionWorker.deferred_storage.as_dict(group) as storage:
                 for key, info in typing.cast(dict[str, deferred_deletion.DeletionInfo], storage).items():
-                    info.last_check = sql_now() - datetime.timedelta(seconds=deferred_deletion.CHECK_INTERVAL)
+                    info.next_check = sql_now() - datetime.timedelta(seconds=1)
                     storage[key] = info
 
     def count_entries_on_storage(self, group: str) -> int:
@@ -167,7 +167,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
                 self.assertIsInstance(info, deferred_deletion.DeletionInfo)
                 self.assertEqual(key, f'{info.service_uuid}_{info.vmid}')
                 self.assertLessEqual(info.created, now)
-                self.assertLessEqual(info.last_check, now)
+                self.assertGreaterEqual(info.next_check, now)
                 self.assertEqual(info.fatal_retries, 0)
                 self.assertEqual(info.total_retries, 0)
 
@@ -298,7 +298,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
                 self.assertIsInstance(info, deferred_deletion.DeletionInfo)
                 self.assertEqual(key, f'{info.service_uuid}_{info.vmid}')
                 self.assertLessEqual(info.created, now)
-                self.assertLessEqual(info.last_check, now)
+                self.assertGreaterEqual(info.next_check, now)
                 self.assertEqual(info.fatal_retries, 0)
                 self.assertEqual(info.total_retries, 1)
 
