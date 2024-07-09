@@ -166,6 +166,14 @@ class DeletionInfo:
                 infos.append((key, info))
         return services, infos
 
+    # For reporting
+    def as_csv(self) -> str:
+        return f'{self.vmid},{self.created},{self.next_check},{self.service_uuid},{self.fatal_retries},{self.total_retries},{self.retries}'
+
+    @staticmethod
+    def csv_header() -> str:
+        return 'vmid,created,next_check,service_uuid,fatal_retries,total_retries,retries'
+
 
 class DeferredDeletionWorker(Job):
     frecuency = 7  # Frequency for this job, in seconds
@@ -376,3 +384,18 @@ class DeferredDeletionWorker(Job):
         self.process_stopping()
         self.process_to_delete()
         self.process_deleting()
+
+    # To allow reporting what is on the queues
+    @staticmethod
+    def report(out: typing.TextIO) -> None:
+        out.write(DeletionInfo.csv_header() + '\n')
+        for group in [
+            TO_DELETE_GROUP,
+            DELETING_GROUP,
+            TO_STOP_GROUP,
+            STOPPING_GROUP,
+        ]:
+            with DeferredDeletionWorker.deferred_storage.as_dict(group) as storage:
+                for _key, info in typing.cast(dict[str, DeletionInfo], storage).items():
+                    out.write(info.as_csv() + '\n')
+        out.write('\n')
