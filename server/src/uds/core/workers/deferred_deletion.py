@@ -55,7 +55,7 @@ RETRIES_TO_RETRY: typing.Final[int] = 32
 MAX_DELETIONS_AT_ONCE: typing.Final[int] = 32
 
 # For every operation that takes more than this time, multiplay CHECK_INTERVAL by (time / TIME_THRESHOLD)
-TIME_THRESHOLD: typing.Final[int] = 2
+OPERATION_DELAY_THRESHOLD: typing.Final[int] = 2
 
 # This interval is how long will take to check again for deletion, stopping, etc...
 # That is, once a machine is deleted, every CHECK_INTERVAL seconds will be check that it has been deleted
@@ -68,34 +68,43 @@ TO_DELETE_GROUP: typing.Final[str] = 'to_delete'
 DELETING_GROUP: typing.Final[str] = 'deleting'
 
 
-class ExecutionTime:
+class ExecutionTimer:
     _start: datetime.datetime
     _end: datetime.datetime
+    _running: bool
 
     def __init__(self) -> None:
         self._start = datetime.datetime.now()
         self._end = self._start
+        self._running = False
 
-    def __enter__(self) -> 'ExecutionTime':
+    def __enter__(self) -> 'ExecutionTimer':
+        self._start = self._end = datetime.datetime.now()
+        self._running = True
         return self
 
     def __exit__(self, exc_type: typing.Any, exc_value: typing.Any, traceback: typing.Any) -> None:
+        self._running = False
         self._end = datetime.datetime.now()
 
     @property
     def elapsed(self) -> datetime.timedelta:
+        if self._running:
+            return datetime.datetime.now() - self._start
         return self._end - self._start
 
-    @staticmethod
-    def from_now() -> 'ExecutionTime':
-        return ExecutionTime()
+    @property
+    def delay_rate(self) -> float:
+        if self.elapsed.total_seconds() > OPERATION_DELAY_THRESHOLD:
+            return self.elapsed.total_seconds() / OPERATION_DELAY_THRESHOLD
+        return 1.0
 
 
-def calc_next(*, fatal: bool = False, interval: datetime.timedelta = CHECK_INTERVAL) -> datetime.datetime:
+def calc_next(*, fatal: bool = False, delay_rate: float = 1.0) -> datetime.datetime:
     """
     Returns the next check time for a deletion operation
     """
-    return sql_now() + (interval * (FATAL_ERROR_INTERVAL_MULTIPLIER if fatal else 1))
+    return sql_now() + (CHECK_INTERVAL * (FATAL_ERROR_INTERVAL_MULTIPLIER if fatal else 1) * delay_rate)
 
 
 @dataclasses.dataclass
@@ -118,13 +127,13 @@ class DeletionInfo:
             storage_dict[unique_key] = self
 
     @staticmethod
-    def create_on_storage(group: str, vmid: str, service_uuid: str) -> None:
+    def create_on_storage(group: str, vmid: str, service_uuid: str, delay_rate: float = 1.0) -> None:
         unique_key = f'{service_uuid}_{vmid}'
         with DeferredDeletionWorker.deferred_storage.as_dict(group, atomic=True) as storage_dict:
             storage_dict[unique_key] = DeletionInfo(
                 vmid=vmid,
                 created=sql_now(),
-                next_check=calc_next(),
+                next_check=calc_next(delay_rate=delay_rate),
                 service_uuid=service_uuid,
                 # fatal, total an retries are 0 by default
             )
@@ -196,24 +205,33 @@ class DeferredDeletionWorker(Job):
         logger.debug('Adding %s from service %s to deferred deletion', vmid, service.type_name)
         # If sync, execute now
         if not execute_later:
+            exec_time = ExecutionTimer()
             try:
-                if service.must_stop_before_deletion:
-                    if service.is_running(None, vmid):
-                        if service.should_try_soft_shutdown():
-                            service.shutdown(None, vmid)
-                        else:
-                            service.stop(None, vmid)
-                        DeletionInfo.create_on_storage(STOPPING_GROUP, vmid, service.db_obj().uuid)
-                        return
+                with exec_time:
+                    if service.must_stop_before_deletion:
+                        if service.is_running(None, vmid):
+                            if service.should_try_soft_shutdown():
+                                service.shutdown(None, vmid)
+                            else:
+                                service.stop(None, vmid)
+                            DeletionInfo.create_on_storage(STOPPING_GROUP, vmid, service.db_obj().uuid)
+                            return
 
-                service.execute_delete(vmid)
+                    service.execute_delete(vmid)
+                # If this takes too long, we will delay the next check a bit
+                DeletionInfo.create_on_storage(DELETING_GROUP, vmid, service.db_obj().uuid, delay_rate=exec_time.delay_rate)
             except gen_exceptions.NotFoundError:
                 return  # Already removed
             except Exception as e:
                 logger.warning(
                     'Could not delete %s from service %s: %s. Retrying later.', vmid, service.db_obj().name, e
                 )
-                DeletionInfo.create_on_storage(TO_DELETE_GROUP, vmid, service.db_obj().uuid)
+                DeletionInfo.create_on_storage(
+                    TO_DELETE_GROUP,
+                    vmid,
+                    service.db_obj().uuid,
+                    delay_rate=exec_time.delay_rate,
+                )
                 return
         else:
             if service.must_stop_before_deletion:
@@ -222,9 +240,6 @@ class DeferredDeletionWorker(Job):
                 DeletionInfo.create_on_storage(TO_DELETE_GROUP, vmid, service.db_obj().uuid)
             return
 
-        # Has not been deleted, so we will defer deletion
-        DeletionInfo.create_on_storage(DELETING_GROUP, vmid, service.db_obj().uuid)
-
     def _process_exception(
         self,
         key: str,
@@ -232,6 +247,8 @@ class DeferredDeletionWorker(Job):
         to_group: str,
         services: dict[str, 'DynamicService'],
         e: Exception,
+        *,
+        delay_rate: float = 1.0,
     ) -> None:
         if isinstance(e, gen_exceptions.NotFoundError):
             return  # All ok, already removed
@@ -246,7 +263,7 @@ class DeferredDeletionWorker(Job):
         )
 
         if not is_retryable:
-            info.next_check = calc_next(fatal=True)
+            info.next_check = calc_next(fatal=True, delay_rate=delay_rate)
             info.fatal_retries += 1
             if info.fatal_retries >= MAX_FATAL_ERROR_RETRIES:
                 logger.error(
@@ -255,7 +272,7 @@ class DeferredDeletionWorker(Job):
                     services[info.service_uuid].db_obj().name,
                 )
                 return  # Do not readd it
-        info.next_check = calc_next()
+        info.next_check = calc_next(delay_rate=delay_rate)
         info.total_retries += 1
         if info.total_retries >= MAX_RETRAYABLE_ERROR_RETRIES:
             logger.error(
@@ -272,28 +289,30 @@ class DeferredDeletionWorker(Job):
 
         # Now process waiting stops
         for key, info in to_stop:
+            exec_time = ExecutionTimer()
             try:
                 service = services[info.service_uuid]
-                if service.is_running(None, info.vmid):
-                    # if info.retries < RETRIES_TO_RETRY, means this is the first time we try to stop it
-                    if info.retries < RETRIES_TO_RETRY:
-                        if service.should_try_soft_shutdown():
-                            service.shutdown(None, info.vmid)
+                with exec_time:
+                    if service.is_running(None, info.vmid):
+                        # if info.retries < RETRIES_TO_RETRY, means this is the first time we try to stop it
+                        if info.retries < RETRIES_TO_RETRY:
+                            if service.should_try_soft_shutdown():
+                                service.shutdown(None, info.vmid)
+                            else:
+                                service.stop(None, info.vmid)
+                            info.fatal_retries = info.total_retries = 0
                         else:
-                            service.stop(None, info.vmid)
-                        info.fatal_retries = info.total_retries = 0
-                    else:
-                        info.total_retries += 1  # Count this as a general retry
-                        info.retries = 0  # Reset retries
-                        service.stop(None, info.vmid)  # Always try to stop it if we have tried before
+                            info.total_retries += 1  # Count this as a general retry
+                            info.retries = 0  # Reset retries
+                            service.stop(None, info.vmid)  # Always try to stop it if we have tried before
 
-                    info.next_check = calc_next()
-                    info.sync_to_storage(STOPPING_GROUP)
-                else:
-                    # Do not update last_check to shutdown it asap, was not running after all
-                    info.sync_to_storage(TO_DELETE_GROUP)
+                        info.next_check = calc_next(delay_rate=exec_time.delay_rate)
+                        info.sync_to_storage(STOPPING_GROUP)
+                    else:
+                        # Do not update last_check to shutdown it asap, was not running after all
+                        info.sync_to_storage(TO_DELETE_GROUP)
             except Exception as e:
-                self._process_exception(key, info, TO_STOP_GROUP, services, e)
+                self._process_exception(key, info, TO_STOP_GROUP, services, e, delay_rate=exec_time.delay_rate)
 
     def process_stopping(self) -> None:
         services, stopping = DeletionInfo.get_from_storage(STOPPING_GROUP)
@@ -301,6 +320,7 @@ class DeferredDeletionWorker(Job):
 
         # Now process waiting for finishing stops
         for key, info in stopping:
+            exec_time = ExecutionTimer()
             try:
                 info.retries += 1
                 if info.retries > RETRIES_TO_RETRY:
@@ -309,17 +329,17 @@ class DeferredDeletionWorker(Job):
                     info.total_retries += 1
                     info.sync_to_storage(TO_STOP_GROUP)
                     continue
-
-                if services[info.service_uuid].is_running(None, info.vmid):
-                    info.next_check = calc_next()
-                    info.total_retries += 1
-                    info.sync_to_storage(STOPPING_GROUP)
-                else:
-                    info.next_check = calc_next()
-                    info.fatal_retries = info.total_retries = 0
-                    info.sync_to_storage(TO_DELETE_GROUP)
+                with exec_time:
+                    if services[info.service_uuid].is_running(None, info.vmid):
+                        info.next_check = calc_next(delay_rate=exec_time.delay_rate)
+                        info.total_retries += 1
+                        info.sync_to_storage(STOPPING_GROUP)
+                    else:
+                        info.next_check = calc_next(delay_rate=exec_time.delay_rate)
+                        info.fatal_retries = info.total_retries = 0
+                        info.sync_to_storage(TO_DELETE_GROUP)
             except Exception as e:
-                self._process_exception(key, info, STOPPING_GROUP, services, e)
+                self._process_exception(key, info, STOPPING_GROUP, services, e, delay_rate=exec_time.delay_rate)
 
     def process_to_delete(self) -> None:
         services, to_delete = DeletionInfo.get_from_storage(TO_DELETE_GROUP)
@@ -328,20 +348,22 @@ class DeferredDeletionWorker(Job):
         # Now process waiting deletions
         for key, info in to_delete:
             service = services[info.service_uuid]
+            exec_time = ExecutionTimer()
             try:
-                # If must be stopped before deletion, and is running, put it on to_stop
-                if service.must_stop_before_deletion and service.is_running(None, info.vmid):
-                    info.sync_to_storage(TO_STOP_GROUP)
-                    continue
+                with exec_time:
+                    # If must be stopped before deletion, and is running, put it on to_stop
+                    if service.must_stop_before_deletion and service.is_running(None, info.vmid):
+                        info.sync_to_storage(TO_STOP_GROUP)
+                        continue
 
-                service.execute_delete(info.vmid)
+                    service.execute_delete(info.vmid)
                 # And store it for checking later if it has been deleted, reseting counters
-                info.next_check = calc_next()
+                info.next_check = calc_next(delay_rate=exec_time.delay_rate)
                 info.retries = 0
                 info.total_retries += 1
                 info.sync_to_storage(DELETING_GROUP)
             except Exception as e:
-                self._process_exception(key, info, TO_DELETE_GROUP, services, e)
+                self._process_exception(key, info, TO_DELETE_GROUP, services, e, delay_rate=exec_time.delay_rate)
 
     def process_deleting(self) -> None:
         """
@@ -354,6 +376,7 @@ class DeferredDeletionWorker(Job):
 
         # Now process waiting for finishing deletions
         for key, info in deleting:
+            exec_time = ExecutionTimer()
             try:
                 info.retries += 1
                 if info.retries > RETRIES_TO_RETRY:
@@ -362,14 +385,14 @@ class DeferredDeletionWorker(Job):
                     info.total_retries += 1
                     info.sync_to_storage(TO_DELETE_GROUP)
                     continue
-
-                # If not finished, readd it for later check
-                if not services[info.service_uuid].is_deleted(info.vmid):
-                    info.next_check = calc_next()
-                    info.total_retries += 1
-                    info.sync_to_storage(DELETING_GROUP)
+                with exec_time:
+                    # If not finished, readd it for later check
+                    if not services[info.service_uuid].is_deleted(info.vmid):
+                        info.next_check = calc_next(delay_rate=exec_time.delay_rate)
+                        info.total_retries += 1
+                        info.sync_to_storage(DELETING_GROUP)
             except Exception as e:
-                self._process_exception(key, info, DELETING_GROUP, services, e)
+                self._process_exception(key, info, DELETING_GROUP, services, e, delay_rate=exec_time.delay_rate)
 
     def run(self) -> None:
         self.process_to_stop()
