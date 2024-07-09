@@ -66,6 +66,8 @@ class DynamicServiceTest(UDSTestCase):
             # Clear mocks
             service.mock.reset_mock()
             userservice.mock.reset_mock()
+            
+            userservice.unmarshal(userservice.marshal())  # As done by worker, to simulate the step-by-step
 
             if first:  # First iteration is call for deploy
                 state = userservice.deploy_for_user(models.User())
@@ -109,6 +111,7 @@ class DynamicServiceTest(UDSTestCase):
         self.assertEqual(state, types.states.TaskState.RUNNING)
 
         for _ in limited_iterator(lambda: state != types.states.TaskState.FINISHED, limit=128):
+            userservice.unmarshal(userservice.marshal())  # As done by worker, to simulate the step-by-step
             state = userservice.check_state()
 
         self.assertEqual(state, types.states.TaskState.FINISHED)
@@ -124,6 +127,7 @@ class DynamicServiceTest(UDSTestCase):
         self.assertEqual(state, types.states.TaskState.RUNNING)
 
         for _ in limited_iterator(lambda: state != types.states.TaskState.FINISHED, limit=128):
+            userservice.unmarshal(userservice.marshal())  # As done by worker, to simulate the step-by-step
             state = userservice.check_state()
 
         self.assertEqual(state, types.states.TaskState.FINISHED)
@@ -139,6 +143,7 @@ class DynamicServiceTest(UDSTestCase):
         self.assertEqual(state, types.states.TaskState.RUNNING)
 
         for _ in limited_iterator(lambda: state != types.states.TaskState.FINISHED, limit=128):
+            userservice.unmarshal(userservice.marshal())  # As done by worker, to simulate the step-by-step
             # if cache is L2, will be stuck on types.services.Operations.WAIT until wake up
             if userservice._queue[0] == types.services.Operation.WAIT:
                 state = userservice.process_ready_from_os_manager('')  # Wake up
@@ -179,6 +184,7 @@ class DynamicServiceTest(UDSTestCase):
         self.assertEqual(state, types.states.TaskState.RUNNING)
 
         for _ in limited_iterator(lambda: state != types.states.TaskState.FINISHED, limit=128):
+            userservice.unmarshal(userservice.marshal())  # As done by worker, to simulate the step-by-step
             state = userservice.check_state()
 
         self.assertEqual(state, types.states.TaskState.FINISHED)
@@ -198,7 +204,7 @@ class DynamicServiceTest(UDSTestCase):
         self.assertEqual(state, types.states.TaskState.RUNNING)
 
         # Force failure
-        userservice._queue = [types.services.Operation.CUSTOM_1]
+        userservice._set_queue([types.services.Operation.CUSTOM_1])
         self.assertEqual(userservice.check_state(), types.states.TaskState.ERROR)
         self.assertEqual(userservice.error_reason(), 'CUSTOM_1')
 
@@ -211,6 +217,7 @@ class DynamicServiceTest(UDSTestCase):
         state = userservice.deploy_for_user(models.User())
         self.assertEqual(state, types.states.TaskState.RUNNING)
         # Again, to execute "CREATE"
+        userservice.unmarshal(userservice.marshal())  # As done by worker, to simulate the step-by-step
         state = userservice.check_state()
         self.assertEqual(state, types.states.TaskState.RUNNING)
         self.assertTrue(userservice._vmid != '')
@@ -230,6 +237,7 @@ class DynamicServiceTest(UDSTestCase):
         state = userservice.deploy_for_user(models.User())
         self.assertEqual(state, types.states.TaskState.RUNNING)
         for _ in limited_iterator(lambda: state != types.states.TaskState.FINISHED, limit=128):
+            userservice.unmarshal(userservice.marshal())  # As done by worker, to simulate the step-by-step
             state = userservice.check_state()
 
         # Now, destroy it. Should call shutdown instead of stop
@@ -252,6 +260,7 @@ class DynamicServiceTest(UDSTestCase):
         state = userservice.deploy_for_user(models.User())
         self.assertEqual(state, types.states.TaskState.RUNNING)
         for _ in limited_iterator(lambda: state != types.states.TaskState.FINISHED, limit=128):
+            userservice.unmarshal(userservice.marshal())  # As done by worker, to simulate the step-by-step
             state = userservice.check_state()
 
         # Call for set_ready
@@ -275,6 +284,7 @@ class DynamicServiceTest(UDSTestCase):
         state = types.states.TaskState.RUNNING
         counter = 0
         for counter in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
+            userservice.unmarshal(userservice.marshal())  # As done by worker, to simulate the step-by-step
             if counter == 5:
                 # Replace the first item in queue to NOP, so next check will fail
                 userservice._queue[0] = types.services.Operation.NOP
@@ -300,6 +310,7 @@ class DynamicServiceTest(UDSTestCase):
         state = types.states.TaskState.RUNNING
         counter = 0
         for counter in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
+            userservice.unmarshal(userservice.marshal())  # As done by worker, to simulate the step-by-step
             if counter == 4:
                 # Replace the first item in queue to NOP, so next check will fail
                 userservice._queue[0] = types.services.Operation.NOP

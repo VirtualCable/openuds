@@ -181,6 +181,8 @@ class FixedServiceTest(UDSTestCase):
             service.mock.reset_mock()
             userservice.mock.reset_mock()
 
+            userservice.unmarshal(userservice.marshal())  # As done by worker, to simulate the step-by-step
+
             if first:  # First iteration is call for deploy
                 if not removal:
                     state = userservice.deploy_for_user(models.User())
@@ -217,8 +219,10 @@ class FixedServiceTest(UDSTestCase):
         max_iterations: int = 100,
     ) -> None:
         if userservice.deploy_for_user(models.User()) != types.states.TaskState.FINISHED:
-            while userservice.check_state() != types.states.TaskState.FINISHED and max_iterations > 0:
-                max_iterations -= 1
+            state = types.states.TaskState.RUNNING
+            for _counter in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=max_iterations):
+                userservice.unmarshal(userservice.marshal())  # As done by worker, to simulate the step-by-step
+                state = userservice.check_state()
 
         # Clear mocks
         service.mock.reset_mock()
@@ -244,7 +248,7 @@ class FixedServiceTest(UDSTestCase):
 
         # Userservice is in deployed state, so we can remove it
         self.check_iterations(service, userservice, EXPECTED_REMOVAL_ITERATIONS_INFO, removal=True)
-        
+
     def test_service_set_ready(self) -> None:
         _prov, service, userservice = self.create_elements()
         self.deploy_service(service, userservice)
@@ -273,14 +277,14 @@ class FixedServiceTest(UDSTestCase):
             service.maintain_on_error.value = maintain_on_error
             self.deploy_service(service, userservice)
             self.assertEqual(userservice.check_state(), types.states.TaskState.FINISHED)
-            
+
             # Now, ensure that we will raise an exception, overriding is_ready of service
             service.is_ready = mock.MagicMock(side_effect=Exception('Error'))
             if maintain_on_error is False:
                 self.assertEqual(userservice.set_ready(), types.states.TaskState.ERROR)
             else:
                 self.assertEqual(userservice.set_ready(), types.states.TaskState.FINISHED)
-            
+
     def test_userservice_maintain_on_error_no_created(self) -> None:
         _prov, service, userservice = self.create_elements()
         service.maintain_on_error.value = True
@@ -327,11 +331,14 @@ class FixedServiceTest(UDSTestCase):
                 if counter == 5:
                     # Replace the first item in queue to NOP, so next check will fail
                     userservice._queue[0] = types.services.Operation.NOP
+                userservice.unmarshal(userservice.marshal())  # As done by worker, to simulate the step-by-step
                 state = userservice.check_state()
 
             self.assertEqual(userservice.check_state(), types.states.TaskState.ERROR)
             self.assertEqual(userservice.error_reason(), 'Max retries reached')
-            self.assertEqual(counter, 11)  # 4 retries + 5 retries after reset + 1 of the reset itself + 1 of initial NOP
+            self.assertEqual(
+                counter, 11
+            )  # 4 retries + 5 retries after reset + 1 of the reset itself + 1 of initial NOP
 
     def test_userservice_max_retries_checker(self) -> None:
         _prov, _service, userservice = self.create_elements()
@@ -351,6 +358,7 @@ class FixedServiceTest(UDSTestCase):
                 if counter == 4:
                     # Replace the first item in queue to NOP, so next check will fail
                     userservice._queue[0] = types.services.Operation.NOP
+                userservice.unmarshal(userservice.marshal())  # As done by worker, to simulate the step-by-step
                 state = userservice.check_state()
 
             self.assertEqual(userservice.check_state(), types.states.TaskState.ERROR)

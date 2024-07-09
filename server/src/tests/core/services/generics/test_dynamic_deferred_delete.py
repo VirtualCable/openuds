@@ -46,7 +46,7 @@ from ....utils import helpers
 from . import fixtures
 
 
-class DynamicServiceTest(UDSTransactionTestCase):
+class DynamicDeferredDeleteTest(UDSTransactionTestCase):
     def setUp(self) -> None:
         super().setUp()
 

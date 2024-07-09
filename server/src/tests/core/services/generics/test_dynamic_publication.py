@@ -69,6 +69,7 @@ class DynamicPublicationTest(UDSTestCase):
             # Clear mocks
             service.mock.reset_mock()
             publication.mock.reset_mock()
+            publication.unmarshal(publication.marshal())  # As it will be done by the worker
 
             if first:  # First iteration is call for deploy
                 state = publication.publish()
@@ -121,6 +122,7 @@ class DynamicPublicationTest(UDSTestCase):
         with mock.patch.object(publication, 'op_create', side_effect=Exception('Test')):
             state = publication.publish()  # Firt iteration is INITIALIZE
             self.assertEqual(state, types.states.TaskState.RUNNING)  # Should work
+            publication.unmarshal(publication.marshal())  # As it will be done by the worker
             state = publication.check_state()  # Second iteration is CREATE
             self.assertEqual(state, types.states.TaskState.ERROR)
             # Check that the reason is the exception
@@ -135,8 +137,10 @@ class DynamicPublicationTest(UDSTestCase):
         with mock.patch.object(publication, 'op_create_completed', side_effect=Exception('Test')):
             state = publication.publish()
             self.assertEqual(state, types.states.TaskState.RUNNING)  # Should work
+            publication.unmarshal(publication.marshal())  # As it will be done by the worker
             state = publication.check_state()
             self.assertEqual(state, types.states.TaskState.RUNNING)  # Should work
+            publication.unmarshal(publication.marshal())  # As it will be done by the worker
             state = publication.check_state()
             self.assertEqual(state, types.states.TaskState.ERROR)
             # Check that the reason is the exception
@@ -162,6 +166,7 @@ class DynamicPublicationTest(UDSTestCase):
             if counter == 5:
                 # Replace the first item in queue to NOP, so next check will fail
                 publication._queue[0] = types.services.Operation.NOP
+            publication.unmarshal(publication.marshal())  # As it will be done by the worker
             state = publication.check_state()
 
         self.assertEqual(publication.check_state(), types.states.TaskState.ERROR)
@@ -185,6 +190,7 @@ class DynamicPublicationTest(UDSTestCase):
             if counter == 4:
                 # Replace the first item in queue to NOP, so next check will fail
                 publication._queue[0] = types.services.Operation.NOP
+            publication.unmarshal(publication.marshal())  # As it will be done by the worker
             state = publication.check_state()
 
         self.assertEqual(publication.check_state(), types.states.TaskState.ERROR)
