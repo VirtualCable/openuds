@@ -56,6 +56,7 @@ MAX_DELETIONS_AT_ONCE: typing.Final[int] = 32
 
 # For every operation that takes more than this time, multiplay CHECK_INTERVAL by (time / TIME_THRESHOLD)
 OPERATION_DELAY_THRESHOLD: typing.Final[int] = 2
+MAX_DELAY_RATE: typing.Final[float] = 4.0
 
 # This interval is how long will take to check again for deletion, stopping, etc...
 # That is, once a machine is deleted, every CHECK_INTERVAL seconds will be check that it has been deleted
@@ -96,7 +97,8 @@ class ExecutionTimer:
     @property
     def delay_rate(self) -> float:
         if self.elapsed.total_seconds() > OPERATION_DELAY_THRESHOLD:
-            return self.elapsed.total_seconds() / OPERATION_DELAY_THRESHOLD
+            # Ensure we do not delay too much, at most MAX_DELAY_RATE times
+            return min(self.elapsed.total_seconds() / OPERATION_DELAY_THRESHOLD, MAX_DELAY_RATE)
         return 1.0
 
 
