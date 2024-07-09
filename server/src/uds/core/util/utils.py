@@ -171,3 +171,41 @@ def ignore_exceptions(log: bool = False) -> typing.Iterator[None]:
         if log:
             logger.error('Ignoring exception: %s', e)
         pass
+
+class ExecutionTimer:
+    _start: datetime.datetime
+    _end: datetime.datetime
+    _running: bool
+    
+    _delay_threshold: float
+    _max_delay_rate: float
+
+    def __init__(self, delay_threshold: float, *, max_delay_rate: float = 4.0) -> None:
+        self._start = datetime.datetime.now()
+        self._end = self._start
+        self._running = False
+        
+        self._delay_threshold = delay_threshold
+        self._max_delay_rate = max_delay_rate
+
+    def __enter__(self) -> 'ExecutionTimer':
+        self._start = self._end = datetime.datetime.now()
+        self._running = True
+        return self
+
+    def __exit__(self, exc_type: typing.Any, exc_value: typing.Any, traceback: typing.Any) -> None:
+        self._running = False
+        self._end = datetime.datetime.now()
+
+    @property
+    def elapsed(self) -> datetime.timedelta:
+        if self._running:
+            return datetime.datetime.now() - self._start
+        return self._end - self._start
+
+    @property
+    def delay_rate(self) -> float:
+        if self.elapsed.total_seconds() > self._delay_threshold:
+            # Ensure we do not delay too much, at most MAX_DELAY_RATE times
+            return min(self.elapsed.total_seconds() / self._delay_threshold, self._max_delay_rate)
+        return 1.0

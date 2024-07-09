@@ -67,9 +67,9 @@ class StateUpdater(abc.ABC):
         if msg is not None:
             log.log(self.user_service, types.log.LogLevel.ERROR, msg, types.log.LogSource.INTERNAL)
 
-    def save(self, newState: typing.Optional[str] = None) -> None:
-        if newState:
-            self.user_service.set_state(newState)
+    def save(self, new_state: typing.Optional[str] = None) -> None:
+        if new_state:
+            self.user_service.set_state(new_state)
 
         self.user_service.update_data(self.user_service_instance)
 
