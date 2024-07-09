@@ -93,7 +93,7 @@ class StateUpdater(abc.ABC):
         logger.debug(
             'Running Executor for %s with state %s and executor %s',
             self.user_service.friendly_name,
-            types.states.State.from_str(state).localized,
+            types.states.TaskState.from_str(state),
             executor,
         )
 

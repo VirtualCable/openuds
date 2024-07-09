@@ -32,7 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 
-SUGGESTED_CHECK_INTERVAL: typing.Final[int] = 10  # In seconds
+SUGGESTED_CHECK_INTERVAL: typing.Final[int] = 8  # In seconds
 MAX_RETRIES: typing.Final[int] = 7 * 24 * 60 // SUGGESTED_CHECK_INTERVAL  # 7 days
 MAX_STATE_CHECKS: typing.Final[int] = 32  # Max number of state checks before giving up
 

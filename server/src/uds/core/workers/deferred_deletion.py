@@ -54,7 +54,6 @@ RETRIES_TO_RETRY: typing.Final[int] = (
     32  # Retries to stop again or to shutdown again in STOPPING_GROUP or DELETING_GROUP
 )
 MAX_DELETIONS_AT_ONCE: typing.Final[int] = 32
-MAX_DELETIONS_CHECKED_AT_ONCE: typing.Final[int] = MAX_DELETIONS_AT_ONCE * 2
 
 # This interval is how long will take to check again for deletion, stopping, etc...
 # That is, once a machine is deleted, every 32 seconds will be check that it has been deleted
