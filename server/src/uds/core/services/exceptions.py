@@ -117,7 +117,7 @@ class ServiceNotReadyError(ServiceException):
     def __init__(
         self,
         *,
-        code: 'ReadyStatus' = typing.cast('ReadyStatus', 0x0000),  # ReadyStatus.READY
+        code: 'ReadyStatus' = ReadyStatus.ZERO,
         user_service: typing.Optional['UserService'] = None,
         transport: typing.Optional['Transport'] = None
     ):

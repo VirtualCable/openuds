@@ -97,7 +97,7 @@ class ConnectionData:
 
 
 class ReadyStatus(enum.IntEnum):
-    READY = 0x0000
+    ZERO = 0x0000
     USERSERVICE_NOT_READY = 0x0001
     USERSERVICE_NO_IP = 0x0002
     TRANSPORT_NOT_READY = 0x0003
@@ -109,6 +109,12 @@ class ReadyStatus(enum.IntEnum):
         """
         return 25 * self.value
 
+    @staticmethod
+    def from_int(value: int) -> 'ReadyStatus':
+        try:
+            return ReadyStatus(value)
+        except ValueError:
+            return ReadyStatus.USERSERVICE_NOT_READY
 
 class CacheLevel(enum.IntEnum):
     NONE = 0  # : Constant for User cache level (no cache at all)

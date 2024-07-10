@@ -220,7 +220,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                     service_pool.name,
                 )
             else:
-                raise Exception(
+                raise InvalidServiceException(
                     f'Invalid publication creating service assignation: {service_pool.name} {user.pretty_name}'
                 )
         else:
@@ -554,13 +554,13 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         Checks if we can start a new service
         """
-        preparingForProvider = self.count_userservices_in_states_for_provider(
+        number_of_preparing = self.count_userservices_in_states_for_provider(
             service_pool.service.provider, [State.PREPARING]
         )
-        serviceInstance = service_pool.service.get_instance()
+        service_instance = service_pool.service.get_instance()
         if self.maximum_user_services_reached(service_pool.service) or (
-            preparingForProvider >= serviceInstance.provider().get_concurrent_creation_limit()
-            and serviceInstance.provider().get_ignore_limits() is False
+            number_of_preparing >= service_instance.provider().get_concurrent_creation_limit()
+            and service_instance.provider().get_ignore_limits() is False
         ):
             return False
         return True
