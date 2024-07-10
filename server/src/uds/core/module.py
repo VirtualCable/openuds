@@ -158,17 +158,6 @@ class Module(UserInterface, Environmentable, Serializable, abc.ABC):
         Serializable.__init__(self)
         self._uuid = uuid or ''
 
-    def is_dirty(self) -> bool:
-        """
-        This method informs the core if the module has changed serializable data,
-        and that must be re-serialized
-
-        Default implemetation is that on every method call, module will be dirty
-
-        Note: The implementation of this is a work in progress, so right now the module will be serialized out on every access
-        """
-        return True
-
     def marshal(self) -> bytes:
         """
         By default and if not overriden by descendants, this method, overridden

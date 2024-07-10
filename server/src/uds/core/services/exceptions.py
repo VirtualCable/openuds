@@ -117,11 +117,14 @@ class ServiceNotReadyError(ServiceException):
     def __init__(
         self,
         *,
-        code: 'ReadyStatus' = ReadyStatus.ZERO,
+        code: typing.Optional['ReadyStatus'] = None,
         user_service: typing.Optional['UserService'] = None,
         transport: typing.Optional['Transport'] = None
     ):
+        from uds.core.types.services import ReadyStatus
+
         super().__init__()
-        self.code = code
+        self.code = code or ReadyStatus.ZERO
+
         self.user_service = user_service
         self.transport = transport

@@ -621,15 +621,6 @@ def create_userservice_fixed(
     """
     Create a fixed user service, has no publication
     """
-    # def __init__(
-    #     self,
-    #     environment: 'Environment',
-    #     service: 'services.Service',
-    #     publication: typing.Optional['services.Publication'] = None,
-    #     osmanager: typing.Optional['osmanagers.OSManager'] = None,
-    #     uuid: str = '',
-    # ):
-
     uuid_ = str(uuid.uuid4().hex)
     return deployment_fixed.ProxmoxUserServiceFixed(
         environment=environment.Environment.private_environment(uuid_),
