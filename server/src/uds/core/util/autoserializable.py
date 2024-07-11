@@ -166,7 +166,7 @@ class _ObservableList(list[T]):
         self._owner._dirty = True
         super().__delitem__(key)
 
-    def __iadd__(self, value: collections.abc.Iterable[T], /) -> typing.Self:
+    def __iadd__(self, value: collections.abc.Iterable[T], /) -> typing.Self:  # type: ignore[override]
         self._owner._dirty = True
         return super().__iadd__(value)
 
@@ -208,7 +208,7 @@ class _ObservableDict(dict[T, V]):
         self._owner._dirty = True
         super().update(*args, **kwargs)
 
-    def __ior__(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Self:
+    def __ior__(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Self:  # type: ignore[override]
         self._owner._dirty = True
         return super().__ior__(*args, **kwargs)
 
@@ -612,7 +612,7 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
     serialization_version: int = 0  # So autoserializable classes can keep their version if needed
 
     # Use __new__ to avoid using __init__ in the class to initialize fields
-    def __new__(cls, *args: typing.Any, **kwargs: typing.Any) -> 'AutoSerializable':
+    def __new__(cls: type['typing.Self'], *args: typing.Any, **kwargs: typing.Any) -> 'typing.Self':
         instance = super().__new__(cls)
         # Ensure fields is initialized
         instance._fields = {}
