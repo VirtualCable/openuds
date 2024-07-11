@@ -95,6 +95,33 @@ VERSION_SIZE: typing.Final[int] = 2  # 2 bytes for version
 PACKED_LENGHS: typing.Final[struct.Struct] = struct.Struct('<HHI')
 
 
+# Helper functions
+def fernet_key(crypt_key: bytes) -> str:
+    """Generate fermet key a crypt key
+
+    Args:
+        crypt_key: Crypt key to use
+
+    Returns:
+        Key valid for Fernet (base64 encoded, 32 bytes long)
+    """
+    # Generate an URL-Safe base64 encoded 32 bytes key for Fernet
+    return base64.b64encode(hashlib.sha256(crypt_key).digest()).decode()
+
+
+# checker for autoserializable data
+def is_autoserializable_data(data: bytes) -> bool:
+    """Check if data is is from an autoserializable class
+
+    Args:
+        data: Data to check
+
+    Returns:
+        True if data is autoserializable, False otherwise
+    """
+    return data[: len(HEADER_BASE)] == HEADER_BASE
+
+
 class _ObservableList(list[T]):
     _owner: 'AutoSerializable'
 
@@ -184,33 +211,6 @@ class _ObservableDict(dict[T, V]):
     def __ior__(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Self:
         self._owner._dirty = True
         return super().__ior__(*args, **kwargs)
-
-
-# Helper functions
-def fernet_key(crypt_key: bytes) -> str:
-    """Generate fermet key a crypt key
-
-    Args:
-        crypt_key: Crypt key to use
-
-    Returns:
-        Key valid for Fernet (base64 encoded, 32 bytes long)
-    """
-    # Generate an URL-Safe base64 encoded 32 bytes key for Fernet
-    return base64.b64encode(hashlib.sha256(crypt_key).digest()).decode()
-
-
-# checker for autoserializable data
-def is_autoserializable_data(data: bytes) -> bool:
-    """Check if data is is from an autoserializable class
-
-    Args:
-        data: Data to check
-
-    Returns:
-        True if data is autoserializable, False otherwise
-    """
-    return data[: len(HEADER_BASE)] == HEADER_BASE
 
 
 @dataclasses.dataclass(slots=True)
@@ -303,9 +303,6 @@ class _SerializableField(typing.Generic[T]):
             instance {SerializableFields} -- Instance of class with field
 
         """
-        if not hasattr(instance, '_fields'):
-            instance._fields = {}
-
         if self.name not in instance._fields:
             # Set default using setter
             self.__set__(instance, self._default())
@@ -319,12 +316,9 @@ class _SerializableField(typing.Generic[T]):
         #     value = int(value)
         # elif self.obj_type == float and isinstance(value, int):
         #     value = float(value)
-        if not hasattr(instance, '_fields'):
-            instance._fields = {}
-
         instance._dirty = True  # Mark as dirty
         if not isinstance(value, self.obj_type):
-            # Try casting to load values (maybe a namedtuple, i.e.)
+            # If set value is not a direct instance of the type, try to convert it
             try:
                 if isinstance(value, collections.abc.Mapping):
                     # If inner type is an ObservableDict, ensure to provider owner
@@ -343,10 +337,10 @@ class _SerializableField(typing.Generic[T]):
                 else:  # Maybe it has a constructor that accepts a single value or is a callable...
                     value = typing.cast(typing.Callable[..., typing.Any], self.obj_type)(value)
             except Exception as e:
-                # Allow int to float conversion and viceversa
                 raise ValueError(
                     f"Field {self.name} cannot be set to {value} (type {self.obj_type.__name__})"
                 ) from e
+
         instance._fields[self.name] = value
 
     def marshal(self, instance: 'AutoSerializable') -> bytes:
@@ -512,8 +506,8 @@ class ObjectField(_SerializableField[T]):
         value = typing.cast(typing.Any, self.__get__(instance))
         if dataclasses.is_dataclass(self.obj_type):
             to_marshal = dataclasses.asdict(value)
-        elif hasattr(value, '_asdict'):
-            to_marshal = value._asdict()  # Serialize namedtuples as dicts
+        elif hasattr(value, 'as_dict'):
+            to_marshal = value.as_dict()  # Serialize namedtuples as dicts
         else:
             to_marshal = value
 
@@ -605,15 +599,24 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
     Example:
         >>> class Test(SerializableFields):
         ...     a = IntegerField()
-        ...     b = StrField()
+        ...     b = StringField()
         ...     c = FloatField()
-        ...     d = ListField(defalut=lambda: [1, 2, 3])
+        ...     d = ListField[int](defalut=lambda: [1, 2, 3])
     """
 
-    _fields: dict[str, typing.Any]  # Values for the fields (serializable fields only ofc)
+    # Note that fields is not initialized, but only declered
+    _fields: dict[str, typing.Any]
     _dirty: bool = False
 
+    # Note that this is not "private". Provided so derived classes can set their own version for their own purposes
     serialization_version: int = 0  # So autoserializable classes can keep their version if needed
+
+    # Use __new__ to avoid using __init__ in the class to initialize fields
+    def __new__(cls, *args: typing.Any, **kwargs: typing.Any) -> 'AutoSerializable':
+        instance = super().__new__(cls)
+        # Ensure fields is initialized
+        instance._fields = {}
+        return instance
 
     def _autoserializable_fields(self) -> collections.abc.Iterator[tuple[str, _SerializableField[typing.Any]]]:
         """Returns an iterator over all fields in the class, including inherited ones
@@ -742,7 +745,7 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
 
     def as_dict(self) -> dict[str, typing.Any]:
         return {k: v.__get__(self) for k, v in self._autoserializable_fields()}
-    
+
     def is_dirty(self) -> bool:
         return self._dirty or super().is_dirty()
 
