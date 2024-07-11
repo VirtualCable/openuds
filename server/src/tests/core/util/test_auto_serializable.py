@@ -341,56 +341,101 @@ class AutoSerializable(UDSTestCase):
         self.assertEqual(instance2.obj_dc_field, SerializableDataclass(1, '2', 3.0))  # default value
         self.assertEqual(instance2.obj_nt_field, SerializableNamedTuple(2, '3', 4.0))  # deserialized value
 
-    def test_autoserializable_dirty(self) -> None:
+    def test_autoserializable_dirty_list(self) -> None:
         instance = AutoSerializableClass()
         self.assertFalse(instance._dirty)
-        
+
         # Test list field dirty flag
         self.assertEqual(instance.list_field[0], 1)
         # First access sets default value, so it's dirty
         self.assertTrue(instance._dirty)
-        
+
         instance._dirty = False
         self.assertEqual(instance.list_field[1], 2)
         # Second access to ANY value does not set dirty flag because
         self.assertFalse(instance._dirty)
-        
+
         instance.list_field = [3, 5, 7]
         self.assertTrue(instance._dirty)
-        
+
         instance._dirty = False
         instance.list_field[0] = 1
         self.assertTrue(instance._dirty)
-        
+
         instance._dirty = False
         instance.list_field.append(9)
         self.assertTrue(instance._dirty)
-        
+
         instance._dirty = False
         instance.list_field.remove(5)
         self.assertTrue(instance._dirty)
-        
+
         instance._dirty = False
         instance.list_field.pop()
         self.assertTrue(instance._dirty)
-        
+
         instance._dirty = False
         instance.list_field.insert(1, 4)
         self.assertTrue(instance._dirty)
-        
+
         instance._dirty = False
         instance.list_field.clear()
         self.assertTrue(instance._dirty)
-        
+
         instance.list_field = [1, 2, 3]
         instance._dirty = False
         del instance.list_field[1]
         self.assertTrue(instance._dirty)
-        
+
         instance._dirty = False
         instance.list_field.extend([4, 5])
         self.assertTrue(instance._dirty)
-        
+
+    def test_autoserializable_dirty_dict(self) -> None:
+        instance = AutoSerializableClass()
+        self.assertFalse(instance._dirty)
+
+        # Test list field dirty flag
+        self.assertEqual(instance.dict_field['a'], 1)
+        # First access sets default value, so it's dirty
+        self.assertTrue(instance._dirty)
+
+        instance._dirty = False
+        self.assertEqual(instance.dict_field['b'], 2)
+        # Second access to ANY value does not set dirty flag because
+        self.assertFalse(instance._dirty)
+
+        instance.dict_field = {'a': 3, 'b': 5, 'c': 7}
+        self.assertTrue(instance._dirty)
+
+        instance._dirty = False
+        instance.dict_field['a'] = 1
+        self.assertTrue(instance._dirty)
+
+        instance._dirty = False
+        instance.dict_field.update({'d': 9})
+        self.assertTrue(instance._dirty)
+
+        instance._dirty = False
+        del instance.dict_field['b']
+        self.assertTrue(instance._dirty)
+
+        instance._dirty = False
+        instance.dict_field.pop('a')
+        self.assertTrue(instance._dirty)
+
+        instance._dirty = False
+        instance.dict_field.clear()
+        self.assertTrue(instance._dirty)
+
+    def test_autoserializable_dirty(self) -> None:
+        instance = AutoSerializableClass()
+        self.assertFalse(instance._dirty)
+
+        _a = instance.int_field
+        # First access, so it's dirty
+        self.assertTrue(instance._dirty)
+
         instance._dirty = False
         instance.int_field = 1
         self.assertTrue(instance._dirty)

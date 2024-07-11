@@ -148,6 +148,48 @@ class _ObservableList(list[T]):
         return super().__imul__(value)
 
 
+# Observable dict
+class _ObservableDict(dict[T, V]):
+    _owner: 'AutoSerializable'
+
+    def __init__(self, owner: 'AutoSerializable', *args: typing.Any, **kwargs: typing.Any):
+        self._owner = owner
+        self._owner._dirty = True
+        super().__init__(*args, **kwargs)
+
+    def __setitem__(self, key: T, value: V, /) -> None:
+        self._owner._dirty = True
+        super().__setitem__(key, value)
+
+    def __delitem__(self, key: T, /) -> None:
+        self._owner._dirty = True
+        super().__delitem__(key)
+
+    def clear(self) -> None:
+        self._owner._dirty = True
+        super().clear()
+
+    def pop(self, *args: typing.Any, **kwargs: typing.Any) -> V:
+        self._owner._dirty = True
+        return super().pop(*args, **kwargs)
+
+    def popitem(self) -> tuple[T, V]:
+        self._owner._dirty = True
+        return super().popitem()
+
+    def setdefault(self, key: T, default: V, /) -> V:
+        self._owner._dirty = True
+        return super().setdefault(key, default)
+
+    def update(self, *args: typing.Any, **kwargs: typing.Any) -> None:
+        self._owner._dirty = True
+        super().update(*args, **kwargs)
+
+    def __ior__(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Self:
+        self._owner._dirty = True
+        return super().__ior__(*args, **kwargs)
+
+
 # Helper functions
 def fernet_key(crypt_key: bytes) -> str:
     """Generate fermet key a crypt key
@@ -265,6 +307,9 @@ class _SerializableField(typing.Generic[T]):
             instance {SerializableFields} -- Instance of class with field
 
         """
+        if not hasattr(instance, '_fields'):
+            instance._fields = {}
+
         if self.name not in instance._fields:
             # Set default using setter
             self.__set__(instance, self._default())
@@ -278,19 +323,27 @@ class _SerializableField(typing.Generic[T]):
         #     value = int(value)
         # elif self.obj_type == float and isinstance(value, int):
         #     value = float(value)
+        if not hasattr(instance, '_fields'):
+            instance._fields = {}
+
         instance._dirty = True  # Mark as dirty
         if not isinstance(value, self.obj_type):
             # Try casting to load values (maybe a namedtuple, i.e.)
             try:
                 if isinstance(value, collections.abc.Mapping):
-                    value = self.obj_type(**value)  # If a dict, try to convert
+                    # If inner type is an ObservableDict, ensure to provider owner
+                    # so dirty can be controlled on dict modifications
+                    if self.obj_type is _ObservableDict:
+                        value = typing.cast(T, _ObservableDict(instance, value))
+                    else:
+                        value = self.obj_type(**value)  # Hopes that obj_type knows how to convert
                 elif isinstance(value, collections.abc.Iterable):  # IF a list, tuple, etc... try to convert
                     # If inner type is an ObservableList, ensure to provider owner
                     # so dirty can be controlled on list modifications
-                    if self.obj_type == _ObservableList:
+                    if self.obj_type is _ObservableList:
                         value = typing.cast(T, _ObservableList(instance, value))
                     else:
-                        value = self.obj_type(*value)  # Hope that obj_type knows how to convert
+                        value = self.obj_type(*value)  # Hopes that obj_type knows how to convert
                 else:  # Maybe it has a constructor that accepts a single value or is a callable...
                     value = typing.cast(typing.Callable[..., typing.Any], self.obj_type)(value)
             except Exception as e:
@@ -419,7 +472,7 @@ class DictField(_SerializableField[dict[T, V]], dict[T, V]):
         default: typing.Union[dict[T, V], collections.abc.Callable[[], dict[T, V]]] = lambda: {},
         cast: typing.Optional[typing.Callable[[T, V], tuple[T, V]]] = None,
     ):
-        super().__init__(dict, default)
+        super().__init__(_ObservableDict, default)
         self._cast = cast
 
     def marshal(self, instance: 'AutoSerializable') -> bytes:
@@ -444,6 +497,8 @@ class ObjectField(_SerializableField[T]):
 
     Note:
         Object type must be serializable.
+        Changes of this object value will not set the dirty flag, so you must do it manually
+        (or assign the object to the field again, that will set the dirty flag)
         Also, take care with these fields and their changes, they are serialized as JSON
         Perfectly supported classes are dataclasses and namedtuples, but any serializable class
         can be used.
@@ -560,14 +615,9 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
     """
 
     _fields: dict[str, typing.Any]  # Values for the fields (serializable fields only ofc)
-    _dirty: bool
+    _dirty: bool = False
 
     serialization_version: int = 0  # So autoserializable classes can keep their version if needed
-
-    def __init__(self):
-        super().__init__()
-        self._fields = {}
-        self._dirty = False
 
     def _autoserializable_fields(self) -> collections.abc.Iterator[tuple[str, _SerializableField[typing.Any]]]:
         """Returns an iterator over all fields in the class, including inherited ones
@@ -627,7 +677,7 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
             for _, v in self._autoserializable_fields()
         ]
         self._dirty = False  # Marshal resets dirty flag
-        
+
         # Serialized data is:
         # 2 bytes -> name length
         # 2 bytes -> type name length
@@ -691,7 +741,7 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
             else:
                 logger.debug('Field %s not found in unmarshalled data', v.name)
                 v.__set__(self, v._default())  # Set default value
-                
+
         self._dirty = False  # Reset dirty flag after unmarshalling
 
     def as_dict(self) -> dict[str, typing.Any]:

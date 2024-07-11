@@ -44,16 +44,12 @@ class Serializable(abc.ABC):
     - Read values from seralized data
     """
 
-    _needs_upgrade: bool
+    _needs_upgrade: bool = False
 
     # Note:
     #   We can include a "data" member variable in the class
     #   If found, and has __dict__, then we will use it
     #   on marshal and unmarshal methods
-
-    def __init__(self) -> None:
-        self._needs_upgrade = False
-
     @abc.abstractmethod
     def marshal(self) -> bytes:
         """
