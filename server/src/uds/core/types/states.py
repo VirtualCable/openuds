@@ -93,9 +93,11 @@ class State(enum.StrEnum):
     def PUBLISH_STATES(self) -> list[str]:
         return [self.LAUNCHING, self.PREPARING]
 
-    @classproperty
+    @property
     def localized(self) -> str:
         """Returns the literal translation of the state"""
+        print(self)
+        print(_TRANSLATIONS.get(self))
         return _TRANSLATIONS.get(self, _TRANSLATIONS[State.UNKNOWN])
 
     def is_active(self) -> bool:
