@@ -26,10 +26,11 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+# pyright: reportUnknownLambdaType=false
+
 import contextlib
 import copy
 import functools
@@ -43,7 +44,8 @@ from uds.core import types, environment
 from uds.core.ui.user_interface import gui
 import uds.services.Proxmox.proxmox.client
 
-from ...utils.autospec import autospec, AutoSpecMethodInfo
+from tests.utils.autospec import autospec, AutoSpecMethodInfo
+from tests.utils import search_item_by_attr
 
 from uds.services.Proxmox import (
     deployment_linked,
@@ -54,7 +56,7 @@ from uds.services.Proxmox import (
     service_linked,
 )
 
-from uds.services.Proxmox.proxmox import types as prox_types
+from uds.services.Proxmox.proxmox import types as prox_types, exceptions as prox_exceptions
 
 DEF_NODES: list[prox_types.Node] = [
     prox_types.Node(name='node0', online=True, local=True, nodeid=1, ip='0.0.0.1', level='level', id='id'),
@@ -275,7 +277,7 @@ CLUSTER_INFO: prox_types.ClusterInfo = copy.deepcopy(DEF_CLUSTER_INFO)
 STORAGES: list[prox_types.StorageInfo] = copy.deepcopy(DEF_STORAGES)
 VGPUS: list[prox_types.VGPUInfo] = copy.deepcopy(DEF_VGPUS)
 HA_GROUPS: list[str] = copy.deepcopy(DEF_HA_GROUPS)
-VMS_INFO: list[prox_types.VMInfo] = copy.deepcopy(DEF_VMS_INFO)
+VMINFO_LIST: list[prox_types.VMInfo] = copy.deepcopy(DEF_VMS_INFO)
 VMS_CONFIGURATION: list[prox_types.VMConfiguration] = copy.deepcopy(DEF_VMS_CONFIGURATION)
 UPID: prox_types.UPID = copy.deepcopy(DEF_UPID)
 VM_CREATION_RESULT: prox_types.VmCreationResult = copy.deepcopy(DEF_VM_CREATION_RESULT)
@@ -299,7 +301,7 @@ def clear() -> None:
     STORAGES[:] = copy.deepcopy(DEF_STORAGES)
     VGPUS[:] = copy.deepcopy(DEF_VGPUS)
     HA_GROUPS[:] = copy.deepcopy(DEF_HA_GROUPS)
-    VMS_INFO[:] = copy.deepcopy(DEF_VMS_INFO)
+    VMINFO_LIST[:] = copy.deepcopy(DEF_VMS_INFO)
     VMS_CONFIGURATION[:] = copy.deepcopy(DEF_VMS_CONFIGURATION)
     UPID = copy.deepcopy(DEF_UPID)  # pyright: ignore
     VM_CREATION_RESULT = copy.deepcopy(DEF_VM_CREATION_RESULT)  # pyright: ignore
@@ -314,11 +316,13 @@ def replace_vm_info(vmid: int, **kwargs: typing.Any) -> prox_types.UPID:
     """
     Set the values of VMS_INFO[vmid - 1]
     """
-    for i in range(len(VMS_INFO)):
-        if VMS_INFO[i].id == vmid:
-            for k, v in kwargs.items():
-                setattr(VMS_INFO[i], k, v)
-            break
+    try:
+        vm = search_item_by_attr(VMINFO_LIST, 'id', vmid)
+        for k, v in kwargs.items():
+            setattr(vm, k, v)
+    except Exception:
+        raise prox_exceptions.ProxmoxNotFound(f'VM {vmid} not found')
+
     return UPID
 
 
@@ -380,12 +384,14 @@ CLIENT_METHODS_INFO: list[AutoSpecMethodInfo] = [
     AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.delete_vm, returns=UPID),
     # list_snapshots
     AutoSpecMethodInfo(
-        uds.services.Proxmox.proxmox.client.ProxmoxClient.list_snapshots, 
-        returns=lambda *args, **kwargs: SNAPSHOTS_INFO, # pyright: ignore[reportUnknownLambdaType]
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.list_snapshots,
+        returns=lambda *args, **kwargs: SNAPSHOTS_INFO,  # pyright: ignore[reportUnknownLambdaType]
     ),
     AutoSpecMethodInfo(
         uds.services.Proxmox.proxmox.client.ProxmoxClient.get_current_vm_snapshot,
-        returns=lambda *args, **kwargs: (SNAPSHOTS_INFO + [None])[0],  # pyright: ignore[reportUnknownLambdaType]
+        returns=lambda *args, **kwargs: (SNAPSHOTS_INFO + [None])[
+            0
+        ], 
     ),
     # supports_snapshot
     AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.supports_snapshot, returns=True),
@@ -401,16 +407,16 @@ CLIENT_METHODS_INFO: list[AutoSpecMethodInfo] = [
         returns=lambda *args, **kwargs: TASK_STATUS,  # pyright: ignore
     ),
     # list_machines
-    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.list_vms, returns=VMS_INFO),
+    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.list_vms, returns=VMINFO_LIST),
     # get_vm_pool_info
     AutoSpecMethodInfo(
         uds.services.Proxmox.proxmox.client.ProxmoxClient.get_vm_pool_info,
-        returns=lambda vmid, poolid, **kwargs: VMS_INFO[vmid - 1],  # pyright: ignore
+        returns=lambda vmid, poolid, **kwargs: VMINFO_LIST[vmid - 1],  # pyright: ignore
     ),
     # get_machine_info
     AutoSpecMethodInfo(
         uds.services.Proxmox.proxmox.client.ProxmoxClient.get_vm_info,
-        returns=lambda vmid, *args, **kwargs: VMS_INFO[vmid - 1],  # pyright: ignore
+        returns=lambda vmid, *args, **kwargs: VMINFO_LIST[vmid - 1],  # pyright: ignore
     ),
     # get_machine_configuration
     AutoSpecMethodInfo(
@@ -420,15 +426,18 @@ CLIENT_METHODS_INFO: list[AutoSpecMethodInfo] = [
     # enable_machine_ha return None
     # start_machine
     AutoSpecMethodInfo(
-        uds.services.Proxmox.proxmox.client.ProxmoxClient.start_vm, returns=replacer_vm_info(status=prox_types.VMStatus.RUNNING)
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.start_vm,
+        returns=replacer_vm_info(status=prox_types.VMStatus.RUNNING),
     ),
     # stop_machine
     AutoSpecMethodInfo(
-        uds.services.Proxmox.proxmox.client.ProxmoxClient.stop_vm, returns=replacer_vm_info(status=prox_types.VMStatus.STOPPED)
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.stop_vm,
+        returns=replacer_vm_info(status=prox_types.VMStatus.STOPPED),
     ),
     # reset_machine
     AutoSpecMethodInfo(
-        uds.services.Proxmox.proxmox.client.ProxmoxClient.reset_vm, returns=replacer_vm_info(status=prox_types.VMStatus.STOPPED)
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.reset_vm,
+        returns=replacer_vm_info(status=prox_types.VMStatus.STOPPED),
     ),
     # suspend_machine
     AutoSpecMethodInfo(
@@ -461,7 +470,7 @@ CLIENT_METHODS_INFO: list[AutoSpecMethodInfo] = [
     AutoSpecMethodInfo(
         uds.services.Proxmox.proxmox.client.ProxmoxClient.list_storages,
         returns=lambda **kwargs: (  # pyright: ignore[reportUnknownLambdaType]
-            (list(filter(lambda s: s.node == kwargs.get('node') , STORAGES)))  # pyright: ignore
+            (list(filter(lambda s: s.node == kwargs.get('node'), STORAGES)))  # pyright: ignore
             if kwargs.get('node') is not None  # pyright: ignore
             else STORAGES  # pyright: ignore
         ),
@@ -510,7 +519,7 @@ SERVICE_LINKED_VALUES_DICT: gui.ValuesDictType = {
     'pool': POOLS[0].id,
     'ha': HA_GROUPS[0],
     'try_soft_shutdown': False,
-    'machine': VMS_INFO[0].id,
+    'machine': VMINFO_LIST[0].id,
     'datastore': STORAGES[0].storage,
     'gpu': VGPUS[0].type,
     'basename': 'base',
@@ -522,7 +531,7 @@ SERVICE_LINKED_VALUES_DICT: gui.ValuesDictType = {
 SERVICE_FIXED_VALUES_DICT: gui.ValuesDictType = {
     'token': '',
     'pool': POOLS[0].id,
-    'machines': [str(VMS_INFO[2].id), str(VMS_INFO[3].id), str(VMS_INFO[4].id)],
+    'machines': [str(VMINFO_LIST[2].id), str(VMINFO_LIST[3].id), str(VMINFO_LIST[4].id)],
     'use_snapshots': True,
     'prov_uuid': '',
 }
@@ -541,7 +550,7 @@ def patched_provider(
 ) -> typing.Generator[provider.ProxmoxProvider, None, None]:
     client = create_client_mock()
     provider = create_provider(**kwargs)
-    provider._cached_api = client 
+    provider._cached_api = client
     yield provider
 
 
@@ -649,5 +658,5 @@ def create_userservice_linked(
 # Other helpers
 def set_all_vm_state(status: prox_types.VMStatus) -> None:
     # Set machine state for fixture to stopped
-    for i in VMS_INFO:
+    for i in VMINFO_LIST:
         i.status = status

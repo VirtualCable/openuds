@@ -43,7 +43,7 @@ from ...utils.test import UDSTransactionTestCase
 class TestProxmoxHelpers(UDSTransactionTestCase):
     _parameters: dict[str, typing.Any] = {
         'prov_uuid': 'test',
-        'machine': fixtures.VMS_INFO[0].id,  # Used on get_storage
+        'machine': fixtures.VMINFO_LIST[0].id,  # Used on get_storage
         'pool': fixtures.POOLS[0].id,  # Used on get_machines
     }
 

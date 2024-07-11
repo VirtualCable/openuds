@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import random
 import typing
 from unittest import mock
 
@@ -53,12 +54,13 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
         """
         Test the user service
         """
+        vm = random.choice(fixtures.VMINFO_LIST)
         with fixtures.patched_provider() as provider:
             api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
             userservice = fixtures.create_userservice_linked(service=service)
             publication = userservice.publication()
-            publication._vmid = '1'
+            publication._vmid = str(vm.id)
 
             state = userservice.deploy_for_cache(level=types.services.CacheLevel.L1)
 
@@ -76,7 +78,7 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
             vmid = int(userservice._vmid)
 
             api.clone_vm.assert_called_with(
-                publication.machine(),
+                int(publication.get_template_id()),
                 mock.ANY,
                 userservice._name,
                 mock.ANY,
@@ -100,6 +102,7 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
         """
         Test the user service
         """
+        vm = random.choice(fixtures.VMINFO_LIST)
         with fixtures.patched_provider() as provider:
             api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
@@ -107,7 +110,7 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
             service.ha.value = '__'  # Disabled
 
             publication = userservice.publication()
-            publication._vmid = '1'
+            publication._vmid = str(vm.id)
 
             state = userservice.deploy_for_cache(level=types.services.CacheLevel.L2)
 
@@ -128,7 +131,7 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
             vmid = int(userservice._vmid)
 
             api.clone_vm.assert_called_with(
-                publication.machine(),
+                int(publication.get_template_id()),
                 mock.ANY,
                 userservice._name,
                 mock.ANY,
@@ -156,13 +159,14 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
         """
         Test the user service
         """
+        vm = random.choice(fixtures.VMINFO_LIST)
         with fixtures.patched_provider() as provider:
             api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
             userservice = fixtures.create_userservice_linked(service=service)
 
             publication = userservice.publication()
-            publication._vmid = '1'
+            publication._vmid = str(vm.id)
 
             state = userservice.deploy_for_user(models.User())
 
@@ -183,7 +187,7 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
             vmid = int(userservice._vmid)
 
             api.clone_vm.assert_called_with(
-                publication.machine(),
+                int(publication.get_template_id()),
                 mock.ANY,
                 userservice._name,
                 mock.ANY,
@@ -220,6 +224,7 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
         """
         Test the user service
         """
+        vm = random.choice(fixtures.VMINFO_LIST)
         with fixtures.patched_provider() as provider:
             api = typing.cast(mock.MagicMock, provider.api)
             for graceful in [True, False]:
@@ -227,12 +232,12 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
                 userservice = fixtures.create_userservice_linked(service=service)
                 service.try_soft_shutdown.value = graceful
                 publication = userservice.publication()
-                publication._vmid = '1'
+                publication._vmid = str(vm.id)
                 
                 service.must_stop_before_deletion = False  # Avoid stopping before deletion, not needed for this test
 
                 # Set machine state for fixture to started
-                for vminfo in fixtures.VMS_INFO:
+                for vminfo in fixtures.VMINFO_LIST:
                     vminfo.status = prox_types.VMStatus.RUNNING
 
                 state = userservice.deploy_for_user(models.User())
@@ -280,7 +285,7 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
                     state = userservice.check_state()
                     if counter > 5:
                         # Set machine state for fixture to stopped
-                        for vminfo in fixtures.VMS_INFO:
+                        for vminfo in fixtures.VMINFO_LIST:
                             vminfo.status = prox_types.VMStatus.STOPPED
 
                 self.assertEqual(state, types.states.TaskState.FINISHED, f'Extra info: {userservice._error_debug_info} {userservice._reason} {userservice._queue}')

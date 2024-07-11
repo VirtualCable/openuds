@@ -152,12 +152,12 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             data['exec_count'] = 0
 
     @typing.final
-    def _inc_checks_counter(self, info: typing.Optional[str] = None) -> typing.Optional[types.states.TaskState]:
+    def _inc_checks_counter(self, op: types.services.Operation) -> typing.Optional[types.states.TaskState]:
         with self.storage.as_dict() as data:
             count = data.get('exec_count', 0) + 1
             data['exec_count'] = count
         if count > self.max_state_checks:
-            return self.error(f'Max checks reached on {info or "unknown"}')
+            return self.error(f'Max checks reached on {op}')
         return None
 
     @typing.final
@@ -450,7 +450,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
 
         if op != types.services.Operation.WAIT:
             # All operations except WAIT will check against checks counter
-            counter_state = self._inc_checks_counter(self._op2str(op))
+            counter_state = self._inc_checks_counter(op)
             if counter_state is not None:
                 return counter_state  # Error, Finished or None (eror can return Finished too)
 

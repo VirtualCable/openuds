@@ -233,22 +233,6 @@ class ProxmoxServiceLinked(DynamicService):
     def get_vm_info(self, vmid: int) -> 'prox_types.VMInfo':
         return self.provider().api.get_vm_pool_info(vmid, self.pool.value.strip())
 
-    def get_nic_mac(self, vmid: int) -> str:
-        config = self.provider().api.get_vm_config(vmid)
-        return config.networks[0].mac.lower()
-
-    # TODO: Remove this method, kept for reference of old code
-    def _xremove_machine(self, vmid: int) -> 'prox_types.UPID':
-        # First, remove from HA if needed
-        try:
-            self.disable_vm_ha(vmid)
-        except Exception as e:
-            logger.warning('Exception disabling HA for vm %s: %s', vmid, e)
-            self.do_log(level=types.log.LogLevel.WARNING, message=f'Exception disabling HA for vm {vmid}: {e}')
-
-        # And remove it
-        return self.provider().api.delete_vm(vmid)
-
     def enable_vm_ha(self, vmid: int, started: bool = False) -> None:
         if self.ha.value == '__':
             return
@@ -281,7 +265,7 @@ class ProxmoxServiceLinked(DynamicService):
         # If vmid is empty, we are requesting a new mac
         if not vmid:
             return self.mac_generator().get(self.get_macs_range())
-        return self.get_nic_mac(int(vmid))
+        return self.provider().api.get_vm_config(int(vmid)).networks[0].mac.lower()
 
     def start(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
         if isinstance(caller_instance, ProxmoxUserserviceLinked):

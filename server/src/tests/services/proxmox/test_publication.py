@@ -73,7 +73,7 @@ class TestProxmoxPublication(UDSTransactionTestCase):
             # And should end in next call
             self.assertEqual(publication.check_state(), types.states.State.FINISHED)
             # Must have vmid, and must match machine() result
-            self.assertEqual(publication.machine(), int(publication._vmid))
+            self.assertEqual(publication.get_template_id(), publication._vmid)
             
             
     def test_publication_error(self) -> None:
@@ -112,7 +112,7 @@ class TestProxmoxPublication(UDSTransactionTestCase):
 
 
     def test_publication_destroy(self) -> None:
-        vmid = str(fixtures.VMS_INFO[0].id)
+        vmid = str(fixtures.VMINFO_LIST[0].id)
         with fixtures.patched_provider() as provider:
             api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
@@ -124,18 +124,18 @@ class TestProxmoxPublication(UDSTransactionTestCase):
             publication._vmid = vmid
             state = publication.destroy()
             self.assertEqual(state, types.states.State.RUNNING)
-            api.delete_vm.assert_called_once_with(publication.machine())
+            api.delete_vm.assert_called_once_with(int(publication.get_template_id()))
 
             # Now, destroy again, should do nothing more
             state = publication.destroy()
             # Should not call again
-            api.delete_vm.assert_called_once_with(publication.machine())
+            api.delete_vm.assert_called_once_with(int(publication.get_template_id()))
 
             self.assertEqual(state, types.states.State.RUNNING)
 
 
     def test_publication_destroy_error(self) -> None:
-        vmid = str(fixtures.VMS_INFO[0].id)
+        vmid = str(fixtures.VMINFO_LIST[0].id)
         with fixtures.patched_provider() as provider:
             api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service_linked(provider=provider)
@@ -147,7 +147,7 @@ class TestProxmoxPublication(UDSTransactionTestCase):
             api.delete_vm.side_effect = Exception('BOOM!')
             publication._vmid = vmid
             self.assertEqual(publication.destroy(), types.states.State.RUNNING)
-            api.delete_vm.assert_called_once_with(publication.machine())
+            api.delete_vm.assert_called_once_with(int(publication.get_template_id()))
 
             # Ensure cancel calls destroy
             with mock.patch.object(publication, 'destroy') as destroy:

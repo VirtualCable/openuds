@@ -70,13 +70,13 @@ class TestProxmoxFixedService(UDSTransactionTestCase):
         with fixtures.patched_provider() as provider:
             service = fixtures.create_service_fixed(provider=provider)
 
-            self.assertEqual(service.get_vm_info(2).name, fixtures.VMS_INFO[1].name)
+            self.assertEqual(service.get_vm_info(2).name, fixtures.VMINFO_LIST[1].name)
 
             # is_available is already tested, so we will skip it
 
             # Enumerate assignables
             locate_vm: typing.Callable[[str], typing.Any] = lambda vmid: next(
-                (x for x in fixtures.VMS_INFO if x.id == int(vmid)), fixtures.VMS_INFO[0]
+                (x for x in fixtures.VMINFO_LIST if x.id == int(vmid)), fixtures.VMINFO_LIST[0]
             )
 
             self.assertEqual(
@@ -117,7 +117,7 @@ class TestProxmoxFixedService(UDSTransactionTestCase):
             service = fixtures.create_service_fixed(provider=provider)
 
             # Get machine name
-            self.assertEqual(service.get_name('1'), fixtures.VMS_INFO[0].name)
+            self.assertEqual(service.get_name('1'), fixtures.VMINFO_LIST[0].name)
 
             # Get first network mac
             self.assertEqual(

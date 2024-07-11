@@ -182,7 +182,7 @@ class ProxmoxUserserviceLinked(DynamicUserService):
     # No need for op_reset_checker
 
     def op_create(self) -> None:
-        template_id = self.publication().machine()
+        template_id = int(self.publication().get_template_id())
         name = self.get_name()
         if name == consts.NO_MORE_NAMES:
             raise Exception(

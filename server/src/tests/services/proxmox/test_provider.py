@@ -137,10 +137,10 @@ class TestProxmoxProvider(UDSTransactionTestCase):
             self.assertEqual(provider.test_connection(), True)
             api.test.assert_called_once_with()
 
-            self.assertEqual(provider.api.list_vms(force=True), fixtures.VMS_INFO)
-            self.assertEqual(provider.api.list_vms(), fixtures.VMS_INFO)
+            self.assertEqual(provider.api.list_vms(force=True), fixtures.VMINFO_LIST)
+            self.assertEqual(provider.api.list_vms(), fixtures.VMINFO_LIST)
 
-            self.assertEqual(provider.api.get_vm_info(1), fixtures.VMS_INFO[0])
+            self.assertEqual(provider.api.get_vm_info(1), fixtures.VMINFO_LIST[0])
 
             self.assertEqual(provider.api.get_vm_config(1), fixtures.VMS_CONFIGURATION[0])
 
