@@ -343,22 +343,69 @@ class AutoSerializable(UDSTestCase):
 
     def test_autoserializable_dirty(self) -> None:
         instance = AutoSerializableClass()
-        self.assertFalse(instance.is_dirty())
-
+        self.assertFalse(instance._dirty)
+        
+        # Test list field dirty flag
+        self.assertEqual(instance.list_field[0], 1)
+        # First access sets default value, so it's dirty
+        self.assertTrue(instance._dirty)
+        
+        instance._dirty = False
+        self.assertEqual(instance.list_field[1], 2)
+        # Second access to ANY value does not set dirty flag because
+        self.assertFalse(instance._dirty)
+        
+        instance.list_field = [3, 5, 7]
+        self.assertTrue(instance._dirty)
+        
+        instance._dirty = False
+        instance.list_field[0] = 1
+        self.assertTrue(instance._dirty)
+        
+        instance._dirty = False
+        instance.list_field.append(9)
+        self.assertTrue(instance._dirty)
+        
+        instance._dirty = False
+        instance.list_field.remove(5)
+        self.assertTrue(instance._dirty)
+        
+        instance._dirty = False
+        instance.list_field.pop()
+        self.assertTrue(instance._dirty)
+        
+        instance._dirty = False
+        instance.list_field.insert(1, 4)
+        self.assertTrue(instance._dirty)
+        
+        instance._dirty = False
+        instance.list_field.clear()
+        self.assertTrue(instance._dirty)
+        
+        instance.list_field = [1, 2, 3]
+        instance._dirty = False
+        del instance.list_field[1]
+        self.assertTrue(instance._dirty)
+        
+        instance._dirty = False
+        instance.list_field.extend([4, 5])
+        self.assertTrue(instance._dirty)
+        
+        instance._dirty = False
         instance.int_field = 1
-        self.assertTrue(instance.is_dirty())
+        self.assertTrue(instance._dirty)
 
         instance.marshal()  # should reset dirty flag
-        self.assertFalse(instance.is_dirty())
+        self.assertFalse(instance._dirty)
 
         instance.int_field = 1
-        self.assertTrue(instance.is_dirty())
+        self.assertTrue(instance._dirty)
 
         instance2 = AutoSerializableClass()
-        self.assertFalse(instance2.is_dirty())
+        self.assertFalse(instance2._dirty)
 
         instance2.int_field = 22
-        self.assertTrue(instance2.is_dirty())
+        self.assertTrue(instance2._dirty)
 
         instance2.unmarshal(instance.marshal())
-        self.assertFalse(instance2.is_dirty())
+        self.assertFalse(instance2._dirty)
