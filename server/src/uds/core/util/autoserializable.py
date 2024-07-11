@@ -177,10 +177,6 @@ class _ObservableDict(dict[T, V]):
         self._owner._dirty = True
         return super().popitem()
 
-    def setdefault(self, key: T, default: V, /) -> V:
-        self._owner._dirty = True
-        return super().setdefault(key, default)
-
     def update(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         self._owner._dirty = True
         super().update(*args, **kwargs)
@@ -746,6 +742,9 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
 
     def as_dict(self) -> dict[str, typing.Any]:
         return {k: v.__get__(self) for k, v in self._autoserializable_fields()}
+    
+    def is_dirty(self) -> bool:
+        return self._dirty or super().is_dirty()
 
     def __eq__(self, other: typing.Any) -> bool:
         """
