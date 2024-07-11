@@ -31,10 +31,10 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import base64
-import pickle  # nosec: Safe pickle usage
+import abc
 
 
-class Serializable:
+class Serializable(abc.ABC):
     """
     This class represents the interface that all serializable objects must provide.
 
@@ -54,6 +54,7 @@ class Serializable:
     def __init__(self) -> None:
         self._needs_upgrade = False
 
+    @abc.abstractmethod
     def marshal(self) -> bytes:
         """
         This is the method that must be overriden in order to serialize an object.
@@ -62,17 +63,12 @@ class Serializable:
         only suitable methods to "codify" serialized values
 
         :note: This method can be overriden.
-        :note: if you provide a "data" member variable, and it has __dict__, then it will be used
-               to marshal that data variable
         """
         # Default implementation will look for a member variable called "data"
         # This is an struct, and will be pickled by default
+        ...
 
-        if hasattr(self, 'data') and hasattr(getattr(self, 'data'), '__dict__'):
-            return pickle.dumps(getattr(self, 'data'), protocol=pickle.HIGHEST_PROTOCOL)
-
-        raise NotImplementedError('You must override the marshal method or provide a data member')
-
+    @abc.abstractmethod
     def unmarshal(self, data: bytes) -> None:
         """
         This is the method that must be overriden in order to deserialize an object.
@@ -87,14 +83,8 @@ class Serializable:
             data : String readed from persistent storage to deseralilize
 
         :note: This method can be overriden.
-        :note: if you provide a "data" member variable, and it has __dict__, then it will be used
-               to unmarshal that data variable
         """
-        if hasattr(self, 'data') and hasattr(getattr(self, 'data'), '__dict__'):
-            setattr(self, 'data', pickle.loads(data))  # nosec: Safe pickle load
-            return
-
-        raise NotImplementedError('You must override the unmarshal method or provide a data member')
+        ...
 
     def serialize(self) -> str:
         """
@@ -116,7 +106,7 @@ class Serializable:
     def mark_for_upgrade(self, value: bool = True) -> None:
         """
         Flags this object for remarshalling
-        
+
         Args:
             value: True if this object needs remarshalling, False if not
 
@@ -132,3 +122,9 @@ class Serializable:
         Returns true if this object needs remarshalling
         """
         return self._needs_upgrade
+
+    def is_dirty(self) -> bool:
+        """
+        Returns true if this object needs remarshalling
+        """
+        return True

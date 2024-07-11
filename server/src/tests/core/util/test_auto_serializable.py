@@ -79,7 +79,9 @@ class AutoSerializableClass(autoserializable.AutoSerializable):
     )
     dict_field = autoserializable.DictField[str, int](default=lambda: {'a': 1, 'b': 2, 'c': 3})
     # Note that due to the dict being serialized as json, the keys are always strings
-    dict_field_with_cast = autoserializable.DictField[EnumTest, EnumTest](cast=lambda k, v: (EnumTest(int(k)), EnumTest(v)))
+    dict_field_with_cast = autoserializable.DictField[EnumTest, EnumTest](
+        cast=lambda k, v: (EnumTest(int(k)), EnumTest(v))
+    )
     obj_dc_field = autoserializable.ObjectField[SerializableDataclass](
         SerializableDataclass, default=lambda: SerializableDataclass(1, '2', 3.0)
     )
@@ -99,7 +101,9 @@ class AutoSerializableCompressedClass(autoserializable.AutoSerializableCompresse
     list_field = autoserializable.ListField[int]()
     list_field_with_cast = autoserializable.ListField[EnumTest](cast=EnumTest.from_int)
     dict_field = autoserializable.DictField[str, int]()
-    dict_field_with_cast = autoserializable.DictField[EnumTest, EnumTest](cast=lambda k, v: (EnumTest(int(k)), EnumTest(v)))
+    dict_field_with_cast = autoserializable.DictField[EnumTest, EnumTest](
+        cast=lambda k, v: (EnumTest(int(k)), EnumTest(v))
+    )
     obj_dc_field = autoserializable.ObjectField[SerializableDataclass](SerializableDataclass)
     obj_nt_field = autoserializable.ObjectField[SerializableNamedTuple](SerializableNamedTuple)
 
@@ -115,7 +119,9 @@ class AutoSerializableEncryptedClass(autoserializable.AutoSerializableEncrypted)
     list_field = autoserializable.ListField[int]()
     list_field_with_cast = autoserializable.ListField[EnumTest](cast=EnumTest.from_int)
     dict_field = autoserializable.DictField[str, int]()
-    dict_field_with_cast = autoserializable.DictField[EnumTest, EnumTest](cast=lambda k, v: (EnumTest(int(k)), EnumTest(v)))
+    dict_field_with_cast = autoserializable.DictField[EnumTest, EnumTest](
+        cast=lambda k, v: (EnumTest(int(k)), EnumTest(v))
+    )
     obj_dc_field = autoserializable.ObjectField[SerializableDataclass](SerializableDataclass)
     obj_nt_field = autoserializable.ObjectField[SerializableNamedTuple](SerializableNamedTuple)
 
@@ -188,7 +194,9 @@ class AutoSerializable(UDSTestCase):
             for vv in i.list_field_with_cast:
                 self.assertIsInstance(vv, EnumTest)
             self.assertEqual(i.dict_field, {'a': 1, 'b': 2, 'c': 3})
-            self.assertEqual(i.dict_field_with_cast, {EnumTest.VALUE1: EnumTest.VALUE2, EnumTest.VALUE2: EnumTest.VALUE3})
+            self.assertEqual(
+                i.dict_field_with_cast, {EnumTest.VALUE1: EnumTest.VALUE2, EnumTest.VALUE2: EnumTest.VALUE3}
+            )
             for kk, vv in i.dict_field_with_cast.items():
                 self.assertIsInstance(kk, EnumTest)
                 self.assertIsInstance(vv, EnumTest)
@@ -332,3 +340,25 @@ class AutoSerializable(UDSTestCase):
         self.assertEqual(instance2.dict_field, {'a': 1, 'b': 2, 'c': 3})  # default value
         self.assertEqual(instance2.obj_dc_field, SerializableDataclass(1, '2', 3.0))  # default value
         self.assertEqual(instance2.obj_nt_field, SerializableNamedTuple(2, '3', 4.0))  # deserialized value
+
+    def test_autoserializable_dirty(self) -> None:
+        instance = AutoSerializableClass()
+        self.assertFalse(instance.is_dirty())
+
+        instance.int_field = 1
+        self.assertTrue(instance.is_dirty())
+
+        instance.marshal()  # should reset dirty flag
+        self.assertFalse(instance.is_dirty())
+
+        instance.int_field = 1
+        self.assertTrue(instance.is_dirty())
+
+        instance2 = AutoSerializableClass()
+        self.assertFalse(instance2.is_dirty())
+
+        instance2.int_field = 22
+        self.assertTrue(instance2.is_dirty())
+
+        instance2.unmarshal(instance.marshal())
+        self.assertFalse(instance2.is_dirty())

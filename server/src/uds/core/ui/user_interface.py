@@ -53,11 +53,13 @@ from uds.core.util import serializer, validators, ensure
 
 logger = logging.getLogger(__name__)
 
-# Old encryption key
-UDSB: typing.Final[bytes] = b'udsprotect'
-
-SERIALIZATION_HEADER: typing.Final[bytes] = b'GUIZ'
-SERIALIZATION_VERSION: typing.Final[bytes] = b'\001'
+# To simplify choice parameters declaration of fields
+_ChoicesParamType: typing.TypeAlias = typing.Union[
+    collections.abc.Callable[[], list['types.ui.ChoiceItem']],
+    collections.abc.Iterable[str | types.ui.ChoiceItem],
+    dict[str, str],
+    None,
+]
 
 
 class gui:
@@ -138,12 +140,7 @@ class gui:
     # Helpers
     @staticmethod
     def as_choices(
-        vals: typing.Union[
-            collections.abc.Callable[[], list['types.ui.ChoiceItem']],
-            collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]],
-            dict[str, str],
-            None,
-        ]
+        vals: _ChoicesParamType,
     ) -> typing.Union[collections.abc.Callable[[], list['types.ui.ChoiceItem']], list['types.ui.ChoiceItem']]:
         """
         Helper to convert from array of strings (or dictionaries) to the same dict used in choice,
@@ -177,8 +174,11 @@ class gui:
 
     @staticmethod
     def sorted_choices(
-        choices: collections.abc.Iterable[types.ui.ChoiceItem], *, by_id: bool = False, reverse: bool = False,
-        key: typing.Optional[collections.abc.Callable[[types.ui.ChoiceItem], typing.Any]] = None
+        choices: collections.abc.Iterable[types.ui.ChoiceItem],
+        *,
+        by_id: bool = False,
+        reverse: bool = False,
+        key: typing.Optional[collections.abc.Callable[[types.ui.ChoiceItem], typing.Any]] = None,
     ) -> list[types.ui.ChoiceItem]:
         if by_id:
             key = lambda item: item['id']
@@ -279,7 +279,7 @@ class gui:
         so if you use both, the used one will be "value". This is valid for
         all form fields. (Anyway, default is part of the "value" property, so
         if you use "value", you will get the default value if not set)
-        
+
         Note:
             Currently, old field name is only intended for 4.0 migration, so it has only one value.
             This means that only one rename can be donoe currently. If needed, we can add a list of old names
@@ -613,12 +613,7 @@ class gui:
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
             default: typing.Union[collections.abc.Callable[[], str], str] = '',
             value: typing.Optional[str] = None,
-            choices: typing.Union[
-                collections.abc.Callable[[], list['types.ui.ChoiceItem']],
-                collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]],
-                dict[str, str],
-                None,
-            ] = None,
+            choices: _ChoicesParamType = None,
             old_field_name: types.ui.OldFieldNameType = None,
         ) -> None:
             super().__init__(
@@ -634,7 +629,9 @@ class gui:
                 old_field_name=old_field_name,
             )
             # Update parent type
-            self.field_type = types.ui.FieldType.TEXT_AUTOCOMPLETE  # pyright: ignore[reportIncompatibleMethodOverride]
+            self.field_type = (
+                types.ui.FieldType.TEXT_AUTOCOMPLETE
+            )  # pyright: ignore[reportIncompatibleMethodOverride]
             self._fields_info.choices = gui.as_choices(choices or [])
 
         def set_choices(self, values: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]) -> None:
@@ -784,7 +781,7 @@ class gui:
             return self.as_date()
 
         @value.setter
-        def value(self, value: datetime.date|str) -> None:
+        def value(self, value: datetime.date | str) -> None:
             self._set_value(value)
 
         def gui_description(self) -> dict[str, typing.Any]:
@@ -1093,12 +1090,7 @@ class gui:
             order: int = 0,
             tooltip: str = '',
             required: typing.Optional[bool] = None,
-            choices: typing.Union[
-                collections.abc.Callable[[], list['types.ui.ChoiceItem']],
-                collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]],
-                dict[str, str],
-                None,
-            ] = None,
+            choices: _ChoicesParamType = None,
             fills: typing.Optional[types.ui.Filler] = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
             default: typing.Union[collections.abc.Callable[[], str], str, None] = None,
@@ -1118,7 +1110,7 @@ class gui:
                 type=types.ui.FieldType.CHOICE,
             )
 
-            self._fields_info.choices = gui.as_choices(choices or [])
+            self._fields_info.choices = gui.as_choices(choices)
             # if has fillers, set them
             if fills:
                 if 'function' not in fills or 'callback_name' not in fills:
@@ -1161,12 +1153,7 @@ class gui:
             order: int = 0,
             tooltip: str = '',
             required: typing.Optional[bool] = None,
-            choices: typing.Union[
-                collections.abc.Callable[[], list['types.ui.ChoiceItem']],
-                collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]],
-                dict[str, str],
-                None,
-            ] = None,
+            choices: _ChoicesParamType = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
             default: typing.Union[collections.abc.Callable[[], str], str, None] = None,
             value: typing.Optional[str] = None,
@@ -1252,12 +1239,7 @@ class gui:
             order: int = 0,
             tooltip: str = '',
             required: typing.Optional[bool] = None,
-            choices: typing.Union[
-                collections.abc.Callable[[], list['types.ui.ChoiceItem']],
-                collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]],
-                dict[str, str],
-                None,
-            ] = None,
+            choices: _ChoicesParamType = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
             default: typing.Union[
                 collections.abc.Callable[[], str], collections.abc.Callable[[], list[str]], list[str], str, None
@@ -1506,7 +1488,7 @@ class UserInterface(metaclass=UserInterfaceType):
                 else:
                     logger.warning('Field %s.%s not found in values data, ', self.__class__.__name__, fld_name)
                     if getattr(settings, 'DEBUG', False):
-                        for caller in itertools.islice(inspect.stack(), 1,  8):
+                        for caller in itertools.islice(inspect.stack(), 1, 8):
                             logger.warning('  %s:%s:%s', caller.filename, caller.lineno, caller.function)
 
     def init_gui(self) -> None:
@@ -1584,7 +1566,7 @@ class UserInterface(metaclass=UserInterfaceType):
             if FIELDS_ENCODERS[field.field_type](field) is not None
         ]
 
-        return SERIALIZATION_HEADER + SERIALIZATION_VERSION + serializer.serialize(fields)
+        return consts.ui.SERIALIZATION_HEADER + consts.ui.SERIALIZATION_VERSION + serializer.serialize(fields)
 
     def deserialize_fields(
         self,
@@ -1619,16 +1601,19 @@ class UserInterface(metaclass=UserInterfaceType):
         if not values:
             return False
 
-        if not values.startswith(SERIALIZATION_HEADER):
+        if not values.startswith(consts.ui.SERIALIZATION_HEADER):
             # Unserialize with old method, and notify that we need to upgrade
             self.deserialize_from_old_format(values)
             return True
 
         # For future use, right now we only have one version
         # Prepared for a possible future versioning of data serialization
-        _version = values[len(SERIALIZATION_HEADER) : len(SERIALIZATION_HEADER) + len(SERIALIZATION_VERSION)]
+        _version = values[
+            len(consts.ui.SERIALIZATION_HEADER) : len(consts.ui.SERIALIZATION_HEADER)
+            + len(consts.ui.SERIALIZATION_VERSION)
+        ]
 
-        values = values[len(SERIALIZATION_HEADER) + len(SERIALIZATION_VERSION) :]
+        values = values[len(consts.ui.SERIALIZATION_HEADER) + len(consts.ui.SERIALIZATION_VERSION) :]
 
         if not values:  # Apart of the header, there is nothing...
             logger.info('Empty values on unserialize_fields')
@@ -1656,7 +1641,12 @@ class UserInterface(metaclass=UserInterfaceType):
                 logger.warning('Field %s has no decoder', field_name)
                 continue
             if field_type != internal_field_type.name:
-                logger.warning('Field %s has different type than expected: %s != %s', field_name, field_type, internal_field_type.name)
+                logger.warning(
+                    'Field %s has different type than expected: %s != %s',
+                    field_name,
+                    field_type,
+                    internal_field_type.name,
+                )
                 continue
             self._gui[field_name].value = FIELD_DECODERS[internal_field_type](field_value)
 
@@ -1692,7 +1682,7 @@ class UserInterface(metaclass=UserInterfaceType):
                 return
 
             field_names_translations: dict[str, str] = self._get_fieldname_translations()
-            
+
             for txt in values.split(FIELD_SEPARATOR):
                 kb, v = txt.split(NAME_VALUE_SEPARATOR)
                 k = kb.decode('utf8')  # Convert name to string
@@ -1701,11 +1691,9 @@ class UserInterface(metaclass=UserInterfaceType):
                 if k in self._gui:
                     try:
                         if v.startswith(MULTIVALUE_FIELD):
-                            val = pickle.loads(  # nosec: safe pickle, controlled
-                                v[1:]
-                            )  # nosec: secure pickled by us for sure
+                            val = pickle.loads(v[1:])
                         elif v.startswith(OLD_PASSWORD_FIELD):
-                            val = CryptoManager().aes_decrypt(v[1:], UDSB, True).decode()
+                            val = CryptoManager().aes_decrypt(v[1:], consts.ui.UDSB, True).decode()
                         elif v.startswith(PASSWORD_FIELD):
                             val = CryptoManager().aes_decrypt(v[1:], UDSK, True).decode()
                         else:
@@ -1728,7 +1716,7 @@ class UserInterface(metaclass=UserInterfaceType):
 
         Args:
             skip_init_gui: If True, init_gui will not be called
-            
+
         Note:
             skip_init_gui is used to avoid calling init_gui when we are not going to use the result
             This is used, for example, when exporting data, generating the tree, etc...
@@ -1774,7 +1762,7 @@ class UserInterface(metaclass=UserInterfaceType):
                     field_names_translations[fld_old_field_name] = fld_name
 
         return field_names_translations
-    
+
     def has_field(self, field_name: str) -> bool:
         """
         So we can check against field existence on "own" instance
@@ -1811,7 +1799,9 @@ FIELD_DECODERS: typing.Final[
     types.ui.FieldType.TEXT: lambda x: x,
     types.ui.FieldType.TEXT_AUTOCOMPLETE: lambda x: x,
     types.ui.FieldType.NUMERIC: int,
-    types.ui.FieldType.PASSWORD: lambda x: (CryptoManager.manager().aes_decrypt(x.encode(), UDSK, True).decode()),
+    types.ui.FieldType.PASSWORD: lambda x: (
+        CryptoManager.manager().aes_decrypt(x.encode(), UDSK, True).decode()
+    ),
     types.ui.FieldType.HIDDEN: lambda x: x,
     types.ui.FieldType.CHOICE: lambda x: x,
     types.ui.FieldType.MULTICHOICE: lambda x: serializer.deserialize(base64.b64decode(x.encode())),

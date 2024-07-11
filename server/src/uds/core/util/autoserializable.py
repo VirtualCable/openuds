@@ -310,7 +310,7 @@ class BoolField(_SerializableField[bool]):
 
 class ListField(_SerializableField[list[T]], list[T]):
     """List field
-    
+
     Args:
         default: Default value for the field. Can be a list or a callable that returns a list.
         cast: Optional function to cast the values of the list to the desired type. If not provided, the values will be "deserialized" as they are. (see notes)
@@ -346,7 +346,7 @@ class ListField(_SerializableField[list[T]], list[T]):
 
 class DictField(_SerializableField[dict[T, V]], dict[T, V]):
     """Dict field
-    
+
     Args:
         default: Default value for the field. Can be a dict or a callable that returns a dict.
         cast: Optional function to cast the values of the dict to the desired type. If not provided, the values will be "deserialized" as they are. (see notes)
@@ -376,7 +376,11 @@ class DictField(_SerializableField[dict[T, V]], dict[T, V]):
             raise ValueError('Invalid dict data')
         self.__set__(
             instance,
-            dict(self._cast(k, v) for k, v in json.loads(data[1:]).items()) if self._cast else json.loads(data[1:]),
+            (
+                dict(self._cast(k, v) for k, v in json.loads(data[1:]).items())
+                if self._cast
+                else json.loads(data[1:])
+            ),
         )
 
 
@@ -500,9 +504,13 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
         ...     d = ListField(defalut=lambda: [1, 2, 3])
     """
 
-    _fields: dict[str, typing.Any]
+    _fields: dict[str, typing.Any]  # Values for the fields (serializable fields only ofc)
 
     serialization_version: int = 0  # So autoserializable classes can keep their version if needed
+
+    def __init__(self):
+        super().__init__()
+        self._fields = {}
 
     def _autoserializable_fields(self) -> collections.abc.Iterator[tuple[str, _SerializableField[typing.Any]]]:
         """Returns an iterator over all fields in the class, including inherited ones
@@ -513,9 +521,11 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
         """
         cls = self.__class__
         while True:
+            # Get own fields first
             for k, v in cls.__dict__.items():
                 if isinstance(v, _SerializableField):
                     yield k, v
+            # and then look for the first base that is also an AutoSerializable
             for c in cls.__bases__:
                 if issubclass(c, AutoSerializable) and c != AutoSerializable:
                     cls = c
@@ -624,6 +634,9 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
                 logger.debug('Field %s not found in unmarshalled data', v.name)
                 v.__set__(self, v._default())  # Set default value
 
+    def as_dict(self) -> dict[str, typing.Any]:
+        return {k: v.__get__(self) for k, v in self._autoserializable_fields()}
+
     def __eq__(self, other: typing.Any) -> bool:
         """
         Basic equality check, checks if all _SerializableFields are equal
@@ -648,9 +661,6 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
         return ', '.join(
             [f"{k}={v.obj_type.__name__}({v.__get__(self)})" for k, v in self._autoserializable_fields()]
         )
-
-    def as_dict(self) -> dict[str, typing.Any]:
-        return {k: v.__get__(self) for k, v in self._autoserializable_fields()}
 
 
 class AutoSerializableCompressed(AutoSerializable):

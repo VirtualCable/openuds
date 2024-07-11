@@ -33,11 +33,11 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import random
 import string
 import logging
-import dataclasses
 import typing
 
 from django.utils.translation import gettext as _
 from uds.core import services, types
+from uds.core.util import autoserializable
 
 logger = logging.getLogger(__name__)
 
@@ -46,26 +46,20 @@ if typing.TYPE_CHECKING:
     pass
 
 
-class TestPublication(services.Publication):
+class TestPublication(services.Publication, autoserializable.AutoSerializable):
     """
-    Simple test publication 
+    Simple test publication
     """
-    suggested_delay = (
-        5  # : Suggested recheck time if publication is unfinished in seconds
-    )
-    
+
+    suggested_delay = 5  # : Suggested recheck time if publication is unfinished in seconds
+
     # Data to store
-    @dataclasses.dataclass
-    class Data:
-        name: str = ''
-        state: str = ''
-        reason: str = ''
-        number: int = -1
-        other: str = ''
-        other2: str = 'other2'
-
-
-    data: Data = Data()
+    name = autoserializable.StringField()
+    state = autoserializable.StringField()
+    reason = autoserializable.StringField()
+    number = autoserializable.IntegerField(default=-1)
+    other = autoserializable.StringField()
+    other2 = autoserializable.StringField(default='other2')
 
     def initialize(self) -> None:
         """
@@ -77,34 +71,37 @@ class TestPublication(services.Publication):
 
         # We do not check anything at marshal method, so we ensure that
         # default values are correctly handled by marshal.
-        self.data.name = ''.join(random.choices(string.ascii_letters, k=8))
-        self.data.state = types.states.TaskState.RUNNING
-        self.data.reason = 'none'
-        self.data.number = 10
+        self.name = ''.join(random.choices(string.ascii_letters, k=8))
+        self.state = types.states.TaskState.RUNNING
+        self.reason = 'none'
+        self.number = 10
 
     def publish(self) -> types.states.TaskState:
-        logger.info('Publishing publication %s: %s remaining',self.data.name, self.data.number)
-        self.data.number -= 1
+        logger.info('Publishing publication %s: %s remaining', self.name, self.number)
+        self.number -= 1
 
-        if self.data.number <= 0:
-            self.data.state = types.states.TaskState.FINISHED
-        return types.states.TaskState.from_str(self.data.state)
+        if self.number <= 0:
+            self.state = types.states.TaskState.FINISHED
+        return types.states.TaskState.from_str(self.state)
+
+    def check_state(self) -> types.states.TaskState:
+        return types.states.TaskState.from_str(self.state)
 
     def finish(self) -> None:
         # Make simply a random string
-        logger.info('Finishing publication %s', self.data.name)
-        self.data.number = 0
-        self.data.state = types.states.TaskState.FINISHED
+        logger.info('Finishing publication %s', self.name)
+        self.number = 0
+        self.state = types.states.TaskState.FINISHED
 
     def error_reason(self) -> str:
-        return self.data.reason
+        return self.reason
 
     def destroy(self) -> types.states.TaskState:
-        logger.info('Destroying publication %s', self.data.name)
+        logger.info('Destroying publication %s', self.name)
         return types.states.TaskState.FINISHED
 
     def cancel(self) -> types.states.TaskState:
-        logger.info('Canceling publication %s', self.data.name)
+        logger.info('Canceling publication %s', self.name)
         return self.destroy()
 
     # Here ends the publication needed methods.
@@ -117,4 +114,4 @@ class TestPublication(services.Publication):
         the name generater for this publication. This is just a sample, and
         this will do the work
         """
-        return self.data.name
+        return self.name

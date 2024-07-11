@@ -258,6 +258,9 @@ class UserService(UUIDModel, properties.PropertiesMixin):
 
         :note: This method SAVES the updated record, just updates the field
         """
+        if not userservice_instance.is_dirty():
+            logger.debug('Skipping update of user service %s, no changes', self)
+            return  # Nothing to do
         self.data = userservice_instance.serialize()
         self.save(update_fields=['data'])
 
@@ -550,7 +553,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         from uds.core.managers.userservice import UserServiceManager
 
         # Cancel is a "forced" operation, so they are not checked against limits
-        UserServiceManager().cancel(self)
+        UserServiceManager.manager().cancel(self)
 
     def remove_or_cancel(self) -> None:
         """

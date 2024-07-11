@@ -169,6 +169,10 @@ class ServicePoolPublication(UUIDModel):
 
         :note: This method do not saves the updated record, just updates the field
         """
+        if not publication_instance.is_dirty():
+            logger.debug('Skipping update of publication %s, no changes', self)
+            return  # Nothing to do
+        
         self.data = publication_instance.serialize()
         self.save(update_fields=['data'])
 

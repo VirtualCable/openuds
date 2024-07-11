@@ -31,17 +31,19 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+from django.conf import settings
+
+from uds.core.util import ensure
+from uds.core.ui.user_interface import gui, UDSK
+from uds.core import consts
+
 # We use commit/rollback
 from ...utils.test import UDSTestCase
-from uds.core.ui.user_interface import gui, UDSB, UDSK
-
-from django.conf import settings
-from uds.core.util import ensure
 
 class GuiTest(UDSTestCase):
     def test_globals(self) -> None:
         self.assertEqual(UDSK, settings.SECRET_KEY[8:24].encode())
-        self.assertEqual(UDSB, b'udsprotect')
+        self.assertEqual(consts.ui.UDSB, b'udsprotect')
 
     def test_convert_to_choices(self) -> None:
         # Several cases

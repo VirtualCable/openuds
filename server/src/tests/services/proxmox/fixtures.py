@@ -34,6 +34,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import contextlib
 import copy
 import functools
+import random
 import typing
 import datetime
 
@@ -615,13 +616,16 @@ def create_publication(
     Create a publication
     """
     uuid_ = str(uuid.uuid4())
-    return publication.ProxmoxPublication(
+    pub = publication.ProxmoxPublication(
         environment=environment.Environment.private_environment(uuid_),
         service=service or create_service_linked(**kwargs),
         revision=1,
         servicepool_name='servicepool_name',
         uuid=uuid_,
     )
+    pub._vmid = str(random.choice(VMINFO_LIST).id)
+    return pub
+    
 
 
 def create_userservice_fixed(

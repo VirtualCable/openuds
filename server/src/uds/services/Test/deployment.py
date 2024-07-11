@@ -31,10 +31,10 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
-import dataclasses
 import typing
 
 from uds.core import services, types
+from uds.core.util import autoserializable
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -44,28 +44,18 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class TestUserService(services.UserService):
+class TestUserService(services.UserService, autoserializable.AutoSerializable):
     """
     Simple testing deployment, no cache
     """
-
-    @dataclasses.dataclass
-    class Data:
-        """
-        This is the data we will store in the storage
-        """
-
-        count: int = -1
-        ready: bool = False
-        name: str = ''
-        ip: str = ''
-        mac: str = ''
-
-    data: Data
+    count = autoserializable.IntegerField(default=-1)
+    ready = autoserializable.BoolField(default=False)
+    name = autoserializable.StringField(default='')
+    ip = autoserializable.StringField(default='')
+    mac = autoserializable.StringField(default='')
 
     def initialize(self) -> None:
         super().initialize()
-        self.data = TestUserService.Data()
 
     # : Recheck every five seconds by default (for task methods)
     suggested_delay = 5
@@ -74,56 +64,56 @@ class TestUserService(services.UserService):
         return typing.cast('TestServiceNoCache', super().service())
 
     def get_name(self) -> str:
-        if not self.data.name:
-            self.data.name = self.name_generator().get(self.service().get_basename(), 3)
+        if not self.name:
+            self.name = self.name_generator().get(self.service().get_basename(), 3)
 
-        logger.info('Getting name of deployment %s', self.data)
+        logger.info('Getting name of deployment %s', self)
 
-        return self.data.name
+        return self.name
 
     def set_ip(self, ip: str) -> None:
-        logger.info('Setting ip of deployment %s to %s', self.data, ip)
-        self.data.ip = ip
+        logger.info('Setting ip of deployment %s to %s', self, ip)
+        self.ip = ip
 
     def get_unique_id(self) -> str:
-        logger.info('Getting unique id of deployment %s', self.data)
-        if not self.data.mac:
-            self.data.mac = self.mac_generator().get('00:00:00:00:00:00-00:FF:FF:FF:FF:FF')
-        return self.data.mac
+        logger.info('Getting unique id of deployment %s', self)
+        if not self.mac:
+            self.mac = self.mac_generator().get('00:00:00:00:00:00-00:FF:FF:FF:FF:FF')
+        return self.mac
 
     def get_ip(self) -> str:
-        logger.info('Getting ip of deployment %s', self.data)
+        logger.info('Getting ip of deployment %s', self)
         ip = typing.cast(str, self.storage.read_from_db('ip'))
         if not ip:
             ip = '8.6.4.2'  # Sample IP for testing purposses only
         return ip
 
     def set_ready(self) -> types.states.TaskState:
-        logger.info('Setting ready %s', self.data)
-        self.data.ready = True
+        logger.info('Setting ready %s', self)
+        self.ready = True
         return types.states.TaskState.FINISHED
 
     def deploy_for_user(self, user: 'models.User') -> types.states.TaskState:
-        logger.info('Deploying for user %s %s', user, self.data)
-        self.data.count = 3
+        logger.info('Deploying for user %s %s', user, self)
+        self.count = 3
         return types.states.TaskState.RUNNING
     
     def deploy_for_cache(self, level: types.services.CacheLevel) -> types.states.TaskState:
-        logger.info('Deploying for cache %s %s', level, self.data)
-        self.data.count = 3
+        logger.info('Deploying for cache %s %s', level, self)
+        self.count = 3
         return types.states.TaskState.RUNNING
 
     def check_state(self) -> types.states.TaskState:
-        logger.info('Checking state of deployment %s', self.data)
-        if self.data.count <= 0:
+        logger.info('Checking state of deployment %s', self)
+        if self.count <= 0:
             return types.states.TaskState.FINISHED
 
-        self.data.count -= 1
+        self.count -= 1
         return types.states.TaskState.RUNNING
 
     def finish(self) -> None:
-        logger.info('Finishing deployment %s', self.data)
-        self.data.count = -1
+        logger.info('Finishing deployment %s', self)
+        self.count = -1
 
     def user_logged_in(self, username: str) -> None:
         logger.info('User %s has logged in', username)
@@ -135,8 +125,8 @@ class TestUserService(services.UserService):
         return 'No error'
 
     def destroy(self) -> types.states.TaskState:
-        logger.info('Destroying deployment %s', self.data)
-        self.data.count = -1
+        logger.info('Destroying deployment %s', self)
+        self.count = -1
         return types.states.TaskState.FINISHED
 
     def cancel(self) -> types.states.TaskState:

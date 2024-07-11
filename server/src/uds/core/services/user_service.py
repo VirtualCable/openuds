@@ -630,4 +630,4 @@ class UserService(Environmentable, Serializable, abc.ABC):
         """
         Mainly used for debugging purposses
         """
-        return f'{self.__class__.__name__}({self.get_unique_id()})'
+        return f'{self.__class__.__name__}'
