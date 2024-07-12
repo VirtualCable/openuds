@@ -72,10 +72,10 @@ class TimeTrack:
         Returns:
             datetime: Current datetime of the database server
         """
-        if connection.vendor in ('mysql', 'microsoft'):
+        if connection.vendor in ('mysql', 'microsoft', 'postgresql'):
             cursor = connection.cursor()
             sentence = (
-                'SELECT CURRENT_TIMESTAMP(4)' if connection.vendor == 'mysql' else 'SELECT CURRENT_TIMESTAMP'
+                'SELECT CURRENT_TIMESTAMP(4)' if connection.vendor in ('mysql', 'postgresql') else 'SELECT CURRENT_TIMESTAMP'
             )
             cursor.execute(sentence)
             date = (cursor.fetchone() or [datetime.datetime.now()])[0]
