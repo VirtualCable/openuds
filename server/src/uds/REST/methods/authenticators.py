@@ -138,7 +138,10 @@ class Authenticators(ModelHandler):
                             field,
                             {
                                 'name': 'mfa_id',
-                                'choices': [gui.choice_item('', str(_('None')))],
+                                'choices': [gui.choice_item('', str(_('None')))]
+                                + gui.sorted_choices(
+                                    [gui.choice_item(v.uuid, v.name) for v in MFA.objects.all()]
+                                ),
                                 'label': gettext('MFA Provider'),
                                 'tooltip': gettext('MFA provider to use for this authenticator'),
                                 'type': types.ui.FieldType.CHOICE,
@@ -213,8 +216,14 @@ class Authenticators(ModelHandler):
             # Cast is neccesary to avoid mypy errors, for example
             search_supported = (
                 type_ == 'user'
-                and (typing.cast(typing.Any, auth.search_users) != typing.cast(typing.Any, auths.Authenticator.search_users))
-                or (typing.cast(typing.Any, auth.search_groups) != typing.cast(typing.Any, auths.Authenticator.search_groups))
+                and (
+                    typing.cast(typing.Any, auth.search_users)
+                    != typing.cast(typing.Any, auths.Authenticator.search_users)
+                )
+                or (
+                    typing.cast(typing.Any, auth.search_groups)
+                    != typing.cast(typing.Any, auths.Authenticator.search_groups)
+                )
             )
             if search_supported is False:
                 raise self.not_supported_response()
