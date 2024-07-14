@@ -38,7 +38,6 @@ import typing
 import collections.abc
 
 from uds.core import consts, types, exceptions
-from uds.core.util import singleton
 
 import uds.core.exceptions.rest
 
@@ -47,56 +46,6 @@ logger = logging.getLogger(__name__)
 # FT = typing.TypeVar('FT', bound=collections.abc.Callable[..., typing.Any])
 T = typing.TypeVar('T')
 P = typing.ParamSpec('P')
-
-
-# Caching statistics
-class CacheStats(metaclass=singleton.Singleton):
-    __slots__ = ('hits', 'misses', 'total', 'start_time', 'saving_time')
-
-    hits: int
-    misses: int
-    total: int
-    start_time: float
-    saving_time: int  # in nano seconds
-
-    def __init__(self) -> None:
-        self.hits = 0
-        self.misses = 0
-        self.total = 0
-        self.start_time = time.time()
-        self.saving_time = 0
-
-    def add_hit(self, saving_time: int = 0) -> None:
-        self.hits += 1
-        self.total += 1
-        self.saving_time += saving_time
-
-    def add_miss(self) -> None:
-        self.misses += 1
-        self.total += 1
-
-    @property
-    def uptime(self) -> float:
-        return time.time() - self.start_time
-
-    @property
-    def hit_rate(self) -> float:
-        return self.hits / self.total if self.total > 0 else 0.0
-
-    @property
-    def miss_rate(self) -> float:
-        return self.misses / self.total if self.total > 0 else 0.0
-
-    def __str__(self) -> str:
-        return (
-            f'CacheStats: {self.hits}/{self.misses} on {self.total}, '
-            f'uptime={self.uptime}, hit_rate={self.hit_rate:.2f}, '
-            f'saving_time={self.saving_time/1000000:.2f}'
-        )
-
-    @staticmethod
-    def manager() -> 'CacheStats':
-        return CacheStats()
 
 
 @dataclasses.dataclass
@@ -244,9 +193,6 @@ def cached(
     args_list: list[int] = [args] if isinstance(args, int) else list(args or [])
     kwargs_list = [kwargs] if isinstance(kwargs, str) else list(kwargs or [])
 
-    # Lock for stats concurrency
-    lock = threading.Lock()
-
     hits = misses = exec_time = 0
 
     def allow_cache_decorator(fnc: collections.abc.Callable[P, T]) -> collections.abc.Callable[P, T]:
@@ -307,14 +253,10 @@ def cached(
             if not kwargs.get('force', False) and effective_timeout > 0 and misses > 0:
                 data = cache.get(cache_key, default=consts.cache.CACHE_NOT_FOUND)
                 if data is not consts.cache.CACHE_NOT_FOUND:
-                    with lock:
-                        hits += 1
-                        CacheStats.manager().add_hit(exec_time // hits)  # Use mean execution time
+                    hits += 1
                     return data
-
-            with lock:
-                misses += 1
-                CacheStats.manager().add_miss()
+                
+            misses += 1
 
             if 'force' in kwargs:
                 # Remove force key
@@ -341,14 +283,13 @@ def cached(
         # Add a couple of methods to the wrapper to allow cache statistics access and cache clearing
         def cache_info() -> CacheInfo:
             """Report cache statistics"""
-            with lock:
-                return CacheInfo(hits, misses, hits + misses, exec_time)
+            return CacheInfo(hits, misses, hits + misses, exec_time)
 
         def cache_clear() -> None:
-            """Clear the cache and cache statistics"""
+            """Clear the cache and cache statistics
+            """
             nonlocal hits, misses, exec_time
-            with lock:
-                hits = misses = exec_time = 0
+            hits = misses = exec_time = 0
 
         # Same as lru_cache
         wrapper.cache_info = cache_info  # type: ignore
