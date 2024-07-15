@@ -743,7 +743,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         Get service info from user service
         """
         if user_service_id[0] == 'M':  # Meta pool
-            return self.get_meta_service_info(user, src_ip, os, user_service_id[1:], transport_id or '')
+            return self.get_meta_service_info(user, src_ip, os, user_service_id[1:], transport_id or 'meta')
 
         user_service = self.locate_user_service(user, user_service_id, create=True)
 
@@ -957,16 +957,16 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # Remove "full" pools (100%) from result and pools in maintenance mode, not ready pools, etc...
         sortedPools = sorted(sortPools, key=operator.itemgetter(0))  # sort by priority (first element)
         pools: list[ServicePool] = []
-        poolsFull: list[ServicePool] = []
+        pool_full: list[ServicePool] = []
         for p in sortedPools:
             if not p[1].is_usable():
                 continue
             if p[1].usage().percent == 100:
-                poolsFull.append(p[1])
+                pool_full.append(p[1])
             else:
                 pools.append(p[1])
 
-        logger.debug('Pools: %s/%s', pools, poolsFull)
+        logger.debug('Pools: %s/%s', pools, pool_full)
 
         usable: typing.Optional[tuple[ServicePool, Transport]] = None
         # Now, Lets find first if there is one assigned in ANY pool
@@ -998,7 +998,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         try:
             # Already assigned should look for in all usable pools, not only "non-full" ones
             alreadyAssigned: UserService = UserService.objects.filter(
-                deployed_service__in=pools + poolsFull,
+                deployed_service__in=pools + pool_full,
                 state__in=State.VALID_STATES,
                 user=user,
                 cache_level=0,

@@ -192,7 +192,7 @@ class ModelHandler(BaseModelHandler):
     def process_detail(self) -> typing.Any:
         logger.debug('Processing detail %s for with params %s', self._path, self._params)
         try:
-            item: models.Model = self.model.objects.filter(uuid__iexact=self._args[0])[0]
+            item: models.Model = self.model.objects.get(uuid__iexact=self._args[0])
             # If we do not have access to parent to, at least, read...
 
             if self._operation in ('put', 'post', 'delete'):
@@ -219,8 +219,8 @@ class ModelHandler(BaseModelHandler):
             method = getattr(detail_handler, self._operation)
 
             return method()
-        except IndexError as e:
-            raise self.invalid_item_response() from e
+        except self.model.DoesNotExist:
+            raise self.invalid_item_response()
         except (KeyError, AttributeError) as e:
             raise self.invalid_method_response() from e
         except exceptions.rest.HandlerError:
