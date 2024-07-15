@@ -822,7 +822,8 @@ class ModelHandler(BaseModelHandler):
             'Processing detail %s for with params %s', self._path, self._params
         )
         try:
-            item: models.Model = self.model.objects.filter(uuid=self._args[0])[0]
+            item: models.Model = self.model.objects.get(uuid=self._args[0])
+
             # If we do not have access to parent to, at least, read...
 
             if self._operation in ('put', 'post', 'delete'):
@@ -855,6 +856,8 @@ class ModelHandler(BaseModelHandler):
             method = getattr(detail, self._operation)
 
             return method()
+        except self.model.DoesNotExist:
+            raise self.invalidItemException()
         except KeyError:
             raise self.invalidMethodException()
         except AttributeError:

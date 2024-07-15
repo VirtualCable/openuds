@@ -782,7 +782,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         Get service info from user service
         """
         if idService[0] == 'M':  # Meta pool
-            return self.getMeta(user, srcIp, os, idService[1:], idTransport or '')
+            return self.getMeta(user, srcIp, os, idService[1:], idTransport or 'meta')
 
         userService = self.locateUserService(user, idService, create=True)
 
