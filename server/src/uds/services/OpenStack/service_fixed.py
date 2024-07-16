@@ -43,7 +43,7 @@ from .deployment_fixed import OpenStackUserServiceFixed
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from .openstack import openstack_client
+    from .openstack import client
 
     from .provider import OpenStackProvider
     from .provider_legacy import OpenStackProviderLegacy
@@ -103,10 +103,10 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
 
     prov_uuid = gui.HiddenField()
 
-    _api: typing.Optional['openstack_client.OpenstackClient'] = None
+    _api: typing.Optional['client.OpenStackClient'] = None
 
     @property
-    def api(self) -> 'openstack_client.OpenstackClient':
+    def api(self) -> 'client.OpenStackClient':
         if not self._api:
             self._api = self.provider().api(projectid=self.project.value, region=self.region.value)
 

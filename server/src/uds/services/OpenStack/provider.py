@@ -40,7 +40,7 @@ from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 from uds.core.util import validators, fields
 
-from .openstack import openstack_client, sanitized_name, types as openstack_types
+from .openstack import client, sanitized_name, types as openstack_types
 from .service import OpenStackLiveService
 from .service_fixed import OpenStackServiceFixed
 
@@ -109,6 +109,17 @@ class OpenStackProvider(ServiceProvider):
         required=True,
     )
 
+    auth_method = gui.ChoiceField(
+        label=_('Authentication method'),
+        order=2,
+        tooltip=_('Authentication method to be used'),
+        choices=[
+            gui.choice_item(str(openstack_types.AuthMethod.PASSWORD), 'Password'),
+            gui.choice_item(str(openstack_types.AuthMethod.APPLICATION_CREDENTIAL), 'Application Credential'),
+        ],
+        default='password',
+    )
+
     access = gui.ChoiceField(
         label=_('Access interface'),
         order=5,
@@ -116,7 +127,8 @@ class OpenStackProvider(ServiceProvider):
         choices=INTERFACE_VALUES,
         default='public',
     )
-
+    
+            
     domain = gui.TextField(
         length=64,
         label=_('Domain'),
@@ -127,17 +139,17 @@ class OpenStackProvider(ServiceProvider):
     )
     username = gui.TextField(
         length=64,
-        label=_('Username'),
+        label=_('Username/Application Credential ID'),
         order=9,
-        tooltip=_('User with valid privileges on OpenStack'),
+        tooltip=_('User with valid privileges on OpenStack/Application Credential ID with valid privileges'),
         required=True,
         default='admin',
     )
     password = gui.PasswordField(
         length=32,
-        label=_('Password'),
+        label=_('Password/Application Credential Secret'),
         order=10,
-        tooltip=_('Password of the user of OpenStack'),
+        tooltip=_('Password of the user of OpenStack/Application Credential Secret'),
         required=True,
     )
 
@@ -148,7 +160,7 @@ class OpenStackProvider(ServiceProvider):
     tenant = gui.TextField(
         length=64,
         label=_('Project Id'),
-        order=6,
+        order=40,
         tooltip=_('Project (tenant) for this provider. Set only if required by server.'),
         required=False,
         default='',
@@ -157,7 +169,7 @@ class OpenStackProvider(ServiceProvider):
     region = gui.TextField(
         length=64,
         label=_('Region'),
-        order=7,
+        order=41,
         tooltip=_('Region for this provider. Set only if required by server.'),
         required=False,
         default='',
@@ -166,17 +178,19 @@ class OpenStackProvider(ServiceProvider):
 
     use_subnets_name = gui.CheckBoxField(
         label=_('Subnets names'),
-        order=8,
+        order=42,
         tooltip=_('If checked, the name of the subnets will be used instead of the names of networks'),
         default=False,
         tab=types.ui.Tab.ADVANCED,
         old_field_name='useSubnetsName',
     )
 
+    verify_ssl = fields.verify_ssl_field(order=91)
+
     https_proxy = gui.TextField(
         length=96,
         label=_('Proxy'),
-        order=91,
+        order=92,
         tooltip=_(
             'Proxy used on server connections for HTTPS connections (use PROTOCOL://host:port, i.e. http://10.10.0.1:8080)'
         ),
@@ -184,11 +198,12 @@ class OpenStackProvider(ServiceProvider):
         tab=types.ui.Tab.ADVANCED,
         old_field_name='httpsProxy',
     )
+    
 
     legacy = False
 
     # Own variables
-    _api: typing.Optional[openstack_client.OpenstackClient] = None
+    _api: typing.Optional[client.OpenStackClient] = None
 
     def initialize(self, values: 'types.core.ValuesType' = None) -> None:
         """
@@ -201,26 +216,25 @@ class OpenStackProvider(ServiceProvider):
 
     def api(
         self, projectid: typing.Optional[str] = None, region: typing.Optional[str] = None
-    ) -> openstack_client.OpenstackClient:
+    ) -> client.OpenStackClient:
         projectid = projectid or self.tenant.value or None
         region = region or self.region.value or None
         if self._api is None:
             proxies: 'dict[str, str]|None' = None
             if self.https_proxy.value.strip():
                 proxies = {'https': self.https_proxy.value}
-            self._api = openstack_client.OpenstackClient(
+            self._api = client.OpenStackClient(
                 self.endpoint.value,
-                -1,
                 self.domain.value,
                 self.username.value,
                 self.password.value,
-                is_legacy=False,
-                use_ssl=False,
                 projectid=projectid,
                 region=region,
                 access=openstack_types.AccessType.from_str(self.access.value),
                 proxies=proxies,
                 timeout=self.timeout.value,
+                auth_method=openstack_types.AuthMethod.from_str(self.auth_method.value),
+                verify_ssl=self.verify_ssl.value,
             )
         return self._api
 

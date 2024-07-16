@@ -57,7 +57,6 @@ logger = logging.getLogger(__name__)
 # These are related to auth, compute & network basically
 
 # Do not verify SSL conections right now
-VERIFY_SSL: typing.Final[bool] = False
 VOLUMES_ENDPOINT_TYPES = [
     'volumev3',
     'volumev2',
@@ -77,7 +76,7 @@ def auth_required(
     def decorator(func: collections.abc.Callable[P, T]) -> collections.abc.Callable[P, T]:
         @functools.wraps(func)
         def wrapper(*args: P.args, **kwargs: P.kwargs) -> typing.Any:
-            obj = typing.cast('OpenstackClient', args[0])
+            obj = typing.cast('OpenStackClient', args[0])
             if for_project is True:
                 if obj._projectid is None:
                     raise Exception('Need a project for method {}'.format(func))
@@ -89,10 +88,10 @@ def auth_required(
     return decorator
 
 
-def cache_key_helper(obj: 'OpenstackClient') -> str:
+def cache_key_helper(obj: 'OpenStackClient') -> str:
     return '_'.join(
         [
-            obj._authurl,
+            obj._identity_endpoint,
             obj._domain,
             obj._username,
             obj._password,
@@ -103,10 +102,10 @@ def cache_key_helper(obj: 'OpenstackClient') -> str:
     )
 
 
-class OpenstackClient:  # pylint: disable=too-many-public-methods
+class OpenStackClient:  # pylint: disable=too-many-public-methods
     _authenticated: bool
-    _authenticatedProjectId: typing.Optional[str]
-    _authurl: str
+    _authenticated_projectid: typing.Optional[str]
+    _identity_endpoint: str
     _tokenid: typing.Optional[str]
     _catalog: typing.Optional[list[dict[str, typing.Any]]]
     _is_legacy: bool
@@ -114,9 +113,9 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
     _domain: str
     _username: str
     _password: str
+    _auth_method: openstack_types.AuthMethod
     _userid: typing.Optional[str]
     _projectid: typing.Optional[str]
-    _project: typing.Optional[str]
     _region: typing.Optional[str]
     _timeout: int
     _session: 'requests.Session'
@@ -127,45 +126,46 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
     # Legacyversion is True for versions <= Ocata
     def __init__(
         self,
-        host: str,
-        port: typing.Union[str, int],
+        identity_endpoint: str,
         domain: str,
         username: str,
         password: str,
-        is_legacy: bool = True,
+        port: int = -1,  # Only used for legacy
         use_ssl: bool = False,  # Only used for legacy
         projectid: typing.Optional[str] = None,
         region: typing.Optional[str] = None,
         access: typing.Optional[openstack_types.AccessType] = None,
         proxies: typing.Optional[dict[str, str]] = None,
         timeout: int = 10,
+        verify_ssl: bool = True,
+        auth_method: openstack_types.AuthMethod = openstack_types.AuthMethod.PASSWORD,
     ):
-        self._session = security.secure_requests_session(verify=VERIFY_SSL)
+        self._session = security.secure_requests_session(verify=verify_ssl)
         if proxies:
             self._session.proxies = proxies
 
         self._authenticated = False
-        self._authenticatedProjectId = None
+        self._authenticated_projectid = None
         self._tokenid = None
         self._catalog = None
-        self._is_legacy = is_legacy
+        self._is_legacy = port != -1  # If port is present, we are using legacy
 
         self._access = openstack_types.AccessType.PUBLIC if access is None else access
-        self._domain, self._username, self._password = domain, username, password
+        self._domain, self._username, self._password = domain or 'Default', username, password
         self._userid = None
         self._projectid = projectid
-        self._project = None
         self._region = region
         self._timeout = timeout
+        self._auth_method = auth_method
 
-        if is_legacy:
-            self._authurl = 'http{}://{}:{}/'.format('s' if use_ssl else '', host, port)
+        if self._is_legacy:
+            self._identity_endpoint = 'http{}://{}:{}/'.format('s' if use_ssl else '', identity_endpoint, port)
         else:
-            self._authurl = host  # Host contains auth URL
-            if self._authurl[-1] != '/':
-                self._authurl += '/'
+            self._identity_endpoint = identity_endpoint  # Host contains auth URL
+            if self._identity_endpoint[-1] != '/':
+                self._identity_endpoint += '/'
 
-        self.cache = cache.Cache(f'openstack_{host}_{port}_{domain}_{username}_{projectid}_{region}')
+        self.cache = cache.Cache(f'openstack_{identity_endpoint}_{port}_{domain}_{username}_{projectid}_{region}')
 
     def _get_endpoints_for(self, *endpoint_types: str) -> collections.abc.Generator[str, None, None]:
         def inner_get(for_type: str) -> collections.abc.Generator[str, None, None]:
@@ -238,7 +238,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
     ) -> typing.Any:
         cache_key = ''.join(endpoints_types)
         found_endpoints = self._get_endpoints_iterable(cache_key, *endpoints_types)
-        
+
         for i, endpoint in enumerate(found_endpoints):
             try:
                 logger.debug(
@@ -252,7 +252,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
                     timeout=self._timeout,
                 )
 
-                OpenstackClient._ensure_valid_response(r, error_message, expects_json=expects_json)
+                OpenStackClient._ensure_valid_response(r, error_message, expects_json=expects_json)
                 logger.debug('Result: %s', r.content)
                 return r
             except Exception as e:
@@ -285,7 +285,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
                 self.cache.put(
                     cache_key, endpoint, consts.cache.EXTREME_CACHE_TIMEOUT
                 )  # Cache endpoint for a very long time
-                yield from OpenstackClient._get_recurring_url_json(
+                yield from OpenStackClient._get_recurring_url_json(
                     endpoint=endpoint,
                     path=path,
                     session=self._session,
@@ -305,42 +305,61 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
                     raise e
                 logger.warning('Error requesting %s: %s (%s)', endpoint + path, e, error_message)
                 self.cache.remove(cache_key)
+                
+    def set_projectid(self, projectid: str) -> None:
+        self._projectid = projectid
 
-    def authenticate_with_password(self) -> None:
+    def authenticate(self) -> None:
         # logger.debug('Authenticating...')
-        data: dict[str, typing.Any] = {
-            'auth': {
-                'identity': {
-                    'methods': ['password'],
-                    'password': {
-                        'user': {
-                            'name': self._username,
-                            'domain': {'name': 'Default' if not self._domain else self._domain},
-                            'password': self._password,
-                        }
-                    },
+        data: dict[str, typing.Any]
+        if self._auth_method == openstack_types.AuthMethod.APPLICATION_CREDENTIAL:
+            data = {
+                'auth': {
+                    'identity': {
+                        'methods': ['application_credential'],
+                        'application_credential': {
+                            'id': self._username,
+                            'secret': self._password,
+                        },
+                    }
                 }
             }
-        }
+        else:
+            data = {
+                'auth': {
+                    'identity': {
+                        'methods': ['password'],
+                        'password': {
+                            'user': {
+                                'name': self._username,
+                                'domain': {'name': 'Default' if not self._domain else self._domain},
+                                'password': self._password,
+                            }
+                        },
+                    }
+                }
+            }
 
         if self._projectid is None:
-            self._authenticatedProjectId = None
+            self._authenticated_projectid = None
             if self._is_legacy:
                 data['auth']['scope'] = 'unscoped'
         else:
-            self._authenticatedProjectId = self._projectid
-            data['auth']['scope'] = {'project': {'id': self._projectid, 'domain': {'name': self._domain}}}
+            self._authenticated_projectid = self._projectid
+            # Scope only if project is present and auth method is password, app credentials is implicit...
+            if self._auth_method == openstack_types.AuthMethod.PASSWORD:
+                data['auth']['scope'] = {'project': {'id': self._projectid, 'domain': {'name': self._domain}}}
 
         # logger.debug('Request data: {}'.format(data))
 
         r = self._session.post(
-            self._authurl + 'v3/auth/tokens',
+            self._identity_endpoint + 'v3/auth/tokens',
             data=json.dumps(data),
             headers={'content-type': 'application/json'},
             timeout=self._timeout,
         )
 
-        OpenstackClient._ensure_valid_response(r, 'Invalid Credentials')
+        OpenStackClient._ensure_valid_response(r, 'Invalid Credentials')
 
         self._authenticated = True
         self._tokenid = r.headers['X-Subject-Token']
@@ -366,16 +385,16 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
             #        'volumev3', 'volumev2' = 'volumev2'
 
     def ensure_authenticated(self) -> None:
-        if self._authenticated is False or self._projectid != self._authenticatedProjectId:
-            self.authenticate_with_password()
+        if self._authenticated is False or self._projectid != self._authenticated_projectid:
+            self.authenticate()
 
     @auth_required()
     @decorators.cached(prefix='prjs', timeout=consts.cache.EXTREME_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def list_projects(self) -> list[openstack_types.ProjectInfo]:
         return [
             openstack_types.ProjectInfo.from_dict(p)
-            for p in OpenstackClient._get_recurring_url_json(
-                self._authurl,
+            for p in OpenStackClient._get_recurring_url_json(
+                self._identity_endpoint,
                 'v3/users/{user_id}/projects'.format(user_id=self._userid),
                 self._session,
                 headers=self._get_request_headers(),
@@ -390,8 +409,8 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
     def list_regions(self) -> list[openstack_types.RegionInfo]:
         return [
             openstack_types.RegionInfo.from_dict(r)
-            for r in OpenstackClient._get_recurring_url_json(
-                self._authurl,
+            for r in OpenStackClient._get_recurring_url_json(
+                self._identity_endpoint,
                 'v3/regions',
                 self._session,
                 headers=self._get_request_headers(),
@@ -560,14 +579,14 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
             openstack_types.SecurityGroupInfo.from_dict(sg)
             for sg in self._get_recurring_from_endpoint(
                 endpoint_types=NETWORKS_ENDPOINT_TYPES,
-                path='/v2.0/security-groups',
+                path=f'/v2.0/security-groups?project_id={self._projectid}',
                 error_message='List security groups',
                 key='security_groups',
             )
         ]
 
     # Very small timeout, so repeated operations will use same data
-    # Any cache time less than 5 seconds will be fine, beceuse checks on 
+    # Any cache time less than 5 seconds will be fine, beceuse checks on
     # openstack are done every 5 seconds
     @decorators.cached(prefix='svr', timeout=consts.cache.SHORTEST_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def get_server(self, server_id: str) -> openstack_types.ServerInfo:
@@ -761,7 +780,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
             error_message='Stoping server',
             expects_json=False,
         )
-        
+
     def reboot_server(self, server_id: str, hard: bool = True) -> None:
         # Does not need return value
         try:
@@ -818,7 +837,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
         # First, ensure requested api is supported
         # We need api version 3.2 or greater
         try:
-            r = self._session.get(self._authurl, headers=self._get_request_headers())
+            r = self._session.get(self._identity_endpoint, headers=self._get_request_headers())
         except Exception:
             logger.exception('Testing')
             raise Exception('Connection error')
@@ -828,7 +847,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
                 if v['id'] >= 'v3.1':
                     # Tries to authenticate
                     try:
-                        self.authenticate_with_password()
+                        self.authenticate()
                         # Log some useful information
                         logger.info('Openstack version: %s', v['id'])
                         logger.info('Endpoints: %s', json.dumps(self._catalog, indent=4))
@@ -851,7 +870,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
     def is_available(self) -> bool:
         try:
             # If we can connect, it is available
-            self._session.get(self._authurl, headers=self._get_request_headers())
+            self._session.get(self._identity_endpoint, headers=self._get_request_headers())
             return True
         except Exception:
             return False
@@ -875,7 +894,7 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
             logger.debug('Requesting url #%s: %s / %s', counter, path, params)
             r = session.get(path, params=params, headers=headers, timeout=timeout)
 
-            OpenstackClient._ensure_valid_response(r, error_message)
+            OpenStackClient._ensure_valid_response(r, error_message)
 
             j = r.json()
 
@@ -911,3 +930,33 @@ class OpenstackClient:  # pylint: disable=too-many-public-methods
                 errMsg = 'Error checking response'
             logger.error('%s: %s', errMsg, response.content)
             raise Exception(errMsg)
+
+    # Only for testing purposes, not used at runtime
+    def t_create_volume(self, name: str, size: int) -> openstack_types.VolumeInfo:
+        data = {
+            'volume': {
+                'size': size,
+                'name': name,
+                # 'volume_type': volume_type,
+            }
+        }
+
+        r = self._request_from_endpoint(
+            'post',
+            endpoints_types=VOLUMES_ENDPOINT_TYPES,
+            path='/volumes',
+            data=json.dumps(data),
+            error_message='Create Volume',
+        )
+
+        return openstack_types.VolumeInfo.from_dict(r.json()['volume'])
+
+    def t_delete_volume(self, volume_id: str) -> None:
+        # This does not returns anything
+        self._request_from_endpoint(
+            'delete',
+            endpoints_types=VOLUMES_ENDPOINT_TYPES,
+            path=f'/volumes/{volume_id}',
+            error_message='Cannot delete volume (probably volume does not exists).',
+            expects_json=False,
+        )

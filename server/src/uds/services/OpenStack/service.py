@@ -42,7 +42,7 @@ from uds.core.ui import gui
 
 from .publication import OpenStackLivePublication
 from .deployment import OpenStackLiveUserService
-from .openstack import types as openstack_types, openstack_client
+from .openstack import client, types as openstack_types
 from . import helpers
 
 
@@ -180,7 +180,7 @@ class OpenStackLiveService(DynamicService):
 
     prov_uuid = gui.HiddenField()
 
-    cached_api: typing.Optional['openstack_client.OpenstackClient'] = None
+    cached_api: typing.Optional['client.OpenStackClient'] = None
 
     # Note: currently, Openstack does not provides a way of specifying how to stop the server
     # At least, i have not found it on the documentation
@@ -223,7 +223,7 @@ class OpenStackLiveService(DynamicService):
         self.prov_uuid.value = self.provider().get_uuid()
 
     @property
-    def api(self) -> 'openstack_client.OpenstackClient':
+    def api(self) -> 'client.OpenStackClient':
         if not self.cached_api:
             self.cached_api = self.provider().api(projectid=self.project.value, region=self.region.value)
 

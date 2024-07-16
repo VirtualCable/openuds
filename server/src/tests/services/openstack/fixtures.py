@@ -54,7 +54,7 @@ from uds.services.OpenStack import (
     service_fixed,
     deployment_fixed,
 )
-from uds.services.OpenStack.openstack import openstack_client, types as openstack_types
+from uds.services.OpenStack.openstack import client, types as openstack_types
 
 AnyOpenStackProvider: typing.TypeAlias = typing.Union[
     provider.OpenStackProvider, provider_legacy.OpenStackProviderLegacy
@@ -251,89 +251,89 @@ def random_element(lst: list[T], *args: typing.Any, **kwargs: typing.Any) -> T:
 # The idea behind this is to allow testing the provider, service and deployment classes
 # without the need of a real OpenStack environment
 CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
-    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_flavors, returns=FLAVORS_LIST),
+    AutoSpecMethodInfo(client.OpenStackClient.list_flavors, returns=FLAVORS_LIST),
     AutoSpecMethodInfo(
-        openstack_client.OpenstackClient.list_availability_zones, returns=AVAILABILITY_ZONES_LIST
+        client.OpenStackClient.list_availability_zones, returns=AVAILABILITY_ZONES_LIST
     ),
-    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_projects, returns=PROJECTS_LIST),
-    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_regions, returns=REGIONS_LIST),
-    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_servers, returns=SERVERS_LIST),
-    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_images, returns=IMAGES_LIST),
-    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_volume_types, returns=VOLUMES_TYPE_LIST),
-    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_volumes, returns=VOLUMES_LIST),
+    AutoSpecMethodInfo(client.OpenStackClient.list_projects, returns=PROJECTS_LIST),
+    AutoSpecMethodInfo(client.OpenStackClient.list_regions, returns=REGIONS_LIST),
+    AutoSpecMethodInfo(client.OpenStackClient.list_servers, returns=SERVERS_LIST),
+    AutoSpecMethodInfo(client.OpenStackClient.list_images, returns=IMAGES_LIST),
+    AutoSpecMethodInfo(client.OpenStackClient.list_volume_types, returns=VOLUMES_TYPE_LIST),
+    AutoSpecMethodInfo(client.OpenStackClient.list_volumes, returns=VOLUMES_LIST),
     AutoSpecMethodInfo(
-        openstack_client.OpenstackClient.list_volume_snapshots, returns=VOLUME_SNAPSHOTS_LIST
+        client.OpenStackClient.list_volume_snapshots, returns=VOLUME_SNAPSHOTS_LIST
     ),
-    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_networks, returns=NETWORKS_LIST),
-    AutoSpecMethodInfo(openstack_client.OpenstackClient.list_ports, returns=PORTS_LIST),
+    AutoSpecMethodInfo(client.OpenStackClient.list_networks, returns=NETWORKS_LIST),
+    AutoSpecMethodInfo(client.OpenStackClient.list_ports, returns=PORTS_LIST),
     AutoSpecMethodInfo(
-        openstack_client.OpenstackClient.list_security_groups, returns=SECURITY_GROUPS_LIST
+        client.OpenStackClient.list_security_groups, returns=SECURITY_GROUPS_LIST
     ),
     AutoSpecMethodInfo(
-        openstack_client.OpenstackClient.get_server,
+        client.OpenStackClient.get_server,
         returns=search_id,
         partial_args=(SERVERS_LIST,),
     ),
     AutoSpecMethodInfo(
-        openstack_client.OpenstackClient.get_volume,
+        client.OpenStackClient.get_volume,
         returns=search_id,
         partial_args=(VOLUMES_LIST,),
     ),  # pyright: ignore
     AutoSpecMethodInfo(
-        openstack_client.OpenstackClient.get_volume_snapshot,
+        client.OpenStackClient.get_volume_snapshot,
         returns=search_id,
         partial_args=(VOLUME_SNAPSHOTS_LIST,),
     ),  # pyright: ignore
     AutoSpecMethodInfo(
-        openstack_client.OpenstackClient.update_snapshot,
+        client.OpenStackClient.update_snapshot,
         returns=search_id,
         partial_args=(VOLUME_SNAPSHOTS_LIST,),
     ),
     AutoSpecMethodInfo(
-        openstack_client.OpenstackClient.create_volume_snapshot,
+        client.OpenStackClient.create_volume_snapshot,
         returns=random_element,
         partial_args=(VOLUME_SNAPSHOTS_LIST,),
     ),
     AutoSpecMethodInfo(
-        openstack_client.OpenstackClient.create_volume_from_snapshot,
+        client.OpenStackClient.create_volume_from_snapshot,
         returns=random_element,
         partial_args=(VOLUMES_LIST,),
     ),
     AutoSpecMethodInfo(
-        openstack_client.OpenstackClient.create_server_from_snapshot,
+        client.OpenStackClient.create_server_from_snapshot,
         returns=random_element,
         partial_args=(SERVERS_LIST,),
     ),
     AutoSpecMethodInfo(
-        openstack_client.OpenstackClient.test_connection,
+        client.OpenStackClient.test_connection,
         returns=True,
     ),
     AutoSpecMethodInfo(
-        openstack_client.OpenstackClient.is_available,
+        client.OpenStackClient.is_available,
         returns=True,
     ),
     AutoSpecMethodInfo(
-        openstack_client.OpenstackClient.start_server,
+        client.OpenStackClient.start_server,
         returns=set_vm_state,
         partial_kwargs={'state': openstack_types.PowerState.RUNNING},
     ),
     AutoSpecMethodInfo(
-        openstack_client.OpenstackClient.stop_server,
+        client.OpenStackClient.stop_server,
         returns=set_vm_state,
         partial_kwargs={'state': openstack_types.PowerState.SHUTDOWN},
     ),
     AutoSpecMethodInfo(
-        openstack_client.OpenstackClient.reboot_server,
+        client.OpenStackClient.reboot_server,
         returns=set_vm_state,
         partial_kwargs={'state': openstack_types.PowerState.RUNNING},
     ),
     AutoSpecMethodInfo(
-        openstack_client.OpenstackClient.suspend_server,
+        client.OpenStackClient.suspend_server,
         returns=set_vm_state,
         partial_kwargs={'state': openstack_types.PowerState.SUSPENDED},
     ),
     AutoSpecMethodInfo(
-        openstack_client.OpenstackClient.resume_server,
+        client.OpenStackClient.resume_server,
         returns=set_vm_state,
         partial_kwargs={'state': openstack_types.PowerState.RUNNING},
     ),
@@ -360,6 +360,7 @@ PROVIDER_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
     'region': 'region',
     'use_subnets_name': False,
     'https_proxy': 'https_proxy',
+    'verify_ssl': False,
 }
 
 PROVIDER_LEGACY_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
@@ -404,7 +405,7 @@ def create_client_mock() -> mock.Mock:
     """
     Create a mock of ProxmoxClient
     """
-    return autospec(openstack_client.OpenstackClient, CLIENT_METHODS_INFO)
+    return autospec(client.OpenStackClient, CLIENT_METHODS_INFO)
 
 
 @contextlib.contextmanager

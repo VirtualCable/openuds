@@ -37,6 +37,17 @@ import enum
 
 from uds.core.services.generics import exceptions
 
+class AuthMethod(enum.StrEnum):
+    # Only theese two methods are supported by our OpenStack implementation
+    PASSWORD = 'password'
+    APPLICATION_CREDENTIAL = 'application_credential'
+
+    @staticmethod
+    def from_str(s: str) -> 'AuthMethod':
+        try:
+            return AuthMethod(s.lower())
+        except ValueError:
+            return AuthMethod.PASSWORD    
 
 class ServerStatus(enum.StrEnum):
     ACTIVE = 'ACTIVE'  # The server is active.

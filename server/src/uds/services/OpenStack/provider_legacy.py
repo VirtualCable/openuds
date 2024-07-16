@@ -42,7 +42,7 @@ from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 from uds.core.util import validators, fields
 
-from .openstack import openstack_client, sanitized_name, types as openstack_types
+from .openstack import client, sanitized_name, types as openstack_types
 from .service import OpenStackLiveService
 from .service_fixed import OpenStackServiceFixed
 
@@ -175,7 +175,7 @@ class OpenStackProviderLegacy(ServiceProvider):
     legacy = True
 
     # Own variables
-    _api: typing.Optional[openstack_client.OpenstackClient] = None
+    _api: typing.Optional[client.OpenStackClient] = None
 
     def initialize(self, values: 'types.core.ValuesType') -> None:
         """
@@ -188,23 +188,23 @@ class OpenStackProviderLegacy(ServiceProvider):
 
     def api(
         self, projectid: typing.Optional[str] = None, region: typing.Optional[str] = None
-    ) -> openstack_client.OpenstackClient:
+    ) -> client.OpenStackClient:
         proxies: typing.Optional[dict[str, str]] = None
         if self.https_proxy.value.strip():
             proxies = {'https': self.https_proxy.value}
-        return openstack_client.OpenstackClient(
+        return client.OpenStackClient(
             self.host.value,
-            self.port.value,
             self.domain.value,
             self.username.value,
             self.password.value,
-            is_legacy=True,
+            port=self.port.value,
             use_ssl=self.ssl.as_bool(),
             projectid=projectid,
             region=region,
             access=openstack_types.AccessType.from_str(self.access.value),
             proxies=proxies,
             timeout=self.timeout.value,
+            verify_ssl=False,
         )
 
     def sanitized_name(self, name: str) -> str:
