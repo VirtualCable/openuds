@@ -57,11 +57,11 @@ class TestOpenstackService(UDSTransactionTestCase):
                 self.assertEqual(service.sanitized_name('a b c'), 'a_b_c')
 
                 template = service.make_template('template', 'desc')
-                self.assertIsInstance(template, openstack_types.VolumeSnapshotInfo)
+                self.assertIsInstance(template, openstack_types.SnapshotInfo)
                 api.create_volume_snapshot.assert_called_once_with(service.volume.value, 'template', 'desc')
 
                 template = service.get_template(fixtures.VOLUME_SNAPSHOTS_LIST[0].id)
-                self.assertIsInstance(template, openstack_types.VolumeSnapshotInfo)
+                self.assertIsInstance(template, openstack_types.SnapshotInfo)
                 api.get_volume_snapshot.assert_called_once_with(fixtures.VOLUME_SNAPSHOTS_LIST[0].id)
 
                 data: typing.Any = service.deploy_from_template('name', fixtures.VOLUME_SNAPSHOTS_LIST[0].id)
@@ -74,13 +74,13 @@ class TestOpenstackService(UDSTransactionTestCase):
                     network_id=service.network.value,
                     security_groups_ids=service.security_groups.value,
                 )
-                data = service.api.get_server(fixtures.SERVERS_LIST[0].id).status
+                data = service.api.get_server_info(fixtures.SERVERS_LIST[0].id).status
                 self.assertIsInstance(data, openstack_types.ServerStatus)
                 api.get_server.assert_called_once_with(fixtures.SERVERS_LIST[0].id)
                 # Reset mocks, get server should be called again
                 api.reset_mock()
 
-                data = service.api.get_server(fixtures.SERVERS_LIST[0].id).power_state
+                data = service.api.get_server_info(fixtures.SERVERS_LIST[0].id).power_state
                 self.assertIsInstance(data, openstack_types.PowerState)
                 api.get_server.assert_called_once_with(fixtures.SERVERS_LIST[0].id)
 

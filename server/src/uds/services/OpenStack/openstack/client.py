@@ -324,6 +324,7 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
                     }
                 }
             }
+            # application_credential is not scoped, so we need to use the projectid
         else:
             data = {
                 'auth': {
@@ -339,6 +340,10 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
                     }
                 }
             }
+            # Note that the user domain could be different from the scope domain (the project domain)
+            # Currently, we are using the same domain for both
+            if self._projectid is not None:
+                data['auth']['scope'] = {'project': {'id': self._projectid, 'domain': {'name': self._domain}}}
 
         if self._projectid is None:
             self._authenticated_projectid = None
@@ -346,9 +351,6 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
                 data['auth']['scope'] = 'unscoped'
         else:
             self._authenticated_projectid = self._projectid
-            # Scope only if project is present and auth method is password, app credentials is implicit...
-            if self._auth_method == openstack_types.AuthMethod.PASSWORD:
-                data['auth']['scope'] = {'project': {'id': self._projectid, 'domain': {'name': self._domain}}}
 
         # logger.debug('Request data: {}'.format(data))
 
@@ -476,9 +478,9 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
     @decorators.cached(prefix='snps', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def list_volume_snapshots(
         self, volume_id: typing.Optional[dict[str, typing.Any]] = None
-    ) -> list[openstack_types.VolumeSnapshotInfo]:
+    ) -> list[openstack_types.SnapshotInfo]:
         return [
-            openstack_types.VolumeSnapshotInfo.from_dict(snapshot)
+            openstack_types.SnapshotInfo.from_dict(snapshot)
             for snapshot in self._get_recurring_from_endpoint(
                 endpoint_types=VOLUMES_ENDPOINT_TYPES,
                 path='/snapshots',
@@ -589,7 +591,7 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
     # Any cache time less than 5 seconds will be fine, beceuse checks on
     # openstack are done every 5 seconds
     @decorators.cached(prefix='svr', timeout=consts.cache.SHORTEST_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def get_server(self, server_id: str) -> openstack_types.ServerInfo:
+    def get_server_info(self, server_id: str) -> openstack_types.ServerInfo:
         r = self._request_from_endpoint(
             'get',
             endpoints_types=COMPUTE_ENDPOINT_TYPES,
@@ -609,7 +611,7 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
 
         return openstack_types.VolumeInfo.from_dict(r.json()['volume'])
 
-    def get_volume_snapshot(self, snapshot_id: str) -> openstack_types.VolumeSnapshotInfo:
+    def get_snapshot_info(self, snapshot_id: str) -> openstack_types.SnapshotInfo:
         """
         States are:
             creating, available, deleting, error,  error_deleting
@@ -621,14 +623,14 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
             error_message='Get Snaphost information',
         )
 
-        return openstack_types.VolumeSnapshotInfo.from_dict(r.json()['snapshot'])
+        return openstack_types.SnapshotInfo.from_dict(r.json()['snapshot'])
 
     def update_snapshot(
         self,
         snapshot_id: str,
         name: typing.Optional[str] = None,
         description: typing.Optional[str] = None,
-    ) -> openstack_types.VolumeSnapshotInfo:
+    ) -> openstack_types.SnapshotInfo:
         data: dict[str, typing.Any] = {'snapshot': {}}
         if name:
             data['snapshot']['name'] = name
@@ -644,11 +646,11 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
             error_message='Update Snaphost information',
         )
 
-        return openstack_types.VolumeSnapshotInfo.from_dict(r.json()['snapshot'])
+        return openstack_types.SnapshotInfo.from_dict(r.json()['snapshot'])
 
-    def create_volume_snapshot(
+    def create_snapshot(
         self, volume_id: str, name: str, description: typing.Optional[str] = None
-    ) -> openstack_types.VolumeSnapshotInfo:
+    ) -> openstack_types.SnapshotInfo:
         description = description or 'UDS Snapshot'
         data = {
             'snapshot': {
@@ -667,7 +669,7 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
             error_message='Create Volume Snapshot',
         )
 
-        return openstack_types.VolumeSnapshotInfo.from_dict(r.json()['snapshot'])
+        return openstack_types.SnapshotInfo.from_dict(r.json()['snapshot'])
 
     def create_volume_from_snapshot(
         self, snapshot_id: str, name: str, description: typing.Optional[str] = None
@@ -699,7 +701,7 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
         availability_zone: str,
         flavor_id: str,
         network_id: str,
-        security_groups_ids: collections.abc.Iterable[str],
+        security_groups_names: collections.abc.Iterable[str],
         count: int = 1,
     ) -> openstack_types.ServerInfo:
         data = {
@@ -725,7 +727,7 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
                 'max_count': count,
                 'min_count': count,
                 'networks': [{'uuid': network_id}],
-                'security_groups': [{'name': sg} for sg in security_groups_ids],
+                'security_groups': [{'name': sg} for sg in security_groups_names],
             }
         }
 

@@ -163,7 +163,7 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
                     if checking_vmid not in assigned:  # Not already assigned
                         try:
                             # Invoke to check it exists, do not need to store the result
-                            if self.api.get_server(checking_vmid).status.is_lost():
+                            if self.api.get_server_info(checking_vmid).status.is_lost():
                                 raise Exception('Machine not found')  # Simply translate is_lost to an exception
                             found_vmid = checking_vmid
                             break
@@ -188,13 +188,13 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
         return found_vmid
 
     def get_mac(self, vmid: str) -> str:
-        return self.api.get_server(vmid).addresses[0].mac
+        return self.api.get_server_info(vmid).addresses[0].mac
 
     def get_ip(self, vmid: str) -> str:
-        return self.api.get_server(vmid).addresses[0].ip
+        return self.api.get_server_info(vmid).addresses[0].ip
 
     def get_name(self, vmid: str) -> str:
-        return self.api.get_server(vmid).name
+        return self.api.get_server_info(vmid).name
 
     def remove_and_free(self, vmid: str) -> types.states.TaskState:
         try:

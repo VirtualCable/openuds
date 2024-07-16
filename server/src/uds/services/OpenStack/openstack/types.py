@@ -151,6 +151,39 @@ class AccessType(enum.StrEnum):
             return AccessType.PUBLIC
 
 
+class VolumeStatus(enum.StrEnum):
+    CREATING = 'creating'  # The volume is being created.
+    AVAILABLE = 'available'  # The volume is ready to attach to an instance.
+    RESERVED = 'reserved'  # The volume is reserved for attaching or shelved.
+    ATTACHING = 'attaching'  # The volume is attaching to an instance.
+    DETACHING = 'detaching'  # The volume is detaching from an instance.
+    IN_USE = 'in-use'  # The volume is attached to an instance.
+    MAINTENANCE = 'maintenance'  # The volume is locked and being migrated.
+    DELETING = 'deleting'  # The volume is being deleted.
+    AWAITING_TRANSFER = 'awaiting-transfer'  # The volume is awaiting for transfer.
+    ERROR = 'error'  # A volume creation error occurred.
+    ERROR_DELETING = 'error_deleting'  # A volume deletion error occurred.
+    BACKING_UP = 'backing-up'  # The volume is being backed up.
+    RESTORING_BACKUP = 'restoring-backup'  # A backup is being restored to the volume.
+    ERROR_BACKING_UP = 'error_backing-up'  # A backup error occurred.
+    ERROR_RESTORING = 'error_restoring'  # A backup restoration error occurred.
+    ERROR_EXTENDING = 'error_extending'  # An error occurred while attempting to extend a volume.
+    DOWNLOADING = 'downloading'  # The volume is downloading an image.
+    UPLOADING = 'uploading'  # The volume is being uploaded to an image.
+    RETYPING = 'retyping'  # The volume is changing type to another volume type.
+    EXTENDING = 'extending'  # The volume is being extended.
+
+    def is_available(self) -> bool:
+        return self in [VolumeStatus.AVAILABLE, VolumeStatus.IN_USE]
+
+    @staticmethod
+    def from_str(s: str) -> 'VolumeStatus':
+        try:
+            return VolumeStatus(s.lower())
+        except ValueError:
+            return VolumeStatus.ERROR
+
+
 class SnapshotStatus(enum.StrEnum):
     CREATING = 'creating'  # The snapshot is being created.
     AVAILABLE = 'available'  # The snapshot is ready to use.
@@ -170,6 +203,9 @@ class SnapshotStatus(enum.StrEnum):
             return SnapshotStatus(s.lower())
         except ValueError:
             return SnapshotStatus.UNKNOWN
+
+    def is_available(self) -> bool:
+        return self == SnapshotStatus.AVAILABLE
 
 
 class NetworkStatus(enum.StrEnum):
@@ -198,39 +234,6 @@ class PortStatus(enum.StrEnum):
             return PortStatus(s.upper())
         except ValueError:
             return PortStatus.ERROR
-
-
-class VolumeStatus(enum.StrEnum):
-    CREATING = 'creating'  # The volume is being created.
-    AVAILABLE = 'available'  # The volume is ready to attach to an instance.
-    RESERVED = 'reserved'  # The volume is reserved for attaching or shelved.
-    ATTACHING = 'attaching'  # The volume is attaching to an instance.
-    DETACHING = 'detaching'  # The volume is detaching from an instance.
-    IN_USE = 'in-use'  # The volume is attached to an instance.
-    MAINTENANCE = 'maintenance'  # The volume is locked and being migrated.
-    DELETING = 'deleting'  # The volume is being deleted.
-    AWAITING_TRANSFER = 'awaiting-transfer'  # The volume is awaiting for transfer.
-    ERROR = 'error'  # A volume creation error occurred.
-    ERROR_DELETING = 'error_deleting'  # A volume deletion error occurred.
-    BACKING_UP = 'backing-up'  # The volume is being backed up.
-    RESTORING_BACKUP = 'restoring-backup'  # A backup is being restored to the volume.
-    ERROR_BACKING_UP = 'error_backing-up'  # A backup error occurred.
-    ERROR_RESTORING = 'error_restoring'  # A backup restoration error occurred.
-    ERROR_EXTENDING = 'error_extending'  # An error occurred while attempting to extend a volume.
-    DOWNLOADING = 'downloading'  # The volume is downloading an image.
-    UPLOADING = 'uploading'  # The volume is being uploaded to an image.
-    RETYPING = 'retyping'  # The volume is changing type to another volume type.
-    EXTENDING = 'extending'  # The volume is being extended.
-
-    def is_available(self) -> bool:
-        return self in [VolumeStatus.AVAILABLE]
-    
-    @staticmethod
-    def from_str(s: str) -> 'VolumeStatus':
-        try:
-            return VolumeStatus(s.lower())
-        except ValueError:
-            return VolumeStatus.ERROR
 
 
 @dataclasses.dataclass
@@ -397,7 +400,7 @@ class VolumeInfo:
 
 
 @dataclasses.dataclass
-class VolumeSnapshotInfo:
+class SnapshotInfo:
     id: str
     volume_id: str
     name: str
@@ -408,11 +411,11 @@ class VolumeSnapshotInfo:
     updated_at: datetime.datetime
 
     @staticmethod
-    def from_dict(d: dict[str, typing.Any]) -> 'VolumeSnapshotInfo':
+    def from_dict(d: dict[str, typing.Any]) -> 'SnapshotInfo':
         # Try to get created_at and updated_at, if not possible, just ignore it
         created_at = datetime.datetime.fromisoformat(d.get('created_at') or '1970-01-01T00:00:00')
         updated_at = datetime.datetime.fromisoformat(d.get('updated_at') or '1970-01-01T00:00:00')
-        return VolumeSnapshotInfo(
+        return SnapshotInfo(
             id=d['id'],
             volume_id=d['volume_id'],
             name=d['name'],

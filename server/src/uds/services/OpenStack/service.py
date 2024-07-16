@@ -233,21 +233,21 @@ class OpenStackLiveService(DynamicService):
         return self.provider().sanitized_name(name)
 
     def get_ip(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> str:
-        return self.api.get_server(vmid).validated().addresses[0].ip
+        return self.api.get_server_info(vmid).validated().addresses[0].ip
 
     def get_mac(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> str:
-        return self.api.get_server(vmid).validated().addresses[0].mac
+        return self.api.get_server_info(vmid).validated().addresses[0].mac
 
     def is_running(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> bool:
-        return self.api.get_server(vmid).validated().power_state.is_running()
+        return self.api.get_server_info(vmid).validated().power_state.is_running()
 
     def start(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
-        if self.api.get_server(vmid).validated().power_state.is_running():
+        if self.api.get_server_info(vmid).validated().power_state.is_running():
             return
         self.api.start_server(vmid)
 
     def stop(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
-        if self.api.get_server(vmid).validated().power_state.is_stopped():
+        if self.api.get_server_info(vmid).validated().power_state.is_stopped():
             return
         self.api.stop_server(vmid)
 
@@ -281,19 +281,19 @@ class OpenStackLiveService(DynamicService):
 
     def make_template(
         self, template_name: str, description: typing.Optional[str] = None
-    ) -> openstack_types.VolumeSnapshotInfo:
+    ) -> openstack_types.SnapshotInfo:
         # First, ensures that volume has not any running instances
         # if self.api.getVolume(self.volume.value)['status'] != 'available':
         #    raise Exception('The Volume is in use right now. Ensure that there is no machine running before publishing')
 
         description = description or 'UDS Template snapshot'
-        return self.api.create_volume_snapshot(self.volume.value, template_name, description)
+        return self.api.create_snapshot(self.volume.value, template_name, description)
 
-    def get_template(self, snapshot_id: str) -> openstack_types.VolumeSnapshotInfo:
+    def get_template(self, snapshot_id: str) -> openstack_types.SnapshotInfo:
         """
         Checks current state of a template (an snapshot)
         """
-        return self.api.get_volume_snapshot(snapshot_id)
+        return self.api.get_snapshot_info(snapshot_id)
 
     def deploy_from_template(self, name: str, snapshot_id: str) -> openstack_types.ServerInfo:
         """
@@ -315,7 +315,7 @@ class OpenStackLiveService(DynamicService):
             availability_zone=self.availability_zone.value,
             flavor_id=self.flavor.value,
             network_id=self.network.value,
-            security_groups_ids=self.security_groups.value,
+            security_groups_names=self.security_groups.value,
         )
 
     def is_avaliable(self) -> bool:

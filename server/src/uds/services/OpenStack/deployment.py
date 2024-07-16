@@ -173,7 +173,7 @@ class OpenStackLiveUserService(DynamicUserService, autoserializable.AutoSerializ
         """
         # Checks if machine has been created
         if self.service().is_running(self, self._vmid):
-            server_info = self.service().api.get_server(self._vmid).validated()
+            server_info = self.service().api.get_server_info(self._vmid).validated()
             self._mac = server_info.addresses[0].mac
             self._ip = server_info.addresses[0].ip
             return types.states.TaskState.FINISHED

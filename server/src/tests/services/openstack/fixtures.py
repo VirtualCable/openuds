@@ -152,8 +152,8 @@ VOLUMES_LIST: list[openstack_types.VolumeInfo] = [
     for n in range(1, 16)
 ]
 
-VOLUME_SNAPSHOTS_LIST: list[openstack_types.VolumeSnapshotInfo] = [
-    openstack_types.VolumeSnapshotInfo(
+VOLUME_SNAPSHOTS_LIST: list[openstack_types.SnapshotInfo] = [
+    openstack_types.SnapshotInfo(
         id=f'vsid{n}',
         volume_id=VOLUMES_LIST[(n - 1) % len(VOLUMES_LIST)].id,
         name=f'volume snapshot name{n}',
@@ -273,7 +273,7 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
         client.OpenStackClient.list_security_groups, returns=SECURITY_GROUPS_LIST
     ),
     AutoSpecMethodInfo(
-        client.OpenStackClient.get_server,
+        client.OpenStackClient.get_server_info,
         returns=search_id,
         partial_args=(SERVERS_LIST,),
     ),
@@ -283,7 +283,7 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
         partial_args=(VOLUMES_LIST,),
     ),  # pyright: ignore
     AutoSpecMethodInfo(
-        client.OpenStackClient.get_volume_snapshot,
+        client.OpenStackClient.get_snapshot_info,
         returns=search_id,
         partial_args=(VOLUME_SNAPSHOTS_LIST,),
     ),  # pyright: ignore
@@ -293,7 +293,7 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
         partial_args=(VOLUME_SNAPSHOTS_LIST,),
     ),
     AutoSpecMethodInfo(
-        client.OpenStackClient.create_volume_snapshot,
+        client.OpenStackClient.create_snapshot,
         returns=random_element,
         partial_args=(VOLUME_SNAPSHOTS_LIST,),
     ),

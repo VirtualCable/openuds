@@ -73,7 +73,7 @@ class OpenStackUserServiceFixed(FixedUserService, autoserializable.AutoSerializa
             return types.states.TaskState.FINISHED
 
         try:
-            server_info = self.service().api.get_server(self._vmid)
+            server_info = self.service().api.get_server_info(self._vmid)
         except Exception as e:
             return self.error(f'Machine not found: {e}')
 
@@ -98,7 +98,7 @@ class OpenStackUserServiceFixed(FixedUserService, autoserializable.AutoSerializa
 
     def op_start(self) -> None:
         try:
-            server_info = self.service().api.get_server(self._vmid)
+            server_info = self.service().api.get_server_info(self._vmid)
         except Exception as e:
             raise Exception('Machine not found on start machine') from e
 
