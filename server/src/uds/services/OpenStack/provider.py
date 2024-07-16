@@ -35,7 +35,7 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import types
+from uds.core import exceptions, types
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 from uds.core.util import validators, fields
@@ -127,8 +127,7 @@ class OpenStackProvider(ServiceProvider):
         choices=INTERFACE_VALUES,
         default='public',
     )
-    
-            
+
     domain = gui.TextField(
         length=64,
         label=_('Domain'),
@@ -198,7 +197,6 @@ class OpenStackProvider(ServiceProvider):
         tab=types.ui.Tab.ADVANCED,
         old_field_name='httpsProxy',
     )
-    
 
     legacy = False
 
@@ -213,6 +211,12 @@ class OpenStackProvider(ServiceProvider):
 
         if values is not None:
             self.timeout.value = validators.validate_timeout(self.timeout.value)
+            if self.auth_method.value == openstack_types.AuthMethod.APPLICATION_CREDENTIAL:
+                # Ensure that the project_id is provided, so it's bound to the application credential
+                if not self.tenant.value:
+                    raise exceptions.ui.ValidationError(
+                        _('Project Id is required when using Application Credential')
+                    )
 
     def api(
         self, projectid: typing.Optional[str] = None, region: typing.Optional[str] = None

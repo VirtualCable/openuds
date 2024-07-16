@@ -598,7 +598,8 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
         )
         return openstack_types.ServerInfo.from_dict(r.json()['server'])
 
-    def get_volume(self, volume_id: str) -> openstack_types.VolumeInfo:
+    @decorators.cached(prefix='vol', timeout=consts.cache.SHORTEST_CACHE_TIMEOUT, key_helper=cache_key_helper)
+    def get_volume_info(self, volume_id: str, **kwargs: typing.Any) -> openstack_types.VolumeInfo:
         r = self._request_from_endpoint(
             'get',
             endpoints_types=VOLUMES_ENDPOINT_TYPES,

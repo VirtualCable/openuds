@@ -145,6 +145,9 @@ VOLUMES_LIST: list[openstack_types.VolumeInfo] = [
         availability_zone=f'zone{n}',
         bootable=n % 2 == 0,
         encrypted=n % 3 == 0,
+        status=openstack_types.VolumeStatus.AVAILABLE,
+        created_at=datetime.datetime(2009, 12, 9, 0, 0, 0),
+        updated_at=datetime.datetime(2024, 1, 1, 0, 0, 0),
     )
     for n in range(1, 16)
 ]
@@ -275,7 +278,7 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
         partial_args=(SERVERS_LIST,),
     ),
     AutoSpecMethodInfo(
-        client.OpenStackClient.get_volume,
+        client.OpenStackClient.get_volume_info,
         returns=search_id,
         partial_args=(VOLUMES_LIST,),
     ),  # pyright: ignore

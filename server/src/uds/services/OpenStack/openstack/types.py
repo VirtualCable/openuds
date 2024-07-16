@@ -37,6 +37,7 @@ import enum
 
 from uds.core.services.generics import exceptions
 
+
 class AuthMethod(enum.StrEnum):
     # Only theese two methods are supported by our OpenStack implementation
     PASSWORD = 'password'
@@ -47,7 +48,8 @@ class AuthMethod(enum.StrEnum):
         try:
             return AuthMethod(s.lower())
         except ValueError:
-            return AuthMethod.PASSWORD    
+            return AuthMethod.PASSWORD
+
 
 class ServerStatus(enum.StrEnum):
     ACTIVE = 'ACTIVE'  # The server is active.
@@ -84,16 +86,31 @@ class ServerStatus(enum.StrEnum):
 
     # Helpers to check statuses
     def is_lost(self) -> bool:
-        return self in [ServerStatus.DELETED, ServerStatus.ERROR, ServerStatus.UNKNOWN, ServerStatus.SOFT_DELETED]
+        return self in [
+            ServerStatus.DELETED,
+            ServerStatus.ERROR,
+            ServerStatus.UNKNOWN,
+            ServerStatus.SOFT_DELETED,
+        ]
 
     def is_paused(self) -> bool:
         return self in [ServerStatus.PAUSED, ServerStatus.SUSPENDED]
 
     def is_running(self) -> bool:
-        return self in [ServerStatus.ACTIVE, ServerStatus.RESCUE, ServerStatus.RESIZE, ServerStatus.VERIFY_RESIZE]
+        return self in [
+            ServerStatus.ACTIVE,
+            ServerStatus.RESCUE,
+            ServerStatus.RESIZE,
+            ServerStatus.VERIFY_RESIZE,
+        ]
 
     def is_stopped(self) -> bool:
-        return self in [ServerStatus.SHUTOFF, ServerStatus.SHELVED, ServerStatus.SHELVED_OFFLOADED, ServerStatus.SOFT_DELETED]
+        return self in [
+            ServerStatus.SHUTOFF,
+            ServerStatus.SHELVED,
+            ServerStatus.SHELVED_OFFLOADED,
+            ServerStatus.SOFT_DELETED,
+        ]
 
 
 class PowerState(enum.IntEnum):
@@ -183,6 +200,39 @@ class PortStatus(enum.StrEnum):
             return PortStatus.ERROR
 
 
+class VolumeStatus(enum.StrEnum):
+    CREATING = 'creating'  # The volume is being created.
+    AVAILABLE = 'available'  # The volume is ready to attach to an instance.
+    RESERVED = 'reserved'  # The volume is reserved for attaching or shelved.
+    ATTACHING = 'attaching'  # The volume is attaching to an instance.
+    DETACHING = 'detaching'  # The volume is detaching from an instance.
+    IN_USE = 'in-use'  # The volume is attached to an instance.
+    MAINTENANCE = 'maintenance'  # The volume is locked and being migrated.
+    DELETING = 'deleting'  # The volume is being deleted.
+    AWAITING_TRANSFER = 'awaiting-transfer'  # The volume is awaiting for transfer.
+    ERROR = 'error'  # A volume creation error occurred.
+    ERROR_DELETING = 'error_deleting'  # A volume deletion error occurred.
+    BACKING_UP = 'backing-up'  # The volume is being backed up.
+    RESTORING_BACKUP = 'restoring-backup'  # A backup is being restored to the volume.
+    ERROR_BACKING_UP = 'error_backing-up'  # A backup error occurred.
+    ERROR_RESTORING = 'error_restoring'  # A backup restoration error occurred.
+    ERROR_EXTENDING = 'error_extending'  # An error occurred while attempting to extend a volume.
+    DOWNLOADING = 'downloading'  # The volume is downloading an image.
+    UPLOADING = 'uploading'  # The volume is being uploaded to an image.
+    RETYPING = 'retyping'  # The volume is changing type to another volume type.
+    EXTENDING = 'extending'  # The volume is being extended.
+
+    def is_available(self) -> bool:
+        return self in [VolumeStatus.AVAILABLE]
+    
+    @staticmethod
+    def from_str(s: str) -> 'VolumeStatus':
+        try:
+            return VolumeStatus(s.lower())
+        except ValueError:
+            return VolumeStatus.ERROR
+
+
 @dataclasses.dataclass
 class ServerInfo:
 
@@ -225,11 +275,11 @@ class ServerInfo:
     access_addr_ipv6: str
     fault: typing.Optional[str]
     admin_pass: str
-    
+
     def validated(self) -> 'ServerInfo':
         """
         Raises NotFoundError if server is lost
-        
+
         Returns:
             self
         """
@@ -325,6 +375,10 @@ class VolumeInfo:
     availability_zone: str
     bootable: bool
     encrypted: bool
+    status: VolumeStatus
+
+    created_at: datetime.datetime  # From ISO 8601 string
+    updated_at: datetime.datetime  # From ISO 8601 string
 
     @staticmethod
     def from_dict(d: dict[str, typing.Any]) -> 'VolumeInfo':
@@ -336,6 +390,9 @@ class VolumeInfo:
             availability_zone=d.get('availability_zone', ''),
             bootable=d.get('bootable', False),
             encrypted=d.get('encrypted', False),
+            status=VolumeStatus.from_str(d.get('status', VolumeStatus.ERROR.value)),
+            created_at=datetime.datetime.fromisoformat(d.get('created_at') or '1970-01-01T00:00:00'),
+            updated_at=datetime.datetime.fromisoformat(d.get('updated_at') or '1970-01-01T00:00:00'),
         )
 
 

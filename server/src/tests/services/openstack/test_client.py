@@ -40,8 +40,7 @@ from uds.services.OpenStack.openstack import (
     client as openstack_client,
 )
 
-from tests.utils import vars
-from tests.utils import helpers
+from tests.utils import vars, helpers
 
 from tests.utils.test import UDSTransactionTestCase
 
@@ -56,6 +55,7 @@ class TestOpenStackClient(UDSTransactionTestCase):
     _password: str
     _auth_method: openstack_types.AuthMethod
     _projectid: str
+    _regionid: str
 
     oclient: openstack_client.OpenStackClient
 
@@ -81,8 +81,16 @@ class TestOpenStackClient(UDSTransactionTestCase):
         self._password = v['password']
         self._auth_method = openstack_types.AuthMethod.from_str(v['auth_method'])
         self._projectid = v['project_id']
+        self._regionid = v['region']
 
         self.get_client()
+
+    def wait_for_volume(self, volume: openstack_types.VolumeInfo) -> None:
+        helpers.waiter(
+            lambda: self.oclient.get_volume_info(volume.id, force=True).status.is_available(),
+            timeout=30,
+            msg='Timeout waiting for volume to be available',
+        )
 
     @contextlib.contextmanager
     def create_test_volume(self) -> typing.Iterator[openstack_types.VolumeInfo]:
@@ -91,9 +99,21 @@ class TestOpenStackClient(UDSTransactionTestCase):
             size=1,
         )
         try:
+            self.wait_for_volume(volume)
             yield volume
         finally:
+            self.wait_for_volume(volume)
             self.oclient.t_delete_volume(volume.id)
+            
+    def test_list_projects(self) -> None:
+        projects = self.oclient.list_projects()
+        self.assertGreaterEqual(len(projects), 1)
+        self.assertIn(self._projectid, [p.id for p in projects])
+        
+    def test_list_regions(self) -> None:
+        regions = self.oclient.list_regions()
+        self.assertGreaterEqual(len(regions), 1)
+        self.assertIn(self._regionid, [r.id for r in regions])
 
     def test_list_volumes(self) -> None:
         with self.create_test_volume() as volume:
@@ -101,9 +121,18 @@ class TestOpenStackClient(UDSTransactionTestCase):
                 with self.create_test_volume() as volume3:
                     volumes = self.oclient.list_volumes()
                     self.assertGreaterEqual(len(volumes), 3)
-                    self.assertIn(volume, volumes)
-                    self.assertIn(volume2, volumes)
-                    self.assertIn(volume3, volumes)
+                    self.assertIn(
+                        (volume.id, volume.name, volume.description),
+                        [(v.id, v.name, v.description) for v in volumes],
+                    )
+                    self.assertIn(
+                        (volume2.id, volume2.name, volume2.description),
+                        [(v.id, v.name, v.description) for v in volumes],
+                    )
+                    self.assertIn(
+                        (volume3.id, volume3.name, volume3.description),
+                        [(v.id, v.name, v.description) for v in volumes],
+                    )
 
         # if no project id, should fail
         self.get_client(use_project_id=False)
