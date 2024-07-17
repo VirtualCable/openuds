@@ -40,6 +40,7 @@ logger = logging.getLogger(__name__)
 
 
 T = typing.TypeVar('T')
+V = typing.TypeVar('V', bound=collections.abc.Mapping[str, typing.Any])
 
 
 def compare_dicts(
@@ -58,7 +59,7 @@ def compare_dicts(
     ignore_keys_startswith = ignore_keys_startswith or []
     ignore_values_startswith = ignore_values_startswith or []
 
-    errors:list[tuple[str, str]] = []
+    errors: list[tuple[str, str]] = []
 
     for k, v in expected.items():
         if k in ignore_keys:
@@ -147,10 +148,10 @@ def random_hostname() -> str:
 # This is a simple class that returns true if the types of the two objects are the same
 class MustBeOfType:
     _kind: type[typing.Any]
-    
+
     def __init__(self, kind: type) -> None:
         self._kind = kind
-    
+
     def __eq__(self, other: typing.Any) -> bool:
         return isinstance(other, self._kind)
 
@@ -163,6 +164,7 @@ class MustBeOfType:
     def __repr__(self) -> str:
         return self.__str__()
 
+
 def search_item_by_attr(lst: list[T], attribute: str, value: typing.Any, **kwargs: typing.Any) -> T:
     """
     Returns an item from a list of items
@@ -173,7 +175,21 @@ def search_item_by_attr(lst: list[T], attribute: str, value: typing.Any, **kwarg
             return item
     raise ValueError(f'Item with {attribute}=="{value}" not found in list {str(lst)[:100]}')
 
-def filter_list_by_attr(lst: list[T], attribute: str, value: typing.Any,*, sorted_by: str = '', **kwargs: typing.Any) -> list[T]:
+
+def search_dict_by_attr(lst: list[V], attribute: str, value: typing.Any, **kwargs: typing.Any) -> V:
+    """
+    Returns an item from a list of items
+    kwargs are not used, just to let use it as partial on fixtures
+    """
+    for item in lst:
+        if item.get(attribute) == value:
+            return item
+    raise ValueError(f'Item with {attribute}=="{value}" not found in list {str(lst)[:100]}')
+
+
+def filter_list_by_attr(
+    lst: list[T], attribute: str, value: typing.Any, *, sorted_by: str = '', **kwargs: typing.Any
+) -> list[T]:
     """
     Returns a list of items from a list of items
     kwargs are not used, just to let use it as partial on fixtures
@@ -183,7 +199,10 @@ def filter_list_by_attr(lst: list[T], attribute: str, value: typing.Any,*, sorte
         values.sort(key=lambda x: getattr(x, sorted_by))
     return values
 
-def filter_list_by_attr_list(lst: list[T], attribute: str, values: list[typing.Any], *, sorted_by: str = '', **kwargs: typing.Any) -> list[T]:
+
+def filter_list_by_attr_list(
+    lst: list[T], attribute: str, values: list[typing.Any], *, sorted_by: str = '', **kwargs: typing.Any
+) -> list[T]:
     """
     Returns a list of items from a list of items
     kwargs are not used, just to let use it as partial on fixtures
@@ -192,6 +211,7 @@ def filter_list_by_attr_list(lst: list[T], attribute: str, values: list[typing.A
     if sorted_by:
         values.sort(key=lambda x: getattr(x, sorted_by))
     return values
+
 
 def check_userinterface_values(obj: ui.UserInterface, values: ui.gui.ValuesDictType) -> None:
     """

@@ -86,7 +86,7 @@ class TestOpenstackLiveDeployment(UDSTransactionTestCase):
             availability_zone=service.availability_zone.value,
             flavor_id=service.flavor.value,
             network_id=service.network.value,
-            security_groups_ids=service.security_groups.value,
+            security_groups_names=service.security_groups.value,
         )        
 
     def test_userservice_linked_cache_l1(self) -> None:
@@ -194,7 +194,7 @@ class TestOpenstackLiveDeployment(UDSTransactionTestCase):
 
             # Now, should be finished without any problem, no call to api should have been done
             self.assertEqual(state, types.states.TaskState.FINISHED, f'State: {state} {userservice._error_debug_info}')
-            api().get_server.assert_called()
+            api().get_server_info.assert_called()
             api().stop_server.assert_called()
             api().delete_server.assert_called()
             

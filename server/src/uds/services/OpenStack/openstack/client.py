@@ -36,7 +36,9 @@ import json
 import typing
 import collections.abc
 
+import requests
 from django.utils.translation import gettext as _
+
 from uds.core import consts
 
 from uds.core.services.generics import exceptions
@@ -44,9 +46,6 @@ from uds.core.util import security, cache, decorators
 
 from . import types as openstack_types
 
-# Not imported at runtime, just for type checking
-if typing.TYPE_CHECKING:
-    import requests
 
 logger = logging.getLogger(__name__)
 
@@ -165,7 +164,9 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
             if self._identity_endpoint[-1] != '/':
                 self._identity_endpoint += '/'
 
-        self.cache = cache.Cache(f'openstack_{identity_endpoint}_{port}_{domain}_{username}_{projectid}_{region}')
+        self.cache = cache.Cache(
+            f'openstack_{identity_endpoint}_{port}_{domain}_{username}_{projectid}_{region}'
+        )
 
     def _get_endpoints_for(self, *endpoint_types: str) -> collections.abc.Generator[str, None, None]:
         def inner_get(for_type: str) -> collections.abc.Generator[str, None, None]:
@@ -255,6 +256,8 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
                 OpenStackClient._ensure_valid_response(r, error_message, expects_json=expects_json)
                 logger.debug('Result: %s', r.content)
                 return r
+            except exceptions.NotFoundError:
+                raise
             except Exception as e:
                 if i == len(found_endpoints) - 1:
                     # Endpoint is down, can retry if none is working
@@ -305,7 +308,7 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
                     raise e
                 logger.warning('Error requesting %s: %s (%s)', endpoint + path, e, error_message)
                 self.cache.remove(cache_key)
-                
+
     def set_projectid(self, projectid: str) -> None:
         self._projectid = projectid
 
@@ -427,6 +430,7 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
         self,
         detail: bool = False,
         params: typing.Optional[dict[str, str]] = None,
+        **kwargs: typing.Any,
     ) -> list[openstack_types.ServerInfo]:
         return [
             openstack_types.ServerInfo.from_dict(s)
@@ -436,30 +440,6 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
                 error_message='List Vms',
                 key='servers',
                 params=params,
-            )
-        ]
-
-    @decorators.cached(prefix='imgs', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def list_images(self) -> list[openstack_types.ImageInfo]:
-        return [
-            openstack_types.ImageInfo.from_dict(i)
-            for i in self._get_recurring_from_endpoint(
-                endpoint_types=['image'],
-                path='/v2/images?status=active',
-                error_message='List Images',
-                key='images',
-            )
-        ]
-
-    @decorators.cached(prefix='volts', timeout=consts.cache.EXTREME_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def list_volume_types(self) -> list[openstack_types.VolumeTypeInfo]:
-        return [
-            openstack_types.VolumeTypeInfo.from_dict(t)
-            for t in self._get_recurring_from_endpoint(
-                endpoint_types=VOLUMES_ENDPOINT_TYPES,
-                path='/types',
-                error_message='List Volume Types',
-                key='volume_types',
             )
         ]
 
@@ -477,17 +457,19 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
 
     @decorators.cached(prefix='snps', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def list_volume_snapshots(
-        self, volume_id: typing.Optional[dict[str, typing.Any]] = None
+        self, volume_id: typing.Optional[str] = None
     ) -> list[openstack_types.SnapshotInfo]:
+        path = '/snapshots'
+        if volume_id is not None:
+            path += f'?volume_id={volume_id}'
         return [
             openstack_types.SnapshotInfo.from_dict(snapshot)
             for snapshot in self._get_recurring_from_endpoint(
                 endpoint_types=VOLUMES_ENDPOINT_TYPES,
-                path='/snapshots',
+                path=path,
                 error_message='List snapshots',
                 key='snapshots',
             )
-            if volume_id is None or snapshot['volume_id'] == volume_id
         ]
 
     @decorators.cached(prefix='azs', timeout=consts.cache.EXTREME_CACHE_TIMEOUT, key_helper=cache_key_helper)
@@ -727,9 +709,10 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
                 'max_count': count,
                 'min_count': count,
                 'networks': [{'uuid': network_id}],
-                'security_groups': [{'name': sg} for sg in security_groups_names],
             }
         }
+        if security_groups_names:
+            data['server']['security_groups'] = [{'name': sg} for sg in security_groups_names]
 
         r = self._request_from_endpoint(
             'post',
@@ -739,7 +722,10 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
             error_message='Create instance from snapshot',
         )
 
-        return openstack_types.ServerInfo.from_dict(r.json()['server'])
+        server = openstack_types.ServerInfo.from_dict(r.json()['server'])
+        # Update name, not returned by openstack
+        server.name = name
+        return server
 
     def delete_server(self, server_id: str) -> None:
         # This does not returns anything
@@ -915,24 +901,24 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
 
     @staticmethod
     def _ensure_valid_response(
-        response: 'requests.Response', errMsg: typing.Optional[str] = None, expects_json: bool = True
+        response: 'requests.Response', error_message: typing.Optional[str] = None, expects_json: bool = True
     ) -> None:
         if response.ok is False:
-            if not expects_json:
-                return  # If not expecting json, simply return
+            if response.status_code == 404:
+                raise exceptions.NotFoundError('Not found')
             try:
                 # Extract any key, in case of error is expected to have only one top key so this will work
                 _, err = response.json().popitem()
                 msg = ': {message}'.format(**err)
-                errMsg = errMsg + msg if errMsg else msg
+                error_message = error_message + msg if error_message else msg
             except (
                 Exception
             ):  # nosec: If error geting error message, simply ignore it (will be loged on service log anyway)
                 pass
-            if errMsg is None:
-                errMsg = 'Error checking response'
-            logger.error('%s: %s', errMsg, response.content)
-            raise Exception(errMsg)
+            if error_message is None and expects_json:
+                error_message = 'Error checking response'
+                logger.error('%s: %s', error_message, response.content)
+            raise Exception(error_message)
 
     # Only for testing purposes, not used at runtime
     def t_create_volume(self, name: str, size: int) -> openstack_types.VolumeInfo:
@@ -953,6 +939,17 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
         )
 
         return openstack_types.VolumeInfo.from_dict(r.json()['volume'])
+
+    def t_set_volume_bootable(self, volume_id: str, bootable: bool) -> None:
+        # Set boot info if needed
+        self._request_from_endpoint(
+            'post',
+            endpoints_types=VOLUMES_ENDPOINT_TYPES,
+            path=f'/volumes/{volume_id}/action',
+            data=json.dumps({'os-set_bootable': {'bootable': bootable}}),
+            error_message='Set Volume bootable',
+            expects_json=False,
+        )
 
     def t_delete_volume(self, volume_id: str) -> None:
         # This does not returns anything

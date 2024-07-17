@@ -50,26 +50,6 @@ class OpenStackLivePublication(DynamicPublication, autoserializable.AutoSerializ
     """
     This class provides the publication of a oVirtLinkedService
     """
-
-    # _name = autoserializable.StringField(default='')
-    # _vmid = autoserializable.StringField(default='')
-    # _reason = autoserializable.StringField(default='')
-    # _status = autoserializable.StringField(default='r')
-    # _destroy_after = autoserializable.BoolField(default=False)
-
-
-    # _name = autoserializable.StringField(default='')
-    # _vmid = autoserializable.StringField(default='')
-    # _queue = autoserializable.ListField[Operation]()
-    # _reason = autoserializable.StringField(default='')
-    # _is_flagged_for_destroy = autoserializable.BoolField(default=False)
-
-    # _name: str = ''
-    # _reason: str = ''
-    # _template_id: str = ''
-    # _state: str = 'r'
-    # _destroyAfter: str = 'n'
-
     suggested_delay = 20  # : Suggested recheck time if publication is unfinished in seconds
 
     def service(self) -> 'OpenStackLiveService':

@@ -116,7 +116,7 @@ class OpenStackLiveService(DynamicService):
         order=2,
         fills={
             'callback_name': 'osFillResources',
-            'function': helpers.get_resources,
+            'function': helpers.list_resources,
             'parameters': ['prov_uuid', 'project', 'region'],
         },
         tooltip=_('Project for this service'),
@@ -128,7 +128,7 @@ class OpenStackLiveService(DynamicService):
         order=3,
         fills={
             'callback_name': 'osFillVolumees',
-            'function': helpers.get_volumes,
+            'function': helpers.list_volumes,
             'parameters': [
                 'prov_uuid',
                 'project',
@@ -177,6 +177,7 @@ class OpenStackLiveService(DynamicService):
     lenname = DynamicService.lenname
 
     maintain_on_error = DynamicService.maintain_on_error
+    try_soft_shutdown = DynamicService.try_soft_shutdown
 
     prov_uuid = gui.HiddenField()
 
@@ -214,11 +215,11 @@ class OpenStackLiveService(DynamicService):
 
         self.region.set_choices(regions)
 
-        if parent and parent.tenant.value:
-            tenants = [gui.choice_item(parent.tenant.value, parent.tenant.value)]
+        if parent and parent.project_id.value:
+            projects = [gui.choice_item(parent.project_id.value, parent.project_id.value)]
         else:
-            tenants = [gui.choice_item(t.id, t.name) for t in api.list_projects()]
-        self.project.set_choices(tenants)
+            projects = [gui.choice_item(t.id, t.name) for t in api.list_projects()]
+        self.project.set_choices(projects)
 
         self.prov_uuid.value = self.provider().get_uuid()
 

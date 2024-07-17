@@ -156,7 +156,7 @@ class OpenStackProvider(ServiceProvider):
     concurrent_removal_limit = fields.concurrent_removal_limit_field()
     timeout = fields.timeout_field(default=10)
 
-    tenant = gui.TextField(
+    project_id = gui.TextField(
         length=64,
         label=_('Project Id'),
         order=40,
@@ -164,6 +164,7 @@ class OpenStackProvider(ServiceProvider):
         required=False,
         default='',
         tab=types.ui.Tab.ADVANCED,
+        old_field_name='tenant',
     )
     region = gui.TextField(
         length=64,
@@ -213,7 +214,7 @@ class OpenStackProvider(ServiceProvider):
             self.timeout.value = validators.validate_timeout(self.timeout.value)
             if self.auth_method.value == openstack_types.AuthMethod.APPLICATION_CREDENTIAL:
                 # Ensure that the project_id is provided, so it's bound to the application credential
-                if not self.tenant.value:
+                if not self.project_id.value:
                     raise exceptions.ui.ValidationError(
                         _('Project Id is required when using Application Credential')
                     )
@@ -221,7 +222,7 @@ class OpenStackProvider(ServiceProvider):
     def api(
         self, projectid: typing.Optional[str] = None, region: typing.Optional[str] = None
     ) -> client.OpenStackClient:
-        projectid = projectid or self.tenant.value or None
+        projectid = projectid or self.project_id.value or None
         region = region or self.region.value or None
         if self._api is None:
             proxies: 'dict[str, str]|None' = None

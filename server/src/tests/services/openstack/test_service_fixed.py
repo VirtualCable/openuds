@@ -98,7 +98,7 @@ class TestOpenstackFixedService(UDSTransactionTestCase):
                 # How many assignables machines are available?
                 remaining = len(list(service.enumerate_assignables()))
 
-                api.get_server.reset_mock()
+                api.get_server_info.reset_mock()
                 # Now get_and_assign_machine as much as remaining machines
                 for _ in range(remaining):
                     vm = service.get_and_assign()
@@ -108,7 +108,7 @@ class TestOpenstackFixedService(UDSTransactionTestCase):
                 self.assertEqual(list(service.enumerate_assignables()), [])
 
                 # And get_server should have been called remaining times
-                self.assertEqual(api.get_server.call_count, remaining)
+                self.assertEqual(api.get_server_info.call_count, remaining)
 
                 # And a new try, should raise an exception
                 self.assertRaises(Exception, service.get_and_assign)

@@ -629,9 +629,7 @@ class gui:
                 old_field_name=old_field_name,
             )
             # Update parent type
-            self.field_type = (
-                types.ui.FieldType.TEXT_AUTOCOMPLETE
-            )  # pyright: ignore[reportIncompatibleMethodOverride]
+            self.field_type = types.ui.FieldType.TEXT_AUTOCOMPLETE
             self._fields_info.choices = gui.as_choices(choices or [])
 
         def set_choices(self, values: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]) -> None:

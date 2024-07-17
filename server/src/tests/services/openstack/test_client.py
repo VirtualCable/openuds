@@ -117,9 +117,12 @@ class TestOpenStackClient(UDSTransactionTestCase):
         )
         try:
             self.wait_for_volume(volume)
+            # Set volume bootable
+            self.oclient.t_set_volume_bootable(volume.id, bootable=True)
             yield volume
         finally:
             self.wait_for_volume(volume)
+            logger.info('Volume; %s', self.oclient.get_volume_info(volume.id, force=True))
             self.oclient.t_delete_volume(volume.id)
 
     @contextlib.contextmanager
@@ -137,6 +140,18 @@ class TestOpenStackClient(UDSTransactionTestCase):
             self.wait_for_snapshot(snapshot)
             self.oclient.delete_snapshot(snapshot.id)
 
+            # Ensure that the snapshot is deleted
+            def snapshot_removal_checker():
+                try:
+                    self.oclient.get_snapshot_info(snapshot.id)
+                    return False
+                except Exception:
+                    return True
+
+            helpers.waiter(
+                snapshot_removal_checker, timeout=30, msg='Timeout waiting for snapshot to be deleted'
+            )
+
     @contextlib.contextmanager
     def create_test_server(self) -> typing.Iterator[openstack_types.ServerInfo]:
         with self.create_test_volume() as volume:
@@ -149,10 +164,10 @@ class TestOpenStackClient(UDSTransactionTestCase):
                     security_groups_names=[],
                     availability_zone=self._availability_zone_id,
                 )
-        try:
-            yield server
-        finally:
-            self.oclient.delete_server(server.id)
+                try:
+                    yield server
+                finally:
+                    self.oclient.delete_server(server.id)
 
     def test_list_projects(self) -> None:
         projects = self.oclient.list_projects()
@@ -163,6 +178,21 @@ class TestOpenStackClient(UDSTransactionTestCase):
         regions = self.oclient.list_regions()
         self.assertGreaterEqual(len(regions), 1)
         self.assertIn(self._regionid, [r.id for r in regions])
+
+    def test_list_servers(self) -> None:
+        with self.create_test_server() as server1:
+            with self.create_test_server() as server2:
+                servers = self.oclient.list_servers(force=True)
+                self.assertGreaterEqual(len(servers), 2)
+                self.assertIn(
+                    (server1.id, server1.flavor),
+                    [(s.id, s.flavor) for s in servers],
+                )
+                self.assertIn(
+                    (server2.id, server2.flavor),
+                    [(s.id, s.flavor) for s in servers],
+                )
+                
 
     def test_list_volumes(self) -> None:
         with self.create_test_volume() as volume:

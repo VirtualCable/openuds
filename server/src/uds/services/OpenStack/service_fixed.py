@@ -90,7 +90,7 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
         order=2,
         fills={
             'callback_name': 'osGetMachines',
-            'function': helpers.get_machines,
+            'function': helpers.list_servers,
             'parameters': ['prov_uuid', 'project', 'region'],
         },
         tooltip=_('Project for this service'),
@@ -127,8 +127,8 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
 
         self.region.set_choices(regions)
 
-        if parent and parent.tenant.value:
-            tenants = [gui.choice_item(parent.tenant.value, parent.tenant.value)]
+        if parent and parent.project_id.value:
+            tenants = [gui.choice_item(parent.project_id.value, parent.project_id.value)]
         else:
             tenants = [gui.choice_item(t.id, t.name) for t in api.list_projects()]
         self.project.set_choices(tenants)

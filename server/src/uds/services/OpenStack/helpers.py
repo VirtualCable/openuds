@@ -60,7 +60,7 @@ def get_api(parameters: dict[str, str]) -> tuple[client.OpenStackClient, bool]:
     return (provider.api(parameters['project'], parameters['region']), use_subnets_names)
 
 
-def get_resources(parameters: dict[str, str]) -> types.ui.CallbackResultType:
+def list_resources(parameters: dict[str, str]) -> types.ui.CallbackResultType:
     '''
     This helper is designed as a callback for Project Selector
     '''
@@ -71,7 +71,8 @@ def get_resources(parameters: dict[str, str]) -> types.ui.CallbackResultType:
         gui.choice_item(z.id, z.name) for z in api.list_networks(name_from_subnets=name_from_subnets)
     ]
     flavors = [gui.choice_item(z.id, f'{z.name} ({z.vcpus} vCPUs, {z.ram} MiB)') for z in api.list_flavors() if not z.disabled]
-    security_groups = [gui.choice_item(z.id, z.name) for z in api.list_security_groups()]
+    # Security groups are used on creation, and used by name...
+    security_groups = [gui.choice_item(z.name, z.name) for z in api.list_security_groups()]
 
     data: types.ui.CallbackResultType = [
         {'name': 'availability_zone', 'choices': zones},
@@ -83,7 +84,7 @@ def get_resources(parameters: dict[str, str]) -> types.ui.CallbackResultType:
     return data
 
 
-def get_volumes(parameters: dict[str, str]) -> types.ui.CallbackResultType:
+def list_volumes(parameters: dict[str, str]) -> types.ui.CallbackResultType:
     '''
     This helper is designed as a callback for Zone Selector
     '''
@@ -98,7 +99,7 @@ def get_volumes(parameters: dict[str, str]) -> types.ui.CallbackResultType:
     logger.debug('Return data: %s', data)
     return data
 
-def get_machines(parameters: dict[str, str]) -> types.ui.CallbackResultType:
+def list_servers(parameters: dict[str, str]) -> types.ui.CallbackResultType:
     # Needs prov_uuid, project and region in order to work
     api = get_api(parameters)[0]
 

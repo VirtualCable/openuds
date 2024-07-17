@@ -90,7 +90,7 @@ class TestOpenstackProvider(UDSTransactionTestCase):
         """
         Test the Helpers. In fact, not used on provider, but on services (fixed, live, ...)
         """
-        from uds.services.OpenStack.helpers import get_machines, get_resources, get_volumes
+        from uds.services.OpenStack.helpers import list_servers, list_resources, list_volumes
 
         for patcher in (fixtures.patched_provider, fixtures.patched_provider_legacy):
             with patcher() as prov:
@@ -113,12 +113,12 @@ class TestOpenstackProvider(UDSTransactionTestCase):
                 with mock.patch('uds.services.OpenStack.helpers.get_api') as get_api:
                     get_api.return_value = (prov.api(), False)
                     
-                    h_machines = get_machines(parameters)
+                    h_machines = list_servers(parameters)
                     self.assertEqual(len(h_machines), 1)
                     self.assertEqual(h_machines[0]['name'], 'machines')
                     self.assertEqual(sorted(i['id'] for i in h_machines[0]['choices']), sorted(i.id for i in fixtures.SERVERS_LIST))
                     
-                    h_resources = get_resources(parameters)
+                    h_resources = list_resources(parameters)
                     # [{'name': 'availability_zone', 'choices': [...]}, {'name': 'network', 'choices': [...]}, {'name': 'flavor', 'choices': [...]}, {'name': 'security_groups', 'choices': [...]}]
                     self.assertEqual(len(h_resources), 4)
                     self.assertEqual(sorted(i['name'] for i in h_resources), ['availability_zone', 'flavor', 'network', 'security_groups'])
@@ -128,10 +128,10 @@ class TestOpenstackProvider(UDSTransactionTestCase):
                     self.assertEqual(sorted(_get_choices_for('availability_zone')), sorted(i.id for i in fixtures.AVAILABILITY_ZONES_LIST))
                     self.assertEqual(sorted(_get_choices_for('network')), sorted(i.id for i in fixtures.NETWORKS_LIST))
                     self.assertEqual(sorted(_get_choices_for('flavor')), sorted(i.id for i in fixtures.FLAVORS_LIST if not i.disabled))
-                    self.assertEqual(sorted(_get_choices_for('security_groups')), sorted(i.id for i in fixtures.SECURITY_GROUPS_LIST))
+                    self.assertEqual(sorted(_get_choices_for('security_groups')), sorted(i.name for i in fixtures.SECURITY_GROUPS_LIST))
                     
                     # [{'name': 'volume', 'choices': [...]}]
-                    h_volumes = get_volumes(parameters)
+                    h_volumes = list_volumes(parameters)
                     self.assertEqual(len(h_volumes), 1)
                     self.assertEqual(h_volumes[0]['name'], 'volume')
                     self.assertEqual(sorted(i['id'] for i in h_volumes[0]['choices']), sorted(i.id for i in fixtures.VOLUMES_LIST))

@@ -174,7 +174,7 @@ class VolumeStatus(enum.StrEnum):
     EXTENDING = 'extending'  # The volume is being extended.
 
     def is_available(self) -> bool:
-        return self in [VolumeStatus.AVAILABLE, VolumeStatus.IN_USE]
+        return self == VolumeStatus.AVAILABLE
 
     @staticmethod
     def from_str(s: str) -> 'VolumeStatus':
@@ -308,7 +308,7 @@ class ServerInfo:
             flavor = ''
         return ServerInfo(
             id=d['id'],
-            name=d.get('name', d['id']),
+            name=d.get('name', d['id']),  # On create server, name is not returned, so use id
             href=href,
             flavor=flavor,
             status=ServerStatus.from_str(d.get('status', ServerStatus.UNKNOWN.value)),
@@ -353,19 +353,6 @@ class RegionInfo:
         return RegionInfo(
             id=d['id'],
             name=name,
-        )
-
-
-@dataclasses.dataclass
-class ImageInfo:
-    id: str
-    name: str
-
-    @staticmethod
-    def from_dict(d: dict[str, typing.Any]) -> 'ImageInfo':
-        return ImageInfo(
-            id=d['id'],
-            name=d.get('name', d['id']),
         )
 
 

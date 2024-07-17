@@ -41,8 +41,6 @@ from ...utils.test import UDSTransactionTestCase
 # from uds.services.OpenStack.service import OpenStackLiveService
 from uds.services.OpenStack.openstack import types as openstack_types
 
-# We have only one service type for both providers
-
 
 class TestOpenstackService(UDSTransactionTestCase):
     def test_service(self) -> None:
@@ -58,11 +56,11 @@ class TestOpenstackService(UDSTransactionTestCase):
 
                 template = service.make_template('template', 'desc')
                 self.assertIsInstance(template, openstack_types.SnapshotInfo)
-                api.create_volume_snapshot.assert_called_once_with(service.volume.value, 'template', 'desc')
+                api.create_snapshot.assert_called_once_with(service.volume.value, 'template', 'desc')
 
                 template = service.get_template(fixtures.VOLUME_SNAPSHOTS_LIST[0].id)
                 self.assertIsInstance(template, openstack_types.SnapshotInfo)
-                api.get_volume_snapshot.assert_called_once_with(fixtures.VOLUME_SNAPSHOTS_LIST[0].id)
+                api.get_snapshot_info.assert_called_once_with(fixtures.VOLUME_SNAPSHOTS_LIST[0].id)
 
                 data: typing.Any = service.deploy_from_template('name', fixtures.VOLUME_SNAPSHOTS_LIST[0].id)
                 self.assertIsInstance(data, openstack_types.ServerInfo)
@@ -72,21 +70,17 @@ class TestOpenstackService(UDSTransactionTestCase):
                     availability_zone=service.availability_zone.value,
                     flavor_id=service.flavor.value,
                     network_id=service.network.value,
-                    security_groups_ids=service.security_groups.value,
+                    security_groups_names=service.security_groups.value,
                 )
                 data = service.api.get_server_info(fixtures.SERVERS_LIST[0].id).status
                 self.assertIsInstance(data, openstack_types.ServerStatus)
-                api.get_server.assert_called_once_with(fixtures.SERVERS_LIST[0].id)
-                # Reset mocks, get server should be called again
-                api.reset_mock()
 
                 data = service.api.get_server_info(fixtures.SERVERS_LIST[0].id).power_state
                 self.assertIsInstance(data, openstack_types.PowerState)
-                api.get_server.assert_called_once_with(fixtures.SERVERS_LIST[0].id)
 
                 server = fixtures.SERVERS_LIST[0]
                 service.api.start_server(server.id)
-                
+
                 server.power_state = openstack_types.PowerState.SHUTDOWN
                 api.start_server.assert_called_once_with(server.id)
 
@@ -113,5 +107,7 @@ class TestOpenstackService(UDSTransactionTestCase):
 
                 self.assertEqual(service.get_basename(), service.basename.value)
                 self.assertEqual(service.get_lenname(), service.lenname.value)
-                self.assertEqual(service.allows_errored_userservice_cleanup(), not service.maintain_on_error.value)
+                self.assertEqual(
+                    service.allows_errored_userservice_cleanup(), not service.maintain_on_error.value
+                )
                 self.assertEqual(service.should_maintain_on_error(), service.maintain_on_error.value)
