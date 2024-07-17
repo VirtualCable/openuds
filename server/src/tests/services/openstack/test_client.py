@@ -172,7 +172,7 @@ class TestOpenStackClient(UDSTransactionTestCase):
                     name='uds-test-server' + helpers.random_string(5),
                     flavor_id=self._flavorid,
                     network_id=self._networkid,
-                    security_groups_names=[],
+                    security_groups_names=[self._security_group_name],
                     availability_zone=self._availability_zone_id,
                 )
                 try:
@@ -183,7 +183,7 @@ class TestOpenStackClient(UDSTransactionTestCase):
                         msg='Timeout waiting for server to be running',
                     )
                     # Reget server info to complete all data
-                    server = self.oclient.get_server_info(server.id)
+                    server = self.oclient.get_server_info(server.id, force=True)
                     yield server
                 finally:
                     self.oclient.delete_server(server.id)
@@ -204,12 +204,12 @@ class TestOpenStackClient(UDSTransactionTestCase):
                 servers = self.oclient.list_servers(force=True)
                 self.assertGreaterEqual(len(servers), 2)
                 self.assertIn(
-                    (server1.id, server1.flavor),
-                    [(s.id, s.flavor) for s in servers],
+                    (server1.id, server1.name),
+                    [(s.id, s.name) for s in servers],
                 )
                 self.assertIn(
-                    (server2.id, server2.flavor),
-                    [(s.id, s.flavor) for s in servers],
+                    (server2.id, server2.name),
+                    [(s.id, s.name) for s in servers],
                 )
 
     def test_list_volumes(self) -> None:

@@ -298,6 +298,8 @@ class ServerInfo:
 
     @staticmethod
     def from_dict(d: dict[str, typing.Any]) -> 'ServerInfo':
+        # Note that for list_servers only the following fields are returned:
+        # id, name, href
         # Look for self link
         href: str = ''
         for link in d.get('links', []):
