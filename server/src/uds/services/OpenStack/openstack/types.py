@@ -95,6 +95,9 @@ class ServerStatus(enum.StrEnum):
 
     def is_paused(self) -> bool:
         return self in [ServerStatus.PAUSED, ServerStatus.SUSPENDED]
+    
+    def is_active(self) -> bool:
+        return self == ServerStatus.ACTIVE
 
     def is_running(self) -> bool:
         return self in [
@@ -130,6 +133,9 @@ class PowerState(enum.IntEnum):
 
     def is_paused(self) -> bool:
         return self == PowerState.PAUSED
+    
+    def is_suspended(self) -> bool:
+        return self == PowerState.SUSPENDED
 
     def is_running(self) -> bool:
         return self == PowerState.RUNNING
@@ -302,10 +308,7 @@ class ServerInfo:
             except Exception:
                 pass  # Just ignore any error here
         # Try to get flavor, only on >= 2.47
-        try:
-            flavor = d.get('flavor', {}).get('id', '')
-        except Exception:
-            flavor = ''
+        flavor = d.get('flavor', {}).get('id', '')
         return ServerInfo(
             id=d['id'],
             name=d.get('name', d['id']),  # On create server, name is not returned, so use id
@@ -510,43 +513,6 @@ class SubnetInfo:
             ip_version=d['ip_version'],
             network_id=d['network_id'],
         )
-
-
-@dataclasses.dataclass
-class PortInfo:
-
-    @dataclasses.dataclass
-    class FixedIpInfo:
-        ip_address: str
-        subnet_id: str
-
-        @staticmethod
-        def from_dict(d: dict[str, typing.Any]) -> 'PortInfo.FixedIpInfo':
-            return PortInfo.FixedIpInfo(
-                ip_address=d['ip_address'],
-                subnet_id=d['subnet_id'],
-            )
-
-    id: str
-    name: str
-    status: str
-    device_id: str
-    device_owner: str
-    mac_address: str
-    fixed_ips: list['FixedIpInfo']
-
-    @staticmethod
-    def from_dict(d: dict[str, typing.Any]) -> 'PortInfo':
-        return PortInfo(
-            id=d['id'],
-            name=d['name'],
-            status=d['status'],
-            device_id=d['device_id'],
-            device_owner=d['device_owner'],
-            mac_address=d['mac_address'],
-            fixed_ips=[PortInfo.FixedIpInfo.from_dict(ip) for ip in d['fixed_ips']],
-        )
-
 
 @dataclasses.dataclass
 class SecurityGroupInfo:

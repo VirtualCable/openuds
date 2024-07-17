@@ -41,7 +41,7 @@ from django.utils.translation import gettext as _
 
 from uds.core import consts
 
-from uds.core.services.generics import exceptions
+from uds.core.services.generics import exceptions as gen_exceptions
 from uds.core.util import security, cache, decorators
 
 from . import types as openstack_types
@@ -256,13 +256,15 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
                 OpenStackClient._ensure_valid_response(r, error_message, expects_json=expects_json)
                 logger.debug('Result: %s', r.content)
                 return r
-            except exceptions.NotFoundError:
+            except gen_exceptions.NotFoundError:
                 raise
             except Exception as e:
                 if i == len(found_endpoints) - 1:
                     # Endpoint is down, can retry if none is working
                     if isinstance(e, (requests.exceptions.Timeout, requests.exceptions.ConnectionError)):
-                        raise exceptions.RetryableError('All endpoints failed') from e  # With last exception
+                        raise gen_exceptions.RetryableError(
+                            'All endpoints failed'
+                        ) from e  # With last exception
                     raise e
                 logger.warning('Error requesting %s: %s', endpoint + path, e)
                 self.cache.remove(cache_key)
@@ -304,7 +306,9 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
                 if i == len(found_endpoints) - 1:
                     # Endpoint is down, can retry if none is working
                     if isinstance(e, (requests.exceptions.Timeout, requests.exceptions.ConnectionError)):
-                        raise exceptions.RetryableError('All endpoints failed') from e  # With last exception
+                        raise gen_exceptions.RetryableError(
+                            'All endpoints failed'
+                        ) from e  # With last exception
                     raise e
                 logger.warning('Error requesting %s: %s (%s)', endpoint + path, e, error_message)
                 self.cache.remove(cache_key)
@@ -455,23 +459,6 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
             )
         ]
 
-    @decorators.cached(prefix='snps', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def list_volume_snapshots(
-        self, volume_id: typing.Optional[str] = None
-    ) -> list[openstack_types.SnapshotInfo]:
-        path = '/snapshots'
-        if volume_id is not None:
-            path += f'?volume_id={volume_id}'
-        return [
-            openstack_types.SnapshotInfo.from_dict(snapshot)
-            for snapshot in self._get_recurring_from_endpoint(
-                endpoint_types=VOLUMES_ENDPOINT_TYPES,
-                path=path,
-                error_message='List snapshots',
-                key='snapshots',
-            )
-        ]
-
     @decorators.cached(prefix='azs', timeout=consts.cache.EXTREME_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def list_availability_zones(self) -> list[openstack_types.AvailabilityZoneInfo]:
         # Only available zones are returned
@@ -523,7 +510,7 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
             return res
 
     @decorators.cached(prefix='subns', timeout=consts.cache.LONG_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def list_subnets(self) -> collections.abc.Iterable[openstack_types.SubnetInfo]:
+    def list_subnets(self) -> list[openstack_types.SubnetInfo]:
         return [
             openstack_types.SubnetInfo.from_dict(s)
             for s in self._get_recurring_from_endpoint(
@@ -531,29 +518,6 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
                 path='/v2.0/subnets',
                 error_message='List Subnets',
                 key='subnets',
-            )
-        ]
-
-    @decorators.cached(prefix='sgps', timeout=consts.cache.LONG_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def list_ports(
-        self,
-        network_id: typing.Optional[str] = None,
-        owner_id: typing.Optional[str] = None,
-    ) -> list[openstack_types.PortInfo]:
-        params: dict[str, typing.Any] = {}
-        if network_id is not None:
-            params['network_id'] = network_id
-        if owner_id is not None:
-            params['device_owner'] = owner_id
-
-        return [
-            openstack_types.PortInfo.from_dict(p)
-            for p in self._get_recurring_from_endpoint(
-                endpoint_types=NETWORKS_ENDPOINT_TYPES,
-                path='/v2.0/ports',
-                error_message='List ports',
-                key='ports',
-                params=params,
             )
         ]
 
@@ -573,7 +537,7 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
     # Any cache time less than 5 seconds will be fine, beceuse checks on
     # openstack are done every 5 seconds
     @decorators.cached(prefix='svr', timeout=consts.cache.SHORTEST_CACHE_TIMEOUT, key_helper=cache_key_helper)
-    def get_server_info(self, server_id: str) -> openstack_types.ServerInfo:
+    def get_server_info(self, server_id: str, **kwargs: typing.Any) -> openstack_types.ServerInfo:
         r = self._request_from_endpoint(
             'get',
             endpoints_types=COMPUTE_ENDPOINT_TYPES,
@@ -607,32 +571,12 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
 
         return openstack_types.SnapshotInfo.from_dict(r.json()['snapshot'])
 
-    def update_snapshot(
-        self,
-        snapshot_id: str,
-        name: typing.Optional[str] = None,
-        description: typing.Optional[str] = None,
-    ) -> openstack_types.SnapshotInfo:
-        data: dict[str, typing.Any] = {'snapshot': {}}
-        if name:
-            data['snapshot']['name'] = name
-
-        if description:
-            data['snapshot']['description'] = description
-
-        r = self._request_from_endpoint(
-            'put',
-            endpoints_types=VOLUMES_ENDPOINT_TYPES,
-            path=f'/snapshots/{snapshot_id}',
-            data=json.dumps(data),
-            error_message='Update Snaphost information',
-        )
-
-        return openstack_types.SnapshotInfo.from_dict(r.json()['snapshot'])
-
     def create_snapshot(
         self, volume_id: str, name: str, description: typing.Optional[str] = None
     ) -> openstack_types.SnapshotInfo:
+        # First, get volume info to ensure it exists
+        self.get_volume_info(volume_id, force=True)
+
         description = description or 'UDS Snapshot'
         data = {
             'snapshot': {
@@ -653,29 +597,6 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
 
         return openstack_types.SnapshotInfo.from_dict(r.json()['snapshot'])
 
-    def create_volume_from_snapshot(
-        self, snapshot_id: str, name: str, description: typing.Optional[str] = None
-    ) -> openstack_types.VolumeInfo:
-        description = description or 'UDS Volume'
-        data = {
-            'volume': {
-                'name': name,
-                'description': description,
-                # 'volume_type': volType,  # This seems to be the volume type name, not the id
-                'snapshot_id': snapshot_id,
-            }
-        }
-
-        r = self._request_from_endpoint(
-            'post',
-            endpoints_types=VOLUMES_ENDPOINT_TYPES,
-            path='/volumes',
-            data=json.dumps(data),
-            error_message='Create Volume from Snapshot',
-        )
-
-        return openstack_types.VolumeInfo.from_dict(r.json()['volume'])
-
     def create_server_from_snapshot(
         self,
         snapshot_id: str,
@@ -686,6 +607,9 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
         security_groups_names: collections.abc.Iterable[str],
         count: int = 1,
     ) -> openstack_types.ServerInfo:
+        # Check snapshot exists
+        self.get_snapshot_info(snapshot_id)
+
         data = {
             'server': {
                 'name': name,
@@ -782,8 +706,14 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
                 error_message='Rebooting server',
                 expects_json=False,
             )
+        except gen_exceptions.NotFoundError:
+            raise
         except Exception:
             pass
+
+    def reset_server(self, server_id: str) -> None:
+        # Does not need return value
+        return self.reboot_server(server_id, hard=True)
 
     def suspend_server(self, server_id: str) -> None:
         # this does not returns anything
@@ -806,21 +736,6 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
             error_message='Resuming server',
             expects_json=False,
         )
-
-    def reset_server(self, server_id: str, hard: bool = True) -> None:
-        # Does not need return value
-        try:
-            type_reboot = 'HARD' if hard else 'SOFT'
-            self._request_from_endpoint(
-                'post',
-                endpoints_types=COMPUTE_ENDPOINT_TYPES,
-                path=f'/servers/{server_id}/action',
-                data='{"reboot":{"type":"' + type_reboot + '"}}',
-                error_message='Resetting server',
-                expects_json=False,
-            )
-        except Exception:
-            pass  # Ignore error for reseting server
 
     def test_connection(self) -> bool:
         # First, ensure requested api is supported
@@ -905,7 +820,7 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
     ) -> None:
         if response.ok is False:
             if response.status_code == 404:
-                raise exceptions.NotFoundError('Not found')
+                raise gen_exceptions.NotFoundError('Not found')
             try:
                 # Extract any key, in case of error is expected to have only one top key so this will work
                 _, err = response.json().popitem()

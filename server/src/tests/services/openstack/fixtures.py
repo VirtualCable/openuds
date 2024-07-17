@@ -185,25 +185,6 @@ DEF_NETWORKS_LIST: typing.Final[list[openstack_types.NetworkInfo]] = [
     for n in range(1, 16)
 ]
 
-DEF_PORTS_LIST: typing.Final[list[openstack_types.PortInfo]] = [
-    openstack_types.PortInfo(
-        id=f'portid{n}',
-        name=f'port name{n}',
-        status=openstack_types.PortStatus.ACTIVE,
-        device_id=f'devid{n}',
-        device_owner=f'devowner{n}',
-        mac_address=f'fa:{n:02x}:3e:0d:{n+1:02x}:91',
-        fixed_ips=[
-            openstack_types.PortInfo.FixedIpInfo(
-                ip_address=f'192.168.{j}.1',
-                subnet_id=random.choice([s.id for s in DEF_SUBNETS_LIST]),
-            )
-            for j in range(1, 4)
-        ],
-    )
-    for n in range(1, 16)
-]
-
 DEF_SECURITY_GROUPS_LIST: typing.Final[list[openstack_types.SecurityGroupInfo]] = [
     openstack_types.SecurityGroupInfo(
         id=f'sgid{n}',
@@ -239,7 +220,6 @@ VOLUMES_LIST = copy.deepcopy(DEF_VOLUMES_LIST)
 VOLUME_SNAPSHOTS_LIST = copy.deepcopy(DEF_VOLUME_SNAPSHOTS_LIST)
 SUBNETS_LIST = copy.deepcopy(DEF_SUBNETS_LIST)
 NETWORKS_LIST = copy.deepcopy(DEF_NETWORKS_LIST)
-PORTS_LIST = copy.deepcopy(DEF_PORTS_LIST)
 SECURITY_GROUPS_LIST = copy.deepcopy(DEF_SECURITY_GROUPS_LIST)
 CONSOLE_CONNECTION_INFO = copy.deepcopy(DEF_CONSOLE_CONNECTION_INFO)
 
@@ -258,7 +238,6 @@ def clear() -> None:
     VOLUME_SNAPSHOTS_LIST[:] = copy.deepcopy(DEF_VOLUME_SNAPSHOTS_LIST)
     SUBNETS_LIST[:] = copy.deepcopy(DEF_SUBNETS_LIST)
     NETWORKS_LIST[:] = copy.deepcopy(DEF_NETWORKS_LIST)
-    PORTS_LIST[:] = copy.deepcopy(DEF_PORTS_LIST)
     SECURITY_GROUPS_LIST[:] = copy.deepcopy(DEF_SECURITY_GROUPS_LIST)
     CONSOLE_CONNECTION_INFO = copy.deepcopy(  # pyright: ignore[reportConstantRedefinition]
         DEF_CONSOLE_CONNECTION_INFO
@@ -298,7 +277,6 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
     AutoSpecMethodInfo(client.OpenStackClient.list_servers, returns=SERVERS_LIST),
     AutoSpecMethodInfo(client.OpenStackClient.list_volumes, returns=VOLUMES_LIST),
     AutoSpecMethodInfo(client.OpenStackClient.list_networks, returns=NETWORKS_LIST),
-    AutoSpecMethodInfo(client.OpenStackClient.list_ports, returns=PORTS_LIST),
     AutoSpecMethodInfo(client.OpenStackClient.list_security_groups, returns=SECURITY_GROUPS_LIST),
     AutoSpecMethodInfo(
         client.OpenStackClient.get_server_info,
@@ -316,19 +294,9 @@ CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
         partial_args=(VOLUME_SNAPSHOTS_LIST,),
     ),  # pyright: ignore
     AutoSpecMethodInfo(
-        client.OpenStackClient.update_snapshot,
-        returns=search_id,
-        partial_args=(VOLUME_SNAPSHOTS_LIST,),
-    ),
-    AutoSpecMethodInfo(
         client.OpenStackClient.create_snapshot,
         returns=random_element,
         partial_args=(VOLUME_SNAPSHOTS_LIST,),
-    ),
-    AutoSpecMethodInfo(
-        client.OpenStackClient.create_volume_from_snapshot,
-        returns=random_element,
-        partial_args=(VOLUMES_LIST,),
     ),
     AutoSpecMethodInfo(
         client.OpenStackClient.create_server_from_snapshot,

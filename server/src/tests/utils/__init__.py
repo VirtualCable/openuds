@@ -165,7 +165,7 @@ class MustBeOfType:
         return self.__str__()
 
 
-def search_item_by_attr(lst: list[T], attribute: str, value: typing.Any, **kwargs: typing.Any) -> T:
+def search_item_by_attr(lst: collections.abc.Iterable[T], attribute: str, value: typing.Any, **kwargs: typing.Any) -> T:
     """
     Returns an item from a list of items
     kwargs are not used, just to let use it as partial on fixtures
@@ -176,7 +176,7 @@ def search_item_by_attr(lst: list[T], attribute: str, value: typing.Any, **kwarg
     raise ValueError(f'Item with {attribute}=="{value}" not found in list {str(lst)[:100]}')
 
 
-def search_dict_by_attr(lst: list[V], attribute: str, value: typing.Any, **kwargs: typing.Any) -> V:
+def search_dict_by_attr(lst: collections.abc.Iterable[V], attribute: str, value: typing.Any, **kwargs: typing.Any) -> V:
     """
     Returns an item from a list of items
     kwargs are not used, just to let use it as partial on fixtures
@@ -188,7 +188,7 @@ def search_dict_by_attr(lst: list[V], attribute: str, value: typing.Any, **kwarg
 
 
 def filter_list_by_attr(
-    lst: list[T], attribute: str, value: typing.Any, *, sorted_by: str = '', **kwargs: typing.Any
+    lst: collections.abc.Iterable[T], attribute: str, value: typing.Any, *, sorted_by: str = '', **kwargs: typing.Any
 ) -> list[T]:
     """
     Returns a list of items from a list of items
@@ -201,7 +201,7 @@ def filter_list_by_attr(
 
 
 def filter_list_by_attr_list(
-    lst: list[T], attribute: str, values: list[typing.Any], *, sorted_by: str = '', **kwargs: typing.Any
+    lst: collections.abc.Iterable[T], attribute: str, values: list[typing.Any], *, sorted_by: str = '', **kwargs: typing.Any
 ) -> list[T]:
     """
     Returns a list of items from a list of items
