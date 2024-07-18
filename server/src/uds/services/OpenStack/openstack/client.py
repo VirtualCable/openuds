@@ -36,6 +36,8 @@ import json
 import typing
 import collections.abc
 
+import dateutil.parser
+
 import requests
 from django.utils.translation import gettext as _
 
@@ -318,6 +320,11 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
 
     def authenticate(self) -> None:
         # logger.debug('Authenticating...')
+        # If credential is cached, use it instead of requesting it again
+        if (cached_creds := self.cache.get('auth')) != None:
+            self._authenticated_projectid, self._tokenid, self._userid, self._catalog = cached_creds
+            return
+            
         data: dict[str, typing.Any]
         if self._auth_method == openstack_types.AuthMethod.APPLICATION_CREDENTIAL:
             data = {
@@ -376,7 +383,10 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
         token = r.json()['token']
         # logger.debug('Got token {}'.format(token))
         self._userid = token['user']['id']
-        # validity = (dateutil.parser.parse(token['expires_at']).replace(tzinfo=None) - dateutil.parser.parse(token['issued_at']).replace(tzinfo=None)).seconds - 60
+        
+        # For cache, we store the token validity, minus 60 seconds t
+        validity = (dateutil.parser.parse(token['expires_at']).replace(tzinfo=None) - dateutil.parser.parse(token['issued_at']).replace(tzinfo=None)).seconds - 60
+        self.cache.put('auth', (self._authenticated_projectid, self._tokenid, self._userid, self._catalog), validity)
 
         # logger.debug('The token {} will be valid for {}'.format(self._tokenId, validity))
 
@@ -771,6 +781,7 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
 
     # Low cache, simple to avoid non needed requests
     @decorators.cached(prefix='ava', timeout=4, key_helper=cache_key_helper)
+    @auth_required()
     def is_available(self) -> bool:
         try:
             # If we can connect, it is available

@@ -35,6 +35,8 @@ import contextlib
 import logging
 import typing
 
+from unittest import mock
+
 from uds.core.services.generics import exceptions as gen_exceptions
 
 from tests.utils import vars, helpers
@@ -412,8 +414,21 @@ class TestOpenStackClient(UDSTransactionTestCase):
             )
             # Has been created, and no problem at all
             self.assertIsNotNone(res)
-            
+
             # Now, delete it
             # wait for server to be running
             self.wait_for_server(res)
             self.oclient.delete_server(res.id)
+
+    def test_auth_cached(self) -> None:
+        # Get a new client, it should be cached
+        cached_value = self.oclient.cache.get('auth')
+        # Unauthorized
+        self.oclient._authenticated = False
+
+        with mock.patch.object(self.oclient.cache, 'get', return_value=cached_value) as mock_cache_get:
+            # Session should not be used
+            with mock.patch.object(self.oclient, '_session') as mock_session:
+                self.assertTrue(self.oclient.is_available())
+                mock_cache_get.assert_called_once()
+                mock_session.assert_not_called()

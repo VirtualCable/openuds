@@ -198,7 +198,7 @@ def get_certificates_from_field(
 
 # Timeout
 def timeout_field(
-    default: int = 5,
+    default: int = 8,
     order: int = 90,
     tab: 'types.ui.Tab|str|None' = types.ui.Tab.ADVANCED,
     old_field_name: typing.Optional[str] = None,
