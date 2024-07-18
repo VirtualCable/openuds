@@ -120,6 +120,17 @@ class TestOpenStackClient(UDSTransactionTestCase):
             msg='Timeout waiting for snapshot to be available',
         )
 
+    def wait_for_server(
+        self,
+        server: openstack_types.ServerInfo,
+        power_state: openstack_types.PowerState = openstack_types.PowerState.RUNNING,
+    ) -> None:
+        helpers.waiter(
+            lambda: self.oclient.get_server_info(server.id, force=True).power_state == power_state,
+            timeout=30,
+            msg='Timeout waiting for server to be running',
+        )
+
     @contextlib.contextmanager
     def create_test_volume(self) -> typing.Iterator[openstack_types.VolumeInfo]:
         volume = self.oclient.t_create_volume(
@@ -164,7 +175,11 @@ class TestOpenStackClient(UDSTransactionTestCase):
             )
 
     @contextlib.contextmanager
-    def create_test_server(self) -> typing.Iterator[openstack_types.ServerInfo]:
+    def create_test_server(
+        self,
+    ) -> typing.Iterator[
+        tuple[openstack_types.ServerInfo, openstack_types.VolumeInfo, openstack_types.SnapshotInfo]
+    ]:
         with self.create_test_volume() as volume:
             with self.create_test_snapshot(volume) as snapshot:
                 server = self.oclient.create_server_from_snapshot(
@@ -177,14 +192,10 @@ class TestOpenStackClient(UDSTransactionTestCase):
                 )
                 try:
                     # Wait for server to be running
-                    helpers.waiter(
-                        lambda: self.oclient.get_server_info(server.id, force=True).power_state.is_running(),
-                        timeout=30,
-                        msg='Timeout waiting for server to be running',
-                    )
+                    self.wait_for_server(server)
                     # Reget server info to complete all data
                     server = self.oclient.get_server_info(server.id, force=True)
-                    yield server
+                    yield server, volume, snapshot
                 finally:
                     self.oclient.delete_server(server.id)
 
@@ -199,8 +210,8 @@ class TestOpenStackClient(UDSTransactionTestCase):
         self.assertIn(self._regionid, [r.id for r in regions])
 
     def test_list_servers(self) -> None:
-        with self.create_test_server() as server1:
-            with self.create_test_server() as server2:
+        with self.create_test_server() as (server1, _, _):
+            with self.create_test_server() as (server2, _, _):
                 servers = self.oclient.list_servers(force=True)
                 self.assertGreaterEqual(len(servers), 2)
                 self.assertIn(
@@ -262,7 +273,7 @@ class TestOpenStackClient(UDSTransactionTestCase):
         self.assertIn(self._security_group_name, [sg.name for sg in security_groups])
 
     def test_get_server_info(self) -> None:
-        with self.create_test_server() as server:
+        with self.create_test_server() as (server, _, _):
             server_info = self.oclient.get_server_info(server.id)
             self.assertEqual(server.id, server_info.id)
             self.assertEqual(server.name, server_info.name)
@@ -303,7 +314,7 @@ class TestOpenStackClient(UDSTransactionTestCase):
             self.oclient.create_snapshot(volume_id='non-existing-volume', name='non-existing-snapshot')
 
     def test_create_server_from_snapshot(self) -> None:
-        with self.create_test_server() as server:
+        with self.create_test_server() as (server, _, _):
             self.assertIsNotNone(server.id)
 
         # Trying to create a server from a non existing snapshot should raise an exceptions.NotFoundException
@@ -330,23 +341,16 @@ class TestOpenStackClient(UDSTransactionTestCase):
             self.oclient.delete_snapshot('non-existing-snapshot')
 
     def test_operations_server(self) -> None:
-        with self.create_test_server() as server:
+        with self.create_test_server() as (server, _, _):
             # Server is already running, first stop it
             self.oclient.stop_server(server.id)
-            helpers.waiter(
-                lambda: self.oclient.get_server_info(server.id, force=True).power_state.is_stopped(),
-                timeout=30,
-                msg='Timeout waiting for server to be stopped',
-            )
+            self.wait_for_server(server, openstack_types.PowerState.SHUTDOWN)
 
             self.oclient.start_server(server.id)
-            helpers.waiter(
-                lambda: self.oclient.get_server_info(server.id, force=True).power_state.is_running(),
-                timeout=30,
-                msg='Timeout waiting for server to be running',
-            )
+            self.wait_for_server(server)
 
             self.oclient.reset_server(server.id)
+            # Here we need to wait for the server to be active again
             helpers.waiter(
                 lambda: self.oclient.get_server_info(server.id, force=True).status.is_active(),
                 timeout=30,
@@ -355,19 +359,11 @@ class TestOpenStackClient(UDSTransactionTestCase):
 
             # Suspend
             self.oclient.suspend_server(server.id)
-            helpers.waiter(
-                lambda: self.oclient.get_server_info(server.id, force=True).power_state.is_suspended(),
-                timeout=30,
-                msg='Timeout waiting for server to be suspended',
-            )
+            self.wait_for_server(server, openstack_types.PowerState.SUSPENDED)
 
             # Resume
             self.oclient.resume_server(server.id)
-            helpers.waiter(
-                lambda: self.oclient.get_server_info(server.id, force=True).power_state.is_running(),
-                timeout=30,
-                msg='Timeout waiting for server to be running',
-            )
+            self.wait_for_server(server)
 
             # Reboot
             self.oclient.reboot_server(server.id)
@@ -399,6 +395,25 @@ class TestOpenStackClient(UDSTransactionTestCase):
 
     def test_test_connection(self) -> None:
         self.assertTrue(self.oclient.test_connection())
-        
+
     def test_is_available(self) -> None:
         self.assertTrue(self.oclient.is_available())
+
+    # Some useful tests
+    def test_duplicated_server_name(self) -> None:
+        with self.create_test_server() as (server, _volume, snapshot):
+            res = self.oclient.create_server_from_snapshot(
+                snapshot_id=snapshot.id,
+                name=server.name,
+                flavor_id=self._flavorid,
+                network_id=self._networkid,
+                security_groups_names=[],
+                availability_zone=self._availability_zone_id,
+            )
+            # Has been created, and no problem at all
+            self.assertIsNotNone(res)
+            
+            # Now, delete it
+            # wait for server to be running
+            self.wait_for_server(res)
+            self.oclient.delete_server(res.id)

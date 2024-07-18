@@ -77,7 +77,6 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         order=102,
         tab=types.ui.Tab.ADVANCED,
     )
-
     maintain_on_error = fields.maintain_on_error_field(
         order=103,
         tab=types.ui.Tab.ADVANCED,
@@ -110,7 +109,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         """
         return name
 
-    # overridable
+    # overridable, but not needed if no remove_duplicates is used
     def find_duplicates(self, name: str, mac: str) -> collections.abc.Iterable[str]:
         """
         Checks if a machine with the same name or mac exists
@@ -125,6 +124,8 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
 
         Note:
             Maybe we can only check name or mac, or both, depending on the service
+            This method must be be provided if the field remove_duplicates is used
+            If not, will raise a NotImplementedError
         """
         raise NotImplementedError(f'{self.__class__}: find_duplicates must be implemented if remove_duplicates is used!')
 

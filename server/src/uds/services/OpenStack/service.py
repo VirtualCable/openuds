@@ -31,6 +31,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import collections.abc
 import typing
 
 from django.utils.translation import gettext_noop as _
@@ -178,6 +179,7 @@ class OpenStackLiveService(DynamicService):
 
     maintain_on_error = DynamicService.maintain_on_error
     try_soft_shutdown = DynamicService.try_soft_shutdown
+    remove_duplicates = DynamicService.remove_duplicates
 
     prov_uuid = gui.HiddenField()
 
@@ -232,6 +234,12 @@ class OpenStackLiveService(DynamicService):
 
     def sanitized_name(self, name: str) -> str:
         return self.provider().sanitized_name(name)
+
+    def find_duplicates(self, name: str, mac: str) -> collections.abc.Iterable[str]:
+        # Only looks for name duplicates, the mac is created by openstack, so it should be unique
+        for i in self.api.list_servers():
+            if i.name == name:
+                yield i.id
 
     def get_ip(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> str:
         return self.api.get_server_info(vmid).validated().addresses[0].ip

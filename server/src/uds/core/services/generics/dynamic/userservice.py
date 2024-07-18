@@ -519,6 +519,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     def remove_duplicated_names(self) -> None:
         name = self.get_vmname()
         try:
+            retry = False
             for vmid in self.service().perform_find_duplicates(name, self.get_unique_id()):
                 userservice = self.db_obj()
                 log.log(
@@ -528,7 +529,12 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
                     types.log.LogSource.SERVICE,
                 )
                 self.service().delete(self, vmid)
+                retry = True
+            if retry:
                 # Retry again in a while if duplicated machines where found, until we remove all of them
+                # Note that this way, can request the deletion of the same machine multiple times
+                # but this is not a problem, as the service will simply ignore the request if the machine is not there
+                # when the deletion is requested
                 self.retry_later()
         except Exception as e:
             logger.warning('Locating duplicated machines: %s', e)

@@ -1,10 +1,13 @@
 from uds.core import exceptions as core_exceptions
 
+
 class Error(core_exceptions.UDSException):
     """
     Base exception for this module
     """
+
     pass
+
 
 class RetryableError(Error):
     """
@@ -27,6 +30,15 @@ class FatalError(Error):
 class NotFoundError(Error):
     """
     Exception that is raised when an object is not found
+    """
+
+    def __init__(self, message: str):
+        super().__init__(message)
+
+
+class AlreadyExistsError(Error):
+    """
+    Exception that is raised when an object already exists
     """
 
     def __init__(self, message: str):
