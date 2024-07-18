@@ -117,6 +117,7 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
     _auth_method: openstack_types.AuthMethod
     _userid: typing.Optional[str]
     _projectid: typing.Optional[str]
+    _project_name: typing.Optional[str]
     _region: typing.Optional[str]
     _timeout: int
     _session: 'requests.Session'
@@ -155,6 +156,7 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
         self._domain, self._username, self._password = domain or 'Default', username, password
         self._userid = None
         self._projectid = projectid
+        self._project_name = None
         self._region = region
         self._timeout = timeout
         self._auth_method = auth_method
@@ -322,9 +324,11 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
         # logger.debug('Authenticating...')
         # If credential is cached, use it instead of requesting it again
         if (cached_creds := self.cache.get('auth')) != None:
-            self._authenticated_projectid, self._tokenid, self._userid, self._catalog = cached_creds
+            self._authenticated_projectid, self._projectid, self._tokenid, self._userid, self._catalog = (
+                cached_creds
+            )
             return
-            
+
         data: dict[str, typing.Any]
         if self._auth_method == openstack_types.AuthMethod.APPLICATION_CREDENTIAL:
             data = {
@@ -381,12 +385,26 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
         self._tokenid = r.headers['X-Subject-Token']
         # Extract the token id
         token = r.json()['token']
-        # logger.debug('Got token {}'.format(token))
+
+        # Get user id, used for list projects
         self._userid = token['user']['id']
-        
+
+        # If authentication method is application_credential, set projectid to the one in the token
+        # Note that in case of unscoped password, 'project' is not present in the token
+        if 'project' in token:
+            self._authenticated_projectid = self._projectid = token['project']['id']
+            self._project_name = token['project'].get('name', self._projectid)
+
         # For cache, we store the token validity, minus 60 seconds t
-        validity = (dateutil.parser.parse(token['expires_at']).replace(tzinfo=None) - dateutil.parser.parse(token['issued_at']).replace(tzinfo=None)).seconds - 60
-        self.cache.put('auth', (self._authenticated_projectid, self._tokenid, self._userid, self._catalog), validity)
+        validity = (
+            dateutil.parser.parse(token['expires_at']).replace(tzinfo=None)
+            - dateutil.parser.parse(token['issued_at']).replace(tzinfo=None)
+        ).seconds - 60
+        self.cache.put(
+            'auth',
+            (self._authenticated_projectid, self._projectid, self._tokenid, self._userid, self._catalog),
+            validity,
+        )
 
         # logger.debug('The token {} will be valid for {}'.format(self._tokenId, validity))
 
@@ -406,6 +424,10 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
     def ensure_authenticated(self) -> None:
         if self._authenticated is False or self._projectid != self._authenticated_projectid:
             self.authenticate()
+
+    @auth_required()
+    def get_project_id(self) -> tuple[str, str]:
+        return (self._projectid or '', self._project_name or '')
 
     @auth_required()
     @decorators.cached(prefix='prjs', timeout=consts.cache.EXTREME_CACHE_TIMEOUT, key_helper=cache_key_helper)
@@ -757,21 +779,23 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
             raise Exception('Connection error')
 
         try:
-            for v in r.json()['versions']['values']:
-                if v['id'] >= 'v3.1':
-                    # Tries to authenticate
-                    try:
-                        self.authenticate()
-                        # Log some useful information
-                        logger.info('Openstack version: %s', v['id'])
-                        logger.info('Endpoints: %s', json.dumps(self._catalog, indent=4))
-                        return True
-                    except Exception:
-                        logger.exception('Authenticating')
-                        raise Exception(_('Authentication error'))
-        except Exception:  # Not json
-            # logger.exception('xx')
-            raise Exception('Invalid endpoint (maybe invalid version selected?)')
+            values = r.json()['versions']['values']
+        except Exception:
+            raise gen_exceptions.Error('Invalid response from OpenStack (Mayby invalid endpoint?)')
+
+        for v in values:
+            if v['id'] >= 'v3.1':
+                # Tries to authenticate
+                try:
+                    self.cache.clear()  # Clear cache, as we are going to authenticate again
+                    self.authenticate()
+                    # Log some useful information
+                    logger.info('Openstack version: %s', v['id'])
+                    logger.info('Endpoints: %s', json.dumps(self._catalog, indent=4))
+                    return True
+                except Exception:
+                    logger.exception('Authenticating')
+                    raise Exception(_('Authentication error'))
 
         raise Exception(
             _(
@@ -844,7 +868,7 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
             if error_message is None and expects_json:
                 error_message = 'Error checking response'
                 logger.error('%s: %s', error_message, response.content)
-            raise Exception(error_message)
+            raise gen_exceptions.Error(error_message)
 
     # Only for testing purposes, not used at runtime
     def t_create_volume(self, name: str, size: int) -> openstack_types.VolumeInfo:

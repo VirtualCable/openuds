@@ -38,7 +38,7 @@ from django.utils.translation import gettext_noop as _
 from uds.core import exceptions, types
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
-from uds.core.util import validators, fields
+from uds.core.util import validators, fields, decorators
 
 from .openstack import client, sanitized_name, types as openstack_types
 from .service import OpenStackLiveService
@@ -214,9 +214,9 @@ class OpenStackProvider(ServiceProvider):
             self.timeout.value = validators.validate_timeout(self.timeout.value)
             if self.auth_method.value == openstack_types.AuthMethod.APPLICATION_CREDENTIAL:
                 # Ensure that the project_id is provided, so it's bound to the application credential
-                if not self.project_id.value:
+                if self.project_id.value:
                     raise exceptions.ui.ValidationError(
-                        _('Project Id is required when using Application Credential')
+                        _('Project Id not allowed when using Application Credential')
                     )
 
     def api(
@@ -263,6 +263,17 @@ class OpenStackProvider(ServiceProvider):
             return types.core.TestResult(False, _('Error: {}').format(e))
 
         return types.core.TestResult(True)
+
+    @decorators.cached('prid', timeout=60)
+    def get_project_info(self) -> tuple[str, str]:
+        """
+        Returns the project id and name (if known)
+        """
+        if self.auth_method.value == openstack_types.AuthMethod.APPLICATION_CREDENTIAL:
+            # Authenticate, and
+            return self.api().get_project_id()
+
+        return self.project_id.value, self.project_id.value
 
     @staticmethod
     def test(env: 'environment.Environment', data: 'types.core.ValuesType') -> 'types.core.TestResult':

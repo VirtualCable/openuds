@@ -127,11 +127,17 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
 
         self.region.set_choices(regions)
 
-        if parent and parent.project_id.value:
-            tenants = [gui.choice_item(parent.project_id.value, parent.project_id.value)]
-        else:
-            tenants = [gui.choice_item(t.id, t.name) for t in api.list_projects()]
-        self.project.set_choices(tenants)
+        # If project is already selected, we use it, if not, we list all projects
+        projects: list[types.ui.ChoiceItem] = []
+        if parent:
+            project_id, project_name = parent.get_project_info()
+            if project_id:
+                projects = [gui.choice_item(project_id, project_name)]
+
+        if not projects:
+            projects = [gui.choice_item(t.id, t.name) for t in api.list_projects()]
+
+        self.project.set_choices(projects)
 
         self.prov_uuid.value = self.provider().get_uuid()
 

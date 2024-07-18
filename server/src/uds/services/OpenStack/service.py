@@ -217,10 +217,16 @@ class OpenStackLiveService(DynamicService):
 
         self.region.set_choices(regions)
 
-        if parent and parent.project_id.value:
-            projects = [gui.choice_item(parent.project_id.value, parent.project_id.value)]
-        else:
+        # If project is already selected, we use it, if not, we list all projects
+        projects: list[types.ui.ChoiceItem] = []
+        if parent:
+            project_id, project_name = parent.get_project_info()
+            if project_id:
+                projects = [gui.choice_item(project_id, project_name)]
+
+        if not projects:
             projects = [gui.choice_item(t.id, t.name) for t in api.list_projects()]
+
         self.project.set_choices(projects)
 
         self.prov_uuid.value = self.provider().get_uuid()
@@ -241,21 +247,31 @@ class OpenStackLiveService(DynamicService):
             if i.name == name:
                 yield i.id
 
-    def get_ip(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> str:
+    def get_ip(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> str:
         return self.api.get_server_info(vmid).validated().addresses[0].ip
 
-    def get_mac(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> str:
+    def get_mac(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> str:
         return self.api.get_server_info(vmid).validated().addresses[0].mac
 
-    def is_running(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> bool:
+    def is_running(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> bool:
         return self.api.get_server_info(vmid).validated().power_state.is_running()
 
-    def start(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
+    def start(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> None:
         if self.api.get_server_info(vmid).validated().power_state.is_running():
             return
         self.api.start_server(vmid)
 
-    def stop(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
+    def stop(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> None:
         if self.api.get_server_info(vmid).validated().power_state.is_stopped():
             return
         self.api.stop_server(vmid)
@@ -264,11 +280,15 @@ class OpenStackLiveService(DynamicService):
     # Note that on openstack, stop is "soft", but may fail to stop if no agent is installed or not responding
     # We can anyway delete de machine even if it is not stopped
 
-    def reset(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
+    def reset(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> None:
         # Default is to stop "hard"
         return self.stop(caller_instance, vmid)
-    
-    def delete(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
+
+    def delete(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> None:
         """
         Removes the machine, or queues it for removal, or whatever :)
         """
@@ -278,14 +298,14 @@ class OpenStackLiveService(DynamicService):
         else:
             vmid = f'SS:{vmid}'
             super().delete(caller_instance, vmid)
-            
+
     def execute_delete(self, vmid: str) -> None:
         kind, vmid = vmid.split(':')
         if kind == 'VM':
             self.api.delete_server(vmid)
         else:
             self.api.delete_snapshot(vmid)
-            
+
     # default is_deleted is fine, returns True always
 
     def make_template(

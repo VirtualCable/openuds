@@ -270,6 +270,7 @@ def random_element(lst: list[T], *args: typing.Any, **kwargs: typing.Any) -> T:
 # The idea behind this is to allow testing the provider, service and deployment classes
 # without the need of a real OpenStack environment
 CLIENT_METHODS_INFO: typing.Final[list[AutoSpecMethodInfo]] = [
+    AutoSpecMethodInfo(client.OpenStackClient.get_project_id, returns=PROJECTS_LIST[0].id),
     AutoSpecMethodInfo(client.OpenStackClient.list_flavors, returns=FLAVORS_LIST),
     AutoSpecMethodInfo(client.OpenStackClient.list_availability_zones, returns=AVAILABILITY_ZONES_LIST),
     AutoSpecMethodInfo(client.OpenStackClient.list_projects, returns=PROJECTS_LIST),
@@ -355,7 +356,7 @@ PROVIDER_VALUES_DICT: typing.Final[gui.ValuesDictType] = {
     'concurrent_creation_limit': 1,
     'concurrent_removal_limit': 1,
     'timeout': 10,
-    'project_id': 'tenant',  # Old name, new is project_id
+    'project_id': '',  # No project_id allowed if using application_credential, it's implicit
     'region': 'region',
     'use_subnets_name': False,
     'https_proxy': 'https_proxy',
