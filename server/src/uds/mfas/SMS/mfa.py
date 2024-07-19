@@ -253,7 +253,7 @@ class SMSMFA(mfas.MFA):
 
     def build_sms_url(
         self,
-        userId: str,  # pylint: disable=unused-argument
+        userid: str,  # pylint: disable=unused-argument
         userName: str,
         code: str,
         phone: str,
@@ -304,7 +304,7 @@ class SMSMFA(mfas.MFA):
     def process(
         self,
         request: 'ExtendedHttpRequest',
-        userId: str,
+        userid: str,
         username: str,
         identifier: str,
         validity: typing.Optional[int] = None,
@@ -313,7 +313,7 @@ class SMSMFA(mfas.MFA):
         if mfas.LoginAllowed.check_ip_allowed(request, self.allow_skip_mfa_from_networks.value):
             return mfas.MFA.RESULT.ALLOWED
 
-        return super().process(request, userId, username, identifier, validity)
+        return super().process(request, userid, username, identifier, validity)
 
     def process_response(self, request: 'ExtendedHttpRequest', response: requests.Response) -> mfas.MFA.RESULT:
         logger.debug('Response: %s', response)
@@ -347,7 +347,7 @@ class SMSMFA(mfas.MFA):
     def _build_data(
         self,
         request: 'ExtendedHttpRequest',  # pylint: disable=unused-argument
-        userId: str,  # pylint: disable=unused-argument
+        userid: str,  # pylint: disable=unused-argument
         username: str,
         url: str,  # pylint: disable=unused-argument
         code: str,
@@ -367,7 +367,7 @@ class SMSMFA(mfas.MFA):
     def _send_sms_using_get(
         self,
         request: 'ExtendedHttpRequest',
-        userId: str,  # pylint: disable=unused-argument
+        userid: str,  # pylint: disable=unused-argument
         username: str,  # pylint: disable=unused-argument
         url: str,
     ) -> mfas.MFA.RESULT:
@@ -376,7 +376,7 @@ class SMSMFA(mfas.MFA):
     def _send_sms_using_post(
         self,
         request: 'ExtendedHttpRequest',
-        userId: str,
+        userid: str,
         username: str,
         url: str,
         code: str,
@@ -384,7 +384,7 @@ class SMSMFA(mfas.MFA):
     ) -> mfas.MFA.RESULT:
         # Compose POST data
         session = self.get_session()
-        bdata = self._build_data(request, userId, username, url, code, phone)
+        bdata = self._build_data(request, userid, username, url, code, phone)
         # Add content-length header
         session.headers['Content-Length'] = str(len(bdata))
 
@@ -393,52 +393,52 @@ class SMSMFA(mfas.MFA):
     def _send_sms_using_put(
         self,
         request: 'ExtendedHttpRequest',
-        userId: str,
+        userid: str,
         username: str,
         url: str,
         code: str,
         phone: str,
     ) -> mfas.MFA.RESULT:
         # Compose POST data
-        bdata = self._build_data(request, userId, username, url, code, phone)
+        bdata = self._build_data(request, userid, username, url, code, phone)
         return self.process_response(request, self.get_session().put(url, data=bdata))
 
     def _send_sms(
         self,
         request: 'ExtendedHttpRequest',
-        userId: str,
+        userid: str,
         username: str,
         code: str,
         phone: str,
     ) -> mfas.MFA.RESULT:
-        url = self.build_sms_url(userId, username, code, phone)
+        url = self.build_sms_url(userid, username, code, phone)
         if self.http_method.value == 'GET':
-            return self._send_sms_using_get(request, userId, username, url)
+            return self._send_sms_using_get(request, userid, username, url)
         if self.http_method.value == 'POST':
-            return self._send_sms_using_post(request, userId, username, url, code, phone)
+            return self._send_sms_using_post(request, userid, username, url, code, phone)
         if self.http_method.value == 'PUT':
-            return self._send_sms_using_put(request, userId, username, url, code, phone)
+            return self._send_sms_using_put(request, userid, username, url, code, phone)
         raise Exception('Unknown SMS sending method')
 
     def label(self) -> str:
         return gettext('MFA Code')
 
-    def html(self, request: 'ExtendedHttpRequest', userId: str, username: str) -> str:
+    def html(self, request: 'ExtendedHttpRequest', userid: str, username: str) -> str:
         return gettext('Check your phone. You will receive an SMS with the verification code')
 
     def send_code(
         self,
         request: 'ExtendedHttpRequest',
-        userId: str,
+        userid: str,
         username: str,
         identifier: str,
         code: str,
     ) -> mfas.MFA.RESULT:
         logger.debug(
-            'Sending SMS code "%s" for user %s (userId="%s", identifier="%s")',
+            'Sending SMS code "%s" for user %s (userid="%s", identifier="%s")',
             code,
             username,
-            userId,
+            userid,
             identifier,
         )
-        return self._send_sms(request, userId, username, code, identifier)
+        return self._send_sms(request, userid, username, code, identifier)

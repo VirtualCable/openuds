@@ -224,13 +224,13 @@ class MFA(Module):
         """
         return 'MFA Code'
 
-    def html(self, request: 'ExtendedHttpRequest', userId: str, username: str) -> str:
+    def html(self, request: 'ExtendedHttpRequest', userid: str, username: str) -> str:
         """
         This method will be invoked from the MFA form, to know the HTML that will be presented
         to the user below the MFA code form.
 
         Args:
-            userId: Id of the user that is requesting the MFA code
+            userid: Id of the user that is requesting the MFA code
             request: Request object, so you can get more information
 
         Returns:
@@ -251,7 +251,7 @@ class MFA(Module):
     def send_code(
         self,
         request: 'ExtendedHttpRequest',
-        userId: str,
+        userid: str,
         username: str,
         identifier: str,
         code: str,
@@ -266,32 +266,32 @@ class MFA(Module):
         raise exceptions.auth.MFAError('MFA.sendCode not implemented')
 
     def _get_data(
-        self, request: 'ExtendedHttpRequest', userId: str
+        self, request: 'ExtendedHttpRequest', userid: str
     ) -> typing.Optional[tuple[datetime.datetime, str]]:
         """
         Internal method to get the data from storage
         """
-        storageKey = request.ip + userId
+        storageKey = request.ip + userid
         return self.storage.read_pickled(storageKey)
 
-    def _remove_data(self, request: 'ExtendedHttpRequest', userId: str) -> None:
+    def _remove_data(self, request: 'ExtendedHttpRequest', userid: str) -> None:
         """
         Internal method to remove the data from storage
         """
-        storageKey = request.ip + userId
+        storageKey = request.ip + userid
         self.storage.remove(storageKey)
 
-    def _put_data(self, request: 'ExtendedHttpRequest', userId: str, code: str) -> None:
+    def _put_data(self, request: 'ExtendedHttpRequest', userid: str, code: str) -> None:
         """
         Internal method to put the data into storage
         """
-        storageKey = request.ip + userId
+        storageKey = request.ip + userid
         self.storage.save_pickled(storageKey, (sql_now(), code))
 
     def process(
         self,
         request: 'ExtendedHttpRequest',
-        userId: str,
+        userid: str,
         username: str,
         identifier: str,
         validity: typing.Optional[int] = None,
@@ -307,7 +307,7 @@ class MFA(Module):
 
         Args:
             request: The request object
-            userId: An unique, non authenticator dependant, id for the user (at this time, it's sha3_256 of user + authenticator)
+            userid: An unique, non authenticator dependant, id for the user (at this time, it's sha3_256 of user + authenticator)
             username: The user name, the one used to login
             identifier: The identifier where to send the code (phone, email, etc)
             validity: The validity of the code in seconds. If None, the default value will be used.
@@ -318,7 +318,7 @@ class MFA(Module):
             Raises an error if the code was not sent and was required to be sent
         """
         # try to get the stored code
-        data = self._get_data(request, userId)
+        data = self._get_data(request, userid)
         validity = validity if validity is not None else 0
         try:
             if data and validity:
@@ -328,7 +328,7 @@ class MFA(Module):
                     return MFA.RESULT.OK
         except Exception:
             # if we have a problem, just remove the stored code
-            self._remove_data(request, userId)
+            self._remove_data(request, userid)
 
         # Generate a 6 digit code (0-9)
         code = ''.join(random.SystemRandom().choices('0123456789', k=6))
@@ -337,17 +337,17 @@ class MFA(Module):
         # Send the code to the user
         # May raise an exception if the code was not sent and is required to be sent
         # pylint: disable=assignment-from-no-return
-        result = self.send_code(request, userId, username, identifier, code)
+        result = self.send_code(request, userid, username, identifier, code)
 
         # Store the code in the database, own storage space, if no exception was raised
-        self._put_data(request, userId, code)
+        self._put_data(request, userid, code)
 
         return result
 
     def validate(
         self,
         request: 'ExtendedHttpRequest',
-        userId: str,
+        userid: str,
         username: str,
         identifier: str,
         code: str,
@@ -359,7 +359,7 @@ class MFA(Module):
 
         Args:
             request: The request object
-            userId: An unique, non authenticator dependant, id for the user (at this time, it's sha3_256 of user + authenticator)
+            userid: An unique, non authenticator dependant, id for the user (at this time, it's sha3_256 of user + authenticator)
             username: The user name, the one used to login
             identifier: The identifier where to send the code (phone, email, etc)
             code: The code entered by the user
@@ -373,19 +373,19 @@ class MFA(Module):
         try:
             err = _('Invalid MFA code')
 
-            data = self._get_data(request, userId)
+            data = self._get_data(request, userid)
             if data and len(data) == 2:
                 validity = validity if validity is not None else 0
                 if validity > 0 and data[0] + datetime.timedelta(seconds=validity) < sql_now():
                     # if it is no more valid, raise an error
                     # Remove stored code and raise error
-                    self._remove_data(request, userId)
+                    self._remove_data(request, userid)
                     raise exceptions.auth.MFAError('MFA Code expired')
 
                 # Check if the code is valid
                 if data[1] == code:
                     # Code is valid, remove it from storage
-                    self._remove_data(request, userId)
+                    self._remove_data(request, userid)
                     return
         except Exception as e:
             # Any error means invalid code
@@ -395,7 +395,7 @@ class MFA(Module):
 
     def reset_data(
         self,
-        userId: str,
+        userid: str,
     ) -> None:
         """
         This method allows to reset the MFA state of an user.

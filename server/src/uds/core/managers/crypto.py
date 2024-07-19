@@ -74,8 +74,11 @@ class CryptoManager(metaclass=singleton.Singleton):
     _namespace: uuid.UUID
 
     def __init__(self) -> None:
-        self._rsa = serialization.load_pem_private_key(
-            settings.RSA_KEY.encode(), password=None, backend=default_backend()
+        self._rsa = typing.cast(
+            'RSAPrivateKey',
+            serialization.load_pem_private_key(
+                settings.RSA_KEY.encode(), password=None, backend=default_backend()
+            ),
         )
         self._namespace = uuid.UUID('627a37a5-e8db-431a-b783-73f7d20b4934')
 
@@ -228,7 +231,10 @@ class CryptoManager(metaclass=singleton.Singleton):
         self, rsaKey: str
     ) -> typing.Union['RSAPrivateKey', 'DSAPrivateKey', 'DHPrivateKey', 'EllipticCurvePrivateKey']:
         try:
-            return serialization.load_pem_private_key(rsaKey.encode(), password=None, backend=default_backend())
+            return typing.cast(
+                typing.Union['RSAPrivateKey', 'DSAPrivateKey', 'DHPrivateKey', 'EllipticCurvePrivateKey'],
+                serialization.load_pem_private_key(rsaKey.encode(), password=None, backend=default_backend()),
+            )
         except Exception as e:
             raise e
 

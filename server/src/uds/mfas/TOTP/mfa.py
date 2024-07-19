@@ -109,37 +109,37 @@ class TOTP_MFA(mfas.MFA):
     def label(self) -> str:
         return gettext('Authentication Code')
 
-    def _user_data(self, userId: str) -> tuple[str, bool]:
+    def _user_data(self, userid: str) -> tuple[str, bool]:
         # Get data from storage related to this user
         # Data contains the secret and if the user has already logged in already some time
         # so we show the QR code only once
-        data: typing.Optional[tuple[str, bool]] = self.storage.read_pickled(userId)
+        data: typing.Optional[tuple[str, bool]] = self.storage.read_pickled(userid)
         if data is None:
             data = (pyotp.random_base32(), False)
-            self._save_user_data(userId, data)
+            self._save_user_data(userid, data)
         return data
 
-    def _save_user_data(self, userId: str, data: tuple[str, bool]) -> None:
-        self.storage.save_pickled(userId, data)
+    def _save_user_data(self, userid: str, data: tuple[str, bool]) -> None:
+        self.storage.save_pickled(userid, data)
 
-    def _remove_user_data(self, userId: str) -> None:
-        self.storage.remove(userId)
+    def _remove_user_data(self, userid: str) -> None:
+        self.storage.remove(userid)
 
-    def get_totp(self, userId: str, username: str) -> pyotp.TOTP:
+    def get_totp(self, userid: str, username: str) -> pyotp.TOTP:
         return pyotp.TOTP(
-            self._user_data(userId)[0],
+            self._user_data(userid)[0],
             issuer=self.issuer.value,
             name=username,
             interval=TOTP_INTERVAL,
         )
 
-    def html(self, request: 'ExtendedHttpRequest', userId: str, username: str) -> str:
+    def html(self, request: 'ExtendedHttpRequest', userid: str, username: str) -> str:
         # Get data from storage related to this user
-        qrShown = self._user_data(userId)[1]
+        qrShown = self._user_data(userid)[1]
         if qrShown:
             return _('Enter your authentication code')
         # Compose the QR code from provisioning URI
-        totp = self.get_totp(userId, username)
+        totp = self.get_totp(userid, username)
         uri = totp.provisioning_uri()
         img: bytes = qrcode.make(uri)  # pyright: ignore
         imgByteStream = io.BytesIO()
@@ -161,7 +161,7 @@ class TOTP_MFA(mfas.MFA):
     def process(
         self,
         request: 'ExtendedHttpRequest',
-        userId: str,
+        userid: str,
         username: str,
         identifier: str,
         validity: typing.Optional[int] = None,
@@ -175,7 +175,7 @@ class TOTP_MFA(mfas.MFA):
     def validate(
         self,
         request: 'ExtendedHttpRequest',
-        userId: str,
+        userid: str,
         username: str,
         identifier: str,
         code: str,
@@ -184,22 +184,22 @@ class TOTP_MFA(mfas.MFA):
         if self.ask_for_otp(request) is False:
             return
 
-        if self.cache.get(userId + code) is not None:
+        if self.cache.get(userid + code) is not None:
             raise exceptions.auth.MFAError(gettext('Code is already used. Wait a minute and try again.'))
 
         # Get data from storage related to this user
-        secret, qrShown = self._user_data(userId)
+        secret, qrShown = self._user_data(userid)
 
         # Validate code
-        if not self.get_totp(userId, username).verify(
+        if not self.get_totp(userid, username).verify(
             code, valid_window=self.valid_window.as_int(), for_time=sql_now()
         ):
             raise exceptions.auth.MFAError(gettext('Invalid code'))
 
-        self.cache.put(userId + code, True, self.valid_window.as_int() * (TOTP_INTERVAL + 1))
+        self.cache.put(userid + code, True, self.valid_window.as_int() * (TOTP_INTERVAL + 1))
 
         if qrShown is False:
-            self._save_user_data(userId, (secret, True))  # Update user data to show QR code only once
+            self._save_user_data(userid, (secret, True))  # Update user data to show QR code only once
 
-    def reset_data(self, userId: str) -> None:
-        self._remove_user_data(userId)
+    def reset_data(self, userid: str) -> None:
+        self._remove_user_data(userid)

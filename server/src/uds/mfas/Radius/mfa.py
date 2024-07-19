@@ -131,7 +131,7 @@ class RadiusOTP(mfas.MFA):
     def label(self) -> str:
         return gettext('OTP Code')
 
-    def html(self, request: 'ExtendedHttpRequest', userId: str, username: str) -> str:
+    def html(self, request: 'ExtendedHttpRequest', userid: str, username: str) -> str:
         '''
         ToDo:
         - Maybe create a field in mfa definition to edit from admin panel ?
@@ -142,7 +142,7 @@ class RadiusOTP(mfas.MFA):
     def process(
         self,
         request: 'ExtendedHttpRequest',
-        userId: str,
+        userid: str,
         username: str,
         identifier: str,
         validity: typing.Optional[int] = None,
@@ -158,6 +158,8 @@ class RadiusOTP(mfas.MFA):
         # if we are in a "all-users-otp" policy, avoid this step and go directly to ask for OTP
         if self.all_users_otp.value:
             return mfas.MFA.RESULT.OK
+        
+        username = identifier or username
 
         web_pwd = web_password(request)
         try:
@@ -203,7 +205,7 @@ class RadiusOTP(mfas.MFA):
     def validate(
         self,
         request: 'ExtendedHttpRequest',
-        userId: str,
+        userid: str,
         username: str,
         identifier: str,
         code: str,
@@ -218,6 +220,7 @@ class RadiusOTP(mfas.MFA):
         regenerate a new State after a wrong sent OTP code
         slightly less efficient but a lot simpler
         '''
+        username = identifier or username
 
         try:
             err = _('Invalid OTP code')

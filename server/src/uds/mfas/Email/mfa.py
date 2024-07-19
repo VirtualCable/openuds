@@ -190,7 +190,7 @@ class EmailMFA(mfas.MFA):
         # now check from email and to email
         self.from_email.value = validators.validate_email(self.from_email.value)
 
-    def html(self, request: 'ExtendedHttpRequest', userId: str, username: str) -> str:
+    def html(self, request: 'ExtendedHttpRequest', userid: str, username: str) -> str:
         return gettext('Check your mail. You will receive an email with the verification code')
 
     def allow_login_without_identifier(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
@@ -235,7 +235,7 @@ class EmailMFA(mfas.MFA):
     def send_code(
         self,
         request: 'ExtendedHttpRequest',
-        userId: str,
+        userid: str,
         username: str,
         identifier: str,
         code: str,
@@ -290,7 +290,7 @@ class EmailMFA(mfas.MFA):
     def process(
         self,
         request: 'ExtendedHttpRequest',
-        userId: str,
+        userid: str,
         username: str,
         identifier: str,
         validity: int | None = None,
@@ -298,4 +298,4 @@ class EmailMFA(mfas.MFA):
         # if ip allowed to skip mfa, return allowed
         if mfas.LoginAllowed.check_ip_allowed(request, self.allow_skip_mfa_from_networks.value):
             return mfas.MFA.RESULT.ALLOWED
-        return super().process(request, userId, username, identifier, validity)
+        return super().process(request, userid, username, identifier, validity)
