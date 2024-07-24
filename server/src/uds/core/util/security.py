@@ -198,8 +198,9 @@ def secure_requests_session(*, verify: typing.Union[str, bool] = True) -> 'reque
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
     class UDSHTTPAdapter(requests.adapters.HTTPAdapter):
+        _ssl_context: ssl.SSLContext
         def init_poolmanager(self, *args: typing.Any, **kwargs: typing.Any) -> None:
-            kwargs["ssl_context"] = create_client_sslcontext(verify=verify is True)
+            self._ssl_context = kwargs["ssl_context"] = create_client_sslcontext(verify=verify is True)
 
             # See urllib3.poolmanager.SSL_KEYWORDS for all available keys.
             return super().init_poolmanager(*args, **kwargs)  # type: ignore
@@ -214,9 +215,12 @@ def secure_requests_session(*, verify: typing.Union[str, bool] = True) -> 'reque
             if not isinstance(verify, str):
                 verify = lverify
 
-            # logger.info('Connection info: %s', conn)
-            # for k, v in conn.__dict__.items():
-            #     logger.info('Connection info: %s = %s', k, v)
+            # 2.32  version of requests, broke the hability to override the ssl_context
+            # Please, ensure that you are using a version of requests that is compatible with this code (2.32.3) or newer
+            # And this way, our ssl_context is not used, so we need to override it again to ensure that our ssl_context is used
+            # if 'conn_kw' in conn.__dict__:
+            #     conn_kw = conn.__dict__['conn_kw']
+            #     conn_kw['ssl_context'] = self.ssl_context
 
             super().cert_verify(conn, url, verify, cert)  # type: ignore
 

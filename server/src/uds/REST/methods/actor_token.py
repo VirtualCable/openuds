@@ -72,7 +72,7 @@ class ActorTokens(ModelHandler):
         item = ensure.is_instance(item, Server)
         data: dict[str, typing.Any] = item.data or {}
         log_level_int = data.get('log_level', 2)
-        if log_level_int < 10000:  # Old log level
+        if log_level_int < 10000:  # Old log level, from actor, etc..
             log_level = LogLevel.from_actor_level(log_level_int).name
         else:
             log_level = LogLevel(log_level_int).name

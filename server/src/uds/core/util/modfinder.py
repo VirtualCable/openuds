@@ -150,10 +150,10 @@ def dynamically_load_and_register_packages(
     def _process(classes: collections.abc.Iterable[type[V]]) -> None:
         cls: type[V]
         for cls in classes:
-            clsSubCls = cls.__subclasses__()
+            cls_subclasses = cls.__subclasses__()
 
-            if clsSubCls:
-                _process(clsSubCls)  # recursive add sub classes
+            if cls_subclasses:
+                _process(cls_subclasses)  # recursive add sub classes
 
             if not check_function(cls):
                 logger.debug('Node is a not accepted, skipping: %s.%s', cls.__module__, cls.__name__)
