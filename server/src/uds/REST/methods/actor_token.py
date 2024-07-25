@@ -61,21 +61,22 @@ class ActorTokens(ModelHandler):
         {'stamp': {'title': _('Date'), 'type': 'datetime'}},
         {'username': {'title': _('Issued by')}},
         {'host': {'title': _('Origin')}},
+        {'version': {'title': _('Version')}},
         {'hostname': {'title': _('Hostname')}},
         {'pre_command': {'title': _('Pre-connect')}},
         {'post_command': {'title': _('Post-Configure')}},
-        {'runonce_command': {'title': _('Run Once')}},
+        {'run_once_command': {'title': _('Run Once')}},
         {'log_level': {'title': _('Log level')}},
+        {'os': {'title': _('OS')}},
     ]
 
     def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
         item = ensure.is_instance(item, Server)
         data: dict[str, typing.Any] = item.data or {}
-        log_level_int = data.get('log_level', 2)
-        if log_level_int < 10000:  # Old log level, from actor, etc..
-            log_level = LogLevel.from_actor_level(log_level_int).name
+        if item.log_level < 10000:  # Old log level, from actor, etc..
+            log_level = LogLevel.from_actor_level(item.log_level).name
         else:
-            log_level = LogLevel(log_level_int).name
+            log_level = LogLevel(item.log_level).name
         return {
             'id': item.token,
             'name': str(_('Token isued by {} from {}')).format(item.register_username, item.hostname or item.ip),
@@ -84,10 +85,12 @@ class ActorTokens(ModelHandler):
             'ip': item.ip,
             'host': f'{item.ip} - {data.get("mac")}',
             'hostname': item.hostname,
+            'version': item.version,
             'pre_command': data.get('pre_command', ''),
             'post_command': data.get('post_command', ''),
-            'runonce_command': data.get('runonce_command', ''),
+            'run_once_command': data.get('run_once_command', ''),
             'log_level': log_level,
+            'os': item.os_type,
         }
 
     def delete(self) -> str:

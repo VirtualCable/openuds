@@ -86,7 +86,7 @@ class Handler:
     # These are the "path" split by /, that is, the REST invocation arguments
     _args: list[str]
     _kwargs: dict[str, typing.Any]  # This are the "path" split by /, that is, the REST invocation arguments
-    _headers: dict[str, str]
+    _headers: dict[str, str]  # Note: These are "output" headers, not input headers (input headers can be retrieved from request)
     _session: typing.Optional[SessionStore]
     _auth_token: typing.Optional[str]
     _user: 'User'

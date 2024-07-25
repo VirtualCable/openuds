@@ -34,6 +34,7 @@ import logging
 import time
 import typing
 import collections.abc
+import re
 
 from django.conf import settings
 
@@ -277,48 +278,54 @@ class Register(ActorV3Action):
         actor_token: typing.Optional[Server] = Server.objects.filter(
             type=types.servers.ServerType.ACTOR, mac=self._params['mac']
         ).first()
+        
+        # Try to get version from headers (USer-Agent), should be something like (UDS Actor v(.+))
+        user_agent = self._request.headers.get('User-Agent', '')
+        match = re.search(r'UDS Actor v(.+)', user_agent)
+        if match:
+            self._params['version'] = self._params.get('version', match.group(1))  # override version if not provided
 
         # Actors does not support any SERVER API version in fact, they has their own interfaces on UserServices
         # This means that we can invoke its API from user_service, but not from server (The actor token is transformed as soon as initialized to a user service token)
+        data = {
+            'pre_command': self._params['pre_command'],
+            'post_command': self._params['post_command'],
+            'run_once_command': self._params['run_once_command'],
+            'custom': self._params.get('custom', ''),
+        }
         if actor_token:
             # Update parameters
+            # type is already set
+            actor_token.subtype = self._params.get('subtype', '')
+            actor_token.version = self._params.get('version', '')
             actor_token.register_username = self._user.pretty_name
             actor_token.register_ip = self._request.ip
             actor_token.ip = self._params['ip']
             actor_token.hostname = self._params['hostname']
             actor_token.log_level = self._params['log_level']
-            actor_token.subtype = self._params.get('version', '')
-            actor_token.data = typing.cast(typing.Any, {  # Cast due to mypy complains on this assignment
-                'pre_command': self._params['pre_command'],
-                'post_command': self._params['post_command'],
-                'run_once_command': self._params['run_once_command'],
-                'custom': self._params.get('custom', ''),
-            })
+            actor_token.data = data
             actor_token.stamp = sql_now()
+            actor_token.os_type = self._params.get('os', types.os.KnownOS.UNKNOWN.os_name())[:31]
+            # Mac is already set, as type was used to locate it
             actor_token.save()
             logger.info('Registered actor %s', self._params)
             found = True
 
         if not found:
             kwargs = {
+                'type': types.servers.ServerType.ACTOR,
+                'subtype': self._params.get('subtype', ''),
+                'version': self._params.get('version', ''),
                 'register_username': self._user.pretty_name,
                 'register_ip': self._request.ip,
                 'ip': self._params['ip'],
                 'hostname': self._params['hostname'],
                 'log_level': self._params['log_level'],
-                'data': {
-                    'pre_command': self._params['pre_command'],
-                    'post_command': self._params['post_command'],
-                    'run_once_command': self._params['run_once_command'],
-                    'custom': self._params.get('custom', ''),
-                },
+                'data': data,
                 # 'token': Server.create_token(),  # Not needed, defaults to create_token
-                'type': types.servers.ServerType.ACTOR,
-                'subtype': self._params.get('version', ''),
-                'version': '',
+                'stamp': sql_now(),
                 'os_type': self._params.get('os', types.os.KnownOS.UNKNOWN.os_name()),
                 'mac': self._params['mac'],
-                'stamp': sql_now(),
             }
 
             actor_token = Server.objects.create(**kwargs)
