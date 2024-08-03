@@ -122,11 +122,13 @@ class TSPICETransport(BaseSpiceTransport):
                 userservice, transport, ip, os, user, password, request
             )
 
+        key = self.generate_key()
         if con.port:
             ticket = TicketStore.create_for_tunnel(
                 userService=userservice,
                 port=int(con.port),
                 validity=self.tunnel_wait.as_int() + 60,  # Ticket overtime
+                key=key,
             )
 
         if con.secure_port:
@@ -135,6 +137,7 @@ class TSPICETransport(BaseSpiceTransport):
                 port=int(con.secure_port),
                 host=con.address,
                 validity=self.tunnel_wait.as_int() + 60,  # Ticket overtime
+                key=key,
             )
 
         r = RemoteViewerFile(
@@ -164,6 +167,7 @@ class TSPICETransport(BaseSpiceTransport):
             'tunChk': self.verify_certificate.as_bool(),
             'ticket': ticket,
             'ticket_secure': ticket_secure,
+            'tunnel_key': key,
         }
 
         try:

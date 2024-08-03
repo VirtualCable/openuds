@@ -45,9 +45,8 @@ from .servers import ServerRegisterBase
 
 logger = logging.getLogger(__name__)
 
-MAX_SESSION_LENGTH = (
-    60 * 60 * 24 * 7 * 2
-)  # Two weeks is max session length for a tunneled connection
+MAX_SESSION_LENGTH = 60 * 60 * 24 * 7 * 2  # Two weeks is max session length for a tunneled connection
+
 
 # Enclosed methods under /tunnel path
 class TunnelTicket(Handler):
@@ -70,11 +69,7 @@ class TunnelTicket(Handler):
             self._request.ip,
         )
 
-        if (
-            not is_trusted_source(self._request.ip)
-            or len(self._args) != 3
-            or len(self._args[0]) != 48
-        ):
+        if not is_trusted_source(self._request.ip) or len(self._args) != 3 or len(self._args[0]) != 48:
             # Invalid requests
             raise exceptions.rest.AccessDenied()
 
@@ -92,11 +87,9 @@ class TunnelTicket(Handler):
 
         # Try to get ticket from DB
         try:
-            user, user_service, host, port, extra = models.TicketStore.get_for_tunnel(
-                self._args[0]
-            )
+            user, user_service, host, port, extra, key = models.TicketStore.get_for_tunnel(self._args[0])
             host = host or ''
-            data = {}
+            data: dict[str, typing.Any] = {}
             if self._args[1][:4] == 'stop':
                 sent, recv = self._params['sent'], self._params['recv']
                 # Ensures extra exists...
@@ -146,7 +139,7 @@ class TunnelTicket(Handler):
                     },
                     validity=MAX_SESSION_LENGTH,
                 )
-                data = {'host': host, 'port': port, 'notify': notifyTicket}
+                data = {'host': host, 'port': port, 'notify': notifyTicket, 'key': key}
 
             return data
         except Exception as e:
@@ -162,7 +155,11 @@ class TunnelRegister(ServerRegisterBase):
     # Just a compatibility method for old tunnel servers
     def post(self) -> collections.abc.MutableMapping[str, typing.Any]:
         self._params['type'] = types.servers.ServerType.TUNNEL
-        self._params['os'] = self._params.get('os', types.os.KnownOS.LINUX.os_name())  # Legacy tunnels are always linux
+        self._params['os'] = self._params.get(
+            'os', types.os.KnownOS.LINUX.os_name()
+        )  # Legacy tunnels are always linux
         self._params['version'] = ''  # No version for legacy tunnels, does not respond to API requests from UDS
-        self._params['certificate'] = '' # No certificate for legacy tunnels, does not respond to API requests from UDS
+        self._params['certificate'] = (
+            ''  # No certificate for legacy tunnels, does not respond to API requests from UDS
+        )
         return super().post()

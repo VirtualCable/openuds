@@ -40,6 +40,7 @@ from django.utils.translation import gettext_noop as _
 
 from uds import models
 from uds.core import consts, types
+from uds.core.managers.crypto import CryptoManager
 from uds.core.module import Module
 from uds.core.util import net
 
@@ -213,6 +214,13 @@ class Transport(Module):
         @return: transformed username
         """
         return user.name
+    
+    def generate_key(self, length: int = 32) -> str:
+        """
+        Returns a random key of the requested length
+        Used for generate keys for the tunnel mainly, but can be used for other purposes
+        """
+        return CryptoManager.manager().random_string(length)
 
     def get_transport_script(
         self,

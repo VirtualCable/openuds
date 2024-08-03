@@ -220,6 +220,7 @@ class TicketStore(UUIDModel):
         port: int,
         host: typing.Optional[str] = None,
         extra: typing.Optional[collections.abc.Mapping[str, typing.Any]] = None,
+        key: typing.Optional[str] = None,
         validity: int = 60 * 60 * 24,  # 24 Hours default validity for tunnel tickets
     ) -> str:
         owner = CryptoManager().random_string(length=8)
@@ -231,6 +232,7 @@ class TicketStore(UUIDModel):
             'h': host,
             'p': port,
             'e': extra,
+            'k': key or '',
         }
         return (
             # Note that the ticket is the uuid + owner, so we can encrypt data without keeping the key
@@ -254,6 +256,7 @@ class TicketStore(UUIDModel):
         typing.Optional[str],
         int,
         typing.Optional[collections.abc.Mapping[str, typing.Any]],
+        str,
     ]:
         """
         Returns the ticket for a tunneled connection
@@ -277,7 +280,7 @@ class TicketStore(UUIDModel):
             if not host:
                 host = userservice.get_instance().get_ip()
 
-            return (user, userservice, host, data['p'], data['e'])
+            return (user, userservice, host, data['p'], data['e'], data.get('k', ''))
         except Exception as e:
             raise TicketStore.InvalidTicket(str(e))
 

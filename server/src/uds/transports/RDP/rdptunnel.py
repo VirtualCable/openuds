@@ -141,10 +141,12 @@ class TRDPTransport(BaseRDPTransport):
         width, height = self.screen_size.value.split('x')
         depth = self.color_depth.value
 
+        key = self.generate_key()
         ticket = TicketStore.create_for_tunnel(
             userService=userservice,
             port=self.rdp_port.as_int(),
             validity=self.tunnel_wait.as_int() + 60,  # Ticket overtime
+            key=key,
         )
 
         tunnelFields = fields.get_tunnel_from_field(self.tunnel)
@@ -187,6 +189,7 @@ class TRDPTransport(BaseRDPTransport):
             'ticket': ticket,
             'password': ci.password,
             'this_server': request.build_absolute_uri('/'),
+            'tunnel_key': key,
         }
 
         if os.os == types.os.KnownOS.WINDOWS:
