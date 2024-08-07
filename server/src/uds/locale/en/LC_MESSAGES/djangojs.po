@@ -38,7 +38,7 @@ msgstr ""
 
 #: static/admin/chunk-BDR7VDMH.js:3 static/admin/chunk-TAOUYBKI.js:3
 msgid "category"
-msgstr ""
+msgstr "category"
 
 #: static/admin/translations-fakejs.js:3
 msgid "#POOLS_NUMBER# service pools"
@@ -731,7 +731,7 @@ msgstr "Enter maintenance mode"
 
 #: static/admin/translations-fakejs.js:166
 msgid "Import CSV"
-msgstr ""
+msgstr "Import CSV"
 
 #: static/admin/translations-fakejs.js:167
 #: static/admin/translations-fakejs.js:189
@@ -752,10 +752,9 @@ msgid "Maintenance mode for"
 msgstr "Maintenance mode for"
 
 #: static/admin/translations-fakejs.js:170
-#, fuzzy
 #| msgid "Servers"
 msgid "Import Servers"
-msgstr "Servers"
+msgstr "Import Servers"
 
 #: static/admin/translations-fakejs.js:173
 msgid "Remove server from server group"
@@ -1552,10 +1551,9 @@ msgid "Permissions"
 msgstr "Permissions"
 
 #: static/admin/translations-fakejs.js:502
-#, fuzzy
 #| msgid "Export"
 msgid "Export CSV"
-msgstr "Export"
+msgstr "Export CSV"
 
 #: static/admin/translations-fakejs.js:503
 #: static/admin/translations-fakejs.js:510
@@ -1600,43 +1598,43 @@ msgstr "New permission..."
 
 #: static/admin/translations-fakejs.js:525
 msgid "CVS Import options for"
-msgstr ""
+msgstr "CVS Import options for"
 
 #: static/admin/translations-fakejs.js:526
 msgid "Header"
-msgstr ""
+msgstr "Header"
 
 #: static/admin/translations-fakejs.js:527
 msgid "CSV contains header line"
-msgstr ""
+msgstr "CSV contains header line"
 
 #: static/admin/translations-fakejs.js:528
 msgid "CSV DOES NOT contains header line"
-msgstr ""
+msgstr "CSV DOES NOT contains header line"
 
 #: static/admin/translations-fakejs.js:529
 msgid "Separator"
-msgstr ""
+msgstr "Separator"
 
 #: static/admin/translations-fakejs.js:530
 msgid "Use comma"
-msgstr ""
+msgstr "Use comma"
 
 #: static/admin/translations-fakejs.js:531
 msgid "Use semicolon"
-msgstr ""
+msgstr "Use semicolon"
 
 #: static/admin/translations-fakejs.js:532
 msgid "Use pipe"
-msgstr ""
+msgstr "Use pipe"
 
 #: static/admin/translations-fakejs.js:533
 msgid "Use tab"
-msgstr ""
+msgstr "Use tab"
 
 #: static/admin/translations-fakejs.js:534
 msgid "File"
-msgstr ""
+msgstr "File"
 
 #: static/admin/translations-fakejs.js:537
 msgid "Remove all"
@@ -1830,14 +1828,13 @@ msgid "This service is currently not accesible due to schedule restrictions."
 msgstr "This service is currently not accesible due to schedule restrictions."
 
 #: static/modern/translations-fakejs.js:13
-#, fuzzy
 #| msgid "Service reseted"
 msgid "Service message"
-msgstr "Service reseted"
+msgstr "Service message"
 
 #: static/modern/translations-fakejs.js:14
 msgid "Press \"Yes\" to continue, or \"No\" to cancel"
-msgstr ""
+msgstr "Press \"Yes\" to continue, or \"No\" to cancel"
 
 #: static/modern/translations-fakejs.js:15
 msgid "Release service: "

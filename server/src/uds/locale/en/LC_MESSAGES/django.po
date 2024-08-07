@@ -142,10 +142,9 @@ msgid "Origin"
 msgstr "Origin"
 
 #: REST/methods/actor_token.py:64
-#, fuzzy
 #| msgid "API Version"
 msgid "Version"
-msgstr "API Version"
+msgstr "Version"
 
 #: REST/methods/actor_token.py:65 REST/methods/servers_management.py:66
 #: REST/methods/servers_management.py:154
@@ -634,16 +633,14 @@ msgid "Relative to"
 msgstr "Relative to"
 
 #: REST/methods/op_calendars.py:177
-#, fuzzy
 #| msgid "Starts"
 msgid "Start"
-msgstr "Starts"
+msgstr "Start"
 
 #: REST/methods/op_calendars.py:177
-#, fuzzy
 #| msgid "Ends"
 msgid "End"
-msgstr "Ends"
+msgstr "End"
 
 #: REST/methods/op_calendars.py:181
 msgid "Time offset"
@@ -809,14 +806,13 @@ msgid "IP of the server. Used if hostname is not resolvable by UDS"
 msgstr "IP of the server. Used if hostname is not resolvable by UDS"
 
 #: REST/methods/servers_management.py:207
-#, fuzzy
 #| msgid "Server"
 msgid "Server MAC"
-msgstr "Server"
+msgstr "Server MAC"
 
 #: REST/methods/servers_management.py:208
 msgid "Optional MAC address of the server"
-msgstr ""
+msgstr "Optional MAC address of the server"
 
 #: REST/methods/servers_management.py:226 auths/OAuth2/authenticator.py:104
 #: auths/OAuth2/authenticator.py:112 auths/OAuth2/authenticator.py:120
@@ -992,10 +988,9 @@ msgstr "If active, transport will be visible for users"
 
 #: REST/methods/services_pools.py:393
 msgid "Custom launch message text"
-msgstr ""
+msgstr "Custom launch message text"
 
 #: REST/methods/services_pools.py:395
-#, fuzzy
 #| msgid ""
 #| "Custom message to be shown to users if access is limited by calendar "
 #| "rules."
@@ -1003,17 +998,17 @@ msgid ""
 "Custom message to be shown to users, if active, when trying to start a "
 "service from this pool."
 msgstr ""
-"Custom message to be shown to users if access is limited by calendar rules."
+"Custom message to be shown to users, if active, when trying to start a "
+"service from this pool."
 
 #: REST/methods/services_pools.py:404
 msgid "Enable custom launch message"
-msgstr ""
+msgstr "Enable custom launch message"
 
 #: REST/methods/services_pools.py:405
-#, fuzzy
 #| msgid "If active, metapool will be visible for users"
 msgid "If active, the custom launch message will be shown to users"
-msgstr "If active, metapool will be visible for users"
+msgstr "If active, the custom launch message will be shown to users"
 
 #: REST/methods/services_pools.py:414
 msgid "Initial available services"
@@ -1725,11 +1720,11 @@ msgstr "Office 365 logout"
 
 #: auths/AzureAD_enterprise/authenticator.py:171
 msgid "External Domain (#EXT# users domain)"
-msgstr ""
+msgstr "External Domain (#EXT# users domain)"
 
 #: auths/AzureAD_enterprise/authenticator.py:173
 msgid "Domain used for external users (empty means no external users)"
-msgstr ""
+msgstr "Domain used for external users (empty means no external users)"
 
 #: auths/AzureAD_enterprise/authenticator.py:190
 #: auths/OAuth2/authenticator.py:442 auths/SAML/saml.py:385
@@ -1738,10 +1733,9 @@ msgstr "This kind of Authenticator does not support white spaces on field NAME"
 
 #: auths/AzureAD_enterprise/authenticator.py:328
 #: auths/AzureAD_enterprise/authenticator.py:330
-#, fuzzy
 #| msgid "Username not found"
 msgid "User not found"
-msgstr "Username not found"
+msgstr "User not found"
 
 #: auths/AzureAD_enterprise/authenticator.py:368
 #: auths/AzureAD_enterprise/authenticator.py:392
@@ -2702,7 +2696,7 @@ msgstr "Clean L2 cache"
 
 #: core/consts/calendar.py:185
 msgid "Custom message on launchers"
-msgstr ""
+msgstr "Custom message on launchers"
 
 #: core/managers/publication.py:262
 msgid ""
@@ -2917,14 +2911,13 @@ msgid "Recover snapshot and start machine"
 msgstr "Recover snapshot and start machine"
 
 #: core/services/generics/fixed/service.py:128
-#, fuzzy
 #| msgid "Services assignation"
 msgid "Randomize machine assignation"
-msgstr "Services assignation"
+msgstr "Randomize machine assignation"
 
 #: core/services/generics/fixed/service.py:131
 msgid "If active, UDS will assign machines in a random way, instead of linear"
-msgstr ""
+msgstr "If active, UDS will assign machines in a random way, instead of linear"
 
 #: core/services/generics/fixed/service.py:148
 #: services/Azure_enterprise/service_fixed.py:121
@@ -3552,7 +3545,6 @@ msgid "Try SOFT Shutdown first"
 msgstr "Try SOFT Shutdown first"
 
 #: core/util/fields.py:346
-#, fuzzy
 #| msgid ""
 #| "If active, UDS will try to shutdown (soft) the machine. Will delay 90 "
 #| "seconds the power off of hanged machines."
@@ -3560,26 +3552,25 @@ msgid ""
 "If active, UDS will try to shutdown (soft) the machine. May delay around 2 "
 "minutes the power off of hanged machines."
 msgstr ""
-"If active, UDS will try to shutdown (soft) the machine. Will delay 90 "
-"seconds the power off of hanged machines."
+"If active, UDS will try to shutdown (soft) the machine. May delay around 2 "
+"minutes the power off of hanged machines."
 
 #: core/util/fields.py:364
-#, fuzzy
 #| msgid "Response type"
 msgid "Reset type"
-msgstr "Response type"
+msgstr "Reset type"
 
 #: core/util/fields.py:366
 msgid "Type of reset to perform"
-msgstr ""
+msgstr "Type of reset to perform"
 
 #: core/util/fields.py:368
 msgid "Soft reset"
-msgstr ""
+msgstr "Soft reset"
 
 #: core/util/fields.py:369
 msgid "Hard reset"
-msgstr ""
+msgstr "Hard reset"
 
 #: core/util/fields.py:383
 msgid "Keep on error"
@@ -3631,24 +3622,22 @@ msgid "Users within these networks will not be asked for OTP"
 msgstr "Users within these networks will not be asked for OTP"
 
 #: core/util/fields.py:458
-#, fuzzy
 #| msgid "SMS networks"
 msgid "MFA policy networks"
-msgstr "SMS networks"
+msgstr "MFA policy networks"
 
 #: core/util/fields.py:462
 msgid "Networks where MFA policy will be enforced if required"
-msgstr ""
+msgstr "Networks where MFA policy will be enforced if required"
 
 #: core/util/fields.py:471
 msgid "Policy for users without MFA support"
 msgstr "Policy for users without MFA support"
 
 #: core/util/fields.py:474
-#, fuzzy
 #| msgid "Policy for users without MFA support"
 msgid "Policy for users without MFA or server failed to ask for MFA"
-msgstr "Policy for users without MFA support"
+msgstr "Policy for users without MFA or server failed to ask for MFA"
 
 #: core/util/ldaputil.py:203
 msgid "Can't contact LDAP server"
@@ -5234,16 +5223,14 @@ msgid "Security groups for the instances from this service"
 msgstr "Security groups for the instances from this service"
 
 #: services/AWS_enterprise/service_fixed.py:59
-#, fuzzy
 #| msgid "Fixed Machines Pool"
 msgid "AWS Fixed Machines"
-msgstr "Fixed Machines Pool"
+msgstr "AWS Fixed Machines"
 
 #: services/AWS_enterprise/service_fixed.py:61
-#, fuzzy
 #| msgid "Xen Services based on templates"
 msgid "AWS Services based on fixed machines."
-msgstr "Xen Services based on templates"
+msgstr "AWS Services based on fixed machines."
 
 #: services/AWS_enterprise/service_fixed.py:82
 #: services/OpenStack/service.py:111 services/OpenStack/service_fixed.py:84
@@ -5254,34 +5241,31 @@ msgstr "Service region"
 #: services/Azure_enterprise/service_fixed.py:102
 #: services/NutanixPrism_enterprise/service_fixed.py:101
 #: services/ScaleComputing_enterprise/service_fixed.py:84
-#, fuzzy
 #| msgid "Calendar logout"
 msgid "After logout"
-msgstr "Calendar logout"
+msgstr "After logout"
 
 #: services/AWS_enterprise/service_fixed.py:96
 #: services/Azure_enterprise/service_fixed.py:105
 #: services/NutanixPrism_enterprise/service_fixed.py:104
 #: services/ScaleComputing_enterprise/service_fixed.py:87
 msgid "Select the action to be performed after the user logs out."
-msgstr ""
+msgstr "Select the action to be performed after the user logs out."
 
 #: services/AWS_enterprise/service_fixed.py:99
 #: services/Azure_enterprise/service_fixed.py:108
 #: services/NutanixPrism_enterprise/service_fixed.py:107
 #: services/ScaleComputing_enterprise/service_fixed.py:90
-#, fuzzy
 #| msgid "Font Smoothing"
 msgid "Do Nothing"
-msgstr "Font Smoothing"
+msgstr "Do Nothing"
 
 #: services/AWS_enterprise/service_fixed.py:100
 #: services/NutanixPrism_enterprise/service_fixed.py:108
 #: services/ScaleComputing_enterprise/service_fixed.py:91
-#, fuzzy
 #| msgid "NoMachine"
 msgid "Stop Machine"
-msgstr "NoMachine"
+msgstr "Stop Machine"
 
 #: services/Azure_enterprise/provider.py:71
 msgid "Subscription ID"
@@ -5390,20 +5374,18 @@ msgid "You must select a network for the service"
 msgstr "You must select a network for the service"
 
 #: services/Azure_enterprise/service_fixed.py:59
-#, fuzzy
 #| msgid "Nutanix Fixed Machines"
 msgid "Azure Fixed Machines"
-msgstr "Nutanix Fixed Machines"
+msgstr "Azure Fixed Machines"
 
 #: services/Azure_enterprise/service_fixed.py:62
-#, fuzzy
 #| msgid "Xen Services based on templates"
 msgid "Azure Services based on fixed machines."
-msgstr "Xen Services based on templates"
+msgstr "Azure Services based on fixed machines."
 
 #: services/Azure_enterprise/service_fixed.py:109
 msgid "Stop Machine (and deallocates it)"
-msgstr ""
+msgstr "Stop Machine (and deallocates it)"
 
 #: services/HyperV_enterprise/provider.py:42
 msgid "HyperV Platform Provider"
@@ -5514,16 +5496,17 @@ msgid "Memory for machines deployed from this service"
 msgstr "Memory for machines deployed from this service"
 
 #: services/HyperV_enterprise/service.py:122
-#, fuzzy
 #| msgid "Reserved Space"
 msgid "Reserved Storage Space"
-msgstr "Reserved Space"
+msgstr "Reserved Storage Space"
 
 #: services/HyperV_enterprise/service.py:125
 msgid ""
 "Minimal free space in GB for any storage unit to be used (if less, will be "
 "ignored)"
 msgstr ""
+"Minimal free space in GB for any storage unit to be used (if less, will be "
+"ignored)"
 
 #: services/HyperV_enterprise/service.py:132
 msgid "Use Full Clones"
@@ -5552,13 +5535,11 @@ msgstr ""
 "If checked, compatibility for migration will be enabled for this service"
 
 #: services/HyperV_enterprise/service_fixed.py:59
-#, fuzzy
 #| msgid "Proxmox Fixed Machines"
 msgid "HyperV Fixed Machines"
-msgstr "Proxmox Fixed Machines"
+msgstr "HyperV Fixed Machines"
 
 #: services/HyperV_enterprise/service_fixed.py:61
-#, fuzzy
 #| msgid ""
 #| "Proxmox Services based on fixed machines. Needs qemu agent installed on "
 #| "machines."
@@ -5566,7 +5547,7 @@ msgid ""
 "HyperV Services based on fixed machines. Needs qemu agent installed on "
 "machines."
 msgstr ""
-"Proxmox Services based on fixed machines. Needs qemu agent installed on "
+"HyperV Services based on fixed machines. Needs qemu agent installed on "
 "machines."
 
 #: services/NutanixPrism_enterprise/provider.py:33
@@ -5578,26 +5559,23 @@ msgid "Nutanix Prism Central based VM provider"
 msgstr "Nutanix Prism Central based VM provider"
 
 #: services/NutanixPrism_enterprise/provider.py:43
-#, fuzzy
 #| msgid "Nutanix Acropolis Server IP or Hostname"
 msgid "Nutanix Prism Central Server IP or Hostname"
-msgstr "Nutanix Acropolis Server IP or Hostname"
+msgstr "Nutanix Prism Central Server IP or Hostname"
 
 #: services/NutanixPrism_enterprise/provider.py:51
-#, fuzzy
 #| msgid "Nutanix Acropolis server Port (default 9440)"
 msgid "Nutanix Prism Central server Port (default 9440)"
-msgstr "Nutanix Acropolis server Port (default 9440)"
+msgstr "Nutanix Prism Central server Port (default 9440)"
 
 #: services/NutanixPrism_enterprise/provider.py:58
 msgid "User with valid privileges on Nutanix Prism Central"
 msgstr "User with valid privileges on Nutanix Prism Central"
 
 #: services/NutanixPrism_enterprise/provider.py:65
-#, fuzzy
 #| msgid "Password of the user of Nutanix  Prism Central"
 msgid "Password of the user of Nutanix Prism Central"
-msgstr "Password of the user of Nutanix  Prism Central"
+msgstr "Password of the user of Nutanix Prism Central"
 
 #: services/NutanixPrism_enterprise/provider.py:97
 msgid "Timeout in seconds of connection to Nutanix"
@@ -5674,21 +5652,20 @@ msgstr "Number of vcpus (\"-1 means \"keep original machine cores per vcpu\")"
 #: services/NutanixPrism_enterprise/service.py:118
 #: services/NutanixPrism_enterprise/service.py:119
 msgid "Enable CPU Passthrough"
-msgstr ""
+msgstr "Enable CPU Passthrough"
 
 #: services/NutanixPrism_enterprise/service.py:122
 msgid "Leave as is"
-msgstr ""
+msgstr "Leave as is"
 
 #: services/NutanixPrism_enterprise/service.py:123
 msgid "Yes"
-msgstr ""
+msgstr "Yes"
 
 #: services/NutanixPrism_enterprise/service.py:124
-#, fuzzy
 #| msgid "None"
 msgid "No"
-msgstr "None"
+msgstr "No"
 
 #: services/NutanixPrism_enterprise/service.py:153
 #: services/Nutanix_enterprise/service.py:136
@@ -5696,13 +5673,11 @@ msgid "Both Cores per VCPU and Number of VCPUS are required"
 msgstr "Both Cores per VCPU and Number of VCPUS are required"
 
 #: services/NutanixPrism_enterprise/service_fixed.py:59
-#, fuzzy
 #| msgid "Proxmox Fixed Machines"
 msgid "Prism Central Fixed Machines"
-msgstr "Proxmox Fixed Machines"
+msgstr "Prism Central Fixed Machines"
 
 #: services/NutanixPrism_enterprise/service_fixed.py:62
-#, fuzzy
 #| msgid ""
 #| "Proxmox Services based on fixed machines. Needs qemu agent installed on "
 #| "machines."
@@ -5710,8 +5685,8 @@ msgid ""
 "Prism Central Services based on fixed machines. Needs qemu agent installed "
 "on machines."
 msgstr ""
-"Proxmox Services based on fixed machines. Needs qemu agent installed on "
-"machines."
+"Prism Central Services based on fixed machines. Needs qemu agent installed "
+"on machines."
 
 #: services/Nutanix_enterprise/provider.py:38
 msgid "Nutanix Acropolis Platform Provider"
@@ -5786,46 +5761,41 @@ msgstr ""
 "machines."
 
 #: services/OVirt/provider.py:75
-#, fuzzy
 #| msgid "oVirt/RHEV Platform Provider"
 msgid "oVirt/OLVM Platform Provider"
-msgstr "oVirt/RHEV Platform Provider"
+msgstr "oVirt/OLVM Platform Provider"
 
 #: services/OVirt/provider.py:79
 msgid "oVirt platform service provider"
 msgstr "oVirt platform service provider"
 
 #: services/OVirt/provider.py:96
-#, fuzzy
 #| msgid "oVirt Server Version"
 msgid "Server Version"
-msgstr "oVirt Server Version"
+msgstr "Server Version"
 
 #: services/OVirt/provider.py:97
-#, fuzzy
 #| msgid "oVirt Server Version"
 msgid "oVirt/OVLM Server Version"
-msgstr "oVirt Server Version"
+msgstr "oVirt/OVLM Server Version"
 
 #: services/OVirt/provider.py:112
 msgid "oVirt Server IP or Hostname"
 msgstr "oVirt Server IP or Hostname"
 
 #: services/OVirt/provider.py:119
-#, fuzzy
 #| msgid "oVirt Server IP or Hostname"
 msgid "oVirt Server Port"
-msgstr "oVirt Server IP or Hostname"
+msgstr "oVirt Server Port"
 
 #: services/OVirt/provider.py:141
 msgid "Password of the user of oVirt"
 msgstr "Password of the user of oVirt"
 
 #: services/OVirt/provider.py:240
-#, fuzzy
 #| msgid "Connection to Radius server failed"
 msgid "Connection to oVirt server is ok"
-msgstr "Connection to Radius server failed"
+msgstr "Connection to oVirt server is ok"
 
 #: services/OVirt/publication.py:98 services/Xen/publication.py:92
 #, python-brace-format
@@ -6124,16 +6094,14 @@ msgstr ""
 "identity). Do not include /v3."
 
 #: services/OpenStack/provider.py:113
-#, fuzzy
 #| msgid "SMS authentication method"
 msgid "Authentication method"
-msgstr "SMS authentication method"
+msgstr "Authentication method"
 
 #: services/OpenStack/provider.py:115
-#, fuzzy
 #| msgid "Authentication Code"
 msgid "Authentication method to be used"
-msgstr "Authentication Code"
+msgstr "Authentication method to be used"
 
 #: services/OpenStack/provider.py:124 services/OpenStack/provider_legacy.py:125
 msgid "Access interface"
@@ -6149,25 +6117,25 @@ msgstr "Domain name (default is Default)"
 
 #: services/OpenStack/provider.py:141
 msgid "Username/Application Credential ID"
-msgstr ""
+msgstr "Username/Application Credential ID"
 
 #: services/OpenStack/provider.py:143
-#, fuzzy
 #| msgid "User with valid privileges on OpenStack"
 msgid ""
 "User with valid privileges on OpenStack/Application Credential ID with valid "
 "privileges"
-msgstr "User with valid privileges on OpenStack"
+msgstr ""
+"User with valid privileges on OpenStack/Application Credential ID with valid "
+"privileges"
 
 #: services/OpenStack/provider.py:149
 msgid "Password/Application Credential Secret"
-msgstr ""
+msgstr "Password/Application Credential Secret"
 
 #: services/OpenStack/provider.py:151
-#, fuzzy
 #| msgid "Password of the user of OpenStack"
 msgid "Password of the user of OpenStack/Application Credential Secret"
-msgstr "Password of the user of OpenStack"
+msgstr "Password of the user of OpenStack/Application Credential Secret"
 
 #: services/OpenStack/provider.py:161
 msgid "Project Id"
@@ -6195,7 +6163,7 @@ msgstr ""
 
 #: services/OpenStack/provider.py:219
 msgid "Project Id not allowed when using Application Credential"
-msgstr ""
+msgstr "Project Id not allowed when using Application Credential"
 
 #: services/OpenStack/provider.py:263
 #: services/VCloud_enterprise/provider.py:162
@@ -6287,16 +6255,14 @@ msgid "Service security groups"
 msgstr "Service security groups"
 
 #: services/OpenStack/service_fixed.py:61
-#, fuzzy
 #| msgid "Nutanix Fixed Machines"
 msgid "OpenStack Fixed Machines"
-msgstr "Nutanix Fixed Machines"
+msgstr "OpenStack Fixed Machines"
 
 #: services/OpenStack/service_fixed.py:63
-#, fuzzy
 #| msgid "Xen Services based on templates"
 msgid "OpenStack Services based on fixed machines."
-msgstr "Xen Services based on templates"
+msgstr "OpenStack Services based on fixed machines."
 
 #: services/PhysicalMachines/provider.py:49
 msgid "Static IP Machines Provider"
@@ -6400,23 +6366,24 @@ msgstr "This service provides access to POWERED-ON Machine by IP"
 
 #: services/PhysicalMachines/service_single.py:70
 msgid "Host IP/FQDN"
-msgstr ""
+msgstr "Host IP/FQDN"
 
 #: services/PhysicalMachines/service_single.py:72
 msgid ""
 "IP or FQDN of the server to connect to. Can include MAC address separated by "
 "\";\" after the IP/Hostname"
 msgstr ""
+"IP or FQDN of the server to connect to. Can include MAC address separated by "
+"\";\" after the IP/Hostname"
 
 #: services/PhysicalMachines/service_single.py:90
 msgid "Invalid server used: \"{}\""
 msgstr "Invalid server used: \"{}\""
 
 #: services/PhysicalMachines/service_single.py:93
-#, fuzzy
 #| msgid "Invalid server used: \"{}\""
 msgid "Invalid MAC address used: \"{}\""
-msgstr "Invalid server used: \"{}\""
+msgstr "Invalid MAC address used: \"{}\""
 
 #: services/Proxmox/helpers.py:68
 msgid " shared"
@@ -6534,7 +6501,7 @@ msgstr "Only if NOT available"
 
 #: services/Proxmox/service_linked.py:159
 msgid "Checking method for GPU availability"
-msgstr ""
+msgstr "Checking method for GPU availability"
 
 #: services/RDS_enterprise/config.py:10
 msgid ""
@@ -6932,75 +6899,62 @@ msgid "List of names"
 msgstr "List of names"
 
 #: services/ScaleComputing_enterprise/provider.py:38
-#, fuzzy
 #| msgid "AWS Platform Provider"
 msgid "Scale Platform Provider"
-msgstr "AWS Platform Provider"
+msgstr "Scale Platform Provider"
 
 #: services/ScaleComputing_enterprise/provider.py:40
-#, fuzzy
 #| msgid "OpenStack platform service provider"
 msgid "Scale platform service provider"
-msgstr "OpenStack platform service provider"
+msgstr "Scale platform service provider"
 
 #: services/ScaleComputing_enterprise/provider.py:49
-#, fuzzy
 #| msgid "Ldap Server IP or Hostname"
 msgid "Scale Server IP or Hostname"
-msgstr "Ldap Server IP or Hostname"
+msgstr "Scale Server IP or Hostname"
 
 #: services/ScaleComputing_enterprise/provider.py:56
-#, fuzzy
 #| msgid "AD LDAPS port (default is 636)"
 msgid "Scale API port (default is 443)"
-msgstr "AD LDAPS port (default is 636)"
+msgstr "Scale API port (default is 443)"
 
 #: services/ScaleComputing_enterprise/provider.py:65
-#, fuzzy
 #| msgid ""
 #| "User with valid privileges on Proxmox, (use \"user@authenticator\" form)"
 msgid "User with valid privileges on Scale, (use \"user@authenticator\" form)"
-msgstr ""
-"User with valid privileges on Proxmox, (use \"user@authenticator\" form)"
+msgstr "User with valid privileges on Scale, (use \"user@authenticator\" form)"
 
 #: services/ScaleComputing_enterprise/provider.py:73
-#, fuzzy
 #| msgid "Password of the user of HyperV"
 msgid "Password of the user of Scale"
-msgstr "Password of the user of HyperV"
+msgstr "Password of the user of Scale"
 
 #: services/ScaleComputing_enterprise/service.py:70
-#, fuzzy
 #| msgid "HyperV Clone"
 msgid "Scale Clone"
-msgstr "HyperV Clone"
+msgstr "Scale Clone"
 
 #: services/ScaleComputing_enterprise/service.py:74
-#, fuzzy
 #| msgid "Xen Services based on templates"
 msgid "Scale Services based on templates"
-msgstr "Xen Services based on templates"
+msgstr "Scale Services based on templates"
 
 #: services/ScaleComputing_enterprise/service.py:117
-#, fuzzy
 #| msgid "Machine Group"
 msgid "Machines Group"
-msgstr "Machine Group"
+msgstr "Machines Group"
 
 #: services/ScaleComputing_enterprise/service.py:118
-#, fuzzy
 #| msgid "Memory assigned to machines"
 msgid "Group to assign the machine to"
-msgstr "Memory assigned to machines"
+msgstr "Group to assign the machine to"
 
 #: services/ScaleComputing_enterprise/service_fixed.py:57
-#, fuzzy
 #| msgid "Nutanix Fixed Machines"
 msgid "Scale Computing Fixed Machines"
-msgstr "Nutanix Fixed Machines"
+msgstr "Scale Computing Fixed Machines"
 
 #: services/ScaleComputing_enterprise/service_fixed.py:60
-#, fuzzy
 #| msgid ""
 #| "Nutanix Services based on fixed machines. Needs qemu agent installed on "
 #| "machines."
@@ -7008,14 +6962,13 @@ msgid ""
 "Scale Computing Services based on fixed machines. Needs qemu agent installed "
 "on machines."
 msgstr ""
-"Nutanix Services based on fixed machines. Needs qemu agent installed on "
-"machines."
+"Scale Computing Services based on fixed machines. Needs qemu agent installed "
+"on machines."
 
 #: services/ScaleComputing_enterprise/service_fixed.py:101
-#, fuzzy
 #| msgid "We need at least a machine"
 msgid "We need at least one machine"
-msgstr "We need at least a machine"
+msgstr "We need at least one machine"
 
 #: services/Test/provider.py:65
 msgid "Testing Provider"
@@ -7195,20 +7148,18 @@ msgid "Datacenter containing base machine"
 msgstr "Datacenter containing base machine"
 
 #: services/Vmware_enterprise/service.py:73
-#, fuzzy
 #| msgid "Resource Pool"
 msgid "Clones Resource Pool"
-msgstr "Resource Pool"
+msgstr "Clones Resource Pool"
 
 #: services/Vmware_enterprise/service.py:76
 msgid "Resource Pool where deploy clones"
 msgstr "Resource Pool where deploy clones"
 
 #: services/Vmware_enterprise/service.py:80
-#, fuzzy
 #| msgid "Pub.Datastores"
 msgid "Pub. Datastores"
-msgstr "Pub.Datastores"
+msgstr "Pub. Datastores"
 
 #: services/Vmware_enterprise/service.py:84
 msgid "Datastores where to put publications"
@@ -7243,10 +7194,9 @@ msgid "Folder where deploy clones"
 msgstr "Folder where deploy clones"
 
 #: services/Vmware_enterprise/service.py:140
-#, fuzzy
 #| msgid "Datastore"
 msgid "Datastores"
-msgstr "Datastore"
+msgstr "Datastores"
 
 #: services/Vmware_enterprise/service.py:144
 msgid "Datastores where to put machines"
@@ -7287,10 +7237,9 @@ msgid "XenServer Server IP or Hostname"
 msgstr "XenServer Server IP or Hostname"
 
 #: services/Xen/provider.py:114
-#, fuzzy
 #| msgid "XenServer Server IP or Hostname"
 msgid "XenServer Server Port"
-msgstr "XenServer Server IP or Hostname"
+msgstr "XenServer Server Port"
 
 #: services/Xen/provider.py:121
 msgid "User with valid privileges on XenServer"
@@ -7351,21 +7300,18 @@ msgid "Shadow memory multiplier (use with care)"
 msgstr "Shadow memory multiplier (use with care)"
 
 #: services/Xen/service_fixed.py:60
-#, fuzzy
 #| msgid "Nutanix Fixed Machines"
 msgid "Xen Fixed Machines"
-msgstr "Nutanix Fixed Machines"
+msgstr "Xen Fixed Machines"
 
 #: services/Xen/service_fixed.py:62
-#, fuzzy
 #| msgid ""
 #| "Nutanix Services based on fixed machines. Needs qemu agent installed on "
 #| "machines."
 msgid ""
 "Xen Services based on fixed machines. Needs xen agent installed on machines."
 msgstr ""
-"Nutanix Services based on fixed machines. Needs qemu agent installed on "
-"machines."
+"Xen Services based on fixed machines. Needs xen agent installed on machines."
 
 #: services/Xen/service_fixed.py:80
 msgid "Folder"
@@ -8523,10 +8469,9 @@ msgid "Launchs an external UDS customized URL"
 msgstr "Launchs an external UDS customized URL"
 
 #: transports/URL/url_custom.py:78
-#, fuzzy
 #| msgid "Select windows behavior for new connections on HTML5"
 msgid "Select windows behavior for opening URL"
-msgstr "Select windows behavior for new connections on HTML5"
+msgstr "Select windows behavior for opening URL"
 
 #: transports/X2GO/x2go.py:57 transports/X2GO/x2gotunnel.py:63
 msgid "X2Go"
