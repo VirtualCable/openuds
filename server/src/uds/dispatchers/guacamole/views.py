@@ -61,7 +61,7 @@ def dict2resp(dct: collections.abc.Mapping[typing.Any, typing.Any]) -> str:
 
 @auth.needs_trusted_source
 def guacamole(request: ExtendedHttpRequestWithUser, token: str, tunnelId: str) -> HttpResponse:
-    if not Server.validate_token(token, serverType=types.servers.ServerType.TUNNEL):
+    if not Server.validate_token(token, server_type=types.servers.ServerType.TUNNEL):
         logger.error('Invalid token %s from %s', token, request.ip)
         return HttpResponse(ERROR, content_type=CONTENT_TYPE)
     logger.debug('Received credentials request for tunnel id %s', tunnelId)

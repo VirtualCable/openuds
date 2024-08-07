@@ -11,7 +11,7 @@ gettext("Launcher");
 gettext("Service is in maintenance and cannot be launched");
 gettext("This service is currently not accesible due to schedule restrictions.");
 gettext("Service message");
-gettext("Press "Yes" to continue, or "No" to cancel");
+gettext("Press \"Yes\" to continue, or \"No\" to cancel");
 gettext("Release service: ");
 gettext("Reset service: ");
 gettext("Service released");

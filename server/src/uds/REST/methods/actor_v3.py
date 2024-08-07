@@ -430,7 +430,7 @@ class Initialize(ActorV3Action):
                 dbFilter = UserService.objects.filter(deployed_service__service=service)
             else:
                 # If not service provided token, use actor tokens
-                if not Server.validate_token(token, types.servers.ServerType.ACTOR):
+                if not Server.validate_token(token, server_type=types.servers.ServerType.ACTOR):
                     raise exceptions.rest.BlockAccess()
                 # Build the possible ids and make initial filter to match ANY userservice with provided MAC
                 idsList = [i['mac'] for i in self._params['id'][:5]]

@@ -75,7 +75,7 @@ class TunnelTicket(Handler):
 
         # Take token from url
         token = self._args[2][:48]
-        if not models.Server.validate_token(token, serverType=types.servers.ServerType.TUNNEL):
+        if not models.Server.validate_token(token, server_type=types.servers.ServerType.TUNNEL):
             if self._args[1][:4] == 'stop':
                 # "Discard" invalid stop requests, because Applications does not like them.
                 # RDS connections keep alive for a while after the application is finished,
@@ -129,7 +129,7 @@ class TunnelTicket(Handler):
                 log.log(user.manager, types.log.LogLevel.INFO, msg)
                 log.log(user_service, types.log.LogLevel.INFO, msg)
                 # Generate new, notify only, ticket
-                notifyTicket = models.TicketStore.create_for_tunnel(
+                notify_ticket = models.TicketStore.create_for_tunnel(
                     userService=user_service,
                     port=port,
                     host=host,
@@ -139,7 +139,7 @@ class TunnelTicket(Handler):
                     },
                     validity=MAX_SESSION_LENGTH,
                 )
-                data = {'host': host, 'port': port, 'notify': notifyTicket, 'key': key}
+                data = {'host': host, 'port': port, 'notify': notify_ticket, 'tunnel_key': key}
 
             return data
         except Exception as e:

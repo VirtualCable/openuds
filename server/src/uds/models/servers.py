@@ -348,7 +348,8 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     @staticmethod
     def validate_token(
         token: str,
-        serverType: typing.Union[collections.abc.Iterable[types.servers.ServerType], types.servers.ServerType],
+        *,
+        server_type: typing.Union[collections.abc.Iterable[types.servers.ServerType], types.servers.ServerType],
         request: typing.Optional[ExtendedHttpRequest] = None,
     ) -> bool:
         """Ensures that a token is valid for a server type
@@ -366,10 +367,10 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         """
         # Ensure token is valid for a kind
         try:
-            if isinstance(serverType, types.servers.ServerType):
-                tt = Server.objects.get(token=token, type=serverType.value)
+            if isinstance(server_type, types.servers.ServerType):
+                tt = Server.objects.get(token=token, type=server_type.value)
             else:
-                tt = Server.objects.get(token=token, type__in=[st.value for st in serverType])
+                tt = Server.objects.get(token=token, type__in=[st.value for st in server_type])
             # We could check the request ip here
             if request and request.ip != tt.ip:
                 raise Exception('Invalid ip')
