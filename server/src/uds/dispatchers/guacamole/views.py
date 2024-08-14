@@ -60,17 +60,17 @@ def dict2resp(dct: collections.abc.Mapping[typing.Any, typing.Any]) -> str:
 
 
 @auth.needs_trusted_source
-def guacamole(request: ExtendedHttpRequestWithUser, token: str, tunnelId: str) -> HttpResponse:
+def guacamole(request: ExtendedHttpRequestWithUser, token: str, tunnelid: str) -> HttpResponse:
     if not Server.validate_token(token, server_type=types.servers.ServerType.TUNNEL):
         logger.error('Invalid token %s from %s', token, request.ip)
         return HttpResponse(ERROR, content_type=CONTENT_TYPE)
-    logger.debug('Received credentials request for tunnel id %s', tunnelId)
+    logger.debug('Received credentials request for tunnel id %s', tunnelid)
 
     try:
-        tunnelId, scrambler = tunnelId.split('.')
+        tunnelid, scrambler = tunnelid.split('.')
 
         # All strings excetp "ticket-info", that is fixed if it exists later
-        val = typing.cast(collections.abc.MutableMapping[str, str], TicketStore.get(tunnelId, invalidate=False))
+        val = typing.cast(collections.abc.MutableMapping[str, str], TicketStore.get(tunnelid, invalidate=False))
 
         # Extra check that the ticket data belongs to original requested user service/user
         if 'ticket-info' in val:
