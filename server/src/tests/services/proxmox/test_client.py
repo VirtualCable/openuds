@@ -30,7 +30,8 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
+import random
+import typing
 import logging
 
 from uds.services.Proxmox.proxmox import (
@@ -49,7 +50,7 @@ class TestProxmoxClient(UDSTransactionTestCase):
     resource_group_name: str
 
     pclient: prox_client.ProxmoxClient
-    
+
     vm: prox_types.VMInfo = prox_types.VMInfo.null()
     pool: prox_types.PoolInfo = prox_types.PoolInfo.null()
 
@@ -63,16 +64,59 @@ class TestProxmoxClient(UDSTransactionTestCase):
             port=int(v['port']),
             username=v['username'],
             password=v['password'],
-            verify_ssl=True,
+            use_api_token=v['use_api_token'] == 'true',
+            verify_ssl=False,
         )
-        
+
         for vm in self.pclient.list_vms():
             if vm.name == v['test_vm']:
                 self.vm = vm
-                
+
         if self.vm.is_null():
             self.skipTest('No test vm found')
 
         for pool in self.pclient.list_pools():
             if pool.id == v['test_pool']:  # id is the pool name in proxmox
                 self.pool = pool
+
+    def _get_new_vmid(self) -> int:
+        MAX_RETRIES: typing.Final[int] = 512  # So we don't loop forever, just in case...
+        vmid = 0
+        for _ in range(MAX_RETRIES):
+            vmid = 100000 + random.randint(0, 899999)  # Get a reasonable vmid
+            if self.pclient.is_vmid_available(vmid):
+                return vmid
+            # All assigned vmid will be left as unusable on UDS until released by time (3 years)
+            # This is not a problem at all, in the rare case that a machine id is released from uds db
+            # if it exists when we try to create a new one, we will simply try to get another one
+        self.fail(f'Could not get a new vmid!!: last tried {vmid}')
+        
+    # Connect is not needed, because setUp will do the connection so if it fails, the test will throw an exception
+
+    def test_list_vms(self):
+        vms = self.pclient.list_vms()
+        # At least, the test vm should be there :)
+        self.assertTrue(len(vms) > 0)
+
+        self.assertTrue(self.vm.id > 0)
+        self.assertTrue(self.vm.status in prox_types.VMStatus)
+        self.assertTrue(self.vm.node)
+        self.assertTrue(self.vm.template in (True, False))
+
+        self.assertIsInstance(self.vm.agent, (str, type(None)))
+        self.assertIsInstance(self.vm.cpus, (int, type(None)))
+        self.assertIsInstance(self.vm.lock, (str, type(None)))
+        self.assertIsInstance(self.vm.disk, (int, type(None)))
+        self.assertIsInstance(self.vm.maxdisk, (int, type(None)))
+        self.assertIsInstance(self.vm.mem, (int, type(None)))
+        self.assertIsInstance(self.vm.maxmem, (int, type(None)))
+        self.assertIsInstance(self.vm.name, (str, type(None)))
+        self.assertIsInstance(self.vm.pid, (int, type(None)))
+        self.assertIsInstance(self.vm.qmpstatus, (str, type(None)))
+        self.assertIsInstance(self.vm.tags, (str, type(None)))
+        self.assertIsInstance(self.vm.uptime, (int, type(None)))
+        self.assertIsInstance(self.vm.netin, (int, type(None)))
+        self.assertIsInstance(self.vm.netout, (int, type(None)))
+        self.assertIsInstance(self.vm.diskread, (int, type(None)))
+        self.assertIsInstance(self.vm.diskwrite, (int, type(None)))
+        self.assertIsInstance(self.vm.vgpu_type, (str, type(None)))

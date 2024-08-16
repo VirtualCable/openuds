@@ -198,7 +198,7 @@ class TaskStatus:
             starttime=datetime.datetime.fromtimestamp(data['starttime']),
             type=data['type'],
             status=data['status'],
-            exitstatus=data['exitstatus'],
+            exitstatus=data.get('exitstatus', ''),
             user=data['user'],
             upid=data['upid'],
             id=data['id'],

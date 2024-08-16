@@ -82,10 +82,19 @@ class ProxmoxProvider(services.ServiceProvider):
         default=8006,
     )
 
+    use_api_token = gui.CheckBoxField(
+        label=_('Use API Token'),
+        order=3,
+        tooltip=_(
+            'Use API Token and secret instead of password. (username must contain the Token ID, the password will be the secret)'
+        ),
+        required=False,
+        default=False,
+    )
     username = gui.TextField(
         length=32,
         label=_('Username'),
-        order=3,
+        order=4,
         tooltip=_('User with valid privileges on Proxmox, (use "user@authenticator" form)'),
         required=True,
         default='root@pam',
@@ -93,7 +102,7 @@ class ProxmoxProvider(services.ServiceProvider):
     password = gui.PasswordField(
         length=32,
         label=_('Password'),
-        order=4,
+        order=5,
         tooltip=_('Password of the user of Proxmox'),
         required=True,
     )
@@ -133,6 +142,7 @@ class ProxmoxProvider(services.ServiceProvider):
                 self.port.as_int(),
                 self.username.value,
                 self.password.value,
+                self.use_api_token.value,
                 self.timeout.as_int(),
                 False,
                 self.cache,
