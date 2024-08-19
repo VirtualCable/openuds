@@ -74,12 +74,11 @@ def ip_to_long(ip: str) -> IpType:
     """
     # First, check if it's an ipv6 address
     try:
-        if ':' in ip and '.' not in ip:
-            return IpType(int(ipaddress.IPv6Address(ip)), 6)
-        if ':' in ip and '.' in ip:
-            ip = ip.split(':')[
-                -1
-            ]  # Last part of ipv6 address is ipv4 address (has dots and colons, so we can't use ipaddress)
+        if ':' in ip:
+            if '.' in ip:  # Is , for example, '::ffff:172.27.0.1'
+                ip = ip.split(':')[-1]
+            else:
+                return IpType(int(ipaddress.IPv6Address(ip)), 6)
         return IpType(int(ipaddress.IPv4Address(ip)), 4)
     except Exception as e:
         logger.error('Ivalid value: %s (%s)', ip, e)
