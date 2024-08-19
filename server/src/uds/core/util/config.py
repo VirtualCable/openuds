@@ -616,7 +616,7 @@ class GlobalConfig:
         'Trusted Hosts',
         '*',
         type=Config.FieldType.TEXT,
-        help=_('Networks considered "trusted" for tunnel requests'),
+        help=_('Networks considered "trusted" for UDS (Tunnels, Load Balancers, etc...)'),
     )
 
     # Allow clients to notify their own ip (if set), or use always the request extracted IP
