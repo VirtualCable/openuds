@@ -410,6 +410,20 @@ class StorageInfo:
             total=total,
         )
 
+    @staticmethod
+    def null() -> 'StorageInfo':
+        return StorageInfo(
+            node='',
+            storage='',
+            content=(),
+            type='',
+            shared=False,
+            active=False,
+            used=0,
+            avail=0,
+            total=0,
+        )
+
 
 @dataclasses.dataclass
 class PoolMemberInfo:

@@ -112,7 +112,8 @@ class ProxmoxClient:
             self._session.headers.update(
                 {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                # 'Content-Type': 'application/json',
                 'Authorization': f'PVEAPIToken={token}',
                 }
             )
@@ -177,7 +178,7 @@ class ProxmoxClient:
                 except Exception:  # nosec: No joson or no errors, use default msg
                     pass
 
-            if response.status_code == 500 and node:
+            if response.status_code // 100 == 5 and node:
                 # Try to get from journal
                 try:
                     journal = [x for x in filter(lambda x: 'failed' in x, self.journal(node, 4))]
@@ -185,7 +186,7 @@ class ProxmoxClient:
                     for line in journal:
                         logger.error(' * %s', line)
 
-                    error_message = f'Error 500 on request: {" ## ".join(journal)}'
+                    error_message = f'Error {response.status_code} on request: {" ## ".join(journal)}'
                 except Exception:
                     pass  # If we can't get journal, just use default message
 
@@ -359,19 +360,19 @@ class ProxmoxClient:
         name: str,
         description: typing.Optional[str],
         as_linked_clone: bool,
-        use_node: typing.Optional[str] = None,
-        use_storage: typing.Optional[str] = None,
-        use_pool: typing.Optional[str] = None,
+        target_node: typing.Optional[str] = None,
+        target_storage: typing.Optional[str] = None,
+        target_pool: typing.Optional[str] = None,
         must_have_vgpus: typing.Optional[bool] = None,
     ) -> types.VmCreationResult:
         vminfo = self.get_vm_info(vmid)
 
         src_node = vminfo.node
 
-        if not use_node:
+        if not target_node:
             logger.debug('Selecting best node')
             # If storage is not shared, must be done on same as origin
-            if use_storage and self.get_storage_info(storage=use_storage, node=vminfo.node).shared:
+            if target_storage and self.get_storage_info(storage=target_storage, node=vminfo.node).shared:
                 node = self.get_best_node_for_vm(
                     min_memory=-1, must_have_vgpus=must_have_vgpus, mdev_type=vminfo.vgpu_type
                 )
@@ -379,17 +380,17 @@ class ProxmoxClient:
                     raise exceptions.ProxmoxError(
                         f'No switable node available for new vm {name} on Proxmox (check memory and VGPUS, space...)'
                     )
-                use_node = node.name
+                target_node = node.name
             else:
-                use_node = src_node
+                target_node = src_node
 
         # Check if mustHaveVGPUS is compatible with the node
-        if must_have_vgpus is not None and must_have_vgpus != bool(self.list_node_gpu_devices(use_node)):
-            raise exceptions.ProxmoxNoGPUError(f'Node "{use_node}" does not have VGPUS and they are required')
+        if must_have_vgpus is not None and must_have_vgpus != bool(self.list_node_gpu_devices(target_node)):
+            raise exceptions.ProxmoxNoGPUError(f'Node "{target_node}" does not have VGPUS and they are required')
 
-        if self.node_has_vgpus_available(use_node, vminfo.vgpu_type):
+        if self.node_has_vgpus_available(target_node, vminfo.vgpu_type):
             raise exceptions.ProxmoxNoGPUError(
-                f'Node "{use_node}" does not have free VGPUS of type {vminfo.vgpu_type} (requred by VM {vminfo.name})'
+                f'Node "{target_node}" does not have free VGPUS of type {vminfo.vgpu_type} (requred by VM {vminfo.name})'
             )
 
         # From normal vm, disable "linked cloning"
@@ -399,18 +400,18 @@ class ProxmoxClient:
         params: list[tuple[str, str]] = [
             ('newid', str(new_vmid)),
             ('name', name),
-            ('target', use_node),
+            ('target', target_node),
             ('full', str(int(not as_linked_clone))),
         ]
 
         if description:
             params.append(('description', description))
 
-        if use_storage and as_linked_clone is False:
-            params.append(('storage', use_storage))
+        if target_storage and as_linked_clone is False:
+            params.append(('storage', target_storage))
 
-        if use_pool:
-            params.append(('pool', use_pool))
+        if target_pool:
+            params.append(('pool', target_pool))
 
         if as_linked_clone is False:
             params.append(('format', 'qcow2'))  # Ensure clone for templates is on qcow2 format
@@ -418,7 +419,7 @@ class ProxmoxClient:
         logger.debug('PARAMS: %s', params)
 
         return types.VmCreationResult(
-            node=use_node,
+            node=target_node,
             vmid=new_vmid,
             upid=types.UPID.from_dict(
                 self.do_post(f'nodes/{src_node}/qemu/{vmid}/clone', data=params, node=src_node)
