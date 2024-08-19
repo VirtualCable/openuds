@@ -616,7 +616,14 @@ class GlobalConfig:
         'Trusted Hosts',
         '*',
         type=Config.FieldType.TEXT,
-        help=_('Networks considered "trusted" for UDS (Tunnels, Load Balancers, etc...)'),
+        help=_('Networks or hosts considered "trusted" for UDS (Tunnels, etc...)'),
+    )
+    
+    ALLOWED_IP_FORWARDERS: Config.Value = Config.section(Config.SectionType.SECURITY).value(
+        'Allowed IP Forwarders',
+        '*',
+        type=Config.FieldType.TEXT,
+        help=_('IPs or networks allowed to forward requests (like proxies)'),
     )
 
     # Allow clients to notify their own ip (if set), or use always the request extracted IP

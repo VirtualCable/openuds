@@ -175,6 +175,10 @@ def is_trusted_source(ip: str) -> bool:
     return net.contains(GlobalConfig.TRUSTED_SOURCES.get(True), ip)
 
 
+def is_trusted_ip_forwarder(ip: str) -> bool:
+    return net.contains(GlobalConfig.ALLOWED_IP_FORWARDERS.get(True), ip)
+
+
 # Decorator to protect pages that needs to be accessed from "trusted sites"
 def needs_trusted_source(
     view_func: collections.abc.Callable[..., HttpResponse]
@@ -534,6 +538,11 @@ def log_logout(request: 'ExtendedHttpRequest') -> None:
                 f'user {request.user.name} has logged out from {request.ip}',
                 types.log.LogSource.WEB,
             )
-            log.log(request.user, types.log.LogLevel.INFO, f'has logged out from {request.ip}', types.log.LogSource.WEB)
+            log.log(
+                request.user,
+                types.log.LogLevel.INFO,
+                f'has logged out from {request.ip}',
+                types.log.LogSource.WEB,
+            )
         else:
             logger.info('Root has logged out from %s', request.ip)

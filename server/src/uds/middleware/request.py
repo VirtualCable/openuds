@@ -39,7 +39,7 @@ from uds.core.util import os_detector as OsDetector
 from uds.core.util.config import GlobalConfig
 from uds.core import consts, types
 from uds.core.auths.auth import (
-    is_trusted_source,
+    is_trusted_ip_forwarder,
     root_user,
     web_logout,
 )
@@ -92,7 +92,7 @@ def _fill_ips(request: 'ExtendedHttpRequest') -> None:
     #   request.ip = PROXY3
     #   request.ip_proxy = PROXY2
 
-    if behind_proxy and is_trusted_source(request.ip):
+    if behind_proxy and is_trusted_ip_forwarder(request.ip):
         request.ip = request.ip_proxy
         request.ip_proxy = proxies[1] if len(proxies) > 1 else request.ip
 
