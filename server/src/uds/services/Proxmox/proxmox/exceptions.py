@@ -43,8 +43,10 @@ class ProxmoxConnectionError(ProxmoxError, exceptions.RetryableError):
 class ProxmoxAuthError(ProxmoxError, exceptions.FatalError):
     pass
 
+class ProxmoxDoesNotExists(ProxmoxError):
+    pass
 
-class ProxmoxNotFound(ProxmoxError, exceptions.NotFoundError):
+class ProxmoxNotFound(ProxmoxDoesNotExists, exceptions.NotFoundError):
     pass
 
 
@@ -52,5 +54,5 @@ class ProxmoxNodeUnavailableError(ProxmoxConnectionError):
     pass
 
 
-class ProxmoxNoGPUError(ProxmoxError):
+class ProxmoxNoGPUError(ProxmoxDoesNotExists):
     pass

@@ -34,10 +34,12 @@ import random
 import time
 import typing
 import logging
+import contextlib
 
 from uds.services.Proxmox.proxmox import (
     types as prox_types,
     client as prox_client,
+    exceptions as prox_exceptions,
 )
 
 from tests.utils import vars
@@ -55,6 +57,7 @@ class TestProxmoxClient(UDSTransactionTestCase):
     test_vm: prox_types.VMInfo = prox_types.VMInfo.null()
     pool: prox_types.PoolInfo = prox_types.PoolInfo.null()
     storage: prox_types.StorageInfo = prox_types.StorageInfo.null()
+    hagroup: str = ''
 
     def setUp(self) -> None:
         v = vars.get_vars('proxmox')
@@ -80,10 +83,21 @@ class TestProxmoxClient(UDSTransactionTestCase):
         for pool in self.pclient.list_pools():
             if pool.id == v['test_pool']:  # id is the pool name in proxmox
                 self.pool = pool
-        
+
+        if self.pool.is_null():
+            self.skipTest('No valid pool found')
+
         for storage in self.pclient.list_storages():
             if storage.storage == v['test_storage']:
                 self.storage = storage
+
+        if self.storage.is_null():
+            self.skipTest('No valid storage found')
+
+        self.hagroup = v['test_ha_group']
+        # Ensure we have a valid pool, storage and ha group
+        if self.hagroup not in self.pclient.list_ha_groups():
+            self.skipTest('No valid ha group found')
 
     def _get_new_vmid(self) -> int:
         MAX_RETRIES: typing.Final[int] = 512  # So we don't loop forever, just in case...
@@ -106,6 +120,37 @@ class TestProxmoxClient(UDSTransactionTestCase):
             else:
                 return
         raise Exception('Timeout waiting for task to finish')
+
+    @contextlib.contextmanager
+    def _create_test_vm(
+        self,
+        vmid: typing.Optional[int] = None,
+        as_linked_clone: bool = False,
+        target_node: typing.Optional[str] = None,
+        target_storage: typing.Optional[str] = None,
+        target_pool: typing.Optional[str] = None,
+        must_have_vgpus: typing.Optional[bool] = None,
+    ) -> typing.Iterator[prox_types.VMInfo]:
+        new_vmid = self._get_new_vmid()
+        res: typing.Optional[prox_types.VmCreationResult] = None
+        try:
+            res = self.pclient.clone_vm(
+                vmid=vmid or self.test_vm.id,
+                new_vmid=new_vmid,
+                name=f'uds-test-{new_vmid}',
+                description=f'UDS Test VM {new_vmid} (cloned from {self.test_vm.id})',
+                as_linked_clone=as_linked_clone,  # Test VM is not a template, so cannot be linked cloned
+                target_node=target_node,
+                target_storage=target_storage or self.storage.storage,
+                target_pool=target_pool,
+                must_have_vgpus=must_have_vgpus,
+            )
+            # Wait for the task to finish
+            self._wait_for_task(res.node, res.upid.upid)
+            yield self.pclient.get_vm_info(res.vmid)
+        finally:
+            if res:
+                self.pclient.delete_vm(res.vmid)
 
     # Connect is not needed, because setUp will do the connection so if it fails, the test will throw an exception
 
@@ -166,36 +211,105 @@ class TestProxmoxClient(UDSTransactionTestCase):
         self.assertIn(node.name, [n['node'] for n in self.pclient.get_cluster_resources('node')])
 
     def test_clone_vm_ok(self) -> None:
-        res: typing.Optional[prox_types.VmCreationResult] = None
-        try:
-            new_vmid = self._get_new_vmid()
-            res = self.pclient.clone_vm(
-                vmid=self.test_vm.id,
-                new_vmid=new_vmid,
-                name=f'uds-test-{new_vmid}',
-                description='Test VM',
-                as_linked_clone=False,  # Test VM is not a template, so cannot be linked cloned
-                target_node=None,
-                target_storage=self.storage.storage,
-                target_pool=None,
-                must_have_vgpus=None,
-            )
-            self.assertIsInstance(res, prox_types.VmCreationResult)
-        except Exception as e:
-            # Remove the vm if it was created
-            self.fail(f'Exception cloning vm: {e}')
-        finally:
-            if res and res.vmid:
-                # Wait for the task to finish
-                self._wait_for_task(res.node, res.upid.upid)
-                self.pclient.delete_vm(res.vmid)
+        # In fact, use the context manager to test this
+        # because it's the same code
+        with self._create_test_vm():
+            pass  # Just test that it does not raise
+
+    def test_clone_vm_fail_invalid_vmid(self) -> None:
+        with self.assertRaises(prox_exceptions.ProxmoxNotFound):
+            with self._create_test_vm(vmid=-1):
+                pass
+
+    def test_clone_vm_fail_invalid_node(self) -> None:
+        with self.assertRaises(prox_exceptions.ProxmoxDoesNotExists):
+            with self._create_test_vm(target_node='invalid-node'):
+                pass
+
+    def test_clone_vm_fail_invalid_pool(self) -> None:
+        with self.assertRaises(prox_exceptions.ProxmoxDoesNotExists):
+            with self._create_test_vm(target_pool='invalid-pool'):
+                pass
+
+    def test_clone_vm_fail_invalid_storage(self) -> None:
+        with self.assertRaises(prox_exceptions.ProxmoxDoesNotExists):
+            with self._create_test_vm(target_storage='invalid-storage'):
+                pass
+
+    def test_clone_vm_fail_no_vgpus(self) -> None:
+        with self.assertRaises(prox_exceptions.ProxmoxError):
+            with self._create_test_vm(must_have_vgpus=True):
+                pass
+
+    def test_list_ha_groups(self) -> None:
+        groups = self.pclient.list_ha_groups()
+        self.assertIsInstance(groups, list)
+        for group in groups:
+            self.assertIsInstance(group, str)
+
+        self.assertIn(self.hagroup, groups)
+
+    def test_enable_disable_vm_ha(self) -> None:
+        with self._create_test_vm() as vm:
+            self.pclient.enable_vm_ha(vm.id, started=False, group=self.hagroup)
+            # Ensure it's enabled
+            vminfo = self.pclient.get_vm_info(vm.id)
+            self.assertEqual(vminfo.ha.group, self.hagroup)
+            # Disable it
+            self.pclient.disable_vm_ha(vm.id)
+            vminfo = self.pclient.get_vm_info(vm.id)
+            self.assertEqual(vminfo.ha.group, '')
+
+    def test_set_vm_protection(self) -> None:
+        with self._create_test_vm() as vm:
+            self.pclient.set_vm_protection(vm.id, protection=True)
+            vmconfig = self.pclient.get_vm_config(vm.id)
+            self.assertTrue(vmconfig.protection)
+            self.pclient.set_vm_protection(vm.id, protection=False)
+            vmconfig = self.pclient.get_vm_config(vm.id)
+            self.assertFalse(vmconfig.protection)
+
+    def test_get_guest_ip_address(self) -> None:
+        # Should raise an exception, because the test vm is not running
+        with self.assertRaises(prox_exceptions.ProxmoxError):
+            self.pclient.get_guest_ip_address(self.test_vm.id)
+
+    # delete_vm should work, because the vm is created and deleted in the context manager
+
+    def test_snapshots(self) -> None:
+        with self._create_test_vm() as vm:
+            # Create snapshot for the vm
+            task = self.pclient.create_snapshot(vm.id, name='test-snapshot')
+            self._wait_for_task(task.node, task.upid)
+            snapshots = self.pclient.list_snapshots(vm.id)
+            self.assertIsInstance(snapshots, list)
+            # should have TWO snapshots, the one created by us and "current"
+            self.assertTrue(len(snapshots) == 2)
+            for snapshot in snapshots:
+                self.assertIsInstance(snapshot, prox_types.SnapshotInfo)
+
+            # test-snapshot should be there
+            self.assertIn('test-snapshot', [s.name for s in snapshots])
+
+            # Restore the snapshot
+            task = self.pclient.restore_snapshot(vm.id, name='test-snapshot')
+            self._wait_for_task(task.node, task.upid)
+
+            # Delete the snapshot
+            task = self.pclient.delete_snapshot(vm.id, name='test-snapshot')
+            self._wait_for_task(task.node, task.upid)
+
+            snapshots = self.pclient.list_snapshots(vm.id)
+            self.assertTrue(len(snapshots) == 1)
+
+    # get_task_info should work, because we wait for the task to finish in _wait_for_task
 
     def test_list_vms(self) -> None:
         vms = self.pclient.list_vms()
         # At least, the test vm should be there :)
         self.assertTrue(len(vms) > 0)
         # Assert the test vm is there
-        self.assertIn(self.test_vm, vms)
+        self.assertIn(self.test_vm.id, [i.id for i in vms])
 
         self.assertTrue(self.test_vm.id > 0)
         self.assertTrue(self.test_vm.status in prox_types.VMStatus)
@@ -219,3 +333,16 @@ class TestProxmoxClient(UDSTransactionTestCase):
         self.assertIsInstance(self.test_vm.diskread, (int, type(None)))
         self.assertIsInstance(self.test_vm.diskwrite, (int, type(None)))
         self.assertIsInstance(self.test_vm.vgpu_type, (str, type(None)))
+
+    def test_get_vm_pool_info(self) -> None:
+        with self._create_test_vm(target_pool=self.pool.id) as vm:
+            vminfo = self.pclient.get_vm_pool_info(vmid=vm.id, poolid=self.pool.id)
+            self.assertIsInstance(vminfo, prox_types.VMInfo)
+            self.assertEqual(vminfo.id, vm.id)
+
+    # get_vm_info should work, because we get the info of the test vm in setUp
+
+    def test_get_vm_config(self) -> None:
+        vmconfig = self.pclient.get_vm_config(self.test_vm.id)
+        self.assertIsInstance(vmconfig, prox_types.VMConfiguration)
+        self.assertEqual(vmconfig.name, self.test_vm.name)

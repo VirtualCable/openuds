@@ -104,17 +104,17 @@ class ProxmoxClient:
             return self._session
 
         self._session = security.secure_requests_session(verify=self._verify_ssl)
-        
+
         if self._use_api_token:
             token = f'{self._credentials[0][1]}={self._credentials[1][1]}'
             # Set _ticket to something, so we don't try to connect again
             self._ticket = 'API_TOKEN'  # Using API token, not a real ticket
             self._session.headers.update(
                 {
-                'Accept': 'application/json',
-                'Content-Type': 'application/x-www-form-urlencoded',
-                # 'Content-Type': 'application/json',
-                'Authorization': f'PVEAPIToken={token}',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    # 'Content-Type': 'application/json',
+                    'Authorization': f'PVEAPIToken={token}',
                 }
             )
         else:
@@ -158,9 +158,8 @@ class ProxmoxClient:
                 _update_session(ticket, csrf)
             except requests.RequestException as e:
                 raise exceptions.ProxmoxConnectionError(str(e)) from e
-        
-        return self._session
 
+        return self._session
 
     def ensure_correct(self, response: 'requests.Response', *, node: typing.Optional[str]) -> typing.Any:
         if not response.ok:
@@ -365,7 +364,20 @@ class ProxmoxClient:
         target_pool: typing.Optional[str] = None,
         must_have_vgpus: typing.Optional[bool] = None,
     ) -> types.VmCreationResult:
+        # Get info of the vm, also ensures that the vm exists
         vminfo = self.get_vm_info(vmid)
+
+        # Ensure exists target storage
+        if target_storage and not any(
+            s.storage == target_storage for s in self.list_storages(node=target_node)
+        ):
+            raise exceptions.ProxmoxDoesNotExists(
+                f'Storage "{target_storage}" does not exist on node "{target_node}"'
+            )
+
+        # Ensure exists target pool, (id is in fact the name of the pool)
+        if target_pool and not any(p.id == target_pool for p in self.list_pools()): 
+            raise exceptions.ProxmoxDoesNotExists(f'Pool "{target_pool}" does not exist')
 
         src_node = vminfo.node
 
@@ -384,9 +396,15 @@ class ProxmoxClient:
             else:
                 target_node = src_node
 
+        # Ensure exists target node
+        if not any(n.name == target_node for n in self.get_cluster_info().nodes):
+            raise exceptions.ProxmoxDoesNotExists(f'Node "{target_node}" does not exist')
+
         # Check if mustHaveVGPUS is compatible with the node
         if must_have_vgpus is not None and must_have_vgpus != bool(self.list_node_gpu_devices(target_node)):
-            raise exceptions.ProxmoxNoGPUError(f'Node "{target_node}" does not have VGPUS and they are required')
+            raise exceptions.ProxmoxNoGPUError(
+                f'Node "{target_node}" does not have VGPUS and they are required'
+            )
 
         if self.node_has_vgpus_available(target_node, vminfo.vgpu_type):
             raise exceptions.ProxmoxNoGPUError(
@@ -542,10 +560,9 @@ class ProxmoxClient:
             ('snapname', name),
             ('description', description or f'UDS Snapshot created at {time.strftime("%c")}'),
         ]
-        params.append(('snapname', name or ''))
         return types.UPID.from_dict(self.do_post(f'nodes/{node}/qemu/{vmid}/snapshot', data=params, node=node))
 
-    def remove_snapshot(
+    def delete_snapshot(
         self,
         vmid: int,
         *,

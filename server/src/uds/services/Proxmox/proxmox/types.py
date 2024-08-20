@@ -234,11 +234,35 @@ class NetworkConfiguration:
 
 
 @dataclasses.dataclass
+class HAInfo:
+    state: str
+    group: str
+    managed: bool
+
+    @staticmethod
+    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'HAInfo':
+        return HAInfo(
+            state=dictionary.get('state', ''),
+            group=dictionary.get('group', ''),
+            managed=dictionary.get('managed', False),
+        )
+
+    @staticmethod
+    def null() -> 'HAInfo':
+        return HAInfo(
+            state='',
+            group='',
+            managed=False,
+        )
+
+
+@dataclasses.dataclass
 class VMInfo:
     id: int
     status: VMStatus
     node: str
     template: bool
+    ha: HAInfo
 
     agent: typing.Optional[str]
     cpus: typing.Optional[int]
@@ -263,6 +287,9 @@ class VMInfo:
             raise prox_exceptions.ProxmoxNotFound('VM not found')
         return self
 
+    def is_null(self) -> bool:
+        return self.id == -1
+
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'VMInfo':
         vgpu_type = None
@@ -282,6 +309,7 @@ class VMInfo:
             id=int(dictionary.get('vmid', 0)),
             node=dictionary.get('node', ''),
             template=dictionary.get('template', False),
+            ha=HAInfo.from_dict(dictionary.get('ha', {})),
             agent=dictionary.get('agent', None),
             cpus=dictionary.get('cpus', None),
             lock=dictionary.get('lock', None),
@@ -308,6 +336,7 @@ class VMInfo:
             id=-1,
             node='',
             template=False,
+            ha=HAInfo.null(),
             agent=None,
             cpus=None,
             lock=None,
@@ -327,9 +356,6 @@ class VMInfo:
             vgpu_type=None,
         )
 
-    def is_null(self) -> bool:
-        return self.id == -1
-
 
 @dataclasses.dataclass
 class VMConfiguration:
@@ -343,6 +369,7 @@ class VMConfiguration:
     tpmstate0: typing.Optional[str]
 
     template: bool
+    protection: bool
 
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'VMConfiguration':
@@ -361,6 +388,7 @@ class VMConfiguration:
             networks=nets,
             tpmstate0=dictionary.get('tpmstate0', ''),
             template=dictionary.get('template', False),
+            protection=dictionary.get('protection', False),
         )
 
 
@@ -383,6 +411,9 @@ class StorageInfo:
     used: int
     avail: int
     total: int
+
+    def is_null(self) -> bool:
+        return self.node == '' and self.storage == ''
 
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'StorageInfo':

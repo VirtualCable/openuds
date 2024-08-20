@@ -399,7 +399,7 @@ CLIENT_METHODS_INFO: list[AutoSpecMethodInfo] = [
     # create_snapshot
     AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.create_snapshot, returns=UPID),
     # remove_snapshot
-    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.remove_snapshot, returns=UPID),
+    AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.delete_snapshot, returns=UPID),
     # restore_snapshot
     AutoSpecMethodInfo(uds.services.Proxmox.proxmox.client.ProxmoxClient.restore_snapshot, returns=UPID),
     # get_task
