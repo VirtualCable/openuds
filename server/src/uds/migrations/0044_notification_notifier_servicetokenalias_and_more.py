@@ -7,6 +7,7 @@ import django.db.models.deletion
 import uds.core.util.model
 import uds.models.notifications
 import uds.models.user_service_session
+import uds.core.consts.auth as auth
 
 
 # Remove ServicePools with null service field
@@ -38,6 +39,23 @@ def update_network_model(apps: typing.Any, schema_editor: typing.Any):  # pylint
             net.save(update_fields=['start', 'end', 'version'])
     except Exception as e:
         print(f'Error updating network model: {e}')  # Will fail on pytest, but it's ok
+
+
+# Update transport net_filtering in base to networks field of Transport having any element
+# If no elements: net_filtering =  auth.NO_FILTERING
+# if any element and nets_positive = True: net_filtering = auth.ALLOW
+# if any element and nets_positive = False: net_filtering = auth.DENY
+# We must use the migration model, because the models.Transport does not have the nets_positive field
+def update_transport_net_filtering(
+    apps: typing.Any, schema_editor: typing.Any
+):  # pylint: disable=unused-argument
+    Transport = apps.get_model('uds', 'Transport')
+    for transport in Transport.objects.all():
+        if transport.networks.count() == 0:
+            transport.net_filtering = auth.NO_FILTERING
+        else:
+            transport.net_filtering = auth.ALLOW if transport.nets_positive else auth.DENY
+        transport.save(update_fields=['net_filtering'])
 
 
 class Migration(migrations.Migration):
@@ -97,9 +115,7 @@ class Migration(migrations.Migration):
                 ("enabled", models.BooleanField(default=True)),
                 (
                     "level",
-                    models.PositiveIntegerField(
-                        default=uds.models.notifications.LogLevel["ERROR"]
-                    ),
+                    models.PositiveIntegerField(default=uds.models.notifications.LogLevel["ERROR"]),
                 ),
             ],
             options={
@@ -165,10 +181,6 @@ class Migration(migrations.Migration):
             name="proxy",
         ),
         migrations.RemoveField(
-            model_name="transport",
-            name="nets_positive",
-        ),
-        migrations.RemoveField(
             model_name="userservice",
             name="cluster_node",
         ),
@@ -180,7 +192,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="authenticator",
             name="net_filtering",
-            field=models.CharField(db_index=True, default="n", max_length=1),
+            field=models.CharField(db_index=True, default=auth.NO_FILTERING, max_length=1),
         ),
         migrations.AddField(
             model_name="authenticator",
@@ -239,7 +251,14 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="transport",
             name="net_filtering",
-            field=models.CharField(db_index=True, default="n", max_length=1),
+            field=models.CharField(db_index=True, default=auth.NO_FILTERING, max_length=1),
+        ),
+        # Update transport net_filtering in base to networks field of Transport having any element
+        migrations.RunPython(update_transport_net_filtering, nop),
+        # And now remove the nets_positive field
+        migrations.RemoveField(
+            model_name="transport",
+            name="nets_positive",
         ),
         migrations.AlterField(
             model_name="account",
@@ -249,16 +268,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="account",
             name="uuid",
-            field=models.CharField(
-                default=uds.core.util.model.generate_uuid, max_length=50, unique=True
-            ),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         migrations.AlterField(
             model_name="accountusage",
             name="uuid",
-            field=models.CharField(
-                default=uds.core.util.model.generate_uuid, max_length=50, unique=True
-            ),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         migrations.AlterField(
             model_name="actortoken",
@@ -278,79 +293,57 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="authenticator",
             name="uuid",
-            field=models.CharField(
-                default=uds.core.util.model.generate_uuid, max_length=50, unique=True
-            ),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         migrations.AlterField(
             model_name="calendar",
             name="uuid",
-            field=models.CharField(
-                default=uds.core.util.model.generate_uuid, max_length=50, unique=True
-            ),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         migrations.AlterField(
             model_name="calendaraccess",
             name="uuid",
-            field=models.CharField(
-                default=uds.core.util.model.generate_uuid, max_length=50, unique=True
-            ),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         migrations.AlterField(
             model_name="calendaraccessmeta",
             name="uuid",
-            field=models.CharField(
-                default=uds.core.util.model.generate_uuid, max_length=50, unique=True
-            ),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         migrations.AlterField(
             model_name="calendaraction",
             name="uuid",
-            field=models.CharField(
-                default=uds.core.util.model.generate_uuid, max_length=50, unique=True
-            ),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         migrations.AlterField(
             model_name="calendarrule",
             name="uuid",
-            field=models.CharField(
-                default=uds.core.util.model.generate_uuid, max_length=50, unique=True
-            ),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         migrations.AlterField(
             model_name="group",
             name="uuid",
-            field=models.CharField(
-                default=uds.core.util.model.generate_uuid, max_length=50, unique=True
-            ),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         migrations.AlterField(
             model_name="image",
             name="uuid",
-            field=models.CharField(
-                default=uds.core.util.model.generate_uuid, max_length=50, unique=True
-            ),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         migrations.AlterField(
             model_name="metapool",
             name="uuid",
-            field=models.CharField(
-                default=uds.core.util.model.generate_uuid, max_length=50, unique=True
-            ),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         migrations.AlterField(
             model_name="metapoolmember",
             name="uuid",
-            field=models.CharField(
-                default=uds.core.util.model.generate_uuid, max_length=50, unique=True
-            ),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         migrations.AlterField(
             model_name="mfa",
             name="uuid",
-            field=models.CharField(
-                default=uds.core.util.model.generate_uuid, max_length=50, unique=True
-            ),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         migrations.AlterField(
             model_name="network",
@@ -360,30 +353,22 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="network",
             name="uuid",
-            field=models.CharField(
-                default=uds.core.util.model.generate_uuid, max_length=50, unique=True
-            ),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         migrations.AlterField(
             model_name="osmanager",
             name="uuid",
-            field=models.CharField(
-                default=uds.core.util.model.generate_uuid, max_length=50, unique=True
-            ),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         migrations.AlterField(
             model_name="permissions",
             name="uuid",
-            field=models.CharField(
-                default=uds.core.util.model.generate_uuid, max_length=50, unique=True
-            ),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         migrations.AlterField(
             model_name="provider",
             name="uuid",
-            field=models.CharField(
-                default=uds.core.util.model.generate_uuid, max_length=50, unique=True
-            ),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         migrations.AlterField(
             model_name="scheduler",
@@ -393,16 +378,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="service",
             name="token",
-            field=models.CharField(
-                blank=True, default=None, max_length=64, null=True, unique=True
-            ),
+            field=models.CharField(blank=True, default=None, max_length=64, null=True, unique=True),
         ),
         migrations.AlterField(
             model_name="service",
             name="uuid",
-            field=models.CharField(
-                default=uds.core.util.model.generate_uuid, max_length=50, unique=True
-            ),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         migrations.AlterField(
             model_name="servicepool",
@@ -416,44 +397,32 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="servicepool",
             name="uuid",
-            field=models.CharField(
-                default=uds.core.util.model.generate_uuid, max_length=50, unique=True
-            ),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         migrations.AlterField(
             model_name="servicepoolgroup",
             name="uuid",
-            field=models.CharField(
-                default=uds.core.util.model.generate_uuid, max_length=50, unique=True
-            ),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         migrations.AlterField(
             model_name="servicepoolpublication",
             name="uuid",
-            field=models.CharField(
-                default=uds.core.util.model.generate_uuid, max_length=50, unique=True
-            ),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         migrations.AlterField(
             model_name="tag",
             name="uuid",
-            field=models.CharField(
-                default=uds.core.util.model.generate_uuid, max_length=50, unique=True
-            ),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         migrations.AlterField(
             model_name="ticketstore",
             name="uuid",
-            field=models.CharField(
-                default=uds.core.util.model.generate_uuid, max_length=50, unique=True
-            ),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         migrations.AlterField(
             model_name="transport",
             name="uuid",
-            field=models.CharField(
-                default=uds.core.util.model.generate_uuid, max_length=50, unique=True
-            ),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         migrations.AlterField(
             model_name="tunneltoken",
@@ -473,9 +442,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="user",
             name="uuid",
-            field=models.CharField(
-                default=uds.core.util.model.generate_uuid, max_length=50, unique=True
-            ),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         migrations.AlterField(
             model_name="userservice",
@@ -490,9 +457,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="userservice",
             name="uuid",
-            field=models.CharField(
-                default=uds.core.util.model.generate_uuid, max_length=50, unique=True
-            ),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         migrations.DeleteModel(
             name="Proxy",
