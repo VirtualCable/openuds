@@ -121,7 +121,7 @@ class TestProxmoxFixedService(UDSTransactionTestCase):
 
             # Get first network mac
             self.assertEqual(
-                service.get_mac('1'), fixtures.VMS_CONFIGURATION[0].networks[0].mac.lower()
+                service.get_mac('1'), fixtures.VMS_CONFIGURATION[0].networks[0].macaddr.lower()
             )
 
             # Get guest ip address

@@ -183,7 +183,7 @@ DEF_VMS_CONFIGURATION: list[prox_types.VMConfiguration] = [
         digest='digest',
         networks=[
             prox_types.NetworkConfiguration(
-                net='net', type='type', mac=f'{i:02x}:{i+1:02x}:{i+2:02x}:{i+3:02x}:{i+4:02x}:{i+5:02x}'
+                net='net', type='type', macaddr=f'{i:02x}:{i+1:02x}:{i+2:02x}:{i+3:02x}:{i+4:02x}:{i+5:02x}'
             )
         ],
         tpmstate0='tpmstate0',

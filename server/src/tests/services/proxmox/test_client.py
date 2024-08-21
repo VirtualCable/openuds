@@ -346,3 +346,10 @@ class TestProxmoxClient(UDSTransactionTestCase):
         vmconfig = self.pclient.get_vm_config(self.test_vm.id)
         self.assertIsInstance(vmconfig, prox_types.VMConfiguration)
         self.assertEqual(vmconfig.name, self.test_vm.name)
+
+    def test_set_vm_net_mac(self) -> None:
+        with self._create_test_vm() as vm:
+            mac = '00:11:22:33:44:55'
+            self.pclient.set_vm_net_mac(vm.id, mac)
+            vmconfig = self.pclient.get_vm_config(vm.id)
+            self.assertEqual(vmconfig.networks[0].macaddr, mac)
