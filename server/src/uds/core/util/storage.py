@@ -110,7 +110,9 @@ class StorageAsDict(dict[str, typing.Any]):
     @property
     def _db(self) -> typing.Union[models.QuerySet[DBStorage], models.Manager[DBStorage]]:
         if self._atomic:
-            return DBStorage.objects.select_for_update(skip_locked=True)
+            # TODO: add skip_locked ASAP (mariadb 10.6+)
+            return DBStorage.objects.select_for_update()
+
         return DBStorage.objects
 
     @property
@@ -183,7 +185,7 @@ class StorageAsDict(dict[str, typing.Any]):
     # Optimized methods, avoid re-reading from DB
     def items(self) -> typing.Iterator[tuple[str, typing.Any]]:  # type: ignore   # compatible type
         return iter(_decode_value(i.key, i.data) for i in self._filtered)
-    
+
     def keys(self) -> typing.Iterator[str]:  # type: ignore   # compatible type
         return iter(_decode_value(i.key, i.data)[0] for i in self._filtered)
 
@@ -247,7 +249,9 @@ class Storage:
         if isinstance(owner, bytes):
             self._owner = owner.decode('utf-8')
             self._bowner = owner
-        elif isinstance(owner, str):  # pyright: ignore reportUnnecessaryIsInstance  Wants to ensure that it is a string no runtime error
+        elif isinstance(
+            owner, str
+        ):  # pyright: ignore reportUnnecessaryIsInstance  Wants to ensure that it is a string no runtime error
             self._owner = owner
             self._bowner = owner.encode('utf8')
         else:
@@ -333,13 +337,13 @@ class Storage:
 
     def read(self, skey: typing.Union[str, bytes]) -> typing.Optional[typing.Union[str, bytes]]:
         return self.read_from_db(skey)
-    
+
     def read_string(self, skey: typing.Union[str, bytes]) -> typing.Optional[str]:
         data = self.read(skey)
         if isinstance(data, bytes):
             return data.decode('utf-8')
         return data
-    
+
     def read_bytes(self, skey: typing.Union[str, bytes]) -> typing.Optional[bytes]:
         data = self.read(skey)
         if isinstance(data, str):
@@ -370,7 +374,7 @@ class Storage:
         if isinstance(skey, (str, bytes)):
             keys = [skey]
         else:
-            keys = skey # typing.cast('collections.abc.Iterable[str|bytes]', skey)
+            keys = skey  # typing.cast('collections.abc.Iterable[str|bytes]', skey)
 
         try:
             # Process several keys at once
