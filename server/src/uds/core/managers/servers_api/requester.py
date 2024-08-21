@@ -125,12 +125,12 @@ class ServerApiRequester:
                 except Exception:
                     logger.error('Error removing temp file %s', verify)
 
-    def get_comms_endpoint(self, method: str, minVersion: typing.Optional[str]) -> typing.Optional[str]:
+    def get_comms_endpoint(self, method: str, min_version: typing.Optional[str]) -> typing.Optional[str]:
         """
         Returns the url for a method on the server
         """
         if self.server.type == types.servers.ServerType.UNMANAGED or (
-            self.server.version < (minVersion or consts.system.MIN_SERVER_VERSION)
+            self.server.version < (min_version or consts.system.MIN_SERVER_VERSION)
         ):
             return None
 

@@ -56,7 +56,7 @@ MAX_DNS_NAME_LENGTH: typing.Final[int] = 255
 # Maximum number of failures before blocking on REST API
 ALLOWED_FAILS: typing.Final[int] = 5
 
-# Servers communications constants
+# Servers communications constants (note, servers providing services TO UDS, not UDS servers)
 USER_AGENT: typing.Final[str] = f'UDS/{VERSION}'
 COMMS_TIMEOUT: typing.Final[int] = 5  # Timeout for communications with servers
 MIN_SERVER_VERSION: typing.Final[str] = '4.0.0'
