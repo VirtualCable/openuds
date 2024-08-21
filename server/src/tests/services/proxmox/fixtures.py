@@ -152,6 +152,7 @@ DEF_VMS_INFO: list[prox_types.VMInfo] = [
         id=i,
         node=DEF_NODES[i % len(DEF_NODES)].name,
         template=True,
+        ha=prox_types.HAInfo.null(),
         agent='agent',
         cpus=1,
         lock='lock',
@@ -183,11 +184,12 @@ DEF_VMS_CONFIGURATION: list[prox_types.VMConfiguration] = [
         digest='digest',
         networks=[
             prox_types.NetworkConfiguration(
-                net='net', type='type', macaddr=f'{i:02x}:{i+1:02x}:{i+2:02x}:{i+3:02x}:{i+4:02x}:{i+5:02x}'
+                net='net', type='type', macaddr=f'{i:02x}:{i+1:02x}:{i+2:02x}:{i+3:02x}:{i+4:02x}:{i+5:02x}', netdata='netdata',
             )
         ],
         tpmstate0='tpmstate0',
-        template=bool(i > 8),  # Last two are templates
+        template=bool(i > 8),  # Last two are templates,
+        protection=bool(i % 2),  # Every two is protected
     )
     for i in range(10)
 ]
