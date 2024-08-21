@@ -129,7 +129,7 @@ class Filler(typing.TypedDict):
 
 
 class ChoiceItem(typing.TypedDict):
-    id: str
+    id: 'str|int'
     text: str
     img: typing.NotRequired[str]  # Only for IMAGECHOICE
 

@@ -128,7 +128,7 @@ class gui:
         """
         Helper method to create a single choice item.
         """
-        return {'id': str(id_), 'text': str(text)}
+        return {'id': id_, 'text': str(text)}
 
     @staticmethod
     def choice_image(id_: typing.Union[str, int], text: str, img: str) -> types.ui.ChoiceItem:
