@@ -33,11 +33,12 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import dataclasses
 import enum
 
+
 @dataclasses.dataclass
 class DetectedOsInfo:
     os: 'KnownOS'
     browser: 'KnownBrowser'
-    version: str   
+    version: str
 
 
 class KnownOS(enum.Enum):
@@ -54,9 +55,24 @@ class KnownOS(enum.Enum):
 
     def os_name(self) -> str:
         return self.value[0].lower()
-    
+
+    def db_value(self) -> str:
+        return {
+            'Linux': 'Linux',
+            'CrOS': 'ChromeOS',
+            'Windows Phone': 'WindowsPhone',
+            'Windows': 'Windows',
+            'MacOsX': 'Macintosh',
+            'Android': 'Android',
+            'iPad': 'iPad',
+            'iPhone': 'iPhone',
+            'WYSE': 'WYSE',
+            'Unknown': 'Unknown',
+        }[self.value[0]]
+
     def __str__(self) -> str:
         return self.os_name()
+
 
 # Order is important here, as we will use the first match
 class KnownBrowser(enum.StrEnum):
@@ -70,4 +86,3 @@ class KnownBrowser(enum.StrEnum):
     CHROMIUM = 'Chromium'
     IEXPLORER = 'Explorer'
     OTHER = 'Other'
-

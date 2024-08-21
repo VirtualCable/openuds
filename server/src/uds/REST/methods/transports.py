@@ -102,7 +102,7 @@ class Transports(ModelHandler):
                     'name': 'allowed_oss',
                     'value': [],
                     'choices': sorted(
-                        [ui.gui.choice_item(x.name, x.name) for x in consts.os.KNOWN_OS_LIST],
+                        [ui.gui.choice_item(x.db_value(), x.os_name().title()) for x in consts.os.KNOWN_OS_LIST],
                         key=lambda x: x['text'].lower(),
                     ),
                     'label': gettext('Allowed Devices'),
