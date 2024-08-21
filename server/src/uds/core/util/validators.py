@@ -263,7 +263,7 @@ def validate_host_port(host_port_pair: str, field_name: typing.Optional[str] = N
             dj_validators.validate_ipv46_address(host)
             return host, validate_port(port)
         except Exception:
-            return validate_hostname(host, 255, False), validate_port(port)
+            return validate_hostname(host, 255, True), validate_port(port)
     except Exception:
         raise exceptions.ui.ValidationError(_('{} is not a valid host:port pair').format(host_port_pair + field_name)) from None
 

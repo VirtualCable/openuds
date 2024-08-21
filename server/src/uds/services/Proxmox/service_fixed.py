@@ -213,7 +213,7 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
 
     def get_mac(self, vmid: str) -> str:
         config = self.provider().api.get_vm_config(int(vmid))
-        return config.networks[0].mac.lower()
+        return config.networks[0].macaddr.lower()
 
     def get_ip(self, vmid: str) -> str:
         return self.provider().api.get_guest_ip_address(int(vmid))

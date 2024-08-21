@@ -221,17 +221,30 @@ class TaskStatus:
 class NetworkConfiguration:
     net: str
     type: str
-    mac: str
+    macaddr: str
+
+    netdata: str  # Original data
+    
+    def is_null(self) -> bool:
+        return self.net == ''
+
+    def set_mac_address(self, macaddr: str) -> None:
+        self.macaddr = macaddr
+        # Replace mac address in netdata
+        self.netdata = re.sub(r'^([^=]+)=([^,]+),', r'\1={},'.format(macaddr), self.netdata)
 
     @staticmethod
-    def from_str(net: str, value: str) -> 'NetworkConfiguration':
-        v = NETWORK_RE.match(value)
+    def from_str(net: str, netdata: str) -> 'NetworkConfiguration':
+        v = NETWORK_RE.match(netdata)
         type = mac = ''
         if v:
             type, mac = v.group(1), v.group(2)
 
-        return NetworkConfiguration(net=net, type=type, mac=mac)
+        return NetworkConfiguration(net=net, type=type, macaddr=mac, netdata=netdata)
 
+    @staticmethod
+    def null() -> 'NetworkConfiguration':
+        return NetworkConfiguration(net='', type='', macaddr='', netdata='')
 
 @dataclasses.dataclass
 class HAInfo:

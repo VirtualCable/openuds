@@ -670,25 +670,29 @@ class ProxmoxClient:
     def set_vm_net_mac(
         self,
         vmid: int,
-        mac: str,
-        netid: typing.Optional[str] = None,
+        macaddr: str,
+        netid: typing.Optional[str] = None,  # net0, net1, ...
         node: typing.Optional[str] = None,
     ) -> None:
         node = node or self.get_vm_info(vmid).node
-        # First, read current configuration and extract network configuration
-        config = self.do_get(f'nodes/{node}/qemu/{vmid}/config', node=node)['data']
-        if netid not in config:
-            # Get first network interface (netX where X is a number)
-            netid = next((k for k in config if k.startswith('net') and k[3:].isdigit()), None)
-        if not netid:
-            raise exceptions.ProxmoxError('No network interface found')
+    
+        net: types.NetworkConfiguration = types.NetworkConfiguration.null()
+        
+        cfg = self.get_vm_config(vmid, node)
+        
+        if netid is None:
+            net = cfg.networks[0]
+        else:
+            for i in cfg.networks:
+                if i.net == netid:
+                    net = i
+                    break
+                
+        # net should be the reference to the network we want to update
+        if net.is_null():
+            raise exceptions.ProxmoxError(f'Network {netid} not found for VM {vmid}')
 
-        netdata = config[netid]
-
-        # Update mac address, that is the first field <model>=<mac>,<other options>
-        netdata = re.sub(r'^([^=]+)=([^,]+),', r'\1={},'.format(mac), netdata)
-
-        logger.debug('Updating mac address for VM %s: %s=%s', vmid, netid, netdata)
+        logger.debug('Updating mac address for VM %s: %s=%s', vmid, netid, net.macaddr)
 
         self.do_post(
             f'nodes/{node}/qemu/{vmid}/config',

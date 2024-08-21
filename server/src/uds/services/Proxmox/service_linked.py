@@ -265,7 +265,7 @@ class ProxmoxServiceLinked(DynamicService):
         # If vmid is empty, we are requesting a new mac
         if not vmid:
             return self.mac_generator().get(self.get_macs_range())
-        return self.provider().api.get_vm_config(int(vmid)).networks[0].mac.lower()
+        return self.provider().api.get_vm_config(int(vmid)).networks[0].macaddr.lower()
 
     def start(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
         if isinstance(caller_instance, ProxmoxUserserviceLinked):
