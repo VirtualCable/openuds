@@ -265,6 +265,7 @@ class Migration(migrations.Migration):
             migrate_old_data,
             rollback_old_data,
             atomic=True,
+            elidable=True,
         ),
         migrations.DeleteModel(
             name="ActorToken",
