@@ -48,12 +48,6 @@ logger = logging.getLogger(__name__)
 # Pair of section/value removed from current UDS version
 # Note: As of version 4.0, all previous REMOVED values has been moved to migration script 0043
 REMOVED_CONFIG_ELEMENTS = {
-    'UDS': (),
-    'Cluster': (),
-    'IPAUTH': (),
-    'VMWare': (),
-    'HyperV': (),
-    'Security': (),
     'RGS': (
         'downloadUrl',
         'tunnelOpenedTime',
@@ -306,9 +300,21 @@ class Config:
             # Skip sections with name starting with "__" (not to be editted on configuration)
             if cfg.section.startswith('__'):  # Hidden section:
                 continue
+
+            # Skip removed configuration values, even if they are in database
+            logger.debug('Key: %s, val: %s', cfg.section, cfg.key)
+            if cfg.key in REMOVED_CONFIG_ELEMENTS.get(cfg.section, ()):
+                # Try to remove it, a left-behind value
+                try:
+                    DBConfig.objects.filter(section=cfg.section, key=cfg.key).delete()
+                except Exception:
+                    pass
+                continue
+
             # Hidden field, not to be edited by admin interface
             if cfg.field_type == Config.FieldType.HIDDEN:
                 continue
+
             logger.debug('%s.%s:%s,%s', cfg.section, cfg.key, cfg.value, cfg.field_type)
             val = Config.section(Config.SectionType.from_str(cfg.section)).value(
                 cfg.key, type=Config.FieldType.from_int(cfg.field_type), help=cfg.help
@@ -363,11 +369,6 @@ class Config:
         """
         res: dict[str, dict[str, typing.Any]] = {}
         for cfg in Config.enumerate():
-            # Skip removed configuration values, even if they are in database
-            logger.debug('Key: %s, val: %s', cfg.section(), cfg.key())
-            if cfg.key() in REMOVED_CONFIG_ELEMENTS.get(cfg.section(), ()):
-                continue
-
             if cfg.get_type() == Config.FieldType.PASSWORD and include_passwords is False:
                 continue
 
