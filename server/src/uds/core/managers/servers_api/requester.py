@@ -55,8 +55,8 @@ AUTH_TOKEN = 'X-TOKEN-AUTH'
 # If server is restrained, it will return False
 # If server is not restrained, it will execute the function and return it's result
 # If exception is raised, it will restrain the server and return False
-def restrain_server(func: collections.abc.Callable[..., typing.Any]) -> collections.abc.Callable[..., typing.Any]:
-    def inner(self: 'ServerApiRequester', *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
+def restrain_server(func: collections.abc.Callable[..., bool]) -> collections.abc.Callable[..., bool]:
+    def inner(self: 'ServerApiRequester', *args: typing.Any, **kwargs: typing.Any) -> bool:
         if self.server.is_restrained():
             return False
 
@@ -64,7 +64,7 @@ def restrain_server(func: collections.abc.Callable[..., typing.Any]) -> collecti
             return func(self, *args, **kwargs)
         except Exception as e:
             restrained_until = sql_now() + datetime.timedelta(seconds=consts.system.FAILURE_TIMEOUT)
-            logger.exception('Error executing %s: %s. Server restrained until %s', func.__name__, e, restrained_until)
+            logger.error('Error executing %s: %s. Server restrained until %s', func.__name__, e, restrained_until)
             self.server.set_restrained_until(
                 restrained_until
             )  # Block server for a while
