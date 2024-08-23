@@ -70,6 +70,7 @@ class Config:
     # Global configuration values
     _for_saving_later: typing.ClassVar[list[tuple['Config.Value', typing.Any]]] = []
     _for_recovering_later: typing.ClassVar[list['Config.Value']] = []
+    _for_removal_later: typing.ClassVar[list[tuple[str, str]]] = []
 
     # For custom params (for choices mainly)
     _config_params: typing.ClassVar[dict[str, typing.Any]] = {}
@@ -79,7 +80,6 @@ class Config:
 
     # If initialization has been done
     _initialization_finished: typing.ClassVar[bool] = False
-
 
     # Fields types, so inputs get more "beautiful"
     class FieldType(enum.IntEnum):
@@ -167,7 +167,7 @@ class Config:
 
         def get(self, force: bool = False) -> str:
             if apps.ready and Config._is_migrating is False:
-                if not GlobalConfig.isInitialized():
+                if not GlobalConfig.is_initialized():
                     logger.debug('Initializing configuration & updating db values')
                     GlobalConfig.initialize()
             else:
@@ -247,7 +247,7 @@ class Config:
             return gettext(self._help)
 
         def set(self, value: typing.Union[str, bool, int]) -> None:
-            if GlobalConfig.isInitialized() is False or Config._is_migrating is True:
+            if GlobalConfig.is_initialized() is False or Config._is_migrating is True:
                 Config._for_saving_later.append((self, value))
                 return
 
@@ -319,7 +319,7 @@ class Config:
     def update(section: 'Config.SectionType', key: str, value: str, check_type: bool = False) -> bool:
         # If cfg value does not exists, simply ignore request
         try:
-            cfg: DBConfig = DBConfig.objects.filter(section=section, key=key)[0]
+            cfg: DBConfig = DBConfig.objects.get(section=section, key=key)
             if check_type and cfg.field_type in (
                 Config.FieldType.READ,
                 Config.FieldType.HIDDEN,
@@ -337,8 +337,26 @@ class Config:
             return False
 
     @staticmethod
+    def removed(section: 'Config.SectionType', key: str) -> None:
+        """
+        Sets a key as removeds.
+        For this, we will simply remove the key if it exists, and add it to the "REMOVED_CONFIG_ELEMENTS" list
+        """
+        # If not ready or migrating, we will do it later
+        if not apps.ready or Config._is_migrating is False:
+            Config._for_removal_later.append((section, key))
+            return
+
+        # Try to remove it, if not found, simply ignore
+        try:
+            DBConfig.objects.filter(section=section, key=key).delete()
+            logger.debug('Removed value for %s.%s', section, key)
+        except Exception:
+            pass  # Ignore if any error...
+
+    @staticmethod
     def get_config_values(
-        addCrypt: bool = False,
+        include_passwords: bool = False,
     ) -> collections.abc.Mapping[str, collections.abc.Mapping[str, collections.abc.Mapping[str, typing.Any]]]:
         """
         Returns a dictionary with all config values
@@ -350,7 +368,7 @@ class Config:
             if cfg.key() in REMOVED_CONFIG_ELEMENTS.get(cfg.section(), ()):
                 continue
 
-            if cfg.get_type() == Config.FieldType.PASSWORD and addCrypt is False:
+            if cfg.get_type() == Config.FieldType.PASSWORD and include_passwords is False:
                 continue
 
             # add section if it do not exists
@@ -618,7 +636,7 @@ class GlobalConfig:
         type=Config.FieldType.TEXT,
         help=_('Networks or hosts considered "trusted" for UDS (Tunnels, etc...)'),
     )
-    
+
     ALLOWED_IP_FORWARDERS: Config.Value = Config.section(Config.SectionType.SECURITY).value(
         'Allowed IP Forwarders',
         '*',
@@ -786,7 +804,7 @@ class GlobalConfig:
     )
 
     @staticmethod
-    def isInitialized() -> bool:
+    def is_initialized() -> bool:
         return Config._initialization_finished
 
     @staticmethod
@@ -804,12 +822,19 @@ class GlobalConfig:
                     logger.debug('Get later: %s', c)
                     c.get()
 
-                Config._for_recovering_later[:] = []  # pyright: ignore[reportUnknownArgumentType]
+                Config._for_recovering_later[:] = []
 
                 for c, v in Config._for_saving_later:
                     logger.debug('Saving delayed value: %s', c)
                     c.set(v)
-                Config._for_saving_later[:] = []  # pyright: ignore[reportUnknownArgumentType]
+                Config._for_saving_later[:] = []
+
+                # Remove delayed values
+                for section, key in Config._for_removal_later:
+                    # Remove from database
+                    DBConfig.objects.filter(section=section, key=key).delete()
+
+                Config._for_removal_later[:] = []
 
                 # Process some global config parameters
                 # GlobalConfig.UDS_THEME.setParams(['html5', 'semantic'])
