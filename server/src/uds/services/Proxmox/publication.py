@@ -122,7 +122,19 @@ class ProxmoxPublication(DynamicPublication, autoserializable.AutoSerializable):
         # Wait a bit, if too fast, proxmox fails.. (Have not tested on 8.x, but previous versions failed if too fast..)
         time.sleep(0.5)
         # Mark vm as template
-        self.service().provider().api.convert_vm_to_template(int(self._vmid))
+        task = self.service().provider().api.convert_vm_to_template(int(self._vmid))
+        self._task = ','.join((task.node, task.upid))
+
+    def op_create_completed_checker(self) -> types.states.TaskState:
+        node, upid = self._task.split(',')
+        task = self.service().provider().api.get_task_info(node, upid)
+        if task.is_running():
+            return types.states.TaskState.RUNNING
+
+        if task.is_errored():
+            return self._error(task.exitstatus)
+
+        return types.states.TaskState.FINISHED
 
     def op_delete(self) -> None:
         self.service().delete(self, self._vmid)

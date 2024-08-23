@@ -149,7 +149,7 @@ class ClusterInfo:
 
 
 @dataclasses.dataclass
-class UPID:
+class ExecResult:
     node: str
     pid: int
     pstart: int
@@ -160,10 +160,10 @@ class UPID:
     upid: str
 
     @staticmethod
-    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'UPID':
+    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'ExecResult':
         upid = dictionary['data']
         d = upid.split(':')
-        return UPID(
+        return ExecResult(
             node=d[1],
             pid=int(d[2], 16),
             pstart=int(d[3], 16),
@@ -409,7 +409,7 @@ class VMConfiguration:
 class VmCreationResult:
     node: str
     vmid: int
-    upid: UPID
+    upid: ExecResult
 
 
 @dataclasses.dataclass

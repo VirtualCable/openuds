@@ -58,7 +58,7 @@ class ProxmoxUserServiceFixed(FixedUserService, autoserializable.AutoSerializabl
 
     """
 
-    def _store_task(self, upid: 'prox_types.UPID') -> None:
+    def _store_task(self, upid: 'prox_types.ExecResult') -> None:
         self._task = '\t'.join([upid.node, upid.upid])
 
     def _retrieve_task(self) -> tuple[str, str]:

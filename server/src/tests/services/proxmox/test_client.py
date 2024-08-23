@@ -36,6 +36,8 @@ import typing
 import logging
 import contextlib
 
+from uds.core import types as core_types
+
 from uds.services.Proxmox.proxmox import (
     types as prox_types,
     client as prox_client,
@@ -150,6 +152,15 @@ class TestProxmoxClient(UDSTransactionTestCase):
             yield self.pclient.get_vm_info(res.vmid)
         finally:
             if res:
+                # If vm is running, stop it and delete it
+                if res.vmid:
+                    try:
+                        vminfo = self.pclient.get_vm_info(res.vmid)
+                        if vminfo.status == prox_types.VMStatus.RUNNING:
+                            exec_result = self.pclient.stop_vm(res.vmid)
+                            self._wait_for_task(exec_result.node, exec_result.upid)
+                    except prox_exceptions.ProxmoxError:
+                        pass
                 self.pclient.delete_vm(res.vmid)
 
     # Connect is not needed, because setUp will do the connection so if it fails, the test will throw an exception
@@ -353,3 +364,98 @@ class TestProxmoxClient(UDSTransactionTestCase):
             self.pclient.set_vm_net_mac(vm.id, mac)
             vmconfig = self.pclient.get_vm_config(vm.id)
             self.assertEqual(vmconfig.networks[0].macaddr, mac)
+
+    def test_start_stop_vm(self) -> None:
+        with self._create_test_vm() as vm:
+            task_info = self.pclient.start_vm(vm.id)
+            self._wait_for_task(task_info.node, task_info.upid)
+            self.assertTrue(self.pclient.get_vm_info(vm.id, force=True).status == prox_types.VMStatus.RUNNING)
+
+            task_info = self.pclient.stop_vm(vm.id)
+            self._wait_for_task(task_info.node, task_info.upid)
+            self.assertTrue(self.pclient.get_vm_info(vm.id, force=True).status == prox_types.VMStatus.STOPPED)
+
+    def test_shutdown_vm(self) -> None:
+        with self._create_test_vm() as vm:
+            task_info = self.pclient.start_vm(vm.id)
+            self._wait_for_task(task_info.node, task_info.upid)
+            self.assertTrue(self.pclient.get_vm_info(vm.id, force=True).status == prox_types.VMStatus.RUNNING)
+
+            start_time = time.time()
+            # The VM has no SO, so it will not shutdown gracefully but in 2 seconds will be stopped
+            task_info = self.pclient.shutdown_vm(vm.id, timeout=2)
+            self._wait_for_task(task_info.node, task_info.upid)
+            self.assertTrue(self.pclient.get_vm_info(vm.id, force=True).status == prox_types.VMStatus.STOPPED)
+            end_time = time.time()
+            self.assertGreaterEqual(end_time - start_time, 2)
+
+    def test_suspend_resume_vm(self) -> None:
+        with self._create_test_vm() as vm:
+            result = self.pclient.start_vm(vm.id)
+            self._wait_for_task(result.node, result.upid)
+            self.assertTrue(self.pclient.get_vm_info(vm.id, force=True).status == prox_types.VMStatus.RUNNING)
+
+            result = self.pclient.suspend_vm(vm.id)
+            self._wait_for_task(result.node, result.upid)
+            self.assertTrue(self.pclient.get_vm_info(vm.id, force=True).status == prox_types.VMStatus.STOPPED)
+
+            result = self.pclient.resume_vm(vm.id)
+            self._wait_for_task(result.node, result.upid)
+            self.assertTrue(self.pclient.get_vm_info(vm.id, force=True).status == prox_types.VMStatus.RUNNING)
+
+    def test_convert_vm_to_template_and_clone(self) -> None:
+        with self._create_test_vm() as vm:
+            result = self.pclient.convert_vm_to_template(vm.id)
+            self._wait_for_task(result.node, result.upid)
+            self.assertTrue(self.pclient.get_vm_info(vm.id, force=True).template)
+
+            with self._create_test_vm(vmid=vm.id, as_linked_clone=True):
+                pass
+
+    def test_get_storage_info(self) -> None:
+        storage_info = self.pclient.get_storage_info(self.storage.node, self.storage.storage)
+        self.assertIsInstance(storage_info, prox_types.StorageInfo)
+        self.assertEqual(storage_info.storage, self.storage.storage)
+
+    def test_list_storages(self) -> None:
+        storages = self.pclient.list_storages()
+        self.assertIsInstance(storages, list)
+        for storage in storages:
+            self.assertIsInstance(storage, prox_types.StorageInfo)
+
+        self.assertTrue(len(storages) > 0)
+        self.assertIn(self.storage.storage, [s.storage for s in storages])
+
+    def test_get_nodes_stats(self) -> None:
+        stats = self.pclient.get_nodes_stats()
+        self.assertIsInstance(stats, list)
+        for stat in stats:
+            self.assertIsInstance(stat, prox_types.NodeStats)
+
+        self.assertGreater(len(stats), 0)
+        self.assertIn(self.test_vm.node, [s.name for s in stats])
+
+    def test_list_pools(self) -> None:
+        pools = self.pclient.list_pools()
+        self.assertIsInstance(pools, list)
+        for pool in pools:
+            self.assertIsInstance(pool, prox_types.PoolInfo)
+
+        self.assertTrue(len(pools) > 0)
+        self.assertIn(self.pool.id, [p.id for p in pools])
+
+    def test_get_pool_info(self) -> None:
+        pool_info = self.pclient.get_pool_info(self.pool.id)
+        self.assertIsInstance(pool_info, prox_types.PoolInfo)
+        self.assertEqual(pool_info.id, self.pool.id)
+
+    def test_get_console_connection(self) -> None:
+        # Create an vm and start it
+        with self._create_test_vm() as vm:
+            result = self.pclient.start_vm(vm.id)
+            self._wait_for_task(result.node, result.upid)
+            self.assertTrue(self.pclient.get_vm_info(vm.id, force=True).status == prox_types.VMStatus.RUNNING)
+
+            # Get the console connection
+            console_info = self.pclient.get_console_connection(vm.id)
+            self.assertIsInstance(console_info, core_types.services.ConsoleConnectionInfo)

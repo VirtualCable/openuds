@@ -195,7 +195,7 @@ DEF_VMS_CONFIGURATION: list[prox_types.VMConfiguration] = [
 ]
 
 
-DEF_UPID: prox_types.UPID = prox_types.UPID(
+DEF_UPID: prox_types.ExecResult = prox_types.ExecResult(
     node=DEF_NODES[0].name,
     pid=1,
     pstart=1,
@@ -282,7 +282,7 @@ VGPUS: list[prox_types.VGPUInfo] = copy.deepcopy(DEF_VGPUS)
 HA_GROUPS: list[str] = copy.deepcopy(DEF_HA_GROUPS)
 VMINFO_LIST: list[prox_types.VMInfo] = copy.deepcopy(DEF_VMS_INFO)
 VMS_CONFIGURATION: list[prox_types.VMConfiguration] = copy.deepcopy(DEF_VMS_CONFIGURATION)
-UPID: prox_types.UPID = copy.deepcopy(DEF_UPID)
+UPID: prox_types.ExecResult = copy.deepcopy(DEF_UPID)
 VM_CREATION_RESULT: prox_types.VmCreationResult = copy.deepcopy(DEF_VM_CREATION_RESULT)
 SNAPSHOTS_INFO: list[prox_types.SnapshotInfo] = copy.deepcopy(DEF_SNAPSHOTS_INFO)
 TASK_STATUS: prox_types.TaskStatus = copy.deepcopy(DEF_TASK_STATUS)
@@ -315,7 +315,7 @@ def clear() -> None:
     CONSOLE_CONNECTION_INFO = copy.deepcopy(DEF_CONSOLE_CONNECTION_INFO)  # pyright: ignore
 
 
-def replace_vm_info(vmid: int, **kwargs: typing.Any) -> prox_types.UPID:
+def replace_vm_info(vmid: int, **kwargs: typing.Any) -> prox_types.ExecResult:
     """
     Set the values of VMS_INFO[vmid - 1]
     """
@@ -329,7 +329,7 @@ def replace_vm_info(vmid: int, **kwargs: typing.Any) -> prox_types.UPID:
     return UPID
 
 
-def replacer_vm_info(**kwargs: typing.Any) -> typing.Callable[..., prox_types.UPID]:
+def replacer_vm_info(**kwargs: typing.Any) -> typing.Callable[..., prox_types.ExecResult]:
     return functools.partial(replace_vm_info, **kwargs)
 
 
@@ -480,7 +480,7 @@ CLIENT_METHODS_INFO: list[AutoSpecMethodInfo] = [
     ),
     # get_node_stats
     AutoSpecMethodInfo(
-        uds.services.Proxmox.proxmox.client.ProxmoxClient.get_node_stats,
+        uds.services.Proxmox.proxmox.client.ProxmoxClient.get_nodes_stats,
         returns=lambda node, **kwargs: next(  # pyright: ignore
             filter(lambda n: n.name == node, NODE_STATS)  # pyright: ignore
         ),

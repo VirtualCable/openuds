@@ -335,7 +335,7 @@ class ProxmoxClient:
             return (x.mem / x.maxmem) + (x.cpu / x.maxcpu) * 1.3
 
         # Offline nodes are not "the best"
-        for node in filter(lambda x: x.status == 'online', self.get_node_stats()):
+        for node in filter(lambda x: x.status == 'online', self.get_nodes_stats()):
             if min_memory and node.mem < min_memory + 512000000:  # 512 MB reserved
                 continue  # Skips nodes with not enouhg memory
             if must_have_vgpus is not None and must_have_vgpus != bool(self.list_node_gpu_devices(node.name)):
@@ -375,7 +375,7 @@ class ProxmoxClient:
             )
 
         # Ensure exists target pool, (id is in fact the name of the pool)
-        if target_pool and not any(p.id == target_pool for p in self.list_pools()): 
+        if target_pool and not any(p.id == target_pool for p in self.list_pools()):
             raise exceptions.ProxmoxDoesNotExists(f'Pool "{target_pool}" does not exist')
 
         src_node = vminfo.node
@@ -438,7 +438,7 @@ class ProxmoxClient:
         return types.VmCreationResult(
             node=target_node,
             vmid=new_vmid,
-            upid=types.UPID.from_dict(
+            upid=types.ExecResult.from_dict(
                 self.do_post(f'nodes/{src_node}/qemu/{vmid}/clone', data=params, node=src_node)
             ),
         )
@@ -510,9 +510,9 @@ class ProxmoxClient:
 
         raise exceptions.ProxmoxError('No ip address found for vm {}'.format(vmid))
 
-    def delete_vm(self, vmid: int, node: typing.Optional[str] = None, purge: bool = True) -> types.UPID:
+    def delete_vm(self, vmid: int, node: typing.Optional[str] = None, purge: bool = True) -> types.ExecResult:
         node = node or self.get_vm_info(vmid).node
-        return types.UPID.from_dict(self.do_delete(f'nodes/{node}/qemu/{vmid}?purge=1', node=node))
+        return types.ExecResult.from_dict(self.do_delete(f'nodes/{node}/qemu/{vmid}?purge=1', node=node))
 
     def list_snapshots(self, vmid: int, node: typing.Optional[str] = None) -> list[types.SnapshotInfo]:
         node = node or self.get_vm_info(vmid).node
@@ -548,7 +548,7 @@ class ProxmoxClient:
         node: 'str|None' = None,
         name: typing.Optional[str] = None,
         description: typing.Optional[str] = None,
-    ) -> types.UPID:
+    ) -> types.ExecResult:
         if self.supports_snapshot(vmid, node) is False:
             raise exceptions.ProxmoxError('Machine does not support snapshots')
 
@@ -559,7 +559,9 @@ class ProxmoxClient:
             ('snapname', name),
             ('description', description or f'UDS Snapshot created at {time.strftime("%c")}'),
         ]
-        return types.UPID.from_dict(self.do_post(f'nodes/{node}/qemu/{vmid}/snapshot', data=params, node=node))
+        return types.ExecResult.from_dict(
+            self.do_post(f'nodes/{node}/qemu/{vmid}/snapshot', data=params, node=node)
+        )
 
     def delete_snapshot(
         self,
@@ -567,11 +569,11 @@ class ProxmoxClient:
         *,
         node: 'str|None' = None,
         name: typing.Optional[str] = None,
-    ) -> types.UPID:
+    ) -> types.ExecResult:
         node = node or self.get_vm_info(vmid).node
         if name is None:
             raise exceptions.ProxmoxError('Snapshot name is required')
-        return types.UPID.from_dict(self.do_delete(f'nodes/{node}/qemu/{vmid}/snapshot/{name}', node=node))
+        return types.ExecResult.from_dict(self.do_delete(f'nodes/{node}/qemu/{vmid}/snapshot/{name}', node=node))
 
     def restore_snapshot(
         self,
@@ -579,11 +581,11 @@ class ProxmoxClient:
         *,
         node: 'str|None' = None,
         name: typing.Optional[str] = None,
-    ) -> types.UPID:
+    ) -> types.ExecResult:
         node = node or self.get_vm_info(vmid).node
         if name is None:
             raise exceptions.ProxmoxError('Snapshot name is required')
-        return types.UPID.from_dict(
+        return types.ExecResult.from_dict(
             self.do_post(f'nodes/{node}/qemu/{vmid}/snapshot/{name}/rollback', node=node)
         )
 
@@ -622,6 +624,7 @@ class ProxmoxClient:
 
         # return sorted(result, key=lambda x: '{}{}'.format(x.node, x.name))
 
+    @cached('vmp', consts.CACHE_VM_INFO_DURATION, key_helper=caching_key_helper)
     def get_vm_pool_info(self, vmid: int, poolid: typing.Optional[str], **kwargs: typing.Any) -> types.VMInfo:
         # try to locate machine in pool
         node = None
@@ -640,6 +643,7 @@ class ProxmoxClient:
 
         return self.get_vm_info(vmid, node, **kwargs)
 
+    @cached('vm', consts.CACHE_VM_INFO_DURATION, key_helper=caching_key_helper)
     def get_vm_info(self, vmid: int, node: typing.Optional[str] = None, **kwargs: typing.Any) -> types.VMInfo:
         nodes = [types.Node(node, False, False, 0, '', '', '')] if node else self.get_cluster_info().nodes
         any_node_is_down = False
@@ -674,11 +678,11 @@ class ProxmoxClient:
         node: typing.Optional[str] = None,
     ) -> None:
         node = node or self.get_vm_info(vmid).node
-    
+
         net: types.NetworkConfiguration = types.NetworkConfiguration.null()
-        
+
         cfg = self.get_vm_config(vmid, node)
-        
+
         if netid is None:
             net = cfg.networks[0]
         else:
@@ -686,7 +690,7 @@ class ProxmoxClient:
                 if i.net == netid:
                     net = i
                     break
-                
+
         # net should be the reference to the network we want to update
         if net.is_null():
             raise exceptions.ProxmoxError(f'Network {netid} not found for VM {vmid}')
@@ -700,39 +704,49 @@ class ProxmoxClient:
             node=node,
         )
 
-    def start_vm(self, vmid: int, node: typing.Optional[str] = None) -> types.UPID:
+    def start_vm(self, vmid: int, node: typing.Optional[str] = None) -> types.ExecResult:
         # if exitstatus is "OK" or contains "already running", all is fine
         node = node or self.get_vm_info(vmid).node
-        return types.UPID.from_dict(self.do_post(f'nodes/{node}/qemu/{vmid}/status/start', node=node))
+        return types.ExecResult.from_dict(self.do_post(f'nodes/{node}/qemu/{vmid}/status/start', node=node))
 
-    def stop_vm(self, vmid: int, node: typing.Optional[str] = None) -> types.UPID:
+    def stop_vm(self, vmid: int, node: typing.Optional[str] = None) -> types.ExecResult:
         node = node or self.get_vm_info(vmid).node
-        return types.UPID.from_dict(self.do_post(f'nodes/{node}/qemu/{vmid}/status/stop', node=node))
+        return types.ExecResult.from_dict(self.do_post(f'nodes/{node}/qemu/{vmid}/status/stop', node=node))
 
-    def reset_vm(self, vmid: int, node: typing.Optional[str] = None) -> types.UPID:
+    def reset_vm(self, vmid: int, node: typing.Optional[str] = None) -> types.ExecResult:
         node = node or self.get_vm_info(vmid).node
-        return types.UPID.from_dict(self.do_post(f'nodes/{node}/qemu/{vmid}/status/reset', node=node))
+        return types.ExecResult.from_dict(self.do_post(f'nodes/{node}/qemu/{vmid}/status/reset', node=node))
 
-    def suspend_vm(self, vmid: int, node: typing.Optional[str] = None) -> types.UPID:
-        # Note: Suspend, in fact, invoques sets the machine state to "paused"
-        return self.shutdown_vm(vmid, node)
-        # node = node or self.get_machine_info(vmid).node
-        # return types.UPID.from_dict(self._post(f'nodes/{node}/qemu/{vmid}/status/suspend', node=node))
+    def suspend_vm(self, vmid: int, node: typing.Optional[str] = None) -> types.ExecResult:
+        # Suspends VM to disk
+        node = node or self.get_vm_info(vmid).node
+        return types.ExecResult.from_dict(
+            self.do_post(f'nodes/{node}/qemu/{vmid}/status/suspend', data=[('todisk', '1')], node=node)
+        )
 
-    def shutdown_vm(self, vmid: int, node: typing.Optional[str] = None) -> types.UPID:
+    def shutdown_vm(
+        self, vmid: int, node: typing.Optional[str] = None, timeout: typing.Optional[int] = None
+    ) -> types.ExecResult:
         # if exitstatus is "OK" or contains "already running", all is fine
         node = node or self.get_vm_info(vmid).node
-        return types.UPID.from_dict(self.do_post(f'nodes/{node}/qemu/{vmid}/status/shutdown', node=node))
+        return types.ExecResult.from_dict(
+            self.do_post(
+                f'nodes/{node}/qemu/{vmid}/status/shutdown',
+                data=[('forceStop', '1'), ('timeout', str(timeout or 60))],
+                node=node,
+            )
+        )
 
-    def convert_vm_to_template(self, vmid: int, node: typing.Optional[str] = None) -> None:
+    def convert_vm_to_template(self, vmid: int, node: typing.Optional[str] = None) -> types.ExecResult:
         node = node or self.get_vm_info(vmid).node
-        self.do_post(f'nodes/{node}/qemu/{vmid}/template', node=node)
+        result = self.do_post(f'nodes/{node}/qemu/{vmid}/template', node=node)
         # Ensure cache is reset for this VM (as it is now a template)
         self.get_vm_info(vmid, force=True)
+        return types.ExecResult.from_dict(result)
 
-    # proxmox has a "resume", but start works for suspended vm so we use it
-    def resume_vm(self, vmid: int, node: typing.Optional[str] = None) -> types.UPID:
-        return self.start_vm(vmid, node)
+    def resume_vm(self, vmid: int, node: typing.Optional[str] = None) -> types.ExecResult:
+        node = node or self.get_vm_info(vmid).node
+        return types.ExecResult.from_dict(self.do_post(f'nodes/{node}/qemu/{vmid}/status/resume', node=node))
 
     @cached('storage', consts.CACHE_DURATION, key_helper=caching_key_helper)
     def get_storage_info(self, node: str, storage: str, **kwargs: typing.Any) -> types.StorageInfo:
@@ -770,22 +784,12 @@ class ProxmoxClient:
             key=lambda x: f'{x.node}{x.storage}',
         )
 
-        # result: list[types.StorageInfo] = []
-
-        # for node_name in nodes:
-        #     for storage in self.do_get(f'nodes/{node_name}/storage{params}', node=node_name)['data']:
-        #         storage['node'] = node_name
-        #         storage['content'] = storage['content'].split(',')
-        #         result.append(types.StorageInfo.from_dict(storage))
-
-        # return result
-
-    @cached('nodeStats', consts.CACHE_INFO_DURATION, key_helper=caching_key_helper)
-    def get_node_stats(self, **kwargs: typing.Any) -> list[types.NodeStats]:
+    @cached('nost', consts.CACHE_INFO_DURATION, key_helper=caching_key_helper)
+    def get_nodes_stats(self, **kwargs: typing.Any) -> list[types.NodeStats]:
         # vm | storage | node | sdn are valid types for cluster/resources
         return [
             types.NodeStats.from_dict(nodeStat)
-            for nodeStat in self.do_get('cluster/resources?type=node')['data']
+            for nodeStat in self.get_cluster_resources('node')
         ]
 
     @cached('pools', consts.CACHE_DURATION // 6, key_helper=caching_key_helper)

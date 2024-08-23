@@ -105,7 +105,7 @@ class ProxmoxDeferredRemoval(jobs.Job):
     @staticmethod
     def waitForTaskFinish(
         provider_instance: 'provider.ProxmoxProvider',
-        upid: 'prox_types.UPID',
+        upid: 'prox_types.ExecResult',
         maxWait: int = 30,  # 30 * 0.3 = 9 seconds
     ) -> bool:
         counter = 0
