@@ -63,8 +63,8 @@ class HTML5SSHTransport(transports.Transport):
 
 
 def migrate(apps: typing.Any, schema_editor: typing.Any) -> None:
-    _migrator.tunnel_transport(apps, HTML5SSHTransport, 'guacamoleServer', is_html_server=True)
+    _migrator.tunnel_transport(apps, schema_editor, HTML5SSHTransport, 'guacamoleServer', is_html_server=True)
 
 
 def rollback(apps: typing.Any, schema_editor: typing.Any) -> None:
-    _migrator.tunnel_transport_back(apps, HTML5SSHTransport, 'guacamoleServer', is_html_server=True)
+    _migrator.tunnel_transport_back(apps, schema_editor, HTML5SSHTransport, 'guacamoleServer', is_html_server=True)

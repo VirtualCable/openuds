@@ -79,8 +79,8 @@ class TRDSTransport(transports.Transport):
 
 
 def migrate(apps: typing.Any, schema_editor: typing.Any) -> None:
-    _migrator.tunnel_transport(apps, TRDSTransport, 'tunnelServer', is_html_server=False)
+    _migrator.tunnel_transport(apps, schema_editor, TRDSTransport, 'tunnelServer', is_html_server=False)
 
 
 def rollback(apps: typing.Any, schema_editor: typing.Any) -> None:
-    _migrator.tunnel_transport_back(apps, TRDSTransport, 'tunnelServer', is_html_server=False)
+    _migrator.tunnel_transport_back(apps, schema_editor, TRDSTransport, 'tunnelServer', is_html_server=False)

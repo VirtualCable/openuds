@@ -86,8 +86,8 @@ class HTML5RDSTransport(transports.Transport):
 
 
 def migrate(apps: typing.Any, schema_editor: typing.Any) -> None:
-    _migrator.tunnel_transport(apps, HTML5RDSTransport, 'guacamoleServer', is_html_server=True)
+    _migrator.tunnel_transport(apps, schema_editor, HTML5RDSTransport, 'guacamoleServer', is_html_server=True)
 
 
 def rollback(apps: typing.Any, schema_editor: typing.Any) -> None:
-    _migrator.tunnel_transport_back(apps, HTML5RDSTransport, 'guacamoleServer', is_html_server=True)
+    _migrator.tunnel_transport_back(apps, schema_editor, HTML5RDSTransport, 'guacamoleServer', is_html_server=True)

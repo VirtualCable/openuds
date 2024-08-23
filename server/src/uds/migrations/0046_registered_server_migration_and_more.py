@@ -18,21 +18,22 @@ if typing.TYPE_CHECKING:
 
 def migrate_old_data(apps: typing.Any, schema_editor: typing.Any) -> None:
     try:
+        db_alias = schema_editor.connection.alias
         Server: 'type[uds.models.Server]' = apps.get_model('uds', 'Server')
         # Not typed, disappeared on this migration
         ActorToken = apps.get_model('uds', 'ActorToken')
 
         # First, add uuid to existing registered servers
-        for server in Server.objects.all():
+        for server in Server.objects.using(db_alias).all():
             server.uuid = uds.core.util.model.generate_uuid()
             server.save(update_fields=['uuid'])
 
         # Current Registered servers are tunnel servers, and all tunnel servers are linux os, so update ip
-        Server.objects.all().update(os_type=uds.core.types.os.KnownOS.LINUX.os_name())
+        Server.objects.using(db_alias).all().update(os_type=uds.core.types.os.KnownOS.LINUX.os_name())
 
         # Now append actors to registered servers, with "unknown" os type (legacy)
-        for token in ActorToken.objects.all():
-            Server.objects.create(
+        for token in ActorToken.objects.using(db_alias).all():
+            Server.objects.using(db_alias).create(
                 register_username=token.username,
                 register_ip=token.ip_from,
                 ip=token.ip,
@@ -63,12 +64,13 @@ def migrate_old_data(apps: typing.Any, schema_editor: typing.Any) -> None:
 
 
 def rollback_old_data(apps: typing.Any, schema_editor: typing.Any) -> None:
+    db_alias = schema_editor.connection.alias
     Server: 'type[uds.models.Server]' = apps.get_model('uds', 'Server')
     ActorToken = apps.get_model('uds', 'ActorToken')
-    for server in Server.objects.filter(type=ACTOR_TYPE):
+    for server in Server.objects.using(db_alias).filter(type=ACTOR_TYPE):
         if not server.data:
             continue  # Skip servers without data, they are not actors!!
-        ActorToken.objects.create(
+        ActorToken.objects.using(db_alias).create(
             username=server.register_username,
             ip_from=server.register_ip,
             ip=server.ip,
@@ -136,7 +138,7 @@ class Migration(migrations.Migration):
             model_name="server",
             old_name="username",
             new_name="register_username",
-        ),        
+        ),
         migrations.CreateModel(
             name="ServerGroup",
             fields=[

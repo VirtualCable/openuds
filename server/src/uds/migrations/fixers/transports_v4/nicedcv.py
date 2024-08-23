@@ -67,8 +67,8 @@ class NICEDCVTunnelTransport(transports.Transport):
 
 
 def migrate(apps: typing.Any, schema_editor: typing.Any) -> None:
-    _migrator.tunnel_transport(apps, NICEDCVTunnelTransport, 'tunnelServer', is_html_server=False)
+    _migrator.tunnel_transport(apps, schema_editor, NICEDCVTunnelTransport, 'tunnelServer', is_html_server=False)
 
 
 def rollback(apps: typing.Any, schema_editor: typing.Any) -> None:
-    _migrator.tunnel_transport_back(apps, NICEDCVTunnelTransport, 'tunnelServer', is_html_server=False)
+    _migrator.tunnel_transport_back(apps, schema_editor, NICEDCVTunnelTransport, 'tunnelServer', is_html_server=False)

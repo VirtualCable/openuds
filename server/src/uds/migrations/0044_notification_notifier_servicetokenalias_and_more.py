@@ -16,19 +16,15 @@ def remove_null_service_pools(apps: typing.Any, schema_editor: typing.Any):  # p
     ServicePool.objects.filter(service__isnull=True).delete()
 
 
-# No-Op backwards migration
-def nop(apps: typing.Any, schema_editor: typing.Any):  # pylint: disable=unused-argument
-    pass
-
-
 # Python update network fields to allow ipv6
 # We will
 def update_network_model(apps: typing.Any, schema_editor: typing.Any):  # pylint: disable=unused-argument
     import uds.models.network  # pylint: disable=import-outside-toplevel,redefined-outer-name
 
     Network = apps.get_model('uds', 'Network')
+    db_alias = schema_editor.connection.alias
     try:
-        for net in Network.objects.all():
+        for net in Network.objects.using(db_alias).all():
             # Store the net_start and net_end on new fields "start" and "end", that are strings
             # to allow us to store ipv6 addresses
             # pylint: disable=protected-access
@@ -50,7 +46,8 @@ def update_transport_net_filtering(
     apps: typing.Any, schema_editor: typing.Any
 ):  # pylint: disable=unused-argument
     Transport = apps.get_model('uds', 'Transport')
-    for transport in Transport.objects.all():
+    db_alias = schema_editor.connection.alias
+    for transport in Transport.objects.using(db_alias).all():
         if transport.networks.count() == 0:
             transport.net_filtering = auth.NO_FILTERING
         else:
@@ -59,12 +56,13 @@ def update_transport_net_filtering(
 
 
 class Migration(migrations.Migration):
+    atomic = False
     dependencies = [
         ("uds", "0043_auto_20220704_2120"),
     ]
 
     operations = [
-        migrations.RunPython(remove_null_service_pools, nop),
+        migrations.RunPython(remove_null_service_pools, elidable=True),
         migrations.CreateModel(
             name="Notification",
             fields=[
@@ -234,7 +232,7 @@ class Migration(migrations.Migration):
             field=models.IntegerField(default=4),
         ),
         # Run python code to update network model
-        migrations.RunPython(update_network_model, nop),
+        migrations.RunPython(update_network_model, elidable=True),
         migrations.RemoveField(
             model_name="network",
             name="net_end",
@@ -254,7 +252,7 @@ class Migration(migrations.Migration):
             field=models.CharField(db_index=True, default=auth.NO_FILTERING, max_length=1),
         ),
         # Update transport net_filtering in base to networks field of Transport having any element
-        migrations.RunPython(update_transport_net_filtering, nop),
+        migrations.RunPython(update_transport_net_filtering, elidable=True),
         # And now remove the nets_positive field
         migrations.RemoveField(
             model_name="transport",
