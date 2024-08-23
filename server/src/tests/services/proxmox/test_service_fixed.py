@@ -82,7 +82,7 @@ class TestProxmoxFixedService(UDSTransactionTestCase):
             self.assertEqual(
                 list(service.enumerate_assignables()),
                 [
-                    ui.gui.choice_item(locate_vm(x).id, locate_vm(x).name or '')
+                    ui.gui.choice_item(str(locate_vm(x).id), locate_vm(x).name or '')
                     for x in typing.cast(list[str], fixtures.SERVICE_FIXED_VALUES_DICT['machines'])
                 ],
             )

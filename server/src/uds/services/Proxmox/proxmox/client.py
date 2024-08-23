@@ -28,7 +28,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import collections.abc
-import re
 import time
 import typing
 import urllib.parse
@@ -693,10 +692,11 @@ class ProxmoxClient:
             raise exceptions.ProxmoxError(f'Network {netid} not found for VM {vmid}')
 
         logger.debug('Updating mac address for VM %s: %s=%s', vmid, netid, net.macaddr)
+        net.set_mac_address(macaddr)
 
         self.do_post(
             f'nodes/{node}/qemu/{vmid}/config',
-            data=[(netid, netdata)],
+            data=[(net.net, net.netdata)],
             node=node,
         )
 
