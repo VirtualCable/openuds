@@ -664,7 +664,8 @@ class ProxmoxClient:
 
         raise exceptions.ProxmoxNotFound(f'VM {vmid} not found')
 
-    def get_vm_config(self, vmid: int, node: typing.Optional[str] = None) -> types.VMConfiguration:
+    @cached('vmc', consts.CACHE_VM_INFO_DURATION, key_helper=caching_key_helper)
+    def get_vm_config(self, vmid: int, node: typing.Optional[str] = None, **kwargs: typing.Any) -> types.VMConfiguration:
         node = node or self.get_vm_info(vmid).node
         return types.VMConfiguration.from_dict(
             self.do_get(f'nodes/{node}/qemu/{vmid}/config', node=node)['data']

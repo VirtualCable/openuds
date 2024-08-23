@@ -264,20 +264,20 @@ class TestProxmoxClient(UDSTransactionTestCase):
         with self._create_test_vm() as vm:
             self.pclient.enable_vm_ha(vm.id, started=False, group=self.hagroup)
             # Ensure it's enabled
-            vminfo = self.pclient.get_vm_info(vm.id)
+            vminfo = self.pclient.get_vm_info(vm.id, force=True)
             self.assertEqual(vminfo.ha.group, self.hagroup)
             # Disable it
             self.pclient.disable_vm_ha(vm.id)
-            vminfo = self.pclient.get_vm_info(vm.id)
+            vminfo = self.pclient.get_vm_info(vm.id, force=True)
             self.assertEqual(vminfo.ha.group, '')
 
     def test_set_vm_protection(self) -> None:
         with self._create_test_vm() as vm:
             self.pclient.set_vm_protection(vm.id, protection=True)
-            vmconfig = self.pclient.get_vm_config(vm.id)
+            vmconfig = self.pclient.get_vm_config(vm.id, force=True)
             self.assertTrue(vmconfig.protection)
             self.pclient.set_vm_protection(vm.id, protection=False)
-            vmconfig = self.pclient.get_vm_config(vm.id)
+            vmconfig = self.pclient.get_vm_config(vm.id, force=True)
             self.assertFalse(vmconfig.protection)
 
     def test_get_guest_ip_address(self) -> None:
