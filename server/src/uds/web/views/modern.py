@@ -91,17 +91,13 @@ def ticketLauncher(request: HttpRequest) -> HttpResponse:
 
 
 # Basically, the original /login method, but fixed for modern interface
-def login(
-    request: ExtendedHttpRequest, tag: typing.Optional[str] = None
-) -> HttpResponse:
+def login(request: ExtendedHttpRequest, tag: typing.Optional[str] = None) -> HttpResponse:
     # Default empty form
     logger.debug('Tag: %s', tag)
 
     if request.method == 'POST':
         request.session['restricted'] = False  # Access is from login
-        request.authorized = (
-            False  # Ensure that on login page, user is unauthorized first
-        )
+        request.authorized = False  # Ensure that on login page, user is unauthorized first
 
         form = LoginForm(request.POST, tag=tag)
         user, data = checkLogin(request, form, tag)
@@ -148,18 +144,15 @@ def logout(request: ExtendedHttpRequestWithUser) -> HttpResponse:
             logoutUrl = request.session.get('logouturl', None)
         return auth.webLogout(request, logoutUrl)
     except exceptions.Redirect as e:
-        return HttpResponseRedirect(
-            request.build_absolute_uri(str(e)) if e.args and e.args[0] else '/'
-        )
+        return HttpResponseRedirect(request.build_absolute_uri(str(e)) if e.args and e.args[0] else '/')
     except Exception as e:
         logger.exception('Error logging out user')
         return auth.webLogout(request, None)
 
 
+@never_cache
 def js(request: ExtendedHttpRequest) -> HttpResponse:
-    return HttpResponse(
-        content=configjs.udsJs(request), content_type='application/javascript'
-    )
+    return HttpResponse(content=configjs.udsJs(request), content_type='application/javascript')
 
 
 @auth.denyNonAuthenticated
@@ -170,9 +163,7 @@ def servicesData(request: ExtendedHttpRequestWithUser) -> HttpResponse:
 # The MFA page does not needs CRF token, so we disable it
 @csrf_exempt
 def mfa(request: ExtendedHttpRequest) -> HttpResponse:
-    if (
-        not request.user or request.authorized
-    ):  # If no user, or user is already authorized, redirect to index
+    if not request.user or request.authorized:  # If no user, or user is already authorized, redirect to index
         logger.warning('MFA: No user or user is already authorized')
         return HttpResponseRedirect(reverse('page.index'))  # No user, no MFA
 
@@ -195,7 +186,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
     mfaInstance: 'mfas.MFA' = mfaProvider.getInstance()
 
     # Get validity duration
-    validity = mfaProvider.validity*60
+    validity = mfaProvider.validity * 60
     now = models.getSqlDatetimeAsUnix()
     start_time = request.session.get('mfa_start_time', now)
 
@@ -249,10 +240,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
                 response = HttpResponseRedirect(reverse('page.index'))
 
                 # If mfaProvider requests to keep MFA code on client, create a mfacookie for this user
-                if (
-                    mfaProvider.remember_device > 0
-                    and form.cleaned_data['remember'] is True
-                ):
+                if mfaProvider.remember_device > 0 and form.cleaned_data['remember'] is True:
                     response.set_cookie(
                         MFA_COOKIE_NAME,
                         mfaUserId,
@@ -330,9 +318,7 @@ def update_transport_ticket(
 
             # Update username andd password in ticket
             username: typing.Optional[str] = data.get('username', None) or None  # None if not present
-            password = (
-                data.get('password', None) or None
-            )  # If password is empty, set it to None
+            password = data.get('password', None) or None  # If password is empty, set it to None
             domain = data.get('domain', None) or None  # If empty string, set to None
 
             if password:
@@ -342,9 +328,7 @@ def update_transport_ticket(
                 if 'ticket-info' not in data:
                     return True
                 try:
-                    user = models.User.objects.get(
-                        uuid=data['ticket-info'].get('user', None)
-                    )
+                    user = models.User.objects.get(uuid=data['ticket-info'].get('user', None))
                     if request.user != user:
                         return False
                 except models.User.DoesNotExist:
@@ -357,9 +341,7 @@ def update_transport_ticket(
                             uuid=data['ticket-info'].get('userService', None)
                         )
                         # Notify preconnect
-                        userServiceManager().notifyPreconnect(
-                            userService, username, data.get('protocol', '')
-                        )
+                        userServiceManager().notifyPreconnect(userService, username, data.get('protocol', ''))
                     except models.UserService.DoesNotExist:
                         pass
 
@@ -372,14 +354,10 @@ def update_transport_ticket(
                 password=password,
                 domain=domain,
             )
-            return HttpResponse(
-                '{"status": "OK"}', status=200, content_type='application/json'
-            )
+            return HttpResponse('{"status": "OK"}', status=200, content_type='application/json')
     except Exception as e:
         # fallback to error
         pass
 
     # Invalid request
-    return HttpResponse(
-        '{"status": "Invalid Request"}', status=400, content_type='application/json'
-    )
+    return HttpResponse('{"status": "Invalid Request"}', status=400, content_type='application/json')
