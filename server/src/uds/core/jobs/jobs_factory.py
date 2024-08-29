@@ -47,10 +47,10 @@ class JobsFactory(factory.Factory['Job']):
         """
         Ensures that uds core workers are correctly registered in database and in factory
         """
-        from uds.models import Scheduler                  # pylint: disable=import-outside-toplevel
-        from uds.core.util.model import sql_now        # pylint: disable=import-outside-toplevel
-        from uds.core.types.states import State             # pylint: disable=import-outside-toplevel
-        from uds import workers                      # pylint: disable=import-outside-toplevel
+        from uds.models import Scheduler  # pylint: disable=import-outside-toplevel
+        from uds.core.util.model import sql_now  # pylint: disable=import-outside-toplevel
+        from uds.core.types.states import State  # pylint: disable=import-outside-toplevel
+        from uds import workers  # pylint: disable=import-outside-toplevel
 
         try:
             logger.debug('Ensuring that jobs are registered inside database')
@@ -74,12 +74,8 @@ class JobsFactory(factory.Factory['Job']):
                     logger.debug('Already added %s', name)
                     job = Scheduler.objects.get(name=name)
                     job.frecuency = type_.frecuency
-                    if job.next_execution > job.last_execution + datetime.timedelta(
-                        seconds=type_.frecuency
-                    ):
-                        job.next_execution = job.last_execution + datetime.timedelta(
-                            seconds=type_.frecuency
-                        )
+                    if job.next_execution > job.last_execution + datetime.timedelta(seconds=type_.frecuency):
+                        job.next_execution = job.last_execution + datetime.timedelta(seconds=type_.frecuency)
                     job.save()
         except Exception as e:
             logger.debug(
@@ -87,3 +83,7 @@ class JobsFactory(factory.Factory['Job']):
                 e.__class__,
                 e,
             )
+
+    @staticmethod
+    def factory() -> 'JobsFactory':
+        return JobsFactory()
