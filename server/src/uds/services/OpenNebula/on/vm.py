@@ -141,7 +141,7 @@ def shutdown_machine(api: 'client.OpenNebulaClient', vmid: str) -> None:
         logger.error('Error shutting down %s on OpenNebula: %s', vmid, e)
 
 
-def reset_machine(api: 'client.OpenNebulaClient', machineId: str) -> None:
+def reset_machine(api: 'client.OpenNebulaClient', vmid: str) -> None:
     '''
     Tries to suspend a machine. No check is done, it is simply requested to OpenNebula
 
@@ -151,12 +151,12 @@ def reset_machine(api: 'client.OpenNebulaClient', machineId: str) -> None:
     Returns:
     '''
     try:
-        api.set_machine_state(machineId, 'reboot-hard')
+        api.set_machine_state(vmid, 'reboot-hard')
     except Exception as e:
-        logger.error('Error reseting %s on OpenNebula: %s', machineId, e)
+        logger.error('Error reseting %s on OpenNebula: %s', vmid, e)
 
 
-def remove_machine(api: 'client.OpenNebulaClient', machineId: str) -> None:
+def remove_machine(api: 'client.OpenNebulaClient', vmid: str) -> None:
     '''
     Tries to delete a machine. No check is done, it is simply requested to OpenNebula
 
@@ -168,9 +168,9 @@ def remove_machine(api: 'client.OpenNebulaClient', machineId: str) -> None:
     try:
         # vm = oca.VirtualMachine.new_with_id(api, int(machineId))
         # vm.delete()
-        api.remove_machine(machineId)
+        api.remove_machine(vmid)
     except Exception as e:
-        err = 'Error removing machine {} on OpenNebula: {}'.format(machineId, e)
+        err = 'Error removing machine {} on OpenNebula: {}'.format(vmid, e)
         logger.exception(err)
         raise Exception(err)
 
@@ -197,19 +197,19 @@ def enumerate_machines(
 def get_network_info(
     api: 'client.OpenNebulaClient',
     vmid: str,
-    networkId: typing.Optional[str] = None,
+    network_id: typing.Optional[str] = None,
 ) -> tuple[str, str]:
     '''
     Get the MAC and the IP for the network and machine. If network is None, for the first network
     '''
     # md = minidom.parseString(api.call('vm.info', int(machineId)))
-    md: typing.Any = minidom.parseString(api.VMInfo(vmid).xml or '')  # pyright: ignore[reportUnknownMemberType]
+    md: typing.Any = minidom.parseString(api.vm_info(vmid).xml or '')  # pyright: ignore[reportUnknownMemberType]
     node = md
 
     try:
         for nic in md.getElementsByTagName('NIC'):
-            netId = nic.getElementsByTagName('NETWORK_ID')[0].childNodes[0].data
-            if networkId is None or int(netId) == int(networkId):
+            net_id = nic.getElementsByTagName('NETWORK_ID')[0].childNodes[0].data
+            if network_id is None or int(net_id) == int(network_id):
                 node = nic
                 break
     except Exception:
@@ -230,13 +230,13 @@ def get_network_info(
 
 
 def get_console_connection(
-    api: 'client.OpenNebulaClient', machineId: str
+    api: 'client.OpenNebulaClient', vmid: str
 ) -> typing.Optional[core_types.services.ConsoleConnectionInfo]:
     '''
     If machine is not running or there is not a display, will return NONE
     SPICE connections should check that 'type' is 'SPICE'
     '''
-    md: typing.Any = minidom.parseString(api.VMInfo(machineId).xml or '')  # pyright: ignore[reportUnknownMemberType]
+    md: typing.Any = minidom.parseString(api.vm_info(vmid).xml or '')  # pyright: ignore[reportUnknownMemberType]
     try:
         graphics = md.getElementsByTagName('GRAPHICS')[0]
 
@@ -247,8 +247,8 @@ def get_console_connection(
         except Exception:
             passwd = ''
 
-        lastChild: typing.Any = md.getElementsByTagName('HISTORY_RECORDS')[0].lastChild
-        address = lastChild.getElementsByTagName('HOSTNAME')[0].childNodes[0].data if lastChild else ''
+        last_child: typing.Any = md.getElementsByTagName('HISTORY_RECORDS')[0].lastChild
+        address = last_child.getElementsByTagName('HOSTNAME')[0].childNodes[0].data if last_child else ''
 
         return core_types.services.ConsoleConnectionInfo(
             type=type_,

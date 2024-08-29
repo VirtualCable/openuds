@@ -128,10 +128,10 @@ class Service(ManagedObjectModel, TaggingMixin):
             return typing.cast('services.Service', self._cached_instance)
 
         prov: 'services.ServiceProvider' = self.provider.get_instance()
-        sType = prov.get_service_by_type(self.data_type)
+        service_type = prov.get_service_by_type(self.data_type)
 
-        if sType:
-            obj = sType(self.get_environment(), prov, values, uuid=self.uuid)
+        if service_type:
+            obj = service_type(self.get_environment(), prov, values, uuid=self.uuid)
             self.deserialize(obj, values)
         else:
             raise Exception(f'Service type of {self.data_type} is not recognized by provider {prov.mod_name}')

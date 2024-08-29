@@ -47,4 +47,4 @@ def enumerateDatastores(
     """
     0 seems to be images datastore
     """
-    yield from api.enumStorage(datastoreType)
+    yield from api.enum_storage(datastoreType)

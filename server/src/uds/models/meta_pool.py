@@ -142,17 +142,17 @@ class MetaPool(UUIDModel, TaggingMixin):
                 maintenance += 1
         return total == maintenance
 
-    def is_access_allowed(self, chkDateTime: typing.Optional['datetime.datetime'] = None) -> bool:
+    def is_access_allowed(self, check_datetime: typing.Optional['datetime.datetime'] = None) -> bool:
         """
         Checks if the access for a service pool is allowed or not (based esclusively on associated calendars)
         """
-        if chkDateTime is None:
-            chkDateTime = sql_now()
+        if check_datetime is None:
+            check_datetime = sql_now()
 
         access = self.fallbackAccess
         # Let's see if we can access by current datetime
         for ac in sorted(self.calendarAccess.all(), key=operator.attrgetter('priority')):
-            if CalendarChecker(ac.calendar).check(chkDateTime):
+            if CalendarChecker(ac.calendar).check(check_datetime):
                 access = ac.access
                 break  # Stops on first rule match found
 
@@ -164,7 +164,7 @@ class MetaPool(UUIDModel, TaggingMixin):
         If no "maximum" number of services, will return 0% ofc
         cachedValue is used to optimize (if known the number of assigned services, we can avoid to query the db)
         Note:
-            No metapoools, cachedValue is ignored, but keep for consistency with servicePool
+            No metapoools, cachedValue is ignored, but keep for consistency with servicePool usage signature
         """
         # If no pools, return 0%
         if self.members.count() == 0:
@@ -194,13 +194,13 @@ class MetaPool(UUIDModel, TaggingMixin):
         usage_count = 0
         max_count = 0
         for pool in query:
-            poolInfo = pool.usage(typing.cast(typing.Any, pool).usage_count)  # usage_count is anottated value, integer
-            usage_count += poolInfo.used
+            pool_info = pool.usage(typing.cast(typing.Any, pool).usage_count)  # usage_count is anottated value, integer
+            usage_count += pool_info.used
             # If any of the pools has no max, then max is -1
-            if max_count == consts.UNLIMITED or poolInfo.total == consts.UNLIMITED:
+            if max_count == consts.UNLIMITED or pool_info.total == consts.UNLIMITED:
                 max_count = consts.UNLIMITED
             else:
-                max_count += poolInfo.total
+                max_count += pool_info.total
 
         if max_count == 0 or max_count == consts.UNLIMITED:
             return types.pools.UsageInfo(usage_count, consts.UNLIMITED)

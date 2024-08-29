@@ -54,17 +54,24 @@ class StatsCountersAccum(models.Model):
 
         def seconds(self) -> int:
             """Returns the number of seconds for this interval type"""
-            if self == self.HOUR:
-                return 3600
-            if self == self.DAY:
-                return 86400
+            match self:
+                case self.HOUR:
+                    return 3600
+                case self.DAY:
+                    return 86400
             raise ValueError('Invalid interval type')
 
         def prev(self) -> 'StatsCountersAccum.IntervalType':
             """Returns the previous interval type"""
-            if self == self.DAY:
-                return StatsCountersAccum.IntervalType.HOUR
-            raise ValueError('Invalid interval type')
+            match self:
+                case self.HOUR:
+                    raise ValueError('No previous interval for HOUR')
+                case self.DAY:
+                    return StatsCountersAccum.IntervalType.HOUR
+        
+        def is_base_interval(self) -> bool:
+            """Returns if this is the base interval"""
+            return self == StatsCountersAccum.IntervalType.HOUR
 
     owner_type = models.SmallIntegerField(default=0)
     owner_id = models.IntegerField(default=0)
@@ -134,7 +141,10 @@ class StatsCountersAccum(models.Model):
             type['StatsCountersAccum'],
             type['StatsCounters'],
         ]
-        if interval_type == StatsCountersAccum.IntervalType.HOUR:
+        # If base interval, we will use StatsCounters to create the accum
+        # Else, we will use StatsCountersAccum to create the accum from previous interval
+        # (for example, to create daily accum from hourly data)
+        if interval_type.is_base_interval():
             model = StatsCounters
         else:
             model = StatsCountersAccum

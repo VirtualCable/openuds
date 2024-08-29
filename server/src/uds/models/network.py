@@ -113,7 +113,7 @@ class Network(UUIDModel, TaggingMixin):
         )
 
     @staticmethod
-    def create(name: str, netRange: str) -> 'Network':
+    def create(name: str, net_range: str) -> 'Network':
         """
         Creates an network record, with the specified network range. Supports IPv4 and IPv6
         IPV4 has a versatile format, that can be:
@@ -128,12 +128,12 @@ class Network(UUIDModel, TaggingMixin):
             netRange: Network range in any supported format
 
         """
-        nr = net.network_from_str(netRange)
+        nr = net.network_from_str(net_range)
         return Network.objects.create(
             name=name,
             start=Network.hexlify(nr.start),
             end=Network.hexlify(nr.end),
-            net_string=netRange,
+            net_string=net_range,
             version=nr.version,
         )
 
@@ -192,8 +192,8 @@ class Network(UUIDModel, TaggingMixin):
         # if net_string is '*', then we are in all networks, return true
         if self.net_string == '*':
             return True
-        ipInt, version = net.ip_to_long(ip)
-        return self.net_start <= ipInt <= self.net_end and self.version == version
+        ip_int, version = net.ip_to_long(ip)
+        return self.version == version and self.net_start <= ip_int <= self.net_end
 
     # utility method to allow "in" operator
     __contains__ = contains

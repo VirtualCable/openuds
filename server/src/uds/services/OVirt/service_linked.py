@@ -288,10 +288,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         Args:
             name: Name (sanitized) of the machine
             comments: Comments for machine
-            templateId: Id of the template to deploy from
-            displayType: 'vnc' or 'spice'. Display to use ad oVirt admin interface
-            memoryMB: Memory requested for machine, in MB
-            guaranteedMB: Minimum memory guaranteed for this machine
+            template_id: Id of the template to deploy from
 
         Returns:
             Info of the deployed machine
