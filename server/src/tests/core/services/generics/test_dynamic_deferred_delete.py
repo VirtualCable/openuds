@@ -38,7 +38,7 @@ from unittest import mock
 from uds import models
 from uds.core import services
 from uds.core.util.model import sql_now
-from uds.core.workers import deferred_deletion
+from uds.workers import deferred_deletion
 from uds.core.services.generics import exceptions as gen_exceptions
 
 from ....utils.test import UDSTransactionTestCase
@@ -101,7 +101,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
         with mock.patch('uds.models.Service.objects') as objs:
             objs.get.return_value = instance.db_obj()
             with mock.patch(
-                'uds.core.workers.deferred_deletion.DeferredDeletionWorker.deferred_storage'
+                'uds.workers.deferred_deletion.DeferredDeletionWorker.deferred_storage'
             ) as storage:
 
                 @contextlib.contextmanager

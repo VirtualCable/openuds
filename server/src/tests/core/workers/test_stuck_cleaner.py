@@ -38,7 +38,7 @@ from ...fixtures import services as services_fixtures
 
 from uds.models import UserService
 from uds.core.types.states import State
-from uds.core.workers.stuck_cleaner import StuckCleaner
+from uds.workers.stuck_cleaner import StuckCleaner
 from uds.core.environment import Environment
 
 if typing.TYPE_CHECKING:

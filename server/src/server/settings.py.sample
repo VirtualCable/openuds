@@ -450,7 +450,7 @@ LOGGING = {
             'level': LOGLEVEL,
             'propagate': False,
         },
-        'uds.core.workers': {
+        'uds.workers': {
             'handlers': ['workersFile'],
             'level': LOGLEVEL,
             'propagate': False,

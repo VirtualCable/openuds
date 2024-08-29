@@ -36,7 +36,7 @@ from uds.core.util import model
 from uds.core.environment import Environment
 from uds.core.util import config
 from uds.core.types.states import State
-from uds.core.workers.hanged_userservice_cleaner import HangedCleaner
+from uds.workers.hanged_userservice_cleaner import HangedCleaner
 
 from ...utils.test import UDSTestCase
 from ...fixtures import services as fixtures_services

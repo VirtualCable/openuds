@@ -72,7 +72,7 @@ class TestOpenstackFixedService(UDSTransactionTestCase):
 
                 # Restore servers_list and assignables
                 fixtures.SERVERS_LIST[:] = prev_servers_list
-                assignables = set(i['id'] for i in service.enumerate_assignables())
+                assignables = set(str(i['id']) for i in service.enumerate_assignables())
 
                 to_assign = list(assignables)[0]
 

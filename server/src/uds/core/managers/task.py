@@ -104,7 +104,7 @@ class TaskManager(metaclass=singleton.Singleton):
         logger.info("Registering sheduled tasks")
 
         # Simply import this to make workers "register" themselves
-        from uds.core import workers  # pyright: ignore[reportUnusedImport]
+        from uds import workers  # pyright: ignore[reportUnusedImport]
 
     def add_other_tasks(self) -> None:
         logger.info("Registering other tasks")

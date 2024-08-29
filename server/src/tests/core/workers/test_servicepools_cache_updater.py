@@ -34,7 +34,7 @@ import logging
 
 
 from uds.core.types.states import State
-from uds.core.workers.servicepools_cache_updater import ServiceCacheUpdater
+from uds.workers.servicepools_cache_updater import ServiceCacheUpdater
 from uds.core.environment import Environment
 
 from uds.services.Test.provider import TestProvider

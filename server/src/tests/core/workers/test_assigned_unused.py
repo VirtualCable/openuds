@@ -36,7 +36,7 @@ from uds.core.util import model
 from uds.core.environment import Environment
 from uds.core.util import config
 from uds.core.types.states import State
-from uds.core.workers.assigned_unused import AssignedAndUnused
+from uds.workers.assigned_unused import AssignedAndUnused
 
 from ...utils.test import UDSTestCase
 from ...fixtures import services as fixtures_services

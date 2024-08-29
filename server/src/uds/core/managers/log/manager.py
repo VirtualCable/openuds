@@ -36,7 +36,7 @@ import logging
 from uds.core.util import singleton
 from uds.core.util.model import sql_now
 from uds.models.log import Log
-# from uds.core.workers.log
+# from uds.workers.log
 
 from uds.core.types.log import LogObjectType
 

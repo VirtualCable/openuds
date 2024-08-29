@@ -123,7 +123,7 @@ class TestOpenstackProvider(UDSTransactionTestCase):
                     self.assertEqual(len(h_resources), 4)
                     self.assertEqual(sorted(i['name'] for i in h_resources), ['availability_zone', 'flavor', 'network', 'security_groups'])
                     def _get_choices_for(name: str) -> list[str]:
-                        return [i['id'] for i in next(i for i in h_resources if i['name'] == name)['choices']]
+                        return [str(i['id']) for i in next(i for i in h_resources if i['name'] == name)['choices']]
                     
                     self.assertEqual(sorted(_get_choices_for('availability_zone')), sorted(i.id for i in fixtures.AVAILABILITY_ZONES_LIST))
                     self.assertEqual(sorted(_get_choices_for('network')), sorted(i.id for i in fixtures.NETWORKS_LIST))

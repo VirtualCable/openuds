@@ -36,7 +36,7 @@ from uds import models
 from uds.core.util.stats import counters
 
 
-from uds.core.workers import stats_collector
+from uds.workers import stats_collector
 from uds.core.environment import Environment
 from uds.core.util import config
 
