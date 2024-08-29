@@ -770,13 +770,6 @@ class GlobalConfig:
         type=Config.FieldType.NUMERIC,
         help=_('Minimal User Services needed to show filter'),
     )
-    LOGOUT_URL: Config.Value = Config.section(Config.SectionType.CUSTOM).value(
-        'Logout URL',
-        '',
-        type=Config.FieldType.TEXT,
-        help=_('Redirect URL after logout. If empty, the user will be redirected to the login page.'),
-    )
-
     EXPERIMENTAL_FEATURES: Config.Value = Config.section(Config.SectionType.GLOBAL).value(
         'Experimental Features',
         '0',
@@ -857,3 +850,8 @@ def _post_migrate(sender: typing.Any, **kwargs: typing.Any) -> None:
 
 signals.pre_migrate.connect(_pre_migrate)
 signals.post_migrate.connect(_post_migrate)
+
+
+# Removed fields, to ensure they are removed from database
+# Will be here for at least one major version, so we can remove them from database for sure
+Config.removed(Config.SectionType.CUSTOM, 'Logout URL')  # Removed on 4.0
