@@ -186,7 +186,7 @@ class UserinterfaceInternalTest(UDSTestCase):
     def test_order(self) -> None:
         ui = TestingUserInterface()
         self.assertEqual(
-            {k: v._fields_info.order for k, v in ui._gui.items()},
+            {k: v._field_info.order for k, v in ui._gui.items()},
             {
                 'str_field': 0,
                 'str_auto_field': 1,
@@ -206,7 +206,7 @@ class UserinterfaceInternalTest(UDSTestCase):
     def test_required(self) -> None:
         ui = TestingUserInterface()
         self.assertEqual(
-            {k: v._fields_info.required for k, v in ui._gui.items()},
+            {k: v._field_info.required for k, v in ui._gui.items()},
             {
                 'str_field': True,
                 'str_auto_field': True,
@@ -226,7 +226,7 @@ class UserinterfaceInternalTest(UDSTestCase):
     def test_tooltip(self) -> None:
         ui = TestingUserInterface()
         self.assertEqual(
-            {k: v._fields_info.tooltip for k, v in ui._gui.items()},
+            {k: v._field_info.tooltip for k, v in ui._gui.items()},
             {
                 'str_field': 'This is a text field',
                 'str_auto_field': 'This is a text autocomplete field',

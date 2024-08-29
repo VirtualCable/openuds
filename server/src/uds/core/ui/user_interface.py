@@ -46,6 +46,8 @@ import abc
 
 from django.conf import settings
 from django.utils.translation import gettext
+from django.utils.functional import Promise  # To recognize lazy translations
+
 
 from uds.core import consts, exceptions, types
 from uds.core.managers.crypto import UDSK, CryptoManager
@@ -124,11 +126,13 @@ class gui:
     ] = {}
 
     @staticmethod
-    def choice_item(id_: typing.Union[str, int], text: str) -> 'types.ui.ChoiceItem':
+    def choice_item(id_: typing.Union[str, int], text: 'str|Promise|typing.Any') -> 'types.ui.ChoiceItem':
         """
         Helper method to create a single choice item.
         """
-        return {'id': id_, 'text': str(text)}
+        if not isinstance(text, (str, Promise)):
+            text = str(text)
+        return {'id': id_, 'text': typing.cast(str, text)}  # Cast to avoid mypy error, Promise is at all effects a str
 
     @staticmethod
     def choice_image(id_: typing.Union[str, int], text: str, img: str) -> types.ui.ChoiceItem:
@@ -286,7 +290,7 @@ class gui:
             in a future version. (str|list[str]|None instead of str|None)
         """
 
-        _fields_info: types.ui.FieldInfo
+        _field_info: types.ui.FieldInfo
 
         def __init__(
             self,
@@ -305,7 +309,7 @@ class gui:
         ) -> None:
             # Length is not used on some kinds of fields, but present in all anyway
             # This property only affects in "modify" operations
-            self._fields_info = types.ui.FieldInfo(
+            self._field_info = types.ui.FieldInfo(
                 old_field_name=old_field_name,
                 order=order,
                 label=label,
@@ -321,7 +325,7 @@ class gui:
 
         @property
         def field_type(self) -> 'types.ui.FieldType':
-            return types.ui.FieldType(self._fields_info.type)
+            return types.ui.FieldType(self._field_info.type)
 
         @field_type.setter
         def field_type(self, type_: 'types.ui.FieldType') -> None:
@@ -331,13 +335,13 @@ class gui:
             Args:
                 type: Type to set (from constants of this class)
             """
-            self._fields_info.type = type_
+            self._field_info.type = type_
 
         def is_type(self, *type_: types.ui.FieldType) -> bool:
             """
             Returns true if this field is of specified type
             """
-            return self._fields_info.type in type_
+            return self._field_info.type in type_
 
         def is_serializable(self) -> bool:
             return True
@@ -346,9 +350,9 @@ class gui:
             """
             Returns the name of the field
             """
-            if isinstance(self._fields_info.old_field_name, list):
-                return self._fields_info.old_field_name
-            return [self._fields_info.old_field_name] if self._fields_info.old_field_name else []
+            if isinstance(self._field_info.old_field_name, list):
+                return self._field_info.old_field_name
+            return [self._field_info.old_field_name] if self._field_info.old_field_name else []
 
         @property
         def value(self) -> typing.Any:
@@ -358,9 +362,9 @@ class gui:
             returns default value instead.
             This is mainly used for hidden fields, so we have correctly initialized
             """
-            if callable(self._fields_info.value):
-                return self._fields_info.value()
-            return self._fields_info.value if self._fields_info.value is not None else self.default
+            if callable(self._field_info.value):
+                return self._field_info.value()
+            return self._field_info.value if self._field_info.value is not None else self.default
 
         @value.setter
         def value(self, value: typing.Any) -> None:
@@ -373,7 +377,7 @@ class gui:
             """
             So we can override value setter at descendants
             """
-            self._fields_info.value = value
+            self._field_info.value = value
 
         def gui_description(self) -> dict[str, typing.Any]:
             """
@@ -382,7 +386,7 @@ class gui:
             and don't want to
             alter original values.
             """
-            data = self._fields_info.as_dict()
+            data = self._field_info.as_dict()
             for i in ('value', 'old_field_name'):
                 if i in data:
                     del data[i]  # We don't want to send some values on gui_description
@@ -398,7 +402,7 @@ class gui:
             """
             Returns the default value for this field
             """
-            defValue = self._fields_info.default
+            defValue = self._field_info.default
             return defValue() if callable(defValue) else defValue
 
         @default.setter
@@ -412,23 +416,23 @@ class gui:
             Args:
                 value: Default value (string)
             """
-            self._fields_info.default = value
+            self._field_info.default = value
 
         @property
         def label(self) -> str:
-            return self._fields_info.label
+            return self._field_info.label
 
         @label.setter
         def label(self, value: str) -> None:
-            self._fields_info.label = value
+            self._field_info.label = value
 
         @property
         def required(self) -> bool:
-            return self._fields_info.required or False
+            return self._field_info.required or False
 
         @required.setter
         def required(self, value: bool) -> None:
-            self._fields_info.required = value
+            self._field_info.required = value
 
         def validate(self) -> bool:
             """
@@ -460,7 +464,7 @@ class gui:
             return gui.as_bool(self.value)
 
         def __repr__(self) -> str:
-            return f'{self.__class__.__name__}: {repr(self._fields_info)}'
+            return f'{self.__class__.__name__}: {repr(self._field_info)}'
 
     class TextField(InputField):
         """
@@ -522,7 +526,7 @@ class gui:
                 value=value,
                 type=types.ui.FieldType.TEXT,
             )
-            self._fields_info.lines = min(max(int(lines), 0), 8)
+            self._field_info.lines = min(max(int(lines), 0), 8)
             # Pattern to validate the value
             # Can contain an regex or PatternType
             #   - 'ipv4'     # IPv4 address
@@ -538,7 +542,7 @@ class gui:
             # Note:
             #  Checks are performed on admin side, so they are not 100% reliable.
             if pattern:
-                self._fields_info.pattern = (
+                self._field_info.pattern = (
                     pattern
                     if isinstance(pattern, types.ui.FieldPatternType)
                     else types.ui.FieldPatternType(pattern)
@@ -548,7 +552,7 @@ class gui:
             return super().validate() and self._validate_pattern()
 
         def _validate_pattern(self) -> bool:
-            pattern = self._fields_info.pattern
+            pattern = self._field_info.pattern
             if isinstance(pattern, types.ui.FieldPatternType):
                 try:
                     if pattern == types.ui.FieldPatternType.IPV4:
@@ -630,13 +634,13 @@ class gui:
             )
             # Update parent type
             self.field_type = types.ui.FieldType.TEXT_AUTOCOMPLETE
-            self._fields_info.choices = gui.as_choices(choices or [])
+            self._field_info.choices = gui.as_choices(choices or [])
 
         def set_choices(self, values: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]) -> None:
             """
             Set the values for this choice field
             """
-            self._fields_info.choices = gui.as_choices(values)
+            self._field_info.choices = gui.as_choices(values)
 
     class NumericField(InputField):
         """
@@ -688,8 +692,8 @@ class gui:
                 value=value,
                 type=types.ui.FieldType.NUMERIC,
             )
-            self._fields_info.min_value = min_value
-            self._fields_info.max_value = max_value
+            self._field_info.min_value = min_value
+            self._field_info.max_value = max_value
 
         def _set_value(self, value: typing.Any) -> None:
             """
@@ -1108,14 +1112,14 @@ class gui:
                 type=types.ui.FieldType.CHOICE,
             )
 
-            self._fields_info.choices = gui.as_choices(choices)
+            self._field_info.choices = gui.as_choices(choices)
             # if has fillers, set them
             if fills:
                 if 'function' not in fills or 'callback_name' not in fills:
                     raise ValueError('Invalid fills parameters')
                 fnc = fills['function']
                 fills.pop('function')
-                self._fields_info.fills = fills
+                self._field_info.fills = fills
                 # Store it only if not already present
                 if fills['callback_name'] not in gui.callbacks:
                     gui.callbacks[fills['callback_name']] = fnc
@@ -1124,7 +1128,7 @@ class gui:
             """
             Set the values for this choice field
             """
-            self._fields_info.choices = gui.as_choices(values)
+            self._field_info.choices = gui.as_choices(values)
 
         def _set_value(self, value: typing.Any) -> None:
             """
@@ -1142,6 +1146,7 @@ class gui:
         @value.setter
         def value(self, value: str) -> None:
             self._set_value(value)
+
 
     class ImageChoiceField(InputField):
         def __init__(
@@ -1170,13 +1175,13 @@ class gui:
                 type=types.ui.FieldType.IMAGECHOICE,
             )
 
-            self._fields_info.choices = gui.as_choices(choices or [])
+            self._field_info.choices = gui.as_choices(choices or [])
 
         def set_choices(self, values: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]) -> None:
             """
             Set the values for this choice field
             """
-            self._fields_info.choices = gui.as_choices(values)
+            self._field_info.choices = gui.as_choices(values)
 
         def _set_value(self, value: typing.Any) -> None:
             """
@@ -1258,8 +1263,8 @@ class gui:
                 value=value,
             )
 
-            self._fields_info.rows = rows
-            self._fields_info.choices = gui.as_choices(choices or [])
+            self._field_info.rows = rows
+            self._field_info.choices = gui.as_choices(choices or [])
 
         def set_choices(
             self, choices: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]
@@ -1267,7 +1272,7 @@ class gui:
             """
             Set the values for this choice field
             """
-            self._fields_info.choices = gui.as_choices(choices)
+            self._field_info.choices = gui.as_choices(choices)
 
         def _set_value(self, value: typing.Any) -> None:
             """
@@ -1423,7 +1428,7 @@ class UserInterfaceType(abc.ABCMeta, type):
         for attrName, attr in namespace.items():
             if isinstance(attr, gui.InputField):
                 # Ensure we have a copy of the data, so we can modify it without affecting others
-                attr._fields_info = copy.deepcopy(attr._fields_info)
+                attr._field_info = copy.deepcopy(attr._field_info)
                 _gui[attrName] = attr
 
             new_class_dict[attrName] = attr
@@ -1475,10 +1480,10 @@ class UserInterface(metaclass=UserInterfaceType):
 
             # Check for "callable" fields and update them if needed
             for field in ['choices', 'default']:  # Update references to self for callable fields
-                attr = getattr(fld._fields_info, field, None)
+                attr = getattr(fld._field_info, field, None)
                 if attr and callable(attr):
                     # val is an InputField derived instance, so it is a reference to self._gui[key]
-                    setattr(fld._fields_info, field, attr())
+                    setattr(fld._field_info, field, attr())
 
             if values is not None:
                 if fld_name in values:
