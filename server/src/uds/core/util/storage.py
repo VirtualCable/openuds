@@ -29,6 +29,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import contextlib
 import pickle  # nosec: This is e controled pickle use
 import base64
 import hashlib
@@ -198,6 +199,9 @@ class StorageAsDict(dict[str, typing.Any]):
     def delete(self, key: str) -> None:
         self.__delitem__(key)  # pylint: disable=unnecessary-dunder-call
 
+    def clear(self) -> None:
+        self._filtered.delete()  # Removes all keys
+
     # Custom utility methods
     @property
     def group(self) -> str:
@@ -206,39 +210,6 @@ class StorageAsDict(dict[str, typing.Any]):
     @group.setter
     def group(self, value: str) -> None:
         self._group = value or ''
-
-
-class StorageAccess:
-    """
-    Allows the access to the storage as a dict, with atomic transaction if requested
-    """
-
-    _owner: str
-    _group: typing.Optional[str]
-    _atomic: typing.Optional[transaction.Atomic]
-
-    def __init__(
-        self,
-        owner: str,
-        group: typing.Optional[str] = None,
-        atomic: bool = False,
-    ):
-        self._owner = owner
-        self._group = group
-        self._atomic = transaction.atomic() if atomic else None
-
-    def __enter__(self) -> StorageAsDict:
-        if self._atomic:
-            self._atomic.__enter__()
-        return StorageAsDict(
-            owner=self._owner,
-            group=self._group,
-            atomic=bool(self._atomic),
-        )
-
-    def __exit__(self, exc_type: typing.Any, exc_value: typing.Any, traceback: typing.Any) -> None:
-        if self._atomic:
-            self._atomic.__exit__(exc_type, exc_value, traceback)
 
 
 class Storage:
@@ -382,12 +353,17 @@ class Storage:
         except Exception:  # nosec: Not interested in processing exceptions, just ignores it
             pass
 
+    @contextlib.contextmanager
     def as_dict(
         self,
         group: typing.Optional[str] = None,
         atomic: bool = False,
-    ) -> StorageAccess:
-        return StorageAccess(self._owner, group=group, atomic=atomic)
+    ) -> typing.Iterator[StorageAsDict]:
+        if atomic:
+            with transaction.atomic():
+                yield StorageAsDict(self._owner, group=group, atomic=True)
+        else:
+            yield StorageAsDict(self._owner, group=group, atomic=False)
 
     def search_by_attr1(
         self, attr1: typing.Union[collections.abc.Iterable[str], str]

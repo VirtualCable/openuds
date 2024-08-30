@@ -210,10 +210,14 @@ class User(UUIDModel, properties.PropertiesMixin):
         to_delete.clean_related_data()
 
         # Remove related stored values
-        with storage.StorageAccess('manager' + str(to_delete.manager.uuid)) as store:
-            for key in store.keys():
-                store.delete(key)
-
+        try:
+            storage.StorageAsDict(
+                owner='manager' + str(to_delete.manager.uuid),
+                group=None,
+                atomic=False
+            ).clear()
+        except Exception:
+            logger.exception('Removing stored data')
         # now removes all "child" of this user, if it has children
         User.objects.filter(parent=to_delete.id).delete()
 

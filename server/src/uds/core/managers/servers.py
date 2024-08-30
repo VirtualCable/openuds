@@ -28,6 +28,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import contextlib
 import datetime
 import logging
 import typing
@@ -41,7 +42,7 @@ from uds import models
 from uds.core import exceptions, types
 from uds.core.util import model as model_utils
 from uds.core.util import singleton
-from uds.core.util.storage import StorageAccess, Storage
+from uds.core.util.storage import StorageAsDict, Storage
 
 from .servers_api import events, requester
 
@@ -65,11 +66,13 @@ class ServerManager(metaclass=singleton.Singleton):
     def manager() -> 'ServerManager':
         return ServerManager()  # Singleton pattern will return always the same instance
 
-    def counter_storage(self) -> 'StorageAccess':
+    @contextlib.contextmanager
+    def counter_storage(self) -> typing.Iterator[StorageAsDict]:
         # If counters are too old, restart them
         if datetime.datetime.now() - self.last_counters_clean > self.MAX_COUNTERS_AGE:
             self.clear_unmanaged_usage()
-        return Storage(self.STORAGE_NAME).as_dict(atomic=True, group='counters')
+        with Storage(self.STORAGE_NAME).as_dict(atomic=True, group='counters') as storage:
+            yield storage
 
     def property_name(self, user: typing.Optional[typing.Union[str, 'models.User']]) -> str:
         """Returns the property name for a user"""
@@ -155,7 +158,9 @@ class ServerManager(metaclass=singleton.Singleton):
             # To values over threshold, we will add 1, so they are always worse than any value under threshold
             # No matter if over threshold is overcalculed, it will be always worse than any value under threshold
             # and all values over threshold will be affected in the same way
-            return weight_threshold - stats.weight() if stats.weight() < weight_threshold else 1 + stats.weight()
+            return (
+                weight_threshold - stats.weight() if stats.weight() < weight_threshold else 1 + stats.weight()
+            )
 
         # Now, cachedStats has a list of tuples (stats, server), use it to find the best server
         for stats, server in stats_and_servers:
@@ -223,7 +228,7 @@ class ServerManager(metaclass=singleton.Singleton):
             excluded_servers_uuids: If not None, exclude this servers from selection. Used in case we check the availability of a server
                                  with some external method and we want to exclude it from selection because it has already failed.
             weight_threshold: If not 0, basically will prefer values below an near this value
-            
+
             Note:
                 weight_threshold is used to select a server with a weight as near as possible, without going over, to this value.
                 If none is found, the server with the lowest weight will be selected.
@@ -233,7 +238,7 @@ class ServerManager(metaclass=singleton.Singleton):
                    * if weight is over threshold, 1 + weight is returned (so, all values over threshold are worse than any value under threshold)
                    that is:
                     real_weight = weight_threshold - weight if weight < weight_threshold else 1 + weight
-                    
+
                 The idea behind this is to be able to select a server not fully empty, but also not fully loaded, so it can be used
                 to leave servers empty as soon as possible, but also to not overload servers that are near to be full.
 

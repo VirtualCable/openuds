@@ -39,7 +39,8 @@ from uds.models import Service
 from uds.core.util.model import sql_now
 from uds.core.jobs import Job
 from uds.core.util import storage, utils
-from uds.core.consts import defered_deletion as consts
+from uds.core.consts import deferred_deletion as consts
+from uds.core.types import deferred_deletion as types
 
 from uds.core.services.generics import exceptions as gen_exceptions
 
@@ -50,14 +51,18 @@ logger = logging.getLogger(__name__)
 
 
 def execution_timer() -> 'utils.ExecutionTimer':
-    return utils.ExecutionTimer(delay_threshold=consts.OPERATION_DELAY_THRESHOLD, max_delay_rate=consts.MAX_DELAY_RATE)
+    return utils.ExecutionTimer(
+        delay_threshold=consts.OPERATION_DELAY_THRESHOLD, max_delay_rate=consts.MAX_DELAY_RATE
+    )
 
 
 def next_execution_calculator(*, fatal: bool = False, delay_rate: float = 1.0) -> datetime.datetime:
     """
     Returns the next check time for a deletion operation
     """
-    return sql_now() + (consts.CHECK_INTERVAL * (consts.FATAL_ERROR_INTERVAL_MULTIPLIER if fatal else 1) * delay_rate)
+    return sql_now() + (
+        consts.CHECK_INTERVAL * (consts.FATAL_ERROR_INTERVAL_MULTIPLIER if fatal else 1) * delay_rate
+    )
 
 
 @dataclasses.dataclass
@@ -70,7 +75,7 @@ class DeletionInfo:
     total_retries: int = 0  # Total retries
     retries: int = 0  # Retries to stop again or to delete again in STOPPING_GROUP or DELETING_GROUP
 
-    def sync_to_storage(self, group: str) -> None:
+    def sync_to_storage(self, group: types.DeferredStorageGroup) -> None:
         """
         Ensures that this object is stored on the storage
         If exists, it will be updated, if not, it will be created
@@ -97,7 +102,7 @@ class DeletionInfo:
 
     @staticmethod
     def get_from_storage(
-        group: str,
+        group: types.DeferredStorageGroup,
     ) -> tuple[dict[str, 'DynamicService'], list[tuple[str, 'DeletionInfo']]]:
         """
         Get a list of objects to be processed from storage
@@ -151,7 +156,7 @@ class DeletionInfo:
         return services, infos
 
     @staticmethod
-    def count_from_storage(group: str) -> int:
+    def count_from_storage(group: types.DeferredStorageGroup) -> int:
         # Counts the total number of objects in storage
         with DeferredDeletionWorker.deferred_storage.as_dict(group) as storage_dict:
             return len(storage_dict)
@@ -181,13 +186,18 @@ class DeferredDeletionWorker(Job):
                                 service.shutdown(None, vmid)
                             else:
                                 service.stop(None, vmid)
-                            DeletionInfo.create_on_storage(consts.STOPPING_GROUP, vmid, service.db_obj().uuid)
+                            DeletionInfo.create_on_storage(
+                                types.DeferredStorageGroup.STOPPING, vmid, service.db_obj().uuid
+                            )
                             return
 
                     service.execute_delete(vmid)
                 # If this takes too long, we will delay the next check a bit
                 DeletionInfo.create_on_storage(
-                    consts.DELETING_GROUP, vmid, service.db_obj().uuid, delay_rate=exec_time.delay_rate
+                    types.DeferredStorageGroup.DELETING,
+                    vmid,
+                    service.db_obj().uuid,
+                    delay_rate=exec_time.delay_rate,
                 )
             except gen_exceptions.NotFoundError:
                 return  # Already removed
@@ -196,7 +206,7 @@ class DeferredDeletionWorker(Job):
                     'Could not delete %s from service %s: %s. Retrying later.', vmid, service.db_obj().name, e
                 )
                 DeletionInfo.create_on_storage(
-                    consts.TO_DELETE_GROUP,
+                    types.DeferredStorageGroup.TO_DELETE,
                     vmid,
                     service.db_obj().uuid,
                     delay_rate=exec_time.delay_rate,
@@ -204,16 +214,18 @@ class DeferredDeletionWorker(Job):
                 return
         else:
             if service.must_stop_before_deletion:
-                DeletionInfo.create_on_storage(consts.TO_STOP_GROUP, vmid, service.db_obj().uuid)
+                DeletionInfo.create_on_storage(types.DeferredStorageGroup.TO_STOP, vmid, service.db_obj().uuid)
             else:
-                DeletionInfo.create_on_storage(consts.TO_DELETE_GROUP, vmid, service.db_obj().uuid)
+                DeletionInfo.create_on_storage(
+                    types.DeferredStorageGroup.TO_DELETE, vmid, service.db_obj().uuid
+                )
             return
 
     def _process_exception(
         self,
         key: str,
         info: DeletionInfo,
-        to_group: str,
+        to_group: types.DeferredStorageGroup,
         services: dict[str, 'DynamicService'],
         e: Exception,
         *,
@@ -253,7 +265,7 @@ class DeferredDeletionWorker(Job):
         info.sync_to_storage(to_group)
 
     def process_to_stop(self) -> None:
-        services, to_stop = DeletionInfo.get_from_storage(consts.TO_STOP_GROUP)
+        services, to_stop = DeletionInfo.get_from_storage(types.DeferredStorageGroup.TO_STOP)
         logger.debug('Processing %s to stop', to_stop)
 
         # Now process waiting stops
@@ -276,15 +288,17 @@ class DeferredDeletionWorker(Job):
                             service.stop(None, info.vmid)  # Always try to stop it if we have tried before
 
                         info.next_check = next_execution_calculator(delay_rate=exec_time.delay_rate)
-                        info.sync_to_storage(consts.STOPPING_GROUP)
+                        info.sync_to_storage(types.DeferredStorageGroup.STOPPING)
                     else:
                         # Do not update last_check to shutdown it asap, was not running after all
-                        info.sync_to_storage(consts.TO_DELETE_GROUP)
+                        info.sync_to_storage(types.DeferredStorageGroup.TO_DELETE)
             except Exception as e:
-                self._process_exception(key, info, consts.TO_STOP_GROUP, services, e, delay_rate=exec_time.delay_rate)
+                self._process_exception(
+                    key, info, types.DeferredStorageGroup.TO_STOP, services, e, delay_rate=exec_time.delay_rate
+                )
 
     def process_stopping(self) -> None:
-        services, stopping = DeletionInfo.get_from_storage(consts.STOPPING_GROUP)
+        services, stopping = DeletionInfo.get_from_storage(types.DeferredStorageGroup.STOPPING)
         logger.debug('Processing %s stopping', stopping)
 
         # Now process waiting for finishing stops
@@ -296,22 +310,24 @@ class DeferredDeletionWorker(Job):
                     # If we have tried to stop it, and it has not stopped, add to stop again
                     info.next_check = next_execution_calculator()
                     info.total_retries += 1
-                    info.sync_to_storage(consts.TO_STOP_GROUP)
+                    info.sync_to_storage(types.DeferredStorageGroup.TO_STOP)
                     continue
                 with exec_time:
                     if services[info.service_uuid].is_running(None, info.vmid):
                         info.next_check = next_execution_calculator(delay_rate=exec_time.delay_rate)
                         info.total_retries += 1
-                        info.sync_to_storage(consts.STOPPING_GROUP)
+                        info.sync_to_storage(types.DeferredStorageGroup.STOPPING)
                     else:
                         info.next_check = next_execution_calculator(delay_rate=exec_time.delay_rate)
                         info.fatal_retries = info.total_retries = 0
-                        info.sync_to_storage(consts.TO_DELETE_GROUP)
+                        info.sync_to_storage(types.DeferredStorageGroup.TO_DELETE)
             except Exception as e:
-                self._process_exception(key, info, consts.STOPPING_GROUP, services, e, delay_rate=exec_time.delay_rate)
+                self._process_exception(
+                    key, info, types.DeferredStorageGroup.STOPPING, services, e, delay_rate=exec_time.delay_rate
+                )
 
     def process_to_delete(self) -> None:
-        services, to_delete = DeletionInfo.get_from_storage(consts.TO_DELETE_GROUP)
+        services, to_delete = DeletionInfo.get_from_storage(types.DeferredStorageGroup.TO_DELETE)
         logger.debug('Processing %s to delete', to_delete)
 
         # Now process waiting deletions
@@ -322,7 +338,7 @@ class DeferredDeletionWorker(Job):
                 with exec_time:
                     # If must be stopped before deletion, and is running, put it on to_stop
                     if service.must_stop_before_deletion and service.is_running(None, info.vmid):
-                        info.sync_to_storage(consts.TO_STOP_GROUP)
+                        info.sync_to_storage(types.DeferredStorageGroup.TO_STOP)
                         continue
 
                     service.execute_delete(info.vmid)
@@ -330,10 +346,15 @@ class DeferredDeletionWorker(Job):
                 info.next_check = next_execution_calculator(delay_rate=exec_time.delay_rate)
                 info.retries = 0
                 info.total_retries += 1
-                info.sync_to_storage(consts.DELETING_GROUP)
+                info.sync_to_storage(types.DeferredStorageGroup.DELETING)
             except Exception as e:
                 self._process_exception(
-                    key, info, consts.TO_DELETE_GROUP, services, e, delay_rate=exec_time.delay_rate
+                    key,
+                    info,
+                    types.DeferredStorageGroup.TO_DELETE,
+                    services,
+                    e,
+                    delay_rate=exec_time.delay_rate,
                 )
 
     def process_deleting(self) -> None:
@@ -342,7 +363,7 @@ class DeferredDeletionWorker(Job):
 
         Note: Very similar to process_to_delete, but this one is for objects that are already being deleted
         """
-        services, deleting = DeletionInfo.get_from_storage(consts.DELETING_GROUP)
+        services, deleting = DeletionInfo.get_from_storage(types.DeferredStorageGroup.DELETING)
         logger.debug('Processing %s deleting', deleting)
 
         # Now process waiting for finishing deletions
@@ -354,16 +375,18 @@ class DeferredDeletionWorker(Job):
                     # If we have tried to delete it, and it has not been deleted, add to delete again
                     info.next_check = next_execution_calculator()
                     info.total_retries += 1
-                    info.sync_to_storage(consts.TO_DELETE_GROUP)
+                    info.sync_to_storage(types.DeferredStorageGroup.TO_DELETE)
                     continue
                 with exec_time:
                     # If not finished, readd it for later check
                     if not services[info.service_uuid].is_deleted(info.vmid):
                         info.next_check = next_execution_calculator(delay_rate=exec_time.delay_rate)
                         info.total_retries += 1
-                        info.sync_to_storage(consts.DELETING_GROUP)
+                        info.sync_to_storage(types.DeferredStorageGroup.DELETING)
             except Exception as e:
-                self._process_exception(key, info, consts.DELETING_GROUP, services, e, delay_rate=exec_time.delay_rate)
+                self._process_exception(
+                    key, info, types.DeferredStorageGroup.DELETING, services, e, delay_rate=exec_time.delay_rate
+                )
 
     def run(self) -> None:
         self.process_to_stop()
@@ -375,12 +398,7 @@ class DeferredDeletionWorker(Job):
     @staticmethod
     def report(out: typing.TextIO) -> None:
         out.write(DeletionInfo.csv_header() + '\n')
-        for group in [
-            consts.TO_DELETE_GROUP,
-            consts.DELETING_GROUP,
-            consts.TO_STOP_GROUP,
-            consts.STOPPING_GROUP,
-        ]:
+        for group in types.DeferredStorageGroup:
             with DeferredDeletionWorker.deferred_storage.as_dict(group) as storage:
                 for _key, info in typing.cast(dict[str, DeletionInfo], storage).items():
                     out.write(info.as_csv() + '\n')

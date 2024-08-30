@@ -48,8 +48,8 @@ MAX_DELAY_RATE: typing.Final[float] = 4.0
 CHECK_INTERVAL: typing.Final[datetime.timedelta] = datetime.timedelta(seconds=11)  # Check interval
 FATAL_ERROR_INTERVAL_MULTIPLIER: typing.Final[int] = 2  # Multiplier for fatal errors
 
-TO_STOP_GROUP: typing.Final[str] = 'to_stop'
-STOPPING_GROUP: typing.Final[str] = 'stopping'
-TO_DELETE_GROUP: typing.Final[str] = 'to_delete'
-DELETING_GROUP: typing.Final[str] = 'deleting'
+# TO_STOP_GROUP: typing.Final[str] = 'to_stop'
+# STOPPING_GROUP: typing.Final[str] = 'stopping'
+# TO_DELETE_GROUP: typing.Final[str] = 'to_delete'
+# DELETING_GROUP: typing.Final[str] = 'deleting'
 
