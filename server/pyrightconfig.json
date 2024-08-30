@@ -10,4 +10,5 @@
     "reportPrivateUsage": false,
     "reportUnusedImport": true,
     "reportMissingTypeStubs": false,
+    "disableBytesTypePromotions": true,
 }
