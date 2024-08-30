@@ -488,7 +488,9 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         """
         This method is called to check if the service is removed
         """
-        return types.states.TaskState.FINISHED
+        if self.service().is_delete_running(self, self._vmid) is False:
+            return types.states.TaskState.FINISHED
+        return types.states.TaskState.RUNNING
 
     def op_delete_completed_checker(self) -> types.states.TaskState:
         """

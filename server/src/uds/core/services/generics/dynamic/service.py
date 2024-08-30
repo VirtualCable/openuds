@@ -213,6 +213,11 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         Removes the machine, or queues it for removal, or whatever :)
         Use the caller_instance to notify anything if needed, or to identify caller
         """
+        # Store the deletion has started for future reference
+        with self.storage.as_dict() as storage:
+            # Store deleting vmid
+            storage[f'deleting_{vmid}'] = True
+            
         DeferredDeletionWorker.add(self, vmid)
 
     # Method for deferred deletion
@@ -233,6 +238,22 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         Default implementation is return True always
         """
         return True
+    
+    def notify_deleted(self, vmid: str) -> None:
+        """
+        Called when the deferred deletion has been done
+        """
+        # Remove the deletion started flag
+        with self.storage.as_dict() as storage:
+            del storage[f'deleting_{vmid}']
+            
+    def is_delete_running(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> bool:
+        """
+        Checks if the deferred deletion of a machine is running
+        Default implementation is return False always
+        """
+        with self.storage.as_dict() as storage:
+            return f'deleting_{vmid}' in storage
 
     def should_maintain_on_error(self) -> bool:
         if self.has_field('maintain_on_error'):  # If has been defined on own class...

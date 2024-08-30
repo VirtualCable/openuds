@@ -631,10 +631,6 @@ class DynamicTestingPublicationQueue(dynamic_publication.DynamicPublication):
         self.mock.shutdown_completed_checker()
         return TaskState.FINISHED
 
-    def op_delete_checker(self) -> types.states.TaskState:
-        self.mock.remove_checker()
-        return TaskState.FINISHED
-
     def op_delete_completed_checker(self) -> types.states.TaskState:
         self.mock.remove_completed_checker()
         return TaskState.FINISHED
@@ -667,6 +663,10 @@ class DynamicTestingServiceForDeferredDeletion(dynamic_service.DynamicService):
     def is_deleted(self, vmid: str) -> bool:
         self.mock.is_deleted(vmid)
         return True
+    
+    def notify_deleted(self, vmid: str) -> None:
+        self.mock.notify_deleted(vmid)
+        return
 
     # Not used, but needed to be implemented due to bein abstract
     def get_ip(
