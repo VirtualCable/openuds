@@ -51,6 +51,10 @@ logger = logging.getLogger(__name__)
 
 
 def execution_timer() -> 'utils.ExecutionTimer':
+    """
+    Generates an execution timer for deletion operations
+    This allows to delay the next check based on how long the operation took
+    """
     return utils.ExecutionTimer(
         delay_threshold=consts.OPERATION_DELAY_THRESHOLD, max_delay_rate=consts.MAX_DELAY_RATE
     )
@@ -75,24 +79,32 @@ class DeletionInfo:
     total_retries: int = 0  # Total retries
     retries: int = 0  # Retries to stop again or to delete again in STOPPING_GROUP or DELETING_GROUP
 
+    deferred_storage: typing.ClassVar[storage.Storage] = storage.Storage('deferdel_worker')
+
+    @property
+    def key(self) -> str:
+        return DeletionInfo.generate_key(self.service_uuid, self.vmid)
+
     def sync_to_storage(self, group: types.DeferredStorageGroup) -> None:
         """
         Ensures that this object is stored on the storage
         If exists, it will be updated, if not, it will be created
         """
-        unique_key = f'{self.service_uuid}_{self.vmid}'
-        with DeferredDeletionWorker.deferred_storage.as_dict(group, atomic=True) as storage_dict:
-            storage_dict[unique_key] = self
+        with DeletionInfo.deferred_storage.as_dict(group, atomic=True) as storage_dict:
+            storage_dict[self.key] = self
 
     # For reporting
     def as_csv(self) -> str:
         return f'{self.vmid},{self.created},{self.next_check},{self.service_uuid},{self.fatal_retries},{self.total_retries},{self.retries}'
 
     @staticmethod
+    def generate_key(service_uuid: str, vmid: str) -> str:
+        return f'{service_uuid}_{vmid}'
+
+    @staticmethod
     def create_on_storage(group: str, vmid: str, service_uuid: str, delay_rate: float = 1.0) -> None:
-        unique_key = f'{service_uuid}_{vmid}'
-        with DeferredDeletionWorker.deferred_storage.as_dict(group, atomic=True) as storage_dict:
-            storage_dict[unique_key] = DeletionInfo(
+        with DeletionInfo.deferred_storage.as_dict(group, atomic=True) as storage_dict:
+            storage_dict[DeletionInfo.generate_key(service_uuid, vmid)] = DeletionInfo(
                 vmid=vmid,
                 created=sql_now(),
                 next_check=next_execution_calculator(delay_rate=delay_rate),
@@ -103,7 +115,7 @@ class DeletionInfo:
     @staticmethod
     def get_from_storage(
         group: types.DeferredStorageGroup,
-    ) -> tuple[dict[str, 'DynamicService'], list[tuple[str, 'DeletionInfo']]]:
+    ) -> tuple[dict[str, 'DynamicService'], list['DeletionInfo']]:
         """
         Get a list of objects to be processed from storage
 
@@ -112,14 +124,14 @@ class DeletionInfo:
             This is so we can release locks as soon as possible
         """
         count = 0
-        infos: list[tuple[str, DeletionInfo]] = []
+        infos: list[DeletionInfo] = []
 
         services: dict[str, 'DynamicService'] = {}
 
         # First, get ownership of to_delete objects to be processed
         # We do this way to release db locks as soon as possible
         now = sql_now()
-        with DeferredDeletionWorker.deferred_storage.as_dict(group, atomic=True) as storage_dict:
+        with DeletionInfo.deferred_storage.as_dict(group, atomic=True) as storage_dict:
             for key, info in sorted(
                 typing.cast(collections.abc.Iterable[tuple[str, DeletionInfo]], storage_dict.items()),
                 key=lambda x: x[1].next_check,
@@ -152,13 +164,13 @@ class DeletionInfo:
                 del storage_dict[key]  # Remove from storage, being processed
 
                 # Only add if not too many retries already
-                infos.append((key, info))
+                infos.append(info)
         return services, infos
 
     @staticmethod
     def count_from_storage(group: types.DeferredStorageGroup) -> int:
         # Counts the total number of objects in storage
-        with DeferredDeletionWorker.deferred_storage.as_dict(group) as storage_dict:
+        with DeletionInfo.deferred_storage.as_dict(group) as storage_dict:
             return len(storage_dict)
 
     @staticmethod
@@ -169,8 +181,6 @@ class DeletionInfo:
 class DeferredDeletionWorker(Job):
     frecuency = 7  # Frequency for this job, in seconds
     friendly_name = 'Deferred deletion runner'
-
-    deferred_storage: typing.ClassVar[storage.Storage] = storage.Storage('deferdel_worker')
 
     @staticmethod
     def add(service: 'DynamicService', vmid: str, execute_later: bool = False) -> None:
@@ -223,7 +233,6 @@ class DeferredDeletionWorker(Job):
 
     def _process_exception(
         self,
-        key: str,
         info: DeletionInfo,
         to_group: types.DeferredStorageGroup,
         services: dict[str, 'DynamicService'],
@@ -269,7 +278,7 @@ class DeferredDeletionWorker(Job):
         logger.debug('Processing %s to stop', to_stop)
 
         # Now process waiting stops
-        for key, info in to_stop:
+        for info in to_stop:  # Key not used
             exec_time = execution_timer()
             try:
                 service = services[info.service_uuid]
@@ -294,7 +303,7 @@ class DeferredDeletionWorker(Job):
                         info.sync_to_storage(types.DeferredStorageGroup.TO_DELETE)
             except Exception as e:
                 self._process_exception(
-                    key, info, types.DeferredStorageGroup.TO_STOP, services, e, delay_rate=exec_time.delay_rate
+                    info, types.DeferredStorageGroup.TO_STOP, services, e, delay_rate=exec_time.delay_rate
                 )
 
     def process_stopping(self) -> None:
@@ -302,7 +311,7 @@ class DeferredDeletionWorker(Job):
         logger.debug('Processing %s stopping', stopping)
 
         # Now process waiting for finishing stops
-        for key, info in stopping:
+        for info in stopping:
             exec_time = execution_timer()
             try:
                 info.retries += 1
@@ -323,7 +332,7 @@ class DeferredDeletionWorker(Job):
                         info.sync_to_storage(types.DeferredStorageGroup.TO_DELETE)
             except Exception as e:
                 self._process_exception(
-                    key, info, types.DeferredStorageGroup.STOPPING, services, e, delay_rate=exec_time.delay_rate
+                    info, types.DeferredStorageGroup.STOPPING, services, e, delay_rate=exec_time.delay_rate
                 )
 
     def process_to_delete(self) -> None:
@@ -331,7 +340,7 @@ class DeferredDeletionWorker(Job):
         logger.debug('Processing %s to delete', to_delete)
 
         # Now process waiting deletions
-        for key, info in to_delete:
+        for info in to_delete:
             service = services[info.service_uuid]
             exec_time = execution_timer()
             try:
@@ -349,7 +358,6 @@ class DeferredDeletionWorker(Job):
                 info.sync_to_storage(types.DeferredStorageGroup.DELETING)
             except Exception as e:
                 self._process_exception(
-                    key,
                     info,
                     types.DeferredStorageGroup.TO_DELETE,
                     services,
@@ -367,7 +375,7 @@ class DeferredDeletionWorker(Job):
         logger.debug('Processing %s deleting', deleting)
 
         # Now process waiting for finishing deletions
-        for key, info in deleting:
+        for info in deleting:  # Key not used
             exec_time = execution_timer()
             try:
                 info.retries += 1
@@ -385,7 +393,7 @@ class DeferredDeletionWorker(Job):
                         info.sync_to_storage(types.DeferredStorageGroup.DELETING)
             except Exception as e:
                 self._process_exception(
-                    key, info, types.DeferredStorageGroup.DELETING, services, e, delay_rate=exec_time.delay_rate
+                    info, types.DeferredStorageGroup.DELETING, services, e, delay_rate=exec_time.delay_rate
                 )
 
     def run(self) -> None:
@@ -399,7 +407,7 @@ class DeferredDeletionWorker(Job):
     def report(out: typing.TextIO) -> None:
         out.write(DeletionInfo.csv_header() + '\n')
         for group in types.DeferredStorageGroup:
-            with DeferredDeletionWorker.deferred_storage.as_dict(group) as storage:
+            with DeletionInfo.deferred_storage.as_dict(group) as storage:
                 for _key, info in typing.cast(dict[str, DeletionInfo], storage).items():
                     out.write(info.as_csv() + '\n')
         out.write('\n')

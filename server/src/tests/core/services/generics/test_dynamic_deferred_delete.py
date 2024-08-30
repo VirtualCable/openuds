@@ -57,13 +57,13 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
 
     def set_last_check_expired(self) -> None:
         for group in deferred_types.DeferredStorageGroup:
-            with deferred_deletion.DeferredDeletionWorker.deferred_storage.as_dict(group) as storage:
+            with deferred_deletion.DeletionInfo.deferred_storage.as_dict(group) as storage:
                 for key, info in typing.cast(dict[str, deferred_deletion.DeletionInfo], storage).items():
                     info.next_check = sql_now() - datetime.timedelta(seconds=1)
                     storage[key] = info
 
     def count_entries_on_storage(self, group: str) -> int:
-        with deferred_deletion.DeferredDeletionWorker.deferred_storage.as_dict(group) as storage:
+        with deferred_deletion.DeletionInfo.deferred_storage.as_dict(group) as storage:
             return len(storage)
 
     @contextlib.contextmanager
@@ -99,7 +99,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
         with mock.patch('uds.models.Service.objects') as objs:
             objs.get.return_value = instance.db_obj()
             with mock.patch(
-                'uds.workers.deferred_deletion.DeferredDeletionWorker.deferred_storage'
+                'uds.workers.deferred_deletion.DeletionInfo.deferred_storage'
             ) as storage:
 
                 @contextlib.contextmanager
@@ -156,7 +156,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
         self.assertEqual(self.count_entries_on_storage(deferred_types.DeferredStorageGroup.STOPPING), 0)
 
         # Storage db should have 16 entries
-        with deferred_deletion.DeferredDeletionWorker.deferred_storage.as_dict(
+        with deferred_deletion.DeletionInfo.deferred_storage.as_dict(
             deferred_types.DeferredStorageGroup.DELETING
         ) as deleting:
             self.assertEqual(len(deleting), 16)
@@ -194,7 +194,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
         self.assertEqual(len(services_1), 1)
         self.assertEqual(len(key_info_1), 1)
         # And should rest only 15 on storage
-        with deferred_deletion.DeferredDeletionWorker.deferred_storage.as_dict(
+        with deferred_deletion.DeletionInfo.deferred_storage.as_dict(
             deferred_types.DeferredStorageGroup.DELETING
         ) as deleting:
             self.assertEqual(len(deleting), 15)
@@ -206,11 +206,11 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
         self.assertEqual(len(key_info_2), 15)  # And 15 entries
 
         # Re-store all DELETING_GROUP entries
-        with deferred_deletion.DeferredDeletionWorker.deferred_storage.as_dict(
+        with deferred_deletion.DeletionInfo.deferred_storage.as_dict(
             deferred_types.DeferredStorageGroup.DELETING
         ) as deleting:
             for info in itertools.chain(key_info_1, key_info_2):
-                deleting[info[0]] = info[1]
+                deleting[info.key] = info
 
         # set MAX_DELETIONS_AT_ONCE to a value bigger than 16
         deferred_consts.MAX_DELETIONS_AT_ONCE = 100
@@ -263,18 +263,18 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
         self.set_last_check_expired()
 
         # Now, get from deleting again, should have all services and infos
-        services, key_info = deferred_deletion.DeletionInfo.get_from_storage(deferred_types.DeferredStorageGroup.TO_DELETE)
+        services, info = deferred_deletion.DeletionInfo.get_from_storage(deferred_types.DeferredStorageGroup.TO_DELETE)
         self.assertEqual(len(services), 1)
-        self.assertEqual(len(key_info), 1)
+        self.assertEqual(len(info), 1)
         # now, db should be empty
         self.assertEqual(self.count_entries_on_storage(deferred_types.DeferredStorageGroup.TO_DELETE), 0)
 
         # Re store the entry
-        with deferred_deletion.DeferredDeletionWorker.deferred_storage.as_dict(
+        with deferred_deletion.DeletionInfo.deferred_storage.as_dict(
             deferred_types.DeferredStorageGroup.TO_DELETE
         ) as to_delete:
-            for info in key_info:
-                to_delete[info[0]] = info[1]
+            for info in info:
+                to_delete[info.key] = info
 
         # Process should move from to_delete to deleting
         job.run()  # process_to_delete and process_deleting
@@ -287,7 +287,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
 
         instance.mock.reset_mock()
         # And should have one entry in deleting
-        with deferred_deletion.DeferredDeletionWorker.deferred_storage.as_dict(
+        with deferred_deletion.DeletionInfo.deferred_storage.as_dict(
             deferred_types.DeferredStorageGroup.DELETING
         ) as deleting:
             self.assertEqual(len(deleting), 1)

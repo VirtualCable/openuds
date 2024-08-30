@@ -181,6 +181,21 @@ class ExecutionTimer:
     _max_delay_rate: float
 
     def __init__(self, delay_threshold: float, *, max_delay_rate: float = 4.0) -> None:
+        """
+        Creates a new ExecutionTimer
+        
+        Arguments:
+            delay_threshold {float} -- Threshold for the delay rate, in seconds.
+            max_delay_rate {float} -- Maximum delay rate, defaults to 4.0
+            
+        Note:
+        - delay_threshold is the time in seconds that we consider an operation is taking too long
+        - max_delay_rate is the maximum delay rate, if the operation is taking longer than the threshold, we will
+          multiply the delay by the delay rate, but at most by the max delay rate
+        - The delay will be calculated as the elapsed time divided by the threshold, at most the max delay rate
+        - A value of <= 0.0 will not delay at all, a value of 1.0 will delay as much as the elapsed time, a value of 2.0
+            will delay twice the elapsed time, and so on
+        """
         self._start = datetime.datetime.now()
         self._end = self._start
         self._running = False
@@ -205,7 +220,22 @@ class ExecutionTimer:
 
     @property
     def delay_rate(self) -> float:
-        if self.elapsed.total_seconds() > self._delay_threshold:
+        """
+        Returns the delay rate based on the elapsed time
+        Delay rate is a multiplier for the delay time based on the elapsed time
+        I.e:
+        - If the elapsed time is 0, the delay rate is 1.0
+        - If the delay_threshold is lower or equal to 0, the delay rate is 1.0
+        - If the elapsed time is greater than the threshold, the delay rate is the elapsed time divided by the threshold
+          for example:
+            * threshold = 2, elapsed = 4, delay rate = 2.0
+            * threshold = 2, elapsed = 8, delay rate = 4.0
+        - If the delay rate is greater than the max delay rate, the delay rate is the max delay rate
+        
+        This allows us to increase the delay for next check based on how long the operation is taking
+        (the longer it takes, the longer we wait for the next check)
+        """
+        if self._delay_threshold > 0 and self.elapsed.total_seconds() > self._delay_threshold:
             # Ensure we do not delay too much, at most MAX_DELAY_RATE times
             return min(self.elapsed.total_seconds() / self._delay_threshold, self._max_delay_rate)
         return 1.0
