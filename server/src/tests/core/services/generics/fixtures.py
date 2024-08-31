@@ -526,6 +526,7 @@ class DynamicTestingService(dynamic_service.DynamicService):
         caller_instance: typing.Optional[dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication],
         vmid: str,
     ) -> None:
+        super().set_deleting_state(vmid)  # Call parent set_delete_runnign
         self.mock.remove(caller_instance, vmid)
         self.machine_running_flag = False
 

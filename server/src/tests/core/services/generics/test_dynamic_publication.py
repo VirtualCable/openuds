@@ -196,6 +196,26 @@ class DynamicPublicationTest(UDSTestCase):
         self.assertEqual(publication.check_state(), types.states.TaskState.ERROR)
         self.assertEqual(publication.error_reason(), 'Max retries reached')
         self.assertEqual(counter, 10)  # 4 retries + 5 retries after reset + 1 of the reset itself
+
+    def test_publication_delete(self) -> None:
+        service = fixtures.create_dynamic_service()
+        publication = fixtures.create_dynamic_publication(service)
+        publication._queue = [
+            types.services.Operation.NOP,  # First check
+            types.services.Operation.DELETE,  # Execute-check
+            types.services.Operation.FINISH,  # Finish
+        ]
+
+        state = types.states.TaskState.RUNNING
+        counter = 0  # to be able to use it outside the loop
+        # Shuold keep running until service notify_delete is called
+        for counter in limited_iterator(lambda: state == types.states.TaskState.RUNNING, limit=128):
+            state = publication.check_state()
+            if counter == 16:  # After 16 iterations, we will call notify_deleted
+                publication.service().notify_deleted(publication._vmid)
+                
+        # Counter should be greater than 16
+        self.assertGreater(counter, 16)
     
 
 EXPECTED_DEPLOY_ITERATIONS_INFO: typing.Final[list[DynamicPublicationIterationInfo]] = [

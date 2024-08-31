@@ -207,16 +207,14 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         """
         # Default is to stop "hard"
         return self.stop(caller_instance, vmid)
-
+    
     def delete(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
         """
         Removes the machine, or queues it for removal, or whatever :)
         Use the caller_instance to notify anything if needed, or to identify caller
         """
         # Store the deletion has started for future reference
-        with self.storage.as_dict() as storage:
-            # Store deleting vmid
-            storage[f'deleting_{vmid}'] = True
+        self.set_deleting_state(vmid)
             
         DeferredDeletionWorker.add(self, vmid)
 
@@ -247,7 +245,15 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         with self.storage.as_dict() as storage:
             del storage[f'deleting_{vmid}']
             
-    def is_delete_running(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> bool:
+    def set_deleting_state(self, vmid: str) -> None:
+        """
+        Marks a machine as deleting
+        """
+        with self.storage.as_dict() as storage:
+            # Store deleting vmid
+            storage[f'deleting_{vmid}'] = True
+            
+    def check_deleting_status(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> bool:
         """
         Checks if the deferred deletion of a machine is running
         Default implementation is return False always

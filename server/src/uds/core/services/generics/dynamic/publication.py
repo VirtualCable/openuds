@@ -64,6 +64,8 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
     # Extra info, not serializable, to keep information in case of exception and debug it
     _error_debug_info: typing.Optional[str] = None
 
+    # Default queues for publication. Should be enough for most of the cases
+    # but can be overrided if needed
     _publish_queue: typing.ClassVar[list[Operation]] = [
         Operation.INITIALIZE,
         Operation.CREATE,
@@ -488,7 +490,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         """
         This method is called to check if the service is removed
         """
-        if self.service().is_delete_running(self, self._vmid) is False:
+        if self.service().check_deleting_status(self, self._vmid) is False:
             return types.states.TaskState.FINISHED
         return types.states.TaskState.RUNNING
 
