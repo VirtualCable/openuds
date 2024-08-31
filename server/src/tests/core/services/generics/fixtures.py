@@ -594,7 +594,7 @@ class DynamicTestingPublicationQueue(dynamic_publication.DynamicPublication):
 
     def op_shutdown_completed(self) -> None:
         self.mock.shutdown_completed()
-
+        
     def op_delete_completed(self) -> None:
         self.mock.remove_completed()
 
@@ -631,6 +631,10 @@ class DynamicTestingPublicationQueue(dynamic_publication.DynamicPublication):
         self.mock.shutdown_completed_checker()
         return TaskState.FINISHED
 
+    def op_delete_checker(self) -> types.states.TaskState:
+        self.mock.remove_checker()
+        return types.states.TaskState.FINISHED
+
     def op_delete_completed_checker(self) -> types.states.TaskState:
         self.mock.remove_completed_checker()
         return TaskState.FINISHED
@@ -665,6 +669,7 @@ class DynamicTestingServiceForDeferredDeletion(dynamic_service.DynamicService):
         return True
     
     def notify_deleted(self, vmid: str) -> None:
+        super().notify_deleted(vmid)  # to update delete_running flag
         self.mock.notify_deleted(vmid)
         return
 
@@ -716,7 +721,7 @@ class DynamicTestingProvider(services.provider.ServiceProvider):
 
 def create_dynamic_provider() -> DynamicTestingProvider:
     uuid_ = str(uuid.uuid4())
-    return DynamicTestingProvider(environment=environment.Environment.private_environment(uuid), uuid=uuid_)
+    return DynamicTestingProvider(environment=environment.Environment.private_environment(uuid_), uuid=uuid_)
 
 
 def create_dynamic_service(
