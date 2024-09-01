@@ -340,6 +340,8 @@ class DynamicServiceTest(UDSTestCase):
                 
         # Counter should be greater than 16
         self.assertGreater(counter, 16)
+        # And state shoudl be finished
+        self.assertEqual(state, types.states.TaskState.FINISHED)
 
 
 EXPECTED_DEPLOY_ITERATIONS_INFO: typing.Final[list[DynamicServiceIterationInfo]] = [
