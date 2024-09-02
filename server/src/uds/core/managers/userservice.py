@@ -518,6 +518,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
             return
 
         stats = self.get_cache_servicepool_stats(userservice.deployed_service)
+        # Fix assigned value, because "userservice" will not count as assigned anymore
+        stats.assigned_count -= 1
+        
         # Note that only moves to cache L1
         # Also, we can get values for L2 cache, thats why we check L1 for overflow and needed
         if stats.has_l1_cache_overflow():
