@@ -66,7 +66,7 @@ def transport_own_link(
 
     # For type checkers to "be happy"
     try:
-        res = UserServiceManager().get_user_service_info(
+        res = UserServiceManager.manager().get_user_service_info(
             request.user, request.os, request.ip, service_id, transport_id
         )
         ip, userService, _iads, trans, itrans = res
@@ -159,10 +159,10 @@ def user_service_status(
     userservice: typing.Optional['UserService'] = None
     status = 'running'
     # If service exists (meta or not)
-    if UserServiceManager().is_meta_service(service_id):
-        userservice = UserServiceManager().locate_meta_service(user=request.user, id_metapool=service_id)
+    if UserServiceManager.manager().is_meta_service(service_id):
+        userservice = UserServiceManager.manager().locate_meta_service(user=request.user, id_metapool=service_id)
     else:
-        userservice = UserServiceManager().locate_user_service(
+        userservice = UserServiceManager.manager().locate_user_service(
             user=request.user, id_service=service_id, create=False
         )
     if userservice:
@@ -191,7 +191,7 @@ def user_service_status(
 def action(request: 'ExtendedHttpRequestWithUser', service_id: str, action_string: str) -> HttpResponse:
     userService = UserServiceManager.manager().locate_meta_service(request.user, service_id)
     if not userService:
-        userService = UserServiceManager().locate_user_service(request.user, service_id, create=False)
+        userService = UserServiceManager.manager().locate_user_service(request.user, service_id, create=False)
 
     response: typing.Any = None
     rebuild: bool = False
@@ -206,7 +206,7 @@ def action(request: 'ExtendedHttpRequestWithUser', service_id: str, action_strin
                 ),
                 types.log.LogSource.WEB,
             )
-            UserServiceManager().request_logoff(userService)
+            UserServiceManager.manager().request_logoff(userService)
             userService.release()
         elif (
             action_string == 'reset'
@@ -222,8 +222,8 @@ def action(request: 'ExtendedHttpRequestWithUser', service_id: str, action_strin
                 ),
                 types.log.LogSource.WEB,
             )
-            # UserServiceManager().requestLogoff(userService)
-            UserServiceManager().reset(userService)
+            # UserServiceManager.manager().requestLogoff(userService)
+            UserServiceManager.manager().reset(userService)
 
     if rebuild:
         # Rebuild services data, but return only "this" service

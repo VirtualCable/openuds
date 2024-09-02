@@ -103,7 +103,7 @@ class Connection(Handler):
                 _,  # iads,
                 _,  # trans,
                 itrans,
-            ) = UserServiceManager().get_user_service_info(  # pylint: disable=unused-variable
+            ) = UserServiceManager.manager().get_user_service_info(  # pylint: disable=unused-variable
                 self._user,
                 self._request.os,
                 self._request.ip,
@@ -134,7 +134,7 @@ class Connection(Handler):
 
     def script(self, idService: str, idTransport: str, scrambler: str, hostname: str) -> dict[str, typing.Any]:
         try:
-            res = UserServiceManager().get_user_service_info(
+            res = UserServiceManager.manager().get_user_service_info(
                 self._user, self._request.os, self._request.ip, idService, idTransport
             )
             userService: 'models.UserService'

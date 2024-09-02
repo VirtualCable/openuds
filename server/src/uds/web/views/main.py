@@ -370,7 +370,7 @@ def update_transport_ticket(
                             userService = models.UserService.objects.get(
                                 uuid=data['ticket-info'].get('userService', None)
                             )
-                            UserServiceManager().notify_preconnect(
+                            UserServiceManager.manager().notify_preconnect(
                                 userService,
                                 types.connections.ConnectionData(
                                     username=username,

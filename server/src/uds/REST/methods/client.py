@@ -142,7 +142,7 @@ class Client(Handler):
                 userServiceInstance,
                 transport,
                 transportInstance,
-            ) = UserServiceManager().get_user_service_info(
+            ) = UserServiceManager.manager().get_user_service_info(
                 self._request.user,
                 self._request.os,
                 self._request.ip,

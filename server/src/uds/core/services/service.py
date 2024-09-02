@@ -269,7 +269,7 @@ class Service(Module):
         """
         return True
     
-    def allows_put_back_to_cache(self) -> bool:
+    def allow_putting_back_to_cache(self) -> bool:
         """
         Returns if this service can be put back to cache. This is used to check if a service can be put back to cache
         when the user logouts instead of being removed. By default, this method returns False.

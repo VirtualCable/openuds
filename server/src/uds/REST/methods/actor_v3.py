@@ -515,7 +515,7 @@ class BaseReadyChange(ActorV3Action):
 
             if osmanager:
                 osmanager.to_ready(userService)
-                UserServiceManager().notify_ready_from_os_manager(userService, '')  # Currently, no data is received for os manager
+                UserServiceManager.manager().notify_ready_from_os_manager(userService, '')  # Currently, no data is received for os manager
 
         # Generates a certificate and send it to client.
         privateKey, cert, password = security.create_self_signed_cert(self._params['ip'])

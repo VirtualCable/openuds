@@ -194,7 +194,7 @@ class ServicesPools(ModelHandler):
         if item.is_in_maintenance():
             state = State.MAINTENANCE
         # This needs a lot of queries, and really does not apport anything important to the report
-        # elif UserServiceManager().canInitiateServiceFromDeployedService(item) is False:
+        # elif UserServiceManager.manager().canInitiateServiceFromDeployedService(item) is False:
         #     state = State.SLOWED_DOWN
         val: dict[str, typing.Any] = {
             'id': item.uuid,
@@ -679,7 +679,7 @@ class ServicesPools(ModelHandler):
             return self.invalid_request_response('Invalid parameters')
 
         logger.debug('Creating from assignable: %s', self._params)
-        UserServiceManager().create_from_assignable(
+        UserServiceManager.manager().create_from_assignable(
             item,
             User.objects.get(uuid__iexact=process_uuid(self._params['user_id'])),
             self._params['assignable_id'],

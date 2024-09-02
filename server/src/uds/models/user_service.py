@@ -365,6 +365,9 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         Returns True if this User Service needs an os manager (i.e. parent services pools is marked to use an os manager)
         """
         return bool(self.get_osmanager())
+    
+    def allow_putting_back_to_cache(self) -> bool:
+        return self.deployed_service.service.get_instance().allow_putting_back_to_cache()
 
     def transforms_user_or_password_for_service(self) -> bool:
         """
@@ -466,7 +469,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
 
         if not inUse:  # Service released, check y we should mark it for removal
             # If our publication is not current, mark this for removal
-            UserServiceManager().check_for_removal(self)
+            UserServiceManager.manager().check_for_removal(self)
 
     def start_accounting(self) -> None:
         # 1.- If do not have any account associated, do nothing
@@ -577,7 +580,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         # pylint: disable=import-outside-toplevel
         from uds.core.managers.userservice import UserServiceManager
 
-        UserServiceManager().move_to_level(self, cacheLevel)
+        UserServiceManager.manager().move_to_level(self, cacheLevel)
 
     def set_comms_endpoint(self, commsUrl: typing.Optional[str] = None) -> None:
         self.properties['comms_url'] = commsUrl

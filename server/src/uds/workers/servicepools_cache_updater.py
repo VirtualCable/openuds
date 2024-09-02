@@ -142,14 +142,14 @@ class ServiceCacheUpdater(Job):
     #         # to create new items over the limit stablisshed, so we will not remove them anymore
     #         l1_cache_count: int = (
     #             servicepool.cached_users_services()
-    #             .filter(UserServiceManager().get_cache_state_filter(servicepool, types.services.CacheLevel.L1))
+    #             .filter(UserServiceManager.manager().get_cache_state_filter(servicepool, types.services.CacheLevel.L1))
     #             .count()
     #         )
     #         l2_cache_count: int = (
     #             (
     #                 servicepool.cached_users_services()
     #                 .filter(
-    #                     UserServiceManager().get_cache_state_filter(servicepool, types.services.CacheLevel.L2)
+    #                     UserServiceManager.manager().get_cache_state_filter(servicepool, types.services.CacheLevel.L2)
     #                 )
     #                 .count()
     #             )
@@ -158,7 +158,7 @@ class ServiceCacheUpdater(Job):
     #         )
     #         assigned_count: int = (
     #             servicepool.assigned_user_services()
-    #             .filter(UserServiceManager().get_state_filter(servicepool.service))
+    #             .filter(UserServiceManager.manager().get_state_filter(servicepool.service))
     #             .count()
     #         )
     #         pool_stat = types.services.ServicePoolStats(
@@ -191,7 +191,7 @@ class ServiceCacheUpdater(Job):
     #             continue
 
     #         # If this service don't allows more starting user services, continue
-    #         if not UserServiceManager().can_grow_service_pool(servicepool):
+    #         if not UserServiceManager.manager().can_grow_service_pool(servicepool):
     #             logger.debug(
     #                 'This pool cannot grow rithg now: %s',
     #                 servicepool,
@@ -263,7 +263,7 @@ class ServiceCacheUpdater(Job):
                     servicepool_stats.servicepool.cached_users_services()
                     .select_for_update()
                     .filter(
-                        UserServiceManager().get_cache_state_filter(
+                        UserServiceManager.manager().get_cache_state_filter(
                             servicepool_stats.servicepool, types.services.CacheLevel.L2
                         )
                     )
@@ -346,7 +346,7 @@ class ServiceCacheUpdater(Job):
             i
             for i in servicepool_stats.servicepool.cached_users_services()
             .filter(
-                UserServiceManager().get_cache_state_filter(
+                UserServiceManager.manager().get_cache_state_filter(
                     servicepool_stats.servicepool, types.services.CacheLevel.L1
                 )
             )
@@ -390,7 +390,7 @@ class ServiceCacheUpdater(Job):
             cacheItems = (
                 servicepool_stats.servicepool.cached_users_services()
                 .filter(
-                    UserServiceManager().get_cache_state_filter(
+                    UserServiceManager.manager().get_cache_state_filter(
                         servicepool_stats.servicepool, types.services.CacheLevel.L2
                     )
                 )

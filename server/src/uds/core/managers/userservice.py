@@ -318,7 +318,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         # Save the new element, for reference
         user_service_copy.save()
-        
+
         # Now, move the original to cache, but do it "hard" way, so we do not need to check for state
         user_service.state = State.USABLE
         user_service.os_state = State.USABLE
@@ -381,13 +381,13 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # to create new items over the limit stablisshed, so we will not remove them anymore
         l1_cache_count: int = (
             servicepool.cached_users_services()
-            .filter(UserServiceManager().get_cache_state_filter(servicepool, types.services.CacheLevel.L1))
+            .filter(UserServiceManager.manager().get_cache_state_filter(servicepool, types.services.CacheLevel.L1))
             .count()
         )
         l2_cache_count: int = (
             (
                 servicepool.cached_users_services()
-                .filter(UserServiceManager().get_cache_state_filter(servicepool, types.services.CacheLevel.L2))
+                .filter(UserServiceManager.manager().get_cache_state_filter(servicepool, types.services.CacheLevel.L2))
                 .count()
             )
             if service_instance.uses_cache_l2
@@ -395,7 +395,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         )
         assigned_count: int = (
             servicepool.assigned_user_services()
-            .filter(UserServiceManager().get_state_filter(servicepool.service))
+            .filter(UserServiceManager.manager().get_state_filter(servicepool.service))
             .count()
         )
         pool_stat = types.services.ServicePoolStats(servicepool, l1_cache_count, l2_cache_count, assigned_count)
@@ -497,10 +497,21 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         This method will take care of removing the service if no cache is desired of cache already full (on servicepool)
         """
-        if userservice.deployed_service.service.get_instance().allows_put_back_to_cache() is False:
+        if userservice.allow_putting_back_to_cache() is False:
+            userservice.release()  # Normal release
+            return
+
+        # Some sanity checks, should never happen
+        if userservice.cache_level != types.services.CacheLevel.NONE:
+            logger.error('Cache level is not NONE for userservice %s on release_on_logout', userservice)
             userservice.release()
             return
-        
+
+        if userservice.is_usable() is False:
+            logger.error('State is not USABLE for userservice %s on release_on_logout', userservice)
+            userservice.release()
+            return
+
         stats = self.get_cache_servicepool_stats(userservice.deployed_service)
         # Note that only moves to cache L1
         # Also, we can get values for L2 cache, thats why we check L1 for overflow and needed

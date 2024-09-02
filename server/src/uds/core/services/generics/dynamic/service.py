@@ -58,7 +58,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
     uses_cache_l2 = False  # L2 Cache are running machines in suspended state
     needs_osmanager = False  # If the service needs a s.o. manager (managers are related to agents provided by services, i.e. virtual machines with agent)
 
-    must_stop_before_deletion = True  # If the service must be stopped before deletion    
+    must_stop_before_deletion = True  # If the service must be stopped before deletion
 
     # Gui remplates, to be "incorporated" by inherited classes if needed
     base_machine = gui.ChoiceField(
@@ -85,6 +85,16 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         order=104,
         tab=types.ui.Tab.ADVANCED,
     )
+    put_back_to_cache = gui.ChoiceField(
+        order=105,
+        label=_('Put back to cache'),
+        tooltip=_('On machine releasy by logout, put it back to cache instead of deleting if possible.'),
+        choices=[
+            {'id': 'no', 'text': _('No. Never put it back to cache')},
+            {'id': 'yes', 'text': _('Yes, try to put it back to cache')},
+        ],
+        tab=types.ui.Tab.ADVANCED,
+    )
 
     def initialize(self, values: 'types.core.ValuesType') -> None:
         """
@@ -95,6 +105,13 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         """
         if values:
             validators.validate_basename(self.basename.value, self.lenname.value)
+
+    def allow_putting_back_to_cache(self) -> bool:
+        if self.has_field('put_back_to_cache') and isinstance(
+            getattr(self, 'put_back_to_cache', None), gui.ChoiceField
+        ):
+            return self.put_back_to_cache.value == 'yes'
+        return False
 
     def get_basename(self) -> str:
         return self.basename.value
@@ -127,7 +144,9 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
             This method must be be provided if the field remove_duplicates is used
             If not, will raise a NotImplementedError
         """
-        raise NotImplementedError(f'{self.__class__}: find_duplicates must be implemented if remove_duplicates is used!')
+        raise NotImplementedError(
+            f'{self.__class__}: find_duplicates must be implemented if remove_duplicates is used!'
+        )
 
     @typing.final
     def perform_find_duplicates(self, name: str, mac: str) -> collections.abc.Iterable[str]:
@@ -152,7 +171,9 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         return []
 
     @abc.abstractmethod
-    def get_ip(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> str:
+    def get_ip(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> str:
         """
         Returns the ip of the machine
         If cannot be obtained, MUST raise an exception
@@ -160,7 +181,9 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         ...
 
     @abc.abstractmethod
-    def get_mac(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> str:
+    def get_mac(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> str:
         """
         Returns the mac of the machine
         If cannot be obtained, MUST raise an exception
@@ -171,14 +194,18 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         ...
 
     @abc.abstractmethod
-    def is_running(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> bool:
+    def is_running(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> bool:
         """
         Returns if the machine is ready and running
         """
         ...
 
     @abc.abstractmethod
-    def start(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
+    def start(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> None:
         """
         Starts the machine
         Returns None. If a task is needed for anything, use the caller_instance to notify
@@ -186,36 +213,44 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         ...
 
     @abc.abstractmethod
-    def stop(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
+    def stop(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> None:
         """
         Stops the machine
         Returns None. If a task is needed for anything, use the caller_instance to notify
         """
         ...
 
-    def shutdown(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
+    def shutdown(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> None:
         """
         Shutdowns the machine.  Defaults to stop
         Returns None. If a task is needed for anything, use the caller_instance to notify
         """
         return self.stop(caller_instance, vmid)
 
-    def reset(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
+    def reset(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> None:
         """
         Resets the machine
         Returns None. If a task is needed for anything, use the caller_instance to notify
         """
         # Default is to stop "hard"
         return self.stop(caller_instance, vmid)
-    
-    def delete(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
+
+    def delete(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> None:
         """
         Removes the machine, or queues it for removal, or whatever :)
         Use the caller_instance to notify anything if needed, or to identify caller
         """
         # Store the deletion has started for future reference
         self.set_deleting_state(vmid)
-            
+
         DeferredDeletionWorker.add(self, vmid)
 
     # Method for deferred deletion
@@ -229,14 +264,14 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         you provided a custom delete method, but better to have it implemented
         """
         ...
-        
+
     def is_deleted(self, vmid: str) -> bool:
         """
         Checks if the deferred deletion of a machine is done
         Default implementation is return True always
         """
         return True
-    
+
     def notify_deleted(self, vmid: str) -> None:
         """
         Called when the deferred deletion has been done
@@ -244,7 +279,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         # Remove the deletion started flag
         with self.storage.as_dict() as storage:
             del storage[f'deleting_{vmid}']
-            
+
     def set_deleting_state(self, vmid: str) -> None:
         """
         Marks a machine as deleting
@@ -252,8 +287,10 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         with self.storage.as_dict() as storage:
             # Store deleting vmid
             storage[f'deleting_{vmid}'] = True
-            
-    def is_deletion_in_progress(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> bool:
+
+    def is_deletion_in_progress(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> bool:
         """
         Checks if the deferred deletion of a machine is running
         Default implementation is return False always

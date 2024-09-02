@@ -257,7 +257,7 @@ class AssignedService(DetailHandler):
 
     def reset(self, parent: 'models.ServicePool', item: str) -> typing.Any:
         userService = parent.userServices.get(uuid=process_uuid(item))
-        UserServiceManager().reset(userService)
+        UserServiceManager.manager().reset(userService)
 
 
 class CachedService(AssignedService):
