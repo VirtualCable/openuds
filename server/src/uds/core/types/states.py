@@ -96,8 +96,6 @@ class State(enum.StrEnum):
     @property
     def localized(self) -> str:
         """Returns the literal translation of the state"""
-        print(self)
-        print(_TRANSLATIONS.get(self))
         return _TRANSLATIONS.get(self, _TRANSLATIONS[State.UNKNOWN])
 
     def is_active(self) -> bool:

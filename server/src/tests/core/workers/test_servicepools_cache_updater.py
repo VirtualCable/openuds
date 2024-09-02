@@ -49,7 +49,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 class ServiceCacheUpdaterTest(UDSTestCase):
-    servicePool: 'models.ServicePool'
+    servicepool: 'models.ServicePool'
 
     def setUp(self) -> None:
         # Default values for max
@@ -60,11 +60,11 @@ class ServiceCacheUpdaterTest(UDSTestCase):
 
         ServiceCacheUpdater.setup()
         userService = services_fixtures.create_db_cache_userservices()[0]
-        self.servicePool = userService.deployed_service
+        self.servicepool = userService.deployed_service
         userService.delete()  # empty all
 
     def removing_or_canceled_count(self) -> int:
-        return self.servicePool.userServices.filter(
+        return self.servicepool.userServices.filter(
             state__in=[State.REMOVABLE, State.CANCELED]
         ).count()
 
@@ -73,7 +73,7 @@ class ServiceCacheUpdaterTest(UDSTestCase):
             updater = ServiceCacheUpdater(Environment.testing_environment())
             updater.run()
         # Test user service will cancel automatically so it will not get in "removable" state (on remove start, it will tell it has been removed)
-        return self.servicePool.userServices.count() - self.removing_or_canceled_count()
+        return self.servicepool.userServices.count() - self.removing_or_canceled_count()
 
     def set_cache(
         self,
@@ -82,52 +82,52 @@ class ServiceCacheUpdaterTest(UDSTestCase):
         cache2: typing.Optional[int] = None,
         max: typing.Optional[int] = None,
     ) -> None:
-        self.servicePool.initial_srvs = (
-            self.servicePool.initial_srvs if initial is None else initial
+        self.servicepool.initial_srvs = (
+            self.servicepool.initial_srvs if initial is None else initial
         )
-        self.servicePool.cache_l1_srvs = (
-            self.servicePool.cache_l1_srvs if cache is None else cache
+        self.servicepool.cache_l1_srvs = (
+            self.servicepool.cache_l1_srvs if cache is None else cache
         )
-        self.servicePool.cache_l2_srvs = (
-            self.servicePool.cache_l2_srvs if cache2 is None else cache2
+        self.servicepool.cache_l2_srvs = (
+            self.servicepool.cache_l2_srvs if cache2 is None else cache2
         )
-        self.servicePool.max_srvs = self.servicePool.max_srvs if max is None else max
-        self.servicePool.save()
+        self.servicepool.max_srvs = self.servicepool.max_srvs if max is None else max
+        self.servicepool.save()
 
     def test_initial(self) -> None:
         self.set_cache(initial=100, cache=10, max=500)
 
         self.assertEqual(
-            self.execute_cache_updater(self.servicePool.initial_srvs + 10),
-            self.servicePool.initial_srvs,
+            self.execute_cache_updater(self.servicepool.initial_srvs + 10),
+            self.servicepool.initial_srvs,
         )
 
     def test_remove(self) -> None:
         self.set_cache(initial=100, cache=110, max=500)
 
-        self.execute_cache_updater(self.servicePool.cache_l1_srvs)
+        self.execute_cache_updater(self.servicepool.cache_l1_srvs)
 
         # Now again, decrease cache to original, must remove ten elements
-        mustDelete = self.servicePool.cache_l1_srvs - self.servicePool.initial_srvs
+        must_delete = self.servicepool.cache_l1_srvs - self.servicepool.initial_srvs
 
         self.set_cache(cache=10)
         self.assertEqual(
-            self.execute_cache_updater(mustDelete*2), self.servicePool.initial_srvs
+            self.execute_cache_updater(must_delete*2), self.servicepool.initial_srvs
         )
 
-        self.assertEqual(self.removing_or_canceled_count(), mustDelete)
+        self.assertEqual(self.removing_or_canceled_count(), must_delete)
 
     def test_max(self) -> None:
         self.set_cache(initial=100, cache=10, max=50)
         self.assertEqual(
-            self.execute_cache_updater(self.servicePool.initial_srvs + 10),
-            self.servicePool.max_srvs,
+            self.execute_cache_updater(self.servicepool.initial_srvs + 10),
+            self.servicepool.max_srvs,
         )
 
         self.set_cache(cache=200)
         self.assertEqual(
-            self.execute_cache_updater(self.servicePool.initial_srvs + 10),
-            self.servicePool.max_srvs,
+            self.execute_cache_updater(self.servicepool.initial_srvs + 10),
+            self.servicepool.max_srvs,
         )
 
     def test_cache(self) -> None:
@@ -135,8 +135,8 @@ class ServiceCacheUpdaterTest(UDSTestCase):
 
         # Try to "overcreate" cache elements (must create 100, that is "cache" (bigger than initial))
         self.assertEqual(
-            self.execute_cache_updater(self.servicePool.cache_l1_srvs + 10),
-            self.servicePool.cache_l1_srvs,
+            self.execute_cache_updater(self.servicepool.cache_l1_srvs + 10),
+            self.servicepool.cache_l1_srvs,
         )
 
     def test_provider_preparing_limits(self) -> None:
@@ -144,14 +144,14 @@ class ServiceCacheUpdaterTest(UDSTestCase):
         self.set_cache(initial=100, cache=10, max=50)
 
         # Try to "overcreate" cache elements but provider limits it to 10
-        self.assertEqual(self.execute_cache_updater(self.servicePool.cache_l1_srvs + 10), 10)
+        self.assertEqual(self.execute_cache_updater(self.servicepool.cache_l1_srvs + 10), 10)
 
         # Delete all userServices
-        self.servicePool.userServices.all().delete()
+        self.servicepool.userServices.all().delete()
 
         # Now, set provider limit to 0. Minumum aceptable is 1, so 1 will be created
         TestProvider.concurrent_creation_limit = 0
-        self.assertEqual(self.execute_cache_updater(self.servicePool.cache_l1_srvs + 10), 1)
+        self.assertEqual(self.execute_cache_updater(self.servicepool.cache_l1_srvs + 10), 1)
 
     def test_provider_no_removing_limits(self) -> None:
         # Removing limits are appliend in fact when EXECUTING removal, not when marking as removable
@@ -159,7 +159,7 @@ class ServiceCacheUpdaterTest(UDSTestCase):
         self.set_cache(initial=0, cache=50, max=50)
 
         # Try to "overcreate" cache elements but provider limits it to 10
-        self.execute_cache_updater(self.servicePool.cache_l1_srvs)
+        self.execute_cache_updater(self.servicepool.cache_l1_srvs)
 
         # Now set cache to a lower value
         self.set_cache(cache=10)
@@ -174,12 +174,12 @@ class ServiceCacheUpdaterTest(UDSTestCase):
         self.set_cache(initial=100, cache=100, max=50)
 
         # Try to "overcreate" cache elements but provider limits it to 10
-        self.assertEqual(self.execute_cache_updater(self.servicePool.cache_l1_srvs + 10), TestServiceCache.userservices_limit)
+        self.assertEqual(self.execute_cache_updater(self.servicepool.cache_l1_srvs + 10), TestServiceCache.userservices_limit)
 
         # Delete all userServices
-        self.servicePool.userServices.all().delete()
+        self.servicepool.userServices.all().delete()
 
         # We again allow masUserServices to be zero (meaning that no service will be created)
         # This allows us to "honor" some external providers that, in some cases, will not have services available...
         TestServiceCache.userservices_limit = 0
-        self.assertEqual(self.execute_cache_updater(self.servicePool.cache_l1_srvs + 10), 0)
+        self.assertEqual(self.execute_cache_updater(self.servicepool.cache_l1_srvs + 10), 0)

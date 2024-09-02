@@ -321,7 +321,7 @@ class DynamicServiceTest(UDSTestCase):
         self.assertEqual(counter, 10)  # 4 retries + 5 retries after reset + 1 of the reset itself
         
     def test_userservice_delete(self) -> None:
-        service = fixtures.create_dynamic_service()
+        service = fixtures.create_dynamic_service(override_mockables=False)
         userservice = fixtures.create_dynamic_userservice(service)
         userservice._vmid = 'vmid'
         userservice._queue = [

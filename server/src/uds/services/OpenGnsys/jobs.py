@@ -80,6 +80,6 @@ class OpenGnsysMaintainer(jobs.Job):
                         'The cached user service %s is about to expire. Removing it so it can be recreated',
                         userService,
                     )
-                    userService.remove()
+                    userService.release()
 
         logger.debug('OpenGnsys job finished')

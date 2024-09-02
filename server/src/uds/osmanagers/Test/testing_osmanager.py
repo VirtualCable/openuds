@@ -123,7 +123,7 @@ class TestOSManager(osmanagers.OSManager):
                 'Unused user service for too long. Removing due to OS Manager parameters.',
                 types.log.LogSource.OSMANAGER,
             )
-            userservice.remove()
+            userservice.release()
 
     def is_persistent(self) -> bool:
         return self.on_logout.value == 'keep-always'

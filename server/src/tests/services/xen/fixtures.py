@@ -490,6 +490,8 @@ def create_service_linked(
     service_db_mock.name = 'ServiceName'
     srvc.db_obj = mock.MagicMock()
     srvc.db_obj.return_value = service_db_mock
+    srvc.is_deletion_in_progress = mock.MagicMock()
+    srvc.is_deletion_in_progress.return_value = False
     return srvc
 
 

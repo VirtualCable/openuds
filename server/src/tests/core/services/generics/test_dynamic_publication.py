@@ -198,7 +198,7 @@ class DynamicPublicationTest(UDSTestCase):
         self.assertEqual(counter, 10)  # 4 retries + 5 retries after reset + 1 of the reset itself
 
     def test_publication_delete(self) -> None:
-        service = fixtures.create_dynamic_service()
+        service = fixtures.create_dynamic_service(override_mockables=False)
         publication = fixtures.create_dynamic_publication(service)
         publication._queue = [
             types.services.Operation.NOP,  # First check

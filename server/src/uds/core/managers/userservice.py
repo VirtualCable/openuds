@@ -50,7 +50,7 @@ from uds.core.services.exceptions import (
 )
 from uds.core.util import log, singleton
 from uds.core.util.decorators import cached
-from uds.core.util.model import sql_now
+from uds.core.util.model import generate_uuid, sql_now
 from uds.core.types.states import State
 from uds.core.util.stats import events
 from uds.models import MetaPool, ServicePool, ServicePoolPublication, Transport, User, UserService
@@ -302,6 +302,130 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # Data will be serialized on makeUnique process
         UserServiceOpChecker.make_unique(cache, cache_instance, state)
 
+    def clone_userservice_as_cache(self, user_service: UserService) -> UserService:
+        """
+        Clones the record of a user service, cleaning up some fields so it's a cache element
+        The uuid will be regenerated, and the pk will be set to None
+        """
+        # Load as new variable to avoid modifying original
+        user_service = UserService.objects.get(id=user_service.id)
+        user_service.pk = None
+        user_service.uuid = generate_uuid()
+        user_service.user = None
+        user_service.cache_level = types.services.CacheLevel.L1
+        user_service.in_use = False
+        user_service.state = State.USABLE  # We set it to usable so it can be used directly...
+        user_service.os_state = State.USABLE
+
+        # Save the new cache element
+        user_service.save()
+        return user_service
+
+    def get_cache_servicepool_stats(self, servicepool: ServicePool) -> 'types.services.ServicePoolStats':
+        """
+        Returns the stats (for cache pourposes) for a service pool.
+        """
+        # State filter for cached and inAssigned objects
+        # First we get all deployed services that could need cache generation
+        # We start filtering out the deployed services that do not need caching at all.
+        if (
+            servicepool.max_srvs == 0
+            or servicepool.state != State.ACTIVE
+            or servicepool.service.provider.maintenance_mode is True
+        ):
+            return types.services.ServicePoolStats.null()  # No cache needed for this servicepool
+
+        service_instance = servicepool.service.get_instance()
+
+        servicepool.user_services.update()  # Cleans cached queries
+
+        # If this deployedService don't have a publication active and needs it, ignore it
+        service_instance = servicepool.service.get_instance()
+
+        if service_instance.uses_cache is False:
+            logger.debug(
+                'Service pool does not uses cache: %s',
+                servicepool.name,
+            )
+            return types.services.ServicePoolStats.null()
+
+        if servicepool.active_publication() is None and service_instance.publication_type is not None:
+            logger.debug(
+                'Service pool needs publication and has none: %s',
+                servicepool.name,
+            )
+            return types.services.ServicePoolStats.null()
+
+        # If it has any running publication, do not generate cache anymore
+        if servicepool.publications.filter(state=State.PREPARING).count() > 0:
+            logger.debug(
+                'Service pool with publication running: %s',
+                servicepool.name,
+            )
+            return types.services.ServicePoolStats.null()
+
+        if servicepool.is_restrained():
+            logger.debug(
+                'Restrained service pool: %s',
+                servicepool.name,
+            )
+            return types.services.ServicePoolStats.null()
+
+        # Get data related to actual state of cache
+        # Before we were removing the elements marked to be destroyed after creation, but this makes us
+        # to create new items over the limit stablisshed, so we will not remove them anymore
+        l1_cache_count: int = (
+            servicepool.cached_users_services()
+            .filter(UserServiceManager().get_cache_state_filter(servicepool, types.services.CacheLevel.L1))
+            .count()
+        )
+        l2_cache_count: int = (
+            (
+                servicepool.cached_users_services()
+                .filter(UserServiceManager().get_cache_state_filter(servicepool, types.services.CacheLevel.L2))
+                .count()
+            )
+            if service_instance.uses_cache_l2
+            else 0
+        )
+        assigned_count: int = (
+            servicepool.assigned_user_services()
+            .filter(UserServiceManager().get_state_filter(servicepool.service))
+            .count()
+        )
+        pool_stat = types.services.ServicePoolStats(servicepool, l1_cache_count, l2_cache_count, assigned_count)
+
+        # if we bypasses max cache, we will reduce it in first place. This is so because this will free resources on service provider
+        logger.debug(
+            "Examining %s with %s in cache L1 and %s in cache L2, %s inAssigned",
+            servicepool.name,
+            l1_cache_count,
+            l2_cache_count,
+            assigned_count,
+        )
+
+        # Check for cache overflow
+        # We have more than we want
+        if pool_stat.has_l1_cache_overflow() or pool_stat.has_l2_cache_overflow():
+            logger.debug('We have more services than max configured.')
+            return pool_stat
+
+        # Check for cache needed
+        # If this service don't allows more starting user services...
+        if not UserServiceManager.manager().can_grow_service_pool(servicepool):
+            logger.debug(
+                'This pool cannot grow rithg now: %s',
+                servicepool,
+            )
+            return types.services.ServicePoolStats.null()
+
+        if pool_stat.is_l1_cache_growth_required() or pool_stat.is_l2_cache_growth_required():
+            logger.debug('Needs to grow L1 cache for %s', servicepool)
+            return pool_stat
+
+        # If this point reached, we do not need any cache
+        return types.services.ServicePoolStats.null()
+
     def cancel(self, user_service: UserService) -> None:
         """
         Cancels an user service creation
@@ -359,6 +483,24 @@ class UserServiceManager(metaclass=singleton.Singleton):
         raise OperationException(
             _('Can\'t remove nor cancel {} cause its state don\'t allow it').format(user_service.name)
         )
+
+    def release_on_logout(self, user_service: UserService) -> None:
+        """
+        In case of logout, this method will take care of removing the service
+        This is so because on logout, may the userservice returns back to cache if ower service
+        desired it that way.
+
+        This method will take care of removing the service if no cache is desired of cache already full (on servicepool)
+        """
+        stats = self.get_cache_servicepool_stats(user_service.deployed_service)
+        # Note that only moves to cache L1
+        # Also, we can get values for L2 cache, thats why we check L1 for overflow and needed
+        if stats.has_l1_cache_overflow():
+            user_service.release()  # Mark as removable
+        elif stats.is_l1_cache_growth_required():
+            # Move the clone of the user service to cache, and set our as REMOVED
+            _cache = self.clone_userservice_as_cache(user_service)
+            user_service.set_state(State.REMOVED)
 
     def get_existing_assignation_for_user(
         self, service_pool: ServicePool, user: User
@@ -664,7 +806,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                     remove = True
 
             if remove:
-                user_service.remove()
+                user_service.release()
 
     def notify_ready_from_os_manager(self, user_service: UserService, data: typing.Any) -> None:
         try:
@@ -955,10 +1097,10 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # Sort pools related to policy now, and xtract only pools, not sort keys
         # split resuult in two lists, 100% full and not 100% full
         # Remove "full" pools (100%) from result and pools in maintenance mode, not ready pools, etc...
-        sortedPools = sorted(sortPools, key=operator.itemgetter(0))  # sort by priority (first element)
+        sorted_pools = sorted(sortPools, key=operator.itemgetter(0))  # sort by priority (first element)
         pools: list[ServicePool] = []
         pool_full: list[ServicePool] = []
-        for p in sortedPools:
+        for p in sorted_pools:
             if not p[1].is_usable():
                 continue
             if p[1].usage().percent == 100:

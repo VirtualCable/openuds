@@ -29,7 +29,6 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import dataclasses
 import logging
 import typing
 import collections.abc
@@ -55,51 +54,6 @@ logger = logging.getLogger(__name__)
 #    * If we have more than max, we can remove cached l1 items until we have no more than max
 #    * l2 is independent of any other counter, and will be created until cache_l2_srvs is reached
 #    * l2 will be removed until cache_l2_srvs is reached
-
-
-@dataclasses.dataclass(slots=True)
-class ServicePoolStats:
-    servicepool: ServicePool
-    l1_cache_count: int
-    l2_cache_count: int
-    assigned_count: int
-
-    def l1_cache_overflow(self) -> bool:
-        """Checks if L1 cache is overflown
-
-        Overflows if:
-            * l1_assigned_count > max_srvs
-            (this is, if we have more than max, we can remove cached l1 items until we reach max)
-            * l1_assigned_count > initial_srvs and l1_cache_count > cache_l1_srvs
-            (this is, if we have more than initial, we can remove cached l1 items until we reach cache_l1_srvs)
-        """
-        l1_assigned_count = self.l1_cache_count + self.assigned_count
-        return l1_assigned_count > self.servicepool.max_srvs or (
-            l1_assigned_count > self.servicepool.initial_srvs
-            and self.l1_cache_count > self.servicepool.cache_l1_srvs
-        )
-
-    def l1_cache_needed(self) -> bool:
-        """Checks if L1 cache is needed
-
-        Grow L1 cache if:
-            * l1_assigned_count < max_srvs and (l1_assigned_count < initial_srvs or l1_cache_count < cache_l1_srvs)
-            (this is, if we have not reached max, and we have not reached initial or cache_l1_srvs, we need to grow L1 cache)
-
-        """
-        l1_assigned_count = self.l1_cache_count + self.assigned_count
-        return l1_assigned_count < self.servicepool.max_srvs and (
-            l1_assigned_count < self.servicepool.initial_srvs
-            or self.l1_cache_count < self.servicepool.cache_l1_srvs
-        )
-
-    def l2_cache_overflow(self) -> bool:
-        """Checks if L2 cache is overflown"""
-        return self.l2_cache_count > self.servicepool.cache_l2_srvs
-
-    def l2_cache_needed(self) -> bool:
-        """Checks if L2 cache is needed"""
-        return self.l2_cache_count < self.servicepool.cache_l2_srvs
 
 
 class ServiceCacheUpdater(Job):
@@ -131,9 +85,139 @@ class ServiceCacheUpdater(Job):
             remaining_restraing_time,
         )
 
+    # def service_pools_needing_cache_update(
+    #     self,
+    # ) -> list[types.services.ServicePoolStats]:
+    #     # State filter for cached and inAssigned objects
+    #     # First we get all deployed services that could need cache generation
+    #     # We start filtering out the deployed services that do not need caching at all.
+    #     candidate_servicepools: collections.abc.Iterable[ServicePool] = (
+    #         ServicePool.objects.filter(Q(initial_srvs__gte=0) | Q(cache_l1_srvs__gte=0))
+    #         .filter(
+    #             max_srvs__gt=0,
+    #             state=State.ACTIVE,
+    #             service__provider__maintenance_mode=False,
+    #         )
+    #         .iterator()
+    #     )
+
+    #     # We will get the one that proportionally needs more cache
+    #     servicepools_numbers: list[types.services.ServicePoolStats] = []
+    #     for servicepool in candidate_servicepools:
+    #         servicepool.user_services.update()  # Cleans cached queries
+    #         # If this deployedService don't have a publication active and needs it, ignore it
+    #         service_instance = servicepool.service.get_instance()
+
+    #         if service_instance.uses_cache is False:
+    #             logger.debug(
+    #                 'Skipping cache generation for service pool that does not uses cache: %s',
+    #                 servicepool.name,
+    #             )
+    #             continue
+
+    #         if servicepool.active_publication() is None and service_instance.publication_type is not None:
+    #             logger.debug(
+    #                 'Skipping. %s Needs publication but do not have one',
+    #                 servicepool.name,
+    #             )
+    #             continue
+    #         # If it has any running publication, do not generate cache anymore
+    #         if servicepool.publications.filter(state=State.PREPARING).count() > 0:
+    #             logger.debug(
+    #                 'Skipping cache generation for service pool with publication running: %s',
+    #                 servicepool.name,
+    #             )
+    #             continue
+
+    #         if servicepool.is_restrained():
+    #             logger.debug(
+    #                 'StopSkippingped cache generation for restrained service pool: %s',
+    #                 servicepool.name,
+    #             )
+    #             ServiceCacheUpdater._notify_restrain(servicepool)
+    #             continue
+
+    #         # Get data related to actual state of cache
+    #         # Before we were removing the elements marked to be destroyed after creation, but this makes us
+    #         # to create new items over the limit stablisshed, so we will not remove them anymore
+    #         l1_cache_count: int = (
+    #             servicepool.cached_users_services()
+    #             .filter(UserServiceManager().get_cache_state_filter(servicepool, types.services.CacheLevel.L1))
+    #             .count()
+    #         )
+    #         l2_cache_count: int = (
+    #             (
+    #                 servicepool.cached_users_services()
+    #                 .filter(
+    #                     UserServiceManager().get_cache_state_filter(servicepool, types.services.CacheLevel.L2)
+    #                 )
+    #                 .count()
+    #             )
+    #             if service_instance.uses_cache_l2
+    #             else 0
+    #         )
+    #         assigned_count: int = (
+    #             servicepool.assigned_user_services()
+    #             .filter(UserServiceManager().get_state_filter(servicepool.service))
+    #             .count()
+    #         )
+    #         pool_stat = types.services.ServicePoolStats(
+    #             servicepool, l1_cache_count, l2_cache_count, assigned_count
+    #         )
+    #         # if we bypasses max cache, we will reduce it in first place. This is so because this will free resources on service provider
+    #         logger.debug(
+    #             "Examining %s with %s in cache L1 and %s in cache L2, %s inAssigned",
+    #             servicepool.name,
+    #             l1_cache_count,
+    #             l2_cache_count,
+    #             assigned_count,
+    #         )
+
+    #         # We have more than we want
+    #         if pool_stat.l1_cache_overflow():
+    #             logger.debug('We have more services than max configured. Reducing..')
+    #             servicepools_numbers.append(
+    #                 types.services.ServicePoolStats(servicepool, l1_cache_count, l2_cache_count, assigned_count)
+    #             )
+    #             continue
+
+    #         # If we have more in L2 cache than needed, decrease L2 cache, but int this case, we continue checking cause L2 cache removal
+    #         # has less priority than l1 creations or removals, but higher. In this case, we will simply take last l2 oversized found and reduce it
+    #         if pool_stat.l2_cache_overflow():
+    #             logger.debug('We have more services in L2 cache than configured, reducing')
+    #             servicepools_numbers.append(
+    #                 types.services.ServicePoolStats(servicepool, l1_cache_count, l2_cache_count, assigned_count)
+    #             )
+    #             continue
+
+    #         # If this service don't allows more starting user services, continue
+    #         if not UserServiceManager().can_grow_service_pool(servicepool):
+    #             logger.debug(
+    #                 'This pool cannot grow rithg now: %s',
+    #                 servicepool,
+    #             )
+    #             continue
+
+    #         if pool_stat.l1_cache_needed():
+    #             logger.debug('Needs to grow L1 cache for %s', servicepool)
+    #             servicepools_numbers.append(
+    #                 types.services.ServicePoolStats(servicepool, l1_cache_count, l2_cache_count, assigned_count)
+    #             )
+    #             continue
+
+    #         if pool_stat.l2_cache_needed():
+    #             logger.debug('Needs to grow L2 cache for %s', servicepool)
+    #             servicepools_numbers.append(
+    #                 types.services.ServicePoolStats(servicepool, l1_cache_count, l2_cache_count, assigned_count)
+    #             )
+    #             continue
+
+    #     # We also return calculated values so we can reuse then
+    #     return servicepools_numbers
+
     def service_pools_needing_cache_update(
         self,
-    ) -> list[ServicePoolStats]:
+    ) -> list[types.services.ServicePoolStats]:
         # State filter for cached and inAssigned objects
         # First we get all deployed services that could need cache generation
         # We start filtering out the deployed services that do not need caching at all.
@@ -148,120 +232,18 @@ class ServiceCacheUpdater(Job):
         )
 
         # We will get the one that proportionally needs more cache
-        servicepools_numbers: list[ServicePoolStats] = []
+        servicepools_numbers: list[types.services.ServicePoolStats] = []
         for servicepool in candidate_servicepools:
-            servicepool.user_services.update()  # Cleans cached queries
-            # If this deployedService don't have a publication active and needs it, ignore it
-            service_instance = servicepool.service.get_instance()
-
-            if service_instance.uses_cache is False:
-                logger.debug(
-                    'Skipping cache generation for service pool that does not uses cache: %s',
-                    servicepool.name,
-                )
-                continue
-
-            if servicepool.active_publication() is None and service_instance.publication_type is not None:
-                logger.debug(
-                    'Skipping. %s Needs publication but do not have one',
-                    servicepool.name,
-                )
-                continue
-            # If it has any running publication, do not generate cache anymore
-            if servicepool.publications.filter(state=State.PREPARING).count() > 0:
-                logger.debug(
-                    'Skipping cache generation for service pool with publication running: %s',
-                    servicepool.name,
-                )
-                continue
-
-            if servicepool.is_restrained():
-                logger.debug(
-                    'StopSkippingped cache generation for restrained service pool: %s',
-                    servicepool.name,
-                )
-                ServiceCacheUpdater._notify_restrain(servicepool)
-                continue
-
-            # Get data related to actual state of cache
-            # Before we were removing the elements marked to be destroyed after creation, but this makes us
-            # to create new items over the limit stablisshed, so we will not remove them anymore
-            l1_cache_count: int = (
-                servicepool.cached_users_services()
-                .filter(UserServiceManager().get_cache_state_filter(servicepool, types.services.CacheLevel.L1))
-                .count()
-            )
-            l2_cache_count: int = (
-                (
-                    servicepool.cached_users_services()
-                    .filter(
-                        UserServiceManager().get_cache_state_filter(servicepool, types.services.CacheLevel.L2)
-                    )
-                    .count()
-                )
-                if service_instance.uses_cache_l2
-                else 0
-            )
-            assigned_count: int = (
-                servicepool.assigned_user_services()
-                .filter(UserServiceManager().get_state_filter(servicepool.service))
-                .count()
-            )
-            pool_stat = ServicePoolStats(servicepool, l1_cache_count, l2_cache_count, assigned_count)
-            # if we bypasses max cache, we will reduce it in first place. This is so because this will free resources on service provider
-            logger.debug(
-                "Examining %s with %s in cache L1 and %s in cache L2, %s inAssigned",
-                servicepool.name,
-                l1_cache_count,
-                l2_cache_count,
-                assigned_count,
-            )
-
-            # We have more than we want
-            if pool_stat.l1_cache_overflow():
-                logger.debug('We have more services than max configured. Reducing..')
-                servicepools_numbers.append(
-                    ServicePoolStats(servicepool, l1_cache_count, l2_cache_count, assigned_count)
-                )
-                continue
-
-            # If we have more in L2 cache than needed, decrease L2 cache, but int this case, we continue checking cause L2 cache removal
-            # has less priority than l1 creations or removals, but higher. In this case, we will simply take last l2 oversized found and reduce it
-            if pool_stat.l2_cache_overflow():
-                logger.debug('We have more services in L2 cache than configured, reducing')
-                servicepools_numbers.append(
-                    ServicePoolStats(servicepool, l1_cache_count, l2_cache_count, assigned_count)
-                )
-                continue
-
-            # If this service don't allows more starting user services, continue
-            if not UserServiceManager().can_grow_service_pool(servicepool):
-                logger.debug(
-                    'This pool cannot grow rithg now: %s',
-                    servicepool,
-                )
-                continue
-
-            if pool_stat.l1_cache_needed():
-                logger.debug('Needs to grow L1 cache for %s', servicepool)
-                servicepools_numbers.append(
-                    ServicePoolStats(servicepool, l1_cache_count, l2_cache_count, assigned_count)
-                )
-                continue
-
-            if pool_stat.l2_cache_needed():
-                logger.debug('Needs to grow L2 cache for %s', servicepool)
-                servicepools_numbers.append(
-                    ServicePoolStats(servicepool, l1_cache_count, l2_cache_count, assigned_count)
-                )
-                continue
+            stats = UserServiceManager.manager().get_cache_servicepool_stats(servicepool)
+            if not stats.is_null():
+                servicepools_numbers.append(stats)
 
         # We also return calculated values so we can reuse then
         return servicepools_numbers
 
     def grow_l1_cache(
         self,
-        servicepool_stats: ServicePoolStats,
+        servicepool_stats: types.services.ServicePoolStats,
     ) -> None:
         """
         This method tries to enlarge L1 cache.
@@ -270,6 +252,8 @@ class ServiceCacheUpdater(Job):
         and PREPARING, assigned, L1 and L2) is over max allowed service deployments,
         this method will not grow the L1 cache
         """
+        if servicepool_stats.servicepool is None:
+            return
         logger.debug('Growing L1 cache creating a new service for %s', servicepool_stats.servicepool.name)
         # First, we try to assign from L2 cache
         if servicepool_stats.l2_cache_count > 0:
@@ -301,7 +285,7 @@ class ServiceCacheUpdater(Job):
                 return
         try:
             # This has a velid publication, or it will not be here
-            UserServiceManager().create_cache_for(
+            UserServiceManager.manager().create_cache_for(
                 typing.cast(ServicePoolPublication, servicepool_stats.servicepool.active_publication()),
                 types.services.CacheLevel.L1,
             )
@@ -322,7 +306,7 @@ class ServiceCacheUpdater(Job):
 
     def grow_l2_cache(
         self,
-        servicepool_stats: ServicePoolStats,
+        servicepool_stats: types.services.ServicePoolStats,
     ) -> None:
         """
         Tries to grow L2 cache of service.
@@ -331,10 +315,12 @@ class ServiceCacheUpdater(Job):
         and PREPARING, assigned, L1 and L2) is over max allowed service deployments,
         this method will not grow the L1 cache
         """
+        if servicepool_stats.servicepool is None:
+            return
         logger.debug("Growing L2 cache creating a new service for %s", servicepool_stats.servicepool.name)
         try:
             # This has a velid publication, or it will not be here
-            UserServiceManager().create_cache_for(
+            UserServiceManager.manager().create_cache_for(
                 typing.cast(ServicePoolPublication, servicepool_stats.servicepool.active_publication()),
                 types.services.CacheLevel.L2,
             )
@@ -344,15 +330,18 @@ class ServiceCacheUpdater(Job):
                 servicepool_stats.servicepool.name,
                 servicepool_stats.servicepool.max_srvs,
             )
-            # TODO: When alerts are ready, notify this
+            # Alerts notified through logger
 
     def reduce_l1_cache(
         self,
-        servicepool_stats: ServicePoolStats,
+        servicepool_stats: types.services.ServicePoolStats,
     ) -> None:
         logger.debug("Reducing L1 cache erasing a service in cache for %s", servicepool_stats.servicepool)
         # We will try to destroy the newest l1_cache_count element that is USABLE if the deployer can't cancel a new service creation
         # Here, we will take into account the "remove_after" marked user services, so we don't try to remove them
+        if servicepool_stats.servicepool is None:
+            return
+
         cacheItems: list[UserService] = [
             i
             for i in servicepool_stats.servicepool.cached_users_services()
@@ -392,8 +381,10 @@ class ServiceCacheUpdater(Job):
 
     def reduce_l2_cache(
         self,
-        servicepool_stats: ServicePoolStats,
+        servicepool_stats: types.services.ServicePoolStats,
     ) -> None:
+        if servicepool_stats.servicepool is None:
+            return
         logger.debug("Reducing L2 cache erasing a service in cache for %s", servicepool_stats.servicepool.name)
         if servicepool_stats.l2_cache_count > 0:
             cacheItems = (
@@ -418,12 +409,12 @@ class ServiceCacheUpdater(Job):
 
             # Treat l1 and l2 cache independently
             # first, try to reduce cache and then grow it
-            if servicepool_stat.l1_cache_overflow():
+            if servicepool_stat.has_l1_cache_overflow():
                 self.reduce_l1_cache(servicepool_stat)
-            elif servicepool_stat.l1_cache_needed():  # We need more L1 items
+            elif servicepool_stat.is_l1_cache_growth_required():  # We need more L1 items
                 self.grow_l1_cache(servicepool_stat)
             # Treat l1 and l2 cache independently
-            if servicepool_stat.l2_cache_overflow():
+            if servicepool_stat.has_l2_cache_overflow():
                 self.reduce_l2_cache(servicepool_stat)
-            elif servicepool_stat.l2_cache_needed():  # We need more L2 items
+            elif servicepool_stat.is_l2_cache_growth_required():  # We need more L2 items
                 self.grow_l2_cache(servicepool_stat)

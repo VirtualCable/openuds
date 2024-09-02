@@ -729,18 +729,22 @@ def create_dynamic_service(
     provider: 'DynamicTestingProvider|None' = None,
     maintain_on_error: bool = False,
     try_soft_shutdown: bool = False,
+    override_mockables: bool = True
 ) -> DynamicTestingService:
     uuid_ = str(uuid.uuid4())
-    service = DynamicTestingService(
+    srvc = DynamicTestingService(
         provider=provider or create_dynamic_provider(),
         environment=environment.Environment.private_environment(uuid),
         uuid=uuid_,
     )
-    service.mock.reset_mock()  # Mock is shared between instances, so we need to reset it
-    service.machine_running_flag = False
-    service.maintain_on_error.value = maintain_on_error
-    service.try_soft_shutdown.value = try_soft_shutdown
-    return service
+    srvc.mock.reset_mock()  # Mock is shared between instances, so we need to reset it
+    srvc.machine_running_flag = False
+    srvc.maintain_on_error.value = maintain_on_error
+    srvc.try_soft_shutdown.value = try_soft_shutdown
+    if override_mockables:
+        srvc.is_deletion_in_progress = mock.MagicMock()
+        srvc.is_deletion_in_progress.return_value = False
+    return srvc
 
 
 def create_dynamic_service_for_deferred_deletion(
@@ -805,11 +809,12 @@ def create_dynamic_userservice_queue(
 
 
 def create_dynamic_userservice(
-    service: 'DynamicTestingService|None' = None, publication: 'DynamicTestingPublication|None' = None
+    service: 'DynamicTestingService|None' = None, publication: 'DynamicTestingPublication|None' = None,
+    override_mockables: bool = True
 ) -> DynamicTestingUserService:
     uuid_ = str(uuid.uuid4())
     userservice = DynamicTestingUserService(
-        service=service or create_dynamic_service(None),
+        service=service or create_dynamic_service(None, override_mockables=override_mockables),
         publication=create_dynamic_publication(None),
         environment=environment.Environment.private_environment(uuid),
         uuid=uuid_,

@@ -29,8 +29,12 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
 import dataclasses
 import enum
+
+if typing.TYPE_CHECKING:
+    from uds.models.service_pool import ServicePool
 
 
 class ServiceType(enum.StrEnum):
@@ -116,6 +120,7 @@ class ReadyStatus(enum.IntEnum):
         except ValueError:
             return ReadyStatus.USERSERVICE_NOT_READY
 
+
 class CacheLevel(enum.IntEnum):
     NONE = 0  # : Constant for User cache level (no cache at all)
     L1 = 1  # : Constant for Cache of level 1
@@ -131,6 +136,7 @@ class Operation(enum.IntEnum):
       * Note that we will need to "translate" old values to new ones on the service,
       * Adapting existing services to this, will probably need a migration
     """
+
     # Standard operations 1000-1999
     INITIALIZE = 1000
     CREATE = 1001
@@ -147,16 +153,16 @@ class Operation(enum.IntEnum):
     RESET_COMPLETED = 1012
     DELETE = 1013
     DELETE_COMPLETED = 1014
-    
+
     WAIT = 1100  # This is a "wait" operation, used to wait for something to happen
     NOP = 1101
     RETRY = 1102  # Do not have executors, inserted to retry operation and recognize it
-    
+
     # Custom validations 2000-2999
     DESTROY_VALIDATOR = 2000  # Check if the userservice has an vmid to stop destroying it if needed
 
     # Specific operations 3000-3999
-    
+
     # for Fixed User Services
     SNAPSHOT_CREATE = 3000
     SNAPSHOT_RECOVER = 3001
@@ -173,7 +179,7 @@ class Operation(enum.IntEnum):
     # So we will translate, for example SNAPSHOT_CREATE to CUSTOM_1, etc..
     # Fixed user services does not allows custom operations, we use them
     # to alias some fixed operations (like snapshot create, recover, etc..)
-    
+
     # Custom operations 20000-29999
     CUSTOM_1 = 20001
     CUSTOM_2 = 20002
@@ -184,7 +190,7 @@ class Operation(enum.IntEnum):
     CUSTOM_7 = 20007
     CUSTOM_8 = 20008
     CUSTOM_9 = 20009
-    
+
     def is_custom(self) -> bool:
         """
         Returns if the operation is a custom one
@@ -197,7 +203,68 @@ class Operation(enum.IntEnum):
             return Operation(value)
         except ValueError:
             return Operation.UNKNOWN
-        
+
     def as_str(self) -> str:
         return self.name
 
+
+@dataclasses.dataclass
+class ServicePoolStats:
+    servicepool: typing.Optional['ServicePool']
+    l1_cache_count: int
+    l2_cache_count: int
+    assigned_count: int
+
+    def has_l1_cache_overflow(self) -> bool:
+        """Checks if L1 cache is overflown
+
+        Overflows if:
+            * l1_assigned_count > max_srvs
+            (this is, if we have more than max, we can remove cached l1 items until we reach max)
+            * l1_assigned_count > initial_srvs and l1_cache_count > cache_l1_srvs
+            (this is, if we have more than initial, we can remove cached l1 items until we reach cache_l1_srvs)
+        """
+        if not self.servicepool:
+            return False
+
+        l1_assigned_count = self.l1_cache_count + self.assigned_count
+        return l1_assigned_count > self.servicepool.max_srvs or (
+            l1_assigned_count > self.servicepool.initial_srvs
+            and self.l1_cache_count > self.servicepool.cache_l1_srvs
+        )
+
+    def is_l1_cache_growth_required(self) -> bool:
+        """Checks if L1 cache is needed
+
+        Grow L1 cache if:
+            * l1_assigned_count < max_srvs and (l1_assigned_count < initial_srvs or l1_cache_count < cache_l1_srvs)
+            (this is, if we have not reached max, and we have not reached initial or cache_l1_srvs, we need to grow L1 cache)
+
+        """
+        if not self.servicepool:
+            return False
+
+        l1_assigned_count = self.l1_cache_count + self.assigned_count
+        return l1_assigned_count < self.servicepool.max_srvs and (
+            l1_assigned_count < self.servicepool.initial_srvs
+            or self.l1_cache_count < self.servicepool.cache_l1_srvs
+        )
+
+    def has_l2_cache_overflow(self) -> bool:
+        """Checks if L2 cache is overflown"""
+        if not self.servicepool:
+            return False
+        return self.l2_cache_count > self.servicepool.cache_l2_srvs
+
+    def is_l2_cache_growth_required(self) -> bool:
+        """Checks if L2 cache is needed"""
+        if not self.servicepool:
+            return False
+        return self.l2_cache_count < self.servicepool.cache_l2_srvs
+
+    def is_null(self) -> bool:
+        return self.servicepool is None
+
+    @staticmethod
+    def null() -> 'ServicePoolStats':
+        return ServicePoolStats(None, 0, 0, 0)

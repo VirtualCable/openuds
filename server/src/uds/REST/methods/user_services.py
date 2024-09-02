@@ -216,7 +216,7 @@ class AssignedService(DetailHandler):
             logStr = f'Deleted cached service {userService.friendly_name} by {self._user.pretty_name}'
 
         if userService.state in (State.USABLE, State.REMOVING):
-            userService.remove()
+            userService.release()
         elif userService.state == State.PREPARING:
             userService.cancel()
         elif userService.state == State.REMOVABLE:

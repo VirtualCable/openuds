@@ -141,7 +141,7 @@ def process_logout(server: 'models.Server', data: dict[str, typing.Any]) -> typi
         osmanager: typing.Optional[osmanagers.OSManager] = userService.get_osmanager_instance()
         if not osmanager or osmanager.is_removable_on_logout(userService):
             logger.debug('Removable on logout: %s', osmanager)
-            userService.remove()
+            userService.release()
 
     return rest_result(consts.OK)
 

@@ -811,7 +811,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         This method is called to check if the service is removed
         """
-        if self.service().check_deleting_status(self, self._vmid) is False:
+        if self.service().is_deletion_in_progress(self, self._vmid) is False:
             return types.states.TaskState.FINISHED
         return types.states.TaskState.RUNNING
 

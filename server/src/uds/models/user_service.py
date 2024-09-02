@@ -524,26 +524,20 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         """
         Returns if this service is ready (not preparing or marked for removal)
         """
-        # pylint: disable=import-outside-toplevel
         from uds.core.managers.userservice import UserServiceManager
 
         # Call to isReady of the instance
-        return UserServiceManager().is_ready(self)
+        return UserServiceManager.manager().is_ready(self)
 
     def is_in_maintenance(self) -> bool:
         return self.deployed_service.is_in_maintenance()
 
-    def remove(self) -> None:
-        """
-        Mark this user deployed service for removal
-        """
-        self.set_state(State.REMOVABLE)
-
     def release(self) -> None:
         """
-        A much more convenient method name that "remove" (i think :) )
+        Mark this user deployed service for removal.
+        If from_logout is true, maybe the service can return to cache, else, it will be removed
         """
-        self.remove()
+        self.set_state(State.REMOVABLE)
 
     def cancel(self) -> None:
         """
@@ -560,7 +554,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         Marks for removal or cancels it, depending on state
         """
         if self.is_usable():
-            self.remove()
+            self.release()
         else:
             self.cancel()
 

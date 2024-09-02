@@ -253,7 +253,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
             # Store deleting vmid
             storage[f'deleting_{vmid}'] = True
             
-    def check_deleting_status(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> bool:
+    def is_deletion_in_progress(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> bool:
         """
         Checks if the deferred deletion of a machine is running
         Default implementation is return False always

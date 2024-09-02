@@ -145,7 +145,7 @@ class ServicesUsage(DetailHandler):
 
         logger.debug('Deleting user service')
         if userService.state in (State.USABLE, State.REMOVING):
-            userService.remove()
+            userService.release()
         elif userService.state == State.PREPARING:
             userService.cancel()
         elif userService.state == State.REMOVABLE:
