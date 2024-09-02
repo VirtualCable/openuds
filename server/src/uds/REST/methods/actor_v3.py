@@ -670,13 +670,10 @@ class Logout(ActorV3Action):
 
         if userservice.in_use:  # If already logged out, do not add a second logout (windows does this i.e.)
             osmanagers.OSManager.logged_out(userservice, username)
-            if osmanager:
-                if osmanager.is_removable_on_logout(userservice):
-                    logger.debug('Removable on logout: %s', osmanager)
-                    userservice.release()
-            else:
-                userservice.release()
-
+            # If does not have osmanager, or has osmanager and is removable, release it
+            if not osmanager or osmanager.is_removable_on_logout(userservice):
+                UserServiceManager.manager().release_on_logout(userservice)
+    
     def action(self) -> dict[str, typing.Any]:
         is_managed = self._params.get('type') != consts.actor.UNMANAGED
 

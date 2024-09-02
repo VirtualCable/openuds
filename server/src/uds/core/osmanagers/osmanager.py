@@ -252,7 +252,7 @@ class OSManager(Module):
         This method:
           - Add log in event to stats
           - Sets service in use
-          - Invokes userLoggedIn for user service instance
+          - Invokes user_logged_in for user service instance
         """
         unique_id = userservice.unique_id
         userservice.set_in_use(True)
@@ -308,7 +308,6 @@ class OSManager(Module):
         This method:
           - Add log in event to stats
           - Sets service in use
-          - Invokes userLoggedIn for user service instance
         """
         with userservice.properties as p:
             counter = int(typing.cast(str, p.get('logins_counter', 0))) - 1

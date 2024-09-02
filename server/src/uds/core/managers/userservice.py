@@ -302,24 +302,29 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # Data will be serialized on makeUnique process
         UserServiceOpChecker.make_unique(cache, cache_instance, state)
 
-    def clone_userservice_as_cache(self, user_service: UserService) -> UserService:
+    def forced_move_assigned_to_cache_l1(self, user_service: UserService) -> None:
         """
-        Clones the record of a user service, cleaning up some fields so it's a cache element
-        The uuid will be regenerated, and the pk will be set to None
+        Clones the record of a user serviceself.
+        For this, the original userservice will ve moved to cache, and a new one will be created
+        to mark it as "REMOVED"
         """
         # Load as new variable to avoid modifying original
-        user_service = UserService.objects.get(id=user_service.id)
-        user_service.pk = None
-        user_service.uuid = generate_uuid()
+        user_service_copy = UserService.objects.get(id=user_service.id)
+        user_service_copy.pk = None
+        user_service_copy.uuid = generate_uuid()
+        user_service_copy.in_use = False
+        user_service_copy.state = State.REMOVED
+        user_service_copy.os_state = State.USABLE
+
+        # Save the new element, for reference
+        user_service_copy.save()
+        
+        # Now, move the original to cache, but do it "hard" way, so we do not need to check for state
+        user_service.state = State.USABLE
+        user_service.os_state = State.USABLE
         user_service.user = None
         user_service.cache_level = types.services.CacheLevel.L1
         user_service.in_use = False
-        user_service.state = State.USABLE  # We set it to usable so it can be used directly...
-        user_service.os_state = State.USABLE
-
-        # Save the new cache element
-        user_service.save()
-        return user_service
 
     def get_cache_servicepool_stats(self, servicepool: ServicePool) -> 'types.services.ServicePoolStats':
         """
@@ -484,7 +489,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             _('Can\'t remove nor cancel {} cause its state don\'t allow it').format(user_service.name)
         )
 
-    def release_on_logout(self, user_service: UserService) -> None:
+    def release_on_logout(self, userservice: UserService) -> None:
         """
         In case of logout, this method will take care of removing the service
         This is so because on logout, may the userservice returns back to cache if ower service
@@ -492,15 +497,19 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         This method will take care of removing the service if no cache is desired of cache already full (on servicepool)
         """
-        stats = self.get_cache_servicepool_stats(user_service.deployed_service)
+        if userservice.deployed_service.service.get_instance().allows_put_back_to_cache() is False:
+            userservice.release()
+            return
+        
+        stats = self.get_cache_servicepool_stats(userservice.deployed_service)
         # Note that only moves to cache L1
         # Also, we can get values for L2 cache, thats why we check L1 for overflow and needed
         if stats.has_l1_cache_overflow():
-            user_service.release()  # Mark as removable
+            userservice.release()  # Mark as removable
         elif stats.is_l1_cache_growth_required():
             # Move the clone of the user service to cache, and set our as REMOVED
-            _cache = self.clone_userservice_as_cache(user_service)
-            user_service.set_state(State.REMOVED)
+            self.forced_move_assigned_to_cache_l1(userservice)
+            userservice.release(immediate=True)
 
     def get_existing_assignation_for_user(
         self, service_pool: ServicePool, user: User

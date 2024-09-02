@@ -532,12 +532,15 @@ class UserService(UUIDModel, properties.PropertiesMixin):
     def is_in_maintenance(self) -> bool:
         return self.deployed_service.is_in_maintenance()
 
-    def release(self) -> None:
+    def release(self, immediate: bool = False) -> None:
         """
         Mark this user deployed service for removal.
         If from_logout is true, maybe the service can return to cache, else, it will be removed
         """
-        self.set_state(State.REMOVABLE)
+        if immediate:
+            self.set_state(State.REMOVED)
+        else:
+            self.set_state(State.REMOVABLE)
 
     def cancel(self) -> None:
         """
