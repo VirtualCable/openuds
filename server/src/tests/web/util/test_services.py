@@ -81,7 +81,7 @@ class TestGetServicesData(UDSTransactionTestCase):
         service_pools: list[models.ServicePool] = []
         for i in range(110):
             service_pools.append(
-                fixtures_services.create_db_cache_userservices(
+                fixtures_services.create_db_assigned_userservices(
                     count=1, user=self.user, groups=self.groups
                 )[0].deployed_service
             )
@@ -101,7 +101,7 @@ class TestGetServicesData(UDSTransactionTestCase):
         service_pools: list[models.ServicePool] = []
         for _i in range(10):
             service_pools.append(
-                fixtures_services.create_db_cache_userservices(
+                fixtures_services.create_db_assigned_userservices(
                     count=1, user=self.user, groups=self.groups
                 )[0].deployed_service
             )
@@ -178,7 +178,7 @@ class TestGetServicesData(UDSTransactionTestCase):
         service_pools: list[models.ServicePool] = []
         for i in range(100):
             service_pools.append(
-                fixtures_services.create_db_cache_userservices(
+                fixtures_services.create_db_assigned_userservices(
                     count=1, user=self.user, groups=self.groups
                 )[0].deployed_service
             )
@@ -226,7 +226,7 @@ class TestGetServicesData(UDSTransactionTestCase):
         user_services: list[models.ServicePool] = []
         for i in range(110):
             user_services.append(
-                fixtures_services.create_db_cache_userservices(
+                fixtures_services.create_db_assigned_userservices(
                     count=1, user=self.user, groups=self.groups
                 )[0].deployed_service
             )
@@ -255,7 +255,7 @@ class TestGetServicesData(UDSTransactionTestCase):
     ) -> tuple[list[models.ServicePool], models.MetaPool]:
         service_pools: list[models.ServicePool] = []
         for _i in range(count):
-            pool = fixtures_services.create_db_cache_userservices(
+            pool = fixtures_services.create_db_assigned_userservices(
                 count=1, user=self.user, groups=self.groups
             )[0].deployed_service
 

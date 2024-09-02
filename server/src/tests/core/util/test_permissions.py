@@ -70,7 +70,7 @@ class PermissionsTest(UDSTestCase):
         self.staffs = authenticators_fixtures.create_db_users(
             self.authenticator, is_staff=True, groups=self.groups
         )
-        self.userService = services_fixtures.create_db_one_cache_userservice(
+        self.userService = services_fixtures.create_db_one_assigned_userservice(
             services_fixtures.create_db_provider(),
             self.users[0],
             list(self.users[0].groups.all()),

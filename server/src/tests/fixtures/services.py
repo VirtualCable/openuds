@@ -220,7 +220,7 @@ def create_db_metapool(
     return meta_pool
 
 
-def create_db_one_cache_userservice(
+def create_db_one_assigned_userservice(
     provider: 'models.Provider',
     user: 'models.User',
     groups: list['models.Group'],
@@ -241,7 +241,7 @@ def create_db_one_cache_userservice(
     return create_db_userservice(service_pool, publication, user)
 
 
-def create_db_cache_userservices(
+def create_db_assigned_userservices(
     count: int = 1,
     type_: typing.Literal['managed', 'unmanaged'] = 'managed',
     user: typing.Optional['models.User'] = None,
@@ -255,5 +255,5 @@ def create_db_cache_userservices(
         user = authenticators.create_db_users(auth, 1, groups=groups)[0]
     user_services: list[models.UserService] = []
     for _ in range(count):
-        user_services.append(create_db_one_cache_userservice(create_db_provider(), user, groups, type_))
+        user_services.append(create_db_one_assigned_userservice(create_db_provider(), user, groups, type_))
     return user_services

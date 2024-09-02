@@ -55,7 +55,7 @@ class ModelAccountTest(UDSTestCase):
 
     def setUp(self) -> None:
         super().setUp()
-        self.user_services = services_fixtures.create_db_cache_userservices(NUM_USERSERVICES)
+        self.user_services = services_fixtures.create_db_assigned_userservices(NUM_USERSERVICES)
 
     def test_base(self) -> None:
         acc = models.Account.objects.create(name='Test Account')

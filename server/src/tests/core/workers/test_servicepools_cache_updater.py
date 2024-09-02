@@ -59,7 +59,7 @@ class ServiceCacheUpdaterTest(UDSTestCase):
         TestServiceNoCache.userservices_limit = 1000
 
         ServiceCacheUpdater.setup()
-        userService = services_fixtures.create_db_cache_userservices()[0]
+        userService = services_fixtures.create_db_assigned_userservices()[0]
         self.servicepool = userService.deployed_service
         userService.delete()  # empty all
 

@@ -672,7 +672,7 @@ class Logout(ActorV3Action):
             osmanagers.OSManager.logged_out(userservice, username)
             # If does not have osmanager, or has osmanager and is removable, release it
             if not osmanager or osmanager.is_removable_on_logout(userservice):
-                UserServiceManager.manager().release_on_logout(userservice)
+                UserServiceManager.manager().release_from_logout(userservice)
     
     def action(self) -> dict[str, typing.Any]:
         is_managed = self._params.get('type') != consts.actor.UNMANAGED

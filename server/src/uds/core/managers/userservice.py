@@ -307,8 +307,11 @@ class UserServiceManager(metaclass=singleton.Singleton):
         Clones the record of a user serviceself.
         For this, the original userservice will ve moved to cache, and a new one will be created
         to mark it as "REMOVED"
+        
+        The reason for creating a new one with cloned data is "conserving" a deleted record, so we can track it
+        as usual
         """
-        # Load as new variable to avoid modifying original
+        # Load again to get a copy of the object
         user_service_copy = UserService.objects.get(id=user_service.id)
         user_service_copy.pk = None
         user_service_copy.uuid = generate_uuid()
@@ -316,7 +319,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         user_service_copy.state = State.REMOVED
         user_service_copy.os_state = State.USABLE
 
-        # Save the new element, for reference
+        # Save the new element.
         user_service_copy.save()
 
         # Now, move the original to cache, but do it "hard" way, so we do not need to check for state
@@ -325,6 +328,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
         user_service.user = None
         user_service.cache_level = types.services.CacheLevel.L1
         user_service.in_use = False
+        user_service.src_hostname = user_service.src_ip = ''
+        user_service.save()  
 
     def get_cache_servicepool_stats(self, servicepool: ServicePool) -> 'types.services.ServicePoolStats':
         """
@@ -489,7 +494,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             _('Can\'t remove nor cancel {} cause its state don\'t allow it').format(user_service.name)
         )
 
-    def release_on_logout(self, userservice: UserService) -> None:
+    def release_from_logout(self, userservice: UserService) -> None:
         """
         In case of logout, this method will take care of removing the service
         This is so because on logout, may the userservice returns back to cache if ower service

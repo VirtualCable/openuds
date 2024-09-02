@@ -49,7 +49,7 @@ class PropertiesTest(UDSTestCase):
         self.user_services = []
         for _ in range(NUM_USERSERVICES):
             # So we have 8 userservices, each one with a different user
-            self.user_services.extend(services_fixtures.create_db_cache_userservices())
+            self.user_services.extend(services_fixtures.create_db_assigned_userservices())
 
     def testUserServiceProperty(self) -> None:
         """
