@@ -93,6 +93,8 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
 
     machines = FixedService.machines
     use_snapshots = FixedService.use_snapshots
+    
+    maintain_on_error = FixedService.maintain_on_error
 
     prov_uuid = gui.HiddenField(value=None)
 

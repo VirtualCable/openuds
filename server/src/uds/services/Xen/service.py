@@ -160,9 +160,9 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
     )
 
     remove_duplicates = DynamicService.remove_duplicates
-
     maintain_on_error = DynamicService.maintain_on_error
     try_soft_shutdown = DynamicService.try_soft_shutdown
+    put_back_to_cache = DynamicService.put_back_to_cache
 
     basename = DynamicService.basename
     lenname = DynamicService.lenname

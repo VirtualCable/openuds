@@ -85,14 +85,8 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         order=104,
         tab=types.ui.Tab.ADVANCED,
     )
-    put_back_to_cache = gui.ChoiceField(
+    put_back_to_cache = fields.put_back_to_cache_field(
         order=105,
-        label=_('Put back to cache'),
-        tooltip=_('On machine releasy by logout, put it back to cache instead of deleting if possible.'),
-        choices=[
-            {'id': 'no', 'text': _('No. Never put it back to cache')},
-            {'id': 'yes', 'text': _('Yes, try to put it back to cache')},
-        ],
         tab=types.ui.Tab.ADVANCED,
     )
 
@@ -107,9 +101,7 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
             validators.validate_basename(self.basename.value, self.lenname.value)
 
     def allow_putting_back_to_cache(self) -> bool:
-        if self.has_field('put_back_to_cache') and isinstance(
-            getattr(self, 'put_back_to_cache', None), gui.ChoiceField
-        ):
+        if self.has_field('put_back_to_cache'):
             return self.put_back_to_cache.value == 'yes'
         return False
 

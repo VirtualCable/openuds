@@ -100,6 +100,8 @@ class OpenStackServiceFixed(FixedService):  # pylint: disable=too-many-public-me
 
     machines = FixedService.machines
     randomize = FixedService.randomize
+   
+    maintain_on_error = FixedService.maintain_on_error
 
     prov_uuid = gui.HiddenField()
 

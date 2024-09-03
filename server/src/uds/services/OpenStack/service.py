@@ -180,6 +180,7 @@ class OpenStackLiveService(DynamicService):
     maintain_on_error = DynamicService.maintain_on_error
     try_soft_shutdown = DynamicService.try_soft_shutdown
     remove_duplicates = DynamicService.remove_duplicates
+    put_back_to_cache = DynamicService.put_back_to_cache
 
     prov_uuid = gui.HiddenField()
 

@@ -440,7 +440,10 @@ def on_logout_field(
         default='keep',
     )
 
-def allow_skip_mfa_from_networks_field(order: int = 52, tab: 'types.ui.Tab|str|None' = types.ui.Tab.CONFIG) -> ui.gui.MultiChoiceField:    
+
+def allow_skip_mfa_from_networks_field(
+    order: int = 52, tab: 'types.ui.Tab|str|None' = types.ui.Tab.CONFIG
+) -> ui.gui.MultiChoiceField:
     return ui.gui.MultiChoiceField(
         label=_('Allow skip MFA from networks'),
         readonly=False,
@@ -453,7 +456,10 @@ def allow_skip_mfa_from_networks_field(order: int = 52, tab: 'types.ui.Tab|str|N
         old_field_name='allow_networks_without_mfa',
     )
 
-def login_without_mfa_policy_networks_field(order: int = 51, tab: 'types.ui.Tab|str|None' = types.ui.Tab.CONFIG) -> ui.gui.MultiChoiceField:
+
+def login_without_mfa_policy_networks_field(
+    order: int = 51, tab: 'types.ui.Tab|str|None' = types.ui.Tab.CONFIG
+) -> ui.gui.MultiChoiceField:
     return ui.gui.MultiChoiceField(
         label=_('MFA policy networks'),
         readonly=False,
@@ -466,7 +472,10 @@ def login_without_mfa_policy_networks_field(order: int = 51, tab: 'types.ui.Tab|
         old_field_name='networks',
     )
 
-def login_without_mfa_policy_field(order: int = 50, tab: 'types.ui.Tab|str|None' = types.ui.Tab.CONFIG) -> ui.gui.ChoiceField:
+
+def login_without_mfa_policy_field(
+    order: int = 50, tab: 'types.ui.Tab|str|None' = types.ui.Tab.CONFIG
+) -> ui.gui.ChoiceField:
     return ui.gui.ChoiceField(
         label=_('Policy for users without MFA support'),
         order=order,
@@ -476,6 +485,19 @@ def login_without_mfa_policy_field(order: int = 50, tab: 'types.ui.Tab|str|None'
         choices=mfas.LoginAllowed.choices,
         tab=tab,
         old_field_name='allowLoginWithoutMFA',
+    )
+
+
+def put_back_to_cache_field(order: int = 120, tab: 'types.ui.Tab|str|None' = types.ui.Tab.ADVANCED) -> ui.gui.ChoiceField:
+    return ui.gui.ChoiceField(
+        order=order,
+        label=_('Put back to cache'),
+        tooltip=_('On machine releasy by logout, put it back to cache instead of deleting if possible.'),
+        choices=[
+            {'id': 'no', 'text': _('No. Never put it back to cache')},
+            {'id': 'yes', 'text': _('Yes, try to put it back to cache')},
+        ],
+        tab=tab,
     )
 
 

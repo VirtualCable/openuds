@@ -94,6 +94,8 @@ class XenFixedService(FixedService):  # pylint: disable=too-many-public-methods
     use_snapshots = FixedService.use_snapshots
     randomize = FixedService.randomize
 
+    maintain_on_error = FixedService.maintain_on_error
+
     prov_uuid = gui.HiddenField(value=None)
 
     # Uses default FixedService.initialize

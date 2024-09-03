@@ -31,6 +31,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 import re
 import typing
+import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
@@ -124,6 +125,9 @@ class ProxmoxServiceLinked(DynamicService):
     )
 
     try_soft_shutdown = DynamicService.try_soft_shutdown
+    maintain_on_error = DynamicService.maintain_on_error
+    remove_duplicates = DynamicService.remove_duplicates
+    put_back_to_cache = DynamicService.put_back_to_cache
 
     machine = gui.ChoiceField(
         label=_("Base Machine"),
@@ -207,6 +211,11 @@ class ProxmoxServiceLinked(DynamicService):
         """
         return re.sub("[^a-zA-Z0-9_-]", "-", name)
 
+    def find_duplicates(self, name: str, mac: str) -> collections.abc.Iterable[str]:
+        for i in self.provider().api.list_vms():
+            if i.name and i.name.casefold() == name.casefold():
+                yield str(i.id)
+
     def clone_vm(self, name: str, description: str, vmid: int = -1) -> 'prox_types.VmCreationResult':
         name = self.sanitized_name(name)
         pool = self.pool.value or None
@@ -258,16 +267,22 @@ class ProxmoxServiceLinked(DynamicService):
     def is_avaliable(self) -> bool:
         return self.provider().is_available()
 
-    def get_ip(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> str:
+    def get_ip(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> str:
         return self.provider().api.get_guest_ip_address(int(vmid))
 
-    def get_mac(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> str:
+    def get_mac(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> str:
         # If vmid is empty, we are requesting a new mac
         if not vmid:
             return self.mac_generator().get(self.get_macs_range())
         return self.provider().api.get_vm_config(int(vmid)).networks[0].macaddr.lower()
 
-    def start(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
+    def start(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> None:
         if isinstance(caller_instance, ProxmoxUserserviceLinked):
             if self.is_running(caller_instance, vmid):  # If running, skip
                 caller_instance._task = ''
@@ -276,7 +291,9 @@ class ProxmoxServiceLinked(DynamicService):
         else:
             self.provider().api.start_vm(int(vmid))
 
-    def stop(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
+    def stop(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> None:
         if isinstance(caller_instance, ProxmoxUserserviceLinked):
             if self.is_running(caller_instance, vmid):
                 caller_instance._store_task(self.provider().api.stop_vm(int(vmid)))
@@ -285,7 +302,9 @@ class ProxmoxServiceLinked(DynamicService):
         else:
             self.provider().api.stop_vm(int(vmid))
 
-    def shutdown(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
+    def shutdown(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> None:
         if isinstance(caller_instance, ProxmoxUserserviceLinked):
             if self.is_running(caller_instance, vmid):
                 caller_instance._store_task(self.provider().api.shutdown_vm(int(vmid)))
@@ -294,7 +313,9 @@ class ProxmoxServiceLinked(DynamicService):
         else:
             self.provider().api.shutdown_vm(int(vmid))  # Just shutdown it, do not stores anything
 
-    def is_running(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> bool:
+    def is_running(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> bool:
         # Raise an exception if fails to get machine info
         return self.get_vm_info(int(vmid)).validate().status.is_running()
 
