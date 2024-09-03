@@ -307,7 +307,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         Clones the record of a user serviceself.
         For this, the original userservice will ve moved to cache, and a new one will be created
         to mark it as "REMOVED"
-        
+
         The reason for creating a new one with cloned data is "conserving" a deleted record, so we can track it
         as usual
         """
@@ -329,11 +329,20 @@ class UserServiceManager(metaclass=singleton.Singleton):
         user_service.cache_level = types.services.CacheLevel.L1
         user_service.in_use = False
         user_service.src_hostname = user_service.src_ip = ''
-        user_service.save()  
+        user_service.save()
 
-    def get_cache_servicepool_stats(self, servicepool: ServicePool) -> 'types.services.ServicePoolStats':
+    def get_cache_servicepool_stats(
+        self,
+        servicepool: ServicePool,
+        assigned_increased_by: int = 0,
+        l1_cache_increased_by: int = 0,
+        l2_cache_increased_by: int = 0,
+    ) -> 'types.services.ServicePoolStats':
         """
         Returns the stats (for cache pourposes) for a service pool.
+
+        increasers are used so we can simulate the removal of some elements and check if we need to grow cache
+        (for exampl)
         """
         # State filter for cached and inAssigned objects
         # First we get all deployed services that could need cache generation
@@ -386,23 +395,29 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # to create new items over the limit stablisshed, so we will not remove them anymore
         l1_cache_count: int = (
             servicepool.cached_users_services()
-            .filter(UserServiceManager.manager().get_cache_state_filter(servicepool, types.services.CacheLevel.L1))
+            .filter(
+                UserServiceManager.manager().get_cache_state_filter(servicepool, types.services.CacheLevel.L1)
+            )
             .count()
-        )
+        ) + l1_cache_increased_by
         l2_cache_count: int = (
             (
                 servicepool.cached_users_services()
-                .filter(UserServiceManager.manager().get_cache_state_filter(servicepool, types.services.CacheLevel.L2))
+                .filter(
+                    UserServiceManager.manager().get_cache_state_filter(
+                        servicepool, types.services.CacheLevel.L2
+                    )
+                )
                 .count()
             )
             if service_instance.uses_cache_l2
             else 0
-        )
+        ) + l2_cache_increased_by
         assigned_count: int = (
             servicepool.assigned_user_services()
             .filter(UserServiceManager.manager().get_state_filter(servicepool.service))
             .count()
-        )
+        ) + assigned_increased_by
         pool_stat = types.services.ServicePoolStats(servicepool, l1_cache_count, l2_cache_count, assigned_count)
 
         # if we bypasses max cache, we will reduce it in first place. This is so because this will free resources on service provider
@@ -517,18 +532,16 @@ class UserServiceManager(metaclass=singleton.Singleton):
             userservice.release()
             return
 
-        stats = self.get_cache_servicepool_stats(userservice.deployed_service)
         # Fix assigned value, because "userservice" will not count as assigned anymore
-        stats.assigned_count -= 1
-        
+        stats = self.get_cache_servicepool_stats(userservice.deployed_service, assigned_increased_by=-1)
+
         # Note that only moves to cache L1
         # Also, we can get values for L2 cache, thats why we check L1 for overflow and needed
-        if stats.has_l1_cache_overflow():
+        if stats.is_null() or stats.has_l1_cache_overflow():
             userservice.release()  # Mark as removable
         elif stats.is_l1_cache_growth_required():
             # Move the clone of the user service to cache, and set our as REMOVED
             self.forced_move_assigned_to_cache_l1(userservice)
-            userservice.release(immediate=True)
 
     def get_existing_assignation_for_user(
         self, service_pool: ServicePool, user: User
