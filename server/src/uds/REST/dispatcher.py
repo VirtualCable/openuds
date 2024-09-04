@@ -278,7 +278,7 @@ class Dispatcher(View):
 
         def checker(x: type[Handler]) -> bool:
             # only register if final class, no classes that have subclasses
-            logger.info(
+            logger.debug(
                 'Checking %s - %s - %s', x.__name__, issubclass(x, DetailHandler), x.__subclasses__() == []
             )
             return not issubclass(x, DetailHandler) and not x.__subclasses__()
