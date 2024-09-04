@@ -32,10 +32,16 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 
-SUGGESTED_CHECK_INTERVAL: typing.Final[int] = 8  # In seconds
-MAX_RETRIES: typing.Final[int] = 7 * 24 * 60 // SUGGESTED_CHECK_INTERVAL  # 7 days
-MAX_STATE_CHECKS: typing.Final[int] = 32  # Max number of state checks before giving up
+HOURS_BEFORE_CONSIDERED_LOCKED: typing.Final[int] = 2  # In hours
+
+USRV_SUGGESTED_CHECK_INTERVAL: typing.Final[int] = 8  # In seconds
+USRV_MAX_RETRIES: typing.Final[int] = 24 * 3600 // USRV_SUGGESTED_CHECK_INTERVAL  # 1 day
+USRV_MAX_STATE_CHECKS: typing.Final[int] = (
+    HOURS_BEFORE_CONSIDERED_LOCKED * 3600 // USRV_SUGGESTED_CHECK_INTERVAL
+)  # hours for a single state at most
 
 PUB_SUGGESTED_CHECK_INTERVAL: typing.Final[int] = 30  # In seconds
-PUB_MAX_RETRIES: typing.Final[int] = 7 * 24 * 60 // PUB_SUGGESTED_CHECK_INTERVAL  # 7 days
-PUB_MAX_STATE_CHECKS: typing.Final[int] = 7200 // PUB_SUGGESTED_CHECK_INTERVAL  # 2 hours for a single state at most
+PUB_MAX_RETRIES: typing.Final[int] = 24 * 3600 // PUB_SUGGESTED_CHECK_INTERVAL  # 1 day
+PUB_MAX_STATE_CHECKS: typing.Final[int] = (
+    HOURS_BEFORE_CONSIDERED_LOCKED * 3600 // PUB_SUGGESTED_CHECK_INTERVAL
+)  # hours for a single state at most

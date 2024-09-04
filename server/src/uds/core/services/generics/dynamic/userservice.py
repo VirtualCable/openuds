@@ -71,15 +71,15 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     and that will be always the from a "fixed" machine, that is, a machine that is not created.
     """
 
-    suggested_delay = consts.services.SUGGESTED_CHECK_INTERVAL
+    suggested_delay = consts.services.USRV_SUGGESTED_CHECK_INTERVAL
+    # How many times we will check for a state before giving up
+    max_state_checks: typing.ClassVar[int] = consts.services.USRV_MAX_STATE_CHECKS
+    # How many "retries" operation on same state will be allowed before giving up
+    max_retries: typing.ClassVar[int] = consts.services.USRV_MAX_RETRIES
 
     # Some customization fields
     # If ip can be manually overriden, normally True... (set by actor, for example)
     can_set_ip: typing.ClassVar[bool] = True
-    # How many times we will check for a state before giving up
-    max_state_checks: typing.ClassVar[int] = 20
-    # How many "retries" operation on same state will be allowed before giving up
-    max_retries: typing.ClassVar[int] = consts.services.MAX_RETRIES
     # If store_error_as_finished is true, and an error occurs, the machine is set to FINISHED instead of ERROR
     store_error_as_finished: typing.ClassVar[bool] = False
     # If must wait untill finish queue for destroying the machine
@@ -157,7 +157,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             count = data.get('exec_count', 0) + 1
             data['exec_count'] = count
         if count > self.max_state_checks:
-            return self.error(f'Max checks reached on {op}')
+            return self.error(f'Max checks reached on {op.as_str()}: {self.max_state_checks}')
         return None
 
     @typing.final
@@ -172,7 +172,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             data['retries'] = retries
 
         if retries > self.max_retries:  # get "own class" max retries
-            return self.error(f'Max retries reached')
+            return self.error(f'Max retries reached on {self._current_op().as_str()}: {self.max_retries}')
 
         return None
 

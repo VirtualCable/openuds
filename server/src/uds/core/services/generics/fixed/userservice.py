@@ -68,11 +68,11 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         - FINISH
     """
 
-    suggested_delay = 8
+    suggested_delay = consts.services.USRV_SUGGESTED_CHECK_INTERVAL
     # How many times we will check for a state before giving up
-    max_state_checks: typing.ClassVar[int] = 20
+    max_state_checks: typing.ClassVar[int] = consts.services.USRV_MAX_STATE_CHECKS
     # How many "retries" operation on same state will be allowed before giving up
-    max_retries: typing.ClassVar[int] = consts.services.MAX_RETRIES
+    max_retries: typing.ClassVar[int] = consts.services.USRV_MAX_RETRIES
 
     _name = autoserializable.StringField(default='')
     _mac = autoserializable.StringField(default='')
