@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import random
 import typing
 from unittest import mock
 
@@ -72,6 +73,14 @@ class TestProxmovLinkedService(UDSTestCase):
             # Now should return False as we have reset the cache
             self.assertFalse(service.is_avaliable())
             api.test.assert_called_with()
+            
+    def test_service_is_deleted(self) -> None:
+        with fixtures.patched_provider() as provider:
+            service = fixtures.create_service_linked(provider=provider)
+            vm = random.choice(fixtures.VMINFO_LIST)
+
+            self.assertFalse(service.is_deleted(str(vm.id)))
+            self.assertTrue(service.is_deleted('non_existent'))
 
     def test_service_methods_1(self) -> None:
         with fixtures.patched_provider() as provider:

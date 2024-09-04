@@ -323,3 +323,10 @@ class ProxmoxServiceLinked(DynamicService):
         # All removals are deferred, so we can do it async
         # Try to stop it if already running... Hard stop
         self.provider().api.delete_vm(int(vmid))
+
+    def is_deleted(self, vmid: str) -> bool:
+        try:
+            self.provider().api.get_vm_info(int(vmid))
+            return False
+        except Exception:
+            return True
