@@ -639,7 +639,7 @@ class ServicePool(UUIDModel, TaggingMixin):
         Returns:
             A list of db records (userService) with cached user services
         """
-        return self.userServices.exclude(cache_level=0)
+        return self.userServices.exclude(cache_level=types.services.CacheLevel.NONE)
 
     def assigned_user_services(self) -> 'models.QuerySet[UserService]':
         """
@@ -649,16 +649,6 @@ class ServicePool(UUIDModel, TaggingMixin):
             A list of db records (userService) with assinged user services
         """
         return self.userServices.filter(cache_level=types.services.CacheLevel.NONE)
-
-    def erroneous_user_services(self) -> 'models.QuerySet[UserService]':
-        """
-        Utility method to locate invalid assigned user services.
-
-        If an user deployed service is assigned, it MUST have an user associated.
-
-        If it don't has an user associated, the user deployed service is wrong.
-        """
-        return self.userServices.filter(cache_level=0, user=None)
 
     def usage(self, cached_value: int = -1) -> types.pools.UsageInfo:
         """

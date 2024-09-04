@@ -65,10 +65,6 @@ class OSManager(Module):
     type_description = _('Base Manager')
     icon_file = 'osmanager.png'
 
-    # If true, this os manager  will be invoked with every user service assigned, but not used
-    # This is an object variable, so it can be overriden on derived classes on runtime
-    handles_unused_userservices: bool = False
-
     # : Type of services for which this OS Manager is designed
     # : Defaults to all. (list or tuple)
     servicesType: types.services.ServiceType = types.services.ServiceType.VDI
@@ -175,6 +171,10 @@ class OSManager(Module):
           We do not expect any exception from this method
         """
         return State.FINISHED
+
+    # If true, this os manager  will be invoked with every user service assigned, but not used
+    def manages_unused_userservices(self) -> bool:
+        return False
 
     def handle_unused(self, userservice: 'models.UserService') -> None:
         """

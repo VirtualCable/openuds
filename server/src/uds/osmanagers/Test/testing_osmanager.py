@@ -83,9 +83,9 @@ class TestOSManager(osmanagers.OSManager):
         ),
         required=True,
     )
-
-    def initialize(self, values: 'types.core.ValuesType') -> None:
-        self.handles_unused_userservices = True
+    
+    def manages_unused_userservices(self) -> bool:
+        return True
 
     def release(self, userservice: 'UserService') -> None:
         logger.debug('User service %s released', userservice)

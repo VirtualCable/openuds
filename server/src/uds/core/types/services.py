@@ -268,3 +268,9 @@ class ServicePoolStats:
     @staticmethod
     def null() -> 'ServicePoolStats':
         return ServicePoolStats(None, 0, 0, 0)
+
+    def __str__(self) -> str:
+        if self.is_null():
+            return 'ServicePoolStats[Null]'
+
+        return f'ServicePoolStats[{self.servicepool}: L1 {self.l1_cache_count}, L2 {self.l2_cache_count}, Assigned {self.assigned_count}]'

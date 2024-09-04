@@ -494,7 +494,7 @@ class GlobalConfig:
         'checkUnusedTime',
         '631',
         type=Config.FieldType.NUMERIC,
-        help=_('Time betwen checks of unused user services by os managers'),
+        help=_('How long should the user service be unused before os manager considers it for removal'),
     )  # Defaults to 10 minutes
     CHECK_UNUSED_DELAY: Config.Value = Config.section(Config.SectionType.GLOBAL).value(
         'checkUnusedDelay',

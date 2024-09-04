@@ -133,6 +133,7 @@ class WinDomainOsManager(WindowsOsManager):
     deadline = WindowsOsManager.deadline
 
     def initialize(self, values: 'types.core.ValuesType') -> None:
+        super().initialize(values)
         if values:
             # Some cleaning of input data (remove spaces, etc..)
             for fld in (self.domain, self.account, self.ou, self.grp, self.server_hint):

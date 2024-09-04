@@ -78,11 +78,8 @@ class LinuxOsManager(osmanagers.OSManager):
         default=True,
     )
 
-    def _flag_processes_unused_machines(self) -> None:
-        self.handles_unused_userservices = fields.onlogout_field_is_removable(self.on_logout)
-
-    def initialize(self, values: 'types.core.ValuesType') -> None:
-        self._flag_processes_unused_machines()
+    def manages_unused_userservices(self) -> bool:
+        return fields.onlogout_field_is_removable(self.on_logout)
 
     def release(self, userservice: 'UserService') -> None:
         pass
@@ -156,6 +153,5 @@ class LinuxOsManager(osmanagers.OSManager):
                 gui.as_bool(values[3]),
             )
 
-        self._flag_processes_unused_machines()
         # Flag that we need an upgrade (remarshal and save)
         self.mark_for_upgrade()

@@ -125,5 +125,3 @@ class LinuxRandomPassManager(LinuxOsManager):
 
             self.mark_for_upgrade()
 
-        # Recalculate flag indicating if we need to process unused machines
-        self._flag_processes_unused_machines()

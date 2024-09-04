@@ -55,7 +55,7 @@ class AssignedAndUnused(Job):
             seconds=GlobalConfig.CHECK_UNUSED_TIME.as_int()
         )
         # Locate service pools with pending assigned service in use
-        outdatedServicePools = ServicePool.objects.annotate(
+        pending_service_pools = ServicePool.objects.annotate(
             outdated=Count(
                 'userServices',
                 filter=Q(
@@ -67,11 +67,11 @@ class AssignedAndUnused(Job):
                 ),
             )
         ).filter(outdated__gt=0, state=State.ACTIVE)
-        for ds in outdatedServicePools:
+        for ds in pending_service_pools:
             # Skips checking deployed services in maintenance mode or ignores assigned and unused
             if ds.is_in_maintenance() or ds.ignores_unused:
                 continue
-            unusedMachines = ds.assigned_user_services().filter(
+            unused_userservices = ds.assigned_user_services().filter(
                 in_use=False,
                 state_date__lt=since_state,
                 state=State.USABLE,
@@ -80,15 +80,15 @@ class AssignedAndUnused(Job):
             # If do not needs os manager, this is
             if ds.osmanager:
                 osm = ds.osmanager.get_instance()
-                if osm.handles_unused_userservices:
+                if osm.manages_unused_userservices():
                     logger.debug(
                         'Processing unused services for %s, %s', ds, ds.osmanager
                     )
-                    for us in unusedMachines:
+                    for us in unused_userservices:
                         logger.debug('Found unused assigned service %s', us)
                         osm.handle_unused(us)
             else:  # No os manager, simply remove unused services in specified time
-                for us in unusedMachines:
+                for us in unused_userservices:
                     logger.debug(
                         'Found unused assigned service with no OS Manager %s', us
                     )

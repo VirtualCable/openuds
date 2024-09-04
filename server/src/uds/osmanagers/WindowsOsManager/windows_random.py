@@ -82,7 +82,7 @@ class WinRandomPassManager(WindowsOsManager):
     idle = WindowsOsManager.idle
     dead_line = WindowsOsManager.deadline
 
-    def validate(self, values: 'types.core.ValuesType') -> None:
+    def initialize(self, values: 'types.core.ValuesType') -> None:
         if values:
             self.user_account.value = self.user_account.value.strip()
 

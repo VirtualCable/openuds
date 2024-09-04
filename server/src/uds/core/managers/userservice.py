@@ -36,7 +36,7 @@ import random
 import typing
 
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, Count, Case, When, IntegerField
 from django.utils.translation import gettext as _
 
 from uds.core import consts, exceptions, services, transports, types
@@ -77,6 +77,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
     @staticmethod
     def get_state_filter(service: 'models.Service') -> Q:
+        """
+        Returns a Q object that filters by valid states for a service
+        """
         if service.old_max_accounting_method:  # If no limits and accounting method is not old one
             # Valid states are: PREPARING, USABLE
             states = [State.PREPARING, State.USABLE]
@@ -393,40 +396,30 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # Get data related to actual state of cache
         # Before we were removing the elements marked to be destroyed after creation, but this makes us
         # to create new items over the limit stablisshed, so we will not remove them anymore
-        l1_cache_count: int = (
-            servicepool.cached_users_services()
-            .filter(
-                UserServiceManager.manager().get_cache_state_filter(servicepool, types.services.CacheLevel.L1)
-            )
-            .count()
-        ) + l1_cache_increased_by
-        l2_cache_count: int = (
-            (
-                servicepool.cached_users_services()
-                .filter(
-                    UserServiceManager.manager().get_cache_state_filter(
-                        servicepool, types.services.CacheLevel.L2
-                    )
-                )
-                .count()
-            )
-            if service_instance.uses_cache_l2
-            else 0
-        ) + l2_cache_increased_by
-        assigned_count: int = (
-            servicepool.assigned_user_services()
-            .filter(UserServiceManager.manager().get_state_filter(servicepool.service))
-            .count()
-        ) + assigned_increased_by
-        pool_stat = types.services.ServicePoolStats(servicepool, l1_cache_count, l2_cache_count, assigned_count)
+        l1_cache_filter = self.get_cache_state_filter(servicepool, types.services.CacheLevel.L1)
+        l2_cache_filter = self.get_cache_state_filter(servicepool, types.services.CacheLevel.L2)
+        assigned_filter = self.get_cache_state_filter(servicepool, types.services.CacheLevel.NONE)
+
+        counts: dict[str, int] = servicepool.user_services.aggregate(
+            l1_cache_count=Count(Case(When(l1_cache_filter, then=1), output_field=IntegerField()))
+            + l1_cache_increased_by,
+            l2_cache_count=Count(Case(When(l2_cache_filter, then=1), output_field=IntegerField()))
+            + l2_cache_increased_by,
+            assigned_count=Count(Case(When(assigned_filter, then=1), output_field=IntegerField()))
+            + assigned_increased_by,
+        )
+
+        pool_stat = types.services.ServicePoolStats(
+            servicepool,
+            l1_cache_count = counts['l1_cache_count'] + l1_cache_increased_by,
+            l2_cache_count = counts['l2_cache_count'] + l2_cache_increased_by,
+            assigned_count = counts['assigned_count'] + assigned_increased_by,
+        )
 
         # if we bypasses max cache, we will reduce it in first place. This is so because this will free resources on service provider
         logger.debug(
-            "Examining %s with %s in cache L1 and %s in cache L2, %s inAssigned",
-            servicepool.name,
-            l1_cache_count,
-            l2_cache_count,
-            assigned_count,
+            "Examining %s",
+            pool_stat
         )
 
         # Check for cache overflow

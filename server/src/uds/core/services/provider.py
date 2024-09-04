@@ -171,11 +171,17 @@ class ServiceProvider(module.Module):
         This will get invoked when all initialization stuff is done
 
         Args:
-            values: If values is not none, this object is being initialized
-            from administration interface, and not unmarshal will be done.
-            If it's None, this is initialized internally, and unmarshal will
-            be called after this.
-
+            values: Values from administration interface. If None, this is being
+                    initialized internally and not from administration
+            
+        Notes:
+            If values is not none, this object is being initialized
+            from administration interface, and not unmarshal is needed because data is already loaded
+            (due to values passed to UserInterface constructor, initializes fields)
+            If values is None, this is being initialized internally, and unmarshal will
+            be called AFTER invoking this method. No unmarshalled means that no automatic field
+            will be filled with values from database, so take care whith this.
+            
         Default implementation does nothing
         """
 
