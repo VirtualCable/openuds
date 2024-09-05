@@ -33,6 +33,7 @@ import logging
 import typing
 import collections.abc
 
+from django.utils.translation import gettext
 from django.http import HttpResponse
 from django.views.decorators.cache import cache_page, never_cache
 
@@ -44,7 +45,7 @@ from uds.core.consts.images import DEFAULT_IMAGE
 from uds.core.util.model import process_uuid
 from uds.models import Transport, Image
 from uds.core.util import log
-from uds.core.services.exceptions import ServiceNotReadyError
+from uds.core.services.exceptions import ServiceNotReadyError, MaxServicesReachedError, ServiceAccessDeniedByCalendar
 
 from uds.web.util import services
 
@@ -60,11 +61,11 @@ logger = logging.getLogger(__name__)
 def transport_own_link(
     request: 'ExtendedHttpRequestWithUser', service_id: str, transport_id: str
 ) -> HttpResponse:
+    def _response(url: str = '', percent: int = 100, error: typing.Any = '') -> typing.Dict[str, typing.Any]:
+        return {'running': percent, 'url': url, 'error': str(error)}
+    
     response: collections.abc.MutableMapping[str, typing.Any] = {}
 
-    # If userService is not owned by user, will raise an exception
-
-    # For type checkers to "be happy"
     try:
         res = UserServiceManager.manager().get_user_service_info(
             request.user, request.os, request.ip, service_id, transport_id
@@ -72,8 +73,8 @@ def transport_own_link(
         ip, userService, _iads, trans, itrans = res
         # This returns a response object in fact
         if itrans and ip:
-            response = {
-                'url': itrans.get_link(
+            response = _response(
+                url=itrans.get_link(
                     userService,
                     trans,
                     ip,
@@ -81,14 +82,23 @@ def transport_own_link(
                     request.user,
                     web_password(request),
                     request,
-                )
-            }
+                ),
+            )
     except ServiceNotReadyError as e:
-        response = {'running': e.code.as_percent()}
+        logger.debug('Service not ready')
+        # Not ready, show message and return to this page in a while
+        # error += ' (code {0:04X})'.format(e.code)
+        response = _response(percent=e.code)
+    except MaxServicesReachedError:
+        logger.info('Number of service reached MAX for service pool "%s"', service_id)
+        response = _response(error=types.errors.Error.MAX_SERVICES_REACHED.message)
+    except ServiceAccessDeniedByCalendar:
+        logger.info('Access tried to a calendar limited access pool "%s"', service_id)
+        response = _response(error=types.errors.Error.SERVICE_CALENDAR_DENIED.message)
     except Exception as e:
-        logger.exception("Exception")
-        response = {'error': str(e)}
-
+        logger.exception('Error')
+        response = _response(error=gettext('Internal error'))
+        
     return HttpResponse(content=json.dumps(response), content_type='application/json')
 
 
@@ -128,7 +138,7 @@ def user_service_enabler(
     request: 'ExtendedHttpRequestWithUser', service_id: str, transport_id: str
 ) -> HttpResponse:
     return HttpResponse(
-        json.dumps(services.enable_service(request, idService=service_id, idTransport=transport_id)),
+        json.dumps(services.enable_service(request, service_id=service_id, transport_id=transport_id)),
         content_type='application/json',
     )
 

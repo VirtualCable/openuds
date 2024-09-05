@@ -181,7 +181,7 @@ class Connection(Handler):
         self._request.user = self._user
         setattr(self._request, '_cryptedpass', self.session['REST']['password'])
         setattr(self._request, '_scrambler', self._request.META['HTTP_SCRAMBLER'])
-        linkInfo = services.enable_service(self._request, idService=idService, idTransport=idTransport)
+        linkInfo = services.enable_service(self._request, service_id=idService, transport_id=idTransport)
         if linkInfo['error']:
             return Connection.result(error=linkInfo['error'])
         return Connection.result(result=linkInfo['url'])

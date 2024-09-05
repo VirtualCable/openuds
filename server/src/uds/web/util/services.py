@@ -418,10 +418,10 @@ def get_services_info_dict(
 
 
 def enable_service(
-    request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str
+    request: 'ExtendedHttpRequestWithUser', service_id: str, transport_id: str
 ) -> collections.abc.Mapping[str, typing.Any]:
     # Maybe we could even protect this even more by limiting referer to own server /? (just a meditation..)
-    logger.debug('idService: %s, idTransport: %s', idService, idTransport)
+    logger.debug('idService: %s, idTransport: %s', service_id, transport_id)
     url = ''
     error = gettext('Service not ready. Please, try again in a while.')
 
@@ -429,24 +429,24 @@ def enable_service(
 
     try:
         res = UserServiceManager.manager().get_user_service_info(
-            request.user, request.os, request.ip, idService, idTransport, validate_with_test=False
+            request.user, request.os, request.ip, service_id, transport_id, validate_with_test=False
         )
         scrambler = CryptoManager().random_string(32)
         password = CryptoManager().symmetric_encrypt(web_password(request), scrambler)
 
-        userService, trans = res[1], res[3]
+        userservice, trans = res[1], res[3]
 
-        userService.properties['accessed_by_client'] = False  # Reset accesed property to
+        userservice.properties['accessed_by_client'] = False  # Reset accesed property to
 
-        typeTrans = trans.get_type()
+        transport_type = trans.get_type()
 
         error = ''  # No error
 
-        if typeTrans.own_link:
-            url = reverse('webapi.transport_own_link', args=('A' + userService.uuid, trans.uuid))
+        if transport_type.own_link:
+            url = reverse('webapi.transport_own_link', args=('A' + userservice.uuid, trans.uuid))
         else:
             data = {
-                'service': 'A' + userService.uuid,
+                'service': 'A' + userservice.uuid,
                 'transport': trans.uuid,
                 'user': request.user.uuid,
                 'password': password,
@@ -463,10 +463,10 @@ def enable_service(
             + f'({e.code.as_percent()}%)'
         )
     except MaxServicesReachedError:
-        logger.info('Number of service reached MAX for service pool "%s"', idService)
+        logger.info('Number of service reached MAX for service pool "%s"', service_id)
         error = types.errors.Error.MAX_SERVICES_REACHED.message
     except ServiceAccessDeniedByCalendar:
-        logger.info('Access tried to a calendar limited access pool "%s"', idService)
+        logger.info('Access tried to a calendar limited access pool "%s"', service_id)
         error = types.errors.Error.SERVICE_CALENDAR_DENIED.message
     except Exception as e:
         logger.exception('Error')
