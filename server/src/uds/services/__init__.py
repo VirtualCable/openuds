@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -48,7 +48,7 @@ from uds.core.util import modfinder
 logger = logging.getLogger(__name__)
 
 
-def __loadModules() -> None:
+def initialize() -> None:
     """
     This imports all packages that are descendant of this package, and, after that,
     it register all subclases of service provider as
@@ -58,4 +58,4 @@ def __loadModules() -> None:
     modfinder.dynamically_load_and_register_modules(services.factory(), services.ServiceProvider, __name__)
 
 
-__loadModules()
+initialize()

@@ -43,7 +43,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 from uds.core.util import modfinder
 
 
-def __loadModules() -> None:
+def initialize() -> None:
     """
     Loads all osmanager modules
     """
@@ -56,4 +56,4 @@ def __loadModules() -> None:
     )
 
 
-__loadModules()
+initialize()

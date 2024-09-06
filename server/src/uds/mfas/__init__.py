@@ -46,7 +46,7 @@ from uds.core.util import modfinder
 logger = logging.getLogger(__name__)
 
 
-def __loadModules() -> None:
+def initialize() -> None:
     """
     This imports all packages that are descendant of this package, and, after that,
     it register all subclases of mfas.MFA 
@@ -56,4 +56,4 @@ def __loadModules() -> None:
     modfinder.dynamically_load_and_register_modules(mfas.factory(), mfas.MFA, __name__)
 
 
-__loadModules()
+initialize()
