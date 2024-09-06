@@ -109,7 +109,7 @@ class Client(Handler):
         version = self._params.get('version', '0.0.0')
         srcIp = self._request.ip
 
-        if version < consts.system.REQUIRED_CLIENT_VERSION:
+        if version < consts.system.VERSION_REQUIRED_CLIENT:
             return Client.result(error='Client version not supported.\n Please, upgrade it.')
 
         # Ip is optional,
@@ -201,8 +201,8 @@ class Client(Handler):
                 {
                     'availableVersion': CLIENT_VERSION,  # Compat with old clients, TB removed soon...
                     'available_version': CLIENT_VERSION,
-                    'requiredVersion': consts.system.REQUIRED_CLIENT_VERSION,  # Compat with old clients, TB removed soon...
-                    'required_version': consts.system.REQUIRED_CLIENT_VERSION,
+                    'requiredVersion': consts.system.VERSION_REQUIRED_CLIENT,  # Compat with old clients, TB removed soon...
+                    'required_version': consts.system.VERSION_REQUIRED_CLIENT,
                     'downloadUrl': self._request.build_absolute_uri(reverse('page.client-download')),  # Compat with old clients, TB removed soon...
                     'client_link': self._request.build_absolute_uri(reverse('page.client-download')),
                 }
