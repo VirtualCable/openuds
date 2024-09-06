@@ -428,26 +428,24 @@ def enable_service(
     # If meta service, process and rebuild idService & idTransport
 
     try:
-        res = UserServiceManager.manager().get_user_service_info(
-            request.user, request.os, request.ip, service_id, transport_id, validate_with_test=False
+        info = UserServiceManager.manager().get_user_service_info(
+            request.user, request.os, request.ip, service_id, transport_id, test_userservice_status=False
         )
         scrambler = CryptoManager().random_string(32)
         password = CryptoManager().symmetric_encrypt(web_password(request), scrambler)
 
-        userservice, trans = res[1], res[3]
+        info.userservice.properties['accessed_by_client'] = False  # Reset accesed property to
 
-        userservice.properties['accessed_by_client'] = False  # Reset accesed property to
-
-        transport_type = trans.get_type()
+        transport_type = info.transport.get_type()
 
         error = ''  # No error
 
         if transport_type.own_link:
-            url = reverse('webapi.transport_own_link', args=('A' + userservice.uuid, trans.uuid))
+            url = reverse('webapi.transport_own_link', args=('A' + info.userservice.uuid, info.transport.uuid))
         else:
             data = {
-                'service': 'A' + userservice.uuid,
-                'transport': trans.uuid,
+                'service': 'A' + info.userservice.uuid,
+                'transport': info.transport.uuid,
                 'user': request.user.uuid,
                 'password': password,
             }

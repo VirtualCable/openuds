@@ -67,17 +67,17 @@ def transport_own_link(
     response: collections.abc.MutableMapping[str, typing.Any] = {}
 
     try:
-        res = UserServiceManager.manager().get_user_service_info(
+        info = UserServiceManager.manager().get_user_service_info(
             request.user, request.os, request.ip, service_id, transport_id
         )
-        ip, userService, _iads, trans, itrans = res
+        # ip, userService, _iads, trans, itrans = res
         # This returns a response object in fact
-        if itrans and ip:
+        if info.ip:
             response = _response(
-                url=itrans.get_link(
-                    userService,
-                    trans,
-                    ip,
+                url=info.transport.get_instance().get_link(
+                    info.userservice,
+                    info.transport,
+                    info.ip,
                     request.os,
                     request.user,
                     web_password(request),

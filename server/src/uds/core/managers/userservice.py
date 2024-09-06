@@ -39,7 +39,7 @@ from django.db import transaction
 from django.db.models import Q, Count, Case, When, IntegerField
 from django.utils.translation import gettext as _
 
-from uds.core import consts, exceptions, services, transports, types
+from uds.core import consts, exceptions, types
 from uds.core.services.exceptions import (
     InvalidServiceException,
     MaxServicesReachedError,
@@ -411,16 +411,13 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         pool_stat = types.services.ServicePoolStats(
             servicepool,
-            l1_cache_count = counts['l1_cache_count'] + l1_cache_increased_by,
-            l2_cache_count = counts['l2_cache_count'] + l2_cache_increased_by,
-            assigned_count = counts['assigned_count'] + assigned_increased_by,
+            l1_cache_count=counts['l1_cache_count'] + l1_cache_increased_by,
+            l2_cache_count=counts['l2_cache_count'] + l2_cache_increased_by,
+            assigned_count=counts['assigned_count'] + assigned_increased_by,
         )
 
         # if we bypasses max cache, we will reduce it in first place. This is so because this will free resources on service provider
-        logger.debug(
-            "Examining %s",
-            pool_stat
-        )
+        logger.debug("Examining %s", pool_stat)
 
         # Check for cache overflow
         # We have more than we want
@@ -867,18 +864,31 @@ class UserServiceManager(metaclass=singleton.Singleton):
     def locate_user_service(
         self, user: User, id_service: str, create: bool = False
     ) -> typing.Optional[UserService]:
-        kind, uuid_user_service = id_service[0], id_service[1:]
+        """
+        Locates a user service from a user and a service id
+        
+        Args:
+            user: User owner of the service
+            id_service: Service id (A<uuid> for assigned, M<uuid> for meta, ?<uuid> for service pool)
+            create: If True, will create a new service if not found
+        """
+        kind, uuid_userservice_pool = id_service[0], id_service[1:]
 
-        logger.debug('Kind of service: %s, idService: %s', kind, uuid_user_service)
+        logger.debug('Kind of service: %s, idService: %s', kind, uuid_userservice_pool)
         userservice: typing.Optional[UserService] = None
 
         if kind in 'A':  # This is an assigned service
-            logger.debug('Getting A service %s', uuid_user_service)
-            userservice = UserService.objects.get(uuid=uuid_user_service, user=user)
-            userservice.deployed_service.validate_user(user)
-        else:
+            logger.debug('Getting assugned user service %s', uuid_userservice_pool)
             try:
-                service_pool: ServicePool = ServicePool.objects.get(uuid=uuid_user_service)
+                userservice = UserService.objects.get(uuid=uuid_userservice_pool, user=user)
+                userservice.service_pool.validate_user(user)
+            except UserService.DoesNotExist:
+                logger.debug('Service does not exist')
+                return None
+        else:
+            logger.debug('Getting service pool %s', uuid_userservice_pool)
+            try:
+                service_pool: ServicePool = ServicePool.objects.get(uuid=uuid_userservice_pool)
                 # We first do a sanity check for this, if the user has access to this service
                 # If it fails, will raise an exception
                 service_pool.validate_user(user)
@@ -906,59 +916,64 @@ class UserServiceManager(metaclass=singleton.Singleton):
         src_ip: str,
         user_service_id: str,
         transport_id: typing.Optional[str],
-        validate_with_test: bool = True,
+        test_userservice_status: bool = True,
         client_hostname: typing.Optional[str] = None,
-    ) -> tuple[
-        typing.Optional[str],
-        UserService,
-        typing.Optional['services.UserService'],
-        Transport,
-        typing.Optional[transports.Transport],
-    ]:
+    ) -> types.services.UserServiceInfo:
         """
-        Get service info from user service
+        Get service info from user service 
+        
+        Args:
+            user: User owner of the service
+            os: Detected OS (as provided by request)
+            src_ip: Source IP of the request
+            user_service_id: User service id (A<uuid> for assigned, M<uuid> for meta, ?<uuid> for service pool)
+            transport_id: Transport id (optional). If not provided, will try to find a suitable one
+            validate_with_test: If True, will check if the service is ready
+            client_hostname: Client hostname (optional). If not provided, will use src_ip
+            
+        Returns:
+            UserServiceInfo: User service info
         """
         if user_service_id[0] == 'M':  # Meta pool
             return self.get_meta_service_info(user, src_ip, os, user_service_id[1:], transport_id or 'meta')
 
-        user_service = self.locate_user_service(user, user_service_id, create=True)
+        userservice = self.locate_user_service(user, user_service_id, create=True)
 
-        if not user_service:
+        if not userservice:
             raise InvalidServiceException(
                 _('Invalid service. The service is not available at this moment. Please, try later')
             )
 
         # Early log of "access try" so we can imagine what is going on
-        user_service.set_connection_source(
-            types.connections.ConnectionSource(src_ip, client_hostname or src_ip)
-        )
+        userservice.set_connection_source(types.connections.ConnectionSource(src_ip, client_hostname or src_ip))
 
-        if user_service.is_in_maintenance():
+        if userservice.is_in_maintenance():
             raise ServiceInMaintenanceMode()
 
-        if not user_service.deployed_service.is_access_allowed():
+        if not userservice.deployed_service.is_access_allowed():
             raise ServiceAccessDeniedByCalendar()
 
         if not transport_id:  # Find a suitable transport
-            t: Transport
-            for t in user_service.deployed_service.transports.order_by('priority'):
-                typeTrans = t.get_type()
+            for transport in userservice.deployed_service.transports.order_by('priority'):
+                typeTrans = transport.get_type()
                 if (
                     typeTrans
-                    and t.is_ip_allowed(src_ip)
+                    and transport.is_ip_allowed(src_ip)
                     and typeTrans.supports_os(os.os)
-                    and t.is_os_allowed(os.os)
+                    and transport.is_os_allowed(os.os)
                 ):
-                    transport_id = t.uuid
+                    transport_id = transport.uuid
                     break
+            else:
+                raise InvalidServiceException(_('No suitable transport found'))
 
         try:
-            transport: Transport = Transport.objects.get(uuid=transport_id)
-        except Exception as e:
-            raise InvalidServiceException() from e
+            transport = Transport.objects.get(uuid=transport_id)
+        except Transport.DoesNotExist:
+            raise InvalidServiceException(_('No suitable transport found'))
 
         # Ensures that the transport is allowed for this service
-        if user_service.deployed_service.transports.filter(id=transport.id).count() == 0:
+        if userservice.deployed_service.transports.filter(id=transport.id).count() == 0:
             raise InvalidServiceException()
 
         # If transport is not available for the request IP...
@@ -969,84 +984,88 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         userName = user.name if user else 'unknown'
 
-        if not validate_with_test:
+        if not test_userservice_status:
             # traceLogger.info('GOT service "{}" for user "{}" with transport "{}" (NOT TESTED)'.format(userService.name, userName, trans.name))
-            return None, user_service, None, transport, None
+            return types.services.UserServiceInfo(
+                ip=None,
+                userservice=userservice,
+                transport=transport,
+            )
+            # return None, userservice, None, transport, None
 
-        service_status: types.services.ReadyStatus = types.services.ReadyStatus.USERSERVICE_NOT_READY
+        userservice_status: types.services.ReadyStatus = types.services.ReadyStatus.USERSERVICE_NOT_READY
         ip = 'unknown'
         # Test if the service is ready
-        if user_service.is_ready():
+        if userservice.is_ready():
             # Is ready, update possible state
-            service_status = types.services.ReadyStatus.USERSERVICE_NO_IP
+            userservice_status = types.services.ReadyStatus.USERSERVICE_NO_IP
             log.log(
-                user_service,
+                userservice,
                 types.log.LogLevel.INFO,
                 f"User {user.pretty_name} from {src_ip} has initiated access",
                 types.log.LogSource.WEB,
             )
             # If ready, show transport for this service, if also ready ofc
-            userServiceInstance = user_service.get_instance()
-            ip = userServiceInstance.get_ip()
-            user_service.log_ip(ip)  # Update known ip
+            userservice_instance = userservice.get_instance()
+            ip = userservice_instance.get_ip()
+            userservice.log_ip(ip)  # Update known ip
             logger.debug('IP: %s', ip)
 
-            if self.check_user_service_uuid(user_service) is False:  # The service is not the expected one
-                service_status = types.services.ReadyStatus.USERSERVICE_INVALID_UUID
+            if self.check_user_service_uuid(userservice) is False:  # The service is not the expected one
+                userservice_status = types.services.ReadyStatus.USERSERVICE_INVALID_UUID
                 log.log(
-                    user_service,
+                    userservice,
                     types.log.LogLevel.WARNING,
                     f'User service is not accessible due to invalid UUID (user: {user.pretty_name}, ip: {ip})',
                     types.log.LogSource.TRANSPORT,
                 )
-                logger.debug('UUID check failed for user service %s', user_service)
+                logger.debug('UUID check failed for user service %s', userservice)
             else:
                 events.add_event(
-                    user_service.deployed_service,
+                    userservice.deployed_service,
                     events.types.stats.EventType.ACCESS,
                     username=userName,
                     srcip=src_ip,
                     dstip=ip,
-                    uniqueid=user_service.unique_id,
+                    uniqueid=userservice.unique_id,
                 )
                 if ip:
-                    service_status = types.services.ReadyStatus.TRANSPORT_NOT_READY
-                    transportInstance = transport.get_instance()
-                    if transportInstance.is_ip_allowed(user_service, ip):
+                    userservice_status = types.services.ReadyStatus.TRANSPORT_NOT_READY
+                    transport_instance = transport.get_instance()
+                    if transport_instance.is_ip_allowed(userservice, ip):
                         log.log(
-                            user_service, types.log.LogLevel.INFO, "User service ready", types.log.LogSource.WEB
+                            userservice, types.log.LogLevel.INFO, "User service ready", types.log.LogSource.WEB
                         )
                         self.notify_preconnect(
-                            user_service,
-                            transportInstance.get_connection_info(user_service, user, ''),
+                            userservice,
+                            transport_instance.get_connection_info(userservice, user, ''),
                         )
                         trace_logger.info(
                             'READY on service "%s" for user "%s" with transport "%s" (ip:%s)',
-                            user_service.name,
+                            userservice.name,
                             userName,
                             transport.name,
                             ip,
                         )
-                        return (
-                            ip,
-                            user_service,
-                            userServiceInstance,
-                            transport,
-                            transportInstance,
+                        return types.services.UserServiceInfo(
+                            ip=ip,
+                            userservice=userservice,
+                            transport=transport,
                         )
+                        # return ( ip, userservice, userservice_instance, transport, transport_instance)
 
-                    message = transportInstance.get_available_error_msg(user_service, ip)
-                    log.log(user_service, types.log.LogLevel.WARNING, message, types.log.LogSource.TRANSPORT)
+                    message = transport_instance.get_available_error_msg(userservice, ip)
+                    log.log(userservice, types.log.LogLevel.WARNING, message, types.log.LogSource.TRANSPORT)
                     logger.debug(
                         'Transport is not ready for user service %s: %s',
-                        user_service,
+                        userservice,
                         message,
                     )
                 else:
-                    logger.debug('Ip not available from user service %s', user_service)
+                    logger.debug('Ip not available from user service %s', userservice)
         else:
             log.log(
-                user_service,
+                userservice,
                 types.log.LogLevel.WARNING,
                 f'User {user.pretty_name} from {src_ip} tried to access, but service was not ready',
                 types.log.LogSource.WEB,
@@ -1054,13 +1073,13 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         trace_logger.error(
             'ERROR %s on service "%s" for user "%s" with transport "%s" (ip:%s)',
-            service_status,
-            user_service.name,
+            userservice_status,
+            userservice.name,
             userName,
             transport.name,
             ip,
         )
-        raise ServiceNotReadyError(code=service_status, user_service=user_service, transport=transport)
+        raise ServiceNotReadyError(code=userservice_status, user_service=userservice, transport=transport)
 
     def is_meta_service(self, meta_id: str) -> bool:
         return meta_id[0] == 'M'
@@ -1092,13 +1111,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         id_metapool: str,
         id_transport: str,
         clientHostName: typing.Optional[str] = None,
-    ) -> tuple[
-        typing.Optional[str],
-        UserService,
-        typing.Optional['services.UserService'],
-        Transport,
-        typing.Optional[transports.Transport],
-    ]:
+    ) -> types.services.UserServiceInfo:
         logger.debug('This is meta')
         # We need to locate the service pool related to this meta, and also the transport
         # First, locate if there is a service in any pool associated with this metapool
@@ -1199,7 +1212,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                     srcIp,
                     'F' + usable[0].uuid,
                     usable[1].uuid,
-                    validate_with_test=False,
+                    test_userservice_status=False,
                     client_hostname=clientHostName,
                 )
             # Not usable, will notify that it is not accessible
@@ -1224,7 +1237,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                             srcIp,
                             'F' + usable[0].uuid,
                             usable[1].uuid,
-                            validate_with_test=False,
+                            test_userservice_status=False,
                             client_hostname=clientHostName,
                         )
                     except Exception as e:

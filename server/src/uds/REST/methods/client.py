@@ -43,9 +43,6 @@ from uds.core.util.rest.tools import match
 from uds.models import TicketStore, User
 from uds.REST import Handler
 
-if typing.TYPE_CHECKING:
-    from uds.models import UserService
-
 logger = logging.getLogger(__name__)
 
 CLIENT_VERSION = consts.system.VERSION
@@ -107,7 +104,7 @@ class Client(Handler):
         return Client.result(_('Correct'))
 
     def process(self, ticket: str, scrambler: str) -> dict[str, typing.Any]:
-        userService: typing.Optional['UserService'] = None
+        info: typing.Optional[types.services.UserServiceInfo] = None
         hostname = self._params.get('hostname', '')  # Or if hostname is not included...
         version = self._params.get('version', '0.0.0')
         srcIp = self._request.ip
@@ -136,13 +133,7 @@ class Client(Handler):
 
         try:
             logger.debug(data)
-            (
-                ip,
-                userService,
-                userServiceInstance,
-                transport,
-                transportInstance,
-            ) = UserServiceManager.manager().get_user_service_info(
+            info = UserServiceManager.manager().get_user_service_info(
                 self._request.user,
                 self._request.os,
                 self._request.ip,
@@ -151,27 +142,19 @@ class Client(Handler):
                 client_hostname=hostname,
             )
             logger.debug(
-                'Res: %s %s %s %s %s',
-                ip,
-                userService,
-                userServiceInstance,
-                transport,
-                transportInstance,
+                'Res: %s',
+                info
             )
             password = CryptoManager().symmetric_decrypt(data['password'], scrambler)
 
             # userService.setConnectionSource(srcIp, hostname)  # Store where we are accessing from so we can notify Service
-            if not ip:
+            if not info.ip:
                 raise ServiceNotReadyError()
 
-            # This should never happen, but it's here just in case
-            if not transportInstance:
-                raise Exception('No transport instance!!!')
-
-            transport_script = transportInstance.encoded_transport_script(
-                userService,
-                transport,
-                ip,
+            transport_script = info.transport.get_instance().encoded_transport_script(
+                info.userservice,
+                info.transport,
+                info.ip,
                 self._request.os,
                 self._request.user,
                 password,
@@ -201,8 +184,8 @@ class Client(Handler):
         finally:
             # ensures that we mark the service as accessed by client
             # so web interface can show can react to this
-            if userService:
-                userService.properties['accessed_by_client'] = True
+            if info and  info.userservice:
+                info.userservice.properties['accessed_by_client'] = True
 
     def get(self) -> dict[str, typing.Any]:
         """

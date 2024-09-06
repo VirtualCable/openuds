@@ -34,7 +34,7 @@ import dataclasses
 import enum
 
 if typing.TYPE_CHECKING:
-    from uds.models.service_pool import ServicePool
+    from uds import models
 
 
 class ServiceType(enum.StrEnum):
@@ -210,7 +210,7 @@ class Operation(enum.IntEnum):
 
 @dataclasses.dataclass
 class ServicePoolStats:
-    servicepool: typing.Optional['ServicePool']
+    servicepool: typing.Optional['models.ServicePool']
     l1_cache_count: int
     l2_cache_count: int
     assigned_count: int
@@ -274,3 +274,12 @@ class ServicePoolStats:
             return 'ServicePoolStats[Null]'
 
         return f'ServicePoolStats[{self.servicepool}: L1 {self.l1_cache_count}, L2 {self.l2_cache_count}, Assigned {self.assigned_count}]'
+
+
+@dataclasses.dataclass
+class UserServiceInfo:
+    # Ip is unknown if not requested test
+    ip: typing.Optional[str]
+    userservice: 'models.UserService'
+    transport: 'models.Transport'
+

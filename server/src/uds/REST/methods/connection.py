@@ -44,9 +44,6 @@ from uds.web.util import services
 
 logger = logging.getLogger(__name__)
 
-if typing.TYPE_CHECKING:
-    from uds import models
-
 
 # Enclosed methods under /connection path
 class Connection(Handler):
@@ -90,39 +87,33 @@ class Connection(Handler):
         # Ensure user is present on request, used by web views methods
         self._request.user = self._user
 
-        return Connection.result(
-            result=services.get_services_info_dict(self._request)
-        )
+        return Connection.result(result=services.get_services_info_dict(self._request))
 
     def connection(self, idService: str, idTransport: str, skip: str = '') -> dict[str, typing.Any]:
-        doNotCheck = skip in ('doNotCheck', 'do_not_check', 'no_check', 'nocheck')
+        skip_check = skip in ('doNotCheck', 'do_not_check', 'no_check', 'nocheck', 'skip_check')
         try:
-            (
-                ip,
-                userService,
-                _,  # iads,
-                _,  # trans,
-                itrans,
-            ) = UserServiceManager.manager().get_user_service_info(  # pylint: disable=unused-variable
+            info = UserServiceManager.manager().get_user_service_info(  # pylint: disable=unused-variable
                 self._user,
                 self._request.os,
                 self._request.ip,
                 idService,
                 idTransport,
-                not doNotCheck,
+                not skip_check,
             )
-            connectionInfoDict = {
+            connection_info = {
                 'username': '',
                 'password': '',
                 'domain': '',
                 'protocol': 'unknown',
-                'ip': ip,
+                'ip': info.ip or '',
             }
-            if itrans:  # only will be available id doNotCheck is False
-                connectionInfoDict.update(
-                    itrans.get_connection_info(userService, self._user, 'UNKNOWN').as_dict()
+            if info.ip:  # only will be available id doNotCheck is False
+                connection_info.update(
+                    info.transport.get_instance()
+                    .get_connection_info(info.userservice, self._user, 'UNKNOWN')
+                    .as_dict()
                 )
-            return Connection.result(result=connectionInfoDict)
+            return Connection.result(result=connection_info)
         except ServiceNotReadyError as e:
             # Refresh ticket and make this retrayable
             return Connection.result(
@@ -134,31 +125,22 @@ class Connection(Handler):
 
     def script(self, idService: str, idTransport: str, scrambler: str, hostname: str) -> dict[str, typing.Any]:
         try:
-            res = UserServiceManager.manager().get_user_service_info(
+            info = UserServiceManager.manager().get_user_service_info(
                 self._user, self._request.os, self._request.ip, idService, idTransport
             )
-            userService: 'models.UserService'
-            logger.debug('Res: %s', res)
-            (
-                ip,
-                userService,
-                _,  # userServiceInstance,
-                transport,
-                transport_instance,
-            ) = res  # pylint: disable=unused-variable
-            password = CryptoManager().symmetric_decrypt(self.recover_value('password'), scrambler)
+            password = CryptoManager.manager().symmetric_decrypt(self.recover_value('password'), scrambler)
 
-            userService.set_connection_source(
+            info.userservice.set_connection_source(
                 types.connections.ConnectionSource(self._request.ip, hostname)
             )  # Store where we are accessing from so we can notify Service
 
-            if not ip or not transport_instance:
+            if not info.ip:
                 raise ServiceNotReadyError()
 
-            transportScript = transport_instance.encoded_transport_script(
-                userService,
-                transport,
-                ip,
+            transportScript = info.transport.get_instance().encoded_transport_script(
+                info.userservice,
+                info.transport,
+                info.ip,
                 self._request.os,
                 self._user,
                 password,
@@ -168,7 +150,9 @@ class Connection(Handler):
             return Connection.result(result=transportScript)
         except ServiceNotReadyError as e:
             # Refresh ticket and make this retrayable
-            return Connection.result(error=types.errors.Error.SERVICE_IN_PREPARATION, error_code=e.code, is_retrayable=True)
+            return Connection.result(
+                error=types.errors.Error.SERVICE_IN_PREPARATION, error_code=e.code, is_retrayable=True
+            )
         except Exception as e:
             logger.exception("Exception")
             return Connection.result(error=str(e))

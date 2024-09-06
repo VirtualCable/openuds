@@ -206,7 +206,7 @@ def ticket_auth(
             groups = data['groups']
             auth = data['auth']
             realname = data['realname']
-            poolUuid = data['servicePool']
+            pool_uuid = data['servicePool']
             password = CryptoManager().decrypt(data['password'])
         except Exception:
             logger.error('Ticket stored is not valid')
@@ -249,21 +249,21 @@ def ticket_auth(
 
         # Transport must always be automatic for ticket authentication
 
-        logger.debug("Service & transport: %s", poolUuid)
+        logger.debug("Service & transport: %s", pool_uuid)
 
         # Check if servicePool is part of the ticket
-        if poolUuid:
+        if pool_uuid:
             # Request service, with transport = None so it is automatic
-            res = UserServiceManager.manager().get_user_service_info(
-                request.user, request.os, request.ip, poolUuid, None, False
+            info = UserServiceManager.manager().get_user_service_info(
+                request.user, request.os, request.ip, pool_uuid, None, False
             )
-            _, userservice, _, transport, _ = res
+            #_, userservice, _, transport, _ = res
 
-            transportInstance = transport.get_instance()
-            if transportInstance.own_link is True:
-                link = reverse('webapi.transport_own_link', args=('A' + userservice.uuid, transport.uuid))
+            transport_instance = info.transport.get_instance()
+            if transport_instance.own_link is True:
+                link = reverse('webapi.transport_own_link', args=('A' + info.userservice.uuid, info.transport.uuid))
             else:
-                link = html.uds_access_link(request, 'A' + userservice.uuid, transport.uuid)
+                link = html.uds_access_link(request, 'A' + info.userservice.uuid, info.transport.uuid)
 
             request.session['launch'] = link
             response = HttpResponseRedirect(reverse('page.ticket.launcher'))
