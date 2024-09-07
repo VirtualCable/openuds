@@ -35,7 +35,6 @@ import string
 import codecs
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _
 from uds.core.ui import gui
@@ -98,7 +97,7 @@ class LinuxRandomPassManager(LinuxOsManager):
 
         return randomPass
 
-    def actor_data(self, userservice: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
+    def actor_data(self, userservice: 'UserService') -> dict[str, typing.Any]:
         return {
             'action': 'rename',
             'name': userservice.get_name(),

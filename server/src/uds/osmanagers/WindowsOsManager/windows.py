@@ -10,7 +10,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
@@ -81,7 +80,7 @@ class WindowsOsManager(osmanagers.OSManager):
     def get_name(self, userservice: 'UserService') -> str:
         return userservice.get_name()
 
-    def actor_data(self, userservice: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
+    def actor_data(self, userservice: 'UserService') -> dict[str, typing.Any]:
         return {'action': 'rename', 'name': userservice.get_name()}  # No custom data
 
     def update_credentials(self, userservice: 'UserService', username: str, password: str) -> tuple[str, str]:

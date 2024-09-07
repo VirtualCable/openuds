@@ -437,7 +437,7 @@ class WinDomainOsManager(WindowsOsManager):
 
         return types.core.TestResult(True)
 
-    def actor_data(self, userservice: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
+    def actor_data(self, userservice: 'UserService') -> dict[str, typing.Any]:
         return {
             'action': 'rename_ad',
             'name': userservice.get_name(),

@@ -32,7 +32,6 @@ Author: Alexander Burmatov,  thatman at altlinux dot org
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_lazy
 from django.utils.translation import gettext_noop as _
@@ -158,7 +157,7 @@ class LinuxOsADManager(LinuxOsManager):
                 raise exceptions.ui.ValidationError(_('Must provide a password for the account!'))
             self.ou.value = self.ou.value.strip()
 
-    def actor_data(self, userservice: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
+    def actor_data(self, userservice: 'UserService') -> dict[str, typing.Any]:
         return {
             'action': 'rename_ad',
             'name': userservice.get_name(),

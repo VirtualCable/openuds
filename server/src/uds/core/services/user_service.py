@@ -531,6 +531,13 @@ class UserService(Environmentable, Serializable, abc.ABC):
         The user provided is just an string, that is provided by actor.
         """
         pass
+    
+    def actor_initialization(self, request_params: dict[str, typing.Any]) -> None:
+        """
+        This method is invoked by the actor REST API when the actor initialize
+        is called. This is a good place to do things that needs to be once only...
+        """
+        pass
 
     def error_reason(self) -> str:
         """

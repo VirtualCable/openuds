@@ -32,7 +32,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 Author: Alexander Burmatov,  thatman at altlinux dot org
 """
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
@@ -116,7 +115,7 @@ class OSManager(Module):
     # These methods must be overriden
     def actor_data(
         self, userservice: 'models.UserService'  # pylint: disable=unused-argument
-    ) -> collections.abc.MutableMapping[str, typing.Any]:
+    ) -> dict[str, typing.Any]:
         """
         This method provides information to actor, so actor can complete os configuration.
         Currently exists 3 types of os managers actions

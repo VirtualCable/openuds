@@ -32,7 +32,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
@@ -105,7 +104,7 @@ class LinuxOsManager(osmanagers.OSManager):
         """
         return service.get_name()
 
-    def actor_data(self, userservice: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
+    def actor_data(self, userservice: 'UserService') -> dict[str, typing.Any]:
         return {'action': 'rename', 'name': userservice.get_name()}  # No custom data
 
     def handle_unused(self, userservice: 'UserService') -> None:

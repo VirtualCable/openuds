@@ -36,7 +36,6 @@ import random
 import string
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext_noop as _
 from uds.core import types
@@ -117,7 +116,7 @@ class WinRandomPassManager(WindowsOsManager):
             )
         return rnd_password
 
-    def actor_data(self, userservice: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
+    def actor_data(self, userservice: 'UserService') -> dict[str, typing.Any]:
         return {
             'action': 'rename',
             'name': userservice.get_name(),
