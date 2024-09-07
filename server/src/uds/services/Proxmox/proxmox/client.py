@@ -287,7 +287,7 @@ class ProxmoxClient:
             return False
         return True
 
-    @cached('nodeNets', consts.CACHE_DURATION, args=1, kwargs=['node'], key_helper=caching_key_helper)
+    @cached('nodeNets', consts.CACHE_DURATION, key_helper=caching_key_helper)
     def get_node_networks(self, node: str, **kwargs: typing.Any) -> typing.Any:
         return self.do_get(f'nodes/{node}/network', node=node)['data']
 

@@ -79,7 +79,6 @@ def classproperty(func: collections.abc.Callable[..., typing.Any]) -> ClassPrope
     return ClassPropertyDescriptor(func)
 
 
-
 def deprecated(func: collections.abc.Callable[P, T]) -> collections.abc.Callable[P, T]:
     """This is a decorator which can be used to mark functions
     as deprecated. It will result in a warning being emitted
@@ -138,14 +137,16 @@ def deprecated_class_value(new_var_name: str) -> collections.abc.Callable[..., t
 
     return functools.partial(innerDeprecated, newVarName=new_var_name)
 
+
 # Keep this, but mypy does not likes it... it's perfect with pyright
 # # So only classes that have a "connect" method can use this decorator
 class _HasConnect(typing.Protocol):
-    def connect(self) -> None:
-        ...
+    def connect(self) -> None: ...
+
 
 # HasConnect = typing.TypeVar('HasConnect', bound=_HasConnect)
 # def ensure_connected(func: collections.abc.Callable[typing.Concatenate[HasConnect, P], T]) -> collections.abc.Callable[typing.Concatenate[HasConnect, P], T]:
+
 
 def ensure_connected(func: collections.abc.Callable[P, T]) -> collections.abc.Callable[P, T]:
     """This decorator calls "connect" method of the class of the wrapped object"""
@@ -184,7 +185,7 @@ def cached(
     Note:
         * The `key_helper` function will receive the first argument of the function (`self`) and must return a string that will be appended to the cache key.
         * Also the cached decorator, if no args provided, must be the last decorator unless all underlying decorators uses functools.wraps
-          This is because the decorator will try to infer the parameters from the function signature, 
+          This is because the decorator will try to infer the parameters from the function signature,
           and if the function signature is not available, it will cache the result no matter the parameters.
     """
     from uds.core.util.cache import Cache  # To avoid circular references
@@ -225,14 +226,14 @@ def cached(
         @functools.wraps(fnc)
         def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
             nonlocal hits, misses, exec_time
-            
+
             cache_key: str = prefix
             for i in args_list:
                 if i < len(args):
                     cache_key += str(args[i])
             for s in kwargs_list:
                 cache_key += str(kwargs.get(s, ''))
-                
+
             # Append key helper to cache key and get real cache
             # Note tha this value (cache_key) will be hashed by cache, so it's not a problem if it's too long
             if len(args) > 0:
@@ -241,7 +242,7 @@ def cached(
             else:
                 cache_key += key_helper_fnc(fnc.__name__)
                 inner_cache = None
-            
+
             # Get cache from object if present, or use the global 'functionCache' (generic, common to all objects)
             cache = inner_cache or Cache('functionCache')
 
@@ -255,7 +256,7 @@ def cached(
                 if data is not consts.cache.CACHE_NOT_FOUND:
                     hits += 1
                     return data
-                
+
             misses += 1
 
             if 'force' in kwargs:
@@ -264,7 +265,7 @@ def cached(
 
             # Execute the function outside the DB transaction
             t = time.thread_time_ns()
-            data = fnc(*args, **kwargs)   # pyright: ignore  # For some reason, pyright does not like this line
+            data = fnc(*args, **kwargs)  # pyright: ignore  # For some reason, pyright does not like this line
             exec_time += time.thread_time_ns() - t
 
             try:
@@ -286,8 +287,7 @@ def cached(
             return CacheInfo(hits, misses, hits + misses, exec_time)
 
         def cache_clear() -> None:
-            """Clear the cache and cache statistics
-            """
+            """Clear the cache and cache statistics"""
             nonlocal hits, misses, exec_time
             hits = misses = exec_time = 0
 
@@ -345,9 +345,7 @@ def blocker(
             if not GlobalConfig.BLOCK_ACTOR_FAILURES.as_bool(True) and not ignore_block_config:
                 return f(*args, **kwargs)
 
-            request: typing.Optional[typing.Any] = getattr(
-                args[0], request_attr or '_request', None
-            )
+            request: typing.Optional[typing.Any] = getattr(args[0], request_attr or '_request', None)
 
             # No request object, so we can't block
             if request is None or not isinstance(request, types.requests.ExtendedHttpRequest):
@@ -416,4 +414,3 @@ def profiler(
         return wrapper
 
     return decorator
-
