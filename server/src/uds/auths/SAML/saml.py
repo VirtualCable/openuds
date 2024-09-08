@@ -45,7 +45,6 @@ from onelogin.saml2.idp_metadata_parser import OneLogin_Saml2_IdPMetadataParser
 from onelogin.saml2.settings import OneLogin_Saml2_Settings
 
 from uds.core import auths, exceptions, types
-from uds.core.managers.crypto import CryptoManager
 from uds.core.types.requests import ExtendedHttpRequest
 from uds.core.ui import gui
 from uds.core.util import security, decorators, auth as auth_utils, validators
