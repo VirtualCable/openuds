@@ -380,7 +380,7 @@ def validate_json(json_data: typing.Optional[str]) -> typing.Any:
         raise exceptions.ui.ValidationError(_('Invalid JSON data')) from None
 
 
-def validate_server_certificate(cert: typing.Optional[str]) -> str:
+def validate_certificate(cert: typing.Optional[str]) -> str:
     """
     Validates that a certificate is valid
 
@@ -394,12 +394,29 @@ def validate_server_certificate(cert: typing.Optional[str]) -> str:
         str: Certificate
     """
     if not cert:
-        return ''
-    try:
-        security.is_server_certificate_valid(cert)
-    except Exception as e:
-        raise exceptions.ui.ValidationError(_('Invalid certificate') + f' :{e}') from e
+        raise exceptions.ui.ValidationError(_('Certificate is empty'))
+    if security.is_server_certificate_valid(cert) is False:
+        raise exceptions.ui.ValidationError(_('Invalid certificate'))
     return cert
+
+def validate_private_key(key: typing.Optional[str]) -> str:
+    """
+    Validates that a private key is valid
+
+    Args:
+        key (str): Private key to validate
+
+    Raises:
+        exceptions.ui.ValidationError: If private key is not valid
+
+    Returns:
+        str: Private key
+    """
+    if not key:
+        raise exceptions.ui.ValidationError(_('Private key is empty'))
+    if security.is_private_key_valid(key) is False:
+        raise exceptions.ui.ValidationError(_('Invalid private key'))
+    return key
 
 
 def validate_server_certificate_multiple(value: typing.Optional[str]) -> str:

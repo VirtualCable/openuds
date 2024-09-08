@@ -199,6 +199,7 @@ def secure_requests_session(*, verify: typing.Union[str, bool] = True) -> 'reque
 
     class UDSHTTPAdapter(requests.adapters.HTTPAdapter):
         _ssl_context: ssl.SSLContext
+
         def init_poolmanager(self, *args: typing.Any, **kwargs: typing.Any) -> None:
             self._ssl_context = kwargs["ssl_context"] = create_client_sslcontext(verify=verify is True)
 
@@ -241,6 +242,19 @@ def is_server_certificate_valid(cert: str) -> bool:
     """
     try:
         x509.load_pem_x509_certificate(cert.encode(), default_backend())
+        return True
+    except Exception:
+        return False
+
+
+def is_private_key_valid(key: str) -> bool:
+    """
+    Checks if a private key is valid.
+    All parameters must be keyword arguments.
+    Borh must be in PEM format.
+    """
+    try:
+        serialization.load_pem_private_key(key.encode(), password=None, backend=default_backend())
         return True
     except Exception:
         return False

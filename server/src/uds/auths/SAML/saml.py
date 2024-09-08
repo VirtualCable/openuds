@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2022 Virtual Cable S.L.U.
+# Copyright (c) 2012-2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -48,7 +48,7 @@ from uds.core import auths, exceptions, types
 from uds.core.managers.crypto import CryptoManager
 from uds.core.types.requests import ExtendedHttpRequest
 from uds.core.ui import gui
-from uds.core.util import security, decorators, auth as auth_utils
+from uds.core.util import security, decorators, auth as auth_utils, validators
 from uds.core.util.model import sql_now
 
 # Not imported at runtime, just for type checking
@@ -389,34 +389,8 @@ class SAMLAuthenticator(auths.Authenticator):
         self.cache.remove('idpMetadata')
 
         # First, validate certificates
-
-        # This is in fact not needed, but we may say something useful to user if we check this
-        if self.server_certificate.value.startswith('-----BEGIN CERTIFICATE-----\n') is False:
-            raise exceptions.ui.ValidationError(
-                gettext(
-                    'Server certificate should be a valid PEM (PEM certificates starts with -----BEGIN CERTIFICATE-----)'
-                )
-            )
-
-        try:
-            CryptoManager().load_certificate(self.server_certificate.value)
-        except Exception as e:
-            raise exceptions.ui.ValidationError(gettext('Invalid server certificate. ') + str(e))
-
-        if (
-            self.private_key.value.startswith('-----BEGIN RSA PRIVATE KEY-----\n') is False
-            and self.private_key.value.startswith('-----BEGIN PRIVATE KEY-----\n') is False
-        ):
-            raise exceptions.ui.ValidationError(
-                gettext(
-                    'Private key should be a valid PEM (PEM private keys starts with -----BEGIN RSA PRIVATE KEY-----'
-                )
-            )
-
-        try:
-            CryptoManager().load_private_key(self.private_key.value)
-        except Exception as e:
-            raise exceptions.ui.ValidationError(gettext('Invalid private key. ') + str(e))
+        validators.validate_private_key(self.private_key.value)
+        validators.validate_certificate(self.server_certificate.value)
 
         if not security.check_certificate_matches_private_key(
             cert=self.server_certificate.value, key=self.private_key.value

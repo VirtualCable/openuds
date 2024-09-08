@@ -196,7 +196,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     def initialize(self, values: typing.Optional[dict[str, typing.Any]]) -> None:
         if values:
             self.username_attr.value = self.username_attr.value.replace(' ', '')  # Removes white spaces
-            validators.validate_server_certificate(self.certificate.value)
+            validators.validate_certificate(self.certificate.value)
 
     def unmarshal(self, data: bytes) -> None:
         if not data.startswith(b'v'):
