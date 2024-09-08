@@ -467,7 +467,9 @@ class Initialize(ActorV3Action):
             userservice.actor_version = self._params['version']
 
             # Give the oportunity to change things to the userservice on initialization
-            userservice.get_instance().actor_initialization(self._params)
+            if userservice.get_instance().actor_initialization(self._params):
+                # Store changes to db
+                userservice.update_data(userservice.get_instance())
 
             os_data: dict[str, typing.Any] = {}
             osmanager = userservice.get_osmanager_instance()

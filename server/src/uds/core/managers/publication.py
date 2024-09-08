@@ -94,33 +94,33 @@ class PublicationLauncher(DelayedTask):
 
     def __init__(self, publication: ServicePoolPublication):
         super().__init__()
-        self._publicationId = publication.id
+        self._publication_id = publication.id
 
     def run(self) -> None:
         logger.debug('Publishing')
-        servicePoolPub: typing.Optional[ServicePoolPublication] = None
+        servicepool_publication: typing.Optional[ServicePoolPublication] = None
         try:
             now = sql_now()
             with transaction.atomic():
-                servicePoolPub = ServicePoolPublication.objects.select_for_update().get(pk=self._publicationId)
-                if not servicePoolPub:
+                servicepool_publication = ServicePoolPublication.objects.select_for_update().get(pk=self._publication_id)
+                if not servicepool_publication:
                     raise ServicePool.DoesNotExist()
                 if (
-                    servicePoolPub.state != State.LAUNCHING
+                    servicepool_publication.state != State.LAUNCHING
                 ):  # If not preparing (may has been canceled by user) just return
                     return
-                servicePoolPub.state = State.PREPARING
-                servicePoolPub.save()
-            pi = servicePoolPub.get_instance()
+                servicepool_publication.state = State.PREPARING
+                servicepool_publication.save()
+            pi = servicepool_publication.get_instance()
             state = pi.publish()
-            servicePool: ServicePool = servicePoolPub.deployed_service
+            servicePool: ServicePool = servicepool_publication.deployed_service
             servicePool.current_pub_revision += 1
             servicePool.set_value(
                 'toBeReplacedIn',
                 serialize(now + datetime.timedelta(hours=GlobalConfig.SESSION_EXPIRE_TIME.as_int(True))),
             )
             servicePool.save()
-            PublicationFinishChecker.state_updater(servicePoolPub, pi, state)
+            PublicationFinishChecker.state_updater(servicepool_publication, pi, state)
         except (
             ServicePoolPublication.DoesNotExist
         ):  # Deployed service publication has been removed from database, this is ok, just ignore it
@@ -128,11 +128,11 @@ class PublicationLauncher(DelayedTask):
         except Exception:
             logger.exception("Exception launching publication")
             try:
-                if servicePoolPub:
-                    servicePoolPub.state = State.ERROR
-                    servicePoolPub.save()
+                if servicepool_publication:
+                    servicepool_publication.state = State.ERROR
+                    servicepool_publication.save()
             except Exception:
-                logger.error('Error saving ERROR state for pool %s', servicePoolPub)
+                logger.error('Error saving ERROR state for pool %s', servicepool_publication)
 
 
 # Delayed Task that checks if a publication is done

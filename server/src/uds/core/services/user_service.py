@@ -532,12 +532,15 @@ class UserService(Environmentable, Serializable, abc.ABC):
         """
         pass
     
-    def actor_initialization(self, request_params: dict[str, typing.Any]) -> None:
+    def actor_initialization(self, request_params: dict[str, typing.Any]) -> bool:
         """
         This method is invoked by the actor REST API when the actor initialize
         is called. This is a good place to do things that needs to be once only...
+        
+        Should return True if any internal instance data has changed, so it gets
+        stored back to database.
         """
-        pass
+        return False
 
     def error_reason(self) -> str:
         """

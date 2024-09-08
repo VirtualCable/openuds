@@ -159,6 +159,9 @@ class DeferredDeletionWorker(Job):
             exec_time = execution_timer()
             try:
                 service = services[info.service_uuid]
+                if service.must_stop_before_deletion is False:
+                    info.sync_to_storage(types.DeferredStorageGroup.TO_DELETE)
+                    continue
                 with exec_time:
                     if service.is_running(None, info.vmid):
                         # if info.retries < RETRIES_TO_RETRY, means this is the first time we try to stop it

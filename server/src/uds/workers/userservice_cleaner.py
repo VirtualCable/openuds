@@ -77,7 +77,7 @@ class UserServiceRemover(Job):
         # USER_SERVICE_REMOVAL_LIMIT is the maximum number of items to remove at once
         # This configuration value is cached at startup, so it is not updated until next reload
         max_to_remove: int = GlobalConfig.USER_SERVICE_CLEAN_NUMBER.as_int()
-        manager = UserServiceManager()
+        manager = UserServiceManager.manager()
 
         with transaction.atomic():
             removeFrom = sql_now() - timedelta(
