@@ -78,7 +78,8 @@ class Dispatcher(View):
 
     # pylint: disable=too-many-locals, too-many-return-statements, too-many-branches, too-many-statements
     @method_decorator(csrf_exempt)
-    def dispatch(self, request: 'ExtendedHttpRequestWithUser', *args, **kwargs):
+    # We know for sure that request is an ExtendedHttpRequestWithUser because of an middleware that is applied to all requests
+    def dispatch(self, request: 'ExtendedHttpRequestWithUser', *args: typing.Any, **kwargs: typing.Any) -> http.HttpResponse:  # type: ignore  
         """
         Processes the REST request and routes it wherever it needs to be routed
         """
