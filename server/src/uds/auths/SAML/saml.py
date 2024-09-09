@@ -398,10 +398,11 @@ class SAMLAuthenticator(auths.Authenticator):
 
         request: 'ExtendedHttpRequest' = values['_request']
 
+        # Always generate https urls
         if self.entity_id.value == '':
-            self.entity_id.value = request.build_absolute_uri(self.info_url())
+            self.entity_id.value = request.build_absolute_uri(self.info_url()).replace('http://', 'https://')
 
-        self.manage_url.value = request.build_absolute_uri(self.callback_url())
+        self.manage_url.value = request.build_absolute_uri(self.callback_url()).replace('http://', 'https://')
 
         idp_metadata: str = self.idp_metadata.value
         from_url: bool = False
@@ -451,7 +452,6 @@ class SAMLAuthenticator(auths.Authenticator):
 
         # If callback parameters are passed, we use them
         if params:
-            # Remove next 3 lines, just for testing and debugging
             return {
                 'https': ['off', 'on'][params.https],
                 'http_host': host,  # params['http_host'],
@@ -475,6 +475,8 @@ class SAMLAuthenticator(auths.Authenticator):
         }
 
     def get_idp_metadata_dict(self) -> dict[str, typing.Any]:
+        # If metadata is an external URL, we will cache almost forever
+        # (until cache is cleared) the downloaded metadata
         if self.idp_metadata.value.startswith('http'):
             resp = self.cache.get('idpMetadata')
             if resp:
@@ -578,16 +580,16 @@ class SAMLAuthenticator(auths.Authenticator):
         In this case, we use it to provide logout callback also
         """
         info = self.get_sp_metadata()
-        wantsHtml = parameters.get('format') == 'html'
+        wants_html = parameters.get('format') == 'html'
 
-        content_type = 'text/html' if wantsHtml else 'application/samlmetadata+xml'
+        content_type = 'text/html' if wants_html else 'application/samlmetadata+xml'
         info = (
             '<br/>'.join(info.replace('<', '&lt;').splitlines()) if parameters.get('format') == 'html' else info
         )
         return info, content_type  # 'application/samlmetadata+xml')
 
     def mfa_storage_key(self, username: str) -> str:
-        return 'mfa_' + self.db_obj().uuid + username  # type: ignore
+        return 'mfa_' + self.db_obj().uuid + username
 
     def mfa_clean(self, username: str) -> None:
         self.storage.remove(self.mfa_storage_key(username))
