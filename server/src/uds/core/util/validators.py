@@ -86,7 +86,9 @@ def validate_numeric(
     return int(value)
 
 
-def validate_hostname(hostname: str, max_length: int = 64, domain_allowed: bool=False, field_name: typing.Optional[str] = None) -> str:
+def validate_hostname(
+    hostname: str, max_length: int = 64, domain_allowed: bool = False, field_name: typing.Optional[str] = None
+) -> str:
     field_name = f' (On field {field_name})' if field_name else ''
     if len(hostname) > max_length:
         raise exceptions.ui.ValidationError(
@@ -102,7 +104,9 @@ def validate_hostname(hostname: str, max_length: int = 64, domain_allowed: bool=
     allowed = re.compile(r'(?!-)[A-Z\d-]{1,63}(?<!-)$', re.IGNORECASE)
 
     if not all(allowed.match(x) for x in hostname.split(".")):
-        raise exceptions.ui.ValidationError(_('{} is not a valid hostname: (invalid characters)').format(hostname + field_name))
+        raise exceptions.ui.ValidationError(
+            _('{} is not a valid hostname: (invalid characters)').format(hostname + field_name)
+        )
 
     return hostname
 
@@ -114,7 +118,9 @@ def validate_fqdn(fqdn: str, maxLength: int = 255, field_name: typing.Optional[s
 def validateUrl(url: str, maxLength: int = 1024, field_name: typing.Optional[str] = None) -> str:
     field_name = f' (On field {field_name})' if field_name else ''
     if len(url) > maxLength:
-        raise exceptions.ui.ValidationError(_('{} is not a valid URL: exceeds maximum length.').format(url + field_name))
+        raise exceptions.ui.ValidationError(
+            _('{} is not a valid URL: exceeds maximum length.').format(url + field_name)
+        )
 
     try:
         url_validator(url)
@@ -135,7 +141,9 @@ def validate_ipv4(ipv4: str, field_name: typing.Optional[str] = None) -> str:
     try:
         dj_validators.validate_ipv4_address(ipv4)
     except Exception:
-        raise exceptions.ui.ValidationError(_('{} is not a valid IPv4 address').format(ipv4 + field_name)) from None
+        raise exceptions.ui.ValidationError(
+            _('{} is not a valid IPv4 address').format(ipv4 + field_name)
+        ) from None
     return ipv4
 
 
@@ -150,7 +158,9 @@ def validate_ipv6(ipv6: str, field_name: typing.Optional[str] = None) -> str:
     try:
         dj_validators.validate_ipv6_address(ipv6)
     except Exception:
-        raise exceptions.ui.ValidationError(_('{} is not a valid IPv6 address').format(ipv6 + field_name)) from None
+        raise exceptions.ui.ValidationError(
+            _('{} is not a valid IPv6 address').format(ipv6 + field_name)
+        ) from None
     return ipv6
 
 
@@ -213,7 +223,12 @@ def validate_path(
     return path
 
 
-def validate_port(port: typing.Union[str, int], *, field_name: typing.Optional[str] = None, valid_default: typing.Optional[int] = None) -> int:
+def validate_port(
+    port: typing.Union[str, int],
+    *,
+    field_name: typing.Optional[str] = None,
+    valid_default: typing.Optional[int] = None,
+) -> int:
     """
     Validates that a port number is valid
 
@@ -265,7 +280,9 @@ def validate_host_port(host_port_pair: str, field_name: typing.Optional[str] = N
         except Exception:
             return validate_hostname(host, 255, True), validate_port(port)
     except Exception:
-        raise exceptions.ui.ValidationError(_('{} is not a valid host:port pair').format(host_port_pair + field_name)) from None
+        raise exceptions.ui.ValidationError(
+            _('{} is not a valid host:port pair').format(host_port_pair + field_name)
+        ) from None
 
 
 def validate_timeout(timeout: 'str|int', field_name: typing.Optional[str] = None) -> int:
@@ -310,7 +327,9 @@ def validate_mac_range(macRange: str, field_name: typing.Optional[str] = None) -
         validate_mac(macRangeStart)
         validate_mac(macRangeEnd)
     except Exception:
-        raise exceptions.ui.ValidationError(_('{} is not a valid MAC range').format(macRange + field_name)) from None
+        raise exceptions.ui.ValidationError(
+            _('{} is not a valid MAC range').format(macRange + field_name)
+        ) from None
 
     return macRange
 
@@ -399,6 +418,7 @@ def validate_certificate(cert: typing.Optional[str]) -> str:
         raise exceptions.ui.ValidationError(_('Invalid certificate'))
     return cert
 
+
 def validate_private_key(key: typing.Optional[str]) -> str:
     """
     Validates that a private key is valid
@@ -419,22 +439,25 @@ def validate_private_key(key: typing.Optional[str]) -> str:
     return key
 
 
+def split_with_separator(text: str, separator: str) -> list[str]:
+    parts = text.split(separator)
+    # Reconstruct the list with the separator included
+    result = [part + separator for part in parts[:-1]] + [parts[-1]]
+    return result
+
+
 def validate_server_certificate_multiple(value: typing.Optional[str]) -> str:
     """
     Validates the multi line fields refering to attributes
     """
     if not value:
-        return ''  # Ok, empty
+        raise exceptions.ui.ValidationError(_('Certificate is empty'))
 
-    pemCerts = value.split('-----END CERTIFICATE-----')
-    # Remove empty strings
-    pemCerts = [cert for cert in pemCerts if cert.strip() != '']
-    # Add back the "-----END CERTIFICATE-----" part
-    pemCerts = [cert + '-----END CERTIFICATE-----' for cert in pemCerts]
+    pem_certs = [cert for cert in split_with_separator(value, '-----END CERTIFICATE-----') if cert.strip()]
 
-    for pemCert in pemCerts:
+    for pem_cert in pem_certs:
         try:
-            load_pem_x509_certificate(pemCert.encode())
+            load_pem_x509_certificate(pem_cert.encode())
         except Exception as e:
             raise exceptions.ui.ValidationError(_('Invalid certificate') + f' :{e}') from e
 
