@@ -385,6 +385,9 @@ class Initialize(ActorV3Action):
                 }
             }
         On  error, will return Empty (None) result, and error field
+        
+        Notes:
+          * Unmanaged actors invokes this method JUST ON LOGIN, so the user service has been created already for sure.
         """
         # First, validate token...
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
@@ -429,7 +432,7 @@ class Initialize(ActorV3Action):
                         raise exceptions.rest.BlockAccess()
                     # If exists, do not create a new one (avoid creating for old 3.x actors lots of aliases...)
                     if not ServiceTokenAlias.objects.filter(service=service, unique_id=unique_id).exists():
-                        alias_token = CryptoManager().random_string(40)  # fix alias with new token
+                        alias_token = CryptoManager.manager().random_string(40)  # fix alias with new token
                         service.aliases.create(alias=alias_token, unique_id=unique_id)
                     else:
                         # If exists, get existing one
