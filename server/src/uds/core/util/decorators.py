@@ -163,7 +163,7 @@ def ensure_connected(func: collections.abc.Callable[P, T]) -> collections.abc.Ca
 # Decorator for caching
 # This decorator will cache the result of the function for a given time, and given parameters
 def cached(
-    prefix: str,
+    prefix: typing.Optional[str] = None,
     timeout: typing.Union[collections.abc.Callable[[], int], int] = -1,
     args: typing.Optional[typing.Union[collections.abc.Iterable[int], int]] = None,
     kwargs: typing.Optional[typing.Union[collections.abc.Iterable[str], str]] = None,
@@ -227,7 +227,7 @@ def cached(
         def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
             nonlocal hits, misses, exec_time
 
-            cache_key: str = prefix
+            cache_key: str = prefix or fnc.__name__
             for i in args_list:
                 if i < len(args):
                     cache_key += str(args[i])
@@ -243,8 +243,12 @@ def cached(
                 cache_key += key_helper_fnc(fnc.__name__)
                 inner_cache = None
 
-            # Get cache from object if present, or use the global 'functionCache' (generic, common to all objects)
-            cache = inner_cache or Cache('functionCache')
+            # Get cache from object if present,
+            # or if args[0] is an object, use its class name as cache name
+            # or use the global 'functionCache' (generic, common cache, may clash with other functions)
+            cache = inner_cache or Cache(
+                getattr(getattr(args[0], '__class__', None), '__name__', None) or 'functionCache'
+            )
 
             # if timeout is a function, call it
             effective_timeout = timeout() if callable(timeout) else timeout
