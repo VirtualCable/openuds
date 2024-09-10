@@ -84,7 +84,8 @@ class ServerRegisterBase(Handler):
             validators.validate_fqdn(hostname)
             validators.validate_mac(mac)
             validators.validate_json(data)
-            validators.validate_certificate(certificate)
+            if certificate:  # Emtpy certificate is allowed
+                validators.validate_certificate(certificate) 
         except Exception as e:
             raise rest_exceptions.RequestError(str(e)) from e
 

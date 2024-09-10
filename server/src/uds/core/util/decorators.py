@@ -247,7 +247,8 @@ def cached(
             # or if args[0] is an object, use its class name as cache name
             # or use the global 'functionCache' (generic, common cache, may clash with other functions)
             cache = inner_cache or Cache(
-                getattr(getattr(args[0], '__class__', None), '__name__', None) or 'functionCache'
+                (getattr(getattr(args[0], '__class__', None), '__name__', None) if len(args) > 0 else None)
+                or 'functionCache'
             )
 
             # if timeout is a function, call it
