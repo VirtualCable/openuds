@@ -123,10 +123,10 @@ class ServerManagerManagedServersTest(UDSTestCase):
 
     def test_auto_assign(self) -> None:
         with self.create_mock_api_requester() as mockServerApiRequester:
-            for elementNumber, userService in enumerate(self.user_services):
-                expected_get_stats_calls = NUM_REGISTEREDSERVERS * (elementNumber + 1)
-                expected_notify_assign_calls = elementNumber * 33  # 32 in loop + 1 in first assign
-                assignation = self.assign(userService)
+            for element_number, userservice in enumerate(self.user_services):
+                expected_get_stats_calls = NUM_REGISTEREDSERVERS * (element_number + 1)
+                expected_notify_assign_calls = element_number * 33  # 32 in loop + 1 in first assign
+                assignation = self.assign(userservice)
                 if assignation is None:
                     self.fail('Assignation returned None')
                     return  # For mypy
@@ -136,7 +136,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
                     self.server_stats[uuid], current_users=self.server_stats[uuid].current_users + 1
                 )               
 
-                prop_name = self.manager.property_name(userService.user)
+                prop_name = self.manager.property_name(userservice.user)
                 # uuid shuld be one on registered servers
                 self.assertTrue(uuid in self.all_uuids)
                 # Server locked should be None
@@ -146,17 +146,17 @@ class ServerManagerManagedServersTest(UDSTestCase):
                 self.assertEqual(
                     mockServerApiRequester.return_value.get_stats.call_count,
                     expected_get_stats_calls,
-                    f'Error on loop {elementNumber}',
+                    f'Error on loop {element_number}',
                 )
                 # notify_assign should has been called once for each user service
                 self.assertEqual(
                     mockServerApiRequester.return_value.notify_assign.call_count, expected_notify_assign_calls + 1
                 )
                 # notify_assign paramsh should have been
-                # request.ServerApiRequester(bestServer).notify_assign(userService, serviceType, uuid_counter[1])
+                # request.ServerApiRequester(bestServer).notify_assign(userservice, serviceType, uuid_counter[1])
                 self.assertEqual(
-                    mockServerApiRequester.return_value.notify_assign.call_args[0][0], userService
-                )  # userService
+                    mockServerApiRequester.return_value.notify_assign.call_args[0][0], userservice
+                )  # userservice
                 self.assertEqual(
                     mockServerApiRequester.return_value.notify_assign.call_args[0][1],
                     types.services.ServiceType.VDI,
@@ -166,7 +166,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
                 )  # counter
 
                 # Server storage should contain the assignation
-                self.assertEqual(len(self.registered_servers_group.properties), elementNumber + 1)
+                self.assertEqual(len(self.registered_servers_group.properties), element_number + 1)
                 uuid_counter = self.registered_servers_group.properties[prop_name]
                 # uuid_counter is (uuid, assign counter)
                 self.assertEqual(uuid_counter[0], uuid)
@@ -174,7 +174,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
 
                 # Again, try to assign, same user service, same group, same service type, same minMemoryMB and same uuid
                 for i in range(32):
-                    assignation = self.assign(userService)
+                    assignation = self.assign(userservice)
                     if assignation is None:
                         self.fail('Assignation returned None')
                         return  # For mypy
@@ -196,28 +196,28 @@ class ServerManagerManagedServersTest(UDSTestCase):
                     )
 
                     # Server storage should have elementNumber + 1 elements
-                    self.assertEqual(len(self.registered_servers_group.properties), elementNumber + 1)
+                    self.assertEqual(len(self.registered_servers_group.properties), element_number + 1)
                     uuid_counter = self.registered_servers_group.properties[prop_name]
                     # uuid_counter is (uuid, assign counter)
                     self.assertEqual(uuid_counter[0], uuid)
                     self.assertEqual(uuid_counter[1], counter)
 
             # Now, remove all asignations..
-            for elementNumber, userService in enumerate(self.user_services):
-                expected_get_stats_calls = NUM_REGISTEREDSERVERS * (elementNumber + 1)
-                expected_notify_assign_calls = elementNumber * 33  # 32 in loop + 1 in first assign
+            for element_number, userservice in enumerate(self.user_services):
+                expected_get_stats_calls = NUM_REGISTEREDSERVERS * (element_number + 1)
+                expected_notify_assign_calls = element_number * 33  # 32 in loop + 1 in first assign
 
                 # # Remove it, should decrement counter
                 for i in range(32, -1, -1):  # Deletes 33 times
-                    _res = self.manager.release(userService, self.registered_servers_group)
+                    _res = self.manager.release(userservice, self.registered_servers_group)
 
             self.assertEqual(len(self.registered_servers_group.properties), 0)
 
     def test_assign_auto_lock_limit(self) -> None:
         with self.create_mock_api_requester() as mockServerApiRequester:
             # Assign all user services with lock
-            for userService in self.user_services[:NUM_REGISTEREDSERVERS]:
-                assignation = self.assign(userService, lock_interval=datetime.timedelta(seconds=1))
+            for userservice in self.user_services[:NUM_REGISTEREDSERVERS]:
+                assignation = self.assign(userservice, lock_interval=datetime.timedelta(seconds=1))
                 if assignation is None:
                     self.fail('Assignation returned None')
                     return  # For mypy
@@ -245,12 +245,12 @@ class ServerManagerManagedServersTest(UDSTestCase):
         with self.create_mock_api_requester() as mockServerApiRequester:
             serverApiRequester = mockServerApiRequester.return_value
             for assignations in range(2):  # Second pass will get current assignation, not new ones
-                for elementNumber, userService in enumerate(self.user_services[:NUM_REGISTEREDSERVERS]):
+                for element_number, userservice in enumerate(self.user_services[:NUM_REGISTEREDSERVERS]):
                     # Ensure locking server, so we have to use every server only once
-                    assignation = self.assign(userService, lock_interval=datetime.timedelta(seconds=32))
+                    assignation = self.assign(userservice, lock_interval=datetime.timedelta(seconds=32))
                     self.assertEqual(
                         serverApiRequester.notify_assign.call_count,
-                        assignations * NUM_REGISTEREDSERVERS + elementNumber + 1,
+                        assignations * NUM_REGISTEREDSERVERS + element_number + 1,
                     )
                     if assignation is None:
                         self.fail('Assignation returned None')
@@ -280,8 +280,8 @@ class ServerManagerManagedServersTest(UDSTestCase):
 
             # Now release all, twice
             for release in range(2):
-                for elementNumber, userService in enumerate(self.user_services[:NUM_REGISTEREDSERVERS]):
-                    res = self.manager.release(userService, self.registered_servers_group)
+                for element_number, userservice in enumerate(self.user_services[:NUM_REGISTEREDSERVERS]):
+                    res = self.manager.release(userservice, self.registered_servers_group)
                     if res:
                         uuid, counter = res
                         # uuid shuld be one on registered servers
@@ -292,8 +292,8 @@ class ServerManagerManagedServersTest(UDSTestCase):
                         self.fail('Release returned None')
                     self.assertEqual(
                         serverApiRequester.notify_release.call_count,
-                        release * NUM_REGISTEREDSERVERS + elementNumber + 1,
-                        f'Error on loop {release} - {elementNumber}',
+                        release * NUM_REGISTEREDSERVERS + element_number + 1,
+                        f'Error on loop {release} - {element_number}',
                     )
 
             # All servers should be unlocked
@@ -306,8 +306,8 @@ class ServerManagerManagedServersTest(UDSTestCase):
                 self.assertEqual(len(stor), 0)
 
             # Trying to release again should return '', 0
-            for elementNumber, userService in enumerate(self.user_services[:NUM_REGISTEREDSERVERS]):
-                res = self.manager.release(userService, self.registered_servers_group)
+            for element_number, userservice in enumerate(self.user_services[:NUM_REGISTEREDSERVERS]):
+                res = self.manager.release(userservice, self.registered_servers_group)
                 if res:
                     uuid, counter = res
                     self.assertEqual(uuid, '')

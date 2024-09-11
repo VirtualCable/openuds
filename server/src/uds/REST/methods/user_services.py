@@ -205,21 +205,21 @@ class AssignedService(DetailHandler):
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, models.ServicePool)
         try:
-            userService: models.UserService = parent.userServices.get(uuid=process_uuid(item))
+            userservice: models.UserService = parent.userServices.get(uuid=process_uuid(item))
         except Exception as e:
             logger.exception('delete_item')
             raise self.invalid_item_response() from e
 
-        if userService.user:
-            logStr = f'Deleted assigned service {userService.friendly_name} to user {userService.user.pretty_name} by {self._user.pretty_name}'
+        if userservice.user:
+            logStr = f'Deleted assigned service {userservice.friendly_name} to user {userservice.user.pretty_name} by {self._user.pretty_name}'
         else:
-            logStr = f'Deleted cached service {userService.friendly_name} by {self._user.pretty_name}'
+            logStr = f'Deleted cached service {userservice.friendly_name} by {self._user.pretty_name}'
 
-        if userService.state in (State.USABLE, State.REMOVING):
-            userService.release()
-        elif userService.state == State.PREPARING:
-            userService.cancel()
-        elif userService.state == State.REMOVABLE:
+        if userservice.state in (State.USABLE, State.REMOVING):
+            userservice.release()
+        elif userservice.state == State.PREPARING:
+            userservice.cancel()
+        elif userservice.state == State.REMOVABLE:
             raise self.invalid_item_response(_('Item already being removed'))
         else:
             raise self.invalid_item_response(_('Item is not removable'))

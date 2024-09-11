@@ -156,7 +156,7 @@ class ServicePool(UUIDModel, TaggingMixin):
 
     # New nomenclature, but keeping old ones for compatibility
     @property
-    def user_services(self) -> 'models.manager.RelatedManager[UserService]':
+    def userservices(self) -> 'models.manager.RelatedManager[UserService]':
         return self.userServices
 
     @property

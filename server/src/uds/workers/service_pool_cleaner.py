@@ -155,9 +155,9 @@ class DeployedServiceRemover(Job):
             'Service %s has been in removing state for too long, forcing removal',
             servicePool.name,
         )
-        for userService in servicePool.userServices.all():
-            logger.warning('Force removing user service %s', userService)
-            userService.delete()
+        for userservice in servicePool.userServices.all():
+            logger.warning('Force removing user service %s', userservice)
+            userservice.delete()
         servicePool.userServices.all().delete()
         for publication in servicePool.publications.all():
             logger.warning('Force removing %s', publication)

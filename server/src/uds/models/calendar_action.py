@@ -167,18 +167,18 @@ class CalendarAction(UUIDModel):
 
         def _remove_userservices() -> None:
             # 1.- Remove usable assigned services (Ignore "creating ones", just for created)
-            for userService in self.service_pool.assigned_user_services().filter(
+            for userservice in self.service_pool.assigned_user_services().filter(
                 state=types.states.State.USABLE
             ):
-                userService.release()
+                userservice.release()
 
         def _remove_stuck_userservice() -> None:
             # 1.- Remove stuck assigned services (Ignore "creating ones", just for created)
             since = sql_now() - datetime.timedelta(hours=_numeric_value('hours'))
-            for userService in self.service_pool.assigned_user_services().filter(
+            for userservice in self.service_pool.assigned_user_services().filter(
                 state_date__lt=since, state=types.states.State.USABLE
             ):
-                userService.release()
+                userservice.release()
 
         def _del_all_transport() -> None:
             # 2.- Remove all transports

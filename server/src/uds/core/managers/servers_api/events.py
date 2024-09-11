@@ -131,17 +131,17 @@ def process_logout(server: 'models.Server', data: dict[str, typing.Any]) -> typi
 
     Returns 'OK' if all went ok ({'result': 'OK', 'stamp': 'stamp'}), or an error if not ({'result': 'error', 'error': 'error description'}})
     """
-    userService = models.UserService.objects.get(uuid=data['userservice_uuid'])
+    userservice = models.UserService.objects.get(uuid=data['userservice_uuid'])
 
     session_id = data['userservice_uuid']
-    userService.end_session(session_id)
+    userservice.end_session(session_id)
 
-    if userService.in_use:  # If already logged out, do not add a second logout (windows does this i.e.)
-        osmanagers.OSManager.logged_out(userService, data['username'])
-        osmanager: typing.Optional[osmanagers.OSManager] = userService.get_osmanager_instance()
-        if not osmanager or osmanager.is_removable_on_logout(userService):
+    if userservice.in_use:  # If already logged out, do not add a second logout (windows does this i.e.)
+        osmanagers.OSManager.logged_out(userservice, data['username'])
+        osmanager: typing.Optional[osmanagers.OSManager] = userservice.get_osmanager_instance()
+        if not osmanager or osmanager.is_removable_on_logout(userservice):
             logger.debug('Removable on logout: %s', osmanager)
-            userService.release()
+            userservice.release()
 
     return rest_result(consts.OK)
 

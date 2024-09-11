@@ -278,8 +278,8 @@ class Authenticators(ModelHandler):
         item = ensure.is_instance(item, Authenticator)
 
         for user in item.users.all():
-            for userService in user.userServices.all():
-                userService.user = None
-                userService.remove_or_cancel()
+            for userservice in user.userServices.all():
+                userservice.user = None
+                userservice.remove_or_cancel()
 
         item.delete()

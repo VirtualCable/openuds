@@ -135,20 +135,20 @@ class ServicesUsage(DetailHandler):
 
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, Provider)
-        userService: UserService
+        userservice: UserService
         try:
-            userService = UserService.objects.get(
+            userservice = UserService.objects.get(
                 uuid=process_uuid(item), deployed_service__service__provider=parent
             )
         except Exception:
             raise self.invalid_item_response()
 
         logger.debug('Deleting user service')
-        if userService.state in (State.USABLE, State.REMOVING):
-            userService.release()
-        elif userService.state == State.PREPARING:
-            userService.cancel()
-        elif userService.state == State.REMOVABLE:
+        if userservice.state in (State.USABLE, State.REMOVING):
+            userservice.release()
+        elif userservice.state == State.PREPARING:
+            userservice.cancel()
+        elif userservice.state == State.REMOVABLE:
             raise self.invalid_item_response(_('Item already being removed'))
         else:
             raise self.invalid_item_response(_('Item is not removable'))

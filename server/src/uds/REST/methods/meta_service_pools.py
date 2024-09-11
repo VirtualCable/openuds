@@ -244,22 +244,22 @@ class MetaAssignedService(DetailHandler):
 
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, models.MetaPool)
-        userService = self._get_assigned_userservice(parent, item)
+        userservice = self._get_assigned_userservice(parent, item)
 
-        if userService.user:
+        if userservice.user:
             logStr = 'Deleted assigned service {} to user {} by {}'.format(
-                userService.friendly_name,
-                userService.user.pretty_name,
+                userservice.friendly_name,
+                userservice.user.pretty_name,
                 self._user.pretty_name,
             )
         else:
-            logStr = 'Deleted cached service {} by {}'.format(userService.friendly_name, self._user.pretty_name)
+            logStr = 'Deleted cached service {} by {}'.format(userservice.friendly_name, self._user.pretty_name)
 
-        if userService.state in (State.USABLE, State.REMOVING):
-            userService.release()
-        elif userService.state == State.PREPARING:
-            userService.cancel()
-        elif userService.state == State.REMOVABLE:
+        if userservice.state in (State.USABLE, State.REMOVING):
+            userservice.release()
+        elif userservice.state == State.PREPARING:
+            userservice.cancel()
+        elif userservice.state == State.REMOVABLE:
             raise self.invalid_item_response(_('Item already being removed'))
         else:
             raise self.invalid_item_response(_('Item is not removable'))

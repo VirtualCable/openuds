@@ -359,7 +359,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         service_instance = servicepool.service.get_instance()
 
-        servicepool.user_services.update()  # Cleans cached queries
+        servicepool.userservices.update()  # Cleans cached queries
 
         # If this deployedService don't have a publication active and needs it, ignore it
         service_instance = servicepool.service.get_instance()
@@ -400,7 +400,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         l2_cache_filter = self.get_cache_state_filter(servicepool, types.services.CacheLevel.L2)
         assigned_filter = self.get_cache_state_filter(servicepool, types.services.CacheLevel.NONE)
 
-        counts: dict[str, int] = servicepool.user_services.aggregate(
+        counts: dict[str, int] = servicepool.userservices.aggregate(
             l1_cache_count=Count(Case(When(l1_cache_filter, then=1), output_field=IntegerField()))
             + l1_cache_increased_by,
             l2_cache_count=Count(Case(When(l2_cache_filter, then=1), output_field=IntegerField()))

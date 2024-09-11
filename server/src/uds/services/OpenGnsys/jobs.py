@@ -70,16 +70,16 @@ class OpenGnsysMaintainer(jobs.Job):
                     hours=instance.max_reserve_hours.as_int() - 8
                 )  # If less than 8 hours of reservation...
                 # Now mark for removal every CACHED service that is about to expire its reservation on OpenGnsys
-                userService: models.UserService
-                for userService in models.UserService.objects.filter(
+                userservice: models.UserService
+                for userservice in models.UserService.objects.filter(
                     deployed_service__service=service,
                     creation_date__lt=since,
                     cache_level=1,
                 ):
                     logger.info(
                         'The cached user service %s is about to expire. Removing it so it can be recreated',
-                        userService,
+                        userservice,
                     )
-                    userService.release()
+                    userservice.release()
 
         logger.debug('OpenGnsys job finished')

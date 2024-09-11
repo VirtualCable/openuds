@@ -540,6 +540,11 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         Mark this user deployed service for removal.
         If from_logout is true, maybe the service can return to cache, else, it will be removed
         """
+        # log backtrace calling this method
+        # import traceback
+        # logger.info('Removing user service %s', self)
+        # logger.info('\n*  '.join(traceback.format_stack()))
+        
         if immediate:
             self.set_state(State.REMOVED)
         else:
