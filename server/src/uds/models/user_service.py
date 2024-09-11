@@ -485,6 +485,10 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         """
         Mark this user deployed service for removal
         """
+        # log backtrace calling this method
+        # import traceback
+        # logger.info('Removing user service %s', self)
+        # logger.info('\n*  '.join(traceback.format_stack()))
         self.setState(State.REMOVABLE)
 
     def release(self) -> None:
