@@ -19,12 +19,13 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Abdel Baaddi <abaaddi@virtualcable.es>, 2017-2018
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-07 19:56+0200\n"
+"POT-Creation-Date: 2024-09-11 15:44+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>, 2017-2018\n"
 "Language-Team: Arabic (http://app.transifex.com/openuds/openuds/language/"
@@ -87,7 +88,7 @@ msgstr "اسم حمام السباحة"
 msgid "User name"
 msgstr "اسم المستخدم"
 
-#: REST/methods/accountsusage.py:96 core/types/states.py:202
+#: REST/methods/accountsusage.py:96 core/types/states.py:200
 msgid "Running"
 msgstr "تشغيل"
 
@@ -139,7 +140,6 @@ msgid "Origin"
 msgstr "الأصل"
 
 #: REST/methods/actor_token.py:64
-#| msgid "API Version"
 msgid "Version"
 msgstr "إصدار"
 
@@ -228,7 +228,7 @@ msgstr "مختفي"
 
 #: REST/methods/authenticators.py:124 REST/methods/users_groups.py:177
 #: REST/methods/users_groups.py:389 REST/methods/users_groups.py:396
-#: core/types/pools.py:83 services/Proxmox/service_linked.py:197
+#: core/types/pools.py:83 services/Proxmox/service_linked.py:201
 msgid "Disabled"
 msgstr "معاق"
 
@@ -257,7 +257,7 @@ msgstr "عرض"
 #: core/services/service.py:157 core/types/permissions.py:16
 #: core/types/permissions.py:20 mfas/Email/mfa.py:78 mfas/SMS/mfa.py:194
 #: notifiers/email/notifier.py:88 services/Azure_enterprise/helpers.py:121
-#: services/Proxmox/service_fixed.py:109 services/Proxmox/service_linked.py:193
+#: services/Proxmox/service_fixed.py:111 services/Proxmox/service_linked.py:197
 #: services/Sample/service.py:96 services/Sample/service.py:102
 #: services/Test/service.py:63 services/Test/service.py:65
 msgid "None"
@@ -332,11 +332,11 @@ msgstr "حمامات مع مداخل"
 msgid "Pools with Actions"
 msgstr "تجمعات مع الإجراءات"
 
-#: REST/methods/client.py:91
+#: REST/methods/client.py:88
 msgid "Your service is being created. Please, wait while we complete it"
 msgstr "يتم إنشاء الخدمة الخاصة بك. من فضلك انتظر بينما نكملها"
 
-#: REST/methods/client.py:107
+#: REST/methods/client.py:104
 msgid "Correct"
 msgstr "صحيح"
 
@@ -463,7 +463,7 @@ msgstr "اسم بركة الخدمة"
 #: REST/methods/meta_service_pools.py:93 REST/methods/notifiers.py:72
 #: REST/methods/notifiers.py:104 REST/methods/users_groups.py:177
 #: REST/methods/users_groups.py:389 REST/methods/users_groups.py:396
-#: core/types/pools.py:84 services/Proxmox/service_linked.py:197
+#: core/types/pools.py:84 services/Proxmox/service_linked.py:201
 msgid "Enabled"
 msgstr "تمكين"
 
@@ -480,7 +480,7 @@ msgstr "تاريخ الإنشاء"
 #: reports/stats/base.py:45 reports/stats/pools_performance.py:237
 #: reports/stats/pools_usage_day.py:147
 #: reports/stats/pools_usage_summary.py:157 reports/stats/usage_by_pool.py:155
-#: services/Proxmox/service_linked.py:111
+#: services/Proxmox/service_linked.py:112
 #: templates/uds/reports/stats/pools-performance.html:33
 #: templates/uds/reports/stats/pools-usage-day.html:27
 #: templates/uds/reports/stats/pools-usage-summary.html:14
@@ -630,12 +630,10 @@ msgid "Relative to"
 msgstr "بالنسبة إلى"
 
 #: REST/methods/op_calendars.py:177
-#| msgid "Starts"
 msgid "Start"
 msgstr "يبدأ"
 
 #: REST/methods/op_calendars.py:177
-#| msgid "Ends"
 msgid "End"
 msgstr "نهاية"
 
@@ -695,7 +693,7 @@ msgstr "التقارير المتوفرة"
 #: auths/AzureAD_enterprise/authenticator.py:98
 #: auths/EDirectory_enterprise/authenticator.py:128
 #: auths/Radius/authenticator.py:62 auths/RegexLdap/authenticator.py:185
-#: auths/SAML/saml.py:110 auths/SimpleLDAP/authenticator.py:190
+#: auths/SAML/saml.py:109 auths/SimpleLDAP/authenticator.py:190
 #: core/consts/calendar.py:128 core/consts/calendar.py:133
 msgid "Group"
 msgstr "المجموعة"
@@ -803,7 +801,6 @@ msgid "IP of the server. Used if hostname is not resolvable by UDS"
 msgstr "IP للخادم. يُستخدم إذا كان اسم المضيف غير قابل للحل بواسطة UDS"
 
 #: REST/methods/servers_management.py:207
-#| msgid "Server"
 msgid "Server MAC"
 msgstr "خادم ماك"
 
@@ -988,9 +985,6 @@ msgid "Custom launch message text"
 msgstr "نص رسالة إطلاق مخصصة"
 
 #: REST/methods/services_pools.py:395
-#| msgid ""
-#| "Custom message to be shown to users if access is limited by calendar "
-#| "rules."
 msgid ""
 "Custom message to be shown to users, if active, when trying to start a "
 "service from this pool."
@@ -1003,7 +997,6 @@ msgid "Enable custom launch message"
 msgstr "تمكين رسالة الإطلاق المخصصة"
 
 #: REST/methods/services_pools.py:405
-#| msgid "If active, metapool will be visible for users"
 msgid "If active, the custom launch message will be shown to users"
 msgstr "إذا كان نشطًا، فسيتم عرض رسالة التشغيل المخصصة للمستخدمين"
 
@@ -1213,7 +1206,7 @@ msgstr "موظف"
 #: auths/AzureAD_enterprise/authenticator.py:97
 #: auths/EDirectory_enterprise/authenticator.py:68
 #: auths/Radius/authenticator.py:61 auths/RegexLdap/authenticator.py:83
-#: auths/SAML/saml.py:107 reports/lists/audit.py:139
+#: auths/SAML/saml.py:106 reports/lists/audit.py:139
 #: reports/stats/pool_users_summary.py:158 reports/stats/usage_by_pool.py:153
 #: templates/uds/reports/stats/pool-users-summary.html:14
 #: templates/uds/reports/stats/usage-by-pool.html:15
@@ -1238,7 +1231,7 @@ msgstr "المستخدمون الحاليون"
 #: services/NutanixPrism_enterprise/provider.py:57
 #: services/Nutanix_enterprise/provider.py:62 services/OVirt/provider.py:125
 #: services/OpenGnsys/provider.py:111 services/OpenNebula/provider.py:98
-#: services/OpenStack/provider_legacy.py:142 services/Proxmox/provider.py:87
+#: services/OpenStack/provider_legacy.py:142 services/Proxmox/provider.py:96
 #: services/RDS_enterprise/provider.py:177
 #: services/ScaleComputing_enterprise/provider.py:63
 #: services/VCloud_enterprise/provider.py:56
@@ -1369,7 +1362,7 @@ msgid "Item not found"
 msgstr "تعذر العثور على عنصر"
 
 #: REST/model/base.py:364 core/types/errors.py:117
-#: web/util/authentication.py:127
+#: web/util/authentication.py:128
 msgid "Access denied"
 msgstr "تم رفض الوصول"
 
@@ -1388,7 +1381,7 @@ msgstr "ملقم Active directory IP أو اسم المضيف"
 #: auths/ActiveDirectory_enterprise/authenticator.py:58
 #: auths/EDirectory_enterprise/authenticator.py:62
 #: auths/RegexLdap/authenticator.py:77 auths/SimpleLDAP/authenticator.py:72
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:132
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:131
 #: osmanagers/WindowsOsManager/windows_domain.py:121
 #: services/OpenNebula/provider.py:90 services/OpenStack/provider_legacy.py:117
 msgid "Use SSL"
@@ -1423,14 +1416,14 @@ msgstr ""
 #: auths/SimpleLDAP/authenticator.py:86 auths/SimpleLDAP/authenticator.py:192
 #: core/auths/authenticator.py:153 mfas/Email/mfa.py:95
 #: notifiers/email/notifier.py:105
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:73
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:72
 #: osmanagers/WindowsOsManager/windows_domain.py:81
-#: osmanagers/WindowsOsManager/windows_random.py:74
+#: osmanagers/WindowsOsManager/windows_random.py:73
 #: services/HyperV_enterprise/provider.py:91
 #: services/NutanixPrism_enterprise/provider.py:64
 #: services/Nutanix_enterprise/provider.py:69 services/OVirt/provider.py:139
 #: services/OpenGnsys/provider.py:118 services/OpenNebula/provider.py:106
-#: services/OpenStack/provider_legacy.py:150 services/Proxmox/provider.py:95
+#: services/OpenStack/provider_legacy.py:150 services/Proxmox/provider.py:104
 #: services/RDS_enterprise/provider.py:186 services/Sample/provider.py:108
 #: services/Sample/service.py:135
 #: services/ScaleComputing_enterprise/provider.py:71
@@ -1504,7 +1497,7 @@ msgstr ""
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:142
 #: auths/EDirectory_enterprise/authenticator.py:102
-#: auths/RegexLdap/authenticator.py:104 auths/SAML/saml.py:129
+#: auths/RegexLdap/authenticator.py:104 auths/SAML/saml.py:128
 #: auths/SimpleLDAP/authenticator.py:99 transports/SPICE/spice_base.py:85
 msgid "Certificate"
 msgstr "شهادة"
@@ -1669,7 +1662,8 @@ msgstr "عنوان رد الاتصال (يشغلها المصغرة، وإصلا
 
 #: auths/AzureAD_enterprise/authenticator.py:136
 #: services/AWS_enterprise/provider.py:65
-#: services/Azure_enterprise/provider.py:95 services/OpenStack/provider.py:192
+#: services/Azure_enterprise/provider.py:95
+#: services/Google_enterprise/provider.py:85 services/OpenStack/provider.py:192
 #: services/OpenStack/provider_legacy.py:162
 msgid "Proxy"
 msgstr "الوكيل"
@@ -1723,13 +1717,12 @@ msgstr ""
 "النطاق المستخدم للمستخدمين الخارجيين (فارغ يعني عدم وجود مستخدمين خارجيين)"
 
 #: auths/AzureAD_enterprise/authenticator.py:190
-#: auths/OAuth2/authenticator.py:442 auths/SAML/saml.py:385
+#: auths/OAuth2/authenticator.py:442 auths/SAML/saml.py:384
 msgid "This kind of Authenticator does not support white spaces on field NAME"
 msgstr "لا يدعم هذا النوع من المصادقة المسافات البيضاء في الحقل NAME"
 
 #: auths/AzureAD_enterprise/authenticator.py:328
 #: auths/AzureAD_enterprise/authenticator.py:330
-#| msgid "Username not found"
 msgid "User not found"
 msgstr "لم يتم العثور على المستخدم"
 
@@ -1768,6 +1761,7 @@ msgstr "اسم المستخدم امتيازات القراءة على eDirector
 
 #: auths/EDirectory_enterprise/authenticator.py:84 core/util/fields.py:208
 #: services/Azure_enterprise/provider.py:84
+#: services/Google_enterprise/provider.py:74
 #: services/NutanixPrism_enterprise/provider.py:94
 #: services/OpenGnsys/provider.py:138
 msgid "Timeout"
@@ -1778,13 +1772,13 @@ msgid "Timeout in seconds of connection to LDAP"
 msgstr "المهلة بالثواني لاتصال LDAP"
 
 #: auths/EDirectory_enterprise/authenticator.py:111
-#: auths/Radius/authenticator.py:117 auths/SAML/saml.py:208
+#: auths/Radius/authenticator.py:117 auths/SAML/saml.py:207
 #: auths/SimpleLDAP/authenticator.py:171 core/util/fields.py:417
 msgid "MFA attribute"
 msgstr "سمة MFA"
 
 #: auths/EDirectory_enterprise/authenticator.py:113
-#: auths/Radius/authenticator.py:119 auths/SAML/saml.py:210
+#: auths/Radius/authenticator.py:119 auths/SAML/saml.py:209
 #: auths/SimpleLDAP/authenticator.py:173 core/util/fields.py:419
 msgid "Attribute from where to extract the MFA code"
 msgstr "السمة من مكان استخراج رمز MFA"
@@ -1994,33 +1988,33 @@ msgstr "المفتاح العمومي"
 msgid "Provided by Oauth2 provider"
 msgstr "مقدمة من مزود Oauth2"
 
-#: auths/OAuth2/authenticator.py:199 auths/SAML/saml.py:158
+#: auths/OAuth2/authenticator.py:199 auths/SAML/saml.py:157
 msgid "User name attrs"
 msgstr "User name attrs"
 
-#: auths/OAuth2/authenticator.py:201 auths/SAML/saml.py:160
+#: auths/OAuth2/authenticator.py:201 auths/SAML/saml.py:159
 msgid "Fields from where to extract user name"
 msgstr "حقول منها يستخرج اسم المستخدم"
 
 #: auths/OAuth2/authenticator.py:203 auths/OAuth2/authenticator.py:213
-#: auths/OAuth2/authenticator.py:223 auths/SAML/saml.py:162
-#: auths/SAML/saml.py:173 auths/SAML/saml.py:184
+#: auths/OAuth2/authenticator.py:223 auths/SAML/saml.py:161
+#: auths/SAML/saml.py:172 auths/SAML/saml.py:183
 msgid "Attributes"
 msgstr "سمات"
 
-#: auths/OAuth2/authenticator.py:209 auths/SAML/saml.py:169
+#: auths/OAuth2/authenticator.py:209 auths/SAML/saml.py:168
 msgid "Group name attrs"
 msgstr "Group name attrs"
 
-#: auths/OAuth2/authenticator.py:211 auths/SAML/saml.py:171
+#: auths/OAuth2/authenticator.py:211 auths/SAML/saml.py:170
 msgid "Fields from where to extract the groups"
 msgstr "حقول منها تستخرج المجموعات"
 
-#: auths/OAuth2/authenticator.py:219 auths/SAML/saml.py:180
+#: auths/OAuth2/authenticator.py:219 auths/SAML/saml.py:179
 msgid "Real name attrs"
 msgstr "Real name attrs"
 
-#: auths/OAuth2/authenticator.py:221 auths/SAML/saml.py:182
+#: auths/OAuth2/authenticator.py:221 auths/SAML/saml.py:181
 msgid "Fields from where to extract the real name"
 msgstr "حقول منها يستخرج الاسم الحقيقي"
 
@@ -2182,19 +2176,19 @@ msgstr ""
 "يبدو أن سمة اسم مجموعة Ldap غير صحيحة (لم يتم العثور على مجموعة بواسطة تلك "
 "السمة)"
 
-#: auths/SAML/saml.py:78
+#: auths/SAML/saml.py:77
 msgid "SAML Authenticator"
 msgstr "المصادق SAML"
 
-#: auths/SAML/saml.py:90
+#: auths/SAML/saml.py:89
 msgid "SAML (v2.0) Authenticator"
 msgstr "المصادق (SAML (v2.0"
 
-#: auths/SAML/saml.py:119
+#: auths/SAML/saml.py:118
 msgid "Private key"
 msgstr "المفتاح الخاص"
 
-#: auths/SAML/saml.py:121
+#: auths/SAML/saml.py:120
 msgid ""
 "Private key used for sign and encription, as generated in base 64 from "
 "openssl"
@@ -2202,159 +2196,159 @@ msgstr ""
 "استخدام المفتاح الخاص للتسجيل ولهذه السمة، كما تم إنشاؤه في الأساس 64 من "
 "OpenSSL"
 
-#: auths/SAML/saml.py:123 auths/SAML/saml.py:133
+#: auths/SAML/saml.py:122 auths/SAML/saml.py:132
 msgid "Certificates"
 msgstr "شهادات"
 
-#: auths/SAML/saml.py:131
+#: auths/SAML/saml.py:130
 msgid "Server certificate used in SAML, as generated in base 64 from openssl"
 msgstr "شهادة الخادم المستخدمة في SAML، كما تم إنشاؤها في الأساس 64 من opensl"
 
-#: auths/SAML/saml.py:139
+#: auths/SAML/saml.py:138
 msgid "IDP Metadata"
 msgstr "IDP Metadata"
 
-#: auths/SAML/saml.py:141
+#: auths/SAML/saml.py:140
 msgid ""
 "You can enter here the URL or the IDP metadata or the metadata itself (xml)"
 msgstr ""
 "يمكنك إدخال URL أو بيانات IDP Metadata هنا داخليا أو بيان التعريف نفسه (xml)"
 
-#: auths/SAML/saml.py:143 auths/SAML/saml.py:151 auths/SAML/saml.py:329
-#: auths/SAML/saml.py:338
+#: auths/SAML/saml.py:142 auths/SAML/saml.py:150 auths/SAML/saml.py:328
+#: auths/SAML/saml.py:337
 msgid "Metadata"
 msgstr "بيانات التعريف"
 
-#: auths/SAML/saml.py:148
+#: auths/SAML/saml.py:147
 msgid "Entity ID"
 msgstr "معرف الكيان"
 
-#: auths/SAML/saml.py:150
+#: auths/SAML/saml.py:149
 msgid "ID of the SP. If left blank, this will be autogenerated from server URL"
 msgstr "SP ID. إذا ترك فارغاً، ستكون هذه المعطيات من محدد موقع معلومات الخادم"
 
-#: auths/SAML/saml.py:189
+#: auths/SAML/saml.py:188
 msgid "Global logout"
 msgstr "تسجيل الخروج العالمي"
 
-#: auths/SAML/saml.py:192
+#: auths/SAML/saml.py:191
 msgid "If set, logout from UDS will trigger SAML logout"
 msgstr "في حالة الضبط ، سيؤدي الخروج من UDS إلى تشغيل تسجيل الخروج من SAML"
 
-#: auths/SAML/saml.py:198
+#: auths/SAML/saml.py:197
 msgid "ADFS compatibility"
 msgstr "توافق ADFS"
 
-#: auths/SAML/saml.py:201
+#: auths/SAML/saml.py:200
 msgid "If set, enable lowercase url encoding so ADFS can work correctly"
 msgstr ""
 "في حالة التعيين ، قم بتمكين ترميز عنوان url بأحرف صغيرة حتى يعمل ADFS بشكل "
 "صحيح"
 
-#: auths/SAML/saml.py:217
+#: auths/SAML/saml.py:216
 msgid "Check SSL certificate"
 msgstr "تحقق من شهادة SSL"
 
-#: auths/SAML/saml.py:220
+#: auths/SAML/saml.py:219
 msgid "If set, check SSL certificate on requests for IDP Metadata"
 msgstr ""
 "في حالة التعيين، تحقق من شهادة SSL عند طلبات البيانات التعريفية لموفر الهوية "
 "(IDP)."
 
-#: auths/SAML/saml.py:221 auths/SAML/saml.py:230 auths/SAML/saml.py:239
-#: auths/SAML/saml.py:248 auths/SAML/saml.py:257 auths/SAML/saml.py:266
-#: auths/SAML/saml.py:275 auths/SAML/saml.py:284 auths/SAML/saml.py:293
-#: auths/SAML/saml.py:302 auths/SAML/saml.py:311 auths/SAML/saml.py:320
+#: auths/SAML/saml.py:220 auths/SAML/saml.py:229 auths/SAML/saml.py:238
+#: auths/SAML/saml.py:247 auths/SAML/saml.py:256 auths/SAML/saml.py:265
+#: auths/SAML/saml.py:274 auths/SAML/saml.py:283 auths/SAML/saml.py:292
+#: auths/SAML/saml.py:301 auths/SAML/saml.py:310 auths/SAML/saml.py:319
 #: mfas/Email/mfa.py:73 notifiers/email/notifier.py:83
 #: transports/HTML5RDP/html5rdp.py:253
 msgid "Security"
 msgstr "الأمن"
 
-#: auths/SAML/saml.py:226
+#: auths/SAML/saml.py:225
 msgid "Encripted nameID"
 msgstr "معرف الاسم المشفر"
 
-#: auths/SAML/saml.py:229
+#: auths/SAML/saml.py:228
 msgid "If set, nameID will be encripted"
 msgstr "إذا تم تعيينه، فسيتم تشفير معرف الاسم"
 
-#: auths/SAML/saml.py:235
+#: auths/SAML/saml.py:234
 msgid "Authn requests signed"
 msgstr "تم توقيع طلبات المصادقة"
 
-#: auths/SAML/saml.py:238
+#: auths/SAML/saml.py:237
 msgid "If set, authn requests will be signed"
 msgstr "في حالة التعيين، سيتم توقيع طلبات المصادقة"
 
-#: auths/SAML/saml.py:244
+#: auths/SAML/saml.py:243
 msgid "Logout requests signed"
 msgstr "تم توقيع طلبات الخروج"
 
-#: auths/SAML/saml.py:247
+#: auths/SAML/saml.py:246
 msgid "If set, logout requests will be signed"
 msgstr "في حالة التعيين، سيتم توقيع طلبات تسجيل الخروج"
 
-#: auths/SAML/saml.py:253
+#: auths/SAML/saml.py:252
 msgid "Logout responses signed"
 msgstr "تم توقيع ردود تسجيل الخروج"
 
-#: auths/SAML/saml.py:256
+#: auths/SAML/saml.py:255
 msgid "If set, logout responses will be signed"
 msgstr "في حالة التعيين، سيتم توقيع استجابات تسجيل الخروج"
 
-#: auths/SAML/saml.py:262
+#: auths/SAML/saml.py:261
 msgid "Sign metadata"
 msgstr "تسجيل البيانات الوصفية"
 
-#: auths/SAML/saml.py:265
+#: auths/SAML/saml.py:264
 msgid "If set, metadata will be signed"
 msgstr "إذا تم تعيينها، سيتم توقيع البيانات الوصفية"
 
-#: auths/SAML/saml.py:271
+#: auths/SAML/saml.py:270
 msgid "Want messages signed"
 msgstr "تريد توقيع الرسائل"
 
-#: auths/SAML/saml.py:274
+#: auths/SAML/saml.py:273
 msgid "If set, messages will be signed"
 msgstr "إذا تم تعيينه، سيتم توقيع الرسائل"
 
-#: auths/SAML/saml.py:280
+#: auths/SAML/saml.py:279
 msgid "Want assertions signed"
 msgstr "نريد تأكيدات وقعت"
 
-#: auths/SAML/saml.py:283
+#: auths/SAML/saml.py:282
 msgid "If set, assertions will be signed"
 msgstr "إذا تم تعيينها، سيتم التوقيع على التأكيدات"
 
-#: auths/SAML/saml.py:289
+#: auths/SAML/saml.py:288
 msgid "Want assertions encrypted"
 msgstr "تريد التأكيدات مشفرة"
 
-#: auths/SAML/saml.py:292
+#: auths/SAML/saml.py:291
 msgid "If set, assertions will be encrypted"
 msgstr "إذا تم تعيينها، سيتم تشفير التأكيدات"
 
-#: auths/SAML/saml.py:298
+#: auths/SAML/saml.py:297
 msgid "Want nameID encrypted"
 msgstr "تريد تشفير معرف الاسم"
 
-#: auths/SAML/saml.py:301
+#: auths/SAML/saml.py:300
 msgid "If set, nameID will be encrypted"
 msgstr "إذا تم تعيينه، فسيتم تشفير معرف الاسم"
 
-#: auths/SAML/saml.py:307
+#: auths/SAML/saml.py:306
 msgid "Requested authn context"
 msgstr "سياق المصادقة المطلوبة"
 
-#: auths/SAML/saml.py:310
+#: auths/SAML/saml.py:309
 msgid "If set, requested authn context will be sent"
 msgstr "في حالة التعيين، سيتم إرسال سياق المصادقة المطلوب"
 
-#: auths/SAML/saml.py:316
+#: auths/SAML/saml.py:315
 msgid "Allow deprecated signature algorithms"
 msgstr "السماح بخوارزميات التوقيع المهملة"
 
-#: auths/SAML/saml.py:319
+#: auths/SAML/saml.py:318
 msgid ""
 "If set, deprecated signature algorithms will be allowed (as SHA1, MD5, "
 "etc...)"
@@ -2362,115 +2356,91 @@ msgstr ""
 "إذا تم تعيينها، فسيتم السماح بخوارزميات التوقيع المهملة (مثل SHA1، MD5، "
 "إلخ...)"
 
-#: auths/SAML/saml.py:325
+#: auths/SAML/saml.py:324
 msgid "Metadata cache duration"
 msgstr "مدة ذاكرة التخزين المؤقت للبيانات التعريفية"
 
-#: auths/SAML/saml.py:328
+#: auths/SAML/saml.py:327
 msgid "Duration of metadata cache in days. 0 means default (ten years)"
 msgstr ""
 "مدة التخزين المؤقت للبيانات التعريفية بالأيام. 0 يعني الافتراضي (عشر سنوات)"
 
-#: auths/SAML/saml.py:334
+#: auths/SAML/saml.py:333
 msgid "Metadata validity duration"
 msgstr "مدة صلاحية البيانات الوصفية"
 
-#: auths/SAML/saml.py:337
+#: auths/SAML/saml.py:336
 msgid "Duration of metadata validity in days. 0 means default (ten years)"
 msgstr "مدة صلاحية البيانات الوصفية بالأيام. 0 يعني الافتراضي (عشر سنوات)"
 
-#: auths/SAML/saml.py:344
+#: auths/SAML/saml.py:343
 msgid "Organization Name"
 msgstr "اسم المنظمة"
 
-#: auths/SAML/saml.py:347
+#: auths/SAML/saml.py:346
 msgid "Organization name to use on SAML SP Metadata"
 msgstr "اسم المؤسسة المطلوب استخدامه في البيانات التعريفية لـ SAML SP"
 
-#: auths/SAML/saml.py:348 auths/SAML/saml.py:357 auths/SAML/saml.py:366
+#: auths/SAML/saml.py:347 auths/SAML/saml.py:356 auths/SAML/saml.py:365
 #: services/VCloud_enterprise/provider.py:49
 msgid "Organization"
 msgstr "المنظمة"
 
-#: auths/SAML/saml.py:353
+#: auths/SAML/saml.py:352
 msgid "Organization Display Name"
 msgstr "اسم عرض المنظمة"
 
-#: auths/SAML/saml.py:356
+#: auths/SAML/saml.py:355
 msgid "Organization Display name to use on SAML SP Metadata"
 msgstr ""
 "الاسم المعروض للمؤسسة الذي سيتم استخدامه في البيانات التعريفية لـ SAML SP"
 
-#: auths/SAML/saml.py:362
+#: auths/SAML/saml.py:361
 msgid "Organization URL"
 msgstr "عنوان URL الخاص بالمنظمة"
 
-#: auths/SAML/saml.py:365
+#: auths/SAML/saml.py:364
 msgid "Organization url to use on SAML SP Metadata"
 msgstr "عنوان URL للمؤسسة المطلوب استخدامه في البيانات الوصفية لـ SAML SP"
 
 #: auths/SAML/saml.py:397
-msgid ""
-"Server certificate should be a valid PEM (PEM certificates starts with -----"
-"BEGIN CERTIFICATE-----)"
-msgstr ""
-"يجب أن تكون شهادة الملقم PEM صالحة (PEM شهادات تبدأ ب-----BEGIN "
-"CERTIFICATE-----)"
-
-#: auths/SAML/saml.py:404
-msgid "Invalid server certificate. "
-msgstr "شهادة الملقم غير صالحة. "
-
-#: auths/SAML/saml.py:412
-msgid ""
-"Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
-"RSA PRIVATE KEY-----"
-msgstr ""
-"يجب أن يكون المفتاح الخاص PEM صالح (PEM المفاتيح الخاصة تبدأ ب------BEGIN "
-"RSA PRIVATE KEY-----"
-
-#: auths/SAML/saml.py:419
-msgid "Invalid private key. "
-msgstr "المفتاح الخاص غير صالح. "
-
-#: auths/SAML/saml.py:424
 msgid "Certificate and private key do not match"
 msgstr "الشهادة والمفتاح الخاص لا يتطابقان"
 
-#: auths/SAML/saml.py:446
+#: auths/SAML/saml.py:420
 #, python-brace-format
 msgid "Can't fetch url {url}: {error}"
 msgstr "لا يمكن جلب عنوان URL {url}: {error}"
 
-#: auths/SAML/saml.py:455
+#: auths/SAML/saml.py:429
 msgid " (obtained from URL)"
 msgstr " (تم الحصول عليها من URL)"
 
-#: auths/SAML/saml.py:456
+#: auths/SAML/saml.py:430
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML لا تبدو صالحة لبيانات التعريف IDP Metadata"
 
-#: auths/SAML/saml.py:520
+#: auths/SAML/saml.py:495
 msgid "Can't access idp metadata"
 msgstr "لا يمكن الوصول إلى بيانات التعريف IDP Metadata"
 
-#: auths/SAML/saml.py:594
+#: auths/SAML/saml.py:569
 msgid "Error validating SP metadata: "
 msgstr "خطأ في التحقق من صحة بيانات تعريف مقدم الخدمة:"
 
-#: auths/SAML/saml.py:655
+#: auths/SAML/saml.py:630
 msgid "Error processing SLO: "
 msgstr "خطأ في معالجة SLO:"
 
-#: auths/SAML/saml.py:683
+#: auths/SAML/saml.py:658
 msgid "Error processing SAML response: "
 msgstr "خطأ في معالجة استجابة SAML:"
 
-#: auths/SAML/saml.py:689
+#: auths/SAML/saml.py:664
 msgid "SAML response not authenticated"
 msgstr "لم تتم مصادقة استجابة SAML"
 
-#: auths/SAML/saml.py:719
+#: auths/SAML/saml.py:694
 msgid "No attributes returned from IdP"
 msgstr "لم يتم إرجاع أي سمات من IdP"
 
@@ -2714,54 +2684,59 @@ msgstr "لا يمكن إلغاء نشر منشور غير صالح للاستع�
 msgid "Can't unpublish publications with services in process"
 msgstr "لا يمكن إلغاء نشر المنشورات مع خدمات في طور الإستعمال"
 
-#: core/managers/servers.py:180
+#: core/managers/servers.py:185
 msgid "No server available for user"
 msgstr "لا يوجد خادم متاح للمستخدم"
 
-#: core/managers/servers.py:244 core/managers/servers.py:467
+#: core/managers/servers.py:249 core/managers/servers.py:472
 msgid "No user assigned to service"
 msgstr "لم يتم تعيين أي مستخدم للخدمة"
 
-#: core/managers/servers.py:264
+#: core/managers/servers.py:269
 msgid "Server is not part of the group"
 msgstr "الخادم ليس جزءًا من المجموعة"
 
-#: core/managers/servers.py:266
+#: core/managers/servers.py:271
 msgid "Server is in maintenance mode"
 msgstr "الخادم في وضع الصيانة"
 
-#: core/managers/servers.py:268
+#: core/managers/servers.py:273
 msgid "Server is restrained"
 msgstr "الخادم مقيد"
 
-#: core/managers/userservice.py:94
+#: core/managers/userservice.py:97
 msgid "Maximum number of user services reached for this {}"
 msgstr "تم بلوغ الحد الأقصى لعدد خدمات المستخدم لهذا {}"
 
-#: core/managers/userservice.py:340
+#: core/managers/userservice.py:479
 msgid "Can't remove a non active element"
 msgstr "لا يمكن إزالة عنصر غير نشط"
 
-#: core/managers/userservice.py:360
+#: core/managers/userservice.py:499
 msgid "Can't remove nor cancel {} cause its state don't allow it"
 msgstr "لا يمكن إزالة أو إلغاء {} لأن حالته لا تسمح بذلك"
 
-#: core/managers/userservice.py:387
+#: core/managers/userservice.py:560
 msgid "The requested service is restrained"
 msgstr "الخدمة المطلوبة مقيدة"
 
-#: core/managers/userservice.py:752 core/types/errors.py:118
+#: core/managers/userservice.py:944 core/types/errors.py:118
 msgid ""
 "Invalid service. The service is not available at this moment. Please, try "
 "later"
 msgstr ""
 "الخدمة غير صالحة. الخدمة غير متوفرة في هذه اللحظة. من فضلك، حاول في وقت لاحق"
 
-#: core/managers/userservice.py:790
+#: core/managers/userservice.py:968 core/managers/userservice.py:973
+#| msgid "Transport not found"
+msgid "No suitable transport found"
+msgstr "لم يتم العثور على وسيلة نقل مناسبة"
+
+#: core/managers/userservice.py:981
 msgid "The requested transport {} is not valid for {}"
 msgstr "النقل المطلوب {} غير صالح لـ {}"
 
-#: core/managers/userservice.py:1068
+#: core/managers/userservice.py:1257
 msgid "The service is not accessible from this device"
 msgstr "لا يمكن الوصول إلى الخدمة من هذا الجهاز"
 
@@ -2805,11 +2780,11 @@ msgstr "لم يقدم  أسلوب الاختيار ."
 msgid "No connection checking method is implemented."
 msgstr "لم ينفذ أي اتصال بالتحقق من الأسلوب."
 
-#: core/osmanagers/osmanager.py:63
+#: core/osmanagers/osmanager.py:62
 msgid "Base OS Manager"
 msgstr "إدارة قاعدة نظام التشغيل "
 
-#: core/osmanagers/osmanager.py:65
+#: core/osmanagers/osmanager.py:64
 msgid "Base Manager"
 msgstr "مدير قاعدة"
 
@@ -2840,7 +2815,7 @@ msgstr "طبع في {now:٪ Y،٪ b٪ d} في {now:٪ H:٪ M}"
 #: core/services/generics/dynamic/service.py:65
 #: services/NutanixPrism_enterprise/service.py:72
 #: services/Nutanix_enterprise/service.py:60
-#: services/OVirt/service_linked.py:140 services/Proxmox/service_linked.py:129
+#: services/OVirt/service_linked.py:140 services/Proxmox/service_linked.py:133
 #: services/Xen/service.py:124
 msgid "Base Machine"
 msgstr "آلة الأساس"
@@ -2904,21 +2879,19 @@ msgid "Recover snapshot and start machine"
 msgstr "استعادة لقطة وبدء تشغيل الجهاز"
 
 #: core/services/generics/fixed/service.py:128
-#| msgid "Services assignation"
 msgid "Randomize machine assignation"
 msgstr "تعيين عشوائي للآلة"
 
 #: core/services/generics/fixed/service.py:131
 msgid "If active, UDS will assign machines in a random way, instead of linear"
-msgstr ""
-"إذا كان نشطًا، فسيقوم UDS بتعيين الأجهزة بطريقة عشوائية، بدلاً من الخطية"
+msgstr "إذا كان نشطًا، فسيقوم UDS بتعيين الأجهزة بطريقة عشوائية، بدلاً من الخطية"
 
 #: core/services/generics/fixed/service.py:148
-#: services/Azure_enterprise/service_fixed.py:121
-#: services/HyperV_enterprise/service_fixed.py:92
-#: services/NutanixPrism_enterprise/service_fixed.py:120
-#: services/Nutanix_enterprise/service_fixed.py:92
-#: services/Vmware_enterprise/service_fixed.py:107
+#: services/Azure_enterprise/service_fixed.py:120
+#: services/HyperV_enterprise/service_fixed.py:91
+#: services/NutanixPrism_enterprise/service_fixed.py:121
+#: services/Nutanix_enterprise/service_fixed.py:93
+#: services/Vmware_enterprise/service_fixed.py:109
 msgid "We need at least a machine"
 msgstr "نحن بحاجة لآلة على الأقل "
 
@@ -3046,91 +3019,91 @@ msgstr "النفق"
 msgid "Actor"
 msgstr "الممثل"
 
-#: core/types/states.py:189
+#: core/types/states.py:187
 msgid "Active"
 msgstr "نشط"
 
-#: core/types/states.py:190
+#: core/types/states.py:188
 msgid "Inactive"
 msgstr "غير نشط"
 
-#: core/types/states.py:191
+#: core/types/states.py:189
 msgid "Blocked"
 msgstr "محظور"
 
-#: core/types/states.py:192
+#: core/types/states.py:190
 msgid "Waiting publication"
 msgstr "في انتظار النشر"
 
-#: core/types/states.py:193
+#: core/types/states.py:191
 msgid "In preparation"
 msgstr "في إعداد"
 
-#: core/types/states.py:194
+#: core/types/states.py:192
 msgid "Valid"
 msgstr "صالحة"
 
-#: core/types/states.py:195 core/types/states.py:197
+#: core/types/states.py:193 core/types/states.py:195
 msgid "Removing"
 msgstr "إزالة"
 
-#: core/types/states.py:196
+#: core/types/states.py:194
 msgid "Restrained"
 msgstr "المقيد"
 
-#: core/types/states.py:198
+#: core/types/states.py:196
 msgid "Removed"
 msgstr "مزال"
 
-#: core/types/states.py:199
+#: core/types/states.py:197
 msgid "Canceled"
 msgstr "ملغى"
 
-#: core/types/states.py:200
+#: core/types/states.py:198
 msgid "Canceling"
 msgstr "إلغاء"
 
-#: core/types/states.py:201
+#: core/types/states.py:199
 msgid "Error"
 msgstr "خطأ"
 
-#: core/types/states.py:203
+#: core/types/states.py:201
 msgid "Finished"
 msgstr "انتهى"
 
-#: core/types/states.py:204
+#: core/types/states.py:202
 msgid "Waiting execution"
 msgstr "في انتظار التنفيذ"
 
-#: core/types/states.py:205
+#: core/types/states.py:203
 msgid "Balancing"
 msgstr "موازنة"
 
-#: core/types/states.py:206
+#: core/types/states.py:204
 msgid "In maintenance"
 msgstr "في الصيانة"
 
-#: core/types/states.py:207
+#: core/types/states.py:205
 msgid "Waiting OS"
 msgstr "في انتظار نظام التشغيل"
 
-#: core/types/states.py:208
+#: core/types/states.py:206
 msgid "Too many preparing services"
 msgstr "عدد كبير من الخدمات المهيأة"
 
-#: core/types/states.py:209
+#: core/types/states.py:207
 msgid "Meta member"
 msgstr "عضو ميتا"
 
-#: core/types/states.py:210
+#: core/types/states.py:208
 msgid "Allowed"
 msgstr "مسموح"
 
-#: core/types/states.py:211
+#: core/types/states.py:209
 msgid "Denied"
 msgstr "رفض"
 
-#: core/types/states.py:212
+#: core/types/states.py:210
 msgid "Unknown"
 msgstr "مجهول"
 
@@ -3155,11 +3128,11 @@ msgstr "آلة"
 msgid "Config"
 msgstr "التكوين"
 
-#: core/util/config.py:379
+#: core/util/config.py:398
 msgid "Session expire time in hours after publishing"
 msgstr "تنتهي مدة الجلسة بعد ساعات من النشر"
 
-#: core/util/config.py:387
+#: core/util/config.py:406
 msgid ""
 "Delay between cache checks. Reducing this number will increase cache "
 "generation speed but also will load service providers"
@@ -3167,7 +3140,7 @@ msgstr ""
 "التأخير بين عمليات فحص ذاكرة التخزين المؤقت. سيؤدي تقليل هذا العدد إلى زيادة "
 "سرعة إنشاء ذاكرة التخزين المؤقت ولكنه سيؤدي أيضًا إلى تحميل موفري الخدمة"
 
-#: core/util/config.py:396
+#: core/util/config.py:415
 msgid ""
 "Delayed task number of threads PER SERVER, with higher number of threads, "
 "deployed task will complete sooner, but it will give more load to overall "
@@ -3177,7 +3150,7 @@ msgstr ""
 "ستكتمل المهمة المنشورة في وقت أقرب، ولكنها ستوفر المزيد من التحميل على "
 "النظام ككل"
 
-#: core/util/config.py:405
+#: core/util/config.py:424
 msgid ""
 "Number of scheduler threads running PER SERVER, with higher number of "
 "threads, deployed task will complete sooner, but it will give more load to "
@@ -3187,7 +3160,7 @@ msgstr ""
 "سلاسل الرسائل، ستكتمل المهمة المنشورة في وقت أقرب، ولكنها ستوفر المزيد من "
 "التحميل على النظام ككل"
 
-#: core/util/config.py:414
+#: core/util/config.py:433
 msgid ""
 "Waiting time before removing \"errored\" and \"removed\" publications, "
 "cache, and user assigned machines. Time is in seconds"
@@ -3195,30 +3168,30 @@ msgstr ""
 "وقت الانتظار قبل إزالة المنشورات \"الخاطئة\" و\"المزالة\"، وذاكرة التخزين "
 "المؤقت، والأجهزة المخصصة للمستخدم. الوقت بالثواني"
 
-#: core/util/config.py:422
+#: core/util/config.py:441
 msgid "Time to maintaing \"info state\" items before removing it, in seconds"
 msgstr "الوقت اللازم لصيانة عناصر \"حالة المعلومات\" قبل إزالتها، بالثواني"
 
-#: core/util/config.py:429
+#: core/util/config.py:448
 msgid "Number of services to initiate removal per run of service cleaner"
 msgstr "عدد الخدمات لبدء الإزالة لكل تشغيل لمنظف الخدمة"
 
-#: core/util/config.py:436
+#: core/util/config.py:455
 msgid ""
 "Removal Check time for cache, publications and deployed services, in seconds"
 msgstr ""
 "إزالة التحقق من الوقت لذاكرة التخزين المؤقت والمنشورات والخدمات المنشورة، في "
 "ثوان"
 
-#: core/util/config.py:439
+#: core/util/config.py:458
 msgid "Superuser username"
 msgstr "اسم المستخدم المتميز"
 
-#: core/util/config.py:443
+#: core/util/config.py:462
 msgid "Superuser password"
 msgstr "كلمة مرور المستخدم الخارق"
 
-#: core/util/config.py:450
+#: core/util/config.py:469
 msgid ""
 "Allow root user to access using web interface.\n"
 " Once configured one authenticator,\n"
@@ -3227,11 +3200,11 @@ msgstr ""
 "السماح للمستخدم الجذر بالوصول باستخدام واجهة الويب. بمجرد تكوين أداة مصادقة "
 "واحدة، يوصى بتعطيل هذا الخيار"
 
-#: core/util/config.py:458
+#: core/util/config.py:477
 msgid "Enable enhanced security modules"
 msgstr "تمكين وحدات الأمان المحسنة"
 
-#: core/util/config.py:466
+#: core/util/config.py:485
 msgid ""
 "Enforced maximum security mode (Zero-Trust Mode). No password redirection "
 "will be allowed if this mode is set."
@@ -3239,40 +3212,48 @@ msgstr ""
 "فرض وضع الأمان الأقصى (وضع الثقة المعدومة). لن يُسمح بإعادة توجيه كلمة المرور "
 "إذا تم ضبط هذا الوضع."
 
-#: core/util/config.py:478 core/util/config.py:484
+#: core/util/config.py:497
+msgid ""
+"How long should the user service be unused before os manager considers it "
+"for removal"
+msgstr ""
+"ما هي المدة التي يجب أن تظل فيها خدمة المستخدم غير مستخدمة قبل أن يفكر مدير "
+"نظام التشغيل في إزالتها؟"
+
+#: core/util/config.py:503
 msgid "Time betwen checks of unused user services by os managers"
 msgstr ""
 "الوقت بين عمليات التحقق من خدمات المستخدم غير المستخدمة من قبل مديري نظام "
 "التشغيل"
 
-#: core/util/config.py:493
+#: core/util/config.py:512
 msgid "Max logins before blocking an account for a while"
 msgstr "الحد الأقصى لعدد مرات تسجيل الدخول قبل حظر الحساب لفترة من الوقت"
 
-#: core/util/config.py:500
+#: core/util/config.py:519
 msgid "Block time in second for an user that has too many login failures"
 msgstr ""
 "حظر الوقت بالثانية للمستخدم الذي لديه عدد كبير جدًا من حالات فشل تسجيل الدخول"
 
-#: core/util/config.py:506
+#: core/util/config.py:525
 msgid "Block ip on login failure"
 msgstr "حظر IP عند فشل تسجيل الدخول"
 
-#: core/util/config.py:515
+#: core/util/config.py:534
 msgid "Do autorun of service if just one service"
 msgstr "قم بالتشغيل التلقائي للخدمة إذا كانت هناك خدمة واحدة فقط"
 
-#: core/util/config.py:522
+#: core/util/config.py:541
 msgid "Redirect HTTP to HTTPS on connection to UDS"
 msgstr "إعادة توجيه HTTP إلى HTTPS عند الاتصال بـ UDS"
 
-#: core/util/config.py:528
+#: core/util/config.py:547
 msgid "Redirects login page to the tag used when logged in if active."
 msgstr ""
 "يعيد توجيه صفحة تسجيل الدخول إلى العلامة المستخدمة عند تسجيل الدخول إذا كانت "
 "نشطة."
 
-#: core/util/config.py:538
+#: core/util/config.py:557
 msgid ""
 "Max time needed to get a service \"fully functional\" before it's considered "
 "\"failed\" and removed"
@@ -3280,7 +3261,7 @@ msgstr ""
 "الحد الأقصى من الوقت اللازم للحصول على الخدمة \"تعمل بكامل طاقتها\" قبل "
 "اعتبارها \"فاشلة\" وإزالتها"
 
-#: core/util/config.py:545
+#: core/util/config.py:564
 msgid ""
 "Max time needed to get a service \"fully removed\" before it's considered "
 "\"failed\" and purged"
@@ -3288,54 +3269,61 @@ msgstr ""
 "الحد الأقصى من الوقت اللازم لإزالة الخدمة بالكامل قبل اعتبارها \"فاشلة\" "
 "وإزالتها"
 
-#: core/util/config.py:552
+#: core/util/config.py:571
 msgid "Maximum logs per every log-capable administration element"
 msgstr "الحد الأقصى من السجلات لكل عنصر إدارة قادر على التسجيل"
 
-#: core/util/config.py:559
+#: core/util/config.py:578
 msgid ""
 "Maximum logs entries for general UDS logs (0 = unlimited, use with care)"
 msgstr ""
 "الحد الأقصى لإدخالات السجلات لسجلات UDS العامة (0 = غير محدود، استخدم بعناية)"
 
-#: core/util/config.py:567
+#: core/util/config.py:586
 msgid ""
 "Time to restrain a user service in case it gives some errors at some point"
 msgstr "حان الوقت لتقييد خدمة المستخدم في حالة حدوث بعض الأخطاء في مرحلة ما"
 
-#: core/util/config.py:574
+#: core/util/config.py:593
 msgid ""
 "Number of errors that must occurr in \"restrainTime\" to restrain an user "
 "service"
 msgstr "عدد الأخطاء التي يجب أن تحدث في \"restrainTime\" لتقييد خدمة المستخدم"
 
-#: core/util/config.py:582
+#: core/util/config.py:601
 msgid "Statistics duration, in days"
 msgstr "مدة الإحصائيات، بالأيام"
 
-#: core/util/config.py:589
+#: core/util/config.py:608
 msgid ""
 "Frequency of stats collection in seconds. Default is 4 hours (14400 seconds)"
 msgstr "معدل تكرار جمع الإحصائيات بالثواني. الافتراضي 4 ساعات (14400 ثانية)"
 
-#: core/util/config.py:596
+#: core/util/config.py:615
 msgid "Maximum number of time to accumulate on one run. Default is 7 (1 week)"
 msgstr "أقصى عدد من الوقت للتراكم في تشغيل واحد. الافتراضي هو 7 (أسبوع واحد)"
 
-#: core/util/config.py:604
+#: core/util/config.py:623
 msgid "If disallow login showing authenticatiors"
 msgstr "في حالة عدم السماح بتسجيل الدخول بإظهار المصادقين"
 
-#: core/util/config.py:612
+#: core/util/config.py:631
 msgid ""
 "Notify user of existence of a new version of a service on new publication"
 msgstr "إعلام المستخدم بوجود إصدار جديد من الخدمة عند النشر الجديد"
 
-#: core/util/config.py:619
-msgid "Networks considered \"trusted\" for tunnel requests"
-msgstr "الشبكات التي تعتبر \"موثوقة\" لطلبات الأنفاق"
+#: core/util/config.py:638
+#| msgid "Networks considered \"trusted\" for tunnel requests"
+msgid "Networks or hosts considered \"trusted\" for UDS (Tunnels, etc...)"
+msgstr ""
+"الشبكات أو المضيفين الذين يعتبرون \"موثوقين\" لـ UDS (الأنفاق، وما إلى ذلك "
+"...)"
 
-#: core/util/config.py:627
+#: core/util/config.py:645
+msgid "IPs or networks allowed to forward requests (like proxies)"
+msgstr "عناوين IP أو الشبكات المسموح لها بإعادة توجيه الطلبات (مثل الوكلاء)"
+
+#: core/util/config.py:653
 msgid ""
 "Allow clients to notify their own ip (if set), or use always the request "
 "extracted IP"
@@ -3343,11 +3331,11 @@ msgstr ""
 "السماح للعملاء بإخطار عنوان IP الخاص بهم (في حالة تعيينه)، أو استخدام عنوان "
 "IP المستخرج للطلب دائمًا"
 
-#: core/util/config.py:635
+#: core/util/config.py:661
 msgid "If there is a proxy in front of us (i.e. HAProxy, or any NLB)"
 msgstr "إذا كان هناك وكيل أمامنا (أي HAProxy أو أي NLB)"
 
-#: core/util/config.py:644
+#: core/util/config.py:670
 msgid ""
 "If we use new logout mechanics for osmanagers, where only when the logged in "
 "users reaches 0, it is considered \"logged out\""
@@ -3355,87 +3343,79 @@ msgstr ""
 "إذا استخدمنا آليات تسجيل خروج جديدة لمديري osmanagers، حيث فقط عندما يصل "
 "المستخدمون الذين قاموا بتسجيل الدخول إلى 0، فسيتم اعتبار ذلك \"مسجل خروج\""
 
-#: core/util/config.py:653
+#: core/util/config.py:679
 msgid "Enable/Disable Actor attack detection ip blocking"
 msgstr "تمكين/تعطيل حظر IP الخاص باكتشاف هجوم الممثل"
 
-#: core/util/config.py:661
+#: core/util/config.py:687
 msgid "Max session length for Admin"
 msgstr "الحد الأقصى لطول الجلسة للمشرف"
 
-#: core/util/config.py:667
+#: core/util/config.py:693
 msgid "Max session length for User"
 msgstr "الحد الأقصى لطول الجلسة للمستخدم"
 
-#: core/util/config.py:674
+#: core/util/config.py:700
 msgid "Page reload Time (legacy)"
 msgstr "وقت إعادة تحميل الصفحة (القديم)"
 
-#: core/util/config.py:682
+#: core/util/config.py:708
 msgid "Custom message for error when limiting by calendar"
 msgstr "رسالة مخصصة للخطأ عند التقييد بالتقويم"
 
-#: core/util/config.py:690
+#: core/util/config.py:716
 msgid "If convert username to lowercase on logins"
 msgstr "إذا قمت بتحويل اسم المستخدم إلى أحرف صغيرة عند تسجيل الدخول"
 
-#: core/util/config.py:698
+#: core/util/config.py:724
 msgid "Global UDS ID (common for all servers on the same cluster)"
 msgstr "معرف UDS العالمي (مشترك لجميع الخوادم الموجودة في نفس المجموعة)"
 
-#: core/util/config.py:706
+#: core/util/config.py:732
 msgid "Site display name"
 msgstr "اسم عرض الموقع"
 
-#: core/util/config.py:712
+#: core/util/config.py:738
 msgid "Site copyright info"
 msgstr "معلومات حقوق الطبع والنشر للموقع"
 
-#: core/util/config.py:718
+#: core/util/config.py:744
 msgid "Site copyright link"
 msgstr "رابط حقوق الطبع والنشر للموقع"
 
-#: core/util/config.py:721
+#: core/util/config.py:747
 msgid "Top navbar logo name"
 msgstr "اسم شعار شريط التنقل العلوي"
 
-#: core/util/config.py:727
+#: core/util/config.py:753
 msgid "Custom CSS styles applied to the user accesible site"
 msgstr "يتم تطبيق أنماط CSS المخصصة على الموقع الذي يمكن للمستخدم الوصول إليه"
 
-#: core/util/config.py:733
+#: core/util/config.py:759
 msgid "Site information"
 msgstr "معلومات الموقع"
 
-#: core/util/config.py:739
+#: core/util/config.py:765
 msgid "Show Filter box for user services on Top or bottom of the page"
 msgstr "إظهار مربع التصفية لخدمات المستخدم في أعلى الصفحة أو أسفلها"
 
-#: core/util/config.py:745
+#: core/util/config.py:771
 msgid "Minimal User Services needed to show filter"
 msgstr "الحد الأدنى من خدمات المستخدم اللازمة لإظهار الفلتر"
 
-#: core/util/config.py:751
-msgid ""
-"Redirect URL after logout. If empty, the user will be redirected to the "
-"login page."
-msgstr ""
-"إعادة توجيه عنوان URL بعد تسجيل الخروج. إذا كان فارغا، سيتم إعادة توجيه "
-"المستخدم إلى صفحة تسجيل الدخول."
-
-#: core/util/config.py:758
+#: core/util/config.py:777
 msgid "Enable experimental features. USE WITH CAUTION!!"
 msgstr "تمكين الميزات التجريبية. استخدم بحذر!!"
 
-#: core/util/config.py:766
+#: core/util/config.py:785
 msgid "Number of items per page in admin tables"
 msgstr "عدد العناصر لكل صفحة في جداول الإدارة"
 
-#: core/util/config.py:772
+#: core/util/config.py:791
 msgid "List of trusted hosts/networks allowed to access the admin interface"
 msgstr "قائمة بالمضيفين/الشبكات الموثوقة المسموح لهم بالوصول إلى واجهة الإدارة"
 
-#: core/util/config.py:778
+#: core/util/config.py:797
 msgid "Enable VNC menu for user services"
 msgstr "تمكين قائمة VNC لخدمات المستخدم"
 
@@ -3537,9 +3517,6 @@ msgid "Try SOFT Shutdown first"
 msgstr "جرب SOFT Shutdown أولاً"
 
 #: core/util/fields.py:346
-#| msgid ""
-#| "If active, UDS will try to shutdown (soft) the machine. Will delay 90 "
-#| "seconds the power off of hanged machines."
 msgid ""
 "If active, UDS will try to shutdown (soft) the machine. May delay around 2 "
 "minutes the power off of hanged machines."
@@ -3548,7 +3525,6 @@ msgstr ""
 "التيار الكهربائي عن الأجهزة المعلقة لمدة دقيقتين تقريبًا."
 
 #: core/util/fields.py:364
-#| msgid "Response type"
 msgid "Reset type"
 msgstr "نوع إعادة الضبط"
 
@@ -3585,51 +3561,69 @@ msgstr ""
 "نطاق أجهزة Mac الصالحة للأجهزة التي تم إنشاؤها. يجب أن يكون في النطاق "
 "{default}"
 
-#: core/util/fields.py:430 osmanagers/Test/testing_osmanager.py:60
+#: core/util/fields.py:430 osmanagers/Test/testing_osmanager.py:59
 msgid "Logout Action"
 msgstr "إجراءات تسجيل الخروج"
 
-#: core/util/fields.py:433 osmanagers/Test/testing_osmanager.py:63
+#: core/util/fields.py:433 osmanagers/Test/testing_osmanager.py:62
 msgid "What to do when user logs out from service"
 msgstr "ماذا تفعل عندما يسجل المستخدم الخروج من الخدمة"
 
-#: core/util/fields.py:435 osmanagers/Test/testing_osmanager.py:65
+#: core/util/fields.py:435 osmanagers/Test/testing_osmanager.py:64
 msgid "Keep service assigned"
 msgstr "الحفاظ على الخدمة المخصصة"
 
-#: core/util/fields.py:436 osmanagers/Test/testing_osmanager.py:66
+#: core/util/fields.py:436 osmanagers/Test/testing_osmanager.py:65
 msgid "Remove service"
 msgstr "إزالة الخدمة"
 
-#: core/util/fields.py:437 osmanagers/Test/testing_osmanager.py:69
+#: core/util/fields.py:437 osmanagers/Test/testing_osmanager.py:68
 msgid "Keep service assigned even on new publication"
 msgstr "الحفاظ على الخدمة المعينة حتى في منشور جديد"
 
-#: core/util/fields.py:445
+#: core/util/fields.py:448
 msgid "Allow skip MFA from networks"
 msgstr "السماح بتخطي MFA من الشبكات"
 
-#: core/util/fields.py:449
+#: core/util/fields.py:452
 msgid "Users within these networks will not be asked for OTP"
 msgstr "لن يُطلب من المستخدمين داخل هذه الشبكات كلمة المرور لمرة واحدة"
 
-#: core/util/fields.py:458
-#| msgid "SMS networks"
+#: core/util/fields.py:464
 msgid "MFA policy networks"
 msgstr "شبكات سياسة وزارة الخارجية"
 
-#: core/util/fields.py:462
+#: core/util/fields.py:468
 msgid "Networks where MFA policy will be enforced if required"
 msgstr "الشبكات التي سيتم فيها تطبيق سياسة MFA إذا لزم الأمر"
 
-#: core/util/fields.py:471
+#: core/util/fields.py:480
 msgid "Policy for users without MFA support"
 msgstr "سياسة للمستخدمين الذين ليس لديهم دعم MFA"
 
-#: core/util/fields.py:474
-#| msgid "Policy for users without MFA support"
+#: core/util/fields.py:483
 msgid "Policy for users without MFA or server failed to ask for MFA"
 msgstr "سياسة المستخدمين الذين ليس لديهم MFA أو فشل الخادم في طلب MFA"
+
+#: core/util/fields.py:494
+msgid "Put back to cache"
+msgstr "إعادة إلى ذاكرة التخزين المؤقت"
+
+#: core/util/fields.py:495
+msgid ""
+"On machine releasy by logout, put it back to cache instead of deleting if "
+"possible."
+msgstr ""
+"عند إعادة تشغيل الجهاز عن طريق تسجيل الخروج، قم بإعادته إلى ذاكرة التخزين "
+"المؤقت بدلاً من حذفه إذا كان ذلك ممكنًا."
+
+#: core/util/fields.py:497
+msgid "No. Never put it back to cache"
+msgstr "لا. لا تعيده إلى ذاكرة التخزين المؤقت أبدًا"
+
+#: core/util/fields.py:498
+msgid "Yes, try to put it back to cache"
+msgstr "نعم، حاول إعادته إلى ذاكرة التخزين المؤقت"
 
 #: core/util/ldaputil.py:203
 msgid "Can't contact LDAP server"
@@ -3658,93 +3652,108 @@ msgstr "{0} يجب أن يكون أقل من أو يساوي {1}"
 msgid "{0} contains invalid characters"
 msgstr "{0} يحتوي على أحرف غير صالحة"
 
-#: core/util/validators.py:93
+#: core/util/validators.py:95
 msgid "{} is not a valid hostname: maximum host name length exceeded."
 msgstr "{} ليس اسم مضيف صالحًا: تم تجاوز الحد الأقصى لطول اسم المضيف."
 
-#: core/util/validators.py:99
+#: core/util/validators.py:101
 msgid "{} is not a valid hostname: (domains not allowed)"
 msgstr "{} ليس اسم مضيف صالحًا: (المجالات غير مسموح بها)"
 
-#: core/util/validators.py:105
+#: core/util/validators.py:108
 msgid "{} is not a valid hostname: (invalid characters)"
 msgstr "{} ليس اسم مضيف صالحًا: (أحرف غير صالحة)"
 
-#: core/util/validators.py:117
+#: core/util/validators.py:122
 msgid "{} is not a valid URL: exceeds maximum length."
 msgstr "{} ليس عنوان URL صالحًا: يتجاوز الحد الأقصى للطول."
 
-#: core/util/validators.py:138
+#: core/util/validators.py:145
 msgid "{} is not a valid IPv4 address"
 msgstr "{} ليس عنوان IPv4 صالحًا"
 
-#: core/util/validators.py:153
+#: core/util/validators.py:162
 msgid "{} is not a valid IPv6 address"
 msgstr "{} ليس عنوان IPv6 صالحًا"
 
-#: core/util/validators.py:169
+#: core/util/validators.py:179
 msgid "{} is not a valid IPv4 or IPv6 address"
 msgstr "{} ليس عنوان IPv4 أو IPv6 صالحًا"
 
-#: core/util/validators.py:198
+#: core/util/validators.py:208
 msgid "{} exceeds maximum path length."
 msgstr "{} يتجاوز الحد الأقصى لطول المسار."
 
-#: core/util/validators.py:205
+#: core/util/validators.py:215
 msgid "{} is not a valid windows path"
 msgstr "{} ليس مسارًا صالحًا لنظام Windows"
 
-#: core/util/validators.py:208
+#: core/util/validators.py:218
 msgid "{} is not a valid unix path"
 msgstr "{} ليس مسارًا صالحًا لنظام التشغيل Unix"
 
-#: core/util/validators.py:211
+#: core/util/validators.py:221
 msgid "{} is not a valid path"
 msgstr "{} ليس مسارًا صالحًا"
 
-#: core/util/validators.py:268
+#: core/util/validators.py:284
 msgid "{} is not a valid host:port pair"
 msgstr "{} ليس مضيفًا صالحًا: زوج منفذ"
 
-#: core/util/validators.py:296
+#: core/util/validators.py:313
 msgid "{} is not a valid MAC address"
 msgstr "{} ليس عنوان MAC صالحًا"
 
-#: core/util/validators.py:313
+#: core/util/validators.py:331
 msgid "{} is not a valid MAC range"
 msgstr "{} ليس نطاق MAC صالحًا"
 
-#: core/util/validators.py:325
+#: core/util/validators.py:344
 msgid "Email address is too long"
 msgstr "عنوان البريد الإلكتروني طويل جدًا"
 
-#: core/util/validators.py:328
+#: core/util/validators.py:347
 msgid "Email address is not valid"
 msgstr "عنوان البريد الإلكتروني غير صالح"
 
-#: core/util/validators.py:348
+#: core/util/validators.py:367
 msgid "The basename is not a valid for a hostname"
 msgstr "اسم القاعدة ليس صالحًا لاسم المضيف"
 
-#: core/util/validators.py:351
+#: core/util/validators.py:370
 msgid "The length of basename plus length must be greater than 0"
 msgstr "يجب أن يكون طول اسم القاعدة زائد الطول أكبر من 0"
 
-#: core/util/validators.py:354
+#: core/util/validators.py:373
 msgid "The length of basename plus length must not be greater than 15"
 msgstr "لا يجب أن يكون طول اسم بالإضافة إلى طول قاعدة  أكبر من 15"
 
-#: core/util/validators.py:357
+#: core/util/validators.py:376
 msgid "The machine name can't be only numbers"
 msgstr "لا يمكن أن يكون اسم الجهاز أرقام فقط"
 
-#: core/util/validators.py:380
+#: core/util/validators.py:399
 msgid "Invalid JSON data"
 msgstr "بيانات JSON غير صالحة"
 
-#: core/util/validators.py:401 core/util/validators.py:422
+#: core/util/validators.py:416 core/util/validators.py:454
+#| msgid "Certificates"
+msgid "Certificate is empty"
+msgstr "الشهادة فارغة"
+
+#: core/util/validators.py:418 core/util/validators.py:462
 msgid "Invalid certificate"
 msgstr "شهادة غير صالحة"
+
+#: core/util/validators.py:436
+#| msgid "Private key"
+msgid "Private key is empty"
+msgstr "المفتاح الخاص فارغ"
+
+#: core/util/validators.py:438
+#| msgid "Invalid private key. "
+msgid "Invalid private key"
+msgstr "مفتاح خاص غير صالح"
 
 #: dispatchers/wyse_enterprise/config.py:20
 msgid "Privileges"
@@ -4326,15 +4335,16 @@ msgstr ""
 "<b>Legacy</b> UDS Actor for OpenSUSE، ... أجهزة Linux <b>(يتطلب python 2.7)</"
 "b>"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:52
-msgid "Linux OS Active Directory Manager"
-msgstr "مدير الدليل النشط لنظام التشغيل Linux"
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:51
+#| msgid "Linux OS Active Directory Manager"
+msgid "Linux Active Directory OS Manager"
+msgstr "مدير نظام التشغيل Linux Active Directory"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:54
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:53
 msgid "Os Manager to control Linux virtual machines with active directory"
 msgstr "OS Manager للتحكم في أجهزة Linux الافتراضية باستخدام الدليل النشط"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:59
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:58
 #: osmanagers/WindowsOsManager/windows_domain.py:67
 #: services/OpenStack/provider.py:133 services/OpenStack/provider_legacy.py:134
 #: transports/HTML5RDP/html5rdp.py:113 transports/PCoIP_enterprise/pcoip.py:73
@@ -4342,7 +4352,7 @@ msgstr "OS Manager للتحكم في أجهزة Linux الافتراضية با�
 msgid "Domain"
 msgstr "مجال"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:61
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:60
 #: osmanagers/WindowsOsManager/windows_domain.py:69
 msgid ""
 "Domain to join machines to (use FQDN form, Netbios name not supported for "
@@ -4351,30 +4361,30 @@ msgstr ""
 "المجال لضم آلات (استخدام FQDN النموذج، اسم Netbios غير معتمد من أجل معظم "
 "العمليات)"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:66
-#: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:62
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:65
+#: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:61
 #: osmanagers/WindowsOsManager/windows_domain.py:74
-#: osmanagers/WindowsOsManager/windows_random.py:67
+#: osmanagers/WindowsOsManager/windows_random.py:66
 msgid "Account"
 msgstr "حساب"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:68
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:67
 #: osmanagers/WindowsOsManager/windows_domain.py:76
 msgid "Account with rights to add machines to domain"
 msgstr "حساب مع حقوق لإضافة آلات إلى مجال"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:75
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:74
 #: osmanagers/WindowsOsManager/windows_domain.py:83
 msgid "Password of the account"
 msgstr "كلمة المرور للحساب"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:80
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:79
 #: osmanagers/WindowsOsManager/windows_domain.py:88
 #: services/OpenGnsys/service.py:95
 msgid "OU"
 msgstr "OU"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:83
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:82
 msgid ""
 "Organizational unit where to add machines in domain (not used if IPA is "
 "selected). i.e.: ou=My Machines,dc=mydomain,dc=local"
@@ -4382,65 +4392,65 @@ msgstr ""
 "الوحدة التنظيمية حيث يمكن إضافة الأجهزة في المجال (لا يتم استخدامها إذا تم "
 "تحديد IPA). على سبيل المثال: ou=My Machines,dc=mydomain,dc=local"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:87
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:86
 msgid "Client software"
 msgstr "برنامج العميل"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:89
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:88
 msgid "Use specific client software"
 msgstr "استخدام برنامج عميل محدد"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:91
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:103
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:90
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:102
 msgid "Automatically"
 msgstr "تلقائيا"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:92
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:91
 msgid "SSSD"
 msgstr "SSD"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:93
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:92
 msgid "Winbind"
 msgstr "وينبيند"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:99
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:98
 msgid "Membership software"
 msgstr "برامج العضوية"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:101
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:100
 msgid "Use specific membership software"
 msgstr "استخدم برامج عضوية محددة"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:104
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:103
 msgid "Samba"
 msgstr "سامبا"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:105
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:104
 msgid "AdCli"
 msgstr "AdCli"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:111
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:110
 msgid "Server software"
 msgstr "برنامج الخادم"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:113
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:112
 msgid "Use specific server software"
 msgstr "استخدم برنامج خادم محدد"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:116
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:115
 msgid "Active Directory"
 msgstr "الدليل النشط"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:117
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:116
 msgid "FreeIPA"
 msgstr "FreeIPA"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:123
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:122
 #: osmanagers/WindowsOsManager/windows_domain.py:102
 msgid "Machine clean"
 msgstr "آلة نظيفة"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:126
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:125
 msgid ""
 "If checked, UDS will try to remove the machine from the domain USING the "
 "provided credentials. (Not used if IPA is selected)"
@@ -4448,48 +4458,48 @@ msgstr ""
 "إذا تم تحديده، فسيحاول UDS إزالة الجهاز من المجال باستخدام بيانات الاعتماد "
 "المقدمة. (لا يُستخدم في حالة تحديد IPA)"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:134
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:133
 msgid "If checked, a ssl connection to Active Directory will be used"
 msgstr "إذا تم تحديده، فسيتم استخدام اتصال SSL بـ Active Directory"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:139
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:138
 msgid "Automatic ID mapping"
 msgstr "تعيين الهوية التلقائي"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:141
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:140
 msgid "If checked, automatic ID mapping"
 msgstr "إذا تم تحديده، فسيتم تعيين المعرف تلقائيًا"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:154
-#: osmanagers/WindowsOsManager/windows_domain.py:142
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:153
+#: osmanagers/WindowsOsManager/windows_domain.py:143
 msgid "Must provide a domain!"
 msgstr "يجب توفير مجال!"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:156
-#: osmanagers/WindowsOsManager/windows_domain.py:144
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:155
+#: osmanagers/WindowsOsManager/windows_domain.py:145
 msgid "Must provide an account to add machines to domain!"
 msgstr "يجب تقديم حساب لإضافة آلات لنطاق!"
 
-#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:158
-#: osmanagers/WindowsOsManager/windows_domain.py:148
+#: osmanagers/LinuxOsManager/linux_ad_osmanager.py:157
+#: osmanagers/WindowsOsManager/windows_domain.py:149
 msgid "Must provide a password for the account!"
 msgstr "يجب توفير كلمة مرور لحساب!"
 
-#: osmanagers/LinuxOsManager/linux_osmanager.py:52
+#: osmanagers/LinuxOsManager/linux_osmanager.py:51
 msgid "Linux OS Manager"
 msgstr "مدير نظام لينكس"
 
-#: osmanagers/LinuxOsManager/linux_osmanager.py:54
+#: osmanagers/LinuxOsManager/linux_osmanager.py:53
 msgid "Os Manager to control Linux virtual machines"
 msgstr "Os Manager للتحكم في الأجهزة الافتراضية لـ Linux"
 
-#: osmanagers/LinuxOsManager/linux_osmanager.py:62
-#: osmanagers/Test/testing_osmanager.py:76
-#: osmanagers/WindowsOsManager/windows.py:41
+#: osmanagers/LinuxOsManager/linux_osmanager.py:61
+#: osmanagers/Test/testing_osmanager.py:75
+#: osmanagers/WindowsOsManager/windows.py:40
 msgid "Max.Idle time"
 msgstr "الوقت الأقصى للخمول"
 
-#: osmanagers/LinuxOsManager/linux_osmanager.py:68
+#: osmanagers/LinuxOsManager/linux_osmanager.py:67
 msgid ""
 "Maximum idle time (in seconds) before session is automatically closed to the "
 "user (<= 0 means no max idle time)."
@@ -4497,13 +4507,13 @@ msgstr ""
 "يتم الإغلاق بعد الحد الأقصى لوقت الخمول (بالثواني) قبل الإغلاق التلقائي "
 "للمستخدم (<= 0 يعني عدم وجود حد أقصى لوقت الخمول)."
 
-#: osmanagers/LinuxOsManager/linux_osmanager.py:74
-#: osmanagers/WindowsOsManager/windows.py:53
+#: osmanagers/LinuxOsManager/linux_osmanager.py:73
+#: osmanagers/WindowsOsManager/windows.py:52
 msgid "Calendar logout"
 msgstr "التقويم الخروج"
 
-#: osmanagers/LinuxOsManager/linux_osmanager.py:76
-#: osmanagers/WindowsOsManager/windows.py:55
+#: osmanagers/LinuxOsManager/linux_osmanager.py:75
+#: osmanagers/WindowsOsManager/windows.py:54
 msgid ""
 "If checked, UDS will try to logout user when the calendar for his current "
 "access expires"
@@ -4511,22 +4521,22 @@ msgstr ""
 "إذا تم تحديده ، فسيحاول UDS تسجيل خروج المستخدم عند انتهاء صلاحية التقويم "
 "الخاص بوصوله الحالي"
 
-#: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:54
+#: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:53
 msgid "Linux Random Password OS Manager"
 msgstr "كلمة سر عشوائية لمدير التشغيل لينكس"
 
-#: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:56
+#: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:55
 msgid "Os Manager to control linux machines, with user password set randomly."
 msgstr ""
 "مدير التشغيل للسيطرة على آلات لينكس، مع كلمة المرور للمستخدم تحدد عشوائيا."
 
-#: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:64
-#: osmanagers/WindowsOsManager/windows_random.py:69
+#: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:63
+#: osmanagers/WindowsOsManager/windows_random.py:68
 msgid "User account to change password"
 msgstr "حساب المستخدم لتغيير كلمة المرور"
 
-#: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:76
-#: osmanagers/WindowsOsManager/windows_random.py:90
+#: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:75
+#: osmanagers/WindowsOsManager/windows_random.py:89
 msgid "Must provide an user account!!!"
 msgstr "يجب تقديم حساب المستخدم !!!"
 
@@ -4558,16 +4568,16 @@ msgstr ""
 "المدة القصوى بالساعات لدورة (0 يعني عدم وجود حد). بعد هذه الفترة، سيتم إنهاء "
 "الدورة."
 
-#: osmanagers/Test/testing_osmanager.py:52
+#: osmanagers/Test/testing_osmanager.py:51
 msgid "Test OS Manager"
 msgstr "اختبار مدير نظام التشغيل"
 
-#: osmanagers/Test/testing_osmanager.py:54
+#: osmanagers/Test/testing_osmanager.py:53
 msgid "Os Manager for testing pourposes"
 msgstr "مدير نظام التشغيل للاختبار"
 
-#: osmanagers/Test/testing_osmanager.py:82
-#: osmanagers/WindowsOsManager/windows.py:47
+#: osmanagers/Test/testing_osmanager.py:81
+#: osmanagers/WindowsOsManager/windows.py:46
 msgid ""
 "Maximum idle time (in seconds) before session is automatically closed to the "
 "user (<= 0 means no max. idle time)"
@@ -4584,11 +4594,11 @@ msgid ""
 "UDS Actor for Unmanaged windows machines. Used ONLY for static machines."
 msgstr "ممثل UDS لآلات النوافذ غير المدارة. تستخدم فقط للآلات الساكنة."
 
-#: osmanagers/WindowsOsManager/windows.py:32
+#: osmanagers/WindowsOsManager/windows.py:31
 msgid "Windows Basic OS Manager"
 msgstr "مدير نظام التشغيل ويندوز الأساسي"
 
-#: osmanagers/WindowsOsManager/windows.py:34
+#: osmanagers/WindowsOsManager/windows.py:33
 msgid "Os Manager to control windows machines without domain."
 msgstr "مدير نظام التشغيل للسيطرة على أجهزة ويندوز دون المجال."
 
@@ -4639,69 +4649,69 @@ msgstr ""
 "في حالة وجود عدة خوادم AD، أي واحد هو المفضل (يستخدم فقط لعمليات إزالة "
 "المجموعة والحساب)"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:146
+#: osmanagers/WindowsOsManager/windows_domain.py:147
 msgid "DOM\\USER form is not allowed! for account"
 msgstr "نموذج DOM\\USER غير مسموح به! لحساب"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:370
-#: osmanagers/WindowsOsManager/windows_domain.py:382
+#: osmanagers/WindowsOsManager/windows_domain.py:371
+#: osmanagers/WindowsOsManager/windows_domain.py:383
 msgid "Check error: {}"
 msgstr "التحقق من الخطأ: {}"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:372
+#: osmanagers/WindowsOsManager/windows_domain.py:373
 #, python-brace-format
 msgid "Could not find server parameters (_ldap._tcp.{0} can't be resolved)"
 msgstr "لا يمكن إيجاد معلمات الخادم (}ldap._tcp.{0} لا يمكن حلها"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:387
+#: osmanagers/WindowsOsManager/windows_domain.py:388
 msgid "Check Error: group \"{}\" not found (using \"cn\" to locate it)"
 msgstr ""
 "الاختيار الخطأ: مجموعة \"{}\" لم يتم العثور على (باستخدام \"cn\" للعثور عليه)"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:391
+#: osmanagers/WindowsOsManager/windows_domain.py:392
 msgid "Server check was successful"
 msgstr " اختيار الخادم كان ناجحا"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:405
+#: osmanagers/WindowsOsManager/windows_domain.py:406
 #, python-brace-format
 msgid "Could not access AD using LDAP ({0})"
 msgstr "لا يمكن الوصول إلى AD باستخدام LDAP ({0})"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:420
+#: osmanagers/WindowsOsManager/windows_domain.py:421
 msgid "The default path for computers was not found!!!"
 msgstr "لم يتم العثور على المسار الافتراضي لأجهزة الكمبيوتر !!!"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:424
+#: osmanagers/WindowsOsManager/windows_domain.py:425
 #, python-brace-format
 msgid "The ou path {0} was not found!!!"
 msgstr "لم يتم العثور على مسار OU {0} !!!"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:429
+#: osmanagers/WindowsOsManager/windows_domain.py:430
 #, python-brace-format
 msgid "Could not check parameters (_ldap._tcp.{0} can't be resolved)"
 msgstr "تعذر التحقق من المعلمات (لا يمكن حل _ldap._tcp.{0})"
 
-#: osmanagers/WindowsOsManager/windows_domain.py:434
+#: osmanagers/WindowsOsManager/windows_domain.py:435
 #, python-brace-format
 msgid "Unknown error: {0}"
 msgstr "خطأ غير معروف: {0}"
 
-#: osmanagers/WindowsOsManager/windows_random.py:59
+#: osmanagers/WindowsOsManager/windows_random.py:58
 msgid "Windows Random Password OS Manager"
 msgstr "مدير نظام التشغيل ويندوز بكلمة عشوائية "
 
-#: osmanagers/WindowsOsManager/windows_random.py:61
+#: osmanagers/WindowsOsManager/windows_random.py:60
 msgid ""
 "Os Manager to control windows machines, with user password set randomly."
 msgstr ""
 "مدير  نظام التشغيل للسيطرة على أجهزة ويندوز، مع كلمة المرور للمستخدم تحدد "
 "عشوائيا."
 
-#: osmanagers/WindowsOsManager/windows_random.py:76
+#: osmanagers/WindowsOsManager/windows_random.py:75
 msgid "Current (template) password of the user account"
 msgstr "كلمة مرور حساب المستخدم الحالية (قالب) "
 
-#: osmanagers/WindowsOsManager/windows_random.py:92
+#: osmanagers/WindowsOsManager/windows_random.py:91
 msgid "Must provide a password for the account!!!"
 msgstr "يجب توفير كلمة مرور للحساب !!!"
 
@@ -5106,7 +5116,8 @@ msgstr ""
 "تم الحصول عليها من مستخدم تم إنشاؤه على AWS IAM لـ UDS Enteprise - Keys"
 
 #: services/AWS_enterprise/provider.py:68
-#: services/Azure_enterprise/provider.py:98 services/OpenStack/provider.py:195
+#: services/Azure_enterprise/provider.py:98
+#: services/Google_enterprise/provider.py:88 services/OpenStack/provider.py:195
 msgid ""
 "Proxy used on server connections for HTTPS connections (use PROTOCOL://host:"
 "port, i.e. http://10.10.0.1:8080)"
@@ -5138,7 +5149,7 @@ msgstr "عدد السفن المطلوب للحفاظ على تشغيل الان
 #: services/AWS_enterprise/service.py:46
 #: services/Azure_enterprise/service.py:47
 #: services/HyperV_enterprise/service.py:75 services/OpenNebula/service.py:84
-#: services/Proxmox/service_linked.py:94
+#: services/Proxmox/service_linked.py:95
 #: services/ScaleComputing_enterprise/service.py:94
 msgid "Number of desired VMs to keep stopped waiting for use"
 msgstr "عدد الأجهزة الافتراضية المرغوبة لتظل متوقفة في انتظار الاستخدام"
@@ -5153,6 +5164,8 @@ msgstr "قاعدة AMI لهذه الخدمة"
 
 #: services/AWS_enterprise/service.py:67
 #: services/AWS_enterprise/service_fixed.py:80
+#: services/Google_enterprise/service.py:65
+#: services/Google_enterprise/service_fixed.py:80
 #: services/OpenStack/provider.py:171 services/OpenStack/service.py:109
 #: services/OpenStack/service_fixed.py:82
 msgid "Region"
@@ -5213,47 +5226,47 @@ msgid "Security groups for the instances from this service"
 msgstr "مجموعات الأمان للطبعات من هذه الخدمة"
 
 #: services/AWS_enterprise/service_fixed.py:59
-#| msgid "Fixed Machines Pool"
 msgid "AWS Fixed Machines"
 msgstr "أجهزة AWS الثابتة"
 
 #: services/AWS_enterprise/service_fixed.py:61
-#| msgid "Xen Services based on templates"
 msgid "AWS Services based on fixed machines."
 msgstr "خدمات AWS تعتمد على الأجهزة الثابتة."
 
 #: services/AWS_enterprise/service_fixed.py:82
+#: services/Google_enterprise/service_fixed.py:82
 #: services/OpenStack/service.py:111 services/OpenStack/service_fixed.py:84
 msgid "Service region"
 msgstr "منطقة الخدمة"
 
 #: services/AWS_enterprise/service_fixed.py:93
-#: services/Azure_enterprise/service_fixed.py:102
-#: services/NutanixPrism_enterprise/service_fixed.py:101
-#: services/ScaleComputing_enterprise/service_fixed.py:84
-#| msgid "Calendar logout"
+#: services/Azure_enterprise/service_fixed.py:101
+#: services/Google_enterprise/service_fixed.py:93
+#: services/NutanixPrism_enterprise/service_fixed.py:102
+#: services/ScaleComputing_enterprise/service_fixed.py:85
 msgid "After logout"
 msgstr "بعد تسجيل الخروج"
 
 #: services/AWS_enterprise/service_fixed.py:96
-#: services/Azure_enterprise/service_fixed.py:105
-#: services/NutanixPrism_enterprise/service_fixed.py:104
-#: services/ScaleComputing_enterprise/service_fixed.py:87
+#: services/Azure_enterprise/service_fixed.py:104
+#: services/Google_enterprise/service_fixed.py:96
+#: services/NutanixPrism_enterprise/service_fixed.py:105
+#: services/ScaleComputing_enterprise/service_fixed.py:88
 msgid "Select the action to be performed after the user logs out."
 msgstr "حدد الإجراء الذي سيتم تنفيذه بعد تسجيل خروج المستخدم."
 
 #: services/AWS_enterprise/service_fixed.py:99
-#: services/Azure_enterprise/service_fixed.py:108
-#: services/NutanixPrism_enterprise/service_fixed.py:107
-#: services/ScaleComputing_enterprise/service_fixed.py:90
-#| msgid "Font Smoothing"
+#: services/Azure_enterprise/service_fixed.py:107
+#: services/Google_enterprise/service_fixed.py:99
+#: services/NutanixPrism_enterprise/service_fixed.py:108
+#: services/ScaleComputing_enterprise/service_fixed.py:91
 msgid "Do Nothing"
 msgstr "لا تفعل شيئا"
 
 #: services/AWS_enterprise/service_fixed.py:100
-#: services/NutanixPrism_enterprise/service_fixed.py:108
-#: services/ScaleComputing_enterprise/service_fixed.py:91
-#| msgid "NoMachine"
+#: services/Google_enterprise/service_fixed.py:100
+#: services/NutanixPrism_enterprise/service_fixed.py:109
+#: services/ScaleComputing_enterprise/service_fixed.py:92
 msgid "Stop Machine"
 msgstr "آلة التوقف"
 
@@ -5266,6 +5279,7 @@ msgid "Obtained from subscriptions"
 msgstr "التي تم الحصول عليها من اشتراكات"
 
 #: services/Azure_enterprise/provider.py:87
+#: services/Google_enterprise/provider.py:77
 msgid "Timeout in seconds of connections server"
 msgstr "المهلة بالثواني لاتصالات الخادم"
 
@@ -5286,12 +5300,12 @@ msgid "This service provides access to Azure VMs based VDI"
 msgstr "توفر هذه الخدمة إمكانية الوصول إلى \"نظام رصد السفن أزور\" أساس VDI"
 
 #: services/Azure_enterprise/service.py:60
-#: services/Azure_enterprise/service_fixed.py:85
+#: services/Azure_enterprise/service_fixed.py:83
 msgid "Resource Group"
 msgstr "مجموعة الموارد"
 
 #: services/Azure_enterprise/service.py:61
-#: services/Azure_enterprise/service_fixed.py:86
+#: services/Azure_enterprise/service_fixed.py:84
 msgid "Resource group container of this VDI service"
 msgstr "حاوية مجموعة الموارد هذه الخدمة VDI"
 
@@ -5359,23 +5373,141 @@ msgstr ""
 "تفعيل هذا الخيار لاستخدام الشبكات المتسارعة على vm. التأكد من أن لديك حجم "
 "الجهاز والجهاز يدعم هذا الخيار قبل تنشيط."
 
-#: services/Azure_enterprise/service.py:171
+#: services/Azure_enterprise/service.py:173
 msgid "You must select a network for the service"
 msgstr "يجب عليك تحديد شبكة للخدمة"
 
 #: services/Azure_enterprise/service_fixed.py:59
-#| msgid "Nutanix Fixed Machines"
 msgid "Azure Fixed Machines"
 msgstr "الأجهزة الثابتة Azure"
 
-#: services/Azure_enterprise/service_fixed.py:62
-#| msgid "Xen Services based on templates"
+#: services/Azure_enterprise/service_fixed.py:61
 msgid "Azure Services based on fixed machines."
 msgstr "خدمات Azure القائمة على الأجهزة الثابتة."
 
-#: services/Azure_enterprise/service_fixed.py:109
+#: services/Azure_enterprise/service_fixed.py:108
 msgid "Stop Machine (and deallocates it)"
 msgstr "إيقاف الجهاز (وإلغاء تخصيصه)"
+
+#: services/Google_enterprise/provider.py:40
+#| msgid "Client ID"
+msgid "Client Email"
+msgstr "البريد الإلكتروني للعميل"
+
+#: services/Google_enterprise/provider.py:42
+msgid "Client email for service account"
+msgstr "بريد إلكتروني للعميل لحساب الخدمة"
+
+#: services/Google_enterprise/provider.py:47
+msgid "Token URI"
+msgstr "رمز URI"
+
+#: services/Google_enterprise/provider.py:49
+msgid "Token URL, as provided by Google (default is for Google Cloud)"
+msgstr ""
+"عنوان URL للرمز، كما توفره Google (الإعداد الافتراضي هو لـ Google Cloud)"
+
+#: services/Google_enterprise/provider.py:56
+#| msgid "Private key"
+msgid "Private Key"
+msgstr "مفتاح خاص"
+
+#: services/Google_enterprise/provider.py:58
+msgid "Private key for service account"
+msgstr "مفتاح خاص لحساب الخدمة"
+
+#: services/Google_enterprise/provider.py:63
+#| msgid "Project Id"
+msgid "Project ID"
+msgstr "معرف المشروع"
+
+#: services/Google_enterprise/provider.py:65
+msgid "Project ID for Google Cloud"
+msgstr "معرف المشروع لـ Google Cloud"
+
+#: services/Google_enterprise/provider.py:97
+#| msgid "Service region"
+msgid "Preferred Region"
+msgstr "المنطقة المفضلة"
+
+#: services/Google_enterprise/provider.py:99
+#| msgid "Region for this service"
+msgid "Preferred region for new services"
+msgstr "المنطقة المفضلة للخدمات الجديدة"
+
+#: services/Google_enterprise/provider.py:110
+#| msgid "Scale Platform Provider"
+msgid "Google Cloud Provider"
+msgstr "مزود خدمة Google Cloud"
+
+#: services/Google_enterprise/provider.py:112
+#| msgid "Provides connection to vCloud Director platform"
+msgid "Provides connection to Google Cloud Compute Engine"
+msgstr "يوفر اتصالاً بمحرك الحوسبة السحابية من Google"
+
+#: services/Google_enterprise/provider.py:157
+#| msgid "Connection test successful"
+msgid "Connection successful"
+msgstr "تم الاتصال بنجاح"
+
+#: services/Google_enterprise/provider.py:158
+#| msgid "Connection failed: {}"
+msgid "Connection failed"
+msgstr "فشل الاتصال"
+
+#: services/Google_enterprise/service.py:42
+#| msgid "Base Template"
+msgid "VDI From Template"
+msgstr "VDI من القالب"
+
+#: services/Google_enterprise/service.py:44
+#| msgid "This service provides access to Azure VMs based VDI"
+msgid "This service provides access to Google instances based on a template"
+msgstr "توفر هذه الخدمة إمكانية الوصول إلى مثيلات Google استنادًا إلى قالب"
+
+#: services/Google_enterprise/service.py:48
+#| msgid "Number of desired machines to keep running waiting for an user"
+msgid "Number of desired Instances to keep running waiting for an user"
+msgstr "عدد الحالات المطلوبة للاستمرار في التشغيل في انتظار مستخدم"
+
+#: services/Google_enterprise/service.py:50
+#| msgid "Number of desired machines to keep stopped waiting for use"
+msgid "Number of desired Instances to keep stopped waiting for use"
+msgstr "عدد الحالات المطلوبة لإبقائها متوقفة في انتظار الاستخدام"
+
+#: services/Google_enterprise/service.py:66
+#| msgid "Network on which the machine will be deployed"
+msgid "Region where the service will be deployed"
+msgstr "المنطقة التي سيتم نشر الخدمة فيها"
+
+#: services/Google_enterprise/service.py:78
+#| msgid "Instance type"
+msgid "Instances zone"
+msgstr "منطقة الحالات"
+
+#: services/Google_enterprise/service.py:79
+#| msgid "Network on which the machine will be deployed"
+msgid "Zone where the instances will be deployed"
+msgstr "المنطقة التي سيتم نشر الحالات فيها"
+
+#: services/Google_enterprise/service.py:85
+msgid "Template Instance"
+msgstr "نموذج القالب"
+
+#: services/Google_enterprise/service.py:86
+#| msgid "Key pair to use for this machine"
+msgid "Template to use for instances"
+msgstr "قالب للاستخدام في الحالات"
+
+#: services/Google_enterprise/service_fixed.py:59
+#| msgid "AWS Fixed Machines"
+msgid "Fixed Instances"
+msgstr "الحالات الثابتة"
+
+#: services/Google_enterprise/service_fixed.py:61
+#| msgid "Azure Services based on fixed machines."
+msgid "Google Services based on fixed instances."
+msgstr "خدمات Google تعتمد على حالات ثابتة."
 
 #: services/HyperV_enterprise/provider.py:42
 msgid "HyperV Platform Provider"
@@ -5450,7 +5582,7 @@ msgid "Hyper Services based on templates and differential disks"
 msgstr "خدمات عالية تعتمد على القوالب والأقراص التفاضلية"
 
 #: services/HyperV_enterprise/service.py:73 services/OVirt/service_linked.py:83
-#: services/Proxmox/service_linked.py:88
+#: services/Proxmox/service_linked.py:89
 #: services/ScaleComputing_enterprise/service.py:88 services/Xen/service.py:83
 msgid "Number of desired machines to keep running waiting for a user"
 msgstr "عدد من الآلات المطلوبة للحفاظ على التوالي في انتظار المستخدم"
@@ -5484,7 +5616,6 @@ msgid "Memory for machines deployed from this service"
 msgstr "الذاكرة لآلات تم نشرها من هذه الخدمة"
 
 #: services/HyperV_enterprise/service.py:122
-#| msgid "Reserved Space"
 msgid "Reserved Storage Space"
 msgstr "مساحة تخزين محجوزة"
 
@@ -5521,15 +5652,11 @@ msgid ""
 "If checked, compatibility for migration will be enabled for this service"
 msgstr "إذا تم تحديده ، فسيتم تمكين التوافق مع الترحيل لهذه الخدمة"
 
-#: services/HyperV_enterprise/service_fixed.py:59
-#| msgid "Proxmox Fixed Machines"
+#: services/HyperV_enterprise/service_fixed.py:58
 msgid "HyperV Fixed Machines"
 msgstr "الأجهزة الثابتة HyperV"
 
-#: services/HyperV_enterprise/service_fixed.py:61
-#| msgid ""
-#| "Proxmox Services based on fixed machines. Needs qemu agent installed on "
-#| "machines."
+#: services/HyperV_enterprise/service_fixed.py:60
 msgid ""
 "HyperV Services based on fixed machines. Needs qemu agent installed on "
 "machines."
@@ -5546,12 +5673,10 @@ msgid "Nutanix Prism Central based VM provider"
 msgstr "مزود VM يستند إلى Nutanix Prism Central"
 
 #: services/NutanixPrism_enterprise/provider.py:43
-#| msgid "Nutanix Acropolis Server IP or Hostname"
 msgid "Nutanix Prism Central Server IP or Hostname"
 msgstr "Nutanix Prism Central Server IP أو اسم المضيف"
 
 #: services/NutanixPrism_enterprise/provider.py:51
-#| msgid "Nutanix Acropolis server Port (default 9440)"
 msgid "Nutanix Prism Central server Port (default 9440)"
 msgstr "منفذ خادم Nutanix Prism المركزي (الافتراضي 9440)"
 
@@ -5560,7 +5685,6 @@ msgid "User with valid privileges on Nutanix Prism Central"
 msgstr "مستخدم بامتيازات صالحة على Nutanix Prism Central"
 
 #: services/NutanixPrism_enterprise/provider.py:65
-#| msgid "Password of the user of Nutanix  Prism Central"
 msgid "Password of the user of Nutanix Prism Central"
 msgstr "كلمة المرور لمستخدم Nutanix Prism Central"
 
@@ -5575,7 +5699,7 @@ msgstr "اتصال يعمل بشكل جيد"
 
 #: services/NutanixPrism_enterprise/provider.py:142
 #: services/Nutanix_enterprise/provider.py:154 services/OVirt/provider.py:242
-#: services/Proxmox/provider.py:245
+#: services/Proxmox/provider.py:255
 #: services/ScaleComputing_enterprise/provider.py:140
 #: services/Vmware_enterprise/provider.py:174
 msgid "Connection failed. Check connection params"
@@ -5602,7 +5726,7 @@ msgstr "اختر مشروعًا"
 
 #: services/NutanixPrism_enterprise/service.py:73
 #: services/Nutanix_enterprise/service.py:61
-#: services/OVirt/service_linked.py:142 services/Proxmox/service_linked.py:136
+#: services/OVirt/service_linked.py:142 services/Proxmox/service_linked.py:140
 #: services/Xen/service.py:126
 msgid "Service base machine"
 msgstr "آلة قاعدة الخدمة"
@@ -5650,24 +5774,19 @@ msgid "Yes"
 msgstr "نعم"
 
 #: services/NutanixPrism_enterprise/service.py:124
-#| msgid "None"
 msgid "No"
 msgstr "لا"
 
-#: services/NutanixPrism_enterprise/service.py:153
-#: services/Nutanix_enterprise/service.py:136
+#: services/NutanixPrism_enterprise/service.py:154
+#: services/Nutanix_enterprise/service.py:138
 msgid "Both Cores per VCPU and Number of VCPUS are required"
 msgstr "كلا النوى لكل VCPU وعدد VCPUS مطلوبان"
 
 #: services/NutanixPrism_enterprise/service_fixed.py:59
-#| msgid "Proxmox Fixed Machines"
 msgid "Prism Central Fixed Machines"
 msgstr "بريزم للآلات الثابتة المركزية"
 
 #: services/NutanixPrism_enterprise/service_fixed.py:62
-#| msgid ""
-#| "Proxmox Services based on fixed machines. Needs qemu agent installed on "
-#| "machines."
 msgid ""
 "Prism Central Services based on fixed machines. Needs qemu agent installed "
 "on machines."
@@ -5746,7 +5865,6 @@ msgstr ""
 "الأجهزة."
 
 #: services/OVirt/provider.py:75
-#| msgid "oVirt/RHEV Platform Provider"
 msgid "oVirt/OLVM Platform Provider"
 msgstr "مزود منصة oVirt/OLVM"
 
@@ -5755,12 +5873,10 @@ msgid "oVirt platform service provider"
 msgstr "oVirt مزود خدمة منصة."
 
 #: services/OVirt/provider.py:96
-#| msgid "oVirt Server Version"
 msgid "Server Version"
 msgstr "إصدار الخادم"
 
 #: services/OVirt/provider.py:97
-#| msgid "oVirt Server Version"
 msgid "oVirt/OVLM Server Version"
 msgstr "إصدار خادم oVirt/OVLM"
 
@@ -5769,7 +5885,6 @@ msgid "oVirt Server IP or Hostname"
 msgstr "IP خادم oVirt أو اسم المضيف"
 
 #: services/OVirt/provider.py:119
-#| msgid "oVirt Server IP or Hostname"
 msgid "oVirt Server Port"
 msgstr "منفذ خادم أوفيرت"
 
@@ -5778,7 +5893,6 @@ msgid "Password of the user of oVirt"
 msgstr "كلمة السر للمستخدم من oVirt"
 
 #: services/OVirt/provider.py:240
-#| msgid "Connection to Radius server failed"
 msgid "Connection to oVirt server is ok"
 msgstr "الاتصال بخادم oVirt على ما يرام"
 
@@ -5796,7 +5910,7 @@ msgid "oVirt Services based on templates and COW (experimental)"
 msgstr "الخدمات oVirt استنادا إلى قوالب و COW (التجريبية)."
 
 #: services/OVirt/service_linked.py:89 services/OpenStack/service.py:92
-#: services/Vmware_enterprise/service_full.py:40 services/Xen/service.py:89
+#: services/Vmware_enterprise/service_full.py:38 services/Xen/service.py:89
 msgid "Number of desired machines to keep suspended waiting for use"
 msgstr "عدد من الآلات المطلوبة للحفاظ على تعليق انتظار للاستخدام"
 
@@ -5918,7 +6032,7 @@ msgstr "الأجهزة الفعلية OpenGnsys"
 
 #: services/OpenGnsys/service.py:78 services/OpenNebula/service.py:78
 #: services/OpenStack/service.py:89 services/Vmware_enterprise/service.py:48
-#: services/Vmware_enterprise/service_full.py:38
+#: services/Vmware_enterprise/service_full.py:36
 msgid "Number of desired machines to keep running waiting for an user"
 msgstr "عدد من الآلات المطلوبة للحفاظ على تشغيل انتظار للمستخدم."
 
@@ -6079,12 +6193,10 @@ msgstr ""
 "https://10.0.0.1/identity). لا تقم بتضمين / v3."
 
 #: services/OpenStack/provider.py:113
-#| msgid "SMS authentication method"
 msgid "Authentication method"
 msgstr "طريقة المصادقة"
 
 #: services/OpenStack/provider.py:115
-#| msgid "Authentication Code"
 msgid "Authentication method to be used"
 msgstr "طريقة المصادقة المستخدمة"
 
@@ -6105,7 +6217,6 @@ msgid "Username/Application Credential ID"
 msgstr "اسم المستخدم/معرف اعتماد التطبيق"
 
 #: services/OpenStack/provider.py:143
-#| msgid "User with valid privileges on OpenStack"
 msgid ""
 "User with valid privileges on OpenStack/Application Credential ID with valid "
 "privileges"
@@ -6118,7 +6229,6 @@ msgid "Password/Application Credential Secret"
 msgstr "كلمة المرور/سر بيانات اعتماد التطبيق"
 
 #: services/OpenStack/provider.py:151
-#| msgid "Password of the user of OpenStack"
 msgid "Password of the user of OpenStack/Application Credential Secret"
 msgstr "كلمة مرور مستخدم OpenStack/Application Credential Secret"
 
@@ -6150,7 +6260,7 @@ msgid "Project Id not allowed when using Application Credential"
 msgstr "معرف المشروع غير مسموح به عند استخدام بيانات اعتماد التطبيق"
 
 #: services/OpenStack/provider.py:263
-#: services/VCloud_enterprise/provider.py:162
+#: services/VCloud_enterprise/provider.py:163
 msgid "Error: {}"
 msgstr "خطأ: {}"
 
@@ -6239,12 +6349,10 @@ msgid "Service security groups"
 msgstr "مجموعات أمان الخدمة"
 
 #: services/OpenStack/service_fixed.py:61
-#| msgid "Nutanix Fixed Machines"
 msgid "OpenStack Fixed Machines"
 msgstr "الآلات الثابتة OpenStack"
 
 #: services/OpenStack/service_fixed.py:63
-#| msgid "Xen Services based on templates"
 msgid "OpenStack Services based on fixed machines."
 msgstr "خدمات OpenStack تعتمد على الأجهزة الثابتة."
 
@@ -6355,15 +6463,14 @@ msgid ""
 "IP or FQDN of the server to connect to. Can include MAC address separated by "
 "\";\" after the IP/Hostname"
 msgstr ""
-"IP أو FQDN للخادم المراد الاتصال به. يمكن أن يتضمن عنوان MAC مفصولاً بـ \";\""
-" بعد عنوان IP/اسم المضيف"
+"IP أو FQDN للخادم المراد الاتصال به. يمكن أن يتضمن عنوان MAC مفصولاً بـ \";\" "
+"بعد عنوان IP/اسم المضيف"
 
 #: services/PhysicalMachines/service_single.py:90
 msgid "Invalid server used: \"{}\""
 msgstr "تم استخدام خادم غير صالح: \"{}\""
 
 #: services/PhysicalMachines/service_single.py:93
-#| msgid "Invalid server used: \"{}\""
 msgid "Invalid MAC address used: \"{}\""
 msgstr "تم استخدام عنوان MAC غير صالح: \"{}\""
 
@@ -6391,26 +6498,38 @@ msgstr "Proxmox Server IP أو اسم المضيف"
 msgid "Proxmox API port (default is 8006)"
 msgstr "منفذ API Proxmox (الافتراضي هو 8006)"
 
+#: services/Proxmox/provider.py:86
+msgid "Use API Token"
+msgstr "استخدم رمز API"
+
 #: services/Proxmox/provider.py:89
+msgid ""
+"Use API Token and secret instead of password. (username must contain the "
+"Token ID, the password will be the secret)"
+msgstr ""
+"استخدم رمز API والسر بدلاً من كلمة المرور. (يجب أن يحتوي اسم المستخدم على "
+"معرف الرمز، وستكون كلمة المرور هي السر)"
+
+#: services/Proxmox/provider.py:98
 msgid ""
 "User with valid privileges on Proxmox, (use \"user@authenticator\" form)"
 msgstr ""
 "مستخدم لديه امتيازات صالحة في Proxmox ، (استخدم نموذج \"user @ "
 "Authenticator\")"
 
-#: services/Proxmox/provider.py:97
+#: services/Proxmox/provider.py:106
 msgid "Password of the user of Proxmox"
 msgstr "كلمة مرور مستخدم Proxmox"
 
-#: services/Proxmox/provider.py:107
+#: services/Proxmox/provider.py:116
 msgid "Starting VmId"
 msgstr "بدء تشغيل VmId"
 
-#: services/Proxmox/provider.py:112
+#: services/Proxmox/provider.py:121
 msgid "Starting machine id on proxmox"
 msgstr "جارٍ بدء معرف الجهاز في proxmox"
 
-#: services/Proxmox/provider.py:243
+#: services/Proxmox/provider.py:253
 #: services/ScaleComputing_enterprise/provider.py:138
 msgid "Test passed"
 msgstr "نجح الاختبار"
@@ -6438,61 +6557,53 @@ msgstr "تجمع الموارد"
 msgid "Resource Pool containing base machines"
 msgstr "تجمع الخدمات يحتوي على الات مرجعية "
 
-#: services/Proxmox/service_linked.py:70
+#: services/Proxmox/service_linked.py:71
 msgid "Proxmox Linked Clone"
 msgstr "Proxmox مرتبط استنساخ"
 
-#: services/Proxmox/service_linked.py:74
+#: services/Proxmox/service_linked.py:75
 msgid "Proxmox Services based on templates and COW"
 msgstr "خدمات Proxmox على أساس القوالب والأبقار"
 
-#: services/Proxmox/service_linked.py:113
+#: services/Proxmox/service_linked.py:114
 msgid "Pool that will contain UDS created vms"
 msgstr "تجمع التي سوف تحتوي على UDS vms التي تم إنشاؤها"
 
-#: services/Proxmox/service_linked.py:120
+#: services/Proxmox/service_linked.py:121
 msgid "HA"
 msgstr "HA"
 
-#: services/Proxmox/service_linked.py:122
+#: services/Proxmox/service_linked.py:123
 msgid "Select if HA is enabled and HA group for machines of this service"
 msgstr "حدد ما إذا تم تمكين HA ومجموعة HA لأجهزة هذه الخدمة"
 
-#: services/Proxmox/service_linked.py:142
+#: services/Proxmox/service_linked.py:146
 msgid "Storage"
 msgstr "تخزين"
 
-#: services/Proxmox/service_linked.py:145
+#: services/Proxmox/service_linked.py:149
 msgid "Storage for publications & machines."
 msgstr "تخزين للمنشورات والآلات."
 
-#: services/Proxmox/service_linked.py:151
+#: services/Proxmox/service_linked.py:155
 msgid "GPU Availability"
 msgstr "توفر GPU"
 
-#: services/Proxmox/service_linked.py:155
+#: services/Proxmox/service_linked.py:159
 msgid "Do not check"
 msgstr "لا تتحقق"
 
-#: services/Proxmox/service_linked.py:156
+#: services/Proxmox/service_linked.py:160
 msgid "Only if available"
 msgstr "فقط إذا كان ذلك متاحًا"
 
-#: services/Proxmox/service_linked.py:157
+#: services/Proxmox/service_linked.py:161
 msgid "Only if NOT available"
 msgstr "فقط إذا لم يكن متاحًا"
 
-#: services/Proxmox/service_linked.py:159
+#: services/Proxmox/service_linked.py:163
 msgid "Checking method for GPU availability"
 msgstr "طريقة التحقق من توفر GPU"
-
-#: services/RDS_enterprise/config.py:10
-msgid ""
-"Maximum time in seconds a session can be active without being used. After "
-"this time, the session will be considered terminated."
-msgstr ""
-"الحد الأقصى للوقت بالثواني الذي يمكن أن تكون فيه الجلسة نشطة دون استخدامها. "
-"وبعد هذا الوقت، سيتم اعتبار الجلسة منتهية."
 
 #: services/RDS_enterprise/provider.py:74
 msgid "RDS Platform Provider"
@@ -6882,66 +6993,51 @@ msgid "List of names"
 msgstr "قائمة بأسماء"
 
 #: services/ScaleComputing_enterprise/provider.py:38
-#| msgid "AWS Platform Provider"
 msgid "Scale Platform Provider"
 msgstr "مزود منصة النطاق"
 
 #: services/ScaleComputing_enterprise/provider.py:40
-#| msgid "OpenStack platform service provider"
 msgid "Scale platform service provider"
 msgstr "مزود خدمة منصة النطاق"
 
 #: services/ScaleComputing_enterprise/provider.py:49
-#| msgid "Ldap Server IP or Hostname"
 msgid "Scale Server IP or Hostname"
 msgstr "قم بقياس عنوان IP للخادم أو اسم المضيف"
 
 #: services/ScaleComputing_enterprise/provider.py:56
-#| msgid "AD LDAPS port (default is 636)"
 msgid "Scale API port (default is 443)"
 msgstr "منفذ API للقياس (الافتراضي هو 443)"
 
 #: services/ScaleComputing_enterprise/provider.py:65
-#| msgid ""
-#| "User with valid privileges on Proxmox, (use \"user@authenticator\" form)"
 msgid "User with valid privileges on Scale, (use \"user@authenticator\" form)"
 msgstr ""
 "مستخدم لديه امتيازات صالحة على Scale، (استخدم نموذج \"user@authenticator\")"
 
 #: services/ScaleComputing_enterprise/provider.py:73
-#| msgid "Password of the user of HyperV"
 msgid "Password of the user of Scale"
 msgstr "كلمة المرور الخاصة بمستخدم برنامج Scale"
 
 #: services/ScaleComputing_enterprise/service.py:70
-#| msgid "HyperV Clone"
 msgid "Scale Clone"
 msgstr "استنساخ النطاق"
 
 #: services/ScaleComputing_enterprise/service.py:74
-#| msgid "Xen Services based on templates"
 msgid "Scale Services based on templates"
 msgstr "خدمات النطاق على أساس القوالب"
 
-#: services/ScaleComputing_enterprise/service.py:117
-#| msgid "Machine Group"
+#: services/ScaleComputing_enterprise/service.py:119
 msgid "Machines Group"
 msgstr "مجموعة الآلات"
 
-#: services/ScaleComputing_enterprise/service.py:118
-#| msgid "Memory assigned to machines"
+#: services/ScaleComputing_enterprise/service.py:120
 msgid "Group to assign the machine to"
 msgstr "مجموعة لتعيين الجهاز ل"
 
 #: services/ScaleComputing_enterprise/service_fixed.py:57
-#| msgid "Nutanix Fixed Machines"
 msgid "Scale Computing Fixed Machines"
 msgstr "مقياس الحوسبة للآلات الثابتة"
 
 #: services/ScaleComputing_enterprise/service_fixed.py:60
-#| msgid ""
-#| "Nutanix Services based on fixed machines. Needs qemu agent installed on "
-#| "machines."
 msgid ""
 "Scale Computing Services based on fixed machines. Needs qemu agent installed "
 "on machines."
@@ -6949,8 +7045,7 @@ msgstr ""
 "توسيع نطاق خدمات الحوسبة بناءً على الأجهزة الثابتة. يحتاج إلى وكيل qemu "
 "المثبت على الأجهزة."
 
-#: services/ScaleComputing_enterprise/service_fixed.py:101
-#| msgid "We need at least a machine"
+#: services/ScaleComputing_enterprise/service_fixed.py:102
 msgid "We need at least one machine"
 msgstr "نحن بحاجة إلى آلة واحدة على الأقل"
 
@@ -7006,11 +7101,11 @@ msgstr "كلمة المرور للمستخدم ل vCloud"
 msgid "Select your vCloud version"
 msgstr "اختر نسخة vCloud الخاصة بك"
 
-#: services/VCloud_enterprise/provider.py:91
+#: services/VCloud_enterprise/provider.py:92
 msgid "VCloud Director Platform Provider"
 msgstr "VCloud مدير موفر منصة"
 
-#: services/VCloud_enterprise/provider.py:93
+#: services/VCloud_enterprise/provider.py:94
 msgid "Provides connection to vCloud Director platform"
 msgstr "يوفر الاتصال بمنصة vCloud المدير"
 
@@ -7131,7 +7226,6 @@ msgid "Datacenter containing base machine"
 msgstr "مراكز البيانات التي تحتوي على آلة قاعدة"
 
 #: services/Vmware_enterprise/service.py:73
-#| msgid "Resource Pool"
 msgid "Clones Resource Pool"
 msgstr "تجمع موارد النسخ"
 
@@ -7140,7 +7234,6 @@ msgid "Resource Pool where deploy clones"
 msgstr "تجمع موارد حيث نشر النسخ."
 
 #: services/Vmware_enterprise/service.py:80
-#| msgid "Pub.Datastores"
 msgid "Pub. Datastores"
 msgstr "حانة. مخازن البيانات"
 
@@ -7177,7 +7270,6 @@ msgid "Folder where deploy clones"
 msgstr "المجلد حيث نشر النسخ"
 
 #: services/Vmware_enterprise/service.py:140
-#| msgid "Datastore"
 msgid "Datastores"
 msgstr "مخازن البيانات"
 
@@ -7201,7 +7293,7 @@ msgstr ""
 msgid "Clone based - Full"
 msgstr "استنساخ على أساس-كامل"
 
-#: services/Vmware_enterprise/service_full.py:33
+#: services/Vmware_enterprise/service_full.py:32
 msgid ""
 "This service provides access to FULL Cloned machines on a Virtual Center"
 msgstr ""
@@ -7220,7 +7312,6 @@ msgid "XenServer Server IP or Hostname"
 msgstr "IP خادم XenServer أو اسم المضيف"
 
 #: services/Xen/provider.py:114
-#| msgid "XenServer Server IP or Hostname"
 msgid "XenServer Server Port"
 msgstr "منفذ خادم زينسيرفر"
 
@@ -7281,14 +7372,10 @@ msgid "Shadow memory multiplier (use with care)"
 msgstr "مضاعف ذاكرة الظل (استخدم بعناية)"
 
 #: services/Xen/service_fixed.py:60
-#| msgid "Nutanix Fixed Machines"
 msgid "Xen Fixed Machines"
 msgstr "آلات زين الثابتة"
 
 #: services/Xen/service_fixed.py:62
-#| msgid ""
-#| "Nutanix Services based on fixed machines. Needs qemu agent installed on "
-#| "machines."
 msgid ""
 "Xen Services based on fixed machines. Needs xen agent installed on machines."
 msgstr ""
@@ -7302,47 +7389,47 @@ msgstr "مجلد"
 msgid "Folder containing base machines"
 msgstr "مجلد يحتوي على الآلات الأساسية"
 
-#: temp_for_locales.py:145
+#: temp_for_locales.py:146
 msgid "Spanish"
 msgstr "الأسبانية"
 
-#: temp_for_locales.py:146
+#: temp_for_locales.py:147
 msgid "English"
 msgstr "الإنجليزية"
 
-#: temp_for_locales.py:147
+#: temp_for_locales.py:148
 msgid "French"
 msgstr "الفرنسية"
 
-#: temp_for_locales.py:148
+#: temp_for_locales.py:149
 msgid "German"
 msgstr "ألمانية"
 
-#: temp_for_locales.py:149
+#: temp_for_locales.py:150
 msgid "Portuguese"
 msgstr "البرتغالية"
 
-#: temp_for_locales.py:150
+#: temp_for_locales.py:151
 msgid "Italian"
 msgstr "الإيطالي"
 
-#: temp_for_locales.py:151
+#: temp_for_locales.py:152
 msgid "Basque"
 msgstr "الباسكي"
 
-#: temp_for_locales.py:152
+#: temp_for_locales.py:153
 msgid "Arabic"
 msgstr "عربى"
 
-#: temp_for_locales.py:153
+#: temp_for_locales.py:154
 msgid "Russian"
 msgstr "الروسية"
 
-#: temp_for_locales.py:154
+#: temp_for_locales.py:155
 msgid "Catalan"
 msgstr "الكاتالونية"
 
-#: temp_for_locales.py:155
+#: temp_for_locales.py:156
 msgid "Chinese"
 msgstr "صينى"
 
@@ -8448,7 +8535,6 @@ msgid "Launchs an external UDS customized URL"
 msgstr "تشغيل عنوان URL مخصص لـ UDS خارجي"
 
 #: transports/URL/url_custom.py:78
-#| msgid "Select windows behavior for new connections on HTML5"
 msgid "Select windows behavior for opening URL"
 msgstr "حدد سلوك Windows لفتح عنوان URL"
 
@@ -8548,15 +8634,15 @@ msgstr "قيمة الجودة المستخدمة في بعض الأشكال حز
 msgid "X2Go access (Experimental). Tunneled connection."
 msgstr "X2Go إتصال (تجريبية). اتصال النفق."
 
-#: web/util/authentication.py:98
+#: web/util/authentication.py:99
 msgid "Too many authentication errrors. User temporarily blocked"
 msgstr "الكثير من أخطاء التوثيق. المستخدم محظور مؤقتا"
 
-#: web/util/authentication.py:107
+#: web/util/authentication.py:108
 msgid "Access tried from an unallowed source"
 msgstr "تم محاولة الوصول من مصدر غير مسموح به"
 
-#: web/util/authentication.py:141
+#: web/util/authentication.py:142
 msgid "Invalid data"
 msgstr "بيانات غير صالحة"
 
@@ -8608,7 +8694,7 @@ msgstr ""
 msgid "Service not ready. Please, try again in a while."
 msgstr "الخدمة ليست جاهزة. من فضلك، حاول مرة أخرى في حين."
 
-#: web/util/services.py:462
+#: web/util/services.py:460
 msgid ""
 "Your service is being created, please, wait for a few seconds while we "
 "complete it.)"
@@ -8625,3 +8711,8 @@ msgstr "{} أيام"
 #: web/views/main.py:322
 msgid "{} hours"
 msgstr "{} ساعات"
+
+#: web/views/service.py:100
+#| msgid "Internal Database"
+msgid "Internal error"
+msgstr "خطأ داخلي"

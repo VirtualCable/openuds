@@ -16,12 +16,13 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-07 19:56+0200\n"
+"POT-Creation-Date: 2024-09-11 15:44+0200\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: Chinese (http://app.transifex.com/openuds/openuds/language/"
@@ -31,10 +32,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-
-#: static/admin/chunk-BDR7VDMH.js:3 static/admin/chunk-TAOUYBKI.js:3
-msgid "category"
-msgstr "类别"
 
 #: static/admin/translations-fakejs.js:3
 msgid "#POOLS_NUMBER# service pools"
@@ -61,7 +58,7 @@ msgstr "使用中的服务"
 #: static/admin/translations-fakejs.js:220
 #: static/admin/translations-fakejs.js:222
 #: static/admin/translations-fakejs.js:250
-#: static/admin/translations-fakejs.js:275 static/modern/main.js:1
+#: static/admin/translations-fakejs.js:275
 #: static/modern/translations-fakejs.js:35
 msgid "Error"
 msgstr "错误"
@@ -748,7 +745,6 @@ msgid "Maintenance mode for"
 msgstr "维护模式"
 
 #: static/admin/translations-fakejs.js:170
-#| msgid "Servers"
 msgid "Import Servers"
 msgstr "导入服务器"
 
@@ -1045,7 +1041,7 @@ msgstr "您确定要删除以下项目吗？"
 msgid "Deletion finished"
 msgstr "删除完成"
 
-#: static/admin/translations-fakejs.js:290 static/modern/main.js:1
+#: static/admin/translations-fakejs.js:290
 #: static/modern/translations-fakejs.js:7
 msgid "seconds"
 msgstr "秒"
@@ -1545,7 +1541,6 @@ msgid "Permissions"
 msgstr "权限"
 
 #: static/admin/translations-fakejs.js:502
-#| msgid "Export"
 msgid "Export CSV"
 msgstr "导出 CSV"
 
@@ -1734,56 +1729,6 @@ msgstr "登出"
 msgid "Close"
 msgstr "关"
 
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:26
-msgid "Launching service"
-msgstr "启动服务"
-
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:27
-msgid "Invalid UDS URL"
-msgstr "UDS URL 无效"
-
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:28
-#: static/modern/translations-fakejs.js:33
-msgid "Please wait until the service is launched."
-msgstr "请等待，直到该服务启动。"
-
-#: static/modern/main.js:1
-msgid ""
-"Remember that you will need the UDS client on your platform to access the "
-"service."
-msgstr "请记住，您将需要平台上的UDS客户端来访问服务。"
-
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:29
-#: static/modern/translations-fakejs.js:32
-msgid "Service ready"
-msgstr "服务就绪"
-
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:30
-msgid "UDS Client not launching"
-msgstr "UDS 客户端未启动"
-
-#: static/modern/main.js:1
-msgid ""
-"It seems that you don't have UDS Client installed. Please, install it from "
-"here:"
-msgstr "您似乎没有安装 UDS 客户端。请从这里安装它："
-
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:31
-msgid "UDS Client Download"
-msgstr "UDS客户端下载"
-
-#: static/modern/main.js:1
-msgid "Launching UDS Client, almost done."
-msgstr "启动 UDS 客户端，差不多完成了。"
-
-#: static/modern/main.js:1
-msgid "Error communicating with your service. Please, retry again."
-msgstr "与您的服务通信时出错。请重试。"
-
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:34
-msgid "Your session has expired. Please, login again"
-msgstr "您的会话已过期。请重新登录"
-
 #: static/modern/translations-fakejs.js:3
 #: static/modern/translations-fakejs.js:4
 msgid "Errors found"
@@ -1818,7 +1763,6 @@ msgid "This service is currently not accesible due to schedule restrictions."
 msgstr "由于时间表限制，目前无法访问此服务。"
 
 #: static/modern/translations-fakejs.js:13
-#| msgid "Service reseted"
 msgid "Service message"
 msgstr "服务讯息"
 
@@ -1871,6 +1815,36 @@ msgstr "我明白"
 #: static/modern/translations-fakejs.js:25
 msgid "Learn more"
 msgstr "学到更多"
+
+#: static/modern/translations-fakejs.js:26
+msgid "Launching service"
+msgstr "启动服务"
+
+#: static/modern/translations-fakejs.js:27
+msgid "Invalid UDS URL"
+msgstr "UDS URL 无效"
+
+#: static/modern/translations-fakejs.js:28
+#: static/modern/translations-fakejs.js:33
+msgid "Please wait until the service is launched."
+msgstr "请等待，直到该服务启动。"
+
+#: static/modern/translations-fakejs.js:29
+#: static/modern/translations-fakejs.js:32
+msgid "Service ready"
+msgstr "服务就绪"
+
+#: static/modern/translations-fakejs.js:30
+msgid "UDS Client not launching"
+msgstr "UDS 客户端未启动"
+
+#: static/modern/translations-fakejs.js:31
+msgid "UDS Client Download"
+msgstr "UDS客户端下载"
+
+#: static/modern/translations-fakejs.js:34
+msgid "Your session has expired. Please, login again"
+msgstr "您的会话已过期。请重新登录"
 
 #: static/modern/translations-fakejs.js:37
 msgid "You can access UDS Open Source code at"

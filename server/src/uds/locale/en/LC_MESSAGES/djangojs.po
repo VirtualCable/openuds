@@ -16,6 +16,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # , 2014
 # blafuente <blafuente@virtualcable.es>, 2014
 # Javier <jgonzalez@virtualcable.es>, 2014
@@ -25,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-07 19:56+0200\n"
+"POT-Creation-Date: 2024-09-11 15:44+0200\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: English (http://app.transifex.com/openuds/openuds/language/"
@@ -35,10 +36,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-#: static/admin/chunk-BDR7VDMH.js:3 static/admin/chunk-TAOUYBKI.js:3
-msgid "category"
-msgstr "category"
 
 #: static/admin/translations-fakejs.js:3
 msgid "#POOLS_NUMBER# service pools"
@@ -65,7 +62,7 @@ msgstr "Services in use"
 #: static/admin/translations-fakejs.js:220
 #: static/admin/translations-fakejs.js:222
 #: static/admin/translations-fakejs.js:250
-#: static/admin/translations-fakejs.js:275 static/modern/main.js:1
+#: static/admin/translations-fakejs.js:275
 #: static/modern/translations-fakejs.js:35
 msgid "Error"
 msgstr "Error"
@@ -752,7 +749,6 @@ msgid "Maintenance mode for"
 msgstr "Maintenance mode for"
 
 #: static/admin/translations-fakejs.js:170
-#| msgid "Servers"
 msgid "Import Servers"
 msgstr "Import Servers"
 
@@ -1049,7 +1045,7 @@ msgstr "Are you sure do you want to delete the following items?"
 msgid "Deletion finished"
 msgstr "Deletion finished"
 
-#: static/admin/translations-fakejs.js:290 static/modern/main.js:1
+#: static/admin/translations-fakejs.js:290
 #: static/modern/translations-fakejs.js:7
 msgid "seconds"
 msgstr "seconds"
@@ -1551,7 +1547,6 @@ msgid "Permissions"
 msgstr "Permissions"
 
 #: static/admin/translations-fakejs.js:502
-#| msgid "Export"
 msgid "Export CSV"
 msgstr "Export CSV"
 
@@ -1740,60 +1735,6 @@ msgstr "Logout"
 msgid "Close"
 msgstr "Close"
 
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:26
-msgid "Launching service"
-msgstr "Launching service"
-
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:27
-msgid "Invalid UDS URL"
-msgstr "Invalid UDS URL"
-
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:28
-#: static/modern/translations-fakejs.js:33
-msgid "Please wait until the service is launched."
-msgstr "Please wait until the service is launched."
-
-#: static/modern/main.js:1
-msgid ""
-"Remember that you will need the UDS client on your platform to access the "
-"service."
-msgstr ""
-"Remember that you will need the UDS client on your platform to access the "
-"service."
-
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:29
-#: static/modern/translations-fakejs.js:32
-msgid "Service ready"
-msgstr "Service ready"
-
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:30
-msgid "UDS Client not launching"
-msgstr "UDS Client not launching"
-
-#: static/modern/main.js:1
-msgid ""
-"It seems that you don't have UDS Client installed. Please, install it from "
-"here:"
-msgstr ""
-"It seems that you don't have UDS Client installed. Please, install it from "
-"here:"
-
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:31
-msgid "UDS Client Download"
-msgstr "UDS Client Download"
-
-#: static/modern/main.js:1
-msgid "Launching UDS Client, almost done."
-msgstr "Launching UDS Client, almost done."
-
-#: static/modern/main.js:1
-msgid "Error communicating with your service. Please, retry again."
-msgstr "Error communicating with your service. Please, retry again."
-
-#: static/modern/main.js:1 static/modern/translations-fakejs.js:34
-msgid "Your session has expired. Please, login again"
-msgstr "Your session has expired. Please, login again"
-
 #: static/modern/translations-fakejs.js:3
 #: static/modern/translations-fakejs.js:4
 msgid "Errors found"
@@ -1828,7 +1769,6 @@ msgid "This service is currently not accesible due to schedule restrictions."
 msgstr "This service is currently not accesible due to schedule restrictions."
 
 #: static/modern/translations-fakejs.js:13
-#| msgid "Service reseted"
 msgid "Service message"
 msgstr "Service message"
 
@@ -1881,6 +1821,36 @@ msgstr "I Understand"
 #: static/modern/translations-fakejs.js:25
 msgid "Learn more"
 msgstr "Learn more"
+
+#: static/modern/translations-fakejs.js:26
+msgid "Launching service"
+msgstr "Launching service"
+
+#: static/modern/translations-fakejs.js:27
+msgid "Invalid UDS URL"
+msgstr "Invalid UDS URL"
+
+#: static/modern/translations-fakejs.js:28
+#: static/modern/translations-fakejs.js:33
+msgid "Please wait until the service is launched."
+msgstr "Please wait until the service is launched."
+
+#: static/modern/translations-fakejs.js:29
+#: static/modern/translations-fakejs.js:32
+msgid "Service ready"
+msgstr "Service ready"
+
+#: static/modern/translations-fakejs.js:30
+msgid "UDS Client not launching"
+msgstr "UDS Client not launching"
+
+#: static/modern/translations-fakejs.js:31
+msgid "UDS Client Download"
+msgstr "UDS Client Download"
+
+#: static/modern/translations-fakejs.js:34
+msgid "Your session has expired. Please, login again"
+msgstr "Your session has expired. Please, login again"
 
 #: static/modern/translations-fakejs.js:37
 msgid "You can access UDS Open Source code at"
