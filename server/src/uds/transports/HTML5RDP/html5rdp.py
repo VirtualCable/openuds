@@ -35,6 +35,7 @@ import re
 import typing
 
 from django.utils.translation import gettext_noop as _
+from django.conf import settings
 
 from uds import models
 from uds.core import transports, types, ui, consts
@@ -247,7 +248,7 @@ class HTML5RDPTransport(transports.Transport):
         tab=types.ui.Tab.ADVANCED,
         old_field_name='forceNewWindow',
     )
-    
+
     security = ui.gui.ChoiceField(
         order=92,
         label=_('Security'),
@@ -428,7 +429,11 @@ class HTML5RDPTransport(transports.Transport):
             'enable-drive': as_txt(self.enable_file_sharing.value in ('true', 'down', 'up')),
             'disable-upload': as_txt(self.enable_file_sharing.value not in ('true', 'up')),
             'drive-path': f'/share/{user.uuid}',
-            'drive-name': 'UDSfs',
+            'drive-name': (
+                settings.GUACAMOLE_DRIVE_NAME
+                if hasattr(settings, 'GUACAMOLE_DRIVE_NAME') and settings.GUACAMOLE_DRIVE_NAME
+                else 'UDSfs'
+            ),
             'disable-copy': as_txt(self.enable_clipboard.value in ('dis-copy', 'disabled')),
             'disable-paste': as_txt(self.enable_clipboard.value in ('dis-paste', 'disabled')),
             'create-drive-path': 'true',
