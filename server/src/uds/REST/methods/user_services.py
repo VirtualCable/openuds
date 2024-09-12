@@ -202,10 +202,13 @@ class AssignedService(DetailHandler):
             raise self.invalid_item_response() from e
 
     # This is also used by CachedService, so we use "userServices" directly and is valid for both
-    def delete_item(self, parent: 'Model', item: str) -> None:
+    def delete_item(self, parent: 'Model', item: str, cache: bool = False) -> None:
         parent = ensure.is_instance(parent, models.ServicePool)
         try:
-            userservice: models.UserService = parent.userServices.get(uuid=process_uuid(item))
+            if cache:
+                userservice: models.UserService = parent.cached_users_services().get(uuid=process_uuid(item))
+            else:
+                userservice: models.UserService = parent.assigned_user_services().get(uuid=process_uuid(item))
         except Exception as e:
             logger.exception('delete_item')
             raise self.invalid_item_response() from e
@@ -305,6 +308,9 @@ class CachedService(AssignedService):
             {'actor_version': {'title': _('Actor version')}},
         ]
 
+    def delete_item(self, parent: 'Model', item: str, cache: bool = False) -> None:
+        return super().delete_item(parent, item, cache=True)
+
     def get_logs(self, parent: 'Model', item: str) -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.ServicePool)
         try:
@@ -322,7 +328,7 @@ class Groups(DetailHandler):
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
-        
+
         return [
             {
                 'id': group.uuid,
@@ -371,7 +377,7 @@ class Groups(DetailHandler):
 
     def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
         parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
-        
+
         group: models.Group = models.Group.objects.get(uuid=process_uuid(self._params['id']))
         parent.assignedGroups.add(group)
         log.log(
