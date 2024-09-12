@@ -38,7 +38,7 @@ from unittest import mock
 from uds import models
 from uds.core import services
 from uds.core.util.model import sql_now
-from uds.workers import deferred_deletion
+from uds.workers import deferred_deleter
 from uds.core.services.generics import exceptions as gen_exceptions
 
 from uds.core.consts import deferred_deletion as deferred_consts
@@ -171,7 +171,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
                 self.assertEqual(info.total_retries, 0)
 
         # Instantiate the Job
-        job = deferred_deletion.DeferredDeletionWorker(environment=mock.MagicMock())
+        job = deferred_deleter.DeferredDeletionWorker(environment=mock.MagicMock())
         to_delete = deferred_types.DeletionInfo.get_from_storage(deferred_types.DeferredStorageGroup.TO_DELETE)
         # Should be empty, both services and infos
         self.assertEqual(len(to_delete[0]), 0)
@@ -247,7 +247,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
         self.assertIsInstance(instance, fixtures.DynamicTestingServiceForDeferredDeletion)
 
         # Invoke add on worker with "execute_later" set to True, should not call execute_delete
-        deferred_deletion.DeferredDeletionWorker.add(instance, 'vmid_1', execute_later=True)
+        deferred_deleter.DeferredDeletionWorker.add(instance, 'vmid_1', execute_later=True)
         instance.mock.execute_delete.assert_not_called()
 
         # No entries deleting
@@ -255,7 +255,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
         # to_delete should contain one entry
         self.assertEqual(self.count_entries_on_storage(deferred_types.DeferredStorageGroup.TO_DELETE), 1)
 
-        job = deferred_deletion.DeferredDeletionWorker(environment=mock.MagicMock())
+        job = deferred_deleter.DeferredDeletionWorker(environment=mock.MagicMock())
         to_delete = deferred_types.DeletionInfo.get_from_storage(deferred_types.DeferredStorageGroup.TO_DELETE)
         # Should be empty, both services and infos
         self.assertEqual(len(to_delete[0]), 0)
@@ -328,7 +328,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
             with self.patch_for_worker(
                 is_deleted_side_effect=lambda *args: is_deleted,
             ) as (instance, dct):
-                deferred_deletion.DeferredDeletionWorker.add(instance, 'vmid1', execute_later=False)
+                deferred_deleter.DeferredDeletionWorker.add(instance, 'vmid1', execute_later=False)
 
                 # No entries in TO_DELETE_GROUP
                 self.assertEqual(self.count_entries_on_storage(deferred_types.DeferredStorageGroup.TO_DELETE), 0)
@@ -340,7 +340,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
                 # Fix last_check
                 self.set_last_check_expired()
 
-                job = deferred_deletion.DeferredDeletionWorker(environment=mock.MagicMock())
+                job = deferred_deleter.DeferredDeletionWorker(environment=mock.MagicMock())
                 job.run()
 
                 # Should have called is_deleted once
@@ -367,7 +367,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
             with self.patch_for_worker(
                 execute_delete_side_effect=error,
             ) as (instance, dct):
-                deferred_deletion.DeferredDeletionWorker.add(instance, 'vmid1', execute_later=False)
+                deferred_deleter.DeferredDeletionWorker.add(instance, 'vmid1', execute_later=False)
 
                 # Not found should remove the entry and nothing more
                 if isinstance(error, gen_exceptions.NotFoundError):
@@ -384,7 +384,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
                 self.assertEqual(info.fatal_retries, 0)
                 self.assertEqual(info.total_retries, 0)  # On adding & error, no count is increased
 
-                job = deferred_deletion.DeferredDeletionWorker(environment=mock.MagicMock())
+                job = deferred_deleter.DeferredDeletionWorker(environment=mock.MagicMock())
                 job.run()
                 # due to check_interval, no retries are done
                 self.assertEqual(self.count_entries_on_storage(deferred_types.DeferredStorageGroup.TO_DELETE), 1)
@@ -430,7 +430,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
             with self.patch_for_worker(
                 is_deleted_side_effect=error,
             ) as (instance, dct):
-                deferred_deletion.DeferredDeletionWorker.add(instance, 'vmid1', execute_later=False)
+                deferred_deleter.DeferredDeletionWorker.add(instance, 'vmid1', execute_later=False)
 
                 # No entries in TO_DELETE_GROUP
                 self.assertEqual(self.count_entries_on_storage(deferred_types.DeferredStorageGroup.TO_DELETE), 0)
@@ -442,7 +442,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
                 # Fix last_check
                 self.set_last_check_expired()
 
-                job = deferred_deletion.DeferredDeletionWorker(environment=mock.MagicMock())
+                job = deferred_deleter.DeferredDeletionWorker(environment=mock.MagicMock())
                 job.run()
 
                 # Should have called is_deleted once and notify_deleted not called
@@ -541,7 +541,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
                         must_stop_before_deletion=True,
                         should_try_soft_shutdown=should_try_soft_shutdown,
                     ) as (instance, _dct):
-                        deferred_deletion.DeferredDeletionWorker.add(
+                        deferred_deleter.DeferredDeletionWorker.add(
                             instance, 'vmid1', execute_later=execute_later
                         )
 
@@ -562,7 +562,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
                         # Fix last_check
                         self.set_last_check_expired()
 
-                        job = deferred_deletion.DeferredDeletionWorker(environment=mock.MagicMock())
+                        job = deferred_deleter.DeferredDeletionWorker(environment=mock.MagicMock())
                         instance.reset_mock()
                         job.run()
 
@@ -589,7 +589,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
             must_stop_before_deletion=True,
             should_try_soft_shutdown=True,
         ) as (instance, dct):
-            deferred_deletion.DeferredDeletionWorker.add(instance, 'vmid1', execute_later=False)
+            deferred_deleter.DeferredDeletionWorker.add(instance, 'vmid1', execute_later=False)
 
             info = next(iter(dct[deferred_types.DeferredStorageGroup.STOPPING].values()))
 
@@ -603,7 +603,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
 
             instance.reset_mock()
 
-            job = deferred_deletion.DeferredDeletionWorker(environment=mock.MagicMock())
+            job = deferred_deleter.DeferredDeletionWorker(environment=mock.MagicMock())
             # On fist run, will already be running
             self.set_last_check_expired()  # To ensure it's processed
             job.run()
@@ -672,7 +672,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
             is_running=helpers.returns_true,
             is_deleted_side_effect=helpers.returns_false,
         ) as (instance, dct):
-            deferred_deletion.DeferredDeletionWorker.add(instance, 'vmid1', execute_later=False)
+            deferred_deleter.DeferredDeletionWorker.add(instance, 'vmid1', execute_later=False)
 
             info = next(iter(dct[deferred_types.DeferredStorageGroup.DELETING].values()))
 
@@ -686,7 +686,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
 
             instance.reset_mock()
 
-            job = deferred_deletion.DeferredDeletionWorker(environment=mock.MagicMock())
+            job = deferred_deleter.DeferredDeletionWorker(environment=mock.MagicMock())
             # On fist run, will already be running
             self.set_last_check_expired()  # To ensure it's processed
             job.run()

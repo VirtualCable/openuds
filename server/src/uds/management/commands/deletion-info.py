@@ -36,7 +36,7 @@ import typing
 from django.core.management.base import BaseCommand
 
 from uds.core.util import config
-from uds.workers.deferred_deletion import DeferredDeletionWorker
+from uds.workers.deferred_deleter import DeferredDeletionWorker
 
 logger = logging.getLogger(__name__)
 

@@ -37,7 +37,7 @@ from django.utils.translation import gettext_noop as _
 from uds.core import services, types
 from uds.core.ui import gui
 from uds.core.util import fields, validators
-from uds.workers.deferred_deletion import DeferredDeletionWorker
+from uds.workers.deferred_deleter import DeferredDeletionWorker
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
