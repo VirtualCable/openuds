@@ -214,9 +214,9 @@ class AssignedService(DetailHandler):
             raise self.invalid_item_response() from e
 
         if userservice.user:
-            logStr = f'Deleted assigned service {userservice.friendly_name} to user {userservice.user.pretty_name} by {self._user.pretty_name}'
+            log_string = f'Deleted assigned user service {userservice.friendly_name} to user {userservice.user.pretty_name} by {self._user.pretty_name}'
         else:
-            logStr = f'Deleted cached service {userservice.friendly_name} by {self._user.pretty_name}'
+            log_string = f'Deleted cached user service {userservice.friendly_name} by {self._user.pretty_name}'
 
         if userservice.state in (State.USABLE, State.REMOVING):
             userservice.release()
@@ -227,7 +227,8 @@ class AssignedService(DetailHandler):
         else:
             raise self.invalid_item_response(_('Item is not removable'))
 
-        log.log(parent, types.log.LogLevel.INFO, logStr, types.log.LogSource.ADMIN)
+        log.log(parent, types.log.LogLevel.INFO, log_string, types.log.LogSource.ADMIN)
+        log.log(userservice, types.log.LogLevel.INFO, log_string, types.log.LogSource.ADMIN)
 
     # Only owner is allowed to change right now
     def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
@@ -238,7 +239,7 @@ class AssignedService(DetailHandler):
         userService = parent.userServices.get(uuid=process_uuid(item))
         user = models.User.objects.get(uuid=process_uuid(fields['user_id']))
 
-        logStr = f'Changed ownership of service {userService.friendly_name} from {userService.user} to {user.pretty_name} by {self._user.pretty_name}'
+        log_string = f'Changed ownership of user service {userService.friendly_name} from {userService.user} to {user.pretty_name} by {self._user.pretty_name}'
 
         # If there is another service that has this same owner, raise an exception
         if (
@@ -256,7 +257,8 @@ class AssignedService(DetailHandler):
         userService.save()
 
         # Log change
-        log.log(parent, types.log.LogLevel.INFO, logStr, types.log.LogSource.ADMIN)
+        log.log(parent, types.log.LogLevel.INFO, log_string, types.log.LogSource.ADMIN)
+        log.log(userService, types.log.LogLevel.INFO, log_string, types.log.LogSource.ADMIN)
 
     def reset(self, parent: 'models.ServicePool', item: str) -> typing.Any:
         userService = parent.userServices.get(uuid=process_uuid(item))
@@ -314,9 +316,9 @@ class CachedService(AssignedService):
     def get_logs(self, parent: 'Model', item: str) -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.ServicePool)
         try:
-            userService = parent.cached_users_services().get(uuid=process_uuid(item))
+            userservice = parent.cached_users_services().get(uuid=process_uuid(item))
             logger.debug('Getting logs for %s', item)
-            return log.get_logs(userService)
+            return log.get_logs(userservice)
         except Exception:
             raise self.invalid_item_response() from None
 
