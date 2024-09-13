@@ -662,13 +662,14 @@ class Authenticator(Module):
 
         This will be invoked from admin interface, when admin wants to create a new group.
 
-        modified groupData will be used to store values at database.
+        modified group_data will be used to store values at database.
 
         Args:
-            groupData: Contains data received from user directly, that is a dictionary
+            group_data: Contains data received from interface directly, that is a dictionary
                        with at least: name, comments and state. (State.ACTIVE, State.INACTIVE)
                        This is an in/out parameter, so you can modify, for example,
                        **comments**
+                       (it's the "fields" from the admin form)
 
         Returns:
             Raises an exception if things didn't went fine,

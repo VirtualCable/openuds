@@ -294,7 +294,7 @@ class Service(Module):
                     if self.userservices_limit == 0:
                         self.userservices_limit = consts.UNLIMITED
                 elif callable(services_limit):
-                    self.userservices_limit = services_limit()
+                    self.userservices_limit = typing.cast(collections.abc.Callable[..., int], services_limit)()
                 else:
                     self.userservices_limit = consts.UNLIMITED
             except Exception:
