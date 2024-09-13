@@ -34,6 +34,7 @@ import codecs
 import datetime
 import logging
 import pickle  # nosec: pickle is used to cache data, not to load it
+import pickletools
 import typing
 
 from uds import models
@@ -95,7 +96,7 @@ def get_servicepools_counters(
                 }
                 for x in stats
             ]
-            
+
             # val = [
             #     {
             #         'stamp': x[0],
@@ -114,7 +115,11 @@ def get_servicepools_counters(
 
             # logger.debug('val: %s', val)
             if len(val) >= 2:
-                cache.put(cache_key, codecs.encode(pickle.dumps(val), 'zip'), CACHE_TIME * 2)
+                cache.put(
+                    cache_key,
+                    codecs.encode(pickletools.optimize(pickle.dumps(val, protocol=-1)), 'zip'),
+                    CACHE_TIME * 2,
+                )
             else:
                 val = [{'stamp': since, 'value': 0}, {'stamp': to, 'value': 0}]
         else:

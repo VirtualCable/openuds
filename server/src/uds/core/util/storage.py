@@ -34,6 +34,7 @@ import pickle  # nosec: This is e controled pickle use
 import base64
 import hashlib
 import codecs
+import pickletools
 import typing
 import collections.abc
 import logging
@@ -268,8 +269,15 @@ class Storage:
         attr1: typing.Optional[str] = None,
     ) -> None:
         return self.save_to_db(
-            skey, pickle.dumps(data), attr1
-        )  # Protocol 2 is compatible with python 2.7. This will be unnecesary when fully migrated
+            skey,
+            pickletools.optimize(
+                pickle.dumps(
+                    data,
+                    protocol=-1,
+                )
+            ),
+            attr1,
+        )
 
     def update_to_db(
         self,
