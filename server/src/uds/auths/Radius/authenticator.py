@@ -168,6 +168,7 @@ class RadiusAuth(auths.Authenticator):
                 self.db_obj(),
                 username,
                 'Access denied by Raiuds',
+                as_error=True,
             )
             return types.auth.FAILED_AUTH
 

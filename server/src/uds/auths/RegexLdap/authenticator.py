@@ -381,7 +381,7 @@ class RegexLdap(auths.Authenticator):
             usr = self._get_user(username)
 
             if usr is None:
-                log_login(request, self.db_obj(), username, 'Invalid user')
+                log_login(request, self.db_obj(), username, 'Invalid user', as_error=True)
                 return types.auth.FAILED_AUTH
 
             try:
@@ -390,7 +390,7 @@ class RegexLdap(auths.Authenticator):
                     usr['dn'], credentials
                 )  # Will raise an exception if it can't connect
             except Exception:
-                log_login(request, self.db_obj(), username, 'Invalid password')
+                log_login(request, self.db_obj(), username, 'Invalid password', as_error=True)
                 return types.auth.FAILED_AUTH
 
             # store the user mfa attribute if it is set

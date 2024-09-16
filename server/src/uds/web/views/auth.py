@@ -107,14 +107,14 @@ def auth_callback_stage2(request: 'ExtendedHttpRequestWithUser', ticket_id: str)
             raise exceptions.auth.Redirect(result.url)
 
         if result.user is None:
-            log_login(request, authenticator, f'{params}', 'Invalid at auth callback')
+            log_login(request, authenticator, f'{params}', 'Invalid at auth callback', as_error=True)
             raise exceptions.auth.InvalidUserException()
 
         response = HttpResponseRedirect(reverse('page.index'))
 
         web_login(request, response, result.user, '')  # Password is unavailable in this case
 
-        log_login(request, authenticator, result.user.name, 'Federated login')
+        log_login(request, authenticator, result.user.name, 'Federated login')  # Nice login, just indicating it's federated
 
         # If MFA is provided, we need to redirect to MFA page
         request.authorized = True
@@ -237,7 +237,7 @@ def ticket_auth(
         web_login(request, None, usr, password)
 
         # Log the login
-        log_login(request, auth, username, 'Ticket authentication')
+        log_login(request, auth, username, 'Ticket authentication')  # Nice login, just indicating it's using a ticket
 
         request.user = (
             usr  # Temporarily store this user as "authenticated" user, next requests will be done using session

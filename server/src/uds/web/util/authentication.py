@@ -82,61 +82,63 @@ def check_login(  # pylint: disable=too-many-branches, too-many-statements
             authenticator = Authenticator.objects.get(uuid=process_uuid(form.cleaned_data['authenticator']))
         except Exception:
             authenticator = Authenticator.null()
-        userName = form.cleaned_data['user']
+        username = form.cleaned_data['user']
         if GlobalConfig.LOWERCASE_USERNAME.as_bool(True) is True:
-            userName = userName.lower()
+            username = username.lower()
 
         cache = Cache('auth')
-        cacheKey = str(authenticator.id) + userName
-        tries = cache.get(cacheKey) or 0
-        triesByIp = (cache.get(request.ip) or 0) if GlobalConfig.LOGIN_BLOCK_IP.as_bool() else 0
-        maxTries = GlobalConfig.MAX_LOGIN_TRIES.as_int()
+        tries_cache_key = str(authenticator.id) + username
+        tries = cache.get(tries_cache_key) or 0
+        tries_in_this_ip = (cache.get(request.ip) or 0) if GlobalConfig.LOGIN_BLOCK_IP.as_bool() else 0
+        max_tries_per_ip = GlobalConfig.MAX_LOGIN_TRIES.as_int()
         # Get instance..
-        authInstance = authenticator.get_instance()
+        auth_instance = authenticator.get_instance()
         # Check if user is locked
-        if authInstance.block_user_on_failures is True and (tries >= maxTries) or triesByIp >= maxTries:
-            log_login(request, authenticator, userName, 'Temporarily blocked')
+        if auth_instance.block_user_on_failures is True and (tries >= max_tries_per_ip) or tries_in_this_ip >= max_tries_per_ip:
+            log_login(request, authenticator, username, 'Temporarily blocked', as_error=True)
             return types.auth.LoginResult(errstr=_('Too many authentication errrors. User temporarily blocked'))
         # check if authenticator is visible for this requests
-        if authInstance.is_ip_allowed(request=request) is False:
+        if auth_instance.is_ip_allowed(request=request) is False:
             log_login(
                 request,
                 authenticator,
-                userName,
+                username,
                 'Access tried from an unallowed source',
+                as_error=True,
             )
             return types.auth.LoginResult(errstr=_('Access tried from an unallowed source'))
 
         password = (
             form.cleaned_data['password'] or 'axd56adhg466jasd6q8sadñ€sáé--v'
         )  # Random string, in fact, just a placeholder that will not be used :)
-        authResult = authenticate(userName, password, authenticator, request=request)
-        logger.debug('User: %s', authResult.user)
+        auth_result = authenticate(username, password, authenticator, request=request)
+        logger.debug('User: %s', auth_result.user)
 
-        if authResult.user is None:
-            logger.debug("Invalid user %s (access denied)", userName)
-            cache.put(cacheKey, tries + 1, GlobalConfig.LOGIN_BLOCK.as_int())
-            cache.put(request.ip, triesByIp + 1, GlobalConfig.LOGIN_BLOCK.as_int())
+        if auth_result.user is None:
+            logger.debug("Invalid user %s (access denied)", username)
+            cache.put(tries_cache_key, tries + 1, GlobalConfig.LOGIN_BLOCK.as_int())
+            cache.put(request.ip, tries_in_this_ip + 1, GlobalConfig.LOGIN_BLOCK.as_int())
             log_login(
                 request,
                 authenticator,
-                userName,
+                username,
                 'Access denied (user not allowed by UDS)',
+                as_error=True,
             )
-            if authResult.url:  # Redirection
-                return types.auth.LoginResult(url=authResult.url)
+            if auth_result.url:  # Redirection
+                return types.auth.LoginResult(url=auth_result.url)
             return types.auth.LoginResult(errstr=_('Access denied'))
 
         request.session.cycle_key()
 
-        logger.debug('User %s has logged in', userName)
-        cache.remove(cacheKey)  # Valid login, remove cached tries
+        logger.debug('User %s has logged in', username)
+        cache.remove(tries_cache_key)  # Valid login, remove cached tries
 
         if form.cleaned_data['logouturl'] != '':
             logger.debug('The logoout url will be %s', form.cleaned_data['logouturl'])
             request.session['logouturl'] = form.cleaned_data['logouturl']
-        log_login(request, authenticator, authResult.user.name)
-        return types.auth.LoginResult(user=authResult.user, password=form.cleaned_data['password'])
+        log_login(request, authenticator, auth_result.user.name)
+        return types.auth.LoginResult(user=auth_result.user, password=form.cleaned_data['password'])
 
     logger.info('Invalid form received')
     return types.auth.LoginResult(errstr=_('Invalid data'))

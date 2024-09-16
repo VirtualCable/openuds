@@ -489,12 +489,15 @@ def log_login(
     authenticator: models.Authenticator,
     userName: str,
     log_string: str = '',
+    as_error: bool = False,
 ) -> None:
     """
     Logs authentication
     """
     if log_string == '':
         log_string = 'Logged in'
+
+    log_level = types.log.LogLevel.ERROR if as_error else types.log.LogLevel.INFO
 
     authLogger.info(
         '|'.join(
@@ -508,10 +511,9 @@ def log_login(
             ]
         )
     )
-    level = types.log.LogLevel.INFO if log_string == 'Logged in' else types.log.LogLevel.ERROR
     log.log(
         authenticator,
-        level,
+        log_level,
         f'user {userName} has {log_string} from {request.ip} where os is {request.os.os.name}',
         types.log.LogSource.WEB,
     )
@@ -521,7 +523,7 @@ def log_login(
         user = authenticator.users.get(name=userName)
         log.log(
             user,
-            level,
+            log_level,
             f'{log_string} from {request.ip} where OS is {request.os.os.name}',
             types.log.LogSource.WEB,
         )

@@ -160,7 +160,7 @@ class InternalDBAuth(auths.Authenticator):
         try:
             user: 'models.User' = dbAuth.users.get(name=username, state=State.ACTIVE)
         except Exception:
-            log_login(request, self.db_obj(), username, 'Invalid user')
+            log_login(request, self.db_obj(), username, 'Invalid user', as_error=True)
             return types.auth.FAILED_AUTH
 
         if user.parent:  # Direct auth not allowed for "derived" users
@@ -171,7 +171,7 @@ class InternalDBAuth(auths.Authenticator):
             groups_manager.validate([g.name for g in user.groups.all()])
             return types.auth.SUCCESS_AUTH
 
-        log_login(request, self.db_obj(), username, 'Invalid password')
+        log_login(request, self.db_obj(), username, 'Invalid password', as_error=True)
         return types.auth.FAILED_AUTH
 
     def get_groups(self, username: str, groups_manager: 'auths.GroupsManager') -> None:
