@@ -475,7 +475,7 @@ def authLogLogin(
             ]
         )
     )
-    level = log.INFO if logStr == 'Logged in' else log.ERROR
+    level = log.INFO if logStr in ('Logged in', 'Federated login') else log.ERROR
     log.doLog(
         authenticator,
         level,
