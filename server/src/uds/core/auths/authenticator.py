@@ -401,7 +401,7 @@ class Authenticator(Module):
         self,
         username: str,
         credentials: str,
-        groupsManager: 'GroupsManager',
+        groups_manager: 'GroupsManager',
         request: 'types.requests.ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         """
@@ -437,7 +437,7 @@ class Authenticator(Module):
                This is done in this way, because UDS has only a subset of groups for this user, and
                we let the authenticator decide inside wich groups of UDS this users is included.
         """
-        return self.authenticate(username, credentials, groupsManager, request)
+        return self.authenticate(username, credentials, groups_manager, request)
 
     def logout(
         self,

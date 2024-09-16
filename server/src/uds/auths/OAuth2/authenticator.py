@@ -95,7 +95,7 @@ class OAuth2Authenticator(auths.Authenticator):
     type_description = _('OAuth2 Authenticator')
     icon_file = 'oauth2.png'
 
-    authorizationEndpoint = gui.TextField(
+    authorization_endpoint = gui.TextField(
         length=64,
         label=_('Authorization endpoint'),
         order=10,
@@ -103,19 +103,19 @@ class OAuth2Authenticator(auths.Authenticator):
         required=True,
         tab=_('Server'),
     )
-    clientId = gui.TextField(
+    client_id = gui.TextField(
         length=64,
         label=_('Client ID'),
         order=2,
-        tooltip=_('Obtained from App created on Azure for UDS Enterprise'),
+        tooltip=_('Client ID for OAuth2.'),
         required=True,
         tab=_('Server'),
     )
-    clientSecret = gui.TextField(
+    client_secret = gui.TextField(
         length=64,
         label=_('Client Secret'),
         order=3,
-        tooltip=_('Obtained from App created on Azure for UDS Enteprise - Keys'),
+        tooltip=_('Client secret for OAuth2.'),
         required=True,
         tab=_('Server'),
     )
@@ -127,7 +127,7 @@ class OAuth2Authenticator(auths.Authenticator):
         required=True,
         tab=_('Server'),
     )
-    commonGroups = gui.TextField(
+    common_groups = gui.TextField(
         length=64,
         label=_('Common Groups'),
         order=5,
@@ -137,7 +137,7 @@ class OAuth2Authenticator(auths.Authenticator):
     )
 
     # Advanced options
-    redirectionEndpoint = gui.TextField(
+    redirection_endpoint = gui.TextField(
         length=64,
         label=_('Redirection endpoint'),
         order=90,
@@ -145,7 +145,7 @@ class OAuth2Authenticator(auths.Authenticator):
         required=False,
         tab=types.ui.Tab.ADVANCED,
     )
-    responseType = gui.ChoiceField(
+    response_type = gui.ChoiceField(
         label=_('Response type'),
         order=91,
         tooltip=_('Response type for OAuth2.'),
@@ -167,7 +167,7 @@ class OAuth2Authenticator(auths.Authenticator):
         tab=types.ui.Tab.ADVANCED,
     )
     # In case of code, we need to get the token from the token endpoint
-    tokenEndpoint = gui.TextField(
+    token_endpoint = gui.TextField(
         length=64,
         label=_('Token endpoint'),
         order=92,
@@ -175,7 +175,7 @@ class OAuth2Authenticator(auths.Authenticator):
         required=False,
         tab=types.ui.Tab.ADVANCED,
     )
-    infoEndpoint = gui.TextField(
+    info_endpoint = gui.TextField(
         length=64,
         label=_('User information endpoint'),
         order=93,
@@ -183,7 +183,7 @@ class OAuth2Authenticator(auths.Authenticator):
         required=False,
         tab=types.ui.Tab.ADVANCED,
     )
-    publicKey = gui.TextField(
+    public_key = gui.TextField(
         length=16384,
         lines=3,
         label=_('Public Key'),
@@ -193,7 +193,7 @@ class OAuth2Authenticator(auths.Authenticator):
         tab=types.ui.Tab.ADVANCED,
     )
 
-    userNameAttr = gui.TextField(
+    username_attr = gui.TextField(
         length=2048,
         lines=2,
         label=_('User name attrs'),
@@ -203,7 +203,7 @@ class OAuth2Authenticator(auths.Authenticator):
         tab=_('Attributes'),
     )
 
-    groupNameAttr = gui.TextField(
+    groupname_attr = gui.TextField(
         length=2048,
         lines=2,
         label=_('Group name attrs'),
@@ -213,7 +213,7 @@ class OAuth2Authenticator(auths.Authenticator):
         tab=_('Attributes'),
     )
 
-    realNameAttr = gui.TextField(
+    realname_attr = gui.TextField(
         length=2048,
         lines=2,
         label=_('Real name attrs'),
@@ -226,10 +226,10 @@ class OAuth2Authenticator(auths.Authenticator):
     def _get_public_keys(self) -> list[typing.Any]:  # In fact, any of the PublicKey types
         # Get certificates in self.publicKey.value, encoded as PEM
         # Return a list of certificates in DER format
-        if self.publicKey.value.strip() == '':
+        if self.public_key.value.strip() == '':
             return []
 
-        return [cert.public_key() for cert in fields.get_certificates_from_field(self.publicKey)]
+        return [cert.public_key() for cert in fields.get_certificates_from_field(self.public_key)]
 
     def _code_verifier_and_challenge(self) -> tuple[str, str]:
         """Generate a code verifier and a code challenge for PKCE
@@ -247,7 +247,7 @@ class OAuth2Authenticator(auths.Authenticator):
         return codeVerifier, codeChallenge
 
     def _get_response_type_string(self) -> str:
-        match self.responseType.value:
+        match self.response_type.value:
             case 'code':
                 return 'code'
             case 'pkce':
@@ -269,13 +269,13 @@ class OAuth2Authenticator(auths.Authenticator):
 
         param_dict = {
             'response_type': self._get_response_type_string(),
-            'client_id': self.clientId.value,
-            'redirect_uri': self.redirectionEndpoint.value,
+            'client_id': self.client_id.value,
+            'redirect_uri': self.redirection_endpoint.value,
             'scope': self.scope.value.replace(',', ' '),
             'state': state,
         }
 
-        match self.responseType.value:
+        match self.response_type.value:
             case 'code' | 'token':
                 # Code or token flow
                 # Simply store state, no code_verifier, store "none" as code_verifier to later restore it
@@ -310,7 +310,7 @@ class OAuth2Authenticator(auths.Authenticator):
 
         params = urllib.parse.urlencode(param_dict)
 
-        return self.authorizationEndpoint.value + '?' + params
+        return self.authorization_endpoint.value + '?' + params
 
     def _request_token(self, code: str, code_verifier: typing.Optional[str] = None) -> TokenInfo:
         """Request a token from the token endpoint using the code received from the authorization endpoint
@@ -323,15 +323,15 @@ class OAuth2Authenticator(auths.Authenticator):
         """
         param_dict = {
             'grant_type': 'authorization_code',
-            'client_id': self.clientId.value,
-            'client_secret': self.clientSecret.value,
-            'redirect_uri': self.redirectionEndpoint.value,
+            'client_id': self.client_id.value,
+            'client_secret': self.client_secret.value,
+            'redirect_uri': self.redirection_endpoint.value,
             'code': code,
         }
         if code_verifier:
             param_dict['code_verifier'] = code_verifier
 
-        req = requests.post(self.tokenEndpoint.value, data=param_dict, timeout=consts.system.COMMS_TIMEOUT)
+        req = requests.post(self.token_endpoint.value, data=param_dict, timeout=consts.system.COMMS_TIMEOUT)
         logger.debug('Token request: %s %s', req.status_code, req.text)
 
         if not req.ok:
@@ -352,14 +352,14 @@ class OAuth2Authenticator(auths.Authenticator):
         """
         userInfo: dict[str, typing.Any]
 
-        if self.infoEndpoint.value.strip() == '':
+        if self.info_endpoint.value.strip() == '':
             if not token.info:
                 raise Exception('No user info received')
             userInfo = token.info
         else:
             # Get user info
             req = requests.get(
-                self.infoEndpoint.value,
+                self.info_endpoint.value,
                 headers={'Authorization': 'Bearer ' + token.access_token},
                 timeout=consts.system.COMMS_TIMEOUT,
             )
@@ -377,16 +377,16 @@ class OAuth2Authenticator(auths.Authenticator):
         # After this point, we don't mind about the token, we only need to authenticate user
         # and get some basic info from it
 
-        username = ''.join(auth_utils.process_regex_field(self.userNameAttr.value, userInfo)).replace(' ', '_')
+        username = ''.join(auth_utils.process_regex_field(self.username_attr.value, userInfo)).replace(' ', '_')
         if len(username) == 0:
             raise Exception('No username received')
 
-        realName = ''.join(auth_utils.process_regex_field(self.realNameAttr.value, userInfo))
+        realName = ''.join(auth_utils.process_regex_field(self.realname_attr.value, userInfo))
 
         # Get groups
-        groups = auth_utils.process_regex_field(self.groupNameAttr.value, userInfo)
+        groups = auth_utils.process_regex_field(self.groupname_attr.value, userInfo)
         # Append common groups
-        groups.extend(self.commonGroups.value.split(','))
+        groups.extend(self.common_groups.value.split(','))
 
         # store groups for this username at storage, so we can check it at a later stage
         self.storage.save_pickled(username, [realName, groups])
@@ -410,7 +410,7 @@ class OAuth2Authenticator(auths.Authenticator):
         for key in self._get_public_keys():
             logger.debug('Key = %s', key)
             try:
-                payload = jwt.decode(token, key=key, audience=self.clientId.value, algorithms=[info.get('alg', 'RSA256')])  # type: ignore
+                payload = jwt.decode(token, key=key, audience=self.client_id.value, algorithms=[info.get('alg', 'RSA256')])  # type: ignore
                 # If reaches here, token is valid, raises jwt.InvalidTokenError otherwise
                 logger.debug('Payload: %s', payload)
                 if payload.get('nonce') != nonce:
@@ -442,31 +442,31 @@ class OAuth2Authenticator(auths.Authenticator):
                 gettext('This kind of Authenticator does not support white spaces on field NAME')
             )
 
-        auth_utils.validate_regex_field(self.userNameAttr)
-        auth_utils.validate_regex_field(self.userNameAttr)
+        auth_utils.validate_regex_field(self.username_attr)
+        auth_utils.validate_regex_field(self.username_attr)
 
-        if self.responseType.value in ('code', 'pkce', 'openid+code'):
-            if self.commonGroups.value.strip() == '':
+        if self.response_type.value in ('code', 'pkce', 'openid+code'):
+            if self.common_groups.value.strip() == '':
                 raise exceptions.ui.ValidationError(
                     gettext('Common groups is required for "code" response types')
                 )
-            if self.tokenEndpoint.value.strip() == '':
+            if self.token_endpoint.value.strip() == '':
                 raise exceptions.ui.ValidationError(
                     gettext('Token endpoint is required for "code" response types')
                 )
             # infoEndpoint will not be necesary if the response of tokenEndpoint contains the user info
 
-        if self.responseType.value == 'openid+token_id':
+        if self.response_type.value == 'openid+token_id':
             # Ensure we have a public key
-            if self.publicKey.value.strip() == '':
+            if self.public_key.value.strip() == '':
                 raise exceptions.ui.ValidationError(
                     gettext('Public key is required for "openid+token_id" response type')
                 )
 
         request: 'HttpRequest' = values['_request']
 
-        if self.redirectionEndpoint.value.strip() == '' and self.db_obj():
-            self.redirectionEndpoint.value = request.build_absolute_uri(self.callback_url())
+        if self.redirection_endpoint.value.strip() == '' and self.db_obj():
+            self.redirection_endpoint.value = request.build_absolute_uri(self.callback_url())
 
     def auth_callback(
         self,
@@ -474,7 +474,7 @@ class OAuth2Authenticator(auths.Authenticator):
         groups_manager: 'auths.GroupsManager',
         request: 'types.requests.ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
-        match self.responseType.value:
+        match self.response_type.value:
             case 'code' | 'pkce':
                 return self.auth_callback_code(parameters, groups_manager, request)
             case 'token':

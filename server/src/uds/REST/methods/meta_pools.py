@@ -114,21 +114,21 @@ class MetaPools(ModelHandler):
         item = ensure.is_instance(item, MetaPool)
         # if item does not have an associated service, hide it (the case, for example, for a removed service)
         # Access from dict will raise an exception, and item will be skipped
-        poolGroupId = None
-        poolGroupName = _('Default')
-        poolGroupThumb = DEFAULT_THUMB_BASE64
+        pool_group_id = None
+        pool_group_name = _('Default')
+        pool_group_thumb = DEFAULT_THUMB_BASE64
         if item.servicesPoolGroup is not None:
-            poolGroupId = item.servicesPoolGroup.uuid
-            poolGroupName = item.servicesPoolGroup.name
+            pool_group_id = item.servicesPoolGroup.uuid
+            pool_group_name = item.servicesPoolGroup.name
             if item.servicesPoolGroup.image is not None:
-                poolGroupThumb = item.servicesPoolGroup.image.thumb64
+                pool_group_thumb = item.servicesPoolGroup.image.thumb64
 
-        allPools = item.members.all()
-        userServicesCount = sum(
-            (i.pool.userServices.exclude(state__in=State.INFO_STATES).count() for i in allPools)
+        all_pools = item.members.all()
+        userservices_total = sum(
+            (i.pool.userServices.exclude(state__in=State.INFO_STATES).count() for i in all_pools)
         )
-        userServicesInPreparation = sum(
-            (i.pool.userServices.filter(state=State.PREPARING).count()) for i in allPools
+        userservices_in_preparation = sum(
+            (i.pool.userServices.filter(state=State.PREPARING).count()) for i in all_pools
         )
 
         val = {
@@ -139,11 +139,11 @@ class MetaPools(ModelHandler):
             'comments': item.comments,
             'thumb': item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64,
             'image_id': item.image.uuid if item.image is not None else None,
-            'servicesPoolGroup_id': poolGroupId,
-            'pool_group_name': poolGroupName,
-            'pool_group_thumb': poolGroupThumb,
-            'user_services_count': userServicesCount,
-            'user_services_in_preparation': userServicesInPreparation,
+            'servicesPoolGroup_id': pool_group_id,
+            'pool_group_name': pool_group_name,
+            'pool_group_thumb': pool_group_thumb,
+            'user_services_count': userservices_total,
+            'user_services_in_preparation': userservices_in_preparation,
             'visible': item.visible,
             'policy': item.policy,
             'fallbackAccess': item.fallbackAccess,
@@ -157,7 +157,7 @@ class MetaPools(ModelHandler):
 
     # Gui related
     def get_gui(self, type_: str) -> list[typing.Any]:
-        localGUI = self.add_default_fields([], ['name', 'comments', 'tags'])
+        local_gui = self.add_default_fields([], ['name', 'comments', 'tags'])
 
         for field in [
             {
@@ -248,31 +248,31 @@ class MetaPools(ModelHandler):
                 'tab': types.ui.Tab.DISPLAY,
             },
         ]:
-            self.add_field(localGUI, field)
+            self.add_field(local_gui, field)
 
-        return localGUI
+        return local_gui
 
     def pre_save(self, fields: dict[str, typing.Any]) -> None:
         # logger.debug(self._params)
         try:
             # **** IMAGE ***
-            imgId = fields['image_id']
+            imgid = fields['image_id']
             fields['image_id'] = None
-            logger.debug('Image id: %s', imgId)
+            logger.debug('Image id: %s', imgid)
             try:
-                if imgId != '-1':
-                    image = Image.objects.get(uuid=process_uuid(imgId))
+                if imgid != '-1':
+                    image = Image.objects.get(uuid=process_uuid(imgid))
                     fields['image_id'] = image.id
             except Exception:
                 logger.exception('At image recovering')
 
             # Servicepool Group
-            spgrpId = fields['servicesPoolGroup_id']
+            servicespool_group_id = fields['servicesPoolGroup_id']
             fields['servicesPoolGroup_id'] = None
-            logger.debug('servicesPoolGroup_id: %s', spgrpId)
+            logger.debug('servicesPoolGroup_id: %s', servicespool_group_id)
             try:
-                if spgrpId != '-1':
-                    spgrp = ServicePoolGroup.objects.get(uuid=process_uuid(spgrpId))
+                if servicespool_group_id != '-1':
+                    spgrp = ServicePoolGroup.objects.get(uuid=process_uuid(servicespool_group_id))
                     fields['servicesPoolGroup_id'] = spgrp.id
             except Exception:
                 logger.exception('At service pool group recovering')
