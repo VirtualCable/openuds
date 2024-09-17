@@ -54,22 +54,17 @@ logger = logging.getLogger(__name__)
 
 register = template.Library()
 
+
 def uds_js(request: 'ExtendedHttpRequest') -> str:
     auth_host = (
-        request.META.get('HTTP_HOST') or request.META.get('SERVER_NAME') or 'auth_host'
+        request.META.get('SERVER_NAME') or request.META.get('HTTP_HOST') or 'auth_host'
     )  # Last one is a placeholder in case we can't locate host name
 
     role: str = 'user'
     user: typing.Optional['User'] = request.user if request.authorized else None
 
     if user:
-        role = (
-            'staff'
-            if user.is_staff() and not user.is_admin
-            else 'admin'
-            if user.is_admin
-            else 'user'
-        )
+        role = 'staff' if user.is_staff() and not user.is_admin else 'admin' if user.is_admin else 'user'
         if request.session.get('restricted', False):
             role = 'restricted'
 
@@ -80,55 +75,17 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
 
     tag = request.session.get('tag', None)
     logger.debug('Tag config: %s', tag)
-    # Initial list of authenticators (all except disabled ones)
-    auths = Authenticator.objects.exclude(state=consts.auth.DISABLED)
-    authenticators: list[Authenticator] = []
-    if GlobalConfig.DISALLOW_GLOBAL_LOGIN.as_bool():
-        try:
-            # Get authenticators with auth_host or tag. If tag is None, auth_host, if exists
-            # Tag will also include non visible authenticators
-            # tag, later will remove "auth_host"
-            authenticators = list(auths.filter(small_name__in=[auth_host, tag]))
-        except Exception:
-            authenticators = []
-    else:
-        if not tag:  # If no tag, remove hidden auths
-            auths = auths.filter(state=consts.auth.VISIBLE)
-        authenticators = list(
-            auths
-        )
-
     # Filter out non accesible authenticators (using origin)
     authenticators = [
-        a for a in authenticators if a.get_instance().is_ip_allowed(request)
+        a
+        for a in Authenticator.get_by_tag(tag, auth_host)
+        if a.get_instance().is_ip_allowed(request) and (tag != 'disabled' or not a.get_type().is_custom())
     ]
 
-    # logger.debug('Authenticators PRE: %s', authenticators)
+    logger.debug('Authenticators PRE: %s', authenticators)
 
-    if (
-        tag and authenticators
-    ):  # Refilter authenticators, not disabled and with this tag if required
-        authenticators = [
-            x
-            for x in authenticators
-            if x.small_name == tag
-            or (tag == 'disabled' and x.get_type().is_custom() is False)
-        ]
-
-    # No autenticator can reach the criteria, let's do a final try
-    # disabled mean "does not use any specific auth, just the root one"
-    if not authenticators and tag != 'disabled':
-        try:
-            authenticators = []
-            for a in Authenticator.objects.exclude(state=consts.auth.DISABLED).order_by('priority'):
-                if a.get_instance().is_ip_allowed(request):
-                    authenticators.append(a)
-                    break
-        except Exception:
-            authenticators = []
-
-    # No tag, and there are authenticators, let's use the first one
-    if not tag and authenticators:
+    # No tag, and there are authenticators, let's use the tag of first one
+    if not tag and authenticators:  # Keep disabled as tag if present
         tag = authenticators[0].small_name
 
     # logger.debug('Authenticators: %s', authenticators)
@@ -148,12 +105,8 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
         'version': consts.system.VERSION,
         'version_stamp': consts.system.VERSION_STAMP,
         'language': get_language(),
-        'available_languages': [
-            {'id': k, 'name': gettext(v)} for k, v in settings.LANGUAGES
-        ],
-        'authenticators': [
-            _get_auth_info(auth) for auth in authenticators if auth.get_type()
-        ],
+        'available_languages': [{'id': k, 'name': gettext(v)} for k, v in settings.LANGUAGES],
+        'authenticators': [_get_auth_info(auth) for auth in authenticators if auth.get_type()],
         'mfa': request.session.get('mfa', None),
         'tag': tag,
         'os': request.os.os.name,
@@ -185,25 +138,22 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
                 'webapi.enabler',
                 kwargs={'service_id': 'param1', 'transport_id': 'param2'},
             ),
-            'status': reverse(
-                'webapi.status', kwargs={'service_id': 'param1', 'transport_id': 'param2'}
-            ),
+            'status': reverse('webapi.status', kwargs={'service_id': 'param1', 'transport_id': 'param2'}),
             'action': reverse(
                 'webapi.action',
                 kwargs={'service_id': 'param1', 'action_string': 'param2'},
             ),
-            'gallery_image': reverse(
-                'webapi.gallery_image', kwargs={'image_id': 'param1'}
-            ),
-            'transport_icon': reverse(
-                'webapi.transport_icon', kwargs={'transport_id': 'param1'}
-            ),
+            'gallery_image': reverse('webapi.gallery_image', kwargs={'image_id': 'param1'}),
+            'transport_icon': reverse('webapi.transport_icon', kwargs={'transport_id': 'param1'}),
             'static': static(''),
             'client_download': reverse('page.client-download'),
-            'update_transport_ticket': reverse('webapi.transport.update_transport_ticket', kwargs={'ticket_id': 'param1', 'scrambler': 'param2'}),
+            'update_transport_ticket': reverse(
+                'webapi.transport.update_transport_ticket',
+                kwargs={'ticket_id': 'param1', 'scrambler': 'param2'},
+            ),
             # Launcher URL if exists
             'launch': request.session.get('launch', ''),
-            'brand': settings.UDSBRAND if hasattr(settings, 'UDSBRAND') else ''
+            'brand': settings.UDSBRAND if hasattr(settings, 'UDSBRAND') else '',
         },
         'min_for_filter': GlobalConfig.SITE_FILTER_MIN.as_int(True),
     }
@@ -212,9 +162,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
     if user and user.is_staff():
         info = {
             'networks': [n.name for n in Network.get_networks_for_ip(request.ip)],
-            'transports': [
-                t.name for t in Transport.objects.all() if t.is_ip_allowed(request.ip)
-            ],
+            'transports': [t.name for t in Transport.objects.all() if t.is_ip_allowed(request.ip)],
             'ip': request.ip,
             'ip_proxy': request.ip_proxy,
         }
@@ -237,9 +185,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
             ('UDSClient-{version}.pkg', gettext('Mac OS X client'), 'MacOS', False),
             (
                 'udsclient3_{version}_all.deb',
-                gettext('Debian based Linux client')
-                + ' '
-                + gettext('(requires Python-3.6 or newer)'),
+                gettext('Debian based Linux client') + ' ' + gettext('(requires Python-3.6 or newer)'),
                 'Linux',
                 False,
             ),
@@ -265,9 +211,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
             ),
             (
                 'udsclient3-{version}.tar.gz',
-                gettext('Generic .tar.gz Linux client')
-                + ' '
-                + gettext('(requires Python-3.6 or newer)'),
+                gettext('Generic .tar.gz Linux client') + ' ' + gettext('(requires Python-3.6 or newer)'),
                 'Linux',
                 False,
             ),

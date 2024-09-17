@@ -53,26 +53,8 @@ logger = logging.getLogger(__name__)
 # (None, NumericError) if errorview redirection
 # (User, password_string) if all is ok
 def check_login(  # pylint: disable=too-many-branches, too-many-statements
-    request: 'ExtendedHttpRequest', form: 'LoginForm', tag: typing.Optional[str] = None
+    request: 'ExtendedHttpRequest', form: 'LoginForm'
 ) -> types.auth.LoginResult:
-    # Last one is a placeholder in case we can't locate host name
-    server_name = (
-        request.META.get('SERVER_NAME') or request.META.get('HTTP_HOST') or 'auth_host'
-    )[:128]
-
-    # Get Authenticators limitation
-    if GlobalConfig.DISALLOW_GLOBAL_LOGIN.as_bool(False) is True:
-        if not tag:
-            try:
-                Authenticator.objects.get(small_name=server_name)
-                tag = server_name
-            except Exception:
-                try:
-                    tag = Authenticator.objects.order_by('priority')[0].small_name
-                except Exception:  # There is no authenticators yet, simply allow global login to nowhere.. :-)
-                    tag = None
-
-    logger.debug('Tag: %s', tag)
 
     if 'uds' not in request.COOKIES:
         logger.debug('Request does not have uds cookie')

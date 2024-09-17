@@ -99,7 +99,7 @@ def login(request: types.requests.ExtendedHttpRequest, tag: typing.Optional[str]
         request.authorized = False  # Ensure that on login page, user is unauthorized first
 
         form = LoginForm(request.POST, tag=tag)
-        login_result = check_login(request, form, tag)
+        login_result = check_login(request, form)
         if login_result.user:
             response = HttpResponseRedirect(reverse('page.index'))
             # Tag is not removed from session, so next login will have it even if not provided

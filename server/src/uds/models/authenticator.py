@@ -46,7 +46,7 @@ from .tag import TaggingMixin
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.models import Group, Network, User, MFA
-    from django.db.models.manager import RelatedManager 
+    from django.db.models.manager import RelatedManager
 
 
 logger = logging.getLogger(__name__)
@@ -244,28 +244,34 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         return Authenticator.objects.all().order_by('priority')
 
     @staticmethod
-    def get_by_tag(tag: typing.Optional[str] = None) -> collections.abc.Iterable['Authenticator']:
+    def get_by_tag(*tag: typing.Optional[str]) -> collections.abc.Iterable['Authenticator']:
         """
         Gets authenticator by tag name.
         Special tag name "disabled" is used to exclude customAuth
         """
         # pylint: disable=import-outside-toplevel
         from uds.core.util.config import GlobalConfig
+        # Filter out None tags
+        tags = list(filter(lambda x: x is not None, tag))
 
-        if tag is not None:
-            auths_list = Authenticator.objects.filter(small_name=tag).order_by('priority', 'name')
-            if not auths_list.exists():
-                auths_list = Authenticator.objects.all().order_by('priority', 'name')
-                # If disallow global login (use all auths), get just the first by priority/name
-                if GlobalConfig.DISALLOW_GLOBAL_LOGIN.as_bool(False) is True:
-                    auths_list = auths_list[:1]
-            logger.debug(auths_list)
+        if tags:
+            # authenticators = list(auths.filter(small_name__in=[auth_host, tag]))
+            authenticators = (
+                Authenticator.objects.exclude(state=consts.auth.DISABLED)
+                .filter(small_name__in=tags)
+                .order_by('priority', 'name')
+            )
+            if not authenticators.exists():
+                authenticators = Authenticator.objects.all().order_by('priority', 'name')
         else:
-            auths_list = Authenticator.objects.all().order_by('priority', 'name')
+            authenticators = Authenticator.objects.all().order_by('priority', 'name')
 
-        for auth in auths_list:
-            if auth.get_type() and (not auth.get_type().is_custom() or tag != 'disabled'):
+        for auth in authenticators:
+            if auth.get_type() and (not auth.get_type().is_custom() or 'disabled' not in tag):
                 yield auth
+                # If disallow global login (that is, do not allow to select the auth), we break here
+                if GlobalConfig.DISALLOW_GLOBAL_LOGIN.as_bool(force=False) is True:
+                    break  # Only one auth for global login (if disallowed)
 
     @staticmethod
     def pre_delete(sender: typing.Any, **kwargs: typing.Any) -> None:  # pylint: disable=unused-argument
