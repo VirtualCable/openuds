@@ -52,12 +52,13 @@ class AuthenticationState(enum.IntEnum):
     REDIRECT = 2
 
 
-class AuthenticationInternalUrl(enum.Enum):
+class AuthenticationInternalUrl(enum.StrEnum):
     """
     Enumeration for authentication success
     """
 
     LOGIN = 'page.login'
+    LOGIN_TAG = 'page.login.tag'
     LOGOUT = 'page.logout'
 
     def get_url(self) -> str:

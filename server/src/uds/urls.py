@@ -101,12 +101,12 @@ urlpatterns = [
     re_path(
         r'^uds/page/login/(?P<tag>[a-zA-Z0-9-]+)$',
         uds.web.views.main.login,
-        name='page.login.tag',
+        name=types.auth.AuthenticationInternalUrl.LOGIN_TAG.value,
     ),
     path(
         r'uds/page/logout',
         uds.web.views.main.logout,
-        name='page.logout',
+        name=types.auth.AuthenticationInternalUrl.LOGOUT.value,
     ),
     # MFA authentication
     path(

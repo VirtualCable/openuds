@@ -450,11 +450,12 @@ def web_logout(request: 'ExtendedHttpRequest', exit_url: typing.Optional[str] = 
     Helper function to clear user related data from session. If this method is not used, the session we be cleaned anyway
     by django in regular basis.
     """
-    tag = request.session.get('tag', None)
+    tag = request.session.pop('tag', None)
     if tag and config.GlobalConfig.REDIRECT_TO_TAG_ON_LOGOUT.as_bool(False):
-        exit_page = reverse('page.login.tag', kwargs={'tag': tag})
+        exit_page = reverse(types.auth.AuthenticationInternalUrl.LOGIN_TAG, kwargs={'tag': tag})
     else:
-        exit_page = reverse('page.login')
+        # remove, if exists, tag from session
+        exit_page = reverse(types.auth.AuthenticationInternalUrl.LOGIN)
     exit_url = exit_url or exit_page
     try:
         if request.user:
