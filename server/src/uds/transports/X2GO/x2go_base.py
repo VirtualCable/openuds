@@ -44,10 +44,7 @@ from uds.core.managers.userservice import UserServiceManager
 from uds.core.types.preferences import CommonPrefs
 from uds.core.ui import gui
 from uds.core.util import net
-
-# Not imported at runtime, just for type checking
-if typing.TYPE_CHECKING:
-    from uds import models
+from uds import models
 
 logger = logging.getLogger(__name__)
 
@@ -230,17 +227,17 @@ class BaseX2GOTransport(transports.Transport):
 
     def process_user_password(
         self,
-        userService: typing.Union['models.UserService', 'models.ServicePool'],
+        userservice: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
     ) -> types.connections.ConnectionData:
         username = user.get_username_for_auth()
 
         # Get the type of service (VDI, VAPP, ...)
-        if isinstance(userService, models.UserService):
-            service = userService.deployed_service.service
+        if isinstance(userservice, models.UserService):
+            service = userservice.deployed_service.service
         else:
-            service = userService.service
+            service = userservice.service
 
         services_type_provided = service.get_type().services_type_provided
 
@@ -248,7 +245,7 @@ class BaseX2GOTransport(transports.Transport):
             username = self.fixed_name.value
 
         # Fix username/password acording to os manager
-        username, password = userService.process_user_password(username, password)
+        username, password = userservice.process_user_password(username, password)
 
         return types.connections.ConnectionData(
             protocol=self.protocol,
