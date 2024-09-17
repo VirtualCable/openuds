@@ -133,7 +133,7 @@ def auth_callback_stage2(request: 'ExtendedHttpRequestWithUser', ticket_id: str)
             request.build_absolute_uri(str(e)) if e.args and e.args[0] else None,
         )
     except Exception as e:
-        logger.exception('authCallback')
+        logger.error('Error authenticating user: %s', e)
         return errors.exception_view(request, e)
 
 

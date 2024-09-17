@@ -488,7 +488,9 @@ def login_without_mfa_policy_field(
     )
 
 
-def put_back_to_cache_field(order: int = 120, tab: 'types.ui.Tab|str|None' = types.ui.Tab.ADVANCED) -> ui.gui.ChoiceField:
+def put_back_to_cache_field(
+    order: int = 120, tab: 'types.ui.Tab|str|None' = types.ui.Tab.ADVANCED
+) -> ui.gui.ChoiceField:
     return ui.gui.ChoiceField(
         order=order,
         label=_('Put back to cache'),
@@ -497,6 +499,61 @@ def put_back_to_cache_field(order: int = 120, tab: 'types.ui.Tab|str|None' = typ
             {'id': 'no', 'text': _('No. Never put it back to cache')},
             {'id': 'yes', 'text': _('Yes, try to put it back to cache')},
         ],
+        tab=tab,
+    )
+
+
+def username_attr_field(
+    tab: 'types.ui.Tab|str|None' = types.ui.Tab.ATTRIBUTES,
+    default: typing.Optional[str] = None,
+    order: int = 100,
+) -> ui.gui.TextField:
+    return ui.gui.TextField(
+        length=640,
+        label=_('User Name Attr'),
+        lines=3,
+        default=default or '',
+        order=order,
+        tooltip=_(
+            'Attributes that contains the user name attributes or attribute patterns (one for each line)'
+        ),
+        required=True,
+        tab=tab,
+    )
+
+
+def groupname_attr_field(
+    tab: 'types.ui.Tab|str|None' = types.ui.Tab.ATTRIBUTES,
+    default: typing.Optional[str] = None,
+    order: int = 101,
+) -> ui.gui.TextField:
+    return ui.gui.TextField(
+        length=640,
+        label=_('Group Name Attr'),
+        lines=3,
+        default=default or '',
+        order=order,
+        tooltip=_(
+            'Attribute that contains the group name attributes or attribute patterns (one for each line)'
+        ),
+        required=True,
+        tab=tab,
+    )
+
+
+def realname_attr_field(
+    tab: 'types.ui.Tab|str|None' = types.ui.Tab.ATTRIBUTES,
+    default: typing.Optional[str] = None,
+    order: int = 102,
+) -> ui.gui.TextField:
+    return ui.gui.TextField(
+        length=640,
+        label=_('Real Name Attr'),
+        lines=3,
+        default=default or '',
+        order=order,
+        tooltip=_('Attribute that contains the real name attributes or attribute patterns (one for each line)'),
+        required=True,
         tab=tab,
     )
 

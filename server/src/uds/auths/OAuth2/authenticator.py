@@ -72,18 +72,17 @@ class TokenInfo:
     id_token: typing.Optional[str]
 
     @staticmethod
-    def from_dict(dct: dict[str, typing.Any]) -> 'TokenInfo':
+    def from_dict(dct: collections.abc.Mapping[str, typing.Any]) -> 'TokenInfo':
         # expires is -10 to avoid problems with clock sync
         return TokenInfo(
             access_token=dct['access_token'],
             token_type=dct['token_type'],
             expires=model.sql_now() + datetime.timedelta(seconds=dct['expires_in'] - 10),
-            refresh_token=dct['refresh_token'],
+            refresh_token=dct.get('refresh_token', ''),
             scope=dct['scope'],
             info=dct.get('info', {}),
             id_token=dct.get('id_token', None),
         )
-
 
 class OAuth2Authenticator(auths.Authenticator):
     """
@@ -96,7 +95,7 @@ class OAuth2Authenticator(auths.Authenticator):
     icon_file = 'oauth2.png'
 
     authorization_endpoint = gui.TextField(
-        length=64,
+        length=256,
         label=_('Authorization endpoint'),
         order=10,
         tooltip=_('Authorization endpoint for OAuth2.'),
@@ -104,7 +103,7 @@ class OAuth2Authenticator(auths.Authenticator):
         tab=_('Server'),
     )
     client_id = gui.TextField(
-        length=64,
+        length=128,
         label=_('Client ID'),
         order=2,
         tooltip=_('Client ID for OAuth2.'),
@@ -112,7 +111,7 @@ class OAuth2Authenticator(auths.Authenticator):
         tab=_('Server'),
     )
     client_secret = gui.TextField(
-        length=64,
+        length=128,
         label=_('Client Secret'),
         order=3,
         tooltip=_('Client secret for OAuth2.'),
@@ -120,7 +119,7 @@ class OAuth2Authenticator(auths.Authenticator):
         tab=_('Server'),
     )
     scope = gui.TextField(
-        length=64,
+        length=128,
         label=_('Scope'),
         order=4,
         tooltip=_('Scope for OAuth2.'),
@@ -128,7 +127,7 @@ class OAuth2Authenticator(auths.Authenticator):
         tab=_('Server'),
     )
     common_groups = gui.TextField(
-        length=64,
+        length=128,
         label=_('Common Groups'),
         order=5,
         tooltip=_('User will be assigned to this groups once authenticated. Comma separated list of groups'),
@@ -138,7 +137,7 @@ class OAuth2Authenticator(auths.Authenticator):
 
     # Advanced options
     redirection_endpoint = gui.TextField(
-        length=64,
+        length=128,
         label=_('Redirection endpoint'),
         order=90,
         tooltip=_('Redirection endpoint for OAuth2.  (Filled by UDS)'),
@@ -168,7 +167,7 @@ class OAuth2Authenticator(auths.Authenticator):
     )
     # In case of code, we need to get the token from the token endpoint
     token_endpoint = gui.TextField(
-        length=64,
+        length=128,
         label=_('Token endpoint'),
         order=92,
         tooltip=_('Token endpoint for OAuth2. Only required for "code" response type.'),
@@ -176,7 +175,7 @@ class OAuth2Authenticator(auths.Authenticator):
         tab=types.ui.Tab.ADVANCED,
     )
     info_endpoint = gui.TextField(
-        length=64,
+        length=128,
         label=_('User information endpoint'),
         order=93,
         tooltip=_('User information endpoint for OAuth2. Only required for "code" response type.'),
@@ -192,36 +191,10 @@ class OAuth2Authenticator(auths.Authenticator):
         required=False,
         tab=types.ui.Tab.ADVANCED,
     )
-
-    username_attr = gui.TextField(
-        length=2048,
-        lines=2,
-        label=_('User name attrs'),
-        order=100,
-        tooltip=_('Fields from where to extract user name'),
-        required=True,
-        tab=_('Attributes'),
-    )
-
-    groupname_attr = gui.TextField(
-        length=2048,
-        lines=2,
-        label=_('Group name attrs'),
-        order=101,
-        tooltip=_('Fields from where to extract the groups'),
-        required=False,
-        tab=_('Attributes'),
-    )
-
-    realname_attr = gui.TextField(
-        length=2048,
-        lines=2,
-        label=_('Real name attrs'),
-        order=102,
-        tooltip=_('Fields from where to extract the real name'),
-        required=False,
-        tab=_('Attributes'),
-    )
+    
+    username_attr = fields.username_attr_field(order=100)
+    groupname_attr = fields.groupname_attr_field(order=101)
+    realname_attr = fields.realname_attr_field(order=102)
 
     def _get_public_keys(self) -> list[typing.Any]:  # In fact, any of the PublicKey types
         # Get certificates in self.publicKey.value, encoded as PEM
@@ -237,14 +210,14 @@ class OAuth2Authenticator(auths.Authenticator):
         Returns:
             tuple[str, str]: Code verifier and code challenge
         """
-        codeVerifier = ''.join(secrets.choice(PKCE_ALPHABET) for _ in range(128))
-        codeChallenge = (
-            b64decode(hashlib.sha256(codeVerifier.encode('ascii')).digest(), altchars=b'-_')
+        code_verifier = ''.join(secrets.choice(PKCE_ALPHABET) for _ in range(128))
+        code_challenge = (
+            b64decode(hashlib.sha256(code_verifier.encode('ascii')).digest(), altchars=b'-_')
             .decode()
             .rstrip('=')  # remove padding
         )
 
-        return codeVerifier, codeChallenge
+        return code_verifier, code_challenge
 
     def _get_response_type_string(self) -> str:
         match self.response_type.value:
@@ -331,13 +304,15 @@ class OAuth2Authenticator(auths.Authenticator):
         if code_verifier:
             param_dict['code_verifier'] = code_verifier
 
-        req = requests.post(self.token_endpoint.value, data=param_dict, timeout=consts.system.COMMS_TIMEOUT)
-        logger.debug('Token request: %s %s', req.status_code, req.text)
+        response = requests.post(
+            self.token_endpoint.value, data=param_dict, timeout=consts.system.COMMS_TIMEOUT
+        )
+        logger.debug('Token request: %s %s', response.status_code, response.text)
 
-        if not req.ok:
-            raise Exception('Error requesting token: {}'.format(req.text))
+        if not response.ok:
+            raise Exception('Error requesting token: {}'.format(response.text))
 
-        return TokenInfo.from_dict(req.json())
+        return TokenInfo.from_dict(response.json())
 
     def _request_info(self, token: 'TokenInfo') -> dict[str, typing.Any]:
         """Request user info from the info endpoint using the token received from the token endpoint
@@ -557,16 +532,7 @@ class OAuth2Authenticator(auths.Authenticator):
             return types.auth.FAILED_AUTH
 
         # Get the token, token_type, expires
-        token = TokenInfo(
-            access_token=parameters.get_params.get('access_token', ''),
-            token_type=parameters.get_params.get('token_type', ''),
-            expires=model.sql_now()
-            + datetime.timedelta(seconds=int(parameters.get_params.get('expires_in', 0))),
-            refresh_token=parameters.get_params.get('refresh_token', ''),
-            scope=parameters.get_params.get('scope', ''),
-            info={},
-            id_token=None,
-        )
+        token = TokenInfo.from_dict(parameters.get_params)
         return self._process_token(self._request_info(token), gm)
 
     def auth_callback_openid_code(

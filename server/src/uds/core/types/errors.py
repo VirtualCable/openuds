@@ -65,9 +65,9 @@ class Error(enum.IntEnum):
     @property
     def message(self) -> str:
         try:
-            return ERROR_STRINGS[self.value]
+            return str(ERROR_STRINGS[self.value])
         except IndexError:
-            return ERROR_STRINGS[0]
+            return str(ERROR_STRINGS[0])
 
     @staticmethod
     def from_int(value: int) -> 'Error':

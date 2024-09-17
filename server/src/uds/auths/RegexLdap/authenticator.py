@@ -133,31 +133,8 @@ class RegexLdap(auths.Authenticator):
         required=True,
         tab=_('Ldap info'),
     )
-    username_attr = gui.TextField(
-        length=640,
-        label=_('User Name Attr'),
-        lines=2,
-        default='uid',
-        order=23,
-        tooltip=_(
-            'Attributes that contains the user name attributes or attribute patterns (one for each line)'
-        ),
-        required=True,
-        tab=_('Ldap info'),
-    )
-    groupname_attr = gui.TextField(
-        length=640,
-        label=_('Group Name Attr'),
-        lines=2,
-        default='cn',
-        order=24,
-        tooltip=_(
-            'Attribute that contains the group name attributes or attribute patterns (one for each line)'
-        ),
-        required=True,
-        tab=_('Ldap info'),
-    )
-    # regex = gui.TextField(length=64, label = _('Regular Exp. for groups'), defvalue = '^(.*)', order = 12, tooltip = _('Regular Expression to extract the group name'), required = True)
+    username_attr = fields.realname_attr_field(tab=_('Ldap info'), order=23, default='uid')
+    groupname_attr = fields.groupname_attr_field(tab=_('Ldap info'), order=24, default='cn')
 
     alternate_class = gui.TextField(
         length=64,

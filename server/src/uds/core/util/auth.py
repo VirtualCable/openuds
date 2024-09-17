@@ -70,7 +70,7 @@ def get_attributes_regex_field(field: 'ui.gui.TextField|str') -> set[str]:
 
     res: set[str] = set()
     for line in content.splitlines():
-        attr, _pattern = (line.split('=')[0:2] + [''])[0:2]
+        attr, _pattern = (line.split('=')[0:2] + [''])[0:2]  # Endure 2 values
 
         # If attributes concateated with +, add all
         if '+' in attr:
@@ -124,9 +124,10 @@ def process_regex_field(
                 return []
 
         for line in field.splitlines():
-            equalPos = line.find('=')
-            if equalPos != -1:
-                attr, pattern = (line[:equalPos], line[equalPos + 1 :])
+            equal_pos = line.find('=')
+            if equal_pos != -1:
+                # attr before first =, pattern after
+                attr, pattern = (line[:equal_pos], line[equal_pos + 1 :])
                 # if pattern do not have groups, define one with full re
                 if pattern.find('(') == -1:
                     pattern = '(' + pattern + ')'

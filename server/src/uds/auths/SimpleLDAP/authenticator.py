@@ -40,7 +40,7 @@ from django.utils.translation import gettext_noop as _
 from uds.core import auths, environment, types, exceptions
 from uds.core.auths.auth import log_login
 from uds.core.ui import gui
-from uds.core.util import ensure, fields, ldaputil, validators
+from uds.core.util import ensure, fields, ldaputil, validators, auth as auth_utils
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -129,15 +129,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         required=True,
         tab=_('Ldap info'),
     )
-    username_attr = gui.TextField(
-        length=64,
-        label=_('User Name Attr'),
-        default='uid',
-        order=33,
-        tooltip=_('Attributes that contains the user name (list of comma separated values)'),
-        required=True,
-        tab=_('Ldap info'),
-    )
+    username_attr = fields.realname_attr_field(tab=_('Ldap info'), order=33, default='uid')
     group_class = gui.TextField(
         length=64,
         label=_('Group class'),
@@ -195,7 +187,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
 
     def initialize(self, values: typing.Optional[dict[str, typing.Any]]) -> None:
         if values:
-            self.username_attr.value = self.username_attr.value.replace(' ', '')  # Removes white spaces
+            auth_utils.validate_regex_field(self.username_attr)
             validators.validate_certificate(self.certificate.value)
 
     def unmarshal(self, data: bytes) -> None:
@@ -221,6 +213,9 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         self.group_id_attr.value = vals[11]
         self.member_attr.value = vals[12]
         self.username_attr.value = vals[13]
+
+        # Upgrade to new format
+        self.username_attr.value = '\n'.join(self.username_attr.value.split(','))
 
         logger.debug("Data: %s", vals[1:])
 
@@ -331,21 +326,12 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             logger.exception('Exception at __getGroups')
             return []
 
-    def _get_user_realname(self, usr: ldaputil.LDAPResultType) -> str:
+    def _get_user_realname(self, user: ldaputil.LDAPResultType) -> str:
         '''
         Tries to extract the real name for this user. Will return all atttributes (joint)
         specified in _userNameAttr (comma separated).
         '''
-        return ' '.join(
-            [
-                (
-                    ' '.join((str(k) for k in usr.get(id_, '')))
-                    if isinstance(usr.get(id_), list)
-                    else str(usr.get(id_, ''))
-                )
-                for id_ in self.username_attr.as_str().split(',')
-            ]
-        ).strip()
+        return ' '.join(auth_utils.process_regex_field(self.username_attr.value, user))
 
     def authenticate(
         self,

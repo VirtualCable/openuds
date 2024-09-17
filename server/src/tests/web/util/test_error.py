@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2023 Virtual Cable S.L.U.
+# Copyright (c) 2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -25,65 +25,30 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import json
-import logging
-import typing
 
-from django.utils.translation import gettext_lazy as _
-from django.shortcuts import render
-from django.http import HttpResponse
-
-from django.http import HttpResponseRedirect
 from django.urls import reverse
 
 from uds.core import types
 
-# Not imported at runtime, just for type checking
-if typing.TYPE_CHECKING:
-    from django.http import (
-        HttpRequest,
-    )  # pylint: disable=ungrouped-imports
+from ...utils.web import test
 
 
-logger = logging.getLogger(__name__)
-
-
-def error_view(request: 'HttpRequest', error_code: int) -> HttpResponseRedirect:
-    return HttpResponseRedirect(reverse('page.error', kwargs={'err': error_code}))
-
-
-def error(request: 'HttpRequest', err: str) -> 'HttpResponse':
+class UtilityWebTest(test.WEBTestCase):
     """
-    Error view, responsible of error display
+    Test WEB login and logout
     """
-    return render(request, 'uds/modern/index.html', {})
 
-
-def exception_view(request: 'HttpRequest', exception: Exception) -> HttpResponseRedirect:
-    """
-    Tries to render an error page with error information
-    """
-    # import traceback
-    # logger.debug(traceback.format_exc())
-    return error_view(request, types.errors.Error.from_exception(exception))
-
-
-def error_message(request: 'HttpRequest', err: str) -> 'HttpResponse':
-    """
-    Error view, responsible of error display
-    """
-    # get error as integer or replace it by 0
-    
-    try:
-        err_int = int(err)
-    except Exception:
-        err_int = 0
-    
-    return HttpResponse(
-        json.dumps({'error': types.errors.Error.from_int(err_int).message, 'code': str(err)}),
-        content_type='application/json',
-    )
+    def test_error_page(self) -> None:
+        """
+        Test login and logout
+        """
+        for error_type in types.errors.Error:
+            response = self.client.get(reverse('webapi.error', kwargs={'err': error_type}))
+            self.assertEqual(response.status_code, 200)
+            # Response should be {"error": "error message", "code": error code as string}
+            data = response.json()
+            self.assertEqual(data['error'], error_type.message)
+            self.assertEqual(int(data['code']), error_type.value)

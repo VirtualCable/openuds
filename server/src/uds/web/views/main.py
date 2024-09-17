@@ -99,40 +99,41 @@ def login(request: types.requests.ExtendedHttpRequest, tag: typing.Optional[str]
         request.authorized = False  # Ensure that on login page, user is unauthorized first
 
         form = LoginForm(request.POST, tag=tag)
-        loginResult = check_login(request, form, tag)
-        if loginResult.user:
+        login_result = check_login(request, form, tag)
+        if login_result.user:
             response = HttpResponseRedirect(reverse('page.index'))
-            # save tag, weblogin will clear session
-            tag = request.session.get('tag')
+            # Tag is not removed from session, so next login will have it even if not provided
+            # This means than once an url is used, unless manually goes to "/uds/page/login/xxx"
+            # The tag will be used again
             auth.web_login(
-                request, response, loginResult.user, loginResult.password
+                request, response, login_result.user, login_result.password
             )  # data is user password here
 
             # If MFA is provided, we need to redirect to MFA page
             request.authorized = True
             if (
-                loginResult.user.manager.get_type().provides_mfa()
-                and loginResult.user.manager.mfa
-                and loginResult.user.groups.filter(skip_mfa=types.states.State.ACTIVE).count() == 0
+                login_result.user.manager.get_type().provides_mfa()
+                and login_result.user.manager.mfa
+                and login_result.user.groups.filter(skip_mfa=types.states.State.ACTIVE).count() == 0
             ):
                 request.authorized = False
                 response = HttpResponseRedirect(reverse('page.mfa'))
 
         else:
             # If redirection on login failure is found, honor it
-            if loginResult.url:  # Redirection
-                return HttpResponseRedirect(loginResult.url)
+            if login_result.url:  # Redirection
+                return HttpResponseRedirect(login_result.url)
 
             if request.ip not in ('127.0.0.1', '::1'):  # If not localhost, wait a bit
                 time.sleep(
                     random.SystemRandom().randint(1600, 2400) / 1000
                 )  # On failure, wait a bit if not localhost (random wait)
             # If error is numeric, redirect...
-            if loginResult.errid:
-                return errors.error_view(request, loginResult.errid)
+            if login_result.errid:
+                return errors.error_view(request, login_result.errid)
 
             # Error, set error on session for process for js
-            request.session['errors'] = [loginResult.errstr]
+            request.session['errors'] = [login_result.errstr]
     else:
         request.session['tag'] = tag
 
