@@ -132,7 +132,10 @@ class gui:
         """
         if not isinstance(text, (str, Promise)):
             text = str(text)
-        return {'id': id_, 'text': typing.cast(str, text)}  # Cast to avoid mypy error, Promise is at all effects a str
+        return {
+            'id': id_,
+            'text': typing.cast(str, text),
+        }  # Cast to avoid mypy error, Promise is at all effects a str
 
     @staticmethod
     def choice_image(id_: typing.Union[str, int], text: str, img: str) -> types.ui.ChoiceItem:
@@ -1147,7 +1150,6 @@ class gui:
         def value(self, value: str) -> None:
             self._set_value(value)
 
-
     class ImageChoiceField(InputField):
         def __init__(
             self,
@@ -1637,7 +1639,8 @@ class UserInterface(metaclass=UserInterfaceType):
         for field_name, field_type, field_value in fields:
             field_name = field_names_translations.get(field_name, field_name)
             if field_name not in self._gui:
-                logger.warning('Field %s not found in form', field_name)
+                # Probably removed, just to note this in case of debugging
+                logger.debug('Field %s not found in form (%s)', field_name, field_value)
                 continue
             internal_field_type = self._gui[field_name].field_type
             if internal_field_type not in FIELD_DECODERS:
