@@ -1,5 +1,5 @@
 # may be executed on old python versions? (should not, but keep compat for a while more)
-# pylint: disable=all
+# type: ignore  # Ignore all type checking
 from __future__ import unicode_literals
 
 import sys
