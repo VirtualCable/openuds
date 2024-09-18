@@ -54,8 +54,6 @@ from uds.core import consts
 
 logger = logging.getLogger(__name__)
 
-KEY_SIZE = 4096
-SECRET_SIZE = 32
 
 # Disable warnings from urllib for
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -78,11 +76,11 @@ def create_self_signed_cert(ip: str) -> tuple[str, str, str]:
     """
     key = rsa.generate_private_key(
         public_exponent=65537,
-        key_size=KEY_SIZE,
+        key_size=consts.system.SECURITY_KEY_SIZE,
         backend=default_backend(),
     )
     # Create a random password for private key
-    password = secrets.token_hex(SECRET_SIZE)
+    password = secrets.token_hex(consts.system.SECURITY_SECRET_SIZE)
 
     name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, ip)])
     san = x509.SubjectAlternativeName([x509.IPAddress(ipaddress.ip_address(ip))])
@@ -258,3 +256,46 @@ def is_private_key_valid(key: str) -> bool:
         return True
     except Exception:
         return False
+
+
+def generate_rsa_keypair(key_size: int = consts.system.SECURITY_KEY_SIZE) -> tuple[str, str]:
+    """
+    Generates a RSA keypair.
+    """
+    key = rsa.generate_private_key(
+        public_exponent=65537,
+        key_size=key_size,
+    )
+
+    return (
+        key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.TraditionalOpenSSL,
+            encryption_algorithm=serialization.NoEncryption(),
+        ).decode(),
+        key.public_key()
+        .public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo,
+        )
+        .decode(),
+    )
+
+
+def generate_ssh_keypair_for_ssh(key_size: int = consts.system.SECURITY_KEY_SIZE) -> tuple[str, str]:
+    """
+    Generates a SSH public key from a private key.
+    Returns only the base64 part of the public key, not the "ssh-rsa" part.
+    """
+    private_key = generate_rsa_keypair(key_size)[0]
+
+    key = serialization.load_pem_private_key(private_key.encode(), password=None, backend=default_backend())
+    return private_key, (
+        key.public_key()
+        .public_bytes(
+            encoding=serialization.Encoding.OpenSSH,
+            format=serialization.PublicFormat.OpenSSH,
+        )
+        .decode()
+        .split()[1]
+    )

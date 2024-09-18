@@ -77,3 +77,6 @@ UDS_ACTION_SCHEME: typing.Final[str] = 'udsa://'
 # Max sequence number for generators
 MAX_SEQ: typing.Final[int] = 1000000000000000
 
+# Security related
+SECURITY_KEY_SIZE: typing.Final[int] = 4096
+SECURITY_SECRET_SIZE: typing.Final[int] = 32
