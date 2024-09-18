@@ -1,4 +1,3 @@
-# pylint: disable=no-member   # ldap module gives errors to pylint
 #
 # Copyright (c) 2024 Virtual Cable S.L.U.
 # All rights reserved.
