@@ -73,7 +73,9 @@ class Cache:
             key = key.encode('utf8')
         return hash_key(self._owner.encode() + key)
 
-    def get(self, skey: typing.Union[str, bytes], default: typing.Any = None) -> typing.Any:
+    def get(
+        self, skey: typing.Union[str, bytes], default: typing.Any = None, *, remove: bool = False
+    ) -> typing.Any:
         now = sql_now()
         # logger.debug('Requesting key "%s" for cache "%s"', skey, self._owner)
         try:
@@ -93,6 +95,9 @@ class Cache:
                 return default
 
             Cache.hits += 1
+            # If we are asked to remove it, do it now
+            if remove:
+                c.delete()
             return val
         except DBCache.DoesNotExist:  # @UndefinedVariable
             Cache.misses += 1
@@ -117,6 +122,13 @@ class Cache:
             # logger.exception('Error getting cache key: %s', skey)
             Cache.misses += 1
             return default
+
+    def pop(self, skey: typing.Union[str, bytes], default: typing.Any = None) -> typing.Any:
+        """
+        Removes an stored cached item and returns it or default if not found
+        If cached item does not exists, just returns default, but else, it will be removed
+        """
+        return self.get(skey, default=default, remove=True)
 
     def __getitem__(self, key: typing.Union[str, bytes]) -> typing.Any:
         """
