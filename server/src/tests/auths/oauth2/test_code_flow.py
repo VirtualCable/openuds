@@ -29,6 +29,7 @@
 '''
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from unittest import mock
 
 from tests.utils.test import UDSTestCase
 
@@ -39,3 +40,31 @@ class OAuthCodeFlowTest(UDSTestCase):
     def test_auth(self) -> None:
         with fixtures.create_authenticator('code') as oauth2:
             self.assertIsInstance(oauth2, fixtures.OAuth2Authenticator)
+
+    def test_correct_callbacks(self) -> None:
+        with fixtures.create_authenticator('code') as oauth2:
+            oauth2.auth_callback_code = mock.MagicMock()
+            oauth2.auth_callback_token = mock.MagicMock()
+            oauth2.auth_callback_openid_code = mock.MagicMock()
+            oauth2.auth_callback_openid_id_token = mock.MagicMock()
+
+            TEST_DCT: dict[str, mock.MagicMock] = {
+                'code': oauth2.auth_callback_code,
+                'pkce': oauth2.auth_callback_code,
+                'token': oauth2.auth_callback_token,
+                'openid+code': oauth2.auth_callback_openid_code,
+                'openid+token_id': oauth2.auth_callback_openid_id_token,
+            }
+
+            for response_type, expected_call in TEST_DCT.items():
+                oauth2.response_type.value = response_type
+                # Reset all mocks first
+                for call in TEST_DCT.values():
+                    call.reset_mock()
+
+                oauth2.auth_callback(mock.MagicMock(), mock.MagicMock(), mock.MagicMock())
+                expected_call.assert_called_once()
+                # Rest of the mocks should not have been called
+                for call in TEST_DCT.values():
+                    if call is not expected_call:
+                        call.assert_not_called()
