@@ -39,7 +39,7 @@ from . import fixtures
 VALID_RESPONSE_TYPES: list[fixtures.ResponseType] = ['code', 'pkce', 'token', 'openid+token_id', 'openid+code']
 
 
-class OAuthCodeFlowTest(UDSTestCase):
+class OAuth2Test(UDSTestCase):
     def test_auth(self) -> None:
         with fixtures.create_authenticator('code') as oauth2:
             self.assertIsInstance(oauth2, fixtures.OAuth2Authenticator)

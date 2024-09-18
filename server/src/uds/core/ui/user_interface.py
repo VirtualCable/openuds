@@ -1621,7 +1621,7 @@ class UserInterface(metaclass=UserInterfaceType):
         values = values[len(consts.ui.SERIALIZATION_HEADER) + len(consts.ui.SERIALIZATION_VERSION) :]
 
         if not values:  # Apart of the header, there is nothing...
-            logger.info('Empty values on unserialize_fields')
+            logger.debug('Empty values on unserialize_fields')
             return False
 
         fields: list[typing.Any] = serializer.deserialize(values) or []
