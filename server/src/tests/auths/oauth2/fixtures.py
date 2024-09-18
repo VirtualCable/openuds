@@ -52,10 +52,10 @@ DATA_TEMPLATE: dict[str, str] = {
     'realname_attr': 'realname_attr',
 }
 
-ResponseTypes: typing.TypeAlias = typing.Literal['code', 'pkce', 'token', 'openid+token_id', 'openid+code']
+ResponseType: typing.TypeAlias = typing.Literal['code', 'pkce', 'token', 'openid+token_id', 'openid+code']
 
 @contextlib.contextmanager
-def create_authenticator(response_type: ResponseTypes) -> typing.Iterator[OAuth2Authenticator]:
+def create_authenticator(response_type: ResponseType) -> typing.Iterator[OAuth2Authenticator]:
     with Environment.temporary_environment() as env:
         data = DATA_TEMPLATE.copy()
         data['response_type'] = response_type

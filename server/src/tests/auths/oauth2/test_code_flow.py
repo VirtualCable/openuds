@@ -32,8 +32,11 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 from unittest import mock
 
 from tests.utils.test import UDSTestCase
+from uds.core import types
 
 from . import fixtures
+
+VALID_RESPONSE_TYPES: list[fixtures.ResponseType] = ['code', 'pkce', 'token', 'openid+token_id', 'openid+code']
 
 
 class OAuthCodeFlowTest(UDSTestCase):
@@ -56,7 +59,9 @@ class OAuthCodeFlowTest(UDSTestCase):
                 'openid+token_id': oauth2.auth_callback_openid_id_token,
             }
 
-            for response_type, expected_call in TEST_DCT.items():
+            for response_type in VALID_RESPONSE_TYPES:
+                expected_call = TEST_DCT[response_type]  # If not exists, raises KeyError
+
                 oauth2.response_type.value = response_type
                 # Reset all mocks first
                 for call in TEST_DCT.values():
@@ -68,3 +73,13 @@ class OAuthCodeFlowTest(UDSTestCase):
                 for call in TEST_DCT.values():
                     if call is not expected_call:
                         call.assert_not_called()
+
+    def test_logout_url(self) -> None:
+        for response_type in VALID_RESPONSE_TYPES:
+            with fixtures.create_authenticator(response_type) as oauth2:
+                oauth2.logout_url.value = 'https://logout.com?token={token}'
+                with mock.patch.object(oauth2, '_retrieve_token_from_session', return_value='token_value'):
+                    logout = oauth2.logout(mock.MagicMock(), 'not_used_username')
+                    self.assertIsInstance(logout, types.auth.AuthenticationResult)
+                    self.assertTrue(logout.success)
+                    self.assertEqual(logout.url, 'https://logout.com?token=token_value')
