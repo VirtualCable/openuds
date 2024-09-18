@@ -46,6 +46,7 @@ DATA_TEMPLATE: dict[str, str] = {
     'token_endpoint': 'https://oauth2.googleapis.com/token',
     'info_endpoint': 'https://openidconnect.googleapis.com/v1/userinfo',
     'public_key': PUBLIC_KEY,
+    'logout_url': 'https://logout.com?token={token}',
     'username_attr': 'username_attr',
     'groupname_attr': 'groupname_attr',
     'realname_attr': 'realname_attr',
