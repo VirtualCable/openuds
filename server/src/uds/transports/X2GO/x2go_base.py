@@ -30,12 +30,10 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import io
 import logging
 import os
 import typing
 
-import paramiko
 from django.utils.translation import gettext_lazy
 from django.utils.translation import gettext_noop as _
 
@@ -43,7 +41,7 @@ from uds.core import transports, types
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.types.preferences import CommonPrefs
 from uds.core.ui import gui
-from uds.core.util import net
+from uds.core.util import net, security
 from uds import models
 
 logger = logging.getLogger(__name__)
@@ -262,7 +260,7 @@ class BaseX2GOTransport(transports.Transport):
     ) -> types.connections.ConnectionData:
         return self.process_user_password(userservice, user, password)
 
-    def genKeyPairForSsh(self) -> tuple[str, str]:
+    def gen_keypair_for_ssh(self) -> tuple[str, str]:
         """
         Generates a key pair for use with x2go
         The private part is used by client
@@ -276,22 +274,16 @@ class BaseX2GOTransport(transports.Transport):
         Linux (tested):
             HOME=[temporal folder, where we create a .x2goclient folder and a sessions inside] pyhoca-cli -P UDS/test-session
         """
-        key = paramiko.RSAKey.generate(SSH_KEY_LENGTH)
-        privFile = io.StringIO()
-        key.write_private_key(privFile)
-        priv = privFile.getvalue()
+        return security.generate_ssh_keypair_for_ssh(SSH_KEY_LENGTH)
 
-        pub = key.get_base64()
-        return priv, pub
-
-    def getAuthorizeScript(self, user: str, pubKey: str) -> str:
+    def get_authorization_script(self, user: str, pubKey: str) -> str:
         with open(os.path.join(os.path.dirname(__file__), 'scripts/authorize.py'), encoding='utf8') as f:
             data = f.read()
 
         return data.replace('__USER__', user).replace('__KEY__', pubKey)
 
-    def getAndPushKey(self, userName: str, userService: 'models.UserService') -> tuple[str, str]:
-        priv, pub = self.genKeyPairForSsh()
-        authScript = self.getAuthorizeScript(userName, pub)
-        UserServiceManager.manager().send_script(userService, authScript)
-        return priv, pub
+    def get_and_push_key(self, username: str, userservice: 'models.UserService') -> tuple[str, str]:
+        private_ssh_key, public_ssh_key = self.gen_keypair_for_ssh()
+        auth_script = self.get_authorization_script(username, public_ssh_key)
+        UserServiceManager.manager().send_script(userservice, auth_script)
+        return private_ssh_key, public_ssh_key

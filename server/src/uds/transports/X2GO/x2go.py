@@ -83,7 +83,7 @@ class X2GOTransport(BaseX2GOTransport):
     ) -> 'types.transports.TransportScript':
         ci = self.get_connection_info(userservice, user, password)
 
-        priv, _pub = self.getAndPushKey(ci.username, userservice)
+        priv, _pub = self.get_and_push_key(ci.username, userservice)
 
         width, height = self.get_screen_size()
         rootless = False

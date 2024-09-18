@@ -105,7 +105,7 @@ class TX2GOTransport(BaseX2GOTransport):
     ) -> 'types.transports.TransportScript':
         ci = self.get_connection_info(userservice, user, password)
 
-        private_key, _public_key = self.getAndPushKey(ci.username, userservice)
+        private_key, _public_key = self.get_and_push_key(ci.username, userservice)
 
         width, height = self.get_screen_size()
 
