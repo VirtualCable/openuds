@@ -172,8 +172,8 @@ class Login(Handler):
             password = password or CryptoManager().random_string(32)
 
             logger.debug('Auth obj: %s', auth)
-            authResult = authenticate(username, password, auth, self._request, True)
-            if authResult.user is None:  # invalid credentials
+            auth_result = authenticate(username, password, auth, self._request)
+            if auth_result.user is None:  # invalid credentials
                 # Sleep a while here to "prottect"
                 time.sleep(3)  # Wait 3 seconds if credentials fails for "protection"
                 # And store in cache for blocking for a while if fails
@@ -184,12 +184,12 @@ class Login(Handler):
                 result='ok',
                 token=self.gen_auth_token(
                     auth.id,
-                    authResult.user.name,
+                    auth_result.user.name,
                     password,
                     locale,
                     platform,
-                    authResult.user.is_admin,
-                    authResult.user.staff_member,
+                    auth_result.user.is_admin,
+                    auth_result.user.staff_member,
                     scrambler,
                 ),
                 scrambler=scrambler,

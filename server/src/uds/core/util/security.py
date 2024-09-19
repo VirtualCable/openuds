@@ -201,9 +201,9 @@ def secure_requests_session(*, verify: 'str|bool' = True) -> 'requests.Session':
         _ssl_context: ssl.SSLContext
 
         def init_poolmanager(self, *args: typing.Any, **kwargs: typing.Any) -> None:
-            self._ssl_context = kwargs["ssl_context"] = create_client_sslcontext(verify=verify is True)
-
             # See urllib3.poolmanager.SSL_KEYWORDS for all available keys.
+            self._ssl_context = kwargs['ssl_context'] = create_client_sslcontext(verify=verify is True)
+
             return super().init_poolmanager(*args, **kwargs)  # type: ignore
 
         def cert_verify(self, conn: typing.Any, url: typing.Any, verify: 'str|bool', cert: typing.Any) -> None:
@@ -219,6 +219,7 @@ def secure_requests_session(*, verify: 'str|bool' = True) -> 'requests.Session':
 
             # 2.32  version of requests, broke the hability to override the ssl_context
             # Please, ensure that you are using a version of requests that is compatible with this code (2.32.3) or newer
+            # Following code left here for reference, but it's not needed anymore if using a compatible version of requests.
             # And this way, our ssl_context is not used, so we need to override it again to ensure that our ssl_context is used
             # if 'conn_kw' in conn.__dict__:
             #     conn_kw = conn.__dict__['conn_kw']

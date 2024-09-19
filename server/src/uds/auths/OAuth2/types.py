@@ -26,13 +26,16 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-from uds.core.util import model
-
-
 import collections.abc
 import dataclasses
 import datetime
+import enum
 import typing
+
+
+from django.utils.translation import gettext_noop as _
+
+from uds.core.util import model
 
 
 @dataclasses.dataclass
@@ -57,3 +60,39 @@ class TokenInfo:
             info=dct.get('info', {}),
             id_token=dct.get('id_token', None),
         )
+
+
+class ResponseType(enum.StrEnum):
+    CODE = 'code'
+    PKCE = 'pkce'
+    TOKEN = 'token'
+    OPENID_TOKEN_ID = 'openid+token_id'
+    OPENID_CODE = 'openid+code'
+
+    @property
+    def for_query(self) -> str:
+        match self:
+            case ResponseType.CODE:
+                return 'code'
+            case ResponseType.PKCE:
+                return 'code'
+            case ResponseType.TOKEN:
+                return 'token'
+            case ResponseType.OPENID_TOKEN_ID:
+                return 'id_token'
+            case ResponseType.OPENID_CODE:
+                return 'code'
+
+    @property
+    def as_text(self) -> str:
+        match self:
+            case ResponseType.CODE:
+                return _('Code (authorization code flow)')
+            case ResponseType.PKCE:
+                return _('PKCE (authorization code flow with PKCE)')
+            case ResponseType.TOKEN:
+                return _('Token (implicit flow)')
+            case ResponseType.OPENID_TOKEN_ID:
+                return _('OpenID Connect Token (implicit flow with OpenID Connect)')
+            case ResponseType.OPENID_CODE:
+                return _('OpenID Connect Code (authorization code flow with OpenID Connect)')

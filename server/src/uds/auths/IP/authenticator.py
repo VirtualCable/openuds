@@ -47,27 +47,6 @@ if typing.TYPE_CHECKING:
 
 
 class IPAuth(auths.Authenticator):
-    acceptProxy = gui.CheckBoxField(
-        label=_('Accept proxy'),
-        default=False,
-        order=50,
-        tooltip=_(
-            'If checked, requests via proxy will get FORWARDED ip address'
-            ' (take care with this bein checked, can take internal IP addresses from internet)'
-        ),
-        tab=types.ui.Tab.ADVANCED,
-    )
-
-    visibleFromNets = gui.TextField(
-        order=50,
-        label=_('Visible only from this networks'),
-        default='',
-        tooltip=_(
-            'This authenticator will be visible only from these networks. Leave empty to allow all networks'
-        ),
-        tab=types.ui.Tab.ADVANCED,
-    )
-
     type_name = _('IP Authenticator')
     type_type = 'IPAuth'
     type_description = _('IP Authenticator')
@@ -79,8 +58,32 @@ class IPAuth(auths.Authenticator):
 
     block_user_on_failures = False
 
-    def getIp(self, request: 'types.requests.ExtendedHttpRequest') -> str:
-        ip = request.ip_proxy if self.acceptProxy.as_bool() else request.ip
+    
+    accepts_proxy = gui.CheckBoxField(
+        label=_('Accept proxy'),
+        default=False,
+        order=50,
+        tooltip=_(
+            'If checked, requests via proxy will get FORWARDED ip address'
+            ' (take care with this bein checked, can take internal IP addresses from internet)'
+        ),
+        tab=types.ui.Tab.ADVANCED,
+        old_field_name='acceptProxy',
+    )
+
+    allowed_in_networks = gui.TextField(
+        order=50,
+        label=_('Allowed only from this networks'),
+        default='',
+        tooltip=_(
+            'This authenticator will be allowed only from these networks. Leave empty to allow all networks'
+        ),
+        tab=types.ui.Tab.ADVANCED,
+        old_field_name='visibleFromNets',
+    )
+
+    def get_ip(self, request: 'types.requests.ExtendedHttpRequest') -> str:
+        ip = request.ip_proxy if self.accepts_proxy.as_bool() else request.ip
         logger.debug('Client IP: %s', ip)
         # If ipv4 on ipv6, we must remove the ipv6 prefix
         if ':' in ip and '.' in ip:
@@ -97,6 +100,16 @@ class IPAuth(auths.Authenticator):
             except Exception as e:
                 logger.error('Invalid network for IP auth: %s', e)
 
+    def is_ip_allowed(self, request: 'types.requests.ExtendedHttpRequest') -> bool:
+        """
+        Used by the login interface to determine if the authenticator is visible on the login page.
+        """
+        valid_networks = self.allowed_in_networks.value.strip()
+        # If has networks and not in any of them, not visible
+        if valid_networks and not net.contains(valid_networks, request.ip):
+            return False
+        return super().is_ip_allowed(request)
+
     def authenticate(
         self,
         username: str,
@@ -105,34 +118,8 @@ class IPAuth(auths.Authenticator):
         request: 'types.requests.ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         # If credentials is a dict, that can't be sent directly from web interface, we allow entering
-        if username == self.getIp(request):
+        if username == self.get_ip(request):
             self.get_groups(username, groups_manager)
-            return types.auth.SUCCESS_AUTH
-        return types.auth.FAILED_AUTH
-
-    def is_ip_allowed(self, request: 'types.requests.ExtendedHttpRequest') -> bool:
-        """
-        Used by the login interface to determine if the authenticator is visible on the login page.
-        """
-        validNets = self.visibleFromNets.value.strip()
-        # If has networks and not in any of them, not visible
-        if validNets and not net.contains(validNets, request.ip):
-            return False
-        return super().is_ip_allowed(request)
-
-    def internal_authenticate(
-        self,
-        username: str,
-        credentials: str,  # pylint: disable=unused-argument
-        groups_manager: 'auths.GroupsManager',
-        request: 'types.requests.ExtendedHttpRequest',
-    ) -> types.auth.AuthenticationResult:
-        # In fact, username does not matter, will get IP from request
-        username = self.getIp(request)  # Override provided username and use source IP
-        self.get_groups(username, groups_manager)
-        if groups_manager.has_valid_groups() and self.db_obj().is_user_allowed(
-            username, True
-        ):
             return types.auth.SUCCESS_AUTH
         return types.auth.FAILED_AUTH
 
@@ -146,7 +133,7 @@ class IPAuth(auths.Authenticator):
     def get_javascript(self, request: 'types.requests.ExtendedHttpRequest') -> typing.Optional[str]:
         # We will authenticate ip here, from request.ip
         # If valid, it will simply submit form with ip submited and a cached generated random password
-        ip = self.getIp(request)
+        ip = self.get_ip(request)
         gm = auths.GroupsManager(self.db_obj())
         self.get_groups(ip, gm)
 

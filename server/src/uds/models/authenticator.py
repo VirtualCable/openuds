@@ -174,14 +174,14 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
 
         return user
 
-    def is_user_allowed(self, username: str, returnValueIfNot: bool = True) -> bool:
+    def is_user_allowed(self, username: str, not_allowed_return_value: bool = True) -> bool:
         """
         Checks the validity of an user
 
         Args:
             username: Name of the user to check
 
-            returnValueIfNot: Defaults to True. It is used so we can return a value defined by caller.
+            not_allowed_return_value: Defaults to True. It is used so we can return a value defined by caller.
 
         Note:
             One example of returnValueIfNot using as True is for checking that the user is active or it doesn't exists.
@@ -202,7 +202,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
             usr: 'User' = self.users.get(name=username)
             return State.from_str(usr.state).is_active()
         except Exception:
-            return returnValueIfNot
+            return not_allowed_return_value
 
     def is_ip_allowed(self, ip_string: str) -> bool:
         """

@@ -220,7 +220,7 @@ def deny_non_authenticated(view_func: collections.abc.Callable[..., RT]) -> coll
 
 def register_user(
     authenticator: models.Authenticator,
-    authInstance: AuthenticatorInstance,
+    auth_instance: AuthenticatorInstance,
     username: str,
     request: 'ExtendedHttpRequest',
 ) -> AuthResult:
@@ -229,11 +229,11 @@ def register_user(
     This will work correctly with both internal or externals cause we first authenticate the user, if internal and user do not exists in database
     authenticate will return false, if external and return true, will create a reference in database
     """
-    username = authInstance.transformed_username(username, request)
+    username = auth_instance.transformed_username(username, request)
     logger.debug('Transformed username: %s', username)
 
     usr = authenticator.get_or_create_user(username, username)
-    usr.real_name = authInstance.get_real_name(username)
+    usr.real_name = auth_instance.get_real_name(username)
     usr.save()
     if usr and State.from_str(usr.state).is_active():
         # Now we update database groups for this user
@@ -257,7 +257,6 @@ def authenticate(
     password: str,
     authenticator: models.Authenticator,
     request: 'ExtendedHttpRequest',
-    useInternalAuthenticate: bool = False,
 ) -> AuthResult:
     """
     Given an username, password and authenticator, try to authenticate user
@@ -265,8 +264,7 @@ def authenticate(
     @param password: password to authenticate this user
     @param authenticator: Authenticator (database object) used to authenticate with provided credentials
     @param request: Request object
-    @param useInternalAuthenticate: If True, tries to authenticate user using "internalAuthenticate". If false, it uses "authenticate".
-                                    This is so because in some situations we may want to use a "trusted" method (internalAuthenticate is never invoked directly from web)
+    
     @return:
             An AuthResult indicating:
             user if success in logging in field user or None if not
@@ -278,19 +276,15 @@ def authenticate(
 
     # If global root auth is enabled && user/password is correct,
     if (
-        not useInternalAuthenticate
-        and GlobalConfig.SUPER_USER_ALLOW_WEBACCESS.as_bool(True)
+        GlobalConfig.SUPER_USER_ALLOW_WEBACCESS.as_bool(True)
         and username == GlobalConfig.SUPER_USER_LOGIN.get(True)
         and CryptoManager().check_hash(password, GlobalConfig.SUPER_USER_PASS.get(True))
     ):
         return AuthResult(user=root_user())
 
     gm = auths.GroupsManager(authenticator)
-    authInstance = authenticator.get_instance()
-    if useInternalAuthenticate is False:
-        res = authInstance.authenticate(username, password, gm, request)
-    else:
-        res = authInstance.internal_authenticate(username, password, gm, request)
+    auth_instance = authenticator.get_instance()
+    res = auth_instance.authenticate(username, password, gm, request)
 
     if res.success == types.auth.AuthenticationState.FAIL:
         logger.debug('Authentication failed')
@@ -310,7 +304,7 @@ def authenticate(
         )
         return AuthResult()
 
-    return register_user(authenticator, authInstance, username, request)
+    return register_user(authenticator, auth_instance, username, request)
 
 
 def authenticate_via_callback(

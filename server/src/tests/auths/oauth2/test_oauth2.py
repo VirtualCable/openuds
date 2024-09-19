@@ -36,16 +36,16 @@ from uds.core import types
 
 from . import fixtures
 
-VALID_RESPONSE_TYPES: list[fixtures.ResponseType] = ['code', 'pkce', 'token', 'openid+token_id', 'openid+code']
+from uds.auths.OAuth2 import types as oauth2_types
 
 
 class OAuth2Test(UDSTestCase):
     def test_auth(self) -> None:
-        with fixtures.create_authenticator('code') as oauth2:
+        with fixtures.create_authenticator(oauth2_types.ResponseType.CODE) as oauth2:
             self.assertIsInstance(oauth2, fixtures.OAuth2Authenticator)
 
     def test_correct_callbacks(self) -> None:
-        with fixtures.create_authenticator('code') as oauth2:
+        with fixtures.create_authenticator(oauth2_types.ResponseType.CODE) as oauth2:
             oauth2.auth_callback_code = mock.MagicMock()
             oauth2.auth_callback_token = mock.MagicMock()
             oauth2.auth_callback_openid_code = mock.MagicMock()
@@ -59,7 +59,7 @@ class OAuth2Test(UDSTestCase):
                 'openid+token_id': oauth2.auth_callback_openid_id_token,
             }
 
-            for response_type in VALID_RESPONSE_TYPES:
+            for response_type in oauth2_types.ResponseType:
                 expected_call = TEST_DCT[response_type]  # If not exists, raises KeyError
 
                 oauth2.response_type.value = response_type
@@ -75,7 +75,7 @@ class OAuth2Test(UDSTestCase):
                         call.assert_not_called()
 
     def test_logout_url(self) -> None:
-        for response_type in VALID_RESPONSE_TYPES:
+        for response_type in oauth2_types.ResponseType:
             with fixtures.create_authenticator(response_type) as oauth2:
                 oauth2.logout_url.value = 'https://logout.com?token={token}'
                 with mock.patch.object(oauth2, '_retrieve_token_from_session', return_value='token_value'):

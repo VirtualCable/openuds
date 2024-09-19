@@ -31,8 +31,14 @@ from uds.core.environment import Environment
 from uds.core.util import security
 
 from uds.auths.OAuth2.authenticator import OAuth2Authenticator
+from uds.auths.OAuth2.types import ResponseType
 
-PRIVATE_KEY, PUBLIC_KEY = security.generate_rsa_keypair()
+KEYS: typing.Final[list[tuple[str, str]]] = [
+    security.generate_rsa_keypair()
+    for _ in range(3)
+]
+
+PUBLIC_KEYS: typing.Final[list[str]] = [key[1] for key in KEYS]
 
 DATA_TEMPLATE: dict[str, str] = {
     'name': 'oauth2',
@@ -45,19 +51,17 @@ DATA_TEMPLATE: dict[str, str] = {
     'response_type': 'code',
     'token_endpoint': 'https://oauth2.googleapis.com/token',
     'info_endpoint': 'https://openidconnect.googleapis.com/v1/userinfo',
-    'public_key': PUBLIC_KEY,
+    'public_key': '\n'.join(PUBLIC_KEYS),
     'logout_url': 'https://logout.com?token={token}',
     'username_attr': 'username_attr',
     'groupname_attr': 'groupname_attr',
     'realname_attr': 'realname_attr',
 }
 
-ResponseType: typing.TypeAlias = typing.Literal['code', 'pkce', 'token', 'openid+token_id', 'openid+code']
-
 @contextlib.contextmanager
 def create_authenticator(response_type: ResponseType) -> typing.Iterator[OAuth2Authenticator]:
     with Environment.temporary_environment() as env:
         data = DATA_TEMPLATE.copy()
-        data['response_type'] = response_type
+        data['response_type'] = str(response_type)
         instance = OAuth2Authenticator(environment=env, values=data)
         yield instance

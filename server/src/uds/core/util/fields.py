@@ -177,6 +177,8 @@ def get_certificates_from_field(
 ) -> list['Certificate']:
     # Get certificates in self.publicKey.value, encoded as PEM
     # Return a list of certificates in DER format
+    
+    # Allows empty certificates list, returns empty list
     value = (field_value or field.value).strip()
     if value == '':
         return []
