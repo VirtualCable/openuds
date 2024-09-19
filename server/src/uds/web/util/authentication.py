@@ -80,16 +80,6 @@ def check_login(  # pylint: disable=too-many-branches, too-many-statements
             log_login(request, authenticator, username, 'Temporarily blocked', as_error=True)
             return types.auth.LoginResult(errstr=_('Too many authentication errrors. User temporarily blocked'))
         # check if authenticator is visible for this requests
-        if auth_instance.is_ip_allowed(request=request) is False:
-            log_login(
-                request,
-                authenticator,
-                username,
-                'Access tried from an unallowed source',
-                as_error=True,
-            )
-            return types.auth.LoginResult(errstr=_('Access tried from an unallowed source'))
-
         password = (
             form.cleaned_data['password'] or 'axd56adhg466jasd6q8sadñ€sáé--v'
         )  # Random string, in fact, just a placeholder that will not be used :)

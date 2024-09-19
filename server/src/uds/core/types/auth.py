@@ -58,7 +58,7 @@ class AuthenticationInternalUrl(enum.StrEnum):
     """
 
     LOGIN = 'page.login'
-    LOGIN_TAG = 'page.login.tag'
+    LOGIN_LABEL = 'page.login.tag'
     LOGOUT = 'page.logout'
 
     def get_url(self) -> str:

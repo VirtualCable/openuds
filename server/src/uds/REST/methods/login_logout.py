@@ -179,7 +179,7 @@ class Login(Handler):
                 # And store in cache for blocking for a while if fails
                 fail_cache.put(self._request.ip, fails + 1, GlobalConfig.LOGIN_BLOCK.as_int())
 
-                return Login.result(error='Invalid credentials')
+                return Login.result(error=auth_result.errstr or 'Invalid credentials')
             return Login.result(
                 result='ok',
                 token=self.gen_auth_token(
@@ -238,7 +238,7 @@ class Auths(Handler):
                     'auth': auth.name,
                     'type': theType.type_type,
                     'priority': auth.priority,
-                    'isCustom': theType.is_custom(), # Deprecated, use 'custom'
+                    'isCustom': theType.is_custom(),  # Deprecated, use 'custom'
                     'custom': theType.is_custom(),
                 }
 

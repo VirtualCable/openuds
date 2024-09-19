@@ -101,7 +101,7 @@ urlpatterns = [
     re_path(
         r'^uds/page/login/(?P<tag>[a-zA-Z0-9-]+)$',
         uds.web.views.main.login,
-        name=types.auth.AuthenticationInternalUrl.LOGIN_TAG.value,
+        name=types.auth.AuthenticationInternalUrl.LOGIN_LABEL.value,
     ),
     path(
         r'uds/page/logout',
