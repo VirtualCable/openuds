@@ -91,22 +91,23 @@ class UsageByPool(StatsReport):
                 .order_by('stamp')
             )
 
-            logins = {}
+            logins: dict[str, typing.Any] = {}
             for i in items:
                 # if '\\' in i.fld1:
                 #    continue
-
+                full_username = i.full_username
                 if i.event_type == stats.events.types.stats.EventType.LOGIN:
-                    logins[i.fld4] = i.stamp
+                    logins[full_username] = i.stamp
                 else:
-                    if i.fld4 in logins:
-                        stamp = typing.cast(int, logins[i.fld4])
-                        del logins[i.fld4]
+                    if full_username in logins:
+                        stamp = typing.cast(int, logins[full_username])
+                        del logins[full_username]
                         total = i.stamp - stamp
                         data.append(
                             {
-                                'name': i.fld4,
-                                'origin': i.fld2.split(':')[0],
+                                'name': full_username,
+                                # ipv6 handled by src_ip property
+                                'origin': i.src_ip,
                                 'date': datetime.datetime.fromtimestamp(stamp),
                                 'time': total,
                                 'pool': pool.uuid,
@@ -117,13 +118,13 @@ class UsageByPool(StatsReport):
         return data, ','.join([p.name for p in pools])
 
     def generate(self) -> bytes:
-        items, poolName = self.get_data()
+        items, poolname = self.get_data()
 
         return self.template_as_pdf(
             'uds/reports/stats/usage-by-pool.html',
             dct={
                 'data': items,
-                'pool': poolName,
+                'pool': poolname,
             },
             header=gettext('Users usage list'),
             water=gettext('UDS Report of users usage'),

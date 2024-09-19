@@ -174,7 +174,7 @@ def check_certificate_matches_private_key(*, cert: str, key: str) -> bool:
         return False
 
 
-def secure_requests_session(*, verify: typing.Union[str, bool] = True) -> 'requests.Session':
+def secure_requests_session(*, verify: 'str|bool' = True) -> 'requests.Session':
     '''
     Generates a requests.Session object with a custom adapter that uses a custom SSLContext.
     This is intended to be used for requests that need to be secure, but not necessarily verified.
@@ -182,6 +182,8 @@ def secure_requests_session(*, verify: typing.Union[str, bool] = True) -> 'reque
 
     Args:
         verify: If True, the server certificate will be verified. (Default: True)
+                Can also be the path to a CA_BUNDLE file or a directory with certificates of trusted CAs.
+                (as required by requests.Session.verify)
 
     Returns:
         A requests.Session object.
@@ -210,6 +212,7 @@ def secure_requests_session(*, verify: typing.Union[str, bool] = True) -> 'reque
             """
 
             # If lverify is an string, use it even if verify is False
+            # This is because verify contains the path to the CA_BUNDLE file or directory
             # if not, use verify value
             if not isinstance(verify, str):
                 verify = lverify

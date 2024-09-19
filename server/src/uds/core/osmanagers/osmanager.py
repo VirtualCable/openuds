@@ -270,7 +270,7 @@ class OSManager(Module):
         username = username or 'unknown'
 
         add_event(
-            userservice.deployed_service,
+            userservice.service_pool,
             types.stats.EventType.LOGIN,
             fld1=username,
             fld2=know_user_ip,

@@ -558,33 +558,36 @@ class gui:
             pattern = self._field_info.pattern
             if isinstance(pattern, types.ui.FieldPatternType):
                 try:
-                    if pattern == types.ui.FieldPatternType.IPV4:
-                        validators.validate_ipv4(self.value)
-                    elif pattern == types.ui.FieldPatternType.IPV6:
-                        validators.validate_ipv6(self.value)
-                    elif pattern == types.ui.FieldPatternType.IP:
-                        validators.validate_ip(self.value)
-                    elif pattern == types.ui.FieldPatternType.MAC:
-                        validators.validate_mac(self.value)
-                    elif pattern == types.ui.FieldPatternType.URL:
-                        validators.validateUrl(self.value)
-                    elif pattern == types.ui.FieldPatternType.EMAIL:
-                        validators.validate_email(self.value)
-                    elif pattern == types.ui.FieldPatternType.FQDN:
-                        validators.validate_fqdn(self.value)
-                    elif pattern == types.ui.FieldPatternType.HOSTNAME:
-                        validators.validate_hostname(self.value)
-                    elif pattern == types.ui.FieldPatternType.HOST:
-                        try:
-                            validators.validate_hostname(self.value, domain_allowed=True)
-                        except exceptions.ui.ValidationError:
+                    match pattern:
+                        case types.ui.FieldPatternType.NONE:
+                            return True
+                        case types.ui.FieldPatternType.IPV4:
+                            validators.validate_ipv4(self.value)
+                        case types.ui.FieldPatternType.IPV6:
+                            validators.validate_ipv6(self.value)
+                        case types.ui.FieldPatternType.IP:
                             validators.validate_ip(self.value)
-                    elif pattern == types.ui.FieldPatternType.PATH:
-                        validators.validate_path(self.value)
-                    return True
+                        case types.ui.FieldPatternType.MAC:
+                            validators.validate_mac(self.value)
+                        case types.ui.FieldPatternType.URL:
+                            validators.validateUrl(self.value)
+                        case types.ui.FieldPatternType.EMAIL:
+                            validators.validate_email(self.value)
+                        case types.ui.FieldPatternType.FQDN:
+                            validators.validate_fqdn(self.value)
+                        case types.ui.FieldPatternType.HOSTNAME:
+                            validators.validate_hostname(self.value)
+                        case types.ui.FieldPatternType.HOST:
+                            try:
+                                validators.validate_hostname(self.value, domain_allowed=True)
+                            except exceptions.ui.ValidationError:
+                                validators.validate_ip(self.value)
+                        case types.ui.FieldPatternType.PATH:
+                            validators.validate_path(self.value)
                 except exceptions.ui.ValidationError:
                     return False
-            elif isinstance(pattern, str):
+            else:
+                assert isinstance(pattern, str)
                 # It's a regex
                 return re.match(pattern, self.value) is not None
             return True  # No pattern, so it's valid

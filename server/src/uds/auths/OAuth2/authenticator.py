@@ -35,9 +35,7 @@ import hashlib
 import secrets
 import string
 import typing
-import dataclasses
 import collections.abc
-import datetime
 import urllib.parse
 from base64 import b64decode
 
@@ -46,9 +44,10 @@ import requests
 from django.utils.translation import gettext
 from django.utils.translation import gettext_noop as _
 
+from uds.auths.OAuth2.types import TokenInfo
 from uds.core import auths, consts, exceptions, types
 from uds.core.ui import gui
-from uds.core.util import fields, model, auth as auth_utils
+from uds.core.util import fields, auth as auth_utils, security
 
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest
@@ -59,30 +58,6 @@ logger = logging.getLogger(__name__)
 PKCE_ALPHABET: typing.Final[str] = string.ascii_letters + string.digits + '-._~'
 # Length of the State parameter
 STATE_LENGTH: typing.Final[int] = 16
-
-
-@dataclasses.dataclass
-class TokenInfo:
-    access_token: str
-    token_type: str
-    expires: datetime.datetime
-    refresh_token: str
-    scope: str
-    info: dict[str, typing.Any]
-    id_token: typing.Optional[str]
-
-    @staticmethod
-    def from_dict(dct: collections.abc.Mapping[str, typing.Any]) -> 'TokenInfo':
-        # expires is -10 to avoid problems with clock sync
-        return TokenInfo(
-            access_token=dct['access_token'],
-            token_type=dct['token_type'],
-            expires=model.sql_now() + datetime.timedelta(seconds=dct['expires_in'] - 10),
-            refresh_token=dct.get('refresh_token', ''),
-            scope=dct['scope'],
-            info=dct.get('info', {}),
-            id_token=dct.get('id_token', None),
-        )
 
 
 class OAuth2Authenticator(auths.Authenticator):
@@ -204,6 +179,9 @@ class OAuth2Authenticator(auths.Authenticator):
     username_attr = fields.username_attr_field(order=100)
     groupname_attr = fields.groupname_attr_field(order=101)
     realname_attr = fields.realname_attr_field(order=102)
+    
+    # Non serializable variables
+    session: requests.Session = security.secure_requests_session()
 
     def _get_public_keys(self) -> list[typing.Any]:  # In fact, any of the PublicKey types
         # Get certificates in self.publicKey.value, encoded as PEM

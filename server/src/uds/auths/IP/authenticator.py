@@ -124,13 +124,13 @@ class IPAuth(auths.Authenticator):
         self,
         username: str,
         credentials: str,  # pylint: disable=unused-argument
-        groupsManager: 'auths.GroupsManager',
+        groups_manager: 'auths.GroupsManager',
         request: 'types.requests.ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         # In fact, username does not matter, will get IP from request
         username = self.getIp(request)  # Override provided username and use source IP
-        self.get_groups(username, groupsManager)
-        if groupsManager.has_valid_groups() and self.db_obj().is_user_allowed(
+        self.get_groups(username, groups_manager)
+        if groups_manager.has_valid_groups() and self.db_obj().is_user_allowed(
             username, True
         ):
             return types.auth.SUCCESS_AUTH

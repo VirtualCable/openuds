@@ -60,42 +60,42 @@ class DeployedServiceStatsCollector(Job):
         ] = models.ServicePool.objects.filter(state=State.ACTIVE).iterator()
         stamp = model.sql_now()
         # Global counters
-        totalAssigned, totalInUse, totalCached = 0, 0, 0
-        for servicePool in service_pool_to_check:
+        total_assigned, total_inuse, total_cached = 0, 0, 0
+        for service_pool in service_pool_to_check:
             try:
-                fltr = servicePool.assigned_user_services().exclude(
+                fltr = service_pool.assigned_user_services().exclude(
                     state__in=State.INFO_STATES
                 )
                 assigned = fltr.count()
                 inUse = fltr.filter(in_use=True).count()
                 # Cached user services
                 cached = (
-                    servicePool.cached_users_services()
+                    service_pool.cached_users_services()
                     .exclude(state__in=State.INFO_STATES)
                     .count()
                 )
-                totalAssigned += assigned
-                totalInUse += inUse
-                totalCached += cached
+                total_assigned += assigned
+                total_inuse += inUse
+                total_cached += cached
                 counters.add_counter(
-                    servicePool, counters.types.stats.CounterType.ASSIGNED, assigned, stamp=stamp
+                    service_pool, counters.types.stats.CounterType.ASSIGNED, assigned, stamp=stamp
                 )
-                counters.add_counter(servicePool, counters.types.stats.CounterType.INUSE, inUse, stamp=stamp)
+                counters.add_counter(service_pool, counters.types.stats.CounterType.INUSE, inUse, stamp=stamp)
                 counters.add_counter(
-                    servicePool, counters.types.stats.CounterType.CACHED, cached, stamp=stamp
+                    service_pool, counters.types.stats.CounterType.CACHED, cached, stamp=stamp
                 )
             except Exception:
                 logger.exception(
-                    'Getting counters for service pool %s', servicePool.name
+                    'Getting counters for service pool %s', service_pool.name
                 )
         # Store a global "fake pool" with all stats
         sp = models.ServicePool()
         sp.id = -1
-        counters.add_counter(sp, counters.types.stats.CounterType.ASSIGNED, totalAssigned, stamp=stamp)
-        counters.add_counter(sp, counters.types.stats.CounterType.INUSE, totalInUse, stamp=stamp)
-        counters.add_counter(sp, counters.types.stats.CounterType.CACHED, totalCached, stamp=stamp)
+        counters.add_counter(sp, counters.types.stats.CounterType.ASSIGNED, total_assigned, stamp=stamp)
+        counters.add_counter(sp, counters.types.stats.CounterType.INUSE, total_inuse, stamp=stamp)
+        counters.add_counter(sp, counters.types.stats.CounterType.CACHED, total_cached, stamp=stamp)
 
-        totalUsers, totalAssigned, totalWithService = 0, 0, 0
+        total_users, total_assigned, total_users_with_service = 0, 0, 0
         for auth in models.Authenticator.objects.all():
             fltr_user = auth.users.filter(userServices__isnull=False).exclude(
                 userServices__state__in=State.INFO_STATES
@@ -104,9 +104,9 @@ class DeployedServiceStatsCollector(Job):
             users_with_service = fltr_user.values('id').distinct().count()  # Use "values" to simplify query (only id)
             number_assigned_services = fltr_user.values('id').count()
             # Global counters
-            totalUsers += users
-            totalAssigned += number_assigned_services
-            totalWithService += users_with_service
+            total_users += users
+            total_assigned += number_assigned_services
+            total_users_with_service += users_with_service
 
             counters.add_counter(auth, counters.types.stats.CounterType.AUTH_USERS, users, stamp=stamp)
             counters.add_counter(
@@ -121,10 +121,10 @@ class DeployedServiceStatsCollector(Job):
 
         au = models.Authenticator()
         au.id = -1
-        counters.add_counter(au, counters.types.stats.CounterType.AUTH_USERS, totalUsers, stamp=stamp)
-        counters.add_counter(au, counters.types.stats.CounterType.AUTH_SERVICES, totalAssigned, stamp=stamp)
+        counters.add_counter(au, counters.types.stats.CounterType.AUTH_USERS, total_users, stamp=stamp)
+        counters.add_counter(au, counters.types.stats.CounterType.AUTH_SERVICES, total_assigned, stamp=stamp)
         counters.add_counter(
-            au, counters.types.stats.CounterType.AUTH_USERS_WITH_SERVICES, totalWithService, stamp=stamp
+            au, counters.types.stats.CounterType.AUTH_USERS_WITH_SERVICES, total_users_with_service, stamp=stamp
         )
 
         logger.debug('Done Deployed service stats collector')

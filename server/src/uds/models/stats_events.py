@@ -122,7 +122,10 @@ class StatsEvents(models.Model):
 
     @property
     def src_ip(self) -> str:
-        return self.fld2
+        # If ipv6, return full, if not, split it by ':' and return first part
+        if '[' in self.fld2:
+            return self.fld2
+        return self.fld2.split(':')[0]
 
     @property
     def dst_ip(self) -> str:
@@ -130,6 +133,11 @@ class StatsEvents(models.Model):
 
     @property
     def unique_id(self) -> str:
+        return self.fld4
+    
+    # on userservice events, fld4 is full username
+    @property
+    def full_username(self) -> str:
         return self.fld4
 
     @property
