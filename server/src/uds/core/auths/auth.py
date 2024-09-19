@@ -264,7 +264,7 @@ def authenticate(
     @param password: password to authenticate this user
     @param authenticator: Authenticator (database object) used to authenticate with provided credentials
     @param request: Request object
-    
+
     @return:
             An AuthResult indicating:
             user if success in logging in field user or None if not
@@ -284,6 +284,11 @@ def authenticate(
 
     gm = auths.GroupsManager(authenticator)
     auth_instance = authenticator.get_instance()
+
+    if auth_instance.is_ip_allowed(request) is False:
+        logger.info('Access tried from an unallowed source')
+        return AuthResult()
+
     res = auth_instance.authenticate(username, password, gm, request)
 
     if res.success == types.auth.AuthenticationState.FAIL:
