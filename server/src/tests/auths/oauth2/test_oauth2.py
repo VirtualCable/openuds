@@ -29,6 +29,7 @@
 '''
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+from urllib.parse import urlparse, parse_qs
 from unittest import mock
 
 from tests.utils.test import UDSTestCase
@@ -36,7 +37,7 @@ from uds.core import types
 
 from . import fixtures
 
-from uds.auths.OAuth2 import types as oauth2_types
+from uds.auths.OAuth2 import types as oauth2_types, consts as oauth2_consts
 
 
 class OAuth2Test(UDSTestCase):
@@ -83,3 +84,44 @@ class OAuth2Test(UDSTestCase):
                     self.assertIsInstance(logout, types.auth.AuthenticationResult)
                     self.assertTrue(logout.success)
                     self.assertEqual(logout.url, 'https://logout.com?token=token_value')
+
+    def test_get_login_url_code(self) -> None:
+        for kind in oauth2_types.ResponseType:
+            with fixtures.create_authenticator(kind) as oauth2:
+                url = oauth2.get_login_url()
+                self.assertIsInstance(url, str)
+                # Parse URL and ensure it's correct
+                auth_url_info = urlparse(url)
+                configured_url_info = urlparse(oauth2.authorization_endpoint.value, kind.as_text)
+                query = parse_qs(auth_url_info.query)
+                configures_scopes = set(oauth2.scope.value.split())
+
+                self.assertEqual(auth_url_info.scheme, configured_url_info.scheme, kind.as_text)
+                self.assertEqual(auth_url_info.netloc, configured_url_info.netloc, kind.as_text)
+                self.assertEqual(auth_url_info.path, configured_url_info.path, kind.as_text)
+                self.assertEqual(query['response_type'], [kind.for_query], kind.as_text)
+                self.assertEqual(query['client_id'], [oauth2.client_id.value], kind.as_text)
+                self.assertEqual(query['redirect_uri'], [oauth2.redirection_endpoint.value], kind.as_text)
+                scopes = set(query['scope'][0].split())
+
+                if kind == oauth2_types.ResponseType.PKCE:
+                    self.assertEqual(query['code_challenge_method'], ['S256'], kind.as_text)
+                    code_challenge = query['code_challenge'][0]
+                    self.assertIsInstance(code_challenge, str, kind.as_text)
+
+                # All configured scopes should be present
+                self.assertTrue(configures_scopes.issubset(scopes), kind.as_text)
+
+                # And if openid variant, scope should contain openid
+                if kind in (oauth2_types.ResponseType.OPENID_CODE, oauth2_types.ResponseType.OPENID_ID_TOKEN):
+                    self.assertIn('openid', scopes, kind.as_text)
+
+                state = query['state'][0]
+                self.assertIsInstance(state, str, kind.as_text)
+                # state is in base64, so it will take a bit more than 16 characters
+                # Exactly every 6 bits will take 8 bits, so we need to divide by 6 and multiply by 8
+                # Adjusting to the upper integer
+                expected_length = (oauth2_consts.STATE_LENGTH * 8 + 5) // 6
+                self.assertEqual(len(state), expected_length, kind.as_text)
+                # oauth2 cache should contain the state
+                self.assertIsNotNone(oauth2.cache.get(state), kind.as_text)

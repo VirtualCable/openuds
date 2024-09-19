@@ -1,6 +1,6 @@
 {
     "include": [
-        "src"
+        "src/**/*.py",
     ],
     "exclude": [
         "**/scripts",
@@ -11,4 +11,5 @@
     "reportUnusedImport": true,
     "reportMissingTypeStubs": false,
     "disableBytesTypePromotions": true,
+    "stubPath": "../../enterprise/stubs",
 }

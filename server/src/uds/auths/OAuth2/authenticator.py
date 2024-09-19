@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2023 Virtual Cable S.L.U.
+# Copyright (c) 2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -33,17 +31,16 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 import hashlib
 import secrets
-import string
 import typing
 import collections.abc
 import urllib.parse
-from base64 import b64decode
+from base64 import b64encode
 
 import jwt
 from django.utils.translation import gettext
 from django.utils.translation import gettext_noop as _
 
-from . import types as oauth2_types
+from . import types as oauth2_types, consts as oauth2_consts
 from uds.core import auths, consts, exceptions, types
 from uds.core.ui import gui
 from uds.core.util import fields, auth as auth_utils, security
@@ -53,11 +50,6 @@ if typing.TYPE_CHECKING:
     import requests
 
 logger = logging.getLogger(__name__)
-
-# Alphabet used for PKCE
-PKCE_ALPHABET: typing.Final[str] = string.ascii_letters + string.digits + '-._~'
-# Length of the State parameter
-STATE_LENGTH: typing.Final[int] = 16
 
 
 class OAuth2Authenticator(auths.Authenticator):
@@ -185,34 +177,123 @@ class OAuth2Authenticator(auths.Authenticator):
     # Non serializable variables
     session: typing.ClassVar['requests.Session'] = security.secure_requests_session()
 
+    def initialize(self, values: typing.Optional[dict[str, typing.Any]]) -> None:
+        if not values:
+            return
+
+        if ' ' in values['name']:
+            raise exceptions.ui.ValidationError(
+                gettext('This kind of Authenticator does not support white spaces on field NAME')
+            )
+
+        auth_utils.validate_regex_field(self.username_attr)
+        auth_utils.validate_regex_field(self.username_attr)
+
+        if self.response_type.value in (
+            oauth2_types.ResponseType.CODE,
+            oauth2_types.ResponseType.PKCE,
+            oauth2_types.ResponseType.OPENID_CODE,
+        ):
+            if self.common_groups.value.strip() == '':
+                raise exceptions.ui.ValidationError(
+                    gettext('Common groups is required for "code" response types')
+                )
+            if self.token_endpoint.value.strip() == '':
+                raise exceptions.ui.ValidationError(
+                    gettext('Token endpoint is required for "code" response types')
+                )
+            # infoEndpoint will not be necesary if the response of tokenEndpoint contains the user info
+
+        if self.response_type.value == 'openid+token_id':
+            # Ensure we have a public key
+            if self.public_key.value.strip() == '':
+                raise exceptions.ui.ValidationError(
+                    gettext('Public key is required for "openid+token_id" response type')
+                )
+
+        if self.redirection_endpoint.value.strip() == '' and self.db_obj() and '_request' in values:
+            request: 'HttpRequest' = values['_request']
+            self.redirection_endpoint.value = request.build_absolute_uri(self.callback_url())
+
+    def auth_callback(
+        self,
+        parameters: 'types.auth.AuthCallbackParams',
+        groups_manager: 'auths.GroupsManager',
+        request: 'types.requests.ExtendedHttpRequest',
+    ) -> types.auth.AuthenticationResult:
+        match oauth2_types.ResponseType(self.response_type.value):
+            case oauth2_types.ResponseType.CODE | oauth2_types.ResponseType.PKCE:
+                return self.auth_callback_code(parameters, groups_manager, request)
+            # case 'token':
+            case oauth2_types.ResponseType.TOKEN:
+                return self.auth_callback_token(parameters, groups_manager, request)
+            # case 'openid+code':
+            case oauth2_types.ResponseType.OPENID_CODE:
+                return self.auth_callback_openid_code(parameters, groups_manager, request)
+            # case 'openid+token_id':
+            case oauth2_types.ResponseType.OPENID_ID_TOKEN:
+                return self.auth_callback_openid_id_token(parameters, groups_manager, request)
+
+    def logout(
+        self,
+        request: 'types.requests.ExtendedHttpRequest',
+        username: str,
+    ) -> types.auth.AuthenticationResult:
+        if self.logout_url.value.strip() == '' or (token := self.retrieve_token(request)) == '':
+            return types.auth.SUCCESS_AUTH
+
+        return types.auth.AuthenticationResult(
+            types.auth.AuthenticationState.SUCCESS,
+            url=self.logout_url.value.replace('{token}', urllib.parse.quote(token)),
+        )
+
+    def get_javascript(self, request: 'HttpRequest') -> typing.Optional[str]:
+        """
+        We will here compose the azure request and send it via http-redirect
+        """
+        return f'window.location="{self.get_login_url()}";'
+
+    def get_groups(self, username: str, groups_manager: 'auths.GroupsManager') -> None:
+        data = self.storage.read_pickled(username)
+        if not data:
+            return
+        groups_manager.validate(data[1])
+
+    def get_real_name(self, username: str) -> str:
+        data = self.storage.read_pickled(username)
+        if not data:
+            return username
+        return data[0]
+
+    # own methods
     def get_public_keys(self) -> list[typing.Any]:  # In fact, any of the PublicKey types
         # Get certificates in self.publicKey.value, encoded as PEM
         # Return a list of certificates in DER format
         return [cert.public_key() for cert in fields.get_certificates_from_field(self.public_key)]
 
-    def _code_verifier_and_challenge(self) -> tuple[str, str]:
+    def code_verifier_and_challenge(self) -> tuple[str, str]:
         """Generate a code verifier and a code challenge for PKCE
 
         Returns:
             tuple[str, str]: Code verifier and code challenge
         """
-        code_verifier = ''.join(secrets.choice(PKCE_ALPHABET) for _ in range(128))
+        code_verifier = ''.join(secrets.choice(oauth2_consts.PKCE_ALPHABET) for _ in range(128))
         code_challenge = (
-            b64decode(hashlib.sha256(code_verifier.encode('ascii')).digest(), altchars=b'-_')
+            b64encode(hashlib.sha256(code_verifier.encode()).digest(), altchars=b'-_')
             .decode()
             .rstrip('=')  # remove padding
         )
 
         return code_verifier, code_challenge
 
-    def _get_login_url(self, request: 'HttpRequest') -> str:
+    def get_login_url(self) -> str:
         """
         :type request: django.http.request.HttpRequest
         """
-        state: str = secrets.token_urlsafe(STATE_LENGTH)
+        state: str = secrets.token_urlsafe(oauth2_consts.STATE_LENGTH)
         response_type = oauth2_types.ResponseType(self.response_type.value)
 
-        param_dict = {
+        param_dict: dict[str, str] = {
             'response_type': response_type.for_query,
             'client_id': self.client_id.value,
             'redirect_uri': self.redirection_endpoint.value,
@@ -225,22 +306,23 @@ class OAuth2Authenticator(auths.Authenticator):
                 # Code or token flow
                 # Simply store state, no code_verifier, store "none" as code_verifier to later restore it
                 self.cache.put(state, 'none', 3600)
-            case oauth2_types.ResponseType.OPENID_CODE | oauth2_types.ResponseType.OPENID_TOKEN_ID:
+            case oauth2_types.ResponseType.OPENID_CODE | oauth2_types.ResponseType.OPENID_ID_TOKEN:
                 # OpenID flow
-                nonce = secrets.token_urlsafe(STATE_LENGTH)
+                nonce = secrets.token_urlsafe(oauth2_consts.STATE_LENGTH)
                 self.cache.put(state, nonce, 3600)  # Store nonce
-                # Fix scope
-                param_dict['scope'] = 'openid ' + param_dict['scope']
+                # Fix scope to ensure openid is present
+                if 'openid' not in param_dict['scope']:
+                    param_dict['scope'] = 'openid ' + param_dict['scope']
                 # Append nonce
                 param_dict['nonce'] = nonce
                 # Add response_mode
                 param_dict['response_mode'] = 'form_post'  # ['query', 'fragment', 'form_post']
             case oauth2_types.ResponseType.PKCE:
                 # PKCE flow
-                codeVerifier, codeChallenge = self._code_verifier_and_challenge()
-                param_dict['code_challenge'] = codeChallenge
+                code_verifier, code_challenge = self.code_verifier_and_challenge()
+                param_dict['code_challenge'] = code_challenge
                 param_dict['code_challenge_method'] = 'S256'
-                self.cache.put(state, codeVerifier, 3600)
+                self.cache.put(state, code_verifier, 3600)
 
         # Nonce only is used
         if False:
@@ -253,7 +335,7 @@ class OAuth2Authenticator(auths.Authenticator):
 
         return self.authorization_endpoint.value + '?' + params
 
-    def _request_token(self, code: str, code_verifier: typing.Optional[str] = None) -> 'oauth2_types.TokenInfo':
+    def request_token(self, code: str, code_verifier: typing.Optional[str] = None) -> 'oauth2_types.TokenInfo':
         """Request a token from the token endpoint using the code received from the authorization endpoint
 
         Args:
@@ -282,7 +364,7 @@ class OAuth2Authenticator(auths.Authenticator):
 
         return oauth2_types.TokenInfo.from_dict(response.json())
 
-    def _request_info(self, token: 'oauth2_types.TokenInfo') -> dict[str, typing.Any]:
+    def request_userinfo(self, token: 'oauth2_types.TokenInfo') -> dict[str, typing.Any]:
         """Request user info from the info endpoint using the token received from the token endpoint
 
         If the token endpoint returns the user info, this method will not be used
@@ -297,7 +379,7 @@ class OAuth2Authenticator(auths.Authenticator):
 
         if self.info_endpoint.value.strip() == '':
             if not token.info:
-                raise Exception('No user info received')
+                raise Exception('No user info endpoint and token does not contain user info')
             userinfo = token.info
         else:
             # Get user info
@@ -314,13 +396,13 @@ class OAuth2Authenticator(auths.Authenticator):
             userinfo = req.json()
         return userinfo
 
-    def _store_token_on_session(self, request: 'HttpRequest', token: str) -> None:
+    def save_token(self, request: 'HttpRequest', token: str) -> None:
         request.session['oauth2_token'] = token
 
-    def _retrieve_token_from_session(self, request: 'HttpRequest') -> str:
+    def retrieve_token(self, request: 'HttpRequest') -> str:
         return request.session.get('oauth2_token', '')
 
-    def _process_userinfo(
+    def process_userinfo(
         self, userinfo: collections.abc.Mapping[str, typing.Any], gm: 'auths.GroupsManager'
     ) -> types.auth.AuthenticationResult:
         # After this point, we don't mind about the token, we only need to authenticate user
@@ -347,7 +429,7 @@ class OAuth2Authenticator(auths.Authenticator):
         # and if we are here, the user is authenticated, so we can return SUCCESS_AUTH
         return types.auth.AuthenticationResult(types.auth.AuthenticationState.SUCCESS, username=username)
 
-    def _process_token_open_id(
+    def process_token_open_id(
         self, token_id: str, nonce: str, gm: 'auths.GroupsManager'
     ) -> types.auth.AuthenticationResult:
         # Get token headers, to extract algorithm
@@ -369,7 +451,7 @@ class OAuth2Authenticator(auths.Authenticator):
                     # All is fine, get user & look for groups
 
                 # Process attributes from payload
-                return self._process_userinfo(payload, gm)
+                return self.process_userinfo(payload, gm)
             except (jwt.InvalidTokenError, IndexError):
                 # logger.debug('Data was invalid: %s', e)
                 pass
@@ -382,89 +464,6 @@ class OAuth2Authenticator(auths.Authenticator):
 
         return types.auth.FAILED_AUTH
 
-    def initialize(self, values: typing.Optional[dict[str, typing.Any]]) -> None:
-        if not values:
-            return
-
-        if ' ' in values['name']:
-            raise exceptions.ui.ValidationError(
-                gettext('This kind of Authenticator does not support white spaces on field NAME')
-            )
-
-        auth_utils.validate_regex_field(self.username_attr)
-        auth_utils.validate_regex_field(self.username_attr)
-
-        if self.response_type.value in (oauth2_types.ResponseType.CODE, oauth2_types.ResponseType.PKCE, oauth2_types.ResponseType.OPENID_CODE):
-            if self.common_groups.value.strip() == '':
-                raise exceptions.ui.ValidationError(
-                    gettext('Common groups is required for "code" response types')
-                )
-            if self.token_endpoint.value.strip() == '':
-                raise exceptions.ui.ValidationError(
-                    gettext('Token endpoint is required for "code" response types')
-                )
-            # infoEndpoint will not be necesary if the response of tokenEndpoint contains the user info
-
-        if self.response_type.value == 'openid+token_id':
-            # Ensure we have a public key
-            if self.public_key.value.strip() == '':
-                raise exceptions.ui.ValidationError(
-                    gettext('Public key is required for "openid+token_id" response type')
-                )
-
-        if self.redirection_endpoint.value.strip() == '' and self.db_obj() and '_request' in values:
-            request: 'HttpRequest' = values['_request']
-            self.redirection_endpoint.value = request.build_absolute_uri(self.callback_url())
-
-    def auth_callback(
-        self,
-        parameters: 'types.auth.AuthCallbackParams',
-        groups_manager: 'auths.GroupsManager',
-        request: 'types.requests.ExtendedHttpRequest',
-    ) -> types.auth.AuthenticationResult:
-        match self.response_type.value:
-            case 'code' | 'pkce':
-                return self.auth_callback_code(parameters, groups_manager, request)
-            case 'token':
-                return self.auth_callback_token(parameters, groups_manager, request)
-            case 'openid+code':
-                return self.auth_callback_openid_code(parameters, groups_manager, request)
-            case 'openid+token_id':
-                return self.auth_callback_openid_id_token(parameters, groups_manager, request)
-            case _:
-                raise Exception('Invalid response type')
-
-    def logout(
-        self,
-        request: 'types.requests.ExtendedHttpRequest',  # pylint: disable=unused-argument
-        username: str,  # pylint: disable=unused-argument
-    ) -> types.auth.AuthenticationResult:
-        if self.logout_url.value.strip() == '' or (token := self._retrieve_token_from_session(request)) == '':
-            return types.auth.SUCCESS_AUTH
-
-        return types.auth.AuthenticationResult(
-            types.auth.AuthenticationState.SUCCESS,
-            url=self.logout_url.value.replace('{token}', urllib.parse.quote(token)),
-        )
-
-    def get_javascript(self, request: 'HttpRequest') -> typing.Optional[str]:
-        """
-        We will here compose the azure request and send it via http-redirect
-        """
-        return f'window.location="{self._get_login_url(request)}";'
-
-    def get_groups(self, username: str, groups_manager: 'auths.GroupsManager') -> None:
-        data = self.storage.read_pickled(username)
-        if not data:
-            return
-        groups_manager.validate(data[1])
-
-    def get_real_name(self, username: str) -> str:
-        data = self.storage.read_pickled(username)
-        if not data:
-            return username
-        return data[0]
-
     def auth_callback_code(
         self,
         parameters: 'types.auth.AuthCallbackParams',
@@ -473,7 +472,7 @@ class OAuth2Authenticator(auths.Authenticator):
     ) -> types.auth.AuthenticationResult:
         """Process the callback for code authorization flow"""
         state = parameters.get_params.get('state', '')
-        # Remove state from cache
+        # Get and remove state from cache
         code_verifier = self.cache.pop(state)
 
         if not state or not code_verifier:
@@ -490,10 +489,10 @@ class OAuth2Authenticator(auths.Authenticator):
         if code_verifier == 'none':
             code_verifier = None
 
-        token_info = self._request_token(code, code_verifier)
+        token_info = self.request_token(code, code_verifier)
         # Store for later use
-        self._store_token_on_session(request, token_info.access_token)
-        return self._process_userinfo(self._request_info(token_info), gm)
+        self.save_token(request, token_info.access_token)
+        return self.process_userinfo(self.request_userinfo(token_info), gm)
 
     def auth_callback_token(
         self,
@@ -513,8 +512,8 @@ class OAuth2Authenticator(auths.Authenticator):
         # Get the token, token_type, expires
         token = oauth2_types.TokenInfo.from_dict(parameters.get_params)
         # Store for later use
-        self._store_token_on_session(request, token.access_token)
-        return self._process_userinfo(self._request_info(token), gm)
+        self.save_token(request, token.access_token)
+        return self.process_userinfo(self.request_userinfo(token), gm)
 
     def auth_callback_openid_code(
         self,
@@ -538,15 +537,15 @@ class OAuth2Authenticator(auths.Authenticator):
             return types.auth.FAILED_AUTH
 
         # Get the token, token_type, expires
-        token = self._request_token(code)
+        token = self.request_token(code)
 
         if not token.id_token:
             logger.error('No id_token received on OAuth2 callback')
             return types.auth.FAILED_AUTH
 
         # Store for later use
-        self._store_token_on_session(request, token.access_token)
-        return self._process_token_open_id(token.id_token, nonce, gm)
+        self.save_token(request, token.access_token)
+        return self.process_token_open_id(token.id_token, nonce, gm)
 
     def auth_callback_openid_id_token(
         self,
@@ -570,5 +569,5 @@ class OAuth2Authenticator(auths.Authenticator):
             return types.auth.FAILED_AUTH
 
         # Store for later use
-        self._store_token_on_session(request, id_token)
-        return self._process_token_open_id(id_token, nonce, gm)
+        self.save_token(request, id_token)
+        return self.process_token_open_id(id_token, nonce, gm)

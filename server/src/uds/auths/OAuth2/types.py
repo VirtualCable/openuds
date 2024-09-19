@@ -66,7 +66,7 @@ class ResponseType(enum.StrEnum):
     CODE = 'code'
     PKCE = 'pkce'
     TOKEN = 'token'
-    OPENID_TOKEN_ID = 'openid+token_id'
+    OPENID_ID_TOKEN = 'openid+token_id'
     OPENID_CODE = 'openid+code'
 
     @property
@@ -78,7 +78,7 @@ class ResponseType(enum.StrEnum):
                 return 'code'
             case ResponseType.TOKEN:
                 return 'token'
-            case ResponseType.OPENID_TOKEN_ID:
+            case ResponseType.OPENID_ID_TOKEN:
                 return 'id_token'
             case ResponseType.OPENID_CODE:
                 return 'code'
@@ -92,7 +92,7 @@ class ResponseType(enum.StrEnum):
                 return _('PKCE (authorization code flow with PKCE)')
             case ResponseType.TOKEN:
                 return _('Token (implicit flow)')
-            case ResponseType.OPENID_TOKEN_ID:
+            case ResponseType.OPENID_ID_TOKEN:
                 return _('OpenID Connect Token (implicit flow with OpenID Connect)')
             case ResponseType.OPENID_CODE:
                 return _('OpenID Connect Code (authorization code flow with OpenID Connect)')

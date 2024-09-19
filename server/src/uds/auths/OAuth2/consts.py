@@ -25,43 +25,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import contextlib
 import typing
-from uds.core.environment import Environment
-from uds.core.util import security
+import string
 
-from uds.auths.OAuth2.authenticator import OAuth2Authenticator
-from uds.auths.OAuth2.types import ResponseType
-
-KEYS: typing.Final[list[tuple[str, str]]] = [
-    security.generate_rsa_keypair()
-    for _ in range(3)
-]
-
-PUBLIC_KEYS: typing.Final[list[str]] = [key[1] for key in KEYS]
-
-DATA_TEMPLATE: dict[str, str] = {
-    'name': 'oauth2',
-    'authorization_endpoint': 'https://auth_endpoint.com',
-    'client_id': 'client_id',
-    'client_secret': 'client_secret',
-    'scope': 'email profile',  # Default scopes
-    'common_groups': 'common_group',
-    'redirection_endpoint': 'https://redirect_endpoint.com',
-    'response_type': 'code',
-    'token_endpoint': 'https://oauth2.googleapis.com/token',
-    'info_endpoint': 'https://openidconnect.googleapis.com/v1/userinfo',
-    'public_key': '\n'.join(PUBLIC_KEYS),
-    'logout_url': 'https://logout.com?token={token}',
-    'username_attr': 'username_attr',
-    'groupname_attr': 'groupname_attr',
-    'realname_attr': 'realname_attr',
-}
-
-@contextlib.contextmanager
-def create_authenticator(response_type: ResponseType) -> typing.Iterator[OAuth2Authenticator]:
-    with Environment.temporary_environment() as env:
-        data = DATA_TEMPLATE.copy()
-        data['response_type'] = str(response_type)
-        instance = OAuth2Authenticator(environment=env, values=data)
-        yield instance
+# Alphabet used for PKCE
+PKCE_ALPHABET: typing.Final[str] = string.ascii_letters + string.digits + '-._~'
+# Length of the State parameter
+STATE_LENGTH: typing.Final[int] = 24
