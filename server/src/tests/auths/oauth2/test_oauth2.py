@@ -30,6 +30,8 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from urllib.parse import urlparse, parse_qs
+from base64 import b64encode
+from hashlib import sha256
 from unittest import mock
 
 from tests.utils.test import UDSTestCase
@@ -104,6 +106,7 @@ class OAuth2Test(UDSTestCase):
                 self.assertEqual(query['redirect_uri'], [oauth2.redirection_endpoint.value], kind.as_text)
                 scopes = set(query['scope'][0].split())
 
+                code_challenge = ''
                 if kind == oauth2_types.ResponseType.PKCE:
                     self.assertEqual(query['code_challenge_method'], ['S256'], kind.as_text)
                     code_challenge = query['code_challenge'][0]
@@ -124,4 +127,16 @@ class OAuth2Test(UDSTestCase):
                 expected_length = (oauth2_consts.STATE_LENGTH * 8 + 5) // 6
                 self.assertEqual(len(state), expected_length, kind.as_text)
                 # oauth2 cache should contain the state
-                self.assertIsNotNone(oauth2.cache.get(state), kind.as_text)
+                state_value = oauth2.cache.get(state)
+                self.assertIsNotNone(state_value, kind.as_text)
+                
+                # If pkce, we need to check the code_challenge. code_verifier is stored in the state
+                if kind == oauth2_types.ResponseType.PKCE:
+                    calc_code_challenge = (
+                        b64encode(sha256(state_value.encode()).digest(), altchars=b'-_')
+                        .decode()
+                        .rstrip('=')  # remove padding
+                    )
+
+                    self.assertEqual(calc_code_challenge, code_challenge, kind.as_text)
+                

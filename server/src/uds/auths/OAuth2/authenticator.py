@@ -370,7 +370,7 @@ class OAuth2Authenticator(auths.Authenticator):
         If the token endpoint returns the user info, this method will not be used
 
         Args:
-            token (TokenInfo): Token received from the token endpoint
+            token (TokenInfo): Token info received from the token endpoint
 
         Returns:
             dict[str, typing.Any]: User info received from the info endpoint
@@ -502,10 +502,9 @@ class OAuth2Authenticator(auths.Authenticator):
     ) -> types.auth.AuthenticationResult:
         """Process the callback for PKCE authorization flow"""
         state = parameters.get_params.get('state', '')
-        stateValue = self.cache.get(state)
-        self.cache.remove(state)
+        state_value = self.cache.pop(state)
 
-        if not state or not stateValue:
+        if not state or not state_value:
             logger.error('Invalid state received on OAuth2 callback')
             return types.auth.FAILED_AUTH
 
@@ -523,8 +522,7 @@ class OAuth2Authenticator(auths.Authenticator):
     ) -> types.auth.AuthenticationResult:
         """Process the callback for OpenID authorization flow"""
         state = parameters.post_params.get('state', '')
-        nonce = self.cache.get(state)
-        self.cache.remove(state)
+        nonce = self.cache.pop(state)
 
         if not state or not nonce:
             logger.error('Invalid state received on OAuth2 callback')
@@ -555,8 +553,7 @@ class OAuth2Authenticator(auths.Authenticator):
     ) -> types.auth.AuthenticationResult:
         """Process the callback for OpenID authorization flow"""
         state = parameters.post_params.get('state', '')
-        nonce = self.cache.get(state)
-        self.cache.remove(state)
+        nonce = self.cache.pop(state)
 
         if not state or not nonce:
             logger.error('Invalid state received on OAuth2 callback')
