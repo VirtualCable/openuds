@@ -481,11 +481,6 @@ class GlobalConfig:
         'New Max restriction', '0', type=Config.BOOLEAN_FIELD
     )
 
-    # Maximum security logs duration in days
-    MAX_AUDIT_LOGS_DURATION: Config.Value = Config.section(SECURITY_SECTION).value(
-        'Max Audit Logs duration', '30', type=Config.NUMERIC_FIELD
-    )
-
     # Allowed "trusted sources" for request
     TRUSTED_SOURCES: Config.Value = Config.section(SECURITY_SECTION).value(
         'Trusted Hosts', '*', type=Config.TEXT_FIELD
