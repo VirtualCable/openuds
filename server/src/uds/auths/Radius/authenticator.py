@@ -201,7 +201,7 @@ class RadiusAuth(auths.Authenticator):
     def test(env: 'environment.Environment', data: 'types.core.ValuesType') -> 'types.core.TestResult':
         """Test the connection to the server ."""
         try:
-            auth = RadiusAuth(None, env, data)  # type: ignore
+            auth = RadiusAuth(env, data)  # type: ignore
             return auth.test_connection()
         except Exception as e:
             logger.error("Exception found testing Radius auth %s: %s", e.__class__, e)

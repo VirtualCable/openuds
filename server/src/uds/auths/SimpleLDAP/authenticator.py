@@ -469,7 +469,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     @staticmethod
     def test(env: 'environment.Environment', data: 'types.core.ValuesType') -> 'types.core.TestResult':
         try:
-            auth = SimpleLDAPAuthenticator(None, env, data)  # type: ignore
+            auth = SimpleLDAPAuthenticator(env, data)  # type: ignore
             return auth.test_connection()
         except Exception as e:
             logger.error("Exception found testing Simple LDAP auth: %s", e)

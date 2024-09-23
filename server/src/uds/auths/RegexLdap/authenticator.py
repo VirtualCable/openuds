@@ -451,7 +451,7 @@ class RegexLdap(auths.Authenticator):
     @staticmethod
     def test(env: 'environment.Environment', data: 'types.core.ValuesType') -> 'types.core.TestResult':
         try:
-            auth = RegexLdap(None, env, data)  # type: ignore  # Regexldap does not use "dbAuth", so it's safe...
+            auth = RegexLdap(env, data)  # type: ignore  # Regexldap does not use "dbAuth", so it's safe...
             return auth.test_connection()
         except Exception as e:
             logger.error('Exception found testing Simple LDAP auth %s: %s', e.__class__, e)
