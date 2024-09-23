@@ -1,4 +1,3 @@
-# pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable, invalid-sequence-index
 import subprocess
 import shutil
 import os
@@ -31,13 +30,12 @@ def fixResolution():
     return list(map(lambda x: x.replace('#WIDTH#', width).replace('#HEIGHT#', height), sp['as_new_xfreerdp_params']))  # type: ignore
 
 
-
-msrdc = (
-    '/Applications/Microsoft Remote Desktop.app'
-)
-msrdc_localized = (
-    '/Applications/Microsoft Remote Desktop.localized/Microsoft Remote Desktop.app'
-)
+msrdc_list = [
+    '/Applications/Microsoft Remote Desktop.app',
+    '/Applications/Microsoft Remote Desktop.localized/Microsoft Remote Desktop.app',
+    '/Applications/Windows App.app',
+    '/Applications/Windows App.localized/Windows App.app',
+]
 
 xfreerdp = tools.findApp('xfreerdp')
 executable = None
@@ -45,10 +43,11 @@ executable = None
 # Check first xfreerdp, allow password redir
 if xfreerdp and os.path.isfile(xfreerdp):
     executable = xfreerdp
-elif os.path.isdir(msrdc) and sp['as_file']:  # type: ignore
-    executable = msrdc
-elif os.path.isdir(msrdc_localized) and sp['as_file']:  # type: ignore
-    executable = msrdc_localized
+else:
+    for msrdc in msrdc_list:
+        if os.path.isdir(msrdc) and sp['as_file']:  # type: ignore
+            executable = msrdc
+            break
 
 if executable is None:
     if sp['as_rdp_url']:  # type: ignore
@@ -97,7 +96,7 @@ if fs.check() is False:
         '<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>'
     )
 
-if executable in (msrdc, msrdc_localized):
+if executable in msrdc_list:
     theFile = theFile = sp['as_file'].format(address=address)  # type: ignore
 
     filename = tools.saveTempFile(theFile)
