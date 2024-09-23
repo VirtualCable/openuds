@@ -3,7 +3,7 @@
         "src/**/*.py",
     ],
     "exclude": [
-        "**/scripts",
+        "src/**/scripts",
         "**/__pycache__",
     ],
     "typeCheckingMode": "strict",

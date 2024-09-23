@@ -1,26 +1,39 @@
-import subprocess  # noqa
+import typing
 
-from uds.tunnel import forward  # type: ignore
+# On older client versions, need importing globally to allow inner functions to work
+import subprocess  # type: ignore
 
-from uds import tools  # type: ignore
+# Avoid type checking annoing errors
+try:
+    from uds.tunnel import forward  # type: ignore
+except ImportError:
+    forward: typing.Any = None
+    raise
 
-# Inject local passed sp into globals for functions
-globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
+try:
+    from uds import tools  # type: ignore
+except ImportError:
+    tools: typing.Any = None
+    raise
+
+if 'sp' not in globals():
+    # Inject local passed sp into globals for inner functions if not already there
+    globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
 
 
-def execUdsRdp(udsrdp, port):
+def execUdsRdp(udsrdp: str, port: int) -> None:
     import subprocess  # @Reimport
     import os.path
 
-    params = [os.path.expandvars(i) for i in [udsrdp] + sp['as_new_xfreerdp_params'] + ['/v:127.0.0.1:{}'.format(port)]]  # type: ignore
+    params: typing.List[str] = [os.path.expandvars(i) for i in [udsrdp] + sp['as_new_xfreerdp_params'] + ['/v:127.0.0.1:{}'.format(port)]]  # type: ignore
     tools.addTaskToWait(subprocess.Popen(params))
 
 
-def execNewXFreeRdp(xfreerdp, port):
+def execNewXFreeRdp(xfreerdp: str, port: int) -> None:
     import subprocess  # @Reimport
     import os.path
 
-    params = [os.path.expandvars(i) for i in [xfreerdp] + sp['as_new_xfreerdp_params'] + ['/v:127.0.0.1:{}'.format(port)]]  # type: ignore
+    params: typing.List[str] = [os.path.expandvars(i) for i in [xfreerdp] + sp['as_new_xfreerdp_params'] + ['/v:127.0.0.1:{}'.format(port)]]  # type: ignore
     tools.addTaskToWait(subprocess.Popen(params))
 
 

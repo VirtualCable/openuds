@@ -1,39 +1,45 @@
+# pyright: reportUnknownMemberType=false,reportUnknownArgumentType=false,reportAttributeAccessIssue=false
+import typing
 import os
-import subprocess  # nosec: B404
 import win32crypt  # type: ignore
 import codecs
 
-try:
-    import winreg as wreg
-except ImportError:  # Python 2.7 fallback
-    import _winreg as wreg  # type: ignore
+# On older client versions, need importing globally to allow inner functions to work
+import subprocess  # type: ignore
 
-from uds.log import logger  # type: ignore
-from uds import tools  # type: ignore
+import winreg as wreg
+
+
+# Avoid type checking annoing errors
+try:
+    from uds import tools  # type: ignore
+except ImportError:
+    tools: typing.Any = None
+    raise
+
+
+if 'sp' not in globals():
+    # Inject local passed sp into globals for inner functions if not already there
+    globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
+
 
 thePass = sp['password'].encode('UTF-16LE')  # type: ignore
 
 try:
-    password = codecs.encode(
-        win32crypt.CryptProtectData(thePass, None, None, None, None, 0x01), 'hex'
-    ).decode()
+    password = codecs.encode(win32crypt.CryptProtectData(thePass, None, None, None, None, 0x01), 'hex').decode()
 except Exception:
-    # logger.info('Cannot encrypt for user, trying for machine')
-    password = codecs.encode(
-        win32crypt.CryptProtectData(thePass, None, None, None, None, 0x05), 'hex'
-    ).decode()
+    password = codecs.encode(win32crypt.CryptProtectData(thePass, None, None, None, None, 0x05), 'hex').decode()
 
 try:
-    key = wreg.OpenKey(  # type: ignore
-        wreg.HKEY_CURRENT_USER,  # type: ignore
+    key: typing.Any = wreg.OpenKey(  
+        wreg.HKEY_CURRENT_USER,  
         'Software\\Microsoft\\Terminal Server Client\\LocalDevices',
         0,
-        wreg.KEY_SET_VALUE,  # type: ignore
+        wreg.KEY_SET_VALUE,  
     )
     wreg.SetValueEx(key, sp['ip'], 0, wreg.REG_DWORD, 255)  # type: ignore
     wreg.CloseKey(key)  # type: ignore
 except Exception as e:  # nosec: Not really interested in the exception
-    # logger.warn('Exception fixing redirection dialog: %s', e)
     pass  # Key does not exists, ok...
 
 # The password must be encoded, to be included in a .rdp file, as 'UTF-16LE' before protecting (CtrpyProtectData) it in order to work with mstsc
@@ -46,7 +52,9 @@ if sp['optimize_teams'] == True:  # type: ignore
         h = wreg.OpenKey(wreg.HKEY_CLASSES_ROOT, '.rdp\\OpenWithProgids', 0, wreg.KEY_READ)  # type: ignore
         h.Close()
     except Exception:
-        raise Exception('Required Microsoft Remote Desktop Application is not found. Please, install it from Microsoft store.')
+        raise Exception(
+            'Required Microsoft Remote Desktop Application is not found. Please, install it from Microsoft store.'
+        )
     # Add .rdp to filename for open with
     os.rename(filename, filename + '.rdp')
     filename = filename + '.rdp'
@@ -54,9 +62,7 @@ if sp['optimize_teams'] == True:  # type: ignore
 else:
     executable = tools.findApp('mstsc.exe')
     if executable is None:
-        raise Exception(
-            'Unable to find mstsc.exe. Check that path points to your SYSTEM32 folder'
-        )
+        raise Exception('Unable to find mstsc.exe. Check that path points to your SYSTEM32 folder')
 
     subprocess.Popen([executable, filename])  # nosec
 

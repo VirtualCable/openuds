@@ -1,30 +1,38 @@
-import subprocess  # noqa
+import typing
 
-from uds import tools  # type: ignore
-
-# Inject local passed sp into globals for inner functions
-globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
+# On older client versions, need importing globally to allow inner functions to work
+import subprocess  # type: ignore
 
 
-def execUdsRdp(udsrdp):
+try:
+    from uds import tools  # type: ignore
+except ImportError:
+    tools: typing.Any = None
+
+if 'sp' not in globals():
+    # Inject local passed sp into globals for inner functions if not already there
+    globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
+
+
+def execUdsRdp(udsrdp: str) -> None:
     import subprocess
     import os.path
 
-    params = [os.path.expandvars(i) for i in [udsrdp] + sp['as_new_xfreerdp_params'] + ['/v:{}'.format(sp['address'])]]  # type: ignore
+    params: typing.List[str] = [os.path.expandvars(i) for i in [udsrdp] + sp['as_new_xfreerdp_params'] + ['/v:{}'.format(sp['address'])]]  # type: ignore
     tools.addTaskToWait(subprocess.Popen(params))
 
 
-def execNewXFreeRdp(xfreerdp):
+def execNewXFreeRdp(xfreerdp: str) -> None:
     import subprocess  # @Reimport
     import os.path
 
-    params = [os.path.expandvars(i) for i in [xfreerdp] + sp['as_new_xfreerdp_params'] + ['/v:{}'.format(sp['address'])]]  # type: ignore
+    params: typing.List[str] = [os.path.expandvars(i) for i in [xfreerdp] + sp['as_new_xfreerdp_params'] + ['/v:{}'.format(sp['address'])]]  # type: ignore
     tools.addTaskToWait(subprocess.Popen(params))
 
 
 # Try to locate a xfreerdp and udsrdp. udsrdp will be used if found.
-xfreerdp = tools.findApp('xfreerdp')
-udsrdp = tools.findApp('udsrdp')
+xfreerdp: typing.Optional[str] = tools.findApp('xfreerdp')
+udsrdp: typing.Optional[str] = tools.findApp('udsrdp')
 fnc, app = None, None
 
 if xfreerdp:

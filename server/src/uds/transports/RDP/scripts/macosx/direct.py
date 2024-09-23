@@ -1,26 +1,24 @@
-import subprocess
+import typing
 import shutil
 import os
 import os.path
 
-from uds import tools  # type: ignore
+# On older client versions, need importing globally to allow inner functions to work
+import subprocess  # type: ignore
 
-# Inject local passed sp into globals for functions
-globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
+# Avoid type checking annoing errors
+try:
+    from uds import tools  # type: ignore
+except ImportError:
+    tools: typing.Any = None
+    raise
 
-msrdc = (
-    '/Applications/Microsoft Remote Desktop.app'
-)
-msrdc_localized = (
-    '/Applications/Microsoft Remote Desktop.localized/Microsoft Remote Desktop.app'
-)
-# msrdc_app = '/Contents/MacOS/Microsoft Remote Desktop'
-
-xfreerdp = tools.findApp('xfreerdp')
-executable = None
+if 'sp' not in globals():
+    # Inject local passed sp into globals for inner functions if not already there
+    globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
 
 
-def fixResolution():
+def fixResolution() -> typing.List[str]:
     import re
     import subprocess
 
@@ -33,19 +31,28 @@ def fixResolution():
     width, height = '1024', '768'  # Safe default values
     if groups:
         res = groups.group(0).split(' ')
-        width, height = str(int(res[1]) - 4), str(
-            int(int(res[3]) * 90 / 100)
-        )  # Width and Height
+        width, height = str(int(res[1]) - 4), str(int(int(res[3]) * 90 / 100))  # Width and Height
     return list(map(lambda x: x.replace('#WIDTH#', width).replace('#HEIGHT#', height), sp['as_new_xfreerdp_params']))  # type: ignore
 
+
+msrdc_list = [
+    '/Applications/Microsoft Remote Desktop.app',
+    '/Applications/Microsoft Remote Desktop.localized/Microsoft Remote Desktop.app',
+    '/Applications/Windows App.app',
+    '/Applications/Windows App.localized/Windows App.app',
+]
+
+xfreerdp: str = tools.findApp('xfreerdp')
+executable = None
 
 # Check first xfreerdp, allow password redir
 if xfreerdp and os.path.isfile(xfreerdp):
     executable = xfreerdp
-elif os.path.isdir(msrdc) and sp['as_file']:  # type: ignore
-    executable = msrdc
-elif os.path.isdir(msrdc_localized) and sp['as_file']:  # type: ignore
-    executable = msrdc_localized
+else:
+    for msrdc in msrdc_list:
+        if os.path.isdir(msrdc) and sp['as_file']:  # type: ignore
+            executable = msrdc
+            break
 
 if executable is None:
     if sp['as_file']:  # type: ignore
@@ -83,7 +90,7 @@ if executable is None:
             </ul>
             '''
         )
-if executable in (msrdc, msrdc_localized):
+if executable in msrdc_list:
     theFile = sp['as_file']  # type: ignore
     filename = tools.saveTempFile(theFile)
     # Rename as .rdp, so open recognizes it

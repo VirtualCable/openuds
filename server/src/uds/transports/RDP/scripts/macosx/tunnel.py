@@ -1,18 +1,31 @@
 # pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable, invalid-sequence-index
-import subprocess
+import typing
 import shutil
 import os
 import os.path
 
-from uds.tunnel import forward  # type: ignore
+# On older client versions, need importing globally to allow inner functions to work
+import subprocess  # type: ignore
 
-from uds import tools  # type: ignore
+# Avoid type checking annoing errors
+try:
+    from uds.tunnel import forward  # type: ignore
+except ImportError:
+    forward: typing.Any = None
+    raise
 
-# Inject local passed sp into globals for functions
-globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
+try:
+    from uds import tools  # type: ignore
+except ImportError:
+    tools: typing.Any = None
+    raise
+
+if 'sp' not in globals():
+    # Inject local passed sp into globals for inner functions if not already there
+    globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
 
 
-def fixResolution():
+def fixResolution() -> typing.List[str]:
     import re
     import subprocess
 
@@ -25,30 +38,28 @@ def fixResolution():
     width, height = '1024', '768'  # Safe default values
     if groups:
         res = groups.group(0).split(' ')
-        width, height = str(int(res[1]) - 4), str(
-            int(int(res[3]) * 90 / 100)
-        )  # Width and Height
+        width, height = str(int(res[1]) - 4), str(int(int(res[3]) * 90 / 100))  # Width and Height
     return list(map(lambda x: x.replace('#WIDTH#', width).replace('#HEIGHT#', height), sp['as_new_xfreerdp_params']))  # type: ignore
 
 
+msrdc_list = [
+    '/Applications/Microsoft Remote Desktop.app',
+    '/Applications/Microsoft Remote Desktop.localized/Microsoft Remote Desktop.app',
+    '/Applications/Windows App.app',
+    '/Applications/Windows App.localized/Windows App.app',
+]
 
-msrdc = (
-    '/Applications/Microsoft Remote Desktop.app'
-)
-msrdc_localized = (
-    '/Applications/Microsoft Remote Desktop.localized/Microsoft Remote Desktop.app'
-)
-
-xfreerdp = tools.findApp('xfreerdp')
+xfreerdp: str = tools.findApp('xfreerdp')
 executable = None
 
 # Check first xfreerdp, allow password redir
 if xfreerdp and os.path.isfile(xfreerdp):
     executable = xfreerdp
-elif os.path.isdir(msrdc) and sp['as_file']:  # type: ignore
-    executable = msrdc
-elif os.path.isdir(msrdc_localized) and sp['as_file']:  # type: ignore
-    executable = msrdc_localized
+else:
+    for msrdc in msrdc_list:
+        if os.path.isdir(msrdc) and sp['as_file']:  # type: ignore
+            executable = msrdc
+            break
 
 if executable is None:
     if sp['as_rdp_url']:  # type: ignore
@@ -93,11 +104,9 @@ address = '127.0.0.1:{}'.format(fs.server_address[1])
 
 # Check that tunnel works..
 if fs.check() is False:
-    raise Exception(
-        '<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>'
-    )
+    raise Exception('<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>')
 
-if executable in (msrdc, msrdc_localized):
+if executable in msrdc_list:
     theFile = theFile = sp['as_file'].format(address=address)  # type: ignore
 
     filename = tools.saveTempFile(theFile)
@@ -124,8 +133,5 @@ elif executable == xfreerdp:
     except Exception as e:
         xfparms = list(map(lambda x: x.replace('#WIDTH#', '1400').replace('#HEIGHT#', '800'), sp['as_new_xfreerdp_params']))  # type: ignore
 
-    params = [
-        os.path.expandvars(i)
-        for i in [executable] + xfparms + ['/v:{}'.format(address)]
-    ]
+    params = [os.path.expandvars(i) for i in [executable] + xfparms + ['/v:{}'.format(address)]]
     subprocess.Popen(params)
