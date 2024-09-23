@@ -855,3 +855,4 @@ signals.post_migrate.connect(_post_migrate)
 # Removed fields, to ensure they are removed from database
 # Will be here for at least one major version, so we can remove them from database for sure
 Config.removed(Config.SectionType.CUSTOM, 'Logout URL')  # Removed on 4.0
+Config.removed(Config.SectionType.SECURITY, 'Max Audit Logs duration')  # Removed on 4.0
