@@ -251,12 +251,14 @@ class OpenStackLiveService(DynamicService):
     def get_ip(
         self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
     ) -> str:
-        return self.api.get_server_info(vmid).validated().addresses[0].ip
+        net_info = self.api.get_server_info(vmid).validated().addresses
+        return '' if not net_info else net_info[0].ip
 
     def get_mac(
         self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
     ) -> str:
-        return self.api.get_server_info(vmid).validated().addresses[0].mac
+        net_info = self.api.get_server_info(vmid).validated().addresses
+        return '' if not net_info else net_info[0].mac
 
     def is_running(
         self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str

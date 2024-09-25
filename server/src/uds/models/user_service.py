@@ -110,6 +110,8 @@ class UserService(UUIDModel, properties.PropertiesMixin):
     # objects: 'models.manager.Manager["UserService"]'
     sessions: 'models.manager.RelatedManager[UserServiceSession]'
     accounting: 'AccountUsage'
+    
+    _cached_instance: typing.Optional['services.UserService'] = None
 
     class Meta(UUIDModel.Meta):  # pylint: disable=too-few-public-methods
         """
@@ -196,6 +198,9 @@ class UserService(UUIDModel, properties.PropertiesMixin):
 
         Raises:
         """
+        if self._cached_instance:
+            return self._cached_instance
+        
         # We get the service instance, publication instance and osmanager instance
         servicepool = self.deployed_service
         if not servicepool.service:
@@ -221,7 +226,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
             raise Exception(
                 f'Class {service_instance.__class__.__name__} needs user_service_type but it is not defined!!!'
             )
-        us = service_instance.user_service_type(
+        instance = service_instance.user_service_type(
             self.get_environment(),
             service=service_instance,
             publication=publication_instance,
@@ -230,15 +235,15 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         )
         if self.data:
             try:
-                us.deserialize(self.data)
+                instance.deserialize(self.data)
 
                 # if needs upgrade, we will serialize it again to ensure its format is upgraded ASAP
                 # Eventually, it will be upgraded anyway, but could take too much time (even years)...
                 # This way, if we instantiate it, it will be upgraded
-                if us.needs_upgrade():
-                    self.data = us.serialize()
+                if instance.needs_upgrade():
+                    self.data = instance.serialize()
                     self.save(update_fields=['data'])
-                    us.mark_for_upgrade(False)
+                    instance.mark_for_upgrade(False)
 
             except Exception:
                 logger.exception(
@@ -247,7 +252,9 @@ class UserService(UUIDModel, properties.PropertiesMixin):
                     self.uuid,
                     self.data,
                 )
-        return us
+        # Store for future uses
+        self._cached_instance = instance
+        return instance
 
     def update_data(self, userservice_instance: 'services.UserService') -> None:
         """

@@ -53,12 +53,12 @@ class StateUpdater(abc.ABC):
 
     def __init__(
         self,
-        userService: UserService,
-        userServiceInstance: typing.Optional[services.UserService] = None,
+        userservice: UserService,
+        userservice_instance: typing.Optional[services.UserService] = None,
     ):
-        self.user_service = userService
+        self.user_service = userservice
         self.user_service_instance = (
-            userServiceInstance if userServiceInstance is not None else userService.get_instance()
+            userservice_instance if userservice_instance is not None else userservice.get_instance()
         )
 
     def set_error(self, msg: typing.Optional[str] = None) -> None:
@@ -232,7 +232,7 @@ class UserServiceOpChecker(DelayedTask):
         userservice: UserService, userservice_instance: services.UserService, state: types.states.TaskState
     ) -> None:
         """
-        Checks the value returned from invocation to publish or checkPublishingState, updating the servicePoolPub database object
+        Checks the value returned from invocation to check_state of the service instance
         Return True if it has to continue checking, False if finished
         """
         try:

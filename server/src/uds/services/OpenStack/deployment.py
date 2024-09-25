@@ -172,7 +172,8 @@ class OpenStackLiveUserService(DynamicUserService, autoserializable.AutoSerializ
         Checks the state of a deploy for an user or cache
         """
         # Checks if machine has been created
-        if self.service().is_running(self, self._vmid):
+        # Should have a mac address assigned and be running
+        if self.service().get_mac(self, self._vmid) and self.service().is_running(self, self._vmid):
             server_info = self.service().api.get_server_info(self._vmid).validated()
             self._mac = server_info.addresses[0].mac
             self._ip = server_info.addresses[0].ip

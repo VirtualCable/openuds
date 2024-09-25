@@ -99,6 +99,8 @@ class ServicePoolPublication(UUIDModel):
     # objects: 'models.manager.Manager["ServicePoolPublication"]'
     userServices: 'models.manager.RelatedManager[UserService]'
 
+    _cached_instance: typing.Optional['services.Publication'] = None
+
     class Meta(UUIDModel.Meta):  # pylint: disable=too-few-public-methods
         """
         Meta class to declare default order and unique multiple field index
@@ -129,6 +131,9 @@ class ServicePoolPublication(UUIDModel):
 
         Raises:
         """
+        if self._cached_instance:
+            return self._cached_instance
+
         if not self.deployed_service.service:
             raise Exception('No service assigned to publication')
         service_instance = self.deployed_service.service.get_instance()
@@ -143,7 +148,7 @@ class ServicePoolPublication(UUIDModel):
                 f'Class {service_instance.__class__.__name__} do not have defined publication_type but needs to be published!!!'
             )
 
-        publication = service_instance.publication_type(
+        instance = service_instance.publication_type(
             self.get_environment(),
             service=service_instance,
             osmanager=osmanager_instance,
@@ -153,12 +158,15 @@ class ServicePoolPublication(UUIDModel):
         )
         # Only invokes deserialization if data has something. '' is nothing
         if self.data:
-            publication.deserialize(self.data)
-            if publication.needs_upgrade():
-                self.update_data(publication)
-                publication.mark_for_upgrade(False)
+            instance.deserialize(self.data)
+            if instance.needs_upgrade():
+                self.update_data(instance)
+                instance.mark_for_upgrade(False)
 
-        return publication
+        # For performance reasons, we cache the instance
+        self._cached_instance = instance
+
+        return instance
 
     def update_data(self, publication_instance: 'services.Publication') -> None:
         """
@@ -172,7 +180,7 @@ class ServicePoolPublication(UUIDModel):
         if not publication_instance.is_dirty():
             logger.debug('Skipping update of publication %s, no changes', self)
             return  # Nothing to do
-        
+
         self.data = publication_instance.serialize()
         self.save(update_fields=['data'])
 
