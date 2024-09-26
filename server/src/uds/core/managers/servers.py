@@ -60,18 +60,18 @@ class ServerManager(metaclass=singleton.Singleton):
     BASE_PROPERTY_NAME: typing.Final[str] = 'sm_usr_'
 
     # Singleton, can initialize here
-    last_counters_clean: datetime.datetime = datetime.datetime.now()
+    last_counters_clean: datetime.datetime = model_utils.sql_now()
 
     @staticmethod
     def manager() -> 'ServerManager':
         return ServerManager()  # Singleton pattern will return always the same instance
-
+    
     @contextlib.contextmanager
     def counter_storage(self) -> typing.Iterator[StorageAsDict]:
-        # If counters are too old, restart them
-        if datetime.datetime.now() - self.last_counters_clean > self.MAX_COUNTERS_AGE:
-            self.clear_unmanaged_usage()
         with Storage(self.STORAGE_NAME).as_dict(atomic=True, group='counters') as storage:
+        # If counters are too old, restart them
+            if model_utils.sql_now() - self.last_counters_clean > self.MAX_COUNTERS_AGE:
+                storage.clear()
             yield storage
 
     def property_name(self, user: typing.Optional[typing.Union[str, 'models.User']]) -> str:
@@ -79,11 +79,6 @@ class ServerManager(metaclass=singleton.Singleton):
         if isinstance(user, str):
             return ServerManager.BASE_PROPERTY_NAME + user
         return ServerManager.BASE_PROPERTY_NAME + (str(user.uuid) if user else '_')
-
-    def clear_unmanaged_usage(self) -> None:
-        with self.counter_storage() as counters:
-            counters.clear()
-        self.last_counters_clean = datetime.datetime.now()
 
     def get_unmanaged_usage(self, uuid: str) -> int:
         uuid = 'c' + uuid
