@@ -50,14 +50,14 @@ _mypath = os.path.dirname(__spec__.origin)  # type: ignore[name-defined]  # mypy
 
 downloads_manager().register(
     f'udsactor_{VERSION}_all.deb',
-    _('UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= 3.6)</b>'),
+    _('UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= 3.9)</b>'),
     _mypath + f'/files/udsactor_{VERSION}_all.deb',
     'application/x-debian-package',
 )
 
 downloads_manager().register(
     f'udsactor-{VERSION}-1.noarch.rpm',
-    _('UDS Actor for Centos, Fedora, RH, Suse, ... Linux machines <b>(Requires python >= 3.6)</b>'),
+    _('UDS Actor for Centos, Fedora, RH, Suse, ... Linux machines <b>(Requires python >= 3.9)</b>'),
     _mypath + f'/files/udsactor-{VERSION}-1.noarch.rpm',
     'application/x-redhat-package-manager',
 )
@@ -65,7 +65,7 @@ downloads_manager().register(
 downloads_manager().register(
     f'udsactor-unmanaged_{VERSION}_all.deb',
     _(
-        'UDS Actor for Debian based Linux machines. Used ONLY for static machines. <b>(Requires python >= 3.6)</b>'
+        'UDS Actor for Debian based Linux machines. Used ONLY for static machines. <b>(Requires python >= 3.9)</b>'
     ),
     _mypath + f'/files/udsactor-unmanaged_{VERSION}_all.deb',
     'application/x-debian-package',
@@ -74,29 +74,9 @@ downloads_manager().register(
 downloads_manager().register(
     f'udsactor-unmanaged-{VERSION}-1.noarch.rpm',
     _(
-        'UDS Actor for Centos, Fedora, RH, Suse, ... Linux machines. Used ONLY for static machines. <b>(Requires python >= 3.6)</b>'
+        'UDS Actor for Centos, Fedora, RH, Suse, ... Linux machines. Used ONLY for static machines. <b>(Requires python >= 3.9)</b>'
     ),
     _mypath + f'/files/udsactor-unmanaged-{VERSION}-1.noarch.rpm',
     'application/x-redhat-package-manager',
 )
 
-downloads_manager().register(
-    'udsactor_2.2.0_legacy.deb',
-    _('<b>Legacy</b> UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python 2.7)</b>'),
-    _mypath + '/files/udsactor_2.2.0_legacy.deb',
-    'application/x-debian-package',
-)
-
-downloads_manager().register(
-    'udsactor-legacy-2.2.1-1.noarch.rpm',
-    _('<b>Legacy</b> UDS Actor for Centos, Fedora, RH, ... Linux machines <b>(Requires python 2.7)</b>'),
-    _mypath + '/files/udsactor-legacy-2.2.1-1.noarch.rpm',
-    'application/x-redhat-package-manager',
-)
-
-downloads_manager().register(
-    'udsactor-opensuse-legacy-2.2.1-1.noarch.rpm',
-    _('<b>Legacy</b> UDS Actor for OpenSUSE, ... Linux machines <b>(Requires python 2.7)</b>'),
-    _mypath + '/files/udsactor-opensuse-legacy-2.2.1-1.noarch.rpm',
-    'application/x-redhat-package-manager',
-)
