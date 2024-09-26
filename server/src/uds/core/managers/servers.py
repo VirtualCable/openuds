@@ -50,8 +50,8 @@ if typing.TYPE_CHECKING:
     from django.db.models.query import QuerySet
 
 logger = logging.getLogger(__name__)
-traceLogger = logging.getLogger('traceLog')
-operationsLogger = logging.getLogger('operationsLog')
+logger_trace = logging.getLogger('traceLog')
+logger_operations = logging.getLogger('operationsLog')
 
 
 class ServerManager(metaclass=singleton.Singleton):
