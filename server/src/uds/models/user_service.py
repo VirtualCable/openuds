@@ -452,7 +452,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         self.user = user
         self.save(update_fields=['cache_level', 'state_date', 'user'])
 
-    def set_in_use(self, inUse: bool) -> None:
+    def set_in_use(self, in_use: bool) -> None:
         """
         Set the "in_use" flag for this user deployed service
 
@@ -464,19 +464,19 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         # pylint: disable=import-outside-toplevel
         from uds.core.managers.userservice import UserServiceManager
 
-        self.in_use = inUse
+        self.in_use = in_use
         self.in_use_date = sql_now()
         self.save(update_fields=['in_use', 'in_use_date'])
 
-        # Start/stop accounting
-        if inUse:
+        if in_use:
+            # Start accounting if needed
             self.start_accounting()
         else:
+            # Stop accounting if needed
             self.stop_accounting()
-
-        if not inUse:  # Service released, check y we should mark it for removal
-            # If our publication is not current, mark this for removal
-            UserServiceManager.manager().check_for_removal(self)
+            # And check if now is time to remove it
+            # Note: this checker is for "old publications"
+            UserServiceManager.manager().process_not_in_use_and_old_publication(self)
 
     def start_accounting(self) -> None:
         # 1.- If do not have any account associated, do nothing

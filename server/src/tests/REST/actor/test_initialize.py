@@ -33,7 +33,7 @@ import functools
 import logging
 
 from uds import models
-from uds.core.consts.system import VERSION
+from uds.core import consts
 
 from ...utils import rest
 from ...fixtures import services as services_fixtures
@@ -59,7 +59,7 @@ class ActorInitializeTest(rest.test.RESTActorTestCase):
             '/uds/rest/actor/v3/initialize',
             data={
                 'type': type_,
-                'version': VERSION,
+                'version': consts.system.VERSION,
                 'token': token,
                 'id': [{'mac': mac or '42:AC:11:22:33', 'ip': ip or '1.2.3.4'}],
             },
@@ -83,7 +83,7 @@ class ActorInitializeTest(rest.test.RESTActorTestCase):
             '/uds/rest/actor/v3/initialize',
             data={
                 'type': type_,
-                'version': VERSION,
+                'version': consts.system.VERSION,
                 'token': token,
                 'id': [{'mac': mac or '42:AC:33:22:11', 'ip': ip or '4.3.2.1'}],
             },

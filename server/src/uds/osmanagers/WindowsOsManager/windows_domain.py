@@ -259,7 +259,7 @@ class WinDomainOsManager(WindowsOsManager):
 
         return obj['dn']  # Returns the DN
 
-    def ready_notified(self, userservice: 'UserService') -> None:
+    def on_ready(self, userservice: 'UserService') -> None:
         # No group to add
         if self.grp.as_str() == '':
             return

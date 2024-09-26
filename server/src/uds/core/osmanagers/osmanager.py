@@ -237,13 +237,15 @@ class OSManager(Module):
     def log_known_ip(self, userservice: 'models.UserService', ip: str) -> None:
         userservice.log_ip(ip)
 
-    def to_ready(self, userservice: 'models.UserService') -> None:
+    # Final method
+    @typing.final
+    def process_ready(self, userservice: 'models.UserService') -> None:
         '''
         Resets login counter to 0
         '''
         userservice.properties['logins_counter'] = 0
         # And execute ready notification method
-        self.ready_notified(userservice)
+        self.on_ready(userservice)
 
     @staticmethod
     def logged_in(userservice: 'models.UserService', username: typing.Optional[str] = None) -> None:
@@ -359,7 +361,7 @@ class OSManager(Module):
             userservice.deployed_service.name,
         )
 
-    def ready_notified(self, userservice: 'models.UserService') -> None:
+    def on_ready(self, userservice: 'models.UserService') -> None:
         """
         Invoked by actor when userService is ready
         """

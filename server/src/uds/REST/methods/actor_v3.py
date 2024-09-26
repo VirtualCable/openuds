@@ -140,7 +140,7 @@ class ActorV3Action(Handler):
         userService.set_comms_endpoint(f'https://{ip}:{port}/actor/{secret}')
 
     @staticmethod
-    def actorCertResult(key: str, certificate: str, password: str) -> dict[str, typing.Any]:
+    def actor_cert_result(key: str, certificate: str, password: str) -> dict[str, typing.Any]:
         return ActorV3Action.actor_result(
             {
                 'private_key': key,  # To be removed on 5.0
@@ -148,7 +148,7 @@ class ActorV3Action(Handler):
                 'server_certificate': certificate,  # To be removed on 5.0
                 'certificate': certificate,
                 'password': password,
-                'ciphers': getattr(settings, 'SECURE_CIPHERS', None),
+                'ciphers': getattr(settings, 'SECURE_CIPHERS', ''),
             }
         )
 
@@ -534,19 +534,19 @@ class BaseReadyChange(ActorV3Action):
             osmanager = userservice.get_osmanager_instance()
 
             if osmanager:
-                osmanager.to_ready(userservice)
+                osmanager.process_ready(userservice)
                 UserServiceManager.manager().notify_ready_from_os_manager(
                     userservice, ''
                 )  # Currently, no data is received for os manager
 
         # Generates a certificate and send it to client.
-        privateKey, cert, password = security.create_self_signed_cert(self._params['ip'])
+        private_key, cert, password = security.create_self_signed_cert(self._params['ip'])
         # Store certificate with userService
         userservice.properties['cert'] = cert
-        userservice.properties['priv'] = privateKey
+        userservice.properties['priv'] = private_key
         userservice.properties['priv_passwd'] = password
 
-        return ActorV3Action.actorCertResult(privateKey, cert, password)
+        return ActorV3Action.actor_cert_result(private_key, cert, password)
 
 
 class IpChange(BaseReadyChange):
@@ -580,7 +580,7 @@ class Ready(BaseReadyChange):
         """
         result = super().action()
 
-        # Maybe we could also set as "inUse" to false because a ready can only ocurr if an user is not logged in
+        # Set as "inUse" to false because a ready can only ocurr if an user is not logged in
         userservice = self.get_userservice()
         userservice.set_in_use(False)
 
@@ -849,7 +849,7 @@ class Unmanaged(ActorV3Action):
                 },
             )
 
-        return ActorV3Action.actorCertResult(private_key, certificate, password)
+        return ActorV3Action.actor_cert_result(private_key, certificate, password)
 
 
 class Notify(ActorV3Action):

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# pylint: disable=no-member   # ldap module gives errors to pylint
 #
 # Copyright (c) 2024 Virtual Cable S.L.U.
 # All rights reserved.
@@ -11,7 +11,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -25,51 +25,24 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 '''
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-import json
 import typing
-import re
-import collections.abc
 
-from uds.core import consts
-from uds.core.util.model import sql_stamp_seconds
-
-
-def rest_result(result: typing.Any, **kwargs: typing.Any) -> dict[str, typing.Any]:
-    '''
-    Returns a REST result
-    '''
-    # A common possible value in kwargs is "error"
-    return {'result': result, 'stamp': sql_stamp_seconds(), 'version': consts.system.VERSION, 'build': consts.system.VERSION_STAMP,**kwargs}
-
-
-def camel_and_snake_case_from(text: str) -> tuple[str, str]:
-    '''
-    Returns a tuple with the camel case and snake case of a text
-    first value is camel case, second is snake case
-    '''
-    snake_case_name = re.sub(r'(?<!^)(?=[A-Z])', '_', text).lower()
-    # And snake case to camel case (first letter lower case, rest upper case)
-    camel_case_name = ''.join(x.capitalize() for x in snake_case_name.split('_'))
-    camel_case_name = camel_case_name[0].lower() + camel_case_name[1:]
-
-    return camel_case_name, snake_case_name
-
-
-def to_incremental_json(
-    source: collections.abc.Generator[typing.Any, None, None]
-) -> typing.Generator[str, None, None]:
-    '''
-    Converts a generator to a json incremental string
-    '''
-    yield '['
-    first = True
-    for item in source:
-        if first:
-            first = False
-        else:
-            yield ','
-        yield json.dumps(item)
-    yield ']'
+LINUX_AD_FIELDS: typing.Final[dict[str, typing.Any]] = {
+    'domain': 'domain.dom',
+    'account': 'account',
+    'password': 'password',
+    'ou': 'ou=ou,dc=domain,dc=dom',
+    'client_software': 'sssd',
+    'membership_software': 'samba',
+    'server_software': 'freeipa',
+    'remove_on_exit': True,
+    'use_ssl': True,
+    'automatic_id_mapping': True,
+    'on_logout': 'keep',
+    'idle': -1,
+    'deadline': True,
+}

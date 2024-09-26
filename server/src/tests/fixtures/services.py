@@ -33,6 +33,7 @@ import typing
 
 from uds import models
 from uds.core import environment, types
+from uds.core.osmanagers.osmanager import OSManager
 
 from ..utils import helpers
 
@@ -69,13 +70,15 @@ def create_db_service(provider: models.Provider, use_caching_version: bool = Tru
     service = provider.services.create(
         name='Service {}'.format(glob['service_id']),
         data_type=TestServiceCache.type_type,
-        data=TestServiceCache(
-            environment.Environment(str(glob['service_id'])), provider.get_instance()
-        ).serialize()
-        if use_caching_version
-        else TestServiceNoCache(
-            environment.Environment(str(glob['service_id'])), provider.get_instance()
-        ).serialize(),
+        data=(
+            TestServiceCache(
+                environment.Environment(str(glob['service_id'])), provider.get_instance()
+            ).serialize()
+            if use_caching_version
+            else TestServiceNoCache(
+                environment.Environment(str(glob['service_id'])), provider.get_instance()
+            ).serialize()
+        ),
         token=helpers.random_string(16) + str(glob['service_id']),
     )
     glob['service_id'] += 1  # In case we generate a some more services elsewhere
@@ -83,22 +86,29 @@ def create_db_service(provider: models.Provider, use_caching_version: bool = Tru
     return service
 
 
-def create_db_osmanager() -> models.OSManager:
-    from uds.osmanagers.Test import TestOSManager
+def create_db_osmanager(
+    osmanager: typing.Optional[OSManager] = None,
+) -> models.OSManager:
+    if osmanager is None:
+        from uds.osmanagers.Test import TestOSManager
 
-    values: dict[str, typing.Any] = {
-        'on_logout': 'remove',
-        'idle': 300,
-    }
-    osmanager = models.OSManager.objects.create(
-        name='OS Manager %d' % (glob['osmanager_id']),
-        comments='Comment for OS Manager %d' % (glob['osmanager_id']),
-        data_type=TestOSManager.type_type,
-        data=TestOSManager(environment.Environment(str(glob['osmanager_id'])), values).serialize(),
+        osmanager = TestOSManager(
+            environment.Environment.testing_environment(),
+            {
+                'on_logout': 'remove',
+                'idle': 300,
+            },
+        )
+
+    osmanager_db = models.OSManager.objects.create(
+        name=f'OS Manager {glob["osmanager_id"]}',
+        comments=f'Comment for OS Manager {glob["osmanager_id"]}',
+        data_type=osmanager.type_type,
+        data=osmanager.serialize(),
     )
     glob['osmanager_id'] += 1
 
-    return osmanager
+    return osmanager_db
 
 
 def create_db_servicepool_group(
@@ -159,9 +169,7 @@ def create_db_publication(
 def create_db_transport(**kwargs: typing.Any) -> models.Transport:
     from uds.transports.Test import TestTransport
 
-    values = TestTransport(
-        environment.Environment.testing_environment(), None
-    ).get_fields_as_dict()
+    values = TestTransport(environment.Environment.testing_environment(), None).get_fields_as_dict()
     transport: 'models.Transport' = models.Transport.objects.create(
         name='Transport %d' % (glob['transport_id']),
         comments='Comment for Transport %d' % (glob['transport_id']),
@@ -225,6 +233,7 @@ def create_db_one_assigned_userservice(
     user: 'models.User',
     groups: list['models.Group'],
     type_: typing.Union[typing.Literal['managed'], typing.Literal['unmanaged']],
+    osmanager: typing.Optional[OSManager] = None,
 ) -> 'models.UserService':
 
     service = create_db_service(provider)
@@ -233,9 +242,11 @@ def create_db_one_assigned_userservice(
     Creates several testing OS Managers
     """
 
-    osmanager: typing.Optional['models.OSManager'] = None if type_ == 'unmanaged' else create_db_osmanager()
+    osmanager_db: typing.Optional['models.OSManager'] = (
+        None if type_ == 'unmanaged' else create_db_osmanager(osmanager=osmanager)
+    )
     transport: 'models.Transport' = create_db_transport()
-    service_pool: 'models.ServicePool' = create_db_servicepool(service, osmanager, groups, [transport])
+    service_pool: 'models.ServicePool' = create_db_servicepool(service, osmanager_db, groups, [transport])
     publication: 'models.ServicePoolPublication' = create_db_publication(service_pool)
 
     return create_db_userservice(service_pool, publication, user)

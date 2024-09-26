@@ -35,6 +35,7 @@ from hashlib import sha256
 from unittest import mock
 
 from tests.utils.test import UDSTestCase
+from uds.auths.OAuth2.authenticator import OAuth2Authenticator
 from uds.core import types
 
 from . import fixtures
@@ -81,7 +82,7 @@ class OAuth2Test(UDSTestCase):
         for response_type in oauth2_types.ResponseType:
             with fixtures.create_authenticator(response_type) as oauth2:
                 oauth2.logout_url.value = 'https://logout.com?token={token}'
-                with mock.patch.object(oauth2, '_retrieve_token_from_session', return_value='token_value'):
+                with mock.patch.object(oauth2, OAuth2Authenticator.retrieve_token.__name__, return_value='token_value'):
                     logout = oauth2.logout(mock.MagicMock(), 'not_used_username')
                     self.assertIsInstance(logout, types.auth.AuthenticationResult)
                     self.assertTrue(logout.success)

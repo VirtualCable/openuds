@@ -811,58 +811,58 @@ class UserServiceManager(metaclass=singleton.Singleton):
     def send_message(self, user_service: UserService, message: str) -> None:
         comms.send_message(user_service, message)
 
-    def check_for_removal(self, user_service: UserService) -> None:
+    def process_not_in_use_and_old_publication(self, userservice: UserService) -> None:
         """
         This method is used by UserService when a request for setInUse(False) is made
-        This checks that the service can continue existing or not
+        This checks that the userservice can continue existing or not
         """
-        osmanager = user_service.deployed_service.osmanager
+        osmanager = userservice.deployed_service.osmanager
         # If os manager says "machine is persistent", do not try to delete "previous version" assigned machines
-        doPublicationCleanup = True if not osmanager else not osmanager.get_instance().is_persistent()
+        do_publication_cleanup = True if not osmanager else not osmanager.get_instance().is_persistent()
 
-        if doPublicationCleanup:
+        if do_publication_cleanup:
             remove = False
             with transaction.atomic():
-                user_service = UserService.objects.select_for_update().get(id=user_service.id)
-                active_publication = user_service.deployed_service.active_publication()
+                userservice = UserService.objects.select_for_update().get(id=userservice.id)
+                active_publication = userservice.deployed_service.active_publication()
                 if (
-                    user_service.publication
+                    userservice.publication
                     and active_publication
-                    and user_service.publication.id != active_publication.id
+                    and userservice.publication.id != active_publication.id
                 ):
                     logger.debug(
                         'Old revision of user service, marking as removable: %s',
-                        user_service,
+                        userservice,
                     )
                     remove = True
 
             if remove:
-                user_service.release()
+                userservice.release()
 
-    def notify_ready_from_os_manager(self, user_service: UserService, data: typing.Any) -> None:
+    def notify_ready_from_os_manager(self, userservice: UserService, data: typing.Any) -> None:
         try:
-            userServiceInstance = user_service.get_instance()
+            userservice_instance = userservice.get_instance()
             logger.debug('Notifying user service ready state')
-            state = userServiceInstance.process_ready_from_os_manager(data)
+            state = userservice_instance.process_ready_from_os_manager(data)
             logger.debug('State: %s', state)
             if state == types.states.TaskState.FINISHED:
-                user_service.update_data(userServiceInstance)
+                userservice.update_data(userservice_instance)
                 logger.debug('Service is now ready')
-            elif user_service.state in (
+            elif userservice.state in (
                 State.USABLE,
                 State.PREPARING,
             ):  # We don't want to get active deleting or deleted machines...
-                user_service.set_state(State.PREPARING)
+                userservice.set_state(State.PREPARING)
                 # Make unique will make sure that we do not have same machine twice
-                UserServiceOpChecker.make_unique(user_service, userServiceInstance, state)
-            user_service.save(update_fields=['os_state'])
+                UserServiceOpChecker.make_unique(userservice, userservice_instance, state)
+            userservice.save(update_fields=['os_state'])
         except Exception as e:
             logger.exception('Unhandled exception on notyfyReady: %s', e)
-            user_service.set_state(State.ERROR)
+            userservice.set_state(State.ERROR)
             return
 
     def locate_user_service(
-        self, user: User, id_service: str, create: bool = False
+        self, user: User, id_userservice: str, create: bool = False
     ) -> typing.Optional[UserService]:
         """
         Locates a user service from a user and a service id
@@ -872,7 +872,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             id_service: Service id (A<uuid> for assigned, M<uuid> for meta, ?<uuid> for service pool)
             create: If True, will create a new service if not found
         """
-        kind, uuid_userservice_pool = id_service[0], id_service[1:]
+        kind, uuid_userservice_pool = id_userservice[0], id_userservice[1:]
 
         logger.debug('Kind of service: %s, idService: %s', kind, uuid_userservice_pool)
         userservice: typing.Optional[UserService] = None

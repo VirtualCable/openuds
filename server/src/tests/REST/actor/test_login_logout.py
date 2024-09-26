@@ -37,7 +37,7 @@ from ...fixtures import authenticators as fixtures_authenticators
 from ...utils import rest, test
 
 
-class LoginLogoutTest(test.UDSTestCase):
+class ActorLoginLogoutTest(test.UDSTestCase):
     """
     Test login and logout
     """
