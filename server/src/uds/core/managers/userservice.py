@@ -194,10 +194,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
             publication,
         )
         cache = self._create_cache_user_service_at_db(publication, cache_level)
-        ci = cache.get_instance()
-        state = ci.deploy_for_cache(cache_level)
+        state = cache.get_instance().deploy_for_cache(cache_level)
 
-        UserServiceOpChecker.state_updater(cache, ci, state)
+        UserServiceOpChecker.state_updater(cache, state)
         return cache
 
     def create_assigned_for(self, service_pool: ServicePool, user: User) -> UserService:
@@ -237,7 +236,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         assigned_instance = assigned.get_instance()
         state = assigned_instance.deploy_for_user(user)
 
-        UserServiceOpChecker.make_unique(assigned, assigned_instance, state)
+        UserServiceOpChecker.make_unique(assigned, state)
 
         return assigned
 
@@ -278,7 +277,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         state = serviceInstance.assign_from_assignables(assignable_id, user, assigned_userservice_instance)
         # assigned.u(assignedInstance)
 
-        UserServiceOpChecker.make_unique(assigned, assigned_userservice_instance, state)
+        UserServiceOpChecker.make_unique(assigned, state)
 
         return assigned
 
@@ -303,7 +302,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             cache.set_state(State.PREPARING)
 
         # Data will be serialized on makeUnique process
-        UserServiceOpChecker.make_unique(cache, cache_instance, state)
+        UserServiceOpChecker.make_unique(cache, state)
 
     def forced_move_assigned_to_cache_l1(self, user_service: UserService) -> None:
         """
@@ -466,7 +465,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # Data will be serialized on makeUnique process
         # If cancel is not supported, base cancel always returns "FINISHED", and
         # opchecker will set state to "removable"
-        UserServiceOpChecker.make_unique(user_service, user_service_instance, state)
+        UserServiceOpChecker.make_unique(user_service, state)
 
     def remove(self, userservice: UserService) -> None:
         """
@@ -482,11 +481,10 @@ class UserServiceManager(metaclass=singleton.Singleton):
             userservice.set_in_use(False)  # For accounting, ensure that it is not in use right now
             userservice.save()
 
-        userServiceInstance = userservice.get_instance()
-        state = userServiceInstance.destroy()
+        state = userservice.get_instance().destroy()
 
         # Data will be serialized on makeUnique process
-        UserServiceOpChecker.make_unique(userservice, userServiceInstance, state)
+        UserServiceOpChecker.make_unique(userservice, state)
 
     def remove_or_cancel(self, user_service: UserService) -> None:
         if user_service.is_usable() or State.from_str(user_service.state).is_removable():
@@ -761,7 +759,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             return True
 
         user_service.set_state(State.PREPARING)
-        UserServiceOpChecker.make_unique(user_service, userServiceInstance, state)
+        UserServiceOpChecker.make_unique(user_service, state)
 
         return False
 
@@ -786,7 +784,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             user_service.update_data(userservice_instance)
             return
 
-        UserServiceOpChecker.make_unique(user_service, userservice_instance, state)
+        UserServiceOpChecker.make_unique(user_service, state)
 
     def notify_preconnect(self, user_service: UserService, info: types.connections.ConnectionData) -> None:
         try:
@@ -854,7 +852,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             ):  # We don't want to get active deleting or deleted machines...
                 userservice.set_state(State.PREPARING)
                 # Make unique will make sure that we do not have same machine twice
-                UserServiceOpChecker.make_unique(userservice, userservice_instance, state)
+                UserServiceOpChecker.make_unique(userservice, state)
             userservice.save(update_fields=['os_state'])
         except Exception as e:
             logger.exception('Unhandled exception on notyfyReady: %s', e)
