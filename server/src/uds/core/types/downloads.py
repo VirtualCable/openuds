@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2024 Virtual Cable S.L.U.
 # All rights reserved.
-#
 #
 # Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
@@ -31,32 +30,13 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-# pyright: reportUnusedImport=false
-import os.path
+import dataclasses
 
-from django.utils.translation import gettext_noop as _
-from uds.core import managers
-from uds.core.consts.system import VERSION
-
-from .windows import WindowsOsManager
-from .windows_domain import WinDomainOsManager
-from .windows_random import WinRandomPassManager
-
-_mypath = os.path.dirname(__spec__.origin)  # type: ignore[name-defined]  # mypy incorrectly report __spec__ as not beind defined
-# Old version, using spec is better, but we can use __package__ as well
-#_mypath = os.path.dirname(typing.cast(str, sys.modules[__package__].__file__))  # pyright: ignore
-
-
-managers.downloads_manager().register(
-    f'UDSActorSetup-{VERSION}.exe',
-    _('UDS Actor for windows machines'),
-    _mypath + f'/files/UDSActorSetup-{VERSION}.exe',
-    mimetype='application/vnd.microsoft.portable-executable',
-)
-
-managers.downloads_manager().register(
-    f'UDSActorUnmanagedSetup-{VERSION}.exe',
-    _('UDS Actor for Unmanaged windows machines. Used ONLY for static machines.'),
-    _mypath + f'/files/UDSActorUnmanagedSetup-{VERSION}.exe',
-    mimetype='application/vnd.microsoft.portable-executable',
-)
+@dataclasses.dataclass
+class Downloadable:
+    name: str
+    description: str
+    path: str
+    mimetype: str
+    legacy: bool
+    

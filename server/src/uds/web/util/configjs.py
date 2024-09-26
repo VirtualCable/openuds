@@ -185,7 +185,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
             ('UDSClient-{version}.pkg', gettext('Mac OS X client'), 'MacOS', False),
             (
                 'udsclient3_{version}_all.deb',
-                gettext('Debian based Linux client') + ' ' + gettext('(requires Python-3.6 or newer)'),
+                gettext('Debian based Linux client') + ' ' + gettext('(requires Python-3.9 or newer)'),
                 'Linux',
                 False,
             ),
@@ -193,7 +193,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
                 'udsclient3-{version}-1.noarch.rpm',
                 gettext('RPM based Linux client (Fedora, Suse, ...)')
                 + ' '
-                + gettext('(requires Python-3.6 or newer)'),
+                + gettext('(requires Python-3.9 or newer)'),
                 'Linux',
                 False,
             ),
@@ -205,13 +205,13 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
             ),
             (
                 'udsclient3-armhf-{version}.tar.gz',
-                gettext('Binary appimage Raspberry Linux client'),
+                gettext('Binary appimage ARMHF Linux client (Raspberry, ...)'),
                 'Linux',
                 False,
             ),
             (
                 'udsclient3-{version}.tar.gz',
-                gettext('Generic .tar.gz Linux client') + ' ' + gettext('(requires Python-3.6 or newer)'),
+                gettext('Generic .tar.gz Linux client') + ' ' + gettext('(requires Python-3.9 or newer)'),
                 'Linux',
                 False,
             ),
@@ -226,7 +226,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
     #     'legacy': False  # True = Gray, False = White
     # })
 
-    actors: list[dict[str, str]] = []
+    actors: list[dict[str, str|bool]] = []
 
     if user and user.is_staff():  # Add staff things
         # If is admin (informational, REST api checks users privileges anyway...)
@@ -238,8 +238,9 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
         actors = [
             {
                 'url': reverse('utility.downloader', kwargs={'download_id': key}),
-                'name': val['name'],
-                'description': gettext(val['comment']),
+                'name': val.name,
+                'description': val.description,
+                'legacy': val.legacy,
             }
             for key, val in downloads_manager().downloadables().items()
         ]

@@ -34,6 +34,7 @@ from . import (
     auth,
     calendar,
     connections,
+    downloads,
     errors,
     os,
     permissions,

@@ -52,14 +52,14 @@ downloads_manager().register(
     f'udsactor_{VERSION}_all.deb',
     _('UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= 3.9)</b>'),
     _mypath + f'/files/udsactor_{VERSION}_all.deb',
-    'application/x-debian-package',
+    mimetype='application/x-debian-package',
 )
 
 downloads_manager().register(
     f'udsactor-{VERSION}-1.noarch.rpm',
     _('UDS Actor for Centos, Fedora, RH, Suse, ... Linux machines <b>(Requires python >= 3.9)</b>'),
     _mypath + f'/files/udsactor-{VERSION}-1.noarch.rpm',
-    'application/x-redhat-package-manager',
+    mimetype='application/x-redhat-package-manager',
 )
 
 downloads_manager().register(
@@ -68,7 +68,7 @@ downloads_manager().register(
         'UDS Actor for Debian based Linux machines. Used ONLY for static machines. <b>(Requires python >= 3.9)</b>'
     ),
     _mypath + f'/files/udsactor-unmanaged_{VERSION}_all.deb',
-    'application/x-debian-package',
+    mimetype='application/x-debian-package',
 )
 
 downloads_manager().register(
@@ -77,6 +77,6 @@ downloads_manager().register(
         'UDS Actor for Centos, Fedora, RH, Suse, ... Linux machines. Used ONLY for static machines. <b>(Requires python >= 3.9)</b>'
     ),
     _mypath + f'/files/udsactor-unmanaged-{VERSION}-1.noarch.rpm',
-    'application/x-redhat-package-manager',
+    mimetype='application/x-redhat-package-manager',
 )
 

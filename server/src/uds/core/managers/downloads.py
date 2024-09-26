@@ -34,9 +34,11 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import os
 import logging
 
+import typing
 from wsgiref.util import FileWrapper
 from django.http import HttpResponse, Http404, HttpRequest
 
+from uds.core import types
 from uds.core.managers.crypto import CryptoManager
 from uds.core.util import singleton
 
@@ -55,7 +57,7 @@ class DownloadsManager(metaclass=singleton.Singleton):
                                                         'application/x-msdos-program')
     """
 
-    _downloadables: dict[str, dict[str, str]] = {}
+    _downloadables: dict[str, types.downloads.Downloadable]
 
     def __init__(self) -> None:
         super().__init__()
@@ -66,7 +68,7 @@ class DownloadsManager(metaclass=singleton.Singleton):
         # Singleton pattern will return always the same instance
         return DownloadsManager()
 
-    def register(self, name: str, comment: str, path: str, mime: str = 'application/octet-stream') -> None:
+    def register(self, name: str, description: str, path: str, *, mimetype: str = 'application/octet-stream', legacy: bool = False) -> None:
         """
         Registers a downloadable file.
         @param name: name shown
@@ -74,14 +76,15 @@ class DownloadsManager(metaclass=singleton.Singleton):
         @params zip: If download as zip
         """
         _id = CryptoManager.manager().uuid(name)
-        self._downloadables[_id] = {
-            'name': name,
-            'comment': comment,
-            'path': path,
-            'mime': mime,
-        }
-
-    def downloadables(self) -> dict[str, dict[str, str]]:
+        self._downloadables[_id] = types.downloads.Downloadable(
+            name=name,
+            description=description,
+            path=path,
+            mimetype=mimetype,
+            legacy=legacy,
+        )
+        
+    def downloadables(self) -> typing.Mapping[str, types.downloads.Downloadable]:
         return self._downloadables
 
     def send(self, request: 'HttpRequest', _id: str) -> HttpResponse:
@@ -90,9 +93,9 @@ class DownloadsManager(metaclass=singleton.Singleton):
             raise Http404
         return self._send_file(
             request,
-            self._downloadables[_id]['name'],
-            self._downloadables[_id]['path'],
-            self._downloadables[_id]['mime'],
+            self._downloadables[_id].name,
+            self._downloadables[_id].path,
+            self._downloadables[_id].mimetype,
         )
 
     def _send_file(self, request: 'HttpRequest', name: str, filename: str, mime: str) -> HttpResponse:
