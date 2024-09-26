@@ -60,7 +60,9 @@ def get_serialized_from_managed_object(
 ) -> collections.abc.Mapping[str, typing.Any]:
     try:
         obj: 'Module' = mod.get_instance()
-        gui_types: dict[str, str] = {i['name']: str(i['gui']['type']) for i in obj.gui_description(skip_init_gui=True)}
+        gui_types: dict[str, str] = {
+            i['name']: str(i['gui']['type']) for i in obj.gui_description(skip_init_gui=True)
+        }
         values = obj.get_fields_as_dict()
         # Remove password fields
         for fld, fld_type in gui_types.items():
@@ -149,13 +151,13 @@ class Command(BaseCommand):
                 servicepools_count = 0
                 userservices_count = 0
                 for service in provider.services.all():
-                    service_pools: dict[str, typing.Any] = {}
+                    servicepools: dict[str, typing.Any] = {}
                     partial_servicepools_count = 0
                     partial_userservices_count = 0
-                    for service_pool in service.deployedServices.all():
+                    for servicepool in service.servicepools.all():
                         # get assigned user services with ERROR status
                         userservices: dict[str, typing.Any] = {}
-                        fltr = service_pool.userServices.all()
+                        fltr = servicepool.userServices.all()
                         if not options['alluserservices']:
                             fltr = fltr.filter(state=types.states.State.ERROR)
                         for item in fltr[:max_items]:  # at most max_items items
@@ -186,22 +188,17 @@ class Command(BaseCommand):
                         # get publications
                         publications: dict[str, typing.Any] = {}
                         changelogs = models.ServicePoolPublicationChangelog.objects.filter(
-                            publication=service_pool
+                            publication=servicepool
                         ).values('stamp', 'revision', 'log')
 
-                        for publication in service_pool.publications.all():
+                        for publication in servicepool.publications.all():
                             publications[str(publication.revision)] = get_serialized_from_model(
                                 publication, ['data']
                             )
 
-                        # get assigned groups
-                        groups: list[str] = []
-                        for group in service_pool.assignedGroups.all():
-                            groups.append(group.pretty_name)
-
                         # get calendar actions
                         calendar_actions: dict[str, typing.Any] = {}
-                        for calendar_action in models.CalendarAction.objects.filter(service_pool=service_pool):
+                        for calendar_action in models.CalendarAction.objects.filter(service_pool=servicepool):
                             calendar_actions[calendar_action.calendar.name] = {
                                 'action': calendar_action.action,
                                 'params': calendar_action.pretty_params,
@@ -211,27 +208,26 @@ class Command(BaseCommand):
                                 'next_execution': calendar_action.next_execution,
                             }
 
-                        # get calendar access
-                        calendar_access: dict[str, typing.Any] = {}
-                        for ca in models.CalendarAccess.objects.filter(service_pool=service_pool):
-                            calendar_access[ca.calendar.name] = ca.access
-
-                        service_pools[f'{service_pool.name} ({partial_userservices_count})'] = {
-                            '_': get_serialized_from_model(service_pool),
+                        servicepools[f'{servicepool.name} ({partial_userservices_count})'] = {
+                            '_': get_serialized_from_model(servicepool),
                             'userservices': userservices,
-                            'calendar_access': calendar_access,
+                            'transports': [t.name for t in servicepool.transports.all()],
+                            'groups': [g.pretty_name for g in servicepool.assignedGroups.all()],
+                            'calendar_access': {
+                                ca.calendar.name: ca.access
+                                for ca in models.CalendarAccess.objects.filter(service_pool=servicepool)
+                            },
                             'calendar_actions': calendar_actions,
-                            'groups': groups,
                             'publications': publications,
                             'publication_changelog': list(changelogs),
                         }
 
-                    partial_servicepools_count = len(service_pools)
+                    partial_servicepools_count = len(servicepools)
                     servicepools_count += partial_servicepools_count
 
                     services[f'{service.name} ({partial_servicepools_count}, {partial_userservices_count})'] = {
                         '_': get_serialized_from_managed_object(service),
-                        'service_pools': service_pools,
+                        'service_pools': servicepools,
                     }
 
                 services_count += len(services)
@@ -280,11 +276,11 @@ class Command(BaseCommand):
             tree[counter('NETWORKS')] = networks
 
             # os managers
-            osManagers: dict[str, typing.Any] = {}
+            osmanagers: dict[str, typing.Any] = {}
             for osmanager in models.OSManager.objects.all():
-                osManagers[osmanager.name] = get_serialized_from_managed_object(osmanager)
+                osmanagers[osmanager.name] = get_serialized_from_managed_object(osmanager)
 
-            tree[counter('OSMANAGERS')] = osManagers
+            tree[counter('OSMANAGERS')] = osmanagers
 
             # calendars
             calendars: dict[str, typing.Any] = {}
@@ -301,12 +297,15 @@ class Command(BaseCommand):
 
             tree[counter('CALENDARS')] = calendars
 
-            # Metapools
-            metapools: dict[str, typing.Any] = {}
-            for metapool in models.MetaPool.objects.all():
-                metapools[metapool.name] = get_serialized_from_model(metapool)
-
-            tree[counter('METAPOOLS')] = metapools
+            tree[counter('METAPOOLS')] = {
+                metapool.name: {
+                    '_': get_serialized_from_model(metapool, removable_fields=['servicesPoolGroup_id']),
+                    'service_pools': [
+                        get_serialized_from_model(servicepool) for servicepool in metapool.members.all()
+                    ],
+                }
+                for metapool in models.MetaPool.objects.all()
+            }
 
             # accounts
             accounts: dict[str, typing.Any] = {}
@@ -319,13 +318,14 @@ class Command(BaseCommand):
             tree[counter('ACCOUNTS')] = accounts
 
             # Service pool groups
-            service_pool_groups: dict[str, typing.Any] = {}
-            for servicePoolGroup in models.ServicePoolGroup.objects.all():
-                service_pool_groups[servicePoolGroup.name] = {
-                    'comments': servicePoolGroup.comments,
-                    'service_pools': [sp.name for sp in servicePoolGroup.servicesPools.all()],                }
+            servicepool_groups: dict[str, typing.Any] = {}
+            for servicepool_group in models.ServicePoolGroup.objects.all():
+                servicepool_groups[servicepool_group.name] = {
+                    'comments': servicepool_group.comments,
+                    'service_pools': [sp.name for sp in servicepool_group.servicesPools.all()],
+                }
 
-            tree[counter('SERVICEPOOLGROUPS')] = service_pool_groups
+            tree[counter('SERVICEPOOLGROUPS')] = servicepool_groups
 
             # Gallery
             gallery: dict[str, typing.Any] = {}
@@ -339,11 +339,11 @@ class Command(BaseCommand):
             tree[counter('GALLERY')] = gallery
 
             # Rest of registerd servers
-            registeredServers: dict[str, typing.Any] = {}
+            registered_servers: dict[str, typing.Any] = {}
             for i, registeredServer in enumerate(models.Server.objects.all()):
-                registeredServers[f'{i}'] = get_serialized_from_model(registeredServer)
+                registered_servers[f'{i}'] = get_serialized_from_model(registeredServer)
 
-            tree[counter('REGISTEREDSERVERS')] = registeredServers
+            tree[counter('REGISTEREDSERVERS')] = registered_servers
 
             cfg: dict[str, typing.Any] = {}
             # Now, config, but not passwords

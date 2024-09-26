@@ -89,6 +89,12 @@ class Service(ManagedObjectModel, TaggingMixin):
     # objects: 'models.manager.Manager["Service"]'
     deployedServices: 'models.manager.RelatedManager[ServicePool]'
     aliases: 'models.manager.RelatedManager[ServiceTokenAlias]'
+    
+    
+    # Comodity, better name
+    @property
+    def servicepools(self) -> 'models.manager.RelatedManager[ServicePool]':
+        return self.deployedServices
 
     class Meta(ManagedObjectModel.Meta):  # pyright: ignore
         """
