@@ -83,7 +83,7 @@ def perform_login_callback(user: models.User) -> None:
                 if not RE_GROUPS.match(grp_name):
                     logger.error('Invalid group name received from callback URL: %s', group_name)
                     continue
-                yield group_name
+                yield grp_name
 
         # Add groups to user if they are in the list
         changed_grps: list[str] = []
@@ -110,7 +110,6 @@ def perform_login_callback(user: models.User) -> None:
                 types.log.LogSource.INTERNAL,
             )
 
-    except requests.RequestException as e:
+    except Exception as e:
         logger.error('Error notifying login to callback URL: %s', e)
-        FAILURE_CACHE.set('notify_failure', fail_count)
-        fail_count: int = FAILURE_CACHE.get('notify_failure', 0) + 1
+        FAILURE_CACHE.set('notify_failure', fail_count+1)
