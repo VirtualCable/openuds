@@ -305,11 +305,11 @@ class OAuth2Authenticator(auths.Authenticator):
             case oauth2_types.ResponseType.CODE | oauth2_types.ResponseType.TOKEN:
                 # Code or token flow
                 # Simply store state, no code_verifier, store "none" as code_verifier to later restore it
-                self.cache.put(state, 'none', 3600)
+                self.cache.set(state, 'none', 3600)
             case oauth2_types.ResponseType.OPENID_CODE | oauth2_types.ResponseType.OPENID_ID_TOKEN:
                 # OpenID flow
                 nonce = secrets.token_urlsafe(oauth2_consts.STATE_LENGTH)
-                self.cache.put(state, nonce, 3600)  # Store nonce
+                self.cache.set(state, nonce, 3600)  # Store nonce
                 # Fix scope to ensure openid is present
                 if 'openid' not in param_dict['scope']:
                     param_dict['scope'] = 'openid ' + param_dict['scope']
@@ -322,7 +322,7 @@ class OAuth2Authenticator(auths.Authenticator):
                 code_verifier, code_challenge = self.code_verifier_and_challenge()
                 param_dict['code_challenge'] = code_challenge
                 param_dict['code_challenge_method'] = 'S256'
-                self.cache.put(state, code_verifier, 3600)
+                self.cache.set(state, code_verifier, 3600)
 
         # Nonce only is used
         if False:

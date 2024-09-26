@@ -796,6 +796,12 @@ class GlobalConfig:
         type=Config.FieldType.BOOLEAN,
         help=_('Enable VNC menu for user services'),
     )
+    LOGIN_CALLBACK_URL: Config.Value = Config.section(Config.SectionType.GLOBAL).value(
+        'Login Callback URL',
+        '',
+        type=Config.FieldType.HIDDEN,
+        help=''
+    )
 
     @staticmethod
     def is_initialized() -> bool:

@@ -152,7 +152,7 @@ class ProxmoxClient:
                 csrf = data['CSRFPreventionToken']
 
                 if self.cache:
-                    self.cache.put(self._host + 'conn', (ticket, csrf), validity=1800)  # 30 minutes
+                    self.cache.set(self._host + 'conn', (ticket, csrf), validity=1800)  # 30 minutes
 
                 _update_session(ticket, csrf)
             except requests.RequestException as e:

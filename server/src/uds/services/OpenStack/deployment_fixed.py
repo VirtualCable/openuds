@@ -81,7 +81,7 @@ class OpenStackUserServiceFixed(FixedUserService, autoserializable.AutoSerializa
             self._queue = [types.services.Operation.START, types.services.Operation.FINISH]
             return self._execute_queue()
 
-        self.cache.put('ready', '1')
+        self.cache.set('ready', '1')
         return types.states.TaskState.FINISHED
 
     def reset(self) -> types.states.TaskState:

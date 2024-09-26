@@ -161,13 +161,13 @@ class BaseSpiceTransport(transports.Transport):
             # test ANY of the ports
             port_to_test = con.port if con.port != -1 else con.secure_port
             if port_to_test == -1:
-                self.cache.put(
+                self.cache.set(
                     'cached_message', 'Could not find the PORT for connection', 120
                 )  # Write a message, that will be used from getCustom
                 logger.info('SPICE didn\'t find has any port: %s', con)
                 return False
 
-            self.cache.put(
+            self.cache.set(
                 'cached_message',
                 'Could not reach server "{}" on port "{}" from broker (prob. causes are name resolution & firewall rules)'.format(
                     con.address, port_to_test
@@ -176,7 +176,7 @@ class BaseSpiceTransport(transports.Transport):
             )
 
             if self.test_connectivity(userservice, con.address, port_to_test) is True:
-                self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
+                self.cache.set(ip, 'Y', READY_CACHE_TIMEOUT)
                 ready = 'Y'
 
         return ready == 'Y'

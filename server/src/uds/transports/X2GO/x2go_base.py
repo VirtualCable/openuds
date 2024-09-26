@@ -211,9 +211,9 @@ class BaseX2GOTransport(transports.Transport):
         if ready is None:
             # Check again for ready
             if net.test_connectivity(ip, 22):
-                self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
+                self.cache.set(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
-            self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
+            self.cache.set(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
     def get_screen_size(self) -> tuple[int, int]:

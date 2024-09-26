@@ -31,6 +31,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import os.path
+import random
 
 # We use commit/rollback
 from ...utils.web.test import WEBTestCase
@@ -60,38 +61,39 @@ class DownloadsManagerTest(WEBTestCase):
                 '6454d619-cc62-5bd4-aa9a-c9e2458d44da',
             ),
         ):
-            fileName, mimeType, knownUuid = v
+            filename, mimetype, known_uuid = v
             self.manager.register(
-                fileName,
-                'This is the test file {}'.format(fileName),
+                filename,
+                'This is the test file {}'.format(filename),
                 self.filePath,
-                mimeType,
+                mimetype=mimetype,
+                legacy=random.choice([True, False]),
             )
 
             downloadables = self.manager.downloadables()
 
             self.assertIn(
-                knownUuid,
+                known_uuid,
                 downloadables,
-                'The File {} was not found in downloadables!'.format(fileName),
+                'The File {} was not found in downloadables!'.format(filename),
             )
 
             # Downloadables are allowed by admin or staff
             self.login(as_admin=True)
 
             # This will fail, no user has logged in
-            self.client.get(reverse('utility.downloader', kwargs={'download_id': knownUuid}))
+            self.client.get(reverse('utility.downloader', kwargs={'download_id': known_uuid}))
             # Remove last '/' for redirect check. URL redirection will not contain it
             # Commented because i don't know why when executed in batch returns the last '/', and alone don't
             # self.assertRedirects(response, reverse('uds.web.views.login'), fetch_redirect_response=False)
 
             # And try to download again
-            response = self.client.get(reverse('utility.downloader', kwargs={'download_id': knownUuid}))
+            response = self.client.get(reverse('utility.downloader', kwargs={'download_id': known_uuid}))
             self.assertEqual(
                 response.get('Content-Type'),
-                mimeType,
+                mimetype,
                 'Mime type of {} is not {} as expected (it is {})'.format(
-                    fileName, mimeType, response.get('Content-Type')
+                    filename, mimetype, response.get('Content-Type')
                 ),
             )
             self.assertContains(

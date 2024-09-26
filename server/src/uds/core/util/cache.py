@@ -53,6 +53,7 @@ class Cache:
     misses = 0
 
     _owner: str
+    _timeout: int
 
     @staticmethod
     def _basic_serialize(value: typing.Any) -> str:
@@ -65,8 +66,9 @@ class Cache:
     _serializer: typing.ClassVar[collections.abc.Callable[[typing.Any], str]] = _basic_serialize
     _deserializer: typing.ClassVar[collections.abc.Callable[[str], typing.Any]] = _basic_deserialize
 
-    def __init__(self, owner: typing.Union[str, bytes]):
+    def __init__(self, owner: typing.Union[str, bytes], default_timeout: int = consts.cache.DEFAULT_CACHE_TIMEOUT) -> None:
         self._owner = owner.decode('utf-8') if isinstance(owner, bytes) else owner
+        self._timeout = default_timeout
 
     def _get_key(self, key: typing.Union[str, bytes]) -> str:
         if isinstance(key, str):
@@ -160,15 +162,14 @@ class Cache:
         with transaction.atomic():
             Cache.delete(self._owner)
 
-    def put(
+    def set(
         self,
         skey: typing.Union[str, bytes],
         value: typing.Any,
         validity: typing.Optional[int] = None,
     ) -> None:
         # logger.debug('Saving key "%s" for cache "%s"' % (skey, self._owner,))
-        if validity is None:
-            validity = consts.cache.DEFAULT_CACHE_TIMEOUT
+        validity = validity if validity is not None else self._timeout
         key = self._get_key(skey)
         strValue = Cache._serializer(value)
         now = sql_now()
@@ -205,7 +206,7 @@ class Cache:
         """
         Stores a value in the cache using the [] operator with default validity
         """
-        self.put(key, value)
+        self.set(key, value)
 
     def refresh(self, skey: typing.Union[str, bytes]) -> None:
         # logger.debug('Refreshing key "%s" for cache "%s"' % (skey, self._owner,))
