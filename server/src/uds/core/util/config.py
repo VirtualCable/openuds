@@ -797,7 +797,7 @@ class GlobalConfig:
         help=_('Enable VNC menu for user services'),
     )
     LOGIN_CALLBACK_URL: Config.Value = Config.section(Config.SectionType.GLOBAL).value(
-        'Login Callback URL',
+        'loginCallbackURL',
         '',
         type=Config.FieldType.HIDDEN,
         help=''

@@ -78,7 +78,7 @@ def get_service_pools_for_groups(
 
 
 class Users(DetailHandler):
-    custom_methods = ['servicesPools', 'userServices', 'cleanRelated']
+    custom_methods = ['servicesPools', 'userServices', 'cleanRelated', 'addToGroup']
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, Authenticator)
@@ -326,6 +326,13 @@ class Users(DetailHandler):
         user = parent.users.get(uuid=process_uuid(uuid))
         user.clean_related_data()
         return {'status': 'ok'}
+    
+    def addToGroup(self, parent: 'Authenticator', item: str) -> dict[str, str]:
+        uuid = process_uuid(item)
+        user = parent.users.get(uuid=process_uuid(uuid))
+        group = parent.groups.get(uuid=process_uuid(self._params['group']))
+        user.groups.add(group)
+        return {'status': 'ok'}
 
 
 class Groups(DetailHandler):
@@ -431,9 +438,11 @@ class Groups(DetailHandler):
             is_meta = self._params['type'] == 'meta'
             meta_if_any = self._params.get('meta_if_any', False)
             pools = self._params.get('pools', None)
+            skip_check = self._params.get('skip_check', False)
             logger.debug('Saving group %s / %s', parent, item)
             logger.debug('Meta any %s', meta_if_any)
             logger.debug('Pools: %s', pools)
+            logger.debug('Skip check: %s', skip_check)
             valid_fields = ['name', 'comments', 'state', 'skip_mfa']
             if self._params.get('name', '') == '':
                 raise exceptions.rest.RequestError(_('Group name is required'))
@@ -442,7 +451,7 @@ class Groups(DetailHandler):
             auth = parent.get_instance()
             to_save: dict[str, typing.Any] = {}
             if not item:  # Create new
-                if not is_meta and not is_pattern:
+                if not is_meta and not is_pattern and not skip_check:
                     auth.create_group(
                         fields
                     )  # this throws an exception if there is an error (for example, this auth can't create groups)

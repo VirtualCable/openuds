@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2012-2024 Virtual Cable S.L.U.
+# Copyright (c) 2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -24,24 +24,3 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-"""
-UDS authentication related interfaces and classes
-
-Author: Adolfo Gómez, dkmaster at dkmon dot com
-"""
-# pyright: reportUnusedImport=false
-from .authenticator import (
-    Authenticator,
-)
-from .authfactory import AuthsFactory
-from .user import User
-from .group import Group
-from .groups_manager import GroupsManager
-
-
-def factory() -> AuthsFactory:
-    """
-    Returns factory for register/access to authenticators
-    """
-    return AuthsFactory()

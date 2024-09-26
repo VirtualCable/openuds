@@ -46,7 +46,7 @@ from django.utils.translation import gettext as _
 
 from uds import models
 from uds.core import auths, consts, exceptions, types
-from uds.core.auths import Authenticator as AuthenticatorInstance
+from uds.core.auths import Authenticator as AuthenticatorInstance, callbacks
 from uds.core.util import config, log, net
 from uds.core.util.stats import events
 from uds.core.managers.crypto import CryptoManager
@@ -239,6 +239,9 @@ def register_user(
             browser=request.os.browser,
             version=request.os.version,
         )
+        # Try to notify callback if needed
+        callbacks.perform_login_callback(usr)
+        
         return types.auth.LoginResult(user=usr)
 
     return types.auth.LoginResult()

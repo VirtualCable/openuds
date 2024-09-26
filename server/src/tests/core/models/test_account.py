@@ -38,9 +38,9 @@ from uds.core.util import model
 from uds.core import consts
 from uds.models.account_usage import AccountUsage
 
-from ...fixtures import services as services_fixtures
+from tests.fixtures import services as services_fixtures
 
-from ...utils.test import UDSTestCase
+from tests.utils.test import UDSTestCase
 
 if typing.TYPE_CHECKING:
     pass

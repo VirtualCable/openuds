@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2012-2024 Virtual Cable S.L.U.
+# Copyright (c) 2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -24,24 +24,51 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 """
-UDS authentication related interfaces and classes
-
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-# pyright: reportUnusedImport=false
-from .authenticator import (
-    Authenticator,
-)
-from .authfactory import AuthsFactory
-from .user import User
-from .group import Group
-from .groups_manager import GroupsManager
+import typing
+import logging
+from unittest import mock
+
+from uds import models
+
+from uds.core.util import config
+from uds.core.auths import callbacks
+
+from tests.utils.test import UDSTestCase
+
+from tests.fixtures import authenticators as authenticators_fixtures
+
+if typing.TYPE_CHECKING:
+    pass
+
+logger = logging.getLogger(__name__)
 
 
-def factory() -> AuthsFactory:
-    """
-    Returns factory for register/access to authenticators
-    """
-    return AuthsFactory()
+class AuthCallbackTest(UDSTestCase):
+    auth: 'models.Authenticator'
+    groups: list['models.Group']
+    user: 'models.User'
+
+    def setUp(self) -> None:
+        super().setUp()
+
+        self.auth = authenticators_fixtures.create_db_authenticator()
+        self.groups = authenticators_fixtures.create_db_groups(self.auth, 1)
+        self.user = authenticators_fixtures.create_db_users(self.auth, number_of_users=1, groups=self.groups)[0]
+
+    def test_no_callback(self) -> None:
+        config.GlobalConfig.LOGIN_CALLBACK_URL.set('')  # Clean callback url
+
+        with mock.patch('requests.post') as mock_post:
+            callbacks.perform_login_callback(self.user)
+            mock_post.assert_not_called()
+
+    def test_callback_failed_url(self) -> None:
+        config.GlobalConfig.LOGIN_CALLBACK_URL.set('http://localhost:1234')  # Sample non existent url
+        callbacks.FAILURE_CACHE.set('notify_failure', 3)  # Already failed 3 times
+
+        with mock.patch('requests.post') as mock_post:
+            callbacks.perform_login_callback(self.user)
+            mock_post.assert_not_called()
