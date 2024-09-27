@@ -59,32 +59,32 @@ class AuthCallbackTest(UDSTestCase):
         self.user = authenticators_fixtures.create_db_users(self.auth, number_of_users=1, groups=self.groups[:3])[0]
 
     def test_no_callback(self) -> None:
-        config.GlobalConfig.LOGIN_CALLBACK_URL.set('')  # Clean callback url
+        config.GlobalConfig.NOTIFY_CALLBACK_URL.set('')  # Clean callback url
 
         with mock.patch('requests.post') as mock_post:
-            callbacks.perform_login_callback(self.user)
+            callbacks.weblogin(self.user)
             mock_post.assert_not_called()
 
     def test_callback_failed_url(self) -> None:
-        config.GlobalConfig.LOGIN_CALLBACK_URL.set('http://localhost:1234')  # Sample non existent url
+        config.GlobalConfig.NOTIFY_CALLBACK_URL.set('http://localhost:1234')  # Sample non existent url
         callbacks.FAILURE_CACHE.set('notify_failure', 3)  # Already failed 3 times
 
         with mock.patch('requests.post') as mock_post:
-            callbacks.perform_login_callback(self.user)
+            callbacks.weblogin(self.user)
             mock_post.assert_not_called()
 
-    def test_callback_fails_reteleadly(self) -> None:
-        config.GlobalConfig.LOGIN_CALLBACK_URL.set('https://localhost:1234')
+    def test_callback_fails_repeteadly(self) -> None:
+        config.GlobalConfig.NOTIFY_CALLBACK_URL.set('https://localhost:1234')
 
         with mock.patch('requests.post') as mock_post:
             mock_post.side_effect = Exception('Error')
-            for _i in range(4):
-                callbacks.perform_login_callback(self.user)
+            for _i in range(16):
+                callbacks.weblogin(self.user)
                 
             self.assertEqual(mock_post.call_count, 3)
 
     def test_callback_change_groups(self) -> None:
-        config.GlobalConfig.LOGIN_CALLBACK_URL.set('https://localhost:1234')
+        config.GlobalConfig.NOTIFY_CALLBACK_URL.set('https://localhost:1234')
         
         all_groups = {group.name for group in self.groups}
         current_groups = {group.name for group in self.user.groups.all()}
@@ -97,7 +97,7 @@ class AuthCallbackTest(UDSTestCase):
                 'removed_groups': list(current_groups),
             }
 
-            callbacks.perform_login_callback(self.user)
+            callbacks.weblogin(self.user)
 
             self.assertEqual(mock_post.call_count, 1)
             self.assertEqual({group.name for group in self.user.groups.all()}, diff_groups)

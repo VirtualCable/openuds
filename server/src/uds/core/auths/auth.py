@@ -240,7 +240,7 @@ def register_user(
             version=request.os.version,
         )
         # Try to notify callback if needed
-        callbacks.perform_login_callback(usr)
+        callbacks.weblogin(usr)
         
         return types.auth.LoginResult(user=usr)
 

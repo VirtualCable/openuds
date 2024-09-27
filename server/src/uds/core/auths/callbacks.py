@@ -35,11 +35,10 @@ import re
 import typing
 import collections.abc
 
-import requests
 
 from uds import models
-from uds.core import types
-from uds.core.util import config, cache, log
+from uds.core import types, consts
+from uds.core.util import config, cache, log, security
 
 logger = logging.getLogger(__name__)
 
@@ -48,26 +47,29 @@ FAILURE_CACHE: typing.Final[cache.Cache] = cache.Cache('callback_auth_failure', 
 RE_GROUPS: typing.Final[typing.Pattern[str]] = re.compile(r'^[A-Za-z0-9_-]+$')
 
 
-def perform_login_callback(user: models.User) -> None:
+def weblogin(user: models.User) -> None:
     """
     This method is called when a user logs in. It can be used to perform any action needed when a user logs in.
     """
-    notify_url = config.GlobalConfig.LOGIN_CALLBACK_URL.as_str()
+    notify_url = config.GlobalConfig.NOTIFY_CALLBACK_URL.as_str()
     if not notify_url.startswith('https') or (fail_count := FAILURE_CACHE.get('notify_failure', 0)) >= 3:
         return
 
     # We are going to notify the login to the callback URL
     # This is a POST with a JSON payload
     try:
-        response = requests.post(
+        response = security.secure_requests_session().post(
             notify_url,
             json={
-                'authenticator_uuid': user.manager.uuid,
-                'user_uuid': user.uuid,
-                'username': user.name,
-                'groups': [group.name for group in user.groups.all()],
+                'type': 'weblogin',
+                'info': {
+                    'authenticator_uuid': user.manager.uuid,
+                    'user_uuid': user.uuid,
+                    'username': user.name,
+                    'groups': [group.name for group in user.groups.all()],
+                },
             },
-            timeout=3,
+            timeout=consts.net.URGENT_REQUEST_TIMEOUT,
         )
         response.raise_for_status()
         FAILURE_CACHE.delete('notify_failure')
@@ -99,7 +101,6 @@ def perform_login_callback(user: models.User) -> None:
                 continue
             changed_grps += [f'-{group_name}']
             user.groups.remove(group)
-        
 
         # Log if groups were changed to keep track of changes
         if changed_grps:
@@ -112,4 +113,4 @@ def perform_login_callback(user: models.User) -> None:
 
     except Exception as e:
         logger.error('Error notifying login to callback URL: %s', e)
-        FAILURE_CACHE.set('notify_failure', fail_count+1)
+        FAILURE_CACHE.set('notify_failure', fail_count + 1)

@@ -796,8 +796,8 @@ class GlobalConfig:
         type=Config.FieldType.BOOLEAN,
         help=_('Enable VNC menu for user services'),
     )
-    LOGIN_CALLBACK_URL: Config.Value = Config.section(Config.SectionType.GLOBAL).value(
-        'loginCallbackURL',
+    NOTIFY_CALLBACK_URL: Config.Value = Config.section(Config.SectionType.GLOBAL).value(
+        'notifyCallbackURL',
         '',
         type=Config.FieldType.HIDDEN,
         help=''

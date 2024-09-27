@@ -58,15 +58,6 @@ logger = logging.getLogger(__name__)
 # Disable warnings from urllib for
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-try:
-    # Ensure that we do not get warnings about self signed certificates and so
-    import requests.packages.urllib3  # type: ignore
-
-    requests.packages.urllib3.disable_warnings()  # pyright: ignore
-except Exception:  # nosec: simple check for disabling warnings,
-    # Igonre if we cannot disable warnings
-    pass
-
 
 def create_self_signed_cert(ip: str) -> tuple[str, str, str]:
     """
@@ -194,6 +185,7 @@ def secure_requests_session(*, verify: 'str|bool' = True) -> 'requests.Session':
 
     # Disable warnings from urllib for insecure requests
     # Note that although this is done globaly, on some circunstances, may be overriden later
+    # by some other code that uses urllib3 directly...
     # This will ensure that we do not get warnings about self signed certificates
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
