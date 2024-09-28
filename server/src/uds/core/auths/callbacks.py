@@ -69,7 +69,7 @@ def weblogin(user: models.User) -> None:
                     'groups': [group.name for group in user.groups.all()],
                 },
             },
-            timeout=consts.net.URGENT_REQUEST_TIMEOUT,
+            timeout=consts.net.SHORT_REQUEST_TIMEOUT,
         )
         response.raise_for_status()
         FAILURE_CACHE.delete('notify_failure')

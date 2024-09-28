@@ -127,6 +127,12 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         """
         # If type is not registered (should be, but maybe a database inconsistence), consider this a "base empty auth"
         return auths.factory().lookup(self.data_type) or auths.Authenticator
+    
+    def type_is_valid(self) -> bool:
+        """
+        Returns if the type of this authenticator exists
+        """
+        return auths.factory().lookup(self.data_type) is not None
 
     def get_or_create_user(self, username: str, realName: typing.Optional[str] = None) -> 'User':
         """

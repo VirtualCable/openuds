@@ -61,27 +61,27 @@ class AuthCallbackTest(UDSTestCase):
     def test_no_callback(self) -> None:
         config.GlobalConfig.NOTIFY_CALLBACK_URL.set('')  # Clean callback url
 
-        with mock.patch('requests.post') as mock_post:
+        with mock.patch('uds.core.util.security.secure_requests_session') as session_mock:
             callbacks.weblogin(self.user)
-            mock_post.assert_not_called()
+            session_mock.assert_not_called()
 
     def test_callback_failed_url(self) -> None:
         config.GlobalConfig.NOTIFY_CALLBACK_URL.set('http://localhost:1234')  # Sample non existent url
         callbacks.FAILURE_CACHE.set('notify_failure', 3)  # Already failed 3 times
 
-        with mock.patch('requests.post') as mock_post:
+        with mock.patch('uds.core.util.security.secure_requests_session') as session_mock:
             callbacks.weblogin(self.user)
-            mock_post.assert_not_called()
+            session_mock.assert_not_called()
 
     def test_callback_fails_repeteadly(self) -> None:
         config.GlobalConfig.NOTIFY_CALLBACK_URL.set('https://localhost:1234')
 
-        with mock.patch('requests.post') as mock_post:
-            mock_post.side_effect = Exception('Error')
+        with mock.patch('uds.core.util.security.secure_requests_session') as session_mock:
+            session_mock.return_value.post.side_effect = Exception('Error')
             for _i in range(16):
                 callbacks.weblogin(self.user)
                 
-            self.assertEqual(mock_post.call_count, 3)
+            self.assertEqual(session_mock.call_count, 3)
 
     def test_callback_change_groups(self) -> None:
         config.GlobalConfig.NOTIFY_CALLBACK_URL.set('https://localhost:1234')
@@ -91,13 +91,13 @@ class AuthCallbackTest(UDSTestCase):
         
         diff_groups = all_groups - current_groups
 
-        with mock.patch('requests.post') as mock_post:
-            mock_post.return_value.json.return_value = {
+        with mock.patch('uds.core.util.security.secure_requests_session') as session_mock:
+            session_mock.return_value.post.return_value.json.return_value = {
                 'new_groups': list(diff_groups),
                 'removed_groups': list(current_groups),
             }
 
             callbacks.weblogin(self.user)
 
-            self.assertEqual(mock_post.call_count, 1)
+            self.assertEqual(session_mock.call_count, 1)
             self.assertEqual({group.name for group in self.user.groups.all()}, diff_groups)

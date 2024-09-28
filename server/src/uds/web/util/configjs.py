@@ -39,11 +39,12 @@ from django.utils.translation import gettext, get_language
 from django.urls import reverse
 from django.templatetags.static import static
 
-from uds.REST.methods.client import CLIENT_VERSION
 from uds.core import consts
 from uds.core.managers import downloads_manager
 from uds.core.util.config import GlobalConfig
 from uds.models import Authenticator, Image, Network, Transport
+
+from . import udsclients_info
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -92,13 +93,13 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
 
     # the auths for client
     def _get_auth_info(auth: Authenticator) -> dict[str, typing.Any]:
-        theType = auth.get_type()
+        auth_type = auth.get_type()
         return {
             'id': auth.uuid,
             'name': auth.name,
             'label': auth.small_name,
             'priority': auth.priority,
-            'is_custom': theType.is_custom(),
+            'is_custom': auth_type.is_custom(),
         }
 
     config: dict[str, typing.Any] = {
@@ -106,7 +107,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
         'version_stamp': consts.system.VERSION_STAMP,
         'language': get_language(),
         'available_languages': [{'id': k, 'name': gettext(v)} for k, v in settings.LANGUAGES],
-        'authenticators': [_get_auth_info(auth) for auth in authenticators if auth.get_type()],
+        'authenticators': [_get_auth_info(auth) for auth in authenticators if auth.type_is_valid()],
         'mfa': request.session.get('mfa', None),
         'tag': tag,
         'os': request.os.os.name,
@@ -122,7 +123,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
         'launcher_wait_time': 5000,
         'messages': {
             # Calendar denied message
-            'calendarDenied': GlobalConfig.LIMITED_BY_CALENDAR_TEXT.get().strip()
+            'calendar_denied': GlobalConfig.LIMITED_BY_CALENDAR_TEXT.get().strip()
             or gettext('Access limited by calendar')
         },
         'urls': {
@@ -167,57 +168,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
             'ip_proxy': request.ip_proxy,
         }
 
-    # all plugins are under url clients...
-    plugins = [
-        {
-            'url': static('clients/' + url.format(version=CLIENT_VERSION)),
-            'description': description,
-            'name': name,
-            'legacy': legacy,
-        }
-        for url, description, name, legacy in (
-            (
-                'UDSClientSetup-{version}.exe',
-                gettext('Windows client'),
-                'Windows',
-                False,
-            ),
-            ('UDSClient-{version}.pkg', gettext('Mac OS X client'), 'MacOS', False),
-            (
-                'udsclient3_{version}_all.deb',
-                gettext('Debian based Linux client') + ' ' + gettext('(requires Python-3.9 or newer)'),
-                'Linux',
-                False,
-            ),
-            (
-                'udsclient3-{version}-1.noarch.rpm',
-                gettext('RPM based Linux client (Fedora, Suse, ...)')
-                + ' '
-                + gettext('(requires Python-3.9 or newer)'),
-                'Linux',
-                False,
-            ),
-            (
-                'udsclient3-x86_64-{version}.tar.gz',
-                gettext('Binary appimage X86_64 Linux client'),
-                'Linux',
-                False,
-            ),
-            (
-                'udsclient3-armhf-{version}.tar.gz',
-                gettext('Binary appimage ARMHF Linux client (Raspberry, ...)'),
-                'Linux',
-                False,
-            ),
-            (
-                'udsclient3-{version}.tar.gz',
-                gettext('Generic .tar.gz Linux client') + ' ' + gettext('(requires Python-3.9 or newer)'),
-                'Linux',
-                False,
-            ),
-        )
-    ]
-
+    plugins = udsclients_info.PLUGINS.copy()
     # We can add here custom downloads with something like this:
     # plugins.append({
     #     'url': 'http://www.google.com/coche.exe',
