@@ -17,6 +17,8 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2022
 # Alexander <ag@kub.tel>, 2020
 # Alexey Shabalin <a.shabalin@gmail.com>, 2019
@@ -32,7 +34,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-11 15:44+0200\n"
+"POT-Creation-Date: 2024-09-28 18:02+0200\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Александр Бурматов, 2022\n"
 "Language-Team: Russian (http://app.transifex.com/openuds/openuds/language/"
@@ -635,7 +637,7 @@ msgstr "Сервисные пулы"
 #: static/admin/translations-fakejs.js:141
 #: static/admin/translations-fakejs.js:142
 #: static/admin/translations-fakejs.js:174
-#: static/modern/translations-fakejs.js:71
+#: static/modern/translations-fakejs.js:70
 msgid "Information"
 msgstr "Информация"
 
@@ -934,14 +936,14 @@ msgstr "Основной"
 #: static/admin/translations-fakejs.js:246
 #: static/admin/translations-fakejs.js:263
 #: static/admin/translations-fakejs.js:570
-#: static/modern/translations-fakejs.js:62
+#: static/modern/translations-fakejs.js:61
 msgid "Yes"
 msgstr "Да"
 
 #: static/admin/translations-fakejs.js:247
 #: static/admin/translations-fakejs.js:264
 #: static/admin/translations-fakejs.js:571
-#: static/modern/translations-fakejs.js:63
+#: static/modern/translations-fakejs.js:62
 msgid "No"
 msgstr "Нет"
 
@@ -978,7 +980,7 @@ msgstr "Пользователь"
 #: static/admin/translations-fakejs.js:346
 #: static/admin/translations-fakejs.js:379
 #: static/admin/translations-fakejs.js:386
-#: static/modern/translations-fakejs.js:50
+#: static/modern/translations-fakejs.js:49
 msgid "Authenticator"
 msgstr "Аутентификатор"
 
@@ -1016,7 +1018,7 @@ msgstr ", (% я больше строк)"
 #: static/admin/translations-fakejs.js:268
 #: static/admin/translations-fakejs.js:504
 #: static/admin/translations-fakejs.js:513
-#: static/modern/translations-fakejs.js:83
+#: static/modern/translations-fakejs.js:82
 msgid "Filter"
 msgstr "Фильтр"
 
@@ -1160,7 +1162,7 @@ msgid "Go to"
 msgstr "Перейти к"
 
 #: static/admin/translations-fakejs.js:325
-#: static/modern/translations-fakejs.js:64
+#: static/modern/translations-fakejs.js:63
 msgid "Dashboard"
 msgstr "Панель управления"
 
@@ -1271,7 +1273,7 @@ msgstr "Кэш"
 
 #: static/admin/translations-fakejs.js:358
 #: static/admin/translations-fakejs.js:549
-#: static/modern/translations-fakejs.js:75
+#: static/modern/translations-fakejs.js:74
 msgid "Transports"
 msgstr "Транспорты"
 
@@ -1672,7 +1674,7 @@ msgid "Connectivity"
 msgstr "Подключение"
 
 #: static/admin/translations-fakejs.js:550
-#: static/modern/translations-fakejs.js:77
+#: static/modern/translations-fakejs.js:76
 msgid "Networks"
 msgstr "Сети"
 
@@ -1733,12 +1735,12 @@ msgid "User mode"
 msgstr "Пользовательский режим"
 
 #: static/admin/translations-fakejs.js:568
-#: static/modern/translations-fakejs.js:66
+#: static/modern/translations-fakejs.js:65
 msgid "Logout"
 msgstr "Выйти"
 
 #: static/admin/translations-fakejs.js:569
-#: static/modern/translations-fakejs.js:61
+#: static/modern/translations-fakejs.js:60
 msgid "Close"
 msgstr "Закрыть"
 
@@ -1806,12 +1808,12 @@ msgid "Are you sure?"
 msgstr "Вы уверены?"
 
 #: static/modern/translations-fakejs.js:20
-#: static/modern/translations-fakejs.js:48
+#: static/modern/translations-fakejs.js:47
 msgid "Username"
 msgstr "Имя пользователя"
 
 #: static/modern/translations-fakejs.js:21
-#: static/modern/translations-fakejs.js:49
+#: static/modern/translations-fakejs.js:48
 msgid "Password"
 msgstr "Пароль"
 
@@ -1888,8 +1890,8 @@ msgid "Submit"
 msgstr "Отправить"
 
 #: static/modern/translations-fakejs.js:43
-#: static/modern/translations-fakejs.js:67
-#: static/modern/translations-fakejs.js:69
+#: static/modern/translations-fakejs.js:66
+#: static/modern/translations-fakejs.js:68
 msgid "UDS Client"
 msgstr "Клиент UDS"
 
@@ -1898,7 +1900,7 @@ msgid "Download UDS client for your platform"
 msgstr "Загрузите клиент UDS для вашей платформы"
 
 #: static/modern/translations-fakejs.js:45
-#: static/modern/translations-fakejs.js:65
+#: static/modern/translations-fakejs.js:64
 msgid "Downloads"
 msgstr "Загрузки"
 
@@ -1906,43 +1908,35 @@ msgstr "Загрузки"
 msgid "Always download the UDS actor matching your platform"
 msgstr "Всегда загружайте клиента UDS, соответствующего вашей платформе"
 
-#: static/modern/translations-fakejs.js:47
-msgid ""
-"Legacy actors are only provided for old operating system support. Try to "
-"avoid them."
-msgstr ""
-"Совместимые клиенты предоставляются только для поддержки старых операционных "
-"систем. Старайтесь их избегать."
-
-#: static/modern/translations-fakejs.js:51
+#: static/modern/translations-fakejs.js:50
 msgid "Login"
 msgstr "Авторизоваться"
 
-#: static/modern/translations-fakejs.js:52
+#: static/modern/translations-fakejs.js:51
 msgid "An error has occurred"
 msgstr "Произошла ошибка"
 
-#: static/modern/translations-fakejs.js:53
+#: static/modern/translations-fakejs.js:52
 msgid "Return"
 msgstr "Вернуться"
 
-#: static/modern/translations-fakejs.js:54
+#: static/modern/translations-fakejs.js:53
 msgid "UDS Service launcher"
 msgstr "Запуск услуг UDS"
 
-#: static/modern/translations-fakejs.js:55
+#: static/modern/translations-fakejs.js:54
 msgid "The service you have requested is being launched."
 msgstr "Запрошенная вами услуга запущена."
 
-#: static/modern/translations-fakejs.js:56
+#: static/modern/translations-fakejs.js:55
 msgid "Please, note that reloading this page will not work."
 msgstr "Обратите внимание, что перезагрузка этой страницы не будет работать."
 
-#: static/modern/translations-fakejs.js:57
+#: static/modern/translations-fakejs.js:56
 msgid "To relaunch service, you will have to do it from origin."
 msgstr "Чтобы перезапустить услугу, вам придется сделать это с нуля."
 
-#: static/modern/translations-fakejs.js:58
+#: static/modern/translations-fakejs.js:57
 msgid ""
 "If the service does not launchs automatically, probably you dont have the "
 "UDS Client installed"
@@ -1950,52 +1944,52 @@ msgstr ""
 "Если услуга не запускается автоматически, возможно, у вас не установлен "
 "клиент UDS"
 
-#: static/modern/translations-fakejs.js:59
+#: static/modern/translations-fakejs.js:58
 msgid "You can obtain it from the"
 msgstr "Вы можете получить его из"
 
-#: static/modern/translations-fakejs.js:60
+#: static/modern/translations-fakejs.js:59
 msgid "UDS Client download page"
 msgstr "Страница загрузки клиента UDS"
 
-#: static/modern/translations-fakejs.js:68
-#: static/modern/translations-fakejs.js:70
+#: static/modern/translations-fakejs.js:67
+#: static/modern/translations-fakejs.js:69
 msgid "About"
 msgstr "О программе"
 
+#: static/modern/translations-fakejs.js:71
 #: static/modern/translations-fakejs.js:72
-#: static/modern/translations-fakejs.js:73
 msgid "Client IP"
 msgstr "IP-адрес клиента"
 
-#: static/modern/translations-fakejs.js:74
+#: static/modern/translations-fakejs.js:73
 msgid "Detected proxy ip"
 msgstr "Обнаружен прокси ip"
 
-#: static/modern/translations-fakejs.js:76
+#: static/modern/translations-fakejs.js:75
 msgid "UDS transports for this client"
 msgstr "Транспорты UDS для этого клиента"
 
-#: static/modern/translations-fakejs.js:78
+#: static/modern/translations-fakejs.js:77
 msgid "UDS networks for this IP"
 msgstr "Сети UDS для этого IP"
 
-#: static/modern/translations-fakejs.js:79
+#: static/modern/translations-fakejs.js:78
 msgid "Release service"
 msgstr "Выпустить услугу"
 
-#: static/modern/translations-fakejs.js:80
+#: static/modern/translations-fakejs.js:79
 msgid "Reset service"
 msgstr "Сбросить услугу"
 
-#: static/modern/translations-fakejs.js:81
+#: static/modern/translations-fakejs.js:80
 msgid "Connections"
 msgstr "Соединения"
 
-#: static/modern/translations-fakejs.js:82
+#: static/modern/translations-fakejs.js:81
 msgid "Actions"
 msgstr "Действия"
 
-#: static/modern/translations-fakejs.js:84
+#: static/modern/translations-fakejs.js:83
 msgid "Please, enter access credentials"
 msgstr "Пожалуйста, введите данные для доступа"
