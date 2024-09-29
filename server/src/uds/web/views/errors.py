@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012 Virtual Cable S.L.
+# Copyright (c) 2012-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -25,27 +25,50 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-# pyright: reportUnusedImport=false
-
+import json
 import logging
+import typing
 
-# from .login import login, logout
-from .service import (
-    transport_own_link,
-    transport_icon,
-    user_service_enabler,
-    user_service_status,
-    service_image,
-    action,
-)
-from .auth import auth_callback, auth_callback_stage2, auth_info, ticket_auth, custom_auth
-from .download import download
-from .images import image
-from .errors import error, error_message
-from . import main
-from . import custom
+from django.utils.translation import gettext_lazy as _
+from django.shortcuts import render
+from django.http import HttpResponse
+
+from uds.core import types
+
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    from django.http import (
+        HttpRequest,
+    )  # pylint: disable=ungrouped-imports
+
 
 logger = logging.getLogger(__name__)
+
+def error(request: 'HttpRequest', err: str) -> 'HttpResponse':
+    """
+    Error view, responsible of error display
+    """
+    return render(request, 'uds/modern/index.html', {})
+
+
+
+
+def error_message(request: 'HttpRequest', err: str) -> 'HttpResponse':
+    """
+    Error view, responsible of error display
+    """
+    # get error as integer or replace it by 0
+    
+    try:
+        err_int = int(err)
+    except Exception:
+        err_int = 0
+    
+    return HttpResponse(
+        json.dumps({'error': types.errors.Error.from_int(err_int).message, 'code': str(err)}),
+        content_type='application/json',
+    )

@@ -29,13 +29,10 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import json
 import logging
 import typing
 
 from django.utils.translation import gettext_lazy as _
-from django.shortcuts import render
-from django.http import HttpResponse
 
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -56,13 +53,6 @@ def error_view(request: 'HttpRequest', error_code: int) -> HttpResponseRedirect:
     return HttpResponseRedirect(reverse('page.error', kwargs={'err': error_code}))
 
 
-def error(request: 'HttpRequest', err: str) -> 'HttpResponse':
-    """
-    Error view, responsible of error display
-    """
-    return render(request, 'uds/modern/index.html', {})
-
-
 def exception_view(request: 'HttpRequest', exception: Exception) -> HttpResponseRedirect:
     """
     Tries to render an error page with error information
@@ -71,19 +61,3 @@ def exception_view(request: 'HttpRequest', exception: Exception) -> HttpResponse
     # logger.debug(traceback.format_exc())
     return error_view(request, types.errors.Error.from_exception(exception))
 
-
-def error_message(request: 'HttpRequest', err: str) -> 'HttpResponse':
-    """
-    Error view, responsible of error display
-    """
-    # get error as integer or replace it by 0
-    
-    try:
-        err_int = int(err)
-    except Exception:
-        err_int = 0
-    
-    return HttpResponse(
-        json.dumps({'error': types.errors.Error.from_int(err_int).message, 'code': str(err)}),
-        content_type='application/json',
-    )
