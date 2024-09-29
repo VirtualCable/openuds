@@ -29,6 +29,8 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import random
+import time
 import typing
 
 from django.db.models import Q
@@ -39,6 +41,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 
 from uds.core import auths, exceptions, types
+from uds.core.auths import auth
 from uds.core.auths.auth import authenticate_via_callback, log_login, uds_cookie, web_login, web_logout
 from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.userservice import UserServiceManager
@@ -48,7 +51,10 @@ from uds.core.types.states import State
 from uds.core.util import html
 from uds.core.util.model import process_uuid
 from uds.models import Authenticator, ServicePool, TicketStore
+from uds.web.forms.login_form import LoginForm
 from uds.web.util import errors
+from uds.web.util.authentication import check_login
+from uds.web.views.main import index, logger
 
 if typing.TYPE_CHECKING:
     from uds.core.types.requests import ExtendedHttpRequestWithUser
@@ -288,3 +294,68 @@ def ticket_auth(
     except Exception as e:
         logger.exception('Exception')
         return errors.exception_view(request, e)
+
+
+@never_cache
+def login(request: types.requests.ExtendedHttpRequest, tag: typing.Optional[str] = None) -> HttpResponse:
+    # Default empty form
+    tag = tag or request.session.get('tag', None)
+
+    logger.debug('Tag: %s', tag)
+    response: typing.Optional[HttpResponse] = None
+    if request.method == 'POST':
+        request.session['restricted'] = False  # Access is from login
+        request.authorized = False  # Ensure that on login page, user is unauthorized first
+
+        form = LoginForm(request.POST, tag=tag)
+        login_result = check_login(request, form)
+        if login_result.user:
+            response = HttpResponseRedirect(reverse('page.index'))
+            # Tag is not removed from session, so next login will have it even if not provided
+            # This means than once an url is used, unless manually goes to "/uds/page/login/xxx"
+            # The tag will be used again
+            auth.web_login(
+                request, response, login_result.user, login_result.password
+            )  # data is user password here
+
+            # If MFA is provided, we need to redirect to MFA page
+            request.authorized = True
+            if (
+                login_result.user.manager.get_type().provides_mfa()
+                and login_result.user.manager.mfa
+                and login_result.user.groups.filter(skip_mfa=types.states.State.ACTIVE).count() == 0
+            ):
+                request.authorized = False
+                response = HttpResponseRedirect(reverse('page.mfa'))
+
+        else:
+            # If redirection on login failure is found, honor it
+            if login_result.url:  # Redirection
+                return HttpResponseRedirect(login_result.url)
+
+            if request.ip not in ('127.0.0.1', '::1'):  # If not localhost, wait a bit
+                time.sleep(
+                    random.SystemRandom().randint(1600, 2400) / 1000
+                )  # On failure, wait a bit if not localhost (random wait)
+            # If error is numeric, redirect...
+            if login_result.errid:
+                return errors.error_view(request, login_result.errid)
+
+            # Error, set error on session for process for js
+            request.session['errors'] = [login_result.errstr]
+    else:
+        request.session['tag'] = tag
+
+    return response or index(request)
+
+
+@never_cache
+@auth.web_login_required(admin=False)
+def logout(request: types.requests.ExtendedHttpRequestWithUser) -> HttpResponse:
+    auth.log_logout(request)
+    request.session['restricted'] = False  # Remove restricted
+    request.authorized = False
+    logoutResponse = request.user.logout(request)
+    url = logoutResponse.url if logoutResponse.success == types.auth.AuthenticationState.REDIRECT else None
+
+    return auth.web_logout(request, url or request.session.get('logouturl', None))

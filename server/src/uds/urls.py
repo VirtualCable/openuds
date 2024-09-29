@@ -37,10 +37,22 @@ from django.views.generic.base import RedirectView
 
 from uds import REST
 from uds.core import types
-import uds.web.views
-import uds.admin.views
 
 from uds.core.util.modfinder import get_urlpatterns_from_modules
+
+from uds.web.views import (
+    auth,
+    errors,
+    main,
+    mfa,
+    service,
+    download,
+    custom,
+    images,
+)
+
+# Admin
+import uds.admin.views
 
 
 urlpatterns = [
@@ -71,110 +83,110 @@ urlpatterns = [
     # Old urls for federated authentications
     re_path(
         r'^auth/(?P<authenticator_name>.+)',
-        uds.web.views.auth_callback,
+        auth.auth_callback,
         name='page.auth.callback.compat',
     ),
     re_path(
         r'^authinfo/(?P<authenticator_name>.+)',
-        uds.web.views.auth_info,
+        auth.auth_info,
         name='page.auth.info.compat',
     ),
     # Ticket authentication
     re_path(
         r'^tkauth/(?P<ticket_id>[a-zA-Z0-9-]+)$',
-        uds.web.views.ticket_auth,
+        auth.ticket_auth,
         name='page.auth.ticket.compat',
     ),
     # END COMPAT
     # Index
     path(
         r'uds/page/services',
-        uds.web.views.main.index,
+        main.index,
         name='page.index',
     ),
-    # Login/logouty
+    # Login/logout
     path(
         r'uds/page/login',
-        uds.web.views.main.login,
+        auth.login,
         name=types.auth.AuthenticationInternalUrl.LOGIN.value,
     ),
     re_path(
         r'^uds/page/login/(?P<tag>[a-zA-Z0-9-]+)$',
-        uds.web.views.main.login,
+        auth.login,
         name=types.auth.AuthenticationInternalUrl.LOGIN_LABEL.value,
     ),
     path(
         r'uds/page/logout',
-        uds.web.views.main.logout,
+        auth.logout,
         name=types.auth.AuthenticationInternalUrl.LOGOUT.value,
     ),
     # MFA authentication
     path(
         r'uds/page/mfa/',
-        uds.web.views.main.mfa,
+        mfa.mfa,
         name='page.mfa',
     ),
     # Error URL (just a placeholder, calls index with data on url for angular)
     re_path(
         r'^uds/page/error/(?P<err>[a-zA-Z0-9=-]+)$',
-        uds.web.views.error,
+        errors.error,
         name='page.error',
     ),
     # Download plugins URL  (just a placeholder, calls index with data on url for angular)
     path(
         r'uds/page/client-download',
-        uds.web.views.main.index,
+        main.index,
         name='page.client-download',
     ),
     # Federated authentication
     re_path(
         r'^uds/page/auth/(?P<authenticator_name>[^/]+)$',
-        uds.web.views.auth_callback,
+        auth.auth_callback,
         name='page.auth.callback',
     ),
     re_path(
         r'^uds/page/auth/stage2/(?P<ticket_id>[^/]+)$',
-        uds.web.views.auth_callback_stage2,
+        auth.auth_callback_stage2,
         name='page.auth.callback_stage2',
     ),
     re_path(
         r'^uds/page/auth/info/(?P<authenticator_name>[a-zA-Z0-9.-]+)$',
-        uds.web.views.auth_info,
+        auth.auth_info,
         name='page.auth.info',
     ),
     # Ticket authentication related
     re_path(
         r'^uds/page/ticket/auth/(?P<ticket_id>[a-zA-Z0-9.-]+)$',
-        uds.web.views.ticket_auth,
+        auth.ticket_auth,
         name='page.ticket.auth',
     ),
     path(
         r'uds/page/ticket/launcher',
-        uds.web.views.main.ticket_launcher,
+        main.ticket_launcher,
         name='page.ticket.launcher',
     ),
     # This catch-all must be the last entry in the path uds/page/...
     # In fact, client part will process this, but just in case...
     re_path(
         r'uds/page/.*',
-        uds.web.views.main.index,
+        main.index,
         name='page.placeholder',
     ),
     # Utility
     path(
         r'uds/utility/closer',
-        uds.web.views.service.closer,
+        service.closer,
         name='utility.closer',
     ),
     # Javascript
     path(
         r'uds/utility/uds.js',
-        uds.web.views.main.js,
+        main.js,
         name='utility.js',
     ),
     path(
         r'uds/adm/utility/uds.js',
-        uds.web.views.main.js,
+        main.js,
         name='utility-adm.js',
     ),
     # i18n
@@ -187,71 +199,71 @@ urlpatterns = [
     # Downloader
     re_path(
         r'^uds/utility/download/(?P<download_id>[a-zA-Z0-9-]*)$',
-        uds.web.views.download,
+        download.download,
         name='utility.downloader',
     ),
     # WEB API path (not REST api, frontend)
     re_path(
         r'^uds/webapi/img/transport/(?P<transport_id>[a-zA-Z0-9:-]+)$',
-        uds.web.views.transport_icon,
+        images.transport_icon,
         name='webapi.transport_icon',
     ),
     re_path(
         r'^uds/webapi/img/gallery/(?P<image_id>[a-zA-Z0-9-]+)$',
-        uds.web.views.image,
+        images.image,
         name='webapi.gallery_image',
     ),
     # Enabler and Status action are first processed, and if not match, execute the generic "action" handler
     re_path(
         r'^uds/webapi/action/(?P<service_id>[a-zA-Z0-9:-]+)/enable/(?P<transport_id>[a-zA-Z0-9:-]+)$',
-        uds.web.views.user_service_enabler,
+        service.user_service_enabler,
         name='webapi.enabler',
     ),
     re_path(
         r'^uds/webapi/action/(?P<service_id>[a-zA-Z0-9:-]+)/status/(?P<transport_id>[a-zA-Z0-9:-]+)$',
-        uds.web.views.user_service_status,
+        service.user_service_status,
         name='webapi.status',
     ),
     re_path(
         r'^uds/webapi/action/(?P<service_id>[a-zA-Z0-9:-]+)/(?P<action_string>[a-zA-Z0-9:-]+)$',
-        uds.web.views.action,
+        service.action,
         name='webapi.action',
     ),
     # Services list, ...
     path(
         r'uds/webapi/services',
-        uds.web.views.main.services_data_json,
+        service.services_data_json,
         name='webapi.services',
     ),
     # Transport own link processor
     re_path(
         r'^uds/webapi/trans/(?P<service_id>[a-zA-Z0-9:-]+)/(?P<transport_id>[a-zA-Z0-9:-]+)$',
-        uds.web.views.transport_own_link,
+        service.transport_own_link,
         name='webapi.transport_own_link',
     ),
     # Transport ticket update (for username/password on html5)
     re_path(
         r'^uds/webapi/trans/ticket/(?P<ticket_id>[a-zA-Z0-9:-]+)/(?P<scrambler>[a-zA-Z0-9:-]+)$',
-        uds.web.views.main.update_transport_ticket,
+        service.update_transport_ticket,
         name='webapi.transport.update_transport_ticket',
     ),
     # Authenticators custom js
     re_path(
         r'^uds/webapi/customAuth/(?P<auth_id>[a-zA-Z0-9:-]*)$',
-        uds.web.views.custom_auth,
+        auth.custom_auth,
         name='uds.web.views.custom_auth',
     ),
     # Error message
     re_path(
         r'^uds/webapi/error/(?P<err>[0-9]+)$',
-        uds.web.views.error_message,
+        errors.error_message,
         name='webapi.error',
     ),
     # END WEB API
     # Custumization of GUI
     re_path(
         r'^uds/custom/(?P<component>[a-zA-Z.-]+)$',
-        uds.web.views.custom.custom,
+        custom.custom,
         name='custom',
     ),
     # REST API

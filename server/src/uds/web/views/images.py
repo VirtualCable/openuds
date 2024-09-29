@@ -35,8 +35,9 @@ from django.http import HttpResponse
 from django.views.decorators.cache import cache_page
 
 from uds.core.consts.images import DEFAULT_IMAGE
+from uds.core.types.requests import ExtendedHttpRequest
 from uds.core.util.model import process_uuid
-from uds.models import Image
+from uds.models import Image, Transport
 
 logger = logging.getLogger(__name__)
 
@@ -51,4 +52,33 @@ def image(request: 'HttpRequest', image_id: str) -> 'HttpResponse':
         icon = Image.objects.get(uuid=process_uuid(image_id))
         return icon.image_as_response()
     except Image.DoesNotExist:
+        return HttpResponse(DEFAULT_IMAGE, content_type='image/png')
+
+
+@cache_page(3600, key_prefix='img', cache='memory')
+def transport_icon(request: 'ExtendedHttpRequest', transport_id: str) -> HttpResponse:
+    try:
+        transport: Transport
+        if transport_id[:6] == 'LABEL:':
+            # Get First label
+            transport = Transport.objects.filter(label=transport_id[6:]).order_by('priority')[0]
+        else:
+            transport = Transport.objects.get(uuid=process_uuid(transport_id))
+        return HttpResponse(transport.get_instance().icon(), content_type='image/png')
+    except Exception:
+        return HttpResponse(DEFAULT_IMAGE, content_type='image/png')
+
+
+@cache_page(3600, key_prefix='img', cache='memory')
+def service_image(request: 'ExtendedHttpRequest', idImage: str) -> HttpResponse:
+    try:
+        icon = Image.objects.get(uuid=process_uuid(idImage))
+        return icon.image_as_response()
+    except Image.DoesNotExist:
+        pass  # Tries to get image from transport
+
+    try:
+        transport: Transport = Transport.objects.get(uuid=process_uuid(idImage))
+        return HttpResponse(transport.get_instance().icon(), content_type='image/png')
+    except Exception:
         return HttpResponse(DEFAULT_IMAGE, content_type='image/png')

@@ -34,20 +34,23 @@ import typing
 import collections.abc
 
 from django.utils.translation import gettext
-from django.http import HttpResponse
-from django.views.decorators.cache import cache_page, never_cache
+from django.http import HttpResponse, JsonResponse
+from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_exempt
 
+from uds import models
 from uds.core import types
+from uds.core.auths import auth
 from uds.core.auths.auth import web_login_required, web_password
+from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.types.requests import ExtendedHttpRequest
-from uds.core.consts.images import DEFAULT_IMAGE
-from uds.core.util.model import process_uuid
-from uds.models import Transport, Image
 from uds.core.util import log
 from uds.core.services.exceptions import ServiceNotReadyError, MaxServicesReachedError, ServiceAccessDeniedByCalendar
 
 from uds.web.util import services
+from uds.web.util.services import get_services_info_dict
+from uds.web.views.main import logger
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -103,35 +106,6 @@ def transport_own_link(
 
 
 # pylint: disable=unused-argument
-@cache_page(3600, key_prefix='img', cache='memory')
-def transport_icon(request: 'ExtendedHttpRequest', transport_id: str) -> HttpResponse:
-    try:
-        transport: Transport
-        if transport_id[:6] == 'LABEL:':
-            # Get First label
-            transport = Transport.objects.filter(label=transport_id[6:]).order_by('priority')[0]
-        else:
-            transport = Transport.objects.get(uuid=process_uuid(transport_id))
-        return HttpResponse(transport.get_instance().icon(), content_type='image/png')
-    except Exception:
-        return HttpResponse(DEFAULT_IMAGE, content_type='image/png')
-
-
-@cache_page(3600, key_prefix='img', cache='memory')
-def service_image(request: 'ExtendedHttpRequest', idImage: str) -> HttpResponse:
-    try:
-        icon = Image.objects.get(uuid=process_uuid(idImage))
-        return icon.image_as_response()
-    except Image.DoesNotExist:
-        pass  # Tries to get image from transport
-
-    try:
-        transport: Transport = Transport.objects.get(uuid=process_uuid(idImage))
-        return HttpResponse(transport.get_instance().icon(), content_type='image/png')
-    except Exception:
-        return HttpResponse(DEFAULT_IMAGE, content_type='image/png')
-
-
 @web_login_required(admin=False)
 @never_cache
 def user_service_enabler(
@@ -243,3 +217,74 @@ def action(request: 'ExtendedHttpRequestWithUser', service_id: str, action_strin
                 break
 
     return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+@never_cache
+@auth.deny_non_authenticated  # web_login_required not used here because this is not a web page, but js
+def services_data_json(request: types.requests.ExtendedHttpRequestWithUser) -> HttpResponse:
+    return JsonResponse(get_services_info_dict(request))
+
+
+@csrf_exempt
+@auth.deny_non_authenticated
+def update_transport_ticket(
+    request: types.requests.ExtendedHttpRequestWithUser, ticket_id: str, scrambler: str
+) -> HttpResponse:
+    try:
+        if request.method == 'POST':
+            # Get request body as json
+            data: dict[str, str] = json.loads(request.body)
+
+            # Update username andd password in ticket
+            username = data.get('username', None) or None  # None if not present
+            password: 'str|bytes|None' = (
+                data.get('password', None) or None
+            )  # If password is empty, set it to None
+            domain = data.get('domain', None) or None  # If empty string, set to None
+
+            if password:
+                password = CryptoManager().symmetric_encrypt(password, scrambler)
+
+            def _is_ticket_valid(data: collections.abc.Mapping[str, typing.Any]) -> bool:
+                if 'ticket-info' in data:
+                    try:
+                        user = models.User.objects.get(
+                            uuid=typing.cast(dict[str, str], data['ticket-info']).get('user', None)
+                        )
+                        if request.user != user:
+                            return False
+                    except models.User.DoesNotExist:
+                        return False
+
+                    if username:
+                        try:
+                            userService = models.UserService.objects.get(
+                                uuid=data['ticket-info'].get('userService', None)
+                            )
+                            UserServiceManager.manager().notify_preconnect(
+                                userService,
+                                types.connections.ConnectionData(
+                                    username=username,
+                                    protocol=data.get('protocol', ''),
+                                    service_type=data['ticket-info'].get('service_type', ''),
+                                ),
+                            )
+                        except models.UserService.DoesNotExist:
+                            pass
+
+                return True
+
+            models.TicketStore.update(
+                uuid=ticket_id,
+                checkFnc=_is_ticket_valid,
+                username=username,
+                password=password,
+                domain=domain,
+            )
+            return HttpResponse('{"status": "OK"}', status=200, content_type='application/json')
+    except Exception as e:
+        # fallback to error
+        logger.warning('Error updating ticket: %s', e)
+
+    # Invalid request
+    return HttpResponse('{"status": "Invalid Request"}', status=400, content_type='application/json')
