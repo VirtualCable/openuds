@@ -127,18 +127,18 @@ class Login(Handler):
             ):
                 raise exceptions.rest.RequestError('Invalid parameters (no auth)')
 
-            authId: typing.Optional[str] = self._params.get(
+            auth_id: typing.Optional[str] = self._params.get(
                 'auth_id',
                 self._params.get('authId', None),  # Old compat, alias
             )
-            authLabel: typing.Optional[str] = self._params.get(
+            auth_label: typing.Optional[str] = self._params.get(
                 'auth_label',
                 self._params.get(
                     'authSmallName',  # Old compat name
                     self._params.get('authLabel', None),  # Old compat name
                 ),
             )
-            authName: typing.Optional[str] = self._params.get('auth', None)
+            auth_name: typing.Optional[str] = self._params.get('auth', None)
             platform: str = self._params.get('platform', self._request.os.os.value[0])
 
             username: str = self._params['username']
@@ -148,12 +148,12 @@ class Login(Handler):
             # Generate a random scrambler
             scrambler: str = CryptoManager.manager().random_string(32)
             if (
-                authName == 'admin'
-                or authLabel == 'admin'
-                or authId == '00000000-0000-0000-0000-000000000000'
-                or (not authId and not authName and not authLabel)
+                auth_name == 'admin'
+                or auth_label == 'admin'
+                or auth_id == '00000000-0000-0000-0000-000000000000'
+                or (not auth_id and not auth_name and not auth_label)
             ):
-                if GlobalConfig.SUPER_USER_LOGIN.get(True) == username and CryptoManager().check_hash(
+                if GlobalConfig.SUPER_USER_LOGIN.get(True) == username and CryptoManager.manager().check_hash(
                     password, GlobalConfig.SUPER_USER_PASS.get(True)
                 ):
                     self.gen_auth_token(-1, username, password, locale, platform, True, True, scrambler)
@@ -161,12 +161,12 @@ class Login(Handler):
                 return Login.result(error='Invalid credentials')
 
             # Will raise an exception if no auth found
-            if authId:
-                auth = Authenticator.objects.get(uuid=process_uuid(authId))
-            elif authName:
-                auth = Authenticator.objects.get(name=authName)
+            if auth_id:
+                auth = Authenticator.objects.get(uuid=process_uuid(auth_id))
+            elif auth_name:
+                auth = Authenticator.objects.get(name__iexact=auth_name)
             else:
-                auth = Authenticator.objects.get(small_name=authLabel)
+                auth = Authenticator.objects.get(small_name__iexact=auth_label)
 
             # No matter in fact the password, just not empty (so it can be encrypted, but will be invalid anyway)
             password = password or CryptoManager().random_string(32)

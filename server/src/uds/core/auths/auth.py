@@ -180,7 +180,9 @@ def needs_trusted_source(
     """
 
     @wraps(view_func)
-    def _wrapped_view(request: 'types.requests.ExtendedHttpRequest', *args: typing.Any, **kwargs: typing.Any) -> HttpResponse:
+    def _wrapped_view(
+        request: 'types.requests.ExtendedHttpRequest', *args: typing.Any, **kwargs: typing.Any
+    ) -> HttpResponse:
         """
         Wrapped function for decorator
         """
@@ -202,7 +204,9 @@ def needs_trusted_source(
 # it's designed to be used in ajax calls mainly
 def deny_non_authenticated(view_func: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
     @wraps(view_func)
-    def _wrapped_view(request: 'types.requests.ExtendedHttpRequest', *args: typing.Any, **kwargs: typing.Any) -> RT:
+    def _wrapped_view(
+        request: 'types.requests.ExtendedHttpRequest', *args: typing.Any, **kwargs: typing.Any
+    ) -> RT:
         if not request.user or not request.authorized:
             return HttpResponseForbidden()  # type: ignore
         return view_func(request, *args, **kwargs)
@@ -215,6 +219,7 @@ def register_user(
     auth_instance: AuthenticatorInstance,
     username: str,
     request: 'types.requests.ExtendedHttpRequest',
+    skip_callbacks: bool = False,
 ) -> types.auth.LoginResult:
     """
     Check if this user already exists on database with this authenticator, if don't, create it with defaults
@@ -239,9 +244,9 @@ def register_user(
             browser=request.os.browser,
             version=request.os.version,
         )
-        # Try to notify callback if needed
-        callbacks.weblogin(usr)
-        
+        if not skip_callbacks:
+            callbacks.weblogin(usr)
+
         return types.auth.LoginResult(user=usr)
 
     return types.auth.LoginResult()
@@ -252,19 +257,17 @@ def authenticate(
     password: str,
     authenticator: models.Authenticator,
     request: 'types.requests.ExtendedHttpRequest',
+    skip_callbacks: bool = False,
 ) -> types.auth.LoginResult:
     """
-    Given an username, password and authenticator, try to authenticate user
-    @param username: username to authenticate
-    @param password: password to authenticate this user
-    @param authenticator: Authenticator (database object) used to authenticate with provided credentials
-    @param request: Request object
+    Authenticate user with provided credentials
 
-    @return:
-            An types.auth.LoginResult indicating:
-            user if success in logging in field user or None if not
-            url if not success in logging in field url so instead of error UDS will redirect to this url
-
+    Args:
+        username (str): username to authenticate
+        password (str): password to authenticate this user
+        authenticator (models.Authenticator): Authenticator (database object) used to authenticate with provided credentials
+        request (ExtendedHttpRequestWithUser): Request object
+        skip_callbacks (bool, optional): Skip callbacks. Defaults to False.
 
     """
     logger.debug('Authenticating user %s with authenticator %s', username, authenticator)
@@ -354,12 +357,11 @@ def authenticate_via_callback(
     if result.success == types.auth.AuthenticationState.REDIRECT:
         return types.auth.LoginResult(url=result.url)
 
-    if result.username:
-        return register_user(authenticator, auth_instance, result.username or '', request)
-    else:
+    if not result.username:
         logger.warning('Authenticator %s returned empty username', authenticator.name)
+        raise exceptions.auth.InvalidUserException('User doesn\'t has access to UDS')
 
-    raise exceptions.auth.InvalidUserException('User doesn\'t has access to UDS')
+    return register_user(authenticator, auth_instance, result.username, request)
 
 
 def authenticate_callback_url(authenticator: models.Authenticator) -> str:
@@ -447,7 +449,9 @@ def web_password(request: HttpRequest) -> str:
     return CryptoManager().symmetric_decrypt(passkey, uds_cookie(request))  # recover as original unicode string
 
 
-def web_logout(request: 'types.requests.ExtendedHttpRequest', exit_url: typing.Optional[str] = None) -> HttpResponse:
+def web_logout(
+    request: 'types.requests.ExtendedHttpRequest', exit_url: typing.Optional[str] = None
+) -> HttpResponse:
     """
     Helper function to clear user related data from session. If this method is not used, the session we be cleaned anyway
     by django in regular basis.

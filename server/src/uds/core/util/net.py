@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import functools
 import ipaddress
 import logging
 import re
@@ -210,29 +211,32 @@ def network_from_str_ipv6(strNets: str) -> NetworkType:
 
 
 def network_from_str(
-    strNets: str,
+    network_str: str,
     version: typing.Literal[0, 4, 6] = 0,
 ) -> NetworkType:
-    if not ':' in strNets and version != 6:
-        return network_from_str_ipv4(strNets)
-    # ':' in strNets or version == 6:
-    # If is in fact an IPv4 address, return None network, this will not be used
-    if '.' in strNets:
+    try:
+        if not ':' in network_str and version != 6:
+            return network_from_str_ipv4(network_str)
+        # ':' in strNets or version == 6:
+        # If is in fact an IPv4 address, return None network, this will not be used
+        if '.' in network_str:
+            return NetworkType(0, 0, 0)
+        return network_from_str_ipv6(network_str)
+    except ValueError:
         return NetworkType(0, 0, 0)
-    return network_from_str_ipv6(strNets)
 
-
+@functools.lru_cache(maxsize=32)
 def networks_from_str(
-    nets: str,
+    networks_str: str,
     version: typing.Literal[0, 4, 6] = 0,
 ) -> list[NetworkType]:
     """
     If allowMultipleNetworks is True, it allows ',' and ';' separators (and, ofc, more than 1 network)
     Returns a list of networks tuples in the form [(start1, end1), (start2, end2) ...]
     """
-    return [network_from_str(str_net, version) for str_net in re.split('[;,]', nets) if str_net]
+    return [network_from_str(str_net, version) for str_net in re.split('[;,]', networks_str) if str_net]
 
-
+@functools.lru_cache(maxsize=32)
 def contains(
     networks: typing.Union[str, NetworkType, list[NetworkType]],
     ip: typing.Union[str, int],
