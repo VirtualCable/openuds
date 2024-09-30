@@ -149,8 +149,8 @@ class TRDPTransport(BaseRDPTransport):
             key=key,
         )
 
-        tunnelFields = fields.get_tunnel_from_field(self.tunnel)
-        tunHost, tunPort = tunnelFields.host, tunnelFields.port
+        tunnel_fields = fields.get_tunnel_from_field(self.tunnel)
+        tunnel_host, tunnel_port = tunnel_fields.host, tunnel_fields.port
 
         r = RDPFile(width == '-1' or height == '-1', width, height, depth, target=os.os)
         #r.enablecredsspsupport = ci.get('sso') == 'True' or self.credssp.as_bool()
@@ -182,8 +182,8 @@ class TRDPTransport(BaseRDPTransport):
         r.optimize_teams = self.wnd_optimize_teams.as_bool()
 
         sp: collections.abc.MutableMapping[str, typing.Any] = {
-            'tunHost': tunHost,
-            'tunPort': tunPort,
+            'tunHost': tunnel_host,
+            'tunPort': tunnel_port,
             'tunWait': self.tunnel_wait.as_int(),
             'tunChk': self.verify_certificate.as_bool(),
             'ticket': ticket,
