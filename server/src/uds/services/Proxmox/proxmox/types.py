@@ -407,9 +407,8 @@ class VMConfiguration:
 
 @dataclasses.dataclass
 class VmCreationResult:
-    node: str
     vmid: int
-    upid: ExecResult
+    exec_result: ExecResult
 
 
 @dataclasses.dataclass

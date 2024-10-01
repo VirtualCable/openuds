@@ -92,6 +92,10 @@ class ConsoleConnectionInfo:
     proxy: str = ''
     monitors: int = 0
 
+    @staticmethod
+    def null() -> 'ConsoleConnectionInfo':
+        return ConsoleConnectionInfo(type='', address='')  # All other values are default
+
 
 @dataclasses.dataclass
 class ConnectionData:
@@ -282,4 +286,3 @@ class UserServiceInfo:
     ip: typing.Optional[str]
     userservice: 'models.UserService'
     transport: 'models.Transport'
-

@@ -100,7 +100,7 @@ class ProxmoxPublication(DynamicPublication, autoserializable.AutoSerializable):
         # Name is generated on op_initialize by DynamicPublication
         task = self.service().clone_vm(self._name, self.generate_annotation())
         self._vmid = str(task.vmid)
-        self._task = ','.join((task.upid.node, task.upid.upid))
+        self._task = ','.join((task.exec_result.node, task.exec_result.upid))
 
     def op_create_checker(self) -> types.states.TaskState:
         node, upid = self._task.split(',')

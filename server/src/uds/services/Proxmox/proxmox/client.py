@@ -440,9 +440,8 @@ class ProxmoxClient:
         )
 
         return types.VmCreationResult(
-            node=src_node,
             vmid=new_vmid,
-            result=result,
+            exec_result=result,
         )
 
     @cached('hagrps', consts.CACHE_DURATION, key_helper=caching_key_helper)
@@ -820,17 +819,20 @@ class ProxmoxClient:
         Gets the connetion info for the specified machine
         """
         node = node or self.get_vm_info(vmid).node
-        res: dict[str, typing.Any] = self.do_post(f'nodes/{node}/qemu/{vmid}/spiceproxy', node=node)['data']
-        return core_types.services.ConsoleConnectionInfo(
-            type=res['type'],
-            proxy=res['proxy'],
-            address=res['host'],
-            port=res.get('port', None),
-            secure_port=res['tls-port'],
-            cert_subject=res['host-subject'],
-            ticket=core_types.services.ConsoleConnectionTicket(value=res['password']),
-            ca=res.get('ca', None),
-        )
+        try:
+            res: dict[str, typing.Any] = self.do_post(f'nodes/{node}/qemu/{vmid}/spiceproxy', node=node)['data']
+            return core_types.services.ConsoleConnectionInfo(
+                type=res['type'],
+                proxy=res['proxy'],
+                address=res['host'],
+                port=res.get('port', None),
+                secure_port=res['tls-port'],
+                cert_subject=res['host-subject'],
+                ticket=core_types.services.ConsoleConnectionTicket(value=res['password']),
+                ca=res.get('ca', None),
+            )
+        except Exception:  # Does not have spice or something went wrong
+            return core_types.services.ConsoleConnectionInfo.null()
         # Sample data:
         # 'data': {'proxy': 'http://pvealone.dkmon.com:3128',
         # 'release-cursor': 'Ctrl+Alt+R',

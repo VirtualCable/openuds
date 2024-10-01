@@ -208,9 +208,8 @@ DEF_UPID: prox_types.ExecResult = prox_types.ExecResult(
 
 
 DEF_VM_CREATION_RESULT: prox_types.VmCreationResult = prox_types.VmCreationResult(
-    node=DEF_NODES[0].name,
     vmid=DEF_VMS_INFO[0].id,
-    upid=DEF_UPID,
+    exec_result=DEF_UPID,
 )
 
 

@@ -62,7 +62,7 @@ class TestProxmoxClient(UDSTransactionTestCase):
     hagroup: str = ''
 
     def setUp(self) -> None:
-        v = vars.get_vars('proxmox')
+        v = vars.get_vars('proxmox_cluster')
         if not v:
             self.skipTest('No proxmox vars')
 
@@ -113,10 +113,10 @@ class TestProxmoxClient(UDSTransactionTestCase):
             # if it exists when we try to create a new one, we will simply try to get another one
         self.fail(f'Could not get a new vmid!!: last tried {vmid}')
 
-    def _wait_for_task(self, node: str, upid: str, timeout: int = 16) -> None:
+    def _wait_for_task(self, exec_result: prox_types.ExecResult, timeout: int = 16) -> None:
         while timeout > 0:
             timeout -= 1
-            task_info = self.pclient.get_task_info(node, upid)
+            task_info = self.pclient.get_task_info(exec_result.node, exec_result.upid)
             if task_info.is_running():
                 time.sleep(1)
             else:
@@ -148,7 +148,7 @@ class TestProxmoxClient(UDSTransactionTestCase):
                 must_have_vgpus=must_have_vgpus,
             )
             # Wait for the task to finish
-            self._wait_for_task(res.node, res.upid.upid)
+            self._wait_for_task(res.exec_result)
             yield self.pclient.get_vm_info(res.vmid)
         finally:
             if res:
@@ -158,7 +158,7 @@ class TestProxmoxClient(UDSTransactionTestCase):
                         vminfo = self.pclient.get_vm_info(res.vmid)
                         if vminfo.status == prox_types.VMStatus.RUNNING:
                             exec_result = self.pclient.stop_vm(res.vmid)
-                            self._wait_for_task(exec_result.node, exec_result.upid)
+                            self._wait_for_task(exec_result)
                     except prox_exceptions.ProxmoxError:
                         pass
                 self.pclient.delete_vm(res.vmid)
@@ -291,7 +291,7 @@ class TestProxmoxClient(UDSTransactionTestCase):
         with self._create_test_vm() as vm:
             # Create snapshot for the vm
             task = self.pclient.create_snapshot(vm.id, name='test-snapshot')
-            self._wait_for_task(task.node, task.upid)
+            self._wait_for_task(task)
             snapshots = self.pclient.list_snapshots(vm.id)
             self.assertIsInstance(snapshots, list)
             # should have TWO snapshots, the one created by us and "current"
@@ -304,11 +304,11 @@ class TestProxmoxClient(UDSTransactionTestCase):
 
             # Restore the snapshot
             task = self.pclient.restore_snapshot(vm.id, name='test-snapshot')
-            self._wait_for_task(task.node, task.upid)
+            self._wait_for_task(task)
 
             # Delete the snapshot
             task = self.pclient.delete_snapshot(vm.id, name='test-snapshot')
-            self._wait_for_task(task.node, task.upid)
+            self._wait_for_task(task)
 
             snapshots = self.pclient.list_snapshots(vm.id)
             self.assertTrue(len(snapshots) == 1)
@@ -368,23 +368,23 @@ class TestProxmoxClient(UDSTransactionTestCase):
     def test_start_stop_vm(self) -> None:
         with self._create_test_vm() as vm:
             task_info = self.pclient.start_vm(vm.id)
-            self._wait_for_task(task_info.node, task_info.upid)
+            self._wait_for_task(task_info)
             self.assertTrue(self.pclient.get_vm_info(vm.id, force=True).status == prox_types.VMStatus.RUNNING)
 
             task_info = self.pclient.stop_vm(vm.id)
-            self._wait_for_task(task_info.node, task_info.upid)
+            self._wait_for_task(task_info)
             self.assertTrue(self.pclient.get_vm_info(vm.id, force=True).status == prox_types.VMStatus.STOPPED)
 
     def test_shutdown_vm(self) -> None:
         with self._create_test_vm() as vm:
             task_info = self.pclient.start_vm(vm.id)
-            self._wait_for_task(task_info.node, task_info.upid)
+            self._wait_for_task(task_info)
             self.assertTrue(self.pclient.get_vm_info(vm.id, force=True).status == prox_types.VMStatus.RUNNING)
 
             start_time = time.time()
             # The VM has no SO, so it will not shutdown gracefully but in 2 seconds will be stopped
             task_info = self.pclient.shutdown_vm(vm.id, timeout=2)
-            self._wait_for_task(task_info.node, task_info.upid)
+            self._wait_for_task(task_info)
             self.assertTrue(self.pclient.get_vm_info(vm.id, force=True).status == prox_types.VMStatus.STOPPED)
             end_time = time.time()
             self.assertGreaterEqual(end_time - start_time, 2)
@@ -392,21 +392,21 @@ class TestProxmoxClient(UDSTransactionTestCase):
     def test_suspend_resume_vm(self) -> None:
         with self._create_test_vm() as vm:
             result = self.pclient.start_vm(vm.id)
-            self._wait_for_task(result.node, result.upid)
+            self._wait_for_task(result)
             self.assertTrue(self.pclient.get_vm_info(vm.id, force=True).status == prox_types.VMStatus.RUNNING)
 
             result = self.pclient.suspend_vm(vm.id)
-            self._wait_for_task(result.node, result.upid)
+            self._wait_for_task(result)
             self.assertTrue(self.pclient.get_vm_info(vm.id, force=True).status == prox_types.VMStatus.STOPPED)
 
             result = self.pclient.resume_vm(vm.id)
-            self._wait_for_task(result.node, result.upid)
+            self._wait_for_task(result)
             self.assertTrue(self.pclient.get_vm_info(vm.id, force=True).status == prox_types.VMStatus.RUNNING)
 
     def test_convert_vm_to_template_and_clone(self) -> None:
         with self._create_test_vm() as vm:
             result = self.pclient.convert_vm_to_template(vm.id)
-            self._wait_for_task(result.node, result.upid)
+            self._wait_for_task(result)
             self.assertTrue(self.pclient.get_vm_info(vm.id, force=True).template)
 
             with self._create_test_vm(vmid=vm.id, as_linked_clone=True):
@@ -453,7 +453,7 @@ class TestProxmoxClient(UDSTransactionTestCase):
         # Create an vm and start it
         with self._create_test_vm() as vm:
             result = self.pclient.start_vm(vm.id)
-            self._wait_for_task(result.node, result.upid)
+            self._wait_for_task(result)
             self.assertTrue(self.pclient.get_vm_info(vm.id, force=True).status == prox_types.VMStatus.RUNNING)
 
             # Get the console connection
