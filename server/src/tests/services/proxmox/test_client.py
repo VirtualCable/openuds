@@ -62,7 +62,7 @@ class TestProxmoxClient(UDSTransactionTestCase):
     hagroup: str = ''
 
     def setUp(self) -> None:
-        v = vars.get_vars('proxmox_cluster_old')
+        v = vars.get_vars('proxmox_cluster')
         if not v:
             self.skipTest('No proxmox vars')
 
