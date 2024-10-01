@@ -435,12 +435,14 @@ class ProxmoxClient:
 
         logger.debug('PARAMS: %s', params)
 
+        result = types.ExecResult.from_dict(
+            self.do_post(f'nodes/{src_node}/qemu/{vmid}/clone', data=params, node=src_node)
+        )
+
         return types.VmCreationResult(
-            node=target_node,
+            node=src_node,
             vmid=new_vmid,
-            upid=types.ExecResult.from_dict(
-                self.do_post(f'nodes/{src_node}/qemu/{vmid}/clone', data=params, node=src_node)
-            ),
+            result=result,
         )
 
     @cached('hagrps', consts.CACHE_DURATION, key_helper=caching_key_helper)
@@ -573,7 +575,9 @@ class ProxmoxClient:
         node = node or self.get_vm_info(vmid).node
         if name is None:
             raise exceptions.ProxmoxError('Snapshot name is required')
-        return types.ExecResult.from_dict(self.do_delete(f'nodes/{node}/qemu/{vmid}/snapshot/{name}', node=node))
+        return types.ExecResult.from_dict(
+            self.do_delete(f'nodes/{node}/qemu/{vmid}/snapshot/{name}', node=node)
+        )
 
     def restore_snapshot(
         self,
@@ -665,7 +669,9 @@ class ProxmoxClient:
         raise exceptions.ProxmoxNotFound(f'VM {vmid} not found')
 
     @cached('vmc', consts.CACHE_VM_INFO_DURATION, key_helper=caching_key_helper)
-    def get_vm_config(self, vmid: int, node: typing.Optional[str] = None, **kwargs: typing.Any) -> types.VMConfiguration:
+    def get_vm_config(
+        self, vmid: int, node: typing.Optional[str] = None, **kwargs: typing.Any
+    ) -> types.VMConfiguration:
         node = node or self.get_vm_info(vmid).node
         return types.VMConfiguration.from_dict(
             self.do_get(f'nodes/{node}/qemu/{vmid}/config', node=node)['data']
@@ -788,10 +794,7 @@ class ProxmoxClient:
     @cached('nost', consts.CACHE_INFO_DURATION, key_helper=caching_key_helper)
     def get_nodes_stats(self, **kwargs: typing.Any) -> list[types.NodeStats]:
         # vm | storage | node | sdn are valid types for cluster/resources
-        return [
-            types.NodeStats.from_dict(nodeStat)
-            for nodeStat in self.get_cluster_resources('node')
-        ]
+        return [types.NodeStats.from_dict(nodeStat) for nodeStat in self.get_cluster_resources('node')]
 
     @cached('pools', consts.CACHE_DURATION // 6, key_helper=caching_key_helper)
     def list_pools(self, **kwargs: typing.Any) -> list[types.PoolInfo]:
