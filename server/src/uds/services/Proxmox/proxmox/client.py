@@ -266,6 +266,10 @@ class ProxmoxClient:
             return False
         return True
 
+    @cached('version', consts.CACHE_DURATION_LONG, key_helper=caching_key_helper)
+    def get_version(self) -> str:
+        return self.do_get('version')['data']['version']
+
     @cached('cluster', consts.CACHE_DURATION, key_helper=caching_key_helper)
     def get_cluster_info(self, **kwargs: typing.Any) -> types.ClusterInfo:
         return types.ClusterInfo.from_dict(self.do_get('cluster/status'))
@@ -593,9 +597,17 @@ class ProxmoxClient:
         )
 
     def get_task_info(self, node: str, upid: str) -> types.TaskStatus:
-        return types.TaskStatus.from_dict(
-            self.do_get(f'nodes/{node}/tasks/{urllib.parse.quote(upid)}/status', node=node)
-        )
+        # On older Versions, the result of some operations are simply missing
+        # To avoid this, we will return a "done" task if upid is empty
+        if upid == '':
+            return types.TaskStatus.done_task()
+
+        try:
+            return types.TaskStatus.from_dict(
+                self.do_get(f'nodes/{node}/tasks/{urllib.parse.quote(upid)}/status', node=node)
+            )
+        except Exception:
+            raise exceptions.ProxmoxNotFound(f'Task {upid} not found')
 
     @cached('vms', consts.CACHE_DURATION, key_helper=caching_key_helper)
     def list_vms(
@@ -797,13 +809,13 @@ class ProxmoxClient:
 
     @cached('pools', consts.CACHE_DURATION // 6, key_helper=caching_key_helper)
     def list_pools(self, **kwargs: typing.Any) -> list[types.PoolInfo]:
-        return [types.PoolInfo.from_dict(poolInfo) for poolInfo in self.do_get('pools')['data']]
+        return [types.PoolInfo.from_dict(pool_info) for pool_info in self.do_get('pools')['data']]
 
     @cached('pool', consts.CACHE_DURATION, key_helper=caching_key_helper)
     def get_pool_info(
-        self, pool_id: str, retrieve_vm_names: bool = False, **kwargs: typing.Any
+        self, poolid: str, retrieve_vm_names: bool = False, **kwargs: typing.Any
     ) -> types.PoolInfo:
-        pool_info = types.PoolInfo.from_dict(self.do_get(f'pools/{pool_id}')['data'])
+        pool_info = types.PoolInfo.from_dict(self.do_get(f'pools/{poolid}')['data'], poolid=poolid)
         if retrieve_vm_names:
             for i in range(len(pool_info.members)):
                 try:

@@ -160,8 +160,10 @@ class ExecResult:
     upid: str
 
     @staticmethod
-    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'ExecResult':
-        upid = dictionary['data']
+    def from_dict(data: collections.abc.MutableMapping[str, typing.Any]) -> 'ExecResult':
+        upid = data['data']
+        if upid is None:
+            return ExecResult.null()  # No data, return null, that in turn, has a finished task
         d = upid.split(':')
         return ExecResult(
             node=d[1],
@@ -172,6 +174,19 @@ class ExecResult:
             vmid=int(d[6]),
             user=d[7],
             upid=upid,
+        )
+
+    @staticmethod
+    def null() -> 'ExecResult':
+        return ExecResult(
+            node='',
+            pid=0,
+            pstart=0,
+            starttime=datetime.datetime.now(),
+            type='',
+            vmid=0,
+            user='',
+            upid='',
         )
 
 
@@ -204,6 +219,21 @@ class TaskStatus:
             id=data['id'],
         )
 
+    @staticmethod
+    def done_task() -> 'TaskStatus':
+        return TaskStatus(
+            node='',
+            pid=0,
+            pstart=0,
+            starttime=datetime.datetime.now(),
+            type='',
+            status='stopped',
+            exitstatus='OK',
+            user='',
+            upid='',
+            id='',
+        )
+
     def is_running(self) -> bool:
         return self.status == 'running'
 
@@ -224,7 +254,7 @@ class NetworkConfiguration:
     macaddr: str
 
     netdata: str  # Original data
-    
+
     def is_null(self) -> bool:
         return self.net == ''
 
@@ -245,6 +275,7 @@ class NetworkConfiguration:
     @staticmethod
     def null() -> 'NetworkConfiguration':
         return NetworkConfiguration(net='', type='', macaddr='', netdata='')
+
 
 @dataclasses.dataclass
 class HAInfo:
@@ -304,10 +335,10 @@ class VMInfo:
         return self.id == -1
 
     @staticmethod
-    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'VMInfo':
+    def from_dict(data: collections.abc.MutableMapping[str, typing.Any]) -> 'VMInfo':
         vgpu_type = None
         # Look for vgpu type if present
-        for k, v in dictionary.items():
+        for k, v in data.items():
             if k.startswith('hostpci'):
                 for i in v.split(','):
                     if i.startswith('mdev='):
@@ -318,27 +349,27 @@ class VMInfo:
                 break  # Already found it, stop looking
 
         return VMInfo(
-            status=VMStatus.from_str(dictionary['status']),
-            id=int(dictionary.get('vmid', 0)),
-            node=dictionary.get('node', ''),
-            template=dictionary.get('template', False),
-            ha=HAInfo.from_dict(dictionary.get('ha', {})),
-            agent=dictionary.get('agent', None),
-            cpus=dictionary.get('cpus', None),
-            lock=dictionary.get('lock', None),
-            disk=dictionary.get('disk', None),
-            maxdisk=dictionary.get('maxdisk', None),
-            mem=dictionary.get('mem', None),
-            maxmem=dictionary.get('maxmem', None),
-            name=dictionary.get('name', None),
-            pid=dictionary.get('pid', None),
-            qmpstatus=dictionary.get('qmpstatus', None),
-            tags=dictionary.get('tags', None),
-            uptime=dictionary.get('uptime', None),
-            netin=dictionary.get('netin', None),
-            netout=dictionary.get('netout', None),
-            diskread=dictionary.get('diskread', None),
-            diskwrite=dictionary.get('diskwrite', None),
+            status=VMStatus.from_str(data['status']),
+            id=int(data.get('vmid', 0)),
+            node=data.get('node', ''),
+            template=bool(data.get('template', False)),
+            ha=HAInfo.from_dict(data.get('ha', {})),
+            agent=data.get('agent', None),
+            cpus=data.get('cpus', None),
+            lock=data.get('lock', None),
+            disk=data.get('disk', None),
+            maxdisk=data.get('maxdisk', None),
+            mem=data.get('mem', None),
+            maxmem=data.get('maxmem', None),
+            name=data.get('name', None),
+            pid=data.get('pid', None),
+            qmpstatus=data.get('qmpstatus', None),
+            tags=data.get('tags', None),
+            uptime=data.get('uptime', None),
+            netin=data.get('netin', None),
+            netout=data.get('netout', None),
+            diskread=data.get('diskread', None),
+            diskwrite=data.get('diskwrite', None),
             vgpu_type=vgpu_type,
         )
 
@@ -496,15 +527,15 @@ class PoolInfo:
     members: list[PoolMemberInfo]
 
     @staticmethod
-    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'PoolInfo':
-        if 'members' in dictionary:
-            members: list[PoolMemberInfo] = [PoolMemberInfo.from_dict(i) for i in dictionary['members']]
+    def from_dict(data: collections.abc.MutableMapping[str, typing.Any], *, poolid: typing.Optional[str] = None) -> 'PoolInfo':
+        if 'members' in data:
+            members: list[PoolMemberInfo] = [PoolMemberInfo.from_dict(i) for i in data['members']]
         else:
             members = []
 
         return PoolInfo(
-            id=dictionary.get('poolid', ''),
-            comments=dictionary.get('comments', ''),
+            id=data.get('poolid', poolid) or '',
+            comments=data.get('comments', ''),
             members=members,
         )
 
