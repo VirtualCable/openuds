@@ -236,7 +236,6 @@ def networks_from_str(
     """
     return [network_from_str(str_net, version) for str_net in re.split('[;,]', networks_str) if str_net]
 
-@functools.lru_cache(maxsize=32)
 def contains(
     networks: typing.Union[str, NetworkType, list[NetworkType]],
     ip: typing.Union[str, int],
