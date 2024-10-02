@@ -244,7 +244,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         except exceptions.NotFoundError:
             self.do_log(types.log.LogLevel.ERROR, f'Machine not found: {self._vmid}::{self._name}')
 
-        except Exception:
+        except Exception:  # No ip already assigned, wait...
             pass
         return ''
 

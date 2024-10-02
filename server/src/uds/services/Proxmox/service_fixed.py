@@ -119,7 +119,7 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
         return self.provider().is_available()
 
     def get_vm_info(self, vmid: int) -> 'prox_types.VMInfo':
-        return self.provider().api.get_vm_info(vmid, self.pool.value.strip()).validate()
+        return self.provider().api.get_vm_info(vmid).validate()
     
     def is_ready(self, vmid: str) -> bool:
         return self.provider().api.get_vm_info(int(vmid)).validate().status.is_running()
