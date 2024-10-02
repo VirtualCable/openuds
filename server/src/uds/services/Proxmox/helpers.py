@@ -89,6 +89,6 @@ def get_machines(parameters: typing.Any) -> types.ui.CallbackResultType:
     return [
         {
             'name': 'machines',
-            'choices': [gui.choice_item(member.vmid, member.vmname) for member in pool_info.members],
+            'choices': [gui.choice_item(str(member.vmid), member.vmname) for member in pool_info.members],
         }
     ]

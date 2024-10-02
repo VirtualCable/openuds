@@ -91,14 +91,14 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         :param item: Service item (db)
         :param full: If full is requested, add "extra" fields to complete information
         """
-        itemType = item.get_type()
+        item_type = item.get_type()
         ret_value: dict[str, typing.Any] = {
             'id': item.uuid,
             'name': item.name,
             'tags': [tag.tag for tag in item.tags.all()],
             'comments': item.comments,
             'type': item.data_type,
-            'type_name': _(itemType.mod_name()),
+            'type_name': _(item_type.mod_name()),
             'deployed_services_count': item.deployedServices.count(),
             'user_services_count': models.UserService.objects.filter(deployed_service__service=item)
             .exclude(state__in=State.INFO_STATES)
@@ -168,14 +168,13 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
             service.tags.set([models.Tag.objects.get_or_create(tag=val)[0] for val in tags])
 
-            serviceInstance = service.get_instance(self._params)
+            service_instance = service.get_instance(self._params)
 
             # Store token if this service provides one
-            service.token = serviceInstance.get_token() or None  # If '', use "None" to
+            service.token = service_instance.get_token() or None  # If '', use "None" to
 
-            service.data = (
-                serviceInstance.serialize()
-            )  # This may launch an validation exception (the get_instance(...) part)
+             # This may launch an validation exception (the get_instance(...) part)
+            service.data = service_instance.serialize()
 
             service.save()
         except models.Service.DoesNotExist:

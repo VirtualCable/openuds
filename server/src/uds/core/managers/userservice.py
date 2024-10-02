@@ -543,60 +543,39 @@ class UserServiceManager(metaclass=singleton.Singleton):
         return None
 
     def get_assignation_for_user(
-        self, service_pool: ServicePool, user: User
+        self, servicepool: ServicePool, user: User
     ) -> typing.Optional[UserService]:  # pylint: disable=too-many-branches
-        if service_pool.service.get_instance().spawns_new is False:
-            assignedUserService = self.get_existing_assignation_for_user(service_pool, user)
+        if servicepool.service.get_instance().spawns_new is False:  # Locate first if we have an assigned one
+            assigned_userservice = self.get_existing_assignation_for_user(servicepool, user)
         else:
-            assignedUserService = None
+            assigned_userservice = None
 
         # If has an assigned user service, returns this without any more work
-        if assignedUserService:
-            return assignedUserService
+        if assigned_userservice:
+            return assigned_userservice
 
-        if service_pool.is_restrained():
+        if servicepool.is_restrained():
             raise InvalidServiceException(_('The requested service is restrained'))
 
-        cache: typing.Optional[UserService] = None
-        # Now try to locate 1 from cache already "ready" (must be usable and at level 1)
-        with transaction.atomic():
-            caches = typing.cast(
-                list[UserService],
-                service_pool.cached_users_services()
-                .select_for_update()
-                .filter(
-                    cache_level=types.services.CacheLevel.L1,
-                    state=State.USABLE,
-                    os_state=State.USABLE,
-                )[:1],
-            )
-            if caches:
-                cache = caches[0]
-                # Ensure element is reserved correctly on DB
-                if (
-                    service_pool.cached_users_services()
-                    .select_for_update()
-                    .filter(user=None, uuid=cache.uuid)
-                    .update(user=user, cache_level=0)
-                    != 1
-                ):
-                    cache = None
-            else:
-                cache = None
-
-        # Out of previous atomic
-        if not cache:
+        if servicepool.uses_cache:
+            cache: typing.Optional[UserService] = None
+            # Now try to locate 1 from cache already "ready" (must be usable and at level 1)
             with transaction.atomic():
                 caches = typing.cast(
                     list[UserService],
-                    service_pool.cached_users_services()
+                    servicepool.cached_users_services()
                     .select_for_update()
-                    .filter(cache_level=types.services.CacheLevel.L1, state=State.USABLE)[:1],
+                    .filter(
+                        cache_level=types.services.CacheLevel.L1,
+                        state=State.USABLE,
+                        os_state=State.USABLE,
+                    )[:1],
                 )
-                if caches:  # If there is a cache, we will use it
+                if caches:
                     cache = caches[0]
+                    # Ensure element is reserved correctly on DB
                     if (
-                        service_pool.cached_users_services()
+                        servicepool.cached_users_services()
                         .select_for_update()
                         .filter(user=None, uuid=cache.uuid)
                         .update(user=user, cache_level=0)
@@ -606,89 +585,111 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 else:
                     cache = None
 
-        # Out of atomic transaction
-        if cache:
-            # Early assign
-            cache.assign_to(user)
+            # Out of previous atomic
+            if not cache:
+                with transaction.atomic():
+                    caches = typing.cast(
+                        list[UserService],
+                        servicepool.cached_users_services()
+                        .select_for_update()
+                        .filter(cache_level=types.services.CacheLevel.L1, state=State.USABLE)[:1],
+                    )
+                    if caches:  # If there is a cache, we will use it
+                        cache = caches[0]
+                        if (
+                            servicepool.cached_users_services()
+                            .select_for_update()
+                            .filter(user=None, uuid=cache.uuid)
+                            .update(user=user, cache_level=0)
+                            != 1
+                        ):
+                            cache = None
+                    else:
+                        cache = None
 
-            logger.debug(
-                'Found a cached-ready service from %s for user %s, item %s',
-                service_pool,
-                user,
-                cache,
-            )
-            events.add_event(
-                service_pool,
-                types.stats.EventType.CACHE_HIT,
-                fld1=service_pool.cached_users_services()
-                .filter(cache_level=types.services.CacheLevel.L1, state=State.USABLE)
-                .count(),
-            )
-            return cache
+            # Out of atomic transaction
+            if cache:
+                # Early assign
+                cache.assign_to(user)
 
-        # Cache missed
-
-        # Now find if there is a preparing one
-        with transaction.atomic():
-            caches = list(
-                service_pool.cached_users_services()
-                .select_for_update()
-                .filter(cache_level=types.services.CacheLevel.L1, state=State.PREPARING)[:1]
-            )
-            if caches:  # If there is a cache, we will use it
-                cache = caches[0]
-                if (
-                    service_pool.cached_users_services()
-                    .select_for_update()
-                    .filter(user=None, uuid=cache.uuid)
-                    .update(user=user, cache_level=0)
-                    != 1
-                ):
-                    cache = None
-            else:
-                cache = None
-
-        # Out of atomic transaction
-        if cache:
-            cache.assign_to(user)
-
-            logger.debug(
-                'Found a cached-preparing service from %s for user %s, item %s',
-                service_pool,
-                user,
-                cache,
-            )
-            events.add_event(
-                service_pool,
-                events.types.stats.EventType.CACHE_MISS,
-                fld1=service_pool.cached_users_services()
-                .filter(cache_level=types.services.CacheLevel.L1, state=State.PREPARING)
-                .count(),
-            )
-            return cache
-
-        # Can't assign directly from L2 cache... so we check if we can create e new service in the limits requested
-        serviceType = service_pool.service.get_type()
-        if serviceType.uses_cache:
-            inAssigned = (
-                service_pool.assigned_user_services()
-                .filter(self.get_state_filter(service_pool.service))
-                .count()
-            )
-            if (
-                inAssigned >= service_pool.max_srvs
-            ):  # cacheUpdater will drop unnecesary L1 machines, so it's not neccesary to check against inCacheL1
-                log.log(
-                    service_pool,
-                    types.log.LogLevel.WARNING,
-                    f'Max number of services reached: {service_pool.max_srvs}',
-                    types.log.LogSource.INTERNAL,
+                logger.debug(
+                    'Found a cached-ready service from %s for user %s, item %s',
+                    servicepool,
+                    user,
+                    cache,
                 )
-                raise MaxServicesReachedError()
+                events.add_event(
+                    servicepool,
+                    types.stats.EventType.CACHE_HIT,
+                    fld1=servicepool.cached_users_services()
+                    .filter(cache_level=types.services.CacheLevel.L1, state=State.USABLE)
+                    .count(),
+                )
+                return cache
 
-        # Can create new service, create it
-        events.add_event(service_pool, events.types.stats.EventType.CACHE_MISS, fld1=0)
-        return self.create_assigned_for(service_pool, user)
+            # Cache missed
+
+            # Now find if there is a preparing one
+            with transaction.atomic():
+                caches = list(
+                    servicepool.cached_users_services()
+                    .select_for_update()
+                    .filter(cache_level=types.services.CacheLevel.L1, state=State.PREPARING)[:1]
+                )
+                if caches:  # If there is a cache, we will use it
+                    cache = caches[0]
+                    if (
+                        servicepool.cached_users_services()
+                        .select_for_update()
+                        .filter(user=None, uuid=cache.uuid)
+                        .update(user=user, cache_level=0)
+                        != 1
+                    ):
+                        cache = None
+                else:
+                    cache = None
+
+            # Out of atomic transaction
+            if cache:
+                cache.assign_to(user)
+
+                logger.debug(
+                    'Found a cached-preparing service from %s for user %s, item %s',
+                    servicepool,
+                    user,
+                    cache,
+                )
+                events.add_event(
+                    servicepool,
+                    events.types.stats.EventType.CACHE_MISS,
+                    fld1=servicepool.cached_users_services()
+                    .filter(cache_level=types.services.CacheLevel.L1, state=State.PREPARING)
+                    .count(),
+                )
+                return cache
+
+            # Can't assign directly from L2 cache... so we check if we can create e new service in the limits requested
+            service_type = servicepool.service.get_type()
+            if service_type.uses_cache:
+                in_assigned = (
+                    servicepool.assigned_user_services()
+                    .filter(self.get_state_filter(servicepool.service))
+                    .count()
+                )
+                if (
+                    in_assigned >= servicepool.max_srvs
+                ):  # cacheUpdater will drop unnecesary L1 machines, so it's not neccesary to check against inCacheL1
+                    log.log(
+                        servicepool,
+                        types.log.LogLevel.WARNING,
+                        f'Max number of services reached: {servicepool.max_srvs}',
+                        types.log.LogSource.INTERNAL,
+                    )
+                    raise MaxServicesReachedError()
+
+            # Can create new service, create it
+            events.add_event(servicepool, events.types.stats.EventType.CACHE_MISS, fld1=0)
+        return self.create_assigned_for(servicepool, user)
 
     def count_userservices_in_states_for_provider(self, provider: 'models.Provider', states: list[str]) -> int:
         """

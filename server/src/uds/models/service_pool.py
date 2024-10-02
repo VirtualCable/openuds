@@ -245,6 +245,10 @@ class ServicePool(UUIDModel, TaggingMixin):
     @property
     def owned_by_meta(self) -> bool:
         return self.memberOfMeta.count() > 0
+    
+    @property
+    def uses_cache(self) -> bool:
+        return self.cache_l1_srvs > 0 or self.cache_l2_srvs > 0
 
     @property
     def visual_name(self) -> str:

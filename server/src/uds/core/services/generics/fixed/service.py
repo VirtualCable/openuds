@@ -96,17 +96,6 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         rows=10,
     )
 
-    use_snapshots = gui.CheckBoxField(
-        label=_('Use snapshots'),
-        default=False,
-        order=33,
-        tooltip=_(
-            'If active, UDS will try to create an snapshot (if one already does not exists) before accessing a machine, and restore it after usage.'
-        ),
-        tab=types.ui.Tab.MACHINE,
-        old_field_name='useSnapshots',
-    )
-
     # This one replaces use_snapshots, and is used to select the snapshot type (No snapshot, recover snapshot and stop machine, recover snapshot and start machine)
     snapshot_type = gui.ChoiceField(
         label=_('Snapshot type'),
@@ -135,6 +124,18 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         order=103,
         tab=types.ui.Tab.ADVANCED,
     )
+    use_snapshots = gui.CheckBoxField(
+        label=_('Use snapshots'),
+        default=False,
+        order=104,
+        tooltip=_(
+            'If active, UDS will try to create an snapshot (if one already does not exists) before accessing a machine, and restore it after usage.'
+        ),
+        tab=types.ui.Tab.ADVANCED,
+        old_field_name='useSnapshots',
+    )
+
+    
 
     def initialize(self, values: 'types.core.ValuesType') -> None:
         """
@@ -151,8 +152,6 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
             with self._assigned_access() as assigned_vms:
                 assigned_vms &= set(self.machines.as_list())
             self.token.value = self.token.value.strip()
-        # Recover userservice
-        self.userservices_limit = len(self.machines.as_list())
 
     @contextlib.contextmanager
     def _assigned_access(self) -> typing.Iterator[set[str]]:
@@ -175,6 +174,11 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         Removes the snapshot for the machine
         """
         return
+    
+    def unmarshal(self, data: bytes) -> None:
+        super().unmarshal(data)
+        # Recover userservice
+        self.userservices_limit = len(self.machines.as_list())
 
     @abc.abstractmethod
     def get_name(self, vmid: str) -> str:

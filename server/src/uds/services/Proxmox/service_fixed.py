@@ -87,7 +87,7 @@ class ProxmoxServiceFixed(FixedService):  # pylint: disable=too-many-public-meth
         },
         tooltip=_('Resource Pool containing base machines'),
         required=True,
-        tab=_('Machines'),
+        tab=types.ui.Tab.MACHINE,
         old_field_name='resourcePool',
     )
 

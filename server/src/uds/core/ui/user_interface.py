@@ -126,14 +126,14 @@ class gui:
     ] = {}
 
     @staticmethod
-    def choice_item(id_: typing.Union[str, int], text: 'str|Promise|typing.Any') -> 'types.ui.ChoiceItem':
+    def choice_item(id_: 'str|int', text: 'str|Promise|typing.Any') -> 'types.ui.ChoiceItem':
         """
         Helper method to create a single choice item.
         """
         if not isinstance(text, (str, Promise)):
             text = str(text)
         return {
-            'id': id_,
+            'id': str(id_),
             'text': typing.cast(str, text),
         }  # Cast to avoid mypy error, Promise is at all effects a str
 
@@ -161,7 +161,7 @@ class gui:
             return vals
 
         # Helper to convert an item to a dict
-        def _choice_from_value(val: typing.Union[str, int, types.ui.ChoiceItem]) -> 'types.ui.ChoiceItem':
+        def _choice_from_value(val: typing.Union[str, types.ui.ChoiceItem]) -> 'types.ui.ChoiceItem':
             if isinstance(val, dict):
                 if 'id' not in val or 'text' not in val:
                     raise ValueError(f'Invalid choice dict: {val}')
