@@ -94,7 +94,7 @@ class PhysicalMachinesProvider(services.ServiceProvider):
             # wol section
             for key in config['wol']:
                 try:
-                    net.networks_from_str(key)  # Raises exception if net is invalid
+                    net.networks_from_str(key, check_mode=True)  # Raises exception if net is invalid
                 except Exception:
                     raise exceptions.ui.ValidationError(
                         _('Invalid network in advanced configuration: ') + key

@@ -93,7 +93,7 @@ class NetTest(UDSTestCase):
 
         for n1 in ('192.168.0', '192.168.0.5-192.168.0.3', 'no net'):
             with self.assertRaises(ValueError):
-                net.networks_from_str(n1)
+                net.networks_from_str(n1, check_mode=True)
 
         self.assertEqual(net.ip_to_long('192.168.0.5').ip, 3232235525)
         self.assertEqual(net.long_to_ip(3232235525, 4), '192.168.0.5')

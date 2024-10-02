@@ -213,6 +213,8 @@ def network_from_str_ipv6(strNets: str) -> NetworkType:
 def network_from_str(
     network_str: str,
     version: typing.Literal[0, 4, 6] = 0,
+    *,
+    check_mode: bool = False,
 ) -> NetworkType:
     try:
         if not ':' in network_str and version != 6:
@@ -223,18 +225,28 @@ def network_from_str(
             return NetworkType(0, 0, 0)
         return network_from_str_ipv6(network_str)
     except ValueError:
+        if check_mode:
+            raise
         return NetworkType(0, 0, 0)
+
 
 @functools.lru_cache(maxsize=32)
 def networks_from_str(
     networks_str: str,
     version: typing.Literal[0, 4, 6] = 0,
+    *,
+    check_mode: bool = False,
 ) -> list[NetworkType]:
     """
     If allowMultipleNetworks is True, it allows ',' and ';' separators (and, ofc, more than 1 network)
     Returns a list of networks tuples in the form [(start1, end1), (start2, end2) ...]
     """
-    return [network_from_str(str_net, version) for str_net in re.split('[;,]', networks_str) if str_net]
+    return [
+        network_from_str(str_net, version, check_mode=check_mode)
+        for str_net in re.split('[;,]', networks_str)
+        if str_net
+    ]
+
 
 def contains(
     networks: typing.Union[str, NetworkType, list[NetworkType]],
