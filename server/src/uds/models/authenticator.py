@@ -102,16 +102,22 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
 
         Raises:
         """
+        if self._cached_instance and values is None:
+            return typing.cast(auths.Authenticator, self._cached_instance)
+        
         if not self.id:
             # Return a fake authenticator
             return auths.Authenticator(
                 environment.Environment.environment_for_table_record('fake_auth'), values, uuid=self.uuid
             )
 
-        auType = self.get_type()
+        auth_type = self.get_type()
         env = self.get_environment()
-        auth = auType(env, values, uuid=self.uuid)
+        auth = auth_type(env, values, uuid=self.uuid)
         self.deserialize(auth, values)
+        
+        self._cached_instance = auth
+        
         return auth
 
     def get_type(self) -> type[auths.Authenticator]:

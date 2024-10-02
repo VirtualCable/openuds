@@ -120,11 +120,11 @@ class Service(Module):
     # : Normally set to UNLIMITED. This attribute indicates if the service has some "limitation"
     # : for providing user services. This attribute can be set here or
     # : modified at instance level, core will access always to it using an instance object.
-    # : Note: you can override this value on service instantiation by providing a "services_limit":
-    # :      - If services_limit is an integer, it will be used as userservices_limit
-    # :      - If services_limit is a gui.NumericField, it will be used as userservices_limit (.num() will be called)
-    # :      - If services_limit is a callable, it will be called and the result will be used as userservices_limit
-    # :      - If services_limit is None, userservices_limit will be set to consts.UNLIMITED (as default)
+    # : Note: you can override this value on service instantiation by providing a "userservices_limit_field":
+    # :      - If userservices_limit_field is an integer, it will be used as userservices_limit
+    # :      - If userservices_limit_field is a gui.NumericField, it will be used as userservices_limit (.num() will be called)
+    # :      - If userservices_limit_field is a callable, it will be called and the result will be used as userservices_limit
+    # :      - If userservices_limit_field is None, userservices_limit will be set to consts.UNLIMITED (as default)
     userservices_limit: int = consts.UNLIMITED
 
     # : If this item "has overrided fields", on deployed service edition, defined keys will overwrite defined ones
@@ -278,23 +278,23 @@ class Service(Module):
 
     def unmarshal(self, data: bytes) -> None:
         # In fact, we will not unmarshal anything here, but setup maxDeployed
-        # if services_limit exists and it is a gui.NumericField
+        # if userservices_limit_field exists and it is a gui.NumericField
         # Invoke base unmarshal, so "gui fields" gets loaded from data
         super().unmarshal(data)
 
-        if hasattr(self, 'services_limit'):
+        if hasattr(self, 'userservices_limit_field'):
             # Fix self "userservices_limit" value after loading fields
             try:
-                services_limit = getattr(self, 'services_limit', None)
-                if isinstance(services_limit, int):
-                    self.userservices_limit = services_limit
-                elif isinstance(services_limit, gui.NumericField):
-                    self.userservices_limit = services_limit.as_int()
+                userservices_limit_field = getattr(self, 'userservices_limit_field', None)
+                if isinstance(userservices_limit_field, int):
+                    self.userservices_limit = userservices_limit_field
+                elif isinstance(userservices_limit_field, gui.NumericField):
+                    self.userservices_limit = userservices_limit_field.as_int()
                     # For 0 values on userservices_limit field, we will set it to UNLIMITED
                     if self.userservices_limit == 0:
                         self.userservices_limit = consts.UNLIMITED
-                elif callable(services_limit):
-                    self.userservices_limit = typing.cast(collections.abc.Callable[..., int], services_limit)()
+                elif callable(userservices_limit_field):
+                    self.userservices_limit = typing.cast(collections.abc.Callable[..., int], userservices_limit_field)()
                 else:
                     self.userservices_limit = consts.UNLIMITED
             except Exception:
@@ -304,7 +304,7 @@ class Service(Module):
             if self.userservices_limit < 0:
                 self.userservices_limit = consts.UNLIMITED
 
-        # Keep untouched if services_limit is not present
+        # Keep untouched if userservices_limit_field is not present
 
     def mac_generator(self) -> 'UniqueMacGenerator':
         """

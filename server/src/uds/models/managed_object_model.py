@@ -88,8 +88,6 @@ class ManagedObjectModel(UUIDModel):
                 self.save(update_fields=['data'])
                 obj.mark_for_upgrade(False)
 
-        self._cached_instance = None  # Ensures returns correct value on get_instance
-
     def get_instance(self, values: typing.Optional[dict[str, str]] = None) -> 'Module':
         """
         Instantiates the object this record contains.

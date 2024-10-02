@@ -162,6 +162,9 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
             # If has changed, save it
             if machines != initial_machines:
                 d['vms'] = machines  # Store it
+                
+    def _get_machines_field(self) -> gui.MultiChoiceField:
+        return typing.cast(gui.MultiChoiceField, getattr(self, self.alternate_machines_field or 'machines'))
 
     def snapshot_creation(self, userservice_instance: 'FixedUserService') -> None:
         """
@@ -178,7 +181,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
     def unmarshal(self, data: bytes) -> None:
         super().unmarshal(data)
         # Recover userservice
-        self.userservices_limit = len(self.machines.as_list())
+        self.userservices_limit = len(self._get_machines_field().as_list())
 
     @abc.abstractmethod
     def get_name(self, vmid: str) -> str:
@@ -252,7 +255,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         Default implementation NEEDS machines field to be present!!
         """
         fixed_instance = typing.cast('FixedUserService', userservice_instance)
-        machines = typing.cast(gui.MultiChoiceField, getattr(self, self.alternate_machines_field or 'machines' ))
+        machines = self._get_machines_field()
         with self._assigned_access() as assigned_vms:
             if assignable_id not in assigned_vms and assignable_id in machines.as_list():
                 assigned_vms.add(assignable_id)
@@ -264,12 +267,10 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         """
         Randomizes the assignation of machines if needed
         """
-        fld_name = self.alternate_machines_field or 'machines'
-        if self.has_field(fld_name) is False:
-            raise ValueError(f'machines field {fld_name} not found')
-        machines = typing.cast(gui.MultiChoiceField, getattr(self, fld_name))
+        machines = self._get_machines_field()
 
         if hasattr(self, 'randomize') and self.randomize.value is True:
+            # Randomize the list
             return random.sample(machines.as_list(), len(machines.as_list()))
 
         return machines.as_list()

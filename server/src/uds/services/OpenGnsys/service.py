@@ -143,7 +143,7 @@ class OGService(services.Service):
         old_field_name='startIfUnavailable',
     )
 
-    services_limit = fields.services_limit_field()
+    userservices_limit_field = fields.services_limit_field()
 
     prov_uuid = gui.HiddenField(value=None)
 

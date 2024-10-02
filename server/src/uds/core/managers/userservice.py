@@ -204,7 +204,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         Creates a new assigned deployed service for the current publication (if any) of service pool and user indicated
         """
         # First, honor concurrent_creation_limit
-        if self.can_grow_service_pool(service_pool) is False:
+        if not self.can_grow_service_pool(service_pool):
             # Cannot create new
             operations_logger.info(
                 'Too many preparing services. Creation of assigned service denied by max preparing services parameter. (login storm with insufficient cache?).'
