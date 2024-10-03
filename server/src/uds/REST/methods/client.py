@@ -145,7 +145,7 @@ class Client(Handler):
                 'Res: %s',
                 info
             )
-            password = CryptoManager().symmetric_decrypt(data['password'], scrambler)
+            password = CryptoManager.manager().symmetric_decrypt(data['password'], scrambler)
 
             # userService.setConnectionSource(srcIp, hostname)  # Store where we are accessing from so we can notify Service
             if not info.ip:
@@ -193,10 +193,10 @@ class Client(Handler):
         """
         logger.debug('Client args for GET: %s', self._args)
 
-        def error() -> None:
+        def _error() -> None:
             raise exceptions.rest.RequestError('Invalid request')
 
-        def noargs() -> dict[str, typing.Any]:
+        def _noargs() -> dict[str, typing.Any]:
             return Client.result(
                 {
                     'availableVersion': CLIENT_VERSION,  # Compat with old clients, TB removed soon...
@@ -210,8 +210,8 @@ class Client(Handler):
 
         return match(
             self._args,
-            error,  # In case of error, raises RequestError
-            ((), noargs),  # No args, return version
+            _error,  # In case of error, raises RequestError
+            ((), _noargs),  # No args, return version
             (('test',), self.test),  # Test request, returns "Correct"
             (
                 (

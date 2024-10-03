@@ -70,7 +70,7 @@ class PropertyAccessor:
         try:
             p = self._filter().get(key=key)
             p.value = value
-            p.save()
+            p.save(update_fields=['value'])
         except Properties.DoesNotExist:
             Properties.objects.create(owner_id=self.owner_id, owner_type=self.owner_type, key=key, value=value)
 
