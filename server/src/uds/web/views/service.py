@@ -152,8 +152,8 @@ def user_service_status(
     if userservice:
         # Service exists...
         try:
-            userServiceInstance = userservice.get_instance()
-            ip = userServiceInstance.get_ip()
+            userservice_instance = userservice.get_instance()
+            ip = userservice_instance.get_ip()
             userservice.log_ip(ip)
             # logger.debug('Res: %s %s %s %s %s', ip, userService, userServiceInstance, transport, transportInstance)
         except ServiceNotReadyError:
