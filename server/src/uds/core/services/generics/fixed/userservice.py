@@ -68,7 +68,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         - FINISH
     """
 
-    suggested_delay = consts.services.USRV_SUGGESTED_CHECK_INTERVAL
+    suggested_delay = consts.services.USRV_FIXED_SUGGESTED_CHECK_INTERVAL
     # How many times we will check for a state before giving up
     max_state_checks: typing.ClassVar[int] = consts.services.USRV_MAX_STATE_CHECKS
     # How many "retries" operation on same state will be allowed before giving up

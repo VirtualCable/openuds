@@ -35,6 +35,7 @@ import typing
 HOURS_BEFORE_CONSIDERED_LOCKED: typing.Final[int] = 2  # In hours
 
 USRV_SUGGESTED_CHECK_INTERVAL: typing.Final[int] = 8  # In seconds
+USRV_FIXED_SUGGESTED_CHECK_INTERVAL: typing.Final[int] = 2  # In seconds
 USRV_MAX_RETRIES: typing.Final[int] = 24 * 3600 // USRV_SUGGESTED_CHECK_INTERVAL  # 1 day
 USRV_MAX_STATE_CHECKS: typing.Final[int] = (
     HOURS_BEFORE_CONSIDERED_LOCKED * 3600 // USRV_SUGGESTED_CHECK_INTERVAL
