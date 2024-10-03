@@ -86,7 +86,7 @@ class TestProxmoxHelpers(UDSTransactionTestCase):
                 self.assertGreaterEqual(len(choices), 1)
                 for choice in choices:
                     self.assertIsInstance(choice, dict)
-                    self.assertIsInstance(choice['id'], int)
+                    self.assertIsInstance(choice['id'], str)
                     self.assertIsInstance(choice['text'], str)
 
                 api.get_pool_info.assert_called_once()

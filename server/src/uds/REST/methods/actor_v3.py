@@ -397,15 +397,16 @@ class Initialize(ActorV3Action):
         alias_token: typing.Optional[str] = None
 
         def _initialization_result(
-            own_token: typing.Optional[str],
+            token: typing.Optional[str],
             unique_id: typing.Optional[str],
             os: typing.Any,
-            alias_token: typing.Optional[str],
+            master_token: typing.Optional[str],
         ) -> dict[str, typing.Any]:
             return ActorV3Action.actor_result(
                 {
-                    'own_token': own_token or alias_token,  # Compat with old actor versions, TBR on 5.0
-                    'token': own_token or alias_token,  # New token, will be used from now onwards
+                    'own_token': token,  # Compat with old actor versions, TBR on 5.0
+                    'token': token,  # New token, will be used from now onwards
+                    'master_token': master_token,  # Master token, to replace on unmanaged machines
                     'unique_id': unique_id,
                     'os': os,
                 }
@@ -413,6 +414,8 @@ class Initialize(ActorV3Action):
 
         try:
             token = self._params['token']
+            list_of_ids = get_list_of_ids(self)
+            
             # First, try to locate an user service providing this token.
             if self._params['type'] == consts.actor.UNMANAGED:
                 # First, try to locate on alias table
@@ -427,7 +430,7 @@ class Initialize(ActorV3Action):
                     service = Service.objects.get(token=token)
                     # If exists, create and alias for it
                     # Get first mac and, if not exists, get first ip
-                    unique_id = self._params['id'][0].get('mac', self._params['id'][0].get('ip', ''))
+                    unique_id = self._params['id'][0].get('mac', self._params['id'][0].get('ip', '')).lower()
                     if unique_id is None:
                         raise exceptions.rest.BlockAccess()
                     # If exists, do not create a new one (avoid creating for old 3.x actors lots of aliases...)
@@ -440,20 +443,17 @@ class Initialize(ActorV3Action):
 
                 # Locate an userService that belongs to this service and which
                 # Build the possible ids and make initial filter to match service
-                list_of_ids = get_list_of_ids(self)
                 dbfilter = UserService.objects.filter(deployed_service__service=service)
             else:
                 # If not service provided token, use actor tokens
                 if not Server.validate_token(token, server_type=types.servers.ServerType.ACTOR):
                     raise exceptions.rest.BlockAccess()
                 # Build the possible ids and make initial filter to match ANY userservice with provided MAC
-                list_of_ids = [i['mac'] for i in self._params['id'][:5]]
                 dbfilter = UserService.objects.all()
 
             # Valid actor token, now validate access allowed. That is, look for a valid mac from the ones provided.
             try:
                 # ensure idsLists has upper and lower versions for case sensitive databases
-                list_of_ids = get_list_of_ids(self)
                 # Set full filter
                 dbfilter = dbfilter.filter(
                     unique_id__in=list_of_ids,
@@ -462,7 +462,7 @@ class Initialize(ActorV3Action):
 
                 userservice: UserService = next(iter(dbfilter))
             except Exception as e:
-                logger.info('Unmanaged host request: %s, %s', self._params, e)
+                logger.info('Not managed host request: %s, %s', self._params, e)
                 return _initialization_result(None, None, None, alias_token)
 
             # Managed by UDS, get initialization data from osmanager and return it
@@ -478,11 +478,6 @@ class Initialize(ActorV3Action):
             osmanager = userservice.get_osmanager_instance()
             if osmanager:
                 os_data = osmanager.actor_data(userservice)
-
-            if service and not alias_token:  # is an UNMANAGED without already an alias?
-                # Create a new alias for it, and save
-                alias_token = CryptoManager().random_string(40)  # fix alias with new token
-                service.aliases.create(alias=alias_token)
 
             return _initialization_result(userservice.uuid, userservice.unique_id, os_data, alias_token)
         except Service.DoesNotExist:
@@ -775,7 +770,7 @@ class Unmanaged(ActorV3Action):
         unmanaged method expect a json POST with this fields:
             * id: List[dict] -> List of dictionary containing ip and mac:
             * token: str -> Valid Actor "master_token" (if invalid, will return an error).
-            * secret: Secret for commsUrl for actor  (Cu
+            * secret: Secret for commsUrl for actor
             * port: port of the listener (normally 43910)
 
         This method will also regenerater the public-private key pair for client, that will be needed for the new ip
@@ -788,31 +783,28 @@ class Unmanaged(ActorV3Action):
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
 
         try:
-            dbService: Service = Service.objects.get(token=self._params['token'])
-            service: 'services.Service' = dbService.get_instance()
+            token = self._params['token']
+            if ServiceTokenAlias.objects.filter(alias=token).exists():
+                # Retrieve real service from token alias
+                dbservice = ServiceTokenAlias.objects.get(alias=token).service
+            else:
+                dbservice: Service = Service.objects.get(token=token)
+            service: 'services.Service' = dbservice.get_instance()
         except Exception:
+            logger.exception('Unmanaged host request: %s', self._params)
             return ActorV3Action.actor_result(error='Invalid token')
-
-        # Build the possible ids and ask service if it recognizes any of it
-        # If not recognized, will generate anyway the certificate, but will not be saved
-        list_of_ids = [x['ip'] for x in self._params['id']] + [x['mac'] for x in self._params['id']][:10]
-        valid_id: typing.Optional[str] = service.get_valid_id(list_of_ids)
 
         # ensure idsLists has upper and lower versions for case sensitive databases
         list_of_ids = get_list_of_ids(self)
+        valid_id: typing.Optional[str] = service.get_valid_id(list_of_ids)
 
         # Check if there is already an assigned user service
         # To notify it logout
         userservice: typing.Optional[UserService]
         try:
-            db_filter = UserService.objects.filter(
-                unique_id__in=list_of_ids,
-                state__in=[State.USABLE, State.PREPARING],
-            )
-
             userservice = next(
                 iter(
-                    db_filter.filter(
+                     UserService.objects.filter(
                         unique_id__in=list_of_ids,
                         state__in=[State.USABLE, State.PREPARING],
                     )
@@ -824,7 +816,7 @@ class Unmanaged(ActorV3Action):
         # Try to infer the ip from the valid id (that could be an IP or a MAC)
         ip: str
         try:
-            ip = next(x['ip'] for x in self._params['id'] if valid_id in (x['ip'], x['mac']))
+            ip = next(x['ip'] for x in self._params['id'] if valid_id and valid_id.lower() in (x['ip'].lower(), x['mac'].lower()))
         except StopIteration:
             ip = self._params['id'][0]['ip']  # Get first IP if no valid ip found
 
@@ -839,7 +831,7 @@ class Unmanaged(ActorV3Action):
                 # If it is not assgined to an user service, notify service
                 service.notify_initialization(valid_id)
 
-            # Store certificate, secret & port with service if validId
+            # Store certificate, secret & port with service if service recognized the id
             service.store_id_info(
                 valid_id,
                 {

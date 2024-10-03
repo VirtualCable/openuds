@@ -69,7 +69,7 @@ class SystemTest(rest.test.RESTTestCase):
     def test_chart_pool(self) -> None:
         # First, create fixtures for the pool
         DAYS = 30
-        for pool in [self.user_service_managed, self.user_service_unmanaged]:
+        for pool in [self.user_service_managed, self.userservice_unmanaged]:
             stats_counters.create_stats_interval_total(
                 id=pool.deployed_service.id,
                 counter_type=[counters.types.stats.CounterType.ASSIGNED, counters.types.stats.CounterType.INUSE, counters.types.stats.CounterType.CACHED],

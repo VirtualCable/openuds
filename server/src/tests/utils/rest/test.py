@@ -55,7 +55,7 @@ class RESTTestCase(test.UDSTransactionTestCase):
 
     provider: models.Provider
     user_service_managed: models.UserService
-    user_service_unmanaged: models.UserService
+    userservice_unmanaged: models.UserService
 
     user_services: list[models.UserService]
 
@@ -98,7 +98,7 @@ class RESTTestCase(test.UDSTransactionTestCase):
             self.groups,
             'managed',
         )
-        self.user_service_unmanaged = services_fixtures.create_db_one_assigned_userservice(
+        self.userservice_unmanaged = services_fixtures.create_db_one_assigned_userservice(
             self.provider,
             self.admins[0],
             self.groups,

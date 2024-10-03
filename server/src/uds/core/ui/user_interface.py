@@ -51,7 +51,7 @@ from django.utils.functional import Promise  # To recognize lazy translations
 
 from uds.core import consts, exceptions, types
 from uds.core.managers.crypto import UDSK, CryptoManager
-from uds.core.util import serializer, validators, ensure
+from uds.core.util import modfinder, serializer, validators, ensure
 
 logger = logging.getLogger(__name__)
 
@@ -1121,8 +1121,9 @@ class gui:
             self._field_info.choices = gui.as_choices(choices)
             # if has fillers, set them
             if fills:
-                if 'function' not in fills or 'callback_name' not in fills:
+                if 'function' not in fills:
                     raise ValueError('Invalid fills parameters')
+                fills['callback_name'] = fills.get('callback_name', modfinder.callable_path(fills['function']))
                 fnc = fills['function']
                 fills.pop('function')
                 self._field_info.fills = fills

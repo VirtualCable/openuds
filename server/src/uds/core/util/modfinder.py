@@ -199,3 +199,8 @@ def dynamically_load_and_register_modules(
         module_name,
         checker=_checker,
     )
+
+
+# Given a callable, return the full path to it as a string
+def callable_path(callable_: collections.abc.Callable[..., typing.Any]) -> str:
+    return f'{callable_.__module__}.{callable_.__name__}'

@@ -51,7 +51,7 @@ logger = logging.getLogger(__name__)
 
 
 class UserServiceInfoItemsCleaner(Job):
-    frecuency = 3600  # Constant time, every hour will check for old info items
+    frecuency = 600  # Constant time, every hour will check for old info items
     # frecuency_cfg = (
     #     GlobalConfig.KEEP_INFO_TIME
     # )  # Request run cache "info" cleaner every configured seconds. If config value is changed, it will be used at next reload

@@ -121,7 +121,7 @@ CallbackResultType = list[CallbackResultItem]
 
 
 class Filler(typing.TypedDict):
-    callback_name: str
+    callback_name: typing.NotRequired[str]
     parameters: list[str]
     function: typing.NotRequired[collections.abc.Callable[..., CallbackResultType]]
 
