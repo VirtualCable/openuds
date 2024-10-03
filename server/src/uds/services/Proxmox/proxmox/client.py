@@ -499,16 +499,26 @@ class ProxmoxClient:
                 node=node,
             )['data']['result']
             # look for first non-localhost interface with an ip address
+            found_ips: list[str] = []
             for iface in ifaces_list:
                 if iface['name'] != 'lo' and 'ip-addresses' in iface:
                     for ip in iface['ip-addresses']:
-                        if ip['ip-address'].startswith('127.'):
+                        ip_address = ip['ip-address']
+                        if (
+                            ip_address.startswith('127.')
+                            or ip_address.startswith('fe80:')
+                            or ip_address == '::1'
+                        ):
                             continue
-                        if ip_version == '4' and ip.get('ip-address-type') != 'ipv4':
+                        if (ip_version == '4') and ip.get('ip-address-type') != 'ipv4':
                             continue
                         elif ip_version == '6' and ip.get('ip-address-type') != 'ipv6':
                             continue
-                        return ip['ip-address']
+                        found_ips.append(ip_address)
+            if found_ips:
+                sorted_ips = sorted(found_ips, key=lambda x: ':' in x)
+                return sorted_ips[0]
+            
         except Exception as e:
             logger.info('Error getting guest ip address for machine %s: %s', vmid, e)
             raise exceptions.ProxmoxError(f'No ip address for vm {vmid}: {e}')
