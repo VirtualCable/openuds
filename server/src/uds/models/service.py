@@ -68,7 +68,7 @@ class ServiceTokenAlias(models.Model):
     )  # Used to locate an already created alias for a userService and service
 
     def __str__(self) -> str:
-        return str(self.alias)
+        return f'{self.alias}/{self.unique_id} for {self.service}'
 
 
 # pylint: disable=no-member

@@ -227,7 +227,7 @@ class ActorInitializeTest(rest.test.RESTActorTestCase):
         self.assertEqual(alias.service, userservice.deployed_service.service)
         self.assertEqual(alias.unique_id, NONEXISTING_MAC.lower())
 
-        # If repeated, same token is returned
+        # If repeated, same token is returned because same service and mac
         result = success(
             actor_token,
             mac=NONEXISTING_MAC,
@@ -240,7 +240,8 @@ class ActorInitializeTest(rest.test.RESTActorTestCase):
             mac=USERSERVICE_MAC,
         )
         
-        # Note that due the change of mac, a new alias is created
+        # Note that due the change of mac, a new alias is created, not equal to the previous one
+        self.assertNotEqual(alias_token, result['master_token'])
         alias_token = result['master_token']
         alias = models.ServiceTokenAlias.objects.get(alias=alias_token)
         self.assertEqual(alias.service, userservice.deployed_service.service)

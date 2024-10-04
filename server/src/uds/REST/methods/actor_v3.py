@@ -79,10 +79,27 @@ def get_list_of_ids(handler: 'Handler') -> list[str]:
     """
     Comment:
         Due to database case sensitiveness, we need to check for both upper and lower case
+
+        Returns the list of ids, first returns the macs (alphabetically ordered) and then the ips (alphabetically ordered)
     """
-    #
-    list_of_ids = [x['ip'] for x in handler._params['id']] + [x['mac'] for x in handler._params['id']][:10]
-    return list(set([i.upper() for i in list_of_ids] + [i.lower() for i in list_of_ids]))
+    set_of_ids = set(
+        i.lower()
+        for i in typing.cast(
+            list[str],
+            ['1' + x['mac'] for x in handler._params['id']]
+            + ['0' + x['ip'] for x in handler._params['id']][:10],
+        )
+    )
+
+    return list(
+        map(
+            lambda x: x[1:],
+            sorted(
+                set_of_ids | {i.upper() for i in set_of_ids},
+                reverse=True,  # So lower case goes first
+            ),
+        )
+    )
 
 
 def check_ip_is_blocked(request: 'ExtendedHttpRequest') -> None:
@@ -183,15 +200,15 @@ class ActorV3Action(Handler):
     def notify_service(self, action: NotifyActionType) -> None:
         """
         Notifies the Service (not userservice) that an action has been performed
-        
+
         This method will raise an exception if the service is not found or if the action is not valid
-        
+
         Args:
             action (NotifyActionType): Action to notify
-            
+
         Raises:
             exceptions.rest.BlockAccess: If the service is not found or the action is not valid
-            
+
         """
         try:
             # If unmanaged, use Service locator
@@ -200,6 +217,7 @@ class ActorV3Action(Handler):
             # We have a valid service, now we can make notifications
 
             # Build the possible ids and make initial filter to match service
+            # Note, for sure, first will be the firt mac (or ip if no macs) alphabetically ordered
             ids_list = get_list_of_ids(self)
 
             # ensure idsLists has upper and lower versions for case sensitive databases
@@ -385,7 +403,7 @@ class Initialize(ActorV3Action):
                 }
             }
         On  error, will return Empty (None) result, and error field
-        
+
         Notes:
           * Unmanaged actors invokes this method JUST ON LOGIN, so the user service has been created already for sure.
         """
@@ -415,31 +433,31 @@ class Initialize(ActorV3Action):
         try:
             token = self._params['token']
             list_of_ids = get_list_of_ids(self)
-            
+
+            if not list_of_ids:
+                raise exceptions.rest.BlockAccess()
+
+            master_id: typing.Final[str] = list_of_ids[0]
+
             # First, try to locate an user service providing this token.
             if self._params['type'] == consts.actor.UNMANAGED:
                 # First, try to locate on alias table
-                if ServiceTokenAlias.objects.filter(alias=token).exists():
+
+                if ServiceTokenAlias.objects.filter(alias=token, unique_id=master_id).exists():
                     # Retrieve real service from token alias
-                    service = ServiceTokenAlias.objects.get(alias=token).service
+                    service = ServiceTokenAlias.objects.get(alias=token, unique_id=master_id).service
                     alias_token = token  # Store token as possible alias
 
                 # If not found an alias, try to locate on service table
                 # Not on alias token, try to locate on Service table
                 if not service:
                     service = Service.objects.get(token=token)
-                    # If exists, create and alias for it
-                    # Get first mac and, if not exists, get first ip
-                    unique_id = self._params['id'][0].get('mac', self._params['id'][0].get('ip', '')).lower()
-                    if unique_id is None:
-                        raise exceptions.rest.BlockAccess()
-                    # If exists, do not create a new one (avoid creating for old 3.x actors lots of aliases...)
-                    if not ServiceTokenAlias.objects.filter(service=service, unique_id=unique_id).exists():
-                        alias_token = CryptoManager.manager().random_string(40)  # fix alias with new token
-                        service.aliases.create(alias=alias_token, unique_id=unique_id)
+                    if service.aliases.filter(unique_id=master_id).exists():
+                        # If found, get the alias token
+                        alias_token = service.aliases.get(unique_id=master_id).alias
                     else:
-                        # If exists, get existing one
-                        alias_token = ServiceTokenAlias.objects.get(service=service, unique_id=unique_id).alias
+                        alias_token = CryptoManager.manager().random_string(40)  # fix alias with new token
+                        service.aliases.create(alias=alias_token, unique_id=master_id)
 
                 # Locate an userService that belongs to this service and which
                 # Build the possible ids and make initial filter to match service
@@ -804,7 +822,7 @@ class Unmanaged(ActorV3Action):
         try:
             userservice = next(
                 iter(
-                     UserService.objects.filter(
+                    UserService.objects.filter(
                         unique_id__in=list_of_ids,
                         state__in=[State.USABLE, State.PREPARING],
                     )
@@ -816,7 +834,11 @@ class Unmanaged(ActorV3Action):
         # Try to infer the ip from the valid id (that could be an IP or a MAC)
         ip: str
         try:
-            ip = next(x['ip'] for x in self._params['id'] if valid_id and valid_id.lower() in (x['ip'].lower(), x['mac'].lower()))
+            ip = next(
+                x['ip']
+                for x in self._params['id']
+                if valid_id and valid_id.lower() in (x['ip'].lower(), x['mac'].lower())
+            )
         except StopIteration:
             ip = self._params['id'][0]['ip']  # Get first IP if no valid ip found
 
