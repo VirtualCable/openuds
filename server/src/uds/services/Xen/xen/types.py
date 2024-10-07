@@ -307,6 +307,14 @@ class StorageInfo:
     type: str  # Type of the storage
     content_type: str  # Content type of the storage
     shared: bool  # Shared storage
+    
+    @property
+    def free_space(self) -> int:
+        """
+        Returns the free space in the storage in bytes
+        """
+        return self.physical_size - self.physical_utilisation
+
 
     @staticmethod
     def from_dict(data: dict[str, typing.Any], opaque_ref: str) -> 'StorageInfo':

@@ -525,8 +525,8 @@ class XenClient:  # pylint: disable=too-many-public-methods
         if memory:
             logger.debug('Setting up memory to %s MB', memory)
             # Convert memory to MB
-            memory = memory * 1024 * 1024
-            self.VM.set_memory_limits(vm_opaque_ref, memory, memory, memory, memory)
+            memory_mb = str(int(memory) * 1024 * 1024)
+            self.VM.set_memory_limits(vm_opaque_ref, memory_mb, memory_mb, memory_mb, memory_mb)
 
     @cached(prefix='xen_folders', timeout=consts.cache.LONG_CACHE_TIMEOUT, key_helper=cache_key_helper)
     @exceptions.catched

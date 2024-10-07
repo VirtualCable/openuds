@@ -187,18 +187,17 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
         # Here we have to use "default values", cause values aren't used at form initialization
         # This is that value is always '', so if we want to change something, we have to do it
         # at defValue
+        GB: typing.Final[int] = 1024**3
 
         with self.provider().get_connection() as api:
             machines_list = [gui.choice_item(m.opaque_ref, m.name) for m in api.list_vms()]
-            storages_list: list[types.ui.ChoiceItem] = []
-            for storage in api.list_srs():
-                space, free = (
-                    storage.physical_size / 1024,
-                    (storage.physical_size - storage.physical_utilisation) / 1024,
+            storages_list: list[types.ui.ChoiceItem] = [
+                gui.choice_item(
+                    storage.opaque_ref,
+                    f'{storage.name} ({storage.physical_size/GB:.2f} Gb/{storage.free_space/GB:.2f} Gb)',
                 )
-                storages_list.append(
-                    gui.choice_item(storage.opaque_ref, f'{storage.name} ({space:.2f} Gb/{free:.2f} Gb)')
-                )
+                for storage in api.list_srs()
+            ]
             network_list = [gui.choice_item(net.opaque_ref, net.name) for net in api.list_networks()]
 
         self.machine.set_choices(machines_list)
@@ -225,7 +224,7 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
         Xen Seems to allow all kind of names, but let's sanitize a bit
         """
         return re.sub(r'([^a-zA-Z0-9_ .-]+)', r'_', name)
-    
+
     def find_duplicates(self, name: str, mac: str) -> collections.abc.Iterable[str]:
         """
         Checks if a machine with the same name or mac exists
@@ -244,9 +243,7 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
         with self.provider().get_connection() as api:
             vms = api.list_vms()
             return [
-                vm.opaque_ref
-                for vm in vms
-                if vm.name == name
+                vm.opaque_ref for vm in vms if vm.name == name
             ]  # Only check for name, mac is harder to get, so by now, we only check for name
 
     def start_deploy_of_template(self, name: str, comments: str) -> str:
@@ -313,20 +310,26 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
                 vm_opaque_ref, mac_info={'network': self.network.value, 'mac': mac}, memory=self.memory.value
             )
 
-    def get_ip(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> str:
+    def get_ip(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> str:
         """
         Returns the ip of the machine
         If cannot be obtained, MUST raise an exception
         """
         return ''  # No ip will be get, UDS will assign one (from actor)
 
-    def get_mac(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> str:
+    def get_mac(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> str:
         """
         For
         """
         return self.mac_generator().get(self.provider().get_macs_range())
 
-    def is_running(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> bool:
+    def is_running(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> bool:
         """
         Returns if the machine is ready and running
         """
@@ -336,7 +339,9 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
                 return True
             return False
 
-    def start(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
+    def start(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> None:
         """
         Starts the machine
         Can return a task, or None if no task is returned
@@ -344,7 +349,9 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
         with self.provider().get_connection() as api:
             api.start_vm(vmid)
 
-    def stop(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
+    def stop(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> None:
         """
         Stops the machine
         Can return a task, or None if no task is returned
@@ -352,7 +359,9 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
         with self.provider().get_connection() as api:
             api.stop_vm(vmid)
 
-    def shutdown(self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str) -> None:
+    def shutdown(
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+    ) -> None:
         with self.provider().get_connection() as api:
             api.shutdown_vm(vmid)
 
