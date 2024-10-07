@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+
 #
-# Copyright (c) 2023 Virtual Cable S.L.U.
+# Copyright (c) 2012-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,28 +30,43 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-# pyright: reportUnusedImport=false
-from . import (
-    auth,
-    calendar,
-    connections,
-    downloads,
-    errors,
-    osmanagers,
-    os,
-    permissions,
-    pools,
-    requests,
-    rest,
-    servers,
-    services,
-    states,
-    stats,
-    transports,
-    ui,
-    core,
-    log,
-)
+import dataclasses
+import typing
 
-# Log is not imported here, as it is a special case with lots of dependencies
-# Preferences must be include explicitly, as it is not a "normal use" type
+
+@dataclasses.dataclass
+class ActorData:
+    action: str
+    name: str
+    custom: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
+
+    # Items to be removed. Kept for compat with 3.6 actor
+    @dataclasses.dataclass
+    class Compat:
+        username: str = ''
+        password: str = ''
+        new_password: str = ''
+        ad: str = ''
+        ou: str = ''
+
+        def as_dict(self) -> dict[str, typing.Any]:
+            return {
+                'username': self.username,
+                'password': self.password,
+                'new_password': self.new_password,
+                'ad': self.ad,
+                'ou': self.ou,
+            }
+
+    compat: Compat = dataclasses.field(default_factory=Compat)
+
+    def as_dict(self) -> dict[str, typing.Any]:
+        return {
+            'action': self.action,
+            'name': self.name,
+            'custom': self.custom,
+        } | self.compat.as_dict()
+
+    @staticmethod
+    def null() -> 'ActorData':
+        return ActorData('', '')

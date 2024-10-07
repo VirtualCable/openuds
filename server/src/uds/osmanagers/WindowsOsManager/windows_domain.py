@@ -437,23 +437,24 @@ class WinDomainOsManager(WindowsOsManager):
 
         return types.core.TestResult(True)
 
-    def actor_data(self, userservice: 'UserService') -> dict[str, typing.Any]:
-        return {
-            'action': 'rename_ad',
-            'name': userservice.get_name(),
-            # Repeat data, to keep compat with old versions of Actor
-            # Will be removed in a couple of versions
-            'ad': self.domain.as_str(),
-            'ou': self.ou.as_str(),
-            'username': self.account.as_str(),
-            'password': self.account.as_str(),
-            'custom': {
+    def actor_data(self, userservice: 'UserService') -> types.osmanagers.ActorData:
+        return types.osmanagers.ActorData(
+            action='rename_ad',
+            name=userservice.get_name(),
+            # Repeat data, to keep compat with old versions of Actor on compat
+            compat=types.osmanagers.ActorData.Compat(
+                ad=self.domain.as_str(),
+                ou=self.ou.as_str(),
+                username=self.account.as_str(),
+                password=self.account.as_str(),
+            ),
+            custom={
                 'domain': self.domain.as_str(),
                 'ou': self.ou.as_str(),
                 'username': self.account.as_str(),
                 'password': self.account.as_str(),
             },
-        }
+        )
 
     def unmarshal(self, data: bytes) -> None:
         if not data.startswith(b'v'):

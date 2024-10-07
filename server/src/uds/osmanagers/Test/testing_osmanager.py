@@ -107,8 +107,8 @@ class TestOSManager(osmanagers.OSManager):
         """
         return userService.get_name()
 
-    def actor_data(self, userservice: 'UserService') -> dict[str, typing.Any]:
-        return {'action': 'rename', 'name': userservice.get_name()}
+    def actor_data(self, userservice: 'UserService') -> types.osmanagers.ActorData:
+        return types.osmanagers.ActorData(action='rename', name=userservice.get_name())
 
     def handle_unused(self, userservice: 'UserService') -> None:
         """

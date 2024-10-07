@@ -104,8 +104,8 @@ class LinuxOsManager(osmanagers.OSManager):
         """
         return service.get_name()
 
-    def actor_data(self, userservice: 'UserService') -> dict[str, typing.Any]:
-        return {'action': 'rename', 'name': userservice.get_name()}  # No custom data
+    def actor_data(self, userservice: 'UserService') -> types.osmanagers.ActorData:
+        return types.osmanagers.ActorData(action='rename', name=userservice.get_name())  # No custom data
 
     def handle_unused(self, userservice: 'UserService') -> None:
         """

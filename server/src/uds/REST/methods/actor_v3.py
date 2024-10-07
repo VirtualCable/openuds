@@ -495,7 +495,7 @@ class Initialize(ActorV3Action):
             os_data: dict[str, typing.Any] = {}
             osmanager = userservice.get_osmanager_instance()
             if osmanager:
-                os_data = osmanager.actor_data(userservice)
+                os_data = osmanager.actor_data(userservice).as_dict()
 
             return _initialization_result(userservice.uuid, userservice.unique_id, os_data, alias_token)
         except Service.DoesNotExist:

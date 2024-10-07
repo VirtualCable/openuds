@@ -74,9 +74,7 @@ class LinuxRandomPassManager(LinuxOsManager):
             if values['user_account'] == '':
                 raise exceptions.ui.ValidationError(_('Must provide an user account!!!'))
 
-    def update_credentials(
-        self, userservice: 'UserService', username: str, password: str
-    ) -> tuple[str, str]:
+    def update_credentials(self, userservice: 'UserService', username: str, password: str) -> tuple[str, str]:
         if username == self.user_account.as_str():
             return (username, userservice.recover_value('linOsRandomPass'))
         return username, password
@@ -97,21 +95,23 @@ class LinuxRandomPassManager(LinuxOsManager):
 
         return randomPass
 
-    def actor_data(self, userservice: 'UserService') -> dict[str, typing.Any]:
-        return {
-            'action': 'rename',
-            'name': userservice.get_name(),
+    def actor_data(self, userservice: 'UserService') -> types.osmanagers.ActorData:
+        return types.osmanagers.ActorData(
+            action='rename',
+            name=userservice.get_name(),
             # Repeat data, to keep compat with old versions of Actor
             # Will be removed in a couple of versions
-            'username': self.user_account.as_str(),
-            'password': '',  # On linux, user password is not needed so we provide an empty one
-            'new_password': self.gen_random_password(userservice),
-            'custom': {
+            compat=types.osmanagers.ActorData.Compat(
+                username=self.user_account.as_str(),
+                password='',  # On linux, user password is not needed so we provide an empty one
+                new_password=self.gen_random_password(userservice),
+            ),
+            custom={
                 'username': self.user_account.as_str(),
                 'password': '',  # On linux, user password is not needed so we provide an empty one
                 'new_password': self.gen_random_password(userservice),
             },
-        }
+        )
 
     def unmarshal(self, data: bytes) -> None:
         if not data.startswith(b'v'):
@@ -123,4 +123,3 @@ class LinuxRandomPassManager(LinuxOsManager):
                 LinuxOsManager.unmarshal(self, codecs.decode(values[2], 'hex'))
 
             self.mark_for_upgrade()
-

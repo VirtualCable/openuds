@@ -115,7 +115,7 @@ class OSManager(Module):
     # These methods must be overriden
     def actor_data(
         self, userservice: 'models.UserService'  # pylint: disable=unused-argument
-    ) -> dict[str, typing.Any]:
+    ) -> types.osmanagers.ActorData:
         """
         This method provides information to actor, so actor can complete os configuration.
         Currently exists 3 types of os managers actions
@@ -154,7 +154,7 @@ class OSManager(Module):
               }
           }
         """
-        return {}
+        return types.osmanagers.ActorData.null()
 
     def check_state(
         self, userservice: 'models.UserService'
