@@ -30,7 +30,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
-import collections.abc
 
 from uds import models
 from uds.core.util import model
@@ -55,9 +54,7 @@ class DeployedServiceStatsCollector(Job):
     def run(self) -> None:
         logger.debug('Starting Deployed service stats collector')
 
-        service_pool_to_check: collections.abc.Iterable[
-            models.ServicePool
-        ] = models.ServicePool.objects.filter(state=State.ACTIVE).iterator()
+        service_pool_to_check = models.ServicePool.objects.filter(state=State.ACTIVE).iterator()
         stamp = model.sql_now()
         # Global counters
         total_assigned, total_inuse, total_cached = 0, 0, 0
@@ -67,7 +64,7 @@ class DeployedServiceStatsCollector(Job):
                     state__in=State.INFO_STATES
                 )
                 assigned = fltr.count()
-                inUse = fltr.filter(in_use=True).count()
+                in_use = fltr.filter(in_use=True).count()
                 # Cached user services
                 cached = (
                     service_pool.cached_users_services()
@@ -75,12 +72,12 @@ class DeployedServiceStatsCollector(Job):
                     .count()
                 )
                 total_assigned += assigned
-                total_inuse += inUse
+                total_inuse += in_use
                 total_cached += cached
                 counters.add_counter(
                     service_pool, counters.types.stats.CounterType.ASSIGNED, assigned, stamp=stamp
                 )
-                counters.add_counter(service_pool, counters.types.stats.CounterType.INUSE, inUse, stamp=stamp)
+                counters.add_counter(service_pool, counters.types.stats.CounterType.INUSE, in_use, stamp=stamp)
                 counters.add_counter(
                     service_pool, counters.types.stats.CounterType.CACHED, cached, stamp=stamp
                 )
