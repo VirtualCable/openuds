@@ -54,11 +54,11 @@ class HangedCleaner(Job):
         since_state = now - timedelta(
             seconds=GlobalConfig.MAX_INITIALIZING_TIME.as_int()
         )
-        since_removing = now - timedelta(seconds=GlobalConfig.MAX_REMOVAL_TIME.as_int())
+        removing_since = now - timedelta(seconds=GlobalConfig.MAX_REMOVAL_TIME.as_int())
         # Filter for locating machine not ready
         flt = Q(state_date__lt=since_state, state=types.states.State.PREPARING) | Q(
             state_date__lt=since_state, state=types.states.State.USABLE, os_state=types.states.State.PREPARING
-        ) | Q(state_date__lt=since_removing, state__in=[types.states.State.REMOVING, types.states.State.CANCELING])
+        ) | Q(state_date__lt=removing_since, state__in=[types.states.State.REMOVING, types.states.State.CANCELING])
 
         servicepools_with_hanged = (
             ServicePool.objects.annotate(
@@ -75,7 +75,7 @@ class HangedCleaner(Job):
                         userServices__os_state=types.states.State.PREPARING,
                     )
                     | Q(
-                        userServices__state_date__lt=since_removing,
+                        userServices__state_date__lt=removing_since,
                         userServices__state__in=[types.states.State.REMOVING, types.states.State.CANCELING],
                     ),
                 )

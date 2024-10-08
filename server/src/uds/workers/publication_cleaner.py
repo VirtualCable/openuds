@@ -31,7 +31,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from datetime import timedelta
 import logging
-import collections.abc
 
 from uds.core.managers import publication_manager
 from uds.core.util.config import GlobalConfig
@@ -52,11 +51,11 @@ class PublicationInfoItemsCleaner(Job):
     friendly_name = 'Publications Info Cleaner'
 
     def run(self) -> None:
-        removeFrom = sql_now() - timedelta(
+        remove_since = sql_now() - timedelta(
             seconds=GlobalConfig.KEEP_INFO_TIME.as_int(True)
         )
         ServicePoolPublication.objects.filter(
-            state__in=State.INFO_STATES, state_date__lt=removeFrom
+            state__in=State.INFO_STATES, state_date__lt=remove_since
         ).delete()
 
 
@@ -68,9 +67,7 @@ class PublicationCleaner(Job):
     friendly_name = 'Publication Cleaner'
 
     def run(self) -> None:
-        removables: collections.abc.Iterable[
-            ServicePoolPublication
-        ] = ServicePoolPublication.objects.filter(
+        removables = ServicePoolPublication.objects.filter(
             state=State.REMOVABLE,
             deployed_service__service__provider__maintenance_mode=False,
         )

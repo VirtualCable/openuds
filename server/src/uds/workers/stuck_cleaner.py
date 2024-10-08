@@ -59,7 +59,7 @@ class StuckCleaner(Job):
         since_state: datetime = sql_now() - timedelta(seconds=MAX_STUCK_TIME)
         # Filter for locating machine stuck on removing, cancelling, etc..
         # Locate service pools with pending assigned service in use
-        servicePoolswithStucks = (
+        servicepools_with_stucks = (
             ServicePool.objects.annotate(
                 stuckCount=Count(
                     'userServices',
@@ -84,7 +84,7 @@ class StuckCleaner(Job):
             yield from q.exclude(state__in=types.states.State.INFO_STATES + types.states.State.VALID_STATES)
             yield from q.filter(state=types.states.State.PREPARING)
 
-        for servicepool in servicePoolswithStucks:
+        for servicepool in servicepools_with_stucks:
             if servicepool.service.get_instance().allows_errored_userservice_cleanup() is False:
                 continue
             # logger.debug('Searching for stuck states for %s', servicePool.name)

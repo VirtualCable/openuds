@@ -53,11 +53,11 @@ class DeployedServiceInfoItemsCleaner(Job):
     friendly_name = 'Deployed Service Info Cleaner'
 
     def run(self) -> None:
-        removeFrom = sql_now() - timedelta(
+        remove_since = sql_now() - timedelta(
             seconds=GlobalConfig.KEEP_INFO_TIME.as_int()
         )
         ServicePool.objects.filter(
-            state__in=State.INFO_STATES, state_date__lt=removeFrom
+            state__in=State.INFO_STATES, state_date__lt=remove_since
         ).delete()
 
 
@@ -95,75 +95,75 @@ class DeployedServiceRemover(Job):
         service_pool.name += ' (removed)'
         service_pool.save(update_fields=['state', 'state_date', 'name'])
 
-    def continue_removal_of(self, servicePool: ServicePool) -> None:
+    def continue_removal_of(self, servicepool: ServicePool) -> None:
         # get current time
         now = sql_now()
 
         # Recheck that there is no publication created just after "startRemovalOf"
         try:
-            for pub in servicePool.publications.filter(state=State.PREPARING):
+            for pub in servicepool.publications.filter(state=State.PREPARING):
                 pub.cancel()
         except Exception:  # nosec: Dont care if we fail here, we will try again later
             pass
 
         try:
             # Now all publications are canceling, let's try to cancel cache and assigned also
-            uServices: collections.abc.Iterable[UserService] = servicePool.userServices.filter(
+            userservices: collections.abc.Iterable[UserService] = servicepool.userServices.filter(
                 state=State.PREPARING
             )
-            for userService in uServices:
-                logger.debug('Canceling %s', userService)
-                userService.cancel()
+            for userservice in userservices:
+                logger.debug('Canceling %s', userservice)
+                userservice.cancel()
         except Exception:  # nosec: Dont care if we fail here, we will try again later
             pass
 
         # First, we remove all publications and user services in "info_state"
         with transaction.atomic():
-            servicePool.userServices.select_for_update().filter(
+            servicepool.userServices.select_for_update().filter(
                 state__in=State.INFO_STATES
             ).delete()
 
         # Mark usable user services as removable, as batch
         with transaction.atomic():
-            servicePool.userServices.select_for_update().filter(
+            servicepool.userServices.select_for_update().filter(
                 state=State.USABLE
             ).update(state=State.REMOVABLE, state_date=now)
 
         # When no service is at database, we start with publications
-        if servicePool.userServices.all().count() == 0:
+        if servicepool.userServices.all().count() == 0:
             try:
                 logger.debug('All services removed, checking active publication')
-                if servicePool.active_publication() is not None:
+                if servicepool.active_publication() is not None:
                     logger.debug('Active publication found, unpublishing it')
-                    servicePool.unpublish()
+                    servicepool.unpublish()
                 else:
                     logger.debug(
                         'No active publication found, removing info states and checking if removal is done'
                     )
-                    servicePool.publications.filter(
+                    servicepool.publications.filter(
                         state__in=State.INFO_STATES
                     ).delete()
-                    if servicePool.publications.count() == 0:
-                        servicePool.removed()  # Mark it as removed, let model decide what to do
+                    if servicepool.publications.count() == 0:
+                        servicepool.removed()  # Mark it as removed, let model decide what to do
             except Exception:
                 logger.exception('Cought unexpected exception at continueRemovalOf: ')
 
-    def force_removal_of(self, servicePool: ServicePool) -> None:
+    def force_removal_of(self, servicepool: ServicePool) -> None:
         # Simple remove all publications and user services, without checking anything
         # Log userServices forcet to remove
         logger.warning(
             'Service %s has been in removing state for too long, forcing removal',
-            servicePool.name,
+            servicepool.name,
         )
-        for userservice in servicePool.userServices.all():
+        for userservice in servicepool.userServices.all():
             logger.warning('Force removing user service %s', userservice)
             userservice.delete()
-        servicePool.userServices.all().delete()
-        for publication in servicePool.publications.all():
+        servicepool.userServices.all().delete()
+        for publication in servicepool.publications.all():
             logger.warning('Force removing %s', publication)
             publication.delete()
 
-        servicePool.removed()  # Mark it as removed, let model decide what to do
+        servicepool.removed()  # Mark it as removed, let model decide what to do
 
     def run(self) -> None:
         # First check if there is someone in "removable" estate
