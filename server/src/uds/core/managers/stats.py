@@ -30,7 +30,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import collections.abc
-import dataclasses
 import datetime
 import logging
 import time
@@ -59,15 +58,6 @@ _REVERSE_FLDS_EQUIV: typing.Final[collections.abc.Mapping[str, str]] = {
 }
 
 
-@dataclasses.dataclass
-class AccumStat:
-    stamp: int
-    count: int  # Number of elements in this interval
-    sum: int  # Sum of elements in this interval
-    max: int  # Max of elements in this interval
-    min: int  # Min of elements in this interval
-
-
 class StatsManager(metaclass=singleton.Singleton):
     """
     Manager for statistics, so we can provide usefull info about platform usage
@@ -76,6 +66,7 @@ class StatsManager(metaclass=singleton.Singleton):
     that has counters (such as how many users is at a time active at platform, how many services
     are assigned, are in use, in cache, etc...
     """
+
     @staticmethod
     def manager() -> 'StatsManager':
         return StatsManager()  # Singleton pattern will return always the same instance
@@ -135,8 +126,8 @@ class StatsManager(metaclass=singleton.Singleton):
 
     def enumerate_counters(
         self,
-        ownerType: int,
-        counterType: int,
+        owner_type: int,
+        counter_type: int,
         ownerIds: typing.Union[collections.abc.Iterable[int], int, None],
         since: datetime.datetime,
         to: datetime.datetime,
@@ -165,8 +156,8 @@ class StatsManager(metaclass=singleton.Singleton):
         to_stamp = int(time.mktime(to.timetuple()))
 
         return StatsCounters.get_grouped(
-            ownerType,
-            counterType,
+            owner_type,
+            counter_type,
             owner_id=ownerIds,
             since=since_stamp,
             to=to_stamp,
@@ -184,7 +175,7 @@ class StatsManager(metaclass=singleton.Singleton):
         owner_id: typing.Optional[int] = None,
         since: typing.Optional[typing.Union[datetime.datetime, int]] = None,
         points: typing.Optional[int] = None,
-    ) -> typing.Generator[AccumStat, None, None]:
+    ) -> typing.Generator[types.stats.AccumStat, None, None]:
         if since is None:
             if points is None:
                 points = 100  # If since is not specified, we need at least points, get a default
@@ -203,12 +194,13 @@ class StatsManager(metaclass=singleton.Singleton):
             query = query.filter(owner_type=owner_type)
         if owner_id is not None:
             query = query.filter(owner_id=owner_id)
+        # If points is NONE, we get all data
         query = query[:points]
 
         # Yields all data, stamp, n, sum, max, min (stamp, v_count,v_sum,v_max,v_min)
         # Now, get exactly the points we need
         stamp = since
-        last = AccumStat(stamp, 0, 0, 0, 0)
+        last = types.stats.AccumStat(stamp, 0, 0, 0, 0)
         for rec in query:
             # While query stamp is greater than stamp, repeat last AccumStat
             while rec.stamp > stamp:
@@ -218,7 +210,7 @@ class StatsManager(metaclass=singleton.Singleton):
                 last.stamp = stamp
             # The record to be emmitted is the current one, but replace record stamp with current stamp
             # The recor is for sure the first one previous to stamp (we have emmited last record until we reach this one)
-            last = AccumStat(
+            last = types.stats.AccumStat(
                 stamp,
                 rec.v_count,
                 rec.v_sum,
@@ -244,7 +236,11 @@ class StatsManager(metaclass=singleton.Singleton):
 
     # Event stats
     def add_event(
-        self, owner_type: types.stats.EventOwnerType, owner_id: int, event_type: types.stats.EventType, **kwargs: typing.Any
+        self,
+        owner_type: types.stats.EventOwnerType,
+        owner_id: int,
+        event_type: types.stats.EventType,
+        **kwargs: typing.Any,
     ) -> bool:
         """
         Adds a new event stat to database.

@@ -81,13 +81,16 @@ class CountersPoolAssigned(StatsReport):
                 continue
 
             hours = [0] * 24
+            
+            # Convert start to datetime
+            start_datetime = datetime.datetime.combine(start, datetime.time.min)
 
             for x in counters.enumerate_counters(
                 pool,
                 counters.types.stats.CounterType.ASSIGNED,
-                since=start,
-                to=start + datetime.timedelta(days=1),
-                intervals=3600,
+                since=start_datetime,
+                to=start_datetime + datetime.timedelta(days=1),
+                interval=3600,
                 use_max=True,
                 all=False,
             ):

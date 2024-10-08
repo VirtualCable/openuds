@@ -157,11 +157,11 @@ class LinuxOsADManager(LinuxOsManager):
                 raise exceptions.ui.ValidationError(_('Must provide a password for the account!'))
             self.ou.value = self.ou.value.strip()
 
-    def actor_data(self, userservice: 'UserService') -> dict[str, typing.Any]:
-        return {
-            'action': 'rename_ad',
-            'name': userservice.get_name(),
-            'custom': {
+    def actor_data(self, userservice: 'UserService') -> types.osmanagers.ActorData:
+        return types.osmanagers.ActorData(
+            action='rename_ad',
+            name=userservice.get_name(),
+            custom={
                 'domain': self.domain.as_str(),
                 'username': self.account.as_str(),
                 'password': self.password.as_str(),
@@ -173,4 +173,4 @@ class LinuxOsADManager(LinuxOsManager):
                 'ssl': self.use_ssl.as_bool(),
                 'automatic_id_mapping': self.automatic_id_mapping.as_bool(),
             },
-        }
+        )

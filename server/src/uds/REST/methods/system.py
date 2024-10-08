@@ -81,7 +81,7 @@ def get_servicepools_counters(
             else:
                 us = servicepool
 
-            stats = counters.get_accumulated_counters(
+            stats = counters.enumerate_accumulated_counters(
                 interval_type=models.StatsCountersAccum.IntervalType.DAY,
                 counter_type=counter_type,
                 owner_type=types.stats.CounterOwnerType.SERVICEPOOL,
@@ -159,7 +159,7 @@ class System(Handler):
     needs_staff = True
 
     help_paths = [
-        ('overview', ''),
+        ('', ''),
         ('stats/assigned', ''),
         ('stats/inuse', ''),
         ('stats/cached', ''),

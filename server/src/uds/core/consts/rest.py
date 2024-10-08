@@ -47,3 +47,5 @@ class _NotFound:
 
 
 NOT_FOUND: typing.Final[_NotFound] = _NotFound()
+
+ITEMS_LIMIT: typing.Final[int] = 4400

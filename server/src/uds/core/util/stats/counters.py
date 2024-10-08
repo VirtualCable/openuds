@@ -36,7 +36,8 @@ import collections.abc
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Model
 
-from uds.core.managers.stats import StatsManager, AccumStat
+from uds.core.managers.stats import StatsManager
+from uds.core.types.stats import AccumStat
 from uds.models import (
     Provider,
     Service,
@@ -73,7 +74,10 @@ def _get_prov_serv_pool_ids(provider: 'Provider') -> tuple[int, ...]:
 
 
 _id_retriever: typing.Final[
-    collections.abc.Mapping[type[Model], collections.abc.Mapping[int, collections.abc.Callable[[typing.Any], typing.Any]]]
+    collections.abc.Mapping[
+        type[Model],
+        collections.abc.Mapping[types.stats.CounterType, collections.abc.Callable[[typing.Any], typing.Any]],
+    ]
 ] = {
     Provider: {
         types.stats.CounterType.LOAD: _get_id,
@@ -98,7 +102,9 @@ _id_retriever: typing.Final[
     },
 }
 
-_valid_model_for_counterype: typing.Final[collections.abc.Mapping[int, tuple[type[Model], ...]]] = {
+_valid_model_for_counterype: typing.Final[
+    collections.abc.Mapping[types.stats.CounterType, tuple[type[Model], ...]]
+] = {
     types.stats.CounterType.LOAD: (Provider,),
     types.stats.CounterType.STORAGE: (Service,),
     types.stats.CounterType.ASSIGNED: (ServicePool,),
@@ -119,8 +125,8 @@ _obj_type_from_model: typing.Final[collections.abc.Mapping[type[Model], types.st
 
 def add_counter(
     obj: CounterClass,
-    counterType: types.stats.CounterType,
-    counterValue: int,
+    counter_type: types.stats.CounterType,
+    value: int,
     stamp: typing.Optional[datetime.datetime] = None,
 ) -> bool:
     """
@@ -133,22 +139,31 @@ def add_counter(
     note: Runtime checks are done so if we try to insert an unssuported stat, this won't be inserted and it will be logged
     """
     type_ = type(obj)
-    if type_ not in _valid_model_for_counterype.get(counterType, ()):  # pylint: disable
+    if type_ not in _valid_model_for_counterype.get(counter_type, ()):  # pylint: disable
         logger.error(
             'Type %s does not accepts counter of type %s',
             type_,
-            counterValue,
+            value,
             exc_info=True,
         )
         return False
 
     return StatsManager.manager().add_counter(
-        _obj_type_from_model[type(obj)], obj.id, counterType, counterValue, stamp
+        _obj_type_from_model[type(obj)], obj.id, counter_type, value, stamp
     )
 
 
 def enumerate_counters(
-    obj: CounterClass, counterType: types.stats.CounterType, **kwargs: typing.Any
+    obj: CounterClass,
+    counter_type: types.stats.CounterType,
+    *,
+    since: typing.Optional[datetime.datetime] = None,
+    to: typing.Optional[datetime.datetime] = None,
+    interval: typing.Optional[int] = None,
+    max_intervals: typing.Optional[int] = None,
+    limit: typing.Optional[int] = None,
+    use_max: bool = False,
+    all: bool = False,
 ) -> typing.Generator[tuple[datetime.datetime, int], None, None]:
     """
     Get counters
@@ -164,10 +179,6 @@ def enumerate_counters(
     Returns:
         A generator, that contains pairs of (stamp, value) tuples
     """
-    since = kwargs.get('since') or consts.NEVER
-    to = kwargs.get('to') or datetime.datetime.now()
-    limit = kwargs.get('limit')
-    use_max = kwargs.get('use_max', False)
     type_ = type(obj)
 
     read_fnc_tbl = _id_retriever.get(type_)
@@ -176,39 +187,44 @@ def enumerate_counters(
         logger.error('Type %s has no registered stats', type_)
         return
 
-    fnc = read_fnc_tbl.get(counterType)
+    fnc = read_fnc_tbl.get(counter_type)
 
     if not fnc:
-        logger.error('Type %s has no registerd stats of type %s', type_, counterType)
+        logger.error('Type %s has no registerd stats of type %s', type_, counter_type)
         return
 
-    if not kwargs.get('all', False):
+    if not all:
         owner_ids = fnc(obj)  # pyright: ignore
     else:
         owner_ids = None
 
     for i in StatsManager.manager().enumerate_counters(
         _obj_type_from_model[type(obj)],
-        counterType,
+        counter_type,
         owner_ids,
-        since,
-        to,
-        kwargs.get('interval'),
-        kwargs.get('max_intervals'),
+        since or consts.NEVER,
+        to or datetime.datetime.now(),
+        interval,
+        max_intervals,
         limit,
         use_max,
     ):
         yield (datetime.datetime.fromtimestamp(i[0]), i[1])
 
 
-def get_accumulated_counters(
+def enumerate_accumulated_counters(
     interval_type: StatsCountersAccum.IntervalType,
     counter_type: types.stats.CounterType,
     owner_type: typing.Optional[types.stats.CounterOwnerType] = None,
     owner_id: typing.Optional[int] = None,
     since: typing.Optional[typing.Union[datetime.datetime, int]] = None,
     points: typing.Optional[int] = None,
+    *,
+    infer_owner_type_from: typing.Optional[CounterClass] = None,
 ) -> typing.Generator[AccumStat, None, None]:
+    if not owner_type and infer_owner_type_from:
+        owner_type = _obj_type_from_model[type(infer_owner_type_from)]
+
     yield from StatsManager.manager().get_accumulated_counters(
         intervalType=interval_type,
         counterType=counter_type,

@@ -29,6 +29,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import enum
 
 
@@ -135,3 +136,15 @@ class CounterOwnerType(enum.IntEnum):
     @property
     def owner_name(self) -> str:
         return self.name.capitalize()
+
+
+@dataclasses.dataclass
+class AccumStat:
+    """
+    Accumulated statistics for a given interval, as stored in the database
+    """
+    stamp: int
+    count: int  # Number of elements in this interval
+    sum: int  # Sum of elements in this interval
+    max: int  # Max of elements in this interval
+    min: int  # Min of elements in this interval
