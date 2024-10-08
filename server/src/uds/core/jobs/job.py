@@ -39,7 +39,6 @@ logger = logging.getLogger(__name__)
 
 
 class Job(Environmentable):
-    __slots__ = ('frequency',)
     # Default frecuency, once a day. Remenber that precision will be based on "granurality" of Scheduler
     # If a job is used for delayed execution, this attribute is in fact ignored
     frecuency: typing.ClassVar[int] = (
