@@ -169,7 +169,7 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
                 self._identity_endpoint += '/'
 
         self.cache = cache.Cache(
-            f'openstack_{identity_endpoint}_{port}_{domain}_{username}_{projectid}_{region}'
+            f'openstack_{self._auth_method}{identity_endpoint}{port}{domain}{username}{projectid}{region}'
         )
 
     def _get_endpoints_for(self, *endpoint_types: str) -> collections.abc.Generator[str, None, None]:
@@ -395,19 +395,6 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
             self._authenticated_projectid = self._projectid = token['project']['id']
             self._project_name = token['project'].get('name', self._projectid)
 
-        # For cache, we store the token validity, minus 60 seconds t
-        validity = (
-            dateutil.parser.parse(token['expires_at']).replace(tzinfo=None)
-            - dateutil.parser.parse(token['issued_at']).replace(tzinfo=None)
-        ).seconds - 60
-        self.cache.set(
-            'auth',
-            (self._authenticated_projectid, self._projectid, self._tokenid, self._userid, self._catalog),
-            validity,
-        )
-
-        # logger.debug('The token {} will be valid for {}'.format(self._tokenId, validity))
-
         # Now, if endpoints are present (only if tenant was specified), store them
         if self._projectid is not None:
             self._catalog = token['catalog']
@@ -420,6 +407,20 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
             #        'volumev3', 'volumev2' = 'volumev3'
             #    else:
             #        'volumev3', 'volumev2' = 'volumev2'
+
+            # For cache, we store the token validity, minus 60 seconds t
+            validity = (
+                dateutil.parser.parse(token['expires_at']).replace(tzinfo=None)
+                - dateutil.parser.parse(token['issued_at']).replace(tzinfo=None)
+            ).seconds - 60
+            self.cache.set(
+                'auth',
+                (self._authenticated_projectid, self._projectid, self._tokenid, self._userid, self._catalog),
+                validity,
+            )
+
+        # logger.debug('The token {} will be valid for {}'.format(self._tokenId, validity))
+
 
     def ensure_authenticated(self) -> None:
         if self._authenticated is False or self._projectid != self._authenticated_projectid:
@@ -461,7 +462,7 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
             )
         ]
 
-    @decorators.cached(prefix='svrs', timeout=consts.cache.DEFAULT_CACHE_TIMEOUT, key_helper=cache_key_helper)
+    @decorators.cached(prefix='svrs', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
     def list_servers(
         self,
         detail: bool = False,
