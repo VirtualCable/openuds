@@ -54,6 +54,7 @@ class NotificationsManager(metaclass=singleton.Singleton):
     def _ensure_local_db_exists(self) -> bool:
         if not apps.ready:
             return False
+
         if self._initialized:
             return True
         # Ensure notifications table exists on local sqlite db (called "persistent" on settings.py)
@@ -64,8 +65,13 @@ class NotificationsManager(metaclass=singleton.Singleton):
             with connections['persistent'].schema_editor() as schema_editor:
                 schema_editor.create_model(Notification)
         except Exception:  # nosec: intentionally catching all exceptions
-            # If it fails, it's ok, it just means that it already exists
-            pass
+            # if fails, check if exists or mayby we cannot create it already...
+            try:
+                Notification.get_persistent_queryset().count()
+            except Exception:
+                logger.info('Cannot create local notifications table right now. Will try later.')
+                return False
+
         self._initialized = True
         return True
 
@@ -73,7 +79,9 @@ class NotificationsManager(metaclass=singleton.Singleton):
     def manager() -> 'NotificationsManager':
         return NotificationsManager()  # Singleton pattern will return always the same instance
 
-    def notify(self, group: str, identificator: str, level: types.log.LogLevel, message: str, *args: typing.Any) -> None:
+    def notify(
+        self, group: str, identificator: str, level: types.log.LogLevel, message: str, *args: typing.Any
+    ) -> None:
         from uds.models.notifications import Notification  # pylint: disable=import-outside-toplevel
 
         # Due to use of local db, we must ensure that it exists (and cannot do it on ready)
