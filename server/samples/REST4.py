@@ -34,7 +34,6 @@ import typing
 import collections.abc
 import asyncio
 import aiohttp
-import collections.abc
 
 
 REST_URL: typing.Final[str] = 'http://172.27.0.1:8000/uds/rest/'
