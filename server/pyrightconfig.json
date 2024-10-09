@@ -1,6 +1,7 @@
 {
     "include": [
         "src/**/*.py",
+        "tests/**/*.py",
     ],
     "exclude": [
         "src/**/scripts",
