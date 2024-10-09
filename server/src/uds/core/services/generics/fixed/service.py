@@ -180,7 +180,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
     
     def unmarshal(self, data: bytes) -> None:
         super().unmarshal(data)
-        # Recover userservice
+        # Recover userservice limit from machines list
         self.userservices_limit = len(self._get_machines_field().as_list())
 
     @abc.abstractmethod
