@@ -105,6 +105,7 @@ def cache_key_helper(obj: 'OpenStackClient') -> str:
 
 class OpenStackClient:  # pylint: disable=too-many-public-methods
     _authenticated: bool
+    # If we change the project id, we need to reauthenticate
     _authenticated_projectid: typing.Optional[str]
     _identity_endpoint: str
     _tokenid: typing.Optional[str]
@@ -221,6 +222,10 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
     def _get_endpoints_iterable(self, cache_key: str, *types: str) -> list[str]:
         # If endpoint is cached, use it as first endpoint
         found_endpoints = list(self._get_endpoints_for(*types))
+        # The idea behind cached "prefered" endpoint is to avoid the case where the first endpoint is down
+        # The loop in _request_from_endpoint will try all endpoints, but if the first one is down, it will
+        # try the next one, and so on. As soon as one is working, it will be cached as the first one
+        # look at _request_from_endpoint for more information
         if self.cache.get(cache_key) in found_endpoints:
             # If cached endpoint is in the list, use it as first endpoint
             found_endpoints = [self.cache.get(cache_key)] + list(
@@ -246,6 +251,9 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
 
         for i, endpoint in enumerate(found_endpoints):
             try:
+                # set first cached endpoint as prefered
+                # Note that if fails, cached endpoint is removed and next one is tried
+                self.cache.set(cache_key, endpoint, consts.cache.EXTREME_CACHE_TIMEOUT)
                 logger.debug(
                     'Requesting from endpoint: %s and path %s using %s: %s', endpoint, path, type, data
                 )
@@ -323,6 +331,8 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
     def authenticate(self) -> None:
         # logger.debug('Authenticating...')
         # If credential is cached, use it instead of requesting it again
+        # Note that credentials will only be cached if it has a projectid
+        # this is because we need the projectid to get the endpoints
         if (cached_creds := self.cache.get('auth')) != None:
             self._authenticated_projectid, self._projectid, self._tokenid, self._userid, self._catalog = (
                 cached_creds
@@ -382,8 +392,10 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
         OpenStackClient._ensure_valid_response(r, 'Invalid Credentials')
 
         self._authenticated = True
-        self._tokenid = r.headers['X-Subject-Token']
         # Extract the token id
+        self._tokenid = r.headers['X-Subject-Token']
+        
+        # get token info
         token = r.json()['token']
 
         # Get user id, used for list projects
@@ -395,18 +407,11 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
             self._authenticated_projectid = self._projectid = token['project']['id']
             self._project_name = token['project'].get('name', self._projectid)
 
-        # Now, if endpoints are present (only if tenant was specified), store them
+        # Now, if endpoints are present (only if project was specified), store them
+        # inside the catalog and cache the authentication
         if self._projectid is not None:
             self._catalog = token['catalog']
             logger.debug('Catalog found: %s', self._catalog)
-            # Check for the presence of the endpoint for volumes
-            # Volume v2 api was deprecated in Pike release, and removed on Xena release
-            # Volume v3 api is available since Mitaka. Both are API compatible
-            # if self._catalog:
-            #    if any(v['type'] == 'volumev3' for v in self._catalog):
-            #        'volumev3', 'volumev2' = 'volumev3'
-            #    else:
-            #        'volumev3', 'volumev2' = 'volumev2'
 
             # For cache, we store the token validity, minus 60 seconds t
             validity = (
@@ -418,9 +423,12 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
                 (self._authenticated_projectid, self._projectid, self._tokenid, self._userid, self._catalog),
                 validity,
             )
+        else:
+            # set cached to None, so we do not use cached credentials
+            self.cache.set('auth', None, 0)
+            
 
         # logger.debug('The token {} will be valid for {}'.format(self._tokenId, validity))
-
 
     def ensure_authenticated(self) -> None:
         if self._authenticated is False or self._projectid != self._authenticated_projectid:

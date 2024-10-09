@@ -85,7 +85,8 @@ class TestOpenStackClient(UDSTransactionTestCase):
         )
 
     def setUp(self) -> None:
-        v = vars.get_vars('openstack')
+        # v = vars.get_vars('openstack-application-credential')
+        v = vars.get_vars('openstack-password')
         if not v:
             self.skipTest('No openstack vars')
 
