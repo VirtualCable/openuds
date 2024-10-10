@@ -327,6 +327,8 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
 
     def set_projectid(self, projectid: str) -> None:
         self._projectid = projectid
+        # If projectid is changed, we need to reauthenticate
+        self.cache.delete('auth')
 
     def authenticate(self) -> None:
         # logger.debug('Authenticating...')
@@ -425,7 +427,7 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
             )
         else:
             # set cached to None, so we do not use cached credentials
-            self.cache.set('auth', None, 0)
+            self.cache.delete('auth')
             
 
         # logger.debug('The token {} will be valid for {}'.format(self._tokenId, validity))

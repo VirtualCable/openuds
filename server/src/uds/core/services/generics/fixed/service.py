@@ -59,7 +59,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
     uses_cache_l2 = False  # L2 Cache are running machines in suspended state
     needs_osmanager = False  # If the service needs a s.o. manager (managers are related to agents provided by services, i.e. virtual machines with agent)
     # can_reset = True
-    
+
     # If machines has an alternate field with it, it will be used instead of "machines" field
     alternate_machines_field: typing.Optional[str] = None
 
@@ -96,22 +96,6 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         rows=10,
     )
 
-    # This one replaces use_snapshots, and is used to select the snapshot type (No snapshot, recover snapshot and stop machine, recover snapshot and start machine)
-    snapshot_type = gui.ChoiceField(
-        label=_('Snapshot type'),
-        order=36,
-        default='0',
-        tooltip=_(
-            'If active, UDS will try to create an snapshot (if one already does not exists) before accessing a machine, and restore it after usage.'
-        ),
-        tab=types.ui.Tab.MACHINE,
-        choices=[
-            gui.choice_item('no', _('No snapshot')),
-            gui.choice_item('stop', _('Recover snapshot and stop machine')),
-            gui.choice_item('start', _('Recover snapshot and start machine')),
-        ],
-    )
-
     # Randomize machine assignation isntead of linear
     randomize = gui.CheckBoxField(
         label=_('Randomize machine assignation'),
@@ -134,8 +118,21 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         tab=types.ui.Tab.ADVANCED,
         old_field_name='useSnapshots',
     )
-
-    
+    # This one replaces use_snapshots, and is used to select the snapshot type (No snapshot, recover snapshot and stop machine, recover snapshot and start machine)
+    snapshot_type = gui.ChoiceField(
+        label=_('Snapshot type'),
+        order=105,
+        default='0',
+        tooltip=_(
+            'If active, UDS will try to create an snapshot (if one already does not exists) before accessing a machine, and restore it after usage.'
+        ),
+        tab=types.ui.Tab.ADVANCED,
+        choices=[
+            gui.choice_item('no', _('No snapshot')),
+            gui.choice_item('stop', _('Recover snapshot and stop machine')),
+            gui.choice_item('start', _('Recover snapshot and start machine')),
+        ],
+    )
 
     def initialize(self, values: 'types.core.ValuesType') -> None:
         """
@@ -162,7 +159,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
             # If has changed, save it
             if machines != initial_machines:
                 d['vms'] = machines  # Store it
-                
+
     def _get_machines_field(self) -> gui.MultiChoiceField:
         return typing.cast(gui.MultiChoiceField, getattr(self, self.alternate_machines_field or 'machines'))
 
@@ -177,7 +174,7 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         Removes the snapshot for the machine
         """
         return
-    
+
     def unmarshal(self, data: bytes) -> None:
         super().unmarshal(data)
         # Recover userservice limit from machines list
@@ -220,11 +217,11 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
         Defaults to True
         """
         return True
-    
+
     def is_running(self, vmid: str) -> bool:
         """
         Returns if the machine is running
-        Defaults to self.is_ready() 
+        Defaults to self.is_ready()
         """
         return self.is_ready(vmid)
 
