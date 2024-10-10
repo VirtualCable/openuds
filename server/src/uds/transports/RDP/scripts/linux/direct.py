@@ -14,7 +14,7 @@ if 'sp' not in globals():
     globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
 
 
-def execUdsRdp(udsrdp: str) -> None:
+def exec_udsrdp(udsrdp: str) -> None:
     import subprocess
     import os.path
 
@@ -22,7 +22,7 @@ def execUdsRdp(udsrdp: str) -> None:
     tools.addTaskToWait(subprocess.Popen(params))
 
 
-def execNewXFreeRdp(xfreerdp: str) -> None:
+def exec_new_xfreerdp(xfreerdp: str) -> None:
     import subprocess  # @Reimport
     import os.path
 
@@ -31,15 +31,15 @@ def execNewXFreeRdp(xfreerdp: str) -> None:
 
 
 # Try to locate a xfreerdp and udsrdp. udsrdp will be used if found.
-xfreerdp: typing.Optional[str] = tools.findApp('xfreerdp')
+xfreerdp: typing.Optional[str] = tools.findApp('xfreerdp3') or tools.findApp('xfreerdp')
 udsrdp: typing.Optional[str] = tools.findApp('udsrdp')
 fnc, app = None, None
 
 if xfreerdp:
-    fnc, app = execNewXFreeRdp, xfreerdp
+    fnc, app = exec_new_xfreerdp, xfreerdp
 
 if udsrdp is not None:
-    fnc, app = execUdsRdp, udsrdp
+    fnc, app = exec_udsrdp, udsrdp
 
 if app is None or fnc is None:
     raise Exception(
