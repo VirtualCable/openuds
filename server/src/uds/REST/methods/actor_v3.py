@@ -806,7 +806,7 @@ class Unmanaged(ActorV3Action):
                 # Retrieve real service from token alias
                 dbservice = ServiceTokenAlias.objects.get(alias=token).service
             else:
-                dbservice: Service = Service.objects.get(token=token)
+                dbservice = Service.objects.get(token=token)
             service: 'services.Service' = dbservice.get_instance()
         except Exception:
             logger.exception('Unmanaged host request: %s', self._params)

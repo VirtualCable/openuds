@@ -32,7 +32,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import typing
-import collections.abc
 import requests
 import argparse
 import socket
@@ -52,7 +51,7 @@ class LogoutException(RESTException):
     pass
 
 
-def registerWithBroker(
+def register_with_broker(
     auth_uuid: str,
     username: str,
     password: str,
@@ -151,7 +150,7 @@ def main():
     args = parser.parse_args()
     
     try:
-        token = registerWithBroker(
+        token = register_with_broker(
             auth_uuid=args.auth_uuid,
             username=args.username,
             password=args.password,

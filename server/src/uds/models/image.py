@@ -99,6 +99,7 @@ class Image(UUIDModel):
 
     @staticmethod
     def prepare_for_db(data: bytes) -> tuple[int, int, bytes]:
+        image: PIL.Image.Image
         try:
             stream = io.BytesIO(data)
             image = PIL.Image.open(stream)

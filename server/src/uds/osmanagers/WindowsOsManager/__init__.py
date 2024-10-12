@@ -32,6 +32,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # pyright: reportUnusedImport=false
+import typing
 import os.path
 
 from django.utils.translation import gettext_noop as _
@@ -42,9 +43,9 @@ from .windows import WindowsOsManager
 from .windows_domain import WinDomainOsManager
 from .windows_random import WinRandomPassManager
 
-_mypath = os.path.dirname(__spec__.origin)  # type: ignore[name-defined]  # mypy incorrectly report __spec__ as not beind defined
+_mypath: typing.Final[str] = os.path.dirname(__spec__.origin)  # type: ignore[type-var, assignment]  # mypy has some problem with dirname??
 # Old version, using spec is better, but we can use __package__ as well
-#_mypath = os.path.dirname(typing.cast(str, sys.modules[__package__].__file__))  # pyright: ignore
+# _mypath = os.path.dirname(typing.cast(str, sys.modules[__package__].__file__))  # pyright: ignore
 
 
 managers.downloads_manager().register(

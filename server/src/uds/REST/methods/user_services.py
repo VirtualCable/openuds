@@ -195,9 +195,9 @@ class AssignedService(DetailHandler):
     def get_logs(self, parent: 'Model', item: str) -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.ServicePool)
         try:
-            userService: models.UserService = parent.assigned_user_services().get(uuid=process_uuid(item))
-            logger.debug('Getting logs for %s', userService)
-            return log.get_logs(userService)
+            user_service: models.UserService = parent.assigned_user_services().get(uuid=process_uuid(item))
+            logger.debug('Getting logs for %s', user_service)
+            return log.get_logs(user_service)
         except Exception as e:
             raise self.invalid_item_response() from e
 
@@ -206,9 +206,9 @@ class AssignedService(DetailHandler):
         parent = ensure.is_instance(parent, models.ServicePool)
         try:
             if cache:
-                userservice: models.UserService = parent.cached_users_services().get(uuid=process_uuid(item))
+                userservice = parent.cached_users_services().get(uuid=process_uuid(item))
             else:
-                userservice: models.UserService = parent.assigned_user_services().get(uuid=process_uuid(item))
+                userservice = parent.assigned_user_services().get(uuid=process_uuid(item))
         except Exception as e:
             logger.exception('delete_item')
             raise self.invalid_item_response() from e

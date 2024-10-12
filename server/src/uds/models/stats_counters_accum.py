@@ -68,6 +68,7 @@ class StatsCountersAccum(models.Model):
                     raise ValueError('No previous interval for HOUR')
                 case self.DAY:
                     return StatsCountersAccum.IntervalType.HOUR
+            raise ValueError('Invalid interval type')
         
         def is_base_interval(self) -> bool:
             """Returns if this is the base interval"""

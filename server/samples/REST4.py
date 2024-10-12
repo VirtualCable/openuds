@@ -107,22 +107,22 @@ async def request_pools(session: aiohttp.ClientSession) -> list[collections.abc.
 async def request_ticket(
     session: aiohttp.ClientSession,
     username: str,
-    authSmallName: str,
+    auth_label: str,
     groups: typing.Union[list[str], str],
-    servicePool: str,
-    realName: typing.Optional[str] = None,
+    servicepool: str,
+    real_name: typing.Optional[str] = None,
     transport: typing.Optional[str] = None,
     force: bool = False
 ) -> collections.abc.MutableMapping[str, typing.Any]:
     data = {
         'username': username,
-        'authSmallName': authSmallName,
+        'authSmallName': auth_label,
         'groups': groups,
-        'servicePool': servicePool,
+        'servicePool': servicepool,
         'force': 'true' if force else 'false'
     }
-    if realName:
-        data['realname'] = realName
+    if real_name:
+        data['realname'] = real_name
     if transport:
         data['transport'] = transport
     response = await session.put(
@@ -145,10 +145,10 @@ async def main():
         ticket = await request_ticket(
             session=session,
             username='adolfo',
-            authSmallName='172.27.0.1:8000',
+            auth_label='172.27.0.1:8000',
             groups=['adolfo', 'dkmaster'],
-            servicePool='6201b357-c4cd-5463-891e-71441a25faee',
-            realName='Adolfo Gómez',
+            servicepool='6201b357-c4cd-5463-891e-71441a25faee',
+            real_name='Adolfo Gómez',
             force=True
         )
         print(ticket)
