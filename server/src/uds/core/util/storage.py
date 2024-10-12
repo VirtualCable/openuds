@@ -288,7 +288,7 @@ class Storage:
         self.save_to_db(skey, data, attr1)
 
     def read_from_db(
-        self, skey: typing.Union[str, bytes], fromPickle: bool = False
+        self, skey: typing.Union[str, bytes], from_pickle: bool = False
     ) -> typing.Optional[typing.Union[str, bytes]]:
         for use_old_method in (False, True):
             try:
@@ -303,7 +303,7 @@ class Storage:
                         key=self.get_key(skey), owner=self._owner, data=c.data, attr1=c.attr1
                     )
 
-                if fromPickle:
+                if from_pickle:
                     return val
 
                 try:

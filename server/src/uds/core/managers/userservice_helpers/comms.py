@@ -47,10 +47,10 @@ TIMEOUT = 2
 
 
 def _execute_actor_request(
-    userService: 'UserService',
+    userservice: 'UserService',
     method: str,
     data: typing.Optional[collections.abc.MutableMapping[str, typing.Any]] = None,
-    minVersion: typing.Optional[str] = None,
+    min_actor_version: typing.Optional[str] = None,
 ) -> typing.Any:
     """
     Makes a request to actor using "method"
@@ -58,17 +58,17 @@ def _execute_actor_request(
     if no communications url is provided or no min version, raises a "NoActorComms" exception (or OldActorVersion, derived from NoActorComms)
     Returns request response value interpreted as json
     """
-    url = userService.get_comms_endpoint()
+    url = userservice.get_comms_endpoint()
     if not url:
-        raise exceptions.actor.NoActorComms(f'No notification urls for {userService.friendly_name}')
+        raise exceptions.actor.NoActorComms(f'No notification urls for {userservice.friendly_name}')
 
-    minVersion = minVersion or '3.5.0'
-    version = userService.properties.get('actor_version', '0.0.0')
-    if '-' in version or version < minVersion:
-        logger.warning('Pool %s has old actors (%s)', userService.deployed_service.name, version)
+    min_actor_version = min_actor_version or '3.5.0'
+    version = userservice.properties.get('actor_version', '0.0.0')
+    if '-' in version or version < min_actor_version:
+        logger.warning('Pool %s has old actors (%s)', userservice.deployed_service.name, version)
         raise exceptions.actor.OldActorVersion(
-            f'Old actor version {version} for {userService.friendly_name}'.format(
-                version, userService.friendly_name
+            f'Old actor version {version} for {userservice.friendly_name}'.format(
+                version, userservice.friendly_name
             )
         )
 
@@ -76,7 +76,7 @@ def _execute_actor_request(
 
     try:
         verify: typing.Union[bool, str]
-        cert = userService.properties.get('cert', '')
+        cert = userservice.properties.get('cert', '')
         # cert = ''  # Uncomment to test without cert
         if cert:
             # Generate temp file, and delete it after
@@ -118,25 +118,25 @@ def _execute_actor_request(
     return js
 
 
-def notify_preconnect(userService: 'UserService', info: types.connections.ConnectionData) -> None:
+def notify_preconnect(userservice: 'UserService', info: types.connections.ConnectionData) -> None:
     """
     Notifies a preconnect to an user service
     """
-    src = userService.get_connection_source()
-    if userService.deployed_service.service.get_instance().notify_preconnect(userService, info) is True:
+    src = userservice.get_connection_source()
+    if userservice.deployed_service.service.get_instance().notify_preconnect(userservice, info) is True:
         return  # Ok, service handled it
 
     _execute_actor_request(
-        userService,
+        userservice,
         'preConnect',
         types.connections.PreconnectRequest(
             user=info.username,
             protocol=info.protocol,
             ip=src.ip,
             hostname=src.hostname,
-            udsuser=userService.user.name + '@' + userService.user.manager.name if userService.user else '',
-            udsuser_uuid=userService.user.uuid if userService.user else '',
-            userservice_uuid=userService.uuid,
+            udsuser=userservice.user.name + '@' + userservice.user.manager.name if userservice.user else '',
+            udsuser_uuid=userservice.user.uuid if userservice.user else '',
+            userservice_uuid=userservice.uuid,
             service_type=info.service_type,
         ).as_dict(),
     )
@@ -162,14 +162,14 @@ def check_user_service_uuid(user_service: 'UserService') -> bool:
     return True  # Actor does not supports checking
 
 
-def request_screenshot(userService: 'UserService') -> None:
+def request_screenshot(userservice: 'UserService') -> None:
     """
     Requests an screenshot to an actor on an user service
     
     This method is used to request an screenshot to an actor on an user service.
     
     Args:
-        userService: User service to request screenshot from
+        userservice: User service to request screenshot from
 
     Notes:
         The screenshot is not returned directly, but will be returned on a actor REST API call to "screenshot" method.
@@ -177,23 +177,23 @@ def request_screenshot(userService: 'UserService') -> None:
     try:
         # Data = {} forces an empty POST
         _execute_actor_request(
-            userService, 'screenshot', data={}, minVersion='4.0.0'
+            userservice, 'screenshot', data={}, min_actor_version='4.0.0'
         )  # First valid version with screenshot is 3.0
     except exceptions.actor.NoActorComms:
         pass # No actor comms, nothing to do
 
 
-def send_script(userService: 'UserService', script: str, forUser: bool = False) -> None:
+def send_script(userservice: 'UserService', script: str, exec_on_user: bool = False) -> None:
     """
     If allowed, sends script to user service
     Note tha the script is a python script, so it can be executed directly by the actor
     """
     try:
         data: collections.abc.MutableMapping[str, typing.Any] = {'script': script}
-        if forUser:
-            data['user'] = forUser
+        if exec_on_user:
+            data['user'] = exec_on_user
         # Data = {} forces an empty POST
-        _execute_actor_request(userService, 'script', data=data)
+        _execute_actor_request(userservice, 'script', data=data)
     except exceptions.actor.NoActorComms:
         pass
 

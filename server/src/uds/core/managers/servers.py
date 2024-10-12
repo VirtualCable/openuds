@@ -458,7 +458,7 @@ class ServerManager(metaclass=singleton.Singleton):
         Returns the server assigned to an user service
 
         Args:
-            userService: User service to get server from
+            userservice: User service to get server from
             server_group: Server group to get server from
 
         Returns:
@@ -498,9 +498,9 @@ class ServerManager(metaclass=singleton.Singleton):
                 fltrs = fltrs.exclude(uuid__in=excluded_servers_uuids)
 
             # Get the stats for all servers, but in parallel
-            serverStats = self.get_server_stats(fltrs)
+            server_stats = self.get_server_stats(fltrs)
         # Sort by weight, lower first (lower is better)
-        return [s[1] for s in sorted(serverStats, key=lambda x: x[0].weight() if x[0] else 999999999)]
+        return [s[1] for s in sorted(server_stats, key=lambda x: x[0].weight() if x[0] else 999999999)]
 
     def perform_maintenance(self, server_group: 'models.ServerGroup') -> None:
         """Realizes maintenance on server group

@@ -226,8 +226,8 @@ def enumerate_accumulated_counters(
         owner_type = _obj_type_from_model[type(infer_owner_type_from)]
 
     yield from StatsManager.manager().get_accumulated_counters(
-        intervalType=interval_type,
-        counterType=counter_type,
+        interval_type=interval_type,
+        counter_type=counter_type,
         owner_type=owner_type,
         owner_id=owner_id,
         since=since,

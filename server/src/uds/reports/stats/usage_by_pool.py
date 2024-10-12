@@ -139,8 +139,8 @@ class UsageByPoolCSV(UsageByPool):
 
     # Input fields
     pool = UsageByPool.pool
-    startDate = UsageByPool.start_date
-    endDate = UsageByPool.end_date
+    start_date = UsageByPool.start_date
+    end_date = UsageByPool.end_date
 
     def generate(self) -> bytes:
         output = io.StringIO()

@@ -286,7 +286,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         except exceptions.NotFoundError:
             return self.error('Machine not found')
         except Exception as e:
-            return self.error(f'Error on setReady: {e}')
+            return self.error(f'Error on set_ready: {e}')
         return self._execute_queue()
 
     @typing.final
@@ -517,7 +517,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         # logger.debug('_mac {0}: {1}'.format(txt, self._mac))
         # logger.debug('_vmId {0}: {1}'.format(txt, self._vmId))
         logger.debug(
-            'Queue at %s for %s: %s, mac:%s, vmId:%s, task:%s',
+            'Queue at %s for %s: %s, mac:%s, vmid:%s, task:%s',
             txt,
             self._name,
             [FixedUserService._op2str(op) for op in self._queue],

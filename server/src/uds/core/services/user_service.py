@@ -79,24 +79,24 @@ class UserService(Environmentable, Serializable, abc.ABC):
 
       * Once a deployment is done, it will never be called again for same instance
         object
-      * The method getUniqueId will be invoked after call to deploys and check.
-        You can change it on the fly, but remember that uniqueId is the "keyword"
+      * The method get_unique_id will be invoked after call to deploys and check.
+        You can change it on the fly, but remember that unique_id is the "keyword"
         used inside services to communicate with os managers (os manager will
         receive an instance of UserDeployment, and this will be located via that
-        uniqueId)
+        unique_id)
 
         Uniques ids can be repeated at database level, to let it come at a later
         deployment stage, but if two services has same uniqueid at a time,
         os manager will simply not work.
       * suggested_delay is always accessed through instance objects, and used after
-        deployForCache, deployForUser and moveToCache it these methods returns
+        deploy_for_cache, deploy_for_user and move_to_cache it these methods returns
         RUNNING
       * Checks (if a deployment has finished, or the cache movement is finished)
         are always done using check_state(). It is secuential, i mean, will only
         be called when a deployment,a cache movement or a cancel operation is
         running
       * If the service that supports this deployeds do not use L2 cache, the
-        moveCache method will never be invoked
+        move_to_cache method will never be invoked
       * The L1 cache should be a fast access cache (i.e. running service but
         not assigned to an user), while L2 cache should be non consuming or
         almost-non-consuming service. This means that if we cannont make an

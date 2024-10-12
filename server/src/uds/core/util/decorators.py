@@ -111,12 +111,12 @@ def deprecated_class_value(new_var_name: str) -> collections.abc.Callable[..., t
             return self._varname  # Returns old value
     """
 
-    class innerDeprecated:
+    class InnerDeprecated:
         fget: collections.abc.Callable[..., typing.Any]
         new_var_name: str
 
-        def __init__(self, method: collections.abc.Callable[..., typing.Any], newVarName: str) -> None:
-            self.new_var_name = newVarName
+        def __init__(self, method: collections.abc.Callable[..., typing.Any], new_var_name: str) -> None:
+            self.new_var_name = new_var_name
             self.fget = method
 
         def __get__(self, instance: typing.Any, cls: typing.Any = None) -> typing.Any:
@@ -134,7 +134,7 @@ def deprecated_class_value(new_var_name: str) -> collections.abc.Callable[..., t
 
             return self.fget(cls)
 
-    return functools.partial(innerDeprecated, newVarName=new_var_name)
+    return functools.partial(InnerDeprecated, new_var_name=new_var_name)
 
 
 # # So only classes that have a "connect" method can use this decorator

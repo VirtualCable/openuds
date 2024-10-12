@@ -141,7 +141,7 @@ class CountersPoolAssignedCSV(CountersPoolAssigned):
     encoded = False
 
     # Input fields
-    startDate = CountersPoolAssigned.start_date
+    start_date = CountersPoolAssigned.start_date
     pools = CountersPoolAssigned.pools
 
     def generate(self) -> bytes:

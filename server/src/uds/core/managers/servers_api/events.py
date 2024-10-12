@@ -48,9 +48,9 @@ def process_log(server: 'models.Server', data: dict[str, typing.Any]) -> typing.
     # Log level is an string, as in types.log.LogLevel
     if data.get('userservice_uuid', None):  # Log for an user service
         try:
-            userService = models.UserService.objects.get(uuid=data['userservice_uuid'])
+            userservice = models.UserService.objects.get(uuid=data['userservice_uuid'])
             log.log(
-                userService, types.log.LogLevel.from_str(data['level']), data['message'], source=types.log.LogSource.SERVER
+                userservice, types.log.LogLevel.from_str(data['level']), data['message'], source=types.log.LogSource.SERVER
             )
             return rest_result(consts.OK)
         except models.UserService.DoesNotExist:
@@ -89,30 +89,30 @@ def process_login(server: 'models.Server', data: dict[str, typing.Any]) -> typin
         # If ticket is included, user_service can be inside ticket or in data
         data['userservice_uuid'] = data.get('userservice_uuid', ticket['userservice_uuid'])
 
-    userService = models.UserService.objects.get(uuid=data['userservice_uuid'])
-    server.set_actor_version(userService)
+    userservice = models.UserService.objects.get(uuid=data['userservice_uuid'])
+    server.set_actor_version(userservice)
 
-    if not userService.in_use:  # If already logged in, do not add a second login (windows does this i.e.)
-        osmanagers.OSManager.logged_in(userService, data['username'])
+    if not userservice.in_use:  # If already logged in, do not add a second login (windows does this i.e.)
+        osmanagers.OSManager.logged_in(userservice, data['username'])
 
     # Get the source of the connection and a new session id
-    src = userService.get_connection_source()
-    session_id = userService.start_session()  # creates a session for every login requested
+    src = userservice.get_connection_source()
+    session_id = userservice.start_session()  # creates a session for every login requested
 
-    osmanager: typing.Optional[osmanagers.OSManager] = userService.get_osmanager_instance()
-    maxIdle = osmanager.max_idle() if osmanager else None
+    osmanager: typing.Optional[osmanagers.OSManager] = userservice.get_osmanager_instance()
+    max_idle = osmanager.max_idle() if osmanager else None
 
-    logger.debug('Max idle: %s', maxIdle)
+    logger.debug('Max idle: %s', max_idle)
 
-    deadLine = (
-        userService.deployed_service.get_deadline() if not osmanager or osmanager.ignore_deadline() else None
+    deadline = (
+        userservice.deployed_service.get_deadline() if not osmanager or osmanager.ignore_deadline() else None
     )
     result = {
         'ip': src.ip,
         'hostname': src.hostname,
         'session_id': session_id,
-        'deadline': deadLine,  # For compatibility with old clients
-        'max_idle': maxIdle,  # Can be None
+        'deadline': deadline,  # For compatibility with old clients
+        'max_idle': max_idle,  # Can be None
     }
     # If ticket is included, add it to result (the content of the ticket, not the ticket id itself)
     if ticket:
@@ -181,9 +181,9 @@ PROCESSORS: typing.Final[
 def process(server: 'models.Server', data: dict[str, typing.Any]) -> typing.Any:
     """Processes the event data
     Valid events are (in key 'type'):
-    * log: A log message (to server or userService)
-    * login: A login has been made (to an userService)
-    * logout: A logout has been made (to an userService)
+    * log: A log message (to server or userservice)
+    * login: A login has been made (to an userservice)
+    * logout: A logout has been made (to an userservice)
     * ping: A ping request (can include stats, etc...)
     * ticket: A ticket to obtain it's data
     """

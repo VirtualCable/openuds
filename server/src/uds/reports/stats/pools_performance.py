@@ -76,9 +76,9 @@ class PoolPerformanceReport(StatsReport):
         vals = [gui.choice_item(v.uuid, v.name) for v in ServicePool.objects.all().order_by('name')]
         self.pools.set_choices(vals)
 
-    def list_pools(self) -> collections.abc.Iterable[tuple[str, str]]:
+    def list_pools(self) -> collections.abc.Iterable[tuple[int, str]]:
         for p in ServicePool.objects.filter(uuid__in=self.pools.value):
-            yield (str(p.id), p.name)
+            yield (p.id, p.name)
 
     def get_range_data(
         self,
@@ -92,30 +92,30 @@ class PoolPerformanceReport(StatsReport):
         if self.sampling_points.as_int() > 128:
             self.sampling_points.value = 128
 
-        samplingPoints = self.sampling_points.as_int()
+        sampling_points = self.sampling_points.as_int()
 
         # x axis label format
         if end - start > 3600 * 24 * 2:
-            xLabelFormat = 'SHORT_DATE_FORMAT'
+            x_label_format = 'SHORT_DATE_FORMAT'
         else:
-            xLabelFormat = 'SHORT_DATETIME_FORMAT'
+            x_label_format = 'SHORT_DATETIME_FORMAT'
 
         samplingIntervals: list[tuple[int, int]] = []
-        samplingIntervalSeconds = (end - start) / samplingPoints
-        for i in range(samplingPoints):
+        samplingIntervalSeconds = (end - start) / sampling_points
+        for i in range(sampling_points):
             samplingIntervals.append(
                 (int(start + i * samplingIntervalSeconds), int(start + (i + 1) * samplingIntervalSeconds))
             )
 
         # Store dataUsers for all pools
-        poolsData: list[dict[str, typing.Any]] = []
+        pools_data: list[dict[str, typing.Any]] = []
 
         fld = StatsManager.manager().get_event_field_for('username')
 
-        reportData: list[dict[str, typing.Any]] = []
+        report_data: list[dict[str, typing.Any]] = []
         for p in self.list_pools():
-            dataUsers: list[tuple[int, int]] = []
-            dataAccesses: list[tuple[int, int]] = []
+            data_users: list[tuple[int, int]] = []
+            data_accesses: list[tuple[int, int]] = []
             for interval in samplingIntervals:
                 key = (interval[0] + interval[1]) // 2
                 q = (
@@ -134,9 +134,9 @@ class PoolPerformanceReport(StatsReport):
                 for v in q:
                     accesses += v['cnt']
 
-                dataUsers.append((key, len(q)))  # @UndefinedVariable
-                dataAccesses.append((key, accesses))
-                reportData.append(
+                data_users.append((key, len(q)))  # @UndefinedVariable
+                data_accesses.append((key, accesses))
+                report_data.append(
                     {
                         'name': p[1],
                         'date': utils.timestamp_as_str(interval[0], 'SHORT_DATETIME_FORMAT')
@@ -146,16 +146,16 @@ class PoolPerformanceReport(StatsReport):
                         'accesses': accesses,
                     }
                 )
-            poolsData.append(
+            pools_data.append(
                 {
                     'pool': p[0],
                     'name': p[1],
-                    'dataUsers': dataUsers,
-                    'dataAccesses': dataAccesses,
+                    'dataUsers': data_users,
+                    'dataAccesses': data_accesses,
                 }
             )
 
-        return xLabelFormat, poolsData, reportData
+        return x_label_format, pools_data, report_data
 
     def generate(self) -> bytes:
         # Generate the sampling intervals and get dataUsers from db
@@ -222,9 +222,9 @@ class PoolPerformanceReportCSV(PoolPerformanceReport):
 
     # Input fields
     pools = PoolPerformanceReport.pools
-    startDate = PoolPerformanceReport.start_date
-    endDate = PoolPerformanceReport.end_date
-    samplingPoints = PoolPerformanceReport.sampling_points
+    start_date = PoolPerformanceReport.start_date
+    end_date = PoolPerformanceReport.end_date
+    sampling_points = PoolPerformanceReport.sampling_points
 
     def generate(self) -> bytes:
         output = io.StringIO()

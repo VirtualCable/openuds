@@ -53,7 +53,7 @@ class TestOSManager(osmanagers.OSManager):
     type_description = _('Os Manager for testing pourposes')
     icon_file = 'osmanager.png'
 
-    servicesType = types.services.ServiceType.VDI
+    services_types = types.services.ServiceType.VDI
 
     on_logout = gui.ChoiceField(
         label=_('Logout Action'),

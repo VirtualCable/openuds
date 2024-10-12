@@ -61,7 +61,7 @@ def uds_access_link(
     transport_id: typing.Optional[str],
 ) -> str:
     '''
-    If transportId (uuid) is None, this will be a metaLink
+    If transport_id (uuid) is None, this will be a meta_link
     '''
     return f'{consts.system.UDS_ACTION_SCHEME}{service_id}/{transport_id or "meta"}'
 

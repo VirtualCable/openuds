@@ -66,7 +66,7 @@ class OSManager(Module):
 
     # : Type of services for which this OS Manager is designed
     # : Defaults to all. (list or tuple)
-    servicesType: types.services.ServiceType = types.services.ServiceType.VDI
+    services_types: typing.ClassVar[types.services.ServiceType] = types.services.ServiceType.VDI
 
     _db_obj: typing.Optional['models.OSManager'] = None
 

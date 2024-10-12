@@ -88,9 +88,9 @@ class ObjectType(enum.Enum):
 
     @staticmethod
     def from_model(model: 'Model') -> 'ObjectType':
-        for objType in ObjectType:
-            if objType.model == type(model):
-                return objType
+        for objtype in ObjectType:
+            if objtype.model == type(model):
+                return objtype
         raise ValueError(f'Invalid model type: {model}')
 
     def __eq__(self, __o: object) -> bool:

@@ -155,7 +155,7 @@ class PublicationFinishChecker(DelayedTask):
         exec_result: types.states.TaskState,
     ) -> None:
         """
-        Checks the value returned from invocation to publish or checkPublishingState, updating the servicePoolPub database object
+        Checks the value returned from invocation to publish or check_publishing_state, updating the servicePoolPub database object
         Return True if it has to continue checking, False if finished
         """
         try:

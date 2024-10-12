@@ -146,8 +146,8 @@ def network_from_str_ipv4(nets_string: str) -> NetworkType:
                 raise Exception()
             val = to_num(*m.groups())
             bits = mask_from_bits(bits)
-            noBits = ~bits & 0xFFFFFFFF
-            return NetworkType(val & bits, val | noBits, 4)
+            negated_bits = ~bits & 0xFFFFFFFF
+            return NetworkType(val & bits, val | negated_bits, 4)
 
         m = REMASKIPV4.match(nets_string)
         if m is not None:
@@ -155,8 +155,8 @@ def network_from_str_ipv4(nets_string: str) -> NetworkType:
             check(*m.groups())
             val = to_num(*(m.groups()[0:4]))
             bits = to_num(*(m.groups()[4:8]))
-            noBits = ~bits & 0xFFFFFFFF
-            return NetworkType(val & bits, val | noBits, 4)
+            negated_bits = ~bits & 0xFFFFFFFF
+            return NetworkType(val & bits, val | negated_bits, 4)
 
         m = RERANGEIPV4.match(nets_string)
         if m is not None:
@@ -181,8 +181,8 @@ def network_from_str_ipv4(nets_string: str) -> NetworkType:
                 check(*m.groups())
                 val = to_num(*(m.groups()[0 : v[1] + 1]))
                 bits = mask_from_bits(v[1] * 8)
-                noBits = ~bits & 0xFFFFFFFF
-                return NetworkType(val & bits, val | noBits, 4)
+                negated_bits = ~bits & 0xFFFFFFFF
+                return NetworkType(val & bits, val | negated_bits, 4)
 
         # No pattern recognized, invalid network
         raise Exception()
@@ -191,23 +191,23 @@ def network_from_str_ipv4(nets_string: str) -> NetworkType:
         raise ValueError(input_string) from e
 
 
-def network_from_str_ipv6(strNets: str) -> NetworkType:
+def network_from_str_ipv6(networks: str) -> NetworkType:
     '''
     returns a named tuple with networks start and network end
     '''
-    logger.debug('Getting network from %s', strNets)
+    logger.debug('Getting network from %s', networks)
 
     # if '*' or '::*', return the whole IPv6 range
-    if strNets in ('*', '::*'):
+    if networks in ('*', '::*'):
         return NetworkType(0, 2**128 - 1, 6)
 
     try:
         # using ipaddress module
-        net = ipaddress.ip_network(strNets, strict=False)
+        net = ipaddress.ip_network(networks, strict=False)
         return NetworkType(int(net.network_address), int(net.broadcast_address), 6)
     except Exception as e:
-        logger.error('Invalid network found: %s %s', strNets, e)
-        raise ValueError(strNets) from e
+        logger.error('Invalid network found: %s %s', networks, e)
+        raise ValueError(networks) from e
 
 
 def network_from_str(

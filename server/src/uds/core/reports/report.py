@@ -154,8 +154,8 @@ class Report(UserInterface):
         ) -> dict[str, 'str|bytes|None']:
             logger.debug('Getting url for weasyprint %s', url)
             if url.startswith('stock://'):
-                imagePath = stock.get_stock_image_path(url[8:])
-                with open(imagePath, 'rb') as f:
+                image_path = stock.get_stock_image_path(url[8:])
+                with open(image_path, 'rb') as f:
                     image = f.read()
                 return {'string': image, 'mime_type': 'image/png'}
 
@@ -189,7 +189,7 @@ class Report(UserInterface):
 
     @staticmethod
     def template_as_pdf(
-        templateName: str,
+        template_name: str,
         dct: dict[str, typing.Any],
         header: typing.Optional[str] = None,
         water: typing.Optional[str] = None,
@@ -198,7 +198,7 @@ class Report(UserInterface):
         """
         Renders a template as PDF
         """
-        t = loader.get_template(templateName)
+        t = loader.get_template(template_name)
 
         return Report.as_pdf(t.render(dct), header=header, water=water, images=images)
 

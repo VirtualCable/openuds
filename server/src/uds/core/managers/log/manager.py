@@ -61,7 +61,7 @@ class LogManager(metaclass=singleton.Singleton):
         level: int,
         message: str,
         source: str,
-        logName: str
+        logname: str
     ) -> None:
         """
         Logs a message associated to owner
@@ -78,7 +78,7 @@ class LogManager(metaclass=singleton.Singleton):
                 source=source,
                 level=level,
                 data=message,
-                name=logName,
+                name=logname,
             )
         except Exception:  # nosec
             # Some objects will not get logged, such as System administrator objects, but this is fine
@@ -104,7 +104,7 @@ class LogManager(metaclass=singleton.Singleton):
 
     def log(
         self,
-        db_object: typing.Optional['Model'],
+        db_obj: typing.Optional['Model'],
         level: int,
         message: str,
         source: str,
@@ -116,38 +116,38 @@ class LogManager(metaclass=singleton.Singleton):
         If the object provided do not accepts associated loggin, it simply ignores the request
         """
         owner_type = (
-            LogObjectType.get_type_from_model(db_object)
-            if db_object
+            LogObjectType.get_type_from_model(db_obj)
+            if db_obj
             else LogObjectType.SYSLOG
         )
-        objectId = getattr(db_object, 'id', -1)
+        obj_id = getattr(db_obj, 'id', -1)
         log_name = log_name or ''
 
         if owner_type is not None:
             try:
                 self._log(
-                    owner_type, objectId, level, message, source, log_name
+                    owner_type, obj_id, level, message, source, log_name
                 )
             except Exception as e:
-                logger.error('Error logging %s.%s-%s %s: %s (%s)', db_object.__class__, objectId, source, level, message, e)
+                logger.error('Error logging %s.%s-%s %s: %s (%s)', db_obj.__class__, obj_id, source, level, message, e)
 
     def get_logs(
-        self, db_object: typing.Optional['Model'], limit: int = -1
+        self, db_obj: typing.Optional['Model'], limit: int = -1
     ) -> list[dict[str, typing.Any]]:
         """
         Get the logs associated with "wichObject", limiting to "limit" (default is GlobalConfig.MAX_LOGS_PER_ELEMENT)
         """
 
         owner_type = (
-            LogObjectType.get_type_from_model(db_object)
-            if db_object
+            LogObjectType.get_type_from_model(db_obj)
+            if db_obj
             else LogObjectType.SYSLOG
         )
 
         if owner_type is not None:  # 0 is valid owner type, so we must check for None
             return self._get_logs(
                 owner_type,
-                getattr(db_object, 'id', -1),
+                getattr(db_obj, 'id', -1),
                 limit if limit != -1 else owner_type.get_max_elements(),
             )
 

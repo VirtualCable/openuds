@@ -251,9 +251,9 @@ class StatsReportLoginCSV(StatsReportLogin):
     encoded = False
 
     # Input fields
-    startDate = StatsReportLogin.start_date
-    endDate = StatsReportLogin.end_date
-    samplingPoints = StatsReportLogin.sampling_points
+    start_date = StatsReportLogin.start_date
+    end_date = StatsReportLogin.end_date
+    sampling_points = StatsReportLogin.sampling_points
 
     def generate(self) -> bytes:
         output = io.StringIO()

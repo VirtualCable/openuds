@@ -75,7 +75,11 @@ class StatsEvents(models.Model):
             types.stats.EventOwnerType, collections.abc.Iterable[types.stats.EventOwnerType]
         ],
         event_type: typing.Union[types.stats.EventType, collections.abc.Iterable[types.stats.EventType]],
-        **kwargs: typing.Any,
+        owner_id: 'int|collections.abc.Iterable[int]|None' = None,
+        since: 'datetime.datetime|int|None' = None,
+        to: 'datetime.datetime|int|None' = None,
+        limit: int = 0,
+        # **kwargs: typing.Any,
     ) -> 'models.QuerySet[StatsEvents]':
         """
         Returns a queryset with the average stats grouped by interval for owner_type and owner_id (optional)
@@ -90,29 +94,24 @@ class StatsEvents(models.Model):
         else:
             q = q.filter(event_type__in=event_type)
 
-        if 'owner_id' in kwargs:
-            owner_id = kwargs['owner_id']
-            if isinstance(owner_id, int):
-                q = q.filter(owner_id=owner_id)
-            else:
-                q = q.filter(owner_id__in=owner_id)
+        if isinstance(owner_id, int):
+            q = q.filter(owner_id=owner_id)
+        else:
+            q = q.filter(owner_id__in=owner_id)
 
-        since = kwargs.get('since')
         if isinstance(since, datetime.datetime):
             # Convert to unix timestamp
             since = int(since.timestamp())
-        if since and isinstance(since, int):
+        if since:
             q = q.filter(stamp__gte=since)
-        to = kwargs.get('to')
         if isinstance(to, datetime.datetime):
             # Convert to unix timestamp
             to = int(to.timestamp())
-        if to and isinstance(to, int):
+        if to:
             q = q.filter(stamp__lte=to)
-
-        if kwargs.get('limit') and isinstance(kwargs['limit'], int) and kwargs['limit'] > 0:
-            q = q[: kwargs['limit']]
-
+            
+        if limit > 0:
+            q = q[:limit]
         return q
 
     # Utility aliases for reading

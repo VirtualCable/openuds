@@ -171,7 +171,7 @@ class Cache:
         # logger.debug('Saving key "%s" for cache "%s"' % (skey, self._owner,))
         validity = validity if validity is not None else self._timeout
         key = self._get_key(skey)
-        strValue = Cache._serializer(value)
+        value_str = Cache._serializer(value)
         now = sql_now()
         # Remove existing if any and create a new one
         with transaction.atomic():
@@ -182,7 +182,7 @@ class Cache:
                     defaults={
                         'owner': self._owner,
                         'key': key,
-                        'value': strValue,
+                        'value': value_str,
                         'created': now,
                         'validity': validity,
                     },

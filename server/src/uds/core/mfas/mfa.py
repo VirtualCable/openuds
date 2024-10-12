@@ -271,22 +271,22 @@ class MFA(Module):
         """
         Internal method to get the data from storage
         """
-        storageKey = request.ip + userid
-        return self.storage.read_pickled(storageKey)
+        storage_key = request.ip + userid
+        return self.storage.read_pickled(storage_key)
 
     def _remove_data(self, request: 'ExtendedHttpRequest', userid: str) -> None:
         """
         Internal method to remove the data from storage
         """
-        storageKey = request.ip + userid
-        self.storage.remove(storageKey)
+        storage_key = request.ip + userid
+        self.storage.remove(storage_key)
 
     def _put_data(self, request: 'ExtendedHttpRequest', userid: str, code: str) -> None:
         """
         Internal method to put the data into storage
         """
-        storageKey = request.ip + userid
-        self.storage.save_pickled(storageKey, (sql_now(), code))
+        storage_key = request.ip + userid
+        self.storage.save_pickled(storage_key, (sql_now(), code))
 
     def process(
         self,

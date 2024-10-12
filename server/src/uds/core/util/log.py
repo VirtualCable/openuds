@@ -62,39 +62,44 @@ LOGLEVEL_PATTERN: typing.Final[typing.Pattern[str]] = re.compile(r'^(DEBUG|INFO|
 
 def log_use(
     type_: str,
-    serviceUniqueId: str,
-    serviceIp: str,
+    service_unique_id: str,
+    service_ip: str,
     username: str,
-    srcIP: typing.Optional[str] = None,
-    srcUser: typing.Optional[str] = None,
-    userServiceName: typing.Optional[str] = None,
-    poolName: typing.Optional[str] = None,
+    src_ip: typing.Optional[str] = None,
+    src_user: typing.Optional[str] = None,
+    userservice_name: typing.Optional[str] = None,
+    servicepool_name: typing.Optional[str] = None,
 ) -> None:
     """
     Logs an "use service" event (logged from actors)
-    :param type_: Type of event (commonly 'login' or 'logout')
-    :param serviceUniqueId: Unique id of service
-    :param serviceIp: IP Of the service
-    :param username: Username notified from service (internal "user service" user name
-    :param srcIP: IP of user holding that service at time of event
-    :param srcUser: Username holding that service at time of event
+    
+    Args:
+        type_: Type of event (login, logout, etc)
+        service_unique_id: Unique id of the service
+        service_ip: IP of the service
+        username: Username of the user
+        src_ip: IP of the source (if any)
+        src_user: Username of the source (if any)
+        userservice_name: Name of the userservice (if any)
+        servicepool_name: Name of the servicepool (if any)
+        
     """
-    srcIP = 'unknown' if srcIP is None else srcIP
-    srcUser = 'unknown' if srcUser is None else srcUser
-    userServiceName = 'unknown' if userServiceName is None else userServiceName
-    poolName = 'unknown' if poolName is None else poolName
+    src_ip = 'unknown' if src_ip is None else src_ip
+    src_user = 'unknown' if src_user is None else src_user
+    userservice_name = 'unknown' if userservice_name is None else userservice_name
+    servicepool_name = 'unknown' if servicepool_name is None else servicepool_name
 
     use_logger.info(
         '|'.join(
             [
                 type_,
-                serviceUniqueId,
-                serviceIp,
-                srcIP,
-                srcUser,
+                service_unique_id,
+                service_ip,
+                src_ip,
+                src_user,
                 username,
-                userServiceName,
-                poolName,
+                userservice_name,
+                servicepool_name,
             ]
         )
     )
@@ -148,11 +153,11 @@ class UDSLogHandler(logging.handlers.RotatingFileHandler):
         # pylint: disable=import-outside-toplevel
         from uds.core.managers.notifications import NotificationsManager
 
-        def _format_msg(*, clearLevel: bool) -> str:
+        def _format_msg(*, clear_level: bool) -> str:
             msg = self.format(record)
             # Remove date and time from message, as it will be stored on database
             msg = DATETIME_PATTERN.sub('', msg)
-            if clearLevel:
+            if clear_level:
                 # Remove log level from message, as it will be stored on database
                 msg = LOGLEVEL_PATTERN.sub('', msg)
             return msg
@@ -163,14 +168,14 @@ class UDSLogHandler(logging.handlers.RotatingFileHandler):
         if apps.ready and record.levelno >= logging.INFO and not UDSLogHandler.emiting:
             try:
                 # Convert to own loglevel, basically multiplying by 1000
-                logLevel = LogLevel.from_logging_level(record.levelno)
+                log_level = LogLevel.from_logging_level(record.levelno)
                 UDSLogHandler.emiting = True
                 identificator = os.path.basename(self.baseFilename)
-                msg = _format_msg(clearLevel=True)
+                msg = _format_msg(clear_level=True)
                 if record.levelno >= logging.WARNING:
                     # Remove traceback from message, as it will be stored on database
-                    notify(msg.splitlines()[0], identificator, logLevel)
-                log(None, logLevel, msg, LogSource.LOGS, identificator)
+                    notify(msg.splitlines()[0], identificator, log_level)
+                log(None, log_level, msg, LogSource.LOGS, identificator)
             except Exception:  # nosec: If cannot log, just ignore it
                 pass
             finally:
@@ -178,7 +183,7 @@ class UDSLogHandler(logging.handlers.RotatingFileHandler):
 
         # Send warning and error messages to systemd journal
         if record.levelno >= logging.WARNING:
-            msg = _format_msg(clearLevel=False)
+            msg = _format_msg(clear_level=False)
             # Send to systemd journaling, transforming identificator and priority
             identificator = 'UDS-' + os.path.basename(self.baseFilename).split('.')[0]
             # convert syslog level to systemd priority

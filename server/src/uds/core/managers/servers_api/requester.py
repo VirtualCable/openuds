@@ -85,12 +85,12 @@ class ServerApiRequester:
 
     @contextlib.contextmanager
     def setup_session(
-        self, *, minVersion: typing.Optional[str] = None
+        self, *, min_server_version: typing.Optional[str] = None
     ) -> typing.Generator['requests.Session', None, None]:
         """
         Sets up the request for the server
         """
-        minVersion = minVersion or consts.system.MIN_SERVER_VERSION
+        min_server_version = min_server_version or consts.system.MIN_SERVER_VERSION
         # If server has a cert, save it to a file
         verify: typing.Union[str, bool] = False
         try:
@@ -136,12 +136,12 @@ class ServerApiRequester:
 
         return self.server.get_comms_endpoint(path=method)
 
-    def get(self, method: str, *, minVersion: typing.Optional[str] = None) -> typing.Any:
-        url = self.get_comms_endpoint(method, minVersion)
+    def get(self, method: str, *, min_server_version: typing.Optional[str] = None) -> typing.Any:
+        url = self.get_comms_endpoint(method, min_server_version)
         if not url:
             return None
 
-        with self.setup_session(minVersion=minVersion) as session:
+        with self.setup_session(min_server_version=min_server_version) as session:
             response = session.get(url, timeout=(consts.net.DEFAULT_CONNECT_TIMEOUT, consts.net.DEFAULT_REQUEST_TIMEOUT))
             if not response.ok:
                 logger.error(
@@ -151,12 +151,12 @@ class ServerApiRequester:
 
             return response.json()
 
-    def post(self, method: str, data: typing.Any, *, minVersion: typing.Optional[str] = None) -> typing.Any:
-        url = self.get_comms_endpoint(method, minVersion)
+    def post(self, method: str, data: typing.Any, *, min_server_version: typing.Optional[str] = None) -> typing.Any:
+        url = self.get_comms_endpoint(method, min_server_version)
         if not url:
             return None
 
-        with self.setup_session(minVersion=minVersion) as session:
+        with self.setup_session(min_server_version=min_server_version) as session:
             response = session.post(url, json=data, timeout=(consts.net.DEFAULT_CONNECT_TIMEOUT, consts.net.DEFAULT_REQUEST_TIMEOUT))
             if not response.ok:
                 logger.error(
@@ -168,26 +168,26 @@ class ServerApiRequester:
 
     @restrain_server
     def notify_assign(
-        self, userService: 'models.UserService', service_type: 'types.services.ServiceType', count: int
+        self, userservice: 'models.UserService', service_type: 'types.services.ServiceType', count: int
     ) -> bool:
         """
         Notifies assign of user service to server
 
         Args:
-            userService: User service to notify
+            userservice: User service to notify
             service_type: Type of service to notify
             count: Number of "logins" to notify
 
         Returns:
             True if notification was sent, False otherwise
         """
-        logger.debug('Notifying assign of service %s to server %s', userService.uuid, self.server.host)
+        logger.debug('Notifying assign of service %s to server %s', userservice.uuid, self.server.host)
         self.post(
             'assign',
             types.connections.AssignRequest(
-                udsuser=userService.user.name + '@' + userService.user.manager.name if userService.user else '',
-                udsuser_uuid=userService.user.uuid if userService.user else '',
-                userservice_uuid=userService.uuid,
+                udsuser=userservice.user.name + '@' + userservice.user.manager.name if userservice.user else '',
+                udsuser_uuid=userservice.user.uuid if userservice.user else '',
+                userservice_uuid=userservice.uuid,
                 service_type=service_type,
                 assignations=count,
             ).as_dict(),
@@ -196,22 +196,22 @@ class ServerApiRequester:
 
     @restrain_server
     def notify_preconnect(
-        self, userService: 'models.UserService', info: 'types.connections.ConnectionData'
+        self, userservice: 'models.UserService', info: 'types.connections.ConnectionData'
     ) -> bool:
         """
         Notifies preconnect to server, if this allows it
 
         Args:
-            userService: User service to notify
+            userservice: User service to notify
             info: Connection data to notify
 
         Returns:
             True if notification was sent, False otherwise
         """
-        src = userService.get_connection_source()
+        src = userservice.get_connection_source()
 
         logger.debug(
-            'Notifying preconnect of service %s to server %s: %s', userService.uuid, self.server.host, info
+            'Notifying preconnect of service %s to server %s: %s', userservice.uuid, self.server.host, info
         )
         self.post(
             'preconnect',
@@ -220,21 +220,21 @@ class ServerApiRequester:
                 protocol=info.protocol,
                 ip=src.ip,
                 hostname=src.hostname,
-                udsuser=userService.user.name + '@' + userService.user.manager.name if userService.user else '',
-                udsuser_uuid=userService.user.uuid if userService.user else '',
-                userservice_uuid=userService.uuid,
+                udsuser=userservice.user.name + '@' + userservice.user.manager.name if userservice.user else '',
+                udsuser_uuid=userservice.user.uuid if userservice.user else '',
+                userservice_uuid=userservice.uuid,
                 service_type=info.service_type,
             ).as_dict(),
         )
         return True
 
     @restrain_server
-    def notify_release(self, userService: 'models.UserService') -> bool:
+    def notify_release(self, userservice: 'models.UserService') -> bool:
         """
         Notifies removal of user service to server
         """
-        logger.debug('Notifying release of service %s to server %s', userService.uuid, self.server.host)
-        self.post('release', types.connections.ReleaseRequest(userservice_uuid=userService.uuid).as_dict())
+        logger.debug('Notifying release of service %s to server %s', userservice.uuid, self.server.host)
+        self.post('release', types.connections.ReleaseRequest(userservice_uuid=userservice.uuid).as_dict())
 
         return True
 

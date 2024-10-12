@@ -195,8 +195,8 @@ class Login(Handler):
                 scrambler=scrambler,
             )
 
-        except Exception:
-            logger.error('Invalid credentials: %s', self._params)
+        except Exception as e:
+            logger.error('Invalid credentials: %s: %s', self._params, e)
             pass
 
         return Login.result(error='Invalid credentials')

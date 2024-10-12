@@ -184,16 +184,16 @@ def get_certificates_from_field(
         return []
 
     # Get certificates in PEM format
-    pemCerts = value.split('-----END CERTIFICATE-----')
+    pem_certs_list = value.split('-----END CERTIFICATE-----')
     # Remove empty strings
-    pemCerts = [cert for cert in pemCerts if cert.strip() != '']
+    pem_certs_list = [cert for cert in pem_certs_list if cert.strip() != '']
     # Add back the "-----END CERTIFICATE-----" part
-    pemCerts = [cert + '-----END CERTIFICATE-----' for cert in pemCerts]
+    pem_certs_list = [cert + '-----END CERTIFICATE-----' for cert in pem_certs_list]
 
     # Convert to DER format
     certs: list['Certificate'] = []  # PublicKey...
-    for pemCert in pemCerts:
-        certs.append(load_pem_x509_certificate(pemCert.encode('ascii'), None))
+    for pem_cert in pem_certs_list:
+        certs.append(load_pem_x509_certificate(pem_cert.encode('ascii'), None))
 
     return certs
 
@@ -329,7 +329,7 @@ def remove_duplicates_field(
         label=_('Remove found duplicates'),
         default=True,
         order=order,
-        tooltip=_('If active, found duplicates vApps for this service will be removed'),
+        tooltip=_('If active, found duplicates VApps for this service will be removed'),
         tab=tab,
         old_field_name=old_field_name or 'removeDuplicates',
     )

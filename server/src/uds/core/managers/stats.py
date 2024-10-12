@@ -75,18 +75,18 @@ class StatsManager(metaclass=singleton.Singleton):
         self,
         model: type[typing.Union['StatsCounters', 'StatsEvents', 'StatsCountersAccum']],
     ) -> None:
-        minTime = time.mktime(
+        min_time = time.mktime(
             (sql_now() - datetime.timedelta(days=GlobalConfig.STATS_DURATION.as_int())).timetuple()
         )
-        model.objects.filter(stamp__lt=minTime).delete()
+        model.objects.filter(stamp__lt=min_time).delete()
 
     # Counter stats
     def add_counter(
         self,
         owner_type: types.stats.CounterOwnerType,
         owner_id: int,
-        counterType: types.stats.CounterType,
-        counterValue: int,
+        counter_type: types.stats.CounterType,
+        value: int,
         stamp: typing.Optional[datetime.datetime] = None,
     ) -> bool:
         """
@@ -96,8 +96,8 @@ class StatsManager(metaclass=singleton.Singleton):
 
             owner_type: type of owner (integer, from internal tables)
             owner_id:  id of the owner
-            counterType: The type of counter that will receive the value (look at uds.core.util.stats.counters module)
-            counterValue: Counter to store. Right now, this must be an integer value (-2G ~ 2G)
+            counter_type: The type of counter that will receive the value (look at uds.core.util.stats.counters module)
+            value: Counter to store. Right now, this must be an integer value (-2G ~ 2G)
             stamp: if not None, this will be used as date for cuounter, else current date/time will be get
                    (this has a granurality of seconds)
 
@@ -115,8 +115,8 @@ class StatsManager(metaclass=singleton.Singleton):
             StatsCounters.objects.create(
                 owner_type=owner_type,
                 owner_id=owner_id,
-                counter_type=counterType,
-                value=counterValue,
+                counter_type=counter_type,
+                value=value,
                 stamp=stampInt,
             )
             return True
@@ -128,7 +128,7 @@ class StatsManager(metaclass=singleton.Singleton):
         self,
         owner_type: int,
         counter_type: int,
-        ownerIds: typing.Union[collections.abc.Iterable[int], int, None],
+        owners_ids: typing.Union[collections.abc.Iterable[int], int, None],
         since: datetime.datetime,
         to: datetime.datetime,
         interval: typing.Optional[int],
@@ -140,16 +140,18 @@ class StatsManager(metaclass=singleton.Singleton):
         Retrieves counters from item
 
         Args:
-
-            counterTye: Type of counter to get values
-            counterId: (optional), if specified, limit counter to only this id, all ids for specidied type if not
-            maxElements: (optional) Maximum number of elements to retrieve, all if nothing specified
-            from: date from what to obtain counters. Unlimited if not specified
+            owner_type: Type of counter to get values
+            counter_type: Type of counter to get values
+            owners_ids: Ids of the owners to get counters from. If None, all owners will be used
+            since: date from what to obtain counters. Unlimited if not specified
             to: date until obtain counters. Unlimited if not specified
+            interval: Interval to get counters. If None, all counters will be returned
+            max_intervals: Maximum number of intervals to get. If None, all intervals will be returned
+            limit: Maximum number of counters to get. If None, all counters will be returned
+            use_max: If True, the maximum value of the counter will be returned instead of the sum
 
         Returns:
-
-            Iterator, containing (date, counter) each element
+            Iterable, containing (timestamp, counter) each element
         """
         # To Unix epoch
         since_stamp = int(time.mktime(since.timetuple()))
@@ -158,7 +160,7 @@ class StatsManager(metaclass=singleton.Singleton):
         return StatsCounters.get_grouped(
             owner_type,
             counter_type,
-            owner_id=ownerIds,
+            owner_id=owners_ids,
             since=since_stamp,
             to=to_stamp,
             interval=interval,
@@ -169,8 +171,8 @@ class StatsManager(metaclass=singleton.Singleton):
 
     def get_accumulated_counters(
         self,
-        intervalType: StatsCountersAccum.IntervalType,
-        counterType: types.stats.CounterType,
+        interval_type: StatsCountersAccum.IntervalType,
+        counter_type: types.stats.CounterType,
         owner_type: typing.Optional[types.stats.CounterOwnerType] = None,
         owner_id: typing.Optional[int] = None,
         since: typing.Optional[typing.Union[datetime.datetime, int]] = None,
@@ -179,15 +181,15 @@ class StatsManager(metaclass=singleton.Singleton):
         if since is None:
             if points is None:
                 points = 100  # If since is not specified, we need at least points, get a default
-            since = sql_now() - datetime.timedelta(seconds=intervalType.seconds() * points)
+            since = sql_now() - datetime.timedelta(seconds=interval_type.seconds() * points)
 
         if isinstance(since, datetime.datetime):
             since = int(since.timestamp())
 
         # Filter from since to now, get at most points
         query = StatsCountersAccum.objects.filter(
-            interval_type=intervalType,
-            counter_type=counterType,
+            interval_type=interval_type,
+            counter_type=counter_type,
             stamp__gte=since,
         ).order_by('stamp')
         if owner_type is not None:
@@ -206,7 +208,7 @@ class StatsManager(metaclass=singleton.Singleton):
             while rec.stamp > stamp:
                 # Yield last value until we reach the record
                 yield last
-                stamp += intervalType.seconds()
+                stamp += interval_type.seconds()
                 last.stamp = stamp
             # The record to be emmitted is the current one, but replace record stamp with current stamp
             # The recor is for sure the first one previous to stamp (we have emmited last record until we reach this one)
@@ -219,7 +221,7 @@ class StatsManager(metaclass=singleton.Singleton):
             )
             # Append to numpy array
             yield last
-            stamp += intervalType.seconds()
+            stamp += interval_type.seconds()
 
     def perform_counters_maintenance(self) -> None:
         """
@@ -240,56 +242,63 @@ class StatsManager(metaclass=singleton.Singleton):
         owner_type: types.stats.EventOwnerType,
         owner_id: int,
         event_type: types.stats.EventType,
-        **kwargs: typing.Any,
+        stamp: typing.Optional[datetime.datetime] = None,
+        **kwargs: str,
     ) -> bool:
         """
         Adds a new event stat to database.
 
         stamp=None, fld1=None, fld2=None, fld3=None
         Args:
-
-            toWhat: if of the counter
+            owner_type: type of owner (integer, from internal tables)
+            owner_id:  id of the owner
+            event_type: The type of event that will be stored (look at uds.core.util.stats.events module)
             stamp: if not None, this will be used as date for cuounter, else current date/time will be get
-                   (this has a granurality of seconds)
+
+            kwargs: Additional fields for the event. This will be stored as fld1, fld2, fld3, fld4
+            
+        Note: to see fields equivalency, check _FLDS_EQUIV
 
         Returns:
 
             Nothing
         """
         logger.debug('Adding event stat')
-        stamp = kwargs.get('stamp')
         if stamp is None:
-            stamp = sql_stamp_seconds()
+            stamp_seconds = sql_stamp_seconds()
         else:
             # To Unix epoch
-            stamp = int(time.mktime(stamp.timetuple()))  # pylint: disable=maybe-no-member
+            stamp_seconds = int(time.mktime(stamp.timetuple()))  # pylint: disable=maybe-no-member
+
+        def get_kwarg(fld: str) -> str:
+            SENTINEL: typing.Final = object()
+            val: 'str|None|object' = kwargs.get(fld, SENTINEL)
+            if val is SENTINEL and fld in _FLDS_EQUIV:
+                for i in _FLDS_EQUIV[fld]:
+                    val = kwargs.get(i, SENTINEL)
+                    if val is not SENTINEL:
+                        break
+
+            if val is SENTINEL:
+                return ''
+
+            return typing.cast('str|None', val) or ''
+
+        fld1 = get_kwarg('fld1')
+        fld2 = get_kwarg('fld2')
+        fld3 = get_kwarg('fld3')
+        fld4 = get_kwarg('fld4')
 
         try:
-
-            def get_kwarg(fld: str) -> str:
-                SENTINEL: typing.Final = object()
-                val = kwargs.get(fld, SENTINEL)
-                if val is SENTINEL and fld in _FLDS_EQUIV:
-                    for i in _FLDS_EQUIV[fld]:
-                        val = kwargs.get(i, SENTINEL)
-                        if val is not SENTINEL:
-                            break
-                return val or ''
-
-            fld1 = get_kwarg('fld1')
-            fld2 = get_kwarg('fld2')
-            fld3 = get_kwarg('fld3')
-            fld4 = get_kwarg('fld4')
-
             StatsEvents.objects.create(
                 owner_type=owner_type,
                 owner_id=owner_id,
                 event_type=event_type,
-                stamp=stamp,
-                fld1=fld1,
-                fld2=fld2,
-                fld3=fld3,
-                fld4=fld4,
+                stamp=stamp_seconds,
+                fld1=fld1 or '',
+                fld2=fld2 or '',
+                fld3=fld3 or '',
+                fld4=fld4 or '',
             )
             return True
         except Exception:
@@ -302,15 +311,18 @@ class StatsManager(metaclass=singleton.Singleton):
             types.stats.EventOwnerType, collections.abc.Iterable[types.stats.EventOwnerType]
         ],
         event_type: typing.Union[types.stats.EventType, collections.abc.Iterable[types.stats.EventType]],
-        **kwargs: typing.Any,
+        owner_id: 'int|collections.abc.Iterable[int]|None' = None,
+        since: 'datetime.datetime|int|None' = None,
+        to: 'datetime.datetime|int|None' = None,
+        limit: int = 0,
     ) -> 'models.QuerySet[StatsEvents]':
         """
         Retrieves counters from item
 
         Args:
 
-            ownerType: Type of counter to get values
-            eventType:
+            owner_type: Type of counter to get values
+            event_type:
             from: date from what to obtain counters. Unlimited if not specified
             to: date until obtain counters. Unlimited if not specified
 
@@ -318,10 +330,13 @@ class StatsManager(metaclass=singleton.Singleton):
 
             Iterator, containing (date, counter) each element
         """
-        return StatsEvents.enumerate_stats(owner_type, event_type, **kwargs)
+        return StatsEvents.enumerate_stats(owner_type, event_type, owner_id, since, to, limit)
 
     def tail_events(
-        self, *, starting_id: typing.Optional[str] = None, number: typing.Optional[int] = None
+        self,
+        *,
+        starting_id: typing.Optional[str] = None,
+        number: typing.Optional[int] = None,
     ) -> 'models.QuerySet[StatsEvents]':
         # If number is not specified, we return five last events
         number = number or 5

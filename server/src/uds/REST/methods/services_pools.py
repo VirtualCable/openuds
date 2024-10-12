@@ -181,14 +181,14 @@ class ServicesPools(ModelHandler):
         # if item does not have an associated service, hide it (the case, for example, for a removed service)
         # Access from dict will raise an exception, and item will be skipped
 
-        poolGroupId: typing.Optional[str] = None
-        poolGroupName: str = _('Default')
-        poolGroupThumb: str = DEFAULT_THUMB_BASE64
+        poolgroup_id: typing.Optional[str] = None
+        poolgroup_name: str = _('Default')
+        poolgroup_thumb: str = DEFAULT_THUMB_BASE64
         if item.servicesPoolGroup:
-            poolGroupId = item.servicesPoolGroup.uuid
-            poolGroupName = item.servicesPoolGroup.name
+            poolgroup_id = item.servicesPoolGroup.uuid
+            poolgroup_name = item.servicesPoolGroup.name
             if item.servicesPoolGroup.image:
-                poolGroupThumb = item.servicesPoolGroup.image.thumb64
+                poolgroup_thumb = item.servicesPoolGroup.image.thumb64
 
         state = item.state
         if item.is_in_maintenance():
@@ -242,14 +242,14 @@ class ServicesPools(ModelHandler):
                 restrained = item.is_restrained()
                 usage_count = -1
 
-            poolGroupId = None
-            poolGroupName = _('Default')
-            poolGroupThumb = DEFAULT_THUMB_BASE64
+            poolgroup_id = None
+            poolgroup_name = _('Default')
+            poolgroup_thumb = DEFAULT_THUMB_BASE64
             if item.servicesPoolGroup is not None:
-                poolGroupId = item.servicesPoolGroup.uuid
-                poolGroupName = item.servicesPoolGroup.name
+                poolgroup_id = item.servicesPoolGroup.uuid
+                poolgroup_name = item.servicesPoolGroup.name
                 if item.servicesPoolGroup.image is not None:
-                    poolGroupThumb = item.servicesPoolGroup.image.thumb64
+                    poolgroup_thumb = item.servicesPoolGroup.image.thumb64
 
             val['state'] = state
             val['thumb'] = item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64
@@ -259,9 +259,9 @@ class ServicesPools(ModelHandler):
             val['restrained'] = restrained
             val['permission'] = permissions.effective_permissions(self._user, item)
             val['info'] = Services.service_info(item.service)
-            val['pool_group_id'] = poolGroupId
-            val['pool_group_name'] = poolGroupName
-            val['pool_group_thumb'] = poolGroupThumb
+            val['pool_group_id'] = poolgroup_id
+            val['pool_group_name'] = poolgroup_name
+            val['pool_group_thumb'] = poolgroup_thumb
             val['usage'] = str(item.usage(usage_count).percent) + '%'
 
         if item.osmanager:
@@ -496,29 +496,29 @@ class ServicesPools(ModelHandler):
                 raise exceptions.rest.RequestError(gettext('Base service does not exist anymore')) from None
 
             try:
-                serviceType = service.get_type()
+                service_type = service.get_type()
 
-                if serviceType.publication_type is None:
+                if service_type.publication_type is None:
                     self._params['publish_on_save'] = False
 
-                if serviceType.can_reset is False:
+                if service_type.can_reset is False:
                     self._params['allow_users_reset'] = False
 
-                if serviceType.needs_osmanager is True:
+                if service_type.needs_osmanager is True:
                     osmanager = OSManager.objects.get(uuid=process_uuid(fields['osmanager_id']))
                     fields['osmanager_id'] = osmanager.id
                 else:
                     del fields['osmanager_id']
 
                 # If service has "overrided fields", overwrite received ones now
-                if serviceType.overrided_fields:
-                    for k, v in serviceType.overrided_fields.items():
+                if service_type.overrided_fields:
+                    for k, v in service_type.overrided_fields.items():
                         fields[k] = v
 
-                if serviceType.uses_cache_l2 is False:
+                if service_type.uses_cache_l2 is False:
                     fields['cache_l2_srvs'] = 0
 
-                if serviceType.uses_cache is False:
+                if service_type.uses_cache is False:
                     for k in (
                         'initial_srvs',
                         'cache_l1_srvs',
@@ -531,10 +531,10 @@ class ServicesPools(ModelHandler):
                     fields['initial_srvs'] = int(fields['initial_srvs'])
                     fields['cache_l1_srvs'] = int(fields['cache_l1_srvs'])
 
-                    # if serviceType.userservices_limit != consts.UNLIMITED:
-                    #    fields['max_srvs'] = min((fields['max_srvs'], serviceType.userservices_limit))
-                    #    fields['initial_srvs'] = min(fields['initial_srvs'], serviceType.userservices_limit)
-                    #    fields['cache_l1_srvs'] = min(fields['cache_l1_srvs'], serviceType.userservices_limit)
+                    # if service_type.userservices_limit != consts.UNLIMITED:
+                    #    fields['max_srvs'] = min((fields['max_srvs'], service_type.userservices_limit))
+                    #    fields['initial_srvs'] = min(fields['initial_srvs'], service_type.userservices_limit)
+                    #    fields['cache_l1_srvs'] = min(fields['cache_l1_srvs'], service_type.userservices_limit)
             except Exception as e:
                 raise exceptions.rest.RequestError(gettext('This service requires an OS Manager')) from e
 
@@ -548,35 +548,35 @@ class ServicesPools(ModelHandler):
             )
 
             # *** ACCOUNT ***
-            accountId = fields['account_id']
+            account_id = fields['account_id']
             fields['account_id'] = None
-            logger.debug('Account id: %s', accountId)
+            logger.debug('Account id: %s', account_id)
 
-            if accountId != '-1':
+            if account_id != '-1':
                 try:
-                    fields['account_id'] = Account.objects.get(uuid=process_uuid(accountId)).id
+                    fields['account_id'] = Account.objects.get(uuid=process_uuid(account_id)).id
                 except Exception:
                     logger.exception('Getting account ID')
 
             # **** IMAGE ***
-            imgId = fields['image_id']
+            image_id = fields['image_id']
             fields['image_id'] = None
-            logger.debug('Image id: %s', imgId)
+            logger.debug('Image id: %s', image_id)
             try:
-                if imgId != '-1':
-                    image = Image.objects.get(uuid=process_uuid(imgId))
+                if image_id != '-1':
+                    image = Image.objects.get(uuid=process_uuid(image_id))
                     fields['image_id'] = image.id
             except Exception:
                 logger.exception('At image recovering')
 
             # Servicepool Group
-            spgrpId = fields['pool_group_id']
+            pool_group_id = fields['pool_group_id']
             del fields['pool_group_id']
             fields['servicesPoolGroup_id'] = None
-            logger.debug('pool_group_id: %s', spgrpId)
+            logger.debug('pool_group_id: %s', pool_group_id)
             try:
-                if spgrpId != '-1':
-                    spgrp = ServicePoolGroup.objects.get(uuid=process_uuid(spgrpId))
+                if pool_group_id != '-1':
+                    spgrp = ServicePoolGroup.objects.get(uuid=process_uuid(pool_group_id))
                     fields['servicesPoolGroup_id'] = spgrp.id
             except Exception:
                 logger.exception('At service pool group recovering')
@@ -631,19 +631,19 @@ class ServicesPools(ModelHandler):
     def actions_list(self, item: 'Model') -> list[types.calendar.CalendarAction]:
         item = ensure.is_instance(item, ServicePool)
         valid_actions: list[types.calendar.CalendarAction] = []
-        itemInfo = item.service.get_type()
-        if itemInfo.uses_cache is True:
+        item_info = item.service.get_type()
+        if item_info.uses_cache is True:
             valid_actions += [
                 consts.calendar.CALENDAR_ACTION_INITIAL,
                 consts.calendar.CALENDAR_ACTION_CACHE_L1,
                 consts.calendar.CALENDAR_ACTION_MAX,
             ]
-            if itemInfo.uses_cache_l2 is True:
+            if item_info.uses_cache_l2 is True:
                 valid_actions += [
                     consts.calendar.CALENDAR_ACTION_CACHE_L2,
                 ]
 
-        if itemInfo.publication_type is not None:
+        if item_info.publication_type is not None:
             valid_actions += [
                 consts.calendar.CALENDAR_ACTION_PUBLISH,
             ]

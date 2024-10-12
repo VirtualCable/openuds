@@ -45,20 +45,20 @@ class Attribute:
     _type: typing.Type[typing.Any]
     _value: typing.Any
 
-    def __init__(self, theType: typing.Type[typing.Any], value: typing.Any = None):
-        self._type = theType
-        self.setValue(value)
+    def __init__(self, the_type: typing.Type[typing.Any], value: typing.Any = None):
+        self._type = the_type
+        self.set_value(value)
 
     def get_type(self) -> typing.Type[typing.Any]:
         return self._type
 
-    def getValue(self) -> typing.Any:
+    def get_value(self) -> typing.Any:
         return self._value
 
-    def getStrValue(self) -> str:
+    def get_str_value(self) -> str:
         return str(self._value)
 
-    def setValue(self, value: typing.Any) -> None:
+    def set_value(self, value: typing.Any) -> None:
         if value is None:
             self._value = self._type()
         else:
@@ -83,12 +83,12 @@ class AutoAttributes(Serializable):
 
     def __getattribute__(self, name: str) -> typing.Any:
         if name.startswith('_') and name[1:] in self.attrs:
-            return self.attrs[name[1:]].getValue()
+            return self.attrs[name[1:]].get_value()
         return super().__getattribute__(name)
 
     def __setattr__(self, name: str, value: typing.Any) -> None:
         if name.startswith('_') and name[1:] in self.attrs:
-            self.attrs[name[1:]].setValue(value)
+            self.attrs[name[1:]].set_value(value)
         else:
             super().__setattr__(name, value)
 
@@ -139,7 +139,7 @@ class AutoAttributes(Serializable):
         return (
             '<AutoAttribute '
             + ','.join(
-                f'{k} ({v.get_type()}) = {v.getStrValue()}'
+                f'{k} ({v.get_type()}) = {v.get_str_value()}'
                 for k, v in self.attrs.items()
             )
             + '>'

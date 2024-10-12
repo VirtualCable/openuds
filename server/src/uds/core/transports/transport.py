@@ -124,7 +124,7 @@ class Transport(Module):
 
     def test_connectivity(
         self,
-        userService: 'models.UserService',
+        userservice: 'models.UserService',
         ip: str,
         port: typing.Union[str, int],
         timeout: float = 4,
@@ -138,7 +138,7 @@ class Transport(Module):
         """
         return False
 
-    def get_available_error_msg(self, userService: 'models.UserService', ip: str) -> str:
+    def get_available_error_msg(self, userservice: 'models.UserService', ip: str) -> str:
         """
         Returns a customized error message, that will be used when a service fails to check "isAvailableFor"
         Override this in yours transports if needed
@@ -156,12 +156,12 @@ class Transport(Module):
         return False
 
     @classmethod
-    def supports_os(cls, osType: types.os.KnownOS) -> bool:
+    def supports_os(cls, os: types.os.KnownOS) -> bool:
         """
         Helper method to check if transport supports requested operating system.
         Class method
         """
-        return osType in cls.supported_oss
+        return os in cls.supported_oss
 
     @classmethod
     def provides_connetion_info(cls) -> bool:
@@ -183,7 +183,7 @@ class Transport(Module):
         kind of terminals/application will not work
 
         Args:
-            userService: UserService for witch we are rendering the connection (db model), or ServicePool (db model)self.
+            userservice: UserService for witch we are rendering the connection (db model), or ServicePool (db model)self.
 
             user: user (dbUser) logged in
             pass: password used in authentication
@@ -191,8 +191,8 @@ class Transport(Module):
         The expected result from this method is a ConnectionInfoType object
 
         :note: The provided service can be an user service or an service pool (parent of user services).
-               I have implemented getConnectionInfo in both so in most cases we do not need if the service is
-               ServicePool or UserService. In case of getConnectionInfo for an ServicePool, no transformation
+               I have implemented get_connection_info in both so in most cases we do not need if the service is
+               ServicePool or UserService. In case of get_connection_info for an ServicePool, no transformation
                is done, because there is no relation at that level between user and service.
         """
         if isinstance(userservice, models.ServicePool):
@@ -207,7 +207,7 @@ class Transport(Module):
             domain='',
         )
 
-    def processed_username(self, userService: 'models.UserService', user: 'models.User') -> str:
+    def processed_username(self, userservice: 'models.UserService', user: 'models.User') -> str:
         """
         Used to "transform" username that will be sent to service
         This is used to make the "user" that will receive the service match with that sent in notification
@@ -258,7 +258,7 @@ class Transport(Module):
 
     def encoded_transport_script(
         self,
-        userService: 'models.UserService',
+        userservice: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
         os: 'types.os.DetectedOsInfo',  # pylint: disable=redefined-outer-name
@@ -269,7 +269,7 @@ class Transport(Module):
         """
         Encodes the script so the client can understand it
         """
-        transport_script = self.get_transport_script(userService, transport, ip, os, user, password, request)
+        transport_script = self.get_transport_script(userservice, transport, ip, os, user, password, request)
         logger.debug('Transport script: %s', transport_script)
 
         return types.transports.TransportScript(
@@ -281,25 +281,25 @@ class Transport(Module):
         )
 
     def get_relative_script(
-        self, scriptName: str, params: collections.abc.Mapping[str, typing.Any]
+        self, scriptname: str, params: collections.abc.Mapping[str, typing.Any]
     ) -> types.transports.TransportScript:
         """Returns a script that will be executed on client, but will be downloaded from server
 
         Args:
-            scriptName: Name of the script to be downloaded, relative path (i.e. 'scripts/direct/transport.py')
+            scriptname: Name of the script to be downloaded, relative path (i.e. 'scripts/direct/transport.py')
             params: Parameters for the return tuple
         """
         # Reads script and signature
         import os  # pylint: disable=import-outside-toplevel
 
-        basePath = os.path.dirname(
+        base_path = os.path.dirname(
             sys.modules[self.__module__].__file__ or 'not_found'
         )  # Will raise if not found
 
-        with open(os.path.join(basePath, scriptName), 'r', encoding='utf8') as scriptFile:
-            script = scriptFile.read()
-        with open(os.path.join(basePath, scriptName + '.signature'), 'r', encoding='utf8') as signatureFile:
-            signature = signatureFile.read()
+        with open(os.path.join(base_path, scriptname), 'r', encoding='utf8') as script_file:
+            script = script_file.read()
+        with open(os.path.join(base_path, scriptname + '.signature'), 'r', encoding='utf8') as signature_file:
+            signature = signature_file.read()
 
         return types.transports.TransportScript(
             script=script,

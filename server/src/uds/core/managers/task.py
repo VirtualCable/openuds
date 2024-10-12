@@ -126,24 +126,24 @@ class TaskManager(metaclass=singleton.Singleton):
 
         self.register_scheduled_tasks()
 
-        noSchedulers: int = GlobalConfig.SCHEDULER_THREADS.as_int()
-        noDelayedTasks: int = GlobalConfig.DELAYED_TASKS_THREADS.as_int()
+        n_schedulers: int = GlobalConfig.SCHEDULER_THREADS.as_int()
+        n_delayed_tasks: int = GlobalConfig.DELAYED_TASKS_THREADS.as_int()
 
         logger.info(
-            'Starting %s schedulers and %s task executors', noSchedulers, noDelayedTasks
+            'Starting %s schedulers and %s task executors', n_schedulers, n_delayed_tasks
         )
 
         signal.signal(signal.SIGTERM, TaskManager.sig_term)
         signal.signal(signal.SIGINT, TaskManager.sig_term)
 
         thread: BaseThread
-        for _ in range(noSchedulers):
+        for _ in range(n_schedulers):
             thread = SchedulerThread()
             thread.start()
             self.threads.append(thread)
             time.sleep(0.5)  # Wait a bit before next scheduler is started
 
-        for _ in range(noDelayedTasks):
+        for _ in range(n_delayed_tasks):
             thread = DelayedTaskThread()
             thread.start()
             self.threads.append(thread)

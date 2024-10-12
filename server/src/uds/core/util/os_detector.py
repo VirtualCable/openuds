@@ -87,15 +87,15 @@ def detect_os(
 
         browser_type = None
         for browser_type, rules in consts.os.BROWSER_RULES.items():
-            must, must_not = rules
+            must_rule, must_not_rule = rules
 
-            for must_re in consts.os.BROWSERS_RE[must]:
+            for must_re in consts.os.BROWSERS_RE[must_rule]:
                 found = must_re.search(ua)
                 if found is None:
                     continue
                 # Check against no maching rules
-                for mustNotREs in must_not:
-                    for cre in consts.os.BROWSERS_RE[mustNotREs]:
+                for must_not_re_list in must_not_rule:
+                    for cre in consts.os.BROWSERS_RE[must_not_re_list]:
                         if cre.search(ua) is not None:
                             found = None
                             break

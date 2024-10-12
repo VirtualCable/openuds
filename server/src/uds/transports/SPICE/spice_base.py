@@ -181,14 +181,14 @@ class BaseSpiceTransport(transports.Transport):
 
         return ready == 'Y'
 
-    def get_available_error_msg(self, userService: 'models.UserService', ip: str) -> str:
+    def get_available_error_msg(self, userservice: 'models.UserService', ip: str) -> str:
         msg = self.cache.get('cached_message')
         if msg is None:
-            return transports.Transport.get_available_error_msg(self, userService, ip)
+            return transports.Transport.get_available_error_msg(self, userservice, ip)
         return msg
 
-    def processed_username(self, userService: 'models.UserService', user: 'models.User') -> str:
-        v = self.process_user_password(userService, user, '')
+    def processed_username(self, userservice: 'models.UserService', user: 'models.User') -> str:
+        v = self.process_user_password(userservice, user, '')
         return v.username
 
     def process_user_password(

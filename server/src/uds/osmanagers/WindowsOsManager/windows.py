@@ -14,7 +14,6 @@ import typing
 from django.utils.translation import gettext_noop as _
 
 from uds.core import osmanagers, types
-from uds.core.types.services import ServiceType as serviceTypes
 from uds.core.ui import gui
 from uds.core.util import log, fields
 from uds.core.types.states import State
@@ -32,7 +31,8 @@ class WindowsOsManager(osmanagers.OSManager):
     type_type = 'WindowsManager'
     type_description = _('Os Manager to control windows machines without domain.')
     icon_file = 'wosmanager.png'
-    servicesType = serviceTypes.VDI
+
+    services_types = types.services.ServiceType.VDI
 
     on_logout = fields.on_logout_field()
 

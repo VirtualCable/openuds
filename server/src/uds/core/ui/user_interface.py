@@ -405,8 +405,8 @@ class gui:
             """
             Returns the default value for this field
             """
-            defValue = self._field_info.default
-            return defValue() if callable(defValue) else defValue
+            default_value = self._field_info.default
+            return default_value() if callable(default_value) else default_value
 
         @default.setter
         def default(self, value: typing.Any) -> None:
@@ -666,7 +666,7 @@ class gui:
               # with tooltip "Port (usually 443)" and order 1
               num = gui.NumericField(length=5, label = _('Port'),
                   default = '443', order = 1, tooltip = _('Port (usually 443)'),
-                  minVAlue = 1024, max_value = 65535,
+                  min_value = 1024, max_value = 65535,
                   required = True)
         """
 
@@ -1332,7 +1332,7 @@ class gui:
            .. code-block:: python
 
               #
-              ipList = gui.EditableList(label=_('List of IPS'))
+              ip_list = gui.EditableList(label=_('List of IPS'))
 
         """
 

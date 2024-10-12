@@ -73,7 +73,7 @@ class OsManagers(ModelHandler):
             'type': type_.mod_type(),
             'type_name': type_.mod_name(),
             'servicesTypes': [
-                type_.servicesType
+                type_.services_types
             ],  # A list for backward compatibility. TODO: To be removed when admin interface is changed
             'comments': osm.comments,
             'permission': permissions.effective_permissions(self._user, osm),

@@ -219,8 +219,8 @@ class BaseX2GOTransport(transports.Transport):
     def get_screen_size(self) -> tuple[int, int]:
         return CommonPrefs.get_wh(self.screen_size.value)
 
-    def processed_username(self, userService: 'models.UserService', user: 'models.User') -> str:
-        v = self.process_user_password(userService, user, '')
+    def processed_username(self, userservice: 'models.UserService', user: 'models.User') -> str:
+        v = self.process_user_password(userservice, user, '')
         return v.username
 
     def process_user_password(

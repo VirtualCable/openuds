@@ -36,7 +36,6 @@ import typing
 from django.utils.translation import gettext_noop as _
 
 from uds.core import osmanagers, types
-from uds.core.types.services import ServiceType as serviceTypes
 from uds.core.ui import gui
 from uds.core.util import fields, log
 from uds.core.types.states import State
@@ -53,7 +52,7 @@ class LinuxOsManager(osmanagers.OSManager):
     type_description = _('Os Manager to control Linux virtual machines')
     icon_file = 'losmanager.png'
 
-    servicesType = serviceTypes.VDI
+    services_types = types.services.ServiceType.VDI
 
     on_logout = fields.on_logout_field()
 

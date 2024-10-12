@@ -306,4 +306,4 @@ class UserServiceOpChecker(DelayedTask):
                     userservice.set_state(types.states.State.ERROR)
                     userservice.save(update_fields=['data'])
                 except Exception:
-                    logger.error('Can\'t update state of uService object')
+                    logger.error('Can\'t update state of userservice object')

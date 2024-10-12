@@ -348,9 +348,9 @@ class Service(Module):
         Assigns from it internal assignable list to an user
 
         args:
-            assignable_id: Id of the assignable element
-            user: User to assign to
-            userDeployment: User deployment to assign
+            assignable_id: Id of the assignable element to assign
+            user: User to assign the service to
+            userservice_instance: User service instance to assign
 
         Note:
             Base implementation does nothing, to be overriden if needed
@@ -374,11 +374,11 @@ class Service(Module):
         """
         return None
 
-    def get_vapp_launcher(self, userService: 'models.UserService') -> typing.Optional[tuple[str, str]]:
+    def get_vapp_launcher(self, userservice: 'models.UserService') -> typing.Optional[tuple[str, str]]:
         """Returns the vapp launcher for this service, if any
 
         Args:
-            userService (UserService): User service to get the vapp launcher from
+            userservice (UserService): User service to get the vapp launcher from
 
         Returns:
             typing.Optional[tuple[str, str]]: A tuple with the vapp launcher name and the vapp launcher path on server
@@ -390,7 +390,7 @@ class Service(Module):
         Looks for an "owned" id in the provided list. If found, returns it, else return None
 
         Args:
-            idsList (collections.abc.Iterable[str]): List of IPs and MACs that acts as
+            ids (collections.abc.Iterable[str]): List of IPs and MACs that acts as
 
         Returns:
             typing.Optional[str]: [description]
@@ -402,7 +402,7 @@ class Service(Module):
         In the case that a login is invoked directly on an actor controlled machine with
         an service token, this method will be called with provided info by uds actor (parameters)
         That is, this method will only be called it UDS does not recognize the invoker, but the invoker
-        has a valid token and the service has recognized it. (via getValidId)
+        has a valid token and the service has recognized it. (via get_valid_id)
 
         Args:
             id (str): Id validated through "getValidId"
@@ -415,7 +415,7 @@ class Service(Module):
         In the case that a logout is invoked directly on an actor controlled machine with
         an service token, this method will be called with provided info by uds actor (parameters)
         That is, this method will only be called it UDS does not recognize the invoker, but the invoker
-        has a valid token and the service has recognized it. (via getValidId)
+        has a valid token and the service has recognized it. (via get_valid_id)
 
         Args:
             id (str): Id validated through "getValidId"
@@ -455,13 +455,13 @@ class Service(Module):
         return value
 
     def notify_preconnect(
-        self, userService: 'models.UserService', info: 'types.connections.ConnectionData'
+        self, userservice: 'models.UserService', info: 'types.connections.ConnectionData'
     ) -> bool:
         """
         Notifies preconnect to server, if this allows it
 
         Args:
-            userService: User service to notify
+            userservice: User service to notify
             info: Connection data to notify
 
         Returns:
