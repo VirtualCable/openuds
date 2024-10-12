@@ -53,7 +53,7 @@ ReportAutoModel = typing.Union[
     models.Provider,
 ]
 
-reportAutoModelDct: collections.abc.Mapping[str, type[ReportAutoModel]] = {
+REPORT_AUTOMODEL: typing.Final[collections.abc.Mapping[str, type[ReportAutoModel]]] = {
     'ServicePool': models.ServicePool,
     'Authenticator': models.Authenticator,
     'Service': models.Service,
@@ -121,7 +121,7 @@ class ReportAuto(Report, metaclass=ReportAutoType):
     def getModel(self) -> type[ReportAutoModel]:
         data_source = self.data_source.split('.', maxsplit=1)[0]
 
-        return reportAutoModelDct[data_source]
+        return REPORT_AUTOMODEL[data_source]
 
     def init_gui(self) -> None:
         # Fills datasource

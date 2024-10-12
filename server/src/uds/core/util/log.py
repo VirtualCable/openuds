@@ -49,7 +49,7 @@ except ImportError:
 if typing.TYPE_CHECKING:
     from django.db.models import Model
 
-useLogger = logging.getLogger('useLog')
+use_logger = logging.getLogger('useLog')
 
 
 # Pattern for look for date and time in this format: 2023-04-20 04:03:08,776 (and trailing spaces)
@@ -84,7 +84,7 @@ def log_use(
     userServiceName = 'unknown' if userServiceName is None else userServiceName
     poolName = 'unknown' if poolName is None else poolName
 
-    useLogger.info(
+    use_logger.info(
         '|'.join(
             [
                 type_,

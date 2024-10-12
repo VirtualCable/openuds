@@ -7,58 +7,66 @@ import os
 import errno
 import pwd
 
-def logError(err):
+def log_error(err, username: str = None):
+    with open('/tmp/uds-x2go-error-{}.log'.format(username or None), 'a') as f:
+        f.write(err)
+ 
     print(err)
 
 
-def updateAuthorizedKeys(user, pubKey):
+def update_authorized_keys(username, pubKey):
     # No X2Go server on windows
     if 'win' in sys.platform:
-        logError('Not a linux platform')
+        log_error('Not a linux platform')
         return
 
-    userInfo = pwd.getpwnam(user)
+    user_info = pwd.getpwnam(username)
+    user_info.
 
     # Create .ssh on user home
-    home = userInfo.pw_dir.rstrip('/')
+    home = user_info.pw_dir.rstrip('/')
 
     if not os.path.exists(home):  # User not found, nothing done
-        logError('Home folder for user {} not found'.format(user))
+        log_error('Home folder for user {} not found'.format(username))
         return
 
-    uid = userInfo.pw_uid
+    uid = user_info.pw_uid
 
-    sshFolder = '{}/.ssh'.format(home)
-    if not os.path.exists(sshFolder):
+    ssh_folder = '{}/.ssh'.format(home)
+    if not os.path.exists(ssh_folder):
         try:
-            os.makedirs(sshFolder, 0o700)
-            os.chown(sshFolder, uid, -1)
+            os.makedirs(ssh_folder, 0o700)
+            os.chown(ssh_folder, uid, -1)
         except OSError as e:
             if e.errno != errno.EEXIST:
-                logError('Error creating .ssh folder for user {}: {}'.format(user, e))
+                log_error('Error creating .ssh folder for user {}: {}'.format(username, e), username)
                 return
             # Folder has been created in between test & creation, thats ok
 
-    authorizedKeys = '{}/authorized_keys'.format(sshFolder)
+    authorized_keys = '{}/authorized_keys'.format(ssh_folder)
     try:
-        with open(authorizedKeys, 'r') as f:
+        with open(authorized_keys, 'r') as f:
             lines = f.readlines()
     except Exception:
         lines = []
 
-    with open(authorizedKeys, 'w') as f:
-        for line in lines:
-            if 'UDS@X2GOCLIENT' not in line and line.strip():
-                f.write(line)
+    with open(authorized_keys, 'w') as f:
+        f.writelines(
+            filter(
+                lambda x: 'UDS@X2GOCLIENT' not in x and x.strip(),
+                lines
+            )
+        )
         # Append pubkey
         f.write('ssh-rsa {} UDS@X2GOCLIENT\n'.format(pubKey))
 
     # Ensure access is correct
-    os.chown(authorizedKeys, uid, -1)
-    os.chmod(authorizedKeys, 0o600)
+    os.chown(authorized_keys, uid, -1)
+    os.chmod(authorized_keys, 0o600)
 
     # Done
 
 
-# __USER__ and __KEY__ will be replaced by the real values, they are placeholders (and must be left as is)
-updateAuthorizedKeys('__USER__', '__KEY__')
+# __USER__ and __KEY__ will be replaced by the real values, 
+# # they are placeholders for the real values so keep them.
+update_authorized_keys('__USER__', '__KEY__')

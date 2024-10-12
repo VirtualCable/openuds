@@ -57,7 +57,7 @@ if typing.TYPE_CHECKING:
 
 
 logger = logging.getLogger(__name__)
-authLogger = logging.getLogger('authLog')
+auth_logger = logging.getLogger('authLog')
 
 
 RT = typing.TypeVar('RT')
@@ -506,7 +506,7 @@ def log_login(
 
     log_level = types.log.LogLevel.ERROR if as_error else types.log.LogLevel.INFO
 
-    authLogger.info(
+    auth_logger.info(
         '|'.join(
             [
                 authenticator.name,
