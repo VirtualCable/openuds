@@ -110,49 +110,49 @@ class RadiusResult:
     """
 
     pwd: RadiusStates = RadiusStates.INCORRECT
-    replyMessage: typing.Optional[bytes] = None
+    reply_message: typing.Optional[bytes] = None
     state: typing.Optional[bytes] = None
     otp: RadiusStates = RadiusStates.NOT_CHECKED
     otp_needed: RadiusStates = RadiusStates.NOT_CHECKED
 
 
 class RadiusClient:
-    radiusServer: Client
-    nasIdentifier: str
-    appClassPrefix: str
+    server: Client
+    nas_identifier: str
+    appclass_prefix: str
 
     def __init__(
         self,
         server: str,
         secret: bytes,
         *,
-        authPort: int = 1812,
-        nasIdentifier: str = 'uds-server',
-        appClassPrefix: str = '',
+        auth_port: int = 1812,
+        nas_identifier: str = 'uds-server',
+        appclass_prefix: str = '',
         dictionary: str = RADDICT,
     ) -> None:
-        self.radiusServer = Client(
+        self.server = Client(
             server=server,
-            authport=authPort,
+            authport=auth_port,
             secret=secret,
             dict=Dictionary(io.StringIO(dictionary)),
         )
-        self.nasIdentifier = nasIdentifier
-        self.appClassPrefix = appClassPrefix
+        self.nas_identifier = nas_identifier
+        self.appclass_prefix = appclass_prefix
 
-    def extractAccessChallenge(self, reply: pyrad.packet.AuthPacket) -> RadiusResult:
+    def extract_access_challenge(self, reply: pyrad.packet.AuthPacket) -> RadiusResult:
         return RadiusResult(
             pwd=RadiusStates.CORRECT,
-            replyMessage=typing.cast(list[bytes], reply.get('Reply-Message') or [''])[0],
+            reply_message=typing.cast(list[bytes], reply.get('Reply-Message') or [''])[0],
             state=typing.cast(list[bytes], reply.get('State') or [b''])[0],
             otp_needed=RadiusStates.NEEDED,
         )
 
-    def sendAccessRequest(self, username: str, password: str, **kwargs: typing.Any) -> pyrad.packet.AuthPacket:
-        req: pyrad.packet.AuthPacket = self.radiusServer.CreateAuthPacket(
+    def send_access_request(self, username: str, password: str, **kwargs: typing.Any) -> pyrad.packet.AuthPacket:
+        req: pyrad.packet.AuthPacket = self.server.CreateAuthPacket(
             code=pyrad.packet.AccessRequest,
             User_Name=username,
-            NAS_Identifier=self.nasIdentifier,
+            NAS_Identifier=self.nas_identifier,
         )
 
         req["User-Password"] = req.PwCrypt(password)
@@ -161,46 +161,46 @@ class RadiusClient:
         for k, v in kwargs.items():
             req[k] = v
 
-        return typing.cast(pyrad.packet.AuthPacket, self.radiusServer.SendPacket(req))
+        return typing.cast(pyrad.packet.AuthPacket, self.server.SendPacket(req))
 
     # Second element of return value is the mfa code from field
     def authenticate(
-        self, username: str, password: str, mfaField: str = ''
+        self, username: str, password: str, mfa_field: str = ''
     ) -> tuple[list[str], str, bytes]:
-        reply = self.sendAccessRequest(username, password)
+        reply = self.send_access_request(username, password)
 
         if reply.code not in (pyrad.packet.AccessAccept, pyrad.packet.AccessChallenge):
             raise RadiusAuthenticationError('Access denied')
 
         # User accepted, extract groups...
         # All radius users belongs to, at least, 'uds-users' group
-        groupClassPrefix = (self.appClassPrefix + 'group=').encode()
-        groupClassPrefixLen = len(groupClassPrefix)
+        groupclass_prefix = (self.appclass_prefix + 'group=').encode()
+        groupclass_prefix_len = len(groupclass_prefix)
         if 'Class' in reply:
             groups = [
-                i[groupClassPrefixLen:].decode()
+                i[groupclass_prefix_len:].decode()
                 for i in typing.cast(collections.abc.Iterable[bytes], reply['Class'])
-                if i.startswith(groupClassPrefix)
+                if i.startswith(groupclass_prefix)
             ]
         else:
             logger.info('No "Class (25)" attribute found')
             return ([], '', b'')
 
         # ...and mfa code
-        mfaCode = ''
-        if mfaField and mfaField in reply:
-            mfaCode = ''.join(
-                i[groupClassPrefixLen:].decode()
+        mfa_code = ''
+        if mfa_field and mfa_field in reply:
+            mfa_code = ''.join(
+                i[groupclass_prefix_len:].decode()
                 for i in typing.cast(collections.abc.Iterable[bytes], reply['Class'])
-                if i.startswith(groupClassPrefix)
+                if i.startswith(groupclass_prefix)
             )
-        return (groups, mfaCode, typing.cast(list[bytes], reply.get('State') or [b''])[0])
+        return (groups, mfa_code, typing.cast(list[bytes], reply.get('State') or [b''])[0])
 
     def authenticate_only(self, username: str, password: str) -> RadiusResult:
-        reply = self.sendAccessRequest(username, password)
+        reply = self.send_access_request(username, password)
 
         if reply.code == pyrad.packet.AccessChallenge:
-            return self.extractAccessChallenge(reply)
+            return self.extract_access_challenge(reply)
 
         # user/pwd accepted: this user does not have challenge data
         if reply.code == pyrad.packet.AccessAccept:
@@ -221,7 +221,7 @@ class RadiusClient:
 
         logger.debug('Sending AccessChallenge request wit otp [%s]', otp)
 
-        reply = self.sendAccessRequest(username, otp, State=state)
+        reply = self.send_access_request(username, otp, State=state)
 
         logger.debug('Received AccessChallenge reply: %s', reply)
 
@@ -238,7 +238,7 @@ class RadiusClient:
         )
 
     def authenticate_and_challenge(self, username: str, password: str, otp: str) -> RadiusResult:
-        reply = self.sendAccessRequest(username, password)
+        reply = self.send_access_request(username, password)
 
         if reply.code == pyrad.packet.AccessChallenge:
             state = typing.cast(list[bytes], reply.get('State') or [b''])[0]

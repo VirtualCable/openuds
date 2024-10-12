@@ -707,15 +707,15 @@ class SAMLAuthenticator(auths.Authenticator):
         )
         logger.debug('Groups: %s', groups)
 
-        realName = ' '.join(
+        realname = ' '.join(
             auth_utils.process_regex_field(
                 self.attrs_realname.value, attributes  # pyright: ignore reportUnknownVariableType
             )
         )
-        logger.debug('Real name: %s', realName)
+        logger.debug('Real name: %s', realname)
 
         # store groups for this username at storage, so we can check it at a later stage
-        self.storage.save_pickled(username, [realName, groups])
+        self.storage.save_pickled(username, [realname, groups])
 
         # store also the mfa identifier field value, in case we have provided it
         if self.mfa_attr.value.strip():

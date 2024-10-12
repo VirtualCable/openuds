@@ -156,11 +156,11 @@ class CryptoManager(metaclass=singleton.Singleton):
             modes.CBC(b'udsinitvectoruds'),
             backend=default_backend(),
         )
-        rndStr = secrets.token_bytes(16)  # Same as block size of CBC (that is 16 here)
-        paddedLength = ((len(text) + 4 + 15) // 16) * 16
-        toEncode = struct.pack('>i', len(text)) + text + rndStr[: paddedLength - len(text) - 4]
+        rnd_string = secrets.token_bytes(16)  # Same as block size of CBC (that is 16 here)
+        padded_length = ((len(text) + 4 + 15) // 16) * 16  # calculate padding length, 4 is for length of text
+        to_encode = struct.pack('>i', len(text)) + text + rnd_string[: padded_length - len(text) - 4]
         encryptor = cipher.encryptor()
-        encoded = encryptor.update(toEncode) + encryptor.finalize()
+        encoded = encryptor.update(to_encode) + encryptor.finalize()
 
         if base64:
             encoded = codecs.encode(encoded, 'base64').strip()  # Return as bytes
@@ -178,8 +178,8 @@ class CryptoManager(metaclass=singleton.Singleton):
         )
         decryptor = cipher.decryptor()
 
-        toDecode = decryptor.update(text) + decryptor.finalize()
-        return toDecode[4 : 4 + struct.unpack('>i', toDecode[:4])[0]]
+        to_decode = decryptor.update(text) + decryptor.finalize()
+        return to_decode[4 : 4 + struct.unpack('>i', to_decode[:4])[0]]
 
     # Fast encription using django SECRET_KEY as key
     def fast_crypt(self, data: bytes) -> bytes:
@@ -212,28 +212,28 @@ class CryptoManager(metaclass=singleton.Singleton):
 
         return self.aes_crypt(text, key)
 
-    def symmetric_decrypt(self, cryptText: typing.Union[str, bytes], key: typing.Union[str, bytes]) -> str:
-        if isinstance(cryptText, str):
-            cryptText = cryptText.encode()
+    def symmetric_decrypt(self, encrypted_text: typing.Union[str, bytes], key: typing.Union[str, bytes]) -> str:
+        if isinstance(encrypted_text, str):
+            encrypted_text = encrypted_text.encode()
 
         if isinstance(key, str):
             key = key.encode()
 
-        if not cryptText or not key:
+        if not encrypted_text or not key:
             return ''
 
         try:
-            return self.aes_decrypt(cryptText, key).decode('utf-8')
+            return self.aes_decrypt(encrypted_text, key).decode('utf-8')
         except Exception:  # Error decoding crypted element, return empty one
             return ''
 
     def load_private_key(
-        self, rsaKey: str
+        self, rsa_key: str
     ) -> typing.Union['RSAPrivateKey', 'DSAPrivateKey', 'DHPrivateKey', 'EllipticCurvePrivateKey']:
         try:
             return typing.cast(
                 typing.Union['RSAPrivateKey', 'DSAPrivateKey', 'DHPrivateKey', 'EllipticCurvePrivateKey'],
-                serialization.load_pem_private_key(rsaKey.encode(), password=None, backend=default_backend()),
+                serialization.load_pem_private_key(rsa_key.encode(), password=None, backend=default_backend()),
             )
         except Exception as e:
             raise e
@@ -271,32 +271,32 @@ class CryptoManager(metaclass=singleton.Singleton):
         # Argon2
         return '{ARGON2}' + PasswordHasher(type=ArgonType.ID).hash(value)
 
-    def check_hash(self, value: typing.Union[str, bytes], hashValue: str) -> bool:
+    def check_hash(self, value: typing.Union[str, bytes], hash_value: str) -> bool:
         if isinstance(value, str):
             value = value.encode()
 
         if not value:
-            return not hashValue
+            return not hash_value
 
-        if hashValue[:8] == '{SHA256}':
-            return secrets.compare_digest(hashlib.sha3_256(value).hexdigest(), hashValue[8:])
-        if hashValue[:12] == '{SHA256SALT}':
+        if hash_value[:8] == '{SHA256}':
+            return secrets.compare_digest(hashlib.sha3_256(value).hexdigest(), hash_value[8:])
+        if hash_value[:12] == '{SHA256SALT}':
             # Extract 16 chars salt and hash
-            salt = hashValue[12:28].encode()
+            salt = hash_value[12:28].encode()
             value = salt + value
-            return secrets.compare_digest(hashlib.sha3_256(value).hexdigest(), hashValue[28:])
+            return secrets.compare_digest(hashlib.sha3_256(value).hexdigest(), hash_value[28:])
         # Argon2
-        if hashValue[:8] == '{ARGON2}':
+        if hash_value[:8] == '{ARGON2}':
             ph = PasswordHasher()  # Type is implicit in hash
             try:
-                ph.verify(hashValue[8:], value)
+                ph.verify(hash_value[8:], value)
                 return True
             except Exception:
                 return False  # Verify will raise an exception if not valid
 
         # Old sha1
         return secrets.compare_digest(
-            hashValue,
+            hash_value,
             str(
                 hashlib.sha1(
                     value

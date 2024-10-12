@@ -74,10 +74,9 @@ class Environment:
     ):
         """
         Initialized the Environment for the specified id
-        @param uniqueKey: Key for this environment
-        @param idGenerators: Hash of generators of ids for this environment. This "generators of ids" feature
-            is used basically at User Services to auto-create ids for macs or names, using
-            {'mac' : UniqueMacGenerator, 'name' : UniqueNameGenerator } as argument.
+
+        Args:
+            unique_key: Unique key for the environment
         """
         # Avoid circular imports
         from uds.core.util.cache import Cache  # pylint: disable=import-outside-toplevel

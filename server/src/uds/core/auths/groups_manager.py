@@ -83,27 +83,28 @@ class GroupsManager:
     """
 
     _groups: list[_LocalGrp]
+    _db_auth: 'DBAuthenticator'
 
-    def __init__(self, dbAuthenticator: 'DBAuthenticator'):
+    def __init__(self, db_auth: 'DBAuthenticator'):
         """
         Initializes the groups manager.
         The dbAuthenticator is the database record of the authenticator
         to which this groupsManager will be associated
         """
-        self._dbAuthenticator = dbAuthenticator
+        self._db_auth = db_auth
         # We just get active groups, inactive aren't visible to this class
         self._groups = []
         if (
-            dbAuthenticator.id
+            db_auth.id
         ):  # If "fake" authenticator (that is, root user with no authenticator in fact)
-            for g in dbAuthenticator.groups.filter(state=State.ACTIVE, is_meta=False):
+            for g in db_auth.groups.filter(state=State.ACTIVE, is_meta=False):
                 name = g.name.lower()
-                isPattern = name.find('pat:') == 0  # Is a pattern?
+                is_pattern_group = name.startswith('pat:')  # Is a pattern?
                 self._groups.append(
                     _LocalGrp(
-                        name=name[4:] if isPattern else name,
+                        name=name[4:] if is_pattern_group else name,
                         group=Group(g),
-                        is_pattern=isPattern,
+                        is_pattern=is_pattern_group,
                     )
                 )
 
@@ -147,7 +148,7 @@ class GroupsManager:
 
         # Now, get metagroups and also return them
         for db_group in DBGroup.objects.filter(
-            manager__id=self._dbAuthenticator.id, is_meta=True
+            manager__id=self._db_auth.id, is_meta=True
         ):  # @UndefinedVariable
             gn = db_group.groups.filter(
                 id__in=valid_id_list, state=State.ACTIVE

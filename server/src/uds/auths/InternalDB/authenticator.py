@@ -156,9 +156,9 @@ class InternalDBAuth(auths.Authenticator):
         request: 'ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         username = username.lower()
-        dbAuth = self.db_obj()
+        auth_db = self.db_obj()
         try:
-            user: 'models.User' = dbAuth.users.get(name=username, state=State.ACTIVE)
+            user: 'models.User' = auth_db.users.get(name=username, state=State.ACTIVE)
         except Exception:
             log_login(request, self.db_obj(), username, 'Invalid user', as_error=True)
             return types.auth.FAILED_AUTH
@@ -175,15 +175,15 @@ class InternalDBAuth(auths.Authenticator):
         return types.auth.FAILED_AUTH
 
     def get_groups(self, username: str, groups_manager: 'auths.GroupsManager') -> None:
-        dbAuth = self.db_obj()
+        auth_db = self.db_obj()
         try:
-            user: 'models.User' = dbAuth.users.get(name=username.lower(), state=State.ACTIVE)
+            user: 'models.User' = auth_db.users.get(name=username.lower(), state=State.ACTIVE)
         except Exception:
             return
         grps = [g.name for g in user.groups.all()]
         if user.parent:
             try:
-                parent = dbAuth.users.get(uuid=user.parent, state=State.ACTIVE)
+                parent = auth_db.users.get(uuid=user.parent, state=State.ACTIVE)
                 grps.extend([g.name for g in parent.groups.all()])
             except Exception:
                 pass

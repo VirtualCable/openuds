@@ -51,7 +51,7 @@ class DownloadsManager(metaclass=singleton.Singleton):
     For registering, use at __init__.py of the conecto something like this:
         from uds.core.managers import DownloadsManager
         import os.path, sys
-        downloadsManager().registerDownloadable('test.exe',
+        DownloadsManager.manager().registerDownloadable('test.exe',
                                                         _('comments for test'),
                                                         os.path.join(os.path.dirname(sys.modules[__package__].__file__), 'files/test.exe'),
                                                         'application/x-msdos-program')

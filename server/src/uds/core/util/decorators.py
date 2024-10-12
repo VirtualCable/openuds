@@ -172,7 +172,8 @@ def ensure_connected(
 #     def __call__(self, *args: P.args, **kwargs: P.kwargs) -> R: ...
 #     def cache_clear(self) -> None: ...
 #     def cache_info(self) -> CacheInfo: ...
-
+# Now, we could use this by creating two decorators, one for the class methods and one for the functions
+# But the inheritance problem will still be there, so we will keep the current implementation
 
 # Decorator for caching
 # This decorator will cache the result of the function for a given time, and given parameters

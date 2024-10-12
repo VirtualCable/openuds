@@ -64,11 +64,11 @@ class JobThread(threading.Thread):
     _db_job_id: int
     _freq: int
 
-    def __init__(self, jobInstance: 'Job', dbJob: DBScheduler) -> None:
+    def __init__(self, job_instance: 'Job', db_job: DBScheduler) -> None:
         super().__init__()
-        self._job_instance = jobInstance
-        self._db_job_id = dbJob.id
-        self._freq = dbJob.frecuency
+        self._job_instance = job_instance
+        self._db_job_id = db_job.id
+        self._freq = db_job.frecuency
 
     def run(self) -> None:
         try:
@@ -148,7 +148,7 @@ class Scheduler:
         """
         Looks for the best waiting job and executes it
         """
-        jobInstance = None
+        job_instance = None
         try:
             now = sql_now()  # Datetimes are based on database server times
             fltr = Q(state=State.FOR_EXECUTE) & (
@@ -172,14 +172,14 @@ class Scheduler:
                 job.last_execution = now
                 job.save(update_fields=['state', 'owner_server', 'last_execution'])
 
-            jobInstance = job.get_instance()
+            job_instance = job.get_instance()
 
-            if jobInstance is None:
+            if job_instance is None:
                 logger.error('Job instance can\'t be resolved for %s, removing it', job)
                 job.delete()
                 return
             logger.debug('Executing job:>%s<', job.name)
-            JobThread(jobInstance, job).start()  # Do not instatiate thread, just run it
+            JobThread(job_instance, job).start()  # Do not instatiate thread, just run it
         except IndexError:
             # Do nothing, there is no jobs for execution
             return

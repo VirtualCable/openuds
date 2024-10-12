@@ -169,13 +169,13 @@ def connection(
             # Disable TLS1 and TLS1.1
             # 0x304 = TLS1.3, 0x303 = TLS1.2, 0x302 = TLS1.1, 0x301 = TLS1.0, but use ldap module constants
             # Ensure that libldap is compiled with TLS1.3 support
-            minVersion = getattr(settings, 'SECURE_MIN_TLS_VERSION', '1.2')
+            min_tls_version = getattr(settings, 'SECURE_MIN_TLS_VERSION', '1.2')
             if hasattr(ldap, 'OPT_X_TLS_PROTOCOL_TLS1_3'):
                 tls_version: typing.Any = {  # for pyright to ignore
                     '1.2': ldap.OPT_X_TLS_PROTOCOL_TLS1_2,  # pyright: ignore
                     '1.3': ldap.OPT_X_TLS_PROTOCOL_TLS1_3,  # pyright: ignore
                 }.get(
-                    minVersion, ldap.OPT_X_TLS_PROTOCOL_TLS1_2  # pyright: ignore
+                    min_tls_version, ldap.OPT_X_TLS_PROTOCOL_TLS1_2  # pyright: ignore
                 )
 
                 l.set_option(ldap.OPT_X_TLS_PROTOCOL_MIN, tls_version)  # pyright: ignore
@@ -271,26 +271,35 @@ def as_dict(
 def first(
     con: 'LDAPObject',
     base: str,
-    objectClass: str,
+    object_class: str,
     field: str,
     value: str,
     attributes: typing.Optional[collections.abc.Iterable[str]] = None,
-    sizeLimit: int = 50,
+    max_entries: int = 50,
 ) -> typing.Optional[LDAPResultType]:
     """
     Searchs for the username and returns its LDAP entry
-    @param username: username to search, using user provided parameters at configuration to map search entries.
-    @param objectClass: Objectclass of the user mane username to search.
-    @return: None if username is not found, an dictionary of LDAP entry attributes if found (all in unicode on py2, str on py3).
+    
+    Args:
+        con (LDAPObject): Connection to LDAP
+        base (str): Base to search
+        object_class (str): Object class to search
+        field (str): Field to search
+        value (str): Value to search
+        attributes (typing.Optional[collections.abc.Iterable[str]], optional): Attributes to return. Defaults to None.
+        max_entries (int, optional): Max entries to return. Defaults to 50.
+        
+    Returns:
+        typing.Optional[LDAPResultType]: Result of the search
     """
     value = ldap.filter.escape_filter_chars(value)  # pyright: ignore reportGeneralTypeIssues
 
-    attrList = [field] + list(attributes) if attributes else []
+    attributes = [field] + list(attributes) if attributes else []
 
-    ldapFilter = f'(&(objectClass={objectClass})({field}={value}))'
+    ldap_filter = f'(&(objectClass={object_class})({field}={value}))'
 
     try:
-        obj = next(as_dict(con, base, ldapFilter, attrList, sizeLimit))
+        obj = next(as_dict(con, base, ldap_filter, attributes, max_entries))
     except StopIteration:
         return None  # None found
 

@@ -79,7 +79,7 @@ class JobsFactory(factory.Factory['Job']):
                     job.save()
         except Exception as e:
             logger.debug(
-                'Exception at ensureJobsInDatabase in JobsFactory: %s, %s',
+                'Exception at ensure_jobs_registered in JobsFactory: %s, %s',
                 e.__class__,
                 e,
             )

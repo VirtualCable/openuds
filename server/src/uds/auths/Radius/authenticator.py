@@ -84,7 +84,7 @@ class RadiusAuth(auths.Authenticator):
         required=True,
     )
 
-    nasIdentifier = gui.TextField(
+    nas_identifier = gui.TextField(
         length=64,
         label=_('NAS Identifier'),
         default='uds-server',
@@ -92,26 +92,29 @@ class RadiusAuth(auths.Authenticator):
         tooltip=_('NAS Identifier for Radius Server'),
         required=True,
         tab=types.ui.Tab.ADVANCED,
+        old_field_name='nasIdentifier',
     )
 
-    appClassPrefix = gui.TextField(
+    app_class_prefix = gui.TextField(
         length=64,
         label=_('App Prefix for Class Attributes'),
         default='',
         order=11,
         tooltip=_('Application prefix for filtering groups from "Class" attribute'),
         tab=types.ui.Tab.ADVANCED,
+        old_field_name='appClassPrefix',
     )
 
-    globalGroup = gui.TextField(
+    global_group = gui.TextField(
         length=64,
         label=_('Global group'),
         default='',
         order=12,
         tooltip=_('If set, this value will be added as group for all radius users'),
         tab=types.ui.Tab.ADVANCED,
+        old_field_name='globalGroup',
     )
-    mfaAttr = gui.TextField(
+    mfa_attr = gui.TextField(
         length=2048,
         lines=2,
         label=_('MFA attribute'),
@@ -119,6 +122,7 @@ class RadiusAuth(auths.Authenticator):
         tooltip=_('Attribute from where to extract the MFA code'),
         required=False,
         tab=types.ui.Tab.MFA,
+        old_field_name='mfaAttr',
     )
 
     def initialize(self, values: typing.Optional[dict[str, typing.Any]]) -> None:
@@ -129,9 +133,9 @@ class RadiusAuth(auths.Authenticator):
         return client.RadiusClient(
             self.server.value,
             self.secret.value.encode(),
-            authPort=self.port.as_int(),
-            nasIdentifier=self.nasIdentifier.value,
-            appClassPrefix=self.appClassPrefix.value,
+            auth_port=self.port.as_int(),
+            nas_identifier=self.nas_identifier.value,
+            appclass_prefix=self.app_class_prefix.value,
         )
 
     def mfa_storage_key(self, username: str) -> str:
@@ -149,17 +153,17 @@ class RadiusAuth(auths.Authenticator):
     ) -> types.auth.AuthenticationResult:
         try:
             connection = self.radius_client()
-            groups, mfaCode, state = connection.authenticate(
-                username=username, password=credentials, mfaField=self.mfaAttr.value.strip()
+            groups, mfa_code, state = connection.authenticate(
+                username=username, password=credentials, mfa_field=self.mfa_attr.value.strip()
             )
             # If state, store in session
             if state:
                 request.session[client.STATE_VAR_NAME] = state.decode()
             # store the user mfa attribute if it is set
-            if mfaCode:
+            if mfa_code:
                 self.storage.save_pickled(
                     self.mfa_storage_key(username),
-                    mfaCode,
+                    mfa_code,
                 )
 
         except Exception:
@@ -172,8 +176,8 @@ class RadiusAuth(auths.Authenticator):
             )
             return types.auth.FAILED_AUTH
 
-        if self.globalGroup.value.strip():
-            groups.append(self.globalGroup.value.strip())
+        if self.global_group.value.strip():
+            groups.append(self.global_group.value.strip())
 
         # Cache groups for "getGroups", because radius will not send us those
         with self.storage.as_dict() as storage:

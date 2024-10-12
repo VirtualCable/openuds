@@ -116,8 +116,8 @@ class RadiusOTP(mfas.MFA):
         return client.RadiusClient(
             self.server.value,
             self.secret.value.encode(),
-            authPort=self.port.as_int(),
-            nasIdentifier=self.nas_identifier.value,
+            auth_port=self.port.as_int(),
+            nas_identifier=self.nas_identifier.value,
         )
 
     def check_result(self, action: str, request: 'ExtendedHttpRequest') -> mfas.MFA.RESULT:

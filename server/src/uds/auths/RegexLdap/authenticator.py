@@ -283,11 +283,11 @@ class RegexLdap(auths.Authenticator):
         user = ldaputil.first(
             con=self._stablish_connection(),
             base=self.ldap_base.as_str(),
-            objectClass=self.user_class.as_str(),
+            object_class=self.user_class.as_str(),
             field=self.userid_attr.as_str(),
             value=username,
             attributes=attributes,
-            sizeLimit=LDAP_RESULT_LIMIT,
+            max_entries=LDAP_RESULT_LIMIT,
         )
 
         # If user attributes is split, that is, it has more than one "ldap entry", get a second entry filtering by a new attribute

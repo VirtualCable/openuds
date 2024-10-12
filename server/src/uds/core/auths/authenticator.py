@@ -69,7 +69,7 @@ class Authenticator(Module):
 
     As always, if you override __init__, do not forget to invoke base __init__ as this::
 
-       super(self.__class__, self).__init__(self, environment, values, dbAuth)
+       super(self.__class__, self).__init__(self, environment, values, uuid)
 
     This is a MUST, so internal structured gets filled correctly, so don't forget it!.
 
@@ -85,7 +85,7 @@ class Authenticator(Module):
     so if an user do not exist at UDS database, it will not be valid.
     In other words, if you have an authenticator where you must create users,
     you can modify them, you must assign passwords manually, and group membership
-    also must be assigned manually, the authenticator is not an externalSource.
+    also must be assigned manually, the authenticator is not an external_source.
 
     As you can notice, almost avery authenticator except internal db will be
     external source, so, by default, attribute that indicates that is an external

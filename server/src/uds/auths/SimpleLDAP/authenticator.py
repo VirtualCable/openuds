@@ -280,11 +280,11 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         return ldaputil.first(
             con=self._get_connection(),
             base=self.ldap_base.as_str(),
-            objectClass=self.user_class.as_str(),
+            object_class=self.user_class.as_str(),
             field=self.user_id_attr.as_str(),
             value=username,
             attributes=attributes,
-            sizeLimit=LDAP_RESULT_LIMIT,
+            max_entries=LDAP_RESULT_LIMIT,
         )
 
     def _get_group(self, groupName: str) -> typing.Optional[ldaputil.LDAPResultType]:
@@ -296,11 +296,11 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         return ldaputil.first(
             con=self._get_connection(),
             base=self.ldap_base.as_str(),
-            objectClass=self.group_class.as_str(),
+            object_class=self.group_class.as_str(),
             field=self.group_id_attr.as_str(),
             value=groupName,
             attributes=[self.member_attr.as_str()],
-            sizeLimit=LDAP_RESULT_LIMIT,
+            max_entries=LDAP_RESULT_LIMIT,
         )
 
     def _get_groups(self, user: ldaputil.LDAPResultType) -> list[str]:

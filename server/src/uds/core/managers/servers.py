@@ -337,10 +337,10 @@ class ServerManager(metaclass=singleton.Singleton):
         Unassigns a server from an user
 
         Args:
-            userService: User service to unassign server from
-            serverGroups: Server group to unassign server from
+            userservice: User service to unassign server from
+            server_group: Server group to unassign server from
             unlock: If True, unlock server, even if it has more users assigned to it
-            userUuid: If not None, use this uuid instead of userService.user.uuid
+            user_uuid: If not None, use this uuid instead of userservice.user.uuid
         """
         user_uuid = user_uuid if user_uuid else userservice.user.uuid if userservice.user else None
 
@@ -350,37 +350,37 @@ class ServerManager(metaclass=singleton.Singleton):
         prop_name = self.property_name(userservice.user)
         with server_group.properties as props:
             with transaction.atomic():
-                resetCounter = False
+                reset_counter = False
                 # ServerCounterType
 
-                serverCounter: typing.Optional[types.servers.ServerCounter] = (
+                server_counter: typing.Optional[types.servers.ServerCounter] = (
                     types.servers.ServerCounter.from_iterable(props.get(prop_name))
                 )
                 # If no cached value, get server assignation
-                if serverCounter is None:
+                if server_counter is None:
                     return types.servers.ServerCounter.null()
                 # Ensure counter is at least 1
-                serverCounter = types.servers.ServerCounter(
-                    serverCounter.server_uuid, max(1, serverCounter.counter)
+                server_counter = types.servers.ServerCounter(
+                    server_counter.server_uuid, max(1, server_counter.counter)
                 )
-                if serverCounter.counter == 1 or unlock:
+                if server_counter.counter == 1 or unlock:
                     # Last one, remove it
                     del props[prop_name]
                 else:  # Not last one, just decrement counter
-                    props[prop_name] = (serverCounter.server_uuid, serverCounter.counter - 1)
+                    props[prop_name] = (server_counter.server_uuid, server_counter.counter - 1)
 
-            server = models.Server.objects.get(uuid=serverCounter.server_uuid)
+            server = models.Server.objects.get(uuid=server_counter.server_uuid)
 
-            if unlock or serverCounter.counter == 1:
+            if unlock or server_counter.counter == 1:
                 server.locked_until = None  # Ensure server is unlocked if no more users are assigned to it
                 server.save(update_fields=['locked_until'])
 
                 # Enure server counter is cleaned also, because server is considered "fully released"
-                resetCounter = True
+                reset_counter = True
 
             # If unmanaged, decrease usage
             if server.type == types.servers.ServerType.UNMANAGED:
-                self.decrement_unmanaged_usage(server.uuid, force_reset=resetCounter)
+                self.decrement_unmanaged_usage(server.uuid, force_reset=reset_counter)
 
             # Ensure next assignation will have updated stats
             # This is a simple simulation on cached stats, will be updated on next stats retrieval
@@ -389,7 +389,7 @@ class ServerManager(metaclass=singleton.Singleton):
 
             self.notify_release(server, userservice)
 
-        return types.servers.ServerCounter(serverCounter.server_uuid, serverCounter.counter - 1)
+        return types.servers.ServerCounter(server_counter.server_uuid, server_counter.counter - 1)
 
     def notify_preconnect(
         self,
@@ -424,12 +424,12 @@ class ServerManager(metaclass=singleton.Singleton):
     def notify_release(
         self,
         server: 'models.Server',
-        userService: 'models.UserService',
+        userservice: 'models.UserService',
     ) -> None:
         """
         Notifies release to server
         """
-        requester.ServerApiRequester(server).notify_release(userService)
+        requester.ServerApiRequester(server).notify_release(userservice)
 
     def assignation_info(self, server_group: 'models.ServerGroup') -> dict[str, int]:
         """
