@@ -130,7 +130,7 @@ class TunnelTicket(Handler):
                 log.log(user_service, types.log.LogLevel.INFO, msg)
                 # Generate new, notify only, ticket
                 notify_ticket = models.TicketStore.create_for_tunnel(
-                    userService=user_service,
+                    userservice=user_service,
                     port=port,
                     host=host,
                     extra={

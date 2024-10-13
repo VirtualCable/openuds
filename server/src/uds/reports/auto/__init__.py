@@ -118,18 +118,18 @@ class ReportAuto(Report, metaclass=ReportAutoType):
     # If True, will allow selection of multiple "source" elements
     multiple: bool = False
 
-    def getModel(self) -> type[ReportAutoModel]:
+    def get_model(self) -> type[ReportAutoModel]:
         data_source = self.data_source.split('.', maxsplit=1)[0]
 
         return REPORT_AUTOMODEL[data_source]
 
     def init_gui(self) -> None:
         # Fills datasource
-        fields.source_field_data(self.getModel(), self.source)
+        fields.source_field_data(self.get_model(), self.source)
         logger.debug('Source field data: %s', self.source)
 
     def get_model_records(self) -> collections.abc.Iterable[ReportAutoModel]:
-        model = self.getModel()
+        model = self.get_model()
 
         filters = [self.source.value] if isinstance(self.source, gui.ChoiceField) else self.source.value
 
@@ -140,14 +140,14 @@ class ReportAuto(Report, metaclass=ReportAutoType):
 
         return items
 
-    def getIntervalInHours(self) -> int:
+    def get_interval_as_hours(self) -> int:
         return {'hour': 1, 'day': 24, 'week': 24 * 7, 'month': 24 * 30}[self.interval.value]
 
-    def getIntervalsList(self) -> list[tuple[datetime.datetime, datetime.datetime]]:
+    def get_intervals_list(self) -> list[tuple[datetime.datetime, datetime.datetime]]:
         intervals: list[tuple[datetime.datetime, datetime.datetime]] = []
         # Convert start and end dates to datetime objects from date objects
-        start = datetime.datetime.combine(self.startingDate(), datetime.time.min)
-        to = datetime.datetime.combine(self.endingDate(), datetime.time.max)
+        start = datetime.datetime.combine(self.starting_date(), datetime.time.min)
+        to = datetime.datetime.combine(self.ending_date(), datetime.time.max)
         while start < to:
             if self.interval.value == 'hour':
                 intervals.append((start, start + datetime.timedelta(hours=1)))
@@ -166,18 +166,18 @@ class ReportAuto(Report, metaclass=ReportAutoType):
         logger.debug('Intervals: %s', intervals)
         return intervals
 
-    def adjustDate(self, d: datetime.date, isEndingDate: bool) -> datetime.date:
+    def adjust_date(self, d: datetime.date, is_ending_date: bool) -> datetime.date:
         if self.interval.value in ('hour', 'day'):
             return d
         if self.interval.value == 'week':
             return (d - datetime.timedelta(days=d.weekday())).replace()
         if self.interval.value == 'month':
-            if not isEndingDate:
+            if not is_ending_date:
                 return d.replace(day=1)
             return (d + datetime.timedelta(days=32)).replace(day=1) - datetime.timedelta(days=1)
         return d
 
-    def formatDatetimeAsString(self, d: datetime.date) -> str:
+    def format_datetime_as_string(self, d: datetime.date) -> str:
         if self.interval.value in ('hour', 'day'):
             return d.strftime('%Y-%b-%d %H:%M:%S')
         if self.interval.value == 'week':
@@ -186,8 +186,8 @@ class ReportAuto(Report, metaclass=ReportAutoType):
             return d.strftime('%Y-%b')
         return d.strftime('%Y-%b-%d %H:%M:%S')
 
-    def startingDate(self) -> datetime.date:
-        return self.adjustDate(self.date_start.as_date(), False)
+    def starting_date(self) -> datetime.date:
+        return self.adjust_date(self.date_start.as_date(), False)
 
-    def endingDate(self) -> datetime.date:
-        return self.adjustDate(self.date_end.as_date(), True)
+    def ending_date(self) -> datetime.date:
+        return self.adjust_date(self.date_end.as_date(), True)

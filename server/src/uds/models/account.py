@@ -58,35 +58,35 @@ class Account(UUIDModel, TaggingMixin):
     # objects: 'models.manager.Manager["Account"]'
     usages: 'models.manager.RelatedManager[AccountUsage]'
 
-    def start_accounting(self, userService: 'UserService') -> typing.Optional['AccountUsage']:
-        if hasattr(userService, 'accounting'):  # Already has an account
+    def start_accounting(self, userservice: 'UserService') -> typing.Optional['AccountUsage']:
+        if hasattr(userservice, 'accounting'):  # Already has an account
             return None
 
         start = sql_now()
 
-        if userService.user:
-            userName = userService.user.pretty_name
-            userUuid = userService.user.uuid
+        if userservice.user:
+            username = userservice.user.pretty_name
+            user_uuid = userservice.user.uuid
         else:
-            userName = '??????'
-            userUuid = '00000000-0000-0000-0000-000000000000'
+            username = '??????'
+            user_uuid = '00000000-0000-0000-0000-000000000000'
 
         return self.usages.create(
-            user_service=userService,
-            user_name=userName,
-            user_uuid=userUuid,
-            pool_name=userService.deployed_service.name,
-            pool_uuid=userService.deployed_service.uuid,
+            user_service=userservice,
+            user_name=username,
+            user_uuid=user_uuid,
+            pool_name=userservice.deployed_service.name,
+            pool_uuid=userservice.deployed_service.uuid,
             start=start,
             end=start,
         )
 
-    def stop_accounting(self, userService: 'UserService') -> typing.Optional['AccountUsage']:
+    def stop_accounting(self, userservice: 'UserService') -> typing.Optional['AccountUsage']:
         # if one to one does not exists, attr is not there
-        if not hasattr(userService, 'accounting'):
+        if not hasattr(userservice, 'accounting'):
             return None
 
-        tmp = userService.accounting
+        tmp = userservice.accounting
         tmp.user_service = None 
         tmp.end = sql_now()
         tmp.save()

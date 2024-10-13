@@ -140,19 +140,18 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         """
         return auths.factory().lookup(self.data_type) is not None
 
-    def get_or_create_user(self, username: str, realName: typing.Optional[str] = None) -> 'User':
+    def get_or_create_user(self, username: str, realname: typing.Optional[str] = None) -> 'User':
         """
         Used to get or create a new user at database associated with this authenticator.
 
-        This user has all parameter default, that are:
+        This created user has all parameter default, that are:
         * 'real_name':realName
         * 'last_access':NEVER
         * 'state':State.ACTIVE
 
         Args:
            username: The username to create and associate with this auhtenticator
-
-           realName: If None, it will be the same that username. If otherwise especified, it will be the default real_name (field)
+           realname: If None, it will be the same that username. If otherwise especified, it will be the default real_name (field)
 
         Returns:
             True if the ip can access this Transport.
@@ -169,19 +168,19 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         Raises:
         """
         user: 'User'
-        realName = realName or username
+        realname = realname or username
         user, _ = self.users.get_or_create(
             name=username,
             defaults={
-                'real_name': realName,
+                'real_name': realname,
                 'last_access': consts.NEVER,
                 'state': State.ACTIVE,
             },
         )
         if (
             user.real_name.strip() == '' or user.name.strip() == user.real_name.strip()
-        ) and realName != user.real_name:
-            user.real_name = realName or ''
+        ) and realname != user.real_name:
+            user.real_name = realname or ''
             user.save(update_fields=['real_name'])
 
         return user
@@ -298,21 +297,21 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         # pylint: disable=import-outside-toplevel
         from uds.core.util.permissions import clean
 
-        toDelete: 'Authenticator' = kwargs['instance']
+        to_delete: 'Authenticator' = kwargs['instance']
 
-        logger.debug('Before delete auth %s', toDelete)
+        logger.debug('Before delete auth %s', to_delete)
 
         # Only tries to get instance if data is not empty
-        if toDelete.data != '':
-            s = toDelete.get_instance()
+        if to_delete.data != '':
+            s = to_delete.get_instance()
             s.destroy()
             s.env.clean_related_data()
 
         # Clears related logs
-        log.clear_logs(toDelete)
+        log.clear_logs(to_delete)
 
         # Clears related permissions
-        clean(toDelete)
+        clean(to_delete)
 
     # returns CSV header
     @staticmethod

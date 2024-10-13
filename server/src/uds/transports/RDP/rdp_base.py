@@ -377,19 +377,19 @@ class BaseRDPTransport(transports.Transport):
             self.cache.set(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
-    def processed_username(self, userService: 'models.UserService', user: 'models.User') -> str:
-        v = self.process_user_password(userService, user, '', altUsername=None)
+    def processed_username(self, userservice: 'models.UserService', user: 'models.User') -> str:
+        v = self.process_user_password(userservice, user, '', alt_username=None)
         return v.username
 
     def process_user_password(
         self,
-        userService: 'models.UserService',
+        userservice: 'models.UserService',
         user: 'models.User',
         password: str,
         *,
-        altUsername: typing.Optional[str]
+        alt_username: typing.Optional[str]
     ) -> types.connections.ConnectionData:
-        username: str = altUsername or user.get_username_for_auth()
+        username: str = alt_username or user.get_username_for_auth()
 
         if self.forced_username.value:
             username = self.forced_username.value
@@ -403,10 +403,10 @@ class BaseRDPTransport(transports.Transport):
         if self.forced_password.value:
             password = self.forced_password.value
 
-        azureAd = False
+        azure_ad = False
         if self.forced_domain.value != '':
             if self.forced_domain.value.lower() == 'azuread':
-                azureAd = True
+                azure_ad = True
             else:
                 domain = self.forced_domain.value
         if self.force_empty_creds.as_bool():
@@ -424,14 +424,14 @@ class BaseRDPTransport(transports.Transport):
                 domain = ''
 
         # Fix username/password acording to os manager
-        username, password = userService.process_user_password(username, password)
+        username, password = userservice.process_user_password(username, password)
 
         # Recover domain name if needed
         if '\\' in username:
             domain, username = username.split('\\')
 
         # If AzureAD, include it on username
-        if azureAd:
+        if azure_ad:
             username = 'AzureAD\\' + username
 
         if self.wnd_optimize_teams.as_bool():
@@ -462,5 +462,5 @@ class BaseRDPTransport(transports.Transport):
             typing.cast('models.UserService', userservice),
             user,
             password,
-            altUsername=username,
+            alt_username=username,
         )

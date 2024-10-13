@@ -91,7 +91,6 @@ class TaskManager(metaclass=singleton.Singleton):
         kill task
         sleep 10
         kill -9 task
-        Take a look at killTaskManager.sh :-)
         """
         logger.info("Caught term signal, finishing task manager")
         TaskManager.manager().keep_running = False

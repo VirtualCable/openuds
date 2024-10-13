@@ -146,7 +146,7 @@ class UsageByPoolCSV(UsageByPool):
         output = io.StringIO()
         writer = csv.writer(output)
 
-        reportData = self.get_data()[0]
+        report_data = self.get_data()[0]
 
         writer.writerow(
             [
@@ -158,7 +158,7 @@ class UsageByPoolCSV(UsageByPool):
             ]
         )
 
-        for v in reportData:
+        for v in report_data:
             writer.writerow(
                 [v['date'], v['name'], v['time'], v['pool_name'], v['origin']]
             )

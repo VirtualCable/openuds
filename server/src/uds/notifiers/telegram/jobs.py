@@ -28,11 +28,11 @@ class TelegramReceiver(jobs.Job):
         logger.debug('Retrieven messages from Telegram')
 
         # Get all Notifiers that are telegram notifiers
-        for telegramDbNotifier in Notifier.objects.filter(data_type=notifier.TELEGRAM_TYPE):
-            n = typing.cast(notifier.TelegramNotifier, telegramDbNotifier.get_instance())
+        for telegram_db_notifier in Notifier.objects.filter(data_type=notifier.TELEGRAM_TYPE):
+            n = typing.cast(notifier.TelegramNotifier, telegram_db_notifier.get_instance())
 
             if not n:  # even if marked as telegram, it could be not a telegram notifier
-                logger.error('Notifier %s is not a Telegram notifier', telegramDbNotifier.name)
+                logger.error('Notifier %s is not a Telegram notifier', telegram_db_notifier.name)
                 continue
 
             n.retrieve_messages()

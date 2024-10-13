@@ -39,7 +39,7 @@ def rollback(apps: typing.Any, schema_editor: typing.Any) -> None:
         # from uds.models import UserServiceProperty, Properties, UserService
 
         for prop in Properties.objects.using(db_alias).filter(owner_type='userservice'):
-            userService = UserService.objects.using(db_alias).get(uuid=prop.owner_id)
-            UserServiceProperty.objects.using(db_alias).create(name=prop.key, value=prop.value, user_service=userService)
+            userservice = UserService.objects.using(db_alias).get(uuid=prop.owner_id)
+            UserServiceProperty.objects.using(db_alias).create(name=prop.key, value=prop.value, user_service=userservice)
     except Exception:
         logger.error('Error migrating properties', exc_info=True)

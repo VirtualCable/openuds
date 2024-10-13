@@ -53,7 +53,7 @@ class InvalidAuthenticatorException(AuthenticatorException):
 class Redirect(AuthenticatorException):
     """
     This exception indicates that a redirect is required.
-    Used in authUrlCallback to indicate that redirect is needed
+    Used in auth_url_callback to indicate that redirect is needed
     """
 
 

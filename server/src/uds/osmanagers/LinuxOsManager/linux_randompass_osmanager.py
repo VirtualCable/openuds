@@ -80,20 +80,20 @@ class LinuxRandomPassManager(LinuxOsManager):
         return username, password
 
     def gen_random_password(self, service: 'UserService') -> str:
-        randomPass = service.recover_value('linOsRandomPass')
-        if not randomPass:
-            randomPass = ''.join(
+        random_password = service.recover_value('linOsRandomPass')
+        if not random_password:
+            random_password = ''.join(
                 random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(16)
             )
-            service.store_value('linOsRandomPass', randomPass)
+            service.store_value('linOsRandomPass', random_password)
             log.log(
                 service,
                 types.log.LogLevel.INFO,
-                f'Password set to "{randomPass}"',
+                f'Password set to "{random_password}"',
                 types.log.LogSource.OSMANAGER,
             )
 
-        return randomPass
+        return random_password
 
     def actor_data(self, userservice: 'UserService') -> types.osmanagers.ActorData:
         return types.osmanagers.ActorData(

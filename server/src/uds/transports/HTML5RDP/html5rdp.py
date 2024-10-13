@@ -329,8 +329,8 @@ class HTML5RDPTransport(transports.Transport):
             self.cache.set(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
-    def processed_username(self, userService: 'models.UserService', user: 'models.User') -> str:
-        v = self.get_connection_info(userService, user, '')
+    def processed_username(self, userservice: 'models.UserService', user: 'models.User') -> str:
+        v = self.get_connection_info(userservice, user, '')
         return v.username
 
     def get_connection_info(

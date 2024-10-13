@@ -286,11 +286,11 @@ class CalendarAction(UUIDModel):
 
     def save(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         last_execution = self.last_execution or sql_now()
-        possibleNext = calendar.CalendarChecker(self.calendar).next_event(
+        possible_next = calendar.CalendarChecker(self.calendar).next_event(
             check_from=last_execution - self.offset, start_event=self.at_start
         )
-        if possibleNext:
-            self.next_execution = possibleNext + self.offset
+        if possible_next:
+            self.next_execution = possible_next + self.offset
         else:
             self.next_execution = None
 

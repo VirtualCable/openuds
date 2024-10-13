@@ -68,7 +68,7 @@ class AuthenticatorsStats(StatsReportAuto):
             # Will show a.name on every change...
             stats.append({'date': a.name, 'users': None})
 
-            for i in self.getIntervalsList():
+            for i in self.get_intervals_list():
                 start = i[0]
                 end = i[1]
                 data = [0, 0, 0]
@@ -107,7 +107,7 @@ class AuthenticatorsStats(StatsReportAuto):
 
                 stats.append(
                     {
-                        'date': self.formatDatetimeAsString(start),
+                        'date': self.format_datetime_as_string(start),
                         'users': data[0],
                         'services': data[1],
                         'user_services': data[2],

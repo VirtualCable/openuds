@@ -140,11 +140,11 @@ class EventFS(types.UDSFSInterface):
         )
         events = EventFS.get_events(year, month, day, skip)
         # Compose lines, adjsting each line length to LINELEN
-        theLines = [pretty_print(x).encode('utf-8') for x in events[:lines]]
+        lines = [pretty_print(x).encode('utf-8') for x in events[:lines]]
         # Adjust each line length to LINELEN (after encoding from utf8)
-        theLines = [x + b' ' * (LINELEN - len(x) - 1) + b'\n' for x in theLines]
+        lines = [x + b' ' * (LINELEN - len(x) - 1) + b'\n' for x in lines]
         # Return lines
-        return b''.join(theLines)[offset : offset + size]
+        return b''.join(lines)[offset : offset + size]
 
     @staticmethod
     def last_years() -> list[str]:

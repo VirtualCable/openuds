@@ -110,19 +110,21 @@ _OWNER_FROM_MODEL: typing.Final[collections.abc.Mapping[type['models.Model'], ty
 # Helpers
 # get owner by type and id
 def get_owner(
-    ownerType: types.stats.EventOwnerType, ownerId: int
+    owner_type: types.stats.EventOwnerType, owner_id: int
 ) -> 'Provider|Service|ServicePool|Authenticator|OSManager|None':
-    if ownerType == types.stats.EventOwnerType.PROVIDER:
-        return Provider.objects.get(pk=ownerId)
-    if ownerType == types.stats.EventOwnerType.SERVICE:
-        return Service.objects.get(pk=ownerId)
-    if ownerType == types.stats.EventOwnerType.SERVICEPOOL:
-        return ServicePool.objects.get(pk=ownerId)
-    if ownerType == types.stats.EventOwnerType.AUTHENTICATOR:
-        return Authenticator.objects.get(pk=ownerId)
-    if ownerType == types.stats.EventOwnerType.OSMANAGER:
-        return OSManager.objects.get(pk=ownerId)
-    return None
+    match owner_type:
+        case types.stats.EventOwnerType.PROVIDER:
+            return Provider.objects.get(pk=owner_id)
+        case types.stats.EventOwnerType.SERVICE:
+            return Service.objects.get(pk=owner_id)
+        case types.stats.EventOwnerType.SERVICEPOOL:
+            return ServicePool.objects.get(pk=owner_id)
+        case types.stats.EventOwnerType.AUTHENTICATOR:
+            return Authenticator.objects.get(pk=owner_id)
+        case types.stats.EventOwnerType.OSMANAGER:
+            return OSManager.objects.get(pk=owner_id)
+
+    return None  # Should never happen
 
 
 @dataclasses.dataclass
@@ -149,7 +151,7 @@ class EventTupleType:
 EventClass = typing.Union[Provider, Service, ServicePool, Authenticator]
 
 
-def add_event(obj: EventClass, eventType: types.stats.EventType, **kwargs: typing.Any) -> bool:
+def add_event(obj: EventClass, event_type: types.stats.EventType, **kwargs: typing.Any) -> bool:
     """
     Adds a event stat to specified object
 
@@ -160,40 +162,45 @@ def add_event(obj: EventClass, eventType: types.stats.EventType, **kwargs: typin
     note: Runtime checks are done so if we try to insert an unssuported stat, this won't be inserted and it will be logged
     """
 
-    return StatsManager.manager().add_event(_OWNER_FROM_MODEL[type(obj)], obj.id, eventType, **kwargs)
+    return StatsManager.manager().add_event(_OWNER_FROM_MODEL[type(obj)], obj.id, event_type, **kwargs)
 
 
 def get_events(
-    obj: EventClass, eventType: types.stats.EventType, **kwargs: typing.Any
+    obj: EventClass, event_type: types.stats.EventType,
+    *,
+    since: 'datetime.datetime|int|None' = None,
+    to: 'datetime.datetime|int|None' = None,
+    limit: int = 0,
+    all: bool = False,
 ) -> typing.Generator[EventTupleType, None, None]:
     """
     Get events
 
     Args:
-        obj: Obj for which to recover stats counters
-        counterType: type of counter to recover
-        since: (optional, defaults to 'Since beginning') Start date for counters to recover
-        to: (optional, defaults to 'Until end') En date for counter to recover
-        limit: (optional, defaults to 1000) Number of counter to recover. This is an 'At most' advice. The returned number of value
-               can be lower, or even 1 more than requested due to a division for retrieving object at database
-        all: (optinal), indicates that get all counters for the type of obj passed in, not only for that obj.
+        obj: Object to get events from
+        event_type: Type of event to get
+        since: From when to get events
+        to: To when to get events
+        limit: Max number of results to get
+        all: If True, gets events from all objects of the same type
 
     Returns:
         A generator, that contains pairs of (stamp, value) tuples
     """
-    objType = type(obj)
+    object_type = type(obj)
 
-    if kwargs.get('all', False):
+    if not all:
         owner_id = None
     else:
         owner_id = obj.pk
 
     for i in StatsManager.manager().enumerate_events(
-        _OWNER_FROM_MODEL[objType],
-        eventType,
+        _OWNER_FROM_MODEL[object_type],
+        event_type,
         owner_id=owner_id,
-        since=kwargs.get('since'),
-        to=kwargs.get('to'),
+        since=since,
+        to=to,
+        limit=limit,
     ):
         yield EventTupleType(
             datetime.datetime.fromtimestamp(i.stamp),

@@ -74,24 +74,25 @@ class SMSMFA(mfas.MFA):
 
     The fields will have the following values:
 
-    sendingUrl: https://myserver.com/sendsms
-    ignoreCertificateErrors: False  (check certificate errors)
-    sendingMethod: 1 (POST)
-    headersParameters:
+    url_pattern: https://myserver.com/sendsms
+    ignore_certificate_errors: False  (check certificate errors)
+    http_method: 1 (POST)
+    headers_parameters:
        Auth: 1234567890
        Content-Type: application/x-www-form-urlencoded
        NonsenseExtraHeader: This is a nonsense example header
-    sendingParameters: phone={phone}&message={message}
+    parameters: phone={phone}&message={message}
     encoding: 0 (UTF-8)
-    authenticationMethod: 0 (No authentication, already done in the headers field)
-    authenticationUserOrToken: (empty)
-    authenticationPassword: (empty)
-    responseOkRegex: {"status": "ok"}  (This is a regex. Only 2xx,3xx responses will be considered ok)
-    responseErrorAction: 1 (Deny login)
-    allowLoginWithoutMFA: 1 (If MFA Field (in our example, phone) is not provided, deny login)
-    networks: (empty) (If not empty, only users from this networks will be allowed to use this MFA)
+    auth_method: 0 (No authentication, already done in the headers field)
+    auth_user_or_token: (empty)
+    auth_password: (empty)
+    valid_response_re: {"status": "ok"}  (This is a regex. Only 2xx,3xx responses will be considered ok)
+    response_error_action: 1 (Deny login)
+    login_without_mfa_policy: 1 (If MFA Field (in our example, phone) is not provided, deny login)
 
-
+    # following fields are not used in this example
+    login_without_mfa_policy_networks
+    allow_skip_mfa_from_networks
     """
 
     type_name = _('SMS via HTTP')
@@ -254,7 +255,7 @@ class SMSMFA(mfas.MFA):
     def build_sms_url(
         self,
         userid: str,  # pylint: disable=unused-argument
-        userName: str,
+        username: str,
         code: str,
         phone: str,
     ) -> str:
@@ -262,8 +263,8 @@ class SMSMFA(mfas.MFA):
         url = url.replace('{code}', code)
         url = url.replace('{phone}', phone.replace('+', ''))
         url = url.replace('{+phone}', phone)
-        url = url.replace('{username}', userName)
-        url = url.replace('{justUsername}', userName.split('@')[0])
+        url = url.replace('{username}', username)
+        url = url.replace('{justUsername}', username.split('@')[0])
         return url
 
     def ask_for_otp(self, request: 'ExtendedHttpRequest') -> bool:
@@ -273,7 +274,10 @@ class SMSMFA(mfas.MFA):
         Returns:
             True if we need to ask for OTP
         """
-        return not any(request.ip in i for i in models.Network.objects.filter(uuid__in=self.login_without_mfa_policy_networks.value))
+        return not any(
+            request.ip in i
+            for i in models.Network.objects.filter(uuid__in=self.login_without_mfa_policy_networks.value)
+        )
 
     def get_session(self) -> requests.Session:
         session = security.secure_requests_session(verify=self.ignore_certificate_errors.as_bool())
@@ -294,12 +298,14 @@ class SMSMFA(mfas.MFA):
         if self.headers_parameters.value.strip():
             for header in self.headers_parameters.value.split('\n'):
                 if header.strip():
-                    headerName, headerValue = header.split(':', 1)
-                    session.headers[headerName.strip()] = headerValue.strip()
+                    header_name, header_value = header.split(':', 1)
+                    session.headers[header_name.strip()] = header_value.strip()
         return session
 
     def allow_login_without_identifier(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
-        return mfas.LoginAllowed.check_action(self.login_without_mfa_policy.value, request, self.login_without_mfa_policy_networks.value)
+        return mfas.LoginAllowed.check_action(
+            self.login_without_mfa_policy.value, request, self.login_without_mfa_policy_networks.value
+        )
 
     def process(
         self,
@@ -323,7 +329,9 @@ class SMSMFA(mfas.MFA):
                 response.status_code,
                 response.text,
             )
-            if not mfas.LoginAllowed.check_action(self.response_error_action.value, request, self.login_without_mfa_policy_networks.value):
+            if not mfas.LoginAllowed.check_action(
+                self.response_error_action.value, request, self.login_without_mfa_policy_networks.value
+            ):
                 raise Exception(_('SMS sending failed'))
             return mfas.MFA.RESULT.ALLOWED  # Allow login, NO MFA code was sent
         if self.valid_response_re.value.strip():

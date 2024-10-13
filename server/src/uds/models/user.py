@@ -164,18 +164,18 @@ class User(UUIDModel, properties.PropertiesMixin):
                 number_belongs_meta=Count('groups', filter=Q(groups__id__in=grps))
             )  # g.groups.filter(id__in=grps).count()
         ):
-            numberGroupsBelongingInMeta: int = typing.cast(typing.Any, g).number_belongs_meta  # Anotated field
+            number_of_groups_belonging_in_meta: int = typing.cast(typing.Any, g).number_belongs_meta  # Anotated field
 
-            logger.debug('gn = %s', numberGroupsBelongingInMeta)
+            logger.debug('gn = %s', number_of_groups_belonging_in_meta)
             logger.debug('groups count: %s', typing.cast(typing.Any, g).number_groups)  # Anotated field
 
-            if g.meta_if_any is True and numberGroupsBelongingInMeta > 0:
-                numberGroupsBelongingInMeta = typing.cast(typing.Any, g).number_groups  # Anotated field
+            if g.meta_if_any is True and number_of_groups_belonging_in_meta > 0:
+                number_of_groups_belonging_in_meta = typing.cast(typing.Any, g).number_groups  # Anotated field
 
-            logger.debug('gn after = %s', numberGroupsBelongingInMeta)
+            logger.debug('gn after = %s', number_of_groups_belonging_in_meta)
 
             # If a meta group is empty, all users belongs to it. we can use gn != 0 to check that if it is empty, is not valid
-            if numberGroupsBelongingInMeta == typing.cast(typing.Any, g).number_groups:
+            if number_of_groups_belonging_in_meta == typing.cast(typing.Any, g).number_groups:
                 # This group matches
                 yield g
 
@@ -195,7 +195,7 @@ class User(UUIDModel, properties.PropertiesMixin):
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
-        In this case, this method ensures that the user has no userServices assigned and, if it has,
+        In this case, this method ensures that the user has no userservices assigned and, if it has,
         mark those services for removal
 
         :note: If destroy raises an exception, the deletion is not taken.

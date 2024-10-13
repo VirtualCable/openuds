@@ -39,7 +39,7 @@ logger = logging.getLogger(__name__)
 
 
 class UniqueMacGenerator(UniqueGenerator):
-    __slots__ = ('_macRange',)
+    __slots__ = ()
 
     def __init__(self, owner: str) -> None:
         super().__init__(owner, '\tmac')
@@ -57,8 +57,8 @@ class UniqueMacGenerator(UniqueGenerator):
         first_mac, last_mac = mac_range.split('-')
         return self._to_mac_addr(super()._get(self._to_int(first_mac), self._to_int(last_mac)))
 
-    def transfer(self, seq: str, to_generator: 'UniqueMacGenerator') -> bool:
-        return super()._transfer(self._to_int(seq), to_generator)
+    def transfer(self, seq: str, target_mac_generator: 'UniqueMacGenerator') -> bool:
+        return super()._transfer(self._to_int(seq), target_mac_generator)
 
     def free(self, seq: str) -> None:
         super()._free(self._to_int(seq))

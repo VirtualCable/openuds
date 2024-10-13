@@ -121,18 +121,18 @@ class UsageSummaryByUsersPool(StatsReport):
         return self.get_pool_data(ServicePool.objects.get(uuid=self.pool.value))
 
     def generate(self) -> bytes:
-        items, poolName = self.get_data()
+        items, pool_name = self.get_data()
 
         return self.template_as_pdf(
             'uds/reports/stats/pool-users-summary.html',
             dct={
                 'data': items,
-                'pool': poolName,
+                'pool': pool_name,
                 'beginning': self.start_date.as_date(),
                 'ending': self.end_date.as_date(),
             },
-            header=gettext('Users usage list for {}').format(poolName),
-            water=gettext('UDS Report of users in {}').format(poolName),
+            header=gettext('Users usage list for {}').format(pool_name),
+            water=gettext('UDS Report of users in {}').format(pool_name),
         )
 
 
@@ -151,7 +151,7 @@ class UsageSummaryByUsersPoolCSV(UsageSummaryByUsersPool):
         output = io.StringIO()
         writer = csv.writer(output)
 
-        reportData = self.get_data()[0]
+        report_data = self.get_data()[0]
 
         writer.writerow(
             [
@@ -162,7 +162,7 @@ class UsageSummaryByUsersPoolCSV(UsageSummaryByUsersPool):
             ]
         )
 
-        for v in reportData:
+        for v in report_data:
             writer.writerow([v['user'], v['sessions'], v['hours'], v['average']])
 
         return output.getvalue().encode()

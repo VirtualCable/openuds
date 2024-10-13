@@ -178,9 +178,18 @@ class Authenticator(Module):
     ):
         """
         Instantiathes the authenticator.
-        @param dbAuth: Database object for the authenticator
-        @param environment: Environment for the authenticator
-        @param values: Values passed to element
+
+        Args:
+            environment: Environment for the authenticator
+            values: Values passed to element
+            uuid: UUID of the authenticator on database, if any.
+
+        Notes:
+            Values is None if "unmarshalling" from DB, and is not None if
+            we are creating the authenticator from administration interface.
+            (Note that other origins can have values, but these are the main ones)
+
+            Same applies to uuid, that will be None if we are creating the authenticator.
         """
         super().__init__(environment, values, uuid=uuid)
         self.initialize(values)
@@ -227,10 +236,10 @@ class Authenticator(Module):
         )
 
         if self.external_source:
-            groupsManager = GroupsManager(self.db_obj())
-            self.get_groups(user.name, groupsManager)
+            groups_manager = GroupsManager(self.db_obj())
+            self.get_groups(user.name, groups_manager)
             # cast for typechecking. user.groups is a "simmmilar to a QuerySet", but it's not a QuerySet, so "set" is not there
-            typing.cast(typing.Any, user.groups).set([g.db_obj() for g in groupsManager.enumerate_valid_groups()])
+            user.groups.set([g.db_obj() for g in groups_manager.enumerate_valid_groups()])
 
     def callback_url(self) -> str:
         """
@@ -254,7 +263,10 @@ class Authenticator(Module):
     @classmethod
     def is_custom(cls) -> bool:
         """
-        Helper to query if a class is custom (implements getJavascript method)
+        Helper to query if a class is custom (implements get_javascript method)
+
+        Returns:
+            True if the class has a custom authentication method (and in consequence, a custom javascript)
         """
         return cls.get_javascript is not Authenticator.get_javascript
 
@@ -305,12 +317,12 @@ class Authenticator(Module):
         If this method is provided by an authenticator, the user will be allowed to enter a MFA code
         You must return the value used by a MFA provider to identify the user (i.e. email, phone number, etc)
         If not provided, or the return value is '', the user will be allowed to access UDS without MFA
-        only if the mfa itself allows empty mfaIdentifier. (look at mfa base, allow_login_without_identifier)
+        only if the mfa itself allows empty mfa_identifier. (look at mfa base, allow_login_without_identifier)
 
         Note: Field capture will be responsible of provider. Put it on MFA tab of user form.
-              Take into consideration that mfaIdentifier will never be invoked if the user has not been
+              Take into consideration that mfa_identifier will never be invoked if the user has not been
               previously authenticated. (that is, authenticate method has already been called)
-              So, you can store the mfaIdentifier at authenticate method, and return it here for example.
+              So, you can store the mfa_identifier at authenticate method, and return it here for example.
         """
         return ''
 
@@ -349,21 +361,28 @@ class Authenticator(Module):
         Args:
             username: User name to authenticate
             credentials: Credentials for this user, (password, pki, or whatever needs to be used). (string)
-            groupsManager: Group manager to modify with groups to which this users belongs to.
+            groups_manager: Group manager to modify with groups to which this users belongs to.
+            request: HttpRequest object
 
         Returns:
+            An authentication result indicating:
+                * success:  AuthenticationState.SUCESS if authentication is valid
+                            AuthenticationState.FAIL if authentication is invalid
+                * username: Username of the user, if success is True
+                * url: Url to redirect to, if success is AuthenticationState.REDIRECT
 
         See uds.core.auths.groups_manager
 
-        :note: This method must check not only that the user has valid credentials, but also
-               check the valid groups from groupsManager.
-               If this method returns false, of method getValidGroups of the groupsManager
-               passed into this method has no elements, the user will be considered invalid.
-               So remember to check validity of groups this user belongs to (inside the authenticator,
-               not inside UDS) using groupsManager.validate(group to which this users belongs to).
+        Note:
+            This method must check not only that the user has valid credentials, but also
+            check the valid groups from groupsmanager.
+            If this method returns FAIL, of method get_valid_groups of the groups_manager
+            passed into this method has no elements, the user will be considered invalid.
+            So remember to check validity of groups this user belongs to (inside the authenticator,
+            not inside UDS) using groups_mnager.validate(group or groups) to which this users belongs to).
 
-               This is done in this way, because UDS has only a subset of groups for this user, and
-               we let the authenticator decide inside wich groups of UDS this users is included.
+            This is done in this way, because UDS has only a subset of groups for this user, and
+            we let the authenticator decide inside wich groups of UDS this users is included.
         """
         return types.auth.FAILED_AUTH
 
@@ -374,9 +393,7 @@ class Authenticator(Module):
         # Maybe "internal for root", if this is the case, it is valid for all ips
         if not self.db_obj().id:
             return True
-        return self.db_obj().state != consts.auth.DISABLED and self.db_obj().is_ip_allowed(
-            request.ip
-        )
+        return self.db_obj().state != consts.auth.DISABLED and self.db_obj().is_ip_allowed(request.ip)
 
     def transformed_username(
         self,
@@ -405,7 +422,7 @@ class Authenticator(Module):
         """
         Invoked whenever an user logs out.
 
-        Notice that authenticators that provides getJavascript method are considered "custom", and
+        Notice that authenticators that provides get_javascript method are considered "custom", and
         these authenticators will never be used to allow an user to access administration interface
         (they will be filtered out)
 
@@ -446,7 +463,7 @@ class Authenticator(Module):
         Returns:
             Nothing
 
-        :note: This method will be invoked whenever the webLogout is requested. It receives request & response so auth cna
+        :note: This method will be invoked whenever the web_logout is requested. It receives request & response so auth cna
                make changes (for example, on cookies) to it.
 
         '''
@@ -511,14 +528,15 @@ class Authenticator(Module):
 
         So, if this callback is called, also get the membership to groups of the user, and keep them.
         This method will have to keep track of those until UDS request that groups
-        using getGroups. (This is easy, using storage() provided with the environment (env())
+        using get_groups. (This is easy, using storage() provided with the environment (env())
 
         If this returns None, or empty, the authentication will be considered "invalid"
         and an error will be shown.
 
         Args:
             parameters: all GET and POST received parameters. Also has "_request" key, that points to HttpRequest
-            gm: Groups manager, you MUST check group membership using this gm
+            groups_manager: Groups manager, you MUST check group membership using this gm
+            request: ExtendedHttpRequest object
 
         Return:
             An AuthResult object, with:
@@ -526,9 +544,10 @@ class Authenticator(Module):
                 * username: Username of the user, if success is True
                 * url: Url to redirect to,
 
-        :note: Keeping user information about group membership inside storage is highly recommended.
-               There will be calls to getGroups one an again, and also to getRealName, not just
-               at login, but at future (from admin interface, at user editing for example)
+        Note:
+            Keeping user information about group membership inside storage is highly recommended.
+            There will be calls to get_groups one an again, and also to get_real_name, not just
+            at login, but at future (from admin interface, at user editing for example)
         """
         return types.auth.FAILED_AUTH
 
@@ -556,31 +575,32 @@ class Authenticator(Module):
         """
         This method is used when creating an user to allow the authenticator:
 
-            * Check that the name inside usrData is fine
-            * Fill other (not name, if you don't know what are you doing) usrData dictionary values.
+            * Check that the name inside user_data is fine
+            * Fill other (avoid modifying name, if you don't know what are you doing) user_data dictionary values.
 
         This will be invoked from admin interface, when admin wants to create a new user
 
-        modified usrData will be used to store values at database.
+        modified user_dta will be used to store values at database.
 
         Args:
-            usrData: Contains data received from user directly, that is a dictionary
-                     with at least: name, real_name, comments, state & password.
-                     This is an in/out parameter, so you can modify, for example,
-                     **realName**
+            user_data: Contains data received from user directly, that is a dictionary
+                with at least: name, real_name, comments, state & password.
+                This is an in/out parameter, so you can modify, for example,
+                **realName**
 
         Returns:
             Raises an exception if things didn't went fine,
-            return value is ignored, but modified usrData is used if this does not
+            return value is ignored, but modified user_data is used if this does not
             raises an exception.
 
             Take care with whatever you modify here, you can even modify provided
             name (login name!) to a new one!
 
-        :note: If you have an SSO where you can't create an user from admin interface,
-               raise an exception here indicating that the creation can't be done.
-               Default implementation simply raises "AuthenticatorException" and
-               says that user can't be created manually
+        Note:
+            If you have an SSO where you can't create an user from admin interface,
+            raise an exception here indicating that the creation can't be done.
+            Default implementation simply raises "AuthenticatorException" and
+            says that user can't be created manually
 
         """
         pass
@@ -589,34 +609,34 @@ class Authenticator(Module):
         """
         This method is used when modifying an user to allow the authenticator:
 
-            * Check that the name inside usrData is fine
-            * Fill other (not name, if you don't know what are you doing) usrData dictionary values.
+            * Check that the name inside user_data is fine
+            * Fill other (avoid modifying name, if you don't know what are you doing) user_data dictionary values.
 
         Args:
-            usrData: Contains data received from user directly, that is a dictionary
-                     with at least: name, real_name, comments, state & password.
-                     This is an in/out parameter, so you can modify, for example,
-                     **realName**
-
+            user_data: Contains data received from user directly, that is a dictionary
+                with at least: name, real_name, comments, state & password.
+                This is an in/out parameter, so you can modify, for example,
+                **realName**
 
         Returns:
             Raises an exception if things didn't went fine,
-            return value is ignored, but modified usrData is used if this does not
+            return value is ignored, but modified user_data is used if this does not
             raises an exception.
 
             Take care with whatever you modify here, you can even modify provided
             name (login name!) to a new one!
 
-        :note: By default, this will do nothing, as we can only modify "accesory" internal
-               data of users.
+        Note:
+            By default, this will do nothing, as we can only modify "accesory" internal
+            data of users.
         """
 
     def create_group(self, group_data: dict[str, str]) -> None:
         """
         This method is used when creating a new group to allow the authenticator:
 
-            * Check that the name inside groupData is fine
-            * Fill other (not name, if you don't know what are you doing) usrData dictionary values.
+            * Check that the name inside group_data is fine
+            * Fill other (not name, if you don't know what are you doing) user_data dictionary values.
 
         This will be invoked from admin interface, when admin wants to create a new group.
 
@@ -631,9 +651,10 @@ class Authenticator(Module):
 
         Returns:
             Raises an exception if things didn't went fine,
-            return value is ignored, but modified groupData is used if this does not
+            return value is ignored, but modified group_data is used if this does not
             raises an exception.
 
+        Note:
             Take care with whatever you modify here, you can even modify provided
             name (group name) to a new one!
         """
@@ -642,22 +663,22 @@ class Authenticator(Module):
         """
         This method is used when modifying group to allow the authenticator:
 
-            * Check that the name inside groupData is fine
-            * Fill other (not name, if you don't know what are you doing) usrData dictionary values.
+            * Check that the name inside group_data is fine
+            * Fill other (not name, if you don't know what are you doing) usr_data dictionary values.
 
         This will be invoked from admin interface, when admin wants to create a new group.
 
-        modified groupData will be used to store values at database.
+        modified group_data will be used to store values at database.
 
         Args:
-            groupData: Contains data received from user directly, that is a dictionary
+            group_data: Contains data received from user directly, that is a dictionary
                        with at least: name, comments and state. (State.ACTIVE, State.INACTIVE)
                        This is an in/out parameter, so you can modify, for example,
                        **comments**
 
         Returns:
             Raises an exception if things didn't went fine,
-            return value is ignored, but modified groupData is used if this does not
+            return value is ignored, but modified group_data is used if this does not
             raises an exception.
 
         Note: 'name' output parameter will be ignored

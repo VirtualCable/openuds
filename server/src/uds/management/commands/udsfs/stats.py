@@ -195,9 +195,9 @@ class StatsFS(types.UDSFSInterface):
 
         # if interval is today, cache time is 10 seconds, else cache time is 60 seconds
         if interval.duration == StatsFS._interval['today']:
-            cacheTime = 10
+            cache_time = 10
         else:
-            cacheTime = 60
+            cache_time = 60
 
         # Check if the file info is cached
         cached = self._cache.get(path[0] + extension)
@@ -207,7 +207,7 @@ class StatsFS(types.UDSFSInterface):
         else:
             logger.debug('Cache miss for %s', path[0])
             data = dispatcher(interval, extension, 0, 0)
-            self._cache.set(path[0] + extension, data, cacheTime)
+            self._cache.set(path[0] + extension, data, cache_time)
 
         # Calculate the size of the file
         size = len(data)
@@ -227,9 +227,9 @@ class StatsFS(types.UDSFSInterface):
 
         # if interval is today, cache time is 10 seconds, else cache time is 60 seconds
         if interval.duration == StatsFS._interval['today']:
-            cacheTime = 10
+            cache_time = 10
         else:
-            cacheTime = 60
+            cache_time = 60
 
         # Check if the file info is cached
         cached = self._cache.get(path[0] + extension)
@@ -239,7 +239,7 @@ class StatsFS(types.UDSFSInterface):
         else:
             logger.debug('Cache miss for %s', path[0])
             data = dispatcher(interval, extension, 0, 0)
-            self._cache.set(path[0] + extension, data, cacheTime)
+            self._cache.set(path[0] + extension, data, cache_time)
 
         # Dispatch the read to the dispatcher
         data = dispatcher(interval, extension, size, offset)
@@ -256,14 +256,14 @@ class StatsFS(types.UDSFSInterface):
             size,
         )
         # Get stats events from last 24 hours (in UTC) stamp is unix timestamp
-        virtualFile = models.StatsEvents.get_csv_header().encode() + b'\n'
+        virtual_file = models.StatsEvents.get_csv_header().encode() + b'\n'
         # stamp is unix timestamp
         for record in models.StatsEvents.objects.filter(
             stamp__gte=interval.start_timestamp, stamp__lte=interval.end_timestamp
         ):
-            virtualFile += record.as_csv().encode() + b'\n'
+            virtual_file += record.as_csv().encode() + b'\n'
 
-        return virtualFile
+        return virtual_file
 
     def _read_pools(self, interval: StatInterval, extension: str, size: int, offset: int) -> bytes:
         logger.debug(
@@ -274,11 +274,11 @@ class StatsFS(types.UDSFSInterface):
             size,
         )
         # Compose the csv file from what we now of service pools
-        virtualFile = models.ServicePool.get_cvs_header().encode() + b'\n'
+        virtual_file = models.ServicePool.get_cvs_header().encode() + b'\n'
         # First, get the list of service pools
         for pool in models.ServicePool.objects.all().order_by('name'):
-            virtualFile += pool.as_cvs().encode() + b'\n'
-        return virtualFile
+            virtual_file += pool.as_cvs().encode() + b'\n'
+        return virtual_file
 
     def _read_auths(self, interval: StatInterval, extension: str, size: int, offset: int) -> bytes:
         logger.debug(
@@ -289,8 +289,8 @@ class StatsFS(types.UDSFSInterface):
             size,
         )
         # Compose the csv file from what we now of service pools
-        virtualFile = models.Authenticator.get_cvs_header().encode() + b'\n'
+        virtual_file = models.Authenticator.get_cvs_header().encode() + b'\n'
         # First, get the list of service pools
         for auth in models.Authenticator.objects.all().order_by('name'):
-            virtualFile += auth.to_csv().encode() + b'\n'
-        return virtualFile
+            virtual_file += auth.to_csv().encode() + b'\n'
+        return virtual_file

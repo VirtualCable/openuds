@@ -74,9 +74,9 @@ class CountersPoolAssigned(StatsReport):
         data: list[dict[str, typing.Any]] = []
 
         pool: ServicePool
-        for poolUuid in self.pools.value:
+        for pool_uuid in self.pools.value:
             try:
-                pool = ServicePool.objects.get(uuid=poolUuid)
+                pool = ServicePool.objects.get(uuid=pool_uuid)
             except Exception:  # nosec:  If not found, simple ignore it and go for next
                 continue
 

@@ -109,8 +109,12 @@ class Environment:
         The idea of generator of id is to obtain at some moment Ids with a proper generator.
         If the environment do not contains generators of id, this method will return None.
         The id generator feature is used by User Services to obtain different auto-id generators, as macs or names
-        @param generatorId: Id of the generator to obtain
-        @return: Generator for that id, or None if no generator for that id is found
+        
+        Args:
+            generator_id: Id of the generator to obtain
+            
+        Returns:
+            Generator for that id, or None if no generator for that id is found
         """
         if not self._id_generators or generator_id not in self._id_generators:
             raise Exception(f'No generator found for {generator_id}')
@@ -141,12 +145,14 @@ class Environment:
         From a table name, and a id, tries to load the associated environment or creates a new
         one if no environment exists at database. The table name and the id are used to obtain the key
         for the environment, so each element at database can have its own environment.
-        @param tblName: Table name
-        @param id_: Id of the element (normally primary key of the record for which we want an environment)
-        @param idGeneratorsTypes: Associated Generators. Defaults to none
-        @return: Obtained associated environment (may be empty if none exists at database, but it will be valid)
+        
+        Args:
+            table_name: Table name
+            record_id: Id of the element (normally primary key of the record for which we want an environment)
+            
+        Returns:
+            Obtained associated environment (may be empty if none exists at database, but it will be valid)
         """
-
         if isinstance(record_id, int):  # So we keep zero int value
             record_id = str(record_id)
         record_id = record_id or ''  # If no record id, get environment for table instead of record
@@ -272,14 +278,14 @@ class Environmentable:
         """
         return self._env.storage
 
-    def id_generator(self, generatorId: str) -> 'UniqueGenerator':
+    def id_generator(self, generator_id: str) -> 'UniqueGenerator':
         """
         Utility method to access the id generator of the environment containe by this object
 
         Args:
-            generatorId: Id of the generator to obtain
+            generator_id: Id of the generator to obtain
 
         Returns:
             Generator for the object and the id specified
         """
-        return self._env.id_generator(generatorId)
+        return self._env.id_generator(generator_id)

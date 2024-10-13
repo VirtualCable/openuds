@@ -57,7 +57,7 @@ class ListReportAuditCSV(ListReport):
     encoded = False
     # PDF Report of audit logs is extremely slow on pdf, so we will use csv only
 
-    startDate = gui.DateField(
+    start_date = gui.DateField(
         order=2,
         label=_('Starting date'),
         tooltip=_('starting date for report'),
@@ -65,7 +65,7 @@ class ListReportAuditCSV(ListReport):
         required=True,
     )
 
-    endDate = gui.DateField(
+    end_date = gui.DateField(
         order=3,
         label=_('Finish date'),
         tooltip=_('finish date for report'),
@@ -76,15 +76,15 @@ class ListReportAuditCSV(ListReport):
     uuid = 'b5f5ebc8-44e9-11ed-97a9-efa619da6a49'
 
     # Generator of data
-    def genData(self) -> typing.Generator[tuple[typing.Any, typing.Any, typing.Any, typing.Any, typing.Any, typing.Any], None, None]:
+    def gen_data(self) -> typing.Generator[tuple[typing.Any, typing.Any, typing.Any, typing.Any, typing.Any, typing.Any], None, None]:
         # Xtract user method, response_code and request from data
         # the format is "user: [method/response_code] request"
         rx = re.compile(
             r'(?P<ip>[^\[ ]*) *(?P<user>.*?): \[(?P<method>[^/]*)/(?P<response_code>[^\]]*)\] (?P<request>.*)'
         )
 
-        start = self.startDate.as_datetime().replace(hour=0, minute=0, second=0, microsecond=0)
-        end = self.endDate.as_datetime().replace(hour=23, minute=59, second=59, microsecond=999999)
+        start = self.start_date.as_datetime().replace(hour=0, minute=0, second=0, microsecond=0)
+        end = self.end_date.as_datetime().replace(hour=23, minute=59, second=59, microsecond=999999)
         for i in Log.objects.filter(
             created__gte=start,
             created__lte=end,
@@ -143,7 +143,7 @@ class ListReportAuditCSV(ListReport):
             ]
         )
 
-        for l in self.genData():
+        for l in self.gen_data():
             writer.writerow(l)
 
         return output.getvalue().encode()

@@ -56,7 +56,7 @@ class PoolsUsageSummary(UsageByPool):
     start_date = UsageByPool.start_date
     end_date = UsageByPool.end_date
 
-    def processedData(
+    def processed_data(
         self,
     ) -> tuple[
         typing.ValuesView[collections.abc.MutableMapping[str, typing.Any]], int, int, int
@@ -64,8 +64,8 @@ class PoolsUsageSummary(UsageByPool):
         orig, _pool_names = super().get_data()  # pylint: disable=unused-variable  # Keep name for reference
 
         pools: dict[str, dict[str, typing.Any]] = {}
-        totalTime: int = 0
-        totalCount: int = 0
+        total_time: int = 0
+        total_count: int = 0
 
         unique_users: set[str] = set()
 
@@ -84,23 +84,23 @@ class PoolsUsageSummary(UsageByPool):
             pools[uuid]['users'].add(v['name'])
             unique_users.add(v['name'])
 
-            totalTime += v['time']
-            totalCount += 1
+            total_time += v['time']
+            total_count += 1
 
         logger.debug('Pools %s', pools)
         # Remove unique users, and keep only counts...
         for _, pn in pools.items():
             pn['users'] = len(pn['users'])
 
-        return pools.values(), totalTime, totalCount or 1, len(unique_users)
+        return pools.values(), total_time, total_count or 1, len(unique_users)
 
     def generate(self) -> bytes:
-        pools, totalTime, totalCount, uniqueUsers = self.processedData()
+        pools, total_time, total_count, unique_users = self.processed_data()
 
         start = self.start_date.as_str()
         end = self.end_date.as_str()
 
-        logger.debug('Pools: %s --- %s  --- %s', pools, totalTime, totalCount)
+        logger.debug('Pools: %s --- %s  --- %s', pools, total_time, total_count)
 
         return self.template_as_pdf(
             'uds/reports/stats/pools-usage-summary.html',
@@ -117,10 +117,10 @@ class PoolsUsageSummary(UsageByPool):
                     }
                     for p in pools
                 ),
-                'time': str(datetime.timedelta(seconds=totalTime)),
-                'count': totalCount,
-                'users': uniqueUsers,
-                'mean': str(datetime.timedelta(seconds=totalTime // totalCount)),
+                'time': str(datetime.timedelta(seconds=total_time)),
+                'count': total_count,
+                'users': unique_users,
+                'mean': str(datetime.timedelta(seconds=total_time // total_count)),
                 'start': start,
                 'end': end,
             },
@@ -150,7 +150,7 @@ class PoolsUsageSummaryCSV(PoolsUsageSummary):
         output = io.StringIO()
         writer = csv.writer(output)
 
-        reportData, totalTime, totalCount, totalUsers = self.processedData()
+        report_data, total_time, total_count, total_users = self.processed_data()
 
         writer.writerow(
             [
@@ -162,7 +162,7 @@ class PoolsUsageSummaryCSV(PoolsUsageSummary):
             ]
         )
 
-        for v in reportData:
+        for v in report_data:
             writer.writerow(
                 [v['name'], v['time'], v['count'], v['users'], v['time'] // v['count']]
             )
@@ -170,10 +170,10 @@ class PoolsUsageSummaryCSV(PoolsUsageSummary):
         writer.writerow(
             [
                 gettext('Total'),
-                totalTime,
-                totalCount,
-                totalUsers,
-                totalTime // totalCount,
+                total_time,
+                total_count,
+                total_users,
+                total_time // total_count,
             ]
         )
 

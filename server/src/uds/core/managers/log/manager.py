@@ -155,7 +155,7 @@ class LogManager(metaclass=singleton.Singleton):
 
     def clear_logs(self, db_object: typing.Optional['Model']) -> None:
         """
-        Clears all logs related to wichObject
+        Clears all logs related to db_object
 
         Used mainly at object database removal (parent object)
         """

@@ -173,19 +173,19 @@ class Service(ManagedObjectModel, TaggingMixin):
     def test_connectivity(self, host: str, port: typing.Union[str, int], timeout: float = 4) -> bool:
         return net.test_connectivity(host, int(port), timeout)
 
-    def notify_preconnect(self, userService: 'UserService', info: 'types.connections.ConnectionData') -> None:
+    def notify_preconnect(self, userservice: 'UserService', info: 'types.connections.ConnectionData') -> None:
         """
         Notify preconnect event to service, so it can do whatever it needs to do before connecting
 
         Args:
-            userService: User service that is going to be connected
+            userservice: User service that is going to be connected
             info: Connection data
 
         Note:
             Override this method if you need to do something before connecting to a service
             (i.e. invoke notify_preconnect using a Server, or whatever you need to do)
         """
-        logger.warning('No actor notification available for user service %s', userService.friendly_name)
+        logger.warning('No actor notification available for user service %s', userservice.friendly_name)
 
     @property
     def old_max_accounting_method(self) -> bool:

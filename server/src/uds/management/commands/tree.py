@@ -56,7 +56,7 @@ CONSIDERED_OLD: typing.Final[datetime.timedelta] = datetime.timedelta(days=365)
 
 def get_serialized_from_managed_object(
     mod: 'models.ManagedObjectModel',
-    removableFields: typing.Optional[list[str]] = None,
+    removable_fields: typing.Optional[list[str]] = None,
 ) -> collections.abc.Mapping[str, typing.Any]:
     try:
         obj: 'Module' = mod.get_instance()
@@ -73,7 +73,7 @@ def get_serialized_from_managed_object(
             if i in values:
                 values[i] = '********'
         # remove removable fields
-        for i in removableFields or []:
+        for i in removable_fields or []:
             if i in values:
                 del values[i]
         # Append type_name to list
@@ -329,19 +329,19 @@ class Command(BaseCommand):
 
             # Gallery
             gallery: dict[str, typing.Any] = {}
-            for galleryItem in models.Image.objects.all():
-                gallery[galleryItem.name] = {
-                    'size': f'{galleryItem.width}x{galleryItem.height}',
-                    'stamp': galleryItem.stamp,
-                    'length': galleryItem.length,
+            for gallery_item in models.Image.objects.all():
+                gallery[gallery_item.name] = {
+                    'size': f'{gallery_item.width}x{gallery_item.height}',
+                    'stamp': gallery_item.stamp,
+                    'length': gallery_item.length,
                 }
 
             tree[counter('GALLERY')] = gallery
 
             # Rest of registerd servers
             registered_servers: dict[str, typing.Any] = {}
-            for i, registeredServer in enumerate(models.Server.objects.all()):
-                registered_servers[f'{i}'] = get_serialized_from_model(registeredServer)
+            for i, registered_server in enumerate(models.Server.objects.all()):
+                registered_servers[f'{i}'] = get_serialized_from_model(registered_server)
 
             tree[counter('REGISTEREDSERVERS')] = registered_servers
 

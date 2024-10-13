@@ -106,7 +106,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
         """
         return transports.factory().lookup(self.data_type) or transports.Transport
 
-    def is_ip_allowed(self, ipStr: str) -> bool:
+    def is_ip_allowed(self, ip: str) -> bool:
         """
         Checks if this transport is valid for the specified IP.
 
@@ -131,10 +131,10 @@ class Transport(ManagedObjectModel, TaggingMixin):
 
         if self.net_filtering == consts.auth.NO_FILTERING:
             return True
-        ip, version = net.ip_to_long(ipStr)
+        ip_int, version = net.ip_to_long(ip)
         # Allow
         exists = self.networks.filter(
-            start__lte=Network.hexlify(ip), end__gte=Network.hexlify(ip), version=version
+            start__lte=Network.hexlify(ip_int), end__gte=Network.hexlify(ip_int), version=version
         ).exists()
         if self.net_filtering == consts.auth.ALLOW:
             return exists

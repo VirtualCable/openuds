@@ -78,10 +78,10 @@ def guacamole(request: ExtendedHttpRequestWithUser, token: str, tunnelid: str) -
             del val['ticket-info']  # Do not send this data to guacamole!! :)
 
             try:
-                userService = UserService.objects.get(uuid=ti['userService'])
-                if not userService.is_usable():
+                userservice = UserService.objects.get(uuid=ti['userService'])
+                if not userservice.is_usable():
                     raise Exception()  # Not usable, so we will not use it :)
-                user = userService.user
+                user = userservice.user
                 # check service owner is the same as the one that requested the ticket
                 if not user or user.uuid != ti['user']:
                     logger.error('The requested userservice has changed owner and is not accesible')
@@ -91,15 +91,15 @@ def guacamole(request: ExtendedHttpRequestWithUser, token: str, tunnelid: str) -
                 host = val.get('hostname', '0.0.0.0')  # nosec: Not a bind, just a placeholder for "no host"
                 msg = f'User {user.name} started HTML5 {protocol} tunnel to {host}.'
                 log.log(user.manager, types.log.LogLevel.INFO, msg)
-                log.log(userService, types.log.LogLevel.INFO, msg)
+                log.log(userservice, types.log.LogLevel.INFO, msg)
 
                 events.add_event(
-                    userService.deployed_service,
+                    userservice.deployed_service,
                     events.types.stats.EventType.TUNNEL_OPEN,
                     username=user.pretty_name,
                     source='HTML5-' + protocol,  # On HTML5, currently src is not provided by Guacamole
                     dstip=host,
-                    uniqueid=userService.unique_id,
+                    uniqueid=userservice.unique_id,
                 )
 
             except Exception:

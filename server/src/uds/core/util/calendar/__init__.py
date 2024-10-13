@@ -84,16 +84,16 @@ class CalendarChecker:
 
             r_end = datetime.datetime.combine(rule.end, datetime.datetime.max.time()) if rule.end else None
 
-            ruleDurationMinutes = rule.duration_as_minutes
-            ruleFrequencyMinutes = rule.frequency_as_minutes
+            duration_in_minutes = rule.duration_as_minutes
+            frequency_in_minutes = rule.frequency_as_minutes
 
             # Skip "bogus" definitions
-            if ruleDurationMinutes == 0 or ruleFrequencyMinutes == 0:
+            if duration_in_minutes == 0 or frequency_in_minutes == 0:
                 continue
 
             # Relative start, rrule can "spawn" the days, so we get the start at least the ruleDurationMinutes of rule to see if it "matches"
             # This means, we need the previous matching day to be "executed" so we can get the "actives" correctly
-            diff = ruleFrequencyMinutes if ruleFrequencyMinutes > ruleDurationMinutes else ruleDurationMinutes
+            diff = frequency_in_minutes if frequency_in_minutes > duration_in_minutes else duration_in_minutes
             _start = (start if start > rule.start else rule.start) - datetime.timedelta(minutes=diff)
 
             _end = end if r_end is None or end < r_end else r_end
@@ -102,12 +102,12 @@ class CalendarChecker:
                 if val.date() != data_date:
                     diff = int((start - val).total_seconds() / 60)
                     pos = 0
-                    posdur = ruleDurationMinutes - diff
+                    posdur = duration_in_minutes - diff
                     if posdur <= 0:
                         continue
                 else:
                     pos = val.hour * 60 + val.minute
-                    posdur = pos + ruleDurationMinutes
+                    posdur = pos + duration_in_minutes
                 if posdur > 60 * 24:
                     posdur = 60 * 24
                 data[pos:posdur] = True
@@ -180,7 +180,6 @@ class CalendarChecker:
         """
         Returns next event for this interval
         """
-        logger.debug('Obtaining nextEvent')
         if not check_from:
             check_from = sql_now()
 
@@ -197,7 +196,7 @@ class CalendarChecker:
         )
         next_event: typing.Optional[datetime.datetime] = CalendarChecker.cache.get(cache_key, None)
         if not next_event:
-            logger.debug('Regenerating cached nextEvent')
+            logger.debug('Regenerating cached next_event')
             next_event = self._update_events(
                 check_from + offset, start_event
             )  # We substract on checkin, so we can take into account for next execution the "offset" on start & end (just the inverse of current, so we substract it)
@@ -205,7 +204,6 @@ class CalendarChecker:
                 next_event += offset
             CalendarChecker.cache.set(cache_key, next_event, 3600)
         else:
-            logger.debug('nextEvent cache hit')
             CalendarChecker.hits += 1
 
         return next_event

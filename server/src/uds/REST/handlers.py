@@ -156,12 +156,17 @@ class Handler:
         """
         return self._headers
 
-    def header(self, headerName: str) -> typing.Optional[str]:
+    def header(self, header_name: str) -> typing.Optional[str]:
         """
         Get's an specific header name from REST request
-        :param headerName: name of header to get
+        
+        Args:
+            header_name: Name of header to retrieve
+            
+        Returns:
+            Value of header or None if not found
         """
-        return self._headers.get(headerName)
+        return self._headers.get(header_name)
 
     def add_header(self, header: str, value: str) -> None:
         """
@@ -357,18 +362,18 @@ class Handler:
         """
         If user is staff member, returns his Associated user on auth
         """
-        logger.debug('REST : %s', self._session)
-        authId = self.recover_value('auth')
+        # logger.debug('REST : %s', self._session)
+        auth_id = self.recover_value('auth')
         username = self.recover_value('username')
         # Maybe it's root user??
         if (
             GlobalConfig.SUPER_USER_ALLOW_WEBACCESS.as_bool(True)
             and username == GlobalConfig.SUPER_USER_LOGIN.get(True)
-            and authId == -1
+            and auth_id == -1
         ):
             return root_user()
 
-        return Authenticator.objects.get(pk=authId).users.get(name=username)
+        return Authenticator.objects.get(pk=auth_id).users.get(name=username)
 
     def get_param(self, *names: str) -> str:
         """
@@ -379,10 +384,10 @@ class Handler:
 
         Example:
             _params = {'username': 'uname_admin', 'name': 'name_admin'}
-            getParam('name') will return 'admin'
-            getParam('username', 'name') will return 'uname_admin'
-            getParam('name', 'username') will return 'name_admin'
-            getParam('other') will return ''
+            get_param('name') will return 'admin'
+            get_param('username', 'name') will return 'uname_admin'
+            get_param('name', 'username') will return 'name_admin'
+            get_param('other') will return ''
         """
         for name in names:
             if name in self._params:

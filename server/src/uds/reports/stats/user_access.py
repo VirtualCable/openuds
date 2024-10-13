@@ -82,24 +82,24 @@ class StatsReportLogin(StatsReport):
         if self.sampling_points.as_int() > 128:
             self.sampling_points.value = 128
 
-        samplingPoints = self.sampling_points.as_int()
+        sampling_points = self.sampling_points.as_int()
 
         # x axis label format
         if end - start > 3600 * 24 * 2:
-            xLabelFormat = 'SHORT_DATE_FORMAT'
+            x_label_format = 'SHORT_DATE_FORMAT'
         else:
-            xLabelFormat = 'SHORT_DATETIME_FORMAT'
+            x_label_format = 'SHORT_DATETIME_FORMAT'
 
-        samplingIntervals: list[tuple[int, int]] = []
-        samplingIntervalSeconds = (end - start) / samplingPoints
-        for i in range(samplingPoints):
-            samplingIntervals.append(
-                (int(start + i * samplingIntervalSeconds), int(start + (i + 1) * samplingIntervalSeconds))
+        sampling_intervals: list[tuple[int, int]] = []
+        sampling_interval_seconds = (end - start) / sampling_points
+        for i in range(sampling_points):
+            sampling_intervals.append(
+                (int(start + i * sampling_interval_seconds), int(start + (i + 1) * sampling_interval_seconds))
             )
 
         data: list[tuple[int, int]] = []
-        reportData: list[dict[str, typing.Any]] = []
-        for interval in samplingIntervals:
+        report_data: list[dict[str, typing.Any]] = []
+        for interval in sampling_intervals:
             key = (interval[0] + interval[1]) // 2
             val = (
                 StatsManager.manager()
@@ -112,7 +112,7 @@ class StatsReportLogin(StatsReport):
                 .count()
             )
             data.append((key, val))
-            reportData.append(
+            report_data.append(
                 {
                     'date': utils.timestamp_as_str(interval[0], 'SHORT_DATETIME_FORMAT')
                     + ' - '
@@ -121,7 +121,7 @@ class StatsReportLogin(StatsReport):
                 }
             )
 
-        return xLabelFormat, data, reportData
+        return x_label_format, data, report_data
 
     def get_week_hourly_data(self) -> tuple[list[int], list[int], list[list[int]]]:
         start = self.start_date.as_timestamp()
@@ -142,7 +142,7 @@ class StatsReportLogin(StatsReport):
         return dataWeek, dataHour, dataWeekHour
 
     def generate(self) -> bytes:
-        xLabelFormat, data, reportData = self.get_range_data()
+        xLabelFormat, data, report_data = self.get_range_data()
 
         #
         # User access by date graph
@@ -168,7 +168,7 @@ class StatsReportLogin(StatsReport):
         graph2 = io.BytesIO()
         graph3 = io.BytesIO()
         graph4 = io.BytesIO()
-        dataWeek, dataHour, dataWeekHour = self.get_week_hourly_data()
+        dataWeek, dataHour, data_week_hour = self.get_week_hourly_data()
         
         def _tick_fnc2(l: int) -> str:
             return [
@@ -217,7 +217,7 @@ class StatsReportLogin(StatsReport):
             'y': Y,
             'ylabel': _('Day of week'),
             'ytickFnc': _tick_fnc2,
-            'z': dataWeekHour,
+            'z': data_week_hour,
             'zlabel': _('Users'),
         }
 
@@ -226,7 +226,7 @@ class StatsReportLogin(StatsReport):
         return self.template_as_pdf(
             'uds/reports/stats/user-access.html',
             dct={
-                'data': reportData,
+                'data': report_data,
                 'beginning': self.start_date.as_date(),
                 'ending': self.end_date.as_date(),
                 'intervals': self.sampling_points.as_int(),
@@ -259,11 +259,11 @@ class StatsReportLoginCSV(StatsReportLogin):
         output = io.StringIO()
         writer = csv.writer(output)
 
-        reportData = self.get_range_data()[2]
+        report_data = self.get_range_data()[2]
 
         writer.writerow([gettext('Date range'), gettext('Users')])
 
-        for v in reportData:
+        for v in report_data:
             writer.writerow([v['date'], v['users']])
 
         return output.getvalue().encode()

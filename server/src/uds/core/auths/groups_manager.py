@@ -38,28 +38,12 @@ import typing
 
 from uds.core.types.states import State
 
-from .group import Group
+from . import group
 
 if typing.TYPE_CHECKING:
     from uds.models import Authenticator as DBAuthenticator
 
 logger = logging.getLogger(__name__)
-
-@dataclasses.dataclass(frozen=True)
-class _LocalGrp:
-    name: str
-    group: 'Group'
-    is_valid: bool = False
-    is_pattern: bool = False
-
-    def matches(self, name: str) -> bool:
-        """
-        Checks if this group name is equal to the provided name (case)
-        """
-        return name.casefold() == self.name.casefold()
-    
-    def replace(self, **kwargs: typing.Any) -> '_LocalGrp':
-        return dataclasses.replace(self, **kwargs)
 
 
 class GroupsManager:
@@ -82,49 +66,57 @@ class GroupsManager:
     Managed groups names are compared using case insensitive comparison.
     """
 
+    @dataclasses.dataclass
+    class _LocalGrp:
+        name: str
+        group: 'group.Group'
+        is_valid: bool = False
+        is_pattern: bool = False
+
+        def matches(self, name: str) -> bool:
+            """
+            Checks if this group name is equal to the provided name (case)
+            """
+            if self.is_pattern:
+                try:
+                    return re.search(self.name, name, re.IGNORECASE) is not None
+                except Exception:
+                    logger.exception('Exception in RE')
+                    return False
+            # If not a pattern, just compare
+            return name.casefold() == self.name.casefold()
+
     _groups: list[_LocalGrp]
     _db_auth: 'DBAuthenticator'
 
     def __init__(self, db_auth: 'DBAuthenticator'):
         """
         Initializes the groups manager.
-        The dbAuthenticator is the database record of the authenticator
-        to which this groupsManager will be associated
+
+        Args:
+            db_auth: The authenticator to which this GroupsManager will be associated
         """
         self._db_auth = db_auth
         # We just get active groups, inactive aren't visible to this class
         self._groups = []
-        if (
-            db_auth.id
-        ):  # If "fake" authenticator (that is, root user with no authenticator in fact)
+        if db_auth.id:  # If "fake" authenticator (that is, root user with no authenticator in fact)
             for g in db_auth.groups.filter(state=State.ACTIVE, is_meta=False):
                 name = g.name.lower()
                 is_pattern_group = name.startswith('pat:')  # Is a pattern?
                 self._groups.append(
-                    _LocalGrp(
+                    GroupsManager._LocalGrp(
                         name=name[4:] if is_pattern_group else name,
-                        group=Group(g),
+                        group=group.Group(g),
                         is_pattern=is_pattern_group,
                     )
                 )
 
-    def _indexes_for_mached_groups(self, group_name: str) -> typing.Generator[int, None, None]:
+    def _mached_groups(self, group_name: str) -> typing.Generator[_LocalGrp, None, None]:
         """
         Returns true if this groups manager contains the specified group name (string)
         """
         name = group_name.lower()
-        for n, grp in enumerate(self._groups):
-            if grp.is_pattern:
-                logger.debug('Group is a pattern: %s', grp)
-                try:
-                    logger.debug('Match: %s->%s', grp.name, name)
-                    if re.search(grp.name, name, re.IGNORECASE) is not None:
-                        yield n
-                except Exception:
-                    logger.exception('Exception in RE')
-            else:
-                if grp.matches(name):  # If group name matches
-                    yield n
+        yield from (grp for grp in self._groups if grp.matches(name))
 
     def enumerate_groups_name(self) -> typing.Generator[str, None, None]:
         """
@@ -134,32 +126,25 @@ class GroupsManager:
         for g in self._groups:
             yield g.group.db_obj().name
 
-    def enumerate_valid_groups(self) -> typing.Generator['Group', None, None]:
-        """Returns the list of valid groups for this groups manager.
-        """
-        from uds.models import \
-            Group as DBGroup  # pylint: disable=import-outside-toplevel
+    def enumerate_valid_groups(self) -> typing.Generator['group.Group', None, None]:
+        """Returns the list of valid groups for this groups manager."""
+        from uds.models import Group as DBGroup  # Avoid circular imports
 
-        valid_id_list: list[int] = []
-        for group in self._groups:
-            if group.is_valid:
-                valid_id_list.append(group.group.db_obj().id)
-                yield group.group
+        valid_id_list: list[int] = [grp.group.db_obj().id for grp in self._groups if grp.is_valid]
 
         # Now, get metagroups and also return them
-        for db_group in DBGroup.objects.filter(
-            manager__id=self._db_auth.id, is_meta=True
-        ):  # @UndefinedVariable
-            gn = db_group.groups.filter(
-                id__in=valid_id_list, state=State.ACTIVE
-            ).count()
-            if db_group.meta_if_any and gn > 0:
-                gn = db_group.groups.count()
-            if (
-                gn == db_group.groups.count()
-            ):  # If a meta group is empty, all users belongs to it. we can use gn != 0 to check that if it is empty, is not valid
+        for db_group in DBGroup.objects.filter(manager__id=self._db_auth.id, is_meta=True):
+            number_of_groups = db_group.groups.filter(id__in=valid_id_list, state=State.ACTIVE).count()
+            if db_group.meta_if_any and number_of_groups > 0:
+                # If meta_if_any is true, we only need one group to be valid
+                # so "fake" number_of_groups to  all groups, so next if is always true
+                number_of_groups = db_group.groups.count()
+
+            # If a meta group is empty, all users belongs to it.
+            # we can use number_of_groups != 0 to check that if it is empty, is not valid
+            if number_of_groups == db_group.groups.count():
                 # This group matches
-                yield Group(db_group)
+                yield group.Group(db_group)
 
     def has_valid_groups(self) -> bool:
         """
@@ -168,7 +153,7 @@ class GroupsManager:
         """
         return any(g.is_valid for g in self._groups)
 
-    def get_group(self, group_name: str) -> typing.Optional[Group]:
+    def get_group(self, group_name: str) -> typing.Optional['group.Group']:
         """
         If this groups manager contains that group manager, it returns the
         :py:class:uds.core.auths.group.Group  representing that group name.
@@ -194,18 +179,15 @@ class GroupsManager:
             for name in group_name:
                 self.validate(name)
         else:
-            for index in self._indexes_for_mached_groups(group_name):
-                self._groups[index] = self._groups[index].replace(is_valid=True)
+            for grp in self._mached_groups(group_name):
+                grp.is_valid = True
 
     def is_valid(self, group_name: str) -> bool:
         """
         Checks if this group name is marked as valid inside this groups manager.
         Returns True if group name is marked as valid, False if it isn't.
         """
-        for n in self._indexes_for_mached_groups(group_name):
-            if self._groups[n].is_valid:
-                return True
-        return False
+        return any(grp.is_valid for grp in self._mached_groups(group_name))
 
     def __str__(self) -> str:
         return f'Groupsmanager: {self._groups}'

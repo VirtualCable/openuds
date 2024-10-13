@@ -399,16 +399,17 @@ class UserService(UUIDModel, properties.PropertiesMixin):
             An array of two elements, first is transformed username, second is
             transformed password.
 
-        :note: This method MUST be invoked by transport before using credentials passed to getJavascript.
+        Notes:
+            This method MUST be invoked by transport before using credentials passed to getJavascript.
         """
-        servicePool = self.deployed_service
-        if not servicePool.service:
+        servicepool = self.deployed_service
+        if not servicepool.service:
             raise Exception('Service not found')
-        serviceInstance = servicePool.service.get_instance()
-        if serviceInstance.needs_osmanager is False or not servicePool.osmanager:
+        service_instance = servicepool.service.get_instance()
+        if service_instance.needs_osmanager is False or not servicepool.osmanager:
             return (username, password)
 
-        return servicePool.osmanager.get_instance().update_credentials(self, username, password)
+        return servicepool.osmanager.get_instance().update_credentials(self, username, password)
 
     def set_state(self, state: str) -> None:
         """
@@ -582,20 +583,20 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         """
         self.remove_or_cancel()
 
-    def move_to_level(self, cacheLevel: types.services.CacheLevel) -> None:
+    def move_to_level(self, cache_level: types.services.CacheLevel) -> None:
         """
         Moves cache items betwen levels, managed directly
 
         Args:
-            cacheLevel: New cache level to put object in
+            cache_level: New cache level to put object in
         """
         # pylint: disable=import-outside-toplevel
         from uds.core.managers.userservice import UserServiceManager
 
-        UserServiceManager.manager().move_to_level(self, cacheLevel)
+        UserServiceManager.manager().move_to_level(self, cache_level)
 
-    def set_comms_endpoint(self, commsUrl: typing.Optional[str] = None) -> None:
-        self.properties['comms_url'] = commsUrl
+    def set_comms_endpoint(self, comms_url: typing.Optional[str] = None) -> None:
+        self.properties['comms_url'] = comms_url
 
     def get_comms_endpoint(
         self, path: typing.Optional[str] = None
@@ -605,7 +606,8 @@ class UserService(UUIDModel, properties.PropertiesMixin):
 
     def notify_preconnect(self) -> None:
         """
-        Notifies preconnect to userService
+        Notifies preconnect to userservice. 
+        TODO: Currently not used
         """
         pass
 

@@ -318,10 +318,10 @@ class ServicePool(UUIDModel, TaggingMixin):
             and not self.is_restrained()
         )
 
-    def when_will_be_replaced(self, forUser: 'User') -> typing.Optional[datetime]:
-        activePub: typing.Optional['ServicePoolPublication'] = self.active_publication()
+    def when_will_be_replaced(self, is_for_user: 'User') -> typing.Optional[datetime]:
+        active_publication: typing.Optional['ServicePoolPublication'] = self.active_publication()
         # If no publication or current revision, it's not going to be replaced
-        if activePub is None:
+        if active_publication is None:
             return None
 
         # If has os manager, check if it is persistent
@@ -331,11 +331,11 @@ class ServicePool(UUIDModel, TaggingMixin):
         # Return the date
         try:
             found = self.assigned_user_services().filter(
-                user=forUser, state__in=types.states.State.VALID_STATES
+                user=is_for_user, state__in=types.states.State.VALID_STATES
             )[
                 0
             ]  # Raises exception if at least one is not found
-            if activePub and found.publication and activePub.id != found.publication.id:
+            if active_publication and found.publication and active_publication.id != found.publication.id:
                 ret = self.get_value('toBeReplacedIn')
                 if ret:
                     return serializer.deserialize(ret)
@@ -363,10 +363,10 @@ class ServicePool(UUIDModel, TaggingMixin):
         return access == types.states.State.ALLOW
 
     def get_deadline(self, check_datetime: typing.Optional[datetime] = None) -> typing.Optional[int]:
-        """Gets the deadline for an access on chkDateTime in seconds
+        """Gets the deadline for an access on check_datetime in seconds
 
-        Keyword Arguments:
-            chkDateTime {typing.Optional[datetime]} -- [Gets the deadline for this date instead of current] (default: {None})
+        Args:
+            check_datetime {typing.Optional[datetime]} -- [Gets the deadline for this date instead of current] (default: {None})
 
         Returns:
             typing.Optional[int] -- [Returns deadline in secods. If no deadline (forever), will return None]
@@ -455,8 +455,8 @@ class ServicePool(UUIDModel, TaggingMixin):
 
     def mark_old_userservices_as_removable(
         self,
-        activePub: typing.Optional['ServicePoolPublication'],
-        skipAssigned: bool = False,
+        active_publication: typing.Optional['ServicePoolPublication'],
+        skip_assigned: bool = False,
     ) -> None:
         """
         Used when a new publication is finished.
@@ -469,24 +469,26 @@ class ServicePool(UUIDModel, TaggingMixin):
         Better see the code, it's easier to understand :-)
 
         Args:
-            activePub: Active publication used as "current" publication to make checks
+            active_publication: Active publication used as "current" publication to make checks
+            skip_assigned: If true, assigned services will not be marked as removable
+            
         """
         now = sql_now()
-        nonActivePub: 'ServicePoolPublication'
-        userService: 'UserService'
+        non_active_publication: 'ServicePoolPublication'
+        userservice: 'UserService'
 
-        if activePub is None:
+        if active_publication is None:
             logger.error('No active publication, don\'t know what to erase!!! (ds = %s)', self)
             return
-        for nonActivePub in self.publications.exclude(id=activePub.id):
-            for userService in nonActivePub.userServices.filter(state=types.states.State.PREPARING):
-                userService.cancel()
+        for non_active_publication in self.publications.exclude(id=active_publication.id):
+            for userservice in non_active_publication.userServices.filter(state=types.states.State.PREPARING):
+                userservice.cancel()
             with transaction.atomic():
-                nonActivePub.userServices.exclude(cache_level=0).filter(state=types.states.State.USABLE).update(
+                non_active_publication.userServices.exclude(cache_level=0).filter(state=types.states.State.USABLE).update(
                     state=types.states.State.REMOVABLE, state_date=now
                 )
-                if not skipAssigned:
-                    nonActivePub.userServices.filter(
+                if not skip_assigned:
+                    non_active_publication.userServices.filter(
                         cache_level=0, state=types.states.State.USABLE, in_use=False
                     ).update(state=types.states.State.REMOVABLE, state_date=now)
 
@@ -554,7 +556,7 @@ class ServicePool(UUIDModel, TaggingMixin):
         """
         from uds.core import services  # pylint: disable=import-outside-toplevel
 
-        servicesNotNeedingPub = [t.mod_type() for t in services.factory().services_not_needing_publication()]
+        services_not_needing_publication = [t.mod_type() for t in services.factory().services_not_needing_publication()]
         # Get services that HAS publications
         query = (
             ServicePool.objects.filter(
@@ -608,14 +610,14 @@ class ServicePool(UUIDModel, TaggingMixin):
                     ),
                 )
             )
-        servicePool: 'ServicePool'
-        for servicePool in query:
-            if typing.cast(typing.Any, servicePool).pubs_active or (
-                servicePool.service and servicePool.service.data_type in servicesNotNeedingPub
+        servicepool: 'ServicePool'
+        for servicepool in query:
+            if typing.cast(typing.Any, servicepool).pubs_active or (
+                servicepool.service and servicepool.service.data_type in services_not_needing_publication
             ):
-                yield servicePool
+                yield servicepool
 
-    def publish(self, changeLog: typing.Optional[str] = None) -> None:
+    def publish(self, changelog: typing.Optional[str] = None) -> None:
         """
         Launches the publication of this deployed service.
 
@@ -623,7 +625,7 @@ class ServicePool(UUIDModel, TaggingMixin):
         """
         from uds.core.managers import publication_manager  # pylint: disable=import-outside-toplevel
 
-        publication_manager().publish(self, changeLog)
+        publication_manager().publish(self, changelog)
 
     def unpublish(self) -> None:
         """
@@ -658,7 +660,7 @@ class ServicePool(UUIDModel, TaggingMixin):
         """
         Returns the % used services, then count and the max related to "maximum" user services
         If no "maximum" number of services, will return 0% ofc
-        cachedValue is used to optimize (if known the number of assigned services, we can avoid to query the db)
+        cached_value is used to optimize (if known the number of assigned services, we can avoid to query the db)
         """
         maxs = self.max_srvs
         if maxs == 0:

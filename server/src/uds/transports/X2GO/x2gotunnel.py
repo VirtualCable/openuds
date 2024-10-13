@@ -131,7 +131,7 @@ class TX2GOTransport(BaseX2GOTransport):
 
         key = self.generate_key()
         ticket = TicketStore.create_for_tunnel(
-            userService=userservice,
+            userservice=userservice,
             port=22,
             validity=self.tunnel_wait.as_int() + 60,  # Ticket overtime
             key=key,

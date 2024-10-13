@@ -169,7 +169,7 @@ class Module(UserInterface, Environmentable, Serializable, abc.ABC):
     def unmarshal(self, data: bytes) -> None:
         """
         By default and if not overriden by descendants, this method recovers
-        data serialized using serializeForm
+        data serialized using serialize_fields method.
         """
         if self.deserialize_fields(data):  # If upgrade of format requested
             self.mark_for_upgrade()  # Flag for upgrade
@@ -282,11 +282,8 @@ class Module(UserInterface, Environmentable, Serializable, abc.ABC):
         Args:
             cls: Class
 
-            inBase64: If true, the image will be returned as base 64 encoded
-
         Returns:
-            Base 64 encoded or raw image, obtained from the specified file at
-            'icon_file' class attribute
+            Icon content as bytes. Look at icon64 for base64 encoded icon
         """
         return utils.load_icon(
             os.path.dirname(typing.cast(str, sys.modules[cls.__module__].__file__)) + '/' + cls.icon_file
@@ -294,6 +291,12 @@ class Module(UserInterface, Environmentable, Serializable, abc.ABC):
 
     @classmethod
     def icon64(cls: type['Module']) -> str:
+        """
+        Reads the icon from file and returns it as base64 encoded
+
+        Notes:
+            The icon_file should be defined at class level, and must be a png file in the folder of the class module        
+        """
         return utils.load_icon_b64(
             os.path.dirname(typing.cast(str, sys.modules[cls.__module__].__file__)) + '/' + cls.icon_file
         )

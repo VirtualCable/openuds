@@ -56,12 +56,18 @@ def validate_numeric(
 ) -> int:
     """
     Validates that a numeric value is valid
-    :param numericStr: Numeric value to check (as string)
-    :param min_value: If not None, min value that must be the numeric or exception is thrown
-    :param max_value: If not None, max value that must be the numeric or exception is thrown
-    :param returnAsInteger: if True, returs value as integer (default), else returns as string
-    :param fieldName: If present, the name of the field for "Raising" exceptions, defaults to "Numeric value"
-    :return: Raises exceptions.Validation exception if is invalid, else return the value "fixed"
+
+    Args:
+        value (typing.Union[str, int]): Numeric value to check
+        min_value (typing.Optional[int], optional): If not None, min value that must be the numeric or exception is thrown. Defaults to None.
+        max_value (typing.Optional[int], optional): If not None, max value that must be the numeric or exception is thrown. Defaults to None.
+        field_name (typing.Optional[str], optional): If present, the name of the field for "Raising" exceptions, defaults to "Numeric value". Defaults to None.
+
+    Returns:
+        int: Value as integer
+
+    Raises:
+        exceptions.ValidationException: If value is not valid
     """
     value = str(value).replace(' ', '')
     field_name = field_name or _('Numeric')
@@ -111,13 +117,13 @@ def validate_hostname(
     return hostname
 
 
-def validate_fqdn(fqdn: str, maxLength: int = 255, field_name: typing.Optional[str] = None) -> str:
-    return validate_hostname(fqdn, maxLength, domain_allowed=True, field_name=field_name)
+def validate_fqdn(fqdn: str, max_length: int = 255, field_name: typing.Optional[str] = None) -> str:
+    return validate_hostname(fqdn, max_length, domain_allowed=True, field_name=field_name)
 
 
-def validateUrl(url: str, maxLength: int = 1024, field_name: typing.Optional[str] = None) -> str:
+def validate_url(url: str, max_length: int = 1024, field_name: typing.Optional[str] = None) -> str:
     field_name = f' (On field {field_name})' if field_name else ''
-    if len(url) > maxLength:
+    if len(url) > max_length:
         raise exceptions.ui.ValidationError(
             _('{} is not a valid URL: exceeds maximum length.').format(url + field_name)
         )
@@ -133,9 +139,18 @@ def validateUrl(url: str, maxLength: int = 1024, field_name: typing.Optional[str
 def validate_ipv4(ipv4: str, field_name: typing.Optional[str] = None) -> str:
     """
     Validates that a ipv4 address is valid
-    :param ipv4: ipv4 address to validate
-    :param returnAsInteger: if True, returns value as integer, if not, as string
-    :return: Raises exceptions.Validation exception if is invalid, else return the value "fixed"
+
+    Args:
+        ipv4 (str): ipv4 address to validate
+        field_name (typing.Optional[str], optional): If present, the name of the field for "Raising" exceptions.
+            If not present, the exception will be raised with the message "Invalid IPv4 address". Defaults to None.
+
+    Returns:
+        str: Received ipv4 address
+
+    Raises:
+        exceptions.ValidationException: If value is not valid
+
     """
     field_name = f' (On field {field_name})' if field_name else ''
     try:
@@ -150,9 +165,17 @@ def validate_ipv4(ipv4: str, field_name: typing.Optional[str] = None) -> str:
 def validate_ipv6(ipv6: str, field_name: typing.Optional[str] = None) -> str:
     """
     Validates that a ipv6 address is valid
-    :param ipv6: ipv6 address to validate
-    :param returnAsInteger: if True, returns value as integer, if not, as string
-    :return: Raises exceptions.Validation exception if is invalid, else return the value "fixed"
+
+    Args:
+        ipv6 (str): ipv6 address to validate
+        field_name (typing.Optional[str], optional): If present, the name of the field for "Raising" exceptions.
+            If not present, the exception will be raised with the message "Invalid IPv6 address". Defaults to None.
+
+    Returns:
+        str: Received ipv6 address
+
+    Raises:
+        exceptions.ValidationException: If value is not valid
     """
     field_name = f' (On field {field_name})' if field_name else ''
     try:
@@ -167,9 +190,17 @@ def validate_ipv6(ipv6: str, field_name: typing.Optional[str] = None) -> str:
 def validate_ip(ipv4_or_ipv6: str, field_name: typing.Optional[str] = None) -> str:
     """
     Validates that a ipv4 or ipv6 address is valid
-    :param ipv4OrIpv6: ipv4 or ipv6 address to validate
-    :param returnAsInteger: if True, returns value as integer, if not, as string
-    :return: Raises exceptions.Validation exception if is invalid, else return the value "fixed"
+
+    Args:
+        ipv4OrIpv6 (str): ipv4 or ipv6 address to validate
+        field_name (typing.Optional[str], optional): If present, the name of the field for "Raising" exceptions.
+            If not present, the exception will be raised with the message "Invalid IPv4 or IPv6 address". Defaults to None.
+
+    Returns:
+        str: Received ipv4 or ipv6 address
+
+    Raises:
+        exceptions.ValidationException: If value is not valid (not ipv4 or ipv6)
     """
     field_name = f' (On field {field_name})' if field_name else ''
     try:
@@ -190,18 +221,20 @@ def validate_path(
 ) -> str:
     """
     Validates a path, if not "mustBe" is specified, it will be validated as either windows or unix.
-    Path must be absolute, and must not exceed maxLength
+    Path must be absolute, and must not exceed max_length
+
     Args:
         path (str): path to validate
         max_length (int, optional): max length of path. Defaults to 1024.
         must_be_windows (bool, optional): if True, path must be a windows path. Defaults to False.
         must_be_unix (bool, optional): if True, path must be a unix path. Defaults to False.
 
+    Returns:
+        str: reiceved path
+
     Raises:
         exceptions.ValidationException: if path is not valid
 
-    Returns:
-        str: path
     """
     field_name = f' (On field {field_name})' if field_name else ''
     if len(path) > max_length:
@@ -262,9 +295,17 @@ def validate_host(host: str, field_name: typing.Optional[str] = None) -> str:
 def validate_host_port(host_port_pair: str, field_name: typing.Optional[str] = None) -> tuple[str, int]:
     """
     Validates that a host:port pair is valid
-    :param hostPortPair: host:port pair to validate
-    :param returnAsInteger: if True, returns value as integer, if not, as string
-    :return: Raises exceptions.Validation exception if is invalid, else return the value "fixed"
+    
+    Args:
+        host_port_pair (str): host:port pair to validate
+        field_name (typing.Optional[str], optional): If present, the name of the field for "Raising" exceptions.
+            If not present, the exception will be raised with the message "Invalid host:port pair". Defaults to None.
+            
+    Returns:
+        tuple[str, int]: host and port as tuple
+        
+    Raises:
+        exceptions.ValidationException: If value is not valid
     """
     field_name = f' (On field {field_name})' if field_name else ''
     try:
@@ -288,9 +329,17 @@ def validate_host_port(host_port_pair: str, field_name: typing.Optional[str] = N
 def validate_timeout(timeout: 'str|int', field_name: typing.Optional[str] = None) -> int:
     """
     Validates that a timeout value is valid
-    :param timeOutStr: timeout to validate
-    :param returnAsInteger: if True, returns value as integer, if not, as string
-    :return: Raises exceptions.Validation exception if is invalid, else return the value "fixed"
+    
+    Args:
+        timeout (str|int): timeout to validate
+        field_name (typing.Optional[str], optional): If present, the name of the field for "Raising" exceptions.
+            If not present, the exception will be raised with the message "Invalid timeout". Defaults to None.
+            
+    Returns:
+        int: timeout as integer
+        
+    Raises:
+        exceptions.ValidationException: If value is not valid
     """
     return validate_numeric(timeout, min_value=0, field_name=field_name or 'Timeout')
 
@@ -298,8 +347,17 @@ def validate_timeout(timeout: 'str|int', field_name: typing.Optional[str] = None
 def validate_mac(mac: str, field_name: typing.Optional[str] = None) -> str:
     """
     Validates that a mac address is valid
-    :param mac: mac address to validate
-    :return: Raises exceptions.Validation exception if is invalid, else return the value "fixed"
+    
+    Args:
+        mac (str): mac address to validate
+        field_name (typing.Optional[str], optional): If present, the name of the field for "Raising" exceptions.
+            If not present, the exception will be raised with the message "Invalid MAC address". Defaults to None.
+            
+    Returns:
+        str: mac address
+        
+    Raises:
+        exceptions.ValidationException: If value is not valid
     """
     # Removes white spaces and all to uppercase
     field_name = f' (On field {field_name})' if field_name else ''
@@ -315,23 +373,32 @@ def validate_mac(mac: str, field_name: typing.Optional[str] = None) -> str:
     return mac
 
 
-def validate_mac_range(macRange: str, field_name: typing.Optional[str] = None) -> str:
+def validate_mac_range(macrange: str, field_name: typing.Optional[str] = None) -> str:
     """
     Corrects mac range (uppercase, without spaces), and checks that is range is valid
-    :param macRange: Range to fix
-    :return: Raises exceptions.Validation exception if is invalid, else return the value "fixed"
+    
+    Args:
+        macrange (str): mac range to validate
+        field_name (typing.Optional[str], optional): If present, the name of the field for "Raising" exceptions.
+            If not present, the exception will be raised with the message "Invalid MAC range". Defaults to None.
+            
+    Returns:
+        str: mac range
+        
+    Raises:
+        exceptions.ValidationException: If value is not valid
     """
     field_name = f' (On field {field_name})' if field_name else ''
     try:
-        macRangeStart, macRangeEnd = macRange.split('-')
-        validate_mac(macRangeStart)
-        validate_mac(macRangeEnd)
+        macrange_start, macrange_end = macrange.split('-')
+        validate_mac(macrange_start)
+        validate_mac(macrange_end)
     except Exception:
         raise exceptions.ui.ValidationError(
-            _('{} is not a valid MAC range').format(macRange + field_name)
+            _('{} is not a valid MAC range').format(macrange + field_name)
         ) from None
 
-    return macRange
+    return macrange
 
 
 def validate_email(email: str) -> str:
@@ -352,16 +419,15 @@ def validate_email(email: str) -> str:
 def validate_basename(basename: str, length: int = -1) -> str:
     """ "Checks if the basename + length is valid for services. Raises an exception if not valid"
 
-    Arguments:
-        baseName {str} -- basename to check
+    Args:
+        basename: basename to check
+        length: length to check, if -1 do not checm (default: {-1})
 
-    Keyword Arguments:
-        length {int} -- length to check, if -1 do not checm (default: {-1})
-
-    Raises:
-        exceptions.ValidationException: If anything goes wrong
     Returns:
         None -- [description]
+        
+    Raises:
+        exceptions.ValidationException: If anything goes wrong        
     """
     if re.match(r'^[a-zA-Z0-9][a-zA-Z0-9-]*$', basename) is None:
         raise exceptions.ui.ValidationError(_('The basename is not a valid for a hostname'))
@@ -383,7 +449,7 @@ def validate_json(json_data: typing.Optional[str]) -> typing.Any:
     Validates that a json data is valid (or empty)
 
     Args:
-        jsonData (typing.Optional[str]): Json data to validate
+        json_data (typing.Optional[str]): Json data to validate
 
     Raises:
         exceptions.ui.ValidationError: If json data is not valid

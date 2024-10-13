@@ -128,14 +128,14 @@ class TelegramNotifier(messaging.Notifier):
         return super().init_gui()
 
     def notify(self, group: str, identificator: str, level: messaging.LogLevel, message: str) -> None:
-        telegramMsg = f'{group} - {identificator} - {str(level)}: {message}'
-        logger.debug('Sending telegram message: %s', telegramMsg)
+        telegram_msg = f'{group} - {identificator} - {str(level)}: {message}'
+        logger.debug('Sending telegram message: %s', telegram_msg)
         # load chat_ids
         chat_ids: list[int] = self.storage.read_pickled('chat_ids') or []
         t = telegram.Telegram(self.access_token.value)  # Only writing, can ingnore last_offset
         for chad_id in chat_ids:
             with ignore_exceptions():
-                t.send_message(chad_id, telegramMsg)
+                t.send_message(chad_id, telegram_msg)
                 # Wait a bit, so we don't send more than 10 messages per second
                 time.sleep(0.1)
 

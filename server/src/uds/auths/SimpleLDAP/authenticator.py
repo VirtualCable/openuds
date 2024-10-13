@@ -287,23 +287,36 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             max_entries=LDAP_RESULT_LIMIT,
         )
 
-    def _get_group(self, groupName: str) -> typing.Optional[ldaputil.LDAPResultType]:
+    def _get_group(self, groupname: str) -> typing.Optional[ldaputil.LDAPResultType]:
         """
-        Searchs for the groupName and returns its LDAP entry
-        @param groupName: group name to search, using user provided parameters at configuration to map search entries.
-        @return: None if group name is not found, an dictionary of LDAP entry attributes if found.
+        Searchs for the groupname and returns its LDAP entry
+
+        Args:
+            groupname (str): groupname to search, using user provided parameters at configuration to map search entries.
+
+        Returns:
+            typing.Optional[ldaputil.LDAPResultType]: None if groupname is not found, an dictionary of LDAP entry attributes if found.
         """
         return ldaputil.first(
             con=self._get_connection(),
             base=self.ldap_base.as_str(),
             object_class=self.group_class.as_str(),
             field=self.group_id_attr.as_str(),
-            value=groupName,
+            value=groupname,
             attributes=[self.member_attr.as_str()],
             max_entries=LDAP_RESULT_LIMIT,
         )
 
     def _get_groups(self, user: ldaputil.LDAPResultType) -> list[str]:
+        """
+        Searchs for the groups the user belongs to and returns a list of group names
+        
+        Args:
+            user (ldaputil.LDAPResultType): The user to search for groups
+            
+        Returns:
+            list[str]: A list of group names the user belongs to
+        """
         try:
             groups: list[str] = []
 
@@ -379,11 +392,6 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             return types.auth.FAILED_AUTH
 
     def create_user(self, user_data: dict[str, str]) -> None:
-        '''
-        Groups are only used in case of internal users (non external sources) that must know to witch groups this user belongs to
-        @param usrData: Contains data received from user directly, that is, a dictionary with at least: name, realName, comments, state & password
-        @return:  Raises an exception (AuthException) it things didn't went fine
-        '''
         res = self._get_user(user_data['name'])
         if res is None:
             raise exceptions.auth.AuthenticatorException(_('Username not found'))
@@ -400,33 +408,14 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         return self._get_user_realname(res)
 
     def modify_user(self, user_data: dict[str, str]) -> None:
-        '''
-        We must override this method in authenticators not based on external sources (i.e. database users, text file users, etc..)
-        Modify user has no reason on external sources, so it will never be used (probably)
-        Groups are only used in case of internal users (non external sources) that must know to witch groups this user belongs to
-        @param usrData: Contains data received from user directly, that is, a dictionary with at least: name, realName, comments, state & password
-        @return:  Raises an exception it things don't goes fine
-        '''
         return self.create_user(user_data)
 
     def create_group(self, group_data: dict[str, str]) -> None:
-        '''
-        We must override this method in authenticators not based on external sources (i.e. database users, text file users, etc..)
-        External sources already has its own groups and, at most, it can check if it exists on external source before accepting it
-        Groups are only used in case of internal users (non external sources) that must know to witch groups this user belongs to
-        @params groupData: a dict that has, at least, name, comments and active
-        @return:  Raises an exception it things don't goes fine
-        '''
         res = self._get_group(group_data['name'])
         if res is None:
             raise exceptions.auth.AuthenticatorException(_('Group not found'))
 
     def get_groups(self, username: str, groups_manager: 'auths.GroupsManager') -> None:
-        '''
-        Looks for the real groups to which the specified user belongs
-        Updates groups manager with valid groups
-        Remember to override it in derived authentication if needed (external auths will need this, for internal authenticators this is never used)
-        '''
         user = self._get_user(username)
         if user is None:
             raise exceptions.auth.AuthenticatorException(_('Username not found'))
@@ -603,7 +592,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     def __str__(self) -> str:
         return (
             f'Ldap Auth: {self.username.as_str()}:{self.password.as_str()}@{self.host.as_str()}:{self.port.as_int()}, '
-            f'base = {self.ldap_base.as_str()}, userClass = {self.user_class.as_str()}, groupClass = {self.group_class.as_str()}, '
-            f'userIdAttr = {self.user_id_attr.as_str()}, groupIdAttr = {self.group_id_attr.as_str()}, '
-            f'memberAttr = {self.member_attr.as_str()}, userName attr = {self.username_attr.as_str()}'
+            f'base = {self.ldap_base.as_str()}, user_class = {self.user_class.as_str()}, group_class = {self.group_class.as_str()}, '
+            f'userIdAttr = {self.user_id_attr.as_str()}, group_id_attr = {self.group_id_attr.as_str()}, '
+            f'memberAttr = {self.member_attr.as_str()}, username attr = {self.username_attr.as_str()}'
         )

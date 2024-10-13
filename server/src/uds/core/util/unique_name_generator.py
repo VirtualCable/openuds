@@ -52,7 +52,7 @@ class UniqueNameGenerator(UniqueGenerator):
             length (int): Length of the name (will be filled with 0's)
             
         Returns:
-            str: Name, composed by baseName + sequence number with length digits (filled with 0's)
+            str: Name, composed by basename + sequence number with length digits (filled with 0's)
         """
         if seq == -1:
             raise KeyError('No more names available. Please, increase service digits.')
@@ -61,13 +61,11 @@ class UniqueNameGenerator(UniqueGenerator):
 
     def get(self, basename: str, length: int = 5) -> str:
         self.set_basename(basename)
-        minVal = 0
-        maxVal = 10**length - 1
-        return self._to_name(super()._get(minVal, maxVal), length)
+        return self._to_name(super()._get(range_start=0, range_end=10**length - 1), length)
 
-    def transfer(self, basename: str, name: str, toUNGen: 'UniqueNameGenerator') -> None:
+    def transfer(self, basename: str, name: str, target_unique_name_generator: 'UniqueNameGenerator') -> None:
         self.set_basename(basename)
-        super()._transfer(int(name[len(self._basename) :]), toUNGen)
+        super()._transfer(int(name[len(self._basename) :]), target_unique_name_generator)
 
     def free(self, basename: str, name: str) -> None:
         self.set_basename(basename)

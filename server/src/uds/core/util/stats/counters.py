@@ -169,12 +169,15 @@ def enumerate_counters(
     Get counters
 
     Args:
-        obj: Obj for which to recover stats counters
-        counterType: type of counter to recover
-        since: (optional, defaults to 'Since beginning') Start date for counters to recover
-        to: (optional, defaults to 'Until end') En date for counter to recover
-        limit: (optional, defaults to 1000) Number of counter to recover. This is an 'At most' advice. The returned number of value
-               can be lower, or even 1 more than requested due to a division for retrieving object at database
+        obj: Object to get counters from
+        counter_type: Type of counter to get
+        since: From when to get counters
+        to: To when to get counters
+        interval: Interval to get counters
+        max_intervals: Max intervals to get
+        limit: Max number of results to get
+        use_max: If limit is reached, use max_intervals to get more results
+        all: If True, get counters for all related objects
 
     Returns:
         A generator, that contains pairs of (stamp, value) tuples

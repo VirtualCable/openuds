@@ -337,9 +337,9 @@ def authenticate_via_callback(
          If it gets None or '', it will raise an error.
        * Register user inside uds if necesary, will invoke in the process
          **getRealUsername** to get it, so keep it wher you can recover it.
-       * Update user group membership using Authenticator getGroups, so, in your
+       * Update user group membership using Authenticator get_groups, so, in your
          callbacks, remember to store (using provided environment storage, for example)
-         the groups of this user so your getGroups will work correctly.
+         the groups of this user so your get_groups will work correctly.
     """
     gm = auths.GroupsManager(authenticator)
     auth_instance = authenticator.get_instance()
@@ -494,7 +494,7 @@ def web_logout(
 def log_login(
     request: 'types.requests.ExtendedHttpRequest',
     authenticator: models.Authenticator,
-    userName: str,
+    username: str,
     log_string: str = '',
     as_error: bool = False,
 ) -> None:
@@ -510,7 +510,7 @@ def log_login(
         '|'.join(
             [
                 authenticator.name,
-                userName,
+                username,
                 request.ip,
                 request.os.os.name,
                 log_string,
@@ -521,13 +521,13 @@ def log_login(
     log.log(
         authenticator,
         log_level,
-        f'user {userName} has {log_string} from {request.ip} where os is {request.os.os.name}',
+        f'user {username} has {log_string} from {request.ip} where os is {request.os.os.name}',
         types.log.LogSource.WEB,
     )
 
     try:
         # Root user is not on any authenticator, so we cannot attach log to an db user
-        user = authenticator.users.get(name=userName)
+        user = authenticator.users.get(name=username)
         log.log(
             user,
             log_level,

@@ -100,11 +100,11 @@ class PoolPerformanceReport(StatsReport):
         else:
             x_label_format = 'SHORT_DATETIME_FORMAT'
 
-        samplingIntervals: list[tuple[int, int]] = []
-        samplingIntervalSeconds = (end - start) / sampling_points
+        sampling_intervals: list[tuple[int, int]] = []
+        sampling_interval_seconds = (end - start) / sampling_points
         for i in range(sampling_points):
-            samplingIntervals.append(
-                (int(start + i * samplingIntervalSeconds), int(start + (i + 1) * samplingIntervalSeconds))
+            sampling_intervals.append(
+                (int(start + i * sampling_interval_seconds), int(start + (i + 1) * sampling_interval_seconds))
             )
 
         # Store dataUsers for all pools
@@ -116,7 +116,7 @@ class PoolPerformanceReport(StatsReport):
         for p in self.list_pools():
             data_users: list[tuple[int, int]] = []
             data_accesses: list[tuple[int, int]] = []
-            for interval in samplingIntervals:
+            for interval in sampling_intervals:
                 key = (interval[0] + interval[1]) // 2
                 q = (
                     StatsManager.manager()
@@ -159,7 +159,7 @@ class PoolPerformanceReport(StatsReport):
 
     def generate(self) -> bytes:
         # Generate the sampling intervals and get dataUsers from db
-        xLabelFormat, poolsData, reportData = self.get_range_data()
+        x_label_format, pools_data, report_data = self.get_range_data()
 
         graph1 = io.BytesIO()
         graph2 = io.BytesIO()
@@ -168,30 +168,30 @@ class PoolPerformanceReport(StatsReport):
 
         # logger.debug('PoolsData: %s', poolsData)
         def _tick_fnc1(l: int) -> str:
-            return filters.date(datetime.datetime.fromtimestamp(l), xLabelFormat) if int(l) >= 0 else ''
+            return filters.date(datetime.datetime.fromtimestamp(l), x_label_format) if int(l) >= 0 else ''
 
-        x = [v[0] for v in poolsData[0]['dataUsers']]
+        x = [v[0] for v in pools_data[0]['dataUsers']]
         data = {
             'title': _('Distinct Users'),
             'x': x,
             'xtickFnc': _tick_fnc1,
             'xlabel': _('Date'),
-            'y': [{'label': p['name'], 'data': [v[1] for v in p['dataUsers']]} for p in poolsData],
+            'y': [{'label': p['name'], 'data': [v[1] for v in p['dataUsers']]} for p in pools_data],
             'ylabel': _('Users'),
         }
 
         graphs.bar_chart(SIZE, data, graph1)
         
         def _tick_fnc2(l: int) -> str:
-            return filters.date(datetime.datetime.fromtimestamp(l), xLabelFormat) if int(l) >= 0 else ''
+            return filters.date(datetime.datetime.fromtimestamp(l), x_label_format) if int(l) >= 0 else ''
 
-        x = [v[0] for v in poolsData[0]['dataAccesses']]
+        x = [v[0] for v in pools_data[0]['dataAccesses']]
         data = {
             'title': _('Accesses'),
             'x': x,
             'xtickFnc': _tick_fnc2,
             'xlabel': _('Date'),
-            'y': [{'label': p['name'], 'data': [v[1] for v in p['dataAccesses']]} for p in poolsData],
+            'y': [{'label': p['name'], 'data': [v[1] for v in p['dataAccesses']]} for p in pools_data],
             'ylabel': _('Accesses'),
         }
 
@@ -202,7 +202,7 @@ class PoolPerformanceReport(StatsReport):
         return self.template_as_pdf(
             'uds/reports/stats/pools-performance.html',
             dct={
-                'data': reportData,
+                'data': report_data,
                 'pools': [i[1] for i in self.list_pools()],
                 'beginning': self.start_date.as_date(),
                 'ending': self.end_date.as_date(),
@@ -230,7 +230,7 @@ class PoolPerformanceReportCSV(PoolPerformanceReport):
         output = io.StringIO()
         writer = csv.writer(output)
 
-        reportData = self.get_range_data()[2]
+        report_data = self.get_range_data()[2]
 
         writer.writerow(
             [
@@ -241,7 +241,7 @@ class PoolPerformanceReportCSV(PoolPerformanceReport):
             ]
         )
 
-        for v in reportData:
+        for v in report_data:
             writer.writerow([v['name'], v['date'], v['users'], v['accesses']])
 
         return output.getvalue().encode('utf-8')

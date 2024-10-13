@@ -570,7 +570,7 @@ class gui:
                         case types.ui.FieldPatternType.MAC:
                             validators.validate_mac(self.value)
                         case types.ui.FieldPatternType.URL:
-                            validators.validateUrl(self.value)
+                            validators.validate_url(self.value)
                         case types.ui.FieldPatternType.EMAIL:
                             validators.validate_email(self.value)
                         case types.ui.FieldPatternType.FQDN:

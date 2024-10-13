@@ -112,7 +112,7 @@ def migrate(
                             # Not found, continue, but do not add to servers and log it
                             logger.error('Server %s on %s not found on DNS', server, record.name)
 
-            registeredServerGroup = ServerGroup.objects.create(
+            registered_server_group = ServerGroup.objects.create(
                 name=f'{server_group_prefix} for {record.name}',
                 comments='Migrated from {}'.format(record.name),
                 type=types.servers.ServerType.UNMANAGED,
@@ -120,7 +120,7 @@ def migrate(
             )
             # Create Registered Servers for IP (individual) and add them to the group
             for ip, hostname, mac in server_ip_hostname_mac:
-                registeredServerGroup.servers.create(
+                registered_server_group.servers.create(
                     token=secrets.token_urlsafe(36),
                     register_username='migration',
                     register_ip='127.0.0.1',
@@ -134,8 +134,8 @@ def migrate(
                     stamp=datetime.datetime.now(),
                 )
             # Set server group on provider
-            logger.info('Setting server group %s on provider %s', registeredServerGroup.name, record.name)
-            obj.server_group.value = registeredServerGroup.uuid
+            logger.info('Setting server group %s on provider %s', registered_server_group.name, record.name)
+            obj.server_group.value = registered_server_group.uuid
             # Now, execute post_migrate of obj
             obj.post_migrate(apps, record)
             # Save record

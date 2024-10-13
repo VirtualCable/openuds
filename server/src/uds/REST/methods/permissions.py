@@ -122,7 +122,7 @@ class Permissions(Handler):
         itemClass = Permissions.getClass(self._args[0])
         obj: 'Model' = itemClass.objects.get(uuid=self._args[1])
 
-        return Permissions.as_dict(permissions.getPermissions(obj))
+        return Permissions.as_dict(permissions.get_permissions(obj))
 
     def put(self) -> typing.Any:
         """
@@ -137,14 +137,14 @@ class Permissions(Handler):
             obj = cls.objects.get(uuid=obj_param)
             user = models.User.objects.get(uuid=user_param)
             permissions.add_user_permission(user, obj, perm)
-            return Permissions.as_dict(permissions.getPermissions(obj))
+            return Permissions.as_dict(permissions.get_permissions(obj))
 
         def add_group_permission(cls_param: str, obj_param: str, group_param: str) -> list[dict[str, str]]:
             cls = Permissions.getClass(cls_param)
             obj = cls.objects.get(uuid=obj_param)
             group = models.Group.objects.get(uuid=group_param)
             permissions.add_group_permission(group, obj, perm)
-            return Permissions.as_dict(permissions.getPermissions(obj))
+            return Permissions.as_dict(permissions.get_permissions(obj))
 
         def revoke() -> list[dict[str, str]]:
             for permId in self._params.get('items', []):

@@ -110,6 +110,15 @@ class TOTP_MFA(mfas.MFA):
         return gettext('Authentication Code')
 
     def _user_data(self, userid: str) -> tuple[str, bool]:
+        """
+        Retrieves the user data from storage for the given user
+        
+        Args:
+            userid (str): User identifier
+            
+        Returns:
+            tuple[str, bool]: Tuple with the secret and a boolean indicating if the QR code has been shown to the user
+        """
         # Get data from storage related to this user
         # Data contains the secret and if the user has already logged in already some time
         # so we show the QR code only once
@@ -135,23 +144,23 @@ class TOTP_MFA(mfas.MFA):
 
     def html(self, request: 'ExtendedHttpRequest', userid: str, username: str) -> str:
         # Get data from storage related to this user
-        qrShown = self._user_data(userid)[1]
-        if qrShown:
+        qr_has_been_shown = self._user_data(userid)[1]
+        if qr_has_been_shown:
             return _('Enter your authentication code')
         # Compose the QR code from provisioning URI
         totp = self.get_totp(userid, username)
         uri = totp.provisioning_uri()
         img: bytes = qrcode.make(uri)  # pyright: ignore
-        imgByteStream = io.BytesIO()
-        img.save(imgByteStream, format='PNG')  # type: ignore  # pylance complains abot format, but it is ok
+        img_bytestream = io.BytesIO()
+        img.save(img_bytestream, format='PNG')  # type: ignore  # pylance complains abot format, but it is ok
         # Convert to base64 to be used in html img tag
-        imgByteArr = imgByteStream.getvalue()
-        imgData = 'data:image/png;base64,' + base64.b64encode(imgByteArr).decode('utf-8')
+        img_bytearray = img_bytestream.getvalue()
+        img_data = 'data:image/png;base64,' + base64.b64encode(img_bytearray).decode('utf-8')
 
         # Return HTML code to be shown to user
         return f'''
             <div style="text-align: center;">
-                <img src="{imgData}" alt="QR Code" />
+                <img src="{img_data}" alt="QR Code" />
             </div>
             <div style="text-align: center;">
                 <p>{_('Please, use your Authenticator to add your account. (i.e. Google Authenticator, Authy, ...)')}</p>
@@ -188,7 +197,7 @@ class TOTP_MFA(mfas.MFA):
             raise exceptions.auth.MFAError(gettext('Code is already used. Wait a minute and try again.'))
 
         # Get data from storage related to this user
-        secret, qrShown = self._user_data(userid)
+        secret, qr_has_been_shown = self._user_data(userid)
 
         # Validate code
         if not self.get_totp(userid, username).verify(
@@ -198,7 +207,7 @@ class TOTP_MFA(mfas.MFA):
 
         self.cache.set(userid + code, True, self.valid_window.as_int() * (TOTP_INTERVAL + 1))
 
-        if qrShown is False:
+        if qr_has_been_shown is False:
             self._save_user_data(userid, (secret, True))  # Update user data to show QR code only once
 
     def reset_data(self, userid: str) -> None:

@@ -101,11 +101,11 @@ class TestOSManager(osmanagers.OSManager):
 
         return False
 
-    def get_name(self, userService: 'UserService') -> str:
+    def get_name(self, userservice: 'UserService') -> str:
         """
         gets name from deployed
         """
-        return userService.get_name()
+        return userservice.get_name()
 
     def actor_data(self, userservice: 'UserService') -> types.osmanagers.ActorData:
         return types.osmanagers.ActorData(action='rename', name=userservice.get_name())

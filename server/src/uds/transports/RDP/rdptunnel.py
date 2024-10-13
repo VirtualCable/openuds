@@ -143,7 +143,7 @@ class TRDPTransport(BaseRDPTransport):
 
         key = self.generate_key()
         ticket = TicketStore.create_for_tunnel(
-            userService=userservice,
+            userservice=userservice,
             port=self.rdp_port.as_int(),
             validity=self.tunnel_wait.as_int() + 60,  # Ticket overtime
             key=key,

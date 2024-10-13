@@ -103,8 +103,8 @@ class Network(UUIDModel, TaggingMixin):
         """
         Returns the networks that are valid for specified ip in dotted quad (xxx.xxx.xxx.xxx)
         """
-        ipInt, version = net.ip_to_long(ip)
-        hex_value = Network.hexlify(ipInt)
+        ip_int, version = net.ip_to_long(ip)
+        hex_value = Network.hexlify(ip_int)
         # hexlify is used to convert to hex, and then decode to convert to string
         return Network.objects.filter(
             version=version,
@@ -125,7 +125,7 @@ class Network(UUIDModel, TaggingMixin):
 
         Args:
             name: Name of the network
-            netRange: Network range in any supported format
+            net_range: Network range in any supported format
 
         """
         nr = net.network_from_str(net_range)

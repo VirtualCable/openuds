@@ -62,14 +62,14 @@ def opengnsys(
             if userservice.properties.get('token') == token:
                 return userservice
             logger.warning(
-                'OpenGnsys: invalid token %s for userService %s. (Ignored)',
+                'OpenGnsys: invalid token %s for userservice %s. (Ignored)',
                 token,
                 uuid,
             )
             # Sleep a while in case of error?
         except Exception:
             # Any exception will stop process
-            logger.warning('OpenGnsys: invalid userService %s:%s. (Ignored)', token, uuid)
+            logger.warning('OpenGnsys: invalid userservice %s:%s. (Ignored)', token, uuid)
 
         return None
 

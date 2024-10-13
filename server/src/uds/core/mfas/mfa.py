@@ -368,6 +368,12 @@ class MFA(Module):
         Returns:
             None if the code is valid
             Raises an error if the code is not valid ("exceptions.MFAError")
+            
+        Note:
+            The user id is provided so you can store user related data in a persistent way, if needed.
+            This user id will always be the same for the same user on same MFA authenticator.
+            In case the user is removed from db an recreated, the user id will be different.
+            (this is a desired behaviour, as the user is different, even if the name is the same)
         """
         # Validate the code
         try:
@@ -406,6 +412,12 @@ class MFA(Module):
     def get_user_unique_id(user: 'models.User') -> str:
         """
         Composes an unique, mfa dependant, id for the user (at this time, it's sha3_256 of user + mfa)
+        
+        Args:
+            user: User to get the unique id for
+            
+        Returns:
+            Unique id for the user
         """
         mfa = user.manager.mfa
         if not mfa:

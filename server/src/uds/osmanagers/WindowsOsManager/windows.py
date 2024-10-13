@@ -101,7 +101,7 @@ class WindowsOsManager(osmanagers.OSManager):
     def handle_unused(self, userservice: 'UserService') -> None:
         """
         This will be invoked for every assigned and unused user service that has been in this state at least 1/2 of Globalconfig.CHECK_UNUSED_TIME
-        This function can update userService values. Normal operation will be remove machines if this state is not valid
+        This function can update userservice values. Normal operation will be remove machines if this state is not valid
         """
         if self.is_removable_on_logout(userservice):
             log.log(

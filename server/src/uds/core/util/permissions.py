@@ -52,7 +52,7 @@ def clean(obj: 'Model') -> None:
     models.Permissions.clean_permissions(objtype.ObjectType.from_model(obj), obj.pk)
 
 
-def getPermissions(obj: 'Model') -> list[models.Permissions]:
+def get_permissions(obj: 'Model') -> list[models.Permissions]:
     return list(
         models.Permissions.enumerate_permissions(
             object_type=objtype.ObjectType.from_model(obj), object_id=obj.pk
@@ -67,8 +67,8 @@ def effective_permissions(
         if user.is_admin:
             return PermissionType.ALL
 
-        # Just check permissions for staff members
-        # root means for "object type" not for an object
+        # Check if user has permissions on the object
+        # instead of the object type
         if for_type is False:
             return models.Permissions.get_permissions(
                 object_type=objtype.ObjectType.from_model(obj),
@@ -77,6 +77,7 @@ def effective_permissions(
                 groups=user.groups.all(),
             )
 
+        # Check if user has permissions on the object type
         return models.Permissions.get_permissions(
             object_type=objtype.ObjectType.from_model(obj),
             user=user,

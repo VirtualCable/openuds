@@ -87,17 +87,17 @@ class CaseInsensitiveDict(dict[str, VT]):
             self.__setitem__(k, v)  # Set new key-value, with lower case key
 
 
-def package_relative_file(moduleName: str, fileName: str) -> str:
+def package_relative_file(module_name: str, file_name: str) -> str:
     """
     Helper to get image path from relative to a module.
     This allows to keep images alongside report
     """
-    mod = sys.modules[moduleName]
+    mod = sys.modules[module_name]
     if mod and hasattr(mod, '__file__') and mod.__file__:
         pkgpath = os.path.dirname(mod.__file__)
-        return os.path.join(pkgpath, fileName)
+        return os.path.join(pkgpath, file_name)
     # Not found, return fileName
-    return fileName
+    return file_name
 
 
 def timestamp_as_str(stamp: float, format_: typing.Optional[str] = None) -> str:
@@ -132,15 +132,15 @@ def remove_control_chars(s: str) -> str:
     return ''.join(ch for ch in s if unicodedata.category(ch)[0] != "C")
 
 
-def load_icon(iconFilename: str) -> bytes:
+def load_icon(icon_filename: str) -> bytes:
     """
     Loads an icon from icons directory
     """
     try:
-        with open(iconFilename, 'rb') as f:
+        with open(icon_filename, 'rb') as f:
             data = f.read()
     except Exception as e:
-        logger.error('Error reading icon file  %s: %s', iconFilename, e)
+        logger.error('Error reading icon file  %s: %s', icon_filename, e)
         # blank png bytes
         data = base64.b64decode(
             (

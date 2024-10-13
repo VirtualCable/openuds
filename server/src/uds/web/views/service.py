@@ -276,7 +276,7 @@ def update_transport_ticket(
 
             models.TicketStore.update(
                 uuid=ticket_id,
-                checkFnc=_is_ticket_valid,
+                checking_fnc=_is_ticket_valid,
                 username=username,
                 password=password,
                 domain=domain,

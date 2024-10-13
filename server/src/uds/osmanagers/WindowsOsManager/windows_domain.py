@@ -219,14 +219,14 @@ class WinDomainOsManager(WindowsOsManager):
 
         raise ldaputil.LDAPError(_error_string)
 
-    def _get_group(self, ldapConnection: 'ldaputil.LDAPObject') -> typing.Optional[str]:
+    def _get_group(self, ldap_connection: 'ldaputil.LDAPObject') -> typing.Optional[str]:
         base = ','.join(['DC=' + i for i in self.domain.as_str().split('.')])
         group = ldaputil.escape(self.grp.as_str())
         obj: typing.Optional[collections.abc.MutableMapping[str, typing.Any]]
         try:
             obj = next(
                 ldaputil.as_dict(
-                    ldapConnection,
+                    ldap_connection,
                     base,
                     f'(&(objectClass=group)(|(cn={group})(sAMAccountName={group})))',
                     ['dn'],

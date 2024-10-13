@@ -274,9 +274,9 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     @property
     def stats(self) -> typing.Optional[types.servers.ServerStats]:
         """Returns the current stats of this server, or None if not available"""
-        statsDct = self.properties.get('stats', None)
-        if statsDct:
-            return types.servers.ServerStats.from_dict(statsDct)
+        stats_dict = self.properties.get('stats', None)
+        if stats_dict:
+            return types.servers.ServerStats.from_dict(stats_dict)
         return None
 
     @stats.setter
@@ -286,9 +286,9 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
             del self.properties['stats']
         else:
             # Set stamp to current time and save it, overwriting existing stamp if any
-            statsDict = value.as_dict()
-            statsDict['stamp'] = sql_stamp()
-            self.properties['stats'] = statsDict
+            stats_dict = value.as_dict()
+            stats_dict['stamp'] = sql_stamp()
+            self.properties['stats'] = stats_dict
 
     def lock(self, duration: typing.Optional[datetime.timedelta]) -> None:
         """Locks this server for a duration"""
@@ -318,8 +318,8 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         For this, we get the property (if available) "available" (datetime) and compare it with current time
         If it is not available, we return False, otherwise True
         """
-        restrainedUntil = datetime.datetime.fromtimestamp(self.properties.get('available', consts.NEVER_UNIX))
-        return restrainedUntil > sql_now()
+        restrained_until = datetime.datetime.fromtimestamp(self.properties.get('available', consts.NEVER_UNIX))
+        return restrained_until > sql_now()
 
     def set_restrained_until(self, value: typing.Optional[datetime.datetime] = None) -> None:
         """Sets the availability of this server
@@ -356,7 +356,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
 
         Args:
             token: Token to validate
-            serverType: Server type to validate token for
+            server_type: Server type to validate token for
             request: Optional request to check ip against token ip
 
         Returns:
@@ -381,9 +381,9 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
             raise Exception('Multiple objects returned for token')
         return False
 
-    def set_actor_version(self, userService: 'UserService') -> None:
-        """Sets the actor version of this server to the userService"""
-        userService.actor_version = f'Server {self.version or "unknown"}'
+    def set_actor_version(self, userservice: 'UserService') -> None:
+        """Sets the actor version of this server to the userservice"""
+        userservice.actor_version = f'Server {self.version or "unknown"}'
 
     def get_comms_endpoint(self, *, path: typing.Optional[str] = None) -> typing.Optional[str]:
         """

@@ -53,9 +53,9 @@ class UniqueGIDGenerator(UniqueGenerator):
 
     def get(self, range_start: int = 0, range_end: int = consts.system.MAX_SEQ) -> str:
         return self._to_name(super()._get(range_start=range_start or 0, range_end=range_end))
-    
-    def transfer(self, seq: int, to_generator: 'UniqueGIDGenerator') -> bool:
-        return super()._transfer(seq, to_generator)
+
+    def transfer(self, seq: int, target_unique_gid_generator: 'UniqueGIDGenerator') -> bool:
+        return super()._transfer(seq, target_unique_gid_generator)
 
     def free(self, seq: int) -> None:
         self._free(seq)

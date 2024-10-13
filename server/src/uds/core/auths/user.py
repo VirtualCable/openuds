@@ -70,7 +70,7 @@ class User:
 
         :note: Once obtained valid groups, it caches them until object removal.
         """
-        from uds.models.user import User as DBUser  # Ensure no circular imports
+        from uds.models.user import User as DBUser  # Avoid circular import
 
         if self._groups is None:
             if self._cached_manager.external_source:

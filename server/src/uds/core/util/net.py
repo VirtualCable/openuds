@@ -238,7 +238,19 @@ def networks_from_str(
     check_mode: bool = False,
 ) -> list[NetworkType]:
     """
-    If allowMultipleNetworks is True, it allows ',' and ';' separators (and, ofc, more than 1 network)
+    Converts a string with networks to a list of NetworkType
+
+    Args:
+        networks_str: A string with networks separated by ',' or ';'
+        version: The version of the networks to convert. If 0, it will try to detect the version
+        check_mode: If True, it will raise an exception if a network is invalid (default is False).
+
+    Returns:
+        a list of NetworkType containing the networks (only valid networks are returned)
+
+    Raises:
+        ValueError: If a network is invalid and check_mode is True
+
     Returns a list of networks tuples in the form [(start1, end1), (start2, end2) ...]
     """
     return [
@@ -253,6 +265,20 @@ def contains(
     ip: typing.Union[str, int],
     version: typing.Literal[0, 4, 6] = 0,
 ) -> bool:
+    """
+    Checks if an IP is contained in a network or list of networks.
+    In case of string, the networks are separated by ',' or ';' and if any network is invalid,
+    will simply be ignored.
+
+    Args:
+        networks: A string with networks separated by ',' or ';' or a list of NetworkType
+        ip: The IP to check. if it's an string, the version will be detected.
+        version: The version of the IP to check. If 0, it will try to detect the version
+
+    Returns:
+        True if the IP is contained in any of the networks, False otherwise
+
+    """
     if isinstance(ip, str):
         ip, version = ip_to_long(ip)  # Ip overrides protocol version
     if isinstance(networks, str):
@@ -270,7 +296,16 @@ def contains(
 
 
 def is_valid_ip(value: str, version: typing.Literal[0, 4, 6] = 0) -> bool:
-    # Using ipaddress module
+    """
+    Checks if a value is a valid IP address of the specified version
+
+    Args:
+        value: The value to check
+        version: The version of the IP to check. If 0, it will try to detect the version
+
+    Returns:
+        True if the value is a valid IP address, False otherwise
+    """
     try:
         addr = ipaddress.ip_address(value)
         return version in (0, addr.version)  # Must be the same version or 0
@@ -278,23 +313,61 @@ def is_valid_ip(value: str, version: typing.Literal[0, 4, 6] = 0) -> bool:
         return False
 
 
-def is_valid_fqdn(value: str) -> bool:
+def is_valid_fqdn(fqdn: str) -> bool:
+    """
+    Checks if a value is a valid Fully Qualified Domain Name (FQDN)
+
+    Args:
+        value: The value to check
+
+    Returns:
+        True if the value is a valid FQDN, False otherwise
+    """
     return (
-        re.match(r'^(?!:\/\/)(?=.{1,255}$)((.{1,63}\.){1,127}(?![0-9]*$)[a-z0-9-]+\.?)$', value, re.IGNORECASE)
+        re.match(r'^(?!:\/\/)(?=.{1,255}$)((.{1,63}\.){1,127}(?![0-9]*$)[a-z0-9-]+\.?)$', fqdn, re.IGNORECASE)
         is not None  # Allow for non qualified domain names (such as localhost, host1, etc)
-        or re.match(r'^[a-z0-9-]+$', value, re.IGNORECASE) is not None
+        or re.match(r'^[a-z0-9-]+$', fqdn, re.IGNORECASE) is not None
     )
 
 
-def is_valid_host(value: str) -> bool:
-    return is_valid_ip(value) or is_valid_fqdn(value)
+def is_valid_host(host: str) -> bool:
+    """
+    Checks if a value is a valid IP address or FQDN
+
+    Args:
+        host: The value to check (IP address or FQDN)
+
+    Returns:
+        True if the value is a valid IP address or FQDN, False otherwise
+    """
+    return is_valid_ip(host) or is_valid_fqdn(host)
 
 
 def is_valid_mac(value: str) -> bool:
+    """
+    Checks if a value is a valid MAC address
+
+    Args:
+        value: The value to check
+
+    Returns:
+        True if the value is a valid MAC address, False otherwise
+    """
     return re.match(r'^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$', value) is not None
 
 
 def test_connectivity(host: str, port: int, timeout: float = 4) -> bool:
+    """
+    Checks the connectivity to a host and port
+    
+    Args:
+        host: The host to check
+        port: The port to check
+        timeout: The timeout in seconds for the connection (default is 4 seconds)
+        
+    Returns:
+        True if the connection is successful, False otherwise
+    """
     try:
         logger.debug('Checking connection to %s:%s with %s seconds timeout', host, port, timeout)
         sock = socket.create_connection((host, port), timeout)
