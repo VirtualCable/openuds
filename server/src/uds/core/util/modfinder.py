@@ -179,7 +179,7 @@ def dynamically_load_and_register_modules(
 ) -> None:
     '''Loads and registers all modules from a given package that are subclasses of the given type
 
-    This is an specialisation of dynamicLoadAndRegisterPackages that uses a ModuleFactory to register the modules
+    This is an specialisation of dynamic_load_and_register_packages that uses a ModuleFactory to register the modules
 
     Args:
         factory (ModuleFactory): Factory to use to create the objects, must support "insert" method

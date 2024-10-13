@@ -153,8 +153,8 @@ class ActorV3Action(Handler):
         return rest_result(result=result, **kwargs)
 
     @staticmethod
-    def set_comms_endpoint(userService: UserService, ip: str, port: int, secret: str) -> None:
-        userService.set_comms_endpoint(f'https://{ip}:{port}/actor/{secret}')
+    def set_comms_endpoint(userservice: UserService, ip: str, port: int, secret: str) -> None:
+        userservice.set_comms_endpoint(f'https://{ip}:{port}/actor/{secret}')
 
     @staticmethod
     def actor_cert_result(key: str, certificate: str, password: str) -> dict[str, typing.Any]:
@@ -171,7 +171,7 @@ class ActorV3Action(Handler):
 
     def get_userservice(self) -> UserService:
         '''
-        Looks for an userService and, if not found, raises a exceptions.rest.BlockAccess request
+        Looks for an userservice and, if not found, raises a exceptions.rest.BlockAccess request
         '''
         try:
             return UserService.objects.get(uuid=self._params['token'])
@@ -514,7 +514,7 @@ class BaseReadyChange(ActorV3Action):
         BaseReady method expect a json POST with this fields:
             * token: str -> Valid Actor "own_token" (if invalid, will return an error).
               Currently it is the same as user service uuid, but this could change
-            * secret: Secret for commsUrl for actor
+            * secret: Secret for comms_url for actor
             * ip: ip accesible by uds
             * port: port of the listener (normally 43910)
 
@@ -582,7 +582,7 @@ class Ready(BaseReadyChange):
         Ready method expect a json POST with this fields:
             * token: str -> Valid Actor "own_token" (if invalid, will return an error).
               Currently it is the same as user service uuid, but this could change
-            * secret: Secret for commsUrl for actor
+            * secret: Secret for comms_url for actor
             * ip: ip accesible by uds
             * port: port of the listener (normally 43910)
 
@@ -788,7 +788,7 @@ class Unmanaged(ActorV3Action):
         unmanaged method expect a json POST with this fields:
             * id: List[dict] -> List of dictionary containing ip and mac:
             * token: str -> Valid Actor "master_token" (if invalid, will return an error).
-            * secret: Secret for commsUrl for actor
+            * secret: Secret for comms_url for actor
             * port: port of the listener (normally 43910)
 
         This method will also regenerater the public-private key pair for client, that will be needed for the new ip

@@ -413,7 +413,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
                     ]
                 )
         except Exception as e:
-            return self.error(f'Error on setReady: {e}')
+            return self.error(f'Error on set_ready: {e}')
         return self._execute_queue()
 
     def reset(self) -> types.states.TaskState:
@@ -861,7 +861,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         return op.name
 
     def _debug(self, txt: str) -> str:
-        return f'Queue at {txt} for {self._name}: {", ".join([DynamicUserService._op2str(op) for op in self._queue])}, mac:{self._mac}, vmId:{self._vmid}'
+        return f'Queue at {txt} for {self._name}: {", ".join([DynamicUserService._op2str(op) for op in self._queue])}, mac:{self._mac}, vmid:{self._vmid}'
 
 
 # This is a map of operations to methods

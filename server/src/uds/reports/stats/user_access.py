@@ -127,22 +127,22 @@ class StatsReportLogin(StatsReport):
         start = self.start_date.as_timestamp()
         end = self.end_date.as_timestamp()
 
-        dataWeek = [0] * 7
-        dataHour = [0] * 24
-        dataWeekHour = [[0] * 24 for _ in range(7)]
+        data_week = [0] * 7
+        data_hour = [0] * 24
+        data_week_hour = [[0] * 24 for _ in range(7)]
         for val in StatsManager.manager().enumerate_events(
             stats.events.types.stats.EventOwnerType.AUTHENTICATOR, stats.events.types.stats.EventType.LOGIN, since=start, to=end
         ):
             s = datetime.datetime.fromtimestamp(val.stamp)
-            dataWeek[s.weekday()] += 1
-            dataHour[s.hour] += 1
-            dataWeekHour[s.weekday()][s.hour] += 1
+            data_week[s.weekday()] += 1
+            data_hour[s.hour] += 1
+            data_week_hour[s.weekday()][s.hour] += 1
             logger.debug('Data: %s %s', s.weekday(), s.hour)
 
-        return dataWeek, dataHour, dataWeekHour
+        return data_week, data_hour, data_week_hour
 
     def generate(self) -> bytes:
-        xLabelFormat, data, report_data = self.get_range_data()
+        x_label_format, data, report_data = self.get_range_data()
 
         #
         # User access by date graph
@@ -150,7 +150,7 @@ class StatsReportLogin(StatsReport):
         graph1 = io.BytesIO()
         
         def _tick_fnc1(l: int) -> str:
-            return filters.date(datetime.datetime.fromtimestamp(l), xLabelFormat)
+            return filters.date(datetime.datetime.fromtimestamp(l), x_label_format)
 
         x = [v[0] for v in data]
         d: dict[str, typing.Any] = {
@@ -168,7 +168,7 @@ class StatsReportLogin(StatsReport):
         graph2 = io.BytesIO()
         graph3 = io.BytesIO()
         graph4 = io.BytesIO()
-        dataWeek, dataHour, data_week_hour = self.get_week_hourly_data()
+        data_week, data_hour, data_week_hour = self.get_week_hourly_data()
         
         def _tick_fnc2(l: int) -> str:
             return [
@@ -187,7 +187,7 @@ class StatsReportLogin(StatsReport):
             'x': x,
             'xtickFnc': _tick_fnc2,
             'xlabel': _('Day of week'),
-            'y': [{'label': 'Users', 'data': list(dataWeek)}],
+            'y': [{'label': 'Users', 'data': list(data_week)}],
             'ylabel': 'Users',
         }
 
@@ -198,7 +198,7 @@ class StatsReportLogin(StatsReport):
             'title': _('Users Access (by hour)'),
             'x': x,
             'xlabel': _('Hour'),
-            'y': [{'label': 'Users', 'data': list(dataHour)}],
+            'y': [{'label': 'Users', 'data': list(data_hour)}],
             'ylabel': 'Users',
         }
 

@@ -89,15 +89,15 @@ class Connection(Handler):
 
         return Connection.result(result=services.get_services_info_dict(self._request))
 
-    def connection(self, idService: str, idTransport: str, skip: str = '') -> dict[str, typing.Any]:
+    def connection(self, id_service: str, id_transport: str, skip: str = '') -> dict[str, typing.Any]:
         skip_check = skip in ('doNotCheck', 'do_not_check', 'no_check', 'nocheck', 'skip_check')
         try:
             info = UserServiceManager.manager().get_user_service_info(  # pylint: disable=unused-variable
                 self._user,
                 self._request.os,
                 self._request.ip,
-                idService,
-                idTransport,
+                id_service,
+                id_transport,
                 not skip_check,
             )
             connection_info = {
@@ -123,10 +123,10 @@ class Connection(Handler):
             logger.exception("Exception")
             return Connection.result(error=str(e))
 
-    def script(self, idService: str, idTransport: str, scrambler: str, hostname: str) -> dict[str, typing.Any]:
+    def script(self, id_service: str, id_transport: str, scrambler: str, hostname: str) -> dict[str, typing.Any]:
         try:
             info = UserServiceManager.manager().get_user_service_info(
-                self._user, self._request.os, self._request.ip, idService, idTransport
+                self._user, self._request.os, self._request.ip, id_service, id_transport
             )
             password = CryptoManager.manager().symmetric_decrypt(self.recover_value('password'), scrambler)
 
@@ -137,7 +137,7 @@ class Connection(Handler):
             if not info.ip:
                 raise ServiceNotReadyError()
 
-            transportScript = info.transport.get_instance().encoded_transport_script(
+            transport_script = info.transport.get_instance().encoded_transport_script(
                 info.userservice,
                 info.transport,
                 info.ip,
@@ -147,7 +147,7 @@ class Connection(Handler):
                 self._request,
             )
 
-            return Connection.result(result=transportScript)
+            return Connection.result(result=transport_script)
         except ServiceNotReadyError as e:
             # Refresh ticket and make this retrayable
             return Connection.result(
@@ -160,15 +160,15 @@ class Connection(Handler):
     def get_ticket_content(self, ticketId: str) -> dict[str, typing.Any]:  # pylint: disable=unused-argument
         return {}
 
-    def get_uds_link(self, idService: str, idTransport: str) -> dict[str, typing.Any]:
+    def get_uds_link(self, id_service: str, id_transport: str) -> dict[str, typing.Any]:
         # Returns the UDS link for the user & transport
         self._request.user = self._user
         setattr(self._request, '_cryptedpass', self.session['REST']['password'])
         setattr(self._request, '_scrambler', self._request.META['HTTP_SCRAMBLER'])
-        linkInfo = services.enable_service(self._request, service_id=idService, transport_id=idTransport)
-        if linkInfo['error']:
-            return Connection.result(error=linkInfo['error'])
-        return Connection.result(result=linkInfo['url'])
+        link_info = services.enable_service(self._request, service_id=id_service, transport_id=id_transport)
+        if link_info['error']:
+            return Connection.result(error=link_info['error'])
+        return Connection.result(result=link_info['url'])
 
     def get(self) -> dict[str, typing.Any]:
         """

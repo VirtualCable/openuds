@@ -108,9 +108,9 @@ class Authenticators(ModelHandler):
             if auth_type:
                 # Create a new instance of the authenticator to access to its GUI
                 with Environment.temporary_environment() as env:
-                    authInstance = auth_type(env, None)
+                    auth_instance = auth_type(env, None)
                     field = self.add_default_fields(
-                        authInstance.gui_description(),
+                        auth_instance.gui_description(),
                         ['name', 'comments', 'tags', 'priority', 'small_name', 'networks'],
                     )
                     self.add_field(
@@ -240,14 +240,14 @@ class Authenticators(ModelHandler):
             # self.invalidResponseException('{}'.format(e))
 
     def test(self, type_: str) -> typing.Any:
-        authType = auths.factory().lookup(type_)
-        if not authType:
+        auth_type = auths.factory().lookup(type_)
+        if not auth_type:
             raise self.invalid_request_response(f'Invalid type: {type_}')
 
         dct = self._params.copy()
         dct['_request'] = self._request
         with Environment.temporary_environment() as env:
-            res = authType.test(env, dct)
+            res = auth_type.test(env, dct)
             if res.success:
                 return self.success()
             return res.error

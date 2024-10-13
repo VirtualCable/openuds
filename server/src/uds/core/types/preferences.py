@@ -50,7 +50,7 @@ class CommonPrefs:
     @staticmethod
     def get_wh(size: str) -> tuple[int, int]:
         """
-        Get width based on screenSizePref value
+        Get width based on size value
         """
         return {
             CommonPrefs.SZ_640x480: (640, 480),
@@ -64,7 +64,7 @@ class CommonPrefs:
     @staticmethod
     def get_depth(depth: str) -> int:
         """
-        Get depth based on depthPref value
+        Get depth based on depth value
         """
         return {
             CommonPrefs.DEPTH_8: 8,

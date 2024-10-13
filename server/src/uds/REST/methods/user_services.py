@@ -236,15 +236,15 @@ class AssignedService(DetailHandler):
         if not item:
             raise self.invalid_item_response('Only modify is allowed')
         fields = self.fields_from_params(['auth_id', 'user_id'])
-        userService = parent.userServices.get(uuid=process_uuid(item))
+        userservice = parent.userServices.get(uuid=process_uuid(item))
         user = models.User.objects.get(uuid=process_uuid(fields['user_id']))
 
-        log_string = f'Changed ownership of user service {userService.friendly_name} from {userService.user} to {user.pretty_name} by {self._user.pretty_name}'
+        log_string = f'Changed ownership of user service {userservice.friendly_name} from {userservice.user} to {user.pretty_name} by {self._user.pretty_name}'
 
         # If there is another service that has this same owner, raise an exception
         if (
             parent.userServices.filter(user=user)
-            .exclude(uuid=userService.uuid)
+            .exclude(uuid=userservice.uuid)
             .exclude(state__in=State.INFO_STATES)
             .count()
             > 0
@@ -253,16 +253,16 @@ class AssignedService(DetailHandler):
                 f'There is already another user service assigned to {user.pretty_name}'
             )
 
-        userService.user = user
-        userService.save()
+        userservice.user = user
+        userservice.save()
 
         # Log change
         log.log(parent, types.log.LogLevel.INFO, log_string, types.log.LogSource.ADMIN)
-        log.log(userService, types.log.LogLevel.INFO, log_string, types.log.LogSource.ADMIN)
+        log.log(userservice, types.log.LogLevel.INFO, log_string, types.log.LogSource.ADMIN)
 
     def reset(self, parent: 'models.ServicePool', item: str) -> typing.Any:
-        userService = parent.userServices.get(uuid=process_uuid(item))
-        UserServiceManager.manager().reset(userService)
+        userservice = parent.userServices.get(uuid=process_uuid(item))
+        UserServiceManager.manager().reset(userservice)
 
 
 class CachedService(AssignedService):

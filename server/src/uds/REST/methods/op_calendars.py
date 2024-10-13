@@ -100,11 +100,11 @@ class AccessCalendars(DetailHandler):
         priority = int(self._params['priority'])
 
         if uuid is not None:
-            calAccess = parent.calendarAccess.get(uuid=uuid)
-            calAccess.calendar = calendar
-            calAccess.access = access
-            calAccess.priority = priority
-            calAccess.save()
+            calendar_access = parent.calendarAccess.get(uuid=uuid)
+            calendar_access.calendar = calendar
+            calendar_access.access = access
+            calendar_access.priority = priority
+            calendar_access.save(update_fields=['calendar', 'access', 'priority'])
         else:
             parent.calendarAccess.create(calendar=calendar, access=access, priority=priority)
 
@@ -117,11 +117,11 @@ class AccessCalendars(DetailHandler):
 
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
-        calendarAccess = parent.calendarAccess.get(uuid=process_uuid(self._args[0]))
-        logStr = f'Removed access calendar {calendarAccess.calendar.name} by {self._user.pretty_name}'
-        calendarAccess.delete()
+        calendar_access = parent.calendarAccess.get(uuid=process_uuid(self._args[0]))
+        log_str = f'Removed access calendar {calendar_access.calendar.name} by {self._user.pretty_name}'
+        calendar_access.delete()
 
-        log.log(parent, types.log.LogLevel.INFO, logStr, types.log.LogSource.ADMIN)
+        log.log(parent, types.log.LogLevel.INFO, log_str, types.log.LogSource.ADMIN)
 
 
 class ActionsCalendars(DetailHandler):
@@ -204,14 +204,14 @@ class ActionsCalendars(DetailHandler):
         )
 
         if uuid is not None:
-            calAction = models.CalendarAction.objects.get(uuid=uuid)
-            calAction.calendar = calendar
-            calAction.service_pool = parent
-            calAction.action = action
-            calAction.at_start = at_start
-            calAction.events_offset = events_offset
-            calAction.params = params
-            calAction.save()
+            calendar_action = models.CalendarAction.objects.get(uuid=uuid)
+            calendar_action.calendar = calendar
+            calendar_action.service_pool = parent
+            calendar_action.action = action
+            calendar_action.at_start = at_start
+            calendar_action.events_offset = events_offset
+            calendar_action.params = params
+            calendar_action.save()
         else:
             models.CalendarAction.objects.create(
                 calendar=calendar,
@@ -226,33 +226,33 @@ class ActionsCalendars(DetailHandler):
 
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, models.ServicePool)
-        calendarAction = models.CalendarAction.objects.get(uuid=process_uuid(self._args[0]))
-        logStr = (
-            f'Removed scheduled action "{calendarAction.calendar.name},'
-            f'{calendarAction.action},{calendarAction.events_offset},'
-            f'{calendarAction.at_start and "Start" or "End"},'
-            f'{calendarAction.params}" by {self._user.pretty_name}'
+        calendar_action = models.CalendarAction.objects.get(uuid=process_uuid(self._args[0]))
+        log_str = (
+            f'Removed scheduled action "{calendar_action.calendar.name},'
+            f'{calendar_action.action},{calendar_action.events_offset},'
+            f'{calendar_action.at_start and "Start" or "End"},'
+            f'{calendar_action.params}" by {self._user.pretty_name}'
         )
 
-        calendarAction.delete()
+        calendar_action.delete()
 
-        log.log(parent, types.log.LogLevel.INFO, logStr, types.log.LogSource.ADMIN)
+        log.log(parent, types.log.LogLevel.INFO, log_str, types.log.LogSource.ADMIN)
 
     def execute(self, parent: 'Model', item: str) -> typing.Any:
         parent = ensure.is_instance(parent, models.ServicePool)
         logger.debug('Launching action')
         uuid = process_uuid(item)
-        calendarAction: models.CalendarAction = models.CalendarAction.objects.get(uuid=uuid)
-        self.ensure_has_access(calendarAction, types.permissions.PermissionType.MANAGEMENT)
+        calendar_action: models.CalendarAction = models.CalendarAction.objects.get(uuid=uuid)
+        self.ensure_has_access(calendar_action, types.permissions.PermissionType.MANAGEMENT)
 
-        logStr = (
-            f'Launched scheduled action "{calendarAction.calendar.name},'
-            f'{calendarAction.action},{calendarAction.events_offset},'
-            f'{calendarAction.at_start and "Start" or "End"},'
-            f'{calendarAction.params}" by {self._user.pretty_name}'
+        log_str = (
+            f'Launched scheduled action "{calendar_action.calendar.name},'
+            f'{calendar_action.action},{calendar_action.events_offset},'
+            f'{calendar_action.at_start and "Start" or "End"},'
+            f'{calendar_action.params}" by {self._user.pretty_name}'
         )
 
-        log.log(parent, types.log.LogLevel.INFO, logStr, types.log.LogSource.ADMIN)
-        calendarAction.execute()
+        log.log(parent, types.log.LogLevel.INFO, log_str, types.log.LogSource.ADMIN)
+        calendar_action.execute()
 
         return self.success()

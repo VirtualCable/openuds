@@ -69,7 +69,7 @@ class Client(Handler):
         Args:
             result: Result value to return (can be None, in which case it is converted to empty string '')
             error: If present, This response represents an error. Result will contain an "Explanation" and error contains the error code
-            errorCode: Code of the error to return, if error is not None
+            error_code: Code of the error to return, if error is not None
             retryable: If True, this operation can (and must) be retried
 
         Returns:
@@ -107,21 +107,21 @@ class Client(Handler):
         info: typing.Optional[types.services.UserServiceInfo] = None
         hostname = self._params.get('hostname', '')  # Or if hostname is not included...
         version = self._params.get('version', '0.0.0')
-        srcIp = self._request.ip
+        src_ip = self._request.ip
 
         if version < consts.system.VERSION_REQUIRED_CLIENT:
             return Client.result(error='Client version not supported.\n Please, upgrade it.')
 
         # Ip is optional,
         if GlobalConfig.HONOR_CLIENT_IP_NOTIFY.as_bool() is True:
-            srcIp = self._params.get('ip', srcIp)
+            src_ip = self._params.get('ip', src_ip)
 
         logger.debug(
             'Got Ticket: %s, scrambled: %s, Hostname: %s, Ip: %s',
             ticket,
             scrambler,
             hostname,
-            srcIp,
+            src_ip,
         )
 
         try:

@@ -36,7 +36,7 @@ import typing
 from django.core.cache import caches
 
 from uds.core import exceptions
-from uds.core.util.cache import Cache as uCache
+from uds.core.util.cache import Cache as UCache
 from uds.REST import Handler
 
 logger = logging.getLogger(__name__)
@@ -58,7 +58,7 @@ class Cache(Handler):
         if len(self._args) != 1:
             raise exceptions.rest.RequestError('Invalid Request')
 
-        uCache.purge()
+        UCache.purge()
         for i in ('default', 'memory'):
             try:
                 caches[i].clear()

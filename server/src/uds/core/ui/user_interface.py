@@ -274,8 +274,8 @@ class gui:
             * order
             * label
             * tooltip
-            * default  (if not included, will be ''). Alias for this field is defaultValue
-            * readonly if can't be modified once it's created. Aliases for this field is readOnly
+            * default  (if not included, will be None).
+            * readonly if can't be modified once it's created. Aliases for this field is read only
 
         Any other paremeter needed is indicated in the corresponding field class.
 
@@ -289,7 +289,7 @@ class gui:
 
         Note:
             Currently, old field name is only intended for 4.0 migration, so it has only one value.
-            This means that only one rename can be donoe currently. If needed, we can add a list of old names
+            This means that only one rename can be done currently. If needed, we can add a list of old names
             in a future version. (str|list[str]|None instead of str|None)
         """
 
@@ -891,7 +891,7 @@ class gui:
               hidden = gui.HiddenField()
 
 
-           After that, at initGui method of module, we can store a value inside
+           After that, at init_gui method of module, we can store a value inside
            using value as shown here:
 
            .. code-block:: python
@@ -1018,7 +1018,7 @@ class gui:
            single-valued field via id-value
 
         * We can override choice values at UserInterface derived class
-          constructor or initGui using setValues
+          constructor or init_gui using set_values
 
         There is an extra option available for this kind of field:
 
@@ -1046,48 +1046,43 @@ class gui:
             .. code-block:: python
 
                choice1 = gui.ChoiceField(label="Choice 1", values = ....,
-                   fills = { 'target': 'choice2', 'callback': fncValues,
+                   fills = { 'target': 'choice2', 'callback': fncvalues,
                        'parameters': ['choice1', 'name']}
                    )
                choice2 = gui.ChoiceField(label="Choice 2")
 
-            Here is a more detailed explanation, using the VC service module as
+            Here is a more detailed explanation, using the a Test service module as
             sample.
 
-            .. code-block:: python
+            class TestHelpers(object):
+                # ...
+                # other stuff
+                # ...
+                @staticmethod
+                def get_machines(parameters):
+                    # ...initialization and other stuff...
+                    if parameters['resourcePool'] != '':
+                        # ... do stuff ...
+                    data = [ { 'name' : 'machine', 'choices' : [{'id': 'xxxxxx', 'value': 'yyyy'}] } ]
+                    return data
 
-               class VCHelpers(object):
-                   # ...
-                   # other stuff
-                   # ...
-                   @staticmethod
-                   def getMachines(parameters):
-                       # ...initialization and other stuff...
-                       if parameters['resourcePool'] != '':
-                           # ... do stuff ...
-                       data = [ { 'name' : 'machine', 'choices' : [{'id': 'xxxxxx', 'value': 'yyyy'}] } ]
-                       return data
+            class ModuleTest(services.Service)
+                # ...
+                # stuff
+                # ...
+                resourcepool = gui.ChoiceField(
+                    label=_("Resource Pool"), readonly = False, order = 5,
+                    fills = {
+                        'callback_name' : 'vcFillMachinesFromResource',
+                        'function' : VCHelpers.getMachines,
+                        'parameters' : ['vc', 'ev', 'resourcePool']
+                    },
+                    tooltip = _('Resource Pool containing base machine'),
+                    required = True
+                )
 
-               class ModuleVC(services.Service)
-                  # ...
-                  # stuff
-                  # ...
-                  resourcePool = gui.ChoiceField(
-                      label=_("Resource Pool"), readonly = False, order = 5,
-                      fills = {
-                          'callback_name' : 'vcFillMachinesFromResource',
-                          'function' : VCHelpers.getMachines,
-                          'parameters' : ['vc', 'ev', 'resourcePool']
-                      },
-                      tooltip = _('Resource Pool containing base machine'),
-                      required = True
-                  )
-
-                  machine = gui.ChoiceField(label = _("Base Machine"), order = 6,
-                      tooltip = _('Base machine for this service'), required = True )
-
-                  vc = gui.HiddenField()
-                  ev = gui.HiddenField() # ....
+                machine = gui.ChoiceField(label = _("Base Machine"), order = 6,
+                    tooltip = _('Base machine for this service'), required = True )
 
         """
 
@@ -1431,13 +1426,13 @@ class UserInterfaceType(abc.ABCMeta, type):
 
         # Make a copy of gui fields description
         # (we will update references on class 'self' to the new copy)
-        for attrName, attr in namespace.items():
+        for attr_name, attr in namespace.items():
             if isinstance(attr, gui.InputField):
                 # Ensure we have a copy of the data, so we can modify it without affecting others
                 attr._field_info = copy.deepcopy(attr._field_info)
-                _gui[attrName] = attr
+                _gui[attr_name] = attr
 
-            new_class_dict[attrName] = attr
+            new_class_dict[attr_name] = attr
         new_class_dict['_gui_fields_template'] = _gui
         return super().__new__(mcs, classname, bases, new_class_dict)
 
@@ -1720,7 +1715,7 @@ class UserInterface(metaclass=UserInterfaceType):
 
     def gui_description(self, *, skip_init_gui: bool = False) -> list[types.ui.GuiElement]:
         """
-        This simple method generates the theGui description needed by the
+        This simple method generates the the_gui description needed by the
         administration client, so it can
         represent it at user interface and manage it.
 

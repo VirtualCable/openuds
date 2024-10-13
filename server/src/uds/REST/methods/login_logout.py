@@ -227,8 +227,8 @@ class Auths(Handler):
         all_param: bool = self._params.get('all', 'false').lower() == 'true'
         auth: Authenticator
         for auth in Authenticator.objects.all():
-            theType = auth.get_type()
-            if all_param or (theType.is_custom() is False and theType.type_type not in ('IP',)):
+            auth_type = auth.get_type()
+            if all_param or (auth_type.is_custom() is False and auth_type.type_type not in ('IP',)):
                 yield {
                     'authId': auth.uuid,  # Deprecated, use 'auth_id'
                     'auth_id': auth.uuid,
@@ -236,10 +236,10 @@ class Auths(Handler):
                     'authLabel': str(auth.small_name),  # Deprecated, use 'auth_label'
                     'auth_label': str(auth.small_name),
                     'auth': auth.name,
-                    'type': theType.type_type,
+                    'type': auth_type.type_type,
                     'priority': auth.priority,
-                    'isCustom': theType.is_custom(),  # Deprecated, use 'custom'
-                    'custom': theType.is_custom(),
+                    'isCustom': auth_type.is_custom(),  # Deprecated, use 'custom'
+                    'custom': auth_type.is_custom(),
                 }
 
     def get(self) -> list[dict[str, typing.Any]]:

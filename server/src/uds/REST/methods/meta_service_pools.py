@@ -123,11 +123,11 @@ class MetaServicesPool(DetailHandler):
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, models.MetaPool)
         member = parent.members.get(uuid=process_uuid(self._args[0]))
-        logStr = "Removed meta pool member {} by {}".format(member.pool.name, self._user.pretty_name)
+        log_str = "Removed meta pool member {} by {}".format(member.pool.name, self._user.pretty_name)
 
         member.delete()
 
-        log.log(parent, types.log.LogLevel.INFO, logStr, types.log.LogSource.ADMIN)
+        log.log(parent, types.log.LogLevel.INFO, log_str, types.log.LogSource.ADMIN)
 
 
 class MetaAssignedService(DetailHandler):
@@ -137,7 +137,7 @@ class MetaAssignedService(DetailHandler):
 
     @staticmethod
     def item_as_dict(
-        metaPool: 'models.MetaPool',
+        meta_pool: 'models.MetaPool',
         item: 'models.UserService',
         props: typing.Optional[dict[str, typing.Any]],
     ) -> dict[str, typing.Any]:
@@ -146,23 +146,23 @@ class MetaAssignedService(DetailHandler):
         element['pool_name'] = item.deployed_service.name
         return element
 
-    def _get_assigned_userservice(self, metaPool: models.MetaPool, userServiceId: str) -> models.UserService:
+    def _get_assigned_userservice(self, metapool: models.MetaPool, userservice_id: str) -> models.UserService:
         """
         Gets an assigned service and checks that it belongs to this metapool
         If not found, raises InvalidItemException
         """
         try:
             return models.UserService.objects.filter(
-                uuid=process_uuid(userServiceId),
+                uuid=process_uuid(userservice_id),
                 cache_level=0,
-                deployed_service__in=[i.pool for i in metaPool.members.all()],
+                deployed_service__in=[i.pool for i in metapool.members.all()],
             )[0]
         except Exception:
             raise self.invalid_item_response()
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = ensure.is_instance(parent, models.MetaPool)
-        def assignedUserServicesForPools() -> (
+        def _assigned_userservices_for_pools() -> (
             typing.Generator[
                 tuple[models.UserService, typing.Optional[dict[str, typing.Any]]], None, None
             ]
@@ -186,7 +186,7 @@ class MetaAssignedService(DetailHandler):
             if not item:  # All items
                 result: dict[str, typing.Any] = {}
 
-                for k, props in assignedUserServicesForPools():
+                for k, props in _assigned_userservices_for_pools():
                     result[k.uuid] = MetaAssignedService.item_as_dict(parent, k, props)
                 return list(result.values())
 
@@ -236,9 +236,9 @@ class MetaAssignedService(DetailHandler):
     def get_logs(self, parent: 'Model', item: str) -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.MetaPool)
         try:
-            asignedService = self._get_assigned_userservice(parent, item)
-            logger.debug('Getting logs for %s', asignedService)
-            return log.get_logs(asignedService)
+            asigned_userservice = self._get_assigned_userservice(parent, item)
+            logger.debug('Getting logs for %s', asigned_userservice)
+            return log.get_logs(asigned_userservice)
         except Exception:
             raise self.invalid_item_response()
 
@@ -247,13 +247,13 @@ class MetaAssignedService(DetailHandler):
         userservice = self._get_assigned_userservice(parent, item)
 
         if userservice.user:
-            logStr = 'Deleted assigned service {} to user {} by {}'.format(
+            log_str = 'Deleted assigned service {} to user {} by {}'.format(
                 userservice.friendly_name,
                 userservice.user.pretty_name,
                 self._user.pretty_name,
             )
         else:
-            logStr = 'Deleted cached service {} by {}'.format(userservice.friendly_name, self._user.pretty_name)
+            log_str = 'Deleted cached service {} by {}'.format(userservice.friendly_name, self._user.pretty_name)
 
         if userservice.state in (State.USABLE, State.REMOVING):
             userservice.release()
@@ -264,7 +264,7 @@ class MetaAssignedService(DetailHandler):
         else:
             raise self.invalid_item_response(_('Item is not removable'))
 
-        log.log(parent, types.log.LogLevel.INFO, logStr, types.log.LogSource.ADMIN)
+        log.log(parent, types.log.LogLevel.INFO, log_str, types.log.LogSource.ADMIN)
 
     # Only owner is allowed to change right now
     def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
@@ -276,7 +276,7 @@ class MetaAssignedService(DetailHandler):
         userservice = self._get_assigned_userservice(parent, item)
         user = models.User.objects.get(uuid=process_uuid(fields['user_id']))
 
-        logStr = 'Changing ownership of service from {} to {} by {}'.format(
+        log_str = 'Changing ownership of service from {} to {} by {}'.format(
             userservice.user.pretty_name if userservice.user else 'unknown', user.pretty_name, self._user.pretty_name
         )
 
@@ -296,4 +296,4 @@ class MetaAssignedService(DetailHandler):
         userservice.save()
 
         # Log change
-        log.log(parent, types.log.LogLevel.INFO, logStr, types.log.LogSource.ADMIN)
+        log.log(parent, types.log.LogLevel.INFO, log_str, types.log.LogSource.ADMIN)

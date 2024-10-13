@@ -177,7 +177,7 @@ class ServersServers(DetailHandler):
     def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
         return types.ui.RowStyleInfo(prefix='row-maintenance-', field='maintenance_mode')
 
-    def get_gui(self, parent: 'Model', forType: str = '') -> list[typing.Any]:
+    def get_gui(self, parent: 'Model', for_type: str = '') -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.ServerGroup)
         kind, subkind = parent.server_type, parent.subtype
         title = _('of type') + f' {subkind.upper()} {kind.name.capitalize()}'

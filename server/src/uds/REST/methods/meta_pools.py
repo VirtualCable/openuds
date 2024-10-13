@@ -289,7 +289,7 @@ class MetaPools(ModelHandler):
         item.delete()
 
     # Set fallback status
-    def setFallbackAccess(self, item: MetaPool) -> typing.Any:
+    def set_fallback_access(self, item: MetaPool) -> typing.Any:
         self.ensure_has_access(item, types.permissions.PermissionType.MANAGEMENT)
 
         fallback = self._params.get('fallbackAccess', 'ALLOW')
@@ -298,10 +298,10 @@ class MetaPools(ModelHandler):
         item.save()
         return ''
 
-    def getFallbackAccess(self, item: MetaPool) -> typing.Any:
+    def get_fallback_access(self, item: MetaPool) -> typing.Any:
         return item.fallbackAccess
 
     #  Returns the action list based on current element, for calendars (nothing right now for metapools, because no actions are allowed)
-    def actionsList(self, item: MetaPool) -> typing.Any:
-        validActions = ()
-        return validActions
+    def actions_list(self, item: MetaPool) -> typing.Any:
+        valid_actions = ()
+        return valid_actions

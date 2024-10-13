@@ -40,7 +40,7 @@ from django.core.exceptions import ValidationError
 
 from uds.core.types.states import State
 
-from uds.core.auths.user import User as aUser
+from uds.core.auths.user import User as AUser
 from uds.core.util import log, ensure
 from uds.core.util.model import process_uuid
 from uds.models import Authenticator, User, Group, ServicePool
@@ -73,8 +73,8 @@ def get_groups_from_metagroup(groups: collections.abc.Iterable[Group]) -> collec
 def get_service_pools_for_groups(
     groups: collections.abc.Iterable[Group],
 ) -> collections.abc.Iterable[ServicePool]:
-    for servicePool in ServicePool.get_pools_for_groups(groups):
-        yield servicePool
+    for servicepool in ServicePool.get_pools_for_groups(groups):
+        yield servicepool
 
 
 class Users(DetailHandler):
@@ -141,7 +141,7 @@ class Users(DetailHandler):
             res['role'] = (
                 res['staff_member'] and (res['is_admin'] and _('Admin') or _('Staff member')) or _('User')
             )
-            usr = aUser(u)
+            usr = AUser(u)
             res['groups'] = [g.db_obj().uuid for g in usr.groups()]
             logger.debug('Item: %s', res)
             return res

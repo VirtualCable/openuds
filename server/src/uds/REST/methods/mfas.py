@@ -67,18 +67,18 @@ class MFA(ModelHandler):
         return mfas.factory().providers().values()
 
     def get_gui(self, type_: str) -> list[typing.Any]:
-        mfaType = mfas.factory().lookup(type_)
+        mfa_type = mfas.factory().lookup(type_)
 
-        if not mfaType:
+        if not mfa_type:
             raise self.invalid_item_response()
 
         # Create a temporal instance to get the gui
         with Environment.temporary_environment() as env:
-            mfa = mfaType(env, None)
+            mfa = mfa_type(env, None)
 
-            localGui = self.add_default_fields(mfa.gui_description(), ['name', 'comments', 'tags'])
+            local_gui = self.add_default_fields(mfa.gui_description(), ['name', 'comments', 'tags'])
             self.add_field(
-                localGui,
+                local_gui,
                 {
                     'name': 'remember_device',
                     'value': '0',
@@ -90,7 +90,7 @@ class MFA(ModelHandler):
                 },
             )
             self.add_field(
-                localGui,
+                local_gui,
                 {
                     'name': 'validity',
                     'value': '5',
@@ -102,7 +102,7 @@ class MFA(ModelHandler):
                 },
             )
 
-            return localGui
+            return local_gui
 
     def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
         item = ensure.is_instance(item, models.MFA)

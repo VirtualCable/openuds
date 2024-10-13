@@ -57,7 +57,7 @@ class Permissions(Handler):
     needs_admin = True
 
     @staticmethod
-    def getClass(arg: str) -> type['Model']:
+    def get_class(class_name: str) -> type['Model']:
         cls = {
             'providers': models.Provider,
             'service': models.Service,
@@ -70,7 +70,7 @@ class Permissions(Handler):
             'metapools': models.MetaPool,
             'accounts': models.Account,
             'mfa': models.MFA,
-        }.get(arg, None)
+        }.get(class_name, None)
 
         if cls is None:
             raise exceptions.rest.RequestError('Invalid request')
@@ -119,8 +119,8 @@ class Permissions(Handler):
         if len(self._args) != 2:
             raise exceptions.rest.RequestError('Invalid request')
 
-        itemClass = Permissions.getClass(self._args[0])
-        obj: 'Model' = itemClass.objects.get(uuid=self._args[1])
+        item_class = Permissions.get_class(self._args[0])
+        obj: 'Model' = item_class.objects.get(uuid=self._args[1])
 
         return Permissions.as_dict(permissions.get_permissions(obj))
 
@@ -133,22 +133,22 @@ class Permissions(Handler):
         perm = uds.core.types.permissions.PermissionType.from_str(self._params.get('perm', '0'))
 
         def add_user_permission(cls_param: str, obj_param: str, user_param: str) -> list[dict[str, str]]:
-            cls = Permissions.getClass(cls_param)
+            cls = Permissions.get_class(cls_param)
             obj = cls.objects.get(uuid=obj_param)
             user = models.User.objects.get(uuid=user_param)
             permissions.add_user_permission(user, obj, perm)
             return Permissions.as_dict(permissions.get_permissions(obj))
 
         def add_group_permission(cls_param: str, obj_param: str, group_param: str) -> list[dict[str, str]]:
-            cls = Permissions.getClass(cls_param)
+            cls = Permissions.get_class(cls_param)
             obj = cls.objects.get(uuid=obj_param)
             group = models.Group.objects.get(uuid=group_param)
             permissions.add_group_permission(group, obj, perm)
             return Permissions.as_dict(permissions.get_permissions(obj))
 
         def revoke() -> list[dict[str, str]]:
-            for permId in self._params.get('items', []):
-                permissions.revoke_permission_by_id(permId)
+            for perm_id in self._params.get('items', []):
+                permissions.revoke_permission_by_id(perm_id)
             return []
 
         def no_match() -> None:

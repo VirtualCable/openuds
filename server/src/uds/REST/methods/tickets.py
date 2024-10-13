@@ -125,6 +125,7 @@ class Tickets(Handler):
                 'auth_id',
                 'authTag',
                 'auth_tag',
+                'auth_label',
                 'auth',
                 'auth_name',
                 'authSmallName',
@@ -154,46 +155,46 @@ class Tickets(Handler):
         force: bool = self.get_param('force') in ('1', 'true', 'True', True)
 
         try:
-            servicePoolId: typing.Optional[str] = None
+            service_pool_id: typing.Optional[str] = None
 
             # First param is recommended, last ones are compatible with old versions
-            authId = self.get_param('auth_id', 'authId')
-            authName = self.get_param('auth_name', 'auth')
-            authTag = self.get_param('auth_tag', 'authTag', 'authSmallName')
+            auth_id = self.get_param('auth_id', 'authId')
+            auth_name = self.get_param('auth_name', 'auth')
+            auth_label = self.get_param('auth_label', 'auth_tag', 'authTag', 'authSmallName')
 
             # Will raise an exception if no auth found
-            if authId:
-                auth = models.Authenticator.objects.get(uuid=process_uuid(authId.lower()))
-            elif authName:
-                auth = models.Authenticator.objects.get(name=authName)
+            if auth_id:
+                auth = models.Authenticator.objects.get(uuid=process_uuid(auth_id.lower()))
+            elif auth_name:
+                auth = models.Authenticator.objects.get(name=auth_name)
             else:
-                auth = models.Authenticator.objects.get(small_name=authTag)
+                auth = models.Authenticator.objects.get(small_name=auth_label)
 
             username: str = self.get_param('username')
             password: str = self.get_param('password')
             # Some machines needs password, depending on configuration
 
-            groupIds: list[str] = []
-            for groupName in ensure.as_list(self.get_param('groups')):
+            groups_ids: list[str] = []
+            for group_name in ensure.as_list(self.get_param('groups')):
                 try:
-                    groupIds.append(auth.groups.get(name=groupName).uuid or '')
+                    groups_ids.append(auth.groups.get(name=group_name).uuid or '')
                 except Exception:
                     logger.info(
                         'Group %s from ticket does not exists on auth %s, forced creation: %s',
-                        groupName,
+                        group_name,
                         auth,
                         force,
                     )
                     if force:  # Force creation by call
-                        groupIds.append(
+                        groups_ids.append(
                             auth.groups.create(
-                                name=groupName,
+                                name=group_name,
                                 comments='Autocreated form ticket by using force paratemeter',
                             ).uuid
                             or ''
                         )
 
-            if not groupIds:  # No valid group in groups names
+            if not groups_ids:  # No valid group in groups names
                 raise exceptions.rest.RequestError(
                     'Authenticator does not contain ANY of the requested groups and force is not used'
                 )
@@ -205,40 +206,40 @@ class Tickets(Handler):
                 time = 60
             realname: str = self.get_param('realname', 'username') or ''
 
-            poolUuid = self.get_param('servicePool')
-            if poolUuid:
+            pool_uuid = self.get_param('servicePool')
+            if pool_uuid:
                 # Check if is pool or metapool
-                poolUuid = process_uuid(poolUuid)
+                pool_uuid = process_uuid(pool_uuid)
                 pool: typing.Union[models.ServicePool, models.MetaPool]
 
                 try:
                     pool = models.MetaPool.objects.get(
-                        uuid=poolUuid
+                        uuid=pool_uuid
                     )  # If not an metapool uuid, will process it as a servicePool
                     if force:
                         # First, add groups to metapool
-                        for addGrp in set(groupIds) - set(pool.assignedGroups.values_list('uuid', flat=True)):
-                            pool.assignedGroups.add(auth.groups.get(uuid=addGrp))
+                        for group_to_add in set(groups_ids) - set(pool.assignedGroups.values_list('uuid', flat=True)):
+                            pool.assignedGroups.add(auth.groups.get(uuid=group_to_add))
                         # And now, to ALL metapool members
-                        for metaMember in pool.members.all():
+                        for meta_member in pool.members.all():
                             # Now add groups to pools
-                            for addGrp in set(groupIds) - set(
-                                metaMember.pool.assignedGroups.values_list('uuid', flat=True)
+                            for group_to_add in set(groups_ids) - set(
+                                meta_member.pool.assignedGroups.values_list('uuid', flat=True)
                             ):
-                                metaMember.pool.assignedGroups.add(auth.groups.get(uuid=addGrp))
+                                meta_member.pool.assignedGroups.add(auth.groups.get(uuid=group_to_add))
 
                     # For metapool, transport is ignored..
 
-                    servicePoolId = 'M' + pool.uuid
+                    service_pool_id = 'M' + pool.uuid
                 except models.MetaPool.DoesNotExist:
-                    pool = models.ServicePool.objects.get(uuid=poolUuid)
+                    pool = models.ServicePool.objects.get(uuid=pool_uuid)
 
                     # If forced that servicePool must honor groups
                     if force:
-                        for addGrp in set(groupIds) - set(pool.assignedGroups.values_list('uuid', flat=True)):
-                            pool.assignedGroups.add(auth.groups.get(uuid=addGrp))
+                        for group_to_add in set(groups_ids) - set(pool.assignedGroups.values_list('uuid', flat=True)):
+                            pool.assignedGroups.add(auth.groups.get(uuid=group_to_add))
 
-                    servicePoolId = 'F' + pool.uuid
+                    service_pool_id = 'F' + pool.uuid
 
         except models.Authenticator.DoesNotExist:
             return Tickets.result(error='Authenticator does not exists')
@@ -255,9 +256,9 @@ class Tickets(Handler):
             'username': username,
             'password': CryptoManager().encrypt(password),
             'realname': realname,
-            'groups': groupIds,
+            'groups': groups_ids,
             'auth': auth.uuid,
-            'servicePool': servicePoolId,
+            'servicePool': service_pool_id,
         }
 
         ticket = models.TicketStore.create(data)

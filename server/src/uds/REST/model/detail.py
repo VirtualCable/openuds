@@ -133,11 +133,11 @@ class DetailHandler(BaseModelHandler):
         """
         # Process args
         logger.debug('Detail args for GET: %s', self._args)
-        nArgs = len(self._args)
+        num_args = len(self._args)
 
         parent: models.Model = self._kwargs['parent']
 
-        if nArgs == 0:
+        if num_args == 0:
             return self.get_items(parent, None)
 
         # if has custom methods, look for if this request matches any of them
@@ -145,7 +145,7 @@ class DetailHandler(BaseModelHandler):
         if r is not consts.rest.NOT_FOUND:
             return r
 
-        if nArgs == 1:
+        if num_args == 1:
             if self._args[0] == consts.rest.OVERVIEW:
                 return self.get_items(parent, None)
             # if self._args[0] == GUI:
@@ -169,7 +169,7 @@ class DetailHandler(BaseModelHandler):
             # try to get id
             return self.get_items(parent, process_uuid(self._args[0]))
 
-        if nArgs == 2:
+        if num_args == 2:
             if self._args[0] == consts.rest.GUI:
                 gui = self.get_gui(parent, self._args[1])
                 return sorted(gui, key=lambda f: f['gui']['order'])
@@ -315,13 +315,17 @@ class DetailHandler(BaseModelHandler):
         """
         return types.ui.RowStyleInfo.null()
 
-    def get_gui(self, parent: models.Model, forType: str) -> collections.abc.Iterable[typing.Any]:
+    def get_gui(self, parent: models.Model, for_type: str) -> collections.abc.Iterable[typing.Any]:
         """
         Gets the gui that is needed in order to "edit/add" new items on this detail
         If not overriden, means that the detail has no edit/new Gui
-        :param parent: Parent object
-        :param forType: Type of object needing gui
-        :return: a "gui" (list of gui fields)
+        
+        Args:
+            parent (models.Model): Parent object
+            for_type (str): Type of object needing gui
+            
+        Return:
+            collections.abc.Iterable[typing.Any]: A list of gui fields
         """
         # raise RequestError('Gui not provided for this type of object')
         return []
@@ -332,9 +336,13 @@ class DetailHandler(BaseModelHandler):
         """
         The default is that detail element will not have any types (they are "homogeneous")
         but we provided this method, that can be overridden, in case one detail needs it
-        :param parent: Parent object
-        :param forType: Request argument in fact
-        :return: list of dictionaries describing type/types
+        
+        Args:
+            parent (models.Model): Parent object
+            for_type (typing.Optional[str]): Request argument in fact
+            
+        Return:
+            collections.abc.Iterable[types.rest.TypeInfoDict]: A list of dictionaries describing type/types
         """
         return []  # Default is that details do not have types
 

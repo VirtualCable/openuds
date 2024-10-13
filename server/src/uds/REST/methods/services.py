@@ -274,14 +274,14 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
         return offers  # Default is that details do not have types
 
-    def get_gui(self, parent: 'Model', forType: str) -> collections.abc.Iterable[typing.Any]:
+    def get_gui(self, parent: 'Model', for_type: str) -> collections.abc.Iterable[typing.Any]:
         parent = ensure.is_instance(parent, models.Provider)
         try:
-            logger.debug('getGui parameters: %s, %s', parent, forType)
+            logger.debug('getGui parameters: %s, %s', parent, for_type)
             parent_instance = parent.get_instance()
-            service_type = parent_instance.get_service_by_type(forType)
+            service_type = parent_instance.get_service_by_type(for_type)
             if not service_type:
-                raise self.invalid_item_response(f'Gui for {forType} not found')
+                raise self.invalid_item_response(f'Gui for {for_type} not found')
             with Environment.temporary_environment() as env:
                 service = service_type(
                     env, parent_instance

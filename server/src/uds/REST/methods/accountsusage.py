@@ -54,13 +54,13 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
     """
 
     @staticmethod
-    def usageToDict(item: 'AccountUsage', perm: int) -> dict[str, typing.Any]:
+    def usage_to_dict(item: 'AccountUsage', perm: int) -> dict[str, typing.Any]:
         """
         Convert an account usage to a dictionary
         :param item: Account usage item (db)
         :param perm: permission
         """
-        retVal = {
+        return {
             'uuid': item.uuid,
             'pool_uuid': item.pool_uuid,
             'pool_name': item.pool_name,
@@ -74,17 +74,15 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
             'permission': perm,
         }
 
-        return retVal
-
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = ensure.is_instance(parent, Account)
         # Check what kind of access do we have to parent provider
         perm = permissions.effective_permissions(self._user, parent)
         try:
             if not item:
-                return [AccountsUsage.usageToDict(k, perm) for k in parent.usages.all()]
+                return [AccountsUsage.usage_to_dict(k, perm) for k in parent.usages.all()]
             k = parent.usages.get(uuid=process_uuid(item))
-            return AccountsUsage.usageToDict(k, perm)
+            return AccountsUsage.usage_to_dict(k, perm)
         except Exception:
             logger.exception('itemId %s', item)
             raise self.invalid_item_response()

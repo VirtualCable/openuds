@@ -86,7 +86,7 @@ class BaseModelHandler(Handler):
             else:
                 choices = field.get('choices', None)
             # Build gui with non empty values
-            guiDesc: dict[str, typing.Any] = {}
+            gui_description: dict[str, typing.Any] = {}
             # First, mandatory fields
             for fld in ('name', 'type'):
                 if fld not in field:
@@ -103,7 +103,7 @@ class BaseModelHandler(Handler):
                     )
 
             if choices:
-                guiDesc['choices'] = choices
+                gui_description['choices'] = choices
             # "fillable" fields (optional and mandatory on gui)
             for fld in (
                 'type',
@@ -117,16 +117,16 @@ class BaseModelHandler(Handler):
                 'readonly',
             ):
                 if fld in field and field[fld] is not None:
-                    guiDesc[fld] = field[fld]
+                    gui_description[fld] = field[fld]
 
             # Order and label optional, but must be present on gui
-            guiDesc['order'] = field.get('order', 0)
-            guiDesc['label'] = field.get('label', field['name'])
+            gui_description['order'] = field.get('order', 0)
+            gui_description['label'] = field.get('label', field['name'])
 
             v: dict[str, typing.Any] = {
                 'name': field.get('name', ''),
                 'value': field.get('value', ''),
-                'gui': guiDesc,
+                'gui': gui_description,
             }
             if field.get('tab', None):
                 v['gui']['tab'] = _(str(field['tab']))
@@ -294,16 +294,16 @@ class BaseModelHandler(Handler):
             'subtitle': subtitle or '',
         }
 
-    def fields_from_params(self, fldList: list[str]) -> dict[str, typing.Any]:
+    def fields_from_params(self, fields_list: list[str]) -> dict[str, typing.Any]:
         """
         Reads the indicated fields from the parameters received, and if
-        :param fldList: List of required fields
+        :param fields_list: List of required fields
         :return: A dictionary containing all required fields
         """
         args: dict[str, str] = {}
         default: typing.Optional[str]
         try:
-            for key in fldList:
+            for key in fields_list:
                 if ':' in key:  # optional field? get default if not present
                     k, default = key.split(':')[:2]
                     # Convert "None" to None

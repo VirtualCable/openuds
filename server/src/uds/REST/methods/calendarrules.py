@@ -57,13 +57,13 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
     """
 
     @staticmethod
-    def ruleToDict(item: CalendarRule, perm: int) -> dict[str, typing.Any]:
+    def rule_as_dict(item: CalendarRule, perm: int) -> dict[str, typing.Any]:
         """
-        Convert a calRule db item to a dict for a rest response
+        Convert a calrule db item to a dict for a rest response
         :param item: Rule item (db)
         :param perm: Permission of the object
         """
-        retVal = {
+        return {
             'id': item.uuid,
             'name': item.name,
             'comments': item.comments,
@@ -76,17 +76,15 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
             'permission': perm,
         }
 
-        return retVal
-
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, Calendar)
         # Check what kind of access do we have to parent provider
         perm = permissions.effective_permissions(self._user, parent)
         try:
             if item is None:
-                return [CalendarRules.ruleToDict(k, perm) for k in parent.rules.all()]
+                return [CalendarRules.rule_as_dict(k, perm) for k in parent.rules.all()]
             k = parent.rules.get(uuid=process_uuid(item))
-            return CalendarRules.ruleToDict(k, perm)
+            return CalendarRules.rule_as_dict(k, perm)
         except Exception as e:
             logger.exception('itemId %s', item)
             raise self.invalid_item_response() from e
@@ -137,14 +135,14 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
         if fields['end'] is not None:
             fields['end'] = datetime.datetime.fromtimestamp(fields['end'])
 
-        calRule: CalendarRule
+        calendar_rule: CalendarRule
         try:
             if item is None:  # Create new
-                calRule = parent.rules.create(**fields)
+                calendar_rule = parent.rules.create(**fields)
             else:
-                calRule = parent.rules.get(uuid=process_uuid(item))
-                calRule.__dict__.update(fields)
-                calRule.save()
+                calendar_rule = parent.rules.get(uuid=process_uuid(item))
+                calendar_rule.__dict__.update(fields)
+                calendar_rule.save()
         except CalendarRule.DoesNotExist:
             raise self.invalid_item_response() from None
         except IntegrityError as e:  # Duplicate key probably
@@ -157,10 +155,10 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
         parent = ensure.is_instance(parent, Calendar)
         logger.debug('Deleting rule %s from %s', item, parent)
         try:
-            calRule = parent.rules.get(uuid=process_uuid(item))
-            calRule.calendar.modified = sql_now()
-            calRule.calendar.save()
-            calRule.delete()
+            calendar_rule = parent.rules.get(uuid=process_uuid(item))
+            calendar_rule.calendar.modified = sql_now()
+            calendar_rule.calendar.save()
+            calendar_rule.delete()
         except Exception as e:
             logger.exception('Exception')
             raise self.invalid_item_response() from e

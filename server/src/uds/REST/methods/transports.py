@@ -85,13 +85,13 @@ class Transports(ModelHandler):
         return transports.factory().providers().values()
 
     def get_gui(self, type_: str) -> list[typing.Any]:
-        transportType = transports.factory().lookup(type_)
+        transport_type = transports.factory().lookup(type_)
 
-        if not transportType:
+        if not transport_type:
             raise self.invalid_item_response()
 
         with Environment.temporary_environment() as env:
-            transport = transportType(env, None)
+            transport = transport_type(env, None)
 
             field = self.add_default_fields(
                 transport.gui_description(), ['name', 'comments', 'tags', 'priority', 'networks']
@@ -124,7 +124,7 @@ class Transports(ModelHandler):
                         for x in ServicePool.objects.filter(service__isnull=False)
                         .order_by('name')
                         .prefetch_related('service')
-                        if transportType.protocol in x.service.get_type().allowed_protocols
+                        if transport_type.protocol in x.service.get_type().allowed_protocols
                     ],
                     'label': gettext('Service Pools'),
                     'tooltip': gettext('Currently assigned services pools'),

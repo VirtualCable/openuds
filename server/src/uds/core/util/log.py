@@ -127,17 +127,17 @@ def get_logs(wichObject: typing.Optional['Model'], limit: int = -1) -> list[dict
     # pylint: disable=import-outside-toplevel
     from uds.core.managers.log import LogManager
 
-    return LogManager().get_logs(wichObject, limit)
+    return LogManager.manager().get_logs(wichObject, limit)
 
 
-def clear_logs(wichObject: typing.Optional['Model']) -> None:
+def clear_logs(obj: typing.Optional['Model']) -> None:
     """
-    Clears the logs associated with the object using the logManager
+    Clears the logs associated with the object using the log_manager
     """
     # pylint: disable=import-outside-toplevel
     from uds.core.managers.log import LogManager
 
-    LogManager().clear_logs(wichObject)
+    LogManager.manager().clear_logs(obj)
 
 
 class UDSLogHandler(logging.handlers.RotatingFileHandler):

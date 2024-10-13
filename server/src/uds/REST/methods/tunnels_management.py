@@ -232,7 +232,7 @@ class Tunnels(ModelHandler):
         Custom method that returns all tunnels of a tunnel server NOT already assigned to a group
         :param item:
         """
-        allServers = set(parent.servers.all())
+        all_servers = set(parent.servers.all())
         return [
             {
                 'id': i.uuid,
@@ -241,5 +241,5 @@ class Tunnels(ModelHandler):
             for i in models.Server.objects.filter(type=types.servers.ServerType.TUNNEL)
             if permissions.effective_permissions(self._user, i)
             >= uds.core.types.permissions.PermissionType.READ
-            and i not in allServers
+            and i not in all_servers
         ]

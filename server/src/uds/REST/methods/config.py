@@ -39,6 +39,7 @@ from uds.REST import Handler
 
 logger = logging.getLogger(__name__)
 
+
 # Enclosed methods under /config path
 class Config(Handler):
     needs_admin = True  # By default, staff is lower level needed
@@ -46,10 +47,13 @@ class Config(Handler):
     def get(self) -> typing.Any:
         return CfgConfig.get_config_values(self.is_admin())
 
-
     def put(self) -> typing.Any:
-        for section, secDict in self._params.items():
-            for key, vals in secDict.items():
-                logger.info('Updating config value %s.%s to %s by %s', section, key, vals['value'], self._user.name)
+        for section, section_dict in typing.cast(
+            dict[str, dict[str, dict[str, str]]], self._params
+        ).items():
+            for key, vals in section_dict.items():
+                logger.info(
+                    'Updating config value %s.%s to %s by %s', section, key, vals['value'], self._user.name
+                )
                 CfgConfig.update(CfgConfig.SectionType.from_str(section), key, vals['value'])
         return 'done'

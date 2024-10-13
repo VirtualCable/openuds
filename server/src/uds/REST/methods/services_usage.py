@@ -94,17 +94,17 @@ class ServicesUsage(DetailHandler):
         parent = ensure.is_instance(parent, Provider)
         try:
             if item is None:
-                userServicesQuery = UserService.objects.filter(
+                userservices_query = UserService.objects.filter(
                     deployed_service__service__provider=parent
                 )
             else:
-                userServicesQuery = UserService.objects.filter(
+                userservices_query = UserService.objects.filter(
                     deployed_service__service_uuid=process_uuid(item)
                 )
 
             return [
                 ServicesUsage.item_as_dict(k)
-                for k in userServicesQuery.filter(state=State.USABLE)
+                for k in userservices_query.filter(state=State.USABLE)
                 .order_by('creation_date')
                 .prefetch_related('deployed_service', 'deployed_service__service', 'user', 'user__manager')
             ]

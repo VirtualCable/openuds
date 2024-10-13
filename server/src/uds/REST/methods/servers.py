@@ -49,7 +49,7 @@ logger = logging.getLogger(__name__)
 # Register is split in two because tunnel registration also uses this
 class ServerRegisterBase(Handler):
     def post(self) -> collections.abc.MutableMapping[str, typing.Any]:
-        serverToken: models.Server
+        server_token: models.Server
         now = model.sql_now()
         ip = self._params.get('ip', self.request.ip)
         if ':' in ip:
@@ -94,29 +94,29 @@ class ServerRegisterBase(Handler):
             # Note that if the same IP (validated by a login) requests a new token, the old one will be sent instead of creating a new one
             # Note that we use IP (with type) to identify the server, so if any of them changes, a new token will be created
             # MAC is just informative, and data is used to store any other information that may be needed
-            serverTokens = models.Server.objects.filter(hostname=hostname, type=type)
-            if serverTokens.count() > 1:
+            server_tokens = models.Server.objects.filter(hostname=hostname, type=type)
+            if server_tokens.count() > 1:
                 return rest_result('error', error='More than one server with same hostname and type')
-            if serverTokens.count() == 0:
+            if server_tokens.count() == 0:
                 raise models.Server.DoesNotExist()  # Force creation of a new one
-            serverToken = serverTokens[0]
+            server_token = server_tokens[0]
             # Update parameters
             # serverToken.hostname = self._params['hostname'] 
-            serverToken.register_username = self._user.pretty_name
-            serverToken.certificate = certificate
+            server_token.register_username = self._user.pretty_name
+            server_token.certificate = certificate
             # Ensure we do not store zone if IPv6 and present
-            serverToken.register_ip = self._request.ip.split('%')[0]
-            serverToken.listen_port = port
-            serverToken.ip = ip
-            serverToken.stamp = now
-            serverToken.mac = mac
-            serverToken.subtype = subtype  # Optional
-            serverToken.version = version
-            serverToken.data = data
-            serverToken.save()
+            server_token.register_ip = self._request.ip.split('%')[0]
+            server_token.listen_port = port
+            server_token.ip = ip
+            server_token.stamp = now
+            server_token.mac = mac
+            server_token.subtype = subtype  # Optional
+            server_token.version = version
+            server_token.data = data
+            server_token.save()
         except Exception:
             try:
-                serverToken = models.Server.objects.create(
+                server_token = models.Server.objects.create(
                     register_username=self._user.pretty_name,
                     register_ip=self._request.ip.split('%')[0],  # Ensure we do not store zone if IPv6 and present
                     ip=ip,
@@ -134,7 +134,7 @@ class ServerRegisterBase(Handler):
                 )
             except Exception as e:
                 return rest_result('error', error=str(e))
-        return rest_result(result=serverToken.token)
+        return rest_result(result=server_token.token)
 
 
 class ServerRegister(ServerRegisterBase):
@@ -178,7 +178,7 @@ class ServerEvent(Handler):
 
     def get_user_service(self) -> models.UserService:
         '''
-        Looks for an userService and, if not found, reraises DoesNotExist exception
+        Looks for an userservice and, if not found, reraises DoesNotExist exception
         '''
         try:
             return models.UserService.objects.get(uuid=self._params['uuid'])

@@ -80,19 +80,19 @@ class ServicesPoolGroups(ModelHandler):
     ]
 
     def pre_save(self, fields: dict[str, typing.Any]) -> None:
-        imgId = fields['image_id']
+        img_id = fields['image_id']
         fields['image_id'] = None
-        logger.debug('Image id: %s', imgId)
+        logger.debug('Image id: %s', img_id)
         try:
-            if imgId != '-1':
-                image = Image.objects.get(uuid=process_uuid(imgId))
+            if img_id != '-1':
+                image = Image.objects.get(uuid=process_uuid(img_id))
                 fields['image_id'] = image.id
         except Exception:
             logger.exception('At image recovering')
 
     # Gui related
     def get_gui(self, type_: str) -> list[typing.Any]:
-        localGui = self.add_default_fields([], ['name', 'comments', 'priority'])
+        local_gui = self.add_default_fields([], ['name', 'comments', 'priority'])
 
         for field in [
                         {
@@ -110,9 +110,9 @@ class ServicesPoolGroups(ModelHandler):
                             'order': 102,
                         }
         ]:
-            self.add_field(localGui, field)
+            self.add_field(local_gui, field)
 
-        return localGui
+        return local_gui
 
     def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
         item = ensure.is_instance(item, ServicePoolGroup)

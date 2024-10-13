@@ -78,13 +78,13 @@ class Notifiers(ModelHandler):
         return messaging.factory().providers().values()
 
     def get_gui(self, type_: str) -> list[typing.Any]:
-        notifierType = messaging.factory().lookup(type_)
+        notifier_type = messaging.factory().lookup(type_)
 
-        if not notifierType:
+        if not notifier_type:
             raise self.invalid_item_response()
 
         with Environment.temporary_environment() as env:
-            notifier = notifierType(env, None)
+            notifier = notifier_type(env, None)
 
             local_gui = self.add_default_fields(
                 notifier.gui_description(), ['name', 'comments', 'tags']

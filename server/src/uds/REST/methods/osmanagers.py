@@ -98,12 +98,12 @@ class OsManagers(ModelHandler):
     # Gui related
     def get_gui(self, type_: str) -> list[typing.Any]:
         try:
-            osmanagerType = osmanagers.factory().lookup(type_)
+            osmanager_type = osmanagers.factory().lookup(type_)
 
-            if not osmanagerType:
+            if not osmanager_type:
                 raise exceptions.rest.NotFound('OS Manager type not found')
             with Environment.temporary_environment() as env:
-                osmanager = osmanagerType(env, None)
+                osmanager = osmanager_type(env, None)
 
                 return self.add_default_fields(
                     osmanager.gui_description(),

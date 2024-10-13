@@ -196,15 +196,15 @@ class ModelHandler(BaseModelHandler):
             # If we do not have access to parent to, at least, read...
 
             if self._operation in ('put', 'post', 'delete'):
-                requiredPermission = types.permissions.PermissionType.MANAGEMENT
+                required_permission = types.permissions.PermissionType.MANAGEMENT
             else:
-                requiredPermission = types.permissions.PermissionType.READ
+                required_permission = types.permissions.PermissionType.READ
 
-            if permissions.has_access(self._user, item, requiredPermission) is False:
+            if permissions.has_access(self._user, item, required_permission) is False:
                 logger.debug(
                     'Permission for user %s does not comply with %s',
                     self._user,
-                    requiredPermission,
+                    required_permission,
                 )
                 raise self.access_denied_response()
 
@@ -289,16 +289,16 @@ class ModelHandler(BaseModelHandler):
     #  pylint: disable=too-many-return-statements
     def process_get(self) -> typing.Any:
         logger.debug('method GET for %s, %s', self.__class__.__name__, self._args)
-        nArgs = len(self._args)
+        number_of_args = len(self._args)
 
-        if nArgs == 0:
+        if number_of_args == 0:
             return list(self.get_items(overview=False))
 
         # if has custom methods, look for if this request matches any of them
         for cm in self.custom_methods:
             # Convert to snake case
             camel_case_name, snake_case_name = camel_and_snake_case_from(cm[0])
-            if nArgs > 1 and cm[1] is True:  # Method needs parent (existing item)
+            if number_of_args > 1 and cm[1] is True:  # Method needs parent (existing item)
                 if self._args[1] in (camel_case_name, snake_case_name):
                     item = None
                     # Check if operation method exists
@@ -328,7 +328,7 @@ class ModelHandler(BaseModelHandler):
 
                 return operation()
 
-        if nArgs == 1:
+        if number_of_args == 1:
             if self._args[0] == consts.rest.OVERVIEW:
                 return list(self.get_items())
             if self._args[0] == consts.rest.TYPES:
@@ -359,19 +359,19 @@ class ModelHandler(BaseModelHandler):
         # nArgs > 1
         # Request type info or gui, or detail
         if self._args[0] == consts.rest.OVERVIEW:
-            if nArgs != 2:
+            if number_of_args != 2:
                 raise self.invalid_request_response()
         elif self._args[0] == consts.rest.TYPES:
-            if nArgs != 2:
+            if number_of_args != 2:
                 raise self.invalid_request_response()
             return self.get_type(self._args[1])
         elif self._args[0] == consts.rest.GUI:
-            if nArgs != 2:
+            if number_of_args != 2:
                 raise self.invalid_request_response()
             gui = self.get_gui(self._args[1])
             return sorted(gui, key=lambda f: f['gui']['order'])
         elif self._args[1] == consts.rest.LOG:
-            if nArgs != 2:
+            if number_of_args != 2:
                 raise self.invalid_request_response()
             try:
                 # DB maybe case sensitive??, anyway, uuids are stored in lowercase
@@ -408,7 +408,7 @@ class ModelHandler(BaseModelHandler):
         # I.e. to get the user IP, server name, etc..
         self._params['_request'] = self._request
 
-        deleteOnError = False
+        delete_on_error = False
 
         if len(self._args) > 1:  # Detail?
             return self.process_detail()
@@ -430,11 +430,11 @@ class ModelHandler(BaseModelHandler):
             else:
                 tags = None
 
-            deleteOnError = False
+            delete_on_error = False
             item: models.Model
             if not self._args:  # create new?
                 item = self.model.objects.create(**args)
-                deleteOnError = True
+                delete_on_error = True
             else:  # Must have 1 arg
                 # We have to take care with this case, update will efectively update records on db
                 item = self.model.objects.get(uuid__iexact=self._args[0].lower())
@@ -453,7 +453,7 @@ class ModelHandler(BaseModelHandler):
                 elif isinstance(tags, list):  # Present, but list is empty (will be proccesed on "if" else)
                     item.tags.clear()
 
-            if not deleteOnError:
+            if not delete_on_error:
                 self.validate_save(
                     item
                 )  # Will raise an exception if item can't be saved (only for modify operations..)
@@ -472,7 +472,7 @@ class ModelHandler(BaseModelHandler):
                 self.fill_instance_fields(item, res)
             except Exception:
                 logger.exception('Exception on put')
-                if deleteOnError:
+                if delete_on_error:
                     item.delete()
                 raise
 
