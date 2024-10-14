@@ -5,3 +5,4 @@
 /*.sqlite3*
 .hypothesis
 htmlcov
+docs
