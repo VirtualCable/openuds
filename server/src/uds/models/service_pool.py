@@ -318,7 +318,7 @@ class ServicePool(UUIDModel, TaggingMixin):
             and not self.is_restrained()
         )
 
-    def when_will_be_replaced(self, is_for_user: 'User') -> typing.Optional[datetime]:
+    def when_will_be_replaced(self, for_user: 'User') -> typing.Optional[datetime]:
         active_publication: typing.Optional['ServicePoolPublication'] = self.active_publication()
         # If no publication or current revision, it's not going to be replaced
         if active_publication is None:
@@ -331,7 +331,7 @@ class ServicePool(UUIDModel, TaggingMixin):
         # Return the date
         try:
             found = self.assigned_user_services().filter(
-                user=is_for_user, state__in=types.states.State.VALID_STATES
+                user=for_user, state__in=types.states.State.VALID_STATES
             )[
                 0
             ]  # Raises exception if at least one is not found

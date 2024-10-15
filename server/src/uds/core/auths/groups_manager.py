@@ -130,8 +130,12 @@ class GroupsManager:
         """Returns the list of valid groups for this groups manager."""
         from uds.models import Group as DBGroup  # Avoid circular imports
 
-        valid_id_list: list[int] = [grp.group.db_obj().id for grp in self._groups if grp.is_valid]
-
+        valid_id_list: list[int] = []
+        for grp in self._groups:
+            if grp.is_valid:
+                yield grp.group
+                valid_id_list.append(grp.group.db_obj().id)
+            
         # Now, get metagroups and also return them
         for db_group in DBGroup.objects.filter(manager__id=self._db_auth.id, is_meta=True):
             number_of_groups = db_group.groups.filter(id__in=valid_id_list, state=State.ACTIVE).count()
