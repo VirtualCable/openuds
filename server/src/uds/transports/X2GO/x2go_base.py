@@ -276,11 +276,11 @@ class BaseX2GOTransport(transports.Transport):
         """
         return security.generate_ssh_keypair_for_ssh(SSH_KEY_LENGTH)
 
-    def get_authorization_script(self, user: str, pubKey: str) -> str:
+    def get_authorization_script(self, user: str, public_key: str) -> str:
         with open(os.path.join(os.path.dirname(__file__), 'scripts/authorize.py'), encoding='utf8') as f:
             data = f.read()
 
-        return data.replace('__USER__', user).replace('__KEY__', pubKey)
+        return data.replace('__USER__', user).replace('__KEY__', public_key)
 
     def get_and_push_key(self, username: str, userservice: 'models.UserService') -> tuple[str, str]:
         private_ssh_key, public_ssh_key = self.gen_keypair_for_ssh()

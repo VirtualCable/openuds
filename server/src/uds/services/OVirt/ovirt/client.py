@@ -72,7 +72,7 @@ def _key_helper(obj: 'Client') -> str:
 
 class Client:
     """
-    Module to manage oVirt connections using ovirtsdk.
+    Module to manage OVirt connections using ovirtsdk.
 
     Due to the fact that we can't create two proxy connections at same time, we serialize all access to ovirt platform.
     Only one request and one live connection can exists at a time.
@@ -391,7 +391,7 @@ class Client:
             # Create initally the machine without usb support, will be added later
             usb = ovirtsdk4.types.Usb(enabled=False)
 
-            memoryPolicy = ovirtsdk4.types.MemoryPolicy(guaranteed=guaranteed_mb * 1024 * 1024)
+            memory_policy = ovirtsdk4.types.MemoryPolicy(guaranteed=guaranteed_mb * 1024 * 1024)
             par = ovirtsdk4.types.Vm(
                 name=name,
                 cluster=cluster,
@@ -399,7 +399,7 @@ class Client:
                 description=comments,
                 type=ovirtsdk4.types.VmType.DESKTOP,
                 memory=memory_mb * 1024 * 1024,
-                memory_policy=memoryPolicy,
+                memory_policy=memory_policy,
                 usb=usb,
             )  # display=display,
 
@@ -543,12 +543,12 @@ class Client:
         Returns:
         """
         with _access_lock():
-            vmService: typing.Any = self.api.system_service().vms_service().service(vmid)
+            vm_service: typing.Any = self.api.system_service().vms_service().service(vmid)
 
-            if vmService.get() is None:
+            if vm_service.get() is None:
                 raise Exception('Machine not found')
 
-            vmService.suspend()
+            vm_service.suspend()
 
     def remove_machine(self, vmid: str) -> None:
         """
@@ -580,8 +580,8 @@ class Client:
 
                 nic = vm_service.nics_service().list()[0]  # If has no nic, will raise an exception (IndexError)
                 nic.mac.address = mac
-                nicService = vm_service.nics_service().service(nic.id)
-                nicService.update(nic)
+                nic_service = vm_service.nics_service().service(nic.id)
+                nic_service.update(nic)
             except IndexError:
                 raise Exception('Machine do not have network interfaces!!')
 

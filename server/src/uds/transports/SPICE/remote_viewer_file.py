@@ -53,7 +53,7 @@ secure-attention=ctrl+alt+end
 
 
 class RemoteViewerFile:
-    connectionType: str = 'spice'
+    connection_type: str = 'spice'
     host: str = ''
     port: typing.Optional[str] = None
     tls_port: typing.Optional[str] = None
@@ -112,7 +112,7 @@ class RemoteViewerFile:
         # If proxy is set
 
         return TEMPLATE.format(
-            type=self.connectionType,
+            type=self.connection_type,
             host=self.host,
             port=self.port,
             tls_port=self.tls_port,

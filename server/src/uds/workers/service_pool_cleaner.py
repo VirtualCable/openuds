@@ -83,12 +83,12 @@ class DeployedServiceRemover(Job):
         for pub in publishing:
             pub.cancel()
         # Now all publishments are canceling, let's try to cancel cache and assigned
-        uServices: collections.abc.Iterable[UserService] = service_pool.userServices.filter(
+        userservices: collections.abc.Iterable[UserService] = service_pool.userServices.filter(
             state=State.PREPARING
         )
-        for userService in uServices:
-            logger.debug('Canceling %s', userService)
-            userService.cancel()
+        for userservice in userservices:
+            logger.debug('Canceling %s', userservice)
+            userservice.cancel()
         # Nice start of removal, maybe we need to do some limitation later, but there should not be too much services nor publications cancelable at once
         service_pool.state = State.REMOVING
         service_pool.state_date = sql_now()  # Now

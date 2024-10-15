@@ -206,7 +206,7 @@ class Tickets(Handler):
                 time = 60
             realname: str = self.get_param('realname', 'username') or ''
 
-            pool_uuid = self.get_param('servicePool')
+            pool_uuid = self.get_param('servicepool', 'servicePool')
             if pool_uuid:
                 # Check if is pool or metapool
                 pool_uuid = process_uuid(pool_uuid)

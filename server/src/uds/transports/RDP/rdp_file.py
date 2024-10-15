@@ -41,7 +41,7 @@ from uds.core import types
 
 
 class RDPFile:
-    fullScreen: bool = False
+    fullscreen: bool = False
     width: str = '800'
     height: str = '600'
     bpp: str = '32'
@@ -84,7 +84,7 @@ class RDPFile:
         self.width = str(width)
         self.height = str(height)
         self.bpp = str(bpp)
-        self.fullScreen = fullscreen
+        self.fullscreen = fullscreen
         self.target = target
 
     def get(self) -> str:
@@ -156,7 +156,7 @@ class RDPFile:
         if self.multimon:
             params.append('/multimon')
 
-        if self.fullScreen:
+        if self.fullscreen:
             if self.target != types.os.KnownOS.MAC_OS:
                 params.append('/f')
             else:  # On mac, will fix this later...
@@ -173,19 +173,19 @@ class RDPFile:
 
         # RDP Security is A MUST if no username nor password is provided
         # NLA requires USERNAME&PASSWORD previously
-        forceRDPSecurity = False
+        force_rdp_security = False
         if self.username != '':
             params.append('/u:{}'.format(self.username))
         else:
-            forceRDPSecurity = True
+            force_rdp_security = True
         if self.password:
             params.append('/p:{}'.format(self.password))
         else:
-            forceRDPSecurity = True
+            force_rdp_security = True
         if self.domain != '':
             params.append('/d:{}'.format(self.domain))
 
-        if forceRDPSecurity:
+        if force_rdp_security:
             params.append('/sec:rdp')
 
         if self.custom_parameters and self.custom_parameters.strip() != '':
@@ -202,34 +202,34 @@ class RDPFile:
     @property
     def as_mstsc_file(self) -> str:  # pylint: disable=too-many-statements
         password = '{password}'  # nosec: placeholder
-        screenMode = '2' if self.fullScreen else '1'
-        audioMode = '0' if self.redir_audio else '2'
+        screen_mode = '2' if self.fullscreen else '1'
+        audio_mode = '0' if self.redir_audio else '2'
         serials = '1' if self.redir_serials else '0'
         scards = '1' if self.redir_smartcards else '0'
         printers = '1' if self.redir_printers else '0'
         compression = '1' if self.compression else '0'
-        connectionBar = '1' if self.pin_bar else '0'
-        disableWallpaper = '0' if self.show_wallpaper else '1'
-        useMultimon = '1' if self.multimon else '0'
-        enableClipboard = '1' if self.enable_clipboard else '0'
+        connection_bar = '1' if self.pin_bar else '0'
+        disable_wallpaper = '0' if self.show_wallpaper else '1'
+        use_multimon = '1' if self.multimon else '0'
+        enable_clipboard = '1' if self.enable_clipboard else '0'
 
         res = ''
-        res += 'screen mode id:i:' + screenMode + '\n'
+        res += 'screen mode id:i:' + screen_mode + '\n'
         if self.width[0] != '-' and self.height[0] != '-':
             res += 'desktopwidth:i:' + self.width + '\n'
             res += 'desktopheight:i:' + self.height + '\n'
         res += 'session bpp:i:' + self.bpp + '\n'
-        res += 'use multimon:i:' + useMultimon + '\n'
+        res += 'use multimon:i:' + use_multimon + '\n'
         res += 'auto connect:i:1' + '\n'
         res += 'full address:s:' + self.address + '\n'
         res += 'compression:i:' + compression + '\n'
         res += 'keyboardhook:i:2' + '\n'
-        res += 'audiomode:i:' + audioMode + '\n'
+        res += 'audiomode:i:' + audio_mode + '\n'
         res += 'redirectprinters:i:' + printers + '\n'
         res += 'redirectcomports:i:' + serials + '\n'
         res += 'redirectsmartcards:i:' + scards + '\n'
-        res += 'redirectclipboard:i:' + enableClipboard + '\n'
-        res += 'displayconnectionbar:i:' + connectionBar + '\n'
+        res += 'redirectclipboard:i:' + enable_clipboard + '\n'
+        res += 'displayconnectionbar:i:' + connection_bar + '\n'
         if self.username:
             res += 'username:s:' + self.username + '\n'
             res += 'domain:s:' + self.domain + '\n'
@@ -238,10 +238,10 @@ class RDPFile:
 
         res += 'alternate shell:s:' + '\n'
         res += 'shell working directory:s:' + '\n'
-        res += 'disable wallpaper:i:' + disableWallpaper + '\n'
+        res += 'disable wallpaper:i:' + disable_wallpaper + '\n'
         res += 'disable full window drag:i:1' + '\n'
-        res += 'disable menu anims:i:' + disableWallpaper + '\n'
-        res += 'disable themes:i:' + disableWallpaper + '\n'
+        res += 'disable menu anims:i:' + disable_wallpaper + '\n'
+        res += 'disable themes:i:' + disable_wallpaper + '\n'
         res += 'bitmapcachepersistenable:i:1' + '\n'
         res += 'authentication level:i:0' + '\n'
         res += 'prompt for credentials:i:0' + '\n'
@@ -265,7 +265,7 @@ class RDPFile:
         if self.redir_webcam:
             res += 'camerastoredirect:s:*\n'
 
-        enforcedSharesStr = (
+        enforced_shares_str = (
             ';'.join(self.enforced_shares.replace(' ', '').upper().split(',')) + ';'
             if self.enforced_shares
             else ''
@@ -273,9 +273,9 @@ class RDPFile:
 
         if self.redir_drives != 'false':
             if self.redir_drives == 'true':
-                res += 'drivestoredirect:s:{}\n'.format(enforcedSharesStr or '*')
+                res += 'drivestoredirect:s:{}\n'.format(enforced_shares_str or '*')
             else:  # Dynamic
-                res += 'drivestoredirect:s:{}DynamicDrives\n'.format(enforcedSharesStr)
+                res += 'drivestoredirect:s:{}DynamicDrives\n'.format(enforced_shares_str)
             res += 'devicestoredirect:s:*\n'
 
         if self.redir_usb != 'false':
@@ -306,24 +306,24 @@ class RDPFile:
     @property
     def as_rdp_url(self) -> str:
         # Some parameters
-        screenMode = '2' if self.fullScreen else '1'
-        audioMode = '0' if self.redir_audio else '2'
-        useMultimon = '1' if self.multimon else '0'
-        disableWallpaper = '0' if self.show_wallpaper else '1'
+        screen_mode = '2' if self.fullscreen else '1'
+        audio_mode = '0' if self.redir_audio else '2'
+        use_multimon = '1' if self.multimon else '0'
+        disable_wallpaper = '0' if self.show_wallpaper else '1'
         printers = '1' if self.redir_printers else '0'
         credsspsupport = '1' if self.enable_credssp_support else '0'
 
         parameters: list[tuple[str, str]] = [
             ('full address', f's:{self.address}'),
-            ('audiomode', f'i:{audioMode}'),
-            ('screen mode id', f'i:{screenMode}'),
-            ('use multimon', f'i:{useMultimon}'),
+            ('audiomode', f'i:{audio_mode}'),
+            ('screen mode id', f'i:{screen_mode}'),
+            ('use multimon', f'i:{use_multimon}'),
             ('desktopwidth', f'i:{self.width}'),
             ('desktopheight', f':{self.height}'),
             ('session bpp', f'i:{self.bpp}'),
-            ('disable menu anims', f'i:{disableWallpaper}'),
-            ('disable themes', f'i:{disableWallpaper}'),
-            ('disable wallpaper', f'i:{disableWallpaper}'),
+            ('disable menu anims', f'i:{disable_wallpaper}'),
+            ('disable themes', f'i:{disable_wallpaper}'),
+            ('disable wallpaper', f'i:{disable_wallpaper}'),
             ('redirectprinters', f'i:{printers}'),
             ('disable full window drag', 'i:1'),
             ('authentication level', f'i:0'),

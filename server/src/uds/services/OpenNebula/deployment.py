@@ -117,7 +117,7 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
         if self._name == '':
             try:
                 self._name = self.name_generator().get(
-                    self.service().get_basename(), self.service().getLenName()
+                    self.service().get_basename(), self.service().get_lenname()
                 )
             except KeyError:
                 return consts.NO_MORE_NAMES
@@ -138,23 +138,23 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
             return types.states.TaskState.FINISHED
 
         try:
-            state = self.service().getMachineState(self._vmid)
+            state = self.service().get_machine_state(self._vmid)
 
             if state == on.types.VmState.UNKNOWN:  # @UndefinedVariable
                 return self._error('Machine is not available anymore')
 
-            self.service().startMachine(self._vmid)
+            self.service().start_machine(self._vmid)
 
             self.cache.set('ready', '1')
         except Exception as e:
-            self.do_log(types.log.LogLevel.ERROR, 'Error on setReady: {}'.format(e))
+            self.do_log(types.log.LogLevel.ERROR, 'Error on set_ready: {}'.format(e))
             # Treat as operation done, maybe the machine is ready and we can continue
 
         return types.states.TaskState.FINISHED
 
     def reset(self) -> types.states.TaskState:
         if self._vmid != '':
-            self.service().resetMachine(self._vmid)
+            self.service().reset_machine(self._vmid)
             
         return types.states.TaskState.FINISHED
 
@@ -208,7 +208,7 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
             self._name,
             state,
         )
-        state = self.service().getMachineState(self._vmid)
+        state = self.service().get_machine_state(self._vmid)
 
         # If we want to check an state and machine does not exists (except in case that we whant to check this)
         if state in [
@@ -256,7 +256,7 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
 
         if self._vmid:  # Powers off & delete it
             try:
-                self.service().removeMachine(self._vmid)
+                self.service().remove_machine(self._vmid)
             except Exception:
                 logger.warning('Can\'t set remove errored machine: %s', self._vmid)
 
@@ -303,13 +303,13 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
         In fact, this will not be never invoked, unless we push it twice, because
         check_state method will "pop" first item when a check operation returns types.states.DeployState.FINISHED
 
-        At executeQueue this return value will be ignored, and it will only be used at check_state
+        At execute_queue this return value will be ignored, and it will only be used at check_state
         """
         return types.states.TaskState.FINISHED
 
     def _wait(self) -> types.states.TaskState:
         """
-        Executes opWait, it simply waits something "external" to end
+        Executes op_wait, it simply waits something "external" to end
         """
         return types.states.TaskState.RUNNING
 
@@ -317,7 +317,7 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
         """
         Deploys a machine from template for user/cache
         """
-        templateId = self.publication().getTemplateId()
+        template_id = self.publication().get_template_id()
         name = self.get_name()
         if name == consts.NO_MORE_NAMES:
             raise Exception(
@@ -328,7 +328,7 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
             name
         )  # OpenNebula don't let us to create machines with more than 15 chars!!!
 
-        self._vmid = self.service().deploy_from_template(name, templateId)
+        self._vmid = self.service().deploy_from_template(name, template_id)
         if not self._vmid:
             raise Exception('Can\'t create machine')
 
@@ -341,19 +341,19 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
         """
         Removes a machine from system
         """
-        state = self.service().getMachineState(self._vmid)
+        state = self.service().get_machine_state(self._vmid)
 
         if state == on.types.VmState.UNKNOWN:  # @UndefinedVariable
             raise Exception('Machine not found')
 
         if state == on.types.VmState.ACTIVE:  # @UndefinedVariable
-            subState = self.service().getMachineSubstate(self._vmid)
-            if subState < 3:  # Less than running
-                logger.info('Must wait before remove: %s', subState)
+            sub_state = self.service().get_machine_substate(self._vmid)
+            if sub_state < 3:  # Less than running
+                logger.info('Must wait before remove: %s', sub_state)
                 self._push_front_op(Operation.RETRY)
                 return types.states.TaskState.RUNNING
 
-        self.service().removeMachine(self._vmid)
+        self.service().remove_machine(self._vmid)
 
         return types.states.TaskState.RUNNING
 
@@ -361,10 +361,10 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
         """
         Powers on the machine
         """
-        self.service().startMachine(self._vmid)
+        self.service().start_machine(self._vmid)
 
         # Get IP & MAC (later stage, after "powering on")
-        self._mac, self._ip = self.service().getNetInfo(self._vmid)
+        self._mac, self._ip = self.service().get_network_info(self._vmid)
 
         return types.states.TaskState.RUNNING
 
@@ -372,7 +372,7 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
         """
         Suspends the machine
         """
-        self.service().shutdownMachine(self._vmid)
+        self.service().shutdown_machine(self._vmid)
         return types.states.TaskState.RUNNING
 
     # Check methods
@@ -423,12 +423,12 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
         }
 
         try:
-            chkFnc: typing.Optional[collections.abc.Callable[[], types.states.TaskState]] = fncs.get(op, None)
+            check_fnc: typing.Optional[collections.abc.Callable[[], types.states.TaskState]] = fncs.get(op, None)
 
-            if chkFnc is None:
+            if check_fnc is None:
                 return self._error('Unknown operation found at check queue ({0})'.format(op))
 
-            state = chkFnc()
+            state = check_fnc()
             if state == types.states.TaskState.FINISHED:
                 self._get_and_pop_current_op()  # Remove runing op
                 return self._execute_queue()

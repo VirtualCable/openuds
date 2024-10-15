@@ -60,7 +60,7 @@ class OpenGnsysMaintainer(jobs.Job):
         for provider in models.Provider.objects.filter(
             maintenance_mode=False, data_type=OGProvider.type_type
         ):
-            logger.debug('Provider %s is type openGnsys', provider)
+            logger.debug('Provider %s is type OpenGnsys', provider)
 
             # Locate all services inside the provider
             service: models.Service

@@ -97,20 +97,20 @@ sshproxykrblogin=false
 '''
 
 
-def getTemplate(
+def get_template(
     speed: typing.Any,
     pack: typing.Any,
     quality: typing.Any,
     sound: typing.Any,
-    soundSystem: typing.Any,
-    windowManager: typing.Any,
+    sound_system: typing.Any,
+    window_manager: typing.Any,
     exports: typing.Any,
     rootless: bool,
     width: typing.Any,
     height: typing.Any,
     user: typing.Any,
 ) -> str:
-    trueFalse: collections.abc.Callable[[bool], str] = lambda x: 'true' if x else 'false'
+    true_false: collections.abc.Callable[[bool], str] = lambda x: 'true' if x else 'false'
     export = 'export="{export}"' if exports else ''
     if width == -1 or height == -1:
         width = 800
@@ -122,9 +122,9 @@ def getTemplate(
         speed=speed,
         pack=pack,
         quality=quality,
-        sound=trueFalse(sound),
-        soundSystem=soundSystem,
-        windowManager=windowManager,
+        sound=true_false(sound),
+        soundSystem=sound_system,
+        windowManager=window_manager,
         export=export,
         rootless=rootless and 'true' or 'false',
         width=width,

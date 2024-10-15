@@ -61,7 +61,7 @@ class StuckCleaner(Job):
         # Locate service pools with pending assigned service in use
         servicepools_with_stucks = (
             ServicePool.objects.annotate(
-                stuckCount=Count(
+                stuck_count=Count(
                     'userServices',
                     filter=Q(userServices__state_date__lt=since_state)
                     & (
@@ -73,12 +73,12 @@ class StuckCleaner(Job):
                 )
             )
             .filter(service__provider__maintenance_mode=False, state=types.states.State.ACTIVE)
-            .exclude(stuckCount=0)
+            .exclude(stuck_count=0)
         )
 
         # Info states are removed on UserServiceCleaner and VALID_STATES are ok, or if "hanged", checked on "HangedCleaner"
-        def _retrieve_stuck_user_services(servicePool: ServicePool) -> collections.abc.Iterable[UserService]:
-            q = servicePool.userServices.filter(state_date__lt=since_state)
+        def _retrieve_stuck_user_services(servicepool: ServicePool) -> collections.abc.Iterable[UserService]:
+            q = servicepool.userServices.filter(state_date__lt=since_state)
             # Get all that are not in valid or info states, AND the ones that are "PREPARING" with
             # "destroy_after" property set (exists) (that means that are waiting to be destroyed after initializations)
             yield from q.exclude(state__in=types.states.State.INFO_STATES + types.states.State.VALID_STATES)

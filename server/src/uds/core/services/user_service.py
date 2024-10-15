@@ -368,11 +368,11 @@ class UserService(Environmentable, Serializable, abc.ABC):
 
         Things to take care with this method are:
 
-           * cacheLevel can be L1 or L2 (class constants)
+           * level can be L1 or L2 (class constants)
            * If a deploy for cache is asked for a L1 cache, the generated
              element is expected to be all-done for user consume. L1 cache items
              will get directly assigned to users whenever needed, and are expected
-             to be fast. (You always have setReady method to do anything else needed
+             to be fast. (You always have set_ready method to do anything else needed
              to assign the cache element to an user, but generally L1 cached items
              must be ready to use.
            * An L2 cache is expected to be an cached element that is "almost ready".

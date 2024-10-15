@@ -181,8 +181,8 @@ class OGService(services.Service):
             self.get_relase_url(uuid, token),
         )
 
-    def notify_deadline(self, vmid: str, deadLine: typing.Optional[int]) -> None:
-        self.provider().notify_deadline(vmid, deadLine)
+    def notify_deadline(self, vmid: str, deadline: typing.Optional[int]) -> None:
+        self.provider().notify_deadline(vmid, deadline)
 
     def power_on(self, vmid: str) -> None:
         self.provider().power_on(vmid, self.image.value)

@@ -46,7 +46,7 @@ logger = logging.getLogger(__name__)
 
 class OpenNebulaLivePublication(Publication, autoserializable.AutoSerializable):
     """
-    This class provides the publication of a oVirtLinkedService
+    This class provides the publication of a service for OpenNebula
     """
 
     suggested_delay = 2  # : Suggested recheck time if publication is unfinished in seconds
@@ -173,7 +173,7 @@ class OpenNebulaLivePublication(Publication, autoserializable.AutoSerializable):
     # Methods provided below are specific for this publication
     # and will be used by user deployments that uses this kind of publication
 
-    def getTemplateId(self) -> str:
+    def get_template_id(self) -> str:
         """
         Returns the template id associated with the publication
         """

@@ -283,8 +283,8 @@ class CachedService(AssignedService):
                     .all()
                     .prefetch_related('deployed_service', 'publication')
                 ]
-            cachedService: models.UserService = parent.cached_users_services().get(uuid=process_uuid(item))
-            return AssignedService.item_as_dict(cachedService, is_cache=True)
+            cached_userservice: models.UserService = parent.cached_users_services().get(uuid=process_uuid(item))
+            return AssignedService.item_as_dict(cached_userservice, is_cache=True)
         except Exception as e:
             logger.exception('get_items')
             raise self.invalid_item_response() from e
@@ -476,7 +476,7 @@ class Publications(DetailHandler):
         :param parent: Parent service pool
         """
         parent = ensure.is_instance(parent, models.ServicePool)
-        changeLog = self._params['changelog'] if 'changelog' in self._params else None
+        change_log = self._params['changelog'] if 'changelog' in self._params else None
 
         if (
             permissions.has_access(self._user, parent, uds.core.types.permissions.PermissionType.MANAGEMENT)
@@ -486,7 +486,7 @@ class Publications(DetailHandler):
             raise self.access_denied_response()
 
         logger.debug('Custom "publish" invoked for %s', parent)
-        parent.publish(changeLog)  # Can raise exceptions that will be processed on response
+        parent.publish(change_log)  # Can raise exceptions that will be processed on response
 
         log.log(
             parent,

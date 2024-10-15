@@ -103,29 +103,29 @@ class ProxmoxDeferredRemoval(jobs.Job):
     #         )
 
     @staticmethod
-    def waitForTaskFinish(
+    def wait_for_task_to_finish(
         provider_instance: 'provider.ProxmoxProvider',
         upid: 'prox_types.ExecResult',
-        maxWait: int = 30,  # 30 * 0.3 = 9 seconds
+        timeout: int = 30,  # 30 * 0.3 = 9 seconds
     ) -> bool:
         counter = 0
-        while provider_instance.api.get_task_info(upid.node, upid.upid).is_running() and counter < maxWait:
+        while provider_instance.api.get_task_info(upid.node, upid.upid).is_running() and counter < timeout:
             time.sleep(0.3)
             counter += 1
 
-        return counter < maxWait
+        return counter < timeout
 
     def run(self) -> None:
-        dbProvider: Provider
+        db_provider: Provider
         # Look for Providers of type proxmox
-        for dbProvider in Provider.objects.filter(
+        for db_provider in Provider.objects.filter(
             maintenance_mode=False, data_type=provider.ProxmoxProvider.type_type
         ):
-            logger.debug('Provider %s if os type proxmox', dbProvider)
+            logger.debug('Provider %s if os type proxmox', db_provider)
 
-            storage = dbProvider.get_environment().storage
+            storage = db_provider.get_environment().storage
             instance: provider.ProxmoxProvider = typing.cast(
-                provider.ProxmoxProvider, dbProvider.get_instance()
+                provider.ProxmoxProvider, db_provider.get_instance()
             )
 
             for data in storage.filter('tRm'):
@@ -139,11 +139,11 @@ class ProxmoxDeferredRemoval(jobs.Job):
                     # If machine is powered on, tries to stop it
                     # tries to remove in sync mode
                     if vm_info.status.is_running():
-                        ProxmoxDeferredRemoval.waitForTaskFinish(instance, instance.api.stop_vm(vmid))
+                        ProxmoxDeferredRemoval.wait_for_task_to_finish(instance, instance.api.stop_vm(vmid))
                         return
 
                     if not vm_info.status.is_running():  # Machine exists, try to remove it now
-                        ProxmoxDeferredRemoval.waitForTaskFinish(instance, instance.api.delete_vm(vmid))
+                        ProxmoxDeferredRemoval.wait_for_task_to_finish(instance, instance.api.delete_vm(vmid))
 
                     # It this is reached, remove check
                     storage.remove('tr' + str(vmid))

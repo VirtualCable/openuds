@@ -204,7 +204,7 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
         try:
             status = self.service().status(self._machine_id)
         except Exception as e:
-            logger.exception('Exception at checkMachineReady')
+            logger.exception('Exception at _check_machine_ready')
             return self._error(f'Error checking machine: {e}')
 
         # possible status are ("off", "oglive", "busy", "linux", "windows", "macos" o "unknown").
@@ -264,12 +264,12 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
         }
 
         try:
-            execFnc: typing.Optional[collections.abc.Callable[[], str]] = fncs.get(op)
+            exec_fnc: typing.Optional[collections.abc.Callable[[], str]] = fncs.get(op)
 
-            if execFnc is None:
+            if exec_fnc is None:
                 return self._error(f'Unknown operation found at execution queue ({op})')
 
-            execFnc()
+            exec_fnc()
 
             return types.states.TaskState.RUNNING
         except Exception as e:
@@ -283,7 +283,7 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
         In fact, this will not be never invoked, unless we push it twice, because
         check_state method will "pop" first item when a check operation returns types.states.DeployState.FINISHED
 
-        At executeQueue this return value will be ignored, and it will only be used at check_state
+        At execute_queue this return value will be ignored, and it will only be used at check_state
         """
         return types.states.TaskState.FINISHED
 
@@ -299,7 +299,7 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
         except Exception as e:
             # logger.exception('Creating machine')
             if r:  # Reservation was done, unreserve it!!!
-                logger.error('Error on notifyEvent (machine was reserved): %s', e)
+                logger.error('Error on notify_endpoints (machine was reserved): %s', e)
                 try:
                     self.service().unreserve(self._machine_id)
                 except Exception as ei:
@@ -383,12 +383,12 @@ class OpenGnsysUserService(services.UserService, autoserializable.AutoSerializab
         }
 
         try:
-            chkFnc: typing.Optional[typing.Optional[collections.abc.Callable[[], types.states.TaskState]]] = fncs.get(op)
+            check_fnc: typing.Optional[typing.Optional[collections.abc.Callable[[], types.states.TaskState]]] = fncs.get(op)
 
-            if chkFnc is None:
+            if check_fnc is None:
                 return self._error(f'Unknown operation found at check queue ({op})')
 
-            state = chkFnc()
+            state = check_fnc()
             if state == types.states.TaskState.FINISHED:
                 self._pop_current_op()  # Remove runing op
                 return self._execute_queue()

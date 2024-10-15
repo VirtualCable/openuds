@@ -361,10 +361,10 @@ class HTML5RDPTransport(transports.Transport):
             domain = ''
         username = proc[0]
 
-        azureAd = False
+        for_azure = False
         if self.forced_domain.value != '':
             if self.forced_domain.value.lower() == 'azuread':
-                azureAd = True
+                for_azure = True
             else:
                 domain = self.forced_domain.value
 
@@ -379,7 +379,7 @@ class HTML5RDPTransport(transports.Transport):
             domain = ''
 
         # If AzureAD, include it on username
-        if azureAd:
+        if for_azure:
             username = 'AzureAD\\' + username
 
         # Fix username/password acording to os manager
@@ -403,15 +403,15 @@ class HTML5RDPTransport(transports.Transport):
         password: str,
         request: 'ExtendedHttpRequestWithUser',  # pylint: disable=unused-argument
     ) -> str:
-        credsInfo = self.get_connection_info(userservice, user, password)
+        creds_info = self.get_connection_info(userservice, user, password)
         username, password, domain = (
-            credsInfo.username,
-            credsInfo.password,
-            credsInfo.domain,
+            creds_info.username,
+            creds_info.password,
+            creds_info.domain,
         )
 
         scrambler = CryptoManager().random_string(32)
-        passwordCrypted = CryptoManager().symmetric_encrypt(password, scrambler)
+        crypted_password = CryptoManager().symmetric_encrypt(password, scrambler)
 
         def as_txt(txt: typing.Any) -> str:
             return 'true' if txt else 'false'
@@ -422,7 +422,7 @@ class HTML5RDPTransport(transports.Transport):
             'hostname': ip,
             'port': self.rdp_port.as_int(),
             'username': username,
-            'password': passwordCrypted,
+            'password': crypted_password,
             'resize-method': 'display-update',
             'ignore-cert': 'true',
             'security': self.security.value,

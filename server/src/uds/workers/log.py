@@ -58,13 +58,13 @@ class LogMaintenance(Job):
         ):
             # First, ensure we do not have more than requested logs, and we can put one more log item
             try:
-                ownerType = log.LogObjectType(owner_type)
+                owner_type = log.LogObjectType(owner_type)
             except ValueError:
                 # If we do not know the owner type, we will delete all logs for this owner
                 models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type).delete()
                 continue
 
-            max_elements = ownerType.get_max_elements()
+            max_elements = owner_type.get_max_elements()
             if 0 < max_elements < count:  # Negative max elements means "unlimited"
                 # We will delete the oldest ones
                 for record in models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type).order_by(

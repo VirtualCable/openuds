@@ -25,7 +25,7 @@ if 'sp' not in globals():
     globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
 
 
-def fixResolution() -> typing.List[str]:
+def fix_resolution() -> typing.List[str]:
     import re
     import subprocess
 
@@ -129,7 +129,7 @@ if executable in msrdc_list:
 elif executable == xfreerdp:
     # Fix resolution...
     try:
-        xfparms = fixResolution()
+        xfparms = fix_resolution()
     except Exception as e:
         xfparms = list(map(lambda x: x.replace('#WIDTH#', '1400').replace('#HEIGHT#', '800'), sp['as_new_xfreerdp_params']))  # type: ignore
 

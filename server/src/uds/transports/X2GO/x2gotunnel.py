@@ -115,13 +115,13 @@ class TX2GOTransport(BaseX2GOTransport):
             desktop = "/usr/bin/udsvapp " + self.custom_cmd.value
             rootless = True
 
-        xf = x2go_file.getTemplate(
+        xf = x2go_file.get_template(
             speed=self.speed.value,
             pack=self.pack.value,
             quality=self.quality.value,
             sound=self.sound.as_bool(),
-            soundSystem=self.sound.value,
-            windowManager=desktop,
+            sound_system=self.sound.value,
+            window_manager=desktop,
             exports=self.exports.as_bool(),
             rootless=rootless,
             width=width,
@@ -137,12 +137,12 @@ class TX2GOTransport(BaseX2GOTransport):
             key=key,
         )
 
-        tunnelFields = fields.get_tunnel_from_field(self.tunnel)
-        tunHost, tunPort = tunnelFields.host, tunnelFields.port
+        tunnel_field = fields.get_tunnel_from_field(self.tunnel)
+        tunnel_host, tunnel_port = tunnel_field.host, tunnel_field.port
 
         sp = {
-            'tunHost': tunHost,
-            'tunPort': tunPort,
+            'tunHost': tunnel_host,
+            'tunPort': tunnel_port,
             'tunWait': self.tunnel_wait.as_int(),
             'tunChk': self.verify_certificate.as_bool(),
             'ticket': ticket,

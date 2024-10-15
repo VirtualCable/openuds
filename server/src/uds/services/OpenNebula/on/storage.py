@@ -41,7 +41,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def enumerateDatastores(
+def enumerate_datastores(
     api: 'client.OpenNebulaClient', datastoreType: int = 0
 ) -> collections.abc.Iterable['types.StorageType']:
     """

@@ -95,8 +95,8 @@ class TunnelTicket(Handler):
                 # Ensures extra exists...
                 extra = extra or {}
                 now = sql_stamp_seconds()
-                totalTime = now - extra.get('b', now - 1)
-                msg = f'User {user.name} stopped tunnel {extra.get("t", "")[:8]}... to {host}:{port}: u:{sent}/d:{recv}/t:{totalTime}.'
+                total_time = now - extra.get('b', now - 1)
+                msg = f'User {user.name} stopped tunnel {extra.get("t", "")[:8]}... to {host}:{port}: u:{sent}/d:{recv}/t:{total_time}.'
                 log.log(user.manager, types.log.LogLevel.INFO, msg)
                 log.log(user_service, types.log.LogLevel.INFO, msg)
 
@@ -106,7 +106,7 @@ class TunnelTicket(Handler):
                     events.add_event(
                         user_service.deployed_service,
                         events.types.stats.EventType.TUNNEL_CLOSE,
-                        duration=totalTime,
+                        duration=total_time,
                         sent=sent,
                         received=recv,
                         tunnel=extra.get('t', 'unknown'),

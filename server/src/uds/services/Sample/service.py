@@ -138,7 +138,7 @@ class ServiceOne(services.Service):
         default='1234',  # : Default password are nonsense?? :-)
     )
 
-    baseName = gui.TextField(
+    basename = gui.TextField(
         order=3,
         label=_('Services names'),
         tooltip=_('Base name for this user services'),
@@ -173,7 +173,7 @@ class ServiceOne(services.Service):
     # From now onwards, we implement our own methods, that will be used by,
     # for example, services derived from this provider
 
-    def getColour(self) -> str:
+    def get_colour(self) -> str:
         """
         Simply returns colour, for deployed user services.
 
@@ -181,14 +181,14 @@ class ServiceOne(services.Service):
         """
         return self.colour.value
 
-    def getPassw(self) -> str:
+    def get_passwd(self) -> str:
         """
         Simply returns passwd, for deloyed user services
         """
         return self.passw.value
 
     def get_basename(self) -> str:
-        return self.baseName.value
+        return self.basename.value
 
 
 class ServiceTwo(services.Service):

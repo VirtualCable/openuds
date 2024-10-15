@@ -80,12 +80,12 @@ class UserServiceRemover(Job):
         manager = UserServiceManager.manager()
 
         with transaction.atomic():
-            removeFrom = sql_now() - timedelta(
+            remove_since = sql_now() - timedelta(
                 seconds=10
             )  # We keep at least 10 seconds the machine before removing it, so we avoid connections errors
             candidates: collections.abc.Iterable[UserService] = UserService.objects.filter(
                 state=State.REMOVABLE,
-                state_date__lt=removeFrom,
+                state_date__lt=remove_since,
                 deployed_service__service__provider__maintenance_mode=False,
             ).iterator(chunk_size=max_to_remove)
 

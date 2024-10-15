@@ -258,11 +258,11 @@ def update_transport_ticket(
 
                     if username:
                         try:
-                            userService = models.UserService.objects.get(
+                            userservice = models.UserService.objects.get(
                                 uuid=data['ticket-info'].get('userService', None)
                             )
                             UserServiceManager.manager().notify_preconnect(
-                                userService,
+                                userservice,
                                 types.connections.ConnectionData(
                                     username=username,
                                     protocol=data.get('protocol', ''),

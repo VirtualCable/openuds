@@ -212,7 +212,7 @@ class ServiceCacheUpdater(Job):
         if servicepool_stats.servicepool is None:
             return
 
-        cacheItems: list[UserService] = [
+        cache_items: list[UserService] = [
             i
             for i in servicepool_stats.servicepool.cached_users_services()
             .filter(
@@ -225,7 +225,7 @@ class ServiceCacheUpdater(Job):
             if not i.destroy_after
         ]
 
-        if not cacheItems:
+        if not cache_items:
             logger.debug(
                 'There is more services than max configured, but could not reduce cache L1 cause its already empty'
             )
@@ -233,7 +233,7 @@ class ServiceCacheUpdater(Job):
 
         if servicepool_stats.l2_cache_count < servicepool_stats.servicepool.cache_l2_srvs:
             valid = None
-            for n in cacheItems:
+            for n in cache_items:
                 if n.needs_osmanager():
                     if State.from_str(n.state).is_usable() is False or State.from_str(n.os_state).is_usable():
                         valid = n
@@ -246,7 +246,7 @@ class ServiceCacheUpdater(Job):
                 valid.move_to_level(types.services.CacheLevel.L2)
                 return
 
-        cache = cacheItems[0]
+        cache = cache_items[0]
         cache.remove_or_cancel()
 
     def reduce_l2_cache(
@@ -257,7 +257,7 @@ class ServiceCacheUpdater(Job):
             return
         logger.debug("Reducing L2 cache erasing a service in cache for %s", servicepool_stats.servicepool.name)
         if servicepool_stats.l2_cache_count > 0:
-            cacheItems = (
+            cache_items = (
                 servicepool_stats.servicepool.cached_users_services()
                 .filter(
                     UserServiceManager.manager().get_cache_state_filter(
@@ -267,7 +267,7 @@ class ServiceCacheUpdater(Job):
                 .order_by('creation_date')
             )
             # TODO: Look first for non finished cache items and cancel them?
-            cache: UserService = cacheItems[0]
+            cache: UserService = cache_items[0]
             cache.remove_or_cancel()
 
     def run(self) -> None:

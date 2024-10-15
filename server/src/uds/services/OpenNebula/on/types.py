@@ -48,7 +48,7 @@ class VmState(enum.Enum):
     UNKNOWN = 99
 
     @staticmethod
-    def fromState(state: str) -> 'VmState':
+    def from_str(state: str) -> 'VmState':
         try:
             return VmState(int(state))
         except Exception:
@@ -71,7 +71,7 @@ class ImageState(enum.Enum):  # pylint: disable=too-few-public-methods
     UNKNOWN = 99
 
     @staticmethod
-    def fromState(state: str) -> 'ImageState':
+    def from_str(state: str) -> 'ImageState':
         try:
             return ImageState(int(state))
         except Exception:

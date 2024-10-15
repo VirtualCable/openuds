@@ -14,7 +14,7 @@ def log_error(err, username: str = None):
     print(err)
 
 
-def update_authorized_keys(username, pubKey):
+def update_authorized_keys(username, public_key):
     # No X2Go server on windows
     if 'win' in sys.platform:
         log_error('Not a linux platform')
@@ -58,7 +58,7 @@ def update_authorized_keys(username, pubKey):
             )
         )
         # Append pubkey
-        f.write('ssh-rsa {} UDS@X2GOCLIENT\n'.format(pubKey))
+        f.write('ssh-rsa {} UDS@X2GOCLIENT\n'.format(public_key))
 
     # Ensure access is correct
     os.chown(authorized_keys, uid, -1)

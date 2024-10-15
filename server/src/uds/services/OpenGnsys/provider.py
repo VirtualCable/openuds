@@ -247,11 +247,11 @@ class OGProvider(ServiceProvider):
     def notify_endpoints(self, vmid: str, login_url: str, logout_url: str, release_url: str) -> None:
         self.api.notify_endpoints(vmid, login_url, logout_url, release_url)
 
-    def notify_deadline(self, machineId: str, deadLine: typing.Optional[int]) -> None:
-        self.api.notify_deadline(machineId, deadLine)
+    def notify_deadline(self, machine_id: str, deadline: typing.Optional[int]) -> None:
+        self.api.notify_deadline(machine_id, deadline)
 
-    def status(self, machineId: str) -> typing.Any:
-        return self.api.status(machineId)
+    def status(self, machineid: str) -> typing.Any:
+        return self.api.status(machineid)
 
     @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def is_available(self) -> bool:

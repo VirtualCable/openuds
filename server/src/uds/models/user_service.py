@@ -219,7 +219,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
             # The publication to which this item points to, does not exists
             self.publication = None
             logger.exception(
-                'Got exception at get_instance of an userService %s (seems that publication does not exists!)',
+                'Got exception at get_instance of an userservice %s (seems that publication does not exists!)',
                 self,
             )
         if service_instance.user_service_type is None:

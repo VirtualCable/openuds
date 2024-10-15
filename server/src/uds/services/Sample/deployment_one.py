@@ -116,7 +116,7 @@ class SampleUserServiceOne(services.UserService):
         name: str = typing.cast(str, self.storage.read_from_db('name'))
         if not name:
             name = self.name_generator().get(
-                self.service().get_basename() + '-' + self.service().getColour(), 3
+                self.service().get_basename() + '-' + self.service().get_colour(), 3
             )
             # Store value for persistence
             self.storage.save_to_db('name', name)
@@ -269,12 +269,12 @@ class SampleUserServiceOne(services.UserService):
         """
         import random
 
-        countStr: typing.Optional[str] = typing.cast(
+        counter_str: typing.Optional[str] = typing.cast(
             str, self.storage.read_from_db('count')
         )
         count: int = 0
-        if countStr:
-            count = int(countStr) + 1
+        if counter_str:
+            count = int(counter_str) + 1
         # Count is always a valid value, because this method will never get
         # called before deployForUser, deployForCache, destroy or cancel.
         # In our sample, we only use check_state in case of deployForUser,

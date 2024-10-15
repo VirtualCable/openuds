@@ -815,7 +815,7 @@ class ProxmoxClient:
     @cached('nost', consts.CACHE_INFO_DURATION, key_helper=caching_key_helper)
     def get_nodes_stats(self, **kwargs: typing.Any) -> list[types.NodeStats]:
         # vm | storage | node | sdn are valid types for cluster/resources
-        return [types.NodeStats.from_dict(nodeStat) for nodeStat in self.get_cluster_resources('node')]
+        return [types.NodeStats.from_dict(node_stat) for node_stat in self.get_cluster_resources('node')]
 
     @cached('pools', consts.CACHE_DURATION // 6, key_helper=caching_key_helper)
     def list_pools(self, **kwargs: typing.Any) -> list[types.PoolInfo]:

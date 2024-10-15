@@ -138,7 +138,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
 
         return self._api
 
-    def resetApi(self) -> None:
+    def reset_api(self) -> None:
         self._api = None
 
     def sanitized_name(self, name: str) -> str:
@@ -164,111 +164,111 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
 
         return types.core.TestResult(True, _('Opennebula test connection passed'))
 
-    def getDatastores(self, datastoreType: int = 0) -> collections.abc.Iterable[on.types.StorageType]:
-        yield from on.storage.enumerateDatastores(self.api, datastoreType)
+    def get_datastores(self, datastore_type: int = 0) -> collections.abc.Iterable[on.types.StorageType]:
+        yield from on.storage.enumerate_datastores(self.api, datastore_type)
 
-    def getTemplates(self, force: bool = False) -> collections.abc.Iterable[on.types.TemplateType]:
+    def get_templates(self, force: bool = False) -> collections.abc.Iterable[on.types.TemplateType]:
         yield from on.template.enumerate_templates(self.api, force)
 
     def make_template(self, from_template_id: str, name: str, dest_storage: str) -> str:
         return on.template.create(self.api, from_template_id, name, dest_storage)
 
-    def check_template_published(self, templateId: str) -> bool:
-        return on.template.check_published(self.api, templateId)
+    def check_template_published(self, template_id: str) -> bool:
+        return on.template.check_published(self.api, template_id)
 
-    def removeTemplate(self, templateId: str) -> None:
-        on.template.remove(self.api, templateId)
+    def remove_template(self, template_id: str) -> None:
+        on.template.remove(self.api, template_id)
 
-    def deply_from_template(self, name: str, templateId: str) -> str:
-        return on.template.deploy_from(self.api, templateId, name)
+    def deply_from_template(self, name: str, template_id: str) -> str:
+        return on.template.deploy_from(self.api, template_id, name)
 
-    def getMachineState(self, machineId: str) -> on.types.VmState:
+    def get_machine_state(self, machine_id: str) -> on.types.VmState:
         '''
         Returns the state of the machine
         This method do not uses cache at all (it always tries to get machine state from OpenNebula server)
 
         Args:
-            machineId: Id of the machine to get state
+            machine_id: Id of the machine to get state
 
         Returns:
             one of the on.VmState Values
         '''
-        return on.vm.get_machine_state(self.api, machineId)
+        return on.vm.get_machine_state(self.api, machine_id)
 
-    def getMachineSubstate(self, machineId: str) -> int:
+    def get_machine_substate(self, machine_id: str) -> int:
         '''
         Returns the  LCM_STATE of a machine (STATE must be ready or this will return -1)
         '''
-        return on.vm.get_machine_substate(self.api, machineId)
+        return on.vm.get_machine_substate(self.api, machine_id)
 
-    def startMachine(self, machineId: str) -> None:
+    def start_machine(self, machine_id: str) -> None:
         '''
         Tries to start a machine. No check is done, it is simply requested to OpenNebula.
 
         This start also "resume" suspended/paused machines
 
         Args:
-            machineId: Id of the machine
+            machineid: Id of the machine
 
         Returns:
         '''
-        on.vm.start_machine(self.api, machineId)
+        on.vm.start_machine(self.api, machine_id)
 
-    def stopMachine(self, machineId: str) -> None:
+    def stop_machine(self, machine_id: str) -> None:
         '''
         Tries to stop a machine. No check is done, it is simply requested to OpenNebula
 
         Args:
-            machineId: Id of the machine
+            machine_id: Id of the machine
 
         Returns:
         '''
-        on.vm.stop_machine(self.api, machineId)
+        on.vm.stop_machine(self.api, machine_id)
 
-    def suspendMachine(self, machineId: str) -> None:
+    def suspend_machine(self, machine_id: str) -> None:
         '''
         Tries to suspend a machine. No check is done, it is simply requested to OpenNebula
 
         Args:
-            machineId: Id of the machine
+            machine_id: Id of the machine
 
         Returns:
         '''
-        on.vm.suspend_machine(self.api, machineId)
+        on.vm.suspend_machine(self.api, machine_id)
 
-    def shutdownMachine(self, machineId: str) -> None:
+    def shutdown_machine(self, machine_id: str) -> None:
         '''
         Tries to shutdown "gracefully" a machine. No check is done, it is simply requested to OpenNebula
 
         Args:
-            machineId: Id of the machine
+            machine_id: Id of the machine
 
         Returns:
         '''
-        on.vm.shutdown_machine(self.api, machineId)
+        on.vm.shutdown_machine(self.api, machine_id)
 
-    def resetMachine(self, machineId: str) -> None:
+    def reset_machine(self, machine_id: str) -> None:
         '''
         Resets a machine (hard-reboot)
         '''
-        on.vm.reset_machine(self.api, machineId)
+        on.vm.reset_machine(self.api, machine_id)
 
-    def removeMachine(self, machineId: str) -> None:
+    def remove_machine(self, machine_id: str) -> None:
         '''
         Tries to delete a machine. No check is done, it is simply requested to OpenNebula
 
         Args:
-            machineId: Id of the machine
+            machine_id: Id of the machine
 
         Returns:
         '''
-        on.vm.remove_machine(self.api, machineId)
+        on.vm.remove_machine(self.api, machine_id)
 
-    def getNetInfo(self, machineId: str, networkId: typing.Optional[str] = None) -> tuple[str, str]:
+    def get_network_info(self, machine_id: str, network_id: typing.Optional[str] = None) -> tuple[str, str]:
         '''
         Changes the mac address of first nic of the machine to the one specified
         '''
-        return on.vm.get_network_info(self.api, machineId, networkId)
+        return on.vm.get_network_info(self.api, machine_id, network_id)
 
     def get_console_connection(self, vmid: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
         console_connection_info = on.vm.get_console_connection(self.api, vmid)

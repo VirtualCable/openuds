@@ -125,8 +125,8 @@ def auth_callback_stage2(request: 'ExtendedHttpRequestWithUser', ticket_id: str)
         # If MFA is provided, we need to redirect to MFA page
         request.authorized = True
         if authenticator.get_type().provides_mfa() and authenticator.mfa:
-            authInstance = authenticator.get_instance()
-            if authInstance.mfa_identifier(result.user.name):
+            auth_instance = authenticator.get_instance()
+            if auth_instance.mfa_identifier(result.user.name):
                 request.authorized = False  # We can ask for MFA so first disauthorize user
                 response = HttpResponseRedirect(reverse('page.mfa'))
 
@@ -160,19 +160,19 @@ def auth_info(request: 'HttpRequest', authenticator_name: str) -> HttpResponse:
         )
         if not authenticator:
             raise Exception('Authenticator not found')
-        authInstance = authenticator.get_instance()
-        if typing.cast(typing.Any, authInstance.get_info) == auths.Authenticator.get_info:
+        auth_instance = authenticator.get_instance()
+        if typing.cast(typing.Any, auth_instance.get_info) == auths.Authenticator.get_info:
             raise Exception()  # This authenticator do not provides info
 
-        info = authInstance.get_info(request.GET)
+        info = auth_instance.get_info(request.GET)
 
         if info is None:
             raise Exception()  # This auth do not provides info
 
-        infoContent = info[0]
-        infoType = info[1] or 'text/html'
+        info_content = info[0]
+        info_type = info[1] or 'text/html'
 
-        return HttpResponse(infoContent, content_type=infoType)
+        return HttpResponse(info_content, content_type=info_type)
     except Exception:
         logger.exception('got')
         return HttpResponse(_('Authenticator does not provide information'))
@@ -355,7 +355,7 @@ def logout(request: types.requests.ExtendedHttpRequestWithUser) -> HttpResponse:
     auth.log_logout(request)
     request.session['restricted'] = False  # Remove restricted
     request.authorized = False
-    logoutResponse = request.user.logout(request)
-    url = logoutResponse.url if logoutResponse.success == types.auth.AuthenticationState.REDIRECT else None
+    logout_response = request.user.logout(request)
+    url = logout_response.url if logout_response.success == types.auth.AuthenticationState.REDIRECT else None
 
     return auth.web_logout(request, url or request.session.get('logouturl', None))

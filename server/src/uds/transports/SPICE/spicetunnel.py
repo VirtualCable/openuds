@@ -98,8 +98,8 @@ class TSPICETransport(BaseSpiceTransport):
         request: 'ExtendedHttpRequestWithUser',
     ) -> types.transports.TransportScript:
         try:
-            userServiceInstance = userservice.get_instance()
-            con = userServiceInstance.get_console_connection()
+            userservice_instance = userservice.get_instance()
+            con = userservice_instance.get_console_connection()
         except Exception:
             logger.exception('Error getting console connection data')
             raise
@@ -109,8 +109,8 @@ class TSPICETransport(BaseSpiceTransport):
                 _('No console connection data received'),
             )
 
-        tunnelFields = fields.get_tunnel_from_field(self.tunnel)
-        tunHost, tunPort = tunnelFields.host, tunnelFields.port
+        tunnel_field = fields.get_tunnel_from_field(self.tunnel)
+        tunnel_host, tunnel_port = tunnel_field.host, tunnel_field.port
 
         # We MAY need two tickets, one for 'insecure' port an one for secure
         ticket = ''
@@ -161,8 +161,8 @@ class TSPICETransport(BaseSpiceTransport):
         sp = {
             'as_file': r.as_file,
             'as_file_ns': r.as_file_ns,
-            'tunHost': tunHost,
-            'tunPort': tunPort,
+            'tunHost': tunnel_host,
+            'tunPort': tunnel_port,
             'tunWait': self.tunnel_wait.as_int(),
             'tunChk': self.verify_certificate.as_bool(),
             'ticket': ticket,

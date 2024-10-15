@@ -147,8 +147,8 @@ class BaseSpiceTransport(transports.Transport):
         """
         ready = self.cache.get(ip)
         if ready is None:
-            userServiceInstance = userservice.get_instance()
-            con = userServiceInstance.get_console_connection()
+            userservice_instance = userservice.get_instance()
+            con = userservice_instance.get_console_connection()
 
             logger.debug('Connection data: %s', con)
 
@@ -193,7 +193,7 @@ class BaseSpiceTransport(transports.Transport):
 
     def process_user_password(
         self,
-        userService: typing.Union['models.UserService', 'models.ServicePool'],
+        userservice: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
     ) -> types.connections.ConnectionData:
@@ -209,7 +209,7 @@ class BaseSpiceTransport(transports.Transport):
             username, password = '', ''
 
         # Fix username/password acording to os manager
-        username, password = userService.process_user_password(username, password)
+        username, password = userservice.process_user_password(username, password)
 
         return types.connections.ConnectionData(
             protocol=self.protocol,

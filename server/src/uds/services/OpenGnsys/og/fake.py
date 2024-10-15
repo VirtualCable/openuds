@@ -132,9 +132,9 @@ STATUS_READY_WINDOWS = {
 
 # FAKE post
 def post(
-    path: str, data: typing.Any, errMsg: typing.Optional[str] = None
+    path: str, data: typing.Any, error_message: typing.Optional[str] = None
 ) -> typing.Any:
-    logger.info('FAKE POST request to %s with %s data. (%s)', path, data, errMsg)
+    logger.info('FAKE POST request to %s with %s data. (%s)', path, data, error_message)
     if path == urls.LOGIN:
         return AUTH
 
@@ -153,9 +153,9 @@ def post(
 
 # FAKE get
 def get(
-    path: str, errMsg: typing.Optional[str]
+    path: str, error_message: typing.Optional[str]
 ) -> typing.Any:  # pylint: disable=too-many-return-statements
-    logger.info('FAKE GET request to %s. (%s)', path, errMsg)
+    logger.info('FAKE GET request to %s. (%s)', path, error_message)
     if path == urls.INFO:
         return INFO
     if path == urls.OUS:
@@ -179,8 +179,8 @@ def get(
     raise Exception('Unknown FAKE URL on GET: {}'.format(path))
 
 
-def delete(path: str, errMsg: typing.Optional[str]) -> typing.Any:
-    logger.info('FAKE DELETE request to %s. (%s)', path, errMsg)
+def delete(path: str, error_message: typing.Optional[str]) -> typing.Any:
+    logger.info('FAKE DELETE request to %s. (%s)', path, error_message)
     # Right now, only "unreserve" uses delete, so simply return
     return UNRESERVE
     # raise Exception('Unknown FAKE URL on DELETE: {}'.format(path))

@@ -92,13 +92,13 @@ class X2GOTransport(BaseX2GOTransport):
             desktop = "/usr/bin/udsvapp " + self.custom_cmd.value
             rootless = True
 
-        xf = x2go_file.getTemplate(
+        xf = x2go_file.get_template(
             speed=self.speed.value,
             pack=self.pack.value,
             quality=self.quality.value,
             sound=self.sound.as_bool(),
-            soundSystem=self.sound.value,
-            windowManager=desktop,
+            sound_system=self.sound.value,
+            window_manager=desktop,
             exports=self.exports.as_bool(),
             rootless=rootless,
             width=width,

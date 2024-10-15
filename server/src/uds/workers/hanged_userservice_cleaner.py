@@ -86,12 +86,12 @@ class HangedCleaner(Job):
         )
 
         # Type
-        servicePool: ServicePool
+        servicepool: ServicePool
 
-        for servicePool in servicepools_with_hanged:
-            logger.debug('Searching for hanged services for %s', servicePool)
+        for servicepool in servicepools_with_hanged:
+            logger.debug('Searching for hanged services for %s', servicepool)
             us: UserService
-            for us in servicePool.userServices.filter(flt):
+            for us in servicepool.userServices.filter(flt):
                 if us.destroy_after:  # It's waiting for removal, skip this very specific case
                     continue
                 logger.debug('Found hanged service %s', us)
@@ -105,7 +105,7 @@ class HangedCleaner(Job):
                         types.log.LogSource.INTERNAL,
                     )
                     log.log(
-                        servicePool,
+                        servicepool,
                         types.log.LogLevel.ERROR,
                         f'User service {us.friendly_name} hanged on removal. Restarting removal.',
                     )
@@ -118,7 +118,7 @@ class HangedCleaner(Job):
                         types.log.LogSource.INTERNAL,
                     )
                     log.log(
-                        servicePool,
+                        servicepool,
                         types.log.LogLevel.ERROR,
                         f'Removing user service {us.friendly_name} because it seems to be hanged'
                     )

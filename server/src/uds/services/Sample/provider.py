@@ -93,7 +93,7 @@ class Provider(services.ServiceProvider):
 
     # : Remote host. Here core will translate label and tooltip, remember to
     # : mark them as _ using gettext_noop.
-    remoteHost = gui.TextField(
+    remote_host = gui.TextField(
         order=1,
         length=64,
         label=_('Remote host'),
@@ -102,7 +102,7 @@ class Provider(services.ServiceProvider):
     )
 
     # simple password field
-    passwdField = gui.PasswordField(
+    passwd_field = gui.PasswordField(
         order=2,
         length=32,
         label=_('Password'),
@@ -111,7 +111,7 @@ class Provider(services.ServiceProvider):
     )
 
     # : Name of your pet (sample, not really needed :-) )
-    petName = gui.TextField(
+    pet_name = gui.TextField(
         order=3,
         length=32,
         label=_('Your pet\'s name'),
@@ -122,7 +122,7 @@ class Provider(services.ServiceProvider):
     # : Age of Methuselah (matusalén in spanish)
     # : in Spain there is a well-known to say that something is very old,
     # : "Tiene mas años que matusalén"(is older than Methuselah)
-    methAge = gui.NumericField(
+    meth_age = gui.NumericField(
         order=4,
         length=4,  # That is, max allowed value is 9999
         label=_('Age of Methuselah'),
@@ -132,7 +132,7 @@ class Provider(services.ServiceProvider):
     )
 
     # : Is Methuselah istill alive?
-    methAlive = gui.CheckBoxField(
+    meth_alive = gui.CheckBoxField(
         order=5,
         label=_('Is Methuselah still alive?'),
         tooltip=_('If you fail, this will not get saved :-)'),
@@ -140,7 +140,7 @@ class Provider(services.ServiceProvider):
     )
 
     # : Is Methuselah istill alive?
-    methAlive2 = gui.CheckBoxField(
+    meth_alive2 = gui.CheckBoxField(
         order=5,
         label=_('Is Methuselah still alive BBBB?'),
         tooltip=_('If you fail, this will not get saved BBBB'),
@@ -148,14 +148,14 @@ class Provider(services.ServiceProvider):
     )
 
     # : Is Methuselah istill alive?
-    methAlive3 = gui.CheckBoxField(
+    meth_alive3 = gui.CheckBoxField(
         order=5,
         label=_('Is Methuselah still alive CCCC?'),
         tooltip=_('If you fail, this will not get saved CCCC'),
         default=True,  # : By default, at new item, check this
     )
 
-    methText = gui.TextField(
+    meth_text = gui.TextField(
         order=6,
         length=512,
         lines=5,
@@ -179,7 +179,7 @@ class Provider(services.ServiceProvider):
         # If you say meth is alive, you are wrong!!! (i guess..)
         # values are only passed from administration client. Internals
         # instantiations are always empty.
-        if values and self.methAlive.as_bool():
+        if values and self.meth_alive.as_bool():
             raise exceptions.ui.ValidationError(_('Methuselah is not alive!!! :-)'))
 
     # Marshal and unmarshal are defaults ones, also enought
@@ -214,8 +214,8 @@ class Provider(services.ServiceProvider):
             instance = Provider(env, data)
             logger.debug(
                 'Methuselah has %s years and is %s :-)',
-                instance.methAge.value,
-                instance.methAlive.value,
+                instance.meth_age.value,
+                instance.meth_alive.value,
             )
         except exceptions.ui.ValidationError as e:
             # If we say that meth is alive, instantiation will
@@ -236,10 +236,10 @@ class Provider(services.ServiceProvider):
         Sample method, in fact in this we just return
         the value of host field, that is an string
         """
-        return self.remoteHost.value
+        return self.remote_host.value
 
-    def methYears(self) -> int:
+    def meth_years(self) -> int:
         """
         Another sample return, it will in fact return the Methuselah years
         """
-        return self.methAge.as_int()
+        return self.meth_age.as_int()

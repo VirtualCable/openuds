@@ -53,7 +53,7 @@ def get_machine_state(api: 'client.OpenNebulaClient', vmid: str) -> types.VmStat
     This method do not uses cache at all (it always tries to get machine state from OpenNebula server)
 
     Args:
-        machineId: Id of the machine to get state
+        vmid: Id of the machine to get state
 
     Returns:
         one of the on.VmState Values
@@ -66,14 +66,14 @@ def get_machine_state(api: 'client.OpenNebulaClient', vmid: str) -> types.VmStat
     return types.VmState.UNKNOWN
 
 
-def get_machine_substate(api: 'client.OpenNebulaClient', machineId: str) -> int:
+def get_machine_substate(api: 'client.OpenNebulaClient', vmid: str) -> int:
     '''
     Returns the lcm_state
     '''
     try:
-        return api.get_machine_substate(machineId)
+        return api.get_machine_substate(vmid)
     except Exception as e:
-        logger.error('Error obtaining machine substate for %s on OpenNebula: %s', machineId, e)
+        logger.error('Error obtaining machine substate for %s on OpenNebula: %s', vmid, e)
 
     return types.VmState.UNKNOWN.value
 
@@ -85,7 +85,7 @@ def start_machine(api: 'client.OpenNebulaClient', vmid: str) -> None:
     This start also "resume" suspended/paused machines
 
     Args:
-        machineId: Id of the machine
+        vmid: Id of the machine
 
     Returns:
     '''
@@ -101,7 +101,7 @@ def stop_machine(api: 'client.OpenNebulaClient', vmid: str) -> None:
     Tries to start a machine. No check is done, it is simply requested to OpenNebula
 
     Args:
-        machineId: Id of the machine
+        vmid: Id of the machine
 
     Returns:
     '''
@@ -116,7 +116,7 @@ def suspend_machine(api: 'client.OpenNebulaClient', vmid: str) -> None:
     Tries to suspend a machine. No check is done, it is simply requested to OpenNebula
 
     Args:
-        machineId: Id of the machine
+        vmid: Id of the machine
 
     Returns:
     '''
@@ -131,7 +131,7 @@ def shutdown_machine(api: 'client.OpenNebulaClient', vmid: str) -> None:
     Tries to "gracefully" shutdown a machine. No check is done, it is simply requested to OpenNebula
 
     Args:
-        machineId: Id of the machine
+        vmid: Id of the machine
 
     Returns:
     '''
@@ -146,7 +146,7 @@ def reset_machine(api: 'client.OpenNebulaClient', vmid: str) -> None:
     Tries to suspend a machine. No check is done, it is simply requested to OpenNebula
 
     Args:
-        machineId: Id of the machine
+        vmid: Id of the machine
 
     Returns:
     '''
@@ -161,12 +161,12 @@ def remove_machine(api: 'client.OpenNebulaClient', vmid: str) -> None:
     Tries to delete a machine. No check is done, it is simply requested to OpenNebula
 
     Args:
-        machineId: Id of the machine
+        vmid: Id of the machine
 
     Returns:
     '''
     try:
-        # vm = oca.VirtualMachine.new_with_id(api, int(machineId))
+        # vm = oca.VirtualMachine.new_with_id(api, int(vmid))
         # vm.delete()
         api.remove_machine(vmid)
     except Exception as e:
@@ -202,7 +202,7 @@ def get_network_info(
     '''
     Get the MAC and the IP for the network and machine. If network is None, for the first network
     '''
-    # md = minidom.parseString(api.call('vm.info', int(machineId)))
+    # md = minidom.parseString(api.call('vm.info', int(vmid)))
     md: typing.Any = minidom.parseString(api.vm_info(vmid).xml or '')  # pyright: ignore[reportUnknownMemberType]
     node = md
 

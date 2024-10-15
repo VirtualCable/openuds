@@ -157,11 +157,11 @@ class OpenNebulaLiveService(services.Service):
         """
 
         self.template.set_choices(
-            [gui.choice_item(t.id, t.name) for t in self.provider().getTemplates()]
+            [gui.choice_item(t.id, t.name) for t in self.provider().get_templates()]
         )
 
         self.datastore.set_choices(
-            [gui.choice_item(d.id, d.name) for d in self.provider().getDatastores()]
+            [gui.choice_item(d.id, d.name) for d in self.provider().get_datastores()]
         )
 
     def sanitized_name(self, name: str) -> str:
@@ -175,7 +175,7 @@ class OpenNebulaLiveService(services.Service):
     def check_template_published(self, template_id: str) -> bool:
         return self.provider().check_template_published(template_id)
 
-    def deploy_from_template(self, name: str, templateId: str) -> str:
+    def deploy_from_template(self, name: str, template_id: str) -> str:
         """
         Deploys a virtual machine on selected cluster from selected template
 
@@ -187,23 +187,23 @@ class OpenNebulaLiveService(services.Service):
         Returns:
             Id of the machine being created form template
         """
-        logger.debug('Deploying from template %s machine %s', templateId, name)
+        logger.debug('Deploying from template %s machine %s', template_id, name)
         # self.datastoreHasSpace()
-        return self.provider().deply_from_template(name, templateId)
+        return self.provider().deply_from_template(name, template_id)
 
-    def remove_template(self, templateId: str) -> None:
+    def remove_template(self, template_id: str) -> None:
         """
-        invokes removeTemplate from parent provider
+        invokes template_id from parent provider
         """
-        self.provider().removeTemplate(templateId)
+        self.provider().remove_template(template_id)
 
-    def getMachineState(self, machineId: str) -> 'on.types.VmState':
+    def get_machine_state(self, machine_id: str) -> 'on.types.VmState':
         """
         Invokes getMachineState from parent provider
         (returns if machine is "active" or "inactive"
 
         Args:
-            machineId: If of the machine to get state
+            machine_id: If of the machine to get state
 
         Returns:
             one of this values:
@@ -213,82 +213,82 @@ class OpenNebulaLiveService(services.Service):
              suspended, image_illegal, image_locked or powering_down
              Also can return'unknown' if Machine is not known
         """
-        return self.provider().getMachineState(machineId)
+        return self.provider().get_machine_state(machine_id)
 
-    def getMachineSubstate(self, machineId: str) -> int:
+    def get_machine_substate(self, machine_id: str) -> int:
         """
         On OpenNebula, the machine can be "active" but not "running".
         Any active machine will have a LCM_STATE, that is what we get here
         """
-        return self.provider().getMachineSubstate(machineId)
+        return self.provider().get_machine_substate(machine_id)
 
-    def startMachine(self, machineId: str) -> None:
+    def start_machine(self, machine_id: str) -> None:
         """
         Tries to start a machine. No check is done, it is simply requested to OpenNebula.
 
         This start also "resume" suspended/paused machines
 
         Args:
-            machineId: Id of the machine
+            machine_id: Id of the machine
 
         Returns:
         """
-        self.provider().startMachine(machineId)
+        self.provider().start_machine(machine_id)
 
-    def stopMachine(self, machineId: str) -> None:
+    def stop_machine(self, machine_id: str) -> None:
         """
         Tries to stop a machine. No check is done, it is simply requested to OpenNebula
 
         Args:
-            machineId: Id of the machine
+            machine_id: Id of the machine
 
         Returns:
         """
-        self.provider().stopMachine(machineId)
+        self.provider().stop_machine(machine_id)
 
-    def suspendMachine(self, machineId: str) -> None:
+    def suspend_machine(self, machine_id: str) -> None:
         """
         Tries to suspend machine. No check is done, it is simply requested to OpenNebula
 
         Args:
-            machineId: Id of the machine
+            machine_id: Id of the machine
 
         Returns:
         """
-        self.provider().suspendMachine(machineId)
+        self.provider().suspend_machine(machine_id)
 
-    def shutdownMachine(self, machineId: str) -> None:
+    def shutdown_machine(self, machine_id: str) -> None:
         """
         Tries to "gracefully" shutdown machine. No check is done, it is simply requested to OpenNebula
 
         Args:
-            machineId: Id of the machine
+            machine_id: Id of the machine
 
         Returns:
         """
-        self.provider().shutdownMachine(machineId)
+        self.provider().shutdown_machine(machine_id)
 
-    def resetMachine(self, machineId: str) -> None:
-        self.provider().resetMachine(machineId)
+    def reset_machine(self, machine_id: str) -> None:
+        self.provider().reset_machine(machine_id)
 
-    def removeMachine(self, machineId: str) -> None:
+    def remove_machine(self, machine_id: str) -> None:
         """
         Tries to delete a machine. No check is done, it is simply requested to OpenNebula
 
         Args:
-            machineId: Id of the machine
+            machine_id: Id of the machine
 
         Returns:
         """
-        self.provider().removeMachine(machineId)
+        self.provider().remove_machine(machine_id)
 
-    def getNetInfo(
-        self, machineId: str, networkId: typing.Optional[str] = None
+    def get_network_info(
+        self, machine_id: str, network_id: typing.Optional[str] = None
     ) -> tuple[str, str]:
         """
-        Changes the mac address of first nic of the machine to the one specified
+        Gets the network info for a machine
         """
-        return self.provider().getNetInfo(machineId, networkId=None)
+        return self.provider().get_network_info(machine_id, network_id=None)
 
     def get_basename(self) -> str:
         """
@@ -296,14 +296,14 @@ class OpenNebulaLiveService(services.Service):
         """
         return self.baseName.value
 
-    def getLenName(self) -> int:
+    def get_lenname(self) -> int:
         """
         Returns the length of numbers part
         """
         return self.lenName.as_int()
 
-    def get_console_connection(self, machineId: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
-        return self.provider().get_console_connection(machineId)
+    def get_console_connection(self, vmid: str) -> typing.Optional[types.services.ConsoleConnectionInfo]:
+        return self.provider().get_console_connection(vmid)
 
     def desktop_login(
         self, vmid: str, username: str, password: str, domain: str

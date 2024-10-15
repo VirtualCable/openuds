@@ -58,7 +58,7 @@ class XenFailure(XenAPI.Failure, XenFault):
         details = [] if details is None else details
         super(XenFailure, self).__init__(details)
 
-    def isHandleInvalid(self) -> bool:
+    def is_valid_handle(self) -> bool:
         return typing.cast(typing.Any, self.details[0]) == XenFailure.ex_handle_invalid
 
     def needs_xen_tools(self) -> bool:

@@ -45,22 +45,22 @@ class ScheduledAction(Job):
     friendly_name = 'Scheduled action runner'
 
     def run(self) -> None:
-        configuredAction: CalendarAction
-        for configuredAction in CalendarAction.objects.filter(
+        configured_action: CalendarAction
+        for configured_action in CalendarAction.objects.filter(
             service_pool__service__provider__maintenance_mode=False,  # Avoid maintenance
             service_pool__state=types.states.State.ACTIVE,  # Avoid Non active pools
             next_execution__lt=sql_now(),
         ).order_by('next_execution'):
             logger.info(
                 'Executing calendar action %s.%s (%s)',
-                configuredAction.service_pool.name,
-                configuredAction.calendar.name,
-                configuredAction.action,
+                configured_action.service_pool.name,
+                configured_action.calendar.name,
+                configured_action.action,
             )
             try:
-                configuredAction.execute()
+                configured_action.execute()
             except Exception:
                 logger.exception(
                     'Got an exception executing calendar access action: %s',
-                    configuredAction,
+                    configured_action,
                 )

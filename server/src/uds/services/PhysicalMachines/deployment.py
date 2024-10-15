@@ -93,9 +93,9 @@ class IPMachineUserService(services.UserService, autoserializable.AutoSerializab
 
     def _deploy(self) -> types.states.TaskState:
         # If not to be managed by a token, autologin user
-        userService = self.db_obj()
-        if userService:
-            userService.set_in_use(True)
+        user_service = self.db_obj()
+        if user_service:
+            user_service.set_in_use(True)
 
         return types.states.TaskState.FINISHED
 

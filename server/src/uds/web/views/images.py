@@ -70,15 +70,15 @@ def transport_icon(request: 'ExtendedHttpRequest', transport_id: str) -> HttpRes
 
 
 @cache_page(3600, key_prefix='img', cache='memory')
-def service_image(request: 'ExtendedHttpRequest', idImage: str) -> HttpResponse:
+def service_image(request: 'ExtendedHttpRequest', image_id: str) -> HttpResponse:
     try:
-        icon = Image.objects.get(uuid=process_uuid(idImage))
+        icon = Image.objects.get(uuid=process_uuid(image_id))
         return icon.image_as_response()
     except Image.DoesNotExist:
         pass  # Tries to get image from transport
 
     try:
-        transport: Transport = Transport.objects.get(uuid=process_uuid(idImage))
+        transport: Transport = Transport.objects.get(uuid=process_uuid(image_id))
         return HttpResponse(transport.get_instance().icon(), content_type='image/png')
     except Exception:
         return HttpResponse(DEFAULT_IMAGE, content_type='image/png')
