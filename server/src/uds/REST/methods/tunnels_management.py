@@ -36,7 +36,7 @@ from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
 import uds.core.types.permissions
-from uds.core import types, consts
+from uds.core import exceptions, types, consts
 from uds.core.util import permissions, validators, ensure
 from uds.core.util.model import process_uuid
 from uds import models
@@ -205,6 +205,14 @@ class Tunnels(ModelHandler):
         fields['port'] = int(fields['port'])
         # Ensure host is a valid IP(4 or 6) or hostname
         validators.validate_host(fields['host'])
+
+    def validate_delete(self, item: 'Model') -> None:
+        item = ensure.is_instance(item, models.ServerGroup)
+        # Only can delete if no ServicePools attached
+        if item.transports.count() > 0:
+            raise exceptions.rest.RequestError(
+                gettext('Cannot delete a tunnel server group with transports attached')
+            )
 
     def assign(self, parent: 'Model') -> typing.Any:
         parent = ensure.is_instance(parent, models.ServerGroup)
