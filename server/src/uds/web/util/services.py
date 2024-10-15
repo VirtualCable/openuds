@@ -117,7 +117,7 @@ def get_services_info_dict(
             'services': services,
             'ip': request.ip,
             'nets': nets,
-            'transports': validTrans,
+            'transports': valid_trans,
             'autorun': autorun
 
     """

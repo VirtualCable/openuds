@@ -35,6 +35,7 @@ import typing
 from uds import models
 from uds.core import environment, types
 from uds.core.osmanagers.osmanager import OSManager
+from uds.core.transports import Transport
 
 from ..utils import helpers
 
@@ -167,15 +168,17 @@ def create_db_publication(
     return publication
 
 
-def create_db_transport(**kwargs: typing.Any) -> models.Transport:
+def create_db_transport(transport_instance: 'Transport|None' = None, **kwargs: typing.Any) -> models.Transport:
     from uds.transports.Test import TestTransport
 
-    values = TestTransport(environment.Environment.testing_environment(), None).get_fields_as_dict()
+    if transport_instance is None:
+        transport_instance = TestTransport(environment.Environment.testing_environment(), None)
+
     transport: 'models.Transport' = models.Transport.objects.create(
         name='Transport %d' % (glob['transport_id']),
         comments='Comment for Transport %d' % (glob['transport_id']),
-        data_type=TestTransport.type_type,
-        data=TestTransport(environment.Environment(str(glob['transport_id'])), values).serialize(),
+        data_type=transport_instance.type_type,
+        data=transport_instance.serialize(),
         **kwargs,
     )
     glob['transport_id'] += 1
@@ -235,6 +238,7 @@ def create_db_one_assigned_userservice(
     groups: collections.abc.Iterable['models.Group'],
     type_: typing.Union[typing.Literal['managed'], typing.Literal['unmanaged']],
     osmanager: typing.Optional[OSManager] = None,
+    transport_instance: typing.Optional['Transport'] = None,
 ) -> 'models.UserService':
 
     service = create_db_service(provider)
@@ -246,7 +250,7 @@ def create_db_one_assigned_userservice(
     osmanager_db: typing.Optional['models.OSManager'] = (
         None if type_ == 'unmanaged' else create_db_osmanager(osmanager=osmanager)
     )
-    transport: 'models.Transport' = create_db_transport()
+    transport: 'models.Transport' = create_db_transport(transport_instance=transport_instance)
     service_pool: 'models.ServicePool' = create_db_servicepool(service, osmanager_db, groups, [transport])
     publication: 'models.ServicePoolPublication' = create_db_publication(service_pool)
 
@@ -258,6 +262,7 @@ def create_db_assigned_userservices(
     type_: typing.Literal['managed', 'unmanaged'] = 'managed',
     user: typing.Optional['models.User'] = None,
     groups: typing.Optional[collections.abc.Iterable['models.Group']] = None,
+    transport_instance: typing.Optional['Transport'] = None,
 ) -> list[models.UserService]:
     from . import authenticators
 
@@ -267,7 +272,11 @@ def create_db_assigned_userservices(
         user = authenticators.create_db_users(auth, 1, groups=groups)[0]
     user_services: list[models.UserService] = []
     for _ in range(count):
-        user_services.append(create_db_one_assigned_userservice(create_db_provider(), user, groups, type_))
+        user_services.append(
+            create_db_one_assigned_userservice(
+                create_db_provider(), user, groups, type_, transport_instance=transport_instance
+            )
+        )
     return user_services
 
 
