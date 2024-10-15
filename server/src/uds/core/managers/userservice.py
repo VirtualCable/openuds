@@ -209,7 +209,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             operations_logger.info(
                 'Too many preparing services. Creation of assigned service denied by max preparing services parameter. (login storm with insufficient cache?).'
             )
-            raise ServiceNotReadyError()
+            raise MaxServicesReachedError()
 
         if service_pool.service.get_type().publication_type is not None:
             publication = service_pool.active_publication()
