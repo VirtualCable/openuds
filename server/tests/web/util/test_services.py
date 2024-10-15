@@ -40,9 +40,9 @@ from uds import models
 from uds.core import consts, types
 from uds.web.util import services
 
-from ...fixtures import authenticators as fixtures_authenticators
-from ...fixtures import services as fixtures_services
-from ...utils.test import UDSTransactionTestCase
+from tests.fixtures import authenticators as fixtures_authenticators
+from tests.fixtures import services as fixtures_services
+from tests.utils.test import UDSTransactionTestCase
 
 
 class TestGetServicesData(UDSTransactionTestCase):
@@ -57,7 +57,10 @@ class TestGetServicesData(UDSTransactionTestCase):
         self.auth = fixtures_authenticators.create_db_authenticator()
         self.groups = fixtures_authenticators.create_db_groups(self.auth, 3)
         self.user = fixtures_authenticators.create_db_users(self.auth, 1, groups=self.groups)[0]
-        self.transports = [fixtures_services.create_db_transport(priority=counter, label=f'label{counter}') for counter in range(10)]
+        self.transports = [
+            fixtures_services.create_db_transport(priority=counter, label=f'label{counter}')
+            for counter in range(10)
+        ]
 
         self.request = mock.Mock()
         self.request.user = self.user
@@ -77,33 +80,18 @@ class TestGetServicesData(UDSTransactionTestCase):
         grouping_method: types.pools.TransportSelectionPolicy,
         ha_policy: types.pools.HighAvailabilityPolicy = types.pools.HighAvailabilityPolicy.DISABLED,
     ) -> None:
-        # Create 10 services, for this user
-        service_pools: list[models.ServicePool] = []
-        for i in range(110):
-            service_pools.append(
-                fixtures_services.create_db_assigned_userservices(
-                    count=1, user=self.user, groups=self.groups
-                )[0].deployed_service
-            )
-
-        # Create 10 meta services, for this user, last 10 user_services will not be added to meta pools
-        meta_services: list[models.MetaPool] = []
-        for i in range(10):
-            service_pool = fixtures_services.create_db_metapool(
-                service_pools=service_pools[i * 10 : (i + 1) * 10],
-                groups=self.groups,
-                transport_grouping=grouping_method,
-            )
-            meta_services.append(service_pool)
+        return fixtures_services.create_db_metapools_for_tests(
+            user=self.user, groups=self.groups, grouping_method=grouping_method, ha_policy=ha_policy
+        )
 
     def test_get_services_data(self) -> None:
         # Create 10 services, for this user
         service_pools: list[models.ServicePool] = []
         for _i in range(10):
             service_pools.append(
-                fixtures_services.create_db_assigned_userservices(
-                    count=1, user=self.user, groups=self.groups
-                )[0].deployed_service
+                fixtures_services.create_db_assigned_userservices(count=1, user=self.user, groups=self.groups)[
+                    0
+                ].deployed_service
             )
 
         data = services.get_services_info_dict(self.request)
@@ -178,9 +166,9 @@ class TestGetServicesData(UDSTransactionTestCase):
         service_pools: list[models.ServicePool] = []
         for i in range(100):
             service_pools.append(
-                fixtures_services.create_db_assigned_userservices(
-                    count=1, user=self.user, groups=self.groups
-                )[0].deployed_service
+                fixtures_services.create_db_assigned_userservices(count=1, user=self.user, groups=self.groups)[
+                    0
+                ].deployed_service
             )
 
         # Create 10 meta services, for this user
@@ -226,9 +214,9 @@ class TestGetServicesData(UDSTransactionTestCase):
         user_services: list[models.ServicePool] = []
         for i in range(110):
             user_services.append(
-                fixtures_services.create_db_assigned_userservices(
-                    count=1, user=self.user, groups=self.groups
-                )[0].deployed_service
+                fixtures_services.create_db_assigned_userservices(count=1, user=self.user, groups=self.groups)[
+                    0
+                ].deployed_service
             )
 
         # Create 10 meta services, for this user, last 10 user_services will not be added to meta pools
@@ -250,8 +238,11 @@ class TestGetServicesData(UDSTransactionTestCase):
         self.assertEqual(len(list(filter(lambda x: not x['is_meta'], result_services))), 10)
 
     def _generate_metapool_with_transports(
-        self, count: int, transport_grouping: types.pools.TransportSelectionPolicy, *,
-        add_random_transports: bool
+        self,
+        count: int,
+        transport_grouping: types.pools.TransportSelectionPolicy,
+        *,
+        add_random_transports: bool,
     ) -> tuple[list[models.ServicePool], models.MetaPool]:
         service_pools: list[models.ServicePool] = []
         for _i in range(count):
@@ -274,9 +265,9 @@ class TestGetServicesData(UDSTransactionTestCase):
     def test_meta_common_grouping(self) -> None:
         # For this test, we don't mind returned value, we just want to create the pools on db
         self._generate_metapool_with_transports(
-            10, types.pools.TransportSelectionPolicy.COMMON,  # Group by common transports
-            add_random_transports=True
-            
+            10,
+            types.pools.TransportSelectionPolicy.COMMON,  # Group by common transports
+            add_random_transports=True,
         )
 
         # Now, get the data
@@ -295,10 +286,11 @@ class TestGetServicesData(UDSTransactionTestCase):
 
     def test_meta_auto_grouping(self) -> None:
         self._generate_metapool_with_transports(
-            10, types.pools.TransportSelectionPolicy.AUTO,  # Group by common transports
-            add_random_transports=True
+            10,
+            types.pools.TransportSelectionPolicy.AUTO,  # Group by common transports
+            add_random_transports=True,
         )
-        
+
         # Now, get the data
         data = services.get_services_info_dict(self.request)
         result_services: typing.Final[list[dict[str, typing.Any]]] = data['services']
@@ -312,14 +304,14 @@ class TestGetServicesData(UDSTransactionTestCase):
         self.assertEqual(transport['name'], 'meta')
         self.assertEqual(transport['priority'], 0)
         self.assertTrue(transport['link'].startswith(consts.system.UDS_ACTION_SCHEME))
-        
 
     def test_meta_label_grouping(self) -> None:
         pools, _meta = self._generate_metapool_with_transports(
-            10, types.pools.TransportSelectionPolicy.LABEL,  # Group by common transports
-            add_random_transports=False
+            10,
+            types.pools.TransportSelectionPolicy.LABEL,  # Group by common transports
+            add_random_transports=False,
         )
-        
+
         # Now we hav to had 2 same labels on the transports, add some ramdon to transports, but ensuring
         # that no transport is assigned to more ALL the transports
         possible_transports = self.transports[3:]
@@ -327,7 +319,7 @@ class TestGetServicesData(UDSTransactionTestCase):
         for pool in pools:
             pool.transports.add(next(transport_iterator))
             pool.transports.add(next(transport_iterator))
-            
+
         # Whe know for sure that the only transports valid are the first 3 ones, because the rest are not present
         # in ALL the transports
 
@@ -340,8 +332,9 @@ class TestGetServicesData(UDSTransactionTestCase):
         # should have 3 transports, the first 3 ones
         self.assertEqual(len(result_services[0]['transports']), 3)
         # id should be "LABEL:[the label]" for each transport. We added trasnports label "label0", "label1" and "label2", same as priority
-        self.assertEqual([t['id'] for t in result_services[0]['transports']], ['LABEL:label0', 'LABEL:label1', 'LABEL:label2'])
+        self.assertEqual(
+            [t['id'] for t in result_services[0]['transports']],
+            ['LABEL:label0', 'LABEL:label1', 'LABEL:label2'],
+        )
         # And priority should be 0, 1 and 2
         self.assertEqual([t['priority'] for t in result_services[0]['transports']], [0, 1, 2])
-        
-        

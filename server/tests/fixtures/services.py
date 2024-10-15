@@ -29,6 +29,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import datetime
+import collections.abc
 import typing
 
 from uds import models
@@ -127,8 +128,8 @@ def create_db_servicepool_group(
 def create_db_servicepool(
     service: models.Service,
     osmanager: typing.Optional[models.OSManager] = None,
-    groups: typing.Optional[list[models.Group]] = None,
-    transports: typing.Optional[list[models.Transport]] = None,
+    groups: typing.Optional[collections.abc.Iterable[models.Group]] = None,
+    transports: typing.Optional[collections.abc.Iterable[models.Transport]] = None,
     servicePoolGroup: typing.Optional[models.ServicePoolGroup] = None,
 ) -> models.ServicePool:
 
@@ -203,8 +204,8 @@ def create_db_userservice(
 
 
 def create_db_metapool(
-    service_pools: list[models.ServicePool],
-    groups: list[models.Group],
+    service_pools: collections.abc.Iterable[models.ServicePool],
+    groups: collections.abc.Iterable[models.Group],
     round_policy: int = types.pools.LoadBalancingPolicy.ROUND_ROBIN,
     transport_grouping: int = types.pools.TransportSelectionPolicy.AUTO,
     ha_policy: int = types.pools.HighAvailabilityPolicy.ENABLED,
@@ -231,7 +232,7 @@ def create_db_metapool(
 def create_db_one_assigned_userservice(
     provider: 'models.Provider',
     user: 'models.User',
-    groups: list['models.Group'],
+    groups: collections.abc.Iterable['models.Group'],
     type_: typing.Union[typing.Literal['managed'], typing.Literal['unmanaged']],
     osmanager: typing.Optional[OSManager] = None,
 ) -> 'models.UserService':
@@ -256,7 +257,7 @@ def create_db_assigned_userservices(
     count: int = 1,
     type_: typing.Literal['managed', 'unmanaged'] = 'managed',
     user: typing.Optional['models.User'] = None,
-    groups: typing.Optional[list['models.Group']] = None,
+    groups: typing.Optional[collections.abc.Iterable['models.Group']] = None,
 ) -> list[models.UserService]:
     from . import authenticators
 
@@ -268,3 +269,29 @@ def create_db_assigned_userservices(
     for _ in range(count):
         user_services.append(create_db_one_assigned_userservice(create_db_provider(), user, groups, type_))
     return user_services
+
+
+def create_db_metapools_for_tests(
+    user: models.User,
+    groups: collections.abc.Iterable[models.Group],
+    grouping_method: types.pools.TransportSelectionPolicy,
+    ha_policy: types.pools.HighAvailabilityPolicy = types.pools.HighAvailabilityPolicy.DISABLED,
+) -> None:
+    # Create 10 services, for this user
+    service_pools: list[models.ServicePool] = [
+        create_db_assigned_userservices(count=1, user=user, groups=groups)[
+            0
+        ].service_pool  # We only need the service pool
+        for _i in range(110)
+    ]
+
+    # Create 10 meta services, for this user, last 10 user_services will not be added to meta pools
+    _meta_services: list[models.MetaPool] = [
+        create_db_metapool(
+            service_pools=service_pools[i * 10 : (i + 1) * 10],
+            groups=groups,
+            transport_grouping=grouping_method,
+            ha_policy=ha_policy,
+        )
+        for i in range(10)
+    ]

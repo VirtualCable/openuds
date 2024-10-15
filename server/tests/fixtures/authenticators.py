@@ -75,7 +75,7 @@ def create_db_users(
     users = [
         authenticator.users.create(
             name=f'user{i}',
-            password=CryptoManager().hash(f'user{i}'),
+            password=CryptoManager.manager().hash(f'user{i}'),
             real_name=f'Real name {i}',
             comments=f'User {i}',
             staff_member=is_staff or is_admin,
