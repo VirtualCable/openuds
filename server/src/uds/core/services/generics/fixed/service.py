@@ -60,6 +60,10 @@ class FixedService(services.Service, abc.ABC):  # pylint: disable=too-many-publi
     needs_osmanager = False  # If the service needs a s.o. manager (managers are related to agents provided by services, i.e. virtual machines with agent)
     # can_reset = True
 
+    # Override the counting type to conservative on Fixed Services by default, that
+    # is the desired behaviour for fixed services
+    overrided_fields = {'max_services_count_type': types.services.ServicesCountingType.CONSERVATIVE}
+
     # If machines has an alternate field with it, it will be used instead of "machines" field
     alternate_machines_field: typing.Optional[str] = None
 

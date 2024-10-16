@@ -146,33 +146,29 @@ class DetailHandler(BaseModelHandler):
             return r
 
         if num_args == 1:
-            if self._args[0] == consts.rest.OVERVIEW:
-                return self.get_items(parent, None)
-            # if self._args[0] == GUI:
-            #     gui = self.get_gui(parent, None)
-            #     return sorted(gui, key=lambda f: f['gui']['order'])
-            if self._args[0] == consts.rest.TYPES:
-                types_ = self.get_types(parent, None)
-                logger.debug('Types: %s', types_)
-                return types_
-            if self._args[0] == consts.rest.GUI:
-                # Gui without type, valid
-                gui = self.get_gui(parent, '')  # No type
-                return sorted(gui, key=lambda f: f['gui']['order'])
-            if self._args[0] == consts.rest.TABLEINFO:
-                return self.process_table_fields(
-                    self.get_title(parent),
-                    self.get_fields(parent),
-                    self.get_row_style(parent),
-                )
-
-            # try to get id
-            return self.get_items(parent, process_uuid(self._args[0]))
+            match self._args[0]:
+                case consts.rest.OVERVIEW:
+                    return self.get_items(parent, None)
+                case consts.rest.TYPES:
+                    types_ = self.get_types(parent, None)
+                    logger.debug('Types: %s', types_)
+                    return types_
+                case consts.rest.TABLEINFO:
+                    return self.process_table_fields(
+                        self.get_title(parent),
+                        self.get_fields(parent),
+                        self.get_row_style(parent),
+                    )
+                case consts.rest.GUI:  # Used on some cases to get the gui for a detail with no subtypes
+                    gui = self.get_processed_gui(parent, '')
+                    return sorted(gui, key=lambda f: f['gui']['order'])
+                case _:
+                    # try to get id
+                    return self.get_items(parent, process_uuid(self._args[0]))
 
         if num_args == 2:
             if self._args[0] == consts.rest.GUI:
-                gui = self.get_gui(parent, self._args[1])
-                return sorted(gui, key=lambda f: f['gui']['order'])
+                return self.get_processed_gui(parent, self._args[1])
             if self._args[0] == consts.rest.TYPES:
                 types_ = self.get_types(parent, self._args[1])
                 logger.debug('Types: %s', types_)
@@ -180,10 +176,12 @@ class DetailHandler(BaseModelHandler):
             if self._args[1] == consts.rest.LOG:
                 return self.get_logs(parent, self._args[0])
 
+            # Maybe a custom method?
             r = self._check_is_custom_method(self._args[1], parent, self._args[0])
             if r is not None:
                 return r
 
+        # Not understood, fallback, maybe the derived class can understand it
         return self.fallback_get()
 
     def put(self) -> typing.Any:
@@ -319,16 +317,20 @@ class DetailHandler(BaseModelHandler):
         """
         Gets the gui that is needed in order to "edit/add" new items on this detail
         If not overriden, means that the detail has no edit/new Gui
-        
+
         Args:
             parent (models.Model): Parent object
             for_type (str): Type of object needing gui
-            
+
         Return:
             collections.abc.Iterable[typing.Any]: A list of gui fields
         """
         # raise RequestError('Gui not provided for this type of object')
         return []
+
+    def get_processed_gui(self, parent: models.Model, for_type: str) -> collections.abc.Iterable[typing.Any]:
+        gui = self.get_gui(parent, for_type)
+        return sorted(gui, key=lambda f: f['gui']['order'])
 
     def get_types(
         self, parent: models.Model, for_type: typing.Optional[str]
@@ -336,11 +338,11 @@ class DetailHandler(BaseModelHandler):
         """
         The default is that detail element will not have any types (they are "homogeneous")
         but we provided this method, that can be overridden, in case one detail needs it
-        
+
         Args:
             parent (models.Model): Parent object
             for_type (typing.Optional[str]): Request argument in fact
-            
+
         Return:
             collections.abc.Iterable[types.rest.TypeInfoDict]: A list of dictionaries describing type/types
         """

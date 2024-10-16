@@ -127,6 +127,17 @@ class Service(Module):
     # :      - If userservices_limit_field is None, userservices_limit will be set to consts.UNLIMITED (as default)
     userservices_limit: int = consts.UNLIMITED
 
+
+    # : Overrided fields for service edition
+    # : This is a dictionary that will be used to override fields on service on its edition
+    # : This is useful for example to set the max_services_count_type for a service
+    # : or whatever field is needed to be overrided on service edition
+    # : Example:
+    # :    overrided_fields = {
+    # :        'max_services_count_type': ServicesCountingType.STANDARD,
+    # : Note that overrided_fields will made the field not to be shown on service edition, so it will be "fixed" to the value provided
+    overrided_fields: typing.Optional[dict[str, typing.Any]] = None
+
     # : If this item "has overrided fields", on deployed service edition, defined keys will overwrite defined ones
     # : That is, this Dicionary will OVERWRITE fields ON ServicePool (normally cache related ones) dictionary from a REST api save invocation!!
     # : Example:
@@ -136,7 +147,8 @@ class Service(Module):
     # :    }
     # : This means that service pool will have cache_l2_srvs = 10 and cache_l1_srvs = 20, no matter what the user has provided
     # : on a save invocation to REST api for ServicePool
-    overrided_fields: typing.Optional[dict[str, typing.Any]] = None
+    # : Note that max_services_count_type is one of the variables of ServicesCountingType in this example
+    overrided_pools_fields: typing.Optional[dict[str, typing.Any]] = None
 
     # : If this class uses cache or not. If uses cache is true, means that the
     # : service can "prepare" some user deployments to allow quicker user access
@@ -268,7 +280,7 @@ class Service(Module):
         from the stuck cleaner job, for example. By default, this method returns True.
         """
         return True
-    
+
     def allow_putting_back_to_cache(self) -> bool:
         """
         Returns if this service can be put back to cache. This is used to check if a service can be put back to cache
@@ -294,7 +306,9 @@ class Service(Module):
                     if self.userservices_limit == 0:
                         self.userservices_limit = consts.UNLIMITED
                 elif callable(userservices_limit_field):
-                    self.userservices_limit = typing.cast(collections.abc.Callable[..., int], userservices_limit_field)()
+                    self.userservices_limit = typing.cast(
+                        collections.abc.Callable[..., int], userservices_limit_field
+                    )()
                 else:
                     self.userservices_limit = consts.UNLIMITED
             except Exception:

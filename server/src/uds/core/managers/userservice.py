@@ -72,9 +72,6 @@ class UserServiceManager(metaclass=singleton.Singleton):
     def manager() -> 'UserServiceManager':
         return UserServiceManager()  # Singleton pattern will return always the same instance
 
-    def get_cache_state_filter(self, service_pool: ServicePool, level: types.services.CacheLevel) -> Q:
-        return Q(cache_level=level) & self.get_state_filter(service_pool.service)
-
     @staticmethod
     def get_state_filter(service: 'models.Service') -> Q:
         """
@@ -96,6 +93,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
             raise MaxServicesReachedError(
                 _('Maximum number of user services reached for this {}').format(service_pool)
             )
+
+    def get_cache_state_filter(self, servicepool: ServicePool, level: types.services.CacheLevel) -> Q:
+        return Q(cache_level=level) & self.get_state_filter(servicepool.service)
 
     def get_existing_user_services(self, service: 'models.Service') -> int:
         """
@@ -865,7 +865,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
     ) -> typing.Optional[UserService]:
         """
         Locates a user service from a user and a service id
-        
+
         Args:
             user: User owner of the service
             id_service: Service id (A<uuid> for assigned, M<uuid> for meta, ?<uuid> for service pool)
@@ -919,8 +919,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
         client_hostname: typing.Optional[str] = None,
     ) -> types.services.UserServiceInfo:
         """
-        Get service info from user service 
-        
+        Get service info from user service
+
         Args:
             user: User owner of the service
             os: Detected OS (as provided by request)
@@ -929,7 +929,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             transport_id: Transport id (optional). If not provided, will try to find a suitable one
             validate_with_test: If True, will check if the service is ready
             client_hostname: Client hostname (optional). If not provided, will use src_ip
-            
+
         Returns:
             UserServiceInfo: User service info
         """

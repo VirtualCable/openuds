@@ -68,12 +68,13 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
     @staticmethod
     def service_info(item: models.Service) -> dict[str, typing.Any]:
         info = item.get_type()
+        overrided_fields = info.overrided_pools_fields or {}
 
         return {
             'icon': info.icon64().replace('\n', ''),
             'needs_publication': info.publication_type is not None,
             'max_deployed': info.userservices_limit,
-            'uses_cache': info.uses_cache and info.overrided_fields is None,
+            'uses_cache': info.uses_cache and overrided_fields.get('uses_cache', True),
             'uses_cache_l2': info.uses_cache_l2,
             'cache_tooltip': _(info.cache_tooltip),
             'cache_tooltip_l2': _(info.cache_tooltip_l2),
@@ -144,7 +145,16 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         # Extract item db fields
         # We need this fields for all
         logger.debug('Saving service for %s / %s', parent, item)
-        fields = self.fields_from_params(['name', 'comments', 'data_type', 'tags', 'max_services_count_type'])
+
+        # Get the sevice type as first step, to obtain "overrided_fields" and other info
+        service_type = parent.get_instance().get_service_by_type(self._params['data_type'])
+        if not service_type:
+            raise exceptions.rest.RequestError('Service type not found')
+
+        fields = self.fields_from_params(
+            ['name', 'comments', 'data_type', 'tags', 'max_services_count_type'],
+            defaults=service_type.overrided_fields,
+        )
         # Fix max_services_count_type to ServicesCountingType enum or ServicesCountingType.STANDARD if not found
         try:
             fields['max_services_count_type'] = types.services.ServicesCountingType.from_int(
@@ -173,7 +183,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             # Store token if this service provides one
             service.token = service_instance.get_token() or None  # If '', use "None" to
 
-             # This may launch an validation exception (the get_instance(...) part)
+            # This may launch an validation exception (the get_instance(...) part)
             service.data = service_instance.serialize()
 
             service.save()
@@ -304,10 +314,14 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                     },
                 )
 
+                # Remove all overrided fields from editables
+                overrided_fields = service.overrided_fields or {}
+                local_gui = [field_gui for field_gui in local_gui if field_gui['name'] not in overrided_fields]
+
                 return local_gui
 
         except Exception as e:
-            logger.exception('getGui')
+            logger.exception('get_gui')
             raise exceptions.rest.ResponseError(str(e)) from e
 
     def get_logs(self, parent: 'Model', item: str) -> list[typing.Any]:

@@ -294,7 +294,9 @@ class BaseModelHandler(Handler):
             'subtitle': subtitle or '',
         }
 
-    def fields_from_params(self, fields_list: list[str]) -> dict[str, typing.Any]:
+    def fields_from_params(
+        self, fields_list: list[str], *, defaults: 'dict[str, typing.Any]|None' = None
+    ) -> dict[str, typing.Any]:
         """
         Reads the indicated fields from the parameters received, and if
         :param fields_list: List of required fields
@@ -313,7 +315,14 @@ class BaseModelHandler(Handler):
                         continue
                     args[k] = self._params.get(k, default)
                 else:
-                    args[key] = self._params[key]
+                    try:
+                        args[key] = self._params[key]
+                    except KeyError:
+                        if defaults is not None and key in defaults:
+                            args[key] = defaults[key]
+                        else:
+                            raise
+
                 # del self._params[key]
         except KeyError as e:
             raise exceptions.rest.RequestError(f'needed parameter not found in data {e}')
