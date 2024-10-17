@@ -171,7 +171,9 @@ class RadiusOTP(mfas.MFA):
         if self.all_users_otp.value:
             return mfas.MFA.RESULT.OK
 
-        # The identifier has preference over username, but normally will be empty
+        # The identifier has preference over username
+        # MFA identifier will be normally be empty, unless the auhenticator provides it
+        # I.E. The Radius Authenticator will provide the user that logged into the Radius Server
         username = identifier or username
 
         # Remove domain part from username if needed
