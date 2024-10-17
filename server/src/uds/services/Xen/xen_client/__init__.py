@@ -485,17 +485,17 @@ class XenServer:  # pylint: disable=too-many-public-methods
                 if not all_VIFs:
                     raise XenException('No Network interfaces found!')
                 found = (all_VIFs[0], self.VIF.get_record(all_VIFs[0]))
-                for vifId in all_VIFs:
-                    vif = self.VIF.get_record(vifId)
+                for vif_id in all_VIFs:
+                    vif = self.VIF.get_record(vif_id)
                     logger.info('VIF: %s', vif)
 
                     if vif['network'] == mac['network']:
-                        found = (vifId, vif)
+                        found = (vif_id, vif)
                         break
 
                 logger.debug('Found VIF: %s', found[1])
-                vifId, vif = found
-                self.VIF.destroy(vifId)
+                vif_id, vif = found
+                self.VIF.destroy(vif_id)
 
                 vif['MAC'] = mac['mac']
                 vif['network'] = mac['network']

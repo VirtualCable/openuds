@@ -268,21 +268,23 @@ class Config:
             yield val
 
     @staticmethod
-    def update(section, key, value, checkType=False) -> bool:
+    def update(section, key, value, checkType=False) -> typing.Optional['Config.Value']:
         # If cfg value does not exists, simply ignore request
         try:
             cfg = DBConfig.objects.filter(section=section, key=key)[0]  # @UndefinedVariable
             if checkType and cfg.field_type in (Config.READ_FIELD, Config.HIDDEN_FIELD):
-                return False  # Skip non writable elements
+                return None  # Skip non writable elements
 
             if cfg.crypt:
                 value = cryptoManager().encrypt(value)
             cfg.value = value
             cfg.save()
             logger.debug('Updated value for %s.%s to %s', section, key, value)
-            return True
+            if cfg.crypt:
+                return Config.section(section).valueCrypt(key)
+            return Config.section(section).value(key)
         except Exception:
-            return False
+            return None
 
     @staticmethod
     def getConfigValues(

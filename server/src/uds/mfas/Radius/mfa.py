@@ -158,6 +158,18 @@ class RadiusOTP(mfas.MFA):
         tab=_('Config'),
     )
 
+    send_just_username = gui.CheckBoxField(
+        label=_('Send only username (without domain) to radius server'),
+        order=34,
+        defvalue=False,
+        tooltip=_(
+            'If unchecked, username will be sent as is to radius server. \n'
+            'If checked, domain part will be removed from username before sending it to radius server.'
+        ),
+        required=False,
+        tab=_('Config'),
+    )
+
     def initialize(self, values: 'Module.ValuesType') -> None:
         return super().initialize(values)
 
@@ -250,10 +262,13 @@ class RadiusOTP(mfas.MFA):
         '''
         if self.askForOTP(request) is False:
             return mfas.MFA.RESULT.ALLOWED
-        
+
         # if we are in a "all-users-otp" policy, avoid this step and go directly to ask for OTP
         if self.all_users_otp.isTrue():
             return mfas.MFA.RESULT.OK
+
+        if self.send_just_username.isTrue():
+            username = username.strip().split('@')[0].split('\\')[-1]
 
         web_pwd = webPassword(request)
         try:
@@ -314,6 +329,9 @@ class RadiusOTP(mfas.MFA):
         '''
 
         try:
+            if self.send_just_username.isTrue():
+                username = username.strip().split('@')[0].split('\\')[-1]
+
             err = _('Invalid OTP code')
 
             web_pwd = webPassword(request)

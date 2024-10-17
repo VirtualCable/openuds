@@ -39,6 +39,7 @@ from uds.REST import Handler
 
 logger = logging.getLogger(__name__)
 
+
 # Enclosed methods under /config path
 class Config(Handler):
     needs_admin = True  # By default, staff is lower level needed
@@ -59,6 +60,21 @@ class Config(Handler):
     def put(self):
         for section, secDict in self._params.items():
             for key, vals in secDict.items():
-                logger.info('Updating config value %s.%s to %s by %s', section, key, vals['value'], self._user.name)
-                CfgConfig.update(section, key, vals['value'])
+                config = CfgConfig.update(section, key, vals['value'])
+                if config is not None:
+                    logger.info(
+                        'Updating config value %s.%s to %s by %s',
+                        section,
+                        key,
+                        '********' if config.isCrypted() else vals['value'],
+                        self._user.name,
+                    )
+                else:
+                    logger.error(
+                        'Non existing config value %s.%s to %s by %s',
+                        section,
+                        key,
+                        vals['value'],
+                        self._user.name,
+                    )
         return 'done'
