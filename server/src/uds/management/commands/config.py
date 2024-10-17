@@ -61,9 +61,7 @@ class Command(BaseCommand):
                     mod, name = Config.SectionType.from_str(first[0]), first[1]
                 else:
                     mod, name = Config.SectionType.GLOBAL, first[0]
-                if (
-                    Config.update(mod, name, value) is False
-                ):  # If not exists, try to store value without any special parameters
+                if Config.update(mod, name, value) is None:
                     kwargs = {}
                     if options['password']:
                         kwargs['type'] = Config.FieldType.PASSWORD

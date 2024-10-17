@@ -233,6 +233,10 @@ class Config:
 
         def get_type(self) -> int:
             return self._type
+        
+        @property
+        def is_password(self) -> bool:
+            return self._type == Config.FieldType.PASSWORD
 
         def get_params(self) -> typing.Any:
             return Config._config_params.get(self._section.name() + self._key, None)
@@ -322,7 +326,7 @@ class Config:
             yield val
 
     @staticmethod
-    def update(section: 'Config.SectionType', key: str, value: str, check_type: bool = False) -> bool:
+    def update(section: 'Config.SectionType', key: str, value: str, check_type: bool = False) -> 'None|Config.Value':
         # If cfg value does not exists, simply ignore request
         try:
             cfg: DBConfig = DBConfig.objects.get(section=section, key=key)
@@ -330,17 +334,17 @@ class Config:
                 Config.FieldType.READ,
                 Config.FieldType.HIDDEN,
             ):
-                return False  # Skip non writable elements
+                return None  # Skip non writable elements
 
             if cfg.field_type == Config.FieldType.PASSWORD.value:
-                value = CryptoManager().hash(value)
+                value = CryptoManager.manager().hash(value)
 
             cfg.value = value
-            cfg.save()
+            cfg.save(update_fields=['value'])
             logger.debug('Updated value for %s.%s to %s', section, key, value)
-            return True
+            return Config.section(section).value(key, value, type=Config.FieldType.from_int(cfg.field_type))
         except Exception:
-            return False
+            return None
 
     @staticmethod
     def removed(section: 'Config.SectionType', key: str) -> None:

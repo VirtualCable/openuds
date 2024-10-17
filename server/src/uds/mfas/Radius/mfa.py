@@ -35,7 +35,7 @@ import logging
 
 from django.utils.translation import gettext_noop as _, gettext
 
-from uds.core import mfas, exceptions
+from uds.core import mfas, exceptions, types
 from uds.core.ui import gui
 
 from uds.auths.Radius import client
@@ -111,6 +111,18 @@ class RadiusOTP(mfas.MFA):
     login_without_mfa_policy_networks = fields.login_without_mfa_policy_networks_field()
     allow_skip_mfa_from_networks = fields.allow_skip_mfa_from_networks_field()
 
+    send_just_username = gui.CheckBoxField(
+        label=_('Send only username (without domain) to radius server'),
+        order=55,
+        default=False,
+        tooltip=_(
+            'If unchecked, username will be sent as is to radius server. \n'
+            'If checked, domain part will be removed from username before sending it to radius server.'
+        ),
+        required=False,
+        tab=types.ui.Tab.CONFIG,
+    )
+
     def radius_client(self) -> client.RadiusClient:
         """Return a new radius client ."""
         return client.RadiusClient(
@@ -158,8 +170,13 @@ class RadiusOTP(mfas.MFA):
         # if we are in a "all-users-otp" policy, avoid this step and go directly to ask for OTP
         if self.all_users_otp.value:
             return mfas.MFA.RESULT.OK
-        
+
+        # The identifier has preference over username, but normally will be empty
         username = identifier or username
+
+        # Remove domain part from username if needed
+        if self.send_just_username.value:
+            username = username.strip().split('@')[0].split('\\')[-1]
 
         web_pwd = web_password(request)
         try:
@@ -220,7 +237,13 @@ class RadiusOTP(mfas.MFA):
         regenerate a new State after a wrong sent OTP code
         slightly less efficient but a lot simpler
         '''
+        # The identifier has preference over username, but normally will be empty
+        # This allows derived class to "alter" the username if needed
         username = identifier or username
+
+        # Remove domain part from username if needed
+        if self.send_just_username.value:
+            username = username.strip().split('@')[0].split('\\')[-1]
 
         try:
             err = _('Invalid OTP code')

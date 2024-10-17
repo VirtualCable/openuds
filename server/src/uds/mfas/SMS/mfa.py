@@ -420,13 +420,15 @@ class SMSMFA(mfas.MFA):
         phone: str,
     ) -> mfas.MFA.RESULT:
         url = self.build_sms_url(userid, username, code, phone)
-        if self.http_method.value == 'GET':
-            return self._send_sms_using_get(request, userid, username, url)
-        if self.http_method.value == 'POST':
-            return self._send_sms_using_post(request, userid, username, url, code, phone)
-        if self.http_method.value == 'PUT':
-            return self._send_sms_using_put(request, userid, username, url, code, phone)
-        raise Exception('Unknown SMS sending method')
+        match self.http_method.value:
+            case 'GET':
+                return self._send_sms_using_get(request, userid, username, url)
+            case 'POST':
+                return self._send_sms_using_post(request, userid, username, url, code, phone)
+            case 'PUT':
+                return self._send_sms_using_put(request, userid, username, url, code, phone)
+            case _:
+                raise Exception('Unknown SMS sending method')
 
     def label(self) -> str:
         return gettext('MFA Code')
