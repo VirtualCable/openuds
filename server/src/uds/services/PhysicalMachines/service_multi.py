@@ -129,6 +129,10 @@ class IPMachinesService(services.Service):
     type_description = _('This service provides access to POWERED-ON Machines by IP')
     icon_file = 'machines.png'
 
+    # Override the counting type to conservative on Fixed Services by default, that
+    # is the desired behaviour for fixed services
+    overrided_fields = {'max_services_count_type': types.services.ServicesCountingType.CONSERVATIVE}
+
     uses_cache = False  # Cache are running machine awaiting to be assigned
     uses_cache_l2 = False  # L2 Cache are running machines in suspended state
     needs_osmanager = False  # If the service needs a s.o. manager (managers are related to agents provided by services itselfs, i.e. virtual machines with agent)

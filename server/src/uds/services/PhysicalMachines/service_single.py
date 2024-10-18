@@ -63,6 +63,9 @@ class IPSingleMachineService(services.Service):
     user_service_type = IPMachineUserService
 
     services_type_provided = types.services.ServiceType.VDI
+
+    # Does not really mind. But do not show the field on admin form
+    overrided_fields = {'max_services_count_type': types.services.ServicesCountingType.STANDARD}
     
     # Gui
     host = gui.TextField(
