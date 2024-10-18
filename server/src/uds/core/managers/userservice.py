@@ -40,7 +40,7 @@ from django.db.models import Q, Count, Case, When, IntegerField
 from django.utils.translation import gettext as _
 
 from uds.core import consts, exceptions, types
-from uds.core.services.exceptions import (
+from uds.core.exceptions.services import (
     InvalidServiceException,
     MaxServicesReachedError,
     OperationException,

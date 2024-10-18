@@ -53,7 +53,7 @@ class IPSingleMachineService(services.Service):
     # Description of service
     type_name = _('Static Single IP')
     type_type = 'IPSingleMachineService'
-    type_description = _('This service provides access to POWERED-ON Machine by IP')
+    type_description = _('This service provides access to POWERED-ON Machine by IP. (You can configure WOL to power on the machine)')
     icon_file = 'machine.png'
 
     uses_cache = False  # Cache are running machine awaiting to be assigned

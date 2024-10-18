@@ -16,11 +16,10 @@ import time
 import typing
 
 from django.utils.translation import gettext as _
-from uds.core import services, types, consts
+from uds.core import services, types, consts, exceptions
 from uds.core.types.services import Operation
 from uds.core.util import autoserializable
 
-from .. import exceptions
 
 if typing.TYPE_CHECKING:
     from .service import DynamicService
@@ -34,7 +33,7 @@ def must_have_vmid(fnc: typing.Callable[[typing.Any], None]) -> typing.Callable[
     @functools.wraps(fnc)
     def wrapper(self: 'DynamicPublication') -> None:
         if self._vmid == '':
-            raise exceptions.FatalError(f'No machine id on {self._name} for {fnc}')
+            raise exceptions.services.generics.FatalError(f'No machine id on {self._name} for {fnc}')
         return fnc(self)
 
     return wrapper
@@ -173,7 +172,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
                 getattr(self, operation_runner.__name__)()
 
             return types.states.TaskState.RUNNING
-        except exceptions.RetryableError as e:
+        except exceptions.services.generics.RetryableError as e:
             # This is a retryable error, so we will retry later
             return self.retry_later()
         except Exception as e:
@@ -268,7 +267,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
                 return self._execute_queue()
 
             return state
-        except exceptions.RetryableError as e:
+        except exceptions.services.generics.RetryableError as e:
             # This is a retryable error, so we will retry later
             # We don not need to push a NOP here, as we will retry the same operation checking again
             # And it has not been removed from the queue

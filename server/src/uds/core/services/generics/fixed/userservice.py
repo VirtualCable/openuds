@@ -35,10 +35,9 @@ import logging
 import typing
 import collections.abc
 
-from uds.core import consts, services, types
+from uds.core import consts, services, types, exceptions
 from uds.core.util import autoserializable
 
-from .. import exceptions
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -198,7 +197,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             getattr(self, operation_runner.__name__)()
 
             return types.states.TaskState.RUNNING
-        except exceptions.RetryableError as e:
+        except exceptions.services.generics.RetryableError as e:
             # This is a retryable error, so we will retry later
             return self.retry_later()
         except Exception as e:
@@ -241,7 +240,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
         try:
             if self._vmid:
                 return self.service().get_ip(self._vmid)
-        except exceptions.NotFoundError:
+        except exceptions.services.generics.NotFoundError:
             self.do_log(types.log.LogLevel.ERROR, f'Machine not found: {self._vmid}::{self._name}')
 
         except Exception:  # No ip already assigned, wait...
@@ -283,7 +282,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
                 self._queue = [types.services.Operation.FINISH]
             else:
                 self._queue = [types.services.Operation.START, types.services.Operation.FINISH]
-        except exceptions.NotFoundError:
+        except exceptions.services.generics.NotFoundError:
             return self.error('Machine not found')
         except Exception as e:
             return self.error(f'Error on set_ready: {e}')
@@ -332,12 +331,12 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
                 return self._execute_queue()
 
             return state
-        except exceptions.RetryableError as e:
+        except exceptions.services.generics.RetryableError as e:
             # This is a retryable error, so we will retry later
             # We don not need to push a NOP here, as we will retry the same operation checking again
             # And it has not been removed from the queue
             return types.states.TaskState.RUNNING
-        except exceptions.NotFoundError as e:
+        except exceptions.services.generics.NotFoundError as e:
             return self.error(f'Machine not found ({e})')
         except Exception as e:
             logger.exception('Unexpected UserService check exception: %s', e)

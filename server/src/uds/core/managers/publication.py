@@ -40,7 +40,7 @@ from uds.core.util.serializer import serialize
 from uds.core.jobs.delayed_task import DelayedTask
 from uds.core.jobs.delayed_task_runner import DelayedTaskRunner
 from uds.core.util.config import GlobalConfig
-from uds.core.services.exceptions import PublishException
+from uds.core.exceptions.services import PublishException
 from uds.core import types
 from uds.core.types.states import State
 from uds.core.util import log

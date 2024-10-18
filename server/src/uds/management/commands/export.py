@@ -346,7 +346,7 @@ class Command(BaseCommand):
                 'typing.Iterator[ModelType]',
                 model.objects.filter(reduce(operator.or_, (Q(**{k: v}) for k, v in self.filter_args))),
             )
-        return typing.cast('typing.Iterator[ModelType]', model.objects.all().iterator())
+        return model.objects.all().iterator()
 
     def output_count(self, message: str, iterable: collections.abc.Iterable[T]) -> collections.abc.Iterable[T]:
         """

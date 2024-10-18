@@ -30,11 +30,109 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
 
 from .common import UDSException
+
+# Import for reference as "services.generics"
+from . import services_generics as generics  # pyright: ignore[reportUnusedImport]
 
 class InsufficientResourcesException(UDSException):
     """
     Exception used to indicate that we have not enough resources to provide a service
     """
 
+if typing.TYPE_CHECKING:
+    from uds.models import UserService, Transport
+    from uds.core.types.services import ReadyStatus
+
+
+class ServiceException(UDSException):
+    """
+    Base class for all service exceptions
+    """
+
+    def __init__(self, *args: typing.Any, **kwargs: typing.Any) -> None:
+        # Eats "kwargs" to avoid "unexpected keyword argument" error
+        super().__init__(*args, **kwargs)
+
+
+class UnsupportedException(ServiceException):
+    """
+    Reflects that we request an operation that is not supported, i.e. Cancel a publication with snapshots
+    """
+
+
+class OperationException(ServiceException):
+    """
+    Reflects that the operation requested can't be acomplished, i.e. remove an snapshot without snapshot reference, cancel non running operation, etc...
+    """
+
+
+class PublishException(ServiceException):
+    """
+    Reflects thate the publication can't be done for causes we don't know in advance
+    """
+
+
+class DeploymentException(ServiceException):
+    """
+    Reflects that a deployment of a service (at cache, or assigned to user) can't be done for causes we don't know in advance
+    """
+
+
+class CancelException(ServiceException):
+    """
+    Reflects that a "cancel" operation can't be done for some reason
+    """
+
+
+class InvalidServiceException(ServiceException):
+    """
+    Invalid service specified. The service is not ready
+    """
+
+
+class MaxServicesReachedError(ServiceException):
+    """
+    Number of maximum services has been reached, and no more services
+    can be created for users.
+    """
+
+
+class ServiceInMaintenanceMode(ServiceException):
+    """
+    The service is in maintenance mode and can't be accesed right now
+    """
+
+
+class ServiceAccessDeniedByCalendar(ServiceException):
+    """
+    This service can't be accessed right now, probably due to date-time restrictions
+    """
+
+
+class ServiceNotReadyError(ServiceException):
+    """
+    The service is not ready
+    Can include an optional code error
+    """
+
+    code: 'ReadyStatus'
+    user_service: typing.Optional['UserService']
+    transport: typing.Optional['Transport']
+
+    def __init__(
+        self,
+        *,
+        code: typing.Optional['ReadyStatus'] = None,
+        user_service: typing.Optional['UserService'] = None,
+        transport: typing.Optional['Transport'] = None
+    ):
+        from uds.core.types.services import ReadyStatus
+
+        super().__init__()
+        self.code = code or ReadyStatus.ZERO
+
+        self.user_service = user_service
+        self.transport = transport

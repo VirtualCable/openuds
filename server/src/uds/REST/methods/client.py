@@ -37,7 +37,7 @@ from django.utils.translation import gettext as _
 from uds.core import consts, exceptions, types
 from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.userservice import UserServiceManager
-from uds.core.services.exceptions import ServiceNotReadyError
+from uds.core.exceptions.services import ServiceNotReadyError
 from uds.core.util.config import GlobalConfig
 from uds.core.util.rest.tools import match
 from uds.models import TicketStore, User

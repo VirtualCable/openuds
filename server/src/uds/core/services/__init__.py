@@ -34,8 +34,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # pyright: reportUnusedImport=false
 
-from . import exceptions
-
 from .user_service import UserService
 from .publication import Publication
 from .service import Service

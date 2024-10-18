@@ -1,7 +1,7 @@
-from uds.core import exceptions as core_exceptions
+from .common import UDSException
 
 
-class Error(core_exceptions.UDSException):
+class Error(UDSException):
     """
     Base exception for this module
     """

@@ -37,7 +37,7 @@ import typing
 
 from unittest import mock
 
-from uds.core.services.generics import exceptions as gen_exceptions
+from uds.core import exceptions
 
 from tests.utils import vars, helpers
 from tests.utils import search_item_by_attr
@@ -283,7 +283,7 @@ class TestOpenStackClient(UDSTransactionTestCase):
             self.assertEqual(server.flavor, server_info.flavor)
 
         # Trying to get a non existing server should raise an exceptions.NotFoundException
-        with self.assertRaises(gen_exceptions.NotFoundError):
+        with self.assertRaises(exceptions.services.generics.NotFoundError):
             self.oclient.get_server_info('non-existing-server')
 
     def test_get_volume_info(self) -> None:
@@ -294,7 +294,7 @@ class TestOpenStackClient(UDSTransactionTestCase):
             self.assertEqual(volume.description, volume_info.description)
 
         # Trying to get a non existing volume should raise an exceptions.NotFoundException
-        with self.assertRaises(gen_exceptions.NotFoundError):
+        with self.assertRaises(exceptions.services.generics.NotFoundError):
             self.oclient.get_volume_info('non-existing-volume')
 
     def test_get_snapshot_info(self) -> None:
@@ -305,7 +305,7 @@ class TestOpenStackClient(UDSTransactionTestCase):
                 self.assertEqual(snapshot.name, snapshot_info.name)
 
         # Trying to get a non existing snapshot should raise an exceptions.NotFoundException
-        with self.assertRaises(gen_exceptions.NotFoundError):
+        with self.assertRaises(exceptions.services.generics.NotFoundError):
             self.oclient.get_snapshot_info('non-existing-snapshot')
 
     def test_create_snapshot(self) -> None:
@@ -313,7 +313,7 @@ class TestOpenStackClient(UDSTransactionTestCase):
         # and it's already tested with test_create_server_from_snapshot, so we just test the exceptions here
 
         # Trying to create a snapshot from a non existing volume should raise an exceptions.NotFoundException
-        with self.assertRaises(gen_exceptions.NotFoundError):
+        with self.assertRaises(exceptions.services.generics.NotFoundError):
             self.oclient.create_snapshot(volume_id='non-existing-volume', name='non-existing-snapshot')
 
     def test_create_server_from_snapshot(self) -> None:
@@ -321,7 +321,7 @@ class TestOpenStackClient(UDSTransactionTestCase):
             self.assertIsNotNone(server.id)
 
         # Trying to create a server from a non existing snapshot should raise an exceptions.NotFoundException
-        with self.assertRaises(gen_exceptions.NotFoundError):
+        with self.assertRaises(exceptions.services.generics.NotFoundError):
             self.oclient.create_server_from_snapshot(
                 snapshot_id='non-existing-snapshot',
                 name='non-existing-server',
@@ -334,13 +334,13 @@ class TestOpenStackClient(UDSTransactionTestCase):
     def test_delete_server(self) -> None:
         # delete_server is tested on test_create_server_from_snapshot and test_list_servers at least
         # so we just test the exceptions here
-        with self.assertRaises(gen_exceptions.NotFoundError):
+        with self.assertRaises(exceptions.services.generics.NotFoundError):
             self.oclient.delete_server('non-existing-server')
 
     def test_delete_snapshot(self) -> None:
         # delete_snapshot is tested on test_create_snapshot at least
         # so we just test the exceptions here
-        with self.assertRaises(gen_exceptions.NotFoundError):
+        with self.assertRaises(exceptions.services.generics.NotFoundError):
             self.oclient.delete_snapshot('non-existing-snapshot')
 
     def test_operations_server(self) -> None:
@@ -378,22 +378,22 @@ class TestOpenStackClient(UDSTransactionTestCase):
 
     def test_operations_fail_server(self) -> None:
         # Trying the operations on a non existing server should raise an exceptions.NotFoundException
-        with self.assertRaises(gen_exceptions.NotFoundError):
+        with self.assertRaises(exceptions.services.generics.NotFoundError):
             self.oclient.start_server('non-existing-server')
 
-        with self.assertRaises(gen_exceptions.NotFoundError):
+        with self.assertRaises(exceptions.services.generics.NotFoundError):
             self.oclient.stop_server('non-existing-server')
 
-        with self.assertRaises(gen_exceptions.NotFoundError):
+        with self.assertRaises(exceptions.services.generics.NotFoundError):
             self.oclient.reset_server('non-existing-server')
 
-        with self.assertRaises(gen_exceptions.NotFoundError):
+        with self.assertRaises(exceptions.services.generics.NotFoundError):
             self.oclient.suspend_server('non-existing-server')
 
-        with self.assertRaises(gen_exceptions.NotFoundError):
+        with self.assertRaises(exceptions.services.generics.NotFoundError):
             self.oclient.resume_server('non-existing-server')
 
-        with self.assertRaises(gen_exceptions.NotFoundError):
+        with self.assertRaises(exceptions.services.generics.NotFoundError):
             self.oclient.reboot_server('non-existing-server')
 
     def test_test_connection(self) -> None:

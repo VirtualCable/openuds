@@ -46,7 +46,7 @@ from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.types.requests import ExtendedHttpRequest
 from uds.core.util import log
-from uds.core.services.exceptions import ServiceNotReadyError, MaxServicesReachedError, ServiceAccessDeniedByCalendar
+from uds.core.exceptions.services import ServiceNotReadyError, MaxServicesReachedError, ServiceAccessDeniedByCalendar
 
 from uds.web.util import services
 from uds.web.util.services import get_services_info_dict

@@ -36,10 +36,9 @@ import typing
 from unittest import mock
 
 from uds import models
-from uds.core import services
+from uds.core import services, exceptions
 from uds.core.util.model import sql_now
 from uds.workers import deferred_deleter
-from uds.core.services.generics import exceptions as gen_exceptions
 
 from uds.core.consts import deferred_deletion as deferred_consts
 from uds.core.types import deferred_deletion as deferred_types
@@ -360,9 +359,9 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
 
     def test_deletion_fails_add(self) -> None:
         for error in (
-            gen_exceptions.RetryableError('error'),
-            gen_exceptions.NotFoundError('error'),
-            gen_exceptions.FatalError('error'),
+            exceptions.services.generics.RetryableError('error'),
+            exceptions.services.generics.NotFoundError('error'),
+            exceptions.services.generics.FatalError('error'),
         ):
             with self.patch_for_worker(
                 execute_delete_side_effect=error,
@@ -370,7 +369,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
                 deferred_deleter.DeferredDeletionWorker.add(instance, 'vmid1', execute_later=False)
 
                 # Not found should remove the entry and nothing more
-                if isinstance(error, gen_exceptions.NotFoundError):
+                if isinstance(error, exceptions.services.generics.NotFoundError):
                     self.assertEqual(self.count_entries_on_storage(deferred_types.DeferredStorageGroup.TO_DELETE), 0)
                     self.assertEqual(self.count_entries_on_storage(deferred_types.DeferredStorageGroup.DELETING), 0)
                     continue
@@ -396,7 +395,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
                 # And run again
                 job.run()
 
-                if isinstance(error, gen_exceptions.RetryableError):
+                if isinstance(error, exceptions.services.generics.RetryableError):
                     self.assertEqual(info.fatal_retries, 0)
                     self.assertEqual(info.total_retries, 1)
                     self.assertEqual(self.count_entries_on_storage(deferred_types.DeferredStorageGroup.TO_DELETE), 1)
@@ -423,9 +422,9 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
 
     def test_deletion_fails_is_deleted(self) -> None:
         for error in (
-            gen_exceptions.RetryableError('error'),
-            gen_exceptions.NotFoundError('error'),
-            gen_exceptions.FatalError('error'),
+            exceptions.services.generics.RetryableError('error'),
+            exceptions.services.generics.NotFoundError('error'),
+            exceptions.services.generics.FatalError('error'),
         ):
             with self.patch_for_worker(
                 is_deleted_side_effect=error,
@@ -449,7 +448,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
                 instance.is_deleted.assert_called_once_with('vmid1')
                 instance.notify_deleted.assert_not_called()
 
-                if isinstance(error, gen_exceptions.RetryableError):
+                if isinstance(error, exceptions.services.generics.RetryableError):
                     self.assertEqual(info.fatal_retries, 0)
                     self.assertEqual(info.total_retries, 1)
                     self.assertEqual(self.count_entries_on_storage(deferred_types.DeferredStorageGroup.TO_DELETE), 0)
@@ -462,7 +461,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
                     # Should have removed the entry
                     self.assertEqual(self.count_entries_on_storage(deferred_types.DeferredStorageGroup.TO_DELETE), 0)
                     self.assertEqual(self.count_entries_on_storage(deferred_types.DeferredStorageGroup.DELETING), 0)
-                elif isinstance(error, gen_exceptions.NotFoundError):
+                elif isinstance(error, exceptions.services.generics.NotFoundError):
                     self.assertEqual(self.count_entries_on_storage(deferred_types.DeferredStorageGroup.TO_DELETE), 0)
                     self.assertEqual(self.count_entries_on_storage(deferred_types.DeferredStorageGroup.DELETING), 0)
                 else:

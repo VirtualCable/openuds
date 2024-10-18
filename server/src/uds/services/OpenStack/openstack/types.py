@@ -35,7 +35,7 @@ import typing
 import dataclasses
 import enum
 
-from uds.core.services.generics import exceptions
+from uds.core import exceptions
 
 
 class AuthMethod(enum.StrEnum):
@@ -293,7 +293,7 @@ class ServerInfo:
             self
         """
         if self.status.is_lost():
-            raise exceptions.NotFoundError(f'Server {self.id} is lost')
+            raise exceptions.services.generics.NotFoundError(f'Server {self.id} is lost')
         return self
 
     @staticmethod

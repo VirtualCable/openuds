@@ -82,7 +82,7 @@ class Error(enum.IntEnum):
             InvalidUserException,
             InvalidAuthenticatorException,
         )
-        from uds.core.services.exceptions import (
+        from uds.core.exceptions.services import (
             InvalidServiceException,
             MaxServicesReachedError,
             ServiceInMaintenanceMode,

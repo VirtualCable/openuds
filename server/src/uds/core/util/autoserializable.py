@@ -289,8 +289,8 @@ class _SerializableField(typing.Generic[T]):
         if isinstance(self.default, _Unassigned):
             return self.obj_type()
         if callable(self.default):
-            return self.default()
-        return self.default
+            return typing.cast(T, self.default())
+        return typing.cast(T, self.default)  # For type checkers
 
     def __get__(
         self,

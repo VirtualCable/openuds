@@ -29,24 +29,24 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
 
-from uds.core.services.generics import exceptions
+from uds.core import exceptions
 
 
-class ProxmoxError(exceptions.Error):
+class ProxmoxError(exceptions.services.generics.Error):
     pass
 
 
-class ProxmoxConnectionError(ProxmoxError, exceptions.RetryableError):
+class ProxmoxConnectionError(ProxmoxError, exceptions.services.generics.RetryableError):
     pass
 
 
-class ProxmoxAuthError(ProxmoxError, exceptions.FatalError):
+class ProxmoxAuthError(ProxmoxError, exceptions.services.generics.FatalError):
     pass
 
 class ProxmoxDoesNotExists(ProxmoxError):
     pass
 
-class ProxmoxNotFound(ProxmoxDoesNotExists, exceptions.NotFoundError):
+class ProxmoxNotFound(ProxmoxDoesNotExists, exceptions.services.generics.NotFoundError):
     pass
 
 

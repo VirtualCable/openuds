@@ -37,12 +37,12 @@ import contextlib
 
 import XenAPI  # pyright: ignore
 
-from uds.core.services.generics import exceptions
+from uds.core import exceptions
 
 logger = logging.getLogger(__name__)
 
 
-class XenFault(exceptions.Error):
+class XenFault(exceptions.services.generics.Error):
     pass
 
 
@@ -95,19 +95,19 @@ class XenException(XenFault):
         logger.debug('Exception create: %s', message)
 
 
-class XenNotFoundError(XenException, exceptions.NotFoundError):
+class XenNotFoundError(XenException, exceptions.services.generics.NotFoundError):
     def __init__(self, message: typing.Any):
         XenException.__init__(self, message)
         logger.debug('Not found exception create: %s', message)
 
 
-class XenFatalError(XenException, exceptions.FatalError):
+class XenFatalError(XenException, exceptions.services.generics.FatalError):
     def __init__(self, message: typing.Any):
         XenException.__init__(self, message)
         logger.debug('Fatal exception create: %s', message)
 
 
-class XenRetryableError(XenException, exceptions.RetryableError):
+class XenRetryableError(XenException, exceptions.services.generics.RetryableError):
     def __init__(self, message: typing.Any):
         XenException.__init__(self, message)
         logger.debug('Retryable exception create: %s', message)

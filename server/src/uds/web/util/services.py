@@ -41,7 +41,7 @@ from uds.core import types
 from uds.core.auths.auth import web_password
 from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.userservice import UserServiceManager
-from uds.core.services.exceptions import (
+from uds.core.exceptions.services import (
     MaxServicesReachedError,
     ServiceAccessDeniedByCalendar,
     ServiceNotReadyError,

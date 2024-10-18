@@ -43,7 +43,7 @@ from django.utils.translation import gettext as _
 
 from uds.core import consts
 
-from uds.core.services.generics import exceptions as gen_exceptions
+from uds.core import exceptions
 from uds.core.util import security, cache, decorators
 
 from . import types as openstack_types
@@ -268,13 +268,13 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
                 OpenStackClient._ensure_valid_response(r, error_message, expects_json=expects_json)
                 logger.debug('Result: %s', r.content)
                 return r
-            except gen_exceptions.NotFoundError:
+            except exceptions.services.generics.NotFoundError:
                 raise
             except Exception as e:
                 if i == len(found_endpoints) - 1:
                     # Endpoint is down, can retry if none is working
                     if isinstance(e, (requests.exceptions.Timeout, requests.exceptions.ConnectionError)):
-                        raise gen_exceptions.RetryableError(
+                        raise exceptions.services.generics.RetryableError(
                             'All endpoints failed'
                         ) from e  # With last exception
                     raise e
@@ -318,7 +318,7 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
                 if i == len(found_endpoints) - 1:
                     # Endpoint is down, can retry if none is working
                     if isinstance(e, (requests.exceptions.Timeout, requests.exceptions.ConnectionError)):
-                        raise gen_exceptions.RetryableError(
+                        raise exceptions.services.generics.RetryableError(
                             'All endpoints failed'
                         ) from e  # With last exception
                     raise e
@@ -749,7 +749,7 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
                 error_message='Rebooting server',
                 expects_json=False,
             )
-        except gen_exceptions.NotFoundError:
+        except exceptions.services.generics.NotFoundError:
             raise
         except Exception:
             pass
@@ -792,7 +792,7 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
         try:
             values = r.json()['versions']['values']
         except Exception:
-            raise gen_exceptions.Error('Invalid response from OpenStack (Mayby invalid endpoint?)')
+            raise exceptions.services.generics.Error('Invalid response from OpenStack (Mayby invalid endpoint?)')
 
         for v in values:
             if v['id'] >= 'v3.1':
@@ -866,7 +866,7 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
     ) -> None:
         if response.ok is False:
             if response.status_code == 404:
-                raise gen_exceptions.NotFoundError('Not found')
+                raise exceptions.services.generics.NotFoundError('Not found')
             try:
                 # Extract any key, in case of error is expected to have only one top key so this will work
                 _, err = response.json().popitem()
@@ -879,7 +879,7 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
             if error_message is None and expects_json:
                 error_message = 'Error checking response'
                 logger.error('%s: %s', error_message, response.content)
-            raise gen_exceptions.Error(error_message)
+            raise exceptions.services.generics.Error(error_message)
 
     # Only for testing purposes, not used at runtime
     def t_create_volume(self, name: str, size: int) -> openstack_types.VolumeInfo:

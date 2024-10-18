@@ -40,7 +40,7 @@ from django.db import models, transaction
 
 from uds.core import consts, exceptions, types
 from uds.core.environment import Environment
-from uds.core.services.exceptions import InvalidServiceException
+from uds.core.exceptions.services import InvalidServiceException
 from uds.core.util import calendar, log, serializer
 from uds.core.util.model import sql_now
 
