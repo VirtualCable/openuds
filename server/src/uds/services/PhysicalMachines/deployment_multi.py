@@ -35,7 +35,7 @@ import logging
 import typing
 
 from uds.core import services, types
-from uds.core.util import autoserializable, auto_attributes
+from uds.core.util import autoserializable
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -43,19 +43,6 @@ if typing.TYPE_CHECKING:
     from .service_multi import IPMachinesService
 
 logger = logging.getLogger(__name__)
-
-
-# This class is used for serialization of old data
-class OldIPSerialData(auto_attributes.AutoAttributes):
-    _ip: str
-    _reason: str
-    _state: str
-
-    def __init__(self) -> None:
-        auto_attributes.AutoAttributes.__init__(self, ip=str, reason=str, state=str)
-        self._ip = ''
-        self._reason = ''
-        self._state = types.states.TaskState.FINISHED
 
 
 class IPMachinesUserService(services.UserService, autoserializable.AutoSerializable):
