@@ -182,7 +182,7 @@ class IPMachinesService(services.Service):
             if server.locked_until is None or server.locked_until < sql_now():
                 server.lock(self.get_max_lock_time())
                 return server.uuid
-        raise exceptions.services.InsufficientResourcesException()
+        raise exceptions.services.MaxServicesReachedError()
 
     def get_host_mac(self, server_uuid: str) -> typing.Tuple[str, str]:
         server = models.Server.objects.get(uuid=server_uuid)

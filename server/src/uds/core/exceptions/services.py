@@ -37,11 +37,6 @@ from .common import UDSException
 # Import for reference as "services.generics"
 from . import services_generics as generics  # pyright: ignore[reportUnusedImport]
 
-class InsufficientResourcesException(UDSException):
-    """
-    Exception used to indicate that we have not enough resources to provide a service
-    """
-
 if typing.TYPE_CHECKING:
     from uds.models import UserService, Transport
     from uds.core.types.services import ReadyStatus
