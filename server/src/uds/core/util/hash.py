@@ -46,6 +46,9 @@ def hash_key(key: typing.Union[str, bytes]) -> str:
         
     Note that replacing the algorithm used here will force to invalidate all previous generated
     entries. In the case of cache, this is not a problem, but in other cases, it could be.
+    
+    Currently, we are using sha256, that generates a 64 bytes long hash
+    Blake2b is also a good candidate
     """
     if isinstance(key, str):
         key = key.encode('utf-8')
