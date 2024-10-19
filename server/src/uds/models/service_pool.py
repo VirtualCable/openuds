@@ -404,7 +404,8 @@ class ServicePool(UUIDModel, TaggingMixin):
             name: Name of the value to store
             value: Value of the value to store
         """
-        self.get_environment().storage.put(name, value)
+        with self.get_environment().storage.as_dict() as storage:
+            storage[name] = value
 
     def get_value(self, name: str) -> typing.Any:
         """
@@ -416,7 +417,8 @@ class ServicePool(UUIDModel, TaggingMixin):
         Returns:
             Stored value, None if no value was stored
         """
-        return typing.cast(str, self.get_environment().storage.read(name))
+        with self.get_environment().storage.as_dict() as storage:
+            return storage.get(name)
 
     def set_state(self, state: str, save: bool = True) -> None:
         """

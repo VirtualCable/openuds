@@ -132,7 +132,7 @@ class DeletionInfo:
         now = sql_now()
         with DeletionInfo.deferred_storage.as_dict(group, atomic=True) as storage_dict:
             for key, info in sorted(
-                typing.cast(collections.abc.Iterable[tuple[str, DeletionInfo]], storage_dict.items()),
+                typing.cast(collections.abc.Iterable[tuple[str, DeletionInfo]], storage_dict.unlocked_items()),
                 key=lambda x: x[1].next_check,
             ):
                 # if max retries reached, remove it

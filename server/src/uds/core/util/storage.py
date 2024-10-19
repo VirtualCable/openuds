@@ -81,10 +81,55 @@ def _decode_value(dbk: str, value: typing.Optional[str]) -> tuple[str, typing.An
     return ('', None)
 
 
-class StorageAsDict(dict[str, typing.Any]):
+class StorageAsDict(collections.abc.MutableMapping[str, typing.Any]):
     """
     Accesses storage as dictionary. Much more convenient that old method
     """
+
+    class DBBasedItemsView(collections.abc.ItemsView[str, typing.Any]):
+        _storage: 'StorageAsDict'
+
+        def __init__(self, storage: 'StorageAsDict'):
+            self._storage = storage
+
+        def __contains__(self, key: object) -> bool:
+            return key in self._storage
+
+        def __iter__(self) -> typing.Iterator[tuple[str, typing.Any]]:
+            return self._storage.items_iter()
+
+        def __len__(self) -> int:
+            return len(self._storage)
+
+    class DBBasedKeysView(collections.abc.KeysView[str]):
+        _storage: 'StorageAsDict'
+
+        def __init__(self, storage: 'StorageAsDict'):
+            self._storage = storage
+
+        def __contains__(self, key: object) -> bool:
+            return key in self._storage
+
+        def __iter__(self) -> typing.Iterator[str]:
+            return self._storage.keys_iter()
+
+        def __len__(self) -> int:
+            return len(self._storage)
+
+    class DBBasedValuesView(collections.abc.ValuesView[typing.Any]):
+        _storage: 'StorageAsDict'
+
+        def __init__(self, storage: 'StorageAsDict'):
+            self._storage = storage
+
+        def __contains__(self, value: object) -> bool:
+            return value in self._storage.values_iter()
+
+        def __iter__(self) -> typing.Iterator[typing.Any]:
+            return self._storage.values_iter()
+
+        def __len__(self) -> int:
+            return len(self._storage)
 
     _group: str
     _owner: str
@@ -109,20 +154,24 @@ class StorageAsDict(dict[str, typing.Any]):
         self._owner = owner
         self._atomic = atomic  # Not used right now, maybe removed
 
-    @property
-    def _db(self) -> typing.Union[models.QuerySet[DBStorage], models.Manager[DBStorage]]:
+    def _db(
+        self, *, skip_locked: bool = False
+    ) -> typing.Union[models.QuerySet[DBStorage], models.Manager[DBStorage]]:
         if self._atomic:
-            # TODO: add skip_locked ASAP (mariadb 10.6+)
+            if skip_locked:
+                # TODO: add skip_locked (as select_for_update(...) argument) ASAP (mariadb 10.6+)
+                pass
             return DBStorage.objects.select_for_update()
 
         return DBStorage.objects
 
-    @property
-    def _filtered(self) -> 'models.QuerySet[DBStorage]':
+    def _filtered(self, *, skip_locked: bool = False) -> 'models.QuerySet[DBStorage]':
         fltr_params = {'owner': self._owner}
         if self._group:
             fltr_params['attr1'] = self._group
-        return typing.cast('models.QuerySet[DBStorage]', self._db.filter(**fltr_params))
+        return typing.cast(
+            'models.QuerySet[DBStorage]', self._db(skip_locked=skip_locked).filter(**fltr_params)
+        )
 
     def _key(self, key: str, old_method: bool = False) -> str:
         if key[0] == '#':
@@ -141,7 +190,7 @@ class StorageAsDict(dict[str, typing.Any]):
         for use_old_method in (False, True):
             db_key = self._key(key, old_method=use_old_method)
             try:
-                c: DBStorage = self._db.get(pk=db_key)
+                c: DBStorage = self._db().get(pk=db_key)
                 if c.owner != self._owner:  # Maybe a key collision,
                     logger.error('Key collision detected for key %s', key)
                     return None
@@ -174,25 +223,37 @@ class StorageAsDict(dict[str, typing.Any]):
         """
         Iterates through keys
         """
-        return iter(_decode_value(i.key, i.data)[0] for i in self._filtered)
+        return iter(_decode_value(i.key, i.data)[0] for i in self._filtered())
 
     def __contains__(self, key: object) -> bool:
         if isinstance(key, str):
-            return self._filtered.filter(key=self._key(key)).exists()
+            return self._filtered().filter(key=self._key(key)).exists()
         return False
 
     def __len__(self) -> int:
-        return self._filtered.count()
+        return self._filtered().count()
+
+    def items_iter(self) -> typing.Iterator[tuple[str, typing.Any]]:
+        return iter(_decode_value(i.key, i.data) for i in self._filtered())
+
+    def keys_iter(self) -> typing.Iterator[str]:
+        return iter(_decode_value(i.key, i.data)[0] for i in self._filtered())
+
+    def values_iter(self) -> typing.Iterator[typing.Any]:
+        return iter(_decode_value(i.key, i.data)[1] for i in self._filtered())
+
+    def unlocked_items(self) -> typing.Iterator[tuple[str, typing.Any]]:
+        return iter(_decode_value(i.key, i.data) for i in self._filtered(skip_locked=True))
 
     # Optimized methods, avoid re-reading from DB
-    def items(self) -> typing.Iterator[tuple[str, typing.Any]]:  # type: ignore   # compatible type
-        return iter(_decode_value(i.key, i.data) for i in self._filtered)
+    def items(self) -> collections.abc.ItemsView[str, typing.Any]:
+        return StorageAsDict.DBBasedItemsView(self)
 
-    def keys(self) -> typing.Iterator[str]:  # type: ignore   # compatible type
-        return iter(_decode_value(i.key, i.data)[0] for i in self._filtered)
+    def keys(self) -> collections.abc.KeysView[str]:
+        return StorageAsDict.DBBasedKeysView(self)
 
-    def values(self) -> typing.Iterator[typing.Any]:  # type: ignore   # compatible type
-        return iter(_decode_value(i.key, i.data)[1] for i in self._filtered)
+    def values(self) -> collections.abc.ValuesView[typing.Any]:
+        return StorageAsDict.DBBasedValuesView(self)
 
     def get(self, key: str, default: typing.Any = None) -> typing.Any:
         return self[key] or default
@@ -201,7 +262,7 @@ class StorageAsDict(dict[str, typing.Any]):
         self.__delitem__(key)  # pylint: disable=unnecessary-dunder-call
 
     def clear(self) -> None:
-        self._filtered.delete()  # Removes all keys
+        self._filtered().delete()  # Removes all keys
 
     # Custom utility methods
     @property

@@ -84,16 +84,46 @@ class StorageTest(UDSTestCase):
             self.assertEqual(d[UNICODE_CHARS], 'chars')
 
             self.assertEqual(d['test_key'], UNICODE_CHARS_2)
-            
+
             # Assert that UNICODE_CHARS is in the dict
             d['test_key2'] = 0
             d['test_key2'] += 1
-            
+
             self.assertEqual(d['test_key2'], 1)
 
         # The values set inside the "with" are not available "outside"
         # because the format is not compatible (with the dict, the values are stored as a tuple, with the original key stored
         # and with old format, only the value is stored
+
+    def test_storage_as_dict_views(self) -> None:
+        strg = storage.Storage(UNICODE_CHARS)
+
+        items = {'key_{i}': f'value_{i}' for i in range(32)}
+
+        with strg.as_dict() as dct:
+            # Store all items
+            for k, v in items.items():
+                dct[k] = v
+
+            for k, v in dct.items():
+                self.assertEqual(v, items[k])
+
+            for k in dct.keys():
+                self.assertIn(k, items)
+
+            for v in dct.values():
+                self.assertIn(v, items.values())
+
+            self.assertEqual(len(dct), len(items))
+            self.assertEqual(len(dct.items()), len(items))
+            self.assertEqual(len(dct.keys()), len(items))
+            self.assertEqual(len(dct.values()), len(items))
+
+            # Contains for items, keys and values
+            for k in items:
+                self.assertIn(k, dct)
+                self.assertIn(k, dct.keys())
+                self.assertIn(items[k], dct.values())
 
     def test_old_storage_compat(self) -> None:
         models.Storage.objects.create(

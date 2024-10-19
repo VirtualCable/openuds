@@ -47,6 +47,10 @@ from ....utils.test import UDSTransactionTestCase
 from ....utils import helpers
 from . import fixtures
 
+class TestDict(dict[str, deferred_types.DeletionInfo]):
+    def unlocked_items(self) -> typing.ItemsView[str, deferred_types.DeletionInfo]:
+        return self.items()
+
 
 class DynamicDeferredDeleteTest(UDSTransactionTestCase):
     def setUp(self) -> None:
@@ -74,13 +78,14 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
         is_running: typing.Union[None, typing.Callable[..., bool]] = None,
         must_stop_before_deletion: bool = False,
         should_try_soft_shutdown: bool = False,
-    ) -> typing.Iterator[tuple[mock.MagicMock, dict[str, dict[str, deferred_types.DeletionInfo]]]]:
+    ) -> typing.Iterator[tuple[mock.MagicMock, dict[str, TestDict]]]:
         """
         Patch the storage to use a dict instead of the real storage
 
         This is useful to test the worker without touching the real storage
         """
-        dct: dict[str, dict[str, deferred_types.DeletionInfo]] = {}
+            
+        dct: dict[str, TestDict] = {}
         instance = mock.MagicMock()
         instance_db_obj = mock.MagicMock(uuid='service1')
         instance_db_obj.get_instance.return_value = instance
@@ -106,7 +111,7 @@ class DynamicDeferredDeleteTest(UDSTransactionTestCase):
                     group: str, *args: typing.Any, **kwargs: typing.Any
                 ) -> typing.Iterator[dict[str, deferred_types.DeletionInfo]]:
                     if group not in dct:
-                        dct[group] = {}
+                        dct[group] = TestDict()
                     yield dct[group]
 
                 storage.as_dict.side_effect = _as_dict
