@@ -48,6 +48,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 def error(request: 'HttpRequest', err: str) -> 'HttpResponse':
     """
     Error view, responsible of error display
@@ -55,19 +56,17 @@ def error(request: 'HttpRequest', err: str) -> 'HttpResponse':
     return render(request, 'uds/modern/index.html', {})
 
 
-
-
 def error_message(request: 'HttpRequest', err: str) -> 'HttpResponse':
     """
     Error view, responsible of error display
     """
     # get error as integer or replace it by 0
-    
+
     try:
         err_int = int(err)
     except Exception:
         err_int = 0
-    
+
     return HttpResponse(
         json.dumps({'error': types.errors.Error.from_int(err_int).message, 'code': str(err)}),
         content_type='application/json',
