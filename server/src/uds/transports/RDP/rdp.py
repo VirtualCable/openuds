@@ -139,7 +139,7 @@ class RDPTransport(BaseRDPTransport):
         r.multimon = self.multimon.as_bool()
         r.desktop_composition = self.aero.as_bool()
         r.smooth_fonts = self.smooth.as_bool()
-        r.pin_bar = self.show_connection_bar.as_bool()
+        r.connection_bar = self.show_connection_bar.as_bool()
         r.enable_credssp_support = self.credssp.as_bool()
         r.multimedia = self.lnx_multimedia.as_bool()
         r.alsa = self.lnx_alsa.as_bool()

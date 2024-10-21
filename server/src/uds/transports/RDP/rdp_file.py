@@ -60,7 +60,7 @@ class RDPFile:
     compression: bool = True
     multimedia: bool = True
     alsa: bool = True
-    pin_bar: bool = True
+    connection_bar: bool = True
     show_wallpaper: bool = False
     multimon: bool = False
     desktop_composition: bool = False
@@ -187,6 +187,9 @@ class RDPFile:
 
         if force_rdp_security:
             params.append('/sec:rdp')
+            
+        if self.connection_bar and '/floatbar' not in params:
+            params.append('/floatbar:sticky:off')
 
         if self.custom_parameters and self.custom_parameters.strip() != '':
             params += shlex.split(self.custom_parameters.strip())
@@ -208,7 +211,7 @@ class RDPFile:
         scards = '1' if self.redir_smartcards else '0'
         printers = '1' if self.redir_printers else '0'
         compression = '1' if self.compression else '0'
-        connection_bar = '1' if self.pin_bar else '0'
+        connection_bar = '1' if self.connection_bar else '0'
         disable_wallpaper = '0' if self.show_wallpaper else '1'
         use_multimon = '1' if self.multimon else '0'
         enable_clipboard = '1' if self.enable_clipboard else '0'
