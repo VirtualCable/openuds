@@ -446,13 +446,13 @@ class WinDomainOsManager(WindowsOsManager):
                 ad=self.domain.as_str(),
                 ou=self.ou.as_str(),
                 username=self.account.as_str(),
-                password=self.account.as_str(),
+                password=self.password.as_str(),
             ),
             custom={
                 'domain': self.domain.as_str(),
                 'ou': self.ou.as_str(),
                 'username': self.account.as_str(),
-                'password': self.account.as_str(),
+                'password': self.password.as_str(),
             },
         )
 
