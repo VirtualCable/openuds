@@ -113,4 +113,4 @@ def weblogin(user: models.User) -> None:
 
     except Exception as e:
         logger.error('Error notifying login to callback URL: %s', e)
-        FAILURE_CACHE.set('notify_failure', fail_count + 1)
+        FAILURE_CACHE.put('notify_failure', fail_count + 1)

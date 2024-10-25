@@ -278,7 +278,7 @@ class FixedUserService(services.UserService, autoserializable.AutoSerializable, 
             if self.cache.get('ready', '0') == '1':
                 self._queue = [types.services.Operation.FINISH]
             elif self.service().is_ready(self._vmid):
-                self.cache.set('ready', '1', consts.cache.SHORT_CACHE_TIMEOUT // 2)  # short cache timeout
+                self.cache.put('ready', '1', consts.cache.SHORT_CACHE_TIMEOUT // 2)  # short cache timeout
                 self._queue = [types.services.Operation.FINISH]
             else:
                 self._queue = [types.services.Operation.START, types.services.Operation.FINISH]

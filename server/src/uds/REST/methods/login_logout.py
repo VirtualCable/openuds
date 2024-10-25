@@ -177,7 +177,7 @@ class Login(Handler):
                 # Sleep a while here to "prottect"
                 time.sleep(3)  # Wait 3 seconds if credentials fails for "protection"
                 # And store in cache for blocking for a while if fails
-                fail_cache.set(self._request.ip, fails + 1, GlobalConfig.LOGIN_BLOCK.as_int())
+                fail_cache.put(self._request.ip, fails + 1, GlobalConfig.LOGIN_BLOCK.as_int())
 
                 return Login.result(error=auth_result.errstr or 'Invalid credentials')
             return Login.result(

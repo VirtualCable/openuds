@@ -58,7 +58,7 @@ class TestEnvironment(UDSTransactionTestCase):
         env.storage.put('test', 'test')
         self.assertEqual(env.storage.read('test'), 'test')
 
-        env.cache.set('test', 'test')
+        env.cache.put('test', 'test')
         self.assertEqual(env.cache.get('test'), 'test')
 
         # Recreate environment
@@ -110,7 +110,7 @@ class TestEnvironment(UDSTransactionTestCase):
             env.storage.put('test', 'test')
             self.assertEqual(env.storage.read('test'), 'test')
 
-            env.cache.set('test', 'test')
+            env.cache.put('test', 'test')
             self.assertEqual(env.cache.get('test'), 'test')
 
         # Environment is cleared after exit, ensure it

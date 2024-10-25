@@ -162,7 +162,7 @@ class Cache:
         with transaction.atomic():
             Cache.delete(self._owner)
 
-    def set(
+    def put(
         self,
         skey: typing.Union[str, bytes],
         value: typing.Any,
@@ -206,7 +206,7 @@ class Cache:
         """
         Stores a value in the cache using the [] operator with default validity
         """
-        self.set(key, value)
+        self.put(key, value)
 
     def refresh(self, skey: typing.Union[str, bytes]) -> None:
         # logger.debug('Refreshing key "%s" for cache "%s"' % (skey, self._owner,))
