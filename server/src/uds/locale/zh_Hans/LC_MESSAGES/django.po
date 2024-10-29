@@ -22,11 +22,12 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-28 18:02+0200\n"
+"POT-Creation-Date: 2024-10-29 19:21+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: Chinese (http://app.transifex.com/openuds/openuds/language/"
@@ -55,11 +56,11 @@ msgid "Name"
 msgstr "名称"
 
 #: REST/methods/accounts.py:69 REST/methods/authenticators.py:74
-#: REST/methods/calendarrules.py:110 REST/methods/calendars.py:72
+#: REST/methods/calendarrules.py:108 REST/methods/calendars.py:72
 #: REST/methods/meta_pools.py:88 REST/methods/mfas.py:62
 #: REST/methods/notifiers.py:73 REST/methods/osmanagers.py:61
 #: REST/methods/providers.py:75 REST/methods/servers_management.py:422
-#: REST/methods/services.py:225 REST/methods/services_pool_groups.py:79
+#: REST/methods/services.py:234 REST/methods/services_pool_groups.py:79
 #: REST/methods/transports.py:72 REST/methods/tunnels_management.py:154
 #: REST/methods/user_services.py:440 REST/methods/users_groups.py:172
 #: REST/methods/users_groups.py:391 REST/model/base.py:172
@@ -75,45 +76,45 @@ msgstr "时间标记"
 #: REST/methods/mfas.py:63 REST/methods/networks.py:86
 #: REST/methods/notifiers.py:74 REST/methods/osmanagers.py:63
 #: REST/methods/providers.py:79 REST/methods/servers_management.py:427
-#: REST/methods/services.py:241 REST/methods/services_pools.py:116
+#: REST/methods/services.py:250 REST/methods/services_pools.py:116
 #: REST/methods/transports.py:81 REST/methods/tunnels_management.py:158
 msgid "tags"
 msgstr "标签"
 
-#: REST/methods/accountsusage.py:94
+#: REST/methods/accountsusage.py:92
 msgid "Pool name"
 msgstr "池名称"
 
-#: REST/methods/accountsusage.py:95 core/auths/authenticator.py:145
+#: REST/methods/accountsusage.py:93 core/auths/authenticator.py:145
 msgid "User name"
 msgstr "用户名"
 
-#: REST/methods/accountsusage.py:96 core/types/states.py:200
+#: REST/methods/accountsusage.py:94 core/types/states.py:200
 msgid "Running"
 msgstr "运行"
 
-#: REST/methods/accountsusage.py:97 REST/methods/calendarrules.py:99
+#: REST/methods/accountsusage.py:95 REST/methods/calendarrules.py:97
 msgid "Starts"
 msgstr "启动"
 
-#: REST/methods/accountsusage.py:98 REST/methods/calendarrules.py:100
+#: REST/methods/accountsusage.py:96 REST/methods/calendarrules.py:98
 msgid "Ends"
 msgstr "完"
 
-#: REST/methods/accountsusage.py:99
+#: REST/methods/accountsusage.py:97
 msgid "Elapsed"
 msgstr "过去"
 
-#: REST/methods/accountsusage.py:100
+#: REST/methods/accountsusage.py:98
 msgid "Elapsed timemark"
 msgstr "经过时间标记"
 
-#: REST/methods/accountsusage.py:122
+#: REST/methods/accountsusage.py:120
 #, python-brace-format
 msgid "Usages of {0}"
 msgstr "{0}的用法"
 
-#: REST/methods/accountsusage.py:124
+#: REST/methods/accountsusage.py:122
 msgid "Current usages"
 msgstr "目前的用法"
 
@@ -185,7 +186,7 @@ msgstr "ID"
 #: REST/methods/authenticators.py:73 REST/methods/mfas.py:61
 #: REST/methods/notifiers.py:70 REST/methods/osmanagers.py:60
 #: REST/methods/providers.py:74 REST/methods/servers_management.py:68
-#: REST/methods/servers_management.py:423 REST/methods/services.py:226
+#: REST/methods/servers_management.py:423 REST/methods/services.py:235
 #: REST/methods/transports.py:71 REST/methods/user_services.py:364
 #: REST/methods/user_services.py:439
 msgid "Type"
@@ -251,9 +252,9 @@ msgstr "此传输的访问类型。禁用不仅意味着隐藏，而且不能用
 msgid "Display"
 msgstr "显示"
 
-#: REST/methods/authenticators.py:141 core/services/service.py:148
-#: core/services/service.py:157 core/types/permissions.py:16
-#: core/types/permissions.py:20 mfas/Email/mfa.py:78 mfas/SMS/mfa.py:194
+#: REST/methods/authenticators.py:141 core/services/service.py:160
+#: core/services/service.py:169 core/types/permissions.py:16
+#: core/types/permissions.py:20 mfas/Email/mfa.py:78 mfas/SMS/mfa.py:195
 #: notifiers/email/notifier.py:88 services/Azure_enterprise/helpers.py:121
 #: services/Proxmox/service_fixed.py:111 services/Proxmox/service_linked.py:197
 #: services/Sample/service.py:96 services/Sample/service.py:102
@@ -281,32 +282,32 @@ msgstr "优化您的查询"
 msgid "Label must contain only letters, numbers, or symbols: - : ."
 msgstr "标签必须仅包含字母、数字或符号：- : 。"
 
-#: REST/methods/calendarrules.py:98
+#: REST/methods/calendarrules.py:96
 msgid "Rule name"
 msgstr "规则名称"
 
-#: REST/methods/calendarrules.py:103
+#: REST/methods/calendarrules.py:101
 msgid "Repeats"
 msgstr "重复"
 
-#: REST/methods/calendarrules.py:108
+#: REST/methods/calendarrules.py:106
 msgid "Every"
 msgstr "一切"
 
-#: REST/methods/calendarrules.py:109
+#: REST/methods/calendarrules.py:107
 msgid "Duration"
 msgstr "持续时间"
 
-#: REST/methods/calendarrules.py:151 REST/methods/services.py:189
+#: REST/methods/calendarrules.py:149 REST/methods/services.py:198
 msgid "Element already exists (duplicate key error)"
 msgstr "元素已存在（重复键错误）"
 
-#: REST/methods/calendarrules.py:171
+#: REST/methods/calendarrules.py:169
 #, python-brace-format
 msgid "Rules of {0}"
 msgstr "{0}的规则"
 
-#: REST/methods/calendarrules.py:173
+#: REST/methods/calendarrules.py:171
 msgid "Current rules"
 msgstr "现行规则"
 
@@ -367,7 +368,7 @@ msgstr "政策"
 msgid "HA Policy"
 msgstr "医管局政策"
 
-#: REST/methods/meta_pools.py:103 REST/methods/services.py:233
+#: REST/methods/meta_pools.py:103 REST/methods/services.py:242
 #: REST/methods/services_pools.py:109
 msgid "User services"
 msgstr "用户服务"
@@ -476,7 +477,7 @@ msgstr "创立日期"
 
 #: REST/methods/meta_service_pools.py:215 REST/methods/services_usage.py:125
 #: reports/stats/base.py:45 reports/stats/pools_performance.py:237
-#: reports/stats/pools_usage_day.py:147
+#: reports/stats/pools_usage_day.py:150
 #: reports/stats/pools_usage_summary.py:157 reports/stats/usage_by_pool.py:156
 #: services/Proxmox/service_linked.py:112
 #: templates/uds/reports/stats/pools-performance.html:33
@@ -663,7 +664,7 @@ msgstr "服务供应商"
 msgid "Status"
 msgstr "状态"
 
-#: REST/methods/providers.py:77 reports/stats/pools_usage_day.py:147
+#: REST/methods/providers.py:77 reports/stats/pools_usage_day.py:150
 #: templates/uds/reports/stats/authenticator_stats.html:16
 #: templates/uds/reports/stats/pools-usage-day.html:29
 msgid "Services"
@@ -683,7 +684,7 @@ msgstr "可用报告"
 
 #: REST/methods/reports.py:71 REST/methods/users_groups.py:388
 #: REST/methods/users_groups.py:413
-#: auths/ActiveDirectory_enterprise/authenticator.py:199
+#: auths/ActiveDirectory_enterprise/authenticator.py:202
 #: auths/AzureAD_enterprise/authenticator.py:98
 #: auths/EDirectory_enterprise/authenticator.py:133
 #: auths/Radius/authenticator.py:62 auths/RegexLdap/authenticator.py:162
@@ -830,59 +831,59 @@ msgstr "管理"
 msgid "Unmanaged"
 msgstr "非托管"
 
-#: REST/methods/servers_management.py:448 REST/methods/services.py:238
-#: REST/methods/services.py:296
+#: REST/methods/servers_management.py:448 REST/methods/services.py:247
+#: REST/methods/services.py:305
 msgid "Standard"
 msgstr "标准"
 
-#: REST/methods/services.py:187
+#: REST/methods/services.py:196
 msgid ""
 "Service token seems to be in use by other service. Please, select a new one."
 msgstr "服务令牌似乎正在被其他服务使用。请选择一个新的。"
 
-#: REST/methods/services.py:195
+#: REST/methods/services.py:204
 #, python-brace-format
 msgid "Input error: {0}"
 msgstr "输入错误：{0}"
 
-#: REST/methods/services.py:218
+#: REST/methods/services.py:227
 msgid "Services of {}"
 msgstr "{}的服务"
 
-#: REST/methods/services.py:220
+#: REST/methods/services.py:229
 msgid "Current services"
 msgstr "目前的服务"
 
-#: REST/methods/services.py:224
+#: REST/methods/services.py:233
 msgid "Service name"
 msgstr "服务名称"
 
-#: REST/methods/services.py:229
+#: REST/methods/services.py:238
 msgid "Services Pools"
 msgstr "服务池"
 
-#: REST/methods/services.py:236
+#: REST/methods/services.py:245
 msgid "Max services count type"
 msgstr "最大服务计数类型"
 
-#: REST/methods/services.py:238 REST/methods/services.py:297
+#: REST/methods/services.py:247 REST/methods/services.py:306
 msgid "Conservative"
 msgstr "保守的"
 
-#: REST/methods/services.py:299
+#: REST/methods/services.py:308
 msgid "Service counting method"
 msgstr "服务计数方式"
 
-#: REST/methods/services.py:300
+#: REST/methods/services.py:309
 msgid "Kind of service counting for calculating if MAX is reached"
 msgstr "用于计算是否达到 MAX 的服务计数"
 
-#: REST/methods/services.py:341 REST/methods/users_groups.py:304
+#: REST/methods/services.py:354 REST/methods/users_groups.py:304
 #: REST/methods/users_groups.py:523
 msgid "With errors"
 msgstr "有错误"
 
-#: REST/methods/services.py:341 REST/methods/users_groups.py:304
+#: REST/methods/services.py:354 REST/methods/users_groups.py:304
 #: REST/methods/users_groups.py:523
 msgid "Ok"
 msgstr "好"
@@ -1104,7 +1105,7 @@ msgstr "隧道"
 
 #: REST/methods/tunnels_management.py:155
 #: auths/ActiveDirectory_enterprise/authenticator.py:52
-#: auths/ActiveDirectory_enterprise/authenticator.py:211
+#: auths/ActiveDirectory_enterprise/authenticator.py:214
 #: auths/EDirectory_enterprise/authenticator.py:51
 #: auths/Radius/authenticator.py:66 auths/RegexLdap/authenticator.py:63
 #: auths/SimpleLDAP/authenticator.py:58 mfas/Radius/mfa.py:71
@@ -1127,6 +1128,10 @@ msgstr "用户可见隧道的服务器的主机名或 IP 地址"
 #: REST/methods/tunnels_management.py:182
 msgid "Port where the tunnel is visible by the users"
 msgstr "用户可见隧道的端口"
+
+#: REST/methods/tunnels_management.py:214
+msgid "Cannot delete a tunnel server group with transports attached"
+msgstr "无法删除附加了传输的隧道服务器组"
 
 #: REST/methods/user_services.py:167 REST/methods/user_services.py:298
 #: REST/methods/user_services.py:550 REST/methods/user_services.py:588
@@ -1207,7 +1212,7 @@ msgid "Current users"
 msgstr "目前的用户"
 
 #: REST/methods/users_groups.py:164
-#: auths/ActiveDirectory_enterprise/authenticator.py:197
+#: auths/ActiveDirectory_enterprise/authenticator.py:200
 #: auths/EDirectory_enterprise/authenticator.py:131
 #: auths/RegexLdap/authenticator.py:160 auths/SimpleLDAP/authenticator.py:180
 #: mfas/Email/mfa.py:86 notifiers/email/notifier.py:96
@@ -1333,24 +1338,24 @@ msgstr ""
 msgid "Networks associated. If No network selected, will mean \"all networks\""
 msgstr "网络相关。如果未选择网络，则表示“所有网络”"
 
-#: REST/model/base.py:342
+#: REST/model/base.py:351
 msgid "Invalid Request"
 msgstr "非法请求"
 
-#: REST/model/base.py:353
+#: REST/model/base.py:362
 msgid "Method not found in {}: {}"
 msgstr "在{}中找不到的方法：{}"
 
-#: REST/model/base.py:359
+#: REST/model/base.py:368
 msgid "Item not found"
 msgstr "物品未找到"
 
-#: REST/model/base.py:364 core/types/errors.py:117
+#: REST/model/base.py:373 core/types/errors.py:117
 #: web/util/authentication.py:102
 msgid "Access denied"
 msgstr "拒绝访问"
 
-#: REST/model/base.py:367
+#: REST/model/base.py:376
 msgid "Operation not supported"
 msgstr "操作不受支持"
 
@@ -1392,7 +1397,7 @@ msgid ""
 msgstr "在所选基础上具有读取权限的用户名（使用USER@DOMAIN.DOM表单）"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:87
-#: auths/ActiveDirectory_enterprise/authenticator.py:201
+#: auths/ActiveDirectory_enterprise/authenticator.py:204
 #: auths/EDirectory_enterprise/authenticator.py:79
 #: auths/RegexLdap/authenticator.py:91 auths/RegexLdap/authenticator.py:164
 #: auths/SimpleLDAP/authenticator.py:86 auths/SimpleLDAP/authenticator.py:184
@@ -1448,133 +1453,135 @@ msgstr ""
 "用于没有域的用户的域（如果为空，将使用用户的域）如果兼容模式不是“Windows NT”"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:118
-#: auths/ActiveDirectory_enterprise/authenticator.py:213
+#: auths/ActiveDirectory_enterprise/authenticator.py:216
 msgid "Backup servers"
 msgstr "备份服务器"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:121
+#: auths/ActiveDirectory_enterprise/authenticator.py:122
 msgid ""
-"If not empty, this host will be used in case main host server is not "
-"reachable"
-msgstr "如果不为空，则在无法访问主主机服务器的情况下将使用此主机"
+"If not empty, this list of domain=backup1,backup2,... will be used as backup "
+"servers for the domains.If domain is not specified, the backup servers will "
+"be used for all domains."
+msgstr "如果不为空，则此域=备份1，备份2，..."
+"列表将用作域的备份服务器。如果没有指定域，则所有域都将使用备份服务器。"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:131
+#: auths/ActiveDirectory_enterprise/authenticator.py:134
 #: auths/EDirectory_enterprise/authenticator.py:96 core/util/fields.py:229
 msgid "Verify SSL"
 msgstr "验证 SSL"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:134
+#: auths/ActiveDirectory_enterprise/authenticator.py:137
 #: auths/EDirectory_enterprise/authenticator.py:99 core/util/fields.py:232
 msgid ""
 "If checked, SSL verification will be enforced. If not, SSL verification will "
 "be disabled"
 msgstr "如果选中，将强制执行 SSL 验证。否则，SSL 验证将被禁用"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:142
+#: auths/ActiveDirectory_enterprise/authenticator.py:145
 #: auths/EDirectory_enterprise/authenticator.py:106
 #: auths/RegexLdap/authenticator.py:104 auths/SAML/saml.py:128
 #: auths/SimpleLDAP/authenticator.py:99 transports/SPICE/spice_base.py:85
 msgid "Certificate"
 msgstr "证书"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:144
+#: auths/ActiveDirectory_enterprise/authenticator.py:147
 #: auths/EDirectory_enterprise/authenticator.py:108
 #: auths/RegexLdap/authenticator.py:106 auths/SimpleLDAP/authenticator.py:101
 msgid "Certificate to use for SSL verification"
 msgstr "用于 SSL 验证的证书"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:153
+#: auths/ActiveDirectory_enterprise/authenticator.py:156
 msgid "Host translation list"
 msgstr "主机翻译列表"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:158
+#: auths/ActiveDirectory_enterprise/authenticator.py:161
 msgid ""
 "If not empty, this list of key=value pairs will be used to translate the "
 "host name from AD to an resolvable hostname."
 msgstr "如果不为空，则此键=值对列表将用于将主机名从 AD 转换为可解析的主机名。"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:167
+#: auths/ActiveDirectory_enterprise/authenticator.py:170
 msgid "Ignore domains"
 msgstr "忽略域"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:171
+#: auths/ActiveDirectory_enterprise/authenticator.py:174
 msgid ""
 "If not empty, this list of domains will be ignored when searching for users. "
 "Comma separated values."
 msgstr "如果不为空，则在搜索用户时将忽略此域列表。逗号分隔值。"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:180
+#: auths/ActiveDirectory_enterprise/authenticator.py:183
 msgid "Redirect On Expired"
 msgstr "重定向过期"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:182
+#: auths/ActiveDirectory_enterprise/authenticator.py:185
 msgid ""
 "If not empty, if user password is expired, will be automatically redirected "
 "to this URL"
 msgstr "如果不为空，如果用户密码过期，会自动重定向到这个URL"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:189
+#: auths/ActiveDirectory_enterprise/authenticator.py:192
 msgid "Active Directory Authenticator"
 msgstr "Active Directory身份验证器"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:191
+#: auths/ActiveDirectory_enterprise/authenticator.py:194
 msgid "Authenticate against Active Directory"
 msgstr "针对Active Directory进行身份验证"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:216
-#: auths/ActiveDirectory_enterprise/authenticator.py:885
+#: auths/ActiveDirectory_enterprise/authenticator.py:219
+#: auths/ActiveDirectory_enterprise/authenticator.py:923
 msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
 msgstr "必须以USERNAME@DOMAIN.DOM格式指定用户名"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:474
+#: auths/ActiveDirectory_enterprise/authenticator.py:488
 msgid ""
 "Could not connect to any AD server. Check your configuration (server, ssl "
 "certificates, ...)."
 msgstr "无法连接到任何 AD 服务器。检查您的配置（服务器、ssl 证书等）。"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:758
-#: auths/ActiveDirectory_enterprise/authenticator.py:816
-#: auths/AzureAD_enterprise/authenticator.py:371
-#: auths/EDirectory_enterprise/authenticator.py:311
-#: auths/EDirectory_enterprise/authenticator.py:342
+#: auths/ActiveDirectory_enterprise/authenticator.py:794
+#: auths/ActiveDirectory_enterprise/authenticator.py:854
+#: auths/AzureAD_enterprise/authenticator.py:375
+#: auths/EDirectory_enterprise/authenticator.py:326
+#: auths/EDirectory_enterprise/authenticator.py:357
 #: auths/RegexLdap/authenticator.py:398 auths/RegexLdap/authenticator.py:429
-#: auths/SimpleLDAP/authenticator.py:389 auths/SimpleLDAP/authenticator.py:432
+#: auths/SimpleLDAP/authenticator.py:397 auths/SimpleLDAP/authenticator.py:421
 msgid "Username not found"
 msgstr "找不到用户名"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:800
-#: auths/SimpleLDAP/authenticator.py:422
+#: auths/ActiveDirectory_enterprise/authenticator.py:836
+#: auths/SimpleLDAP/authenticator.py:416
 msgid "Group not found"
 msgstr "未找到组"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:843
-#: auths/ActiveDirectory_enterprise/authenticator.py:863
-#: auths/EDirectory_enterprise/authenticator.py:357
-#: auths/RegexLdap/authenticator.py:449 auths/SimpleLDAP/authenticator.py:451
-#: auths/SimpleLDAP/authenticator.py:467
+#: auths/ActiveDirectory_enterprise/authenticator.py:881
+#: auths/ActiveDirectory_enterprise/authenticator.py:901
+#: auths/EDirectory_enterprise/authenticator.py:372
+#: auths/RegexLdap/authenticator.py:449 auths/SimpleLDAP/authenticator.py:440
+#: auths/SimpleLDAP/authenticator.py:456
 msgid "Too many results, be more specific"
 msgstr "结果太多，更具体"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:879
-#: auths/Radius/authenticator.py:208 auths/SimpleLDAP/authenticator.py:476
+#: auths/ActiveDirectory_enterprise/authenticator.py:917
+#: auths/Radius/authenticator.py:212 auths/SimpleLDAP/authenticator.py:465
 msgid "Error testing connection"
 msgstr "错误测试连接"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:899
+#: auths/ActiveDirectory_enterprise/authenticator.py:937
 msgid "Connection seems to be incorrect, please check it"
 msgstr "连接好像不正确，请检查一下"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:918
+#: auths/ActiveDirectory_enterprise/authenticator.py:956
 msgid ""
 "Server does not seem an Active Directory (it does not have user objects)"
 msgstr "服务器似乎不是Active Directory（它没有用户对象）"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:940
+#: auths/ActiveDirectory_enterprise/authenticator.py:978
 msgid ""
 "Server does not seem an Active Directory (it does not have group objects)"
 msgstr "服务器似乎不是Active Directory（它没有组对象）"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:946
+#: auths/ActiveDirectory_enterprise/authenticator.py:984
 msgid "Connection params seem correct, test was succesfully executed"
 msgstr "连接参数似乎正确，测试成功执行"
 
@@ -1626,7 +1633,7 @@ msgstr "回调网址（由UDS填写，仅在必要时修复此问题！）"
 #: auths/AzureAD_enterprise/authenticator.py:136
 #: services/AWS_enterprise/provider.py:65
 #: services/Azure_enterprise/provider.py:95
-#: services/Google_enterprise/provider.py:85 services/OpenStack/provider.py:192
+#: services/Google_enterprise/provider.py:96 services/OpenStack/provider.py:192
 #: services/OpenStack/provider_legacy.py:162
 msgid "Proxy"
 msgstr "代理"
@@ -1685,23 +1692,23 @@ msgstr "用于外部用户的域（空表示没有外部用户）"
 msgid "This kind of Authenticator does not support white spaces on field NAME"
 msgstr "这种 Authenticator 不支持字段 NAME 上的空格"
 
-#: auths/AzureAD_enterprise/authenticator.py:331
-#: auths/AzureAD_enterprise/authenticator.py:333
+#: auths/AzureAD_enterprise/authenticator.py:335
+#: auths/AzureAD_enterprise/authenticator.py:337
 msgid "User not found"
 msgstr "未找到用户"
 
-#: auths/AzureAD_enterprise/authenticator.py:378
-#: auths/AzureAD_enterprise/authenticator.py:402
-#: auths/AzureAD_enterprise/authenticator.py:409
+#: auths/AzureAD_enterprise/authenticator.py:382
+#: auths/AzureAD_enterprise/authenticator.py:411
+#: auths/AzureAD_enterprise/authenticator.py:418
 msgid "Authenticator exception:"
 msgstr "验证者例外："
 
-#: auths/AzureAD_enterprise/authenticator.py:429
-#: auths/AzureAD_enterprise/authenticator.py:443 core/util/ldaputil.py:82
+#: auths/AzureAD_enterprise/authenticator.py:438
+#: auths/AzureAD_enterprise/authenticator.py:453 core/util/ldaputil.py:82
 msgid "Connection error: "
 msgstr "连接错误："
 
-#: auths/AzureAD_enterprise/authenticator.py:444
+#: auths/AzureAD_enterprise/authenticator.py:454
 msgid "Connection params seems correct, test was succesfully executed"
 msgstr "连接参数似乎是正确的，测试成功执行"
 
@@ -1725,7 +1732,7 @@ msgstr "具有eDirectory读取权限的用户名"
 
 #: auths/EDirectory_enterprise/authenticator.py:87 core/util/fields.py:210
 #: services/Azure_enterprise/provider.py:84
-#: services/Google_enterprise/provider.py:74
+#: services/Google_enterprise/provider.py:85
 #: services/NutanixPrism_enterprise/provider.py:94
 #: services/OpenGnsys/provider.py:138
 msgid "Timeout"
@@ -1736,13 +1743,13 @@ msgid "Timeout in seconds of connection to LDAP"
 msgstr "连接到LDAP的超时（以秒为单位）"
 
 #: auths/EDirectory_enterprise/authenticator.py:115
-#: auths/Radius/authenticator.py:117 auths/SAML/saml.py:207
+#: auths/Radius/authenticator.py:120 auths/SAML/saml.py:207
 #: auths/SimpleLDAP/authenticator.py:163 core/util/fields.py:419
 msgid "MFA attribute"
 msgstr "MFA 属性"
 
 #: auths/EDirectory_enterprise/authenticator.py:117
-#: auths/Radius/authenticator.py:119 auths/SAML/saml.py:209
+#: auths/Radius/authenticator.py:122 auths/SAML/saml.py:209
 #: auths/SimpleLDAP/authenticator.py:165 core/util/fields.py:421
 msgid "Attribute from where to extract the MFA code"
 msgstr "从哪里提取 MFA 代码的属性"
@@ -1755,37 +1762,37 @@ msgstr "eDirectory身份验证器"
 msgid "Authenticate against eDirectory"
 msgstr "针对eDirectory进行身份验证"
 
-#: auths/EDirectory_enterprise/authenticator.py:368
+#: auths/EDirectory_enterprise/authenticator.py:383
 msgid "Connection error"
 msgstr "连接错误"
 
-#: auths/EDirectory_enterprise/authenticator.py:375
+#: auths/EDirectory_enterprise/authenticator.py:390
 msgid "Connection error: {}"
 msgstr "连接错误： {}"
 
-#: auths/EDirectory_enterprise/authenticator.py:382
-#: auths/RegexLdap/authenticator.py:472 auths/SimpleLDAP/authenticator.py:491
+#: auths/EDirectory_enterprise/authenticator.py:397
+#: auths/RegexLdap/authenticator.py:472 auths/SimpleLDAP/authenticator.py:480
 msgid "Ldap search base is incorrect"
 msgstr "Ldap搜索库不正确"
 
-#: auths/EDirectory_enterprise/authenticator.py:399
-#: auths/RegexLdap/authenticator.py:490 auths/SimpleLDAP/authenticator.py:507
+#: auths/EDirectory_enterprise/authenticator.py:414
+#: auths/RegexLdap/authenticator.py:490 auths/SimpleLDAP/authenticator.py:496
 msgid "Ldap user class seems to be incorrect (no user found by that class)"
 msgstr "Ldap用户类似乎不正确（该类没有找到用户）"
 
-#: auths/EDirectory_enterprise/authenticator.py:420
-#: auths/SimpleLDAP/authenticator.py:538
+#: auths/EDirectory_enterprise/authenticator.py:435
+#: auths/SimpleLDAP/authenticator.py:527
 msgid ""
 "Ldap user id attribute seems to be incorrect (no user found by that "
 "attribute)"
 msgstr "Ldap用户标识属性似乎不正确（该属性找不到用户）"
 
-#: auths/EDirectory_enterprise/authenticator.py:441
+#: auths/EDirectory_enterprise/authenticator.py:456
 msgid ""
 "Ldap group attribute seems to be incorrect (no group found by that attribute)"
 msgstr "LDAP 组属性似乎不正确（该属性未找到组）"
 
-#: auths/EDirectory_enterprise/authenticator.py:463
+#: auths/EDirectory_enterprise/authenticator.py:478
 msgid ""
 "Ldap user class or user id attr is probably wrong (Ldap is an eDirectory?)"
 msgstr "Ldap用户类或用户ID attr可能是错误的（Ldap是eDirectory？）"
@@ -2002,23 +2009,23 @@ msgstr "NAS 标识符"
 msgid "NAS Identifier for Radius Server"
 msgstr "Radius 服务器的 NAS 标识符"
 
-#: auths/Radius/authenticator.py:99
+#: auths/Radius/authenticator.py:100
 msgid "App Prefix for Class Attributes"
 msgstr "类属性的应用程序前缀"
 
-#: auths/Radius/authenticator.py:102
+#: auths/Radius/authenticator.py:103
 msgid "Application prefix for filtering groups from \"Class\" attribute"
 msgstr "用于从“类”属性过滤组的应用程序前缀"
 
-#: auths/Radius/authenticator.py:108
+#: auths/Radius/authenticator.py:110
 msgid "Global group"
 msgstr "全球组"
 
-#: auths/Radius/authenticator.py:111
+#: auths/Radius/authenticator.py:113
 msgid "If set, this value will be added as group for all radius users"
 msgstr "如果设置，此值将作为所有半径用户的组添加"
 
-#: auths/Radius/authenticator.py:220
+#: auths/Radius/authenticator.py:224
 msgid "Connection to Radius server failed"
 msgstr "连接到 Radius 服务器失败"
 
@@ -2446,29 +2453,29 @@ msgstr "简单的LDAP"
 msgid "Simple LDAP authenticator"
 msgstr "简单的 LDAP 验证器"
 
-#: auths/SimpleLDAP/authenticator.py:522
+#: auths/SimpleLDAP/authenticator.py:511
 msgid "Ldap group class seems to be incorrect (no group found by that class)"
 msgstr "Ldap组类似乎不正确（该类没有找到组）"
 
-#: auths/SimpleLDAP/authenticator.py:555
+#: auths/SimpleLDAP/authenticator.py:544
 msgid ""
 "Ldap group id attribute seems to be incorrect (no group found by that "
 "attribute)"
 msgstr "Ldap组id属性似乎不正确（该属性找不到任何组）"
 
-#: auths/SimpleLDAP/authenticator.py:573
+#: auths/SimpleLDAP/authenticator.py:562
 msgid ""
 "Ldap user class or user id attr is probably wrong (can't find any user with "
 "both conditions)"
 msgstr "Ldap用户类或用户ID attr可能是错误的（找不到具有这两个条件的任何用户）"
 
-#: auths/SimpleLDAP/authenticator.py:588
+#: auths/SimpleLDAP/authenticator.py:577
 msgid ""
 "Ldap group class or group id attr is probably wrong (can't find any group "
 "with both conditions)"
 msgstr "Ldap组类或组ID attr可能是错误的（找不到具有这两个条件的任何组）"
 
-#: auths/SimpleLDAP/authenticator.py:597
+#: auths/SimpleLDAP/authenticator.py:586
 msgid "Can't locate any group with the membership attribute specified"
 msgstr "找不到指定了成员资格属性的任何组"
 
@@ -2480,7 +2487,7 @@ msgstr "系统管理员"
 msgid "Forbidden"
 msgstr "被禁止"
 
-#: core/auths/auth.py:293
+#: core/auths/auth.py:296
 msgid "Access tried from an unallowed source"
 msgstr "从不允许的来源尝试访问"
 
@@ -2592,24 +2599,24 @@ msgstr "清理二级缓存"
 msgid "Custom message on launchers"
 msgstr "启动器上的自定义消息"
 
-#: core/managers/publication.py:262
+#: core/managers/publication.py:266
 msgid ""
 "Already publishing. Wait for previous publication to finish and try again"
 msgstr "已经发布。等待以前的出版物完成，然后重试"
 
-#: core/managers/publication.py:266
+#: core/managers/publication.py:270
 msgid "Service is in maintenance mode and new publications are not allowed"
 msgstr "服务处于维护模式，不允许新的出版物"
 
-#: core/managers/publication.py:313
+#: core/managers/publication.py:320
 msgid "Can't cancel non running publication"
 msgstr "无法取消非运行发布"
 
-#: core/managers/publication.py:339
+#: core/managers/publication.py:349
 msgid "Can't unpublish non usable publication"
 msgstr "无法取消发布不可用的出版物"
 
-#: core/managers/publication.py:341
+#: core/managers/publication.py:351
 msgid "Can't unpublish publications with services in process"
 msgstr "无法取消发布正在处理的服务的出版物"
 
@@ -2633,7 +2640,7 @@ msgstr "服务器处于维护模式"
 msgid "Server is restrained"
 msgstr "服务器被限制"
 
-#: core/managers/userservice.py:97
+#: core/managers/userservice.py:94
 msgid "Maximum number of user services reached for this {}"
 msgstr "此 {} 达到的最大用户服务数"
 
@@ -2649,21 +2656,21 @@ msgstr "无法删除或取消{}，导致其状态不允许"
 msgid "The requested service is restrained"
 msgstr "请求的服务被限制"
 
-#: core/managers/userservice.py:942 core/types/errors.py:118
+#: core/managers/userservice.py:943 core/types/errors.py:118
 msgid ""
 "Invalid service. The service is not available at this moment. Please, try "
 "later"
 msgstr "服务无效。目前无法使用该服务。请稍后再试"
 
-#: core/managers/userservice.py:966 core/managers/userservice.py:971
+#: core/managers/userservice.py:967 core/managers/userservice.py:972
 msgid "No suitable transport found"
 msgstr "未找到合适的交通方式"
 
-#: core/managers/userservice.py:979
+#: core/managers/userservice.py:980
 msgid "The requested transport {} is not valid for {}"
 msgstr "请求的传输{}对{}无效"
 
-#: core/managers/userservice.py:1255
+#: core/managers/userservice.py:1256
 msgid "The service is not accessible from this device"
 msgstr "无法从此设备访问该服务"
 
@@ -2675,11 +2682,11 @@ msgstr "忽略重复消息的秒数"
 msgid "Base Notifier"
 msgstr "基本通知程序"
 
-#: core/mfas/mfa.py:124 mfas/SMS/mfa.py:238
+#: core/mfas/mfa.py:124 mfas/SMS/mfa.py:239
 msgid "Allow user login"
 msgstr "允许用户登录"
 
-#: core/mfas/mfa.py:125 mfas/SMS/mfa.py:239
+#: core/mfas/mfa.py:125 mfas/SMS/mfa.py:240
 msgid "Deny user login"
 msgstr "拒绝用户登录"
 
@@ -2695,7 +2702,7 @@ msgstr "如果 IP 在网络列表中，则拒绝用户登录"
 msgid "Base MFA"
 msgstr "基础 MFA"
 
-#: core/mfas/mfa.py:374
+#: core/mfas/mfa.py:380
 msgid "Invalid MFA code"
 msgstr "无效的 MFA 代码"
 
@@ -2703,7 +2710,7 @@ msgstr "无效的 MFA 代码"
 msgid "No check method provided."
 msgstr "没有提供检查方法。"
 
-#: core/module.py:320
+#: core/module.py:323
 msgid "No connection checking method is implemented."
 msgstr "没有实现连接检查方法。"
 
@@ -2751,35 +2758,42 @@ msgstr "基础机器"
 msgid "Base machine for this service"
 msgstr "这项服务的基础机器"
 
-#: core/services/generics/fixed/service.py:80
+#: core/services/generics/fixed/service.py:84
 #: services/PhysicalMachines/service_multi.py:61
 msgid "Service Token"
 msgstr "服务令牌"
 
-#: core/services/generics/fixed/service.py:83
+#: core/services/generics/fixed/service.py:87
 #: services/PhysicalMachines/service_multi.py:64
 msgid ""
 "Service token that will be used by actors to communicate with service. Leave "
 "empty for persistent assignation."
 msgstr "参与者将用于与服务进行通信的服务令牌。留空以进行永久分配。"
 
-#: core/services/generics/fixed/service.py:91
-#: services/Proxmox/service_fixed.py:90
+#: core/services/generics/fixed/service.py:95
 #: services/Vmware_enterprise/service_fixed.py:79
 msgid "Machines"
 msgstr "机"
 
-#: core/services/generics/fixed/service.py:93
+#: core/services/generics/fixed/service.py:97
 #: services/Vmware_enterprise/service_fixed.py:81
 msgid "Machines for this service"
 msgstr "这项服务的机器"
 
-#: core/services/generics/fixed/service.py:100
+#: core/services/generics/fixed/service.py:105
+msgid "Randomize machine assignation"
+msgstr "随机分配机器"
+
+#: core/services/generics/fixed/service.py:108
+msgid "If active, UDS will assign machines in a random way, instead of linear"
+msgstr "如果激活，UDS 将以随机方式分配机器，而不是线性分配"
+
+#: core/services/generics/fixed/service.py:116
 msgid "Use snapshots"
 msgstr "使用快照"
 
-#: core/services/generics/fixed/service.py:104
-#: core/services/generics/fixed/service.py:116
+#: core/services/generics/fixed/service.py:120
+#: core/services/generics/fixed/service.py:131
 msgid ""
 "If active, UDS will try to create an snapshot (if one already does not "
 "exists) before accessing a machine, and restore it after usage."
@@ -2787,32 +2801,24 @@ msgstr ""
 "如果处于活动状态，UDS 将在访问计算机之前尝试创建快照（如果快照不存在），并在"
 "使用后将其恢复。"
 
-#: core/services/generics/fixed/service.py:112
+#: core/services/generics/fixed/service.py:127
 msgid "Snapshot type"
 msgstr "快照类型"
 
-#: core/services/generics/fixed/service.py:120
+#: core/services/generics/fixed/service.py:135
 msgid "No snapshot"
 msgstr "无快照"
 
-#: core/services/generics/fixed/service.py:121
+#: core/services/generics/fixed/service.py:136
 msgid "Recover snapshot and stop machine"
 msgstr "恢复快照并停止机器"
 
-#: core/services/generics/fixed/service.py:122
+#: core/services/generics/fixed/service.py:137
 msgid "Recover snapshot and start machine"
 msgstr "恢复快照并启动机器"
 
-#: core/services/generics/fixed/service.py:128
-msgid "Randomize machine assignation"
-msgstr "随机分配机器"
-
-#: core/services/generics/fixed/service.py:131
-msgid "If active, UDS will assign machines in a random way, instead of linear"
-msgstr "如果激活，UDS 将以随机方式分配机器，而不是线性分配"
-
-#: core/services/generics/fixed/service.py:148
-#: services/Azure_enterprise/service_fixed.py:120
+#: core/services/generics/fixed/service.py:150
+#: services/Azure_enterprise/service_fixed.py:121
 #: services/HyperV_enterprise/service_fixed.py:91
 #: services/NutanixPrism_enterprise/service_fixed.py:121
 #: services/Nutanix_enterprise/service_fixed.py:93
@@ -3050,18 +3056,18 @@ msgstr "机"
 msgid "Config"
 msgstr "配置"
 
-#: core/util/config.py:398
+#: core/util/config.py:402
 msgid "Session expire time in hours after publishing"
 msgstr "会话在发布后的过期时间（以小时为单位）"
 
-#: core/util/config.py:406
+#: core/util/config.py:410
 msgid ""
 "Delay between cache checks. Reducing this number will increase cache "
 "generation speed but also will load service providers"
 msgstr ""
 "缓存检查之间的延迟。减少此数量将提高缓存生成速度，但也会增加服务提供商的负载"
 
-#: core/util/config.py:415
+#: core/util/config.py:419
 msgid ""
 "Delayed task number of threads PER SERVER, with higher number of threads, "
 "deployed task will complete sooner, but it will give more load to overall "
@@ -3070,7 +3076,7 @@ msgstr ""
 "每个服务器的延迟任务线程数，线程数越高，部署的任务将更快完成，但会给整个系统"
 "带来更多负载"
 
-#: core/util/config.py:424
+#: core/util/config.py:428
 msgid ""
 "Number of scheduler threads running PER SERVER, with higher number of "
 "threads, deployed task will complete sooner, but it will give more load to "
@@ -3079,7 +3085,7 @@ msgstr ""
 "每个服务器运行的调度程序线程数，线程数越高，部署的任务将更快完成，但会给整个"
 "系统带来更多负载"
 
-#: core/util/config.py:433
+#: core/util/config.py:437
 msgid ""
 "Waiting time before removing \"errored\" and \"removed\" publications, "
 "cache, and user assigned machines. Time is in seconds"
@@ -3087,28 +3093,28 @@ msgstr ""
 "删除“错误的”和“已删除的”出版物、缓存和用户分配的计算机之前的等待时间。时间以"
 "秒为单位"
 
-#: core/util/config.py:441
+#: core/util/config.py:445
 msgid "Time to maintaing \"info state\" items before removing it, in seconds"
 msgstr "在删除“信息状态”项目之前维护该项目的时间（以秒为单位）"
 
-#: core/util/config.py:448
+#: core/util/config.py:452
 msgid "Number of services to initiate removal per run of service cleaner"
 msgstr "每次运行服务清理程序启动删除的服务数量"
 
-#: core/util/config.py:455
+#: core/util/config.py:459
 msgid ""
 "Removal Check time for cache, publications and deployed services, in seconds"
 msgstr "删除检查缓存、发布和已部署服务的时间（以秒为单位）"
 
-#: core/util/config.py:458
+#: core/util/config.py:462
 msgid "Superuser username"
 msgstr "超级用户用户名"
 
-#: core/util/config.py:462
+#: core/util/config.py:466
 msgid "Superuser password"
 msgstr "超级用户密码"
 
-#: core/util/config.py:469
+#: core/util/config.py:473
 msgid ""
 "Allow root user to access using web interface.\n"
 " Once configured one authenticator,\n"
@@ -3116,123 +3122,123 @@ msgid ""
 msgstr ""
 "允许 root 用户使用 Web 界面进行访问。一旦配置了一个身份验证器，建议禁用此选项"
 
-#: core/util/config.py:477
+#: core/util/config.py:481
 msgid "Enable enhanced security modules"
 msgstr "启用增强的安全模块"
 
-#: core/util/config.py:485
+#: core/util/config.py:489
 msgid ""
 "Enforced maximum security mode (Zero-Trust Mode). No password redirection "
 "will be allowed if this mode is set."
 msgstr "强制最大安全模式（零信任模式）。如果设置此模式，则不允许密码重定向。"
 
-#: core/util/config.py:497
+#: core/util/config.py:501
 msgid ""
 "How long should the user service be unused before os manager considers it "
 "for removal"
 msgstr "用户服务应该闲置多长时间，操作系统管理器才会考虑将其删除"
 
-#: core/util/config.py:503
+#: core/util/config.py:507
 msgid "Time betwen checks of unused user services by os managers"
 msgstr "操作系统管理器检查未使用的用户服务的时间间隔"
 
-#: core/util/config.py:512
+#: core/util/config.py:516
 msgid "Max logins before blocking an account for a while"
 msgstr "暂时阻止帐户之前的最大登录次数"
 
-#: core/util/config.py:519
+#: core/util/config.py:523
 msgid "Block time in second for an user that has too many login failures"
 msgstr "登录失败次数过多的用户的阻止时间（以秒为单位）"
 
-#: core/util/config.py:525
+#: core/util/config.py:529
 msgid "Block ip on login failure"
 msgstr "登录失败时阻止 ip"
 
-#: core/util/config.py:534
+#: core/util/config.py:538
 msgid "Do autorun of service if just one service"
 msgstr "如果只有一项服务，则自动运行服务"
 
-#: core/util/config.py:541
+#: core/util/config.py:545
 msgid "Redirect HTTP to HTTPS on connection to UDS"
 msgstr "连接到 UDS 时将 HTTP 重定向到 HTTPS"
 
-#: core/util/config.py:547
+#: core/util/config.py:551
 msgid "Redirects login page to the tag used when logged in if active."
 msgstr "如果处于活动状态，则将登录页面重定向到登录时使用的标签。"
 
-#: core/util/config.py:557
+#: core/util/config.py:561
 msgid ""
 "Max time needed to get a service \"fully functional\" before it's considered "
 "\"failed\" and removed"
 msgstr "在服务被视为“失败”并删除之前获得“功能齐全”所需的最长时间"
 
-#: core/util/config.py:564
+#: core/util/config.py:568
 msgid ""
 "Max time needed to get a service \"fully removed\" before it's considered "
 "\"failed\" and purged"
 msgstr "在服务被视为“失败”并清除之前“完全删除”服务所需的最长时间"
 
-#: core/util/config.py:571
+#: core/util/config.py:575
 msgid "Maximum logs per every log-capable administration element"
 msgstr "每个具有日志功能的管理元素的最大日志数"
 
-#: core/util/config.py:578
+#: core/util/config.py:582
 msgid ""
 "Maximum logs entries for general UDS logs (0 = unlimited, use with care)"
 msgstr "通用 UDS 日志的最大日志条目数（0 = 无限制，谨慎使用）"
 
-#: core/util/config.py:586
+#: core/util/config.py:590
 msgid ""
 "Time to restrain a user service in case it gives some errors at some point"
 msgstr "是时候限制用户服务，以防它在某个时候出现一些错误"
 
-#: core/util/config.py:593
+#: core/util/config.py:597
 msgid ""
 "Number of errors that must occurr in \"restrainTime\" to restrain an user "
 "service"
 msgstr "在“restrainTime”内必须发生的错误数以限制用户服务"
 
-#: core/util/config.py:601
+#: core/util/config.py:605
 msgid "Statistics duration, in days"
 msgstr "统计持续时间，以天为单位"
 
-#: core/util/config.py:608
+#: core/util/config.py:612
 msgid ""
 "Frequency of stats collection in seconds. Default is 4 hours (14400 seconds)"
 msgstr "以秒为单位的统计数据收集频率。默认为 4 小时（14400 秒）"
 
-#: core/util/config.py:615
+#: core/util/config.py:619
 msgid "Maximum number of time to accumulate on one run. Default is 7 (1 week)"
 msgstr "一次运行累积的最大时间数。默认为 7（1 周）"
 
-#: core/util/config.py:623
+#: core/util/config.py:627
 msgid "If disallow login showing authenticatiors"
 msgstr "如果不允许登录显示身份验证器"
 
-#: core/util/config.py:631
+#: core/util/config.py:635
 msgid ""
 "Notify user of existence of a new version of a service on new publication"
 msgstr "通知用户新出版物上存在新版本的服务"
 
-#: core/util/config.py:638
+#: core/util/config.py:642
 msgid "Networks or hosts considered \"trusted\" for UDS (Tunnels, etc...)"
 msgstr "被视为 UDS“可信”的网络或主机（隧道等...）"
 
-#: core/util/config.py:645
+#: core/util/config.py:649
 msgid "IPs or networks allowed to forward requests (like proxies)"
 msgstr "允许转发请求的 IP 或网络（如代理）"
 
-#: core/util/config.py:653
+#: core/util/config.py:657
 msgid ""
 "Allow clients to notify their own ip (if set), or use always the request "
 "extracted IP"
 msgstr "允许客户端通知自己的 IP（如果设置），或始终使用请求提取的 IP"
 
-#: core/util/config.py:661
+#: core/util/config.py:665
 msgid "If there is a proxy in front of us (i.e. HAProxy, or any NLB)"
 msgstr "如果我们前面有一个代理（即HAProxy，或任何NLB）"
 
-#: core/util/config.py:670
+#: core/util/config.py:674
 msgid ""
 "If we use new logout mechanics for osmanagers, where only when the logged in "
 "users reaches 0, it is considered \"logged out\""
@@ -3240,79 +3246,79 @@ msgstr ""
 "如果我们为 osmanagers 使用新的注销机制，只有当登录用户达到 0 时，才被视为“注"
 "销”"
 
-#: core/util/config.py:679
+#: core/util/config.py:683
 msgid "Enable/Disable Actor attack detection ip blocking"
 msgstr "启用/禁用 Actor 攻击检测 ip 阻止"
 
-#: core/util/config.py:687
+#: core/util/config.py:691
 msgid "Max session length for Admin"
 msgstr "管理员的最大会话长度"
 
-#: core/util/config.py:693
+#: core/util/config.py:697
 msgid "Max session length for User"
 msgstr "用户的最大会话长度"
 
-#: core/util/config.py:700
+#: core/util/config.py:704
 msgid "Page reload Time (legacy)"
 msgstr "页面重新加载时间（旧版）"
 
-#: core/util/config.py:708
+#: core/util/config.py:712
 msgid "Custom message for error when limiting by calendar"
 msgstr "受日历限制时出现错误的自定义消息"
 
-#: core/util/config.py:716
+#: core/util/config.py:720
 msgid "If convert username to lowercase on logins"
 msgstr "如果在登录时将用户名转换为小写"
 
-#: core/util/config.py:724
+#: core/util/config.py:728
 msgid "Global UDS ID (common for all servers on the same cluster)"
 msgstr "全局 UDS ID（同一集群上的所有服务器通用）"
 
-#: core/util/config.py:732
+#: core/util/config.py:736
 msgid "Site display name"
 msgstr "站点显示名称"
 
-#: core/util/config.py:738
+#: core/util/config.py:742
 msgid "Site copyright info"
 msgstr "网站版权信息"
 
-#: core/util/config.py:744
+#: core/util/config.py:748
 msgid "Site copyright link"
 msgstr "网站版权链接"
 
-#: core/util/config.py:747
+#: core/util/config.py:751
 msgid "Top navbar logo name"
 msgstr "顶部导航栏徽标名称"
 
-#: core/util/config.py:753
+#: core/util/config.py:757
 msgid "Custom CSS styles applied to the user accesible site"
 msgstr "应用于用户可访问站点的自定义 CSS 样式"
 
-#: core/util/config.py:759
+#: core/util/config.py:763
 msgid "Site information"
 msgstr "站点信息"
 
-#: core/util/config.py:765
+#: core/util/config.py:769
 msgid "Show Filter box for user services on Top or bottom of the page"
 msgstr "在页面顶部或底部显示用户服务的过滤框"
 
-#: core/util/config.py:771
+#: core/util/config.py:775
 msgid "Minimal User Services needed to show filter"
 msgstr "显示过滤器所需的最少用户服务"
 
-#: core/util/config.py:777
+#: core/util/config.py:781
 msgid "Enable experimental features. USE WITH CAUTION!!"
 msgstr "启用实验性功能。谨慎使用！"
 
-#: core/util/config.py:785
+#: core/util/config.py:789
 msgid "Number of items per page in admin tables"
 msgstr "管理表中每页的项目数"
 
-#: core/util/config.py:791
+#: core/util/config.py:795
 msgid "List of trusted hosts/networks allowed to access the admin interface"
 msgstr "允许访问管理界面的受信任主机/网络列表"
 
-#: core/util/config.py:797
+#: core/util/config.py:801
 msgid "Enable VNC menu for user services"
 msgstr "为用户服务启用VNC菜单"
 
@@ -3367,7 +3373,7 @@ msgid "Base name for clones from this service"
 msgstr "来自此服务的克隆的基本名称"
 
 #: core/util/fields.py:255 services/OpenNebula/service.py:129
-#: services/VCloud_enterprise/service.py:110
+#: services/VCloud_enterprise/service.py:113
 msgid "Name Length"
 msgstr "名称长度"
 
@@ -3403,9 +3409,10 @@ msgstr "允许的最大服务数（0表示无限制）"
 msgid "Remove found duplicates"
 msgstr "删除找到的重复项"
 
-#: core/util/fields.py:332 services/VCloud_enterprise/service.py:63
-msgid "If active, found duplicates vApps for this service will be removed"
-msgstr "如果处于活动状态，则会删除此服务的重复vApp"
+#: core/util/fields.py:332
+#| msgid "If active, found duplicates vApps for this service will be removed"
+msgid "If active, found duplicates VApps for this service will be removed"
+msgstr "如果处于活动状态，则将删除此服务的重复 VApp"
 
 #: core/util/fields.py:344
 msgid "Try SOFT Shutdown first"
@@ -3553,122 +3560,122 @@ msgstr "无法联系LDAP服务器"
 msgid "{} days {:d}:{:02d}:{:02d}"
 msgstr "{}天{：d}：{：02d}：{：02d}"
 
-#: core/util/validators.py:67
+#: core/util/validators.py:73
 msgid "Numeric"
 msgstr "数字"
 
-#: core/util/validators.py:73
+#: core/util/validators.py:79
 #, python-brace-format
 msgid "{0} must be greater than or equal to {1}"
 msgstr "{0}必须大于或等于{1}"
 
-#: core/util/validators.py:78
+#: core/util/validators.py:84
 #, python-brace-format
 msgid "{0} must be lower than or equal to {1}"
 msgstr "{0}必须小于或等于{1}"
 
-#: core/util/validators.py:84
+#: core/util/validators.py:90
 #, python-brace-format
 msgid "{0} contains invalid characters"
 msgstr "{0}包含无效字符"
 
-#: core/util/validators.py:95
+#: core/util/validators.py:101
 msgid "{} is not a valid hostname: maximum host name length exceeded."
 msgstr "{} 不是有效的主机名：超出最大主机名长度。"
 
-#: core/util/validators.py:101
+#: core/util/validators.py:107
 msgid "{} is not a valid hostname: (domains not allowed)"
 msgstr "{} 不是有效的主机名：（不允许使用域）"
 
-#: core/util/validators.py:108
+#: core/util/validators.py:114
 msgid "{} is not a valid hostname: (invalid characters)"
 msgstr "{} 不是有效的主机名：（无效字符）"
 
-#: core/util/validators.py:122
+#: core/util/validators.py:128
 msgid "{} is not a valid URL: exceeds maximum length."
 msgstr "{} 不是有效的 URL：超过最大长度。"
 
-#: core/util/validators.py:145
+#: core/util/validators.py:160
 msgid "{} is not a valid IPv4 address"
 msgstr "{} 不是有效的 IPv4 地址"
 
-#: core/util/validators.py:162
+#: core/util/validators.py:185
 msgid "{} is not a valid IPv6 address"
 msgstr "{} 不是有效的 IPv6 地址"
 
-#: core/util/validators.py:179
+#: core/util/validators.py:210
 msgid "{} is not a valid IPv4 or IPv6 address"
 msgstr "{} 不是有效的 IPv4 或 IPv6 地址"
 
-#: core/util/validators.py:208
+#: core/util/validators.py:241
 msgid "{} exceeds maximum path length."
 msgstr "{} 超过最大路径长度。"
 
-#: core/util/validators.py:215
+#: core/util/validators.py:248
 msgid "{} is not a valid windows path"
 msgstr "{} 不是有效的 Windows 路径"
 
-#: core/util/validators.py:218
+#: core/util/validators.py:251
 msgid "{} is not a valid unix path"
 msgstr "{} 不是有效的 Unix 路径"
 
-#: core/util/validators.py:221
+#: core/util/validators.py:254
 msgid "{} is not a valid path"
 msgstr "{} 不是有效路径"
 
-#: core/util/validators.py:284
+#: core/util/validators.py:325
 msgid "{} is not a valid host:port pair"
 msgstr "{} 不是有效的主机：端口对"
 
-#: core/util/validators.py:313
+#: core/util/validators.py:371
 msgid "{} is not a valid MAC address"
 msgstr "{} 不是有效的 MAC 地址"
 
-#: core/util/validators.py:331
+#: core/util/validators.py:398
 msgid "{} is not a valid MAC range"
 msgstr "{} 不是有效的 MAC 范围"
 
-#: core/util/validators.py:344
+#: core/util/validators.py:411
 msgid "Email address is too long"
 msgstr "电子邮件地址太长"
 
-#: core/util/validators.py:347
+#: core/util/validators.py:414
 msgid "Email address is not valid"
 msgstr "电子邮件地址无效"
 
-#: core/util/validators.py:367
+#: core/util/validators.py:433
 msgid "The basename is not a valid for a hostname"
 msgstr "基本名称对于主机名无效"
 
-#: core/util/validators.py:370
+#: core/util/validators.py:436
 msgid "The length of basename plus length must be greater than 0"
 msgstr "基本名称的长度加上长度必须大于0"
 
-#: core/util/validators.py:373
+#: core/util/validators.py:439
 msgid "The length of basename plus length must not be greater than 15"
 msgstr "basename加长度的长度不得大于15"
 
-#: core/util/validators.py:376
+#: core/util/validators.py:442
 msgid "The machine name can't be only numbers"
 msgstr "机器名称不能只是数字"
 
-#: core/util/validators.py:399
+#: core/util/validators.py:465
 msgid "Invalid JSON data"
 msgstr "JSON 数据无效"
 
-#: core/util/validators.py:416 core/util/validators.py:454
+#: core/util/validators.py:482 core/util/validators.py:520
 msgid "Certificate is empty"
 msgstr "证书为空"
 
-#: core/util/validators.py:418 core/util/validators.py:462
+#: core/util/validators.py:484 core/util/validators.py:528
 msgid "Invalid certificate"
 msgstr "证书无效"
 
-#: core/util/validators.py:436
+#: core/util/validators.py:502
 msgid "Private key is empty"
 msgstr "私钥为空"
 
-#: core/util/validators.py:438
+#: core/util/validators.py:504
 msgid "Invalid private key"
 msgstr "私钥无效"
 
@@ -3851,35 +3858,47 @@ msgstr ""
 "如果未选中，则需要进行身份验证步骤以了解此用户是否必须输入 OTP。如果选中，所"
 "有用户都必须输入 OTP，因此跳过验证步骤。"
 
-#: mfas/Radius/mfa.py:132
+#: mfas/Radius/mfa.py:115
+msgid "Send only username (without domain) to radius server"
+msgstr "仅发送用户名（不带域名）到 radius 服务器"
+
+#: mfas/Radius/mfa.py:119
+msgid ""
+"If unchecked, username will be sent as is to radius server. \n"
+"If checked, domain part will be removed from username before sending it to "
+"radius server."
+msgstr "如果不选中，用户名将按原样发送到 radius 服务器。如果选中，将在将用户名发送到 "
+"radius 服务器之前删除其域部分。"
+
+#: mfas/Radius/mfa.py:144
 msgid "OTP Code"
 msgstr "一次性密码"
 
-#: mfas/Radius/mfa.py:140
+#: mfas/Radius/mfa.py:152
 msgid "Please enter OTP"
 msgstr "请输入一次性密码"
 
-#: mfas/Radius/mfa.py:173 mfas/Radius/mfa.py:244
+#: mfas/Radius/mfa.py:192 mfas/Radius/mfa.py:269
 msgid "Radius OTP connection error"
 msgstr "半径 OTP 连接错误"
 
-#: mfas/Radius/mfa.py:226
+#: mfas/Radius/mfa.py:251
 msgid "Invalid OTP code"
 msgstr "无效的 OTP 代码"
 
-#: mfas/SMS/mfa.py:97
+#: mfas/SMS/mfa.py:98
 msgid "SMS via HTTP"
 msgstr "通过 HTTP 发送短信"
 
-#: mfas/SMS/mfa.py:99
+#: mfas/SMS/mfa.py:100
 msgid "Simple SMS sending MFA using HTTP/HTTPS"
 msgstr "使用 HTTP/HTTPS 发送 MFA 的简单短信"
 
-#: mfas/SMS/mfa.py:104
+#: mfas/SMS/mfa.py:105
 msgid "URL pattern for SMS sending"
 msgstr "SMS 发送的 URL 模式"
 
-#: mfas/SMS/mfa.py:107
+#: mfas/SMS/mfa.py:108
 msgid ""
 "URL pattern for SMS sending. It can contain the following variables:\n"
 "* {code} - the code to send\n"
@@ -3891,34 +3910,34 @@ msgstr ""
 "{phone/+phone} - 电话号码 * {username} - 用户名 * {justUsername} - 不带 "
 "@.... 的用户名"
 
-#: mfas/SMS/mfa.py:115 mfas/SMS/mfa.py:127 mfas/SMS/mfa.py:137
-#: mfas/SMS/mfa.py:156 mfas/SMS/mfa.py:174 mfas/SMS/mfa.py:185
+#: mfas/SMS/mfa.py:116 mfas/SMS/mfa.py:128 mfas/SMS/mfa.py:138
+#: mfas/SMS/mfa.py:157 mfas/SMS/mfa.py:175 mfas/SMS/mfa.py:186
 msgid "HTTP Server"
 msgstr "HTTP 服务器"
 
-#: mfas/SMS/mfa.py:120
+#: mfas/SMS/mfa.py:121
 msgid "Ignore certificate errors"
 msgstr "忽略证书错误"
 
-#: mfas/SMS/mfa.py:124
+#: mfas/SMS/mfa.py:125
 msgid ""
 "If checked, the server certificate will be ignored. This is useful if the "
 "server uses a self-signed certificate."
 msgstr "如果选中，服务器证书将被忽略。如果服务器使用自签名证书，这很有用。"
 
-#: mfas/SMS/mfa.py:132
+#: mfas/SMS/mfa.py:133
 msgid "SMS sending method"
 msgstr "短信发送方式"
 
-#: mfas/SMS/mfa.py:134 mfas/SMS/mfa.py:191
+#: mfas/SMS/mfa.py:135 mfas/SMS/mfa.py:192
 msgid "Method for sending SMS"
 msgstr "发送短信的方法"
 
-#: mfas/SMS/mfa.py:144
+#: mfas/SMS/mfa.py:145
 msgid "Headers for SMS requests"
 msgstr "SMS 请求的标头"
 
-#: mfas/SMS/mfa.py:147
+#: mfas/SMS/mfa.py:148
 msgid ""
 "Headers for SMS requests. It can contain the following variables:\n"
 "* {code} - the code to send\n"
@@ -3931,11 +3950,11 @@ msgstr ""
 "+phone} - 电话号码 * {username} - 用户名 * {justUsername} - 不带 @.... 的用户"
 "名“标题：值”的形式。 （不带引号）"
 
-#: mfas/SMS/mfa.py:163
+#: mfas/SMS/mfa.py:164
 msgid "Parameters for SMS POST/PUT sending"
 msgstr "SMS POST/PUT 发送参数"
 
-#: mfas/SMS/mfa.py:166
+#: mfas/SMS/mfa.py:167
 msgid ""
 "Parameters for SMS sending via POST/PUT. It can contain the following "
 "variables:\n"
@@ -3948,90 +3967,90 @@ msgstr ""
 "* {phone/+phone} - 电话号码 * {username} - 用户名 * {justUsername} - 不带 "
 "@...."
 
-#: mfas/SMS/mfa.py:179
+#: mfas/SMS/mfa.py:180
 msgid "SMS encoding"
 msgstr "短信编码"
 
-#: mfas/SMS/mfa.py:182
+#: mfas/SMS/mfa.py:183
 msgid "Encoding for SMS"
 msgstr "短信编码"
 
-#: mfas/SMS/mfa.py:189
+#: mfas/SMS/mfa.py:190
 msgid "SMS authentication method"
 msgstr "短信认证方式"
 
-#: mfas/SMS/mfa.py:195
+#: mfas/SMS/mfa.py:196
 msgid "HTTP Basic Auth"
 msgstr "HTTP 基本身份验证"
 
-#: mfas/SMS/mfa.py:196
+#: mfas/SMS/mfa.py:197
 msgid "HTTP Digest Auth"
 msgstr "HTTP摘要认证"
 
-#: mfas/SMS/mfa.py:198 mfas/SMS/mfa.py:208 mfas/SMS/mfa.py:218
+#: mfas/SMS/mfa.py:199 mfas/SMS/mfa.py:209 mfas/SMS/mfa.py:219
 msgid "HTTP Authentication"
 msgstr "HTTP 身份验证"
 
-#: mfas/SMS/mfa.py:204
+#: mfas/SMS/mfa.py:205
 msgid "SMS authentication user or token"
 msgstr "短信认证用户或令牌"
 
-#: mfas/SMS/mfa.py:206
+#: mfas/SMS/mfa.py:207
 msgid "User or token for SMS authentication"
 msgstr "用于 SMS 身份验证的用户或令牌"
 
-#: mfas/SMS/mfa.py:214
+#: mfas/SMS/mfa.py:215
 msgid "SMS authentication password"
 msgstr "短信认证密码"
 
-#: mfas/SMS/mfa.py:216
+#: mfas/SMS/mfa.py:217
 msgid "Password for SMS authentication"
 msgstr "短信验证密码"
 
-#: mfas/SMS/mfa.py:223
+#: mfas/SMS/mfa.py:224
 msgid "SMS response OK regex"
 msgstr "短信回复 OK 正则表达式"
 
-#: mfas/SMS/mfa.py:225
+#: mfas/SMS/mfa.py:226
 msgid ""
 "Regex for SMS response OK. If empty, the response is considered OK if status "
 "code is 200."
 msgstr ""
 "SMS 响应的正则表达式 OK。如果为空，则如果状态码为 200，则认为响应正常。"
 
-#: mfas/SMS/mfa.py:227
+#: mfas/SMS/mfa.py:228
 msgid "HTTP Response"
 msgstr "HTTP 响应"
 
-#: mfas/SMS/mfa.py:232
+#: mfas/SMS/mfa.py:233
 msgid "SMS response error action"
 msgstr "短信响应错误动作"
 
-#: mfas/SMS/mfa.py:235
+#: mfas/SMS/mfa.py:236
 msgid "Action for SMS response error"
 msgstr "SMS 响应错误的操作"
 
-#: mfas/SMS/mfa.py:240
+#: mfas/SMS/mfa.py:241
 msgid "Allow user to login if its IP is in the networks list"
 msgstr "如果用户的 IP 在网络列表中，则允许用户登录"
 
-#: mfas/SMS/mfa.py:241
+#: mfas/SMS/mfa.py:242
 msgid "Deny user to login if its IP is in the networks list"
 msgstr "如果 IP 在网络列表中，则拒绝用户登录"
 
-#: mfas/SMS/mfa.py:327
+#: mfas/SMS/mfa.py:335
 msgid "SMS sending failed"
 msgstr "短信发送失败"
 
-#: mfas/SMS/mfa.py:343
+#: mfas/SMS/mfa.py:351
 msgid "SMS response error"
 msgstr "短信回复错误"
 
-#: mfas/SMS/mfa.py:424 web/views/main.py:330
+#: mfas/SMS/mfa.py:434 web/views/mfa.py:214
 msgid "MFA Code"
 msgstr "MFA 代码"
 
-#: mfas/SMS/mfa.py:427
+#: mfas/SMS/mfa.py:437
 msgid "Check your phone. You will receive an SMS with the verification code"
 msgstr "检查你的手机。您将收到一条带有验证码的短信"
 
@@ -4079,15 +4098,15 @@ msgstr "当前码前后有效码数"
 msgid "Authentication Code"
 msgstr "验证码"
 
-#: mfas/TOTP/mfa.py:140
+#: mfas/TOTP/mfa.py:149
 msgid "Enter your authentication code"
 msgstr "输入您的验证码"
 
-#: mfas/TOTP/mfa.py:188
+#: mfas/TOTP/mfa.py:197
 msgid "Code is already used. Wait a minute and try again."
 msgstr "代码已被使用。请稍等，然后重试。"
 
-#: mfas/TOTP/mfa.py:197
+#: mfas/TOTP/mfa.py:206
 msgid "Invalid code"
 msgstr "无效的代码"
 
@@ -4365,21 +4384,21 @@ msgstr "必须提供一个帐户才能将机器添加到域！"
 msgid "Must provide a password for the account!"
 msgstr "必须提供帐户密码！"
 
-#: osmanagers/LinuxOsManager/linux_osmanager.py:51
+#: osmanagers/LinuxOsManager/linux_osmanager.py:50
 msgid "Linux OS Manager"
 msgstr "Linux OS Manager"
 
-#: osmanagers/LinuxOsManager/linux_osmanager.py:53
+#: osmanagers/LinuxOsManager/linux_osmanager.py:52
 msgid "Os Manager to control Linux virtual machines"
 msgstr "Os Manager用于控制Linux虚拟机"
 
-#: osmanagers/LinuxOsManager/linux_osmanager.py:61
+#: osmanagers/LinuxOsManager/linux_osmanager.py:60
 #: osmanagers/Test/testing_osmanager.py:75
 #: osmanagers/WindowsOsManager/windows.py:40
 msgid "Max.Idle time"
 msgstr "最大闲置时间"
 
-#: osmanagers/LinuxOsManager/linux_osmanager.py:67
+#: osmanagers/LinuxOsManager/linux_osmanager.py:66
 msgid ""
 "Maximum idle time (in seconds) before session is automatically closed to the "
 "user (<= 0 means no max idle time)."
@@ -4387,12 +4406,12 @@ msgstr ""
 "会话自动关闭给用户之前的最大空闲时间（以秒为单位）（&lt;= 0表示没有最大空闲时"
 "间）。"
 
-#: osmanagers/LinuxOsManager/linux_osmanager.py:73
+#: osmanagers/LinuxOsManager/linux_osmanager.py:72
 #: osmanagers/WindowsOsManager/windows.py:52
 msgid "Calendar logout"
 msgstr "日历登出"
 
-#: osmanagers/LinuxOsManager/linux_osmanager.py:75
+#: osmanagers/LinuxOsManager/linux_osmanager.py:74
 #: osmanagers/WindowsOsManager/windows.py:54
 msgid ""
 "If checked, UDS will try to logout user when the calendar for his current "
@@ -4460,20 +4479,20 @@ msgstr ""
 "会话自动关闭给用户之前的最大空闲时间（以秒为单位）（&lt;= 0表示没有最大空闲时"
 "间）"
 
-#: osmanagers/WindowsOsManager/__init__.py:52
+#: osmanagers/WindowsOsManager/__init__.py:53
 msgid "UDS Actor for windows machines"
 msgstr "适用于Windows机器的UDS Actor"
 
-#: osmanagers/WindowsOsManager/__init__.py:59
+#: osmanagers/WindowsOsManager/__init__.py:60
 msgid ""
 "UDS Actor for Unmanaged windows machines. Used ONLY for static machines."
 msgstr "适用于不受管理的Windows计算机的UDS Actor。仅用于静态机器。"
 
-#: osmanagers/WindowsOsManager/windows.py:31
+#: osmanagers/WindowsOsManager/windows.py:30
 msgid "Windows Basic OS Manager"
 msgstr "Windows Basic OS Manager"
 
-#: osmanagers/WindowsOsManager/windows.py:33
+#: osmanagers/WindowsOsManager/windows.py:32
 msgid "Os Manager to control windows machines without domain."
 msgstr "Os Manager可以控制没有域的Windows机器。"
 
@@ -4814,21 +4833,21 @@ msgstr "游泳池使用一天"
 msgid "Pools usage counters for an specific day"
 msgstr "特定日期的池使用计数器"
 
-#: reports/stats/pools_usage_day.py:111
+#: reports/stats/pools_usage_day.py:114
 msgid "Services by hour"
 msgstr "按小时服务"
 
-#: reports/stats/pools_usage_day.py:114 reports/stats/pools_usage_day.py:147
+#: reports/stats/pools_usage_day.py:117 reports/stats/pools_usage_day.py:150
 #: reports/stats/user_access.py:200 reports/stats/user_access.py:215
 #: templates/uds/reports/stats/pools-usage-day.html:28
 msgid "Hour"
 msgstr "小时"
 
-#: reports/stats/pools_usage_day.py:128
+#: reports/stats/pools_usage_day.py:131
 msgid "Services usage report for a day"
 msgstr "一天的服务使用情况报告"
 
-#: reports/stats/pools_usage_day.py:129
+#: reports/stats/pools_usage_day.py:132
 msgid "Service usage report"
 msgstr "服务使用报告"
 
@@ -4980,7 +4999,7 @@ msgstr "从在 AWS IAM 上为 UDS Enteprise 创建的用户获取 - 密钥"
 
 #: services/AWS_enterprise/provider.py:68
 #: services/Azure_enterprise/provider.py:98
-#: services/Google_enterprise/provider.py:88 services/OpenStack/provider.py:195
+#: services/Google_enterprise/provider.py:99 services/OpenStack/provider.py:195
 msgid ""
 "Proxy used on server connections for HTTPS connections (use PROTOCOL://host:"
 "port, i.e. http://10.10.0.1:8080)"
@@ -4996,20 +5015,20 @@ msgstr "默认区域"
 msgid "Default region to use for connecting to EC2"
 msgstr "用于连接到 EC2 的默认区域"
 
-#: services/AWS_enterprise/service.py:38
+#: services/AWS_enterprise/service.py:39
 msgid "AWS Existing AMI Service"
 msgstr "AWS 现有 AMI 服务"
 
-#: services/AWS_enterprise/service.py:40
+#: services/AWS_enterprise/service.py:41
 msgid "This service provides access to AWS VDI based on an existing owned AMI"
 msgstr "此服务提供对基于现有自有 AMI 的 AWS VDI 的访问"
 
-#: services/AWS_enterprise/service.py:44
+#: services/AWS_enterprise/service.py:45
 #: services/Azure_enterprise/service.py:45
 msgid "Number of desired VMs to keep running waiting for an user"
 msgstr "要继续运行等待用户的所需VM数"
 
-#: services/AWS_enterprise/service.py:46
+#: services/AWS_enterprise/service.py:47
 #: services/Azure_enterprise/service.py:47
 #: services/HyperV_enterprise/service.py:75 services/OpenNebula/service.py:84
 #: services/Proxmox/service_linked.py:95
@@ -5017,15 +5036,15 @@ msgstr "要继续运行等待用户的所需VM数"
 msgid "Number of desired VMs to keep stopped waiting for use"
 msgstr "保持停止等待使用的虚拟机数量"
 
-#: services/AWS_enterprise/service.py:55
+#: services/AWS_enterprise/service.py:58
 msgid "AMI"
 msgstr "AMI"
 
-#: services/AWS_enterprise/service.py:56
+#: services/AWS_enterprise/service.py:59
 msgid "Base AMI for this service"
 msgstr "此服务的基础 AMI"
 
-#: services/AWS_enterprise/service.py:67
+#: services/AWS_enterprise/service.py:70
 #: services/AWS_enterprise/service_fixed.py:80
 #: services/Google_enterprise/service.py:65
 #: services/Google_enterprise/service_fixed.py:80
@@ -5034,37 +5053,37 @@ msgstr "此服务的基础 AMI"
 msgid "Region"
 msgstr "区域"
 
-#: services/AWS_enterprise/service.py:68
+#: services/AWS_enterprise/service.py:71
 msgid "Region for this service"
 msgstr "此服务的区域"
 
-#: services/AWS_enterprise/service.py:79
+#: services/AWS_enterprise/service.py:82
 msgid "Instance type"
 msgstr "实例类型"
 
-#: services/AWS_enterprise/service.py:80
+#: services/AWS_enterprise/service.py:83
 msgid "Type for instances created from the AMI."
 msgstr "键入从 AMI 创建的实例。"
 
-#: services/AWS_enterprise/service.py:87
+#: services/AWS_enterprise/service.py:90
 msgid "Key pair"
 msgstr "密钥对"
 
-#: services/AWS_enterprise/service.py:88
+#: services/AWS_enterprise/service.py:91
 msgid "Key pair to use for this machine"
 msgstr "本机使用的密钥对"
 
-#: services/AWS_enterprise/service.py:99
+#: services/AWS_enterprise/service.py:102
 msgid "VPC"
 msgstr "专有网络"
 
-#: services/AWS_enterprise/service.py:100
+#: services/AWS_enterprise/service.py:103
 msgid "VPC for the instances from this service"
 msgstr "来自此服务的实例的 VPC"
 
-#: services/AWS_enterprise/service.py:102
-#: services/AWS_enterprise/service.py:115
-#: services/AWS_enterprise/service.py:123
+#: services/AWS_enterprise/service.py:105
+#: services/AWS_enterprise/service.py:118
+#: services/AWS_enterprise/service.py:126
 #: services/Azure_enterprise/service.py:97
 #: services/HyperV_enterprise/service.py:102
 #: services/Nutanix_enterprise/service.py:106 services/OpenStack/service.py:154
@@ -5072,19 +5091,19 @@ msgstr "来自此服务的实例的 VPC"
 msgid "Network"
 msgstr "网络"
 
-#: services/AWS_enterprise/service.py:112
+#: services/AWS_enterprise/service.py:115
 msgid "Subnetwork"
 msgstr "子网"
 
-#: services/AWS_enterprise/service.py:113
+#: services/AWS_enterprise/service.py:116
 msgid "Subnetwork for the instances from this service"
 msgstr "来自此服务的实例的子网"
 
-#: services/AWS_enterprise/service.py:120
+#: services/AWS_enterprise/service.py:123
 msgid "Security groups"
 msgstr "安全组"
 
-#: services/AWS_enterprise/service.py:121
+#: services/AWS_enterprise/service.py:124
 msgid "Security groups for the instances from this service"
 msgstr "此服务中实例的安全组"
 
@@ -5103,7 +5122,7 @@ msgid "Service region"
 msgstr "服务区域"
 
 #: services/AWS_enterprise/service_fixed.py:93
-#: services/Azure_enterprise/service_fixed.py:101
+#: services/Azure_enterprise/service_fixed.py:102
 #: services/Google_enterprise/service_fixed.py:93
 #: services/NutanixPrism_enterprise/service_fixed.py:102
 #: services/ScaleComputing_enterprise/service_fixed.py:85
@@ -5111,7 +5130,7 @@ msgid "After logout"
 msgstr "退出后"
 
 #: services/AWS_enterprise/service_fixed.py:96
-#: services/Azure_enterprise/service_fixed.py:104
+#: services/Azure_enterprise/service_fixed.py:105
 #: services/Google_enterprise/service_fixed.py:96
 #: services/NutanixPrism_enterprise/service_fixed.py:105
 #: services/ScaleComputing_enterprise/service_fixed.py:88
@@ -5119,7 +5138,7 @@ msgid "Select the action to be performed after the user logs out."
 msgstr "选择用户注销后要执行的操作。"
 
 #: services/AWS_enterprise/service_fixed.py:99
-#: services/Azure_enterprise/service_fixed.py:107
+#: services/Azure_enterprise/service_fixed.py:108
 #: services/Google_enterprise/service_fixed.py:99
 #: services/NutanixPrism_enterprise/service_fixed.py:108
 #: services/ScaleComputing_enterprise/service_fixed.py:91
@@ -5146,7 +5165,7 @@ msgid "Obtained from subscriptions"
 msgstr "从订阅中获得"
 
 #: services/Azure_enterprise/provider.py:87
-#: services/Google_enterprise/provider.py:77
+#: services/Google_enterprise/provider.py:88
 msgid "Timeout in seconds of connections server"
 msgstr "连接服务器超时（以秒为单位）"
 
@@ -5252,57 +5271,59 @@ msgstr "Azure 固定计算机"
 msgid "Azure Services based on fixed machines."
 msgstr "基于固定机器的 Azure 服务。"
 
-#: services/Azure_enterprise/service_fixed.py:108
+#: services/Azure_enterprise/service_fixed.py:109
 msgid "Stop Machine (and deallocates it)"
 msgstr "停止机器（并释放它）"
 
-#: services/Google_enterprise/provider.py:40
+#: services/Google_enterprise/provider.py:42
+#| msgid "Google Cloud Provider"
+msgid "Google Cloud Platform Provider"
+msgstr "Google 云平台提供商"
+
+#: services/Google_enterprise/provider.py:44
+#| msgid "Provides connection to Google Cloud Compute Engine"
+msgid "Provides connection to Google Cloud Platform Compute Engine"
+msgstr "提供与 Google Cloud Platform Compute Engine 的连接"
+
+#: services/Google_enterprise/provider.py:51
 msgid "Client Email"
 msgstr "客户电子邮件"
 
-#: services/Google_enterprise/provider.py:42
+#: services/Google_enterprise/provider.py:53
 msgid "Client email for service account"
 msgstr "服务帐户的客户电子邮件"
 
-#: services/Google_enterprise/provider.py:47
+#: services/Google_enterprise/provider.py:58
 msgid "Token URI"
 msgstr "令牌 URI"
 
-#: services/Google_enterprise/provider.py:49
+#: services/Google_enterprise/provider.py:60
 msgid "Token URL, as provided by Google (default is for Google Cloud)"
 msgstr "令牌 URL，由 Google 提供（默认为 Google Cloud）"
 
-#: services/Google_enterprise/provider.py:56
+#: services/Google_enterprise/provider.py:67
 msgid "Private Key"
 msgstr "私钥"
 
-#: services/Google_enterprise/provider.py:58
+#: services/Google_enterprise/provider.py:69
 msgid "Private key for service account"
 msgstr "服务账户私钥"
 
-#: services/Google_enterprise/provider.py:63
+#: services/Google_enterprise/provider.py:74
 msgid "Project ID"
 msgstr "项目编号"
 
-#: services/Google_enterprise/provider.py:65
+#: services/Google_enterprise/provider.py:76
 msgid "Project ID for Google Cloud"
 msgstr "Google Cloud 的项目 ID"
 
-#: services/Google_enterprise/provider.py:97
+#: services/Google_enterprise/provider.py:108
 msgid "Preferred Region"
 msgstr "首选区域"
 
-#: services/Google_enterprise/provider.py:99
+#: services/Google_enterprise/provider.py:110
 msgid "Preferred region for new services"
 msgstr "新服务的首选区域"
-
-#: services/Google_enterprise/provider.py:110
-msgid "Google Cloud Provider"
-msgstr "Google 云提供商"
-
-#: services/Google_enterprise/provider.py:112
-msgid "Provides connection to Google Cloud Compute Engine"
-msgstr "提供与 Google Cloud Compute Engine 的连接"
 
 #: services/Google_enterprise/provider.py:157
 msgid "Connection successful"
@@ -5585,7 +5606,6 @@ msgid "VCPUS"
 msgstr "虚拟CPU"
 
 #: services/NutanixPrism_enterprise/service.py:97
-#: services/Nutanix_enterprise/service.py:85
 msgid "Number of vcpus (\"-1 means \"keep original machine vcpus\")"
 msgstr "vcpus的数量（“ -1表示保持原始计算机vcpus”）"
 
@@ -5595,7 +5615,6 @@ msgid "Cores per VCPU"
 msgstr "每个VCPU的内核"
 
 #: services/NutanixPrism_enterprise/service.py:110
-#: services/Nutanix_enterprise/service.py:98
 msgid "Number of vcpus (\"-1 means \"keep original machine cores per vcpu\")"
 msgstr "vcpus的数量（“ -1表示”保持每个vcpu的原始计算机核心“）"
 
@@ -5617,7 +5636,6 @@ msgid "No"
 msgstr "不"
 
 #: services/NutanixPrism_enterprise/service.py:154
-#: services/Nutanix_enterprise/service.py:138
 msgid "Both Cores per VCPU and Number of VCPUS are required"
 msgstr "每个VCPU的内核数和VCPUS数都是必需的"
 
@@ -5683,11 +5701,28 @@ msgstr "Nutanix雅典卫城服务"
 msgid "Nutanix Acropolis based service"
 msgstr "Nutanix雅典卫城的服务"
 
+#: services/Nutanix_enterprise/service.py:85
+#| msgid "Number of vcpus (\"-1 means \"keep original machine vcpus\")"
+msgid "Number of vcpus (Zero value means \"keep original machine vcpus\")"
+msgstr "vcpus 数量（零值表示“保留原机器 vcpus”）"
+
+#: services/Nutanix_enterprise/service.py:98
+#| msgid ""
+#| "Number of vcpus (\"-1 means \"keep original machine cores per vcpu\")"
+msgid ""
+"Number of vcpus (Zero value means \"keep original machine cores per vcpu\")"
+msgstr "vCPU 数量（零值表示“保留每个 vCPU 的原始机器核心”）"
+
 #: services/Nutanix_enterprise/service.py:107
 msgid ""
 "Network for the machines (every machine created will be attached to this "
 "network)"
 msgstr "机器网络（创建的每台机器都将连接到该网络）"
+
+#: services/Nutanix_enterprise/service.py:140
+#| msgid "Both Cores per VCPU and Number of VCPUS are required"
+msgid "Both Cores per VCPU and Number of VCPUS must be greater than 0"
+msgstr "每个 VCPU 的核心数和 VCPUS 数量都必须大于 0"
 
 #: services/Nutanix_enterprise/service_fixed.py:59
 msgid "Nutanix Fixed Machines"
@@ -5976,23 +6011,23 @@ msgstr "基本模板"
 msgid "Service base template"
 msgstr "服务基础模板"
 
-#: services/OpenNebula/service.py:119 services/VCloud_enterprise/service.py:101
+#: services/OpenNebula/service.py:119 services/VCloud_enterprise/service.py:103
 msgid "Machine Names"
 msgstr "机器名称"
 
-#: services/OpenNebula/service.py:122 services/VCloud_enterprise/service.py:104
+#: services/OpenNebula/service.py:122 services/VCloud_enterprise/service.py:106
 msgid "Base name for clones from this machine"
 msgstr "来自此计算机的克隆的基本名称"
 
-#: services/OpenNebula/service.py:132 services/VCloud_enterprise/service.py:113
+#: services/OpenNebula/service.py:132 services/VCloud_enterprise/service.py:116
 msgid "Size of numeric part for the names of these machines"
 msgstr "这些机器名称的数字部分的大小"
 
-#: services/OpenStack/openstack/client.py:798
+#: services/OpenStack/openstack/client.py:809
 msgid "Authentication error"
 msgstr "授权错误"
 
-#: services/OpenStack/openstack/client.py:802
+#: services/OpenStack/openstack/client.py:813
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
@@ -6270,25 +6305,28 @@ msgid "Static Single IP"
 msgstr "静态单IP"
 
 #: services/PhysicalMachines/service_single.py:56
-msgid "This service provides access to POWERED-ON Machine by IP"
-msgstr "此服务可通过IP访问POWERED-ON机器"
+#| msgid "This service provides access to POWERED-ON Machine by IP"
+msgid ""
+"This service provides access to POWERED-ON Machine by IP. (You can configure "
+"WOL to power on the machine)"
+msgstr "此服务提供通过 IP 访问已启动的机器的功能。（您可以配置 WOL 来启动机器）"
 
-#: services/PhysicalMachines/service_single.py:70
+#: services/PhysicalMachines/service_single.py:73
 msgid "Host IP/FQDN"
 msgstr "主机 IP/FQDN"
 
-#: services/PhysicalMachines/service_single.py:72
+#: services/PhysicalMachines/service_single.py:75
 msgid ""
 "IP or FQDN of the server to connect to. Can include MAC address separated by "
 "\";\" after the IP/Hostname"
 msgstr ""
 "要连接的服务器的 IP 或 FQDN。可以在 IP/主机名后包含用“;”分隔的 MAC 地址"
 
-#: services/PhysicalMachines/service_single.py:90
+#: services/PhysicalMachines/service_single.py:93
 msgid "Invalid server used: \"{}\""
 msgstr "使用的服务器无效：“{}”"
 
-#: services/PhysicalMachines/service_single.py:93
+#: services/PhysicalMachines/service_single.py:96
 msgid "Invalid MAC address used: \"{}\""
 msgstr "使用的 MAC 地址无效：“{}”"
 
@@ -6638,35 +6676,35 @@ msgstr "RDS平台RemoteAPP"
 msgid "RDS Platform RemoteAPP based service"
 msgstr "RDS平台基于RemoteAPP的服务"
 
-#: services/RDS_enterprise/service.py:53
+#: services/RDS_enterprise/service.py:57
 msgid "Application path"
 msgstr "申请路径"
 
-#: services/RDS_enterprise/service.py:54
+#: services/RDS_enterprise/service.py:58
 msgid "Full path of the application this service will represent"
 msgstr "此服务将代表的应用程序的完整路径"
 
-#: services/RDS_enterprise/service.py:64
+#: services/RDS_enterprise/service.py:68
 msgid "Application parameters"
 msgstr "应用参数"
 
-#: services/RDS_enterprise/service.py:65
+#: services/RDS_enterprise/service.py:69
 msgid "Applications parameters, as will be passed in command line"
 msgstr "应用程序参数，将在命令行中传递"
 
-#: services/RDS_enterprise/service.py:74
+#: services/RDS_enterprise/service.py:78
 msgid "Start path"
 msgstr "开始路径"
 
-#: services/RDS_enterprise/service.py:75
+#: services/RDS_enterprise/service.py:79
 msgid "Path where the app will be started on. (i.e. f:\\example\\folder)"
 msgstr "应用程序将在其上启动的路径。 （即f：\\ example \\ folder）"
 
-#: services/RDS_enterprise/service.py:86
+#: services/RDS_enterprise/service.py:90
 msgid "Wait spawned processes"
 msgstr "等待产生的进程"
 
-#: services/RDS_enterprise/service.py:90
+#: services/RDS_enterprise/service.py:94
 msgid ""
 "If active, RDS Actor will wait until the application and all spawned "
 "processes finished before considering app logged out"
@@ -6674,7 +6712,7 @@ msgstr ""
 "如果处于活动状态，RDS Actor将等到应用程序和所有生成的进程完成后再考虑应用程序"
 "注销"
 
-#: services/RDS_enterprise/service.py:102
+#: services/RDS_enterprise/service.py:106
 msgid "A valid application path is required"
 msgstr "需要有效的应用程序路径"
 
@@ -6952,34 +6990,38 @@ msgstr "vDatacenter"
 msgid "Virtual Datacenter"
 msgstr "虚拟数据中心"
 
-#: services/VCloud_enterprise/service.py:67
+#: services/VCloud_enterprise/service.py:63
+msgid "If active, found duplicates vApps for this service will be removed"
+msgstr "如果处于活动状态，则会删除此服务的重复vApp"
+
+#: services/VCloud_enterprise/service.py:68
 msgid "Catalog"
 msgstr "目录"
 
-#: services/VCloud_enterprise/service.py:70
+#: services/VCloud_enterprise/service.py:71
 msgid "vApps source catalog"
 msgstr "vApps源目录"
 
-#: services/VCloud_enterprise/service.py:81
+#: services/VCloud_enterprise/service.py:82
 msgid "vApp Template"
 msgstr "vApp模板"
 
-#: services/VCloud_enterprise/service.py:84
+#: services/VCloud_enterprise/service.py:85
 msgid "vApp template for the service"
 msgstr "该服务的vApp模板"
 
-#: services/VCloud_enterprise/service.py:90
+#: services/VCloud_enterprise/service.py:92
 #: services/Vmware_enterprise/service.py:114
 msgid "Main Network"
 msgstr "主网"
 
-#: services/VCloud_enterprise/service.py:94
+#: services/VCloud_enterprise/service.py:96
 msgid ""
 "If more than one interface is found in machine, use the first found on this "
 "network as main"
 msgstr "如果在计算机中找到多个接口，请使用此网络上的第一个接口作为主要接口"
 
-#: services/VCloud_enterprise/service.py:137
+#: services/VCloud_enterprise/service.py:141
 msgid "Only vApp Templates with 1 VM are allowed"
 msgstr "仅允许具有1个VM的vApp模板"
 
@@ -8459,18 +8501,18 @@ msgstr "二进制 appimage ARMHF Linux 客户端（Raspberry，...）"
 msgid "Generic .tar.gz Linux client"
 msgstr "通用.tar.gz Linux客户端"
 
-#: web/views/auth.py:172
+#: web/views/auth.py:178
 msgid "Authenticator does not provide information"
 msgstr "Authenticator不提供信息"
 
-#: web/views/main.py:321
+#: web/views/mfa.py:205
 msgid "{} days"
 msgstr "{} 天"
 
-#: web/views/main.py:323
+#: web/views/mfa.py:207
 msgid "{} hours"
 msgstr "{} 小时"
 
-#: web/views/service.py:100
+#: web/views/service.py:103
 msgid "Internal error"
 msgstr "内部错误"

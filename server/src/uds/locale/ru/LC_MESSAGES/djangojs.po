@@ -19,6 +19,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2022
 # Alexander <ag@kub.tel>, 2020
 # Alexey Shabalin <a.shabalin@gmail.com>, 2019
@@ -34,9 +35,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-28 18:02+0200\n"
+"POT-Creation-Date: 2024-10-29 19:21+0100\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
-"Last-Translator: Александр Бурматов, 2022\n"
+"Last-Translator: Elena Mishina, 2022-2024\n"
 "Language-Team: Russian (http://app.transifex.com/openuds/openuds/language/"
 "ru/)\n"
 "Language: ru\n"
@@ -643,7 +644,7 @@ msgstr "Информация"
 
 #: static/admin/translations-fakejs.js:143
 msgid "Clean related (mfa,...)"
-msgstr "Связанные с чистотой (mfa,...)"
+msgstr "Очистить связанные данные (мфа,...)"
 
 #: static/admin/translations-fakejs.js:144
 #: static/admin/translations-fakejs.js:161
@@ -1009,7 +1010,7 @@ msgstr "Записи не найдены"
 
 #: static/admin/translations-fakejs.js:262
 msgid "Select"
-msgstr "Выбирать"
+msgstr "Выбрать"
 
 #: static/admin/translations-fakejs.js:267
 msgid ", (%i more items)"
@@ -1622,19 +1623,19 @@ msgstr "Разделитель"
 
 #: static/admin/translations-fakejs.js:530
 msgid "Use comma"
-msgstr "Используйте запятую"
+msgstr "Использовать запятую"
 
 #: static/admin/translations-fakejs.js:531
 msgid "Use semicolon"
-msgstr "Используйте точку с запятой"
+msgstr "Использовать точку с запятой"
 
 #: static/admin/translations-fakejs.js:532
 msgid "Use pipe"
-msgstr "Использовать трубу"
+msgstr "Использовать вертикальную черту"
 
 #: static/admin/translations-fakejs.js:533
 msgid "Use tab"
-msgstr "Использовать вкладку"
+msgstr "Использовать табуляцию"
 
 #: static/admin/translations-fakejs.js:534
 msgid "File"

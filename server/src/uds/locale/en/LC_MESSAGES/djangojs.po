@@ -19,6 +19,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # , 2014
 # blafuente <blafuente@virtualcable.es>, 2014
 # Javier <jgonzalez@virtualcable.es>, 2014
@@ -28,7 +29,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-28 18:02+0200\n"
+"POT-Creation-Date: 2024-10-29 19:21+0100\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: English (http://app.transifex.com/openuds/openuds/language/"
