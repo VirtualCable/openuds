@@ -180,34 +180,42 @@ def action(request: 'ExtendedHttpRequestWithUser', service_id: str, action_strin
     response: typing.Any = None
     rebuild: bool = False
     if userservice:
-        if action_string == 'release' and userservice.service_pool.allow_users_remove:
-            rebuild = True
-            log.log(
-                userservice.service_pool,
-                types.log.LogLevel.INFO,
-                "Removing User Service {} as requested by {} from {}".format(
-                    userservice.friendly_name, request.user.pretty_name, request.ip
-                ),
-                types.log.LogSource.WEB,
-            )
-            UserServiceManager.manager().request_logoff(userservice)
-            userservice.release()
-        elif (
-            action_string == 'reset'
-            and userservice.service_pool.allow_users_reset
-            and userservice.service_pool.service.get_type().can_reset
-        ):
-            rebuild = True
-            log.log(
-                userservice.service_pool,
-                types.log.LogLevel.INFO,
-                "Reseting User Service {} as requested by {} from {}".format(
-                    userservice.friendly_name, request.user.pretty_name, request.ip
-                ),
-                types.log.LogSource.WEB,
-            )
-            # UserServiceManager.manager().requestLogoff(userService)
-            UserServiceManager.manager().reset(userservice)
+        match action_string:
+            case 'release':
+                if userservice.service_pool.allow_users_remove:
+                    rebuild = True
+                    log.log(
+                        userservice.service_pool,
+                        types.log.LogLevel.INFO,
+                        "Removing User Service {} as requested by {} from {}".format(
+                            userservice.friendly_name, request.user.pretty_name, request.ip
+                        ),
+                        types.log.LogSource.WEB,
+                    )
+                    UserServiceManager.manager().request_logoff(userservice)
+                    userservice.release()
+            case 'reset':
+                if userservice.service_pool.allow_users_reset and userservice.service_pool.service.get_type().can_reset:
+                    logger.info('Resetting service')
+                    rebuild = True
+                    log.log(
+                        userservice.service_pool,
+                        types.log.LogLevel.INFO,
+                        "Reseting User Service {} as requested by {} from {}".format(
+                            userservice.friendly_name, request.user.pretty_name, request.ip
+                        ),
+                        types.log.LogSource.WEB,
+                    )
+                    # UserServiceManager.manager().requestLogoff(userService)
+                    UserServiceManager.manager().reset(userservice)
+            # Rest, ignore
+            case _:
+                log.log(
+                    userservice.service_pool,
+                    types.log.LogLevel.ERROR,
+                    "Unknown action '{}' requested by {} from {}".format(action_string, request.user.pretty_name, request.ip),
+                    types.log.LogSource.WEB,
+                )
 
     if rebuild:
         # Rebuild services data, but return only "this" service
