@@ -88,12 +88,13 @@ class Config:
         WYSE = 'WYSE'  # Legacy
         ENTERPRISE = 'Enterprise'  # For enterprise pourposes
         OTHER = 'Other'
+        MISSING = 'Missing'
 
         @staticmethod
         def from_str(value: str) -> 'Config.SectionType':
             if value in list(Config.SectionType.values()):
                 return Config.SectionType(value)
-            return Config.SectionType(Config.SectionType.OTHER)
+            return Config.SectionType(Config.SectionType.MISSING)
 
         @staticmethod
         def values() -> collections.abc.Iterable['Config.SectionType']:
@@ -302,7 +303,9 @@ class Config:
             val = Config.section(Config.SectionType.from_str(cfg.section)).value(
                 cfg.key, type=Config.FieldType.from_int(cfg.field_type), help=cfg.help
             )
-            yield val
+            # If an already missing section is found, we will skip it
+            if val.section() != Config.SectionType.MISSING:
+                yield val
 
     @staticmethod
     def update(section: 'Config.SectionType', key: str, value: str, check_type: bool = False) -> 'None|Config.Value':
