@@ -764,17 +764,25 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         return False
 
-    def reset(self, user_service: UserService) -> None:
-        user_service.refresh_from_db()
+    def reset(self, userservice: UserService) -> None:
+        userservice.refresh_from_db()
 
-        if not user_service.deployed_service.service.get_type().can_reset:
+        if not userservice.deployed_service.service.get_type().can_reset:
             return
 
-        operations_logger.info('Reseting %s', user_service)
+        operations_logger.info('Reseting %s', userservice)
 
-        userservice_instance = user_service.get_instance()
+        userservice_instance = userservice.get_instance()
         try:
             state = userservice_instance.reset()
+            userservice.update_state_date()
+
+            log.log(
+                userservice,
+                types.log.LogLevel.INFO,
+                'Service reset by user',
+                types.log.LogSource.WEB,
+            )
         except Exception:
             logger.exception('Reseting service')
             return
@@ -782,10 +790,10 @@ class UserServiceManager(metaclass=singleton.Singleton):
         logger.debug('State: %s', state)
 
         if state == types.states.TaskState.FINISHED:
-            user_service.update_data(userservice_instance)
+            userservice.update_data(userservice_instance)
             return
 
-        UserServiceOpChecker.make_unique(user_service, state)
+        UserServiceOpChecker.make_unique(userservice, state)
 
     def notify_preconnect(self, user_service: UserService, info: types.connections.ConnectionData) -> None:
         try:

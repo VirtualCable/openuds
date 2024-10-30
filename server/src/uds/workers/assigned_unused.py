@@ -46,8 +46,8 @@ logger = logging.getLogger(__name__)
 
 
 class AssignedAndUnused(Job):
-    frecuency = 300  # Once every 5 minute, but look for GlobalConfig.CHECK_UNUSED_TIME
-    frecuency_cfg = GlobalConfig.CHECK_UNUSED_DELAY
+    frecuency = 60
+    # frecuency_cfg = GlobalConfig.CHECK_UNUSED_DELAY
     friendly_name = 'Unused services checker'
 
     def run(self) -> None:

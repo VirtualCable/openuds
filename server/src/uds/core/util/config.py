@@ -45,20 +45,6 @@ from uds.models.config import Config as DBConfig
 
 logger = logging.getLogger(__name__)
 
-# Pair of section/value removed from current UDS version
-# Note: As of version 4.0, all previous REMOVED values has been moved to migration script 0043
-REMOVED_CONFIG_ELEMENTS = {
-    'RGS': (
-        'downloadUrl',
-        'tunnelOpenedTime',
-    ),
-    'SAML': (
-        'Organization Name',
-        'Org. Display Name',
-        'Organization URL',
-    ),
-}
-
 
 class Config:
     # Global configuration values
@@ -307,13 +293,6 @@ class Config:
 
             # Skip removed configuration values, even if they are in database
             logger.debug('Key: %s, val: %s', cfg.section, cfg.key)
-            if cfg.key in REMOVED_CONFIG_ELEMENTS.get(cfg.section, ()):
-                # Try to remove it, a left-behind value
-                try:
-                    DBConfig.objects.filter(section=cfg.section, key=cfg.key).delete()
-                except Exception:
-                    pass
-                continue
 
             # Hidden field, not to be edited by admin interface
             if cfg.field_type == Config.FieldType.HIDDEN:
@@ -500,12 +479,7 @@ class GlobalConfig:
         type=Config.FieldType.NUMERIC,
         help=_('How long should the user service be unused before os manager considers it for removal'),
     )  # Defaults to 10 minutes
-    CHECK_UNUSED_DELAY: Config.Value = Config.section(Config.SectionType.GLOBAL).value(
-        'checkUnusedDelay',
-        '300',
-        type=Config.FieldType.NUMERIC,
-        help=_('Time betwen checks of unused user services by os managers'),
-    )  # Defaults to 10 minutes
+    
     # Default CSS Used: REMOVED! (keep the for for naw, for reference, but will be cleaned on future...)
     # CSS: Config.Value = Config.section(Config.SectionType.GLOBAL).value('css', settings.STATIC_URL + 'css/uds.css', type=Config.FieldType.TEXT_FIELD)
     # Max logins before blocking an account
@@ -536,13 +510,6 @@ class GlobalConfig:
         '0',
         type=Config.FieldType.BOOLEAN,
         help=_('Do autorun of service if just one service'),
-    )
-    # Redirect HTTP to HTTPS
-    REDIRECT_TO_HTTPS: Config.Value = Config.section(Config.SectionType.GLOBAL).value(
-        'redirectToHttps',
-        '1',
-        type=Config.FieldType.BOOLEAN,
-        help=_('Redirect HTTP to HTTPS on connection to UDS'),
     )
     REDIRECT_TO_TAG_ON_LOGOUT: Config.Value = Config.section(Config.SectionType.GLOBAL).value(
         'Redirect to tag on logout',
@@ -866,3 +833,8 @@ signals.post_migrate.connect(_post_migrate)
 # Will be here for at least one major version, so we can remove them from database for sure
 Config.removed(Config.SectionType.CUSTOM, 'Logout URL')  # Removed on 4.0
 Config.removed(Config.SectionType.SECURITY, 'Max Audit Logs duration')  # Removed on 4.0
+Config.removed(Config.SectionType.GLOBAL, 'checkUnusedDelay')  # Removed on 4.0
+Config.removed(Config.SectionType.GLOBAL, 'redirectToHttps')  # Removed on 4.0
+
+# Old saml related data
+Config.removed(Config.SectionType.OTHER, 'Global logout on exit')  # Removed on 4.0

@@ -65,8 +65,11 @@ class StateUpdater(abc.ABC):
     def save(self, new_state: typing.Optional[str] = None) -> None:
         if new_state:
             self.userservice.set_state(new_state)
+            
+        instance = self.userservice.get_instance()
+        # logger.debug('Instance: _queue: %s', getattr(instance, '_queue', '????'))
 
-        self.userservice.update_data(self.userservice.get_instance())
+        self.userservice.update_data(instance)
 
     def log_ip(self) -> None:
         ip = self.userservice.get_instance().get_ip()
@@ -186,6 +189,13 @@ class UpdateFromCanceling(StateUpdater):
 
         self.save(types.states.State.CANCELED)
 
+class UpdateFromValid(StateUpdater):
+    # Some operations, like "reset", are done on "valid" states
+    # Simply, do nothing on finish except saving the state
+    def state_finish(self) -> None:
+        logger.debug('Finishing %s', self.userservice.friendly_name)
+        # All done
+        self.save()
 
 class UpdateFromOther(StateUpdater):
     def state_finish(self) -> None:
@@ -245,6 +255,7 @@ class UserServiceOpChecker(DelayedTask):
                     types.states.State.PREPARING: UpdateFromPreparing,
                     types.states.State.REMOVING: UpdateFromRemoving,
                     types.states.State.CANCELING: UpdateFromCanceling,
+                    types.states.State.USABLE: UpdateFromValid,
                 }.get(types.states.State.from_str(userservice.state), UpdateFromOther),
             )
 

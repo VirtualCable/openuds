@@ -110,7 +110,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
     # objects: 'models.manager.Manager["UserService"]'
     sessions: 'models.manager.RelatedManager[UserServiceSession]'
     accounting: 'AccountUsage'
-    
+
     _cached_instance: typing.Optional['services.UserService'] = None
 
     class Meta(UUIDModel.Meta):  # pylint: disable=too-few-public-methods
@@ -200,7 +200,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         """
         if self._cached_instance:
             return self._cached_instance
-        
+
         # We get the service instance, publication instance and osmanager instance
         servicepool = self.deployed_service
         if not servicepool.service:
@@ -372,7 +372,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         Returns True if this User Service needs an os manager (i.e. parent services pools is marked to use an os manager)
         """
         return bool(self.get_osmanager())
-    
+
     def allow_putting_back_to_cache(self) -> bool:
         return self.deployed_service.service.get_instance().allow_putting_back_to_cache()
 
@@ -425,6 +425,10 @@ class UserService(UUIDModel, properties.PropertiesMixin):
             self.state_date = sql_now()
             self.state = state
             self.save(update_fields=['state', 'state_date'])
+
+    def update_state_date(self) -> None:
+        self.state_date = sql_now()
+        self.save(update_fields=['state_date'])
 
     def set_os_state(self, state: str) -> None:
         """
@@ -552,7 +556,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         # import traceback
         # logger.info('Removing user service %s', self)
         # logger.info('\n*  '.join(traceback.format_stack()))
-        
+
         if immediate:
             self.set_state(State.REMOVED)
         else:
@@ -606,7 +610,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
 
     def notify_preconnect(self) -> None:
         """
-        Notifies preconnect to userservice. 
+        Notifies preconnect to userservice.
         TODO: Currently not used
         """
         pass

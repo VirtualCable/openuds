@@ -594,6 +594,8 @@ class Ready(BaseReadyChange):
         result = super().action()
 
         # Set as "inUse" to false because a ready can only ocurr if an user is not logged in
+        # Note that an assigned dynamic user service that gets "restarted", will be marked as not in use
+        # until it's logged ing again. So, id the system has 
         userservice = self.get_userservice()
         userservice.set_in_use(False)
 
