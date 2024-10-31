@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 class TelegramReceiver(jobs.Job):
-    frecuency = 10  # Once every 60 seconds
+    frecuency = 60  # Once every 60 seconds
     friendly_name = 'Telegram Receiver'
 
     def run(self) -> None:
