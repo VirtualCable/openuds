@@ -39,5 +39,5 @@ class TelegramReceiver(jobs.Job):
             n.retrieve_messages()
 
     @staticmethod
-    def register() -> None: 
+    def register() -> None:
         managers.task_manager().register_job(TelegramReceiver)
