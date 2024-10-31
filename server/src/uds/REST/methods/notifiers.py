@@ -98,6 +98,7 @@ class Notifiers(ModelHandler):
                     'tooltip': gettext('Level of notifications'),
                     'type': types.ui.FieldType.CHOICE,
                     'order': 102,
+                    'default': str(LogLevel.ERROR.value),
                 },
                 {
                     'name': 'enabled',

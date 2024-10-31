@@ -7,11 +7,13 @@ import requests
 
 logger = logging.getLogger(__name__)
 
+
 @dataclasses.dataclass
 class Chat:
     id: int
     type: str
     first_name: str
+
 
 @dataclasses.dataclass
 class From:
@@ -20,6 +22,7 @@ class From:
     first_name: str
     last_name: typing.Optional[str]
     username: str
+
 
 @dataclasses.dataclass
 class Message:
@@ -80,13 +83,19 @@ class Telegram:
         return response.json()
 
     def send_message(self, chat_id: int, text: str) -> dict[str, typing.Any]:
-        return self.request('send_message', {'chat_id': chat_id, 'text': text})
+        return self.request('sendMessage', {'chat_id': chat_id, 'text': text})
 
     def get_updates(self, offset: int = 0, timeout: int = 0) -> collections.abc.Iterable[Message]:
         self.last_offset = offset or self.last_offset
-        res = self.request('get_updates', {'offset': self.last_offset, 'timeout': timeout}, stream=True)
+        res = self.request('getUpdates', {'offset': self.last_offset, 'timeout': timeout}, stream=True)
         if res['ok'] and res['result']:  # if ok and there are results
             # Update the offset
             self.last_offset = res['result'][-1]['update_id'] + 1
+            update: dict[str, typing.Any]
             for update in res['result']:
-                yield Message.from_dict(update['message'])
+                message = update.get('message', update.get('edited_message', None))
+                if message:
+                    try:
+                        yield Message.from_dict(message)
+                    except Exception as e:
+                        logger.warning('Skiped unknown telegram message: %s', e)

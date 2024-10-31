@@ -41,6 +41,7 @@ import unicodedata
 
 import django.template.defaultfilters as filters
 from django.utils import formats
+from django.conf import settings
 from django.utils.translation import gettext
 
 logger = logging.getLogger(__name__)
@@ -168,7 +169,7 @@ def ignore_exceptions(log: bool = False) -> typing.Iterator[None]:
     try:
         yield
     except Exception as e:
-        if log:
+        if log or getattr(settings, 'DEBUG', False):
             logger.error('Ignoring exception: %s', e)
         pass
 
