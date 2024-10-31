@@ -451,7 +451,7 @@ class WinDomainOsManager(WindowsOsManager):
             custom={
                 'domain': self.domain.as_str(),
                 'ou': self.ou.as_str(),
-                'username': self.account.as_str(),
+                'account': self.account.as_str(),
                 'password': self.password.as_str(),
             },
         )
