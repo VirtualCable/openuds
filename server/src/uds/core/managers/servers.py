@@ -148,14 +148,16 @@ class ServerManager(metaclass=singleton.Singleton):
         stats_and_servers = self.get_server_stats(fltrs)
 
         def _real_weight(stats: 'types.servers.ServerStats') -> float:
+            stats_weight = stats.weight()
+            
             if weight_threshold == 0:
-                return stats.weight()
+                return stats_weight
             # Values under threshold are better, weight is in between 0 and 1, lower is better
             # To values over threshold, we will add 1, so they are always worse than any value under threshold
             # No matter if over threshold is overcalculed, it will be always worse than any value under threshold
             # and all values over threshold will be affected in the same way
             return (
-                weight_threshold - stats.weight() if stats.weight() < weight_threshold else 1 + stats.weight()
+                weight_threshold - stats_weight if stats_weight < weight_threshold else 1 + stats_weight
             )
 
         # Now, cachedStats has a list of tuples (stats, server), use it to find the best server

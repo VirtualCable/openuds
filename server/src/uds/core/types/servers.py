@@ -33,6 +33,7 @@ import dataclasses
 import enum
 import typing
 import collections.abc
+import logging
 
 from django.utils.translation import gettext as _
 
@@ -40,6 +41,8 @@ from uds.core import consts
 from uds.core.util import ensure, singleton
 
 IP_SUBTYPE: typing.Final[str] = 'ip'
+
+logger = logging.getLogger(__name__)
 
 
 class ServerType(enum.IntEnum):
@@ -148,16 +151,6 @@ class ServerStats:
     stamp: float = 0  # Timestamp of this stats
 
     @property
-    def cpufree_ratio(self) -> float:
-        # Returns a valuen between 0 and 1, being 1 the best value (no cpu used per user) and 0 the worst
-        return (1 - self.cpuused) / (self.current_users + 1)
-
-    @property
-    def memfree_ratio(self) -> float:
-        # Returns a valuen between 0 and 1, being 1 the best value (no memory used per user) and 0 the worst
-        return (self.memtotal - self.memused) / (self.memtotal or 1) / (self.current_users + 1)
-
-    @property
     def is_valid(self) -> bool:
         """If the stamp is lesss than consts.cache.DEFAULT_CACHE_TIMEOUT, it is considered valid
 
@@ -174,20 +167,21 @@ class ServerStats:
 
     def weight(self, min_memory: int = 0) -> float:
         # Weights are calculated as:
-        # 0.5 * cpu_usage + 0.5 * (1 - mem_free / mem_total) / (current_users + 1)
-        # +1 is because this weights the connection of current users + new user
-        # Dividing by number of users + 1 gives us a "ratio" of available resources per user when a new user is added
-        # Also note that +512 forces that if mem_free is less than 512 MB, this server will be put at the end of the list
+        # 30% cpu usage
+        # 60% memory usage
+        # 10% current users, with a max of 1000 users
+        # Weights are normalized to 0-1
+        # Lower weight is better
+
         if self.memtotal - self.memused < min_memory:
             return 1000000000  # At the end of the list
 
-        # Lower is better
-        # value can be between:
-        # (1 / (1 * 1.3 + 1) - 0.434) * 1.76 ~= 0.0 (worst case, no memory, all cpu)
-        # and
-        # (1 / ((0 * 1.3 + 0) or 1) - 0.434) * 1.76 = 0.566 * 1.76 ~= 1.0 (best case, all memory, no cpu)
+        w = (
+            0.3 * self.cpuused
+            + 0.6 * (self.memused / (self.memtotal or 1))
+            + 0.1 * (min(1.0, self.current_users / 100.0))
+        )
 
-        w = (1 / ((self.cpufree_ratio * 1.3 + self.memfree_ratio) or 1) - 0.434) * 1.76
         return min(max(0.0, w), 1.0)
 
     def adjust(self, users_increment: int) -> 'ServerStats':
