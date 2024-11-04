@@ -65,11 +65,11 @@ class ServerManager(metaclass=singleton.Singleton):
     @staticmethod
     def manager() -> 'ServerManager':
         return ServerManager()  # Singleton pattern will return always the same instance
-    
+
     @contextlib.contextmanager
     def counter_storage(self) -> typing.Iterator[StorageAsDict]:
         with Storage(self.STORAGE_NAME).as_dict(atomic=True, group='counters') as storage:
-        # If counters are too old, restart them
+            # If counters are too old, restart them
             if datetime.datetime.now() - self.last_counters_clean > self.MAX_COUNTERS_AGE:
                 self.last_counters_clean = datetime.datetime.now()
                 storage.clear()
@@ -133,6 +133,7 @@ class ServerManager(metaclass=singleton.Singleton):
         now: datetime.datetime,
         min_memory_mb: int = 0,
         excluded_servers_uuids: typing.Optional[typing.Set[str]] = None,
+        *,
         weight_threshold: int = 0,  # If not 0, server with weight below and nearer to this value will be selected
     ) -> tuple['models.Server', 'types.servers.ServerStats']:
         """
@@ -147,18 +148,28 @@ class ServerManager(metaclass=singleton.Singleton):
 
         stats_and_servers = self.get_server_stats(fltrs)
 
+        weight_threshold_f = weight_threshold / 100
+
         def _real_weight(stats: 'types.servers.ServerStats') -> float:
             stats_weight = stats.weight()
-            
+
             if weight_threshold == 0:
                 return stats_weight
+
             # Values under threshold are better, weight is in between 0 and 1, lower is better
             # To values over threshold, we will add 1, so they are always worse than any value under threshold
             # No matter if over threshold is overcalculed, it will be always worse than any value under threshold
             # and all values over threshold will be affected in the same way
-            return (
-                weight_threshold - stats_weight if stats_weight < weight_threshold else 1 + stats_weight
+            weight = (
+                weight_threshold_f - stats_weight if stats_weight < weight_threshold_f else 1 + stats_weight
             )
+
+            # logger.info('Stats: %s', stats)
+            # logger.info(
+            #     'Stats weight: %s, threshold: %s, calculated: %s', stats_weight, weight_threshold, weight
+            # )
+
+            return weight
 
         # Now, cachedStats has a list of tuples (stats, server), use it to find the best server
         for stats, server in stats_and_servers:
@@ -211,6 +222,7 @@ class ServerManager(metaclass=singleton.Singleton):
         lock_interval: typing.Optional[datetime.timedelta] = None,
         server: typing.Optional['models.Server'] = None,  # If not note
         excluded_servers_uuids: typing.Optional[typing.Set[str]] = None,
+        *,
         weight_threshold: int = 0,
     ) -> typing.Optional[types.servers.ServerCounter]:
         """
