@@ -23,12 +23,13 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Abdel Baaddi <abaaddi@virtualcable.es>, 2017-2018
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-29 19:21+0100\n"
+"POT-Creation-Date: 2024-11-05 23:23+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>, 2017-2018\n"
 "Language-Team: Arabic (http://app.transifex.com/openuds/openuds/language/"
@@ -464,7 +465,7 @@ msgid "Service Pool name"
 msgstr "اسم بركة الخدمة"
 
 #: REST/methods/meta_service_pools.py:93 REST/methods/notifiers.py:72
-#: REST/methods/notifiers.py:104 REST/methods/users_groups.py:177
+#: REST/methods/notifiers.py:105 REST/methods/users_groups.py:177
 #: REST/methods/users_groups.py:396 REST/methods/users_groups.py:403
 #: core/types/pools.py:84 services/Proxmox/service_linked.py:201
 msgid "Enabled"
@@ -600,7 +601,7 @@ msgstr "مستوى"
 msgid "Level of notifications"
 msgstr "مستوى الإخطارات"
 
-#: REST/methods/notifiers.py:105
+#: REST/methods/notifiers.py:106
 msgid "If checked, this notifier will be used"
 msgstr "إذا تم تحديده، سيتم استخدام هذا المخطر"
 
@@ -814,7 +815,7 @@ msgstr "عنوان MAC الاختياري للخادم"
 #: REST/methods/servers_management.py:226 auths/OAuth2/authenticator.py:71
 #: auths/OAuth2/authenticator.py:79 auths/OAuth2/authenticator.py:87
 #: auths/OAuth2/authenticator.py:95 auths/OAuth2/authenticator.py:103
-#: core/types/servers.py:68
+#: core/types/servers.py:71
 msgid "Server"
 msgstr "الخادم"
 
@@ -835,7 +836,7 @@ msgid "Managed"
 msgstr "تمكنت"
 
 #: REST/methods/servers_management.py:439
-#: REST/methods/servers_management.py:450 core/types/servers.py:69
+#: REST/methods/servers_management.py:450 core/types/servers.py:72
 msgid "Unmanaged"
 msgstr "غير مُدار"
 
@@ -1486,9 +1487,9 @@ msgid ""
 "servers for the domains.If domain is not specified, the backup servers will "
 "be used for all domains."
 msgstr ""
-"إذا لم تكن فارغة، فسيتم استخدام هذه القائمة الخاصة بالنطاق=backup1،backup2،"
-"... كخوادم احتياطية للنطاقات. إذا لم يتم تحديد النطاق، فسيتم استخدام خوادم "
-"النسخ الاحتياطي لجميع النطاقات."
+"إذا لم تكن فارغة، فسيتم استخدام هذه القائمة الخاصة بالنطاق=backup1،"
+"backup2،... كخوادم احتياطية للنطاقات. إذا لم يتم تحديد النطاق، فسيتم استخدام "
+"خوادم النسخ الاحتياطي لجميع النطاقات."
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:134
 #: auths/EDirectory_enterprise/authenticator.py:96 core/util/fields.py:229
@@ -2693,23 +2694,23 @@ msgstr "لا يمكن إلغاء نشر منشور غير صالح للاستع�
 msgid "Can't unpublish publications with services in process"
 msgstr "لا يمكن إلغاء نشر المنشورات مع خدمات في طور الإستعمال"
 
-#: core/managers/servers.py:181
+#: core/managers/servers.py:194
 msgid "No server available for user"
 msgstr "لا يوجد خادم متاح للمستخدم"
 
-#: core/managers/servers.py:245 core/managers/servers.py:468
+#: core/managers/servers.py:259 core/managers/servers.py:482
 msgid "No user assigned to service"
 msgstr "لم يتم تعيين أي مستخدم للخدمة"
 
-#: core/managers/servers.py:265
+#: core/managers/servers.py:279
 msgid "Server is not part of the group"
 msgstr "الخادم ليس جزءًا من المجموعة"
 
-#: core/managers/servers.py:267
+#: core/managers/servers.py:281
 msgid "Server is in maintenance mode"
 msgstr "الخادم في وضع الصيانة"
 
-#: core/managers/servers.py:269
+#: core/managers/servers.py:283
 msgid "Server is restrained"
 msgstr "الخادم مقيد"
 
@@ -2729,22 +2730,22 @@ msgstr "لا يمكن إزالة أو إلغاء {} لأن حالته لا تس�
 msgid "The requested service is restrained"
 msgstr "الخدمة المطلوبة مقيدة"
 
-#: core/managers/userservice.py:943 core/types/errors.py:118
+#: core/managers/userservice.py:951 core/types/errors.py:118
 msgid ""
 "Invalid service. The service is not available at this moment. Please, try "
 "later"
 msgstr ""
 "الخدمة غير صالحة. الخدمة غير متوفرة في هذه اللحظة. من فضلك، حاول في وقت لاحق"
 
-#: core/managers/userservice.py:967 core/managers/userservice.py:972
+#: core/managers/userservice.py:975 core/managers/userservice.py:980
 msgid "No suitable transport found"
 msgstr "لم يتم العثور على وسيلة نقل مناسبة"
 
-#: core/managers/userservice.py:980
+#: core/managers/userservice.py:988
 msgid "The requested transport {} is not valid for {}"
 msgstr "النقل المطلوب {} غير صالح لـ {}"
 
-#: core/managers/userservice.py:1256
+#: core/managers/userservice.py:1264
 msgid "The service is not accessible from this device"
 msgstr "لا يمكن الوصول إلى الخدمة من هذا الجهاز"
 
@@ -3018,11 +3019,11 @@ msgstr "استخدم وسائل النقل الشائعة فقط"
 msgid "Group Transports by label"
 msgstr "مجموعة النقل حسب التسمية"
 
-#: core/types/servers.py:66 core/types/ui.py:46
+#: core/types/servers.py:69 core/types/ui.py:46
 msgid "Tunnel"
 msgstr "النفق"
 
-#: core/types/servers.py:67
+#: core/types/servers.py:70
 msgid "Actor"
 msgstr "الممثل"
 
@@ -3135,11 +3136,11 @@ msgstr "آلة"
 msgid "Config"
 msgstr "التكوين"
 
-#: core/util/config.py:402
+#: core/util/config.py:384
 msgid "Session expire time in hours after publishing"
 msgstr "تنتهي مدة الجلسة بعد ساعات من النشر"
 
-#: core/util/config.py:410
+#: core/util/config.py:392
 msgid ""
 "Delay between cache checks. Reducing this number will increase cache "
 "generation speed but also will load service providers"
@@ -3147,7 +3148,7 @@ msgstr ""
 "التأخير بين عمليات فحص ذاكرة التخزين المؤقت. سيؤدي تقليل هذا العدد إلى زيادة "
 "سرعة إنشاء ذاكرة التخزين المؤقت ولكنه سيؤدي أيضًا إلى تحميل موفري الخدمة"
 
-#: core/util/config.py:419
+#: core/util/config.py:401
 msgid ""
 "Delayed task number of threads PER SERVER, with higher number of threads, "
 "deployed task will complete sooner, but it will give more load to overall "
@@ -3157,7 +3158,7 @@ msgstr ""
 "ستكتمل المهمة المنشورة في وقت أقرب، ولكنها ستوفر المزيد من التحميل على "
 "النظام ككل"
 
-#: core/util/config.py:428
+#: core/util/config.py:410
 msgid ""
 "Number of scheduler threads running PER SERVER, with higher number of "
 "threads, deployed task will complete sooner, but it will give more load to "
@@ -3167,7 +3168,7 @@ msgstr ""
 "سلاسل الرسائل، ستكتمل المهمة المنشورة في وقت أقرب، ولكنها ستوفر المزيد من "
 "التحميل على النظام ككل"
 
-#: core/util/config.py:437
+#: core/util/config.py:419
 msgid ""
 "Waiting time before removing \"errored\" and \"removed\" publications, "
 "cache, and user assigned machines. Time is in seconds"
@@ -3175,30 +3176,30 @@ msgstr ""
 "وقت الانتظار قبل إزالة المنشورات \"الخاطئة\" و\"المزالة\"، وذاكرة التخزين "
 "المؤقت، والأجهزة المخصصة للمستخدم. الوقت بالثواني"
 
-#: core/util/config.py:445
+#: core/util/config.py:427
 msgid "Time to maintaing \"info state\" items before removing it, in seconds"
 msgstr "الوقت اللازم لصيانة عناصر \"حالة المعلومات\" قبل إزالتها، بالثواني"
 
-#: core/util/config.py:452
+#: core/util/config.py:434
 msgid "Number of services to initiate removal per run of service cleaner"
 msgstr "عدد الخدمات لبدء الإزالة لكل تشغيل لمنظف الخدمة"
 
-#: core/util/config.py:459
+#: core/util/config.py:441
 msgid ""
 "Removal Check time for cache, publications and deployed services, in seconds"
 msgstr ""
 "إزالة التحقق من الوقت لذاكرة التخزين المؤقت والمنشورات والخدمات المنشورة، في "
 "ثوان"
 
-#: core/util/config.py:462
+#: core/util/config.py:444
 msgid "Superuser username"
 msgstr "اسم المستخدم المتميز"
 
-#: core/util/config.py:466
+#: core/util/config.py:448
 msgid "Superuser password"
 msgstr "كلمة مرور المستخدم الخارق"
 
-#: core/util/config.py:473
+#: core/util/config.py:455
 msgid ""
 "Allow root user to access using web interface.\n"
 " Once configured one authenticator,\n"
@@ -3207,11 +3208,11 @@ msgstr ""
 "السماح للمستخدم الجذر بالوصول باستخدام واجهة الويب. بمجرد تكوين أداة مصادقة "
 "واحدة، يوصى بتعطيل هذا الخيار"
 
-#: core/util/config.py:481
+#: core/util/config.py:463
 msgid "Enable enhanced security modules"
 msgstr "تمكين وحدات الأمان المحسنة"
 
-#: core/util/config.py:489
+#: core/util/config.py:471
 msgid ""
 "Enforced maximum security mode (Zero-Trust Mode). No password redirection "
 "will be allowed if this mode is set."
@@ -3219,7 +3220,7 @@ msgstr ""
 "فرض وضع الأمان الأقصى (وضع الثقة المعدومة). لن يُسمح بإعادة توجيه كلمة المرور "
 "إذا تم ضبط هذا الوضع."
 
-#: core/util/config.py:501
+#: core/util/config.py:483
 msgid ""
 "How long should the user service be unused before os manager considers it "
 "for removal"
@@ -3227,40 +3228,30 @@ msgstr ""
 "ما هي المدة التي يجب أن تظل فيها خدمة المستخدم غير مستخدمة قبل أن يفكر مدير "
 "نظام التشغيل في إزالتها؟"
 
-#: core/util/config.py:507
-msgid "Time betwen checks of unused user services by os managers"
-msgstr ""
-"الوقت بين عمليات التحقق من خدمات المستخدم غير المستخدمة من قبل مديري نظام "
-"التشغيل"
-
-#: core/util/config.py:516
+#: core/util/config.py:493
 msgid "Max logins before blocking an account for a while"
 msgstr "الحد الأقصى لعدد مرات تسجيل الدخول قبل حظر الحساب لفترة من الوقت"
 
-#: core/util/config.py:523
+#: core/util/config.py:500
 msgid "Block time in second for an user that has too many login failures"
 msgstr ""
 "حظر الوقت بالثانية للمستخدم الذي لديه عدد كبير جدًا من حالات فشل تسجيل الدخول"
 
-#: core/util/config.py:529
+#: core/util/config.py:506
 msgid "Block ip on login failure"
 msgstr "حظر IP عند فشل تسجيل الدخول"
 
-#: core/util/config.py:538
+#: core/util/config.py:515
 msgid "Do autorun of service if just one service"
 msgstr "قم بالتشغيل التلقائي للخدمة إذا كانت هناك خدمة واحدة فقط"
 
-#: core/util/config.py:545
-msgid "Redirect HTTP to HTTPS on connection to UDS"
-msgstr "إعادة توجيه HTTP إلى HTTPS عند الاتصال بـ UDS"
-
-#: core/util/config.py:551
+#: core/util/config.py:521
 msgid "Redirects login page to the tag used when logged in if active."
 msgstr ""
 "يعيد توجيه صفحة تسجيل الدخول إلى العلامة المستخدمة عند تسجيل الدخول إذا كانت "
 "نشطة."
 
-#: core/util/config.py:561
+#: core/util/config.py:531
 msgid ""
 "Max time needed to get a service \"fully functional\" before it's considered "
 "\"failed\" and removed"
@@ -3268,7 +3259,7 @@ msgstr ""
 "الحد الأقصى من الوقت اللازم للحصول على الخدمة \"تعمل بكامل طاقتها\" قبل "
 "اعتبارها \"فاشلة\" وإزالتها"
 
-#: core/util/config.py:568
+#: core/util/config.py:538
 msgid ""
 "Max time needed to get a service \"fully removed\" before it's considered "
 "\"failed\" and purged"
@@ -3276,60 +3267,63 @@ msgstr ""
 "الحد الأقصى من الوقت اللازم لإزالة الخدمة بالكامل قبل اعتبارها \"فاشلة\" "
 "وإزالتها"
 
-#: core/util/config.py:575
+#: core/util/config.py:545
 msgid "Maximum logs per every log-capable administration element"
 msgstr "الحد الأقصى من السجلات لكل عنصر إدارة قادر على التسجيل"
 
-#: core/util/config.py:582
+#: core/util/config.py:552
 msgid ""
 "Maximum logs entries for general UDS logs (0 = unlimited, use with care)"
 msgstr ""
 "الحد الأقصى لإدخالات السجلات لسجلات UDS العامة (0 = غير محدود، استخدم بعناية)"
 
-#: core/util/config.py:590
+#: core/util/config.py:560
 msgid ""
 "Time to restrain a user service in case it gives some errors at some point"
 msgstr "حان الوقت لتقييد خدمة المستخدم في حالة حدوث بعض الأخطاء في مرحلة ما"
 
-#: core/util/config.py:597
+#: core/util/config.py:567
 msgid ""
 "Number of errors that must occurr in \"restrainTime\" to restrain an user "
 "service"
 msgstr "عدد الأخطاء التي يجب أن تحدث في \"restrainTime\" لتقييد خدمة المستخدم"
 
-#: core/util/config.py:605
+#: core/util/config.py:575
 msgid "Statistics duration, in days"
 msgstr "مدة الإحصائيات، بالأيام"
 
-#: core/util/config.py:612
+#: core/util/config.py:582
+#| msgid ""
+#| "Frequency of stats collection in seconds. Default is 4 hours (14400 "
+#| "seconds)"
 msgid ""
-"Frequency of stats collection in seconds. Default is 4 hours (14400 seconds)"
-msgstr "معدل تكرار جمع الإحصائيات بالثواني. الافتراضي 4 ساعات (14400 ثانية)"
+"Frequency of stats collection in seconds. Default is 1 hours (3600 seconds)"
+msgstr "تردد جمع الإحصائيات بالثواني. الافتراضي هو 1 ساعة (3600 ثانية)"
 
-#: core/util/config.py:619
+#: core/util/config.py:589
 msgid "Maximum number of time to accumulate on one run. Default is 7 (1 week)"
 msgstr "أقصى عدد من الوقت للتراكم في تشغيل واحد. الافتراضي هو 7 (أسبوع واحد)"
 
-#: core/util/config.py:627
+#: core/util/config.py:597
 msgid "If disallow login showing authenticatiors"
 msgstr "في حالة عدم السماح بتسجيل الدخول بإظهار المصادقين"
 
-#: core/util/config.py:635
+#: core/util/config.py:605
 msgid ""
 "Notify user of existence of a new version of a service on new publication"
 msgstr "إعلام المستخدم بوجود إصدار جديد من الخدمة عند النشر الجديد"
 
-#: core/util/config.py:642
+#: core/util/config.py:612
 msgid "Networks or hosts considered \"trusted\" for UDS (Tunnels, etc...)"
 msgstr ""
 "الشبكات أو المضيفين الذين يعتبرون \"موثوقين\" لـ UDS (الأنفاق، وما إلى "
 "ذلك ...)"
 
-#: core/util/config.py:649
+#: core/util/config.py:619
 msgid "IPs or networks allowed to forward requests (like proxies)"
 msgstr "عناوين IP أو الشبكات المسموح لها بإعادة توجيه الطلبات (مثل الوكلاء)"
 
-#: core/util/config.py:657
+#: core/util/config.py:627
 msgid ""
 "Allow clients to notify their own ip (if set), or use always the request "
 "extracted IP"
@@ -3337,11 +3331,11 @@ msgstr ""
 "السماح للعملاء بإخطار عنوان IP الخاص بهم (في حالة تعيينه)، أو استخدام عنوان "
 "IP المستخرج للطلب دائمًا"
 
-#: core/util/config.py:665
+#: core/util/config.py:635
 msgid "If there is a proxy in front of us (i.e. HAProxy, or any NLB)"
 msgstr "إذا كان هناك وكيل أمامنا (أي HAProxy أو أي NLB)"
 
-#: core/util/config.py:674
+#: core/util/config.py:644
 msgid ""
 "If we use new logout mechanics for osmanagers, where only when the logged in "
 "users reaches 0, it is considered \"logged out\""
@@ -3349,79 +3343,79 @@ msgstr ""
 "إذا استخدمنا آليات تسجيل خروج جديدة لمديري osmanagers، حيث فقط عندما يصل "
 "المستخدمون الذين قاموا بتسجيل الدخول إلى 0، فسيتم اعتبار ذلك \"مسجل خروج\""
 
-#: core/util/config.py:683
+#: core/util/config.py:653
 msgid "Enable/Disable Actor attack detection ip blocking"
 msgstr "تمكين/تعطيل حظر IP الخاص باكتشاف هجوم الممثل"
 
-#: core/util/config.py:691
+#: core/util/config.py:661
 msgid "Max session length for Admin"
 msgstr "الحد الأقصى لطول الجلسة للمشرف"
 
-#: core/util/config.py:697
+#: core/util/config.py:667
 msgid "Max session length for User"
 msgstr "الحد الأقصى لطول الجلسة للمستخدم"
 
-#: core/util/config.py:704
+#: core/util/config.py:674
 msgid "Page reload Time (legacy)"
 msgstr "وقت إعادة تحميل الصفحة (القديم)"
 
-#: core/util/config.py:712
+#: core/util/config.py:682
 msgid "Custom message for error when limiting by calendar"
 msgstr "رسالة مخصصة للخطأ عند التقييد بالتقويم"
 
-#: core/util/config.py:720
+#: core/util/config.py:690
 msgid "If convert username to lowercase on logins"
 msgstr "إذا قمت بتحويل اسم المستخدم إلى أحرف صغيرة عند تسجيل الدخول"
 
-#: core/util/config.py:728
+#: core/util/config.py:698
 msgid "Global UDS ID (common for all servers on the same cluster)"
 msgstr "معرف UDS العالمي (مشترك لجميع الخوادم الموجودة في نفس المجموعة)"
 
-#: core/util/config.py:736
+#: core/util/config.py:706
 msgid "Site display name"
 msgstr "اسم عرض الموقع"
 
-#: core/util/config.py:742
+#: core/util/config.py:712
 msgid "Site copyright info"
 msgstr "معلومات حقوق الطبع والنشر للموقع"
 
-#: core/util/config.py:748
+#: core/util/config.py:718
 msgid "Site copyright link"
 msgstr "رابط حقوق الطبع والنشر للموقع"
 
-#: core/util/config.py:751
+#: core/util/config.py:721
 msgid "Top navbar logo name"
 msgstr "اسم شعار شريط التنقل العلوي"
 
-#: core/util/config.py:757
+#: core/util/config.py:727
 msgid "Custom CSS styles applied to the user accesible site"
 msgstr "يتم تطبيق أنماط CSS المخصصة على الموقع الذي يمكن للمستخدم الوصول إليه"
 
-#: core/util/config.py:763
+#: core/util/config.py:733
 msgid "Site information"
 msgstr "معلومات الموقع"
 
-#: core/util/config.py:769
+#: core/util/config.py:739
 msgid "Show Filter box for user services on Top or bottom of the page"
 msgstr "إظهار مربع التصفية لخدمات المستخدم في أعلى الصفحة أو أسفلها"
 
-#: core/util/config.py:775
+#: core/util/config.py:745
 msgid "Minimal User Services needed to show filter"
 msgstr "الحد الأدنى من خدمات المستخدم اللازمة لإظهار الفلتر"
 
-#: core/util/config.py:781
+#: core/util/config.py:751
 msgid "Enable experimental features. USE WITH CAUTION!!"
 msgstr "تمكين الميزات التجريبية. استخدم بحذر!!"
 
-#: core/util/config.py:789
+#: core/util/config.py:759
 msgid "Number of items per page in admin tables"
 msgstr "عدد العناصر لكل صفحة في جداول الإدارة"
 
-#: core/util/config.py:795
+#: core/util/config.py:765
 msgid "List of trusted hosts/networks allowed to access the admin interface"
 msgstr "قائمة بالمضيفين/الشبكات الموثوقة المسموح لهم بالوصول إلى واجهة الإدارة"
 
-#: core/util/config.py:801
+#: core/util/config.py:771
 msgid "Enable VNC menu for user services"
 msgstr "تمكين قائمة VNC لخدمات المستخدم"
 
@@ -3515,7 +3509,6 @@ msgid "Remove found duplicates"
 msgstr "إزالة الملفات المكررة"
 
 #: core/util/fields.py:332
-#| msgid "If active, found duplicates vApps for this service will be removed"
 msgid "If active, found duplicates VApps for this service will be removed"
 msgstr "إذا تم تنشيطه، فسيتم إزالة التطبيقات المكررة لهذه الخدمة"
 
@@ -3668,7 +3661,7 @@ msgstr ""
 msgid "Can't contact LDAP server"
 msgstr "لا يمكن الاتصال بخادم LDAP"
 
-#: core/util/utils.py:119
+#: core/util/utils.py:120
 msgid "{} days {:d}:{:02d}:{:02d}"
 msgstr "{} أيام {: d}: {: 02d}: {: 02d}"
 
@@ -4322,11 +4315,11 @@ msgstr "تأخير بالثواني بين عمليات التحقق من الأ
 msgid "Invalid value for {}"
 msgstr "قيمة غير صالحة لـ {}"
 
-#: notifiers/telegram/notifier.py:197
+#: notifiers/telegram/notifier.py:201
 msgid "You have been subscribed to notifications"
 msgstr "لقد اشتركت في الإخطارات"
 
-#: notifiers/telegram/notifier.py:200
+#: notifiers/telegram/notifier.py:204
 msgid "You have been unsubscribed from notifications"
 msgstr "لقد تم إلغاء اشتراكك من الإخطارات"
 
@@ -5419,12 +5412,10 @@ msgid "Stop Machine (and deallocates it)"
 msgstr "إيقاف الجهاز (وإلغاء تخصيصه)"
 
 #: services/Google_enterprise/provider.py:42
-#| msgid "Google Cloud Provider"
 msgid "Google Cloud Platform Provider"
 msgstr "مزود منصة Google Cloud"
 
 #: services/Google_enterprise/provider.py:44
-#| msgid "Provides connection to Google Cloud Compute Engine"
 msgid "Provides connection to Google Cloud Platform Compute Engine"
 msgstr "يوفر اتصالاً بمحرك الحوسبة الخاص بمنصة Google Cloud"
 
@@ -5856,15 +5847,12 @@ msgid "Nutanix Acropolis based service"
 msgstr "الخدمة على Nutanix أكروبوليس."
 
 #: services/Nutanix_enterprise/service.py:85
-#| msgid "Number of vcpus (\"-1 means \"keep original machine vcpus\")"
 msgid "Number of vcpus (Zero value means \"keep original machine vcpus\")"
 msgstr ""
 "عدد وحدات المعالجة المركزية الافتراضية (القيمة صفر تعني \"الاحتفاظ بوحدات "
 "المعالجة المركزية الافتراضية للجهاز الأصلي\")"
 
 #: services/Nutanix_enterprise/service.py:98
-#| msgid ""
-#| "Number of vcpus (\"-1 means \"keep original machine cores per vcpu\")"
 msgid ""
 "Number of vcpus (Zero value means \"keep original machine cores per vcpu\")"
 msgstr ""
@@ -5878,7 +5866,6 @@ msgid ""
 msgstr "شبكة للأجهزة (كل آلة تم إنشاؤها سوف يتم إرفاق هذا شبكة الاتصال)"
 
 #: services/Nutanix_enterprise/service.py:140
-#| msgid "Both Cores per VCPU and Number of VCPUS are required"
 msgid "Both Cores per VCPU and Number of VCPUS must be greater than 0"
 msgstr ""
 "يجب أن يكون كل من النوى لكل وحدة معالجة مركزية افتراضية وعدد وحدات المعالجة "
@@ -6483,7 +6470,6 @@ msgid "Static Single IP"
 msgstr "IP ثابت واحد"
 
 #: services/PhysicalMachines/service_single.py:56
-#| msgid "This service provides access to POWERED-ON Machine by IP"
 msgid ""
 "This service provides access to POWERED-ON Machine by IP. (You can configure "
 "WOL to power on the machine)"
@@ -6793,67 +6779,72 @@ msgstr "شهادة إعلانية (تنسيق PEM). اتركه فارغًا لا
 msgid "Load threshold"
 msgstr "عتبة التحميل"
 
-#: services/RDS_enterprise/provider.py:236
+#: services/RDS_enterprise/provider.py:237
+#| msgid ""
+#| "Load threshold for assigning users to servers. 0 means lower load first, "
+#| "any other the less distance to threshold."
 msgid ""
-"Load threshold for assigning users to servers. 0 means lower load first, any "
-"other the less distance to threshold."
+"Load threshold, in percent (0-100), for assigning users to servers.0 means "
+"server with lower load is preferred, any other value means that server will "
+"be used until it reaches that load."
 msgstr ""
-"عتبة التحميل لتعيين المستخدمين للخوادم. 0 تعني تحميل أقل أولاً، أي حمل آخر "
-"يعني مسافة أقل إلى العتبة."
+"عتبة التحميل، كنسبة مئوية (0-100)، لتعيين المستخدمين للخوادم. 0 تعني أن "
+"الخادم ذو الحمل الأقل هو المفضل، وأي قيمة أخرى تعني أنه سيتم استخدام الخادم "
+"حتى يصل إلى هذا الحمل."
 
-#: services/RDS_enterprise/provider.py:250
+#: services/RDS_enterprise/provider.py:254
 msgid "Select only one of \"User mapping\" or \"User creation\" methods."
 msgstr "حدد واحدة فقط من طرق \"تعيين المستخدم\" أو \"إنشاء المستخدم\"."
 
-#: services/RDS_enterprise/provider.py:256
+#: services/RDS_enterprise/provider.py:260
 msgid "AD User Management: you must provide the AD server host."
 msgstr "م إدارة المستخدم: يجب أن توفر مضيف خادم م."
 
-#: services/RDS_enterprise/provider.py:261
+#: services/RDS_enterprise/provider.py:265
 msgid "AD User Management: you must provide the users base DN."
 msgstr "إدارة مستخدم AD: يجب عليك توفير الاسم المميز لقاعدة المستخدمين."
 
-#: services/RDS_enterprise/provider.py:266
+#: services/RDS_enterprise/provider.py:270
 msgid "AD User Management: the username should be in USER@DOMAIN form."
 msgstr "م إدارة المستخدم: يجب أن يكون اسم المستخدم في نموذج USER @ DOMAIN."
 
-#: services/RDS_enterprise/provider.py:271
+#: services/RDS_enterprise/provider.py:275
 msgid "AD User Management: you must provide the password."
 msgstr "م إدارة المستخدم: يجب عليك تقديم كلمة المرور."
 
-#: services/RDS_enterprise/provider.py:277
+#: services/RDS_enterprise/provider.py:281
 msgid "AD User Management: you must provide the user prefix. (1-4 characters)"
 msgstr "م إدارة المستخدم: يجب عليك توفير بادئة المستخدم. (1-4 أحرف)"
 
-#: services/RDS_enterprise/provider.py:286
+#: services/RDS_enterprise/provider.py:290
 msgid "AD User Management: you must provide the user creation domain FQDN."
 msgstr "م إدارة المستخدم: يجب عليك توفير مجال إنشاء المستخدم FQDN."
 
-#: services/RDS_enterprise/provider.py:295
+#: services/RDS_enterprise/provider.py:299
 msgid "User mapping is not supported anymore on UDS."
 msgstr "لم يعد تعيين المستخدم مدعومًا على UDS."
 
-#: services/RDS_enterprise/provider.py:335
+#: services/RDS_enterprise/provider.py:339
 msgid "Connection to {}, port {} failed."
 msgstr "فشل الاتصال بـ {} ، المنفذ {}."
 
-#: services/RDS_enterprise/provider.py:365
+#: services/RDS_enterprise/provider.py:369
 msgid "The group {} could not be found. Please, check it."
 msgstr "تعذر العثور على المجموعة {}. رجاءا تأكد."
 
-#: services/RDS_enterprise/provider.py:370
+#: services/RDS_enterprise/provider.py:374
 msgid "User creation test failed. Please, check parameters."
 msgstr "فشل اختبار إنشاء المستخدم. من فضلك ، تحقق المعلمات."
 
-#: services/RDS_enterprise/provider.py:380
+#: services/RDS_enterprise/provider.py:384
 msgid "Connection to {} failed and server checking is enabled."
 msgstr "فشل الاتصال بـ {} وتم تمكين التحقق من الخادم."
 
-#: services/RDS_enterprise/provider.py:384
+#: services/RDS_enterprise/provider.py:388
 msgid "Connectivity test passed"
 msgstr "اختبار الاتصال مرت"
 
-#: services/RDS_enterprise/provider.py:667
+#: services/RDS_enterprise/provider.py:680
 msgid "No more servers available"
 msgstr "لا يوجد المزيد من الخوادم المتاحة"
 

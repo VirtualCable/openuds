@@ -23,6 +23,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2018
 # albert clar <albert.clar@uib.cat>, 2017-2018,2020-2021
 # Javier <jgonzalez@virtualcable.es>, 2020
@@ -30,7 +31,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-29 19:21+0100\n"
+"POT-Creation-Date: 2024-11-05 23:23+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2020\n"
 "Language-Team: Catalan (http://app.transifex.com/openuds/openuds/language/"
@@ -468,7 +469,7 @@ msgid "Service Pool name"
 msgstr "Nom del Pool de servei"
 
 #: REST/methods/meta_service_pools.py:93 REST/methods/notifiers.py:72
-#: REST/methods/notifiers.py:104 REST/methods/users_groups.py:177
+#: REST/methods/notifiers.py:105 REST/methods/users_groups.py:177
 #: REST/methods/users_groups.py:396 REST/methods/users_groups.py:403
 #: core/types/pools.py:84 services/Proxmox/service_linked.py:201
 msgid "Enabled"
@@ -604,7 +605,7 @@ msgstr "Nivell"
 msgid "Level of notifications"
 msgstr "Nivell de notificacions"
 
-#: REST/methods/notifiers.py:105
+#: REST/methods/notifiers.py:106
 msgid "If checked, this notifier will be used"
 msgstr "Si està marcat, s&#39;utilitzarà aquest notificador"
 
@@ -820,7 +821,7 @@ msgstr "Adreça MAC opcional del servidor"
 #: REST/methods/servers_management.py:226 auths/OAuth2/authenticator.py:71
 #: auths/OAuth2/authenticator.py:79 auths/OAuth2/authenticator.py:87
 #: auths/OAuth2/authenticator.py:95 auths/OAuth2/authenticator.py:103
-#: core/types/servers.py:68
+#: core/types/servers.py:71
 msgid "Server"
 msgstr "Servidor"
 
@@ -841,7 +842,7 @@ msgid "Managed"
 msgstr "Gestionat"
 
 #: REST/methods/servers_management.py:439
-#: REST/methods/servers_management.py:450 core/types/servers.py:69
+#: REST/methods/servers_management.py:450 core/types/servers.py:72
 msgid "Unmanaged"
 msgstr "No gestionat"
 
@@ -2757,23 +2758,23 @@ msgstr "No es pot anul·lar una publicació que no es pot utilitzar"
 msgid "Can't unpublish publications with services in process"
 msgstr "No es poden anul·lar publicacions amb serveis en procés"
 
-#: core/managers/servers.py:181
+#: core/managers/servers.py:194
 msgid "No server available for user"
 msgstr "No hi ha servidor disponible per a l&#39;usuari"
 
-#: core/managers/servers.py:245 core/managers/servers.py:468
+#: core/managers/servers.py:259 core/managers/servers.py:482
 msgid "No user assigned to service"
 msgstr "Cap usuari assignat al servei"
 
-#: core/managers/servers.py:265
+#: core/managers/servers.py:279
 msgid "Server is not part of the group"
 msgstr "El servidor no forma part del grup"
 
-#: core/managers/servers.py:267
+#: core/managers/servers.py:281
 msgid "Server is in maintenance mode"
 msgstr "El servidor està en mode de manteniment"
 
-#: core/managers/servers.py:269
+#: core/managers/servers.py:283
 msgid "Server is restrained"
 msgstr "El servidor està restringit"
 
@@ -2793,7 +2794,7 @@ msgstr "No es pot eliminar ni cancel·lar {} perquè el seu estat no ho permet"
 msgid "The requested service is restrained"
 msgstr "El servei sol·licitat està restringit"
 
-#: core/managers/userservice.py:943 core/types/errors.py:118
+#: core/managers/userservice.py:951 core/types/errors.py:118
 msgid ""
 "Invalid service. The service is not available at this moment. Please, try "
 "later"
@@ -2801,15 +2802,15 @@ msgstr ""
 "Servei no vàlid. El servei no està disponible ara mateix. Si us plau, "
 "intenteu-ho més tard"
 
-#: core/managers/userservice.py:967 core/managers/userservice.py:972
+#: core/managers/userservice.py:975 core/managers/userservice.py:980
 msgid "No suitable transport found"
 msgstr "No s&#39;ha trobat cap transport adequat"
 
-#: core/managers/userservice.py:980
+#: core/managers/userservice.py:988
 msgid "The requested transport {} is not valid for {}"
 msgstr "El transport sol·licitat {} no és vàlid per a {}"
 
-#: core/managers/userservice.py:1256
+#: core/managers/userservice.py:1264
 msgid "The service is not accessible from this device"
 msgstr "El servei no és accessible des d'aquest dispositiu"
 
@@ -3095,11 +3096,11 @@ msgstr "Utilitzeu només transports habituals"
 msgid "Group Transports by label"
 msgstr "Transports de grup per etiqueta"
 
-#: core/types/servers.py:66 core/types/ui.py:46
+#: core/types/servers.py:69 core/types/ui.py:46
 msgid "Tunnel"
 msgstr "Túnel"
 
-#: core/types/servers.py:67
+#: core/types/servers.py:70
 msgid "Actor"
 msgstr "Actor"
 
@@ -3212,11 +3213,11 @@ msgstr "Màquina"
 msgid "Config"
 msgstr "Config"
 
-#: core/util/config.py:402
+#: core/util/config.py:384
 msgid "Session expire time in hours after publishing"
 msgstr "Temps de caducitat de la sessió en hores després de la publicació"
 
-#: core/util/config.py:410
+#: core/util/config.py:392
 msgid ""
 "Delay between cache checks. Reducing this number will increase cache "
 "generation speed but also will load service providers"
@@ -3225,7 +3226,7 @@ msgstr ""
 "augmentarà la velocitat de generació de memòria cau, però també carregarà "
 "els proveïdors de serveis"
 
-#: core/util/config.py:419
+#: core/util/config.py:401
 msgid ""
 "Delayed task number of threads PER SERVER, with higher number of threads, "
 "deployed task will complete sooner, but it will give more load to overall "
@@ -3235,7 +3236,7 @@ msgstr ""
 "de fils, la tasca desplegada es completarà abans, però donarà més càrrega al "
 "sistema en general"
 
-#: core/util/config.py:428
+#: core/util/config.py:410
 msgid ""
 "Number of scheduler threads running PER SERVER, with higher number of "
 "threads, deployed task will complete sooner, but it will give more load to "
@@ -3245,7 +3246,7 @@ msgstr ""
 "nombre més elevat de fils, la tasca desplegada es completarà abans, però "
 "donarà més càrrega al sistema en general"
 
-#: core/util/config.py:437
+#: core/util/config.py:419
 msgid ""
 "Waiting time before removing \"errored\" and \"removed\" publications, "
 "cache, and user assigned machines. Time is in seconds"
@@ -3254,34 +3255,34 @@ msgstr ""
 "\"eliminades\", la memòria cau i les màquines assignades per l&#39;usuari. "
 "El temps és en segons"
 
-#: core/util/config.py:445
+#: core/util/config.py:427
 msgid "Time to maintaing \"info state\" items before removing it, in seconds"
 msgstr ""
 "Temps per mantenir els elements \"estat de la informació\" abans d&#39;"
 "eliminar-lo, en segons"
 
-#: core/util/config.py:452
+#: core/util/config.py:434
 msgid "Number of services to initiate removal per run of service cleaner"
 msgstr ""
 "Nombre de serveis per iniciar l&#39;eliminació per execució del netejador de "
 "servei"
 
-#: core/util/config.py:459
+#: core/util/config.py:441
 msgid ""
 "Removal Check time for cache, publications and deployed services, in seconds"
 msgstr ""
 "Eliminació Comproveu el temps per a la memòria cau, les publicacions i els "
 "serveis desplegats, en segons"
 
-#: core/util/config.py:462
+#: core/util/config.py:444
 msgid "Superuser username"
 msgstr "Nom d&#39;usuari de superusuari"
 
-#: core/util/config.py:466
+#: core/util/config.py:448
 msgid "Superuser password"
 msgstr "Contrasenya de superusuari"
 
-#: core/util/config.py:473
+#: core/util/config.py:455
 msgid ""
 "Allow root user to access using web interface.\n"
 " Once configured one authenticator,\n"
@@ -3290,11 +3291,11 @@ msgstr ""
 "Permet que l&#39;usuari root accedeixi mitjançant la interfície web. Un cop "
 "configurat un autenticador, es recomana desactivar aquesta opció"
 
-#: core/util/config.py:481
+#: core/util/config.py:463
 msgid "Enable enhanced security modules"
 msgstr "Activa els mòduls de seguretat millorats"
 
-#: core/util/config.py:489
+#: core/util/config.py:471
 msgid ""
 "Enforced maximum security mode (Zero-Trust Mode). No password redirection "
 "will be allowed if this mode is set."
@@ -3302,7 +3303,7 @@ msgstr ""
 "Mode de seguretat màxima aplicat (mode de confiança zero). No es permetrà "
 "cap redirecció de contrasenyes si s&#39;estableix aquest mode."
 
-#: core/util/config.py:501
+#: core/util/config.py:483
 msgid ""
 "How long should the user service be unused before os manager considers it "
 "for removal"
@@ -3310,42 +3311,32 @@ msgstr ""
 "Quant de temps hauria d&#39;estar sense utilitzar el servei d&#39;usuari "
 "abans que el gestor del sistema operatiu el consideri per eliminar-lo"
 
-#: core/util/config.py:507
-msgid "Time betwen checks of unused user services by os managers"
-msgstr ""
-"Temps entre comprovacions dels serveis d&#39;usuari no utilitzats per part "
-"dels gestors del sistema operatiu"
-
-#: core/util/config.py:516
+#: core/util/config.py:493
 msgid "Max logins before blocking an account for a while"
 msgstr ""
 "Màxim d&#39;inicis de sessió abans de bloquejar un compte durant un temps"
 
-#: core/util/config.py:523
+#: core/util/config.py:500
 msgid "Block time in second for an user that has too many login failures"
 msgstr ""
 "Bloqueja el temps en segons per a un usuari que té massa errors d&#39;inici "
 "de sessió"
 
-#: core/util/config.py:529
+#: core/util/config.py:506
 msgid "Block ip on login failure"
 msgstr "Bloqueja la ip en cas d&#39;error d&#39;inici de sessió"
 
-#: core/util/config.py:538
+#: core/util/config.py:515
 msgid "Do autorun of service if just one service"
 msgstr "Feu l&#39;execució automàtica del servei si només hi ha un servei"
 
-#: core/util/config.py:545
-msgid "Redirect HTTP to HTTPS on connection to UDS"
-msgstr "Redirigeix HTTP a HTTPS en connexió a UDS"
-
-#: core/util/config.py:551
+#: core/util/config.py:521
 msgid "Redirects login page to the tag used when logged in if active."
 msgstr ""
 "Redirigeix la pàgina d&#39;inici de sessió a l&#39;etiqueta utilitzada quan "
 "s&#39;ha iniciat sessió si està activa."
 
-#: core/util/config.py:561
+#: core/util/config.py:531
 msgid ""
 "Max time needed to get a service \"fully functional\" before it's considered "
 "\"failed\" and removed"
@@ -3353,7 +3344,7 @@ msgstr ""
 "Temps màxim necessari per aconseguir un servei \"totalment funcional\" abans "
 "que es consideri \"fallit\" i s&#39;elimini"
 
-#: core/util/config.py:568
+#: core/util/config.py:538
 msgid ""
 "Max time needed to get a service \"fully removed\" before it's considered "
 "\"failed\" and purged"
@@ -3361,27 +3352,27 @@ msgstr ""
 "Temps màxim necessari per \"eliminar completament\" un servei abans que es "
 "consideri \"fallit\" i purgat"
 
-#: core/util/config.py:575
+#: core/util/config.py:545
 msgid "Maximum logs per every log-capable administration element"
 msgstr ""
 "Nombre màxim de registres per cada element d&#39;administració amb capacitat "
 "de registre"
 
-#: core/util/config.py:582
+#: core/util/config.py:552
 msgid ""
 "Maximum logs entries for general UDS logs (0 = unlimited, use with care)"
 msgstr ""
 "Màxim d&#39;entrades de registres per als registres generals d&#39;UDS (0 = "
 "il·limitat, utilitzar-lo amb cura)"
 
-#: core/util/config.py:590
+#: core/util/config.py:560
 msgid ""
 "Time to restrain a user service in case it gives some errors at some point"
 msgstr ""
 "És hora de restringir un servei d&#39;usuari en cas que en algun moment doni "
 "alguns errors"
 
-#: core/util/config.py:597
+#: core/util/config.py:567
 msgid ""
 "Number of errors that must occurr in \"restrainTime\" to restrain an user "
 "service"
@@ -3389,45 +3380,48 @@ msgstr ""
 "Nombre d&#39;errors que s&#39;han de produir a \"restrainTime\" per "
 "restringir un servei d&#39;usuari"
 
-#: core/util/config.py:605
+#: core/util/config.py:575
 msgid "Statistics duration, in days"
 msgstr "Durada de les estadístiques, en dies"
 
-#: core/util/config.py:612
+#: core/util/config.py:582
+#| msgid ""
+#| "Frequency of stats collection in seconds. Default is 4 hours (14400 "
+#| "seconds)"
 msgid ""
-"Frequency of stats collection in seconds. Default is 4 hours (14400 seconds)"
+"Frequency of stats collection in seconds. Default is 1 hours (3600 seconds)"
 msgstr ""
 "Freqüència de recollida d&#39;estadístiques en segons. El valor "
-"predeterminat és 4 hores (14400 segons)"
+"predeterminat és 1 hora (3600 segons)"
 
-#: core/util/config.py:619
+#: core/util/config.py:589
 msgid "Maximum number of time to accumulate on one run. Default is 7 (1 week)"
 msgstr ""
 "Nombre màxim de temps per acumular en una carrera. El valor predeterminat és "
 "7 (1 setmana)"
 
-#: core/util/config.py:627
+#: core/util/config.py:597
 msgid "If disallow login showing authenticatiors"
 msgstr "Si no permet l&#39;inici de sessió mostrant autenticadors"
 
-#: core/util/config.py:635
+#: core/util/config.py:605
 msgid ""
 "Notify user of existence of a new version of a service on new publication"
 msgstr ""
 "Notificar a l&#39;usuari l&#39;existència d&#39;una nova versió d&#39;un "
 "servei en una nova publicació"
 
-#: core/util/config.py:642
+#: core/util/config.py:612
 msgid "Networks or hosts considered \"trusted\" for UDS (Tunnels, etc...)"
 msgstr "Xarxes o hosts considerats \"de confiança\" per a UDS (túnels, etc...)"
 
-#: core/util/config.py:649
+#: core/util/config.py:619
 msgid "IPs or networks allowed to forward requests (like proxies)"
 msgstr ""
 "IPs o xarxes permeses per reenviar sol·licituds (com ara servidors "
 "intermediaris)"
 
-#: core/util/config.py:657
+#: core/util/config.py:627
 msgid ""
 "Allow clients to notify their own ip (if set), or use always the request "
 "extracted IP"
@@ -3435,11 +3429,11 @@ msgstr ""
 "Permet als clients notificar la seva pròpia IP (si està establerta), o "
 "utilitzeu sempre la IP extreta de la sol·licitud"
 
-#: core/util/config.py:665
+#: core/util/config.py:635
 msgid "If there is a proxy in front of us (i.e. HAProxy, or any NLB)"
 msgstr "Si tenim un proxy davant nostre (és a dir, HAProxy o qualsevol NLB)"
 
-#: core/util/config.py:674
+#: core/util/config.py:644
 msgid ""
 "If we use new logout mechanics for osmanagers, where only when the logged in "
 "users reaches 0, it is considered \"logged out\""
@@ -3447,85 +3441,85 @@ msgstr ""
 "Si utilitzem noves mecàniques de tancament de sessió per a osmanagers, on "
 "només quan els usuaris connectats arriben a 0, es considera \"tancat\""
 
-#: core/util/config.py:683
+#: core/util/config.py:653
 msgid "Enable/Disable Actor attack detection ip blocking"
 msgstr ""
 "Activa/desactiva el bloqueig d&#39;IP de detecció d&#39;atacs d&#39;actor"
 
-#: core/util/config.py:691
+#: core/util/config.py:661
 msgid "Max session length for Admin"
 msgstr "Durada màxima de la sessió per a l&#39;administrador"
 
-#: core/util/config.py:697
+#: core/util/config.py:667
 msgid "Max session length for User"
 msgstr "Durada màxima de la sessió per a l&#39;usuari"
 
-#: core/util/config.py:704
+#: core/util/config.py:674
 msgid "Page reload Time (legacy)"
 msgstr "Temps de recàrrega de la pàgina (heretat)"
 
-#: core/util/config.py:712
+#: core/util/config.py:682
 msgid "Custom message for error when limiting by calendar"
 msgstr "Missatge personalitzat per error quan es limita per calendari"
 
-#: core/util/config.py:720
+#: core/util/config.py:690
 msgid "If convert username to lowercase on logins"
 msgstr ""
 "Si converteix el nom d&#39;usuari en minúscules en els inicis de sessió"
 
-#: core/util/config.py:728
+#: core/util/config.py:698
 msgid "Global UDS ID (common for all servers on the same cluster)"
 msgstr "ID global d&#39;UDS (comú per a tots els servidors del mateix clúster)"
 
-#: core/util/config.py:736
+#: core/util/config.py:706
 msgid "Site display name"
 msgstr "Nom de visualització del lloc"
 
-#: core/util/config.py:742
+#: core/util/config.py:712
 msgid "Site copyright info"
 msgstr "Informació dels drets d&#39;autor del lloc"
 
-#: core/util/config.py:748
+#: core/util/config.py:718
 msgid "Site copyright link"
 msgstr "Enllaç de copyright del lloc"
 
-#: core/util/config.py:751
+#: core/util/config.py:721
 msgid "Top navbar logo name"
 msgstr "Nom del logotip de la barra de navegació superior"
 
-#: core/util/config.py:757
+#: core/util/config.py:727
 msgid "Custom CSS styles applied to the user accesible site"
 msgstr "Estils CSS personalitzats aplicats al lloc accessible per l&#39;usuari"
 
-#: core/util/config.py:763
+#: core/util/config.py:733
 msgid "Site information"
 msgstr "Informació del lloc"
 
-#: core/util/config.py:769
+#: core/util/config.py:739
 msgid "Show Filter box for user services on Top or bottom of the page"
 msgstr ""
 "Mostra el quadre de filtre per als serveis d&#39;usuari a la part superior o "
 "inferior de la pàgina"
 
-#: core/util/config.py:775
+#: core/util/config.py:745
 msgid "Minimal User Services needed to show filter"
 msgstr "Serveis d&#39;usuari mínims necessaris per mostrar el filtre"
 
-#: core/util/config.py:781
+#: core/util/config.py:751
 msgid "Enable experimental features. USE WITH CAUTION!!"
 msgstr "Activa les funcions experimentals. ÚS AMB PRECAUCIÓ!!"
 
-#: core/util/config.py:789
+#: core/util/config.py:759
 msgid "Number of items per page in admin tables"
 msgstr "Nombre d&#39;elements per pàgina a les taules d&#39;administració"
 
-#: core/util/config.py:795
+#: core/util/config.py:765
 msgid "List of trusted hosts/networks allowed to access the admin interface"
 msgstr ""
 "Llista d&#39;amfitrions/xarxes de confiança per accedir a la interfície "
 "d&#39;administració"
 
-#: core/util/config.py:801
+#: core/util/config.py:771
 msgid "Enable VNC menu for user services"
 msgstr "Activa el menú VNC per als serveis d&#39;usuari"
 
@@ -3619,7 +3613,6 @@ msgid "Remove found duplicates"
 msgstr "Elimina els duplicats trobats"
 
 #: core/util/fields.py:332
-#| msgid "If active, found duplicates vApps for this service will be removed"
 msgid "If active, found duplicates VApps for this service will be removed"
 msgstr ""
 "Si està activat, s&#39;eliminaran les VApp duplicades trobades per a aquest "
@@ -3781,7 +3774,7 @@ msgstr ""
 msgid "Can't contact LDAP server"
 msgstr "No es pot contactar amb el servidor LDAP"
 
-#: core/util/utils.py:119
+#: core/util/utils.py:120
 msgid "{} days {:d}:{:02d}:{:02d}"
 msgstr "{} dies {: d}: {: 02d}: {: 02d}"
 
@@ -4450,11 +4443,11 @@ msgstr "Retard en segons entre comprovacions d&#39;ordres"
 msgid "Invalid value for {}"
 msgstr "Valor no vàlid per a {}"
 
-#: notifiers/telegram/notifier.py:197
+#: notifiers/telegram/notifier.py:201
 msgid "You have been subscribed to notifications"
 msgstr "T&#39;has subscrit a les notificacions"
 
-#: notifiers/telegram/notifier.py:200
+#: notifiers/telegram/notifier.py:204
 msgid "You have been unsubscribed from notifications"
 msgstr "Has cancel·lat la subscripció a les notificacions"
 
@@ -5568,12 +5561,10 @@ msgid "Stop Machine (and deallocates it)"
 msgstr "Atura la màquina (i la desassigna)"
 
 #: services/Google_enterprise/provider.py:42
-#| msgid "Google Cloud Provider"
 msgid "Google Cloud Platform Provider"
 msgstr "Proveïdor de Google Cloud Platform"
 
 #: services/Google_enterprise/provider.py:44
-#| msgid "Provides connection to Google Cloud Compute Engine"
 msgid "Provides connection to Google Cloud Platform Compute Engine"
 msgstr "Proporciona connexió a Google Cloud Platform Compute Engine"
 
@@ -6026,15 +6017,12 @@ msgid "Nutanix Acropolis based service"
 msgstr "Servei basat en Nutanix Acropolis"
 
 #: services/Nutanix_enterprise/service.py:85
-#| msgid "Number of vcpus (\"-1 means \"keep original machine vcpus\")"
 msgid "Number of vcpus (Zero value means \"keep original machine vcpus\")"
 msgstr ""
 "Nombre de vcpus (el valor zero significa \"mantenir el vcpus de la màquina "
 "original\")"
 
 #: services/Nutanix_enterprise/service.py:98
-#| msgid ""
-#| "Number of vcpus (\"-1 means \"keep original machine cores per vcpu\")"
 msgid ""
 "Number of vcpus (Zero value means \"keep original machine cores per vcpu\")"
 msgstr ""
@@ -6050,7 +6038,6 @@ msgstr ""
 "xarxa)"
 
 #: services/Nutanix_enterprise/service.py:140
-#| msgid "Both Cores per VCPU and Number of VCPUS are required"
 msgid "Both Cores per VCPU and Number of VCPUS must be greater than 0"
 msgstr ""
 "Tant els nuclis per VCPU com el nombre de VCPUS han de ser superiors a 0"
@@ -6678,7 +6665,6 @@ msgid "Static Single IP"
 msgstr "IP simple estàtica"
 
 #: services/PhysicalMachines/service_single.py:56
-#| msgid "This service provides access to POWERED-ON Machine by IP"
 msgid ""
 "This service provides access to POWERED-ON Machine by IP. (You can configure "
 "WOL to power on the machine)"
@@ -7000,79 +6986,85 @@ msgstr ""
 msgid "Load threshold"
 msgstr "Llindar de càrrega"
 
-#: services/RDS_enterprise/provider.py:236
+#: services/RDS_enterprise/provider.py:237
+#| msgid ""
+#| "Load threshold for assigning users to servers. 0 means lower load first, "
+#| "any other the less distance to threshold."
 msgid ""
-"Load threshold for assigning users to servers. 0 means lower load first, any "
-"other the less distance to threshold."
+"Load threshold, in percent (0-100), for assigning users to servers.0 means "
+"server with lower load is preferred, any other value means that server will "
+"be used until it reaches that load."
 msgstr ""
-"Llindar de càrrega per assignar usuaris als servidors. 0 significa una "
-"càrrega més baixa primer, una altra a menor distància al llindar."
+"Llindar de càrrega, en percentatge (0-100), per assignar usuaris a "
+"servidors. 0 significa que es prefereix un servidor amb una càrrega menor, "
+"qualsevol altre valor significa que s&#39;utilitzarà el servidor fins que "
+"assoleixi aquesta càrrega."
 
-#: services/RDS_enterprise/provider.py:250
+#: services/RDS_enterprise/provider.py:254
 msgid "Select only one of \"User mapping\" or \"User creation\" methods."
 msgstr ""
 "Seleccioneu només un dels mètodes: \"Mapeig d'usuaris\" o \"Creació "
 "d'usuaris\"."
 
-#: services/RDS_enterprise/provider.py:256
+#: services/RDS_enterprise/provider.py:260
 msgid "AD User Management: you must provide the AD server host."
 msgstr ""
 "Gestió d’usuaris de Directori Actiu: heu de proporcionar el host del "
 "servidor del Directori Actiu."
 
-#: services/RDS_enterprise/provider.py:261
+#: services/RDS_enterprise/provider.py:265
 msgid "AD User Management: you must provide the users base DN."
 msgstr "Gestió d’usuaris d’AD: heu de proporcionar el DN de base d’usuaris."
 
-#: services/RDS_enterprise/provider.py:266
+#: services/RDS_enterprise/provider.py:270
 msgid "AD User Management: the username should be in USER@DOMAIN form."
 msgstr ""
 "Gestió d’usuaris de Directori Actiu: el nom d’usuari ha de tenir el format "
 "USUARI@DOMINI."
 
-#: services/RDS_enterprise/provider.py:271
+#: services/RDS_enterprise/provider.py:275
 msgid "AD User Management: you must provide the password."
 msgstr ""
 "Gestió d’usuaris de Directori Actiu: heu de proporcionar la contrasenya."
 
-#: services/RDS_enterprise/provider.py:277
+#: services/RDS_enterprise/provider.py:281
 msgid "AD User Management: you must provide the user prefix. (1-4 characters)"
 msgstr ""
 "Gestió d’usuaris de Directori Actiu: heu de proporcionar el prefix d’usuari. "
 "(1-4 caràcters)"
 
-#: services/RDS_enterprise/provider.py:286
+#: services/RDS_enterprise/provider.py:290
 msgid "AD User Management: you must provide the user creation domain FQDN."
 msgstr ""
 "Gestió d’usuaris de Directori Actiu: heu de proporcionar el domini (FQDN) de "
 "creació d’usuaris."
 
-#: services/RDS_enterprise/provider.py:295
+#: services/RDS_enterprise/provider.py:299
 msgid "User mapping is not supported anymore on UDS."
 msgstr "L&#39;assignació d&#39;usuaris ja no és compatible amb UDS."
 
-#: services/RDS_enterprise/provider.py:335
+#: services/RDS_enterprise/provider.py:339
 msgid "Connection to {}, port {} failed."
 msgstr "La connexió a {}, port {} ha fallat."
 
-#: services/RDS_enterprise/provider.py:365
+#: services/RDS_enterprise/provider.py:369
 msgid "The group {} could not be found. Please, check it."
 msgstr "No s'ha pogut trobar el grup {}. Si us plau, reviseu-ho."
 
-#: services/RDS_enterprise/provider.py:370
+#: services/RDS_enterprise/provider.py:374
 msgid "User creation test failed. Please, check parameters."
 msgstr "La prova de creació d'usuari ha fallat . Reviseu els paràmetres."
 
-#: services/RDS_enterprise/provider.py:380
+#: services/RDS_enterprise/provider.py:384
 msgid "Connection to {} failed and server checking is enabled."
 msgstr ""
 "La connexió a {} ha fallat i la comprovació del servidor està activada."
 
-#: services/RDS_enterprise/provider.py:384
+#: services/RDS_enterprise/provider.py:388
 msgid "Connectivity test passed"
 msgstr "La prova de connectivitat s'ha realitzat correctament"
 
-#: services/RDS_enterprise/provider.py:667
+#: services/RDS_enterprise/provider.py:680
 msgid "No more servers available"
 msgstr "No hi ha més servidors disponibles"
 

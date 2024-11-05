@@ -23,11 +23,12 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-29 19:21+0100\n"
+"POT-Creation-Date: 2024-11-05 23:23+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: Chinese (http://app.transifex.com/openuds/openuds/language/"
@@ -460,7 +461,7 @@ msgid "Service Pool name"
 msgstr "服务池名称"
 
 #: REST/methods/meta_service_pools.py:93 REST/methods/notifiers.py:72
-#: REST/methods/notifiers.py:104 REST/methods/users_groups.py:177
+#: REST/methods/notifiers.py:105 REST/methods/users_groups.py:177
 #: REST/methods/users_groups.py:396 REST/methods/users_groups.py:403
 #: core/types/pools.py:84 services/Proxmox/service_linked.py:201
 msgid "Enabled"
@@ -592,7 +593,7 @@ msgstr "等级"
 msgid "Level of notifications"
 msgstr "通知级别"
 
-#: REST/methods/notifiers.py:105
+#: REST/methods/notifiers.py:106
 msgid "If checked, this notifier will be used"
 msgstr "如果选中，将使用此通知程序"
 
@@ -806,7 +807,7 @@ msgstr "服务器的可选 MAC 地址"
 #: REST/methods/servers_management.py:226 auths/OAuth2/authenticator.py:71
 #: auths/OAuth2/authenticator.py:79 auths/OAuth2/authenticator.py:87
 #: auths/OAuth2/authenticator.py:95 auths/OAuth2/authenticator.py:103
-#: core/types/servers.py:68
+#: core/types/servers.py:71
 msgid "Server"
 msgstr "服务器"
 
@@ -827,7 +828,7 @@ msgid "Managed"
 msgstr "管理"
 
 #: REST/methods/servers_management.py:439
-#: REST/methods/servers_management.py:450 core/types/servers.py:69
+#: REST/methods/servers_management.py:450 core/types/servers.py:72
 msgid "Unmanaged"
 msgstr "非托管"
 
@@ -1462,8 +1463,9 @@ msgid ""
 "If not empty, this list of domain=backup1,backup2,... will be used as backup "
 "servers for the domains.If domain is not specified, the backup servers will "
 "be used for all domains."
-msgstr "如果不为空，则此域=备份1，备份2，..."
-"列表将用作域的备份服务器。如果没有指定域，则所有域都将使用备份服务器。"
+msgstr ""
+"如果不为空，则此域=备份1，备份2，...列表将用作域的备份服务器。如果没有指定"
+"域，则所有域都将使用备份服务器。"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:134
 #: auths/EDirectory_enterprise/authenticator.py:96 core/util/fields.py:229
@@ -2620,23 +2622,23 @@ msgstr "无法取消发布不可用的出版物"
 msgid "Can't unpublish publications with services in process"
 msgstr "无法取消发布正在处理的服务的出版物"
 
-#: core/managers/servers.py:181
+#: core/managers/servers.py:194
 msgid "No server available for user"
 msgstr "没有可供用户使用的服务器"
 
-#: core/managers/servers.py:245 core/managers/servers.py:468
+#: core/managers/servers.py:259 core/managers/servers.py:482
 msgid "No user assigned to service"
 msgstr "没有用户分配到服务"
 
-#: core/managers/servers.py:265
+#: core/managers/servers.py:279
 msgid "Server is not part of the group"
 msgstr "服务器不属于该组"
 
-#: core/managers/servers.py:267
+#: core/managers/servers.py:281
 msgid "Server is in maintenance mode"
 msgstr "服务器处于维护模式"
 
-#: core/managers/servers.py:269
+#: core/managers/servers.py:283
 msgid "Server is restrained"
 msgstr "服务器被限制"
 
@@ -2656,21 +2658,21 @@ msgstr "无法删除或取消{}，导致其状态不允许"
 msgid "The requested service is restrained"
 msgstr "请求的服务被限制"
 
-#: core/managers/userservice.py:943 core/types/errors.py:118
+#: core/managers/userservice.py:951 core/types/errors.py:118
 msgid ""
 "Invalid service. The service is not available at this moment. Please, try "
 "later"
 msgstr "服务无效。目前无法使用该服务。请稍后再试"
 
-#: core/managers/userservice.py:967 core/managers/userservice.py:972
+#: core/managers/userservice.py:975 core/managers/userservice.py:980
 msgid "No suitable transport found"
 msgstr "未找到合适的交通方式"
 
-#: core/managers/userservice.py:980
+#: core/managers/userservice.py:988
 msgid "The requested transport {} is not valid for {}"
 msgstr "请求的传输{}对{}无效"
 
-#: core/managers/userservice.py:1256
+#: core/managers/userservice.py:1264
 msgid "The service is not accessible from this device"
 msgstr "无法从此设备访问该服务"
 
@@ -2939,11 +2941,11 @@ msgstr "仅使用普通传输"
 msgid "Group Transports by label"
 msgstr "按标签分组传输"
 
-#: core/types/servers.py:66 core/types/ui.py:46
+#: core/types/servers.py:69 core/types/ui.py:46
 msgid "Tunnel"
 msgstr "隧道"
 
-#: core/types/servers.py:67
+#: core/types/servers.py:70
 msgid "Actor"
 msgstr "演员"
 
@@ -3056,18 +3058,18 @@ msgstr "机"
 msgid "Config"
 msgstr "配置"
 
-#: core/util/config.py:402
+#: core/util/config.py:384
 msgid "Session expire time in hours after publishing"
 msgstr "会话在发布后的过期时间（以小时为单位）"
 
-#: core/util/config.py:410
+#: core/util/config.py:392
 msgid ""
 "Delay between cache checks. Reducing this number will increase cache "
 "generation speed but also will load service providers"
 msgstr ""
 "缓存检查之间的延迟。减少此数量将提高缓存生成速度，但也会增加服务提供商的负载"
 
-#: core/util/config.py:419
+#: core/util/config.py:401
 msgid ""
 "Delayed task number of threads PER SERVER, with higher number of threads, "
 "deployed task will complete sooner, but it will give more load to overall "
@@ -3076,7 +3078,7 @@ msgstr ""
 "每个服务器的延迟任务线程数，线程数越高，部署的任务将更快完成，但会给整个系统"
 "带来更多负载"
 
-#: core/util/config.py:428
+#: core/util/config.py:410
 msgid ""
 "Number of scheduler threads running PER SERVER, with higher number of "
 "threads, deployed task will complete sooner, but it will give more load to "
@@ -3085,7 +3087,7 @@ msgstr ""
 "每个服务器运行的调度程序线程数，线程数越高，部署的任务将更快完成，但会给整个"
 "系统带来更多负载"
 
-#: core/util/config.py:437
+#: core/util/config.py:419
 msgid ""
 "Waiting time before removing \"errored\" and \"removed\" publications, "
 "cache, and user assigned machines. Time is in seconds"
@@ -3093,28 +3095,28 @@ msgstr ""
 "删除“错误的”和“已删除的”出版物、缓存和用户分配的计算机之前的等待时间。时间以"
 "秒为单位"
 
-#: core/util/config.py:445
+#: core/util/config.py:427
 msgid "Time to maintaing \"info state\" items before removing it, in seconds"
 msgstr "在删除“信息状态”项目之前维护该项目的时间（以秒为单位）"
 
-#: core/util/config.py:452
+#: core/util/config.py:434
 msgid "Number of services to initiate removal per run of service cleaner"
 msgstr "每次运行服务清理程序启动删除的服务数量"
 
-#: core/util/config.py:459
+#: core/util/config.py:441
 msgid ""
 "Removal Check time for cache, publications and deployed services, in seconds"
 msgstr "删除检查缓存、发布和已部署服务的时间（以秒为单位）"
 
-#: core/util/config.py:462
+#: core/util/config.py:444
 msgid "Superuser username"
 msgstr "超级用户用户名"
 
-#: core/util/config.py:466
+#: core/util/config.py:448
 msgid "Superuser password"
 msgstr "超级用户密码"
 
-#: core/util/config.py:473
+#: core/util/config.py:455
 msgid ""
 "Allow root user to access using web interface.\n"
 " Once configured one authenticator,\n"
@@ -3122,123 +3124,118 @@ msgid ""
 msgstr ""
 "允许 root 用户使用 Web 界面进行访问。一旦配置了一个身份验证器，建议禁用此选项"
 
-#: core/util/config.py:481
+#: core/util/config.py:463
 msgid "Enable enhanced security modules"
 msgstr "启用增强的安全模块"
 
-#: core/util/config.py:489
+#: core/util/config.py:471
 msgid ""
 "Enforced maximum security mode (Zero-Trust Mode). No password redirection "
 "will be allowed if this mode is set."
 msgstr "强制最大安全模式（零信任模式）。如果设置此模式，则不允许密码重定向。"
 
-#: core/util/config.py:501
+#: core/util/config.py:483
 msgid ""
 "How long should the user service be unused before os manager considers it "
 "for removal"
 msgstr "用户服务应该闲置多长时间，操作系统管理器才会考虑将其删除"
 
-#: core/util/config.py:507
-msgid "Time betwen checks of unused user services by os managers"
-msgstr "操作系统管理器检查未使用的用户服务的时间间隔"
-
-#: core/util/config.py:516
+#: core/util/config.py:493
 msgid "Max logins before blocking an account for a while"
 msgstr "暂时阻止帐户之前的最大登录次数"
 
-#: core/util/config.py:523
+#: core/util/config.py:500
 msgid "Block time in second for an user that has too many login failures"
 msgstr "登录失败次数过多的用户的阻止时间（以秒为单位）"
 
-#: core/util/config.py:529
+#: core/util/config.py:506
 msgid "Block ip on login failure"
 msgstr "登录失败时阻止 ip"
 
-#: core/util/config.py:538
+#: core/util/config.py:515
 msgid "Do autorun of service if just one service"
 msgstr "如果只有一项服务，则自动运行服务"
 
-#: core/util/config.py:545
-msgid "Redirect HTTP to HTTPS on connection to UDS"
-msgstr "连接到 UDS 时将 HTTP 重定向到 HTTPS"
-
-#: core/util/config.py:551
+#: core/util/config.py:521
 msgid "Redirects login page to the tag used when logged in if active."
 msgstr "如果处于活动状态，则将登录页面重定向到登录时使用的标签。"
 
-#: core/util/config.py:561
+#: core/util/config.py:531
 msgid ""
 "Max time needed to get a service \"fully functional\" before it's considered "
 "\"failed\" and removed"
 msgstr "在服务被视为“失败”并删除之前获得“功能齐全”所需的最长时间"
 
-#: core/util/config.py:568
+#: core/util/config.py:538
 msgid ""
 "Max time needed to get a service \"fully removed\" before it's considered "
 "\"failed\" and purged"
 msgstr "在服务被视为“失败”并清除之前“完全删除”服务所需的最长时间"
 
-#: core/util/config.py:575
+#: core/util/config.py:545
 msgid "Maximum logs per every log-capable administration element"
 msgstr "每个具有日志功能的管理元素的最大日志数"
 
-#: core/util/config.py:582
+#: core/util/config.py:552
 msgid ""
 "Maximum logs entries for general UDS logs (0 = unlimited, use with care)"
 msgstr "通用 UDS 日志的最大日志条目数（0 = 无限制，谨慎使用）"
 
-#: core/util/config.py:590
+#: core/util/config.py:560
 msgid ""
 "Time to restrain a user service in case it gives some errors at some point"
 msgstr "是时候限制用户服务，以防它在某个时候出现一些错误"
 
-#: core/util/config.py:597
+#: core/util/config.py:567
 msgid ""
 "Number of errors that must occurr in \"restrainTime\" to restrain an user "
 "service"
 msgstr "在“restrainTime”内必须发生的错误数以限制用户服务"
 
-#: core/util/config.py:605
+#: core/util/config.py:575
 msgid "Statistics duration, in days"
 msgstr "统计持续时间，以天为单位"
 
-#: core/util/config.py:612
+#: core/util/config.py:582
+#| msgid ""
+#| "Frequency of stats collection in seconds. Default is 4 hours (14400 "
+#| "seconds)"
 msgid ""
-"Frequency of stats collection in seconds. Default is 4 hours (14400 seconds)"
-msgstr "以秒为单位的统计数据收集频率。默认为 4 小时（14400 秒）"
+"Frequency of stats collection in seconds. Default is 1 hours (3600 seconds)"
+msgstr "统计信息收集频率（以秒为单位）。默认值为 1 小时（3600 秒）"
 
-#: core/util/config.py:619
+#: core/util/config.py:589
 msgid "Maximum number of time to accumulate on one run. Default is 7 (1 week)"
 msgstr "一次运行累积的最大时间数。默认为 7（1 周）"
 
-#: core/util/config.py:627
+#: core/util/config.py:597
 msgid "If disallow login showing authenticatiors"
 msgstr "如果不允许登录显示身份验证器"
 
-#: core/util/config.py:635
+#: core/util/config.py:605
 msgid ""
 "Notify user of existence of a new version of a service on new publication"
 msgstr "通知用户新出版物上存在新版本的服务"
 
-#: core/util/config.py:642
+#: core/util/config.py:612
 msgid "Networks or hosts considered \"trusted\" for UDS (Tunnels, etc...)"
 msgstr "被视为 UDS“可信”的网络或主机（隧道等...）"
 
-#: core/util/config.py:649
+#: core/util/config.py:619
 msgid "IPs or networks allowed to forward requests (like proxies)"
 msgstr "允许转发请求的 IP 或网络（如代理）"
 
-#: core/util/config.py:657
+#: core/util/config.py:627
 msgid ""
 "Allow clients to notify their own ip (if set), or use always the request "
 "extracted IP"
 msgstr "允许客户端通知自己的 IP（如果设置），或始终使用请求提取的 IP"
 
-#: core/util/config.py:665
+#: core/util/config.py:635
 msgid "If there is a proxy in front of us (i.e. HAProxy, or any NLB)"
 msgstr "如果我们前面有一个代理（即HAProxy，或任何NLB）"
 
-#: core/util/config.py:674
+#: core/util/config.py:644
 msgid ""
 "If we use new logout mechanics for osmanagers, where only when the logged in "
 "users reaches 0, it is considered \"logged out\""
@@ -3246,79 +3243,79 @@ msgstr ""
 "如果我们为 osmanagers 使用新的注销机制，只有当登录用户达到 0 时，才被视为“注"
 "销”"
 
-#: core/util/config.py:683
+#: core/util/config.py:653
 msgid "Enable/Disable Actor attack detection ip blocking"
 msgstr "启用/禁用 Actor 攻击检测 ip 阻止"
 
-#: core/util/config.py:691
+#: core/util/config.py:661
 msgid "Max session length for Admin"
 msgstr "管理员的最大会话长度"
 
-#: core/util/config.py:697
+#: core/util/config.py:667
 msgid "Max session length for User"
 msgstr "用户的最大会话长度"
 
-#: core/util/config.py:704
+#: core/util/config.py:674
 msgid "Page reload Time (legacy)"
 msgstr "页面重新加载时间（旧版）"
 
-#: core/util/config.py:712
+#: core/util/config.py:682
 msgid "Custom message for error when limiting by calendar"
 msgstr "受日历限制时出现错误的自定义消息"
 
-#: core/util/config.py:720
+#: core/util/config.py:690
 msgid "If convert username to lowercase on logins"
 msgstr "如果在登录时将用户名转换为小写"
 
-#: core/util/config.py:728
+#: core/util/config.py:698
 msgid "Global UDS ID (common for all servers on the same cluster)"
 msgstr "全局 UDS ID（同一集群上的所有服务器通用）"
 
-#: core/util/config.py:736
+#: core/util/config.py:706
 msgid "Site display name"
 msgstr "站点显示名称"
 
-#: core/util/config.py:742
+#: core/util/config.py:712
 msgid "Site copyright info"
 msgstr "网站版权信息"
 
-#: core/util/config.py:748
+#: core/util/config.py:718
 msgid "Site copyright link"
 msgstr "网站版权链接"
 
-#: core/util/config.py:751
+#: core/util/config.py:721
 msgid "Top navbar logo name"
 msgstr "顶部导航栏徽标名称"
 
-#: core/util/config.py:757
+#: core/util/config.py:727
 msgid "Custom CSS styles applied to the user accesible site"
 msgstr "应用于用户可访问站点的自定义 CSS 样式"
 
-#: core/util/config.py:763
+#: core/util/config.py:733
 msgid "Site information"
 msgstr "站点信息"
 
-#: core/util/config.py:769
+#: core/util/config.py:739
 msgid "Show Filter box for user services on Top or bottom of the page"
 msgstr "在页面顶部或底部显示用户服务的过滤框"
 
-#: core/util/config.py:775
+#: core/util/config.py:745
 msgid "Minimal User Services needed to show filter"
 msgstr "显示过滤器所需的最少用户服务"
 
-#: core/util/config.py:781
+#: core/util/config.py:751
 msgid "Enable experimental features. USE WITH CAUTION!!"
 msgstr "启用实验性功能。谨慎使用！"
 
-#: core/util/config.py:789
+#: core/util/config.py:759
 msgid "Number of items per page in admin tables"
 msgstr "管理表中每页的项目数"
 
-#: core/util/config.py:795
+#: core/util/config.py:765
 msgid "List of trusted hosts/networks allowed to access the admin interface"
 msgstr "允许访问管理界面的受信任主机/网络列表"
 
-#: core/util/config.py:801
+#: core/util/config.py:771
 msgid "Enable VNC menu for user services"
 msgstr "为用户服务启用VNC菜单"
 
@@ -3410,7 +3407,6 @@ msgid "Remove found duplicates"
 msgstr "删除找到的重复项"
 
 #: core/util/fields.py:332
-#| msgid "If active, found duplicates vApps for this service will be removed"
 msgid "If active, found duplicates VApps for this service will be removed"
 msgstr "如果处于活动状态，则将删除此服务的重复 VApp"
 
@@ -3556,7 +3552,7 @@ msgstr "包含真实名称属性或属性模式的属性（每行一个）"
 msgid "Can't contact LDAP server"
 msgstr "无法联系LDAP服务器"
 
-#: core/util/utils.py:119
+#: core/util/utils.py:120
 msgid "{} days {:d}:{:02d}:{:02d}"
 msgstr "{}天{：d}：{：02d}：{：02d}"
 
@@ -3867,7 +3863,8 @@ msgid ""
 "If unchecked, username will be sent as is to radius server. \n"
 "If checked, domain part will be removed from username before sending it to "
 "radius server."
-msgstr "如果不选中，用户名将按原样发送到 radius 服务器。如果选中，将在将用户名发送到 "
+msgstr ""
+"如果不选中，用户名将按原样发送到 radius 服务器。如果选中，将在将用户名发送到 "
 "radius 服务器之前删除其域部分。"
 
 #: mfas/Radius/mfa.py:144
@@ -4198,11 +4195,11 @@ msgstr "命令检查之间的延迟（以秒为单位）"
 msgid "Invalid value for {}"
 msgstr "{} 的值无效"
 
-#: notifiers/telegram/notifier.py:197
+#: notifiers/telegram/notifier.py:201
 msgid "You have been subscribed to notifications"
 msgstr "您已订阅通知"
 
-#: notifiers/telegram/notifier.py:200
+#: notifiers/telegram/notifier.py:204
 msgid "You have been unsubscribed from notifications"
 msgstr "您已取消订阅通知"
 
@@ -5276,12 +5273,10 @@ msgid "Stop Machine (and deallocates it)"
 msgstr "停止机器（并释放它）"
 
 #: services/Google_enterprise/provider.py:42
-#| msgid "Google Cloud Provider"
 msgid "Google Cloud Platform Provider"
 msgstr "Google 云平台提供商"
 
 #: services/Google_enterprise/provider.py:44
-#| msgid "Provides connection to Google Cloud Compute Engine"
 msgid "Provides connection to Google Cloud Platform Compute Engine"
 msgstr "提供与 Google Cloud Platform Compute Engine 的连接"
 
@@ -5702,13 +5697,10 @@ msgid "Nutanix Acropolis based service"
 msgstr "Nutanix雅典卫城的服务"
 
 #: services/Nutanix_enterprise/service.py:85
-#| msgid "Number of vcpus (\"-1 means \"keep original machine vcpus\")"
 msgid "Number of vcpus (Zero value means \"keep original machine vcpus\")"
 msgstr "vcpus 数量（零值表示“保留原机器 vcpus”）"
 
 #: services/Nutanix_enterprise/service.py:98
-#| msgid ""
-#| "Number of vcpus (\"-1 means \"keep original machine cores per vcpu\")"
 msgid ""
 "Number of vcpus (Zero value means \"keep original machine cores per vcpu\")"
 msgstr "vCPU 数量（零值表示“保留每个 vCPU 的原始机器核心”）"
@@ -5720,7 +5712,6 @@ msgid ""
 msgstr "机器网络（创建的每台机器都将连接到该网络）"
 
 #: services/Nutanix_enterprise/service.py:140
-#| msgid "Both Cores per VCPU and Number of VCPUS are required"
 msgid "Both Cores per VCPU and Number of VCPUS must be greater than 0"
 msgstr "每个 VCPU 的核心数和 VCPUS 数量都必须大于 0"
 
@@ -6305,11 +6296,11 @@ msgid "Static Single IP"
 msgstr "静态单IP"
 
 #: services/PhysicalMachines/service_single.py:56
-#| msgid "This service provides access to POWERED-ON Machine by IP"
 msgid ""
 "This service provides access to POWERED-ON Machine by IP. (You can configure "
 "WOL to power on the machine)"
-msgstr "此服务提供通过 IP 访问已启动的机器的功能。（您可以配置 WOL 来启动机器）"
+msgstr ""
+"此服务提供通过 IP 访问已启动的机器的功能。（您可以配置 WOL 来启动机器）"
 
 #: services/PhysicalMachines/service_single.py:73
 msgid "Host IP/FQDN"
@@ -6604,67 +6595,71 @@ msgstr "AD 证书（PEM 格式）。留空以使用标准 CA"
 msgid "Load threshold"
 msgstr "负载阈值"
 
-#: services/RDS_enterprise/provider.py:236
+#: services/RDS_enterprise/provider.py:237
+#| msgid ""
+#| "Load threshold for assigning users to servers. 0 means lower load first, "
+#| "any other the less distance to threshold."
 msgid ""
-"Load threshold for assigning users to servers. 0 means lower load first, any "
-"other the less distance to threshold."
+"Load threshold, in percent (0-100), for assigning users to servers.0 means "
+"server with lower load is preferred, any other value means that server will "
+"be used until it reaches that load."
 msgstr ""
-"将用户分配到服务器的负载阈值。0 表示首先降低负载，其他任何值表示与阈值的距离"
-"较小。"
+"负载阈值，以百分比 (0-100) 表示，用于将用户分配给服务器。0 "
+"表示优先使用负载较低的服务器，任何其他值都表示将使用该服务器直到达到该负载。"
 
-#: services/RDS_enterprise/provider.py:250
+#: services/RDS_enterprise/provider.py:254
 msgid "Select only one of \"User mapping\" or \"User creation\" methods."
 msgstr "仅选择“用户映射”或“用户创建”方法之一。"
 
-#: services/RDS_enterprise/provider.py:256
+#: services/RDS_enterprise/provider.py:260
 msgid "AD User Management: you must provide the AD server host."
 msgstr "AD用户管理：您必须提供AD服务器主机。"
 
-#: services/RDS_enterprise/provider.py:261
+#: services/RDS_enterprise/provider.py:265
 msgid "AD User Management: you must provide the users base DN."
 msgstr "AD用户管理：您必须提供用户基本DN。"
 
-#: services/RDS_enterprise/provider.py:266
+#: services/RDS_enterprise/provider.py:270
 msgid "AD User Management: the username should be in USER@DOMAIN form."
 msgstr "AD用户管理：用户名应为USER @ DOMAIN形式。"
 
-#: services/RDS_enterprise/provider.py:271
+#: services/RDS_enterprise/provider.py:275
 msgid "AD User Management: you must provide the password."
 msgstr "AD用户管理：您必须提供密码。"
 
-#: services/RDS_enterprise/provider.py:277
+#: services/RDS_enterprise/provider.py:281
 msgid "AD User Management: you must provide the user prefix. (1-4 characters)"
 msgstr "AD用户管理：您必须提供用户前缀。 （1-4个字符）"
 
-#: services/RDS_enterprise/provider.py:286
+#: services/RDS_enterprise/provider.py:290
 msgid "AD User Management: you must provide the user creation domain FQDN."
 msgstr "AD用户管理：您必须提供用户创建域FQDN。"
 
-#: services/RDS_enterprise/provider.py:295
+#: services/RDS_enterprise/provider.py:299
 msgid "User mapping is not supported anymore on UDS."
 msgstr "UDS 不再支持用户映射。"
 
-#: services/RDS_enterprise/provider.py:335
+#: services/RDS_enterprise/provider.py:339
 msgid "Connection to {}, port {} failed."
 msgstr "与{}，端口{}的连接失败。"
 
-#: services/RDS_enterprise/provider.py:365
+#: services/RDS_enterprise/provider.py:369
 msgid "The group {} could not be found. Please, check it."
 msgstr "找不到群组{}。请检查一下。"
 
-#: services/RDS_enterprise/provider.py:370
+#: services/RDS_enterprise/provider.py:374
 msgid "User creation test failed. Please, check parameters."
 msgstr "用户创建测试失败。请检查参数。"
 
-#: services/RDS_enterprise/provider.py:380
+#: services/RDS_enterprise/provider.py:384
 msgid "Connection to {} failed and server checking is enabled."
 msgstr "与 {} 的连接失败，服务器检查已启用。"
 
-#: services/RDS_enterprise/provider.py:384
+#: services/RDS_enterprise/provider.py:388
 msgid "Connectivity test passed"
 msgstr "连接测试通过"
 
-#: services/RDS_enterprise/provider.py:667
+#: services/RDS_enterprise/provider.py:680
 msgid "No more servers available"
 msgstr "没有更多可用服务器"
 

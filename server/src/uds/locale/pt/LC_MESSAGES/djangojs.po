@@ -28,7 +28,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-29 19:21+0100\n"
+"POT-Creation-Date: 2024-11-05 23:23+0100\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2020\n"
 "Language-Team: Portuguese (http://app.transifex.com/openuds/openuds/language/"
@@ -370,7 +370,6 @@ msgid "Yearly"
 msgstr "Anual"
 
 #: static/admin/translations-fakejs.js:82
-#: static/admin/translations-fakejs.js:420
 msgid "Weekdays"
 msgstr "Dias úteis"
 
@@ -451,6 +450,7 @@ msgid "Interval"
 msgstr "Intervalo"
 
 #: static/admin/translations-fakejs.js:100
+#: static/admin/translations-fakejs.js:420
 msgid "Week days"
 msgstr "Dias úteis"
 

@@ -25,7 +25,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-29 19:21+0100\n"
+"POT-Creation-Date: 2024-11-05 23:23+0100\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: Chinese (http://app.transifex.com/openuds/openuds/language/"
@@ -366,7 +366,6 @@ msgid "Yearly"
 msgstr "每年"
 
 #: static/admin/translations-fakejs.js:82
-#: static/admin/translations-fakejs.js:420
 msgid "Weekdays"
 msgstr "平日"
 
@@ -447,6 +446,7 @@ msgid "Interval"
 msgstr "间隔"
 
 #: static/admin/translations-fakejs.js:100
+#: static/admin/translations-fakejs.js:420
 msgid "Week days"
 msgstr "周日"
 
