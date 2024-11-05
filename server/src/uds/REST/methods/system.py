@@ -54,10 +54,9 @@ if typing.TYPE_CHECKING:
 cache = Cache('StatsDispatcher')
 
 # Enclosed methods under /stats path
-POINTS = 70
-SINCE = 90  # Days, if higer values used, ensure mysql/mariadb has a bigger sort buffer
-USE_MAX = True
-CACHE_TIME = 60 * 60  # 1 hour
+SINCE: typing.Final[int] = 14  # Days, if higer values used, ensure mysql/mariadb has a bigger sort buffer
+USE_MAX: typing.Final[int] = True
+CACHE_TIME: typing.Final[int] = 60 * 60  # 1 hour
 
 
 def get_servicepools_counters(
@@ -68,9 +67,10 @@ def get_servicepools_counters(
     val: list[dict[str, typing.Any]] = []
     try:
         cache_key = (
-            (servicepool and str(servicepool.id) or 'all') + str(counter_type) + str(POINTS) + str(since_days)
+            (servicepool and str(servicepool.id) or 'all') + str(counter_type) + str(since_days) + str(since_days)
         )
-        to = sql_now()
+        # Get now but with 0 minutes and 0 seconds
+        to = sql_now().replace(minute=0, second=0, microsecond=0)
         since: datetime.datetime = to - datetime.timedelta(days=since_days)
 
         cached_value: typing.Optional[bytes] = cache.get(cache_key)
@@ -82,12 +82,12 @@ def get_servicepools_counters(
                 us = servicepool
 
             stats = counters.enumerate_accumulated_counters(
-                interval_type=models.StatsCountersAccum.IntervalType.DAY,
+                interval_type=models.StatsCountersAccum.IntervalType.HOUR,
                 counter_type=counter_type,
                 owner_type=types.stats.CounterOwnerType.SERVICEPOOL,
                 owner_id=us.id if us.id != -1 else None,
                 since=since,
-                points=since_days,  # One point per hour
+                points=since_days*24,  # One point per hour
             )
             val = [
                 {
@@ -97,22 +97,6 @@ def get_servicepools_counters(
                 for x in stats
             ]
 
-            # val = [
-            #     {
-            #         'stamp': x[0],
-            #         'value': int(x[1]),
-            #     }
-            #     for x in counters.enumerate_counters(
-            #         us,
-            #         counter_type,
-            #         since=since,
-            #         to=to,
-            #         max_intervals=POINTS,
-            #         use_max=USE_MAX,
-            #         all=us.id == -1,
-            #     )
-            # ]
-
             # logger.debug('val: %s', val)
             if len(val) >= 2:
                 cache.put(
@@ -121,7 +105,11 @@ def get_servicepools_counters(
                     CACHE_TIME * 2,
                 )
             else:
-                val = [{'stamp': since, 'value': 0}, {'stamp': to, 'value': 0}]
+                # Generate as much points as needed with 0 value
+                val = [
+                    {'stamp': since + datetime.timedelta(hours=i), 'value': 0}
+                    for i in range(since_days * 24)
+                ]
         else:
             val = pickle.loads(
                 codecs.decode(cached_value, 'zip')

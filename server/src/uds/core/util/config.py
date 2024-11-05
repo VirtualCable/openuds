@@ -577,9 +577,9 @@ class GlobalConfig:
     # Statisctis accumulation frequency, in seconds
     STATS_ACCUM_FREQUENCY: Config.Value = Config.section(Config.SectionType.GLOBAL).value(
         'statsAccumFrequency',
-        '14400',
+        '3600',
         type=Config.FieldType.NUMERIC,
-        help=_('Frequency of stats collection in seconds. Default is 4 hours (14400 seconds)'),
+        help=_('Frequency of stats collection in seconds. Default is 1 hours (3600 seconds)'),
     )
     # Statisctis accumulation chunk size, in days
     STATS_ACCUM_MAX_CHUNK_TIME = Config.section(Config.SectionType.GLOBAL).value(

@@ -159,7 +159,7 @@ class StatsAccumulator(Job):
     This is done by:
         * For HOUR, DAY
     """
-    frecuency = 3600  # Executed every 4 hours
+    frecuency = 3600  # Executed every hours
     frecuency_cfg = (
         config.GlobalConfig.STATS_ACCUM_FREQUENCY
     )

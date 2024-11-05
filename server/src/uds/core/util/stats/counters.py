@@ -221,6 +221,7 @@ def enumerate_accumulated_counters(
     owner_type: typing.Optional[types.stats.CounterOwnerType] = None,
     owner_id: typing.Optional[int] = None,
     since: typing.Optional[typing.Union[datetime.datetime, int]] = None,
+    to: typing.Optional[datetime.datetime] = None,
     points: typing.Optional[int] = None,
     *,
     infer_owner_type_from: typing.Optional[CounterClass] = None,
@@ -234,5 +235,6 @@ def enumerate_accumulated_counters(
         owner_type=owner_type,
         owner_id=owner_id,
         since=since,
+        to=to,
         points=points,
     )

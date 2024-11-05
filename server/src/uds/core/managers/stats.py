@@ -176,26 +176,39 @@ class StatsManager(metaclass=singleton.Singleton):
         owner_type: typing.Optional[types.stats.CounterOwnerType] = None,
         owner_id: typing.Optional[int] = None,
         since: typing.Optional[typing.Union[datetime.datetime, int]] = None,
+        to: typing.Optional[typing.Union[datetime.datetime, int]] = None,
         points: typing.Optional[int] = None,
     ) -> typing.Generator[types.stats.AccumStat, None, None]:
+        if to is None:
+            to = sql_now()
+        elif isinstance(to, int):
+            to = datetime.datetime.fromtimestamp(to)
+
         if since is None:
             if points is None:
                 points = 100  # If since is not specified, we need at least points, get a default
-            since = sql_now() - datetime.timedelta(seconds=interval_type.seconds() * points)
+            since = to - datetime.timedelta(seconds=interval_type.seconds() * points)
+        elif isinstance(since, int):
+            since = datetime.datetime.fromtimestamp(since)
 
-        if isinstance(since, datetime.datetime):
-            since = int(since.timestamp())
+        # If points has any value, ensure since..to is points long
+        if points is not None:
+            # Ensure since is at least points long before to
+            if (to - since).seconds < interval_type.seconds() * points:
+                since = to - datetime.timedelta(seconds=interval_type.seconds() * points)
+
+        since = int(since.replace(minute=0, second=0, microsecond=0).timestamp())
+        to = int(to.replace(minute=0, second=0, microsecond=0).timestamp())
 
         # Filter from since to now, get at most points
         query = StatsCountersAccum.objects.filter(
             interval_type=interval_type,
             counter_type=counter_type,
             stamp__gte=since,
+            owner_id=owner_id if owner_id is not None else -1,
         ).order_by('stamp')
         if owner_type is not None:
             query = query.filter(owner_type=owner_type)
-        if owner_id is not None:
-            query = query.filter(owner_id=owner_id)
         # If points is NONE, we get all data
         query = query[:points]
 
@@ -210,6 +223,7 @@ class StatsManager(metaclass=singleton.Singleton):
                 yield last
                 stamp += interval_type.seconds()
                 last.stamp = stamp
+
             # The record to be emmitted is the current one, but replace record stamp with current stamp
             # The recor is for sure the first one previous to stamp (we have emmited last record until we reach this one)
             last = types.stats.AccumStat(
@@ -219,9 +233,22 @@ class StatsManager(metaclass=singleton.Singleton):
                 rec.v_max,
                 rec.v_min,
             )
-            # Append to numpy array
             yield last
             stamp += interval_type.seconds()
+
+        # Complete the serie until to
+        last = types.stats.AccumStat(
+            stamp,
+            0,
+            0,
+            0,
+            0,
+        )
+
+        while stamp < to:
+            yield last
+            stamp += interval_type.seconds()
+            last.stamp = stamp
 
     def perform_counters_maintenance(self) -> None:
         """
@@ -256,7 +283,7 @@ class StatsManager(metaclass=singleton.Singleton):
             stamp: if not None, this will be used as date for cuounter, else current date/time will be get
 
             kwargs: Additional fields for the event. This will be stored as fld1, fld2, fld3, fld4
-            
+
         Note: to see fields equivalency, check _FLDS_EQUIV
 
         Returns:
