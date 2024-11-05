@@ -78,7 +78,7 @@ def get_service_pools_for_groups(
 
 
 class Users(DetailHandler):
-    custom_methods = ['servicesPools', 'userServices', 'cleanRelated', 'addToGroup']
+    custom_methods = ['servicesPools', 'userServices', 'clean_related', 'addToGroup']
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, Authenticator)
@@ -321,7 +321,7 @@ class Users(DetailHandler):
 
         return res
 
-    def cleanRelated(self, parent: 'Authenticator', item: str) -> dict[str, str]:
+    def clean_related(self, parent: 'Authenticator', item: str) -> dict[str, str]:
         uuid = process_uuid(item)
         user = parent.users.get(uuid=process_uuid(uuid))
         user.clean_related_data()

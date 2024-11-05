@@ -417,7 +417,7 @@ gettext("Duration units");
 gettext("Start date");
 gettext("Repeat until date");
 gettext("Frequency");
-gettext("Weekdays");
+gettext("Week days");
 gettext("Repeat every");
 gettext("Summary");
 gettext("Cancel");
