@@ -469,7 +469,7 @@ gettext("Selected Groups");
 gettext("Cancel");
 gettext("Ok");
 gettext("Summary");
-gettext("Services");
+gettext("Servers");
 gettext("Summary");
 gettext("Services");
 gettext("Usage");
