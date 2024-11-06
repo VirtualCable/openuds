@@ -24,6 +24,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2022
 # Alexander <ag@kub.tel>, 2020
 # Alexey Shabalin <a.shabalin@gmail.com>, 2019
@@ -37,7 +38,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-05 23:23+0100\n"
+"POT-Creation-Date: 2024-11-06 17:43+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Elena Mishina, 2022-2024\n"
 "Language-Team: Russian (http://app.transifex.com/openuds/openuds/language/"
@@ -3367,9 +3368,6 @@ msgid "Statistics duration, in days"
 msgstr "Продолжительность хранения статистики, в днях"
 
 #: core/util/config.py:582
-#| msgid ""
-#| "Frequency of stats collection in seconds. Default is 4 hours (14400 "
-#| "seconds)"
 msgid ""
 "Frequency of stats collection in seconds. Default is 1 hours (3600 seconds)"
 msgstr "Частота сбора статистики в секундах. По умолчанию 1 час (3600 секунд)"
@@ -3600,7 +3598,7 @@ msgstr "Удалить найденные дубликаты"
 
 #: core/util/fields.py:332
 msgid "If active, found duplicates VApps for this service will be removed"
-msgstr "Если активны, найденные дубликаты VApps для этой службы будут удалены."
+msgstr "Если активен, найденные дубликаты VApps для этой службы будут удалены"
 
 #: core/util/fields.py:344
 msgid "Try SOFT Shutdown first"
@@ -6952,9 +6950,6 @@ msgid "Load threshold"
 msgstr "Порог нагрузки"
 
 #: services/RDS_enterprise/provider.py:237
-#| msgid ""
-#| "Load threshold for assigning users to servers. 0 means lower load first, "
-#| "any other the less distance to threshold."
 msgid ""
 "Load threshold, in percent (0-100), for assigning users to servers.0 means "
 "server with lower load is preferred, any other value means that server will "

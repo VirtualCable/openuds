@@ -20,6 +20,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2015
 # Lanmedia Comunicaciones <jetxaniz@lanmedia.es>, 2016-2017,2020
 # Naroa Uriarte <nuriarte@lanmedia.es>, 2017
@@ -31,7 +32,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-05 23:23+0100\n"
+"POT-Creation-Date: 2024-11-06 17:43+0100\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2020\n"
 "Language-Team: Basque (http://app.transifex.com/openuds/openuds/language/"
@@ -1477,6 +1478,11 @@ msgid "Selected Groups"
 msgstr "Hautatutako taldeak"
 
 #: static/admin/translations-fakejs.js:472
+#: static/admin/translations-fakejs.js:543
+#: static/admin/translations-fakejs.js:564
+msgid "Servers"
+msgstr "Zerbitzariak"
+
 #: static/admin/translations-fakejs.js:474
 #: static/admin/translations-fakejs.js:541
 msgid "Services"
@@ -1643,11 +1649,6 @@ msgstr "Kendu guztiak"
 #: static/admin/translations-fakejs.js:542
 msgid "Providers"
 msgstr "Hornitzaileak"
-
-#: static/admin/translations-fakejs.js:543
-#: static/admin/translations-fakejs.js:564
-msgid "Servers"
-msgstr "Zerbitzariak"
 
 #: static/admin/translations-fakejs.js:544
 msgid "Authentication"

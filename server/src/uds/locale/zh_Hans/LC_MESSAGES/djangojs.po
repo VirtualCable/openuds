@@ -20,12 +20,13 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-05 23:23+0100\n"
+"POT-Creation-Date: 2024-11-06 17:43+0100\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: Chinese (http://app.transifex.com/openuds/openuds/language/"
@@ -1469,6 +1470,11 @@ msgid "Selected Groups"
 msgstr "选定的团体"
 
 #: static/admin/translations-fakejs.js:472
+#: static/admin/translations-fakejs.js:543
+#: static/admin/translations-fakejs.js:564
+msgid "Servers"
+msgstr "服务器"
+
 #: static/admin/translations-fakejs.js:474
 #: static/admin/translations-fakejs.js:541
 msgid "Services"
@@ -1635,11 +1641,6 @@ msgstr "移除所有"
 #: static/admin/translations-fakejs.js:542
 msgid "Providers"
 msgstr "供应商"
-
-#: static/admin/translations-fakejs.js:543
-#: static/admin/translations-fakejs.js:564
-msgid "Servers"
-msgstr "服务器"
 
 #: static/admin/translations-fakejs.js:544
 msgid "Authentication"

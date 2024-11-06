@@ -24,13 +24,14 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2015
 # Lanmedia Comunicaciones <jetxaniz@lanmedia.es>, 2016-2017,2020
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-05 23:23+0100\n"
+"POT-Creation-Date: 2024-11-06 17:43+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>, 2015\n"
 "Language-Team: Basque (http://app.transifex.com/openuds/openuds/language/"
@@ -3348,14 +3349,11 @@ msgid "Statistics duration, in days"
 msgstr "Estatistikaren iraupena, egunetan"
 
 #: core/util/config.py:582
-#| msgid ""
-#| "Frequency of stats collection in seconds. Default is 4 hours (14400 "
-#| "seconds)"
 msgid ""
 "Frequency of stats collection in seconds. Default is 1 hours (3600 seconds)"
 msgstr ""
-"Estatistikak biltzeko maiztasuna segundotan. Lehenetsia ordu 1 (3600 segundo)"
-" da"
+"Estatistikak biltzeko maiztasuna segundotan. Lehenetsia ordu 1 (3600 "
+"segundo) da"
 
 #: core/util/config.py:589
 msgid "Maximum number of time to accumulate on one run. Default is 7 (1 week)"
@@ -6907,9 +6905,6 @@ msgid "Load threshold"
 msgstr "Karga atalasea"
 
 #: services/RDS_enterprise/provider.py:237
-#| msgid ""
-#| "Load threshold for assigning users to servers. 0 means lower load first, "
-#| "any other the less distance to threshold."
 msgid ""
 "Load threshold, in percent (0-100), for assigning users to servers.0 means "
 "server with lower load is preferred, any other value means that server will "

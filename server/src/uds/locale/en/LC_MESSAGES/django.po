@@ -24,6 +24,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo GÃ³mez <dkmaster at dkmon dot com>, 2012
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012
 # blafuente <blafuente@virtualcable.es>, 2014
@@ -33,7 +34,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-05 23:23+0100\n"
+"POT-Creation-Date: 2024-11-06 17:43+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: English (http://app.transifex.com/openuds/openuds/language/"
@@ -3296,9 +3297,6 @@ msgid "Statistics duration, in days"
 msgstr "Statistics duration, in days"
 
 #: core/util/config.py:582
-#| msgid ""
-#| "Frequency of stats collection in seconds. Default is 4 hours (14400 "
-#| "seconds)"
 msgid ""
 "Frequency of stats collection in seconds. Default is 1 hours (3600 seconds)"
 msgstr ""
@@ -6790,9 +6788,6 @@ msgid "Load threshold"
 msgstr "Load threshold"
 
 #: services/RDS_enterprise/provider.py:237
-#| msgid ""
-#| "Load threshold for assigning users to servers. 0 means lower load first, "
-#| "any other the less distance to threshold."
 msgid ""
 "Load threshold, in percent (0-100), for assigning users to servers.0 means "
 "server with lower load is preferred, any other value means that server will "

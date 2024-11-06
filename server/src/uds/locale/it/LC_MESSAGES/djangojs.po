@@ -20,6 +20,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Javier <jgonzalez@virtualcable.es>, 2020
 # Massimo Vignone, 2020
 # mvignone, 2020-2021,2024
@@ -31,7 +32,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-05 23:23+0100\n"
+"POT-Creation-Date: 2024-11-06 17:43+0100\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2020\n"
 "Language-Team: Italian (http://app.transifex.com/openuds/openuds/language/"
@@ -1480,6 +1481,11 @@ msgid "Selected Groups"
 msgstr "Gruppi selezionati"
 
 #: static/admin/translations-fakejs.js:472
+#: static/admin/translations-fakejs.js:543
+#: static/admin/translations-fakejs.js:564
+msgid "Servers"
+msgstr "Server"
+
 #: static/admin/translations-fakejs.js:474
 #: static/admin/translations-fakejs.js:541
 msgid "Services"
@@ -1646,11 +1652,6 @@ msgstr "Rimuovi tutto"
 #: static/admin/translations-fakejs.js:542
 msgid "Providers"
 msgstr "Provider"
-
-#: static/admin/translations-fakejs.js:543
-#: static/admin/translations-fakejs.js:564
-msgid "Servers"
-msgstr "Server"
 
 #: static/admin/translations-fakejs.js:544
 msgid "Authentication"
