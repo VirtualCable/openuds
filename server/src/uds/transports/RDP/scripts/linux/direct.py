@@ -31,7 +31,7 @@ def exec_new_xfreerdp(xfreerdp: str) -> None:
 
 
 # Try to locate a xfreerdp and udsrdp. udsrdp will be used if found.
-xfreerdp: typing.Optional[str] = tools.findApp('xfreerdp3') or tools.findApp('xfreerdp')
+xfreerdp: typing.Optional[str] = tools.findApp('xfreerdp3') or tools.findApp('xfreerdp') or tools.findApp('xfreerdp2')
 udsrdp: typing.Optional[str] = tools.findApp('udsrdp')
 fnc, app = None, None
 
