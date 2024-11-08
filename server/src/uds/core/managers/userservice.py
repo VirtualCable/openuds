@@ -795,28 +795,28 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         UserServiceOpChecker.make_unique(userservice, state)
 
-    def notify_preconnect(self, user_service: UserService, info: types.connections.ConnectionData) -> None:
+    def notify_preconnect(self, userservice: UserService, info: types.connections.ConnectionData) -> None:
         try:
-            comms.notify_preconnect(user_service, info)
+            comms.notify_preconnect(userservice, info)
         except exceptions.actor.NoActorComms:  # If no comms url for userService, try with service
-            user_service.deployed_service.service.notify_preconnect(user_service, info)
+            userservice.deployed_service.service.notify_preconnect(userservice, info)
 
-    def check_user_service_uuid(self, user_service: UserService) -> bool:
-        return comms.check_user_service_uuid(user_service)
+    def check_user_service_uuid(self, userservice: UserService) -> bool:
+        return comms.check_user_service_uuid(userservice)
 
-    def request_screenshot(self, user_service: UserService) -> None:
+    def request_screenshot(self, userservice: UserService) -> None:
         # Screenshot will request an screenshot to the actor
         # And the actor will return back, via REST actor API, the screenshot
-        comms.request_screenshot(user_service)
+        comms.request_screenshot(userservice)
 
-    def send_script(self, user_service: UserService, script: str, exec_on_user: bool = False) -> None:
-        comms.send_script(user_service, script, exec_on_user)
+    def send_script(self, userservice: UserService, script: str, exec_on_user: bool = False) -> None:
+        comms.send_script(userservice, script, exec_on_user)
 
-    def request_logoff(self, user_service: UserService) -> None:
-        comms.request_logoff(user_service)
+    def request_logoff(self, userservice: UserService) -> None:
+        comms.request_logoff(userservice)
 
-    def send_message(self, user_service: UserService, message: str) -> None:
-        comms.send_message(user_service, message)
+    def send_message(self, userservice: UserService, message: str) -> None:
+        comms.send_message(userservice, message)
 
     def process_not_in_use_and_old_publication(self, userservice: UserService) -> None:
         """
@@ -869,7 +869,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             return
 
     def locate_user_service(
-        self, user: User, id_userservice: str, create: bool = False
+        self, user: User, userservice_id: str, create: bool = False
     ) -> typing.Optional[UserService]:
         """
         Locates a user service from a user and a service id
@@ -879,7 +879,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             id_service: Service id (A<uuid> for assigned, M<uuid> for meta, ?<uuid> for service pool)
             create: If True, will create a new service if not found
         """
-        kind, uuid_userservice_pool = id_userservice[0], id_userservice[1:]
+        kind, uuid_userservice_pool = userservice_id[0], userservice_id[1:]
 
         logger.debug('Kind of service: %s, idservice: %s', kind, uuid_userservice_pool)
         userservice: typing.Optional[UserService] = None
@@ -1097,8 +1097,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
             return None
 
         meta: MetaPool = MetaPool.objects.get(uuid=uuid_metapool)
-        # Get pool members. Just pools "visible" and "usable"
-        pools = [p.pool for p in meta.members.all() if p.pool.is_visible() and p.pool.is_usable()]
+        # Get pool members. Just pools enabled, that are "visible" and "usable"
+        pools = [p.pool for p in meta.members.filter(enabled=True) if p.pool.is_visible() and p.pool.is_usable()]
         # look for an existing user service in the pool
         try:
             return UserService.objects.filter(
@@ -1129,7 +1129,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             raise ServiceAccessDeniedByCalendar()
 
         # Get pool members. Just pools "visible" and "usable"
-        metapool_members = [p for p in meta.members.all() if p.pool.is_visible() and p.pool.is_usable()]
+        metapool_members = [p for p in meta.members.filter(enabled=True) if p.pool.is_visible() and p.pool.is_usable()]
         # Sort pools array. List of tuples with (priority, pool)
         pools_sorted: list[tuple[int, ServicePool]]
         # Sort pools based on meta selection

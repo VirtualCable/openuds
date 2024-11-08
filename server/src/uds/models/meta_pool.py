@@ -115,7 +115,7 @@ class MetaPool(UUIDModel, TaggingMixin):
     @property
     def allow_users_remove(self) -> bool:
         # Returns true if all members allow users remove
-        for p in self.members.all():
+        for p in self.members.filter(enabled=True):
             if not p.pool.allow_users_remove:
                 return False
         return True
@@ -123,7 +123,7 @@ class MetaPool(UUIDModel, TaggingMixin):
     @property
     def allow_users_reset(self) -> bool:
         # Returns true if all members allow users reset
-        for p in self.members.all():
+        for p in self.members.filter(enabled=True):
             if not p.pool.allow_users_reset:
                 return False
         return True
@@ -136,7 +136,7 @@ class MetaPool(UUIDModel, TaggingMixin):
         """
         total, maintenance = 0, 0
         p: 'MetaPoolMember'
-        for p in self.members.all():
+        for p in self.members.filter(enabled=True):
             total += 1
             if p.pool.is_in_maintenance():
                 maintenance += 1
@@ -167,12 +167,13 @@ class MetaPool(UUIDModel, TaggingMixin):
             No metapoools, cachedValue is ignored, but keep for consistency with servicePool usage signature
         """
         # If no pools, return 0%
-        if self.members.count() == 0:
+        if self.members.filter(enabled=True).count() == 0:
             return types.pools.UsageInfo(0, 0)
 
         query = (
             ServicePool.objects.filter(
                 memberOfMeta__meta_pool=self,
+                memberOfMeta__enabled=True,
                 state=types.states.State.ACTIVE,
             )
             .annotate(

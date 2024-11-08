@@ -192,7 +192,7 @@ def get_services_info_dict(
 
         # Fist member of the pool that has a custom message, and is enabled, will be used
         # Ordered by priority, using internal sort, to take advantage of prefetched data
-        sorted_members = sorted(meta.members.all(), key=lambda x: x.priority)
+        sorted_members = sorted(meta.members.filter(enabled=True), key=lambda x: x.priority)
 
         # Get first member with custom message visible and enabled for metapools
         for member in sorted_members:
@@ -262,7 +262,7 @@ def get_services_info_dict(
                         'link': html.uds_access_link(request, 'M' + meta.uuid, None),
                         'priority': 0,
                     }
-                    if any(_valid_transports(member) for member in meta.members.all())
+                    if any(_valid_transports(member) for member in meta.members.filter(enabled=True))
                     else {}
                 )
             ]

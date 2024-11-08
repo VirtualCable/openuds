@@ -220,7 +220,7 @@ class Tickets(Handler):
                         # First, add groups to metapool
                         for group_to_add in set(groups_ids) - set(pool.assignedGroups.values_list('uuid', flat=True)):
                             pool.assignedGroups.add(auth.groups.get(uuid=group_to_add))
-                        # And now, to ALL metapool members
+                        # And now, to ALL metapool members, even those disabled
                         for meta_member in pool.members.all():
                             # Now add groups to pools
                             for group_to_add in set(groups_ids) - set(

@@ -147,7 +147,7 @@ def user_service_status(
         userservice = UserServiceManager.manager().locate_meta_service(user=request.user, id_metapool=service_id)
     else:
         userservice = UserServiceManager.manager().locate_user_service(
-            user=request.user, id_userservice=service_id, create=False
+            user=request.user, userservice_id=service_id, create=False
         )
     if userservice:
         # Service exists...
