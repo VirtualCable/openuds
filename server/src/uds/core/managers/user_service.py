@@ -990,7 +990,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         # Get pool members. Just pools "visible" and "usable"
         poolMembers = [
-            p for p in meta.members.all() if p.pool.isVisible() and p.pool.isUsable() and p.enabled
+            p for p in meta.members.filter(enabled=True) if p.pool.isVisible() and p.pool.isUsable()
         ]
         # Sort pools based on meta selection
         if meta.policy == MetaPool.PRIORITY_POOL:
