@@ -142,15 +142,13 @@ class StatsCountersAccum(models.Model):
             type['StatsCountersAccum'],
             type['StatsCounters'],
         ]
-        # If base interval, we will use StatsCounters to create the accum
+        # If base interval (that menas an inteval that must be readed from stats_c), 
+        # we will use StatsCounters to create the accum
         # Else, we will use StatsCountersAccum to create the accum from previous interval
         # (for example, to create daily accum from hourly data)
-        if interval_type.is_base_interval():
-            model = StatsCounters
-        else:
-            model = StatsCountersAccum
+        model = StatsCounters if interval_type.is_base_interval() else StatsCountersAccum
 
-        # Accumulate HOURS from StatsCounters
+        # Accumulate INTERVAL from StatsCounters
         interval = interval_type.seconds()
 
         # Get last stamp in table for this interval_type
@@ -207,6 +205,7 @@ class StatsCountersAccum(models.Model):
                     'counter_type': 'counter_type',
                 },
             )
+
             .values('group_by_stamp', 'owner_id', 'owner_type', 'counter_type')
         )
 
@@ -225,6 +224,8 @@ class StatsCountersAccum(models.Model):
                 count=models.Sum('v_count'),
                 sum=models.Sum('v_sum'),
             )
+            
+        logger.debug('Query: %s', query.query)
 
         # Stores accumulated data in StatsCountersAccum
         # Acummulate data, only register if there is data

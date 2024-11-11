@@ -33,7 +33,7 @@ import logging
 
 from uds import models
 from uds.core.util import model
-from uds.core.types.states import State
+from uds.core import types
 from uds.core.util.stats import counters
 from uds.core.managers.stats import StatsManager
 from uds.core.jobs import Job
@@ -54,32 +54,32 @@ class DeployedServiceStatsCollector(Job):
     def run(self) -> None:
         logger.debug('Starting Deployed service stats collector')
 
-        service_pool_to_check = models.ServicePool.objects.filter(state=State.ACTIVE).iterator()
+        service_pool_to_check = models.ServicePool.objects.filter(state=types.states.State.ACTIVE).iterator()
         stamp = model.sql_now()
         # Global counters
         total_assigned, total_inuse, total_cached = 0, 0, 0
         for service_pool in service_pool_to_check:
             try:
                 fltr = service_pool.assigned_user_services().exclude(
-                    state__in=State.INFO_STATES
+                    state__in=types.states.State.INFO_STATES
                 )
                 assigned = fltr.count()
                 in_use = fltr.filter(in_use=True).count()
                 # Cached user services
                 cached = (
                     service_pool.cached_users_services()
-                    .exclude(state__in=State.INFO_STATES)
+                    .exclude(state__in=types.states.State.INFO_STATES)
                     .count()
                 )
                 total_assigned += assigned
                 total_inuse += in_use
                 total_cached += cached
                 counters.add_counter(
-                    service_pool, counters.types.stats.CounterType.ASSIGNED, assigned, stamp=stamp
+                    service_pool, types.stats.CounterType.ASSIGNED, assigned, stamp=stamp
                 )
-                counters.add_counter(service_pool, counters.types.stats.CounterType.INUSE, in_use, stamp=stamp)
+                counters.add_counter(service_pool, types.stats.CounterType.INUSE, in_use, stamp=stamp)
                 counters.add_counter(
-                    service_pool, counters.types.stats.CounterType.CACHED, cached, stamp=stamp
+                    service_pool, types.stats.CounterType.CACHED, cached, stamp=stamp
                 )
             except Exception:
                 logger.exception(
@@ -88,14 +88,14 @@ class DeployedServiceStatsCollector(Job):
         # Store a global "fake pool" with all stats
         sp = models.ServicePool()
         sp.id = -1
-        counters.add_counter(sp, counters.types.stats.CounterType.ASSIGNED, total_assigned, stamp=stamp)
-        counters.add_counter(sp, counters.types.stats.CounterType.INUSE, total_inuse, stamp=stamp)
-        counters.add_counter(sp, counters.types.stats.CounterType.CACHED, total_cached, stamp=stamp)
+        counters.add_counter(sp, types.stats.CounterType.ASSIGNED, total_assigned, stamp=stamp)
+        counters.add_counter(sp, types.stats.CounterType.INUSE, total_inuse, stamp=stamp)
+        counters.add_counter(sp, types.stats.CounterType.CACHED, total_cached, stamp=stamp)
 
         total_users, total_assigned, total_users_with_service = 0, 0, 0
         for auth in models.Authenticator.objects.all():
             fltr_user = auth.users.filter(userServices__isnull=False).exclude(
-                userServices__state__in=State.INFO_STATES
+                userServices__state__in=types.states.State.INFO_STATES
             ).order_by()
             users = auth.users.all().count()
             users_with_service = fltr_user.values('id').distinct().count()  # Use "values" to simplify query (only id)
@@ -105,23 +105,23 @@ class DeployedServiceStatsCollector(Job):
             total_assigned += number_assigned_services
             total_users_with_service += users_with_service
 
-            counters.add_counter(auth, counters.types.stats.CounterType.AUTH_USERS, users, stamp=stamp)
+            counters.add_counter(auth, types.stats.CounterType.AUTH_USERS, users, stamp=stamp)
             counters.add_counter(
-                auth, counters.types.stats.CounterType.AUTH_SERVICES, number_assigned_services, stamp=stamp
+                auth, types.stats.CounterType.AUTH_SERVICES, number_assigned_services, stamp=stamp
             )
             counters.add_counter(
                 auth,
-                counters.types.stats.CounterType.AUTH_USERS_WITH_SERVICES,
+                types.stats.CounterType.AUTH_USERS_WITH_SERVICES,
                 users_with_service,
                 stamp=stamp,
             )
 
         au = models.Authenticator()
         au.id = -1
-        counters.add_counter(au, counters.types.stats.CounterType.AUTH_USERS, total_users, stamp=stamp)
-        counters.add_counter(au, counters.types.stats.CounterType.AUTH_SERVICES, total_assigned, stamp=stamp)
+        counters.add_counter(au, types.stats.CounterType.AUTH_USERS, total_users, stamp=stamp)
+        counters.add_counter(au, types.stats.CounterType.AUTH_SERVICES, total_assigned, stamp=stamp)
         counters.add_counter(
-            au, counters.types.stats.CounterType.AUTH_USERS_WITH_SERVICES, total_users_with_service, stamp=stamp
+            au, types.stats.CounterType.AUTH_USERS_WITH_SERVICES, total_users_with_service, stamp=stamp
         )
 
         logger.debug('Done Deployed service stats collector')

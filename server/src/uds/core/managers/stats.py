@@ -214,13 +214,17 @@ class StatsManager(metaclass=singleton.Singleton):
 
         # Yields all data, stamp, n, sum, max, min (stamp, v_count,v_sum,v_max,v_min)
         # Now, get exactly the points we need
+        
+        # Note that empty values were not saved, so we can find "holes" in the data
+        # that will be filled with empty values
+        
         stamp = since
         last = types.stats.AccumStat(stamp, 0, 0, 0, 0)
         for rec in query:
             # While query stamp is greater than stamp, repeat last AccumStat
             while rec.stamp > stamp:
-                # Yield last value until we reach the record
-                yield last
+                # No values, return empty
+                yield types.stats.AccumStat(stamp, 0, 0, 0, 0)
                 stamp += interval_type.seconds()
                 last.stamp = stamp
 
@@ -236,17 +240,8 @@ class StatsManager(metaclass=singleton.Singleton):
             yield last
             stamp += interval_type.seconds()
 
-        # Complete the serie until to
-        last = types.stats.AccumStat(
-            stamp,
-            0,
-            0,
-            0,
-            0,
-        )
-
         while stamp < to:
-            yield last
+            yield types.stats.AccumStat(stamp, 0, 0, 0, 0)
             stamp += interval_type.seconds()
             last.stamp = stamp
 
