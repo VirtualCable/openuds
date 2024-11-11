@@ -76,16 +76,16 @@ def get_servicepools_counters(
         cached_value: typing.Optional[bytes] = cache.get(cache_key)
         if not cached_value:
             if not servicepool:
-                us = models.ServicePool()
-                us.id = -1  # Global stats
+                servicepool = models.ServicePool()
+                servicepool.id = -1  # Global stats
             else:
-                us = servicepool
+                servicepool = servicepool
 
             stats = counters.enumerate_accumulated_counters(
                 interval_type=models.StatsCountersAccum.IntervalType.HOUR,
                 counter_type=counter_type,
                 owner_type=types.stats.CounterOwnerType.SERVICEPOOL,
-                owner_id=us.id if us.id != -1 else None,
+                owner_id=servicepool.id if servicepool.id != -1 else None,
                 since=since,
                 points=since_days*24,  # One point per hour
             )

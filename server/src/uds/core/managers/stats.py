@@ -219,31 +219,27 @@ class StatsManager(metaclass=singleton.Singleton):
         # that will be filled with empty values
         
         stamp = since
-        last = types.stats.AccumStat(stamp, 0, 0, 0, 0)
         for rec in query:
             # While query stamp is greater than stamp, repeat last AccumStat
             while rec.stamp > stamp:
                 # No values, return empty
                 yield types.stats.AccumStat(stamp, 0, 0, 0, 0)
                 stamp += interval_type.seconds()
-                last.stamp = stamp
 
             # The record to be emmitted is the current one, but replace record stamp with current stamp
             # The recor is for sure the first one previous to stamp (we have emmited last record until we reach this one)
-            last = types.stats.AccumStat(
+            yield types.stats.AccumStat(
                 stamp,
                 rec.v_count,
                 rec.v_sum,
                 rec.v_max,
                 rec.v_min,
             )
-            yield last
             stamp += interval_type.seconds()
 
         while stamp < to:
             yield types.stats.AccumStat(stamp, 0, 0, 0, 0)
             stamp += interval_type.seconds()
-            last.stamp = stamp
 
     def perform_counters_maintenance(self) -> None:
         """
