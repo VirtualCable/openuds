@@ -145,12 +145,12 @@ class MetaPools(ModelHandler):
             'user_services_count': userservices_total,
             'user_services_in_preparation': userservices_in_preparation,
             'visible': item.visible,
-            'policy': item.policy,
+            'policy': str(item.policy),
             'fallbackAccess': item.fallbackAccess,
             'permission': permissions.effective_permissions(self._user, item),
             'calendar_message': item.calendar_message,
             'transport_grouping': item.transport_grouping,
-            'ha_policy': item.ha_policy,
+            'ha_policy': str(item.ha_policy),
         }
 
         return val
