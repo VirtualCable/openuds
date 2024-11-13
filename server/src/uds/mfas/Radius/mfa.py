@@ -46,7 +46,7 @@ from uds.auths.Radius.client import (
     NOT_NEEDED,
     # NEEDED
 )
-from uds.core.auths.auth import web_password
+from uds.core.auths.auth import get_webpassword
 from uds.core.util import fields
 
 if typing.TYPE_CHECKING:
@@ -180,7 +180,7 @@ class RadiusOTP(mfas.MFA):
         if self.send_just_username.value:
             username = username.strip().split('@')[0].split('\\')[-1]
 
-        web_pwd = web_password(request)
+        web_pwd = get_webpassword(request)
         try:
             connection = self.radius_client()
             auth_reply = connection.authenticate_challenge(username, password=web_pwd)
@@ -250,7 +250,7 @@ class RadiusOTP(mfas.MFA):
         try:
             err = _('Invalid OTP code')
 
-            web_pwd = web_password(request)
+            web_pwd = get_webpassword(request)
             try:
                 connection = self.radius_client()
                 state = request.session.get(client.STATE_VAR_NAME, b'')

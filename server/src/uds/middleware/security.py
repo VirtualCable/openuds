@@ -38,7 +38,7 @@ from django.http import HttpResponseForbidden
 
 from uds.core import consts
 from uds.core.util.config import GlobalConfig
-from uds.core.auths.auth import is_trusted_source
+from uds.core.auths.auth import is_trusted_source, weblogout
 
 from . import builder
 
@@ -79,7 +79,10 @@ def _process_request(request: 'ExtendedHttpRequest') -> typing.Optional['HttpRes
                 request.user,
                 request.session.get('ip', None),
             )
-            return HttpResponseForbidden(content='Forbbiden', content_type='text/plain')
+            
+            # Clear session and redirect to login, skipping manager
+            weblogout(request)
+            
 
     return None
 

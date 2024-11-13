@@ -38,7 +38,7 @@ from django.utils import formats
 from django.utils.translation import gettext
 
 from uds.core import types
-from uds.core.auths.auth import web_password
+from uds.core.auths.auth import get_webpassword
 from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.exceptions.services import (
@@ -432,7 +432,7 @@ def enable_service(
             request.user, request.os, request.ip, service_id, transport_id, test_userservice_status=False
         )
         scrambler = CryptoManager().random_string(32)
-        password = CryptoManager().symmetric_encrypt(web_password(request), scrambler)
+        password = CryptoManager().symmetric_encrypt(get_webpassword(request), scrambler)
 
         info.userservice.properties['accessed_by_client'] = False  # Reset accesed property to
 

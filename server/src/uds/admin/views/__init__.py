@@ -38,7 +38,7 @@ from django.template import RequestContext, loader
 from django.utils.translation import gettext as _
 
 from uds.core import consts
-from uds.core.auths.auth import web_login_required
+from uds.core.auths.auth import weblogin_required
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +46,7 @@ if typing.TYPE_CHECKING:
     from django.http import HttpRequest
 
 
-@web_login_required(admin=True)
+@weblogin_required(admin=True)
 def index(request: 'HttpRequest') -> HttpResponse:
     # Gets csrf token
     csrf_token = csrf.get_token(request)
@@ -58,7 +58,7 @@ def index(request: 'HttpRequest') -> HttpResponse:
     )
 
 
-@web_login_required(admin=True)
+@weblogin_required(admin=True)
 def tmpl(request: 'HttpRequest', template: str) -> HttpResponse:
     try:
         t = loader.get_template('uds/admin/tmpl/' + template + ".html")
@@ -70,6 +70,6 @@ def tmpl(request: 'HttpRequest', template: str) -> HttpResponse:
     return HttpResponse(resp, content_type="text/plain")
 
 
-@web_login_required(admin=True)
+@weblogin_required(admin=True)
 def sample(request: 'HttpRequest') -> HttpResponse:
     return render(request, 'uds/admin/sample.html')

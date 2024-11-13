@@ -116,7 +116,7 @@ def root_user() -> models.User:
 
 
 # Decorator to make easier protect pages that needs to be logged in
-def web_login_required(
+def weblogin_required(
     admin: typing.Union[bool, typing.Literal['admin']] = False
 ) -> collections.abc.Callable[
     [collections.abc.Callable[..., HttpResponse]], collections.abc.Callable[..., HttpResponse]
@@ -149,7 +149,7 @@ def web_login_required(
             """
             # If no user or user authorization is not completed...
             if not request.user or not request.authorized:
-                return HttpResponseRedirect(reverse('page.login'))
+                return weblogout(request)
 
             if admin in (True, 'admin'):
                 if request.user.is_staff() is False or (admin == 'admin' and not request.user.is_admin):
@@ -200,7 +200,7 @@ def needs_trusted_source(
 
 
 # decorator to deny non authenticated requests
-# The difference with web_login_required is that this one does not redirect to login page
+# The difference with weblogin_required is that this one does not redirect to login page
 # it's designed to be used in ajax calls mainly
 def deny_non_authenticated(view_func: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
     @wraps(view_func)
@@ -385,7 +385,7 @@ def authenticate_info_url(authenticator: typing.Union[str, bytes, models.Authent
     return reverse('page.auth.info', kwargs={'authenticator_name': name})
 
 
-def web_login(
+def weblogin(
     request: 'types.requests.ExtendedHttpRequest',
     response: typing.Optional[HttpResponse],
     user: models.User,
@@ -434,11 +434,11 @@ def web_login(
     return True
 
 
-def web_password(request: HttpRequest) -> str:
+def get_webpassword(request: HttpRequest) -> str:
     """
     The password is stored at session using a simple scramble algorithm that keeps the password splited at
     session (db) and client browser cookies. This method uses this two values to recompose the user password
-    so we can provide it to remote sessions.
+    so we can provide it to remote sessions. (this way, the password is never completely stored at any side)
     """
     if hasattr(request, '_cryptedpass') and hasattr(request, '_scrambler'):
         return CryptoManager.manager().symmetric_decrypt(
@@ -449,8 +449,9 @@ def web_password(request: HttpRequest) -> str:
     return CryptoManager().symmetric_decrypt(passkey, uds_cookie(request))  # recover as original unicode string
 
 
-def web_logout(
-    request: 'types.requests.ExtendedHttpRequest', exit_url: typing.Optional[str] = None
+def weblogout(
+    request: 'types.requests.ExtendedHttpRequest',
+    exit_url: typing.Optional[str] = None,
 ) -> HttpResponse:
     """
     Helper function to clear user related data from session. If this method is not used, the session we be cleaned anyway
@@ -462,7 +463,8 @@ def web_logout(
     else:
         # remove, if exists, tag from session
         exit_page = reverse(types.auth.AuthenticationInternalUrl.LOGIN)
-    exit_url = exit_url or exit_page
+
+    response = HttpResponseRedirect(exit_url or exit_page)
     try:
         if request.user:
             authenticator = request.user.manager.get_instance()
@@ -478,16 +480,12 @@ def web_logout(
                     username=request.user.name,
                     srcip=request.ip,
                 )
-        else:  # No user, redirect to /
-            return HttpResponseRedirect(exit_page)
+            authenticator.hook_web_logout(username, request, response)
     finally:
         # Try to delete session
         request.session.flush()
         request.authorized = False
 
-    response = HttpResponseRedirect(exit_url)
-    if authenticator:
-        authenticator.hook_web_logout(username, request, response)
     return response
 
 

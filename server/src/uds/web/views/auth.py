@@ -42,7 +42,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from uds.core import auths, exceptions, types
 from uds.core.auths import auth
-from uds.core.auths.auth import authenticate_via_callback, log_login, uds_cookie, web_login, web_logout
+from uds.core.auths.auth import authenticate_via_callback, log_login, uds_cookie, weblogin, weblogout
 from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.exceptions.services import ServiceNotReadyError
@@ -118,7 +118,7 @@ def auth_callback_stage2(request: 'ExtendedHttpRequestWithUser', ticket_id: str)
 
         response = HttpResponseRedirect(reverse('page.index'))
 
-        web_login(request, response, result.user, '')  # Password is unavailable in this case
+        weblogin(request, response, result.user, '')  # Password is unavailable in this case
 
         log_login(request, authenticator, result.user.name, 'Federated login')  # Nice login, just indicating it's federated
 
@@ -134,7 +134,7 @@ def auth_callback_stage2(request: 'ExtendedHttpRequestWithUser', ticket_id: str)
     except exceptions.auth.Redirect as e:
         return HttpResponseRedirect(request.build_absolute_uri(str(e)) if e.args and e.args[0] else '/')
     except exceptions.auth.Logout as e:
-        return web_logout(
+        return weblogout(
             request,
             request.build_absolute_uri(str(e)) if e.args and e.args[0] else None,
         )
@@ -240,7 +240,7 @@ def ticket_auth(
         usr.groups.set(grps)
 
         # Force cookie generation
-        web_login(request, None, usr, password)
+        weblogin(request, None, usr, password)
 
         # Log the login
         log_login(request, auth, username, 'Ticket authentication')  # Nice login, just indicating it's using a ticket
@@ -314,7 +314,7 @@ def login(request: types.requests.ExtendedHttpRequest, tag: typing.Optional[str]
             # Tag is not removed from session, so next login will have it even if not provided
             # This means than once an url is used, unless manually goes to "/uds/page/login/xxx"
             # The tag will be used again
-            auth.web_login(
+            auth.weblogin(
                 request, response, login_result.user, login_result.password
             )  # data is user password here
 
@@ -350,7 +350,7 @@ def login(request: types.requests.ExtendedHttpRequest, tag: typing.Optional[str]
 
 
 @never_cache
-@auth.web_login_required(admin=False)
+@auth.weblogin_required(admin=False)
 def logout(request: types.requests.ExtendedHttpRequestWithUser) -> HttpResponse:
     auth.log_logout(request)
     request.session['restricted'] = False  # Remove restricted
@@ -358,4 +358,4 @@ def logout(request: types.requests.ExtendedHttpRequestWithUser) -> HttpResponse:
     logout_response = request.user.logout(request)
     url = logout_response.url if logout_response.success == types.auth.AuthenticationState.REDIRECT else None
 
-    return auth.web_logout(request, url or request.session.get('logouturl', None))
+    return auth.weblogout(request, url or request.session.get('logouturl', None))
