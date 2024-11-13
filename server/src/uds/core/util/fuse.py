@@ -846,14 +846,14 @@ class FUSE:
                 return func(*args, **kwargs) or 0
 
             except OSError as e:
-                if e.errno > 0:
+                if e.errno > 0:  # pyright: ignore
                     logger.debug(
                         "FUSE operation %s raised a %s, returning errno %s.",
                         func.__name__,
                         type(e),
                         e.errno,
                     )
-                    return -e.errno
+                    return -e.errno  # pyright: ignore
                 logger.error(
                     "FUSE operation %s raised an OSError with negative " "errno %s, returning errno.EINVAL.",
                     func.__name__,

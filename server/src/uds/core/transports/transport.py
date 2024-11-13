@@ -81,7 +81,7 @@ class Transport(Module):
 
     # For allowing grouping transport on dashboard "new" menu, and maybe other places
     group: typing.ClassVar[types.transports.Grouping] = types.transports.Grouping.DIRECT
-    
+
     _db_obj: typing.Optional['models.Transport'] = None
 
     def __init__(self, environment: 'Environment', values: types.core.ValuesType):
@@ -214,7 +214,7 @@ class Transport(Module):
         @return: transformed username
         """
         return user.name
-    
+
     def generate_key(self, length: int = 32) -> str:
         """
         Returns a random key of the requested length
@@ -237,22 +237,22 @@ class Transport(Module):
         this on client
         """
         return types.transports.TransportScript(
-            script="raise Exception('The transport {transport} is not supported on your platform.'.format(transport=params['transport']))",
-            signature_b64='EH/91J7u9+/sHtB5+EUVRDW1+jqF0LuZzfRi8qxyIuSdJuWt'
-            '8V8Yngu24p0NNr13TaxPQ1rpGN8x0NsU/Ma8k4GGohc+zxdf'
-            '4xlkwMjAIytp8jaMHKkzvcihiIAMtaicP786FZCwGMmFTH4Z'
-            'A9i7YWaSzT95h84kirAG67J0GWKiyATxs6mtxBNaLgqU4juA'
-            'Qn98hYp5ffWa5FQDSAmheiDyQbCXMRwtWcxVHVQCAoZbsvCe'
-            'njKc+FaeKNmXsYOgmcj+pz8IViNOyTbueP9u7lTzuBlIyV+7'
-            'OlBPTqb5yA5wOBicKIpplPd8V71Oh3pdpRvdlvVbbwNfsCl5'
-            'v6s1X20MxaQOSwM5z02eY1lJSbLIp8d9WRkfVty0HP/4Z8JZ'
-            'kavkWNaGiKXEZXqojx/ZdzvTfvBkYrREQ8lMCIvtawBTysus'
-            'IV4vHnDRdSmRxpYdj+1SNfzB0s1VuY6F7bSdBvgzja4P3Zbo'
-            'Z63yNGuBhIsqUDA2ARmiMHRx9jr6eilFBKhoyWgNi9izTkar'
-            '3iMYtXfvcFnmz4jvuJHUccbpUo4O31K2G7OaqlLylQ5dCu62'
-            'JuVuquKKSfiwOIdYcdPJ6gvpgkQQDPqt7wN+duyZA0FI5F4h'
-            'O6acQZmbjBCqZoo9Qsg7k9cTcalNkc5flEYAk1mULnddgDM6'
-            'YGmoJgVnDr0=',
+            script="raise Exception('The selected transport is not supported on your platform.'.format(transport=sp['transport']))",
+            signature_b64='Ki6Emu7h3gBmqipOD7uW6ytIXQLg149a2vRcCHcl2yyIXqX0'
+            '4JAViKwhVrbQhAZ5kli1uzLOKa7heLMT0Wif6SAckcMuyOng'
+            'lrEZW0xnzuCWYTj3373a1qWX8wres8mzxA9x3cQ9PuzDSRDS'
+            'ZMbXbVTifkZU0t5hAV4poLe7oAkjx9bypmQOjFB3MN0XRqGT'
+            'AqlT+bViL4a8FL/pkMIDk/2Z2PGh2yF8FkWBab34eSHCwXA8'
+            'GgZ/xC3VtO7c1hq6bxNdneVxxLM74EYRpqy4rXX8QXCoZ2kB'
+            '+7VMviG+lqXDkj1xQpTK77rnYj6ye6mSHLPd+bLkQ3/XqV6e'
+            '1pqTlVwas1PMmsduEuhEJ+cRh9IhOMCM9oTWcngPGD8n9CQM'
+            'k3eMmb/73Tx5ZCg6BhpNjZNKmnomEmEFkdQpX3afZ4bS9Nic'
+            'E9M+IJTv+g5AImGZTZXsskDTYP+bQeygugXw0p3YZqDaJeIp'
+            'C2u1gDZjgCJ6FobGVziqdqLNRNOjwjP82y8nU6jvs6rnQD+4'
+            'qBps9EVau//q3nXyTbWtQfmC8hqQ5hsFID9K27WNy92OHqIc'
+            'fd6NuTG7jC+TiHyMGC937TfiQQy+0J8BiQtjY4Q3I+Sws7AT'
+            'XXv7MJMqYLXIVi0Fn8yrTiFqEDP2l4eFwKv7XZn5c+RO8ZE9'
+            'NbxIWj2Fvuw=',
             parameters={'transport': transport.name},
         )
 

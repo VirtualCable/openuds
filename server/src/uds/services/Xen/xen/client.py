@@ -223,7 +223,7 @@ class XenClient:  # pylint: disable=too-many-public-methods
                 self._host = e.details[1]
                 self.login(backup_checked=backup_checked)
             else:
-                raise exceptions.XenFailure(e.details)
+                raise exceptions.XenFailure(typing.cast(typing.Any, e.details))
         except Exception:
             if self._host == self._host_backup or not self._host_backup or backup_checked:
                 logger.exception('Connection to master server is broken and backup connection unavailable.')
@@ -305,7 +305,7 @@ class XenClient:  # pylint: disable=too-many-public-methods
                     return_list.append(vm)
             return return_list
         except XenAPI.Failure as e:
-            raise exceptions.XenFailure(e.details)
+            raise exceptions.XenFailure(typing.cast(typing.Any, e.details))
         except Exception as e:
             raise exceptions.XenException(str(e))
 
@@ -455,7 +455,7 @@ class XenClient:  # pylint: disable=too-many-public-methods
                 task = self.Async.VM.clone(vm_opaque_ref, target_name)
             return task
         except XenAPI.Failure as e:
-            raise exceptions.XenFailure(e.details)
+            raise exceptions.XenFailure(typing.cast(typing.Any, e.details))
 
     @exceptions.catched
     def delete_vm(self, vm_opaque_ref: str) -> None:

@@ -46,7 +46,7 @@ class KnownOS(enum.Enum):
     CHROME_OS = ('CrOS',)
     WINDOWS_PHONE = ('Windows Phone',)
     WINDOWS = ('Windows',)
-    MAC_OS = ('MacOsX',)
+    MAC_OS = ('MacOsX', 'MacOs', 'Mac Os X')  # Previous was only "Mac"
     ANDROID = ('Android',)
     IPAD = ('iPad',)  #
     IPHONE = ('iPhone',)  # In fact, these are IOS both, but we can diferentiate them

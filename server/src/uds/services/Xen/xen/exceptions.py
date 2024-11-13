@@ -83,7 +83,7 @@ class XenFailure(XenAPI.Failure, XenFault):
 
             return err.format(*typing.cast(list[typing.Any], self.details))
         except Exception:
-            return 'Unknown exception: {0}'.format(self.details)
+            return 'Unknown exception: {}'.format(typing.cast(typing.Any, self.details))
 
     def __str__(self) -> str:
         return self.as_human_readable()
@@ -122,7 +122,7 @@ def translator() -> typing.Generator[None, None, None]:
     except XenAPI.Failure as e:
         if e.details[0] == 'HANDLE_INVALID':
             raise XenNotFoundError(e.details[1:]) from e
-        raise XenFailure(e.details) from e
+        raise XenFailure(typing.cast(typing.Any, e.details)) from e
     except TimeoutError:  # Retryable error
         raise XenRetryableError('Timeout error') from None
     except Exception as e:

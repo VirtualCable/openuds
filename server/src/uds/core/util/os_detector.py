@@ -66,9 +66,10 @@ def detect_os(
     else:  # Try to detect from User-Agent
         ual = ua.lower()
         for os in consts.os.KNOWN_OS_LIST:
-            if os.os_name().lower() in ual:
-                found_os = types.os.KnownOS(os)
-                break
+            for osname in os.value:
+                if osname.lower() in ual:
+                    found_os = types.os.KnownOS(os)
+                    break
 
     # If we found a known OS, store it
     if found_os != types.os.KnownOS.UNKNOWN:
