@@ -41,13 +41,15 @@ from uds.core.managers.userservice import UserServiceManager
 from uds.core.exceptions.services import ServiceNotReadyError
 from uds.core.types.log import LogLevel, LogSource
 from uds.core.util.config import GlobalConfig
+from uds.core.util.model import sql_stamp_seconds
 from uds.core.util.rest.tools import match
 from uds.models import TicketStore, User
 from uds.REST import Handler
 
 logger = logging.getLogger(__name__)
 
-CLIENT_VERSION = consts.system.VERSION
+CLIENT_VERSION: typing.Final[str] = consts.system.VERSION
+LOG_ENABLED_DURATION: typing.Final[int] = 2 * 60 * 60 * 24  # 2 days
 
 
 # Enclosed methods under /client path
@@ -162,8 +164,13 @@ class Client(Handler):
 
             logger.debug('Script: %s', transport_script)
 
-            # is_logging_enabled = self._request.user.properties.get('log_enabled', False)
-            is_logging_enabled = True
+            # Log is enabled if user has log_enabled property set to
+            try:
+                log_enabled_since_limit = sql_stamp_seconds() - LOG_ENABLED_DURATION
+                log_enabled_since = self._request.user.properties.get('client_logging', log_enabled_since_limit)
+                is_logging_enabled = False if log_enabled_since <= log_enabled_since_limit else True
+            except Exception:
+                is_logging_enabled = False
             log: dict[str, 'str|None'] = {
                 'level': 'DEBUG',
                 'ticket': None,

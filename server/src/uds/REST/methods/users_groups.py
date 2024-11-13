@@ -42,7 +42,7 @@ from uds.core.types.states import State
 
 from uds.core.auths.user import User as AUser
 from uds.core.util import log, ensure
-from uds.core.util.model import process_uuid
+from uds.core.util.model import process_uuid, sql_stamp_seconds
 from uds.models import Authenticator, User, Group, ServicePool
 from uds.core.managers.crypto import CryptoManager
 from uds.core import consts, exceptions, types
@@ -78,7 +78,13 @@ def get_service_pools_for_groups(
 
 
 class Users(DetailHandler):
-    custom_methods = ['servicesPools', 'userServices', 'clean_related', 'addToGroup']
+    custom_methods = [
+        'services_pools',
+        'user_services',
+        'clean_related',
+        'add_to_group',
+        'enable_client_logging',
+    ]
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, Authenticator)
@@ -286,7 +292,7 @@ class Users(DetailHandler):
             logger.error('Error on user removal of %s.%s:  %s', parent.name, item, e)
             raise self.invalid_item_response() from e
 
-    def servicesPools(self, parent: 'Model', item: str) -> list[dict[str, typing.Any]]:
+    def services_pools(self, parent: 'Model', item: str) -> list[dict[str, typing.Any]]:
         parent = ensure.is_instance(parent, Authenticator)
         uuid = process_uuid(item)
         user = parent.users.get(uuid=process_uuid(uuid))
@@ -307,7 +313,7 @@ class Users(DetailHandler):
 
         return res
 
-    def userServices(self, parent: 'Authenticator', item: str) -> list[dict[str, typing.Any]]:
+    def user_services(self, parent: 'Authenticator', item: str) -> list[dict[str, typing.Any]]:
         parent = ensure.is_instance(parent, Authenticator)
         uuid = process_uuid(item)
         user = parent.users.get(uuid=process_uuid(uuid))
@@ -326,17 +332,35 @@ class Users(DetailHandler):
         user = parent.users.get(uuid=process_uuid(uuid))
         user.clean_related_data()
         return {'status': 'ok'}
-    
-    def addToGroup(self, parent: 'Authenticator', item: str) -> dict[str, str]:
+
+    def add_to_group(self, parent: 'Authenticator', item: str) -> dict[str, str]:
         uuid = process_uuid(item)
         user = parent.users.get(uuid=process_uuid(uuid))
         group = parent.groups.get(uuid=process_uuid(self._params['group']))
+        user.log(
+            f'Added to group {group.name} by {self._user.pretty_name}',
+            types.log.LogLevel.INFO,
+            types.log.LogSource.REST,
+        )
         user.groups.add(group)
+        return {'status': 'ok'}
+
+    def enable_client_logging(self, parent: 'Model', item: str) -> dict[str, str]:
+        parent = ensure.is_instance(parent, Authenticator)
+        user = parent.users.get(uuid=process_uuid(item))
+        user.log(
+            f'Client logging enabled by {self._user.pretty_name}',
+            types.log.LogLevel.INFO,
+            types.log.LogSource.REST,
+        )
+        with user.properties as props:
+            props['client_logging'] = sql_stamp_seconds()
+
         return {'status': 'ok'}
 
 
 class Groups(DetailHandler):
-    custom_methods = ['servicesPools', 'users']
+    custom_methods = ['services_pools', 'users']
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = ensure.is_instance(parent, Authenticator)
