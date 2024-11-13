@@ -39,7 +39,7 @@ from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.exceptions.services import ServiceNotReadyError
 from uds.core.util.config import GlobalConfig
-from uds.core.util.rest.tools import match
+from uds.core.util.rest.tools import matcher
 from uds.models import TicketStore, User
 from uds.REST import Handler
 
@@ -125,7 +125,7 @@ class Client(Handler):
         )
 
         try:
-            data = TicketStore.get(ticket)
+            data: dict[str, typing.Any] = TicketStore.get(ticket)
         except TicketStore.InvalidTicket:
             return Client.result(error=types.errors.Error.ACCESS_DENIED)
 
@@ -141,10 +141,7 @@ class Client(Handler):
                 data['transport'],
                 client_hostname=hostname,
             )
-            logger.debug(
-                'Res: %s',
-                info
-            )
+            logger.debug('Res: %s', info)
             password = CryptoManager.manager().symmetric_decrypt(data['password'], scrambler)
 
             # userService.setConnectionSource(srcIp, hostname)  # Store where we are accessing from so we can notify Service
@@ -162,6 +159,13 @@ class Client(Handler):
             )
 
             logger.debug('Script: %s', transport_script)
+            
+            _log_ticket = TicketStore.create(
+                {
+                    'user': self._request.user.uuid,
+                    'type': 'log',
+                }
+            )
 
             return Client.result(
                 result={
@@ -169,6 +173,10 @@ class Client(Handler):
                     'type': transport_script.script_type,
                     'signature': transport_script.signature_b64,  # It is already on base64
                     'params': transport_script.encoded_parameters,
+                    # 'log': {
+                    #     'level': 'DEBUG',
+                    #     'ticket': _log_ticket,
+                    # }
                 }
             )
         except ServiceNotReadyError as e:
@@ -184,8 +192,40 @@ class Client(Handler):
         finally:
             # ensures that we mark the service as accessed by client
             # so web interface can show can react to this
-            if info and  info.userservice:
+            if info and info.userservice:
                 info.userservice.properties['accessed_by_client'] = True
+
+    def post(self) -> dict[str, typing.Any]:
+        """
+        Processes put requests
+
+        Currently, only "upload logs"
+        """
+        logger.debug('Client args for PUT: %s', self._args)
+        try:
+            ticket, command = self._args[:2]
+            try:
+                data: dict[str, typing.Any] = TicketStore.get(ticket)
+            except TicketStore.InvalidTicket:
+                return Client.result(error=types.errors.Error.ACCESS_DENIED)
+
+            self._request.user = User.objects.get(uuid=data['user'])
+
+            match command:
+                case 'log':
+                    if data.get('type') != 'log':
+                        return Client.result(error='Invalid command')
+
+                    log = self._params.get('log', '')
+                    # Right now, log to logger, but will be stored with user logs
+                    logger.info('Client log for %s: %s', self._request.user.pretty_name, log)
+                case _:
+                    return Client.result(error='Invalid command')
+
+        except Exception as e:
+            return Client.result(error=str(e))
+
+        return Client.result(result='Ok')
 
     def get(self) -> dict[str, typing.Any]:
         """
@@ -203,12 +243,14 @@ class Client(Handler):
                     'available_version': CLIENT_VERSION,
                     'requiredVersion': consts.system.VERSION_REQUIRED_CLIENT,  # Compat with old clients, TB removed soon...
                     'required_version': consts.system.VERSION_REQUIRED_CLIENT,
-                    'downloadUrl': self._request.build_absolute_uri(reverse('page.client-download')),  # Compat with old clients, TB removed soon...
+                    'downloadUrl': self._request.build_absolute_uri(
+                        reverse('page.client-download')
+                    ),  # Compat with old clients, TB removed soon...
                     'client_link': self._request.build_absolute_uri(reverse('page.client-download')),
                 }
             )
 
-        return match(
+        return matcher(
             self._args,
             _error,  # In case of error, raises RequestError
             ((), _noargs),  # No args, return version
