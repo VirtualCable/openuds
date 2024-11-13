@@ -86,6 +86,7 @@ class LogSource(enum.StrEnum):
     REST = 'rest'
     LOGS = 'logs'
     MODULE = 'module'
+    CLIENT = 'client'
 
 
 # Note: Once assigned a value, do not change it, as it will break the log

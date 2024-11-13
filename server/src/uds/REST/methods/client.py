@@ -34,12 +34,14 @@ import typing
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
+from uds import models
 from uds.core import consts, exceptions, types
 from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.exceptions.services import ServiceNotReadyError
+from uds.core.types.log import LogLevel, LogSource
 from uds.core.util.config import GlobalConfig
-from uds.core.util.rest.tools import matcher
+from uds.core.util.rest.tools import match
 from uds.models import TicketStore, User
 from uds.REST import Handler
 
@@ -159,13 +161,25 @@ class Client(Handler):
             )
 
             logger.debug('Script: %s', transport_script)
-            
-            _log_ticket = TicketStore.create(
-                {
-                    'user': self._request.user.uuid,
-                    'type': 'log',
-                }
-            )
+
+            # is_logging_enabled = self._request.user.properties.get('log_enabled', False)
+            is_logging_enabled = True
+            log: dict[str, 'str|None'] = {
+                'level': 'DEBUG',
+                'ticket': None,
+            }
+
+            if is_logging_enabled:
+                log['ticket'] = TicketStore.create(
+                    {
+                        'user': self._request.user.uuid,
+                        'userservice': info.userservice.uuid,
+                        'type': 'log',
+                    },
+                    # Long enough for a looong time, will be cleaned on first access
+                    # Or 24 hours after creation, whatever happens first
+                    validity=60 * 60 * 24,
+                )
 
             return Client.result(
                 result={
@@ -173,10 +187,7 @@ class Client(Handler):
                     'type': transport_script.script_type,
                     'signature': transport_script.signature_b64,  # It is already on base64
                     'params': transport_script.encoded_parameters,
-                    # 'log': {
-                    #     'level': 'DEBUG',
-                    #     'ticket': _log_ticket,
-                    # }
+                    'log': log,
                 }
             )
         except ServiceNotReadyError as e:
@@ -201,7 +212,7 @@ class Client(Handler):
 
         Currently, only "upload logs"
         """
-        logger.debug('Client args for PUT: %s', self._args)
+        logger.debug('Client args for POST: %s', self._args)
         try:
             ticket, command = self._args[:2]
             try:
@@ -211,14 +222,27 @@ class Client(Handler):
 
             self._request.user = User.objects.get(uuid=data['user'])
 
+            try:
+                userservice = models.UserService.objects.get(uuid=data['userservice'])
+            except models.UserService.DoesNotExist:
+                return Client.result(error='Service not found')
+
             match command:
                 case 'log':
                     if data.get('type') != 'log':
                         return Client.result(error='Invalid command')
 
-                    log = self._params.get('log', '')
+                    log: str = self._params.get('log', '')
                     # Right now, log to logger, but will be stored with user logs
-                    logger.info('Client log for %s: %s', self._request.user.pretty_name, log)
+                    for line in log.split('\n'):
+                        # Firt word is level
+                        try:
+                            level, message = line.split(' ', 1)
+                            userservice.log(message, LogLevel.from_str(level), LogSource.CLIENT)
+                        except Exception:
+                            # If something goes wrong, log it as debug
+                            pass
+                        # logger.info('Client log for %s: %s', self._request.user.pretty_name, line)
                 case _:
                     return Client.result(error='Invalid command')
 
@@ -250,7 +274,7 @@ class Client(Handler):
                 }
             )
 
-        return matcher(
+        return match(
             self._args,
             _error,  # In case of error, raises RequestError
             ((), _noargs),  # No args, return version

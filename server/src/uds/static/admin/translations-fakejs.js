@@ -431,6 +431,7 @@ gettext("Information for");
 gettext("Groups");
 gettext("Services Pools");
 gettext("Assigned Services");
+gettext("Logs");
 gettext("Ok");
 gettext("Summary");
 gettext("Users");

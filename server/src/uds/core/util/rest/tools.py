@@ -48,7 +48,7 @@ T = typing.TypeVar('T', bound=typing.Any)
 # The callback will be called with the arguments in the order they are in the tuple, so:
 # callback(sample, arg_2, argument)
 # And the literals will be ignored
-def matcher(
+def match(
     arg_list: collections.abc.Iterable[str],
     error: collections.abc.Callable[..., typing.Any],
     *args: tuple[tuple[str, ...], collections.abc.Callable[..., T]],

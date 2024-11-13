@@ -38,7 +38,7 @@ from uds.core import exceptions, types
 from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.exceptions.services import ServiceNotReadyError
-from uds.core.util.rest.tools import matcher
+from uds.core.util.rest.tools import match
 from uds.REST import Handler
 from uds.web.util import services
 
@@ -179,7 +179,7 @@ class Connection(Handler):
         def error() -> dict[str, typing.Any]:
             raise exceptions.rest.RequestError('Invalid Request')
 
-        return matcher(
+        return match(
             self._args,
             error,
             ((), self.service_list),

@@ -118,6 +118,15 @@ class User(UUIDModel, properties.PropertiesMixin):
         """
         return self.manager.get_instance()
 
+    # Utility for logging
+    def log(
+        self,
+        message: str,
+        level: types.log.LogLevel = types.log.LogLevel.INFO,
+        source: types.log.LogSource = types.log.LogSource.INTERNAL,
+    ) -> None:
+        log.log(self, level, message, source)
+
     def is_staff(self) -> bool:
         """
         Return true if this user is admin or staff member
@@ -164,7 +173,9 @@ class User(UUIDModel, properties.PropertiesMixin):
                 number_belongs_meta=Count('groups', filter=Q(groups__id__in=grps))
             )  # g.groups.filter(id__in=grps).count()
         ):
-            number_of_groups_belonging_in_meta: int = typing.cast(typing.Any, g).number_belongs_meta  # Anotated field
+            number_of_groups_belonging_in_meta: int = typing.cast(
+                typing.Any, g
+            ).number_belongs_meta  # Anotated field
 
             logger.debug('gn = %s', number_of_groups_belonging_in_meta)
             logger.debug('groups count: %s', typing.cast(typing.Any, g).number_groups)  # Anotated field
@@ -212,9 +223,7 @@ class User(UUIDModel, properties.PropertiesMixin):
         # Remove related stored values
         try:
             storage.StorageAsDict(
-                owner='manager' + str(to_delete.manager.uuid),
-                group=None,
-                atomic=False
+                owner='manager' + str(to_delete.manager.uuid), group=None, atomic=False
             ).clear()
         except Exception:
             logger.exception('Removing stored data')

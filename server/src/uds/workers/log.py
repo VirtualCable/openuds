@@ -29,6 +29,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import datetime
 import logging
 
 from django.db.models import Count
@@ -36,6 +37,7 @@ from django.db.models import Count
 from uds.core.jobs import Job
 from uds import models
 from uds.core.types import log
+from uds.core.util.model import sql_now
 
 # from uds.core.util.config import GlobalConfig
 
@@ -44,7 +46,7 @@ logger = logging.getLogger(__name__)
 
 
 class LogMaintenance(Job):
-    frecuency = 7200  # Once every two hours
+    frecuency = 3600  # Once every hour
     # frecuency_cfg = GlobalConfig.XXXX
     friendly_name = 'Log maintenance'
 
@@ -65,9 +67,14 @@ class LogMaintenance(Job):
                 continue
 
             max_elements = owner_type.get_max_elements()
+            removing_before = sql_now() - datetime.timedelta(seconds=3600)
             if 0 < max_elements < count:  # Negative max elements means "unlimited"
                 # We will delete the oldest ones
-                for record in models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type).order_by(
+                for record in models.Log.objects.filter(
+                    owner_id=owner_id,
+                    owner_type=owner_type,
+                    created_lt=removing_before,
+                ).order_by(
                     'created', 'id'
                 )[: count - max_elements + 1]:
                     record.delete()

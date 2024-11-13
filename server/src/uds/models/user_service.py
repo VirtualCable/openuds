@@ -639,8 +639,8 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         )
 
     # Utility for logging
-    def log(self, message: str, level: types.log.LogLevel = types.log.LogLevel.INFO) -> None:
-        log.log(self, level, message, types.log.LogSource.INTERNAL)
+    def log(self, message: str, level: types.log.LogLevel = types.log.LogLevel.INFO, source: types.log.LogSource = types.log.LogSource.INTERNAL) -> None:
+        log.log(self, level, message, source)
 
     def test_connectivity(self, host: str, port: 'str|int', timeout: int = 4) -> bool:
         return self.deployed_service.test_connectivity(host, port, timeout)
