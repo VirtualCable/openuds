@@ -29,7 +29,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-06 17:43+0100\n"
+"POT-Creation-Date: 2024-11-13 20:14+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: Chinese (http://app.transifex.com/openuds/openuds/language/"
@@ -53,7 +53,7 @@ msgstr "帐号"
 #: REST/methods/services_pool_groups.py:78 REST/methods/services_pools.py:107
 #: REST/methods/transports.py:70 REST/methods/tunnels_management.py:153
 #: REST/methods/user_services.py:357 REST/methods/user_services.py:438
-#: REST/methods/users_groups.py:171 REST/model/base.py:161
+#: REST/methods/users_groups.py:177 REST/model/base.py:161
 msgid "Name"
 msgstr "名称"
 
@@ -64,8 +64,8 @@ msgstr "名称"
 #: REST/methods/providers.py:75 REST/methods/servers_management.py:422
 #: REST/methods/services.py:234 REST/methods/services_pool_groups.py:79
 #: REST/methods/transports.py:72 REST/methods/tunnels_management.py:154
-#: REST/methods/user_services.py:440 REST/methods/users_groups.py:172
-#: REST/methods/users_groups.py:391 REST/model/base.py:172
+#: REST/methods/user_services.py:440 REST/methods/users_groups.py:178
+#: REST/methods/users_groups.py:415 REST/model/base.py:172
 msgid "Comments"
 msgstr "评论"
 
@@ -229,8 +229,8 @@ msgstr "可见"
 msgid "Hidden"
 msgstr "隐"
 
-#: REST/methods/authenticators.py:124 REST/methods/users_groups.py:177
-#: REST/methods/users_groups.py:396 REST/methods/users_groups.py:403
+#: REST/methods/authenticators.py:124 REST/methods/users_groups.py:183
+#: REST/methods/users_groups.py:420 REST/methods/users_groups.py:427
 #: core/types/pools.py:83 services/Proxmox/service_linked.py:201
 msgid "Disabled"
 msgstr "残障人士"
@@ -333,11 +333,11 @@ msgstr "具有访问权限的池"
 msgid "Pools with Actions"
 msgstr "动作池"
 
-#: REST/methods/client.py:88
+#: REST/methods/client.py:92
 msgid "Your service is being created. Please, wait while we complete it"
 msgstr "您的服务正在创建中。请等我们完成"
 
-#: REST/methods/client.py:104
+#: REST/methods/client.py:108
 msgid "Correct"
 msgstr "正确"
 
@@ -462,8 +462,8 @@ msgid "Service Pool name"
 msgstr "服务池名称"
 
 #: REST/methods/meta_service_pools.py:93 REST/methods/notifiers.py:72
-#: REST/methods/notifiers.py:105 REST/methods/users_groups.py:177
-#: REST/methods/users_groups.py:396 REST/methods/users_groups.py:403
+#: REST/methods/notifiers.py:105 REST/methods/users_groups.py:183
+#: REST/methods/users_groups.py:420 REST/methods/users_groups.py:427
 #: core/types/pools.py:84 services/Proxmox/service_linked.py:201
 msgid "Enabled"
 msgstr "启用"
@@ -684,8 +684,8 @@ msgstr "无法删除具有服务的提供商"
 msgid "Available reports"
 msgstr "可用报告"
 
-#: REST/methods/reports.py:71 REST/methods/users_groups.py:388
-#: REST/methods/users_groups.py:413
+#: REST/methods/reports.py:71 REST/methods/users_groups.py:412
+#: REST/methods/users_groups.py:437
 #: auths/ActiveDirectory_enterprise/authenticator.py:202
 #: auths/AzureAD_enterprise/authenticator.py:98
 #: auths/EDirectory_enterprise/authenticator.py:133
@@ -880,13 +880,13 @@ msgstr "服务计数方式"
 msgid "Kind of service counting for calculating if MAX is reached"
 msgstr "用于计算是否达到 MAX 的服务计数"
 
-#: REST/methods/services.py:354 REST/methods/users_groups.py:304
-#: REST/methods/users_groups.py:523
+#: REST/methods/services.py:354 REST/methods/users_groups.py:310
+#: REST/methods/users_groups.py:547
 msgid "With errors"
 msgstr "有错误"
 
-#: REST/methods/services.py:354 REST/methods/users_groups.py:304
-#: REST/methods/users_groups.py:523
+#: REST/methods/services.py:354 REST/methods/users_groups.py:310
+#: REST/methods/users_groups.py:547
 msgid "Ok"
 msgstr "好"
 
@@ -1184,15 +1184,15 @@ msgstr "更新日志"
 msgid "Comment"
 msgstr "评论"
 
-#: REST/methods/users_groups.py:121 REST/methods/users_groups.py:142
+#: REST/methods/users_groups.py:127 REST/methods/users_groups.py:148
 msgid "Admin"
 msgstr "管理员"
 
-#: REST/methods/users_groups.py:121 REST/methods/users_groups.py:142
+#: REST/methods/users_groups.py:127 REST/methods/users_groups.py:148
 msgid "Staff member"
 msgstr "工作人员"
 
-#: REST/methods/users_groups.py:122 REST/methods/users_groups.py:142
+#: REST/methods/users_groups.py:128 REST/methods/users_groups.py:148
 #: auths/ActiveDirectory_enterprise/authenticator.py:79
 #: auths/AzureAD_enterprise/authenticator.py:97
 #: auths/EDirectory_enterprise/authenticator.py:71
@@ -1204,16 +1204,16 @@ msgstr "工作人员"
 msgid "User"
 msgstr "用户"
 
-#: REST/methods/users_groups.py:154
+#: REST/methods/users_groups.py:160
 #, python-brace-format
 msgid "Users of {0}"
 msgstr "{0}的用户"
 
-#: REST/methods/users_groups.py:158
+#: REST/methods/users_groups.py:164
 msgid "Current users"
 msgstr "目前的用户"
 
-#: REST/methods/users_groups.py:164
+#: REST/methods/users_groups.py:170
 #: auths/ActiveDirectory_enterprise/authenticator.py:200
 #: auths/EDirectory_enterprise/authenticator.py:131
 #: auths/RegexLdap/authenticator.py:160 auths/SimpleLDAP/authenticator.py:180
@@ -1237,52 +1237,52 @@ msgstr "目前的用户"
 msgid "Username"
 msgstr "用户名"
 
-#: REST/methods/users_groups.py:170
+#: REST/methods/users_groups.py:176
 msgid "Role"
 msgstr "角色"
 
-#: REST/methods/users_groups.py:175 REST/methods/users_groups.py:394
+#: REST/methods/users_groups.py:181 REST/methods/users_groups.py:418
 msgid "state"
 msgstr "州"
 
-#: REST/methods/users_groups.py:180 reports/lists/users.py:113
+#: REST/methods/users_groups.py:186 reports/lists/users.py:113
 msgid "Last access"
 msgstr "上次访问"
 
-#: REST/methods/users_groups.py:208
+#: REST/methods/users_groups.py:214
 msgid "Username cannot be empty"
 msgstr "用户名不能为空"
 
-#: REST/methods/users_groups.py:247 REST/methods/users_groups.py:491
+#: REST/methods/users_groups.py:253 REST/methods/users_groups.py:515
 msgid "User already exists (duplicate key error)"
 msgstr "用户已存在（重复键错误）"
 
-#: REST/methods/users_groups.py:380
+#: REST/methods/users_groups.py:404
 #, python-brace-format
 msgid "Groups of {0}"
 msgstr "{0}组"
 
-#: REST/methods/users_groups.py:382
+#: REST/methods/users_groups.py:406
 msgid "Current groups"
 msgstr "目前的团体"
 
-#: REST/methods/users_groups.py:401
+#: REST/methods/users_groups.py:425
 msgid "Skip MFA"
 msgstr "跳过 MFA"
 
-#: REST/methods/users_groups.py:413
+#: REST/methods/users_groups.py:437
 msgid "UDS Group"
 msgstr "UDS集团"
 
-#: REST/methods/users_groups.py:414
+#: REST/methods/users_groups.py:438
 msgid "Meta group"
 msgstr "元组"
 
-#: REST/methods/users_groups.py:414
+#: REST/methods/users_groups.py:438
 msgid "UDS Meta Group"
 msgstr "UDS Meta Group"
 
-#: REST/methods/users_groups.py:448
+#: REST/methods/users_groups.py:472
 msgid "Group name is required"
 msgstr "组名是必填项"
 

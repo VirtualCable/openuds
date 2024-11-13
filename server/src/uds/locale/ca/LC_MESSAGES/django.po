@@ -32,7 +32,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-06 17:43+0100\n"
+"POT-Creation-Date: 2024-11-13 20:14+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2020\n"
 "Language-Team: Catalan (http://app.transifex.com/openuds/openuds/language/"
@@ -56,7 +56,7 @@ msgstr "Comptes"
 #: REST/methods/services_pool_groups.py:78 REST/methods/services_pools.py:107
 #: REST/methods/transports.py:70 REST/methods/tunnels_management.py:153
 #: REST/methods/user_services.py:357 REST/methods/user_services.py:438
-#: REST/methods/users_groups.py:171 REST/model/base.py:161
+#: REST/methods/users_groups.py:177 REST/model/base.py:161
 msgid "Name"
 msgstr "Nom"
 
@@ -67,8 +67,8 @@ msgstr "Nom"
 #: REST/methods/providers.py:75 REST/methods/servers_management.py:422
 #: REST/methods/services.py:234 REST/methods/services_pool_groups.py:79
 #: REST/methods/transports.py:72 REST/methods/tunnels_management.py:154
-#: REST/methods/user_services.py:440 REST/methods/users_groups.py:172
-#: REST/methods/users_groups.py:391 REST/model/base.py:172
+#: REST/methods/user_services.py:440 REST/methods/users_groups.py:178
+#: REST/methods/users_groups.py:415 REST/model/base.py:172
 msgid "Comments"
 msgstr "Comentaris"
 
@@ -232,8 +232,8 @@ msgstr "Visible"
 msgid "Hidden"
 msgstr "Ocult"
 
-#: REST/methods/authenticators.py:124 REST/methods/users_groups.py:177
-#: REST/methods/users_groups.py:396 REST/methods/users_groups.py:403
+#: REST/methods/authenticators.py:124 REST/methods/users_groups.py:183
+#: REST/methods/users_groups.py:420 REST/methods/users_groups.py:427
 #: core/types/pools.py:83 services/Proxmox/service_linked.py:201
 msgid "Disabled"
 msgstr "Deshabilitat"
@@ -338,11 +338,11 @@ msgstr "Piscines amb accessos"
 msgid "Pools with Actions"
 msgstr "Piscines amb Accions"
 
-#: REST/methods/client.py:88
+#: REST/methods/client.py:92
 msgid "Your service is being created. Please, wait while we complete it"
 msgstr "El vostre servei s'està creant. Si us plau, espereu mentre es completa"
 
-#: REST/methods/client.py:104
+#: REST/methods/client.py:108
 msgid "Correct"
 msgstr "Correcte"
 
@@ -470,8 +470,8 @@ msgid "Service Pool name"
 msgstr "Nom del Pool de servei"
 
 #: REST/methods/meta_service_pools.py:93 REST/methods/notifiers.py:72
-#: REST/methods/notifiers.py:105 REST/methods/users_groups.py:177
-#: REST/methods/users_groups.py:396 REST/methods/users_groups.py:403
+#: REST/methods/notifiers.py:105 REST/methods/users_groups.py:183
+#: REST/methods/users_groups.py:420 REST/methods/users_groups.py:427
 #: core/types/pools.py:84 services/Proxmox/service_linked.py:201
 msgid "Enabled"
 msgstr "Habilitat"
@@ -696,8 +696,8 @@ msgstr "No es poden suprimir els proveïdors amb serveis"
 msgid "Available reports"
 msgstr "Informes disponibles"
 
-#: REST/methods/reports.py:71 REST/methods/users_groups.py:388
-#: REST/methods/users_groups.py:413
+#: REST/methods/reports.py:71 REST/methods/users_groups.py:412
+#: REST/methods/users_groups.py:437
 #: auths/ActiveDirectory_enterprise/authenticator.py:202
 #: auths/AzureAD_enterprise/authenticator.py:98
 #: auths/EDirectory_enterprise/authenticator.py:133
@@ -896,13 +896,13 @@ msgstr "Mètode de recompte de serveis"
 msgid "Kind of service counting for calculating if MAX is reached"
 msgstr "Tipus de recompte de servei per calcular si s&#39;arriba a MAX"
 
-#: REST/methods/services.py:354 REST/methods/users_groups.py:304
-#: REST/methods/users_groups.py:523
+#: REST/methods/services.py:354 REST/methods/users_groups.py:310
+#: REST/methods/users_groups.py:547
 msgid "With errors"
 msgstr "Amb errors"
 
-#: REST/methods/services.py:354 REST/methods/users_groups.py:304
-#: REST/methods/users_groups.py:523
+#: REST/methods/services.py:354 REST/methods/users_groups.py:310
+#: REST/methods/users_groups.py:547
 msgid "Ok"
 msgstr "D'acord"
 
@@ -1219,15 +1219,15 @@ msgstr "Registre de canvis"
 msgid "Comment"
 msgstr "Comentari"
 
-#: REST/methods/users_groups.py:121 REST/methods/users_groups.py:142
+#: REST/methods/users_groups.py:127 REST/methods/users_groups.py:148
 msgid "Admin"
 msgstr "Admin"
 
-#: REST/methods/users_groups.py:121 REST/methods/users_groups.py:142
+#: REST/methods/users_groups.py:127 REST/methods/users_groups.py:148
 msgid "Staff member"
 msgstr "Membre del personal"
 
-#: REST/methods/users_groups.py:122 REST/methods/users_groups.py:142
+#: REST/methods/users_groups.py:128 REST/methods/users_groups.py:148
 #: auths/ActiveDirectory_enterprise/authenticator.py:79
 #: auths/AzureAD_enterprise/authenticator.py:97
 #: auths/EDirectory_enterprise/authenticator.py:71
@@ -1239,16 +1239,16 @@ msgstr "Membre del personal"
 msgid "User"
 msgstr "Usuari"
 
-#: REST/methods/users_groups.py:154
+#: REST/methods/users_groups.py:160
 #, python-brace-format
 msgid "Users of {0}"
 msgstr "Usuaris de {0}"
 
-#: REST/methods/users_groups.py:158
+#: REST/methods/users_groups.py:164
 msgid "Current users"
 msgstr "Usuaris actuals"
 
-#: REST/methods/users_groups.py:164
+#: REST/methods/users_groups.py:170
 #: auths/ActiveDirectory_enterprise/authenticator.py:200
 #: auths/EDirectory_enterprise/authenticator.py:131
 #: auths/RegexLdap/authenticator.py:160 auths/SimpleLDAP/authenticator.py:180
@@ -1272,52 +1272,52 @@ msgstr "Usuaris actuals"
 msgid "Username"
 msgstr "Nom d'usuari"
 
-#: REST/methods/users_groups.py:170
+#: REST/methods/users_groups.py:176
 msgid "Role"
 msgstr "Paper"
 
-#: REST/methods/users_groups.py:175 REST/methods/users_groups.py:394
+#: REST/methods/users_groups.py:181 REST/methods/users_groups.py:418
 msgid "state"
 msgstr "estat"
 
-#: REST/methods/users_groups.py:180 reports/lists/users.py:113
+#: REST/methods/users_groups.py:186 reports/lists/users.py:113
 msgid "Last access"
 msgstr "Darrer accés"
 
-#: REST/methods/users_groups.py:208
+#: REST/methods/users_groups.py:214
 msgid "Username cannot be empty"
 msgstr "El nom d&#39;usuari no pot estar buit"
 
-#: REST/methods/users_groups.py:247 REST/methods/users_groups.py:491
+#: REST/methods/users_groups.py:253 REST/methods/users_groups.py:515
 msgid "User already exists (duplicate key error)"
 msgstr "Aquest usuari ja existeix (error de clau duplicada)"
 
-#: REST/methods/users_groups.py:380
+#: REST/methods/users_groups.py:404
 #, python-brace-format
 msgid "Groups of {0}"
 msgstr "Grups de {0}"
 
-#: REST/methods/users_groups.py:382
+#: REST/methods/users_groups.py:406
 msgid "Current groups"
 msgstr "Grups actuals"
 
-#: REST/methods/users_groups.py:401
+#: REST/methods/users_groups.py:425
 msgid "Skip MFA"
 msgstr "Omet MFA"
 
-#: REST/methods/users_groups.py:413
+#: REST/methods/users_groups.py:437
 msgid "UDS Group"
 msgstr "Grup UDS"
 
-#: REST/methods/users_groups.py:414
+#: REST/methods/users_groups.py:438
 msgid "Meta group"
 msgstr "Metagrup"
 
-#: REST/methods/users_groups.py:414
+#: REST/methods/users_groups.py:438
 msgid "UDS Meta Group"
 msgstr "Metagrup UDS"
 
-#: REST/methods/users_groups.py:448
+#: REST/methods/users_groups.py:472
 msgid "Group name is required"
 msgstr "El nom del grup és obligatori"
 
