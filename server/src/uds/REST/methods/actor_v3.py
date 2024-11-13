@@ -811,7 +811,7 @@ class Unmanaged(ActorV3Action):
                 dbservice = Service.objects.get(token=token)
             service: 'services.Service' = dbservice.get_instance()
         except Exception:
-            logger.exception('Unmanaged host request: %s', self._params)
+            logger.warning('Unmanaged host request: %s', self._params)
             return ActorV3Action.actor_result(error='Invalid token')
 
         # ensure idsLists has upper and lower versions for case sensitive databases

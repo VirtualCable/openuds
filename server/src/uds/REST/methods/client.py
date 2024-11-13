@@ -234,15 +234,16 @@ class Client(Handler):
 
                     log: str = self._params.get('log', '')
                     # Right now, log to logger, but will be stored with user logs
+                    logger.info('Client %s: %s', self._request.user.pretty_name, userservice.service_pool.name)
                     for line in log.split('\n'):
                         # Firt word is level
                         try:
                             level, message = line.split(' ', 1)
                             userservice.log(message, LogLevel.from_str(level), LogSource.CLIENT)
+                            logger.info('Client %s: %s', self._request.user.pretty_name, message)
                         except Exception:
                             # If something goes wrong, log it as debug
                             pass
-                        # logger.info('Client log for %s: %s', self._request.user.pretty_name, line)
                 case _:
                     return Client.result(error='Invalid command')
 
