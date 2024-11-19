@@ -25,12 +25,13 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Abdel Baaddi <abaaddi@virtualcable.es>, 2017-2018
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-13 20:14+0100\n"
+"POT-Creation-Date: 2024-11-19 23:34+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>, 2017-2018\n"
 "Language-Team: Arabic (http://app.transifex.com/openuds/openuds/language/"
@@ -3416,6 +3417,19 @@ msgstr "قائمة بالمضيفين/الشبكات الموثوقة المسم
 #: core/util/config.py:771
 msgid "Enable VNC menu for user services"
 msgstr "تمكين قائمة VNC لخدمات المستخدم"
+
+#: core/util/config.py:785
+#| msgid "Text of the email. If empty, a default text will be used"
+msgid ""
+"Cookies consent text. If empty, a default multi language text will be used"
+msgstr ""
+"نص موافقة ملفات تعريف الارتباط. إذا كان فارغًا، فسيتم استخدام نص متعدد اللغات "
+"افتراضيًا"
+
+#: core/util/config.py:791
+#| msgid "Enable Microphone"
+msgid "Enable cookies consent"
+msgstr "تمكين الموافقة على ملفات تعريف الارتباط"
 
 #: core/util/fields.py:85
 msgid "Tunnel server"
@@ -8681,7 +8695,7 @@ msgstr "الكثير من أخطاء التوثيق. المستخدم محظور
 msgid "Invalid data"
 msgstr "بيانات غير صالحة"
 
-#: web/util/configjs.py:127
+#: web/util/configjs.py:131
 msgid "Access limited by calendar"
 msgstr "وصول محدود بسبب الجدول الزمني."
 

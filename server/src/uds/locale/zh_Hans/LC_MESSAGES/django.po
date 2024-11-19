@@ -25,11 +25,12 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-13 20:14+0100\n"
+"POT-Creation-Date: 2024-11-19 23:34+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: Chinese (http://app.transifex.com/openuds/openuds/language/"
@@ -3316,6 +3317,17 @@ msgstr "允许访问管理界面的受信任主机/网络列表"
 #: core/util/config.py:771
 msgid "Enable VNC menu for user services"
 msgstr "为用户服务启用VNC菜单"
+
+#: core/util/config.py:785
+#| msgid "Text of the email. If empty, a default text will be used"
+msgid ""
+"Cookies consent text. If empty, a default multi language text will be used"
+msgstr "Cookies 同意文本。如果为空，将使用默认的多语言文本"
+
+#: core/util/config.py:791
+#| msgid "Enable Microphone"
+msgid "Enable cookies consent"
+msgstr "启用 Cookie 同意"
 
 #: core/util/fields.py:85
 msgid "Tunnel server"
@@ -8438,7 +8450,7 @@ msgstr "身份验证错误太多。用户暂时被阻止"
 msgid "Invalid data"
 msgstr "无效数据"
 
-#: web/util/configjs.py:127
+#: web/util/configjs.py:131
 msgid "Access limited by calendar"
 msgstr "访问受日历限制"
 

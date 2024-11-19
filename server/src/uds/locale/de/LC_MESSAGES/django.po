@@ -25,6 +25,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012
 # Víctor Alonso <valonso@virtualcable.net>, 2022
 # Víctor Alonso <valonso@virtualcable.net>, 2022
@@ -32,7 +33,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-13 20:14+0100\n"
+"POT-Creation-Date: 2024-11-19 23:34+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2022\n"
 "Language-Team: German (http://app.transifex.com/openuds/openuds/language/"
@@ -3531,6 +3532,19 @@ msgstr ""
 #: core/util/config.py:771
 msgid "Enable VNC menu for user services"
 msgstr "Aktivieren Sie das VNC-Menü für Benutzerdienste"
+
+#: core/util/config.py:785
+#| msgid "Text of the email. If empty, a default text will be used"
+msgid ""
+"Cookies consent text. If empty, a default multi language text will be used"
+msgstr ""
+"Cookie-Einwilligungstext. Wenn leer, wird ein mehrsprachiger Standardtext "
+"verwendet."
+
+#: core/util/config.py:791
+#| msgid "Enable Microphone"
+msgid "Enable cookies consent"
+msgstr "Cookies-Zustimmung aktivieren"
 
 #: core/util/fields.py:85
 msgid "Tunnel server"
@@ -8982,7 +8996,7 @@ msgstr "Zu viele Authentifizierungsfehler. Benutzer vorübergehend gesperrt"
 msgid "Invalid data"
 msgstr "Ungültige Daten"
 
-#: web/util/configjs.py:127
+#: web/util/configjs.py:131
 msgid "Access limited by calendar"
 msgstr "Zugriff durch Kalender begrenzt"
 

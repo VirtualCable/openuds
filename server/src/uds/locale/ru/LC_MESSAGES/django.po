@@ -25,6 +25,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2022
 # Alexander <ag@kub.tel>, 2020
 # Alexey Shabalin <a.shabalin@gmail.com>, 2019
@@ -38,9 +39,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-13 20:14+0100\n"
+"POT-Creation-Date: 2024-11-19 23:34+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
-"Last-Translator: Elena Mishina, 2022-2024\n"
+"Last-Translator: Александр Бурматов, 2022\n"
 "Language-Team: Russian (http://app.transifex.com/openuds/openuds/language/"
 "ru/)\n"
 "Language: ru\n"
@@ -3505,6 +3506,19 @@ msgstr ""
 #: core/util/config.py:771
 msgid "Enable VNC menu for user services"
 msgstr "Включить меню VNC для пользовательских сервисов"
+
+#: core/util/config.py:785
+#| msgid "Text of the email. If empty, a default text will be used"
+msgid ""
+"Cookies consent text. If empty, a default multi language text will be used"
+msgstr ""
+"Текст согласия на использование файлов cookie. Если оставить пустым, будет "
+"использован многоязычный текст по умолчанию"
+
+#: core/util/config.py:791
+#| msgid "Enable Microphone"
+msgid "Enable cookies consent"
+msgstr "Включить согласие на использование файлов cookie"
 
 #: core/util/fields.py:85
 msgid "Tunnel server"
@@ -8911,7 +8925,7 @@ msgstr ""
 msgid "Invalid data"
 msgstr "Неверные данные"
 
-#: web/util/configjs.py:127
+#: web/util/configjs.py:131
 msgid "Access limited by calendar"
 msgstr "Доступ ограничен календарем"
 
