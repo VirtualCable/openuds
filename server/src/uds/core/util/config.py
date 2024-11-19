@@ -776,6 +776,21 @@ class GlobalConfig:
         type=Config.FieldType.HIDDEN,
         help=''
     )
+    
+    # Cookies consent
+    COOKIES_CONSENT_TEXT: Config.Value = Config.section(Config.SectionType.CUSTOM).value(
+        'Cookies consent text',
+        '',
+        type=Config.FieldType.TEXT,
+        help=_('Cookies consent text. If empty, a default multi language text will be used'),
+    )
+    COOKIES_CONSENT_ENABLED: Config.Value = Config.section(Config.SectionType.CUSTOM).value(
+        'Cookies consent enabled',
+        '1',
+        type=Config.FieldType.BOOLEAN,
+        help=_('Enable cookies consent'),
+    )
+        
 
     @staticmethod
     def is_initialized() -> bool:

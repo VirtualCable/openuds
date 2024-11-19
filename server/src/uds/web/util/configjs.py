@@ -121,6 +121,10 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
         'site_information': GlobalConfig.SITE_INFO.get(),
         'site_filter_on_top': GlobalConfig.SITE_FILTER_ONTOP.as_bool(True),
         'launcher_wait_time': 5000,
+        'cookies_consent': {
+            'text': GlobalConfig.COOKIES_CONSENT_TEXT.get(True),
+            'enabled': GlobalConfig.COOKIES_CONSENT_ENABLED.as_bool(True),
+        },
         'messages': {
             # Calendar denied message
             'calendar_denied': GlobalConfig.LIMITED_BY_CALENDAR_TEXT.get().strip()
