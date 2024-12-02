@@ -34,6 +34,7 @@ from django.urls import re_path, path
 from django.conf.urls import include
 from django.views.i18n import JavaScriptCatalog
 from django.views.generic.base import RedirectView
+from django.views.decorators.cache import cache_page
 
 from uds import REST
 from uds.core import types
@@ -192,7 +193,7 @@ urlpatterns = [
     # i18n
     re_path(
         r'^uds/utility/i18n/(?P<lang>[a-z_-]*).js$',
-        JavaScriptCatalog.as_view(),
+        cache_page(60*60)(JavaScriptCatalog.as_view()),
         name='utility.jsCatalog',
     ),
     path(r'uds/utility/i18n', include('django.conf.urls.i18n')),
