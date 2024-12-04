@@ -306,7 +306,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
     def forced_move_assigned_to_cache_l1(self, user_service: UserService) -> None:
         """
-        Clones the record of a user serviceself.
+        Clones the record of a user service.
         For this, the original userservice will ve moved to cache, and a new one will be created
         to mark it as "REMOVED"
 
@@ -320,6 +320,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         user_service_copy.in_use = False
         user_service_copy.state = State.REMOVED
         user_service_copy.os_state = State.USABLE
+        log.log(user_service_copy, types.log.LogLevel.INFO, 'Service moved to cache')
 
         # Save the new element.
         user_service_copy.save()
@@ -560,6 +561,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         if servicepool.uses_cache:
             cache: typing.Optional[UserService] = None
             # Now try to locate 1 from cache already "ready" (must be usable and at level 1)
+            # First, a cached service that is "fully" ready
             with transaction.atomic():
                 caches = typing.cast(
                     list[UserService],
@@ -574,6 +576,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 if caches:
                     cache = caches[0]
                     # Ensure element is reserved correctly on DB
+                    # Avoid concurrency problems due to cache being assigned to user
+                    # in the middle of this process
                     if (
                         servicepool.cached_users_services()
                         .select_for_update()
@@ -587,6 +591,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
             # Out of previous atomic
             if not cache:
+                # Now try to locate 1 from cache already "ready" (must be usable and at level 1)
                 with transaction.atomic():
                     caches = typing.cast(
                         list[UserService],
@@ -606,9 +611,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                             cache = None
                     else:
                         cache = None
-
-            # Out of atomic transaction
-            if cache:
+            else:
                 # Early assign
                 cache.assign_to(user)
 
@@ -885,7 +888,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         userservice: typing.Optional[UserService] = None
 
         if kind in 'A':  # This is an assigned service
-            logger.debug('Getting assugned user service %s', uuid_userservice_pool)
+            logger.debug('Getting assigned user service %s', uuid_userservice_pool)
             try:
                 userservice = UserService.objects.get(uuid=uuid_userservice_pool, user=user)
                 userservice.service_pool.validate_user(user)

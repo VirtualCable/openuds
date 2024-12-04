@@ -47,7 +47,7 @@ logger = logging.getLogger(__name__)
 
 class TestUserserviceManager(UDSTransactionTestCase):
     manager: UserServiceManager = UserServiceManager.manager()  # For convenience debugging
-    
+
     def test_forced_mode_assigned_to_l1(self) -> None:
         # Create an user service, we need
         userservice = services_fixtures.create_db_assigned_userservices()[0]
@@ -55,15 +55,15 @@ class TestUserserviceManager(UDSTransactionTestCase):
         orig_uuid = userservice.uuid
         orig_src_ip = userservice.src_ip
         orig_src_hostname = userservice.src_hostname
-        
+
         self.assertEqual(models.UserService.objects.all().count(), 1)
         # And uuser service is assigned to an user
         self.assertIsNotNone(userservice.user)
         # And cache level is None
         self.assertEqual(userservice.cache_level, core_types.services.CacheLevel.NONE)
-        
+
         self.manager.forced_move_assigned_to_cache_l1(userservice)
-        
+
         # Now, should have 2 user services, one in cache and one in db
         self.assertEqual(models.UserService.objects.all().count(), 2)
         # Reload userservice, that should be now in cache
@@ -78,8 +78,7 @@ class TestUserserviceManager(UDSTransactionTestCase):
         # Source ip and hostname should be empty
         self.assertEqual(userservice.src_ip, '')
         self.assertEqual(userservice.src_hostname, '')
-        
-        
+
         # Look for the created one (that is the assigned, deleted)
         assigned = models.UserService.objects.exclude(uuid=orig_uuid).get()
         self.assertEqual(assigned.cache_level, core_types.services.CacheLevel.NONE)
@@ -87,12 +86,47 @@ class TestUserserviceManager(UDSTransactionTestCase):
         self.assertIsNotNone(assigned.user)
         # Should be removed
         self.assertEqual(assigned.state, core_types.states.State.REMOVED)
-                         
+
         # unique_id should be same as the original one
         self.assertEqual(userservice.unique_id, assigned.unique_id)
         # src_ip and src_hostname should be the original ones
         self.assertEqual(assigned.src_ip, orig_src_ip)
         self.assertEqual(assigned.src_hostname, orig_src_hostname)
-        
+
     def test_release_from_logout(self) -> None:
         pass
+
+    def test_get_user_service_with_initial_no_cache(self) -> None:
+        userservice = services_fixtures.create_db_assigned_userservices()[0]
+        user = userservice.user
+        assert user is not None
+
+        # Fix userservice to set it as cache l1
+        userservice.cache_level = core_types.services.CacheLevel.L1
+        userservice.user = None
+        userservice.save()
+
+        service_pool = userservice.service_pool
+
+        service_pool.initial_srvs = 1
+        service_pool.cache_l1_srvs = 0
+        service_pool.cache_l2_srvs = 0
+        service_pool.max_srvs = 3
+        service_pool.save()
+
+        assigned_info = self.manager.get_user_service_info(
+            user,
+            core_types.os.DetectedOsInfo(
+                core_types.os.KnownOS.LINUX, core_types.os.KnownBrowser.CHROME, '1.0.0'
+            ),
+            '1.2.3.4',
+            f'P{service_pool.uuid}',
+            service_pool.transports.all()[0].uuid,
+        )
+
+        self.assertEqual(assigned_info.userservice.uuid, userservice.uuid)
+        self.assertEqual(assigned_info.userservice.cache_level, core_types.services.CacheLevel.NONE)
+        self.assertEqual(assigned_info.userservice.user, user)
+        self.assertEqual(assigned_info.userservice.src_ip, '1.2.3.4')
+        self.assertEqual(assigned_info.userservice.src_hostname, '1.2.3.4')
+        self.assertEqual(assigned_info.transport.uuid, service_pool.transports.all()[0].uuid)
