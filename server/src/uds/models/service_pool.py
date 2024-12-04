@@ -248,7 +248,7 @@ class ServicePool(UUIDModel, TaggingMixin):
     
     @property
     def uses_cache(self) -> bool:
-        return self.cache_l1_srvs > 0 or self.cache_l2_srvs > 0
+        return self.cache_l1_srvs > 0 or self.cache_l2_srvs > 0 or self.initial_srvs > 0
 
     @property
     def visual_name(self) -> str:
