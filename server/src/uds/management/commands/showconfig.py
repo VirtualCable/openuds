@@ -74,19 +74,20 @@ class Command(BaseCommand):
                 writer = {}  # Create a dict to store data, and write at the end
             # Get sections, key, value as a list of tuples
             for section, data in config.Config.get_config_values().items():
+                str_section = str(section)
                 for key, value in data.items():
                     # value is a dict, get 'value' key
                     if options['csv']:
-                        writer.writerow([section, key, value['value']])
+                        writer.writerow([str_section, key, value['value']])
                     elif options['yaml']:
-                        if section not in writer:
-                            writer[section] = {}
-                        writer[section][key] = value['value']
+                        if str_section not in writer:
+                            writer[str_section] = {}
+                        writer[str_section][key] = value['value']
                     else:
                         v = value['value'].replace('\n', '\\n')
                         self.stdout.write(f'{section}.{key}="{v}"')
             if options['yaml']:
-                self.stdout.write(yaml.safe_dump(writer, default_flow_style=False))
+                self.stdout.write(yaml.safe_dump(writer, default_flow_style=False)) 
         except Exception as e:
             self.stdout.write(f'The command could not be processed: {e}')
             self.stdout.flush()
