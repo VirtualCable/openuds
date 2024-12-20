@@ -70,6 +70,9 @@ class Permissions(Handler):
             'metapools': models.MetaPool,
             'accounts': models.Account,
             'mfa': models.MFA,
+            'servers-groups': models.ServerGroup,
+            'tunnels-tunnels': models.ServerGroup,  # Same as servers-groups, but different items
+            
         }.get(class_name, None)
 
         if cls is None:
@@ -115,6 +118,10 @@ class Permissions(Handler):
         Processes get requests
         """
         logger.debug('Permissions args for GET: %s', self._args)
+        
+        # Update some XXX/YYYY to XXX-YYYY (as server/groups, that is a valid class name)
+        if len(self._args) == 3:
+            self._args = [self._args[0]+ '-' + self._args[1], self._args[2]]
 
         if len(self._args) != 2:
             raise exceptions.rest.RequestError('Invalid request')
@@ -129,6 +136,13 @@ class Permissions(Handler):
         Processes put requests
         """
         logger.debug('Put args: %s', self._args)
+        
+        # Update some XXX/YYYY to XXX-YYYY (as server/groups, that is a valid class name)
+        if len(self._args) == 6:
+            self._args = [self._args[0]+ '-' + self._args[1], self._args[2], self._args[3], self._args[4], self._args[5]]
+            
+        if len(self._args) != 5:
+            raise exceptions.rest.RequestError('Invalid request')
 
         perm = uds.core.types.permissions.PermissionType.from_str(self._params.get('perm', '0'))
 
