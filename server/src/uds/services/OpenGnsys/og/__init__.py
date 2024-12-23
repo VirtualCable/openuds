@@ -52,7 +52,7 @@ if typing.TYPE_CHECKING:
     from uds.core.util.cache import Cache
 
 # Fake part
-FAKE: typing.Final[bool] = True
+FAKE: typing.Final[bool] = False
 CACHE_VALIDITY: typing.Final[int] = consts.cache.DEFAULT_CACHE_TIMEOUT
 TIMEOUT: typing.Final[int] = 10
 
