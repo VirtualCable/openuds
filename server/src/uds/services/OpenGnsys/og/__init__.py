@@ -52,6 +52,7 @@ CACHE_VALIDITY = 180
 
 RT = typing.TypeVar('RT')
 
+
 # Decorator
 def ensureConnected(fnc: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
     def inner(*args, **kwargs) -> RT:
@@ -62,9 +63,7 @@ def ensureConnected(fnc: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
 
 
 # Result checker
-def ensureResponseIsValid(
-    response: 'requests.Response', errMsg: typing.Optional[str] = None
-) -> typing.Any:
+def ensureResponseIsValid(response: 'requests.Response', errMsg: typing.Optional[str] = None) -> typing.Any:
     if not response.ok:
         if not errMsg:
             errMsg = 'Invalid response'
@@ -76,7 +75,7 @@ def ensureResponseIsValid(
             err = response.content.decode()
         if 'Database error' in err:
             err = 'Database error: Please, check OpenGnsys fields length on remotepc table (loginurl and logouturl)'
-            
+
         errMsg = '{}: {}, ({})'.format(errMsg, err, response.status_code)
         logger.error('%s: %s', errMsg, response.content)
         raise Exception(errMsg)
@@ -84,11 +83,7 @@ def ensureResponseIsValid(
     try:
         return json.loads(response.content)
     except Exception:
-        raise Exception(
-            'Error communicating with OpenGnsys: {}'.format(
-                response.content[:128].decode()
-            )
-        )
+        raise Exception('Error communicating with OpenGnsys: {}'.format(response.content[:128].decode()))
 
 
 class OpenGnsysClient:
@@ -118,7 +113,8 @@ class OpenGnsysClient:
 
     @property
     def headers(self) -> typing.MutableMapping[str, str]:
-        headers = {'content-type': 'application/json'}
+        headers = {'content-type': 'application/json', 'User-Agent': 'python-requests/2.27.1'}
+
         if self.auth:
             headers['Authorization'] = self.auth
 
@@ -127,9 +123,7 @@ class OpenGnsysClient:
     def _ogUrl(self, path: str) -> str:
         return self.endpoint + '/' + path
 
-    def _post(
-        self, path: str, data: typing.Any, errMsg: typing.Optional[str] = None
-    ) -> typing.Any:
+    def _post(self, path: str, data: typing.Any, errMsg: typing.Optional[str] = None) -> typing.Any:
         if not FAKE:
             return ensureResponseIsValid(
                 security.secureRequestsSession(verify=self.verifyCert).post(
@@ -252,9 +246,7 @@ class OpenGnsysClient:
         # Invoked every time we need to release a reservation (i mean, if a reservation is done, this will be called with the obtained id from that reservation)
         ou, lab, client = machineId.split('.')
         errMsg = 'Unreserving client {} in lab {} in ou {}'.format(client, lab, ou)
-        return self._delete(
-            urls.UNRESERVE.format(ou=ou, lab=lab, client=client), errMsg=errMsg
-        )
+        return self._delete(urls.UNRESERVE.format(ou=ou, lab=lab, client=client), errMsg=errMsg)
 
     @ensureConnected
     def powerOn(self, machineId, image):
@@ -265,36 +257,26 @@ class OpenGnsysClient:
             data = {
                 'image': image,
             }
-            return self._post(
-                urls.START.format(ou=ou, lab=lab, client=client), data, errMsg=errMsg
-            )
+            return self._post(urls.START.format(ou=ou, lab=lab, client=client), data, errMsg=errMsg)
         except Exception:  # For now, if this fails, ignore it to keep backwards compat
             return 'OK'
 
     @ensureConnected
-    def notifyURLs(
-        self, machineId: str, loginURL: str, logoutURL: str, releaseURL: str
-    ) -> typing.Any:
+    def notifyURLs(self, machineId: str, loginURL: str, logoutURL: str, releaseURL: str) -> typing.Any:
         ou, lab, client = machineId.split('.')
         errMsg = 'Notifying login/logout urls'
         data = {'urlLogin': loginURL, 'urlLogout': logoutURL, 'urlRelease': releaseURL}
 
-        return self._post(
-            urls.EVENTS.format(ou=ou, lab=lab, client=client), data, errMsg=errMsg
-        )
+        return self._post(urls.EVENTS.format(ou=ou, lab=lab, client=client), data, errMsg=errMsg)
 
     @ensureConnected
-    def notifyDeadline(
-        self, machineId: str, deadLine: typing.Optional[int]
-    ) -> typing.Any:
+    def notifyDeadline(self, machineId: str, deadLine: typing.Optional[int]) -> typing.Any:
         ou, lab, client = machineId.split('.')
         deadLine = deadLine or 0
         errMsg = 'Notifying deadline'
         data = {'deadLine': deadLine}
 
-        return self._post(
-            urls.SESSIONS.format(ou=ou, lab=lab, client=client), data, errMsg=errMsg
-        )
+        return self._post(urls.SESSIONS.format(ou=ou, lab=lab, client=client), data, errMsg=errMsg)
 
     @ensureConnected
     def status(self, id_: str) -> typing.Any:
