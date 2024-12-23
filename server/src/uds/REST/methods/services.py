@@ -104,7 +104,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             'user_services_count': models.UserService.objects.filter(deployed_service__service=item)
             .exclude(state__in=State.INFO_STATES)
             .count(),
-            'max_services_count_type': item.max_services_count_type,
+            'max_services_count_type': str(item.max_services_count_type),
             'maintenance_mode': item.provider.maintenance_mode,
             'permission': perm,
         }
