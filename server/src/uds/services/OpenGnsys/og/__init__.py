@@ -112,7 +112,10 @@ class OpenGnsysClient:
 
     @property
     def headers(self) -> collections.abc.MutableMapping[str, str]:
-        headers = {'content-type': 'application/json'}
+        headers = {
+            'content-type': 'application/json',
+            'User-Agent': 'python-requests/2.27.1',
+        }
         if self.auth:
             headers['Authorization'] = self.auth
 
