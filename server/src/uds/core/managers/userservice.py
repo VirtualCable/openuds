@@ -558,6 +558,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
         if servicepool.is_restrained():
             raise InvalidServiceException(_('The requested service is restrained'))
 
+        if servicepool.can_create_userservices() is False:
+            raise InvalidServiceException(_('Cannot create user services for this service'))
+
         if servicepool.uses_cache:
             cache: typing.Optional[UserService] = None
             # Now try to locate 1 from cache already "ready" (must be usable and at level 1)
@@ -1101,7 +1104,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         meta: MetaPool = MetaPool.objects.get(uuid=uuid_metapool)
         # Get pool members. Just pools enabled, that are "visible" and "usable"
-        pools = [p.pool for p in meta.members.filter(enabled=True) if p.pool.is_visible() and p.pool.is_usable()]
+        pools = [
+            p.pool for p in meta.members.filter(enabled=True) if p.pool.is_visible() and p.pool.is_usable()
+        ]
         # look for an existing user service in the pool
         try:
             return UserService.objects.filter(
@@ -1132,7 +1137,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
             raise ServiceAccessDeniedByCalendar()
 
         # Get pool members. Just pools "visible" and "usable"
-        metapool_members = [p for p in meta.members.filter(enabled=True) if p.pool.is_visible() and p.pool.is_usable()]
+        metapool_members = [
+            p for p in meta.members.filter(enabled=True) if p.pool.is_visible() and p.pool.is_usable()
+        ]
         # Sort pools array. List of tuples with (priority, pool)
         pools_sorted: list[tuple[int, ServicePool]]
         # Sort pools based on meta selection
