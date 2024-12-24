@@ -256,6 +256,13 @@ class ServicePool(UUIDModel, TaggingMixin):
         if self.short_name and str(self.short_name).strip():
             return str(self.short_name.strip())
         return str(self.name)
+    
+    def can_create_userservices(self) -> bool:
+        """
+        If the service pool is in a state that allows to create user services
+        True if the state is ACTIVE, False otherwise
+        """
+        return self.state == types.states.State.ACTIVE
 
     def is_restrained(self) -> bool:
         """
