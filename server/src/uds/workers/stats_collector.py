@@ -94,9 +94,7 @@ class DeployedServiceStatsCollector(Job):
 
         total_users, total_assigned, total_users_with_service = 0, 0, 0
         for auth in models.Authenticator.objects.all():
-            fltr_user = auth.users.filter(userServices__isnull=False).exclude(
-                userServices__state__in=types.states.State.INFO_STATES
-            ).order_by()
+            fltr_user = auth.users.filter(userServices__state__in=types.states.State.VALID_STATES).order_by()
             users = auth.users.all().count()
             users_with_service = fltr_user.values('id').distinct().count()  # Use "values" to simplify query (only id)
             number_assigned_services = fltr_user.values('id').count()
