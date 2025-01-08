@@ -1645,14 +1645,17 @@ class UserInterface(metaclass=UserInterfaceType):
             if internal_field_type not in FIELD_DECODERS:
                 logger.warning('Field %s has no decoder', field_name)
                 continue
+            
             if field_type != internal_field_type.name:
-                logger.warning(
-                    'Field %s has different type than expected: %s != %s',
-                    field_name,
-                    field_type,
-                    internal_field_type.name,
-                )
-                continue
+                # Especial case for text fields converted to password fields
+                if not (internal_field_type == types.ui.FieldType.PASSWORD and field_type == types.ui.FieldType.TEXT.name):
+                    logger.warning(
+                        'Field %s has different type than expected: %s != %s',
+                        field_name,
+                        field_type,
+                        internal_field_type.name,
+                    )
+                    continue
             self._gui[field_name].value = FIELD_DECODERS[internal_field_type](field_value)
 
         return False
@@ -1776,6 +1779,17 @@ class UserInterface(metaclass=UserInterfaceType):
         return field_name in self._gui
 
 
+def password_compat_field_decoder(value: str) -> str:
+    """
+    Compatibility function to decode text fields converted to password fields
+    """
+    try:   
+        value = CryptoManager.manager().aes_decrypt(value.encode('utf8'), UDSK, True).decode()
+    except Exception:
+        pass
+    logger.info('Decoding password field: %s', value)
+    return value
+
 # Dictionaries used to encode/decode fields to be stored on database
 FIELDS_ENCODERS: typing.Final[
     collections.abc.Mapping[
@@ -1804,9 +1818,7 @@ FIELD_DECODERS: typing.Final[
     types.ui.FieldType.TEXT: lambda x: x,
     types.ui.FieldType.TEXT_AUTOCOMPLETE: lambda x: x,
     types.ui.FieldType.NUMERIC: int,
-    types.ui.FieldType.PASSWORD: lambda x: (
-        CryptoManager.manager().aes_decrypt(x.encode(), UDSK, True).decode()
-    ),
+    types.ui.FieldType.PASSWORD: password_compat_field_decoder,
     types.ui.FieldType.HIDDEN: lambda x: x,
     types.ui.FieldType.CHOICE: lambda x: x,
     types.ui.FieldType.MULTICHOICE: lambda x: serializer.deserialize(base64.b64decode(x.encode())),
