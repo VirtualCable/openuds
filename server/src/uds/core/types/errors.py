@@ -61,6 +61,7 @@ class Error(enum.IntEnum):
     INTERNAL_SERVER_ERROR = 17
     RELOAD_NOT_SUPPORTED = 18
     INVALID_MFA_CODE = 19
+    PASSWORD_EXPIRED = 20
 
     @property
     def message(self) -> str:
@@ -131,4 +132,5 @@ ERROR_STRINGS: typing.Final[list[str]] = [
     _('Unexpected error'),
     _('Reloading this page is not supported. Please, reopen service from origin.'),
     _('Invalid Multi-Factor Authentication code'),
+    _('Password expired'),
 ]
