@@ -141,7 +141,7 @@ class Permissions(Handler):
         if len(self._args) == 6:
             self._args = [self._args[0]+ '-' + self._args[1], self._args[2], self._args[3], self._args[4], self._args[5]]
             
-        if len(self._args) != 5:
+        if len(self._args) != 5 and len(self._args) != 1:
             raise exceptions.rest.RequestError('Invalid request')
 
         perm = uds.core.types.permissions.PermissionType.from_str(self._params.get('perm', '0'))
