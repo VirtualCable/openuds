@@ -1787,7 +1787,6 @@ def password_compat_field_decoder(value: str) -> str:
         value = CryptoManager.manager().aes_decrypt(value.encode('utf8'), UDSK, True).decode()
     except Exception:
         pass
-    logger.info('Decoding password field: %s', value)
     return value
 
 # Dictionaries used to encode/decode fields to be stored on database
