@@ -78,7 +78,7 @@ class OAuth2Authenticator(auths.Authenticator):
         required=True,
         tab=_('Server'),
     )
-    client_secret = gui.TextField(
+    client_secret = gui.PasswordField(
         length=128,
         label=_('Client Secret'),
         order=3,

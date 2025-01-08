@@ -76,7 +76,7 @@ class RadiusAuth(auths.Authenticator):
         tooltip=_('Radius authentication port (usually 1812)'),
         required=True,
     )
-    secret = gui.TextField(
+    secret = gui.PasswordField(
         length=64,
         label=_('Secret'),
         order=3,
