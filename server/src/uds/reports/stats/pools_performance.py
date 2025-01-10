@@ -72,12 +72,18 @@ class PoolPerformanceReport(StatsReport):
     sampling_points = StatsReport.sampling_points
 
     def init_gui(self) -> None:
-        logger.debug('Initializing gui')
-        vals = [gui.choice_item(v.uuid, v.name) for v in ServicePool.objects.all().order_by('name')]
+        vals = [gui.choice_item('0-0-0-0', gettext('ALL POOLS'))] + [
+            gui.choice_item(v.uuid, v.name) for v in ServicePool.objects.all().order_by('name') if v.uuid
+        ]
         self.pools.set_choices(vals)
 
     def list_pools(self) -> collections.abc.Iterable[tuple[int, str]]:
-        for p in ServicePool.objects.filter(uuid__in=self.pools.value):
+        if '0-0-0-0' in self.pools.value:
+            pools = ServicePool.objects.all()
+        else:
+            pools = ServicePool.objects.filter(uuid__in=self.pools.value)
+
+        for p in pools:
             yield (p.id, p.name)
 
     def get_range_data(
@@ -134,7 +140,7 @@ class PoolPerformanceReport(StatsReport):
                 for v in q:
                     accesses += v['cnt']
 
-                data_users.append((key, len(q)))  # @UndefinedVariable
+                data_users.append((key, len(q)))  # Store number of users
                 data_accesses.append((key, accesses))
                 report_data.append(
                     {
@@ -167,10 +173,13 @@ class PoolPerformanceReport(StatsReport):
         # surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)  # @UndefinedVariable
 
         # logger.debug('PoolsData: %s', poolsData)
-        def _tick_fnc1(l: int) -> str:
-            return filters.date(datetime.datetime.fromtimestamp(l), x_label_format) if int(l) >= 0 else ''
-
         x = [v[0] for v in pools_data[0]['dataUsers']]
+        
+        # l is the index of the x value
+        # returns the date in the x value to be used as label on the x axis
+        def _tick_fnc1(l: int) -> str:
+            return filters.date(datetime.datetime.fromtimestamp(x[l]), x_label_format) if int(x[l]) >= 0 else ''
+
         data = {
             'title': _('Distinct Users'),
             'x': x,
@@ -181,11 +190,12 @@ class PoolPerformanceReport(StatsReport):
         }
 
         graphs.bar_chart(SIZE, data, graph1)
-        
-        def _tick_fnc2(l: int) -> str:
-            return filters.date(datetime.datetime.fromtimestamp(l), x_label_format) if int(l) >= 0 else ''
 
         x = [v[0] for v in pools_data[0]['dataAccesses']]
+        
+        def _tick_fnc2(l: int) -> str:
+            return filters.date(datetime.datetime.fromtimestamp(x[l]), x_label_format) if int(x[l]) >= 0 else ''
+
         data = {
             'title': _('Accesses'),
             'x': x,

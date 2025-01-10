@@ -96,7 +96,7 @@ class StatsEvents(models.Model):
 
         if isinstance(owner_id, int):
             q = q.filter(owner_id=owner_id)
-        else:
+        elif owner_id is not None:
             q = q.filter(owner_id__in=owner_id)
 
         if isinstance(since, datetime.datetime):
