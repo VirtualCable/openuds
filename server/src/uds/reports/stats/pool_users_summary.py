@@ -37,6 +37,7 @@ import typing
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
+from uds.core import ui
 from uds.core.managers.stats import StatsManager
 from uds.core.ui import gui
 from uds.core.util.stats import events
@@ -55,7 +56,13 @@ class UsageSummaryByUsersPool(StatsReport):
 
     # UserInterface will ignore all fields that are not from FINAL class
     # so we must redeclare them here
-    pool = StatsReport.pool
+    pool = ui.gui.ChoiceField(
+        order=1,
+        label=_('Pool'),
+        tooltip=_('Pool for report'),
+        required=True,
+    )
+
     start_date = StatsReport.start_date
     end_date = StatsReport.end_date
 
