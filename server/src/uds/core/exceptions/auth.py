@@ -67,3 +67,8 @@ class MFAError(AuthenticatorException):
     """
     This exceptions indicates than an MFA error has ocurred
     """
+
+class PasswordExpired(AuthenticatorException):
+    """
+    This exceptions indicates that the password has expired
+    """
