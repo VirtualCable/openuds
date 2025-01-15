@@ -249,6 +249,9 @@ def update_transport_ticket(
                 data.get('password', None) or None
             )  # If password is empty, set it to None
             domain = data.get('domain', None) or None  # If empty string, set to None
+            if domain and '.' in domain:
+                username = f'{username}@{domain}'
+                domain = None
 
             if password:
                 password = CryptoManager().symmetric_encrypt(password, scrambler)
