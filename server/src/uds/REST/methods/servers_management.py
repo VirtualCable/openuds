@@ -517,7 +517,7 @@ class ServersGroups(ModelHandler):
                 'stats': s[0].as_dict() if s[0] else None,
                 'server': {
                     'id': s[1].uuid,
-                    'name': s[1].hostname,
+                    'hostname': s[1].hostname,
                     'ip': s[1].ip,
                 },
             }
