@@ -101,7 +101,7 @@ class ServerManager(metaclass=singleton.Singleton):
                 counters[uuid] = counters.get(uuid, 0) + 1
 
     def get_server_stats(
-        self, severs_filter: 'QuerySet[models.Server]'
+        self, servers_filter: 'QuerySet[models.Server]'
     ) -> list[tuple[typing.Optional['types.servers.ServerStats'], 'models.Server']]:
         """
         Returns a list of stats for a list of servers
@@ -118,8 +118,9 @@ class ServerManager(metaclass=singleton.Singleton):
                 retrieved_stats.append((None, server))
 
         # Retrieve, in parallel, stats for all servers (not restrained)
+        # Not using a transaction here, as we are only reading data
         with ThreadPoolExecutor(max_workers=10) as executor:
-            for server in severs_filter.select_for_update():
+            for server in servers_filter.all():
                 if server.is_restrained():
                     continue  # Skip restrained servers
                 executor.submit(_retrieve_stats, server)
@@ -504,15 +505,14 @@ class ServerManager(metaclass=singleton.Singleton):
         Returns:
             List of servers sorted by usage
         """
-        with transaction.atomic():
-            now = model_utils.sql_now()
-            fltrs = server_group.servers.filter(maintenance_mode=False)
-            fltrs = fltrs.filter(Q(locked_until=None) | Q(locked_until__lte=now))  # Only unlocked servers
-            if excluded_servers_uuids:
-                fltrs = fltrs.exclude(uuid__in=excluded_servers_uuids)
+        now = model_utils.sql_now()
+        fltrs = server_group.servers.filter(maintenance_mode=False)
+        fltrs = fltrs.filter(Q(locked_until=None) | Q(locked_until__lte=now))  # Only unlocked servers
+        if excluded_servers_uuids:
+            fltrs = fltrs.exclude(uuid__in=excluded_servers_uuids)
 
-            # Get the stats for all servers, but in parallel
-            server_stats = self.get_server_stats(fltrs)
+        # Get the stats for all servers, but in parallel
+        server_stats = self.get_server_stats(fltrs)
         # Sort by weight, lower first (lower is better)
         return [s[1] for s in sorted(server_stats, key=lambda x: x[0].weight() if x[0] else 999999999)]
 
