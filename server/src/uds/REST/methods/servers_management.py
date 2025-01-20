@@ -37,6 +37,7 @@ from django.utils.translation import gettext_lazy as _
 
 from uds import models
 from uds.core import consts, types, ui
+from uds.core.managers.servers import ServerManager
 from uds.core.util import net, permissions, ensure
 from uds.core.util.model import sql_now, process_uuid
 from uds.core.exceptions.rest import NotFound, RequestError
@@ -321,7 +322,7 @@ class ServersServers(DetailHandler):
     def maintenance(self, parent: 'Model', id: str) -> typing.Any:
         parent = ensure.is_instance(parent, models.ServerGroup)
         """
-        Custom method that swaps maintenance mode state for a tunnel server
+        Custom method that swaps maintenance mode state for a server
         :param item:
         """
         item = models.Server.objects.get(uuid=process_uuid(id))
@@ -403,6 +404,7 @@ class ServersServers(DetailHandler):
 
 
 class ServersGroups(ModelHandler):
+    custom_methods = [('stats', True)]
     model = models.ServerGroup
     model_filter = {
         'type__in': [
@@ -506,3 +508,18 @@ class ServersGroups(ModelHandler):
             item.delete()
         except self.model.DoesNotExist:
             raise NotFound('Element do not exists') from None
+
+    def stats(self, item: 'Model') -> typing.Any:
+        item = ensure.is_instance(item, models.ServerGroup)
+
+        return [
+            {
+                'stats': s[0].as_dict() if s[0] else None,
+                'server': {
+                    'id': s[1].uuid,
+                    'name': s[1].hostname,
+                    'ip': s[1].ip,
+                },
+            }
+            for s in ServerManager.manager().get_server_stats(item.servers.all())
+        ]
