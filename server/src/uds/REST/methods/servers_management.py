@@ -37,7 +37,6 @@ from django.utils.translation import gettext_lazy as _
 
 from uds import models
 from uds.core import consts, types, ui
-from uds.core.managers.servers import ServerManager
 from uds.core.util import net, permissions, ensure
 from uds.core.util.model import sql_now, process_uuid
 from uds.core.exceptions.rest import NotFound, RequestError
@@ -510,6 +509,10 @@ class ServersGroups(ModelHandler):
             raise NotFound('Element do not exists') from None
 
     def stats(self, item: 'Model') -> typing.Any:
+        # Avoid circular imports
+        from uds.core.managers.servers import ServerManager
+        
+        
         item = ensure.is_instance(item, models.ServerGroup)
 
         return [
