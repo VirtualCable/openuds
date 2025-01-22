@@ -163,7 +163,6 @@ class ReportAuto(Report, metaclass=ReportAutoType):
                 intervals.append((start, next))
                 start = next
 
-        logger.debug('Intervals: %s', intervals)
         return intervals
 
     def adjust_date(self, d: datetime.date, is_ending_date: bool) -> datetime.date:

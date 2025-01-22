@@ -29,7 +29,9 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import datetime
 import logging
+import time
 import typing
 
 from django.utils.translation import gettext, gettext_lazy as _
@@ -62,58 +64,61 @@ class AuthenticatorsStats(StatsReportAuto):
     uuid = 'a5a43bc0-d543-11ea-af8f-af01fa65994e'
 
     def generate(self) -> bytes:
-
         stats: list[dict[str, typing.Any]] = []
+
+        exec_start = time.time()
+
+        interval = self.get_interval_as_hours() * 3600  # Convert to seconds
+
+        start = datetime.datetime.combine(self.starting_date(), datetime.time.min)
+        to = datetime.datetime.combine(self.ending_date(), datetime.time.max)
+
         for a in self.get_model_records():
             # Will show a.name on every change...
             stats.append({'date': a.name, 'users': None})
 
-            for i in self.get_intervals_list():
-                start = i[0]
-                end = i[1]
-                data = [0, 0, 0]
-                # Get stats for interval
-                for counter in counters.enumerate_counters(
-                    typing.cast('models.Authenticator', a),
+            auth = typing.cast('models.Authenticator', a)
+
+            for counter1, counter2, counter3 in zip(
+                counters.enumerate_counters(
+                    auth,
                     counters.types.stats.CounterType.AUTH_SERVICES,
                     since=start,
-                    to=end,
-                    interval=BIG_INTERVAL,
+                    to=to,
+                    interval=interval,
                     limit=MAX_ELEMENTS,
                     use_max=True,
-                ):
-                    data[0] += counter[1]
-
-                for counter in counters.enumerate_counters(
-                    typing.cast('models.Authenticator', a),
+                ),
+                counters.enumerate_counters(
+                    auth,
                     counters.types.stats.CounterType.AUTH_USERS_WITH_SERVICES,
                     since=start,
-                    to=end,
-                    interval=BIG_INTERVAL,
+                    to=to,
+                    interval=interval,
                     limit=MAX_ELEMENTS,
                     use_max=True,
-                ):
-                    data[1] += counter[1]
-                for counter in counters.enumerate_counters(
-                    typing.cast('models.Authenticator', a),
+                ),
+                counters.enumerate_counters(
+                    auth,
                     counters.types.stats.CounterType.AUTH_USERS,
                     since=start,
-                    to=end,
-                    interval=BIG_INTERVAL,
+                    to=to,
+                    interval=interval,
                     limit=MAX_ELEMENTS,
                     use_max=True,
-                ):
-                    data[2] += counter[1]
-
+                ),
+            ):
                 stats.append(
                     {
-                        'date': self.format_datetime_as_string(start),
-                        'users': data[0],
-                        'services': data[1],
-                        'user_services': data[2],
+                        'date': self.format_datetime_as_string(counter1[0]),
+                        'users': counter3[1],
+                        'services': counter1[1],
+                        'user_services': counter2[1],
                     }
                 )
-        logger.debug('Report Data Done')
+
+        logger.debug('Report Data Done. Elapsed time: %s', time.time() - exec_start)
+
         return self.template_as_pdf(
             'uds/reports/stats/authenticator_stats.html',
             dct={'data': stats},

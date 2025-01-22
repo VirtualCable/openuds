@@ -173,7 +173,7 @@ def enumerate_counters(
         counter_type: Type of counter to get
         since: From when to get counters
         to: To when to get counters
-        interval: Interval to get counters
+        interval: Interval in seconds to get counters
         max_intervals: Max intervals to get
         limit: Max number of results to get
         use_max: If limit is reached, use max_intervals to get more results
