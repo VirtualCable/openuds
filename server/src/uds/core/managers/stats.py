@@ -145,7 +145,7 @@ class StatsManager(metaclass=singleton.Singleton):
             owners_ids: Ids of the owners to get counters from. If None, all owners will be used
             since: date from what to obtain counters. Unlimited if not specified
             to: date until obtain counters. Unlimited if not specified
-            interval: Interval to get counters. If None, all counters will be returned
+            interval: Interval in seconds to get counters. If None, all counters will be returned
             max_intervals: Maximum number of intervals to get. If None, all intervals will be returned
             limit: Maximum number of counters to get. If None, all counters will be returned
             use_max: If True, the maximum value of the counter will be returned instead of the sum
