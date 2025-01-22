@@ -31,6 +31,7 @@
 Author: Alexander Burmatov,  thatman at altlinux dot org
 """
 import logging
+import re
 import typing
 
 from django.utils.translation import gettext_lazy
@@ -155,7 +156,9 @@ class LinuxOsADManager(LinuxOsManager):
                 raise exceptions.ui.ValidationError(_('Must provide an account to add machines to domain!'))
             if self.password.as_str() == '':
                 raise exceptions.ui.ValidationError(_('Must provide a password for the account!'))
-            self.ou.value = self.ou.value.strip()
+            
+            # Remove spaces around , and = in ou
+            self.ou.value = re.sub(r'\s*([,=])\s*', r'\1', self.ou.value.strip())
 
     def actor_data(self, userservice: 'UserService') -> types.osmanagers.ActorData:
         return types.osmanagers.ActorData(
