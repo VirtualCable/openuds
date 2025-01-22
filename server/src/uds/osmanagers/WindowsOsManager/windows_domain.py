@@ -33,6 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import codecs
 import logging
+import re
 import typing
 import collections.abc
 
@@ -136,8 +137,11 @@ class WinDomainOsManager(WindowsOsManager):
         super().initialize(values)
         if values:
             # Some cleaning of input data (remove spaces, etc..)
-            for fld in (self.domain, self.account, self.ou, self.grp, self.server_hint):
+            for fld in (self.domain, self.account, self.grp, self.server_hint):
                 fld.value = fld.value.strip().replace(' ', '')
+                
+            # Remove spaces around , and = in ou
+            self.ou.value = re.sub(r'\s*([,=])\s*', r'\1', self.ou.value.strip())
 
             if self.domain.as_str() == '':
                 raise exceptions.ui.ValidationError(_('Must provide a domain!'))
