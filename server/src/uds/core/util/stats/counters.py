@@ -73,10 +73,10 @@ def _get_prov_serv_pool_ids(provider: 'Provider') -> tuple[int, ...]:
     return res
 
 
-_id_retriever: typing.Final[
-    collections.abc.Mapping[
+TYPE_TO_ID_RETRIEVER: typing.Final[
+    dict[
         type[Model],
-        collections.abc.Mapping[types.stats.CounterType, collections.abc.Callable[[typing.Any], typing.Any]],
+        dict[types.stats.CounterType, collections.abc.Callable[[typing.Any], typing.Any]],
     ]
 ] = {
     Provider: {
@@ -102,8 +102,8 @@ _id_retriever: typing.Final[
     },
 }
 
-_valid_model_for_counterype: typing.Final[
-    collections.abc.Mapping[types.stats.CounterType, tuple[type[Model], ...]]
+VALID_MODEL_FOR_COUNTER_TYPE_DICT: typing.Final[
+    dict[types.stats.CounterType, tuple[type[Model], ...]]
 ] = {
     types.stats.CounterType.LOAD: (Provider,),
     types.stats.CounterType.STORAGE: (Service,),
@@ -115,7 +115,7 @@ _valid_model_for_counterype: typing.Final[
     types.stats.CounterType.CACHED: (ServicePool,),
 }
 
-_obj_type_from_model: typing.Final[collections.abc.Mapping[type[Model], types.stats.CounterOwnerType]] = {
+OBJ_TYPE_FROM_MODEL_DICT: typing.Final[dict[type[Model], types.stats.CounterOwnerType]] = {
     ServicePool: types.stats.CounterOwnerType.SERVICEPOOL,
     Service: types.stats.CounterOwnerType.SERVICE,
     Provider: types.stats.CounterOwnerType.PROVIDER,
@@ -139,7 +139,7 @@ def add_counter(
     note: Runtime checks are done so if we try to insert an unssuported stat, this won't be inserted and it will be logged
     """
     type_ = type(obj)
-    if type_ not in _valid_model_for_counterype.get(counter_type, ()):  # pylint: disable
+    if type_ not in VALID_MODEL_FOR_COUNTER_TYPE_DICT.get(counter_type, ()):  # pylint: disable
         logger.error(
             'Type %s does not accepts counter of type %s',
             type_,
@@ -149,7 +149,7 @@ def add_counter(
         return False
 
     return StatsManager.manager().add_counter(
-        _obj_type_from_model[type(obj)], obj.id, counter_type, value, stamp
+        OBJ_TYPE_FROM_MODEL_DICT[type(obj)], obj.id, counter_type, value, stamp
     )
 
 
@@ -182,27 +182,27 @@ def enumerate_counters(
     Returns:
         A generator, that contains pairs of (stamp, value) tuples
     """
-    type_ = type(obj)
+    obj_type = type(obj)
 
-    read_fnc_tbl = _id_retriever.get(type_)
+    type_to_id_dct = TYPE_TO_ID_RETRIEVER.get(obj_type)
 
-    if not read_fnc_tbl:
-        logger.error('Type %s has no registered stats', type_)
+    if not type_to_id_dct:
+        logger.error('Type %s has no registered stats', obj_type)
         return
 
-    fnc = read_fnc_tbl.get(counter_type)
+    id_retriever_fnc = type_to_id_dct.get(counter_type)
 
-    if not fnc:
-        logger.error('Type %s has no registerd stats of type %s', type_, counter_type)
+    if not id_retriever_fnc:
+        logger.error('Type %s has no registerd stats of type %s', obj_type, counter_type)
         return
 
     if not all:
-        owner_ids = fnc(obj)  # pyright: ignore
+        owner_ids = id_retriever_fnc(obj)  # pyright: ignore
     else:
         owner_ids = None
 
     for i in StatsManager.manager().enumerate_counters(
-        _obj_type_from_model[type(obj)],
+        OBJ_TYPE_FROM_MODEL_DICT[type(obj)],
         counter_type,
         owner_ids,
         since or consts.NEVER,
@@ -227,7 +227,7 @@ def enumerate_accumulated_counters(
     infer_owner_type_from: typing.Optional[CounterClass] = None,
 ) -> typing.Generator[AccumStat, None, None]:
     if not owner_type and infer_owner_type_from:
-        owner_type = _obj_type_from_model[type(infer_owner_type_from)]
+        owner_type = OBJ_TYPE_FROM_MODEL_DICT[type(infer_owner_type_from)]
 
     yield from StatsManager.manager().get_accumulated_counters(
         interval_type=interval_type,
