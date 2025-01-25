@@ -350,7 +350,7 @@ def login(request: types.requests.ExtendedHttpRequest, tag: typing.Optional[str]
 
 
 @never_cache
-@auth.weblogin_required(admin=False)
+@auth.weblogin_required()
 def logout(request: types.requests.ExtendedHttpRequestWithUser) -> HttpResponse:
     auth.log_logout(request)
     request.session['restricted'] = False  # Remove restricted

@@ -44,7 +44,7 @@ from uds.core.util.cache import Cache
 from uds.core.util.model import process_uuid, sql_now
 from uds.core.types.states import State
 from uds.core.util.stats import counters
-from uds.REST import Handler
+from uds.REST import Handler, HelpPath
 
 logger = logging.getLogger(__name__)
 
@@ -147,15 +147,15 @@ class System(Handler):
     needs_staff = True
 
     help_paths = [
-        ('', ''),
-        ('stats/assigned', ''),
-        ('stats/inuse', ''),
-        ('stats/cached', ''),
-        ('stats/complete', ''),
-        ('stats/assigned/<servicePoolId>', ''),
-        ('stats/inuse/<servicePoolId>', ''),
-        ('stats/cached/<servicePoolId>', ''),
-        ('stats/complete/<servicePoolId>', ''),
+        HelpPath('', ''),
+        HelpPath('stats/assigned', ''),
+        HelpPath('stats/inuse', ''),
+        HelpPath('stats/cached', ''),
+        HelpPath('stats/complete', ''),
+        HelpPath('stats/assigned/<servicePoolId>', ''),
+        HelpPath('stats/inuse/<servicePoolId>', ''),
+        HelpPath('stats/cached/<servicePoolId>', ''),
+        HelpPath('stats/complete/<servicePoolId>', ''),
     ]
     help_text = 'Provides system information. Must be admin to access this'
 

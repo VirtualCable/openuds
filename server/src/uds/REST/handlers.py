@@ -52,6 +52,12 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+class HelpPath(typing.NamedTuple):
+    """
+    Help path class
+    """
+    path: str
+    help: str
 
 class Handler:
     """
@@ -74,7 +80,7 @@ class Handler:
 
     # For implementing help
     # A list of pairs of (path, help) for subpaths on this handler
-    help_paths: typing.ClassVar[list[tuple[str, str]]] = []
+    help_paths: typing.ClassVar[list[HelpPath]] = []
     help_text: typing.ClassVar[str] = 'No help available'
 
     _request: 'ExtendedHttpRequestWithUser'  # It's a modified HttpRequest

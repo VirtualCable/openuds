@@ -46,7 +46,7 @@ from uds.core.util import modfinder
 
 from . import processors, log
 from .handlers import Handler
-from .model import DetailHandler
+from .model import DetailHandler, ModelHandler
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -65,7 +65,8 @@ class HandlerNode:
 
     name: str
     handler: typing.Optional[type[Handler]]
-    children: collections.abc.MutableMapping[str, 'HandlerNode']
+    parent: typing.Optional['HandlerNode']
+    children: dict[str, 'HandlerNode']
 
     def __str__(self) -> str:
         return f'HandlerNode({self.name}, {self.handler}, {self.children})'
@@ -77,10 +78,50 @@ class HandlerNode:
         """
         Returns a string representation of the tree
         """
-        ret = f'{"  " * level}{self.name} ({self.handler.__name__ if self.handler else "None"})\n'
-        for child in self.children.values():
-            ret += child.tree(level + 1)
-        return ret
+        if self.handler is None:
+            return f'{"  " * level}|- {self.name}\n' + ''.join(
+                child.tree(level + 1) for child in self.children.values()
+            )
+        
+        ret = f'{"  " * level}{self.name} ({self.handler.__name__}  {self.full_path()})\n'
+
+        if issubclass(self.handler, ModelHandler):
+            # Add custom_methods
+            for method in self.handler.custom_methods:
+                ret += f'{"  " * level}  |- {method}\n'
+            # Add detail methods
+            if self.handler.detail:
+                for method in self.handler.detail.keys():
+                    ret += f'{"  " * level}  |- {method}\n'
+            
+        return ret + ''.join(child.tree(level + 1) for child in self.children.values())
+
+    def find_path(self, path: str | list[str]) -> typing.Optional['HandlerNode']:
+        """
+        Returns the node for a given path, or None if not found
+        """
+        if not path or not self.children:
+            return self
+        path = path.split('/') if isinstance(path, str) else path
+
+        if path[0] not in self.children:
+            return None
+
+        return self.children[path[0]].find_path(path[1:])  # Recursive call
+
+    def full_path(self) -> str:
+        """
+        Returns the full path of this node
+        """
+        if self.name == '' or self.parent is None:
+            return ''
+        
+        parent_full_path = self.parent.full_path()
+        
+        if parent_full_path == '':
+            return self.name
+
+        return f'{parent_full_path}/{self.name}'
 
 
 class Dispatcher(View):
@@ -89,7 +130,7 @@ class Dispatcher(View):
     """
 
     # This attribute will contain all paths--> handler relations, filled at Initialized method
-    services: typing.ClassVar[HandlerNode] = HandlerNode('', None, {})
+    base_handler_node: typing.ClassVar[HandlerNode] = HandlerNode('', None, None, {})
 
     @method_decorator(csrf_exempt)
     def dispatch(
@@ -103,35 +144,40 @@ class Dispatcher(View):
         del request.session
 
         # Now we extract method and possible variables from path
-        path: list[str] = kwargs['arguments'].split('/')
+        # path: list[str] = kwargs['arguments'].split('/')
+        path = kwargs['arguments']
         del kwargs['arguments']
 
-        # Transverse service nodes, so we can locate class processing this path
-        service = Dispatcher.services
-        full_path_lst: list[str] = []
-        # Guess content type from content type header (post) or ".xxx" to method
+        # # Transverse service nodes, so we can locate class processing this path
+        # service = Dispatcher.services
+        # full_path_lst: list[str] = []
+        # # Guess content type from content type header (post) or ".xxx" to method
         content_type: str = request.META.get('CONTENT_TYPE', 'application/json').split(';')[0]
 
-        while path:
-            clean_path = path[0]
-            # Skip empty path elements, so /x/y == /x////y for example (due to some bugs detected on some clients)
-            if not clean_path:
-                path = path[1:]
-                continue
+        # while path:
+        #     clean_path = path[0]
+        #     # Skip empty path elements, so /x/y == /x////y for example (due to some bugs detected on some clients)
+        #     if not clean_path:
+        #         path = path[1:]
+        #         continue
 
-            if clean_path in service.children:  # if we have a node for this path, walk down
-                service = service.children[clean_path]
-                full_path_lst.append(path[0])  # Add this path to full path
-                path = path[1:]  # Remove first part of path
-            else:
-                break  # If we don't have a node for this path, we are done
+        #     if clean_path in service.children:  # if we have a node for this path, walk down
+        #         service = service.children[clean_path]
+        #         full_path_lst.append(path[0])  # Add this path to full path
+        #         path = path[1:]  # Remove first part of path
+        #     else:
+        #         break  # If we don't have a node for this path, we are done
 
-        full_path = '/'.join(full_path_lst)
-        logger.debug("REST request: %s (%s)", full_path, content_type)
+        # full_path = '/'.join(full_path_lst)
+        handler_node = Dispatcher.base_handler_node.find_path(path)
+        if not handler_node:
+            return http.HttpResponseNotFound('Service not found', content_type="text/plain")
+        
+        logger.debug("REST request: %s (%s)", handler_node, handler_node.full_path())
 
         # Now, service points to the class that will process the request
         # We get the '' node, that is the "current" node, and get the class from it
-        cls: typing.Optional[type[Handler]] = service.handler
+        cls: typing.Optional[type[Handler]] = handler_node.handler
         if not cls:
             return http.HttpResponseNotFound('Method not found', content_type="text/plain")
 
@@ -146,14 +192,14 @@ class Dispatcher(View):
             return http.HttpResponseNotAllowed(['GET', 'POST', 'PUT', 'DELETE'], content_type="text/plain")
 
         # Path here has "remaining" path, that is, method part has been removed
-        args = tuple(path)
+        args = path[len(handler_node.full_path()):].split('/')[1:] # First element is always empty, so we skip it
 
         handler: typing.Optional[Handler] = None
 
         try:
             handler = cls(
                 request,
-                full_path,
+                handler_node.full_path(),
                 http_method,
                 processor.process_parameters(),
                 *args,
@@ -161,12 +207,12 @@ class Dispatcher(View):
             )
             operation: collections.abc.Callable[[], typing.Any] = getattr(handler, http_method)
         except processors.ParametersException as e:
-            logger.debug('Path: %s', full_path)
+            logger.debug('Path: %s', )
             logger.debug('Error: %s', e)
 
             log.log_operation(handler, 400, types.log.LogLevel.ERROR)
             return http.HttpResponseBadRequest(
-                f'Invalid parameters invoking {full_path}: {e}',
+                f'Invalid parameters invoking {handler_node.full_path()}: {e}',
                 content_type="text/plain",
             )
         except AttributeError:
@@ -179,7 +225,7 @@ class Dispatcher(View):
         except Exception:
             log.log_operation(handler, 500, types.log.LogLevel.ERROR)
             logger.exception('error accessing attribute')
-            logger.debug('Getting attribute %s for %s', http_method, full_path)
+            logger.debug('Getting attribute %s for %s', http_method, handler_node.full_path())
             return http.HttpResponseServerError('Unexcepected error', content_type="text/plain")
 
         # Invokes the handler's operation, add headers to response and returns
@@ -198,7 +244,7 @@ class Dispatcher(View):
                         ),
                     )
                 else:
-                    response = processor.get_response(response)                
+                    response = processor.get_response(response)
             # Set response headers
             response['UDS-Version'] = f'{consts.system.VERSION};{consts.system.VERSION_STAMP}'
             for k, val in handler.headers().items():
@@ -230,7 +276,7 @@ class Dispatcher(View):
             log.log_operation(handler, 500, types.log.LogLevel.ERROR)
             # Get ecxeption backtrace
             trace_back = traceback.format_exc()
-            logger.error('Exception processing request: %s', full_path)
+            logger.error('Exception processing request: %s', handler_node.full_path())
             for i in trace_back.splitlines():
                 logger.error('* %s', i)
 
@@ -248,20 +294,20 @@ class Dispatcher(View):
             name = type_.name
 
         # Fill the service_node tree with the class
-        service_node = Dispatcher.services  # Root path
+        service_node = Dispatcher.base_handler_node  # Root path
         # If path, ensure that the path exists on the tree
         if type_.path:
             logger.info('Path: /%s/%s', type_.path, name)
             for k in type_.path.split('/'):
                 intern_k = sys.intern(k)
                 if intern_k not in service_node.children:
-                    service_node.children[intern_k] = HandlerNode(k, None, {})
+                    service_node.children[intern_k] = HandlerNode(k, None, service_node, {})
                 service_node = service_node.children[intern_k]
         else:
             logger.info('Path: /%s', name)
 
         if name not in service_node.children:
-            service_node.children[name] = HandlerNode(name, None, {})
+            service_node.children[name] = HandlerNode(name, None, service_node, {})
 
         service_node.children[name] = dataclasses.replace(service_node.children[name], handler=type_)
 

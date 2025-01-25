@@ -117,17 +117,14 @@ def root_user() -> models.User:
 
 # Decorator to make easier protect pages that needs to be logged in
 def weblogin_required(
-    admin: typing.Union[bool, typing.Literal['admin']] = False
+    role: typing.Optional[consts.Roles] = None,
 ) -> collections.abc.Callable[
     [collections.abc.Callable[..., HttpResponse]], collections.abc.Callable[..., HttpResponse]
 ]:
     """Decorator to set protection to access page
-    Look for samples at uds.core.web.views
-    if admin == True, needs admin or staff
-    if admin == 'admin', needs admin
-
+    
     Args:
-        admin (bool, optional): If True, needs admin or staff. Is it's "admin" literal, needs admin . Defaults to False (any user).
+        role (str, optional): If set, needs this role. Defaults to None.
 
     Returns:
         collections.abc.Callable[[collections.abc.Callable[..., HttpResponse]], collections.abc.Callable[..., HttpResponse]]: Decorator
@@ -135,6 +132,7 @@ def weblogin_required(
     Note:
         This decorator is used to protect pages that needs to be logged in.
         To protect against ajax calls, use `denyNonAuthenticated` instead
+        Roles as "inclusive", that is, if you set role to USER, it will allow all users that are not anonymous. (USER, STAFF, ADMIN)
     """
 
     def decorator(
@@ -151,8 +149,8 @@ def weblogin_required(
             if not request.user or not request.authorized:
                 return weblogout(request)
 
-            if admin in (True, 'admin'):
-                if request.user.is_staff() is False or (admin == 'admin' and not request.user.is_admin):
+            if role in (consts.Roles.ADMIN, consts.Roles.STAFF):
+                if request.user.is_staff() is False or (role == consts.Roles.ADMIN and not request.user.is_admin):
                     return HttpResponseForbidden(_('Forbidden'))
 
             return view_func(request, *args, **kwargs)

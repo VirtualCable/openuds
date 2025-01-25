@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012-2023 Virtual Cable S.L.U.
+# Copyright (c) 2025 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,61 +29,26 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-# pyright: reportUnusedImport=false
-import enum
-import time
+import logging
 import typing
-from datetime import datetime
 
-from . import actor, auth, cache, calendar, images, net, os, system, ticket, rest, services, transports, ui
+from django import http
+from django.views.generic.base import View
 
-# Date related constants
-NEVER: typing.Final[datetime] = datetime(1972, 7, 1)
-NEVER_UNIX: typing.Final[int] = int(time.mktime(NEVER.timetuple()))
+from .dispatcher import Dispatcher
 
-# Unknown mac address "magic" value
-MAC_UNKNOWN: typing.Final[str] = '00:00:00:00:00:00'
+# Not imported at runtime, just for type checking
+if typing.TYPE_CHECKING:
+    pass
 
-# REST Related constants
-OK: typing.Final[str] = 'ok'  # Constant to be returned when result is just "operation complete successfully"
-
-# For conversion to boolean
-BOOL_TRUE_VALUES: typing.Final[typing.Set[typing.Union[bool, str, bytes, int]]] = {
-    True,
-    'TRUE',
-    'True',
-    b'true',
-    b'True',
-    b'TRUE',
-    1,
-    '1',
-    b'1',
-    'true',
-    'YES',
-    'Yes',
-    'yes',
-    'ENABLED',
-    'Enabled',
-    'enabled',
-}
-TRUE_STR: typing.Final[str] = 'true'
-FALSE_STR: typing.Final[str] = 'false'
-
-# Constant to mark an "UNLIMITED" value
-UNLIMITED: typing.Final[int] = -1
-
-# Constant marking no more names available
-NO_MORE_NAMES: typing.Final[str] = 'NO-NAME-ERROR'
+logger = logging.getLogger(__name__)
 
 
-class Roles(enum.StrEnum):
-    """
-    Roles for users
-    """
+class Documentation(View):
 
-    ADMIN = 'admin'
-    STAFF = 'staff'
-    
-    # Currently not used, but reserved
-    USER = 'user'
-    ANONYMOUS = 'anonymous'
+    def dispatch(
+        self, request: 'http.request.HttpRequest', *_args: typing.Any, **kwargs: typing.Any
+    ) -> 'http.HttpResponse':
+        service = Dispatcher.base_handler_node
+        
+        return http.HttpResponseServerError(f'{service.tree()}', content_type="text/plain")

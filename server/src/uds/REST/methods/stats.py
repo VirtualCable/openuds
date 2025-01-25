@@ -35,7 +35,7 @@ import datetime
 import typing
 
 from uds.core import types
-from uds.REST import Handler
+from uds.REST import Handler, HelpPath
 from uds import models
 from uds.core.util.stats import counters
 
@@ -48,7 +48,7 @@ class Stats(Handler):
     needs_admin = True
 
     help_paths = [
-        ('', 'Returns the last day usage statistics for all authenticators'),
+        HelpPath('', 'Returns the last day usage statistics for all authenticators'),
     ]
     help_text = 'Provides access to usage statistics'
 

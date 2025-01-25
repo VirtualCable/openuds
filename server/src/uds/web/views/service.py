@@ -60,7 +60,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-@weblogin_required(admin=False)
+@weblogin_required()
 def transport_own_link(
     request: 'ExtendedHttpRequestWithUser', service_id: str, transport_id: str
 ) -> HttpResponse:
@@ -105,8 +105,7 @@ def transport_own_link(
     return HttpResponse(content=json.dumps(response), content_type='application/json')
 
 
-# pylint: disable=unused-argument
-@weblogin_required(admin=False)
+@weblogin_required()
 @never_cache
 def user_service_enabler(
     request: 'ExtendedHttpRequestWithUser', service_id: str, transport_id: str
@@ -126,7 +125,7 @@ def closer(request: 'ExtendedHttpRequest') -> HttpResponse:
     # return HttpResponse('<html><body onload="window.close()"></body></html>')
 
 
-@weblogin_required(admin=False)
+@weblogin_required()
 @never_cache
 def user_service_status(
     request: 'ExtendedHttpRequestWithUser', service_id: str, transport_id: str
@@ -170,7 +169,7 @@ def user_service_status(
     return HttpResponse(json.dumps({'status': status}), content_type='application/json')
 
 
-@weblogin_required(admin=False)
+@weblogin_required()
 @never_cache
 def action(request: 'ExtendedHttpRequestWithUser', service_id: str, action_string: str) -> HttpResponse:
     userservice = UserServiceManager.manager().locate_meta_service(request.user, service_id)

@@ -64,13 +64,13 @@ def index(request: HttpRequest) -> HttpResponse:
     return response
 
 
-# Includes a request.session ticket, indicating that
+# Launches the service using a ticket (for example, from external portal)
 @never_cache
 def ticket_launcher(request: HttpRequest) -> HttpResponse:
     return index(request)
 
 
-# Basically, the original /login method, but fixed for modern interface
+# Javascript configuration
 @never_cache
 def js(request: types.requests.ExtendedHttpRequest) -> HttpResponse:
     return HttpResponse(content=configjs.uds_js(request), content_type='application/javascript')
