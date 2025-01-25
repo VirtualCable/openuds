@@ -62,7 +62,11 @@ class Providers(ModelHandler):
     model = Provider
     detail = {'services': DetailServices, 'usage': ServicesUsage}
 
-    custom_methods = [('allservices', False), ('service', False), ('maintenance', True)]
+    custom_methods = [
+        types.rest.ModelCustomMethod('allservices', False),
+        types.rest.ModelCustomMethod('service', False),
+        types.rest.ModelCustomMethod('maintenance', True),
+    ]
 
     save_fields = ['name', 'comments', 'tags']
 

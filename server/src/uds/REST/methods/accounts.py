@@ -59,7 +59,10 @@ class Accounts(ModelHandler):
     model = Account
     detail = {'usage': AccountsUsage}
 
-    custom_methods = [('clear', True), ('timemark', True)]
+    custom_methods = [
+        types.rest.ModelCustomMethod('clear', True),
+        types.rest.ModelCustomMethod('timemark', True),
+    ]
 
     save_fields = ['name', 'comments', 'tags']
 

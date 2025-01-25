@@ -41,12 +41,13 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import View
 
+from uds.core.types.rest import HandlerNode
 from uds.core import consts, exceptions, types
 from uds.core.util import modfinder
 
 from . import processors, log
 from .handlers import Handler
-from .model import DetailHandler, ModelHandler
+from .model import DetailHandler
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -55,73 +56,6 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 __all__ = ['Handler', 'Dispatcher']
-
-
-@dataclasses.dataclass(frozen=True)
-class HandlerNode:
-    """
-    Represents a node on the handler tree
-    """
-
-    name: str
-    handler: typing.Optional[type[Handler]]
-    parent: typing.Optional['HandlerNode']
-    children: dict[str, 'HandlerNode']
-
-    def __str__(self) -> str:
-        return f'HandlerNode({self.name}, {self.handler}, {self.children})'
-
-    def __repr__(self) -> str:
-        return str(self)
-
-    def tree(self, level: int = 0) -> str:
-        """
-        Returns a string representation of the tree
-        """
-        if self.handler is None:
-            return f'{"  " * level}|- {self.name}\n' + ''.join(
-                child.tree(level + 1) for child in self.children.values()
-            )
-        
-        ret = f'{"  " * level}{self.name} ({self.handler.__name__}  {self.full_path()})\n'
-
-        if issubclass(self.handler, ModelHandler):
-            # Add custom_methods
-            for method in self.handler.custom_methods:
-                ret += f'{"  " * level}  |- {method}\n'
-            # Add detail methods
-            if self.handler.detail:
-                for method in self.handler.detail.keys():
-                    ret += f'{"  " * level}  |- {method}\n'
-            
-        return ret + ''.join(child.tree(level + 1) for child in self.children.values())
-
-    def find_path(self, path: str | list[str]) -> typing.Optional['HandlerNode']:
-        """
-        Returns the node for a given path, or None if not found
-        """
-        if not path or not self.children:
-            return self
-        path = path.split('/') if isinstance(path, str) else path
-
-        if path[0] not in self.children:
-            return None
-
-        return self.children[path[0]].find_path(path[1:])  # Recursive call
-
-    def full_path(self) -> str:
-        """
-        Returns the full path of this node
-        """
-        if self.name == '' or self.parent is None:
-            return ''
-        
-        parent_full_path = self.parent.full_path()
-        
-        if parent_full_path == '':
-            return self.name
-
-        return f'{parent_full_path}/{self.name}'
 
 
 class Dispatcher(View):
@@ -172,7 +106,7 @@ class Dispatcher(View):
         handler_node = Dispatcher.base_handler_node.find_path(path)
         if not handler_node:
             return http.HttpResponseNotFound('Service not found', content_type="text/plain")
-        
+
         logger.debug("REST request: %s (%s)", handler_node, handler_node.full_path())
 
         # Now, service points to the class that will process the request
@@ -192,7 +126,9 @@ class Dispatcher(View):
             return http.HttpResponseNotAllowed(['GET', 'POST', 'PUT', 'DELETE'], content_type="text/plain")
 
         # Path here has "remaining" path, that is, method part has been removed
-        args = path[len(handler_node.full_path()):].split('/')[1:] # First element is always empty, so we skip it
+        args = path[len(handler_node.full_path()) :].split('/')[
+            1:
+        ]  # First element is always empty, so we skip it
 
         handler: typing.Optional[Handler] = None
 
@@ -207,7 +143,9 @@ class Dispatcher(View):
             )
             operation: collections.abc.Callable[[], typing.Any] = getattr(handler, http_method)
         except processors.ParametersException as e:
-            logger.debug('Path: %s', )
+            logger.debug(
+                'Path: %s',
+            )
             logger.debug('Error: %s', e)
 
             log.log_operation(handler, 400, types.log.LogLevel.ERROR)

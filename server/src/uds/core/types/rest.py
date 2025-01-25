@@ -34,6 +34,10 @@ import typing
 import dataclasses
 import collections.abc
 
+if typing.TYPE_CHECKING:
+    from uds.REST.handlers import Handler
+
+
 TypeInfoDict = dict[str, typing.Any]  # Alias for type info dict
 
 
@@ -107,3 +111,81 @@ ManyItemsDictType = typing.Union[ItemListType, ItemDictType, ItemGeneratorType]
 
 # 
 FieldType = collections.abc.Mapping[str, typing.Any]
+
+
+class HelpPath(typing.NamedTuple):
+    """
+    Help helper class
+    """
+
+    path: str
+    help: str
+
+
+@dataclasses.dataclass(frozen=True)
+class HandlerNode:
+    """
+    Represents a node on the handler tree for rest services
+    """
+
+    name: str
+    handler: typing.Optional[type['Handler']]
+    parent: typing.Optional['HandlerNode']
+    children: dict[str, 'HandlerNode']
+
+    def __str__(self) -> str:
+        return f'HandlerNode({self.name}, {self.handler}, {self.children})'
+
+    def __repr__(self) -> str:
+        return str(self)
+
+    def tree(self, level: int = 0) -> str:
+        """
+        Returns a string representation of the tree
+        """
+        from uds.REST.model import ModelHandler
+        
+        if self.handler is None:
+            return f'{"  " * level}|- {self.name}\n' + ''.join(
+                child.tree(level + 1) for child in self.children.values()
+            )
+
+        ret = f'{"  " * level}{self.name} ({self.handler.__name__}  {self.full_path()})\n'
+
+        if issubclass(self.handler, ModelHandler):
+            # Add custom_methods
+            for method in self.handler.custom_methods:
+                ret += f'{"  " * level}  |- {method}\n'
+            # Add detail methods
+            if self.handler.detail:
+                for method in self.handler.detail.keys():
+                    ret += f'{"  " * level}  |- {method}\n'
+
+        return ret + ''.join(child.tree(level + 1) for child in self.children.values())
+
+    def find_path(self, path: str | list[str]) -> typing.Optional['HandlerNode']:
+        """
+        Returns the node for a given path, or None if not found
+        """
+        if not path or not self.children:
+            return self
+        path = path.split('/') if isinstance(path, str) else path
+
+        if path[0] not in self.children:
+            return None
+
+        return self.children[path[0]].find_path(path[1:])  # Recursive call
+
+    def full_path(self) -> str:
+        """
+        Returns the full path of this node
+        """
+        if self.name == '' or self.parent is None:
+            return ''
+
+        parent_full_path = self.parent.full_path()
+
+        if parent_full_path == '':
+            return self.name
+
+        return f'{parent_full_path}/{self.name}'

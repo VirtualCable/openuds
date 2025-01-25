@@ -62,7 +62,7 @@ logger = logging.getLogger(__name__)
 class Authenticators(ModelHandler):
     model = Authenticator
     # Custom get method "search" that requires authenticator id
-    custom_methods = [('search', True)]
+    custom_methods = [types.rest.ModelCustomMethod('search', True)]
     detail = {'users': Users, 'groups': Groups}
     save_fields = ['name', 'comments', 'tags', 'priority', 'small_name', 'mfa_id:_']
 

@@ -403,7 +403,9 @@ class ServersServers(DetailHandler):
 
 
 class ServersGroups(ModelHandler):
-    custom_methods = [('stats', True)]
+    custom_methods = [
+        types.rest.ModelCustomMethod('stats', True),
+    ]
     model = models.ServerGroup
     model_filter = {
         'type__in': [
@@ -511,8 +513,7 @@ class ServersGroups(ModelHandler):
     def stats(self, item: 'Model') -> typing.Any:
         # Avoid circular imports
         from uds.core.managers.servers import ServerManager
-        
-        
+
         item = ensure.is_instance(item, models.ServerGroup)
 
         return [

@@ -119,11 +119,11 @@ class ServicesPools(ModelHandler):
     table_row_style = types.ui.RowStyleInfo(prefix='row-state-', field='state')
 
     custom_methods = [
-        ('set_fallback_access', True),
-        ('get_fallback_access', True),
-        ('actions_list', True),
-        ('list_assignables', True),
-        ('create_from_assignable', True),
+        types.rest.ModelCustomMethod('set_fallback_access', True),
+        types.rest.ModelCustomMethod('get_fallback_access', True),
+        types.rest.ModelCustomMethod('actions_list', True),
+        types.rest.ModelCustomMethod('list_assignables', True),
+        types.rest.ModelCustomMethod('create_from_assignable', True),
     ]
 
     def get_items(

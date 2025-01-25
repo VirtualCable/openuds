@@ -88,7 +88,7 @@ class ModelHandler(BaseModelHandler):
     # This is an array of tuples of two items, where first is method and second inticates if method needs parent id (normal behavior is it needs it)
     # For example ('services', True) -- > .../id_parent/services
     #             ('services', False) --> ..../services
-    custom_methods: typing.ClassVar[list[tuple[str, bool]]] = (
+    custom_methods: typing.ClassVar[list[types.rest.ModelCustomMethod]] = (
         []
     )  # If this model respond to "custom" methods, we will declare them here
     # If this model has details, which ones

@@ -108,7 +108,10 @@ class MetaPools(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    custom_methods = [('setFallbackAccess', True), ('getFallbackAccess', True)]
+    custom_methods = [
+        types.rest.ModelCustomMethod('setFallbackAccess', True),
+        types.rest.ModelCustomMethod('getFallbackAccess', True),
+    ]
 
     def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
         item = ensure.is_instance(item, MetaPool)
@@ -205,10 +208,7 @@ class MetaPools(ModelHandler):
                 'name': 'servicesPoolGroup_id',
                 'choices': [gui.choice_image(-1, _('Default'), DEFAULT_THUMB_BASE64)]
                 + gui.sorted_choices(
-                    [
-                        gui.choice_image(v.uuid, v.name, v.thumb64)
-                        for v in ServicePoolGroup.objects.all()
-                    ]
+                    [gui.choice_image(v.uuid, v.name, v.thumb64) for v in ServicePoolGroup.objects.all()]
                 ),
                 'label': gettext('Pool group'),
                 'tooltip': gettext('Pool group for this pool (for pool classify on display)'),

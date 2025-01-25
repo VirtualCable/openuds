@@ -56,10 +56,6 @@ class AssignedService(DetailHandler):
     Rest handler for Assigned Services, wich parent is Service
     """
 
-    custom_methods = [
-        'reset',
-    ]
-
     custom_methods = ['reset']
 
     @staticmethod
@@ -270,7 +266,7 @@ class CachedService(AssignedService):
     Rest handler for Cached Services, wich parent is Service
     """
 
-    custom_methods: typing.ClassVar[list[str]] = []  # Remove custom methods from assigned services
+    custom_methods = []  # Remove custom methods from assigned services
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = ensure.is_instance(parent, models.ServicePool)

@@ -34,8 +34,9 @@ import logging
 import datetime
 import typing
 
+from uds.core.types.rest import HelpPath
 from uds.core import types
-from uds.REST import Handler, HelpPath
+from uds.REST import Handler
 from uds import models
 from uds.core.util.stats import counters
 

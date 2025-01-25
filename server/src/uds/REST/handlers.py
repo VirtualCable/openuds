@@ -52,13 +52,6 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-class HelpPath(typing.NamedTuple):
-    """
-    Help path class
-    """
-    path: str
-    help: str
-
 class Handler:
     """
     REST requests handler base class
@@ -80,7 +73,7 @@ class Handler:
 
     # For implementing help
     # A list of pairs of (path, help) for subpaths on this handler
-    help_paths: typing.ClassVar[list[HelpPath]] = []
+    help_paths: typing.ClassVar[list[types.rest.HelpPath]] = []
     help_text: typing.ClassVar[str] = 'No help available'
 
     _request: 'ExtendedHttpRequestWithUser'  # It's a modified HttpRequest

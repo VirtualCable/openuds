@@ -38,13 +38,14 @@ import pickletools
 import typing
 
 from uds import models
+from uds.core.types.rest import HelpPath
 from uds.core import exceptions, types
 from uds.core.util import permissions
 from uds.core.util.cache import Cache
 from uds.core.util.model import process_uuid, sql_now
 from uds.core.types.states import State
 from uds.core.util.stats import counters
-from uds.REST import Handler, HelpPath
+from uds.REST import Handler
 
 logger = logging.getLogger(__name__)
 
