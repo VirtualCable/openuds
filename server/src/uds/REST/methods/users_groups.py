@@ -293,6 +293,17 @@ class Users(DetailHandler):
             raise self.invalid_item_response() from e
 
     def services_pools(self, parent: 'Model', item: str) -> list[dict[str, typing.Any]]:
+        """
+        API:
+            Description:
+                Returns the service pools assigned to a user
+
+            Parameters:
+                - uuid: User
+
+            Response:
+                - 200: A list of service pools assigned to the user
+        """
         parent = ensure.is_instance(parent, Authenticator)
         uuid = process_uuid(item)
         user = parent.users.get(uuid=process_uuid(uuid))
@@ -530,7 +541,7 @@ class Groups(DetailHandler):
         except Exception:
             raise self.invalid_item_response() from None
 
-    def servicesPools(self, parent: 'Model', item: str) -> list[collections.abc.Mapping[str, typing.Any]]:
+    def services_pools(self, parent: 'Model', item: str) -> list[collections.abc.Mapping[str, typing.Any]]:
         parent = ensure.is_instance(parent, Authenticator)
         uuid = process_uuid(item)
         group = parent.groups.get(uuid=process_uuid(uuid))

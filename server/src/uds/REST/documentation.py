@@ -63,7 +63,7 @@ class HelpMethodInfo:
 
 
 class HelpMethod(enum.Enum):
-    ITEM = HelpMethodInfo('', 'Retrieves an item by its UUID')
+    ITEM = HelpMethodInfo('<uuid>', 'Retrieves an item by its UUID')
     LOG = HelpMethodInfo(f'<uuid>/{consts.rest.LOG}', 'Retrieves the log of an item')
     OVERVIEW = HelpMethodInfo(consts.rest.OVERVIEW, 'General Overview of all items (a list')
     TABLEINFO = HelpMethodInfo(consts.rest.TABLEINFO, 'Table visualization information (types, etc..)')
@@ -79,6 +79,10 @@ class HelpInfo:
     path: str
     text: str
     methods: list[HelpMethod]
+
+    @property
+    def is_empty(self) -> bool:
+        return not self.path
 
 
 class Documentation(View):
@@ -116,7 +120,7 @@ class Documentation(View):
                     HelpMethod.TYPES_TYPE,
                     HelpMethod.TABLEINFO,
                     HelpMethod.ITEM,
-                    HelpMethod.LOG,                    
+                    HelpMethod.LOG,
                 ]
             else:
                 methods = []
@@ -135,7 +139,7 @@ class Documentation(View):
         response = render(
             request=request,
             template_name='uds/modern/documentation.html',
-            context={'help': help_data},
+            context={'help': [h for h in help_data if not h.is_empty]},
         )
 
         return response

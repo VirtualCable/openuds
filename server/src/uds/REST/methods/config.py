@@ -43,6 +43,16 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /config path
 class Config(Handler):
+    """
+    API:
+        Description: Get or update UDS configuration
+
+        Actions:
+            - GET: Returns the configuration values
+            - PUT: Updates the configuration values
+
+    """
+
     min_access_role = consts.UserRole.ADMIN
 
     def get(self) -> typing.Any:
@@ -61,5 +71,11 @@ class Config(Handler):
                         self._user.name,
                     )
                 else:
-                    logger.error('Non existing config value %s.%s to %s by %s', section, key, vals['value'], self._user.name)
+                    logger.error(
+                        'Non existing config value %s.%s to %s by %s',
+                        section,
+                        key,
+                        vals['value'],
+                        self._user.name,
+                    )
         return 'done'

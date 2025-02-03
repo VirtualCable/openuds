@@ -258,14 +258,26 @@ class HandlerNode:
 
                 # Add detail methods
                 if self.handler.detail:
-                    for method in self.handler.detail.keys():
+                    for method_name, method_class in self.handler.detail.items():
                         custom_help.add(
                             HelpNode(
-                                HelpPath(path=self.full_path() + '/' + method, help=''),
+                                HelpPath(path=self.full_path() + '/' + method_name, help=''),
                                 [],
                                 HelpNode.HelpNodeType.DETAIL,
                             )
                         )
+                        # Add custom_methods
+                        for detail_method in method_class.custom_methods:
+                            # Method is a Me CustomModelMethod,
+                            # We access the __doc__ of the function inside the handler with method.name
+                            doc = getattr(method_class, detail_method).__doc__ or ''
+                            custom_help.add(
+                                HelpNode(
+                                    HelpPath(path=self.full_path() + '/<uuid>/' + method_name + '/<uuid>/' + detail_method, help=doc),
+                                    [],
+                                    HelpNode.HelpNodeType.CUSTOM,
+                                )
+                            )
 
             custom_help |= {
                 HelpNode(HelpPath(path=help_info.path, help=help_info.text), [], help_node_type)

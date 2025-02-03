@@ -122,11 +122,13 @@ class TunnelServers(DetailHandler):
 
     # Custom methods
     def maintenance(self, parent: 'Model', id: str) -> typing.Any:
+        """
+        API:
+            Description:
+                Custom method that swaps maintenance mode state for a tunnel server
+            
+        """
         parent = ensure.is_instance(parent, models.ServerGroup)
-        """
-        Custom method that swaps maintenance mode state for a tunnel server
-        :param item:
-        """
         item = models.Server.objects.get(uuid=process_uuid(id))
         self.ensure_has_access(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
         item.maintenance_mode = not item.maintenance_mode

@@ -41,6 +41,7 @@
         <!-- doc contains the list of helps -->
         <div class="doc">
             {% for h in help %}
+            <div>{{ h }}</div>
             <div class="doc-item">
                 {% if h.methods %}
                 <div class="doc-item-methods">
@@ -54,7 +55,23 @@
             </div>
             {% endfor %}
         </div>
-        
+        <div class="debug">
+            <div class="debug-title">Debug</div>
+            <div class="debug-content">
+                <div>Language: {{ LANGUAGE_CODE }}</div>
+            </div>
+            <div class="vars">
+                <div class="vars-title">Vars</div>
+                <div class="vars-content">
+                    <div>help</div>
+                    <div>
+                        {% for h in help %}
+                        <div>{{ h }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
   </body>
 </html>
