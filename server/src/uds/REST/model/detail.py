@@ -144,6 +144,52 @@ class DetailHandler(BaseModelHandler):
         r = self._check_is_custom_method(self._args[0], parent)
         if r is not consts.rest.NOT_FOUND:
             return r
+        
+        match self._args[0]:
+            case consts.rest.OVERVIEW:
+                if num_args == 1:
+                    return self.get_items(parent, None)
+                raise self.invalid_request_response()
+            case consts.rest.TYPES:
+                if num_args == 1:
+                    types_ = self.get_types(parent, None)
+                    logger.debug('Types: %s', types_)
+                    return types_
+                elif num_args == 2:
+                    return self.get_types(parent, self._args[1])
+                raise self.invalid_request_response()
+            case consts.rest.TABLEINFO:
+                if num_args == 1:
+                    return self.process_table_fields(
+                        self.get_title(parent),
+                        self.get_fields(parent),
+                        self.get_row_style(parent),
+                    )
+                raise self.invalid_request_response()
+            case consts.rest.GUI:
+                if num_args in (1, 2):
+                    if num_args == 1:
+                        gui = self.get_processed_gui(parent, '')
+                    else:
+                        gui = self.get_processed_gui(parent, self._args[1])
+                    return sorted(gui, key=lambda f: f['gui']['order'])
+                raise self.invalid_request_response()
+            case consts.rest.LOG:
+                if num_args == 2:
+                    return self.get_logs(parent, self._args[1])
+                raise self.invalid_request_response()
+            case _:
+                # try to get id
+                if num_args == 1:
+                    return self.get_items(parent, process_uuid(self._args[0]))
+                
+                # Maybe a custom method?
+                r = self._check_is_custom_method(self._args[1], parent, self._args[0])
+                if r is not None:
+                    return r
+
+        # Not understood, fallback, maybe the derived class can understand it
+        return self.fallback_get()
 
         if num_args == 1:
             match self._args[0]:

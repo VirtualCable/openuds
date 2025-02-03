@@ -13,6 +13,20 @@
     <link href="/uds/res/modern/fonts/roboto.css" rel="stylesheet" />
     <!-- Material styles -->
     <link href="/uds/res/modern/styles.css" rel="stylesheet" />
+    <style>
+        .doc {
+            padding: 20px;
+        }
+        .doc-item {
+            margin-bottom: 20px;
+        }
+        .doc-item-methods {
+            margin-left: 20px;
+        }
+        .doc-item-method {
+            margin-bottom: 10px;
+        }
+    </style>
   </head>
   <body>
     <div>
@@ -31,15 +45,14 @@
                 {% if h.methods %}
                 <div class="doc-item-methods">
                     {% for m in h.methods %}
-                      {% for mm in m.value.methods %}
-                        <div class="doc-item-method">{{ h.path }}/{{ mm }}</div>
-                      {% endfor %}
+                      <div class="doc-item-method">{{ h.path }}/{{ m.value.method }} : {{ m.value.text }}</div>
                     {% endfor %}
                 </div>
+                {% else %}
+                <div>{{ h.path }} : {{ h.text }}</div>
                 {% endif %}
             </div>
             {% endfor %}
-
         </div>
         
     </div>

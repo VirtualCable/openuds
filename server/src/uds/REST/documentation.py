@@ -53,36 +53,24 @@ logger = logging.getLogger(__name__)
 @dataclasses.dataclass
 class HelpMethodInfo:
     method: str
-    params: list[str]
     text: str
 
-    @property
-    def methods(self) -> typing.Generator[str, None, None]:
-        for param in self.params:
-            if param == '':
-                yield self.method
-            else:
-                if (self.method + ' ')[0] == '-':
-                    yield f'<{param}>/{self.method[1:]}'
-                elif self.method:
-                    yield f'{self.method}/<{param}>'
-                else:
-                    yield f'<{param}>'
-
     def __str__(self) -> str:
-        return ', '.join(self.methods)
+        return f'{self.method}: {self.text}'
 
     def __repr__(self) -> str:
         return self.__str__()
 
 
 class HelpMethod(enum.Enum):
-    ITEM = HelpMethodInfo('', ['uuid'], 'Retrieves an item by its UUID')
-    LOG = HelpMethodInfo('-' + consts.rest.LOG, ['uuid'], 'Retrieves the log of an item')
-    OVERVIEW = HelpMethodInfo(consts.rest.OVERVIEW, [''], 'General Overview of all items (a list')
-    TABLEINFO = HelpMethodInfo(consts.rest.TABLEINFO, [''], 'Table visualization information (types, etc..)')
-    TYPES = HelpMethodInfo(consts.rest.TYPES, ['', 'type'], 'Types information')
-    GUI = HelpMethodInfo(consts.rest.GUI, ['', 'type'], 'GUI information')
+    ITEM = HelpMethodInfo('', 'Retrieves an item by its UUID')
+    LOG = HelpMethodInfo(f'<uuid>/{consts.rest.LOG}', 'Retrieves the log of an item')
+    OVERVIEW = HelpMethodInfo(consts.rest.OVERVIEW, 'General Overview of all items (a list')
+    TABLEINFO = HelpMethodInfo(consts.rest.TABLEINFO, 'Table visualization information (types, etc..)')
+    TYPES = HelpMethodInfo(consts.rest.TYPES, 'Retrieves a list of types available')
+    TYPES_TYPE = HelpMethodInfo(f'{consts.rest.TYPES}/<type>', 'Retrieves a type information')
+    GUI = HelpMethodInfo(consts.rest.GUI, 'GUI information')
+    GUI_TYPES = HelpMethodInfo(f'{consts.rest.GUI}/<type>', 'GUI Types information')
 
 
 @dataclasses.dataclass
@@ -112,13 +100,24 @@ class Documentation(View):
                 methods = [
                     HelpMethod.OVERVIEW,
                     HelpMethod.GUI,
-                    HelpMethod.TABLEINFO,
+                    HelpMethod.GUI_TYPES,
                     HelpMethod.TYPES,
+                    HelpMethod.TYPES_TYPE,
+                    HelpMethod.TABLEINFO,
                     HelpMethod.ITEM,
                     HelpMethod.LOG,
                 ]
             elif node.kind == types.rest.HelpNode.HelpNodeType.DETAIL:
-                methods = []
+                methods = [
+                    HelpMethod.OVERVIEW,
+                    HelpMethod.GUI,
+                    HelpMethod.GUI_TYPES,
+                    HelpMethod.TYPES,
+                    HelpMethod.TYPES_TYPE,
+                    HelpMethod.TABLEINFO,
+                    HelpMethod.ITEM,
+                    HelpMethod.LOG,                    
+                ]
             else:
                 methods = []
 
