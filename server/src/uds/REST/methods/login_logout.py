@@ -156,7 +156,7 @@ class Login(Handler):
                 if GlobalConfig.SUPER_USER_LOGIN.get(True) == username and CryptoManager.manager().check_hash(
                     password, GlobalConfig.SUPER_USER_PASS.get(True)
                 ):
-                    self.gen_auth_token(-1, username, password, locale, platform, True, True, scrambler)
+                    self.gen_auth_token(-1, username, password, locale, platform, scrambler)
                     return Login.result(result='ok', token=self.get_auth_token())
                 return Login.result(error='Invalid credentials')
 
@@ -188,8 +188,6 @@ class Login(Handler):
                     password,
                     locale,
                     platform,
-                    auth_result.user.is_admin,
-                    auth_result.user.staff_member,
                     scrambler,
                 ),
                 scrambler=scrambler,

@@ -425,8 +425,6 @@ def weblogin(
         password,
         get_language() or '',
         request.os.os.name,
-        user.is_admin,
-        user.staff_member,
         cookie,
     )
     return True

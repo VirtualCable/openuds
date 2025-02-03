@@ -125,15 +125,14 @@ class Handler:
             if self._auth_token is None:
                 raise AccessDenied()
 
-            self._user = self.get_user()
-            if not self._user.can_access(self.min_access_role):
-                raise AccessDenied()
-
             try:
                 self._user = self.get_user()
             except Exception as e:
                 # Maybe the user was deleted, so access is denied
                 raise AccessDenied() from e
+
+            if not self._user.can_access(self.min_access_role):
+                raise AccessDenied()
         else:
             self._user = User()  # Empty user for non authenticated handlers
             self._user.state = types.states.State.ACTIVE  # Ensure it's active
@@ -219,8 +218,6 @@ class Handler:
         password: str,
         locale: str,
         platform: str,
-        is_admin: bool,
-        staff_member: bool,
         scrambler: str,
     ) -> None:
         """
@@ -232,11 +229,8 @@ class Handler:
         :param is_admin: If user is considered admin or not
         :param staff_member: If is considered as staff member
         """
-        if is_admin:
-            staff_member = True  # Make admins also staff members :-)
-
         # crypt password and convert to base64
-        passwd = codecs.encode(CryptoManager().symmetric_encrypt(password, scrambler), 'base64').decode()
+        passwd = codecs.encode(CryptoManager.manager().symmetric_encrypt(password, scrambler), 'base64').decode()
 
         session['REST'] = {
             'auth': id_auth,
@@ -244,8 +238,6 @@ class Handler:
             'password': passwd,
             'locale': locale,
             'platform': platform,
-            'is_admin': is_admin,
-            'staff_member': staff_member,
         }
 
     def gen_auth_token(
@@ -255,8 +247,6 @@ class Handler:
         password: str,
         locale: str,
         platform: str,
-        is_admin: bool,
-        staf_member: bool,
         scrambler: str,
     ) -> str:
         """
@@ -276,8 +266,6 @@ class Handler:
             password,
             locale,
             platform,
-            is_admin,
-            staf_member,
             scrambler,
         )
         session.save()

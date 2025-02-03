@@ -84,8 +84,6 @@ class UserRole(enum.StrEnum):
 
     ADMIN = 'admin'
     STAFF = 'staff'
-
-    # Currently not used, but reserved
     USER = 'user'
     ANONYMOUS = 'anonymous'
     

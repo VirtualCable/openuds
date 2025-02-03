@@ -327,32 +327,32 @@ class ModelHandler(BaseModelHandler):
 
                 return operation()
 
-        match self._args[0]:
-            case consts.rest.OVERVIEW:
-                if number_of_args == 1:
-                    return list(self.get_items())
+        match self._args:
+            case [consts.rest.OVERVIEW]:
+                return list(self.get_items())
+            case [consts.rest.OVERVIEW, *_fails]:
                 raise self.invalid_request_response()
-            case consts.rest.TABLEINFO:
-                if number_of_args != 1:
-                    raise self.invalid_request_response()
+            case [consts.rest.TABLEINFO]:
                 return self.process_table_fields(
                     self.table_title,
                     self.table_fields,
                     self.table_row_style,
                     self.table_subtitle,
                 )
-            case consts.rest.TYPES:
-                if number_of_args == 1:
-                    return list(self.get_types())
-                if number_of_args != 2:
-                    raise self.invalid_request_response()
-                return self.get_type(self._args[1])
-            case consts.rest.GUI:
-                if number_of_args == 1:
-                    return self.get_gui('')
-                if number_of_args != 2:
-                    raise self.invalid_request_response()
-                return sorted(self.get_gui(self._args[1]), key=lambda f: f['gui']['order'])
+            case [consts.rest.TABLEINFO, *_fails]:
+                raise self.invalid_request_response()
+            case [consts.rest.TYPES]:
+                return list(self.get_types())
+            case [consts.rest.TYPES, type_]:
+                return self.get_type(type_)
+            case [consts.rest.TYPES, type_, *_fails]:
+                raise self.invalid_request_response()
+            case [consts.rest.GUI]:
+                return self.get_gui('')
+            case [consts.rest.GUI, type_]:
+                return sorted(self.get_gui(type_), key=lambda f: f['gui']['order'])
+            case [consts.rest.GUI, type_, *_fails]:
+                raise self.invalid_request_response()
             case _:  # Maybe an item or a detail
                 if number_of_args == 1:
                     try:
