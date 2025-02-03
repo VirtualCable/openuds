@@ -35,7 +35,7 @@ import typing
 
 from django.core.cache import caches
 
-from uds.core import exceptions
+from uds.core import exceptions, consts
 from uds.core.util.cache import Cache as UCache
 from uds.REST import Handler
 
@@ -44,8 +44,7 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /cache path
 class Cache(Handler):
-    authenticated = True
-    needs_admin = True
+    min_access_role = consts.UserRole.ADMIN
 
     def get(self) -> typing.Any:
         """

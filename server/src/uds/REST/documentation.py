@@ -29,17 +29,22 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import logging
 import typing
 
 from django import http
+from django.shortcuts import render
 from django.views.generic.base import View
+
+from uds.core.auths import auth
+from uds.core import consts, types
 
 from .dispatcher import Dispatcher
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    pass
+    from uds.core import types
 
 logger = logging.getLogger(__name__)
 
@@ -49,6 +54,41 @@ class Documentation(View):
     def dispatch(
         self, request: 'http.request.HttpRequest', *_args: typing.Any, **kwargs: typing.Any
     ) -> 'http.HttpResponse':
+        request = typing.cast('types.requests.ExtendedHttpRequest', request)
+        if not request.user or not request.authorized:
+            return auth.weblogout(request)
+
+        if not request.user.get_role().can_access(consts.UserRole.STAFF):
+            return auth.weblogout(request)
+
+        @dataclasses.dataclass
+        class HelpInfo:
+            level: int
+            path: str
+            text: str
+            
+        help_data: list[HelpInfo] = []
+
+        def _process_node(node: 'types.rest.HelpNode', path: str, level: int) -> None:
+            help_data.append(HelpInfo(level, path, node.help.text))
+
+            for child in node.children:
+                _process_node(
+                    child,
+                    path + '/' + child.help.path,
+                    level + (0 if node.kind == types.rest.HelpNode.HelpNodeType.PATH else 1),
+                )
+
+        _process_node(Dispatcher.base_handler_node.help_node(), '', 0)
+
+        response = render(
+            request=request,
+            template_name='uds/modern/documentation.html',
+            context={'help': help_data},
+        )
+
+        return response
+
         service = Dispatcher.base_handler_node
-        
-        return http.HttpResponseServerError(f'{service.tree()}', content_type="text/plain")
+
+        # return http.HttpResponseServerError(f'{service.tree()}', content_type="text/plain")

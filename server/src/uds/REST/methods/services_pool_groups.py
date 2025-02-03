@@ -58,8 +58,6 @@ class ServicesPoolGroups(ModelHandler):
     Handles the gallery REST interface
     """
 
-    # needs_admin = True
-
     path = 'gallery'
     model = ServicePoolGroup
     save_fields = ['name', 'comments', 'image_id', 'priority']

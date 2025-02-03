@@ -63,9 +63,8 @@ class Reports(model.BaseModelHandler):
     """
     Processes reports requests
     """
-
-    needs_admin = True  # By default, staff is lower level needed
-
+    min_access_role = consts.UserRole.ADMIN
+ 
     table_title = _('Available reports')
     table_fields = [
         {'group': {'title': _('Group')}},

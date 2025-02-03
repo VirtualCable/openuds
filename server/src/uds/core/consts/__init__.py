@@ -77,14 +77,45 @@ UNLIMITED: typing.Final[int] = -1
 NO_MORE_NAMES: typing.Final[str] = 'NO-NAME-ERROR'
 
 
-class Roles(enum.StrEnum):
+class UserRole(enum.StrEnum):
     """
     Roles for users
     """
 
     ADMIN = 'admin'
     STAFF = 'staff'
-    
+
     # Currently not used, but reserved
     USER = 'user'
     ANONYMOUS = 'anonymous'
+    
+    @property
+    def needs_authentication(self) -> bool:
+        """
+        Checks if this role needs authentication
+        
+        Returns:
+            True if this role needs authentication, False otherwise
+        """
+        return self != UserRole.ANONYMOUS
+
+    def can_access(self, role: 'UserRole') -> bool:
+        """
+        Checks if this role can access to the requested role
+        
+        That is, if this role is greater or equal to the requested role
+        
+        Args:
+            role: Role to check against
+            
+        Returns:
+            True if this role can access to the requested role, False otherwise
+        """
+        ROLE_PRECEDENCE: typing.Final = {
+            UserRole.ADMIN: 3,
+            UserRole.STAFF: 2,
+            UserRole.USER: 1,
+            UserRole.ANONYMOUS: 0,
+        }
+
+        return ROLE_PRECEDENCE[self] >= ROLE_PRECEDENCE[role]

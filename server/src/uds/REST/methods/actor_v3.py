@@ -145,7 +145,7 @@ def clear_failed_ip_counter(request: 'ExtendedHttpRequest') -> None:
 
 
 class ActorV3Action(Handler):
-    authenticated = False  # Actor requests are not authenticated normally
+    min_access_role = consts.UserRole.ANONYMOUS
     path = 'actor/v3'
 
     @staticmethod
@@ -291,8 +291,7 @@ class Register(ActorV3Action):
 
     """
 
-    authenticated = True
-    needs_staff = True
+    min_access_role = consts.UserRole.STAFF
 
     name = 'register'
 

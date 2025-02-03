@@ -30,6 +30,8 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import abc
+import enum
+import re
 import typing
 import dataclasses
 import collections.abc
@@ -96,7 +98,8 @@ class TypeInfo:
 
 # This is a named tuple for convenience, and must be
 # compatible with tuple[str, bool] (name, needs_parent)
-class ModelCustomMethod(typing.NamedTuple):
+@dataclasses.dataclass
+class ModelCustomMethod:
     name: str
     needs_parent: bool = True
 
@@ -109,17 +112,80 @@ ItemGeneratorType = typing.Generator[ItemDictType, None, None]
 # Alias for get_items return type
 ManyItemsDictType = typing.Union[ItemListType, ItemDictType, ItemGeneratorType]
 
-# 
+#
 FieldType = collections.abc.Mapping[str, typing.Any]
 
+# Regular expression to match the API: part of the docstring
+# should be a multi line string, with a line containing only "API:" (with leading and trailing \s)
+API_RE = re.compile(r'(?ms)^\s*API:\s*$')
 
-class HelpPath(typing.NamedTuple):
+
+@dataclasses.dataclass(eq=False)
+class HelpPath:
     """
     Help helper class
     """
 
     path: str
-    help: str
+    text: str
+
+    def __init__(self, path: str, help: str):
+        self.path = path
+        self.text = HelpPath.process_help(help)
+
+    def __hash__(self) -> int:
+        return hash(self.path)
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, HelpPath):
+            return False
+        return self.path == other.path
+
+    @property
+    def is_empty(self) -> bool:
+        return self.path == '' and self.text == ''
+
+    @staticmethod
+    def process_help(help: str) -> str:
+        """
+        Processes the help string, removing leading and trailing spaces
+        """
+        match = API_RE.search(help)
+        if match:
+            return help[match.end() :].strip()
+
+        return ''
+
+
+@dataclasses.dataclass(frozen=True)
+class HelpNode:
+    class HelpNodeType(enum.StrEnum):
+        MODEL = 'model'
+        DETAIL = 'detail'
+        CUSTOM = 'custom'
+        PATH = 'path'
+
+    help: HelpPath
+    children: list['HelpNode']  # Children nodes
+    kind: HelpNodeType
+
+    def __hash__(self) -> int:
+        return hash(self.help.path)
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, HelpNode):
+            return self.help.path == other.help.path
+        if not isinstance(other, HelpPath):
+            return False
+
+        return self.help.path == other.path
+
+    @property
+    def is_empty(self) -> bool:
+        return self.help.is_empty and not self.children
+
+    def __str__(self) -> str:
+        return f'HelpNode({self.help}, {self.children})'
 
 
 @dataclasses.dataclass(frozen=True)
@@ -144,7 +210,7 @@ class HandlerNode:
         Returns a string representation of the tree
         """
         from uds.REST.model import ModelHandler
-        
+
         if self.handler is None:
             return f'{"  " * level}|- {self.name}\n' + ''.join(
                 child.tree(level + 1) for child in self.children.values()
@@ -163,13 +229,66 @@ class HandlerNode:
 
         return ret + ''.join(child.tree(level + 1) for child in self.children.values())
 
+    def help_node(self) -> HelpNode:
+        """
+        Returns a HelpNode for this node (and children recursively)
+        """
+        from uds.REST.model import ModelHandler
+
+        custom_help: set[HelpNode] = set()
+
+        help_node_type = HelpNode.HelpNodeType.PATH
+
+        if self.handler:
+            help_node_type = HelpNode.HelpNodeType.CUSTOM
+            if issubclass(self.handler, ModelHandler):
+                help_node_type = HelpNode.HelpNodeType.MODEL
+                # Add custom_methods
+                for method in self.handler.custom_methods:
+                    # Method is a Me CustomModelMethod,
+                    # We access the __doc__ of the function inside the handler with method.name
+                    doc = getattr(self.handler, method.name).__doc__ or ''
+                    custom_help.add(
+                        HelpNode(
+                            HelpPath(path=self.full_path() + '/' + method.name, help=doc),
+                            [],
+                            HelpNode.HelpNodeType.CUSTOM,
+                        )
+                    )
+
+                # Add detail methods
+                if self.handler.detail:
+                    for method in self.handler.detail.keys():
+                        custom_help.add(
+                            HelpNode(
+                                HelpPath(path=self.full_path() + '/' + method, help=''),
+                                [],
+                                HelpNode.HelpNodeType.DETAIL,
+                            )
+                        )
+
+            custom_help |= {
+                HelpNode(HelpPath(path=help_info.path, help=help_info.text), [], help_node_type)
+                for help_info in self.handler.help_paths
+            }
+
+        custom_help |= {child.help_node() for child in self.children.values()}
+
+        return HelpNode(
+            help=HelpPath(path=self.full_path(), help=self.handler.__doc__ or ''),
+            children=list(custom_help),
+            kind=help_node_type,
+        )
+
     def find_path(self, path: str | list[str]) -> typing.Optional['HandlerNode']:
         """
         Returns the node for a given path, or None if not found
         """
         if not path or not self.children:
             return self
-        path = path.split('/') if isinstance(path, str) else path
+        
+        # Remove any trailing '/' to allow some "bogus" paths with trailing slashes
+        path = path.lstrip('/').split('/') if isinstance(path, str) else path
 
         if path[0] not in self.children:
             return None

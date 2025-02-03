@@ -109,8 +109,8 @@ class MetaPools(ModelHandler):
     ]
 
     custom_methods = [
-        types.rest.ModelCustomMethod('setFallbackAccess', True),
-        types.rest.ModelCustomMethod('getFallbackAccess', True),
+        types.rest.ModelCustomMethod('set_fallback_access', True),
+        types.rest.ModelCustomMethod('get_fallback_access', True),
     ]
 
     def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:

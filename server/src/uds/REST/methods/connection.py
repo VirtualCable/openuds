@@ -34,7 +34,7 @@ import datetime
 import logging
 import typing
 
-from uds.core import exceptions, types
+from uds.core import exceptions, types, consts
 from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.exceptions.services import ServiceNotReadyError
@@ -51,9 +51,7 @@ class Connection(Handler):
     Processes actor requests
     """
 
-    authenticated = True  # Actor requests are not authenticated
-    needs_admin = False
-    needs_staff = False
+    min_access_role = consts.UserRole.USER
 
     @staticmethod
     def result(

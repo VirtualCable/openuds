@@ -52,6 +52,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 class Handler:
     """
     REST requests handler base class
@@ -63,13 +64,10 @@ class Handler:
     path: typing.ClassVar[typing.Optional[str]] = (
         None  # Path for this method, so we can do /auth/login, /auth/logout, /auth/auths in a simple way
     )
-    authenticated: typing.ClassVar[bool] = (
-        True  # By default, all handlers needs authentication. Will be overwriten if needs_admin or needs_staff,
-    )
-    needs_admin: typing.ClassVar[bool] = (
-        False  # By default, the methods will be accessible by anyone if nothing else indicated
-    )
-    needs_staff: typing.ClassVar[bool] = False  # By default, staff
+
+    min_access_role: typing.ClassVar[consts.UserRole] = (
+        consts.UserRole.USER
+    )  # By default, only users can access
 
     # For implementing help
     # A list of pairs of (path, help) for subpaths on this handler
@@ -85,7 +83,9 @@ class Handler:
     # These are the "path" split by /, that is, the REST invocation arguments
     _args: list[str]
     _kwargs: dict[str, typing.Any]  # This are the "path" split by /, that is, the REST invocation arguments
-    _headers: dict[str, str]  # Note: These are "output" headers, not input headers (input headers can be retrieved from request)
+    _headers: dict[
+        str, str
+    ]  # Note: These are "output" headers, not input headers (input headers can be retrieved from request)
     _session: typing.Optional[SessionStore]
     _auth_token: typing.Optional[str]
     _user: 'User'
@@ -103,14 +103,6 @@ class Handler:
         *args: str,
         **kwargs: typing.Any,
     ):
-        logger.debug('Data: %s %s %s', self.__class__, self.needs_admin, self.authenticated)
-        if (
-            self.needs_admin or self.needs_staff
-        ) and not self.authenticated:  # If needs_admin, must also be authenticated
-            raise Exception(
-                f'class {self.__class__} is not authenticated but has needs_admin or needs_staff set!!'
-            )
-
         self._request = request
         self._path = path
         self._operation = method
@@ -119,7 +111,8 @@ class Handler:
         self._kwargs = kwargs
         self._headers = {}
         self._auth_token = None
-        if self.authenticated:  # Only retrieve auth related data on authenticated handlers
+
+        if self.min_access_role.needs_authentication:
             try:
                 self._auth_token = self._request.headers.get(consts.auth.AUTH_TOKEN_HEADER, '')
                 self._session = SessionStore(session_key=self._auth_token)
@@ -132,11 +125,10 @@ class Handler:
             if self._auth_token is None:
                 raise AccessDenied()
 
-            if self.needs_admin and not self.is_admin():
+            self._user = self.get_user()
+            if not self._user.can_access(self.min_access_role):
                 raise AccessDenied()
 
-            if self.needs_staff and not self.is_staff_member():
-                raise AccessDenied()
             try:
                 self._user = self.get_user()
             except Exception as e:
@@ -158,10 +150,10 @@ class Handler:
     def header(self, header_name: str) -> typing.Optional[str]:
         """
         Get's an specific header name from REST request
-        
+
         Args:
             header_name: Name of header to retrieve
-            
+
         Returns:
             Value of header or None if not found
         """

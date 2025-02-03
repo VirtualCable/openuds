@@ -117,7 +117,7 @@ def root_user() -> models.User:
 
 # Decorator to make easier protect pages that needs to be logged in
 def weblogin_required(
-    role: typing.Optional[consts.Roles] = None,
+    role: typing.Optional[consts.UserRole] = None,
 ) -> collections.abc.Callable[
     [collections.abc.Callable[..., HttpResponse]], collections.abc.Callable[..., HttpResponse]
 ]:
@@ -149,8 +149,8 @@ def weblogin_required(
             if not request.user or not request.authorized:
                 return weblogout(request)
 
-            if role in (consts.Roles.ADMIN, consts.Roles.STAFF):
-                if request.user.is_staff() is False or (role == consts.Roles.ADMIN and not request.user.is_admin):
+            if role in (consts.UserRole.ADMIN, consts.UserRole.STAFF):
+                if request.user.is_staff() is False or (role == consts.UserRole.ADMIN and not request.user.is_admin):
                     return HttpResponseForbidden(_('Forbidden'))
 
             return view_func(request, *args, **kwargs)

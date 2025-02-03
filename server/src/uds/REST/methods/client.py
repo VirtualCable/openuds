@@ -58,7 +58,7 @@ class Client(Handler):
     Processes Client requests
     """
 
-    authenticated = False  # Client requests are not authenticated
+    min_access_role = consts.UserRole.ANONYMOUS
 
     @staticmethod
     def result(

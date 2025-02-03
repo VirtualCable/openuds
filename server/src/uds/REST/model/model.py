@@ -72,8 +72,7 @@ class ModelHandler(BaseModelHandler):
     """
 
     # Authentication related
-    authenticated = True
-    needs_staff = True
+    min_access_role = consts.UserRole.STAFF
 
     # Which model does this manage, must be a django model ofc
     model: 'typing.ClassVar[type[models.Model]]'
@@ -297,8 +296,8 @@ class ModelHandler(BaseModelHandler):
         # if has custom methods, look for if this request matches any of them
         for cm in self.custom_methods:
             # Convert to snake case
-            camel_case_name, snake_case_name = camel_and_snake_case_from(cm[0])
-            if number_of_args > 1 and cm[1] is True:  # Method needs parent (existing item)
+            camel_case_name, snake_case_name = camel_and_snake_case_from(cm.name)
+            if number_of_args > 1 and cm.needs_parent:  # Method needs parent (existing item)
                 if self._args[1] in (camel_case_name, snake_case_name):
                     item = None
                     # Check if operation method exists

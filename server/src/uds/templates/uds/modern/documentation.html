@@ -1,0 +1,39 @@
+{% load i18n %}{% get_current_language as LANGUAGE_CODE %}<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/png" href="/uds/res/modern/img/favicon.png" />
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title data-i18n="uds:documentation">Documentation</title>
+
+    <link href="/uds/res/modern/fonts/material-icons.css" rel="stylesheet" />
+    <link href="/uds/res/modern/fonts/roboto.css" rel="stylesheet" />
+    <!-- Material styles -->
+    <link href="/uds/res/modern/styles.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div>
+        <div class="header">
+            <div class="header-logo">
+                <a href="/"><img src="/uds/res/modern/img/logo.png" alt="UDS" /></a>
+            </div>
+            <div class="header-title">
+                <h1 data-i18n="uds:documentation">Documentation</h1>
+            </div>
+        </div>
+        <!-- doc contains the list of helps -->
+        <div class="doc">
+            {% for h in help %}
+            <div class="doc-item">
+                {{ h }}
+            </div>
+            {% endfor %}
+
+        </div>
+        
+    </div>
+  </body>
+</html>

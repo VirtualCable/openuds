@@ -40,7 +40,7 @@ from uds import models
 from uds.core.managers.crypto import CryptoManager
 from uds.core.util.model import process_uuid
 from uds.core.util import ensure
-from uds.core import exceptions
+from uds.core import consts, exceptions
 
 logger = logging.getLogger(__name__)
 
@@ -89,7 +89,7 @@ class Tickets(Handler):
                  - servicePool has these groups in it's allowed list
     """
 
-    needs_admin = True  # By default, staff is lower level needed
+    min_access_role = consts.UserRole.ADMIN
 
     @staticmethod
     def result(result: str = '', error: typing.Optional[str] = None) -> dict[str, typing.Any]:

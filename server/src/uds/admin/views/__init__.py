@@ -45,7 +45,7 @@ if typing.TYPE_CHECKING:
     from django.http import HttpRequest
 
 
-@weblogin_required(role=consts.Roles.ADMIN)
+@weblogin_required(role=consts.UserRole.ADMIN)
 def index(request: 'HttpRequest') -> HttpResponse:
     # Gets csrf token
     csrf_token = csrf.get_token(request)

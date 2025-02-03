@@ -35,7 +35,7 @@ import typing
 
 from django.db import models
 from django.db.models import Count, Q, signals
-from uds.core import auths, mfas, types
+from uds.core import auths, mfas, types, consts
 from uds.core.util import log, storage, properties
 
 from .authenticator import Authenticator
@@ -46,7 +46,6 @@ from .uuid_model import UUIDModel
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.models import Group, UserService, Permissions
-    from uds.core.types.requests import ExtendedHttpRequest
     from django.db.models.manager import RelatedManager
 
 
@@ -133,6 +132,26 @@ class User(UUIDModel, properties.PropertiesMixin):
         """
         return self.staff_member or self.is_admin
 
+    def get_role(self) -> consts.UserRole:
+        """
+        Returns the role of the user
+        """
+        if self.pk is None:
+            return consts.UserRole.ANONYMOUS
+
+        if self.is_admin:
+            return consts.UserRole.ADMIN
+        if self.staff_member:
+            return consts.UserRole.STAFF
+
+        return consts.UserRole.USER
+
+    def can_access(self, role: consts.UserRole) -> bool:
+        """
+        Returns true if the user has more or equal role than the one passed as argument
+        """
+        return self.get_role().can_access(role)
+
     def update_last_access(self) -> None:
         """
         Updates the last access for this user with the current time of the sql server
@@ -140,7 +159,7 @@ class User(UUIDModel, properties.PropertiesMixin):
         self.last_access = sql_now()
         self.save(update_fields=['last_access'])
 
-    def logout(self, request: 'ExtendedHttpRequest') -> types.auth.AuthenticationResult:
+    def logout(self, request: 'types.requests.ExtendedHttpRequest') -> types.auth.AuthenticationResult:
         """
         Invoked to log out this user
         Returns the url where to redirect user, or None if default url will be used

@@ -34,8 +34,7 @@ import logging
 import datetime
 import typing
 
-from uds.core.types.rest import HelpPath
-from uds.core import types
+from uds.core import types, consts
 from uds.REST import Handler
 from uds import models
 from uds.core.util.stats import counters
@@ -45,11 +44,10 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /cache path
 class Stats(Handler):
-    authenticated = True
-    needs_admin = True
+    min_access_role = consts.UserRole.ADMIN
 
     help_paths = [
-        HelpPath('', 'Returns the last day usage statistics for all authenticators'),
+        types.rest.HelpPath('', 'Returns the last day usage statistics for all authenticators'),
     ]
     help_text = 'Provides access to usage statistics'
 

@@ -46,7 +46,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-@weblogin_required(role=consts.Roles.STAFF)
+@weblogin_required(role=consts.UserRole.STAFF)
 def download(request: 'HttpRequest', download_id: str) -> 'HttpResponse':
     """
     Downloadables management

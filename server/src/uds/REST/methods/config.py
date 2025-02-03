@@ -33,6 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import typing
 import logging
 
+from uds.core import consts
 from uds.core.util.config import Config as CfgConfig
 from uds.REST import Handler
 
@@ -42,7 +43,7 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /config path
 class Config(Handler):
-    needs_admin = True  # By default, staff is lower level needed
+    min_access_role = consts.UserRole.ADMIN
 
     def get(self) -> typing.Any:
         return CfgConfig.get_config_values(self.is_admin())

@@ -34,7 +34,7 @@ import logging
 import typing
 
 from uds import models
-from uds.core import exceptions, types
+from uds.core import consts, exceptions, types
 from uds.core.auths.auth import is_trusted_source
 from uds.core.util import log, net
 from uds.core.util.model import sql_stamp_seconds
@@ -54,7 +54,7 @@ class TunnelTicket(Handler):
     Processes tunnel requests
     """
 
-    authenticated = False  # Client requests are not authenticated
+    min_access_role = consts.UserRole.ANONYMOUS
     path = 'tunnel'
     name = 'ticket'
 
@@ -148,7 +148,8 @@ class TunnelTicket(Handler):
 
 
 class TunnelRegister(ServerRegisterBase):
-    needs_admin = True
+    min_access_role = consts.UserRole.ADMIN
+    
     path = 'tunnel'
     name = 'register'
 

@@ -38,8 +38,7 @@ import pickletools
 import typing
 
 from uds import models
-from uds.core.types.rest import HelpPath
-from uds.core import exceptions, types
+from uds.core import exceptions, types, consts
 from uds.core.util import permissions
 from uds.core.util.cache import Cache
 from uds.core.util.model import process_uuid, sql_now
@@ -144,19 +143,18 @@ class System(Handler):
     }
     """
 
-    needs_admin = False
-    needs_staff = True
+    min_access_role = consts.UserRole.STAFF
 
     help_paths = [
-        HelpPath('', ''),
-        HelpPath('stats/assigned', ''),
-        HelpPath('stats/inuse', ''),
-        HelpPath('stats/cached', ''),
-        HelpPath('stats/complete', ''),
-        HelpPath('stats/assigned/<servicePoolId>', ''),
-        HelpPath('stats/inuse/<servicePoolId>', ''),
-        HelpPath('stats/cached/<servicePoolId>', ''),
-        HelpPath('stats/complete/<servicePoolId>', ''),
+        types.rest.HelpPath('', ''),
+        types.rest.HelpPath('stats/assigned', ''),
+        types.rest.HelpPath('stats/inuse', ''),
+        types.rest.HelpPath('stats/cached', ''),
+        types.rest.HelpPath('stats/complete', ''),
+        types.rest.HelpPath('stats/assigned/<servicePoolId>', ''),
+        types.rest.HelpPath('stats/inuse/<servicePoolId>', ''),
+        types.rest.HelpPath('stats/cached/<servicePoolId>', ''),
+        types.rest.HelpPath('stats/complete/<servicePoolId>', ''),
     ]
     help_text = 'Provides system information. Must be admin to access this'
 

@@ -138,14 +138,15 @@ class ServerRegisterBase(Handler):
 
 
 class ServerRegister(ServerRegisterBase):
-    needs_staff = True
+    min_access_role = consts.UserRole.STAFF    
+    
     path = 'servers'
     name = 'register'
 
 
 # REST handlers for server actions
 class ServerTest(Handler):
-    authenticated = False  # Test is not authenticated, the auth is the token to test itself
+    min_access_role = consts.UserRole.ANONYMOUS
 
     path = 'servers'
     name = 'test'
@@ -172,7 +173,7 @@ class ServerEvent(Handler):
     * log
     """
 
-    authenticated = False  # Actor requests are not authenticated normally
+    min_access_role = consts.UserRole.ANONYMOUS
     path = 'servers'
     name = 'event'
 

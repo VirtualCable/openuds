@@ -424,7 +424,7 @@ class TestOpenStackClient(UDSTransactionTestCase):
     def test_auth_cached(self) -> None:
         # Get a new client, it should be cached
         cached_value = self.oclient.cache.get('auth')
-        # Unauthorized
+        # Unauthorized        
         self.oclient._authenticated = False
 
         with mock.patch.object(self.oclient.cache, 'get', return_value=cached_value) as mock_cache_get:

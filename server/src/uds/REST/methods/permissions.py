@@ -36,7 +36,7 @@ import typing
 
 import uds.core.types.permissions
 from uds import models
-from uds.core import exceptions
+from uds.core import consts, exceptions
 from uds.core.util import permissions
 from uds.core.util.rest.tools import match
 from uds.REST import Handler
@@ -53,8 +53,7 @@ class Permissions(Handler):
     """
     Processes permissions requests
     """
-
-    needs_admin = True
+    min_access_role = consts.UserRole.ADMIN
 
     @staticmethod
     def get_class(class_name: str) -> type['Model']:
