@@ -30,6 +30,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import dataclasses
+import enum
 import logging
 import typing
 
@@ -49,6 +50,49 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+@dataclasses.dataclass
+class HelpMethodInfo:
+    method: str
+    params: list[str]
+    text: str
+
+    @property
+    def methods(self) -> typing.Generator[str, None, None]:
+        for param in self.params:
+            if param == '':
+                yield self.method
+            else:
+                if (self.method + ' ')[0] == '-':
+                    yield f'<{param}>/{self.method[1:]}'
+                elif self.method:
+                    yield f'{self.method}/<{param}>'
+                else:
+                    yield f'<{param}>'
+
+    def __str__(self) -> str:
+        return ', '.join(self.methods)
+
+    def __repr__(self) -> str:
+        return self.__str__()
+
+
+class HelpMethod(enum.Enum):
+    ITEM = HelpMethodInfo('', ['uuid'], 'Retrieves an item by its UUID')
+    LOG = HelpMethodInfo('-' + consts.rest.LOG, ['uuid'], 'Retrieves the log of an item')
+    OVERVIEW = HelpMethodInfo(consts.rest.OVERVIEW, [''], 'General Overview of all items (a list')
+    TABLEINFO = HelpMethodInfo(consts.rest.TABLEINFO, [''], 'Table visualization information (types, etc..)')
+    TYPES = HelpMethodInfo(consts.rest.TYPES, ['', 'type'], 'Types information')
+    GUI = HelpMethodInfo(consts.rest.GUI, ['', 'type'], 'GUI information')
+
+
+@dataclasses.dataclass
+class HelpInfo:
+    level: int
+    path: str
+    text: str
+    methods: list[HelpMethod]
+
+
 class Documentation(View):
 
     def dispatch(
@@ -61,21 +105,29 @@ class Documentation(View):
         if not request.user.get_role().can_access(consts.UserRole.STAFF):
             return auth.weblogout(request)
 
-        @dataclasses.dataclass
-        class HelpInfo:
-            level: int
-            path: str
-            text: str
-            
         help_data: list[HelpInfo] = []
 
         def _process_node(node: 'types.rest.HelpNode', path: str, level: int) -> None:
-            help_data.append(HelpInfo(level, path, node.help.text))
+            if node.kind == types.rest.HelpNode.HelpNodeType.MODEL:
+                methods = [
+                    HelpMethod.OVERVIEW,
+                    HelpMethod.GUI,
+                    HelpMethod.TABLEINFO,
+                    HelpMethod.TYPES,
+                    HelpMethod.ITEM,
+                    HelpMethod.LOG,
+                ]
+            elif node.kind == types.rest.HelpNode.HelpNodeType.DETAIL:
+                methods = []
+            else:
+                methods = []
+
+            help_data.append(HelpInfo(level, path, node.help.text, methods))
 
             for child in node.children:
                 _process_node(
                     child,
-                    path + '/' + child.help.path,
+                    child.help.path,
                     level + (0 if node.kind == types.rest.HelpNode.HelpNodeType.PATH else 1),
                 )
 

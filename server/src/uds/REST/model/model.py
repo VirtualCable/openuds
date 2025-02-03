@@ -232,13 +232,13 @@ class ModelHandler(BaseModelHandler):
         self, *args: typing.Any, **kwargs: typing.Any
     ) -> typing.Generator[types.rest.ItemDictType, None, None]:
         if 'overview' in kwargs:
-            overview = kwargs['overview']
+            overview: bool = kwargs['overview']
             del kwargs['overview']
         else:
             overview = True
 
         if 'prefetch' in kwargs:
-            prefetch = kwargs['prefetch']
+            prefetch: list[str] = kwargs['prefetch']
             logger.debug('Prefetching %s', prefetch)
             del kwargs['prefetch']
         else:
@@ -327,61 +327,53 @@ class ModelHandler(BaseModelHandler):
 
                 return operation()
 
-        if number_of_args == 1:
-            if self._args[0] == consts.rest.OVERVIEW:
-                return list(self.get_items())
-            if self._args[0] == consts.rest.TYPES:
-                return list(self.get_types())
-            if self._args[0] == consts.rest.TABLEINFO:
+        match self._args[0]:
+            case consts.rest.OVERVIEW:
+                if number_of_args == 1:
+                    return list(self.get_items())
+                raise self.invalid_request_response()
+            case consts.rest.TABLEINFO:
+                if number_of_args != 1:
+                    raise self.invalid_request_response()
                 return self.process_table_fields(
                     self.table_title,
                     self.table_fields,
                     self.table_row_style,
                     self.table_subtitle,
                 )
-            if self._args[0] == consts.rest.GUI:
-                return self.get_gui('')
+            case consts.rest.TYPES:
+                if number_of_args == 1:
+                    return list(self.get_types())
+                if number_of_args != 2:
+                    raise self.invalid_request_response()
+                return self.get_type(self._args[1])
+            case consts.rest.GUI:
+                if number_of_args == 1:
+                    return self.get_gui('')
+                if number_of_args != 2:
+                    raise self.invalid_request_response()
+                return sorted(self.get_gui(self._args[1]), key=lambda f: f['gui']['order'])
+            case _:  # Maybe an item or a detail
+                if number_of_args == 1:
+                    try:
+                        item = self.model.objects.get(uuid__iexact=self._args[0].lower())
+                        self.ensure_has_access(item, types.permissions.PermissionType.READ)
+                        res = self.item_as_dict(item)
+                        self.fill_instance_fields(item, res)
+                        return res
+                    except Exception as e:
+                        logger.exception('Got Exception looking for item')
+                        raise self.invalid_item_response() from e
+                elif number_of_args == 2:
+                    if self._args[1] == consts.rest.LOG:
+                        try:
+                            item = self.model.objects.get(uuid__iexact=self._args[0].lower())
+                            return self.get_logs(item)
+                        except Exception as e:
+                            raise self.invalid_item_response() from e
 
-            # get item ID
-            try:
-                item = self.model.objects.get(uuid__iexact=self._args[0].lower())
-
-                self.ensure_has_access(item, types.permissions.PermissionType.READ)
-
-                res = self.item_as_dict(item)
-                self.fill_instance_fields(item, res)
-                return res
-            except Exception as e:
-                logger.exception('Got Exception looking for item')
-                raise self.invalid_item_response() from e
-
-        # nArgs > 1
-        # Request type info or gui, or detail
-        if self._args[0] == consts.rest.OVERVIEW:
-            if number_of_args != 2:
-                raise self.invalid_request_response()
-        elif self._args[0] == consts.rest.TYPES:
-            if number_of_args != 2:
-                raise self.invalid_request_response()
-            return self.get_type(self._args[1])
-        elif self._args[0] == consts.rest.GUI:
-            if number_of_args != 2:
-                raise self.invalid_request_response()
-            gui = self.get_gui(self._args[1])
-            return sorted(gui, key=lambda f: f['gui']['order'])
-        elif self._args[1] == consts.rest.LOG:
-            if number_of_args != 2:
-                raise self.invalid_request_response()
-            try:
-                # DB maybe case sensitive??, anyway, uuids are stored in lowercase
-                item = self.model.objects.get(uuid__iexact=self._args[0].lower())
-                return self.get_logs(item)
-            except Exception as e:
-                raise self.invalid_item_response() from e
-
-        # If has detail and is requesting detail
-        if self.detail is not None:
-            return self.process_detail()
+                if self.detail is not None:
+                    return self.process_detail()
 
         raise self.invalid_request_response()  # Will not return
 
