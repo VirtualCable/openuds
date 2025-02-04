@@ -159,22 +159,30 @@ class HelpPath:
 
 @dataclasses.dataclass(frozen=True)
 class HelpNode:
-    class HelpNodeType(enum.StrEnum):
+    class Type(enum.StrEnum):
         MODEL = 'model'
         DETAIL = 'detail'
         CUSTOM = 'custom'
         PATH = 'path'
+        
+    class Methods(enum.StrEnum):
+        GET = 'GET'
+        POST = 'POST'
+        PUT = 'PUT'
+        DELETE = 'DELETE'
+        PATCH = 'PATCH'
 
     help: HelpPath
     children: list['HelpNode']  # Children nodes
-    kind: HelpNodeType
+    kind: Type
+    methods: set[Methods] = dataclasses.field(default_factory=lambda: {HelpNode.Methods.GET})
 
     def __hash__(self) -> int:
-        return hash(self.help.path)
+        return hash(self.help.path + ''.join(method for method in self.methods))
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, HelpNode):
-            return self.help.path == other.help.path
+            return self.help.path == other.help.path and self.methods == other.methods
         if not isinstance(other, HelpPath):
             return False
 
@@ -237,12 +245,12 @@ class HandlerNode:
 
         custom_help: set[HelpNode] = set()
 
-        help_node_type = HelpNode.HelpNodeType.PATH
+        help_node_type = HelpNode.Type.PATH
 
         if self.handler:
-            help_node_type = HelpNode.HelpNodeType.CUSTOM
+            help_node_type = HelpNode.Type.CUSTOM
             if issubclass(self.handler, ModelHandler):
-                help_node_type = HelpNode.HelpNodeType.MODEL
+                help_node_type = HelpNode.Type.MODEL
                 # Add custom_methods
                 for method in self.handler.custom_methods:
                     # Method is a Me CustomModelMethod,
@@ -252,7 +260,7 @@ class HandlerNode:
                         HelpNode(
                             HelpPath(path=self.full_path() + '/' + method.name, help=doc),
                             [],
-                            HelpNode.HelpNodeType.CUSTOM,
+                            HelpNode.Type.CUSTOM,
                         )
                     )
 
@@ -263,7 +271,7 @@ class HandlerNode:
                             HelpNode(
                                 HelpPath(path=self.full_path() + '/' + method_name, help=''),
                                 [],
-                                HelpNode.HelpNodeType.DETAIL,
+                                HelpNode.Type.DETAIL,
                             )
                         )
                         # Add custom_methods
@@ -282,7 +290,7 @@ class HandlerNode:
                                         help=doc,
                                     ),
                                     [],
-                                    HelpNode.HelpNodeType.CUSTOM,
+                                    HelpNode.Type.CUSTOM,
                                 )
                             )
 

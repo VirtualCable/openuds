@@ -43,15 +43,7 @@
             {% for h in help %}
             <div>{{ h }}</div>
             <div class="doc-item">
-                {% if h.methods %}
-                <div class="doc-item-methods">
-                    {% for m in h.methods %}
-                      <div class="doc-item-method">{{ h.path }}/{{ m.value.method }} : {{ m.value.text }}</div>
-                    {% endfor %}
-                </div>
-                {% else %}
-                <div>{{ h.path }} : {{ h.text }}</div>
-                {% endif %}
+                <div>{{ h.path }} : {{ h.text }}  {{ h.method }}</div>
             </div>
             {% endfor %}
         </div>

@@ -52,8 +52,10 @@ logger = logging.getLogger(__name__)
 
 @dataclasses.dataclass
 class HelpMethodInfo:
+
     method: str
     text: str
+    methods: list[types.rest.HelpNode.Methods]
 
     def __str__(self) -> str:
         return f'{self.method}: {self.text}'
@@ -63,26 +65,68 @@ class HelpMethodInfo:
 
 
 class HelpMethod(enum.Enum):
-    ITEM = HelpMethodInfo('<uuid>', 'Retrieves an item by its UUID')
-    LOG = HelpMethodInfo(f'<uuid>/{consts.rest.LOG}', 'Retrieves the log of an item')
-    OVERVIEW = HelpMethodInfo(consts.rest.OVERVIEW, 'General Overview of all items (a list')
-    TABLEINFO = HelpMethodInfo(consts.rest.TABLEINFO, 'Table visualization information (types, etc..)')
-    TYPES = HelpMethodInfo(consts.rest.TYPES, 'Retrieves a list of types available')
-    TYPES_TYPE = HelpMethodInfo(f'{consts.rest.TYPES}/<type>', 'Retrieves a type information')
-    GUI = HelpMethodInfo(consts.rest.GUI, 'GUI information')
-    GUI_TYPES = HelpMethodInfo(f'{consts.rest.GUI}/<type>', 'GUI Types information')
+    ITEM = HelpMethodInfo(
+        '<uuid>',
+        'Retrieves an item by its UUID',
+        [
+            types.rest.HelpNode.Methods.GET,
+            types.rest.HelpNode.Methods.PUT,
+            types.rest.HelpNode.Methods.DELETE,
+        ],
+    )
+    LOG = HelpMethodInfo(
+        f'<uuid>/{consts.rest.LOG}',
+        'Retrieves the logs of an element by its UUID',
+        [
+            types.rest.HelpNode.Methods.GET,
+        ],
+    )
+    OVERVIEW = HelpMethodInfo(
+        consts.rest.OVERVIEW, 'General Overview of all items (a list', [types.rest.HelpNode.Methods.GET]
+    )
+    TABLEINFO = HelpMethodInfo(
+        consts.rest.TABLEINFO,
+        'Table visualization information (types, etc..)',
+        [
+            types.rest.HelpNode.Methods.GET,
+        ],
+    )
+    TYPES = HelpMethodInfo(
+        consts.rest.TYPES,
+        'Retrieves a list of types available',
+        [
+            types.rest.HelpNode.Methods.GET,
+        ],
+    )
+    TYPES_TYPE = HelpMethodInfo(
+        f'{consts.rest.TYPES}/<type>',
+        'Retrieves a type information',
+        [
+            types.rest.HelpNode.Methods.GET,
+        ],
+    )
+    GUI = HelpMethodInfo(consts.rest.GUI, 'GUI information', [types.rest.HelpNode.Methods.GET])
+    GUI_TYPES = HelpMethodInfo(
+        f'{consts.rest.GUI}/<type>', 'GUI Types information', [types.rest.HelpNode.Methods.GET]
+    )
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(frozen=True)
 class HelpInfo:
-    level: int
     path: str
     text: str
-    methods: list[HelpMethod]
+    method: types.rest.HelpNode.Methods = types.rest.HelpNode.Methods.GET
 
     @property
     def is_empty(self) -> bool:
         return not self.path
+
+    def as_dict(self) -> dict[str, str]:
+        return {
+            'path': self.path,
+            'text': self.text,
+            'method': self.method.value,
+        }
 
 
 class Documentation(View):
@@ -99,48 +143,36 @@ class Documentation(View):
 
         help_data: list[HelpInfo] = []
 
-        def _process_node(node: 'types.rest.HelpNode', path: str, level: int) -> None:
-            if node.kind == types.rest.HelpNode.HelpNodeType.MODEL:
-                methods = [
-                    HelpMethod.OVERVIEW,
-                    HelpMethod.GUI,
-                    HelpMethod.GUI_TYPES,
-                    HelpMethod.TYPES,
-                    HelpMethod.TYPES_TYPE,
-                    HelpMethod.TABLEINFO,
-                    HelpMethod.ITEM,
-                    HelpMethod.LOG,
-                ]
-            elif node.kind == types.rest.HelpNode.HelpNodeType.DETAIL:
-                methods = [
-                    HelpMethod.OVERVIEW,
-                    HelpMethod.GUI,
-                    HelpMethod.GUI_TYPES,
-                    HelpMethod.TYPES,
-                    HelpMethod.TYPES_TYPE,
-                    HelpMethod.TABLEINFO,
-                    HelpMethod.ITEM,
-                    HelpMethod.LOG,
-                ]
-            else:
-                methods = []
-
-            if node.kind != types.rest.HelpNode.HelpNodeType.PATH:
-                help_data.append(HelpInfo(level, path, node.help.text, methods))
+        def _process_node(node: 'types.rest.HelpNode', path: str) -> None:
+            match node.kind:
+                case types.rest.HelpNode.Type.PATH:
+                    pass
+                case types.rest.HelpNode.Type.MODEL | types.rest.HelpNode.Type.DETAIL:
+                    for func in [
+                        HelpMethod.OVERVIEW,
+                        HelpMethod.GUI,
+                        HelpMethod.GUI_TYPES,
+                        HelpMethod.TYPES,
+                        HelpMethod.TYPES_TYPE,
+                        HelpMethod.TABLEINFO,
+                        HelpMethod.ITEM,
+                        HelpMethod.LOG,
+                    ]:
+                        for method in func.value.methods:
+                            help_data.append(HelpInfo(f'{path}/{func.value.method}', func.value.text, method))
+                case _:
+                    for method in node.methods:
+                        help_data.append(HelpInfo(path, node.help.text, method))
 
             for child in node.children:
-                _process_node(
-                    child,
-                    child.help.path,
-                    level + (0 if node.kind == types.rest.HelpNode.HelpNodeType.PATH else 1),
-                )
+                _process_node(child, child.help.path)
 
-        _process_node(Dispatcher.base_handler_node.help_node(), '', 0)
+        _process_node(Dispatcher.base_handler_node.help_node(), '')
 
         response = render(
             request=request,
             template_name='uds/modern/documentation.html',
-            context={'help': [h for h in help_data if not h.is_empty]},
+            context={'help': [h.as_dict() for h in help_data]},
         )
 
         return response
