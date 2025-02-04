@@ -125,7 +125,8 @@ class Documentation(View):
             else:
                 methods = []
 
-            help_data.append(HelpInfo(level, path, node.help.text, methods))
+            if node.kind != types.rest.HelpNode.HelpNodeType.PATH:
+                help_data.append(HelpInfo(level, path, node.help.text, methods))
 
             for child in node.children:
                 _process_node(

@@ -151,10 +151,10 @@ class System(Handler):
         types.rest.HelpPath('stats/inuse', ''),
         types.rest.HelpPath('stats/cached', ''),
         types.rest.HelpPath('stats/complete', ''),
-        types.rest.HelpPath('stats/assigned/<servicePoolId>', ''),
-        types.rest.HelpPath('stats/inuse/<servicePoolId>', ''),
-        types.rest.HelpPath('stats/cached/<servicePoolId>', ''),
-        types.rest.HelpPath('stats/complete/<servicePoolId>', ''),
+        types.rest.HelpPath('stats/assigned/<uuuid>', 'Get service pool assigned stats'),
+        types.rest.HelpPath('stats/inuse/<uuid>', 'Get service pool in use stats'),
+        types.rest.HelpPath('stats/cached/<uuid>', 'Get service pool cached stats'),
+        types.rest.HelpPath('stats/complete/<uuid>', 'Get service pool complete stats'),
     ]
     help_text = 'Provides system information. Must be admin to access this'
 

@@ -290,6 +290,14 @@ class MetaPools(ModelHandler):
 
     # Set fallback status
     def set_fallback_access(self, item: MetaPool) -> typing.Any:
+        """
+        API:
+            Description:
+                Sets the fallback access for a metapool
+
+            Response:
+                200: All fine, no data returned
+        """
         self.ensure_has_access(item, types.permissions.PermissionType.MANAGEMENT)
 
         fallback = self._params.get('fallbackAccess', 'ALLOW')

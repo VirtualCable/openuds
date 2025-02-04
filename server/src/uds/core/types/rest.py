@@ -273,14 +273,28 @@ class HandlerNode:
                             doc = getattr(method_class, detail_method).__doc__ or ''
                             custom_help.add(
                                 HelpNode(
-                                    HelpPath(path=self.full_path() + '/<uuid>/' + method_name + '/<uuid>/' + detail_method, help=doc),
+                                    HelpPath(
+                                        path=self.full_path()
+                                        + '/<uuid>/'
+                                        + method_name
+                                        + '/<uuid>/'
+                                        + detail_method,
+                                        help=doc,
+                                    ),
                                     [],
                                     HelpNode.HelpNodeType.CUSTOM,
                                 )
                             )
 
             custom_help |= {
-                HelpNode(HelpPath(path=help_info.path, help=help_info.text), [], help_node_type)
+                HelpNode(
+                    HelpPath(
+                        path=self.full_path() + '/' + help_info.path,
+                        help=help_info.text,
+                    ),
+                    [],
+                    help_node_type,
+                )
                 for help_info in self.handler.help_paths
             }
 
@@ -298,7 +312,7 @@ class HandlerNode:
         """
         if not path or not self.children:
             return self
-        
+
         # Remove any trailing '/' to allow some "bogus" paths with trailing slashes
         path = path.lstrip('/').split('/') if isinstance(path, str) else path
 

@@ -42,6 +42,11 @@ logger = logging.getLogger(__name__)
 
 
 class Callback(Handler):
+    """
+    API:
+        Description:
+            Executes a callback from the GUI. Internal use, not intended to be called from outside.
+    """
     path = 'gui'
 
     min_access_role = consts.UserRole.STAFF
