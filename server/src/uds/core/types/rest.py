@@ -256,9 +256,10 @@ class HandlerNode:
                     # Method is a Me CustomModelMethod,
                     # We access the __doc__ of the function inside the handler with method.name
                     doc = getattr(self.handler, method.name).__doc__ or ''
+                    path = f'{self.full_path()}/{method.name}' if not method.needs_parent else f'{self.full_path()}/<uuid>/{method.name}'
                     custom_help.add(
                         HelpNode(
-                            HelpPath(path=self.full_path() + '/' + method.name, help=doc),
+                            HelpPath(path=path, help=doc),
                             [],
                             HelpNode.Type.CUSTOM,
                         )
