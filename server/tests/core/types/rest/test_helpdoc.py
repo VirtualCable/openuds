@@ -100,3 +100,33 @@ class TestHelpDoc(TestCase):
             'age': '<integer>',
             'money': '<float>',
         })
+
+    def test_help_doc_from_typed_response_nested_dataclass(self) -> None:
+        @dataclasses.dataclass
+        class TestResponse:
+            name: str = 'test_name'
+            age: int = 0
+            money: float = 0.0
+            
+        @dataclasses.dataclass
+        class TestResponse2(rest.TypedResponse):
+            name: str
+            age: int
+            money: float
+            nested: TestResponse
+            
+        h = rest.HelpDoc.from_typed_response('path', 'help', TestResponse2)
+        
+        self.assertEqual(h.path, 'path')
+        self.assertEqual(h.description, 'help')
+        self.assertEqual(h.arguments, [])
+        self.assertEqual(h.returns, {
+            'name': '<string>',
+            'age': '<integer>',
+            'money': '<float>',
+            'nested': {
+                'name': '<string>',
+                'age': '<integer>',
+                'money': '<float>',
+            }
+        })
