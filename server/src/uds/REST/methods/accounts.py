@@ -91,18 +91,14 @@ class Accounts(ModelHandler):
     def timemark(self, item: 'Model') -> typing.Any:
         """
         API:
-            Description:
-                Generates a time mark associated with the account.
-                This is useful to easily identify when the account data was last updated.
-                (For example, one user enters an service, we get the usage data and "timemark" it, later read again
-                and we can identify that all data before this timemark has already been processed)
+            Generates a time mark associated with the account.
+            This is useful to easily identify when the account data was last updated.
+            (For example, one user enters an service, we get the usage data and "timemark" it, later read again
+            and we can identify that all data before this timemark has already been processed)
+            
+            Arguments:
+                item: Account to timemark
 
-            Parameters:
-                - item: Account
-                    Description of the item parameter
-
-            Response:
-                200: All fine, no data returned
         """
         item = ensure.is_instance(item, Account)
         item.time_mark = datetime.datetime.now()
@@ -114,15 +110,7 @@ class Accounts(ModelHandler):
         Api documentation for the method. From here, will be used by the documentation generator
         Always starts with API:
         API:
-            Description:
-                Clears all usage associated with the account
-
-            Parameters:
-                - item: Account
-                    Description of the item parameter
-
-            Response:
-                200: All fine, no data returned
+            Clears all usage associated with the account
         """
         item = ensure.is_instance(item, Account)
         self.ensure_has_access(item, uds.core.types.permissions.PermissionType.MANAGEMENT)

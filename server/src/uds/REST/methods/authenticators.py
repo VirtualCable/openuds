@@ -201,13 +201,7 @@ class Authenticators(ModelHandler):
     def search(self, item: 'Model') -> list[types.rest.ItemDictType]:
         """
         API:
-            Description:
-                Search for users or groups in this authenticator
-                
-            
-        
-        Args:
-            item: Authenticator instance
+            Search for users or groups in this authenticator
         """
         item = ensure.is_instance(item, Authenticator)
         self.ensure_has_access(item, types.permissions.PermissionType.READ)

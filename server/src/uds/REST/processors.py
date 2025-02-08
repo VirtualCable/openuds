@@ -40,7 +40,7 @@ import typing
 from django.http import HttpResponse
 from django.utils.functional import Promise as DjangoPromise
 
-from uds.core import consts
+from uds.core import consts, types
 
 from .utils import to_incremental_json
 
@@ -111,6 +111,10 @@ class ContentProcessor:
         """
         if obj is None or isinstance(obj, (bool, int, float, str)):
             return obj
+
+        # If we are a typed response...
+        if isinstance(obj, types.rest.TypedResponse):
+            return ContentProcessor.process_for_render(obj.as_dict())
 
         if isinstance(obj, DjangoPromise):
             return str(obj)  # This is for translations

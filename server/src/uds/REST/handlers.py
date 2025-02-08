@@ -29,6 +29,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import abc
 import typing
 import logging
 import codecs
@@ -53,7 +54,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class Handler:
+class Handler(abc.ABC):
     """
     REST requests handler base class
     """
@@ -71,7 +72,7 @@ class Handler:
 
     # For implementing help
     # A list of pairs of (path, help) for subpaths on this handler
-    help_paths: typing.ClassVar[list[types.rest.HelpPath]] = []
+    help_paths: typing.ClassVar[list[types.rest.HelpDoc]] = []
     help_text: typing.ClassVar[str] = 'No help available'
 
     _request: 'ExtendedHttpRequestWithUser'  # It's a modified HttpRequest

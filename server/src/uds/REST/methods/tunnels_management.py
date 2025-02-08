@@ -124,8 +124,7 @@ class TunnelServers(DetailHandler):
     def maintenance(self, parent: 'Model', id: str) -> typing.Any:
         """
         API:
-            Description:
-                Custom method that swaps maintenance mode state for a tunnel server
+            Custom method that swaps maintenance mode state for a tunnel server
             
         """
         parent = ensure.is_instance(parent, models.ServerGroup)

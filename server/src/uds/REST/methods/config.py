@@ -45,12 +45,7 @@ logger = logging.getLogger(__name__)
 class Config(Handler):
     """
     API:
-        Description: Get or update UDS configuration
-
-        Actions:
-            - GET: Returns the configuration values
-            - PUT: Updates the configuration values
-
+        Get or update UDS configuration
     """
 
     min_access_role = consts.UserRole.ADMIN

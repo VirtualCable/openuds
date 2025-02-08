@@ -295,14 +295,7 @@ class Users(DetailHandler):
     def services_pools(self, parent: 'Model', item: str) -> list[dict[str, typing.Any]]:
         """
         API:
-            Description:
-                Returns the service pools assigned to a user
-
-            Parameters:
-                - uuid: User
-
-            Response:
-                - 200: A list of service pools assigned to the user
+            Returns the service pools assigned to a user
         """
         parent = ensure.is_instance(parent, Authenticator)
         uuid = process_uuid(item)

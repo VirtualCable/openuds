@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.
+# Copyright (c) 2025 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -26,35 +24,3 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-"""
-Author: Adolfo Gómez, dkmaster at dkmon dot com
-"""
-import logging
-
-from uds.core import exceptions, types, consts
-from uds.core.ui import gui
-from uds.REST import Handler
-
-logger = logging.getLogger(__name__)
-
-# Enclosed methods under /auth path
-
-
-class Callback(Handler):
-    """
-    API:
-        Executes a callback from the GUI. Internal use, not intended to be called from outside.
-    """
-    path = 'gui'
-
-    min_access_role = consts.UserRole.STAFF
-
-    def get(self) -> types.ui.CallbackResultType:
-        if len(self._args) != 1:
-            raise exceptions.rest.RequestError('Invalid Request')
-
-        if self._args[0] in gui.callbacks:
-            return gui.callbacks[self._args[0]](self._params)
-
-        raise exceptions.rest.NotFound('callback {0} not found'.format(self._args[0]))

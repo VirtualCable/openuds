@@ -40,6 +40,51 @@ if typing.TYPE_CHECKING:
     from uds.REST.handlers import Handler
 
 
+# TypedResponse related.
+# Typed responses are used to define the type of the response that a method will return.
+# This allow us to "describe" it later on the documentation, and also to check that the
+# response is correct (and also to generate the response in the correct format)
+class TypedResponse(abc.ABC):
+    def as_dict(self) -> dict[str, typing.Any]:
+        # If we are a dataclass
+        if dataclasses.is_dataclass(self):
+            return dataclasses.asdict(self)
+        # If we are a dict
+        if isinstance(self, dict):
+            return self
+
+        raise Exception(f'Cannot convert {self} to dict')
+
+    @classmethod
+    def as_help(cls: type) -> dict[str, typing.Any]:
+        """
+        Returns a representation, as json, of the response type to be used on documentation
+
+        For this, we build a dict of "name": "<type>" for each field of the response and returns it
+        Note that we support nested dataclasses and dicts, but not lists
+        """
+        CLASS_REPR: dict[typing.Any, str] = {
+            str: '<string>',
+            int: '<integer>',
+            float: '<float>',
+            bool: '<boolean>',
+            dict: '<dict>',
+            list: '<list>',
+            typing.Any: '<any>',
+        }
+        
+        def _as_help(obj: typing.Any) -> typing.Union[str, dict[str, typing.Any]]:
+            if dataclasses.is_dataclass(obj):
+                return {field.name: _as_help(field.type) for field in dataclasses.fields(obj)}
+            if isinstance(obj, dict):
+                return {k: str(_as_help(v)) for k, v in typing.cast(dict[str, typing.Any], obj).items()}
+
+            return CLASS_REPR.get(obj, str(obj))
+
+        return {field.name: _as_help(field.type) for field in dataclasses.fields(cls)}
+
+
+# Type related definitions
 TypeInfoDict = dict[str, typing.Any]  # Alias for type info dict
 
 
@@ -121,40 +166,78 @@ API_RE = re.compile(r'(?ms)^\s*API:\s*$')
 
 
 @dataclasses.dataclass(eq=False)
-class HelpPath:
+class HelpDoc:
     """
     Help helper class
     """
+    @dataclasses.dataclass
+    class ArgumentInfo:
+        name: str
+        type: str
+        description: str
+        
 
     path: str
-    text: str
+    description: str
+    arguments: list[ArgumentInfo] = dataclasses.field(default_factory=list)
+    # Result is always a json ressponse, so we can describe it as a dict
+    # Note that this dict can be nested
+    returns: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
 
-    def __init__(self, path: str, help: str):
+    def __init__(
+        self,
+        path: str,
+        help: str,
+        *,
+        arguments: typing.Optional[list[ArgumentInfo]] = None,
+        returns: typing.Optional[dict[str, typing.Any]] = None,
+    ) -> None:
         self.path = path
-        self.text = HelpPath.process_help(help)
+        self.description = help
+        self.arguments = arguments or []
+        self.returns = returns or {}
 
     def __hash__(self) -> int:
         return hash(self.path)
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, HelpPath):
+        if not isinstance(other, HelpDoc):
             return False
         return self.path == other.path
 
+    def as_str(self) -> str:
+        return f'{self.path} - {self.description}'
+
     @property
     def is_empty(self) -> bool:
-        return self.path == '' and self.text == ''
+        return self.path == '' and self.description == ''
 
-    @staticmethod
-    def process_help(help: str) -> str:
+    def _process_help(self, help: str, annotations: typing.Optional[dict[str, typing.Any]] = None) -> None:
         """
         Processes the help string, removing leading and trailing spaces
         """
+        self.description = ''
+        self.arguments = []
+        self.returns = {}
+
         match = API_RE.search(help)
         if match:
-            return help[match.end() :].strip()
+            self.description = help[: match.start()].strip()
 
-        return ''
+            if annotations:
+                if 'return' in annotations and issubclass(annotations['return'], TypedResponse):
+                    self.returns = annotations['return'].as_help()
+
+    @staticmethod
+    def from_typed_response(path: str, help: str, TR: type[TypedResponse]) -> 'HelpDoc':
+        """
+        Returns a HelpDoc from a TypedResponse class
+        """
+        return HelpDoc(
+            path=path,
+            help=help,
+            returns=TR.as_help(),
+        )
 
 
 @dataclasses.dataclass(frozen=True)
@@ -164,7 +247,7 @@ class HelpNode:
         DETAIL = 'detail'
         CUSTOM = 'custom'
         PATH = 'path'
-        
+
     class Methods(enum.StrEnum):
         GET = 'GET'
         POST = 'POST'
@@ -172,7 +255,7 @@ class HelpNode:
         DELETE = 'DELETE'
         PATCH = 'PATCH'
 
-    help: HelpPath
+    help: HelpDoc
     children: list['HelpNode']  # Children nodes
     kind: Type
     methods: set[Methods] = dataclasses.field(default_factory=lambda: {HelpNode.Methods.GET})
@@ -183,7 +266,7 @@ class HelpNode:
     def __eq__(self, other: object) -> bool:
         if isinstance(other, HelpNode):
             return self.help.path == other.help.path and self.methods == other.methods
-        if not isinstance(other, HelpPath):
+        if not isinstance(other, HelpDoc):
             return False
 
         return self.help.path == other.path
@@ -256,10 +339,14 @@ class HandlerNode:
                     # Method is a Me CustomModelMethod,
                     # We access the __doc__ of the function inside the handler with method.name
                     doc = getattr(self.handler, method.name).__doc__ or ''
-                    path = f'{self.full_path()}/{method.name}' if not method.needs_parent else f'{self.full_path()}/<uuid>/{method.name}'
+                    path = (
+                        f'{self.full_path()}/{method.name}'
+                        if not method.needs_parent
+                        else f'{self.full_path()}/<uuid>/{method.name}'
+                    )
                     custom_help.add(
                         HelpNode(
-                            HelpPath(path=path, help=doc),
+                            HelpDoc(path=path, help=doc),
                             [],
                             HelpNode.Type.CUSTOM,
                         )
@@ -270,7 +357,7 @@ class HandlerNode:
                     for method_name, method_class in self.handler.detail.items():
                         custom_help.add(
                             HelpNode(
-                                HelpPath(path=self.full_path() + '/' + method_name, help=''),
+                                HelpDoc(path=self.full_path() + '/' + method_name, help=''),
                                 [],
                                 HelpNode.Type.DETAIL,
                             )
@@ -282,7 +369,7 @@ class HandlerNode:
                             doc = getattr(method_class, detail_method).__doc__ or ''
                             custom_help.add(
                                 HelpNode(
-                                    HelpPath(
+                                    HelpDoc(
                                         path=self.full_path()
                                         + '/<uuid>/'
                                         + method_name
@@ -297,9 +384,9 @@ class HandlerNode:
 
             custom_help |= {
                 HelpNode(
-                    HelpPath(
+                    HelpDoc(
                         path=self.full_path() + '/' + help_info.path,
-                        help=help_info.text,
+                        help=help_info.description,
                     ),
                     [],
                     help_node_type,
@@ -310,7 +397,7 @@ class HandlerNode:
         custom_help |= {child.help_node() for child in self.children.values()}
 
         return HelpNode(
-            help=HelpPath(path=self.full_path(), help=self.handler.__doc__ or ''),
+            help=HelpDoc(path=self.full_path(), help=self.handler.__doc__ or ''),
             children=list(custom_help),
             kind=help_node_type,
         )

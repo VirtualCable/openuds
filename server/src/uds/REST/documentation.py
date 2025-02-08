@@ -162,7 +162,7 @@ class Documentation(View):
                             help_data.append(HelpInfo(f'{path}/{func.value.method}', func.value.text, method))
                 case _:
                     for method in node.methods:
-                        help_data.append(HelpInfo(path, node.help.text, method))
+                        help_data.append(HelpInfo(path, node.help.description, method))
 
             for child in node.children:
                 _process_node(child, child.help.path)
