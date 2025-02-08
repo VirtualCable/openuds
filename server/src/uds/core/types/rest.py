@@ -72,7 +72,7 @@ class TypedResponse(abc.ABC):
             list: '<list>',
             typing.Any: '<any>',
         }
-        
+
         def _as_help(obj: typing.Any) -> typing.Union[str, dict[str, typing.Any]]:
             if dataclasses.is_dataclass(obj):
                 return {field.name: _as_help(field.type) for field in dataclasses.fields(obj)}
@@ -170,19 +170,19 @@ class HelpDoc:
     """
     Help helper class
     """
+
     @dataclasses.dataclass
     class ArgumentInfo:
         name: str
         type: str
         description: str
-        
 
     path: str
     description: str
     arguments: list[ArgumentInfo] = dataclasses.field(default_factory=list)
     # Result is always a json ressponse, so we can describe it as a dict
     # Note that this dict can be nested
-    returns: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
+    returns: typing.Any = None
 
     def __init__(
         self,
@@ -218,15 +218,19 @@ class HelpDoc:
         """
         self.description = ''
         self.arguments = []
-        self.returns = {}
+        self.returns = None
 
         match = API_RE.search(help)
         if match:
             self.description = help[: match.start()].strip()
 
             if annotations:
-                if 'return' in annotations and issubclass(annotations['return'], TypedResponse):
-                    self.returns = annotations['return'].as_help()
+                if 'return' in annotations:
+                    t = annotations['return']
+                    if isinstance(t, collections.abc.Iterable):
+                        pass
+                    # if issubclass(annotations['return'], TypedResponse):
+                    # self.returns = annotations['return'].as_help()
 
     @staticmethod
     def from_typed_response(path: str, help: str, TR: type[TypedResponse]) -> 'HelpDoc':
@@ -238,6 +242,28 @@ class HelpDoc:
             help=help,
             returns=TR.as_help(),
         )
+
+    @staticmethod
+    def from_fnc(path: str, help: str, fnc: typing.Callable[..., typing.Any]) -> 'HelpDoc|None':
+        """
+        Returns a HelpDoc from a function that returns a list of TypedResponses
+        """
+        return_type: typing.Any = fnc.__annotations__.get('return')
+
+        if isinstance(return_type, TypedResponse):
+            return HelpDoc.from_typed_response(path, help, typing.cast(type[TypedResponse], return_type))
+        elif (
+            isinstance(return_type, collections.abc.Iterable)
+            and len(typing.cast(typing.Any, return_type).__args__) == 1
+            and issubclass(typing.cast(typing.Any, return_type).__args__[0], TypedResponse)
+        ):
+            hd = HelpDoc.from_typed_response(
+                path, help, typing.cast(type[TypedResponse], typing.cast(typing.Any, return_type).__args__[0])
+            )
+            hd.returns = [hd.returns]  # We need to return a list of returns
+            return hd
+        
+        return None
 
 
 @dataclasses.dataclass(frozen=True)

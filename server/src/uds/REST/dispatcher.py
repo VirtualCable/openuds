@@ -88,21 +88,6 @@ class Dispatcher(View):
         # # Guess content type from content type header (post) or ".xxx" to method
         content_type: str = request.META.get('CONTENT_TYPE', 'application/json').split(';')[0]
 
-        # while path:
-        #     clean_path = path[0]
-        #     # Skip empty path elements, so /x/y == /x////y for example (due to some bugs detected on some clients)
-        #     if not clean_path:
-        #         path = path[1:]
-        #         continue
-
-        #     if clean_path in service.children:  # if we have a node for this path, walk down
-        #         service = service.children[clean_path]
-        #         full_path_lst.append(path[0])  # Add this path to full path
-        #         path = path[1:]  # Remove first part of path
-        #     else:
-        #         break  # If we don't have a node for this path, we are done
-
-        # full_path = '/'.join(full_path_lst)
         handler_node = Dispatcher.base_handler_node.find_path(path)
         if not handler_node:
             return http.HttpResponseNotFound('Service not found', content_type="text/plain")
