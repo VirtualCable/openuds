@@ -30,7 +30,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import dataclasses
-import collections.abc
 import logging
 
 import typing
@@ -150,7 +149,7 @@ class TestHelpDoc(TestCase):
             """
             This is a test function
             """
-            return []
+            return TestResponse()
 
         h = rest.HelpDoc.from_fnc('path', 'help', testing_fnc)
 
