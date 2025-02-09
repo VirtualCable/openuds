@@ -54,10 +54,27 @@ if typing.TYPE_CHECKING:
     from django.db.models import Model
 
 
+# Helper class for Provider offers
+class OfferItem(types.rest.ItemDictType):
+    name: str
+    type: str
+    description: str
+    icon: str
+
+
 class Providers(ModelHandler):
-    """
-    Providers REST handler
-    """
+    class ProviderItem(types.rest.ItemDictType):
+        id: str
+        name: str
+        tags: list[str]
+        services_count: int
+        user_services_count: int
+        maintenance_mode: bool
+        offers: list[OfferItem]
+        type: str
+        type_name: str
+        comments: str
+        permission: types.permissions.PermissionType
 
     model = Provider
     detail = {'services': DetailServices, 'usage': ServicesUsage}
@@ -85,12 +102,12 @@ class Providers(ModelHandler):
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
     table_row_style = types.ui.RowStyleInfo(prefix='row-maintenance-', field='maintenance_mode')
 
-    def item_as_dict(self, item: 'Model') -> types.rest.ItemDictType:
+    def item_as_dict(self, item: 'Model') -> ProviderItem:
         item = ensure.is_instance(item, Provider)
         type_ = item.get_type()
 
         # Icon can have a lot of data (1-2 Kbytes), but it's not expected to have a lot of services providers, and even so, this will work fine
-        offers = [
+        offers: list[OfferItem] = [
             {
                 'name': gettext(t.mod_name()),
                 'type': t.mod_type(),

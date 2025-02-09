@@ -53,6 +53,13 @@ class TunnelServers(DetailHandler):
     # tunnels/[id]/servers
     custom_methods = ['maintenance']
 
+    class ServerItem(types.rest.ItemDictType):
+        id: str
+        hostname: str
+        ip: str
+        mac: str
+        maintenance: bool
+
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = ensure.is_instance(parent, models.ServerGroup)
         try:
@@ -62,22 +69,23 @@ class TunnelServers(DetailHandler):
                 q = parent.servers.all().order_by('hostname')
             else:
                 q = parent.servers.filter(uuid=process_uuid(item))
-            res: list[dict[str, typing.Any]] = []
+            res: list[TunnelServers.ServerItem] = []
             i = None
             for i in q:
-                val = {
-                    'id': i.uuid,
-                    'hostname': i.hostname,
-                    'ip': i.ip,
-                    'mac': i.mac if not multi or i.mac != consts.MAC_UNKNOWN else '',
-                    'maintenance': i.maintenance_mode,
-                }
-                res.append(val)
+                res.append(
+                    {
+                        'id': i.uuid,
+                        'hostname': i.hostname,
+                        'ip': i.ip,
+                        'mac': i.mac if not multi or i.mac != consts.MAC_UNKNOWN else '',
+                        'maintenance': i.maintenance_mode,
+                    }
+                )
             if multi:
-                return res
+                return typing.cast(types.rest.ManyItemsDictType, res)
             if not i:
                 raise Exception('Item not found')
-            return res[0]
+            return typing.cast(types.rest.ManyItemsDictType, res[0])
         except Exception as e:
             logger.exception('REST groups')
             raise self.invalid_item_response() from e
@@ -125,7 +133,7 @@ class TunnelServers(DetailHandler):
         """
         API:
             Custom method that swaps maintenance mode state for a tunnel server
-            
+
         """
         parent = ensure.is_instance(parent, models.ServerGroup)
         item = models.Server.objects.get(uuid=process_uuid(id))
@@ -137,6 +145,17 @@ class TunnelServers(DetailHandler):
 
 # Enclosed methods under /auth path
 class Tunnels(ModelHandler):
+    class TunnelItem(types.rest.ItemDictType):
+        id: str
+        name: str
+        comments: str
+        host: str
+        port: int
+        tags: list[str]
+        transports_count: int
+        servers_count: int
+        permission: uds.core.types.permissions.PermissionType
+
     path = 'tunnels'
     name = 'tunnels'
     model = models.ServerGroup
@@ -187,7 +206,7 @@ class Tunnels(ModelHandler):
             ],
         )
 
-    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> TunnelItem:
         item = ensure.is_instance(item, models.ServerGroup)
         return {
             'id': item.uuid,

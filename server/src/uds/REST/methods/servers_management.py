@@ -29,6 +29,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import datetime
 import logging
 import typing
 
@@ -50,6 +51,19 @@ logger = logging.getLogger(__name__)
 
 # REST API for Server Tokens management (for admin interface)
 class ServersTokens(ModelHandler):
+    class TokenItem(types.rest.ItemDictType):
+        id: str
+        name: str
+        stamp: datetime.datetime
+        username: str
+        ip: str
+        hostname: str
+        listen_port: int
+        mac: str
+        token: str
+        type: str
+        os: str
+
     # servers/groups/[id]/servers
     model = models.Server
     model_exclude = {
@@ -71,7 +85,7 @@ class ServersTokens(ModelHandler):
         {'stamp': {'title': _('Date'), 'type': 'datetime'}},
     ]
 
-    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> TokenItem:
         item = typing.cast('models.Server', item)  # We will receive for sure
         return {
             'id': item.uuid,
@@ -108,6 +122,14 @@ class ServersTokens(ModelHandler):
 
 # REST API For servers (except tunnel servers nor actors)
 class ServersServers(DetailHandler):
+    class ServerItem(types.rest.ItemDictType):
+        id: str
+        hostname: str
+        ip: str
+        listen_port: int
+        mac: str
+        maintenance_mode: bool
+
     custom_methods = ['maintenance', 'importcsv']
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
@@ -117,23 +139,24 @@ class ServersServers(DetailHandler):
                 q = parent.servers.all()
             else:
                 q = parent.servers.filter(uuid=process_uuid(item))
-            res: types.rest.ItemListType = []
+            res: list[ServersServers.ServerItem] = []
             i = None
             for i in q:
-                val = {
-                    'id': i.uuid,
-                    'hostname': i.hostname,
-                    'ip': i.ip,
-                    'listen_port': i.listen_port,
-                    'mac': i.mac if i.mac != consts.MAC_UNKNOWN else '',
-                    'maintenance_mode': i.maintenance_mode,
-                }
-                res.append(val)
+                res.append(
+                    {
+                        'id': i.uuid,
+                        'hostname': i.hostname,
+                        'ip': i.ip,
+                        'listen_port': i.listen_port,
+                        'mac': i.mac if i.mac != consts.MAC_UNKNOWN else '',
+                        'maintenance_mode': i.maintenance_mode,
+                    }
+                )
             if item is None:
-                return res
+                return typing.cast(types.rest.ManyItemsDictType, res)
             if not i:
                 raise Exception('Item not found')
-            return res[0]
+            return typing.cast(types.rest.ManyItemsDictType, res[0])
         except Exception as e:
             logger.exception('REST servers')
             raise self.invalid_item_response() from e
@@ -403,6 +426,17 @@ class ServersServers(DetailHandler):
 
 
 class ServersGroups(ModelHandler):
+    class GroupItem(types.rest.ItemDictType):
+        id: str
+        name: str
+        comments: str
+        type: str
+        subtype: str
+        type_name: str
+        tags: list[str]
+        servers_count: int
+        permission: types.permissions.PermissionType
+
     custom_methods = [
         types.rest.ModelCustomMethod('stats', True),
     ]
@@ -478,7 +512,7 @@ class ServersGroups(ModelHandler):
         fields['subtype'] = subtype
         return super().pre_save(fields)
 
-    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> GroupItem:
         item = ensure.is_instance(item, models.ServerGroup)
         return {
             'id': item.uuid,

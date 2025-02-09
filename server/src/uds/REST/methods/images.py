@@ -52,6 +52,16 @@ class Images(ModelHandler):
     """
     Handles the gallery REST interface
     """
+    class ImageItem(types.rest.ItemDictType):
+        id: str
+        name: str
+        data: str
+        
+    class ImageItemOverview(types.rest.ItemDictType):
+        id: str
+        name: str
+        size: str
+        thumb: str
 
     path = 'gallery'
     model = Image
@@ -96,7 +106,7 @@ class Images(ModelHandler):
             },
         )
 
-    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> ImageItem:
         item = ensure.is_instance(item, Image)
         return {
             'id': item.uuid,
@@ -104,7 +114,7 @@ class Images(ModelHandler):
             'data': item.data64,
         }
 
-    def item_as_dict_overview(self, item: 'Model') -> dict[str, typing.Any]:
+    def item_as_dict_overview(self, item: 'Model') -> ImageItemOverview:
         item = ensure.is_instance(item, Image)
         return {
             'id': item.uuid,

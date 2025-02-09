@@ -52,6 +52,18 @@ logger = logging.getLogger(__name__)
 
 
 class MFA(ModelHandler):
+    class MFAItem(types.rest.ItemDictType):
+        id: str
+        name: str
+        remember_device: int
+        validity: int
+        tags: list[str]
+        comments: str
+        type: str
+        type_name: str
+        permission: int
+
+    
     model = models.MFA
     save_fields = ['name', 'comments', 'tags', 'remember_device', 'validity']
 
@@ -103,8 +115,8 @@ class MFA(ModelHandler):
             )
 
             return local_gui
-
-    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
+        
+    def item_as_dict(self, item: 'Model') -> MFAItem:
         item = ensure.is_instance(item, models.MFA)
         type_ = item.get_type()
         return {

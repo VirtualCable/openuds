@@ -30,10 +30,12 @@
 """
 @Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import datetime
 import logging
 import typing
 
 from django.utils.translation import gettext_lazy as _
+from uds.core import types
 from uds.models import Calendar
 from uds.core.util import permissions, ensure
 
@@ -53,6 +55,16 @@ class Calendars(ModelHandler):
     """
     Processes REST requests about calendars
     """
+    class CalendarItem(types.rest.ItemDictType):
+        id: str
+        name: str
+        tags: list[str]
+        comments: str
+        modified: datetime.datetime
+        number_rules: int
+        number_access: int
+        number_actions: int
+        permission: types.permissions.PermissionType
 
     model = Calendar
     detail = {'rules': CalendarRules}
@@ -77,7 +89,7 @@ class Calendars(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> CalendarItem:
         item = ensure.is_instance(item, Calendar)
         return {
             'id': item.uuid,

@@ -146,15 +146,15 @@ class System(Handler):
     min_access_role = consts.UserRole.STAFF
 
     help_paths = [
-        types.rest.HelpDoc('', ''),
-        types.rest.HelpDoc('stats/assigned', ''),
-        types.rest.HelpDoc('stats/inuse', ''),
-        types.rest.HelpDoc('stats/cached', ''),
-        types.rest.HelpDoc('stats/complete', ''),
-        types.rest.HelpDoc('stats/assigned/<uuuid>', 'Get service pool assigned stats'),
-        types.rest.HelpDoc('stats/inuse/<uuid>', 'Get service pool in use stats'),
-        types.rest.HelpDoc('stats/cached/<uuid>', 'Get service pool cached stats'),
-        types.rest.HelpDoc('stats/complete/<uuid>', 'Get service pool complete stats'),
+        types.rest.doc.HelpDoc('', ''),
+        types.rest.doc.HelpDoc('stats/assigned', ''),
+        types.rest.doc.HelpDoc('stats/inuse', ''),
+        types.rest.doc.HelpDoc('stats/cached', ''),
+        types.rest.doc.HelpDoc('stats/complete', ''),
+        types.rest.doc.HelpDoc('stats/assigned/<uuuid>', 'Get service pool assigned stats'),
+        types.rest.doc.HelpDoc('stats/inuse/<uuid>', 'Get service pool in use stats'),
+        types.rest.doc.HelpDoc('stats/cached/<uuid>', 'Get service pool cached stats'),
+        types.rest.doc.HelpDoc('stats/complete/<uuid>', 'Get service pool complete stats'),
     ]
     help_text = 'Provides system information. Must be admin to access this'
 

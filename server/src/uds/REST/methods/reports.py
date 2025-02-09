@@ -36,7 +36,7 @@ import typing
 from django.utils.translation import gettext_lazy as _
 
 from uds.core import types, consts
-from uds.core.util.rest.tools import match
+from uds.core.util.rest.tools import match_args
 from uds.REST import model
 from uds import reports
 
@@ -97,7 +97,7 @@ class Reports(model.BaseModelHandler):
         def report_gui(report_id: str) -> typing.Any:
             return self.get_gui(report_id)
 
-        return match(
+        return match_args(
             self._args,
             error,
             ((), lambda: list(self.get_items())),

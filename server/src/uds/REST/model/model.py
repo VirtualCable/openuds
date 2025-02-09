@@ -118,7 +118,7 @@ class ModelHandler(BaseModelHandler):
         """
         return {}
 
-    def item_as_dict_overview(self, item: models.Model) -> dict[str, typing.Any]:
+    def item_as_dict_overview(self, item: models.Model) -> types.rest.ItemDictType:
         """
         Invoked when request is an "overview"
         default behavior is return item_as_dict

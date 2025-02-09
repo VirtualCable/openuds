@@ -54,9 +54,20 @@ from uds.core.ui import gui
 
 
 class ServicesPoolGroups(ModelHandler):
-    """
-    Handles the gallery REST interface
-    """
+    class ServicePoolGroupItem(types.rest.ItemDictType):
+        id: str
+        name: str
+        comments: str
+        priority: int
+        image_id: str|None
+        
+    class ServicePoolGroupItemOverview(types.rest.ItemDictType):
+        id: str
+        name: str
+        priority: int
+        comments: str
+        thumb: str
+
 
     path = 'gallery'
     model = ServicePoolGroup
@@ -111,20 +122,20 @@ class ServicesPoolGroups(ModelHandler):
             self.add_field(local_gui, field)
 
         return local_gui
-
-    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
+    
+    def item_as_dict(self, item: 'Model') -> ServicePoolGroupItem:
         item = ensure.is_instance(item, ServicePoolGroup)
         return {
             'id': item.uuid,
-            'priority': item.priority,
             'name': item.name,
             'comments': item.comments,
+            'priority': item.priority,
             'image_id': item.image.uuid if item.image else None,
         }
 
     def item_as_dict_overview(
         self, item: 'Model'
-    ) -> dict[str, typing.Any]:
+    ) -> ServicePoolGroupItemOverview:
         item = ensure.is_instance(item, ServicePoolGroup)
         return {
             'id': item.uuid,

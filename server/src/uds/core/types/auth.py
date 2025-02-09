@@ -119,8 +119,12 @@ class LoginResult:
 
 @dataclasses.dataclass
 class SearchResultItem:
+    class ItemDict(typing.TypedDict):
+        id: str
+        name: str
+    
     id: str
     name: str
 
-    def as_dict(self) -> typing.Dict[str, str]:
-        return dataclasses.asdict(self)
+    def as_dict(self) -> 'SearchResultItem.ItemDict':
+        return typing.cast(SearchResultItem.ItemDict, dataclasses.asdict(self))

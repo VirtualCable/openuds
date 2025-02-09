@@ -72,7 +72,7 @@ class Handler(abc.ABC):
 
     # For implementing help
     # A list of pairs of (path, help) for subpaths on this handler
-    help_paths: typing.ClassVar[list[types.rest.HelpDoc]] = []
+    help_paths: typing.ClassVar[list[types.rest.doc.HelpDoc]] = []
     help_text: typing.ClassVar[str] = 'No help available'
 
     _request: 'ExtendedHttpRequestWithUser'  # It's a modified HttpRequest

@@ -43,7 +43,7 @@ logger = logging.getLogger(__name__)
 
 class TestHelpDoc(TestCase):
     def test_helpdoc_basic(self) -> None:
-        h = rest.HelpDoc('/path', 'help_text')
+        h = rest.doc.HelpDoc('/path', 'help_text')
 
         self.assertEqual(h.path, '/path')
         self.assertEqual(h.description, 'help_text')
@@ -51,10 +51,10 @@ class TestHelpDoc(TestCase):
 
     def test_helpdoc_with_args(self) -> None:
         arguments = [
-            rest.HelpDoc.ArgumentInfo('arg1', 'arg1_type', 'arg1_description'),
-            rest.HelpDoc.ArgumentInfo('arg2', 'arg2_type', 'arg2_description'),
+            rest.doc.HelpDoc.ArgumentInfo('arg1', 'arg1_type', 'arg1_description'),
+            rest.doc.HelpDoc.ArgumentInfo('arg2', 'arg2_type', 'arg2_description'),
         ]
-        h = rest.HelpDoc(
+        h = rest.doc.HelpDoc(
             '/path',
             'help_text',
             arguments=arguments,
@@ -66,13 +66,13 @@ class TestHelpDoc(TestCase):
 
     def test_helpdoc_with_args_and_return(self) -> None:
         arguments = [
-            rest.HelpDoc.ArgumentInfo('arg1', 'arg1_type', 'arg1_description'),
-            rest.HelpDoc.ArgumentInfo('arg2', 'arg2_type', 'arg2_description'),
+            rest.doc.HelpDoc.ArgumentInfo('arg1', 'arg1_type', 'arg1_description'),
+            rest.doc.HelpDoc.ArgumentInfo('arg2', 'arg2_type', 'arg2_description'),
         ]
         returns = {
             'name': 'return_name',
         }
-        h = rest.HelpDoc(
+        h = rest.doc.HelpDoc(
             '/path',
             'help_text',
             arguments=arguments,
@@ -85,13 +85,12 @@ class TestHelpDoc(TestCase):
         self.assertEqual(h.returns, returns)
 
     def test_help_doc_from_typed_response(self) -> None:
-        @dataclasses.dataclass
-        class TestResponse(rest.TypedResponse):
-            name: str = 'test_name'
-            age: int = 0
-            money: float = 0.0
+        class TestResponse(rest.doc.TypedResponse):
+            name: str
+            age: int
+            money: float
 
-        h = rest.HelpDoc.from_typed_response('path', 'help', TestResponse)
+        h = rest.doc.HelpDoc.from_typed_response('path', 'help', TestResponse)
 
         self.assertEqual(h.path, 'path')
         self.assertEqual(h.description, 'help')
@@ -106,20 +105,18 @@ class TestHelpDoc(TestCase):
         )
 
     def test_help_doc_from_typed_response_nested_dataclass(self) -> None:
-        @dataclasses.dataclass
         class TestResponse:
             name: str = 'test_name'
             age: int = 0
             money: float = 0.0
 
-        @dataclasses.dataclass
-        class TestResponse2(rest.TypedResponse):
+        class TestResponse2(rest.doc.TypedResponse):
             name: str
             age: int
             money: float
             nested: TestResponse
 
-        h = rest.HelpDoc.from_typed_response('path', 'help', TestResponse2)
+        h = rest.doc.HelpDoc.from_typed_response('path', 'help', TestResponse2)
 
         self.assertEqual(h.path, 'path')
         self.assertEqual(h.description, 'help')
@@ -139,19 +136,18 @@ class TestHelpDoc(TestCase):
         )
 
     def test_help_doc_from_fnc(self) -> None:
-        @dataclasses.dataclass
-        class TestResponse(rest.TypedResponse):
-            name: str = 'test_name'
-            age: int = 0
-            money: float = 0.0
+        class TestResponse(rest.doc.TypedResponse):
+            name: str
+            age: int
+            money: float
 
         def testing_fnc() -> TestResponse:
             """
             This is a test function
             """
-            return TestResponse()
+            return TestResponse(name='test_name', age=0, money=0.0)
 
-        h = rest.HelpDoc.from_fnc('path', 'help', testing_fnc)
+        h = rest.doc.HelpDoc.from_fnc('path', 'help', testing_fnc)
 
         if h is None:
             self.fail('HelpDoc is None')
@@ -175,17 +171,17 @@ class TestHelpDoc(TestCase):
             """
             return {}
 
-        h = rest.HelpDoc.from_fnc('path', 'help', testing_fnc)
+        h = rest.doc.HelpDoc.from_fnc('path', 'help', testing_fnc)
 
         self.assertIsNone(h)
         
 
     def test_help_doc_from_fnc_list(self) -> None:
         @dataclasses.dataclass
-        class TestResponse(rest.TypedResponse):
-            name: str = 'test_name'
-            age: int = 0
-            money: float = 0.0
+        class TestResponse(rest.doc.TypedResponse):
+            name: str
+            age: int
+            money: float
 
         def testing_fnc() -> list[TestResponse]:
             """
@@ -193,7 +189,7 @@ class TestHelpDoc(TestCase):
             """
             return []
 
-        h = rest.HelpDoc.from_fnc('path', 'help', testing_fnc)
+        h = rest.doc.HelpDoc.from_fnc('path', 'help', testing_fnc)
 
         if h is None:
             self.fail('HelpDoc is None')

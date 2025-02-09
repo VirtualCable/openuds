@@ -329,18 +329,23 @@ class BaseModelHandler(Handler):
 
         return args
 
-    def fill_instance_fields(self, item: 'models.Model', res: dict[str, typing.Any]) -> dict[str, typing.Any]:
+    def fill_instance_fields(self, item: 'models.Model', dct: types.rest.ItemDictType) -> None:
         """
         For Managed Objects (db element that contains a serialized object), fills a dictionary with the "field" parameters values.
         For non managed objects, it does nothing
-        :param item: Item to extract fields
-        :param res: Dictionary to "extend" with instance key-values pairs
+        
+        Args:
+            item: Item to fill fields
+            dct: Dictionary to fill with fields
+            
         """
+        
+        # Cast to allow override typing
+        res = typing.cast(dict[str, typing.Any], dct)
         if isinstance(item, ManagedObjectModel):
             i = item.get_instance()
             i.init_gui()  # Defaults & stuff
             res.update(i.get_fields_as_dict())
-        return res
 
     # Exceptions
     def invalid_request_response(self, message: typing.Optional[str] = None) -> exceptions.rest.HandlerError:

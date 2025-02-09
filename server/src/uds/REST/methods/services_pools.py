@@ -175,7 +175,49 @@ class ServicesPools(ModelHandler):
         # return super().get_items(overview=kwargs.get('overview', True), prefetch=['service', 'service__provider', 'servicesPoolGroup', 'image', 'tags'])
         # return super(ServicesPools, self).get_items(*args, **kwargs)
 
-    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
+    class SummaryItem(types.rest.ItemDictType):
+        id: str
+        name: str
+        short_name: str
+        tags: typing.List[str]
+        parent: str
+        parent_type: str
+        comments: str
+        state: str
+        thumb: str
+        account: str
+        account_id: str | None
+        service_id: str
+        provider_id: str
+        image_id: str | None
+        initial_srvs: int
+        cache_l1_srvs: int
+        cache_l2_srvs: int
+        max_srvs: int
+        show_transports: bool
+        visible: bool
+        allow_users_remove: bool
+        allow_users_reset: bool
+        ignores_unused: bool
+        fallbackAccess: str
+        meta_member: list[dict[str, str]]
+        calendar_message: str
+        custom_message: str
+        display_custom_message: bool
+        osmanager_id: str | None
+
+    class FullItem(SummaryItem):
+        user_services_count: int
+        user_services_in_preparation: int
+        restrained: bool
+        permission: int
+        info: dict[str, typing.Any]
+        pool_group_id: str | None
+        pool_group_name: str
+        pool_group_thumb: str
+        usage: str
+
+    def item_as_dict(self, item: 'Model') -> SummaryItem | FullItem:
         item = ensure.is_instance(item, ServicePool)
         summary = 'summarize' in self._params
         # if item does not have an associated service, hide it (the case, for example, for a removed service)
@@ -196,7 +238,7 @@ class ServicesPools(ModelHandler):
         # This needs a lot of queries, and really does not apport anything important to the report
         # elif UserServiceManager.manager().canInitiateServiceFromDeployedService(item) is False:
         #     state = State.SLOWED_DOWN
-        val: dict[str, typing.Any] = {
+        val: ServicesPools.SummaryItem = {
             'id': item.uuid,
             'name': item.name,
             'short_name': item.short_name,
@@ -227,45 +269,46 @@ class ServicesPools(ModelHandler):
             'calendar_message': item.calendar_message,
             'custom_message': item.custom_message,
             'display_custom_message': item.display_custom_message,
+            'osmanager_id': item.osmanager.uuid if item.osmanager else None,
         }
+        if summary:
+            return val
+        
+        # Recast to complete data
+        val = typing.cast(ServicesPools.FullItem, val)
 
-        # Extended info
-        if not summary:
-            if hasattr(item, 'valid_count'):
-                valid_count = getattr(item, 'valid_count')
-                preparing_count = getattr(item, 'preparing_count')
-                restrained = getattr(item, 'error_count') >= GlobalConfig.RESTRAINT_COUNT.as_int()
-                usage_count = getattr(item, 'usage_count')
-            else:
-                valid_count = item.userServices.exclude(state__in=State.INFO_STATES).count()
-                preparing_count = item.userServices.filter(state=State.PREPARING).count()
-                restrained = item.is_restrained()
-                usage_count = -1
+        if hasattr(item, 'valid_count'):
+            valid_count = getattr(item, 'valid_count')
+            preparing_count = getattr(item, 'preparing_count')
+            restrained = getattr(item, 'error_count') >= GlobalConfig.RESTRAINT_COUNT.as_int()
+            usage_count = getattr(item, 'usage_count')
+        else:
+            valid_count = item.userServices.exclude(state__in=State.INFO_STATES).count()
+            preparing_count = item.userServices.filter(state=State.PREPARING).count()
+            restrained = item.is_restrained()
+            usage_count = -1
 
-            poolgroup_id = None
-            poolgroup_name = _('Default')
-            poolgroup_thumb = DEFAULT_THUMB_BASE64
-            if item.servicesPoolGroup is not None:
-                poolgroup_id = item.servicesPoolGroup.uuid
-                poolgroup_name = item.servicesPoolGroup.name
-                if item.servicesPoolGroup.image is not None:
-                    poolgroup_thumb = item.servicesPoolGroup.image.thumb64
+        poolgroup_id = None
+        poolgroup_name = _('Default')
+        poolgroup_thumb = DEFAULT_THUMB_BASE64
+        if item.servicesPoolGroup is not None:
+            poolgroup_id = item.servicesPoolGroup.uuid
+            poolgroup_name = item.servicesPoolGroup.name
+            if item.servicesPoolGroup.image is not None:
+                poolgroup_thumb = item.servicesPoolGroup.image.thumb64
 
-            val['state'] = state
-            val['thumb'] = item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64
-            val['user_services_count'] = valid_count
-            val['user_services_in_preparation'] = preparing_count
-            val['tags'] = [tag.tag for tag in item.tags.all()]
-            val['restrained'] = restrained
-            val['permission'] = permissions.effective_permissions(self._user, item)
-            val['info'] = Services.service_info(item.service)
-            val['pool_group_id'] = poolgroup_id
-            val['pool_group_name'] = poolgroup_name
-            val['pool_group_thumb'] = poolgroup_thumb
-            val['usage'] = str(item.usage(usage_count).percent) + '%'
-
-        if item.osmanager:
-            val['osmanager_id'] = item.osmanager.uuid
+        val['state'] = state
+        val['thumb'] = item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64
+        val['user_services_count'] = valid_count
+        val['user_services_in_preparation'] = preparing_count
+        val['tags'] = [tag.tag for tag in item.tags.all()]
+        val['restrained'] = restrained
+        val['permission'] = permissions.effective_permissions(self._user, item)
+        val['info'] = Services.service_info(item.service)
+        val['pool_group_id'] = poolgroup_id
+        val['pool_group_name'] = poolgroup_name
+        val['pool_group_thumb'] = poolgroup_thumb
+        val['usage'] = str(item.usage(usage_count).percent) + '%'
 
         return val
 

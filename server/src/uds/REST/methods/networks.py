@@ -54,6 +54,15 @@ class Networks(ModelHandler):
     Processes REST requests about networks
     Implements specific handling for network related requests using GUI
     """
+    class NetworkItem(types.rest.ItemDictType):
+        id: str
+        name: str
+        tags: list[str]
+        net_string: str
+        transports_count: int
+        authenticators_count: int
+        permission: types.permissions.PermissionType
+
 
     model = Network
     save_fields = ['name', 'net_string', 'tags']
@@ -100,8 +109,8 @@ class Networks(ModelHandler):
                 'order': 100,  # At end
             },
         )
-
-    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
+        
+    def item_as_dict(self, item: 'Model') -> NetworkItem:
         item = ensure.is_instance(item, Network)
         return {
             'id': item.uuid,

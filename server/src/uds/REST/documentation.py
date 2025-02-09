@@ -55,7 +55,7 @@ class HelpMethodInfo:
 
     method: str
     text: str
-    methods: list[types.rest.HelpNode.Methods]
+    methods: list[types.rest.doc.HelpNode.Methods]
 
     def __str__(self) -> str:
         return f'{self.method}: {self.text}'
@@ -69,45 +69,45 @@ class HelpMethod(enum.Enum):
         '<uuid>',
         'Retrieves an item by its UUID',
         [
-            types.rest.HelpNode.Methods.GET,
-            types.rest.HelpNode.Methods.PUT,
-            types.rest.HelpNode.Methods.DELETE,
+            types.rest.doc.HelpNode.Methods.GET,
+            types.rest.doc.HelpNode.Methods.PUT,
+            types.rest.doc.HelpNode.Methods.DELETE,
         ],
     )
     LOG = HelpMethodInfo(
         f'<uuid>/{consts.rest.LOG}',
         'Retrieves the logs of an element by its UUID',
         [
-            types.rest.HelpNode.Methods.GET,
+            types.rest.doc.HelpNode.Methods.GET,
         ],
     )
     OVERVIEW = HelpMethodInfo(
-        consts.rest.OVERVIEW, 'General Overview of all items (a list', [types.rest.HelpNode.Methods.GET]
+        consts.rest.OVERVIEW, 'General Overview of all items (a list', [types.rest.doc.HelpNode.Methods.GET]
     )
     TABLEINFO = HelpMethodInfo(
         consts.rest.TABLEINFO,
         'Table visualization information (types, etc..)',
         [
-            types.rest.HelpNode.Methods.GET,
+            types.rest.doc.HelpNode.Methods.GET,
         ],
     )
     TYPES = HelpMethodInfo(
         consts.rest.TYPES,
         'Retrieves a list of types available',
         [
-            types.rest.HelpNode.Methods.GET,
+            types.rest.doc.HelpNode.Methods.GET,
         ],
     )
     TYPES_TYPE = HelpMethodInfo(
         f'{consts.rest.TYPES}/<type>',
         'Retrieves a type information',
         [
-            types.rest.HelpNode.Methods.GET,
+            types.rest.doc.HelpNode.Methods.GET,
         ],
     )
-    GUI = HelpMethodInfo(consts.rest.GUI, 'GUI information', [types.rest.HelpNode.Methods.GET])
+    GUI = HelpMethodInfo(consts.rest.GUI, 'GUI information', [types.rest.doc.HelpNode.Methods.GET])
     GUI_TYPES = HelpMethodInfo(
-        f'{consts.rest.GUI}/<type>', 'GUI Types information', [types.rest.HelpNode.Methods.GET]
+        f'{consts.rest.GUI}/<type>', 'GUI Types information', [types.rest.doc.HelpNode.Methods.GET]
     )
 
 
@@ -115,7 +115,7 @@ class HelpMethod(enum.Enum):
 class HelpInfo:
     path: str
     text: str
-    method: types.rest.HelpNode.Methods = types.rest.HelpNode.Methods.GET
+    method: types.rest.doc.HelpNode.Methods = types.rest.doc.HelpNode.Methods.GET
 
     @property
     def is_empty(self) -> bool:
@@ -143,11 +143,11 @@ class Documentation(View):
 
         help_data: list[HelpInfo] = []
 
-        def _process_node(node: 'types.rest.HelpNode', path: str) -> None:
+        def _process_node(node: 'types.rest.doc.HelpNode', path: str) -> None:
             match node.kind:
-                case types.rest.HelpNode.Type.PATH:
+                case types.rest.doc.HelpNode.Type.PATH:
                     pass
-                case types.rest.HelpNode.Type.MODEL | types.rest.HelpNode.Type.DETAIL:
+                case types.rest.doc.HelpNode.Type.MODEL | types.rest.doc.HelpNode.Type.DETAIL:
                     for func in [
                         HelpMethod.OVERVIEW,
                         HelpMethod.GUI,

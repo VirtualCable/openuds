@@ -60,6 +60,26 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /auth path
 class Authenticators(ModelHandler):
+    class PartialAuthItem(types.rest.ItemDictType):
+        numeric_id: int
+        id: str
+        name: str
+        priority: int
+
+    class FullAuthItem(PartialAuthItem):
+        tags: list[str]
+        comments: str
+        net_filtering: str
+        networks: list[dict[str, str]]
+        state: str
+        mfa_id: str
+        small_name: str
+        users_count: int
+        type: str
+        type_name: str
+        type_info: types.rest.TypeInfoDict
+        permission: int
+
     model = Authenticator
     # Custom get method "search" that requires authenticator id
     custom_methods = [types.rest.ModelCustomMethod('search', True)]
@@ -155,35 +175,37 @@ class Authenticators(ModelHandler):
             logger.info('Type not found: %s', e)
             raise exceptions.rest.NotFound('type not found') from e
 
-    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> PartialAuthItem | FullAuthItem:
         summary = 'summarize' in self._params
 
         item = ensure.is_instance(item, Authenticator)
-        v: dict[str, typing.Any] = {
+
+        if summary:
+            return {
+                'numeric_id': item.id,
+                'id': item.uuid,
+                'name': item.name,
+                'priority': item.priority,
+            }
+        type_ = item.get_type()
+        return {
             'numeric_id': item.id,
             'id': item.uuid,
             'name': item.name,
             'priority': item.priority,
+            'tags': [tag.tag for tag in typing.cast(collections.abc.Iterable[Tag], item.tags.all())],
+            'comments': item.comments,
+            'net_filtering': item.net_filtering,
+            'networks': [{'id': n.uuid} for n in item.networks.all()],
+            'state': item.state,
+            'mfa_id': item.mfa.uuid if item.mfa else '',
+            'small_name': item.small_name,
+            'users_count': item.users.count(),
+            'type': type_.mod_type(),
+            'type_name': type_.mod_name(),
+            'type_info': self.type_as_dict(type_),
+            'permission': permissions.effective_permissions(self._user, item),
         }
-        if not summary:
-            type_ = item.get_type()
-            v.update(
-                {
-                    'tags': [tag.tag for tag in typing.cast(collections.abc.Iterable[Tag], item.tags.all())],
-                    'comments': item.comments,
-                    'net_filtering': item.net_filtering,
-                    'networks': [{'id': n.uuid} for n in item.networks.all()],
-                    'state': item.state,
-                    'mfa_id': item.mfa.uuid if item.mfa else '',
-                    'small_name': item.small_name,
-                    'users_count': item.users.count(),
-                    'type': type_.mod_type(),
-                    'type_name': type_.mod_name(),
-                    'type_info': self.type_as_dict(type_),
-                    'permission': permissions.effective_permissions(self._user, item),
-                }
-            )
-        return v
 
     def post_save(self, item: 'Model') -> None:
         item = ensure.is_instance(item, Authenticator)
@@ -198,7 +220,7 @@ class Authenticators(ModelHandler):
         item.networks.set(Network.objects.filter(uuid__in=networks))
 
     # Custom "search" method
-    def search(self, item: 'Model') -> list[types.rest.ItemDictType]:
+    def search(self, item: 'Model') -> list[types.auth.SearchResultItem.ItemDict]:
         """
         API:
             Search for users or groups in this authenticator
@@ -240,7 +262,9 @@ class Authenticators(ModelHandler):
             return [i.as_dict() for i in itertools.islice(iterable, limit)]
         except Exception as e:
             logger.exception('Too many results: %s', e)
-            return [{'id': _('Too many results...'), 'name': _('Refine your query')}]
+            return [
+                types.auth.SearchResultItem(id=_('Too many results...'), name=_('Refine your query')).as_dict()
+            ]
             # self.invalidResponseException('{}'.format(e))
 
     def test(self, type_: str) -> typing.Any:

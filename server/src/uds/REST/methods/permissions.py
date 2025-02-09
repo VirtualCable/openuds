@@ -38,7 +38,7 @@ import uds.core.types.permissions
 from uds import models
 from uds.core import consts, exceptions
 from uds.core.util import permissions
-from uds.core.util.rest.tools import match
+from uds.core.util.rest.tools import match_args
 from uds.REST import Handler
 
 # Not imported at runtime, just for type checking
@@ -168,7 +168,7 @@ class Permissions(Handler):
             raise exceptions.rest.RequestError('Invalid request')
 
         # match is a helper function that will match the args with the given patterns
-        return match(self._args,
+        return match_args(self._args,
             no_match,
             (('<cls>', '<obj>', 'users', 'add', '<user>'), add_user_permission),
             (('<cls>', '<obj>', 'groups', 'add', '<group>'), add_group_permission),

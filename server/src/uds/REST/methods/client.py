@@ -42,7 +42,7 @@ from uds.core.exceptions.services import ServiceNotReadyError
 from uds.core.types.log import LogLevel, LogSource
 from uds.core.util.config import GlobalConfig
 from uds.core.util.model import sql_stamp_seconds
-from uds.core.util.rest.tools import match
+from uds.core.util.rest.tools import match_args
 from uds.models import TicketStore, User
 from uds.REST import Handler
 
@@ -282,7 +282,7 @@ class Client(Handler):
                 }
             )
 
-        return match(
+        return match_args(
             self._args,
             _error,  # In case of error, raises RequestError
             ((), _noargs),  # No args, return version

@@ -51,6 +51,17 @@ logger = logging.getLogger(__name__)
 
 
 class OsManagers(ModelHandler):
+    class OsManagerItem(types.rest.ItemDictType):
+        id: str
+        name: str
+        tags: list[str]
+        deployed_count: int
+        type: str
+        type_name: str
+        servicesTypes: list[str]
+        comments: str
+        permission: types.permissions.PermissionType
+
     model = OSManager
     save_fields = ['name', 'comments', 'tags']
 
@@ -63,7 +74,7 @@ class OsManagers(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def os_manager_as_dict(self, osm: OSManager) -> dict[str, typing.Any]:
+    def os_manager_as_dict(self, osm: OSManager) -> OsManagerItem:
         type_ = osm.get_type()
         return {
             'id': osm.uuid,
@@ -79,7 +90,7 @@ class OsManagers(ModelHandler):
             'permission': permissions.effective_permissions(self._user, osm),
         }
 
-    def item_as_dict(self, item: 'Model') -> types.rest.ItemDictType:
+    def item_as_dict(self, item: 'Model') -> OsManagerItem:
         item = ensure.is_instance(item, OSManager)
         return self.os_manager_as_dict(item)
 

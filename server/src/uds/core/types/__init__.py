@@ -30,6 +30,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # pyright: reportUnusedImport=false
+from . import rest
 from . import (
     auth,
     calendar,
@@ -41,7 +42,6 @@ from . import (
     permissions,
     pools,
     requests,
-    rest,
     servers,
     services,
     states,

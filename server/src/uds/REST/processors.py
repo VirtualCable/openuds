@@ -40,7 +40,7 @@ import typing
 from django.http import HttpResponse
 from django.utils.functional import Promise as DjangoPromise
 
-from uds.core import consts, types
+from uds.core import consts
 
 from .utils import to_incremental_json
 
@@ -109,38 +109,35 @@ class ContentProcessor:
         """
         Helper for renderers. Alters some types so they can be serialized correctly (as we want them to be)
         """
-        if obj is None or isinstance(obj, (bool, int, float, str)):
-            return obj
+        match obj:
+            case None | bool() | int() | float() | str():
+                return obj
+            case dict():
+                return {
+                    k: ContentProcessor.process_for_render(v)
+                    for k, v in typing.cast(dict[str, typing.Any], obj).items()
+                }
 
-        # If we are a typed response...
-        if isinstance(obj, types.rest.TypedResponse):
-            return ContentProcessor.process_for_render(obj.as_dict())
+            case DjangoPromise():
+                return str(obj)  # This is for translations
 
-        if isinstance(obj, DjangoPromise):
-            return str(obj)  # This is for translations
+            case bytes():
+                return obj.decode('utf-8')
 
-        if isinstance(obj, dict):
-            return {
-                k: ContentProcessor.process_for_render(v)
-                for k, v in typing.cast(dict[str, typing.Any], obj).items()
-            }
+            case collections.abc.Iterable():
+                return [
+                    ContentProcessor.process_for_render(v)
+                    for v in typing.cast(collections.abc.Iterable[typing.Any], obj)
+                ]
 
-        if isinstance(obj, bytes):
-            return obj.decode('utf-8')
+            case datetime.datetime():
+                return int(time.mktime(obj.timetuple()))
 
-        if isinstance(obj, collections.abc.Iterable):
-            return [
-                ContentProcessor.process_for_render(v)
-                for v in typing.cast(collections.abc.Iterable[typing.Any], obj)
-            ]
+            case datetime.date():
+                return '{}-{:02d}-{:02d}'.format(obj.year, obj.month, obj.day)
 
-        if isinstance(obj, (datetime.datetime,)):  # Datetime as timestamp
-            return int(time.mktime(obj.timetuple()))
-
-        if isinstance(obj, (datetime.date,)):  # Date as string
-            return '{}-{:02d}-{:02d}'.format(obj.year, obj.month, obj.day)
-
-        return str(obj)
+            case _:
+                return str(obj)
 
 
 class MarshallerProcessor(ContentProcessor):

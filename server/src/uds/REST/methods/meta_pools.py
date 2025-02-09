@@ -60,6 +60,27 @@ class MetaPools(ModelHandler):
     Handles Services Pools REST requests
     """
 
+    class MetaPoolItem(types.rest.ItemDictType):
+        id: str
+        name: str
+        short_name: str
+        tags: list[str]
+        comments: str
+        thumb: str
+        image_id: str | None
+        servicesPoolGroup_id: str | None
+        pool_group_name: str | None
+        pool_group_thumb: str | None
+        user_services_count: int
+        user_services_in_preparation: int
+        visible: bool
+        policy: str
+        fallbackAccess: str
+        permission: int
+        calendar_message: str
+        transport_grouping: int
+        ha_policy: str
+
     model = MetaPool
     detail = {
         'pools': MetaServicesPool,
@@ -113,7 +134,7 @@ class MetaPools(ModelHandler):
         types.rest.ModelCustomMethod('get_fallback_access', True),
     ]
 
-    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> MetaPoolItem:
         item = ensure.is_instance(item, MetaPool)
         # if item does not have an associated service, hide it (the case, for example, for a removed service)
         # Access from dict will raise an exception, and item will be skipped
@@ -134,7 +155,7 @@ class MetaPools(ModelHandler):
             (i.pool.userServices.filter(state=State.PREPARING).count()) for i in all_pools
         )
 
-        val = {
+        return {
             'id': item.uuid,
             'name': item.name,
             'short_name': item.short_name,
@@ -155,8 +176,6 @@ class MetaPools(ModelHandler):
             'transport_grouping': item.transport_grouping,
             'ha_policy': str(item.ha_policy),
         }
-
-        return val
 
     # Gui related
     def get_gui(self, type_: str) -> list[typing.Any]:

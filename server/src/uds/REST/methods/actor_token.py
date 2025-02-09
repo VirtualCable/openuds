@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import datetime
 import logging
 import typing
 
@@ -52,6 +53,21 @@ logger = logging.getLogger(__name__)
 
 
 class ActorTokens(ModelHandler):
+    class ActorTokenItem(types.rest.ItemDictType):
+        id: str
+        name: str
+        stamp: datetime.datetime
+        username: str
+        ip: str
+        host: str
+        hostname: str
+        version: str
+        pre_command: str
+        post_command: str
+        run_once_command: str
+        log_level: str
+        os: str
+
     model = Server
     model_filter = {'type': types.servers.ServerType.ACTOR}
 
@@ -70,7 +86,7 @@ class ActorTokens(ModelHandler):
         {'os': {'title': _('OS')}},
     ]
 
-    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> ActorTokenItem:
         item = ensure.is_instance(item, Server)
         data: dict[str, typing.Any] = item.data or {}
         if item.log_level < 10000:  # Old log level, from actor, etc..
@@ -79,7 +95,9 @@ class ActorTokens(ModelHandler):
             log_level = LogLevel(item.log_level).name
         return {
             'id': item.token,
-            'name': str(_('Token isued by {} from {}')).format(item.register_username, item.hostname or item.ip),
+            'name': str(_('Token isued by {} from {}')).format(
+                item.register_username, item.hostname or item.ip
+            ),
             'stamp': item.stamp,
             'username': item.register_username,
             'ip': item.ip,

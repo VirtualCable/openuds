@@ -54,6 +54,18 @@ logger = logging.getLogger(__name__)
 
 
 class Notifiers(ModelHandler):
+    class NotifierItem(types.rest.ItemDictType):
+        id: str
+        name: str
+        level: str
+        enabled: bool
+        tags: list[str]
+        comments: str
+        type: str
+        type_name: str
+        permission: types.permissions.PermissionType
+
+    
     path = 'messaging'
     model = Notifier
     save_fields = [
@@ -113,7 +125,7 @@ class Notifiers(ModelHandler):
 
             return local_gui
 
-    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> NotifierItem:
         item = ensure.is_instance(item, Notifier)
         type_ = item.get_type()
         return {

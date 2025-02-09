@@ -55,6 +55,13 @@ class Accounts(ModelHandler):
     """
     Processes REST requests about accounts
     """
+    class AccountItem(types.rest.ItemDictType):
+        id: str
+        name: str
+        tags: typing.List[str]
+        comments: str
+        time_mark: typing.Optional[datetime.datetime]
+        permission: int
 
     model = Account
     detail = {'usage': AccountsUsage}
@@ -74,7 +81,7 @@ class Accounts(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def item_as_dict(self, item: 'Model') -> types.rest.ItemDictType:
+    def item_as_dict(self, item: 'Model') -> AccountItem:
         item = ensure.is_instance(item, Account)
         return {
             'id': item.uuid,
