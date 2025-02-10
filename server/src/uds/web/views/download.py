@@ -31,7 +31,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 import typing
 
-from uds.core.auths.auth import weblogin_required
 from uds.core.managers import downloads_manager
 from .main import index
 
@@ -45,7 +44,6 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-@weblogin_required(admin=True)
 def download(request: 'HttpRequest', download_id: str) -> 'HttpResponse':
     """
     Downloadables management
