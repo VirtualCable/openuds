@@ -303,6 +303,13 @@ class HTML5RDPTransport(transports.Transport):
         old_field_name='customGEPath',
     )
 
+    support_params = ui.gui.TextField(
+        label=_('Support parameters'),
+        order=999,
+        tooltip=_('Support provided parameters. Do not modify'),
+        tab=types.ui.Tab.ADVANCED,
+    )
+
     def initialize(self, values: 'types.core.ValuesType') -> None:
         if not values:
             return
@@ -490,6 +497,14 @@ class HTML5RDPTransport(transports.Transport):
 
         if self.smooth.as_bool():
             params['enable-font-smoothing'] = 'true'
+
+        # if support_params is not empty, add it to the params
+        # a comma separated list of key=value pairs
+        if self.support_params.value.strip():
+            for param in self.support_params.value.split(','):
+                if '=' in param:
+                    key, value = param.split('=', 1)
+                    params[key.strip()] = value.strip()
 
         logger.debug('RDP Params: %s', params)
 

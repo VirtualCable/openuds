@@ -287,7 +287,7 @@ class Config:
     @staticmethod
     def enumerate() -> collections.abc.Iterable['Config.Value']:
         GlobalConfig.initialize()  # Ensures DB contains all values
-        for cfg in DBConfig.objects.all().order_by('key'):  # @UndefinedVariable
+        for cfg in DBConfig.objects.all().order_by('key'):
             # Skip sections with name starting with "__" (not to be editted on configuration)
             if cfg.section.startswith('__'):  # Hidden section:
                 continue
