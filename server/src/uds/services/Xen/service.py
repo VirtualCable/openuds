@@ -320,11 +320,12 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
         return ''  # No ip will be get, UDS will assign one (from actor)
 
     def get_mac(
-        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+        self,
+        caller_instance: typing.Optional['DynamicUserService | DynamicPublication'],
+        vmid: str,
+        *,
+        force_new: bool = False,
     ) -> str:
-        """
-        For
-        """
         return self.mac_generator().get(self.provider().get_macs_range())
 
     def is_running(

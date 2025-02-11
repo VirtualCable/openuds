@@ -174,13 +174,17 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
 
     @abc.abstractmethod
     def get_mac(
-        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+        self,
+        caller_instance: typing.Optional['DynamicUserService | DynamicPublication'],
+        vmid: str,
+        *,
+        force_new: bool = False,
     ) -> str:
         """
         Returns the mac of the machine
         If cannot be obtained, MUST raise an exception
         Note:
-           vmid can be '' if we are requesting a new mac (on some services, where UDS generate the machines MAC)
+           vmid can be '' or force_new can be True, in this case, a new mac must be generated
            If the service does not support this, it can raise an exception
         """
         ...
