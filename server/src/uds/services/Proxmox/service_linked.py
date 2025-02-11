@@ -273,10 +273,14 @@ class ProxmoxServiceLinked(DynamicService):
         return self.provider().api.get_guest_ip_address(int(vmid))
 
     def get_mac(
-        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+        self,
+        caller_instance: typing.Optional['DynamicUserService | DynamicPublication'],
+        vmid: str,
+        *,
+        force_new: bool = False,
     ) -> str:
         # If vmid is empty, we are requesting a new mac
-        if not vmid:
+        if not vmid or force_new:
             return self.mac_generator().get(self.get_macs_range())
         return self.provider().api.get_vm_config(int(vmid)).networks[0].macaddr.lower()
 
