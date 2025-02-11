@@ -417,8 +417,8 @@ class HTML5RDPTransport(transports.Transport):
             creds_info.domain,
         )
 
-        scrambler = CryptoManager().random_string(32)
-        crypted_password = CryptoManager().symmetric_encrypt(password, scrambler)
+        scrambler = CryptoManager.manager().random_string(32)
+        crypted_password = CryptoManager.manager().symmetric_encrypt(password, scrambler)
 
         def as_txt(txt: typing.Any) -> str:
             return 'true' if txt else 'false'
