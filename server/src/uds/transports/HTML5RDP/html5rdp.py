@@ -498,13 +498,16 @@ class HTML5RDPTransport(transports.Transport):
         if self.smooth.as_bool():
             params['enable-font-smoothing'] = 'true'
 
-        # if support_params is not empty, add it to the params
-        # a comma separated list of key=value pairs
-        if self.support_params.value.strip():
-            for param in self.support_params.value.split(','):
-                if '=' in param:
-                    key, value = param.split('=', 1)
-                    params[key.strip()] = value.strip()
+        # add support params that is a comma separated list of key=value pairs
+        # ignore empty values or values without '='
+        params.update(
+            {
+                key.strip(): value.strip()
+                for key, value in (
+                    param.split('=', 1) for param in self.support_params.value.split(',') if '=' in param
+                )
+            }
+        )
 
         logger.debug('RDP Params: %s', params)
 
