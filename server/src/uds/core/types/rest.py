@@ -52,6 +52,7 @@ class AuthenticatorTypeInfo(ExtraTypeInfo):
     label_password: str
     create_users_supported: bool
     is_external: bool
+    mfa_data_enabled: bool
     mfa_supported: bool
 
     def as_dict(self) -> TypeInfoDict:

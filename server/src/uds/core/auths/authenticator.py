@@ -136,6 +136,9 @@ class Authenticator(Module):
     # : database, that are most authenticator (except Internal DB)
     # : So, external_source means that "user is kept at database only"
     external_source: typing.ClassVar[bool] = True
+    
+    # : Mark this authenticator as mfa data enabled (so mfa field appears on the user)
+    mfa_data_enabled: typing.ClassVar[bool] = False
 
     # : If we need to enter the password for this user when creating a new
     # : user at administration interface. Used basically by internal authenticator.
