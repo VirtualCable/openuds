@@ -37,6 +37,7 @@ import typing
 from django.utils.translation import gettext_noop as _
 
 from uds.core import auths, types
+from uds.core.types.states import State
 from uds.core.ui import gui
 from uds.core.util import net
 
@@ -52,13 +53,15 @@ class IPAuth(auths.Authenticator):
     type_description = _('IP Authenticator')
     icon_file = 'auth.png'
 
+    # Allow mfa data on user form
+    mfa_data_enabled = True
+
     needs_password = False
     label_username = _('IP')
     label_groupname = _('IP Range')
 
     block_user_on_failures = False
 
-    
     accepts_proxy = gui.CheckBoxField(
         label=_('Accept proxy'),
         default=False,
@@ -89,6 +92,13 @@ class IPAuth(auths.Authenticator):
         if ':' in ip and '.' in ip:
             ip = ip.split(':')[-1]
         return ip
+
+    def mfa_identifier(self, username: str) -> str:
+        try:
+            return self.db_obj().users.get(name=username.lower(), state=State.ACTIVE).mfa_data
+        except Exception:  # nosec: This is a "not found" exception or any other db exception
+            pass
+        return ''
 
     def get_groups(self, username: str, groups_manager: 'auths.GroupsManager') -> None:
         # these groups are a bit special. They are in fact ip-ranges, and we must check that the ip is in betwen
@@ -138,12 +148,14 @@ class IPAuth(auths.Authenticator):
         self.get_groups(ip, gm)
 
         if gm.has_valid_groups() and self.db_obj().is_user_allowed(ip, True):
-            return ('function setVal(element, value) {{\n'  # nosec: no user input, password is always EMPTY
-                    '    document.getElementById(element).value = value;\n'
-                    '}}\n'
-                    f'setVal("id_user", "{ip}");\n'
-                    'setVal("id_password", "");\n'
-                    'document.getElementById("loginform").submit();\n')
+            return (
+                'function setVal(element, value) {{\n'  # nosec: no user input, password is always EMPTY
+                '    document.getElementById(element).value = value;\n'
+                '}}\n'
+                f'setVal("id_user", "{ip}");\n'
+                'setVal("id_password", "");\n'
+                'document.getElementById("loginform").submit();\n'
+            )
 
         return 'alert("invalid authhenticator"); window.location.reload();'
 

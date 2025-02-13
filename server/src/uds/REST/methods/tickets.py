@@ -254,7 +254,7 @@ class Tickets(Handler):
 
         data = {
             'username': username,
-            'password': CryptoManager().encrypt(password),
+            'password': CryptoManager.manager().encrypt(password),
             'realname': realname,
             'groups': groups_ids,
             'auth': auth.uuid,

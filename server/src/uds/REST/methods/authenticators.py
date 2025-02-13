@@ -117,6 +117,7 @@ class Authenticators(ModelHandler):
                 label_password=_(type_.label_password),
                 create_users_supported=type_.create_user != auths.Authenticator.create_user,
                 is_external=type_.external_source,
+                mfa_data_enabled=type_.mfa_data_enabled,
                 mfa_supported=type_.provides_mfa(),
             )
         # Not of my type

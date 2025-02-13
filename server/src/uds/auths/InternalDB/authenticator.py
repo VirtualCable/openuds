@@ -66,6 +66,9 @@ class InternalDBAuth(auths.Authenticator):
     # This is the only internal source
     external_source = False
 
+    # Allow mfa data on user form
+    mfa_data_enabled = True
+
     unique_by_host = gui.CheckBoxField(
         label=_('Different user for each host'),
         order=1,
@@ -99,7 +102,8 @@ class InternalDBAuth(auths.Authenticator):
         ip = request.ip_proxy if self.accepts_proxy.as_bool() else request.ip  # pylint: disable=maybe-no-member
         if self.reverse_dns.as_bool():
             try:
-                return str(dns.resolver.query(dns.reversename.from_address(ip).to_text(), 'PTR')[0])  # pyright: ignore[reportUnknownArgumentType]
+                ptr_resolv = dns.resolver.query(dns.reversename.from_address(ip).to_text(), 'PTR')
+                return str(ptr_resolv[0])  # pyright: ignore[reportUnknownArgumentType]
             except Exception:
                 # if we can't get the reverse, we will use the ip
                 pass
@@ -108,7 +112,7 @@ class InternalDBAuth(auths.Authenticator):
     def mfa_identifier(self, username: str) -> str:
         try:
             return self.db_obj().users.get(name=username.lower(), state=State.ACTIVE).mfa_data
-        except Exception:  # nosec: This is e controled pickle loading
+        except Exception:  # nosec: This is a "not found" exception or any other db exception
             pass
         return ''
 
@@ -127,7 +131,9 @@ class InternalDBAuth(auths.Authenticator):
                 usr = auth.users.get(name=username, state=State.ACTIVE)
                 parent = usr.uuid
                 grps = [g for g in usr.groups.all()]
-                typing.cast(typing.Any, usr).id = typing.cast(typing.Any, usr).uuid = None  # cast to avoid pylance error
+                typing.cast(typing.Any, usr).id = typing.cast(typing.Any, usr).uuid = (
+                    None  # cast to avoid pylance error
+                )
                 if usr.real_name.strip() == '':
                     usr.real_name = usr.name
                 usr.name = ip_username
