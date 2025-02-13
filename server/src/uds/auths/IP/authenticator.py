@@ -54,7 +54,7 @@ class IPAuth(auths.Authenticator):
     icon_file = 'auth.png'
 
     # Allow mfa data on user form
-    mfa_data_enabled = True
+    mfa_data_enabled = False
 
     needs_password = False
     label_username = _('IP')
