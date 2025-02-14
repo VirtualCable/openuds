@@ -228,7 +228,7 @@ def register_user(
     logger.debug('Transformed username: %s', username)
 
     usr = authenticator.get_or_create_user(username, username)
-    usr.real_name = auth_instance.get_real_name(username)
+    usr.real_name = auth_instance.get_real_name(username) or usr.real_name or username
     usr.save()
     if usr and types.states.State.from_str(usr.state).is_active():
         # Now we update database groups for this user

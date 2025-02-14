@@ -254,9 +254,7 @@ class DetailHandler(BaseModelHandler):
             raise self.invalid_request_response()
 
         logger.debug('Invoking proper saving detail item %s', item)
-        self.save_item(parent, item)
-        # Empty response
-        return rest_result(consts.OK)
+        return rest_result(self.save_item(parent, item))
 
     def post(self) -> typing.Any:
         """
@@ -304,7 +302,7 @@ class DetailHandler(BaseModelHandler):
         raise NotImplementedError(f'Must provide an get_items method for {self.__class__} class')
 
     # Default save
-    def save_item(self, parent: models.Model, item: typing.Optional[str]) -> None:
+    def save_item(self, parent: models.Model, item: typing.Optional[str]) -> typing.Any:
         """
         Invoked for a valid "put" operation
         If this method is not overridden, the detail class will not have "Save/modify" operations.

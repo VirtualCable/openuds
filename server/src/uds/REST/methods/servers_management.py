@@ -264,7 +264,7 @@ class ServersServers(DetailHandler):
                 ],
             )
 
-    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
+    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, models.ServerGroup)
         # Item is the uuid of the server to add
         server: typing.Optional['models.Server'] = None  # Avoid warning on reference before assignment
@@ -290,7 +290,7 @@ class ServersServers(DetailHandler):
                 )
                 # Add to group
                 parent.servers.add(server)
-                return
+                return {'id': server.uuid}
             elif parent.type == types.servers.ServerType.SERVER:
                 # Get server
                 try:
@@ -302,7 +302,7 @@ class ServersServers(DetailHandler):
                     parent.servers.add(server)
                 except Exception:
                     raise self.invalid_item_response() from None
-                pass
+                return {'id': server.uuid}
         else:
             if parent.type == types.servers.ServerType.UNMANAGED:
                 mac = self._params['mac'].strip().upper()
@@ -327,6 +327,8 @@ class ServersServers(DetailHandler):
                     parent.servers.add(server)
                 except Exception:
                     raise self.invalid_item_response() from None
+            return {'id': item}
+
 
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, models.ServerGroup)

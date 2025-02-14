@@ -227,7 +227,7 @@ class AssignedService(DetailHandler):
         log.log(userservice, types.log.LogLevel.INFO, log_string, types.log.LogSource.ADMIN)
 
     # Only owner is allowed to change right now
-    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
+    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, models.ServicePool)
         if not item:
             raise self.invalid_item_response('Only modify is allowed')
@@ -255,6 +255,8 @@ class AssignedService(DetailHandler):
         # Log change
         log.log(parent, types.log.LogLevel.INFO, log_string, types.log.LogSource.ADMIN)
         log.log(userservice, types.log.LogLevel.INFO, log_string, types.log.LogSource.ADMIN)
+        
+        return {'id': userservice.uuid}
 
     def reset(self, parent: 'models.ServicePool', item: str) -> typing.Any:
         userservice = parent.userServices.get(uuid=process_uuid(item))
@@ -373,7 +375,7 @@ class Groups(DetailHandler):
     def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
         return types.ui.RowStyleInfo(prefix='row-state-', field='state')
 
-    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
+    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
 
         group: models.Group = models.Group.objects.get(uuid=process_uuid(self._params['id']))
@@ -384,6 +386,8 @@ class Groups(DetailHandler):
             f'Added group {group.pretty_name} by {self._user.pretty_name}',
             types.log.LogSource.ADMIN,
         )
+        
+        return {'id': group.uuid}
 
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, models.ServicePool)
@@ -436,7 +440,7 @@ class Transports(DetailHandler):
             {'comments': {'title': _('Comments')}},
         ]
 
-    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
+    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, models.ServicePool)
         transport: models.Transport = models.Transport.objects.get(uuid=process_uuid(self._params['id']))
         parent.transports.add(transport)
@@ -446,6 +450,8 @@ class Transports(DetailHandler):
             f'Added transport {transport.name} by {self._user.pretty_name}',
             types.log.LogSource.ADMIN,
         )
+        
+        return {'id': transport.uuid}
 
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, models.ServicePool)

@@ -93,7 +93,7 @@ class MetaServicesPool(DetailHandler):
             {'enabled': {'title': _('Enabled')}},
         ]
 
-    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
+    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, models.MetaPool)
         # If already exists
         uuid = process_uuid(item) if item else None
@@ -110,8 +110,8 @@ class MetaServicesPool(DetailHandler):
             member.priority = priority
             member.save()
         else:
-            parent.members.create(pool=pool, priority=priority, enabled=enabled)
-
+            member = parent.members.create(pool=pool, priority=priority, enabled=enabled)
+            
         log.log(
             parent,
             types.log.LogLevel.INFO,
@@ -119,6 +119,9 @@ class MetaServicesPool(DetailHandler):
             + " meta pool member {}/{}/{} by {}".format(pool.name, priority, enabled, self._user.pretty_name),
             types.log.LogSource.ADMIN,
         )
+
+        return {'id': member.uuid}
+
 
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, models.MetaPool)
@@ -267,7 +270,7 @@ class MetaAssignedService(DetailHandler):
         log.log(parent, types.log.LogLevel.INFO, log_str, types.log.LogSource.ADMIN)
 
     # Only owner is allowed to change right now
-    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
+    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, models.MetaPool)
         if item is None:
             raise self.invalid_item_response()
@@ -297,3 +300,5 @@ class MetaAssignedService(DetailHandler):
 
         # Log change
         log.log(parent, types.log.LogLevel.INFO, log_str, types.log.LogSource.ADMIN)
+        
+        return {'id': userservice.uuid}

@@ -110,7 +110,8 @@ class SMSMFA(mfas.MFA):
             '* {code} - the code to send\n'
             '* {phone/+phone} - the phone number\n'
             '* {username} - the username\n'
-            '* {justUsername} - the username without @....'
+            '* {justUsername} - the username without @....\n'
+            '* {realName} - the real name of the user'
         ),
         required=True,
         tab=_('HTTP Server'),
@@ -151,6 +152,7 @@ class SMSMFA(mfas.MFA):
             '* {phone/+phone} - the phone number\n'
             '* {username} - the username\n'
             '* {justUsername} - the username without @....\n'
+            '* {realName} - the real name of the user\n'
             'Headers are in the form of "Header: Value". (without the quotes)'
         ),
         required=False,
@@ -169,7 +171,8 @@ class SMSMFA(mfas.MFA):
             '* {code} - the code to send\n'
             '* {phone/+phone} - the phone number\n'
             '* {username} - the username\n'
-            '* {justUsername} - the username without @....'
+            '* {justUsername} - the username without @....\n'
+            '* {realName} - the real name of the user'
         ),
         required=False,
         tab=_('HTTP Server'),
@@ -256,6 +259,7 @@ class SMSMFA(mfas.MFA):
         self,
         userid: str,  # pylint: disable=unused-argument
         username: str,
+        real_name: str,
         code: str,
         phone: str,
     ) -> str:
@@ -265,6 +269,7 @@ class SMSMFA(mfas.MFA):
         url = url.replace('{+phone}', phone)
         url = url.replace('{username}', username)
         url = url.replace('{justUsername}', username.split('@')[0])
+        url = url.replace('{realName}', real_name)
         return url
 
     def ask_for_otp(self, request: 'ExtendedHttpRequest') -> bool:
@@ -416,10 +421,11 @@ class SMSMFA(mfas.MFA):
         request: 'ExtendedHttpRequest',
         userid: str,
         username: str,
+        real_name: str,
         code: str,
         phone: str,
     ) -> mfas.MFA.RESULT:
-        url = self.build_sms_url(userid, username, code, phone)
+        url = self.build_sms_url(userid, username, real_name, code, phone)
         match self.http_method.value:
             case 'GET':
                 return self._send_sms_using_get(request, userid, username, url)
@@ -451,4 +457,6 @@ class SMSMFA(mfas.MFA):
             userid,
             identifier,
         )
-        return self._send_sms(request, userid, username, code, identifier)
+        return self._send_sms(
+            request, userid, username, request.user.real_name if request.user else username, code, identifier
+        )

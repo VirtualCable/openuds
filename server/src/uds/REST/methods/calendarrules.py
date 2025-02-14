@@ -108,7 +108,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
             {'comments': {'title': _('Comments')}},
         ]
 
-    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
+    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, Calendar)
 
         # Extract item db fields
@@ -143,6 +143,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
                 calendar_rule = parent.rules.get(uuid=process_uuid(item))
                 calendar_rule.__dict__.update(fields)
                 calendar_rule.save()
+                return {'id': calendar_rule.uuid}
         except CalendarRule.DoesNotExist:
             raise self.invalid_item_response() from None
         except IntegrityError as e:  # Duplicate key probably
