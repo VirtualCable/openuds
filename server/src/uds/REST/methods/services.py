@@ -140,7 +140,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         except Exception:  # nosec: This is a delete, we don't care about exceptions
             pass
 
-    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
+    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, models.Provider)
         # Extract item db fields
         # We need this fields for all
@@ -187,6 +187,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             service.data = service_instance.serialize()
 
             service.save()
+            return {'id': service.uuid}
         except models.Service.DoesNotExist:
             raise self.invalid_item_response() from None
         except IntegrityError as e:  # Duplicate key probably

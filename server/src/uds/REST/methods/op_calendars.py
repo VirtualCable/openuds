@@ -85,7 +85,7 @@ class AccessCalendars(DetailHandler):
             {'access': {'title': _('Access')}},
         ]
 
-    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
+    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
         # If already exists
         uuid = process_uuid(item) if item is not None else None
@@ -106,7 +106,7 @@ class AccessCalendars(DetailHandler):
             calendar_access.priority = priority
             calendar_access.save(update_fields=['calendar', 'access', 'priority'])
         else:
-            parent.calendarAccess.create(calendar=calendar, access=access, priority=priority)
+            calendar_access = parent.calendarAccess.create(calendar=calendar, access=access, priority=priority)
 
         log.log(
             parent,
@@ -114,6 +114,8 @@ class AccessCalendars(DetailHandler):
             f'{"Added" if uuid is None else "Updated"} access calendar {calendar.name}/{access} by {self._user.pretty_name}',
             types.log.LogSource.ADMIN,
         )
+        
+        return {'id': calendar_access.uuid}
 
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
@@ -183,7 +185,7 @@ class ActionsCalendars(DetailHandler):
             {'last_execution': {'title': _('Last execution'), 'type': 'datetime'}},
         ]
 
-    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
+    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, models.ServicePool)
         # If already exists
         uuid = process_uuid(item) if item is not None else None
@@ -213,7 +215,7 @@ class ActionsCalendars(DetailHandler):
             calendar_action.params = params
             calendar_action.save()
         else:
-            models.CalendarAction.objects.create(
+            calendar_action = models.CalendarAction.objects.create(
                 calendar=calendar,
                 service_pool=parent,
                 action=action,
@@ -223,6 +225,8 @@ class ActionsCalendars(DetailHandler):
             )
 
         log.log(parent, types.log.LogLevel.INFO, log_string, types.log.LogSource.ADMIN)
+        
+        return {'id': calendar_action.uuid}
 
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, models.ServicePool)

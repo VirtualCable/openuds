@@ -572,7 +572,7 @@ class Authenticator(Module):
 
         Default implementation returns just the same user name that is passed in.
         """
-        return username
+        return ''
 
     def create_user(self, user_data: dict[str, typing.Any]) -> None:
         """

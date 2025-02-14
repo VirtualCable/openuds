@@ -199,7 +199,7 @@ class Users(DetailHandler):
 
         return log.get_logs(user)
 
-    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
+    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, Authenticator)
         logger.debug('Saving user %s / %s', parent, item)
         valid_fields = [
@@ -247,6 +247,8 @@ class Users(DetailHandler):
                     groups = self.fields_from_params(['groups'])['groups']
                     # Save but skip meta groups, they are not real groups, but just a way to group users based on rules
                     user.groups.set(g for g in parent.groups.filter(uuid__in=groups) if g.is_meta is False)
+                    
+                return {'id': user.uuid}
         except User.DoesNotExist:
             raise self.invalid_item_response() from None
         except IntegrityError:  # Duplicate key probably
@@ -455,7 +457,7 @@ class Groups(DetailHandler):
         except Exception:
             raise self.invalid_request_response() from None
 
-    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
+    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, Authenticator)
         group = None  # Avoid warning on reference before assignment
         try:
@@ -509,6 +511,7 @@ class Groups(DetailHandler):
                 group.deployedServices.set(ServicePool.objects.filter(uuid__in=pools))
 
             group.save()
+            return {'id': group.uuid}
         except Group.DoesNotExist:
             raise self.invalid_item_response() from None
         except IntegrityError:  # Duplicate key probably
