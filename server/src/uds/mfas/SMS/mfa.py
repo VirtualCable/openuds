@@ -255,6 +255,16 @@ class SMSMFA(mfas.MFA):
     def initialize(self, values: 'types.core.ValuesType') -> None:
         return super().initialize(values)
 
+    def _transform_placeholders(self, text: str, username: str, real_name: str, code: str, phone: str) -> str:
+        return (
+            text.replace('{code}', code)
+            .replace('{phone}', phone)
+            .replace('{+phone}', phone)
+            .replace('{username}', username)
+            .replace('{justUsername}', username.split('@')[0])
+            .replace('{realName}', real_name)
+        )
+
     def build_sms_url(
         self,
         userid: str,  # pylint: disable=unused-argument
@@ -263,14 +273,7 @@ class SMSMFA(mfas.MFA):
         code: str,
         phone: str,
     ) -> str:
-        url = self.url_pattern.value
-        url = url.replace('{code}', code)
-        url = url.replace('{phone}', phone.replace('+', ''))
-        url = url.replace('{+phone}', phone)
-        url = url.replace('{username}', username)
-        url = url.replace('{justUsername}', username.split('@')[0])
-        url = url.replace('{realName}', real_name)
-        return url
+        return self._transform_placeholders(self.url_pattern.value, username, real_name, code, phone)
 
     def ask_for_otp(self, request: 'ExtendedHttpRequest') -> bool:
         """
@@ -359,29 +362,23 @@ class SMSMFA(mfas.MFA):
 
     def _build_data(
         self,
-        request: 'ExtendedHttpRequest',  # pylint: disable=unused-argument
-        userid: str,  # pylint: disable=unused-argument
+        request: 'ExtendedHttpRequest',
+        userid: str,
         username: str,
-        url: str,  # pylint: disable=unused-argument
+        real_name: str,
+        url: str,
         code: str,
         phone: str,
     ) -> bytes:
-        data = ''
-        if self.parameters.value:
-            data = (
-                self.parameters.value.replace('{code}', code)
-                .replace('{phone}', phone.replace('+', ''))
-                .replace('{+phone}', phone)
-                .replace('{username}', username)
-                .replace('{justUsername}', username.split('@')[0])
-            )
+        data = self._transform_placeholders(self.parameters.value, username, real_name, code, phone)
         return data.encode(self.encoding.value)
 
     def _send_sms_using_get(
         self,
         request: 'ExtendedHttpRequest',
-        userid: str,  # pylint: disable=unused-argument
-        username: str,  # pylint: disable=unused-argument
+        userid: str,
+        username: str,
+        real_name: str,
         url: str,
     ) -> mfas.MFA.RESULT:
         return self.process_response(request, self.get_session().get(url))
@@ -391,13 +388,14 @@ class SMSMFA(mfas.MFA):
         request: 'ExtendedHttpRequest',
         userid: str,
         username: str,
+        real_name: str,
         url: str,
         code: str,
         phone: str,
     ) -> mfas.MFA.RESULT:
         # Compose POST data
         session = self.get_session()
-        bdata = self._build_data(request, userid, username, url, code, phone)
+        bdata = self._build_data(request, userid, username, real_name, url, code, phone)
         # Add content-length header
         session.headers['Content-Length'] = str(len(bdata))
 
@@ -408,12 +406,13 @@ class SMSMFA(mfas.MFA):
         request: 'ExtendedHttpRequest',
         userid: str,
         username: str,
+        real_name: str,
         url: str,
         code: str,
         phone: str,
     ) -> mfas.MFA.RESULT:
         # Compose POST data
-        bdata = self._build_data(request, userid, username, url, code, phone)
+        bdata = self._build_data(request, userid, username, real_name, url, code, phone)
         return self.process_response(request, self.get_session().put(url, data=bdata))
 
     def _send_sms(
@@ -428,11 +427,11 @@ class SMSMFA(mfas.MFA):
         url = self.build_sms_url(userid, username, real_name, code, phone)
         match self.http_method.value:
             case 'GET':
-                return self._send_sms_using_get(request, userid, username, url)
+                return self._send_sms_using_get(request, userid, username, real_name, url)
             case 'POST':
-                return self._send_sms_using_post(request, userid, username, url, code, phone)
+                return self._send_sms_using_post(request, userid, username, real_name, url, code, phone)
             case 'PUT':
-                return self._send_sms_using_put(request, userid, username, url, code, phone)
+                return self._send_sms_using_put(request, userid, username, real_name, url, code, phone)
             case _:
                 raise Exception('Unknown SMS sending method')
 
