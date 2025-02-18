@@ -1,6 +1,5 @@
 // "Fake" javascript file for translations
 // Typescript
-gettext("#POOLS_NUMBER# service pools");
 gettext("Assigned services");
 gettext("Services in use");
 gettext("Error");
@@ -328,9 +327,16 @@ gettext("pool group");
 gettext("Go to");
 // HTML
 gettext("Dashboard");
+gettext("total users");
+gettext("total groups");
+gettext("with services");
 gettext("View authenticators");
+gettext("total pools");
 gettext("View service pools");
+gettext("total services");
+gettext("assigned");
 gettext("View service pools");
+gettext("restrained services");
 gettext("View service pools");
 gettext("Assigned services chart");
 gettext("In use services chart");

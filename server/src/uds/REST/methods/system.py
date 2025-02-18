@@ -165,7 +165,14 @@ class System(Handler):
             if self._args[0] == 'overview':  # System overview
                 if not self._user.is_admin:
                     raise exceptions.rest.AccessDenied()
-                users: int = models.User.objects.count()
+                
+                fltr_user = models.User.objects.filter(userServices__state__in=types.states.State.VALID_STATES).order_by()
+                users = models.User.objects.all().count()
+                users_with_services = (
+                    fltr_user.values('id').distinct().count()
+                )  # Use "values" to simplify query (only id)
+                number_assigned_user_services = fltr_user.values('id').count()
+                
                 groups: int = models.Group.objects.count()
                 services: int = models.Service.objects.count()
                 service_pools: int = models.ServicePool.objects.count()
@@ -176,11 +183,13 @@ class System(Handler):
                 restrained_services_pools: int = models.ServicePool.restraineds_queryset().count()
                 return {
                     'users': users,
+                    'users_with_services': users_with_services,
                     'groups': groups,
                     'services': services,
                     'service_pools': service_pools,
                     'meta_pools': meta_pools,
                     'user_services': user_services,
+                    'assigned_user_services': number_assigned_user_services,
                     'restrained_services_pools': restrained_services_pools,
                 }
 
