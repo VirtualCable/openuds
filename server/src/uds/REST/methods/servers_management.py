@@ -229,7 +229,7 @@ class ServersServers(DetailHandler):
                         'choices': [
                             ui.gui.choice_item(item.uuid, item.hostname)
                             for item in models.Server.objects.filter(type=parent.type, subtype=parent.subtype)
-                            if item not in parent.servers.all()
+                            if item.groups.count() == 0
                         ],
                         'order': 100,  # At end
                     },

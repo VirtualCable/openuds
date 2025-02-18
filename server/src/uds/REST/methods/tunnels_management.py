@@ -237,7 +237,7 @@ class Tunnels(ModelHandler):
     def tunnels(self, parent: 'Model') -> typing.Any:
         parent = ensure.is_instance(parent, models.ServerGroup)
         """
-        Custom method that returns all tunnels of a tunnel server NOT already assigned to a group
+        Custom method that returns all tunnels of a tunnel server NOT already assigned to THIS tunnel group
         :param item:
         """
         all_servers = set(parent.servers.all())
