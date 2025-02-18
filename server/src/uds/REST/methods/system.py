@@ -169,7 +169,7 @@ class System(Handler):
                 
                 fltr_user = models.User.objects.filter(userServices__state__in=types.states.State.VALID_STATES).order_by()
                 users = models.User.objects.all().count()
-                users_with_service = (
+                users_with_services = (
                     fltr_user.values('id').distinct().count()
                 )  # Use "values" to simplify query (only id)
                 number_assigned_user_services = fltr_user.values('id').count()
@@ -184,7 +184,7 @@ class System(Handler):
                 restrained_services_pools: int = models.ServicePool.restraineds_queryset().count()
                 return {
                     'users': users,
-                    'users_with_services': users_with_service,
+                    'users_with_services': users_with_services,
                     'groups': groups,
                     'services': services,
                     'service_pools': service_pools,
