@@ -291,7 +291,16 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
             self.properties['stats'] = stats_dict
 
     def lock(self, duration: typing.Optional[datetime.timedelta]) -> None:
-        """Locks this server for a duration"""
+        """Locks this server for a duration
+        
+        Args:
+            duration: Duration to lock the server. If None, it will be unlocked
+            
+        Note:
+            If duration is None, the server will be unlocked
+            The lock time will be calculated from current time on sql server
+        """
+        
         if duration is None:
             self.locked_until = None
         else:

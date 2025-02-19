@@ -182,19 +182,10 @@ class IPMachinesService(services.Service):
         for server in list_of_servers:
             # If not locked or lock expired
             if server.locked_until is None or server.locked_until < sql_now():
-                # if port check enabled, check
+                # if port check enabled, check 
                 if self.port.value != 0:
-                    # if we have a cache entry, and it's not None, it's because it failed the check
-                    # not too long ago, so we skip it
-                    if self.cache.get(f'port{server.host}'):
-                        continue
-
                     if not net.test_connectivity(server.host, self.port.value):
-                        self.cache.put(
-                            f'port{server.host}',
-                            'failed',
-                            self.ignore_minutes_on_failure.value * 60,
-                        )
+                        server.lock(datetime.timedelta(minutes=self.ignore_minutes_on_failure.value))
                         self.provider().do_log(
                             types.log.LogLevel.WARNING,
                             f'Host {server.host} does not respond to port {self.port.value}, skipping',
