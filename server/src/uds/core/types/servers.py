@@ -165,12 +165,12 @@ class ServerStats:
 
         return self.stamp > sql_stamp() - consts.cache.DEFAULT_CACHE_TIMEOUT
 
-    def weight(self, min_memory: int = 0) -> float:
-        # Weights are calculated as:
+    def load(self, min_memory: int = 0) -> float:
+        # Loads are calculated as:
         # 30% cpu usage
         # 60% memory usage
         # 10% current users, with a max of 1000 users
-        # Weights are normalized to 0-1
+        # Loads are normalized to 0-1
         # Lower weight is better
 
         if self.memtotal - self.memused < min_memory:
@@ -251,7 +251,7 @@ class ServerStats:
 
     def __str__(self) -> str:
         # Human readable
-        return f'memory: {self.memused//(1024*1024)}/{self.memtotal//(1024*1024)} cpu: {self.cpuused*100} users: {self.current_users}, weight: {self.weight()}, valid: {self.is_valid}'
+        return f'memory: {self.memused//(1024*1024)}/{self.memtotal//(1024*1024)} cpu: {self.cpuused*100} users: {self.current_users}, load: {self.load()}, valid: {self.is_valid}'
 
 
 # ServerCounter must be serializable by json, so

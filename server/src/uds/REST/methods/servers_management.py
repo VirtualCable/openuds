@@ -524,7 +524,7 @@ class ServersGroups(ModelHandler):
                     'id': s[1].uuid,
                     'hostname': s[1].hostname,
                     'ip': s[1].ip,
-                    'weight': s[0].weight if s[0] else 0,
+                    'load': s[0].load() if s[0] else 0,
                 },
             }
             for s in ServerManager.manager().get_server_stats(item.servers.all())
