@@ -152,7 +152,7 @@ class ServerManager(metaclass=singleton.Singleton):
         weight_threshold_f = weight_threshold / 100
 
         def _real_weight(stats: 'types.servers.ServerStats') -> float:
-            stats_weight = stats.weight()
+            stats_weight = stats.load()
 
             if weight_threshold == 0:
                 return stats_weight
@@ -513,8 +513,8 @@ class ServerManager(metaclass=singleton.Singleton):
 
         # Get the stats for all servers, but in parallel
         server_stats = self.get_server_stats(fltrs)
-        # Sort by weight, lower first (lower is better)
-        return [s[1] for s in sorted(server_stats, key=lambda x: x[0].weight() if x[0] else 999999999)]
+        # Sort by load, lower first (lower is better)
+        return [s[1] for s in sorted(server_stats, key=lambda x: x[0].load() if x[0] else 999999999)]
 
     def perform_maintenance(self, server_group: 'models.ServerGroup') -> None:
         """Realizes maintenance on server group
