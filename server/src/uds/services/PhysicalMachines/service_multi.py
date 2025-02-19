@@ -41,7 +41,7 @@ from django.utils.translation import gettext_lazy as _
 from uds import models
 from uds.core import exceptions, types, services
 from uds.core.ui import gui
-from uds.core.util import fields
+from uds.core.util import fields, net
 from uds.core.util.model import sql_now
 from uds.core.util import security
 
@@ -178,8 +178,34 @@ class IPMachinesService(services.Service):
         list_of_servers = list(fields.get_server_group_from_field(self.server_group).servers.all())
         if self.randomize_host.as_bool() is True:
             random.shuffle(list_of_servers)  # Reorder the list randomly if required
+
         for server in list_of_servers:
+            # If not locked or lock expired
             if server.locked_until is None or server.locked_until < sql_now():
+                # if port check enabled, check
+                if self.port.value != 0:
+                    # if we have a cache entry, and it's not None, it's because it failed the check
+                    # not too long ago, so we skip it
+                    if self.cache.get(f'port{server.host}'):
+                        continue
+
+                    if not net.test_connectivity(server.host, self.port.value):
+                        self.cache.put(
+                            f'port{server.host}',
+                            'failed',
+                            self.ignore_minutes_on_failure.value * 60,
+                        )
+                        self.provider().do_log(
+                            types.log.LogLevel.WARNING,
+                            f'Host {server.host} does not respond to port {self.port.value}, skipping',
+                        )
+                        logger.warning(
+                            'Static Machine check on %s:%s failed. Will be ignored for %s minutes.',
+                            server.host,
+                            self.port.value,
+                            self.ignore_minutes_on_failure.value,
+                        )
+                        continue
                 server.lock(self.get_max_lock_time())
                 return server.uuid
         raise exceptions.services.MaxServicesReachedError()
