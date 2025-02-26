@@ -73,15 +73,20 @@ class PublicationOldMachinesCleaner(DelayedTask):
             if servicepool_publication.state != State.REMOVABLE:
                 logger.info('Already removed')
 
-            now = sql_now()
             current_publication: typing.Optional[ServicePoolPublication] = (
                 servicepool_publication.deployed_service.active_publication()
             )
 
             if current_publication:
-                servicepool_publication.deployed_service.userServices.filter(in_use=True).exclude(
-                    publication=current_publication
-                ).update(in_use=False, state_date=now)
+                # Do register by register to log the action on each user service
+                for user_service in servicepool_publication.deployed_service.userServices.filter(
+                    in_use=True, publication=servicepool_publication
+                ):
+                    user_service.set_in_use(False)  # Mark as not in use, saves the object
+                    user_service.log(
+                        'Service maked as removable due to publication session timeout', log.LogLevel.INFO
+                    )
+                # .update(in_use=False, state_date=now)
                 servicepool_publication.deployed_service.mark_old_userservices_as_removable(current_publication)
         except Exception:  #  nosec: Removed publication, no problem at all, just continue
             pass
@@ -169,7 +174,7 @@ class PublicationFinishChecker(DelayedTask):
                         old.set_state(State.REMOVABLE)
 
                         osm = publication.deployed_service.osmanager
-                        # If os manager says "machine is persistent", do not tray to delete "previous version" assigned machines
+                        # If os manager says "machine is persistent", do not try to delete "previous version" assigned machines
                         if osm is None or osm.get_instance().is_persistent() is False:
                             pc = PublicationOldMachinesCleaner(old.id)
                             pc.register(
