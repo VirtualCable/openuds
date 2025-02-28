@@ -181,6 +181,13 @@ class System(Handler):
                     state__in=(State.REMOVED, State.ERROR)
                 ).count()
                 restrained_services_pools: int = models.ServicePool.restraineds_queryset().count()
+                os_managers: int = models.OSManager.objects.count()
+                transports_: int = models.Transport.objects.count()
+                networks: int = models.Network.objects.count()
+                calendars: int = models.Calendar.objects.count()
+                tunnels: int = models.Server.objects.filter(type=types.servers.ServerType.TUNNEL).count()
+                auths: int = models.Authenticator.objects.count()
+                
                 return {
                     'users': users,
                     'users_with_services': users_with_services,
@@ -191,6 +198,12 @@ class System(Handler):
                     'user_services': user_services,
                     'assigned_user_services': number_assigned_user_services,
                     'restrained_services_pools': restrained_services_pools,
+                    'os_managers': os_managers,
+                    'transports': transports_,
+                    'networks': networks,
+                    'calendars': calendars,
+                    'tunnels': tunnels,
+                    'authenticators': auths,
                 }
 
         if len(self.args) in (2, 3):
