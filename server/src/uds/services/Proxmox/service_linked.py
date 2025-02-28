@@ -209,7 +209,7 @@ class ProxmoxServiceLinked(DynamicService):
         """
         Proxmox only allows machine names with [a-zA-Z0-9_-]
         """
-        return re.sub("[^a-zA-Z0-9_-]", "-", name)
+        return re.sub(r'[^a-zA-Z0-9-]', '-', name)
 
     def find_duplicates(self, name: str, mac: str) -> collections.abc.Iterable[str]:
         for i in self.provider().api.list_vms():
