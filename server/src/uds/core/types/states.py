@@ -68,7 +68,7 @@ class State(enum.StrEnum):
     MAINTENANCE = 'Y'
     # "Visual" state, no element will be in fact in WAITING_OS, but used to show "User Services" that are waiting for os manager
     WAITING_OS = 'Z'
-    # "Visual" state, no element will be in fact in WAITING_OS, but used to show "User Services" that are waiting for os manager
+    # "Visual" state, no element will be in fact in META_MEMBER, but used to show "User Services" that are waiting for os manager
     META_MEMBER = 'V'
 
     # For accesses (calendar actions)
