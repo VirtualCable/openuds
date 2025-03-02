@@ -121,3 +121,10 @@ class UsageInfoVars:
     @staticmethod
     def has_macros(x: str) -> bool:
         return any(y in x for y in ('{use}', '{total}', '{usec}', '{left}'))
+    
+    @staticmethod
+    def processed_macros_len(x: str) -> int:
+        """
+        Calculates an aproximation of the length of the string witho macros processed
+        """
+        return len(x.replace('{use}', 'xx').replace('{total}', 'xx').replace('{usec}', 'xx').replace('{left}', 'xx'))

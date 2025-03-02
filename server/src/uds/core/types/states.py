@@ -68,8 +68,10 @@ class State(enum.StrEnum):
     MAINTENANCE = 'Y'
     # "Visual" state, no element will be in fact in WAITING_OS, but used to show "User Services" that are waiting for os manager
     WAITING_OS = 'Z'
-    # "Visual" state, no element will be in fact in WAITING_OS, but used to show "User Services" that are waiting for os manager
+    # "Visual" state, no element will be in fact in META_MEMBER, but used to show "User Services" that are waiting for os manager
     META_MEMBER = 'V'
+    # Internal state, not to be used by users. USed to lock edit of the object
+    LOCKED = 'Q'
 
     # For accesses (calendar actions)
     ALLOW = 'ALLOW'
@@ -87,6 +89,10 @@ class State(enum.StrEnum):
     @classproperty
     def VALID_STATES(self) -> list[str]:
         return [self.USABLE, self.PREPARING]
+    
+    @classproperty
+    def PROCESABLE_STATES(self) -> list[str]:
+        return [self.USABLE, self.LOCKED]
 
     # Publication States
     @classproperty
@@ -208,4 +214,5 @@ _TRANSLATIONS: typing.Final[dict[State, str]] = {
     State.ALLOW: _('Allowed'),
     State.DENY: _('Denied'),
     State.UNKNOWN: _('Unknown'),
+    State.LOCKED: _('Locked'),
 }

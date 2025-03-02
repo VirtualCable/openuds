@@ -519,16 +519,11 @@ class ServicesPools(ModelHandler):
     # pylint: disable=too-many-statements
     def pre_save(self, fields: dict[str, typing.Any]) -> None:
         # logger.debug(self._params)
-        def macro_fld_len(x: str) -> int:
-            w = x
-            for i in ('{use}', '{total}', '{usec}', '{left}'):
-                w = w.replace(i, 'xx')
-            return len(w)
-
-        if macro_fld_len(fields['name']) > 128:
+        
+        if types.pools.UsageInfoVars.processed_macros_len(fields['name']) > 128:
             raise exceptions.rest.RequestError(gettext('Name too long'))
 
-        if macro_fld_len(fields['short_name']) > 32:
+        if types.pools.UsageInfoVars.processed_macros_len(fields['short_name']) > 32:
             raise exceptions.rest.RequestError(gettext('Short name too long'))
 
         try:
