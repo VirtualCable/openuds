@@ -38,6 +38,8 @@ gettext("(This service does not requires an OS Manager)");
 gettext("New service Pool");
 gettext("Publish on creation");
 gettext("If selected, will initiate the publication inmediatly after creation");
+gettext("Service Pool is locked");
+gettext("This service pool is locked and cannot be edited");
 gettext("Edit Service Pool");
 gettext("Delete service pool");
 gettext("New pool group");

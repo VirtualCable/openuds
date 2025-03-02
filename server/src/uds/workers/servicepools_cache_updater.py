@@ -95,7 +95,7 @@ class ServiceCacheUpdater(Job):
             ServicePool.objects.filter(Q(initial_srvs__gte=0) | Q(cache_l1_srvs__gte=0))
             .filter(
                 max_srvs__gt=0,
-                state=State.ACTIVE,
+                state_in=State.PROCESABLE_STATES,
                 service__provider__maintenance_mode=False,
             )
             .iterator()

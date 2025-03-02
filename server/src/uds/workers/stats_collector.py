@@ -54,7 +54,7 @@ class DeployedServiceStatsCollector(Job):
     def run(self) -> None:
         logger.debug('Starting Deployed service stats collector')
 
-        service_pool_to_check = models.ServicePool.objects.filter(state=types.states.State.ACTIVE).iterator()
+        service_pool_to_check = models.ServicePool.objects.filter(state_in=types.states.State.PROCESABLE_STATES).iterator()
         stamp = model.sql_now()
         # Global counters
         total_assigned, total_inuse, total_cached = 0, 0, 0
