@@ -98,6 +98,7 @@ class ServicesPools(ModelHandler):
         'calendar_message',
         'custom_message',
         'display_custom_message',
+        'state:',  # Optional field, defaults to Nothing (to apply default or existing value)
     ]
 
     remove_fields = ['osmanager_id', 'service_id']
@@ -476,6 +477,10 @@ class ServicesPools(ModelHandler):
     # pylint: disable=too-many-statements
     def pre_save(self, fields: dict[str, typing.Any]) -> None:
         # logger.debug(self._params)
+        
+        # Ensure that, if no state is provided, it is removed so it will be set to default or existing value
+        if fields['state'] == '':
+            del fields['state']
         
         if types.pools.UsageInfoVars.processed_macros_len(fields['name']) > 128:
             raise exceptions.rest.RequestError(gettext('Name too long'))
