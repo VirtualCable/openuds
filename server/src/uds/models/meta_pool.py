@@ -174,7 +174,7 @@ class MetaPool(UUIDModel, TaggingMixin):
             ServicePool.objects.filter(
                 memberOfMeta__meta_pool=self,
                 memberOfMeta__enabled=True,
-                state_in=types.states.State.PROCESABLE_STATES,
+                state__in=types.states.State.PROCESABLE_STATES,
             )
             .annotate(
                 usage_count=models.Count(
