@@ -520,11 +520,11 @@ class ServicesPools(ModelHandler):
     # pylint: disable=too-many-statements
     def pre_save(self, fields: dict[str, typing.Any]) -> None:
         # logger.debug(self._params)
-        
+
         # Ensure that, if no state is provided, it is removed so it will be set to default or existing value
         if fields['state'] == '':
             del fields['state']
-        
+
         if types.pools.UsageInfoVars.processed_macros_len(fields['name']) > 128:
             raise exceptions.rest.RequestError(gettext('Name too long'))
 
@@ -673,6 +673,14 @@ class ServicesPools(ModelHandler):
     #  Returns the action list based on current element, for calendar
     def actions_list(self, item: 'Model') -> list[types.calendar.CalendarAction]:
         item = ensure.is_instance(item, ServicePool)
+
+        # If item is locked, only allow publish
+        if item.state == types.states.State.LOCKED:
+            # Only allow publish
+            return [
+                consts.calendar.CALENDAR_ACTION_PUBLISH,
+            ]
+
         valid_actions: list[types.calendar.CalendarAction] = []
         item_info = item.service.get_type()
         if item_info.uses_cache is True:
