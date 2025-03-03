@@ -306,7 +306,6 @@ class ServersServers(DetailHandler):
                     raise self.invalid_item_response() from None
             return {'id': item}
 
-
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, models.ServerGroup)
         try:
@@ -513,8 +512,7 @@ class ServersGroups(ModelHandler):
     def stats(self, item: 'Model') -> typing.Any:
         # Avoid circular imports
         from uds.core.managers.servers import ServerManager
-        
-        
+
         item = ensure.is_instance(item, models.ServerGroup)
 
         return [
