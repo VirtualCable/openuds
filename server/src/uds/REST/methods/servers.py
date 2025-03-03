@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 # REST API for Server Token Clients interaction
 # Register is split in two because tunnel registration also uses this
 class ServerRegisterBase(Handler):
-    def post(self) -> collections.abc.MutableMapping[str, typing.Any]:
+    def post(self) -> dict[str, typing.Any]:
         server_token: models.Server
         now = model.sql_now()
         ip = self._params.get('ip', self.request.ip)

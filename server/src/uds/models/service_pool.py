@@ -571,7 +571,7 @@ class ServicePool(UUIDModel, TaggingMixin):
             ServicePool.objects.filter(
                 assignedGroups__in=groups,
                 assignedGroups__state=types.states.State.ACTIVE,
-                state_in=types.states.State.PROCESABLE_STATES,
+                state__in=types.states.State.PROCESABLE_STATES,
                 visible=True,
             )
             .annotate(

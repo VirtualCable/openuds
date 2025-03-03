@@ -92,7 +92,7 @@ class State(enum.StrEnum):
     
     @classproperty
     def PROCESABLE_STATES(self) -> list[str]:
-        return [self.USABLE, self.LOCKED]
+        return [self.ACTIVE, self.LOCKED]
 
     # Publication States
     @classproperty
