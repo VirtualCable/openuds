@@ -329,7 +329,6 @@ class ServersServers(DetailHandler):
                     raise self.invalid_item_response() from None
             return {'id': item}
 
-
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, models.ServerGroup)
         try:

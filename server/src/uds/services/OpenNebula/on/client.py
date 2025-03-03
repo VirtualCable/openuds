@@ -104,7 +104,7 @@ class OpenNebulaClient:  # pylint: disable=too-many-public-methods
         return self.cached_version
 
     def connect(self) -> None:
-        if not self.connection:
+        if self.connection:
             return
 
         self.connection = xmlrpc.client.ServerProxy(self.endpoint)
