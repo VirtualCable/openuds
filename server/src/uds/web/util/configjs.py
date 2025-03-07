@@ -124,6 +124,10 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
         'cookies_consent': {
             'text': GlobalConfig.COOKIES_CONSENT_TEXT.get(True),
             'enabled': GlobalConfig.COOKIES_CONSENT_ENABLED.as_bool(True),
+            'urls': {
+                'leave': GlobalConfig.COOKIES_CONSENT_LEAVE_URL.get(True),
+                'more': GlobalConfig.COOKIES_CONSENT_MORE_URL.get(True),
+            },
         },
         'messages': {
             # Calendar denied message
