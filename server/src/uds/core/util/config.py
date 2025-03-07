@@ -790,6 +790,18 @@ class GlobalConfig:
         type=Config.FieldType.BOOLEAN,
         help=_('Enable cookies consent'),
     )
+    COOKIES_CONSENT_MORE_URL: Config.Value = Config.section(Config.SectionType.CUSTOM).value(
+        'Cookies consent more info url',
+        '',
+        type=Config.FieldType.TEXT,
+        help=_('URL for more info about cookies'),
+    )
+    COOKIES_CONSENT_LEAVE_URL: Config.Value = Config.section(Config.SectionType.CUSTOM).value(
+        'Cookies consent leave url',
+        '',
+        type=Config.FieldType.TEXT,
+        help=_('URL to leave cookies consent'),
+    )
         
 
     @staticmethod
