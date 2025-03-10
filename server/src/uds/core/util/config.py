@@ -781,7 +781,7 @@ class GlobalConfig:
     COOKIES_CONSENT_TEXT: Config.Value = Config.section(Config.SectionType.CUSTOM).value(
         'Cookies consent text',
         '',
-        type=Config.FieldType.TEXT,
+        type=Config.FieldType.LONGTEXT,
         help=_('Cookies consent text. If empty, a default multi language text will be used'),
     )
     COOKIES_CONSENT_ENABLED: Config.Value = Config.section(Config.SectionType.CUSTOM).value(
