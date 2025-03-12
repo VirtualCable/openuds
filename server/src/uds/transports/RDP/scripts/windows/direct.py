@@ -1,6 +1,5 @@
 # pyright: reportUnknownMemberType=false,reportUnknownArgumentType=false,reportAttributeAccessIssue=false
 import typing
-import os
 import win32crypt  # type: ignore
 import codecs
 
@@ -46,24 +45,10 @@ except Exception as e:  # nosec: Not really interested in the exception
 theFile = sp['as_file'].format(password=password)  # type: ignore
 filename = tools.saveTempFile(theFile)
 
-if sp['optimize_teams'] == True:  # type: ignore
-    try:
-        # Very basic check for RDP client from Microsoft Store
-        h = wreg.OpenKey(wreg.HKEY_CLASSES_ROOT, '.rdp\\OpenWithProgids', 0, wreg.KEY_READ)  # type: ignore
-        h.Close()
-    except Exception:
-        raise Exception(
-            'Required Microsoft Remote Desktop Application is not found. Please, install it from Microsoft store.'
-        )
-    # Add .rdp to filename for open with
-    os.rename(filename, filename + '.rdp')
-    filename = filename + '.rdp'
-    os.startfile(filename)  # type: ignore  # nosec
-else:
-    executable = tools.findApp('mstsc.exe')
-    if executable is None:
-        raise Exception('Unable to find mstsc.exe. Check that path points to your SYSTEM32 folder')
+executable = tools.findApp('mstsc.exe')
+if executable is None:
+    raise Exception('Unable to find mstsc.exe. Check that path points to your SYSTEM32 folder')
 
-    subprocess.Popen([executable, filename])  # nosec
+subprocess.Popen([executable, filename])  # nosec
 
 # tools.addFileToUnlink(filename)

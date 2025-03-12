@@ -179,7 +179,6 @@ class TRDPTransport(BaseRDPTransport):
         r.printer_params = self.lnx_printer_string.value
         r.enforced_shares = self.enforce_drives.value
         r.redir_usb = self.allow_usb_redirection.value
-        r.optimize_teams = self.wnd_optimize_teams.as_bool()
 
         sp: collections.abc.MutableMapping[str, typing.Any] = {
             'tunHost': tunnel_host,
@@ -199,7 +198,6 @@ class TRDPTransport(BaseRDPTransport):
             sp.update(
                 {
                     'as_file': r.as_file,
-                    'optimize_teams': self.wnd_optimize_teams.as_bool(),
                 }
             )
         elif os.os == types.os.KnownOS.LINUX:
