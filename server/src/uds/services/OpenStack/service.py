@@ -94,6 +94,8 @@ class OpenStackLiveService(DynamicService):
     # : provided by services itselfs, i.e. virtual machines with actors)
     needs_osmanager = True
     can_reset = True
+    
+    must_stop_before_deletion = False
 
     # : Types of publications (preparated data for deploys)
     # : In our case, we do no need a publication, so this is None
