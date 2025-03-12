@@ -27,11 +27,12 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-18 21:00+0100\n"
+"POT-Creation-Date: 2025-03-12 19:02+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: Chinese (http://app.transifex.com/openuds/openuds/language/"
@@ -51,8 +52,8 @@ msgstr "帐号"
 #: REST/methods/meta_pools.py:87 REST/methods/mfas.py:60
 #: REST/methods/networks.py:65 REST/methods/notifiers.py:69
 #: REST/methods/osmanagers.py:59 REST/methods/providers.py:73
-#: REST/methods/reports.py:72 REST/methods/servers_management.py:424
-#: REST/methods/services_pool_groups.py:78 REST/methods/services_pools.py:107
+#: REST/methods/reports.py:72 REST/methods/servers_management.py:423
+#: REST/methods/services_pool_groups.py:78 REST/methods/services_pools.py:108
 #: REST/methods/transports.py:70 REST/methods/tunnels_management.py:153
 #: REST/methods/user_services.py:359 REST/methods/user_services.py:442
 #: REST/methods/users_groups.py:177 REST/model/base.py:161
@@ -63,7 +64,7 @@ msgstr "名称"
 #: REST/methods/calendarrules.py:108 REST/methods/calendars.py:72
 #: REST/methods/meta_pools.py:88 REST/methods/mfas.py:62
 #: REST/methods/notifiers.py:73 REST/methods/osmanagers.py:61
-#: REST/methods/providers.py:75 REST/methods/servers_management.py:425
+#: REST/methods/providers.py:75 REST/methods/servers_management.py:424
 #: REST/methods/services.py:235 REST/methods/services_pool_groups.py:79
 #: REST/methods/transports.py:72 REST/methods/tunnels_management.py:154
 #: REST/methods/user_services.py:444 REST/methods/users_groups.py:178
@@ -79,8 +80,8 @@ msgstr "时间标记"
 #: REST/methods/calendars.py:77 REST/methods/meta_pools.py:108
 #: REST/methods/mfas.py:63 REST/methods/networks.py:86
 #: REST/methods/notifiers.py:74 REST/methods/osmanagers.py:63
-#: REST/methods/providers.py:79 REST/methods/servers_management.py:430
-#: REST/methods/services.py:251 REST/methods/services_pools.py:116
+#: REST/methods/providers.py:79 REST/methods/servers_management.py:429
+#: REST/methods/services.py:251 REST/methods/services_pools.py:117
 #: REST/methods/transports.py:81 REST/methods/tunnels_management.py:158
 msgid "tags"
 msgstr "标签"
@@ -93,7 +94,7 @@ msgstr "池名称"
 msgid "User name"
 msgstr "用户名"
 
-#: REST/methods/accountsusage.py:94 core/types/states.py:200
+#: REST/methods/accountsusage.py:94 core/types/states.py:206
 msgid "Running"
 msgstr "运行"
 
@@ -190,7 +191,7 @@ msgstr "ID"
 #: REST/methods/authenticators.py:73 REST/methods/mfas.py:61
 #: REST/methods/notifiers.py:70 REST/methods/osmanagers.py:60
 #: REST/methods/providers.py:74 REST/methods/servers_management.py:68
-#: REST/methods/servers_management.py:426 REST/methods/services.py:236
+#: REST/methods/servers_management.py:425 REST/methods/services.py:236
 #: REST/methods/transports.py:71 REST/methods/user_services.py:366
 #: REST/methods/user_services.py:443
 msgid "Type"
@@ -222,8 +223,8 @@ msgid "MFA"
 msgstr "外交部"
 
 #: REST/methods/authenticators.py:123 REST/methods/meta_pools.py:105
-#: REST/methods/meta_pools.py:222 REST/methods/services_pools.py:112
-#: REST/methods/services_pools.py:349 core/consts/calendar.py:190
+#: REST/methods/meta_pools.py:222 REST/methods/services_pools.py:113
+#: REST/methods/services_pools.py:350 core/consts/calendar.py:190
 msgid "Visible"
 msgstr "可见"
 
@@ -248,10 +249,10 @@ msgid ""
 "usable as login method."
 msgstr "此传输的访问类型。禁用不仅意味着隐藏，而且不能用作登录方法。"
 
-#: REST/methods/authenticators.py:133 REST/methods/services_pools.py:353
-#: REST/methods/services_pools.py:365 REST/methods/services_pools.py:377
-#: REST/methods/services_pools.py:388 REST/methods/services_pools.py:399
-#: REST/methods/services_pools.py:408 core/types/ui.py:47
+#: REST/methods/authenticators.py:133 REST/methods/services_pools.py:354
+#: REST/methods/services_pools.py:366 REST/methods/services_pools.py:378
+#: REST/methods/services_pools.py:389 REST/methods/services_pools.py:400
+#: REST/methods/services_pools.py:409 core/types/ui.py:47
 #: services/OVirt/service_linked.py:186
 msgid "Display"
 msgstr "显示"
@@ -373,11 +374,11 @@ msgid "HA Policy"
 msgstr "医管局政策"
 
 #: REST/methods/meta_pools.py:103 REST/methods/services.py:243
-#: REST/methods/services_pools.py:109
+#: REST/methods/services_pools.py:110
 msgid "User services"
 msgstr "用户服务"
 
-#: REST/methods/meta_pools.py:104 REST/methods/services_pools.py:110
+#: REST/methods/meta_pools.py:104 REST/methods/services_pools.py:111
 msgid "In Preparation"
 msgstr "在筹备"
 
@@ -386,16 +387,16 @@ msgid "Pool Group"
 msgstr "池组"
 
 #: REST/methods/meta_pools.py:118 REST/methods/meta_pools.py:206
-#: REST/methods/services_pools.py:185 REST/methods/services_pools.py:246
-#: REST/methods/services_pools.py:369
+#: REST/methods/services_pools.py:186 REST/methods/services_pools.py:247
+#: REST/methods/services_pools.py:370
 msgid "Default"
 msgstr "默认"
 
-#: REST/methods/meta_pools.py:166 REST/methods/services_pools.py:287
+#: REST/methods/meta_pools.py:166 REST/methods/services_pools.py:288
 msgid "Short name"
 msgstr "简称"
 
-#: REST/methods/meta_pools.py:167 REST/methods/services_pools.py:288
+#: REST/methods/meta_pools.py:167 REST/methods/services_pools.py:289
 msgid "Short name for user service visualization"
 msgstr "用户服务可视化的简称"
 
@@ -416,21 +417,21 @@ msgstr ""
 "心启用！"
 
 #: REST/methods/meta_pools.py:198 REST/methods/services_pool_groups.py:107
-#: REST/methods/services_pools.py:361
+#: REST/methods/services_pools.py:362
 msgid "Associated Image"
 msgstr "相关图像"
 
 #: REST/methods/meta_pools.py:199 REST/methods/services_pool_groups.py:108
-#: REST/methods/services_pools.py:362
+#: REST/methods/services_pools.py:363
 msgid "Image assocciated with this service"
 msgstr "图像与此服务相关联"
 
-#: REST/methods/meta_pools.py:213 REST/methods/services_pools.py:114
-#: REST/methods/services_pools.py:373
+#: REST/methods/meta_pools.py:213 REST/methods/services_pools.py:115
+#: REST/methods/services_pools.py:374
 msgid "Pool group"
 msgstr "池组"
 
-#: REST/methods/meta_pools.py:214 REST/methods/services_pools.py:374
+#: REST/methods/meta_pools.py:214 REST/methods/services_pools.py:375
 msgid "Pool group for this pool (for pool classify on display)"
 msgstr "此池的池组（用于显示池分类）"
 
@@ -438,11 +439,11 @@ msgstr "此池的池组（用于显示池分类）"
 msgid "If active, metapool will be visible for users"
 msgstr "如果处于活动状态，则元数将对用户可见"
 
-#: REST/methods/meta_pools.py:231 REST/methods/services_pools.py:382
+#: REST/methods/meta_pools.py:231 REST/methods/services_pools.py:383
 msgid "Calendar access denied text"
 msgstr "日历访问被拒绝的文本"
 
-#: REST/methods/meta_pools.py:233 REST/methods/services_pools.py:384
+#: REST/methods/meta_pools.py:233 REST/methods/services_pools.py:385
 msgid ""
 "Custom message to be shown to users if access is limited by calendar rules."
 msgstr "如果访问受日历规则限制，则向用户显示的自定义消息。"
@@ -664,7 +665,7 @@ msgstr "无法删除与关联的服务池的OS Manager"
 msgid "Service providers"
 msgstr "服务供应商"
 
-#: REST/methods/providers.py:76 REST/methods/services_pools.py:108
+#: REST/methods/providers.py:76 REST/methods/services_pools.py:109
 msgid "Status"
 msgstr "状态"
 
@@ -735,7 +736,7 @@ msgid "Servers of {0}"
 msgstr "{0} 的服务器"
 
 #: REST/methods/servers_management.py:146
-#: REST/methods/servers_management.py:429 REST/methods/tunnels_management.py:90
+#: REST/methods/servers_management.py:428 REST/methods/tunnels_management.py:90
 #: REST/methods/tunnels_management.py:157
 msgid "Servers"
 msgstr "服务器"
@@ -787,7 +788,7 @@ msgid "Normal"
 msgstr "普通的"
 
 #: REST/methods/servers_management.py:183
-#: REST/methods/servers_management.py:454
+#: REST/methods/servers_management.py:453
 msgid "of type"
 msgstr "类型的"
 
@@ -818,24 +819,24 @@ msgstr "服务器"
 msgid "Server to include on group"
 msgstr "要包含在组中的服务器"
 
-#: REST/methods/servers_management.py:422
+#: REST/methods/servers_management.py:421
 msgid "Servers Groups"
 msgstr "服务器组"
 
-#: REST/methods/servers_management.py:428
+#: REST/methods/servers_management.py:427
 msgid "Subtype"
 msgstr "亚型"
 
-#: REST/methods/servers_management.py:442
+#: REST/methods/servers_management.py:441
 msgid "Managed"
 msgstr "管理"
 
-#: REST/methods/servers_management.py:442
-#: REST/methods/servers_management.py:453 core/types/servers.py:72
+#: REST/methods/servers_management.py:441
+#: REST/methods/servers_management.py:452 core/types/servers.py:72
 msgid "Unmanaged"
 msgstr "非托管"
 
-#: REST/methods/servers_management.py:451 REST/methods/services.py:248
+#: REST/methods/servers_management.py:450 REST/methods/services.py:248
 #: REST/methods/services.py:306
 msgid "Standard"
 msgstr "标准"
@@ -896,48 +897,48 @@ msgstr "好"
 msgid "Services Pool Groups"
 msgstr "服务池组"
 
-#: REST/methods/services_pools.py:105 REST/methods/transports.py:75
+#: REST/methods/services_pools.py:106 REST/methods/transports.py:75
 #: REST/methods/transports.py:129
 msgid "Service Pools"
 msgstr "服务池"
 
-#: REST/methods/services_pools.py:111
+#: REST/methods/services_pools.py:112
 msgid "Usage"
 msgstr "用法"
 
-#: REST/methods/services_pools.py:113
+#: REST/methods/services_pools.py:114
 msgid "Shows transports"
 msgstr "显示运输"
 
-#: REST/methods/services_pools.py:115
+#: REST/methods/services_pools.py:116
 msgid "Parent service"
 msgstr "家长服务"
 
-#: REST/methods/services_pools.py:278
+#: REST/methods/services_pools.py:279
 msgid "Create at least a service before creating a new service pool"
 msgstr "在创建新服务池之前至少创建一个服务"
 
-#: REST/methods/services_pools.py:299
+#: REST/methods/services_pools.py:300
 msgid "Base service"
 msgstr "基本服务"
 
-#: REST/methods/services_pools.py:300
+#: REST/methods/services_pools.py:301
 msgid "Service used as base of this service pool"
 msgstr "用作此服务池基础的服务"
 
-#: REST/methods/services_pools.py:309
+#: REST/methods/services_pools.py:310
 msgid "OS Manager"
 msgstr "OS经理"
 
-#: REST/methods/services_pools.py:310
+#: REST/methods/services_pools.py:311
 msgid "OS Manager used as base of this service pool"
 msgstr "OS Manager用作此服务池的基础"
 
-#: REST/methods/services_pools.py:318
+#: REST/methods/services_pools.py:319
 msgid "Allow removal by users"
 msgstr "允许用户删除"
 
-#: REST/methods/services_pools.py:320
+#: REST/methods/services_pools.py:321
 msgid ""
 "If active, the user will be allowed to remove the service \"manually\". Be "
 "careful with this, because the user will have the \"power\" to delete it's "
@@ -946,105 +947,105 @@ msgstr ""
 "如果激活，则允许用户“手动”删除服务。请注意这一点，因为用户将拥有“权力”来删除"
 "它自己的服务"
 
-#: REST/methods/services_pools.py:324 REST/methods/services_pools.py:333
-#: REST/methods/services_pools.py:344 REST/methods/services_pools.py:458
-#: REST/methods/services_pools.py:468 auths/RegexLdap/authenticator.py:146
+#: REST/methods/services_pools.py:325 REST/methods/services_pools.py:334
+#: REST/methods/services_pools.py:345 REST/methods/services_pools.py:459
+#: REST/methods/services_pools.py:469 auths/RegexLdap/authenticator.py:146
 #: core/types/ui.py:43 services/OpenGnsys/service.py:131
 msgid "Advanced"
 msgstr "高级"
 
-#: REST/methods/services_pools.py:329
+#: REST/methods/services_pools.py:330
 msgid "Allow reset by users"
 msgstr "允许用户重置"
 
-#: REST/methods/services_pools.py:330
+#: REST/methods/services_pools.py:331
 msgid "If active, the user will be allowed to reset the service"
 msgstr "如果处于活动状态，则允许用户重置服务"
 
-#: REST/methods/services_pools.py:338
+#: REST/methods/services_pools.py:339
 msgid "Ignores unused"
 msgstr "忽略未使用的"
 
-#: REST/methods/services_pools.py:340
+#: REST/methods/services_pools.py:341
 msgid ""
 "If the option is enabled, UDS will not attempt to detect and remove the user "
 "services assigned but not in use."
 msgstr "如果启用该选项，UDS将不会尝试检测并删除已分配但未使用的用户服务。"
 
-#: REST/methods/services_pools.py:350
+#: REST/methods/services_pools.py:351
 msgid "If active, transport will be visible for users"
 msgstr "如果处于活动状态，则用户可以看到传输"
 
-#: REST/methods/services_pools.py:393
+#: REST/methods/services_pools.py:394
 msgid "Custom launch message text"
 msgstr "自定义启动消息文本"
 
-#: REST/methods/services_pools.py:395
+#: REST/methods/services_pools.py:396
 msgid ""
 "Custom message to be shown to users, if active, when trying to start a "
 "service from this pool."
 msgstr "尝试从该池启动服务时，如果处于活动状态，则向用户显示的自定义消息。"
 
-#: REST/methods/services_pools.py:404
+#: REST/methods/services_pools.py:405
 msgid "Enable custom launch message"
 msgstr "启用自定义启动消息"
 
-#: REST/methods/services_pools.py:405
+#: REST/methods/services_pools.py:406
 msgid "If active, the custom launch message will be shown to users"
 msgstr "如果激活，自定义启动消息将显示给用户"
 
-#: REST/methods/services_pools.py:414
+#: REST/methods/services_pools.py:415
 msgid "Initial available services"
 msgstr "初始可用服务"
 
-#: REST/methods/services_pools.py:415
+#: REST/methods/services_pools.py:416
 msgid "Services created initially for this service pool"
 msgstr "最初为此服务池创建的服务"
 
-#: REST/methods/services_pools.py:418 REST/methods/services_pools.py:428
-#: REST/methods/services_pools.py:438 REST/methods/services_pools.py:450
+#: REST/methods/services_pools.py:419 REST/methods/services_pools.py:429
+#: REST/methods/services_pools.py:439 REST/methods/services_pools.py:451
 msgid "Availability"
 msgstr "可用性"
 
-#: REST/methods/services_pools.py:424
+#: REST/methods/services_pools.py:425
 msgid "Services to keep in cache"
 msgstr "保留在缓存中的服务"
 
-#: REST/methods/services_pools.py:425
+#: REST/methods/services_pools.py:426
 msgid "Services kept in cache for improved user service assignation"
 msgstr "保留在缓存中的服务用于改进用户服务分配"
 
-#: REST/methods/services_pools.py:434
+#: REST/methods/services_pools.py:435
 msgid "Services to keep in L2 cache"
 msgstr "要保留在L2缓存中的服务"
 
-#: REST/methods/services_pools.py:435
+#: REST/methods/services_pools.py:436
 msgid "Services kept in cache of level2 for improved service generation"
 msgstr "服务保留在level2的缓存中以改进服务生成"
 
-#: REST/methods/services_pools.py:444
+#: REST/methods/services_pools.py:445
 msgid "Maximum number of services to provide"
 msgstr "要提供的最大服务数"
 
-#: REST/methods/services_pools.py:446
+#: REST/methods/services_pools.py:447
 msgid ""
 "Maximum number of service (assigned and L1 cache) that can be created for "
 "this service"
 msgstr "可以为此服务创建的最大服务数（已分配和L1缓存）"
 
-#: REST/methods/services_pools.py:455
+#: REST/methods/services_pools.py:456
 msgid "Show transports"
 msgstr "显示运输"
 
-#: REST/methods/services_pools.py:456
+#: REST/methods/services_pools.py:457
 msgid "If active, alternative transports for user will be shown"
 msgstr "如果激活，将显示用户的替代传输"
 
-#: REST/methods/services_pools.py:465
+#: REST/methods/services_pools.py:466
 msgid "Accounting"
 msgstr "会计"
 
-#: REST/methods/services_pools.py:466
+#: REST/methods/services_pools.py:467
 msgid "Account associated to this service pool"
 msgstr "与此服务池关联的帐户"
 
@@ -1526,12 +1527,10 @@ msgid ""
 msgstr "如果不为空，如果用户密码过期，会自动重定向到这个URL"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:194
-#| msgid "Group membership attr"
 msgid "Force Group Membership"
 msgstr "强制群组成员身份"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:196
-#| msgid "If not empty, UDS will try to add managed users to this group"
 msgid "If not empty, all users will be considered members of this group"
 msgstr "如果不为空，所有用户都将被视为该组的成员"
 
@@ -2614,24 +2613,24 @@ msgstr "清理二级缓存"
 msgid "Custom message on launchers"
 msgstr "启动器上的自定义消息"
 
-#: core/managers/publication.py:266
+#: core/managers/publication.py:271
 msgid ""
 "Already publishing. Wait for previous publication to finish and try again"
 msgstr "已经发布。等待以前的出版物完成，然后重试"
 
-#: core/managers/publication.py:270
+#: core/managers/publication.py:275
 msgid "Service is in maintenance mode and new publications are not allowed"
 msgstr "服务处于维护模式，不允许新的出版物"
 
-#: core/managers/publication.py:320
+#: core/managers/publication.py:325
 msgid "Can't cancel non running publication"
 msgstr "无法取消非运行发布"
 
-#: core/managers/publication.py:349
+#: core/managers/publication.py:354
 msgid "Can't unpublish non usable publication"
 msgstr "无法取消发布不可用的出版物"
 
-#: core/managers/publication.py:351
+#: core/managers/publication.py:356
 msgid "Can't unpublish publications with services in process"
 msgstr "无法取消发布正在处理的服务的出版物"
 
@@ -2672,7 +2671,6 @@ msgid "The requested service is restrained"
 msgstr "请求的服务被限制"
 
 #: core/managers/userservice.py:562
-#| msgid "Machines for this service"
 msgid "Cannot create user services for this service"
 msgstr "无法为此服务创建用户服务"
 
@@ -2928,7 +2926,6 @@ msgid "Invalid Multi-Factor Authentication code"
 msgstr "无效的多重身份验证代码"
 
 #: core/types/errors.py:135
-#| msgid "Password"
 msgid "Password expired"
 msgstr "密码已过期"
 
@@ -2972,93 +2969,98 @@ msgstr "隧道"
 msgid "Actor"
 msgstr "演员"
 
-#: core/types/states.py:187
+#: core/types/states.py:193
 msgid "Active"
 msgstr "活性"
 
-#: core/types/states.py:188
+#: core/types/states.py:194
 msgid "Inactive"
 msgstr "待用"
 
-#: core/types/states.py:189
+#: core/types/states.py:195
 msgid "Blocked"
 msgstr "阻止"
 
-#: core/types/states.py:190
+#: core/types/states.py:196
 msgid "Waiting publication"
 msgstr "等待出版"
 
-#: core/types/states.py:191
+#: core/types/states.py:197
 msgid "In preparation"
 msgstr "在筹备"
 
-#: core/types/states.py:192
+#: core/types/states.py:198
 msgid "Valid"
 msgstr "有效"
 
-#: core/types/states.py:193 core/types/states.py:195
+#: core/types/states.py:199 core/types/states.py:201
 msgid "Removing"
 msgstr "删除"
 
-#: core/types/states.py:194
+#: core/types/states.py:200
 msgid "Restrained"
 msgstr "矜持"
 
-#: core/types/states.py:196
+#: core/types/states.py:202
 msgid "Removed"
 msgstr "删除"
 
-#: core/types/states.py:197
+#: core/types/states.py:203
 msgid "Canceled"
 msgstr "取消"
 
-#: core/types/states.py:198
+#: core/types/states.py:204
 msgid "Canceling"
 msgstr "取消"
 
-#: core/types/states.py:199
+#: core/types/states.py:205
 msgid "Error"
 msgstr "错误"
 
-#: core/types/states.py:201
+#: core/types/states.py:207
 msgid "Finished"
 msgstr "成品"
 
-#: core/types/states.py:202
+#: core/types/states.py:208
 msgid "Waiting execution"
 msgstr "等待执行"
 
-#: core/types/states.py:203
+#: core/types/states.py:209
 msgid "Balancing"
 msgstr "平衡"
 
-#: core/types/states.py:204
+#: core/types/states.py:210
 msgid "In maintenance"
 msgstr "在维护"
 
-#: core/types/states.py:205
+#: core/types/states.py:211
 msgid "Waiting OS"
 msgstr "等待操作系统"
 
-#: core/types/states.py:206
+#: core/types/states.py:212
 msgid "Too many preparing services"
 msgstr "准备服务太多了"
 
-#: core/types/states.py:207
+#: core/types/states.py:213
 msgid "Meta member"
 msgstr "元成员"
 
-#: core/types/states.py:208
+#: core/types/states.py:214
 msgid "Allowed"
 msgstr "允许"
 
-#: core/types/states.py:209
+#: core/types/states.py:215
 msgid "Denied"
 msgstr "被拒绝"
 
-#: core/types/states.py:210
+#: core/types/states.py:216
 msgid "Unknown"
 msgstr "未知"
+
+#: core/types/states.py:217
+#| msgid "Blocked"
+msgid "Locked"
+msgstr "已锁定"
 
 #: core/types/transports.py:76
 msgid "Direct"
@@ -3347,6 +3349,15 @@ msgstr "Cookies 同意文本。如果为空，将使用默认的多语言文本"
 #: core/util/config.py:791
 msgid "Enable cookies consent"
 msgstr "启用 Cookie 同意"
+
+#: core/util/config.py:797
+msgid "URL for more info about cookies"
+msgstr "有关 Cookie 的更多信息的 URL"
+
+#: core/util/config.py:803
+#| msgid "Enable cookies consent"
+msgid "URL to leave cookies consent"
+msgstr "同意 Cookie 的 URL"
 
 #: core/util/fields.py:85
 msgid "Tunnel server"
@@ -3925,12 +3936,6 @@ msgid "URL pattern for SMS sending"
 msgstr "SMS 发送的 URL 模式"
 
 #: mfas/SMS/mfa.py:108
-#| msgid ""
-#| "URL pattern for SMS sending. It can contain the following variables:\n"
-#| "* {code} - the code to send\n"
-#| "* {phone/+phone} - the phone number\n"
-#| "* {username} - the username\n"
-#| "* {justUsername} - the username without @...."
 msgid ""
 "URL pattern for SMS sending. It can contain the following variables:\n"
 "* {code} - the code to send\n"
@@ -3940,8 +3945,8 @@ msgid ""
 "* {realName} - the real name of the user"
 msgstr ""
 "短信发送的 URL 模式。它可以包含以下变量：* {code} - 要发送的代码* {phone/"
-"+phone} - 电话号码* {username} - 用户名* {justUsername} - 不带 @ "
-"的用户名....* {realName} - 用户的真实姓名"
+"+phone} - 电话号码* {username} - 用户名* {justUsername} - 不带 @ 的用户"
+"名....* {realName} - 用户的真实姓名"
 
 #: mfas/SMS/mfa.py:117 mfas/SMS/mfa.py:129 mfas/SMS/mfa.py:139
 #: mfas/SMS/mfa.py:159 mfas/SMS/mfa.py:178 mfas/SMS/mfa.py:189
@@ -3971,13 +3976,6 @@ msgid "Headers for SMS requests"
 msgstr "SMS 请求的标头"
 
 #: mfas/SMS/mfa.py:149
-#| msgid ""
-#| "Headers for SMS requests. It can contain the following variables:\n"
-#| "* {code} - the code to send\n"
-#| "* {phone/+phone} - the phone number\n"
-#| "* {username} - the username\n"
-#| "* {justUsername} - the username without @....\n"
-#| "Headers are in the form of \"Header: Value\". (without the quotes)"
 msgid ""
 "Headers for SMS requests. It can contain the following variables:\n"
 "* {code} - the code to send\n"
@@ -3987,8 +3985,8 @@ msgid ""
 "* {realName} - the real name of the user\n"
 "Headers are in the form of \"Header: Value\". (without the quotes)"
 msgstr ""
-"SMS 请求的标头。它可以包含以下变量：* {code} - 要发送的代码* {phone/+phone} -"
-" 电话号码* {username} - 用户名* {justUsername} - 不带 @ 的用户名....* "
+"SMS 请求的标头。它可以包含以下变量：* {code} - 要发送的代码* {phone/+phone} "
+"- 电话号码* {username} - 用户名* {justUsername} - 不带 @ 的用户名....* "
 "{realName} - 用户的真实姓名标头的格式为“标头：值”。（不带引号）"
 
 #: mfas/SMS/mfa.py:166
@@ -3996,13 +3994,6 @@ msgid "Parameters for SMS POST/PUT sending"
 msgstr "SMS POST/PUT 发送参数"
 
 #: mfas/SMS/mfa.py:169
-#| msgid ""
-#| "Parameters for SMS sending via POST/PUT. It can contain the following "
-#| "variables:\n"
-#| "* {code} - the code to send\n"
-#| "* {phone/+phone} - the phone number\n"
-#| "* {username} - the username\n"
-#| "* {justUsername} - the username without @...."
 msgid ""
 "Parameters for SMS sending via POST/PUT. It can contain the following "
 "variables:\n"
@@ -4012,9 +4003,9 @@ msgid ""
 "* {justUsername} - the username without @....\n"
 "* {realName} - the real name of the user"
 msgstr ""
-"通过 POST/PUT 发送短信的参数。它可以包含以下变量：* {code} - 要发送的代码* {"
-"phone/+phone} - 电话号码* {username} - 用户名* {justUsername} - 不带 @ "
-"的用户名....* {realName} - 用户的真实姓名"
+"通过 POST/PUT 发送短信的参数。它可以包含以下变量：* {code} - 要发送的代码* "
+"{phone/+phone} - 电话号码* {username} - 用户名* {justUsername} - 不带 @ 的用"
+"户名....* {realName} - 用户的真实姓名"
 
 #: mfas/SMS/mfa.py:183
 msgid "SMS encoding"
@@ -4155,7 +4146,8 @@ msgstr "输入您的验证码"
 msgid ""
 "Please, use your Authenticator to add your account. (i.e. Google "
 "Authenticator, Authy, ...)"
-msgstr "请使用您的身份验证器添加您的帐户。（例如 Google Authenticator、Authy 等）"
+msgstr ""
+"请使用您的身份验证器添加您的帐户。（例如 Google Authenticator、Authy 等）"
 
 #: mfas/TOTP/mfa.py:197
 msgid "Code is already used. Wait a minute and try again."
@@ -5103,7 +5095,7 @@ msgstr "此服务的基础 AMI"
 #: services/AWS_enterprise/service_fixed.py:80
 #: services/Google_enterprise/service.py:65
 #: services/Google_enterprise/service_fixed.py:80
-#: services/OpenStack/provider.py:171 services/OpenStack/service.py:109
+#: services/OpenStack/provider.py:171 services/OpenStack/service.py:111
 #: services/OpenStack/service_fixed.py:82
 msgid "Region"
 msgstr "区域"
@@ -5141,7 +5133,7 @@ msgstr "来自此服务的实例的 VPC"
 #: services/AWS_enterprise/service.py:126
 #: services/Azure_enterprise/service.py:97
 #: services/HyperV_enterprise/service.py:102
-#: services/Nutanix_enterprise/service.py:106 services/OpenStack/service.py:154
+#: services/Nutanix_enterprise/service.py:106 services/OpenStack/service.py:156
 #: services/Xen/service.py:132
 msgid "Network"
 msgstr "网络"
@@ -5172,7 +5164,7 @@ msgstr "基于固定机器的AWS服务。"
 
 #: services/AWS_enterprise/service_fixed.py:82
 #: services/Google_enterprise/service_fixed.py:82
-#: services/OpenStack/service.py:111 services/OpenStack/service_fixed.py:84
+#: services/OpenStack/service.py:113 services/OpenStack/service_fixed.py:84
 msgid "Service region"
 msgstr "服务区域"
 
@@ -5630,7 +5622,7 @@ msgstr "基于 Nutanix Prism Central 的服务"
 
 #: services/NutanixPrism_enterprise/service.py:59
 #: services/NutanixPrism_enterprise/service_fixed.py:84
-#: services/OpenStack/service.py:116 services/OpenStack/service_fixed.py:89
+#: services/OpenStack/service.py:118 services/OpenStack/service_fixed.py:89
 msgid "Project"
 msgstr "项目"
 
@@ -6214,43 +6206,43 @@ msgstr "OpenStack Live Volume"
 msgid "OpenStack live images based service"
 msgstr "OpenStack基于实时图像的服务"
 
-#: services/OpenStack/service.py:123 services/OpenStack/service_fixed.py:96
+#: services/OpenStack/service.py:125 services/OpenStack/service_fixed.py:96
 msgid "Project for this service"
 msgstr "这项服务的项目"
 
-#: services/OpenStack/service.py:128
+#: services/OpenStack/service.py:130
 msgid "Availability Zones"
 msgstr "可用区域"
 
-#: services/OpenStack/service.py:140
+#: services/OpenStack/service.py:142
 msgid "Service availability zones"
 msgstr "服务可用区域"
 
-#: services/OpenStack/service.py:146
+#: services/OpenStack/service.py:148
 msgid "Volume"
 msgstr "体积"
 
-#: services/OpenStack/service.py:148
+#: services/OpenStack/service.py:150
 msgid "Base volume for service (restricted by availability zone)"
 msgstr "服务基础量（受可用区限制）"
 
-#: services/OpenStack/service.py:156
+#: services/OpenStack/service.py:158
 msgid "Network to attach to this service"
 msgstr "要附加到此服务的网络"
 
-#: services/OpenStack/service.py:161
+#: services/OpenStack/service.py:163
 msgid "Flavor"
 msgstr "味道"
 
-#: services/OpenStack/service.py:163
+#: services/OpenStack/service.py:165
 msgid "Flavor for service"
 msgstr "服务的味道"
 
-#: services/OpenStack/service.py:169
+#: services/OpenStack/service.py:171
 msgid "Security Groups"
 msgstr "安全组"
 
-#: services/OpenStack/service.py:171
+#: services/OpenStack/service.py:173
 msgid "Service security groups"
 msgstr "服务安全组"
 
@@ -7086,7 +7078,6 @@ msgid "Local"
 msgstr "当地的"
 
 #: services/Vmware_enterprise/helpers.py:101
-#| msgid "Removed"
 msgid "Remote"
 msgstr "偏僻的"
 
@@ -7773,7 +7764,6 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:307
 #: transports/HTML5RDS_enterprise/html5rds.py:171
-#| msgid "Custom parameters"
 msgid "Support parameters"
 msgstr "支持参数"
 
@@ -8518,7 +8508,7 @@ msgstr "身份验证错误太多。用户暂时被阻止"
 msgid "Invalid data"
 msgstr "无效数据"
 
-#: web/util/configjs.py:131
+#: web/util/configjs.py:135
 msgid "Access limited by calendar"
 msgstr "访问受日历限制"
 
