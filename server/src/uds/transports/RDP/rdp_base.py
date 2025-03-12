@@ -354,14 +354,6 @@ class BaseRDPTransport(transports.Transport):
         old_field_name='customParametersWindows',
     )
 
-    wnd_optimize_teams = gui.CheckBoxField(
-        label=_('Optimize Teams'),
-        order=46,
-        tooltip=_('If checked, Teams will be optimized (only works on Windows clients)'),
-        tab='Windows Client',
-        old_field_name='optimizeTeams',
-    )
-
     def is_ip_allowed(self, userservice: 'models.UserService', ip: str) -> bool:
         """
         Checks if the transport is available for the requested destination ip
@@ -433,9 +425,6 @@ class BaseRDPTransport(transports.Transport):
         # If AzureAD, include it on username
         if azure_ad:
             username = 'AzureAD\\' + username
-
-        if self.wnd_optimize_teams.as_bool():
-            password = ''  # nosec
 
         return types.connections.ConnectionData(
             protocol=self.protocol,

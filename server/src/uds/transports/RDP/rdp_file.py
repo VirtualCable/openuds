@@ -71,7 +71,6 @@ class RDPFile:
     enable_clipboard: bool = False
     custom_parameters: typing.Optional[str] = None
     enforced_shares: typing.Optional[str] = None
-    optimize_teams: bool = False
 
     def __init__(
         self,
@@ -236,7 +235,7 @@ class RDPFile:
         if self.username:
             res += 'username:s:' + self.username + '\n'
             res += 'domain:s:' + self.domain + '\n'
-            if self.target == types.os.KnownOS.WINDOWS and not self.optimize_teams:
+            if self.target == types.os.KnownOS.WINDOWS:
                 res += 'password 51:b:' + password + '\n'
 
         res += 'alternate shell:s:' + '\n'
