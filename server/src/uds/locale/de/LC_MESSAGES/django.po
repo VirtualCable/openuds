@@ -27,16 +27,18 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012
+# Javier <jgonzalez@virtualcable.es>, 2025
 # Víctor Alonso <valonso@virtualcable.net>, 2022
 # Víctor Alonso <valonso@virtualcable.net>, 2022
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-18 21:00+0100\n"
+"POT-Creation-Date: 2025-03-12 19:02+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
-"Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2022\n"
+"Last-Translator: Javier <jgonzalez@virtualcable.es>, 2025\n"
 "Language-Team: German (http://app.transifex.com/openuds/openuds/language/"
 "de/)\n"
 "Language: de\n"
@@ -54,8 +56,8 @@ msgstr "Konten"
 #: REST/methods/meta_pools.py:87 REST/methods/mfas.py:60
 #: REST/methods/networks.py:65 REST/methods/notifiers.py:69
 #: REST/methods/osmanagers.py:59 REST/methods/providers.py:73
-#: REST/methods/reports.py:72 REST/methods/servers_management.py:424
-#: REST/methods/services_pool_groups.py:78 REST/methods/services_pools.py:107
+#: REST/methods/reports.py:72 REST/methods/servers_management.py:423
+#: REST/methods/services_pool_groups.py:78 REST/methods/services_pools.py:108
 #: REST/methods/transports.py:70 REST/methods/tunnels_management.py:153
 #: REST/methods/user_services.py:359 REST/methods/user_services.py:442
 #: REST/methods/users_groups.py:177 REST/model/base.py:161
@@ -66,7 +68,7 @@ msgstr "Name"
 #: REST/methods/calendarrules.py:108 REST/methods/calendars.py:72
 #: REST/methods/meta_pools.py:88 REST/methods/mfas.py:62
 #: REST/methods/notifiers.py:73 REST/methods/osmanagers.py:61
-#: REST/methods/providers.py:75 REST/methods/servers_management.py:425
+#: REST/methods/providers.py:75 REST/methods/servers_management.py:424
 #: REST/methods/services.py:235 REST/methods/services_pool_groups.py:79
 #: REST/methods/transports.py:72 REST/methods/tunnels_management.py:154
 #: REST/methods/user_services.py:444 REST/methods/users_groups.py:178
@@ -82,8 +84,8 @@ msgstr "Zeitmarke"
 #: REST/methods/calendars.py:77 REST/methods/meta_pools.py:108
 #: REST/methods/mfas.py:63 REST/methods/networks.py:86
 #: REST/methods/notifiers.py:74 REST/methods/osmanagers.py:63
-#: REST/methods/providers.py:79 REST/methods/servers_management.py:430
-#: REST/methods/services.py:251 REST/methods/services_pools.py:116
+#: REST/methods/providers.py:79 REST/methods/servers_management.py:429
+#: REST/methods/services.py:251 REST/methods/services_pools.py:117
 #: REST/methods/transports.py:81 REST/methods/tunnels_management.py:158
 msgid "tags"
 msgstr "Stichworte"
@@ -96,7 +98,7 @@ msgstr "Poolname"
 msgid "User name"
 msgstr "Nutzername"
 
-#: REST/methods/accountsusage.py:94 core/types/states.py:200
+#: REST/methods/accountsusage.py:94 core/types/states.py:206
 msgid "Running"
 msgstr "Laufen"
 
@@ -127,7 +129,7 @@ msgstr "Aktuelle Verwendungen"
 
 #: REST/methods/actor_token.py:58
 msgid "Actor tokens"
-msgstr "Schauspieler-Token"
+msgstr "Actor-Token"
 
 #: REST/methods/actor_token.py:61 REST/methods/servers_management.py:71
 #: reports/auto/fields.py:57 reports/lists/audit.py:137
@@ -184,7 +186,7 @@ msgstr "Token wird von {} von {} ausgegeben"
 
 #: REST/methods/authenticators.py:69 REST/methods/networks.py:81
 msgid "Authenticators"
-msgstr "Authentifikatoren"
+msgstr "Authentifikator"
 
 #: REST/methods/authenticators.py:71
 msgid "Id"
@@ -193,7 +195,7 @@ msgstr "Ich würde"
 #: REST/methods/authenticators.py:73 REST/methods/mfas.py:61
 #: REST/methods/notifiers.py:70 REST/methods/osmanagers.py:60
 #: REST/methods/providers.py:74 REST/methods/servers_management.py:68
-#: REST/methods/servers_management.py:426 REST/methods/services.py:236
+#: REST/methods/servers_management.py:425 REST/methods/services.py:236
 #: REST/methods/transports.py:71 REST/methods/user_services.py:366
 #: REST/methods/user_services.py:443
 msgid "Type"
@@ -225,8 +227,8 @@ msgid "MFA"
 msgstr "MFA"
 
 #: REST/methods/authenticators.py:123 REST/methods/meta_pools.py:105
-#: REST/methods/meta_pools.py:222 REST/methods/services_pools.py:112
-#: REST/methods/services_pools.py:349 core/consts/calendar.py:190
+#: REST/methods/meta_pools.py:222 REST/methods/services_pools.py:113
+#: REST/methods/services_pools.py:350 core/consts/calendar.py:190
 msgid "Visible"
 msgstr "Sichtbar"
 
@@ -253,10 +255,10 @@ msgstr ""
 "Zugriffstyp für diesen Transport. Deaktiviert bedeutet nicht nur "
 "ausgeblendet, sondern auch nicht als Anmeldemethode verwendbar."
 
-#: REST/methods/authenticators.py:133 REST/methods/services_pools.py:353
-#: REST/methods/services_pools.py:365 REST/methods/services_pools.py:377
-#: REST/methods/services_pools.py:388 REST/methods/services_pools.py:399
-#: REST/methods/services_pools.py:408 core/types/ui.py:47
+#: REST/methods/authenticators.py:133 REST/methods/services_pools.py:354
+#: REST/methods/services_pools.py:366 REST/methods/services_pools.py:378
+#: REST/methods/services_pools.py:389 REST/methods/services_pools.py:400
+#: REST/methods/services_pools.py:409 core/types/ui.py:47
 #: services/OVirt/service_linked.py:186
 msgid "Display"
 msgstr "Anzeige"
@@ -378,11 +380,11 @@ msgid "HA Policy"
 msgstr "HA-Richtlinie"
 
 #: REST/methods/meta_pools.py:103 REST/methods/services.py:243
-#: REST/methods/services_pools.py:109
+#: REST/methods/services_pools.py:110
 msgid "User services"
 msgstr "User services"
 
-#: REST/methods/meta_pools.py:104 REST/methods/services_pools.py:110
+#: REST/methods/meta_pools.py:104 REST/methods/services_pools.py:111
 msgid "In Preparation"
 msgstr "In Vorbereitung"
 
@@ -391,16 +393,16 @@ msgid "Pool Group"
 msgstr "Poolgruppe"
 
 #: REST/methods/meta_pools.py:118 REST/methods/meta_pools.py:206
-#: REST/methods/services_pools.py:185 REST/methods/services_pools.py:246
-#: REST/methods/services_pools.py:369
+#: REST/methods/services_pools.py:186 REST/methods/services_pools.py:247
+#: REST/methods/services_pools.py:370
 msgid "Default"
 msgstr "Standard"
 
-#: REST/methods/meta_pools.py:166 REST/methods/services_pools.py:287
+#: REST/methods/meta_pools.py:166 REST/methods/services_pools.py:288
 msgid "Short name"
 msgstr "Kurzer Name"
 
-#: REST/methods/meta_pools.py:167 REST/methods/services_pools.py:288
+#: REST/methods/meta_pools.py:167 REST/methods/services_pools.py:289
 msgid "Short name for user service visualization"
 msgstr "Kurzname für die Visualisierung des Benutzerservices"
 
@@ -422,21 +424,21 @@ msgstr ""
 "gestartet. Vorsichtig aktivieren!."
 
 #: REST/methods/meta_pools.py:198 REST/methods/services_pool_groups.py:107
-#: REST/methods/services_pools.py:361
+#: REST/methods/services_pools.py:362
 msgid "Associated Image"
 msgstr "Zugeordnetes Bild"
 
 #: REST/methods/meta_pools.py:199 REST/methods/services_pool_groups.py:108
-#: REST/methods/services_pools.py:362
+#: REST/methods/services_pools.py:363
 msgid "Image assocciated with this service"
 msgstr "Bild mit diesem Dienst verbunden"
 
-#: REST/methods/meta_pools.py:213 REST/methods/services_pools.py:114
-#: REST/methods/services_pools.py:373
+#: REST/methods/meta_pools.py:213 REST/methods/services_pools.py:115
+#: REST/methods/services_pools.py:374
 msgid "Pool group"
 msgstr "Poolgruppe"
 
-#: REST/methods/meta_pools.py:214 REST/methods/services_pools.py:374
+#: REST/methods/meta_pools.py:214 REST/methods/services_pools.py:375
 msgid "Pool group for this pool (for pool classify on display)"
 msgstr "Poolgruppe für diesen Pool (für Poolklassifizierung auf dem Display)"
 
@@ -444,11 +446,11 @@ msgstr "Poolgruppe für diesen Pool (für Poolklassifizierung auf dem Display)"
 msgid "If active, metapool will be visible for users"
 msgstr "Wenn aktiv, ist der Metapool für Benutzer sichtbar"
 
-#: REST/methods/meta_pools.py:231 REST/methods/services_pools.py:382
+#: REST/methods/meta_pools.py:231 REST/methods/services_pools.py:383
 msgid "Calendar access denied text"
 msgstr "Kalenderzugriff verweigert Text"
 
-#: REST/methods/meta_pools.py:233 REST/methods/services_pools.py:384
+#: REST/methods/meta_pools.py:233 REST/methods/services_pools.py:385
 msgid ""
 "Custom message to be shown to users if access is limited by calendar rules."
 msgstr ""
@@ -537,7 +539,7 @@ msgstr "Inhaber"
 #: REST/methods/meta_service_pools.py:233 REST/methods/user_services.py:188
 #: REST/methods/user_services.py:312
 msgid "Actor version"
-msgstr "Darstellerversion"
+msgstr "Actor-version"
 
 #: REST/methods/meta_service_pools.py:266 REST/methods/services_usage.py:152
 #: REST/methods/user_services.py:226
@@ -678,7 +680,7 @@ msgstr ""
 msgid "Service providers"
 msgstr "Dienstleister"
 
-#: REST/methods/providers.py:76 REST/methods/services_pools.py:108
+#: REST/methods/providers.py:76 REST/methods/services_pools.py:109
 msgid "Status"
 msgstr "Status"
 
@@ -749,7 +751,7 @@ msgid "Servers of {0}"
 msgstr "Server von {0}"
 
 #: REST/methods/servers_management.py:146
-#: REST/methods/servers_management.py:429 REST/methods/tunnels_management.py:90
+#: REST/methods/servers_management.py:428 REST/methods/tunnels_management.py:90
 #: REST/methods/tunnels_management.py:157
 msgid "Servers"
 msgstr "Server"
@@ -801,7 +803,7 @@ msgid "Normal"
 msgstr "Normal"
 
 #: REST/methods/servers_management.py:183
-#: REST/methods/servers_management.py:454
+#: REST/methods/servers_management.py:453
 msgid "of type"
 msgstr "vom Typ"
 
@@ -834,24 +836,24 @@ msgstr "Server"
 msgid "Server to include on group"
 msgstr "Server, der in die Gruppe aufgenommen werden soll"
 
-#: REST/methods/servers_management.py:422
+#: REST/methods/servers_management.py:421
 msgid "Servers Groups"
 msgstr "Servergruppen"
 
-#: REST/methods/servers_management.py:428
+#: REST/methods/servers_management.py:427
 msgid "Subtype"
 msgstr "Untertyp"
 
-#: REST/methods/servers_management.py:442
+#: REST/methods/servers_management.py:441
 msgid "Managed"
 msgstr "Gelang es"
 
-#: REST/methods/servers_management.py:442
-#: REST/methods/servers_management.py:453 core/types/servers.py:72
+#: REST/methods/servers_management.py:441
+#: REST/methods/servers_management.py:452 core/types/servers.py:72
 msgid "Unmanaged"
 msgstr "Nicht verwaltet"
 
-#: REST/methods/servers_management.py:451 REST/methods/services.py:248
+#: REST/methods/servers_management.py:450 REST/methods/services.py:248
 #: REST/methods/services.py:306
 msgid "Standard"
 msgstr "Standard"
@@ -914,50 +916,50 @@ msgstr "OK"
 msgid "Services Pool Groups"
 msgstr "Dienstleistungen Pool Gruppen"
 
-#: REST/methods/services_pools.py:105 REST/methods/transports.py:75
+#: REST/methods/services_pools.py:106 REST/methods/transports.py:75
 #: REST/methods/transports.py:129
 msgid "Service Pools"
 msgstr "Service-Pools"
 
-#: REST/methods/services_pools.py:111
+#: REST/methods/services_pools.py:112
 msgid "Usage"
 msgstr "Verwendungszweck"
 
-#: REST/methods/services_pools.py:113
+#: REST/methods/services_pools.py:114
 msgid "Shows transports"
 msgstr "Zeigt Transporte"
 
-#: REST/methods/services_pools.py:115
+#: REST/methods/services_pools.py:116
 msgid "Parent service"
 msgstr "Elternservice"
 
-#: REST/methods/services_pools.py:278
+#: REST/methods/services_pools.py:279
 msgid "Create at least a service before creating a new service pool"
 msgstr ""
 "Erstellen Sie mindestens einen Service, bevor Sie einen neuen Service-Pool "
 "erstellen"
 
-#: REST/methods/services_pools.py:299
+#: REST/methods/services_pools.py:300
 msgid "Base service"
 msgstr "Basisservice"
 
-#: REST/methods/services_pools.py:300
+#: REST/methods/services_pools.py:301
 msgid "Service used as base of this service pool"
 msgstr "Service, der als Basis für diesen Service-Pool verwendet wird"
 
-#: REST/methods/services_pools.py:309
+#: REST/methods/services_pools.py:310
 msgid "OS Manager"
 msgstr "OS Manager"
 
-#: REST/methods/services_pools.py:310
+#: REST/methods/services_pools.py:311
 msgid "OS Manager used as base of this service pool"
 msgstr "OS-Manager wird als Basis dieses Service-Pools verwendet"
 
-#: REST/methods/services_pools.py:318
+#: REST/methods/services_pools.py:319
 msgid "Allow removal by users"
 msgstr "Entfernung von Benutzern zulassen"
 
-#: REST/methods/services_pools.py:320
+#: REST/methods/services_pools.py:321
 msgid ""
 "If active, the user will be allowed to remove the service \"manually\". Be "
 "careful with this, because the user will have the \"power\" to delete it's "
@@ -967,26 +969,26 @@ msgstr ""
 "vorsichtig, denn der Benutzer hat die Berechtigung, seinen eigenen Service "
 "zu \"löschen\""
 
-#: REST/methods/services_pools.py:324 REST/methods/services_pools.py:333
-#: REST/methods/services_pools.py:344 REST/methods/services_pools.py:458
-#: REST/methods/services_pools.py:468 auths/RegexLdap/authenticator.py:146
+#: REST/methods/services_pools.py:325 REST/methods/services_pools.py:334
+#: REST/methods/services_pools.py:345 REST/methods/services_pools.py:459
+#: REST/methods/services_pools.py:469 auths/RegexLdap/authenticator.py:146
 #: core/types/ui.py:43 services/OpenGnsys/service.py:131
 msgid "Advanced"
 msgstr "Erweitert"
 
-#: REST/methods/services_pools.py:329
+#: REST/methods/services_pools.py:330
 msgid "Allow reset by users"
 msgstr "Zurücksetzen durch Benutzer zulassen"
 
-#: REST/methods/services_pools.py:330
+#: REST/methods/services_pools.py:331
 msgid "If active, the user will be allowed to reset the service"
 msgstr "Wenn aktiv, kann der Benutzer den Service zurücksetzen"
 
-#: REST/methods/services_pools.py:338
+#: REST/methods/services_pools.py:339
 msgid "Ignores unused"
 msgstr "Ignoriert ungenutzte"
 
-#: REST/methods/services_pools.py:340
+#: REST/methods/services_pools.py:341
 msgid ""
 "If the option is enabled, UDS will not attempt to detect and remove the user "
 "services assigned but not in use."
@@ -994,15 +996,15 @@ msgstr ""
 "Wenn die Option aktiviert ist, versucht das System nicht, die zugewiesenen, "
 "jedoch nicht verwendeten User-Services zu erkennen und zu entfernen."
 
-#: REST/methods/services_pools.py:350
+#: REST/methods/services_pools.py:351
 msgid "If active, transport will be visible for users"
 msgstr "Wenn aktiv, ist der Transport für Benutzer sichtbar"
 
-#: REST/methods/services_pools.py:393
+#: REST/methods/services_pools.py:394
 msgid "Custom launch message text"
 msgstr "Benutzerdefinierter Text für die Startnachricht"
 
-#: REST/methods/services_pools.py:395
+#: REST/methods/services_pools.py:396
 msgid ""
 "Custom message to be shown to users, if active, when trying to start a "
 "service from this pool."
@@ -1010,54 +1012,54 @@ msgstr ""
 "Benutzerdefinierte Nachricht, die den Benutzern angezeigt wird, wenn sie "
 "aktiv sind und versuchen, einen Dienst aus diesem Pool zu starten."
 
-#: REST/methods/services_pools.py:404
+#: REST/methods/services_pools.py:405
 msgid "Enable custom launch message"
 msgstr "Benutzerdefinierte Startnachricht aktivieren"
 
-#: REST/methods/services_pools.py:405
+#: REST/methods/services_pools.py:406
 msgid "If active, the custom launch message will be shown to users"
 msgstr ""
 "Wenn aktiviert, wird den Benutzern die benutzerdefinierte Startnachricht "
 "angezeigt"
 
-#: REST/methods/services_pools.py:414
+#: REST/methods/services_pools.py:415
 msgid "Initial available services"
 msgstr "Anfangs verfügbare Services"
 
-#: REST/methods/services_pools.py:415
+#: REST/methods/services_pools.py:416
 msgid "Services created initially for this service pool"
 msgstr "Services, die ursprünglich für diesen Servicepool erstellt wurden"
 
-#: REST/methods/services_pools.py:418 REST/methods/services_pools.py:428
-#: REST/methods/services_pools.py:438 REST/methods/services_pools.py:450
+#: REST/methods/services_pools.py:419 REST/methods/services_pools.py:429
+#: REST/methods/services_pools.py:439 REST/methods/services_pools.py:451
 msgid "Availability"
 msgstr "Verfügbarkeit"
 
-#: REST/methods/services_pools.py:424
+#: REST/methods/services_pools.py:425
 msgid "Services to keep in cache"
 msgstr "Dienste, die im Cache aufbewahrt werden sollen"
 
-#: REST/methods/services_pools.py:425
+#: REST/methods/services_pools.py:426
 msgid "Services kept in cache for improved user service assignation"
 msgstr ""
 "Dienste werden im Cache gehalten, um die Benutzerdienstzuweisung zu "
 "verbessern"
 
-#: REST/methods/services_pools.py:434
+#: REST/methods/services_pools.py:435
 msgid "Services to keep in L2 cache"
 msgstr "Dienste, die im L2-Cache aufbewahrt werden sollen"
 
-#: REST/methods/services_pools.py:435
+#: REST/methods/services_pools.py:436
 msgid "Services kept in cache of level2 for improved service generation"
 msgstr ""
 "Services, die im Level 2 Cache gehalten werden, um die Service-Generierung "
 "zu verbessern"
 
-#: REST/methods/services_pools.py:444
+#: REST/methods/services_pools.py:445
 msgid "Maximum number of services to provide"
 msgstr "Maximale Anzahl der zu erbringenden Services"
 
-#: REST/methods/services_pools.py:446
+#: REST/methods/services_pools.py:447
 msgid ""
 "Maximum number of service (assigned and L1 cache) that can be created for "
 "this service"
@@ -1065,19 +1067,19 @@ msgstr ""
 "Maximale Anzahl an Services (zugewiesen und L1-Cache), die für diesen "
 "Service erstellt werden können"
 
-#: REST/methods/services_pools.py:455
+#: REST/methods/services_pools.py:456
 msgid "Show transports"
 msgstr "Transporte anzeigen"
 
-#: REST/methods/services_pools.py:456
+#: REST/methods/services_pools.py:457
 msgid "If active, alternative transports for user will be shown"
 msgstr "Wenn aktiv, werden alternative Transporte für Benutzer angezeigt"
 
-#: REST/methods/services_pools.py:465
+#: REST/methods/services_pools.py:466
 msgid "Accounting"
 msgstr "Buchhaltung"
 
-#: REST/methods/services_pools.py:466
+#: REST/methods/services_pools.py:467
 msgid "Account associated to this service pool"
 msgstr "Konto, das diesem Service-Pool zugeordnet ist"
 
@@ -1593,19 +1595,17 @@ msgstr ""
 "automatisch zu dieser URL umgeleitet"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:194
-#| msgid "Group membership attr"
 msgid "Force Group Membership"
 msgstr "Gruppenmitgliedschaft erzwingen"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:196
-#| msgid "If not empty, UDS will try to add managed users to this group"
 msgid "If not empty, all users will be considered members of this group"
 msgstr ""
 "Wenn nicht leer, werden alle Benutzer als Mitglieder dieser Gruppe betrachtet"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:202
 msgid "Active Directory Authenticator"
-msgstr "Active Directory Authenticator"
+msgstr "Active Directory Authentifikator"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:204
 msgid "Authenticate against Active Directory"
@@ -1676,7 +1676,7 @@ msgstr ""
 
 #: auths/AzureAD_enterprise/authenticator.py:87
 msgid "Entra ID Authenticator"
-msgstr "Entra ID-Authentifikator"
+msgstr "Entra ID Authentifikator"
 
 #: auths/AzureAD_enterprise/authenticator.py:89
 msgid "Entra ID Authenticator. Formerly Azure AD."
@@ -1854,7 +1854,7 @@ msgstr "Attribut, aus dem der MFA-Code extrahiert werden soll"
 
 #: auths/EDirectory_enterprise/authenticator.py:123
 msgid "eDirectory Authenticator"
-msgstr "eDirectory Authenticator"
+msgstr "eDirectory Authentifikator"
 
 #: auths/EDirectory_enterprise/authenticator.py:125
 msgid "Authenticate against eDirectory"
@@ -1905,7 +1905,7 @@ msgstr ""
 
 #: auths/IP/authenticator.py:51 auths/IP/authenticator.py:53
 msgid "IP Authenticator"
-msgstr "IP-Authenticator"
+msgstr "IP Authentifikator"
 
 #: auths/IP/authenticator.py:61
 msgid "IP Range"
@@ -1971,7 +1971,7 @@ msgstr "Beim Authentifikator scheint alles in Ordnung zu sein."
 
 #: auths/OAuth2/authenticator.py:60 auths/OAuth2/authenticator.py:62
 msgid "OAuth2 Authenticator"
-msgstr "OAuth2-Authentifikator"
+msgstr "OAuth2 Authentifikator"
 
 #: auths/OAuth2/authenticator.py:67
 msgid "Authorization endpoint"
@@ -2099,7 +2099,7 @@ msgstr "OpenID Connect Code (Autorisierungscodefluss mit OpenID Connect)"
 
 #: auths/Radius/authenticator.py:56 auths/Radius/authenticator.py:58
 msgid "Radius Authenticator"
-msgstr "Radius-Authentifikator"
+msgstr "Radius Authentifikator"
 
 #: auths/Radius/authenticator.py:68 mfas/Radius/mfa.py:73
 msgid "Radius Server IP or Hostname"
@@ -2226,7 +2226,7 @@ msgstr ""
 
 #: auths/SAML/saml.py:77
 msgid "SAML Authenticator"
-msgstr "SAML Authenticator"
+msgstr "SAML Authentifikator"
 
 #: auths/SAML/saml.py:89
 msgid "SAML (v2.0) Authenticator"
@@ -2751,30 +2751,30 @@ msgstr "Bereinigen Sie den L2-Cache"
 msgid "Custom message on launchers"
 msgstr "Benutzerdefinierte Nachricht auf Launchern"
 
-#: core/managers/publication.py:266
+#: core/managers/publication.py:271
 msgid ""
 "Already publishing. Wait for previous publication to finish and try again"
 msgstr ""
 "Bereits veröffentlicht Warten Sie, bis die vorherige Veröffentlichung "
 "abgeschlossen ist, und versuchen Sie es erneut"
 
-#: core/managers/publication.py:270
+#: core/managers/publication.py:275
 msgid "Service is in maintenance mode and new publications are not allowed"
 msgstr ""
 "Der Service befindet sich im Wartungsmodus und neue Veröffentlichungen sind "
 "nicht zulässig"
 
-#: core/managers/publication.py:320
+#: core/managers/publication.py:325
 msgid "Can't cancel non running publication"
 msgstr "Nicht laufende Veröffentlichung kann nicht abgebrochen werden"
 
-#: core/managers/publication.py:349
+#: core/managers/publication.py:354
 msgid "Can't unpublish non usable publication"
 msgstr ""
 "Veröffentlichung nicht verwendbarer Publikationen kann nicht aufgehoben "
 "werden"
 
-#: core/managers/publication.py:351
+#: core/managers/publication.py:356
 msgid "Can't unpublish publications with services in process"
 msgstr ""
 "Veröffentlichungen mit laufenden Services können nicht aufgehoben werden"
@@ -2818,7 +2818,6 @@ msgid "The requested service is restrained"
 msgstr "Der angeforderte Service ist eingeschränkt"
 
 #: core/managers/userservice.py:562
-#| msgid "Machines for this service"
 msgid "Cannot create user services for this service"
 msgstr "Für diesen Dienst können keine Benutzerdienste erstellt werden"
 
@@ -3092,7 +3091,6 @@ msgid "Invalid Multi-Factor Authentication code"
 msgstr "Ungültiger Multi-Factor Authentication-Code"
 
 #: core/types/errors.py:135
-#| msgid "Password"
 msgid "Password expired"
 msgstr "Passwort abgelaufen"
 
@@ -3134,95 +3132,100 @@ msgstr "Tunnel"
 
 #: core/types/servers.py:70
 msgid "Actor"
-msgstr "Schauspieler"
+msgstr "Actor"
 
-#: core/types/states.py:187
+#: core/types/states.py:193
 msgid "Active"
 msgstr "Aktiv"
 
-#: core/types/states.py:188
+#: core/types/states.py:194
 msgid "Inactive"
 msgstr "Inaktiv"
 
-#: core/types/states.py:189
+#: core/types/states.py:195
 msgid "Blocked"
 msgstr "verstopft"
 
-#: core/types/states.py:190
+#: core/types/states.py:196
 msgid "Waiting publication"
 msgstr "Warten auf Veröffentlichung"
 
-#: core/types/states.py:191
+#: core/types/states.py:197
 msgid "In preparation"
 msgstr "In Vorbereitung"
 
-#: core/types/states.py:192
+#: core/types/states.py:198
 msgid "Valid"
 msgstr "Gültig"
 
-#: core/types/states.py:193 core/types/states.py:195
+#: core/types/states.py:199 core/types/states.py:201
 msgid "Removing"
 msgstr "Entfernen"
 
-#: core/types/states.py:194
+#: core/types/states.py:200
 msgid "Restrained"
 msgstr "Zurückhaltend"
 
-#: core/types/states.py:196
+#: core/types/states.py:202
 msgid "Removed"
 msgstr "Entfernt"
 
-#: core/types/states.py:197
+#: core/types/states.py:203
 msgid "Canceled"
 msgstr "Abgebrochen"
 
-#: core/types/states.py:198
+#: core/types/states.py:204
 msgid "Canceling"
 msgstr "Abbrechen"
 
-#: core/types/states.py:199
+#: core/types/states.py:205
 msgid "Error"
 msgstr "Error"
 
-#: core/types/states.py:201
+#: core/types/states.py:207
 msgid "Finished"
 msgstr "Fertig"
 
-#: core/types/states.py:202
+#: core/types/states.py:208
 msgid "Waiting execution"
 msgstr "Warten auf die Ausführung"
 
-#: core/types/states.py:203
+#: core/types/states.py:209
 msgid "Balancing"
 msgstr "Balancing"
 
-#: core/types/states.py:204
+#: core/types/states.py:210
 msgid "In maintenance"
 msgstr "In Wartung"
 
-#: core/types/states.py:205
+#: core/types/states.py:211
 msgid "Waiting OS"
 msgstr "Wartendes OS"
 
-#: core/types/states.py:206
+#: core/types/states.py:212
 msgid "Too many preparing services"
 msgstr "Zu viele Vorbereitungsdienste"
 
-#: core/types/states.py:207
+#: core/types/states.py:213
 msgid "Meta member"
 msgstr "Meta-Mitglied"
 
-#: core/types/states.py:208
+#: core/types/states.py:214
 msgid "Allowed"
 msgstr "Erlaubt"
 
-#: core/types/states.py:209
+#: core/types/states.py:215
 msgid "Denied"
 msgstr "Bestritten"
 
-#: core/types/states.py:210
+#: core/types/states.py:216
 msgid "Unknown"
 msgstr "Unbekannt"
+
+#: core/types/states.py:217
+#| msgid "Blocked"
+msgid "Locked"
+msgstr "Gesperrt"
 
 #: core/types/transports.py:76
 msgid "Direct"
@@ -3565,6 +3568,15 @@ msgstr ""
 #: core/util/config.py:791
 msgid "Enable cookies consent"
 msgstr "Cookies-Zustimmung aktivieren"
+
+#: core/util/config.py:797
+msgid "URL for more info about cookies"
+msgstr "URL für weitere Informationen zu Cookies"
+
+#: core/util/config.py:803
+#| msgid "Enable cookies consent"
+msgid "URL to leave cookies consent"
+msgstr "URL zum Hinterlassen der Cookie-Einwilligung"
 
 #: core/util/fields.py:85
 msgid "Tunnel server"
@@ -4172,12 +4184,6 @@ msgid "URL pattern for SMS sending"
 msgstr "URL-Muster für den SMS-Versand"
 
 #: mfas/SMS/mfa.py:108
-#| msgid ""
-#| "URL pattern for SMS sending. It can contain the following variables:\n"
-#| "* {code} - the code to send\n"
-#| "* {phone/+phone} - the phone number\n"
-#| "* {username} - the username\n"
-#| "* {justUsername} - the username without @...."
 msgid ""
 "URL pattern for SMS sending. It can contain the following variables:\n"
 "* {code} - the code to send\n"
@@ -4221,13 +4227,6 @@ msgid "Headers for SMS requests"
 msgstr "Header für SMS-Anfragen"
 
 #: mfas/SMS/mfa.py:149
-#| msgid ""
-#| "Headers for SMS requests. It can contain the following variables:\n"
-#| "* {code} - the code to send\n"
-#| "* {phone/+phone} - the phone number\n"
-#| "* {username} - the username\n"
-#| "* {justUsername} - the username without @....\n"
-#| "Headers are in the form of \"Header: Value\". (without the quotes)"
 msgid ""
 "Headers for SMS requests. It can contain the following variables:\n"
 "* {code} - the code to send\n"
@@ -4248,13 +4247,6 @@ msgid "Parameters for SMS POST/PUT sending"
 msgstr "Parameter für das Senden von SMS POST/PUT"
 
 #: mfas/SMS/mfa.py:169
-#| msgid ""
-#| "Parameters for SMS sending via POST/PUT. It can contain the following "
-#| "variables:\n"
-#| "* {code} - the code to send\n"
-#| "* {phone/+phone} - the phone number\n"
-#| "* {username} - the username\n"
-#| "* {justUsername} - the username without @...."
 msgid ""
 "Parameters for SMS sending via POST/PUT. It can contain the following "
 "variables:\n"
@@ -5332,7 +5324,7 @@ msgstr "UDS-Bericht für Benutzerzugriff"
 
 #: services/AWS_enterprise/provider.py:35
 msgid "AWS Platform Provider"
-msgstr "AWS-Plattformanbieter"
+msgstr "AWS Plattformanbieter"
 
 #: services/AWS_enterprise/provider.py:37
 msgid "Provides connection to Amazon Web Services platform"
@@ -5410,7 +5402,7 @@ msgstr "Basis-AMI für diesen Dienst"
 #: services/AWS_enterprise/service_fixed.py:80
 #: services/Google_enterprise/service.py:65
 #: services/Google_enterprise/service_fixed.py:80
-#: services/OpenStack/provider.py:171 services/OpenStack/service.py:109
+#: services/OpenStack/provider.py:171 services/OpenStack/service.py:111
 #: services/OpenStack/service_fixed.py:82
 msgid "Region"
 msgstr "Region"
@@ -5448,7 +5440,7 @@ msgstr "VPC für die Instanzen dieses Dienstes"
 #: services/AWS_enterprise/service.py:126
 #: services/Azure_enterprise/service.py:97
 #: services/HyperV_enterprise/service.py:102
-#: services/Nutanix_enterprise/service.py:106 services/OpenStack/service.py:154
+#: services/Nutanix_enterprise/service.py:106 services/OpenStack/service.py:156
 #: services/Xen/service.py:132
 msgid "Network"
 msgstr "Netzwerk"
@@ -5479,7 +5471,7 @@ msgstr "AWS-Dienste basierend auf festen Maschinen."
 
 #: services/AWS_enterprise/service_fixed.py:82
 #: services/Google_enterprise/service_fixed.py:82
-#: services/OpenStack/service.py:111 services/OpenStack/service_fixed.py:84
+#: services/OpenStack/service.py:113 services/OpenStack/service_fixed.py:84
 msgid "Service region"
 msgstr "Service-Region"
 
@@ -5535,7 +5527,7 @@ msgstr "Zeitüberschreitung des Verbindungsservers in Sekunden"
 
 #: services/Azure_enterprise/provider.py:111
 msgid "Azure Platform Provider"
-msgstr "Azure-Plattformanbieter"
+msgstr "Azure Plattformanbieter"
 
 #: services/Azure_enterprise/provider.py:113
 msgid "Provides connection to Azure Platform"
@@ -5643,7 +5635,7 @@ msgstr "Maschine stoppen (und freigeben)"
 
 #: services/Google_enterprise/provider.py:42
 msgid "Google Cloud Platform Provider"
-msgstr "Google Cloud Platform-Anbieter"
+msgstr "Google Cloud Plattformanbieter"
 
 #: services/Google_enterprise/provider.py:44
 msgid "Provides connection to Google Cloud Platform Compute Engine"
@@ -5749,7 +5741,7 @@ msgstr "Google-Dienste basierend auf festen Instanzen."
 
 #: services/HyperV_enterprise/provider.py:42
 msgid "HyperV Platform Provider"
-msgstr "HyperV-Plattformanbieter"
+msgstr "HyperV Plattformanbieter"
 
 #: services/HyperV_enterprise/provider.py:46
 msgid "HyperV platform service provider with cluster support"
@@ -5916,7 +5908,7 @@ msgstr ""
 
 #: services/NutanixPrism_enterprise/provider.py:33
 msgid "Prism Central Platform Provider"
-msgstr "Anbieter von Prism Central Platform"
+msgstr "Prism Central Plattformanbieter"
 
 #: services/NutanixPrism_enterprise/provider.py:35
 msgid "Nutanix Prism Central based VM provider"
@@ -5965,7 +5957,7 @@ msgstr "Nutanix Prism Central-basierter Dienst"
 
 #: services/NutanixPrism_enterprise/service.py:59
 #: services/NutanixPrism_enterprise/service_fixed.py:84
-#: services/OpenStack/service.py:116 services/OpenStack/service_fixed.py:89
+#: services/OpenStack/service.py:118 services/OpenStack/service_fixed.py:89
 msgid "Project"
 msgstr "Projekt"
 
@@ -6044,7 +6036,7 @@ msgstr ""
 
 #: services/Nutanix_enterprise/provider.py:38
 msgid "Nutanix Acropolis Platform Provider"
-msgstr "Nutanix Acropolis-Plattformanbieter"
+msgstr "Nutanix Acropolis Plattformanbieter"
 
 #: services/Nutanix_enterprise/provider.py:40
 msgid "Nutanix based VM provider"
@@ -6134,7 +6126,7 @@ msgstr ""
 
 #: services/OVirt/provider.py:75
 msgid "oVirt/OLVM Platform Provider"
-msgstr "oVirt/OLVM-Plattformanbieter"
+msgstr "oVirt/OLVM Plattformanbieter"
 
 #: services/OVirt/provider.py:79
 msgid "oVirt platform service provider"
@@ -6240,7 +6232,7 @@ msgstr "Alle Labore"
 
 #: services/OpenGnsys/provider.py:80
 msgid "OpenGnsys Platform Provider"
-msgstr "OpenGnsys-Plattformanbieter"
+msgstr "OpenGnsys Plattformanbieter"
 
 #: services/OpenGnsys/provider.py:84
 msgid "OpenGnsys platform service provider (experimental)"
@@ -6355,7 +6347,7 @@ msgstr ""
 
 #: services/OpenNebula/provider.py:61
 msgid "OpenNebula Platform Provider"
-msgstr "OpenNebula-Plattformanbieter"
+msgstr "OpenNebula Plattformanbieter"
 
 #: services/OpenNebula/provider.py:65
 msgid "OpenNebula platform service provider"
@@ -6449,7 +6441,7 @@ msgstr ""
 
 #: services/OpenStack/provider.py:83
 msgid "OpenStack Platform Provider"
-msgstr "OpenStack-Plattformanbieter"
+msgstr "OpenStack Plattformanbieter"
 
 #: services/OpenStack/provider.py:87
 msgid "OpenStack platform service provider"
@@ -6547,7 +6539,7 @@ msgstr "Fehler: {}"
 
 #: services/OpenStack/provider_legacy.py:86
 msgid "OpenStack LEGACY Platform Provider"
-msgstr "OpenStack LEGACY-Plattformanbieter"
+msgstr "OpenStack LEGACY Plattformanbieter"
 
 #: services/OpenStack/provider_legacy.py:91
 msgid ""
@@ -6589,44 +6581,44 @@ msgstr "OpenStack Live Volume"
 msgid "OpenStack live images based service"
 msgstr "OpenStack Live Images-basierter Service"
 
-#: services/OpenStack/service.py:123 services/OpenStack/service_fixed.py:96
+#: services/OpenStack/service.py:125 services/OpenStack/service_fixed.py:96
 msgid "Project for this service"
 msgstr "Projekt für diesen Service"
 
-#: services/OpenStack/service.py:128
+#: services/OpenStack/service.py:130
 msgid "Availability Zones"
 msgstr "Verfügbarkeitszonen"
 
-#: services/OpenStack/service.py:140
+#: services/OpenStack/service.py:142
 msgid "Service availability zones"
 msgstr "Service-Verfügbarkeitszonen"
 
-#: services/OpenStack/service.py:146
+#: services/OpenStack/service.py:148
 msgid "Volume"
 msgstr "Volumen"
 
-#: services/OpenStack/service.py:148
+#: services/OpenStack/service.py:150
 msgid "Base volume for service (restricted by availability zone)"
 msgstr ""
 "Basisvolumen für den Service (eingeschränkt durch die Verfügbarkeitszone)"
 
-#: services/OpenStack/service.py:156
+#: services/OpenStack/service.py:158
 msgid "Network to attach to this service"
 msgstr "Netzwerk, das mit diesem Dienst verbunden werden soll"
 
-#: services/OpenStack/service.py:161
+#: services/OpenStack/service.py:163
 msgid "Flavor"
 msgstr "Geschmack"
 
-#: services/OpenStack/service.py:163
+#: services/OpenStack/service.py:165
 msgid "Flavor for service"
 msgstr "Geschmack für den Service"
 
-#: services/OpenStack/service.py:169
+#: services/OpenStack/service.py:171
 msgid "Security Groups"
 msgstr "Sicherheitsgruppen"
 
-#: services/OpenStack/service.py:171
+#: services/OpenStack/service.py:173
 msgid "Service security groups"
 msgstr "Service-Sicherheitsgruppen"
 
@@ -6777,7 +6769,7 @@ msgstr "(gebunden an {})"
 
 #: services/Proxmox/provider.py:62
 msgid "Proxmox Platform Provider"
-msgstr "Proxmox Plattform Anbieter"
+msgstr "Proxmox Plattformanbieter"
 
 #: services/Proxmox/provider.py:64
 msgid "Proxmox platform service provider"
@@ -6902,7 +6894,7 @@ msgstr "Methode zur Überprüfung der GPU-Verfügbarkeit"
 
 #: services/RDS_enterprise/provider.py:74
 msgid "RDS Platform Provider"
-msgstr "RDS-Plattformanbieter"
+msgstr "RDS Plattformanbieter"
 
 #: services/RDS_enterprise/provider.py:76
 msgid "Microsoft RDS based provider"
@@ -7325,7 +7317,7 @@ msgstr "Namensliste"
 
 #: services/ScaleComputing_enterprise/provider.py:38
 msgid "Scale Platform Provider"
-msgstr "Anbieter von Scale-Plattformen"
+msgstr "Scale Plattformanbieter"
 
 #: services/ScaleComputing_enterprise/provider.py:40
 msgid "Scale platform service provider"
@@ -7435,7 +7427,7 @@ msgstr "Wählen Sie Ihre vCloud-Version aus"
 
 #: services/VCloud_enterprise/provider.py:93
 msgid "VCloud Director Platform Provider"
-msgstr "VCloud Director-Plattformanbieter"
+msgstr "VCloud Director Plattformanbieter"
 
 #: services/VCloud_enterprise/provider.py:95
 msgid "Provides connection to vCloud Director platform"
@@ -7521,13 +7513,12 @@ msgid "Local"
 msgstr "Lokal"
 
 #: services/Vmware_enterprise/helpers.py:101
-#| msgid "Removed"
 msgid "Remote"
 msgstr "Fernbedienung"
 
 #: services/Vmware_enterprise/provider.py:44
 msgid "VMWare VCenter Platform Provider"
-msgstr "VMWare VCenter Platform Provider"
+msgstr "VMWare VCenter Plattformanbieter"
 
 #: services/Vmware_enterprise/provider.py:46
 msgid "Provides connection to Virtual Center Services"
@@ -7657,7 +7648,7 @@ msgstr ""
 
 #: services/Xen/provider.py:83
 msgid "Xenserver/XCP-NG Platforms Provider"
-msgstr "Xenserver/XCP-NG-Plattformanbieter"
+msgstr "Xenserver/XCP-NG Plattformanbieter"
 
 #: services/Xen/provider.py:87
 msgid "XenServer and XCP-NG platforms service provider"
@@ -8253,7 +8244,6 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:307
 #: transports/HTML5RDS_enterprise/html5rds.py:171
-#| msgid "Custom parameters"
 msgid "Support parameters"
 msgstr "Support-Parameter"
 
@@ -8530,7 +8520,7 @@ msgstr "Fenstergröße am Anschluss"
 #: transports/NoMachine_enterprise/nomachine_transport.py:61
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:63
 msgid "NoMachine"
-msgstr "Keine Maschine"
+msgstr " Authentifikator"
 
 #: transports/NoMachine_enterprise/nomachine_transport.py:63
 msgid "NoMachine Protocol Direct connection."
@@ -9070,7 +9060,7 @@ msgstr "Zu viele Authentifizierungsfehler. Benutzer vorübergehend gesperrt"
 msgid "Invalid data"
 msgstr "Ungültige Daten"
 
-#: web/util/configjs.py:131
+#: web/util/configjs.py:135
 msgid "Access limited by calendar"
 msgstr "Zugriff durch Kalender begrenzt"
 
