@@ -80,7 +80,7 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
             api.clone_vm.assert_called_with(
                 int(publication.get_template_id()),
                 mock.ANY,
-                userservice._name,
+                f'UDS-{userservice._name}',
                 mock.ANY,
                 True,
                 None,
@@ -133,7 +133,7 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
             api.clone_vm.assert_called_with(
                 int(publication.get_template_id()),
                 mock.ANY,
-                userservice._name,
+                f'UDS-{userservice._name}',
                 mock.ANY,
                 True,
                 None,
@@ -189,7 +189,7 @@ class TestProxmoxLinkedUserService(UDSTransactionTestCase):
             api.clone_vm.assert_called_with(
                 int(publication.get_template_id()),
                 mock.ANY,
-                userservice._name,
+                f'UDS-{userservice._name}',
                 mock.ANY,
                 True,
                 None,
