@@ -45,7 +45,9 @@ from ...utils.test import UDSTransactionTestCase
 
 # We use transactions on some related methods (storage access, etc...)
 class TestUserServiceMulti(UDSTransactionTestCase):
-    def test_userservice(self) -> None:
+    
+    @mock.patch('uds.core.util.net.test_connectivity', return_value=True)
+    def test_userservice(self, test_conn: mock.MagicMock) -> None:
         """
         Test the user service
         """
@@ -71,7 +73,8 @@ class TestUserServiceMulti(UDSTransactionTestCase):
         server.refresh_from_db()
         self.assertIsNone(server.locked_until)
 
-    def test_userservice_set_ready(self) -> None:
+    @mock.patch('uds.core.util.net.test_connectivity', return_value=True)
+    def test_userservice_set_ready(self, test_conn: mock.MagicMock) -> None:
         """
         Test the user service
         """
@@ -107,7 +110,8 @@ class TestUserServiceMulti(UDSTransactionTestCase):
         self.assertEqual(userservice._ip, server.ip)
         self.assertEqual(userservice._mac, server.mac)
 
-    def test_userservice_without_token(self) -> None:
+    @mock.patch('uds.core.util.net.test_connectivity', return_value=True)
+    def test_userservice_without_token(self, test_conn: mock.MagicMock) -> None:
         """
         Test the user service
         """
@@ -119,7 +123,8 @@ class TestUserServiceMulti(UDSTransactionTestCase):
         self.assertEqual(userservice.deploy_for_user(mock.MagicMock()), types.states.TaskState.FINISHED)
         self.assertTrue(mock.call().set_in_use(True) in db_obj_mock.mock_calls)
 
-    def test_userservice_with_token(self) -> None:
+    @mock.patch('uds.core.util.net.test_connectivity', return_value=True)
+    def test_userservice_with_token(self, test_conn: mock.MagicMock) -> None:
         """
         Test the user service
         """

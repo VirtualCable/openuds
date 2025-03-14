@@ -168,7 +168,10 @@ class TestServiceMulti(UDSTransactionTestCase):
         server.refresh_from_db()
         self.assertIsNone(server.locked_until)
 
-    def test_get_unassigned(self) -> None:
+    @mock.patch('uds.core.util.net.test_connectivity', return_value=True)
+    def test_get_unassigned(self, test_conn: mock.MagicMock) -> None:
+        # We need to patch test_connectivity, as it's used to check if a server is available
+        # because the server has a "check port" assigned
         service = fixtures.create_service_multi()
         # Without random host
         service.randomize_host.value = False
