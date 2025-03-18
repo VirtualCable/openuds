@@ -53,6 +53,14 @@ thincast_list = [
     '/Applications/Thincast Remote Desktop Client.app/Contents/MacOS/Thincast Remote Desktop Client',
 ]
 
+xfreerdp_list = [
+    'udsrdp',
+    'xfreerdp',
+    'xfreerdp3',
+    'xfreerdp2',
+]
+
+
 executable = None
 kind = ''
 
@@ -64,64 +72,50 @@ for thincast in thincast_list:
         break
 
 if not executable:
-    xfreerdp: str = tools.findApp('xfreerdp')
-
-    # Check first xfreerdp, allow password redir
-    if xfreerdp and os.path.isfile(xfreerdp):
-        executable = xfreerdp
-        kind = 'freerdp'
+    for xfreerdp_executable in xfreerdp_list:
+        xfreerdp: str = tools.findApp(xfreerdp_executable)
+        if xfreerdp and os.path.isfile(xfreerdp):
+            executable = xfreerdp
+            # Ensure that the kind is 'xfreerdp' and not 'xfreerdp3' or 'xfreerdp2'
+            kind = xfreerdp_executable.rstrip('3').rstrip('2')
+            break
     else:
-        # Look for udsrdp
-        udsrdp = tools.findApp('udsrdp')
-        if udsrdp and os.path.isfile(udsrdp):
-            executable = udsrdp
-            kind = 'udsrdp'
-        else:
-            for msrdc in msrdc_list:
-                if os.path.isdir(msrdc) and sp['as_file']:  # type: ignore
-                    executable = msrdc
-                    kind = 'msrdc'
-                    break
+        for msrdc in msrdc_list:
+            if os.path.isdir(msrdc) and sp['as_file']:  # type: ignore
+                executable = msrdc
+                kind = 'msrdc'
+                break
 
 if not executable:
+    msrd = msrd_li = ''
     if sp['as_rdp_url']:  # type: ignore
-        raise Exception(
-            '''<p><b>Microsoft Remote Desktop, xfreerdp or thincast clients not found</b></p>
-            <p>In order to connect to UDS RDP Sessions, you need to have a<p>
-            <ul>
-                <li>
-                    <p><b>Microsoft Remote Desktop</b> from Apple Store</p>
-                </li>
-                <li>
-                    <p><b>Xfreerdp</b> from homebrew</p>
-                </li>
-                <li>
-                    <p>ThinCast Remote Desktop Client</p>
-                </li>
-            </ul>
-            '''
-        )
-    else:
-        raise Exception(
-            '''<p><b>xfreerdp not found</b></p>
-            <p>In order to connect to UDS RDP Sessions, you need to have a<p>
-            <ul>
-                <li>
-                    <p><b>Xfreerdp</b> from homebrew</p>
-                    <p>
-                        <ul>
-                            <li>Install brew (from <a href="https://brew.sh">brew website</a>)</li>
-                            <li>Install xquartz<br/>
-                                <b>brew install --cask xquartz</b></li>
-                            <li>Install freerdp<br/>
-                                <b>brew install freerdp</b></li>
-                            <li>Reboot so xquartz will be automatically started when needed</li>
-                        </ul>
-                    </p>
-                </li>
-            </ul>
-            '''
-        )
+        msrd = ', Microsoft Remote Desktop'
+        msrd_li = '<li><p><b>{}</b> from Apple Store</p></li>'.format(msrd)
+
+    raise Exception(
+        f'''<p><b>xfreerdp{msrd} or thincast client not found</b></p>
+        <p>In order to connect to UDS RDP Sessions, you need to have a<p>
+        <ul>
+            <li>
+                <p><b>Xfreerdp</b> from homebrew</p>
+                <p>
+                    <ul>
+                        <li>Install brew (from <a href="https://brew.sh">brew website</a>)</li>
+                        <li>Install xquartz<br/>
+                            <b>brew install --cask xquartz</b></li>
+                        <li>Install freerdp<br/>
+                            <b>brew install freerdp</b></li>
+                        <li>Reboot so xquartz will be automatically started when needed</li>
+                    </ul>
+                </p>
+            </li>
+            {msrd_li}
+            <li>
+                <p>ThinCast Remote Desktop Client (from <a href="https://thincast.com/en/products/client">thincast website</a>)</p>
+            </li>
+        </ul>
+        '''
+    )
 
 # Open tunnel
 fs = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket'], timeout=sp['tunWait'], check_certificate=sp['tunChk'])  # type: ignore
