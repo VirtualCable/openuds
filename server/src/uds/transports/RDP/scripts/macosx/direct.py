@@ -42,7 +42,17 @@ msrdc_list = [
     '/Applications/Windows App.localized/Windows App.app',
 ]
 
-xfreerdp: str = tools.findApp('xfreerdp')
+thincast_list = [
+    '/Applications/Thincast Remote Desktop Client.app/Contents/MacOS/Thincast Remote Desktop Client',
+]
+
+executable = None
+for thincast in thincast_list:
+    if os.path.isfile(thincast):
+        executable = thincast
+        break
+
+xfreerdp: str = executable or tools.findApp('xfreerdp')
 executable = None
 
 # Check first xfreerdp, allow password redir

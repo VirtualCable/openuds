@@ -49,6 +49,17 @@ msrdc_list = [
     '/Applications/Windows App.localized/Windows App.app',
 ]
 
+thincast_list = [
+    '/Applications/Thincast Remote Desktop Client.app/Contents/MacOS/Thincast Remote Desktop Client',
+]
+
+executable = None
+for thincast in thincast_list:
+    if os.path.isfile(thincast):
+        executable = thincast
+        break
+
+
 xfreerdp: str = tools.findApp('xfreerdp')
 executable = None
 
