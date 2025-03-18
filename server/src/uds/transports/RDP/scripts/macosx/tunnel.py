@@ -54,28 +54,39 @@ thincast_list = [
 ]
 
 executable = None
+kind = ''
+
+# Check first thincast (better option right now, prefer it)
 for thincast in thincast_list:
     if os.path.isfile(thincast):
         executable = thincast
+        kind = 'thincast'
         break
 
+if not executable:
+    xfreerdp: str = tools.findApp('xfreerdp')
 
-xfreerdp: str = tools.findApp('xfreerdp')
-executable = None
+    # Check first xfreerdp, allow password redir
+    if xfreerdp and os.path.isfile(xfreerdp):
+        executable = xfreerdp
+        kind = 'freerdp'
+    else:
+        # Look for udsrdp
+        udsrdp = tools.findApp('udsrdp')
+        if udsrdp and os.path.isfile(udsrdp):
+            executable = udsrdp
+            kind = 'udsrdp'
+        else:
+            for msrdc in msrdc_list:
+                if os.path.isdir(msrdc) and sp['as_file']:  # type: ignore
+                    executable = msrdc
+                    kind = 'msrdc'
+                    break
 
-# Check first xfreerdp, allow password redir
-if xfreerdp and os.path.isfile(xfreerdp):
-    executable = xfreerdp
-else:
-    for msrdc in msrdc_list:
-        if os.path.isdir(msrdc) and sp['as_file']:  # type: ignore
-            executable = msrdc
-            break
-
-if executable is None:
+if not executable:
     if sp['as_rdp_url']:  # type: ignore
         raise Exception(
-            '''<p><b>Microsoft Remote Desktop or xfreerdp not found</b></p>
+            '''<p><b>Microsoft Remote Desktop, xfreerdp or thincast clients not found</b></p>
             <p>In order to connect to UDS RDP Sessions, you need to have a<p>
             <ul>
                 <li>
@@ -83,6 +94,9 @@ if executable is None:
                 </li>
                 <li>
                     <p><b>Xfreerdp</b> from homebrew</p>
+                </li>
+                <li>
+                    <p>ThinCast Remote Desktop Client</p>
                 </li>
             </ul>
             '''
@@ -117,7 +131,7 @@ address = '127.0.0.1:{}'.format(fs.server_address[1])
 if fs.check() is False:
     raise Exception('<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>')
 
-if executable in msrdc_list:
+if kind == 'msrdc':
     theFile = theFile = sp['as_file'].format(address=address)  # type: ignore
 
     filename = tools.saveTempFile(theFile)
@@ -137,7 +151,7 @@ if executable in msrdc_list:
         )
     )
     tools.addFileToUnlink(filename + '.rdp')
-elif executable == xfreerdp:
+else:  # freerdp, thincast or udsrdp
     # Fix resolution...
     try:
         xfparms = fix_resolution()

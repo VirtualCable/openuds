@@ -47,27 +47,39 @@ thincast_list = [
 ]
 
 executable = None
+kind = ''
+
+# Check first thincast (better option right now, prefer it)
 for thincast in thincast_list:
     if os.path.isfile(thincast):
         executable = thincast
+        kind = 'thincast'
         break
 
-xfreerdp: str = executable or tools.findApp('xfreerdp')
-executable = None
+if not executable:
+    xfreerdp: str = tools.findApp('xfreerdp')
 
-# Check first xfreerdp, allow password redir
-if xfreerdp and os.path.isfile(xfreerdp):
-    executable = xfreerdp
-else:
-    for msrdc in msrdc_list:
-        if os.path.isdir(msrdc) and sp['as_file']:  # type: ignore
-            executable = msrdc
-            break
+    # Check first xfreerdp, allow password redir
+    if xfreerdp and os.path.isfile(xfreerdp):
+        executable = xfreerdp
+        kind = 'freerdp'
+    else:
+        # Look for udsrdp
+        udsrdp = tools.findApp('udsrdp')
+        if udsrdp and os.path.isfile(udsrdp):
+            executable = udsrdp
+            kind = 'udsrdp'
+        else:
+            for msrdc in msrdc_list:
+                if os.path.isdir(msrdc) and sp['as_file']:  # type: ignore
+                    executable = msrdc
+                    kind = 'msrdc'
+                    break
 
-if executable is None:
-    if sp['as_file']:  # type: ignore
+if not executable:
+    if sp['as_rdp_url']:  # type: ignore
         raise Exception(
-            '''<p><b>Microsoft Remote Desktop or xfreerdp not found</b></p>
+            '''<p><b>Microsoft Remote Desktop, xfreerdp or thincast clients not found</b></p>
             <p>In order to connect to UDS RDP Sessions, you need to have a<p>
             <ul>
                 <li>
@@ -75,6 +87,9 @@ if executable is None:
                 </li>
                 <li>
                     <p><b>Xfreerdp</b> from homebrew</p>
+                </li>
+                <li>
+                    <p>ThinCast Remote Desktop Client</p>
                 </li>
             </ul>
             '''
@@ -100,7 +115,8 @@ if executable is None:
             </ul>
             '''
         )
-if executable in msrdc_list:
+
+if kind == 'msrdc':
     theFile = sp['as_file']  # type: ignore
     filename = tools.saveTempFile(theFile)
     # Rename as .rdp, so open recognizes it
@@ -119,7 +135,7 @@ if executable in msrdc_list:
         )
     )
     tools.addFileToUnlink(filename + '.rdp')
-elif executable == xfreerdp:
+else:  # thincast, udsrdp, freerdp
     # Fix resolution...
     try:
         xfparms = fix_resolution()
