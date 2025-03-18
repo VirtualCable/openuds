@@ -53,7 +53,7 @@ def detect_os(
 
     # First, try to detect from Sec-Ch-Ua-Platform
     # Remember all Sec... headers are only available on secure connections
-    sec_ch_ua_platform = headers.get('Sec-Ch-Ua-Platform')
+    sec_ch_ua_platform: typing.Optional[str] = headers.get('Sec-Ch-Ua-Platform')
     found_os = types.os.KnownOS.UNKNOWN
 
     if sec_ch_ua_platform is not None:
