@@ -33,17 +33,16 @@ import json
 import logging
 import typing
 
-from django.utils.translation import gettext_lazy as _
-from django.shortcuts import render
 from django.http import HttpResponse
+from django.middleware import csrf
+from django.shortcuts import render
+from django.utils.translation import gettext_lazy as _
 
-from uds.core import types
+from uds.core import consts, types
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from django.http import (
-        HttpRequest,
-    )  # pylint: disable=ungrouped-imports
+    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
 
 
 logger = logging.getLogger(__name__)
@@ -53,7 +52,13 @@ def error(request: 'HttpRequest', err: str) -> 'HttpResponse':
     """
     Error view, responsible of error display
     """
-    return render(request, 'uds/modern/index.html', {})
+    csrf_token = csrf.get_token(request)
+
+    return render(
+        request,
+        'uds/modern/index.html',
+        context={'csrf_field': consts.auth.CSRF_FIELD, 'csrf_token': csrf_token},
+    )
 
 
 def error_message(request: 'HttpRequest', err: str) -> 'HttpResponse':

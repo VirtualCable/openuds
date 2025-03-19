@@ -58,6 +58,8 @@ def index(request: 'HttpRequest') -> HttpResponse:
     )
 
 
+# Samples, not used in fact from anywhere
+# Usef for reference
 @weblogin_required(admin=True)
 def tmpl(request: 'HttpRequest', template: str) -> HttpResponse:
     try:
