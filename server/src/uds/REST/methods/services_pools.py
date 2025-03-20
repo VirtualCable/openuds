@@ -98,7 +98,7 @@ class ServicesPools(ModelHandler):
         'calendar_message',
         'custom_message',
         'display_custom_message',
-        'state:',  # Optional field, defaults to Nothing (to apply default or existing value)
+        'state:_',  # Optional field, defaults to Nothing (to apply default or existing value)
     ]
 
     remove_fields = ['osmanager_id', 'service_id']
@@ -521,10 +521,6 @@ class ServicesPools(ModelHandler):
     def pre_save(self, fields: dict[str, typing.Any]) -> None:
         # logger.debug(self._params)
 
-        # Ensure that, if no state is provided, it is removed so it will be set to default or existing value
-        if fields['state'] == '':
-            del fields['state']
-
         if types.pools.UsageInfoVars.processed_macros_len(fields['name']) > 128:
             raise exceptions.rest.RequestError(gettext('Name too long'))
 
@@ -548,8 +544,13 @@ class ServicesPools(ModelHandler):
                     self._params['allow_users_reset'] = False
 
                 if service_type.needs_osmanager is True:
-                    osmanager = OSManager.objects.get(uuid=process_uuid(fields['osmanager_id']))
-                    fields['osmanager_id'] = osmanager.id
+                    try:
+                        osmanager = OSManager.objects.get(uuid=process_uuid(fields['osmanager_id']))
+                        fields['osmanager_id'] = osmanager.id
+                    except Exception:
+                        if fields.get('state') != State.LOCKED:
+                            raise exceptions.rest.RequestError(gettext('This service requires an OS Manager')) from None
+                        del fields['osmanager_id']
                 else:
                     del fields['osmanager_id']
 
