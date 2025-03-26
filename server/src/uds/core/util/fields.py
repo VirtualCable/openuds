@@ -155,12 +155,12 @@ def tunnel_ticket_validity_field(
 
 # Tunnel wait time (for uds client related tunnels)
 def tunnel_wait_time_field(
-    order: int = 2, tab: 'types.ui.Tab|None' = types.ui.Tab.TUNNEL
+    order: int = 2, tab: 'types.ui.Tab|None' = types.ui.Tab.TUNNEL,default: int = 30
 ) -> ui.gui.NumericField:
     return ui.gui.NumericField(
         length=3,
         label=_('Tunnel wait time'),
-        default=30,
+        default=default,
         min_value=5,
         max_value=3600 * 24,
         order=order,
