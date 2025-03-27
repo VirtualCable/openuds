@@ -150,7 +150,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
         Returns:
             bool: True if this transport is valid for the specified OS, False otherwise
         """
-        return not self.allowed_oss or os.name.casefold() in str(self.allowed_oss.casefold()).split(',')
+        return not self.allowed_oss or os.db_value().casefold() in self.allowed_oss.casefold().split(',')
 
     def __str__(self) -> str:
         return f'{self.name} of type {self.data_type} (id:{self.id})'

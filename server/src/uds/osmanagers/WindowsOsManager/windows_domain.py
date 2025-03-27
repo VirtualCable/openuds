@@ -211,7 +211,7 @@ class WinDomainOsManager(WindowsOsManager):
             try:
                 return ldaputil.connection(
                     account,
-                    self.account.as_str(),
+                    self.password.as_str(),
                     server[0],
                     port=port,
                     ssl=ssl,
@@ -300,15 +300,14 @@ class WinDomainOsManager(WindowsOsManager):
                 # Already added this machine to this group, pass
                 error = None
                 break
-            except ldaputil.LDAPError:
-                logger.exception('Ldap Exception caught')
-                error = f'Could not add machine (invalid credentials? for {self.account.as_str()})'
+            except ldaputil.LDAPError as e:
+                error = f'Could not add machine (invalid credentials? for {self.account.as_str()} ({e}))'
             except Exception as e:
                 error = f'Could not add machine {userservice.friendly_name} to group {self.grp.as_str()}: {e}'
                 # logger.exception('Ldap Exception caught')
 
         if error:
-            log.log(userservice, types.log.LogLevel.WARNING, error, types.log.LogSource.OSMANAGER)
+            log.log(userservice.service_pool, types.log.LogLevel.WARNING, error, types.log.LogSource.OSMANAGER)
             logger.error(error)
 
     def release(self, userservice: 'UserService') -> None:
