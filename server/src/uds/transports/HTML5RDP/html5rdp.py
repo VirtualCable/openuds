@@ -434,7 +434,8 @@ class HTML5RDPTransport(transports.Transport):
             'ignore-cert': 'true',
             'security': self.security.value,
             'enable-drive': as_txt(self.enable_file_sharing.value in ('true', 'down', 'up')),
-            'disable-upload': as_txt(self.enable_file_sharing.value not in ('true', 'up')),
+            'disable-upload': as_txt(self.enable_file_sharing.value in ('false', 'down')),
+            'disable-download': as_txt(self.enable_file_sharing.value in ('false', 'up')),
             'drive-path': f'/share/{user.uuid}',
             'drive-name': (
                 settings.GUACAMOLE_DRIVE_NAME

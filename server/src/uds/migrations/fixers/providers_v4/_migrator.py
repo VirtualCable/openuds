@@ -137,13 +137,16 @@ def migrate(
             logger.info('Setting server group %s on provider %s', registered_server_group.name, record.name)
             obj.server_group.value = registered_server_group.uuid
             # Now, execute post_migrate of obj
-            obj.post_migrate(apps, record)
+            try:
+                obj.post_migrate(apps, record)
+            except Exception:
+                logger.exception('Exception found while executing post_migrate on %s', data_type.type_type)
+                # Ignore error, but log it
             # Save record
             record.data = obj.serialize()
             record.save(update_fields=['data'])
 
-    except Exception as e:
-        print(e)
+    except Exception:
         logger.exception(f'Exception found while migrating {data_type.type_type}')
 
 def rollback(apps: typing.Any, model: typing.Literal['Provider', 'Service'], DataType: typing.Any, subtype: str, ip_list_attr: str) -> None:
