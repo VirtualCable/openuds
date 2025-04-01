@@ -128,7 +128,7 @@ class IPMachinesService(services.Service):
         FOREVER: typing.Final[datetime.timedelta] = datetime.timedelta(days=365 * 20)
         now = datetime.datetime.now()
         server_group = fields.get_server_group_from_field(self.server_group)
-        
+
         for server in server_group.servers.all():
 
             try:
@@ -136,7 +136,7 @@ class IPMachinesService(services.Service):
             except Exception as e:
                 logger.error('Error on postmigrate reading locked value for %s: %s', server.ip, e)
                 locked = None
-            # print(f'Locked: {locked} for {server.ip}')
+
             if not locked:
                 continue
 
@@ -193,7 +193,9 @@ class IPMachinesService(services.Service):
                     if not new_data._reason and userservice.state == types.states.State.USABLE:
                         new_data._vmid = ''
                         for server in server_group.servers.all():
-                            if (server.ip == new_data._ip or server.hostname == new_data._ip) and server.uuid not in assigned_servers:
+                            if (
+                                server.ip == new_data._ip or server.hostname == new_data._ip
+                            ) and server.uuid not in assigned_servers:
                                 new_data._vmid = server.uuid
                                 assigned_servers.add(server.uuid)
                                 # Ensure locked, relock if needed
