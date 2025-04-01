@@ -134,6 +134,7 @@ class IPMachinesService(services.Service):
             try:
                 locked = self.storage.read_pickled(server.ip)
             except Exception as e:
+                logger.error('Error on postmigrate reading locked value for %s: %s', server.ip, e)
                 locked = None
             # print(f'Locked: {locked} for {server.ip}')
             if not locked:
