@@ -131,7 +131,10 @@ class IPMachinesService(services.Service):
         
         for server in server_group.servers.all():
 
-            locked = self.storage.read_pickled(server.ip)
+            try:
+                locked = self.storage.read_pickled(server.ip)
+            except Exception as e:
+                locked = None
             # print(f'Locked: {locked} for {server.ip}')
             if not locked:
                 continue
