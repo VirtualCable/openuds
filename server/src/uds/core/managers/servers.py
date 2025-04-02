@@ -346,7 +346,6 @@ class ServerManager(metaclass=singleton.Singleton):
         userservice: 'models.UserService',
         server_group: 'models.ServerGroup',
         unlock: bool = False,
-        user_uuid: typing.Optional[str] = None,
     ) -> types.servers.ServerCounter:
         """
         Unassigns a server from an user
@@ -357,7 +356,7 @@ class ServerManager(metaclass=singleton.Singleton):
             unlock: If True, unlock server, even if it has more users assigned to it
             user_uuid: If not None, use this uuid instead of userservice.user.uuid
         """
-        user_uuid = user_uuid if user_uuid else userservice.user.uuid if userservice.user else None
+        user_uuid = userservice.user.uuid if userservice.user else None
 
         if user_uuid is None:
             return types.servers.ServerCounter.null()  # No user is assigned to this service, nothing to do
