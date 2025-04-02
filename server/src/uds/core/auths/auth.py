@@ -255,7 +255,6 @@ def authenticate(
     password: str,
     authenticator: models.Authenticator,
     request: 'types.requests.ExtendedHttpRequest',
-    skip_callbacks: bool = False,
 ) -> types.auth.LoginResult:
     """
     Authenticate user with provided credentials
@@ -265,7 +264,6 @@ def authenticate(
         password (str): password to authenticate this user
         authenticator (models.Authenticator): Authenticator (database object) used to authenticate with provided credentials
         request (ExtendedHttpRequestWithUser): Request object
-        skip_callbacks (bool, optional): Skip callbacks. Defaults to False.
 
     """
     logger.debug('Authenticating user %s with authenticator %s', username, authenticator)
