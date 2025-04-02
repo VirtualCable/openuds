@@ -215,7 +215,7 @@ STORAGE_DATA: typing.Final[list[dict[str, typing.Any]]] = [
     {
         'owner': 't-service-144',
         'key': '848d16fb421048c690c9761c11dc1699',
-        'data': 'gASVVQAAAAAAAABdlCiMDTE3Mi4yNy4xLjI1fjCUjA0xNzIuMjcuMS4yNn4xlIwNMTcyLjI3LjEuMjd+MpSMHWxvY2FsaG9zdDswMToyMzo0NTo2Nzo4OTpBQn4zlGUu\n',
+        'data': 'gASVUwAAAAAAAABdlCiMHzE3Mi4yNy4xLjI1OzAxOjIzOjQ1OjY3Ojg5OkFCfjGUjA0xNzIuMjcuMS4yNn4xlIwNMTcyLjI3LjEuMjd+MpSMCWxvY2FsaG9zdJRlLg==',
         'attr1': '',
     },
     {'owner': 't-service-142', 'key': 'b6ac33477ae0a82fa2681c4d398d88d7', 'data': 'gARLAS4=\n', 'attr1': ''},
@@ -293,44 +293,70 @@ class TestPhysicalMigration(UDSTransactionTestCase):
 
         # Now check that data has been migrated correctly
         # Single ip
-        single_ip = typing.cast('service_single.IPSingleMachineService', models.Service.objects.get(uuid=SERVICES_DATA[SINGLE_IP_SERVICE_IDX]['uuid']).get_instance())
+        single_ip = typing.cast(
+            'service_single.IPSingleMachineService',
+            models.Service.objects.get(uuid=SERVICES_DATA[SINGLE_IP_SERVICE_IDX]['uuid']).get_instance(),
+        )
         self.assertEqual(single_ip.host.value, 'localhost')
-        
+
         # Multiple ip
-        multi_ip = typing.cast('service_multi.IPMachinesService', models.Service.objects.get(uuid=SERVICES_DATA[MULTIPLE_IP_SERVICE_IDX]['uuid']).get_instance())
+        multi_ip = typing.cast(
+            'service_multi.IPMachinesService',
+            models.Service.objects.get(uuid=SERVICES_DATA[MULTIPLE_IP_SERVICE_IDX]['uuid']).get_instance(),
+        )
         server_group = fields.get_server_group_from_field(multi_ip.server_group)
         self.assertEqual(server_group.name, 'Physical Machines Server Group for Multiple IPS')
-        ips_to_check = {'172.27.1.25', '172.27.1.26', '172.27.1.27', '127.0.0.1'}
+        # Localhost will be filtered out because cannot be resolved by dns query
+        ips_to_check = {
+            '172.27.1.25',
+            '172.27.1.26',
+            '172.27.1.27',
+        }
+        self.assertEqual(server_group.servers.count(), len(ips_to_check))
         for server in server_group.servers.all():
-            self.assertEqual(server.server_type, types.servers.ServerType.UNMANAGED, f'Invalid server type for {server.ip}')
+            self.assertEqual(
+                server.server_type, types.servers.ServerType.UNMANAGED, f'Invalid server type for {server.ip}'
+            )
             self.assertIn(server.ip, ips_to_check, f'Invalid server ip {server.ip}: {ips_to_check}')
             ips_to_check.remove(server.ip)
             # Ensure has a hostname, and MAC is empty
             self.assertNotEqual(server.hostname, '')
-            
-            # Localhost has a MAC, rest of servers have MAC_UNKNOWN (empty equivalent)
+
+            # 172.27.1.25 has a MAC, rest of servers have MAC_UNKNOWN (empty equivalent)
             # Also, should have 127.0.0.1 as ip if localhost
-            if server.hostname == 'localhost':
-                self.assertEqual(server.ip, '127.0.0.1')
+            if server.ip == '172.27.1.25':
                 self.assertEqual(server.mac, '01:23:45:67:89:AB')
             else:
                 self.assertEqual(server.mac, consts.MAC_UNKNOWN)
-            
+
             # If is 172.27.1.26 ensure is locked
-            if server.ip == '172.27.1.26' or server.hostname == 'localhost':
-                self.assertTrue(server.locked_until is not None and server.locked_until > datetime.datetime.now(), f'Server {server.ip} is not locked')
+            if server.ip == '172.27.1.26':
+                self.assertTrue(
+                    server.locked_until is not None and server.locked_until > datetime.datetime.now(),
+                    f'Server {server.ip} is not locked',
+                )
             else:
                 self.assertIsNone(server.locked_until, f'Server {server.ip} is locked')
-                
+
         # Ensure all ips have been checked
         self.assertEqual(len(ips_to_check), 0)
-        
+
         # Now, check UserServices
         for userservice_data in USERSERVICES_DATA:
             # Get the user service
             if userservice_data['deployed_service_id'] == SERVICEPOOLS_DATA[SINGLE_IP_SERVICEPOOL_IDX]['id']:
-                userservice = typing.cast('deployment.IPMachineUserService', models.UserService.objects.get(uuid=userservice_data['uuid']).get_instance())
+                userservice = typing.cast(
+                    'deployment.IPMachineUserService',
+                    models.UserService.objects.get(uuid=userservice_data['uuid']).get_instance(),
+                )
                 self.assertEqual(userservice._ip, 'dc.dkmon.local~1')  # Same as original data
             else:
-                userservice = typing.cast('deployment_multi.IPMachinesUserService', models.UserService.objects.get(uuid=userservice_data['uuid']).get_instance())
-                self.assertEqual(userservice._ip, userservice_data['unique_id'], f'Invalid IP for {userservice_data["unique_id"]}: {userservice._ip}')
+                userservice = typing.cast(
+                    'deployment_multi.IPMachinesUserService',
+                    models.UserService.objects.get(uuid=userservice_data['uuid']).get_instance(),
+                )
+                self.assertEqual(
+                    userservice._ip,
+                    userservice_data['unique_id'],
+                    f'Invalid IP for {userservice_data["unique_id"]}: {userservice._ip}',
+                )
