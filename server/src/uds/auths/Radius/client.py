@@ -167,7 +167,15 @@ class RadiusClient:
         for k, v in kwargs.items():
             req[k] = v
 
-        return typing.cast(pyrad.packet.AuthPacket, self.server.SendPacket(req))
+        pkt = typing.cast(pyrad.packet.AuthPacket, self.server.SendPacket(req))
+        
+        # If verified, do it now
+        if self.use_message_authenticator:
+            if not req.verify_message_authenticator(secret=self.server.secret, original_authenticator=req.authenticator):
+                logger.error('Invalid message authenticator')
+                raise RadiusAuthenticationError('Invalid message authenticator')
+        
+        return pkt
 
     # Second element of return value is the mfa code from field
     def authenticate(
