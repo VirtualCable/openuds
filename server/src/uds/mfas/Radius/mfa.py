@@ -123,6 +123,14 @@ class RadiusOTP(mfas.MFA):
         tab=types.ui.Tab.CONFIG,
     )
 
+    use_message_authenticator = gui.CheckBoxField(
+        label=_('Use Message Authenticator'),
+        default=False,
+        order=13,
+        tooltip=_('Use Message Authenticator for authentication'),
+        tab=types.ui.Tab.CONFIG,
+    )
+
     def radius_client(self) -> client.RadiusClient:
         """Return a new radius client ."""
         return client.RadiusClient(
@@ -130,6 +138,7 @@ class RadiusOTP(mfas.MFA):
             self.secret.value.encode(),
             auth_port=self.port.as_int(),
             nas_identifier=self.nas_identifier.value,
+            use_message_authenticator=self.use_message_authenticator.as_bool(),
         )
 
     def check_result(self, action: str, request: 'ExtendedHttpRequest') -> mfas.MFA.RESULT:
