@@ -73,7 +73,7 @@ class LogMaintenance(Job):
                 for record in models.Log.objects.filter(
                     owner_id=owner_id,
                     owner_type=owner_type,
-                    created_lt=removing_before,
+                    created__lt=removing_before,
                 ).order_by(
                     'created', 'id'
                 )[: count - max_elements + 1]:

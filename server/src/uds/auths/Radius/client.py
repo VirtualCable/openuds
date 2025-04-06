@@ -120,6 +120,7 @@ class RadiusClient:
     server: Client
     nas_identifier: str
     appclass_prefix: str
+    use_message_authenticator: bool
 
     def __init__(
         self,
@@ -130,6 +131,7 @@ class RadiusClient:
         nas_identifier: str = 'uds-server',
         appclass_prefix: str = '',
         dictionary: str = RADDICT,
+        use_message_authenticator: bool = False,
     ) -> None:
         self.server = Client(
             server=server,
@@ -139,6 +141,7 @@ class RadiusClient:
         )
         self.nas_identifier = nas_identifier
         self.appclass_prefix = appclass_prefix
+        self.use_message_authenticator = use_message_authenticator
 
     def extract_access_challenge(self, reply: pyrad.packet.AuthPacket) -> RadiusResult:
         return RadiusResult(
@@ -147,7 +150,7 @@ class RadiusClient:
             state=typing.cast(list[bytes], reply.get('State') or [b''])[0],
             otp_needed=RadiusStates.NEEDED,
         )
-
+        
     def send_access_request(self, username: str, password: str, **kwargs: typing.Any) -> pyrad.packet.AuthPacket:
         req: pyrad.packet.AuthPacket = self.server.CreateAuthPacket(
             code=pyrad.packet.AccessRequest,
@@ -156,6 +159,9 @@ class RadiusClient:
         )
 
         req["User-Password"] = req.PwCrypt(password)
+        
+        if self.use_message_authenticator:
+            req.add_message_authenticator()
 
         # Fill in extra fields
         for k, v in kwargs.items():

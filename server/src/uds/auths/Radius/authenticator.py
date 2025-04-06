@@ -44,7 +44,7 @@ from . import client
 
 if typing.TYPE_CHECKING:
     from uds.core.types.requests import ExtendedHttpRequest
-    
+
 logger = logging.getLogger(__name__)
 
 
@@ -114,11 +114,20 @@ class RadiusAuth(auths.Authenticator):
         tab=types.ui.Tab.ADVANCED,
         old_field_name='globalGroup',
     )
+
+    use_message_authenticator = gui.CheckBoxField(
+        label=_('Use Message Authenticator'),
+        default=False,
+        order=13,
+        tooltip=_('Use Message Authenticator for authentication'),
+        tab=types.ui.Tab.ADVANCED,
+    )
+
     mfa_attr = gui.TextField(
         length=2048,
         lines=2,
         label=_('MFA attribute'),
-        order=13,
+        order=20,
         tooltip=_('Attribute from where to extract the MFA code'),
         required=False,
         tab=types.ui.Tab.MFA,
@@ -136,6 +145,7 @@ class RadiusAuth(auths.Authenticator):
             auth_port=self.port.as_int(),
             nas_identifier=self.nas_identifier.value,
             appclass_prefix=self.app_class_prefix.value,
+            use_message_authenticator=self.use_message_authenticator.as_bool(),
         )
 
     def mfa_storage_key(self, username: str) -> str:
