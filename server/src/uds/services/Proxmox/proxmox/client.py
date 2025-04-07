@@ -409,7 +409,7 @@ class ProxmoxClient:
                 f'Node "{target_node}" does not have VGPUS and they are required'
             )
 
-        if self.node_has_vgpus_available(target_node, vminfo.vgpu_type):
+        if vminfo.vgpu_type and not self.node_has_vgpus_available(target_node, vminfo.vgpu_type):
             raise exceptions.ProxmoxNoGPUError(
                 f'Node "{target_node}" does not have free VGPUS of type {vminfo.vgpu_type} (requred by VM {vminfo.name})'
             )
@@ -847,11 +847,11 @@ class ProxmoxClient:
                 type=res['type'],
                 proxy=res['proxy'],
                 address=res['host'],
-                port=res.get('port', None),
+                port=res.get('port', -1),
                 secure_port=res['tls-port'],
                 cert_subject=res['host-subject'],
                 ticket=core_types.services.ConsoleConnectionTicket(value=res['password']),
-                ca=res.get('ca', None),
+                ca=res.get('ca', ''),
             )
         except Exception:  # Does not have spice or something went wrong
             return core_types.services.ConsoleConnectionInfo.null()

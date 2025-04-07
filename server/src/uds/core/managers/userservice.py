@@ -450,7 +450,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         if user_service.is_preparing() is False:
             logger.debug('Cancel requested for a non running operation, performing removal instead')
-            return self.remove(user_service)
+            return self.remove(user_service, forced=True)
 
         operations_logger.info('Canceling userservice %s', user_service.name)
         user_service_instance = user_service.get_instance()
@@ -468,7 +468,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # opchecker will set state to "removable"
         UserServiceOpChecker.make_unique(user_service, state)
 
-    def remove(self, userservice: UserService) -> None:
+    def remove(self, userservice: UserService, *, forced: bool = False) -> None:
         """
         Removes an user service
         """
@@ -476,7 +476,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
             userservice = UserService.objects.select_for_update().get(id=userservice.id)
             operations_logger.info('Removing userservice %a', userservice.name)
             if userservice.is_usable() is False and State.from_str(userservice.state).is_removable() is False:
-                raise OperationException(_('Can\'t remove a non active element'))
+                if not forced:
+                    raise OperationException(_('Can\'t remove a non active element') + ': ' + userservice.name + ', ' + userservice.state)
             userservice.set_state(State.REMOVING)
             logger.debug("***** The state now is %s *****", State.from_str(userservice.state).localized)
             userservice.set_in_use(False)  # For accounting, ensure that it is not in use right now
