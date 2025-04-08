@@ -44,6 +44,7 @@ from django.views.generic.base import View
 from uds.core.types.rest import HandlerNode
 from uds.core import consts, exceptions, types
 from uds.core.util import modfinder
+from uds.core.util.model import sql_stamp_seconds
 
 from . import processors, log
 from .handlers import Handler
@@ -170,6 +171,7 @@ class Dispatcher(View):
                     response = processor.get_response(response)
             # Set response headers
             response['UDS-Version'] = f'{consts.system.VERSION};{consts.system.VERSION_STAMP}'
+            response['Response-Stamp'] = sql_stamp_seconds()
             for k, val in handler.headers().items():
                 response[k] = val
 

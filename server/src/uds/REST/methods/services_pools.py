@@ -125,6 +125,7 @@ class ServicesPools(ModelHandler):
         types.rest.ModelCustomMethod('actions_list', True),
         types.rest.ModelCustomMethod('list_assignables', True),
         types.rest.ModelCustomMethod('create_from_assignable', True),
+        types.rest.ModelCustomMethod('add_log', True),
     ]
 
     def get_items(
@@ -719,7 +720,6 @@ class ServicesPools(ModelHandler):
         ]
         return valid_actions
 
-    # Deprecated, use list_assignables
     def list_assignables(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)
         service = item.service.get_instance()
@@ -738,3 +738,19 @@ class ServicesPools(ModelHandler):
         )
 
         return True
+
+    def add_log(self, item: 'Model') -> typing.Any:
+        item = ensure.is_instance(item, ServicePool)
+        if 'message' not in self._params:
+            return self.invalid_request_response('Invalid parameters')
+        if 'level' not in self._params:
+            return self.invalid_request_response('Invalid parameters')
+        
+        log.log(
+            item,
+            level=types.log.LogLevel.from_str(self._params['level']),
+            message=self._params['message'],
+            source=types.log.LogSource.REST,
+            log_name=self._params.get('log_name', None),
+        )
+        
