@@ -130,7 +130,7 @@ class ServersServers(DetailHandler):
         mac: str
         maintenance_mode: bool
         register_username: str
-        stamp: int
+        stamp: datetime.datetime
 
     custom_methods = ['maintenance', 'importcsv']
 
