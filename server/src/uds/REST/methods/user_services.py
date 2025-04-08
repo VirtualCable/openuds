@@ -259,7 +259,7 @@ class AssignedService(DetailHandler):
         # Log change
         log.log(parent, types.log.LogLevel.INFO, log_string, types.log.LogSource.ADMIN)
         log.log(userservice, types.log.LogLevel.INFO, log_string, types.log.LogSource.ADMIN)
-        
+
         return {'id': userservice.uuid}
 
     def reset(self, parent: 'models.ServicePool', item: str) -> typing.Any:
@@ -295,22 +295,28 @@ class CachedService(AssignedService):
         return _('Cached services')
 
     def get_fields(self, parent: 'Model') -> list[typing.Any]:
+        parent = ensure.is_instance(parent, models.ServicePool)
         return [
             {'creation_date': {'title': _('Creation date'), 'type': 'datetime'}},
             {'revision': {'title': _('Revision')}},
             {'unique_id': {'title': 'Unique ID'}},
             {'ip': {'title': _('IP')}},
             {'friendly_name': {'title': _('Friendly name')}},
-            {
-                'state': {
-                    'title': _('State'),
-                    'type': 'dict',
-                    'dict': State.literals_dict(),
-                }
-            },
-            {'cache_level': {'title': _('Cache level')}},
-            {'actor_version': {'title': _('Actor version')}},
-        ]
+        ] + (
+            [
+                {
+                    'state': {
+                        'title': _('State'),
+                        'type': 'dict',
+                        'dict': State.literals_dict(),
+                    }
+                },
+                {'cache_level': {'title': _('Cache level')}},
+                {'actor_version': {'title': _('Actor version')}},
+            ]
+            if parent.state != State.LOCKED
+            else []
+        )
 
     def delete_item(self, parent: 'Model', item: str, cache: bool = False) -> None:
         return super().delete_item(parent, item, cache=True)
@@ -390,7 +396,7 @@ class Groups(DetailHandler):
             f'Added group {group.pretty_name} by {self._user.pretty_name}',
             types.log.LogSource.ADMIN,
         )
-        
+
         return {'id': group.uuid}
 
     def delete_item(self, parent: 'Model', item: str) -> None:
@@ -454,7 +460,7 @@ class Transports(DetailHandler):
             f'Added transport {transport.name} by {self._user.pretty_name}',
             types.log.LogSource.ADMIN,
         )
-        
+
         return {'id': transport.uuid}
 
     def delete_item(self, parent: 'Model', item: str) -> None:
