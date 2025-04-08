@@ -523,7 +523,7 @@ class ServersGroups(ModelHandler):
                 'server': {
                     'id': s[1].uuid,
                     'hostname': s[1].hostname,
-                    'mac': s[1].mac,
+                    'mac': s[1].mac if s[1].mac != consts.MAC_UNKNOWN else '',
                     'ip': s[1].ip,
                     'load': s[0].load() if s[0] else 0,
                 },
