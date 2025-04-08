@@ -93,6 +93,7 @@ class DetailHandler(BaseModelHandler):
         path: str,
         params: typing.Any,
         *args: str,
+        user: 'User',
         **kwargs: typing.Any,
     ) -> None:
         """
@@ -106,7 +107,7 @@ class DetailHandler(BaseModelHandler):
         self._params = params
         self._args = list(args)
         self._kwargs = kwargs
-        self._user = kwargs.get('user', None)
+        self._user = user
 
     def _check_is_custom_method(self, check: str, parent: models.Model, arg: typing.Any = None) -> typing.Any:
         """

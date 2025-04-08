@@ -127,6 +127,8 @@ class ServersServers(DetailHandler):
                     'listen_port': i.listen_port,
                     'mac': i.mac if i.mac != consts.MAC_UNKNOWN else '',
                     'maintenance_mode': i.maintenance_mode,
+                    'register_username': i.register_username,
+                    'stamp': i.stamp,
                 }
                 res.append(val)
             if item is None:
@@ -521,6 +523,7 @@ class ServersGroups(ModelHandler):
                 'server': {
                     'id': s[1].uuid,
                     'hostname': s[1].hostname,
+                    'mac': s[1].mac,
                     'ip': s[1].ip,
                     'load': s[0].load() if s[0] else 0,
                 },
