@@ -33,7 +33,7 @@ import typing
 
 from django.utils.translation import gettext as _
 
-from uds.core import types
+from uds.core import types, consts
 from uds.core.auths.auth import authenticate, log_login
 from uds.core.util.cache import Cache
 from uds.core.util.config import GlobalConfig
@@ -61,8 +61,11 @@ def check_login(  # pylint: disable=too-many-branches, too-many-statements
         return types.auth.LoginResult(errid=types.errors.Error.COOKIES_NEEDED)
     if form.is_valid():
         try:
-            authenticator = Authenticator.objects.get(uuid=process_uuid(form.cleaned_data['authenticator']))
-        except Exception:
+            # Get authenticator, must not be disabled
+            authenticator = Authenticator.objects.exclude(state=consts.auth.DISABLED).get(
+                uuid=process_uuid(form.cleaned_data['authenticator'])
+            )
+        except Exception:  # Don't exists an authenticator with that uuid and that is not disabled
             authenticator = Authenticator.null()
         username = form.cleaned_data['user']
         if GlobalConfig.LOWERCASE_USERNAME.as_bool(True) is True:
@@ -76,9 +79,13 @@ def check_login(  # pylint: disable=too-many-branches, too-many-statements
         # Get instance..
         auth_instance = authenticator.get_instance()
         # Check if user is locked
-        if auth_instance.block_user_on_failures is True and (tries >= max_tries_per_ip) or tries_in_this_ip >= max_tries_per_ip:
+        if (
+            auth_instance.block_user_on_failures is True
+            and (tries >= max_tries_per_ip)
+            or tries_in_this_ip >= max_tries_per_ip
+        ):
             log_login(request, authenticator, username, 'Temporarily blocked', as_error=True)
-            return types.auth.LoginResult(errstr=_('Too many authentication errrors. User temporarily blocked'))
+            return types.auth.LoginResult(errstr=_('Too many authentication errors. User temporarily blocked'))
         # check if authenticator is visible for this requests
         password = (
             form.cleaned_data['password'] or 'axd56adhg466jasd6q8sadñ€sáé--v'

@@ -63,10 +63,10 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 # The callback is now a two stage, so we can use cookies samesite policy to "Lax"
-# 1.- First stage:  SESSION COOKIE IS NOT PRESSENT HERE
+# 1.- First stage:  SESSION COOKIE IS NOT PRESSENT HERE (Redirect from an external url)
 #       * gets all parameters of callback and stores it in a ticket.
 #       * Redirectos to stage2, with ticket id parameter
-# 2.- Second Stage:  SESSION COOKIE IS PRESENT!!
+# 2.- Second Stage:  SESSION COOKIE IS PRESENT!! (because is an internal redirect)
 #       * Recovers parameters from first stage
 #       * Process real callback
 
