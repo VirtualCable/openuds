@@ -173,7 +173,7 @@ class Authenticators(ModelHandler):
                     'tags': [tag.tag for tag in typing.cast(collections.abc.Iterable[Tag], item.tags.all())],
                     'comments': item.comments,
                     'net_filtering': item.net_filtering,
-                    'networks': [{'id': n.uuid} for n in item.networks.all()],
+                    'networks': [n.uuid for n in item.networks.all()],
                     'state': item.state,
                     'mfa_id': item.mfa.uuid if item.mfa else '',
                     'small_name': item.small_name,
