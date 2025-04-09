@@ -225,6 +225,7 @@ class ServerManager(metaclass=singleton.Singleton):
         excluded_servers_uuids: typing.Optional[typing.Set[str]] = None,
         *,
         weight_threshold: int = 0,
+        last_activity_period: typing.Optional[datetime.timedelta] = None,
     ) -> typing.Optional[types.servers.ServerCounter]:
         """
         Select a server for an userservice to be assigned to
@@ -263,7 +264,15 @@ class ServerManager(metaclass=singleton.Singleton):
         prop_name = self.property_name(userservice.user)
         now = model_utils.sql_now()
 
-        excluded_servers_uuids = excluded_servers_uuids or set()
+        if not excluded_servers_uuids:
+            if last_activity_period is None:
+                excluded_servers_uuids = set()
+            else:
+                # Exclude servers that have not pinged in the last last_activity_period minutes
+                excluded_servers_uuids = {
+                    server.uuid
+                    for server in server_group.servers.all() if (now - server.last_ping) > last_activity_period
+                }
 
         with server_group.properties as props:
             info: typing.Optional[types.servers.ServerCounter] = types.servers.ServerCounter.from_iterable(
