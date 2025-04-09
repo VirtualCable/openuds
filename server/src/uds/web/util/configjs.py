@@ -107,7 +107,11 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
         'version_stamp': consts.system.VERSION_STAMP,
         'language': get_language(),
         'available_languages': [{'id': k, 'name': gettext(v)} for k, v in settings.LANGUAGES],
-        'authenticators': [_get_auth_info(auth) for auth in authenticators if auth.type_is_valid()],
+        'authenticators': [
+            _get_auth_info(auth)
+            for auth in authenticators
+            if auth.type_is_valid() and auth.state == consts.auth.VISIBLE
+        ],
         'mfa': request.session.get('mfa', None),
         'tag': tag,
         'os': request.os.os.name,
@@ -185,7 +189,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
     #     'legacy': False  # True = Gray, False = White
     # })
 
-    actors: list[dict[str, str|bool]] = []
+    actors: list[dict[str, str | bool]] = []
 
     if user and user.is_staff():  # Add staff things
         # If is admin (informational, REST api checks users privileges anyway...)

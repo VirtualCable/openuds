@@ -99,6 +99,26 @@ class ServerManager(metaclass=singleton.Singleton):
         with self.counter_storage() as counters:
             if not only_if_exists or uuid in counters:
                 counters[uuid] = counters.get(uuid, 0) + 1
+                
+    def enum_servers_with_activity(
+        self, server_group: 'models.ServerGroup', last_activity_delta: datetime.timedelta = datetime.timedelta(minutes=3)
+    ) -> typing.Iterator['models.Server']:
+        """
+        Returns an iterator of servers with activity in the last last_activity_delta time
+        This is used to check if a server is still active and not in maintenance mode.
+        
+        Args:
+            server_group: The server group to check
+            last_activity_delta: The time delta to check for activity
+            
+        Returns:
+            An iterator of servers with activity in the last last_activity_delta time
+        """
+        now = model_utils.sql_now()
+        # Get all servers with activity in the last 10 minutes
+        for server in server_group.servers.filter(maintenance_mode=False):
+            if server.last_ping > now - last_activity_delta:
+                yield server
 
     def get_server_stats(
         self, servers_filter: 'QuerySet[models.Server]'
@@ -225,7 +245,6 @@ class ServerManager(metaclass=singleton.Singleton):
         excluded_servers_uuids: typing.Optional[typing.Set[str]] = None,
         *,
         weight_threshold: int = 0,
-        last_activity_period: typing.Optional[datetime.timedelta] = None,
     ) -> typing.Optional[types.servers.ServerCounter]:
         """
         Select a server for an userservice to be assigned to
@@ -263,16 +282,8 @@ class ServerManager(metaclass=singleton.Singleton):
         # Look for existing user asignation through properties
         prop_name = self.property_name(userservice.user)
         now = model_utils.sql_now()
-
-        if not excluded_servers_uuids:
-            if last_activity_period is None:
-                excluded_servers_uuids = set()
-            else:
-                # Exclude servers that have not pinged in the last last_activity_period minutes
-                excluded_servers_uuids = {
-                    server.uuid
-                    for server in server_group.servers.all() if (now - server.last_ping) > last_activity_period
-                }
+        
+        excluded_servers_uuids = excluded_servers_uuids or set()
 
         with server_group.properties as props:
             info: typing.Optional[types.servers.ServerCounter] = types.servers.ServerCounter.from_iterable(
