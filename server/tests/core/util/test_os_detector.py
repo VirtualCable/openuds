@@ -40,7 +40,7 @@ from tests.utils.test import UDSTestCase
 logger = logging.getLogger(__name__)
 
 
-class NetTest(UDSTestCase):
+class OsDetectorTest(UDSTestCase):
     def test_detect_chromeos(self) -> None:
         user_agents = [
             'Mozilla/5.0 (X11; CrOS x86_64 16181.47.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.6998.130 Safari/537.36',
@@ -48,9 +48,38 @@ class NetTest(UDSTestCase):
             'Mozilla/5.0 (X11;CrOS aarch64 16181.47.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.6998.130 Safari/537.36',
         ]
         for user_agent in user_agents:
-            os = os_detector.detect_os(
-                headers={
-                    'User-Agent': user_agent,
-                }
-            )
-            assert os.os == types.os.KnownOS.CHROME_OS, f'Failed to detect ChromeOS for {user_agent}'
+            assert (
+                os_detector.detect_os(
+                    headers={
+                        'User-Agent': user_agent,
+                    }
+                ).os
+                == types.os.KnownOS.CHROME_OS
+            ), f'Failed to detect ChromeOS for {user_agent}'
+
+    def test_detect_chromeos_ssl_headers(self) -> None:
+        headers = {
+            'Content-Length': '',
+            'Content-Type': 'text/plain',
+            'Host': '172.27.0.1:8443',
+            'Connection': 'keep-alive',
+            'Cache-Control': 'max-age=0',
+            'Sec-Ch-Ua': '"Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"',
+            'Sec-Ch-Ua-Mobile': '?0',
+            'Sec-Ch-Ua-Platform': '"Chrome OS"',
+            'Dnt': '1',
+            'Upgrade-Insecure-Requests': '1',
+            'User-Agent': 'Mozilla/5.0 (X11; CrOS x86_64 14541.0.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Sec-Fetch-Site': 'none',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-User': '?1',
+            'Sec-Fetch-Dest': 'document',
+            'Accept-Encoding': 'gzip, deflate, br, zstd',
+            'Accept-Language': 'es,en;q=0.9',
+            'Cookie': 'sessionid=pfif34l989sw010h5qtmrzb6wd71ggch; uds=egOiL4Eg3sppQL5r7VHLgfwI0qq9Kdow5w4vZdnvYMPmScxz',
+            'Sec-Gpc': '1',
+        }
+        assert os_detector.detect_os(headers).os == types.os.KnownOS.CHROME_OS, 'Failed to detect ChromeOS'
+        headers['Sec-Ch-Ua-Platform'] = '"CrOS"'
+        assert os_detector.detect_os(headers).os == types.os.KnownOS.CHROME_OS, 'Failed to detect ChromeOS'

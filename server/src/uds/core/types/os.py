@@ -42,8 +42,8 @@ class DetectedOsInfo:
 
 
 class KnownOS(enum.Enum):
-    LINUX = ('Linux',)  # previusly got 'armv7l'
-    CHROME_OS = ('CrOS',)
+    LINUX = ('Linux',)  # previously got 'armv7l'
+    CHROME_OS = ('CrOS','Chrome OS',)
     WINDOWS_PHONE = ('Windows Phone',)
     WINDOWS = ('Windows',)
     MAC_OS = ('MacOsX', 'MacOs', 'Mac Os X', 'macOS')  # Previous was only "Mac"
