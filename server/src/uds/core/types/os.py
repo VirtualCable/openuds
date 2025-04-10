@@ -57,6 +57,14 @@ class KnownOS(enum.Enum):
         return self.value[0].lower()
 
     def db_value(self) -> str:
+        """
+        Returns the value to be stored in the database.
+        This values are used so we can keep the database values even if we change the enum values.
+        
+        Returns:
+        
+            str: The value to be stored in the database.
+        """
         return {
             'Linux': 'Linux',
             'CrOS': 'ChromeOS',
