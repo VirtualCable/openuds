@@ -32,6 +32,7 @@ import contextlib
 import datetime
 import logging
 import typing
+import operator
 from concurrent.futures import ThreadPoolExecutor
 
 from django.db import transaction
@@ -99,25 +100,33 @@ class ServerManager(metaclass=singleton.Singleton):
         with self.counter_storage() as counters:
             if not only_if_exists or uuid in counters:
                 counters[uuid] = counters.get(uuid, 0) + 1
-                
-    def enum_servers_with_activity(
-        self, server_group: 'models.ServerGroup', last_activity_delta: datetime.timedelta = datetime.timedelta(minutes=3)
+
+    def enum_servers_by_activity(
+        self,
+        server_group: 'models.ServerGroup',
+        with_activity: bool,
+        last_activity_delta: datetime.timedelta = datetime.timedelta(minutes=3),
     ) -> typing.Iterator['models.Server']:
         """
-        Returns an iterator of servers with activity in the last last_activity_delta time
+        Returns an iterator of servers with or without activity in the past last_activity_delta time
         This is used to check if a server is still active and not in maintenance mode.
-        
+
         Args:
             server_group: The server group to check
+            with_activity: If True, return servers with activity in the last last_activity_delta time, else return servers without activity
             last_activity_delta: The time delta to check for activity
-            
+
         Returns:
             An iterator of servers with activity in the last last_activity_delta time
         """
-        now = model_utils.sql_now()
+        
+        op = operator.gt if with_activity else operator.le
+        
+        activity_limit = model_utils.sql_now() - last_activity_delta
         # Get all servers with activity in the last 10 minutes
         for server in server_group.servers.filter(maintenance_mode=False):
-            if server.last_ping > now - last_activity_delta:
+            # Check if server is active
+            if op(server.last_ping, activity_limit):
                 yield server
 
     def get_server_stats(
@@ -282,7 +291,7 @@ class ServerManager(metaclass=singleton.Singleton):
         # Look for existing user asignation through properties
         prop_name = self.property_name(userservice.user)
         now = model_utils.sql_now()
-        
+
         excluded_servers_uuids = excluded_servers_uuids or set()
 
         with server_group.properties as props:

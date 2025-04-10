@@ -81,6 +81,7 @@ def create_server_group(
     )
     for _ in range(num_servers):
         server = create_server(type, subtype=subtype, version=version, ip=ip, listen_port=listen_port)
+        server.last_ping = datetime.datetime.now()
         rsg.servers.add(server)
 
     return rsg
