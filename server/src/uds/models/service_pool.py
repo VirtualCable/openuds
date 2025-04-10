@@ -291,6 +291,13 @@ class ServicePool(UUIDModel, TaggingMixin):
             return True
 
         return False
+    
+    def is_locked(self) -> bool:
+        """
+        Returns true if the service pool is locked
+        """
+        return self.state == types.states.State.LOCKED
+    
 
     def remaining_restraint_time(self) -> int:
         from uds.core.util.config import GlobalConfig
