@@ -43,7 +43,7 @@ logger = logging.getLogger(__name__)
 class NetTest(UDSTestCase):
     def test_detect_chromeos(self) -> None:
         user_agents = [
-            'PlatformLatest ChromeOS User AgentsChrome on ChromeOSMozilla/5.0 (X11; CrOS x86_64 16181.47.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.6998.130 Safari/537.36',
+            'Mozilla/5.0 (X11; CrOS x86_64 16181.47.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.6998.130 Safari/537.36',
             'Mozilla/5.0 (X11; CrOS armv7l 16181.47.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.6998.130 Safari/537.36',
             'Mozilla/5.0 (X11;CrOS aarch64 16181.47.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.6998.130 Safari/537.36',
         ]
