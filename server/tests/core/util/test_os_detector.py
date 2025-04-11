@@ -58,6 +58,10 @@ class OsDetectorTest(UDSTestCase):
             ), f'Failed to detect ChromeOS for {user_agent}'
 
     def test_detect_chromeos_ssl_headers(self) -> None:
+        """
+        Test detection of ChromeOS using SSL headers, including fallback to User-Agent
+        when Sec-Ch-Ua-Platform contains an unexpected value.
+        """
         headers = {
             'Content-Length': '',
             'Content-Type': 'text/plain',
@@ -81,5 +85,16 @@ class OsDetectorTest(UDSTestCase):
             'Sec-Gpc': '1',
         }
         assert os_detector.detect_os(headers).os == types.os.KnownOS.CHROME_OS, 'Failed to detect ChromeOS'
-        headers['Sec-Ch-Ua-Platform'] = '"CrOS"'
+
+    def test_fallback_to_user_agent(self) -> None:
+        """
+        Test that detection falls back to User-Agent when Sec-Ch-Ua-Platform contains an unexpected value.
+        """
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (X11; CrOS x86_64 14541.0.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+            'Sec-Ch-Ua-Platform': '"UnexpectedPlatform"',
+        }
+        assert os_detector.detect_os(headers).os == types.os.KnownOS.CHROME_OS, 'Fallback to User-Agent failed'
+        # Setting Sec-Ch-Ua-Platform to an unexpected value to ensure fallback to User-Agent detection
+        headers['Sec-Ch-Ua-Platform'] = '"UnknownPlatform"'
         assert os_detector.detect_os(headers).os == types.os.KnownOS.CHROME_OS, 'Failed to detect ChromeOS'
