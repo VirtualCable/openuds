@@ -53,36 +53,32 @@ def detect_os(
 
     # First, try to detect from Sec-Ch-Ua-Platform
     # Remember all Sec... headers are only available on secure connections
-    sec_ch_ua_platform: typing.Optional[str] = headers.get('Sec-Ch-Ua-Platform')
-    found_os = types.os.KnownOS.UNKNOWN
+    
 
-    if sec_ch_ua_platform is not None:
+    if (sec_ch_ua_platform := typing.cast(str|None, headers.get('Sec-Ch-Ua-Platform'))) is not None:
         # Strip initial and final " chars if present
         sec_ch_ua_platform = sec_ch_ua_platform.strip('"')
         for os in consts.os.KNOWN_OS_LIST:
             if sec_ch_ua_platform in os.value:
-                found_os = os
+                res.os = os
                 break
-    else:  # Try to detect from User-Agent
+            
+    if res.os == types.os.KnownOS.UNKNOWN:
         ual = ua.lower()
         for os in consts.os.KNOWN_OS_LIST:
             for osname in os.value:
                 if osname.lower() in ual:
-                    found_os = types.os.KnownOS(os)
+                    res.os = types.os.KnownOS(os)
                     break
 
-    # If we found a known OS, store it
-    if found_os != types.os.KnownOS.UNKNOWN:
-        res.os = found_os
-
     # Try to detect browser from Sec-Ch-Ua first
-    sec_ch_ua = headers.get('Sec-Ch-Ua')
-    if sec_ch_ua is not None:
+    if (sec_ch_ua := typing.cast(str|None, headers.get('Sec-Ch-Ua'))) is not None:
         for browser in consts.os.KNOW_BROWSERS:
             if browser in sec_ch_ua:
                 res.browser = browser
                 break
-    else:
+    
+    if res.browser == types.os.KnownBrowser.OTHER:
         # Try to detect browser from User-Agent
         found: 'None|typing.Match[str]' = None
 

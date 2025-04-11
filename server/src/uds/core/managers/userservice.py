@@ -352,7 +352,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # We start filtering out the deployed services that do not need caching at all.
         if (
             servicepool.max_srvs == 0
-            or servicepool.state != State.ACTIVE
+            or servicepool.state not in State.PROCESABLE_STATES
             or servicepool.service.provider.maintenance_mode is True
         ):
             return types.services.ServicePoolStats.null()  # No cache needed for this servicepool
