@@ -367,7 +367,10 @@ def blocker(
         @functools.wraps(f)
         def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
             if not GlobalConfig.BLOCK_ACTOR_FAILURES.as_bool(True) and not ignore_block_config:
-                return f(*args, **kwargs)
+                try:
+                    return f(*args, **kwargs)
+                except uds.core.exceptions.rest.BlockAccess:
+                    raise exceptions.rest.AccessDenied
 
             request: typing.Optional[typing.Any] = getattr(args[0], request_attr or '_request', None)
 
