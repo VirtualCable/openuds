@@ -254,11 +254,8 @@ class ServicesPools(ModelHandler):
                 if item.servicesPoolGroup.image is not None:
                     poolgroup_thumb = item.servicesPoolGroup.image.thumb64
 
-            val['state'] = state
-            val['thumb'] = item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64
             val['user_services_count'] = valid_count
             val['user_services_in_preparation'] = preparing_count
-            val['tags'] = [tag.tag for tag in item.tags.all()]
             val['restrained'] = restrained
             val['permission'] = permissions.effective_permissions(self._user, item)
             val['info'] = Services.service_info(item.service)
@@ -539,7 +536,7 @@ class ServicesPools(ModelHandler):
                     #    fields['initial_srvs'] = min(fields['initial_srvs'], service_type.userservices_limit)
                     #    fields['cache_l1_srvs'] = min(fields['cache_l1_srvs'], service_type.userservices_limit)
             except Exception as e:
-                raise exceptions.rest.RequestError(gettext('This service requires an OS Manager')) from e
+                raise exceptions.rest.RequestError(gettext('This parameters provided are not valid')) from e
 
             # If max < initial or cache_1 or cache_l2
             fields['max_srvs'] = max(
@@ -553,36 +550,36 @@ class ServicesPools(ModelHandler):
             # *** ACCOUNT ***
             account_id = fields['account_id']
             fields['account_id'] = None
-            logger.debug('Account id: %s', account_id)
 
-            if account_id != '-1':
+            if account_id and account_id != '-1':
+                logger.debug('Account id: %s', account_id)
                 try:
                     fields['account_id'] = Account.objects.get(uuid=process_uuid(account_id)).id
                 except Exception:
-                    logger.exception('Getting account ID')
+                    logger.warning('Getting account ID: %s %s', account_id)
 
             # **** IMAGE ***
             image_id = fields['image_id']
             fields['image_id'] = None
-            logger.debug('Image id: %s', image_id)
-            try:
-                if image_id != '-1':
+            if image_id and image_id != '-1':
+                logger.debug('Image id: %s', image_id)
+                try:
                     image = Image.objects.get(uuid=process_uuid(image_id))
                     fields['image_id'] = image.id
-            except Exception:
-                logger.exception('At image recovering')
+                except Exception:
+                    logger.warning('At image recovering: %s', image_id)
 
             # Servicepool Group
             pool_group_id = fields['pool_group_id']
             del fields['pool_group_id']
             fields['servicesPoolGroup_id'] = None
-            logger.debug('pool_group_id: %s', pool_group_id)
-            try:
-                if pool_group_id != '-1':
+            if pool_group_id and pool_group_id != '-1':
+                logger.debug('pool_group_id: %s', pool_group_id)
+                try:
                     spgrp = ServicePoolGroup.objects.get(uuid=process_uuid(pool_group_id))
                     fields['servicesPoolGroup_id'] = spgrp.id
-            except Exception:
-                logger.exception('At service pool group recovering')
+                except Exception:
+                    logger.warning('At service pool group recovering: %s', pool_group_id)
 
         except (exceptions.rest.RequestError, exceptions.rest.ResponseError):
             raise
