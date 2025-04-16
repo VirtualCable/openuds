@@ -176,3 +176,15 @@ class DeletionInfo:
     @staticmethod
     def csv_header() -> str:
         return 'vmid,created,next_check,service_uuid,fatal_retries,total_retries,retries'
+
+    @staticmethod
+    def report(out: typing.TextIO) -> None:
+        """
+        Generates a report of the current state of the deferred deletion
+        """
+        out.write(DeletionInfo.csv_header() + '\n')
+        for group in DeferredStorageGroup:
+            with DeletionInfo.deferred_storage.as_dict(group) as storage_dict:
+                info: tuple[str, DeletionInfo]
+                for info in storage_dict.unlocked_items():
+                    out.write(info[0] + ',' + info[1].as_csv() + '\n')
