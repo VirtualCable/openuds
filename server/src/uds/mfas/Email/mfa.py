@@ -212,9 +212,18 @@ class EmailMFA(mfas.MFA):
                 msg['From'] = self.from_email.value.strip()
                 msg['To'] = identifier
 
+                text = self.mail_txt.as_clean_str() or gettext(
+                    'A login attemt has been made from {ip} to.\nTo continue, provide the verification code {code}'
+                )
+                html = self.mail_html.as_clean_str() or gettext(
+                    '<p>A login attemt has been made from <b>{ip}</b>.</p><p>To continue, provide the verification code <b>{code}</b></p>'
+                )
+                username = request.user.name if request.user else ''
                 msg.attach(
                     MIMEText(
-                        f'A login attemt has been made from {request.ip}.\nTo continue, provide the verification code {code}',
+                        text.format(
+                            ip=request.ip, code=code, username=username, justUsername=username.split('@')[0]
+                        ),
                         'plain',
                     )
                 )
@@ -222,7 +231,9 @@ class EmailMFA(mfas.MFA):
                 if self.enable_html.value:
                     msg.attach(
                         MIMEText(
-                            f'<p>A login attemt has been made from <b>{request.ip}</b>.</p><p>To continue, provide the verification code <b>{code}</b></p>',
+                            html.format(
+                                ip=request.ip, code=code, username=username, justUsername=username.split('@')[0]
+                            ),
                             'html',
                         )
                     )

@@ -195,6 +195,7 @@ class ServerEvent(Handler):
         try:
             server = models.Server.objects.get(token=self._params['token'])
         except models.Server.DoesNotExist:
+            logger.error('Token error from %s (%s is an invalid token)', self._request.ip, self._params['token'])
             raise rest_exceptions.BlockAccess() from None  # Block access if token is not valid
         except KeyError:
             raise rest_exceptions.RequestError('Token not present') from None  # Invalid request if token is not present

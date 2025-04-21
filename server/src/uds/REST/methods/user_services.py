@@ -117,7 +117,7 @@ class AssignedService(DetailHandler):
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = ensure.is_instance(parent, models.ServicePool)
-        # Extract provider
+
         try:
             if not item:
                 # First, fetch all properties for all assigned services on this pool
@@ -209,7 +209,7 @@ class AssignedService(DetailHandler):
             logger.exception('delete_item')
             raise self.invalid_item_response() from e
 
-        if userservice.user:
+        if userservice.user:  # All assigned services have a user
             log_string = f'Deleted assigned user service {userservice.friendly_name} to user {userservice.user.pretty_name} by {self._user.pretty_name}'
         else:
             log_string = f'Deleted cached user service {userservice.friendly_name} by {self._user.pretty_name}'
@@ -265,14 +265,14 @@ class AssignedService(DetailHandler):
 
 class CachedService(AssignedService):
     """
-    Rest handler for Cached Services, wich parent is Service
+    Rest handler for Cached Services, which parent is ServicePool
     """
 
     custom_methods = []  # Remove custom methods from assigned services
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = ensure.is_instance(parent, models.ServicePool)
-        # Extract provider
+
         try:
             if not item:
                 return [

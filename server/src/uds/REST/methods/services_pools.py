@@ -68,6 +68,7 @@ class ServicesPools(ModelHandler):
     detail = {
         'services': AssignedService,
         'cache': CachedService,
+        'servers': CachedService,  # Alias for cache, but will change in a future release
         'groups': Groups,
         'transports': Transports,
         'publications': Publications,
