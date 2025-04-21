@@ -214,7 +214,7 @@ class EmailMFA(mfas.MFA):
 
                 msg.attach(
                     MIMEText(
-                        f'A login attemt has been made from {request.ip}.\nTo continue, provide the verification code {code}',
+                        f'A login attemt has been made from {request.ip}.\nTo continue, provide the verification code {code}\n\n{self.mail_txt.value}',
                         'plain',
                     )
                 )
@@ -222,7 +222,7 @@ class EmailMFA(mfas.MFA):
                 if self.enable_html.value:
                     msg.attach(
                         MIMEText(
-                            f'<p>A login attemt has been made from <b>{request.ip}</b>.</p><p>To continue, provide the verification code <b>{code}</b></p>',
+                            f'<p>A login attemt has been made from <b>{request.ip}</b>.</p><p>To continue, provide the verification code <b>{code}</b></p><br><p>{self.mail_html.value}</p>',
                             'html',
                         )
                     )
