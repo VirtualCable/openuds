@@ -93,7 +93,7 @@ class HelpDoc:
 
     path: str
     description: str
-    arguments: list[ArgumentInfo] = dataclasses.field(default_factory=list)
+    arguments: list[ArgumentInfo] = dataclasses.field(default_factory=list[ArgumentInfo])
     # Result is always a json ressponse, so we can describe it as a dict
     # Note that this dict can be nested
     returns: typing.Any = None
