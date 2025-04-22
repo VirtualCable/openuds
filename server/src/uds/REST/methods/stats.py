@@ -47,7 +47,7 @@ class Stats(Handler):
     min_access_role = consts.UserRole.ADMIN
 
     help_paths = [
-        types.rest.HelpDoc('', 'Returns the last day usage statistics for all authenticators'),
+        types.rest.doc.HelpDoc('', 'Returns the last day usage statistics for all authenticators'),
     ]
     help_text = 'Provides access to usage statistics'
 
