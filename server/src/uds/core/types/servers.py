@@ -144,7 +144,7 @@ class ServerStats:
     cpuused: float = 0  # 0-1 (cpu usage)
     uptime: int = 0  # In seconds
     disks: list[ServerDiskInfo] = dataclasses.field(
-        default_factory=list
+        default_factory=list[ServerDiskInfo]
     )  # List of tuples (mountpoint, used, total)
     connections: int = 0  # Number of connections
     current_users: int = 0  # Number of current users
@@ -230,7 +230,7 @@ class ServerStats:
             disks=disks,
             connections=dct.get('connections', 0),
             current_users=dct.get('current_users', 0),
-            stamp=dct.get('stamp', sql_stamp()),
+            stamp=sql_stamp(),
         )
 
     def as_dict(self) -> dict[str, typing.Any]:
