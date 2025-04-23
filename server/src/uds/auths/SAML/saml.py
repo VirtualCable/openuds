@@ -133,7 +133,7 @@ class SAMLAuthenticator(auths.Authenticator):
         old_field_name='serverCertificate',
     )
     idp_metadata = gui.TextField(
-        length=8192,
+        length=16384,
         lines=4,
         label=_('IDP Metadata'),
         order=3,
@@ -478,21 +478,20 @@ class SAMLAuthenticator(auths.Authenticator):
         # If metadata is an external URL, we will cache almost forever
         # (until cache is cleared) the downloaded metadata
         if self.idp_metadata.value.startswith('http'):
-            resp = self.cache.get('idpMetadata')
-            if resp:
-                return resp
-            try:
-                resp = requests.get(
-                    self.idp_metadata.value.split('\n')[0],
-                    verify=self.check_https_certificate.as_bool(),
-                    timeout=10,
-                )
-                val = resp.content.decode()
-                # 10 years, unless edited the metadata will be kept
-                self.cache.put('idpMetadata', val, 86400 * 365 * 10)
-            except Exception as e:
-                logger.error('Error fetching idp metadata: %s', e)
-                raise exceptions.auth.AuthenticatorException(gettext('Can\'t access idp metadata'))
+            val = self.cache.get('idpMetadata')
+            if not val:
+                try:
+                    resp = requests.get(
+                        self.idp_metadata.value.split('\n')[0],
+                        verify=self.check_https_certificate.as_bool(),
+                        timeout=10,
+                    )
+                    val = resp.content.decode()
+                    # 10 years, unless edited the metadata will be kept
+                    self.cache.put('idpMetadata', val, 86400 * 365 * 10)
+                except Exception as e:
+                    logger.error('Error fetching idp metadata: %s', e)
+                    raise exceptions.auth.AuthenticatorException(gettext('Can\'t access idp metadata'))
         else:
             val = self.idp_metadata.value
 
@@ -560,7 +559,7 @@ class SAMLAuthenticator(auths.Authenticator):
     )
     def get_sp_metadata(self) -> str:
         saml_settings = OneLogin_Saml2_Settings(settings=self.build_onelogin_settings())
-        metadata: typing.Any = saml_settings.get_sp_metadata()
+        metadata = typing.cast(typing.Any, saml_settings.get_sp_metadata())
         errors: list[typing.Any] = saml_settings.validate_metadata(  # pyright: ignore reportUnknownVariableType
             metadata
         )
@@ -619,7 +618,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
         url: str = auth.process_slo(request_id=logout_req_id)  # pyright: ignore reportUnknownVariableType
 
-        errors: list[str] = auth.get_errors()
+        errors = typing.cast(list[str], auth.get_errors())
 
         if errors:
             logger.debug(
@@ -656,7 +655,7 @@ class SAMLAuthenticator(auths.Authenticator):
             auth.process_response()  # pyright: ignore reportUnknownVariableType
         except Exception as e:
             raise exceptions.auth.AuthenticatorException(gettext('Error processing SAML response: ') + str(e))
-        errors: list[str] = auth.get_errors()
+        errors = typing.cast(list[str], auth.get_errors())
         if errors:
             raise exceptions.auth.AuthenticatorException('SAML response error: ' + str(errors))
 
