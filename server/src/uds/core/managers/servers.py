@@ -412,7 +412,10 @@ class ServerManager(metaclass=singleton.Singleton):
                 else:  # Not last one, just decrement counter
                     props[prop_name] = (server_counter.server_uuid, server_counter.counter - 1)
 
-            server = models.Server.objects.get(uuid=server_counter.server_uuid)
+            try:
+                server = models.Server.objects.get(uuid=server_counter.server_uuid)
+            except models.Server.DoesNotExist:
+                return types.servers.ServerCounter.null()
 
             if unlock or server_counter.counter == 1:
                 server.locked_until = None  # Ensure server is unlocked if no more users are assigned to it
