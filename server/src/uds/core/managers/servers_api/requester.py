@@ -64,10 +64,10 @@ def restrain_server(func: collections.abc.Callable[..., bool]) -> collections.ab
             return func(self, *args, **kwargs)
         except Exception as e:
             restrained_until = sql_now() + datetime.timedelta(seconds=consts.system.FAILURE_TIMEOUT)
-            logger.error('Error executing %s: %s. Server restrained until %s', func.__name__, e, restrained_until)
-            self.server.set_restrained_until(
-                restrained_until
-            )  # Block server for a while
+            logger.error(
+                'Error executing %s: %s. Server restrained until %s', func.__name__, e, restrained_until
+            )
+            self.server.set_restrained_until(restrained_until)  # Block server for a while
             return False
 
     return inner
@@ -142,7 +142,9 @@ class ServerApiRequester:
             return None
 
         with self.setup_session(min_server_version=min_server_version) as session:
-            response = session.get(url, timeout=(consts.net.DEFAULT_CONNECT_TIMEOUT, consts.net.DEFAULT_REQUEST_TIMEOUT))
+            response = session.get(
+                url, timeout=(consts.net.DEFAULT_CONNECT_TIMEOUT, consts.net.DEFAULT_REQUEST_TIMEOUT)
+            )
             if not response.ok:
                 logger.error(
                     'Error requesting %s from server %s: %s', method, self.server.hostname, response.text
@@ -151,13 +153,17 @@ class ServerApiRequester:
 
             return response.json()
 
-    def post(self, method: str, data: typing.Any, *, min_server_version: typing.Optional[str] = None) -> typing.Any:
+    def post(
+        self, method: str, data: typing.Any, *, min_server_version: typing.Optional[str] = None
+    ) -> typing.Any:
         url = self.get_comms_endpoint(method, min_server_version)
         if not url:
             return None
 
         with self.setup_session(min_server_version=min_server_version) as session:
-            response = session.post(url, json=data, timeout=(consts.net.DEFAULT_CONNECT_TIMEOUT, consts.net.DEFAULT_REQUEST_TIMEOUT))
+            response = session.post(
+                url, json=data, timeout=(consts.net.DEFAULT_CONNECT_TIMEOUT, consts.net.DEFAULT_REQUEST_TIMEOUT)
+            )
             if not response.ok:
                 logger.error(
                     'Error requesting %s from server %s: %s', method, self.server.hostname, response.text
@@ -238,13 +244,13 @@ class ServerApiRequester:
 
         return True
 
-    def get_stats(self) -> typing.Optional['types.servers.ServerStats']:
+    def get_stats(self, enable_refresh: bool = False) -> typing.Optional['types.servers.ServerStats']:
         """
         Returns the stats of a server
         """
         # If stored stats are still valid, return them
         stats = self.server.stats
-        if stats and stats.is_valid:
+        if stats and (stats.is_valid or not enable_refresh):
             return stats
 
         logger.debug('Getting stats from server %s', self.server.host)
