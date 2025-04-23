@@ -235,26 +235,33 @@ class AssignedService(DetailHandler):
         parent = ensure.is_instance(parent, models.ServicePool)
         if not item:
             raise self.invalid_item_response('Only modify is allowed')
-        fields = self.fields_from_params(['auth_id', 'user_id'])
+        fields = self.fields_from_params(['auth_id:_', 'user_id:_', 'ip:_'])
+        
         userservice = parent.userServices.get(uuid=process_uuid(item))
-        user = models.User.objects.get(uuid=process_uuid(fields['user_id']))
+        if 'user_id' in fields and 'auth_id' in fields:
+            user = models.User.objects.get(uuid=process_uuid(fields['user_id']))
 
-        log_string = f'Changed ownership of user service {userservice.friendly_name} from {userservice.user} to {user.pretty_name} by {self._user.pretty_name}'
+            log_string = f'Changed ownership of user service {userservice.friendly_name} from {userservice.user} to {user.pretty_name} by {self._user.pretty_name}'
 
-        # If there is another service that has this same owner, raise an exception
-        if (
-            parent.userServices.filter(user=user)
-            .exclude(uuid=userservice.uuid)
-            .exclude(state__in=State.INFO_STATES)
-            .count()
-            > 0
-        ):
-            raise self.invalid_response_response(
-                f'There is already another user service assigned to {user.pretty_name}'
-            )
+            # If there is another service that has this same owner, raise an exception
+            if (
+                parent.userServices.filter(user=user)
+                .exclude(uuid=userservice.uuid)
+                .exclude(state__in=State.INFO_STATES)
+                .count()
+                > 0
+            ):
+                raise self.invalid_response_response(
+                    f'There is already another user service assigned to {user.pretty_name}'
+                )
 
-        userservice.user = user
-        userservice.save()
+            userservice.user = user
+            userservice.save()
+        elif 'ip' in fields:
+            log_string = f'Changed IP of user service {userservice.friendly_name} to {fields["ip"]} by {self._user.pretty_name}'
+            userservice.log_ip(fields['ip'])
+        else:
+            raise self.invalid_item_response('Invalid fields')
 
         # Log change
         log.log(parent, types.log.LogLevel.INFO, log_string, types.log.LogSource.ADMIN)
