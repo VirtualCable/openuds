@@ -98,7 +98,8 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             'name': item.name,
             'tags': [tag.tag for tag in item.tags.all()],
             'comments': item.comments,
-            'type': item.data_type,
+            'type': item.data_type,   # Compat with old code
+            'data_type': item.data_type,
             'type_name': _(item_type.mod_name()),
             'deployed_services_count': item.deployedServices.count(),
             'user_services_count': models.UserService.objects.filter(deployed_service__service=item)
