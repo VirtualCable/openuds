@@ -43,7 +43,7 @@ from uds.core.managers.crypto import CryptoManager
 
 logger = logging.getLogger(__name__)
 
-CACHE_TIME_TIMEOUT = 60  # Every 60 second, refresh the time from database (to avoid drifts)
+CACHE_TIME_TIMEOUT = 10  # Every 10 second, refresh the time from database (to avoid drifts)
 
 
 # pylint: disable=too-few-public-methods
