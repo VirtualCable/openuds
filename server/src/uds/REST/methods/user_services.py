@@ -407,7 +407,7 @@ class Groups(DetailHandler):
         return {'id': group.uuid}
 
     def delete_item(self, parent: 'Model', item: str) -> None:
-        parent = ensure.is_instance(parent, models.ServicePool)
+        parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
         group: models.Group = models.Group.objects.get(uuid=process_uuid(self._args[0]))
         parent.assignedGroups.remove(group)
         log.log(
