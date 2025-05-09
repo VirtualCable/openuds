@@ -166,7 +166,7 @@ class LinuxOsADManager(LinuxOsManager):
             name=userservice.get_name(),
             custom={
                 'domain': self.domain.as_str(),
-                'username': self.account.as_str(),
+                'account': self.account.as_str(),
                 'password': self.password.as_str(),
                 'ou': self.ou.as_str(),
                 'is_persistent': self.remove_on_exit.as_bool(),
