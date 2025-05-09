@@ -338,8 +338,10 @@ class ProxmoxClient:
         def calc_weight(x: types.NodeStats) -> float:
             return (x.mem / x.maxmem) + (x.cpu / x.maxcpu) * 1.3
 
+        logger.debug('Selecting best node for VM : %s, %s, %s', min_memory, must_have_vgpus, mdev_type)
         # Offline nodes are not "the best"
         for node in filter(lambda x: x.status == 'online', self.get_nodes_stats()):
+            logger.debug('Node %s: %s', node.name, self.list_node_gpu_devices(node.name))
             if min_memory and node.mem < min_memory + 512000000:  # 512 MB reserved
                 continue  # Skips nodes with not enouhg memory
             if must_have_vgpus is not None and must_have_vgpus != bool(self.list_node_gpu_devices(node.name)):
@@ -381,6 +383,9 @@ class ProxmoxClient:
         # Ensure exists target pool, (id is in fact the name of the pool)
         if target_pool and not any(p.id == target_pool for p in self.list_pools()):
             raise exceptions.ProxmoxDoesNotExists(f'Pool "{target_pool}" does not exist')
+        
+        logger.debug('Cloning VM %s to %s', vmid, new_vmid)
+        logger.debug('Parameters: %s %s %s %s %s %s %s', name, description, as_linked_clone, target_node, target_storage, target_pool, must_have_vgpus)
 
         src_node = vminfo.node
 
@@ -389,19 +394,25 @@ class ProxmoxClient:
             # If storage is not shared, must be done on same as origin
             if target_storage and self.get_storage_info(storage=target_storage, node=vminfo.node).shared:
                 node = self.get_best_node_for_vm(
-                    min_memory=-1, must_have_vgpus=must_have_vgpus, mdev_type=vminfo.vgpu_type
+                    min_memory=0, must_have_vgpus=must_have_vgpus, mdev_type=vminfo.vgpu_type
                 )
                 if node is None:
                     raise exceptions.ProxmoxError(
-                        f'No switable node available for new vm {name} on Proxmox (check memory and VGPUS, space...)'
+                        f'No suitable node available for new vm {name} on Proxmox (check memory and VGPUS, space...)'
                     )
                 target_node = node.name
             else:
                 target_node = src_node
+                
+        logger.debug('Target node: %s', target_node)    
 
         # Ensure exists target node
         if not any(n.name == target_node for n in self.get_cluster_info().nodes):
             raise exceptions.ProxmoxDoesNotExists(f'Node "{target_node}" does not exist')
+        
+        logger.debug('VM info: %s', vminfo)
+        logger.debug('Type of vminfo.vgpu_type: %s', type(vminfo.vgpu_type))
+        logger.debug('Value of vminfo.vgpu_type: %s', vminfo.vgpu_type)
 
         # Check if mustHaveVGPUS is compatible with the node
         if must_have_vgpus is not None and must_have_vgpus != bool(self.list_node_gpu_devices(target_node)):
@@ -409,7 +420,7 @@ class ProxmoxClient:
                 f'Node "{target_node}" does not have VGPUS and they are required'
             )
 
-        if vminfo.vgpu_type and not self.node_has_vgpus_available(target_node, vminfo.vgpu_type):
+        if vminfo.vgpu_type is not None and not self.node_has_vgpus_available(target_node, vminfo.vgpu_type):
             raise exceptions.ProxmoxNoGPUError(
                 f'Node "{target_node}" does not have free VGPUS of type {vminfo.vgpu_type} (requred by VM {vminfo.name})'
             )
@@ -520,7 +531,7 @@ class ProxmoxClient:
                 return sorted_ips[0]
             
         except Exception as e:
-            logger.info('Error getting guest ip address for machine %s: %s', vmid, e)
+            logger.warning('Error getting guest ip address for machine %s: %s', vmid, e)
             raise exceptions.ProxmoxError(f'No ip address for vm {vmid}: {e}')
 
         raise exceptions.ProxmoxError('No ip address found for vm {}'.format(vmid))
