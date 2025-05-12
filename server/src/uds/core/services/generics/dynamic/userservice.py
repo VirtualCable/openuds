@@ -275,7 +275,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             # This is a retryable error, so we will retry later
             return self.retry_later()
         except Exception as e:
-            logger.exception('Unexpected FixedUserService exception: %s', e)
+            logger.exception('Unexpected DynamicUserService exception: %s', e)
             return self.error(e)
 
     @typing.final
