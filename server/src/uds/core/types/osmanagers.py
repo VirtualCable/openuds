@@ -38,7 +38,7 @@ import typing
 class ActorData:
     action: str
     name: str
-    custom: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
+    custom: dict[str, typing.Any] = dataclasses.field(default_factory=dict[str, typing.Any])
 
     # Items to be removed. Kept for compat with 3.6 actor
     @dataclasses.dataclass
