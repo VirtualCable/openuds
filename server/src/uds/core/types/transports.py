@@ -86,7 +86,7 @@ class TransportScript:
     # currently only python is supported
     script_type: typing.Literal['python'] = 'python'
     signature_b64: str = ''  # Signature of the script in base64
-    parameters: collections.abc.Mapping[str, typing.Any] = dataclasses.field(default_factory=dict)
+    parameters: collections.abc.Mapping[str, typing.Any] = dataclasses.field(default_factory=dict[str, typing.Any])
 
     @property
     def encoded_parameters(self) -> str:
