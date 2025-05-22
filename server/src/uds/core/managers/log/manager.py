@@ -98,7 +98,7 @@ class LogManager(metaclass=singleton.Singleton):
 
     def _clear_logs(self, owner_type: LogObjectType, owner_id: int) -> None:
         """
-        Clears ALL logs related to user service
+        Clears ALL logs related to owner_id and owner_type
         """
         Log.objects.filter(owner_id=owner_id, owner_type=owner_type).delete()
 
