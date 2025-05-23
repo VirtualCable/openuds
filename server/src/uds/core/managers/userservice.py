@@ -996,7 +996,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             logger.error(msg)
             raise InvalidServiceException(msg)
 
-        username = user.name if user else 'unknown'
+        full_username = user.pretty_name if user else 'unknown'
 
         if not test_userservice_status:
             # traceLogger.info('GOT service "{}" for user "{}" with transport "{}" (NOT TESTED)'.format(userService.name, userName, trans.name))
@@ -1038,7 +1038,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 events.add_event(
                     userservice.deployed_service,
                     events.types.stats.EventType.ACCESS,
-                    username=username,
+                    username=full_username,
                     srcip=src_ip,
                     dstip=ip,
                     uniqueid=userservice.unique_id,
@@ -1057,7 +1057,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                         trace_logger.info(
                             'READY on service "%s" for user "%s" with transport "%s" (ip:%s)',
                             userservice.name,
-                            username,
+                            full_username,
                             transport.name,
                             ip,
                         )
@@ -1089,7 +1089,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             'ERROR %s on service "%s" for user "%s" with transport "%s" (ip:%s)',
             userservice_status,
             userservice.name,
-            username,
+            full_username,
             transport.name,
             ip,
         )

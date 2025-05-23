@@ -325,6 +325,13 @@ class gui:
                 value=value,
                 tab=tab,
             )
+            
+        @property
+        def field_name(self) -> str:
+            """
+            Returns the name of the field
+            """
+            return self._field_info.field_name
 
         @property
         def field_type(self) -> 'types.ui.FieldType':
@@ -1430,6 +1437,7 @@ class UserInterfaceType(abc.ABCMeta, type):
             if isinstance(attr, gui.InputField):
                 # Ensure we have a copy of the data, so we can modify it without affecting others
                 attr._field_info = copy.deepcopy(attr._field_info)
+                attr._field_info.field_name = attr_name
                 _gui[attr_name] = attr
 
             new_class_dict[attr_name] = attr
