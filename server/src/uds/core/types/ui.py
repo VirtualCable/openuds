@@ -147,6 +147,7 @@ class FieldInfo:
     tooltip: str
     order: int
     type: FieldType
+    field_name: str = ''
     old_field_name: OldFieldNameType = None
     readonly: typing.Optional[bool] = None
     value: typing.Union[collections.abc.Callable[[], typing.Any], typing.Any] = None
