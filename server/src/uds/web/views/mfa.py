@@ -47,6 +47,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 import datetime
 
+
 # The MFA page does not needs CSRF token, so we disable it
 @csrf_exempt
 def mfa(
@@ -58,7 +59,7 @@ def mfa(
 
     store: 'storage.Storage' = storage.Storage('mfs')
 
-    mfa_provider = request.user.manager.mfa # Get MFA provider for user
+    mfa_provider = request.user.manager.mfa  # Get MFA provider for user
     if not mfa_provider:
         logger.warning('MFA: No MFA provider for user')
         return HttpResponseRedirect(reverse('page.index'))
@@ -69,13 +70,17 @@ def mfa(
     mfa_cookie = request.COOKIES.get(consts.auth.MFA_COOKIE_NAME, None)
     if mfa_cookie and mfa_provider.remember_device > 0:
         stored_user_id: typing.Optional[str]
-        created: typing.Optional[datetime.datetime]
+        created: typing.Optional[int]
         stored_data = store.read_pickled(mfa_cookie) or (None, None, None)
         stored_user_id, created, ip = (stored_data + (None,))[:3]
         if (
             stored_user_id
             and created
-            and created + datetime.timedelta(hours=mfa_provider.remember_device) > datetime.datetime.now()
+            and (
+                datetime.datetime.fromtimestamp(created)
+                + datetime.timedelta(hours=mfa_provider.remember_device)
+            )
+            > datetime.datetime.now()
             # Old stored values do not have ip, so we need to check it
             and (not ip or ip == request.ip)
         ):
