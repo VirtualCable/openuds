@@ -83,7 +83,7 @@ class LinuxAdOsManagerActorTest(rest.test.RESTActorTestCase):
         self.assertIn('custom', os)
         custom = os['custom']
         self.assertEqual(custom['domain'], osm_instance.domain.value)
-        self.assertEqual(custom['username'], osm_instance.account.value)
+        self.assertEqual(custom['account'], osm_instance.account.value)
         self.assertEqual(custom['password'], osm_instance.password.value)
         self.assertEqual(custom['ou'], osm_instance.ou.value)
         self.assertEqual(custom['is_persistent'], osm_instance.remove_on_exit.value)

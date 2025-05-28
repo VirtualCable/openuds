@@ -105,18 +105,18 @@ class ServerEventsPingTest(rest.test.RESTTestCase):
         server_stats = self.server.properties.get('stats', None)
         self.assertIsNotNone(server_stats)
         # Get stats, but clear stamp
-        statsResponse = types.servers.ServerStats.from_dict(server_stats, stamp=0)
-        self.assertEqual(statsResponse, stats)
+        stats_response = types.servers.ServerStats.from_dict(server_stats)
+        stats_response.stamp = 0  # Clear stamp to compare
+        self.assertEqual(stats_response, stats)
         # Ensure that stamp is not 0 on server_stats dict
         self.assertNotEqual(server_stats['stamp'], 0)
 
         # Ensure stat is valid right now
-        statsResponse = types.servers.ServerStats.from_dict(server_stats)
-        self.assertTrue(statsResponse.is_valid)
-        statsResponse = types.servers.ServerStats.from_dict(
-            server_stats, stamp=sql_stamp() - consts.cache.DEFAULT_CACHE_TIMEOUT - 1
-        )
-        self.assertFalse(statsResponse.is_valid)
+        stats_response = types.servers.ServerStats.from_dict(server_stats)
+        self.assertTrue(stats_response.is_valid)
+        stats_response = types.servers.ServerStats.from_dict(server_stats)
+        stats_response.stamp = sql_stamp() - consts.cache.DEFAULT_CACHE_TIMEOUT - 1
+        self.assertFalse(stats_response.is_valid)
 
     def test_event_ping_without_stats(self) -> None:
         # Create an stat object
