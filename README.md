@@ -1,8 +1,3 @@
-![UDS Logo](https://www2.udsenterprise.com/static/img/logoUDSNav.png)
-
-The main repository has been transfered to https://github.com/VirtualCable/openuds.
-Please, update your references.
-
 OpenUDS
 =======
 
