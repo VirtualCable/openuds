@@ -1,8 +1,3 @@
-![UDS Logo](https://www2.udsenterprise.com/static/img/logoUDSNav.png)
-
-The main repository has been transfered to https://github.com/VirtualCable/openuds.
-Please, update your references.
-
 OpenUDS
 =======
 
@@ -18,8 +13,8 @@ Please feel free to contribute to this project.
 
 Notes
 =====
-* Master version is always under heavy development and it is not recommended for use, it will probably have unfixed bugs.  Please use the latest stable branch. (v3.6 right now)
-* From 4.0 onwards (current master), OpenUDS has been splitted in several repositories and contains submodules. Remember to use "git clone --resursive ..." to fetch it ;-).
-* 3.6 version is tested on Python 3.9, 3.10 and 3.11. It will probably work on 3.8 too.
-* 4.0 Version will need Python 3.11 or higher. It uses new features only available on 3.10 or later, and is tested against 3.11. It will probably work on 3.10 too.
+* Master version is always under heavy development and it is not recommended for use, it will probably have unfixed bugs.  Please use the latest stable branch (`v4.0` right now).
+* From `v4.0` onwards (current master), OpenUDS has been splitted in several repositories and contains submodules. Remember to use "git clone --resursive ..." to fetch it ;-).
+* `v3.6` version is tested on Python 3.9, 3.10 and 3.11. It will probably work on 3.8 too.
+* `v4.0` version will need Python 3.11 or higher. It uses new features only available on 3.10 or later, and is tested against 3.11. It will probably work on 3.10 too.
 * We use "NamedTuples" in the code, and seems to be some kind of error on 3.11.1, so please do not use that python version: (Ref: https://github.com/python/cpython/issues/100098). 
