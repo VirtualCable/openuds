@@ -171,8 +171,8 @@ class StatsCountersAccum(models.Model):
 
         # End date is now, adjusted to interval so we dont have "leftovers"
         end_stamp = StatsCountersAccum._adjust_to_interval(interval_type=interval_type)
-
-        # If time lapse is greater that max_days days, we will optimize in 30 days chunks
+        
+        # If time lapse is greater that max_days days, we will optimize in a predefined days chunks
         # This is to avoid having a huge query that will take a lot of time
         if end_stamp - start_stamp > (max_days * 24 * 3600):
             logger.info(
@@ -244,6 +244,21 @@ class StatsCountersAccum(models.Model):
             for rec in query
             if rec['sum'] or rec['min'] or rec['max']
         ]
+        # If no data, insert a dummy record with 0 values
+        if not accumulated:
+            accumulated = [
+                StatsCountersAccum(
+                    owner_type=0,
+                    owner_id=0,
+                    counter_type=0,
+                    interval_type=interval_type,
+                    stamp=end_stamp,
+                    v_count=0,
+                    v_sum=0,
+                    v_min=0,
+                    v_max=0,
+                )
+            ]
 
         logger.debug('Inserting %s records', len(accumulated))
         # Insert in chunks of 2500 records
