@@ -170,7 +170,7 @@ class StatsCountersAccum(models.Model):
         )  # Adjust to hour
 
         # End date is now, adjusted to interval so we dont have "leftovers"
-        end_stamp = StatsCountersAccum._adjust_to_interval(interval_type=interval_type)
+        current_stamp = end_stamp = StatsCountersAccum._adjust_to_interval(interval_type=interval_type)
         
         # If time lapse is greater that max_days days, we will optimize in a predefined days chunks
         # This is to avoid having a huge query that will take a lot of time
@@ -245,7 +245,7 @@ class StatsCountersAccum(models.Model):
             if rec['sum'] or rec['min'] or rec['max']
         ]
         # If no data, insert a dummy record with 0 values
-        if not accumulated:
+        if not accumulated and current_stamp != end_stamp:
             accumulated = [
                 StatsCountersAccum(
                     owner_type=0,
