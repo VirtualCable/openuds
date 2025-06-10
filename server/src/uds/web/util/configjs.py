@@ -85,6 +85,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
 
     logger.debug('Authenticators PRE: %s', authenticators)
 
+    use_hidden: bool = tag is not None and tag != 'disabled'
     # No tag, and there are authenticators, let's use the tag of first one
     if not tag and authenticators:  # Keep disabled as tag if present
         tag = authenticators[0].small_name
@@ -101,6 +102,14 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
             'priority': auth.priority,
             'is_custom': auth_type.is_custom(),
         }
+        
+    def _is_auth_visible(auth: Authenticator) -> bool:
+        """
+        Check if the authenticator is visible for the current request.
+        This is used to filter out authenticators that are not allowed
+        for the current user or request.
+        """
+        return auth.type_is_valid() and (auth.state == consts.auth.VISIBLE or (auth.state == consts.auth.HIDDEN and use_hidden))
 
     config: dict[str, typing.Any] = {
         'version': consts.system.VERSION,
@@ -110,7 +119,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
         'authenticators': [
             _get_auth_info(auth)
             for auth in authenticators
-            if auth.type_is_valid() and auth.state == consts.auth.VISIBLE
+            if _is_auth_visible(auth)
         ],
         'mfa': request.session.get('mfa', None),
         'tag': tag,
