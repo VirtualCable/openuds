@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2021 Virtual Cable S.L.U.
+# Copyright (c) 2012-2025 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -80,13 +80,20 @@ def uds_cookie(
                 cookie,
                 samesite='Lax',
                 httponly=config.GlobalConfig.ENHANCED_SECURITY.as_bool(),
+                secure=True if config.GlobalConfig.ENHANCED_SECURITY.as_bool() else False,
             )
         request.COOKIES['uds'] = cookie
     else:
         cookie = request.COOKIES['uds'][: consts.auth.UDS_COOKIE_LENGTH]
 
     if response and force:
-        response.set_cookie('uds', cookie)
+        response.set_cookie(
+            'uds',
+            cookie,
+            samesite='Lax',
+            httponly=config.GlobalConfig.ENHANCED_SECURITY.as_bool(),
+            secure=True if config.GlobalConfig.ENHANCED_SECURITY.as_bool() else False,
+        )
 
     return cookie
 
