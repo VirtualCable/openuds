@@ -80,13 +80,20 @@ def uds_cookie(
                 cookie,
                 samesite='Lax',
                 httponly=config.GlobalConfig.ENHANCED_SECURITY.as_bool(),
+                secure=True if config.GlobalConfig.ENHANCED_SECURITY.as_bool() else False,
             )
         request.COOKIES['uds'] = cookie
     else:
         cookie = request.COOKIES['uds'][: consts.auth.UDS_COOKIE_LENGTH]
 
     if response and force:
-        response.set_cookie('uds', cookie)
+        response.set_cookie(
+            'uds',
+            cookie,
+            samesite='Lax',
+            httponly=config.GlobalConfig.ENHANCED_SECURITY.as_bool(),
+            secure=True if config.GlobalConfig.ENHANCED_SECURITY.as_bool() else False,
+        )
 
     return cookie
 
@@ -117,7 +124,7 @@ def root_user() -> models.User:
 
 # Decorator to make easier protect pages that needs to be logged in
 def weblogin_required(
-    admin: typing.Union[bool, typing.Literal['admin']] = False
+    admin: typing.Union[bool, typing.Literal['admin']] = False,
 ) -> collections.abc.Callable[
     [collections.abc.Callable[..., HttpResponse]], collections.abc.Callable[..., HttpResponse]
 ]:
@@ -138,7 +145,7 @@ def weblogin_required(
     """
 
     def decorator(
-        view_func: collections.abc.Callable[..., HttpResponse]
+        view_func: collections.abc.Callable[..., HttpResponse],
     ) -> collections.abc.Callable[..., HttpResponse]:
         @wraps(view_func)
         def _wrapped_view(
@@ -173,7 +180,7 @@ def is_trusted_ip_forwarder(ip: str) -> bool:
 
 # Decorator to protect pages that needs to be accessed from "trusted sites"
 def needs_trusted_source(
-    view_func: collections.abc.Callable[..., HttpResponse]
+    view_func: collections.abc.Callable[..., HttpResponse],
 ) -> collections.abc.Callable[..., HttpResponse]:
     """
     Decorator to set protection to access page
