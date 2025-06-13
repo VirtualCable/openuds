@@ -79,7 +79,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
     # Filter out non accesible authenticators (using origin)
     authenticators = [
         a
-        for a in Authenticator.get_by_tag(tag, auth_host)
+        for a in Authenticator.get_by_tag(tag, auth_host if GlobalConfig.DISALLOW_GLOBAL_LOGIN.as_bool(True) else None)
         if a.get_instance().is_ip_allowed(request) and (tag != 'disabled' or not a.get_type().is_custom())
     ]
 

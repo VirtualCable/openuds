@@ -255,30 +255,34 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         return Authenticator.objects.all().order_by('priority')
 
     @staticmethod
-    def get_by_tag(*tag: typing.Optional[str]) -> collections.abc.Iterable['Authenticator']:
+    def get_by_tag(*tags: typing.Optional[str]) -> collections.abc.Iterable['Authenticator']:
         """
         Gets authenticator by tag name.
         Special tag name "disabled" is used to exclude customAuth
         """
         # pylint: disable=import-outside-toplevel
         from uds.core.util.config import GlobalConfig
+        
         # Filter out None tags
-        tags = list(filter(lambda x: x is not None, tag))
+        #tags = typing.cast(list[str], list(filter(lambda x: x is not None, tag)))
+        authenticators = Authenticator.objects.exclude(state=consts.auth.DISABLED)
+        
+        q : 'models.Q|None' = None
+        for t in tags:
+            if t is not None:
+                if q is None:
+                    q = models.Q(small_name__iexact=t)
+                else:
+                    q |= models.Q(small_name__iexact=t)
 
-        if tags:
-            # authenticators = list(auths.filter(small_name__in=[auth_host, tag]))
-            authenticators = (
-                Authenticator.objects.exclude(state=consts.auth.DISABLED)
-                .filter(small_name__in=tags)
-                .order_by('priority', 'name')
-            )
-            if not authenticators.exists():
-                authenticators = Authenticator.objects.all().order_by('priority', 'name')
-        else:
-            authenticators = Authenticator.objects.all().order_by('priority', 'name')
-
-        for auth in authenticators:
-            if auth.get_type() and (not auth.get_type().is_custom() or 'disabled' not in tag):
+        if q is not None:
+            authenticators = authenticators.filter(q)
+            
+        if not authenticators.exists() and 'disabled' in tags:
+            authenticators = Authenticator.objects.all()
+        
+        for auth in authenticators.order_by('priority', 'name'):
+            if auth.get_type() and (not auth.get_type().is_custom() or 'disabled' not in tags):
                 yield auth
                 # If disallow global login (that is, do not allow to select the auth), we break here
                 if GlobalConfig.DISALLOW_GLOBAL_LOGIN.as_bool(force=False) is True:
