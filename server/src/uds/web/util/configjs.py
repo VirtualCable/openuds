@@ -58,9 +58,9 @@ register = template.Library()
 
 def uds_js(request: 'ExtendedHttpRequest') -> str:
     auth_host = (
-        request.META.get('SERVER_NAME') or request.META.get('HTTP_HOST') or 'auth_host'
+        request.META.get('HTTP_HOST') or request.META.get('SERVER_NAME') or 'auth_host'
     )  # Last one is a placeholder in case we can't locate host name
-
+    
     role: str = 'user'
     user: typing.Optional['User'] = request.user if request.authorized else None
 
@@ -79,8 +79,10 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
     # Filter out non accesible authenticators (using origin)
     authenticators = [
         a
-        for a in Authenticator.get_by_tag(tag, auth_host if GlobalConfig.DISALLOW_GLOBAL_LOGIN.as_bool(True) else None)
-        if a.get_instance().is_ip_allowed(request) and (tag != 'disabled' or not a.get_type().is_custom())
+        for a in Authenticator.get_by_tag(
+            tag, auth_host if GlobalConfig.DISALLOW_GLOBAL_LOGIN.as_bool(True) else None
+        )
+        if a.get_instance().is_ip_allowed(request)
     ]
 
     logger.debug('Authenticators PRE: %s', authenticators)
@@ -102,25 +104,23 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
             'priority': auth.priority,
             'is_custom': auth_type.is_custom(),
         }
-        
+
     def _is_auth_visible(auth: Authenticator) -> bool:
         """
         Check if the authenticator is visible for the current request.
         This is used to filter out authenticators that are not allowed
         for the current user or request.
         """
-        return auth.type_is_valid() and (auth.state == consts.auth.VISIBLE or (auth.state == consts.auth.HIDDEN and use_hidden))
+        return auth.type_is_valid() and (
+            auth.state == consts.auth.VISIBLE or (auth.state == consts.auth.HIDDEN and use_hidden)
+        )
 
     config: dict[str, typing.Any] = {
         'version': consts.system.VERSION,
         'version_stamp': consts.system.VERSION_STAMP,
         'language': get_language(),
         'available_languages': [{'id': k, 'name': gettext(v)} for k, v in settings.LANGUAGES],
-        'authenticators': [
-            _get_auth_info(auth)
-            for auth in authenticators
-            if _is_auth_visible(auth)
-        ],
+        'authenticators': [_get_auth_info(auth) for auth in authenticators if _is_auth_visible(auth)],
         'mfa': request.session.get('mfa', None),
         'tag': tag,
         'os': request.os.os.name,

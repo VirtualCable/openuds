@@ -104,7 +104,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         """
         if self._cached_instance and values is None:
             return typing.cast(auths.Authenticator, self._cached_instance)
-        
+
         if not self.id:
             # Return a fake authenticator
             return auths.Authenticator(
@@ -115,9 +115,9 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         env = self.get_environment()
         auth = auth_type(env, values, uuid=self.uuid)
         self.deserialize(auth, values)
-        
+
         self._cached_instance = auth
-        
+
         return auth
 
     def get_type(self) -> type[auths.Authenticator]:
@@ -133,7 +133,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         """
         # If type is not registered (should be, but maybe a database inconsistence), consider this a "base empty auth"
         return auths.factory().lookup(self.data_type) or auths.Authenticator
-    
+
     def type_is_valid(self) -> bool:
         """
         Returns if the type of this authenticator exists
@@ -255,38 +255,36 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         return Authenticator.objects.all().order_by('priority')
 
     @staticmethod
-    def get_by_tag(*tags: typing.Optional[str]) -> collections.abc.Iterable['Authenticator']:
+    def get_by_tag(
+        tag: str | None,
+        hostname: str | None = None,
+    ) -> collections.abc.Iterable['Authenticator']:
         """
         Gets authenticator by tag name.
         Special tag name "disabled" is used to exclude customAuth
         """
-        # pylint: disable=import-outside-toplevel
-        from uds.core.util.config import GlobalConfig
-        
-        # Filter out None tags
-        #tags = typing.cast(list[str], list(filter(lambda x: x is not None, tag)))
-        authenticators = Authenticator.objects.exclude(state=consts.auth.DISABLED)
-        
-        q : 'models.Q|None' = None
-        for t in tags:
-            if t is not None:
-                if q is None:
-                    q = models.Q(small_name__iexact=t)
-                else:
-                    q |= models.Q(small_name__iexact=t)
+        available_auths = Authenticator.objects.exclude(state=consts.auth.DISABLED).order_by('priority', 'name')
+        authenticators = available_auths
+        if tag != 'disabled':
+            if tag:
+                hostname = None
 
-        if q is not None:
-            authenticators = authenticators.filter(q)
-            
-        if not authenticators.exists() and 'disabled' in tags:
-            authenticators = Authenticator.objects.all()
-        
-        for auth in authenticators.order_by('priority', 'name'):
-            if auth.get_type() and (not auth.get_type().is_custom() or 'disabled' not in tags):
+            q = (models.Q(small_name__iexact=tag) if tag else models.Q()) | (
+                models.Q(small_name__iexact=hostname) if hostname else models.Q()
+            )
+
+            authenticators = available_auths.filter(q)
+
+            if not tag and hostname and not authenticators.exists():
+                # If no tag specified, we return all authenticators with the hostname
+                authenticators = available_auths.all()
+                if authenticators.exists():
+                    # If hostname is specified, we filter by hostname
+                    authenticators = authenticators.filter(small_name__iexact=authenticators[0].small_name)
+
+        for auth in authenticators:
+            if auth.get_type() and (not auth.get_type().is_custom() or tag != 'disabled'):
                 yield auth
-                # If disallow global login (that is, do not allow to select the auth), we break here
-                if GlobalConfig.DISALLOW_GLOBAL_LOGIN.as_bool(force=False) is True:
-                    break  # Only one auth for global login (if disallowed)
 
     @staticmethod
     def pre_delete(sender: typing.Any, **kwargs: typing.Any) -> None:  # pylint: disable=unused-argument
