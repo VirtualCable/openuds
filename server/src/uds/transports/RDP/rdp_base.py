@@ -386,45 +386,39 @@ class BaseRDPTransport(transports.Transport):
         if self.forced_username.value:
             username = self.forced_username.value
 
-        proc = username.split('@')
-        domain: str = ''
+        proc = username.split('@', 1)
         if len(proc) > 1:
             domain = proc[1]
+        else:
+            domain = ''  # Default domain is empty
         username = proc[0]
 
         if self.forced_password.value:
             password = self.forced_password.value
 
-        azure_ad = False
-        if self.forced_domain.value != '':
-            if self.forced_domain.value.lower() == 'azuread':
-                azure_ad = True
+        for_azure = False
+        forced_domain = self.forced_domain.value.strip().lower()
+        if forced_domain:  # If has forced domain
+            if forced_domain == 'azuread':
+                for_azure = True
             else:
-                domain = self.forced_domain.value
+                domain = forced_domain
+
         if self.force_empty_creds.as_bool():
             username, password, domain = '', '', ''
 
         if self.force_no_domain.as_bool():
             domain = ''
 
-        if domain:  # If has domain
-            if '.' in domain:  # Dotter domain form
-                username = username + '@' + domain
-                domain = ''
-            else:  # In case of a NETBIOS domain (not recomended), join it so process_user_password can deal with it
-                username = domain + '\\' + username
-                domain = ''
+        if '.' in domain:  # Dotter domain form
+            username = username + '@' + domain
+            domain = ''
+
+        if for_azure:
+            username = 'AzureAD\\' + username  # AzureAD domain form
 
         # Fix username/password acording to os manager
         username, password = userservice.process_user_password(username, password)
-
-        # Recover domain name if needed
-        if '\\' in username:
-            domain, username = username.split('\\')
-
-        # If AzureAD, include it on username
-        if azure_ad:
-            username = 'AzureAD\\' + username
 
         return types.connections.ConnectionData(
             protocol=self.protocol,
