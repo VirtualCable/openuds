@@ -39,7 +39,7 @@ class AutoSpecMethodInfo:
     name: str|typing.Callable[..., typing.Any]
     returns: typing.Any = None  # Can be a callable or a value
     partial_args: typing.Tuple[typing.Any, ...] = ()
-    partial_kwargs: dict[str, typing.Any] = dataclasses.field(default_factory=dict)
+    partial_kwargs: dict[str, typing.Any] = dataclasses.field(default_factory=dict[str, typing.Any])
     
     
 def autospec(cls: type, metods_info: collections.abc.Iterable[AutoSpecMethodInfo], **kwargs: typing.Any) -> mock.Mock:
