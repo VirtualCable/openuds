@@ -291,9 +291,13 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
         if op == Operation.ERROR:
             return self._error('Machine is already in error state!')
 
+        destroy_operations = [
+            types.services.Operation.DESTROY_VALIDATOR
+        ] + self._destroy_queue  # copy is not needed due to list concatenation
+
         # If a "paused" state, reset queue to destroy
         if op == Operation.FINISH:
-            self._queue = self._destroy_queue.copy()
+            self._queue = destroy_operations
             return self._execute_queue()
 
         # If must wait until finish, flag for destroy and wait
@@ -301,9 +305,7 @@ class DynamicPublication(services.Publication, autoserializable.AutoSerializable
             self._is_flagged_for_destroy = True
         else:
             # If other operation, wait for finish before destroying
-            self._queue = [
-                op
-            ] + self._destroy_queue  # Copy not needed, will be copied anyway due to list concatenation
+            self._queue = [op] + destroy_operations  # Add destroy operations to the queue
             # Do not execute anything.here, just continue normally
         return types.states.TaskState.RUNNING
 
