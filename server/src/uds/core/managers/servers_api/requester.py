@@ -219,18 +219,33 @@ class ServerApiRequester:
         logger.debug(
             'Notifying preconnect of service %s to server %s: %s', userservice.uuid, self.server.host, info
         )
+
+        # Fix username to contain the domain if needed
+        username = info.username
+        if info.domain:
+            if '@' in username:
+                username = username.split('@')[0]
+            if '.' in info.domain:  # FQDN domain
+                username = f'{username}@{info.domain}'
+            else:  # NetBIOS domain
+                username = f'{info.domain}\\{username}'
+
+        connect_data = types.connections.PreconnectRequest(
+            user=username,  # The username that will be used to login
+            protocol=info.protocol,
+            ip=src.ip,
+            hostname=src.hostname,
+            udsuser=userservice.user.name + '@' + userservice.user.manager.name if userservice.user else '',
+            udsuser_uuid=userservice.user.uuid if userservice.user else '',
+            userservice_uuid=userservice.uuid,
+            service_type=info.service_type,
+        )
+        
+        logger.debug('Preconnect data to send: %s', connect_data)
+
         self.post(
             'preconnect',
-            types.connections.PreconnectRequest(
-                user=info.username,
-                protocol=info.protocol,
-                ip=src.ip,
-                hostname=src.hostname,
-                udsuser=userservice.user.name + '@' + userservice.user.manager.name if userservice.user else '',
-                udsuser_uuid=userservice.user.uuid if userservice.user else '',
-                userservice_uuid=userservice.uuid,
-                service_type=info.service_type,
-            ).as_dict(),
+            connect_data.as_dict(),
         )
         return True
 

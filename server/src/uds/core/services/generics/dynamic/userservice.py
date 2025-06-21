@@ -354,7 +354,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
                     self._ip = self.service().get_ip(self, self._vmid)
             except Exception:
                 logger.warning(
-                    'Error obtaining IP for %s: %s', self.__class__.__name__, self._vmid, exc_info=True
+                    'Error obtaining IP for %s: %s', self.__class__.__name__, self._vmid  # , exc_info=True
                 )
         return self._ip
 

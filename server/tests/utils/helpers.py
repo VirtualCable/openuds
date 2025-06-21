@@ -39,11 +39,13 @@ from . import constants
 
 logger = logging.getLogger('test')
 
+
 def random_string(size: int = 6, chars: typing.Optional[str] = None) -> str:
     chars = chars or constants.STRING_CHARS
     return ''.join(
         random.choice(chars) for _ in range(size)  # nosec: Not used for cryptography, just for testing
     )
+
 
 def random_utf8_string(size: int = 6) -> str:
     # Generate a random utf-8 string of length "length"
@@ -68,7 +70,7 @@ def random_ip() -> str:
 def random_mac(mac_range: typing.Optional[str] = None) -> str:
     if not mac_range:
         return ':'.join(random_string(2, '0123456789ABCDEF') for _ in range(6))
-    else: # Mac range is like 00:15:5D:10:00:00-00:15:5D:FF:FF:FF
+    else:  # Mac range is like 00:15:5D:10:00:00-00:15:5D:FF:FF:FF
         start, end = mac_range.split('-')
         # Convert to integers
         start = start.split(':')
@@ -76,7 +78,7 @@ def random_mac(mac_range: typing.Optional[str] = None) -> str:
         start_n = int(''.join(start), 16)
         end_n = int(''.join(end), 16)
         mac = random.randint(start_n, end_n)
-        return ':'.join(f'{mac:012X}'[i:i + 2] for i in range(0, 12, 2))
+        return ':'.join(f'{mac:012X}'[i : i + 2] for i in range(0, 12, 2))
 
 
 def limited_iterator(
@@ -98,7 +100,9 @@ def limited_iterator(
     raise Exception(f'Limit reached: {current}/{limit}: {until_checker()}')
 
 
-def waiter(finish_checker: typing.Callable[[], bool], timeout: int = 64, msg: typing.Optional[str] = None) -> None:
+def waiter(
+    finish_checker: typing.Callable[[], bool], timeout: int = 64, msg: typing.Optional[str] = None
+) -> None:
     start_time = time.time()
     for _ in limited_iterator(lambda: time.time() - start_time < timeout):
         if finish_checker():
@@ -109,11 +113,50 @@ def waiter(finish_checker: typing.Callable[[], bool], timeout: int = 64, msg: ty
     if msg:
         logger.info('%s. Elapsed time: %s', msg, time.time() - start_time)
 
+
 def returns_true(*args: typing.Any, **kwargs: typing.Any) -> bool:
     return True
+
 
 def returns_false(*args: typing.Any, **kwargs: typing.Any) -> bool:
     return False
 
+
 def returns_none(*args: typing.Any, **kwargs: typing.Any) -> typing.Any:
     return None
+
+
+def enable_http_debug() -> None:
+    """
+    Enable HTTP debug logging for requests and urllib3
+    """
+    import http.client as http_client
+
+    http_client.HTTPConnection.debuglevel = 1
+
+    requests_log = logging.getLogger("requests.packages.urllib3")
+    requests_log.setLevel(logging.DEBUG)
+    requests_log.propagate = True
+
+    # Also enable logging for urllib3
+    urllib3_log = logging.getLogger("urllib3")
+    urllib3_log.setLevel(logging.DEBUG)
+    urllib3_log.propagate = True
+
+
+def disable_http_debug() -> None:
+    """
+    Disable HTTP debug logging for requests and urllib3
+    """
+    import http.client as http_client
+
+    http_client.HTTPConnection.debuglevel = 0
+
+    requests_log = logging.getLogger("requests.packages.urllib3")
+    requests_log.setLevel(logging.WARNING)
+    requests_log.propagate = False
+
+    # Also disable logging for urllib3
+    urllib3_log = logging.getLogger("urllib3")
+    urllib3_log.setLevel(logging.WARNING)
+    urllib3_log.propagate = False

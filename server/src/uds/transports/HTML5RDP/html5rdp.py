@@ -361,7 +361,7 @@ class HTML5RDPTransport(transports.Transport):
         if self.forced_username.value:
             username = self.forced_username.value
 
-        proc = username.split('@')
+        proc = username.split('@', 1)
         if len(proc) > 1:
             domain = proc[1]
         else:
@@ -369,11 +369,12 @@ class HTML5RDPTransport(transports.Transport):
         username = proc[0]
 
         for_azure = False
-        if self.forced_domain.value != '':
-            if self.forced_domain.value.lower() == 'azuread':
+        forced_domain = self.forced_domain.value.strip().lower()
+        if forced_domain:
+            if forced_domain == 'azuread':
                 for_azure = True
             else:
-                domain = self.forced_domain.value
+                domain = forced_domain
 
         if self.force_empty_creds.as_bool():
             username, password, domain = '', '', ''
@@ -424,7 +425,7 @@ class HTML5RDPTransport(transports.Transport):
             return 'true' if txt else 'false'
 
         # Build params dict
-        params = {
+        params: dict[str, typing.Any] = {
             'protocol': 'rdp',
             'hostname': ip,
             'port': self.rdp_port.as_int(),
