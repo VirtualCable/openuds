@@ -117,7 +117,8 @@ class PublicationLauncher(DelayedTask):
                 ):  # If not preparing (may has been canceled by user) just return
                     return
                 servicepool_publication.state = State.PREPARING
-                servicepool_publication.save()
+                servicepool_publication.state_date = now
+                servicepool_publication.save(update_fields=['state', 'state_date'])
             pi = servicepool_publication.get_instance()
             state = pi.publish()
             servicepool: ServicePool = servicepool_publication.deployed_service
