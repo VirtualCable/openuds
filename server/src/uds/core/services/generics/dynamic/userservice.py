@@ -252,10 +252,10 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         op = self._current_op()
 
         if op == types.services.Operation.ERROR:
-            return types.states.TaskState.ERROR
+            return types.states.TaskState.ERROR  # Error is returned as soon as we find it
 
         if op == types.services.Operation.FINISH:
-            return types.states.TaskState.FINISHED
+            return types.states.TaskState.RUNNING  # But finish should be processed by check_state
 
         try:
             self._reset_checks_counter()  # Reset checks counter
@@ -440,8 +440,8 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         if op == types.services.Operation.FINISH:
             # If has a deferred destroy, do it now
             if self.wait_until_finish_to_destroy and self._is_flagged_for_destroy:
-                self._is_flagged_for_destroy = False
                 # Simply ensures nothing is left on queue and returns FINISHED
+                logger.debug('Destroying service after finish')
                 self._set_queue([types.services.Operation.FINISH])
                 return self.destroy()
             return types.states.TaskState.FINISHED
@@ -499,6 +499,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
 
         # If a "paused" state, reset queue to destroy
         if op in (types.services.Operation.FINISH, types.services.Operation.WAIT):
+            logger.debug('Destroying service with these operations: %s', destroy_operations)
             self._set_queue(destroy_operations)
             return self._execute_queue()
 
@@ -858,8 +859,16 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
     def _op2str(op: types.services.Operation) -> str:
         return op.name
 
-    def _debug(self, txt: str) -> str:
-        return f'Queue at {txt} for {self._name}: {", ".join([DynamicUserService._op2str(op) for op in self._queue])}, mac:{self._mac}, vmid:{self._vmid}'
+    def _debug(self, txt: str) -> None:
+        # f'Queue at {txt} for {self._name}: {", ".join([DynamicUserService._op2str(op) for op in self._queue])}, mac:{self._mac}, vmid:{self._vmid}'
+        logger.debug(
+            'Queue at %s for %s: %s, mac:%s, vmid:%s',
+            txt,
+            self._name,
+            ', '.join([DynamicUserService._op2str(op) for op in self._queue]),
+            self._mac,
+            self._vmid,
+        )
 
 
 # This is a map of operations to methods
