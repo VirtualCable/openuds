@@ -254,6 +254,9 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         if op == types.services.Operation.ERROR:
             return types.states.TaskState.ERROR  # Error is returned as soon as we find it
 
+        # We also check here the finish operation, because some other methods
+        # as set_ready, expects this to return FINISHED. So keeping this here
+        # is a good idea, because no check is needed if already in FINISH state
         if op == types.services.Operation.FINISH:
             if def_op := self._check_deferred_operations():  # Check if we have deferred operations to execute
                 return def_op  # If we have deferred operations, return their state
