@@ -30,7 +30,6 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import hashlib
 import logging
 import typing
 
@@ -74,7 +73,7 @@ class IPMachinesUserService(services.UserService, autoserializable.AutoSerializa
 
     def get_unique_id(self) -> str:
         # Generate a 16 chars string mixing up all _vmid chars
-        return hashlib.shake_128(self._vmid.encode('utf8')).hexdigest(8)
+        return self.get_ip()
 
     def set_ready(self) -> types.states.TaskState:
         self.service().wakeup(self._ip, self._mac)
