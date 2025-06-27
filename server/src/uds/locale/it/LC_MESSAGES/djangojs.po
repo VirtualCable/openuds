@@ -25,6 +25,9 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
+# Translators:
+# Andrés Schumann <aschumann@virtualcable.es>, 2025
 # Javier <jgonzalez@virtualcable.es>, 2020,2025
 # Massimo Vignone, 2020
 # mvignone, 2020-2021,2024
@@ -36,9 +39,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-12 19:02+0100\n"
+"POT-Creation-Date: 2025-06-27 15:48+0200\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
-"Last-Translator: Javier <jgonzalez@virtualcable.es>, 2020,2025\n"
+"Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2020\n"
 "Language-Team: Italian (http://app.transifex.com/openuds/openuds/language/"
 "it/)\n"
 "Language: it\n"
@@ -162,7 +165,6 @@ msgstr "Principale"
 #: static/admin/translations-fakejs.js:210
 #: static/admin/translations-fakejs.js:218
 #: static/admin/translations-fakejs.js:226
-#: static/admin/translations-fakejs.js:228
 #: static/admin/translations-fakejs.js:230
 #: static/admin/translations-fakejs.js:258
 #: static/admin/translations-fakejs.js:283 static/modern/main.js:8
@@ -577,7 +579,7 @@ msgstr "Modifica MFA"
 
 #: static/admin/main.js:17 static/admin/translations-fakejs.js:165
 msgid "Delete MFA"
-msgstr "Elimina l&#39;MFA"
+msgstr "Elimina l'MFA"
 
 #: static/admin/main.js:17 static/admin/translations-fakejs.js:160
 #: static/admin/translations-fakejs.js:482
@@ -718,7 +720,7 @@ msgstr "Registrazione del cliente"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:157
 msgid "Enable client logging for user?"
-msgstr "Abilitare la registrazione client per l&#39;utente?"
+msgstr "Abilitare la registrazione client per l'utente?"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:158
 msgid "Client logging enabled"
@@ -802,12 +804,10 @@ msgstr ""
 "Se selezionato, avvierà la pubblicazione immediatamente dopo la creazione"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:43
-#| msgid "Service Pools"
 msgid "Service Pool is locked"
 msgstr "Il pool di servizi è bloccato"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:44
-#| msgid "Service is in maintenance and cannot be executed"
 msgid "This service pool is locked and cannot be edited"
 msgstr "Questo pool di servizi è bloccato e non può essere modificato"
 
@@ -905,7 +905,6 @@ msgid "Delete cached service"
 msgstr "Elimina il servizio in cache"
 
 #: static/admin/main.js:26 static/admin/translations-fakejs.js:18
-#| msgid "Service pools"
 msgid "Service pool is locked"
 msgstr "Il pool di servizi è bloccato"
 
@@ -1173,9 +1172,13 @@ msgid "Image is too big (max. upload size is 256Kb)"
 msgstr ""
 "L'immagine è troppo grande (la dimensione massima di caricamento è 256 Kb)"
 
+#: static/admin/main.js:28 static/admin/translations-fakejs.js:228
+msgid "Error on upload"
+msgstr "Errore durante il caricamento"
+
 #: static/admin/main.js:28 static/admin/translations-fakejs.js:229
-msgid "Invalid image type (only supports JPEG, PNG and GIF"
-msgstr "Tipo di immagine non valido (supporta solo JPEG, PNG e GIF)"
+msgid "Invalid image type. Supported types are: JPEG, PNG and GIF"
+msgstr "Tipo di immagine non valido. I tipi supportati sono: JPEG, PNG e GIF."
 
 #: static/admin/main.js:28 static/admin/translations-fakejs.js:231
 msgid "Please, provide a name and a image"
@@ -1904,7 +1907,7 @@ msgstr "Errore di comunicazione con il tuo servizio. Riprova di nuovo."
 
 #: static/modern/main.js:8 static/modern/translations-fakejs.js:39
 msgid "Your session has expired. Please, login again"
-msgstr "La tua sessione è scaduta. Per favore esegui l&#39;accesso di nuovo"
+msgstr "La tua sessione è scaduta. Per favore esegui l'accesso di nuovo"
 
 #: static/modern/translations-fakejs.js:3
 #: static/modern/translations-fakejs.js:4
@@ -1992,7 +1995,7 @@ msgstr ""
 
 #: static/modern/translations-fakejs.js:24
 msgid "If you do not agree, please"
-msgstr "Se non sei d&#39;accordo, per favore"
+msgstr "Se non sei d'accordo, per favore"
 
 #: static/modern/translations-fakejs.js:25
 msgid "leave this site"
@@ -2057,7 +2060,7 @@ msgstr "Download"
 
 #: static/modern/translations-fakejs.js:51
 msgid "Always download the UDS actor matching your platform"
-msgstr "Scarica sempre l&#39;UDS Actor corrispondente alla tua piattaforma"
+msgstr "Scarica sempre l'UDS Actor corrispondente alla tua piattaforma"
 
 #: static/modern/translations-fakejs.js:55
 msgid "Login"

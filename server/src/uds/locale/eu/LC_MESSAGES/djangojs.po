@@ -25,6 +25,8 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2015
 # Javier <jgonzalez@virtualcable.es>, 2025
 # Lanmedia Comunicaciones <jetxaniz@lanmedia.es>, 2016-2017,2020
@@ -37,9 +39,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-12 19:02+0100\n"
+"POT-Creation-Date: 2025-06-27 15:48+0200\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
-"Last-Translator: Javier <jgonzalez@virtualcable.es>, 2025\n"
+"Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2020\n"
 "Language-Team: Basque (http://app.transifex.com/openuds/openuds/language/"
 "eu/)\n"
 "Language: eu\n"
@@ -162,7 +164,6 @@ msgstr "Nagusia"
 #: static/admin/translations-fakejs.js:210
 #: static/admin/translations-fakejs.js:218
 #: static/admin/translations-fakejs.js:226
-#: static/admin/translations-fakejs.js:228
 #: static/admin/translations-fakejs.js:230
 #: static/admin/translations-fakejs.js:258
 #: static/admin/translations-fakejs.js:283 static/modern/main.js:8
@@ -802,12 +803,10 @@ msgid "If selected, will initiate the publication inmediatly after creation"
 msgstr "Hautatuta badago, sortu ostean argitaratuko da."
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:43
-#| msgid "Service Pools"
 msgid "Service Pool is locked"
 msgstr "Zerbitzu-igerilekua blokeatuta dago"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:44
-#| msgid "Service is in maintenance and cannot be executed"
 msgid "This service pool is locked and cannot be edited"
 msgstr "Zerbitzu-talde hau blokeatuta dago eta ezin da editatu"
 
@@ -905,7 +904,6 @@ msgid "Delete cached service"
 msgstr "Ezabatu cachean dagoen zerbitzua"
 
 #: static/admin/main.js:26 static/admin/translations-fakejs.js:18
-#| msgid "Service pools"
 msgid "Service pool is locked"
 msgstr "Zerbitzu igerilekua blokeatuta dago"
 
@@ -1172,9 +1170,13 @@ msgstr "Ezabatu kontuaren erabilera"
 msgid "Image is too big (max. upload size is 256Kb)"
 msgstr "Irudia handiegia da (gehienezko tamaina 256Kb)"
 
+#: static/admin/main.js:28 static/admin/translations-fakejs.js:228
+msgid "Error on upload"
+msgstr "Errorea igotzean"
+
 #: static/admin/main.js:28 static/admin/translations-fakejs.js:229
-msgid "Invalid image type (only supports JPEG, PNG and GIF"
-msgstr "Irudi mota okerra (JPEG, PNG eta GIF bakarrik onartzen dira)"
+msgid "Invalid image type. Supported types are: JPEG, PNG and GIF"
+msgstr "Irudi mota baliogabea. Onartutako motak hauek dira: JPEG, PNG eta GIF"
 
 #: static/admin/main.js:28 static/admin/translations-fakejs.js:231
 msgid "Please, provide a name and a image"

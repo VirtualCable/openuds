@@ -25,15 +25,18 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2017,2020
 # albert clar <albert.clar@uib.cat>, 2017-2018,2020-2021
+# Andrés Schumann <aschumann@virtualcable.es>, 2025
 # Javier <jgonzalez@virtualcable.es>, 2025
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-12 19:02+0100\n"
+"POT-Creation-Date: 2025-06-27 15:48+0200\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2025\n"
 "Language-Team: Catalan (http://app.transifex.com/openuds/openuds/language/"
@@ -158,7 +161,6 @@ msgstr "Principal"
 #: static/admin/translations-fakejs.js:210
 #: static/admin/translations-fakejs.js:218
 #: static/admin/translations-fakejs.js:226
-#: static/admin/translations-fakejs.js:228
 #: static/admin/translations-fakejs.js:230
 #: static/admin/translations-fakejs.js:258
 #: static/admin/translations-fakejs.js:283 static/modern/main.js:8
@@ -545,7 +547,7 @@ msgid ""
 "are optional. Separator can be configured."
 msgstr ""
 "El format del fitxer ha de ser \"hostname,ip,mac,...\". Tots els camps "
-"excepte el nom d&#39;amfitrió són opcionals. El separador es pot configurar."
+"excepte el nom d'amfitrió són opcionals. El separador es pot configurar."
 
 #: static/admin/main.js:17 static/admin/translations-fakejs.js:181
 msgid "Remove server from server group"
@@ -706,7 +708,7 @@ msgstr "Netejar dades relacionades (mfa, ...)?"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:154
 msgid "Related data cleaned"
-msgstr "S&#39;han netejat les dades relacionades"
+msgstr "S'han netejat les dades relacionades"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:156
 msgid "Client logging"
@@ -714,7 +716,7 @@ msgstr "Registre de clients"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:157
 msgid "Enable client logging for user?"
-msgstr "Habilitar el registre del client per a l&#39;usuari?"
+msgstr "Habilitar el registre del client per a l'usuari?"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:158
 msgid "Client logging enabled"
@@ -798,12 +800,10 @@ msgstr ""
 "Si està seleccionat, s'iniciarà la publicació just després de la creació"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:43
-#| msgid "Service Pools"
 msgid "Service Pool is locked"
 msgstr "La piscina de serveis està bloquejada"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:44
-#| msgid "Service is in maintenance and cannot be executed"
 msgid "This service pool is locked and cannot be edited"
 msgstr "Aquest grup de serveis està bloquejat i no es pot editar"
 
@@ -901,7 +901,6 @@ msgid "Delete cached service"
 msgstr "Suprimir servei en memòria cau"
 
 #: static/admin/main.js:26 static/admin/translations-fakejs.js:18
-#| msgid "Service pools"
 msgid "Service pool is locked"
 msgstr "La piscina de servei està tancada"
 
@@ -1168,9 +1167,14 @@ msgstr "Suprimir ús del compte"
 msgid "Image is too big (max. upload size is 256Kb)"
 msgstr "Imatge massa gran (la mida màxima és de 256Kb)"
 
+#: static/admin/main.js:28 static/admin/translations-fakejs.js:228
+msgid "Error on upload"
+msgstr "Error en la càrrega"
+
 #: static/admin/main.js:28 static/admin/translations-fakejs.js:229
-msgid "Invalid image type (only supports JPEG, PNG and GIF"
-msgstr "Tipus d'imatge no suportat (només es suporta JPEG, PNG i GIF"
+msgid "Invalid image type. Supported types are: JPEG, PNG and GIF"
+msgstr ""
+"Tipus d&#39;imatge no vàlid. Els tipus compatibles són: JPEG, PNG i GIF"
 
 #: static/admin/main.js:28 static/admin/translations-fakejs.js:231
 msgid "Please, provide a name and a image"
@@ -1711,7 +1715,7 @@ msgstr "Nou permís ..."
 
 #: static/admin/translations-fakejs.js:542
 msgid "CVS Import options for"
-msgstr "Opcions d&#39;importació de CVS per"
+msgstr "Opcions d'importació de CVS per"
 
 #: static/admin/translations-fakejs.js:543
 msgid "Header"
@@ -1884,7 +1888,7 @@ msgid ""
 "here:"
 msgstr ""
 "Sembla que no teniu instal·lat el client UDS. Si us plau, instal·leu-lo des "
-"d&#39;aquí:"
+"d'aquí:"
 
 #: static/modern/main.js:8 static/modern/translations-fakejs.js:36
 msgid "UDS Client Download"
@@ -1897,7 +1901,7 @@ msgstr "Llançament del client UDS, gairebé fet."
 #: static/modern/main.js:8
 msgid "Error communicating with your service. Please, retry again."
 msgstr ""
-"S&#39;ha produït un error en comunicar-se amb el vostre servei. Si us plau, "
+"S'ha produït un error en comunicar-se amb el vostre servei. Si us plau, "
 "torna-ho a provar."
 
 #: static/modern/main.js:8 static/modern/translations-fakejs.js:39
@@ -1988,7 +1992,7 @@ msgstr ""
 
 #: static/modern/translations-fakejs.js:24
 msgid "If you do not agree, please"
-msgstr "Si no esteu d&#39;acord, si us plau"
+msgstr "Si no esteu d'acord, si us plau"
 
 #: static/modern/translations-fakejs.js:25
 msgid "leave this site"
@@ -2025,11 +2029,11 @@ msgstr "Si creieu que hem oblidat algun component, si us plau feu-nos-ho saber"
 
 #: static/modern/translations-fakejs.js:45
 msgid "Login Verification"
-msgstr "Verificació d&#39;inici de sessió"
+msgstr "Verificació d'inici de sessió"
 
 #: static/modern/translations-fakejs.js:46
 msgid "Remember me for"
-msgstr "Recorda&#39;m per"
+msgstr "Recorda'm per"
 
 #: static/modern/translations-fakejs.js:47
 msgid "Submit"
@@ -2138,4 +2142,4 @@ msgstr "Accions"
 
 #: static/modern/translations-fakejs.js:88
 msgid "Please, enter access credentials"
-msgstr "Si us plau, introduïu les credencials d&#39;accés"
+msgstr "Si us plau, introduïu les credencials d'accés"
