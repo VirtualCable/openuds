@@ -234,7 +234,19 @@ class UserServiceManager(metaclass=singleton.Singleton):
             assigned = self._create_assigned_user_service_at_db_from_pool(service_pool, user)
 
         assigned_instance = assigned.get_instance()
-        state = assigned_instance.deploy_for_user(user)
+        try:
+            state = assigned_instance.deploy_for_user(user)
+        except MaxServicesReachedError:
+            # If we reach this point, it means that the service has reached its maximum number of user services
+            operations_logger.error(
+                'Cannot create assigned service for user %s on pool %s: Maximum number of user services reached',
+                user.pretty_name,
+                service_pool.name,
+            )
+            # Remove existing assigned service
+            if assigned.id:
+                assigned.delete()
+            raise MaxServicesReachedError()
 
         UserServiceOpChecker.make_unique(assigned, state)
 

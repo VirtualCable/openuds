@@ -25,6 +25,8 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
+# Translators:
 # Javier Gomez <jgomez@virtualcable.es>, 2023
 # Javier <jgonzalez@virtualcable.es>, 2025
 # Víctor Alonso <valonso@virtualcable.net>, 2020
@@ -34,9 +36,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-12 19:02+0100\n"
+"POT-Creation-Date: 2025-06-27 15:48+0200\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
-"Last-Translator: Javier <jgonzalez@virtualcable.es>, 2025\n"
+"Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2020\n"
 "Language-Team: Portuguese (http://app.transifex.com/openuds/openuds/language/"
 "pt/)\n"
 "Language: pt\n"
@@ -160,7 +162,6 @@ msgstr "Principal"
 #: static/admin/translations-fakejs.js:210
 #: static/admin/translations-fakejs.js:218
 #: static/admin/translations-fakejs.js:226
-#: static/admin/translations-fakejs.js:228
 #: static/admin/translations-fakejs.js:230
 #: static/admin/translations-fakejs.js:258
 #: static/admin/translations-fakejs.js:283 static/modern/main.js:8
@@ -799,12 +800,10 @@ msgid "If selected, will initiate the publication inmediatly after creation"
 msgstr "Se selecionado, iniciará a publicação imediatamente após a criação"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:43
-#| msgid "Service Pools"
 msgid "Service Pool is locked"
 msgstr "O pool de serviços está bloqueado"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:44
-#| msgid "Service is in maintenance and cannot be executed"
 msgid "This service pool is locked and cannot be edited"
 msgstr "Este pool de serviços está bloqueado e não pode ser editado"
 
@@ -902,7 +901,6 @@ msgid "Delete cached service"
 msgstr "Excluir serviço em cache"
 
 #: static/admin/main.js:26 static/admin/translations-fakejs.js:18
-#| msgid "Service pools"
 msgid "Service pool is locked"
 msgstr "O pool de serviços está bloqueado"
 
@@ -1169,9 +1167,13 @@ msgstr "Excluir o uso da conta"
 msgid "Image is too big (max. upload size is 256Kb)"
 msgstr "A imagem é muito grande (o tamanho máximo de upload é de 256 KB)"
 
+#: static/admin/main.js:28 static/admin/translations-fakejs.js:228
+msgid "Error on upload"
+msgstr "Erro no upload"
+
 #: static/admin/main.js:28 static/admin/translations-fakejs.js:229
-msgid "Invalid image type (only supports JPEG, PNG and GIF"
-msgstr "Tipo de imagem inválido (suporta apenas JPEG, PNG e GIF"
+msgid "Invalid image type. Supported types are: JPEG, PNG and GIF"
+msgstr "Tipo de imagem inválido. Os tipos suportados são: JPEG, PNG e GIF."
 
 #: static/admin/main.js:28 static/admin/translations-fakejs.js:231
 msgid "Please, provide a name and a image"

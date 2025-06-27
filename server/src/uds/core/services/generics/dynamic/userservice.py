@@ -254,8 +254,13 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         if op == types.services.Operation.ERROR:
             return types.states.TaskState.ERROR  # Error is returned as soon as we find it
 
+        # We also check here the finish operation, because some other methods
+        # as set_ready, expects this to return FINISHED. So keeping this here
+        # is a good idea, because no check is needed if already in FINISH state
         if op == types.services.Operation.FINISH:
-            return types.states.TaskState.RUNNING  # But finish should be processed by check_state
+            if def_op := self._check_deferred_operations():  # Check if we have deferred operations to execute
+                return def_op  # If we have deferred operations, return their state
+            return types.states.TaskState.FINISHED
 
         try:
             self._reset_checks_counter()  # Reset checks counter
@@ -277,6 +282,21 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         except Exception as e:
             logger.exception('Unexpected DynamicUserService exception: %s', e)
             return self.error(e)
+
+    def _check_deferred_operations(self) -> typing.Optional[types.states.TaskState]:
+        """
+        Checks if we have deferred operations to execute.
+        Deferred operations are operations that are not executed immediately, but are stored in the queue
+        to be executed later.
+        """
+        # If has a deferred destroy, do it now
+        if self.wait_until_finish_to_destroy and self._is_flagged_for_destroy:
+            # Simply ensures nothing is left on queue and returns FINISHED
+            logger.debug('Destroying service after finish')
+            self._set_queue([types.services.Operation.FINISH])
+            return self.destroy()
+
+        return None
 
     @typing.final
     def retry_later(self) -> types.states.TaskState:
@@ -413,6 +433,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
                 )
         except Exception as e:
             return self.error(f'Error on set_ready: {e}')
+        
         return self._execute_queue()
 
     def reset(self) -> types.states.TaskState:
@@ -438,12 +459,8 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
             return types.states.TaskState.ERROR
 
         if op == types.services.Operation.FINISH:
-            # If has a deferred destroy, do it now
-            if self.wait_until_finish_to_destroy and self._is_flagged_for_destroy:
-                # Simply ensures nothing is left on queue and returns FINISHED
-                logger.debug('Destroying service after finish')
-                self._set_queue([types.services.Operation.FINISH])
-                return self.destroy()
+            if def_op := self._check_deferred_operations():  # Check if we have deferred operations to execute
+                return def_op  # If we have deferred operations, return their state
             return types.states.TaskState.FINISHED
 
         if op != types.services.Operation.WAIT:

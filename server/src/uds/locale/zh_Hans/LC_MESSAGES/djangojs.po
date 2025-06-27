@@ -25,12 +25,14 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
+# Translators:
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-12 19:02+0100\n"
+"POT-Creation-Date: 2025-06-27 15:48+0200\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: Chinese (http://app.transifex.com/openuds/openuds/language/"
@@ -155,7 +157,6 @@ msgstr "主要"
 #: static/admin/translations-fakejs.js:210
 #: static/admin/translations-fakejs.js:218
 #: static/admin/translations-fakejs.js:226
-#: static/admin/translations-fakejs.js:228
 #: static/admin/translations-fakejs.js:230
 #: static/admin/translations-fakejs.js:258
 #: static/admin/translations-fakejs.js:283 static/modern/main.js:8
@@ -794,12 +795,10 @@ msgid "If selected, will initiate the publication inmediatly after creation"
 msgstr "如果选中，将在创建后立即启动发布"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:43
-#| msgid "Service Pools"
 msgid "Service Pool is locked"
 msgstr "服务池已锁定"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:44
-#| msgid "Service is in maintenance and cannot be executed"
 msgid "This service pool is locked and cannot be edited"
 msgstr "此服务池已被锁定，无法编辑"
 
@@ -897,7 +896,6 @@ msgid "Delete cached service"
 msgstr "删除缓存的服务"
 
 #: static/admin/main.js:26 static/admin/translations-fakejs.js:18
-#| msgid "Service pools"
 msgid "Service pool is locked"
 msgstr "服务池已锁定"
 
@@ -1164,9 +1162,13 @@ msgstr "删除帐户使用情况"
 msgid "Image is too big (max. upload size is 256Kb)"
 msgstr "图像太大（最大上传大小为256Kb）"
 
+#: static/admin/main.js:28 static/admin/translations-fakejs.js:228
+msgid "Error on upload"
+msgstr "上传错误"
+
 #: static/admin/main.js:28 static/admin/translations-fakejs.js:229
-msgid "Invalid image type (only supports JPEG, PNG and GIF"
-msgstr "图像类型无效（仅支持JPEG，PNG和GIF"
+msgid "Invalid image type. Supported types are: JPEG, PNG and GIF"
+msgstr "图片类型无效。支持的类型为：JPEG、PNG 和 GIF"
 
 #: static/admin/main.js:28 static/admin/translations-fakejs.js:231
 msgid "Please, provide a name and a image"

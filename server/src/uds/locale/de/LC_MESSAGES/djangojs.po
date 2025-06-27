@@ -25,6 +25,8 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
+# Translators:
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012
 # Javier <jgonzalez@virtualcable.es>, 2024-2025
 # Thorsten Latka <thorsten.latka@aktobis.de>, 2020
@@ -35,9 +37,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-12 19:02+0100\n"
+"POT-Creation-Date: 2025-06-27 15:48+0200\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
-"Last-Translator: Javier <jgonzalez@virtualcable.es>, 2024-2025\n"
+"Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2020,2022\n"
 "Language-Team: German (http://app.transifex.com/openuds/openuds/language/"
 "de/)\n"
 "Language: de\n"
@@ -160,7 +162,6 @@ msgstr "Main"
 #: static/admin/translations-fakejs.js:210
 #: static/admin/translations-fakejs.js:218
 #: static/admin/translations-fakejs.js:226
-#: static/admin/translations-fakejs.js:228
 #: static/admin/translations-fakejs.js:230
 #: static/admin/translations-fakejs.js:258
 #: static/admin/translations-fakejs.js:283 static/modern/main.js:8
@@ -801,12 +802,10 @@ msgstr ""
 "gestartet"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:43
-#| msgid "Service Pools"
 msgid "Service Pool is locked"
 msgstr "Der Servicepool ist gesperrt"
 
 #: static/admin/main.js:18 static/admin/translations-fakejs.js:44
-#| msgid "Service is in maintenance and cannot be executed"
 msgid "This service pool is locked and cannot be edited"
 msgstr "Dieser Servicepool ist gesperrt und kann nicht bearbeitet werden"
 
@@ -904,7 +903,6 @@ msgid "Delete cached service"
 msgstr "Löschen Sie den zwischengespeicherten Dienst"
 
 #: static/admin/main.js:26 static/admin/translations-fakejs.js:18
-#| msgid "Service pools"
 msgid "Service pool is locked"
 msgstr "Der Servicepool ist gesperrt"
 
@@ -1172,9 +1170,13 @@ msgstr "Benutzerkonto löschen"
 msgid "Image is too big (max. upload size is 256Kb)"
 msgstr "Bild ist zu groß (max. Upload-Größe beträgt 256Kb)"
 
+#: static/admin/main.js:28 static/admin/translations-fakejs.js:228
+msgid "Error on upload"
+msgstr "Fehler beim Hochladen"
+
 #: static/admin/main.js:28 static/admin/translations-fakejs.js:229
-msgid "Invalid image type (only supports JPEG, PNG and GIF"
-msgstr "Ungültiger Bildtyp (unterstützt nur JPEG, PNG und GIF"
+msgid "Invalid image type. Supported types are: JPEG, PNG and GIF"
+msgstr "Ungültiger Bildtyp. Unterstützte Typen sind: JPEG, PNG und GIF"
 
 #: static/admin/main.js:28 static/admin/translations-fakejs.js:231
 msgid "Please, provide a name and a image"
