@@ -298,7 +298,7 @@ class WinDomainOsManager(WindowsOsManager):
                 ldaputil.modify(
                     ldap_connection,
                     group,
-                    {'member': [(int(ldaputil.MODIFY_ADD), [machine])]},
+                    {'member': [(ldaputil.MODIFY_ADD, [machine])]},
                 )
                 error = None
                 break
