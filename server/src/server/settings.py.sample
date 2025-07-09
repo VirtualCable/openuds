@@ -186,7 +186,7 @@ SECURE_CIPHERS = (
     ':ECDHE-ECDSA-CHACHA20-POLY1305'
 )
 # Min TLS version
-SECURE_MIN_TLS_VERSION = '1.2'
+# SECURE_MIN_TLS_VERSION = '1.2'
 
 # LDAP CIFHER SUITE can be enforced here. Use GNU TLS cipher suite names in this case
 # Debian libldap uses gnutls, and it's my development environment. Continue reading for more info:
