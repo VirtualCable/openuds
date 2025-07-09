@@ -38,7 +38,7 @@ import typing
 import collections.abc
 
 import dns.resolver
-import ldap
+
 
 from django.utils.translation import gettext_noop as _
 from uds.core.ui import gui
@@ -214,7 +214,7 @@ class WinDomainOsManager(WindowsOsManager):
                     self.password.as_str(),
                     server[0],
                     port=port,
-                    ssl=ssl,
+                    use_ssl=ssl,
                     timeout=self.timeout.as_int(),
                     debug=False,
                 )
@@ -223,7 +223,7 @@ class WinDomainOsManager(WindowsOsManager):
 
         raise ldaputil.LDAPError(_error_string)
 
-    def _get_group(self, ldap_connection: 'ldaputil.LDAPObject') -> typing.Optional[str]:
+    def _get_group(self, ldap_connection: 'ldaputil.LDAPConnection') -> typing.Optional[str]:
         base = ','.join(['DC=' + i for i in self.domain.as_str().split('.')])
         group = ldaputil.escape(self.grp.as_str())
         obj: typing.Optional[collections.abc.MutableMapping[str, typing.Any]]
@@ -233,7 +233,7 @@ class WinDomainOsManager(WindowsOsManager):
                     ldap_connection,
                     base,
                     f'(&(objectClass=group)(|(cn={group})(sAMAccountName={group})))',
-                    ['dn'],
+                    attributes=['dn'],
                     limit=50,
                 )
             )
@@ -245,7 +245,7 @@ class WinDomainOsManager(WindowsOsManager):
 
         return obj['dn']  # Returns the DN
 
-    def _get_machine(self, ldap_connection: 'ldaputil.LDAPObject', machine_name: str) -> typing.Optional[str]:
+    def _get_machine(self, ldap_connection: 'ldaputil.LDAPConnection', machine_name: str) -> typing.Optional[str]:
         # if self.ou.as_str():
         #     base = self.ou.as_str()
         # else:
@@ -254,7 +254,15 @@ class WinDomainOsManager(WindowsOsManager):
         fltr = f'(&(objectClass=computer)(sAMAccountName={ldaputil.escape(machine_name)}$))'
         obj: typing.Optional[collections.abc.MutableMapping[str, typing.Any]]
         try:
-            obj = next(ldaputil.as_dict(ldap_connection, base, fltr, ['dn'], limit=50))
+            obj = next(
+                ldaputil.as_dict(
+                    ldap_connection,
+                    base,
+                    fltr,
+                    attributes=['dn'],
+                    limit=50,
+                )
+            )
         except StopIteration:
             obj = None
 
@@ -280,12 +288,18 @@ class WinDomainOsManager(WindowsOsManager):
 
                 machine = self._get_machine(ldap_connection, userservice.friendly_name)
                 group = self._get_group(ldap_connection)
-                # #
-                # Direct LDAP operation "modify", maybe this need to be added to ldaputil? :)
-                # #
-                ldap_connection.modify_s(
-                    group, ((ldap.MOD_ADD, 'member', [machine.encode()]),)  # type: ignore  # (valid)
-                )  # @UndefinedVariable
+                if not group:
+                    error = f'Group {self.grp.as_str()} not found in AD.'
+                    continue
+                if not machine:
+                    error = f'Machine {userservice.friendly_name} not found in AD.'
+                    continue
+                # Use ldaputil.modify to add the machine to the group
+                ldaputil.modify(
+                    ldap_connection,
+                    group,
+                    {'member': [(int(ldaputil.MODIFY_ADD), [machine])]},
+                )
                 error = None
                 break
             except dns.resolver.NXDOMAIN:  # No domain found, log it and pass
