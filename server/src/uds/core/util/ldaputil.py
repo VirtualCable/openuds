@@ -18,6 +18,9 @@ from ldap3 import (
     LEVEL,
     ALL_ATTRIBUTES,
     SIMPLE,
+    MODIFY_ADD as LDAP_MODIFY_ADD,
+    MODIFY_DELETE as LDAP_MODIFY_DELETE,
+    MODIFY_REPLACE as LDAP_MODIFY_REPLACE,
 )
 
 from django.utils.translation import gettext as _
@@ -27,14 +30,20 @@ from uds.core.util import utils
 
 logger = logging.getLogger(__name__)
 
+# Re-export with our nomenclature
 SCOPE_BASE = BASE
 SCOPE_SUBTREE = SUBTREE
 SCOPE_ONELEVEL = LEVEL
 
+# Also for modify operations
+MODIFY_ADD = LDAP_MODIFY_ADD
+MODIFY_DELETE = LDAP_MODIFY_DELETE
+MODIFY_REPLACE = LDAP_MODIFY_REPLACE
+
 LDAPResultType = collections.abc.MutableMapping[str, typing.Any]
 LDAPSearchResultType = typing.Optional[list[dict[str, typing.Any]]]
 
-LDAPObject: typing.TypeAlias = Connection
+LDAPConnection: typing.TypeAlias = Connection
 
 
 class LDAPError(Exception):
@@ -71,7 +80,7 @@ def connection(
     debug: bool = False,
     verify_ssl: bool = False,
     certificate_data: typing.Optional[str] = None,  # Content of the certificate, not the file itself
-) -> 'LDAPObject':
+) -> 'LDAPConnection':
     """
     Tries to connect to ldap using ldap3. If username is None, it tries to connect using user provided credentials.
     """
@@ -80,7 +89,7 @@ def connection(
     if port == -1:
         port = 636 if use_ssl else 389
     tls = None
-    
+
     if use_ssl:
         # Use ldap3's own constants for validate and version, not ssl module
         tls_validate = ssl.CERT_REQUIRED if verify_ssl else ssl.CERT_NONE
@@ -122,7 +131,7 @@ def connection(
         if not conn.bind():
             logger.error('Could not bind to LDAP server %s as user %s', host, username)
             raise LDAPError(_('Could not bind to LDAP server: {host}').format(host=host))
-        
+
         logger.debug('Connection was successful')
         return conn
     except Exception as e:
@@ -188,10 +197,46 @@ def first(
 
 
 def recursive_delete(con: Connection, base_dn: str) -> None:
+    """
+    Recursively deletes all entries under the given base DN.
+    Args:
+        con: LDAP connection
+        base_dn: Distinguished Name of the base entry to start deletion from
+    Returns:
+        None
+
+    Note: Not recursive, but only one level deep.
+    """
     con.search(base_dn, '(objectClass=*)', search_scope=SCOPE_ONELEVEL, attributes=['dn'])
     for entry in typing.cast(list[typing.Any], con.entries):
         con.delete(entry.entry_dn)
     con.delete(base_dn)
+
+
+def modify(
+    con: Connection,
+    dn: str,
+    changes: dict[str, list[tuple[int, list[bytes | str]]]],
+    controls: typing.Any = None,
+) -> bool:
+    """
+    Performs a modify operation on the LDAP entry.
+    Args:
+        con: LDAP connection
+        dn: Distinguished Name of the entry to modify
+        changes: Dictionary of changes, e.g. { 'member': [(MODIFY_ADD, [b'userdn'])] }
+        controls: Optional controls
+    Returns:
+        True if the operation was successful, raises LDAPError otherwise
+    """
+    try:
+        result = typing.cast(typing.Any, con.modify(dn, changes, controls=controls))
+        if not result:
+            raise LDAPError(f'Modify operation failed: {con.result}')
+        return True
+    except Exception as e:
+        logger.exception('Exception in modify:')
+        raise LDAPError(str(e)) from e
 
 
 def get_root_dse(con: Connection) -> typing.Optional[LDAPResultType]:
