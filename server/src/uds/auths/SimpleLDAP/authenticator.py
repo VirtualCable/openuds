@@ -33,14 +33,13 @@ import logging
 import typing
 import collections.abc
 
-import ldap  # pyright: ignore  # Needed to import ldap.filter without errors
-import ldap.filter
+from uds.core.util import ldaputil
 from django.utils.translation import gettext_noop as _
 
 from uds.core import auths, environment, types, exceptions
 from uds.core.auths.auth import log_login
 from uds.core.ui import gui
-from uds.core.util import ensure, fields, ldaputil, validators, auth as auth_utils
+from uds.core.util import fields, ldaputil, validators, auth as auth_utils
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -234,49 +233,52 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
 
     def _get_connection(self) -> 'ldaputil.LDAPObject':
         """
-        Tries to connect to ldap. If username is None, it tries to connect using user provided credentials.
-        @return: Connection established
-        @raise exception: If connection could not be established
+        Tries to connect to LDAP using ldaputil. If username is None, it tries to connect using user provided credentials.
+        Returns:
+            Connection established
+        Raises:
+            Exception if connection could not be established
         """
-        if self._connection is None:  # We are not connected
+        if self._connection is None:
             self._connection = ldaputil.connection(
-                self.username.as_str(),
-                self.password.as_str(),
-                self.host.as_str(),
+                username=self.username.as_str(),
+                passwd=self.password.as_str(),
+                host=self.host.as_str(),
                 port=self.port.as_int(),
-                ssl=self.use_ssl.as_bool(),
+                use_ssl=self.use_ssl.as_bool(),
                 timeout=self.timeout.as_int(),
                 debug=False,
                 verify_ssl=self.verify_ssl.as_bool(),
-                certificate=self.certificate.as_str(),
+                certificate_data=self.certificate.as_str(),
             )
-
         return self._connection
 
     def _connect_as(self, username: str, password: str) -> typing.Any:
         return ldaputil.connection(
-            username,
-            password,
-            self.host.as_str(),
+            username=username,
+            passwd=password,
+            host=self.host.as_str(),
             port=self.port.as_int(),
-            ssl=self.use_ssl.as_bool(),
+            use_ssl=self.use_ssl.as_bool(),
             timeout=self.timeout.as_int(),
             debug=False,
             verify_ssl=self.verify_ssl.as_bool(),
-            certificate=self.certificate.as_str(),
+            certificate_data=self.certificate.as_str(),
         )
 
     def _get_user(self, username: str) -> typing.Optional[ldaputil.LDAPResultType]:
         """
-        Searchs for the username and returns its LDAP entry
-        @param username: username to search, using user provided parameters at configuration to map search entries.
-        @return: None if username is not found, an dictionary of LDAP entry attributes if found.
-        @note: Active directory users contains the groups it belongs to in "memberOf" attribute
+        Searches for the username and returns its LDAP entry.
+        Args:
+            username: username to search, using user provided parameters at configuration to map search entries.
+        Returns:
+            None if username is not found, a dictionary of LDAP entry attributes if found.
+        Note:
+            Active directory users contain the groups it belongs to in "memberOf" attribute
         """
         attributes = self.username_attr.as_str().split(',') + [self.user_id_attr.as_str()]
         if self.mfa_attribute.as_str():
             attributes = attributes + [self.mfa_attribute.as_str()]
-
         return ldaputil.first(
             con=self._get_connection(),
             base=self.ldap_base.as_str(),
@@ -289,13 +291,11 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
 
     def _get_group(self, groupname: str) -> typing.Optional[ldaputil.LDAPResultType]:
         """
-        Searchs for the groupname and returns its LDAP entry
-
+        Searches for the groupname and returns its LDAP entry.
         Args:
             groupname (str): groupname to search, using user provided parameters at configuration to map search entries.
-
         Returns:
-            typing.Optional[ldaputil.LDAPResultType]: None if groupname is not found, an dictionary of LDAP entry attributes if found.
+            typing.Optional[ldaputil.LDAPResultType]: None if groupname is not found, a dictionary of LDAP entry attributes if found.
         """
         return ldaputil.first(
             con=self._get_connection(),
@@ -309,17 +309,14 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
 
     def _get_groups(self, user: ldaputil.LDAPResultType) -> list[str]:
         """
-        Searchs for the groups the user belongs to and returns a list of group names
-        
+        Searches for the groups the user belongs to and returns a list of group names.
         Args:
             user (ldaputil.LDAPResultType): The user to search for groups
-            
         Returns:
             list[str]: A list of group names the user belongs to
         """
         try:
             groups: list[str] = []
-
             filter_ = f'(&(objectClass={self.group_class.as_str()})(|({self.member_attr.as_str()}={user["_id"]})({self.member_attr.as_str()}={user["dn"]})))'
             for d in ldaputil.as_dict(
                 con=self._get_connection(),
@@ -331,19 +328,17 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                 if self.group_id_attr.as_str() in d:
                     for k in d[self.group_id_attr.as_str()]:
                         groups.append(k)
-
             logger.debug('Groups: %s', groups)
             return groups
-
         except Exception:
-            logger.exception('Exception at __getGroups')
+            logger.exception('Exception at _get_groups')
             return []
 
     def _get_user_realname(self, user: ldaputil.LDAPResultType) -> str:
-        '''
-        Tries to extract the real name for this user. Will return all atttributes (joint)
-        specified in _userNameAttr (comma separated).
-        '''
+        """
+        Tries to extract the real name for this user. Will return all attributes (joined)
+        specified in username_attr (comma separated).
+        """
         return ' '.join(auth_utils.process_regex_field(self.username_attr.value, user))
 
     def authenticate(
@@ -353,41 +348,26 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         groups_manager: 'auths.GroupsManager',
         request: 'ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
-        '''
-        Must authenticate the user.
-        We can have to different situations here:
-           1.- The authenticator is external source, what means that users may be unknown to system before callig this
-           2.- The authenticator isn't external source, what means that users have been manually added to system and are known before this call
-        We receive the username, the credentials used (normally password, but can be a public key or something related to pk) and a group manager.
-        The group manager is responsible for letting know the authenticator which groups we currently has active.
-        @see: uds.core.auths.groups_manager
-        '''
+        """
+        Authenticates the user using ldaputil.
+        """
         try:
-            # Locate the user at LDAP
             user = self._get_user(username)
-
             if user is None:
                 log_login(request, self.db_obj(), username, 'Invalid user', as_error=True)
                 return types.auth.FAILED_AUTH
-
             try:
-                # Let's see first if it credentials are fine
-                self._connect_as(user['dn'], credentials)  # Will raise an exception if it can't connect
+                self._connect_as(user['dn'], credentials)
             except Exception:
                 log_login(request, self.db_obj(), username, 'Invalid password', as_error=True)
                 return types.auth.FAILED_AUTH
-
-            # store the user mfa attribute if it is set
             if self.mfa_attribute.as_str():
                 self.storage.save_pickled(
                     self.mfa_storage_key(username),
                     user[self.mfa_attribute.as_str()][0],
                 )
-
             groups_manager.validate(self._get_groups(user))
-
             return types.auth.SUCCESS_AUTH
-
         except Exception:
             return types.auth.FAILED_AUTH
 
@@ -470,120 +450,104 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         except Exception as e:
             return types.core.TestResult(False, str(e))
 
+        # Test base search
         try:
-            con.search_s(  # pyright: ignore reportGeneralTypeIssues
-                base=self.ldap_base.as_str(),
-                scope=ldaputil.SCOPE_BASE,  # pyright: ignore reportGeneralTypeIssues
-            )
-
+            next(ldaputil.as_dict(
+                con,
+                self.ldap_base.as_str(),
+                '(objectClass=*)',
+                limit=1,
+                scope=ldaputil.SCOPE_BASE,
+            ))
         except Exception:
             return types.core.TestResult(False, _('Ldap search base is incorrect'))
 
+        # Test user class
         try:
-            if (
-                len(
-                    ensure.as_list(
-                        con.search_ext_s(  # pyright: ignore reportGeneralTypeIssues
-                            base=self.ldap_base.as_str(),
-                            scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportGeneralTypeIssues
-                            filterstr=f'(objectClass={self.user_class.as_str()})',
-                            sizelimit=1,
-                        )
-                    )
-                )
-                != 1
-            ):
-                raise Exception(_('Ldap user class seems to be incorrect (no user found by that class)'))
+            count = sum(1 for _ in ldaputil.as_dict(
+                con,
+                self.ldap_base.as_str(),
+                f'(objectClass={self.user_class.as_str()})',
+                limit=1,
+                scope=ldaputil.SCOPE_SUBTREE,
+            ))
+            if count == 0:
+                return types.core.TestResult(False, _('Ldap user class seems to be incorrect (no user found by that class)'))
+        except Exception:
+            pass
 
-            if (
-                len(
-                    ensure.as_list(
-                        con.search_ext_s(  # pyright: ignore reportGeneralTypeIssues
-                            base=self.ldap_base.as_str(),
-                            scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportGeneralTypeIssues
-                            filterstr=f'(objectClass={self.group_class.as_str()})',
-                            sizelimit=1,
-                        )
-                    )
-                )
-                != 1
-            ):
-                raise Exception(_('Ldap group class seems to be incorrect (no group found by that class)'))
+        # Test group class
+        try:
+            count = sum(1 for _ in ldaputil.as_dict(
+                con,
+                self.ldap_base.as_str(),
+                f'(objectClass={self.group_class.as_str()})',
+                limit=1,
+                scope=ldaputil.SCOPE_SUBTREE,
+            ))
+            if count == 0:
+                return types.core.TestResult(False, _('Ldap group class seems to be incorrect (no group found by that class)'))
+        except Exception:
+            pass
 
-            if (
-                len(
-                    ensure.as_list(
-                        con.search_ext_s(  # pyright: ignore reportGeneralTypeIssues
-                            base=self.ldap_base.as_str(),
-                            scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportGeneralTypeIssues
-                            filterstr=f'({self.user_id_attr.as_str()}=*)',
-                            sizelimit=1,
-                        )
-                    )
-                )
-                != 1
-            ):
-                raise Exception(
-                    _('Ldap user id attribute seems to be incorrect (no user found by that attribute)')
-                )
+        # Test user id attribute
+        try:
+            count = sum(1 for _ in ldaputil.as_dict(
+                con,
+                self.ldap_base.as_str(),
+                f'({self.user_id_attr.as_str()}=*)',
+                limit=1,
+                scope=ldaputil.SCOPE_SUBTREE,
+            ))
+            if count == 0:
+                return types.core.TestResult(False, _('Ldap user id attribute seems to be incorrect (no user found by that attribute)'))
+        except Exception:
+            pass
 
-            if (
-                len(
-                    ensure.as_list(
-                        con.search_ext_s(  # pyright: ignore reportGeneralTypeIssues
-                            base=self.ldap_base.as_str(),
-                            scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportGeneralTypeIssues
-                            filterstr=f'({self.group_id_attr.as_str()}=*)',
-                            sizelimit=1,
-                        )
-                    )
-                )
-                != 1
-            ):
-                raise Exception(
-                    _('Ldap group id attribute seems to be incorrect (no group found by that attribute)')
-                )
+        # Test group id attribute
+        try:
+            count = sum(1 for _ in ldaputil.as_dict(
+                con,
+                self.ldap_base.as_str(),
+                f'({self.group_id_attr.as_str()}=*)',
+                limit=1,
+                scope=ldaputil.SCOPE_SUBTREE,
+            ))
+            if count == 0:
+                return types.core.TestResult(False, _('Ldap group id attribute seems to be incorrect (no group found by that attribute)'))
+        except Exception:
+            pass
 
-            if (
-                len(
-                    ensure.as_list(
-                        con.search_ext_s(  # pyright: ignore reportGeneralTypeIssues
-                            base=self.ldap_base.as_str(),
-                            scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportGeneralTypeIssues
-                            filterstr=f'(&(objectClass={self.user_class.as_str()})({self.user_id_attr.as_str()}=*))',
-                            sizelimit=1,
-                        )
-                    )
-                )
-                != 1
-            ):
-                raise Exception(
-                    _(
-                        'Ldap user class or user id attr is probably wrong (can\'t find any user with both conditions)'
-                    )
-                )
+        # Test user class and user id attribute together
+        try:
+            count = sum(1 for _ in ldaputil.as_dict(
+                con,
+                self.ldap_base.as_str(),
+                f'(&(objectClass={self.user_class.as_str()})({self.user_id_attr.as_str()}=*))',
+                limit=1,
+                scope=ldaputil.SCOPE_SUBTREE,
+            ))
+            if count == 0:
+                return types.core.TestResult(False, _('Ldap user class or user id attr is probably wrong (can\'t find any user with both conditions)'))
+        except Exception:
+            pass
 
-            res = ensure.as_list(
-                con.search_ext_s(  # pyright: ignore reportGeneralTypeIssues
-                    base=self.ldap_base.as_str(),
-                    scope=ldaputil.SCOPE_SUBTREE,  # pyright: ignore reportGeneralTypeIssues
-                    filterstr=f'(&(objectClass={self.group_class.as_str()})({self.group_id_attr.as_str()}=*))',
-                    attrlist=[self.member_attr.as_str()],
-                )
-            )
-            if not res:
-                raise Exception(
-                    _(
-                        'Ldap group class or group id attr is probably wrong (can\'t find any group with both conditions)'
-                    )
-                )
-            ok = False
-            for r in res:
-                if self.member_attr.as_str() in r[1]:
-                    ok = True
+        # Test group class and group id attribute together
+        try:
+            found = False
+            for r in ldaputil.as_dict(
+                con,
+                self.ldap_base.as_str(),
+                f'(&(objectClass={self.group_class.as_str()})({self.group_id_attr.as_str()}=*))',
+                attributes=[self.member_attr.as_str()],
+                limit=LDAP_RESULT_LIMIT,
+                scope=ldaputil.SCOPE_SUBTREE,
+            ):
+                if self.member_attr.as_str() in r:
+                    found = True
                     break
-            if ok is False:
-                raise Exception(_('Can\'t locate any group with the membership attribute specified'))
+            if not found:
+                return types.core.TestResult(False, _('Can\'t locate any group with the membership attribute specified'))
         except Exception as e:
             return types.core.TestResult(False, str(e))
 
