@@ -21,6 +21,7 @@ from ldap3 import (
     MODIFY_ADD as LDAP_MODIFY_ADD,
     MODIFY_DELETE as LDAP_MODIFY_DELETE,
     MODIFY_REPLACE as LDAP_MODIFY_REPLACE,
+    MODIFY_INCREMENT as LDAP_MODIFY_INCREMENT,
 )
 
 from django.utils.translation import gettext as _
@@ -39,6 +40,7 @@ SCOPE_ONELEVEL = LEVEL
 MODIFY_ADD = LDAP_MODIFY_ADD
 MODIFY_DELETE = LDAP_MODIFY_DELETE
 MODIFY_REPLACE = LDAP_MODIFY_REPLACE
+MODIFY_INCREMENT = LDAP_MODIFY_INCREMENT
 
 LDAPResultType = collections.abc.MutableMapping[str, typing.Any]
 LDAPSearchResultType = typing.Optional[list[dict[str, typing.Any]]]
@@ -178,6 +180,7 @@ def first(
     object_class: str,
     field: str,
     value: str,
+    *,
     attributes: typing.Optional[collections.abc.Iterable[str]] = None,
     max_entries: int = 50,
 ) -> typing.Optional[LDAPResultType]:
@@ -196,27 +199,69 @@ def first(
     return obj
 
 
-def recursive_delete(con: Connection, base_dn: str) -> None:
+def add(
+    con: Connection,
+    dn: str,
+    *,
+    attributes: dict[str, list[bytes | str]],
+) -> bool:
     """
-    Recursively deletes all entries under the given base DN.
+    Adds a new LDAP entry.
     Args:
         con: LDAP connection
-        base_dn: Distinguished Name of the base entry to start deletion from
+        dn: Distinguished Name of the entry to add
+        attributes: Dictionary of attributes, e.g. { 'objectClass': ['user'], ... }
     Returns:
-        None
-
-    Note: Not recursive, but only one level deep.
+        True if the operation was successful, raises LDAPError otherwise
     """
-    con.search(base_dn, '(objectClass=*)', search_scope=SCOPE_ONELEVEL, attributes=['dn'])
-    for entry in typing.cast(list[typing.Any], con.entries):
-        con.delete(entry.entry_dn)
-    con.delete(base_dn)
+    try:
+        result = typing.cast(typing.Any, con.add(dn, attributes))
+        if not result:
+            raise LDAPError(f'Add operation failed: {con.result}')
+        return True
+    except Exception as e:
+        logger.exception('Exception in add:')
+        raise LDAPError(str(e)) from e
+
+
+
+def delete(con: Connection, dn: str, *, depth: int = 1) -> None:
+    """
+    Deletes an LDAP entry and its children up to a certain depth.
+    Args:
+        con: LDAP connection
+        dn: Distinguished Name of the entry to delete
+        depth: How many levels to delete (1=only direct children, 2=children and grandchildren, <1=all levels)
+    Returns:
+        None. Raises LDAPError on failure.
+    """
+    try:
+        con.search(dn, '(objectClass=*)', search_scope=SCOPE_ONELEVEL, attributes=['dn'])
+        for entry in typing.cast(list[typing.Any], con.entries):
+            child_dn: str = entry.entry_dn
+            delete(con, child_dn, depth=depth - 1)
+            result = typing.cast(typing.Any, con.delete(child_dn))
+            if not result:
+                raise LDAPError(f'Delete operation failed: {con.result}')
+        result = typing.cast(typing.Any, con.delete(dn))
+        if not result:
+            raise LDAPError(f'Delete operation failed: {con.result}')
+    except Exception as e:
+        logger.exception('Exception in delete:')
+        raise LDAPError(str(e)) from e
+
+def recursive_delete(con: Connection, base_dn: str) -> None:
+    """
+    Deletes all direct children and the entry itself (one level deep, for compatibility).
+    """
+    delete(con, base_dn, depth=1)
 
 
 def modify(
     con: Connection,
     dn: str,
-    changes: dict[str, list[tuple[int, list[bytes | str]]]],
+    changes: dict[str, list[tuple[str, list[bytes | str]]]],
+    *,
     controls: typing.Any = None,
 ) -> bool:
     """
