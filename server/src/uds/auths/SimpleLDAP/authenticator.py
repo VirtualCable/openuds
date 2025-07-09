@@ -182,7 +182,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     # Label for password field
     label_password = _("Password")
 
-    _connection: typing.Optional['ldaputil.LDAPObject'] = None
+    _connection: typing.Optional['ldaputil.LDAPConnection'] = None
 
     def initialize(self, values: typing.Optional[dict[str, typing.Any]]) -> None:
         if values:
@@ -231,7 +231,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     def mfa_identifier(self, username: str) -> str:
         return self.storage.read_pickled(self.mfa_storage_key(username)) or ''
 
-    def _get_connection(self) -> 'ldaputil.LDAPObject':
+    def _get_connection(self) -> 'ldaputil.LDAPConnection':
         """
         Tries to connect to LDAP using ldaputil. If username is None, it tries to connect using user provided credentials.
         Returns:
