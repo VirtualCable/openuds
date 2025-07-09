@@ -102,20 +102,34 @@ def create_self_signed_cert(ip: str) -> tuple[str, str, str]:
     )
 
 
-def create_client_sslcontext(verify: bool = True) -> ssl.SSLContext:
+def create_client_sslcontext(
+    verify: bool = True, ca_cert_file: str | None = None, ca_cert_data: str | None = None
+) -> ssl.SSLContext:
     """
     Creates a SSLContext for client connections.
 
     Args:
         verify: If True, the server certificate will be verified. (Default: True)
+        custom_cert: If provided, this will be used as the CA_BUNDLE file or directory with certificates of trusted CAs.
 
     Returns:
         A SSLContext object.
     """
-    ssl_context = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=certifi.where())
+
+    ssl_context = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH)
+
     if not verify:
         ssl_context.check_hostname = False
         ssl_context.verify_mode = ssl.VerifyMode.CERT_NONE
+    else:
+        if ca_cert_file:
+            # If custom_cert is provided, use it as the CA_BUNDLE file or directory with certificates of trusted CAs.
+            # This is the same as requests.Session.verify
+            ssl_context.load_verify_locations(cafile=ca_cert_file)
+        elif ca_cert_data:
+            # If custom_cert is provided, use it as the CA_BUNDLE file or directory with certificates of trusted CAs.
+            # This is the same as requests.Session.verify
+            ssl_context.load_verify_locations(cadata=ca_cert_data)
 
     # Disable TLS1.0 and TLS1.1, SSLv2 and SSLv3 are disabled by default
     # Next line is deprecated in Python 3.7
