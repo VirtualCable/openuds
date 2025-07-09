@@ -163,7 +163,7 @@ class RegexLdap(auths.Authenticator):
     # Label for password field
     label_password = _("Password")
 
-    _connection: typing.Optional['ldaputil.LDAPObject'] = None
+    _connection: typing.Optional['ldaputil.LDAPConnection'] = None
 
     def initialize(self, values: typing.Optional[dict[str, typing.Any]]) -> None:
         if values:
@@ -235,7 +235,7 @@ class RegexLdap(auths.Authenticator):
 
         self.mark_for_upgrade()  # Old version, so flag for upgrade if possible
 
-    def _stablish_connection(self) -> 'ldaputil.LDAPObject':
+    def _stablish_connection(self) -> 'ldaputil.LDAPConnection':
         """
         Tries to connect to ldap. If username is None, it tries to connect using user provided credentials.
         @return: Connection established
@@ -254,7 +254,7 @@ class RegexLdap(auths.Authenticator):
 
         return self._connection
 
-    def _stablish_connection_as(self, username: str, password: str) -> 'ldaputil.LDAPObject':
+    def _stablish_connection_as(self, username: str, password: str) -> 'ldaputil.LDAPConnection':
         return ldaputil.connection(
             username,
             password,
