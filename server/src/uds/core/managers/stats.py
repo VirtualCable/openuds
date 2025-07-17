@@ -362,7 +362,7 @@ class StatsManager(metaclass=singleton.Singleton):
             return StatsEvents.objects.filter(id__gt=starting_id).order_by('-id')[:number]
         return StatsEvents.objects.order_by('-id')[:number]
 
-    def perform_events_maintenancecleanupEvents(self) -> None:
+    def perform_events_maintenancecleanup_events(self) -> None:
         """
         Removes all events previous to configured max keep time for stat information from database.
         """

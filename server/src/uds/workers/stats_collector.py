@@ -144,7 +144,7 @@ class StatsCleaner(Job):
             logger.exception('Cleaning up counters')
 
         try:
-            StatsManager.manager().perform_events_maintenancecleanupEvents()
+            StatsManager.manager().perform_events_maintenancecleanup_events()
         except Exception:
             logger.exception('Cleaning up events')
 

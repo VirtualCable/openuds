@@ -162,7 +162,7 @@ class Scheduler:
                     .filter(fltr)
                     .order_by('next_execution')[0]
                 )
-                if job.last_execution > now:
+                if job.last_execution > now + timedelta(seconds=3):  # Give some skew
                     logger.warning(
                         'EXecuted %s due to last_execution being in the future!',
                         job.name,

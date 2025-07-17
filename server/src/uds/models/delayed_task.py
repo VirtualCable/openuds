@@ -69,4 +69,5 @@ class DelayedTask(models.Model):
         app_label = 'uds'
 
     def __str__(self) -> str:
-        return f'Run Queue task {self.type} owned by {self.execution_time},inserted at {self.insert_date} and with {self.execution_delay} seconds delay'
+        # return f'Run Queue task {self.type} w {self.execution_time},inserted at {self.insert_date} and with {self.execution_delay} seconds delay'
+        return f'Delayed Task {self.type} ({self.tag}) at {self.execution_time} (inserted at {self.insert_date}, delay {self.execution_delay})'
