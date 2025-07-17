@@ -114,12 +114,15 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
             with transaction.atomic():  # Encloses
                 # Throws exception if no delayed task is avilable
                 task: DBDelayedTask = (
-                    DBDelayedTask.objects.select_for_update()
-                    .filter(filt)
-                    .order_by('execution_time')[0]
-                )  # @UndefinedVariable
-                if task.insert_date > now + timedelta(seconds=30):
-                    logger.warning('Executed %s due to insert_date being in the future!', task.type)
+                    DBDelayedTask.objects.select_for_update().filter(filt).order_by('execution_time')[0]
+                )
+                if task.insert_date > now + timedelta(seconds=3):
+                    logger.warning(
+                        'Executed %s due to insert_date being in the future!, insert_date: %s, now: %s',
+                        task.type,
+                        task.insert_date,
+                        now,
+                    )
                 task_instance_dump = base64.b64decode(task.instance.encode())
                 task.delete()
             task_instance = pickle.loads(task_instance_dump)  # nosec: controlled pickle
