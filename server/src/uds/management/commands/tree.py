@@ -40,7 +40,7 @@ import yaml
 
 from django.core.management.base import BaseCommand
 
-from uds.core.util import log, model, config
+from uds.core.util import cluster, log, model, config
 from uds import models
 from uds.core import types
 
@@ -353,6 +353,18 @@ class Command(BaseCommand):
                     cfg[f'{section}.{key}'] = value['value']
 
             tree[counter('CONFIG')] = cfg
+
+            # system
+            tree[counter('SYSTEM')] = {
+                # Last 7 days of logs
+                'logs': [
+                    get_serialized_from_model(log_entry)
+                    for log_entry in models.Log.objects.filter(
+                        created__gt=now - datetime.timedelta(days=7)
+                    ).order_by('-created')
+                ],
+                'cluster_nodes': [str(node) for node in cluster.enumerate_cluster_nodes()],
+            }
 
             self.stdout.write(yaml.safe_dump(tree, default_flow_style=False))
 
