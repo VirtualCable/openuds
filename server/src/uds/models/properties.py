@@ -47,7 +47,7 @@ class Properties(models.Model):
     owner_id = models.CharField(max_length=128, db_index=True)
     owner_type = models.CharField(max_length=64, db_index=True)
     key = models.CharField(max_length=64, db_index=True)
-    value: typing.Any = models.JSONField(default=dict)
+    value = typing.cast(typing.Any, models.JSONField(default=dict))
 
     class Meta:  # pyright: ignore
         """
