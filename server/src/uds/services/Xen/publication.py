@@ -61,7 +61,9 @@ class XenPublication(DynamicPublication, autoserializable.AutoSerializable):
         """
         if not data.startswith(b'v'):
             return super().unmarshal(data)
-            
+
+        logger.debug('Upgrading XenPublication from old format: %s', data)
+
         # logger.debug('Data: {0}'.format(data))
         vals = data.decode('utf8').split('\t')
         if vals[0] == 'v1':
@@ -94,6 +96,7 @@ class XenPublication(DynamicPublication, autoserializable.AutoSerializable):
         )
 
         self._task = self.service().start_deploy_of_template(self._name, comments)
+        logger.debug('Task created: %s', self._task)
         
     def op_create_checker(self) -> types.states.TaskState:
         """
@@ -101,11 +104,14 @@ class XenPublication(DynamicPublication, autoserializable.AutoSerializable):
         """
         with  self.service().provider().get_connection() as api:
             task_info = api.get_task_info(self._task)
+            logger.debug('Task info: %s', task_info)
             if task_info.is_success():
+                logger.debug('Task finished successfully: %s', task_info.result)
                 self._vmid = task_info.result
                 self.service().convert_to_template(self._vmid)
                 return types.states.TaskState.FINISHED
             elif task_info.is_failure():
+                logger.warning('Task failed: %s', task_info.result)
                 return self._error(task_info.result)
 
         return types.states.TaskState.RUNNING
@@ -118,4 +124,5 @@ class XenPublication(DynamicPublication, autoserializable.AutoSerializable):
         """
         Returns the template id associated with the publication
         """
+        logger.debug('Getting template id for publication: %s', self._vmid)
         return self._vmid
