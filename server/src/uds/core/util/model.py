@@ -75,7 +75,9 @@ class TimeTrack:
         if connection.vendor in ('mysql', 'microsoft', 'postgresql'):
             cursor = connection.cursor()
             sentence = (
-                'SELECT CURRENT_TIMESTAMP(4)' if connection.vendor in ('mysql', 'postgresql') else 'SELECT CURRENT_TIMESTAMP'
+                'SELECT CURRENT_TIMESTAMP(4)'
+                if connection.vendor in ('mysql', 'postgresql')
+                else 'SELECT CURRENT_TIMESTAMP'
             )
             cursor.execute(sentence)
             date = (cursor.fetchone() or [datetime.datetime.now()])[0]
@@ -94,12 +96,15 @@ class TimeTrack:
             # If in last_check is in the future, or more than CACHE_TIME_TIMEOUT seconds ago, we need to refresh
             # Future is possible if we have a clock update, or a big drift
             if diff > datetime.timedelta(seconds=CACHE_TIME_TIMEOUT) or diff < datetime.timedelta(seconds=0):
-                TimeTrack.last_check = now
                 TimeTrack.misses += 1
                 TimeTrack.cached_time = TimeTrack._fetch_sql_datetime()
+                TimeTrack.last_check = now
             else:
                 TimeTrack.hits += 1
-        return TimeTrack.cached_time + (now - TimeTrack.last_check)
+        the_time = TimeTrack.cached_time + (now - TimeTrack.last_check)
+        # Keep only cent of second precision
+        the_time = the_time.replace(microsecond=int(the_time.microsecond / 10000) * 10000)
+        return the_time
 
 
 def sql_now() -> datetime.datetime:
@@ -138,3 +143,36 @@ def process_uuid(uuid: str) -> str:
     if isinstance(uuid, bytes):
         uuid = uuid.decode('utf8')
     return uuid.lower()
+
+
+def get_my_ip_from_db() -> str:
+    """
+    Gets, from the database, the IP of the current server.
+    """
+    # Mysql query:
+    # SELECT host FROM information_schema.processlist WHERE ID = CONNECTION_ID();
+    # Postgres query: SELECT client_addr FROM pg_stat_activity WHERE pid = pg_backend_pid();
+    # sql server: SELECT client_net_address FROM sys.dm_exec_connections WHERE session_id = @@SPID;
+
+    try:
+        match connection.vendor:
+            case 'mysql':
+                query = 'SELECT host FROM information_schema.processlist WHERE ID = CONNECTION_ID();'
+            case 'postgresql':
+                query = 'SELECT client_addr FROM pg_stat_activity WHERE pid = pg_backend_pid();'
+            case 'microsoft':
+                query = 'SELECT client_net_address FROM sys.dm_exec_connections WHERE session_id = @@SPID;'
+            case _:
+                return '0.0.0.0'  # If not known, return a default IP
+
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            result = cursor.fetchone()
+            if result:
+                result = result[0] if isinstance(result[0], str) else result[0].decode('utf8')
+                return result.split(':')[0]
+
+    except Exception as e:
+        logger.error('Error getting my IP: %s', e)
+
+    return '0.0.0.0'

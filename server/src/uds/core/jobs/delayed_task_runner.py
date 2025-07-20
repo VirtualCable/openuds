@@ -108,14 +108,17 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
 
     def execute_delayed_task(self) -> None:
         now = sql_now()
-        filt = Q(execution_time__lt=now) | Q(insert_date__gt=now + timedelta(seconds=30))
+        filt = Q(execution_time__lt=now) | Q(insert_date__gt=now + timedelta(seconds=3))
         # If next execution is before now or last execution is in the future (clock changed on this server, we take that task as executable)
         try:
             with transaction.atomic():  # Encloses
                 # Throws exception if no delayed task is avilable
-                task: DBDelayedTask = (
-                    DBDelayedTask.objects.select_for_update().filter(filt).order_by('execution_time')[0]
-                )
+                task: DBDelayedTask|None = DBDelayedTask.objects.select_for_update().filter(filt).order_by('execution_time').first()
+                if not task:
+                    return
+                
+                logger.debug('Obtained delayed task %s for execution', task)
+                
                 if task.insert_date > now + timedelta(seconds=3):
                     logger.warning(
                         'Executed %s due to insert_date being in the future!, insert_date: %s, now: %s',
@@ -126,8 +129,6 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
                 task_instance_dump = base64.b64decode(task.instance.encode())
                 task.delete()
             task_instance = pickle.loads(task_instance_dump)  # nosec: controlled pickle
-        except IndexError:
-            return  # No problem, there is no waiting delayed task
         except OperationalError:
             logger.info('Retrying delayed task')
             return
@@ -142,6 +143,8 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
             # Re-create environment data
             task_instance.env = Environment.type_environment(task_instance.__class__)
             DelayedTaskThread(task_instance).start()
+        else:
+            logger.error('Could not load delayed task instance from %s <%s>', task, task_instance_dump)
 
     def _insert(self, instance: DelayedTask, delay: int, tag: str) -> None:
         now = sql_now()
@@ -163,14 +166,16 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
             exec_time,
         )
 
-        DBDelayedTask.objects.create(
+        created = DBDelayedTask.objects.create(
             type=type_name,
-            instance=instance_dump,  # @UndefinedVariable
+            instance=instance_dump,
             insert_date=now,
             execution_delay=delay,
             execution_time=exec_time,
             tag=tag,
         )
+        
+        logger.debug('Delayed task %s inserted with', created)
 
     def insert(self, instance: DelayedTask, delay: int, tag: str = '') -> bool:
         retries = 3
@@ -178,6 +183,7 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
             retries -= 1
             try:
                 self._insert(instance, delay, tag)
+                logger.debug('Delayed task %s inserted with tag %s', instance, tag)
                 break
             except Exception as e:
                 logger.info('Exception inserting a delayed task %s: %s', e.__class__, e)
@@ -215,7 +221,6 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
         logger.debug("At loop")
         while DelayedTaskRunner._keep_running:
             try:
-                time.sleep(self.granularity)
                 self.execute_delayed_task()
             except Exception as e:
                 logger.error('Unexpected exception at run loop %s: %s', e.__class__, e)
@@ -223,4 +228,5 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
                     connections['default'].close()
                 except Exception:
                     logger.exception('Exception clossing connection at delayed task')
+            time.sleep(self.granularity)
         logger.info('Exiting DelayedTask Runner because stop has been requested')

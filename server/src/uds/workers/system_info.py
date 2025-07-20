@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 #
 # Copyright (c) 2012-2023 Virtual Cable S.L.U.
 # All rights reserved.
@@ -31,34 +30,19 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
-import typing
 
-from django.db import models
+from uds.core.util import cluster
+from uds.core.jobs import Job
 
 logger = logging.getLogger(__name__)
 
 
-class Properties(models.Model):
-    """
-    General storage model. Used to store specific instances (transport, service, servicemanager, ...) persistent information
-    not intended to be serialized/deserialized everytime one object instance is loaded/saved.
-    """
+class SystemInformation(Job):
+    frecuency = 3600
+    friendly_name = 'System Information update'
 
-    owner_id = models.CharField(max_length=128, db_index=True)
-    owner_type = models.CharField(max_length=64, db_index=True)
-    key = models.CharField(max_length=64, db_index=True)
-    value = typing.cast(typing.Any, models.JSONField(default=dict))
-
-    class Meta:  # pyright: ignore
-        """
-        Meta class to declare the name of the table at database
-        """
-        app_label = 'uds'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['owner_id', 'owner_type', 'key'], name='unique_property'
-            )
-        ]
-
-    def __str__(self) -> str:
-        return f'{self.owner_id}.{self.owner_type}.{self.key}  = {self.value}'
+    def run(self) -> None:
+        try:
+            cluster.store_cluster_info()
+        except Exception as e:
+            logger.error('Error storing cluster hostname: %s', e)

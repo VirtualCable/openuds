@@ -368,8 +368,6 @@ class VMInfo:
 
         other_config = typing.cast(dict[str, str], data.get('other_config', {}))
 
-        logger.debug('data: %s', data)
-
         return VMInfo(
             opaque_ref=opaque_ref,
             uuid=data['uuid'],

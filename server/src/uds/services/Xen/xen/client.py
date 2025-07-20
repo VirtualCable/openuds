@@ -77,7 +77,7 @@ class TimeoutTransport(xmlrpc.client.Transport):
 
 
 class XenClient:  # pylint: disable=too-many-public-methods
-    _originalHost: str
+    _original_host: str
     _host: str
     _host_backup: str
     _port: str
@@ -104,7 +104,7 @@ class XenClient:  # pylint: disable=too-many-public-methods
         verify_ssl: bool = False,
         timeout: int = 10,
     ):
-        self._originalHost = self._host = host
+        self._original_host = self._host = host
         self._host_backup = host_backup or ''
         self._port = str(port)
         self._use_ssl = bool(use_ssl)
@@ -198,11 +198,9 @@ class XenClient:  # pylint: disable=too-many-public-methods
                 context = security.create_client_sslcontext(verify=self._verify_ssl)
                 transport = SafeTimeoutTransport(context=context)
                 transport.set_timeout(self._timeout)
-                logger.debug('Transport: %s', transport)
             else:
                 transport = TimeoutTransport()
                 transport.set_timeout(self._timeout)
-                logger.debug('Transport: %s', transport)
 
             self._session = XenAPI.Session(self._url, transport=transport)
             self._session.xenapi.login_with_password(
@@ -211,6 +209,11 @@ class XenClient:  # pylint: disable=too-many-public-methods
             self._logged_in = True
             self._api_version = self._session.API_version
             self._pool_name = self.get_pool_name(force=True)
+            logger.debug('Connected to XenServer %s, API version %s, pool name: %s',
+                self._host,
+                self._api_version,
+                self._pool_name,
+            )
         except (
             XenAPI.Failure
         ) as e:  # XenAPI.Failure: ['HOST_IS_SLAVE', '172.27.0.29'] indicates that this host is an slave of 172.27.0.29, connect to it...
@@ -257,7 +260,9 @@ class XenClient:  # pylint: disable=too-many-public-methods
             with exceptions.translator():
                 task_info = xen_types.TaskInfo.from_dict(self.task.get_record(task_opaque_ref), task_opaque_ref)
         except exceptions.XenNotFoundError:
-            task_info = xen_types.TaskInfo.unknown_task(task_opaque_ref)
+            logger.warning('Task %s not found, returning unknown task info', task_opaque_ref)
+            # task_info = xen_types.TaskInfo.unknown_task(task_opaque_ref)
+            raise  # Re-raise the exception to handle it outside
 
         return task_info
 
@@ -269,7 +274,8 @@ class XenClient:  # pylint: disable=too-many-public-methods
             sr = xen_types.StorageInfo.from_dict(sr_raw, sr_id)
             if sr.is_usable():
                 return_list.append(sr)
-
+        
+        logger.debug('Srs: %s', return_list)
         return return_list
 
     @cached(prefix='xen_sr', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
@@ -286,6 +292,7 @@ class XenClient:  # pylint: disable=too-many-public-methods
             if netinfo.is_host_internal_management_network is False:
                 return_list.append(netinfo)
 
+        logger.debug('Networks: %s', return_list)
         return return_list
 
     @cached(prefix='xen_net', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
@@ -298,16 +305,13 @@ class XenClient:  # pylint: disable=too-many-public-methods
     def list_vms(self) -> list[xen_types.VMInfo]:
         return_list: list[xen_types.VMInfo] = []
 
-        try:
-            for vm_id, vm_raw in typing.cast(dict[str, typing.Any], self.VM.get_all_records()).items():
-                vm = xen_types.VMInfo.from_dict(vm_raw, vm_id)
-                if vm.is_usable():
-                    return_list.append(vm)
-            return return_list
-        except XenAPI.Failure as e:
-            raise exceptions.XenFailure(typing.cast(typing.Any, e.details))
-        except Exception as e:
-            raise exceptions.XenException(str(e))
+        for vm_id, vm_raw in typing.cast(dict[str, typing.Any], self.VM.get_all_records()).items():
+            vm = xen_types.VMInfo.from_dict(vm_raw, vm_id)
+            if vm.is_usable():
+                return_list.append(vm)
+        
+        logger.debug('VMs: %s', return_list)
+        return return_list
 
     @cached(prefix='xen_vm', timeout=consts.cache.SHORT_CACHE_TIMEOUT, key_helper=cache_key_helper)
     @exceptions.catched
@@ -440,22 +444,19 @@ class XenClient:  # pylint: disable=too-many-public-methods
         operations = self.VM.get_allowed_operations(vm_opaque_ref)
         logger.debug('Allowed operations: %s', operations)
 
-        try:
-            if target_sr:
-                if 'copy' not in operations:
-                    raise exceptions.XenFatalError(
-                        'Copy is not supported for this machine (maybe it\'s powered on?)'
-                    )
-                task = self.Async.VM.copy(vm_opaque_ref, target_name, target_sr)
-            else:
-                if 'clone' not in operations:
-                    raise exceptions.XenFatalError(
-                        'Clone is not supported for this machine (maybe it\'s powered on?)'
-                    )
-                task = self.Async.VM.clone(vm_opaque_ref, target_name)
-            return task
-        except XenAPI.Failure as e:
-            raise exceptions.XenFailure(typing.cast(typing.Any, e.details))
+        if target_sr:
+            if 'copy' not in operations:
+                raise exceptions.XenFatalError(
+                    'Copy is not supported for this machine (maybe it\'s powered on?)'
+                )
+            task = self.Async.VM.copy(vm_opaque_ref, target_name, target_sr)
+        else:
+            if 'clone' not in operations:
+                raise exceptions.XenFatalError(
+                    'Clone is not supported for this machine (maybe it\'s powered on?)'
+                )
+            task = self.Async.VM.clone(vm_opaque_ref, target_name)
+        return task
 
     @exceptions.catched
     def delete_vm(self, vm_opaque_ref: str) -> None:
@@ -536,12 +537,14 @@ class XenClient:  # pylint: disable=too-many-public-methods
         Returns:
             A list of 'folders' (organizations, str) in the XenServer
         """
-        folders: set[str] = set('/')  # Add root folder for machines without folder
+        folders: set[str]|list[str] = set('/')  # Add root folder for machines without folder
         for vm in self.list_vms():
             if vm.folder:
                 folders.add(vm.folder)
 
-        return sorted(folders)
+        folders = sorted(folders)
+        logger.debug('Folders: %s', folders)
+        return folders
 
     @exceptions.catched
     def list_vms_in_folder(self, folder: str) -> list[xen_types.VMInfo]:
@@ -559,6 +562,8 @@ class XenClient:  # pylint: disable=too-many-public-methods
         for vm in self.list_vms():
             if vm.folder.upper() == folder:
                 result_list.append(vm)
+                
+        logger.debug('VMs in folder %s: %s', folder, result_list)
         return result_list
 
     @exceptions.catched
@@ -594,6 +599,8 @@ class XenClient:  # pylint: disable=too-many-public-methods
         if not vifs:
             return ''
         vif = self.VIF.get_record(vifs[0])
+        
+        logger.info('MAC: %s', vif['MAC'])
         return vif['MAC']
 
     @exceptions.catched

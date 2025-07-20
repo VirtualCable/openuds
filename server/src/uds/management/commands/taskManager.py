@@ -42,6 +42,7 @@ from django.core.management.base import BaseCommand  # , CommandError
 from django.conf import settings
 
 from uds.core.managers import task_manager
+from uds.core.util import cluster
 from uds.core.util.config import GlobalConfig
 
 logger = logging.getLogger(__name__)
@@ -154,6 +155,10 @@ class Command(BaseCommand):
 
         if start:
             logger.info('Starting task manager.')
+            
+            # Store cluster hostname intially.
+            # will be updated by system_info worker every hour
+            cluster.store_cluster_info()
 
             if not foreground:
                 become_daemon(

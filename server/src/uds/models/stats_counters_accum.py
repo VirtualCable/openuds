@@ -37,6 +37,8 @@ import logging
 
 from django.db import models
 
+from uds.core.util.model import sql_stamp_seconds
+
 from .stats_counters import StatsCounters
 
 logger = logging.getLogger(__name__)
@@ -123,7 +125,7 @@ class StatsCountersAccum(models.Model):
     ) -> int:
         """Adjusts a timestamp to the given interval"""
         if value == -1:
-            value = int(datetime.datetime.now().timestamp())
+            value = sql_stamp_seconds()
         return value - (value % interval_type.seconds())
 
     @staticmethod
