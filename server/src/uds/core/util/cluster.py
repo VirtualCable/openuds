@@ -6,6 +6,7 @@ import typing
 from django.db import transaction, OperationalError
 
 from uds import models
+from uds.core.util.iface import get_first_iface
 from uds.core.util.model import sql_now, get_my_ip_from_db
 
 logger = logging.getLogger(__name__)
@@ -19,17 +20,23 @@ class UDSClusterNode(typing.NamedTuple):
     hostname: str
     ip: str
     last_seen: datetime.datetime
+    mac: str = '00:00:00:00:00:00'
 
     def __str__(self) -> str:
         return f'Node {self.hostname} ({self.ip}) last seen at {self.last_seen.isoformat()}'
+
 
 def store_cluster_info() -> None:
     """
     Stores the current hostname in the database, ensuring that it is unique.
     This is used to identify the current node in a cluster.
     """
+    iface = get_first_iface()
+    ip = iface.ip if iface else get_my_ip_from_db()
+    mac = iface.mac if iface else '00:00:00:00:00:00'
+
     try:
-        hostname = socket.getfqdn() + '|' + get_my_ip_from_db()
+        hostname = socket.getfqdn() + '|' + ip
         date = sql_now().isoformat()
         with transaction.atomic():
             current_host_property = (
@@ -39,7 +46,7 @@ def store_cluster_info() -> None:
             )
             if current_host_property:
                 # Update existing property
-                current_host_property.value = {'last_seen': date}
+                current_host_property.value = {'last_seen': date, 'mac': mac}
                 current_host_property.save()
             else:
                 # Create new property
@@ -61,7 +68,10 @@ def enumerate_cluster_nodes() -> list[UDSClusterNode]:
         properties = models.Properties.objects.filter(owner_type='cluster')
         return [
             UDSClusterNode(
-                hostname=prop.key.split('|')[0], ip=prop.key.split('|')[1], last_seen=datetime.datetime.fromisoformat(prop.value['last_seen'])
+                hostname=prop.key.split('|')[0],
+                ip=prop.key.split('|')[1],
+                last_seen=datetime.datetime.fromisoformat(prop.value['last_seen']),
+                mac=prop.value.get('mac', '00:00:00:00:00:00'),
             )
             for prop in properties
             if 'last_seen' in prop.value and '|' in prop.key

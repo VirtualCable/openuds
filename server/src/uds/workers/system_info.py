@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
 
 
 class SystemInformation(Job):
-    frecuency = 3600
+    frecuency = 300  # 5 minutes
     friendly_name = 'System Information update'
 
     def run(self) -> None:

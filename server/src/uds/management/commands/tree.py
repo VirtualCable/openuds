@@ -57,6 +57,7 @@ CONSIDERED_OLD: typing.Final[datetime.timedelta] = datetime.timedelta(days=365)
 def get_serialized_from_managed_object(
     mod: 'models.ManagedObjectModel',
     removable_fields: typing.Optional[list[str]] = None,
+    callback: typing.Optional[typing.Callable[[models.ManagedObjectModel, dict[str, typing.Any]], None]] = None,
 ) -> collections.abc.Mapping[str, typing.Any]:
     try:
         obj: 'Module' = mod.get_instance()
@@ -82,6 +83,10 @@ def get_serialized_from_managed_object(
         values['type_name'] = str(obj.type_name)
         values['comments'] = mod.comments
 
+        # May alter values with callback
+        if callback:
+            callback(mod, values)
+
         return values
     except Exception:
         return {}
@@ -91,12 +96,13 @@ def get_serialized_from_model(
     mod: 'dbmodels.Model',
     removable_fields: typing.Optional[list[str]] = None,
     password_fields: typing.Optional[list[str]] = None,
+    exclude_uuid: bool = True,
 ) -> collections.abc.Mapping[str, typing.Any]:
     removable_fields = removable_fields or []
     password_fields = password_fields or []
     try:
         values = mod._meta.managers[0].filter(pk=mod.pk).values()[0]
-        for i in ['uuid', 'id'] + removable_fields:
+        for i in (['uuid', 'id'] if exclude_uuid else []) + removable_fields:
             if i in values:
                 del values[i]
 
@@ -259,11 +265,27 @@ class Command(BaseCommand):
             tree[counter('AUTHENTICATORS')] = authenticators
 
             # transports
+            def trans_callback(mod: models.ManagedObjectModel, values: dict[str, typing.Any]) -> None:
+                # Add transport type
+                if 'tunnel' in values:
+                    tunnel = models.Server.objects.filter(
+                        type=types.servers.ServerType.TUNNEL, uuid=values['tunnel']
+                    ).first()
+                    if tunnel:
+                        values['tunnel'] = get_serialized_from_model(tunnel, exclude_uuid=False)
+                    elif values['tunnel']:
+                        values['tunnel'] += ' (not found)'
+
             transports: dict[str, typing.Any] = {}
             for transport in models.Transport.objects.all():
-                transports[transport.name] = get_serialized_from_managed_object(transport)
+                transports[transport.name] = get_serialized_from_managed_object(
+                    transport, callback=trans_callback
+                )
 
-            tree[counter('TRANSPORTS')] = transports
+            # Tunnel servers
+            tunnels: dict[str, typing.Any] = {}
+            for tunnel in models.Server.objects.filter(type=types.servers.ServerType.TUNNEL):
+                tunnels[tunnel.hostname] = get_serialized_from_model(tunnel, exclude_uuid=False)
 
             # Networks
             networks: dict[str, typing.Any] = {}
@@ -273,7 +295,11 @@ class Command(BaseCommand):
                     'transports': [t.name for t in network.transports.all()],
                 }
 
-            tree[counter('NETWORKS')] = networks
+            tree[counter('CONNECTIVITY')] = {
+                'transports': transports,
+                'tunnels': tunnels,
+                'networks': networks,
+            }
 
             # os managers
             osmanagers: dict[str, typing.Any] = {}
@@ -354,16 +380,30 @@ class Command(BaseCommand):
 
             tree[counter('CONFIG')] = cfg
 
+            # Last 7 days of logs
+            logs = [
+                get_serialized_from_model(log_entry)
+                for log_entry in models.Log.objects.filter(
+                    created__gt=now - datetime.timedelta(days=7)
+                ).order_by('-created')
+            ]
+            # Cluster nodes
+            cluster_nodes: list[str] = [str(node) for node in cluster.enumerate_cluster_nodes()]
+            # Scheduled jobs
+            scheduled_jobs: list[dict[str, typing.Any]] = [
+                {i.name: get_serialized_from_model(i)} for i in models.Scheduler.objects.all()
+            ]
+            delayed_tasks: list[dict[str, typing.Any]] = [
+                {task.insert_date.strftime('%Y-%m-%d %H:%M:%S'): get_serialized_from_model(task)}
+                for task in models.DelayedTask.objects.all()
+            ]
+
             # system
             tree[counter('SYSTEM')] = {
-                # Last 7 days of logs
-                'logs': [
-                    get_serialized_from_model(log_entry)
-                    for log_entry in models.Log.objects.filter(
-                        created__gt=now - datetime.timedelta(days=7)
-                    ).order_by('-created')
-                ],
-                'cluster_nodes': [str(node) for node in cluster.enumerate_cluster_nodes()],
+                'logs': logs,
+                'cluster_nodes': cluster_nodes,
+                'scheduled_jobs': scheduled_jobs,
+                'delayed_tasks': delayed_tasks,
             }
 
             self.stdout.write(yaml.safe_dump(tree, default_flow_style=False))
