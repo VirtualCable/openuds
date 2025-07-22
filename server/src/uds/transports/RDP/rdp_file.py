@@ -172,19 +172,19 @@ class RDPFile:
 
         # RDP Security is A MUST if no username nor password is provided
         # NLA requires USERNAME&PASSWORD previously
-        force_rdp_security = False
+        no_credentials = False
         if self.username != '':
             params.append('/u:{}'.format(self.username))
         else:
-            force_rdp_security = True
+            no_credentials = True
         if self.password:
             params.append('/p:{}'.format(self.password))
         else:
-            force_rdp_security = True
+            no_credentials = True
         if self.domain != '':
             params.append('/d:{}'.format(self.domain))
 
-        if force_rdp_security:
+        if no_credentials and not '/sec' in params:
             params.append('/sec:rdp')
             
         if self.connection_bar and '/floatbar' not in params:
