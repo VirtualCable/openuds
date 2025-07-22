@@ -22,8 +22,19 @@ class UDSClusterNode(typing.NamedTuple):
     last_seen: datetime.datetime
     mac: str = '00:00:00:00:00:00'
 
+    def as_dict(self) -> dict[str, str]:
+        """
+        Returns a dictionary representation of the UDSClusterNode.
+        """
+        return {
+            'hostname': self.hostname,
+            'ip': self.ip,
+            'last_seen': self.last_seen.isoformat(),
+            'mac': self.mac,
+        }
+
     def __str__(self) -> str:
-        return f'Node {self.hostname} ({self.ip}) last seen at {self.last_seen.isoformat()}'
+        return f'{self.hostname} ({self.ip}) - Last seen: {self.last_seen.isoformat()} - MAC: {self.mac}'
 
 
 def store_cluster_info() -> None:
