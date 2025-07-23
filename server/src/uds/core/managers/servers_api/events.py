@@ -201,5 +201,5 @@ def process(server: 'models.Server', data: dict[str, typing.Any]) -> typing.Any:
     try:
         return fnc(server, data)
     except Exception as e:
-        logger.error('Exception processing event %s: %s', data, e)
+        logger.exception('Exception processing event %s: %s', data, e)
         return rest_result('error', error=str(e))
