@@ -36,6 +36,14 @@ DATABASES = {
         'HOST': 'localhost',  # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '3306',  # Set to empty string for default. Not used with sqlite3.
         # 'CONN_MAX_AGE': 600,		     # Enable DB Pooling, 10 minutes max connection duration
+    },
+    'persistent': {
+        'ENGINE': 'django.db.backends.sqlite3',  # Persistent DB, used for persistent data
+        'NAME': os.path.join(BASE_DIR, 'persistent.sqlite3'),  # Path to persistent DB file
+        'OPTIONS': {
+            'timeout': 20,  # Timeout for sqlite3 connections
+            'transaction_mode': 'IMMEDIATE',  # Use immediate transaction mode for better concurrency
+        },
     }
 }
 
