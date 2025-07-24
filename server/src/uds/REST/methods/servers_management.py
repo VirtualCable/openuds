@@ -188,7 +188,10 @@ class ServersServers(DetailHandler):
                     {'mac': {'title': _('Mac')}},
                 ]
                 if not parent.is_managed()
-                else [{'listen_port': {'title': _('Port')}}]
+                else [
+                    {'mac': {'title': _('Mac')}},
+                    {'listen_port': {'title': _('Port')}},
+                ]
             )
             + [
                 {

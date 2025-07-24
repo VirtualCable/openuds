@@ -388,7 +388,7 @@ class Command(BaseCommand):
                 ).order_by('-created')
             ]
             # Cluster nodes
-            cluster_nodes: list[str] = [str(node) for node in cluster.enumerate_cluster_nodes()]
+            cluster_nodes: list[dict[str, str]] = [node.as_dict() for node in cluster.enumerate_cluster_nodes()]
             # Scheduled jobs
             scheduled_jobs: list[dict[str, typing.Any]] = [
                 {i.name: get_serialized_from_model(i)} for i in models.Scheduler.objects.all()
