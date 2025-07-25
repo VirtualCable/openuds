@@ -58,7 +58,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class AuthenticatorItem(types.rest.ItemDictType):
+class AuthenticatorItem(types.rest.ManagedObjectDictType):
     numeric_id: int
     id: str
     name: str
@@ -72,9 +72,6 @@ class AuthenticatorItem(types.rest.ItemDictType):
     mfa_id: str
     small_name: str
     users_count: int
-    type: str
-    type_name: str
-    type_info: types.rest.TypeInfoDict
     permission: int
 
 
@@ -196,7 +193,6 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
             'users_count': item.users.count(),
             'type': type_.mod_type(),
             'type_name': type_.mod_name(),
-            'type_info': self.type_as_dict(type_),
             'permission': permissions.effective_permissions(self._user, item),
         }
 

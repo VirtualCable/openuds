@@ -94,21 +94,19 @@ class Permissions(Handler):
                 entity = perm.user
 
             # If entity is None, it means that the permission is not valid anymore (user or group deleted on db manually?)
-            if not entity:
-                continue
-
-            res.append(
-                {
-                    'id': perm.uuid,
-                    'type': kind,
-                    'auth': entity.manager.uuid,
-                    'auth_name': entity.manager.name,
-                    'entity_id': entity.uuid,
-                    'entity_name': entity.name,
-                    'perm': perm.permission,
-                    'perm_name': perm.as_str,
-                }
-            )
+            if entity:
+                res.append(
+                    {
+                        'id': perm.uuid,
+                        'type': kind,
+                        'auth': entity.manager.uuid,
+                        'auth_name': entity.manager.name,
+                        'entity_id': entity.uuid,
+                        'entity_name': entity.name,
+                        'perm': perm.permission,
+                        'perm_name': perm.as_str,
+                    }
+                )
 
         return sorted(res, key=lambda v: v['auth_name'] + v['entity_name'])
 

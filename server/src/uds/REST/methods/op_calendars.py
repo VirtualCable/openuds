@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import datetime
 import json
 import logging
 import typing
@@ -51,10 +52,16 @@ logger = logging.getLogger(__name__)
 ALLOW = 'ALLOW'
 DENY = 'DENY'
 
+class AccessCalendarItem(types.rest.ItemDictType):
+    id: str
+    calendar_id: str
+    calendar: str
+    access: str
+    priority: int
 
-class AccessCalendars(DetailHandler):
+class AccessCalendars(DetailHandler[AccessCalendarItem]):
     @staticmethod
-    def as_dict(item: 'models.CalendarAccess|models.CalendarAccessMeta') -> types.rest.ItemDictType:
+    def as_dict(item: 'models.CalendarAccess|models.CalendarAccessMeta') -> AccessCalendarItem:
         return {
             'id': item.uuid,
             'calendar_id': item.calendar.uuid,
@@ -63,7 +70,7 @@ class AccessCalendars(DetailHandler):
             'priority': item.priority,
         }
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult[AccessCalendarItem]:
         # parent can be a ServicePool or a metaPool
         parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
 
@@ -126,7 +133,20 @@ class AccessCalendars(DetailHandler):
         log.log(parent, types.log.LogLevel.INFO, log_str, types.log.LogSource.ADMIN)
 
 
-class ActionsCalendars(DetailHandler):
+class ActionCalendarItem(types.rest.ItemDictType):
+    id: str
+    calendar_id: str
+    calendar: str
+    action: str
+    description: str
+    at_start: bool
+    events_offset: int
+    params: dict[str, typing.Any]
+    pretty_params: str
+    next_execution: typing.Optional[datetime.datetime]
+    last_execution: typing.Optional[datetime.datetime]
+
+class ActionsCalendars(DetailHandler[ActionCalendarItem]):
     """
     Processes the transports detail requests of a Service Pool
     """
@@ -136,7 +156,7 @@ class ActionsCalendars(DetailHandler):
     ]
 
     @staticmethod
-    def as_dict(item: 'models.CalendarAction') -> dict[str, typing.Any]:
+    def as_dict(item: 'models.CalendarAction') -> ActionCalendarItem:
         action = consts.calendar.CALENDAR_ACTION_DICT.get(item.action)
         descrption = action.get('description') if action is not None else ''
         params = json.loads(item.params)
@@ -154,7 +174,7 @@ class ActionsCalendars(DetailHandler):
             'last_execution': item.last_execution,
         }
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult[ActionCalendarItem]:
         parent = ensure.is_instance(parent, models.ServicePool)
         try:
             if item is None:

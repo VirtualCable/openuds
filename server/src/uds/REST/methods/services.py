@@ -58,7 +58,43 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class Services(DetailHandler):  # pylint: disable=too-many-public-methods
+class ServiceItem(types.rest.ManagedObjectDictType):
+    id: str
+    name: str
+    tags: list[str]
+    comments: str
+    deployed_services_count: int
+    user_services_count: int
+    max_services_count_type: str
+    maintenance_mode: bool
+    permission: int
+    info: typing.NotRequired['ServiceInfo']
+
+
+class ServiceInfo(types.rest.ItemDictType):
+    icon: str
+    needs_publication: bool
+    max_deployed: int
+    uses_cache: bool
+    uses_cache_l2: bool
+    cache_tooltip: str
+    cache_tooltip_l2: str
+    needs_osmanager: bool
+    allowed_protocols: list[str]
+    services_type_provided: str
+    can_reset: bool
+    can_list_assignables: bool
+
+
+class ServicePoolResumeItem(types.rest.ItemDictType):
+    id: str
+    name: str
+    thumb: str
+    user_services_count: int
+    state: str
+
+
+class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-methods
     """
     Detail handler for Services, whose parent is a Provider
     """
@@ -66,7 +102,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
     custom_methods = ['servicepools']
 
     @staticmethod
-    def service_info(item: models.Service) -> dict[str, typing.Any]:
+    def service_info(item: models.Service) -> ServiceInfo:
         info = item.get_type()
         overrided_fields = info.overrided_pools_fields or {}
 
@@ -79,28 +115,24 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             'cache_tooltip': _(info.cache_tooltip),
             'cache_tooltip_l2': _(info.cache_tooltip_l2),
             'needs_osmanager': info.needs_osmanager,
-            'allowed_protocols': info.allowed_protocols,
+            'allowed_protocols': [str(i) for i in info.allowed_protocols],
             'services_type_provided': info.services_type_provided,
             'can_reset': info.can_reset,
             'can_list_assignables': info.can_assign(),
         }
 
     @staticmethod
-    def service_to_dict(item: models.Service, perm: int, full: bool = False) -> types.rest.ItemDictType:
+    def service_to_dict(item: models.Service, perm: int, full: bool = False) -> ServiceItem:
         """
         Convert a service db item to a dict for a rest response
         :param item: Service item (db)
         :param full: If full is requested, add "extra" fields to complete information
         """
-        item_type = item.get_type()
-        ret_value: dict[str, typing.Any] = {
+        ret_value: ServiceItem = {
             'id': item.uuid,
             'name': item.name,
             'tags': [tag.tag for tag in item.tags.all()],
             'comments': item.comments,
-            'type': item.data_type,   # Compat with old code
-            'data_type': item.data_type,
-            'type_name': _(item_type.mod_name()),
             'deployed_services_count': item.deployedServices.count(),
             'user_services_count': models.UserService.objects.filter(deployed_service__service=item)
             .exclude(state__in=State.INFO_STATES)
@@ -109,12 +141,14 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             'maintenance_mode': item.provider.maintenance_mode,
             'permission': perm,
         }
+        Services.fill_instance_type(item, ret_value)
+
         if full:
             ret_value['info'] = Services.service_info(item)
 
         return ret_value
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult[ServiceItem]:
         parent = ensure.is_instance(parent, models.Provider)
         # Check what kind of access do we have to parent provider
         perm = permissions.effective_permissions(self._user, parent)
@@ -123,7 +157,9 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                 return [Services.service_to_dict(k, perm) for k in parent.services.all()]
             k = parent.services.get(uuid=process_uuid(item))
             val = Services.service_to_dict(k, perm, full=True)
-            return self.fill_instance_fields(k, val)
+            # On detail, ne wee to fill the instance fields by hand
+            self.fill_instance_fields(k, val)
+            return val
         except Exception as e:
             logger.error('Error getting services for %s: %s', parent, e)
             raise self.invalid_item_response(repr(e)) from e
@@ -141,7 +177,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         except Exception:  # nosec: This is a delete, we don't care about exceptions
             pass
 
-    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
+    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> ServiceItem:
         parent = ensure.is_instance(parent, models.Provider)
         # Extract item db fields
         # We need this fields for all
@@ -188,7 +224,10 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             service.data = service_instance.serialize()
 
             service.save()
-            return {'id': service.uuid}
+            return Services.service_to_dict(
+                service, permissions.effective_permissions(self._user, service), full=True
+            )
+
         except models.Service.DoesNotExist:
             raise self.invalid_item_response() from None
         except IntegrityError as e:  # Duplicate key probably
@@ -293,7 +332,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             parent_instance = parent.get_instance()
             service_type = parent_instance.get_service_by_type(for_type)
             if not service_type:
-                raise self.invalid_item_response(f'Gui for {for_type} not found')
+                raise self.invalid_item_response(f'Gui for type "{for_type}" not found')
             with Environment.temporary_environment() as env:
                 service = service_type(
                     env, parent_instance
@@ -335,11 +374,11 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         except Exception:
             raise self.invalid_item_response() from None
 
-    def servicepools(self, parent: 'Model', item: str) -> types.rest.GetItemsResult:
+    def servicepools(self, parent: 'Model', item: str) -> list[ServicePoolResumeItem]:
         parent = ensure.is_instance(parent, models.Provider)
         service = parent.services.get(uuid=process_uuid(item))
         logger.debug('Got parameters for servicepools: %s, %s', parent, item)
-        res: types.rest.ItemListType = []
+        res: list[ServicePoolResumeItem] = []
         for i in service.deployedServices.all():
             try:
                 self.ensure_has_access(

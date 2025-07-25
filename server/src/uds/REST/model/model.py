@@ -54,7 +54,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-class ModelHandler(BaseModelHandler, typing.Generic[types.rest.T_Item]):
+class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.rest.T_Item]):
     """
     Basic Handler for a model
     Basically we will need same operations for all models, so we can

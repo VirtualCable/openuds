@@ -48,21 +48,22 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+class TokenItem(types.rest.ItemDictType):
+    id: str
+    name: str
+    stamp: datetime.datetime
+    username: str
+    ip: str
+    hostname: str
+    listen_port: int
+    mac: str
+    token: str
+    type: str
+    os: str
+
 
 # REST API for Server Tokens management (for admin interface)
-class ServersTokens(ModelHandler):
-    class TokenItem(types.rest.ItemDictType):
-        id: str
-        name: str
-        stamp: datetime.datetime
-        username: str
-        ip: str
-        hostname: str
-        listen_port: int
-        mac: str
-        token: str
-        type: str
-        os: str
+class ServersTokens(ModelHandler[TokenItem]):
 
     # servers/groups/[id]/servers
     model = models.Server
@@ -120,28 +121,29 @@ class ServersTokens(ModelHandler):
         return consts.OK
 
 
+class ServerItem(types.rest.ItemDictType):
+    id: str
+    hostname: str
+    ip: str
+    listen_port: int
+    mac: str
+    maintenance_mode: bool
+    register_username: str
+    stamp: datetime.datetime
+
 # REST API For servers (except tunnel servers nor actors)
-class ServersServers(DetailHandler):
-    class ServerItem(types.rest.ItemDictType):
-        id: str
-        hostname: str
-        ip: str
-        listen_port: int
-        mac: str
-        maintenance_mode: bool
-        register_username: str
-        stamp: datetime.datetime
+class ServersServers(DetailHandler[ServerItem]):
 
     custom_methods = ['maintenance', 'importcsv']
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult[ServerItem]:
         parent = typing.cast('models.ServerGroup', parent)  # We will receive for sure
         try:
             if item is None:
                 q = parent.servers.all()
             else:
                 q = parent.servers.filter(uuid=process_uuid(item))
-            res: list[ServersServers.ServerItem] = []
+            res: list[ServerItem] = []
             i = None
             for i in q:
                 res.append(
@@ -157,10 +159,10 @@ class ServersServers(DetailHandler):
                     }
                 )
             if item is None:
-                return typing.cast(types.rest.GetItemsResult, res)
+                return res
             if not i:
-                raise Exception('Item not found')
-            return typing.cast(types.rest.GetItemsResult, res[0])
+                raise Exception('Item not found')  # Threated on the except below
+            return res[0]
         except Exception as e:
             logger.exception('REST servers')
             raise self.invalid_item_response() from e
@@ -432,18 +434,19 @@ class ServersServers(DetailHandler):
 
         return import_errors
 
+class GroupItem(types.rest.ItemDictType):
+    id: str
+    name: str
+    comments: str
+    type: str
+    subtype: str
+    type_name: str
+    tags: list[str]
+    servers_count: int
+    permission: types.permissions.PermissionType
 
-class ServersGroups(ModelHandler):
-    class GroupItem(types.rest.ItemDictType):
-        id: str
-        name: str
-        comments: str
-        type: str
-        subtype: str
-        type_name: str
-        tags: list[str]
-        servers_count: int
-        permission: types.permissions.PermissionType
+
+class ServersGroups(ModelHandler[GroupItem ]):
 
     custom_methods = [
         types.rest.ModelCustomMethod('stats', True),

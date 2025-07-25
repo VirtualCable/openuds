@@ -53,19 +53,20 @@ logger = logging.getLogger(__name__)
 # Enclosed methods under /item path
 
 
-class Notifiers(ModelHandler):
-    class NotifierItem(types.rest.ItemDictType):
-        id: str
-        name: str
-        level: str
-        enabled: bool
-        tags: list[str]
-        comments: str
-        type: str
-        type_name: str
-        permission: types.permissions.PermissionType
+class NotifierItem(types.rest.ItemDictType):
+    id: str
+    name: str
+    level: str
+    enabled: bool
+    tags: list[str]
+    comments: str
+    type: str
+    type_name: str
+    permission: types.permissions.PermissionType
 
-    
+
+class Notifiers(ModelHandler[NotifierItem]):
+
     path = 'messaging'
     model = Notifier
     save_fields = [
@@ -98,9 +99,7 @@ class Notifiers(ModelHandler):
         with Environment.temporary_environment() as env:
             notifier = notifier_type(env, None)
 
-            local_gui = self.add_default_fields(
-                notifier.gui_description(), ['name', 'comments', 'tags']
-            )
+            local_gui = self.add_default_fields(notifier.gui_description(), ['name', 'comments', 'tags'])
 
             for field in [
                 {
@@ -119,7 +118,7 @@ class Notifiers(ModelHandler):
                     'type': types.ui.FieldType.CHECKBOX,
                     'order': 103,
                     'default': True,
-                }
+                },
             ]:
                 self.add_field(local_gui, field)
 

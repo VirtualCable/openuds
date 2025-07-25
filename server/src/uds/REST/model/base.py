@@ -55,7 +55,7 @@ logger = logging.getLogger(__name__)
 
 
 # pylint: disable=unused-argument
-class BaseModelHandler(Handler):
+class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
     """
     Base Handler for Master & Detail Handlers
     """
@@ -329,23 +329,48 @@ class BaseModelHandler(Handler):
 
         return args
 
-    def fill_instance_fields(self, item: 'models.Model', dct: types.rest.ItemDictType) -> None:
+    @staticmethod
+    def fill_instance_type(item: 'models.Model', dct: types.rest.ManagedObjectDictType) -> None:
+        """
+        For Managed Objects (db element that contains a serialized object), fills a dictionary with the "type" and "type_name" parameters values.
+        For non managed objects, it does nothing
+
+        Args:
+            item: Item to fill type
+            dct: Dictionary to fill with type
+
+        """
+        if isinstance(item, ManagedObjectModel):
+            kind = item.get_type()
+            typing.cast(dict[str, typing.Any], dct)['type'] = kind.mod_type()
+            typing.cast(dict[str, typing.Any], dct)['type_name'] = kind.mod_name()
+
+    @staticmethod
+    def fill_instance_fields(item: 'models.Model', dct: types.rest.ItemDictType) -> None:
         """
         For Managed Objects (db element that contains a serialized object), fills a dictionary with the "field" parameters values.
         For non managed objects, it does nothing
-        
+
         Args:
             item: Item to fill fields
             dct: Dictionary to fill with fields
-            
+
         """
-        
+
         # Cast to allow override typing
-        res = typing.cast(dict[str, typing.Any], dct)
         if isinstance(item, ManagedObjectModel):
+            res = typing.cast(types.rest.ManagedObjectDictType, dct)
             i = item.get_instance()
             i.init_gui()  # Defaults & stuff
-            res.update(i.get_fields_as_dict())
+            fields = i.get_fields_as_dict()
+
+            # TODO: This will be removed in future versions, as it will be overseed by "instance" key
+            typing.cast(typing.Any, res).update(fields)  # Add fields to dict
+            res['type'] = i.mod_type()  # Add type
+            res['type_name'] = i.mod_name()  # Add type name
+            # Future inmplementation wil insert instace fields into "instance" key
+            # For now, just repeat the fields
+            res['instance'] = fields
 
     # Exceptions
     def invalid_request_response(self, message: typing.Optional[str] = None) -> exceptions.rest.HandlerError:

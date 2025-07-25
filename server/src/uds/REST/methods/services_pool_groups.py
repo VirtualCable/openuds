@@ -53,21 +53,16 @@ from uds.core.ui import gui
 # Enclosed methods under /item path
 
 
-class ServicesPoolGroups(ModelHandler):
-    class ServicePoolGroupItem(types.rest.ItemDictType):
-        id: str
-        name: str
-        comments: str
-        priority: int
-        image_id: str|None
-        
-    class ServicePoolGroupItemOverview(types.rest.ItemDictType):
-        id: str
-        name: str
-        priority: int
-        comments: str
-        thumb: str
+class ServicePoolGroupItem(types.rest.ItemDictType):
+    id: str
+    name: str
+    comments: str
+    priority: int
+    image_id: typing.NotRequired[str | None]
+    thumb: typing.NotRequired[str]
 
+
+class ServicesPoolGroups(ModelHandler[ServicePoolGroupItem]):
 
     path = 'gallery'
     model = ServicePoolGroup
@@ -104,25 +99,22 @@ class ServicesPoolGroups(ModelHandler):
         local_gui = self.add_default_fields([], ['name', 'comments', 'priority'])
 
         for field in [
-                        {
-                            'name': 'image_id',
-                            'choices': [gui.choice_image(-1, '--------', DEFAULT_THUMB_BASE64)]
-                            + gui.sorted_choices(
-                                [
-                                    gui.choice_image(v.uuid, v.name, v.thumb64)
-                                    for v in Image.objects.all()
-                                ]
-                            ),
-                            'label': gettext('Associated Image'),
-                            'tooltip': gettext('Image assocciated with this service'),
-                            'type': types.ui.FieldType.IMAGECHOICE,
-                            'order': 102,
-                        }
+            {
+                'name': 'image_id',
+                'choices': [gui.choice_image(-1, '--------', DEFAULT_THUMB_BASE64)]
+                + gui.sorted_choices(
+                    [gui.choice_image(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]
+                ),
+                'label': gettext('Associated Image'),
+                'tooltip': gettext('Image assocciated with this service'),
+                'type': types.ui.FieldType.IMAGECHOICE,
+                'order': 102,
+            }
         ]:
             self.add_field(local_gui, field)
 
         return local_gui
-    
+
     def item_as_dict(self, item: 'Model') -> ServicePoolGroupItem:
         item = ensure.is_instance(item, ServicePoolGroup)
         return {
@@ -133,9 +125,7 @@ class ServicesPoolGroups(ModelHandler):
             'image_id': item.image.uuid if item.image else None,
         }
 
-    def item_as_dict_overview(
-        self, item: 'Model'
-    ) -> ServicePoolGroupItemOverview:
+    def item_as_dict_overview(self, item: 'Model') -> ServicePoolGroupItem:
         item = ensure.is_instance(item, ServicePoolGroup)
         return {
             'id': item.uuid,

@@ -51,25 +51,24 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /item path
 
+class TransportItem(types.rest.ManagedObjectDictType):
+    id: str
+    name: str
+    tags: list[str]
+    comments: str
+    priority: int
+    label: str
+    net_filtering: str
+    networks: list[str]
+    allowed_oss: list[str]
+    pools: list[str]
+    pools_count: int
+    deployed_count: int
+    protocol: str
+    permission: int
 
-class Transports(ModelHandler):
-    class TransportItem(types.rest.ItemDictType):
-        id: str
-        name: str
-        tags: list[str]
-        comments: str
-        priority: int
-        label: str
-        net_filtering: str
-        networks: list[str]
-        allowed_oss: list[str]
-        pools: list[str]
-        pools_count: int
-        deployed_count: int
-        type: str
-        type_name: str
-        protocol: str
-        permission: int
+
+class Transports(ModelHandler[TransportItem]):
 
     model = Transport
     save_fields = [

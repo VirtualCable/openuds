@@ -58,13 +58,23 @@ VALID_PARAMS = (
 )
 
 
+class ReportItem(types.rest.ItemDictType):
+    id: str
+    mime_type: str
+    encoded: bool
+    group: str
+    name: str
+    description: str
+
+
 # Enclosed methods under /actor path
-class Reports(model.BaseModelHandler):
+class Reports(model.BaseModelHandler[ReportItem]):
     """
     Processes reports requests
     """
+
     min_access_role = consts.UserRole.ADMIN
- 
+
     table_title = _('Available reports')
     table_fields = [
         {'group': {'title': _('Group')}},
@@ -75,7 +85,9 @@ class Reports(model.BaseModelHandler):
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
     table_row_style = types.ui.RowStyleInfo(prefix='row-state-', field='state')
 
-    def _locate_report(self, uuid: str, values: typing.Optional[typing.Dict[str, typing.Any]] = None) -> 'Report':
+    def _locate_report(
+        self, uuid: str, values: typing.Optional[typing.Dict[str, typing.Any]] = None
+    ) -> 'Report':
         found = None
         logger.debug('Looking for report %s', uuid)
         for i in reports.available_reports:
@@ -149,9 +161,7 @@ class Reports(model.BaseModelHandler):
         return sorted(report.gui_description(), key=lambda f: f['gui']['order'])
 
     # Returns the list of
-    def get_items(
-        self, *args: typing.Any, **kwargs: typing.Any
-    ) -> typing.Generator[types.rest.ItemDictType, None, None]:
+    def get_items(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Generator[ReportItem, None, None]:
         for i in reports.available_reports:
             yield {
                 'id': i.get_uuid(),

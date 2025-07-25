@@ -61,20 +61,18 @@ class OfferItem(types.rest.ItemDictType):
     description: str
     icon: str
 
+class ProviderItem(types.rest.ManagedObjectDictType):
+    id: str
+    name: str
+    tags: list[str]
+    services_count: int
+    user_services_count: int
+    maintenance_mode: bool
+    offers: list[OfferItem]
+    comments: str
+    permission: types.permissions.PermissionType
 
-class Providers(ModelHandler):
-    class ProviderItem(types.rest.ItemDictType):
-        id: str
-        name: str
-        tags: list[str]
-        services_count: int
-        user_services_count: int
-        maintenance_mode: bool
-        offers: list[OfferItem]
-        type: str
-        type_name: str
-        comments: str
-        permission: types.permissions.PermissionType
+class Providers(ModelHandler[ProviderItem]):
 
     model = Provider
     detail = {'services': DetailServices, 'usage': ServicesUsage}
@@ -117,7 +115,7 @@ class Providers(ModelHandler):
             for t in type_.get_provided_services()
         ]
 
-        return {
+        val: ProviderItem = {
             'id': item.uuid,
             'name': item.name,
             'tags': [tag.vtag for tag in item.tags.all()],
@@ -132,6 +130,9 @@ class Providers(ModelHandler):
             'comments': item.comments,
             'permission': permissions.effective_permissions(self._user, item),
         }
+        
+        Providers.fill_instance_type(item, val)
+        return val
 
     def validate_delete(self, item: 'Model') -> None:
         item = ensure.is_instance(item, Provider)

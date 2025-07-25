@@ -50,7 +50,7 @@ from uds.models import Account, Image, OSManager, Service, ServicePool, ServiceP
 from uds.REST.model import ModelHandler
 
 from .op_calendars import AccessCalendars, ActionsCalendars
-from .services import Services
+from .services import Services, ServiceInfo
 from .user_services import AssignedUserService, CachedService, Changelog, Groups, Publications, Transports
 
 if typing.TYPE_CHECKING:
@@ -59,7 +59,50 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class ServicesPools(ModelHandler):
+class ServicePoolItem(types.rest.ItemDictType):
+    id: str
+    name: str
+    short_name: str
+    tags: typing.List[str]
+    parent: str
+    parent_type: str
+    comments: str
+    state: str
+    thumb: str
+    account: str
+    account_id: str | None
+    service_id: str
+    provider_id: str
+    image_id: str | None
+    initial_srvs: int
+    cache_l1_srvs: int
+    cache_l2_srvs: int
+    max_srvs: int
+    show_transports: bool
+    visible: bool
+    allow_users_remove: bool
+    allow_users_reset: bool
+    ignores_unused: bool
+    fallbackAccess: str
+    meta_member: list[dict[str, str]]
+    calendar_message: str
+    custom_message: str
+    display_custom_message: bool
+    osmanager_id: str | None
+
+    user_services_count: typing.NotRequired[int]
+    user_services_in_preparation: typing.NotRequired[int]
+    user_services_in_preparation: typing.NotRequired[int]
+    restrained: typing.NotRequired[bool]
+    permission: typing.NotRequired[int]
+    info: typing.NotRequired[ServiceInfo]
+    pool_group_id: typing.NotRequired[str | None]
+    pool_group_name: typing.NotRequired[str]
+    pool_group_thumb: typing.NotRequired[str]
+    usage: typing.NotRequired[str]
+
+
+class ServicesPools(ModelHandler[ServicePoolItem]):
     """
     Handles Services Pools REST requests
     """
@@ -131,7 +174,7 @@ class ServicesPools(ModelHandler):
 
     def get_items(
         self, *args: typing.Any, **kwargs: typing.Any
-    ) -> typing.Generator[types.rest.ItemDictType, None, None]:
+    ) -> typing.Generator[ServicePoolItem, None, None]:
         # Optimized query, due that there is a lot of info needed for theee
         d = sql_now() - datetime.timedelta(seconds=GlobalConfig.RESTRAINT_TIME.as_int())
         return super().get_items(
@@ -178,49 +221,7 @@ class ServicesPools(ModelHandler):
         # return super().get_items(overview=kwargs.get('overview', True), prefetch=['service', 'service__provider', 'servicesPoolGroup', 'image', 'tags'])
         # return super(ServicesPools, self).get_items(*args, **kwargs)
 
-    class SummaryItem(types.rest.ItemDictType):
-        id: str
-        name: str
-        short_name: str
-        tags: typing.List[str]
-        parent: str
-        parent_type: str
-        comments: str
-        state: str
-        thumb: str
-        account: str
-        account_id: str | None
-        service_id: str
-        provider_id: str
-        image_id: str | None
-        initial_srvs: int
-        cache_l1_srvs: int
-        cache_l2_srvs: int
-        max_srvs: int
-        show_transports: bool
-        visible: bool
-        allow_users_remove: bool
-        allow_users_reset: bool
-        ignores_unused: bool
-        fallbackAccess: str
-        meta_member: list[dict[str, str]]
-        calendar_message: str
-        custom_message: str
-        display_custom_message: bool
-        osmanager_id: str | None
-
-    class FullItem(SummaryItem):
-        user_services_count: int
-        user_services_in_preparation: int
-        restrained: bool
-        permission: int
-        info: dict[str, typing.Any]
-        pool_group_id: str | None
-        pool_group_name: str
-        pool_group_thumb: str
-        usage: str
-
-    def item_as_dict(self, item: 'Model') -> SummaryItem | FullItem:
+    def item_as_dict(self, item: 'Model') -> ServicePoolItem:
         item = ensure.is_instance(item, ServicePool)
         summary = 'summarize' in self._params
         # if item does not have an associated service, hide it (the case, for example, for a removed service)
@@ -241,7 +242,7 @@ class ServicesPools(ModelHandler):
         # This needs a lot of queries, and really does not apport anything important to the report
         # elif UserServiceManager.manager().canInitiateServiceFromDeployedService(item) is False:
         #     state = State.SLOWED_DOWN
-        val: ServicesPools.SummaryItem = {
+        val: ServicePoolItem = {
             'id': item.uuid,
             'name': item.name,
             'short_name': item.short_name,
@@ -277,9 +278,6 @@ class ServicesPools(ModelHandler):
         if summary:
             return val
         
-        # Recast to complete data
-        val = typing.cast(ServicesPools.FullItem, val)
-
         if hasattr(item, 'valid_count'):
             valid_count = getattr(item, 'valid_count')
             preparing_count = getattr(item, 'preparing_count')

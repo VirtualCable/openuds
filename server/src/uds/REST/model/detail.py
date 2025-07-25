@@ -57,7 +57,7 @@ logger = logging.getLogger(__name__)
 # Details do not have types at all
 # so, right now, we only process details petitions for Handling & tables info
 # noinspection PyMissingConstructor
-class DetailHandler(BaseModelHandler, typing.Generic[types.rest.T_Item]):
+class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.rest.T_Item]):
     """
     Detail handler (for relations such as provider-->services, authenticators-->users,groups, deployed services-->cache,assigned, groups, transports
     Urls recognized for GET are:

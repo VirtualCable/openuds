@@ -50,17 +50,17 @@ logger = logging.getLogger(__name__)
 # Enclosed methods under /osm path
 
 
-class OsManagers(ModelHandler):
-    class OsManagerItem(types.rest.ItemDictType):
-        id: str
-        name: str
-        tags: list[str]
-        deployed_count: int
-        type: str
-        type_name: str
-        servicesTypes: list[str]
-        comments: str
-        permission: types.permissions.PermissionType
+class OsManagerItem(types.rest.ManagedObjectDictType):
+    id: str
+    name: str
+    tags: list[str]
+    deployed_count: int
+    servicesTypes: list[str]
+    comments: str
+    permission: types.permissions.PermissionType
+
+
+class OsManagers(ModelHandler[OsManagerItem]):
 
     model = OSManager
     save_fields = ['name', 'comments', 'tags']
@@ -76,19 +76,20 @@ class OsManagers(ModelHandler):
 
     def os_manager_as_dict(self, osm: OSManager) -> OsManagerItem:
         type_ = osm.get_type()
-        return {
+        ret_value: OsManagerItem = {
             'id': osm.uuid,
             'name': osm.name,
             'tags': [tag.tag for tag in osm.tags.all()],
             'deployed_count': osm.deployedServices.count(),
-            'type': type_.mod_type(),
-            'type_name': type_.mod_name(),
             'servicesTypes': [
                 type_.services_types
             ],  # A list for backward compatibility. TODO: To be removed when admin interface is changed
             'comments': osm.comments,
             'permission': permissions.effective_permissions(self._user, osm),
         }
+        # Fill type and type_name
+        OsManagers.fill_instance_type(osm, ret_value)
+        return ret_value
 
     def item_as_dict(self, item: 'Model') -> OsManagerItem:
         item = ensure.is_instance(item, OSManager)

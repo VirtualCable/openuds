@@ -112,6 +112,15 @@ class ItemDictType(typing.TypedDict):
     pass
 
 
+class ManagedObjectDictType(typing.TypedDict):
+    """
+    Represents a managed object type, with its name and type.
+    This is used to represent the type of a managed object in the REST API.
+    """
+    type: typing.NotRequired[str]       # Type of the managed object
+    type_name: typing.NotRequired[str]  # Name of the type of the managed object
+    instance: typing.NotRequired[typing.Any]  # Instance of the managed object, if available
+
 # Alias for item type
 # ItemDictType = dict[str, typing.Any]
 T_Item = typing.TypeVar("T_Item", bound=ItemDictType)

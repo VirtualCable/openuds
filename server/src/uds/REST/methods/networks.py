@@ -48,20 +48,20 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /item path
 
+class NetworkItem(types.rest.ItemDictType):
+    id: str
+    name: str
+    tags: list[str]
+    net_string: str
+    transports_count: int
+    authenticators_count: int
+    permission: types.permissions.PermissionType
 
-class Networks(ModelHandler):
+class Networks(ModelHandler[NetworkItem]):
     """
     Processes REST requests about networks
     Implements specific handling for network related requests using GUI
     """
-    class NetworkItem(types.rest.ItemDictType):
-        id: str
-        name: str
-        tags: list[str]
-        net_string: str
-        transports_count: int
-        authenticators_count: int
-        permission: types.permissions.PermissionType
 
 
     model = Network
