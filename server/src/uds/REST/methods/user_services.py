@@ -63,7 +63,7 @@ class AssignedService(DetailHandler):
         item: models.UserService,
         props: typing.Optional[dict[str, typing.Any]] = None,
         is_cache: bool = False,
-    ) -> dict[str, typing.Any]:
+    ) -> types.rest.ItemDictType:
         """
         Converts an assigned/cached service db item to a dictionary for REST response
         :param item: item to convert
@@ -113,7 +113,8 @@ class AssignedService(DetailHandler):
                     'source_ip': item.src_ip,
                 }
             )
-        return val
+        # ItemDictType is a TypedDict, but no members, so this is valid
+        return typing.cast(types.rest.ItemDictType, val)
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = ensure.is_instance(parent, models.ServicePool)
@@ -232,7 +233,7 @@ class AssignedService(DetailHandler):
         if not item:
             raise self.invalid_item_response('Only modify is allowed')
         fields = self.fields_from_params(['auth_id:_', 'user_id:_', 'ip:_'])
-        
+
         userservice = parent.userServices.get(uuid=process_uuid(item))
         if 'user_id' in fields and 'auth_id' in fields:
             user = models.User.objects.get(uuid=process_uuid(fields['user_id']))
@@ -343,16 +344,19 @@ class Groups(DetailHandler):
         parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
 
         return [
-            {
-                'id': group.uuid,
-                'auth_id': group.manager.uuid,
-                'name': group.name,
-                'group_name': group.pretty_name,
-                'comments': group.comments,
-                'state': group.state,
-                'type': 'meta' if group.is_meta else 'group',
-                'auth_name': group.manager.name,
-            }
+            typing.cast(
+                types.rest.ItemDictType,
+                {
+                    'id': group.uuid,
+                    'auth_id': group.manager.uuid,
+                    'name': group.name,
+                    'group_name': group.pretty_name,
+                    'comments': group.comments,
+                    'state': group.state,
+                    'type': 'meta' if group.is_meta else 'group',
+                    'auth_name': group.manager.name,
+                },
+            )
             for group in typing.cast(collections.abc.Iterable[models.Group], parent.assignedGroups.all())
         ]
 
@@ -429,14 +433,17 @@ class Transports(DetailHandler):
                 raise self.invalid_item_response()
 
         return [
-            {
-                'id': i.uuid,
-                'name': i.name,
-                'type': get_type(i),
-                'comments': i.comments,
-                'priority': i.priority,
-                'trans_type': _(i.get_type().mod_name()),
-            }
+            typing.cast(
+                types.rest.ItemDictType,
+                {
+                    'id': i.uuid,
+                    'name': i.name,
+                    'type': get_type(i),
+                    'comments': i.comments,
+                    'priority': i.priority,
+                    'trans_type': _(i.get_type().mod_name()),
+                },
+            )
             for i in parent.transports.all()
             if get_type(i)
         ]
@@ -545,14 +552,17 @@ class Publications(DetailHandler):
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = ensure.is_instance(parent, models.ServicePool)
         return [
-            {
-                'id': i.uuid,
-                'revision': i.revision,
-                'publish_date': i.publish_date,
-                'state': i.state,
-                'reason': State.from_str(i.state).is_errored() and i.get_instance().error_reason() or '',
-                'state_date': i.state_date,
-            }
+            typing.cast(
+                types.rest.ItemDictType,
+                {
+                    'id': i.uuid,
+                    'revision': i.revision,
+                    'publish_date': i.publish_date,
+                    'state': i.state,
+                    'reason': State.from_str(i.state).is_errored() and i.get_instance().error_reason() or '',
+                    'state_date': i.state_date,
+                },
+            )
             for i in parent.publications.all()
         ]
 
@@ -586,11 +596,14 @@ class Changelog(DetailHandler):
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
         parent = ensure.is_instance(parent, models.ServicePool)
         return [
-            {
-                'revision': i.revision,
-                'stamp': i.stamp,
-                'log': i.log,
-            }
+            typing.cast(
+                types.rest.ItemDictType,
+                {
+                    'revision': i.revision,
+                    'stamp': i.stamp,
+                    'log': i.log,
+                },
+            )
             for i in parent.changelog.all()
         ]
 
