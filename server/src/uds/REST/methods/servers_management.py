@@ -134,7 +134,7 @@ class ServersServers(DetailHandler):
 
     custom_methods = ['maintenance', 'importcsv']
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult:
         parent = typing.cast('models.ServerGroup', parent)  # We will receive for sure
         try:
             if item is None:
@@ -157,10 +157,10 @@ class ServersServers(DetailHandler):
                     }
                 )
             if item is None:
-                return typing.cast(types.rest.ManyItemsDictType, res)
+                return typing.cast(types.rest.GetItemsResult, res)
             if not i:
                 raise Exception('Item not found')
-            return typing.cast(types.rest.ManyItemsDictType, res[0])
+            return typing.cast(types.rest.GetItemsResult, res[0])
         except Exception as e:
             logger.exception('REST servers')
             raise self.invalid_item_response() from e

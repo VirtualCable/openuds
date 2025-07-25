@@ -38,7 +38,6 @@ import ssl
 import typing
 import datetime
 
-import certifi
 import requests
 import requests.adapters
 import urllib3
@@ -210,7 +209,7 @@ def secure_requests_session(*, verify: 'str|bool' = True, proxies: 'dict[str, st
             # See urllib3.poolmanager.SSL_KEYWORDS for all available keys.
             self._ssl_context = kwargs['ssl_context'] = create_client_sslcontext(verify=verify is True)
 
-            return super().init_poolmanager(*args, **kwargs)  # type: ignore
+            return super().init_poolmanager(*args, **kwargs)  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
 
         def cert_verify(self, conn: typing.Any, url: typing.Any, verify: 'str|bool', cert: typing.Any) -> None:
             """Verify a SSL certificate. This method should not be called from user
@@ -231,7 +230,7 @@ def secure_requests_session(*, verify: 'str|bool' = True, proxies: 'dict[str, st
             #     conn_kw = conn.__dict__['conn_kw']
             #     conn_kw['ssl_context'] = self.ssl_context
 
-            super().cert_verify(conn, url, verify, cert)  # type: ignore
+            super().cert_verify(conn, url, verify, cert)  # pyright: ignore[reportUnknownMemberType]
 
     session = requests.Session()
     session.mount("https://", UDSHTTPAdapter())

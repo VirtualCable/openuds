@@ -60,7 +60,7 @@ class TunnelServers(DetailHandler):
         mac: str
         maintenance: bool
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult:
         parent = ensure.is_instance(parent, models.ServerGroup)
         try:
             multi = False
@@ -82,10 +82,10 @@ class TunnelServers(DetailHandler):
                     }
                 )
             if multi:
-                return typing.cast(types.rest.ManyItemsDictType, res)
+                return typing.cast(types.rest.GetItemsResult, res)
             if not i:
                 raise Exception('Item not found')
-            return typing.cast(types.rest.ManyItemsDictType, res[0])
+            return typing.cast(types.rest.GetItemsResult, res[0])
         except Exception as e:
             logger.exception('REST groups')
             raise self.invalid_item_response() from e

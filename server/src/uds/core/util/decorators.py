@@ -45,8 +45,7 @@ logger = logging.getLogger(__name__)
 
 # FT = typing.TypeVar('FT', bound=collections.abc.Callable[..., typing.Any])
 P = typing.ParamSpec('P')
-R = typing.TypeVar('R')
-
+R = typing.TypeVar('R', bound=typing.Any)
 
 @dataclasses.dataclass
 class CacheInfo:
@@ -147,16 +146,16 @@ class _HasConnect(typing.Protocol):
 
 # Keep this, but mypy does not likes it... it's perfect with pyright
 # We use pyright for type checking, so we will use this
-HasConnect = typing.TypeVar('HasConnect', bound=_HasConnect)
+HAS_CONNECT = typing.TypeVar('HAS_CONNECT', bound=_HasConnect)
 
 
 def ensure_connected(
-    func: collections.abc.Callable[typing.Concatenate[HasConnect, P], R],
-) -> collections.abc.Callable[typing.Concatenate[HasConnect, P], R]:
+    func: collections.abc.Callable[typing.Concatenate[HAS_CONNECT, P], R],
+) -> collections.abc.Callable[typing.Concatenate[HAS_CONNECT, P], R]:
     """This decorator calls "connect" method of the class of the wrapped object"""
 
     @functools.wraps(func)
-    def new_func(obj: HasConnect, /, *args: P.args, **kwargs: P.kwargs) -> R:
+    def new_func(obj: HAS_CONNECT, /, *args: P.args, **kwargs: P.kwargs) -> R:
         # self = typing.cast(_HasConnect, args[0])
         obj.connect()
         return func(obj, *args, **kwargs)
@@ -181,11 +180,11 @@ def ensure_connected(
 # Decorator for caching
 # This decorator will cache the result of the function for a given time, and given parameters
 def cached(
-    prefix: typing.Optional[str] = None,
-    timeout: typing.Union[collections.abc.Callable[[], int], int] = -1,
-    args: typing.Optional[typing.Union[collections.abc.Iterable[int], int]] = None,
-    kwargs: typing.Optional[typing.Union[collections.abc.Iterable[str], str]] = None,
-    key_helper: typing.Optional[collections.abc.Callable[[typing.Any], str]] = None,
+    prefix: str | None = None,
+    timeout: collections.abc.Callable[[], int] | int = -1,
+    args: collections.abc.Iterable[int] | int | None = None,
+    kwargs: collections.abc.Iterable[str] | str | None = None,
+    key_helper: collections.abc.Callable[[typing.Any], str] | None = None,
 ) -> collections.abc.Callable[[collections.abc.Callable[P, R]], collections.abc.Callable[P, R]]:
     """
     Decorator that gives us a "quick & clean" caching feature on the database.
@@ -340,8 +339,8 @@ def threaded(func: collections.abc.Callable[P, None]) -> collections.abc.Callabl
 
 
 def blocker(
-    request_attr: typing.Optional[str] = None,
-    max_failures: typing.Optional[int] = None,
+    request_attr: str | None = None,
+    max_failures: int | None = None,
     ignore_block_config: bool = False,
 ) -> collections.abc.Callable[[collections.abc.Callable[P, R]], collections.abc.Callable[P, R]]:
     """
@@ -375,7 +374,7 @@ def blocker(
                 except uds.core.exceptions.rest.BlockAccess:
                     raise exceptions.rest.AccessDenied
 
-            request: typing.Optional[typing.Any] = getattr(args[0], request_attr or '_request', None)
+            request: typing.Any | None = getattr(args[0], request_attr or '_request', None)
 
             # No request object, so we can't block
             if request is None or not isinstance(request, types.requests.ExtendedHttpRequest):
@@ -410,7 +409,7 @@ def blocker(
 
 
 def profiler(
-    log_file: typing.Optional[str] = None,
+    log_file: str | None = None,
 ) -> collections.abc.Callable[[collections.abc.Callable[P, R]], collections.abc.Callable[P, R]]:
     """
     Decorator that will profile the wrapped function and log the results to the provided file
@@ -450,7 +449,7 @@ def retry_on_exception(
     retries: int,
     *,
     wait_seconds: float = 2,
-    retryable_exceptions: typing.Optional[typing.List[typing.Type[Exception]]] = None,
+    retryable_exceptions: list[type[Exception]] | None = None,
     do_log: bool = False,
 ) -> collections.abc.Callable[[collections.abc.Callable[P, R]], collections.abc.Callable[P, R]]:
     to_retry = retryable_exceptions or [Exception]
@@ -473,7 +472,7 @@ def retry_on_exception(
                         raise e
 
                     time.sleep(wait_seconds * (2 ** min(i, 4)))  # Exponential backoff until 16x
-                    
+
             # retries == 0 allowed, but only use it for testing purposes
             # because it's a nonsensical decorator otherwise
             return fnc(*args, **kwargs)

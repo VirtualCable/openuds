@@ -112,11 +112,10 @@ class ItemDictType(typing.TypedDict):
 
 # Alias for item type
 # ItemDictType = dict[str, typing.Any]
-ItemListType = list[ItemDictType]
-ItemGeneratorType = typing.Generator[ItemDictType, None, None]
+T_Item = typing.TypeVar("T_Item", bound=ItemDictType)
 
 # Alias for get_items return type
-ManyItemsDictType: typing.TypeAlias = ItemListType|ItemDictType|ItemGeneratorType
+GetItemsResult: typing.TypeAlias = list[T_Item]|ItemDictType|typing.Iterator[T_Item]
 
 #
 FieldType = collections.abc.Mapping[str, typing.Any]
@@ -157,8 +156,8 @@ class HandlerNode:
                 ret += f'{"  " * level}  |- {method}\n'
             # Add detail methods
             if self.handler.detail:
-                for method in self.handler.detail.keys():
-                    ret += f'{"  " * level}  |- {method}\n'
+                for method_name in self.handler.detail.keys():
+                    ret += f'{"  " * level}  |- {method_name}\n'
 
         return ret + ''.join(child.tree(level + 1) for child in self.children.values())
 

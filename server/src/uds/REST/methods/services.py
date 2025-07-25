@@ -114,7 +114,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
         return ret_value
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult:
         parent = ensure.is_instance(parent, models.Provider)
         # Check what kind of access do we have to parent provider
         perm = permissions.effective_permissions(self._user, parent)
@@ -335,7 +335,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         except Exception:
             raise self.invalid_item_response() from None
 
-    def servicepools(self, parent: 'Model', item: str) -> types.rest.ManyItemsDictType:
+    def servicepools(self, parent: 'Model', item: str) -> types.rest.GetItemsResult:
         parent = ensure.is_instance(parent, models.Provider)
         service = parent.services.get(uuid=process_uuid(item))
         logger.debug('Got parameters for servicepools: %s, %s', parent, item)

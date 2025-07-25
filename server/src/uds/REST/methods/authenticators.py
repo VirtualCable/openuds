@@ -70,7 +70,7 @@ class Authenticators(ModelHandler):
         tags: list[str]
         comments: str
         net_filtering: str
-        networks: list[dict[str, str]]
+        networks: list[str]
         state: str
         mfa_id: str
         small_name: str
@@ -189,6 +189,8 @@ class Authenticators(ModelHandler):
                 'priority': item.priority,
             }
         type_ = item.get_type()
+        
+       
         return {
             'numeric_id': item.id,
             'id': item.uuid,

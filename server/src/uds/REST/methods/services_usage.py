@@ -90,7 +90,7 @@ class ServicesUsage(DetailHandler):
             'in_use': item.in_use,
         }
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult:
         parent = ensure.is_instance(parent, Provider)
         try:
             if item is None:

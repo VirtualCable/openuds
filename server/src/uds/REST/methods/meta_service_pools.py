@@ -46,21 +46,35 @@ from uds.core.types.states import State
 from uds.core.util.model import process_uuid
 from uds.core.util import log, ensure
 from uds.REST.model import DetailHandler
-from .user_services import AssignedService
+from .user_services import AssignedUserService, UserServiceItem
 
 if typing.TYPE_CHECKING:
     from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
+class MetaItem(types.rest.ItemDictType):
+    """
+    Item type for a Meta Pool Member
+    """
+    id: str
+    pool_id: str
+    pool_name: typing.NotRequired[str]  # Optional, as it can be not present
+    name: str
+    comments: str
+    priority: int
+    enabled: bool
+    user_services_count: int
+    user_services_in_preparation: int
 
-class MetaServicesPool(DetailHandler):
+class MetaServicesPool(DetailHandler[MetaItem]):
     """
     Processes the transports detail requests of a Service Pool
     """
+    
 
     @staticmethod
-    def as_dict(item: models.MetaPoolMember) -> dict[str, typing.Any]:
+    def as_dict(item: models.MetaPoolMember) -> 'MetaItem':
         return {
             'id': item.uuid,
             'pool_id': item.pool.uuid,
@@ -72,7 +86,7 @@ class MetaServicesPool(DetailHandler):
             'user_services_in_preparation': item.pool.userServices.filter(state=State.PREPARING).count(),
         }
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult['MetaItem']:
         parent = ensure.is_instance(parent, models.MetaPool)
         try:
             if not item:
@@ -133,7 +147,7 @@ class MetaServicesPool(DetailHandler):
         log.log(parent, types.log.LogLevel.INFO, log_str, types.log.LogSource.ADMIN)
 
 
-class MetaAssignedService(DetailHandler):
+class MetaAssignedService(DetailHandler[UserServiceItem]):
     """
     Rest handler for Assigned Services, wich parent is Service
     """
@@ -143,8 +157,8 @@ class MetaAssignedService(DetailHandler):
         meta_pool: 'models.MetaPool',
         item: 'models.UserService',
         props: typing.Optional[dict[str, typing.Any]],
-    ) -> dict[str, typing.Any]:
-        element = AssignedService.item_as_dict(item, props, False)
+    ) -> 'UserServiceItem':
+        element = AssignedUserService.item_as_dict(item, props, False)
         element['pool_id'] = item.deployed_service.uuid
         element['pool_name'] = item.deployed_service.name
         return element
@@ -163,7 +177,7 @@ class MetaAssignedService(DetailHandler):
         except Exception:
             raise self.invalid_item_response()
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult[UserServiceItem]:
         parent = ensure.is_instance(parent, models.MetaPool)
         def _assigned_userservices_for_pools() -> (
             typing.Generator[

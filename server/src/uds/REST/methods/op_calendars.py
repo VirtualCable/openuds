@@ -63,7 +63,7 @@ class AccessCalendars(DetailHandler):
             'priority': item.priority,
         }
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult:
         # parent can be a ServicePool or a metaPool
         parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
 
@@ -154,7 +154,7 @@ class ActionsCalendars(DetailHandler):
             'last_execution': item.last_execution,
         }
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult:
         parent = ensure.is_instance(parent, models.ServicePool)
         try:
             if item is None:

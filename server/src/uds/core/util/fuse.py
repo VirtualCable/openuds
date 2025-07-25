@@ -495,11 +495,11 @@ else:
 
 class FuseContext(ctypes.Structure):
     _fields_ = [
-        ('fuse', ctypes.c_voidp),  # type: ignore
+        ('fuse', ctypes.c_voidp),
         ('uid', c_uid_t),
         ('gid', c_gid_t),
         ('pid', c_pid_t),
-        ('private_data', ctypes.c_voidp),  # type: ignore
+        ('private_data', ctypes.c_voidp),
     ]
 
 
@@ -521,7 +521,7 @@ class FuseOperations(ctypes.Structure):
                 ctypes.c_size_t,
             ),
         ),
-        ('getdir', ctypes.c_voidp),  # type: ignore  # Deprecated, use readdir
+        ('getdir', ctypes.c_voidp),  # Deprecated, use readdir
         ('mknod', ctypes.CFUNCTYPE(ctypes.c_int, ctypes.c_char_p, c_mode_t, c_dev_t)),
         ('mkdir', ctypes.CFUNCTYPE(ctypes.c_int, ctypes.c_char_p, c_mode_t)),
         ('unlink', ctypes.CFUNCTYPE(ctypes.c_int, ctypes.c_char_p)),
@@ -532,7 +532,7 @@ class FuseOperations(ctypes.Structure):
         ('chmod', ctypes.CFUNCTYPE(ctypes.c_int, ctypes.c_char_p, c_mode_t)),
         ('chown', ctypes.CFUNCTYPE(ctypes.c_int, ctypes.c_char_p, c_uid_t, c_gid_t)),
         ('truncate', ctypes.CFUNCTYPE(ctypes.c_int, ctypes.c_char_p, c_off_t)),
-        ('utime', ctypes.c_voidp),  # type: ignore   # Deprecated, use utimens
+        ('utime', ctypes.c_voidp), # Deprecated, use utimens
         (
             'open',
             ctypes.CFUNCTYPE(ctypes.c_int, ctypes.c_char_p, ctypes.POINTER(fuse_file_info)),
@@ -604,10 +604,10 @@ class FuseOperations(ctypes.Structure):
             ctypes.CFUNCTYPE(
                 ctypes.c_int,
                 ctypes.c_char_p,
-                ctypes.c_voidp,  # type: ignore
+                ctypes.c_voidp,
                 ctypes.CFUNCTYPE(
                     ctypes.c_int,
-                    ctypes.c_voidp,  # type: ignore
+                    ctypes.c_voidp,
                     ctypes.c_char_p,
                     ctypes.POINTER(c_stat),
                     c_off_t,
@@ -629,8 +629,8 @@ class FuseOperations(ctypes.Structure):
                 ctypes.POINTER(fuse_file_info),
             ),
         ),
-        ('init', ctypes.CFUNCTYPE(ctypes.c_voidp, ctypes.c_voidp)),  # type: ignore
-        ('destroy', ctypes.CFUNCTYPE(ctypes.c_voidp, ctypes.c_voidp)),  # type: ignore
+        ('init', ctypes.CFUNCTYPE(ctypes.c_voidp, ctypes.c_voidp)),
+        ('destroy', ctypes.CFUNCTYPE(ctypes.c_voidp, ctypes.c_voidp)),
         ('access', ctypes.CFUNCTYPE(ctypes.c_int, ctypes.c_char_p, ctypes.c_int)),
         (
             'create',
@@ -656,7 +656,7 @@ class FuseOperations(ctypes.Structure):
                 ctypes.c_char_p,
                 ctypes.POINTER(fuse_file_info),
                 ctypes.c_int,
-                ctypes.c_voidp,  # type: ignore
+                ctypes.c_voidp,
             ),
         ),
         (
@@ -798,7 +798,7 @@ class FUSE:
                 continue
 
             if hasattr(typing.cast(typing.Any, prototype), 'argtypes'):
-                val = prototype(partial(FUSE._wrapper, getattr(self, name)))  # type: ignore
+                val = prototype(partial(FUSE._wrapper, getattr(self, name)))
 
             setattr(fuse_ops, name, val)
 
@@ -846,14 +846,14 @@ class FUSE:
                 return func(*args, **kwargs) or 0
 
             except OSError as e:
-                if e.errno > 0:  # pyright: ignore
+                if e.errno and e.errno > 0:
                     logger.debug(
                         "FUSE operation %s raised a %s, returning errno %s.",
                         func.__name__,
                         type(e),
                         e.errno,
                     )
-                    return -e.errno  # pyright: ignore
+                    return -e.errno
                 logger.error(
                     "FUSE operation %s raised an OSError with negative " "errno %s, returning errno.EINVAL.",
                     func.__name__,

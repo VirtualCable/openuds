@@ -34,6 +34,10 @@ import typing
 import collections.abc
 import logging
 
+if typing.TYPE_CHECKING:
+    from django.db import models
+    from uds.core import types
+
 logger = logging.getLogger(__name__)
 
 T = typing.TypeVar('T', bound=typing.Any)
@@ -96,3 +100,37 @@ def match_args(
     # Invoke error callback
     error()
     return None  # In fact, error is expected to raise an exception, so this is never reached
+
+
+def as_typed_dict(
+    model: 'models.Model',
+    t: type['types.rest.T_Item'],
+) -> 'types.rest.T_Item':
+    """
+    Converts a model to a TypedDict of type T.
+    This is useful to convert models to TypedDicts for use in REST APIs.
+    """
+    annotations = t.__annotations__
+    dct: dict[str, typing.Any] = {}
+    NOT_FOUND = object()  # Sentinel for not found values
+    for field, field_type in annotations.items():
+        # Skip "typing.NotRequired" fields
+        if typing.get_origin(field_type) is typing.NotRequired:
+            continue
+        
+        if hasattr(model, field):
+            value: typing.Any = getattr(model, field, NOT_FOUND)
+            if value is NOT_FOUND:
+                logger.warning(
+                    'Field %s not found in model %s, using default value',
+                    field,
+                    model.__class__.__name__,
+                )
+                continue
+
+
+            # Note, currently we do no convert the types, and do not support complex types
+            dct[field] = value
+
+    # Ensure that the dictionary is compatible with the TypedDict
+    return typing.cast('types.rest.T_Item', dct)

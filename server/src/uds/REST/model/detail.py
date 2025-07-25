@@ -54,10 +54,12 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+T = typing.TypeVar('T', bound=types.rest.ItemDictType)
+
 # Details do not have types at all
 # so, right now, we only process details petitions for Handling & tables info
 # noinspection PyMissingConstructor
-class DetailHandler(BaseModelHandler):
+class DetailHandler(BaseModelHandler, typing.Generic[T]):
     """
     Detail handler (for relations such as provider-->services, authenticators-->users,groups, deployed services-->cache,assigned, groups, transports
     Urls recognized for GET are:
@@ -192,6 +194,7 @@ class DetailHandler(BaseModelHandler):
         # Not understood, fallback, maybe the derived class can understand it
         return self.fallback_get()
 
+        # For reference, this is the old code to be removed
         if num_args == 1:
             match self._args[0]:
                 case consts.rest.OVERVIEW:
@@ -290,7 +293,7 @@ class DetailHandler(BaseModelHandler):
 
     # Override this to provide functionality
     # Default (as sample) get_items
-    def get_items(self, parent: models.Model, item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
+    def get_items(self, parent: models.Model, item: typing.Optional[str]) -> types.rest.GetItemsResult[T]:
         """
         This MUST be overridden by derived classes
         Excepts to return a list of dictionaries or a single dictionary, depending on "item" param

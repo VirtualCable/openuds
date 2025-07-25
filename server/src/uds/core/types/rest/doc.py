@@ -71,7 +71,8 @@ def extract_doc(response: type[TypedResponse]) -> dict[str, typing.Any]:
 
 
 def is_typed_response(t: type[TypedResponse]) -> bool:
-    return hasattr(t, '__orig_bases__') and TypedResponse in t.__orig_bases__
+    orig_bases = getattr(t, '__orig_bases__', None)
+    return orig_bases is not None and TypedResponse in orig_bases
 
 
 # Regular expression to match the API: part of the docstring

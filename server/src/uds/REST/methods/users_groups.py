@@ -29,12 +29,12 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import datetime
 import logging
 import typing
 import collections.abc
 
 from django.utils.translation import gettext as _
-from django.forms.models import model_to_dict
 from django.db import IntegrityError, transaction
 from django.core.exceptions import ValidationError
 
@@ -42,6 +42,7 @@ from uds.core.types.states import State
 
 from uds.core.auths.user import User as AUser
 from uds.core.util import log, ensure
+from uds.core.util.rest.tools import as_typed_dict
 from uds.core.util.model import process_uuid, sql_stamp_seconds
 from uds.models import Authenticator, User, Group, ServicePool
 from uds.core.managers.crypto import CryptoManager
@@ -49,7 +50,7 @@ from uds.core import consts, exceptions, types
 
 from uds.REST.model import DetailHandler
 
-from .user_services import AssignedService
+from .user_services import AssignedUserService, UserServiceItem
 
 if typing.TYPE_CHECKING:
     from django.db.models import Model
@@ -77,7 +78,22 @@ def get_service_pools_for_groups(
         yield servicepool
 
 
-class Users(DetailHandler):
+class UserItem(types.rest.ItemDictType):
+    id: str
+    name: str
+    real_name: str
+    comments: str
+    state: str
+    staff_member: bool
+    is_admin: bool
+    last_access: datetime.datetime
+    parent: typing.NotRequired[str]
+    mfa_data: str
+    role: str
+    groups: typing.NotRequired[list[str]]
+
+
+class Users(DetailHandler[UserItem]):
     custom_methods = [
         'services_pools',
         'user_services',
@@ -89,64 +105,25 @@ class Users(DetailHandler):
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, Authenticator)
 
-        # processes item to change uuid key for id
-        def uuid_to_id(
-            iterable: collections.abc.Iterable[typing.Any],
-        ) -> collections.abc.Generator[typing.Any, None, None]:
-            for v in iterable:
-                v['id'] = v['uuid']
-                del v['uuid']
-                yield v
+        def as_user_item(model: 'User') -> UserItem:
+            base = as_typed_dict(
+                model,
+                UserItem,
+            )
+            # Convert uuid to id, that is what the frontend expects (instaad of the numeric id)
+            base['id'] = model.uuid
+            base['role'] = (
+                model.staff_member and (model.is_admin and _('Admin') or _('Staff member')) or _('User')
+            )
+            return base
 
-        logger.debug(item)
         # Extract authenticator
         try:
             if item is None:
-                values = list(
-                    uuid_to_id(
-                        (
-                            i
-                            for i in parent.users.all().values(
-                                'uuid',
-                                'name',
-                                'real_name',
-                                'comments',
-                                'state',
-                                'staff_member',
-                                'is_admin',
-                                'last_access',
-                                'parent',
-                                'mfa_data',
-                            )
-                        )
-                    )
-                )
-                for res in values:
-                    res['role'] = (
-                        res['staff_member']
-                        and (res['is_admin'] and _('Admin') or _('Staff member'))
-                        or _('User')
-                    )
-                return values
+                return [as_user_item(i) for i in parent.users.all()]
+
             u = parent.users.get(uuid__iexact=process_uuid(item))
-            res = model_to_dict(
-                u,
-                fields=(
-                    'name',
-                    'real_name',
-                    'comments',
-                    'state',
-                    'staff_member',
-                    'is_admin',
-                    'last_access',
-                    'parent',
-                    'mfa_data',
-                ),
-            )
-            res['id'] = u.uuid
-            res['role'] = (
-                res['staff_member'] and (res['is_admin'] and _('Admin') or _('Staff member')) or _('User')
-            )
+            res = as_user_item(u)
             usr = AUser(u)
             res['groups'] = [g.db_obj().uuid for g in usr.groups()]
             logger.debug('Item: %s', res)
@@ -247,7 +224,7 @@ class Users(DetailHandler):
                     groups = self.fields_from_params(['groups'])['groups']
                     # Save but skip meta groups, they are not real groups, but just a way to group users based on rules
                     user.groups.set(g for g in parent.groups.filter(uuid__in=groups) if g.is_meta is False)
-                    
+
                 return {'id': user.uuid}
         except User.DoesNotExist:
             raise self.invalid_item_response() from None
@@ -319,19 +296,21 @@ class Users(DetailHandler):
 
         return res
 
-    def user_services(self, parent: 'Authenticator', item: str) -> list[dict[str, typing.Any]]:
+    def user_services(self, parent: 'Authenticator', item: str) -> list[UserServiceItem]:
         parent = ensure.is_instance(parent, Authenticator)
         uuid = process_uuid(item)
         user = parent.users.get(uuid=process_uuid(uuid))
-        res: list[dict[str, typing.Any]] = []
-        for i in user.userServices.all():
-            if i.state == State.USABLE:
-                v = AssignedService.item_as_dict(i)
-                v['pool'] = i.deployed_service.name
-                v['pool_id'] = i.deployed_service.uuid
-                res.append(v)
 
-        return res
+        def item_as_dict(assigned_user_service: 'UserService') -> UserServiceItem:
+            base = AssignedUserService.item_as_dict(assigned_user_service)
+            base['pool'] = assigned_user_service.deployed_service.name
+            base['pool_id'] = assigned_user_service.deployed_service.uuid
+            return base
+
+        return [
+            item_as_dict(i)
+            for i in user.userServices.all().prefetch_related('deployed_service').filter(state=State.USABLE)
+        ]
 
     def clean_related(self, parent: 'Authenticator', item: str) -> dict[str, str]:
         uuid = process_uuid(item)
@@ -365,10 +344,22 @@ class Users(DetailHandler):
         return {'status': 'ok'}
 
 
-class Groups(DetailHandler):
+class GroupItem(typing.TypedDict):
+    id: str
+    name: str
+    comments: str
+    state: str
+    type: str
+    meta_if_any: bool
+    skip_mfa: str
+    groups: typing.NotRequired[list[str]]  # Only for meta groups
+    pools: typing.NotRequired[list[str]]  # Only for single group items
+
+
+class Groups(DetailHandler[GroupItem]):
     custom_methods = ['services_pools', 'users']
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult['GroupItem']:
         parent = ensure.is_instance(parent, Authenticator)
         try:
             multi = False
@@ -377,10 +368,10 @@ class Groups(DetailHandler):
                 q = parent.groups.all().order_by('name')
             else:
                 q = parent.groups.filter(uuid=process_uuid(item))
-            res: list[dict[str, typing.Any]] = []
+            res: list[GroupItem] = []
             i = None
             for i in q:
-                val: dict[str, typing.Any] = {
+                val: GroupItem = {
                     'id': i.uuid,
                     'name': i.name,
                     'comments': i.comments,

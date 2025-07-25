@@ -51,7 +51,7 @@ from uds.REST.model import ModelHandler
 
 from .op_calendars import AccessCalendars, ActionsCalendars
 from .services import Services
-from .user_services import AssignedService, CachedService, Changelog, Groups, Publications, Transports
+from .user_services import AssignedUserService, CachedService, Changelog, Groups, Publications, Transports
 
 if typing.TYPE_CHECKING:
     from django.db.models import Model
@@ -66,7 +66,7 @@ class ServicesPools(ModelHandler):
 
     model = ServicePool
     detail = {
-        'services': AssignedService,
+        'services': AssignedUserService,
         'cache': CachedService,
         'servers': CachedService,  # Alias for cache, but will change in a future release
         'groups': Groups,

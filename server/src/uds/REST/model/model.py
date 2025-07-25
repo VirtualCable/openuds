@@ -91,7 +91,7 @@ class ModelHandler(BaseModelHandler):
         []
     )  # If this model respond to "custom" methods, we will declare them here
     # If this model has details, which ones
-    detail: typing.ClassVar[typing.Optional[dict[str, type['DetailHandler']]]] = (
+    detail: typing.ClassVar[typing.Optional[dict[str, type['DetailHandler[typing.Any]']]]] = (
         None  # Dictionary containing detail routing
     )
     # Fields that are going to be saved directly
