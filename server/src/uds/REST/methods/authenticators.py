@@ -58,27 +58,28 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-# Enclosed methods under /auth path
-class Authenticators(ModelHandler):
-    class PartialAuthItem(types.rest.ItemDictType):
-        numeric_id: int
-        id: str
-        name: str
-        priority: int
+class AuthenticatorItem(types.rest.ItemDictType):
+    numeric_id: int
+    id: str
+    name: str
+    priority: int
 
-    class FullAuthItem(PartialAuthItem):
-        tags: list[str]
-        comments: str
-        net_filtering: str
-        networks: list[str]
-        state: str
-        mfa_id: str
-        small_name: str
-        users_count: int
-        type: str
-        type_name: str
-        type_info: types.rest.TypeInfoDict
-        permission: int
+    tags: list[str]
+    comments: str
+    net_filtering: str
+    networks: list[str]
+    state: str
+    mfa_id: str
+    small_name: str
+    users_count: int
+    type: str
+    type_name: str
+    type_info: types.rest.TypeInfoDict
+    permission: int
+
+
+# Enclosed methods under /auth path
+class Authenticators(ModelHandler[AuthenticatorItem]):
 
     model = Authenticator
     # Custom get method "search" that requires authenticator id
@@ -176,21 +177,10 @@ class Authenticators(ModelHandler):
             logger.info('Type not found: %s', e)
             raise exceptions.rest.NotFound('type not found') from e
 
-    def item_as_dict(self, item: 'Model') -> PartialAuthItem | FullAuthItem:
-        summary = 'summarize' in self._params
-
+    def item_as_dict(self, item: 'Model') -> AuthenticatorItem:
         item = ensure.is_instance(item, Authenticator)
-
-        if summary:
-            return {
-                'numeric_id': item.id,
-                'id': item.uuid,
-                'name': item.name,
-                'priority': item.priority,
-            }
         type_ = item.get_type()
-        
-       
+
         return {
             'numeric_id': item.id,
             'id': item.uuid,

@@ -50,18 +50,19 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /item path
 
+class AccountItem(types.rest.ItemDictType):
+    id: str
+    name: str
+    tags: typing.List[str]
+    comments: str
+    time_mark: typing.Optional[datetime.datetime]
+    permission: int
 
-class Accounts(ModelHandler):
+
+class Accounts(ModelHandler[AccountItem]):
     """
     Processes REST requests about accounts
     """
-    class AccountItem(types.rest.ItemDictType):
-        id: str
-        name: str
-        tags: typing.List[str]
-        comments: str
-        time_mark: typing.Optional[datetime.datetime]
-        permission: int
 
     model = Account
     detail = {'usage': AccountsUsage}

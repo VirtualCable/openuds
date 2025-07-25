@@ -51,22 +51,23 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /osm path
 
+class ActorTokenItem(types.rest.ItemDictType):
+    id: str
+    name: str
+    stamp: datetime.datetime
+    username: str
+    ip: str
+    host: str
+    hostname: str
+    version: str
+    pre_command: str
+    post_command: str
+    run_once_command: str
+    log_level: str
+    os: str
 
-class ActorTokens(ModelHandler):
-    class ActorTokenItem(types.rest.ItemDictType):
-        id: str
-        name: str
-        stamp: datetime.datetime
-        username: str
-        ip: str
-        host: str
-        hostname: str
-        version: str
-        pre_command: str
-        post_command: str
-        run_once_command: str
-        log_level: str
-        os: str
+
+class ActorTokens(ModelHandler[ActorTokenItem]):
 
     model = Server
     model_filter = {'type': types.servers.ServerType.ACTOR}

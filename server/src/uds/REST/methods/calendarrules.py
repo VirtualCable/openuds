@@ -37,7 +37,7 @@ import typing
 from django.db import IntegrityError
 from django.utils.translation import gettext as _
 
-from uds.core import exceptions
+from uds.core import exceptions, types
 from uds.core.util import ensure, permissions
 from uds.core.util.model import process_uuid, sql_now
 from uds.models.calendar import Calendar
@@ -50,14 +50,25 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+class CalendarRuleItem(types.rest.ItemDictType):
+    id: str
+    name: str
+    comments: str
+    start: datetime.datetime
+    end: datetime.datetime|None
+    frequency: str
+    interval: int
+    duration: int
+    duration_unit: str
+    permission: int
 
-class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
+class CalendarRules(DetailHandler[CalendarRuleItem]):  # pylint: disable=too-many-public-methods
     """
     Detail handler for Services, whose parent is a Provider
     """
 
     @staticmethod
-    def rule_as_dict(item: CalendarRule, perm: int) -> dict[str, typing.Any]:
+    def rule_as_dict(item: CalendarRule, perm: int) -> CalendarRuleItem:
         """
         Convert a calrule db item to a dict for a rest response
         :param item: Rule item (db)
@@ -76,7 +87,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
             'permission': perm,
         }
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult[CalendarRuleItem]:
         parent = ensure.is_instance(parent, Calendar)
         # Check what kind of access do we have to parent provider
         perm = permissions.effective_permissions(self._user, parent)

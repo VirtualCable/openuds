@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import datetime
 import logging
 import typing
 
@@ -48,13 +49,27 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
+class AccountItem(types.rest.ItemDictType):
+    uuid: str
+    pool_uuid: str
+    pool_name: str
+    user_uuid: str
+    user_name: str
+    start: datetime.datetime
+    end: datetime.datetime
+    running: bool
+    elapsed: str
+    elapsed_timemark: str
+    permission: int
+
+
+class AccountsUsage(DetailHandler[AccountItem]):  # pylint: disable=too-many-public-methods
     """
     Detail handler for Services, whose parent is a Provider
     """
 
     @staticmethod
-    def usage_to_dict(item: 'AccountUsage', perm: int) -> dict[str, typing.Any]:
+    def usage_to_dict(item: 'AccountUsage', perm: int) -> AccountItem:
         """
         Convert an account usage to a dictionary
         :param item: Account usage item (db)
@@ -74,7 +89,7 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
             'permission': perm,
         }
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult[AccountItem]:
         parent = ensure.is_instance(parent, Account)
         # Check what kind of access do we have to parent provider
         perm = permissions.effective_permissions(self._user, parent)
@@ -101,7 +116,7 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
     def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
         return types.ui.RowStyleInfo(prefix='row-running-', field='running')
 
-    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
+    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> AccountItem:
         raise exceptions.rest.RequestError('Accounts usage cannot be edited')
 
     def delete_item(self, parent: 'Model', item: str) -> None:

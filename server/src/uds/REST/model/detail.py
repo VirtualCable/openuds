@@ -54,12 +54,10 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-T = typing.TypeVar('T', bound=types.rest.ItemDictType)
-
 # Details do not have types at all
 # so, right now, we only process details petitions for Handling & tables info
 # noinspection PyMissingConstructor
-class DetailHandler(BaseModelHandler, typing.Generic[T]):
+class DetailHandler(BaseModelHandler, typing.Generic[types.rest.T_Item]):
     """
     Detail handler (for relations such as provider-->services, authenticators-->users,groups, deployed services-->cache,assigned, groups, transports
     Urls recognized for GET are:
@@ -82,7 +80,9 @@ class DetailHandler(BaseModelHandler, typing.Generic[T]):
     """
 
     custom_methods: typing.ClassVar[list[str]] = []
-    _parent: typing.Optional['ModelHandler']
+    _parent: typing.Optional[
+        'ModelHandler[types.rest.T_Item]'
+    ]  # Parent handler, that is the ModelHandler that contains this detail
     _path: str
     _params: typing.Any  # _params is deserialized object from request
     _args: list[str]
@@ -91,7 +91,7 @@ class DetailHandler(BaseModelHandler, typing.Generic[T]):
 
     def __init__(
         self,
-        parent_handler: 'ModelHandler',
+        parent_handler: 'ModelHandler[types.rest.T_Item]',
         path: str,
         params: typing.Any,
         *args: str,
@@ -147,7 +147,7 @@ class DetailHandler(BaseModelHandler, typing.Generic[T]):
         r = self._check_is_custom_method(self._args[0], parent)
         if r is not consts.rest.NOT_FOUND:
             return r
-        
+
         match self._args[0]:
             case consts.rest.OVERVIEW:
                 if num_args == 1:
@@ -185,51 +185,11 @@ class DetailHandler(BaseModelHandler, typing.Generic[T]):
                 # try to get id
                 if num_args == 1:
                     return self.get_items(parent, process_uuid(self._args[0]))
-                
+
                 # Maybe a custom method?
                 r = self._check_is_custom_method(self._args[1], parent, self._args[0])
                 if r is not None:
                     return r
-
-        # Not understood, fallback, maybe the derived class can understand it
-        return self.fallback_get()
-
-        # For reference, this is the old code to be removed
-        if num_args == 1:
-            match self._args[0]:
-                case consts.rest.OVERVIEW:
-                    return self.get_items(parent, None)
-                case consts.rest.TYPES:
-                    types_ = self.get_types(parent, None)
-                    logger.debug('Types: %s', types_)
-                    return types_
-                case consts.rest.TABLEINFO:
-                    return self.process_table_fields(
-                        self.get_title(parent),
-                        self.get_fields(parent),
-                        self.get_row_style(parent),
-                    )
-                case consts.rest.GUI:  # Used on some cases to get the gui for a detail with no subtypes
-                    gui = self.get_processed_gui(parent, '')
-                    return sorted(gui, key=lambda f: f['gui']['order'])
-                case _:
-                    # try to get id
-                    return self.get_items(parent, process_uuid(self._args[0]))
-
-        if num_args == 2:
-            if self._args[0] == consts.rest.GUI:
-                return self.get_processed_gui(parent, self._args[1])
-            if self._args[0] == consts.rest.TYPES:
-                types_ = self.get_types(parent, self._args[1])
-                logger.debug('Types: %s', types_)
-                return types_
-            if self._args[1] == consts.rest.LOG:
-                return self.get_logs(parent, self._args[0])
-
-            # Maybe a custom method?
-            r = self._check_is_custom_method(self._args[1], parent, self._args[0])
-            if r is not None:
-                return r
 
         # Not understood, fallback, maybe the derived class can understand it
         return self.fallback_get()
@@ -293,7 +253,9 @@ class DetailHandler(BaseModelHandler, typing.Generic[T]):
 
     # Override this to provide functionality
     # Default (as sample) get_items
-    def get_items(self, parent: models.Model, item: typing.Optional[str]) -> types.rest.GetItemsResult[T]:
+    def get_items(
+        self, parent: models.Model, item: typing.Optional[str]
+    ) -> types.rest.GetItemsResult[types.rest.T_Item]:
         """
         This MUST be overridden by derived classes
         Excepts to return a list of dictionaries or a single dictionary, depending on "item" param
@@ -306,7 +268,7 @@ class DetailHandler(BaseModelHandler, typing.Generic[T]):
         raise NotImplementedError(f'Must provide an get_items method for {self.__class__} class')
 
     # Default save
-    def save_item(self, parent: models.Model, item: typing.Optional[str]) -> typing.Any:
+    def save_item(self, parent: models.Model, item: typing.Optional[str]) -> types.rest.T_Item:
         """
         Invoked for a valid "put" operation
         If this method is not overridden, the detail class will not have "Save/modify" operations.

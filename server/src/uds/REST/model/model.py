@@ -54,8 +54,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-
-class ModelHandler(BaseModelHandler):
+class ModelHandler(BaseModelHandler, typing.Generic[types.rest.T_Item]):
     """
     Basic Handler for a model
     Basically we will need same operations for all models, so we can
@@ -111,14 +110,15 @@ class ModelHandler(BaseModelHandler):
     # This methods must be override, depending on what is provided
 
     # Data related
-    def item_as_dict(self, item: models.Model) -> types.rest.ItemDictType:
+    def item_as_dict(self, item: models.Model) -> types.rest.T_Item:
         """
         Must be overriden by descendants.
         Expects the return of an item as a dictionary
         """
-        return {}
+        raise NotImplementedError()
 
-    def item_as_dict_overview(self, item: models.Model) -> types.rest.ItemDictType:
+
+    def item_as_dict_overview(self, item: models.Model) -> types.rest.T_Item:
         """
         Invoked when request is an "overview"
         default behavior is return item_as_dict
@@ -230,7 +230,7 @@ class ModelHandler(BaseModelHandler):
 
     def get_items(
         self, *args: typing.Any, **kwargs: typing.Any
-    ) -> typing.Generator[types.rest.ItemDictType, None, None]:
+    ) -> typing.Generator[types.rest.T_Item, None, None]:
         if 'overview' in kwargs:
             overview: bool = kwargs['overview']
             del kwargs['overview']

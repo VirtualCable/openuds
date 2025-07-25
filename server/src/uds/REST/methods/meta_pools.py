@@ -55,31 +55,32 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class MetaPools(ModelHandler):
+class MetaPoolItem(types.rest.ItemDictType):
+    id: str
+    name: str
+    short_name: str
+    tags: list[str]
+    comments: str
+    thumb: str
+    image_id: str | None
+    servicesPoolGroup_id: str | None
+    pool_group_name: str | None
+    pool_group_thumb: str | None
+    user_services_count: int
+    user_services_in_preparation: int
+    visible: bool
+    policy: str
+    fallbackAccess: str
+    permission: int
+    calendar_message: str
+    transport_grouping: int
+    ha_policy: str
+
+
+class MetaPools(ModelHandler[MetaPoolItem]):
     """
     Handles Services Pools REST requests
     """
-
-    class MetaPoolItem(types.rest.ItemDictType):
-        id: str
-        name: str
-        short_name: str
-        tags: list[str]
-        comments: str
-        thumb: str
-        image_id: str | None
-        servicesPoolGroup_id: str | None
-        pool_group_name: str | None
-        pool_group_thumb: str | None
-        user_services_count: int
-        user_services_in_preparation: int
-        visible: bool
-        policy: str
-        fallbackAccess: str
-        permission: int
-        calendar_message: str
-        transport_grouping: int
-        ha_policy: str
 
     model = MetaPool
     detail = {

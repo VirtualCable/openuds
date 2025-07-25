@@ -105,20 +105,23 @@ class ModelCustomMethod:
     name: str
     needs_parent: bool = True
 
-# Note that for this item to work with documentation 
+
+# Note that for this item to work with documentation
 # no forward references can be used (that is, do not use quotes around the inner field types)
 class ItemDictType(typing.TypedDict):
     pass
+
 
 # Alias for item type
 # ItemDictType = dict[str, typing.Any]
 T_Item = typing.TypeVar("T_Item", bound=ItemDictType)
 
 # Alias for get_items return type
-GetItemsResult: typing.TypeAlias = list[T_Item]|ItemDictType|typing.Iterator[T_Item]
+GetItemsResult: typing.TypeAlias = list[T_Item] | ItemDictType | typing.Iterator[T_Item]
 
 #
 FieldType = collections.abc.Mapping[str, typing.Any]
+
 
 @dataclasses.dataclass(frozen=True)
 class HandlerNode:
@@ -151,12 +154,17 @@ class HandlerNode:
         ret = f'{"  " * level}{self.name} ({self.handler.__name__}  {self.full_path()})\n'
 
         if issubclass(self.handler, ModelHandler):
+            # We don't mind the type of handler here, as we are just using it for introspection
+            handler = typing.cast(
+                ModelHandler[typing.Any], self.handler  # pyright: ignore[reportUnknownMemberType]
+            )
+
             # Add custom_methods
-            for method in self.handler.custom_methods:
+            for method in handler.custom_methods:
                 ret += f'{"  " * level}  |- {method}\n'
             # Add detail methods
-            if self.handler.detail:
-                for method_name in self.handler.detail.keys():
+            if handler.detail:
+                for method_name in handler.detail.keys():
                     ret += f'{"  " * level}  |- {method_name}\n'
 
         return ret + ''.join(child.tree(level + 1) for child in self.children.values())
@@ -171,57 +179,69 @@ class HandlerNode:
 
         help_node_type = doc.HelpNode.Type.PATH
 
-        if self.handler:
-            help_node_type = doc.HelpNode.Type.CUSTOM
-            if issubclass(self.handler, ModelHandler):
-                help_node_type = doc.HelpNode.Type.MODEL
-                # Add custom_methods
-                for method in self.handler.custom_methods:
-                    # Method is a Me CustomModelMethod,
-                    # We access the __doc__ of the function inside the handler with method.name
-                    doc_attr = getattr(self.handler, method.name).__doc__ or ''
-                    path = (
-                        f'{self.full_path()}/{method.name}'
-                        if not method.needs_parent
-                        else f'{self.full_path()}/<uuid>/{method.name}'
+        if not self.handler:
+            # If no handler, this is a path node, so we return a path node
+            return doc.HelpNode(
+                doc.HelpDoc(path=self.full_path(), help=self.name),
+                [],
+                help_node_type,
+            )
+
+        # Cast here, but may be not a ModelHandler, so we need to check later
+        handler = typing.cast(
+            ModelHandler[typing.Any], self.handler
+        )  # pyright: ignore[reportUnknownMemberType]
+        help_node_type = doc.HelpNode.Type.CUSTOM
+
+        if issubclass(self.handler, ModelHandler):
+            help_node_type = doc.HelpNode.Type.MODEL
+            # Add custom_methods
+            for method in handler.custom_methods:
+                # Method is a Me CustomModelMethod,
+                # We access the __doc__ of the function inside the handler with method.name
+                doc_attr = getattr(handler, method.name).__doc__ or ''
+                path = (
+                    f'{self.full_path()}/{method.name}'
+                    if not method.needs_parent
+                    else f'{self.full_path()}/<uuid>/{method.name}'
+                )
+                custom_help.add(
+                    doc.HelpNode(
+                        doc.HelpDoc(path=path, help=doc_attr),
+                        [],
+                        doc.HelpNode.Type.CUSTOM,
                     )
+                )
+
+            # Add detail methods
+            if handler.detail:
+                for method_name, method_class in handler.detail.items():
                     custom_help.add(
                         doc.HelpNode(
-                            doc.HelpDoc(path=path, help=doc_attr),
+                            doc.HelpDoc(path=self.full_path() + '/' + method_name, help=''),
                             [],
-                            doc.HelpNode.Type.CUSTOM,
+                            doc.HelpNode.Type.DETAIL,
                         )
                     )
-
-                # Add detail methods
-                if self.handler.detail:
-                    for method_name, method_class in self.handler.detail.items():
+                    # Add custom_methods
+                    for detail_method in method_class.custom_methods:
+                        # Method is a Me CustomModelMethod,
+                        # We access the __doc__ of the function inside the handler with method.name
+                        doc_attr = getattr(method_class, detail_method).__doc__ or ''
                         custom_help.add(
                             doc.HelpNode(
-                                doc.HelpDoc(path=self.full_path() + '/' + method_name, help=''),
+                                doc.HelpDoc(
+                                    path=self.full_path()
+                                    + '/<uuid>/'
+                                    + method_name
+                                    + '/<uuid>/'
+                                    + detail_method,
+                                    help=doc_attr,
+                                ),
                                 [],
-                                doc.HelpNode.Type.DETAIL,
+                                doc.HelpNode.Type.CUSTOM,
                             )
                         )
-                        # Add custom_methods
-                        for detail_method in method_class.custom_methods:
-                            # Method is a Me CustomModelMethod,
-                            # We access the __doc__ of the function inside the handler with method.name
-                            doc_attr = getattr(method_class, detail_method).__doc__ or ''
-                            custom_help.add(
-                                doc.HelpNode(
-                                    doc.HelpDoc(
-                                        path=self.full_path()
-                                        + '/<uuid>/'
-                                        + method_name
-                                        + '/<uuid>/'
-                                        + detail_method,
-                                        help=doc_attr,
-                                    ),
-                                    [],
-                                    doc.HelpNode.Type.CUSTOM,
-                                )
-                            )
 
             custom_help |= {
                 doc.HelpNode(
@@ -232,13 +252,13 @@ class HandlerNode:
                     [],
                     help_node_type,
                 )
-                for help_info in self.handler.help_paths
+                for help_info in handler.help_paths
             }
 
         custom_help |= {child.help_node() for child in self.children.values()}
 
         return doc.HelpNode(
-            help=doc.HelpDoc(path=self.full_path(), help=self.handler.__doc__ or ''),
+            help=doc.HelpDoc(path=self.full_path(), help=handler.__doc__ or ''),
             children=list(custom_help),
             kind=help_node_type,
         )

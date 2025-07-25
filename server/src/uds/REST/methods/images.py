@@ -48,20 +48,18 @@ logger = logging.getLogger(__name__)
 # Enclosed methods under /item path
 
 
-class Images(ModelHandler):
+class ImageItem(types.rest.ItemDictType):
+    id: str
+    name: str
+    data: typing.NotRequired[str]
+    size: typing.NotRequired[str]
+    thumb: typing.NotRequired[str]
+
+
+class Images(ModelHandler[ImageItem]):
     """
     Handles the gallery REST interface
     """
-    class ImageItem(types.rest.ItemDictType):
-        id: str
-        name: str
-        data: str
-        
-    class ImageItemOverview(types.rest.ItemDictType):
-        id: str
-        name: str
-        size: str
-        thumb: str
 
     path = 'gallery'
     model = Image
@@ -84,14 +82,14 @@ class Images(ModelHandler):
     def pre_save(self, fields: dict[str, typing.Any]) -> None:
         fields['image'] = fields['data']
         del fields['data']
-        #fields['data'] = Image.prepareForDb(Image.decode64(fields['data']))[2]
+        # fields['data'] = Image.prepareForDb(Image.decode64(fields['data']))[2]
 
     def post_save(self, item: 'Model') -> None:
         item = ensure.is_instance(item, Image)
         # Updates the thumbnail and re-saves it
         logger.debug('After save: item = %s', item)
-        #item.updateThumbnail()
-        #item.save()
+        # item.updateThumbnail()
+        # item.save()
 
     def get_gui(self, type_: str) -> list[typing.Any]:
         return self.add_field(
@@ -114,7 +112,7 @@ class Images(ModelHandler):
             'data': item.data64,
         }
 
-    def item_as_dict_overview(self, item: 'Model') -> ImageItemOverview:
+    def item_as_dict_overview(self, item: 'Model') -> ImageItem:
         item = ensure.is_instance(item, Image)
         return {
             'id': item.uuid,

@@ -51,19 +51,20 @@ logger = logging.getLogger(__name__)
 # Enclosed methods under /item path
 
 
-class MFA(ModelHandler):
-    class MFAItem(types.rest.ItemDictType):
-        id: str
-        name: str
-        remember_device: int
-        validity: int
-        tags: list[str]
-        comments: str
-        type: str
-        type_name: str
-        permission: int
+class MFAItem(types.rest.ItemDictType):
+    id: str
+    name: str
+    remember_device: int
+    validity: int
+    tags: list[str]
+    comments: str
+    type: str
+    type_name: str
+    permission: int
 
-    
+
+class MFA(ModelHandler[MFAItem]):
+
     model = models.MFA
     save_fields = ['name', 'comments', 'tags', 'remember_device', 'validity']
 
@@ -96,7 +97,9 @@ class MFA(ModelHandler):
                     'value': '0',
                     'min_value': '0',
                     'label': gettext('Device Caching'),
-                    'tooltip': gettext('Time in hours to cache device so MFA is not required again. User based.'),
+                    'tooltip': gettext(
+                        'Time in hours to cache device so MFA is not required again. User based.'
+                    ),
                     'type': types.ui.FieldType.NUMERIC,
                     'order': 111,
                 },
@@ -115,7 +118,7 @@ class MFA(ModelHandler):
             )
 
             return local_gui
-        
+
     def item_as_dict(self, item: 'Model') -> MFAItem:
         item = ensure.is_instance(item, models.MFA)
         type_ = item.get_type()

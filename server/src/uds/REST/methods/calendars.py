@@ -48,23 +48,22 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-# Enclosed methods under /item path
+class CalendarItem(types.rest.ItemDictType):
+    id: str
+    name: str
+    tags: list[str]
+    comments: str
+    modified: datetime.datetime
+    number_rules: int
+    number_access: int
+    number_actions: int
+    permission: types.permissions.PermissionType
 
 
-class Calendars(ModelHandler):
+class Calendars(ModelHandler[CalendarItem]):
     """
     Processes REST requests about calendars
     """
-    class CalendarItem(types.rest.ItemDictType):
-        id: str
-        name: str
-        tags: list[str]
-        comments: str
-        modified: datetime.datetime
-        number_rules: int
-        number_access: int
-        number_actions: int
-        permission: types.permissions.PermissionType
 
     model = Calendar
     detail = {'rules': CalendarRules}
