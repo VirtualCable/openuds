@@ -234,7 +234,7 @@ class Users(DetailHandler[UserItem]):
             raise exceptions.rest.RequestError(str(e.message)) from e
         except exceptions.auth.AuthenticatorException as e:
             raise exceptions.rest.RequestError(str(e)) from e
-        except exceptions.rest.RequestError:  # pylint: disable=try-except-raise
+        except exceptions.rest.RequestError:
             raise  # Re-raise
         except Exception as e:
             logger.exception('Saving user')
