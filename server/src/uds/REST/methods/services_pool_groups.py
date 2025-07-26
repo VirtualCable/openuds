@@ -36,10 +36,9 @@ import typing
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
-from uds.core import types
+from uds.core import types, ui
 from uds.core.consts.images import DEFAULT_THUMB_BASE64
-from uds.core.ui import gui
-from uds.core.util import ensure
+from uds.core.util import ensure, ui as ui_utils
 from uds.core.util.model import process_uuid
 from uds.models import Image, ServicePoolGroup
 from uds.REST.model import ModelHandler
@@ -48,7 +47,7 @@ logger = logging.getLogger(__name__)
 
 if typing.TYPE_CHECKING:
     from django.db.models import Model
-from uds.core.ui import gui
+
 
 # Enclosed methods under /item path
 
@@ -95,25 +94,25 @@ class ServicesPoolGroups(ModelHandler[ServicePoolGroupItem]):
             logger.exception('At image recovering')
 
     # Gui related
-    def get_gui(self, type_: str) -> list[typing.Any]:
-        local_gui = self.compose_gui([], ['name', 'comments', 'priority'])
-
-        for field in [
-            {
-                'name': 'image_id',
-                'choices': [gui.choice_image(-1, '--------', DEFAULT_THUMB_BASE64)]
-                + gui.sorted_choices(
-                    [gui.choice_image(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]
+    def get_gui(self, for_type: str) -> list[typing.Any]:
+        return self.compose_gui(
+            [
+                types.rest.stock.StockField.NAME,
+                types.rest.stock.StockField.COMMENTS,
+                types.rest.stock.StockField.PRIORITY,
+            ],
+            ui_utils.image_choice_field(
+                order=120,
+                name='image_id',
+                label=gettext('Associated Image'),
+                choices=[ui.gui.choice_image(-1, '--------', DEFAULT_THUMB_BASE64)]
+                + ui.gui.sorted_choices(
+                    [ui.gui.choice_image(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]
                 ),
-                'label': gettext('Associated Image'),
-                'tooltip': gettext('Image assocciated with this service'),
-                'type': types.ui.FieldType.IMAGECHOICE,
-                'order': 102,
-            }
-        ]:
-            self.add_field(local_gui, field)
-
-        return local_gui
+                tooltip=gettext('Image associated with this service'),
+                tab=types.ui.Tab.DISPLAY,
+            ),
+        )
 
     def item_as_dict(self, item: 'Model') -> ServicePoolGroupItem:
         item = ensure.is_instance(item, ServicePoolGroup)
