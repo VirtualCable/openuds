@@ -498,7 +498,7 @@ class ServersGroups(ModelHandler[GroupItem ]):
             kind = _('Unmanaged')
         title = _('of type') + f' {subkind.upper()} {kind}'
         return self.add_field(
-            self.add_default_fields(
+            self.default_fields(
                 [],
                 ['name', 'comments', 'tags'],
             ),

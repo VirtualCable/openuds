@@ -149,7 +149,7 @@ class Providers(ModelHandler[ProviderItem]):
         if provider_type:
             with Environment.temporary_environment() as env:
                 provider = provider_type(env, None)
-                return self.add_default_fields(provider.gui_description(), ['name', 'comments', 'tags'])
+                return self.default_fields(provider.gui_description(), ['name', 'comments', 'tags'])
         raise exceptions.rest.NotFound('Type not found!')
 
     def allservices(self) -> typing.Generator[types.rest.ItemDictType, None, None]:

@@ -103,4 +103,4 @@ class Calendars(ModelHandler[CalendarItem]):
         }
 
     def get_gui(self, type_: str) -> list[typing.Any]:
-        return self.add_default_fields([], ['name', 'comments', 'tags'])
+        return self.default_fields([], ['name', 'comments', 'tags'])

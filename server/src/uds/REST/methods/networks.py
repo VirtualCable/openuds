@@ -97,7 +97,7 @@ class Networks(ModelHandler[NetworkItem]):
 
     def get_gui(self, type_: str) -> list[typing.Any]:
         return self.add_field(
-            self.add_default_fields([], ['name', 'tags']),
+            self.default_fields([], ['name', 'tags']),
             {
                 'name': 'net_string',
                 'value': '',

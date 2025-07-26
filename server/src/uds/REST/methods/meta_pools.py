@@ -180,7 +180,7 @@ class MetaPools(ModelHandler[MetaPoolItem]):
 
     # Gui related
     def get_gui(self, type_: str) -> list[typing.Any]:
-        local_gui = self.add_default_fields([], ['name', 'comments', 'tags'])
+        local_gui = self.default_fields([], ['name', 'comments', 'tags'])
 
         for field in [
             {

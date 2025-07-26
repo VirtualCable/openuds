@@ -121,19 +121,20 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
         # Not of my type
         return None
 
-    def get_gui(self, type_: str) -> list[typing.Any]:
+    def get_gui(self, type_: str) -> list[types.ui.GuiElement]:
         try:
             auth_type = auths.factory().lookup(type_)
             if auth_type:
                 # Create a new instance of the authenticator to access to its GUI
                 with Environment.temporary_environment() as env:
                     auth_instance = auth_type(env, None)
-                    field = self.add_default_fields(
+                    fields = self.default_fields(
                         auth_instance.gui_description(),
                         ['name', 'comments', 'tags', 'priority', 'small_name', 'networks'],
                     )
+                    
                     self.add_field(
-                        field,
+                        fields,
                         {
                             'name': 'state',
                             'value': consts.auth.VISIBLE,
@@ -154,7 +155,7 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
                     # If supports mfa, add MFA provider selector field
                     if auth_type.provides_mfa():
                         self.add_field(
-                            field,
+                            fields,
                             {
                                 'name': 'mfa_id',
                                 'choices': [gui.choice_item('', str(_('None')))]
@@ -168,7 +169,7 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
                                 'tab': types.ui.Tab.MFA,
                             },
                         )
-                    return field
+                    return fields
             raise Exception()  # Not found
         except Exception as e:
             logger.info('Type not found: %s', e)

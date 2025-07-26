@@ -322,7 +322,7 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
                 gettext('Create at least a service before creating a new service pool')
             )
 
-        g = self.add_default_fields([], ['name', 'comments', 'tags'])
+        g = self.default_fields([], ['name', 'comments', 'tags'])
 
         for f in [
             {

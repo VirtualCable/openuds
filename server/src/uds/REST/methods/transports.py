@@ -110,7 +110,7 @@ class Transports(ModelHandler[TransportItem]):
         with Environment.temporary_environment() as env:
             transport = transport_type(env, None)
 
-            field = self.add_default_fields(
+            field = self.default_fields(
                 transport.gui_description(), ['name', 'comments', 'tags', 'priority', 'networks']
             )
             field = self.add_field(

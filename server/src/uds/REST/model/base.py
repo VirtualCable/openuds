@@ -133,113 +133,136 @@ class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
             gui.append(v)
         return gui
 
-    def add_default_fields(self, gui: list[typing.Any], flds: list[str]) -> list[typing.Any]:
+    def append_field(
+        self, gui_list: list[types.ui.GuiElement], field: types.ui.GuiElement
+    ) -> list[types.ui.GuiElement]:
+        """
+        Appends a field to the gui description
+
+        Args:
+            gui_list: List of GuiElement to append the field to
+            field: Field to append
+
+        Returns:
+            The updated gui list with the new field appended
+        """
+        gui_list.append(field)
+        return gui_list
+
+    def default_fields(self, gui: list[types.ui.GuiElement], flds: list[str]) -> list[types.ui.GuiElement]:
         """
         Adds default fields (based in a list) to a "gui" description
         :param gui: Gui list where the "default" fielsds will be added
         :param flds: List of fields names requested to be added. Valid values are 'name', 'comments',
                     'priority' and 'small_name', 'short_name', 'tags'
         """
-        if 'tags' in flds:
-            self.add_field(
-                gui,
+        TRANS_FLDS: dict[str, list[types.ui.GuiElement]] = {
+            'tags': [
                 {
                     'name': 'tags',
-                    'label': _('Tags'),
-                    'type': 'taglist',
-                    'tooltip': _('Tags for this element'),
-                    'order': 0 - 105,
-                },
-            )
-        if 'name' in flds:
-            self.add_field(
-                gui,
+                    'gui': {
+                        'label': _('Tags'),
+                        'type': 'taglist',
+                        'tooltip': _('Tags for this element'),
+                        'order': 0 - 105,
+                    },
+                }
+            ],
+            'name': [
                 {
                     'name': 'name',
-                    'type': 'text',
-                    'required': True,
-                    'label': _('Name'),
-                    'length': 128,
-                    'tooltip': _('Name of this element'),
-                    'order': 0 - 100,
-                },
-            )
-        if 'comments' in flds:
-            self.add_field(
-                gui,
+                    'gui': {
+                        'type': 'text',
+                        'required': True,
+                        'label': _('Name'),
+                        'length': 128,
+                        'tooltip': _('Name of this element'),
+                        'order': 0 - 100,
+                    },
+                }
+            ],
+            'comments': [
                 {
                     'name': 'comments',
-                    'label': _('Comments'),
-                    'type': 'text',
-                    'lines': 3,
-                    'tooltip': _('Comments for this element'),
-                    'length': 256,
-                    'order': 0 - 90,
-                },
-            )
-        if 'priority' in flds:
-            self.add_field(
-                gui,
+                    'gui': {
+                        'label': _('Comments'),
+                        'type': 'text',
+                        'lines': 3,
+                        'tooltip': _('Comments for this element'),
+                        'length': 256,
+                        'order': 0 - 90,
+                    },
+                }
+            ],
+            'priority': [
                 {
                     'name': 'priority',
-                    'type': 'numeric',
-                    'label': _('Priority'),
-                    'tooltip': _('Selects the priority of this element (lower number means higher priority)'),
-                    'required': True,
-                    'value': 1,
-                    'length': 4,
-                    'order': 0 - 85,
-                },
-            )
-        if 'small_name' in flds:
-            self.add_field(
-                gui,
+                    'gui': {
+                        'label': _('Priority'),
+                        'type': 'numeric',
+                        'required': True,
+                        'default': 1,
+                        'length': 4,
+                        'tooltip': _(
+                            'Selects the priority of this element (lower number means higher priority)'
+                        ),
+                        'order': 0 - 85,
+                    },
+                }
+            ],
+            'small_name': [
                 {
                     'name': 'small_name',
-                    'type': 'text',
-                    'label': _('Label'),
-                    'tooltip': _('Label for this element'),
-                    'required': True,
-                    'length': 128,
-                    'order': 0 - 80,
-                },
-            )
-        if 'networks' in flds:
-            self.add_field(
-                gui,
-                {
-                    'name': 'net_filtering',
-                    'value': 'n',
-                    'choices': [
-                        {'id': 'n', 'text': _('No filtering')},
-                        {'id': 'a', 'text': _('Allow selected networks')},
-                        {'id': 'd', 'text': _('Deny selected networks')},
-                    ],
-                    'label': _('Network Filtering'),
-                    'tooltip': _(
-                        'Type of network filtering. Use "Disabled" to disable origin check, "Allow" to only enable for selected networks or "Deny" to deny from selected networks'
-                    ),
-                    'type': 'choice',
-                    'order': 100,  # At end
-                    'tab': types.ui.Tab.ADVANCED,
-                },
-            )
-            self.add_field(
-                gui,
+                    'gui': {
+                        'label': _('Label'),
+                        'type': 'text',
+                        'required': True,
+                        'length': 128,
+                        'tooltip': _('Label for this element'),
+                        'order': 0 - 80,
+                    },
+                }
+            ],
+            'networks': [
                 {
                     'name': 'networks',
-                    'value': [],
-                    'choices': sorted(
-                        [{'id': x.uuid, 'text': x.name} for x in Network.objects.all()],
-                        key=lambda x: x['text'].lower(),
-                    ),
-                    'label': _('Networks'),
-                    'tooltip': _('Networks associated. If No network selected, will mean "all networks"'),
-                    'type': 'multichoice',
-                    'order': 101,
-                    'tab': types.ui.Tab.ADVANCED,
+                    'gui': {
+                        'label': _('Networks'),
+                        'type': 'multichoice',
+                        'tooltip': _('Networks associated. If No network selected, will mean "all networks"'),
+                        'choices': sorted(
+                            [{'id': x.uuid, 'text': x.name} for x in Network.objects.all()],
+                            key=lambda x: x['text'].lower(),
+                        ),
+                        'order': 101,
+                        'tab': types.ui.Tab.ADVANCED,
+                    },
                 },
-            )
+                {
+                    'name': 'net_filtering',
+                    'gui': {
+                        'label': _('Network Filtering'),
+                        'type': 'choice',  # Type of network filtering
+                        'default': 'n',
+                        'choices': [
+                            {'id': 'n', 'text': _('No filtering')},
+                            {'id': 'a', 'text': _('Allow selected networks')},
+                            {'id': 'd', 'text': _('Deny selected networks')},
+                        ],
+                        'tooltip': _(
+                            'Type of network filtering. Use "Disabled" to disable origin check, "Allow" to only enable for selected networks or "Deny" to deny from selected networks'
+                        ),
+                        'order': 100,  # At end
+                        'tab': types.ui.Tab.ADVANCED,
+                    },
+                },
+            ],
+        }
+
+        for i in flds:
+            if i in TRANS_FLDS:
+                for field in TRANS_FLDS[i]:
+                    gui = self.append_field(gui, field)
 
         return gui
 

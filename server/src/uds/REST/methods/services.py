@@ -337,7 +337,7 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
                 service = service_type(
                     env, parent_instance
                 )  # Instantiate it so it has the opportunity to alter gui description based on parent
-                local_gui = self.add_default_fields(service.gui_description(), ['name', 'comments', 'tags'])
+                local_gui = self.default_fields(service.gui_description(), ['name', 'comments', 'tags'])
                 self.add_field(
                     local_gui,
                     {

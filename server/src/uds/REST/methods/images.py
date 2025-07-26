@@ -93,7 +93,7 @@ class Images(ModelHandler[ImageItem]):
 
     def get_gui(self, type_: str) -> list[typing.Any]:
         return self.add_field(
-            self.add_default_fields([], ['name']),
+            self.default_fields([], ['name']),
             {
                 'name': 'data',
                 'value': '',

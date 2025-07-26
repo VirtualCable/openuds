@@ -89,7 +89,7 @@ class MFA(ModelHandler[MFAItem]):
         with Environment.temporary_environment() as env:
             mfa = mfa_type(env, None)
 
-            local_gui = self.add_default_fields(mfa.gui_description(), ['name', 'comments', 'tags'])
+            local_gui = self.default_fields(mfa.gui_description(), ['name', 'comments', 'tags'])
             self.add_field(
                 local_gui,
                 {

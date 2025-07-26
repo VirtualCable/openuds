@@ -167,11 +167,33 @@ class FieldInfo:
         """Returns a dict with all fields that are not None"""
         return {k: v for k, v in dataclasses.asdict(self).items() if v is not None}
 
+class GuiDescription(typing.TypedDict):
+    """
+    GuiDescription is a dictionary that describes a GUI element.
+    It contains the name of the element, the GUI description, and the value.
+    """
+    label: str
+    tooltip: str
+    order: int
+    type: str
+    readonly: typing.NotRequired[bool]
+    default: typing.NotRequired[str|int|float|bool]
+    required: typing.NotRequired[bool]
+    length: typing.NotRequired[int]
+    lines: typing.NotRequired[int]
+    pattern: typing.NotRequired[str]
+    tab: typing.NotRequired[str]
+    choices: typing.NotRequired[list[ChoiceItem]]
+    min_value: typing.NotRequired[int]
+    max_value: typing.NotRequired[int]
+    fills: typing.NotRequired[Filler]
+    rows: typing.NotRequired[int]
+
 
 class GuiElement(typing.TypedDict):
     name: str
-    gui: dict[str, list[dict[str, typing.Any]]]
-    value: typing.Any
+    value: typing.NotRequired[typing.Any]
+    gui: GuiDescription
 
 
 # Row styles

@@ -117,7 +117,7 @@ class OsManagers(ModelHandler[OsManagerItem]):
             with Environment.temporary_environment() as env:
                 osmanager = osmanager_type(env, None)
 
-                return self.add_default_fields(
+                return self.default_fields(
                     osmanager.gui_description(),
                     ['name', 'comments', 'tags'],
                 )

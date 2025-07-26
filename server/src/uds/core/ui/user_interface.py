@@ -325,7 +325,7 @@ class gui:
                 value=value,
                 tab=tab,
             )
-            
+
         @property
         def field_name(self) -> str:
             """
@@ -389,7 +389,7 @@ class gui:
             """
             self._field_info.value = value
 
-        def gui_description(self) -> dict[str, typing.Any]:
+        def gui_description(self) -> types.ui.GuiDescription:
             """
             Returns the dictionary with the description of this item.
             We copy it, cause we need to translate the label and tooltip fields
@@ -400,12 +400,17 @@ class gui:
             for i in ('value', 'old_field_name'):
                 if i in data:
                     del data[i]  # We don't want to send some values on gui_description
+            # Translate label and tooltip
             data['label'] = gettext(data['label']) if data['label'] else ''
             data['tooltip'] = gettext(data['tooltip']) if data['tooltip'] else ''
+
+            # And, if tab is set, translate it too
             if 'tab' in data:
                 data['tab'] = gettext(data['tab'])  # Translates tab name
-            data['default'] = self.default  # We need to translate default value
-            return data
+
+            data['default'] = self.default
+
+            return typing.cast(types.ui.GuiDescription, data)
 
         @property
         def default(self) -> typing.Any:
@@ -799,7 +804,7 @@ class gui:
         def value(self, value: datetime.date | str) -> None:
             self._set_value(value)
 
-        def gui_description(self) -> dict[str, typing.Any]:
+        def gui_description(self) -> types.ui.GuiDescription:
             fldgui = super().gui_description()
             # Convert if needed value and default to string (YYYY-MM-DD)
             if 'default' in fldgui:
@@ -1653,10 +1658,13 @@ class UserInterface(metaclass=UserInterfaceType):
             if internal_field_type not in FIELD_DECODERS:
                 logger.warning('Field %s has no decoder', field_name)
                 continue
-            
+
             if field_type != internal_field_type.name:
                 # Especial case for text fields converted to password fields
-                if not (internal_field_type == types.ui.FieldType.PASSWORD and field_type == types.ui.FieldType.TEXT.name):
+                if not (
+                    internal_field_type == types.ui.FieldType.PASSWORD
+                    and field_type == types.ui.FieldType.TEXT.name
+                ):
                     logger.warning(
                         'Field %s has different type than expected: %s != %s',
                         field_name,
@@ -1791,11 +1799,12 @@ def password_compat_field_decoder(value: str) -> str:
     """
     Compatibility function to decode text fields converted to password fields
     """
-    try:   
+    try:
         value = CryptoManager.manager().aes_decrypt(value.encode('utf8'), UDSK, True).decode()
     except Exception:
         pass
     return value
+
 
 # Dictionaries used to encode/decode fields to be stored on database
 FIELDS_ENCODERS: typing.Final[

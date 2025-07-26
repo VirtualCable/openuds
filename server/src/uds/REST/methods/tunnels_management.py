@@ -180,7 +180,7 @@ class Tunnels(ModelHandler):
 
     def get_gui(self, type_: str) -> list[typing.Any]:
         return self.add_field(
-            self.add_default_fields(
+            self.default_fields(
                 [],
                 ['name', 'comments', 'tags'],
             ),
