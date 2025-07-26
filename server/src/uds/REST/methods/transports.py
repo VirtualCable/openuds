@@ -40,7 +40,7 @@ from django.utils.translation import gettext_lazy as _
 
 from uds.core import consts, transports, types, ui
 from uds.core.environment import Environment
-from uds.core.util import ensure, permissions
+from uds.core.util import ensure, permissions, ui as ui_utils
 from uds.models import Network, ServicePool, Transport
 from uds.REST.model import ModelHandler
 
@@ -50,6 +50,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 # Enclosed methods under /item path
+
 
 class TransportItem(types.rest.ManagedObjectDictType):
     id: str
@@ -101,8 +102,8 @@ class Transports(ModelHandler[TransportItem]):
     def enum_types(self) -> collections.abc.Iterable[type[transports.Transport]]:
         return transports.factory().providers().values()
 
-    def get_gui(self, type_: str) -> list[typing.Any]:
-        transport_type = transports.factory().lookup(type_)
+    def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
+        transport_type = transports.factory().lookup(for_type)
 
         if not transport_type:
             raise self.invalid_item_response()
@@ -110,63 +111,53 @@ class Transports(ModelHandler[TransportItem]):
         with Environment.temporary_environment() as env:
             transport = transport_type(env, None)
 
-            field = self.default_fields(
-                transport.gui_description(), ['name', 'comments', 'tags', 'priority', 'networks']
-            )
-            field = self.add_field(
-                field,
-                {
-                    'name': 'allowed_oss',
-                    'value': [],
-                    'choices': sorted(
-                        [
-                            ui.gui.choice_item(x.db_value(), x.os_name().title())
-                            for x in consts.os.KNOWN_OS_LIST
-                        ],
-                        key=lambda x: x['text'].lower(),
-                    ),
-                    'label': gettext('Allowed Devices'),
-                    'tooltip': gettext(
+            ORDER: typing.Final[int] = 100
+            fields = self.compose_gui(
+                [
+                    types.rest.stock.StockField.NAME,
+                    types.rest.stock.StockField.COMMENTS,
+                    types.rest.stock.StockField.TAGS,
+                    types.rest.stock.StockField.PRIORITY,
+                    types.rest.stock.StockField.NETWORKS,
+                ],
+                *transport.gui_description(),
+                ui_utils.multichoice_field(
+                    order=ORDER,
+                    name='allowed_oss',
+                    label=gettext('Allowed Devices'),
+                    choices=[
+                        ui.gui.choice_item(x.db_value(), x.os_name().title()) for x in consts.os.KNOWN_OS_LIST
+                    ],
+                    tooltip=gettext(
                         'If empty, any kind of device compatible with this transport will be allowed. Else, only devices compatible with selected values will be allowed'
                     ),
-                    'type': types.ui.FieldType.MULTICHOICE,
-                    'tab': types.ui.Tab.ADVANCED,
-                    'order': 102,
-                },
-            )
-            field = self.add_field(
-                field,
-                {
-                    'name': 'pools',
-                    'value': [],
-                    'choices': [
+                    tab=types.ui.Tab.ADVANCED,
+                ),
+                ui_utils.multichoice_field(
+                    order=ORDER + 1,
+                    name='pools',
+                    label=gettext('Service Pools'),
+                    choices=[
                         ui.gui.choice_item(x.uuid, x.name)
                         for x in ServicePool.objects.filter(service__isnull=False)
                         .order_by('name')
                         .prefetch_related('service')
                         if transport_type.protocol in x.service.get_type().allowed_protocols
                     ],
-                    'label': gettext('Service Pools'),
-                    'tooltip': gettext('Currently assigned services pools'),
-                    'type': types.ui.FieldType.MULTICHOICE,
-                    'order': 103,
-                },
+                    tooltip=gettext(
+                        'Currently assigned services pools. If empty, no service pool is assigned to this transport'
+                    ),
+                    tab=types.ui.Tab.ADVANCED,
+                ),
+                ui_utils.text_field(
+                    order=ORDER + 2,
+                    name='label',
+                    label=gettext('Label'),
+                    tooltip=gettext('Metapool transport label (only used on metapool transports grouping)'),
+                    tab=types.ui.Tab.ADVANCED,
+                ),
             )
-            field = self.add_field(
-                field,
-                {
-                    'name': 'label',
-                    'length': 32,
-                    'value': '',
-                    'label': gettext('Label'),
-                    'tooltip': gettext('Metapool transport label (only used on metapool transports grouping)'),
-                    'type': types.ui.FieldType.TEXT,
-                    'order': 201,
-                    'tab': types.ui.Tab.ADVANCED,
-                },
-            )
-
-            return field
+            return fields
 
     def item_as_dict(self, item: 'Model') -> TransportItem:
         item = ensure.is_instance(item, Transport)

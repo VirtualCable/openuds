@@ -71,7 +71,7 @@ def match_args(
     callback(sample, arg_2, argument)
     And the literals will be ignored
     """
-    arg_list = list(arg_list)  # ensure it is a list
+    arg_list = [i for i in arg_list]  # ensure it is a list
     for pattern, function in args:
         if len(arg_list) != len(pattern):
             continue

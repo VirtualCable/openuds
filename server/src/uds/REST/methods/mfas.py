@@ -40,7 +40,7 @@ from django.utils.translation import gettext_lazy as _
 from uds import models
 from uds.core import mfas, types
 from uds.core.environment import Environment
-from uds.core.util import ensure, permissions
+from uds.core.util import ensure, permissions, ui as ui_utils
 from uds.REST.model import ModelHandler
 
 if typing.TYPE_CHECKING:
@@ -79,8 +79,8 @@ class MFA(ModelHandler[MFAItem]):
     def enum_types(self) -> collections.abc.Iterable[type[mfas.MFA]]:
         return mfas.factory().providers().values()
 
-    def get_gui(self, type_: str) -> list[typing.Any]:
-        mfa_type = mfas.factory().lookup(type_)
+    def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
+        mfa_type = mfas.factory().lookup(for_type)
 
         if not mfa_type:
             raise self.invalid_item_response()
@@ -88,36 +88,31 @@ class MFA(ModelHandler[MFAItem]):
         # Create a temporal instance to get the gui
         with Environment.temporary_environment() as env:
             mfa = mfa_type(env, None)
-
-            local_gui = self.default_fields(mfa.gui_description(), ['name', 'comments', 'tags'])
-            self.add_field(
-                local_gui,
-                {
-                    'name': 'remember_device',
-                    'value': '0',
-                    'min_value': '0',
-                    'label': gettext('Device Caching'),
-                    'tooltip': gettext(
-                        'Time in hours to cache device so MFA is not required again. User based.'
-                    ),
-                    'type': types.ui.FieldType.NUMERIC,
-                    'order': 111,
-                },
+            return self.compose_gui(
+                [
+                    types.rest.stock.StockField.NAME,
+                    types.rest.stock.StockField.COMMENTS,
+                    types.rest.stock.StockField.TAGS,
+                ],
+                *mfa.gui_description(),
+                # Add remember_device and validity fields
+                ui_utils.numeric_field(
+                    name='remember_device',
+                    default=0,
+                    min_value=0,
+                    label=gettext('Device Caching'),
+                    tooltip=gettext('Time in hours to cache device so MFA is not required again. User based.'),
+                    order=111,
+                ),
+                ui_utils.numeric_field(
+                    name='validity',
+                    default=5,
+                    min_value=0,
+                    label=gettext('MFA code validity'),
+                    tooltip=gettext('Time in minutes to allow MFA code to be used.'),
+                    order=112,
+                ),
             )
-            self.add_field(
-                local_gui,
-                {
-                    'name': 'validity',
-                    'value': '5',
-                    'min_value': '0',
-                    'label': gettext('MFA code validity'),
-                    'tooltip': gettext('Time in minutes to allow MFA code to be used.'),
-                    'type': types.ui.FieldType.NUMERIC,
-                    'order': 112,
-                },
-            )
-
-            return local_gui
 
     def item_as_dict(self, item: 'Model') -> MFAItem:
         item = ensure.is_instance(item, models.MFA)

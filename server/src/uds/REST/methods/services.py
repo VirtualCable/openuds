@@ -41,11 +41,11 @@ from uds import models
 
 from uds.core import exceptions, types
 import uds.core.types.permissions
-from uds.core.util import log, permissions, ensure
+from uds.core.util import log, permissions, ensure, ui as ui_utils
 from uds.core.util.model import process_uuid
 from uds.core.environment import Environment
 from uds.core.consts.images import DEFAULT_THUMB_BASE64
-from uds.core.ui import gui
+from uds.core import ui
 from uds.core.types.states import State
 
 
@@ -325,7 +325,7 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
 
         return offers  # Default is that details do not have types
 
-    def get_gui(self, parent: 'Model', for_type: str) -> collections.abc.Iterable[typing.Any]:
+    def get_gui(self, parent: 'Model', for_type: str) -> list[types.ui.GuiElement]:
         parent = ensure.is_instance(parent, models.Provider)
         try:
             logger.debug('getGui parameters: %s, %s', parent, for_type)
@@ -337,29 +337,36 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
                 service = service_type(
                     env, parent_instance
                 )  # Instantiate it so it has the opportunity to alter gui description based on parent
-                local_gui = self.default_fields(service.gui_description(), ['name', 'comments', 'tags'])
-                self.add_field(
-                    local_gui,
-                    {
-                        'name': 'max_services_count_type',
-                        'choices': [
-                            gui.choice_item('0', _('Standard')),
-                            gui.choice_item('1', _('Conservative')),
-                        ],
-                        'label': _('Service counting method'),
-                        'tooltip': _('Kind of service counting for calculating if MAX is reached'),
-                        'type': types.ui.FieldType.CHOICE,
-                        'readonly': False,
-                        'order': 110,
-                        'tab': types.ui.Tab.ADVANCED,
-                    },
-                )
-
-                # Remove all overrided fields from editables
                 overrided_fields = service.overrided_fields or {}
-                local_gui = [field_gui for field_gui in local_gui if field_gui['name'] not in overrided_fields]
-
-                return local_gui
+                return [
+                    field_gui
+                    for field_gui in self.compose_gui(
+                        [
+                            types.rest.stock.StockField.NAME,
+                            types.rest.stock.StockField.COMMENTS,
+                            types.rest.stock.StockField.TAGS,
+                        ],
+                        *service.gui_description(),
+                        ui_utils.choice_field(
+                            name='max_services_count_type',
+                            choices=[
+                                ui.gui.choice_item(
+                                    str(types.services.ServicesCountingType.STANDARD.value),
+                                    _('Standard'),
+                                ),
+                                ui.gui.choice_item(
+                                    str(types.services.ServicesCountingType.CONSERVATIVE.value),
+                                    _('Conservative'),
+                                ),
+                            ],
+                            label=_('Service counting method'),
+                            tooltip=_('Kind of service counting for calculating if MAX is reached'),
+                            order=110,
+                            tab=types.ui.Tab.ADVANCED,
+                        ),
+                    )
+                    if field_gui['name'] not in overrided_fields
+                ]
 
         except Exception as e:
             logger.exception('get_gui')

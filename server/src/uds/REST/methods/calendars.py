@@ -48,6 +48,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 class CalendarItem(types.rest.ItemDictType):
     id: str
     name: str
@@ -102,5 +103,11 @@ class Calendars(ModelHandler[CalendarItem]):
             'permission': permissions.effective_permissions(self._user, item),
         }
 
-    def get_gui(self, type_: str) -> list[typing.Any]:
-        return self.default_fields([], ['name', 'comments', 'tags'])
+    def get_gui(self, for_type: str) -> list[typing.Any]:
+        return self.compose_gui(
+            [
+                types.rest.stock.StockField.NAME,
+                types.rest.stock.StockField.COMMENTS,
+                types.rest.stock.StockField.TAGS,
+            ],
+        )

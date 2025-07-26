@@ -156,8 +156,8 @@ class Reports(model.BaseModelHandler[ReportItem]):
             raise self.invalid_request_response(str(e))
 
     # Gui related
-    def get_gui(self, type_: str) -> list[typing.Any]:
-        report = self._locate_report(type_)
+    def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
+        report = self._locate_report(for_type)
         return sorted(report.gui_description(), key=lambda f: f['gui']['order'])
 
     # Returns the list of

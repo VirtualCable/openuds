@@ -33,6 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 
 import logging
 import typing
+import datetime
 
 from django.utils.translation import gettext as _
 from uds.core import types
@@ -50,13 +51,31 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class ServicesUsage(DetailHandler):
+class ServicesUsageItem(types.rest.ItemDictType):
+    id: str
+    state_date: datetime.datetime
+    creation_date: datetime.datetime
+    unique_id: str
+    friendly_name: str
+    owner: str
+    owner_info: dict[str, str]
+    service: str
+    service_id: str
+    pool: str
+    pool_id: str
+    ip: str
+    source_host: str
+    source_ip: str
+    in_use: bool
+
+
+class ServicesUsage(DetailHandler[ServicesUsageItem]):
     """
     Rest handler for Assigned Services, which parent is Service
     """
 
     @staticmethod
-    def item_as_dict(item: UserService) -> dict[str, typing.Any]:
+    def item_as_dict(item: UserService) -> ServicesUsageItem:
         """
         Converts an assigned/cached service db item to a dictionary for REST response
         :param item: item to convert
@@ -90,13 +109,13 @@ class ServicesUsage(DetailHandler):
             'in_use': item.in_use,
         }
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult:
+    def get_items(
+        self, parent: 'Model', item: typing.Optional[str]
+    ) -> types.rest.GetItemsResult[ServicesUsageItem]:
         parent = ensure.is_instance(parent, Provider)
         try:
             if item is None:
-                userservices_query = UserService.objects.filter(
-                    deployed_service__service__provider=parent
-                )
+                userservices_query = UserService.objects.filter(deployed_service__service__provider=parent)
             else:
                 userservices_query = UserService.objects.filter(
                     deployed_service__service_uuid=process_uuid(item)

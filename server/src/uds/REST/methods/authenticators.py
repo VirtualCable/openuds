@@ -42,7 +42,7 @@ from django.utils.translation import gettext_lazy as _
 from uds.core import auths, consts, exceptions, types
 from uds.core.environment import Environment
 from uds.core.ui import gui
-from uds.core.util import ensure, permissions
+from uds.core.util import ensure, permissions, ui as ui_utils
 from uds.core.util.model import process_uuid
 from uds.models import MFA, Authenticator, Network, Tag
 from uds.REST.model import ModelHandler
@@ -121,55 +121,56 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
         # Not of my type
         return None
 
-    def get_gui(self, type_: str) -> list[types.ui.GuiElement]:
+    def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
         try:
-            auth_type = auths.factory().lookup(type_)
+            auth_type = auths.factory().lookup(for_type)
+            ORDER: typing.Final[int] = 110
             if auth_type:
                 # Create a new instance of the authenticator to access to its GUI
                 with Environment.temporary_environment() as env:
-                    auth_instance = auth_type(env, None)
-                    fields = self.default_fields(
-                        auth_instance.gui_description(),
-                        ['name', 'comments', 'tags', 'priority', 'small_name', 'networks'],
+                    # If supports mfa, add MFA provider selector field
+                    mfa_fields = (
+                        [
+                            ui_utils.choice_field(
+                                order=ORDER + 1,
+                                name='mfa_id',
+                                label=gettext('MFA Provider'),
+                                tooltip=gettext('MFA provider to use for this authenticator'),
+                                choices=[gui.choice_item('', str(_('None')))]
+                                + gui.sorted_choices(
+                                    [gui.choice_item(v.uuid, v.name) for v in MFA.objects.all()]
+                                ),
+                                tab=types.ui.Tab.MFA,
+                            )
+                        ]
+                        if auth_type.provides_mfa()
+                        else []
                     )
-                    
-                    self.add_field(
-                        fields,
-                        {
-                            'name': 'state',
-                            'value': consts.auth.VISIBLE,
-                            'choices': [
+                    auth_instance = auth_type(env, None)
+                    return self.compose_gui(
+                        [
+                            types.rest.stock.StockField.NAME,
+                            types.rest.stock.StockField.COMMENTS,
+                            types.rest.stock.StockField.TAGS,
+                            types.rest.stock.StockField.PRIORITY,
+                            types.rest.stock.StockField.LABEL,
+                            types.rest.stock.StockField.NETWORKS,
+                        ],
+                        *auth_instance.gui_description(),
+                        ui_utils.choice_field(
+                            order=ORDER,
+                            name='state',
+                            default=consts.auth.VISIBLE,
+                            choices=[
                                 {'id': consts.auth.VISIBLE, 'text': _('Visible')},
                                 {'id': consts.auth.HIDDEN, 'text': _('Hidden')},
                                 {'id': consts.auth.DISABLED, 'text': _('Disabled')},
                             ],
-                            'label': gettext('Access'),
-                            'tooltip': gettext(
-                                'Access type for this transport. Disabled means not only hidden, but also not usable as login method.'
-                            ),
-                            'type': types.ui.FieldType.CHOICE,
-                            'order': 107,
-                            'tab': gettext('Display'),
-                        },
+                            label=gettext('Access'),
+                        ),
+                        *mfa_fields,
                     )
-                    # If supports mfa, add MFA provider selector field
-                    if auth_type.provides_mfa():
-                        self.add_field(
-                            fields,
-                            {
-                                'name': 'mfa_id',
-                                'choices': [gui.choice_item('', str(_('None')))]
-                                + gui.sorted_choices(
-                                    [gui.choice_item(v.uuid, v.name) for v in MFA.objects.all()]
-                                ),
-                                'label': gettext('MFA Provider'),
-                                'tooltip': gettext('MFA provider to use for this authenticator'),
-                                'type': types.ui.FieldType.CHOICE,
-                                'order': 108,
-                                'tab': types.ui.Tab.MFA,
-                            },
-                        )
-                    return fields
+
             raise Exception()  # Not found
         except Exception as e:
             logger.info('Type not found: %s', e)

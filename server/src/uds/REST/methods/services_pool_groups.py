@@ -96,7 +96,7 @@ class ServicesPoolGroups(ModelHandler[ServicePoolGroupItem]):
 
     # Gui related
     def get_gui(self, type_: str) -> list[typing.Any]:
-        local_gui = self.default_fields([], ['name', 'comments', 'priority'])
+        local_gui = self.compose_gui([], ['name', 'comments', 'priority'])
 
         for field in [
             {

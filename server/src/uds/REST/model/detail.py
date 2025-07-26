@@ -323,7 +323,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
         """
         return types.ui.RowStyleInfo.null()
 
-    def get_gui(self, parent: models.Model, for_type: str) -> collections.abc.Iterable[typing.Any]:
+    def get_gui(self, parent: models.Model, for_type: str) -> list[types.ui.GuiElement]:
         """
         Gets the gui that is needed in order to "edit/add" new items on this detail
         If not overriden, means that the detail has no edit/new Gui
@@ -333,14 +333,13 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
             for_type (str): Type of object needing gui
 
         Return:
-            collections.abc.Iterable[typing.Any]: A list of gui fields
+            list[types.ui.GuiElement]: A list of gui fields
         """
         # raise RequestError('Gui not provided for this type of object')
         return []
 
-    def get_processed_gui(self, parent: models.Model, for_type: str) -> collections.abc.Iterable[typing.Any]:
-        gui = self.get_gui(parent, for_type)
-        return sorted(gui, key=lambda f: f['gui']['order'])
+    def get_processed_gui(self, parent: models.Model, for_type: str) -> list[types.ui.GuiElement]:
+        return sorted(self.get_gui(parent, for_type), key=lambda f: f['gui']['order'])
 
     def get_types(
         self, parent: models.Model, for_type: typing.Optional[str]

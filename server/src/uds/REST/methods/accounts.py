@@ -50,6 +50,7 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /item path
 
+
 class AccountItem(types.rest.ItemDictType):
     id: str
     name: str
@@ -93,8 +94,14 @@ class Accounts(ModelHandler[AccountItem]):
             'permission': permissions.effective_permissions(self._user, item),
         }
 
-    def get_gui(self, type_: str) -> list[typing.Any]:
-        return self.default_fields([], ['name', 'comments', 'tags'])
+    def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
+        return self.compose_gui(
+            [
+                types.rest.stock.StockField.NAME,
+                types.rest.stock.StockField.COMMENTS,
+                types.rest.stock.StockField.TAGS,
+            ],
+        )
 
     def timemark(self, item: 'Model') -> typing.Any:
         """
@@ -103,7 +110,7 @@ class Accounts(ModelHandler[AccountItem]):
             This is useful to easily identify when the account data was last updated.
             (For example, one user enters an service, we get the usage data and "timemark" it, later read again
             and we can identify that all data before this timemark has already been processed)
-            
+
             Arguments:
                 item: Account to timemark
 

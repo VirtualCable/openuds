@@ -29,7 +29,6 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-# pylint: disable=too-many-public-methods
 
 import inspect
 import logging
@@ -43,7 +42,7 @@ from uds.core import exceptions
 from uds.core import types
 from uds.core.module import Module
 from uds.core.util import permissions
-from uds.models import ManagedObjectModel, Network
+from uds.models import ManagedObjectModel
 
 from ..handlers import Handler
 
@@ -133,138 +132,28 @@ class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
             gui.append(v)
         return gui
 
-    def append_field(
-        self, gui_list: list[types.ui.GuiElement], field: types.ui.GuiElement
+    def compose_gui(
+        self,
+        stock_fields: list[types.rest.stock.StockField],
+        *gui: types.ui.GuiElement,
     ) -> list[types.ui.GuiElement]:
         """
-        Appends a field to the gui description
+        Adds default fields (based in a list) to a "gui" description
 
         Args:
-            gui_list: List of GuiElement to append the field to
-            field: Field to append
+            gui: Gui list where the "default" fielsds will be added
+            stock_fields: List of StockField to be added. Valid values are 'name', '
 
-        Returns:
-            The updated gui list with the new field appended
+        returns:
+            The updated gui list with the new fields appended
         """
-        gui_list.append(field)
-        return gui_list
+        the_gui: list[types.ui.GuiElement] = [
+            gui_field for field in stock_fields for gui_field in field.get_fields()
+        ]
+        for field in gui:
+            the_gui.append(field)
 
-    def default_fields(self, gui: list[types.ui.GuiElement], flds: list[str]) -> list[types.ui.GuiElement]:
-        """
-        Adds default fields (based in a list) to a "gui" description
-        :param gui: Gui list where the "default" fielsds will be added
-        :param flds: List of fields names requested to be added. Valid values are 'name', 'comments',
-                    'priority' and 'small_name', 'short_name', 'tags'
-        """
-        TRANS_FLDS: dict[str, list[types.ui.GuiElement]] = {
-            'tags': [
-                {
-                    'name': 'tags',
-                    'gui': {
-                        'label': _('Tags'),
-                        'type': 'taglist',
-                        'tooltip': _('Tags for this element'),
-                        'order': 0 - 105,
-                    },
-                }
-            ],
-            'name': [
-                {
-                    'name': 'name',
-                    'gui': {
-                        'type': 'text',
-                        'required': True,
-                        'label': _('Name'),
-                        'length': 128,
-                        'tooltip': _('Name of this element'),
-                        'order': 0 - 100,
-                    },
-                }
-            ],
-            'comments': [
-                {
-                    'name': 'comments',
-                    'gui': {
-                        'label': _('Comments'),
-                        'type': 'text',
-                        'lines': 3,
-                        'tooltip': _('Comments for this element'),
-                        'length': 256,
-                        'order': 0 - 90,
-                    },
-                }
-            ],
-            'priority': [
-                {
-                    'name': 'priority',
-                    'gui': {
-                        'label': _('Priority'),
-                        'type': 'numeric',
-                        'required': True,
-                        'default': 1,
-                        'length': 4,
-                        'tooltip': _(
-                            'Selects the priority of this element (lower number means higher priority)'
-                        ),
-                        'order': 0 - 85,
-                    },
-                }
-            ],
-            'small_name': [
-                {
-                    'name': 'small_name',
-                    'gui': {
-                        'label': _('Label'),
-                        'type': 'text',
-                        'required': True,
-                        'length': 128,
-                        'tooltip': _('Label for this element'),
-                        'order': 0 - 80,
-                    },
-                }
-            ],
-            'networks': [
-                {
-                    'name': 'networks',
-                    'gui': {
-                        'label': _('Networks'),
-                        'type': 'multichoice',
-                        'tooltip': _('Networks associated. If No network selected, will mean "all networks"'),
-                        'choices': sorted(
-                            [{'id': x.uuid, 'text': x.name} for x in Network.objects.all()],
-                            key=lambda x: x['text'].lower(),
-                        ),
-                        'order': 101,
-                        'tab': types.ui.Tab.ADVANCED,
-                    },
-                },
-                {
-                    'name': 'net_filtering',
-                    'gui': {
-                        'label': _('Network Filtering'),
-                        'type': 'choice',  # Type of network filtering
-                        'default': 'n',
-                        'choices': [
-                            {'id': 'n', 'text': _('No filtering')},
-                            {'id': 'a', 'text': _('Allow selected networks')},
-                            {'id': 'd', 'text': _('Deny selected networks')},
-                        ],
-                        'tooltip': _(
-                            'Type of network filtering. Use "Disabled" to disable origin check, "Allow" to only enable for selected networks or "Deny" to deny from selected networks'
-                        ),
-                        'order': 100,  # At end
-                        'tab': types.ui.Tab.ADVANCED,
-                    },
-                },
-            ],
-        }
-
-        for i in flds:
-            if i in TRANS_FLDS:
-                for field in TRANS_FLDS[i]:
-                    gui = self.append_field(gui, field)
-
-        return gui
+        return the_gui
 
     def ensure_has_access(
         self,

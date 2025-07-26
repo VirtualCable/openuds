@@ -54,6 +54,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.rest.T_Item]):
     """
     Basic Handler for a model
@@ -117,7 +118,6 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
         """
         raise NotImplementedError()
 
-
     def item_as_dict_overview(self, item: models.Model) -> types.rest.T_Item:
         """
         Invoked when request is an "overview"
@@ -162,9 +162,12 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
             return []
 
     # gui related
-    def get_gui(self, type_: str) -> list[typing.Any]:
+    def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
         return []
         # raise self.invalidRequestException()
+
+    def get_processed_gui(self, for_type: str) -> list[types.ui.GuiElement]:
+        return sorted(self.get_gui(for_type), key=lambda f: f['gui']['order'])
 
     # Delete related, checks if the item can be deleted
     # If it can't be so, raises an exception
@@ -343,15 +346,15 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
                 raise self.invalid_request_response()
             case [consts.rest.TYPES]:
                 return list(self.get_types())
-            case [consts.rest.TYPES, type_]:
-                return self.get_type(type_)
-            case [consts.rest.TYPES, type_, *_fails]:
+            case [consts.rest.TYPES, for_type]:
+                return self.get_type(for_type)
+            case [consts.rest.TYPES, for_type, *_fails]:
                 raise self.invalid_request_response()
             case [consts.rest.GUI]:
-                return self.get_gui('')
-            case [consts.rest.GUI, type_]:
-                return sorted(self.get_gui(type_), key=lambda f: f['gui']['order'])
-            case [consts.rest.GUI, type_, *_fails]:
+                return self.get_processed_gui('')
+            case [consts.rest.GUI, for_type]:
+                return self.get_processed_gui(for_type)
+            case [consts.rest.GUI, for_type, *_fails]:
                 raise self.invalid_request_response()
             case _:  # Maybe an item or a detail
                 if number_of_args == 1:

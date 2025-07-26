@@ -38,8 +38,8 @@ from django.utils.translation import gettext_lazy as _
 
 from uds.core import types, exceptions
 from uds.core.consts.images import DEFAULT_THUMB_BASE64
-from uds.core.ui import gui
-from uds.core.util import ensure, permissions
+from uds.core import ui
+from uds.core.util import ensure, permissions, ui as ui_utils
 from uds.core.util.model import process_uuid
 from uds.core.types.states import State
 from uds.models import Image, MetaPool, ServicePoolGroup
@@ -179,96 +179,94 @@ class MetaPools(ModelHandler[MetaPoolItem]):
         }
 
     # Gui related
-    def get_gui(self, type_: str) -> list[typing.Any]:
-        local_gui = self.default_fields([], ['name', 'comments', 'tags'])
+    def get_gui(self, for_type: str) -> list[typing.Any]:
 
-        for field in [
-            {
-                'name': 'short_name',
-                'type': 'text',
-                'label': _('Short name'),
-                'tooltip': _('Short name for user service visualization'),
-                'required': False,
-                'length': 32,
-                'order': 0 - 95,
-            },
-            {
-                'name': 'policy',
-                'choices': [gui.choice_item(k, str(v)) for k, v in types.pools.LoadBalancingPolicy.enumerate()],
-                'label': gettext('Load balancing policy'),
-                'tooltip': gettext('Service pool load balancing policy'),
-                'type': types.ui.FieldType.CHOICE,
-                'order': 100,
-            },
-            {
-                'name': 'ha_policy',
-                'choices': [
-                    gui.choice_item(k, str(v)) for k, v in types.pools.HighAvailabilityPolicy.enumerate()
+        ORDER: typing.Final[int] = 100
+        local_gui = self.compose_gui(
+            [
+                types.rest.stock.StockField.NAME,
+                types.rest.stock.StockField.COMMENTS,
+                types.rest.stock.StockField.TAGS,
+            ],
+            #     {
+            ui_utils.text_field(
+                order=-95,  # On top
+                name='short_name',
+                label=gettext('Short name'),
+                tooltip=gettext('Short name for user service visualization'),
+                length=32,
+            ),
+            ui_utils.multichoice_field(
+                order=ORDER,
+                name='policy',
+                label=gettext('Load balancing policy'),
+                choices=[ui.gui.choice_item(k, str(v)) for k, v in types.pools.LoadBalancingPolicy.enumerate()],
+                tooltip=gettext('Service pool load balancing policy'),
+            ),
+            ui_utils.multichoice_field(
+                order=ORDER + 1,
+                name='ha_policy',
+                label=gettext('HA Policy'),
+                choices=[
+                    ui.gui.choice_item(k, str(v)) for k, v in types.pools.HighAvailabilityPolicy.enumerate()
                 ],
-                'label': gettext('HA Policy'),
-                'tooltip': gettext(
-                    'Service pool High Availability policy. If enabled and a pool fails, it will be restarted in another pool. Enable with care!.'
+                tooltip=gettext(
+                    'Service pool High Availability policy. If enabled and a pool fails, it will be restarted in another pool. Enable with care!'
                 ),
-                'type': types.ui.FieldType.CHOICE,
-                'order': 101,
-            },
-            {
-                'name': 'image_id',
-                'choices': [gui.choice_image(-1, '--------', DEFAULT_THUMB_BASE64)]
-                + gui.sorted_choices(
-                    [gui.choice_image(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]
+            ),
+            ui_utils.image_choice_field(
+                order=ORDER + 20,
+                name='image_id',
+                label=gettext('Associated Image'),
+                choices=[ui.gui.choice_image(-1, '--------', DEFAULT_THUMB_BASE64)]
+                + ui.gui.sorted_choices(
+                    [ui.gui.choice_image(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]
                 ),
-                'label': gettext('Associated Image'),
-                'tooltip': gettext('Image assocciated with this service'),
-                'type': types.ui.FieldType.IMAGECHOICE,
-                'order': 120,
-                'tab': types.ui.Tab.DISPLAY,
-            },
-            {
-                'name': 'servicesPoolGroup_id',
-                'choices': [gui.choice_image(-1, _('Default'), DEFAULT_THUMB_BASE64)]
-                + gui.sorted_choices(
-                    [gui.choice_image(v.uuid, v.name, v.thumb64) for v in ServicePoolGroup.objects.all()]
+                tooltip=gettext('Image associated with this service'),
+                tab=types.ui.Tab.DISPLAY,
+            ),
+            ui_utils.image_choice_field(
+                order=ORDER + 21,
+                name='servicesPoolGroup_id',
+                label=gettext('Pool group'),
+                choices=[ui.gui.choice_image(-1, '--------', DEFAULT_THUMB_BASE64)]
+                + ui.gui.sorted_choices(
+                    [
+                        ui.gui.choice_image(
+                            x.uuid, x.name, x.image.thumb64 if x.image is not None else DEFAULT_THUMB_BASE64
+                        )
+                        for x in ServicePoolGroup.objects.all()
+                    ]
                 ),
-                'label': gettext('Pool group'),
-                'tooltip': gettext('Pool group for this pool (for pool classify on display)'),
-                'type': types.ui.FieldType.IMAGECHOICE,
-                'order': 121,
-                'tab': types.ui.Tab.DISPLAY,
-            },
-            {
-                'name': 'visible',
-                'value': True,
-                'label': gettext('Visible'),
-                'tooltip': gettext('If active, metapool will be visible for users'),
-                'type': types.ui.FieldType.CHECKBOX,
-                'order': 123,
-                'tab': types.ui.Tab.DISPLAY,
-            },
-            {
-                'name': 'calendar_message',
-                'value': '',
-                'label': gettext('Calendar access denied text'),
-                'tooltip': gettext(
-                    'Custom message to be shown to users if access is limited by calendar rules.'
-                ),
-                'type': types.ui.FieldType.TEXT,
-                'order': 124,
-                'tab': types.ui.Tab.DISPLAY,
-            },
-            {
-                'name': 'transport_grouping',
-                'choices': [
-                    gui.choice_item(k, str(v)) for k, v in types.pools.TransportSelectionPolicy.enumerate()
+                tooltip=gettext('Pool group for this pool (for pool classify on display)'),
+                tab=types.ui.Tab.DISPLAY,
+            ),
+            ui_utils.checkbox_field(
+                order=ORDER + 22,
+                name='visible',
+                label=gettext('Visible'),
+                tooltip=gettext('If active, metapool will be visible for users'),
+                value=True,
+                tab=types.ui.Tab.DISPLAY,
+            ),
+            ui_utils.text_field(
+                order=ORDER + 23,
+                name='calendar_message',
+                label=gettext('Calendar access denied text'),
+                tooltip=gettext('Custom message to be shown to users if access is limited by calendar rules.'),
+                tab=types.ui.Tab.DISPLAY,
+            ),
+            ui_utils.multichoice_field(
+                order=ORDER + 24,
+                name='transport_grouping',
+                label=gettext('Transport Selection'),
+                choices=[
+                    ui.gui.choice_item(k, str(v)) for k, v in types.pools.TransportSelectionPolicy.enumerate()
                 ],
-                'label': gettext('Transport Selection'),
-                'tooltip': gettext('Transport selection policy'),
-                'type': types.ui.FieldType.CHOICE,
-                'order': 125,
-                'tab': types.ui.Tab.DISPLAY,
-            },
-        ]:
-            self.add_field(local_gui, field)
+                tooltip=gettext('Transport selection policy'),
+                tab=types.ui.Tab.DISPLAY,
+            ),
+        )
 
         return local_gui
 

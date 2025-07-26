@@ -108,18 +108,21 @@ class OsManagers(ModelHandler[OsManagerItem]):
         return osmanagers.factory().providers().values()
 
     # Gui related
-    def get_gui(self, type_: str) -> list[typing.Any]:
+    def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
         try:
-            osmanager_type = osmanagers.factory().lookup(type_)
+            osmanager_type = osmanagers.factory().lookup(for_type)
 
             if not osmanager_type:
                 raise exceptions.rest.NotFound('OS Manager type not found')
             with Environment.temporary_environment() as env:
                 osmanager = osmanager_type(env, None)
-
-                return self.default_fields(
-                    osmanager.gui_description(),
-                    ['name', 'comments', 'tags'],
+                return self.compose_gui(
+                    [
+                        types.rest.stock.StockField.NAME,
+                        types.rest.stock.StockField.COMMENTS,
+                        types.rest.stock.StockField.TAGS,
+                    ],
+                    *osmanager.gui_description(),
                 )
         except:
             raise exceptions.rest.NotFound('type not found')

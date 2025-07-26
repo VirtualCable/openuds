@@ -37,7 +37,7 @@ from django.utils.translation import gettext_lazy as _
 
 import uds.core.types.permissions
 from uds.core import exceptions, types, consts
-from uds.core.util import permissions, validators, ensure
+from uds.core.util import permissions, validators, ensure, ui as ui_utils
 from uds.core.util.model import process_uuid
 from uds import models
 from uds.REST.model import DetailHandler, ModelHandler
@@ -49,18 +49,19 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class TunnelServers(DetailHandler):
+class TunnelServerItem(types.rest.ItemDictType):
+    id: str
+    hostname: str
+    ip: str
+    mac: str
+    maintenance: bool
+
+
+class TunnelServers(DetailHandler[TunnelServerItem]):
     # tunnels/[id]/servers
     custom_methods = ['maintenance']
 
-    class ServerItem(types.rest.ItemDictType):
-        id: str
-        hostname: str
-        ip: str
-        mac: str
-        maintenance: bool
-
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult[TunnelServerItem]:
         parent = ensure.is_instance(parent, models.ServerGroup)
         try:
             multi = False
@@ -69,23 +70,22 @@ class TunnelServers(DetailHandler):
                 q = parent.servers.all().order_by('hostname')
             else:
                 q = parent.servers.filter(uuid=process_uuid(item))
-            res: list[TunnelServers.ServerItem] = []
-            i = None
-            for i in q:
-                res.append(
-                    {
-                        'id': i.uuid,
-                        'hostname': i.hostname,
-                        'ip': i.ip,
-                        'mac': i.mac if not multi or i.mac != consts.MAC_UNKNOWN else '',
-                        'maintenance': i.maintenance_mode,
-                    }
-                )
+            res: list[TunnelServerItem] = [
+                {
+                    'id': i.uuid,
+                    'hostname': i.hostname,
+                    'ip': i.ip,
+                    'mac': i.mac if i.mac != consts.MAC_UNKNOWN else '',
+                    'maintenance': i.maintenance_mode,
+                }
+                for i in q
+            ]
+
             if multi:
-                return typing.cast(types.rest.GetItemsResult, res)
-            if not i:
+                return res
+            if not res:
                 raise Exception('Item not found')
-            return typing.cast(types.rest.GetItemsResult, res[0])
+            return res[0]
         except Exception as e:
             logger.exception('REST groups')
             raise self.invalid_item_response() from e
@@ -142,19 +142,19 @@ class TunnelServers(DetailHandler):
         item.save()
         return 'ok'
 
+class TunnelItem(types.rest.ItemDictType):
+    id: str
+    name: str
+    comments: str
+    host: str
+    port: int
+    tags: list[str]
+    transports_count: int
+    servers_count: int
+    permission: uds.core.types.permissions.PermissionType
 
 # Enclosed methods under /auth path
-class Tunnels(ModelHandler):
-    class TunnelItem(types.rest.ItemDictType):
-        id: str
-        name: str
-        comments: str
-        host: str
-        port: int
-        tags: list[str]
-        transports_count: int
-        servers_count: int
-        permission: uds.core.types.permissions.PermissionType
+class Tunnels(ModelHandler[TunnelItem]):
 
     path = 'tunnels'
     name = 'tunnels'
@@ -178,33 +178,32 @@ class Tunnels(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def get_gui(self, type_: str) -> list[typing.Any]:
-        return self.add_field(
-            self.default_fields(
-                [],
-                ['name', 'comments', 'tags'],
-            ),
+    def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
+        ORDER: typing.Final[ui_utils.OrderCounter] = ui_utils.OrderCounter(100)
+        return self.compose_gui(
             [
-                {
-                    'name': 'host',
-                    'value': '',
-                    'label': gettext('Hostname'),
-                    'tooltip': gettext(
-                        'Hostname or IP address of the server where the tunnel is visible by the users'
-                    ),
-                    'type': types.ui.FieldType.TEXT,
-                    'order': 100,  # At end
-                },
-                {
-                    'name': 'port',
-                    'value': 443,
-                    'label': gettext('Port'),
-                    'tooltip': gettext('Port where the tunnel is visible by the users'),
-                    'type': types.ui.FieldType.NUMERIC,
-                    'order': 101,  # At end
-                },
+                types.rest.stock.StockField.NAME,
+                types.rest.stock.StockField.COMMENTS,
+                types.rest.stock.StockField.TAGS,
             ],
+            ui_utils.text_field(
+                order=ORDER.next(),
+                name='host',
+                default='',
+                label=gettext('Hostname'),
+                tooltip=gettext(
+                    'Hostname or IP address of the server where the tunnel is visible by the users'
+                ),
+            ),
+            ui_utils.numeric_field(
+                order=ORDER.next(),
+                name='port',
+                default=443,
+                label=gettext('Port'),
+                tooltip=gettext('Port where the tunnel is visible by the users'),
+            ),
         )
+        
 
     def item_as_dict(self, item: 'Model') -> TunnelItem:
         item = ensure.is_instance(item, models.ServerGroup)

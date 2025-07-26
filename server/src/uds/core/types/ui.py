@@ -79,6 +79,7 @@ class FieldType(enum.StrEnum):
     IMAGECHOICE = 'imgchoice'
     DATE = 'date'
     INFO = 'internal-info'
+    TAGLIST = 'taglist'
 
     @staticmethod
     def from_str(value: str) -> 'FieldType':
@@ -175,7 +176,7 @@ class GuiDescription(typing.TypedDict):
     label: str
     tooltip: str
     order: int
-    type: str
+    type: FieldType
     readonly: typing.NotRequired[bool]
     default: typing.NotRequired[str|int|float|bool]
     required: typing.NotRequired[bool]

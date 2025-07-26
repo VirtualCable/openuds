@@ -40,7 +40,7 @@ from django.utils.translation import gettext_lazy as _
 from uds.core import messaging, types
 from uds.core.environment import Environment
 from uds.core.ui import gui
-from uds.core.util import ensure, permissions
+from uds.core.util import ensure, permissions, ui as ui_utils
 from uds.models import LogLevel, Notifier
 from uds.REST.model import ModelHandler
 
@@ -90,8 +90,8 @@ class Notifiers(ModelHandler[NotifierItem]):
     def enum_types(self) -> collections.abc.Iterable[type[messaging.Notifier]]:
         return messaging.factory().providers().values()
 
-    def get_gui(self, type_: str) -> list[typing.Any]:
-        notifier_type = messaging.factory().lookup(type_)
+    def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
+        notifier_type = messaging.factory().lookup(for_type)
 
         if not notifier_type:
             raise self.invalid_item_response()
@@ -99,30 +99,29 @@ class Notifiers(ModelHandler[NotifierItem]):
         with Environment.temporary_environment() as env:
             notifier = notifier_type(env, None)
 
-            local_gui = self.default_fields(notifier.gui_description(), ['name', 'comments', 'tags'])
-
-            for field in [
-                {
-                    'name': 'level',
-                    'choices': [gui.choice_item(i[0], i[1]) for i in LogLevel.interesting()],
-                    'label': gettext('Level'),
-                    'tooltip': gettext('Level of notifications'),
-                    'type': types.ui.FieldType.CHOICE,
-                    'order': 102,
-                    'default': str(LogLevel.ERROR.value),
-                },
-                {
-                    'name': 'enabled',
-                    'label': gettext('Enabled'),
-                    'tooltip': gettext('If checked, this notifier will be used'),
-                    'type': types.ui.FieldType.CHECKBOX,
-                    'order': 103,
-                    'default': True,
-                },
-            ]:
-                self.add_field(local_gui, field)
-
-            return local_gui
+            return self.compose_gui(
+                [
+                    types.rest.stock.StockField.NAME,
+                    types.rest.stock.StockField.COMMENTS,
+                    types.rest.stock.StockField.TAGS,
+                ],
+                *notifier.gui_description(),
+                ui_utils.choice_field(
+                    name='level',
+                    choices=[gui.choice_item(i[0], i[1]) for i in LogLevel.interesting()],
+                    label=gettext('Level'),
+                    tooltip=gettext('Level of notifications'),
+                    order=102,
+                    default=str(LogLevel.ERROR.value),
+                ),
+                ui_utils.checkbox_field(
+                    name='enabled',
+                    label=gettext('Enabled'),
+                    tooltip=gettext('If checked, this notifier will be used'),
+                    order=103,
+                    default=True,
+                ),
+            )
 
     def item_as_dict(self, item: 'Model') -> NotifierItem:
         item = ensure.is_instance(item, Notifier)

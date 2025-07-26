@@ -36,7 +36,7 @@ import typing
 from django.utils.translation import gettext_lazy as _, gettext
 from uds.models import Image
 from uds.core import types
-from uds.core.util import ensure
+from uds.core.util import ensure, ui as ui_utils
 
 from uds.REST.model import ModelHandler
 
@@ -91,17 +91,17 @@ class Images(ModelHandler[ImageItem]):
         # item.updateThumbnail()
         # item.save()
 
-    def get_gui(self, type_: str) -> list[typing.Any]:
-        return self.add_field(
-            self.default_fields([], ['name']),
-            {
-                'name': 'data',
-                'value': '',
-                'label': gettext('Image'),
-                'tooltip': gettext('Image object'),
-                'type': types.ui.FieldType.IMAGECHOICE,
-                'order': 100,  # At end
-            },
+    def get_gui(self, for_type: str) -> list[typing.Any]:
+        ORDER: typing.Final[int] = 100
+
+        return self.compose_gui(
+            [types.rest.stock.StockField.NAME],
+            ui_utils.image_field(
+                order=ORDER,
+                name='data',
+                label=gettext('Image'),
+                tooltip=gettext('Image object'),
+            ),
         )
 
     def item_as_dict(self, item: 'Model') -> ImageItem:

@@ -37,7 +37,7 @@ from django.utils.translation import gettext_lazy as _, gettext
 
 from uds.models import Network
 from uds.core import types
-from uds.core.util import permissions, ensure
+from uds.core.util import permissions, ensure, ui as ui_utils
 
 from ..model import ModelHandler
 
@@ -48,6 +48,7 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /item path
 
+
 class NetworkItem(types.rest.ItemDictType):
     id: str
     name: str
@@ -57,12 +58,12 @@ class NetworkItem(types.rest.ItemDictType):
     authenticators_count: int
     permission: types.permissions.PermissionType
 
+
 class Networks(ModelHandler[NetworkItem]):
     """
     Processes REST requests about networks
     Implements specific handling for network related requests using GUI
     """
-
 
     model = Network
     save_fields = ['name', 'net_string', 'tags']
@@ -95,21 +96,23 @@ class Networks(ModelHandler[NetworkItem]):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def get_gui(self, type_: str) -> list[typing.Any]:
-        return self.add_field(
-            self.default_fields([], ['name', 'tags']),
-            {
-                'name': 'net_string',
-                'value': '',
-                'label': gettext('Network range'),
-                'tooltip': gettext(
-                    'Network range. Accepts most network definitions formats (range, subnet, host, etc...'
+    def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
+        ORDER: typing.Final[int] = 100
+        return self.compose_gui(
+            [
+                types.rest.stock.StockField.NAME,
+                types.rest.stock.StockField.TAGS,
+            ],
+            ui_utils.text_field(
+                order=ORDER,
+                name='net_string',
+                label=gettext('Network range'),
+                tooltip=gettext(
+                    'Network range. Accepts most network definitions formats (range, subnet, host, etc...)'
                 ),
-                'type': types.ui.FieldType.TEXT,
-                'order': 100,  # At end
-            },
+            ),
         )
-        
+
     def item_as_dict(self, item: 'Model') -> NetworkItem:
         item = ensure.is_instance(item, Network)
         return {

@@ -61,6 +61,7 @@ class OfferItem(types.rest.ItemDictType):
     description: str
     icon: str
 
+
 class ProviderItem(types.rest.ManagedObjectDictType):
     id: str
     name: str
@@ -71,6 +72,7 @@ class ProviderItem(types.rest.ManagedObjectDictType):
     offers: list[OfferItem]
     comments: str
     permission: types.permissions.PermissionType
+
 
 class Providers(ModelHandler[ProviderItem]):
 
@@ -130,7 +132,7 @@ class Providers(ModelHandler[ProviderItem]):
             'comments': item.comments,
             'permission': permissions.effective_permissions(self._user, item),
         }
-        
+
         Providers.fill_instance_type(item, val)
         return val
 
@@ -144,12 +146,19 @@ class Providers(ModelHandler[ProviderItem]):
         return services.factory().providers().values()
 
     # Gui related
-    def get_gui(self, type_: str) -> list[typing.Any]:
-        provider_type = services.factory().lookup(type_)
+    def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
+        provider_type = services.factory().lookup(for_type)
         if provider_type:
             with Environment.temporary_environment() as env:
                 provider = provider_type(env, None)
-                return self.default_fields(provider.gui_description(), ['name', 'comments', 'tags'])
+                return self.compose_gui(
+                    [
+                        types.rest.stock.StockField.NAME,
+                        types.rest.stock.StockField.COMMENTS,
+                        types.rest.stock.StockField.TAGS,
+                    ],
+                    *provider.gui_description(),
+                )
         raise exceptions.rest.NotFound('Type not found!')
 
     def allservices(self) -> typing.Generator[types.rest.ItemDictType, None, None]:
