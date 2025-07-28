@@ -29,323 +29,347 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
 from uds.core import types
+from django.utils.translation import gettext
 
-class OrderCounter:
-    """
-    A simple counter that can be used to order elements in a list.
-    It is used to ensure that the order of elements is consistent across different runs.
-    """
-    counter: int
-    
-    def __init__(self, value: int = 0):
-        super().__init__()
-        self.counter = value
+
+class GuiBuilder:
+    fields: list[types.ui.GuiElement]
+    order: int = 0
+    saved_tab: types.ui.Tab | str | None = None
+
+    def __init__(
+        self,
+        *stock_fields: types.rest.stock.StockField,
+        order: int = 0,
+        gui: list[types.ui.GuiElement] | None = None,
+    ) -> None:
+        """
+        Initializes the GuiBuilder with a starting order.
+        """
+        self.order = order
+        self.fields: list[types.ui.GuiElement] = [i.copy() for i in (gui or [])] + [
+            gui_field.copy() for field in stock_fields for gui_field in field.get_fields()
+        ]
 
     def next(self) -> int:
         """
         Returns the next value of the counter.
         """
-        val = self.counter
-        self.counter += 1
+        val = self.order
+        self.order += 1
         return val
 
-    def next_tab(self) -> int:
+    def next_tab(self) -> None:
         """
         returns the next value that is divisible by 10.
         """
-        self.counter = (self.counter // 10 + 1) * 10
-        return self.counter
+        self.order = (self.order // 10 + 1) * 10
 
-def _add_common(
-    gui: types.ui.GuiElement,
-    *,
-    tab: types.ui.Tab | str | None = None,
-    order: int | None = None,
-    length: int | None = None,
-    min_value: int | None = None,
-    max_value: int | None = None,
-    default: str | int | bool | None = None,
-    required: bool | None = None,
-    readonly: bool | None = None,
-    tooltip: str | None = None,
-) -> types.ui.GuiElement:
-    """
-    Adds common fields to the given GUI element.
-    """
-    if tab:
-        gui['gui']['tab'] = tab
-    if order is not None:
-        gui['gui']['order'] = order
-    if length is not None:
-        gui['gui']['length'] = length
-    if min_value is not None:
-        gui['gui']['min_value'] = min_value
-    if max_value is not None:
-        gui['gui']['max_value'] = max_value
-    if default is not None:
-        gui['gui']['default'] = default
-    if required is not None:
-        gui['gui']['required'] = required
-    if readonly is not None:
-        gui['gui']['readonly'] = readonly
-    
-    gui['gui']['tooltip'] = tooltip or ''
+    def make_gui(
+        self,
+        name: str,
+        type: types.ui.FieldType,
+        *,
+        label: str | None = None,
+        tab: types.ui.Tab | str | None = None,
+        order: int | None = None,
+        length: int | None = None,
+        min_value: int | None = None,
+        max_value: int | None = None,
+        default: str | int | bool | None = None,
+        required: bool | None = None,
+        readonly: bool | None = None,
+        tooltip: str | None = None,
+        choices: list[types.ui.ChoiceItem] | None = None,
+    ) -> types.ui.GuiElement:
+        """
+        Adds common fields to the given GUI element.
+        """
+        gui_desk: types.ui.GuiDescription = {
+            'type': type,
+            'label': label or '',
+            'order': self.next(),
+        }
+        tab = tab or self.saved_tab
 
-    return gui
+        if tab:
+            gui_desk['tab'] = tab
 
-def hidden_field(
-    order: int,
-    name: str,
-    *,
-    default: str | int | bool | None = None,
-    tab: types.ui.Tab | str | None = None,
-) -> types.ui.GuiElement:
-    """
-    Creates a hidden field with the given parameters.
-    """
-    return _add_common(
-        {
+        if order is not None:
+            gui_desk['order'] = order
+        if length is not None:
+            gui_desk['length'] = length
+        if min_value is not None:
+            gui_desk['min_value'] = min_value
+        if max_value is not None:
+            gui_desk['max_value'] = max_value
+        if default is not None:
+            gui_desk['default'] = default
+        if required is not None:
+            gui_desk['required'] = required
+        if readonly is not None:
+            gui_desk['readonly'] = readonly
+        if choices is not None:
+            gui_desk['choices'] = choices
+
+        gui_desk['tooltip'] = tooltip or ''
+
+        return {
             'name': name,
-            'gui': {
-                'label': name,
-                'type': types.ui.FieldType.HIDDEN,
-                'order': order,
-            },
-        },
-        tab=tab,
-        order=order,
-        default=default,
-    )   
+            'gui': gui_desk,
+        }
 
+    def new_tab(self, tab: types.ui.Tab | str | None = None) -> typing.Self:
+        """
+        Resets the order counter to the next tab.
+        """
+        self.saved_tab = tab
+        self.next_tab()
+        return self
 
-def info_field(
-    order: int,
-    name: str,
-    *,
-    default: str | int | bool | None = None,
-) -> types.ui.GuiElement:
-    """
-    Creates an info field with the given parameters.
-    """
-    return _add_common(
-        {
-            'name': name,
-            'gui': {
-                'label': name,
-                'type': types.ui.FieldType.INFO,
-                'order': order,
-            },
-        },
-        order=order,
-        default=default,
-    )
+    def set_order(self, order: int) -> typing.Self:
+        """
+        Resets the order counter to the given value.
+        """
+        self.order = order
+        return self
 
-def text_field(
-    order: int,
-    name: str,
-    label: str,
-    *,
-    tooltip: str = '',
-    tab: types.ui.Tab | str | None = None,
-    length: int | None = None,
-    default: str | None = None,
-    required: bool | None = None,
-) -> types.ui.GuiElement:
-    """
-    Creates a text field with the given parameters.
-    """
-    return _add_common(
-        {
-            'name': name,
-            'gui': {
-                'label': label,
-                'type': types.ui.FieldType.TEXT,
-                'order': order,
-            },
-        },
-        tab=tab,
-        order=order,
-        length=length,
-        default=default,
-        required=required,
-        tooltip=tooltip,
-    )
+    def add_hidden(
+        self,
+        name: str,
+        *,
+        default: str | int | bool | None = None,
+        readonly: bool = False,
+    ) -> typing.Self:
+        """
+        Creates a hidden field with the given parameters.
+        """
+        self.fields.append(
+            self.make_gui(
+                name,
+                types.ui.FieldType.HIDDEN,
+                default=default,
+                readonly=readonly,
+            )
+        )
+        return self
 
+    def add_info(
+        self,
+        name: str,
+        *,
+        default: str | int | bool | None = None,
+        readonly: bool = False,
+    ) -> typing.Self:
+        """
+        Creates an info field with the given parameters.
+        """
+        self.fields.append(
+            self.make_gui(
+                name,
+                types.ui.FieldType.INFO,
+                default=default,
+                readonly=readonly,
+            )
+        )
+        return self
 
-def choice_field(
-    order: int,
-    name: str,
-    label: str,
-    choices: list[types.ui.ChoiceItem],
-    *,
-    tooltip: str = '',
-    tab: types.ui.Tab | str | None = None,
-    default: str | None = None,
-    readonly: bool = False,
-) -> types.ui.GuiElement:
-    """
-    Creates a choice field with the given parameters.
-    """
-    return _add_common(
-        {
-            'name': name,
-            'gui': {
-                'label': label,
-                'type': types.ui.FieldType.CHOICE,
-                'choices': choices,
-                'order': order,
-            },
-        },
-        tab=tab,
-        order=order,
-        default=default,
-        readonly=readonly,
-        tooltip=tooltip,
-    )
+    def add_text(
+        self,
+        name: str,
+        label: str,
+        *,
+        tooltip: str = '',
+        tab: types.ui.Tab | str | None = None,
+        default: str | None = None,
+        readonly: bool = False,
+        length: int | None = None,
+        required: bool | None = None,
+    ) -> typing.Self:
+        """
+        Creates a text field with the given parameters.
+        """
+        self.fields.append(
+            self.make_gui(
+                name,
+                types.ui.FieldType.TEXT,
+                label=label,
+                tab=tab,
+                default=default or '',
+                readonly=readonly,
+                length=length,
+                required=required,
+                tooltip=tooltip,
+            )
+        )
+        return self
 
+    def add_numeric(
+        self,
+        name: str,
+        label: str,
+        *,
+        tooltip: str = '',
+        tab: types.ui.Tab | str | None = None,
+        default: int | None = None,
+        readonly: bool = False,
+        min_value: int | None = None,
+        max_value: int | None = None,
+        required: bool | None = None,
+    ) -> typing.Self:
+        """
+        Creates a numeric field with the given parameters.
+        """
+        self.fields.append(
+            self.make_gui(
+                name,
+                types.ui.FieldType.NUMERIC,
+                label=label,
+                tab=tab,
+                default=default or 0,
+                readonly=readonly,
+                min_value=min_value,
+                max_value=max_value,
+                tooltip=tooltip,
+                required=required,
+            )
+        )
+        return self
 
-def multichoice_field(
-    order: int,
-    name: str,
-    label: str,
-    choices: list[types.ui.ChoiceItem],
-    *,
-    tooltip: str = '',
-    tab: types.ui.Tab | str | None = None,
-) -> types.ui.GuiElement:
-    """
-    Creates a multichoice field with the given parameters.
-    """
-    return _add_common(
-        {
-            'name': name,
-            'gui': {
-                'label': label,
-                'type': types.ui.FieldType.MULTICHOICE,
-                'choices': choices,
-                'order': order,
-            },
-        },
-        tab=tab,
-        order=order,
-        tooltip=tooltip,
-    )
+    def add_checkbox(
+        self,
+        name: str,
+        label: str,
+        *,
+        tooltip: str = '',
+        tab: types.ui.Tab | str | None = None,
+        default: bool | None = None,
+        readonly: bool = False,
+        required: bool | None = None,
+    ) -> typing.Self:
+        """
+        Creates a checkbox field with the given parameters.
+        """
+        self.fields.append(
+            self.make_gui(
+                name,
+                types.ui.FieldType.CHECKBOX,
+                label=label,
+                tab=tab,
+                default=default or False,
+                tooltip=tooltip,
+                readonly=readonly,
+                required=required,
+            )
+        )
+        return self
 
+    def add_choice(
+        self,
+        name: str,
+        label: str,
+        choices: list[types.ui.ChoiceItem],
+        *,
+        tooltip: str = '',
+        tab: types.ui.Tab | str | None = None,
+        default: str | None = None,
+        readonly: bool = False,
+        required: bool | None = None,
+    ) -> typing.Self:
+        """
+        Creates a choice field with the given parameters.
+        """
+        self.fields.append(
+            self.make_gui(
+                name,
+                types.ui.FieldType.CHOICE,
+                label=label,
+                choices=choices,
+                tab=tab,
+                default=default or (choices[0]['id'] if choices else None),
+                readonly=readonly,
+                tooltip=tooltip,
+                required=required,
+            )
+        )
+        return self
 
-def numeric_field(
-    order: int,
-    name: str,
-    label: str,
-    *,
-    tooltip: str = '',
-    tab: types.ui.Tab | str | None = None,
-    min_value: int | None = None,
-    max_value: int | None = None,
-    default: int | None = None,
-) -> types.ui.GuiElement:
-    """
-    Creates a numeric field with the given parameters.
-    """
-    gui: types.ui.GuiDescription = {
-        'label': label,
-        'type': types.ui.FieldType.NUMERIC,
-        'order': order,
-    }
-    return _add_common(
-        {
-            'name': name,
-            'gui': gui,
-        },
-        tab=tab,
-        order=order,
-        min_value=min_value,
-        max_value=max_value,
-        default=default,
-        tooltip=tooltip,
-    )
+    def add_multichoice(
+        self,
+        name: str,
+        label: str,
+        choices: list[types.ui.ChoiceItem],
+        *,
+        tooltip: str = '',
+        tab: types.ui.Tab | str | None = None,
+        default: str | None = None,
+        readonly: bool = False,
+        required: bool | None = None,
+    ) -> typing.Self:
+        """
+        Creates a multichoice field with the given parameters.
+        """
+        self.fields.append(
+            self.make_gui(
+                name,
+                types.ui.FieldType.MULTICHOICE,
+                label=label,
+                choices=choices,
+                tab=tab,
+                tooltip=tooltip,
+                default=default,
+                readonly=readonly,
+                required=required,
+            )
+        )
+        return self
 
-def checkbox_field(
-    order: int,
-    name: str,
-    label: str,
-    *,
-    tooltip: str = '',
-    tab: types.ui.Tab | str | None = None,
-    default: bool | None = None,
-) -> types.ui.GuiElement:
-    """
-    Creates a checkbox field with the given parameters.
-    """
-    return _add_common(
-        {
-            'name': name,
-            'gui': {
-                'label': label,
-                'type': types.ui.FieldType.CHECKBOX,
-                'order': order,
-            },
-        },
-        tab=tab,
-        order=order,
-        default=default,
-        tooltip=tooltip,
-    )
+    def add_image_choice(
+        self,
+        *,
+        name: str | None = None,
+        label: str | None = None,
+        choices: list[types.ui.ChoiceItem] | None = None,
+        tooltip: str | None = None,
+        tab: types.ui.Tab | str | None = None,
+        default: str | None = None,
+        readonly: bool = False,
+        required: bool | None = None,
+    ) -> typing.Self:
+        """
+        Creates an image choice field with the given parameters.
+        """
+        from uds.core import ui
+        from uds.core.consts.images import DEFAULT_THUMB_BASE64
+        from uds.models import Image
 
+        name = name or 'image_id'
+        label = label or gettext('Associated Image')
+        if tooltip is None:
+            tooltip = gettext('Select an image')
 
-def image_field(
-    order: int,
-    name: str,
-    label: str,
-    *,
-    tooltip: str = '',
-    tab: types.ui.Tab | str | None = None,
-    default: str | None = None,
-) -> types.ui.GuiElement:
-    """
-    Creates an image field with the given parameters.
-    """
-    return _add_common(
-        {
-            'name': name,
-            'gui': {
-                'label': label,
-                'type': types.ui.FieldType.IMAGECHOICE,
-                'order': order,
-            },
-        },
-        tab=tab,
-        order=order,
-        default=default,
-        tooltip=tooltip,
-    )
+        if choices is None:
+            choices = [ui.gui.choice_image(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]
 
+        # Prepend ui.gui.choice_image(-1, '--------', DEFAULT_THUMB_BASE64)
+        choices = [ui.gui.choice_image(-1, '--------', DEFAULT_THUMB_BASE64)] + ui.gui.sorted_choices(choices)
 
-def image_choice_field(
-    order: int,
-    name: str,
-    label: str,
-    choices: list[types.ui.ChoiceItem],
-    *,
-    tooltip: str = '',
-    tab: types.ui.Tab | str | None = None,
-    default: str | None = None,
-) -> types.ui.GuiElement:
-    """
-    Creates an image choice field with the given parameters.
-    """
-    return _add_common(
-        {
-            'name': name,
-            'gui': {
-                'label': label,
-                'type': types.ui.FieldType.IMAGECHOICE,
-                'choices': choices,
-                'order': order,
-            },
-        },
-        tab=tab,
-        order=order,
-        default=default,
-        tooltip=tooltip,
-    )
+        self.fields.append(
+            self.make_gui(
+                name,
+                types.ui.FieldType.IMAGECHOICE,
+                label=label,
+                choices=choices,
+                tab=tab,
+                default=default,
+                tooltip=tooltip,
+                readonly=readonly,
+                required=required,
+            )
+        )
+        return self
+
+    def build(self) -> list[types.ui.GuiElement]:
+        return self.fields

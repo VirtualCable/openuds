@@ -179,32 +179,29 @@ class MetaPools(ModelHandler[MetaPoolItem]):
         }
 
     # Gui related
-    def get_gui(self, for_type: str) -> list[typing.Any]:
+    def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
 
-        ORDER: typing.Final[int] = 100
-        local_gui = self.compose_gui(
-            [
+        return (
+            ui_utils.GuiBuilder(
                 types.rest.stock.StockField.NAME,
                 types.rest.stock.StockField.COMMENTS,
                 types.rest.stock.StockField.TAGS,
-            ],
-            #     {
-            ui_utils.text_field(
                 order=-95,  # On top
+            )
+            .add_text(
                 name='short_name',
                 label=gettext('Short name'),
                 tooltip=gettext('Short name for user service visualization'),
                 length=32,
-            ),
-            ui_utils.multichoice_field(
-                order=ORDER,
+            )
+            .set_order(100)
+            .add_multichoice(
                 name='policy',
                 label=gettext('Load balancing policy'),
                 choices=[ui.gui.choice_item(k, str(v)) for k, v in types.pools.LoadBalancingPolicy.enumerate()],
                 tooltip=gettext('Service pool load balancing policy'),
-            ),
-            ui_utils.multichoice_field(
-                order=ORDER + 1,
+            )
+            .add_choice(
                 name='ha_policy',
                 label=gettext('HA Policy'),
                 choices=[
@@ -213,62 +210,42 @@ class MetaPools(ModelHandler[MetaPoolItem]):
                 tooltip=gettext(
                     'Service pool High Availability policy. If enabled and a pool fails, it will be restarted in another pool. Enable with care!'
                 ),
-            ),
-            ui_utils.image_choice_field(
-                order=ORDER + 20,
-                name='image_id',
-                label=gettext('Associated Image'),
-                choices=[ui.gui.choice_image(-1, '--------', DEFAULT_THUMB_BASE64)]
-                + ui.gui.sorted_choices(
-                    [ui.gui.choice_image(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]
-                ),
-                tooltip=gettext('Image associated with this service'),
-                tab=types.ui.Tab.DISPLAY,
-            ),
-            ui_utils.image_choice_field(
-                order=ORDER + 21,
+            )
+            .new_tab(types.ui.Tab.DISPLAY)
+            .add_image_choice(
+            )
+            .add_image_choice(
                 name='servicesPoolGroup_id',
                 label=gettext('Pool group'),
-                choices=[ui.gui.choice_image(-1, '--------', DEFAULT_THUMB_BASE64)]
-                + ui.gui.sorted_choices(
-                    [
-                        ui.gui.choice_image(
-                            x.uuid, x.name, x.image.thumb64 if x.image is not None else DEFAULT_THUMB_BASE64
-                        )
-                        for x in ServicePoolGroup.objects.all()
-                    ]
-                ),
+                choices=[
+                    ui.gui.choice_image(
+                        x.uuid, x.name, x.image.thumb64 if x.image is not None else DEFAULT_THUMB_BASE64
+                    )
+                    for x in ServicePoolGroup.objects.all()
+                ],
                 tooltip=gettext('Pool group for this pool (for pool classify on display)'),
-                tab=types.ui.Tab.DISPLAY,
-            ),
-            ui_utils.checkbox_field(
-                order=ORDER + 22,
+            )
+            .add_checkbox(
                 name='visible',
                 label=gettext('Visible'),
                 tooltip=gettext('If active, metapool will be visible for users'),
-                value=True,
-                tab=types.ui.Tab.DISPLAY,
-            ),
-            ui_utils.text_field(
-                order=ORDER + 23,
+                default=True,
+            )
+            .add_text(
                 name='calendar_message',
                 label=gettext('Calendar access denied text'),
                 tooltip=gettext('Custom message to be shown to users if access is limited by calendar rules.'),
-                tab=types.ui.Tab.DISPLAY,
-            ),
-            ui_utils.multichoice_field(
-                order=ORDER + 24,
-                name='transport_grouping',
+            )
+            .add_multichoice(
+                name='transport_grouping',  # Transport Selection
                 label=gettext('Transport Selection'),
                 choices=[
                     ui.gui.choice_item(k, str(v)) for k, v in types.pools.TransportSelectionPolicy.enumerate()
                 ],
                 tooltip=gettext('Transport selection policy'),
-                tab=types.ui.Tab.DISPLAY,
-            ),
+            )
+            .build()
         )
-
-        return local_gui
 
     def pre_save(self, fields: dict[str, typing.Any]) -> None:
         # logger.debug(self._params)

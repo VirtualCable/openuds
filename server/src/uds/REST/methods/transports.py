@@ -111,30 +111,17 @@ class Transports(ModelHandler[TransportItem]):
         with Environment.temporary_environment() as env:
             transport = transport_type(env, None)
 
-            ORDER: typing.Final[int] = 100
-            fields = self.compose_gui(
-                [
+            return (
+                ui_utils.GuiBuilder(
                     types.rest.stock.StockField.NAME,
                     types.rest.stock.StockField.COMMENTS,
                     types.rest.stock.StockField.TAGS,
                     types.rest.stock.StockField.PRIORITY,
                     types.rest.stock.StockField.NETWORKS,
-                ],
-                *transport.gui_description(),
-                ui_utils.multichoice_field(
-                    order=ORDER,
-                    name='allowed_oss',
-                    label=gettext('Allowed Devices'),
-                    choices=[
-                        ui.gui.choice_item(x.db_value(), x.os_name().title()) for x in consts.os.KNOWN_OS_LIST
-                    ],
-                    tooltip=gettext(
-                        'If empty, any kind of device compatible with this transport will be allowed. Else, only devices compatible with selected values will be allowed'
-                    ),
-                    tab=types.ui.Tab.ADVANCED,
-                ),
-                ui_utils.multichoice_field(
-                    order=ORDER + 1,
+                    order=100,
+                    gui=transport.gui_description(),
+                )
+                .add_multichoice(
                     name='pools',
                     label=gettext('Service Pools'),
                     choices=[
@@ -147,17 +134,25 @@ class Transports(ModelHandler[TransportItem]):
                     tooltip=gettext(
                         'Currently assigned services pools. If empty, no service pool is assigned to this transport'
                     ),
-                    tab=types.ui.Tab.ADVANCED,
-                ),
-                ui_utils.text_field(
-                    order=ORDER + 2,
+                )
+                .new_tab(types.ui.Tab.ADVANCED)
+                .add_multichoice(
+                    name='allowed_oss',
+                    label=gettext('Allowed Devices'),
+                    choices=[
+                        ui.gui.choice_item(x.db_value(), x.os_name().title()) for x in consts.os.KNOWN_OS_LIST
+                    ],
+                    tooltip=gettext(
+                        'If empty, any kind of device compatible with this transport will be allowed. Else, only devices compatible with selected values will be allowed'
+                    ),
+                )
+                .add_text(
                     name='label',
                     label=gettext('Label'),
                     tooltip=gettext('Metapool transport label (only used on metapool transports grouping)'),
-                    tab=types.ui.Tab.ADVANCED,
-                ),
+                )
+                .build()
             )
-            return fields
 
     def item_as_dict(self, item: 'Model') -> TransportItem:
         item = ensure.is_instance(item, Transport)

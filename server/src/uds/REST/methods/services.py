@@ -338,35 +338,27 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
                     env, parent_instance
                 )  # Instantiate it so it has the opportunity to alter gui description based on parent
                 overrided_fields = service.overrided_fields or {}
-                return [
-                    field_gui
-                    for field_gui in self.compose_gui(
-                        [
-                            types.rest.stock.StockField.NAME,
-                            types.rest.stock.StockField.COMMENTS,
-                            types.rest.stock.StockField.TAGS,
-                        ],
-                        *service.gui_description(),
-                        ui_utils.choice_field(
-                            name='max_services_count_type',
-                            choices=[
-                                ui.gui.choice_item(
-                                    str(types.services.ServicesCountingType.STANDARD.value),
-                                    _('Standard'),
-                                ),
-                                ui.gui.choice_item(
-                                    str(types.services.ServicesCountingType.CONSERVATIVE.value),
-                                    _('Conservative'),
-                                ),
-                            ],
-                            label=_('Service counting method'),
-                            tooltip=_('Kind of service counting for calculating if MAX is reached'),
-                            order=110,
-                            tab=types.ui.Tab.ADVANCED,
+
+                gui = ui_utils.GuiBuilder(
+                    types.rest.stock.StockField.NAME,
+                    types.rest.stock.StockField.COMMENTS,
+                    types.rest.stock.StockField.TAGS,
+                ).add_choice(
+                    name='max_services_count_type',
+                    choices=[
+                        ui.gui.choice_item(
+                            str(types.services.ServicesCountingType.STANDARD.value), _('Standard')
                         ),
-                    )
-                    if field_gui['name'] not in overrided_fields
-                ]
+                        ui.gui.choice_item(
+                            str(types.services.ServicesCountingType.CONSERVATIVE.value), _('Conservative')
+                        ),
+                    ],
+                    label=_('Service counting method'),
+                    tooltip=_('Kind of service counting for calculating if MAX is reached'),
+                    tab=types.ui.Tab.ADVANCED,
+                )
+
+                return [field_gui for field_gui in gui.build() if field_gui['name'] not in overrided_fields]
 
         except Exception as e:
             logger.exception('get_gui')

@@ -33,10 +33,10 @@
 import logging
 import typing
 
-from django.utils.translation import gettext_lazy as _, gettext
+from django.utils.translation import gettext_lazy as _
 from uds.models import Image
 from uds.core import types
-from uds.core.util import ensure, ui as ui_utils
+from uds.core.util import ensure
 
 from uds.REST.model import ModelHandler
 
@@ -91,18 +91,9 @@ class Images(ModelHandler[ImageItem]):
         # item.updateThumbnail()
         # item.save()
 
-    def get_gui(self, for_type: str) -> list[typing.Any]:
-        ORDER: typing.Final[int] = 100
-
-        return self.compose_gui(
-            [types.rest.stock.StockField.NAME],
-            ui_utils.image_field(
-                order=ORDER,
-                name='data',
-                label=gettext('Image'),
-                tooltip=gettext('Image object'),
-            ),
-        )
+    # Note:
+    # This has no get_gui because its treated on the admin or client. 
+    # We expect an Image List
 
     def item_as_dict(self, item: 'Model') -> ImageItem:
         item = ensure.is_instance(item, Image)

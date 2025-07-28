@@ -39,9 +39,8 @@ import typing
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
-from uds.core import auths, consts, exceptions, types
+from uds.core import auths, consts, exceptions, types, ui
 from uds.core.environment import Environment
-from uds.core.ui import gui
 from uds.core.util import ensure, permissions, ui as ui_utils
 from uds.core.util.model import process_uuid
 from uds.models import MFA, Authenticator, Network, Tag
@@ -124,52 +123,42 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
         try:
             auth_type = auths.factory().lookup(for_type)
-            ORDER: typing.Final[int] = 110
             if auth_type:
                 # Create a new instance of the authenticator to access to its GUI
                 with Environment.temporary_environment() as env:
                     # If supports mfa, add MFA provider selector field
-                    mfa_fields = (
-                        [
-                            ui_utils.choice_field(
-                                order=ORDER + 1,
-                                name='mfa_id',
-                                label=gettext('MFA Provider'),
-                                tooltip=gettext('MFA provider to use for this authenticator'),
-                                choices=[gui.choice_item('', str(_('None')))]
-                                + gui.sorted_choices(
-                                    [gui.choice_item(v.uuid, v.name) for v in MFA.objects.all()]
-                                ),
-                                tab=types.ui.Tab.MFA,
-                            )
-                        ]
-                        if auth_type.provides_mfa()
-                        else []
-                    )
                     auth_instance = auth_type(env, None)
-                    return self.compose_gui(
-                        [
-                            types.rest.stock.StockField.NAME,
-                            types.rest.stock.StockField.COMMENTS,
-                            types.rest.stock.StockField.TAGS,
-                            types.rest.stock.StockField.PRIORITY,
-                            types.rest.stock.StockField.LABEL,
-                            types.rest.stock.StockField.NETWORKS,
+                    gui = ui_utils.GuiBuilder(
+                        types.rest.stock.StockField.NAME,
+                        types.rest.stock.StockField.COMMENTS,
+                        types.rest.stock.StockField.TAGS,
+                        types.rest.stock.StockField.PRIORITY,
+                        types.rest.stock.StockField.LABEL,
+                        types.rest.stock.StockField.NETWORKS,
+                        order=100,
+                        gui=auth_instance.gui_description(),
+                    ).add_choice(
+                        name='state',
+                        default=consts.auth.VISIBLE,
+                        choices=[
+                            {'id': consts.auth.VISIBLE, 'text': _('Visible')},
+                            {'id': consts.auth.HIDDEN, 'text': _('Hidden')},
+                            {'id': consts.auth.DISABLED, 'text': _('Disabled')},
                         ],
-                        *auth_instance.gui_description(),
-                        ui_utils.choice_field(
-                            order=ORDER,
-                            name='state',
-                            default=consts.auth.VISIBLE,
-                            choices=[
-                                {'id': consts.auth.VISIBLE, 'text': _('Visible')},
-                                {'id': consts.auth.HIDDEN, 'text': _('Hidden')},
-                                {'id': consts.auth.DISABLED, 'text': _('Disabled')},
-                            ],
-                            label=gettext('Access'),
-                        ),
-                        *mfa_fields,
+                        label=gettext('Access'),
                     )
+
+                    if auth_type.provides_mfa():
+                        gui.add_multichoice(
+                            name='mfa_id',
+                            label=gettext('MFA Provider'),
+                            choices=[ui.gui.choice_item('', str(_('None')))]
+                            + ui.gui.sorted_choices(
+                                [ui.gui.choice_item(v.uuid, v.name) for v in MFA.objects.all()]
+                            ),
+                        )
+
+                    return gui.build()
 
             raise Exception()  # Not found
         except Exception as e:

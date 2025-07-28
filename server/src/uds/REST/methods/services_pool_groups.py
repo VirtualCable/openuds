@@ -33,11 +33,9 @@
 import logging
 import typing
 
-from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
-from uds.core import types, ui
-from uds.core.consts.images import DEFAULT_THUMB_BASE64
+from uds.core import types
 from uds.core.util import ensure, ui as ui_utils
 from uds.core.util.model import process_uuid
 from uds.models import Image, ServicePoolGroup
@@ -95,23 +93,15 @@ class ServicesPoolGroups(ModelHandler[ServicePoolGroupItem]):
 
     # Gui related
     def get_gui(self, for_type: str) -> list[typing.Any]:
-        return self.compose_gui(
-            [
+        return (
+            ui_utils.GuiBuilder(
                 types.rest.stock.StockField.NAME,
                 types.rest.stock.StockField.COMMENTS,
                 types.rest.stock.StockField.PRIORITY,
-            ],
-            ui_utils.image_choice_field(
-                order=120,
-                name='image_id',
-                label=gettext('Associated Image'),
-                choices=[ui.gui.choice_image(-1, '--------', DEFAULT_THUMB_BASE64)]
-                + ui.gui.sorted_choices(
-                    [ui.gui.choice_image(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]
-                ),
-                tooltip=gettext('Image associated with this service'),
-                tab=types.ui.Tab.DISPLAY,
-            ),
+            )
+            .new_tab(types.ui.Tab.DISPLAY)
+            .add_image_choice()
+            .build()
         )
 
     def item_as_dict(self, item: 'Model') -> ServicePoolGroupItem:

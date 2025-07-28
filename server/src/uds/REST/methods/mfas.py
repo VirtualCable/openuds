@@ -88,30 +88,30 @@ class MFA(ModelHandler[MFAItem]):
         # Create a temporal instance to get the gui
         with Environment.temporary_environment() as env:
             mfa = mfa_type(env, None)
-            return self.compose_gui(
-                [
+
+            return (
+                ui_utils.GuiBuilder(
                     types.rest.stock.StockField.NAME,
                     types.rest.stock.StockField.COMMENTS,
                     types.rest.stock.StockField.TAGS,
-                ],
-                *mfa.gui_description(),
-                # Add remember_device and validity fields
-                ui_utils.numeric_field(
+                    order=100,
+                    gui=mfa.gui_description(),
+                )
+                .add_numeric(
                     name='remember_device',
                     default=0,
                     min_value=0,
                     label=gettext('Device Caching'),
                     tooltip=gettext('Time in hours to cache device so MFA is not required again. User based.'),
-                    order=111,
-                ),
-                ui_utils.numeric_field(
+                )
+                .add_numeric(
                     name='validity',
                     default=5,
                     min_value=0,
                     label=gettext('MFA code validity'),
                     tooltip=gettext('Time in minutes to allow MFA code to be used.'),
-                    order=112,
-                ),
+                )
+                .build()
             )
 
     def item_as_dict(self, item: 'Model') -> MFAItem:

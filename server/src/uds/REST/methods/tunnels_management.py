@@ -61,7 +61,9 @@ class TunnelServers(DetailHandler[TunnelServerItem]):
     # tunnels/[id]/servers
     custom_methods = ['maintenance']
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult[TunnelServerItem]:
+    def get_items(
+        self, parent: 'Model', item: typing.Optional[str]
+    ) -> types.rest.GetItemsResult[TunnelServerItem]:
         parent = ensure.is_instance(parent, models.ServerGroup)
         try:
             multi = False
@@ -142,6 +144,7 @@ class TunnelServers(DetailHandler[TunnelServerItem]):
         item.save()
         return 'ok'
 
+
 class TunnelItem(types.rest.ItemDictType):
     id: str
     name: str
@@ -152,6 +155,7 @@ class TunnelItem(types.rest.ItemDictType):
     transports_count: int
     servers_count: int
     permission: uds.core.types.permissions.PermissionType
+
 
 # Enclosed methods under /auth path
 class Tunnels(ModelHandler[TunnelItem]):
@@ -179,31 +183,27 @@ class Tunnels(ModelHandler[TunnelItem]):
     ]
 
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
-        ORDER: typing.Final[ui_utils.OrderCounter] = ui_utils.OrderCounter(100)
-        return self.compose_gui(
-            [
+        return (
+            ui_utils.GuiBuilder(
                 types.rest.stock.StockField.NAME,
                 types.rest.stock.StockField.COMMENTS,
                 types.rest.stock.StockField.TAGS,
-            ],
-            ui_utils.text_field(
-                order=ORDER.next(),
+            )
+            .add_text(
                 name='host',
-                default='',
                 label=gettext('Hostname'),
                 tooltip=gettext(
                     'Hostname or IP address of the server where the tunnel is visible by the users'
                 ),
-            ),
-            ui_utils.numeric_field(
-                order=ORDER.next(),
+            )
+            .add_numeric(
                 name='port',
                 default=443,
                 label=gettext('Port'),
                 tooltip=gettext('Port where the tunnel is visible by the users'),
-            ),
+            )
+            .build()
         )
-        
 
     def item_as_dict(self, item: 'Model') -> TunnelItem:
         item = ensure.is_instance(item, models.ServerGroup)

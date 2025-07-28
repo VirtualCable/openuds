@@ -37,7 +37,7 @@ from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
 from uds import models
-from uds.core import consts, types, ui
+from uds.core import consts, types
 from uds.core.util import net, permissions, ensure, ui as ui_utils
 from uds.core.util.model import sql_now, process_uuid
 from uds.core.exceptions.rest import NotFound, RequestError
@@ -211,69 +211,46 @@ class ServersServers(DetailHandler[ServerItem]):
     def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
         return types.ui.RowStyleInfo(prefix='row-maintenance-', field='maintenance_mode')
 
-    def get_gui(self, parent: 'Model', for_type: str = '') -> list[typing.Any]:
+    def get_gui(self, parent: 'Model', for_type: str = '') -> list[types.ui.GuiElement]:
         parent = ensure.is_instance(parent, models.ServerGroup)
         kind, subkind = parent.server_type, parent.subtype
         title = _('of type') + f' {subkind.upper()} {kind.name.capitalize()}'
+        gui_builder = ui_utils.GuiBuilder(order=100)
         if kind == types.servers.ServerType.UNMANAGED:
-            return self.add_field(
-                [],
-                [
-                    {
-                        'name': 'hostname',
-                        'value': '',
-                        'label': gettext('Hostname'),
-                        'tooltip': gettext('Hostname of the server. It must be resolvable by UDS'),
-                        'type': types.ui.FieldType.TEXT,
-                        'order': 100,  # At end
-                    },
-                    {
-                        'name': 'ip',
-                        'value': '',
-                        'label': gettext('IP'),
-                        'tooltip': gettext('IP of the server. Used if hostname is not resolvable by UDS'),
-                        'type': types.ui.FieldType.TEXT,
-                        'order': 101,  # At end
-                    },
-                    {
-                        'name': 'mac',
-                        'value': '',
-                        'label': gettext('Server MAC'),
-                        'tooltip': gettext('Optional MAC address of the server'),
-                        'type': types.ui.FieldType.TEXT,
-                        'order': 102,  # At end
-                    },
-                    {
-                        'name': 'title',
-                        'value': title,
-                        'type': types.ui.FieldType.INFO,
-                    },
-                ],
+            return (
+                gui_builder.add_text(
+                    name='hostname',
+                    label=gettext('Hostname'),
+                    tooltip=gettext('Hostname of the server. It must be resolvable by UDS'),
+                    default='',
+                )
+                .add_text(
+                    name='ip',
+                    label=gettext('IP'),
+                )
+                .add_text(
+                    name='mac',
+                    label=gettext('Server MAC'),
+                    tooltip=gettext('Optional MAC address of the server'),
+                    default='',
+                )
+                .add_info(
+                    name='title',
+                    default=title,
+                )
+                .build()
             )
-        else:
-            return self.add_field(
-                [],
-                [
-                    {
-                        'name': 'server',
-                        'value': '',
-                        'label': gettext('Server'),
-                        'tooltip': gettext('Server to include on group'),
-                        'type': types.ui.FieldType.CHOICE,
-                        'choices': [
-                            ui.gui.choice_item(item.uuid, item.hostname)
-                            for item in models.Server.objects.filter(type=parent.type, subtype=parent.subtype)
-                            if item.groups.count() == 0
-                        ],
-                        'order': 100,  # At end
-                    },
-                    {
-                        'name': 'title',
-                        'value': title,
-                        'type': types.ui.FieldType.INFO,
-                    },
-                ],
+
+        return (
+            gui_builder.add_text(
+                name='server',
+                label=gettext('Server'),
+                tooltip=gettext('Server to include on group'),
+                default='',
             )
+            .add_info(name='title', default=title)
+            .build()
+        )
 
     def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, models.ServerGroup)
@@ -501,22 +478,19 @@ class ServersGroups(ModelHandler[GroupItem]):
             kind = _('Unmanaged')
         title = _('of type') + f' {subkind.upper()} {kind}'
 
-        return self.compose_gui(
-            [
+        return (
+            ui_utils.GuiBuilder(
                 types.rest.stock.StockField.NAME,
                 types.rest.stock.StockField.COMMENTS,
                 types.rest.stock.StockField.TAGS,
-            ],
-            ui_utils.hidden_field(
-                order=0,
-                name='type',
-                default=for_type,
-            ),
-            ui_utils.info_field(
-                order=1,
+                order=100,
+            )
+            .add_hidden(name='type', default=for_type)
+            .add_info(
                 name='title',
                 default=title,
-            ),
+            )
+            .build()
         )
 
     def pre_save(self, fields: dict[str, typing.Any]) -> None:

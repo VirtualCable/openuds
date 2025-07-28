@@ -97,20 +97,20 @@ class Networks(ModelHandler[NetworkItem]):
     ]
 
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
-        ORDER: typing.Final[int] = 100
-        return self.compose_gui(
-            [
+        return (
+            ui_utils.GuiBuilder(
                 types.rest.stock.StockField.NAME,
+                types.rest.stock.StockField.COMMENTS,
                 types.rest.stock.StockField.TAGS,
-            ],
-            ui_utils.text_field(
-                order=ORDER,
+            )
+            .add_text(
                 name='net_string',
                 label=gettext('Network range'),
                 tooltip=gettext(
                     'Network range. Accepts most network definitions formats (range, subnet, host, etc...)'
                 ),
-            ),
+            )
+            .build()
         )
 
     def item_as_dict(self, item: 'Model') -> NetworkItem:

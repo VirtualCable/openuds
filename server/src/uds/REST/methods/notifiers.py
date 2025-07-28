@@ -99,28 +99,28 @@ class Notifiers(ModelHandler[NotifierItem]):
         with Environment.temporary_environment() as env:
             notifier = notifier_type(env, None)
 
-            return self.compose_gui(
-                [
+            return (
+                ui_utils.GuiBuilder(
                     types.rest.stock.StockField.NAME,
                     types.rest.stock.StockField.COMMENTS,
                     types.rest.stock.StockField.TAGS,
-                ],
-                *notifier.gui_description(),
-                ui_utils.choice_field(
+                    order=100,
+                    gui=notifier.gui_description(),
+                )
+                .add_choice(
                     name='level',
                     choices=[gui.choice_item(i[0], i[1]) for i in LogLevel.interesting()],
                     label=gettext('Level'),
                     tooltip=gettext('Level of notifications'),
-                    order=102,
                     default=str(LogLevel.ERROR.value),
-                ),
-                ui_utils.checkbox_field(
+                )
+                .add_checkbox(
                     name='enabled',
                     label=gettext('Enabled'),
                     tooltip=gettext('If checked, this notifier will be used'),
-                    order=103,
                     default=True,
-                ),
+                )
+                .build()
             )
 
     def item_as_dict(self, item: 'Model') -> NotifierItem:

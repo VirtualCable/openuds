@@ -78,7 +78,7 @@ _STATIC_FLDS: typing.Final[dict[StockField, list['ui.GuiElement']]] = {
                 'label': _('Tags'),
                 'type': ui.FieldType.TAGLIST,
                 'tooltip': _('Tags for this element'),
-                'order': 0 - 105,
+                'order': 0 - 110,
             },
         }
     ],
@@ -118,7 +118,7 @@ _STATIC_FLDS: typing.Final[dict[StockField, list['ui.GuiElement']]] = {
                 'default': 1,
                 'length': 4,
                 'tooltip': _('Selects the priority of this element (lower number means higher priority)'),
-                'order': 0 - 85,
+                'order': 0 - 80,
             },
         }
     ],
@@ -131,7 +131,7 @@ _STATIC_FLDS: typing.Final[dict[StockField, list['ui.GuiElement']]] = {
                 'required': True,
                 'length': 128,
                 'tooltip': _('Label for this element'),
-                'order': 0 - 80,
+                'order': 0 - 70,
             },
         }
     ],

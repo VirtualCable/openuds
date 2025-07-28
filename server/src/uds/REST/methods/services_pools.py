@@ -322,22 +322,21 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
                 gettext('Create at least a service before creating a new service pool')
             )
 
-        ORDER: typing.Final[ui_utils.OrderCounter] = ui_utils.OrderCounter(100)
-        return self.compose_gui(
-            [
+        gui = (
+            ui_utils.GuiBuilder(
                 types.rest.stock.StockField.NAME,
                 types.rest.stock.StockField.COMMENTS,
                 types.rest.stock.StockField.TAGS,
-            ],
-            ui_utils.text_field(
+                order=-95,  # On top
+            )
+            .add_text(
                 name='short_name',
                 label=gettext('Short name'),
                 tooltip=gettext('Short name for user service visualization'),
-                required=False,
-                length=64,
-                order=0 - 95,
-            ),
-            ui_utils.choice_field(
+                length=32,
+            )
+            .set_order(100)
+            .add_choice(
                 name='service_id',
                 choices=[ui.gui.choice_item('', '')]
                 + ui.gui.sorted_choices(
@@ -345,156 +344,125 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
                 ),
                 label=gettext('Base service'),
                 tooltip=gettext('Service used as base of this service pool'),
-                order=ORDER.next(),  # Ensures is at end
-            ),
-            ui_utils.choice_field(
+                readonly=True,
+            )
+            .add_choice(
                 name='osmanager_id',
                 choices=[ui.gui.choice_item(-1, '')]
                 + ui.gui.sorted_choices([ui.gui.choice_item(v.uuid, v.name) for v in OSManager.objects.all()]),
                 label=gettext('OS Manager'),
                 tooltip=gettext('OS Manager used as base of this service pool'),
                 readonly=True,
-                order=ORDER.next(),
-            ),
-            ui_utils.checkbox_field(
+            )
+            .add_checkbox(
+                name='publish_on_save',
+                default=True,
+                label=gettext('Publish on save'),
+                tooltip=gettext('If active, the service will be published when saved'),
+            )
+            .new_tab(types.ui.Tab.DISPLAY)
+            .add_checkbox(
+                name='visible',
+                default=True,
+                label=gettext('Visible'),
+                tooltip=gettext('If active, transport will be visible for users'),
+            )
+            .add_image_choice()
+            .add_image_choice(
+                name='pool_group_id',
+                choices=[
+                    ui.gui.choice_image(v.uuid, v.name, v.thumb64) for v in ServicePoolGroup.objects.all()
+                ],
+                label=gettext('Pool group'),
+                tooltip=gettext('Pool group for this pool (for pool classify on display)'),
+            )
+            .add_text(
+                name='calendar_message',
+                label=gettext('Calendar access denied text'),
+                tooltip=gettext('Custom message to be shown to users if access is limited by calendar rules.'),
+            )
+            .add_text(
+                name='custom_message',
+                label=gettext('Custom launch message text'),
+                tooltip=gettext(
+                    'Custom message to be shown to users, if active, when trying to start a service from this pool.'
+                ),
+            )
+            .add_checkbox(
+                name='display_custom_message',
+                default=False,
+                label=gettext('Enable custom launch message'),
+                tooltip=gettext('If active, the custom launch message will be shown to users'),
+            )
+            .new_tab(gettext('Availability'))
+            .add_numeric(
+                name='initial_srvs',
+                default=0,
+                min_value=0,
+                label=gettext('Initial available services'),
+                tooltip=gettext('Services created initially for this service pool'),
+            )
+            .add_numeric(
+                name='cache_l1_srvs',
+                default=0,
+                min_value=0,
+                label=gettext('Services to keep in cache'),
+                tooltip=gettext('Services kept in cache for improved user service assignation'),
+            )
+            .add_numeric(
+                name='cache_l2_srvs',
+                default=0,
+                min_value=0,
+                label=gettext('Services to keep in L2 cache'),
+                tooltip=gettext('Services kept in cache of level2 for improved service assignation'),
+            )
+            .add_numeric(
+                name='max_srvs',
+                default=0,
+                min_value=0,
+                label=gettext('Max services per user'),
+                tooltip=gettext('Maximum number of services that can be assigned to a user from this pool'),
+            )
+            .add_checkbox(
+                name='show_transports',
+                default=False,
+                label=gettext('Show transports'),
+                tooltip=gettext('If active, transports will be shown to users'),
+            )
+            .new_tab(types.ui.Tab.ADVANCED)
+            .add_checkbox(
                 name='allow_users_remove',
+                default=False,
                 label=gettext('Allow removal by users'),
                 tooltip=gettext(
                     'If active, the user will be allowed to remove the service "manually". Be careful with this, because the user will have the "power" to delete its own service'
                 ),
-                order=ORDER.next_tab(),
-                tab=types.ui.Tab.ADVANCED,
-            ),
-            ui_utils.checkbox_field(
+            )
+            .add_checkbox(
                 name='allow_users_reset',
                 default=False,
                 label=gettext('Allow reset by users'),
                 tooltip=gettext('If active, the user will be allowed to reset the service'),
-                order=ORDER.next(),
-                tab=types.ui.Tab.ADVANCED,
-            ),
-            ui_utils.checkbox_field(
+            )
+            .add_checkbox(
                 name='ignores_unused',
                 default=False,
                 label=gettext('Ignores unused'),
                 tooltip=gettext(
                     'If the option is enabled, UDS will not attempt to detect and remove the user services assigned but not in use.'
                 ),
-                order=ORDER.next(),
-                tab=types.ui.Tab.ADVANCED,
-            ),
-            ui_utils.checkbox_field(
-                name='visible',
-                default=True,
-                label=gettext('Visible'),
-                tooltip=gettext('If active, transport will be visible for users'),
-                order=ORDER.next_tab(),
-                tab=types.ui.Tab.DISPLAY,
-            ),
-            ui_utils.image_choice_field(
-                name='image_id',
-                choices=[ui.gui.choice_image(-1, '--------', DEFAULT_THUMB_BASE64)]
-                + ui.gui.sorted_choices(
-                    [ui.gui.choice_image(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]
-                ),
-                label=gettext('Associated Image'),
-                tooltip=gettext('Image associated with this service'),
-                order=ORDER.next(),
-                tab=types.ui.Tab.DISPLAY,
-            ),
-            ui_utils.image_choice_field(
-                name='pool_group_id',
-                choices=[ui.gui.choice_image(-1, _('Default'), DEFAULT_THUMB_BASE64)]
-                + ui.gui.sorted_choices(
-                    [ui.gui.choice_image(v.uuid, v.name, v.thumb64) for v in ServicePoolGroup.objects.all()]
-                ),
-                label=gettext('Pool group'),
-                tooltip=gettext('Pool group for this pool (for pool classify on display)'),
-                order=ORDER.next(),
-                tab=types.ui.Tab.DISPLAY,
-            ),
-            ui_utils.text_field(
-                name='calendar_message',
-                label=gettext('Calendar access denied text'),
-                tooltip=gettext('Custom message to be shown to users if access is limited by calendar rules.'),
-                order=ORDER.next(),
-                tab=types.ui.Tab.DISPLAY,
-            ),
-            ui_utils.text_field(
-                name='custom_message',
-                label=gettext('Custom launch message text'),
-                tooltip=gettext(
-                    'Custom message to be shown to users, if active, when trying to start a service from this pool.'
-                ),
-                order=ORDER.next(),
-                tab=types.ui.Tab.DISPLAY,
-            ),
-            ui_utils.checkbox_field(
-                name='display_custom_message',
-                default=False,
-                label=gettext('Enable custom launch message'),
-                tooltip=gettext('If active, the custom launch message will be shown to users'),
-                order=ORDER.next(),
-                tab=types.ui.Tab.DISPLAY,
-            ),
-            ui_utils.numeric_field(
-                name='initial_srvs',
-                default=0,
-                min_value=0,
-                label=gettext('Initial available services'),
-                tooltip=gettext('Services created initially for this service pool'),
-                order=ORDER.next_tab(),
-                tab=gettext('Availability'),
-            ),
-            ui_utils.numeric_field(
-                name='cache_l1_srvs',
-                default=0,
-                min_value=0,
-                label=gettext('Services to keep in cache'),
-                tooltip=gettext('Services kept in cache for improved user service assignation'),
-                order=ORDER.next(),
-                tab=gettext('Availability'),
-            ),
-            ui_utils.numeric_field(
-                name='cache_l2_srvs',
-                default=0,
-                min_value=0,
-                label=gettext('Services to keep in L2 cache'),
-                tooltip=gettext('Services kept in cache of level2 for improved service generation'),
-                order=ORDER.next(),
-                tab=gettext('Availability'),
-            ),
-            ui_utils.numeric_field(
-                name='max_srvs',
-                default=0,
-                min_value=0,
-                label=gettext('Maximum number of services to provide'),
-                tooltip=gettext(
-                    'Maximum number of service (assigned and L1 cache) that can be created for this service'
-                ),
-                order=ORDER.next(),
-                tab=gettext('Availability'),
-            ),
-            ui_utils.checkbox_field(
-                name='show_transports',
-                default=True,
-                label=gettext('Show transports'),
-                tooltip=gettext('If active, alternative transports for user will be shown'),
-                order=ORDER.next_tab(),
-                tab=types.ui.Tab.ADVANCED,
-            ),
-            ui_utils.choice_field(
+            )
+            .add_choice(
                 name='account_id',
-                choices=[ui.gui.choice_item(-1, '')]
+                choices=[ui.gui.choice_item('', '')]
                 + ui.gui.sorted_choices([ui.gui.choice_item(v.uuid, v.name) for v in Account.objects.all()]),
-                label=gettext('Accounting'),
-                tooltip=gettext('Account associated to this service pool'),
-                order=ORDER.next(),
-                tab=types.ui.Tab.ADVANCED,
-            ),
+                label=gettext('Account'),
+                tooltip=gettext('Account used for this service pool'),
+                readonly=True,
+            )
         )
+        return gui.build()
 
-    # pylint: disable=too-many-statements
     def pre_save(self, fields: dict[str, typing.Any]) -> None:
         # logger.debug(self._params)
 
