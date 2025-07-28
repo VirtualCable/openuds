@@ -68,6 +68,7 @@ def _add_common(
     default: str | int | bool | None = None,
     required: bool | None = None,
     readonly: bool | None = None,
+    tooltip: str | None = None,
 ) -> types.ui.GuiElement:
     """
     Adds common fields to the given GUI element.
@@ -88,9 +89,57 @@ def _add_common(
         gui['gui']['required'] = required
     if readonly is not None:
         gui['gui']['readonly'] = readonly
+    
+    gui['gui']['tooltip'] = tooltip or ''
 
     return gui
 
+def hidden_field(
+    order: int,
+    name: str,
+    *,
+    default: str | int | bool | None = None,
+    tab: types.ui.Tab | str | None = None,
+) -> types.ui.GuiElement:
+    """
+    Creates a hidden field with the given parameters.
+    """
+    return _add_common(
+        {
+            'name': name,
+            'gui': {
+                'label': name,
+                'type': types.ui.FieldType.HIDDEN,
+                'order': order,
+            },
+        },
+        tab=tab,
+        order=order,
+        default=default,
+    )   
+
+
+def info_field(
+    order: int,
+    name: str,
+    *,
+    default: str | int | bool | None = None,
+) -> types.ui.GuiElement:
+    """
+    Creates an info field with the given parameters.
+    """
+    return _add_common(
+        {
+            'name': name,
+            'gui': {
+                'label': name,
+                'type': types.ui.FieldType.INFO,
+                'order': order,
+            },
+        },
+        order=order,
+        default=default,
+    )
 
 def text_field(
     order: int,
@@ -112,7 +161,6 @@ def text_field(
             'gui': {
                 'label': label,
                 'type': types.ui.FieldType.TEXT,
-                'tooltip': tooltip,
                 'order': order,
             },
         },
@@ -121,6 +169,7 @@ def text_field(
         length=length,
         default=default,
         required=required,
+        tooltip=tooltip,
     )
 
 
@@ -145,7 +194,6 @@ def choice_field(
                 'label': label,
                 'type': types.ui.FieldType.CHOICE,
                 'choices': choices,
-                'tooltip': tooltip,
                 'order': order,
             },
         },
@@ -153,6 +201,7 @@ def choice_field(
         order=order,
         default=default,
         readonly=readonly,
+        tooltip=tooltip,
     )
 
 
@@ -175,12 +224,12 @@ def multichoice_field(
                 'label': label,
                 'type': types.ui.FieldType.MULTICHOICE,
                 'choices': choices,
-                'tooltip': tooltip,
                 'order': order,
             },
         },
         tab=tab,
         order=order,
+        tooltip=tooltip,
     )
 
 
@@ -201,7 +250,6 @@ def numeric_field(
     gui: types.ui.GuiDescription = {
         'label': label,
         'type': types.ui.FieldType.NUMERIC,
-        'tooltip': tooltip,
         'order': order,
     }
     return _add_common(
@@ -214,6 +262,7 @@ def numeric_field(
         min_value=min_value,
         max_value=max_value,
         default=default,
+        tooltip=tooltip,
     )
 
 def checkbox_field(
@@ -234,13 +283,13 @@ def checkbox_field(
             'gui': {
                 'label': label,
                 'type': types.ui.FieldType.CHECKBOX,
-                'tooltip': tooltip,
                 'order': order,
             },
         },
         tab=tab,
         order=order,
         default=default,
+        tooltip=tooltip,
     )
 
 
@@ -262,13 +311,13 @@ def image_field(
             'gui': {
                 'label': label,
                 'type': types.ui.FieldType.IMAGECHOICE,
-                'tooltip': tooltip,
                 'order': order,
             },
         },
         tab=tab,
         order=order,
         default=default,
+        tooltip=tooltip,
     )
 
 
@@ -292,11 +341,11 @@ def image_choice_field(
                 'label': label,
                 'type': types.ui.FieldType.IMAGECHOICE,
                 'choices': choices,
-                'tooltip': tooltip,
                 'order': order,
             },
         },
         tab=tab,
         order=order,
         default=default,
+        tooltip=tooltip,
     )

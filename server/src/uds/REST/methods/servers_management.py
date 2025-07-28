@@ -38,7 +38,7 @@ from django.utils.translation import gettext_lazy as _
 
 from uds import models
 from uds.core import consts, types, ui
-from uds.core.util import net, permissions, ensure
+from uds.core.util import net, permissions, ensure, ui as ui_utils
 from uds.core.util.model import sql_now, process_uuid
 from uds.core.exceptions.rest import NotFound, RequestError
 from uds.REST.model import DetailHandler, ModelHandler
@@ -47,6 +47,7 @@ if typing.TYPE_CHECKING:
     from django.db.models import Model
 
 logger = logging.getLogger(__name__)
+
 
 class TokenItem(types.rest.ItemDictType):
     id: str
@@ -131,6 +132,7 @@ class ServerItem(types.rest.ItemDictType):
     register_username: str
     stamp: datetime.datetime
 
+
 # REST API For servers (except tunnel servers nor actors)
 class ServersServers(DetailHandler[ServerItem]):
 
@@ -155,7 +157,7 @@ class ServersServers(DetailHandler[ServerItem]):
                         'mac': i.mac if i.mac != consts.MAC_UNKNOWN else '',
                         'maintenance_mode': i.maintenance_mode,
                         'register_username': i.register_username,
-                        'stamp': i.stamp,                    
+                        'stamp': i.stamp,
                     }
                 )
             if item is None:
@@ -434,6 +436,7 @@ class ServersServers(DetailHandler[ServerItem]):
 
         return import_errors
 
+
 class GroupItem(types.rest.ItemDictType):
     id: str
     name: str
@@ -446,7 +449,7 @@ class GroupItem(types.rest.ItemDictType):
     permission: types.permissions.PermissionType
 
 
-class ServersGroups(ModelHandler[GroupItem ]):
+class ServersGroups(ModelHandler[GroupItem]):
 
     custom_methods = [
         types.rest.ModelCustomMethod('stats', True),
@@ -488,32 +491,32 @@ class ServersGroups(ModelHandler[GroupItem ]):
             ).as_dict()
             yield v
 
-    def get_gui(self, type_: str) -> list[typing.Any]:
-        if '@' not in type_:  # If no subtype, use default
-            type_ += '@default'
-        kind, subkind = type_.split('@')[:2]
+    def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
+        if '@' not in for_type:  # If no subtype, use default
+            for_type += '@default'
+        kind, subkind = for_type.split('@')[:2]
         if kind == types.servers.ServerType.SERVER.name:
             kind = _('Standard')
         elif kind == types.servers.ServerType.UNMANAGED.name:
             kind = _('Unmanaged')
         title = _('of type') + f' {subkind.upper()} {kind}'
-        return self.add_field(
-            self.compose_gui(
-                [],
-                ['name', 'comments', 'tags'],
-            ),
+
+        return self.compose_gui(
             [
-                {
-                    'name': 'type',
-                    'value': type_,
-                    'type': types.ui.FieldType.HIDDEN,
-                },
-                {
-                    'name': 'title',
-                    'value': title,
-                    'type': types.ui.FieldType.INFO,
-                },
+                types.rest.stock.StockField.NAME,
+                types.rest.stock.StockField.COMMENTS,
+                types.rest.stock.StockField.TAGS,
             ],
+            ui_utils.hidden_field(
+                order=0,
+                name='type',
+                default=for_type,
+            ),
+            ui_utils.info_field(
+                order=1,
+                name='title',
+                default=title,
+            ),
         )
 
     def pre_save(self, fields: dict[str, typing.Any]) -> None:

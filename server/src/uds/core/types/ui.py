@@ -174,9 +174,9 @@ class GuiDescription(typing.TypedDict):
     It contains the name of the element, the GUI description, and the value.
     """
     label: str
-    tooltip: str
     order: int
     type: FieldType
+    tooltip: typing.NotRequired[str]
     readonly: typing.NotRequired[bool]
     default: typing.NotRequired[str|int|float|bool]
     required: typing.NotRequired[bool]
