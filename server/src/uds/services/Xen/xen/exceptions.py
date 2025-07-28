@@ -129,15 +129,15 @@ def translator() -> typing.Generator[None, None, None]:
         raise XenException(str(e)) from e
 
 
-T = typing.TypeVar('T')
+R = typing.TypeVar('R')
 P = typing.ParamSpec('P')
 
 
 # decorator for translator
-def catched(f: collections.abc.Callable[P, T]) -> collections.abc.Callable[P, T]:
+def catched(f: collections.abc.Callable[P, R]) -> collections.abc.Callable[P, R]:
 
     @functools.wraps(f)
-    def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
         with translator():
             return f(*args, **kwargs)
 
