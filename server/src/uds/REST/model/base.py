@@ -30,7 +30,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-import inspect
 import logging
 import typing
 
@@ -59,103 +58,7 @@ class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
     Base Handler for Master & Detail Handlers
     """
 
-    def add_field(
-        self, gui: list[typing.Any], field: typing.Union[types.rest.FieldType, list[types.rest.FieldType]]
-    ) -> list[typing.Any]:
-        """
-        Add a field to a "gui" description.
-        This method checks that every required field element is in there.
-        If not, defaults are assigned
-        :param gui: List of "gui" items where the field will be added
-        :param field: Field to be added (dictionary)
-        """
-        if isinstance(field, list):
-            for i in field:
-                gui = self.add_field(gui, i)
-        else:
-            if 'values' in field:
-                caller = inspect.stack()[1]
-                logger.warning(
-                    'Field %s has "values" attribute, this is deprecated and will be removed in future versions. Use "choices" instead. Called from %s:%s',
-                    field.get('name', ''),
-                    caller.filename,
-                    caller.lineno,
-                )
-                choices = field['values']
-            else:
-                choices = field.get('choices', None)
-            # Build gui with non empty values
-            gui_description: dict[str, typing.Any] = {}
-            # First, mandatory fields
-            for fld in ('name', 'type'):
-                if fld not in field:
-                    caller = inspect.stack()[1]
-                    logger.error(
-                        'Field %s does not have mandatory field %s. Called from %s:%s',
-                        field.get('name', ''),
-                        fld,
-                        caller.filename,
-                        caller.lineno,
-                    )
-                    raise exceptions.rest.RequestError(
-                        f'Field {fld} is mandatory on {field.get("name", "")} field.'
-                    )
-
-            if choices:
-                gui_description['choices'] = choices
-            # "fillable" fields (optional and mandatory on gui)
-            for fld in (
-                'type',
-                'default',
-                'required',
-                'min_value',
-                'max_value',
-                'length',
-                'lines',
-                'tooltip',
-                'readonly',
-            ):
-                if fld in field and field[fld] is not None:
-                    gui_description[fld] = field[fld]
-
-            # Order and label optional, but must be present on gui
-            gui_description['order'] = field.get('order', 0)
-            gui_description['label'] = field.get('label', field['name'])
-
-            v: dict[str, typing.Any] = {
-                'name': field.get('name', ''),
-                'value': field.get('value', ''),
-                'gui': gui_description,
-            }
-            if field.get('tab', None):
-                v['gui']['tab'] = _(str(field['tab']))
-            gui.append(v)
-        return gui
-
-    def compose_gui(
-        self,
-        stock_fields: list[types.rest.stock.StockField],
-        *gui: types.ui.GuiElement,
-    ) -> list[types.ui.GuiElement]:
-        """
-        Adds default fields (based in a list) to a "gui" description
-
-        Args:
-            gui: Gui list where the "default" fielsds will be added
-            stock_fields: List of StockField to be added. Valid values are 'name', '
-
-        returns:
-            The updated gui list with the new fields appended
-        """
-        the_gui: list[types.ui.GuiElement] = [
-            gui_field for field in stock_fields for gui_field in field.get_fields()
-        ]
-        for field in gui:
-            the_gui.append(field)
-
-        return the_gui
-
-    def ensure_has_access(
+    def check_access(
         self,
         obj: models.Model,
         permission: 'types.permissions.PermissionType',
@@ -174,7 +77,7 @@ class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
         """
         return None
 
-    def type_as_dict(self, type_: type['Module']) -> types.rest.TypeInfoDict:
+    def as_typeinfo(self, type_: type['Module']) -> types.rest.TypeInfoDict:
         """
         Returns a dictionary describing the type (the name, the icon, description, etc...)
         """
@@ -189,7 +92,7 @@ class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
 
         return res
 
-    def process_table_fields(
+    def table_description(
         self,
         title: str,
         fields: list[typing.Any],
@@ -242,7 +145,7 @@ class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
         return args
 
     @staticmethod
-    def fill_instance_type(item: 'models.Model', dct: types.rest.ManagedObjectDictType) -> None:
+    def fill_instance_type(item: 'models.Model', dct: types.rest.ManagedObjectItem) -> None:
         """
         For Managed Objects (db element that contains a serialized object), fills a dictionary with the "type" and "type_name" parameters values.
         For non managed objects, it does nothing
@@ -258,7 +161,7 @@ class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
             typing.cast(dict[str, typing.Any], dct)['type_name'] = kind.mod_name()
 
     @staticmethod
-    def fill_instance_fields(item: 'models.Model', dct: types.rest.ItemDictType) -> None:
+    def fill_instance_fields(item: 'models.Model', dct: types.rest.BaseRestItem) -> None:
         """
         For Managed Objects (db element that contains a serialized object), fills a dictionary with the "field" parameters values.
         For non managed objects, it does nothing
@@ -271,7 +174,7 @@ class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
 
         # Cast to allow override typing
         if isinstance(item, ManagedObjectModel):
-            res = typing.cast(types.rest.ManagedObjectDictType, dct)
+            res = typing.cast(types.rest.ManagedObjectItem, dct)
             i = item.get_instance()
             i.init_gui()  # Defaults & stuff
             fields = i.get_fields_as_dict()

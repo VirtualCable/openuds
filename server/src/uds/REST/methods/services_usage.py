@@ -51,7 +51,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class ServicesUsageItem(types.rest.ItemDictType):
+class ServicesUsageItem(types.rest.BaseRestItem):
     id: str
     state_date: datetime.datetime
     creation_date: datetime.datetime
@@ -111,7 +111,7 @@ class ServicesUsage(DetailHandler[ServicesUsageItem]):
 
     def get_items(
         self, parent: 'Model', item: typing.Optional[str]
-    ) -> types.rest.GetItemsResult[ServicesUsageItem]:
+    ) -> types.rest.ItemsResult[ServicesUsageItem]:
         parent = ensure.is_instance(parent, Provider)
         try:
             if item is None:

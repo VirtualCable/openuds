@@ -37,7 +37,7 @@ import typing
 from django.utils.translation import gettext_lazy as _
 from uds.core import types
 from uds.models import Calendar
-from uds.core.util import permissions, ensure
+from uds.core.util import permissions, ensure, ui as ui_utils
 
 from uds.REST.model import ModelHandler
 from .calendarrules import CalendarRules
@@ -49,7 +49,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class CalendarItem(types.rest.ItemDictType):
+class CalendarItem(types.rest.BaseRestItem):
     id: str
     name: str
     tags: list[str]
@@ -104,10 +104,8 @@ class Calendars(ModelHandler[CalendarItem]):
         }
 
     def get_gui(self, for_type: str) -> list[typing.Any]:
-        return self.compose_gui(
-            [
-                types.rest.stock.StockField.NAME,
-                types.rest.stock.StockField.COMMENTS,
-                types.rest.stock.StockField.TAGS,
-            ],
-        )
+        return ui_utils.GuiBuilder(
+            types.rest.stock.StockField.NAME,
+            types.rest.stock.StockField.COMMENTS,
+            types.rest.stock.StockField.TAGS,
+        ).build()

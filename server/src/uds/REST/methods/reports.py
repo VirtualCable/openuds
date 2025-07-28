@@ -58,7 +58,7 @@ VALID_PARAMS = (
 )
 
 
-class ReportItem(types.rest.ItemDictType):
+class ReportItem(types.rest.BaseRestItem):
     id: str
     mime_type: str
     encoded: bool
@@ -116,7 +116,7 @@ class Reports(model.BaseModelHandler[ReportItem]):
             ((consts.rest.OVERVIEW,), lambda: list(self.get_items())),
             (
                 (consts.rest.TABLEINFO,),
-                lambda: self.process_table_fields(
+                lambda: self.table_description(
                     str(self.table_title), self.table_fields, self.table_row_style
                 ),
             ),

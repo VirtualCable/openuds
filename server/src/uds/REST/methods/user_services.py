@@ -51,7 +51,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-class UserServiceItem(types.rest.ItemDictType):
+class UserServiceItem(types.rest.BaseRestItem):
     id: str
     id_deployed_service: str
     unique_id: str
@@ -149,7 +149,7 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
 
     def get_items(
         self, parent: 'Model', item: typing.Optional[str]
-    ) -> types.rest.GetItemsResult['UserServiceItem']:
+    ) -> types.rest.ItemsResult['UserServiceItem']:
         parent = ensure.is_instance(parent, models.ServicePool)
 
         try:
@@ -313,7 +313,7 @@ class CachedService(AssignedUserService):
 
     def get_items(
         self, parent: 'Model', item: typing.Optional[str]
-    ) -> types.rest.GetItemsResult['UserServiceItem']:
+    ) -> types.rest.ItemsResult['UserServiceItem']:
         parent = ensure.is_instance(parent, models.ServicePool)
 
         try:
@@ -369,7 +369,7 @@ class CachedService(AssignedUserService):
         except Exception:
             raise self.invalid_item_response() from None
 
-class GroupItem(types.rest.ItemDictType):
+class GroupItem(types.rest.BaseRestItem):
     id: str
     auth_id: str
     name: str
@@ -461,7 +461,7 @@ class Groups(DetailHandler[GroupItem]):
             types.log.LogSource.ADMIN,
         )
 
-class TransportItem(types.rest.ItemDictType):
+class TransportItem(types.rest.BaseRestItem):
     id: str
     name: str
     type: types.rest.TypeInfoDict
@@ -483,7 +483,7 @@ class Transports(DetailHandler[TransportItem]):
 
         def get_type(trans: 'models.Transport') -> types.rest.TypeInfoDict:
             try:
-                return self.type_as_dict(trans.get_type())
+                return self.as_typeinfo(trans.get_type())
             except Exception:  # No type found
                 raise self.invalid_item_response()
 
@@ -538,7 +538,7 @@ class Transports(DetailHandler[TransportItem]):
             types.log.LogSource.ADMIN,
         )
 
-class PublicationItem(types.rest.ItemDictType):
+class PublicationItem(types.rest.BaseRestItem):
     id: str
     revision: int
     publish_date: datetime.datetime
@@ -648,7 +648,7 @@ class Publications(DetailHandler[PublicationItem]):
     def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
         return types.ui.RowStyleInfo(prefix='row-state-', field='state')
 
-class ChangelogItem(types.rest.ItemDictType):
+class ChangelogItem(types.rest.BaseRestItem):
     revision: int
     stamp: datetime.datetime
     log: str

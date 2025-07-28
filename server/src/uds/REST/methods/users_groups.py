@@ -78,7 +78,7 @@ def get_service_pools_for_groups(
         yield servicepool
 
 
-class UserItem(types.rest.ItemDictType):
+class UserItem(types.rest.BaseRestItem):
     id: str
     name: str
     real_name: str
@@ -359,7 +359,7 @@ class GroupItem(typing.TypedDict):
 class Groups(DetailHandler[GroupItem]):
     custom_methods = ['services_pools', 'users']
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult['GroupItem']:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult['GroupItem']:
         parent = ensure.is_instance(parent, Authenticator)
         try:
             multi = False

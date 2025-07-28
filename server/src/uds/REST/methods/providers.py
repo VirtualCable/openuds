@@ -40,7 +40,7 @@ from django.utils.translation import gettext_lazy as _
 import uds.core.types.permissions
 from uds.core import exceptions, services, types
 from uds.core.environment import Environment
-from uds.core.util import ensure, permissions
+from uds.core.util import ensure, permissions, ui as ui_utils
 from uds.core.types.states import State
 from uds.models import Provider, Service, UserService
 from uds.REST.model import ModelHandler
@@ -55,14 +55,14 @@ if typing.TYPE_CHECKING:
 
 
 # Helper class for Provider offers
-class OfferItem(types.rest.ItemDictType):
+class OfferItem(types.rest.BaseRestItem):
     name: str
     type: str
     description: str
     icon: str
 
 
-class ProviderItem(types.rest.ManagedObjectDictType):
+class ProviderItem(types.rest.ManagedObjectItem):
     id: str
     name: str
     tags: list[str]
@@ -151,17 +151,16 @@ class Providers(ModelHandler[ProviderItem]):
         if provider_type:
             with Environment.temporary_environment() as env:
                 provider = provider_type(env, None)
-                return self.compose_gui(
-                    [
-                        types.rest.stock.StockField.NAME,
-                        types.rest.stock.StockField.COMMENTS,
-                        types.rest.stock.StockField.TAGS,
-                    ],
-                    *provider.gui_description(),
-                )
+                return ui_utils.GuiBuilder(
+                    types.rest.stock.StockField.NAME,
+                    types.rest.stock.StockField.COMMENTS,
+                    types.rest.stock.StockField.TAGS,
+                    gui=provider.gui_description(),
+                ).build()
+
         raise exceptions.rest.NotFound('Type not found!')
 
-    def allservices(self) -> typing.Generator[types.rest.ItemDictType, None, None]:
+    def allservices(self) -> typing.Generator[types.rest.BaseRestItem, None, None]:
         """
         Custom method that returns "all existing services", no mater who's his daddy :)
         """
@@ -173,26 +172,26 @@ class Providers(ModelHandler[ProviderItem]):
             except Exception:
                 logger.exception('Passed service cause type is unknown')
 
-    def service(self) -> types.rest.ItemDictType:
+    def service(self) -> types.rest.BaseRestItem:
         """
         Custom method that returns a service by its uuid, no matter who's his daddy
         """
         try:
             service = Service.objects.get(uuid=self._args[1])
-            self.ensure_has_access(service.provider, uds.core.types.permissions.PermissionType.READ)
+            self.check_access(service.provider, uds.core.types.permissions.PermissionType.READ)
             perm = self.get_permissions(service.provider)
             return DetailServices.service_to_dict(service, perm, True)
         except Exception:
             # logger.exception('Exception')
             return {}
 
-    def maintenance(self, item: 'Model') -> types.rest.ItemDictType:
+    def maintenance(self, item: 'Model') -> types.rest.BaseRestItem:
         """
         Custom method that swaps maintenance mode state for a provider
         :param item:
         """
         item = ensure.is_instance(item, Provider)
-        self.ensure_has_access(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
+        self.check_access(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
         item.maintenance_mode = not item.maintenance_mode
         item.save()
         return self.item_as_dict(item)

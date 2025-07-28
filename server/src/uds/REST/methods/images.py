@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 # Enclosed methods under /item path
 
 
-class ImageItem(types.rest.ItemDictType):
+class ImageItem(types.rest.BaseRestItem):
     id: str
     name: str
     data: typing.NotRequired[str]

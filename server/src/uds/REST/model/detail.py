@@ -163,7 +163,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
                 raise self.invalid_request_response()
             case consts.rest.TABLEINFO:
                 if num_args == 1:
-                    return self.process_table_fields(
+                    return self.table_description(
                         self.get_title(parent),
                         self.get_fields(parent),
                         self.get_row_style(parent),
@@ -255,7 +255,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
     # Default (as sample) get_items
     def get_items(
         self, parent: models.Model, item: typing.Optional[str]
-    ) -> types.rest.GetItemsResult[types.rest.T_Item]:
+    ) -> types.rest.ItemsResult[types.rest.T_Item]:
         """
         This MUST be overridden by derived classes
         Excepts to return a list of dictionaries or a single dictionary, depending on "item" param

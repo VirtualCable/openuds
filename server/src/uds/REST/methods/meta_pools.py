@@ -55,7 +55,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class MetaPoolItem(types.rest.ItemDictType):
+class MetaPoolItem(types.rest.BaseRestItem):
     id: str
     name: str
     short_name: str
@@ -289,7 +289,7 @@ class MetaPools(ModelHandler[MetaPoolItem]):
         API:
             Sets the fallback access for a metapool
         """
-        self.ensure_has_access(item, types.permissions.PermissionType.MANAGEMENT)
+        self.check_access(item, types.permissions.PermissionType.MANAGEMENT)
 
         fallback = self._params.get('fallbackAccess', 'ALLOW')
         logger.debug('Setting fallback of %s to %s', item.name, fallback)

@@ -51,7 +51,7 @@ logger = logging.getLogger(__name__)
 # Enclosed methods under /item path
 
 
-class MFAItem(types.rest.ItemDictType):
+class MFAItem(types.rest.BaseRestItem):
     id: str
     name: str
     remember_device: int

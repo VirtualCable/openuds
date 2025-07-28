@@ -59,7 +59,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class ServicePoolItem(types.rest.ItemDictType):
+class ServicePoolItem(types.rest.BaseRestItem):
     id: str
     name: str
     short_name: str
@@ -605,7 +605,7 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
     # Set fallback status
     def set_fallback_access(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)
-        self.ensure_has_access(item, types.permissions.PermissionType.MANAGEMENT)
+        self.check_access(item, types.permissions.PermissionType.MANAGEMENT)
 
         fallback = self._params.get('fallbackAccess', self.params.get('fallback', None))
         if fallback:

@@ -52,7 +52,7 @@ logger = logging.getLogger(__name__)
 # Enclosed methods under /item path
 
 
-class TransportItem(types.rest.ManagedObjectDictType):
+class TransportItem(types.rest.ManagedObjectItem):
     id: str
     name: str
     tags: list[str]

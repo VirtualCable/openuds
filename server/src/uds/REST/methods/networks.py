@@ -49,7 +49,7 @@ logger = logging.getLogger(__name__)
 # Enclosed methods under /item path
 
 
-class NetworkItem(types.rest.ItemDictType):
+class NetworkItem(types.rest.BaseRestItem):
     id: str
     name: str
     tags: list[str]

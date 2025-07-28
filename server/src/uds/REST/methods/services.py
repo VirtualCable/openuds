@@ -58,7 +58,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class ServiceItem(types.rest.ManagedObjectDictType):
+class ServiceItem(types.rest.ManagedObjectItem):
     id: str
     name: str
     tags: list[str]
@@ -71,7 +71,7 @@ class ServiceItem(types.rest.ManagedObjectDictType):
     info: typing.NotRequired['ServiceInfo']
 
 
-class ServiceInfo(types.rest.ItemDictType):
+class ServiceInfo(types.rest.BaseRestItem):
     icon: str
     needs_publication: bool
     max_deployed: int
@@ -86,7 +86,7 @@ class ServiceInfo(types.rest.ItemDictType):
     can_list_assignables: bool
 
 
-class ServicePoolResumeItem(types.rest.ItemDictType):
+class ServicePoolResumeItem(types.rest.BaseRestItem):
     id: str
     name: str
     thumb: str
@@ -148,7 +148,7 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
 
         return ret_value
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult[ServiceItem]:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[ServiceItem]:
         parent = ensure.is_instance(parent, models.Provider)
         # Check what kind of access do we have to parent provider
         perm = permissions.effective_permissions(self._user, parent)
@@ -380,7 +380,7 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
         res: list[ServicePoolResumeItem] = []
         for i in service.deployedServices.all():
             try:
-                self.ensure_has_access(
+                self.check_access(
                     i, uds.core.types.permissions.PermissionType.READ
                 )  # Ensures access before listing...
                 res.append(

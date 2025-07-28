@@ -49,7 +49,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class TokenItem(types.rest.ItemDictType):
+class TokenItem(types.rest.BaseRestItem):
     id: str
     name: str
     stamp: datetime.datetime
@@ -110,7 +110,7 @@ class ServersTokens(ModelHandler[TokenItem]):
         if len(self._args) != 1:
             raise RequestError('Delete need one and only one argument')
 
-        self.ensure_has_access(
+        self.check_access(
             self.model(), types.permissions.PermissionType.ALL, root=True
         )  # Must have write permissions to delete
 
@@ -122,7 +122,7 @@ class ServersTokens(ModelHandler[TokenItem]):
         return consts.OK
 
 
-class ServerItem(types.rest.ItemDictType):
+class ServerItem(types.rest.BaseRestItem):
     id: str
     hostname: str
     ip: str
@@ -138,7 +138,7 @@ class ServersServers(DetailHandler[ServerItem]):
 
     custom_methods = ['maintenance', 'importcsv']
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult[ServerItem]:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[ServerItem]:
         parent = typing.cast('models.ServerGroup', parent)  # We will receive for sure
         try:
             if item is None:
@@ -337,7 +337,7 @@ class ServersServers(DetailHandler[ServerItem]):
         :param item:
         """
         item = models.Server.objects.get(uuid=process_uuid(id))
-        self.ensure_has_access(item, types.permissions.PermissionType.MANAGEMENT)
+        self.check_access(item, types.permissions.PermissionType.MANAGEMENT)
         item.maintenance_mode = not item.maintenance_mode
         item.save()
         return 'ok'
@@ -414,7 +414,7 @@ class ServersServers(DetailHandler[ServerItem]):
         return import_errors
 
 
-class GroupItem(types.rest.ItemDictType):
+class GroupItem(types.rest.BaseRestItem):
     id: str
     name: str
     comments: str
@@ -519,7 +519,7 @@ class ServersGroups(ModelHandler[GroupItem]):
         """
         Processes a DELETE request
         """
-        self.ensure_has_access(
+        self.check_access(
             self.model(), permissions.PermissionType.ALL, root=True
         )  # Must have write permissions to delete
 

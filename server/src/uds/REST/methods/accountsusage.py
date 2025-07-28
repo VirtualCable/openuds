@@ -49,7 +49,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class AccountItem(types.rest.ItemDictType):
+class AccountItem(types.rest.BaseRestItem):
     uuid: str
     pool_uuid: str
     pool_name: str
@@ -89,7 +89,7 @@ class AccountsUsage(DetailHandler[AccountItem]):  # pylint: disable=too-many-pub
             'permission': perm,
         }
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult[AccountItem]:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[AccountItem]:
         parent = ensure.is_instance(parent, Account)
         # Check what kind of access do we have to parent provider
         perm = permissions.effective_permissions(self._user, parent)

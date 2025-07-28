@@ -57,7 +57,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class AuthenticatorItem(types.rest.ManagedObjectDictType):
+class AuthenticatorItem(types.rest.ManagedObjectItem):
     numeric_id: int
     id: str
     name: str
@@ -206,7 +206,7 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
             Search for users or groups in this authenticator
         """
         item = ensure.is_instance(item, Authenticator)
-        self.ensure_has_access(item, types.permissions.PermissionType.READ)
+        self.check_access(item, types.permissions.PermissionType.READ)
         try:
             type_ = self._params['type']
             if type_ not in ('user', 'group'):

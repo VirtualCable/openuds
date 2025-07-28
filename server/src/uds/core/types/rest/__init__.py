@@ -41,10 +41,11 @@ from . import stock
 
 if typing.TYPE_CHECKING:
     from uds.REST.handlers import Handler
+    from uds.core import types
 
 
 # Type related definitions
-TypeInfoDict = dict[str, typing.Any]  # Alias for type info dict
+TypeInfoDict: typing.TypeAlias = dict[str, typing.Any]  # Alias for type info dict
 
 
 class ExtraTypeInfo(abc.ABC):
@@ -111,11 +112,11 @@ class ModelCustomMethod:
 
 # Note that for this item to work with documentation
 # no forward references can be used (that is, do not use quotes around the inner field types)
-class ItemDictType(typing.TypedDict):
+class BaseRestItem(typing.TypedDict):
     pass
 
 
-class ManagedObjectDictType(typing.TypedDict):
+class ManagedObjectItem(BaseRestItem):
     """
     Represents a managed object type, with its name and type.
     This is used to represent the type of a managed object in the REST API.
@@ -128,13 +129,31 @@ class ManagedObjectDictType(typing.TypedDict):
 
 # Alias for item type
 # ItemDictType = dict[str, typing.Any]
-T_Item = typing.TypeVar("T_Item", bound=ItemDictType)
+T_Item = typing.TypeVar("T_Item", bound=BaseRestItem)
 
 # Alias for get_items return type
-GetItemsResult: typing.TypeAlias = list[T_Item] | ItemDictType | typing.Iterator[T_Item]
+ItemsResult: typing.TypeAlias = list[T_Item] | BaseRestItem | typing.Iterator[T_Item]
 
-#
-FieldType = collections.abc.Mapping[str, typing.Any]
+
+@dataclasses.dataclass
+class TableInfo:
+    """
+    Represents the table info for a REST API endpoint.
+    This is used to describe the table fields and row style.
+    """
+
+    title: str
+    fields: list[dict[str, dict[str, typing.Any]]]
+    row_style: 'types.ui.RowStyleInfo'
+    subtitle: typing.Optional[str] = None
+
+    def as_dict(self) -> dict[str, typing.Any]:
+        return {
+            'title': self.title,
+            'fields': self.fields,
+            'row-style': self.row_style.as_dict(),
+            'subtitle': self.subtitle or '',
+        }
 
 
 @dataclasses.dataclass(frozen=True)

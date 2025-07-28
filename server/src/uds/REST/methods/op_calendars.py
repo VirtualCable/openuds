@@ -52,7 +52,7 @@ logger = logging.getLogger(__name__)
 ALLOW = 'ALLOW'
 DENY = 'DENY'
 
-class AccessCalendarItem(types.rest.ItemDictType):
+class AccessCalendarItem(types.rest.BaseRestItem):
     id: str
     calendar_id: str
     calendar: str
@@ -70,7 +70,7 @@ class AccessCalendars(DetailHandler[AccessCalendarItem]):
             'priority': item.priority,
         }
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult[AccessCalendarItem]:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[AccessCalendarItem]:
         # parent can be a ServicePool or a metaPool
         parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
 
@@ -133,7 +133,7 @@ class AccessCalendars(DetailHandler[AccessCalendarItem]):
         log.log(parent, types.log.LogLevel.INFO, log_str, types.log.LogSource.ADMIN)
 
 
-class ActionCalendarItem(types.rest.ItemDictType):
+class ActionCalendarItem(types.rest.BaseRestItem):
     id: str
     calendar_id: str
     calendar: str
@@ -174,7 +174,7 @@ class ActionsCalendars(DetailHandler[ActionCalendarItem]):
             'last_execution': item.last_execution,
         }
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult[ActionCalendarItem]:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[ActionCalendarItem]:
         parent = ensure.is_instance(parent, models.ServicePool)
         try:
             if item is None:
@@ -267,7 +267,7 @@ class ActionsCalendars(DetailHandler[ActionCalendarItem]):
         logger.debug('Launching action')
         uuid = process_uuid(item)
         calendar_action: models.CalendarAction = models.CalendarAction.objects.get(uuid=uuid)
-        self.ensure_has_access(calendar_action, types.permissions.PermissionType.MANAGEMENT)
+        self.check_access(calendar_action, types.permissions.PermissionType.MANAGEMENT)
 
         log_str = (
             f'Launched scheduled action "{calendar_action.calendar.name},'

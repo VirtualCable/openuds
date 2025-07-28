@@ -38,7 +38,7 @@ from django.utils.translation import gettext, gettext_lazy as _
 
 from uds.core import exceptions, osmanagers, types
 from uds.core.environment import Environment
-from uds.core.util import ensure, permissions
+from uds.core.util import ensure, permissions, ui as ui_utils
 from uds.models import OSManager
 from uds.REST.model import ModelHandler
 
@@ -50,7 +50,7 @@ logger = logging.getLogger(__name__)
 # Enclosed methods under /osm path
 
 
-class OsManagerItem(types.rest.ManagedObjectDictType):
+class OsManagerItem(types.rest.ManagedObjectItem):
     id: str
     name: str
     tags: list[str]
@@ -116,13 +116,11 @@ class OsManagers(ModelHandler[OsManagerItem]):
                 raise exceptions.rest.NotFound('OS Manager type not found')
             with Environment.temporary_environment() as env:
                 osmanager = osmanager_type(env, None)
-                return self.compose_gui(
-                    [
-                        types.rest.stock.StockField.NAME,
-                        types.rest.stock.StockField.COMMENTS,
-                        types.rest.stock.StockField.TAGS,
-                    ],
-                    *osmanager.gui_description(),
-                )
+                return ui_utils.GuiBuilder(
+                    types.rest.stock.StockField.NAME,
+                    types.rest.stock.StockField.COMMENTS,
+                    types.rest.stock.StockField.TAGS,
+                    gui=osmanager.gui_description(),
+                ).build()
         except:
             raise exceptions.rest.NotFound('type not found')

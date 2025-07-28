@@ -53,7 +53,7 @@ logger = logging.getLogger(__name__)
 # Enclosed methods under /item path
 
 
-class NotifierItem(types.rest.ItemDictType):
+class NotifierItem(types.rest.BaseRestItem):
     id: str
     name: str
     level: str

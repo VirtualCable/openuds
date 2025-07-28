@@ -51,7 +51,7 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /osm path
 
-class ActorTokenItem(types.rest.ItemDictType):
+class ActorTokenItem(types.rest.BaseRestItem):
     id: str
     name: str
     stamp: datetime.datetime
@@ -119,7 +119,7 @@ class ActorTokens(ModelHandler[ActorTokenItem]):
         if len(self._args) != 1:
             raise RequestError('Delete need one and only one argument')
 
-        self.ensure_has_access(
+        self.check_access(
             self.model(), permissions.PermissionType.ALL, root=True
         )  # Must have write permissions to delete
 

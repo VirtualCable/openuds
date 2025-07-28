@@ -137,7 +137,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
         self, *args: typing.Any, **kwargs: typing.Any
     ) -> typing.Generator[types.rest.TypeInfoDict, None, None]:
         for type_ in self.enum_types():
-            yield self.type_as_dict(type_)
+            yield self.as_typeinfo(type_)
 
     def get_type(self, type_: str) -> types.rest.TypeInfoDict:
         found = None
@@ -154,7 +154,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
 
     # log related
     def get_logs(self, item: models.Model) -> list[dict[typing.Any, typing.Any]]:
-        self.ensure_has_access(item, types.permissions.PermissionType.READ)
+        self.check_access(item, types.permissions.PermissionType.READ)
         try:
             return log.get_logs(item)
         except Exception as e:
@@ -336,7 +336,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
             case [consts.rest.OVERVIEW, *_fails]:
                 raise self.invalid_request_response()
             case [consts.rest.TABLEINFO]:
-                return self.process_table_fields(
+                return self.table_description(
                     self.table_title,
                     self.table_fields,
                     self.table_row_style,
@@ -360,7 +360,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
                 if number_of_args == 1:
                     try:
                         item = self.model.objects.get(uuid__iexact=self._args[0].lower())
-                        self.ensure_has_access(item, types.permissions.PermissionType.READ)
+                        self.check_access(item, types.permissions.PermissionType.READ)
                         res = self.item_as_dict(item)
                         self.fill_instance_fields(item, res)
                         return res
@@ -408,7 +408,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
             return self.process_detail()
 
         # Here, self.model() indicates an "django model object with default params"
-        self.ensure_has_access(
+        self.check_access(
             self.model(), types.permissions.PermissionType.ALL, root=True
         )  # Must have write permissions to create, modify, etc..
 
@@ -497,7 +497,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
         if len(self._args) != 1:
             raise exceptions.rest.RequestError('Delete need one and only one argument')
 
-        self.ensure_has_access(
+        self.check_access(
             self.model(), types.permissions.PermissionType.ALL, root=True
         )  # Must have write permissions to delete
 

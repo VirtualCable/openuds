@@ -53,7 +53,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-class MetaItem(types.rest.ItemDictType):
+class MetaItem(types.rest.BaseRestItem):
     """
     Item type for a Meta Pool Member
     """
@@ -86,7 +86,7 @@ class MetaServicesPool(DetailHandler[MetaItem]):
             'user_services_in_preparation': item.pool.userServices.filter(state=State.PREPARING).count(),
         }
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult['MetaItem']:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult['MetaItem']:
         parent = ensure.is_instance(parent, models.MetaPool)
         try:
             if not item:
@@ -177,7 +177,7 @@ class MetaAssignedService(DetailHandler[UserServiceItem]):
         except Exception:
             raise self.invalid_item_response()
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult[UserServiceItem]:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[UserServiceItem]:
         parent = ensure.is_instance(parent, models.MetaPool)
         def _assigned_userservices_for_pools() -> (
             typing.Generator[

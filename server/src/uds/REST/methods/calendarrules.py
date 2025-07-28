@@ -50,7 +50,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-class CalendarRuleItem(types.rest.ItemDictType):
+class CalendarRuleItem(types.rest.BaseRestItem):
     id: str
     name: str
     comments: str
@@ -87,7 +87,7 @@ class CalendarRules(DetailHandler[CalendarRuleItem]):  # pylint: disable=too-man
             'permission': perm,
         }
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.GetItemsResult[CalendarRuleItem]:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[CalendarRuleItem]:
         parent = ensure.is_instance(parent, Calendar)
         # Check what kind of access do we have to parent provider
         perm = permissions.effective_permissions(self._user, parent)

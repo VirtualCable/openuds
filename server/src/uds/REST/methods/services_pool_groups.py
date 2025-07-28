@@ -50,7 +50,7 @@ if typing.TYPE_CHECKING:
 # Enclosed methods under /item path
 
 
-class ServicePoolGroupItem(types.rest.ItemDictType):
+class ServicePoolGroupItem(types.rest.BaseRestItem):
     id: str
     name: str
     comments: str

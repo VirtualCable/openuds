@@ -49,7 +49,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class TunnelServerItem(types.rest.ItemDictType):
+class TunnelServerItem(types.rest.BaseRestItem):
     id: str
     hostname: str
     ip: str
@@ -63,7 +63,7 @@ class TunnelServers(DetailHandler[TunnelServerItem]):
 
     def get_items(
         self, parent: 'Model', item: typing.Optional[str]
-    ) -> types.rest.GetItemsResult[TunnelServerItem]:
+    ) -> types.rest.ItemsResult[TunnelServerItem]:
         parent = ensure.is_instance(parent, models.ServerGroup)
         try:
             multi = False
@@ -139,13 +139,13 @@ class TunnelServers(DetailHandler[TunnelServerItem]):
         """
         parent = ensure.is_instance(parent, models.ServerGroup)
         item = models.Server.objects.get(uuid=process_uuid(id))
-        self.ensure_has_access(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
+        self.check_access(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
         item.maintenance_mode = not item.maintenance_mode
         item.save()
         return 'ok'
 
 
-class TunnelItem(types.rest.ItemDictType):
+class TunnelItem(types.rest.BaseRestItem):
     id: str
     name: str
     comments: str
@@ -235,7 +235,7 @@ class Tunnels(ModelHandler[TunnelItem]):
 
     def assign(self, parent: 'Model') -> typing.Any:
         parent = ensure.is_instance(parent, models.ServerGroup)
-        self.ensure_has_access(parent, uds.core.types.permissions.PermissionType.MANAGEMENT)
+        self.check_access(parent, uds.core.types.permissions.PermissionType.MANAGEMENT)
 
         server: typing.Optional['models.Server'] = None  # Avoid warning on reference before assignment
 
@@ -246,7 +246,7 @@ class Tunnels(ModelHandler[TunnelItem]):
 
         try:
             server = models.Server.objects.get(uuid=process_uuid(item))
-            self.ensure_has_access(server, uds.core.types.permissions.PermissionType.READ)
+            self.check_access(server, uds.core.types.permissions.PermissionType.READ)
             parent.servers.add(server)
         except Exception:
             raise self.invalid_item_response() from None

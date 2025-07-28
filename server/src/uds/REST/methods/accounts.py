@@ -39,7 +39,7 @@ from django.utils.translation import gettext_lazy as _
 from uds.REST.model import ModelHandler
 from uds.core import types
 import uds.core.types.permissions
-from uds.core.util import permissions, ensure
+from uds.core.util import permissions, ensure, ui as ui_utils
 from uds.models import Account
 from .accountsusage import AccountsUsage
 
@@ -51,7 +51,7 @@ logger = logging.getLogger(__name__)
 # Enclosed methods under /item path
 
 
-class AccountItem(types.rest.ItemDictType):
+class AccountItem(types.rest.BaseRestItem):
     id: str
     name: str
     tags: typing.List[str]
@@ -95,13 +95,11 @@ class Accounts(ModelHandler[AccountItem]):
         }
 
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
-        return self.compose_gui(
-            [
-                types.rest.stock.StockField.NAME,
-                types.rest.stock.StockField.COMMENTS,
-                types.rest.stock.StockField.TAGS,
-            ],
-        )
+        return ui_utils.GuiBuilder(
+            types.rest.stock.StockField.NAME,
+            types.rest.stock.StockField.COMMENTS,
+            types.rest.stock.StockField.TAGS,
+        ).build()
 
     def timemark(self, item: 'Model') -> typing.Any:
         """
@@ -128,5 +126,5 @@ class Accounts(ModelHandler[AccountItem]):
             Clears all usage associated with the account
         """
         item = ensure.is_instance(item, Account)
-        self.ensure_has_access(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
+        self.check_access(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
         return item.usages.filter(user_service=None).delete()
