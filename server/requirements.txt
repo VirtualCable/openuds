@@ -1,6 +1,8 @@
 # Broker (and common)
 # Latest versions should work fine with master branch
-Django>5.0
+Django>5.2
+pillow
+cairosvg
 bitarray
 numpy
 html5lib

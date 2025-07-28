@@ -37,6 +37,7 @@ import typing
 
 
 import PIL.Image
+import cairosvg
 
 from django.db import models
 from django.http import HttpResponse
@@ -55,7 +56,7 @@ if typing.TYPE_CHECKING:
 class Image(UUIDModel):
     """
     Image storing on DB model
-    This is intended for small images (i will limit them to 128x128), so storing at db is fine
+    This is intended for small images (i will limit them to 256x256), so storing at db is fine
     """
 
     MAX_IMAGE_SIZE = (
@@ -101,6 +102,12 @@ class Image(UUIDModel):
     def prepare_for_db(data: bytes) -> tuple[int, int, bytes]:
         image: PIL.Image.Image
         try:
+            # If data is svg (simple check: if has "<svg")
+            if b'<svg' in data:
+                try:
+                    data = typing.cast(bytes, cairosvg.svg2png(data, output_width=Image.MAX_IMAGE_SIZE[0]))
+                except Exception: # Not a valid SVG, fallback to default
+                    pass
             stream = io.BytesIO(data)
             image = PIL.Image.open(stream)
         except Exception:  # Image data is incorrect, replace as a simple transparent image
@@ -165,7 +172,7 @@ class Image(UUIDModel):
             self.width, self.height, self.data = Image.prepare_for_db(data)
 
             # Setup thumbnail
-            with io.BytesIO(data) as input:
+            with io.BytesIO(self.data) as input:
                 with PIL.Image.open(input) as img:
                     img.thumbnail(Image.THUMBNAIL_SIZE, PIL.Image.LANCZOS)
                     with io.BytesIO() as output:
