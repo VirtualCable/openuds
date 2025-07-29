@@ -483,7 +483,7 @@ class Transports(DetailHandler[TransportItem]):
 
         def get_type(trans: 'models.Transport') -> types.rest.TypeInfoDict:
             try:
-                return self.as_typeinfo(trans.get_type())
+                return self.as_typeinfo(trans.get_type()).as_dict()
             except Exception:  # No type found
                 raise self.invalid_item_response()
 

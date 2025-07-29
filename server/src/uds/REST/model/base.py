@@ -70,29 +70,27 @@ class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
     def get_permissions(self, obj: models.Model, root: bool = False) -> int:
         return permissions.effective_permissions(self._user, obj, root)
 
-    def type_info(self, type_: type['Module']) -> typing.Optional[types.rest.ExtraTypeInfo]:
+    def extra_type_info(self, type_: type['Module']) -> typing.Optional[types.rest.ExtraTypeInfo]:
         """
         Returns info about the type
         In fact, right now, it returns an empty dict, that will be extended by typeAsDict
         """
         return None
 
-    def as_typeinfo(self, type_: type['Module']) -> types.rest.TypeInfoDict:
+    def as_typeinfo(self, type_: type['Module']) -> types.rest.TypeInfo:
         """
         Returns a dictionary describing the type (the name, the icon, description, etc...)
         """
-        res = types.rest.TypeInfo(
+        return types.rest.TypeInfo(
             name=_(type_.mod_name()),
             type=type_.mod_type(),
             description=_(type_.description()),
             icon=type_.icon64().replace('\n', ''),
-            extra=self.type_info(type_),
+            extra=self.extra_type_info(type_),
             group=getattr(type_, 'group', None),
-        ).as_dict()
+        )
 
-        return res
-
-    def table_description(
+    def table_info(
         self,
         title: str,
         fields: list[typing.Any],

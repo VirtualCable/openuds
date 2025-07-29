@@ -128,7 +128,6 @@ class ManagedObjectItem(BaseRestItem):
 
 
 # Alias for item type
-# ItemDictType = dict[str, typing.Any]
 T_Item = typing.TypeVar("T_Item", bound=BaseRestItem)
 
 # Alias for get_items return type

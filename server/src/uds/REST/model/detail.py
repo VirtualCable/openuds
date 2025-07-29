@@ -155,15 +155,15 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
                 raise self.invalid_request_response()
             case consts.rest.TYPES:
                 if num_args == 1:
-                    types_ = self.get_types(parent, None)
-                    logger.debug('Types: %s', types_)
-                    return types_
+                    types = self.get_types(parent, None)
+                    logger.debug('Types: %s', types)
+                    return [i.as_dict() for i in types]
                 elif num_args == 2:
-                    return self.get_types(parent, self._args[1])
+                    return [i.as_dict() for i in self.get_types(parent, self._args[1])]
                 raise self.invalid_request_response()
             case consts.rest.TABLEINFO:
                 if num_args == 1:
-                    return self.table_description(
+                    return self.table_info(
                         self.get_title(parent),
                         self.get_fields(parent),
                         self.get_row_style(parent),
@@ -343,7 +343,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
 
     def get_types(
         self, parent: models.Model, for_type: typing.Optional[str]
-    ) -> collections.abc.Iterable[types.rest.TypeInfoDict]:
+    ) -> collections.abc.Iterable[types.rest.TypeInfo]:
         """
         The default is that detail element will not have any types (they are "homogeneous")
         but we provided this method, that can be overridden, in case one detail needs it

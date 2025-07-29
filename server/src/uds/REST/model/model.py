@@ -135,22 +135,16 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
 
     def get_types(
         self, *args: typing.Any, **kwargs: typing.Any
-    ) -> typing.Generator[types.rest.TypeInfoDict, None, None]:
+    ) -> typing.Generator[types.rest.TypeInfo, None, None]:
         for type_ in self.enum_types():
             yield self.as_typeinfo(type_)
 
-    def get_type(self, type_: str) -> types.rest.TypeInfoDict:
-        found = None
+    def get_type(self, type_: str) -> types.rest.TypeInfo:
         for v in self.get_types():
-            if v['type'] == type_:
-                found = v
-                break
+            if v.type == type_:
+                return v
 
-        if found is None:
-            raise exceptions.rest.NotFound('type not found')
-
-        logger.debug('Found type %s', found)
-        return found
+        raise exceptions.rest.NotFound('type not found')
 
     # log related
     def get_logs(self, item: models.Model) -> list[dict[typing.Any, typing.Any]]:
@@ -336,7 +330,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
             case [consts.rest.OVERVIEW, *_fails]:
                 raise self.invalid_request_response()
             case [consts.rest.TABLEINFO]:
-                return self.table_description(
+                return self.table_info(
                     self.table_title,
                     self.table_fields,
                     self.table_row_style,
@@ -345,9 +339,9 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
             case [consts.rest.TABLEINFO, *_fails]:
                 raise self.invalid_request_response()
             case [consts.rest.TYPES]:
-                return list(self.get_types())
+                return [i.as_dict() for i in self.get_types()]
             case [consts.rest.TYPES, for_type]:
-                return self.get_type(for_type)
+                return self.get_type(for_type).as_dict()
             case [consts.rest.TYPES, for_type, *_fails]:
                 raise self.invalid_request_response()
             case [consts.rest.GUI]:

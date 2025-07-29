@@ -32,7 +32,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
-import collections.abc
 
 from django.db import IntegrityError
 from django.utils.translation import gettext as _
@@ -291,39 +290,22 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
             {'tags': {'title': _('tags'), 'visible': False}},
         ]
 
-    def get_types(
-        self, parent: 'Model', for_type: typing.Optional[str]
-    ) -> collections.abc.Iterable[types.rest.TypeInfoDict]:
+    def get_types(self, parent: 'Model', for_type: typing.Optional[str]) -> list[types.rest.TypeInfo]:
 
         parent = ensure.is_instance(parent, models.Provider)
         logger.debug('get_types parameters: %s, %s', parent, for_type)
-        offers: list[types.rest.TypeInfoDict] = []
+        offers: list[types.rest.TypeInfo] = []
         if for_type is None:
-            offers = [
-                {
-                    'name': _(t.mod_name()),
-                    'type': t.mod_type(),
-                    'description': _(t.description()),
-                    'icon': t.icon64().replace('\n', ''),
-                }
-                for t in parent.get_type().get_provided_services()
-            ]
+            offers = [self.as_typeinfo(t) for t in parent.get_type().get_provided_services()]
         else:
             for t in parent.get_type().get_provided_services():
                 if for_type == t.mod_type():
-                    offers = [
-                        {
-                            'name': _(t.mod_name()),
-                            'type': t.mod_type(),
-                            'description': _(t.description()),
-                            'icon': t.icon64().replace('\n', ''),
-                        }
-                    ]
+                    offers = [self.as_typeinfo(t)]
                     break
             if not offers:
                 raise exceptions.rest.NotFound('type not found')
 
-        return offers  # Default is that details do not have types
+        return offers
 
     def get_gui(self, parent: 'Model', for_type: str) -> list[types.ui.GuiElement]:
         parent = ensure.is_instance(parent, models.Provider)

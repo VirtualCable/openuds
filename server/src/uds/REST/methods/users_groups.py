@@ -428,28 +428,29 @@ class Groups(DetailHandler[GroupItem]):
 
     def get_types(
         self, parent: 'Model', for_type: typing.Optional[str]
-    ) -> collections.abc.Iterable[types.rest.TypeInfoDict]:
+    ) -> collections.abc.Iterable[types.rest.TypeInfo]:
         parent = ensure.is_instance(parent, Authenticator)
         types_dict: dict[str, dict[str, str]] = {
             'group': {'name': _('Group'), 'description': _('UDS Group')},
             'meta': {'name': _('Meta group'), 'description': _('UDS Meta Group')},
         }
-        types_list: list[types.rest.TypeInfoDict] = [
-            {
-                'name': v['name'],
-                'type': k,
-                'description': v['description'],
-                'icon': '',
-            }
+        types_list: list[types.rest.TypeInfo] = [
+            types.rest.TypeInfo(
+                name=v['name'],
+                type=k,
+                description=v['description'],
+                icon='',
+            )
             for k, v in types_dict.items()
         ]
 
-        if for_type is None:
+        if not for_type:
             return types_list
 
         try:
-            return [next(filter(lambda x: x['type'] == for_type, types_list))]
-        except Exception:
+            return [next(filter(lambda x: x.type == for_type, types_list))]
+        except StopIteration:
+            logger.error('Type %s not found in %s', for_type, types_list)
             raise self.invalid_request_response() from None
 
     def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:

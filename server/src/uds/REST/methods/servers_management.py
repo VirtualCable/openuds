@@ -457,16 +457,15 @@ class ServersGroups(ModelHandler[GroupItem]):
 
     def get_types(
         self, *args: typing.Any, **kwargs: typing.Any
-    ) -> typing.Generator[types.rest.TypeInfoDict, None, None]:
+    ) -> typing.Generator[types.rest.TypeInfo, None, None]:
         for i in types.servers.ServerSubtype.manager().enum():
-            v = types.rest.TypeInfo(
+            yield types.rest.TypeInfo(
                 name=i.description,
                 type=f'{i.type.name}@{i.subtype}',
                 description='',
                 icon=i.icon,
                 group=gettext('Managed') if i.managed else gettext('Unmanaged'),
-            ).as_dict()
-            yield v
+            )
 
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
         if '@' not in for_type:  # If no subtype, use default

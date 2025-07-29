@@ -103,7 +103,7 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
     def enum_types(self) -> collections.abc.Iterable[type[auths.Authenticator]]:
         return auths.factory().providers().values()
 
-    def type_info(self, type_: type['Module']) -> typing.Optional[types.rest.AuthenticatorTypeInfo]:
+    def extra_type_info(self, type_: type['Module']) -> typing.Optional[types.rest.AuthenticatorTypeInfo]:
         if issubclass(type_, auths.Authenticator):
             return types.rest.AuthenticatorTypeInfo(
                 search_users_supported=type_.search_users != auths.Authenticator.search_users,
