@@ -383,14 +383,14 @@ class TableBuilder:
     title: str
     subtitle: str | None
     fields: list[types.rest.TableField]
-    style_info: types.ui.RowStyleInfo
+    style_info: types.rest.RowStyleInfo
 
     def __init__(self, title: str, subtitle: str | None = None) -> None:
         # TODO: USe table_name on a later iteration of the code
         self.title = title
         self.subtitle = subtitle
         self.fields = []
-        self.style_info = types.ui.RowStyleInfo.null()
+        self.style_info = types.rest.RowStyleInfo.null()
 
     def _add_field(
         self,
@@ -430,6 +430,12 @@ class TableBuilder:
         """
         return self._add_field(name, title, types.rest.TableFieldType.NUMERIC, visible, width)
 
+    def boolean(self, name: str, title: str, visible: bool = True, width: str | None = None) -> typing.Self:
+        """
+        Adds a boolean field to the table fields.
+        """
+        return self._add_field(name, title, types.rest.TableFieldType.BOOLEAN, visible, width)
+
     def datetime(self, name: str, title: str, visible: bool = True, width: str | None = None) -> typing.Self:
         """
         Adds a datetime field to the table fields.
@@ -462,12 +468,6 @@ class TableBuilder:
         """
         return self._add_field(name, title, types.rest.TableFieldType.ICON, visible, width)
 
-    def callback(self, name: str, title: str, visible: bool = True, width: str | None = None) -> typing.Self:
-        """
-        Adds a callback field to the table fields.
-        """
-        return self._add_field(name, title, types.rest.TableFieldType.CALLBACK, visible, width)
-
     def dictionary(
         self,
         name: str,
@@ -486,18 +486,15 @@ class TableBuilder:
         Adds an image field to the table fields.
         """
         return self._add_field(name, title, types.rest.TableFieldType.IMAGE, visible, width)
-    
-    def row_style(self, row_style: types.ui.RowStyleInfo) -> typing.Self:
+
+    def row_style(self, prefix: str, field: str) -> typing.Self:
         """
         Sets the row style for the table fields.
         """
-        self.style_info = row_style
+        self.style_info = types.rest.RowStyleInfo(prefix=prefix, field=field)
         return self
 
-    def build(self) -> list[types.rest.TableField]:
-        return self.fields
-
-    def table_info(self) -> types.rest.TableInfo:
+    def build(self) -> types.rest.TableInfo:
         """
         Returns the table info for the table fields.
         """

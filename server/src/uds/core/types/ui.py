@@ -37,7 +37,8 @@ import collections.abc
 from django.utils.translation import gettext_noop
 
 # Old Field name type
-OldFieldNameType = typing.Union[str,list[str],None]
+OldFieldNameType = typing.Union[str, list[str], None]
+
 
 class Tab(enum.StrEnum):
     ADVANCED = gettext_noop('Advanced')
@@ -168,17 +169,19 @@ class FieldInfo:
         """Returns a dict with all fields that are not None"""
         return {k: v for k, v in dataclasses.asdict(self).items() if v is not None}
 
+
 class GuiDescription(typing.TypedDict):
     """
     GuiDescription is a dictionary that describes a GUI element.
     It contains the name of the element, the GUI description, and the value.
     """
+
     label: str
     order: int
     type: FieldType
     tooltip: typing.NotRequired[str]
     readonly: typing.NotRequired[bool]
-    default: typing.NotRequired[str|int|float|bool]
+    default: typing.NotRequired[str | int | float | bool]
     required: typing.NotRequired[bool]
     length: typing.NotRequired[int]
     lines: typing.NotRequired[int]
@@ -195,34 +198,3 @@ class GuiElement(typing.TypedDict):
     name: str
     value: typing.NotRequired[typing.Any]
     gui: GuiDescription
-
-
-# Row styles
-@dataclasses.dataclass
-class RowStyleInfo:
-    prefix: str
-    field: str
-
-    def as_dict(self) -> dict[str, typing.Any]:
-        """Returns a dict with all fields that are not None"""
-        return dataclasses.asdict(self)
-
-    @staticmethod
-    def null() -> 'RowStyleInfo':
-        return RowStyleInfo('', '')
-
-# Table information
-@dataclasses.dataclass
-class TableInfo:
-    fields: list[FieldInfo]
-    row_style: RowStyleInfo
-    title: str
-    subtitle: typing.Optional[str] = None
-
-    def as_dict(self) -> dict[str, typing.Any]:
-        """Returns a dict with all fields that are not None"""
-        return dataclasses.asdict(self)
-    
-    @staticmethod
-    def null() -> 'TableInfo':
-        return TableInfo([], RowStyleInfo.null(), '')
