@@ -78,14 +78,24 @@ class Notifiers(ModelHandler[NotifierItem]):
     ]
 
     table_title = _('Notifiers')
-    table_fields = [
-        {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
-        {'type_name': {'title': _('Type')}},
-        {'level': {'title': _('Level')}},
-        {'enabled': {'title': _('Enabled')}},
-        {'comments': {'title': _('Comments')}},
-        {'tags': {'title': _('tags'), 'visible': False}},
-    ]
+
+    table_fields = (
+        ui_utils.TableFieldsBuilder(_('Notifiers'))
+        .icon(name='name', title=_('Name'))
+        .string(name='type_name', title=_('Type'))
+        .string(name='level', title=_('Level'))
+        .callback(name='enabled', title=_('Enabled'))
+        .string(name='comments', title=_('Comments'))
+        .string(name='tags', title=_('Tags'), visible=False)
+    ).build()
+    # xtable_fields = [
+    #     {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
+    #     {'type_name': {'title': _('Type')}},
+    #     {'level': {'title': _('Level')}},
+    #     {'enabled': {'title': _('Enabled')}},
+    #     {'comments': {'title': _('Comments')}},
+    #     {'tags': {'title': _('tags'), 'visible': False}},
+    # ]
 
     def enum_types(self) -> collections.abc.Iterable[type[messaging.Notifier]]:
         return messaging.factory().providers().values()

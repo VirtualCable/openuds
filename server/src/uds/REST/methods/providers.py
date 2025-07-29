@@ -89,16 +89,26 @@ class Providers(ModelHandler[ProviderItem]):
 
     table_title = _('Service providers')
 
+    table_fields = (
+        ui_utils.TableFieldsBuilder(_('Service providers'))
+        .icon(name='name', title=_('Name'))
+        .string(name='type_name', title=_('Type'))
+        .string(name='comments', title=_('Comments'))
+        .number(name='services_count', title=_('Services'), width='6em')
+        .number(name='user_services_count', title=_('User Services'), width='6em')
+        .string(name='tags', title=_('Tags'), visible=False)
+    ).build()
+
     # Table info fields
-    table_fields = [
-        {'name': {'title': _('Name'), 'type': 'iconType'}},
-        {'type_name': {'title': _('Type')}},
-        {'comments': {'title': _('Comments')}},
-        {'maintenance_state': {'title': _('Status')}},
-        {'services_count': {'title': _('Services'), 'type': 'numeric'}},
-        {'user_services_count': {'title': _('User Services'), 'type': 'numeric'}},  # , 'width': '132px'
-        {'tags': {'title': _('tags'), 'visible': False}},
-    ]
+    # xtable_fields = [
+    #     {'name': {'title': _('Name'), 'type': 'iconType'}},
+    #     {'type_name': {'title': _('Type')}},
+    #     {'comments': {'title': _('Comments')}},
+    #     {'maintenance_state': {'title': _('Status')}},
+    #     {'services_count': {'title': _('Services'), 'type': 'numeric'}},
+    #     {'user_services_count': {'title': _('User Services'), 'type': 'numeric'}},  # , 'width': '132px'
+    #     {'tags': {'title': _('tags'), 'visible': False}},
+    # ]
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
     table_row_style = types.ui.RowStyleInfo(prefix='row-maintenance-', field='maintenance_mode')
 
