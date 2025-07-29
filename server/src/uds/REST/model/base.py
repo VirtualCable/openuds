@@ -98,16 +98,16 @@ class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
         fields: list[typing.Any],
         row_style: types.ui.RowStyleInfo,
         subtitle: typing.Optional[str] = None,
-    ) -> dict[str, typing.Any]:
+    ) -> types.rest.TableInfo:
         """
         Returns a dict containing the table fields description
         """
-        return {
-            'title': title,
-            'fields': fields,
-            'row-style': row_style.as_dict(),
-            'subtitle': subtitle or '',
-        }
+        return types.rest.TableInfo(
+            title=title,
+            fields=fields,
+            row_style=row_style,
+            subtitle=subtitle,
+        )
 
     def fields_from_params(
         self, fields_list: list[str], *, defaults: 'dict[str, typing.Any]|None' = None

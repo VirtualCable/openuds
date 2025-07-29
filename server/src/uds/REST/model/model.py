@@ -341,7 +341,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
                     self.table_fields,
                     self.table_row_style,
                     self.table_subtitle,
-                )
+                ).as_dict()
             case [consts.rest.TABLEINFO, *_fails]:
                 raise self.invalid_request_response()
             case [consts.rest.TYPES]:

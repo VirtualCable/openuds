@@ -118,7 +118,7 @@ class Reports(model.BaseModelHandler[ReportItem]):
                 (consts.rest.TABLEINFO,),
                 lambda: self.table_description(
                     str(self.table_title), self.table_fields, self.table_row_style
-                ),
+                ).as_dict(),
             ),
             ((consts.rest.GUI, '<report>'), report_gui),
         )

@@ -167,7 +167,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
                         self.get_title(parent),
                         self.get_fields(parent),
                         self.get_row_style(parent),
-                    )
+                    ).as_dict()
                 raise self.invalid_request_response()
             case consts.rest.GUI:
                 if num_args in (1, 2):
