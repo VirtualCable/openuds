@@ -161,7 +161,6 @@ gettext("Time mark");
 gettext("Set time mark for $NAME to current date/time?");
 gettext("Time mark stablished");
 gettext("dismiss");
-gettext("No time mark");
 gettext("Configuration saved");
 gettext("dismiss");
 gettext("New Notifier");
