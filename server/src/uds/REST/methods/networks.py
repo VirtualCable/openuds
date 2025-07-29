@@ -68,8 +68,7 @@ class Networks(ModelHandler[NetworkItem]):
     model = Network
     save_fields = ['name', 'net_string', 'tags']
 
-    table_title = _('Networks')
-    table_fields = (
+    table_info = (
         ui_utils.TableBuilder(_('Networks'))
         .string('name', _('Name'))
         .string('net_string', _('Range'))
@@ -79,6 +78,7 @@ class Networks(ModelHandler[NetworkItem]):
         .build()
     )
     
+    # table_title = _('Networks')
     # xtable_fields = [
     #     {
     #         'name': {

@@ -104,8 +104,7 @@ class MetaPools(ModelHandler[MetaPoolItem]):
         'transport_grouping',
     ]
 
-    table_title = _('Meta Pools')
-    table_fields = (
+    table_info = (
         ui_utils.TableBuilder(_('Meta Pools'))
         .string(name='name', title=_('Name'))
         .string(name='comments', title=_('Comments'))
@@ -121,13 +120,14 @@ class MetaPools(ModelHandler[MetaPoolItem]):
         )
         .number(name='user_services_count', title=_('User services'))
         .number(name='user_services_in_preparation', title=_('In Preparation'))
-        .callback(name='visible', title=_('Visible'))
-        .string(name='pool_group_name', title=_('Pool Group'))
+        .boolean(name='visible', title=_('Visible'))
+        .string(name='pool_group_name', title=_('Pool Group'), width='16em')
         .string(name='short_name', title=_('Label'))
         .string(name='tags', title=_('tags'), visible=False)
         .build()
     )
     
+    # table_title = _('Meta Pools')
     # xtable_fields = [
     #     {'name': {'title': _('Name')}},
     #     {'comments': {'title': _('Comments')}},
@@ -259,7 +259,7 @@ class MetaPools(ModelHandler[MetaPoolItem]):
                 label=gettext('Calendar access denied text'),
                 tooltip=gettext('Custom message to be shown to users if access is limited by calendar rules.'),
             )
-            .add_multichoice(
+            .add_choice(
                 name='transport_grouping',  # Transport Selection
                 label=gettext('Transport Selection'),
                 choices=[

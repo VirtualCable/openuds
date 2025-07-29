@@ -163,11 +163,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
                 raise self.invalid_request_response()
             case consts.rest.TABLEINFO:
                 if num_args == 1:
-                    return self.table_info(
-                        self.get_title(parent),
-                        self.get_fields(parent),
-                        self.get_row_style(parent),
-                    ).as_dict()
+                    return self.get_table_info(parent).as_dict()
                 raise self.invalid_request_response()
             case consts.rest.GUI:
                 if num_args in (1, 2):
@@ -291,37 +287,13 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
         """
         raise self.invalid_request_response()
 
-    # A detail handler must also return title & fields for tables
-    def get_title(self, parent: models.Model) -> str:  # pylint: disable=no-self-use
+    def get_table_info(self, parent: models.Model) -> types.rest.TableInfo:
         """
-        A "generic" title for a view based on this detail.
-        If not overridden, defaults to ''
+        Returns the table info for this detail, that is the title, fields and row style
         :param parent: Parent object
-        :return: Expected to return an string that is the "title".
+        :return: TableInfo object with title, fields and row style
         """
-        return ''
-
-    def get_fields(self, parent: models.Model) -> list[types.rest.TableField]:
-        """
-        A "generic" list of fields for a view based on this detail.
-        If not overridden, defaults to emty list
-        :param parent: Parent object
-        :return: Expected to return a list of fields
-        """
-        return []
-
-    def get_row_style(self, parent: models.Model) -> types.ui.RowStyleInfo:
-        """
-        A "generic" row style based on row field content.
-        If not overridden, defaults to {}
-
-        Args:
-            parent (models.Model): Parent object
-
-        Return:
-            dict[str, typing.Any]: A dictionary with 'field' and 'prefix' keys
-        """
-        return types.ui.RowStyleInfo.null()
+        return types.rest.TableInfo.null()
 
     def get_gui(self, parent: models.Model, for_type: str) -> list[types.ui.GuiElement]:
         """

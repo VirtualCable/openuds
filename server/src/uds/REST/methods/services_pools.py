@@ -147,19 +147,19 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
 
     remove_fields = ['osmanager_id', 'service_id']
 
-    table_title = _('Service Pools')
-    table_fields = (
+    table_info = (
         ui_utils.TableBuilder(_('Service Pools'))
         .string(name='name', title=_('Name'))
         .dictionary(name='state', title=_('Status'), dct=State.literals_dict())
         .number(name='user_services_count', title=_('User services'))
         .number(name='user_services_in_preparation', title=_('In Preparation'))
         .string(name='usage', title=_('Usage'))
-        .callback(name='visible', title=_('Visible'))
-        .callback(name='show_transports', title=_('Shows transports'))
+        .boolean(name='visible', title=_('Visible'))
+        .boolean(name='show_transports', title=_('Shows transports'))
         .string(name='pool_group_name', title=_('Pool group'))
         .string(name='parent', title=_('Parent service'))
         .string(name='tags', title=_('tags'))
+        .row_style(prefix='row-state-', field='state')
         .build()
     )
     
@@ -177,7 +177,6 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
     #     {'tags': {'title': _('tags'), 'visible': False}},
     # ]
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
-    table_row_style = types.ui.RowStyleInfo(prefix='row-state-', field='state')
 
     custom_methods = [
         types.rest.ModelCustomMethod('set_fallback_access', True),

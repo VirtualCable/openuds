@@ -76,16 +76,17 @@ class Reports(model.BaseModelHandler[ReportItem]):
 
     min_access_role = consts.UserRole.ADMIN
 
-    table_title = _('Available reports')
-    table_fields = (
+    table_info = (
         ui_utils.TableBuilder(_('Available reports'))
         .string(name='group', title=_('Group'), visible=True)
         .string(name='name', title=_('Name'), visible=True)
         .string(name='description', title=_('Description'), visible=True)
         .string(name='mime_type', title=_('Generates'), visible=True)
+        .row_style(prefix='row-state-', field='state')
         .build()
     )
 
+    # table_title = _('Available reports')
     # xtable_fields = [
     #     {'group': {'title': _('Group')}},
     #     {'name': {'title': _('Name')}},
@@ -93,7 +94,6 @@ class Reports(model.BaseModelHandler[ReportItem]):
     #     {'mime_type': {'title': _('Generates')}},
     # ]
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
-    table_row_style = types.ui.RowStyleInfo(prefix='row-state-', field='state')
 
     def _locate_report(
         self, uuid: str, values: typing.Optional[typing.Dict[str, typing.Any]] = None
@@ -126,9 +126,7 @@ class Reports(model.BaseModelHandler[ReportItem]):
             ((consts.rest.OVERVIEW,), lambda: list(self.get_items())),
             (
                 (consts.rest.TABLEINFO,),
-                lambda: self.table_info(
-                    str(self.table_title), self.table_fields, self.table_row_style
-                ).as_dict(),
+                lambda: self.table_info.as_dict(),
             ),
             ((consts.rest.GUI, '<report>'), report_gui),
         )

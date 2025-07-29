@@ -65,8 +65,7 @@ class Images(ModelHandler[ImageItem]):
     model = Image
     save_fields = ['name', 'data']
 
-    table_title = _('Image Gallery')
-    table_fields = (
+    table_info = (
         ui_utils.TableBuilder(_('Image Gallery'))
         .image('thumb', _('Image'), width='96px')
         .string('name', _('Name'))
@@ -74,6 +73,7 @@ class Images(ModelHandler[ImageItem]):
         .build()
     )
 
+    # table_title = _('Image Gallery')
     # xtable_fields = [
     #     {
     #         'thumb': {

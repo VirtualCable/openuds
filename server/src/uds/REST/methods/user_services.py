@@ -41,8 +41,9 @@ import uds.core.types.permissions
 from uds import models
 from uds.core import exceptions, types
 from uds.core.managers.userservice import UserServiceManager
+from uds.core.types.rest import TableInfo
 from uds.core.types.states import State
-from uds.core.util import ensure, log, permissions
+from uds.core.util import ensure, log, permissions, ui as ui_utils
 from uds.core.util.model import process_uuid
 from uds.REST.model import DetailHandler
 
@@ -181,45 +182,27 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
             logger.exception('get_items')
             raise self.invalid_item_response() from e
 
-    def get_title(self, parent: 'Model') -> str:
-        return _('Assigned services')
-
-    def get_fields(self, parent: 'Model') -> list[typing.Any]:
+    def get_table_info(self, parent: 'Model') -> types.rest.TableInfo:
         parent = ensure.is_instance(parent, models.ServicePool)
-        # Revision is only shown if publication type is not None
-        return (
-            [
-                {'creation_date': {'title': _('Creation date'), 'type': 'datetime'}},
-            ]
-            + (
-                [
-                    {'revision': {'title': _('Revision')}},
-                ]
-                if parent.service.get_type().publication_type is not None
-                else []
-            )
-            + [
-                {'unique_id': {'title': 'Unique ID'}},
-                {'ip': {'title': _('IP')}},
-                {'friendly_name': {'title': _('Friendly name')}},
-                {
-                    'state': {
-                        'title': _('status'),
-                        'type': 'dict',
-                        'dict': State.literals_dict(),
-                    }
-                },
-                {'state_date': {'title': _('Status date'), 'type': 'datetime'}},
-                {'in_use': {'title': _('In Use')}},
-                {'source_host': {'title': _('Src Host')}},
-                {'source_ip': {'title': _('Src Ip')}},
-                {'owner': {'title': _('Owner')}},
-                {'actor_version': {'title': _('Actor version')}},
-            ]
+        table_info = ui_utils.TableBuilder(_('Assigned Services')).datetime(
+            name='creation_date', title=_('Creation date')
         )
+        if parent.service.get_type().publication_type is not None:
+            table_info.string(name='revision', title=_('Revision'))
 
-    def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
-        return types.ui.RowStyleInfo(prefix='row-state-', field='state')
+        return (
+            table_info.string(name='unique_id', title='Unique ID')
+            .string(name='ip', title=_('IP'))
+            .string(name='friendly_name', title=_('Friendly name'))
+            .dictionary(name='state', title=_('status'), dct=State.literals_dict())
+            .datetime(name='state_date', title=_('Status date'))
+            .string(name='in_use', title=_('In Use'))
+            .string(name='source_host', title=_('Src Host'))
+            .string(name='source_ip', title=_('Src Ip'))
+            .string(name='owner', title=_('Owner'))
+            .string(name='actor_version', title=_('Actor version'))
+            .row_style(prefix='row-state-', field='state')
+        ).build()
 
     def get_logs(self, parent: 'Model', item: str) -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.ServicePool)
@@ -402,37 +385,16 @@ class Groups(DetailHandler[GroupItem]):
             for group in typing.cast(collections.abc.Iterable[models.Group], parent.assignedGroups.all())
         ]
 
-    def get_title(self, parent: 'Model') -> str:
+    def get_table_info(self, parent: 'Model') -> TableInfo:
         parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
-        return _('Assigned groups')
-
-    def get_fields(self, parent: 'Model') -> list[typing.Any]:
-        return [
-            # Note that this field is "self generated" on client table
-            {
-                'group_name': {
-                    'title': _('Name'),
-                    'type': 'alphanumeric',
-                }
-            },
-            {'comments': {'title': _('comments')}},
-            {
-                'type': {
-                    'title': _('Type'),
-                    # Alphanumeric, default is alphanumeric
-                }
-            },
-            {
-                'state': {
-                    'title': _('State'),
-                    'type': 'dict',
-                    'dict': State.literals_dict(),
-                }
-            },
-        ]
-
-    def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
-        return types.ui.RowStyleInfo(prefix='row-state-', field='state')
+        return (
+            ui_utils.TableBuilder(_('Assigned groups'))
+            .string(name='group_name', title=_('Name'))
+            .string(name='comments', title=_('comments'))
+            .dictionary(name='state', title=_('State'), dct=State.literals_dict())
+            .row_style(prefix='row-state-', field='state')
+            .build()
+        )
 
     def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
@@ -613,26 +575,16 @@ class Publications(DetailHandler[PublicationItem]):
             for i in parent.publications.all()
         ]
 
-    def get_title(self, parent: 'Model') -> str:
+    def get_table_info(self, parent: 'Model') -> TableInfo:
         parent = ensure.is_instance(parent, models.ServicePool)
-        return _('Publications')
-
-    def get_fields(self, parent: 'Model') -> list[typing.Any]:
-        return [
-            {'revision': {'title': _('Revision'), 'type': 'numeric', 'width': '6em'}},
-            {'publish_date': {'title': _('Publish date'), 'type': 'datetime'}},
-            {
-                'state': {
-                    'title': _('State'),
-                    'type': 'dict',
-                    'dict': State.literals_dict(),
-                }
-            },
-            {'reason': {'title': _('Reason')}},
-        ]
-
-    def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
-        return types.ui.RowStyleInfo(prefix='row-state-', field='state')
+        return (
+            ui_utils.TableBuilder(_('Publications'))
+            .number(name='revision', title=_('Revision'), width='6em')
+            .datetime(name='publish_date', title=_('Publish date'))
+            .dictionary(name='state', title=_('State'), dct=State.literals_dict())
+            .string(name='reason', title=_('Reason'))
+            .row_style(prefix='row-state-', field='state')
+        ).build()
 
 
 class ChangelogItem(types.rest.BaseRestItem):

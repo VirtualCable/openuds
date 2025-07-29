@@ -37,6 +37,7 @@ from django.utils.translation import gettext_lazy as _
 
 import uds.core.types.permissions
 from uds.core import exceptions, types, consts
+from uds.core.types.rest import TableInfo
 from uds.core.util import permissions, validators, ensure, ui as ui_utils
 from uds.core.util.model import process_uuid
 from uds import models
@@ -92,34 +93,20 @@ class TunnelServers(DetailHandler[TunnelServerItem]):
             logger.exception('REST groups')
             raise self.invalid_item_response() from e
 
-    def get_title(self, parent: 'Model') -> str:
+    def get_table_info(self, parent: 'Model') -> TableInfo:
         parent = ensure.is_instance(parent, models.ServerGroup)
-        try:
-            return _('Servers of {0}').format(parent.name)
-        except Exception:
-            return gettext('Servers')
-
-    def get_fields(self, parent: 'Model') -> list[typing.Any]:
-        parent = ensure.is_instance(parent, models.ServerGroup)
-        return [
-            {
-                'hostname': {
-                    'title': _('Hostname'),
-                }
-            },
-            {'ip': {'title': _('Ip')}},
-            {'mac': {'title': _('Mac')}},
-            {
-                'maintenance_mode': {
-                    'title': _('State'),
-                    'type': 'dict',
-                    'dict': {True: _('Maintenance'), False: _('Normal')},
-                }
-            },
-        ]
-
-    def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
-        return types.ui.RowStyleInfo(prefix='row-maintenance-', field='maintenance_mode')
+        return (
+            ui_utils.TableBuilder(_('Servers of {0}').format(parent.name))
+            .string(name='hostname', title=_('Hostname'))
+            .string(name='ip', title=_('Ip'))
+            .string(name='mac', title=_('Mac'))
+            .dictionary(
+                name='maintenance',
+                title=_('State'),
+                dct={True: _('Maintenance'), False: _('Normal')},
+            )
+            .row_style(prefix='row-maintenance-', field='maintenance')
+        ).build()
 
     # Cannot save a tunnel server, it's not editable...
 
@@ -172,8 +159,7 @@ class Tunnels(ModelHandler[TunnelItem]):
     detail = {'servers': TunnelServers}
     save_fields = ['name', 'comments', 'host:', 'port:0']
 
-    table_title = _('Tunnels')
-    table_fields = (
+    table_info = (
         ui_utils.TableBuilder(_('Tunnels'))
         .icon(name='name', title=_('Name'))
         .string(name='comments', title=_('Comments'))
@@ -184,6 +170,7 @@ class Tunnels(ModelHandler[TunnelItem]):
         .build()
     )
 
+    # table_title = _('Tunnels')
     # xtable_fields = [
     #     {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
     #     {'comments': {'title': _('Comments')}},

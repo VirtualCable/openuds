@@ -65,9 +65,8 @@ class ServicesPoolGroups(ModelHandler[ServicePoolGroupItem]):
     model = ServicePoolGroup
     save_fields = ['name', 'comments', 'image_id', 'priority']
 
-    table_title = _('Services Pool Groups')
 
-    table_fields = (
+    table_info = (
         ui_utils.TableBuilder(_('Services Pool Groups'))
         .number(name='priority', title=_('Priority'), width='6em')
         .image(name='thumb', title=_('Image'), width='96px')
@@ -76,6 +75,7 @@ class ServicesPoolGroups(ModelHandler[ServicePoolGroupItem]):
         .build()
     )
 
+    # table_title = _('Services Pool Groups')
     # xtable_fields = [
     #     {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
     #     {

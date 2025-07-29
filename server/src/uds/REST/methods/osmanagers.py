@@ -65,8 +65,7 @@ class OsManagers(ModelHandler[OsManagerItem]):
     model = OSManager
     save_fields = ['name', 'comments', 'tags']
 
-    table_title = _('OS Managers')
-    table_fields = (
+    table_info = (
         ui_utils.TableBuilder(_('OS Managers'))
         .icon(name='name', title=_('Name'))
         .string(name='type_name', title=_('Type'))
@@ -76,6 +75,7 @@ class OsManagers(ModelHandler[OsManagerItem]):
         .build()
     )
 
+    # table_title = _('OS Managers')
     # xtable_fields = [
     #     {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
     #     {'type_name': {'title': _('Type')}},

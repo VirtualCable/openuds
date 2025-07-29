@@ -77,17 +77,17 @@ class Notifiers(ModelHandler[NotifierItem]):
         'enabled',
     ]
 
-    table_title = _('Notifiers')
-
-    table_fields = (
+    table_info = (
         ui_utils.TableBuilder(_('Notifiers'))
         .icon(name='name', title=_('Name'))
         .string(name='type_name', title=_('Type'))
         .string(name='level', title=_('Level'))
-        .callback(name='enabled', title=_('Enabled'))
+        .boolean(name='enabled', title=_('Enabled'))
         .string(name='comments', title=_('Comments'))
         .string(name='tags', title=_('Tags'), visible=False)
     ).build()
+
+    # table_title = _('Notifiers')
     # xtable_fields = [
     #     {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
     #     {'type_name': {'title': _('Type')}},

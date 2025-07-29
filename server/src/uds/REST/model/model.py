@@ -103,11 +103,9 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
     # Put removable fields before updating
     remove_fields: typing.ClassVar[list[str]] = []
     # Table info needed fields and title
-    table_fields: typing.ClassVar[list[types.rest.TableField]] = []
-    table_row_style: typing.ClassVar[types.ui.RowStyleInfo] = types.ui.RowStyleInfo.null()
-    table_title: typing.ClassVar[str] = ''
-    table_subtitle: typing.ClassVar[str] = ''
-
+    
+    table_info: typing.ClassVar[types.rest.TableInfo] = types.rest.TableInfo.null()
+    
     # This methods must be override, depending on what is provided
 
     # Data related
@@ -330,12 +328,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
             case [consts.rest.OVERVIEW, *_fails]:
                 raise self.invalid_request_response()
             case [consts.rest.TABLEINFO]:
-                return self.table_info(
-                    self.table_title,
-                    self.table_fields,
-                    self.table_row_style,
-                    self.table_subtitle,
-                ).as_dict()
+                return self.table_info.as_dict()
             case [consts.rest.TABLEINFO, *_fails]:
                 raise self.invalid_request_response()
             case [consts.rest.TYPES]:

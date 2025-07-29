@@ -41,7 +41,7 @@ from django.core.exceptions import ValidationError
 from uds.core.types.states import State
 
 from uds.core.auths.user import User as AUser
-from uds.core.util import log, ensure
+from uds.core.util import log, ensure, ui as ui_utils
 from uds.core.util.rest.tools import as_typed_dict
 from uds.core.util.model import process_uuid, sql_stamp_seconds
 from uds.models import Authenticator, User, Group, ServicePool
@@ -132,39 +132,20 @@ class Users(DetailHandler[UserItem]):
             # User not found
             raise self.invalid_item_response() from e
 
-    def get_title(self, parent: 'Model') -> str:
-        try:
-            return _('Users of {0}').format(
-                Authenticator.objects.get(uuid=process_uuid(self._kwargs['parent_id'])).name
+    def get_table_info(self, parent: 'Model') -> types.rest.TableInfo:
+        parent = ensure.is_instance(parent, Authenticator)
+        return (
+            ui_utils.TableBuilder(_('Users of {0}').format(parent.name))
+            .icon(name='name', title=_('Username'), visible=True)
+            .string(name='role', title=_('Role'))
+            .string(name='real_name', title=_('Name'))
+            .string(name='comments', title=_('Comments'))
+            .dictionary(
+                name='state', title=_('Status'), dct={State.ACTIVE: _('Enabled'), State.INACTIVE: _('Disabled')}
             )
-        except Exception:
-            return _('Current users')
-
-    def get_fields(self, parent: 'Model') -> list[typing.Any]:
-        return [
-            {
-                'name': {
-                    'title': _('Username'),
-                    'visible': True,
-                    'type': 'icon',
-                    'icon': 'fa fa-user text-success',
-                }
-            },
-            {'role': {'title': _('Role')}},
-            {'real_name': {'title': _('Name')}},
-            {'comments': {'title': _('Comments')}},
-            {
-                'state': {
-                    'title': _('state'),
-                    'type': 'dict',
-                    'dict': {State.ACTIVE: _('Enabled'), State.INACTIVE: _('Disabled')},
-                }
-            },
-            {'last_access': {'title': _('Last access'), 'type': 'datetime'}},
-        ]
-
-    def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
-        return types.ui.RowStyleInfo(prefix='row-state-', field='state')
+            .datetime(name='last_access', title=_('Last access'))
+            .row_style(prefix='row-state-', field='state')
+        ).build()
 
     def get_logs(self, parent: 'Model', item: str) -> list[typing.Any]:
         parent = ensure.is_instance(parent, Authenticator)

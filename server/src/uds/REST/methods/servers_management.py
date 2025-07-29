@@ -38,6 +38,7 @@ from django.utils.translation import gettext_lazy as _
 
 from uds import models
 from uds.core import consts, types
+from uds.core.types.rest import TableInfo
 from uds.core.util import net, permissions, ensure, ui as ui_utils
 from uds.core.util.model import sql_now, process_uuid
 from uds.core.exceptions.rest import NotFound, RequestError
@@ -77,8 +78,7 @@ class ServersTokens(ModelHandler[TokenItem]):
     path = 'servers'
     name = 'tokens'
 
-    table_title = _('Registered Servers')
-    table_fields = (
+    table_info = (
         ui_utils.TableBuilder(_('Registered Servers'))
         .string(name='hostname', title=_('Hostname'), visible=True)
         .string(name='ip', title=_('IP'), visible=True)
@@ -89,7 +89,8 @@ class ServersTokens(ModelHandler[TokenItem]):
         .datetime(name='stamp', title=_('Date'), visible=True)
         .build()
     )
-    
+
+    # table_title = _('Registered Servers')
     # xtable_fields = [
     #     {'hostname': {'title': _('Hostname')}},
     #     {'ip': {'title': _('IP')}},
@@ -181,64 +182,26 @@ class ServersServers(DetailHandler[ServerItem]):
             logger.exception('REST servers')
             raise self.invalid_item_response() from e
 
-    def get_title(self, parent: 'Model') -> str:
+    def get_table_info(self, parent: 'Model') -> TableInfo:
         parent = ensure.is_instance(parent, models.ServerGroup)
-        try:
-            return (_('Servers of {0}')).format(parent.name)
-        except Exception:
-            return str(_('Servers'))
-
-    def get_fields(self, parent: 'Model') -> list[types.rest.TableField]:
-        parent = ensure.is_instance(parent, models.ServerGroup)
-        
-        fields = (
-            ui_utils.TableBuilder(_('Servers'))
+        table_info = (
+            ui_utils.TableBuilder(_('Servers of {0}').format(parent.name))
             .string(name='hostname', title=_('Hostname'))
             .string(name='ip', title=_('Ip'))
             .string(name='mac', title=_('Mac'))
         )
-        
         if parent.is_managed():
-            fields.string(name='listen_port', title=_('Port'))
-            
-        return fields.dictionary(
-            name='maintenance_mode',
-            title=_('State'),
-            dct={True: _('Maintenance'), False: _('Normal')},
-        ).build()
+            table_info.string(name='listen_port', title=_('Port'))
 
-        # return (
-        #     [
-        #         {
-        #             'hostname': {
-        #                 'title': _('Hostname'),
-        #             }
-        #         },
-        #         {'ip': {'title': _('Ip')}},
-        #     ]  # If not managed, we can show mac, else listen port (related to UDS Server)
-        #     + (
-        #         [
-        #             {'mac': {'title': _('Mac')}},
-        #         ]
-        #         if not parent.is_managed()
-        #         else [
-        #             {'mac': {'title': _('Mac')}},
-        #             {'listen_port': {'title': _('Port')}},
-        #         ]
-        #     )
-        #     + [
-        #         {
-        #             'maintenance_mode': {
-        #                 'title': _('State'),
-        #                 'type': 'dict',
-        #                 'dict': {True: _('Maintenance'), False: _('Normal')},
-        #             }
-        #         },
-        #     ]
-        # )
-
-    def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
-        return types.ui.RowStyleInfo(prefix='row-maintenance-', field='maintenance_mode')
+        return (
+            table_info.dictionary(
+                name='maintenance_mode',
+                title=_('State'),
+                dct={True: _('Maintenance'), False: _('Normal')},
+            )
+            .row_style(prefix='row-maintenance-', field='maintenance_mode')
+            .build()
+        )
 
     def get_gui(self, parent: 'Model', for_type: str = '') -> list[types.ui.GuiElement]:
         parent = ensure.is_instance(parent, models.ServerGroup)
@@ -473,9 +436,8 @@ class ServersGroups(ModelHandler[GroupItem]):
     name = 'groups'
 
     save_fields = ['name', 'comments', 'type', 'tags']  # Subtype is appended on pre_save
-    table_title = _('Servers Groups')
-    
-    table_fields = (
+
+    table_info = (
         ui_utils.TableBuilder(_('Servers Groups'))
         .string(name='name', title=_('Name'), visible=True)
         .string(name='comments', title=_('Comments'))
@@ -486,7 +448,8 @@ class ServersGroups(ModelHandler[GroupItem]):
         .string(name='tags', title=_('tags'), visible=False)
         .build()
     )
-    
+
+    # table_title = _('Servers Groups')
     # xtable_fields = [
     #     {'name': {'title': _('Name')}},
     #     {'comments': {'title': _('Comments')}},

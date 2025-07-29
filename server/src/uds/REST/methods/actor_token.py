@@ -73,8 +73,7 @@ class ActorTokens(ModelHandler[ActorTokenItem]):
     model = Server
     model_filter = {'type': types.servers.ServerType.ACTOR}
 
-    table_title = _('Actor tokens')
-    table_fields = (
+    table_info = (
         ui_utils.TableBuilder(_('Actor tokens'))
         .datetime('stamp', _('Date'))
         .string('username', _('Issued by'))
@@ -89,6 +88,7 @@ class ActorTokens(ModelHandler[ActorTokenItem]):
         .build()
     )
 
+    # table_title = _('Actor tokens')
     # xtable_fields = [
     #     # {'token': {'title': _('Token')}},
     #     {'stamp': {'title': _('Date'), 'type': 'datetime'}},

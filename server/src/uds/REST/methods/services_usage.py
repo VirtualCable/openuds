@@ -42,7 +42,7 @@ from uds.models import UserService, Provider
 from uds.core.types.states import State
 from uds.core.util.model import process_uuid
 from uds.REST.model import DetailHandler
-from uds.core.util import ensure
+from uds.core.util import ensure, ui as ui_utils
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -132,25 +132,22 @@ class ServicesUsage(DetailHandler[ServicesUsageItem]):
             logger.exception('get_items')
             raise self.invalid_item_response()
 
-    def get_title(self, parent: 'Model') -> str:
-        return _('Services Usage')
-
-    def get_fields(self, parent: 'Model') -> list[typing.Any]:
-        return [
-            # {'creation_date': {'title': _('Creation date'), 'type': 'datetime'}},
-            {'state_date': {'title': _('Access'), 'type': 'datetime'}},
-            {'owner': {'title': _('Owner')}},
-            {'service': {'title': _('Service')}},
-            {'pool': {'title': _('Pool')}},
-            {'unique_id': {'title': 'Unique ID'}},
-            {'ip': {'title': _('IP')}},
-            {'friendly_name': {'title': _('Friendly name')}},
-            {'source_ip': {'title': _('Src Ip')}},
-            {'source_host': {'title': _('Src Host')}},
-        ]
-
-    def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
-        return types.ui.RowStyleInfo(prefix='row-state-', field='state')
+    def get_table_info(self, parent: 'Model') -> types.rest.TableInfo:
+        parent = ensure.is_instance(parent, Provider)
+        return (
+            ui_utils.TableBuilder(_('Services Usage'))
+            .datetime(name='state_date', title=_('Access'))
+            .string(name='owner', title=_('Owner'))
+            .string(name='service', title=_('Service'))
+            .string(name='pool', title=_('Pool'))
+            .string(name='unique_id', title='Unique ID')
+            .string(name='ip', title=_('IP'))
+            .string(name='friendly_name', title=_('Friendly name'))
+            .string(name='source_ip', title=_('Src Ip'))
+            .string(name='source_host', title=_('Src Host'))
+            .row_style(prefix='row-state-', field='state')
+            .build()
+        )
 
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, Provider)

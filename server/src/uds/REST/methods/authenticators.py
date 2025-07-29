@@ -83,8 +83,7 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
     detail = {'users': Users, 'groups': Groups}
     save_fields = ['name', 'comments', 'tags', 'priority', 'small_name', 'mfa_id:_', 'state']
 
-    table_title = _('Authenticators')
-    table_fields = (
+    table_info = (
         ui_utils.TableBuilder(_('Authenticators'))
         .number(name='numeric_id', title=_('Id'), visible=True, width='1rem')
         .icon(name='name', title=_('Name'), visible=True)
@@ -95,9 +94,11 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
         .number(name='users_count', title=_('Users'), width='1rem')
         .string(name='mfa_name', title=_('MFA'))
         .string(name='tags', title=_('tags'), visible=False)
+        .row_style(prefix='row-state-', field='state')
         .build()
     )
 
+    # table_title = _('Authenticators')
     # xtable_fields = [
     #     {'numeric_id': {'title': _('Id'), 'visible': True}},
     #     {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},

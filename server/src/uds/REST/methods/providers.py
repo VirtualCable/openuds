@@ -87,18 +87,18 @@ class Providers(ModelHandler[ProviderItem]):
 
     save_fields = ['name', 'comments', 'tags']
 
-    table_title = _('Service providers')
-
-    table_fields = (
+    table_info = (
         ui_utils.TableBuilder(_('Service providers'))
         .icon(name='name', title=_('Name'))
         .string(name='type_name', title=_('Type'))
         .string(name='comments', title=_('Comments'))
-        .number(name='services_count', title=_('Services'), width='6em')
-        .number(name='user_services_count', title=_('User Services'), width='6em')
+        .number(name='services_count', title=_('Services'))
+        .number(name='user_services_count', title=_('User Services'))
         .string(name='tags', title=_('Tags'), visible=False)
+        .row_style(prefix='row-maintenance-', field='maintenance_mode')
     ).build()
 
+    # table_title = _('Service providers')
     # Table info fields
     # xtable_fields = [
     #     {'name': {'title': _('Name'), 'type': 'iconType'}},
@@ -110,7 +110,7 @@ class Providers(ModelHandler[ProviderItem]):
     #     {'tags': {'title': _('tags'), 'visible': False}},
     # ]
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
-    table_row_style = types.ui.RowStyleInfo(prefix='row-maintenance-', field='maintenance_mode')
+    # table_row_style = types.rest.RowStyleInfo(prefix='row-maintenance-', field='maintenance_mode')
 
     def item_as_dict(self, item: 'Model') -> ProviderItem:
         item = ensure.is_instance(item, Provider)

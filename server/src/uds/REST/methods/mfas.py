@@ -68,9 +68,7 @@ class MFA(ModelHandler[MFAItem]):
     model = models.MFA
     save_fields = ['name', 'comments', 'tags', 'remember_device', 'validity']
 
-    table_title = _('Multi Factor Authentication')
-    
-    table_fields = (
+    table_info = (
         ui_utils.TableBuilder(_('Multi Factor Authentication'))
         .icon(name='name', title=_('Name'), visible=True)
         .string(name='type_name', title=_('Type'))
@@ -78,7 +76,8 @@ class MFA(ModelHandler[MFAItem]):
         .string(name='tags', title=_('tags'), visible=False)
         .build()
     )
-    
+
+    # table_title = _('Multi Factor Authentication')
     # xtable_fields = [
     #     {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
     #     {'type_name': {'title': _('Type')}},

@@ -82,8 +82,7 @@ class Transports(ModelHandler[TransportItem]):
         'label',
     ]
 
-    table_title = _('Transports')
-    table_fields = (
+    table_info = (
         ui_utils.TableBuilder(_('Transports'))
         .number(name='priority', title=_('Priority'), width='6em')
         .icon(name='name', title=_('Name'))

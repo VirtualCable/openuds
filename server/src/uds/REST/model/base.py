@@ -90,23 +90,6 @@ class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
             group=getattr(type_, 'group', None),
         )
 
-    def table_info(
-        self,
-        title: str,
-        fields: list[types.rest.TableField],
-        row_style: types.ui.RowStyleInfo,
-        subtitle: str | None = None,
-    ) -> types.rest.TableInfo:
-        """
-        Returns a dict containing the table fields description
-        """
-        return types.rest.TableInfo(
-            title=title,
-            fields=fields,
-            row_style=row_style,
-            subtitle=subtitle,
-        )
-
     def fields_from_params(
         self, fields_list: list[str], *, defaults: dict[str, typing.Any] | None = None
     ) -> dict[str, typing.Any]:

@@ -40,6 +40,7 @@ from uds import models
 
 from uds.core import exceptions, types
 import uds.core.types.permissions
+from uds.core.types.rest import TableInfo
 from uds.core.util import log, permissions, ensure, ui as ui_utils
 from uds.core.util.model import process_uuid
 from uds.core.environment import Environment
@@ -163,9 +164,6 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
             logger.error('Error getting services for %s: %s', parent, e)
             raise self.invalid_item_response(repr(e)) from e
 
-    def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
-        return types.ui.RowStyleInfo(prefix='row-maintenance-', field='maintenance_mode')
-
     def _delete_incomplete_service(self, service: models.Service) -> None:
         """
         Deletes a service if it is needed to (that is, if it is not None) and silently catch any exception of this operation
@@ -261,34 +259,27 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
 
         raise exceptions.rest.RequestError('Item has associated deployed services')
 
-    def get_title(self, parent: 'Model') -> str:
+    def get_table_info(self, parent: 'Model') -> TableInfo:
         parent = ensure.is_instance(parent, models.Provider)
-        try:
-            return _('Services of {}').format(parent.name)
-        except Exception:
-            return _('Current services')
-
-    def get_fields(self, parent: 'Model') -> list[typing.Any]:
-        return [
-            {'name': {'title': _('Service name'), 'visible': True, 'type': 'iconType'}},
-            {'comments': {'title': _('Comments')}},
-            {'type_name': {'title': _('Type')}},
-            {
-                'deployed_services_count': {
-                    'title': _('Services Pools'),
-                    'type': 'numeric',
-                }
-            },
-            {'user_services_count': {'title': _('User services'), 'type': 'numeric'}},
-            {
-                'max_services_count_type': {
-                    'title': _('Max services count type'),
-                    'type': 'dict',
-                    'dict': {'0': _('Standard'), '1': _('Conservative')},
+        return (
+            ui_utils.TableBuilder(_('Services of {0}').format(parent.name))
+            .icon(name='name', title=_('Name'))
+            .string(name='type_name', title=_('Type'))
+            .string(name='comments', title=_('Comments'))
+            .number(name='deployed_services_count', title=_('Services Pools'), width='12em')
+            .number(name='user_services_count', title=_('User Services'), width='12em')
+            .dictionary(
+                name='max_services_count_type',
+                title=_('Counting method'),
+                dct={
+                    types.services.ServicesCountingType.STANDARD: _('Standard'),
+                    types.services.ServicesCountingType.CONSERVATIVE: _('Conservative'),
                 },
-            },
-            {'tags': {'title': _('tags'), 'visible': False}},
-        ]
+            )
+            .string(name='tags', title=_('Tags'), visible=False)
+            .row_style(prefix='row-maintenance-', field='maintenance_mode')
+            .build()
+        )
 
     def get_types(self, parent: 'Model', for_type: typing.Optional[str]) -> list[types.rest.TypeInfo]:
 
