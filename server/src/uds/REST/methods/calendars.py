@@ -71,8 +71,7 @@ class Calendars(ModelHandler[CalendarItem]):
 
     save_fields = ['name', 'comments', 'tags']
 
-    table_title = _('Calendars')
-    table_Fields = (
+    table_info = (
         ui_utils.TableBuilder(_('Calendars'))
         .string(name='name', title=_('Name'), visible=True)
         .string(name='comments', title=_('Comments'))
@@ -84,6 +83,7 @@ class Calendars(ModelHandler[CalendarItem]):
         .build()
     )
 
+    # table_title = _('Calendars')
     # xtable_fields = [
     #     {
     #         'name': {

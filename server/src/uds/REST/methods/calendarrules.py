@@ -38,7 +38,7 @@ from django.db import IntegrityError
 from django.utils.translation import gettext as _
 
 from uds.core import exceptions, types
-from uds.core.util import ensure, permissions
+from uds.core.util import ensure, permissions, ui as ui_utils
 from uds.core.util.model import process_uuid, sql_now
 from uds.models.calendar import Calendar
 from uds.models.calendar_rule import CalendarRule, FrequencyInfo
@@ -99,25 +99,20 @@ class CalendarRules(DetailHandler[CalendarRuleItem]):  # pylint: disable=too-man
         except Exception as e:
             logger.exception('itemId %s', item)
             raise self.invalid_item_response() from e
-
-    def get_fields(self, parent: 'Model') -> list[typing.Any]:
+        
+    def get_table_info(self, parent: 'Model') -> types.rest.TableInfo:
         parent = ensure.is_instance(parent, Calendar)
-
-        return [
-            {'name': {'title': _('Rule name')}},
-            {'start': {'title': _('Starts'), 'type': 'datetime'}},
-            {'end': {'title': _('Ends'), 'type': 'date'}},
-            {
-                'frequency': {
-                    'title': _('Repeats'),
-                    'type': 'dict',
-                    'dict': dict((v.name, str(v.value.title)) for v in FrequencyInfo),
-                }
-            },
-            {'interval': {'title': _('Every'), 'type': 'callback'}},
-            {'duration': {'title': _('Duration'), 'type': 'callback'}},
-            {'comments': {'title': _('Comments')}},
-        ]
+        return (
+            ui_utils.TableBuilder(_('Rules of {0}').format(parent.name))
+            .string(name='name', title=_('Name'))
+            .datetime(name='start', title=_('Start'))
+            .date(name='end', title=_('End'))
+            .dictionary(name='frequency', title=_('Frequency'), dct=FrequencyInfo.literals_dict())
+            .number(name='interval', title=_('Interval'))
+            .number(name='duration', title=_('Duration'))
+            .string(name='comments', title=_('Comments'))
+            .build()
+        )
 
     def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, Calendar)
@@ -175,9 +170,3 @@ class CalendarRules(DetailHandler[CalendarRuleItem]):  # pylint: disable=too-man
             logger.exception('Exception')
             raise self.invalid_item_response() from e
 
-    def get_title(self, parent: 'Model') -> str:
-        parent = ensure.is_instance(parent, Calendar)
-        try:
-            return _('Rules of {0}').format(parent.name)
-        except Exception:
-            return _('Current rules')
