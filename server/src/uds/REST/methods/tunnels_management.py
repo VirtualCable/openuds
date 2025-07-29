@@ -173,14 +173,25 @@ class Tunnels(ModelHandler[TunnelItem]):
     save_fields = ['name', 'comments', 'host:', 'port:0']
 
     table_title = _('Tunnels')
-    table_fields = [
-        {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
-        {'comments': {'title': _('Comments')}},
-        {'host': {'title': _('Host')}},
-        {'port': {'title': _('Port')}},
-        {'servers_count': {'title': _('Servers'), 'type': 'numeric', 'width': '1rem'}},
-        {'tags': {'title': _('tags'), 'visible': False}},
-    ]
+    table_fields = (
+        ui_utils.TableFieldsBuilder(_('Tunnels'))
+        .icon(name='name', title=_('Name'))
+        .string(name='comments', title=_('Comments'))
+        .string(name='host', title=_('Host'))
+        .number(name='port', title=_('Port'), width='6em')
+        .number(name='servers_count', title=_('Servers'), width='1rem')
+        .string(name='tags', title=_('tags'), visible=False)
+        .build()
+    )
+
+    # xtable_fields = [
+    #     {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
+    #     {'comments': {'title': _('Comments')}},
+    #     {'host': {'title': _('Host')}},
+    #     {'port': {'title': _('Port')}},
+    #     {'servers_count': {'title': _('Servers'), 'type': 'numeric', 'width': '1rem'}},
+    #     {'tags': {'title': _('tags'), 'visible': False}},
+    # ]
 
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
         return (

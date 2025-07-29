@@ -38,7 +38,7 @@ from django.utils.translation import gettext_lazy as _
 
 from uds.core import types, consts
 from uds.core.types import permissions
-from uds.core.util import ensure
+from uds.core.util import ensure, ui as ui_utils
 from uds.core.util.log import LogLevel
 from uds.models import Server
 from uds.core.exceptions.rest import NotFound, RequestError
@@ -50,6 +50,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 # Enclosed methods under /osm path
+
 
 class ActorTokenItem(types.rest.BaseRestItem):
     id: str
@@ -73,19 +74,34 @@ class ActorTokens(ModelHandler[ActorTokenItem]):
     model_filter = {'type': types.servers.ServerType.ACTOR}
 
     table_title = _('Actor tokens')
-    table_fields = [
-        # {'token': {'title': _('Token')}},
-        {'stamp': {'title': _('Date'), 'type': 'datetime'}},
-        {'username': {'title': _('Issued by')}},
-        {'host': {'title': _('Origin')}},
-        {'version': {'title': _('Version')}},
-        {'hostname': {'title': _('Hostname')}},
-        {'pre_command': {'title': _('Pre-connect')}},
-        {'post_command': {'title': _('Post-Configure')}},
-        {'run_once_command': {'title': _('Run Once')}},
-        {'log_level': {'title': _('Log level')}},
-        {'os': {'title': _('OS')}},
-    ]
+    table_fields = (
+        ui_utils.TableFieldsBuilder(_('Actor tokens'))
+        .datetime('stamp', _('Date'))
+        .string('username', _('Issued by'))
+        .string('host', _('Origin'))
+        .string('version', _('Version'))
+        .string('hostname', _('Hostname'))
+        .string('pre_command', _('Pre-connect'))
+        .string('post_command', _('Post-Configure'))
+        .string('run_once_command', _('Run Once'))
+        .string('log_level', _('Log level'))
+        .string('os', _('OS'))
+        .build()
+    )
+
+    # xtable_fields = [
+    #     # {'token': {'title': _('Token')}},
+    #     {'stamp': {'title': _('Date'), 'type': 'datetime'}},
+    #     {'username': {'title': _('Issued by')}},
+    #     {'host': {'title': _('Origin')}},
+    #     {'version': {'title': _('Version')}},
+    #     {'hostname': {'title': _('Hostname')}},
+    #     {'pre_command': {'title': _('Pre-connect')}},
+    #     {'post_command': {'title': _('Post-Configure')}},
+    #     {'run_once_command': {'title': _('Run Once')}},
+    #     {'log_level': {'title': _('Log level')}},
+    #     {'os': {'title': _('OS')}},
+    # ]
 
     def item_as_dict(self, item: 'Model') -> ActorTokenItem:
         item = ensure.is_instance(item, Server)

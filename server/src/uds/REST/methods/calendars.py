@@ -72,22 +72,32 @@ class Calendars(ModelHandler[CalendarItem]):
     save_fields = ['name', 'comments', 'tags']
 
     table_title = _('Calendars')
-    table_fields = [
-        {
-            'name': {
-                'title': _('Name'),
-                'visible': True,
-                'type': 'icon',
-                'icon': 'fa fa-calendar text-success',
-            }
-        },
-        {'comments': {'title': _('Comments')}},
-        {'modified': {'title': _('Modified'), 'type': 'datetime'}},
-        {'number_rules': {'title': _('Rules')}},
-        {'number_access': {'title': _('Pools with Accesses')}},
-        {'number_actions': {'title': _('Pools with Actions')}},
-        {'tags': {'title': _('tags'), 'visible': False}},
-    ]
+    table_Fields = (
+        ui_utils.TableFieldsBuilder(_('Calendars'))
+        .string(name='name', title=_('Name'), visible=True)
+        .string(name='comments', title=_('Comments'))
+        .datetime(name='modified', title=_('Modified'))
+        .number(name='number_rules', title=_('Rules'), width='5rem')
+        .number(name='number_access', title=_('Pools with Accesses'), width='5rem')
+        .number(name='number_actions', title=_('Pools with Actions'), width='5rem')
+        .string(name='tags', title=_('tags'), visible=False)
+        .build()
+    )
+
+    # xtable_fields = [
+    #     {
+    #         'name': {
+    #             'title': _('Name'),
+    #             'visible': True,
+    #         }
+    #     },
+    #     {'comments': {'title': _('Comments')}},
+    #     {'modified': {'title': _('Modified'), 'type': 'datetime'}},
+    #     {'number_rules': {'title': _('Rules')}},
+    #     {'number_access': {'title': _('Pools with Accesses')}},
+    #     {'number_actions': {'title': _('Pools with Actions')}},
+    #     {'tags': {'title': _('tags'), 'visible': False}},
+    # ]
 
     def item_as_dict(self, item: 'Model') -> CalendarItem:
         item = ensure.is_instance(item, Calendar)

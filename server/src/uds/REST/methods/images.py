@@ -36,7 +36,7 @@ import typing
 from django.utils.translation import gettext_lazy as _
 from uds.models import Image
 from uds.core import types
-from uds.core.util import ensure
+from uds.core.util import ensure, ui as ui_utils
 
 from uds.REST.model import ModelHandler
 
@@ -66,18 +66,26 @@ class Images(ModelHandler[ImageItem]):
     save_fields = ['name', 'data']
 
     table_title = _('Image Gallery')
-    table_fields = [
-        {
-            'thumb': {
-                'title': _('Image'),
-                'visible': True,
-                'type': 'image',
-                'width': '96px',
-            }
-        },
-        {'name': {'title': _('Name')}},
-        {'size': {'title': _('Size')}},
-    ]
+    table_fields = (
+        ui_utils.TableFieldsBuilder(_('Image Gallery'))
+        .image('thumb', _('Image'), width='96px')
+        .string('name', _('Name'))
+        .string('size', _('Size'))
+        .build()
+    )
+
+    # xtable_fields = [
+    #     {
+    #         'thumb': {
+    #             'title': _('Image'),
+    #             'visible': True,
+    #             'type': 'image',
+    #             'width': '96px',
+    #         }
+    #     },
+    #     {'name': {'title': _('Name')}},
+    #     {'size': {'title': _('Size')}},
+    # ]
 
     def pre_save(self, fields: dict[str, typing.Any]) -> None:
         fields['image'] = fields['data']
@@ -92,7 +100,7 @@ class Images(ModelHandler[ImageItem]):
         # item.save()
 
     # Note:
-    # This has no get_gui because its treated on the admin or client. 
+    # This has no get_gui because its treated on the admin or client.
     # We expect an Image List
 
     def item_as_dict(self, item: 'Model') -> ImageItem:

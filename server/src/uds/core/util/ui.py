@@ -373,3 +373,115 @@ class GuiBuilder:
 
     def build(self) -> list[types.ui.GuiElement]:
         return self.fields
+
+
+class TableFieldsBuilder:
+    """
+    Builds a list of table fields for REST API responses.
+    """
+
+    table_title: str
+    fields: list[types.rest.TableField]
+
+    def __init__(self, table_name: str) -> None:
+        # TODO: USe table_name on a later iteration of the code
+        self.table_title = table_name
+        self.fields = []
+
+    def _add_field(
+        self,
+        name: str,
+        title: str,
+        type: types.rest.TableFieldType = types.rest.TableFieldType.ALPHANUMERIC,
+        visible: bool = True,
+        width: str | None = None,
+        dct: dict[typing.Any, typing.Any] | None = None,
+    ) -> typing.Self:
+        """
+        Adds a field to the table fields.
+        """
+        self.fields.append(
+            types.rest.TableField(
+                name=name,
+                title=title,
+                type=type,
+                visible=visible,
+                width=width,
+                dct=dct,  # Dictionary for dictionary fields, if applicable
+            )
+        )
+
+        return self
+
+    # For each field type, we can add a specific method
+    def string(self, name: str, title: str, visible: bool = True, width: str | None = None) -> typing.Self:
+        """
+        Adds a string field to the table fields.
+        """
+        return self._add_field(name, title, types.rest.TableFieldType.ALPHANUMERIC, visible, width)
+
+    def number(self, name: str, title: str, visible: bool = True, width: str | None = None) -> typing.Self:
+        """
+        Adds a number field to the table fields.
+        """
+        return self._add_field(name, title, types.rest.TableFieldType.NUMERIC, visible, width)
+
+    def datetime(self, name: str, title: str, visible: bool = True, width: str | None = None) -> typing.Self:
+        """
+        Adds a datetime field to the table fields.
+        """
+        return self._add_field(name, title, types.rest.TableFieldType.DATETIME, visible, width)
+
+    def datetime_sec(
+        self, name: str, title: str, visible: bool = True, width: str | None = None
+    ) -> typing.Self:
+        """
+        Adds a datetime with seconds field to the table fields.
+        """
+        return self._add_field(name, title, types.rest.TableFieldType.DATETIMESEC, visible, width)
+
+    def date(self, name: str, title: str, visible: bool = True, width: str | None = None) -> typing.Self:
+        """
+        Adds a date field to the table fields.
+        """
+        return self._add_field(name, title, types.rest.TableFieldType.DATE, visible, width)
+
+    def time(self, name: str, title: str, visible: bool = True, width: str | None = None) -> typing.Self:
+        """
+        Adds a time field to the table fields.
+        """
+        return self._add_field(name, title, types.rest.TableFieldType.TIME, visible, width)
+
+    def icon(self, name: str, title: str, visible: bool = True, width: str | None = None) -> typing.Self:
+        """
+        Adds an icon field to the table fields.
+        """
+        return self._add_field(name, title, types.rest.TableFieldType.ICON, visible, width)
+
+    def callback(self, name: str, title: str, visible: bool = True, width: str | None = None) -> typing.Self:
+        """
+        Adds a callback field to the table fields.
+        """
+        return self._add_field(name, title, types.rest.TableFieldType.CALLBACK, visible, width)
+
+    def dictionary(
+        self,
+        name: str,
+        title: str,
+        dct: dict[typing.Any, typing.Any],
+        visible: bool = True,
+        width: str | None = None,
+    ) -> typing.Self:
+        """
+        Adds a dictionary field to the table fields.
+        """
+        return self._add_field(name, title, types.rest.TableFieldType.DICTIONARY, visible, width, dct=dct)
+
+    def image(self, name: str, title: str, visible: bool = True, width: str | None = None) -> typing.Self:
+        """
+        Adds an image field to the table fields.
+        """
+        return self._add_field(name, title, types.rest.TableFieldType.IMAGE, visible, width)
+
+    def build(self) -> list[types.rest.TableField]:
+        return self.fields

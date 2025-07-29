@@ -93,7 +93,7 @@ class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
     def table_info(
         self,
         title: str,
-        fields: list[typing.Any],
+        fields: list[types.rest.TableField],
         row_style: types.ui.RowStyleInfo,
         subtitle: str | None = None,
     ) -> types.rest.TableInfo:

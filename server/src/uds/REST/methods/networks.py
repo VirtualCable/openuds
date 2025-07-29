@@ -69,32 +69,42 @@ class Networks(ModelHandler[NetworkItem]):
     save_fields = ['name', 'net_string', 'tags']
 
     table_title = _('Networks')
-    table_fields = [
-        {
-            'name': {
-                'title': _('Name'),
-                'visible': True,
-                'type': 'icon',
-                'icon': 'fa fa-globe text-success',
-            }
-        },
-        {'net_string': {'title': _('Range')}},
-        {
-            'transports_count': {
-                'title': _('Transports'),
-                'type': 'numeric',
-                'width': '8em',
-            }
-        },
-        {
-            'authenticators_count': {
-                'title': _('Authenticators'),
-                'type': 'numeric',
-                'width': '8em',
-            }
-        },
-        {'tags': {'title': _('tags'), 'visible': False}},
-    ]
+    table_fields = (
+        ui_utils.TableFieldsBuilder(_('Networks'))
+        .string('name', _('Name'))
+        .string('net_string', _('Range'))
+        .number('transports_count', _('Transports'), width='8em')
+        .number('authenticators_count', _('Authenticators'), width='8em')
+        .string('tags', _('Tags'), visible=False)
+        .build()
+    )
+    
+    # xtable_fields = [
+    #     {
+    #         'name': {
+    #             'title': _('Name'),
+    #             'visible': True,
+    #             'type': 'icon',
+    #             'icon': 'fa fa-globe text-success',
+    #         }
+    #     },
+    #     {'net_string': {'title': _('Range')}},
+    #     {
+    #         'transports_count': {
+    #             'title': _('Transports'),
+    #             'type': 'numeric',
+    #             'width': '8em',
+    #         }
+    #     },
+    #     {
+    #         'authenticators_count': {
+    #             'title': _('Authenticators'),
+    #             'type': 'numeric',
+    #             'width': '8em',
+    #         }
+    #     },
+    #     {'tags': {'title': _('tags'), 'visible': False}},
+    # ]
 
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
         return (

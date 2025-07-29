@@ -148,18 +148,34 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
     remove_fields = ['osmanager_id', 'service_id']
 
     table_title = _('Service Pools')
-    table_fields = [
-        {'name': {'title': _('Name')}},
-        {'state': {'title': _('Status'), 'type': 'dict', 'dict': State.literals_dict()}},
-        {'user_services_count': {'title': _('User services'), 'type': 'number'}},
-        {'user_services_in_preparation': {'title': _('In Preparation')}},
-        {'usage': {'title': _('Usage')}},
-        {'visible': {'title': _('Visible'), 'type': 'callback'}},
-        {'show_transports': {'title': _('Shows transports'), 'type': 'callback'}},
-        {'pool_group_name': {'title': _('Pool group')}},
-        {'parent': {'title': _('Parent service')}},
-        {'tags': {'title': _('tags'), 'visible': False}},
-    ]
+    table_fields = (
+        ui_utils.TableFieldsBuilder(_('Service Pools'))
+        .string(name='name', title=_('Name'))
+        .dictionary(name='state', title=_('Status'), dct=State.literals_dict())
+        .number(name='user_services_count', title=_('User services'))
+        .number(name='user_services_in_preparation', title=_('In Preparation'))
+        .string(name='usage', title=_('Usage'))
+        .callback(name='visible', title=_('Visible'))
+        .callback(name='show_transports', title=_('Shows transports'))
+        .string(name='pool_group_name', title=_('Pool group'))
+        .string(name='parent', title=_('Parent service'))
+        .string(name='tags', title=_('tags'))
+        .build()
+    )
+    
+        
+    # xtable_fields = [
+    #     {'name': {'title': _('Name')}},
+    #     {'state': {'title': _('Status'), 'type': 'dict', 'dict': State.literals_dict()}},
+    #     {'user_services_count': {'title': _('User services'), 'type': 'number'}},
+    #     {'user_services_in_preparation': {'title': _('In Preparation')}},
+    #     {'usage': {'title': _('Usage')}},
+    #     {'visible': {'title': _('Visible'), 'type': 'callback'}},
+    #     {'show_transports': {'title': _('Shows transports'), 'type': 'callback'}},
+    #     {'pool_group_name': {'title': _('Pool group')}},
+    #     {'parent': {'title': _('Parent service')}},
+    #     {'tags': {'title': _('tags'), 'visible': False}},
+    # ]
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
     table_row_style = types.ui.RowStyleInfo(prefix='row-state-', field='state')
 

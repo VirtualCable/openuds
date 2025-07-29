@@ -103,7 +103,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
     # Put removable fields before updating
     remove_fields: typing.ClassVar[list[str]] = []
     # Table info needed fields and title
-    table_fields: typing.ClassVar[list[typing.Any]] = []
+    table_fields: typing.ClassVar[list[types.rest.TableField]] = []
     table_row_style: typing.ClassVar[types.ui.RowStyleInfo] = types.ui.RowStyleInfo.null()
     table_title: typing.ClassVar[str] = ''
     table_subtitle: typing.ClassVar[str] = ''

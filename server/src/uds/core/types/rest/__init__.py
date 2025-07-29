@@ -32,6 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 # pyright: reportUnusedImport=false
 
 import abc
+import enum
 import typing
 import dataclasses
 
@@ -129,6 +130,50 @@ T_Item = typing.TypeVar("T_Item", bound=BaseRestItem)
 ItemsResult: typing.TypeAlias = list[T_Item] | BaseRestItem | typing.Iterator[T_Item]
 
 
+class TableFieldType(enum.StrEnum):
+    """
+    Enum for table field types.
+    This is used to define the type of a field in a table.
+    """
+
+    NUMERIC = 'numeric'
+    ALPHANUMERIC = 'alphanumeric'
+    DATETIME = 'datetime'
+    DATETIMESEC = 'datetimesec'
+    DATE = 'date'
+    TIME = 'time'
+    ICON = 'icontype'
+    CALLBACK = 'callback'
+    DICTIONARY = 'dict'
+    IMAGE = 'image'
+
+
+@dataclasses.dataclass
+class TableField:
+    """
+    Represents a field in a table, with its title and type.
+    This is used to describe the fields of a table in the REST API.
+    """
+
+    name: str  # Name of the field, used as key in the table
+
+    title: str  # Title of the field
+    type: TableFieldType = TableFieldType.ALPHANUMERIC  # Type of the field, defaults to alphanumeric
+    visible: bool = True
+    width: str | None = None  # Width of the field, if applicable
+    dct: dict[typing.Any, typing.Any] | None = None  # Dictionary for dictionary fields, if applicable
+
+    def as_dict(self) -> dict[str, typing.Any]:
+        # Only return the fields that are set
+
+        res: dict[str|int, typing.Any] = {'title': self.title, 'type': self.type.value, 'visible': self.visible}
+        if self.dct:
+            res['dict'] = self.dct
+        if self.width:
+            res['width'] = self.width
+        return {self.name: res}  # Return as a dictionary with the field name as key
+
+
 @dataclasses.dataclass
 class TableInfo:
     """
@@ -137,15 +182,15 @@ class TableInfo:
     """
 
     title: str
-    fields: list[dict[str, dict[str, typing.Any]]]
+    fields: list[TableField]  # List of fields in the table
     row_style: 'types.ui.RowStyleInfo'
     subtitle: typing.Optional[str] = None
 
     def as_dict(self) -> dict[str, typing.Any]:
         return {
             'title': self.title,
-            'fields': self.fields,
-            'row-style': self.row_style.as_dict(),
+            'fields': [field.as_dict() for field in self.fields],
+            'row_style': self.row_style.as_dict(),
             'subtitle': self.subtitle or '',
         }
 

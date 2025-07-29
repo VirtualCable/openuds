@@ -301,7 +301,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
         """
         return ''
 
-    def get_fields(self, parent: models.Model) -> list[typing.Any]:
+    def get_fields(self, parent: models.Model) -> list[types.rest.TableField]:
         """
         A "generic" list of fields for a view based on this detail.
         If not overridden, defaults to emty list

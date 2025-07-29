@@ -66,13 +66,23 @@ class OsManagers(ModelHandler[OsManagerItem]):
     save_fields = ['name', 'comments', 'tags']
 
     table_title = _('OS Managers')
-    table_fields = [
-        {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
-        {'type_name': {'title': _('Type')}},
-        {'comments': {'title': _('Comments')}},
-        {'deployed_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}},
-        {'tags': {'title': _('tags'), 'visible': False}},
-    ]
+    table_fields = (
+        ui_utils.TableFieldsBuilder(_('OS Managers'))
+        .icon(name='name', title=_('Name'))
+        .string(name='type_name', title=_('Type'))
+        .string(name='comments', title=_('Comments'))
+        .number(name='deployed_count', title=_('Used by'), width='8em')
+        .string(name='tags', title=_('Tags'), visible=False)
+        .build()
+    )
+
+    # xtable_fields = [
+    #     {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
+    #     {'type_name': {'title': _('Type')}},
+    #     {'comments': {'title': _('Comments')}},
+    #     {'deployed_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}},
+    #     {'tags': {'title': _('tags'), 'visible': False}},
+    # ]
 
     def os_manager_as_dict(self, osm: OSManager) -> OsManagerItem:
         type_ = osm.get_type()

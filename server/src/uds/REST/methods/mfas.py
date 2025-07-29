@@ -69,12 +69,22 @@ class MFA(ModelHandler[MFAItem]):
     save_fields = ['name', 'comments', 'tags', 'remember_device', 'validity']
 
     table_title = _('Multi Factor Authentication')
-    table_fields = [
-        {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
-        {'type_name': {'title': _('Type')}},
-        {'comments': {'title': _('Comments')}},
-        {'tags': {'title': _('tags'), 'visible': False}},
-    ]
+    
+    table_fields = (
+        ui_utils.TableFieldsBuilder(_('Multi Factor Authentication'))
+        .icon(name='name', title=_('Name'), visible=True)
+        .string(name='type_name', title=_('Type'))
+        .string(name='comments', title=_('Comments'))
+        .string(name='tags', title=_('tags'), visible=False)
+        .build()
+    )
+    
+    # xtable_fields = [
+    #     {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
+    #     {'type_name': {'title': _('Type')}},
+    #     {'comments': {'title': _('Comments')}},
+    #     {'tags': {'title': _('tags'), 'visible': False}},
+    # ]
 
     def enum_types(self) -> collections.abc.Iterable[type[mfas.MFA]]:
         return mfas.factory().providers().values()

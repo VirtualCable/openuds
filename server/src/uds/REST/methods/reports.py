@@ -37,6 +37,7 @@ from django.utils.translation import gettext_lazy as _
 
 from uds.core import types, consts
 from uds.core.util.rest.tools import match_args
+from uds.core.util import ui as ui_utils
 from uds.REST import model
 from uds import reports
 
@@ -76,12 +77,21 @@ class Reports(model.BaseModelHandler[ReportItem]):
     min_access_role = consts.UserRole.ADMIN
 
     table_title = _('Available reports')
-    table_fields = [
-        {'group': {'title': _('Group')}},
-        {'name': {'title': _('Name')}},
-        {'description': {'title': _('Description')}},
-        {'mime_type': {'title': _('Generates')}},
-    ]
+    table_fields = (
+        ui_utils.TableFieldsBuilder(_('Available reports'))
+        .string(name='group', title=_('Group'), visible=True)
+        .string(name='name', title=_('Name'), visible=True)
+        .string(name='description', title=_('Description'), visible=True)
+        .string(name='mime_type', title=_('Generates'), visible=True)
+        .build()
+    )
+
+    # xtable_fields = [
+    #     {'group': {'title': _('Group')}},
+    #     {'name': {'title': _('Name')}},
+    #     {'description': {'title': _('Description')}},
+    #     {'mime_type': {'title': _('Generates')}},
+    # ]
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
     table_row_style = types.ui.RowStyleInfo(prefix='row-state-', field='state')
 

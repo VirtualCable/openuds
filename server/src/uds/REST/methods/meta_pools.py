@@ -105,30 +105,53 @@ class MetaPools(ModelHandler[MetaPoolItem]):
     ]
 
     table_title = _('Meta Pools')
-    table_fields = [
-        {'name': {'title': _('Name')}},
-        {'comments': {'title': _('Comments')}},
-        {
-            'policy': {
-                'title': _('Policy'),
-                'type': 'dict',
-                'dict': dict(types.pools.LoadBalancingPolicy.enumerate()),
-            }
-        },
-        {
-            'ha_policy': {
-                'title': _('HA Policy'),
-                'type': 'dict',
-                'dict': dict(types.pools.HighAvailabilityPolicy.enumerate()),
-            }
-        },
-        {'user_services_count': {'title': _('User services'), 'type': 'number'}},
-        {'user_services_in_preparation': {'title': _('In Preparation')}},
-        {'visible': {'title': _('Visible'), 'type': 'callback'}},
-        {'pool_group_name': {'title': _('Pool Group')}},
-        {'label': {'title': _('Label')}},
-        {'tags': {'title': _('tags'), 'visible': False}},
-    ]
+    table_fields = (
+        ui_utils.TableFieldsBuilder(_('Meta Pools'))
+        .string(name='name', title=_('Name'))
+        .string(name='comments', title=_('Comments'))
+        .dictionary(
+            name='policy',
+            title=_('Policy'),
+            dct=dict(types.pools.LoadBalancingPolicy.enumerate()),
+        )
+        .dictionary(
+            name='ha_policy',
+            title=_('HA Policy'),
+            dct=dict(types.pools.HighAvailabilityPolicy.enumerate()),
+        )
+        .number(name='user_services_count', title=_('User services'))
+        .number(name='user_services_in_preparation', title=_('In Preparation'))
+        .callback(name='visible', title=_('Visible'))
+        .string(name='pool_group_name', title=_('Pool Group'))
+        .string(name='short_name', title=_('Label'))
+        .string(name='tags', title=_('tags'), visible=False)
+        .build()
+    )
+    
+    # xtable_fields = [
+    #     {'name': {'title': _('Name')}},
+    #     {'comments': {'title': _('Comments')}},
+    #     {
+    #         'policy': {
+    #             'title': _('Policy'),
+    #             'type': 'dict',
+    #             'dict': dict(types.pools.LoadBalancingPolicy.enumerate()),
+    #         }
+    #     },
+    #     {
+    #         'ha_policy': {
+    #             'title': _('HA Policy'),
+    #             'type': 'dict',
+    #             'dict': dict(types.pools.HighAvailabilityPolicy.enumerate()),
+    #         }
+    #     },
+    #     {'user_services_count': {'title': _('User services'), 'type': 'number'}},
+    #     {'user_services_in_preparation': {'title': _('In Preparation')}},
+    #     {'visible': {'title': _('Visible'), 'type': 'callback'}},
+    #     {'pool_group_name': {'title': _('Pool Group')}},
+    #     {'label': {'title': _('Label')}},
+    #     {'tags': {'title': _('tags'), 'visible': False}},
+    # ]
 
     custom_methods = [
         types.rest.ModelCustomMethod('set_fallback_access', True),

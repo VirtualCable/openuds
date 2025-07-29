@@ -84,21 +84,31 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
     save_fields = ['name', 'comments', 'tags', 'priority', 'small_name', 'mfa_id:_', 'state']
 
     table_title = _('Authenticators')
-    table_fields = [
-        {'numeric_id': {'title': _('Id'), 'visible': True}},
-        {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
-        {'type_name': {'title': _('Type')}},
-        {'comments': {'title': _('Comments')}},
-        {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '5rem'}},
-        {'small_name': {'title': _('Label')}},
-        {'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '1rem'}},
-        {
-            'mfa_name': {
-                'title': _('MFA'),
-            }
-        },
-        {'tags': {'title': _('tags'), 'visible': False}},
-    ]
+    table_fields = (
+        ui_utils.TableFieldsBuilder(_('Authenticators'))
+        .number(name='numeric_id', title=_('Id'), visible=True, width='1rem')
+        .icon(name='name', title=_('Name'), visible=True)
+        .string(name='type_name', title=_('Type'))
+        .string(name='comments', title=_('Comments'))
+        .number(name='priority', title=_('Priority'), width='5rem')
+        .string(name='small_name', title=_('Label'))
+        .number(name='users_count', title=_('Users'), width='1rem')
+        .string(name='mfa_name', title=_('MFA'))
+        .string(name='tags', title=_('tags'), visible=False)
+        .build()
+    )
+
+    # xtable_fields = [
+    #     {'numeric_id': {'title': _('Id'), 'visible': True}},
+    #     {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
+    #     {'type_name': {'title': _('Type')}},
+    #     {'comments': {'title': _('Comments')}},
+    #     {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '5rem'}},
+    #     {'small_name': {'title': _('Label')}},
+    #     {'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '1rem'}},
+    #     {'mfa_name': {'title': _('MFA')}},
+    #     {'tags': {'title': _('tags'), 'visible': False}},
+    # ]
 
     def enum_types(self) -> collections.abc.Iterable[type[auths.Authenticator]]:
         return auths.factory().providers().values()

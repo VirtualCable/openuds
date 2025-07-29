@@ -78,14 +78,26 @@ class ServersTokens(ModelHandler[TokenItem]):
     name = 'tokens'
 
     table_title = _('Registered Servers')
-    table_fields = [
-        {'hostname': {'title': _('Hostname')}},
-        {'ip': {'title': _('IP')}},
-        {'type': {'title': _('Type'), 'type': 'dict', 'dict': dict(types.servers.ServerType.enumerate())}},
-        {'os': {'title': _('OS')}},
-        {'username': {'title': _('Issued by')}},
-        {'stamp': {'title': _('Date'), 'type': 'datetime'}},
-    ]
+    table_fields = (
+        ui_utils.TableFieldsBuilder(_('Registered Servers'))
+        .string(name='hostname', title=_('Hostname'), visible=True)
+        .string(name='ip', title=_('IP'), visible=True)
+        .string(name='mac', title=_('MAC'), visible=True)
+        .string(name='type', title=_('Type'), visible=False)
+        .string(name='os', title=_('OS'), visible=True)
+        .string(name='username', title=_('Issued by'), visible=True)
+        .datetime(name='stamp', title=_('Date'), visible=True)
+        .build()
+    )
+    
+    # xtable_fields = [
+    #     {'hostname': {'title': _('Hostname')}},
+    #     {'ip': {'title': _('IP')}},
+    #     {'type': {'title': _('Type'), 'type': 'dict', 'dict': dict(types.servers.ServerType.enumerate())}},
+    #     {'os': {'title': _('OS')}},
+    #     {'username': {'title': _('Issued by')}},
+    #     {'stamp': {'title': _('Date'), 'type': 'datetime'}},
+    # ]
 
     def item_as_dict(self, item: 'Model') -> TokenItem:
         item = typing.cast('models.Server', item)  # We will receive for sure
@@ -176,37 +188,54 @@ class ServersServers(DetailHandler[ServerItem]):
         except Exception:
             return str(_('Servers'))
 
-    def get_fields(self, parent: 'Model') -> list[typing.Any]:
+    def get_fields(self, parent: 'Model') -> list[types.rest.TableField]:
         parent = ensure.is_instance(parent, models.ServerGroup)
-        return (
-            [
-                {
-                    'hostname': {
-                        'title': _('Hostname'),
-                    }
-                },
-                {'ip': {'title': _('Ip')}},
-            ]  # If not managed, we can show mac, else listen port (related to UDS Server)
-            + (
-                [
-                    {'mac': {'title': _('Mac')}},
-                ]
-                if not parent.is_managed()
-                else [
-                    {'mac': {'title': _('Mac')}},
-                    {'listen_port': {'title': _('Port')}},
-                ]
-            )
-            + [
-                {
-                    'maintenance_mode': {
-                        'title': _('State'),
-                        'type': 'dict',
-                        'dict': {True: _('Maintenance'), False: _('Normal')},
-                    }
-                },
-            ]
+        
+        fields = (
+            ui_utils.TableFieldsBuilder(_('Servers'))
+            .string(name='hostname', title=_('Hostname'))
+            .string(name='ip', title=_('Ip'))
+            .string(name='mac', title=_('Mac'))
         )
+        
+        if parent.is_managed():
+            fields.string(name='listen_port', title=_('Port'))
+            
+        return fields.dictionary(
+            name='maintenance_mode',
+            title=_('State'),
+            dct={True: _('Maintenance'), False: _('Normal')},
+        ).build()
+
+        # return (
+        #     [
+        #         {
+        #             'hostname': {
+        #                 'title': _('Hostname'),
+        #             }
+        #         },
+        #         {'ip': {'title': _('Ip')}},
+        #     ]  # If not managed, we can show mac, else listen port (related to UDS Server)
+        #     + (
+        #         [
+        #             {'mac': {'title': _('Mac')}},
+        #         ]
+        #         if not parent.is_managed()
+        #         else [
+        #             {'mac': {'title': _('Mac')}},
+        #             {'listen_port': {'title': _('Port')}},
+        #         ]
+        #     )
+        #     + [
+        #         {
+        #             'maintenance_mode': {
+        #                 'title': _('State'),
+        #                 'type': 'dict',
+        #                 'dict': {True: _('Maintenance'), False: _('Normal')},
+        #             }
+        #         },
+        #     ]
+        # )
 
     def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
         return types.ui.RowStyleInfo(prefix='row-maintenance-', field='maintenance_mode')
@@ -445,15 +474,28 @@ class ServersGroups(ModelHandler[GroupItem]):
 
     save_fields = ['name', 'comments', 'type', 'tags']  # Subtype is appended on pre_save
     table_title = _('Servers Groups')
-    table_fields = [
-        {'name': {'title': _('Name')}},
-        {'comments': {'title': _('Comments')}},
-        {'type_name': {'title': _('Type')}},
-        {'type': {'title': '', 'visible': False}},
-        {'subtype': {'title': _('Subtype')}},
-        {'servers_count': {'title': _('Servers')}},
-        {'tags': {'title': _('tags'), 'visible': False}},
-    ]
+    
+    table_fields = (
+        ui_utils.TableFieldsBuilder(_('Servers Groups'))
+        .string(name='name', title=_('Name'), visible=True)
+        .string(name='comments', title=_('Comments'))
+        .string(name='type_name', title=_('Type'), visible=True)
+        .string(name='type', title='', visible=False)
+        .string(name='subtype', title=_('Subtype'), visible=True)
+        .number(name='servers_count', title=_('Servers'), width='5rem')
+        .string(name='tags', title=_('tags'), visible=False)
+        .build()
+    )
+    
+    # xtable_fields = [
+    #     {'name': {'title': _('Name')}},
+    #     {'comments': {'title': _('Comments')}},
+    #     {'type_name': {'title': _('Type')}},
+    #     {'type': {'title': '', 'visible': False}},
+    #     {'subtype': {'title': _('Subtype')}},
+    #     {'servers_count': {'title': _('Servers')}},
+    #     {'tags': {'title': _('tags'), 'visible': False}},
+    # ]
 
     def get_types(
         self, *args: typing.Any, **kwargs: typing.Any

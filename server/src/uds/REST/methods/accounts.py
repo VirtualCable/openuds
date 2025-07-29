@@ -76,12 +76,22 @@ class Accounts(ModelHandler[AccountItem]):
     save_fields = ['name', 'comments', 'tags']
 
     table_title = _('Accounts')
-    table_fields = [
-        {'name': {'title': _('Name'), 'visible': True}},
-        {'comments': {'title': _('Comments')}},
-        {'time_mark': {'title': _('Time mark'), 'type': 'callback'}},
-        {'tags': {'title': _('tags'), 'visible': False}},
-    ]
+
+    table_fields = (
+        ui_utils.TableFieldsBuilder(_('Accounts'))
+        .string(name='name', title=_('Name'))
+        .string(name='comments', title=_('Comments'))
+        .callback(name='time_mark', title=_('Time mark'))
+        .string(name='tags', title=_('tags'), visible=False)
+        .build()
+    )
+
+    # xtable_fields = [
+    #     {'name': {'title': _('Name'), 'visible': True}},
+    #     {'comments': {'title': _('Comments')}},
+    #     {'time_mark': {'title': _('Time mark'), 'type': 'callback'}},
+    #     {'tags': {'title': _('tags'), 'visible': False}},
+    # ]
 
     def item_as_dict(self, item: 'Model') -> AccountItem:
         item = ensure.is_instance(item, Account)

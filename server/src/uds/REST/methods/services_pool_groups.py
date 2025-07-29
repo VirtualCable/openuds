@@ -66,19 +66,29 @@ class ServicesPoolGroups(ModelHandler[ServicePoolGroupItem]):
     save_fields = ['name', 'comments', 'image_id', 'priority']
 
     table_title = _('Services Pool Groups')
-    table_fields = [
-        {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
-        {
-            'thumb': {
-                'title': _('Image'),
-                'visible': True,
-                'type': 'image',
-                'width': '96px',
-            }
-        },
-        {'name': {'title': _('Name')}},
-        {'comments': {'title': _('Comments')}},
-    ]
+
+    table_fields = (
+        ui_utils.TableFieldsBuilder(_('Services Pool Groups'))
+        .number(name='priority', title=_('Priority'), width='6em')
+        .image(name='thumb', title=_('Image'), width='96px')
+        .string(name='name', title=_('Name'))
+        .string(name='comments', title=_('Comments'))
+        .build()
+    )
+
+    # xtable_fields = [
+    #     {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
+    #     {
+    #         'thumb': {
+    #             'title': _('Image'),
+    #             'visible': True,
+    #             'type': 'image',
+    #             'width': '96px',
+    #         }
+    #     },
+    #     {'name': {'title': _('Name')}},
+    #     {'comments': {'title': _('Comments')}},
+    # ]
 
     def pre_save(self, fields: dict[str, typing.Any]) -> None:
         img_id = fields['image_id']
