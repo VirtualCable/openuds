@@ -67,7 +67,7 @@ class OsManagers(ModelHandler[OsManagerItem]):
 
     table_title = _('OS Managers')
     table_fields = (
-        ui_utils.TableFieldsBuilder(_('OS Managers'))
+        ui_utils.TableBuilder(_('OS Managers'))
         .icon(name='name', title=_('Name'))
         .string(name='type_name', title=_('Type'))
         .string(name='comments', title=_('Comments'))

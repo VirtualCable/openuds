@@ -73,7 +73,7 @@ class Calendars(ModelHandler[CalendarItem]):
 
     table_title = _('Calendars')
     table_Fields = (
-        ui_utils.TableFieldsBuilder(_('Calendars'))
+        ui_utils.TableBuilder(_('Calendars'))
         .string(name='name', title=_('Name'), visible=True)
         .string(name='comments', title=_('Comments'))
         .datetime(name='modified', title=_('Modified'))

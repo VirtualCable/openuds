@@ -106,7 +106,7 @@ class MetaPools(ModelHandler[MetaPoolItem]):
 
     table_title = _('Meta Pools')
     table_fields = (
-        ui_utils.TableFieldsBuilder(_('Meta Pools'))
+        ui_utils.TableBuilder(_('Meta Pools'))
         .string(name='name', title=_('Name'))
         .string(name='comments', title=_('Comments'))
         .dictionary(

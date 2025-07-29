@@ -71,7 +71,7 @@ class MFA(ModelHandler[MFAItem]):
     table_title = _('Multi Factor Authentication')
     
     table_fields = (
-        ui_utils.TableFieldsBuilder(_('Multi Factor Authentication'))
+        ui_utils.TableBuilder(_('Multi Factor Authentication'))
         .icon(name='name', title=_('Name'), visible=True)
         .string(name='type_name', title=_('Type'))
         .string(name='comments', title=_('Comments'))

@@ -75,7 +75,7 @@ class ActorTokens(ModelHandler[ActorTokenItem]):
 
     table_title = _('Actor tokens')
     table_fields = (
-        ui_utils.TableFieldsBuilder(_('Actor tokens'))
+        ui_utils.TableBuilder(_('Actor tokens'))
         .datetime('stamp', _('Date'))
         .string('username', _('Issued by'))
         .string('host', _('Origin'))

@@ -149,7 +149,7 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
 
     table_title = _('Service Pools')
     table_fields = (
-        ui_utils.TableFieldsBuilder(_('Service Pools'))
+        ui_utils.TableBuilder(_('Service Pools'))
         .string(name='name', title=_('Name'))
         .dictionary(name='state', title=_('Status'), dct=State.literals_dict())
         .number(name='user_services_count', title=_('User services'))

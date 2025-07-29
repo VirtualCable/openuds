@@ -67,7 +67,7 @@ class Images(ModelHandler[ImageItem]):
 
     table_title = _('Image Gallery')
     table_fields = (
-        ui_utils.TableFieldsBuilder(_('Image Gallery'))
+        ui_utils.TableBuilder(_('Image Gallery'))
         .image('thumb', _('Image'), width='96px')
         .string('name', _('Name'))
         .string('size', _('Size'))

@@ -79,7 +79,7 @@ class ServersTokens(ModelHandler[TokenItem]):
 
     table_title = _('Registered Servers')
     table_fields = (
-        ui_utils.TableFieldsBuilder(_('Registered Servers'))
+        ui_utils.TableBuilder(_('Registered Servers'))
         .string(name='hostname', title=_('Hostname'), visible=True)
         .string(name='ip', title=_('IP'), visible=True)
         .string(name='mac', title=_('MAC'), visible=True)
@@ -192,7 +192,7 @@ class ServersServers(DetailHandler[ServerItem]):
         parent = ensure.is_instance(parent, models.ServerGroup)
         
         fields = (
-            ui_utils.TableFieldsBuilder(_('Servers'))
+            ui_utils.TableBuilder(_('Servers'))
             .string(name='hostname', title=_('Hostname'))
             .string(name='ip', title=_('Ip'))
             .string(name='mac', title=_('Mac'))
@@ -476,7 +476,7 @@ class ServersGroups(ModelHandler[GroupItem]):
     table_title = _('Servers Groups')
     
     table_fields = (
-        ui_utils.TableFieldsBuilder(_('Servers Groups'))
+        ui_utils.TableBuilder(_('Servers Groups'))
         .string(name='name', title=_('Name'), visible=True)
         .string(name='comments', title=_('Comments'))
         .string(name='type_name', title=_('Type'), visible=True)

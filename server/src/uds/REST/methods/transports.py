@@ -84,7 +84,7 @@ class Transports(ModelHandler[TransportItem]):
 
     table_title = _('Transports')
     table_fields = (
-        ui_utils.TableFieldsBuilder(_('Transports'))
+        ui_utils.TableBuilder(_('Transports'))
         .number(name='priority', title=_('Priority'), width='6em')
         .icon(name='name', title=_('Name'))
         .string(name='type_name', title=_('Type'))

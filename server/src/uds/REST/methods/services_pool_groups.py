@@ -68,7 +68,7 @@ class ServicesPoolGroups(ModelHandler[ServicePoolGroupItem]):
     table_title = _('Services Pool Groups')
 
     table_fields = (
-        ui_utils.TableFieldsBuilder(_('Services Pool Groups'))
+        ui_utils.TableBuilder(_('Services Pool Groups'))
         .number(name='priority', title=_('Priority'), width='6em')
         .image(name='thumb', title=_('Image'), width='96px')
         .string(name='name', title=_('Name'))

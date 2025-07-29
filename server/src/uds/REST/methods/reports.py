@@ -78,7 +78,7 @@ class Reports(model.BaseModelHandler[ReportItem]):
 
     table_title = _('Available reports')
     table_fields = (
-        ui_utils.TableFieldsBuilder(_('Available reports'))
+        ui_utils.TableBuilder(_('Available reports'))
         .string(name='group', title=_('Group'), visible=True)
         .string(name='name', title=_('Name'), visible=True)
         .string(name='description', title=_('Description'), visible=True)

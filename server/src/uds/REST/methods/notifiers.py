@@ -80,7 +80,7 @@ class Notifiers(ModelHandler[NotifierItem]):
     table_title = _('Notifiers')
 
     table_fields = (
-        ui_utils.TableFieldsBuilder(_('Notifiers'))
+        ui_utils.TableBuilder(_('Notifiers'))
         .icon(name='name', title=_('Name'))
         .string(name='type_name', title=_('Type'))
         .string(name='level', title=_('Level'))

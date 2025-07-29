@@ -375,18 +375,22 @@ class GuiBuilder:
         return self.fields
 
 
-class TableFieldsBuilder:
+class TableBuilder:
     """
     Builds a list of table fields for REST API responses.
     """
 
-    table_title: str
+    title: str
+    subtitle: str | None
     fields: list[types.rest.TableField]
+    style_info: types.ui.RowStyleInfo
 
-    def __init__(self, table_name: str) -> None:
+    def __init__(self, title: str, subtitle: str | None = None) -> None:
         # TODO: USe table_name on a later iteration of the code
-        self.table_title = table_name
+        self.title = title
+        self.subtitle = subtitle
         self.fields = []
+        self.style_info = types.ui.RowStyleInfo.null()
 
     def _add_field(
         self,
@@ -482,6 +486,24 @@ class TableFieldsBuilder:
         Adds an image field to the table fields.
         """
         return self._add_field(name, title, types.rest.TableFieldType.IMAGE, visible, width)
+    
+    def row_style(self, row_style: types.ui.RowStyleInfo) -> typing.Self:
+        """
+        Sets the row style for the table fields.
+        """
+        self.style_info = row_style
+        return self
 
     def build(self) -> list[types.rest.TableField]:
         return self.fields
+
+    def table_info(self) -> types.rest.TableInfo:
+        """
+        Returns the table info for the table fields.
+        """
+        return types.rest.TableInfo(
+            title=self.title,
+            fields=self.fields,
+            row_style=self.style_info,
+            subtitle=self.subtitle,
+        )

@@ -70,7 +70,7 @@ class Networks(ModelHandler[NetworkItem]):
 
     table_title = _('Networks')
     table_fields = (
-        ui_utils.TableFieldsBuilder(_('Networks'))
+        ui_utils.TableBuilder(_('Networks'))
         .string('name', _('Name'))
         .string('net_string', _('Range'))
         .number('transports_count', _('Transports'), width='8em')

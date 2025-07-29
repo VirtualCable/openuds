@@ -78,7 +78,7 @@ class Accounts(ModelHandler[AccountItem]):
     table_title = _('Accounts')
 
     table_fields = (
-        ui_utils.TableFieldsBuilder(_('Accounts'))
+        ui_utils.TableBuilder(_('Accounts'))
         .string(name='name', title=_('Name'))
         .string(name='comments', title=_('Comments'))
         .callback(name='time_mark', title=_('Time mark'))

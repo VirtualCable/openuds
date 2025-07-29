@@ -90,7 +90,7 @@ class Providers(ModelHandler[ProviderItem]):
     table_title = _('Service providers')
 
     table_fields = (
-        ui_utils.TableFieldsBuilder(_('Service providers'))
+        ui_utils.TableBuilder(_('Service providers'))
         .icon(name='name', title=_('Name'))
         .string(name='type_name', title=_('Type'))
         .string(name='comments', title=_('Comments'))

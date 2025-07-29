@@ -85,7 +85,7 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
 
     table_title = _('Authenticators')
     table_fields = (
-        ui_utils.TableFieldsBuilder(_('Authenticators'))
+        ui_utils.TableBuilder(_('Authenticators'))
         .number(name='numeric_id', title=_('Id'), visible=True, width='1rem')
         .icon(name='name', title=_('Name'), visible=True)
         .string(name='type_name', title=_('Type'))

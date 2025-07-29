@@ -174,7 +174,7 @@ class Tunnels(ModelHandler[TunnelItem]):
 
     table_title = _('Tunnels')
     table_fields = (
-        ui_utils.TableFieldsBuilder(_('Tunnels'))
+        ui_utils.TableBuilder(_('Tunnels'))
         .icon(name='name', title=_('Name'))
         .string(name='comments', title=_('Comments'))
         .string(name='host', title=_('Host'))
