@@ -70,7 +70,7 @@ class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
     def get_permissions(self, obj: models.Model, root: bool = False) -> int:
         return permissions.effective_permissions(self._user, obj, root)
 
-    def extra_type_info(self, type_: type['Module']) -> typing.Optional[types.rest.ExtraTypeInfo]:
+    def extra_type_info(self, type_: type['Module']) -> types.rest.ExtraTypeInfo | None:
         """
         Returns info about the type
         In fact, right now, it returns an empty dict, that will be extended by typeAsDict
@@ -95,7 +95,7 @@ class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
         title: str,
         fields: list[typing.Any],
         row_style: types.ui.RowStyleInfo,
-        subtitle: typing.Optional[str] = None,
+        subtitle: str | None = None,
     ) -> types.rest.TableInfo:
         """
         Returns a dict containing the table fields description
@@ -108,7 +108,7 @@ class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
         )
 
     def fields_from_params(
-        self, fields_list: list[str], *, defaults: 'dict[str, typing.Any]|None' = None
+        self, fields_list: list[str], *, defaults: dict[str, typing.Any] | None = None
     ) -> dict[str, typing.Any]:
         """
         Reads the indicated fields from the parameters received, and if
@@ -116,9 +116,10 @@ class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
         :return: A dictionary containing all required fields
         """
         args: dict[str, str] = {}
-        default: typing.Optional[str]
+        default: str | None = None
         try:
             for key in fields_list:
+                # if : is in the field, it is an optional field, with an "static" default value
                 if ':' in key:  # optional field? get default if not present
                     k, default = key.split(':')[:2]
                     # Convert "None" to None
@@ -127,14 +128,15 @@ class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
                     if default == '_' and k not in self._params:
                         continue
                     args[k] = self._params.get(k, default)
-                else:
-                    try:
-                        args[key] = self._params[key]
-                    except KeyError:
-                        if defaults is not None and key in defaults:
+                else:  # Required field, with a possible default on defaults dict
+                    if key not in self._params:
+                        if defaults and key in defaults:
                             args[key] = defaults[key]
                         else:
-                            raise
+                            raise exceptions.rest.RequestError(f'needed parameter not found in data {key}')
+                    else:
+                        # Set the value
+                        args[key] = self._params[key]
 
                 # del self._params[key]
         except KeyError as e:
@@ -186,7 +188,7 @@ class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
             res['instance'] = fields
 
     # Exceptions
-    def invalid_request_response(self, message: typing.Optional[str] = None) -> exceptions.rest.HandlerError:
+    def invalid_request_response(self, message: str | None = None) -> exceptions.rest.HandlerError:
         """
         Raises an invalid request error with a default translated string
         :param message: Custom message to add to exception. If it is None, "Invalid Request" is used
@@ -194,7 +196,7 @@ class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
         message = message or _('Invalid Request')
         return exceptions.rest.RequestError(f'{message} {self.__class__}: {self._args}')
 
-    def invalid_response_response(self, message: typing.Optional[str] = None) -> exceptions.rest.HandlerError:
+    def invalid_response_response(self, message: str | None = None) -> exceptions.rest.HandlerError:
         message = 'Invalid response' if message is None else message
         return exceptions.rest.ResponseError(message)
 
@@ -204,7 +206,7 @@ class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
         """
         return exceptions.rest.RequestError(_('Method not found in {}: {}').format(self.__class__, self._args))
 
-    def invalid_item_response(self, message: typing.Optional[str] = None) -> exceptions.rest.HandlerError:
+    def invalid_item_response(self, message: str | None = None) -> exceptions.rest.HandlerError:
         """
         Raises a NotFound exception, with location info
         """
@@ -212,16 +214,16 @@ class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
         return exceptions.rest.NotFound(message)
         # raise NotFound('{} {}: {}'.format(message, self.__class__, self._args))
 
-    def access_denied_response(self, message: typing.Optional[str] = None) -> exceptions.rest.HandlerError:
+    def access_denied_response(self, message: str | None = None) -> exceptions.rest.HandlerError:
         return exceptions.rest.AccessDenied(message or _('Access denied'))
 
-    def not_supported_response(self, message: typing.Optional[str] = None) -> exceptions.rest.HandlerError:
+    def not_supported_response(self, message: str | None = None) -> exceptions.rest.HandlerError:
         return exceptions.rest.NotSupportedError(message or _('Operation not supported'))
 
     # Success methods
     def success(self) -> str:
         """
-        Utility method to be invoked for simple methods that returns nothing in fact
+        Utility method to be invoked for simple methods that returns a simple OK response
         """
         logger.debug('Returning success on %s %s', self.__class__, self._args)
         return consts.OK
