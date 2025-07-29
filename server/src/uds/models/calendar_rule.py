@@ -78,6 +78,12 @@ class FrequencyInfo(enum.Enum):
             return FrequencyInfo[value]
         except KeyError:
             return FrequencyInfo.YEARLY
+        
+    @staticmethod
+    def literals_dict() -> dict[str, str]:
+        return {str(f.name): str(f.value.title) for f in FrequencyInfo}
+
+
 
 
 @dataclasses.dataclass
@@ -166,7 +172,7 @@ class CalendarRule(UUIDModel):
                 rules.YEARLY, interval=1000, dtstart=dstart, until=dstart + datetime.timedelta(days=1)
             )
         return rules.rrule(
-            FrequencyInfo.from_str(self.frequency).value.rule,
+            typing.cast(typing.Literal[0, 1, 2, 3, 4, 5, 6], FrequencyInfo.from_str(self.frequency).value.rule),
             interval=self.interval,
             dtstart=dstart,
             until=end,
