@@ -34,7 +34,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import abc
 import typing
 import dataclasses
-import collections.abc
 
 from . import doc
 from . import stock
@@ -42,32 +41,6 @@ from . import stock
 if typing.TYPE_CHECKING:
     from uds.REST.handlers import Handler
     from uds.core import types
-
-
-# Type related definitions
-TypeInfoDict: typing.TypeAlias = dict[str, typing.Any]  # Alias for type info dict
-
-
-class ExtraTypeInfo(abc.ABC):
-    def as_dict(self) -> TypeInfoDict:
-        return {}
-
-
-@dataclasses.dataclass
-class AuthenticatorTypeInfo(ExtraTypeInfo):
-    search_users_supported: bool
-    search_groups_supported: bool
-    needs_password: bool
-    label_username: str
-    label_groupname: str
-    label_password: str
-    create_users_supported: bool
-    is_external: bool
-    mfa_data_enabled: bool
-    mfa_supported: bool
-
-    def as_dict(self) -> TypeInfoDict:
-        return dataclasses.asdict(self)
 
 
 @dataclasses.dataclass
@@ -81,7 +54,7 @@ class TypeInfo:
 
     extra: 'ExtraTypeInfo|None' = None
 
-    def as_dict(self) -> TypeInfoDict:
+    def as_dict(self) -> dict[str, typing.Any]:
         res: dict[str, typing.Any] = {
             'name': self.name,
             'type': self.type,
@@ -100,6 +73,28 @@ class TypeInfo:
     @staticmethod
     def null() -> 'TypeInfo':
         return TypeInfo(name='', type='', description='', icon='', extra=None)
+
+
+class ExtraTypeInfo(abc.ABC):
+    def as_dict(self) -> dict[str, typing.Any]:
+        return {}
+
+
+@dataclasses.dataclass
+class AuthenticatorTypeInfo(ExtraTypeInfo):
+    search_users_supported: bool
+    search_groups_supported: bool
+    needs_password: bool
+    label_username: str
+    label_groupname: str
+    label_password: str
+    create_users_supported: bool
+    is_external: bool
+    mfa_data_enabled: bool
+    mfa_supported: bool
+
+    def as_dict(self) -> dict[str, typing.Any]:
+        return dataclasses.asdict(self)
 
 
 # This is a named tuple for convenience, and must be

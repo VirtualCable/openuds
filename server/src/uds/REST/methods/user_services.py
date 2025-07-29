@@ -51,6 +51,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 class UserServiceItem(types.rest.BaseRestItem):
     id: str
     id_deployed_service: str
@@ -79,13 +80,13 @@ class UserServiceItem(types.rest.BaseRestItem):
     source_host: typing.NotRequired[str]
     source_ip: typing.NotRequired[str]
 
+
 class AssignedUserService(DetailHandler[UserServiceItem]):
     """
     Rest handler for Assigned Services, wich parent is Service
     """
 
     custom_methods = ['reset']
-
 
     @staticmethod
     def item_as_dict(
@@ -101,9 +102,7 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
         if props is None:
             props = dict(item.properties)
 
-        val: (
-            UserServiceItem
-        ) = {
+        val: UserServiceItem = {
             'id': item.uuid,
             'id_deployed_service': item.deployed_service.uuid,
             'unique_id': item.unique_id,
@@ -369,6 +368,7 @@ class CachedService(AssignedUserService):
         except Exception:
             raise self.invalid_item_response() from None
 
+
 class GroupItem(types.rest.BaseRestItem):
     id: str
     auth_id: str
@@ -379,15 +379,13 @@ class GroupItem(types.rest.BaseRestItem):
     type: str
     auth_name: str
 
+
 class Groups(DetailHandler[GroupItem]):
     """
     Processes the groups detail requests of a Service Pool
     """
 
-
-    def get_items(
-        self, parent: 'Model', item: typing.Optional[str]
-    ) -> list['GroupItem']:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> list['GroupItem']:
         parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
 
         return [
@@ -461,14 +459,14 @@ class Groups(DetailHandler[GroupItem]):
             types.log.LogSource.ADMIN,
         )
 
+
 class TransportItem(types.rest.BaseRestItem):
     id: str
     name: str
-    type: types.rest.TypeInfoDict
+    type: dict[str, typing.Any]  # TypeInfo
     comments: str
     priority: int
     trans_type: str
-
 
 
 class Transports(DetailHandler[TransportItem]):
@@ -476,31 +474,20 @@ class Transports(DetailHandler[TransportItem]):
     Processes the transports detail requests of a Service Pool
     """
 
-    def get_items(
-        self, parent: 'Model', item: typing.Optional[str]
-    ) -> list['TransportItem']:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> list['TransportItem']:
         parent = ensure.is_instance(parent, models.ServicePool)
 
-        def get_type(trans: 'models.Transport') -> types.rest.TypeInfoDict:
-            try:
-                return self.as_typeinfo(trans.get_type()).as_dict()
-            except Exception:  # No type found
-                raise self.invalid_item_response()
-
-        items: list[TransportItem] = [
+        return [
             {
-                'id': i.uuid,
-                'name': i.name,
-                'type': get_type(i),
-                'comments': i.comments,
-                'priority': i.priority,
-                'trans_type': i.get_type().mod_name(),
+                'id': trans.uuid,
+                'name': trans.name,
+                'type': self.as_typeinfo(trans.get_type()).as_dict(),
+                'comments': trans.comments,
+                'priority': trans.priority,
+                'trans_type': trans.get_type().mod_name(),
             }
-            for i in parent.transports.all()
-            if get_type(i)
+            for trans in parent.transports.all()
         ]
-
-        return items
 
     def get_title(self, parent: 'Model') -> str:
         parent = ensure.is_instance(parent, models.ServicePool)
@@ -537,6 +524,7 @@ class Transports(DetailHandler[TransportItem]):
             f'Removed transport {transport.name} by {self._user.pretty_name}',
             types.log.LogSource.ADMIN,
         )
+
 
 class PublicationItem(types.rest.BaseRestItem):
     id: str
@@ -611,9 +599,7 @@ class Publications(DetailHandler[PublicationItem]):
 
         return self.success()
 
-    def get_items(
-        self, parent: 'Model', item: typing.Optional[str]
-    ) -> list['PublicationItem']:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> list['PublicationItem']:
         parent = ensure.is_instance(parent, models.ServicePool)
         return [
             {
@@ -648,6 +634,7 @@ class Publications(DetailHandler[PublicationItem]):
     def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
         return types.ui.RowStyleInfo(prefix='row-state-', field='state')
 
+
 class ChangelogItem(types.rest.BaseRestItem):
     revision: int
     stamp: datetime.datetime
@@ -659,10 +646,7 @@ class Changelog(DetailHandler['ChangelogItem']):
     Processes the transports detail requests of a Service Pool
     """
 
-
-    def get_items(
-        self, parent: 'Model', item: typing.Optional[str]
-    ) -> list['ChangelogItem']:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> list['ChangelogItem']:
         parent = ensure.is_instance(parent, models.ServicePool)
         return [
             {
