@@ -36,12 +36,13 @@ import enum
 import typing
 import dataclasses
 
+from uds.core import types
+
 from . import doc
 from . import stock
 
 if typing.TYPE_CHECKING:
     from uds.REST.handlers import Handler
-    from uds.core import types
 
 
 @dataclasses.dataclass
@@ -138,13 +139,13 @@ class TableFieldType(enum.StrEnum):
 
     NUMERIC = 'numeric'
     ALPHANUMERIC = 'alphanumeric'
+    BOOLEAN = 'boolean'
     DATETIME = 'datetime'
     DATETIMESEC = 'datetimesec'
     DATE = 'date'
     TIME = 'time'
-    ICON = 'icontype'
-    CALLBACK = 'callback'
-    DICTIONARY = 'dict'
+    ICON = 'icon'
+    DICTIONARY = 'dictionary'
     IMAGE = 'image'
 
 
@@ -166,12 +167,30 @@ class TableField:
     def as_dict(self) -> dict[str, typing.Any]:
         # Only return the fields that are set
 
-        res: dict[str|int, typing.Any] = {'title': self.title, 'type': self.type.value, 'visible': self.visible}
+        res: dict[str | int, typing.Any] = {
+            'title': self.title,
+            'type': self.type.value,
+            'visible': self.visible,
+        }
         if self.dct:
             res['dict'] = self.dct
         if self.width:
             res['width'] = self.width
         return {self.name: res}  # Return as a dictionary with the field name as key
+
+
+@dataclasses.dataclass
+class RowStyleInfo:
+    prefix: str
+    field: str
+
+    def as_dict(self) -> dict[str, typing.Any]:
+        """Returns a dict with all fields that are not None"""
+        return dataclasses.asdict(self)
+
+    @staticmethod
+    def null() -> 'RowStyleInfo':
+        return RowStyleInfo('', '')
 
 
 @dataclasses.dataclass
@@ -183,7 +202,7 @@ class TableInfo:
 
     title: str
     fields: list[TableField]  # List of fields in the table
-    row_style: 'types.ui.RowStyleInfo'
+    row_style: 'RowStyleInfo'
     subtitle: typing.Optional[str] = None
 
     def as_dict(self) -> dict[str, typing.Any]:
@@ -193,6 +212,13 @@ class TableInfo:
             'row_style': self.row_style.as_dict(),
             'subtitle': self.subtitle or '',
         }
+
+    @staticmethod
+    def null() -> 'TableInfo':
+        """
+        Returns a null TableInfo instance, with no fields and an empty title.
+        """
+        return TableInfo(title='', fields=[], row_style=RowStyleInfo.null(), subtitle=None)
 
 
 @dataclasses.dataclass(frozen=True)

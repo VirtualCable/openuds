@@ -37,7 +37,8 @@ import typing
 from django.utils.translation import gettext as _
 
 from uds.core import exceptions, types
-from uds.core.util import ensure, permissions
+from uds.core.types.rest import TableInfo
+from uds.core.util import ensure, permissions, ui as ui_utils
 from uds.core.util.model import process_uuid
 from uds.models import Account, AccountUsage
 from uds.REST.model import DetailHandler
@@ -102,19 +103,20 @@ class AccountsUsage(DetailHandler[AccountItem]):  # pylint: disable=too-many-pub
             logger.exception('itemId %s', item)
             raise self.invalid_item_response()
 
-    def get_fields(self, parent: 'Model') -> list[typing.Any]:
-        return [
-            {'pool_name': {'title': _('Pool name')}},
-            {'user_name': {'title': _('User name')}},
-            {'running': {'title': _('Running')}},
-            {'start': {'title': _('Starts'), 'type': 'datetime'}},
-            {'end': {'title': _('Ends'), 'type': 'datetime'}},
-            {'elapsed': {'title': _('Elapsed')}},
-            {'elapsed_timemark': {'title': _('Elapsed timemark')}},
-        ]
-
-    def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
-        return types.ui.RowStyleInfo(prefix='row-running-', field='running')
+    def get_table_info(self, parent: 'Model') -> TableInfo:
+        parent = ensure.is_instance(parent, Account)
+        return (
+            ui_utils.TableBuilder(_('Usages of {0}').format(parent.name))
+            .string(name='pool_name', title=_('Pool name'))
+            .string(name='user_name', title=_('User name'))
+            .string(name='running', title=_('Running'))
+            .datetime(name='start', title=_('Starts'))
+            .datetime(name='end', title=_('Ends'))
+            .string(name='elapsed', title=_('Elapsed'))
+            .datetime(name='elapsed_timemark', title=_('Elapsed timemark'))
+            .row_style(prefix='row-running-', field='running')
+            .build()
+        )
 
     def save_item(self, parent: 'Model', item: typing.Optional[str]) -> AccountItem:
         raise exceptions.rest.RequestError('Accounts usage cannot be edited')
@@ -128,10 +130,3 @@ class AccountsUsage(DetailHandler[AccountItem]):  # pylint: disable=too-many-pub
         except Exception:
             logger.exception('Exception')
             raise self.invalid_item_response()
-
-    def get_title(self, parent: 'Model') -> str:
-        parent = ensure.is_instance(parent, Account)
-        try:
-            return _('Usages of {0}').format(parent.name)
-        except Exception:
-            return _('Current usages')

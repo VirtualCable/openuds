@@ -75,17 +75,16 @@ class Accounts(ModelHandler[AccountItem]):
 
     save_fields = ['name', 'comments', 'tags']
 
-    table_title = _('Accounts')
-
-    table_fields = (
+    table_info = (
         ui_utils.TableBuilder(_('Accounts'))
         .string(name='name', title=_('Name'))
         .string(name='comments', title=_('Comments'))
-        .callback(name='time_mark', title=_('Time mark'))
+        .datetime(name='time_mark', title=_('Time mark'))
         .string(name='tags', title=_('tags'), visible=False)
         .build()
     )
 
+    # table_title = _('Accounts')
     # xtable_fields = [
     #     {'name': {'title': _('Name'), 'visible': True}},
     #     {'comments': {'title': _('Comments')}},
