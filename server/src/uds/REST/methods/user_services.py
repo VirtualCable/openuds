@@ -236,7 +236,7 @@ class AssignedService(DetailHandler):
         if not item:
             raise self.invalid_item_response('Only modify is allowed')
         fields = self.fields_from_params(['auth_id:_', 'user_id:_', 'ip:_'])
-        
+
         userservice = parent.userServices.get(uuid=process_uuid(item))
         if 'user_id' in fields and 'auth_id' in fields:
             user = models.User.objects.get(uuid=process_uuid(fields['user_id']))
@@ -307,17 +307,11 @@ class CachedService(AssignedService):
             {'creation_date': {'title': _('Creation date'), 'type': 'datetime'}},
             {'revision': {'title': _('Revision')}},
             {'unique_id': {'title': 'Unique ID'}},
-            {'ip': {'title': _('IP')}},
             {'friendly_name': {'title': _('Friendly name')}},
+            {'state': {'title': _('State'), 'type': 'dict', 'dict': State.literals_dict()}},
         ] + (
             [
-                {
-                    'state': {
-                        'title': _('State'),
-                        'type': 'dict',
-                        'dict': State.literals_dict(),
-                    }
-                },
+                {'ip': {'title': _('IP')}},
                 {'cache_level': {'title': _('Cache level')}},
                 {'actor_version': {'title': _('Actor version')}},
             ]
