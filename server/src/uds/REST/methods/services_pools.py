@@ -158,7 +158,7 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
         .boolean(name='show_transports', title=_('Shows transports'))
         .string(name='pool_group_name', title=_('Pool group'))
         .string(name='parent', title=_('Parent service'))
-        .string(name='tags', title=_('tags'))
+        .string(name='tags', title=_('tags'), visible=False)
         .row_style(prefix='row-state-', field='state')
         .build()
     )
