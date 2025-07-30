@@ -86,15 +86,6 @@ class Reports(model.BaseModelHandler[ReportItem]):
         .build()
     )
 
-    # table_title = _('Available reports')
-    # xtable_fields = [
-    #     {'group': {'title': _('Group')}},
-    #     {'name': {'title': _('Name')}},
-    #     {'description': {'title': _('Description')}},
-    #     {'mime_type': {'title': _('Generates')}},
-    # ]
-    # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
-
     def _locate_report(
         self, uuid: str, values: typing.Optional[typing.Dict[str, typing.Any]] = None
     ) -> 'Report':

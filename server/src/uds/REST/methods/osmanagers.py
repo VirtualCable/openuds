@@ -75,15 +75,6 @@ class OsManagers(ModelHandler[OsManagerItem]):
         .build()
     )
 
-    # table_title = _('OS Managers')
-    # xtable_fields = [
-    #     {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
-    #     {'type_name': {'title': _('Type')}},
-    #     {'comments': {'title': _('Comments')}},
-    #     {'deployed_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}},
-    #     {'tags': {'title': _('tags'), 'visible': False}},
-    # ]
-
     def os_manager_as_dict(self, osm: OSManager) -> OsManagerItem:
         type_ = osm.get_type()
         ret_value: OsManagerItem = {

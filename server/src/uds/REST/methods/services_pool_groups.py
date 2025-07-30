@@ -61,7 +61,7 @@ class ServicePoolGroupItem(types.rest.BaseRestItem):
 
 class ServicesPoolGroups(ModelHandler[ServicePoolGroupItem]):
 
-    path = 'gallery'
+    PATH = 'gallery'
     MODEL = ServicePoolGroup
     FIELDS_TO_SAVE = ['name', 'comments', 'image_id', 'priority']
 
@@ -73,21 +73,6 @@ class ServicesPoolGroups(ModelHandler[ServicePoolGroupItem]):
         .text_column(name='comments', title=_('Comments'))
         .build()
     )
-
-    # table_title = _('Services Pool Groups')
-    # xtable_fields = [
-    #     {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
-    #     {
-    #         'thumb': {
-    #             'title': _('Image'),
-    #             'visible': True,
-    #             'type': 'image',
-    #             'width': '96px',
-    #         }
-    #     },
-    #     {'name': {'title': _('Name')}},
-    #     {'comments': {'title': _('Comments')}},
-    # ]
 
     def pre_save(self, fields: dict[str, typing.Any]) -> None:
         img_id = fields['image_id']

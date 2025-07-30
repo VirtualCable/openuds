@@ -84,14 +84,6 @@ class Accounts(ModelHandler[AccountItem]):
         .build()
     )
 
-    # table_title = _('Accounts')
-    # xtable_fields = [
-    #     {'name': {'title': _('Name'), 'visible': True}},
-    #     {'comments': {'title': _('Comments')}},
-    #     {'time_mark': {'title': _('Time mark'), 'type': 'callback'}},
-    #     {'tags': {'title': _('tags'), 'visible': False}},
-    # ]
-
     def item_as_dict(self, item: 'Model') -> AccountItem:
         item = ensure.is_instance(item, Account)
         return {

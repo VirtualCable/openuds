@@ -61,7 +61,7 @@ class Images(ModelHandler[ImageItem]):
     Handles the gallery REST interface
     """
 
-    path = 'gallery'
+    PATH = 'gallery'
     MODEL = Image
     FIELDS_TO_SAVE = ['name', 'data']
 

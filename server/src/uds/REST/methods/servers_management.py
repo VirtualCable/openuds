@@ -75,8 +75,8 @@ class ServersTokens(ModelHandler[TokenItem]):
             types.servers.ServerType.UNMANAGED,
         ]
     }
-    path = 'servers'
-    name = 'tokens'
+    PATH = 'servers'
+    NAME = 'tokens'
 
     TABLE = (
         ui_utils.TableBuilder(_('Registered Servers'))
@@ -432,8 +432,8 @@ class ServersGroups(ModelHandler[GroupItem]):
     }
     DETAIL = {'servers': ServersServers}
 
-    path = 'servers'
-    name = 'groups'
+    PATH = 'servers'
+    NAME = 'groups'
 
     FIELDS_TO_SAVE = ['name', 'comments', 'type', 'tags']  # Subtype is appended on pre_save
 
@@ -448,17 +448,6 @@ class ServersGroups(ModelHandler[GroupItem]):
         .text_column(name='tags', title=_('tags'), visible=False)
         .build()
     )
-
-    # table_title = _('Servers Groups')
-    # xtable_fields = [
-    #     {'name': {'title': _('Name')}},
-    #     {'comments': {'title': _('Comments')}},
-    #     {'type_name': {'title': _('Type')}},
-    #     {'type': {'title': '', 'visible': False}},
-    #     {'subtype': {'title': _('Subtype')}},
-    #     {'servers_count': {'title': _('Servers')}},
-    #     {'tags': {'title': _('tags'), 'visible': False}},
-    # ]
 
     def get_types(
         self, *args: typing.Any, **kwargs: typing.Any

@@ -28,7 +28,6 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import enum
 import functools
 import logging
 import time
@@ -62,16 +61,6 @@ logger = logging.getLogger(__name__)
 
 # Cache the "failed login attempts" for a given IP
 cache = Cache('actorv3')
-
-
-class NotifyActionType(enum.StrEnum):
-    LOGIN = 'login'
-    LOGOUT = 'logout'
-    DATA = 'data'
-
-    @staticmethod
-    def valid_names() -> list[str]:
-        return [e.value for e in NotifyActionType]
 
 
 # Helpers
@@ -146,7 +135,8 @@ def clear_failed_ip_counter(request: 'ExtendedHttpRequest') -> None:
 
 class ActorV3Action(Handler):
     ROLE = consts.UserRole.ANONYMOUS
-    path = 'actor/v3'
+    PATH = 'actor/v3'
+    NAME = 'actorv3'
 
     @staticmethod
     def actor_result(result: typing.Any = None, **kwargs: typing.Any) -> dict[str, typing.Any]:
@@ -197,7 +187,7 @@ class ActorV3Action(Handler):
         raise exceptions.rest.AccessDenied('Access denied')
 
     # Some helpers
-    def notify_service(self, action: NotifyActionType) -> None:
+    def notify_service(self, action: types.rest.actor.NotifyActionType) -> None:
         """
         Notifies the Service (not userservice) that an action has been performed
 
@@ -227,17 +217,17 @@ class ActorV3Action(Handler):
             is_remote = self._params.get('session_type', '')[:4] in ('xrdp', 'RDP-')
 
             # Must be valid
-            if action in (NotifyActionType.LOGIN, NotifyActionType.LOGOUT):
+            if action in (types.rest.actor.NotifyActionType.LOGIN, types.rest.actor.NotifyActionType.LOGOUT):
                 if not service_id:  # For login/logout, we need a valid id
                     raise Exception()
                 # Notify Service that someone logged in/out
 
-                if action == NotifyActionType.LOGIN:
+                if action == types.rest.actor.NotifyActionType.LOGIN:
                     # Try to guess if this is a remote session
                     service.process_login(service_id, remote_login=is_remote)
-                elif action == NotifyActionType.LOGOUT:
+                elif action == types.rest.actor.NotifyActionType.LOGOUT:
                     service.process_logout(service_id, remote_login=is_remote)
-            elif action == NotifyActionType.DATA:
+            elif action == types.rest.actor.NotifyActionType.DATA:
                 service.notify_data(service_id, self._params['data'])
             else:
                 raise Exception('Invalid action')
@@ -254,7 +244,7 @@ class Test(ActorV3Action):
     Tests UDS Broker actor connectivity & key
     """
 
-    name = 'test'
+    NAME = 'test'
 
     def action(self) -> dict[str, typing.Any]:
         # First, try to locate an user service providing this token.
@@ -293,7 +283,7 @@ class Register(ActorV3Action):
 
     ROLE = consts.UserRole.STAFF
 
-    name = 'register'
+    NAME = 'register'
 
     def post(self) -> dict[str, typing.Any]:
         # If already exists a token for this MAC, return it instead of creating a new one, and update the information...
@@ -367,7 +357,7 @@ class Initialize(ActorV3Action):
     Also returns the id used for the rest of the actions. (Only this one will use actor key)
     """
 
-    name = 'initialize'
+    NAME = 'initialize'
 
     def action(self) -> dict[str, typing.Any]:
         """
@@ -506,7 +496,7 @@ class BaseReadyChange(ActorV3Action):
     Records the IP change of actor
     """
 
-    name = 'notused'  # Not really important, this is not a "leaf" class and will not be directly available
+    NAME = 'notused'  # Not really important, this is not a "leaf" class and will not be directly available
 
     def action(self) -> dict[str, typing.Any]:
         """
@@ -566,7 +556,7 @@ class IpChange(BaseReadyChange):
     Processses IP Change.
     """
 
-    name = 'ipchange'
+    NAME = 'ipchange'
 
 
 class Ready(BaseReadyChange):
@@ -574,7 +564,7 @@ class Ready(BaseReadyChange):
     Notifies the user service is ready
     """
 
-    name = 'ready'
+    NAME = 'ready'
 
     def action(self) -> dict[str, typing.Any]:
         """
@@ -594,7 +584,7 @@ class Ready(BaseReadyChange):
 
         # Set as "inUse" to false because a ready can only ocurr if an user is not logged in
         # Note that an assigned dynamic user service that gets "restarted", will be marked as not in use
-        # until it's logged ing again. So, id the system has 
+        # until it's logged ing again. So, id the system has
         userservice = self.get_userservice()
         userservice.set_in_use(False)
 
@@ -607,7 +597,7 @@ class Version(ActorV3Action):
     Used on possible "customized" actors.
     """
 
-    name = 'version'
+    NAME = 'version'
 
     def action(self) -> dict[str, typing.Any]:
         logger.debug('Version Args: %s,  Params: %s', self._args, self._params)
@@ -623,7 +613,7 @@ class Login(ActorV3Action):
     Notifies user logged id
     """
 
-    name = 'login'
+    NAME = 'login'
 
     # payload received
     #   {
@@ -672,7 +662,7 @@ class Login(ActorV3Action):
         ):  # If unamanaged host, lest do a bit more work looking for a service with the provided parameters...
             if is_managed:
                 raise
-            self.notify_service(action=NotifyActionType.LOGIN)
+            self.notify_service(action=types.rest.actor.NotifyActionType.LOGIN)
 
         return ActorV3Action.actor_result(
             {
@@ -691,7 +681,7 @@ class Logout(ActorV3Action):
     Notifies user logged out
     """
 
-    name = 'logout'
+    NAME = 'logout'
 
     @staticmethod
     def process_logout(userservice: UserService, username: str, session_id: str) -> None:
@@ -725,7 +715,7 @@ class Logout(ActorV3Action):
         except Exception:
             if is_managed:
                 raise
-            self.notify_service(NotifyActionType.LOGOUT)  # Logout notification
+            self.notify_service(types.rest.actor.NotifyActionType.LOGOUT)  # Logout notification
             # Result is that we have not processed the logout in fact, but notified the service
             return ActorV3Action.actor_result('notified')
 
@@ -737,7 +727,7 @@ class Log(ActorV3Action):
     Sends a log from the service
     """
 
-    name = 'log'
+    NAME = 'log'
 
     def action(self) -> dict[str, typing.Any]:
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
@@ -762,7 +752,7 @@ class Ticket(ActorV3Action):
     Gets an stored ticket
     """
 
-    name = 'ticket'
+    NAME = 'ticket'
 
     def action(self) -> dict[str, typing.Any]:
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
@@ -782,7 +772,7 @@ class Ticket(ActorV3Action):
 
 
 class Unmanaged(ActorV3Action):
-    name = 'unmanaged'
+    NAME = 'unmanaged'
 
     def action(self) -> dict[str, typing.Any]:
         """
@@ -868,7 +858,7 @@ class Unmanaged(ActorV3Action):
 
 
 class Notify(ActorV3Action):
-    name = 'notify'
+    NAME = 'notify'
 
     def post(self) -> dict[str, typing.Any]:
         # Raplaces original post (non existent here)
@@ -877,7 +867,7 @@ class Notify(ActorV3Action):
     def get(self) -> collections.abc.MutableMapping[str, typing.Any]:
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
         try:
-            action = NotifyActionType(self._params['action'])
+            action = types.rest.actor.NotifyActionType(self._params['action'])
             _token = self._params['token']  # Just to check it exists
         except Exception as e:
             # Requested login, logout or whatever
@@ -886,11 +876,11 @@ class Notify(ActorV3Action):
         try:
             # Check block manually
             check_ip_is_blocked(self._request)  # pylint: disable=protected-access
-            if action == NotifyActionType.LOGIN:
+            if action == types.rest.actor.NotifyActionType.LOGIN:
                 Login.action(typing.cast(Login, self))
-            elif action == NotifyActionType.LOGOUT:
+            elif action == types.rest.actor.NotifyActionType.LOGOUT:
                 Logout.action(typing.cast(Logout, self))
-            elif action == NotifyActionType.DATA:
+            elif action == types.rest.actor.NotifyActionType.DATA:
                 self.notify_service(action)
 
             return ActorV3Action.actor_result('ok')

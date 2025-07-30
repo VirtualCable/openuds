@@ -55,7 +55,7 @@ class Login(Handler):
     Responsible of user authentication
     """
 
-    path = 'auth'
+    PATH = 'auth'
     ROLE = consts.UserRole.ANONYMOUS
 
     @staticmethod
@@ -205,8 +205,8 @@ class Logout(Handler):
     Responsible of user de-authentication
     """
 
-    path = 'auth'
-    authenticated = True  # By default, all handlers needs authentication
+    PATH = 'auth'
+    ROLE = consts.UserRole.USER  # Must be logged in to logout :)
 
     def get(self) -> typing.Any:
         # Remove auth token
@@ -218,7 +218,7 @@ class Logout(Handler):
 
 
 class Auths(Handler):
-    path = 'auth'
+    PATH = 'auth'
     ROLE = consts.UserRole.ANONYMOUS
 
     def auths(self) -> collections.abc.Iterable[dict[str, typing.Any]]:

@@ -78,34 +78,6 @@ class Networks(ModelHandler[NetworkItem]):
         .build()
     )
 
-    # table_title = _('Networks')
-    # xtable_fields = [
-    #     {
-    #         'name': {
-    #             'title': _('Name'),
-    #             'visible': True,
-    #             'type': 'icon',
-    #             'icon': 'fa fa-globe text-success',
-    #         }
-    #     },
-    #     {'net_string': {'title': _('Range')}},
-    #     {
-    #         'transports_count': {
-    #             'title': _('Transports'),
-    #             'type': 'numeric',
-    #             'width': '8em',
-    #         }
-    #     },
-    #     {
-    #         'authenticators_count': {
-    #             'title': _('Authenticators'),
-    #             'type': 'numeric',
-    #             'width': '8em',
-    #         }
-    #     },
-    #     {'tags': {'title': _('tags'), 'visible': False}},
-    # ]
-
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
         return (
             ui_utils.GuiBuilder()

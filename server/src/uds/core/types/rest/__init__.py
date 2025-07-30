@@ -40,6 +40,7 @@ from uds.core import types
 
 from . import doc
 from . import stock
+from . import actor
 
 if typing.TYPE_CHECKING:
     from uds.REST.handlers import Handler
@@ -350,7 +351,7 @@ class HandlerNode:
                     [],
                     help_node_type,
                 )
-                for help_info in handler.help_paths
+                for help_info in handler.HELP_PATHS
             }
 
         custom_help |= {child.help_node() for child in self.children.values()}

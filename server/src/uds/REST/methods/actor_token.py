@@ -88,21 +88,6 @@ class ActorTokens(ModelHandler[ActorTokenItem]):
         .build()
     )
 
-    # table_title = _('Actor tokens')
-    # xtable_fields = [
-    #     # {'token': {'title': _('Token')}},
-    #     {'stamp': {'title': _('Date'), 'type': 'datetime'}},
-    #     {'username': {'title': _('Issued by')}},
-    #     {'host': {'title': _('Origin')}},
-    #     {'version': {'title': _('Version')}},
-    #     {'hostname': {'title': _('Hostname')}},
-    #     {'pre_command': {'title': _('Pre-connect')}},
-    #     {'post_command': {'title': _('Post-Configure')}},
-    #     {'run_once_command': {'title': _('Run Once')}},
-    #     {'log_level': {'title': _('Log level')}},
-    #     {'os': {'title': _('OS')}},
-    # ]
-
     def item_as_dict(self, item: 'Model') -> ActorTokenItem:
         item = ensure.is_instance(item, Server)
         data: dict[str, typing.Any] = item.data or {}

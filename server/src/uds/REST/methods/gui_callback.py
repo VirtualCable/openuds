@@ -46,7 +46,7 @@ class Callback(Handler):
     API:
         Executes a callback from the GUI. Internal use, not intended to be called from outside.
     """
-    path = 'gui'
+    PATH = 'gui'
 
     ROLE = consts.UserRole.STAFF
 

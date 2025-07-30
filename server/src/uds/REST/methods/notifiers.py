@@ -67,7 +67,7 @@ class NotifierItem(types.rest.BaseRestItem):
 
 class Notifiers(ModelHandler[NotifierItem]):
 
-    path = 'messaging'
+    PATH = 'messaging'
     MODEL = Notifier
     FIELDS_TO_SAVE = [
         'name',
@@ -86,16 +86,6 @@ class Notifiers(ModelHandler[NotifierItem]):
         .text_column(name='comments', title=_('Comments'))
         .text_column(name='tags', title=_('Tags'), visible=False)
     ).build()
-
-    # table_title = _('Notifiers')
-    # xtable_fields = [
-    #     {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
-    #     {'type_name': {'title': _('Type')}},
-    #     {'level': {'title': _('Level')}},
-    #     {'enabled': {'title': _('Enabled')}},
-    #     {'comments': {'title': _('Comments')}},
-    #     {'tags': {'title': _('tags'), 'visible': False}},
-    # ]
 
     def enum_types(self) -> collections.abc.Iterable[type[messaging.Notifier]]:
         return messaging.factory().providers().values()

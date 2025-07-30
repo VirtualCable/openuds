@@ -93,22 +93,6 @@ class Transports(ModelHandler[TransportItem]):
         .text_column(name='tags', title=_('tags'), visible=False)
     ).build()
 
-    # table_fields = [
-    #     {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
-    #     {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
-    #     {'type_name': {'title': _('Type')}},
-    #     {'comments': {'title': _('Comments')}},
-    #     {
-    #         'pools_count': {
-    #             'title': _('Service Pools'),
-    #             'type': 'numeric',
-    #             'width': '6em',
-    #         }
-    #     },
-    #     {'allowed_oss': {'title': _('Devices'), 'width': '8em'}},
-    #     {'tags': {'title': _('tags'), 'visible': False}},
-    # ]
-
     def enum_types(self) -> collections.abc.Iterable[type[transports.Transport]]:
         return transports.factory().providers().values()
 

@@ -127,32 +127,6 @@ class MetaPools(ModelHandler[MetaPoolItem]):
         .build()
     )
 
-    # table_title = _('Meta Pools')
-    # xtable_fields = [
-    #     {'name': {'title': _('Name')}},
-    #     {'comments': {'title': _('Comments')}},
-    #     {
-    #         'policy': {
-    #             'title': _('Policy'),
-    #             'type': 'dict',
-    #             'dict': dict(types.pools.LoadBalancingPolicy.enumerate()),
-    #         }
-    #     },
-    #     {
-    #         'ha_policy': {
-    #             'title': _('HA Policy'),
-    #             'type': 'dict',
-    #             'dict': dict(types.pools.HighAvailabilityPolicy.enumerate()),
-    #         }
-    #     },
-    #     {'user_services_count': {'title': _('User services'), 'type': 'number'}},
-    #     {'user_services_in_preparation': {'title': _('In Preparation')}},
-    #     {'visible': {'title': _('Visible'), 'type': 'callback'}},
-    #     {'pool_group_name': {'title': _('Pool Group')}},
-    #     {'label': {'title': _('Label')}},
-    #     {'tags': {'title': _('tags'), 'visible': False}},
-    # ]
-
     CUSTOM_METHODS = [
         types.rest.ModelCustomMethod('set_fallback_access', True),
         types.rest.ModelCustomMethod('get_fallback_access', True),

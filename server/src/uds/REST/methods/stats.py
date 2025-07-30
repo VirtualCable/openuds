@@ -46,10 +46,10 @@ logger = logging.getLogger(__name__)
 class Stats(Handler):
     ROLE = consts.UserRole.ADMIN
 
-    help_paths = [
+    HELP_PATHS = [
         types.rest.doc.HelpDoc('', 'Returns the last day usage statistics for all authenticators'),
     ]
-    help_text = 'Provides access to usage statistics'
+    HELP_TEXT = 'Provides access to usage statistics'
 
     def _usage_stats(self, since: datetime.datetime) -> dict[str, list[dict[str, typing.Any]]]:
         """

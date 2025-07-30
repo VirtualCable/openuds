@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2022 Virtual Cable S.L.U.
+# Copyright (c) 2025 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -25,23 +25,18 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import logging
-import typing
-import collections.abc
-
-from uds.core import consts
-
-from ..handlers import Handler
-
-logger = logging.getLogger(__name__)
+import enum
 
 
-class UDSVersion(Handler):
-    ROLE = consts.UserRole.ANONYMOUS
-    NAME = 'version'
+class NotifyActionType(enum.StrEnum):
+    LOGIN = 'login'
+    LOGOUT = 'logout'
+    DATA = 'data'
 
-    def get(self) -> collections.abc.MutableMapping[str, typing.Any]:
-        return {'version': consts.system.VERSION, 'build': consts.system.VERSION_STAMP}
+    @staticmethod
+    def valid_names() -> list[str]:
+        return [e.value for e in NotifyActionType]

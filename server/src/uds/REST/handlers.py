@@ -59,10 +59,10 @@ class Handler(abc.ABC):
     REST requests handler base class
     """
 
-    name: typing.ClassVar[typing.Optional[str]] = (
+    NAME: typing.ClassVar[typing.Optional[str]] = (
         None  # If name is not used, name will be the class name in lower case
     )
-    path: typing.ClassVar[typing.Optional[str]] = (
+    PATH: typing.ClassVar[typing.Optional[str]] = (
         None  # Path for this method, so we can do /auth/login, /auth/logout, /auth/auths in a simple way
     )
 
@@ -72,8 +72,8 @@ class Handler(abc.ABC):
 
     # For implementing help
     # A list of pairs of (path, help) for subpaths on this handler
-    help_paths: typing.ClassVar[list[types.rest.doc.HelpDoc]] = []
-    help_text: typing.ClassVar[str] = 'No help available'
+    HELP_PATHS: typing.ClassVar[list[types.rest.doc.HelpDoc]] = []
+    HELP_TEXT: typing.ClassVar[str] = 'No help available'
 
     _request: 'ExtendedHttpRequestWithUser'  # It's a modified HttpRequest
     _path: str

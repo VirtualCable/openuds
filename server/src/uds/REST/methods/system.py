@@ -145,7 +145,7 @@ class System(Handler):
 
     ROLE = consts.UserRole.STAFF
 
-    help_paths = [
+    HELP_PATHS = [
         types.rest.doc.HelpDoc('', ''),
         types.rest.doc.HelpDoc('stats/assigned', ''),
         types.rest.doc.HelpDoc('stats/inuse', ''),
@@ -156,7 +156,7 @@ class System(Handler):
         types.rest.doc.HelpDoc('stats/cached/<uuid>', 'Get service pool cached stats'),
         types.rest.doc.HelpDoc('stats/complete/<uuid>', 'Get service pool complete stats'),
     ]
-    help_text = 'Provides system information. Must be admin to access this'
+    HELP_TEXT = 'Provides system information. Must be admin to access this'
 
     def get(self) -> typing.Any:
         logger.debug('args: %s', self._args)

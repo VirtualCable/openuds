@@ -163,20 +163,6 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
         .build()
     )
 
-    # xtable_fields = [
-    #     {'name': {'title': _('Name')}},
-    #     {'state': {'title': _('Status'), 'type': 'dict', 'dict': State.literals_dict()}},
-    #     {'user_services_count': {'title': _('User services'), 'type': 'number'}},
-    #     {'user_services_in_preparation': {'title': _('In Preparation')}},
-    #     {'usage': {'title': _('Usage')}},
-    #     {'visible': {'title': _('Visible'), 'type': 'callback'}},
-    #     {'show_transports': {'title': _('Shows transports'), 'type': 'callback'}},
-    #     {'pool_group_name': {'title': _('Pool group')}},
-    #     {'parent': {'title': _('Parent service')}},
-    #     {'tags': {'title': _('tags'), 'visible': False}},
-    # ]
-    # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
-
     CUSTOM_METHODS = [
         types.rest.ModelCustomMethod('set_fallback_access', True),
         types.rest.ModelCustomMethod('get_fallback_access', True),

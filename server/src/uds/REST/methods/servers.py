@@ -140,16 +140,16 @@ class ServerRegisterBase(Handler):
 class ServerRegister(ServerRegisterBase):
     ROLE = consts.UserRole.STAFF    
     
-    path = 'servers'
-    name = 'register'
+    PATH = 'servers'
+    NAME = 'register'
 
 
 # REST handlers for server actions
 class ServerTest(Handler):
     ROLE = consts.UserRole.ANONYMOUS
 
-    path = 'servers'
-    name = 'test'
+    PATH = 'servers'
+    NAME = 'test'
 
     @decorators.blocker()
     def post(self) -> collections.abc.MutableMapping[str, typing.Any]:
@@ -174,8 +174,8 @@ class ServerEvent(Handler):
     """
 
     ROLE = consts.UserRole.ANONYMOUS
-    path = 'servers'
-    name = 'event'
+    PATH = 'servers'
+    NAME = 'event'
 
     def get_user_service(self) -> models.UserService:
         '''

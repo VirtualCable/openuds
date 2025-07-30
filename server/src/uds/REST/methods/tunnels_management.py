@@ -147,8 +147,8 @@ class TunnelItem(types.rest.BaseRestItem):
 # Enclosed methods under /auth path
 class Tunnels(ModelHandler[TunnelItem]):
 
-    path = 'tunnels'
-    name = 'tunnels'
+    PATH = 'tunnels'
+    NAME = 'tunnels'
     MODEL = models.ServerGroup
     FILTER = {'type': types.servers.ServerType.TUNNEL}
     CUSTOM_METHODS = [
@@ -169,16 +169,6 @@ class Tunnels(ModelHandler[TunnelItem]):
         .text_column(name='tags', title=_('tags'), visible=False)
         .build()
     )
-
-    # table_title = _('Tunnels')
-    # xtable_fields = [
-    #     {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
-    #     {'comments': {'title': _('Comments')}},
-    #     {'host': {'title': _('Host')}},
-    #     {'port': {'title': _('Port')}},
-    #     {'servers_count': {'title': _('Servers'), 'type': 'numeric', 'width': '1rem'}},
-    #     {'tags': {'title': _('tags'), 'visible': False}},
-    # ]
 
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
         return (

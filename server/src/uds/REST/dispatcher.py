@@ -213,17 +213,17 @@ class Dispatcher(View):
         Method to register a class as a REST service
         param type_: Class to be registered
         """
-        if not type_.name:
+        if not type_.NAME:
             name = sys.intern(type_.__name__.lower())
         else:
-            name = type_.name
+            name = type_.NAME
 
         # Fill the service_node tree with the class
         service_node = Dispatcher.base_handler_node  # Root path
         # If path, ensure that the path exists on the tree
-        if type_.path:
-            logger.info('Path: /%s/%s', type_.path, name)
-            for k in type_.path.split('/'):
+        if type_.PATH:
+            logger.info('Path: /%s/%s', type_.PATH, name)
+            for k in type_.PATH.split('/'):
                 intern_k = sys.intern(k)
                 if intern_k not in service_node.children:
                     service_node.children[intern_k] = HandlerNode(k, None, service_node, {})

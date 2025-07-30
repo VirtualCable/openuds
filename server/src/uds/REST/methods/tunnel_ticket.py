@@ -55,8 +55,8 @@ class TunnelTicket(Handler):
     """
 
     ROLE = consts.UserRole.ANONYMOUS
-    path = 'tunnel'
-    name = 'ticket'
+    PATH = 'tunnel'
+    NAME = 'ticket'
 
     def get(self) -> collections.abc.MutableMapping[str, typing.Any]:
         """
@@ -150,8 +150,8 @@ class TunnelTicket(Handler):
 class TunnelRegister(ServerRegisterBase):
     ROLE = consts.UserRole.ADMIN
     
-    path = 'tunnel'
-    name = 'register'
+    PATH = 'tunnel'
+    NAME = 'register'
 
     # Just a compatibility method for old tunnel servers
     def post(self) -> dict[str, typing.Any]:

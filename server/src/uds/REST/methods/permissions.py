@@ -53,6 +53,7 @@ class Permissions(Handler):
     """
     Processes permissions requests
     """
+
     ROLE = consts.UserRole.ADMIN
 
     @staticmethod
@@ -71,7 +72,6 @@ class Permissions(Handler):
             'mfa': models.MFA,
             'servers-groups': models.ServerGroup,
             'tunnels-tunnels': models.ServerGroup,  # Same as servers-groups, but different items
-            
         }.get(class_name, None)
 
         if cls is None:
@@ -115,10 +115,10 @@ class Permissions(Handler):
         Processes get requests
         """
         logger.debug('Permissions args for GET: %s', self._args)
-        
+
         # Update some XXX/YYYY to XXX-YYYY (as server/groups, that is a valid class name)
         if len(self._args) == 3:
-            self._args = [self._args[0]+ '-' + self._args[1], self._args[2]]
+            self._args = [self._args[0] + '-' + self._args[1], self._args[2]]
 
         if len(self._args) != 2:
             raise exceptions.rest.RequestError('Invalid request')
@@ -133,11 +133,17 @@ class Permissions(Handler):
         Processes put requests
         """
         logger.debug('Put args: %s', self._args)
-        
+
         # Update some XXX/YYYY to XXX-YYYY (as server/groups, that is a valid class name)
         if len(self._args) == 6:
-            self._args = [self._args[0]+ '-' + self._args[1], self._args[2], self._args[3], self._args[4], self._args[5]]
-            
+            self._args = [
+                self._args[0] + '-' + self._args[1],
+                self._args[2],
+                self._args[3],
+                self._args[4],
+                self._args[5],
+            ]
+
         if len(self._args) != 5 and len(self._args) != 1:
             raise exceptions.rest.RequestError('Invalid request')
 
@@ -166,33 +172,10 @@ class Permissions(Handler):
             raise exceptions.rest.RequestError('Invalid request')
 
         # match is a helper function that will match the args with the given patterns
-        return match_args(self._args,
+        return match_args(
+            self._args,
             no_match,
             (('<cls>', '<obj>', 'users', 'add', '<user>'), add_user_permission),
             (('<cls>', '<obj>', 'groups', 'add', '<group>'), add_group_permission),
-            (('revoke', ), revoke)
+            (('revoke',), revoke),
         )
-
-        # Old code: (Replaced by code above :) )
-        # if la == 5 and self._args[3] == 'add':
-        #
-        #     cls = Permissions.getClass(self._args[0])
-        #
-        #     obj = cls.objects.get(uuid=self._args[1])
-        #
-        #     if self._args[2] == 'users':
-        #         user = models.User.objects.get(uuid=self._args[4])
-        #         permissions.add_user_permission(user, obj, perm)
-        #     elif self._args[2] == 'groups':
-        #         group = models.Group.objects.get(uuid=self._args[4])
-        #         permissions.add_group_permission(group, obj, perm)
-        #     else:
-        #         raise exceptions.rest.RequestError('Ivalid request')
-        #     return Permissions.permsToDict(permissions.getPermissions(obj))
-        #
-        # if la == 1 and self._args[0] == 'revoke':
-        #     for permId in self._params.get('items', []):
-        #         permissions.revoke_permission_by_id(permId)
-        #     return []
-        #
-        # raise exceptions.rest.RequestError('Invalid request')
