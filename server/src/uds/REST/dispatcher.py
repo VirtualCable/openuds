@@ -75,6 +75,9 @@ class Dispatcher(View):
         Processes the REST request and routes it wherever it needs to be routed
         """
         request = typing.cast('ExtendedHttpRequestWithUser', request)  # Reconverting to typed request
+        if not hasattr(request, 'user'):
+            raise exceptions.rest.HandlerError('Request does not have a user, cannot process request')
+
         # Remove session from request, so response middleware do nothing with this
         del request.session
 

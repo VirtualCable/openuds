@@ -282,7 +282,7 @@ class HandlerNode:
             # If no handler, this is a path node, so we return a path node
             return doc.HelpNode(
                 doc.HelpDoc(path=self.full_path(), help=self.name),
-                [],
+                [child.help_node() for child in self.children.values()],
                 help_node_type,
             )
 

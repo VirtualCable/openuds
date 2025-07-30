@@ -82,7 +82,7 @@ class HelpMethod(enum.Enum):
         ],
     )
     OVERVIEW = HelpMethodInfo(
-        consts.rest.OVERVIEW, 'General Overview of all items (a list', [types.rest.doc.HelpNode.Methods.GET]
+        consts.rest.OVERVIEW, 'General Overview of all items (a list)', [types.rest.doc.HelpNode.Methods.GET]
     )
     TABLEINFO = HelpMethodInfo(
         consts.rest.TABLEINFO,
