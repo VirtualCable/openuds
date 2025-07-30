@@ -37,7 +37,7 @@ import typing
 from django.utils.translation import gettext as _
 
 from uds.core import exceptions, types
-from uds.core.types.rest import TableInfo
+from uds.core.types.rest import Table
 from uds.core.util import ensure, permissions, ui as ui_utils
 from uds.core.util.model import process_uuid
 from uds.models import Account, AccountUsage
@@ -103,17 +103,17 @@ class AccountsUsage(DetailHandler[AccountItem]):  # pylint: disable=too-many-pub
             logger.exception('itemId %s', item)
             raise self.invalid_item_response()
 
-    def get_table_info(self, parent: 'Model') -> TableInfo:
+    def get_table(self, parent: 'Model') -> Table:
         parent = ensure.is_instance(parent, Account)
         return (
             ui_utils.TableBuilder(_('Usages of {0}').format(parent.name))
-            .string(name='pool_name', title=_('Pool name'))
-            .string(name='user_name', title=_('User name'))
-            .string(name='running', title=_('Running'))
-            .datetime(name='start', title=_('Starts'))
-            .datetime(name='end', title=_('Ends'))
-            .string(name='elapsed', title=_('Elapsed'))
-            .datetime(name='elapsed_timemark', title=_('Elapsed timemark'))
+            .text_column(name='pool_name', title=_('Pool name'))
+            .text_column(name='user_name', title=_('User name'))
+            .text_column(name='running', title=_('Running'))
+            .datetime_column(name='start', title=_('Starts'))
+            .datetime_column(name='end', title=_('Ends'))
+            .text_column(name='elapsed', title=_('Elapsed'))
+            .datetime_column(name='elapsed_timemark', title=_('Elapsed timemark'))
             .row_style(prefix='row-running-', field='running')
             .build()
         )

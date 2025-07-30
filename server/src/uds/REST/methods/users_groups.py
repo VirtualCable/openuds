@@ -94,7 +94,7 @@ class UserItem(types.rest.BaseRestItem):
 
 
 class Users(DetailHandler[UserItem]):
-    custom_methods = [
+    CUSTOM_METHODS = [
         'services_pools',
         'user_services',
         'clean_related',
@@ -132,18 +132,18 @@ class Users(DetailHandler[UserItem]):
             # User not found
             raise self.invalid_item_response() from e
 
-    def get_table_info(self, parent: 'Model') -> types.rest.TableInfo:
+    def get_table(self, parent: 'Model') -> types.rest.Table:
         parent = ensure.is_instance(parent, Authenticator)
         return (
             ui_utils.TableBuilder(_('Users of {0}').format(parent.name))
             .icon(name='name', title=_('Username'), visible=True)
-            .string(name='role', title=_('Role'))
-            .string(name='real_name', title=_('Name'))
-            .string(name='comments', title=_('Comments'))
-            .dictionary(
+            .text_column(name='role', title=_('Role'))
+            .text_column(name='real_name', title=_('Name'))
+            .text_column(name='comments', title=_('Comments'))
+            .dict_column(
                 name='state', title=_('Status'), dct={State.ACTIVE: _('Enabled'), State.INACTIVE: _('Disabled')}
             )
-            .datetime(name='last_access', title=_('Last access'))
+            .datetime_column(name='last_access', title=_('Last access'))
             .row_style(prefix='row-state-', field='state')
         ).build()
 
@@ -338,7 +338,7 @@ class GroupItem(typing.TypedDict):
 
 
 class Groups(DetailHandler[GroupItem]):
-    custom_methods = ['services_pools', 'users']
+    CUSTOM_METHODS = ['services_pools', 'users']
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult['GroupItem']:
         parent = ensure.is_instance(parent, Authenticator)
@@ -376,36 +376,15 @@ class Groups(DetailHandler[GroupItem]):
             logger.error('Group item not found: %s.%s: %s', parent.name, item, e)
             raise self.invalid_item_response() from e
 
-    def get_title(self, parent: 'Model') -> str:
+    def get_table(self, parent: 'Model') -> types.rest.Table:
         parent = ensure.is_instance(parent, Authenticator)
-        try:
-            return _('Groups of {0}').format(parent.name)
-        except Exception:
-            return _('Current groups')
-
-    def get_fields(self, parent: 'Model') -> list[typing.Any]:
-        return [
-            {
-                'name': {
-                    'title': _('Group'),
-                }
-            },
-            {'comments': {'title': _('Comments')}},
-            {
-                'state': {
-                    'title': _('state'),
-                    'type': 'dict',
-                    'dict': {State.ACTIVE: _('Enabled'), State.INACTIVE: _('Disabled')},
-                }
-            },
-            {
-                'skip_mfa': {
-                    'title': _('Skip MFA'),
-                    'type': 'dict',
-                    'dict': {State.ACTIVE: _('Enabled'), State.INACTIVE: _('Disabled')},
-                }
-            },
-        ]
+        return (
+            ui_utils.TableBuilder(_('Groups of {0}').format(parent.name))
+            .text_column(name='name', title=_('Group'), visible=True)
+            .text_column(name='comments', title=_('Comments'))
+            .dict_column(name='state', title=_('Status'), dct=State.literals_dict())
+            .dict_column(name='skip_mfa', title=_('Skip MFA'), dct=State.literals_dict())
+        ).build()
 
     def get_types(
         self, parent: 'Model', for_type: typing.Optional[str]

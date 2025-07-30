@@ -41,17 +41,13 @@ class GuiBuilder:
 
     def __init__(
         self,
-        *stock_fields: types.rest.stock.StockField,
         order: int = 0,
-        gui: list[types.ui.GuiElement] | None = None,
     ) -> None:
         """
         Initializes the GuiBuilder with a starting order.
         """
         self.order = order
-        self.fields: list[types.ui.GuiElement] = [i.copy() for i in (gui or [])] + [
-            gui_field.copy() for field in stock_fields for gui_field in field.get_fields()
-        ]
+        self.fields = []
 
     def next(self) -> int:
         """
@@ -134,6 +130,26 @@ class GuiBuilder:
         Resets the order counter to the given value.
         """
         self.order = order
+        return self
+
+    def add_fields(self, fields: list[types.ui.GuiElement]) -> typing.Self:
+        """
+        Adds a list of GUI elements to the GUI.
+        """
+        self.fields.extend(fields)
+        return self
+
+    def add_stock_field(self, field: types.rest.stock.StockField) -> typing.Self:
+        """
+        Adds a stock field set to the GUI.
+        """
+
+        def update_order(gui: types.ui.GuiElement) -> types.ui.GuiElement:
+            gui = gui.copy()
+            gui['gui']['order'] = self.next()
+            return gui
+
+        self.fields.extend([update_order(i) for i in field.get_fields()])
         return self
 
     def add_hidden(
@@ -418,13 +434,15 @@ class TableBuilder:
         return self
 
     # For each field type, we can add a specific method
-    def string(self, name: str, title: str, visible: bool = True, width: str | None = None) -> typing.Self:
+    def text_column(self, name: str, title: str, visible: bool = True, width: str | None = None) -> typing.Self:
         """
         Adds a string field to the table fields.
         """
         return self._add_field(name, title, types.rest.TableFieldType.ALPHANUMERIC, visible, width)
 
-    def number(self, name: str, title: str, visible: bool = True, width: str | None = None) -> typing.Self:
+    def numeric_column(
+        self, name: str, title: str, visible: bool = True, width: str | None = None
+    ) -> typing.Self:
         """
         Adds a number field to the table fields.
         """
@@ -436,7 +454,9 @@ class TableBuilder:
         """
         return self._add_field(name, title, types.rest.TableFieldType.BOOLEAN, visible, width)
 
-    def datetime(self, name: str, title: str, visible: bool = True, width: str | None = None) -> typing.Self:
+    def datetime_column(
+        self, name: str, title: str, visible: bool = True, width: str | None = None
+    ) -> typing.Self:
         """
         Adds a datetime field to the table fields.
         """
@@ -468,7 +488,7 @@ class TableBuilder:
         """
         return self._add_field(name, title, types.rest.TableFieldType.ICON, visible, width)
 
-    def dictionary(
+    def dict_column(
         self,
         name: str,
         title: str,
@@ -494,11 +514,11 @@ class TableBuilder:
         self.style_info = types.rest.RowStyleInfo(prefix=prefix, field=field)
         return self
 
-    def build(self) -> types.rest.TableInfo:
+    def build(self) -> types.rest.Table:
         """
         Returns the table info for the table fields.
         """
-        return types.rest.TableInfo(
+        return types.rest.Table(
             title=self.title,
             fields=self.fields,
             row_style=self.style_info,

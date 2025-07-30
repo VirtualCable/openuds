@@ -56,7 +56,7 @@ class Login(Handler):
     """
 
     path = 'auth'
-    min_access_role = consts.UserRole.ANONYMOUS
+    ROLE = consts.UserRole.ANONYMOUS
 
     @staticmethod
     def result(
@@ -219,7 +219,7 @@ class Logout(Handler):
 
 class Auths(Handler):
     path = 'auth'
-    min_access_role = consts.UserRole.ANONYMOUS
+    ROLE = consts.UserRole.ANONYMOUS
 
     def auths(self) -> collections.abc.Iterable[dict[str, typing.Any]]:
         all_param: bool = self._params.get('all', 'false').lower() == 'true'

@@ -66,7 +66,7 @@ class Handler(abc.ABC):
         None  # Path for this method, so we can do /auth/login, /auth/logout, /auth/auths in a simple way
     )
 
-    min_access_role: typing.ClassVar[consts.UserRole] = (
+    ROLE: typing.ClassVar[consts.UserRole] = (
         consts.UserRole.USER
     )  # By default, only users can access
 
@@ -113,7 +113,7 @@ class Handler(abc.ABC):
         self._headers = {}
         self._auth_token = None
 
-        if self.min_access_role.needs_authentication:
+        if self.ROLE.needs_authentication:
             try:
                 self._auth_token = self._request.headers.get(consts.auth.AUTH_TOKEN_HEADER, '')
                 self._session = SessionStore(session_key=self._auth_token)
@@ -132,7 +132,7 @@ class Handler(abc.ABC):
                 # Maybe the user was deleted, so access is denied
                 raise AccessDenied() from e
 
-            if not self._user.can_access(self.min_access_role):
+            if not self._user.can_access(self.ROLE):
                 raise AccessDenied()
         else:
             self._user = User()  # Empty user for non authenticated handlers

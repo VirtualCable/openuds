@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /cache path
 class Cache(Handler):
-    min_access_role = consts.UserRole.ADMIN
+    ROLE = consts.UserRole.ADMIN
 
     def get(self) -> typing.Any:
         """

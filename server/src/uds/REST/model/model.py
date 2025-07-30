@@ -72,26 +72,23 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
     """
 
     # Authentication related
-    min_access_role = consts.UserRole.STAFF
+    ROLE = consts.UserRole.STAFF
 
     # Which model does this manage, must be a django model ofc
-    model: 'typing.ClassVar[type[models.Model]]'
+    MODEL: 'typing.ClassVar[type[models.Model]]'
     # If the model is filtered (for overviews)
-    model_filter: 'typing.ClassVar[typing.Optional[collections.abc.Mapping[str, typing.Any]]]' = None
+    FILTER: 'typing.ClassVar[typing.Optional[collections.abc.Mapping[str, typing.Any]]]' = None
     # Same, but for exclude
-    model_exclude: 'typing.ClassVar[typing.Optional[collections.abc.Mapping[str, typing.Any]]]' = None
-
-    # By default, filter is empty
-    fltr: typing.Optional[str] = None
+    EXCLUDE: 'typing.ClassVar[typing.Optional[collections.abc.Mapping[str, typing.Any]]]' = None
 
     # This is an array of tuples of two items, where first is method and second inticates if method needs parent id (normal behavior is it needs it)
     # For example ('services', True) -- > .../id_parent/services
     #             ('services', False) --> ..../services
-    custom_methods: typing.ClassVar[list[types.rest.ModelCustomMethod]] = (
+    CUSTOM_METHODS: typing.ClassVar[list[types.rest.ModelCustomMethod]] = (
         []
     )  # If this model respond to "custom" methods, we will declare them here
     # If this model has details, which ones
-    detail: typing.ClassVar[typing.Optional[dict[str, type['DetailHandler[typing.Any]']]]] = (
+    DETAIL: typing.ClassVar[typing.Optional[dict[str, type['DetailHandler[typing.Any]']]]] = (
         None  # Dictionary containing detail routing
     )
     # Fields that are going to be saved directly
@@ -99,12 +96,12 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
     # * If the "default" is the string "None", then the default will be None
     # * If the "default" is _ (underscore), then the field will be ignored (not saved) if not present in the request
     # Note that these fields has to be present in the model, and they can be "edited" in the pre_save method
-    save_fields: typing.ClassVar[list[str]] = []
+    FIELDS_TO_SAVE: typing.ClassVar[list[str]] = []
     # Put removable fields before updating
-    remove_fields: typing.ClassVar[list[str]] = []
+    EXCLUDED_FIELDS: typing.ClassVar[list[str]] = []
     # Table info needed fields and title
     
-    table_info: typing.ClassVar[types.rest.TableInfo] = types.rest.TableInfo.null()
+    TABLE: typing.ClassVar[types.rest.Table] = types.rest.Table.null()
     
     # This methods must be override, depending on what is provided
 
@@ -186,7 +183,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
     def process_detail(self) -> typing.Any:
         logger.debug('Processing detail %s for with params %s', self._path, self._params)
         try:
-            item: models.Model = self.model.objects.get(uuid__iexact=self._args[0])
+            item: models.Model = self.MODEL.objects.get(uuid__iexact=self._args[0])
             # If we do not have access to parent to, at least, read...
 
             if self._operation in ('put', 'post', 'delete'):
@@ -202,18 +199,18 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
                 )
                 raise self.access_denied_response()
 
-            if not self.detail:
+            if not self.DETAIL:
                 raise self.invalid_request_response()
 
             # pylint: disable=unsubscriptable-object
-            handler_type = self.detail[self._args[1]]
+            handler_type = self.DETAIL[self._args[1]]
             args = list(self._args[2:])
             path = self._path + '/' + '/'.join(args[:2])
             detail_handler = handler_type(self, path, self._params, *args, parent=item, user=self._user)
             method = getattr(detail_handler, self._operation)
 
             return method()
-        except self.model.DoesNotExist:
+        except self.MODEL.DoesNotExist:
             raise self.invalid_item_response()
         except (KeyError, AttributeError) as e:
             raise self.invalid_method_response() from e
@@ -245,13 +242,13 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
             del kwargs['query']
         else:
             logger.debug('Args: %s, kwargs: %s', args, kwargs)
-            query = self.model.objects.filter(*args, **kwargs).prefetch_related(*prefetch)
+            query = self.MODEL.objects.filter(*args, **kwargs).prefetch_related(*prefetch)
 
-        if self.model_filter is not None:
-            query = query.filter(**self.model_filter)
+        if self.FILTER is not None:
+            query = query.filter(**self.FILTER)
 
-        if self.model_exclude is not None:
-            query = query.exclude(**self.model_exclude)
+        if self.EXCLUDE is not None:
+            query = query.exclude(**self.EXCLUDE)
 
         for item in query:
             try:
@@ -289,7 +286,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
             return list(self.get_items(overview=False))
 
         # if has custom methods, look for if this request matches any of them
-        for cm in self.custom_methods:
+        for cm in self.CUSTOM_METHODS:
             # Convert to snake case
             camel_case_name, snake_case_name = camel_and_snake_case_from(cm.name)
             if number_of_args > 1 and cm.needs_parent:  # Method needs parent (existing item)
@@ -300,8 +297,8 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
                     try:
                         if not operation:
                             raise Exception()  # Operation not found
-                        item = self.model.objects.get(uuid__iexact=self._args[0])
-                    except self.model.DoesNotExist:
+                        item = self.MODEL.objects.get(uuid__iexact=self._args[0])
+                    except self.MODEL.DoesNotExist:
                         raise self.invalid_item_response()
                     except Exception as e:
                         logger.error(
@@ -328,7 +325,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
             case [consts.rest.OVERVIEW, *_fails]:
                 raise self.invalid_request_response()
             case [consts.rest.TABLEINFO]:
-                return self.table_info.as_dict()
+                return self.TABLE.as_dict()
             case [consts.rest.TABLEINFO, *_fails]:
                 raise self.invalid_request_response()
             case [consts.rest.TYPES]:
@@ -346,7 +343,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
             case _:  # Maybe an item or a detail
                 if number_of_args == 1:
                     try:
-                        item = self.model.objects.get(uuid__iexact=self._args[0].lower())
+                        item = self.MODEL.objects.get(uuid__iexact=self._args[0].lower())
                         self.check_access(item, types.permissions.PermissionType.READ)
                         res = self.item_as_dict(item)
                         self.fill_instance_fields(item, res)
@@ -357,12 +354,12 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
                 elif number_of_args == 2:
                     if self._args[1] == consts.rest.LOG:
                         try:
-                            item = self.model.objects.get(uuid__iexact=self._args[0].lower())
+                            item = self.MODEL.objects.get(uuid__iexact=self._args[0].lower())
                             return self.get_logs(item)
                         except Exception as e:
                             raise self.invalid_item_response() from e
 
-                if self.detail is not None:
+                if self.DETAIL is not None:
                     return self.process_detail()
 
         raise self.invalid_request_response()  # Will not return
@@ -396,16 +393,16 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
 
         # Here, self.model() indicates an "django model object with default params"
         self.check_access(
-            self.model(), types.permissions.PermissionType.ALL, root=True
+            self.MODEL(), types.permissions.PermissionType.ALL, root=True
         )  # Must have write permissions to create, modify, etc..
 
         try:
             # Extract fields
-            args = self.fields_from_params(self.save_fields)
+            args = self.fields_from_params(self.FIELDS_TO_SAVE)
             logger.debug('Args: %s', args)
             self.pre_save(args)
             # If tags is in save fields, treat it "specially"
-            if 'tags' in self.save_fields:
+            if 'tags' in self.FIELDS_TO_SAVE:
                 tags = args['tags']
                 del args['tags']
             else:
@@ -414,12 +411,12 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
             delete_on_error = False
             item: models.Model
             if not self._args:  # create new?
-                item = self.model.objects.create(**args)
+                item = self.MODEL.objects.create(**args)
                 delete_on_error = True
             else:  # Must have 1 arg
                 # We have to take care with this case, update will efectively update records on db
-                item = self.model.objects.get(uuid__iexact=self._args[0].lower())
-                for v in self.remove_fields:
+                item = self.MODEL.objects.get(uuid__iexact=self._args[0].lower())
+                for v in self.EXCLUDED_FIELDS:
                     if v in args:
                         del args[v]
                 # Upadte fields from args
@@ -461,7 +458,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
 
             return res
 
-        except self.model.DoesNotExist:
+        except self.MODEL.DoesNotExist:
             raise exceptions.rest.NotFound('Item not found') from None
         except IntegrityError:  # Duplicate key probably
             raise exceptions.rest.RequestError('Element already exists (duplicate key error)') from None
@@ -485,14 +482,14 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
             raise exceptions.rest.RequestError('Delete need one and only one argument')
 
         self.check_access(
-            self.model(), types.permissions.PermissionType.ALL, root=True
+            self.MODEL(), types.permissions.PermissionType.ALL, root=True
         )  # Must have write permissions to delete
 
         try:
-            item = self.model.objects.get(uuid__iexact=self._args[0].lower())
+            item = self.MODEL.objects.get(uuid__iexact=self._args[0].lower())
             self.validate_delete(item)
             self.delete_item(item)
-        except self.model.DoesNotExist:
+        except self.MODEL.DoesNotExist:
             raise exceptions.rest.NotFound('Element do not exists') from None
 
         return consts.OK

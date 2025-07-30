@@ -70,21 +70,21 @@ class ActorTokenItem(types.rest.BaseRestItem):
 
 class ActorTokens(ModelHandler[ActorTokenItem]):
 
-    model = Server
-    model_filter = {'type': types.servers.ServerType.ACTOR}
+    MODEL = Server
+    FILTER = {'type': types.servers.ServerType.ACTOR}
 
-    table_info = (
+    TABLE = (
         ui_utils.TableBuilder(_('Actor tokens'))
-        .datetime('stamp', _('Date'))
-        .string('username', _('Issued by'))
-        .string('host', _('Origin'))
-        .string('version', _('Version'))
-        .string('hostname', _('Hostname'))
-        .string('pre_command', _('Pre-connect'))
-        .string('post_command', _('Post-Configure'))
-        .string('run_once_command', _('Run Once'))
-        .string('log_level', _('Log level'))
-        .string('os', _('OS'))
+        .datetime_column('stamp', _('Date'))
+        .text_column('username', _('Issued by'))
+        .text_column('host', _('Origin'))
+        .text_column('version', _('Version'))
+        .text_column('hostname', _('Hostname'))
+        .text_column('pre_command', _('Pre-connect'))
+        .text_column('post_command', _('Post-Configure'))
+        .text_column('run_once_command', _('Run Once'))
+        .text_column('log_level', _('Log level'))
+        .text_column('os', _('OS'))
         .build()
     )
 
@@ -136,12 +136,12 @@ class ActorTokens(ModelHandler[ActorTokenItem]):
             raise RequestError('Delete need one and only one argument')
 
         self.check_access(
-            self.model(), permissions.PermissionType.ALL, root=True
+            self.MODEL(), permissions.PermissionType.ALL, root=True
         )  # Must have write permissions to delete
 
         try:
-            self.model.objects.get(token=self._args[0]).delete()
-        except self.model.DoesNotExist:
+            self.MODEL.objects.get(token=self._args[0]).delete()
+        except self.MODEL.DoesNotExist:
             raise NotFound('Element do not exists') from None
 
         return consts.OK

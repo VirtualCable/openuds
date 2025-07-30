@@ -71,8 +71,8 @@ class TransportItem(types.rest.ManagedObjectItem):
 
 class Transports(ModelHandler[TransportItem]):
 
-    model = Transport
-    save_fields = [
+    MODEL = Transport
+    FIELDS_TO_SAVE = [
         'name',
         'comments',
         'tags',
@@ -82,17 +82,16 @@ class Transports(ModelHandler[TransportItem]):
         'label',
     ]
 
-    table_info = (
+    TABLE = (
         ui_utils.TableBuilder(_('Transports'))
-        .number(name='priority', title=_('Priority'), width='6em')
+        .numeric_column(name='priority', title=_('Priority'), width='6em')
         .icon(name='name', title=_('Name'))
-        .string(name='type_name', title=_('Type'))
-        .string(name='comments', title=_('Comments'))
-        .number(name='pools_count', title=_('Service Pools'), width='6em')
-        .string(name='allowed_oss', title=_('Devices'), width='8em')
-        .string(name='tags', title=_('tags'), visible=False)
+        .text_column(name='type_name', title=_('Type'))
+        .text_column(name='comments', title=_('Comments'))
+        .numeric_column(name='pools_count', title=_('Service Pools'), width='6em')
+        .text_column(name='allowed_oss', title=_('Devices'), width='8em')
+        .text_column(name='tags', title=_('tags'), visible=False)
     ).build()
-
 
     # table_fields = [
     #     {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
@@ -123,15 +122,13 @@ class Transports(ModelHandler[TransportItem]):
             transport = transport_type(env, None)
 
             return (
-                ui_utils.GuiBuilder(
-                    types.rest.stock.StockField.NAME,
-                    types.rest.stock.StockField.COMMENTS,
-                    types.rest.stock.StockField.TAGS,
-                    types.rest.stock.StockField.PRIORITY,
-                    types.rest.stock.StockField.NETWORKS,
-                    order=100,
-                    gui=transport.gui_description(),
-                )
+                ui_utils.GuiBuilder()
+                .add_stock_field(types.rest.stock.StockField.NAME)
+                .add_stock_field(types.rest.stock.StockField.COMMENTS)
+                .add_stock_field(types.rest.stock.StockField.TAGS)
+                .add_stock_field(types.rest.stock.StockField.PRIORITY)
+                .add_stock_field(types.rest.stock.StockField.NETWORKS)
+                .add_fields(transport.gui_description())
                 .add_multichoice(
                     name='pools',
                     label=gettext('Service Pools'),

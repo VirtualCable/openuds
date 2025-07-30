@@ -77,23 +77,23 @@ class AuthenticatorItem(types.rest.ManagedObjectItem):
 # Enclosed methods under /auth path
 class Authenticators(ModelHandler[AuthenticatorItem]):
 
-    model = Authenticator
+    MODEL = Authenticator
     # Custom get method "search" that requires authenticator id
-    custom_methods = [types.rest.ModelCustomMethod('search', True)]
-    detail = {'users': Users, 'groups': Groups}
-    save_fields = ['name', 'comments', 'tags', 'priority', 'small_name', 'mfa_id:_', 'state']
+    CUSTOM_METHODS = [types.rest.ModelCustomMethod('search', True)]
+    DETAIL = {'users': Users, 'groups': Groups}
+    FIELDS_TO_SAVE = ['name', 'comments', 'tags', 'priority', 'small_name', 'mfa_id:_', 'state']
 
-    table_info = (
+    TABLE = (
         ui_utils.TableBuilder(_('Authenticators'))
-        .number(name='numeric_id', title=_('Id'), visible=True, width='1rem')
+        .numeric_column(name='numeric_id', title=_('Id'), visible=True, width='1rem')
         .icon(name='name', title=_('Name'), visible=True)
-        .string(name='type_name', title=_('Type'))
-        .string(name='comments', title=_('Comments'))
-        .number(name='priority', title=_('Priority'), width='5rem')
-        .string(name='small_name', title=_('Label'))
-        .number(name='users_count', title=_('Users'), width='1rem')
-        .string(name='mfa_name', title=_('MFA'))
-        .string(name='tags', title=_('tags'), visible=False)
+        .text_column(name='type_name', title=_('Type'))
+        .text_column(name='comments', title=_('Comments'))
+        .numeric_column(name='priority', title=_('Priority'), width='5rem')
+        .text_column(name='small_name', title=_('Label'))
+        .numeric_column(name='users_count', title=_('Users'), width='1rem')
+        .text_column(name='mfa_name', title=_('MFA'))
+        .text_column(name='tags', title=_('tags'), visible=False)
         .row_style(prefix='row-state-', field='state')
         .build()
     )
@@ -139,24 +139,28 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
                 with Environment.temporary_environment() as env:
                     # If supports mfa, add MFA provider selector field
                     auth_instance = auth_type(env, None)
-                    gui = ui_utils.GuiBuilder(
-                        types.rest.stock.StockField.NAME,
-                        types.rest.stock.StockField.COMMENTS,
-                        types.rest.stock.StockField.TAGS,
-                        types.rest.stock.StockField.PRIORITY,
-                        types.rest.stock.StockField.LABEL,
-                        types.rest.stock.StockField.NETWORKS,
-                        order=100,
-                        gui=auth_instance.gui_description(),
-                    ).add_choice(
-                        name='state',
-                        default=consts.auth.VISIBLE,
-                        choices=[
-                            {'id': consts.auth.VISIBLE, 'text': _('Visible')},
-                            {'id': consts.auth.HIDDEN, 'text': _('Hidden')},
-                            {'id': consts.auth.DISABLED, 'text': _('Disabled')},
-                        ],
-                        label=gettext('Access'),
+                    gui = (
+                        (
+                            ui_utils.GuiBuilder()
+                            .set_order(100)
+                            .add_stock_field(types.rest.stock.StockField.NAME)
+                            .add_stock_field(types.rest.stock.StockField.COMMENTS)
+                            .add_stock_field(types.rest.stock.StockField.TAGS)
+                            .add_stock_field(types.rest.stock.StockField.PRIORITY)
+                            .add_stock_field(types.rest.stock.StockField.LABEL)
+                            .add_stock_field(types.rest.stock.StockField.NETWORKS)
+                        )
+                        .add_fields(auth_instance.gui_description())
+                        .add_choice(
+                            name='state',
+                            default=consts.auth.VISIBLE,
+                            choices=[
+                                {'id': consts.auth.VISIBLE, 'text': _('Visible')},
+                                {'id': consts.auth.HIDDEN, 'text': _('Hidden')},
+                                {'id': consts.auth.DISABLED, 'text': _('Disabled')},
+                            ],
+                            label=gettext('Access'),
+                        )
                     )
 
                     if auth_type.provides_mfa():

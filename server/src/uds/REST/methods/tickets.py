@@ -89,7 +89,7 @@ class Tickets(Handler):
                  - servicePool has these groups in it's allowed list
     """
 
-    min_access_role = consts.UserRole.ADMIN
+    ROLE = consts.UserRole.ADMIN
 
     @staticmethod
     def result(result: str = '', error: typing.Optional[str] = None) -> dict[str, typing.Any]:

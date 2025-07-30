@@ -65,15 +65,15 @@ class MFAItem(types.rest.BaseRestItem):
 
 class MFA(ModelHandler[MFAItem]):
 
-    model = models.MFA
-    save_fields = ['name', 'comments', 'tags', 'remember_device', 'validity']
+    MODEL = models.MFA
+    FIELDS_TO_SAVE = ['name', 'comments', 'tags', 'remember_device', 'validity']
 
-    table_info = (
+    TABLE = (
         ui_utils.TableBuilder(_('Multi Factor Authentication'))
         .icon(name='name', title=_('Name'), visible=True)
-        .string(name='type_name', title=_('Type'))
-        .string(name='comments', title=_('Comments'))
-        .string(name='tags', title=_('tags'), visible=False)
+        .text_column(name='type_name', title=_('Type'))
+        .text_column(name='comments', title=_('Comments'))
+        .text_column(name='tags', title=_('tags'), visible=False)
         .build()
     )
 
@@ -99,13 +99,13 @@ class MFA(ModelHandler[MFAItem]):
             mfa = mfa_type(env, None)
 
             return (
-                ui_utils.GuiBuilder(
-                    types.rest.stock.StockField.NAME,
-                    types.rest.stock.StockField.COMMENTS,
+                ui_utils.GuiBuilder(100)
+                .add_stock_field(types.rest.stock.StockField.NAME)
+                .add_stock_field(types.rest.stock.StockField.COMMENTS)
+                .add_stock_field(
                     types.rest.stock.StockField.TAGS,
-                    order=100,
-                    gui=mfa.gui_description(),
                 )
+                .add_fields(mfa.gui_description())
                 .add_numeric(
                     name='remember_device',
                     default=0,

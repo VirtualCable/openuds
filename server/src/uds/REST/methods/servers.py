@@ -138,7 +138,7 @@ class ServerRegisterBase(Handler):
 
 
 class ServerRegister(ServerRegisterBase):
-    min_access_role = consts.UserRole.STAFF    
+    ROLE = consts.UserRole.STAFF    
     
     path = 'servers'
     name = 'register'
@@ -146,7 +146,7 @@ class ServerRegister(ServerRegisterBase):
 
 # REST handlers for server actions
 class ServerTest(Handler):
-    min_access_role = consts.UserRole.ANONYMOUS
+    ROLE = consts.UserRole.ANONYMOUS
 
     path = 'servers'
     name = 'test'
@@ -173,7 +173,7 @@ class ServerEvent(Handler):
     * log
     """
 
-    min_access_role = consts.UserRole.ANONYMOUS
+    ROLE = consts.UserRole.ANONYMOUS
     path = 'servers'
     name = 'event'
 

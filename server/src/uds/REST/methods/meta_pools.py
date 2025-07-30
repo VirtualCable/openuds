@@ -82,15 +82,15 @@ class MetaPools(ModelHandler[MetaPoolItem]):
     Handles Services Pools REST requests
     """
 
-    model = MetaPool
-    detail = {
+    MODEL = MetaPool
+    DETAIL = {
         'pools': MetaServicesPool,
         'services': MetaAssignedService,
         'groups': Groups,
         'access': AccessCalendars,
     }
 
-    save_fields = [
+    FIELDS_TO_SAVE = [
         'name',
         'short_name',
         'comments',
@@ -104,29 +104,29 @@ class MetaPools(ModelHandler[MetaPoolItem]):
         'transport_grouping',
     ]
 
-    table_info = (
+    TABLE = (
         ui_utils.TableBuilder(_('Meta Pools'))
-        .string(name='name', title=_('Name'))
-        .string(name='comments', title=_('Comments'))
-        .dictionary(
+        .text_column(name='name', title=_('Name'))
+        .text_column(name='comments', title=_('Comments'))
+        .dict_column(
             name='policy',
             title=_('Policy'),
             dct=dict(types.pools.LoadBalancingPolicy.enumerate()),
         )
-        .dictionary(
+        .dict_column(
             name='ha_policy',
             title=_('HA Policy'),
             dct=dict(types.pools.HighAvailabilityPolicy.enumerate()),
         )
-        .number(name='user_services_count', title=_('User services'))
-        .number(name='user_services_in_preparation', title=_('In Preparation'))
+        .numeric_column(name='user_services_count', title=_('User services'))
+        .numeric_column(name='user_services_in_preparation', title=_('In Preparation'))
         .boolean(name='visible', title=_('Visible'))
-        .string(name='pool_group_name', title=_('Pool Group'), width='16em')
-        .string(name='short_name', title=_('Label'))
-        .string(name='tags', title=_('tags'), visible=False)
+        .text_column(name='pool_group_name', title=_('Pool Group'), width='16em')
+        .text_column(name='short_name', title=_('Label'))
+        .text_column(name='tags', title=_('tags'), visible=False)
         .build()
     )
-    
+
     # table_title = _('Meta Pools')
     # xtable_fields = [
     #     {'name': {'title': _('Name')}},
@@ -153,7 +153,7 @@ class MetaPools(ModelHandler[MetaPoolItem]):
     #     {'tags': {'title': _('tags'), 'visible': False}},
     # ]
 
-    custom_methods = [
+    CUSTOM_METHODS = [
         types.rest.ModelCustomMethod('set_fallback_access', True),
         types.rest.ModelCustomMethod('get_fallback_access', True),
     ]
@@ -205,18 +205,16 @@ class MetaPools(ModelHandler[MetaPoolItem]):
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
 
         return (
-            ui_utils.GuiBuilder(
-                types.rest.stock.StockField.NAME,
-                types.rest.stock.StockField.COMMENTS,
-                types.rest.stock.StockField.TAGS,
-                order=-95,  # On top
-            )
+            ui_utils.GuiBuilder()
+            .add_stock_field(types.rest.stock.StockField.TAGS)
             .add_text(
                 name='short_name',
                 label=gettext('Short name'),
                 tooltip=gettext('Short name for user service visualization'),
                 length=32,
             )
+            .add_stock_field(types.rest.stock.StockField.NAME)
+            .add_stock_field(types.rest.stock.StockField.COMMENTS)
             .set_order(100)
             .add_multichoice(
                 name='policy',
@@ -235,8 +233,7 @@ class MetaPools(ModelHandler[MetaPoolItem]):
                 ),
             )
             .new_tab(types.ui.Tab.DISPLAY)
-            .add_image_choice(
-            )
+            .add_image_choice()
             .add_image_choice(
                 name='servicesPoolGroup_id',
                 label=gettext('Pool group'),

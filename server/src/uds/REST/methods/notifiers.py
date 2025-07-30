@@ -68,8 +68,8 @@ class NotifierItem(types.rest.BaseRestItem):
 class Notifiers(ModelHandler[NotifierItem]):
 
     path = 'messaging'
-    model = Notifier
-    save_fields = [
+    MODEL = Notifier
+    FIELDS_TO_SAVE = [
         'name',
         'comments',
         'level',
@@ -77,14 +77,14 @@ class Notifiers(ModelHandler[NotifierItem]):
         'enabled',
     ]
 
-    table_info = (
+    TABLE = (
         ui_utils.TableBuilder(_('Notifiers'))
         .icon(name='name', title=_('Name'))
-        .string(name='type_name', title=_('Type'))
-        .string(name='level', title=_('Level'))
+        .text_column(name='type_name', title=_('Type'))
+        .text_column(name='level', title=_('Level'))
         .boolean(name='enabled', title=_('Enabled'))
-        .string(name='comments', title=_('Comments'))
-        .string(name='tags', title=_('Tags'), visible=False)
+        .text_column(name='comments', title=_('Comments'))
+        .text_column(name='tags', title=_('Tags'), visible=False)
     ).build()
 
     # table_title = _('Notifiers')
@@ -110,13 +110,13 @@ class Notifiers(ModelHandler[NotifierItem]):
             notifier = notifier_type(env, None)
 
             return (
-                ui_utils.GuiBuilder(
-                    types.rest.stock.StockField.NAME,
-                    types.rest.stock.StockField.COMMENTS,
-                    types.rest.stock.StockField.TAGS,
-                    order=100,
-                    gui=notifier.gui_description(),
+                (
+                    ui_utils.GuiBuilder(100)
+                    .add_stock_field(types.rest.stock.StockField.NAME)
+                    .add_stock_field(types.rest.stock.StockField.COMMENTS)
+                    .add_stock_field(types.rest.stock.StockField.TAGS)
                 )
+                .add_fields(notifier.gui_description())
                 .add_choice(
                     name='level',
                     choices=[gui.choice_item(i[0], i[1]) for i in LogLevel.interesting()],

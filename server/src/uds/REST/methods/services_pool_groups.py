@@ -62,16 +62,15 @@ class ServicePoolGroupItem(types.rest.BaseRestItem):
 class ServicesPoolGroups(ModelHandler[ServicePoolGroupItem]):
 
     path = 'gallery'
-    model = ServicePoolGroup
-    save_fields = ['name', 'comments', 'image_id', 'priority']
+    MODEL = ServicePoolGroup
+    FIELDS_TO_SAVE = ['name', 'comments', 'image_id', 'priority']
 
-
-    table_info = (
+    TABLE = (
         ui_utils.TableBuilder(_('Services Pool Groups'))
-        .number(name='priority', title=_('Priority'), width='6em')
+        .numeric_column(name='priority', title=_('Priority'), width='6em')
         .image(name='thumb', title=_('Image'), width='96px')
-        .string(name='name', title=_('Name'))
-        .string(name='comments', title=_('Comments'))
+        .text_column(name='name', title=_('Name'))
+        .text_column(name='comments', title=_('Comments'))
         .build()
     )
 
@@ -104,11 +103,10 @@ class ServicesPoolGroups(ModelHandler[ServicePoolGroupItem]):
     # Gui related
     def get_gui(self, for_type: str) -> list[typing.Any]:
         return (
-            ui_utils.GuiBuilder(
-                types.rest.stock.StockField.NAME,
-                types.rest.stock.StockField.COMMENTS,
-                types.rest.stock.StockField.PRIORITY,
-            )
+            ui_utils.GuiBuilder()
+            .add_stock_field(types.rest.stock.StockField.NAME)
+            .add_stock_field(types.rest.stock.StockField.COMMENTS)
+            .add_stock_field(types.rest.stock.StockField.PRIORITY)
             .new_tab(types.ui.Tab.DISPLAY)
             .add_image_choice()
             .build()

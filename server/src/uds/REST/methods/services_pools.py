@@ -107,8 +107,8 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
     Handles Services Pools REST requests
     """
 
-    model = ServicePool
-    detail = {
+    MODEL = ServicePool
+    DETAIL = {
         'services': AssignedUserService,
         'cache': CachedService,
         'servers': CachedService,  # Alias for cache, but will change in a future release
@@ -120,7 +120,7 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
         'actions': ActionsCalendars,
     }
 
-    save_fields = [
+    FIELDS_TO_SAVE = [
         'name',
         'short_name',
         'comments',
@@ -145,25 +145,24 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
         'state:_',  # Optional field, defaults to Nothing (to apply default or existing value)
     ]
 
-    remove_fields = ['osmanager_id', 'service_id']
+    EXCLUDED_FIELDS = ['osmanager_id', 'service_id']
 
-    table_info = (
+    TABLE = (
         ui_utils.TableBuilder(_('Service Pools'))
-        .string(name='name', title=_('Name'))
-        .dictionary(name='state', title=_('Status'), dct=State.literals_dict())
-        .number(name='user_services_count', title=_('User services'))
-        .number(name='user_services_in_preparation', title=_('In Preparation'))
-        .string(name='usage', title=_('Usage'))
+        .text_column(name='name', title=_('Name'))
+        .dict_column(name='state', title=_('Status'), dct=State.literals_dict())
+        .numeric_column(name='user_services_count', title=_('User services'))
+        .numeric_column(name='user_services_in_preparation', title=_('In Preparation'))
+        .text_column(name='usage', title=_('Usage'))
         .boolean(name='visible', title=_('Visible'))
         .boolean(name='show_transports', title=_('Shows transports'))
-        .string(name='pool_group_name', title=_('Pool group'))
-        .string(name='parent', title=_('Parent service'))
-        .string(name='tags', title=_('tags'), visible=False)
+        .text_column(name='pool_group_name', title=_('Pool group'))
+        .text_column(name='parent', title=_('Parent service'))
+        .text_column(name='tags', title=_('tags'), visible=False)
         .row_style(prefix='row-state-', field='state')
         .build()
     )
-    
-        
+
     # xtable_fields = [
     #     {'name': {'title': _('Name')}},
     #     {'state': {'title': _('Status'), 'type': 'dict', 'dict': State.literals_dict()}},
@@ -178,7 +177,7 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
     # ]
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
 
-    custom_methods = [
+    CUSTOM_METHODS = [
         types.rest.ModelCustomMethod('set_fallback_access', True),
         types.rest.ModelCustomMethod('get_fallback_access', True),
         types.rest.ModelCustomMethod('actions_list', True),
@@ -338,12 +337,13 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
             )
 
         gui = (
-            ui_utils.GuiBuilder(
-                types.rest.stock.StockField.NAME,
-                types.rest.stock.StockField.COMMENTS,
-                types.rest.stock.StockField.TAGS,
-                order=-95,  # On top
+            (
+                ui_utils.GuiBuilder()
+                .add_stock_field(types.rest.stock.StockField.NAME)
+                .add_stock_field(types.rest.stock.StockField.COMMENTS)
+                .add_stock_field(types.rest.stock.StockField.TAGS)
             )
+            .set_order(-95)
             .add_text(
                 name='short_name',
                 label=gettext('Short name'),

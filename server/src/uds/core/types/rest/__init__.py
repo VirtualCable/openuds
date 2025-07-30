@@ -194,7 +194,7 @@ class RowStyleInfo:
 
 
 @dataclasses.dataclass
-class TableInfo:
+class Table:
     """
     Represents the table info for a REST API endpoint.
     This is used to describe the table fields and row style.
@@ -214,11 +214,11 @@ class TableInfo:
         }
 
     @staticmethod
-    def null() -> 'TableInfo':
+    def null() -> 'Table':
         """
         Returns a null TableInfo instance, with no fields and an empty title.
         """
-        return TableInfo(title='', fields=[], row_style=RowStyleInfo.null(), subtitle=None)
+        return Table(title='', fields=[], row_style=RowStyleInfo.null(), subtitle=None)
 
 
 @dataclasses.dataclass(frozen=True)
@@ -258,11 +258,11 @@ class HandlerNode:
             )
 
             # Add custom_methods
-            for method in handler.custom_methods:
+            for method in handler.CUSTOM_METHODS:
                 ret += f'{"  " * level}  |- {method}\n'
             # Add detail methods
-            if handler.detail:
-                for method_name in handler.detail.keys():
+            if handler.DETAIL:
+                for method_name in handler.DETAIL.keys():
                     ret += f'{"  " * level}  |- {method_name}\n'
 
         return ret + ''.join(child.tree(level + 1) for child in self.children.values())
@@ -294,7 +294,7 @@ class HandlerNode:
         if issubclass(self.handler, ModelHandler):
             help_node_type = doc.HelpNode.Type.MODEL
             # Add custom_methods
-            for method in handler.custom_methods:
+            for method in handler.CUSTOM_METHODS:
                 # Method is a Me CustomModelMethod,
                 # We access the __doc__ of the function inside the handler with method.name
                 doc_attr = getattr(handler, method.name).__doc__ or ''
@@ -312,8 +312,8 @@ class HandlerNode:
                 )
 
             # Add detail methods
-            if handler.detail:
-                for method_name, method_class in handler.detail.items():
+            if handler.DETAIL:
+                for method_name, method_class in handler.DETAIL.items():
                     custom_help.add(
                         doc.HelpNode(
                             doc.HelpDoc(path=self.full_path() + '/' + method_name, help=''),
@@ -322,7 +322,7 @@ class HandlerNode:
                         )
                     )
                     # Add custom_methods
-                    for detail_method in method_class.custom_methods:
+                    for detail_method in method_class.CUSTOM_METHODS:
                         # Method is a Me CustomModelMethod,
                         # We access the __doc__ of the function inside the handler with method.name
                         doc_attr = getattr(method_class, detail_method).__doc__ or ''

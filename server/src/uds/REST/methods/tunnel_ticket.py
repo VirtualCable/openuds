@@ -54,7 +54,7 @@ class TunnelTicket(Handler):
     Processes tunnel requests
     """
 
-    min_access_role = consts.UserRole.ANONYMOUS
+    ROLE = consts.UserRole.ANONYMOUS
     path = 'tunnel'
     name = 'ticket'
 
@@ -148,7 +148,7 @@ class TunnelTicket(Handler):
 
 
 class TunnelRegister(ServerRegisterBase):
-    min_access_role = consts.UserRole.ADMIN
+    ROLE = consts.UserRole.ADMIN
     
     path = 'tunnel'
     name = 'register'

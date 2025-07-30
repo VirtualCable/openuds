@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /cache path
 class Stats(Handler):
-    min_access_role = consts.UserRole.ADMIN
+    ROLE = consts.UserRole.ADMIN
 
     help_paths = [
         types.rest.doc.HelpDoc('', 'Returns the last day usage statistics for all authenticators'),

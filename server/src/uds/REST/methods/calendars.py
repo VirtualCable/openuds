@@ -66,20 +66,20 @@ class Calendars(ModelHandler[CalendarItem]):
     Processes REST requests about calendars
     """
 
-    model = Calendar
-    detail = {'rules': CalendarRules}
+    MODEL = Calendar
+    DETAIL = {'rules': CalendarRules}
 
-    save_fields = ['name', 'comments', 'tags']
+    FIELDS_TO_SAVE = ['name', 'comments', 'tags']
 
-    table_info = (
+    TABLE = (
         ui_utils.TableBuilder(_('Calendars'))
-        .string(name='name', title=_('Name'), visible=True)
-        .string(name='comments', title=_('Comments'))
-        .datetime(name='modified', title=_('Modified'))
-        .number(name='number_rules', title=_('Rules'), width='5rem')
-        .number(name='number_access', title=_('Pools with Accesses'), width='5rem')
-        .number(name='number_actions', title=_('Pools with Actions'), width='5rem')
-        .string(name='tags', title=_('tags'), visible=False)
+        .text_column(name='name', title=_('Name'), visible=True)
+        .text_column(name='comments', title=_('Comments'))
+        .datetime_column(name='modified', title=_('Modified'))
+        .numeric_column(name='number_rules', title=_('Rules'), width='5rem')
+        .numeric_column(name='number_access', title=_('Pools with Accesses'), width='5rem')
+        .numeric_column(name='number_actions', title=_('Pools with Actions'), width='5rem')
+        .text_column(name='tags', title=_('tags'), visible=False)
         .build()
     )
 
@@ -114,8 +114,10 @@ class Calendars(ModelHandler[CalendarItem]):
         }
 
     def get_gui(self, for_type: str) -> list[typing.Any]:
-        return ui_utils.GuiBuilder(
-            types.rest.stock.StockField.NAME,
-            types.rest.stock.StockField.COMMENTS,
-            types.rest.stock.StockField.TAGS,
-        ).build()
+        return (
+            ui_utils.GuiBuilder()
+            .add_stock_field(types.rest.stock.StockField.NAME)
+            .add_stock_field(types.rest.stock.StockField.COMMENTS)
+            .add_stock_field(types.rest.stock.StockField.TAGS)
+            .build()
+        )

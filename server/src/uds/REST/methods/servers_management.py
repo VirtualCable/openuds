@@ -38,7 +38,7 @@ from django.utils.translation import gettext_lazy as _
 
 from uds import models
 from uds.core import consts, types
-from uds.core.types.rest import TableInfo
+from uds.core.types.rest import Table
 from uds.core.util import net, permissions, ensure, ui as ui_utils
 from uds.core.util.model import sql_now, process_uuid
 from uds.core.exceptions.rest import NotFound, RequestError
@@ -68,8 +68,8 @@ class TokenItem(types.rest.BaseRestItem):
 class ServersTokens(ModelHandler[TokenItem]):
 
     # servers/groups/[id]/servers
-    model = models.Server
-    model_exclude = {
+    MODEL = models.Server
+    EXCLUDE = {
         'type__in': [
             types.servers.ServerType.ACTOR,
             types.servers.ServerType.UNMANAGED,
@@ -78,15 +78,15 @@ class ServersTokens(ModelHandler[TokenItem]):
     path = 'servers'
     name = 'tokens'
 
-    table_info = (
+    TABLE = (
         ui_utils.TableBuilder(_('Registered Servers'))
-        .string(name='hostname', title=_('Hostname'), visible=True)
-        .string(name='ip', title=_('IP'), visible=True)
-        .string(name='mac', title=_('MAC'), visible=True)
-        .string(name='type', title=_('Type'), visible=False)
-        .string(name='os', title=_('OS'), visible=True)
-        .string(name='username', title=_('Issued by'), visible=True)
-        .datetime(name='stamp', title=_('Date'), visible=True)
+        .text_column(name='hostname', title=_('Hostname'), visible=True)
+        .text_column(name='ip', title=_('IP'), visible=True)
+        .text_column(name='mac', title=_('MAC'), visible=True)
+        .text_column(name='type', title=_('Type'), visible=False)
+        .text_column(name='os', title=_('OS'), visible=True)
+        .text_column(name='username', title=_('Issued by'), visible=True)
+        .datetime_column(name='stamp', title=_('Date'), visible=True)
         .build()
     )
 
@@ -124,12 +124,12 @@ class ServersTokens(ModelHandler[TokenItem]):
             raise RequestError('Delete need one and only one argument')
 
         self.check_access(
-            self.model(), types.permissions.PermissionType.ALL, root=True
+            self.MODEL(), types.permissions.PermissionType.ALL, root=True
         )  # Must have write permissions to delete
 
         try:
-            self.model.objects.get(uuid=process_uuid(self._args[0])).delete()
-        except self.model.DoesNotExist:
+            self.MODEL.objects.get(uuid=process_uuid(self._args[0])).delete()
+        except self.MODEL.DoesNotExist:
             raise NotFound('Element do not exists') from None
 
         return consts.OK
@@ -149,7 +149,7 @@ class ServerItem(types.rest.BaseRestItem):
 # REST API For servers (except tunnel servers nor actors)
 class ServersServers(DetailHandler[ServerItem]):
 
-    custom_methods = ['maintenance', 'importcsv']
+    CUSTOM_METHODS = ['maintenance', 'importcsv']
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[ServerItem]:
         parent = typing.cast('models.ServerGroup', parent)  # We will receive for sure
@@ -182,19 +182,19 @@ class ServersServers(DetailHandler[ServerItem]):
             logger.exception('REST servers')
             raise self.invalid_item_response() from e
 
-    def get_table_info(self, parent: 'Model') -> TableInfo:
+    def get_table(self, parent: 'Model') -> Table:
         parent = ensure.is_instance(parent, models.ServerGroup)
         table_info = (
             ui_utils.TableBuilder(_('Servers of {0}').format(parent.name))
-            .string(name='hostname', title=_('Hostname'))
-            .string(name='ip', title=_('Ip'))
-            .string(name='mac', title=_('Mac'))
+            .text_column(name='hostname', title=_('Hostname'))
+            .text_column(name='ip', title=_('Ip'))
+            .text_column(name='mac', title=_('Mac'))
         )
         if parent.is_managed():
-            table_info.string(name='listen_port', title=_('Port'))
+            table_info.text_column(name='listen_port', title=_('Port'))
 
         return (
-            table_info.dictionary(
+            table_info.dict_column(
                 name='maintenance_mode',
                 title=_('State'),
                 dct={True: _('Maintenance'), False: _('Normal')},
@@ -420,32 +420,32 @@ class GroupItem(types.rest.BaseRestItem):
 
 class ServersGroups(ModelHandler[GroupItem]):
 
-    custom_methods = [
+    CUSTOM_METHODS = [
         types.rest.ModelCustomMethod('stats', True),
     ]
-    model = models.ServerGroup
-    model_filter = {
+    MODEL = models.ServerGroup
+    FILTER = {
         'type__in': [
             types.servers.ServerType.SERVER,
             types.servers.ServerType.UNMANAGED,
         ]
     }
-    detail = {'servers': ServersServers}
+    DETAIL = {'servers': ServersServers}
 
     path = 'servers'
     name = 'groups'
 
-    save_fields = ['name', 'comments', 'type', 'tags']  # Subtype is appended on pre_save
+    FIELDS_TO_SAVE = ['name', 'comments', 'type', 'tags']  # Subtype is appended on pre_save
 
-    table_info = (
+    TABLE = (
         ui_utils.TableBuilder(_('Servers Groups'))
-        .string(name='name', title=_('Name'), visible=True)
-        .string(name='comments', title=_('Comments'))
-        .string(name='type_name', title=_('Type'), visible=True)
-        .string(name='type', title='', visible=False)
-        .string(name='subtype', title=_('Subtype'), visible=True)
-        .number(name='servers_count', title=_('Servers'), width='5rem')
-        .string(name='tags', title=_('tags'), visible=False)
+        .text_column(name='name', title=_('Name'), visible=True)
+        .text_column(name='comments', title=_('Comments'))
+        .text_column(name='type_name', title=_('Type'), visible=True)
+        .text_column(name='type', title='', visible=False)
+        .text_column(name='subtype', title=_('Subtype'), visible=True)
+        .numeric_column(name='servers_count', title=_('Servers'), width='5rem')
+        .text_column(name='tags', title=_('tags'), visible=False)
         .build()
     )
 
@@ -483,12 +483,10 @@ class ServersGroups(ModelHandler[GroupItem]):
         title = _('of type') + f' {subkind.upper()} {kind}'
 
         return (
-            ui_utils.GuiBuilder(
-                types.rest.stock.StockField.NAME,
-                types.rest.stock.StockField.COMMENTS,
-                types.rest.stock.StockField.TAGS,
-                order=100,
-            )
+            ui_utils.GuiBuilder()
+            .add_stock_field(types.rest.stock.StockField.NAME)
+            .add_stock_field(types.rest.stock.StockField.COMMENTS)
+            .add_stock_field(types.rest.stock.StockField.TAGS)
             .add_hidden(name='type', default=for_type)
             .add_info(
                 name='title',
@@ -524,7 +522,7 @@ class ServersGroups(ModelHandler[GroupItem]):
         Processes a DELETE request
         """
         self.check_access(
-            self.model(), permissions.PermissionType.ALL, root=True
+            self.MODEL(), permissions.PermissionType.ALL, root=True
         )  # Must have write permissions to delete
 
         try:
@@ -533,7 +531,7 @@ class ServersGroups(ModelHandler[GroupItem]):
                 for server in item.servers.all():
                     server.delete()
             item.delete()
-        except self.model.DoesNotExist:
+        except self.MODEL.DoesNotExist:
             raise NotFound('Element do not exists') from None
 
     def stats(self, item: 'Model') -> typing.Any:

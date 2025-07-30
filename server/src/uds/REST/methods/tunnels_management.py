@@ -37,7 +37,7 @@ from django.utils.translation import gettext_lazy as _
 
 import uds.core.types.permissions
 from uds.core import exceptions, types, consts
-from uds.core.types.rest import TableInfo
+from uds.core.types.rest import Table
 from uds.core.util import permissions, validators, ensure, ui as ui_utils
 from uds.core.util.model import process_uuid
 from uds import models
@@ -60,7 +60,7 @@ class TunnelServerItem(types.rest.BaseRestItem):
 
 class TunnelServers(DetailHandler[TunnelServerItem]):
     # tunnels/[id]/servers
-    custom_methods = ['maintenance']
+    CUSTOM_METHODS = ['maintenance']
 
     def get_items(
         self, parent: 'Model', item: typing.Optional[str]
@@ -93,14 +93,14 @@ class TunnelServers(DetailHandler[TunnelServerItem]):
             logger.exception('REST groups')
             raise self.invalid_item_response() from e
 
-    def get_table_info(self, parent: 'Model') -> TableInfo:
+    def get_table(self, parent: 'Model') -> Table:
         parent = ensure.is_instance(parent, models.ServerGroup)
         return (
             ui_utils.TableBuilder(_('Servers of {0}').format(parent.name))
-            .string(name='hostname', title=_('Hostname'))
-            .string(name='ip', title=_('Ip'))
-            .string(name='mac', title=_('Mac'))
-            .dictionary(
+            .text_column(name='hostname', title=_('Hostname'))
+            .text_column(name='ip', title=_('Ip'))
+            .text_column(name='mac', title=_('Mac'))
+            .dict_column(
                 name='maintenance',
                 title=_('State'),
                 dct={True: _('Maintenance'), False: _('Normal')},
@@ -149,24 +149,24 @@ class Tunnels(ModelHandler[TunnelItem]):
 
     path = 'tunnels'
     name = 'tunnels'
-    model = models.ServerGroup
-    model_filter = {'type': types.servers.ServerType.TUNNEL}
-    custom_methods = [
+    MODEL = models.ServerGroup
+    FILTER = {'type': types.servers.ServerType.TUNNEL}
+    CUSTOM_METHODS = [
         types.rest.ModelCustomMethod('tunnels', needs_parent=True),
         types.rest.ModelCustomMethod('assign', needs_parent=True),
     ]
 
-    detail = {'servers': TunnelServers}
-    save_fields = ['name', 'comments', 'host:', 'port:0']
+    DETAIL = {'servers': TunnelServers}
+    FIELDS_TO_SAVE = ['name', 'comments', 'host:', 'port:0']
 
-    table_info = (
+    TABLE = (
         ui_utils.TableBuilder(_('Tunnels'))
         .icon(name='name', title=_('Name'))
-        .string(name='comments', title=_('Comments'))
-        .string(name='host', title=_('Host'))
-        .number(name='port', title=_('Port'), width='6em')
-        .number(name='servers_count', title=_('Servers'), width='1rem')
-        .string(name='tags', title=_('tags'), visible=False)
+        .text_column(name='comments', title=_('Comments'))
+        .text_column(name='host', title=_('Host'))
+        .numeric_column(name='port', title=_('Port'), width='6em')
+        .numeric_column(name='servers_count', title=_('Servers'), width='1rem')
+        .text_column(name='tags', title=_('tags'), visible=False)
         .build()
     )
 
@@ -182,11 +182,10 @@ class Tunnels(ModelHandler[TunnelItem]):
 
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
         return (
-            ui_utils.GuiBuilder(
-                types.rest.stock.StockField.NAME,
-                types.rest.stock.StockField.COMMENTS,
-                types.rest.stock.StockField.TAGS,
-            )
+            ui_utils.GuiBuilder()
+            .add_stock_field(types.rest.stock.StockField.NAME)
+            .add_stock_field(types.rest.stock.StockField.COMMENTS)
+            .add_stock_field(types.rest.stock.StockField.TAGS)
             .add_text(
                 name='host',
                 label=gettext('Hostname'),

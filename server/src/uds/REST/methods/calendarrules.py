@@ -100,17 +100,17 @@ class CalendarRules(DetailHandler[CalendarRuleItem]):  # pylint: disable=too-man
             logger.exception('itemId %s', item)
             raise self.invalid_item_response() from e
         
-    def get_table_info(self, parent: 'Model') -> types.rest.TableInfo:
+    def get_table(self, parent: 'Model') -> types.rest.Table:
         parent = ensure.is_instance(parent, Calendar)
         return (
             ui_utils.TableBuilder(_('Rules of {0}').format(parent.name))
-            .string(name='name', title=_('Name'))
-            .datetime(name='start', title=_('Start'))
+            .text_column(name='name', title=_('Name'))
+            .datetime_column(name='start', title=_('Start'))
             .date(name='end', title=_('End'))
-            .dictionary(name='frequency', title=_('Frequency'), dct=FrequencyInfo.literals_dict())
-            .number(name='interval', title=_('Interval'))
-            .number(name='duration', title=_('Duration'))
-            .string(name='comments', title=_('Comments'))
+            .dict_column(name='frequency', title=_('Frequency'), dct=FrequencyInfo.literals_dict())
+            .numeric_column(name='interval', title=_('Interval'))
+            .numeric_column(name='duration', title=_('Duration'))
+            .text_column(name='comments', title=_('Comments'))
             .build()
         )
 

@@ -62,14 +62,14 @@ class Images(ModelHandler[ImageItem]):
     """
 
     path = 'gallery'
-    model = Image
-    save_fields = ['name', 'data']
+    MODEL = Image
+    FIELDS_TO_SAVE = ['name', 'data']
 
-    table_info = (
+    TABLE = (
         ui_utils.TableBuilder(_('Image Gallery'))
         .image('thumb', _('Image'), width='96px')
-        .string('name', _('Name'))
-        .string('size', _('Size'))
+        .text_column('name', _('Name'))
+        .text_column('size', _('Size'))
         .build()
     )
 

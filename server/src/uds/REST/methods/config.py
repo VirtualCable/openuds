@@ -48,7 +48,7 @@ class Config(Handler):
         Get or update UDS configuration
     """
 
-    min_access_role = consts.UserRole.ADMIN
+    ROLE = consts.UserRole.ADMIN
 
     def get(self) -> typing.Any:
         return CfgConfig.get_config_values(self.is_admin())

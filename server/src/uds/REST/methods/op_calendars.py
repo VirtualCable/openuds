@@ -38,7 +38,8 @@ import typing
 from django.utils.translation import gettext as _
 
 from uds.core import types, consts
-from uds.core.util import log, ensure
+from uds.core.types.rest import Table
+from uds.core.util import log, ensure, ui as ui_utils
 from uds.core.util.model import process_uuid
 from uds import models
 from uds.REST.model import DetailHandler
@@ -52,12 +53,14 @@ logger = logging.getLogger(__name__)
 ALLOW = 'ALLOW'
 DENY = 'DENY'
 
+
 class AccessCalendarItem(types.rest.BaseRestItem):
     id: str
     calendar_id: str
     calendar: str
     access: str
     priority: int
+
 
 class AccessCalendars(DetailHandler[AccessCalendarItem]):
     @staticmethod
@@ -70,7 +73,9 @@ class AccessCalendars(DetailHandler[AccessCalendarItem]):
             'priority': item.priority,
         }
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[AccessCalendarItem]:
+    def get_items(
+        self, parent: 'Model', item: typing.Optional[str]
+    ) -> types.rest.ItemsResult[AccessCalendarItem]:
         # parent can be a ServicePool or a metaPool
         parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
 
@@ -82,15 +87,14 @@ class AccessCalendars(DetailHandler[AccessCalendarItem]):
             logger.exception('err: %s', item)
             raise self.invalid_item_response() from e
 
-    def get_title(self, parent: 'Model') -> str:
-        return _('Access restrictions by calendar')
-
-    def get_fields(self, parent: 'Model') -> list[typing.Any]:
-        return [
-            {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
-            {'calendar': {'title': _('Calendar')}},
-            {'access': {'title': _('Access')}},
-        ]
+    def get_table(self, parent: 'Model') -> types.rest.Table:
+        return (
+            ui_utils.TableBuilder(_('Access calendars'))
+            .numeric_column('priority', _('Priority'))
+            .text_column('calendar', _('Calendar'))
+            .text_column('access', _('Access'))
+            .build()
+        )
 
     def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
@@ -98,7 +102,9 @@ class AccessCalendars(DetailHandler[AccessCalendarItem]):
         uuid = process_uuid(item) if item is not None else None
 
         try:
-            calendar: models.Calendar = models.Calendar.objects.get(uuid=process_uuid(self._params['calendar_id']))
+            calendar: models.Calendar = models.Calendar.objects.get(
+                uuid=process_uuid(self._params['calendar_id'])
+            )
             access: str = self._params['access'].upper()
             if access not in (ALLOW, DENY):
                 raise Exception()
@@ -121,7 +127,7 @@ class AccessCalendars(DetailHandler[AccessCalendarItem]):
             f'{"Added" if uuid is None else "Updated"} access calendar {calendar.name}/{access} by {self._user.pretty_name}',
             types.log.LogSource.ADMIN,
         )
-        
+
         return {'id': calendar_access.uuid}
 
     def delete_item(self, parent: 'Model', item: str) -> None:
@@ -146,12 +152,13 @@ class ActionCalendarItem(types.rest.BaseRestItem):
     next_execution: typing.Optional[datetime.datetime]
     last_execution: typing.Optional[datetime.datetime]
 
+
 class ActionsCalendars(DetailHandler[ActionCalendarItem]):
     """
     Processes the transports detail requests of a Service Pool
     """
 
-    custom_methods = [
+    CUSTOM_METHODS = [
         'execute',
     ]
 
@@ -174,7 +181,9 @@ class ActionsCalendars(DetailHandler[ActionCalendarItem]):
             'last_execution': item.last_execution,
         }
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[ActionCalendarItem]:
+    def get_items(
+        self, parent: 'Model', item: typing.Optional[str]
+    ) -> types.rest.ItemsResult[ActionCalendarItem]:
         parent = ensure.is_instance(parent, models.ServicePool)
         try:
             if item is None:
@@ -184,26 +193,18 @@ class ActionsCalendars(DetailHandler[ActionCalendarItem]):
         except Exception as e:
             raise self.invalid_item_response() from e
 
-    def get_title(self, parent: 'Model') -> str:
-        return _('Scheduled actions')
-
-    def get_fields(self, parent: 'Model') -> list[typing.Any]:
-        return [
-            {'calendar': {'title': _('Calendar')}},
-            {'description': {'title': _('Action')}},
-            {'pretty_params': {'title': _('Parameters')}},
-            {
-                'at_start': {
-                    'title': _('Relative to'),
-                    'type': 'dict',
-                    'dict': {True: _('Start'), False: _('End')},
-                }
-            },
-            # {'at_start': {'title': _('At start')}},
-            {'events_offset': {'title': _('Time offset')}},
-            {'next_execution': {'title': _('Next execution'), 'type': 'datetime'}},
-            {'last_execution': {'title': _('Last execution'), 'type': 'datetime'}},
-        ]
+    def get_table(self, parent: 'Model') -> Table:
+        return (
+            ui_utils.TableBuilder(_('Scheduled actions'))
+            .text_column('calendar', _('Calendar'))
+            .text_column('description', _('Action'))
+            .text_column('pretty_params', _('Parameters'))
+            .dict_column('at_start', _('Relative to'), dct={True: _('Start'), False: _('End')})
+            .text_column('events_offset', _('Time offset'))
+            .datetime_column('next_execution', _('Next execution'))
+            .datetime_column('last_execution', _('Last execution'))
+            .build()
+        )
 
     def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, models.ServicePool)
@@ -245,7 +246,7 @@ class ActionsCalendars(DetailHandler[ActionCalendarItem]):
             )
 
         log.log(parent, types.log.LogLevel.INFO, log_string, types.log.LogSource.ADMIN)
-        
+
         return {'id': calendar_action.uuid}
 
     def delete_item(self, parent: 'Model', item: str) -> None:

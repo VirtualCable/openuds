@@ -79,7 +79,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
     Also accepts GET methods for "custom" methods
     """
 
-    custom_methods: typing.ClassVar[list[str]] = []
+    CUSTOM_METHODS: typing.ClassVar[list[str]] = []
     _parent: typing.Optional[
         'ModelHandler[types.rest.T_Item]'
     ]  # Parent handler, that is the ModelHandler that contains this detail
@@ -118,7 +118,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
         :param parent: Parent Model Element
         :param arg: argument to pass to custom method
         """
-        for to_check in self.custom_methods:
+        for to_check in self.CUSTOM_METHODS:
             camel_case_name, snake_case_name = camel_and_snake_case_from(to_check)
             if check in (camel_case_name, snake_case_name):
                 operation = getattr(self, snake_case_name, None) or getattr(self, camel_case_name, None)
@@ -163,7 +163,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
                 raise self.invalid_request_response()
             case consts.rest.TABLEINFO:
                 if num_args == 1:
-                    return self.get_table_info(parent).as_dict()
+                    return self.get_table(parent).as_dict()
                 raise self.invalid_request_response()
             case consts.rest.GUI:
                 if num_args in (1, 2):
@@ -287,13 +287,13 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
         """
         raise self.invalid_request_response()
 
-    def get_table_info(self, parent: models.Model) -> types.rest.TableInfo:
+    def get_table(self, parent: models.Model) -> types.rest.Table:
         """
         Returns the table info for this detail, that is the title, fields and row style
         :param parent: Parent object
         :return: TableInfo object with title, fields and row style
         """
-        return types.rest.TableInfo.null()
+        return types.rest.Table.null()
 
     def get_gui(self, parent: models.Model, for_type: str) -> list[types.ui.GuiElement]:
         """

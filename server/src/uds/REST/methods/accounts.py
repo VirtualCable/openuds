@@ -65,22 +65,22 @@ class Accounts(ModelHandler[AccountItem]):
     Processes REST requests about accounts
     """
 
-    model = Account
-    detail = {'usage': AccountsUsage}
+    MODEL = Account
+    DETAIL = {'usage': AccountsUsage}
 
-    custom_methods = [
+    CUSTOM_METHODS = [
         types.rest.ModelCustomMethod('clear', True),
         types.rest.ModelCustomMethod('timemark', True),
     ]
 
-    save_fields = ['name', 'comments', 'tags']
+    FIELDS_TO_SAVE = ['name', 'comments', 'tags']
 
-    table_info = (
+    TABLE = (
         ui_utils.TableBuilder(_('Accounts'))
-        .string(name='name', title=_('Name'))
-        .string(name='comments', title=_('Comments'))
-        .datetime(name='time_mark', title=_('Time mark'))
-        .string(name='tags', title=_('tags'), visible=False)
+        .text_column(name='name', title=_('Name'))
+        .text_column(name='comments', title=_('Comments'))
+        .datetime_column(name='time_mark', title=_('Time mark'))
+        .text_column(name='tags', title=_('tags'), visible=False)
         .build()
     )
 
@@ -104,10 +104,11 @@ class Accounts(ModelHandler[AccountItem]):
         }
 
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
-        return ui_utils.GuiBuilder(
-            types.rest.stock.StockField.NAME,
-            types.rest.stock.StockField.COMMENTS,
-            types.rest.stock.StockField.TAGS,
+        return (
+            ui_utils.GuiBuilder()
+            .add_stock_field(types.rest.stock.StockField.NAME)
+            .add_stock_field(types.rest.stock.StockField.COMMENTS)
+            .add_stock_field(types.rest.stock.StockField.TAGS)
         ).build()
 
     def timemark(self, item: 'Model') -> typing.Any:

@@ -70,6 +70,8 @@ class StockField(enum.StrEnum):
         return field_gui
 
 
+# Note tha Table Builder will update the order, but keep the order here for, maybe, compatibility with older code
+# Eventullay, should be removed
 _STATIC_FLDS: typing.Final[dict[StockField, list['ui.GuiElement']]] = {
     StockField.TAGS: [
         {

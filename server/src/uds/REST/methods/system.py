@@ -143,7 +143,7 @@ class System(Handler):
     }
     """
 
-    min_access_role = consts.UserRole.STAFF
+    ROLE = consts.UserRole.STAFF
 
     help_paths = [
         types.rest.doc.HelpDoc('', ''),

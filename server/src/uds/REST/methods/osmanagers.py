@@ -62,16 +62,16 @@ class OsManagerItem(types.rest.ManagedObjectItem):
 
 class OsManagers(ModelHandler[OsManagerItem]):
 
-    model = OSManager
-    save_fields = ['name', 'comments', 'tags']
+    MODEL = OSManager
+    FIELDS_TO_SAVE = ['name', 'comments', 'tags']
 
-    table_info = (
+    TABLE = (
         ui_utils.TableBuilder(_('OS Managers'))
         .icon(name='name', title=_('Name'))
-        .string(name='type_name', title=_('Type'))
-        .string(name='comments', title=_('Comments'))
-        .number(name='deployed_count', title=_('Used by'), width='8em')
-        .string(name='tags', title=_('Tags'), visible=False)
+        .text_column(name='type_name', title=_('Type'))
+        .text_column(name='comments', title=_('Comments'))
+        .numeric_column(name='deployed_count', title=_('Used by'), width='8em')
+        .text_column(name='tags', title=_('Tags'), visible=False)
         .build()
     )
 
@@ -126,11 +126,13 @@ class OsManagers(ModelHandler[OsManagerItem]):
                 raise exceptions.rest.NotFound('OS Manager type not found')
             with Environment.temporary_environment() as env:
                 osmanager = osmanager_type(env, None)
-                return ui_utils.GuiBuilder(
-                    types.rest.stock.StockField.NAME,
-                    types.rest.stock.StockField.COMMENTS,
-                    types.rest.stock.StockField.TAGS,
-                    gui=osmanager.gui_description(),
-                ).build()
+                return (
+                    ui_utils.GuiBuilder()
+                    .add_stock_field(types.rest.stock.StockField.NAME)
+                    .add_stock_field(types.rest.stock.StockField.COMMENTS)
+                    .add_stock_field(types.rest.stock.StockField.TAGS)
+                    .add_fields(osmanager.gui_description())
+                    .build()
+                )
         except:
             raise exceptions.rest.NotFound('type not found')

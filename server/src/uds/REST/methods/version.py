@@ -40,7 +40,7 @@ logger = logging.getLogger(__name__)
 
 
 class UDSVersion(Handler):
-    min_access_role = consts.UserRole.ANONYMOUS
+    ROLE = consts.UserRole.ANONYMOUS
     name = 'version'
 
     def get(self) -> collections.abc.MutableMapping[str, typing.Any]:

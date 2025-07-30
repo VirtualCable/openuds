@@ -53,7 +53,7 @@ class Permissions(Handler):
     """
     Processes permissions requests
     """
-    min_access_role = consts.UserRole.ADMIN
+    ROLE = consts.UserRole.ADMIN
 
     @staticmethod
     def get_class(class_name: str) -> type['Model']:

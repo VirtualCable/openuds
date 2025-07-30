@@ -42,7 +42,7 @@ from uds.core import types
 # from uds.models.user_service import UserService
 # from uds.models.user import User
 
-from uds.core.types.rest import TableInfo
+from uds.core.types.rest import Table
 from uds.core.types.states import State
 from uds.core.util.model import process_uuid
 from uds.core.util import log, ensure, ui as ui_utils
@@ -100,14 +100,14 @@ class MetaServicesPool(DetailHandler[MetaItem]):
             logger.exception('err: %s', item)
             raise self.invalid_item_response()
 
-    def get_table_info(self, parent: 'Model') -> types.rest.TableInfo:
+    def get_table(self, parent: 'Model') -> types.rest.Table:
         parent = ensure.is_instance(parent, models.MetaPool)
         return (
             ui_utils.TableBuilder(_('Members of {0}').format(parent.name))
-            .string(name='name', title=_('Name'))
-            .string(name='comments', title=_('Comments'))
-            .number(name='priority', title=_('Priority'))
-            .string(name='enabled', title=_('Enabled'))
+            .text_column(name='name', title=_('Name'))
+            .text_column(name='comments', title=_('Comments'))
+            .numeric_column(name='priority', title=_('Priority'))
+            .text_column(name='enabled', title=_('Enabled'))
             .build()
         )
 
@@ -223,21 +223,21 @@ class MetaAssignedService(DetailHandler[UserServiceItem]):
             logger.exception('get_items')
             raise self.invalid_item_response()
 
-    def get_table_info(self, parent: 'Model') -> TableInfo:
+    def get_table(self, parent: 'Model') -> Table:
         parent = ensure.is_instance(parent, models.MetaPool)
         return (
             ui_utils.TableBuilder(_('Assigned services to {0}').format(parent.name))
-            .datetime(name='creation_date', title=_('Creation date'))
-            .string(name='pool_name', title=_('Pool'))
-            .string(name='unique_id', title='Unique ID')
-            .string(name='ip', title=_('IP'))
-            .string(name='friendly_name', title=_('Friendly name'))
-            .dictionary(name='state', title=_('status'), dct=State.literals_dict())
-            .string(name='in_use', title=_('In Use'))
-            .string(name='source_host', title=_('Src Host'))
-            .string(name='source_ip', title=_('Src Ip'))
-            .string(name='owner', title=_('Owner'))
-            .string(name='actor_version', title=_('Actor version'))
+            .datetime_column(name='creation_date', title=_('Creation date'))
+            .text_column(name='pool_name', title=_('Pool'))
+            .text_column(name='unique_id', title='Unique ID')
+            .text_column(name='ip', title=_('IP'))
+            .text_column(name='friendly_name', title=_('Friendly name'))
+            .dict_column(name='state', title=_('status'), dct=State.literals_dict())
+            .text_column(name='in_use', title=_('In Use'))
+            .text_column(name='source_host', title=_('Src Host'))
+            .text_column(name='source_ip', title=_('Src Ip'))
+            .text_column(name='owner', title=_('Owner'))
+            .text_column(name='actor_version', title=_('Actor version'))
             .row_style(prefix='row-state-', field='state')
             .build()
         )

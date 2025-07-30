@@ -76,25 +76,25 @@ class ProviderItem(types.rest.ManagedObjectItem):
 
 class Providers(ModelHandler[ProviderItem]):
 
-    model = Provider
-    detail = {'services': DetailServices, 'usage': ServicesUsage}
+    MODEL = Provider
+    DETAIL = {'services': DetailServices, 'usage': ServicesUsage}
 
-    custom_methods = [
+    CUSTOM_METHODS = [
         types.rest.ModelCustomMethod('allservices', False),
         types.rest.ModelCustomMethod('service', False),
         types.rest.ModelCustomMethod('maintenance', True),
     ]
 
-    save_fields = ['name', 'comments', 'tags']
+    FIELDS_TO_SAVE = ['name', 'comments', 'tags']
 
-    table_info = (
+    TABLE = (
         ui_utils.TableBuilder(_('Service providers'))
         .icon(name='name', title=_('Name'))
-        .string(name='type_name', title=_('Type'))
-        .string(name='comments', title=_('Comments'))
-        .number(name='services_count', title=_('Services'))
-        .number(name='user_services_count', title=_('User Services'))
-        .string(name='tags', title=_('Tags'), visible=False)
+        .text_column(name='type_name', title=_('Type'))
+        .text_column(name='comments', title=_('Comments'))
+        .numeric_column(name='services_count', title=_('Services'))
+        .numeric_column(name='user_services_count', title=_('User Services'))
+        .text_column(name='tags', title=_('Tags'), visible=False)
         .row_style(prefix='row-maintenance-', field='maintenance_mode')
     ).build()
 
@@ -161,11 +161,12 @@ class Providers(ModelHandler[ProviderItem]):
         if provider_type:
             with Environment.temporary_environment() as env:
                 provider = provider_type(env, None)
-                return ui_utils.GuiBuilder(
-                    types.rest.stock.StockField.NAME,
-                    types.rest.stock.StockField.COMMENTS,
-                    types.rest.stock.StockField.TAGS,
-                    gui=provider.gui_description(),
+                return (
+                    ui_utils.GuiBuilder()
+                    .add_stock_field(types.rest.stock.StockField.NAME)
+                    .add_stock_field(types.rest.stock.StockField.COMMENTS)
+                    .add_stock_field(types.rest.stock.StockField.TAGS)
+                    .add_fields(provider.gui_description())
                 ).build()
 
         raise exceptions.rest.NotFound('Type not found!')

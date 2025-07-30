@@ -51,7 +51,7 @@ class Connection(Handler):
     Processes actor requests
     """
 
-    min_access_role = consts.UserRole.USER
+    ROLE = consts.UserRole.USER
 
     @staticmethod
     def result(

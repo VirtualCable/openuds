@@ -65,19 +65,19 @@ class Networks(ModelHandler[NetworkItem]):
     Implements specific handling for network related requests using GUI
     """
 
-    model = Network
-    save_fields = ['name', 'net_string', 'tags']
+    MODEL = Network
+    FIELDS_TO_SAVE = ['name', 'net_string', 'tags']
 
-    table_info = (
+    TABLE = (
         ui_utils.TableBuilder(_('Networks'))
-        .string('name', _('Name'))
-        .string('net_string', _('Range'))
-        .number('transports_count', _('Transports'), width='8em')
-        .number('authenticators_count', _('Authenticators'), width='8em')
-        .string('tags', _('Tags'), visible=False)
+        .text_column('name', _('Name'))
+        .text_column('net_string', _('Range'))
+        .numeric_column('transports_count', _('Transports'), width='8em')
+        .numeric_column('authenticators_count', _('Authenticators'), width='8em')
+        .text_column('tags', _('Tags'), visible=False)
         .build()
     )
-    
+
     # table_title = _('Networks')
     # xtable_fields = [
     #     {
@@ -108,11 +108,10 @@ class Networks(ModelHandler[NetworkItem]):
 
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
         return (
-            ui_utils.GuiBuilder(
-                types.rest.stock.StockField.NAME,
-                types.rest.stock.StockField.COMMENTS,
-                types.rest.stock.StockField.TAGS,
-            )
+            ui_utils.GuiBuilder()
+            .add_stock_field(types.rest.stock.StockField.NAME)
+            .add_stock_field(types.rest.stock.StockField.COMMENTS)
+            .add_stock_field(types.rest.stock.StockField.TAGS)
             .add_text(
                 name='net_string',
                 label=gettext('Network range'),

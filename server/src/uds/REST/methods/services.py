@@ -40,7 +40,7 @@ from uds import models
 
 from uds.core import exceptions, types
 import uds.core.types.permissions
-from uds.core.types.rest import TableInfo
+from uds.core.types.rest import Table
 from uds.core.util import log, permissions, ensure, ui as ui_utils
 from uds.core.util.model import process_uuid
 from uds.core.environment import Environment
@@ -99,7 +99,7 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
     Detail handler for Services, whose parent is a Provider
     """
 
-    custom_methods = ['servicepools']
+    CUSTOM_METHODS = ['servicepools']
 
     @staticmethod
     def service_info(item: models.Service) -> ServiceInfo:
@@ -259,16 +259,16 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
 
         raise exceptions.rest.RequestError('Item has associated deployed services')
 
-    def get_table_info(self, parent: 'Model') -> TableInfo:
+    def get_table(self, parent: 'Model') -> Table:
         parent = ensure.is_instance(parent, models.Provider)
         return (
             ui_utils.TableBuilder(_('Services of {0}').format(parent.name))
             .icon(name='name', title=_('Name'))
-            .string(name='type_name', title=_('Type'))
-            .string(name='comments', title=_('Comments'))
-            .number(name='deployed_services_count', title=_('Services Pools'), width='12em')
-            .number(name='user_services_count', title=_('User Services'), width='12em')
-            .dictionary(
+            .text_column(name='type_name', title=_('Type'))
+            .text_column(name='comments', title=_('Comments'))
+            .numeric_column(name='deployed_services_count', title=_('Services Pools'), width='12em')
+            .numeric_column(name='user_services_count', title=_('User Services'), width='12em')
+            .dict_column(
                 name='max_services_count_type',
                 title=_('Counting method'),
                 dct={
@@ -276,7 +276,7 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
                     types.services.ServicesCountingType.CONSERVATIVE: _('Conservative'),
                 },
             )
-            .string(name='tags', title=_('Tags'), visible=False)
+            .text_column(name='tags', title=_('Tags'), visible=False)
             .row_style(prefix='row-maintenance-', field='maintenance_mode')
             .build()
         )
@@ -312,23 +312,25 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
                 )  # Instantiate it so it has the opportunity to alter gui description based on parent
                 overrided_fields = service.overrided_fields or {}
 
-                gui = ui_utils.GuiBuilder(
-                    types.rest.stock.StockField.NAME,
-                    types.rest.stock.StockField.COMMENTS,
-                    types.rest.stock.StockField.TAGS,
-                ).add_choice(
-                    name='max_services_count_type',
-                    choices=[
-                        ui.gui.choice_item(
-                            str(types.services.ServicesCountingType.STANDARD.value), _('Standard')
-                        ),
-                        ui.gui.choice_item(
-                            str(types.services.ServicesCountingType.CONSERVATIVE.value), _('Conservative')
-                        ),
-                    ],
-                    label=_('Service counting method'),
-                    tooltip=_('Kind of service counting for calculating if MAX is reached'),
-                    tab=types.ui.Tab.ADVANCED,
+                gui = (
+                    ui_utils.GuiBuilder()
+                    .add_stock_field(types.rest.stock.StockField.NAME)
+                    .add_stock_field(types.rest.stock.StockField.COMMENTS)
+                    .add_stock_field(types.rest.stock.StockField.TAGS)
+                    .add_choice(
+                        name='max_services_count_type',
+                        choices=[
+                            ui.gui.choice_item(
+                                str(types.services.ServicesCountingType.STANDARD.value), _('Standard')
+                            ),
+                            ui.gui.choice_item(
+                                str(types.services.ServicesCountingType.CONSERVATIVE.value), _('Conservative')
+                            ),
+                        ],
+                        label=_('Service counting method'),
+                        tooltip=_('Kind of service counting for calculating if MAX is reached'),
+                        tab=types.ui.Tab.ADVANCED,
+                    )
                 )
 
                 return [field_gui for field_gui in gui.build() if field_gui['name'] not in overrided_fields]

@@ -41,7 +41,7 @@ import uds.core.types.permissions
 from uds import models
 from uds.core import exceptions, types
 from uds.core.managers.userservice import UserServiceManager
-from uds.core.types.rest import TableInfo
+from uds.core.types.rest import Table
 from uds.core.types.states import State
 from uds.core.util import ensure, log, permissions, ui as ui_utils
 from uds.core.util.model import process_uuid
@@ -87,7 +87,7 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
     Rest handler for Assigned Services, wich parent is Service
     """
 
-    custom_methods = ['reset']
+    CUSTOM_METHODS = ['reset']
 
     @staticmethod
     def item_as_dict(
@@ -182,25 +182,25 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
             logger.exception('get_items')
             raise self.invalid_item_response() from e
 
-    def get_table_info(self, parent: 'Model') -> types.rest.TableInfo:
+    def get_table(self, parent: 'Model') -> types.rest.Table:
         parent = ensure.is_instance(parent, models.ServicePool)
-        table_info = ui_utils.TableBuilder(_('Assigned Services')).datetime(
+        table_info = ui_utils.TableBuilder(_('Assigned Services')).datetime_column(
             name='creation_date', title=_('Creation date')
         )
         if parent.service.get_type().publication_type is not None:
-            table_info.string(name='revision', title=_('Revision'))
+            table_info.text_column(name='revision', title=_('Revision'))
 
         return (
-            table_info.string(name='unique_id', title='Unique ID')
-            .string(name='ip', title=_('IP'))
-            .string(name='friendly_name', title=_('Friendly name'))
-            .dictionary(name='state', title=_('status'), dct=State.literals_dict())
-            .datetime(name='state_date', title=_('Status date'))
-            .string(name='in_use', title=_('In Use'))
-            .string(name='source_host', title=_('Src Host'))
-            .string(name='source_ip', title=_('Src Ip'))
-            .string(name='owner', title=_('Owner'))
-            .string(name='actor_version', title=_('Actor version'))
+            table_info.text_column(name='unique_id', title='Unique ID')
+            .text_column(name='ip', title=_('IP'))
+            .text_column(name='friendly_name', title=_('Friendly name'))
+            .dict_column(name='state', title=_('status'), dct=State.literals_dict())
+            .datetime_column(name='state_date', title=_('Status date'))
+            .text_column(name='in_use', title=_('In Use'))
+            .text_column(name='source_host', title=_('Src Host'))
+            .text_column(name='source_ip', title=_('Src Ip'))
+            .text_column(name='owner', title=_('Owner'))
+            .text_column(name='actor_version', title=_('Actor version'))
             .row_style(prefix='row-state-', field='state')
         ).build()
 
@@ -291,7 +291,7 @@ class CachedService(AssignedUserService):
     Rest handler for Cached Services, which parent is ServicePool
     """
 
-    custom_methods = []  # Remove custom methods from assigned services
+    CUSTOM_METHODS = []  # Remove custom methods from assigned services
 
     def get_items(
         self, parent: 'Model', item: typing.Optional[str]
@@ -312,32 +312,23 @@ class CachedService(AssignedUserService):
             logger.exception('get_items')
             raise self.invalid_item_response() from e
 
-    def get_title(self, parent: 'Model') -> str:
-        return _('Cached services')
-
-    def get_fields(self, parent: 'Model') -> list[typing.Any]:
+    def get_table(self, parent: 'Model') -> types.rest.Table:
         parent = ensure.is_instance(parent, models.ServicePool)
-        return [
-            {'creation_date': {'title': _('Creation date'), 'type': 'datetime'}},
-            {'revision': {'title': _('Revision')}},
-            {'unique_id': {'title': 'Unique ID'}},
-            {'ip': {'title': _('IP')}},
-            {'friendly_name': {'title': _('Friendly name')}},
-        ] + (
-            [
-                {
-                    'state': {
-                        'title': _('State'),
-                        'type': 'dict',
-                        'dict': State.literals_dict(),
-                    }
-                },
-                {'cache_level': {'title': _('Cache level')}},
-                {'actor_version': {'title': _('Actor version')}},
-            ]
-            if parent.state != State.LOCKED
-            else []
+        table_info = (
+            ui_utils.TableBuilder(_('Cached Services'))
+            .datetime_column(name='creation_date', title=_('Creation date'))
+            .text_column(name='revision', title=_('Revision'))
+            .text_column(name='unique_id', title='Unique ID')
+            .text_column(name='ip', title=_('IP'))
+            .text_column(name='friendly_name', title=_('Friendly name'))
+            .dict_column(name='state', title=_('State'), dct=State.literals_dict())
         )
+        if parent.state != State.LOCKED:
+            table_info = table_info.text_column(name='cache_level', title=_('Cache level')).text_column(
+                name='actor_version', title=_('Actor version')
+            )
+
+        return table_info.build()
 
     def delete_item(self, parent: 'Model', item: str, cache: bool = False) -> None:
         return super().delete_item(parent, item, cache=True)
@@ -385,13 +376,13 @@ class Groups(DetailHandler[GroupItem]):
             for group in typing.cast(collections.abc.Iterable[models.Group], parent.assignedGroups.all())
         ]
 
-    def get_table_info(self, parent: 'Model') -> TableInfo:
+    def get_table(self, parent: 'Model') -> Table:
         parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
         return (
             ui_utils.TableBuilder(_('Assigned groups'))
-            .string(name='group_name', title=_('Name'))
-            .string(name='comments', title=_('comments'))
-            .dictionary(name='state', title=_('State'), dct=State.literals_dict())
+            .text_column(name='group_name', title=_('Name'))
+            .text_column(name='comments', title=_('comments'))
+            .dict_column(name='state', title=_('State'), dct=State.literals_dict())
             .row_style(prefix='row-state-', field='state')
             .build()
         )
@@ -451,17 +442,16 @@ class Transports(DetailHandler[TransportItem]):
             for trans in parent.transports.all()
         ]
 
-    def get_title(self, parent: 'Model') -> str:
+    def get_table(self, parent: 'Model') -> Table:
         parent = ensure.is_instance(parent, models.ServicePool)
-        return _('Assigned transports')
-
-    def get_fields(self, parent: 'Model') -> list[typing.Any]:
-        return [
-            {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
-            {'name': {'title': _('Name')}},
-            {'trans_type': {'title': _('Type')}},
-            {'comments': {'title': _('Comments')}},
-        ]
+        return (
+            ui_utils.TableBuilder(_('Assigned transports'))
+            .numeric_column(name='priority', title=_('Priority'), width='6em')
+            .text_column(name='name', title=_('Name'))
+            .text_column(name='trans_type', title=_('Type'))
+            .text_column(name='comments', title=_('Comments'))
+            .build()
+        )
 
     def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, models.ServicePool)
@@ -502,7 +492,7 @@ class Publications(DetailHandler[PublicationItem]):
     Processes the publications detail requests of a Service Pool
     """
 
-    custom_methods = ['publish', 'cancel']  # We provided these custom methods
+    CUSTOM_METHODS = ['publish', 'cancel']  # We provided these custom methods
 
     def publish(self, parent: 'Model') -> typing.Any:
         """
@@ -575,14 +565,14 @@ class Publications(DetailHandler[PublicationItem]):
             for i in parent.publications.all()
         ]
 
-    def get_table_info(self, parent: 'Model') -> TableInfo:
+    def get_table(self, parent: 'Model') -> Table:
         parent = ensure.is_instance(parent, models.ServicePool)
         return (
             ui_utils.TableBuilder(_('Publications'))
-            .number(name='revision', title=_('Revision'), width='6em')
-            .datetime(name='publish_date', title=_('Publish date'))
-            .dictionary(name='state', title=_('State'), dct=State.literals_dict())
-            .string(name='reason', title=_('Reason'))
+            .numeric_column(name='revision', title=_('Revision'), width='6em')
+            .datetime_column(name='publish_date', title=_('Publish date'))
+            .dict_column(name='state', title=_('State'), dct=State.literals_dict())
+            .text_column(name='reason', title=_('Reason'))
             .row_style(prefix='row-state-', field='state')
         ).build()
 
@@ -609,13 +599,11 @@ class Changelog(DetailHandler['ChangelogItem']):
             for i in parent.changelog.all()
         ]
 
-    def get_title(self, parent: 'Model') -> str:
+    def get_table(self, parent: 'Model') -> types.rest.Table:
         parent = ensure.is_instance(parent, models.ServicePool)
-        return _(f'Changelog')
-
-    def get_fields(self, parent: 'Model') -> list[typing.Any]:
-        return [
-            {'revision': {'title': _('Revision'), 'type': 'numeric', 'width': '6em'}},
-            {'stamp': {'title': _('Publish date'), 'type': 'datetime'}},
-            {'log': {'title': _('Comment')}},
-        ]
+        return (
+            ui_utils.TableBuilder(_('Changelog'))
+            .numeric_column(name='revision', title=_('Revision'), width='6em')
+            .datetime_column(name='stamp', title=_('Publish date'))
+            .text_column(name='log', title=_('Comment'))
+        ).build()

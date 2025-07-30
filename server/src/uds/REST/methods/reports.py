@@ -74,14 +74,14 @@ class Reports(model.BaseModelHandler[ReportItem]):
     Processes reports requests
     """
 
-    min_access_role = consts.UserRole.ADMIN
+    ROLE = consts.UserRole.ADMIN
 
-    table_info = (
+    TABLE = (
         ui_utils.TableBuilder(_('Available reports'))
-        .string(name='group', title=_('Group'), visible=True)
-        .string(name='name', title=_('Name'), visible=True)
-        .string(name='description', title=_('Description'), visible=True)
-        .string(name='mime_type', title=_('Generates'), visible=True)
+        .text_column(name='group', title=_('Group'), visible=True)
+        .text_column(name='name', title=_('Name'), visible=True)
+        .text_column(name='description', title=_('Description'), visible=True)
+        .text_column(name='mime_type', title=_('Generates'), visible=True)
         .row_style(prefix='row-state-', field='state')
         .build()
     )
@@ -126,7 +126,7 @@ class Reports(model.BaseModelHandler[ReportItem]):
             ((consts.rest.OVERVIEW,), lambda: list(self.get_items())),
             (
                 (consts.rest.TABLEINFO,),
-                lambda: self.table_info.as_dict(),
+                lambda: self.TABLE.as_dict(),
             ),
             ((consts.rest.GUI, '<report>'), report_gui),
         )
