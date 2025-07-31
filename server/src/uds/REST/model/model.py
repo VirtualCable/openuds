@@ -113,7 +113,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
         """
         raise NotImplementedError()
 
-    def item_as_dict_overview(self, item: models.Model) -> types.rest.T_Item:
+    def get_item_summary(self, item: models.Model) -> types.rest.T_Item:
         """
         Invoked when request is an "overview"
         default behavior is return item_as_dict
@@ -262,7 +262,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
                 ):
                     continue
                 if overview:
-                    yield self.item_as_dict_overview(item)
+                    yield self.get_item_summary(item)
                 else:
                     yield self.get_item(item)
             except Exception as e:  # maybe an exception is thrown to skip an item

@@ -99,7 +99,7 @@ class Images(ModelHandler[ImageItem]):
             data=item.data64,
         )
 
-    def item_as_dict_overview(self, item: 'Model') -> ImageItem:
+    def get_item_summary(self, item: 'Model') -> ImageItem:
         item = ensure.is_instance(item, Image)
         return ImageItem(
             id=item.uuid,

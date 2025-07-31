@@ -109,7 +109,7 @@ class ServicesPoolGroups(ModelHandler[ServicePoolGroupItem]):
             image_id=item.image.uuid if item.image else None,
         )
 
-    def item_as_dict_overview(self, item: 'Model') -> ServicePoolGroupItem:
+    def get_item_summary(self, item: 'Model') -> ServicePoolGroupItem:
         item = ensure.is_instance(item, ServicePoolGroup)
         return ServicePoolGroupItem(
             id=item.uuid,
