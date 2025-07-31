@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import logging
 import typing
 
@@ -58,7 +59,8 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class ServiceItem(types.rest.ManagedObjectItem):
+@dataclasses.dataclass
+class ServiceItem(types.rest.ManagedObjectItem['models.Service']):
     id: str
     name: str
     tags: list[str]
@@ -68,9 +70,10 @@ class ServiceItem(types.rest.ManagedObjectItem):
     max_services_count_type: str
     maintenance_mode: bool
     permission: int
-    info: typing.NotRequired['ServiceInfo']
+    info: 'ServiceInfo|types.rest.NotRequired' = types.rest.NotRequired.field()
 
 
+@dataclasses.dataclass
 class ServiceInfo(types.rest.BaseRestItem):
     icon: str
     needs_publication: bool
@@ -86,6 +89,7 @@ class ServiceInfo(types.rest.BaseRestItem):
     can_list_assignables: bool
 
 
+@dataclasses.dataclass
 class ServicePoolResumeItem(types.rest.BaseRestItem):
     id: str
     name: str
@@ -106,45 +110,45 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
         info = item.get_type()
         overrided_fields = info.overrided_pools_fields or {}
 
-        return {
-            'icon': info.icon64().replace('\n', ''),
-            'needs_publication': info.publication_type is not None,
-            'max_deployed': info.userservices_limit,
-            'uses_cache': info.uses_cache and overrided_fields.get('uses_cache', True),
-            'uses_cache_l2': info.uses_cache_l2,
-            'cache_tooltip': _(info.cache_tooltip),
-            'cache_tooltip_l2': _(info.cache_tooltip_l2),
-            'needs_osmanager': info.needs_osmanager,
-            'allowed_protocols': [str(i) for i in info.allowed_protocols],
-            'services_type_provided': info.services_type_provided,
-            'can_reset': info.can_reset,
-            'can_list_assignables': info.can_assign(),
-        }
+        return ServiceInfo(
+            icon=info.icon64().replace('\n', ''),
+            needs_publication=info.publication_type is not None,
+            max_deployed=info.userservices_limit,
+            uses_cache=info.uses_cache and overrided_fields.get('uses_cache', True),
+            uses_cache_l2=info.uses_cache_l2,
+            cache_tooltip=_(info.cache_tooltip),
+            cache_tooltip_l2=_(info.cache_tooltip_l2),
+            needs_osmanager=info.needs_osmanager,
+            allowed_protocols=[str(i) for i in info.allowed_protocols],
+            services_type_provided=info.services_type_provided,
+            can_reset=info.can_reset,
+            can_list_assignables=info.can_assign(),
+        )
 
     @staticmethod
-    def service_to_dict(item: models.Service, perm: int, full: bool = False) -> ServiceItem:
+    def service_item(item: models.Service, perm: int, full: bool = False) -> ServiceItem:
         """
         Convert a service db item to a dict for a rest response
         :param item: Service item (db)
         :param full: If full is requested, add "extra" fields to complete information
         """
-        ret_value: ServiceItem = {
-            'id': item.uuid,
-            'name': item.name,
-            'tags': [tag.tag for tag in item.tags.all()],
-            'comments': item.comments,
-            'deployed_services_count': item.deployedServices.count(),
-            'user_services_count': models.UserService.objects.filter(deployed_service__service=item)
+        ret_value = ServiceItem(
+            id=item.uuid,
+            name=item.name,
+            tags=[tag.tag for tag in item.tags.all()],
+            comments=item.comments,
+            deployed_services_count=item.deployedServices.count(),
+            user_services_count=models.UserService.objects.filter(deployed_service__service=item)
             .exclude(state__in=State.INFO_STATES)
             .count(),
-            'max_services_count_type': str(item.max_services_count_type),
-            'maintenance_mode': item.provider.maintenance_mode,
-            'permission': perm,
-        }
-        Services.fill_instance_type(item, ret_value)
+            max_services_count_type=str(item.max_services_count_type),
+            maintenance_mode=item.provider.maintenance_mode,
+            permission=perm,
+            item=item,
+        )
 
         if full:
-            ret_value['info'] = Services.service_info(item)
+            ret_value.info = Services.service_info(item)
 
         return ret_value
 
@@ -154,11 +158,10 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
         perm = permissions.effective_permissions(self._user, parent)
         try:
             if item is None:
-                return [Services.service_to_dict(k, perm) for k in parent.services.all()]
+                return [Services.service_item(k, perm) for k in parent.services.all()]
             k = parent.services.get(uuid=process_uuid(item))
-            val = Services.service_to_dict(k, perm, full=True)
+            val = Services.service_item(k, perm, full=True)
             # On detail, ne wee to fill the instance fields by hand
-            self.fill_instance_fields(k, val)
             return val
         except Exception as e:
             logger.error('Error getting services for %s: %s', parent, e)
@@ -221,7 +224,7 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
             service.data = service_instance.serialize()
 
             service.save()
-            return Services.service_to_dict(
+            return Services.service_item(
                 service, permissions.effective_permissions(self._user, service), full=True
             )
 
@@ -359,15 +362,15 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
                     i, uds.core.types.permissions.PermissionType.READ
                 )  # Ensures access before listing...
                 res.append(
-                    {
-                        'id': i.uuid,
-                        'name': i.name,
-                        'thumb': i.image.thumb64 if i.image is not None else DEFAULT_THUMB_BASE64,
-                        'user_services_count': i.userServices.exclude(
+                    ServicePoolResumeItem(
+                        id=i.uuid,
+                        name=i.name,
+                        thumb=i.image.thumb64 if i.image is not None else DEFAULT_THUMB_BASE64,
+                        user_services_count=i.userServices.exclude(
                             state__in=(State.REMOVED, State.ERROR)
                         ).count(),
-                        'state': _('With errors') if i.is_restrained() else _('Ok'),
-                    }
+                        state=_('With errors') if i.is_restrained() else _('Ok'),
+                    )
                 )
             except exceptions.rest.AccessDenied:
                 pass

@@ -30,6 +30,7 @@
 """
 @Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import datetime
 import logging
 import typing
@@ -49,6 +50,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+@dataclasses.dataclass
 class CalendarItem(types.rest.BaseRestItem):
     id: str
     name: str
@@ -59,7 +61,6 @@ class CalendarItem(types.rest.BaseRestItem):
     number_access: int
     number_actions: int
     permission: types.permissions.PermissionType
-
 
 class Calendars(ModelHandler[CalendarItem]):
     """
@@ -83,35 +84,19 @@ class Calendars(ModelHandler[CalendarItem]):
         .build()
     )
 
-    # table_title = _('Calendars')
-    # xtable_fields = [
-    #     {
-    #         'name': {
-    #             'title': _('Name'),
-    #             'visible': True,
-    #         }
-    #     },
-    #     {'comments': {'title': _('Comments')}},
-    #     {'modified': {'title': _('Modified'), 'type': 'datetime'}},
-    #     {'number_rules': {'title': _('Rules')}},
-    #     {'number_access': {'title': _('Pools with Accesses')}},
-    #     {'number_actions': {'title': _('Pools with Actions')}},
-    #     {'tags': {'title': _('tags'), 'visible': False}},
-    # ]
-
-    def item_as_dict(self, item: 'Model') -> CalendarItem:
+    def get_item(self, item: 'Model') -> CalendarItem:
         item = ensure.is_instance(item, Calendar)
-        return {
-            'id': item.uuid,
-            'name': item.name,
-            'tags': [tag.tag for tag in item.tags.all()],
-            'comments': item.comments,
-            'modified': item.modified,
-            'number_rules': item.rules.count(),
-            'number_access': item.calendaraccess_set.all().values('service_pool').distinct().count(),
-            'number_actions': item.calendaraction_set.all().values('service_pool').distinct().count(),
-            'permission': permissions.effective_permissions(self._user, item),
-        }
+        return CalendarItem(
+            id=item.uuid,
+            name=item.name,
+            tags=[tag.tag for tag in item.tags.all()],
+            comments=item.comments,
+            modified=item.modified,
+            number_rules=item.rules.count(),
+            number_access=item.calendaraccess_set.all().values('service_pool').distinct().count(),
+            number_actions=item.calendaraction_set.all().values('service_pool').distinct().count(),
+            permission=permissions.effective_permissions(self._user, item),
+        )
 
     def get_gui(self, for_type: str) -> list[typing.Any]:
         return (

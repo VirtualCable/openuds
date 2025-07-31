@@ -30,6 +30,7 @@
 """
 @Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import datetime
 import logging
 import typing
@@ -50,7 +51,7 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /item path
 
-
+@dataclasses.dataclass
 class AccountItem(types.rest.BaseRestItem):
     id: str
     name: str
@@ -84,16 +85,16 @@ class Accounts(ModelHandler[AccountItem]):
         .build()
     )
 
-    def item_as_dict(self, item: 'Model') -> AccountItem:
+    def get_item(self, item: 'Model') -> AccountItem:
         item = ensure.is_instance(item, Account)
-        return {
-            'id': item.uuid,
-            'name': item.name,
-            'tags': [tag.tag for tag in item.tags.all()],
-            'comments': item.comments,
-            'time_mark': item.time_mark,
-            'permission': permissions.effective_permissions(self._user, item),
-        }
+        return AccountItem(
+            id=item.uuid,
+            name=item.name,
+            tags=[tag.tag for tag in item.tags.all()],
+            comments=item.comments,
+            time_mark=item.time_mark,
+            permission=permissions.effective_permissions(self._user, item),
+        )
 
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
         return (

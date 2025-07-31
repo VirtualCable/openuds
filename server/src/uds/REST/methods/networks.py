@@ -30,6 +30,7 @@
 """
 @Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import logging
 import typing
 
@@ -48,7 +49,7 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /item path
 
-
+@dataclasses.dataclass
 class NetworkItem(types.rest.BaseRestItem):
     id: str
     name: str
@@ -94,14 +95,14 @@ class Networks(ModelHandler[NetworkItem]):
             .build()
         )
 
-    def item_as_dict(self, item: 'Model') -> NetworkItem:
+    def get_item(self, item: 'Model') -> NetworkItem:
         item = ensure.is_instance(item, Network)
-        return {
-            'id': item.uuid,
-            'name': item.name,
-            'tags': [tag.tag for tag in item.tags.all()],
-            'net_string': item.net_string,
-            'transports_count': item.transports.count(),
-            'authenticators_count': item.authenticators.count(),
-            'permission': permissions.effective_permissions(self._user, item),
-        }
+        return NetworkItem(
+            id=item.uuid,
+            name=item.name,
+            tags=[tag.tag for tag in item.tags.all()],
+            net_string=item.net_string,
+            transports_count=item.transports.count(),
+            authenticators_count=item.authenticators.count(),
+            permission=permissions.effective_permissions(self._user, item),
+        )

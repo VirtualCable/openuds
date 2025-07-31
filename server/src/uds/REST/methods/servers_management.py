@@ -29,6 +29,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import datetime
 import logging
 import typing
@@ -49,7 +50,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-
+@dataclasses.dataclass
 class TokenItem(types.rest.BaseRestItem):
     id: str
     name: str
@@ -100,21 +101,21 @@ class ServersTokens(ModelHandler[TokenItem]):
     #     {'stamp': {'title': _('Date'), 'type': 'datetime'}},
     # ]
 
-    def item_as_dict(self, item: 'Model') -> TokenItem:
+    def get_item(self, item: 'Model') -> TokenItem:
         item = typing.cast('models.Server', item)  # We will receive for sure
-        return {
-            'id': item.uuid,
-            'name': str(_('Token isued by {} from {}')).format(item.register_username, item.ip),
-            'stamp': item.stamp,
-            'username': item.register_username,
-            'ip': item.ip,
-            'hostname': item.hostname,
-            'listen_port': item.listen_port,
-            'mac': item.mac,
-            'token': item.token,
-            'type': types.servers.ServerType(item.type).as_str(),
-            'os': item.os_type,
-        }
+        return TokenItem(
+            id=item.uuid,
+            name=str(_('Token isued by {} from {}')).format(item.register_username, item.ip),
+            stamp=item.stamp,
+            username=item.register_username,
+            ip=item.ip,
+            hostname=item.hostname,
+            listen_port=item.listen_port,
+            mac=item.mac,
+            token=item.token,
+            type=types.servers.ServerType(item.type).as_str(),
+            os=item.os_type,
+        )
 
     def delete(self) -> str:
         """
@@ -134,7 +135,7 @@ class ServersTokens(ModelHandler[TokenItem]):
 
         return consts.OK
 
-
+@dataclasses.dataclass
 class ServerItem(types.rest.BaseRestItem):
     id: str
     hostname: str
@@ -162,16 +163,16 @@ class ServersServers(DetailHandler[ServerItem]):
             i = None
             for i in q:
                 res.append(
-                    {
-                        'id': i.uuid,
-                        'hostname': i.hostname,
-                        'ip': i.ip,
-                        'listen_port': i.listen_port,
-                        'mac': i.mac if i.mac != consts.MAC_UNKNOWN else '',
-                        'maintenance_mode': i.maintenance_mode,
-                        'register_username': i.register_username,
-                        'stamp': i.stamp,
-                    }
+                    ServerItem(
+                        id=i.uuid,
+                        hostname=i.hostname,
+                        ip=i.ip,
+                        listen_port=i.listen_port,
+                        mac=i.mac if i.mac != consts.MAC_UNKNOWN else '',
+                        maintenance_mode=i.maintenance_mode,
+                        register_username=i.register_username,
+                        stamp=i.stamp,
+                    )
                 )
             if item is None:
                 return res
@@ -405,7 +406,7 @@ class ServersServers(DetailHandler[ServerItem]):
 
         return import_errors
 
-
+@dataclasses.dataclass
 class GroupItem(types.rest.BaseRestItem):
     id: str
     name: str
@@ -491,19 +492,19 @@ class ServersGroups(ModelHandler[GroupItem]):
         fields['subtype'] = subtype
         return super().pre_save(fields)
 
-    def item_as_dict(self, item: 'Model') -> GroupItem:
+    def get_item(self, item: 'Model') -> GroupItem:
         item = ensure.is_instance(item, models.ServerGroup)
-        return {
-            'id': item.uuid,
-            'name': item.name,
-            'comments': item.comments,
-            'type': f'{types.servers.ServerType(item.type).name}@{item.subtype}',
-            'subtype': item.subtype.capitalize(),
-            'type_name': types.servers.ServerType(item.type).name.capitalize(),
-            'tags': [tag.tag for tag in item.tags.all()],
-            'servers_count': item.servers.count(),
-            'permission': permissions.effective_permissions(self._user, item),
-        }
+        return GroupItem(
+            id=item.uuid,
+            name=item.name,
+            comments=item.comments,
+            type=f'{types.servers.ServerType(item.type).name}@{item.subtype}',
+            subtype=item.subtype.capitalize(),
+            type_name=types.servers.ServerType(item.type).name.capitalize(),
+            tags=[tag.tag for tag in item.tags.all()],
+            servers_count=item.servers.count(),
+            permission=permissions.effective_permissions(self._user, item),
+        )
 
     def delete_item(self, item: 'Model') -> None:
         item = ensure.is_instance(item, models.ServerGroup)

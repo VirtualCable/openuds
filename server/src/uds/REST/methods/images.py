@@ -30,6 +30,7 @@
 """
 @Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import logging
 import typing
 
@@ -48,12 +49,13 @@ logger = logging.getLogger(__name__)
 # Enclosed methods under /item path
 
 
+@dataclasses.dataclass
 class ImageItem(types.rest.BaseRestItem):
     id: str
     name: str
-    data: typing.NotRequired[str]
-    size: typing.NotRequired[str]
-    thumb: typing.NotRequired[str]
+    data: str = ''
+    size: str = ''
+    thumb: str = ''
 
 
 class Images(ModelHandler[ImageItem]):
@@ -73,20 +75,6 @@ class Images(ModelHandler[ImageItem]):
         .build()
     )
 
-    # table_title = _('Image Gallery')
-    # xtable_fields = [
-    #     {
-    #         'thumb': {
-    #             'title': _('Image'),
-    #             'visible': True,
-    #             'type': 'image',
-    #             'width': '96px',
-    #         }
-    #     },
-    #     {'name': {'title': _('Name')}},
-    #     {'size': {'title': _('Size')}},
-    # ]
-
     def pre_save(self, fields: dict[str, typing.Any]) -> None:
         fields['image'] = fields['data']
         del fields['data']
@@ -103,21 +91,21 @@ class Images(ModelHandler[ImageItem]):
     # This has no get_gui because its treated on the admin or client.
     # We expect an Image List
 
-    def item_as_dict(self, item: 'Model') -> ImageItem:
+    def get_item(self, item: 'Model') -> ImageItem:
         item = ensure.is_instance(item, Image)
-        return {
-            'id': item.uuid,
-            'name': item.name,
-            'data': item.data64,
-        }
+        return ImageItem(
+            id=item.uuid,
+            name=item.name,
+            data=item.data64,
+        )
 
     def item_as_dict_overview(self, item: 'Model') -> ImageItem:
         item = ensure.is_instance(item, Image)
-        return {
-            'id': item.uuid,
-            'size': '{}x{}, {} bytes (thumb {} bytes)'.format(
+        return ImageItem(
+            id=item.uuid,
+            size='{}x{}, {} bytes (thumb {} bytes)'.format(
                 item.width, item.height, len(item.data), len(item.thumb)
             ),
-            'name': item.name,
-            'thumb': item.thumb64,
-        }
+            name=item.name,
+            thumb=item.thumb64,
+        )

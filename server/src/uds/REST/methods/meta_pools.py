@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import logging
 import typing
 
@@ -55,6 +56,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+@dataclasses.dataclass
 class MetaPoolItem(types.rest.BaseRestItem):
     id: str
     name: str
@@ -132,7 +134,7 @@ class MetaPools(ModelHandler[MetaPoolItem]):
         types.rest.ModelCustomMethod('get_fallback_access', True),
     ]
 
-    def item_as_dict(self, item: 'Model') -> MetaPoolItem:
+    def get_item(self, item: 'Model') -> MetaPoolItem:
         item = ensure.is_instance(item, MetaPool)
         # if item does not have an associated service, hide it (the case, for example, for a removed service)
         # Access from dict will raise an exception, and item will be skipped
@@ -153,27 +155,27 @@ class MetaPools(ModelHandler[MetaPoolItem]):
             (i.pool.userServices.filter(state=State.PREPARING).count()) for i in all_pools
         )
 
-        return {
-            'id': item.uuid,
-            'name': item.name,
-            'short_name': item.short_name,
-            'tags': [tag.tag for tag in item.tags.all()],
-            'comments': item.comments,
-            'thumb': item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64,
-            'image_id': item.image.uuid if item.image is not None else None,
-            'servicesPoolGroup_id': pool_group_id,
-            'pool_group_name': pool_group_name,
-            'pool_group_thumb': pool_group_thumb,
-            'user_services_count': userservices_total,
-            'user_services_in_preparation': userservices_in_preparation,
-            'visible': item.visible,
-            'policy': str(item.policy),
-            'fallbackAccess': item.fallbackAccess,
-            'permission': permissions.effective_permissions(self._user, item),
-            'calendar_message': item.calendar_message,
-            'transport_grouping': item.transport_grouping,
-            'ha_policy': str(item.ha_policy),
-        }
+        return MetaPoolItem(
+            id=item.uuid,
+            name=item.name,
+            short_name=item.short_name,
+            tags=[tag.tag for tag in item.tags.all()],
+            comments=item.comments,
+            thumb=item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64,
+            image_id=item.image.uuid if item.image is not None else None,
+            servicesPoolGroup_id=pool_group_id,
+            pool_group_name=pool_group_name,
+            pool_group_thumb=pool_group_thumb,
+            user_services_count=userservices_total,
+            user_services_in_preparation=userservices_in_preparation,
+            visible=item.visible,
+            policy=str(item.policy),
+            fallbackAccess=item.fallbackAccess,
+            permission=permissions.effective_permissions(self._user, item),
+            calendar_message=item.calendar_message,
+            transport_grouping=item.transport_grouping,
+            ha_policy=str(item.ha_policy),
+        )
 
     # Gui related
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:

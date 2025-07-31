@@ -31,6 +31,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import collections.abc
+import dataclasses
 import logging
 import typing
 
@@ -50,7 +51,8 @@ logger = logging.getLogger(__name__)
 # Enclosed methods under /osm path
 
 
-class OsManagerItem(types.rest.ManagedObjectItem):
+@dataclasses.dataclass
+class OsManagerItem(types.rest.ManagedObjectItem[OSManager]):
     id: str
     name: str
     tags: list[str]
@@ -75,24 +77,24 @@ class OsManagers(ModelHandler[OsManagerItem]):
         .build()
     )
 
-    def os_manager_as_dict(self, osm: OSManager) -> OsManagerItem:
-        type_ = osm.get_type()
-        ret_value: OsManagerItem = {
-            'id': osm.uuid,
-            'name': osm.name,
-            'tags': [tag.tag for tag in osm.tags.all()],
-            'deployed_count': osm.deployedServices.count(),
-            'servicesTypes': [
+    def os_manager_as_dict(self, item: OSManager) -> OsManagerItem:
+        type_ = item.get_type()
+        ret_value = OsManagerItem(
+            id=item.uuid,
+            name=item.name,
+            tags=[tag.tag for tag in item.tags.all()],
+            deployed_count=item.deployedServices.count(),
+            servicesTypes=[
                 type_.services_types
             ],  # A list for backward compatibility. TODO: To be removed when admin interface is changed
-            'comments': osm.comments,
-            'permission': permissions.effective_permissions(self._user, osm),
-        }
+            comments=item.comments,
+            permission=permissions.effective_permissions(self._user, item),
+            item=item,
+        )
         # Fill type and type_name
-        OsManagers.fill_instance_type(osm, ret_value)
         return ret_value
 
-    def item_as_dict(self, item: 'Model') -> OsManagerItem:
+    def get_item(self, item: 'Model') -> OsManagerItem:
         item = ensure.is_instance(item, OSManager)
         return self.os_manager_as_dict(item)
 

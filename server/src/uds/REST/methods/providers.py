@@ -31,6 +31,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import collections.abc
+import dataclasses
 import logging
 import typing
 
@@ -55,6 +56,7 @@ if typing.TYPE_CHECKING:
 
 
 # Helper class for Provider offers
+@dataclasses.dataclass
 class OfferItem(types.rest.BaseRestItem):
     name: str
     type: str
@@ -62,7 +64,8 @@ class OfferItem(types.rest.BaseRestItem):
     icon: str
 
 
-class ProviderItem(types.rest.ManagedObjectItem):
+@dataclasses.dataclass
+class ProviderItem(types.rest.ManagedObjectItem[Provider]):
     id: str
     name: str
     tags: list[str]
@@ -98,39 +101,35 @@ class Providers(ModelHandler[ProviderItem]):
         .row_style(prefix='row-maintenance-', field='maintenance_mode')
     ).build()
 
-    def item_as_dict(self, item: 'Model') -> ProviderItem:
+    def get_item(self, item: 'Model') -> ProviderItem:
         item = ensure.is_instance(item, Provider)
         type_ = item.get_type()
 
         # Icon can have a lot of data (1-2 Kbytes), but it's not expected to have a lot of services providers, and even so, this will work fine
         offers: list[OfferItem] = [
-            {
-                'name': gettext(t.mod_name()),
-                'type': t.mod_type(),
-                'description': gettext(t.description()),
-                'icon': t.icon64().replace('\n', ''),
-            }
+            OfferItem(
+                name=gettext(t.mod_name()),
+                type=t.mod_type(),
+                description=gettext(t.description()),
+                icon=t.icon64().replace('\n', ''),
+            )
             for t in type_.get_provided_services()
         ]
 
-        val: ProviderItem = {
-            'id': item.uuid,
-            'name': item.name,
-            'tags': [tag.vtag for tag in item.tags.all()],
-            'services_count': item.services.count(),
-            'user_services_count': UserService.objects.filter(deployed_service__service__provider=item)
+        return ProviderItem(
+            id=item.uuid,
+            name=item.name,
+            tags=[tag.vtag for tag in item.tags.all()],
+            services_count=item.services.count(),
+            user_services_count=UserService.objects.filter(deployed_service__service__provider=item)
             .exclude(state__in=(State.REMOVED, State.ERROR))
             .count(),
-            'maintenance_mode': item.maintenance_mode,
-            'offers': offers,
-            'type': type_.mod_type(),
-            'type_name': type_.mod_name(),
-            'comments': item.comments,
-            'permission': permissions.effective_permissions(self._user, item),
-        }
-
-        Providers.fill_instance_type(item, val)
-        return val
+            maintenance_mode=item.maintenance_mode,
+            offers=offers,
+            comments=item.comments,
+            permission=permissions.effective_permissions(self._user, item),
+            item=item,
+        )
 
     def validate_delete(self, item: 'Model') -> None:
         item = ensure.is_instance(item, Provider)
@@ -165,7 +164,7 @@ class Providers(ModelHandler[ProviderItem]):
             try:
                 perm = permissions.effective_permissions(self._user, s)
                 if perm >= uds.core.types.permissions.PermissionType.READ:
-                    yield DetailServices.service_to_dict(s, perm, True)
+                    yield DetailServices.service_item(s, perm, True)
             except Exception:
                 logger.exception('Passed service cause type is unknown')
 
@@ -177,10 +176,10 @@ class Providers(ModelHandler[ProviderItem]):
             service = Service.objects.get(uuid=self._args[1])
             self.check_access(service.provider, uds.core.types.permissions.PermissionType.READ)
             perm = self.get_permissions(service.provider)
-            return DetailServices.service_to_dict(service, perm, True)
+            return DetailServices.service_item(service, perm, True)
         except Exception:
             # logger.exception('Exception')
-            return {}
+            return types.rest.BaseRestItem()
 
     def maintenance(self, item: 'Model') -> types.rest.BaseRestItem:
         """
@@ -191,7 +190,7 @@ class Providers(ModelHandler[ProviderItem]):
         self.check_access(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
         item.maintenance_mode = not item.maintenance_mode
         item.save()
-        return self.item_as_dict(item)
+        return self.get_item(item)
 
     def test(self, type_: str) -> str:
         from uds.core.environment import Environment

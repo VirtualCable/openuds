@@ -33,6 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 
 import abc
 import enum
+import collections.abc
 import typing
 import dataclasses
 
@@ -44,6 +45,7 @@ from . import actor
 
 if typing.TYPE_CHECKING:
     from uds.REST.handlers import Handler
+    from uds.models.managed_object_model import ManagedObjectModel
 
 
 @dataclasses.dataclass
@@ -100,6 +102,28 @@ class AuthenticatorTypeInfo(ExtraTypeInfo):
         return dataclasses.asdict(self)
 
 
+class NotRequired:
+    """
+    This is a marker class to indicate that a field is not required.
+    It is used to indicate that a field is optional in the REST API.
+    """
+
+    def __bool__(self) -> bool:
+        return False
+
+    def __str__(self) -> str:
+        return 'NotRequired'
+    
+    # Field generator for dataclasses
+    @staticmethod
+    def field() -> typing.Any:
+        """
+        Returns a field that is not required.
+        This is used to indicate that a field is optional in the REST API.
+        """
+        return dataclasses.field(default_factory=lambda: NotRequired(), repr=False, compare=False)
+
+
 # This is a named tuple for convenience, and must be
 # compatible with tuple[str, bool] (name, needs_parent)
 @dataclasses.dataclass
@@ -110,19 +134,80 @@ class ModelCustomMethod:
 
 # Note that for this item to work with documentation
 # no forward references can be used (that is, do not use quotes around the inner field types)
-class BaseRestItem(typing.TypedDict):
-    pass
+@dataclasses.dataclass
+class BaseRestItem:
+
+    def as_dict(self) -> dict[str, typing.Any]:
+        """
+        Returns a dictionary representation of the item.
+        By default, it returns the dataclass fields as a dictionary.
+        """
+        dct = dataclasses.asdict(self)
+
+        def _process_item(key: str, value: typing.Any) -> typing.Any:
+            """
+            Process each item in the dictionary.
+            If the item is a BaseRestItem, call its as_dict method.
+            If the item is an iterable, iterate over it and call as_dict on each item.
+            If the item is a mapping, iterate over it and call as_dict on each value.
+            """
+            # if it's a basic type, we just return it
+            # Avoid this traetment for strings for example, as they are also collections.abc.Iterable
+            if isinstance(value, (str, int, float, bool, type(None))):
+                return value
+            if isinstance(value, BaseRestItem):
+                value = value.as_dict()
+            # It its an iterable, we iterate over it and call as_dict on each item
+            elif isinstance(value, collections.abc.Iterable):
+                value = [
+                    item.as_dict() if isinstance(item, BaseRestItem) else item
+                    for item in typing.cast(collections.abc.Iterable[typing.Any], value)
+                ]
+            elif isinstance(value, collections.abc.Mapping):
+                value = {
+                    k: v.as_dict() if isinstance(v, BaseRestItem) else v
+                    for k, v in typing.cast(collections.abc.Mapping[typing.Any, typing.Any], value).items()
+                }
+
+            return value
+
+        return {k: _process_item(k, v) for k, v in dct.items() if not isinstance(v, NotRequired)}
 
 
-class ManagedObjectItem(BaseRestItem):
+T_Model = typing.TypeVar('T_Model', bound='ManagedObjectModel')
+
+
+@dataclasses.dataclass
+class ManagedObjectItem(BaseRestItem, typing.Generic[T_Model]):
     """
     Represents a managed object type, with its name and type.
     This is used to represent the type of a managed object in the REST API.
     """
 
-    type: typing.NotRequired[str]  # Type of the managed object
-    type_name: typing.NotRequired[str]  # Name of the type of the managed object
-    instance: typing.NotRequired[typing.Any]  # Instance of the managed object, if available
+    item: T_Model
+
+    def as_dict(self) -> dict[str, typing.Any]:
+        """
+        Returns a dictionary representation of the managed object item.
+        """
+        base = super().as_dict()
+        # Remove the fields that are not needed in the dictionary
+        base.pop('item')
+        item = self.item.get_instance()
+        item.init_gui()  # Defaults & stuff
+        fields = item.get_fields_as_dict()
+
+        # TODO: This will be removed in future versions, as it will be overseed by "instance" key
+        base.update(fields)  # Add fields to dict
+        base.update(
+            {
+                'type': item.mod_type(),  # Add type
+                'type_name': item.mod_name(),  # Add type name
+                'instance': fields,  # Future implementation will insert instance fields into "instance" key
+            }
+        )
+
+        return base
 
 
 # Alias for item type

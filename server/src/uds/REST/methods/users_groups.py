@@ -29,6 +29,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import datetime
 import logging
 import typing
@@ -42,7 +43,6 @@ from uds.core.types.states import State
 
 from uds.core.auths.user import User as AUser
 from uds.core.util import log, ensure, ui as ui_utils
-from uds.core.util.rest.tools import as_typed_dict
 from uds.core.util.model import process_uuid, sql_stamp_seconds
 from uds.models import Authenticator, User, Group, ServicePool
 from uds.core.managers.crypto import CryptoManager
@@ -78,6 +78,7 @@ def get_service_pools_for_groups(
         yield servicepool
 
 
+@dataclasses.dataclass
 class UserItem(types.rest.BaseRestItem):
     id: str
     name: str
@@ -87,10 +88,10 @@ class UserItem(types.rest.BaseRestItem):
     staff_member: bool
     is_admin: bool
     last_access: datetime.datetime
-    parent: typing.NotRequired[str]
     mfa_data: str
     role: str
-    groups: typing.NotRequired[list[str]]
+    parent: str | None
+    groups: list[str] | types.rest.NotRequired = types.rest.NotRequired.field()
 
 
 class Users(DetailHandler[UserItem]):
@@ -102,30 +103,34 @@ class Users(DetailHandler[UserItem]):
         'enable_client_logging',
     ]
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[UserItem]:
         parent = ensure.is_instance(parent, Authenticator)
 
-        def as_user_item(model: 'User') -> UserItem:
-            base = as_typed_dict(
-                model,
-                UserItem,
+        def as_user_item(user: 'User') -> UserItem:
+            return UserItem(
+                id=user.uuid,
+                name=user.name,
+                real_name=user.real_name,
+                comments=user.comments,
+                state=user.state,
+                staff_member=user.staff_member,
+                is_admin=user.is_admin,
+                last_access=user.last_access,
+                mfa_data=user.mfa_data,
+                parent=user.parent,
+                groups=[i.uuid for i in user.get_groups()],    
+                role=user.get_role().as_str(),
             )
-            # Convert uuid to id, that is what the frontend expects (instaad of the numeric id)
-            base['id'] = model.uuid
-            base['role'] = (
-                model.staff_member and (model.is_admin and _('Admin') or _('Staff member')) or _('User')
-            )
-            return base
 
         # Extract authenticator
         try:
-            if item is None:
+            if item is None:  # All users
                 return [as_user_item(i) for i in parent.users.all()]
 
             u = parent.users.get(uuid__iexact=process_uuid(item))
             res = as_user_item(u)
             usr = AUser(u)
-            res['groups'] = [g.db_obj().uuid for g in usr.groups()]
+            res.groups = [g.db_obj().uuid for g in usr.groups()]
             logger.debug('Item: %s', res)
             return res
         except Exception as e:
@@ -283,9 +288,9 @@ class Users(DetailHandler[UserItem]):
         user = parent.users.get(uuid=process_uuid(uuid))
 
         def item_as_dict(assigned_user_service: 'UserService') -> UserServiceItem:
-            base = AssignedUserService.item_as_dict(assigned_user_service)
-            base['pool'] = assigned_user_service.deployed_service.name
-            base['pool_id'] = assigned_user_service.deployed_service.uuid
+            base = AssignedUserService.userservice_item(assigned_user_service)
+            base.pool_name = assigned_user_service.deployed_service.name
+            base.pool_id = assigned_user_service.deployed_service.uuid
             return base
 
         return [
@@ -325,7 +330,8 @@ class Users(DetailHandler[UserItem]):
         return {'status': 'ok'}
 
 
-class GroupItem(typing.TypedDict):
+@dataclasses.dataclass
+class GroupItem(types.rest.BaseRestItem):
     id: str
     name: str
     comments: str
@@ -333,8 +339,8 @@ class GroupItem(typing.TypedDict):
     type: str
     meta_if_any: bool
     skip_mfa: str
-    groups: typing.NotRequired[list[str]]  # Only for meta groups
-    pools: typing.NotRequired[list[str]]  # Only for single group items
+    groups: list[str] | types.rest.NotRequired = types.rest.NotRequired.field()
+    pools: list[str] | types.rest.NotRequired = types.rest.NotRequired.field()
 
 
 class Groups(DetailHandler[GroupItem]):
@@ -352,26 +358,27 @@ class Groups(DetailHandler[GroupItem]):
             res: list[GroupItem] = []
             i = None
             for i in q:
-                val: GroupItem = {
-                    'id': i.uuid,
-                    'name': i.name,
-                    'comments': i.comments,
-                    'state': i.state,
-                    'type': i.is_meta and 'meta' or 'group',
-                    'meta_if_any': i.meta_if_any,
-                    'skip_mfa': i.skip_mfa,
-                }
+                val = GroupItem(
+                    id=i.uuid,
+                    name=i.name,
+                    comments=i.comments,
+                    state=i.state,
+                    type=i.is_meta and 'meta' or 'group',
+                    meta_if_any=i.meta_if_any,
+                    skip_mfa=i.skip_mfa,
+                )
                 if i.is_meta:
-                    val['groups'] = list(x.uuid for x in i.groups.all().order_by('name'))
+                    val.groups = list(x.uuid for x in i.groups.all().order_by('name'))
                 res.append(val)
+
             if multi:
                 return res
+
             if not i:
                 raise Exception('Item not found')
             # Add pools field if 1 item only
-            result = res[0]
-            result['pools'] = [v.uuid for v in get_service_pools_for_groups([i])]
-            return result
+            res[0].pools = [v.uuid for v in get_service_pools_for_groups([i])]
+            return res[0]
         except Exception as e:
             logger.error('Group item not found: %s.%s: %s', parent.name, item, e)
             raise self.invalid_item_response() from e

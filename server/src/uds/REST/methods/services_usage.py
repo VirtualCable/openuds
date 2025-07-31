@@ -31,6 +31,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
+import dataclasses
 import logging
 import typing
 import datetime
@@ -50,7 +51,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-
+@dataclasses.dataclass
 class ServicesUsageItem(types.rest.BaseRestItem):
     id: str
     state_date: datetime.datetime
@@ -91,23 +92,23 @@ class ServicesUsage(DetailHandler[ServicesUsageItem]):
             owner = item.user.pretty_name
             owner_info = {'auth_id': item.user.manager.uuid, 'user_id': item.user.uuid}
 
-        return {
-            'id': item.uuid,
-            'state_date': item.state_date,
-            'creation_date': item.creation_date,
-            'unique_id': item.unique_id,
-            'friendly_name': item.friendly_name,
-            'owner': owner,
-            'owner_info': owner_info,
-            'service': item.deployed_service.service.name,
-            'service_id': item.deployed_service.service.uuid,
-            'pool': item.deployed_service.name,
-            'pool_id': item.deployed_service.uuid,
-            'ip': props.get('ip', _('unknown')),
-            'source_host': item.src_hostname,
-            'source_ip': item.src_ip,
-            'in_use': item.in_use,
-        }
+        return ServicesUsageItem(
+            id=item.uuid,
+            state_date=item.state_date,
+            creation_date=item.creation_date,
+            unique_id=item.unique_id,
+            friendly_name=item.friendly_name,
+            owner=owner,
+            owner_info=owner_info,
+            service=item.deployed_service.service.name,
+            service_id=item.deployed_service.service.uuid,
+            pool=item.deployed_service.name,
+            pool_id=item.deployed_service.uuid,
+            ip=props.get('ip', _('unknown')),
+            source_host=item.src_hostname,
+            source_ip=item.src_ip,
+            in_use=item.in_use,
+        )
 
     def get_items(
         self, parent: 'Model', item: typing.Optional[str]

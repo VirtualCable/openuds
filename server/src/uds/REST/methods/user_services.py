@@ -31,6 +31,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import collections.abc
+import dataclasses
 import datetime
 import logging
 import typing
@@ -53,9 +54,10 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+@dataclasses.dataclass
 class UserServiceItem(types.rest.BaseRestItem):
     id: str
-    id_deployed_service: str
+    pool_id: str
     unique_id: str
     friendly_name: str
     state: str
@@ -66,20 +68,19 @@ class UserServiceItem(types.rest.BaseRestItem):
     ip: str
     actor_version: str
 
-    pool: typing.NotRequired[str]
-    pool_id: typing.NotRequired[str]
-    pool_name: typing.NotRequired[str]
-
     # For cache
-    cache_level: typing.NotRequired[int]
+    cache_level: int | types.rest.NotRequired = types.rest.NotRequired.field()
+
+    # Optional, used on some cases (e.g. assigned services)
+    pool_name: str | types.rest.NotRequired = types.rest.NotRequired.field()
 
     # For assigned
-    owner: typing.NotRequired[str]
-    owner_info: typing.NotRequired[dict[str, str]]
-    in_use: typing.NotRequired[bool]
-    in_use_date: typing.NotRequired[datetime.datetime]
-    source_host: typing.NotRequired[str]
-    source_ip: typing.NotRequired[str]
+    owner: str | types.rest.NotRequired = types.rest.NotRequired.field()
+    owner_info: dict[str, str] | types.rest.NotRequired = types.rest.NotRequired.field()
+    in_use: bool | types.rest.NotRequired = types.rest.NotRequired.field()
+    in_use_date: datetime.datetime | types.rest.NotRequired = types.rest.NotRequired.field()
+    source_host: str | types.rest.NotRequired = types.rest.NotRequired.field()
+    source_ip: str | types.rest.NotRequired = types.rest.NotRequired.field()
 
 
 class AssignedUserService(DetailHandler[UserServiceItem]):
@@ -90,7 +91,7 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
     CUSTOM_METHODS = ['reset']
 
     @staticmethod
-    def item_as_dict(
+    def userservice_item(
         item: models.UserService,
         props: typing.Optional[dict[str, typing.Any]] = None,
         is_cache: bool = False,
@@ -103,26 +104,26 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
         if props is None:
             props = dict(item.properties)
 
-        val: UserServiceItem = {
-            'id': item.uuid,
-            'id_deployed_service': item.deployed_service.uuid,
-            'unique_id': item.unique_id,
-            'friendly_name': item.friendly_name,
-            'state': (
+        val = UserServiceItem(
+            id=item.uuid,
+            pool_id=item.deployed_service.uuid,
+            unique_id=item.unique_id,
+            friendly_name=item.friendly_name,
+            state=(
                 item.state
                 if not (props.get('destroy_after') and item.state == State.PREPARING)
                 else State.CANCELING
             ),  # Destroy after means that we need to cancel AFTER finishing preparing, but not before...
-            'os_state': item.os_state,
-            'state_date': item.state_date,
-            'creation_date': item.creation_date,
-            'revision': item.publication and str(item.publication.revision) or '',
-            'ip': props.get('ip', _('unknown')),
-            'actor_version': props.get('actor_version', _('unknown')),
-        }
+            os_state=item.os_state,
+            state_date=item.state_date,
+            creation_date=item.creation_date,
+            revision=item.publication and str(item.publication.revision) or '',
+            ip=props.get('ip', _('unknown')),
+            actor_version=props.get('actor_version', _('unknown')),
+        )
 
         if is_cache:
-            val['cache_level'] = item.cache_level
+            val.cache_level = item.cache_level
         else:
             if item.user is None:
                 owner = ''
@@ -134,16 +135,12 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
                     'user_id': item.user.uuid,
                 }
 
-            val.update(
-                {
-                    'owner': owner,
-                    'owner_info': owner_info,
-                    'in_use': item.in_use,
-                    'in_use_date': item.in_use_date,
-                    'source_host': item.src_hostname,
-                    'source_ip': item.src_ip,
-                }
-            )
+            val.owner = owner
+            val.owner_info = owner_info
+            val.in_use = item.in_use
+            val.in_use_date = item.in_use_date
+            val.source_host = item.src_hostname
+            val.source_ip = item.src_ip
 
         return val
 
@@ -164,12 +161,12 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
                     properties[id][key] = value
 
                 return [
-                    AssignedUserService.item_as_dict(k, properties.get(k.uuid, {}))
+                    AssignedUserService.userservice_item(k, properties.get(k.uuid, {}))
                     for k in parent.assigned_user_services()
                     .all()
                     .prefetch_related('deployed_service', 'publication', 'user')
                 ]
-            return AssignedUserService.item_as_dict(
+            return AssignedUserService.userservice_item(
                 parent.assigned_user_services().get(process_uuid(uuid=process_uuid(item))),
                 props={
                     k: v
@@ -301,13 +298,13 @@ class CachedService(AssignedUserService):
         try:
             if not item:
                 return [
-                    AssignedUserService.item_as_dict(k, is_cache=True)
+                    AssignedUserService.userservice_item(k, is_cache=True)
                     for k in parent.cached_users_services()
                     .all()
                     .prefetch_related('deployed_service', 'publication')
                 ]
             cached_userservice: models.UserService = parent.cached_users_services().get(uuid=process_uuid(item))
-            return AssignedUserService.item_as_dict(cached_userservice, is_cache=True)
+            return AssignedUserService.userservice_item(cached_userservice, is_cache=True)
         except Exception as e:
             logger.exception('get_items')
             raise self.invalid_item_response() from e
@@ -343,6 +340,7 @@ class CachedService(AssignedUserService):
             raise self.invalid_item_response() from None
 
 
+@dataclasses.dataclass
 class GroupItem(types.rest.BaseRestItem):
     id: str
     auth_id: str
@@ -363,16 +361,16 @@ class Groups(DetailHandler[GroupItem]):
         parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
 
         return [
-            {
-                'id': group.uuid,
-                'auth_id': group.manager.uuid,
-                'name': group.name,
-                'group_name': group.pretty_name,
-                'comments': group.comments,
-                'state': group.state,
-                'type': 'meta' if group.is_meta else 'group',
-                'auth_name': group.manager.name,
-            }
+            GroupItem(
+                id=group.uuid,
+                auth_id=group.manager.uuid,
+                name=group.name,
+                group_name=group.pretty_name,
+                comments=group.comments,
+                state=group.state,
+                type='meta' if group.is_meta else 'group',
+                auth_name=group.manager.name,
+            )
             for group in typing.cast(collections.abc.Iterable[models.Group], parent.assignedGroups.all())
         ]
 
@@ -413,6 +411,7 @@ class Groups(DetailHandler[GroupItem]):
         )
 
 
+@dataclasses.dataclass
 class TransportItem(types.rest.BaseRestItem):
     id: str
     name: str
@@ -431,14 +430,14 @@ class Transports(DetailHandler[TransportItem]):
         parent = ensure.is_instance(parent, models.ServicePool)
 
         return [
-            {
-                'id': trans.uuid,
-                'name': trans.name,
-                'type': self.as_typeinfo(trans.get_type()).as_dict(),
-                'comments': trans.comments,
-                'priority': trans.priority,
-                'trans_type': trans.get_type().mod_name(),
-            }
+            TransportItem(
+                id=trans.uuid,
+                name=trans.name,
+                type=self.as_typeinfo(trans.get_type()).as_dict(),
+                comments=trans.comments,
+                priority=trans.priority,
+                trans_type=trans.get_type().mod_name(),
+            )
             for trans in parent.transports.all()
         ]
 
@@ -477,7 +476,7 @@ class Transports(DetailHandler[TransportItem]):
             types.log.LogSource.ADMIN,
         )
 
-
+@dataclasses.dataclass
 class PublicationItem(types.rest.BaseRestItem):
     id: str
     revision: int
@@ -554,14 +553,14 @@ class Publications(DetailHandler[PublicationItem]):
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> list['PublicationItem']:
         parent = ensure.is_instance(parent, models.ServicePool)
         return [
-            {
-                'id': i.uuid,
-                'revision': i.revision,
-                'publish_date': i.publish_date,
-                'state': i.state,
-                'reason': State.from_str(i.state).is_errored() and i.get_instance().error_reason() or '',
-                'state_date': i.state_date,
-            }
+            PublicationItem(
+                id=i.uuid,
+                revision=i.revision,
+                publish_date=i.publish_date,
+                state=i.state,
+                reason=State.from_str(i.state).is_errored() and i.get_instance().error_reason() or '',
+                state_date=i.state_date,
+            )
             for i in parent.publications.all()
         ]
 
@@ -576,7 +575,7 @@ class Publications(DetailHandler[PublicationItem]):
             .row_style(prefix='row-state-', field='state')
         ).build()
 
-
+@dataclasses.dataclass
 class ChangelogItem(types.rest.BaseRestItem):
     revision: int
     stamp: datetime.datetime
@@ -591,11 +590,11 @@ class Changelog(DetailHandler['ChangelogItem']):
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> list['ChangelogItem']:
         parent = ensure.is_instance(parent, models.ServicePool)
         return [
-            {
-                'revision': i.revision,
-                'stamp': i.stamp,
-                'log': i.log,
-            }
+            ChangelogItem(
+                revision=i.revision,
+                stamp=i.stamp,
+                log=i.log,
+            )
             for i in parent.changelog.all()
         ]
 

@@ -31,6 +31,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import collections.abc
+import dataclasses
 import itertools
 import logging
 import re
@@ -57,7 +58,8 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class AuthenticatorItem(types.rest.ManagedObjectItem):
+@dataclasses.dataclass
+class AuthenticatorItem(types.rest.ManagedObjectItem[Authenticator]):
     numeric_id: int
     id: str
     name: str
@@ -97,19 +99,6 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
         .row_style(prefix='row-state-', field='state')
         .build()
     )
-
-    # table_title = _('Authenticators')
-    # xtable_fields = [
-    #     {'numeric_id': {'title': _('Id'), 'visible': True}},
-    #     {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
-    #     {'type_name': {'title': _('Type')}},
-    #     {'comments': {'title': _('Comments')}},
-    #     {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '5rem'}},
-    #     {'small_name': {'title': _('Label')}},
-    #     {'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '1rem'}},
-    #     {'mfa_name': {'title': _('MFA')}},
-    #     {'tags': {'title': _('tags'), 'visible': False}},
-    # ]
 
     def enum_types(self) -> collections.abc.Iterable[type[auths.Authenticator]]:
         return auths.factory().providers().values()
@@ -180,27 +169,25 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
             logger.info('Type not found: %s', e)
             raise exceptions.rest.NotFound('type not found') from e
 
-    def item_as_dict(self, item: 'Model') -> AuthenticatorItem:
+    def get_item(self, item: 'Model') -> AuthenticatorItem:
         item = ensure.is_instance(item, Authenticator)
-        type_ = item.get_type()
 
-        return {
-            'numeric_id': item.id,
-            'id': item.uuid,
-            'name': item.name,
-            'priority': item.priority,
-            'tags': [tag.tag for tag in typing.cast(collections.abc.Iterable[Tag], item.tags.all())],
-            'comments': item.comments,
-            'net_filtering': item.net_filtering,
-            'networks': [n.uuid for n in item.networks.all()],
-            'state': item.state,
-            'mfa_id': item.mfa.uuid if item.mfa else '',
-            'small_name': item.small_name,
-            'users_count': item.users.count(),
-            'type': type_.mod_type(),
-            'type_name': type_.mod_name(),
-            'permission': permissions.effective_permissions(self._user, item),
-        }
+        return AuthenticatorItem(
+            numeric_id=item.id,
+            id=item.uuid,
+            name=item.name,
+            priority=item.priority,
+            tags=[tag.tag for tag in typing.cast(collections.abc.Iterable[Tag], item.tags.all())],
+            comments=item.comments,
+            net_filtering=item.net_filtering,
+            networks=[n.uuid for n in item.networks.all()],
+            state=item.state,
+            mfa_id=item.mfa.uuid if item.mfa else '',
+            small_name=item.small_name,
+            users_count=item.users.count(),
+            permission=permissions.effective_permissions(self._user, item),
+            item=item,
+        )
 
     def post_save(self, item: 'Model') -> None:
         item = ensure.is_instance(item, Authenticator)

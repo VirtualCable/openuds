@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import datetime
 import json
 import logging
@@ -53,7 +54,7 @@ logger = logging.getLogger(__name__)
 ALLOW = 'ALLOW'
 DENY = 'DENY'
 
-
+@dataclasses.dataclass
 class AccessCalendarItem(types.rest.BaseRestItem):
     id: str
     calendar_id: str
@@ -64,14 +65,14 @@ class AccessCalendarItem(types.rest.BaseRestItem):
 
 class AccessCalendars(DetailHandler[AccessCalendarItem]):
     @staticmethod
-    def as_dict(item: 'models.CalendarAccess|models.CalendarAccessMeta') -> AccessCalendarItem:
-        return {
-            'id': item.uuid,
-            'calendar_id': item.calendar.uuid,
-            'calendar': item.calendar.name,
-            'access': item.access,
-            'priority': item.priority,
-        }
+    def as_item(item: 'models.CalendarAccess|models.CalendarAccessMeta') -> AccessCalendarItem:
+        return AccessCalendarItem(
+            id=item.uuid,
+            calendar_id=item.calendar.uuid,
+            calendar=item.calendar.name,
+            access=item.access,
+            priority=item.priority,
+        )
 
     def get_items(
         self, parent: 'Model', item: typing.Optional[str]
@@ -81,8 +82,8 @@ class AccessCalendars(DetailHandler[AccessCalendarItem]):
 
         try:
             if not item:
-                return [AccessCalendars.as_dict(i) for i in parent.calendarAccess.all()]
-            return AccessCalendars.as_dict(parent.calendarAccess.get(uuid=process_uuid(item)))
+                return [AccessCalendars.as_item(i) for i in parent.calendarAccess.all()]
+            return AccessCalendars.as_item(parent.calendarAccess.get(uuid=process_uuid(item)))
         except Exception as e:
             logger.exception('err: %s', item)
             raise self.invalid_item_response() from e
@@ -138,7 +139,7 @@ class AccessCalendars(DetailHandler[AccessCalendarItem]):
 
         log.log(parent, types.log.LogLevel.INFO, log_str, types.log.LogSource.ADMIN)
 
-
+@dataclasses.dataclass
 class ActionCalendarItem(types.rest.BaseRestItem):
     id: str
     calendar_id: str
@@ -167,19 +168,19 @@ class ActionsCalendars(DetailHandler[ActionCalendarItem]):
         action = consts.calendar.CALENDAR_ACTION_DICT.get(item.action)
         descrption = action.get('description') if action is not None else ''
         params = json.loads(item.params)
-        return {
-            'id': item.uuid,
-            'calendar_id': item.calendar.uuid,
-            'calendar': item.calendar.name,
-            'action': item.action,
-            'description': descrption,
-            'at_start': item.at_start,
-            'events_offset': item.events_offset,
-            'params': params,
-            'pretty_params': item.pretty_params,
-            'next_execution': item.next_execution,
-            'last_execution': item.last_execution,
-        }
+        return ActionCalendarItem(
+            id=item.uuid,
+            calendar_id=item.calendar.uuid,
+            calendar=item.calendar.name,
+            action=item.action,
+            description=descrption,
+            at_start=item.at_start,
+            events_offset=item.events_offset,
+            params=params,
+            pretty_params=item.pretty_params,
+            next_execution=item.next_execution,
+            last_execution=item.last_execution,
+        )
 
     def get_items(
         self, parent: 'Model', item: typing.Optional[str]

@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import datetime
 import logging
 import typing
@@ -49,7 +50,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-
+@dataclasses.dataclass
 class AccountItem(types.rest.BaseRestItem):
     uuid: str
     pool_uuid: str
@@ -76,19 +77,19 @@ class AccountsUsage(DetailHandler[AccountItem]):  # pylint: disable=too-many-pub
         :param item: Account usage item (db)
         :param perm: permission
         """
-        return {
-            'uuid': item.uuid,
-            'pool_uuid': item.pool_uuid,
-            'pool_name': item.pool_name,
-            'user_uuid': item.user_uuid,
-            'user_name': item.user_name,
-            'start': item.start,
-            'end': item.end,
-            'running': item.user_service is not None,
-            'elapsed': item.elapsed,
-            'elapsed_timemark': item.elapsed_timemark,
-            'permission': perm,
-        }
+        return AccountItem(
+            uuid=item.uuid,
+            pool_uuid=item.pool_uuid,
+            pool_name=item.pool_name,
+            user_uuid=item.user_uuid,
+            user_name=item.user_name,
+            start=item.start,
+            end=item.end,
+            running=item.user_service is not None,
+            elapsed=item.elapsed,
+            elapsed_timemark=item.elapsed_timemark,
+            permission=perm,
+        )
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[AccountItem]:
         parent = ensure.is_instance(parent, Account)

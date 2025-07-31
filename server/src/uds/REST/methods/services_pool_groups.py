@@ -30,6 +30,7 @@
 """
 @Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import logging
 import typing
 
@@ -50,13 +51,14 @@ if typing.TYPE_CHECKING:
 # Enclosed methods under /item path
 
 
+@dataclasses.dataclass
 class ServicePoolGroupItem(types.rest.BaseRestItem):
     id: str
     name: str
     comments: str
     priority: int
-    image_id: typing.NotRequired[str | None]
-    thumb: typing.NotRequired[str]
+    image_id: str | None | types.rest.NotRequired = types.rest.NotRequired.field()
+    thumb: str | types.rest.NotRequired = types.rest.NotRequired.field()
 
 
 class ServicesPoolGroups(ModelHandler[ServicePoolGroupItem]):
@@ -97,22 +99,22 @@ class ServicesPoolGroups(ModelHandler[ServicePoolGroupItem]):
             .build()
         )
 
-    def item_as_dict(self, item: 'Model') -> ServicePoolGroupItem:
+    def get_item(self, item: 'Model') -> ServicePoolGroupItem:
         item = ensure.is_instance(item, ServicePoolGroup)
-        return {
-            'id': item.uuid,
-            'name': item.name,
-            'comments': item.comments,
-            'priority': item.priority,
-            'image_id': item.image.uuid if item.image else None,
-        }
+        return ServicePoolGroupItem(
+            id=item.uuid,
+            name=item.name,
+            comments=item.comments,
+            priority=item.priority,
+            image_id=item.image.uuid if item.image else None,
+        )
 
     def item_as_dict_overview(self, item: 'Model') -> ServicePoolGroupItem:
         item = ensure.is_instance(item, ServicePoolGroup)
-        return {
-            'id': item.uuid,
-            'priority': item.priority,
-            'name': item.name,
-            'comments': item.comments,
-            'thumb': item.thumb64,
-        }
+        return ServicePoolGroupItem(
+            id=item.uuid,
+            priority=item.priority,
+            name=item.name,
+            comments=item.comments,
+            thumb=item.thumb64,
+        )

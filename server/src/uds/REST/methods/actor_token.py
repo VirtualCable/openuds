@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import datetime
 import logging
 import typing
@@ -51,7 +52,7 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /osm path
 
-
+@dataclasses.dataclass
 class ActorTokenItem(types.rest.BaseRestItem):
     id: str
     name: str
@@ -88,30 +89,30 @@ class ActorTokens(ModelHandler[ActorTokenItem]):
         .build()
     )
 
-    def item_as_dict(self, item: 'Model') -> ActorTokenItem:
+    def get_item(self, item: 'Model') -> ActorTokenItem:
         item = ensure.is_instance(item, Server)
         data: dict[str, typing.Any] = item.data or {}
         if item.log_level < 10000:  # Old log level, from actor, etc..
             log_level = LogLevel.from_actor_level(item.log_level).name
         else:
             log_level = LogLevel(item.log_level).name
-        return {
-            'id': item.token,
-            'name': str(_('Token isued by {} from {}')).format(
+        return ActorTokenItem(
+            id=item.token,
+            name=str(_('Token isued by {} from {}')).format(
                 item.register_username, item.hostname or item.ip
             ),
-            'stamp': item.stamp,
-            'username': item.register_username,
-            'ip': item.ip,
-            'host': f'{item.ip} - {data.get("mac")}',
-            'hostname': item.hostname,
-            'version': item.version,
-            'pre_command': data.get('pre_command', ''),
-            'post_command': data.get('post_command', ''),
-            'run_once_command': data.get('run_once_command', ''),
-            'log_level': log_level,
-            'os': item.os_type,
-        }
+            stamp=item.stamp,
+            username=item.register_username,
+            ip=item.ip,
+            host=f'{item.ip} - {data.get("mac")}',
+            hostname=item.hostname,
+            version=item.version,
+            pre_command=data.get('pre_command', ''),
+            post_command=data.get('post_command', ''),
+            run_once_command=data.get('run_once_command', ''),
+            log_level=log_level,
+            os=item.os_type,
+        )
 
     def delete(self) -> str:
         """

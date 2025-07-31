@@ -30,6 +30,7 @@
 '''
 @Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+import dataclasses
 import logging
 import typing
 import collections.abc
@@ -50,7 +51,7 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /item path
 
-
+@dataclasses.dataclass
 class MFAItem(types.rest.BaseRestItem):
     id: str
     name: str
@@ -123,17 +124,17 @@ class MFA(ModelHandler[MFAItem]):
                 .build()
             )
 
-    def item_as_dict(self, item: 'Model') -> MFAItem:
+    def get_item(self, item: 'Model') -> MFAItem:
         item = ensure.is_instance(item, models.MFA)
         type_ = item.get_type()
-        return {
-            'id': item.uuid,
-            'name': item.name,
-            'remember_device': item.remember_device,
-            'validity': item.validity,
-            'tags': [tag.tag for tag in item.tags.all()],
-            'comments': item.comments,
-            'type': type_.mod_type(),
-            'type_name': type_.mod_name(),
-            'permission': permissions.effective_permissions(self._user, item),
-        }
+        return MFAItem(
+            id=item.uuid,
+            name=item.name,
+            remember_device=item.remember_device,
+            validity=item.validity,
+            tags=[tag.tag for tag in item.tags.all()],
+            comments=item.comments,
+            type=type_.mod_type(),
+            type_name=type_.mod_name(),
+            permission=permissions.effective_permissions(self._user, item),
+        )

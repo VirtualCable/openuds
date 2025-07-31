@@ -30,6 +30,7 @@
 '''
 @Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+import dataclasses
 import logging
 import re
 import typing
@@ -51,8 +52,8 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /item path
 
-
-class TransportItem(types.rest.ManagedObjectItem):
+@dataclasses.dataclass
+class TransportItem(types.rest.ManagedObjectItem[Transport]):
     id: str
     name: str
     tags: list[str]
@@ -146,28 +147,27 @@ class Transports(ModelHandler[TransportItem]):
                 .build()
             )
 
-    def item_as_dict(self, item: 'Model') -> TransportItem:
+    def get_item(self, item: 'Model') -> TransportItem:
         item = ensure.is_instance(item, Transport)
         type_ = item.get_type()
         pools = list(item.deployedServices.all().values_list('uuid', flat=True))
-        return {
-            'id': item.uuid,
-            'name': item.name,
-            'tags': [tag.tag for tag in item.tags.all()],
-            'comments': item.comments,
-            'priority': item.priority,
-            'label': item.label,
-            'net_filtering': item.net_filtering,
-            'networks': list(item.networks.all().values_list('uuid', flat=True)),
-            'allowed_oss': [x for x in item.allowed_oss.split(',')] if item.allowed_oss != '' else [],
-            'pools': pools,
-            'pools_count': len(pools),
-            'deployed_count': item.deployedServices.count(),
-            'type': type_.mod_type(),
-            'type_name': type_.mod_name(),
-            'protocol': type_.protocol,
-            'permission': permissions.effective_permissions(self._user, item),
-        }
+        return TransportItem(
+            id=item.uuid,
+            name=item.name,
+            tags=[tag.tag for tag in item.tags.all()],
+            comments=item.comments,
+            priority=item.priority,
+            label=item.label,
+            net_filtering=item.net_filtering,
+            networks=list(item.networks.all().values_list('uuid', flat=True)),
+            allowed_oss=[x for x in item.allowed_oss.split(',')] if item.allowed_oss != '' else [],
+            pools=pools,
+            pools_count=len(pools),
+            deployed_count=item.deployedServices.count(),
+            protocol=type_.protocol,
+            permission=permissions.effective_permissions(self._user, item),
+            item=item,
+        )
 
     def pre_save(self, fields: dict[str, typing.Any]) -> None:
         fields['allowed_oss'] = ','.join(fields['allowed_oss'])

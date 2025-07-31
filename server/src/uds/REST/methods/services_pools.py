@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import datetime
 import logging
 import typing
@@ -58,7 +59,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-
+@dataclasses.dataclass
 class ServicePoolItem(types.rest.BaseRestItem):
     id: str
     name: str
@@ -90,16 +91,15 @@ class ServicePoolItem(types.rest.BaseRestItem):
     display_custom_message: bool
     osmanager_id: str | None
 
-    user_services_count: typing.NotRequired[int]
-    user_services_in_preparation: typing.NotRequired[int]
-    user_services_in_preparation: typing.NotRequired[int]
-    restrained: typing.NotRequired[bool]
-    permission: typing.NotRequired[int]
-    info: typing.NotRequired[ServiceInfo]
-    pool_group_id: typing.NotRequired[str | None]
-    pool_group_name: typing.NotRequired[str]
-    pool_group_thumb: typing.NotRequired[str]
-    usage: typing.NotRequired[str]
+    user_services_count: int|types.rest.NotRequired = types.rest.NotRequired.field()
+    user_services_in_preparation: int|types.rest.NotRequired = types.rest.NotRequired.field()
+    restrained: bool|types.rest.NotRequired = types.rest.NotRequired.field()
+    permission: types.permissions.PermissionType|types.rest.NotRequired = types.rest.NotRequired.field()
+    info: ServiceInfo|types.rest.NotRequired = types.rest.NotRequired.field()
+    pool_group_id: str | None | types.rest.NotRequired = types.rest.NotRequired.field()
+    pool_group_name: str | types.rest.NotRequired = types.rest.NotRequired.field()
+    pool_group_thumb: str | types.rest.NotRequired = types.rest.NotRequired.field()
+    usage: str | types.rest.NotRequired = types.rest.NotRequired.field()
 
 
 class ServicesPools(ModelHandler[ServicePoolItem]):
@@ -221,7 +221,7 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
         # return super().get_items(overview=kwargs.get('overview', True), prefetch=['service', 'service__provider', 'servicesPoolGroup', 'image', 'tags'])
         # return super(ServicesPools, self).get_items(*args, **kwargs)
 
-    def item_as_dict(self, item: 'Model') -> ServicePoolItem:
+    def get_item(self, item: 'Model') -> ServicePoolItem:
         item = ensure.is_instance(item, ServicePool)
         summary = 'summarize' in self._params
         # if item does not have an associated service, hide it (the case, for example, for a removed service)
@@ -242,39 +242,39 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
         # This needs a lot of queries, and really does not apport anything important to the report
         # elif UserServiceManager.manager().canInitiateServiceFromDeployedService(item) is False:
         #     state = State.SLOWED_DOWN
-        val: ServicePoolItem = {
-            'id': item.uuid,
-            'name': item.name,
-            'short_name': item.short_name,
-            'tags': [tag.tag for tag in item.tags.all()],
-            'parent': item.service.name,
-            'parent_type': item.service.data_type,
-            'comments': item.comments,
-            'state': state,
-            'thumb': item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64,
-            'account': item.account.name if item.account is not None else '',
-            'account_id': item.account.uuid if item.account is not None else None,
-            'service_id': item.service.uuid,
-            'provider_id': item.service.provider.uuid,
-            'image_id': item.image.uuid if item.image is not None else None,
-            'initial_srvs': item.initial_srvs,
-            'cache_l1_srvs': item.cache_l1_srvs,
-            'cache_l2_srvs': item.cache_l2_srvs,
-            'max_srvs': item.max_srvs,
-            'show_transports': item.show_transports,
-            'visible': item.visible,
-            'allow_users_remove': item.allow_users_remove,
-            'allow_users_reset': item.allow_users_reset,
-            'ignores_unused': item.ignores_unused,
-            'fallbackAccess': item.fallbackAccess,
-            'meta_member': [
+        val: ServicePoolItem = ServicePoolItem(
+            id=item.uuid,
+            name=item.name,
+            short_name=item.short_name,
+            tags=[tag.tag for tag in item.tags.all()],
+            parent=item.service.name,
+            parent_type=item.service.data_type,
+            comments=item.comments,
+            state=state,
+            thumb=item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64,
+            account=item.account.name if item.account is not None else '',
+            account_id=item.account.uuid if item.account is not None else None,
+            service_id=item.service.uuid,
+            provider_id=item.service.provider.uuid,
+            image_id=item.image.uuid if item.image is not None else None,
+            initial_srvs=item.initial_srvs,
+            cache_l1_srvs=item.cache_l1_srvs,
+            cache_l2_srvs=item.cache_l2_srvs,
+            max_srvs=item.max_srvs,
+            show_transports=item.show_transports,
+            visible=item.visible,
+            allow_users_remove=item.allow_users_remove,
+            allow_users_reset=item.allow_users_reset,
+            ignores_unused=item.ignores_unused,
+            fallbackAccess=item.fallbackAccess,
+            meta_member=[
                 {'id': i.meta_pool.uuid, 'name': i.meta_pool.name} for i in item.memberOfMeta.all()
             ],
-            'calendar_message': item.calendar_message,
-            'custom_message': item.custom_message,
-            'display_custom_message': item.display_custom_message,
-            'osmanager_id': item.osmanager.uuid if item.osmanager else None,
-        }
+            calendar_message=item.calendar_message,
+            custom_message=item.custom_message,
+            display_custom_message=item.display_custom_message,
+            osmanager_id=item.osmanager.uuid if item.osmanager else None,
+        )
         if summary:
             return val
 
@@ -298,18 +298,17 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
             if item.servicesPoolGroup.image is not None:
                 poolgroup_thumb = item.servicesPoolGroup.image.thumb64
 
-        val['state'] = state
-        val['thumb'] = item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64
-        val['user_services_count'] = valid_count
-        val['user_services_in_preparation'] = preparing_count
-        val['tags'] = [tag.tag for tag in item.tags.all()]
-        val['restrained'] = restrained
-        val['permission'] = permissions.effective_permissions(self._user, item)
-        val['info'] = Services.service_info(item.service)
-        val['pool_group_id'] = poolgroup_id
-        val['pool_group_name'] = poolgroup_name
-        val['pool_group_thumb'] = poolgroup_thumb
-        val['usage'] = str(item.usage(usage_count).percent) + '%'
+        val.thumb = item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64
+        val.user_services_count = valid_count
+        val.user_services_in_preparation = preparing_count
+        val.tags = [tag.tag for tag in item.tags.all()]
+        val.restrained = restrained
+        val.permission = permissions.effective_permissions(self._user, item)
+        val.info = Services.service_info(item.service)
+        val.pool_group_id = poolgroup_id
+        val.pool_group_name = poolgroup_name
+        val.pool_group_thumb = poolgroup_thumb
+        val.usage = str(item.usage(usage_count).percent) + '%'
 
         return val
 

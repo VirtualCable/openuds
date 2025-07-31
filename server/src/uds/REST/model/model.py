@@ -106,7 +106,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
     # This methods must be override, depending on what is provided
 
     # Data related
-    def item_as_dict(self, item: models.Model) -> types.rest.T_Item:
+    def get_item(self, item: models.Model) -> types.rest.T_Item:
         """
         Must be overriden by descendants.
         Expects the return of an item as a dictionary
@@ -118,7 +118,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
         Invoked when request is an "overview"
         default behavior is return item_as_dict
         """
-        return self.item_as_dict(item)
+        return self.get_item(item)
 
     # types related
     def enum_types(self) -> collections.abc.Iterable[type['Module']]:  # override this
@@ -264,9 +264,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
                 if overview:
                     yield self.item_as_dict_overview(item)
                 else:
-                    res = self.item_as_dict(item)
-                    self.fill_instance_fields(item, res)
-                    yield res
+                    yield self.get_item(item)
             except Exception as e:  # maybe an exception is thrown to skip an item
                 logger.debug('Got exception processing item from model: %s', e)
                 # logger.exception('Exception getting item from {0}'.format(self.model))
@@ -321,7 +319,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
 
         match self._args:
             case [consts.rest.OVERVIEW]:
-                return list(self.get_items())
+                return [i.as_dict() for i in self.get_items()]
             case [consts.rest.OVERVIEW, *_fails]:
                 raise self.invalid_request_response()
             case [consts.rest.TABLEINFO]:
@@ -345,9 +343,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
                     try:
                         item = self.MODEL.objects.get(uuid__iexact=self._args[0].lower())
                         self.check_access(item, types.permissions.PermissionType.READ)
-                        res = self.item_as_dict(item)
-                        self.fill_instance_fields(item, res)
-                        return res
+                        return self.get_item(item).as_dict()
                     except Exception as e:
                         logger.exception('Got Exception looking for item')
                         raise self.invalid_item_response() from e
@@ -446,8 +442,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
 
                 item.save()
 
-                res = self.item_as_dict(item)
-                self.fill_instance_fields(item, res)
+                res = self.get_item(item)
             except Exception:
                 logger.exception('Exception on put')
                 if delete_on_error:
@@ -456,7 +451,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
 
             self.post_save(item)
 
-            return res
+            return res.as_dict()
 
         except self.MODEL.DoesNotExist:
             raise exceptions.rest.NotFound('Item not found') from None

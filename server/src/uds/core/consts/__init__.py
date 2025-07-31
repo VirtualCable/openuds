@@ -36,6 +36,8 @@ import time
 import typing
 from datetime import datetime
 
+from django.utils.translation import gettext as _
+
 from . import actor, auth, cache, calendar, images, net, os, system, ticket, rest, services, transports, ui
 
 # Date related constants
@@ -117,3 +119,18 @@ class UserRole(enum.StrEnum):
         }
 
         return ROLE_PRECEDENCE[self] >= ROLE_PRECEDENCE[role]
+    
+    def as_str(self) -> str:
+        """
+        Returns the string representation of the role
+        
+        Returns:
+            The string representation of the role
+        """
+        # _('Admin') or _('Staff member')) or _('User')
+        return {
+            UserRole.ADMIN: _('Admin'),
+            UserRole.STAFF: _('Staff member'),
+            UserRole.USER: _('User'),
+            UserRole.ANONYMOUS: _('Anonymous'),
+        }.get(self, _('Unknown role'))  # Default case, should not happen

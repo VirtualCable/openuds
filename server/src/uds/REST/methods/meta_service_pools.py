@@ -29,6 +29,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import logging
 import typing
 
@@ -54,7 +55,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-
+@dataclasses.dataclass
 class MetaItem(types.rest.BaseRestItem):
     """
     Item type for a Meta Pool Member
@@ -62,7 +63,6 @@ class MetaItem(types.rest.BaseRestItem):
 
     id: str
     pool_id: str
-    pool_name: typing.NotRequired[str]  # Optional, as it can be not present
     name: str
     comments: str
     priority: int
@@ -70,6 +70,7 @@ class MetaItem(types.rest.BaseRestItem):
     user_services_count: int
     user_services_in_preparation: int
 
+    pool_name: str = ''  # Optional, as it can be not present
 
 class MetaServicesPool(DetailHandler[MetaItem]):
     """
@@ -78,16 +79,16 @@ class MetaServicesPool(DetailHandler[MetaItem]):
 
     @staticmethod
     def as_dict(item: models.MetaPoolMember) -> 'MetaItem':
-        return {
-            'id': item.uuid,
-            'pool_id': item.pool.uuid,
-            'name': item.pool.name,
-            'comments': item.pool.comments,
-            'priority': item.priority,
-            'enabled': item.enabled,
-            'user_services_count': item.pool.userServices.exclude(state__in=State.INFO_STATES).count(),
-            'user_services_in_preparation': item.pool.userServices.filter(state=State.PREPARING).count(),
-        }
+        return MetaItem(
+            id=item.uuid,
+            pool_id=item.pool.uuid,
+            name=item.pool.name,
+            comments=item.pool.comments,
+            priority=item.priority,
+            enabled=item.enabled,
+            user_services_count=item.pool.userServices.exclude(state__in=State.INFO_STATES).count(),
+            user_services_in_preparation=item.pool.userServices.filter(state=State.PREPARING).count(),
+        )
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult['MetaItem']:
         parent = ensure.is_instance(parent, models.MetaPool)
@@ -161,9 +162,9 @@ class MetaAssignedService(DetailHandler[UserServiceItem]):
         item: 'models.UserService',
         props: typing.Optional[dict[str, typing.Any]],
     ) -> 'UserServiceItem':
-        element = AssignedUserService.item_as_dict(item, props, False)
-        element['pool_id'] = item.deployed_service.uuid
-        element['pool_name'] = item.deployed_service.name
+        element = AssignedUserService.userservice_item(item, props, False)
+        element.pool_id = item.deployed_service.uuid
+        element.pool_name = item.deployed_service.name
         return element
 
     def _get_assigned_userservice(self, metapool: models.MetaPool, userservice_id: str) -> models.UserService:

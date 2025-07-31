@@ -30,6 +30,7 @@
 '''
 @Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+import dataclasses
 import logging
 import typing
 import collections.abc
@@ -53,6 +54,7 @@ logger = logging.getLogger(__name__)
 # Enclosed methods under /item path
 
 
+@dataclasses.dataclass
 class NotifierItem(types.rest.BaseRestItem):
     id: str
     name: str
@@ -123,17 +125,17 @@ class Notifiers(ModelHandler[NotifierItem]):
                 .build()
             )
 
-    def item_as_dict(self, item: 'Model') -> NotifierItem:
+    def get_item(self, item: 'Model') -> NotifierItem:
         item = ensure.is_instance(item, Notifier)
         type_ = item.get_type()
-        return {
-            'id': item.uuid,
-            'name': item.name,
-            'level': str(item.level),
-            'enabled': item.enabled,
-            'tags': [tag.tag for tag in item.tags.all()],
-            'comments': item.comments,
-            'type': type_.mod_type(),
-            'type_name': type_.mod_name(),
-            'permission': permissions.effective_permissions(self._user, item),
-        }
+        return NotifierItem(
+            id=item.uuid,
+            name=item.name,
+            level=str(item.level),
+            enabled=item.enabled,
+            tags=[tag.tag for tag in item.tags.all()],
+            comments=item.comments,
+            type=type_.mod_type(),
+            type_name=type_.mod_name(),
+            permission=permissions.effective_permissions(self._user, item),
+        )

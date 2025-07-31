@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import datetime
 import logging
 import typing
@@ -50,6 +51,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+@dataclasses.dataclass
 class CalendarRuleItem(types.rest.BaseRestItem):
     id: str
     name: str
@@ -74,18 +76,18 @@ class CalendarRules(DetailHandler[CalendarRuleItem]):  # pylint: disable=too-man
         :param item: Rule item (db)
         :param perm: Permission of the object
         """
-        return {
-            'id': item.uuid,
-            'name': item.name,
-            'comments': item.comments,
-            'start': item.start,
-            'end': datetime.datetime.combine(item.end, datetime.time.max) if item.end else None,
-            'frequency': item.frequency,
-            'interval': item.interval,
-            'duration': item.duration,
-            'duration_unit': item.duration_unit,
-            'permission': perm,
-        }
+        return CalendarRuleItem(
+            id=item.uuid,
+            name=item.name,
+            comments=item.comments,
+            start=item.start,
+            end=datetime.datetime.combine(item.end, datetime.time.max) if item.end else None,
+            frequency=item.frequency,
+            interval=item.interval,
+            duration=item.duration,
+            duration_unit=item.duration_unit,
+            permission=perm,
+        )
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[CalendarRuleItem]:
         parent = ensure.is_instance(parent, Calendar)

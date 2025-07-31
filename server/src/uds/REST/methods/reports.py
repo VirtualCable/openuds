@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import logging
 import typing
 
@@ -59,6 +60,7 @@ VALID_PARAMS = (
 )
 
 
+@dataclasses.dataclass
 class ReportItem(types.rest.BaseRestItem):
     id: str
     mime_type: str
@@ -162,11 +164,11 @@ class Reports(model.BaseModelHandler[ReportItem]):
     # Returns the list of
     def get_items(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Generator[ReportItem, None, None]:
         for i in reports.available_reports:
-            yield {
-                'id': i.get_uuid(),
-                'mime_type': i.mime_type,
-                'encoded': i.encoded,
-                'group': i.translated_group(),
-                'name': i.translated_name(),
-                'description': i.translated_description(),
-            }
+            yield ReportItem(
+                id=i.get_uuid(),
+                mime_type=i.mime_type,
+                encoded=i.encoded,
+                group=i.translated_group(),
+                name=i.translated_name(),
+                description=i.translated_description(),
+            )

@@ -41,7 +41,7 @@ from uds.core import exceptions
 from uds.core import types
 from uds.core.module import Module
 from uds.core.util import permissions
-from uds.models import ManagedObjectModel
+# from uds.models import ManagedObjectModel
 
 from ..handlers import Handler
 
@@ -127,48 +127,48 @@ class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
 
         return args
 
-    @staticmethod
-    def fill_instance_type(item: 'models.Model', dct: types.rest.ManagedObjectItem) -> None:
-        """
-        For Managed Objects (db element that contains a serialized object), fills a dictionary with the "type" and "type_name" parameters values.
-        For non managed objects, it does nothing
+    # @staticmethod
+    # def fill_instance_type(item: 'models.Model', dct: types.rest.ManagedObjectItem) -> None:
+    #     """
+    #     For Managed Objects (db element that contains a serialized object), fills a dictionary with the "type" and "type_name" parameters values.
+    #     For non managed objects, it does nothing
 
-        Args:
-            item: Item to fill type
-            dct: Dictionary to fill with type
+    #     Args:
+    #         item: Item to fill type
+    #         dct: Dictionary to fill with type
 
-        """
-        if isinstance(item, ManagedObjectModel):
-            kind = item.get_type()
-            typing.cast(dict[str, typing.Any], dct)['type'] = kind.mod_type()
-            typing.cast(dict[str, typing.Any], dct)['type_name'] = kind.mod_name()
+    #     """
+    #     if isinstance(item, ManagedObjectModel):
+    #         kind = item.get_type()
+    #         typing.cast(dict[str, typing.Any], dct)['type'] = kind.mod_type()
+    #         typing.cast(dict[str, typing.Any], dct)['type_name'] = kind.mod_name()
 
-    @staticmethod
-    def fill_instance_fields(item: 'models.Model', dct: types.rest.BaseRestItem) -> None:
-        """
-        For Managed Objects (db element that contains a serialized object), fills a dictionary with the "field" parameters values.
-        For non managed objects, it does nothing
+    # @staticmethod
+    # def fill_instance_fields(item: 'models.Model', dct: types.rest.BaseRestItem) -> None:
+    #     """
+    #     For Managed Objects (db element that contains a serialized object), fills a dictionary with the "field" parameters values.
+    #     For non managed objects, it does nothing
 
-        Args:
-            item: Item to fill fields
-            dct: Dictionary to fill with fields
+    #     Args:
+    #         item: Item to fill fields
+    #         dct: Dictionary to fill with fields
 
-        """
+    #     """
 
-        # Cast to allow override typing
-        if isinstance(item, ManagedObjectModel):
-            res = typing.cast(types.rest.ManagedObjectItem, dct)
-            i = item.get_instance()
-            i.init_gui()  # Defaults & stuff
-            fields = i.get_fields_as_dict()
+    #     # Cast to allow override typing
+    #     if isinstance(item, ManagedObjectModel):
+    #         res = typing.cast(types.rest.ManagedObjectItem, dct)
+    #         i = item.get_instance()
+    #         i.init_gui()  # Defaults & stuff
+    #         fields = i.get_fields_as_dict()
 
-            # TODO: This will be removed in future versions, as it will be overseed by "instance" key
-            typing.cast(typing.Any, res).update(fields)  # Add fields to dict
-            res['type'] = i.mod_type()  # Add type
-            res['type_name'] = i.mod_name()  # Add type name
-            # Future inmplementation wil insert instace fields into "instance" key
-            # For now, just repeat the fields
-            res['instance'] = fields
+    #         # TODO: This will be removed in future versions, as it will be overseed by "instance" key
+    #         typing.cast(typing.Any, res).update(fields)  # Add fields to dict
+    #         res['type'] = i.mod_type()  # Add type
+    #         res['type_name'] = i.mod_name()  # Add type name
+    #         # Future inmplementation wil insert instace fields into "instance" key
+    #         # For now, just repeat the fields
+    #         res['instance'] = fields
 
     # Exceptions
     def invalid_request_response(self, message: str | None = None) -> exceptions.rest.HandlerError:

@@ -29,6 +29,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import logging
 import typing
 
@@ -49,7 +50,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-
+@dataclasses.dataclass
 class TunnelServerItem(types.rest.BaseRestItem):
     id: str
     hostname: str
@@ -74,13 +75,13 @@ class TunnelServers(DetailHandler[TunnelServerItem]):
             else:
                 q = parent.servers.filter(uuid=process_uuid(item))
             res: list[TunnelServerItem] = [
-                {
-                    'id': i.uuid,
-                    'hostname': i.hostname,
-                    'ip': i.ip,
-                    'mac': i.mac if i.mac != consts.MAC_UNKNOWN else '',
-                    'maintenance': i.maintenance_mode,
-                }
+                TunnelServerItem(
+                    id=i.uuid,
+                    hostname=i.hostname,
+                    ip=i.ip,
+                    mac=i.mac if i.mac != consts.MAC_UNKNOWN else '',
+                    maintenance=i.maintenance_mode,
+                )
                 for i in q
             ]
 
@@ -131,7 +132,7 @@ class TunnelServers(DetailHandler[TunnelServerItem]):
         item.save()
         return 'ok'
 
-
+@dataclasses.dataclass
 class TunnelItem(types.rest.BaseRestItem):
     id: str
     name: str
@@ -192,19 +193,19 @@ class Tunnels(ModelHandler[TunnelItem]):
             .build()
         )
 
-    def item_as_dict(self, item: 'Model') -> TunnelItem:
+    def get_item(self, item: 'Model') -> TunnelItem:
         item = ensure.is_instance(item, models.ServerGroup)
-        return {
-            'id': item.uuid,
-            'name': item.name,
-            'comments': item.comments,
-            'host': item.host,
-            'port': item.port,
-            'tags': [tag.tag for tag in item.tags.all()],
-            'transports_count': item.transports.count(),
-            'servers_count': item.servers.count(),
-            'permission': permissions.effective_permissions(self._user, item),
-        }
+        return TunnelItem(
+            id=item.uuid,
+            name=item.name,
+            comments=item.comments,
+            host=item.host,
+            port=item.port,
+            tags=[tag.tag for tag in item.tags.all()],
+            transports_count=item.transports.count(),
+            servers_count=item.servers.count(),
+            permission=permissions.effective_permissions(self._user, item),
+        )
 
     def pre_save(self, fields: dict[str, typing.Any]) -> None:
         fields['type'] = types.servers.ServerType.TUNNEL.value
