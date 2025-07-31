@@ -156,12 +156,12 @@ def ensure_connected(
     """This decorator calls "connect" method of the class of the wrapped object"""
 
     @functools.wraps(func)
-    def new_func(obj: HasConnect, /, *args: P.args, **kwargs: P.kwargs) -> R:
+    def connect_and_execute(obj: HasConnect, /, *args: P.args, **kwargs: P.kwargs) -> R:
         # self = typing.cast(_HasConnect, args[0])
         obj.connect()
         return func(obj, *args, **kwargs)
 
-    return new_func
+    return connect_and_execute
 
 
 # To be used in a future, for type checking only
