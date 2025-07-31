@@ -142,36 +142,39 @@ class BaseRestItem:
         Returns a dictionary representation of the item.
         By default, it returns the dataclass fields as a dictionary.
         """
-        dct = dataclasses.asdict(self)
+        return dataclasses.asdict(self)
 
-        def _process_item(key: str, value: typing.Any) -> typing.Any:
-            """
-            Process each item in the dictionary.
-            If the item is a BaseRestItem, call its as_dict method.
-            If the item is an iterable, iterate over it and call as_dict on each item.
-            If the item is a mapping, iterate over it and call as_dict on each value.
-            """
-            # if it's a basic type, we just return it
-            # Avoid this traetment for strings for example, as they are also collections.abc.Iterable
-            if isinstance(value, (str, int, float, bool, type(None))):
-                return value
-            if isinstance(value, BaseRestItem):
-                value = value.as_dict()
-            # It its an iterable, we iterate over it and call as_dict on each item
-            elif isinstance(value, collections.abc.Iterable):
-                value = [
-                    item.as_dict() if isinstance(item, BaseRestItem) else item
-                    for item in typing.cast(collections.abc.Iterable[typing.Any], value)
-                ]
-            elif isinstance(value, collections.abc.Mapping):
-                value = {
-                    k: v.as_dict() if isinstance(v, BaseRestItem) else v
-                    for k, v in typing.cast(collections.abc.Mapping[typing.Any, typing.Any], value).items()
-                }
+        # NOTE: the json processor should take care of converting "sub-items" to valid dictionaries
+        #
+        # This code is keept here for future reference, but not used right now
+        # def _process_item(key: str, value: typing.Any) -> typing.Any:
+        #     """
+        #     Process each item in the dictionary.
+        #     If the item is a BaseRestItem, call its as_dict method.
+        #     If the item is an iterable, iterate over it and call as_dict on each item.
+        #     If the item is a mapping, iterate over it and call as_dict on each value.
+        #     """
+        #     # if it's a basic type, we just return it
+        #     # Avoid this traetment for strings for example, as they are also collections.abc.Iterable
+        #     if isinstance(value, (str, int, float, bool, type(None))):
+        #         return value
+        #     if isinstance(value, BaseRestItem):
+        #         value = value.as_dict()
+        #     # It its an iterable, we iterate over it and call as_dict on each item
+        #     elif isinstance(value, collections.abc.Iterable):
+        #         value = [
+        #             item.as_dict() if isinstance(item, BaseRestItem) else item
+        #             for item in typing.cast(collections.abc.Iterable[typing.Any], value)
+        #         ]
+        #     elif isinstance(value, collections.abc.Mapping):
+        #         value = {
+        #             k: v.as_dict() if isinstance(v, BaseRestItem) else v
+        #             for k, v in typing.cast(collections.abc.Mapping[typing.Any, typing.Any], value).items()
+        #         }
 
-            return value
+        #     return value
 
-        return {k: _process_item(k, v) for k, v in dct.items() if not isinstance(v, NotRequired)}
+        # return {k: _process_item(k, v) for k, v in dct.items() if not isinstance(v, NotRequired)}
 
 
 T_Model = typing.TypeVar('T_Model', bound='ManagedObjectModel')
