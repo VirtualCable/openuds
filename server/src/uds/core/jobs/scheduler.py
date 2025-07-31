@@ -164,8 +164,10 @@ class Scheduler:
                 )
                 if job.last_execution > now + timedelta(seconds=3):  # Give some skew
                     logger.warning(
-                        'EXecuted %s due to last_execution being in the future!',
+                        'Executed %s due to last_execution being in the future!: %s > %s + 3',
                         job.name,
+                        job.last_execution,
+                        now,
                     )
                 job.state = State.RUNNING
                 job.owner_server = self._hostname
