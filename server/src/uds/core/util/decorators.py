@@ -160,7 +160,7 @@ def ensure_connected(
         obj.connect()
         return func(obj, *args, **kwargs)
 
-    return new_func
+    return connect_and_execute
 
 
 # To be used in a future, for type checking only

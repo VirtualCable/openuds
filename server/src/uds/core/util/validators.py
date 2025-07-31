@@ -95,6 +95,23 @@ def validate_numeric(
 def validate_hostname(
     hostname: str, max_length: int = 64, domain_allowed: bool = False, field_name: typing.Optional[str] = None
 ) -> str:
+    """
+    Validates that a hostname is valid
+
+    Args:
+        hostname (str): Hostname to validate
+        max_length (int, optional): Maximum length of the hostname. Defaults to 64.
+        domain_allowed (bool, optional): If True, allows domains in the hostname. Defaults to False.
+        field_name (typing.Optional[str], optional): If present, the name of the field for "Raising" exceptions.
+            If not present, the exception will be raised with the message "Invalid hostname". Defaults to None.
+
+    Returns:
+        str: The validated hostname
+
+    Raises:
+        exceptions.ValidationException: If value is not valid
+    """
+    hostname = hostname.strip()
     field_name = f' (On field {field_name})' if field_name else ''
     if len(hostname) > max_length:
         raise exceptions.ui.ValidationError(
