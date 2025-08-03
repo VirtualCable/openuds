@@ -8,6 +8,10 @@ import typing
 import collections.abc
 import ssl
 
+# For pyans1 compatibility
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
 from ldap3 import (
     Server,
     Connection,

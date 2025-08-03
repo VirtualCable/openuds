@@ -136,7 +136,7 @@ def generate_uuid(obj: typing.Any = None) -> str:
     """
     Generates a ramdom uuid for models default
     """
-    return CryptoManager().uuid(obj=obj).lower()
+    return CryptoManager.manager().uuid(obj=obj).lower()
 
 
 def process_uuid(uuid: str) -> str:
