@@ -170,19 +170,6 @@ class Cache:
         value: typing.Any,
         validity: typing.Optional[int] = None,
     ) -> None:
-        """
-        Deprecated method, use set() instead.
-        Stores a value in the cache using the given key and default validity.
-        """
-        logger.warning('Cache.put() is deprecated, use Cache.set() instead')
-        self.set(skey, value, validity=validity)
-
-    def set(
-        self,
-        skey: typing.Union[str, bytes],
-        value: typing.Any,
-        validity: typing.Optional[int] = None,
-    ) -> None:
         # logger.debug('Saving key "%s" for cache "%s"' % (skey, self._owner,))
         validity = validity if validity is not None else self._timeout
         key = self._get_key(skey)
@@ -221,7 +208,7 @@ class Cache:
         """
         Stores a value in the cache using the [] operator with default validity
         """
-        self.set(key, value)
+        self.put(key, value)
 
     def refresh(self, skey: typing.Union[str, bytes]) -> None:
         # logger.debug('Refreshing key "%s" for cache "%s"' % (skey, self._owner,))

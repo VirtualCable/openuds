@@ -364,9 +364,9 @@ class BaseRDPTransport(transports.Transport):
         if ready is None:
             # Check again for ready
             if self.test_connectivity(userservice, ip, self.rdp_port.as_int()) is True:
-                self.cache.set(ip, 'Y', READY_CACHE_TIMEOUT)
+                self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
-            self.cache.set(ip, 'N', READY_CACHE_TIMEOUT)
+            self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
     def processed_username(self, userservice: 'models.UserService', user: 'models.User') -> str:

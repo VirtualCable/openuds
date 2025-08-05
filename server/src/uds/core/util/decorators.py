@@ -309,7 +309,7 @@ def cached(
 
             try:
                 # Maybe returned data is not serializable. In that case, cache will fail but no harm is done with this
-                cache.set(cache_key, data, effective_timeout)
+                cache.put(cache_key, data, effective_timeout)
             except Exception as e:
                 logger.debug(
                     'Data for %s is not serializable on call to %s, not cached. %s (%s)',
@@ -395,7 +395,7 @@ def blocker(
                 result = f(*args, **kwargs)
             except uds.core.exceptions.rest.BlockAccess:
                 # Increment
-                mycache.set(ip, failures_count + 1, GlobalConfig.LOGIN_BLOCK.as_int())
+                mycache.put(ip, failures_count + 1, GlobalConfig.LOGIN_BLOCK.as_int())
                 raise exceptions.rest.AccessDenied
             # Any other exception will be raised
             except Exception:
