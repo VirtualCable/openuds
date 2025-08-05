@@ -8,9 +8,11 @@ import typing
 import collections.abc
 import ssl
 
-# For pyans1 compatibility
+# For pyasn1 compatibility of ldap3
+# This is a workaround for the deprecation warning of pyasn1 when used by ldap3
+# It is not recommended to ignore warnings :)
 import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning)
+warnings.filterwarnings("ignore", module='pyasn1', category=DeprecationWarning)
 
 from ldap3 import (
     Server,

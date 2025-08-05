@@ -45,7 +45,8 @@ logger = logging.getLogger(__name__)
 
 # FT = typing.TypeVar('FT', bound=collections.abc.Callable[..., typing.Any])
 P = typing.ParamSpec('P')
-R = typing.TypeVar('R', bound=typing.Any)
+R = typing.TypeVar('R', bound=typing.Any, covariant=True)  # R is covariant, so we can return a subclass of R
+
 
 @dataclasses.dataclass
 class CacheInfo:
@@ -176,7 +177,6 @@ def ensure_connected(
 # Now, we could use this by creating two decorators, one for the class methods and one for the functions
 # But the inheritance problem will still be there, so we will keep the current implementation
 
-
 # Decorator for caching
 # This decorator will cache the result of the function for a given time, and given parameters
 def cached(
@@ -288,6 +288,9 @@ def cached(
             data: typing.Any = None
             # If misses is 0, we are starting, so we will not try to get from cache
             if not kwargs.get('force', False) and effective_timeout > 0 and misses > 0:
+                if 'force' in kwargs:
+                    # Remove force key
+                    del kwargs['force']
                 data = cache.get(cache_key, default=consts.cache.CACHE_NOT_FOUND)
                 if data is not consts.cache.CACHE_NOT_FOUND:
                     hits += 1
@@ -306,7 +309,7 @@ def cached(
 
             try:
                 # Maybe returned data is not serializable. In that case, cache will fail but no harm is done with this
-                cache.put(cache_key, data, effective_timeout)
+                cache.set(cache_key, data, effective_timeout)
             except Exception as e:
                 logger.debug(
                     'Data for %s is not serializable on call to %s, not cached. %s (%s)',
@@ -392,7 +395,7 @@ def blocker(
                 result = f(*args, **kwargs)
             except uds.core.exceptions.rest.BlockAccess:
                 # Increment
-                mycache.put(ip, failures_count + 1, GlobalConfig.LOGIN_BLOCK.as_int())
+                mycache.set(ip, failures_count + 1, GlobalConfig.LOGIN_BLOCK.as_int())
                 raise exceptions.rest.AccessDenied
             # Any other exception will be raised
             except Exception:

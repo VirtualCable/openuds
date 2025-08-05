@@ -488,7 +488,7 @@ class SAMLAuthenticator(auths.Authenticator):
                     )
                     val = resp.content.decode()
                     # 10 years, unless edited the metadata will be kept
-                    self.cache.put('idpMetadata', val, 86400 * 365 * 10)
+                    self.cache.set('idpMetadata', val, 86400 * 365 * 10)
                 except Exception as e:
                     logger.error('Error fetching idp metadata: %s', e)
                     raise exceptions.auth.AuthenticatorException(gettext('Can\'t access idp metadata'))

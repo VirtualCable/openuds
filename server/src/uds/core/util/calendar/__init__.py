@@ -166,7 +166,7 @@ class CalendarChecker:
 
             # Now data can be accessed as an array of booleans.
             # Store data on persistent cache
-            CalendarChecker.cache.put(cache_key, state_on_minute.tobytes(), ONE_DAY)
+            CalendarChecker.cache.set(cache_key, state_on_minute.tobytes(), ONE_DAY)
             memcache_storage.set(cache_key, state_on_minute.tobytes(), ONE_DAY)
 
         return bool(state_on_minute[dtime.hour * 60 + dtime.minute])
@@ -202,7 +202,7 @@ class CalendarChecker:
             )  # We substract on checkin, so we can take into account for next execution the "offset" on start & end (just the inverse of current, so we substract it)
             if next_event:
                 next_event += offset
-            CalendarChecker.cache.put(cache_key, next_event, 3600)
+            CalendarChecker.cache.set(cache_key, next_event, 3600)
         else:
             CalendarChecker.hits += 1
 

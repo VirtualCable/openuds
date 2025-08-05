@@ -207,7 +207,7 @@ class StatsFS(types.UDSFSInterface):
         else:
             logger.debug('Cache miss for %s', path[0])
             data = dispatcher(interval, extension, 0, 0)
-            self._cache.put(path[0] + extension, data, cache_time)
+            self._cache.set(path[0] + extension, data, cache_time)
 
         # Calculate the size of the file
         size = len(data)
@@ -239,7 +239,7 @@ class StatsFS(types.UDSFSInterface):
         else:
             logger.debug('Cache miss for %s', path[0])
             data = dispatcher(interval, extension, 0, 0)
-            self._cache.put(path[0] + extension, data, cache_time)
+            self._cache.set(path[0] + extension, data, cache_time)
 
         # Dispatch the read to the dispatcher
         data = dispatcher(interval, extension, size, offset)

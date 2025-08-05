@@ -145,7 +145,7 @@ class OpenNebulaLiveDeployment(services.UserService, autoserializable.AutoSerial
 
             self.service().start_machine(self._vmid)
 
-            self.cache.put('ready', '1')
+            self.cache.set('ready', '1')
         except Exception as e:
             self.do_log(types.log.LogLevel.ERROR, 'Error on set_ready: {}'.format(e))
             # Treat as operation done, maybe the machine is ready and we can continue

@@ -169,9 +169,9 @@ class HTML5SSHTransport(transports.Transport):
         if not ready:
             # Check again for readyness
             if self.test_connectivity(userservice, ip, self.ssh_port.value) is True:
-                self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
+                self.cache.set(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
-            self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
+            self.cache.set(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
     def get_link(

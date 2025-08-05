@@ -57,13 +57,13 @@ class CacheTest(UDSTransactionTestCase):
         self.assertEqual(cache.remove('non-existing-1'), False, 'Removing unexisting key')
 
         # Add new key (non existing) with default duration (60 seconds probable)
-        cache.put(UNICODE_CHARS_2, VALUE_1)
+        cache.set(UNICODE_CHARS_2, VALUE_1)
 
         # checks it
         self.assertEqual(cache.get(UNICODE_CHARS_2), VALUE_1, 'Put a key and recover it')
 
         # Add new "str" key, with 1 second life, wait 2 seconds and recover
-        cache.put(b'key', VALUE_1, 1)
+        cache.set(b'key', VALUE_1, 1)
         time.sleep(1.1)
         self.assertEqual(
             cache.get(b'key'),
@@ -80,17 +80,17 @@ class CacheTest(UDSTransactionTestCase):
         )
 
         # Checks cache clean
-        cache.put('key', VALUE_1)
+        cache.set('key', VALUE_1)
         cache.clear()
         self.assertEqual(cache.get('key'), None, 'Get key from cleaned cache')
 
         # Checks cache purge
-        cache.put('key', 'test')
+        cache.set('key', 'test')
         Cache.purge()
         self.assertEqual(cache.get('key'), None, 'Get key from purged cache')
 
         # Checks cache cleanup (remove expired keys)
-        cache.put('key', 'test', 0)
+        cache.set('key', 'test', 0)
         time.sleep(0.1)
         Cache.purge_outdated()
         cache.refresh('key')

@@ -180,7 +180,7 @@ class OpenGnsysClient:
         )
 
         self.auth = auth['apikey']
-        self.cache.put(cache_key, self.auth, CACHE_VALIDITY)
+        self.cache.set(cache_key, self.auth, CACHE_VALIDITY)
 
     @property
     def version(self) -> str:

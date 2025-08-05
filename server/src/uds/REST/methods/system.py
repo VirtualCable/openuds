@@ -99,7 +99,7 @@ def get_servicepools_counters(
 
             # logger.debug('val: %s', val)
             if len(val) >= 2:
-                cache.put(
+                cache.set(
                     cache_key,
                     codecs.encode(pickletools.optimize(pickle.dumps(val, protocol=-1)), 'zip'),
                     CACHE_TIME * 2,

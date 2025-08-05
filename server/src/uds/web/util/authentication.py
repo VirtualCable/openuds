@@ -95,8 +95,8 @@ def check_login(  # pylint: disable=too-many-branches, too-many-statements
 
         if auth_result.user is None:
             logger.debug("Invalid user %s (access denied)", username)
-            cache.put(tries_cache_key, tries + 1, GlobalConfig.LOGIN_BLOCK.as_int())
-            cache.put(request.ip, tries_in_this_ip + 1, GlobalConfig.LOGIN_BLOCK.as_int())
+            cache.set(tries_cache_key, tries + 1, GlobalConfig.LOGIN_BLOCK.as_int())
+            cache.set(request.ip, tries_in_this_ip + 1, GlobalConfig.LOGIN_BLOCK.as_int())
             log_login(
                 request,
                 authenticator,

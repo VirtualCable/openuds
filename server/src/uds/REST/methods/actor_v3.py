@@ -108,7 +108,7 @@ def check_ip_is_blocked(request: 'ExtendedHttpRequest') -> None:
 
 def increase_failed_ip_count(request: 'ExtendedHttpRequest') -> None:
     fails = cache.get(request.ip, 0) + 1
-    cache.put(request.ip, fails, GlobalConfig.LOGIN_BLOCK.as_int())
+    cache.set(request.ip, fails, GlobalConfig.LOGIN_BLOCK.as_int())
 
 
 P = typing.ParamSpec('P')

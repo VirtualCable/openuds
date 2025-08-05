@@ -253,7 +253,7 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
             try:
                 # set first cached endpoint as prefered
                 # Note that if fails, cached endpoint is removed and next one is tried
-                self.cache.put(cache_key, endpoint, consts.cache.EXTREME_CACHE_TIMEOUT)
+                self.cache.set(cache_key, endpoint, consts.cache.EXTREME_CACHE_TIMEOUT)
                 logger.debug(
                     'Requesting from endpoint: %s and path %s using %s: %s', endpoint, path, type, data
                 )
@@ -299,7 +299,7 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
         for i, endpoint in enumerate(found_endpoints):
             try:
                 # If fails, cached endpoint is removed and next one is tried
-                self.cache.put(
+                self.cache.set(
                     cache_key, endpoint, consts.cache.EXTREME_CACHE_TIMEOUT
                 )  # Cache endpoint for a very long time
                 yield from OpenStackClient._get_recurring_url_json(
@@ -420,7 +420,7 @@ class OpenStackClient:  # pylint: disable=too-many-public-methods
                 dateutil.parser.parse(token['expires_at']).replace(tzinfo=None)
                 - dateutil.parser.parse(token['issued_at']).replace(tzinfo=None)
             ).seconds - 60
-            self.cache.put(
+            self.cache.set(
                 'auth',
                 (self._authenticated_projectid, self._projectid, self._tokenid, self._userid, self._catalog),
                 validity,

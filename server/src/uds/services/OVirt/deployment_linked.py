@@ -246,7 +246,7 @@ class OVirtLinkedUserService(services.UserService, autoserializable.AutoSerializ
                 self._queue = [Operation.START, Operation.FINISH]
                 return self._execute_queue()
 
-            self.cache.put('ready', '1')
+            self.cache.set('ready', '1')
         except Exception as e:
             self.do_log(types.log.LogLevel.ERROR, f'Error on setReady: {e}')
             # Treat as operation done, maybe the machine is ready and we can continue

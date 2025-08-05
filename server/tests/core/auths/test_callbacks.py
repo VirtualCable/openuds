@@ -67,7 +67,7 @@ class AuthCallbackTest(UDSTestCase):
 
     def test_callback_failed_url(self) -> None:
         config.GlobalConfig.NOTIFY_CALLBACK_URL.set('http://localhost:1234')  # Sample non existent url
-        callbacks.FAILURE_CACHE.put('notify_failure', 3)  # Already failed 3 times
+        callbacks.FAILURE_CACHE.set('notify_failure', 3)  # Already failed 3 times
 
         with mock.patch('uds.core.util.security.secure_requests_session') as session_mock:
             callbacks.weblogin(self.user)
