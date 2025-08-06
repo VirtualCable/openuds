@@ -317,9 +317,9 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
 
                 gui = (
                     ui_utils.GuiBuilder()
+                    .add_stock_field(types.rest.stock.StockField.TAGS)
                     .add_stock_field(types.rest.stock.StockField.NAME)
                     .add_stock_field(types.rest.stock.StockField.COMMENTS)
-                    .add_stock_field(types.rest.stock.StockField.TAGS)
                     .add_choice(
                         name='max_services_count_type',
                         choices=[
@@ -334,6 +334,7 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
                         tooltip=_('Kind of service counting for calculating if MAX is reached'),
                         tab=types.ui.Tab.ADVANCED,
                     )
+                    .add_fields(service.gui_description())
                 )
 
                 return [field_gui for field_gui in gui.build() if field_gui['name'] not in overrided_fields]

@@ -122,8 +122,8 @@ class OsManagers(ModelHandler[OsManagerItem]):
                 return (
                     ui_utils.GuiBuilder()
                     .add_stock_field(types.rest.stock.StockField.NAME)
-                    .add_stock_field(types.rest.stock.StockField.COMMENTS)
                     .add_stock_field(types.rest.stock.StockField.TAGS)
+                    .add_stock_field(types.rest.stock.StockField.COMMENTS)
                     .add_fields(osmanager.gui_description())
                     .build()
                 )

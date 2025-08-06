@@ -298,10 +298,6 @@ def cached(
 
             misses += 1
 
-            if 'force' in kwargs:
-                # Remove force key
-                del kwargs['force']
-
             # Execute the function outside the DB transaction
             t = time.thread_time_ns()
             data = fnc(*args, **kwargs)  # pyright: ignore  # For some reason, pyright does not like this line

@@ -40,7 +40,7 @@ import typing
 from django.http import HttpResponse
 from django.utils.functional import Promise as DjangoPromise
 
-from uds.core import consts
+from uds.core import consts, types
 
 from .utils import to_incremental_json
 
@@ -110,12 +110,15 @@ class ContentProcessor:
         Helper for renderers. Alters some types so they can be serialized correctly (as we want them to be)
         """
         match obj:
+            case types.rest.BaseRestItem():
+                return ContentProcessor.process_for_render(obj.as_dict())
             case None | bool() | int() | float() | str():
                 return obj
             case dict():
                 return {
                     k: ContentProcessor.process_for_render(v)
                     for k, v in typing.cast(dict[str, typing.Any], obj).items()
+                    if not isinstance(v, types.rest.NotRequired)  # Skip
                 }
 
             case DjangoPromise():
