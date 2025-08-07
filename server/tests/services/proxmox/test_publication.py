@@ -124,6 +124,11 @@ class TestProxmoxPublication(UDSTransactionTestCase):
             publication._vmid = vmid
             state = publication.destroy()
             self.assertEqual(state, types.states.State.RUNNING)
+            api.delete_vm.assert_not_called()
+            # check state should return RUNNING, and call api.delete_vm
+            state = publication.check_state()
+            self.assertEqual(state, types.states.State.RUNNING)
+            # Should call api.delete_vm with the template id
             api.delete_vm.assert_called_once_with(int(publication.get_template_id()))
 
             # Now, destroy again, should do nothing more
@@ -147,6 +152,11 @@ class TestProxmoxPublication(UDSTransactionTestCase):
             api.delete_vm.side_effect = Exception('BOOM!')
             publication._vmid = vmid
             self.assertEqual(publication.destroy(), types.states.State.RUNNING)
+            api.delete_vm.assert_not_called()
+            # check state should return RUNNING, and call api.delete_vm
+            state = publication.check_state()
+            self.assertEqual(state, types.states.State.RUNNING)
+            # Should call api.delete_vm with the template id
             api.delete_vm.assert_called_once_with(int(publication.get_template_id()))
 
             # Ensure cancel calls destroy

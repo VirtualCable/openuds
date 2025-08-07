@@ -117,6 +117,11 @@ class TestXenPublication(UDSTransactionTestCase):
             publication._vmid = vmid
             state = publication.destroy()
             self.assertEqual(state, types.states.State.RUNNING)
+            api.delete_vm.assert_not_called()
+            # check state should return RUNNING, and call api.delete_vm
+            state = publication.check_state()
+            self.assertEqual(state, types.states.State.RUNNING)
+            # Should call api.delete_vm with the template id
             api.delete_vm.assert_called_once_with(publication.get_template_id())
 
             # Now, destroy again, should do nothing more
@@ -143,6 +148,11 @@ class TestXenPublication(UDSTransactionTestCase):
             # destroy, in Xen, will call delete_vm on invocation (not queued), but deferred delete will enqueue it if errored
             # wo destroy will end find
             self.assertEqual(publication.destroy(), types.states.State.RUNNING)
+            api.delete_vm.assert_not_called()
+            # check state should return RUNNING, and call api.delete_vm
+            state = publication.check_state()
+            self.assertEqual(state, types.states.State.RUNNING)
+            # Should call api.delete_vm with the template id
             # delete_vm should have been called once
             api.delete_vm.assert_called_with(publication.get_template_id())
             self.assertEqual(api.delete_vm.call_count, 1)
