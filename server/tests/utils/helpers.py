@@ -29,6 +29,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
+import contextlib
 import random
 import time
 import typing
@@ -160,3 +161,16 @@ def disable_http_debug() -> None:
     urllib3_log = logging.getLogger("urllib3")
     urllib3_log.setLevel(logging.WARNING)
     urllib3_log.propagate = False
+
+@contextlib.contextmanager
+def timeit(name: str) -> typing.Generator[None, None, None]:
+    """
+    Context manager to time a block of code
+    """
+    start_time = time.time()
+    logger.info('Starting timer for %s', name)
+    try:
+        yield
+    finally:
+        elapsed_time = time.time() - start_time
+        logger.info('%s took %.2f seconds', name, elapsed_time)
