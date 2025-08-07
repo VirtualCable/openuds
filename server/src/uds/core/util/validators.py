@@ -93,7 +93,7 @@ def validate_numeric(
 
 
 def validate_hostname(
-    hostname: str, max_length: int = 64, domain_allowed: bool = False, field_name: typing.Optional[str] = None
+    hostname: str, max_length: int = 64, allow_domain: bool = False, field_name: typing.Optional[str] = None
 ) -> str:
     """
     Validates that a hostname is valid
@@ -118,7 +118,7 @@ def validate_hostname(
             _('{} is not a valid hostname: maximum host name length exceeded.').format(hostname + field_name)
         )
 
-    if not domain_allowed:
+    if not allow_domain:
         if '.' in hostname:
             raise exceptions.ui.ValidationError(
                 _('{} is not a valid hostname: (domains not allowed)').format(hostname + field_name)
@@ -135,7 +135,7 @@ def validate_hostname(
 
 
 def validate_fqdn(fqdn: str, max_length: int = 255, field_name: typing.Optional[str] = None) -> str:
-    return validate_hostname(fqdn, max_length, domain_allowed=True, field_name=field_name)
+    return validate_hostname(fqdn, max_length, allow_domain=True, field_name=field_name)
 
 
 def validate_url(url: str, max_length: int = 1024, field_name: typing.Optional[str] = None) -> str:

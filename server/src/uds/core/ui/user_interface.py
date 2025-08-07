@@ -586,7 +586,7 @@ class gui:
                             validators.validate_hostname(self.value)
                         case types.ui.FieldPatternType.HOST:
                             try:
-                                validators.validate_hostname(self.value, domain_allowed=True)
+                                validators.validate_hostname(self.value, allow_domain=True)
                             except exceptions.ui.ValidationError:
                                 validators.validate_ip(self.value)
                         case types.ui.FieldPatternType.PATH:
