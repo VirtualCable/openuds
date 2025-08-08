@@ -277,10 +277,10 @@ class ProxmoxServiceLinked(DynamicService):
         caller_instance: typing.Optional['DynamicUserService | DynamicPublication'],
         vmid: str,
         *,
-        force_new: bool = False,
+        for_unique_id: bool = False,
     ) -> str:
         # If vmid is empty, we are requesting a new mac
-        if not vmid or force_new:
+        if not vmid or for_unique_id:
             return self.mac_generator().get(self.get_macs_range())
         return self.provider().api.get_vm_config(int(vmid)).networks[0].macaddr.lower()
 

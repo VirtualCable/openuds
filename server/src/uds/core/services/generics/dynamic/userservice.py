@@ -362,7 +362,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         # Note that get_mac is used for creating a new mac, returning the one of the vm or whatever
         # This is responsibility of the service, not of the user service
         if not self._mac:
-            self._mac = self.service().get_mac(self, self._vmid, force_new=True) or ''
+            self._mac = self.service().get_mac(self, self._vmid, for_unique_id=True) or ''
         return self._mac
 
     @typing.final
@@ -433,7 +433,7 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
                 )
         except Exception as e:
             return self.error(f'Error on set_ready: {e}')
-        
+
         return self._execute_queue()
 
     def reset(self) -> types.states.TaskState:
@@ -579,7 +579,9 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         """
         This method is called when the service creation is completed
         """
-        pass
+        # By default, get the MAC address if not set already by get_unique_id at start
+        if self._mac == '' and self._vmid != '':
+            self._mac = self.service().get_mac(self, self._vmid)
 
     @must_have_vmid
     def op_start(self) -> None:

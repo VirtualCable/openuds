@@ -324,7 +324,7 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
         caller_instance: typing.Optional['DynamicUserService | DynamicPublication'],
         vmid: str,
         *,
-        force_new: bool = False,
+        for_unique_id: bool = False,
     ) -> str:
         return self.mac_generator().get(self.provider().get_macs_range())
 
