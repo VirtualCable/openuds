@@ -38,7 +38,7 @@ import typing
 
 from django.utils.translation import gettext as _
 
-from uds.core import types, consts
+from uds.core import exceptions, types, consts
 from uds.core.types.rest import Table
 from uds.core.util import log, ensure, ui as ui_utils
 from uds.core.util.model import process_uuid
@@ -53,6 +53,7 @@ logger = logging.getLogger(__name__)
 
 ALLOW = 'ALLOW'
 DENY = 'DENY'
+
 
 @dataclasses.dataclass
 class AccessCalendarItem(types.rest.BaseRestItem):
@@ -84,9 +85,11 @@ class AccessCalendars(DetailHandler[AccessCalendarItem]):
             if not item:
                 return [AccessCalendars.as_item(i) for i in parent.calendarAccess.all()]
             return AccessCalendars.as_item(parent.calendarAccess.get(uuid=process_uuid(item)))
+        except models.CalendarAccess.DoesNotExist:
+            raise exceptions.rest.NotFound(_('Access calendar not found: {}').format(item)) from None
         except Exception as e:
             logger.exception('err: %s', item)
-            raise self.invalid_item_response() from e
+            raise exceptions.rest.RequestError(f'Error retrieving access calendar: {e}') from e
 
     def get_table(self, parent: 'Model') -> types.rest.Table:
         return (
@@ -109,8 +112,14 @@ class AccessCalendars(DetailHandler[AccessCalendarItem]):
             access: str = self._params['access'].upper()
             if access not in (ALLOW, DENY):
                 raise Exception()
+        except models.Calendar.DoesNotExist:
+            raise exceptions.rest.NotFound(
+                _('Calendar not found: {}').format(self._params['calendar_id'])
+            ) from None
         except Exception as e:
-            raise self.invalid_request_response(_('Invalid parameters on request')) from e
+            logger.error('Error saving calendar access: %s', e)
+            raise exceptions.rest.RequestError(_('Invalid parameters on request')) from e
+
         priority = int(self._params['priority'])
 
         if uuid is not None:
@@ -138,6 +147,7 @@ class AccessCalendars(DetailHandler[AccessCalendarItem]):
         calendar_access.delete()
 
         log.log(parent, types.log.LogLevel.INFO, log_str, types.log.LogSource.ADMIN)
+
 
 @dataclasses.dataclass
 class ActionCalendarItem(types.rest.BaseRestItem):
@@ -191,8 +201,11 @@ class ActionsCalendars(DetailHandler[ActionCalendarItem]):
                 return [ActionsCalendars.as_dict(i) for i in parent.calendaraction_set.all()]
             i = parent.calendaraction_set.get(uuid=process_uuid(item))
             return ActionsCalendars.as_dict(i)
+        except models.CalendarAction.DoesNotExist:
+            raise exceptions.rest.NotFound(_('Scheduled action not found: {}').format(item)) from None
         except Exception as e:
-            raise self.invalid_item_response() from e
+            logger.error('Error retrieving scheduled action %s: %s', item, e)
+            raise exceptions.rest.RequestError(f'Error retrieving scheduled action: {e}') from e
 
     def get_table(self, parent: 'Model') -> Table:
         return (
@@ -215,7 +228,7 @@ class ActionsCalendars(DetailHandler[ActionCalendarItem]):
         calendar = models.Calendar.objects.get(uuid=process_uuid(self._params['calendar_id']))
         action = self._params['action'].upper()
         if action not in consts.calendar.CALENDAR_ACTION_DICT:
-            raise self.invalid_request_response()
+            raise exceptions.rest.RequestError(_('Invalid action: {}').format(action))
         events_offset = int(self._params['events_offset'])
         at_start = self._params['at_start'] not in ('false', False, '0', 0)
         params = json.dumps(self._params['params'])

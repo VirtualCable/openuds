@@ -38,7 +38,7 @@ import collections.abc
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
-from uds.core import messaging, types
+from uds.core import exceptions, messaging, types
 from uds.core.environment import Environment
 from uds.core.ui import gui
 from uds.core.util import ensure, permissions, ui as ui_utils
@@ -89,14 +89,15 @@ class Notifiers(ModelHandler[NotifierItem]):
         .text_column(name='tags', title=_('Tags'), visible=False)
     ).build()
 
-    def enum_types(self) -> collections.abc.Iterable[type[messaging.Notifier]]:
+    @staticmethod
+    def enum_types() -> collections.abc.Iterable[type[messaging.Notifier]]:
         return messaging.factory().providers().values()
 
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
         notifier_type = messaging.factory().lookup(for_type)
 
         if not notifier_type:
-            raise self.invalid_item_response()
+            raise exceptions.rest.NotFound(_('Notifier type not found: {}').format(for_type))
 
         with Environment.temporary_environment() as env:
             notifier = notifier_type(env, None)

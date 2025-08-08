@@ -133,9 +133,11 @@ class Users(DetailHandler[UserItem]):
             res.groups = [g.db_obj().uuid for g in usr.groups()]
             logger.debug('Item: %s', res)
             return res
+        except User.DoesNotExist:
+            raise exceptions.rest.NotFound(_('User not found')) from None
         except Exception as e:
-            # User not found
-            raise self.invalid_item_response() from e
+            logger.error('Error getting user %s: %s', item, e)
+            raise exceptions.rest.ResponseError(_('Error getting user')) from e
 
     def get_table(self, parent: 'Model') -> types.rest.Table:
         parent = ensure.is_instance(parent, Authenticator)
@@ -157,8 +159,11 @@ class Users(DetailHandler[UserItem]):
         user = None
         try:
             user = parent.users.get(uuid=process_uuid(item))
-        except Exception:
-            raise self.invalid_item_response() from None
+        except User.DoesNotExist:
+            raise exceptions.rest.NotFound(_('User not found')) from None
+        except Exception as e:
+            logger.error('Error getting user %s: %s', item, e)
+            raise exceptions.rest.ResponseError(_('Error getting user')) from e
 
         return log.get_logs(user)
 
@@ -213,7 +218,7 @@ class Users(DetailHandler[UserItem]):
 
                 return {'id': user.uuid}
         except User.DoesNotExist:
-            raise self.invalid_item_response() from None
+            raise exceptions.rest.NotFound(_('User not found')) from None
         except IntegrityError:  # Duplicate key probably
             raise exceptions.rest.RequestError(_('User already exists (duplicate key error)')) from None
         except ValidationError as e:
@@ -223,8 +228,8 @@ class Users(DetailHandler[UserItem]):
         except exceptions.rest.RequestError:
             raise  # Re-raise
         except Exception as e:
-            logger.exception('Saving user')
-            raise self.invalid_request_response() from e
+            logger.error('Error saving user %s: %s', item, e)
+            raise exceptions.rest.ResponseError(_('Error saving user')) from e
 
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, Authenticator)
@@ -235,7 +240,7 @@ class Users(DetailHandler[UserItem]):
                     'Removal of user %s denied due to insufficients rights',
                     user.pretty_name,
                 )
-                raise self.invalid_item_response(
+                raise exceptions.rest.AccessDenied(
                     f'Removal of user {user.pretty_name} denied due to insufficients rights'
                 )
 
@@ -255,7 +260,7 @@ class Users(DetailHandler[UserItem]):
             user.delete()
         except Exception as e:
             logger.error('Error on user removal of %s.%s:  %s', parent.name, item, e)
-            raise self.invalid_item_response() from e
+            raise exceptions.rest.ResponseError(_('Error removing user')) from e
 
     def services_pools(self, parent: 'Model', item: str) -> list[dict[str, typing.Any]]:
         """
@@ -375,13 +380,15 @@ class Groups(DetailHandler[GroupItem]):
                 return res
 
             if not i:
-                raise Exception('Item not found')
+                raise exceptions.rest.NotFound(_('Group not found')) from None
             # Add pools field if 1 item only
             res[0].pools = [v.uuid for v in get_service_pools_for_groups([i])]
             return res[0]
+        except exceptions.rest.HandlerError:
+            raise  # Re-raise
         except Exception as e:
             logger.error('Group item not found: %s.%s: %s', parent.name, item, e)
-            raise self.invalid_item_response() from e
+            raise exceptions.rest.ResponseError(_('Error getting group')) from e
 
     def get_table(self, parent: 'Model') -> types.rest.Table:
         parent = ensure.is_instance(parent, Authenticator)
@@ -418,7 +425,7 @@ class Groups(DetailHandler[GroupItem]):
             return [next(filter(lambda x: x.type == for_type, types_list))]
         except StopIteration:
             logger.error('Type %s not found in %s', for_type, types_list)
-            raise self.invalid_request_response() from None
+            raise exceptions.rest.NotFound(_('Group type not found')) from None
 
     def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, Authenticator)
@@ -476,7 +483,7 @@ class Groups(DetailHandler[GroupItem]):
             group.save()
             return {'id': group.uuid}
         except Group.DoesNotExist:
-            raise self.invalid_item_response() from None
+            raise exceptions.rest.NotFound(_('Group not found')) from None
         except IntegrityError:  # Duplicate key probably
             raise exceptions.rest.RequestError(_('User already exists (duplicate key error)')) from None
         except exceptions.auth.AuthenticatorException as e:
@@ -484,8 +491,8 @@ class Groups(DetailHandler[GroupItem]):
         except exceptions.rest.RequestError:  # pylint: disable=try-except-raise
             raise  # Re-raise
         except Exception as e:
-            logger.exception('Saving group')
-            raise self.invalid_request_response() from e
+            logger.error('Error saving group %s: %s', item, e)
+            raise exceptions.rest.ResponseError(_('Error saving group')) from e
 
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, Authenticator)
@@ -493,8 +500,11 @@ class Groups(DetailHandler[GroupItem]):
             group = parent.groups.get(uuid=item)
 
             group.delete()
-        except Exception:
-            raise self.invalid_item_response() from None
+        except exceptions.rest.NotFound:
+            raise exceptions.rest.NotFound(_('Group not found')) from None
+        except Exception as e:
+            logger.error('Error deleting group %s: %s', item, e)
+            raise exceptions.rest.ResponseError(_('Error deleting group')) from e
 
     def services_pools(self, parent: 'Model', item: str) -> list[collections.abc.Mapping[str, typing.Any]]:
         parent = ensure.is_instance(parent, Authenticator)

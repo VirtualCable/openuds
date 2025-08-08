@@ -39,7 +39,7 @@ from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
 from uds import models
-from uds.core import mfas, types
+from uds.core import exceptions, mfas, types
 from uds.core.environment import Environment
 from uds.core.util import ensure, permissions, ui as ui_utils
 from uds.REST.model import ModelHandler
@@ -78,22 +78,15 @@ class MFA(ModelHandler[MFAItem]):
         .build()
     )
 
-    # table_title = _('Multi Factor Authentication')
-    # xtable_fields = [
-    #     {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
-    #     {'type_name': {'title': _('Type')}},
-    #     {'comments': {'title': _('Comments')}},
-    #     {'tags': {'title': _('tags'), 'visible': False}},
-    # ]
-
-    def enum_types(self) -> collections.abc.Iterable[type[mfas.MFA]]:
+    @staticmethod
+    def enum_types() -> collections.abc.Iterable[type[mfas.MFA]]:
         return mfas.factory().providers().values()
 
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
         mfa_type = mfas.factory().lookup(for_type)
 
         if not mfa_type:
-            raise self.invalid_item_response()
+            raise exceptions.rest.NotFound(_('MFA type not found: {}').format(for_type))
 
         # Create a temporal instance to get the gui
         with Environment.temporary_environment() as env:

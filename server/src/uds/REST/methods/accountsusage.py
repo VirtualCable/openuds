@@ -50,6 +50,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 @dataclasses.dataclass
 class AccountItem(types.rest.BaseRestItem):
     uuid: str
@@ -102,7 +103,7 @@ class AccountsUsage(DetailHandler[AccountItem]):  # pylint: disable=too-many-pub
             return AccountsUsage.usage_to_dict(k, perm)
         except Exception:
             logger.exception('itemId %s', item)
-            raise self.invalid_item_response()
+            raise exceptions.rest.NotFound(_('Account usage not found: {}').format(item)) from None
 
     def get_table(self, parent: 'Model') -> Table:
         parent = ensure.is_instance(parent, Account)
@@ -129,5 +130,5 @@ class AccountsUsage(DetailHandler[AccountItem]):  # pylint: disable=too-many-pub
             usage = parent.usages.get(uuid=process_uuid(item))
             usage.delete()
         except Exception:
-            logger.exception('Exception')
-            raise self.invalid_item_response()
+            logger.error('Error deleting account usage %s from %s', item, parent)
+            raise exceptions.rest.NotFound(_('Account usage not found: {}').format(item)) from None

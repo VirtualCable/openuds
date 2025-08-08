@@ -38,7 +38,7 @@ import collections.abc
 from django.db import models
 from django.utils.translation import gettext as _
 
-from uds.core import consts
+from uds.core import consts, exceptions
 from uds.core import types
 from uds.core.util.model import process_uuid
 from uds.REST.utils import rest_result
@@ -148,40 +148,36 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
         if r is not consts.rest.NOT_FOUND:
             return r
 
-        match self._args[0]:
-            case consts.rest.OVERVIEW:
-                if num_args == 1:
-                    return self.get_items(parent, None)
-                raise self.invalid_request_response()
-            case consts.rest.TYPES:
-                if num_args == 1:
-                    types = self.get_types(parent, None)
-                    logger.debug('Types: %s', types)
-                    return [i.as_dict() for i in types]
-                elif num_args == 2:
-                    return [i.as_dict() for i in self.get_types(parent, self._args[1])]
-                raise self.invalid_request_response()
-            case consts.rest.TABLEINFO:
-                if num_args == 1:
-                    return self.get_table(parent).as_dict()
-                raise self.invalid_request_response()
-            case consts.rest.GUI:
-                if num_args in (1, 2):
-                    if num_args == 1:
-                        gui = self.get_processed_gui(parent, '')
-                    else:
-                        gui = self.get_processed_gui(parent, self._args[1])
-                    return sorted(gui, key=lambda f: f['gui']['order'])
-                raise self.invalid_request_response()
-            case consts.rest.LOG:
-                if num_args == 2:
-                    return self.get_logs(parent, self._args[1])
-                raise self.invalid_request_response()
+        match self._args:
+            case [consts.rest.OVERVIEW]:
+                return self.get_items(parent, None)
+            case [consts.rest.OVERVIEW, *_fails]:
+                raise exceptions.rest.RequestError('Invalid overview request') from None
+            case [consts.rest.TYPES]:
+                types = self.get_types(parent, None)
+                logger.debug('Types: %s', types)
+                return [i.as_dict() for i in types]
+            case [consts.rest.TYPES, for_type]:
+                return [i.as_dict() for i in self.get_types(parent, for_type)]
+            case [consts.rest.TYPES, for_type, *_fails]:
+                raise exceptions.rest.RequestError('Invalid types request') from None
+            case [consts.rest.TABLEINFO]:
+                return self.get_table(parent).as_dict()
+            case [consts.rest.TABLEINFO, *_fails]:
+                raise exceptions.rest.RequestError('Invalid table info request') from None
+            case [consts.rest.GUI]:
+                return sorted(self.get_processed_gui(parent, ''), key=lambda f: f['gui']['order'])
+            case [consts.rest.GUI, for_type]:
+                return sorted(self.get_processed_gui(parent, for_type), key=lambda f: f['gui']['order'])
+            case [consts.rest.GUI, for_type, *_fails]:
+                raise exceptions.rest.RequestError('Invalid GUI request') from None
+            case [consts.rest.LOG, for_type]:
+                return self.get_logs(parent, for_type)
+            case [consts.rest.LOG, *_fails]:
+                raise exceptions.rest.RequestError('Invalid log request') from None
+            case [one_arg]:
+                return self.get_items(parent, process_uuid(one_arg))
             case _:
-                # try to get id
-                if num_args == 1:
-                    return self.get_items(parent, process_uuid(self._args[0]))
-
                 # Maybe a custom method?
                 r = self._check_is_custom_method(self._args[1], parent, self._args[0])
                 if r is not None:
@@ -211,7 +207,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
         if len(self._args) == 1:
             item = self._args[0]
         elif len(self._args) > 1:  # PUT expects 0 or 1 parameters. 0 == NEW, 1 = EDIT
-            raise self.invalid_request_response()
+            raise exceptions.rest.RequestError('Invalid PUT request') from None
 
         logger.debug('Invoking proper saving detail item %s', item)
         return rest_result(self.save_item(parent, item))
@@ -222,7 +218,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
         Post can be used for, for example, testing.
         Right now is an invalid method for Detail elements
         """
-        raise self.invalid_request_response('This method does not accepts POST')
+        raise exceptions.rest.RequestError('This method does not accepts POST') from None
 
     def delete(self) -> typing.Any:
         """
@@ -234,7 +230,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
         parent = self._kwargs['parent']
 
         if len(self._args) != 1:
-            raise self.invalid_request_response()
+            raise exceptions.rest.RequestError('Invalid DELETE request') from None
 
         self.delete_item(parent, self._args[0])
 
@@ -245,7 +241,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
         Invoked if default get can't process request.
         Here derived classes can process "non default" (and so, not understood) GET constructions
         """
-        raise self.invalid_request_response('Fallback invoked')
+        raise exceptions.rest.RequestError('Invalid GET request') from None
 
     # Override this to provide functionality
     # Default (as sample) get_items
@@ -274,7 +270,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
         :return: Normally "success" is expected, but can throw any "exception"
         """
         logger.debug('Default save_item handler caller for %s', self._path)
-        raise self.invalid_request_response()
+        raise exceptions.rest.RequestError('Invalid PUT request') from None
 
     # Default delete
     def delete_item(self, parent: models.Model, item: str) -> None:
@@ -285,7 +281,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
         :param item: Item id (uuid)
         :return: Normally "success" is expected, but can throw any "exception"
         """
-        raise self.invalid_request_response()
+        raise exceptions.rest.InvalidMethodError('Object does not support delete')
 
     def get_table(self, parent: models.Model) -> types.rest.Table:
         """
@@ -336,4 +332,4 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
         :param item:
         :return: a list of log elements (normally got using "uds.core.util.log.get_logs" method)
         """
-        raise self.invalid_method_response()
+        raise exceptions.rest.InvalidMethodError('Object does not support logs')

@@ -107,7 +107,8 @@ class OsManagers(ModelHandler[OsManagerItem]):
             )
 
     # Types related
-    def enum_types(self) -> collections.abc.Iterable[type[osmanagers.OSManager]]:
+    @staticmethod
+    def enum_types() -> collections.abc.Iterable[type[osmanagers.OSManager]]:
         return osmanagers.factory().providers().values()
 
     # Gui related
@@ -128,4 +129,4 @@ class OsManagers(ModelHandler[OsManagerItem]):
                     .build()
                 )
         except:
-            raise exceptions.rest.NotFound('type not found')
+            raise exceptions.rest.NotFound(_('OS Manager type not found: {}').format(for_type))

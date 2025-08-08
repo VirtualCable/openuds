@@ -66,9 +66,7 @@ class Handler(abc.ABC):
         None  # Path for this method, so we can do /auth/login, /auth/logout, /auth/auths in a simple way
     )
 
-    ROLE: typing.ClassVar[consts.UserRole] = (
-        consts.UserRole.USER
-    )  # By default, only users can access
+    ROLE: typing.ClassVar[consts.UserRole] = consts.UserRole.USER  # By default, only users can access
 
     # For implementing help
     # A list of pairs of (path, help) for subpaths on this handler
@@ -231,7 +229,9 @@ class Handler(abc.ABC):
         :param staff_member: If is considered as staff member
         """
         # crypt password and convert to base64
-        passwd = codecs.encode(CryptoManager.manager().symmetric_encrypt(password, scrambler), 'base64').decode()
+        passwd = codecs.encode(
+            CryptoManager.manager().symmetric_encrypt(password, scrambler), 'base64'
+        ).decode()
 
         session['REST'] = {
             'auth': id_auth,
@@ -373,3 +373,10 @@ class Handler(abc.ABC):
             if name in self._params:
                 return self._params[name]
         return ''
+
+    @classmethod
+    def get_component_types(cls: type[typing.Self]) -> list[tuple[str, dict[str, typing.Any]]]:
+        """
+        Returns the types that should be registered
+        """
+        return []

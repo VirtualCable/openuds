@@ -163,9 +163,11 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
             val = Services.service_item(k, perm, full=True)
             # On detail, ne wee to fill the instance fields by hand
             return val
+        except models.Service.DoesNotExist:
+            raise exceptions.rest.NotFound(_('Service not found')) from None
         except Exception as e:
             logger.error('Error getting services for %s: %s', parent, e)
-            raise self.invalid_item_response(repr(e)) from e
+            raise exceptions.rest.ResponseError(_('Error getting services')) from None
 
     def _delete_incomplete_service(self, service: models.Service) -> None:
         """
@@ -229,20 +231,20 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
             )
 
         except models.Service.DoesNotExist:
-            raise self.invalid_item_response() from None
+            raise exceptions.rest.NotFound('Service not found') from None
         except IntegrityError as e:  # Duplicate key probably
             if service and service.token and not item:
                 service.delete()
                 raise exceptions.rest.RequestError(
-                    _('Service token seems to be in use by other service. Please, select a new one.')
+                    'Service token seems to be in use by other service. Please, select a new one.'
                 ) from e
-            raise exceptions.rest.RequestError(_('Element already exists (duplicate key error)')) from e
+            raise exceptions.rest.RequestError('Element already exists (duplicate key error)') from e
         except exceptions.ui.ValidationError as e:
             if (
                 not item and service
             ):  # Only remove partially saved element if creating new (if editing, ignore this)
                 self._delete_incomplete_service(service)
-            raise exceptions.rest.RequestError(_('Input error: {0}'.format(e))) from e
+            raise exceptions.rest.ValidationError('Input error: {0}'.format(e)) from e
         except Exception as e:
             if not item and service:
                 self._delete_incomplete_service(service)
@@ -256,9 +258,11 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
             if service.deployedServices.count() == 0:
                 service.delete()
                 return
-        except Exception:
-            logger.exception('Deleting service')
-            raise self.invalid_item_response() from None
+        except models.Service.DoesNotExist:
+            raise exceptions.rest.NotFound(_('Service not found')) from None
+        except Exception as e:
+            logger.error('Error deleting service %s from %s: %s', item, parent, e)
+            raise exceptions.rest.ResponseError(_('Error deleting service')) from None
 
         raise exceptions.rest.RequestError('Item has associated deployed services')
 
@@ -308,7 +312,7 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
             parent_instance = parent.get_instance()
             service_type = parent_instance.get_service_by_type(for_type)
             if not service_type:
-                raise self.invalid_item_response(f'Gui for type "{for_type}" not found')
+                raise exceptions.rest.RequestError(f'Gui for type "{for_type}" not found')
             with Environment.temporary_environment() as env:
                 service = service_type(
                     env, parent_instance
@@ -349,8 +353,11 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
             service = parent.services.get(uuid=process_uuid(item))
             logger.debug('Getting logs for %s', item)
             return log.get_logs(service)
-        except Exception:
-            raise self.invalid_item_response() from None
+        except models.Service.DoesNotExist:
+            raise exceptions.rest.NotFound(_('Service not found')) from None
+        except Exception as e:
+            logger.error('Error getting logs for %s: %s', item, e)
+            raise exceptions.rest.ResponseError(_('Error getting logs')) from None
 
     def servicepools(self, parent: 'Model', item: str) -> list[ServicePoolResumeItem]:
         parent = ensure.is_instance(parent, models.Provider)

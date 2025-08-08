@@ -36,7 +36,7 @@ import typing
 
 from django.utils.translation import gettext_lazy as _
 
-from uds.core import types, consts
+from uds.core import exceptions, types, consts
 from uds.core.util.rest.tools import match_args
 from uds.core.util import ui as ui_utils
 from uds.REST import model
@@ -99,7 +99,7 @@ class Reports(model.BaseModelHandler[ReportItem]):
                 break
 
         if not found:
-            raise self.invalid_request_response('Invalid report uuid!')
+            raise exceptions.rest.NotFound(f'Report not found: {uuid}') from None
 
         return found
 
@@ -107,7 +107,7 @@ class Reports(model.BaseModelHandler[ReportItem]):
         logger.debug('method GET for %s, %s', self.__class__.__name__, self._args)
 
         def error() -> typing.NoReturn:
-            raise self.invalid_request_response()
+            raise exceptions.rest.RequestError('Invalid report uuid!')
 
         def report_gui(report_id: str) -> typing.Any:
             return self.get_gui(report_id)
@@ -136,7 +136,7 @@ class Reports(model.BaseModelHandler[ReportItem]):
         )
 
         if len(self._args) != 1:
-            raise self.invalid_request_response()
+            raise exceptions.rest.RequestError('Invalid report uuid!')
 
         report = self._locate_report(self._args[0], self._params)
 
@@ -154,7 +154,7 @@ class Reports(model.BaseModelHandler[ReportItem]):
             return data
         except Exception as e:
             logger.exception('Generating report')
-            raise self.invalid_request_response(str(e))
+            raise exceptions.rest.RequestError(str(e)) from e
 
     # Gui related
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:

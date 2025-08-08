@@ -98,8 +98,10 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
     ) -> 'UserServiceItem':
         """
         Converts an assigned/cached service db item to a dictionary for REST response
-        :param item: item to convert
-        :param is_cache: If item is from cache or not
+        Args:
+            item: item to convert
+            props: properties to include
+            is_cache: If item is from cache or not
         """
         if props is None:
             props = dict(item.properties)
@@ -176,8 +178,8 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
                 },
             )
         except Exception as e:
-            logger.exception('get_items')
-            raise self.invalid_item_response() from e
+            logger.error('Error getting user service %s: %s', item, e)
+            raise exceptions.rest.ResponseError(_('Error getting user service')) from e
 
     def get_table(self, parent: 'Model') -> types.rest.Table:
         parent = ensure.is_instance(parent, models.ServicePool)
@@ -207,8 +209,11 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
             user_service: models.UserService = parent.assigned_user_services().get(uuid=process_uuid(item))
             logger.debug('Getting logs for %s', user_service)
             return log.get_logs(user_service)
+        except models.UserService.DoesNotExist:
+            raise exceptions.rest.NotFound(_('User service not found')) from None
         except Exception as e:
-            raise self.invalid_item_response() from e
+            logger.error('Error getting user service logs for %s: %s', item, e)
+            raise exceptions.rest.ResponseError(_('Error getting user service logs')) from e
 
     # This is also used by CachedService, so we use "userServices" directly and is valid for both
     def delete_item(self, parent: 'Model', item: str, cache: bool = False) -> None:
@@ -219,8 +224,8 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
             else:
                 userservice = parent.assigned_user_services().get(uuid=process_uuid(item))
         except Exception as e:
-            logger.exception('delete_item')
-            raise self.invalid_item_response() from e
+            logger.error('Error deleting user service %s from %s: %s', item, parent, e)
+            raise exceptions.rest.ResponseError(_('Error deleting user service')) from None
 
         if userservice.user:  # All assigned services have a user
             log_string = f'Deleted assigned user service {userservice.friendly_name} to user {userservice.user.pretty_name} by {self._user.pretty_name}'
@@ -232,9 +237,9 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
         elif userservice.state == State.PREPARING:
             userservice.cancel()
         elif userservice.state == State.REMOVABLE:
-            raise self.invalid_item_response(_('Item already being removed'))
+            raise exceptions.rest.RequestError(_('Item already being removed')) from None
         else:
-            raise self.invalid_item_response(_('Item is not removable'))
+            raise exceptions.rest.RequestError(_('Item is not removable')) from None
 
         log.log(parent, types.log.LogLevel.INFO, log_string, types.log.LogSource.ADMIN)
         log.log(userservice, types.log.LogLevel.INFO, log_string, types.log.LogSource.ADMIN)
@@ -243,7 +248,7 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
     def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, models.ServicePool)
         if not item:
-            raise self.invalid_item_response('Only modify is allowed')
+            raise exceptions.rest.RequestError('Only modify is allowed')
         fields = self.fields_from_params(['auth_id:_', 'user_id:_', 'ip:_'])
 
         userservice = parent.userServices.get(uuid=process_uuid(item))
@@ -260,7 +265,7 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
                 .count()
                 > 0
             ):
-                raise self.invalid_response_response(
+                raise exceptions.rest.RequestError(
                     f'There is already another user service assigned to {user.pretty_name}'
                 )
 
@@ -270,7 +275,7 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
             log_string = f'Changed IP of user service {userservice.friendly_name} to {fields["ip"]} by {self._user.pretty_name}'
             userservice.log_ip(fields['ip'])
         else:
-            raise self.invalid_item_response('Invalid fields')
+            raise exceptions.rest.RequestError('Invalid fields')
 
         # Log change
         log.log(parent, types.log.LogLevel.INFO, log_string, types.log.LogSource.ADMIN)
@@ -305,9 +310,11 @@ class CachedService(AssignedUserService):
                 ]
             cached_userservice: models.UserService = parent.cached_users_services().get(uuid=process_uuid(item))
             return AssignedUserService.userservice_item(cached_userservice, is_cache=True)
+        except models.UserService.DoesNotExist:
+            raise exceptions.rest.NotFound(_('User service not found')) from None
         except Exception as e:
-            logger.exception('get_items')
-            raise self.invalid_item_response() from e
+            logger.error('Error getting user service %s: %s', item, e)
+            raise exceptions.rest.ResponseError(_('Error getting user service')) from e
 
     def get_table(self, parent: 'Model') -> types.rest.Table:
         parent = ensure.is_instance(parent, models.ServicePool)
@@ -336,8 +343,9 @@ class CachedService(AssignedUserService):
             userservice = parent.cached_users_services().get(uuid=process_uuid(item))
             logger.debug('Getting logs for %s', item)
             return log.get_logs(userservice)
-        except Exception:
-            raise self.invalid_item_response() from None
+        except Exception as e:
+            logger.error('Error getting user service logs for %s: %s', item, e)
+            raise exceptions.rest.ResponseError(_('Error getting user service logs')) from None
 
 
 @dataclasses.dataclass
@@ -506,7 +514,7 @@ class Publications(DetailHandler[PublicationItem]):
             is False
         ):
             logger.debug('Management Permission failed for user %s', self._user)
-            raise self.access_denied_response()
+            raise exceptions.rest.AccessDenied(_('Access denied to publish service pool')) from None
 
         logger.debug('Custom "publish" invoked for %s', parent)
         parent.publish(change_log)  # Can raise exceptions that will be processed on response
@@ -533,7 +541,7 @@ class Publications(DetailHandler[PublicationItem]):
             is False
         ):
             logger.debug('Management Permission failed for user %s', self._user)
-            raise self.access_denied_response()
+            raise exceptions.rest.AccessDenied(_('Access denied to cancel service pool publication')) from None
 
         try:
             ds = models.ServicePoolPublication.objects.get(uuid=process_uuid(uuid))

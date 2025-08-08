@@ -36,7 +36,7 @@ import typing
 from django.utils.translation import gettext as _
 
 from uds import models
-from uds.core import types
+from uds.core import exceptions, types
 
 # from uds.models.meta_pool import MetaPool, MetaPoolMember
 # from uds.models.service_pool import ServicePool
@@ -55,6 +55,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 @dataclasses.dataclass
 class MetaItem(types.rest.BaseRestItem):
     """
@@ -71,6 +72,7 @@ class MetaItem(types.rest.BaseRestItem):
     user_services_in_preparation: int
 
     pool_name: str = ''  # Optional, as it can be not present
+
 
 class MetaServicesPool(DetailHandler[MetaItem]):
     """
@@ -97,9 +99,11 @@ class MetaServicesPool(DetailHandler[MetaItem]):
                 return [MetaServicesPool.as_dict(i) for i in parent.members.all()]
             i = parent.members.get(uuid=process_uuid(item))
             return MetaServicesPool.as_dict(i)
-        except Exception:
+        except models.MetaPoolMember.DoesNotExist:
+            raise exceptions.rest.NotFound(_('Meta pool member not found: {}').format(item)) from None
+        except Exception as e:
             logger.exception('err: %s', item)
-            raise self.invalid_item_response()
+            raise exceptions.rest.RequestError(f'Error retrieving meta pool member: {e}') from e
 
     def get_table(self, parent: 'Model') -> types.rest.Table:
         parent = ensure.is_instance(parent, models.MetaPool)
@@ -178,8 +182,13 @@ class MetaAssignedService(DetailHandler[UserServiceItem]):
                 cache_level=0,
                 deployed_service__in=[i.pool for i in metapool.members.all()],
             )[0]
+        except IndexError:
+            raise exceptions.rest.NotFound(_('User service not found: {}').format(userservice_id)) from None
         except Exception:
-            raise self.invalid_item_response()
+            logger.error('Error getting assigned userservice %s for metapool %s', userservice_id, metapool.uuid)
+            raise exceptions.rest.RequestError(
+                _('Error retrieving assigned service: {}').format(userservice_id)
+            ) from None
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[UserServiceItem]:
         parent = ensure.is_instance(parent, models.MetaPool)
@@ -220,9 +229,9 @@ class MetaAssignedService(DetailHandler[UserServiceItem]):
                     ).values_list('key', 'value')
                 },
             )
-        except Exception:
+        except Exception as e:
             logger.exception('get_items')
-            raise self.invalid_item_response()
+            raise exceptions.rest.RequestError(f'Error retrieving meta pool member: {e}') from e
 
     def get_table(self, parent: 'Model') -> Table:
         parent = ensure.is_instance(parent, models.MetaPool)
@@ -246,11 +255,14 @@ class MetaAssignedService(DetailHandler[UserServiceItem]):
     def get_logs(self, parent: 'Model', item: str) -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.MetaPool)
         try:
-            asigned_userservice = self._get_assigned_userservice(parent, item)
-            logger.debug('Getting logs for %s', asigned_userservice)
-            return log.get_logs(asigned_userservice)
-        except Exception:
-            raise self.invalid_item_response()
+            assigned_userservice = self._get_assigned_userservice(parent, item)
+            logger.debug('Getting logs for %s', assigned_userservice)
+            return log.get_logs(assigned_userservice)
+        except exceptions.rest.HandlerError:
+            raise
+        except Exception as e:
+            logger.error('Error getting logs for %s', e)
+            raise exceptions.rest.RequestError(f'Error retrieving logs for assigned service: {e}') from e
 
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, models.MetaPool)
@@ -272,9 +284,9 @@ class MetaAssignedService(DetailHandler[UserServiceItem]):
         elif userservice.state == State.PREPARING:
             userservice.cancel()
         elif userservice.state == State.REMOVABLE:
-            raise self.invalid_item_response(_('Item already being removed'))
+            raise exceptions.rest.RequestError(_('Item already being removed'))
         else:
-            raise self.invalid_item_response(_('Item is not removable'))
+            raise exceptions.rest.RequestError(_('Item is not removable'))
 
         log.log(parent, types.log.LogLevel.INFO, log_str, types.log.LogSource.ADMIN)
 
@@ -282,7 +294,7 @@ class MetaAssignedService(DetailHandler[UserServiceItem]):
     def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, models.MetaPool)
         if item is None:
-            raise self.invalid_item_response()
+            raise exceptions.rest.RequestError(_('Invalid item specified'))
 
         fields = self.fields_from_params(['auth_id', 'user_id'])
         userservice = self._get_assigned_userservice(parent, item)
@@ -302,7 +314,7 @@ class MetaAssignedService(DetailHandler[UserServiceItem]):
             .count()
             > 0
         ):
-            raise self.invalid_response_response(
+            raise exceptions.rest.RequestError(
                 'There is already another user service assigned to {}'.format(user.pretty_name)
             )
 

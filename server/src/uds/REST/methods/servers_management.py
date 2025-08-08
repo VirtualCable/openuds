@@ -38,7 +38,7 @@ from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
 from uds import models
-from uds.core import consts, types
+from uds.core import consts, exceptions, types
 from uds.core.types.rest import Table
 from uds.core.util import net, permissions, ensure, ui as ui_utils
 from uds.core.util.model import sql_now, process_uuid
@@ -49,6 +49,7 @@ if typing.TYPE_CHECKING:
     from django.db.models import Model
 
 logger = logging.getLogger(__name__)
+
 
 @dataclasses.dataclass
 class TokenItem(types.rest.BaseRestItem):
@@ -135,6 +136,7 @@ class ServersTokens(ModelHandler[TokenItem]):
 
         return consts.OK
 
+
 @dataclasses.dataclass
 class ServerItem(types.rest.BaseRestItem):
     id: str
@@ -177,11 +179,13 @@ class ServersServers(DetailHandler[ServerItem]):
             if item is None:
                 return res
             if not i:
-                raise Exception('Item not found')  # Threated on the except below
+                raise exceptions.rest.NotFound(f'Server not found: {item}')
             return res[0]
-        except Exception as e:
-            logger.exception('REST servers')
-            raise self.invalid_item_response() from e
+        except exceptions.rest.HandlerError:
+            raise
+        except Exception:
+            logger.exception('Error getting server')
+            raise exceptions.rest.ResponseError(_('Error getting server')) from None
 
     def get_table(self, parent: 'Model') -> Table:
         parent = ensure.is_instance(parent, models.ServerGroup)
@@ -253,10 +257,10 @@ class ServersServers(DetailHandler[ServerItem]):
         if item is None:
             # Create new, depending on server type
             if parent.type == types.servers.ServerType.UNMANAGED:
-                # Ensure mac is emty or valid
+                # Ensure mac is empty or valid
                 mac = self._params['mac'].strip().upper()
                 if mac and not net.is_valid_mac(mac):
-                    raise self.invalid_request_response('Invalid MAC address')
+                    raise exceptions.rest.RequestError(_('Invalid MAC address'))
                 # Create a new one, and add it to group
                 server = models.Server.objects.create(
                     register_username=self._user.pretty_name,
@@ -279,16 +283,20 @@ class ServersServers(DetailHandler[ServerItem]):
                     # Check server type is also SERVER
                     if server and server.type != types.servers.ServerType.SERVER:
                         logger.error('Server type for %s is not SERVER', server.host)
-                        raise self.invalid_request_response() from None
+                        raise exceptions.rest.RequestError('Invalid server type') from None
                     parent.servers.add(server)
-                except Exception:
-                    raise self.invalid_item_response() from None
+                except models.Server.DoesNotExist:
+                    raise exceptions.rest.NotFound(f'Server not found: {self._params["server"]}') from None
+                except Exception as e:
+                    logger.error('Error getting server: %s', e)
+                    raise exceptions.rest.ResponseError('Error getting server') from None
+
                 return {'id': server.uuid}
         else:
             if parent.type == types.servers.ServerType.UNMANAGED:
                 mac = self._params['mac'].strip().upper()
                 if mac and not net.is_valid_mac(mac):
-                    raise self.invalid_request_response('Invalid MAC address')
+                    raise exceptions.rest.RequestError('Invalid MAC address')
                 try:
                     models.Server.objects.filter(uuid=process_uuid(item)).update(
                         # Update register info also on update
@@ -299,15 +307,19 @@ class ServersServers(DetailHandler[ServerItem]):
                         mac=mac,
                         stamp=sql_now(),  # Modified now
                     )
-                except Exception:
-                    raise self.invalid_item_response() from None
+                except models.Server.DoesNotExist:
+                    raise exceptions.rest.NotFound(f'Server not found: {item}') from None
+                except Exception as e:
+                    logger.error('Error updating server: %s', e)
+                    raise exceptions.rest.ResponseError('Error updating server') from None
 
             else:
                 try:
                     server = models.Server.objects.get(uuid=process_uuid(item))
                     parent.servers.add(server)
-                except Exception:
-                    raise self.invalid_item_response() from None
+                except models.Server.DoesNotExist:
+                    raise exceptions.rest.NotFound(f'Server not found: {item}') from None
+
             return {'id': item}
 
     def delete_item(self, parent: 'Model', item: str) -> None:
@@ -319,8 +331,11 @@ class ServersServers(DetailHandler[ServerItem]):
                 server.delete()  # and delete server
             else:
                 parent.servers.remove(server)  # Just remove reference
-        except Exception:
-            raise self.invalid_item_response() from None
+        except models.Server.DoesNotExist:
+            raise exceptions.rest.NotFound(f'Server not found: {item}') from None
+        except Exception as e:
+            logger.error('Error deleting server %s from %s: %s', item, parent, e)
+            raise exceptions.rest.ResponseError('Error deleting server') from None
 
     # Custom methods
     def maintenance(self, parent: 'Model', id: str) -> typing.Any:
@@ -406,6 +421,7 @@ class ServersServers(DetailHandler[ServerItem]):
 
         return import_errors
 
+
 @dataclasses.dataclass
 class GroupItem(types.rest.BaseRestItem):
     id: str
@@ -475,8 +491,8 @@ class ServersGroups(ModelHandler[GroupItem]):
         return (
             ui_utils.GuiBuilder()
             .add_stock_field(types.rest.stock.StockField.NAME)
-            .add_stock_field(types.rest.stock.StockField.COMMENTS)
             .add_stock_field(types.rest.stock.StockField.TAGS)
+            .add_stock_field(types.rest.stock.StockField.COMMENTS)
             .add_hidden(name='type', default=for_type)
             .add_info(
                 name='title',

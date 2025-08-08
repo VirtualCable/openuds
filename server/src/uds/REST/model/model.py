@@ -100,9 +100,9 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
     # Put removable fields before updating
     EXCLUDED_FIELDS: typing.ClassVar[list[str]] = []
     # Table info needed fields and title
-    
+
     TABLE: typing.ClassVar[types.rest.Table] = types.rest.Table.null()
-    
+
     # This methods must be override, depending on what is provided
 
     # Data related
@@ -121,7 +121,8 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
         return self.get_item(item)
 
     # types related
-    def enum_types(self) -> collections.abc.Iterable[type['Module']]:  # override this
+    @staticmethod
+    def enum_types() -> collections.abc.Iterable[type['Module']]:  # override this
         """
         Must be overriden by desdencents if they support types
         Excpetcs the list of types that the handler supports
@@ -197,10 +198,10 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
                     self._user,
                     required_permission,
                 )
-                raise self.access_denied_response()
+                raise exceptions.rest.AccessDenied()
 
             if not self.DETAIL:
-                raise self.invalid_request_response()
+                raise exceptions.rest.NotFound('Detail not found')
 
             # pylint: disable=unsubscriptable-object
             handler_type = self.DETAIL[self._args[1]]
@@ -211,14 +212,14 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
 
             return method()
         except self.MODEL.DoesNotExist:
-            raise self.invalid_item_response()
+            raise exceptions.rest.NotFound('Item not found on model {self.MODEL.__name__}')
         except (KeyError, AttributeError) as e:
-            raise self.invalid_method_response() from e
+            raise exceptions.rest.InvalidMethodError(f'Invalid method {self._operation}') from e
         except exceptions.rest.HandlerError:
             raise
         except Exception as e:
             logger.error('Exception processing detail: %s', e)
-            raise self.invalid_request_response() from e
+            raise exceptions.rest.RequestError(f'Error processing detail: {e}') from e
 
     def get_items(
         self, *args: typing.Any, **kwargs: typing.Any
@@ -297,7 +298,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
                             raise Exception()  # Operation not found
                         item = self.MODEL.objects.get(uuid__iexact=self._args[0])
                     except self.MODEL.DoesNotExist:
-                        raise self.invalid_item_response()
+                        raise exceptions.rest.NotFound('Item not found') from None
                     except Exception as e:
                         logger.error(
                             'Invalid custom method exception %s/%s/%s: %s',
@@ -306,14 +307,16 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
                             self._params,
                             e,
                         )
-                        raise self.invalid_method_response()
+                        raise exceptions.rest.ResponseError(
+                            f'Error processing custom method: {self.__class__.__name__}/{self._args}'
+                        ) from e
 
                     return operation(item)
 
             elif self._args[0] in (snake_case_name, snake_case_name):
                 operation = getattr(self, snake_case_name) or getattr(self, snake_case_name)
                 if not operation:
-                    raise self.invalid_method_response()
+                    raise exceptions.rest.InvalidMethodError(f'Invalid method {self._operation}') from None
 
                 return operation()
 
@@ -321,23 +324,23 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
             case [consts.rest.OVERVIEW]:
                 return [i.as_dict() for i in self.get_items()]
             case [consts.rest.OVERVIEW, *_fails]:
-                raise self.invalid_request_response()
+                raise exceptions.rest.RequestError('Invalid overview request') from None
             case [consts.rest.TABLEINFO]:
                 return self.TABLE.as_dict()
             case [consts.rest.TABLEINFO, *_fails]:
-                raise self.invalid_request_response()
+                raise exceptions.rest.RequestError('Invalid table info request') from None
             case [consts.rest.TYPES]:
                 return [i.as_dict() for i in self.get_types()]
             case [consts.rest.TYPES, for_type]:
                 return self.get_type(for_type).as_dict()
             case [consts.rest.TYPES, for_type, *_fails]:
-                raise self.invalid_request_response()
+                raise exceptions.rest.RequestError('Invalid type request') from None
             case [consts.rest.GUI]:
                 return self.get_processed_gui('')
             case [consts.rest.GUI, for_type]:
                 return self.get_processed_gui(for_type)
             case [consts.rest.GUI, for_type, *_fails]:
-                raise self.invalid_request_response()
+                raise exceptions.rest.RequestError('Invalid GUI request') from None
             case _:  # Maybe an item or a detail
                 if number_of_args == 1:
                     try:
@@ -346,19 +349,19 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
                         return self.get_item(item).as_dict()
                     except Exception as e:
                         logger.exception('Got Exception looking for item')
-                        raise self.invalid_item_response() from e
+                        raise exceptions.rest.NotFound('Item not found') from e
                 elif number_of_args == 2:
                     if self._args[1] == consts.rest.LOG:
                         try:
                             item = self.MODEL.objects.get(uuid__iexact=self._args[0].lower())
                             return self.get_logs(item)
                         except Exception as e:
-                            raise self.invalid_item_response() from e
+                            raise exceptions.rest.NotFound('Item not found') from e
 
                 if self.DETAIL is not None:
                     return self.process_detail()
 
-        raise self.invalid_request_response()  # Will not return
+        raise exceptions.rest.RequestError('Invalid request') from None
 
     def post(self) -> typing.Any:
         """
@@ -370,7 +373,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
             if self._args[0] == 'test':
                 return self.test(self._args[1])
 
-        raise self.invalid_method_response()  # Will not return
+        raise exceptions.rest.InvalidMethodError(f'Invalid method {self._operation}') from None
 
     def put(self) -> typing.Any:
         """
@@ -494,3 +497,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
         Basic, overridable method for deleting an item
         """
         item.delete()
+
+    @classmethod
+    def get_component_types(cls: type[typing.Self]) -> list[tuple[str, dict[str, typing.Any]]]:
+        return []

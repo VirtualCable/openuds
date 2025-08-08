@@ -51,18 +51,20 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 @dataclasses.dataclass
 class CalendarRuleItem(types.rest.BaseRestItem):
     id: str
     name: str
     comments: str
     start: datetime.datetime
-    end: datetime.datetime|None
+    end: datetime.datetime | None
     frequency: str
     interval: int
     duration: int
     duration_unit: str
     permission: int
+
 
 class CalendarRules(DetailHandler[CalendarRuleItem]):  # pylint: disable=too-many-public-methods
     """
@@ -89,7 +91,9 @@ class CalendarRules(DetailHandler[CalendarRuleItem]):  # pylint: disable=too-man
             permission=perm,
         )
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[CalendarRuleItem]:
+    def get_items(
+        self, parent: 'Model', item: typing.Optional[str]
+    ) -> types.rest.ItemsResult[CalendarRuleItem]:
         parent = ensure.is_instance(parent, Calendar)
         # Check what kind of access do we have to parent provider
         perm = permissions.effective_permissions(self._user, parent)
@@ -98,10 +102,12 @@ class CalendarRules(DetailHandler[CalendarRuleItem]):  # pylint: disable=too-man
                 return [CalendarRules.rule_as_dict(k, perm) for k in parent.rules.all()]
             k = parent.rules.get(uuid=process_uuid(item))
             return CalendarRules.rule_as_dict(k, perm)
+        except CalendarRule.DoesNotExist:
+            raise exceptions.rest.NotFound(_('Calendar rule not found: {}').format(item)) from None
         except Exception as e:
             logger.exception('itemId %s', item)
-            raise self.invalid_item_response() from e
-        
+            raise exceptions.rest.RequestError(f'Error retrieving calendar rule: {e}') from e
+
     def get_table(self, parent: 'Model') -> types.rest.Table:
         parent = ensure.is_instance(parent, Calendar)
         return (
@@ -136,7 +142,7 @@ class CalendarRules(DetailHandler[CalendarRuleItem]):  # pylint: disable=too-man
         )
 
         if int(fields['interval']) < 1:
-            raise self.invalid_item_response('Repeat must be greater than zero')
+            raise exceptions.rest.RequestError('Repeat must be greater than zero')
 
         # Convert timestamps to datetimes
         fields['start'] = datetime.datetime.fromtimestamp(fields['start'])
@@ -153,12 +159,12 @@ class CalendarRules(DetailHandler[CalendarRuleItem]):  # pylint: disable=too-man
                 calendar_rule.save()
                 return {'id': calendar_rule.uuid}
         except CalendarRule.DoesNotExist:
-            raise self.invalid_item_response() from None
+            raise exceptions.rest.NotFound(_('Calendar rule not found: {}').format(item)) from None
         except IntegrityError as e:  # Duplicate key probably
             raise exceptions.rest.RequestError(_('Element already exists (duplicate key error)')) from e
         except Exception as e:
             logger.exception('Saving calendar')
-            raise self.invalid_request_response(f'incorrect invocation to PUT: {e}') from e
+            raise exceptions.rest.RequestError(f'incorrect invocation to PUT: {e}') from e
 
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, Calendar)
@@ -168,7 +174,8 @@ class CalendarRules(DetailHandler[CalendarRuleItem]):  # pylint: disable=too-man
             calendar_rule.calendar.modified = sql_now()
             calendar_rule.calendar.save()
             calendar_rule.delete()
+        except CalendarRule.DoesNotExist:
+            raise exceptions.rest.NotFound(_('Calendar rule not found: {}').format(item)) from None
         except Exception as e:
-            logger.exception('Exception')
-            raise self.invalid_item_response() from e
-
+            logger.error('Error deleting calendar rule %s from %s', item, parent)
+            raise exceptions.rest.RequestError(f'Error deleting calendar rule: {e}') from e

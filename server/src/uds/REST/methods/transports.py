@@ -39,7 +39,7 @@ import collections.abc
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
-from uds.core import consts, transports, types, ui
+from uds.core import consts, exceptions, transports, types, ui
 from uds.core.environment import Environment
 from uds.core.util import ensure, permissions, ui as ui_utils
 from uds.models import Network, ServicePool, Transport
@@ -94,14 +94,15 @@ class Transports(ModelHandler[TransportItem]):
         .text_column(name='tags', title=_('tags'), visible=False)
     ).build()
 
-    def enum_types(self) -> collections.abc.Iterable[type[transports.Transport]]:
+    @staticmethod
+    def enum_types() -> collections.abc.Iterable[type[transports.Transport]]:
         return transports.factory().providers().values()
 
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
         transport_type = transports.factory().lookup(for_type)
 
         if not transport_type:
-            raise self.invalid_item_response()
+            raise exceptions.rest.NotFound(_('Transport type not found: {}').format(for_type))
 
         with Environment.temporary_environment() as env:
             transport = transport_type(env, None)
@@ -175,7 +176,7 @@ class Transports(ModelHandler[TransportItem]):
         fields['label'] = fields['label'].strip().replace(' ', '-')
         # And ensure small_name chars are valid [ a-zA-Z0-9:-]+
         if fields['label'] and not re.match(r'^[a-zA-Z0-9:-]+$', fields['label']):
-            raise self.invalid_request_response(
+            raise exceptions.rest.ValidationError(
                 gettext('Label must contain only letters, numbers, ":" and "-"')
             )
 

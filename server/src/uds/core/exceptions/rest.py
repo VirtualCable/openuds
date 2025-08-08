@@ -31,10 +31,13 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from uds.core.exceptions.common import UDSException
 
+
 class HandlerError(UDSException):
     """
     Generic error for a REST handler
     """
+
+    pass
 
 
 class NotFound(HandlerError):
@@ -42,11 +45,15 @@ class NotFound(HandlerError):
     Item not found error
     """
 
+    pass
+
 
 class AccessDenied(HandlerError):
     """
     Access denied error
     """
+
+    pass
 
 
 class RequestError(HandlerError):
@@ -54,17 +61,24 @@ class RequestError(HandlerError):
     Request is invalid error
     """
 
+    pass
+
 
 class ResponseError(HandlerError):
     """
     Generic response error
     """
+    
+    pass
 
 
-class NotSupportedError(HandlerError):
+class NotSupportedError(RequestError):
     """
     Some elements do not support some operations (as searching over an authenticator that does not supports it)
     """
+
+    pass
+
 
 # Exception to "rethrow" on save error
 class SaveException(HandlerError):
@@ -72,9 +86,28 @@ class SaveException(HandlerError):
     Exception thrown if couldn't save
     """
 
+    pass
+
 
 class BlockAccess(UDSException):
     """
     Exception used to signal that the access to a resource is blocked
     """
 
+    pass
+
+
+class ValidationError(RequestError):
+    """
+    Exception raised for validation errors
+    """
+
+    pass
+
+
+class InvalidMethodError(RequestError):
+    """
+    Exception raised for invalid HTTP methods
+    """
+
+    pass

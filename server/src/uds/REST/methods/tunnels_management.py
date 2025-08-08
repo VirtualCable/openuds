@@ -88,11 +88,13 @@ class TunnelServers(DetailHandler[TunnelServerItem]):
             if multi:
                 return res
             if not res:
-                raise Exception('Item not found')
+                raise exceptions.rest.NotFound(f'Tunnel server {item} not found')
             return res[0]
+        except exceptions.rest.HandlerError:
+            raise
         except Exception as e:
-            logger.exception('REST groups')
-            raise self.invalid_item_response() from e
+            logger.error('Error getting tunnel servers for %s: %s', parent, e)
+            raise exceptions.rest.ResponseError(_('Error getting tunnel servers')) from e
 
     def get_table(self, parent: 'Model') -> Table:
         parent = ensure.is_instance(parent, models.ServerGroup)
@@ -115,8 +117,11 @@ class TunnelServers(DetailHandler[TunnelServerItem]):
         parent = ensure.is_instance(parent, models.ServerGroup)
         try:
             parent.servers.remove(models.Server.objects.get(uuid=process_uuid(item)))
-        except Exception:
-            raise self.invalid_item_response() from None
+        except models.Server.DoesNotExist:
+            raise exceptions.rest.NotFound(_('Tunnel server not found')) from None
+        except Exception as e:
+            logger.error('Error deleting tunnel server %s from %s: %s', item, parent, e)
+            raise exceptions.rest.ResponseError(_('Error deleting tunnel server')) from None
 
     # Custom methods
     def maintenance(self, parent: 'Model', id: str) -> typing.Any:
@@ -230,14 +235,17 @@ class Tunnels(ModelHandler[TunnelItem]):
         item = self._args[-1]
 
         if not item:
-            raise self.invalid_item_response('No server specified')
+            raise exceptions.rest.RequestError('No server specified')
 
         try:
             server = models.Server.objects.get(uuid=process_uuid(item))
             self.check_access(server, uds.core.types.permissions.PermissionType.READ)
             parent.servers.add(server)
-        except Exception:
-            raise self.invalid_item_response() from None
+        except models.Server.DoesNotExist:
+            raise exceptions.rest.NotFound(_('Tunnel server not found')) from None
+        except Exception as e:
+            logger.error('Error assigning server %s to %s: %s', item, parent, e)
+            raise exceptions.rest.ResponseError(_('Error assigning server')) from None
 
         return 'ok'
 

@@ -30,6 +30,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
+import abc
 import logging
 import typing
 
@@ -41,6 +42,7 @@ from uds.core import exceptions
 from uds.core import types
 from uds.core.module import Module
 from uds.core.util import permissions
+
 # from uds.models import ManagedObjectModel
 
 from ..handlers import Handler
@@ -53,7 +55,7 @@ logger = logging.getLogger(__name__)
 
 
 # pylint: disable=unused-argument
-class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
+class BaseModelHandler(Handler, abc.ABC, typing.Generic[types.rest.T_Item]):
     """
     Base Handler for Master & Detail Handlers
     """
@@ -65,7 +67,7 @@ class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
         root: bool = False,
     ) -> None:
         if not permissions.has_access(self._user, obj, permission, root):
-            raise self.access_denied_response()
+            raise exceptions.rest.AccessDenied('Access denied')
 
     def get_permissions(self, obj: models.Model, root: bool = False) -> int:
         return permissions.effective_permissions(self._user, obj, root)
@@ -127,81 +129,39 @@ class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
 
         return args
 
-    # @staticmethod
-    # def fill_instance_type(item: 'models.Model', dct: types.rest.ManagedObjectItem) -> None:
+    # # Exception helpers
+    # @classmethod
+    # def invalid_request_response(cls: type[typing.Self], message: str | None = None) -> exceptions.rest.HandlerError:
     #     """
-    #     For Managed Objects (db element that contains a serialized object), fills a dictionary with the "type" and "type_name" parameters values.
-    #     For non managed objects, it does nothing
-
-    #     Args:
-    #         item: Item to fill type
-    #         dct: Dictionary to fill with type
-
+    #     Raises an invalid request error with a default translated string
+    #     :param message: Custom message to add to exception. If it is None, "Invalid Request" is used
     #     """
-    #     if isinstance(item, ManagedObjectModel):
-    #         kind = item.get_type()
-    #         typing.cast(dict[str, typing.Any], dct)['type'] = kind.mod_type()
-    #         typing.cast(dict[str, typing.Any], dct)['type_name'] = kind.mod_name()
+    #     message = message or _('Invalid Request')
+    #     return exceptions.rest.RequestError(f'{message} {cls}')
 
-    # @staticmethod
-    # def fill_instance_fields(item: 'models.Model', dct: types.rest.BaseRestItem) -> None:
+    # def invalid_response_response(self, message: str | None = None) -> exceptions.rest.HandlerError:
+    #     message = 'Invalid response' if message is None else message
+    #     return exceptions.rest.ResponseError(message)
+
+    # def invalid_method_response(self) -> exceptions.rest.HandlerError:
     #     """
-    #     For Managed Objects (db element that contains a serialized object), fills a dictionary with the "field" parameters values.
-    #     For non managed objects, it does nothing
-
-    #     Args:
-    #         item: Item to fill fields
-    #         dct: Dictionary to fill with fields
-
+    #     Raises a NotFound exception with translated "Method not found" string to current locale
     #     """
+    #     return exceptions.rest.RequestError(_('Method not found in {}: {}').format(self.__class__, self._args))
 
-    #     # Cast to allow override typing
-    #     if isinstance(item, ManagedObjectModel):
-    #         res = typing.cast(types.rest.ManagedObjectItem, dct)
-    #         i = item.get_instance()
-    #         i.init_gui()  # Defaults & stuff
-    #         fields = i.get_fields_as_dict()
+    # def invalid_item_response(self, message: str | None = None) -> exceptions.rest.HandlerError:
+    #     """
+    #     Raises a NotFound exception, with location info
+    #     """
+    #     message = message or _('Item not found')
+    #     return exceptions.rest.NotFound(message)
+    #     # raise NotFound('{} {}: {}'.format(message, self.__class__, self._args))
 
-    #         # TODO: This will be removed in future versions, as it will be overseed by "instance" key
-    #         typing.cast(typing.Any, res).update(fields)  # Add fields to dict
-    #         res['type'] = i.mod_type()  # Add type
-    #         res['type_name'] = i.mod_name()  # Add type name
-    #         # Future inmplementation wil insert instace fields into "instance" key
-    #         # For now, just repeat the fields
-    #         res['instance'] = fields
+    # def access_denied_response(self, message: str | None = None) -> exceptions.rest.HandlerError:
+    #     return exceptions.rest.AccessDenied(message or _('Access denied'))
 
-    # Exceptions
-    def invalid_request_response(self, message: str | None = None) -> exceptions.rest.HandlerError:
-        """
-        Raises an invalid request error with a default translated string
-        :param message: Custom message to add to exception. If it is None, "Invalid Request" is used
-        """
-        message = message or _('Invalid Request')
-        return exceptions.rest.RequestError(f'{message} {self.__class__}: {self._args}')
-
-    def invalid_response_response(self, message: str | None = None) -> exceptions.rest.HandlerError:
-        message = 'Invalid response' if message is None else message
-        return exceptions.rest.ResponseError(message)
-
-    def invalid_method_response(self) -> exceptions.rest.HandlerError:
-        """
-        Raises a NotFound exception with translated "Method not found" string to current locale
-        """
-        return exceptions.rest.RequestError(_('Method not found in {}: {}').format(self.__class__, self._args))
-
-    def invalid_item_response(self, message: str | None = None) -> exceptions.rest.HandlerError:
-        """
-        Raises a NotFound exception, with location info
-        """
-        message = message or _('Item not found')
-        return exceptions.rest.NotFound(message)
-        # raise NotFound('{} {}: {}'.format(message, self.__class__, self._args))
-
-    def access_denied_response(self, message: str | None = None) -> exceptions.rest.HandlerError:
-        return exceptions.rest.AccessDenied(message or _('Access denied'))
-
-    def not_supported_response(self, message: str | None = None) -> exceptions.rest.HandlerError:
-        return exceptions.rest.NotSupportedError(message or _('Operation not supported'))
+    # def not_supported_response(self, message: str | None = None) -> exceptions.rest.HandlerError:
+    #     return exceptions.rest.NotSupportedError(message or _('Operation not supported'))
 
     # Success methods
     def success(self) -> str:
@@ -216,4 +176,11 @@ class BaseModelHandler(Handler, typing.Generic[types.rest.T_Item]):
         Invokes a test for an item
         """
         logger.debug('Called base test for %s --> %s', self.__class__.__name__, self._params)
-        raise self.invalid_method_response()
+        raise exceptions.rest.NotSupportedError(_('Testing not supported'))
+
+    @classmethod
+    def get_component_types(cls: type[typing.Self]) -> list[tuple[str, dict[str, typing.Any]]]:
+        """
+        Default implementation does not have any component types. (for Api specification purposes)
+        """
+        return []

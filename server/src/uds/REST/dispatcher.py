@@ -48,7 +48,7 @@ from uds.core.util.model import sql_stamp_seconds
 
 from . import processors, log
 from .handlers import Handler
-from .model import DetailHandler
+from . import model as rest_model
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -182,12 +182,8 @@ class Dispatcher(View):
             # Exceptiol will also be logged, but with ERROR level
             log.log_operation(handler, response.status_code, types.log.LogLevel.INFO)
             return response
-        except exceptions.rest.RequestError as e:
-            log.log_operation(handler, 400, types.log.LogLevel.ERROR)
-            return http.HttpResponseBadRequest(str(e), content_type="text/plain")
-        except exceptions.rest.ResponseError as e:
-            log.log_operation(handler, 500, types.log.LogLevel.ERROR)
-            return http.HttpResponseServerError(str(e), content_type="text/plain")
+            # Note that the order of exceptions is important
+            # because some exceptions are subclasses of others
         except exceptions.rest.NotSupportedError as e:
             log.log_operation(handler, 501, types.log.LogLevel.ERROR)
             return http.HttpResponseBadRequest(str(e), content_type="text/plain")
@@ -197,6 +193,12 @@ class Dispatcher(View):
         except exceptions.rest.NotFound as e:
             log.log_operation(handler, 404, types.log.LogLevel.ERROR)
             return http.HttpResponseNotFound(str(e), content_type="text/plain")
+        except exceptions.rest.RequestError as e:
+            log.log_operation(handler, 400, types.log.LogLevel.ERROR)
+            return http.HttpResponseBadRequest(str(e), content_type="text/plain")
+        except exceptions.rest.ResponseError as e:
+            log.log_operation(handler, 500, types.log.LogLevel.ERROR)
+            return http.HttpResponseServerError(str(e), content_type="text/plain")
         except exceptions.rest.HandlerError as e:
             log.log_operation(handler, 500, types.log.LogLevel.ERROR)
             return http.HttpResponseBadRequest(str(e), content_type="text/plain")
@@ -251,11 +253,7 @@ class Dispatcher(View):
         module_name = __name__[: __name__.rfind('.')]
 
         def checker(x: type[Handler]) -> bool:
-            # only register if final class, no classes that have subclasses
-            logger.debug(
-                'Checking %s - %s - %s', x.__name__, issubclass(x, DetailHandler), x.__subclasses__() == []
-            )
-            return not issubclass(x, DetailHandler) and not x.__subclasses__()
+            return not issubclass(x, rest_model.DetailHandler) and not x.__subclasses__()
 
         # Register all subclasses of Handler
         modfinder.dynamically_load_and_register_packages(
@@ -265,6 +263,8 @@ class Dispatcher(View):
             checker=checker,
             package_name='methods',
         )
+        
+        logger.info('REST Handlers initialized')
 
 
 Dispatcher.initialize()

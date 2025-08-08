@@ -100,7 +100,8 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
         .build()
     )
 
-    def enum_types(self) -> collections.abc.Iterable[type[auths.Authenticator]]:
+    @staticmethod
+    def enum_types() -> collections.abc.Iterable[type[auths.Authenticator]]:
         return auths.factory().providers().values()
 
     def extra_type_info(self, type_: type['Module']) -> typing.Optional[types.rest.AuthenticatorTypeInfo]:
@@ -166,8 +167,8 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
 
             raise Exception()  # Not found
         except Exception as e:
-            logger.info('Type not found: %s', e)
-            raise exceptions.rest.NotFound('type not found') from e
+            logger.info('Authenticator type not found: %s', e)
+            raise exceptions.rest.NotFound('Authenticator type not found') from e
 
     def get_item(self, item: 'Model') -> AuthenticatorItem:
         item = ensure.is_instance(item, Authenticator)
@@ -212,7 +213,7 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
         try:
             type_ = self._params['type']
             if type_ not in ('user', 'group'):
-                raise self.invalid_request_response()
+                raise exceptions.rest.RequestError(_('Invalid type: {}').format(type_))
 
             term = self._params['term']
 
@@ -234,7 +235,7 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
                 )
             )
             if search_supported is False:
-                raise self.not_supported_response()
+                raise exceptions.rest.NotSupportedError(_('Search not supported'))
 
             if type_ == 'user':
                 iterable = auth.search_users(term)
@@ -252,7 +253,7 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
     def test(self, type_: str) -> typing.Any:
         auth_type = auths.factory().lookup(type_)
         if not auth_type:
-            raise self.invalid_request_response(f'Invalid type: {type_}')
+            raise exceptions.rest.RequestError(_('Invalid type: {}').format(type_))
 
         dct = self._params.copy()
         dct['_request'] = self._request
@@ -279,9 +280,7 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
         fields['small_name'] = fields['small_name'].strip().replace(' ', '_')
         # And ensure small_name chars are valid [a-zA-Z0-9:-]+
         if fields['small_name'] and not re.match(r'^[a-zA-Z0-9:.-]+$', fields['small_name']):
-            raise self.invalid_request_response(
-                _('Label must contain only letters, numbers, or symbols: - : .')
-            )
+            raise exceptions.rest.RequestError(_('Label must contain only letters, numbers, or symbols: - : .'))
 
     def delete_item(self, item: 'Model') -> None:
         # For every user, remove assigned services (mark them for removal)

@@ -37,7 +37,7 @@ import typing
 import datetime
 
 from django.utils.translation import gettext as _
-from uds.core import types
+from uds.core import exceptions, types
 
 from uds.models import UserService, Provider
 from uds.core.types.states import State
@@ -50,6 +50,7 @@ if typing.TYPE_CHECKING:
     from django.db.models import Model
 
 logger = logging.getLogger(__name__)
+
 
 @dataclasses.dataclass
 class ServicesUsageItem(types.rest.BaseRestItem):
@@ -129,9 +130,9 @@ class ServicesUsage(DetailHandler[ServicesUsageItem]):
                 .prefetch_related('deployed_service', 'deployed_service__service', 'user', 'user__manager')
             ]
 
-        except Exception:
-            logger.exception('get_items')
-            raise self.invalid_item_response()
+        except Exception as e:
+            logger.error('Error getting services usage for %s: %s', parent.uuid, e)
+            raise exceptions.rest.ResponseError(_('Error getting services usage')) from None
 
     def get_table(self, parent: 'Model') -> types.rest.Table:
         parent = ensure.is_instance(parent, Provider)
@@ -157,8 +158,11 @@ class ServicesUsage(DetailHandler[ServicesUsageItem]):
             userservice = UserService.objects.get(
                 uuid=process_uuid(item), deployed_service__service__provider=parent
             )
-        except Exception:
-            raise self.invalid_item_response()
+        except UserService.DoesNotExist:
+            raise exceptions.rest.NotFound(_('User service not found')) from None
+        except Exception as e:
+            logger.error('Error getting user service %s from %s: %s', item, parent, e)
+            raise exceptions.rest.ResponseError(_('Error getting user service')) from None
 
         logger.debug('Deleting user service')
         if userservice.state in (State.USABLE, State.REMOVING):
@@ -166,6 +170,6 @@ class ServicesUsage(DetailHandler[ServicesUsageItem]):
         elif userservice.state == State.PREPARING:
             userservice.cancel()
         elif userservice.state == State.REMOVABLE:
-            raise self.invalid_item_response(_('Item already being removed'))
+            raise exceptions.rest.ResponseError(_('Item already being removed')) from None
         else:
-            raise self.invalid_item_response(_('Item is not removable'))
+            raise exceptions.rest.ResponseError(_('Item is not removable')) from None
