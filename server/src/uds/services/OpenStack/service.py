@@ -261,7 +261,7 @@ class OpenStackLiveService(DynamicService):
         caller_instance: typing.Optional['DynamicUserService | DynamicPublication'],
         vmid: str,
         *,
-        force_new: bool = False,
+        for_unique_id: bool = False,
     ) -> str:
         net_info = self.api.get_server_info(vmid).validated().addresses
         return '' if not net_info else net_info[0].mac

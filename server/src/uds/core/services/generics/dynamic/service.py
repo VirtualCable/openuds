@@ -178,14 +178,25 @@ class DynamicService(services.Service, abc.ABC):  # pylint: disable=too-many-pub
         caller_instance: typing.Optional['DynamicUserService | DynamicPublication'],
         vmid: str,
         *,
-        force_new: bool = False,
+        for_unique_id: bool = False,
     ) -> str:
         """
         Returns the mac of the machine
         If cannot be obtained, MUST raise an exception
+        Args:
+            caller_instance: The instance of the caller
+            vmid: The vmid of the machine
+            for_unique_id: Whether to force a new mac address
+
         Note:
-           vmid can be '' or force_new can be True, in this case, a new mac must be generated
-           If the service does not support this, it can raise an exception
+            vmid can be '', or for_unique_id can be True. Is up tu the service to treat this situation
+            Why is this?
+            Because we need to give the oportunity to discern if the call to the get_mac is for a new unique_id
+            for de userservice, or it is to force to generate one.
+            For example:
+                some_userservice ---> get_unique_id --> get_mac('xxxxxxx', for_unique_id=True) --> '' (because no mac until the end of the process...)
+                some_userservice ---> on termination --> get_mac('', for_unique_id=False) --> 'the_mac' (because at the end, the mac will be available)
+
         """
         ...
 
