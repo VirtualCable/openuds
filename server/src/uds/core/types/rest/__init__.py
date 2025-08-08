@@ -42,6 +42,7 @@ from uds.core import types
 from . import doc
 from . import stock
 from . import actor
+from . import api
 
 if typing.TYPE_CHECKING:
     from uds.REST.handlers import Handler

@@ -56,12 +56,20 @@ class PathItem:
     delete: Operation | None = None
 
 
+# Schema property
+@dataclasses.dataclass
+class SchemaProperty:
+    type: str
+    description: str | None = None
+    example: typing.Any | None = None
+
+
 # Schema
 @dataclasses.dataclass
 class Schema:
     type: str
-    properties: dict[str, typing.Any] | None = None
-    required: list[str] | None = None
+    properties: dict[str, SchemaProperty] = dataclasses.field(default_factory=dict[str, SchemaProperty])
+    required: list[str] = dataclasses.field(default_factory=list[str])
     description: str | None = None
     additionalProperties: bool | dict[str, typing.Any] | None = None
 

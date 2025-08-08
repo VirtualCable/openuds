@@ -179,8 +179,8 @@ class BaseModelHandler(Handler, abc.ABC, typing.Generic[types.rest.T_Item]):
         raise exceptions.rest.NotSupportedError(_('Testing not supported'))
 
     @classmethod
-    def get_component_types(cls: type[typing.Self]) -> list[tuple[str, dict[str, typing.Any]]]:
+    def enum_schemas_for_api(cls: type[typing.Self]) -> typing.Iterable[tuple[str, types.rest.api.Schema]]:
         """
         Default implementation does not have any component types. (for Api specification purposes)
         """
-        return []
+        yield from ()

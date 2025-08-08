@@ -375,8 +375,8 @@ class Handler(abc.ABC):
         return ''
 
     @classmethod
-    def get_component_types(cls: type[typing.Self]) -> list[tuple[str, dict[str, typing.Any]]]:
+    def enum_schemas_for_api(cls: type[typing.Self]) -> typing.Iterable[tuple[str, types.rest.api.Schema]]:
         """
         Returns the types that should be registered
         """
-        return []
+        yield from ()

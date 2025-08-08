@@ -499,5 +499,18 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
         item.delete()
 
     @classmethod
-    def get_component_types(cls: type[typing.Self]) -> list[tuple[str, dict[str, typing.Any]]]:
-        return []
+    def enum_schemas_for_api(cls: type[typing.Self]) -> typing.Iterable[tuple[str, types.rest.api.Schema]]:
+        for type_ in cls.enum_types():
+            schema = types.rest.api.Schema(
+                type='object',
+                required=[],
+                description=type_.type_name,
+            )
+            for field in type_.describe_fields():
+                schema.properties[field['name']] = types.rest.api.SchemaProperty(
+                    type=field['gui']['type'],
+                )
+                if field['gui'].get('required', False):
+                    schema.required.append(field['name'])
+
+            yield (type_.type_type, schema)
