@@ -81,7 +81,6 @@ class Handler(abc.ABC):
     ]  # This is a deserliazied object from request. Can be anything as 'a' or {'a': 1} or ....
     # These are the "path" split by /, that is, the REST invocation arguments
     _args: list[str]
-    _kwargs: dict[str, typing.Any]  # This are the "path" split by /, that is, the REST invocation arguments
     _headers: dict[
         str, str
     ]  # Note: These are "output" headers, not input headers (input headers can be retrieved from request)
@@ -100,14 +99,12 @@ class Handler(abc.ABC):
         method: str,
         params: dict[str, typing.Any],
         *args: str,
-        **kwargs: typing.Any,
     ):
         self._request = request
         self._path = path
         self._operation = method
         self._params = params
         self._args = list(args)  # copy of args
-        self._kwargs = kwargs
         self._headers = {}
         self._auth_token = None
 
@@ -375,8 +372,8 @@ class Handler(abc.ABC):
         return ''
 
     @classmethod
-    def enum_schemas_for_api(cls: type[typing.Self]) -> typing.Iterable[tuple[str, types.rest.api.Schema]]:
+    def enum_api_components(cls: type[typing.Self]) -> types.rest.api.Components:
         """
         Returns the types that should be registered
         """
-        yield from ()
+        return types.rest.api.Components()

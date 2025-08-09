@@ -71,7 +71,7 @@ class MetaItem(types.rest.BaseRestItem):
     user_services_count: int
     user_services_in_preparation: int
 
-    pool_name: str = ''  # Optional, as it can be not present
+    pool_name: str = ''  # Optional
 
 
 class MetaServicesPool(DetailHandler[MetaItem]):

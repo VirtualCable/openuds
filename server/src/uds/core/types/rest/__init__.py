@@ -37,8 +37,6 @@ import collections.abc
 import typing
 import dataclasses
 
-from uds.core import types
-
 from . import doc
 from . import stock
 from . import actor
@@ -47,6 +45,10 @@ from . import api
 if typing.TYPE_CHECKING:
     from uds.REST.handlers import Handler
     from uds.models.managed_object_model import ManagedObjectModel
+
+
+T_Model = typing.TypeVar('T_Model', bound='ManagedObjectModel')
+T_Item = typing.TypeVar("T_Item", bound='BaseRestItem')
 
 
 @dataclasses.dataclass
@@ -86,23 +88,6 @@ class ExtraTypeInfo(abc.ABC):
         return {}
 
 
-@dataclasses.dataclass
-class AuthenticatorTypeInfo(ExtraTypeInfo):
-    search_users_supported: bool
-    search_groups_supported: bool
-    needs_password: bool
-    label_username: str
-    label_groupname: str
-    label_password: str
-    create_users_supported: bool
-    is_external: bool
-    mfa_data_enabled: bool
-    mfa_supported: bool
-
-    def as_dict(self) -> dict[str, typing.Any]:
-        return dataclasses.asdict(self)
-
-
 class NotRequired:
     """
     This is a marker class to indicate that a field is not required.
@@ -114,7 +99,7 @@ class NotRequired:
 
     def __str__(self) -> str:
         return 'NotRequired'
-    
+
     # Field generator for dataclasses
     @staticmethod
     def field() -> typing.Any:
@@ -146,39 +131,25 @@ class BaseRestItem:
         return dataclasses.asdict(self)
 
         # NOTE: the json processor should take care of converting "sub-items" to valid dictionaries
-        #
-        # This code is keept here for future reference, but not used right now
-        # def _process_item(key: str, value: typing.Any) -> typing.Any:
-        #     """
-        #     Process each item in the dictionary.
-        #     If the item is a BaseRestItem, call its as_dict method.
-        #     If the item is an iterable, iterate over it and call as_dict on each item.
-        #     If the item is a mapping, iterate over it and call as_dict on each value.
-        #     """
-        #     # if it's a basic type, we just return it
-        #     # Avoid this traetment for strings for example, as they are also collections.abc.Iterable
-        #     if isinstance(value, (str, int, float, bool, type(None))):
-        #         return value
-        #     if isinstance(value, BaseRestItem):
-        #         value = value.as_dict()
-        #     # It its an iterable, we iterate over it and call as_dict on each item
-        #     elif isinstance(value, collections.abc.Iterable):
-        #         value = [
-        #             item.as_dict() if isinstance(item, BaseRestItem) else item
-        #             for item in typing.cast(collections.abc.Iterable[typing.Any], value)
-        #         ]
-        #     elif isinstance(value, collections.abc.Mapping):
-        #         value = {
-        #             k: v.as_dict() if isinstance(v, BaseRestItem) else v
-        #             for k, v in typing.cast(collections.abc.Mapping[typing.Any, typing.Any], value).items()
-        #         }
+        #       (as it already does)
 
-        #     return value
-
-        # return {k: _process_item(k, v) for k, v in dct.items() if not isinstance(v, NotRequired)}
+    def get_components_for_api(self) -> api.Components:
+        components = api.Components()
+        schema = api.Schema(type='object', properties={})
+        type_hints = typing.get_type_hints(self)
+        
+        for field in dataclasses.fields(self):
+            # Check the type, can be a primitive or a complex type
+            # complexes types accepted are list and dict currently
+            field_type = type_hints.get(field.name)
+            if not field_type:
+                raise Exception(f'Field {field.name} has no type hint')
+            
+            openapi_type = api.python_type_to_openapi(field_type)
 
 
-T_Model = typing.TypeVar('T_Model', bound='ManagedObjectModel')
+        components.schemas[self.__class__.__name__] = schema
+        return components
 
 
 @dataclasses.dataclass
@@ -213,9 +184,6 @@ class ManagedObjectItem(BaseRestItem, typing.Generic[T_Model]):
 
         return base
 
-
-# Alias for item type
-T_Item = typing.TypeVar("T_Item", bound=BaseRestItem)
 
 # Alias for get_items return type
 ItemsResult: typing.TypeAlias = list[T_Item] | BaseRestItem | typing.Iterator[T_Item]

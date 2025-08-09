@@ -70,6 +70,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
     Note: Instance variables are the variables declared and serialized by modules.
           The only detail that has types within is "Service", child of "Provider"
     """
+    ITEM_TYPE: typing.ClassVar[type[types.rest.BaseRestItem]] = types.rest.BaseRestItem
 
     # Authentication related
     ROLE = consts.UserRole.STAFF
@@ -207,7 +208,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
             handler_type = self.DETAIL[self._args[1]]
             args = list(self._args[2:])
             path = self._path + '/' + '/'.join(args[:2])
-            detail_handler = handler_type(self, path, self._params, *args, parent=item, user=self._user)
+            detail_handler = handler_type(self, path, self._params, *args, parent_item=item, user=self._user)
             method = getattr(detail_handler, self._operation)
 
             return method()
@@ -499,16 +500,30 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
         item.delete()
 
     @classmethod
-    def enum_schemas_for_api(cls: type[typing.Self]) -> typing.Iterable[tuple[str, types.rest.api.Schema]]:
+    def enum_api_components(cls: type[typing.Self]) -> types.rest.api.Components:
+        components = types.rest.api.Components()
+        
         for type_ in cls.enum_types():
             schema = types.rest.api.Schema(
                 type='object',
                 required=[],
                 description=type_.type_name,
             )
+            refs: list[str] = []
             for field in type_.describe_fields():
                 schema.properties[field['name']] = types.rest.api.SchemaProperty.from_field_desc(field)
+                refs.append(field['name'])
                 if field['gui'].get('required', False):
                     schema.required.append(field['name'])
+                refs.append(field['name'])
 
-            yield (type_.type_type, schema)
+            # Create the instance field that is an instance of any of the refs.
+            schema.properties['instance'] = types.rest.api.SchemaProperty(
+                description='An instance of the model',
+                type=refs,
+                discriminator='type_type'
+            )
+
+            components.schemas[type_.type_type] = schema
+
+        return components

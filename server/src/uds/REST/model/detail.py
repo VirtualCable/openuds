@@ -86,7 +86,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
     _path: str
     _params: typing.Any  # _params is deserialized object from request
     _args: list[str]
-    _kwargs: dict[str, typing.Any]
+    _parent_item: models.Model  # Parent item, that is the parent model element
     _user: 'User'
 
     def __init__(
@@ -96,7 +96,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
         params: typing.Any,
         *args: str,
         user: 'User',
-        **kwargs: typing.Any,
+        parent_item: models.Model
     ) -> None:
         """
         Detail Handlers in fact "disabled" handler most initialization, that is no needed because
@@ -108,7 +108,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
         self._path = path
         self._params = params
         self._args = list(args)
-        self._kwargs = kwargs
+        self._parent_item = parent_item
         self._user = user
 
     def _check_is_custom_method(self, check: str, parent: models.Model, arg: typing.Any = None) -> typing.Any:
@@ -138,7 +138,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
         logger.debug('Detail args for GET: %s', self._args)
         num_args = len(self._args)
 
-        parent: models.Model = self._kwargs['parent']
+        parent: models.Model = self._parent_item
 
         if num_args == 0:
             return self.get_items(parent, None)
@@ -194,7 +194,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
         """
         logger.debug('Detail args for PUT: %s, %s', self._args, self._params)
 
-        parent: models.Model = self._kwargs['parent']
+        parent: models.Model = self._parent_item
 
         # if has custom methods, look for if this request matches any of them
         if len(self._args) > 1:
@@ -227,7 +227,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
         """
         logger.debug('Detail args for DELETE: %s', self._args)
 
-        parent = self._kwargs['parent']
+        parent = self._parent_item
 
         if len(self._args) != 1:
             raise exceptions.rest.RequestError('Invalid DELETE request') from None

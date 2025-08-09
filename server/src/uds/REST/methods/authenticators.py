@@ -57,6 +57,22 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+@dataclasses.dataclass
+class AuthenticatorTypeInfo(types.rest.ExtraTypeInfo):
+    search_users_supported: bool
+    search_groups_supported: bool
+    needs_password: bool
+    label_username: str
+    label_groupname: str
+    label_password: str
+    create_users_supported: bool
+    is_external: bool
+    mfa_data_enabled: bool
+    mfa_supported: bool
+
+    def as_dict(self) -> dict[str, typing.Any]:
+        return dataclasses.asdict(self)
+
 
 @dataclasses.dataclass
 class AuthenticatorItem(types.rest.ManagedObjectItem[Authenticator]):
@@ -78,6 +94,7 @@ class AuthenticatorItem(types.rest.ManagedObjectItem[Authenticator]):
 
 # Enclosed methods under /auth path
 class Authenticators(ModelHandler[AuthenticatorItem]):
+    ITEM_TYPE = AuthenticatorItem
 
     MODEL = Authenticator
     # Custom get method "search" that requires authenticator id
@@ -104,9 +121,9 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
     def enum_types() -> collections.abc.Iterable[type[auths.Authenticator]]:
         return auths.factory().providers().values()
 
-    def extra_type_info(self, type_: type['Module']) -> typing.Optional[types.rest.AuthenticatorTypeInfo]:
+    def extra_type_info(self, type_: type['Module']) -> typing.Optional[AuthenticatorTypeInfo]:
         if issubclass(type_, auths.Authenticator):
-            return types.rest.AuthenticatorTypeInfo(
+            return AuthenticatorTypeInfo(
                 search_users_supported=type_.search_users != auths.Authenticator.search_users,
                 search_groups_supported=type_.search_groups != auths.Authenticator.search_groups,
                 needs_password=type_.needs_password,

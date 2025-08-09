@@ -30,6 +30,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 import logging
+import enum
 
 from tests.utils.test import UDSTestCase
 
@@ -50,10 +51,57 @@ class TestApiGenBasic(UDSTestCase):
             if node.handler and issubclass(node.handler, model.ModelHandler):
                 handler = typing.cast(model.ModelHandler[typing.Any], typing.cast(typing.Any, node).handler)
                 logger.info("Checking handler: %s", handler)
-                for type_name, schema in handler.enum_schemas_for_api():
-                    logger.info("Found enum schema for API: %s=%s", type_name, schema.as_dict())
-                    self.assertIsInstance(schema, types.rest.api.Schema)    
+                schema = handler.enum_api_components()
+                logger.info("Found enum schema for API: %s=%s", schema.as_dict())
+                self.assertIsInstance(schema, types.rest.api.Components)
             for child in node.children.values():
                 check_node(child)
 
         check_node(root_node)
+
+    def test_python_type_to_openapi(self):
+        # Test basic types
+        self.assertEqual(
+            types.rest.api.python_type_to_openapi(int), types.rest.api.SchemaProperty(type='integer')
+        )
+        self.assertEqual(
+            types.rest.api.python_type_to_openapi(str), types.rest.api.SchemaProperty(type='string')
+        )
+        self.assertEqual(
+            types.rest.api.python_type_to_openapi(float), types.rest.api.SchemaProperty(type='number')
+        )
+        self.assertEqual(
+            types.rest.api.python_type_to_openapi(bool), types.rest.api.SchemaProperty(type='boolean')
+        )
+        self.assertEqual(
+            types.rest.api.python_type_to_openapi(type(None)), types.rest.api.SchemaProperty(type='"null"')
+        )
+
+        # Test list, dict, union and enums (Enum, IntEnum, StrEnum)
+        self.assertEqual(
+            types.rest.api.python_type_to_openapi(list[str]),
+            types.rest.api.SchemaProperty(type='array', items=types.rest.api.SchemaProperty(type='string')),
+        )
+        self.assertEqual(
+            types.rest.api.python_type_to_openapi(dict[str, str]),
+            types.rest.api.SchemaProperty(
+                type='object', additionalProperties=types.rest.api.SchemaProperty(type='string')
+            ),
+        )
+        self.assertEqual(
+            types.rest.api.python_type_to_openapi(typing.Union[int, str]),
+            types.rest.api.SchemaProperty(type=['integer', 'string']),
+        )
+        self.assertEqual(
+            types.rest.api.python_type_to_openapi(enum.Enum),
+            types.rest.api.SchemaProperty(type='string', enum=[]),
+        )
+
+        class MyEnum(enum.Enum):
+            VALUE1 = "value1"
+            VALUE2 = "value2"
+
+        self.assertEqual(
+            types.rest.api.python_type_to_openapi(MyEnum),
+            types.rest.api.SchemaProperty(type='string', enum=[e.value for e in MyEnum]),
+        )
