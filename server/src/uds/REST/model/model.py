@@ -33,6 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 
 import logging
 import typing
+import abc
 import collections.abc
 
 from django.db import IntegrityError, models
@@ -55,7 +56,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.rest.T_Item]):
+class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC, typing.Generic[types.rest.T_Item]):
     """
     Basic Handler for a model
     Basically we will need same operations for all models, so we can
@@ -70,8 +71,6 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
     Note: Instance variables are the variables declared and serialized by modules.
           The only detail that has types within is "Service", child of "Provider"
     """
-    ITEM_TYPE: typing.ClassVar[type[types.rest.BaseRestItem]] = types.rest.BaseRestItem
-
     # Authentication related
     ROLE = consts.UserRole.STAFF
 
@@ -500,14 +499,15 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
         item.delete()
 
     @classmethod
-    def enum_api_components(cls: type[typing.Self]) -> types.rest.api.Components:
+    def api_component(cls: type[typing.Self]) -> types.rest.api.Components:
         components = types.rest.api.Components()
         
+        # Component schemas
         for type_ in cls.enum_types():
             schema = types.rest.api.Schema(
                 type='object',
                 required=[],
-                description=type_.type_name,
+                description=type_.__doc__ or None,
             )
             refs: list[str] = []
             for field in type_.describe_fields():
@@ -515,7 +515,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
                 refs.append(field['name'])
                 if field['gui'].get('required', False):
                     schema.required.append(field['name'])
-                refs.append(field['name'])
+                refs.append(f'#/components/schemas/{field["name"]}')
 
             # Create the instance field that is an instance of any of the refs.
             schema.properties['instance'] = types.rest.api.SchemaProperty(

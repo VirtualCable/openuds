@@ -133,22 +133,25 @@ class BaseRestItem:
         # NOTE: the json processor should take care of converting "sub-items" to valid dictionaries
         #       (as it already does)
 
-    def get_components_for_api(self) -> api.Components:
+    @classmethod
+    def api_components(cls: type[typing.Self]) -> api.Components:
         components = api.Components()
-        schema = api.Schema(type='object', properties={})
-        type_hints = typing.get_type_hints(self)
-        
-        for field in dataclasses.fields(self):
+        schema = api.Schema(type='object', properties={}, description=None)
+        type_hints = typing.get_type_hints(cls)
+
+        for field in dataclasses.fields(cls):
             # Check the type, can be a primitive or a complex type
             # complexes types accepted are list and dict currently
             field_type = type_hints.get(field.name)
             if not field_type:
                 raise Exception(f'Field {field.name} has no type hint')
-            
-            openapi_type = api.python_type_to_openapi(field_type)
 
+            schema_prop = api.python_type_to_openapi(field_type)
+            schema.properties[field.name] = schema_prop
+            if field.default is dataclasses.MISSING and field.default_factory is dataclasses.MISSING:
+                schema.required.append(field.name)
 
-        components.schemas[self.__class__.__name__] = schema
+        components.schemas[cls.__name__] = schema
         return components
 
 
@@ -183,6 +186,25 @@ class ManagedObjectItem(BaseRestItem, typing.Generic[T_Model]):
         )
 
         return base
+
+    @classmethod
+    def api_components(cls: type[typing.Self]) -> api.Components:
+        component = super().api_components()
+        # Add any additional components specific to this item, that are "type", "type_name" and "instance"
+        # get reference
+        schema = component.schemas.get(cls.__name__)
+        assert schema is not None, f'Schema for {cls.__name__} not found in components'
+
+        # Add the specific fields to the schema
+        schema.properties.update(
+            {
+                'type': api.SchemaProperty(type='string'),
+                'type_name': api.SchemaProperty(type='string'),
+                'instance': api.SchemaProperty(type='object'),
+            }
+        )
+
+        return component
 
 
 # Alias for get_items return type

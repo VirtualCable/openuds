@@ -28,7 +28,7 @@ _OPENAPI_TYPE_MAP: typing.Final[dict[typing.Any, str]] = {
     str: 'string',
     float: 'number',
     bool: 'boolean',
-    type(None): '"null"',
+    type(None): 'null',
 }
 
 

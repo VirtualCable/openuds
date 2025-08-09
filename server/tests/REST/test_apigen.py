@@ -28,6 +28,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import typing
 import logging
 import enum
@@ -51,7 +52,7 @@ class TestApiGenBasic(UDSTestCase):
             if node.handler and issubclass(node.handler, model.ModelHandler):
                 handler = typing.cast(model.ModelHandler[typing.Any], typing.cast(typing.Any, node).handler)
                 logger.info("Checking handler: %s", handler)
-                schema = handler.enum_api_components()
+                schema = handler.api_component()
                 logger.info("Found enum schema for API: %s=%s", schema.as_dict())
                 self.assertIsInstance(schema, types.rest.api.Components)
             for child in node.children.values():
@@ -94,7 +95,7 @@ class TestApiGenBasic(UDSTestCase):
         )
         self.assertEqual(
             types.rest.api.python_type_to_openapi(enum.Enum),
-            types.rest.api.SchemaProperty(type='string', enum=[]),
+            types.rest.api.SchemaProperty(type='string'),
         )
 
         class MyEnum(enum.Enum):
@@ -105,3 +106,27 @@ class TestApiGenBasic(UDSTestCase):
             types.rest.api.python_type_to_openapi(MyEnum),
             types.rest.api.SchemaProperty(type='string', enum=[e.value for e in MyEnum]),
         )
+
+    def test_base_rest_item_api_components(self):
+
+        class MyEnum(enum.Enum):
+            VALUE1 = "value1"
+            VALUE2 = "value2"
+
+        @dataclasses.dataclass
+        class TestItem(types.rest.BaseRestItem):
+            field_str: str
+            field_int: int
+            field_float: float
+            field_list: typing.List[str] = dataclasses.field(default_factory=list[str])
+            field_list_2: list[str] = dataclasses.field(default_factory=list[str])
+            field_dict: typing.Dict[str, str] = dataclasses.field(default_factory=dict[str, str])
+            field_dict_2: dict[str, str] = dataclasses.field(default_factory=dict[str, str])
+            field_enum: MyEnum = MyEnum.VALUE1
+            field_optional: typing.Optional[str] = None
+            field_union: typing.Union[str, int] = "value"
+            field_union_2: str | int = 1
+
+        components = TestItem.api_components()
+
+        self.assertIsInstance(components, types.rest.api.Components)
