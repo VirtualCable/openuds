@@ -65,7 +65,7 @@ class HTML5RDPTransport(transports.Transport):
 
     own_link = True
     supported_oss = consts.os.ALL_OS_LIST
-    protocol = types.transports.Protocol.RDP
+    PROTOCOL = types.transports.Protocol.RDP
     group = types.transports.Grouping.TUNNELED
 
     tunnel = fields.tunnel_field()
@@ -394,7 +394,7 @@ class HTML5RDPTransport(transports.Transport):
         username, password = userservice.process_user_password(username, password)
 
         return types.connections.ConnectionData(
-            protocol=self.protocol,
+            protocol=self.PROTOCOL,
             username=username,
             service_type=types.services.ServiceType.VDI,
             password=password,

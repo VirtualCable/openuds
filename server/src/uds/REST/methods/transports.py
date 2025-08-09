@@ -123,7 +123,7 @@ class Transports(ModelHandler[TransportItem]):
                         for x in ServicePool.objects.filter(service__isnull=False)
                         .order_by('name')
                         .prefetch_related('service')
-                        if transport_type.protocol in x.service.get_type().allowed_protocols
+                        if transport_type.PROTOCOL in x.service.get_type().allowed_protocols
                     ],
                     tooltip=gettext(
                         'Currently assigned services pools. If empty, no service pool is assigned to this transport'
@@ -165,7 +165,7 @@ class Transports(ModelHandler[TransportItem]):
             pools=pools,
             pools_count=len(pools),
             deployed_count=item.deployedServices.count(),
-            protocol=type_.protocol,
+            protocol=type_.PROTOCOL,
             permission=permissions.effective_permissions(self._user, item),
             item=item,
         )

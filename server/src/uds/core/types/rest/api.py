@@ -8,7 +8,9 @@ if typing.TYPE_CHECKING:
 
 
 def as_dict_without_none(v: typing.Any) -> typing.Any:
-    if dataclasses.is_dataclass(v):
+    if hasattr(v, 'as_dict'):
+        return as_dict_without_none(v.as_dict())
+    elif dataclasses.is_dataclass(v):
         return as_dict_without_none(dataclasses.asdict(typing.cast(typing.Any, v)))
     elif isinstance(v, list):
         return [as_dict_without_none(item) for item in typing.cast(list[typing.Any], v) if item is not None]
@@ -180,7 +182,7 @@ class SchemaProperty:
         return schema
 
     def as_dict(self) -> dict[str, typing.Any]:
-        val = as_dict_without_none(self)
+        val = as_dict_without_none(dataclasses.asdict(self))
 
         # Convert type to oneOf if necesary, and add refs if needed
         def one_of_ref(type_: str) -> dict[str, typing.Any]:
@@ -192,7 +194,7 @@ class SchemaProperty:
             # If one_of is defined, we should not use type, but one_of
             val['oneOf'] = [one_of_ref(ref) for ref in self.type]
             del val['type']
-        return val
+        return as_dict_without_none(val)
 
 
 # Schema
@@ -206,7 +208,14 @@ class Schema:
     # For use on generating schemas
 
     def as_dict(self) -> dict[str, typing.Any]:
-        return as_dict_without_none(self)
+        return as_dict_without_none(
+            {
+                'type': self.type,
+                'properties': {k: v.as_dict() for k, v in self.properties.items()},
+                'required': self.required,
+                'description': self.description,
+            }
+        )
 
 
 # Componentes
@@ -215,7 +224,11 @@ class Components:
     schemas: dict[str, Schema] = dataclasses.field(default_factory=dict[str, Schema])
 
     def as_dict(self) -> dict[str, typing.Any]:
-        return as_dict_without_none(self)
+        return as_dict_without_none(
+            {
+                'schemas': {k: v.as_dict() for k, v in self.schemas.items()},
+            }
+        )
 
     def union(self, other: 'Components') -> 'Components':
         '''Returns a new Components instance that is the union of this and another Components.'''

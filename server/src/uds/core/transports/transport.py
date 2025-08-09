@@ -77,7 +77,7 @@ class Transport(Module):
     own_link: bool = False
 
     # Protocol "type". This is not mandatory, but will help
-    protocol: types.transports.Protocol = types.transports.Protocol.NONE
+    PROTOCOL: typing.ClassVar[types.transports.Protocol] = types.transports.Protocol.NONE
 
     # For allowing grouping transport on dashboard "new" menu, and maybe other places
     group: typing.ClassVar[types.transports.Grouping] = types.transports.Grouping.DIRECT
@@ -146,12 +146,12 @@ class Transport(Module):
         return f'Not accessible (using service ip {ip})'
 
     @classmethod
-    def supports_protocol(cls, protocol: typing.Union[collections.abc.Iterable[str], str]) -> bool:
+    def is_protocol_supported(cls, protocol: typing.Union[collections.abc.Iterable[str], str]) -> bool:
         if isinstance(protocol, str):
-            return protocol.lower() == cls.protocol.lower()
+            return protocol.lower() == cls.PROTOCOL.lower()
         # Not string group of strings
         for v in protocol:
-            if cls.supports_protocol(v):
+            if cls.is_protocol_supported(v):
                 return True
         return False
 
@@ -200,7 +200,7 @@ class Transport(Module):
         else:
             username = self.processed_username(userservice, user)
         return types.connections.ConnectionData(
-            protocol=self.protocol,
+            protocol=self.PROTOCOL,
             username=username,
             service_type=types.services.ServiceType.VDI,
             password='',  # nosec: password is empty string, no password

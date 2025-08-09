@@ -59,7 +59,7 @@ class BaseX2GOTransport(transports.Transport):
     is_base = True
 
     icon_file = 'x2go.png'
-    protocol = types.transports.Protocol.X2GO
+    PROTOCOL = types.transports.Protocol.X2GO
     supported_oss = (types.os.KnownOS.LINUX, types.os.KnownOS.WINDOWS)
 
     fixed_name = gui.TextField(
@@ -246,7 +246,7 @@ class BaseX2GOTransport(transports.Transport):
         username, password = userservice.process_user_password(username, password)
 
         return types.connections.ConnectionData(
-            protocol=self.protocol,
+            protocol=self.PROTOCOL,
             username=username,
             service_type=services_type_provided,
             password=password,

@@ -55,7 +55,7 @@ class BaseSpiceTransport(transports.Transport):
     is_base = True
 
     icon_file = 'spice.png'
-    protocol = types.transports.Protocol.SPICE
+    PROTOCOL = types.transports.Protocol.SPICE
 
     force_empty_creds = gui.CheckBoxField(
         order=1,
@@ -212,7 +212,7 @@ class BaseSpiceTransport(transports.Transport):
         username, password = userservice.process_user_password(username, password)
 
         return types.connections.ConnectionData(
-            protocol=self.protocol,
+            protocol=self.PROTOCOL,
             username=username,
             service_type=types.services.ServiceType.VDI,
             password=password,

@@ -56,7 +56,7 @@ class BaseRDPTransport(transports.Transport):
     is_base = True
 
     icon_file = 'rdp.png'
-    protocol = types.transports.Protocol.RDP
+    PROTOCOL = types.transports.Protocol.RDP
 
     force_empty_creds = gui.CheckBoxField(
         label=_('Empty creds'),
@@ -421,7 +421,7 @@ class BaseRDPTransport(transports.Transport):
         username, password = userservice.process_user_password(username, password)
 
         return types.connections.ConnectionData(
-            protocol=self.protocol,
+            protocol=self.PROTOCOL,
             username=username,
             service_type=types.services.ServiceType.VDI,
             password=password,
