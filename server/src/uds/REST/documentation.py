@@ -167,7 +167,7 @@ class Documentation(View):
             for child in node.children:
                 _process_node(child, child.help.path)
 
-        _process_node(Dispatcher.base_handler_node.help_node(), '')
+        _process_node(Dispatcher.root_node.help_node(), '')
 
         response = render(
             request=request,
@@ -177,6 +177,6 @@ class Documentation(View):
 
         return response
 
-        service = Dispatcher.base_handler_node
+        service = Dispatcher.root_node
 
         # return http.HttpResponseServerError(f'{service.tree()}', content_type="text/plain")

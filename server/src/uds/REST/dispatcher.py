@@ -41,7 +41,6 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import View
 
-from uds.core.types.rest import HandlerNode
 from uds.core import consts, exceptions, types
 from uds.core.util import modfinder
 from uds.core.util.model import sql_stamp_seconds
@@ -65,7 +64,7 @@ class Dispatcher(View):
     """
 
     # This attribute will contain all paths--> handler relations, filled at Initialized method
-    base_handler_node: typing.ClassVar[HandlerNode] = HandlerNode('', None, None, {})
+    root_node: typing.ClassVar[types.rest.HandlerNode] = types.rest.HandlerNode('', None, None, {})
 
     @method_decorator(csrf_exempt)
     def dispatch(
@@ -92,7 +91,7 @@ class Dispatcher(View):
         # # Guess content type from content type header (post) or ".xxx" to method
         content_type: str = request.META.get('CONTENT_TYPE', 'application/json').split(';')[0]
 
-        handler_node = Dispatcher.base_handler_node.find_path(path)
+        handler_node = Dispatcher.root_node.find_path(path)
         if not handler_node:
             return http.HttpResponseNotFound('Service not found', content_type="text/plain")
 
@@ -224,20 +223,20 @@ class Dispatcher(View):
             name = type_.NAME
 
         # Fill the service_node tree with the class
-        service_node = Dispatcher.base_handler_node  # Root path
+        service_node = Dispatcher.root_node  # Root path
         # If path, ensure that the path exists on the tree
         if type_.PATH:
             logger.info('Path: /%s/%s', type_.PATH, name)
             for k in type_.PATH.split('/'):
                 intern_k = sys.intern(k)
                 if intern_k not in service_node.children:
-                    service_node.children[intern_k] = HandlerNode(k, None, service_node, {})
+                    service_node.children[intern_k] = types.rest.HandlerNode(k, None, service_node, {})
                 service_node = service_node.children[intern_k]
         else:
             logger.info('Path: /%s', name)
 
         if name not in service_node.children:
-            service_node.children[name] = HandlerNode(name, None, service_node, {})
+            service_node.children[name] = types.rest.HandlerNode(name, None, service_node, {})
 
         service_node.children[name] = dataclasses.replace(service_node.children[name], handler=type_)
 

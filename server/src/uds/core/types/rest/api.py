@@ -1,7 +1,20 @@
 import typing
 import dataclasses
 
-from uds.core import consts
+if typing.TYPE_CHECKING:
+    from uds.core.types import ui
+
+
+def as_dict_without_none(v: typing.Any) -> typing.Any:
+    if dataclasses.is_dataclass(v):
+        return as_dict_without_none(dataclasses.asdict(typing.cast(typing.Any, v)))
+    elif isinstance(v, list):
+        return [as_dict_without_none(item) for item in typing.cast(list[typing.Any], v) if item is not None]
+    elif isinstance(v, dict):
+        return {k: as_dict_without_none(val) for k, val in typing.cast(dict[str, typing.Any], v).items() if val is not None}
+    elif hasattr(v, 'as_dict'):
+        return v.as_dict()
+    return v
 
 
 # Info general
@@ -62,6 +75,47 @@ class SchemaProperty:
     type: str
     description: str | None = None
     example: typing.Any | None = None
+    items: 'SchemaProperty | None' = None  # For arrays
+
+    @staticmethod
+    def from_field_desc(desc: 'ui.GuiElement') -> 'SchemaProperty':
+        from uds.core.types import ui  # avoid circular import
+
+        def base_schema() -> 'SchemaProperty':
+            """Returns the API type for this field type"""
+            match desc['gui']['type']:
+                case ui.FieldType.TEXT:
+                    return SchemaProperty(type='string')
+                case ui.FieldType.TEXT_AUTOCOMPLETE:
+                    return SchemaProperty(type='string')
+                case ui.FieldType.NUMERIC:
+                    return SchemaProperty(type='number')
+                case ui.FieldType.PASSWORD:
+                    return SchemaProperty(type='string')
+                case ui.FieldType.HIDDEN:
+                    return SchemaProperty(type='string')
+                case ui.FieldType.CHOICE:
+                    return SchemaProperty(type='string')
+                case ui.FieldType.MULTICHOICE:
+                    return SchemaProperty(type='array', items=SchemaProperty(type='string'))
+                case ui.FieldType.EDITABLELIST:
+                    return SchemaProperty(type='array', items=SchemaProperty(type='string'))
+                case ui.FieldType.CHECKBOX:
+                    return SchemaProperty(type='boolean')
+                case ui.FieldType.IMAGECHOICE:
+                    return SchemaProperty(type='string')
+                case ui.FieldType.DATE:
+                    return SchemaProperty(type='string')
+                case ui.FieldType.INFO:
+                    return SchemaProperty(type='string')
+                case ui.FieldType.TAGLIST:
+                    return SchemaProperty(type='array', items=SchemaProperty(type='string'))
+        schema = base_schema()
+        schema.description = f'{desc['gui']['label']}.{desc['gui'].get('tooltip', '')}'
+        return schema
+
+    def as_dict(self) -> dict[str, typing.Any]:
+        return as_dict_without_none(self)
 
 
 # Schema
@@ -73,17 +127,31 @@ class Schema:
     description: str | None = None
     additionalProperties: bool | dict[str, typing.Any] | None = None
 
+    # For use on generating schemas
+
+    def as_dict(self) -> dict[str, typing.Any]:
+        return as_dict_without_none(self)
+
 
 # Componentes
 @dataclasses.dataclass
 class Components:
     schemas: dict[str, Schema] = dataclasses.field(default_factory=dict[str, Schema])
 
+    def as_dict(self) -> dict[str, typing.Any]:
+        return as_dict_without_none(self)
+
 
 # Documento OpenAPI completo
 @dataclasses.dataclass
 class OpenAPI:
+    @staticmethod
+    def _get_system_version() -> Info:
+        from uds.core.consts import system
+
+        return Info(title="UDS API", version=system.VERSION)
+
     openapi: str = "3.0.0"
-    info: Info = dataclasses.field(default_factory=lambda: Info(title="UDS API", version=consts.system.VERSION))
+    info: Info = dataclasses.field(default_factory=lambda: OpenAPI._get_system_version())
     paths: dict[str, PathItem] = dataclasses.field(default_factory=dict[str, PathItem])
     components: Components = dataclasses.field(default_factory=Components)

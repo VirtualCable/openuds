@@ -1530,18 +1530,14 @@ class UserInterface(metaclass=UserInterfaceType):
         
     @classmethod
     def describe_fields(cls: type[typing.Self]) -> list[types.ui.GuiElement]:
-        res: list[types.ui.GuiElement] = []
-        for key, val in cls._gui_fields_template.items():
-            # Only add "value" for hidden fields on gui description. Rest of fields will be filled by client
-            res.append(
-                {
-                    'name': key,
-                    'gui': val.gui_description(),
-                    'value': val.value if val.is_type(types.ui.FieldType.HIDDEN) else None,
-                }
-            )
-        # logger.debug('theGui description: %s', res)
-        return res
+        return [
+            {
+                'name': key,
+                'gui': val.gui_description(),
+                'value': val.value if val.is_type(types.ui.FieldType.HIDDEN) else None,
+            }
+            for key, val in cls._gui_fields_template.items()
+        ]
 
     def get_fields_as_dict(self) -> gui.ValuesDictType:
         """

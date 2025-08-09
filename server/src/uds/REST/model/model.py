@@ -507,9 +507,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.res
                 description=type_.type_name,
             )
             for field in type_.describe_fields():
-                schema.properties[field['name']] = types.rest.api.SchemaProperty(
-                    type=field['gui']['type'],
-                )
+                schema.properties[field['name']] = types.rest.api.SchemaProperty.from_field_desc(field)
                 if field['gui'].get('required', False):
                     schema.required.append(field['name'])
 
