@@ -33,7 +33,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 
 import abc
 import enum
-import collections.abc
 import typing
 import dataclasses
 
@@ -44,6 +43,7 @@ from . import api
 
 if typing.TYPE_CHECKING:
     from uds.REST.handlers import Handler
+    from uds.core.module import Module
     from uds.models.managed_object_model import ManagedObjectModel
 
 
@@ -161,7 +161,6 @@ class ManagedObjectItem(BaseRestItem, typing.Generic[T_Model]):
     Represents a managed object type, with its name and type.
     This is used to represent the type of a managed object in the REST API.
     """
-
     item: T_Model
 
     def as_dict(self) -> dict[str, typing.Any]:
@@ -194,8 +193,13 @@ class ManagedObjectItem(BaseRestItem, typing.Generic[T_Model]):
         # get reference
         schema = component.schemas.get(cls.__name__)
         assert schema is not None, f'Schema for {cls.__name__} not found in components'
+        # item is not an real field, remove it from components description and required
+        schema.properties.pop('item', None)
+        schema.required.remove('item')
 
         # Add the specific fields to the schema
+        # Note that 'instance' is incomplete, must be completed with item fields
+        # But as long as python has not "real" generics, we cannot estimate the type of item
         schema.properties.update(
             {
                 'type': api.SchemaProperty(type='string'),
@@ -203,6 +207,7 @@ class ManagedObjectItem(BaseRestItem, typing.Generic[T_Model]):
                 'instance': api.SchemaProperty(type='object'),
             }
         )
+        schema.required.extend(['type', 'instance'])  # type_name is not required
 
         return component
 

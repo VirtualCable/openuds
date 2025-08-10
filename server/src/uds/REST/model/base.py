@@ -129,40 +129,6 @@ class BaseModelHandler(Handler, abc.ABC, typing.Generic[types.rest.T_Item]):
 
         return args
 
-    # # Exception helpers
-    # @classmethod
-    # def invalid_request_response(cls: type[typing.Self], message: str | None = None) -> exceptions.rest.HandlerError:
-    #     """
-    #     Raises an invalid request error with a default translated string
-    #     :param message: Custom message to add to exception. If it is None, "Invalid Request" is used
-    #     """
-    #     message = message or _('Invalid Request')
-    #     return exceptions.rest.RequestError(f'{message} {cls}')
-
-    # def invalid_response_response(self, message: str | None = None) -> exceptions.rest.HandlerError:
-    #     message = 'Invalid response' if message is None else message
-    #     return exceptions.rest.ResponseError(message)
-
-    # def invalid_method_response(self) -> exceptions.rest.HandlerError:
-    #     """
-    #     Raises a NotFound exception with translated "Method not found" string to current locale
-    #     """
-    #     return exceptions.rest.RequestError(_('Method not found in {}: {}').format(self.__class__, self._args))
-
-    # def invalid_item_response(self, message: str | None = None) -> exceptions.rest.HandlerError:
-    #     """
-    #     Raises a NotFound exception, with location info
-    #     """
-    #     message = message or _('Item not found')
-    #     return exceptions.rest.NotFound(message)
-    #     # raise NotFound('{} {}: {}'.format(message, self.__class__, self._args))
-
-    # def access_denied_response(self, message: str | None = None) -> exceptions.rest.HandlerError:
-    #     return exceptions.rest.AccessDenied(message or _('Access denied'))
-
-    # def not_supported_response(self, message: str | None = None) -> exceptions.rest.HandlerError:
-    #     return exceptions.rest.NotSupportedError(message or _('Operation not supported'))
-
     # Success methods
     def success(self) -> str:
         """
@@ -171,7 +137,7 @@ class BaseModelHandler(Handler, abc.ABC, typing.Generic[types.rest.T_Item]):
         logger.debug('Returning success on %s %s', self.__class__, self._args)
         return consts.OK
 
-    def test(self, type_: str) -> str:  # pylint: disable=unused-argument
+    def test(self, type_: str) -> str:
         """
         Invokes a test for an item
         """

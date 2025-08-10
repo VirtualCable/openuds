@@ -36,7 +36,7 @@ import enum
 from tests.utils.test import UDSTestCase
 
 from uds.REST import dispatcher, model
-from uds.core import types
+from uds.core import types, transports, consts, ui
 from uds.models import Transport
 
 logger = logging.getLogger(__name__)
@@ -62,10 +62,47 @@ class BaseRestItem(types.rest.BaseRestItem):
     field_union_2: str | int = 1
 
 
+class TestTransport(transports.Transport):
+    """
+    Simpe testing transport. Currently a copy of URLCustomTransport
+    """
+
+    type_name = 'Test Transport'
+    type_type = 'TestTransport'
+    type_description = 'Test Transport'
+    icon_file = 'transport.png'
+
+    own_link = True
+    supported_oss = consts.os.ALL_OS_LIST
+    PROTOCOL = types.transports.Protocol.OTHER
+    group = types.transports.Grouping.DIRECT
+
+    text_fld = ui.gui.TextField(label='text_fld', tooltip='text_fld tooltip', required=True)
+    text_auto_fld = ui.gui.TextAutocompleteField(
+        label='text_auto_fld', tooltip='text_auto_fld tooltip', required=True
+    )
+    num_fld = ui.gui.NumericField(label='num_fld', tooltip='num_fld tooltip', required=True)
+    pass_fld = ui.gui.PasswordField(label='pass_fld', tooltip='pass_fld tooltip', required=True)
+    hidden_fld = ui.gui.HiddenField(label='hidden_fld')
+    choice_fld = ui.gui.ChoiceField(label='choice_fld', tooltip='choice_fld tooltip', required=True)
+    multi_choice_fld = ui.gui.MultiChoiceField(
+        label='multi_choice_fld', tooltip='multi_choice_fld tooltip', required=True
+    )
+    editable_list_fld = ui.gui.EditableListField(
+        label='editable_list_fld', tooltip='editable_list_fld tooltip', required=True
+    )
+    checkbox_fld = ui.gui.CheckBoxField(label='checkbox_fld', tooltip='checkbox_fld tooltip', required=True)
+    image_choice_fld = ui.gui.ImageChoiceField(
+        label='image_choice_fld', tooltip='image_choice_fld tooltip', required=True
+    )
+    date_fld = ui.gui.DateField(label='date_fld', tooltip='date_fld tooltip', required=True)
+    info_fld = ui.gui.HelpField(label='info_fld', title='help', help='help text')
+
+
 @dataclasses.dataclass
 class ManagedObjectRestItem(types.rest.ManagedObjectItem[Transport]):
     field_str: str
-    field_union_2: str | int | None = None
+    field_union: str | int | None = None
 
 
 class TestApiGenBasic(UDSTestCase):
@@ -133,11 +170,9 @@ class TestApiGenBasic(UDSTestCase):
 
         components = BaseRestItem.api_components()
 
-        dct = components.as_dict()
-
         self.assertIsInstance(components, types.rest.api.Components)
-        self.assertIn('TestItem', components.schemas)
-        schema = components.schemas['TestItem']
+        self.assertIn('BaseRestItem', components.schemas)
+        schema = components.schemas['BaseRestItem']
         self.assertIsInstance(schema, types.rest.api.Schema)
         self.assertEqual(schema.type, 'object')
         self.assertEqual(schema.required, ['field_str', 'field_int', 'field_float'])
@@ -181,7 +216,7 @@ class TestApiGenBasic(UDSTestCase):
             dct,
             {
                 'schemas': {
-                    'TestItem': {
+                    'BaseRestItem': {
                         'type': 'object',
                         'properties': {
                             'field_str': {'type': 'string'},
@@ -201,3 +236,26 @@ class TestApiGenBasic(UDSTestCase):
                 }
             },
         )
+
+    def test_managed_object_schema(self) -> None:
+        components = ManagedObjectRestItem.api_components()
+
+        self.assertIsInstance(components, types.rest.api.Components)
+        self.assertIn('ManagedObjectRestItem', components.schemas)
+        schema = components.schemas['ManagedObjectRestItem']
+        self.assertIsInstance(schema, types.rest.api.Schema)
+        self.assertEqual(schema.type, 'object')
+        self.assertEqual(schema.required, ['field_str', 'type', 'instance'])
+        properties = schema.properties
+        self.assertIn('field_str', properties)
+        self.assertEqual(properties['field_str'], types.rest.api.SchemaProperty(type='string'))
+        self.assertIn('field_union', properties)
+        self.assertEqual(
+            properties['field_union'], types.rest.api.SchemaProperty(type=['string', 'integer', 'null'])
+        )
+        self.assertIn('type', properties)
+        self.assertEqual(properties['type'], types.rest.api.SchemaProperty(type='string'))
+        self.assertIn('type_name', properties)
+        self.assertEqual(properties['type_name'], types.rest.api.SchemaProperty(type='string'))
+        self.assertIn('instance', properties)
+        self.assertEqual(properties['instance'], types.rest.api.SchemaProperty(type='object'))

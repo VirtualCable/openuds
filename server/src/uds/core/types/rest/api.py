@@ -1,3 +1,4 @@
+import datetime
 import types as python_types
 import typing
 import enum
@@ -25,12 +26,29 @@ def as_dict_without_none(v: typing.Any) -> typing.Any:
     return v
 
 
-_OPENAPI_TYPE_MAP: typing.Final[dict[typing.Any, str]] = {
-    int: 'integer',
-    str: 'string',
-    float: 'number',
-    bool: 'boolean',
-    type(None): 'null',
+@dataclasses.dataclass(slots=True)
+class OpenAPIType:
+    type: str
+    format: str | None = None
+
+    def as_dict(self) -> dict[str, typing.Any]:
+        dct = {'type': self.type}
+        if self.format:
+            dct['format'] = self.format
+        return dct
+
+
+OBJECT_TYPE: OpenAPIType = OpenAPIType(type='object')
+STRING_TYPE: OpenAPIType = OpenAPIType(type='string')
+
+_OPENAPI_TYPE_MAP: typing.Final[dict[typing.Any, OpenAPIType]] = {
+    int: OpenAPIType(type='integer', format='int64'),
+    str: OpenAPIType(type='string'),
+    float: OpenAPIType(type='number'),
+    bool: OpenAPIType(type='boolean'),
+    type(None): OpenAPIType(type='null'),
+    datetime.datetime: OpenAPIType(type='string', format='date-time'),
+    datetime.date: OpenAPIType(type='string', format='date'),
 }
 
 
@@ -54,8 +72,9 @@ def python_type_to_openapi(py_type: typing.Any) -> 'SchemaProperty':
     # Union[...] → oneOf
     elif origin in {python_types.UnionType, typing.Union}:
         # Optional[X] is Union[X, None]
+        oa_types = [_OPENAPI_TYPE_MAP.get(arg, OBJECT_TYPE) for arg in args if isinstance(arg, type)]
         return SchemaProperty(
-            type=[_OPENAPI_TYPE_MAP.get(arg, 'object') for arg in args if isinstance(arg, type)],
+            type=[oa_type.type for oa_type in oa_types],
         )
 
     elif origin is typing.Annotated:
@@ -64,20 +83,21 @@ def python_type_to_openapi(py_type: typing.Any) -> 'SchemaProperty':
     # Literal[...] → enum
     elif origin is typing.Literal:
         literal_type = typing.cast(type[typing.Any], type(args[0]) if args else str)
-        return SchemaProperty(type=_OPENAPI_TYPE_MAP.get(literal_type, 'string'), enum=list(args))
+        return SchemaProperty(type=_OPENAPI_TYPE_MAP.get(literal_type, STRING_TYPE).type, enum=list(args))
 
     # Enum classes
     elif isinstance(py_type, type) and issubclass(py_type, enum.Enum):
         try:
             sample = next(iter(py_type))
             value_type = typing.cast(type[typing.Any], type(sample.value))
-            openapi_type = _OPENAPI_TYPE_MAP.get(value_type, 'string')
-            return SchemaProperty(type=openapi_type, enum=[e.value for e in py_type])
+            openapi_type = _OPENAPI_TYPE_MAP.get(value_type, STRING_TYPE)
+            return SchemaProperty(type=openapi_type.type, enum=[e.value for e in py_type])
         except StopIteration:
             return SchemaProperty(type='string')
 
     # Simple types
-    return SchemaProperty(type=_OPENAPI_TYPE_MAP.get(py_type, 'object'))
+    oa_type = _OPENAPI_TYPE_MAP.get(py_type, OBJECT_TYPE)
+    return SchemaProperty(type=oa_type.type, format=oa_type.format)
 
 
 # Info general
@@ -136,6 +156,7 @@ class PathItem:
 @dataclasses.dataclass
 class SchemaProperty:
     type: str | list[str]
+    format: str | None = None  # e.g. 'date-time', 'int32', etc.
     description: str | None = None
     example: typing.Any | None = None
     items: 'SchemaProperty | None' = None  # For arrays
@@ -144,10 +165,10 @@ class SchemaProperty:
     enum: list[str | int] | None = None  # For enum types
 
     @staticmethod
-    def from_field_desc(desc: 'ui.GuiElement') -> 'SchemaProperty':
+    def from_field_desc(desc: 'ui.GuiElement') -> 'SchemaProperty|None':
         from uds.core.types import ui  # avoid circular import
 
-        def base_schema() -> 'SchemaProperty':
+        def base_schema() -> 'SchemaProperty|None':
             '''Returns the API type for this field type'''
             match desc['gui']['type']:
                 case ui.FieldType.TEXT:
@@ -159,7 +180,7 @@ class SchemaProperty:
                 case ui.FieldType.PASSWORD:
                     return SchemaProperty(type='string')
                 case ui.FieldType.HIDDEN:
-                    return SchemaProperty(type='string')
+                    return None
                 case ui.FieldType.CHOICE:
                     return SchemaProperty(type='string')
                 case ui.FieldType.MULTICHOICE:
@@ -173,11 +194,13 @@ class SchemaProperty:
                 case ui.FieldType.DATE:
                     return SchemaProperty(type='string')
                 case ui.FieldType.INFO:
-                    return SchemaProperty(type='string')
+                    return None
                 case ui.FieldType.TAGLIST:
                     return SchemaProperty(type='array', items=SchemaProperty(type='string'))
 
         schema = base_schema()
+        if schema is None:
+            return None
         schema.description = f'{desc['gui']['label']}.{desc['gui'].get('tooltip', '')}'
         return schema
 

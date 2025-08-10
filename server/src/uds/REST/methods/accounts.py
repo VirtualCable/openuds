@@ -44,8 +44,7 @@ from uds.core.util import permissions, ensure, ui as ui_utils
 from uds.models import Account
 from .accountsusage import AccountsUsage
 
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
+from django.db import models
 
 logger = logging.getLogger(__name__)
 
@@ -85,7 +84,7 @@ class Accounts(ModelHandler[AccountItem]):
         .build()
     )
 
-    def get_item(self, item: 'Model') -> AccountItem:
+    def get_item(self, item: 'models.Model') -> AccountItem:
         item = ensure.is_instance(item, Account)
         return AccountItem(
             id=item.uuid,
@@ -104,7 +103,7 @@ class Accounts(ModelHandler[AccountItem]):
             .add_stock_field(types.rest.stock.StockField.TAGS)
         ).build()
 
-    def timemark(self, item: 'Model') -> typing.Any:
+    def timemark(self, item: 'models.Model') -> typing.Any:
         """
         API:
             Generates a time mark associated with the account.
@@ -121,7 +120,7 @@ class Accounts(ModelHandler[AccountItem]):
         item.save()
         return ''
 
-    def clear(self, item: 'Model') -> typing.Any:
+    def clear(self, item: 'models.Model') -> typing.Any:
         """
         Api documentation for the method. From here, will be used by the documentation generator
         Always starts with API:

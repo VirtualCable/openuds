@@ -57,6 +57,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 @dataclasses.dataclass
 class AuthenticatorTypeInfo(types.rest.ExtraTypeInfo):
     search_users_supported: bool
