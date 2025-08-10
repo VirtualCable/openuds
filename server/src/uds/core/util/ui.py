@@ -132,11 +132,20 @@ class GuiBuilder:
         self.order = order
         return self
 
-    def add_fields(self, fields: list[types.ui.GuiElement]) -> typing.Self:
+    def add_fields(self, fields: list[types.ui.GuiElement], *, parent: str | None = None) -> typing.Self:
         """
         Adds a list of GUI elements to the GUI.
         """
+        # Copy fields, deep copy to ensure not modifying the original fields
+        fields = [field.copy() for field in fields]
+        for field in fields:
+            # Add "parent." to the name of each field if a parent is specified
+            if parent:
+                field['name'] = f"{parent}.{field['name']}"
+            field['gui']['order'] = self.next()
+                
         self.fields.extend(fields)
+
         return self
 
     def add_stock_field(self, field: types.rest.stock.StockField) -> typing.Self:

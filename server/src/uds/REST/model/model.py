@@ -442,7 +442,10 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC, typing.Generic[
                     data_type: typing.Optional[str] = self._params.get('data_type', self._params.get('type'))
                     if data_type:
                         item.data_type = data_type
-                        item.data = item.get_instance(self._params).serialize()
+                        # TODO: Currently support parameters outside "instance". Will be removed after tests
+                        item.data = item.get_instance(
+                            self._params['instance'] if 'instance' in self._params else self._params
+                        ).serialize()
 
                 item.save()
 
@@ -532,9 +535,6 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC, typing.Generic[
 
         # The item is
         if issubclass(item_type_hint, types.rest.ManagedObjectItem):
-            item_schema.properties['instance'] = types.rest.api.SchemaProperty(
-                type=refs,
-                discriminator='type'
-            )
+            item_schema.properties['instance'] = types.rest.api.SchemaProperty(type=refs, discriminator='type')
 
         return components

@@ -150,7 +150,7 @@ class Providers(ModelHandler[ProviderItem]):
                     .add_stock_field(types.rest.stock.StockField.NAME)
                     .add_stock_field(types.rest.stock.StockField.TAGS)
                     .add_stock_field(types.rest.stock.StockField.COMMENTS)
-                    .add_fields(provider.gui_description())
+                    .add_fields(provider.gui_description(), parent='instance')
                 ).build()
 
         raise exceptions.rest.NotFound('Type not found!')
