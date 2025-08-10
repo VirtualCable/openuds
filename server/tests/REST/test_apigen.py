@@ -109,19 +109,28 @@ class TestApiGenBasic(UDSTestCase):
     def test_model_enum_schemas_for_api(self) -> None:
         root_node = dispatcher.Dispatcher.root_node
 
+        comps = types.rest.api.Components()
+
         # Node is a tree, recursively check all children
         def check_node(node: types.rest.HandlerNode):
+            nonlocal comps
             logger.info("Checking child node: %s", node.name)
             if node.handler and issubclass(node.handler, model.ModelHandler):
                 handler = typing.cast(model.ModelHandler[typing.Any], typing.cast(typing.Any, node).handler)
                 logger.info("Checking handler: %s", handler)
-                schema = handler.api_component()
-                logger.info("Found enum schema for API: %s=%s", schema.as_dict())
-                self.assertIsInstance(schema, types.rest.api.Components)
+                components = handler.api_component()
+                comps = comps.union(components)
+                logger.info("Found component for API: %s-%s", node.name, components.as_dict())
+                self.assertIsInstance(components, types.rest.api.Components)
             for child in node.children.values():
                 check_node(child)
 
         check_node(root_node)
+        logger.info("Components found: %s", comps.as_dict())
+        
+        import json
+        with open('/tmp/uds_api.json', 'w') as f:
+            f.write(json.dumps(comps.as_dict(), indent=4))
 
     def test_python_type_to_openapi(self) -> None:
         # Test basic types

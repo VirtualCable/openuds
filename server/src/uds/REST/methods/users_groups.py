@@ -37,6 +37,7 @@ import collections.abc
 
 from django.utils.translation import gettext as _
 from django.db import IntegrityError, transaction
+from django.db.models import Model
 from django.core.exceptions import ValidationError
 
 from uds.core.types.states import State
@@ -44,17 +45,13 @@ from uds.core.types.states import State
 from uds.core.auths.user import User as AUser
 from uds.core.util import log, ensure, ui as ui_utils
 from uds.core.util.model import process_uuid, sql_stamp_seconds
-from uds.models import Authenticator, User, Group, ServicePool
+from uds.models import Authenticator, User, Group, ServicePool, UserService
 from uds.core.managers.crypto import CryptoManager
 from uds.core import consts, exceptions, types
 
 from uds.REST.model import DetailHandler
 
 from .user_services import AssignedUserService, UserServiceItem
-
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
-    from uds.models import UserService
 
 
 logger = logging.getLogger(__name__)
@@ -118,7 +115,7 @@ class Users(DetailHandler[UserItem]):
                 last_access=user.last_access,
                 mfa_data=user.mfa_data,
                 parent=user.parent,
-                groups=[i.uuid for i in user.get_groups()],    
+                groups=[i.uuid for i in user.get_groups()],
                 role=user.get_role().as_str(),
             )
 

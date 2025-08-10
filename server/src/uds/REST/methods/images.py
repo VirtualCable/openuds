@@ -35,14 +35,14 @@ import logging
 import typing
 
 from django.utils.translation import gettext_lazy as _
+from django.db import models
+
 from uds.models import Image
 from uds.core import types
 from uds.core.util import ensure, ui as ui_utils
 
 from uds.REST.model import ModelHandler
 
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
@@ -80,7 +80,7 @@ class Images(ModelHandler[ImageItem]):
         del fields['data']
         # fields['data'] = Image.prepareForDb(Image.decode64(fields['data']))[2]
 
-    def post_save(self, item: 'Model') -> None:
+    def post_save(self, item: 'models.Model') -> None:
         item = ensure.is_instance(item, Image)
         # Updates the thumbnail and re-saves it
         logger.debug('After save: item = %s', item)
@@ -91,7 +91,7 @@ class Images(ModelHandler[ImageItem]):
     # This has no get_gui because its treated on the admin or client.
     # We expect an Image List
 
-    def get_item(self, item: 'Model') -> ImageItem:
+    def get_item(self, item: 'models.Model') -> ImageItem:
         item = ensure.is_instance(item, Image)
         return ImageItem(
             id=item.uuid,
@@ -99,7 +99,7 @@ class Images(ModelHandler[ImageItem]):
             data=item.data64,
         )
 
-    def get_item_summary(self, item: 'Model') -> ImageItem:
+    def get_item_summary(self, item: 'models.Model') -> ImageItem:
         item = ensure.is_instance(item, Image)
         return ImageItem(
             id=item.uuid,

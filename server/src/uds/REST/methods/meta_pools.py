@@ -34,8 +34,8 @@ import dataclasses
 import logging
 import typing
 
-from django.utils.translation import gettext
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
+from django.db import models
 
 from uds.core import types, exceptions
 from uds.core.consts.images import DEFAULT_THUMB_BASE64
@@ -50,8 +50,6 @@ from uds.REST.model import ModelHandler
 from .meta_service_pools import MetaAssignedService, MetaServicesPool
 from .user_services import Groups
 
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
@@ -134,7 +132,7 @@ class MetaPools(ModelHandler[MetaPoolItem]):
         types.rest.ModelCustomMethod('get_fallback_access', True),
     ]
 
-    def get_item(self, item: 'Model') -> MetaPoolItem:
+    def get_item(self, item: 'models.Model') -> MetaPoolItem:
         item = ensure.is_instance(item, MetaPool)
         # if item does not have an associated service, hide it (the case, for example, for a removed service)
         # Access from dict will raise an exception, and item will be skipped
@@ -275,7 +273,7 @@ class MetaPools(ModelHandler[MetaPoolItem]):
 
         logger.debug('Fields: %s', fields)
 
-    def delete_item(self, item: 'Model') -> None:
+    def delete_item(self, item: 'models.Model') -> None:
         item = ensure.is_instance(item, MetaPool)
         item.delete()
 

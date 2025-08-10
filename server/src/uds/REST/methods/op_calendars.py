@@ -37,6 +37,7 @@ import logging
 import typing
 
 from django.utils.translation import gettext as _
+from django.db.models import Model
 
 from uds.core import exceptions, types, consts
 from uds.core.types.rest import Table
@@ -46,8 +47,6 @@ from uds import models
 from uds.REST.model import DetailHandler
 
 # Not imported at runtime, just for type checking
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 

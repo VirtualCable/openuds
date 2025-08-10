@@ -37,8 +37,9 @@ import logging
 import re
 import typing
 
-from django.utils.translation import gettext
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
+from django.db import models
+
 
 from uds.core import auths, consts, exceptions, types, ui
 from uds.core.environment import Environment
@@ -50,10 +51,8 @@ from uds.REST.model import ModelHandler
 from .users_groups import Groups, Users
 
 # Not imported at runtime, just for type checking
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
-    from uds.core.module import Module
+from uds.core.module import Module
 
 logger = logging.getLogger(__name__)
 
@@ -188,7 +187,7 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
             logger.info('Authenticator type not found: %s', e)
             raise exceptions.rest.NotFound('Authenticator type not found') from e
 
-    def get_item(self, item: 'Model') -> AuthenticatorItem:
+    def get_item(self, item: 'models.Model') -> AuthenticatorItem:
         item = ensure.is_instance(item, Authenticator)
 
         return AuthenticatorItem(
@@ -208,7 +207,7 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
             item=item,
         )
 
-    def post_save(self, item: 'Model') -> None:
+    def post_save(self, item: 'models.Model') -> None:
         item = ensure.is_instance(item, Authenticator)
         try:
             networks = self._params['networks']
@@ -221,7 +220,7 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
         item.networks.set(Network.objects.filter(uuid__in=networks))
 
     # Custom "search" method
-    def search(self, item: 'Model') -> list[types.auth.SearchResultItem.ItemDict]:
+    def search(self, item: 'models.Model') -> list[types.auth.SearchResultItem.ItemDict]:
         """
         API:
             Search for users or groups in this authenticator
@@ -300,7 +299,7 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
         if fields['small_name'] and not re.match(r'^[a-zA-Z0-9:.-]+$', fields['small_name']):
             raise exceptions.rest.RequestError(_('Label must contain only letters, numbers, or symbols: - : .'))
 
-    def delete_item(self, item: 'Model') -> None:
+    def delete_item(self, item: 'models.Model') -> None:
         # For every user, remove assigned services (mark them for removal)
         item = ensure.is_instance(item, Authenticator)
 

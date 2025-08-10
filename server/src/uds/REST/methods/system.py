@@ -37,6 +37,8 @@ import pickle  # nosec: pickle is used to cache data, not to load it
 import pickletools
 import typing
 
+from django.db.models import Model
+
 from uds import models
 from uds.core import exceptions, types, consts
 from uds.core.util import permissions
@@ -48,8 +50,6 @@ from uds.REST import Handler
 
 logger = logging.getLogger(__name__)
 
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 cache = Cache('StatsDispatcher')
 
@@ -66,9 +66,7 @@ def get_servicepools_counters(
 ) -> list[dict[str, typing.Any]]:
     val: list[dict[str, typing.Any]] = []
     try:
-        cache_key = (
-            (servicepool and str(servicepool.id) or 'all') + str(counter_type) + str(since_days)
-        )
+        cache_key = (servicepool and str(servicepool.id) or 'all') + str(counter_type) + str(since_days)
         # Get now but with 0 minutes and 0 seconds
         to = sql_now().replace(minute=0, second=0, microsecond=0)
         since: datetime.datetime = to - datetime.timedelta(days=since_days)
@@ -87,7 +85,7 @@ def get_servicepools_counters(
                 owner_type=types.stats.CounterOwnerType.SERVICEPOOL,
                 owner_id=servicepool.id if servicepool.id != -1 else None,
                 since=since,
-                points=since_days*24,  # One point per hour
+                points=since_days * 24,  # One point per hour
             )
             val = [
                 {
@@ -107,8 +105,7 @@ def get_servicepools_counters(
             else:
                 # Generate as much points as needed with 0 value
                 val = [
-                    {'stamp': since + datetime.timedelta(hours=i), 'value': 0}
-                    for i in range(since_days * 24)
+                    {'stamp': since + datetime.timedelta(hours=i), 'value': 0} for i in range(since_days * 24)
                 ]
         else:
             val = pickle.loads(
@@ -165,14 +162,16 @@ class System(Handler):
             if self._args[0] == 'overview':  # System overview
                 if not self._user.is_admin:
                     raise exceptions.rest.AccessDenied()
-                
-                fltr_user = models.User.objects.filter(userServices__state__in=types.states.State.VALID_STATES).order_by()
+
+                fltr_user = models.User.objects.filter(
+                    userServices__state__in=types.states.State.VALID_STATES
+                ).order_by()
                 users = models.User.objects.all().count()
                 users_with_services = (
                     fltr_user.values('id').distinct().count()
                 )  # Use "values" to simplify query (only id)
                 number_assigned_user_services = fltr_user.values('id').count()
-                
+
                 groups: int = models.Group.objects.count()
                 services: int = models.Service.objects.count()
                 service_pools: int = models.ServicePool.objects.count()
@@ -187,7 +186,7 @@ class System(Handler):
                 calendars: int = models.Calendar.objects.count()
                 tunnels: int = models.Server.objects.filter(type=types.servers.ServerType.TUNNEL).count()
                 auths: int = models.Authenticator.objects.count()
-                
+
                 return {
                     'users': users,
                     'users_with_services': users_with_services,

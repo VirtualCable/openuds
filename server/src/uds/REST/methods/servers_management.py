@@ -34,8 +34,8 @@ import datetime
 import logging
 import typing
 
-from django.utils.translation import gettext
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
+from django.db.models import Model
 
 from uds import models
 from uds.core import consts, exceptions, types
@@ -45,8 +45,6 @@ from uds.core.util.model import sql_now, process_uuid
 from uds.core.exceptions.rest import NotFound, RequestError
 from uds.REST.model import DetailHandler, ModelHandler
 
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 

@@ -34,6 +34,8 @@ import collections.abc
 import logging
 import typing
 
+from django.db.models import Model
+
 import uds.core.types.permissions
 from uds import models
 from uds.core import consts, exceptions
@@ -42,8 +44,6 @@ from uds.core.util.rest.tools import match_args
 from uds.REST import Handler
 
 # Not imported at runtime, just for type checking
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 

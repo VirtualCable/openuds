@@ -32,11 +32,10 @@
 '''
 import dataclasses
 import logging
-import typing
 import collections.abc
 
-from django.utils.translation import gettext
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
+from django.db.models import Model
 
 from uds.core import exceptions, messaging, types
 from uds.core.environment import Environment
@@ -44,9 +43,6 @@ from uds.core.ui import gui
 from uds.core.util import ensure, permissions, ui as ui_utils
 from uds.models import LogLevel, Notifier
 from uds.REST.model import ModelHandler
-
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 
 logger = logging.getLogger(__name__)

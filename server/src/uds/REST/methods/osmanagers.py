@@ -33,9 +33,9 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import collections.abc
 import dataclasses
 import logging
-import typing
 
 from django.utils.translation import gettext, gettext_lazy as _
+from django.db.models import Model
 
 from uds.core import exceptions, osmanagers, types
 from uds.core.environment import Environment
@@ -43,8 +43,6 @@ from uds.core.util import ensure, permissions, ui as ui_utils
 from uds.models import OSManager
 from uds.REST.model import ModelHandler
 
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 

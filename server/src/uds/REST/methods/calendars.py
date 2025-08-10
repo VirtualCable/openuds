@@ -36,6 +36,8 @@ import logging
 import typing
 
 from django.utils.translation import gettext_lazy as _
+from django.db import models
+
 from uds.core import types
 from uds.models import Calendar
 from uds.core.util import permissions, ensure, ui as ui_utils
@@ -43,8 +45,6 @@ from uds.core.util import permissions, ensure, ui as ui_utils
 from uds.REST.model import ModelHandler
 from .calendarrules import CalendarRules
 
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 
 logger = logging.getLogger(__name__)
@@ -84,7 +84,7 @@ class Calendars(ModelHandler[CalendarItem]):
         .build()
     )
 
-    def get_item(self, item: 'Model') -> CalendarItem:
+    def get_item(self, item: 'models.Model') -> CalendarItem:
         item = ensure.is_instance(item, Calendar)
         return CalendarItem(
             id=item.uuid,

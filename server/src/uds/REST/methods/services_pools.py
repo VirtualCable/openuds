@@ -35,9 +35,8 @@ import datetime
 import logging
 import typing
 
-from django.db.models import Count, Q
-from django.utils.translation import gettext
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
+from django.db.models import Model, Count, Q
 
 from uds.core import types, exceptions, consts
 from uds.core.managers.userservice import UserServiceManager
@@ -54,10 +53,9 @@ from .op_calendars import AccessCalendars, ActionsCalendars
 from .services import Services, ServiceInfo
 from .user_services import AssignedUserService, CachedService, Changelog, Groups, Publications, Transports
 
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
+
 
 @dataclasses.dataclass
 class ServicePoolItem(types.rest.BaseRestItem):
@@ -91,11 +89,11 @@ class ServicePoolItem(types.rest.BaseRestItem):
     display_custom_message: bool
     osmanager_id: str | None
 
-    user_services_count: int|types.rest.NotRequired = types.rest.NotRequired.field()
-    user_services_in_preparation: int|types.rest.NotRequired = types.rest.NotRequired.field()
-    restrained: bool|types.rest.NotRequired = types.rest.NotRequired.field()
-    permission: types.permissions.PermissionType|types.rest.NotRequired = types.rest.NotRequired.field()
-    info: ServiceInfo|types.rest.NotRequired = types.rest.NotRequired.field()
+    user_services_count: int | types.rest.NotRequired = types.rest.NotRequired.field()
+    user_services_in_preparation: int | types.rest.NotRequired = types.rest.NotRequired.field()
+    restrained: bool | types.rest.NotRequired = types.rest.NotRequired.field()
+    permission: types.permissions.PermissionType | types.rest.NotRequired = types.rest.NotRequired.field()
+    info: ServiceInfo | types.rest.NotRequired = types.rest.NotRequired.field()
     pool_group_id: str | None | types.rest.NotRequired = types.rest.NotRequired.field()
     pool_group_name: str | types.rest.NotRequired = types.rest.NotRequired.field()
     pool_group_thumb: str | types.rest.NotRequired = types.rest.NotRequired.field()
@@ -267,9 +265,7 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
             allow_users_reset=item.allow_users_reset,
             ignores_unused=item.ignores_unused,
             fallbackAccess=item.fallbackAccess,
-            meta_member=[
-                {'id': i.meta_pool.uuid, 'name': i.meta_pool.name} for i in item.memberOfMeta.all()
-            ],
+            meta_member=[{'id': i.meta_pool.uuid, 'name': i.meta_pool.name} for i in item.memberOfMeta.all()],
             calendar_message=item.calendar_message,
             custom_message=item.custom_message,
             display_custom_message=item.display_custom_message,
@@ -674,7 +670,7 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
     def create_from_assignable(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)
         if 'user_id' not in self._params or 'assignable_id' not in self._params:
-            return self.invalid_request_response('Invalid parameters')
+            raise exceptions.rest.RequestError('Invalid parameters')
 
         logger.debug('Creating from assignable: %s', self._params)
         UserServiceManager.manager().create_from_assignable(
@@ -688,9 +684,9 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
     def add_log(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)
         if 'message' not in self._params:
-            return self.invalid_request_response('Invalid parameters')
+            raise exceptions.rest.RequestError('Invalid parameters')
         if 'level' not in self._params:
-            return self.invalid_request_response('Invalid parameters')
+            raise exceptions.rest.RequestError('Invalid parameters')
 
         log.log(
             item,

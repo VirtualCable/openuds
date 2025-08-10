@@ -86,6 +86,15 @@ def python_type_to_openapi(py_type: typing.Any) -> 'SchemaProperty':
         return SchemaProperty(type=_OPENAPI_TYPE_MAP.get(literal_type, STRING_TYPE).type, enum=list(args))
 
     # Enum classes
+    # First, IntEnum --> int
+    elif isinstance(py_type, type) and issubclass(py_type, enum.IntEnum):
+        return SchemaProperty(type='integer')
+
+    # Now, StrEnum --> string
+    elif isinstance(py_type, type) and issubclass(py_type, enum.StrEnum):
+        return SchemaProperty(type='string')
+
+    # Rest of cases --> enum with first item type setting the type for the field
     elif isinstance(py_type, type) and issubclass(py_type, enum.Enum):
         try:
             sample = next(iter(py_type))

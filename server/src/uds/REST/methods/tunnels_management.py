@@ -33,8 +33,8 @@ import dataclasses
 import logging
 import typing
 
-from django.utils.translation import gettext
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
+from django.db.models import Model
 
 import uds.core.types.permissions
 from uds.core import exceptions, types, consts
@@ -44,9 +44,6 @@ from uds.core.util.model import process_uuid
 from uds import models
 from uds.REST.model import DetailHandler, ModelHandler
 
-# Not imported at runtime, just for type checking
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 

@@ -36,6 +36,7 @@ import typing
 
 from django.db import IntegrityError
 from django.utils.translation import gettext as _
+from django.db.models import Model
 
 from uds import models
 
@@ -52,9 +53,6 @@ from uds.core.types.states import State
 
 from uds.REST.model import DetailHandler
 
-# Not imported at runtime, just for type checking
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 

@@ -36,8 +36,8 @@ import re
 import typing
 import collections.abc
 
-from django.utils.translation import gettext
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
+from django.db.models import Model
 
 from uds.core import consts, exceptions, transports, types, ui
 from uds.core.environment import Environment
@@ -45,8 +45,6 @@ from uds.core.util import ensure, permissions, ui as ui_utils
 from uds.models import Network, ServicePool, Transport
 from uds.REST.model import ModelHandler
 
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 

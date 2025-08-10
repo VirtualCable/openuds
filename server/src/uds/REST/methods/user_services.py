@@ -37,6 +37,7 @@ import logging
 import typing
 
 from django.utils.translation import gettext as _
+from django.db.models import Model
 
 import uds.core.types.permissions
 from uds import models
@@ -48,8 +49,6 @@ from uds.core.util import ensure, log, permissions, ui as ui_utils
 from uds.core.util.model import process_uuid
 from uds.REST.model import DetailHandler
 
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
@@ -484,6 +483,7 @@ class Transports(DetailHandler[TransportItem]):
             types.log.LogSource.ADMIN,
         )
 
+
 @dataclasses.dataclass
 class PublicationItem(types.rest.BaseRestItem):
     id: str
@@ -582,6 +582,7 @@ class Publications(DetailHandler[PublicationItem]):
             .text_column(name='reason', title=_('Reason'))
             .row_style(prefix='row-state-', field='state')
         ).build()
+
 
 @dataclasses.dataclass
 class ChangelogItem(types.rest.BaseRestItem):

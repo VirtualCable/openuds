@@ -32,9 +32,9 @@
 """
 import dataclasses
 import logging
-import typing
 
 from django.utils.translation import gettext_lazy as _, gettext
+from django.db.models import Model
 
 from uds.models import Network
 from uds.core import types
@@ -42,8 +42,6 @@ from uds.core.util import permissions, ensure, ui as ui_utils
 
 from ..model import ModelHandler
 
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 

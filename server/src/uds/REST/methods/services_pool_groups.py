@@ -35,6 +35,7 @@ import logging
 import typing
 
 from django.utils.translation import gettext_lazy as _
+from django.db.models import Model
 
 from uds.core import types
 from uds.core.util import ensure, ui as ui_utils
@@ -43,9 +44,6 @@ from uds.models import Image, ServicePoolGroup
 from uds.REST.model import ModelHandler
 
 logger = logging.getLogger(__name__)
-
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 
 # Enclosed methods under /item path

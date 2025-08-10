@@ -35,8 +35,8 @@ import dataclasses
 import logging
 import typing
 
-from django.utils.translation import gettext
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
+from django.db.models import Model
 
 import uds.core.types.permissions
 from uds.core import exceptions, services, types
@@ -51,8 +51,6 @@ from .services_usage import ServicesUsage
 
 logger = logging.getLogger(__name__)
 
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 
 # Helper class for Provider offers

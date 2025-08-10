@@ -35,7 +35,7 @@ import datetime
 import logging
 import typing
 
-from django.db import IntegrityError
+from django.db import IntegrityError, models
 from django.utils.translation import gettext as _
 
 from uds.core import exceptions, types
@@ -46,8 +46,6 @@ from uds.models.calendar_rule import CalendarRule, FrequencyInfo
 from uds.REST.model import DetailHandler
 
 # Not imported at runtime, just for type checking
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
@@ -92,7 +90,7 @@ class CalendarRules(DetailHandler[CalendarRuleItem]):  # pylint: disable=too-man
         )
 
     def get_items(
-        self, parent: 'Model', item: typing.Optional[str]
+        self, parent: 'models.Model', item: typing.Optional[str]
     ) -> types.rest.ItemsResult[CalendarRuleItem]:
         parent = ensure.is_instance(parent, Calendar)
         # Check what kind of access do we have to parent provider
@@ -108,7 +106,7 @@ class CalendarRules(DetailHandler[CalendarRuleItem]):  # pylint: disable=too-man
             logger.exception('itemId %s', item)
             raise exceptions.rest.RequestError(f'Error retrieving calendar rule: {e}') from e
 
-    def get_table(self, parent: 'Model') -> types.rest.Table:
+    def get_table(self, parent: 'models.Model') -> types.rest.Table:
         parent = ensure.is_instance(parent, Calendar)
         return (
             ui_utils.TableBuilder(_('Rules of {0}').format(parent.name))
@@ -122,7 +120,7 @@ class CalendarRules(DetailHandler[CalendarRuleItem]):  # pylint: disable=too-man
             .build()
         )
 
-    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
+    def save_item(self, parent: 'models.Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, Calendar)
 
         # Extract item db fields
@@ -166,7 +164,7 @@ class CalendarRules(DetailHandler[CalendarRuleItem]):  # pylint: disable=too-man
             logger.exception('Saving calendar')
             raise exceptions.rest.RequestError(f'incorrect invocation to PUT: {e}') from e
 
-    def delete_item(self, parent: 'Model', item: str) -> None:
+    def delete_item(self, parent: 'models.Model', item: str) -> None:
         parent = ensure.is_instance(parent, Calendar)
         logger.debug('Deleting rule %s from %s', item, parent)
         try:

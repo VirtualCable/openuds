@@ -37,6 +37,8 @@ import typing
 import datetime
 
 from django.utils.translation import gettext as _
+from django.db.models import Model
+
 from uds.core import exceptions, types
 
 from uds.models import UserService, Provider
@@ -46,8 +48,6 @@ from uds.REST.model import DetailHandler
 from uds.core.util import ensure, ui as ui_utils
 
 # Not imported at runtime, just for type checking
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 

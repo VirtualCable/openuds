@@ -36,6 +36,7 @@ import logging
 import typing
 
 from django.utils.translation import gettext_lazy as _
+from django.db import models
 
 from uds.core import types, consts
 from uds.core.types import permissions
@@ -45,8 +46,6 @@ from uds.models import Server
 from uds.core.exceptions.rest import NotFound, RequestError
 from uds.REST.model import ModelHandler
 
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
@@ -89,7 +88,7 @@ class ActorTokens(ModelHandler[ActorTokenItem]):
         .build()
     )
 
-    def get_item(self, item: 'Model') -> ActorTokenItem:
+    def get_item(self, item: 'models.Model') -> ActorTokenItem:
         item = ensure.is_instance(item, Server)
         data: dict[str, typing.Any] = item.data or {}
         if item.log_level < 10000:  # Old log level, from actor, etc..

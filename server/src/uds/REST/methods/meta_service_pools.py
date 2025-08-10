@@ -35,6 +35,7 @@ import typing
 
 from django.utils.translation import gettext as _
 
+
 from uds import models
 from uds.core import exceptions, types
 
@@ -50,8 +51,7 @@ from uds.core.util import log, ensure, ui as ui_utils
 from uds.REST.model import DetailHandler
 from .user_services import AssignedUserService, UserServiceItem
 
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
+from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
