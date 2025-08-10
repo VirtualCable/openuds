@@ -591,7 +591,7 @@ class ChangelogItem(types.rest.BaseRestItem):
     log: str
 
 
-class Changelog(DetailHandler['ChangelogItem']):
+class Changelog(DetailHandler[ChangelogItem]):
     """
     Processes the transports detail requests of a Service Pool
     """

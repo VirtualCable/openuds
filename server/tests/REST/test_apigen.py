@@ -106,7 +106,7 @@ class ManagedObjectRestItem(types.rest.ManagedObjectItem[Transport]):
 
 
 class TestApiGenBasic(UDSTestCase):
-    def test_model_enum_schemas_for_api(self) -> None:
+    def test_model_handler_componments(self) -> None:
         root_node = dispatcher.Dispatcher.root_node
 
         comps = types.rest.api.Components()
@@ -119,16 +119,42 @@ class TestApiGenBasic(UDSTestCase):
                 handler = typing.cast(model.ModelHandler[typing.Any], typing.cast(typing.Any, node).handler)
                 logger.info("Checking handler: %s", handler)
                 components = handler.api_component()
+                # Component should not be empty
+                self.assertIsInstance(
+                    components,
+                    types.rest.api.Components,
+                    f'Component for {node.name} should be of type Components',
+                )
+                self.assertFalse(components.is_empty(), f'Component for model {node.name} should not be empty')
                 comps = comps.union(components)
-                logger.info("Found component for API: %s-%s", node.name, components.as_dict())
-                self.assertIsInstance(components, types.rest.api.Components)
+                # Check details if needed
+                if handler.DETAIL:
+                    for detail_name, detail_handler in handler.DETAIL.items():
+                        detail_components = detail_handler.api_component()
+                        self.assertIsInstance(
+                            detail_components,
+                            types.rest.api.Components,
+                            f'Component for detail {detail_name} of model {node.name} should be of type Components',
+                        )
+                        if (
+                            detail_handler.get_items is model.DetailHandler[typing.Any].get_items
+                            and detail_handler.api_component is model.DetailHandler[typing.Any].api_component
+                        ):
+                            continue  # No custom components
+                        self.assertFalse(
+                            detail_components.is_empty(),
+                            f'Component for detail {detail_name} of model {node.name} should not be empty',
+                        )
+                        comps = comps.union(detail_components)
+
             for child in node.children.values():
                 check_node(child)
 
         check_node(root_node)
         logger.info("Components found: %s", comps.as_dict())
-        
+
         import json
+
         with open('/tmp/uds_api.json', 'w') as f:
             f.write(json.dumps(comps.as_dict(), indent=4))
 

@@ -1,5 +1,5 @@
 import datetime
-import types as python_types
+import types as py_types
 import typing
 import enum
 import dataclasses
@@ -70,7 +70,7 @@ def python_type_to_openapi(py_type: typing.Any) -> 'SchemaProperty':
         return SchemaProperty(type='object', additionalProperties=python_type_to_openapi(value_type))
 
     # Union[...] → oneOf
-    elif origin in {python_types.UnionType, typing.Union}:
+    elif origin in {py_types.UnionType, typing.Union}:
         # Optional[X] is Union[X, None]
         oa_types = [_OPENAPI_TYPE_MAP.get(arg, OBJECT_TYPE) for arg in args if isinstance(arg, type)]
         return SchemaProperty(
@@ -116,6 +116,9 @@ class Info:
     version: str
     description: str | None = None
 
+    def as_dict(self) -> dict[str, typing.Any]:
+        return as_dict_without_none(dataclasses.asdict(self))
+
 
 # Parámetro
 @dataclasses.dataclass
@@ -126,6 +129,9 @@ class Parameter:
     schema: dict[str, typing.Any]
     description: str | None = None
 
+    def as_dict(self) -> dict[str, typing.Any]:
+        return as_dict_without_none(dataclasses.asdict(self))
+
 
 # Request body
 @dataclasses.dataclass
@@ -133,12 +139,18 @@ class RequestBody:
     required: bool
     content: dict[str, typing.Any]  # e.g. {'application/json': {'schema': {...}}}
 
+    def as_dict(self) -> dict[str, typing.Any]:
+        return as_dict_without_none(dataclasses.asdict(self))
+
 
 # Response
 @dataclasses.dataclass
 class Response:
     description: str
     content: dict[str, typing.Any] | None = None
+
+    def as_dict(self) -> dict[str, typing.Any]:
+        return as_dict_without_none(dataclasses.asdict(self))
 
 
 # Operación (GET, POST, etc.)
@@ -151,6 +163,18 @@ class Operation:
     responses: dict[str, Response] = dataclasses.field(default_factory=dict[str, Response])
     tags: list[str] = dataclasses.field(default_factory=list[str])
 
+    def as_dict(self) -> dict[str, typing.Any]:
+        return as_dict_without_none(
+            {
+                'summary': self.summary,
+                'description': self.description,
+                'parameters': [param.as_dict() for param in self.parameters],
+                'requestBody': self.requestBody.as_dict() if self.requestBody else None,
+                'responses': {k: v.as_dict() for k, v in self.responses.items()},
+                'tags': self.tags,
+            }
+        )
+
 
 # Path item
 @dataclasses.dataclass
@@ -159,6 +183,16 @@ class PathItem:
     post: Operation | None = None
     put: Operation | None = None
     delete: Operation | None = None
+
+    def as_dict(self) -> dict[str, typing.Any]:
+        return as_dict_without_none(
+            {
+                'get': self.get.as_dict() if self.get else None,
+                'post': self.post.as_dict() if self.post else None,
+                'put': self.put.as_dict() if self.put else None,
+                'delete': self.delete.as_dict() if self.delete else None,
+            }
+        )
 
 
 # Schema property
@@ -267,7 +301,9 @@ class Components:
         new_components = Components()
         new_components.schemas = {**self.schemas, **other.schemas}
         return new_components
-
+    
+    def is_empty(self) -> bool:
+        return not self.schemas
 
 # Documento OpenAPI completo
 @dataclasses.dataclass
@@ -282,3 +318,11 @@ class OpenAPI:
     info: Info = dataclasses.field(default_factory=lambda: OpenAPI._get_system_version())
     paths: dict[str, PathItem] = dataclasses.field(default_factory=dict[str, PathItem])
     components: Components = dataclasses.field(default_factory=Components)
+
+    def as_dict(self) -> dict[str, typing.Any]:
+        return as_dict_without_none({
+            'openapi': self.openapi,
+            'info': self.info.as_dict(),
+            'paths': {k: v.as_dict() for k, v in self.paths.items()},
+            'components': self.components.as_dict(),
+        })

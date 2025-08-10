@@ -43,7 +43,7 @@ from uds.core import consts
 from uds.core import exceptions
 from uds.core import types
 from uds.core.module import Module
-from uds.core.util import log, permissions
+from uds.core.util import log, permissions, api as api_utils
 from uds.models import ManagedObjectModel, Tag, TaggingMixin
 
 from .base import BaseModelHandler
@@ -114,6 +114,13 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC, typing.Generic[
         Excpetcs the list of types that the handler supports
         """
         return []
+
+    @classmethod
+    def possible_types(cls: type[typing.Self]) -> collections.abc.Iterable[type['Module']]:
+        """
+        So detail can share same structure
+        """
+        return cls.enum_types()
 
     def get_types(
         self, *args: typing.Any, **kwargs: typing.Any
@@ -504,37 +511,40 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC, typing.Generic[
 
     @classmethod
     def api_component(cls: type[typing.Self]) -> types.rest.api.Components:
+        return api_utils.get_component_from_type(cls)
 
-        item_type_hint = typing.get_type_hints(cls.get_item).get('return')
-        if item_type_hint is None or not issubclass(item_type_hint, types.rest.BaseRestItem):
-            raise Exception(f'get_item method of {cls.__name__} must have a return type hint')
+        # item_type_hint = typing.get_type_hints(cls.get_item).get('return')
+        # if item_type_hint is None or not issubclass(item_type_hint, types.rest.BaseRestItem):
+        #     raise Exception(
+        #         f'get_item method of {cls.__name__} must have a return type hint subclass of types.rest.BaseRestItem'
+        #     )
 
-        components = item_type_hint.api_components()
-        # Components has only 1 schema, which is the item schema
-        item_schema = next(iter(components.schemas.values()))
+        # components = item_type_hint.api_components()
+        # # Components has only 1 schema, which is the item schema
+        # item_schema = next(iter(components.schemas.values()))
 
-        refs: list[str] = []
-        # Component schemas
-        for type_ in cls.enum_types():
-            schema = types.rest.api.Schema(
-                type='object',
-                required=[],
-                description=type_.__doc__ or None,
-            )
-            for field in type_.describe_fields():
-                schema_property = types.rest.api.SchemaProperty.from_field_desc(field)
-                if schema_property is None:
-                    continue  # Skip fields that don't have a schema property
-                schema.properties[field['name']] = schema_property
-                if field['gui'].get('required', False):
-                    schema.required.append(field['name'])
+        # refs: list[str] = []
+        # # Component schemas
+        # for type_ in cls.enum_types():
+        #     schema = types.rest.api.Schema(
+        #         type='object',
+        #         required=[],
+        #         description=type_.__doc__ or None,
+        #     )
+        #     for field in type_.describe_fields():
+        #         schema_property = types.rest.api.SchemaProperty.from_field_desc(field)
+        #         if schema_property is None:
+        #             continue  # Skip fields that don't have a schema property
+        #         schema.properties[field['name']] = schema_property
+        #         if field['gui'].get('required', False):
+        #             schema.required.append(field['name'])
 
-            refs.append(f'#/components/schemas/{type_.type_type}')
+        #     refs.append(f'#/components/schemas/{type_.type_type}')
 
-            components.schemas[type_.type_type] = schema
+        #     components.schemas[type_.type_type] = schema
 
-        # The item is
-        if issubclass(item_type_hint, types.rest.ManagedObjectItem):
-            item_schema.properties['instance'] = types.rest.api.SchemaProperty(type=refs, discriminator='type')
+        # # The item is
+        # if issubclass(item_type_hint, types.rest.ManagedObjectItem):
+        #     item_schema.properties['instance'] = types.rest.api.SchemaProperty(type=refs, discriminator='type')
 
-        return components
+        # return components

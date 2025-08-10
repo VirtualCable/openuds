@@ -38,9 +38,9 @@ import collections.abc
 from django.db import models
 from django.utils.translation import gettext as _
 
-from uds.core import consts, exceptions
-from uds.core import types
+from uds.core import consts, exceptions, types, module
 from uds.core.util.model import process_uuid
+from uds.core.util import api as api_utils
 from uds.REST.utils import rest_result
 
 from .base import BaseModelHandler
@@ -57,7 +57,7 @@ logger = logging.getLogger(__name__)
 # Details do not have types at all
 # so, right now, we only process details petitions for Handling & tables info
 # noinspection PyMissingConstructor
-class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.rest.T_Item]):
+class DetailHandler(BaseModelHandler[types.rest.T_Item]):
     """
     Detail handler (for relations such as provider-->services, authenticators-->users,groups, deployed services-->cache,assigned, groups, transports
     Urls recognized for GET are:
@@ -96,7 +96,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
         params: typing.Any,
         *args: str,
         user: 'User',
-        parent_item: models.Model
+        parent_item: models.Model,
     ) -> None:
         """
         Detail Handlers in fact "disabled" handler most initialization, that is no needed because
@@ -154,11 +154,11 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
             case [consts.rest.OVERVIEW, *_fails]:
                 raise exceptions.rest.RequestError('Invalid overview request') from None
             case [consts.rest.TYPES]:
-                types = self.get_types(parent, None)
+                types = self.enum_types(parent, None)
                 logger.debug('Types: %s', types)
                 return [i.as_dict() for i in types]
             case [consts.rest.TYPES, for_type]:
-                return [i.as_dict() for i in self.get_types(parent, for_type)]
+                return [i.as_dict() for i in self.enum_types(parent, for_type)]
             case [consts.rest.TYPES, for_type, *_fails]:
                 raise exceptions.rest.RequestError('Invalid types request') from None
             case [consts.rest.TABLEINFO]:
@@ -309,7 +309,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
     def get_processed_gui(self, parent: models.Model, for_type: str) -> list[types.ui.GuiElement]:
         return sorted(self.get_gui(parent, for_type), key=lambda f: f['gui']['order'])
 
-    def get_types(
+    def enum_types(
         self, parent: models.Model, for_type: typing.Optional[str]
     ) -> collections.abc.Iterable[types.rest.TypeInfo]:
         """
@@ -325,6 +325,10 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
         """
         return []  # Default is that details do not have types
 
+    @classmethod
+    def possible_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[module.Module]]:
+        return []
+
     def get_logs(self, parent: models.Model, item: str) -> list[typing.Any]:
         """
         If the detail has any log associated with it items, provide it overriding this method
@@ -333,3 +337,11 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item], typing.Generic[types.re
         :return: a list of log elements (normally got using "uds.core.util.log.get_logs" method)
         """
         raise exceptions.rest.InvalidMethodError('Object does not support logs')
+
+    @classmethod
+    def api_component(cls: type[typing.Self]) -> types.rest.api.Components:
+        """
+        Default implementation does not have any component types. (for Api specification purposes)
+        """
+        # If no get_items, has no components (if custom components is needed, override this classmethod)
+        return api_utils.get_component_from_type(cls)

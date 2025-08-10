@@ -33,6 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import dataclasses
 import logging
 import typing
+import collections.abc
 
 from django.db import IntegrityError
 from django.utils.translation import gettext as _
@@ -40,7 +41,7 @@ from django.db.models import Model
 
 from uds import models
 
-from uds.core import exceptions, types
+from uds.core import exceptions, types, module, services
 import uds.core.types.permissions
 from uds.core.types.rest import Table
 from uds.core.util import log, permissions, ensure, ui as ui_utils
@@ -286,8 +287,7 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
             .build()
         )
 
-    def get_types(self, parent: 'Model', for_type: typing.Optional[str]) -> list[types.rest.TypeInfo]:
-
+    def enum_types(self, parent: 'Model', for_type: typing.Optional[str]) -> list[types.rest.TypeInfo]:
         parent = ensure.is_instance(parent, models.Provider)
         logger.debug('get_types parameters: %s, %s', parent, for_type)
         offers: list[types.rest.TypeInfo] = []
@@ -302,6 +302,16 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
                 raise exceptions.rest.NotFound('type not found')
 
         return offers
+
+    @classmethod
+    def possible_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[module.Module]]:
+        """
+        If the detail has any possible types, provide them overriding this method
+        :param cls:
+        """
+        for parent_type in services.factory().providers().values():
+            for service in parent_type.get_provided_services():
+                yield service
 
     def get_gui(self, parent: 'Model', for_type: str) -> list[types.ui.GuiElement]:
         parent = ensure.is_instance(parent, models.Provider)
