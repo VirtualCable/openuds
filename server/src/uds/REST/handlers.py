@@ -367,7 +367,7 @@ class Handler(abc.ABC):
         return ''
 
     @classmethod
-    def api_component(cls: type[typing.Self]) -> types.rest.api.Components:
+    def api_components(cls: type[typing.Self]) -> types.rest.api.Components:
         """
         Returns the types that should be registered
         """

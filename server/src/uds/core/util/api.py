@@ -11,7 +11,7 @@ from uds.core import types, module
 
 if typing.TYPE_CHECKING:
     from uds.REST import model
-    from uds.core.types.rest.api import SchemaProperty
+    from uds.core.types.rest import api
 
 logger = logging.getLogger(__name__)
 
@@ -132,11 +132,11 @@ _OPENAPI_TYPE_MAP: typing.Final[dict[typing.Any, OpenApiType]] = {
 }
 
 
-def python_type_to_openapi(py_type: typing.Any) -> 'SchemaProperty':
+def python_type_to_openapi(py_type: typing.Any) -> 'api.SchemaProperty':
     """
     Convert a Python type to an OpenAPI 3.1 schema property.
     """
-    from uds.core.types.rest.api import SchemaProperty  # Avoid circular import
+    from uds.core.types.rest import api
 
     origin = typing.get_origin(py_type)
     args = typing.get_args(py_type)
@@ -144,18 +144,18 @@ def python_type_to_openapi(py_type: typing.Any) -> 'SchemaProperty':
     # list[...] → array
     if origin is list:
         item_type = args[0] if args else typing.Any
-        return SchemaProperty(type='array', items=python_type_to_openapi(item_type))
+        return api.SchemaProperty(type='array', items=python_type_to_openapi(item_type))
 
     # dict[...] → object
     elif origin is dict:
         value_type = args[1] if len(args) == 2 else typing.Any
-        return SchemaProperty(type='object', additionalProperties=python_type_to_openapi(value_type))
+        return api.SchemaProperty(type='object', additionalProperties=python_type_to_openapi(value_type))
 
     # Union[...] → oneOf
     elif origin in {py_types.UnionType, typing.Union}:
         # Optional[X] is Union[X, None]
         oa_types = [_OPENAPI_TYPE_MAP.get(arg, OpenApiType.OBJECT) for arg in args if isinstance(arg, type)]
-        return SchemaProperty(
+        return api.SchemaProperty(
             type=[oa_type.value.type for oa_type in oa_types],
         )
 
@@ -165,18 +165,18 @@ def python_type_to_openapi(py_type: typing.Any) -> 'SchemaProperty':
     # Literal[...] → enum
     elif origin is typing.Literal:
         literal_type = typing.cast(type[typing.Any], type(args[0]) if args else str)
-        return SchemaProperty(
+        return api.SchemaProperty(
             type=_OPENAPI_TYPE_MAP.get(literal_type, OpenApiType.STRING).value.type, enum=list(args)
         )
 
     # Enum classes
     # First, IntEnum --> int
     elif isinstance(py_type, type) and issubclass(py_type, enum.IntEnum):
-        return SchemaProperty(type='integer')
+        return api.SchemaProperty(type='integer')
 
     # Now, StrEnum --> string
     elif isinstance(py_type, type) and issubclass(py_type, enum.StrEnum):
-        return SchemaProperty(type='string')
+        return api.SchemaProperty(type='string')
 
     # Rest of cases --> enum with first item type setting the type for the field
     elif isinstance(py_type, type) and issubclass(py_type, enum.Enum):
@@ -184,10 +184,38 @@ def python_type_to_openapi(py_type: typing.Any) -> 'SchemaProperty':
             sample = next(iter(py_type))
             value_type = typing.cast(type[typing.Any], type(sample.value))
             openapi_type = _OPENAPI_TYPE_MAP.get(value_type, OpenApiType.STRING)
-            return SchemaProperty(type=openapi_type.value.type, enum=[e.value for e in py_type])
+            return api.SchemaProperty(type=openapi_type.value.type, enum=[e.value for e in py_type])
         except StopIteration:
-            return SchemaProperty(type='string')
+            return api.SchemaProperty(type='string')
 
     # Simple types
     oa_type = _OPENAPI_TYPE_MAP.get(py_type, OpenApiType.OBJECT)
-    return SchemaProperty(type=oa_type.value.type, format=oa_type.value.format)
+    return api.SchemaProperty(type=oa_type.value.type, format=oa_type.value.format)
+
+
+def api_components(dataclass: typing.Type[typing.Any]) -> 'api.Components':
+    from uds.core.util import api as api_uti  # Avoid circular import
+    from uds.core.types.rest import api
+
+    # If not dataclass, raise a ValueError
+    if not dataclasses.is_dataclass(dataclass):
+        raise ValueError('Expected a dataclass')
+
+    components = api.Components()
+    schema = api.Schema(type='object', properties={}, description=None)
+    type_hints = typing.get_type_hints(dataclass)
+
+    for field in dataclasses.fields(dataclass):
+        # Check the type, can be a primitive or a complex type
+        # complexes types accepted are list and dict currently
+        field_type = type_hints.get(field.name)
+        if not field_type:
+            raise Exception(f'Field {field.name} has no type hint')
+
+        schema_prop = api_uti.python_type_to_openapi(field_type)
+        schema.properties[field.name] = schema_prop
+        if field.default is dataclasses.MISSING and field.default_factory is dataclasses.MISSING:
+            schema.required.append(field.name)
+
+    components.schemas[dataclass.__name__] = schema
+    return components

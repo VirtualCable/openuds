@@ -148,8 +148,17 @@ class BaseModelHandler(Handler, abc.ABC, typing.Generic[types.rest.T_Item]):
         raise exceptions.rest.NotSupportedError(_('Testing not supported'))
 
     @classmethod
-    def api_component(cls: type[typing.Self]) -> types.rest.api.Components:
+    def api_components(cls: type[typing.Self]) -> types.rest.api.Components:
         """
         Default implementation does not have any component types. (for Api specification purposes)
         """
         return types.rest.api.Components()
+
+    @staticmethod
+    def common_components() -> types.rest.api.Components:
+        """
+        Returns a list of common components for the API
+        """
+        from uds.core.util import api as api_utils
+
+        return api_utils.api_components(types.rest.TypeInfo) | api_utils.api_components(types.rest.Table)

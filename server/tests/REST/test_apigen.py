@@ -36,6 +36,7 @@ import enum
 from tests.utils.test import UDSTestCase
 
 from uds.REST import dispatcher
+from uds.REST.model import base
 from uds.core import types, transports, consts, ui
 from uds.core.util import api as util_api
 from uds.models import Transport
@@ -110,14 +111,14 @@ class TestApiGenBasic(UDSTestCase):
     def test_model_handler_componments(self) -> None:
         root_node = dispatcher.Dispatcher.root_node
 
-        comps = types.rest.api.Components()
+        comps = base.BaseModelHandler.common_components()
 
         # Node is a tree, recursively check all children
         def check_node(node: types.rest.HandlerNode):
             nonlocal comps
             if handler := node.handler:
                 logger.info("Checking child node: %s, %s", node.name, handler.__module__)
-                components = handler.api_component()
+                components = handler.api_components()
                 # Component should not be empty
                 self.assertIsInstance(
                     components,
@@ -181,7 +182,7 @@ class TestApiGenBasic(UDSTestCase):
             types.rest.api.SchemaProperty(type='string', enum=[e.value for e in MyEnum]),
         )
 
-    def test_base_rest_item_api_components(self) -> None:
+    def test_base_rest_item_api_componentss(self) -> None:
 
         components = BaseRestItem.api_components()
 

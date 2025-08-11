@@ -145,7 +145,7 @@ class ServerRegister(ServerRegisterBase):
 
 
     @classmethod
-    def api_component(cls: type[typing.Self]) -> types.rest.api.Components:
+    def api_components(cls: type[typing.Self]) -> types.rest.api.Components:
         return types.rest.api.Components(schemas={
             'ServerRegisterItem': types.rest.api.Schema(
                 type='object',

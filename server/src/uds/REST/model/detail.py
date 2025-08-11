@@ -339,7 +339,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item]):
         raise exceptions.rest.InvalidMethodError('Object does not support logs')
 
     @classmethod
-    def api_component(cls: type[typing.Self]) -> types.rest.api.Components:
+    def api_components(cls: type[typing.Self]) -> types.rest.api.Components:
         """
         Default implementation does not have any component types. (for Api specification purposes)
         """

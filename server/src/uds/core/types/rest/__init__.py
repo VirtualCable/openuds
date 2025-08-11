@@ -50,43 +50,6 @@ T_Model = typing.TypeVar('T_Model', bound='ManagedObjectModel')
 T_Item = typing.TypeVar("T_Item", bound='BaseRestItem')
 
 
-@dataclasses.dataclass
-class TypeInfo:
-    name: str
-    type: str
-    description: str
-    icon: str
-
-    group: typing.Optional[str] = None
-
-    extra: 'ExtraTypeInfo|None' = None
-
-    def as_dict(self) -> dict[str, typing.Any]:
-        res: dict[str, typing.Any] = {
-            'name': self.name,
-            'type': self.type,
-            'description': self.description,
-            'icon': self.icon,
-        }
-        # Add optional fields
-        if self.group:
-            res['group'] = self.group
-
-        if self.extra:
-            res.update(self.extra.as_dict())
-
-        return res
-
-    @staticmethod
-    def null() -> 'TypeInfo':
-        return TypeInfo(name='', type='', description='', icon='', extra=None)
-
-
-class ExtraTypeInfo(abc.ABC):
-    def as_dict(self) -> dict[str, typing.Any]:
-        return {}
-
-
 class NotRequired:
     """
     This is a marker class to indicate that a field is not required.
@@ -136,24 +99,7 @@ class BaseRestItem:
     def api_components(cls: type[typing.Self]) -> api.Components:
         from uds.core.util import api as api_uti  # Avoid circular import
 
-        components = api.Components()
-        schema = api.Schema(type='object', properties={}, description=None)
-        type_hints = typing.get_type_hints(cls)
-
-        for field in dataclasses.fields(cls):
-            # Check the type, can be a primitive or a complex type
-            # complexes types accepted are list and dict currently
-            field_type = type_hints.get(field.name)
-            if not field_type:
-                raise Exception(f'Field {field.name} has no type hint')
-
-            schema_prop = api_uti.python_type_to_openapi(field_type)
-            schema.properties[field.name] = schema_prop
-            if field.default is dataclasses.MISSING and field.default_factory is dataclasses.MISSING:
-                schema.required.append(field.name)
-
-        components.schemas[cls.__name__] = schema
-        return components
+        return api_uti.api_components(cls)
 
 
 @dataclasses.dataclass
@@ -162,6 +108,7 @@ class ManagedObjectItem(BaseRestItem, typing.Generic[T_Model]):
     Represents a managed object type, with its name and type.
     This is used to represent the type of a managed object in the REST API.
     """
+
     item: T_Model
 
     def as_dict(self) -> dict[str, typing.Any]:
@@ -215,6 +162,43 @@ class ManagedObjectItem(BaseRestItem, typing.Generic[T_Model]):
 
 # Alias for get_items return type
 ItemsResult: typing.TypeAlias = list[T_Item] | BaseRestItem | typing.Iterator[T_Item]
+
+
+@dataclasses.dataclass
+class TypeInfo:
+    name: str
+    type: str
+    description: str
+    icon: str
+
+    group: typing.Optional[str] = None
+
+    extra: 'ExtraTypeInfo|None' = None
+
+    def as_dict(self) -> dict[str, typing.Any]:
+        res: dict[str, typing.Any] = {
+            'name': self.name,
+            'type': self.type,
+            'description': self.description,
+            'icon': self.icon,
+        }
+        # Add optional fields
+        if self.group:
+            res['group'] = self.group
+
+        if self.extra:
+            res.update(self.extra.as_dict())
+
+        return res
+
+    @staticmethod
+    def null() -> 'TypeInfo':
+        return TypeInfo(name='', type='', description='', icon='', extra=None)
+
+
+class ExtraTypeInfo(abc.ABC):
+    def as_dict(self) -> dict[str, typing.Any]:
+        return {}
 
 
 class TableFieldType(enum.StrEnum):

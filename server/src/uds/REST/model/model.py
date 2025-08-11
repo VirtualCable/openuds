@@ -504,5 +504,5 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
         item.delete()
 
     @classmethod
-    def api_component(cls: type[typing.Self]) -> types.rest.api.Components:
+    def api_components(cls: type[typing.Self]) -> types.rest.api.Components:
         return api_utils.get_component_from_type(cls)

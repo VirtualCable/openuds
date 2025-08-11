@@ -216,6 +216,10 @@ class Components:
         new_components.schemas = {**self.schemas, **other.schemas}
         return new_components
 
+    # Operator | will union two Components
+    def __or__(self, other: 'Components') -> 'Components':
+        return self.union(other)
+
     def is_empty(self) -> bool:
         return not self.schemas
 
