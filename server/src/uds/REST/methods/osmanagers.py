@@ -33,16 +33,18 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import collections.abc
 import dataclasses
 import logging
+import typing
 
-from django.utils.translation import gettext, gettext_lazy as _
 from django.db.models import Model
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
 
 from uds.core import exceptions, osmanagers, types
 from uds.core.environment import Environment
-from uds.core.util import ensure, permissions, ui as ui_utils
+from uds.core.util import ensure, permissions
+from uds.core.util import ui as ui_utils
 from uds.models import OSManager
 from uds.REST.model import ModelHandler
-
 
 logger = logging.getLogger(__name__)
 
@@ -105,8 +107,8 @@ class OsManagers(ModelHandler[OsManagerItem]):
             )
 
     # Types related
-    @staticmethod
-    def enum_types() -> collections.abc.Iterable[type[osmanagers.OSManager]]:
+    @classmethod
+    def enum_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[osmanagers.OSManager]]:
         return osmanagers.factory().providers().values()
 
     # Gui related

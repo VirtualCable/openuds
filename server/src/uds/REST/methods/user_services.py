@@ -440,7 +440,7 @@ class Transports(DetailHandler[TransportItem]):
             TransportItem(
                 id=trans.uuid,
                 name=trans.name,
-                type=self.as_typeinfo(trans.get_type()).as_dict(),
+                type=type(self).as_typeinfo(trans.get_type()).as_dict(),
                 comments=trans.comments,
                 priority=trans.priority,
                 trans_type=trans.get_type().mod_name(),

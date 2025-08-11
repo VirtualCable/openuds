@@ -107,8 +107,8 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
     # This methods must be override, depending on what is provided
 
     # types related
-    @staticmethod
-    def enum_types() -> collections.abc.Iterable[type['Module']]:  # override this
+    @classmethod
+    def enum_types(cls: type[typing.Self]) -> collections.abc.Iterable[type['Module']]:  # override this
         """
         Must be overriden by desdencents if they support types
         Excpetcs the list of types that the handler supports
@@ -126,7 +126,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
         self, *args: typing.Any, **kwargs: typing.Any
     ) -> typing.Generator[types.rest.TypeInfo, None, None]:
         for type_ in self.enum_types():
-            yield self.as_typeinfo(type_)
+            yield type(self).as_typeinfo(type_)
 
     def get_type(self, type_: str) -> types.rest.TypeInfo:
         for v in self.get_types():

@@ -142,19 +142,6 @@ class System(Handler):
 
     ROLE = consts.UserRole.STAFF
 
-    HELP_PATHS = [
-        types.rest.doc.HelpDoc('', ''),
-        types.rest.doc.HelpDoc('stats/assigned', ''),
-        types.rest.doc.HelpDoc('stats/inuse', ''),
-        types.rest.doc.HelpDoc('stats/cached', ''),
-        types.rest.doc.HelpDoc('stats/complete', ''),
-        types.rest.doc.HelpDoc('stats/assigned/<uuuid>', 'Get service pool assigned stats'),
-        types.rest.doc.HelpDoc('stats/inuse/<uuid>', 'Get service pool in use stats'),
-        types.rest.doc.HelpDoc('stats/cached/<uuid>', 'Get service pool cached stats'),
-        types.rest.doc.HelpDoc('stats/complete/<uuid>', 'Get service pool complete stats'),
-    ]
-    HELP_TEXT = 'Provides system information. Must be admin to access this'
-
     def get(self) -> typing.Any:
         logger.debug('args: %s', self._args)
         # Only allow admin user for global stats

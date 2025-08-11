@@ -91,6 +91,8 @@ class AuthenticatorItem(types.rest.ManagedObjectItem[Authenticator]):
     users_count: int
     permission: int
 
+    type_info: types.rest.TypeInfo
+
 
 # Enclosed methods under /auth path
 class Authenticators(ModelHandler[AuthenticatorItem]):
@@ -117,11 +119,14 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
         .build()
     )
 
-    @staticmethod
-    def enum_types() -> collections.abc.Iterable[type[auths.Authenticator]]:
+    @classmethod
+    def enum_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[auths.Authenticator]]:
         return auths.factory().providers().values()
 
-    def extra_type_info(self, type_: type['Module']) -> typing.Optional[AuthenticatorTypeInfo]:
+    @classmethod
+    def extra_type_info(
+        cls: type[typing.Self], type_: type['Module']
+    ) -> typing.Optional[AuthenticatorTypeInfo]:
         if issubclass(type_, auths.Authenticator):
             return AuthenticatorTypeInfo(
                 search_users_supported=type_.search_users != auths.Authenticator.search_users,
@@ -205,6 +210,7 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
             users_count=item.users.count(),
             permission=permissions.effective_permissions(self._user, item),
             item=item,
+            type_info=type(self).as_typeinfo(item.get_type()),
         )
 
     def post_save(self, item: 'models.Model') -> None:

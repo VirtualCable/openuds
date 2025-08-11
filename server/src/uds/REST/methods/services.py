@@ -292,11 +292,11 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
         logger.debug('get_types parameters: %s, %s', parent, for_type)
         offers: list[types.rest.TypeInfo] = []
         if for_type is None:
-            offers = [self.as_typeinfo(t) for t in parent.get_type().get_provided_services()]
+            offers = [type(self).as_typeinfo(t) for t in parent.get_type().get_provided_services()]
         else:
             for t in parent.get_type().get_provided_services():
                 if for_type == t.mod_type():
-                    offers = [self.as_typeinfo(t)]
+                    offers = [type(self).as_typeinfo(t)]
                     break
             if not offers:
                 raise exceptions.rest.NotFound('type not found')

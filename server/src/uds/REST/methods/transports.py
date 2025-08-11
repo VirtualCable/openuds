@@ -92,8 +92,8 @@ class Transports(ModelHandler[TransportItem]):
         .text_column(name='tags', title=_('tags'), visible=False)
     ).build()
 
-    @staticmethod
-    def enum_types() -> collections.abc.Iterable[type[transports.Transport]]:
+    @classmethod
+    def enum_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[transports.Transport]]:
         return transports.factory().providers().values()
 
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:

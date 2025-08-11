@@ -275,7 +275,7 @@ urlpatterns = [
     ),
     # Web admin GUI
     re_path(
-        r'^uds/adm5/',
+        r'^uds/adm/',
         uds.admin.views.index,
         name='uds.admin.views.index',
     ),

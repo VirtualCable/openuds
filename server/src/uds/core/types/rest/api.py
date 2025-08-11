@@ -227,7 +227,7 @@ class OpenAPI:
     def _get_system_version() -> Info:
         from uds.core.consts import system
 
-        return Info(title='UDS API', version=system.VERSION)
+        return Info(title='UDS API', version=system.VERSION, description='UDS REST API Documentation')
 
     openapi: str = '3.1.0'
     info: Info = dataclasses.field(default_factory=lambda: OpenAPI._get_system_version())

@@ -30,23 +30,26 @@
 '''
 @Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+import collections.abc
 import dataclasses
 import logging
-import collections.abc
+import typing
 
-from django.utils.translation import gettext, gettext_lazy as _
 from django.db.models import Model
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
 
 from uds import models
 from uds.core import exceptions, mfas, types
 from uds.core.environment import Environment
-from uds.core.util import ensure, permissions, ui as ui_utils
+from uds.core.util import ensure, permissions
+from uds.core.util import ui as ui_utils
 from uds.REST.model import ModelHandler
-
 
 logger = logging.getLogger(__name__)
 
 # Enclosed methods under /item path
+
 
 @dataclasses.dataclass
 class MFAItem(types.rest.BaseRestItem):
@@ -75,8 +78,8 @@ class MFA(ModelHandler[MFAItem]):
         .build()
     )
 
-    @staticmethod
-    def enum_types() -> collections.abc.Iterable[type[mfas.MFA]]:
+    @classmethod
+    def enum_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[mfas.MFA]]:
         return mfas.factory().providers().values()
 
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
