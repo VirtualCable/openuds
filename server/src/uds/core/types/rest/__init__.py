@@ -36,7 +36,6 @@ import enum
 import typing
 import dataclasses
 
-from . import doc
 from . import stock
 from . import actor
 from . import api
@@ -135,6 +134,8 @@ class BaseRestItem:
 
     @classmethod
     def api_components(cls: type[typing.Self]) -> api.Components:
+        from uds.core.util import api as api_uti  # Avoid circular import
+
         components = api.Components()
         schema = api.Schema(type='object', properties={}, description=None)
         type_hints = typing.get_type_hints(cls)
@@ -146,7 +147,7 @@ class BaseRestItem:
             if not field_type:
                 raise Exception(f'Field {field.name} has no type hint')
 
-            schema_prop = api.python_type_to_openapi(field_type)
+            schema_prop = api_uti.python_type_to_openapi(field_type)
             schema.properties[field.name] = schema_prop
             if field.default is dataclasses.MISSING and field.default_factory is dataclasses.MISSING:
                 schema.required.append(field.name)
@@ -351,100 +352,6 @@ class HandlerNode:
                     ret += f'{"  " * level}  |- {method_name}\n'
 
         return ret + ''.join(child.tree(level + 1) for child in self.children.values())
-
-    def help_node(self) -> doc.HelpNode:
-        """
-        Returns a HelpNode for this node (and children recursively)
-        """
-        from uds.REST.model import ModelHandler
-
-        custom_help: set[doc.HelpNode] = set()
-
-        help_node_type = doc.HelpNode.Type.PATH
-
-        if not self.handler:
-            # If no handler, this is a path node, so we return a path node
-            return doc.HelpNode(
-                doc.HelpDoc(path=self.full_path(), help=self.name),
-                [child.help_node() for child in self.children.values()],
-                help_node_type,
-            )
-
-        # Cast here, but may be not a ModelHandler, so we need to check later
-        handler = typing.cast(
-            ModelHandler[typing.Any], self.handler
-        )  # pyright: ignore[reportUnknownMemberType]
-        help_node_type = doc.HelpNode.Type.CUSTOM
-
-        if issubclass(self.handler, ModelHandler):
-            help_node_type = doc.HelpNode.Type.MODEL
-            # Add custom_methods
-            for method in handler.CUSTOM_METHODS:
-                # Method is a Me CustomModelMethod,
-                # We access the __doc__ of the function inside the handler with method.name
-                doc_attr = getattr(handler, method.name).__doc__ or ''
-                path = (
-                    f'{self.full_path()}/{method.name}'
-                    if not method.needs_parent
-                    else f'{self.full_path()}/<uuid>/{method.name}'
-                )
-                custom_help.add(
-                    doc.HelpNode(
-                        doc.HelpDoc(path=path, help=doc_attr),
-                        [],
-                        doc.HelpNode.Type.CUSTOM,
-                    )
-                )
-
-            # Add detail methods
-            if handler.DETAIL:
-                for method_name, method_class in handler.DETAIL.items():
-                    custom_help.add(
-                        doc.HelpNode(
-                            doc.HelpDoc(path=self.full_path() + '/' + method_name, help=''),
-                            [],
-                            doc.HelpNode.Type.DETAIL,
-                        )
-                    )
-                    # Add custom_methods
-                    for detail_method in method_class.CUSTOM_METHODS:
-                        # Method is a Me CustomModelMethod,
-                        # We access the __doc__ of the function inside the handler with method.name
-                        doc_attr = getattr(method_class, detail_method).__doc__ or ''
-                        custom_help.add(
-                            doc.HelpNode(
-                                doc.HelpDoc(
-                                    path=self.full_path()
-                                    + '/<uuid>/'
-                                    + method_name
-                                    + '/<uuid>/'
-                                    + detail_method,
-                                    help=doc_attr,
-                                ),
-                                [],
-                                doc.HelpNode.Type.CUSTOM,
-                            )
-                        )
-
-            custom_help |= {
-                doc.HelpNode(
-                    doc.HelpDoc(
-                        path=self.full_path() + '/' + help_info.path,
-                        help=help_info.description,
-                    ),
-                    [],
-                    help_node_type,
-                )
-                for help_info in handler.HELP_PATHS
-            }
-
-        custom_help |= {child.help_node() for child in self.children.values()}
-
-        return doc.HelpNode(
-            help=doc.HelpDoc(path=self.full_path(), help=handler.__doc__ or ''),
-            children=list(custom_help),
-            kind=help_node_type,
-        )
 
     def find_path(self, path: str | list[str]) -> typing.Optional['HandlerNode']:
         """

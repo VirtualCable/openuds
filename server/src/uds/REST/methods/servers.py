@@ -144,6 +144,22 @@ class ServerRegister(ServerRegisterBase):
     NAME = 'register'
 
 
+    @classmethod
+    def api_component(cls: type[typing.Self]) -> types.rest.api.Components:
+        return types.rest.api.Components(schemas={
+            'ServerRegisterItem': types.rest.api.Schema(
+                type='object',
+                description='A server object',
+                properties={
+                    'id': types.rest.api.SchemaProperty(type='string'),
+                    'name': types.rest.api.SchemaProperty(type='string'),
+                    'ip': types.rest.api.SchemaProperty(type='string'),
+                    'port': types.rest.api.SchemaProperty(type='integer'),
+                }
+            )
+        })
+
+
 # REST handlers for server actions
 class ServerTest(Handler):
     ROLE = consts.UserRole.ANONYMOUS

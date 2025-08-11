@@ -1,7 +1,4 @@
-import datetime
-import types as py_types
 import typing
-import enum
 import dataclasses
 
 if typing.TYPE_CHECKING:
@@ -24,89 +21,6 @@ def as_dict_without_none(v: typing.Any) -> typing.Any:
     elif hasattr(v, 'as_dict'):
         return v.as_dict()
     return v
-
-
-@dataclasses.dataclass(slots=True)
-class OpenAPIType:
-    type: str
-    format: str | None = None
-
-    def as_dict(self) -> dict[str, typing.Any]:
-        dct = {'type': self.type}
-        if self.format:
-            dct['format'] = self.format
-        return dct
-
-
-OBJECT_TYPE: OpenAPIType = OpenAPIType(type='object')
-STRING_TYPE: OpenAPIType = OpenAPIType(type='string')
-
-_OPENAPI_TYPE_MAP: typing.Final[dict[typing.Any, OpenAPIType]] = {
-    int: OpenAPIType(type='integer', format='int64'),
-    str: OpenAPIType(type='string'),
-    float: OpenAPIType(type='number'),
-    bool: OpenAPIType(type='boolean'),
-    type(None): OpenAPIType(type='null'),
-    datetime.datetime: OpenAPIType(type='string', format='date-time'),
-    datetime.date: OpenAPIType(type='string', format='date'),
-}
-
-
-def python_type_to_openapi(py_type: typing.Any) -> 'SchemaProperty':
-    """
-    Convert a Python type to an OpenAPI 3.1 schema property.
-    """
-    origin = typing.get_origin(py_type)
-    args = typing.get_args(py_type)
-
-    # list[...] → array
-    if origin is list:
-        item_type = args[0] if args else typing.Any
-        return SchemaProperty(type='array', items=python_type_to_openapi(item_type))
-
-    # dict[...] → object
-    elif origin is dict:
-        value_type = args[1] if len(args) == 2 else typing.Any
-        return SchemaProperty(type='object', additionalProperties=python_type_to_openapi(value_type))
-
-    # Union[...] → oneOf
-    elif origin in {py_types.UnionType, typing.Union}:
-        # Optional[X] is Union[X, None]
-        oa_types = [_OPENAPI_TYPE_MAP.get(arg, OBJECT_TYPE) for arg in args if isinstance(arg, type)]
-        return SchemaProperty(
-            type=[oa_type.type for oa_type in oa_types],
-        )
-
-    elif origin is typing.Annotated:
-        return python_type_to_openapi(args[0])
-
-    # Literal[...] → enum
-    elif origin is typing.Literal:
-        literal_type = typing.cast(type[typing.Any], type(args[0]) if args else str)
-        return SchemaProperty(type=_OPENAPI_TYPE_MAP.get(literal_type, STRING_TYPE).type, enum=list(args))
-
-    # Enum classes
-    # First, IntEnum --> int
-    elif isinstance(py_type, type) and issubclass(py_type, enum.IntEnum):
-        return SchemaProperty(type='integer')
-
-    # Now, StrEnum --> string
-    elif isinstance(py_type, type) and issubclass(py_type, enum.StrEnum):
-        return SchemaProperty(type='string')
-
-    # Rest of cases --> enum with first item type setting the type for the field
-    elif isinstance(py_type, type) and issubclass(py_type, enum.Enum):
-        try:
-            sample = next(iter(py_type))
-            value_type = typing.cast(type[typing.Any], type(sample.value))
-            openapi_type = _OPENAPI_TYPE_MAP.get(value_type, STRING_TYPE)
-            return SchemaProperty(type=openapi_type.type, enum=[e.value for e in py_type])
-        except StopIteration:
-            return SchemaProperty(type='string')
-
-    # Simple types
-    oa_type = _OPENAPI_TYPE_MAP.get(py_type, OBJECT_TYPE)
-    return SchemaProperty(type=oa_type.type, format=oa_type.format)
 
 
 # Info general
@@ -301,9 +215,10 @@ class Components:
         new_components = Components()
         new_components.schemas = {**self.schemas, **other.schemas}
         return new_components
-    
+
     def is_empty(self) -> bool:
         return not self.schemas
+
 
 # Documento OpenAPI completo
 @dataclasses.dataclass
@@ -320,9 +235,11 @@ class OpenAPI:
     components: Components = dataclasses.field(default_factory=Components)
 
     def as_dict(self) -> dict[str, typing.Any]:
-        return as_dict_without_none({
-            'openapi': self.openapi,
-            'info': self.info.as_dict(),
-            'paths': {k: v.as_dict() for k, v in self.paths.items()},
-            'components': self.components.as_dict(),
-        })
+        return as_dict_without_none(
+            {
+                'openapi': self.openapi,
+                'info': self.info.as_dict(),
+                'paths': {k: v.as_dict() for k, v in self.paths.items()},
+                'components': self.components.as_dict(),
+            }
+        )

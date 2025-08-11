@@ -68,11 +68,6 @@ class Handler(abc.ABC):
 
     ROLE: typing.ClassVar[consts.UserRole] = consts.UserRole.USER  # By default, only users can access
 
-    # For implementing help
-    # A list of pairs of (path, help) for subpaths on this handler
-    HELP_PATHS: typing.ClassVar[list[types.rest.doc.HelpDoc]] = []
-    HELP_TEXT: typing.ClassVar[str] = 'No help available'
-
     _request: 'ExtendedHttpRequestWithUser'  # It's a modified HttpRequest
     _path: str
     _operation: str

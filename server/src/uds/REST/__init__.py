@@ -33,4 +33,3 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 # Convenience imports, must be present before initializing handlers
 from .handlers import Handler
 from .dispatcher import Dispatcher
-from .documentation import Documentation

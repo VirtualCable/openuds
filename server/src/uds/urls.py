@@ -267,12 +267,6 @@ urlpatterns = [
         custom.custom,
         name='custom',
     ),
-    # REST API documentation
-    re_path(
-        r'^uds/rest/doc/?(?P<doc>.*)$',
-        REST.Documentation.as_view(),
-        name='REST.doc',
-    ),
     # REST API
     re_path(
         r'^uds/rest/(?P<arguments>.*)$',
@@ -281,7 +275,7 @@ urlpatterns = [
     ),
     # Web admin GUI
     re_path(
-        r'^uds/adm/',
+        r'^uds/adm5/',
         uds.admin.views.index,
         name='uds.admin.views.index',
     ),
