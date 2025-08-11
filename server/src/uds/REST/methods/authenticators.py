@@ -91,7 +91,7 @@ class AuthenticatorItem(types.rest.ManagedObjectItem[Authenticator]):
     users_count: int
     permission: int
 
-    type_info: types.rest.TypeInfo
+    type_info: types.rest.TypeInfo|None
 
 
 # Enclosed methods under /auth path
@@ -120,7 +120,7 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
     )
 
     @classmethod
-    def enum_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[auths.Authenticator]]:
+    def possible_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[auths.Authenticator]]:
         return auths.factory().providers().values()
 
     @classmethod
@@ -138,7 +138,7 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
                 create_users_supported=type_.create_user != auths.Authenticator.create_user,
                 is_external=type_.external_source,
                 mfa_data_enabled=type_.mfa_data_enabled,
-                mfa_supported=type_.provides_mfa(),
+                mfa_supported=type_.provides_mfa_identifier(),
             )
         # Not of my type
         return None
@@ -175,8 +175,8 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
                         )
                     )
 
-                    if auth_type.provides_mfa():
-                        gui.add_multichoice(
+                    if auth_type.provides_mfa_identifier():
+                        gui.add_choice(
                             name='mfa_id',
                             label=gettext('MFA Provider'),
                             choices=[ui.gui.choice_item('', str(_('None')))]

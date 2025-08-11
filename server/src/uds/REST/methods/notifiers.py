@@ -88,7 +88,7 @@ class Notifiers(ModelHandler[NotifierItem]):
     ).build()
 
     @classmethod
-    def enum_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[messaging.Notifier]]:
+    def possible_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[messaging.Notifier]]:
         return messaging.factory().providers().values()
 
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:

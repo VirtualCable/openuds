@@ -79,7 +79,7 @@ class MFA(ModelHandler[MFAItem]):
     )
 
     @classmethod
-    def enum_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[mfas.MFA]]:
+    def possible_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[mfas.MFA]]:
         return mfas.factory().providers().values()
 
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:

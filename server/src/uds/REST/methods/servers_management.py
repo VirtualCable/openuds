@@ -464,7 +464,7 @@ class ServersGroups(ModelHandler[GroupItem]):
         .build()
     )
 
-    def get_types(
+    def enum_types(
         self, *args: typing.Any, **kwargs: typing.Any
     ) -> typing.Generator[types.rest.TypeInfo, None, None]:
         for i in types.servers.ServerSubtype.manager().enum():

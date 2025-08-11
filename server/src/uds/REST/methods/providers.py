@@ -136,7 +136,7 @@ class Providers(ModelHandler[ProviderItem]):
 
     # Types related
     @classmethod
-    def enum_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[services.ServiceProvider]]:
+    def possible_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[services.ServiceProvider]]:
         return services.factory().providers().values()
 
     # Gui related

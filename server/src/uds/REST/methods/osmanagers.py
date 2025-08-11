@@ -108,7 +108,7 @@ class OsManagers(ModelHandler[OsManagerItem]):
 
     # Types related
     @classmethod
-    def enum_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[osmanagers.OSManager]]:
+    def possible_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[osmanagers.OSManager]]:
         return osmanagers.factory().providers().values()
 
     # Gui related

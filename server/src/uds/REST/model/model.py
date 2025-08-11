@@ -107,29 +107,23 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
     # This methods must be override, depending on what is provided
 
     # types related
+    # def possible_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[module.Module]]:
     @classmethod
-    def enum_types(cls: type[typing.Self]) -> collections.abc.Iterable[type['Module']]:  # override this
+    def possible_types(cls: type[typing.Self]) -> collections.abc.Iterable[type['Module']]:  # override this
         """
         Must be overriden by desdencents if they support types
         Excpetcs the list of types that the handler supports
         """
         return []
 
-    @classmethod
-    def possible_types(cls: type[typing.Self]) -> collections.abc.Iterable[type['Module']]:
-        """
-        So detail can share same structure
-        """
-        return cls.enum_types()
-
-    def get_types(
+    def enum_types(
         self, *args: typing.Any, **kwargs: typing.Any
     ) -> typing.Generator[types.rest.TypeInfo, None, None]:
-        for type_ in self.enum_types():
+        for type_ in self.possible_types():
             yield type(self).as_typeinfo(type_)
 
     def get_type(self, type_: str) -> types.rest.TypeInfo:
-        for v in self.get_types():
+        for v in self.enum_types():
             if v.type == type_:
                 return v
 
@@ -338,7 +332,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
             case [consts.rest.TABLEINFO, *_fails]:
                 raise exceptions.rest.RequestError('Invalid table info request') from None
             case [consts.rest.TYPES]:
-                return [i.as_dict() for i in self.get_types()]
+                return [i.as_dict() for i in self.enum_types()]
             case [consts.rest.TYPES, for_type]:
                 return self.get_type(for_type).as_dict()
             case [consts.rest.TYPES, for_type, *_fails]:
