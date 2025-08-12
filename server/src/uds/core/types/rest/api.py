@@ -34,9 +34,17 @@ class Info:
         return as_dict_without_none(dataclasses.asdict(self))
 
 
-# Parámetro
+# Parameter
 @dataclasses.dataclass
 class Parameter:
+    name: str
+    in_: str
+    required: bool
+    schema: dict[str, typing.Any]
+    description: str | None = None
+    style: str | None = None
+    explode: bool | None = None
+        
     name: str
     in_: str  # 'query', 'path', 'header', etc.
     required: bool
@@ -70,6 +78,7 @@ class Response:
 # Operación (GET, POST, etc.)
 @dataclasses.dataclass
 class Operation:
+    
     summary: str | None = None
     description: str | None = None
     parameters: list[Parameter] = dataclasses.field(default_factory=list[Parameter])

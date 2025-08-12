@@ -216,7 +216,7 @@ def api_components(dataclass: typing.Type[typing.Any]) -> 'api.Components':
         if dataclasses.is_dataclass(field_type):
             sub_component = api_uti.api_components(typing.cast(type[typing.Any], field_type))
             components = components.union(sub_component)
-            schema_prop = api.SchemaProperty(type=next(iter(sub_component.schemas.keys())), description=None)
+            schema_prop = api.SchemaProperty(type=f'#/components/schemas/{next(iter(sub_component.schemas.keys()))}', description=None)
         else:
             schema_prop = api_uti.python_type_to_openapi(field_type)
 

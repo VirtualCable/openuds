@@ -154,10 +154,18 @@ class BaseModelHandler(Handler, abc.ABC, typing.Generic[types.rest.T_Item]):
         """
         return types.rest.api.Components()
 
+    @classmethod
+    def api_paths(cls: type[typing.Self]) -> dict[str, types.rest.api.PathItem]:
+        """
+        Returns the API operations that should be registered
+        """
+        return {}
+
+    @typing.final
     @staticmethod
     def common_components() -> types.rest.api.Components:
         """
-        Returns a list of common components for the API
+        Returns a list of common components for the API for ModelHandlers (Model and Detail)
         """
         from uds.core.util import api as api_utils
 

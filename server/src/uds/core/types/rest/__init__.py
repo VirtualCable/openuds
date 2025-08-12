@@ -308,10 +308,44 @@ class HandlerNode:
     def __repr__(self) -> str:
         return str(self)
 
-    def tree(self, level: int = 0) -> str:
+    # Visit all nodes recursively, invoking a callback for each node with the node and path
+    def visit(
+        self, callback: typing.Callable[['HandlerNode', str, typing.Literal['handler', 'custom_method', 'detail_method'], int], None], path: str = '', level: int = 0
+    ) -> None:
+        from uds.REST.model import ModelHandler
+
+        if self.handler:
+            callback(self, path, 'handler', level)
+
+            if issubclass(self.handler, ModelHandler):
+                handler = typing.cast(
+                    type[ModelHandler[typing.Any]], self.handler  # pyright: ignore[reportUnknownMemberType]
+                )
+                for method in handler.CUSTOM_METHODS:
+                    callback(self, f'{path}/{method.name}' if path else method.name, 'custom_method', level + 1)
+                for detail_name in handler.DETAIL.keys() if handler.DETAIL else typing.cast(list[str], []):
+                    callback(self, f'{path}/{detail_name}' if path else detail_name, 'detail_method', level + 1)
+
+        for child in self.children.values():
+            child.visit(callback, f'{path}/{child.name}' if path else child.name, level + 1)
+
+    def tree(self) -> str:
         """
         Returns a string representation of the tree
         """
+        ret = ''
+
+        def _tree(node: HandlerNode, path: str, type_: typing.Literal['handler', 'custom_method', 'detail_method'], level: int) -> None:
+            nonlocal ret
+
+            if not node.handler:
+                raise ValueError(f'Node {node.name} has no handler, cannot generate tree')
+
+            ret += f'{"  " * level}* {path} {node.handler.__name__} ({type_})\n'
+
+        self.visit(_tree)
+        return ret
+
         from uds.REST.model import ModelHandler
 
         if self.handler is None:
@@ -324,7 +358,7 @@ class HandlerNode:
         if issubclass(self.handler, ModelHandler):
             # We don't mind the type of handler here, as we are just using it for introspection
             handler = typing.cast(
-                ModelHandler[typing.Any], self.handler  # pyright: ignore[reportUnknownMemberType]
+                type[ModelHandler[typing.Any]], self.handler  # pyright: ignore[reportUnknownMemberType]
             )
 
             # Add custom_methods

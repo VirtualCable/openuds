@@ -218,7 +218,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
         ]
         # URLS
         config['urls']['admin'] = reverse('uds.admin.views.index')
-        config['urls']['rest'] = reverse('REST', kwargs={'arguments': ''})
+        config['urls']['rest'] = reverse('REST', kwargs={'path': ''})
         # Admin config
         page_size = GlobalConfig.ADMIN_PAGESIZE.as_int(True)
         vnc_userservices = GlobalConfig.ADMIN_ENABLE_USERSERVICES_VNC.as_bool(True)

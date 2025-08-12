@@ -372,3 +372,10 @@ class Handler(abc.ABC):
         Returns the types that should be registered
         """
         return types.rest.api.Components()
+
+    @classmethod
+    def api_paths(cls: type[typing.Self]) -> dict[str, types.rest.api.PathItem]:
+        """
+        Returns the API operations that should be registered
+        """
+        return {}

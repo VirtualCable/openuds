@@ -68,7 +68,7 @@ class Dispatcher(View):
 
     @method_decorator(csrf_exempt)
     def dispatch(
-        self, request: 'http.request.HttpRequest', *args: typing.Any, **kwargs: typing.Any
+        self, request: 'http.request.HttpRequest', path: str
     ) -> 'http.HttpResponse':
         """
         Processes the REST request and routes it wherever it needs to be routed
@@ -82,8 +82,8 @@ class Dispatcher(View):
 
         # Now we extract method and possible variables from path
         # path: list[str] = kwargs['arguments'].split('/')
-        path = kwargs['arguments']
-        del kwargs['arguments']
+        # path = kwargs['arguments']
+        # del kwargs['arguments']
 
         # # Transverse service nodes, so we can locate class processing this path
         # service = Dispatcher.services
@@ -112,9 +112,11 @@ class Dispatcher(View):
         # ensure method is recognized
         if http_method not in ('get', 'post', 'put', 'delete'):
             return http.HttpResponseNotAllowed(['GET', 'POST', 'PUT', 'DELETE'], content_type="text/plain")
+        
+        node_full_path: typing.Final[str] = handler_node.full_path()
 
         # Path here has "remaining" path, that is, method part has been removed
-        args = path[len(handler_node.full_path()) :].split('/')[
+        args = path[len(node_full_path) :].split('/')[
             1:
         ]  # First element is always empty, so we skip it
 
@@ -123,11 +125,10 @@ class Dispatcher(View):
         try:
             handler = cls(
                 request,
-                handler_node.full_path(),
+                node_full_path,
                 http_method,
                 processor.process_parameters(),
                 *args,
-                **kwargs,
             )
             operation: collections.abc.Callable[[], typing.Any] = getattr(handler, http_method)
         except processors.ParametersException as e:

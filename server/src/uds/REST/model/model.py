@@ -323,6 +323,8 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
                 return operation()
 
         match self._args:
+            case []:  # Same as overview, but with all data
+                return [i.as_dict() for i in self.get_items(overview=False)]
             case [consts.rest.OVERVIEW]:
                 return [i.as_dict() for i in self.get_items()]
             case [consts.rest.OVERVIEW, *_fails]:
@@ -506,3 +508,41 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
     @classmethod
     def api_components(cls: type[typing.Self]) -> types.rest.api.Components:
         return api_utils.get_component_from_type(cls)
+
+    @classmethod
+    def api_paths(cls: type[typing.Self]) -> dict[str, types.rest.api.PathItem]:
+        """
+        Returns the API operations that should be registered
+        """
+            # case []:  # Same as overview, but with all data
+            #     return [i.as_dict() for i in self.get_items(overview=False)]
+            # case [consts.rest.OVERVIEW]:
+            #     return [i.as_dict() for i in self.get_items()]
+            # case [consts.rest.OVERVIEW, *_fails]:
+            #     raise exceptions.rest.RequestError('Invalid overview request') from None
+            # case [consts.rest.TABLEINFO]:
+            #     return self.TABLE.as_dict()
+            # case [consts.rest.TABLEINFO, *_fails]:
+            #     raise exceptions.rest.RequestError('Invalid table info request') from None
+            # case [consts.rest.TYPES]:
+            #     return [i.as_dict() for i in self.enum_types()]
+            # case [consts.rest.TYPES, for_type]:
+            #     return self.get_type(for_type).as_dict()
+            # case [consts.rest.TYPES, for_type, *_fails]:
+            #     raise exceptions.rest.RequestError('Invalid type request') from None
+            # case [consts.rest.GUI]:
+            #     return self.get_processed_gui('')
+            # case [consts.rest.GUI, for_type]:
+            #     return self.get_processed_gui(for_type)
+            # case [consts.rest.GUI, for_type, *_fails]:
+            #     raise exceptions.rest.RequestError('Invalid GUI request') from None
+        return {
+            '': types.rest.api.PathItem(
+                get=types.rest.api.Operation(
+                    summary=f'Get all {cls.MODEL.__name__} items',
+                    description=f'Retrieve a list of all {cls.MODEL.__name__} items',
+                    parameters=[],
+                    responses={}
+                )
+            )
+        }

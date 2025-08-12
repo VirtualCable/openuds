@@ -155,12 +155,12 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
                         (
                             ui_utils.GuiBuilder()
                             .set_order(100)
-                            .add_stock_field(types.rest.stock.StockField.NAME)
-                            .add_stock_field(types.rest.stock.StockField.COMMENTS)
-                            .add_stock_field(types.rest.stock.StockField.TAGS)
                             .add_stock_field(types.rest.stock.StockField.PRIORITY)
+                            .add_stock_field(types.rest.stock.StockField.NAME)
                             .add_stock_field(types.rest.stock.StockField.LABEL)
                             .add_stock_field(types.rest.stock.StockField.NETWORKS)
+                            .add_stock_field(types.rest.stock.StockField.COMMENTS)
+                            .add_stock_field(types.rest.stock.StockField.TAGS)
                         )
                         .add_fields(auth_instance.gui_description())
                         .add_choice(

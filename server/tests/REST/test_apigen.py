@@ -139,20 +139,39 @@ class TestApiGenBasic(UDSTestCase):
         with open('/tmp/uds_api.json', 'w') as f:
             f.write(json.dumps(comps.as_dict(), indent=4))
 
+    def test_handler_urls(self) -> None:
+        root_node = dispatcher.Dispatcher.root_node
+        for line in root_node.tree().splitlines():
+            logger.info('*> %s', line)
+
+        def process_node(
+            node: 'types.rest.HandlerNode',
+            path: str,
+            type_: str,
+            level: int,
+        ) -> None:
+            if node.handler is None:
+                raise ValueError(f'Node {node.name} has no handler, cannot process')
+            logger.info("Processing node: %s, %s", node.name, type_)
+            # 'handler', 'custom_method', 'detail_method'
+            match type_:
+                case 'custom_method':
+                    pass
+                case 'detail_method':
+                    pass
+                case 'handler':
+                    pass
+                case _:
+                    raise ValueError(f'Unknown type {type_} for node {node.name}')
+
+        root_node.visit(process_node)
+
     def test_python_type_to_openapi(self) -> None:
         # Test basic types
-        self.assertEqual(
-            util_api.python_type_to_openapi(int), types.rest.api.SchemaProperty(type='integer')
-        )
-        self.assertEqual(
-            util_api.python_type_to_openapi(str), types.rest.api.SchemaProperty(type='string')
-        )
-        self.assertEqual(
-            util_api.python_type_to_openapi(float), types.rest.api.SchemaProperty(type='number')
-        )
-        self.assertEqual(
-            util_api.python_type_to_openapi(bool), types.rest.api.SchemaProperty(type='boolean')
-        )
+        self.assertEqual(util_api.python_type_to_openapi(int), types.rest.api.SchemaProperty(type='integer'))
+        self.assertEqual(util_api.python_type_to_openapi(str), types.rest.api.SchemaProperty(type='string'))
+        self.assertEqual(util_api.python_type_to_openapi(float), types.rest.api.SchemaProperty(type='number'))
+        self.assertEqual(util_api.python_type_to_openapi(bool), types.rest.api.SchemaProperty(type='boolean'))
         self.assertEqual(
             util_api.python_type_to_openapi(type(None)), types.rest.api.SchemaProperty(type='"null"')
         )

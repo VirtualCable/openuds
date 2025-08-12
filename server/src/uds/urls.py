@@ -269,7 +269,7 @@ urlpatterns = [
     ),
     # REST API
     re_path(
-        r'^uds/rest/(?P<arguments>.*)$',
+        r'^uds/rest/(?P<path>.*)$',
         REST.Dispatcher.as_view(),
         name='REST',
     ),

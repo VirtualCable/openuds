@@ -345,3 +345,10 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item]):
         """
         # If no get_items, has no components (if custom components is needed, override this classmethod)
         return api_utils.get_component_from_type(cls)
+
+    @classmethod
+    def api_paths(cls: type[typing.Self]) -> dict[str, types.rest.api.PathItem]:
+        """
+        Returns the API operations that should be registered
+        """
+        return {}
