@@ -44,7 +44,7 @@ from uds.core import exceptions, types
 # from uds.models.user_service import UserService
 # from uds.models.user import User
 
-from uds.core.types.rest import Table
+from uds.core.types.rest import TableInfo
 from uds.core.types.states import State
 from uds.core.util.model import process_uuid
 from uds.core.util import log, ensure, ui as ui_utils
@@ -105,7 +105,7 @@ class MetaServicesPool(DetailHandler[MetaItem]):
             logger.exception('err: %s', item)
             raise exceptions.rest.RequestError(f'Error retrieving meta pool member: {e}') from e
 
-    def get_table(self, parent: 'Model') -> types.rest.Table:
+    def get_table(self, parent: 'Model') -> types.rest.TableInfo:
         parent = ensure.is_instance(parent, models.MetaPool)
         return (
             ui_utils.TableBuilder(_('Members of {0}').format(parent.name))
@@ -233,7 +233,7 @@ class MetaAssignedService(DetailHandler[UserServiceItem]):
             logger.exception('get_items')
             raise exceptions.rest.RequestError(f'Error retrieving meta pool member: {e}') from e
 
-    def get_table(self, parent: 'Model') -> Table:
+    def get_table(self, parent: 'Model') -> TableInfo:
         parent = ensure.is_instance(parent, models.MetaPool)
         return (
             ui_utils.TableBuilder(_('Assigned services to {0}').format(parent.name))

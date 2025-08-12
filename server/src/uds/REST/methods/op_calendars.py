@@ -40,7 +40,7 @@ from django.utils.translation import gettext as _
 from django.db.models import Model
 
 from uds.core import exceptions, types, consts
-from uds.core.types.rest import Table
+from uds.core.types.rest import TableInfo
 from uds.core.util import log, ensure, ui as ui_utils
 from uds.core.util.model import process_uuid
 from uds import models
@@ -90,7 +90,7 @@ class AccessCalendars(DetailHandler[AccessCalendarItem]):
             logger.exception('err: %s', item)
             raise exceptions.rest.RequestError(f'Error retrieving access calendar: {e}') from e
 
-    def get_table(self, parent: 'Model') -> types.rest.Table:
+    def get_table(self, parent: 'Model') -> types.rest.TableInfo:
         return (
             ui_utils.TableBuilder(_('Access calendars'))
             .numeric_column('priority', _('Priority'))
@@ -206,7 +206,7 @@ class ActionsCalendars(DetailHandler[ActionCalendarItem]):
             logger.error('Error retrieving scheduled action %s: %s', item, e)
             raise exceptions.rest.RequestError(f'Error retrieving scheduled action: {e}') from e
 
-    def get_table(self, parent: 'Model') -> Table:
+    def get_table(self, parent: 'Model') -> TableInfo:
         return (
             ui_utils.TableBuilder(_('Scheduled actions'))
             .text_column('calendar', _('Calendar'))

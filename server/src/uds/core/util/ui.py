@@ -523,11 +523,11 @@ class TableBuilder:
         self.style_info = types.rest.RowStyleInfo(prefix=prefix, field=field)
         return self
 
-    def build(self) -> types.rest.Table:
+    def build(self) -> types.rest.TableInfo:
         """
         Returns the table info for the table fields.
         """
-        return types.rest.Table(
+        return types.rest.TableInfo(
             title=self.title,
             fields=self.fields,
             row_style=self.style_info,

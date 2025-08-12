@@ -136,7 +136,7 @@ class Users(DetailHandler[UserItem]):
             logger.error('Error getting user %s: %s', item, e)
             raise exceptions.rest.ResponseError(_('Error getting user')) from e
 
-    def get_table(self, parent: 'Model') -> types.rest.Table:
+    def get_table(self, parent: 'Model') -> types.rest.TableInfo:
         parent = ensure.is_instance(parent, Authenticator)
         return (
             ui_utils.TableBuilder(_('Users of {0}').format(parent.name))
@@ -387,7 +387,7 @@ class Groups(DetailHandler[GroupItem]):
             logger.error('Group item not found: %s.%s: %s', parent.name, item, e)
             raise exceptions.rest.ResponseError(_('Error getting group')) from e
 
-    def get_table(self, parent: 'Model') -> types.rest.Table:
+    def get_table(self, parent: 'Model') -> types.rest.TableInfo:
         parent = ensure.is_instance(parent, Authenticator)
         return (
             ui_utils.TableBuilder(_('Groups of {0}').format(parent.name))

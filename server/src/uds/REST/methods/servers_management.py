@@ -39,7 +39,7 @@ from django.db.models import Model
 
 from uds import models
 from uds.core import consts, exceptions, types
-from uds.core.types.rest import Table
+from uds.core.types.rest import TableInfo
 from uds.core.util import net, permissions, ensure, ui as ui_utils
 from uds.core.util.model import sql_now, process_uuid
 from uds.core.exceptions.rest import NotFound, RequestError
@@ -185,7 +185,7 @@ class ServersServers(DetailHandler[ServerItem]):
             logger.exception('Error getting server')
             raise exceptions.rest.ResponseError(_('Error getting server')) from None
 
-    def get_table(self, parent: 'Model') -> Table:
+    def get_table(self, parent: 'Model') -> TableInfo:
         parent = ensure.is_instance(parent, models.ServerGroup)
         table_info = (
             ui_utils.TableBuilder(_('Servers of {0}').format(parent.name))

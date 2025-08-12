@@ -38,7 +38,7 @@ from django.db.models import Model
 
 import uds.core.types.permissions
 from uds.core import exceptions, types, consts
-from uds.core.types.rest import Table
+from uds.core.types.rest import TableInfo
 from uds.core.util import permissions, validators, ensure, ui as ui_utils
 from uds.core.util.model import process_uuid
 from uds import models
@@ -93,7 +93,7 @@ class TunnelServers(DetailHandler[TunnelServerItem]):
             logger.error('Error getting tunnel servers for %s: %s', parent, e)
             raise exceptions.rest.ResponseError(_('Error getting tunnel servers')) from e
 
-    def get_table(self, parent: 'Model') -> Table:
+    def get_table(self, parent: 'Model') -> TableInfo:
         parent = ensure.is_instance(parent, models.ServerGroup)
         return (
             ui_utils.TableBuilder(_('Servers of {0}').format(parent.name))

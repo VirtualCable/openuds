@@ -102,7 +102,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
     EXCLUDED_FIELDS: typing.ClassVar[list[str]] = []
     # Table info needed fields and title
 
-    TABLE: typing.ClassVar[types.rest.Table] = types.rest.Table.null()
+    TABLE: typing.ClassVar[types.rest.TableInfo] = types.rest.TableInfo.null()
 
     # This methods must be override, depending on what is provided
 

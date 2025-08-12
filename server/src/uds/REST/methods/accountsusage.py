@@ -39,7 +39,7 @@ from django.utils.translation import gettext as _
 from django.db.models import Model
 
 from uds.core import exceptions, types
-from uds.core.types.rest import Table
+from uds.core.types.rest import TableInfo
 from uds.core.util import ensure, permissions, ui as ui_utils
 from uds.core.util.model import process_uuid
 from uds.models import Account, AccountUsage
@@ -103,7 +103,7 @@ class AccountsUsage(DetailHandler[AccountItem]):  # pylint: disable=too-many-pub
             logger.exception('itemId %s', item)
             raise exceptions.rest.NotFound(_('Account usage not found: {}').format(item)) from None
 
-    def get_table(self, parent: 'Model') -> Table:
+    def get_table(self, parent: 'Model') -> TableInfo:
         parent = ensure.is_instance(parent, Account)
         return (
             ui_utils.TableBuilder(_('Usages of {0}').format(parent.name))

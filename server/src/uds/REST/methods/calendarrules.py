@@ -106,7 +106,7 @@ class CalendarRules(DetailHandler[CalendarRuleItem]):  # pylint: disable=too-man
             logger.exception('itemId %s', item)
             raise exceptions.rest.RequestError(f'Error retrieving calendar rule: {e}') from e
 
-    def get_table(self, parent: 'models.Model') -> types.rest.Table:
+    def get_table(self, parent: 'models.Model') -> types.rest.TableInfo:
         parent = ensure.is_instance(parent, Calendar)
         return (
             ui_utils.TableBuilder(_('Rules of {0}').format(parent.name))

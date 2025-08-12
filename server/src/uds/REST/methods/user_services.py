@@ -43,7 +43,7 @@ import uds.core.types.permissions
 from uds import models
 from uds.core import exceptions, types
 from uds.core.managers.userservice import UserServiceManager
-from uds.core.types.rest import Table
+from uds.core.types.rest import TableInfo
 from uds.core.types.states import State
 from uds.core.util import ensure, log, permissions, ui as ui_utils
 from uds.core.util.model import process_uuid
@@ -180,7 +180,7 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
             logger.error('Error getting user service %s: %s', item, e)
             raise exceptions.rest.ResponseError(_('Error getting user service')) from e
 
-    def get_table(self, parent: 'Model') -> types.rest.Table:
+    def get_table(self, parent: 'Model') -> types.rest.TableInfo:
         parent = ensure.is_instance(parent, models.ServicePool)
         table_info = ui_utils.TableBuilder(_('Assigned Services')).datetime_column(
             name='creation_date', title=_('Creation date')
@@ -315,7 +315,7 @@ class CachedService(AssignedUserService):
             logger.error('Error getting user service %s: %s', item, e)
             raise exceptions.rest.ResponseError(_('Error getting user service')) from e
 
-    def get_table(self, parent: 'Model') -> types.rest.Table:
+    def get_table(self, parent: 'Model') -> types.rest.TableInfo:
         parent = ensure.is_instance(parent, models.ServicePool)
         table_info = (
             ui_utils.TableBuilder(_('Cached Services'))
@@ -381,7 +381,7 @@ class Groups(DetailHandler[GroupItem]):
             for group in typing.cast(collections.abc.Iterable[models.Group], parent.assignedGroups.all())
         ]
 
-    def get_table(self, parent: 'Model') -> Table:
+    def get_table(self, parent: 'Model') -> TableInfo:
         parent = typing.cast(typing.Union['models.ServicePool', 'models.MetaPool'], parent)
         return (
             ui_utils.TableBuilder(_('Assigned groups'))
@@ -448,7 +448,7 @@ class Transports(DetailHandler[TransportItem]):
             for trans in parent.transports.all()
         ]
 
-    def get_table(self, parent: 'Model') -> Table:
+    def get_table(self, parent: 'Model') -> TableInfo:
         parent = ensure.is_instance(parent, models.ServicePool)
         return (
             ui_utils.TableBuilder(_('Assigned transports'))
@@ -572,7 +572,7 @@ class Publications(DetailHandler[PublicationItem]):
             for i in parent.publications.all()
         ]
 
-    def get_table(self, parent: 'Model') -> Table:
+    def get_table(self, parent: 'Model') -> TableInfo:
         parent = ensure.is_instance(parent, models.ServicePool)
         return (
             ui_utils.TableBuilder(_('Publications'))
@@ -607,7 +607,7 @@ class Changelog(DetailHandler[ChangelogItem]):
             for i in parent.changelog.all()
         ]
 
-    def get_table(self, parent: 'Model') -> types.rest.Table:
+    def get_table(self, parent: 'Model') -> types.rest.TableInfo:
         parent = ensure.is_instance(parent, models.ServicePool)
         return (
             ui_utils.TableBuilder(_('Changelog'))

@@ -161,4 +161,4 @@ class BaseModelHandler(Handler, abc.ABC, typing.Generic[types.rest.T_Item]):
         """
         from uds.core.util import api as api_utils
 
-        return api_utils.api_components(types.rest.TypeInfo) | api_utils.api_components(types.rest.Table)
+        return api_utils.api_components(types.rest.TypeInfo) | api_utils.api_components(types.rest.TableInfo)

@@ -212,7 +212,14 @@ def api_components(dataclass: typing.Type[typing.Any]) -> 'api.Components':
         if not field_type:
             raise Exception(f'Field {field.name} has no type hint')
 
-        schema_prop = api_uti.python_type_to_openapi(field_type)
+        # If it is a dataclass, get its API components
+        if dataclasses.is_dataclass(field_type):
+            sub_component = api_uti.api_components(typing.cast(type[typing.Any], field_type))
+            components = components.union(sub_component)
+            schema_prop = api.SchemaProperty(type=next(iter(sub_component.schemas.keys())), description=None)
+        else:
+            schema_prop = api_uti.python_type_to_openapi(field_type)
+
         schema.properties[field.name] = schema_prop
         if field.default is dataclasses.MISSING and field.default_factory is dataclasses.MISSING:
             schema.required.append(field.name)

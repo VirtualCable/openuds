@@ -283,13 +283,13 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item]):
         """
         raise exceptions.rest.InvalidMethodError('Object does not support delete')
 
-    def get_table(self, parent: models.Model) -> types.rest.Table:
+    def get_table(self, parent: models.Model) -> types.rest.TableInfo:
         """
         Returns the table info for this detail, that is the title, fields and row style
         :param parent: Parent object
         :return: TableInfo object with title, fields and row style
         """
-        return types.rest.Table.null()
+        return types.rest.TableInfo.null()
 
     def get_gui(self, parent: models.Model, for_type: str) -> list[types.ui.GuiElement]:
         """

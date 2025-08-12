@@ -43,7 +43,7 @@ from uds import models
 
 from uds.core import exceptions, types, module, services
 import uds.core.types.permissions
-from uds.core.types.rest import Table
+from uds.core.types.rest import TableInfo
 from uds.core.util import log, permissions, ensure, ui as ui_utils
 from uds.core.util.model import process_uuid
 from uds.core.environment import Environment
@@ -265,7 +265,7 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
 
         raise exceptions.rest.RequestError('Item has associated deployed services')
 
-    def get_table(self, parent: 'Model') -> Table:
+    def get_table(self, parent: 'Model') -> TableInfo:
         parent = ensure.is_instance(parent, models.Provider)
         return (
             ui_utils.TableBuilder(_('Services of {0}').format(parent.name))

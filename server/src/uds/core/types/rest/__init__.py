@@ -264,7 +264,7 @@ class RowStyleInfo:
 
 
 @dataclasses.dataclass
-class Table:
+class TableInfo:
     """
     Represents the table info for a REST API endpoint.
     This is used to describe the table fields and row style.
@@ -284,11 +284,11 @@ class Table:
         }
 
     @staticmethod
-    def null() -> 'Table':
+    def null() -> 'TableInfo':
         """
         Returns a null TableInfo instance, with no fields and an empty title.
         """
-        return Table(title='', fields=[], row_style=RowStyleInfo.null(), subtitle=None)
+        return TableInfo(title='', fields=[], row_style=RowStyleInfo.null(), subtitle=None)
 
 
 @dataclasses.dataclass(frozen=True)

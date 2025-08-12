@@ -134,7 +134,7 @@ class ServicesUsage(DetailHandler[ServicesUsageItem]):
             logger.error('Error getting services usage for %s: %s', parent.uuid, e)
             raise exceptions.rest.ResponseError(_('Error getting services usage')) from None
 
-    def get_table(self, parent: 'Model') -> types.rest.Table:
+    def get_table(self, parent: 'Model') -> types.rest.TableInfo:
         parent = ensure.is_instance(parent, Provider)
         return (
             ui_utils.TableBuilder(_('Services Usage'))
