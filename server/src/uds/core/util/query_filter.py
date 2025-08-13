@@ -82,7 +82,8 @@ NAME: CNAME ("." CNAME)*
 # So we ensure all returned functions have the same signature and can be composed together
 # Note that value can receive function or final values, as it is composed of
 # terminals and
-_T_Result: typing.TypeAlias = collections.abc.Callable[[dict[str, typing.Any]], typing.Any]
+_T_Result: typing.TypeAlias = collections.abc.Callable[[typing.Any], typing.Any]
+T = typing.TypeVar('T')
 
 _QUERY_PARSER_VAR: typing.Final[contextvars.ContextVar[lark.Lark]] = contextvars.ContextVar("query_parser")
 
@@ -132,7 +133,7 @@ class QueryTransformer(lark.Transformer[typing.Any, _T_Result]):
                 case _:
                     raise ValueError(f"Unexpected token type: {arg.type}")
         elif isinstance(arg, typing.Callable):
-            return lambda obj: typing.cast(_T_Result, arg)(obj)
+            return arg
 
         return lambda _obj: value
 
@@ -154,17 +155,25 @@ class QueryTransformer(lark.Transformer[typing.Any, _T_Result]):
     def field(self, arg: lark.Token) -> _T_Result:
         """
         Transforms a field token into a filtering function.
-        
+
         Args:
             arg: The field token to transform.
 
         Returns:
             A filtering function that returns the value of the field from the input dictionary.
         """
-        def getter(obj: dict[str, typing.Any]) -> typing.Any:
-            for part in arg.value.split('.'):
-                obj = obj.get(part, {})
-            return obj
+
+        def getter(obj: typing.Any) -> typing.Any:
+            if isinstance(obj, dict):
+                for part in arg.value.split('.'):
+                    obj = typing.cast(dict[str, typing.Any], obj).get(part, {})
+            else:
+                try:
+                    for part in arg.value.split('.'):
+                        obj = getattr(obj, part)
+                except AttributeError:  # Nonexisting fields simple maps to empty value
+                    return ''
+            return typing.cast(typing.Any, obj)
 
         return getter
 
@@ -181,6 +190,7 @@ class QueryTransformer(lark.Transformer[typing.Any, _T_Result]):
         Returns:
             A filtering function that applies the comparison operator to the operands.
         """
+
         def _compare(val_left: str | int | float, val_right: str | int | float) -> int:
             if type(val_left) != type(val_right):
                 val_left = str(val_left)
@@ -208,105 +218,105 @@ class QueryTransformer(lark.Transformer[typing.Any, _T_Result]):
 
     @lark.visitors.v_args(inline=True)
     def logical_and(self, left: _T_Result, right: _T_Result) -> _T_Result:
-            """
-            Transforms a logical AND expression into a filtering function.
+        """
+        Transforms a logical AND expression into a filtering function.
 
-            Args:
-                left: The left operand as a filtering function.
-                right: The right operand as a filtering function.
+        Args:
+            left: The left operand as a filtering function.
+            right: The right operand as a filtering function.
 
-            Returns:
-                A filtering function that returns True if both operands are True.
-            """
-            return lambda item: left(item) and right(item)
+        Returns:
+            A filtering function that returns True if both operands are True.
+        """
+        return lambda item: left(item) and right(item)
 
     @lark.visitors.v_args(inline=True)
     def logical_or(self, left: _T_Result, right: _T_Result) -> _T_Result:
-            """
-            Transforms a logical OR expression into a filtering function.
+        """
+        Transforms a logical OR expression into a filtering function.
 
-            Args:
-                left: The left operand as a filtering function.
-                right: The right operand as a filtering function.
+        Args:
+            left: The left operand as a filtering function.
+            right: The right operand as a filtering function.
 
-            Returns:
-                A filtering function that returns True if either operand is True.
-            """
-            return lambda item: left(item) or right(item)
+        Returns:
+            A filtering function that returns True if either operand is True.
+        """
+        return lambda item: left(item) or right(item)
 
     @lark.visitors.v_args(inline=True)
     def unary_not(self, expr: _T_Result) -> _T_Result:
-            """
-            Transforms a logical NOT expression into a filtering function.
+        """
+        Transforms a logical NOT expression into a filtering function.
 
-            Args:
-                expr: The operand as a filtering function.
+        Args:
+            expr: The operand as a filtering function.
 
-            Returns:
-                A filtering function that returns the negation of the operand.
-            """
-            return lambda item: not expr(item)
+        Returns:
+            A filtering function that returns the negation of the operand.
+        """
+        return lambda item: not expr(item)
 
     @lark.visitors.v_args(inline=True)
     def paren_expr(self, expr: _T_Result) -> _T_Result:
-            """
-            Returns the filtering function for a parenthesized expression.
+        """
+        Returns the filtering function for a parenthesized expression.
 
-            Args:
-                expr: The filtering function inside parentheses.
+        Args:
+            expr: The filtering function inside parentheses.
 
-            Returns:
-                The same filtering function.
-            """
-            return expr
+        Returns:
+            The same filtering function.
+        """
+        return expr
 
     @lark.visitors.v_args(inline=True)
     def func_call(self, func: lark.Token, *args: _T_Result) -> _T_Result:
-            """
-            Transforms a function call into a filtering function.
+        """
+        Transforms a function call into a filtering function.
 
-            Args:
-                func: The function name token.
-                *args: Arguments as filtering functions.
+        Args:
+            func: The function name token.
+            *args: Arguments as filtering functions.
 
-            Returns:
-                A filtering function that applies the specified function to the arguments.
-            """
-            func_name = func.value.lower()
-            # If unknown function, raise an error
-            if func_name not in _FUNCTIONS_PARAMS_NUM:
+        Returns:
+            A filtering function that applies the specified function to the arguments.
+        """
+        func_name = func.value.lower()
+        # If unknown function, raise an error
+        if func_name not in _FUNCTIONS_PARAMS_NUM:
+            raise ValueError(f"Unknown function: {func.value}")
+
+        if len(args) != _FUNCTIONS_PARAMS_NUM[func_name]:
+            raise ValueError(
+                f"{func_name} function requires exactly {_FUNCTIONS_PARAMS_NUM[func_name]} arguments"
+            )
+        match func_name:
+            case 'substringof':
+                return lambda obj: str(args[1](obj)).find(str(args[0](obj))) != -1
+            case 'startswith':
+                return lambda obj: str(args[0](obj)).startswith(str(args[1](obj)))
+            case 'endswith':
+                return lambda obj: str(args[0](obj)).endswith(str(args[1](obj)))
+            case 'indexof':
+                return lambda obj: str(args[0](obj)).find(str(args[1](obj)))
+            case 'concat':
+                return lambda obj: str(args[0](obj)) + str(args[1](obj))
+            case 'length':
+                return lambda obj: len(str(args[0](obj)))
+            case 'tolower':
+                return lambda obj: str(args[0](obj)).lower()
+            case 'toupper':
+                return lambda obj: str(args[0](obj)).upper()
+            case 'year':
+                return lambda obj: str(args[0](obj)).split('-')[0] if isinstance(args[0](obj), str) else ''
+            case 'month':
+                return lambda obj: str(args[0](obj)).split('-')[1] if isinstance(args[0](obj), str) else ''
+            case 'day':
+                return lambda obj: str(args[0](obj)).split('-')[2] if isinstance(args[0](obj), str) else ''
+            case _:
+                # Will never reach this, as it has been already
                 raise ValueError(f"Unknown function: {func.value}")
-
-            if len(args) != _FUNCTIONS_PARAMS_NUM[func_name]:
-                raise ValueError(
-                    f"{func_name} function requires exactly {_FUNCTIONS_PARAMS_NUM[func_name]} arguments"
-                )
-            match func_name:
-                case 'substringof':
-                    return lambda obj: str(args[1](obj)).find(str(args[0](obj))) != -1
-                case 'startswith':
-                    return lambda obj: str(args[0](obj)).startswith(str(args[1](obj)))
-                case 'endswith':
-                    return lambda obj: str(args[0](obj)).endswith(str(args[1](obj)))
-                case 'indexof':
-                    return lambda obj: str(args[0](obj)).find(str(args[1](obj)))
-                case 'concat':
-                    return lambda obj: str(args[0](obj)) + str(args[1](obj))
-                case 'length':
-                    return lambda obj: len(str(args[0](obj)))
-                case 'tolower':
-                    return lambda obj: str(args[0](obj)).lower()
-                case 'toupper':
-                    return lambda obj: str(args[0](obj)).upper()
-                case 'year':
-                    return lambda obj: str(args[0](obj)).split('-')[0] if isinstance(args[0](obj), str) else ''
-                case 'month':
-                    return lambda obj: str(args[0](obj)).split('-')[1] if isinstance(args[0](obj), str) else ''
-                case 'day':
-                    return lambda obj: str(args[0](obj)).split('-')[2] if isinstance(args[0](obj), str) else ''
-                case _:
-                    # Will never reach this, as it has been already
-                    raise ValueError(f"Unknown function: {func.value}")
 
 
 def get_parser() -> lark.Lark:
@@ -324,7 +334,7 @@ def get_parser() -> lark.Lark:
         return parser
 
 
-def exec_filter(data: list[dict[str, typing.Any]], query: str) -> typing.Iterable[dict[str, typing.Any]]:
+def exec_query(data: list[T], query: str) -> typing.Iterable[T]:
     """
     Filters a list of dictionaries using a query string.
 
@@ -338,5 +348,5 @@ def exec_filter(data: list[dict[str, typing.Any]], query: str) -> typing.Iterabl
     try:
         filter_func = typing.cast(_T_Result, get_parser().parse(query))
         return filter(filter_func, data)
-    except Exception as e:
+    except lark.exceptions.LarkError as e:
         raise ValueError(f"Error processing query: {e}") from None
