@@ -93,13 +93,23 @@ class TestQueryFilter(unittest.TestCase):
         expected = [{"first": "John", "last": "Doe"}]
         self.assertEqual(result, expected)
 
-    def test_indexof_function(self):
+    def test_indexof_function_case_sensitive(self):
         result = list(exec_filter(self.data, "indexof(name,'a') ge 0"))
         expected = [
             {"name": "Charlie", "age": 35},
             {"name": "David", "age": 30},
         ]
         self.assertEqual(result, expected)
+        
+    def test_indexof_function_case_insensitive(self):
+        result = list(exec_filter(self.data, "indexof(tolower(name),'a') ge 0"))
+        expected = [
+            {"name": "Alice", "age": 30},
+            {"name": "Charlie", "age": 35},
+            {"name": "David", "age": 30},
+        ]
+        self.assertEqual(result, expected)
+        
 
     def test_substringof_function(self):
         result = list(exec_filter(self.data, "substringof('li',name)"))
