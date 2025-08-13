@@ -53,10 +53,10 @@ class TestQueryFilter(unittest.TestCase):
     def test_grouped_expression_with_parentheses(self):
         query = "not (age gt 30 or name eq 'Bob')"
         result = list(exec_filter(self.data, query))
-        # Esperamos solo a Alice y David, porque:
-        # - Charlie tiene age > 30 → excluido
-        # - Bob tiene name eq 'Bob' → excluido
-        # - Alice y David tienen age == 30 y name != 'Bob' → incluidos
+        # We expect:
+        # - Charlie has age > 30 → excluded
+        # - Bob has name eq 'Bob' → excluded
+        # - Alice and David have age == 30 and name != 'Bob' → included
         expected = [
             {"name": "Alice", "age": 30},
             {"name": "David", "age": 30},
@@ -72,4 +72,81 @@ class TestQueryFilter(unittest.TestCase):
     def test_unary_func_length(self):
         result = list(exec_filter(self.data, "length(name) eq 5"))
         expected = [{"name": "Alice", "age": 30}, {"name": "David", "age": 30}]
+        self.assertEqual(result, expected)
+
+    def test_toupper_function(self):
+        result = list(exec_filter(self.data, "toupper(name) eq 'ALICE'"))
+        expected = [{"name": "Alice", "age": 30}]
+        self.assertEqual(result, expected)
+
+    def test_tolower_function(self):
+        result = list(exec_filter(self.data, "tolower(name) eq 'david'"))
+        expected = [{"name": "David", "age": 30}]
+        self.assertEqual(result, expected)
+
+    def test_concat_function(self):
+        data = [
+            {"first": "John", "last": "Doe"},
+            {"first": "Jane", "last": "Smith"},
+        ]
+        result = list(exec_filter(data, "concat(first,last) eq 'JohnDoe'"))
+        expected = [{"first": "John", "last": "Doe"}]
+        self.assertEqual(result, expected)
+
+    def test_indexof_function(self):
+        result = list(exec_filter(self.data, "indexof(name,'a') ge 0"))
+        expected = [
+            {"name": "Charlie", "age": 35},
+            {"name": "David", "age": 30},
+        ]
+        self.assertEqual(result, expected)
+
+    def test_substringof_function(self):
+        result = list(exec_filter(self.data, "substringof('li',name)"))
+        expected = [{"name": "Alice", "age": 30}, {"name": "Charlie", "age": 35}]
+        self.assertEqual(result, expected)
+
+    def test_year_function(self):
+        data = [
+            {"dob": "1990-05-12"},
+            {"dob": "1985-11-30"},
+        ]
+        result = list(exec_filter(data, "year(dob) eq '1990'"))
+        expected = [{"dob": "1990-05-12"}]
+        self.assertEqual(result, expected)
+
+    def test_month_function(self):
+        data = [
+            {"dob": "1990-05-12"},
+            {"dob": "1985-11-30"},
+        ]
+        result = list(exec_filter(data, "month(dob) eq '11'"))
+        expected = [{"dob": "1985-11-30"}]
+        self.assertEqual(result, expected)
+
+    def test_day_function(self):
+        data = [
+            {"dob": "1990-05-12"},
+            {"dob": "1985-11-30"},
+        ]
+        result = list(exec_filter(data, "day(dob) eq '12'"))
+        expected = [{"dob": "1990-05-12"}]
+        self.assertEqual(result, expected)
+
+    def test_nested_field_access(self):
+        data = [
+            {"user": {"name": "Alice"}},
+            {"user": {"name": "Bob"}},
+        ]
+        result = list(exec_filter(data, "user.name eq 'Bob'"))
+        expected = [{"user": {"name": "Bob"}}]
+        self.assertEqual(result, expected)
+
+    def test_not_with_parentheses(self):
+        result = list(exec_filter(self.data, "not (name eq 'Alice')"))
+        expected = [
+            {"name": "Bob", "age": 25},
+            {"name": "Charlie", "age": 35},
+            {"name": "David", "age": 30},
+        ]
         self.assertEqual(result, expected)
