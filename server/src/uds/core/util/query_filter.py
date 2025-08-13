@@ -94,7 +94,7 @@ _FUNCTIONS_PARAMS_NUM: dict[str, int] = {
     'startswith': 2,
     'endswith': 2,
     'indexof': 2,
-    'concat': 2,
+    'concat': -1,
     'tolower': 1,
     'toupper': 1,
     'length': 1,
@@ -287,7 +287,7 @@ class QueryTransformer(lark.Transformer[typing.Any, _T_Result]):
         if func_name not in _FUNCTIONS_PARAMS_NUM:
             raise ValueError(f"Unknown function: {func.value}")
 
-        if len(args) != _FUNCTIONS_PARAMS_NUM[func_name]:
+        if len(args) != _FUNCTIONS_PARAMS_NUM[func_name] and _FUNCTIONS_PARAMS_NUM[func_name] != -1:
             raise ValueError(
                 f"{func_name} function requires exactly {_FUNCTIONS_PARAMS_NUM[func_name]} arguments"
             )
@@ -301,7 +301,7 @@ class QueryTransformer(lark.Transformer[typing.Any, _T_Result]):
             case 'indexof':
                 return lambda obj: str(args[0](obj)).find(str(args[1](obj)))
             case 'concat':
-                return lambda obj: str(args[0](obj)) + str(args[1](obj))
+                return lambda obj: ''.join(str(arg(obj)) for arg in args) if args else ''
             case 'length':
                 return lambda obj: len(str(args[0](obj)))
             case 'tolower':

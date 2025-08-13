@@ -158,6 +158,10 @@ class TestQueryFilter(unittest.TestCase):
         expected = [{"first": "John", "last": "Doe"}]
         self.assertEqual(result, expected)
 
+        result = list(exec_query(data, "first eq concat('J', 'o', 'h', 'n')"))
+        expected = [{"first": "John", "last": "Doe"}]
+        self.assertEqual(result, expected)
+
     def test_indexof_function_case_sensitive(self):
         result = list(exec_query(self.data, "indexof(name,'a') ge 0"))
         expected = [

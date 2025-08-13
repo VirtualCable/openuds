@@ -31,11 +31,12 @@ import typing
 import re
 import contextvars
 import logging
+import hashlib
 
 import lark
 
-from django.db.models import Q, F, QuerySet
-from django.db.models.functions import Lower, Upper, Length, ExtractYear, ExtractMonth, ExtractDay
+from django.db.models import Q, F, QuerySet, Value
+from django.db.models.functions import Lower, Upper, Length, ExtractYear, ExtractMonth, ExtractDay, Concat
 
 logger = logging.getLogger(__name__)
 
@@ -55,7 +56,7 @@ class FieldName(str):
 
 
 class AnnotatedField(str):
-    """Represents an annotated field name from a unary function."""
+    """Represents an annotated field name from a function."""
 
     pass
 
@@ -70,7 +71,7 @@ _UNARY_FUNCTIONS: typing.Final[dict[str, typing.Callable[[F], typing.Any]]] = {
 }
 
 
-class DjangoQueryTransformer(lark.Transformer[typing.Any, Q]):
+class DjangoQueryTransformer(lark.Transformer[typing.Any, Q | AnnotatedField]):
     def __init__(self):
         super().__init__()
         self.annotations: dict[str, typing.Any] = {}
@@ -109,9 +110,7 @@ class DjangoQueryTransformer(lark.Transformer[typing.Any, Q]):
         if isinstance(right, FieldName):
             right = F(right)
 
-        if isinstance(left, AnnotatedField):
-            field_name = str(left)
-        elif isinstance(left, FieldName):
+        if isinstance(left, (FieldName, AnnotatedField)):
             field_name = str(left)
         elif isinstance(left, F):
             field_name = left.name
@@ -150,16 +149,19 @@ class DjangoQueryTransformer(lark.Transformer[typing.Any, Q]):
     def paren_expr(self, expr: Q) -> Q:
         return expr
 
-    @lark.visitors.v_args(inline=True)
-    def func_call(self, func: lark.Token, *args: typing.Any) -> Q | AnnotatedField:
-        func_name = func.value.lower()
-        if func_name not in _FUNCTIONS_PARAMS_NUM:
-            raise ValueError(f"Unknown function: {func.value}")
-        if len(args) != _FUNCTIONS_PARAMS_NUM[func_name]:
-            raise ValueError(f"{func_name} requires {_FUNCTIONS_PARAMS_NUM[func_name]} arguments")
+    @lark.visitors.v_args()
+    def func_call(self, args: list[typing.Any]) -> Q | AnnotatedField:
+        func_token = args[0]
+        func_name = func_token.value.lower()
+        func_args = args[1:]
+
+        if func_name not in _FUNCTIONS_PARAMS_NUM and func_name != 'concat':
+            raise ValueError(f"Unknown function: {func_name}")
 
         if func_name in ('substringof', 'startswith', 'endswith'):
-            field, value = args[0], args[1]
+            if len(func_args) != 2:
+                raise ValueError(f"{func_name} requires 2 arguments")
+            field, value = func_args
             if not isinstance(field, str):
                 raise ValueError(f"Field name must be a string")
             if isinstance(value, F):
@@ -173,22 +175,45 @@ class DjangoQueryTransformer(lark.Transformer[typing.Any, Q]):
                     return Q(**{f"{field}__iendswith": value})
 
         if func_name in _UNARY_FUNCTIONS:
-            field = args[0]
+            if len(func_args) != 1:
+                raise ValueError(f"{func_name} requires 1 argument")
+            field = func_args[0]
             if not isinstance(field, FieldName):
                 raise ValueError(f"{func_name} requires a field name")
-            alias = f"{func_name}_{field}"
+            alias = DjangoQueryTransformer._make_alias(func_name, [field])
             self.annotations[alias] = _UNARY_FUNCTIONS[func_name](F(field))
             return AnnotatedField(alias)
 
+        if func_name == 'concat':
+            if len(func_args) < 2:
+                raise ValueError("concat requires at least 2 arguments")
+            django_args = []
+            for arg in func_args:
+                if isinstance(arg, FieldName):
+                    django_args.append(F(arg))
+                elif isinstance(arg, str):
+                    django_args.append(Value(arg))
+                else:
+                    raise ValueError(f"Unsupported concat argument: {arg}")
+
+            alias = DjangoQueryTransformer._make_alias(func_name, func_args)
+            self.annotations[alias] = Concat(*django_args)
+            return AnnotatedField(alias)
+
         raise ValueError(f"Function {func_name} not supported in Django Q")
+
+    @staticmethod
+    def _make_alias(func_name: str, args: list[typing.Any]) -> str:
+        raw = f"{func_name}:{','.join(str(a) for a in args)}"
+        digest = hashlib.sha256(raw.encode('utf-8')).hexdigest()[:10]
+        return f"{func_name}_{digest}"
 
 
 def get_parser() -> lark.Lark:
     try:
         return _DB_QUERY_PARSER_VAR.get()
     except LookupError:
-        transformer = DjangoQueryTransformer()
-        parser = lark.Lark(_QUERY_GRAMMAR, parser="lalr", transformer=transformer)
+        parser = lark.Lark(_QUERY_GRAMMAR, parser="lalr")
         _DB_QUERY_PARSER_VAR.set(parser)
         return parser
 
@@ -198,17 +223,17 @@ T = typing.TypeVar('T', bound=typing.Any)
 
 def exec_query(query: str, qs: QuerySet[T]) -> QuerySet[T]:
     try:
+        parser = get_parser()
+        tree = parser.parse(query)
         transformer = DjangoQueryTransformer()
-        parser = lark.Lark(_QUERY_GRAMMAR, parser="lalr", transformer=transformer)
-        q_obj = typing.cast(Q, parser.parse(query))
+        q_obj = transformer.transform(tree)
+
+        if not isinstance(q_obj, Q):
+            raise ValueError("Query must result in a filterable expression")
 
         if transformer.annotations:
             qs = qs.annotate(**transformer.annotations)
-            
-        qs = qs.filter(q_obj)
-        logger.debug(f"Executed query: {query} -> {q_obj}: {qs.query}")
-        return qs
+        return qs.filter(q_obj)
 
     except lark.exceptions.LarkError as e:
-        logger.error(f"Error parsing query: {query}", exc_info=e)
-        return qs.none()
+        raise ValueError(f"Error processing query: {e}") from None
