@@ -34,8 +34,8 @@ import logging
 
 import lark
 
-from django.db.models import Q
-
+from django.db.models import Q, F, QuerySet
+from django.db.models.functions import Lower, Upper, Length, ExtractYear, ExtractMonth, ExtractDay
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +48,33 @@ _DB_QUERY_PARSER_VAR: typing.Final[contextvars.ContextVar[lark.Lark]] = contextv
 _REMOVE_QUOTES_RE: typing.Final[typing.Pattern[str]] = re.compile(r"^(['\"])(.*)\1$")
 
 
+class FieldName(str):
+    """Marker class to distinguish field names from string literals."""
+
+    pass
+
+
+class AnnotatedField(str):
+    """Represents an annotated field name from a unary function."""
+
+    pass
+
+
+_UNARY_FUNCTIONS: typing.Final[dict[str, typing.Callable[[F], typing.Any]]] = {
+    'tolower': Lower,
+    'toupper': Upper,
+    'length': Length,
+    'year': ExtractYear,
+    'month': ExtractMonth,
+    'day': ExtractDay,
+}
+
+
 class DjangoQueryTransformer(lark.Transformer[typing.Any, Q]):
+    def __init__(self):
+        super().__init__()
+        self.annotations: dict[str, typing.Any] = {}
+
     @lark.visitors.v_args(inline=True)
     def value(self, arg: lark.Token | str | int | float) -> typing.Any:
         if isinstance(arg, lark.Token):
@@ -60,37 +86,51 @@ class DjangoQueryTransformer(lark.Transformer[typing.Any, Q]):
                     return float(arg.value) if '.' in arg.value else int(arg.value)
                 case 'BOOLEAN':
                     return arg.value.lower() == 'true'
+                case 'CNAME':
+                    return F(arg.value)
                 case _:
                     raise ValueError(f"Unexpected token type: {arg.type}")
         return arg
 
     @lark.visitors.v_args(inline=True)
     def true(self) -> Q:
-        return Q(pk__isnull=False)  # Always true
+        return Q(pk__isnull=False)
 
     @lark.visitors.v_args(inline=True)
     def false(self) -> Q:
-        return ~Q(pk__isnull=False)  # Always false
+        return ~Q(pk__isnull=False)
 
     @lark.visitors.v_args(inline=True)
-    def field(self, arg: lark.Token) -> str:
-        return arg.value
+    def field(self, arg: lark.Token) -> FieldName:
+        return FieldName(arg.value)
 
     @lark.visitors.v_args(inline=True)
-    def binary_expr(self, left: str, op: typing.Any, right: typing.Any) -> Q:
+    def binary_expr(self, left: typing.Any, op: typing.Any, right: typing.Any) -> Q:
+        if isinstance(right, FieldName):
+            right = F(right)
+
+        if isinstance(left, AnnotatedField):
+            field_name = str(left)
+        elif isinstance(left, FieldName):
+            field_name = str(left)
+        elif isinstance(left, F):
+            field_name = left.name
+        else:
+            raise ValueError(f"Left side of binary expression must be a field name or annotated field")
+
         match op:
             case 'eq':
-                return Q(**{left: right})
+                return Q(**{field_name: right})
             case 'ne':
-                return ~Q(**{left: right})
+                return ~Q(**{field_name: right})
             case 'gt':
-                return Q(**{f"{left}__gt": right})
+                return Q(**{f"{field_name}__gt": right})
             case 'lt':
-                return Q(**{f"{left}__lt": right})
+                return Q(**{f"{field_name}__lt": right})
             case 'ge':
-                return Q(**{f"{left}__gte": right})
+                return Q(**{f"{field_name}__gte": right})
             case 'le':
-                return Q(**{f"{left}__lte": right})
+                return Q(**{f"{field_name}__lte": right})
             case _:
                 raise ValueError(f"Unknown operator: {op}")
 
@@ -111,57 +151,64 @@ class DjangoQueryTransformer(lark.Transformer[typing.Any, Q]):
         return expr
 
     @lark.visitors.v_args(inline=True)
-    def func_call(self, func: lark.Token, *args: typing.Any) -> Q:
+    def func_call(self, func: lark.Token, *args: typing.Any) -> Q | AnnotatedField:
         func_name = func.value.lower()
         if func_name not in _FUNCTIONS_PARAMS_NUM:
             raise ValueError(f"Unknown function: {func.value}")
         if len(args) != _FUNCTIONS_PARAMS_NUM[func_name]:
             raise ValueError(f"{func_name} requires {_FUNCTIONS_PARAMS_NUM[func_name]} arguments")
 
-        field, value = args[0], args[1]
+        if func_name in ('substringof', 'startswith', 'endswith'):
+            field, value = args[0], args[1]
+            if not isinstance(field, str):
+                raise ValueError(f"Field name must be a string")
+            if isinstance(value, F):
+                raise ValueError(f"Function '{func_name}' does not support field-to-field comparison")
+            match func_name:
+                case 'substringof':
+                    return Q(**{f"{field}__icontains": value})
+                case 'startswith':
+                    return Q(**{f"{field}__istartswith": value})
+                case 'endswith':
+                    return Q(**{f"{field}__iendswith": value})
 
-        if not isinstance(field, str):
-            raise ValueError(f"Field name must be a string")
+        if func_name in _UNARY_FUNCTIONS:
+            field = args[0]
+            if not isinstance(field, FieldName):
+                raise ValueError(f"{func_name} requires a field name")
+            alias = f"{func_name}_{field}"
+            self.annotations[alias] = _UNARY_FUNCTIONS[func_name](F(field))
+            return AnnotatedField(alias)
 
-        match func_name:
-            case 'substringof':
-                return Q(**{f"{field}__icontains": value})
-            case 'startswith':
-                return Q(**{f"{field}__istartswith": value})
-            case 'endswith':
-                return Q(**{f"{field}__iendswith": value})
-            case _:
-                raise ValueError(f"Function {func_name} not supported in Django Q")
+        raise ValueError(f"Function {func_name} not supported in Django Q")
 
 
 def get_parser() -> lark.Lark:
-    """
-    Returns the query parser instance, creating it if necessary.
-
-    Returns:
-        lark.Lark: The query parser.
-    """
     try:
         return _DB_QUERY_PARSER_VAR.get()
     except LookupError:
-        parser = lark.Lark(_QUERY_GRAMMAR, parser="lalr", transformer=DjangoQueryTransformer())
+        transformer = DjangoQueryTransformer()
+        parser = lark.Lark(_QUERY_GRAMMAR, parser="lalr", transformer=transformer)
         _DB_QUERY_PARSER_VAR.set(parser)
         return parser
 
 
-def exec_query(query: str) -> Q:
-    """
-    Parses a query string and returns a Django Q object.
+T = typing.TypeVar('T', bound=typing.Any)
 
-    Args:
-        query: The query string to parse.
 
-    Returns:
-        A Django Q object representing the parsed query.
-    """
+def exec_query(query: str, qs: QuerySet[T]) -> QuerySet[T]:
     try:
-        return typing.cast(Q, get_parser().parse(query))
+        transformer = DjangoQueryTransformer()
+        parser = lark.Lark(_QUERY_GRAMMAR, parser="lalr", transformer=transformer)
+        q_obj = typing.cast(Q, parser.parse(query))
+
+        if transformer.annotations:
+            qs = qs.annotate(**transformer.annotations)
+            
+        qs = qs.filter(q_obj)
+        logger.debug(f"Executed query: {query} -> {q_obj}: {qs.query}")
+        return qs
+
     except lark.exceptions.LarkError as e:
         logger.error(f"Error parsing query: {query}", exc_info=e)
-        # Return empty queryset
-        return Q(pk__isnull=True)  # Always false, as an empty queryset
+        return qs.none()
