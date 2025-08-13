@@ -1,4 +1,4 @@
-# Copyright (c) 2026 Virtual Cable S.L.U.
+# Copyright (c) 2025 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -108,6 +108,15 @@ _FUNCTIONS_PARAMS_NUM: dict[str, int] = {
 class QueryTransformer(lark.Transformer[typing.Any, _T_Result]):
     @lark.visitors.v_args(inline=True)  # pyright: ignore
     def value(self, arg: lark.Token | str | int | float) -> _T_Result:
+        """
+        Transforms a value token into a filtering function.
+
+        Args:
+            arg: The value token to transform.
+
+        Returns:
+            A filtering function that returns the value of the token.
+        """
         value: typing.Any = arg
         if isinstance(arg, lark.Token):
             match arg.type:
@@ -129,14 +138,29 @@ class QueryTransformer(lark.Transformer[typing.Any, _T_Result]):
 
     @lark.visitors.v_args(inline=True)
     def true(self) -> _T_Result:
+        """
+        Transforms a true token into a filtering function.
+        """
         return lambda obj: True
 
     @lark.visitors.v_args(inline=True)
     def false(self) -> _T_Result:
+        """
+        Transforms a false token into a filtering function.
+        """
         return lambda obj: False
 
     @lark.visitors.v_args(inline=True)
     def field(self, arg: lark.Token) -> _T_Result:
+        """
+        Transforms a field token into a filtering function.
+        
+        Args:
+            arg: The field token to transform.
+
+        Returns:
+            A filtering function that returns the value of the field from the input dictionary.
+        """
         def getter(obj: dict[str, typing.Any]) -> typing.Any:
             for part in arg.value.split('.'):
                 obj = obj.get(part, {})
@@ -146,92 +170,152 @@ class QueryTransformer(lark.Transformer[typing.Any, _T_Result]):
 
     @lark.visitors.v_args(inline=True)
     def binary_expr(self, left: _T_Result, op: typing.Any, right: _T_Result) -> _T_Result:
-        def _compare(left: str | int | float, right: str | int | float) -> int:
-            if type(left) != type(right):
-                # Convert both to string and compare
-                left = str(left)
-                right = str(right)
-            #  0 -> are equal
-            # <0 -> left is less than right
-            # >0 -> left is greater than right
-            if typing.cast(typing.Any, left) < typing.cast(typing.Any, right):
+        """
+        Transforms a binary expression (comparison) into a filtering function.
+
+        Args:
+            left: The left operand as a filtering function.
+            op: The comparison operator.
+            right: The right operand as a filtering function.
+
+        Returns:
+            A filtering function that applies the comparison operator to the operands.
+        """
+        def _compare(val_left: str | int | float, val_right: str | int | float) -> int:
+            if type(val_left) != type(val_right):
+                val_left = str(val_left)
+                val_right = str(val_right)
+            if typing.cast(typing.Any, val_left) < typing.cast(typing.Any, val_right):
                 return -1
-            elif typing.cast(typing.Any, left) > typing.cast(typing.Any, right):
+            elif typing.cast(typing.Any, val_left) > typing.cast(typing.Any, val_right):
                 return 1
             return 0
 
-        match op:
-            case "eq":
-                return lambda item: _compare(left(item), right(item)) == 0
-            case "gt":
-                return lambda item: _compare(left(item), right(item)) > 0
-            case "lt":
-                return lambda item: _compare(left(item), right(item)) < 0
-            case "ne":
-                return lambda item: _compare(left(item), right(item)) != 0
-            case "ge":
-                return lambda item: _compare(left(item), right(item)) >= 0
-            case "le":
-                return lambda item: _compare(left(item), right(item)) <= 0
-            case _:
-                raise ValueError(f"Unknown operator: {op}")
+        if op == "eq":
+            return lambda item: _compare(left(item), right(item)) == 0
+        elif op == "gt":
+            return lambda item: _compare(left(item), right(item)) > 0
+        elif op == "lt":
+            return lambda item: _compare(left(item), right(item)) < 0
+        elif op == "ne":
+            return lambda item: _compare(left(item), right(item)) != 0
+        elif op == "ge":
+            return lambda item: _compare(left(item), right(item)) >= 0
+        elif op == "le":
+            return lambda item: _compare(left(item), right(item)) <= 0
+        else:
+            raise ValueError(f"Unknown operator: {op}")
 
     @lark.visitors.v_args(inline=True)
     def logical_and(self, left: _T_Result, right: _T_Result) -> _T_Result:
-        return lambda item: left(item) and right(item)
+            """
+            Transforms a logical AND expression into a filtering function.
+
+            Args:
+                left: The left operand as a filtering function.
+                right: The right operand as a filtering function.
+
+            Returns:
+                A filtering function that returns True if both operands are True.
+            """
+            return lambda item: left(item) and right(item)
 
     @lark.visitors.v_args(inline=True)
     def logical_or(self, left: _T_Result, right: _T_Result) -> _T_Result:
-        return lambda item: left(item) or right(item)
+            """
+            Transforms a logical OR expression into a filtering function.
+
+            Args:
+                left: The left operand as a filtering function.
+                right: The right operand as a filtering function.
+
+            Returns:
+                A filtering function that returns True if either operand is True.
+            """
+            return lambda item: left(item) or right(item)
 
     @lark.visitors.v_args(inline=True)
     def unary_not(self, expr: _T_Result) -> _T_Result:
-        return lambda item: not expr(item)
+            """
+            Transforms a logical NOT expression into a filtering function.
+
+            Args:
+                expr: The operand as a filtering function.
+
+            Returns:
+                A filtering function that returns the negation of the operand.
+            """
+            return lambda item: not expr(item)
 
     @lark.visitors.v_args(inline=True)
     def paren_expr(self, expr: _T_Result) -> _T_Result:
-        return expr
+            """
+            Returns the filtering function for a parenthesized expression.
+
+            Args:
+                expr: The filtering function inside parentheses.
+
+            Returns:
+                The same filtering function.
+            """
+            return expr
 
     @lark.visitors.v_args(inline=True)
     def func_call(self, func: lark.Token, *args: _T_Result) -> _T_Result:
-        func_name = func.value.lower()
-        # If unknown function, raise an error
-        if func_name not in _FUNCTIONS_PARAMS_NUM:
-            raise ValueError(f"Unknown function: {func.value}")
+            """
+            Transforms a function call into a filtering function.
 
-        if len(args) != _FUNCTIONS_PARAMS_NUM[func_name]:
-            raise ValueError(
-                f"{func_name} function requires exactly {_FUNCTIONS_PARAMS_NUM[func_name]} arguments"
-            )
-        match func_name:
-            case 'substringof':
-                return lambda obj: str(args[1](obj)).find(str(args[0](obj))) != -1
-            case 'startswith':
-                return lambda obj: str(args[0](obj)).startswith(str(args[1](obj)))
-            case 'endswith':
-                return lambda obj: str(args[0](obj)).endswith(str(args[1](obj)))
-            case 'indexof':
-                return lambda obj: str(args[0](obj)).find(str(args[1](obj)))
-            case 'concat':
-                return lambda obj: str(args[0](obj)) + str(args[1](obj))
-            case 'length':
-                return lambda obj: len(str(args[0](obj)))
-            case 'tolower':
-                return lambda obj: str(args[0](obj)).lower()
-            case 'toupper':
-                return lambda obj: str(args[0](obj)).upper()
-            case 'year':
-                return lambda obj: str(args[0](obj)).split('-')[0] if isinstance(args[0](obj), str) else ''
-            case 'month':
-                return lambda obj: str(args[0](obj)).split('-')[1] if isinstance(args[0](obj), str) else ''
-            case 'day':
-                return lambda obj: str(args[0](obj)).split('-')[2] if isinstance(args[0](obj), str) else ''
-            case _:
-                # Will never reach this, as it has been already
+            Args:
+                func: The function name token.
+                *args: Arguments as filtering functions.
+
+            Returns:
+                A filtering function that applies the specified function to the arguments.
+            """
+            func_name = func.value.lower()
+            # If unknown function, raise an error
+            if func_name not in _FUNCTIONS_PARAMS_NUM:
                 raise ValueError(f"Unknown function: {func.value}")
+
+            if len(args) != _FUNCTIONS_PARAMS_NUM[func_name]:
+                raise ValueError(
+                    f"{func_name} function requires exactly {_FUNCTIONS_PARAMS_NUM[func_name]} arguments"
+                )
+            match func_name:
+                case 'substringof':
+                    return lambda obj: str(args[1](obj)).find(str(args[0](obj))) != -1
+                case 'startswith':
+                    return lambda obj: str(args[0](obj)).startswith(str(args[1](obj)))
+                case 'endswith':
+                    return lambda obj: str(args[0](obj)).endswith(str(args[1](obj)))
+                case 'indexof':
+                    return lambda obj: str(args[0](obj)).find(str(args[1](obj)))
+                case 'concat':
+                    return lambda obj: str(args[0](obj)) + str(args[1](obj))
+                case 'length':
+                    return lambda obj: len(str(args[0](obj)))
+                case 'tolower':
+                    return lambda obj: str(args[0](obj)).lower()
+                case 'toupper':
+                    return lambda obj: str(args[0](obj)).upper()
+                case 'year':
+                    return lambda obj: str(args[0](obj)).split('-')[0] if isinstance(args[0](obj), str) else ''
+                case 'month':
+                    return lambda obj: str(args[0](obj)).split('-')[1] if isinstance(args[0](obj), str) else ''
+                case 'day':
+                    return lambda obj: str(args[0](obj)).split('-')[2] if isinstance(args[0](obj), str) else ''
+                case _:
+                    # Will never reach this, as it has been already
+                    raise ValueError(f"Unknown function: {func.value}")
 
 
 def get_parser() -> lark.Lark:
+    """
+    Returns the query parser instance, creating it if necessary.
+
+    Returns:
+        lark.Lark: The query parser.
+    """
     try:
         return _QUERY_PARSER_VAR.get()
     except LookupError:
@@ -241,6 +325,16 @@ def get_parser() -> lark.Lark:
 
 
 def exec_filter(data: list[dict[str, typing.Any]], query: str) -> typing.Iterable[dict[str, typing.Any]]:
+    """
+    Filters a list of dictionaries using a query string.
+
+    Args:
+        data: The list of dictionaries to filter.
+        query: The query string to apply.
+
+    Returns:
+        An iterable of dictionaries that match the query.
+    """
     try:
         filter_func = typing.cast(_T_Result, get_parser().parse(query))
         return filter(filter_func, data)
