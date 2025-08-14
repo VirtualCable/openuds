@@ -97,18 +97,3 @@ def match_args(
     error()
     return None  # In fact, error is expected to raise an exception, so this is never reached
 
-def filter_dict_by_keys(d: dict[str, typing.Any], keys: set[str]) -> dict[str, typing.Any]:
-    """
-    Filters a dictionary by a set of keys.
-
-    Args:
-        d: The dictionary to filter.
-        keys: The set of keys to keep. If empty, all keys are kept.
-
-    Returns:
-        A new dictionary containing only the keys from the original dictionary that are in the set of keys.
-    """
-    if not keys:
-        return d
-
-    return {k: v for k, v in d.items() if k in keys}

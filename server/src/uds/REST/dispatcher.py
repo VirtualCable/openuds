@@ -130,6 +130,7 @@ class Dispatcher(View):
                 processor.process_parameters(),
                 *args,
             )
+            processor.set_odata(handler.odata)
             operation: collections.abc.Callable[[], typing.Any] = getattr(handler, http_method)
         except processors.ParametersException as e:
             logger.debug(

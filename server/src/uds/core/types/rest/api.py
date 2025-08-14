@@ -301,3 +301,21 @@ class ODataParams:
             )
         except (ValueError, TypeError):
             raise exceptions.rest.RequestError('Invalid OData query parameters')
+
+    def select_filter(self, d: dict[str, typing.Any]) -> dict[str, typing.Any]:
+        """
+        Filters a dictionary by the OData parameters.
+
+        Args:
+            d: The dictionary to filter.
+
+        Returns:
+            A new dictionary containing only the keys from the original dictionary that are in the OData select set.
+            
+        Note:
+            If the OData select set is empty, all keys are kept.
+        """
+        if not self.select:
+            return d
+
+        return {k: v for k, v in d.items() if k in self.select}

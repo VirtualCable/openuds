@@ -65,9 +65,14 @@ class ContentProcessor:
     extensions: typing.ClassVar[collections.abc.Iterable[str]] = []
 
     _request: 'HttpRequest'
+    _odata: 'types.rest.api.ODataParams|None' = None
 
     def __init__(self, request: 'HttpRequest'):
         self._request = request
+        self._odata = None
+
+    def set_odata(self, odata: 'types.rest.api.ODataParams') -> None:
+        self._odata = odata
 
     def process_get_parameters(self) -> dict[str, typing.Any]:
         """
@@ -105,21 +110,26 @@ class ContentProcessor:
         yield self.render(obj).encode('utf8')
 
     @staticmethod
-    def process_for_render(obj: typing.Any) -> typing.Any:
+    def process_for_render(
+        obj: typing.Any,
+        data_transformer: collections.abc.Callable[[dict[str, typing.Any]], dict[str, typing.Any]],
+    ) -> typing.Any:
         """
         Helper for renderers. Alters some types so they can be serialized correctly (as we want them to be)
         """
         match obj:
             case types.rest.BaseRestItem():
-                return ContentProcessor.process_for_render(obj.as_dict())
+                return ContentProcessor.process_for_render(obj.as_dict(), data_transformer)
             case None | bool() | int() | float() | str():
                 return obj
             case dict():
-                return {
-                    k: ContentProcessor.process_for_render(v)
-                    for k, v in typing.cast(dict[str, typing.Any], obj).items()
-                    if not isinstance(v, types.rest.NotRequired)  # Skip
-                }
+                return data_transformer(
+                    {
+                        k: ContentProcessor.process_for_render(v, data_transformer)
+                        for k, v in typing.cast(dict[str, typing.Any], obj).items()
+                        if not isinstance(v, types.rest.NotRequired)  # Skip
+                    }
+                )
 
             case DjangoPromise():
                 return str(obj)  # This is for translations
@@ -129,7 +139,7 @@ class ContentProcessor:
 
             case collections.abc.Iterable():
                 return [
-                    ContentProcessor.process_for_render(v)
+                    ContentProcessor.process_for_render(v, data_transformer)
                     for v in typing.cast(collections.abc.Iterable[typing.Any], obj)
                 ]
 
@@ -173,7 +183,10 @@ class MarshallerProcessor(ContentProcessor):
             raise ParametersException(str(e))
 
     def render(self, obj: typing.Any) -> str:
-        return self.marshaller.dumps(ContentProcessor.process_for_render(obj))
+        def none_transformer(dct: dict[str, typing.Any]) -> dict[str, typing.Any]:
+            return dct
+        dct_filter = none_transformer if self._odata is None else self._odata.select_filter
+        return self.marshaller.dumps(ContentProcessor.process_for_render(obj, dct_filter))
 
 
 # ---------------

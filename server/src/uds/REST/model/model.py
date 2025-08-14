@@ -44,7 +44,6 @@ from uds.core import exceptions
 from uds.core import types
 from uds.core.module import Module
 from uds.core.util import log, permissions, api as api_utils, query_db_filter
-from uds.core.util.rest.tools import filter_dict_by_keys
 from uds.models import ManagedObjectModel, Tag, TaggingMixin
 
 from .base import BaseModelHandler
@@ -327,9 +326,9 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
 
         match self._args:
             case []:  # Same as overview, but with all data
-                return [filter_dict_by_keys(i.as_dict(), self.odata.select) for i in self.get_items(overview=False)]
+                return [i.as_dict() for i in self.get_items(overview=False)]
             case [consts.rest.OVERVIEW]:
-                return [filter_dict_by_keys(i.as_dict(), self.odata.select) for i in self.get_items()]
+                return [i.as_dict() for i in self.get_items()]
             case [consts.rest.OVERVIEW, *_fails]:
                 raise exceptions.rest.RequestError('Invalid overview request') from None
             case [consts.rest.TABLEINFO]:
