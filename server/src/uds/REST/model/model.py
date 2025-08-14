@@ -43,7 +43,8 @@ from uds.core import consts
 from uds.core import exceptions
 from uds.core import types
 from uds.core.module import Module
-from uds.core.util import log, permissions, api as api_utils
+from uds.core.util import log, permissions, api as api_utils, query_db_filter
+from uds.core.util.rest.tools import filter_dict_by_keys
 from uds.models import ManagedObjectModel, Tag, TaggingMixin
 
 from .base import BaseModelHandler
@@ -224,37 +225,42 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
         return self.get_item(item)
 
     def get_items(
-        self, *args: typing.Any, **kwargs: typing.Any
+        self,
+        overview: bool = False,
     ) -> typing.Generator[types.rest.T_Item, None, None]:
-        if 'overview' in kwargs:
-            overview: bool = kwargs['overview']
-            del kwargs['overview']
-        else:
-            overview = True
 
-        if 'prefetch' in kwargs:
-            prefetch: list[str] = kwargs['prefetch']
-            logger.debug('Prefetching %s', prefetch)
-            del kwargs['prefetch']
-        else:
-            prefetch = []
-
-        if 'query' in kwargs:
-            query = kwargs['query']  # We are using a prebuilt query on args
-            logger.debug('Got query: %s', query)
-            del kwargs['query']
-        else:
-            logger.debug('Args: %s, kwargs: %s', args, kwargs)
-            query = self.MODEL.objects.filter(*args, **kwargs).prefetch_related(*prefetch)
-
+        # Basic model filter
+        qs = self.MODEL.objects.all()
         if self.FILTER is not None:
-            query = query.filter(**self.FILTER)
-
+            qs = qs.filter(**self.FILTER)
         if self.EXCLUDE is not None:
-            query = query.exclude(**self.EXCLUDE)
+            qs = qs.exclude(**self.EXCLUDE)
 
-        for item in query:
+        # OData filter
+        if self.odata.filter:
             try:
+                qs = query_db_filter.exec_query(self.odata.filter, qs)
+            except ValueError as e:
+                raise exceptions.rest.RequestError(f'Invalid odata filter: {e}') from e
+
+        for order in self.odata.orderby:
+            qs = qs.order_by(order)
+
+        if self.odata.start is not None:
+            qs = qs[self.odata.start :]
+        if self.odata.limit is not None:
+            qs = qs[: self.odata.limit]
+
+        # Get total items and set it on X-Total-Count
+        try:
+            total_items = qs.count()
+            self.add_header('X-Total-Count', total_items)
+        except Exception as e:
+            raise exceptions.rest.RequestError(f'Invalid odata: {e}')
+
+        for item in qs:
+            try:
+                # Note: Due to this, the response may not have the required elements, but a subset will be returned
                 if (
                     permissions.has_access(
                         self._user,
@@ -264,10 +270,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
                     is False
                 ):
                     continue
-                if overview:
-                    yield self.get_item_summary(item)
-                else:
-                    yield self.get_item(item)
+                yield self.get_item_summary(item) if overview else self.get_item(item)
             except Exception as e:  # maybe an exception is thrown to skip an item
                 logger.debug('Got exception processing item from model: %s', e)
                 # logger.exception('Exception getting item from {0}'.format(self.model))
@@ -324,9 +327,9 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
 
         match self._args:
             case []:  # Same as overview, but with all data
-                return [i.as_dict() for i in self.get_items(overview=False)]
+                return [filter_dict_by_keys(i.as_dict(), self.odata.select) for i in self.get_items(overview=False)]
             case [consts.rest.OVERVIEW]:
-                return [i.as_dict() for i in self.get_items()]
+                return [filter_dict_by_keys(i.as_dict(), self.odata.select) for i in self.get_items()]
             case [consts.rest.OVERVIEW, *_fails]:
                 raise exceptions.rest.RequestError('Invalid overview request') from None
             case [consts.rest.TABLEINFO]:
@@ -514,35 +517,35 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
         """
         Returns the API operations that should be registered
         """
-            # case []:  # Same as overview, but with all data
-            #     return [i.as_dict() for i in self.get_items(overview=False)]
-            # case [consts.rest.OVERVIEW]:
-            #     return [i.as_dict() for i in self.get_items()]
-            # case [consts.rest.OVERVIEW, *_fails]:
-            #     raise exceptions.rest.RequestError('Invalid overview request') from None
-            # case [consts.rest.TABLEINFO]:
-            #     return self.TABLE.as_dict()
-            # case [consts.rest.TABLEINFO, *_fails]:
-            #     raise exceptions.rest.RequestError('Invalid table info request') from None
-            # case [consts.rest.TYPES]:
-            #     return [i.as_dict() for i in self.enum_types()]
-            # case [consts.rest.TYPES, for_type]:
-            #     return self.get_type(for_type).as_dict()
-            # case [consts.rest.TYPES, for_type, *_fails]:
-            #     raise exceptions.rest.RequestError('Invalid type request') from None
-            # case [consts.rest.GUI]:
-            #     return self.get_processed_gui('')
-            # case [consts.rest.GUI, for_type]:
-            #     return self.get_processed_gui(for_type)
-            # case [consts.rest.GUI, for_type, *_fails]:
-            #     raise exceptions.rest.RequestError('Invalid GUI request') from None
+        # case []:  # Same as overview, but with all data
+        #     return [i.as_dict() for i in self.get_items(overview=False)]
+        # case [consts.rest.OVERVIEW]:
+        #     return [i.as_dict() for i in self.get_items()]
+        # case [consts.rest.OVERVIEW, *_fails]:
+        #     raise exceptions.rest.RequestError('Invalid overview request') from None
+        # case [consts.rest.TABLEINFO]:
+        #     return self.TABLE.as_dict()
+        # case [consts.rest.TABLEINFO, *_fails]:
+        #     raise exceptions.rest.RequestError('Invalid table info request') from None
+        # case [consts.rest.TYPES]:
+        #     return [i.as_dict() for i in self.enum_types()]
+        # case [consts.rest.TYPES, for_type]:
+        #     return self.get_type(for_type).as_dict()
+        # case [consts.rest.TYPES, for_type, *_fails]:
+        #     raise exceptions.rest.RequestError('Invalid type request') from None
+        # case [consts.rest.GUI]:
+        #     return self.get_processed_gui('')
+        # case [consts.rest.GUI, for_type]:
+        #     return self.get_processed_gui(for_type)
+        # case [consts.rest.GUI, for_type, *_fails]:
+        #     raise exceptions.rest.RequestError('Invalid GUI request') from None
         return {
             '': types.rest.api.PathItem(
                 get=types.rest.api.Operation(
                     summary=f'Get all {cls.MODEL.__name__} items',
                     description=f'Retrieve a list of all {cls.MODEL.__name__} items',
                     parameters=[],
-                    responses={}
+                    responses={},
                 )
             )
         }

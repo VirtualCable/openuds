@@ -1,6 +1,8 @@
 import typing
 import dataclasses
 
+from uds.core import exceptions
+
 if typing.TYPE_CHECKING:
     from uds.core.types import ui
 
@@ -44,7 +46,7 @@ class Parameter:
     description: str | None = None
     style: str | None = None
     explode: bool | None = None
-        
+
     name: str
     in_: str  # 'query', 'path', 'header', etc.
     required: bool
@@ -78,7 +80,7 @@ class Response:
 # Operación (GET, POST, etc.)
 @dataclasses.dataclass
 class Operation:
-    
+
     summary: str | None = None
     description: str | None = None
     parameters: list[Parameter] = dataclasses.field(default_factory=list[Parameter])
@@ -256,3 +258,46 @@ class OpenAPI:
                 'components': self.components.as_dict(),
             }
         )
+
+
+@dataclasses.dataclass
+class ODataParams:
+    """
+    OData query parameters converter
+    """
+
+    filter: str | None = None  # $filter=....
+    start: int | None = None  # $skip=... zero based
+    limit: int | None = None  # $top=... defaults to unlimited right now
+    orderby: list[str] = dataclasses.field(default_factory=list[str])  # $orderby=xxx, yyy asc, zzz desc
+    select: set[str] = dataclasses.field(default_factory=set[str])  # $select=...
+
+    @staticmethod
+    def from_dict(data: dict[str, typing.Any]) -> 'ODataParams':
+        try:
+            # extract order by, split by ',' and replace asc by '' and desc by a '-' stripping text.
+            # After this, move the - to the beginning when needed
+            order_fld = typing.cast(str, data.get('$orderby', ''))
+            order_by = list(
+                map(
+                    lambda x: f'-{x.rstrip("-")}' if x.endswith('-') else x,
+                    [
+                        item.strip().replace(' asc', '').replace(' desc', '-')
+                        for item in order_fld.split(',')
+                        if item
+                    ],
+                )
+            )
+            select_fld = typing.cast(str, data.get('$select', ''))
+            select = {item.strip() for item in select_fld.split(',') if item}
+            start = int(data.get('$skip', 0)) if data.get('$skip') is not None else None
+            limit = int(data.get('$top', 0)) if data.get('$top') is not None else None
+            return ODataParams(
+                filter=data.get('$filter'),
+                start=start,
+                limit=limit,
+                orderby=order_by,
+                select=select,
+            )
+        except (ValueError, TypeError):
+            raise exceptions.rest.RequestError('Invalid OData query parameters')

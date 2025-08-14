@@ -82,6 +82,7 @@ class Handler(abc.ABC):
     _session: typing.Optional[SessionStore]
     _auth_token: typing.Optional[str]
     _user: 'User'
+    _odata: 'types.rest.api.ODataParams'  # OData parameters, if any
 
     # The dispatcher proceses the request and calls the method with the same name as the operation
     # currently, only 'get', 'post, 'put' y 'delete' are supported
@@ -131,6 +132,8 @@ class Handler(abc.ABC):
         if self._user and self._user.state != types.states.State.ACTIVE:
             raise AccessDenied()
 
+        self._odata = types.rest.api.ODataParams.from_dict(self.query_params())
+
     def headers(self) -> dict[str, str]:
         """
         Returns the headers of the REST request (all)
@@ -149,13 +152,25 @@ class Handler(abc.ABC):
         """
         return self._headers.get(header_name)
 
-    def add_header(self, header: str, value: str) -> None:
+    def query_params(self) -> dict[str, str | list[str]]:
+        """
+        Returns the query parameters from the request (GET parameters)
+
+        Note:
+            Dispatcher has it own parameters processor that fills our "_params".
+            The processor tries to get from POST body json (or whatever), and, if not available
+            from GET. So maybe this returns same values as _params, but, this always are GET parameters.
+            Useful for odata fields ($filter, $skip, $top, $orderby)
+        """
+        return {k: v[0] if len(v) == 1 else v for k, v in self._request.GET.lists()}
+
+    def add_header(self, header: str, value: str | int) -> None:
         """
         Inserts a new header inside the headers list
         :param header: name of header to insert
         :param value: value of header
         """
-        self._headers[header] = value
+        self._headers[header] = str(value)
 
     def delete_header(self, header: str) -> None:
         """
@@ -187,6 +202,10 @@ class Handler(abc.ABC):
         Returns the args object
         """
         return self._args
+
+    @property
+    def odata(self) -> 'types.rest.api.ODataParams':
+        return self._odata
 
     @property
     def session(self) -> 'SessionStore':
@@ -365,7 +384,7 @@ class Handler(abc.ABC):
             if name in self._params:
                 return self._params[name]
         return ''
-
+    
     @classmethod
     def api_components(cls: type[typing.Self]) -> types.rest.api.Components:
         """
