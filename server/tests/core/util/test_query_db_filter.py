@@ -1,4 +1,5 @@
 from datetime import datetime
+import logging
 
 from uds.models import Scheduler
 from uds.core import consts
@@ -9,8 +10,10 @@ from uds.core.util.query_db_filter import exec_query  # Ajusta el path si necesa
 
 from tests.utils.test import UDSTestCase
 
+logger = logging.getLogger(__name__)
 
-class SchedulerQueryTests(UDSTestCase):
+
+class DBQueryTests(UDSTestCase):
     def setUp(self) -> None:
         Scheduler.objects.create(
             name='daily_job',
@@ -81,7 +84,7 @@ class SchedulerQueryTests(UDSTestCase):
     def test_complex_and_or_combination(self) -> None:
         results = exec_query(
             f"(state eq '{State.FOR_EXECUTE}' and frecuency lt '{Scheduler.DAY}') or owner_server eq 'server3'",
-            Scheduler.objects
+            Scheduler.objects,
         )
         self.assertEqual(results.count(), 1)
         first = results.first()
@@ -92,7 +95,9 @@ class SchedulerQueryTests(UDSTestCase):
         self.assertEqual(results.count(), 2)  # daily_job & weekly_job
 
     def test_nested_not_and(self) -> None:
-        result = exec_query(f"not(state eq '{State.FOR_EXECUTE}' and owner_server eq 'server1')", Scheduler.objects)
+        result = exec_query(
+            f"not(state eq '{State.FOR_EXECUTE}' and owner_server eq 'server1')", Scheduler.objects
+        )
         self.assertEqual(result.count(), 2)
         names = {r.name for r in result}
         self.assertFalse('daily_job' in names and 'weekly_job' in names)
@@ -145,8 +150,57 @@ class SchedulerQueryTests(UDSTestCase):
         self.assertEqual(results.count(), 2)  # daily_job & hourly_job
 
     def test_func_concat(self) -> None:
-        results = exec_query(f"concat(name, ' - ', state) eq 'daily_job - {State.FOR_EXECUTE}'", Scheduler.objects)
-        self.assertEqual(results.count(), 1)
-        first = results.first()
-        assert first is not None
-        self.assertEqual(first.name, 'daily_job')
+        results = exec_query(
+            f"concat(name, ' - ', state) eq 'daily_job - {State.FOR_EXECUTE}'", Scheduler.objects
+        )
+        res = list(results)
+        self.assertEqual(len(res), 1)
+        self.assertEqual(res[0].name, 'daily_job')
+
+    def test_func_substring(self) -> None:
+        results = exec_query("substring(name, 1, 4) eq 'aily'", Scheduler.objects)
+        res = list(results)
+        logger.info('Query executed: %s', results.query)
+        self.assertEqual(len(res), 1)
+        self.assertEqual(res[0].name, 'daily_job')
+
+    def test_func_floor(self) -> None:
+        # Scheduler frecuency: DAY = 86400, HOUR = 3600, etc.
+        result = exec_query("floor(frecuency) eq 3600", Scheduler.objects)
+        res = list(result)
+        logger.info('Query executed: %s', result.query)
+        self.assertEqual(len(res), 1)
+        self.assertEqual(res[0].name, 'hourly_job')
+
+    def test_func_round(self) -> None:
+        # Assuming frecuency is exact, round should behave like floor here
+        result = exec_query("round(frecuency) eq 604800", Scheduler.objects)
+        res = list(result)
+        logger.info('Query executed: %s', result.query)
+        self.assertEqual(len(res), 1)
+        self.assertEqual(res[0].name, 'weekly_job')
+
+    def test_func_ceiling(self) -> None:
+        # Should match long_job with frecuency = 2592000
+        result = exec_query("ceiling(frecuency) eq 2592000", Scheduler.objects)
+        res = list(result)
+        logger.info('Query executed: %s', result.query)
+        self.assertEqual(len(res), 1)
+        self.assertEqual(res[0].name, 'long_job')
+
+    def test_func_trim(self) -> None:
+        # Add a scheduler with padded name to test trim
+        Scheduler.objects.create(
+            name='  hourly_job  ',
+            frecuency=Scheduler.HOUR,
+            last_execution=datetime(2025, 8, 13, 21, 0),
+            next_execution=datetime(2025, 8, 13, 22, 0),
+            owner_server='server4',
+            state=State.FINISHED,
+        )
+
+        result = exec_query("trim(name) eq 'hourly_job'", Scheduler.objects)
+        res = list(result)
+        logger.info('Query executed: %s', result.query)
+        self.assertEqual(len(res), 2)
+        self.assertIn('server4', {r.owner_server for r in res})

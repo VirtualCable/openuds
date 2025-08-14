@@ -26,6 +26,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import copy
 import dataclasses
 import typing
 
@@ -34,7 +35,7 @@ import unittest
 from uds.core.util.query_filter import exec_query  # Ajusta esto al nombre real del archivo si lo separas
 
 
-class TestQueryFilter(unittest.TestCase):
+class QueryFilterTest(unittest.TestCase):
     data: list[dict[str, typing.Any]]
     objects: list[typing.Any]
 
@@ -184,6 +185,21 @@ class TestQueryFilter(unittest.TestCase):
         expected = [{"name": "Alice", "age": 30}, {"name": "Charlie", "age": 35}]
         self.assertEqual(result, expected)
 
+    def test_contains_function(self):
+        result = list(exec_query(self.data, "contains(name,'li')"))
+        expected = [{"name": "Alice", "age": 30}, {"name": "Charlie", "age": 35}]
+        self.assertEqual(result, expected)
+
+    def test_substring_function_two_arguments(self):
+        result = list(exec_query(self.data, "substring(name,3) eq 'ce'"))
+        expected = [{"name": "Alice", "age": 30}]
+        self.assertEqual(result, expected)
+
+    def test_substring_function_three_arguments(self):
+        result = list(exec_query(self.data, "substring(name,1,3) eq 'li'"))
+        expected = [{"name": "Alice", "age": 30}]
+        self.assertEqual(result, expected)
+
     def test_year_function(self):
         data = [
             {"dob": "1990-05-12"},
@@ -227,4 +243,26 @@ class TestQueryFilter(unittest.TestCase):
             {"name": "Charlie", "age": 35},
             {"name": "David", "age": 30},
         ]
+        self.assertEqual(result, expected)
+
+    def test_trim_function(self):
+        data_copy = copy.deepcopy(self.data)
+        data_copy.append({"name": "  Bella  ", "age": 30})
+        result = list(exec_query(data_copy, "trim(name) eq 'Bella'"))
+        expected = [{"name": "  Bella  ", "age": 30}]
+        self.assertEqual(result, expected)
+
+    def test_floor_function(self):
+        result = list(exec_query(self.data, "floor(age) eq 25"))
+        expected = [{"name": "Bob", "age": 25}]
+        self.assertEqual(result, expected)
+
+    def test_ceiling_function(self):
+        result = list(exec_query(self.data, "ceiling(age) eq 35"))
+        expected = [{"name": "Charlie", "age": 35}]
+        self.assertEqual(result, expected)
+
+    def test_round_function(self):
+        result = list(exec_query(self.data, "round(age) eq 25"))
+        expected = [{"name": "Bob", "age": 25}]
         self.assertEqual(result, expected)

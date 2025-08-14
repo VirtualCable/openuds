@@ -310,7 +310,12 @@ class HandlerNode:
 
     # Visit all nodes recursively, invoking a callback for each node with the node and path
     def visit(
-        self, callback: typing.Callable[['HandlerNode', str, typing.Literal['handler', 'custom_method', 'detail_method'], int], None], path: str = '', level: int = 0
+        self,
+        callback: typing.Callable[
+            ['HandlerNode', str, typing.Literal['handler', 'custom_method', 'detail_method'], int], None
+        ],
+        path: str = '',
+        level: int = 0,
     ) -> None:
         from uds.REST.model import ModelHandler
 
@@ -335,7 +340,12 @@ class HandlerNode:
         """
         ret = ''
 
-        def _tree(node: HandlerNode, path: str, type_: typing.Literal['handler', 'custom_method', 'detail_method'], level: int) -> None:
+        def _tree(
+            node: HandlerNode,
+            path: str,
+            type_: typing.Literal['handler', 'custom_method', 'detail_method'],
+            level: int,
+        ) -> None:
             nonlocal ret
 
             if not node.handler:
@@ -345,31 +355,6 @@ class HandlerNode:
 
         self.visit(_tree)
         return ret
-
-        from uds.REST.model import ModelHandler
-
-        if self.handler is None:
-            return f'{"  " * level}|- {self.name}\n' + ''.join(
-                child.tree(level + 1) for child in self.children.values()
-            )
-
-        ret = f'{"  " * level}{self.name} ({self.handler.__name__}  {self.full_path()})\n'
-
-        if issubclass(self.handler, ModelHandler):
-            # We don't mind the type of handler here, as we are just using it for introspection
-            handler = typing.cast(
-                type[ModelHandler[typing.Any]], self.handler  # pyright: ignore[reportUnknownMemberType]
-            )
-
-            # Add custom_methods
-            for method in handler.CUSTOM_METHODS:
-                ret += f'{"  " * level}  |- {method}\n'
-            # Add detail methods
-            if handler.DETAIL:
-                for method_name in handler.DETAIL.keys():
-                    ret += f'{"  " * level}  |- {method_name}\n'
-
-        return ret + ''.join(child.tree(level + 1) for child in self.children.values())
 
     def find_path(self, path: str | list[str]) -> typing.Optional['HandlerNode']:
         """

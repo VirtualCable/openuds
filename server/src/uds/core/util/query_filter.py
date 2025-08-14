@@ -27,6 +27,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # pyright: reportUnknownMemberType=false
+import math
 import typing
 import re
 import contextvars
@@ -90,17 +91,26 @@ _QUERY_PARSER_VAR: typing.Final[contextvars.ContextVar[lark.Lark]] = contextvars
 _REMOVE_QUOTES_RE: typing.Final[typing.Pattern[str]] = re.compile(r"^(['\"])(.*)\1$")
 
 _FUNCTIONS_PARAMS_NUM: dict[str, int] = {
+    # Variable parameters
+    'substring': -1,
+    'concat': -1,
+    # 2 parametes
     'substringof': 2,
+    'contains': 2,
     'startswith': 2,
     'endswith': 2,
     'indexof': 2,
-    'concat': -1,
+    # 1 parameter
     'tolower': 1,
     'toupper': 1,
     'length': 1,
     'year': 1,
     'month': 1,
     'day': 1,
+    'floor': 1,
+    'ceiling': 1,
+    'round': 1,
+    'trim': 1,
 }
 
 
@@ -294,6 +304,15 @@ class QueryTransformer(lark.Transformer[typing.Any, _T_Result]):
         match func_name:
             case 'substringof':
                 return lambda obj: str(args[1](obj)).find(str(args[0](obj))) != -1
+            case 'contains':
+                return lambda obj: str(args[0](obj)).find(str(args[1](obj))) != -1
+            case 'substring':
+                if len(args) == 2:
+                    return lambda obj: str(args[0](obj))[int(args[1](obj)) :]
+                elif len(args) == 3:
+                    return lambda obj: str(args[0](obj))[int(args[1](obj)) : int(args[2](obj))]
+                else:
+                    raise ValueError(f"substring function requires 2 or 3 arguments")
             case 'startswith':
                 return lambda obj: str(args[0](obj)).startswith(str(args[1](obj)))
             case 'endswith':
@@ -314,6 +333,14 @@ class QueryTransformer(lark.Transformer[typing.Any, _T_Result]):
                 return lambda obj: str(args[0](obj)).split('-')[1] if isinstance(args[0](obj), str) else ''
             case 'day':
                 return lambda obj: str(args[0](obj)).split('-')[2] if isinstance(args[0](obj), str) else ''
+            case 'trim':
+                return lambda obj: str(args[0](obj)).strip()
+            case 'floor':
+                return lambda obj: math.floor(args[0](obj))
+            case 'round':
+                return lambda obj: round(args[0](obj))
+            case 'ceiling':
+                return lambda obj: math.ceil(args[0](obj))
             case _:
                 # Will never reach this, as it has been already
                 raise ValueError(f"Unknown function: {func.value}")
