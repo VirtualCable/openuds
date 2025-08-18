@@ -418,7 +418,7 @@ def weblogin(
 
     request.session[consts.auth.SESSION_USER_KEY] = user.id
     request.session[consts.auth.SESSION_PASS_KEY] = codecs.encode(
-        CryptoManager().symmetric_encrypt(password, cookie), "base64"
+        CryptoManager.manager().symmetric_encrypt(password, cookie), "base64"
     ).decode()  # as str
 
     # Ensures that this user will have access through REST api if logged in through web interface
