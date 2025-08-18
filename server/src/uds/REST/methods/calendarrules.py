@@ -97,7 +97,7 @@ class CalendarRules(DetailHandler[CalendarRuleItem]):  # pylint: disable=too-man
         perm = permissions.effective_permissions(self._user, parent)
         try:
             if item is None:
-                return [CalendarRules.rule_as_dict(k, perm) for k in parent.rules.all()]
+                return [CalendarRules.rule_as_dict(k, perm) for k in self.filter_queryset(parent.rules.all())]
             k = parent.rules.get(uuid=process_uuid(item))
             return CalendarRules.rule_as_dict(k, perm)
         except CalendarRule.DoesNotExist:

@@ -82,7 +82,7 @@ class AccessCalendars(DetailHandler[AccessCalendarItem]):
 
         try:
             if not item:
-                return [AccessCalendars.as_item(i) for i in parent.calendarAccess.all()]
+                return [AccessCalendars.as_item(i) for i in self.filter_queryset(parent.calendarAccess.all())]
             return AccessCalendars.as_item(parent.calendarAccess.get(uuid=process_uuid(item)))
         except models.CalendarAccess.DoesNotExist:
             raise exceptions.rest.NotFound(_('Access calendar not found: {}').format(item)) from None
@@ -197,7 +197,7 @@ class ActionsCalendars(DetailHandler[ActionCalendarItem]):
         parent = ensure.is_instance(parent, models.ServicePool)
         try:
             if item is None:
-                return [ActionsCalendars.as_dict(i) for i in parent.calendaraction_set.all()]
+                return [ActionsCalendars.as_dict(i) for i in self.filter_queryset(parent.calendaraction_set.all())]
             i = parent.calendaraction_set.get(uuid=process_uuid(item))
             return ActionsCalendars.as_dict(i)
         except models.CalendarAction.DoesNotExist:

@@ -51,7 +51,7 @@ class Config(Handler):
     ROLE = consts.UserRole.ADMIN
 
     def get(self) -> typing.Any:
-        return CfgConfig.get_config_values(self.is_admin())
+        return self.filter_data(CfgConfig.get_config_values(self.is_admin()))
 
     def put(self) -> typing.Any:
         for section, section_dict in typing.cast(dict[str, dict[str, dict[str, str]]], self._params).items():

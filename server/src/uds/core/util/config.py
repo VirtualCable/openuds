@@ -349,7 +349,7 @@ class Config:
     @staticmethod
     def get_config_values(
         include_passwords: bool = False,
-    ) -> collections.abc.Mapping[str, collections.abc.Mapping[str, collections.abc.Mapping[str, typing.Any]]]:
+    ) -> dict[str, dict[str, dict[str, typing.Any]]]:
         """
         Returns a dictionary with all config values
         """

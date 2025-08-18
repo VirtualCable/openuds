@@ -37,13 +37,14 @@ import abc
 import collections.abc
 
 from django.db import IntegrityError, models
+from django.db.models import QuerySet
 from django.utils.translation import gettext as _
 
 from uds.core import consts
 from uds.core import exceptions
 from uds.core import types
 from uds.core.module import Module
-from uds.core.util import log, permissions, api as api_utils, query_db_filter
+from uds.core.util import log, permissions, api as api_utils
 from uds.models import ManagedObjectModel, Tag, TaggingMixin
 
 from .base import BaseModelHandler
@@ -55,6 +56,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+T = typing.TypeVar('T', bound=models.Model)
 
 class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
     """
@@ -225,37 +227,30 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
 
     def get_items(
         self,
+        *,
         overview: bool = False,
+        query: QuerySet[T] | None = None
     ) -> typing.Generator[types.rest.T_Item, None, None]:
+        """
+        Get items from the model.
+        Args:
+            overview: If True, return a summary of the items.
+            query: Optional queryset to filter the items. Used to optimize the process for some models
+                   (such as ServicePools)
+
+        """
 
         # Basic model filter
-        qs = self.MODEL.objects.all()
+        if query:
+            qs = query
+        else:
+            qs = self.MODEL.objects.all()
         if self.FILTER is not None:
             qs = qs.filter(**self.FILTER)
         if self.EXCLUDE is not None:
             qs = qs.exclude(**self.EXCLUDE)
 
-        # OData filter
-        if self.odata.filter:
-            try:
-                qs = query_db_filter.exec_query(self.odata.filter, qs)
-            except ValueError as e:
-                raise exceptions.rest.RequestError(f'Invalid odata filter: {e}') from e
-
-        for order in self.odata.orderby:
-            qs = qs.order_by(order)
-
-        if self.odata.start is not None:
-            qs = qs[self.odata.start :]
-        if self.odata.limit is not None:
-            qs = qs[: self.odata.limit]
-
-        # Get total items and set it on X-Total-Count
-        try:
-            total_items = qs.count()
-            self.add_header('X-Total-Count', total_items)
-        except Exception as e:
-            raise exceptions.rest.RequestError(f'Invalid odata: {e}')
+        qs = self.filter_queryset(qs)
 
         for item in qs:
             try:

@@ -96,7 +96,7 @@ class AccountsUsage(DetailHandler[AccountItem]):  # pylint: disable=too-many-pub
         perm = permissions.effective_permissions(self._user, parent)
         try:
             if not item:
-                return [AccountsUsage.usage_to_dict(k, perm) for k in parent.usages.all()]
+                return [AccountsUsage.usage_to_dict(k, perm) for k in self.filter_queryset(parent.usages.all())]
             k = parent.usages.get(uuid=process_uuid(item))
             return AccountsUsage.usage_to_dict(k, perm)
         except Exception:

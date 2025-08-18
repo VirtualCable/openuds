@@ -115,7 +115,7 @@ class Reports(model.BaseModelHandler[ReportItem]):
         return match_args(
             self._args,
             error,
-            ((), lambda: list(self.get_items())),
+            ((), lambda: list(self.filter_data(self.get_items()))),
             ((consts.rest.OVERVIEW,), lambda: list(self.get_items())),
             (
                 (consts.rest.TABLEINFO,),

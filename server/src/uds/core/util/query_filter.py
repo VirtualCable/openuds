@@ -361,7 +361,7 @@ def get_parser() -> lark.Lark:
         return parser
 
 
-def exec_query(data: list[T], query: str) -> typing.Iterable[T]:
+def exec_query(query: str, data: collections.abc.Iterable[T]) -> collections.abc.Iterable[T]:
     """
     Filters a list of dictionaries using a query string.
 

@@ -85,7 +85,7 @@ class Connection(Handler):
         # Ensure user is present on request, used by web views methods
         self._request.user = self._user
 
-        return Connection.result(result=services.get_services_info_dict(self._request))
+        return Connection.result(result=self.filter_data(services.get_services_info_dict(self._request)))
 
     def connection(self, id_service: str, id_transport: str, skip: str = '') -> dict[str, typing.Any]:
         skip_check = skip in ('doNotCheck', 'do_not_check', 'no_check', 'nocheck', 'skip_check')

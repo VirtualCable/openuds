@@ -110,6 +110,8 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item]):
         self._args = list(args)
         self._parent_item = parent_item
         self._user = user
+        self._odata = parent_handler._odata  # Ref to parent OData
+        self._headers = parent_handler._headers  # "link" headers
 
     def _check_is_custom_method(self, check: str, parent: models.Model, arg: typing.Any = None) -> typing.Any:
         """

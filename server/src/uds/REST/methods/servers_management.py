@@ -156,7 +156,7 @@ class ServersServers(DetailHandler[ServerItem]):
         parent = typing.cast('models.ServerGroup', parent)  # We will receive for sure
         try:
             if item is None:
-                q = parent.servers.all()
+                q = self.filter_queryset(parent.servers.all())
             else:
                 q = parent.servers.filter(uuid=process_uuid(item))
             res: list[ServerItem] = []

@@ -155,9 +155,11 @@ class AssignedUserService(DetailHandler[UserServiceItem]):
                 # First, fetch all properties for all assigned services on this pool
                 # We can cache them, because they are going to be readed anyway...
                 properties: dict[str, typing.Any] = collections.defaultdict(dict)
-                for id, key, value in models.Properties.objects.filter(
-                    owner_type='userservice',
-                    owner_id__in=parent.assigned_user_services().values_list('uuid', flat=True),
+                for id, key, value in self.filter_queryset(
+                    models.Properties.objects.filter(
+                        owner_type='userservice',
+                        owner_id__in=parent.assigned_user_services().values_list('uuid', flat=True),
+                    )
                 ).values_list('owner_id', 'key', 'value'):
                     properties[id][key] = value
 
@@ -303,9 +305,9 @@ class CachedService(AssignedUserService):
             if not item:
                 return [
                     AssignedUserService.userservice_item(k, is_cache=True)
-                    for k in parent.cached_users_services()
-                    .all()
-                    .prefetch_related('deployed_service', 'publication')
+                    for k in self.filter_queryset(parent.cached_users_services().all()).prefetch_related(
+                        'deployed_service', 'publication'
+                    )
                 ]
             cached_userservice: models.UserService = parent.cached_users_services().get(uuid=process_uuid(item))
             return AssignedUserService.userservice_item(cached_userservice, is_cache=True)
@@ -378,7 +380,9 @@ class Groups(DetailHandler[GroupItem]):
                 type='meta' if group.is_meta else 'group',
                 auth_name=group.manager.name,
             )
-            for group in typing.cast(collections.abc.Iterable[models.Group], parent.assignedGroups.all())
+            for group in typing.cast(
+                collections.abc.Iterable[models.Group], self.filter_queryset(parent.assignedGroups.all())
+            )
         ]
 
     def get_table(self, parent: 'Model') -> TableInfo:
@@ -445,7 +449,7 @@ class Transports(DetailHandler[TransportItem]):
                 priority=trans.priority,
                 trans_type=trans.get_type().mod_name(),
             )
-            for trans in parent.transports.all()
+            for trans in self.filter_queryset(parent.transports.all())
         ]
 
     def get_table(self, parent: 'Model') -> TableInfo:
@@ -569,7 +573,7 @@ class Publications(DetailHandler[PublicationItem]):
                 reason=State.from_str(i.state).is_errored() and i.get_instance().error_reason() or '',
                 state_date=i.state_date,
             )
-            for i in parent.publications.all()
+            for i in self.filter_queryset(parent.publications.all())
         ]
 
     def get_table(self, parent: 'Model') -> TableInfo:
@@ -604,7 +608,7 @@ class Changelog(DetailHandler[ChangelogItem]):
                 stamp=i.stamp,
                 log=i.log,
             )
-            for i in parent.changelog.all()
+            for i in self.filter_queryset(parent.changelog.all())
         ]
 
     def get_table(self, parent: 'Model') -> types.rest.TableInfo:

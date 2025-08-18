@@ -40,8 +40,8 @@ from django.utils.translation import gettext as _
 from uds.core import consts
 from uds.core import exceptions
 from uds.core import types
-from uds.core.module import Module
 from uds.core.util import permissions
+from uds.core.module import Module
 
 # from uds.models import ManagedObjectModel
 

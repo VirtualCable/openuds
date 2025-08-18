@@ -157,7 +157,7 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
         perm = permissions.effective_permissions(self._user, parent)
         try:
             if item is None:
-                return [Services.service_item(k, perm) for k in parent.services.all()]
+                return [Services.service_item(k, perm) for k in self.filter_queryset(parent.services.all())]
             k = parent.services.get(uuid=process_uuid(item))
             val = Services.service_item(k, perm, full=True)
             # On detail, ne wee to fill the instance fields by hand

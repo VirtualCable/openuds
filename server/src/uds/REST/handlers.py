@@ -33,14 +33,17 @@ import abc
 import typing
 import logging
 import codecs
+import collections.abc
 
 from django.contrib.sessions.backends.base import SessionBase
 from django.contrib.sessions.backends.db import SessionStore
+from django.db.models import QuerySet
 
-from uds.core import consts, types
+from uds.core import consts, types, exceptions
 from uds.core.util.config import GlobalConfig
 from uds.core.auths.auth import root_user
-from uds.core.util import net
+from uds.core.util import net, query_db_filter, query_filter
+
 from uds.models import Authenticator, User
 from uds.core.managers.crypto import CryptoManager
 
@@ -53,6 +56,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+T = typing.TypeVar('T')
 
 class Handler(abc.ABC):
     """
@@ -384,6 +388,56 @@ class Handler(abc.ABC):
             if name in self._params:
                 return self._params[name]
         return ''
+    
+    def filter_queryset(self, qs: QuerySet[typing.Any]) -> QuerySet[typing.Any]:
+        """
+        Filters the queryset based on odata
+        """
+        # OData filter
+        if self.odata.filter:
+            try:
+                qs = query_db_filter.exec_query(self.odata.filter, qs)
+            except ValueError as e:
+                raise exceptions.rest.RequestError(f'Invalid odata filter: {e}') from e
+
+        for order in self.odata.orderby:
+            qs = qs.order_by(order)
+
+        if self.odata.start is not None:
+            qs = qs[self.odata.start :]
+        if self.odata.limit is not None:
+            qs = qs[: self.odata.limit]
+
+        # Get total items and set it on X-Total-Count
+        try:
+            total_items = qs.count()
+            self.add_header('X-Total-Count', total_items)
+        except Exception as e:
+            raise exceptions.rest.RequestError(f'Invalid odata: {e}')
+
+        return qs
+
+    def filter_data(self, data: collections.abc.Iterable[T]) -> list[T]:
+        """
+        Filters the dict base on the currnet odata
+        """
+        if self.odata.filter:
+            try:
+                data = list(query_filter.exec_query(self.odata.filter, data))
+
+            except ValueError as e:
+                raise exceptions.rest.RequestError(f'Invalid odata filter: {e}') from e
+        else:
+            data = list(data)
+
+        # Get total items and set it on X-Total-Count
+        try:
+            self.add_header('X-Total-Count', len(data))
+        except Exception as e:
+            raise exceptions.rest.RequestError(f'Invalid odata: {e}')
+
+        return data
+    
     
     @classmethod
     def api_components(cls: type[typing.Self]) -> types.rest.api.Components:

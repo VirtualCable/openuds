@@ -96,7 +96,7 @@ class MetaServicesPool(DetailHandler[MetaItem]):
         parent = ensure.is_instance(parent, models.MetaPool)
         try:
             if not item:
-                return [MetaServicesPool.as_dict(i) for i in parent.members.all()]
+                return [MetaServicesPool.as_dict(i) for i in self.filter_queryset(parent.members.all())]
             i = parent.members.get(uuid=process_uuid(item))
             return MetaServicesPool.as_dict(i)
         except models.MetaPoolMember.DoesNotExist:
@@ -196,7 +196,7 @@ class MetaAssignedService(DetailHandler[UserServiceItem]):
         def _assigned_userservices_for_pools() -> (
             typing.Generator[tuple[models.UserService, typing.Optional[dict[str, typing.Any]]], None, None]
         ):
-            for m in parent.members.filter(enabled=True):
+            for m in self.filter_queryset(parent.members.filter(enabled=True)):
                 properties: dict[str, typing.Any] = {
                     k: v
                     for k, v in models.Properties.objects.filter(
