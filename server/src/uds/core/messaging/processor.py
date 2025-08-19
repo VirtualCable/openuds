@@ -33,6 +33,7 @@ import time
 import logging
 import typing
 
+from uds.core.managers.notifications import NotificationsManager
 from uds.core.managers.task import BaseThread
 
 from uds.models import Notifier, Notification
@@ -43,13 +44,12 @@ from .config import DO_NOT_REPEAT
 
 logger = logging.getLogger(__name__)
 
+
 # Note that this thread will be running on the scheduler process
 class MessageProcessorThread(BaseThread):
     _keep_running: bool = True
 
-    _cached_providers: typing.Optional[
-        list[tuple[int, NotificationProviderModule]]
-    ]
+    _cached_providers: typing.Optional[list[tuple[int, NotificationProviderModule]]]
     _cached_stamp: float
 
     def __init__(self) -> None:
@@ -73,12 +73,14 @@ class MessageProcessorThread(BaseThread):
         return self._cached_providers
 
     def run(self) -> None:
+        while NotificationsManager.manager().ensure_local_db_exists() is False:
+            logger.info('Waiting for local notifications database to be ready...')
+            time.sleep(1)
+
         while self._keep_running:
             # Locate all notifications from "persistent" and try to process them
             # If no notification can be fully resolved, it will be kept in the database
-            not_before = sql_now() - datetime.timedelta(
-                seconds=DO_NOT_REPEAT.as_int()
-            )
+            not_before = sql_now() - datetime.timedelta(seconds=DO_NOT_REPEAT.as_int())
             for n in Notification.get_persistent_queryset().all():
                 # If there are any other notification simmilar to this on default db, skip it
                 # Simmilar means that group, identificator and message are already been logged less than DO_NOT_REPEAT seconds ago
@@ -119,7 +121,7 @@ class MessageProcessorThread(BaseThread):
                     # logger.warning(
                     #     'Could not save notification %s to main DB, trying notificators',
                     #    n,
-                    #)
+                    # )
 
                 if notify:
                     for p in (i[1] for i in self.providers if i[0] >= n.level):
