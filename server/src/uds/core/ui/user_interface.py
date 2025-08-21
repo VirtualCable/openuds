@@ -1527,7 +1527,7 @@ class UserInterface(metaclass=UserInterfaceType):
                time, and returned data will be probable a nonsense. We will take care
                of this posibility in a near version...
         """
-        
+
     @classmethod
     def describe_fields(cls: type[typing.Self]) -> list[types.ui.GuiElement]:
         return [
@@ -1652,6 +1652,12 @@ class UserInterface(metaclass=UserInterfaceType):
         # Dict of translations from old_field_name to field_name
         field_names_translations: dict[str, str] = self._get_fieldname_translations()
 
+        # Allowed conversions of type
+        VALID_CONVERSIONS: typing.Final[dict[types.ui.FieldType, list[types.ui.FieldType]]] = {
+            types.ui.FieldType.TEXT: [types.ui.FieldType.PASSWORD]
+        }
+        
+
         # Set all values to defaults ones
         for field_name, field in self._all_serializable_fields():
             if field.is_type(types.ui.FieldType.HIDDEN) and field.is_serializable() is False:
@@ -1671,18 +1677,18 @@ class UserInterface(metaclass=UserInterfaceType):
                 continue
 
             if field_type != internal_field_type.name:
-                # Especial case for text fields converted to password fields
-                if not (
-                    internal_field_type == types.ui.FieldType.PASSWORD
-                    and field_type == types.ui.FieldType.TEXT.name
-                ):
-                    logger.warning(
-                        'Field %s has different type than expected: %s != %s',
-                        field_name,
-                        field_type,
-                        internal_field_type.name,
-                    )
-                    continue
+                if valids_for_field := VALID_CONVERSIONS.get(internal_field_type):
+                    if field_type not in [v.name for v in valids_for_field]:
+                        # If the field type is not valid for the internal field type, we log a warning
+                        # and do not include this field in the form
+                        logger.warning(
+                            'Field %s has different type than expected: %s != %s. Not included in form',
+                            field_name,
+                            field_type,
+                            internal_field_type.name,
+                        )
+                        continue
+
             self._gui[field_name].value = FIELD_DECODERS[internal_field_type](field_value)
 
         return False
