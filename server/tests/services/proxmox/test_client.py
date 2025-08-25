@@ -62,7 +62,7 @@ class TestProxmoxClient(UDSTransactionTestCase):
     hagroup: str = ''
 
     def setUp(self) -> None:
-        v = vars.get_vars('proxmox_cluster')
+        v = vars.get_vars('proxmox9_alone')
         if not v:
             self.skipTest('No proxmox vars')
 
@@ -96,10 +96,13 @@ class TestProxmoxClient(UDSTransactionTestCase):
         if self.storage.is_null():
             self.skipTest('No valid storage found')
 
-        self.hagroup = v['test_ha_group']
-        # Ensure we have a valid pool, storage and ha group
-        if self.hagroup not in self.pclient.list_ha_groups():
-            self.skipTest('No valid ha group found')
+        if v.get('version', '8') < '9':
+            self.hagroup = v['test_ha_group']
+            # Ensure we have a valid pool, storage and ha group
+            if self.hagroup not in self.pclient.list_ha_groups():
+                self.skipTest('No valid ha group found')
+        else:
+            self.hagroup = ''
 
     def _get_new_vmid(self) -> int:
         MAX_RETRIES: typing.Final[int] = 512  # So we don't loop forever, just in case...
@@ -253,6 +256,9 @@ class TestProxmoxClient(UDSTransactionTestCase):
                 pass
 
     def test_list_ha_groups(self) -> None:
+        if self.hagroup == '':
+            self.skipTest('No ha groups in this version of proxmox')
+            
         groups = self.pclient.list_ha_groups()
         self.assertIsInstance(groups, list)
         for group in groups:
@@ -261,15 +267,25 @@ class TestProxmoxClient(UDSTransactionTestCase):
         self.assertIn(self.hagroup, groups)
 
     def test_enable_disable_vm_ha(self) -> None:
+        # Should enable HA, but with no ha group because no ha groups are available
         with self._create_test_vm() as vm:
             self.pclient.enable_vm_ha(vm.id, started=False, group=self.hagroup)
-            # Ensure it's enabled
-            vminfo = self.pclient.get_vm_info(vm.id, force=True)
-            self.assertEqual(vminfo.ha.group, self.hagroup)
+            # Ensure it's enabled. Only works for version 9
+            ha_resources = self.pclient.list_ha_resources(force=True)
+            self.assertIn(f'vm:{vm.id}', ha_resources)
+            # On < 9, groups can be enabled. On 9 >, no ha groups exists
+            if self.hagroup:
+                vminfo = self.pclient.get_vm_info(vm.id, force=True)
+                self.assertEqual(vminfo.ha.group, self.hagroup)
             # Disable it
             self.pclient.disable_vm_ha(vm.id)
-            vminfo = self.pclient.get_vm_info(vm.id, force=True)
-            self.assertEqual(vminfo.ha.group, '')
+
+            ha_resources = self.pclient.list_ha_resources(force=True)
+            self.assertNotIn(f'vm:{vm.id}', ha_resources)
+            
+            if self.hagroup:
+                vminfo = self.pclient.get_vm_info(vm.id, force=True)
+                self.assertEqual(vminfo.ha.group, '')
 
     def test_set_vm_protection(self) -> None:
         with self._create_test_vm() as vm:
