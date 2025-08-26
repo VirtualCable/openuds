@@ -33,7 +33,11 @@ class Info:
     description: str | None = None
 
     def as_dict(self) -> dict[str, typing.Any]:
-        return as_dict_without_none(dataclasses.asdict(self))
+        return {
+            'title': self.title,
+            'version': self.version,
+            'description': self.description,
+        }
 
 
 # Parameter
@@ -48,27 +52,62 @@ class Parameter:
     explode: bool | None = None
 
     def as_dict(self) -> dict[str, typing.Any]:
-        return as_dict_without_none(dataclasses.asdict(self))
+        return as_dict_without_none(
+            {
+                'name': self.name,
+                'in': self.in_,
+                'required': self.required,
+                'schema': self.schema.as_dict(),
+                'description': self.description,
+                'style': self.style,
+                'explode': self.explode,
+            }
+        )
+
+
+@dataclasses.dataclass
+class Content:
+    media_type: str
+    schema: 'SchemaProperty'
+
+    def as_dict(self) -> dict[str, typing.Any]:
+        return as_dict_without_none(
+            {
+                self.media_type: {
+                    'schema': self.schema.as_dict(),
+                },
+            }
+        )
 
 
 # Request body
 @dataclasses.dataclass
 class RequestBody:
     required: bool
-    content: dict[str, typing.Any]  # e.g. {'application/json': {'schema': {...}}}
+    content: Content  # e.g. {'application/json': {'schema': {...}}}
 
     def as_dict(self) -> dict[str, typing.Any]:
-        return as_dict_without_none(dataclasses.asdict(self))
+        return as_dict_without_none(
+            {
+                'required': self.required,
+                'content': self.content.as_dict(),
+            }
+        )
 
 
 # Response
 @dataclasses.dataclass
 class Response:
     description: str
-    content: dict[str, typing.Any] | None = None
+    content: Content | None = None
 
     def as_dict(self) -> dict[str, typing.Any]:
-        return as_dict_without_none(dataclasses.asdict(self))
+        return as_dict_without_none(
+            {
+                'description': self.description,
+                'content': self.content.as_dict() if self.content else None,
+            }
+        )
 
 
 # Operación (GET, POST, etc.)
@@ -125,6 +164,7 @@ class SchemaProperty:
     additionalProperties: 'SchemaProperty | None' = None  # For objects
     discriminator: str | None = None  # For polymorphic types
     enum: list[str | int] | None = None  # For enum types
+    properties: dict[str, 'SchemaProperty'] | None = None
 
     @staticmethod
     def from_field_desc(desc: 'ui.GuiElement') -> 'SchemaProperty|None':
@@ -167,7 +207,17 @@ class SchemaProperty:
         return schema
 
     def as_dict(self) -> dict[str, typing.Any]:
-        val = as_dict_without_none(dataclasses.asdict(self))
+        val = {
+            'type': self.type,
+            'format': self.format,
+            'description': self.description,
+            'example': self.example,
+            'items': self.items.as_dict() if self.items else None,
+            'additionalProperties': self.additionalProperties.as_dict() if self.additionalProperties else None,
+            'discriminator': self.discriminator,
+            'enum': self.enum,
+            'properties': {k: v.as_dict() for k, v in self.properties.items()} if self.properties else None,
+        }
 
         # Convert type to oneOf if necesary, and add refs if needed
         def one_of_ref(type_: str) -> dict[str, typing.Any]:
@@ -179,6 +229,9 @@ class SchemaProperty:
             # If one_of is defined, we should not use type, but one_of
             val['oneOf'] = [one_of_ref(ref) for ref in self.type]
             del val['type']
+        elif self.type:
+            del val['type']  # Remove existing type
+            val.update(one_of_ref(self.type))
         return as_dict_without_none(val)
 
 
@@ -198,9 +251,26 @@ class Schema:
             {
                 'type': self.type,
                 'format': self.format,
-                'properties': {k: v.as_dict() for k, v in self.properties.items()},
-                'required': self.required,
+                'properties': {k: v.as_dict() for k, v in self.properties.items()} if self.properties else None,
+                'required': self.required if self.required else None,
                 'description': self.description,
+            }
+        )
+
+
+@dataclasses.dataclass
+class RelatedSchema:
+    property: str
+    mappings: list[tuple[str, str]]  # list of (type, ref)
+
+    def as_dict(self) -> dict[str, typing.Any]:
+        return as_dict_without_none(
+            {
+                'oneOf': [{'$ref': i[1]} for i in self.mappings],
+                'discriminator': {
+                    'propertyName': self.property,
+                    'mapping': {i[0]: i[1] for i in self.mappings},
+                },
             }
         )
 
@@ -208,7 +278,9 @@ class Schema:
 # Componentes
 @dataclasses.dataclass
 class Components:
-    schemas: dict[str, Schema] = dataclasses.field(default_factory=dict[str, Schema])
+    schemas: dict[str, Schema | RelatedSchema] = dataclasses.field(
+        default_factory=dict[str, Schema | RelatedSchema]
+    )
     securitySchemes: dict[str, typing.Any] = dataclasses.field(default_factory=dict[str, typing.Any])
 
     def as_dict(self) -> dict[str, typing.Any]:

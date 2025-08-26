@@ -84,7 +84,8 @@ def get_component_from_type(
         logger.debug('Processing base %s for components %s', base_type, base_type.__bases__)
         components = base_type.api_components()
 
-        item_schema = next(iter(components.schemas.values()))
+        # A reference
+        item_name, item_schema = next(iter(components.schemas.items()))
 
         possible_types: collections.abc.Iterable[type['module.Module']] = []
         if issubclass(base_type, types.rest.ManagedObjectItem):
@@ -94,6 +95,7 @@ def get_component_from_type(
             pass
 
         refs: list[str] = []
+        mappings: list[tuple[str, str]] = []
         for type_ in possible_types:
             type_schema = types.rest.api.Schema(
                 type='object',
@@ -108,12 +110,20 @@ def get_component_from_type(
                 if field['gui'].get('required', False):
                     type_schema.required.append(field['name'])
 
-            refs.append(f'#/components/schemas/{type_.type_type}')
+            ref = f'#/components/schemas/{type_.type_type}'
+            refs.append(ref)
+            mappings.append((f'{type_.type_type}', ref))  
 
             components.schemas[type_.type_type] = type_schema
 
-        if issubclass(base_type, types.rest.ManagedObjectItem):
-            item_schema.properties['instance'] = types.rest.api.SchemaProperty(type=refs, discriminator='type')
+        if issubclass(base_type, types.rest.ManagedObjectItem) and isinstance(item_schema, types.rest.api.Schema):
+            # item_schema.discriminator = types.rest.api.Discriminator(propertyName='type')
+            instance_name = f'{item_name}Instance'
+            item_schema.properties['instance'] = types.rest.api.SchemaProperty(type=f'#/components/schemas/{instance_name}')
+            instance_comps = types.rest.api.Components(
+                schemas={instance_name: types.rest.api.RelatedSchema(property='type', mappings=mappings)}
+            )
+            all_components = all_components.union(instance_comps)
 
         # Store it
         all_components = all_components.union(components)
@@ -151,6 +161,7 @@ _OPENAPI_TYPE_MAP: typing.Final[dict[typing.Any, OpenApiType]] = {
     str: OpenApiType.STRING,
     float: OpenApiType.NUMBER,
     bool: OpenApiType.BOOLEAN,
+    type(None): OpenApiType.NULL,
     datetime.datetime: OpenApiType.DATE_TIME,
     datetime.date: OpenApiType.DATE,
 }
@@ -184,7 +195,6 @@ def python_type_to_openapi(py_type: typing.Any) -> 'api.SchemaProperty':
             _OPENAPI_TYPE_MAP.get(arg, OpenApiType.OBJECT)
             for arg in args
             if isinstance(arg, type)
-            if arg is not type(None)
         ]
 
         return api.SchemaProperty(

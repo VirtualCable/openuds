@@ -140,22 +140,23 @@ class ManagedObjectItem(BaseRestItem, typing.Generic[T_Model]):
         # Add any additional components specific to this item, that are "type", "type_name" and "instance"
         # get reference
         schema = component.schemas.get(cls.__name__)
-        assert schema is not None, f'Schema for {cls.__name__} not found in components'
-        # item is not an real field, remove it from components description and required
-        schema.properties.pop('item', None)
-        schema.required.remove('item')
+        if isinstance(schema, api.Schema):
+            assert schema is not None, f'Schema for {cls.__name__} not found in components'
+            # item is not an real field, remove it from components description and required
+            schema.properties.pop('item', None)
+            schema.required.remove('item')
 
-        # Add the specific fields to the schema
-        # Note that 'instance' is incomplete, must be completed with item fields
-        # But as long as python has not "real" generics, we cannot estimate the type of item
-        schema.properties.update(
-            {
-                'type': api.SchemaProperty(type='string'),
-                'type_name': api.SchemaProperty(type='string'),
-                'instance': api.SchemaProperty(type='object'),
-            }
-        )
-        schema.required.extend(['type', 'instance'])  # type_name is not required
+            # Add the specific fields to the schema
+            # Note that 'instance' is incomplete, must be completed with item fields
+            # But as long as python has not "real" generics, we cannot estimate the type of item
+            schema.properties.update(
+                {
+                    'type': api.SchemaProperty(type='string'),
+                    'type_name': api.SchemaProperty(type='string'),
+                    'instance': api.SchemaProperty(type='object'),
+                }
+            )
+            schema.required.extend(['type', 'instance'])  # type_name is not required
 
         return component
 

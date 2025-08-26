@@ -119,7 +119,7 @@ class TestApiGenBasic(UDSTestCase):
         def check_node(node: types.rest.HandlerNode):
             nonlocal comps
             if handler := node.handler:
-                path = node.full_path()
+                full_path = '/' + node.full_path().lstrip('/')
                 logger.info("Checking child node: %s, %s", node.name, handler.__module__)
                 components = handler.api_components()
                 # Component should not be empty
@@ -129,7 +129,7 @@ class TestApiGenBasic(UDSTestCase):
                     f'Component for {node.name} should be of type Components',
                 )
 
-                handler_paths = handler.api_paths(path, [path.split('/')[0].capitalize()])
+                handler_paths = handler.api_paths(full_path, [full_path.split('/')[0].capitalize()])
                 self.assertIsInstance(
                     handler_paths,
                     dict,
@@ -149,14 +149,14 @@ class TestApiGenBasic(UDSTestCase):
                 # self.assertFalse(components.is_empty(), f'Component for model {node.name} ({node.handler.__module__}) should not be empty')
                 comps = comps.union(components)
                 paths.update(handler_paths)
-                
+
                 # If is a ModelHandler, look for DETAIL
                 if issubclass(handler, ModelHandler) and handler.DETAIL:
                     for name, cls in handler.DETAIL.items():
                         logger.info("Found detail for %s: %s", node.name, name)
-                        
+
                         comps = comps.union(cls.api_components())
-                        paths.update(cls.api_paths(f'{path}/{name}', []))
+                        paths.update(cls.api_paths(f'{full_path}/{name}', []))
 
             for child in node.children.values():
                 check_node(child)
@@ -164,7 +164,7 @@ class TestApiGenBasic(UDSTestCase):
         check_node(root_node)
         logger.info("Components found: %s", ', '.join(comps.schemas.keys()))
         logger.info("Paths found: %s", ', '.join(paths.keys()))
-        
+
         # Upgrade comps to include security schema
         comps.securitySchemes = {
             'apiKeyAuth': {
@@ -254,7 +254,10 @@ class TestApiGenBasic(UDSTestCase):
         self.assertIsInstance(components, types.rest.api.Components)
         self.assertIn('BaseRestItem', components.schemas)
         schema = components.schemas['BaseRestItem']
-        self.assertIsInstance(schema, types.rest.api.Schema)
+
+        # This way, the syntax checker ccan infer the type of schema
+        assert isinstance(schema, types.rest.api.Schema)
+
         self.assertEqual(schema.type, 'object')
         self.assertEqual(schema.required, ['field_str', 'field_int', 'field_float'])
         properties = schema.properties
@@ -301,7 +304,7 @@ class TestApiGenBasic(UDSTestCase):
                         'type': 'object',
                         'properties': {
                             'field_str': {'type': 'string'},
-                            'field_int': {'type': 'integer'},
+                            'field_int': {'type': 'integer', 'format': 'int64'},
                             'field_float': {'type': 'number'},
                             'field_list': {'type': 'array', 'items': {'type': 'string'}},
                             'field_list_2': {'type': 'array', 'items': {'type': 'string'}},
@@ -324,7 +327,9 @@ class TestApiGenBasic(UDSTestCase):
         self.assertIsInstance(components, types.rest.api.Components)
         self.assertIn('ManagedObjectRestItem', components.schemas)
         schema = components.schemas['ManagedObjectRestItem']
-        self.assertIsInstance(schema, types.rest.api.Schema)
+
+        assert isinstance(schema, types.rest.api.Schema)
+
         self.assertEqual(schema.type, 'object')
         self.assertEqual(schema.required, ['field_str', 'type', 'instance'])
         properties = schema.properties
