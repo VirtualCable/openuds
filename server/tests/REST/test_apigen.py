@@ -164,6 +164,15 @@ class TestApiGenBasic(UDSTestCase):
         check_node(root_node)
         logger.info("Components found: %s", ', '.join(comps.schemas.keys()))
         logger.info("Paths found: %s", ', '.join(paths.keys()))
+        
+        # Upgrade comps to include security schema
+        comps.securitySchemes = {
+            'apiKeyAuth': {
+                'type': 'apiKey',
+                'in': 'header',
+                'name': consts.auth.AUTH_TOKEN_HEADER,
+            }
+        }
 
         import json
         import yaml

@@ -209,11 +209,13 @@ class Schema:
 @dataclasses.dataclass
 class Components:
     schemas: dict[str, Schema] = dataclasses.field(default_factory=dict[str, Schema])
+    securitySchemes: dict[str, typing.Any] = dataclasses.field(default_factory=dict[str, typing.Any])
 
     def as_dict(self) -> dict[str, typing.Any]:
         return as_dict_without_none(
             {
                 'schemas': {k: v.as_dict() for k, v in self.schemas.items()},
+                'securitySchemes': self.securitySchemes if self.securitySchemes else None,
             }
         )
 
@@ -221,6 +223,8 @@ class Components:
         '''Returns a new Components instance that is the union of this and another Components.'''
         new_components = Components()
         new_components.schemas = {**self.schemas, **other.schemas}
+        if other.securitySchemes:
+            new_components.securitySchemes = {**self.securitySchemes, **other.securitySchemes}
         return new_components
 
     # Operator | will union two Components
