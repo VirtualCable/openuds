@@ -119,10 +119,11 @@ class Operation:
     parameters: list[Parameter] = dataclasses.field(default_factory=list[Parameter])
     requestBody: RequestBody | None = None
     responses: dict[str, Response] = dataclasses.field(default_factory=dict[str, Response])
+    security: str | None = None
     tags: list[str] = dataclasses.field(default_factory=list[str])
 
     def as_dict(self) -> dict[str, typing.Any]:
-        return as_dict_without_none(
+        data = as_dict_without_none(
             {
                 'summary': self.summary,
                 'description': self.description,
@@ -132,6 +133,9 @@ class Operation:
                 'tags': self.tags,
             }
         )
+        if self.security:
+            data['security'] = [{self.security: []}]
+        return data
 
 
 # Path item

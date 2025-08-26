@@ -51,7 +51,7 @@ T = typing.TypeVar('T', bound=models.Model)
 
 
 def api_paths(
-    cls: type['ModelHandler[types.rest.T_Item]'], path: str, tags: list[str]
+    cls: type['ModelHandler[types.rest.T_Item]'], path: str, tags: list[str], security: str
 ) -> dict[str, types.rest.api.PathItem]:
     """
     Returns the API operations that should be registered
@@ -59,9 +59,9 @@ def api_paths(
     # The the base pathº
     cls_model = cls.MODEL.__name__
     get_tags = tags
-    put_tags = tags + ['Create', 'Modify']
+    put_tags = tags # + ['Create', 'Modify']
     # post_tags = tags + ['Create']
-    delete_tags = tags + ['Delete']
+    delete_tags = tags # + ['Delete']
 
     base_type = next(iter(api_utils.get_generic_types(cls)), None)
     if base_type is None:
@@ -78,6 +78,7 @@ def api_paths(
                 parameters=[],
                 responses=api_utils.gen_response(base_type_name, single=False),
                 tags=get_tags,
+                security=security,
             ),
             put=types.rest.api.Operation(
                 summary=f'Creates a new {cls_model} item',
@@ -85,6 +86,7 @@ def api_paths(
                 parameters=[],
                 responses=api_utils.gen_response(base_type_name, with_404=True),
                 tags=put_tags,
+                security=security,
             ),
         ),
         f'{path}/{{uuid}}': types.rest.api.PathItem(
@@ -102,6 +104,7 @@ def api_paths(
                 ],
                 responses=api_utils.gen_response(base_type_name, with_404=True),
                 tags=get_tags,
+                security=security,
             ),
             put=types.rest.api.Operation(
                 summary=f'Update {cls_model} item by UUID',
@@ -117,6 +120,7 @@ def api_paths(
                 ],
                 responses=api_utils.gen_response(base_type_name, with_404=True),
                 tags=put_tags,
+                security=security,
             ),
             delete=types.rest.api.Operation(
                 summary=f'Delete {cls_model} item by UUID',
@@ -132,6 +136,7 @@ def api_paths(
                 ],
                 responses=api_utils.gen_response(base_type_name, with_404=True),
                 tags=delete_tags,
+                security=security,
             ),
         ),
         f'{path}/{consts.rest.OVERVIEW}': types.rest.api.PathItem(
@@ -141,6 +146,7 @@ def api_paths(
                 parameters=[],
                 responses=api_utils.gen_response(base_type_name, single=False),
                 tags=get_tags,
+                security=security,
             )
         ),
         f'{path}/{consts.rest.TABLEINFO}': types.rest.api.PathItem(
@@ -149,6 +155,8 @@ def api_paths(
                 description=f'Retrieve table info of {cls_model} items',
                 parameters=[],
                 responses=api_utils.gen_response(base_type_name, single=False),
+                tags=get_tags,
+                security=security,
             )
         ),
         f'{path}/{consts.rest.TYPES}': types.rest.api.PathItem(
@@ -158,6 +166,7 @@ def api_paths(
                 parameters=[],
                 responses=api_utils.gen_response(base_type_name, single=False),
                 tags=get_tags,
+                security=security,
             )
         ),
         f'{path}/{consts.rest.TYPES}/{{type}}': types.rest.api.PathItem(
@@ -175,6 +184,7 @@ def api_paths(
                 ],
                 responses=api_utils.gen_response(base_type_name, with_404=True),
                 tags=get_tags,
+                security=security,
             )
         ),
         # TODO: Fix this
@@ -185,6 +195,7 @@ def api_paths(
                 parameters=[],
                 responses=api_utils.gen_response(base_type_name),
                 tags=get_tags,
+                security=security,
             )
         ),
         f'{path}/{consts.rest.GUI}/{{type}}': types.rest.api.PathItem(
@@ -202,6 +213,7 @@ def api_paths(
                 ],
                 responses=api_utils.gen_response(base_type_name, with_404=True),
                 tags=get_tags,
+                security=security,
             )
         ),
     }

@@ -51,16 +51,18 @@ logger = logging.getLogger(__name__)
 T = typing.TypeVar('T', bound=models.Model)
 
 
-def api_paths(cls: type['DetailHandler[types.rest.T_Item]'], path: str, tags: list[str]) -> dict[str, types.rest.api.PathItem]:
+def api_paths(
+    cls: type['DetailHandler[types.rest.T_Item]'], path: str, tags: list[str], security: str
+) -> dict[str, types.rest.api.PathItem]:
     """
     Returns the API operations that should be registered
     """
 
     name = path.split('/')[-1]
     get_tags = tags
-    put_tags = tags + ['Create', 'Modify']
+    put_tags = tags  # + ['Create', 'Modify']
     # post_tags = tags + ['Create']
-    delete_tags = tags + ['Delete']
+    delete_tags = tags  # + ['Delete']
 
     base_type = next(iter(api_utils.get_generic_types(cls)), None)
     if base_type is None:
@@ -77,6 +79,7 @@ def api_paths(cls: type['DetailHandler[types.rest.T_Item]'], path: str, tags: li
                 parameters=[],
                 responses=api_utils.gen_response(base_type_name, single=False),
                 tags=get_tags,
+                security=security,
             ),
             put=types.rest.api.Operation(
                 summary=f'Creates a new {name} items',
@@ -84,6 +87,7 @@ def api_paths(cls: type['DetailHandler[types.rest.T_Item]'], path: str, tags: li
                 parameters=[],
                 responses=api_utils.gen_response(base_type_name, single=True),
                 tags=put_tags,
+                security=security,
             ),
         ),
         f'{path}/{{uuid}}': types.rest.api.PathItem(
@@ -101,6 +105,7 @@ def api_paths(cls: type['DetailHandler[types.rest.T_Item]'], path: str, tags: li
                 ],
                 responses=api_utils.gen_response(base_type_name, with_404=True),
                 tags=get_tags,
+                security=security,
             ),
             put=types.rest.api.Operation(
                 summary=f'Update {name} item by UUID',
@@ -116,6 +121,7 @@ def api_paths(cls: type['DetailHandler[types.rest.T_Item]'], path: str, tags: li
                 ],
                 responses=api_utils.gen_response(base_type_name, with_404=True),
                 tags=put_tags,
+                security=security,
             ),
             delete=types.rest.api.Operation(
                 summary=f'Delete {name} item by UUID',
@@ -131,6 +137,7 @@ def api_paths(cls: type['DetailHandler[types.rest.T_Item]'], path: str, tags: li
                 ],
                 responses=api_utils.gen_response(base_type_name, with_404=True),
                 tags=delete_tags,
+                security=security,
             ),
         ),
         f'{path}/{consts.rest.OVERVIEW}': types.rest.api.PathItem(
@@ -140,6 +147,7 @@ def api_paths(cls: type['DetailHandler[types.rest.T_Item]'], path: str, tags: li
                 parameters=[],
                 responses=api_utils.gen_response(base_type_name, single=False),
                 tags=get_tags,
+                security=security,
             )
         ),
         f'{path}/{consts.rest.TABLEINFO}': types.rest.api.PathItem(
@@ -149,6 +157,7 @@ def api_paths(cls: type['DetailHandler[types.rest.T_Item]'], path: str, tags: li
                 parameters=[],
                 responses=api_utils.gen_response(base_type_name, single=False),
                 tags=get_tags,
+                security=security,
             )
         ),
         f'{path}/{consts.rest.TYPES}': types.rest.api.PathItem(
@@ -158,6 +167,7 @@ def api_paths(cls: type['DetailHandler[types.rest.T_Item]'], path: str, tags: li
                 parameters=[],
                 responses=api_utils.gen_response(base_type_name, single=False),
                 tags=get_tags,
+                security=security,
             )
         ),
         f'{path}/{consts.rest.TYPES}/{{type}}': types.rest.api.PathItem(
@@ -175,6 +185,7 @@ def api_paths(cls: type['DetailHandler[types.rest.T_Item]'], path: str, tags: li
                 ],
                 responses=api_utils.gen_response(base_type_name, with_404=True),
                 tags=get_tags,
+                security=security,
             )
         ),
         f'{path}/{consts.rest.GUI}': types.rest.api.PathItem(
@@ -184,6 +195,7 @@ def api_paths(cls: type['DetailHandler[types.rest.T_Item]'], path: str, tags: li
                 parameters=[],
                 responses=api_utils.gen_response(base_type_name, single=False),
                 tags=get_tags,
+                security=security,
             )
         ),
         f'{path}/{consts.rest.GUI}/{{type}}': types.rest.api.PathItem(
@@ -201,6 +213,7 @@ def api_paths(cls: type['DetailHandler[types.rest.T_Item]'], path: str, tags: li
                 ],
                 responses=api_utils.gen_response(base_type_name, with_404=True),
                 tags=get_tags,
+                security=security,
             )
         ),
     }

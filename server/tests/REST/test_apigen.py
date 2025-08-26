@@ -110,6 +110,7 @@ class ManagedObjectRestItem(types.rest.ManagedObjectItem[Transport]):
 
 class TestApiGenBasic(UDSTestCase):
     def test_model_handler_componments(self) -> None:
+        SECURITY_NAME: typing.Final[str] = 'udsApiAuth'
         root_node = dispatcher.Dispatcher.root_node
 
         comps = base.BaseModelHandler.common_components()
@@ -121,6 +122,8 @@ class TestApiGenBasic(UDSTestCase):
             if handler := node.handler:
                 full_path = '/' + node.full_path().lstrip('/')
                 tags = [full_path.split('/')[1].capitalize()] if len(full_path.split('/')) > 1 else []
+                security = SECURITY_NAME if handler.ROLE != consts.UserRole.ANONYMOUS else ''
+                
                 logger.info("Checking child node: %s, %s", node.name, handler.__module__)
                 components = handler.api_components()
                 # Component should not be empty
@@ -129,8 +132,10 @@ class TestApiGenBasic(UDSTestCase):
                     types.rest.api.Components,
                     f'Component for {node.name} should be of type Components',
                 )
+                
+                    
 
-                handler_paths = handler.api_paths(full_path, tags)
+                handler_paths = handler.api_paths(full_path, tags, security)
                 self.assertIsInstance(
                     handler_paths,
                     dict,
@@ -157,7 +162,7 @@ class TestApiGenBasic(UDSTestCase):
                         logger.info("Found detail for %s: %s", node.name, name)
 
                         comps = comps.union(cls.api_components())
-                        paths.update(cls.api_paths(f'{full_path}/{name}', tags))
+                        paths.update(cls.api_paths(f'{full_path}/{name}', tags, security))
 
             for child in node.children.values():
                 check_node(child)
@@ -168,7 +173,7 @@ class TestApiGenBasic(UDSTestCase):
 
         # Upgrade comps to include security schema
         comps.securitySchemes = {
-            'apiKeyAuth': {
+            SECURITY_NAME: {
                 'type': 'apiKey',
                 'in': 'header',
                 'name': consts.auth.AUTH_TOKEN_HEADER,
