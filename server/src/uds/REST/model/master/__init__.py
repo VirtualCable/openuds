@@ -47,16 +47,17 @@ from uds.core.module import Module
 from uds.core.util import log, permissions, api as api_utils
 from uds.models import ManagedObjectModel, Tag, TaggingMixin
 
-from .base import BaseModelHandler
-from ..utils import camel_and_snake_case_from
+from uds.REST.model.base import BaseModelHandler
+from uds.REST.utils import camel_and_snake_case_from
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from .detail import DetailHandler
+    from uds.REST.model.detail import DetailHandler
 
 logger = logging.getLogger(__name__)
 
 T = typing.TypeVar('T', bound=models.Model)
+
 
 class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
     """
@@ -226,10 +227,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
         return self.get_item(item)
 
     def get_items(
-        self,
-        *,
-        overview: bool = False,
-        query: QuerySet[T] | None = None
+        self, *, overview: bool = False, query: QuerySet[T] | None = None
     ) -> typing.Generator[types.rest.T_Item, None, None]:
         """
         Get items from the model.
@@ -507,39 +505,10 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
         return api_utils.get_component_from_type(cls)
 
     @classmethod
-    def api_paths(cls: type[typing.Self]) -> dict[str, types.rest.api.PathItem]:
+    def api_paths(cls: type[typing.Self], path: str) -> dict[str, types.rest.api.PathItem]:
         """
         Returns the API operations that should be registered
         """
-        # case []:  # Same as overview, but with all data
-        #     return [i.as_dict() for i in self.get_items(overview=False)]
-        # case [consts.rest.OVERVIEW]:
-        #     return [i.as_dict() for i in self.get_items()]
-        # case [consts.rest.OVERVIEW, *_fails]:
-        #     raise exceptions.rest.RequestError('Invalid overview request') from None
-        # case [consts.rest.TABLEINFO]:
-        #     return self.TABLE.as_dict()
-        # case [consts.rest.TABLEINFO, *_fails]:
-        #     raise exceptions.rest.RequestError('Invalid table info request') from None
-        # case [consts.rest.TYPES]:
-        #     return [i.as_dict() for i in self.enum_types()]
-        # case [consts.rest.TYPES, for_type]:
-        #     return self.get_type(for_type).as_dict()
-        # case [consts.rest.TYPES, for_type, *_fails]:
-        #     raise exceptions.rest.RequestError('Invalid type request') from None
-        # case [consts.rest.GUI]:
-        #     return self.get_processed_gui('')
-        # case [consts.rest.GUI, for_type]:
-        #     return self.get_processed_gui(for_type)
-        # case [consts.rest.GUI, for_type, *_fails]:
-        #     raise exceptions.rest.RequestError('Invalid GUI request') from None
-        return {
-            '': types.rest.api.PathItem(
-                get=types.rest.api.Operation(
-                    summary=f'Get all {cls.MODEL.__name__} items',
-                    description=f'Retrieve a list of all {cls.MODEL.__name__} items',
-                    parameters=[],
-                    responses={},
-                )
-            )
-        }
+        from .api_helpers import api_paths
+
+        return api_paths(cls, path)

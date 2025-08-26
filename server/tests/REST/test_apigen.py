@@ -112,6 +112,7 @@ class TestApiGenBasic(UDSTestCase):
         root_node = dispatcher.Dispatcher.root_node
 
         comps = base.BaseModelHandler.common_components()
+        paths = base.BaseModelHandler.common_paths()
 
         # Node is a tree, recursively check all children
         def check_node(node: types.rest.HandlerNode):
@@ -125,8 +126,27 @@ class TestApiGenBasic(UDSTestCase):
                     types.rest.api.Components,
                     f'Component for {node.name} should be of type Components',
                 )
+
+                handler_paths = handler.api_paths(node.full_path())
+                self.assertIsInstance(
+                    handler_paths,
+                    dict,
+                    f'Paths for {node.name} should be of type Paths',
+                )
+                for path, item in handler_paths.items():
+                    self.assertIsInstance(
+                        path,
+                        str,
+                        f'Path for {node.name} should be of type str',
+                    )
+                    self.assertIsInstance(
+                        item,
+                        types.rest.api.PathItem,
+                        f'Path item for {node.name} path {path} should be of type PathItem',
+                    )
                 # self.assertFalse(components.is_empty(), f'Component for model {node.name} ({node.handler.__module__}) should not be empty')
                 comps = comps.union(components)
+                paths.update(handler_paths)
 
             for child in node.children.values():
                 check_node(child)
@@ -135,9 +155,15 @@ class TestApiGenBasic(UDSTestCase):
         logger.info("Components found: %s", comps.as_dict())
 
         import json
+        import yaml
+
+        api = types.rest.api.OpenAPI(paths=paths, components=comps)
 
         with open('/tmp/uds_api.json', 'w') as f:
-            f.write(json.dumps(comps.as_dict(), indent=4))
+            f.write(json.dumps(api.as_dict(), indent=4))
+
+        with open('/tmp/uds_api.yaml', 'w') as f:
+            f.write(yaml.dump(api.as_dict()))
 
     def test_handler_urls(self) -> None:
         root_node = dispatcher.Dispatcher.root_node

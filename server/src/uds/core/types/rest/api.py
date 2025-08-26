@@ -40,18 +40,12 @@ class Info:
 @dataclasses.dataclass
 class Parameter:
     name: str
-    in_: str
+    in_: str  # 'query', 'path', 'header', etc.
     required: bool
-    schema: dict[str, typing.Any]
+    schema: 'Schema'
     description: str | None = None
     style: str | None = None
     explode: bool | None = None
-
-    name: str
-    in_: str  # 'query', 'path', 'header', etc.
-    required: bool
-    schema: dict[str, typing.Any]
-    description: str | None = None
 
     def as_dict(self) -> dict[str, typing.Any]:
         return as_dict_without_none(dataclasses.asdict(self))

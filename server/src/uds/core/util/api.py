@@ -102,6 +102,8 @@ def get_component_from_type(
 class OpenApiTypeInfo:
     type: str
     format: str | None = None
+    nullable: bool = False
+    ref: bool = False
 
     def as_dict(self) -> dict[str, typing.Any]:
         dct = {'type': self.type}
@@ -126,7 +128,6 @@ _OPENAPI_TYPE_MAP: typing.Final[dict[typing.Any, OpenApiType]] = {
     str: OpenApiType.STRING,
     float: OpenApiType.NUMBER,
     bool: OpenApiType.BOOLEAN,
-    type(None): OpenApiType.NULL,
     datetime.datetime: OpenApiType.DATE_TIME,
     datetime.date: OpenApiType.DATE,
 }
@@ -152,9 +153,17 @@ def python_type_to_openapi(py_type: typing.Any) -> 'api.SchemaProperty':
         return api.SchemaProperty(type='object', additionalProperties=python_type_to_openapi(value_type))
 
     # Union[...] → oneOf
+    # Except if one of them is None, in which case, we must extract it from the list
+    # and create {'type': xxx, 'nullable': true}
     elif origin in {py_types.UnionType, typing.Union}:
         # Optional[X] is Union[X, None]
-        oa_types = [_OPENAPI_TYPE_MAP.get(arg, OpenApiType.OBJECT) for arg in args if isinstance(arg, type)]
+        oa_types = [
+            _OPENAPI_TYPE_MAP.get(arg, OpenApiType.OBJECT)
+            for arg in args
+            if isinstance(arg, type)
+            if arg is not type(None)
+        ]
+
         return api.SchemaProperty(
             type=[oa_type.value.type for oa_type in oa_types],
         )
@@ -216,7 +225,9 @@ def api_components(dataclass: typing.Type[typing.Any]) -> 'api.Components':
         if dataclasses.is_dataclass(field_type):
             sub_component = api_uti.api_components(typing.cast(type[typing.Any], field_type))
             components = components.union(sub_component)
-            schema_prop = api.SchemaProperty(type=f'#/components/schemas/{next(iter(sub_component.schemas.keys()))}', description=None)
+            schema_prop = api.SchemaProperty(
+                type=f'#/components/schemas/{next(iter(sub_component.schemas.keys()))}', description=None
+            )
         else:
             schema_prop = api_uti.python_type_to_openapi(field_type)
 

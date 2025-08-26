@@ -43,13 +43,13 @@ from uds.core.util.model import process_uuid
 from uds.core.util import api as api_utils
 from uds.REST.utils import rest_result
 
-from .base import BaseModelHandler
-from ..utils import camel_and_snake_case_from
+from uds.REST.model.base import BaseModelHandler
+from uds.REST.utils import camel_and_snake_case_from
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.models import User
-    from .model import ModelHandler
+    from uds.REST.model.master import ModelHandler
 
 logger = logging.getLogger(__name__)
 
@@ -349,7 +349,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item]):
         return api_utils.get_component_from_type(cls)
 
     @classmethod
-    def api_paths(cls: type[typing.Self]) -> dict[str, types.rest.api.PathItem]:
+    def api_paths(cls: type[typing.Self], path: str) -> dict[str, types.rest.api.PathItem]:
         """
         Returns the API operations that should be registered
         """
