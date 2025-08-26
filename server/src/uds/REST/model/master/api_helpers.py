@@ -39,7 +39,6 @@ from django.utils.translation import gettext as _
 
 from uds.core import consts
 from uds.core import types
-
 from uds.core.util import api as api_utils
 
 # Not imported at runtime, just for type checking
@@ -49,56 +48,6 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 T = typing.TypeVar('T', bound=models.Model)
-
-
-def _response(type: str, with_404: bool = False, single: bool = True, delete: bool = False) -> dict[str, types.rest.api.Response]:
-    data: dict[str, types.rest.api.Response]
-
-    if not single:
-        data = {
-            '200': types.rest.api.Response(
-                description=f'Successfully retrieved all {type} items',
-                content=types.rest.api.Content(
-                    media_type='application/json',
-                    schema=types.rest.api.SchemaProperty(
-                        type='array',
-                        items=types.rest.api.SchemaProperty(
-                            type=f'#/components/schemas/{type}',
-                        ),
-                    ),
-                ),
-            )
-        }
-    else:
-        data = {
-            '200': types.rest.api.Response(
-                description=f'Successfully {"retrieved" if not delete else "deleted"} {type} item',
-                content=types.rest.api.Content(
-                    media_type='application/json',
-                    schema=types.rest.api.SchemaProperty(
-                        type=f'#/components/schemas/{type}',
-                    ),
-                ),
-            )
-        }
-
-    if with_404:
-        data['404'] = types.rest.api.Response(
-            description=f'{type} item not found',
-            content=types.rest.api.Content(
-                media_type='application/json',
-                schema=types.rest.api.SchemaProperty(
-                    type='object',
-                    properties={
-                        'detail': types.rest.api.SchemaProperty(
-                            type='string',
-                        )
-                    },
-                ),
-            ),
-        )
-
-    return data
 
 
 def api_paths(
@@ -127,14 +76,14 @@ def api_paths(
                 summary=f'Get all {cls_model} items',
                 description=f'Retrieve a list of all {cls_model} items',
                 parameters=[],
-                responses=_response(base_type_name, single=False),
+                responses=api_utils.gen_response(base_type_name, single=False),
                 tags=get_tags,
             ),
             put=types.rest.api.Operation(
                 summary=f'Creates a new {cls_model} item',
                 description=f'Creates a new, nonexisting {cls_model} item',
                 parameters=[],
-                responses=_response(base_type_name, with_404=True),
+                responses=api_utils.gen_response(base_type_name, with_404=True),
                 tags=put_tags,
             ),
         ),
@@ -151,7 +100,7 @@ def api_paths(
                         schema=types.rest.api.Schema(type='string', format='uuid'),
                     )
                 ],
-                responses=_response(base_type_name, with_404=True),
+                responses=api_utils.gen_response(base_type_name, with_404=True),
                 tags=get_tags,
             ),
             put=types.rest.api.Operation(
@@ -166,7 +115,7 @@ def api_paths(
                         schema=types.rest.api.Schema(type='string', format='uuid'),
                     )
                 ],
-                responses=_response(base_type_name, with_404=True),
+                responses=api_utils.gen_response(base_type_name, with_404=True),
                 tags=put_tags,
             ),
             delete=types.rest.api.Operation(
@@ -181,7 +130,7 @@ def api_paths(
                         schema=types.rest.api.Schema(type='string', format='uuid'),
                     )
                 ],
-                responses=_response(base_type_name, with_404=True),
+                responses=api_utils.gen_response(base_type_name, with_404=True),
                 tags=delete_tags,
             ),
         ),
@@ -190,7 +139,7 @@ def api_paths(
                 summary=f'Get overview of {cls_model} items',
                 description=f'Retrieve an overview of {cls_model} items',
                 parameters=[],
-                responses=_response(base_type_name, single=False),
+                responses=api_utils.gen_response(base_type_name, single=False),
                 tags=get_tags,
             )
         ),
@@ -199,7 +148,7 @@ def api_paths(
                 summary=f'Get table info of {cls_model} items',
                 description=f'Retrieve table info of {cls_model} items',
                 parameters=[],
-                responses=_response(base_type_name, single=False),
+                responses=api_utils.gen_response(base_type_name, single=False),
             )
         ),
         f'{path}/{consts.rest.TYPES}': types.rest.api.PathItem(
@@ -207,7 +156,7 @@ def api_paths(
                 summary=f'Get types of {cls_model} items',
                 description=f'Retrieve types of {cls_model} items',
                 parameters=[],
-                responses=_response(base_type_name, single=False),
+                responses=api_utils.gen_response(base_type_name, single=False),
                 tags=get_tags,
             )
         ),
@@ -224,7 +173,7 @@ def api_paths(
                         schema=types.rest.api.Schema(type='string'),
                     )
                 ],
-                responses=_response(base_type_name, with_404=True),
+                responses=api_utils.gen_response(base_type_name, with_404=True),
                 tags=get_tags,
             )
         ),
@@ -234,7 +183,7 @@ def api_paths(
                 summary=f'Get GUI representation of {cls_model} items',
                 description=f'Retrieve the GUI representation of {cls_model} items',
                 parameters=[],
-                responses=_response(base_type_name),
+                responses=api_utils.gen_response(base_type_name),
                 tags=get_tags,
             )
         ),
@@ -251,7 +200,7 @@ def api_paths(
                         schema=types.rest.api.Schema(type='string'),
                     )
                 ],
-                responses=_response(base_type_name, with_404=True),
+                responses=api_utils.gen_response(base_type_name, with_404=True),
                 tags=get_tags,
             )
         ),

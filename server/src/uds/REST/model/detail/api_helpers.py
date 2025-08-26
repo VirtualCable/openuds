@@ -39,6 +39,7 @@ from django.utils.translation import gettext as _
 
 from uds.core import consts
 from uds.core import types
+from uds.core.util import api as api_utils
 
 
 # Not imported at runtime, just for type checking
@@ -61,6 +62,12 @@ def api_paths(cls: type['DetailHandler[types.rest.T_Item]'], path: str, tags: li
     # post_tags = tags + ['Create']
     delete_tags = tags + ['Delete']
 
+    base_type = next(iter(api_utils.get_generic_types(cls)), None)
+    if base_type is None:
+        logger.error('Base type not detected: %s', cls)
+        return {}  # Skip
+    else:
+        base_type_name = base_type.__name__
     # TODO: Append "custom" methods
     return {
         path: types.rest.api.PathItem(
@@ -68,14 +75,14 @@ def api_paths(cls: type['DetailHandler[types.rest.T_Item]'], path: str, tags: li
                 summary=f'Get all {name} items',
                 description=f'Retrieve a list of all {name} items',
                 parameters=[],
-                responses={},
+                responses=api_utils.gen_response(base_type_name, single=False),
                 tags=get_tags,
             ),
             put=types.rest.api.Operation(
                 summary=f'Creates a new {name} items',
                 description=f'Update an existing {name} item',
                 parameters=[],
-                responses={},
+                responses=api_utils.gen_response(base_type_name, single=True),
                 tags=put_tags,
             ),
         ),
@@ -92,7 +99,7 @@ def api_paths(cls: type['DetailHandler[types.rest.T_Item]'], path: str, tags: li
                         schema=types.rest.api.Schema(type='string', format='uuid'),
                     )
                 ],
-                responses={},
+                responses=api_utils.gen_response(base_type_name, with_404=True),
                 tags=get_tags,
             ),
             put=types.rest.api.Operation(
@@ -107,7 +114,7 @@ def api_paths(cls: type['DetailHandler[types.rest.T_Item]'], path: str, tags: li
                         schema=types.rest.api.Schema(type='string', format='uuid'),
                     )
                 ],
-                responses={},
+                responses=api_utils.gen_response(base_type_name, with_404=True),
                 tags=put_tags,
             ),
             delete=types.rest.api.Operation(
@@ -122,7 +129,7 @@ def api_paths(cls: type['DetailHandler[types.rest.T_Item]'], path: str, tags: li
                         schema=types.rest.api.Schema(type='string', format='uuid'),
                     )
                 ],
-                responses={},
+                responses=api_utils.gen_response(base_type_name, with_404=True),
                 tags=delete_tags,
             ),
         ),
@@ -131,7 +138,7 @@ def api_paths(cls: type['DetailHandler[types.rest.T_Item]'], path: str, tags: li
                 summary=f'Get overview of {name} items',
                 description=f'Retrieve an overview of {name} items',
                 parameters=[],
-                responses={},
+                responses=api_utils.gen_response(base_type_name, single=False),
                 tags=get_tags,
             )
         ),
@@ -140,7 +147,7 @@ def api_paths(cls: type['DetailHandler[types.rest.T_Item]'], path: str, tags: li
                 summary=f'Get table info of {name} items',
                 description=f'Retrieve table info of {name} items',
                 parameters=[],
-                responses={},
+                responses=api_utils.gen_response(base_type_name, single=False),
                 tags=get_tags,
             )
         ),
@@ -149,7 +156,7 @@ def api_paths(cls: type['DetailHandler[types.rest.T_Item]'], path: str, tags: li
                 summary=f'Get types of {name} items',
                 description=f'Retrieve types of {name} items',
                 parameters=[],
-                responses={},
+                responses=api_utils.gen_response(base_type_name, single=False),
                 tags=get_tags,
             )
         ),
@@ -166,7 +173,7 @@ def api_paths(cls: type['DetailHandler[types.rest.T_Item]'], path: str, tags: li
                         schema=types.rest.api.Schema(type='string'),
                     )
                 ],
-                responses={},
+                responses=api_utils.gen_response(base_type_name, with_404=True),
                 tags=get_tags,
             )
         ),
@@ -175,7 +182,7 @@ def api_paths(cls: type['DetailHandler[types.rest.T_Item]'], path: str, tags: li
                 summary=f'Get GUI representation of {name} items',
                 description=f'Retrieve the GUI representation of {name} items',
                 parameters=[],
-                responses={},
+                responses=api_utils.gen_response(base_type_name, single=False),
                 tags=get_tags,
             )
         ),
@@ -192,7 +199,7 @@ def api_paths(cls: type['DetailHandler[types.rest.T_Item]'], path: str, tags: li
                         schema=types.rest.api.Schema(type='string'),
                     )
                 ],
-                responses={},
+                responses=api_utils.gen_response(base_type_name, with_404=True),
                 tags=get_tags,
             )
         ),

@@ -270,3 +270,53 @@ def api_components(dataclass: typing.Type[typing.Any]) -> 'api.Components':
 
     components.schemas[dataclass.__name__] = schema
     return components
+
+def gen_response(type: str, with_404: bool = False, single: bool = True, delete: bool = False) -> dict[str, types.rest.api.Response]:
+    data: dict[str, types.rest.api.Response]
+
+    if not single:
+        data = {
+            '200': types.rest.api.Response(
+                description=f'Successfully retrieved all {type} items',
+                content=types.rest.api.Content(
+                    media_type='application/json',
+                    schema=types.rest.api.SchemaProperty(
+                        type='array',
+                        items=types.rest.api.SchemaProperty(
+                            type=f'#/components/schemas/{type}',
+                        ),
+                    ),
+                ),
+            )
+        }
+    else:
+        data = {
+            '200': types.rest.api.Response(
+                description=f'Successfully {"retrieved" if not delete else "deleted"} {type} item',
+                content=types.rest.api.Content(
+                    media_type='application/json',
+                    schema=types.rest.api.SchemaProperty(
+                        type=f'#/components/schemas/{type}',
+                    ),
+                ),
+            )
+        }
+
+    if with_404:
+        data['404'] = types.rest.api.Response(
+            description=f'{type} item not found',
+            content=types.rest.api.Content(
+                media_type='application/json',
+                schema=types.rest.api.SchemaProperty(
+                    type='object',
+                    properties={
+                        'detail': types.rest.api.SchemaProperty(
+                            type='string',
+                        )
+                    },
+                ),
+            ),
+        )
+
+    return data
+

@@ -120,6 +120,7 @@ class TestApiGenBasic(UDSTestCase):
             nonlocal comps
             if handler := node.handler:
                 full_path = '/' + node.full_path().lstrip('/')
+                tags = [full_path.split('/')[1].capitalize()] if len(full_path.split('/')) > 1 else []
                 logger.info("Checking child node: %s, %s", node.name, handler.__module__)
                 components = handler.api_components()
                 # Component should not be empty
@@ -129,7 +130,7 @@ class TestApiGenBasic(UDSTestCase):
                     f'Component for {node.name} should be of type Components',
                 )
 
-                handler_paths = handler.api_paths(full_path, [full_path.split('/')[0].capitalize()])
+                handler_paths = handler.api_paths(full_path, tags)
                 self.assertIsInstance(
                     handler_paths,
                     dict,
@@ -156,7 +157,7 @@ class TestApiGenBasic(UDSTestCase):
                         logger.info("Found detail for %s: %s", node.name, name)
 
                         comps = comps.union(cls.api_components())
-                        paths.update(cls.api_paths(f'{full_path}/{name}', []))
+                        paths.update(cls.api_paths(f'{full_path}/{name}', tags))
 
             for child in node.children.values():
                 check_node(child)
