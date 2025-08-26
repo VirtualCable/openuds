@@ -447,7 +447,7 @@ class Handler(abc.ABC):
         return types.rest.api.Components()
 
     @classmethod
-    def api_paths(cls: type[typing.Self], path: str) -> dict[str, types.rest.api.PathItem]:
+    def api_paths(cls: type[typing.Self], path: str, tags: list[str]) -> dict[str, types.rest.api.PathItem]:
         """
         Returns the API operations that should be registered
         """

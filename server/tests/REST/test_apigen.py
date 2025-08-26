@@ -37,6 +37,7 @@ from tests.utils.test import UDSTestCase
 
 from uds.REST import dispatcher
 from uds.REST.model import base
+from uds.REST.model.master import ModelHandler
 from uds.core import types, transports, consts, ui
 from uds.core.util import api as util_api
 from uds.models import Transport
@@ -118,6 +119,7 @@ class TestApiGenBasic(UDSTestCase):
         def check_node(node: types.rest.HandlerNode):
             nonlocal comps
             if handler := node.handler:
+                path = node.full_path()
                 logger.info("Checking child node: %s, %s", node.name, handler.__module__)
                 components = handler.api_components()
                 # Component should not be empty
@@ -127,7 +129,7 @@ class TestApiGenBasic(UDSTestCase):
                     f'Component for {node.name} should be of type Components',
                 )
 
-                handler_paths = handler.api_paths(node.full_path())
+                handler_paths = handler.api_paths(path, [path.split('/')[0].capitalize()])
                 self.assertIsInstance(
                     handler_paths,
                     dict,
@@ -147,12 +149,21 @@ class TestApiGenBasic(UDSTestCase):
                 # self.assertFalse(components.is_empty(), f'Component for model {node.name} ({node.handler.__module__}) should not be empty')
                 comps = comps.union(components)
                 paths.update(handler_paths)
+                
+                # If is a ModelHandler, look for DETAIL
+                if issubclass(handler, ModelHandler) and handler.DETAIL:
+                    for name, cls in handler.DETAIL.items():
+                        logger.info("Found detail for %s: %s", node.name, name)
+                        
+                        comps = comps.union(cls.api_components())
+                        paths.update(cls.api_paths(f'{path}/{name}', []))
 
             for child in node.children.values():
                 check_node(child)
 
         check_node(root_node)
-        logger.info("Components found: %s", comps.as_dict())
+        logger.info("Components found: %s", ', '.join(comps.schemas.keys()))
+        logger.info("Paths found: %s", ', '.join(paths.keys()))
 
         import json
         import yaml

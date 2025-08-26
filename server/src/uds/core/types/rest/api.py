@@ -307,7 +307,7 @@ class ODataParams:
 
         Returns:
             A new dictionary containing only the keys from the original dictionary that are in the OData select set.
-            
+
         Note:
             If the OData select set is empty, all keys are kept.
         """

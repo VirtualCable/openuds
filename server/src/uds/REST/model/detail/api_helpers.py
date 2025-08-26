@@ -43,38 +43,46 @@ from uds.core import types
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.REST.model.master import ModelHandler
+    from uds.REST.model.master import DetailHandler
 
 logger = logging.getLogger(__name__)
 
 T = typing.TypeVar('T', bound=models.Model)
 
 
-def api_paths(klass: type['ModelHandler[types.rest.T_Item]'], path: str) -> dict[str, types.rest.api.PathItem]:
+def api_paths(cls: type['DetailHandler[types.rest.T_Item]'], path: str, tags: list[str]) -> dict[str, types.rest.api.PathItem]:
     """
     Returns the API operations that should be registered
     """
+
+    name = path.split('/')[-1]
+    get_tags = tags
+    put_tags = tags + ['Create', 'Modify']
+    # post_tags = tags + ['Create']
+    delete_tags = tags + ['Delete']
 
     # TODO: Append "custom" methods
     return {
         path: types.rest.api.PathItem(
             get=types.rest.api.Operation(
-                summary=f'Get all {klass.MODEL.__name__} items',
-                description=f'Retrieve a list of all {klass.MODEL.__name__} items',
+                summary=f'Get all {name} items',
+                description=f'Retrieve a list of all {name} items',
                 parameters=[],
                 responses={},
+                tags=get_tags,
             ),
             put=types.rest.api.Operation(
-                summary=f'Creates a new {klass.MODEL.__name__} items',
-                description=f'Update an existing {klass.MODEL.__name__} item',
+                summary=f'Creates a new {name} items',
+                description=f'Update an existing {name} item',
                 parameters=[],
                 responses={},
+                tags=put_tags,
             ),
         ),
         f'{path}/{{uuid}}': types.rest.api.PathItem(
             get=types.rest.api.Operation(
-                summary=f'Get {klass.MODEL.__name__} item by UUID',
-                description=f'Retrieve a {klass.MODEL.__name__} item by UUID',
+                summary=f'Get {name} item by UUID',
+                description=f'Retrieve a {name} item by UUID',
                 parameters=[
                     types.rest.api.Parameter(
                         name='uuid',
@@ -85,10 +93,11 @@ def api_paths(klass: type['ModelHandler[types.rest.T_Item]'], path: str) -> dict
                     )
                 ],
                 responses={},
+                tags=get_tags,
             ),
             put=types.rest.api.Operation(
-                summary=f'Update {klass.MODEL.__name__} item by UUID',
-                description=f'Update an existing {klass.MODEL.__name__} item by UUID',
+                summary=f'Update {name} item by UUID',
+                description=f'Update an existing {name} item by UUID',
                 parameters=[
                     types.rest.api.Parameter(
                         name='uuid',
@@ -99,10 +108,11 @@ def api_paths(klass: type['ModelHandler[types.rest.T_Item]'], path: str) -> dict
                     )
                 ],
                 responses={},
+                tags=put_tags,
             ),
             delete=types.rest.api.Operation(
-                summary=f'Delete {klass.MODEL.__name__} item by UUID',
-                description=f'Delete a {klass.MODEL.__name__} item by UUID',
+                summary=f'Delete {name} item by UUID',
+                description=f'Delete a {name} item by UUID',
                 parameters=[
                     types.rest.api.Parameter(
                         name='uuid',
@@ -113,36 +123,40 @@ def api_paths(klass: type['ModelHandler[types.rest.T_Item]'], path: str) -> dict
                     )
                 ],
                 responses={},
+                tags=delete_tags,
             ),
         ),
         f'{path}/{consts.rest.OVERVIEW}': types.rest.api.PathItem(
             get=types.rest.api.Operation(
-                summary=f'Get overview of {klass.MODEL.__name__} items',
-                description=f'Retrieve an overview of {klass.MODEL.__name__} items',
+                summary=f'Get overview of {name} items',
+                description=f'Retrieve an overview of {name} items',
                 parameters=[],
                 responses={},
+                tags=get_tags,
             )
         ),
         f'{path}/{consts.rest.TABLEINFO}': types.rest.api.PathItem(
             get=types.rest.api.Operation(
-                summary=f'Get table info of {klass.MODEL.__name__} items',
-                description=f'Retrieve table info of {klass.MODEL.__name__} items',
+                summary=f'Get table info of {name} items',
+                description=f'Retrieve table info of {name} items',
                 parameters=[],
                 responses={},
+                tags=get_tags,
             )
         ),
         f'{path}/{consts.rest.TYPES}': types.rest.api.PathItem(
             get=types.rest.api.Operation(
-                summary=f'Get types of {klass.MODEL.__name__} items',
-                description=f'Retrieve types of {klass.MODEL.__name__} items',
+                summary=f'Get types of {name} items',
+                description=f'Retrieve types of {name} items',
                 parameters=[],
                 responses={},
+                tags=get_tags,
             )
         ),
         f'{path}/{consts.rest.TYPES}/{{type}}': types.rest.api.PathItem(
             get=types.rest.api.Operation(
-                summary=f'Get {klass.MODEL.__name__} item by type',
-                description=f'Retrieve a {klass.MODEL.__name__} item by type',
+                summary=f'Get {name} item by type',
+                description=f'Retrieve a {name} item by type',
                 parameters=[
                     types.rest.api.Parameter(
                         name='type',
@@ -153,20 +167,22 @@ def api_paths(klass: type['ModelHandler[types.rest.T_Item]'], path: str) -> dict
                     )
                 ],
                 responses={},
+                tags=get_tags,
             )
         ),
         f'{path}/{consts.rest.GUI}': types.rest.api.PathItem(
             get=types.rest.api.Operation(
-                summary=f'Get GUI representation of {klass.MODEL.__name__} items',
-                description=f'Retrieve the GUI representation of {klass.MODEL.__name__} items',
+                summary=f'Get GUI representation of {name} items',
+                description=f'Retrieve the GUI representation of {name} items',
                 parameters=[],
                 responses={},
+                tags=get_tags,
             )
         ),
         f'{path}/{consts.rest.GUI}/{{type}}': types.rest.api.PathItem(
             get=types.rest.api.Operation(
-                summary=f'Get {klass.MODEL.__name__} item by type',
-                description=f'Retrieve a {klass.MODEL.__name__} item by type',
+                summary=f'Get {name} item by type',
+                description=f'Retrieve a {name} item by type',
                 parameters=[
                     types.rest.api.Parameter(
                         name='type',
@@ -177,6 +193,7 @@ def api_paths(klass: type['ModelHandler[types.rest.T_Item]'], path: str) -> dict
                     )
                 ],
                 responses={},
+                tags=get_tags,
             )
         ),
     }

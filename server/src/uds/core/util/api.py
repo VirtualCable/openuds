@@ -27,23 +27,38 @@ def _resolve_forwardref(
     return ref
 
 
-def get_component_from_type(
+def get_generic_types(
     cls: 'type[model.ModelHandler[typing.Any] | model.DetailHandler[typing.Any]]',
-) -> types.rest.api.Components:
-    logger.debug('Getting components from type %s', cls)
+) -> list[type[types.rest.BaseRestItem]]:
+    """
+    Get the generic types of a model handler or detail handler class.
+
+    Args:
+        cls: The class to inspect. (Must be subclass of ModelHandler or DetailHandler)
+
+    Note: Normally, for our models, will be or an empty list, or a list with just one element
+        that is a subclass of BaseRestItem.
+        Examples:
+            class Test(ModelHandler[TheType]):
+            ...
+            if Test is resolvable and TheType is also resolvable, will return
+            [TheType], else will return []
+        We use the "list" version just in case, in a future, we have other kind of constructions
+        with several elements.
+    """
     base_types: list[type[types.rest.BaseRestItem]] = list(
         filter(
             lambda x: issubclass(x, types.rest.BaseRestItem),  # pyright: ignore[reportUnnecessaryIsInstance]
             itertools.chain.from_iterable(
                 map(
                     lambda x: [
-                        # Filter out non resolvable forward references, protect against failures
+                        # Filter out non resolvable forward references of the ARGS, protect against failures
                         typing.cast(type[typing.Any], _resolve_forwardref(xx))
                         for xx in typing.get_args(x)
                         if _resolve_forwardref(xx) is not None
                     ],
                     [
-                        # Filter out non resolvable forward references, protect against failures
+                        # Filter out non resolvable forward references of the TYPE, protect against failures
                         typing.cast(type[typing.Any], _resolve_forwardref(base))
                         for base in filter(
                             lambda x: _resolve_forwardref(x) is not None,
@@ -54,6 +69,14 @@ def get_component_from_type(
             ),
         )
     )
+    return base_types
+
+
+def get_component_from_type(
+    cls: 'type[model.ModelHandler[typing.Any] | model.DetailHandler[typing.Any]]',
+) -> types.rest.api.Components:
+    logger.debug('Getting components from type %s', cls)
+    base_types = get_generic_types(cls)
 
     all_components = types.rest.api.Components()
 
