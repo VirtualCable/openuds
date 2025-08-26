@@ -186,6 +186,7 @@ class SchemaProperty:
 @dataclasses.dataclass
 class Schema:
     type: str
+    format: str | None = None
     properties: dict[str, SchemaProperty] = dataclasses.field(default_factory=dict[str, SchemaProperty])
     required: list[str] = dataclasses.field(default_factory=list[str])
     description: str | None = None
@@ -196,6 +197,7 @@ class Schema:
         return as_dict_without_none(
             {
                 'type': self.type,
+                'format': self.format,
                 'properties': {k: v.as_dict() for k, v in self.properties.items()},
                 'required': self.required,
                 'description': self.description,

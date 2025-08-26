@@ -386,7 +386,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
 
         delete_on_error = False
 
-        if len(self._args) > 1:  # Detail?
+        if len(self._args) > 1:  # Detail (1 arg means ID, more means detail/ID)?
             return self.process_detail()
 
         # Here, self.model() indicates an "django model object with default params"

@@ -54,7 +54,8 @@ def api_paths(klass: type['ModelHandler[types.rest.T_Item]'], path: str) -> dict
     """
     Returns the API operations that should be registered
     """
-    # The the base path
+
+    # TODO: Append "custom" methods
     return {
         path: types.rest.api.PathItem(
             get=types.rest.api.Operation(
@@ -64,8 +65,8 @@ def api_paths(klass: type['ModelHandler[types.rest.T_Item]'], path: str) -> dict
                 responses={},
             ),
             put=types.rest.api.Operation(
-                summary=f'Creates a new {klass.MODEL.__name__} item',
-                description=f'Creates a new, nonexisting {klass.MODEL.__name__} item',
+                summary=f'Creates a new {klass.MODEL.__name__} items',
+                description=f'Update an existing {klass.MODEL.__name__} item',
                 parameters=[],
                 responses={},
             ),
