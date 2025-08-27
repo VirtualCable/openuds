@@ -248,6 +248,8 @@ def python_type_to_openapi(py_type: typing.Any) -> 'types.rest.api.SchemaPropert
             return types.rest.api.SchemaProperty(type=openapi_type.value.type, enum=[e.value for e in py_type])
         except StopIteration:
             return types.rest.api.SchemaProperty(type='string')
+    elif isinstance(py_type, type) and dataclasses.is_dataclass(py_type):
+        return types.rest.api.SchemaProperty(type=f'#/components/schemas/{py_type.__name__}')
 
     # Simple types
     oa_type = _OPENAPI_TYPE_MAP.get(py_type, OpenApiType.OBJECT)
@@ -290,18 +292,24 @@ def api_components(
         if not field_type:
             raise Exception(f'Field {field.name} has no type hint')
 
+        args = typing.get_args(field_type)
+
+        if args and dataclasses.is_dataclass(args[0]):
+            # If it's a reference to a dataclass, include the dataclass definition
+            # care with circular references. Not checked right now, data is our,
+            # No problem should arise..
+            components = components | api_components(
+                typing.cast(type[typing.Any], args[0]), removable_fields=child_removables.get(field.name, [])
+            )
+
         # If it is a dataclass, get its API components
         if dataclasses.is_dataclass(field_type):
-            sub_component = api_util.api_components(
+            components = components | api_components(
                 typing.cast(type[typing.Any], field_type),
                 removable_fields=child_removables.get(field.name, []),
             )
-            components = components.union(sub_component)
-            schema_prop = types.rest.api.SchemaProperty(
-                type=f'#/components/schemas/{next(iter(sub_component.schemas.keys()))}', description=None
-            )
-        else:
-            schema_prop = api_util.python_type_to_openapi(field_type)
+
+        schema_prop = api_util.python_type_to_openapi(field_type)
 
         schema.properties[field.name] = schema_prop
         if field.default is dataclasses.MISSING and field.default_factory is dataclasses.MISSING:
