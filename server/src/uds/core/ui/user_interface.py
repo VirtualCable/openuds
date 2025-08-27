@@ -132,17 +132,14 @@ class gui:
         """
         if not isinstance(text, (str, Promise)):
             text = str(text)
-        return {
-            'id': str(id_),
-            'text': typing.cast(str, text),
-        }  # Cast to avoid mypy error, Promise is at all effects a str
+        return types.ui.ChoiceItem(id=str(id_), text=typing.cast(str, text))
 
     @staticmethod
     def choice_image(id_: typing.Union[str, int], text: str, img: str) -> types.ui.ChoiceItem:
         """
         Helper method to create a single choice item with image.
         """
-        return {'id': str(id_), 'text': str(text), 'img': img}
+        return types.ui.ChoiceItem(id=str(id_), text=str(text), img=img)
 
     # Helpers
     @staticmethod
@@ -160,14 +157,10 @@ class gui:
         if callable(vals):
             return vals
 
-        # Helper to convert an item to a dict
-        def _choice_from_value(val: typing.Union[str, types.ui.ChoiceItem]) -> 'types.ui.ChoiceItem':
-            if isinstance(val, dict):
-                if 'id' not in val or 'text' not in val:
-                    raise ValueError(f'Invalid choice dict: {val}')
-                return gui.choice_item(val['id'], val['text'])
-            # If val is not a dict, and it has not 'id' and 'text', raise an exception
-            return gui.choice_item(val, str(val))
+        def _choice_from_value(val: str | types.ui.ChoiceItem) -> 'types.ui.ChoiceItem':
+            if isinstance(val, str):
+                return gui.choice_item(val, val)
+            return val
 
         # If is a dict
         if isinstance(vals, dict):
@@ -188,9 +181,9 @@ class gui:
         key: typing.Optional[collections.abc.Callable[[types.ui.ChoiceItem], typing.Any]] = None,
     ) -> list[types.ui.ChoiceItem]:
         if by_id:
-            key = lambda item: item['id']
+            key = lambda item: item.id
         elif key is None:
-            key = lambda item: item['text'].lower()
+            key = lambda item: item.text.casefold()
         else:
             key = key
         return sorted(choices, key=key, reverse=reverse)
@@ -405,7 +398,7 @@ class gui:
             # And, if tab is set, translate it too
             if data.tab:
                 data.tab = gettext(data.tab)  # Translates tab name
-                
+
             # Choices can be a callback, resolve
             if callable(data.choices):
                 data.choices = data.choices()
@@ -1658,7 +1651,6 @@ class UserInterface(metaclass=UserInterfaceType):
         VALID_CONVERSIONS: typing.Final[dict[types.ui.FieldType, list[types.ui.FieldType]]] = {
             types.ui.FieldType.TEXT: [types.ui.FieldType.PASSWORD]
         }
-        
 
         # Set all values to defaults ones
         for field_name, field in self._all_serializable_fields():

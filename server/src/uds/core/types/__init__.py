@@ -30,7 +30,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # pyright: reportUnusedImport=false
-from . import rest
 from . import (
     auth,
     calendar,
@@ -51,6 +50,7 @@ from . import (
     core,
     log,
     net,
+    rest,
 )
 
 # Log is not imported here, as it is a special case with lots of dependencies

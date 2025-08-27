@@ -303,7 +303,7 @@ class GuiBuilder:
                 label=label,
                 choices=choices,
                 tab=tab,
-                default=default or (choices[0]['id'] if choices else None),
+                default=default or (choices[0].id if choices else None),
                 readonly=readonly,
                 tooltip=tooltip,
                 required=required,

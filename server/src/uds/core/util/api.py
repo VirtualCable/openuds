@@ -8,10 +8,10 @@ import enum
 import types as py_types
 
 from uds.core import types, module
+from uds.core.types.rest.api import SchemaProperty
 
 if typing.TYPE_CHECKING:
     from uds.REST import model
-    from uds.core.types.rest import api
 
 logger = logging.getLogger(__name__)
 
@@ -106,20 +106,24 @@ def get_component_from_type(
                 schema_property = types.rest.api.SchemaProperty.from_field_desc(field)
                 if schema_property is None:
                     continue  # Skip fields that don't have a schema property
-                type_schema.properties[field['name']] = schema_property
-                if field['gui'].get('required', False):
-                    type_schema.required.append(field['name'])
+                type_schema.properties[field.name] = schema_property
+                if field.gui.required is True:
+                    type_schema.required.append(field.name)
 
             ref = f'#/components/schemas/{type_.type_type}'
             refs.append(ref)
-            mappings.append((f'{type_.type_type}', ref))  
+            mappings.append((f'{type_.type_type}', ref))
 
             components.schemas[type_.type_type] = type_schema
 
-        if issubclass(base_type, types.rest.ManagedObjectItem) and isinstance(item_schema, types.rest.api.Schema):
+        if issubclass(base_type, types.rest.ManagedObjectItem) and isinstance(
+            item_schema, types.rest.api.Schema
+        ):
             # item_schema.discriminator = types.rest.api.Discriminator(propertyName='type')
             instance_name = f'{item_name}Instance'
-            item_schema.properties['instance'] = types.rest.api.SchemaProperty(type=f'#/components/schemas/{instance_name}')
+            item_schema.properties['instance'] = types.rest.api.SchemaProperty(
+                type=f'#/components/schemas/{instance_name}'
+            )
             instance_comps = types.rest.api.Components(
                 schemas={instance_name: types.rest.api.RelatedSchema(property='type', mappings=mappings)}
             )
@@ -135,13 +139,15 @@ def get_component_from_type(
 class OpenApiTypeInfo:
     type: str
     format: str | None = None
-    nullable: bool = False
     ref: bool = False
+    items: str | None = None  # Type of items in array
 
     def as_dict(self) -> dict[str, typing.Any]:
-        dct = {'type': self.type}
+        dct: dict[str, typing.Any] = {'type': self.type}
         if self.format:
             dct['format'] = self.format
+        if self.items:
+            dct['items'] = {'type': self.items}
         return dct
 
 
@@ -154,6 +160,8 @@ class OpenApiType(enum.Enum):
     NULL = OpenApiTypeInfo(type='null')
     DATE_TIME = OpenApiTypeInfo(type='string', format='date-time')
     DATE = OpenApiTypeInfo(type='string', format='date')
+    LIST_STR = OpenApiTypeInfo(type='array', items='string')
+    LIST_INT = OpenApiTypeInfo(type='array', items='integer')
 
 
 _OPENAPI_TYPE_MAP: typing.Final[dict[typing.Any, OpenApiType]] = {
@@ -164,14 +172,15 @@ _OPENAPI_TYPE_MAP: typing.Final[dict[typing.Any, OpenApiType]] = {
     type(None): OpenApiType.NULL,
     datetime.datetime: OpenApiType.DATE_TIME,
     datetime.date: OpenApiType.DATE,
+    list[str]: OpenApiType.LIST_STR,
+    list[int]: OpenApiType.LIST_INT,
 }
 
 
-def python_type_to_openapi(py_type: typing.Any) -> 'api.SchemaProperty':
+def python_type_to_openapi(py_type: typing.Any) -> 'types.rest.api.SchemaProperty':
     """
     Convert a Python type to an OpenAPI 3.1 schema property.
     """
-    from uds.core.types.rest import api
 
     origin = typing.get_origin(py_type)
     args = typing.get_args(py_type)
@@ -179,27 +188,44 @@ def python_type_to_openapi(py_type: typing.Any) -> 'api.SchemaProperty':
     # list[...] → array
     if origin is list:
         item_type = args[0] if args else typing.Any
-        return api.SchemaProperty(type='array', items=python_type_to_openapi(item_type))
+        return types.rest.api.SchemaProperty(type='array', items=python_type_to_openapi(item_type))
 
     # dict[...] → object
     elif origin is dict:
         value_type = args[1] if len(args) == 2 else typing.Any
-        return api.SchemaProperty(type='object', additionalProperties=python_type_to_openapi(value_type))
+        return types.rest.api.SchemaProperty(
+            type='object', additionalProperties=python_type_to_openapi(value_type)
+        )
 
     # Union[...] → oneOf
     # Except if one of them is None, in which case, we must extract it from the list
     # and create {'type': xxx, 'nullable': true}
     elif origin in {py_types.UnionType, typing.Union}:
         # Optional[X] is Union[X, None]
-        oa_types = [
-            _OPENAPI_TYPE_MAP.get(arg, OpenApiType.OBJECT)
-            for arg in args
-            if isinstance(arg, type)
-        ]
+        one_of: list[SchemaProperty] = [python_type_to_openapi(arg) for arg in args if arg is not None]
+        # Remove repeated
+        one_of = list({item.type: item for item in one_of}.values())
+        # if only 1, return it directly
+        if len(one_of) == 1:
+            return one_of[0]
 
-        return api.SchemaProperty(
-            type=[oa_type.value.type for oa_type in oa_types],
+        return types.rest.api.SchemaProperty(
+            type='not_used',
+            one_of=one_of,
         )
+        # for arg in args:
+        #     if not isinstance(arg, type) and not isinstance(arg, py_types.GenericAlias):
+        #         continue
+        #     oa_type = _OPENAPI_TYPE_MAP.get(arg, OpenApiType.OBJECT)
+        #     if oa_type.value.items:  # IF has items
+        #         one_of.append(
+        #             types.rest.api.SchemaProperty(
+        #                 type=oa_type.value.type,
+        #                 one_of=[types.rest.api.SchemaProperty(type=k) for k in oa_type.value.items],
+        #             )
+        #         )
+        #     else:
+        #         one_of.append(types.rest.api.SchemaProperty(type=oa_type.value.type, format=oa_type.value.format))
 
     elif origin is typing.Annotated:
         return python_type_to_openapi(args[0])
@@ -207,18 +233,18 @@ def python_type_to_openapi(py_type: typing.Any) -> 'api.SchemaProperty':
     # Literal[...] → enum
     elif origin is typing.Literal:
         literal_type = typing.cast(type[typing.Any], type(args[0]) if args else str)
-        return api.SchemaProperty(
+        return types.rest.api.SchemaProperty(
             type=_OPENAPI_TYPE_MAP.get(literal_type, OpenApiType.STRING).value.type, enum=list(args)
         )
 
     # Enum classes
     # First, IntEnum --> int
     elif isinstance(py_type, type) and issubclass(py_type, enum.IntEnum):
-        return api.SchemaProperty(type='integer')
+        return types.rest.api.SchemaProperty(type='integer', enum=[e.value for e in py_type])
 
     # Now, StrEnum --> string
     elif isinstance(py_type, type) and issubclass(py_type, enum.StrEnum):
-        return api.SchemaProperty(type='string')
+        return types.rest.api.SchemaProperty(type='string', enum=[e.value for e in py_type])
 
     # Rest of cases --> enum with first item type setting the type for the field
     elif isinstance(py_type, type) and issubclass(py_type, enum.Enum):
@@ -226,28 +252,45 @@ def python_type_to_openapi(py_type: typing.Any) -> 'api.SchemaProperty':
             sample = next(iter(py_type))
             value_type = typing.cast(type[typing.Any], type(sample.value))
             openapi_type = _OPENAPI_TYPE_MAP.get(value_type, OpenApiType.STRING)
-            return api.SchemaProperty(type=openapi_type.value.type, enum=[e.value for e in py_type])
+            return types.rest.api.SchemaProperty(type=openapi_type.value.type, enum=[e.value for e in py_type])
         except StopIteration:
-            return api.SchemaProperty(type='string')
+            return types.rest.api.SchemaProperty(type='string')
 
     # Simple types
     oa_type = _OPENAPI_TYPE_MAP.get(py_type, OpenApiType.OBJECT)
-    return api.SchemaProperty(type=oa_type.value.type, format=oa_type.value.format)
+    return types.rest.api.SchemaProperty(type=oa_type.value.type, format=oa_type.value.format)
 
 
-def api_components(dataclass: typing.Type[typing.Any]) -> 'api.Components':
-    from uds.core.util import api as api_uti  # Avoid circular import
-    from uds.core.types.rest import api
+def api_components(
+    dataclass: typing.Type[typing.Any], *, removable_fields: list[str] | None = None
+) -> 'types.rest.api.Components':
+    from uds.core.util import api as api_util  # Avoid circular import
 
     # If not dataclass, raise a ValueError
     if not dataclasses.is_dataclass(dataclass):
         raise ValueError('Expected a dataclass')
 
-    components = api.Components()
-    schema = api.Schema(type='object', properties={}, description=None)
+    our_removables: set[str] = set()
+
+    child_removables: dict[str, list[str]] = {}
+    for rem_fld in removable_fields or []:
+        if '.' in rem_fld:
+            child_name, field = rem_fld.split('.', 1)
+            if child_name not in child_removables:
+                child_removables[child_name] = []
+
+            child_removables[child_name].append(field)
+        else:
+            our_removables.add(rem_fld)
+
+    components = types.rest.api.Components()
+    schema = types.rest.api.Schema(type='object', properties={}, description=None)
     type_hints = typing.get_type_hints(dataclass)
 
     for field in dataclasses.fields(dataclass):
+        if field.name in our_removables:
+            continue
+
         # Check the type, can be a primitive or a complex type
         # complexes types accepted are list and dict currently
         field_type = type_hints.get(field.name)
@@ -256,13 +299,16 @@ def api_components(dataclass: typing.Type[typing.Any]) -> 'api.Components':
 
         # If it is a dataclass, get its API components
         if dataclasses.is_dataclass(field_type):
-            sub_component = api_uti.api_components(typing.cast(type[typing.Any], field_type))
+            sub_component = api_util.api_components(
+                typing.cast(type[typing.Any], field_type),
+                removable_fields=child_removables.get(field.name, []),
+            )
             components = components.union(sub_component)
-            schema_prop = api.SchemaProperty(
+            schema_prop = types.rest.api.SchemaProperty(
                 type=f'#/components/schemas/{next(iter(sub_component.schemas.keys()))}', description=None
             )
         else:
-            schema_prop = api_uti.python_type_to_openapi(field_type)
+            schema_prop = api_util.python_type_to_openapi(field_type)
 
         schema.properties[field.name] = schema_prop
         if field.default is dataclasses.MISSING and field.default_factory is dataclasses.MISSING:
@@ -271,7 +317,10 @@ def api_components(dataclass: typing.Type[typing.Any]) -> 'api.Components':
     components.schemas[dataclass.__name__] = schema
     return components
 
-def gen_response(type: str, with_404: bool = False, single: bool = True, delete: bool = False) -> dict[str, types.rest.api.Response]:
+
+def gen_response(
+    type: str, with_404: bool = False, single: bool = True, delete: bool = False
+) -> dict[str, types.rest.api.Response]:
     data: dict[str, types.rest.api.Response]
 
     if not single:
@@ -319,4 +368,3 @@ def gen_response(type: str, with_404: bool = False, single: bool = True, delete:
         )
 
     return data
-

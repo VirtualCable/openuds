@@ -119,6 +119,6 @@ def source_field_data(
     ]
 
     if isinstance(field, gui.MultiChoiceField):
-        data_list.insert(0, {'id': '0-0-0-0', 'text': _('All')})
+        data_list.insert(0, types.ui.ChoiceItem(id='0-0-0-0', text=_('All')))
 
     field.set_choices(data_list)

@@ -97,9 +97,9 @@ class BaseRestItem:
 
     @classmethod
     def api_components(cls: type[typing.Self]) -> api.Components:
-        from uds.core.util import api as api_uti  # Avoid circular import
+        from uds.core.util import api as api_util  # Avoid circular import
 
-        return api_uti.api_components(cls)
+        return api_util.api_components(cls)
 
 
 @dataclasses.dataclass

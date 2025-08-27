@@ -169,6 +169,7 @@ class SchemaProperty:
     discriminator: str | None = None  # For polymorphic types
     enum: list[str | int] | None = None  # For enum types
     properties: dict[str, 'SchemaProperty'] | None = None
+    one_of: list['SchemaProperty'] | None = None
 
     @staticmethod
     def from_field_desc(desc: 'ui.GuiElement') -> 'SchemaProperty|None':
@@ -229,7 +230,10 @@ class SchemaProperty:
                 return {'$ref': type_}
             return {'type': type_}
 
-        if isinstance(self.type, list):
+        if self.one_of:  # Ignore type, ose one_of values
+            val['oneOf'] = [i.as_dict() for i in self.one_of]
+            del val['type']
+        elif isinstance(self.type, list):
             # If one_of is defined, we should not use type, but one_of
             val['oneOf'] = [one_of_ref(ref) for ref in self.type]
             del val['type']
