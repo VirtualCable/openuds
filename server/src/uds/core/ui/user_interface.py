@@ -389,28 +389,30 @@ class gui:
             """
             self._field_info.value = value
 
-        def gui_description(self) -> types.ui.GuiDescription:
+        def gui_description(self) -> types.ui.FieldInfo:
             """
             Returns the dictionary with the description of this item.
             We copy it, cause we need to translate the label and tooltip fields
             and don't want to
             alter original values.
             """
-            data = self._field_info.as_dict()
-            for i in ('value', 'old_field_name'):
-                if i in data:
-                    del data[i]  # We don't want to send some values on gui_description
+            data = copy.copy(self._field_info)
+            data.value = data.old_field_name = None  # We don't want to send some values on gui_description
+            data.label = gettext(data.label) if data.label else ''
             # Translate label and tooltip
-            data['label'] = gettext(data['label']) if data['label'] else ''
-            data['tooltip'] = gettext(data['tooltip']) if data['tooltip'] else ''
+            data.tooltip = gettext(data.tooltip) if data.tooltip else ''
 
             # And, if tab is set, translate it too
-            if 'tab' in data:
-                data['tab'] = gettext(data['tab'])  # Translates tab name
+            if data.tab:
+                data.tab = gettext(data.tab)  # Translates tab name
+                
+            # Choices can be a callback, resolve
+            if callable(data.choices):
+                data.choices = data.choices()
 
-            data['default'] = self.default
+            data.default = self.default
 
-            return typing.cast(types.ui.GuiDescription, data)
+            return data
 
         @property
         def default(self) -> typing.Any:
@@ -804,11 +806,11 @@ class gui:
         def value(self, value: datetime.date | str) -> None:
             self._set_value(value)
 
-        def gui_description(self) -> types.ui.GuiDescription:
+        def gui_description(self) -> types.ui.FieldInfo:
             fldgui = super().gui_description()
             # Convert if needed value and default to string (YYYY-MM-DD)
-            if 'default' in fldgui:
-                fldgui['default'] = str(fldgui['default'])
+            if fldgui.default is not None:
+                fldgui.default = str(fldgui.default)
             return fldgui
 
     class PasswordField(InputField):
@@ -1531,11 +1533,11 @@ class UserInterface(metaclass=UserInterfaceType):
     @classmethod
     def describe_fields(cls: type[typing.Self]) -> list[types.ui.GuiElement]:
         return [
-            {
-                'name': key,
-                'gui': val.gui_description(),
-                'value': val.value if val.is_type(types.ui.FieldType.HIDDEN) else None,
-            }
+            types.ui.GuiElement(
+                name=key,
+                gui=val.gui_description(),
+                value=val.value if val.is_type(types.ui.FieldType.HIDDEN) else None,
+            )
             for key, val in cls._gui_fields_template.items()
         ]
 
@@ -1769,11 +1771,11 @@ class UserInterface(metaclass=UserInterfaceType):
         for key, val in self._gui.items():
             # Only add "value" for hidden fields on gui description. Rest of fields will be filled by client
             res.append(
-                {
-                    'name': key,
-                    'gui': val.gui_description(),
-                    'value': val.value if val.is_type(types.ui.FieldType.HIDDEN) else None,
-                }
+                types.ui.GuiElement(
+                    name=key,
+                    gui=val.gui_description(),
+                    value=val.value if val.is_type(types.ui.FieldType.HIDDEN) else None,
+                )
             )
         # logger.debug('theGui description: %s', res)
         return res

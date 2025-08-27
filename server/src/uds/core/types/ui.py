@@ -153,7 +153,9 @@ class FieldInfo:
     old_field_name: OldFieldNameType = None
     readonly: typing.Optional[bool] = None
     value: typing.Union[collections.abc.Callable[[], typing.Any], typing.Any] = None
-    default: typing.Optional[typing.Union[collections.abc.Callable[[], str], str]] = None
+    default: typing.Optional[typing.Union[collections.abc.Callable[[], str | int | bool], str | int | bool]] = (
+        None
+    )
     required: typing.Optional[bool] = None
     length: typing.Optional[int] = None
     lines: typing.Optional[int] = None
@@ -170,31 +172,16 @@ class FieldInfo:
         return {k: v for k, v in dataclasses.asdict(self).items() if v is not None}
 
 
-class GuiDescription(typing.TypedDict):
-    """
-    GuiDescription is a dictionary that describes a GUI element.
-    It contains the name of the element, the GUI description, and the value.
-    """
-
-    label: str
-    order: int
-    type: FieldType
-    tooltip: typing.NotRequired[str]
-    readonly: typing.NotRequired[bool]
-    default: typing.NotRequired[str | int | float | bool]
-    required: typing.NotRequired[bool]
-    length: typing.NotRequired[int]
-    lines: typing.NotRequired[int]
-    pattern: typing.NotRequired[str]
-    tab: typing.NotRequired[str]
-    choices: typing.NotRequired[list[ChoiceItem]]
-    min_value: typing.NotRequired[int]
-    max_value: typing.NotRequired[int]
-    fills: typing.NotRequired[Filler]
-    rows: typing.NotRequired[int]
-
-
-class GuiElement(typing.TypedDict):
+@dataclasses.dataclass
+class GuiElement:
     name: str
-    value: typing.NotRequired[typing.Any]
-    gui: GuiDescription
+    gui: FieldInfo
+    value: typing.Any | None = None
+
+    def as_dict(self) -> dict[str, typing.Any]:
+        """Returns a dict with all fields that are not None"""
+        return {
+            'name': self.name,
+            'gui': self.gui.as_dict(),
+            'value': self.value,
+        }

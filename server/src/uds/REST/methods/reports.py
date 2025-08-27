@@ -159,7 +159,7 @@ class Reports(model.BaseModelHandler[ReportItem]):
     # Gui related
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
         report = self._locate_report(for_type)
-        return sorted(report.gui_description(), key=lambda f: f['gui']['order'])
+        return sorted(report.gui_description(), key=lambda f: f.gui.order)
 
     # Returns the list of
     def get_items(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Generator[ReportItem, None, None]:

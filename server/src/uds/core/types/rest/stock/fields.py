@@ -29,6 +29,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import copy
 import typing
 import enum
 
@@ -58,11 +59,11 @@ class StockField(enum.StrEnum):
         from uds.models import Network  # Import here to avoid circular import
 
         # Get a copy to ensure we do not modify the original
-        field_gui = [i.copy() for i in _STATIC_FLDS[self]]
+        field_gui = [copy.copy(i) for i in _STATIC_FLDS[self]]
 
         # Special cases, as network choices are dynamic
         if self.value == self.NETWORKS:
-            field_gui[0]['gui']['choices'] = sorted(
+            field_gui[0].gui.choices = sorted(
                 [{'id': x.uuid, 'text': x.name} for x in Network.objects.all()],
                 key=lambda x: x['text'].lower(),
             )
@@ -74,98 +75,98 @@ class StockField(enum.StrEnum):
 # Eventullay, should be removed
 _STATIC_FLDS: typing.Final[dict[StockField, list['ui.GuiElement']]] = {
     StockField.TAGS: [
-        {
-            'name': 'tags',
-            'gui': {
-                'label': _('Tags'),
-                'type': ui.FieldType.TAGLIST,
-                'tooltip': _('Tags for this element'),
-                'order': 0 - 110,
-            },
-        }
+        ui.GuiElement(
+            name='tags',
+            gui=ui.FieldInfo(
+                label=_('Tags'),
+                type=ui.FieldType.TAGLIST,
+                tooltip=_('Tags for this element'),
+                order=0 - 110,
+            ),
+        )
     ],
     StockField.NAME: [
-        {
-            'name': 'name',
-            'gui': {
-                'type': ui.FieldType.TEXT,
-                'required': True,
-                'label': _('Name'),
-                'length': 128,
-                'tooltip': _('Name of this element'),
-                'order': 0 - 100,
-            },
-        }
+        ui.GuiElement(
+            name='name',
+            gui=ui.FieldInfo(
+                type=ui.FieldType.TEXT,
+                required=True,
+                label=_('Name'),
+                length=128,
+                tooltip=_('Name of this element'),
+                order=0 - 100,
+            ),
+        )
     ],
     StockField.COMMENTS: [
-        {
-            'name': 'comments',
-            'gui': {
-                'label': _('Comments'),
-                'type': ui.FieldType.TEXT,
-                'lines': 3,
-                'tooltip': _('Comments for this element'),
-                'length': 256,
-                'order': 0 - 90,
-            },
-        }
+        ui.GuiElement(
+            name='comments',
+            gui=ui.FieldInfo(
+                label=_('Comments'),
+                type=ui.FieldType.TEXT,
+                lines=3,
+                tooltip=_('Comments for this element'),
+                length=256,
+                order=0 - 90,
+            ),
+        )
     ],
     StockField.PRIORITY: [
-        {
-            'name': 'priority',
-            'gui': {
-                'label': _('Priority'),
-                'type': ui.FieldType.NUMERIC,
-                'required': True,
-                'default': 1,
-                'length': 4,
-                'tooltip': _('Selects the priority of this element (lower number means higher priority)'),
-                'order': 0 - 80,
-            },
-        }
+        ui.GuiElement(
+            name='priority',
+            gui=ui.FieldInfo(
+                label=_('Priority'),
+                type=ui.FieldType.NUMERIC,
+                required=True,
+                default=1,
+                length=4,
+                tooltip=_('Selects the priority of this element (lower number means higher priority)'),
+                order=0 - 80,
+            ),
+        )
     ],
     StockField.LABEL: [
-        {
-            'name': 'small_name',
-            'gui': {
-                'label': _('Label'),
-                'type': ui.FieldType.TEXT,
-                'required': True,
-                'length': 128,
-                'tooltip': _('Label for this element'),
-                'order': 0 - 70,
-            },
-        }
+        ui.GuiElement(
+            name='small_name',
+            gui=ui.FieldInfo(
+                label=_('Label'),
+                type=ui.FieldType.TEXT,
+                required=True,
+                length=128,
+                tooltip=_('Label for this element'),
+                order=0 - 70,
+            ),
+        )
     ],
     StockField.NETWORKS: [
-        {
-            'name': 'networks',
-            'gui': {
-                'label': _('Networks'),
-                'type': ui.FieldType.MULTICHOICE,
-                'tooltip': _('Networks associated. If No network selected, will mean "all networks"'),
-                'choices': [],  # Will be filled dynamically
-                'order': 101,
-                'tab': ui.Tab.ADVANCED,
-            },
-        },
-        {
-            'name': 'net_filtering',
-            'gui': {
-                'label': _('Network Filtering'),
-                'type': ui.FieldType.CHOICE,  # Type of network filtering
-                'default': 'n',
-                'choices': [
+        ui.GuiElement(
+            name='networks',
+            gui=ui.FieldInfo(
+                label=_('Networks'),
+                type=ui.FieldType.MULTICHOICE,
+                tooltip=_('Networks associated. If No network selected, will mean "all networks"'),
+                choices=[],  # Will be filled dynamically
+                order=101,
+                tab=ui.Tab.ADVANCED,
+            ),
+        ),
+        ui.GuiElement(
+            name='net_filtering',
+            gui=ui.FieldInfo(
+                label=_('Network Filtering'),
+                type=ui.FieldType.CHOICE,  # Type of network filtering
+                default='n',
+                choices=[
                     {'id': 'n', 'text': _('No filtering')},
                     {'id': 'a', 'text': _('Allow selected networks')},
                     {'id': 'd', 'text': _('Deny selected networks')},
                 ],
-                'tooltip': _(
+                tooltip=_(
                     'Type of network filtering. Use "Disabled" to disable origin check, "Allow" to only enable for selected networks or "Deny" to deny from selected networks'
                 ),
-                'order': 100,  # At end
-                'tab': ui.Tab.ADVANCED,
-            },
-        },
+                order=100,  # At end
+                tab=ui.Tab.ADVANCED,
+            ),
+        )
     ],
 }

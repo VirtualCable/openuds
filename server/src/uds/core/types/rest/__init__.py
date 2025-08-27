@@ -119,7 +119,7 @@ class ManagedObjectItem(BaseRestItem, typing.Generic[T_Model]):
         # Remove the fields that are not needed in the dictionary
         base.pop('item')
         item = self.item.get_instance()
-        item.init_gui()  # Defaults & stuff
+        # item.init_gui()  # Defaults & stuff
         fields = item.get_fields_as_dict()
 
         # TODO: This will be removed in future versions, as it will be overseed by "instance" key

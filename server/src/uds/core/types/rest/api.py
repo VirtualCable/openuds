@@ -176,7 +176,7 @@ class SchemaProperty:
 
         def base_schema() -> 'SchemaProperty|None':
             '''Returns the API type for this field type'''
-            match desc['gui']['type']:
+            match desc.gui.type:
                 case ui.FieldType.TEXT:
                     return SchemaProperty(type='string')
                 case ui.FieldType.TEXT_AUTOCOMPLETE:
@@ -207,7 +207,7 @@ class SchemaProperty:
         schema = base_schema()
         if schema is None:
             return None
-        schema.description = f'{desc['gui']['label']}.{desc['gui'].get('tooltip', '')}'
+        schema.description = f'{desc.gui.label}.{desc.gui.tooltip}'
         return schema
 
     def as_dict(self) -> dict[str, typing.Any]:

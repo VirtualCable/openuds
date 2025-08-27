@@ -29,6 +29,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import copy
 import typing
 from uds.core import types
 from django.utils.translation import gettext
@@ -83,34 +84,25 @@ class GuiBuilder:
         """
         Adds common fields to the given GUI element.
         """
-        gui_desk: types.ui.GuiDescription = {
-            'type': type,
-            'label': label or '',
-            'order': self.next(),
-        }
-        tab = tab or self.saved_tab
 
-        if tab:
-            gui_desk['tab'] = tab
-
-        if order is not None:
-            gui_desk['order'] = order
-        if length is not None:
-            gui_desk['length'] = length
-        if min_value is not None:
-            gui_desk['min_value'] = min_value
-        if max_value is not None:
-            gui_desk['max_value'] = max_value
-        if default is not None:
-            gui_desk['default'] = default
-        if required is not None:
-            gui_desk['required'] = required
-        if readonly is not None:
-            gui_desk['readonly'] = readonly
-        if choices is not None:
-            gui_desk['choices'] = choices
-
-        gui_desk['tooltip'] = tooltip or ''
+        return types.ui.GuiElement(
+            name=name,
+            value=None,
+            gui=types.ui.FieldInfo(
+                order=order or self.next(),
+                type=type,
+                label=label or '',
+                tooltip=tooltip or '',
+                tab=tab or self.saved_tab,
+                length=length,
+                min_value=min_value,
+                max_value=max_value,
+                default=default,
+                required=required,
+                readonly=readonly,
+                choices=choices,
+            ),
+        )
 
         return {
             'name': name,
@@ -137,14 +129,12 @@ class GuiBuilder:
         Adds a list of GUI elements to the GUI.
         """
         # Copy fields, deep copy to ensure not modifying the original fields
-        fields = [field.copy() for field in fields]
-        for field in fields:
+        for field in [copy.copy(field) for field in fields]:
             # Add "parent." to the name of each field if a parent is specified
             if parent:
-                field['name'] = f"{parent}.{field['name']}"
-            field['gui']['order'] = self.next()
-                
-        self.fields.extend(fields)
+                field.name = f"{parent}.{field.name}"
+            field.gui.order = self.next()
+            self.fields.append(field)
 
         return self
 
@@ -154,8 +144,8 @@ class GuiBuilder:
         """
 
         def update_order(gui: types.ui.GuiElement) -> types.ui.GuiElement:
-            gui = gui.copy()
-            gui['gui']['order'] = self.next()
+            gui = copy.copy(gui)
+            gui.gui.order = self.next()
             return gui
 
         self.fields.extend([update_order(i) for i in field.get_fields()])

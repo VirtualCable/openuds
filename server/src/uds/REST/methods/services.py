@@ -349,7 +349,7 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
                     .add_fields(service.gui_description())
                 )
 
-                return [field_gui for field_gui in gui.build() if field_gui['name'] not in overrided_fields]
+                return [field_gui for field_gui in gui.build() if field_gui.name not in overrided_fields]
 
         except Exception as e:
             logger.exception('get_gui')

@@ -147,7 +147,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
         # raise self.invalidRequestException()
 
     def get_processed_gui(self, for_type: str) -> list[types.ui.GuiElement]:
-        return sorted(self.get_gui(for_type), key=lambda f: f['gui']['order'])
+        return sorted(self.get_gui(for_type), key=lambda f: f.gui.order)
 
     # Delete related, checks if the item can be deleted
     # If it can't be so, raises an exception

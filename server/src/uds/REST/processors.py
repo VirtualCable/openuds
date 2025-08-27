@@ -31,6 +31,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import collections.abc
+import dataclasses
 import datetime
 import json
 import logging
@@ -120,6 +121,7 @@ class ContentProcessor:
         match obj:
             case types.rest.BaseRestItem():
                 return ContentProcessor.process_for_render(obj.as_dict(), data_transformer)
+            # Dataclass
             case None | bool() | int() | float() | str():
                 return obj
             case dict():
@@ -150,6 +152,21 @@ class ContentProcessor:
                 return '{}-{:02d}-{:02d}'.format(obj.year, obj.month, obj.day)
 
             case _:
+                # Any class with as_dict method shoud be processed
+                if as_dict := getattr(obj, 'as_dict', None):
+                    try:
+                        obj = as_dict()
+                        return ContentProcessor.process_for_render(obj, data_transformer)
+                    except Exception as e:
+                        # Maybe the as_dict method is not implemented as we expect.. should not happen
+                        logger.warning('Obj has as_dict method but failed to call it: %s', e)
+                        # Will return obj as str in this case, or if it is a dataclass, can return as dict
+
+                if dataclasses.is_dataclass(obj):
+                    # If already has a "as_dict" method, use it, and if not, default
+                    obj = dataclasses.asdict(typing.cast(typing.Any, obj))
+                    return ContentProcessor.process_for_render(obj, data_transformer)
+
                 return str(obj)
 
 
@@ -185,6 +202,7 @@ class MarshallerProcessor(ContentProcessor):
     def render(self, obj: typing.Any) -> str:
         def none_transformer(dct: dict[str, typing.Any]) -> dict[str, typing.Any]:
             return dct
+
         dct_filter = none_transformer if self._odata is None else self._odata.select_filter
         return self.marshaller.dumps(ContentProcessor.process_for_render(obj, dct_filter))
 

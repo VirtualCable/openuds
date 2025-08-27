@@ -168,9 +168,9 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item]):
             case [consts.rest.TABLEINFO, *_fails]:
                 raise exceptions.rest.RequestError('Invalid table info request') from None
             case [consts.rest.GUI]:
-                return sorted(self.get_processed_gui(parent, ''), key=lambda f: f['gui']['order'])
+                return sorted(self.get_processed_gui(parent, ''), key=lambda f: f.gui.order)
             case [consts.rest.GUI, for_type]:
-                return sorted(self.get_processed_gui(parent, for_type), key=lambda f: f['gui']['order'])
+                return sorted(self.get_processed_gui(parent, for_type), key=lambda f: f.gui.order)
             case [consts.rest.GUI, for_type, *_fails]:
                 raise exceptions.rest.RequestError('Invalid GUI request') from None
             case [consts.rest.LOG, for_type]:
@@ -309,7 +309,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item]):
         return []
 
     def get_processed_gui(self, parent: models.Model, for_type: str) -> list[types.ui.GuiElement]:
-        return sorted(self.get_gui(parent, for_type), key=lambda f: f['gui']['order'])
+        return sorted(self.get_gui(parent, for_type), key=lambda f: f.gui.order)
 
     def enum_types(
         self, parent: models.Model, for_type: typing.Optional[str]
