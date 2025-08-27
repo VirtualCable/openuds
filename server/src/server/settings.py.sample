@@ -151,7 +151,7 @@ CACHES = {
     #    }
     'memory': {
         'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
-        'LOCATION': 'db.dkmon.com:11211',
+        'LOCATION': '127.0.0.1:11211',
     },
 }
 
