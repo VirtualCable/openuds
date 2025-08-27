@@ -155,7 +155,7 @@ def api_paths(
                 summary=f'Get table info of {name} items',
                 description=f'Retrieve table info of {name} items',
                 parameters=[],
-                responses=api_utils.gen_response(base_type_name, single=False),
+                responses=api_utils.gen_response('TableInfo', single=False),
                 tags=get_tags,
                 security=security,
             )
@@ -193,7 +193,7 @@ def api_paths(
                 summary=f'Get GUI representation of {name} items',
                 description=f'Retrieve the GUI representation of {name} items',
                 parameters=[],
-                responses=api_utils.gen_response(base_type_name, single=False),
+                responses=api_utils.gen_response('GuiElement', with_404=True),
                 tags=get_tags,
                 security=security,
             )
@@ -211,7 +211,7 @@ def api_paths(
                         schema=types.rest.api.Schema(type='string'),
                     )
                 ],
-                responses=api_utils.gen_response(base_type_name, with_404=True),
+                responses=api_utils.gen_response('GuiElement', with_404=True),
                 tags=get_tags,
                 security=security,
             )

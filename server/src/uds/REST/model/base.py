@@ -174,7 +174,10 @@ class BaseModelHandler(Handler, abc.ABC, typing.Generic[types.rest.T_Item]):
         return (
             api_utils.api_components(types.rest.TypeInfo)
             | api_utils.api_components(types.rest.TableInfo)
-            | api_utils.api_components(types.ui.GuiElement, removable_fields=['gui.old_field_name', 'gui.value', 'gui.field_name'])
+            | api_utils.api_components(
+                types.ui.GuiElement,
+                removable_fields=['value', 'gui.old_field_name', 'gui.value', 'gui.field_name'],
+            )
         )
 
     @typing.final

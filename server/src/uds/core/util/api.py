@@ -202,7 +202,13 @@ def python_type_to_openapi(py_type: typing.Any) -> 'types.rest.api.SchemaPropert
     # and create {'type': xxx, 'nullable': true}
     elif origin in {py_types.UnionType, typing.Union}:
         # Optional[X] is Union[X, None]
-        one_of: list[SchemaProperty] = [python_type_to_openapi(arg) for arg in args if arg is not None]
+        # Note: the casting is because we use "is not", and cannot ad inner types
+        one_of: list[SchemaProperty] = [
+            python_type_to_openapi(arg)
+            for arg in args
+            if arg is not None
+            and typing.get_origin(arg) is not typing.cast(typing.Any, collections.abc.Callable)
+        ]
         # Remove repeated
         one_of = list({item.type: item for item in one_of}.values())
         # if only 1, return it directly
@@ -213,19 +219,6 @@ def python_type_to_openapi(py_type: typing.Any) -> 'types.rest.api.SchemaPropert
             type='not_used',
             one_of=one_of,
         )
-        # for arg in args:
-        #     if not isinstance(arg, type) and not isinstance(arg, py_types.GenericAlias):
-        #         continue
-        #     oa_type = _OPENAPI_TYPE_MAP.get(arg, OpenApiType.OBJECT)
-        #     if oa_type.value.items:  # IF has items
-        #         one_of.append(
-        #             types.rest.api.SchemaProperty(
-        #                 type=oa_type.value.type,
-        #                 one_of=[types.rest.api.SchemaProperty(type=k) for k in oa_type.value.items],
-        #             )
-        #         )
-        #     else:
-        #         one_of.append(types.rest.api.SchemaProperty(type=oa_type.value.type, format=oa_type.value.format))
 
     elif origin is typing.Annotated:
         return python_type_to_openapi(args[0])
