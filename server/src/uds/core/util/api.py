@@ -85,10 +85,13 @@ def get_component_from_type(
         components = base_type.api_components()
 
         # A reference
-        item_name, item_schema = next(iter(components.schemas.items()))
+        item_name = base_type.__name__
+        # For for item schema in components
+        item_schema = next(filter(lambda x: x[0] == item_name, components.schemas.items()), (None, None))[1]
 
         possible_types: collections.abc.Iterable[type['module.Module']] = []
-        if issubclass(base_type, types.rest.ManagedObjectItem):
+        is_managed_object = issubclass(base_type, types.rest.ManagedObjectItem)
+        if is_managed_object:
             # Managed object item class should provide types as it has "instance" field
             possible_types = cls.possible_types()
         else:  # BaseRestItem, does not have types as it does not have "instance" field
@@ -116,7 +119,7 @@ def get_component_from_type(
 
             components.schemas[type_.type_type] = type_schema
 
-        if issubclass(base_type, types.rest.ManagedObjectItem) and isinstance(
+        if is_managed_object and isinstance(
             item_schema, types.rest.api.Schema
         ):
             # item_schema.discriminator = types.rest.api.Discriminator(propertyName='type')
