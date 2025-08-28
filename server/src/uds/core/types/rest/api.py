@@ -7,16 +7,17 @@ if typing.TYPE_CHECKING:
     from uds.core.types import ui
 
 
-def as_dict_without_none(v: typing.Any) -> typing.Any:
+# Helper to clean None values from dicts
+def _as_dict_without_none(v: typing.Any) -> typing.Any:
     if hasattr(v, 'as_dict'):
-        return as_dict_without_none(v.as_dict())
+        return _as_dict_without_none(v.as_dict())
     elif dataclasses.is_dataclass(v):
-        return as_dict_without_none(dataclasses.asdict(typing.cast(typing.Any, v)))
+        return _as_dict_without_none(dataclasses.asdict(typing.cast(typing.Any, v)))
     elif isinstance(v, list):
-        return [as_dict_without_none(item) for item in typing.cast(list[typing.Any], v) if item is not None]
+        return [_as_dict_without_none(item) for item in typing.cast(list[typing.Any], v) if item is not None]
     elif isinstance(v, dict):
         return {
-            k: as_dict_without_none(val)
+            k: _as_dict_without_none(val)
             for k, val in typing.cast(dict[str, typing.Any], v).items()
             if val is not None
         }
@@ -24,21 +25,9 @@ def as_dict_without_none(v: typing.Any) -> typing.Any:
         return v.as_dict()
     return v
 
-
-# Info general
 @dataclasses.dataclass
-class Info:
-    title: str
-    version: str
-    description: str | None = None
-
-    def as_dict(self) -> dict[str, typing.Any]:
-        return {
-            'title': self.title,
-            'version': self.version,
-            'description': self.description,
-        }
-
+class HandlerApiInfo:
+    pass
 
 # Parameter
 @dataclasses.dataclass
@@ -52,7 +41,7 @@ class Parameter:
     explode: bool | None = None
 
     def as_dict(self) -> dict[str, typing.Any]:
-        return as_dict_without_none(
+        return _as_dict_without_none(
             {
                 'name': self.name,
                 'in': self.in_,
@@ -71,7 +60,7 @@ class Content:
     schema: 'SchemaProperty'
 
     def as_dict(self) -> dict[str, typing.Any]:
-        return as_dict_without_none(
+        return _as_dict_without_none(
             {
                 self.media_type: {
                     'schema': self.schema.as_dict(),
@@ -87,7 +76,7 @@ class RequestBody:
     content: Content  # e.g. {'application/json': {'schema': {...}}}
 
     def as_dict(self) -> dict[str, typing.Any]:
-        return as_dict_without_none(
+        return _as_dict_without_none(
             {
                 'required': self.required,
                 'content': self.content.as_dict(),
@@ -102,7 +91,7 @@ class Response:
     content: Content | None = None
 
     def as_dict(self) -> dict[str, typing.Any]:
-        return as_dict_without_none(
+        return _as_dict_without_none(
             {
                 'description': self.description,
                 'content': self.content.as_dict() if self.content else None,
@@ -123,7 +112,7 @@ class Operation:
     tags: list[str] = dataclasses.field(default_factory=list[str])
 
     def as_dict(self) -> dict[str, typing.Any]:
-        data = as_dict_without_none(
+        data = _as_dict_without_none(
             {
                 'summary': self.summary,
                 'description': self.description,
@@ -147,7 +136,7 @@ class PathItem:
     delete: Operation | None = None
 
     def as_dict(self) -> dict[str, typing.Any]:
-        return as_dict_without_none(
+        return _as_dict_without_none(
             {
                 'get': self.get.as_dict() if self.get else None,
                 'post': self.post.as_dict() if self.post else None,
@@ -240,7 +229,7 @@ class SchemaProperty:
         elif self.type:
             del val['type']  # Remove existing type
             val.update(one_of_ref(self.type))
-        return as_dict_without_none(val)
+        return _as_dict_without_none(val)
 
 
 # Schema
@@ -255,7 +244,7 @@ class Schema:
     # For use on generating schemas
 
     def as_dict(self) -> dict[str, typing.Any]:
-        return as_dict_without_none(
+        return _as_dict_without_none(
             {
                 'type': self.type,
                 'format': self.format,
@@ -272,7 +261,7 @@ class RelatedSchema:
     mappings: list[tuple[str, str]]  # list of (type, ref)
 
     def as_dict(self) -> dict[str, typing.Any]:
-        return as_dict_without_none(
+        return _as_dict_without_none(
             {
                 'oneOf': [{'$ref': i[1]} for i in self.mappings],
                 'discriminator': {
@@ -292,7 +281,7 @@ class Components:
     securitySchemes: dict[str, typing.Any] = dataclasses.field(default_factory=dict[str, typing.Any])
 
     def as_dict(self) -> dict[str, typing.Any]:
-        return as_dict_without_none(
+        return _as_dict_without_none(
             {
                 'schemas': {k: v.as_dict() for k, v in self.schemas.items()},
                 'securitySchemes': self.securitySchemes if self.securitySchemes else None,
@@ -315,6 +304,21 @@ class Components:
         return not self.schemas
 
 
+# Info general for OpenApi
+@dataclasses.dataclass
+class Info:
+    title: str
+    version: str
+    description: str | None = None
+
+    def as_dict(self) -> dict[str, typing.Any]:
+        return {
+            'title': self.title,
+            'version': self.version,
+            'description': self.description,
+        }
+
+
 # Documento OpenAPI completo
 @dataclasses.dataclass
 class OpenAPI:
@@ -330,7 +334,7 @@ class OpenAPI:
     components: Components = dataclasses.field(default_factory=Components)
 
     def as_dict(self) -> dict[str, typing.Any]:
-        return as_dict_without_none(
+        return _as_dict_without_none(
             {
                 'openapi': self.openapi,
                 'info': self.info.as_dict(),

@@ -155,7 +155,7 @@ def api_paths(
                 summary=f'Get table info of {name} items',
                 description=f'Retrieve table info of {name} items',
                 parameters=[],
-                responses=api_utils.gen_response('TableInfo', single=False),
+                responses=api_utils.gen_response('TableInfo', with_404=True),
                 tags=get_tags,
                 security=security,
             )
