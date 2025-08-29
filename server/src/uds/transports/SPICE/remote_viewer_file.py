@@ -59,7 +59,7 @@ class RemoteViewerFile:
     tls_port: typing.Optional[str] = None
     password: str
     fullscreen: bool = False
-    title: str = 'UDS Enterprise'
+    title: str = 'OpenUDS'
     host_subject: str = ''
     ca: str = ''
     smartcard: bool = False
