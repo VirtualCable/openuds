@@ -40,6 +40,7 @@ import string
 import logging
 import typing
 import secrets
+import base64
 
 # For password secrets
 from argon2 import PasswordHasher, Type as ArgonType
@@ -49,7 +50,8 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes, aead
+
 
 from django.conf import settings
 
@@ -321,6 +323,31 @@ class CryptoManager(metaclass=singleton.Singleton):
         return str(
             uuid.uuid5(self._namespace, obj)
         ).lower()  # I believe uuid returns a lowercase uuid always, but in case... :)
+
+    # Used to encode fields that will go inside json
+    def encrypt_field_b64(self, plaintext: str, key_ascii32: str, nonce_seq: int) -> str:
+        """
+        Cipher a `plaintext` with AES-256-GCM using `key_ascii32` (32 bytes ASCII)
+        and a nonce of 12 bytes with last one being a simple seq, starting at 1.
+
+        Args:
+            plaintext: The plaintext to encrypt.
+            key_ascii32: The 32 bytes ASCII key to use for encryption.
+            nonce_seq: The nonce sequence number (1, 2, 3...).
+
+        Returns the ciphertext+tag in standard Base64.
+        """
+        key_bytes = key_ascii32.encode("ascii")
+        if len(key_bytes) != 32:
+            raise ValueError("The key must be exactly 32 bytes ASCII")
+
+        # Nonce is 12 bytes with the last byte = nonce_seq
+        nonce = bytearray(12)
+        nonce[-1] = nonce_seq  # 1, 2, 3...
+
+        # Initialize AES-GCM
+        aesgcm = aead.AESGCM(key_bytes)
+        return base64.b64encode(aesgcm.encrypt(bytes(nonce), plaintext.encode("utf-8"), None)).decode()
 
     def random_string(self, length: int = 40, digits: bool = True, punctuation: bool = False) -> str:
         base = (
