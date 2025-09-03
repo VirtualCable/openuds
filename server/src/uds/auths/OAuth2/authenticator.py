@@ -119,19 +119,8 @@ class OAuth2Authenticator(auths.Authenticator):
         required=True,
         default='code',
         choices=[
-            {'id': v, 'text': v.as_text}
+            gui.choice_item(v, v.as_text)
             for v in oauth2_types.ResponseType
-            # {'id': 'code', 'text': _('Code (authorization code flow)')},
-            # {'id': 'pkce', 'text': _('PKCE (authorization code flow with PKCE)')},
-            # {'id': 'token', 'text': _('Token (implicit flow)')},
-            # {
-            #     'id': 'openid+token_id',
-            #     'text': _('OpenID Connect Token (implicit flow with OpenID Connect)'),
-            # },
-            # {
-            #     'id': 'openid+code',
-            #     'text': _('OpenID Connect Code (authorization code flow with OpenID Connect)'),
-            # },
         ],
         tab=types.ui.Tab.ADVANCED,
     )

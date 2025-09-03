@@ -167,9 +167,9 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
                             name='state',
                             default=consts.auth.VISIBLE,
                             choices=[
-                                {'id': consts.auth.VISIBLE, 'text': _('Visible')},
-                                {'id': consts.auth.HIDDEN, 'text': _('Hidden')},
-                                {'id': consts.auth.DISABLED, 'text': _('Disabled')},
+                                ui.gui.choice_item(consts.auth.VISIBLE, _('Visible')),
+                                ui.gui.choice_item(consts.auth.HIDDEN, _('Hidden')),
+                                ui.gui.choice_item(consts.auth.DISABLED, _('Disabled')),
                             ],
                             label=gettext('Access'),
                         )

@@ -75,12 +75,12 @@ def intervals_field(order: int) -> gui.ChoiceField:
     return gui.ChoiceField(
         label=_('Report data interval'),
         order=order,
-        choices={
-            'hour': _('Hourly'),
-            'day': _('Daily'),
-            'week': _('Weekly'),
-            'month': _('Monthly'),
-        },
+        choices=[
+            gui.choice_item('hour', _('Hourly')),
+            gui.choice_item('day', _('Daily')),
+            gui.choice_item('week', _('Weekly')),
+            gui.choice_item('month', _('Monthly')),
+        ],
         tooltip=_('Interval for report data'),
         required=True,
         default='day',

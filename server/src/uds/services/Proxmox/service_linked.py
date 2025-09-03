@@ -155,11 +155,11 @@ class ProxmoxServiceLinked(DynamicService):
         label=_("GPU Availability"),
         readonly=False,
         order=112,
-        choices={
-            '0': _('Do not check'),
-            '1': _('Only if available'),
-            '2': _('Only if NOT available'),
-        },
+        choices=[
+            gui.choice_item('0', _('Do not check')),
+            gui.choice_item('1', _('Only if available')),
+            gui.choice_item('2', _('Only if NOT available')),
+        ],
         tooltip=_('Checking method for GPU availability'),
         tab=types.ui.Tab.MACHINE,
         required=True,

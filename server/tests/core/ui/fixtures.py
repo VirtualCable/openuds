@@ -137,6 +137,7 @@ class TestingOldUserInterface(UserInterface):
         value=typing.cast(datetime.date, DEFAULTS['date_field']),
     )
 
+
 class TestingUserInterface(UserInterface):
     str_field = gui.TextField(
         label='Text Field',
@@ -152,7 +153,11 @@ class TestingUserInterface(UserInterface):
         tooltip='This is a text autocomplete field',
         required=True,
         default=typing.cast(str, DEFAULTS['str_auto_field']),
-        choices=['Value 1', 'Value 2', 'Value 3'],
+        choices=[
+            gui.choice_item('Value 1', 'Value 1'),
+            gui.choice_item('Value 2', 'Value 2'),
+            gui.choice_item('Value 3', 'Value 3'),
+        ],
         old_field_name='strAutoField',
     )
     num_field = gui.NumericField(
@@ -185,7 +190,11 @@ class TestingUserInterface(UserInterface):
         tooltip='This is a choice field',
         required=False,
         default=typing.cast(str, DEFAULTS['choice_field']),
-        choices=['Value 1', 'Value 2', 'Value 3'],
+        choices=[
+            gui.choice_item('Value 1', 'Value 1'),
+            gui.choice_item('Value 2', 'Value 2'),
+            gui.choice_item('Value 3', 'Value 3'),
+        ],
         old_field_name='choiceField',
     )
     multi_choice_field = gui.MultiChoiceField(
@@ -193,7 +202,11 @@ class TestingUserInterface(UserInterface):
         order=6,
         tooltip='This is a multi choice field',
         default=typing.cast(list[str], DEFAULTS['multi_choice_field']),
-        choices=['Value 1', 'Value 2', 'Value 3'],
+        choices=[
+            gui.choice_item('Value 1', 'Value 1'),
+            gui.choice_item('Value 2', 'Value 2'),
+            gui.choice_item('Value 3', 'Value 3'),
+        ],
         old_field_name='multiChoiceField',
     )
     editable_list_field = gui.EditableListField(
@@ -218,7 +231,11 @@ class TestingUserInterface(UserInterface):
         tooltip='This is a image choice field',
         required=True,
         default=typing.cast(str, DEFAULTS['image_choice_field']),
-        choices=['Value 1', 'Value 2', 'Value 3'],
+        choices=[
+            gui.choice_item('Value 1', 'Value 1'),
+            gui.choice_item('Value 2', 'Value 2'),
+            gui.choice_item('Value 3', 'Value 3'),
+        ],
         old_field_name='imageChoiceField',
     )
     date_field = gui.DateField(
@@ -271,7 +288,7 @@ class TestingUserInterface(UserInterface):
             # Info field is not compared, because it is not serialized
             # Nor help field, not present in old version
         )
-        
+
     def randomize_values(self) -> None:
         self.str_field.default = ''.join(random.choices('abcdefghijklmnopqrstuvwxyz', k=10))
         self.str_auto_field.default = ''.join(random.choices('abcdefghijklmnopqrstuvwxyz', k=10))
@@ -282,9 +299,11 @@ class TestingUserInterface(UserInterface):
         self.editable_list_field.default = random.sample(['Value 1', 'Value 2', 'Value 3'], 2)
         self.checkbox_field.default = random.choice([True, False])
         self.image_choice_field.default = random.choice(['Value 1', 'Value 2', 'Value 3'])
-        self.date_field.default = datetime.date(random.randint(2000, 2022), random.randint(1, 12), random.randint(1, 28))
+        self.date_field.default = datetime.date(
+            random.randint(2000, 2022), random.randint(1, 12), random.randint(1, 28)
+        )
         # Ignore HelpField, not present in old version
-        
+
         # Also, randomize values
         self.str_field.value = self.str_field.default
         self.str_auto_field.value = self.str_auto_field.default
@@ -296,7 +315,6 @@ class TestingUserInterface(UserInterface):
         self.checkbox_field.value = self.checkbox_field.default
         self.image_choice_field.value = self.image_choice_field.default
         self.date_field.value = self.date_field.default
-        
 
 
 class TestingUserInterfaceFieldNameOrig(UserInterface):
@@ -319,6 +337,7 @@ class TestingUserInterfaceFieldName(UserInterface):
         default='',  # Will be loaded from orig
         old_field_name='strField',
     )
+
 
 class TestingUserInterfaceFieldNameSeveral(UserInterface):
     str2_field = gui.TextField(

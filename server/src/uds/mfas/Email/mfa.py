@@ -72,11 +72,11 @@ class EmailMFA(mfas.MFA):
     security = gui.ChoiceField(
         label=_('Security'),
         tooltip=_('Security protocol to use'),
-        choices={
-            'tls': _('TLS'),
-            'ssl': _('SSL'),
-            'none': _('None'),
-        },
+        choices=[
+            gui.choice_item('tls', _('TLS')),
+            gui.choice_item('ssl', _('SSL')),
+            gui.choice_item('none', _('None')),
+        ],
         order=2,
         required=True,
         tab=_('SMTP Server'),

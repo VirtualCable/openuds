@@ -56,12 +56,13 @@ from uds.core.util import modfinder, serializer, validators, ensure
 logger = logging.getLogger(__name__)
 
 # To simplify choice parameters declaration of fields
-_ChoicesParamType: typing.TypeAlias = typing.Union[
-    collections.abc.Callable[[], list['types.ui.ChoiceItem']],
-    collections.abc.Iterable[str | types.ui.ChoiceItem],
-    dict[str, str],
-    None,
-]
+_ChoicesParamType: typing.TypeAlias = collections.abc.Iterable[types.ui.ChoiceItem]|collections.abc.Callable[[], list['types.ui.ChoiceItem']]|None
+# typing.Union[
+#     collections.abc.Callable[[], list['types.ui.ChoiceItem']],
+#     collections.abc.Iterable[str | types.ui.ChoiceItem],
+#     dict[str, str],
+#     None,
+# ]
 
 
 class gui:
@@ -649,7 +650,7 @@ class gui:
             self.field_type = types.ui.FieldType.TEXT_AUTOCOMPLETE
             self._field_info.choices = gui.as_choices(choices or [])
 
-        def set_choices(self, values: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]) -> None:
+        def set_choices(self, values: collections.abc.Iterable[types.ui.ChoiceItem]) -> None:
             """
             Set the values for this choice field
             """
@@ -1133,7 +1134,7 @@ class gui:
                 if fills['callback_name'] not in gui.callbacks:
                     gui.callbacks[fills['callback_name']] = fnc
 
-        def set_choices(self, values: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]) -> None:
+        def set_choices(self, values: collections.abc.Iterable[types.ui.ChoiceItem]) -> None:
             """
             Set the values for this choice field
             """
@@ -1185,7 +1186,7 @@ class gui:
 
             self._field_info.choices = gui.as_choices(choices or [])
 
-        def set_choices(self, values: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]) -> None:
+        def set_choices(self, values: collections.abc.Iterable[types.ui.ChoiceItem]) -> None:
             """
             Set the values for this choice field
             """
@@ -1275,7 +1276,7 @@ class gui:
             self._field_info.choices = gui.as_choices(choices or [])
 
         def set_choices(
-            self, choices: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]
+            self, choices: collections.abc.Iterable[types.ui.ChoiceItem]
         ) -> None:
             """
             Set the values for this choice field

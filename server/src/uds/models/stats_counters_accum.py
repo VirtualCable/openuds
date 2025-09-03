@@ -148,7 +148,7 @@ class StatsCountersAccum(models.Model):
         # we will use StatsCounters to create the accum
         # Else, we will use StatsCountersAccum to create the accum from previous interval
         # (for example, to create daily accum from hourly data)
-        MODEL = StatsCounters if interval_type.is_base_interval() else StatsCountersAccum
+        model = StatsCounters if interval_type.is_base_interval() else StatsCountersAccum
 
         # Accumulate INTERVAL from StatsCounters
         interval = interval_type.seconds()

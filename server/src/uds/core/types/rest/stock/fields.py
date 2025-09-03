@@ -64,8 +64,8 @@ class StockField(enum.StrEnum):
         # Special cases, as network choices are dynamic
         if self.value == self.NETWORKS:
             field_gui[0].gui.choices = sorted(
-                [{'id': x.uuid, 'text': x.name} for x in Network.objects.all()],
-                key=lambda x: x['text'].lower(),
+                [ui.ChoiceItem(id=x.uuid, text=x.name) for x in Network.objects.all()],
+                key=lambda x: x.text.lower(),
             )
 
         return field_gui
@@ -157,9 +157,9 @@ _STATIC_FLDS: typing.Final[dict[StockField, list['ui.GuiElement']]] = {
                 type=ui.FieldType.CHOICE,  # Type of network filtering
                 default='n',
                 choices=[
-                    {'id': 'n', 'text': _('No filtering')},
-                    {'id': 'a', 'text': _('Allow selected networks')},
-                    {'id': 'd', 'text': _('Deny selected networks')},
+                    ui.ChoiceItem(id='n', text= _('No filtering')),
+                    ui.ChoiceItem(id='a', text= _('Allow selected networks')),
+                    ui.ChoiceItem(id='d', text= _('Deny selected networks')),
                 ],
                 tooltip=_(
                     'Type of network filtering. Use "Disabled" to disable origin check, "Allow" to only enable for selected networks or "Deny" to deny from selected networks'
