@@ -34,8 +34,10 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
+
 from uds.core.ui import gui
 from uds.core import transports, types
+from uds.core.util.security import convert_to_credential_token
 from uds.models import UserService
 
 # Not imported at runtime, just for type checking
@@ -379,7 +381,7 @@ class BaseRDPTransport(transports.Transport):
         user: 'models.User',
         password: str,
         *,
-        alt_username: typing.Optional[str]
+        alt_username: typing.Optional[str],
     ) -> types.connections.ConnectionData:
         username: str = alt_username or user.get_username_for_auth()
 
@@ -435,15 +437,22 @@ class BaseRDPTransport(transports.Transport):
         password: str,
     ) -> types.connections.ConnectionData:
         username = None
+        supports_sso = False
         if isinstance(userservice, UserService):
             cdata = userservice.get_instance().get_connection_data()
             if cdata:
                 username = cdata.username or username
                 password = cdata.password or password
+            supports_sso = userservice.supports_sso
 
-        return self.process_user_password(
+        cdata = self.process_user_password(
             typing.cast('models.UserService', userservice),
             user,
             password,
             alt_username=username,
         )
+
+        if supports_sso:
+            cdata = convert_to_credential_token(typing.cast(UserService, userservice), cdata)
+
+        return cdata

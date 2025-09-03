@@ -164,6 +164,27 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         Removes the to_be_removed property
         """
         del self.properties['destroy_after']
+        
+    @property
+    def supports_sso(self) -> bool:
+        """
+        Returns True if this service has SSO enabled
+        """
+        return self.properties.get('sso', False)
+
+    @supports_sso.setter
+    def supports_sso(self, value: bool) -> None:
+        """
+        Sets the SSO property
+        """
+        self.properties['sso'] = value
+
+    @supports_sso.deleter
+    def supports_sso(self) -> None:
+        """
+        Removes the SSO property
+        """
+        del self.properties['sso']
 
     def get_environment(self) -> Environment:
         """
@@ -639,7 +660,12 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         )
 
     # Utility for logging
-    def log(self, message: str, level: types.log.LogLevel = types.log.LogLevel.INFO, source: types.log.LogSource = types.log.LogSource.INTERNAL) -> None:
+    def log(
+        self,
+        message: str,
+        level: types.log.LogLevel = types.log.LogLevel.INFO,
+        source: types.log.LogSource = types.log.LogSource.INTERNAL,
+    ) -> None:
         log.log(self, level, message, source)
 
     def test_connectivity(self, host: str, port: 'str|int', timeout: int = 4) -> bool:

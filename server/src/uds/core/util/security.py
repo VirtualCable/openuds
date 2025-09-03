@@ -58,6 +58,10 @@ logger = logging.getLogger(__name__)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
+if typing.TYPE_CHECKING:
+    from uds import models
+    from uds.core import types
+
 def create_self_signed_cert(ip: str) -> tuple[str, str, str]:
     """
     Generates a self signed certificate for the given ip.
@@ -311,3 +315,29 @@ def generate_ssh_keypair_for_ssh(key_size: int = consts.system.SECURITY_KEY_SIZE
         .decode()
         .split()[1]
     )
+
+def convert_to_credential_token(userservice: 'models.UserService', crendential: 'types.connections.ConnectionData') -> 'types.connections.ConnectionData':
+    """
+    Creates a credentials token for the given username, password, and domain.
+    """
+    from uds.core.managers.crypto import CryptoManager
+    from uds import models
+
+    key = CryptoManager.manager().random_string(32, punctuation=False)
+    encrypted_username = CryptoManager.manager().encrypt_field_b64(crendential.username, key, 1)
+    encrypted_password = CryptoManager.manager().encrypt_field_b64(crendential.password, key, 2)
+    encrypted_domain = CryptoManager.manager().encrypt_field_b64(crendential.domain, key, 3)
+    ticket = models.TicketStore.create(
+        data={
+            'username': encrypted_username,
+            'password': encrypted_password,
+            'domain': encrypted_domain,
+        },
+        owner=userservice.uuid,
+        validity=120,
+    )
+    crendential.username = f'uds-{ticket}{key}'
+    crendential.password = ''
+    crendential.domain = ''
+
+    return crendential
