@@ -186,11 +186,11 @@ def create_db_transport(transport_instance: 'Transport|None' = None, **kwargs: t
 
 
 def create_db_userservice(
-    service_pool: models.ServicePool,
+    servicepool: models.ServicePool,
     publication: models.ServicePoolPublication,
-    user: 'models.User|None',
+    user: 'models.User|None' = None,
 ) -> models.UserService:
-    user_service: 'models.UserService' = service_pool.userServices.create(
+    user_service: 'models.UserService' = servicepool.userServices.create(
         friendly_name='user-service-{}'.format(glob['user_service_id']),
         publication=publication,
         unique_id=helpers.random_mac(),

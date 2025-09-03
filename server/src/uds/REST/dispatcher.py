@@ -67,9 +67,7 @@ class Dispatcher(View):
     root_node: typing.ClassVar[types.rest.HandlerNode] = types.rest.HandlerNode('', None, None, {})
 
     @method_decorator(csrf_exempt)
-    def dispatch(
-        self, request: 'http.request.HttpRequest', path: str
-    ) -> 'http.HttpResponse':
+    def dispatch(self, request: 'http.request.HttpRequest', path: str) -> 'http.HttpResponse':
         """
         Processes the REST request and routes it wherever it needs to be routed
         """
@@ -112,13 +110,11 @@ class Dispatcher(View):
         # ensure method is recognized
         if http_method not in ('get', 'post', 'put', 'delete'):
             return http.HttpResponseNotAllowed(['GET', 'POST', 'PUT', 'DELETE'], content_type="text/plain")
-        
+
         node_full_path: typing.Final[str] = handler_node.full_path()
 
         # Path here has "remaining" path, that is, method part has been removed
-        args = path[len(node_full_path) :].split('/')[
-            1:
-        ]  # First element is always empty, so we skip it
+        args = path[len(node_full_path) :].split('/')[1:]  # First element is always empty, so we skip it
 
         handler: typing.Optional[Handler] = None
 
@@ -146,15 +142,19 @@ class Dispatcher(View):
         except AttributeError:
             allowed_methods: list[str] = [n for n in ['get', 'post', 'put', 'delete'] if hasattr(handler, n)]
             log.log_operation(handler, 405, types.log.LogLevel.ERROR)
-            return http.HttpResponseNotAllowed(allowed_methods, content_type="text/plain")
+            return http.HttpResponseNotAllowed(
+                allowed_methods, content=b'{"error": "Invalid method"}', content_type="application/json"
+            )
         except exceptions.rest.AccessDenied:
             log.log_operation(handler, 403, types.log.LogLevel.ERROR)
-            return http.HttpResponseForbidden('access denied', content_type="text/plain")
+            return http.HttpResponseForbidden(b'{"error": "Access denied"}', content_type="application/json")
         except Exception:
             log.log_operation(handler, 500, types.log.LogLevel.ERROR)
             logger.exception('error accessing attribute')
             logger.debug('Getting attribute %s for %s', http_method, handler_node.full_path())
-            return http.HttpResponseServerError('Unexcepected error', content_type="text/plain")
+            return http.HttpResponseServerError(
+                b'{"error": "Unexpected error"}', content_type="application/json"
+            )
 
         # Invokes the handler's operation, add headers to response and returns
         try:
@@ -187,22 +187,22 @@ class Dispatcher(View):
             # because some exceptions are subclasses of others
         except exceptions.rest.NotSupportedError as e:
             log.log_operation(handler, 501, types.log.LogLevel.ERROR)
-            return http.HttpResponseBadRequest(str(e), content_type="text/plain")
+            return http.HttpResponseBadRequest(f'{{"error": "{e}"}}'.encode(), content_type="application/json")
         except exceptions.rest.AccessDenied as e:
             log.log_operation(handler, 403, types.log.LogLevel.ERROR)
-            return http.HttpResponseForbidden(str(e), content_type="text/plain")
+            return http.HttpResponseForbidden(f'{{"error": "{e}"}}'.encode(), content_type="application/json")
         except exceptions.rest.NotFound as e:
             log.log_operation(handler, 404, types.log.LogLevel.ERROR)
-            return http.HttpResponseNotFound(str(e), content_type="text/plain")
+            return http.HttpResponseNotFound(f'{{"error": "{e}"}}'.encode(), content_type="application/json")
         except exceptions.rest.RequestError as e:
             log.log_operation(handler, 400, types.log.LogLevel.ERROR)
-            return http.HttpResponseBadRequest(str(e), content_type="text/plain")
+            return http.HttpResponseBadRequest(f'{{"error": "{e}"}}'.encode(), content_type="application/json")
         except exceptions.rest.ResponseError as e:
             log.log_operation(handler, 500, types.log.LogLevel.ERROR)
-            return http.HttpResponseServerError(str(e), content_type="text/plain")
+            return http.HttpResponseServerError(f'{{"error": "{e}"}}'.encode(), content_type="application/json")
         except exceptions.rest.HandlerError as e:
             log.log_operation(handler, 500, types.log.LogLevel.ERROR)
-            return http.HttpResponseBadRequest(str(e), content_type="text/plain")
+            return http.HttpResponseBadRequest(f'{{"error": "{e}"}}'.encode(), content_type="application/json")
         except Exception as e:
             log.log_operation(handler, 500, types.log.LogLevel.ERROR)
             # Get ecxeption backtrace
@@ -211,7 +211,7 @@ class Dispatcher(View):
             for i in trace_back.splitlines():
                 logger.error('* %s', i)
 
-            return http.HttpResponseServerError(str(e), content_type="text/plain")
+            return http.HttpResponseServerError(f'{{"error": "{e}"}}'.encode(), content_type="application/json")
 
     @staticmethod
     def register_handler(type_: type[Handler]) -> None:
@@ -264,7 +264,7 @@ class Dispatcher(View):
             checker=checker,
             package_name='methods',
         )
-        
+
         logger.info('REST Handlers initialized')
 
 

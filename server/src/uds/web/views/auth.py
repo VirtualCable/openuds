@@ -281,7 +281,7 @@ def ticket_auth(
         return response
     except ServiceNotReadyError:
         return errors.error_view(request, types.errors.Error.SERVICE_NOT_READY)
-    except TicketStore.InvalidTicket:
+    except TicketStore.DoesNotExist:
         return errors.error_view(request, types.errors.Error.RELOAD_NOT_SUPPORTED)
     except Authenticator.DoesNotExist:
         logger.error('Ticket has an non existing authenticator')

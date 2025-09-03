@@ -130,7 +130,7 @@ class Client(Handler):
 
         try:
             data: dict[str, typing.Any] = TicketStore.get(ticket)
-        except TicketStore.InvalidTicket:
+        except TicketStore.DoesNotExist:
             return Client.result(error=types.errors.Error.ACCESS_DENIED)
 
         self._request.user = User.objects.get(uuid=data['user'])
@@ -224,7 +224,7 @@ class Client(Handler):
             ticket, command = self._args[:2]
             try:
                 data: dict[str, typing.Any] = TicketStore.get(ticket)
-            except TicketStore.InvalidTicket:
+            except TicketStore.DoesNotExist:
                 return Client.result(error=types.errors.Error.ACCESS_DENIED)
 
             self._request.user = User.objects.get(uuid=data['user'])

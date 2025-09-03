@@ -757,16 +757,38 @@ class Ticket(ActorV3Action):
     def action(self) -> dict[str, typing.Any]:
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
 
-        try:
-            # Simple check that token exists
-            Server.objects.get(
-                token=self._params['token'], type=types.servers.ServerType.ACTOR
-            )  # Not assigned, because only needs check
-        except Server.DoesNotExist:
-            raise exceptions.rest.BlockAccess() from None  # If too many blocks...
+        if len(self._args) > 1:
+            raise exceptions.rest.RequestError('Invalid request')
+
+        kind = self._args[0] if len(self._args) == 1 else 'server'
 
         try:
-            return ActorV3Action.actor_result(TicketStore.get(self._params['ticket'], invalidate=True))
+            match kind:
+                case 'server':
+                    # Server tickets are simple applicaitons with parameters
+                    # Enough secure this way (no onwer)
+                    try:
+                        # Simple check that token exists
+                        Server.objects.get(
+                            token=self._params['token'], type=types.servers.ServerType.ACTOR
+                        )  # Not assigned, because only needs check
+                    except Server.DoesNotExist:
+                        raise exceptions.rest.BlockAccess() from None  # If too many blocks...
+
+                    return ActorV3Action.actor_result(TicketStore.get(self._params['ticket'], invalidate=True))
+
+                case 'userservice':
+                    # Userservice also has owner, to increase security
+                    self.get_userservice()  # We just want to check that is valid
+
+                    return ActorV3Action.actor_result(
+                        TicketStore.get(
+                            uuid=self._params['ticket'], owner=self._params['token'], invalidate=True
+                        )
+                    )
+
+                case _:
+                    raise exceptions.rest.RequestError('Invalid request')
         except TicketStore.DoesNotExist:
             return ActorV3Action.actor_result(error='Invalid ticket')
 

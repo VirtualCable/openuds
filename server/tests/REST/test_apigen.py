@@ -220,12 +220,12 @@ class TestApiGenBasic(UDSTestCase):
 
     def test_python_type_to_openapi(self) -> None:
         # Test basic types
-        self.assertEqual(util_api.python_type_to_openapi(int), types.rest.api.SchemaProperty(type='integer'))
+        self.assertEqual(util_api.python_type_to_openapi(int), types.rest.api.SchemaProperty(type='integer', format='int64'))
         self.assertEqual(util_api.python_type_to_openapi(str), types.rest.api.SchemaProperty(type='string'))
         self.assertEqual(util_api.python_type_to_openapi(float), types.rest.api.SchemaProperty(type='number'))
         self.assertEqual(util_api.python_type_to_openapi(bool), types.rest.api.SchemaProperty(type='boolean'))
         self.assertEqual(
-            util_api.python_type_to_openapi(type(None)), types.rest.api.SchemaProperty(type='"null"')
+            util_api.python_type_to_openapi(type(None)), types.rest.api.SchemaProperty(type='null')
         )
 
         # Test list, dict, union and enums (Enum, IntEnum, StrEnum)
@@ -241,7 +241,10 @@ class TestApiGenBasic(UDSTestCase):
         )
         self.assertEqual(
             util_api.python_type_to_openapi(typing.Union[int, str]),
-            types.rest.api.SchemaProperty(type=['integer', 'string']),
+            types.rest.api.SchemaProperty(type='not_used', one_of=[
+                types.rest.api.SchemaProperty(type='integer', format='int64'),
+                types.rest.api.SchemaProperty(type='string'),
+            ]),
         )
         self.assertEqual(
             util_api.python_type_to_openapi(enum.Enum),
