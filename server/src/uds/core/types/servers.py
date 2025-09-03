@@ -169,7 +169,7 @@ class ServerStats:
         # Loads are calculated as:
         # 30% cpu usage
         # 60% memory usage
-        # 10% current users, with a max of 1000 users
+        # 10% current users, with a max of 100 users
         # Loads are normalized to 0-1
         # Lower weight is better
 
