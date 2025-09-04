@@ -164,27 +164,6 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         Removes the to_be_removed property
         """
         del self.properties['destroy_after']
-        
-    @property
-    def supports_sso(self) -> bool:
-        """
-        Returns True if this service has SSO enabled
-        """
-        return self.properties.get('sso', False)
-
-    @supports_sso.setter
-    def supports_sso(self, value: bool) -> None:
-        """
-        Sets the SSO property
-        """
-        self.properties['sso'] = value
-
-    @supports_sso.deleter
-    def supports_sso(self) -> None:
-        """
-        Removes the SSO property
-        """
-        del self.properties['sso']
 
     def get_environment(self) -> Environment:
         """

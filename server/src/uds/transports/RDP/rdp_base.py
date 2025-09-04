@@ -97,6 +97,15 @@ class BaseRDPTransport(transports.Transport):
         tab=types.ui.Tab.CREDENTIALS,
         old_field_name='fixedDomain',
     )
+    use_sso = gui.CheckBoxField(
+        label=_('Use SSO'),
+        order=16,
+        tooltip=_(
+            'If checked, and user service supports it, will use UDS SSO mechanism. (Ensure you have enabled UDS SSO)'
+        ),
+        tab=types.ui.Tab.CREDENTIALS,
+        old_field_name='useSSO',
+    )
 
     allow_smartcards = gui.CheckBoxField(
         label=_('Allow Smartcards'),
@@ -437,13 +446,11 @@ class BaseRDPTransport(transports.Transport):
         password: str,
     ) -> types.connections.ConnectionData:
         username = None
-        supports_sso = False
         if isinstance(userservice, UserService):
             cdata = userservice.get_instance().get_connection_data()
             if cdata:
                 username = cdata.username or username
                 password = cdata.password or password
-            supports_sso = userservice.supports_sso
 
         cdata = self.process_user_password(
             typing.cast('models.UserService', userservice),
@@ -452,7 +459,7 @@ class BaseRDPTransport(transports.Transport):
             alt_username=username,
         )
 
-        if supports_sso:
-            cdata = convert_to_credential_token(typing.cast(UserService, userservice), cdata)
+        if self.use_sso.as_bool() and isinstance(userservice, UserService):
+            cdata = convert_to_credential_token(userservice, cdata)
 
         return cdata
