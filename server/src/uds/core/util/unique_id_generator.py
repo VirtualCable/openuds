@@ -111,6 +111,7 @@ class UniqueGenerator:
                         seq = range_start
 
                     if seq > range_end:
+                        logger.error('No more ids available in range %s - %s', range_start, range_end)
                         return -1  # No ids free in range
 
                     # May ocurr on some circustance that a concurrency access gives same item twice, in this case, we
