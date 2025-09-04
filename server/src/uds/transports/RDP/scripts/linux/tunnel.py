@@ -1,4 +1,7 @@
 import typing
+import logging
+
+logger = logging.getLogger(__name__)
 
 # On older client versions, need importing globally to allow inner functions to work
 import subprocess  # type: ignore
@@ -60,19 +63,24 @@ def exec_thincast(thincast: str, port: int) -> None:
 
 # Si existe Thincast, usarlo. Si no, seguir con udsrdp/xfreerdp como antes
 if thincast_executable:
+    logger.debug('Thincast executable found: %s', thincast_executable)
     fnc, app = exec_thincast, thincast_executable
 else:
+    logger.debug('Thincast not found, searching for xfreerdp and udsrdp')
     xfreerdp: typing.Optional[str] = tools.findApp('xfreerdp3') or tools.findApp('xfreerdp') or tools.findApp('xfreerdp2')
     udsrdp = tools.findApp('udsrdp')
     fnc, app = None, None
     if xfreerdp:
+        logger.debug('xfreerdp found: %s', xfreerdp)
         fnc, app = exec_new_xfreerdp, xfreerdp
     if udsrdp:
+        logger.debug('udsrdp found: %s', udsrdp)
         fnc, app = exec_udsrdp, udsrdp
     if app is None or fnc is None:
+        logger.error('No suitable RDP client found (Thincast, xfreerdp, udsrdp)')
         raise Exception(
-            '''<p>You need to have Thincast Remote Desktop Client o xfreerdp (>= 2.0) installed on your system, y tenerlo en tu PATH para conectar con este servicio UDS.</p>
-        <p>Por favor, instala el paquete adecuado para tu sistema.</p>
+            '''<p>You need to have Thincast Remote Desktop Client or xfreerdp (>= 2.0) installed on your system, and have it in your PATH to connect to this UDS service.</p>
+        <p>Please, install the appropriate package for your system.</p>
         <ul>
             <li>Thincast: <a href="https://thincast.com/en/products/client">Download</a></li>
             <li>xfreerdp: <a href="https://github.com/FreeRDP/FreeRDP">Download</a></li>
@@ -80,13 +88,17 @@ else:
 '''
         )
 
+logger.debug('Using RDP client: %s with function: %s', app, fnc)
+
 # Open tunnel and connect
 fs = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket'], timeout=sp['tunWait'], check_certificate=sp['tunChk'])  # type: ignore
 
+logger.debug('Checking tunnel connection...')
 # Check that tunnel works..
 if fs.check() is False:
     raise Exception(
         '<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>'
     )
 
+logger.debug('Launching RDP client %s to connect to tunnel port %s', app, fs.server_address[1])
 fnc(app, fs.server_address[1])

@@ -1,4 +1,7 @@
 import typing
+import logging
+
+logger = logging.getLogger(__name__)
 
 # On older client versions, need importing globally to allow inner functions to work
 import subprocess  # type: ignore
@@ -32,7 +35,7 @@ def exec_new_xfreerdp(xfreerdp: str) -> None:
 
 import os
 
-# Rutas típicas de Thincast en Linux
+# Typical Thincast Routes on Linux
 thincast_list = [
     '/usr/bin/thincast-remote-desktop-client',
     '/usr/bin/thincast',
@@ -43,27 +46,35 @@ thincast_list = [
     '/snap/bin/thincast-client'
 ]
 
-# Buscar Thincast primero
+# Search Thincast first
+logger.debug('Searching for Thincast executables in known locations.')
 executable = None
 kind = ''
 for thincast in thincast_list:
     if os.path.isfile(thincast) and os.access(thincast, os.X_OK):
         executable = thincast
         kind = 'thincast'
+        logger.debug('Found Thincast executable: %s', thincast)
         break
 
-# Si no se encuentra Thincast, buscar udsrdp y xfreerdp
+# If you don't find Thincast, search UDSRDP and XFREERDP
 if not executable:
+    logger.debug('Thincast not found. Searching for UDSRDP and XFREERDP.')
     udsrdp: typing.Optional[str] = tools.findApp('udsrdp')
     xfreerdp: typing.Optional[str] = tools.findApp('xfreerdp3') or tools.findApp('xfreerdp') or tools.findApp('xfreerdp2')
+    logger.debug('UDSRDP found: %s', udsrdp)
+    logger.debug('XFREERDP found: %s', xfreerdp)
     if udsrdp:
         executable = udsrdp
         kind = 'udsrdp'
+        logger.debug('Selected UDSRDP as executable.')
     elif xfreerdp:
         executable = xfreerdp
         kind = 'xfreerdp'
+        logger.debug('Selected XFREERDP as executable.')
 
 if not executable:
+    logger.error('No suitable RDP client found. Thincast, UDSRDP, or XFREERDP are required.')
     raise Exception(
         '''<p>You need to have Thincast Remote Desktop Client or xfreerdp (>= 2.0) installed on your system, and have it in your PATH in order to connect to this UDS service.</p>
     <p>Please, install the proper package for your system.</p>
@@ -73,8 +84,9 @@ if not executable:
     </ul>
 '''
     )
+logger.debug('Using RDP client: %s as kind: %s', executable, kind)
 
-# Ejecutar el cliente encontrado
+# Execute the client found
 if kind == 'thincast':
     import subprocess
     import os.path
