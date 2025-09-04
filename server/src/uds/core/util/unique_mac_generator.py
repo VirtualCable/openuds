@@ -48,7 +48,8 @@ class UniqueMacGenerator(UniqueGenerator):
         return int(mac.replace(':', ''), 16)
 
     def _to_mac_addr(self, seq: int) -> str:
-        if seq == -1:  # No mor macs available
+        if seq == -1:  # No more macs available
+            logger.error('No more MAC addresses available')
             return '00:00:00:00:00:00'
         return re.sub(r"(..)", r"\1:", f'{seq:012X}')[:-1]
 
