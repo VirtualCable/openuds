@@ -138,6 +138,35 @@ class ServerDiskInfo:
 
 
 @dataclasses.dataclass
+class ServerStatsWeights:
+    cpu: float = 0.3
+    memory: float = 0.6
+    users: float = 0.1
+
+    def normalize(self) -> 'ServerStatsWeights':
+        total = self.cpu + self.memory + self.users
+        self.cpu /= total
+        self.memory /= total
+        self.users /= total
+        return self
+
+    def as_dict(self) -> dict[str, float]:
+        return {
+            'cpu': self.cpu,
+            'memory': self.memory,
+            'users': self.users,
+        }
+
+    @staticmethod
+    def from_dict(data: dict[str, float]) -> 'ServerStatsWeights':
+        return ServerStatsWeights(
+            data.get('cpu', 0.3),
+            data.get('memory', 0.6),
+            data.get('users', 0.1),
+        ).normalize()
+
+
+@dataclasses.dataclass
 class ServerStats:
     memused: int = 0  # In bytes
     memtotal: int = 0  # In bytes
@@ -165,7 +194,7 @@ class ServerStats:
 
         return self.stamp > sql_stamp() - consts.cache.DEFAULT_CACHE_TIMEOUT
 
-    def load(self, min_memory: int = 0) -> float:
+    def load(self, *, min_memory: int = 0, weights: ServerStatsWeights | None = None) -> float:
         # Loads are calculated as:
         # 30% cpu usage
         # 60% memory usage
@@ -173,13 +202,15 @@ class ServerStats:
         # Loads are normalized to 0-1
         # Lower weight is better
 
+        weights = (weights or ServerStatsWeights()).normalize()
+
         if self.memtotal - self.memused < min_memory:
             return 1000000000  # At the end of the list
 
         w = (
-            0.3 * self.cpuused
-            + 0.6 * (self.memused / (self.memtotal or 1))
-            + 0.1 * (min(1.0, self.current_users / 100.0))
+            weights.cpu * self.cpuused
+            + weights.memory * (self.memused / (self.memtotal or 1))
+            + weights.users * (min(1.0, self.current_users / 100.0))
         )
 
         return min(max(0.0, w), 1.0)
