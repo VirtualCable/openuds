@@ -268,7 +268,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     def server_type(self, value: types.servers.ServerType) -> None:
         """Sets the server type of this server"""
         self.type = value
-        
+
     def is_managed(self) -> bool:
         """Returns if this server is managed or not"""
         return self.server_type != types.servers.ServerType.UNMANAGED

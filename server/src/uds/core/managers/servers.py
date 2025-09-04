@@ -119,9 +119,9 @@ class ServerManager(metaclass=singleton.Singleton):
         Returns:
             An iterator of servers with activity in the last last_activity_delta time
         """
-        
+
         op = operator.gt if with_activity else operator.le
-        
+
         activity_limit = model_utils.sql_now() - last_activity_delta
         # Get all servers with activity in the last 10 minutes
         for server in server_group.servers.filter(maintenance_mode=False):
@@ -545,7 +545,12 @@ class ServerManager(metaclass=singleton.Singleton):
         # Get the stats for all servers, but in parallel
         server_stats = self.get_server_stats(fltrs)
         # Sort by load, lower first (lower is better)
-        return [s[1] for s in sorted(server_stats, key=lambda x: x[0].load(weights=server_group.weights) if x[0] else 999999999)]
+        return [
+            s[1]
+            for s in sorted(
+                server_stats, key=lambda x: x[0].load(weights=server_group.weights) if x[0] else 999999999
+            )
+        ]
 
     def perform_maintenance(self, server_group: 'models.ServerGroup') -> None:
         """Realizes maintenance on server group
