@@ -68,6 +68,8 @@ class RDPTransport(BaseRDPTransport):
     forced_password = BaseRDPTransport.forced_password
     force_no_domain = BaseRDPTransport.force_no_domain
     forced_domain = BaseRDPTransport.forced_domain
+    use_sso = BaseRDPTransport.use_sso
+
     allow_smartcards = BaseRDPTransport.allow_smartcards
     allow_printers = BaseRDPTransport.allow_printers
     allow_drives = BaseRDPTransport.allow_drives
@@ -146,6 +148,11 @@ class RDPTransport(BaseRDPTransport):
         r.printer_params = self.lnx_printer_string.value
         r.enforced_shares = self.enforce_drives.value
         r.redir_usb = self.allow_usb_redirection.value
+
+        # If sso, fix adding a domain UDS and force
+        if self.use_sso.value:
+            r.password = '__NO_PASSWORD__'
+            r.domain = 'UDS'  # Fake in fact for SSO, but needed so xfreerdp3 do not ask for domain
 
         sp: collections.abc.MutableMapping[str, typing.Any] = {
             'password': ci.password,

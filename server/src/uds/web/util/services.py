@@ -431,8 +431,8 @@ def enable_service(
         info = UserServiceManager.manager().get_user_service_info(
             request.user, request.os, request.ip, service_id, transport_id, test_userservice_status=False
         )
-        scrambler = CryptoManager().random_string(32)
-        password = CryptoManager().symmetric_encrypt(get_webpassword(request), scrambler)
+        scrambler = CryptoManager.manager().random_string(32)
+        password = CryptoManager.manager().symmetric_encrypt(get_webpassword(request), scrambler)
 
         info.userservice.properties['accessed_by_client'] = False  # Reset accesed property to
 
@@ -450,7 +450,9 @@ def enable_service(
                 'password': password,
             }
 
-            ticket = TicketStore.create(data)
+            # Ensure that old clients will work with us
+            # On a future, we will remove legacy_ticket_length
+            ticket = TicketStore.create(data, legacy_ticket_length=True)
             url = html.uds_link(request, ticket, scrambler)
     except ServiceNotReadyError as e:
         logger.debug('Service not ready')

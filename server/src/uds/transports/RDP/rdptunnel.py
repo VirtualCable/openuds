@@ -85,6 +85,8 @@ class TRDPTransport(BaseRDPTransport):
     forced_password = BaseRDPTransport.forced_password
     force_no_domain = BaseRDPTransport.force_no_domain
     forced_domain = BaseRDPTransport.forced_domain
+    use_sso = BaseRDPTransport.use_sso
+
     allow_smartcards = BaseRDPTransport.allow_smartcards
     allow_printers = BaseRDPTransport.allow_printers
     allow_drives = BaseRDPTransport.allow_drives
@@ -153,7 +155,7 @@ class TRDPTransport(BaseRDPTransport):
         tunnel_host, tunnel_port = tunnel_fields.host, tunnel_fields.port
 
         r = RDPFile(width == '-1' or height == '-1', width, height, depth, target=os.os)
-        #r.enablecredsspsupport = ci.get('sso') == 'True' or self.credssp.as_bool()
+        # r.enablecredsspsupport = ci.get('sso') == 'True' or self.credssp.as_bool()
         r.enable_credssp_support = self.credssp.as_bool()
         r.address = '{address}'
         r.username = ci.username
@@ -179,6 +181,11 @@ class TRDPTransport(BaseRDPTransport):
         r.printer_params = self.lnx_printer_string.value
         r.enforced_shares = self.enforce_drives.value
         r.redir_usb = self.allow_usb_redirection.value
+
+        # If sso, fix adding a domain UDS and force
+        if self.use_sso.value:
+            r.password = '__NO_PASSWORD__'
+            r.domain = 'UDS'  # Fake in fact for SSO, but needed so xfreerdp3 do not ask for domain
 
         sp: collections.abc.MutableMapping[str, typing.Any] = {
             'tunHost': tunnel_host,

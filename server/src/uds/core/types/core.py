@@ -34,9 +34,7 @@ import typing
 import dataclasses
 
 # Module values type
-ValuesType = typing.Optional[
-    dict[str, typing.Any]
-]
+ValuesType = dict[str, typing.Any] | None
 
 
 # Module Test Result type

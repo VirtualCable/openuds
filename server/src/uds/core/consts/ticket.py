@@ -41,4 +41,6 @@ TUNNEL_TICKET_VALIDITY_TIME: typing.Final[int] = 60 * 60 * 24 * 7  # 1 week
 TICKET_SECURED_ONWER: typing.Final[str] = '#SECURE#'  # Just a "different" owner. If used anywhere, it's not important (will not fail), but weird enough
 # The old comment about length of ticket, does not apply anymore, because the Owner has been moved to an own field
 TICKET_LENGTH: typing.Final[int] = 48  # Ticket length must much the length of the ticket length on tunnel server!!! (take care with previous note) - 
+LEGACY_TICKET_LENGTH: typing.Final[int] = 40  # Short ticket length - Used for client compatibility
+
 SCRAMBLER_LENGTH: typing.Final[int] = 32  # Scrambler length 

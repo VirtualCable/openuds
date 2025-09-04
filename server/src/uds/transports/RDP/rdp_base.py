@@ -364,6 +364,14 @@ class BaseRDPTransport(transports.Transport):
         tab='Windows Client',
         old_field_name='customParametersWindows',
     )
+    
+    def initialize(self, values: types.core.ValuesType) -> None:
+        if not values:
+            return
+        
+        if self.use_sso.value:
+            self.credssp.value = False   # Credssp and SSO are mutually exclusive, use_sso has preference
+        
 
     def is_ip_allowed(self, userservice: 'models.UserService', ip: str) -> bool:
         """

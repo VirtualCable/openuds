@@ -56,7 +56,7 @@ class TicketStore(UUIDModel):
 
     # Cleanup will purge all elements that have been created MAX_VALIDITY ago
 
-    owner = models.CharField(null=True, blank=True, default=None, max_length=8)
+    owner = models.CharField(null=True, blank=True, default=None, max_length=50)
     stamp = models.DateTimeField()  # Date creation or validation of this entry
     validity = models.IntegerField(default=60)  # Duration allowed for this ticket to be valid, in seconds
 
@@ -74,10 +74,14 @@ class TicketStore(UUIDModel):
         app_label = 'uds'
 
     @staticmethod
-    def generate_uuid() -> str:
+    def generate_uuid(*, legacy_ticket_length: bool = False) -> str:
         """In fact, generates a random string of TICKET_LENGTH chars, that will be used as uuid for the ticket (but is not an uuid compliant string)"""
         return (
-            CryptoManager.manager().random_string(consts.ticket.TICKET_LENGTH).lower()
+            CryptoManager.manager()
+            .random_string(
+                consts.ticket.TICKET_LENGTH if not legacy_ticket_length else consts.ticket.LEGACY_TICKET_LENGTH
+            )
+            .lower()
         )  # Temporary fix lower() for compat with 3.0
 
     @staticmethod
@@ -86,6 +90,8 @@ class TicketStore(UUIDModel):
         validity: int = consts.ticket.DEFAULT_TICKET_VALIDITY_TIME,
         owner: typing.Optional[str] = None,
         secure: bool = False,
+        *,
+        legacy_ticket_length: bool = False,
     ) -> str:
         """Creates a ticket (used to store data that can be retrieved later using REST API, for example)
 
@@ -111,7 +117,7 @@ class TicketStore(UUIDModel):
             )  # So data is REALLY encrypted, because key used to encrypt is sustituted by SECURED on DB
 
         return TicketStore.objects.create(
-            uuid=TicketStore.generate_uuid(),
+            uuid=TicketStore.generate_uuid(legacy_ticket_length=legacy_ticket_length),
             stamp=sql_now(),
             data=data,
             validity=validity,
@@ -122,7 +128,7 @@ class TicketStore(UUIDModel):
     def get(
         uuid: str,
         invalidate: bool = True,
-        owner: str|None = None,
+        owner: str | None = None,
         secure: bool = False,
     ) -> typing.Any:
         key = b''

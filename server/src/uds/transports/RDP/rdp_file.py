@@ -177,6 +177,9 @@ class RDPFile:
             
         if self.password:
             params.append('/p:{}'.format(self.password))
+        
+        if self.password == "__NO_PASSWORD__":
+            params.append('/p:')  # No password, but /p: is needed to avoid asking for it
             
         if self.domain != '':
             params.append('/d:{}'.format(self.domain))
