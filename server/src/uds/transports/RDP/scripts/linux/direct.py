@@ -30,22 +30,57 @@ def exec_new_xfreerdp(xfreerdp: str) -> None:
     tools.addTaskToWait(subprocess.Popen(params))
 
 
-# Try to locate a xfreerdp and udsrdp. udsrdp will be used if found.
-xfreerdp: typing.Optional[str] = tools.findApp('xfreerdp3') or tools.findApp('xfreerdp') or tools.findApp('xfreerdp2')
-udsrdp: typing.Optional[str] = tools.findApp('udsrdp')
-fnc, app = None, None
+import os
 
-if xfreerdp:
-    fnc, app = exec_new_xfreerdp, xfreerdp
+# Rutas típicas de Thincast en Linux
+thincast_list = [
+    '/usr/bin/thincast-remote-desktop-client',
+    '/usr/bin/thincast',
+    '/opt/thincast/thincast-remote-desktop-client',
+    '/opt/thincast/thincast',
+    '/snap/bin/thincast-remote-desktop-client',
+    '/snap/bin/thincast',
+    '/snap/bin/thincast-client'
+]
 
-if udsrdp is not None:
-    fnc, app = exec_udsrdp, udsrdp
+# Buscar Thincast primero
+executable = None
+kind = ''
+for thincast in thincast_list:
+    if os.path.isfile(thincast) and os.access(thincast, os.X_OK):
+        executable = thincast
+        kind = 'thincast'
+        break
 
-if app is None or fnc is None:
+# Si no se encuentra Thincast, buscar udsrdp y xfreerdp
+if not executable:
+    udsrdp: typing.Optional[str] = tools.findApp('udsrdp')
+    xfreerdp: typing.Optional[str] = tools.findApp('xfreerdp3') or tools.findApp('xfreerdp') or tools.findApp('xfreerdp2')
+    if udsrdp:
+        executable = udsrdp
+        kind = 'udsrdp'
+    elif xfreerdp:
+        executable = xfreerdp
+        kind = 'xfreerdp'
+
+if not executable:
     raise Exception(
-        '''<p>You need to have xfreerdp (>= 2.0) installed on your systeam, and have it your PATH in order to connect to this UDS service.</p>
+        '''<p>You need to have Thincast Remote Desktop Client or xfreerdp (>= 2.0) installed on your system, and have it in your PATH in order to connect to this UDS service.</p>
     <p>Please, install the proper package for your system.</p>
+    <ul>
+        <li>Thincast: <a href="https://thincast.com/en/products/client">Download</a></li>
+        <li>xfreerdp: <a href="https://github.com/FreeRDP/FreeRDP">Download</a></li>
+    </ul>
 '''
     )
 
-fnc(app)
+# Ejecutar el cliente encontrado
+if kind == 'thincast':
+    import subprocess
+    import os.path
+    params: typing.List[str] = [os.path.expandvars(i) for i in [executable] + sp['as_new_xfreerdp_params'] + ['/v:{}'.format(sp['address'])]]  # type: ignore
+    tools.addTaskToWait(subprocess.Popen(params))
+elif kind == 'udsrdp':
+    exec_udsrdp(executable)
+elif kind == 'xfreerdp':
+    exec_new_xfreerdp(executable)
