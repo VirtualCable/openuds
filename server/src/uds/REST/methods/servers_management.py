@@ -552,7 +552,8 @@ class ServersGroups(ModelHandler[GroupItem]):
                     'hostname': s[1].hostname,
                     'mac': s[1].mac if s[1].mac != consts.MAC_UNKNOWN else '',
                     'ip': s[1].ip,
-                    'load': s[0].load() if s[0] else 0,
+                    'load': s[0].load(weights=item.weights) if s[0] else 0,
+                    'weights': item.weights.as_dict(),
                 },
             }
             for s in ServerManager.manager().get_server_stats(item.servers.all())
