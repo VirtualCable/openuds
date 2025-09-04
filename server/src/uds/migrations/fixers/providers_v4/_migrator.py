@@ -113,8 +113,8 @@ def migrate(
                             logger.error('Server %s on %s not found on DNS', server, record.name)
 
             registered_server_group = ServerGroup.objects.create(
-                name=f'{server_group_prefix} for {record.name}',
-                comments='Migrated from {}'.format(record.name),
+                name=f'{server_group_prefix} for {record.name}'[:64],
+                comments='Migrated from {}'.format(record.name)[:255],
                 type=types.servers.ServerType.UNMANAGED,
                 subtype=subtype,
             )
