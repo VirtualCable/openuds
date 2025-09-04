@@ -566,6 +566,14 @@ class DynamicUserService(services.UserService, autoserializable.AutoSerializable
         If you override this method, you should take care yourself of removing duplicated machines
         (maybe only calling "super().op_initialize()" method)
         """
+        # By default, should return a VALID username and unique_id
+        # Note that valid is anything different from consts.NO_MORE_NAMES or consts.NO_MORE_MACS
+        if self.get_name() == consts.NO_MORE_NAMES:
+            self.error('No more names available')  # Will mark as error and check will note it
+            return
+        if self.get_unique_id() == consts.NO_MORE_MACS:
+            self.error('No more MACs available')  # Will mark as error and check will note it
+            return
         self.remove_duplicates()
 
     @abc.abstractmethod
