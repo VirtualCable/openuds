@@ -78,7 +78,7 @@ class UsersTest(rest.test.RESTActorTestCase):
         self.assertIn('title', tableinfo)
         self.assertIn('subtitle', tableinfo)
         self.assertIn('fields', tableinfo)
-        self.assertIn('row-style', tableinfo)
+        self.assertIn('row_style', tableinfo)
 
         # Ensure at least name, role, real_name comments, state and last_access are present on tableinfo['fields']
         fields: list[collections.abc.Mapping[str, typing.Any]] = tableinfo['fields']

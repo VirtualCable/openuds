@@ -123,7 +123,7 @@ class TestApiGenBasic(UDSTestCase):
                 full_path = '/' + node.full_path().lstrip('/')
                 tags = [full_path.split('/')[1].capitalize()] if len(full_path.split('/')) > 1 else []
                 security = SECURITY_NAME if handler.ROLE != consts.UserRole.ANONYMOUS else ''
-                
+
                 logger.info("Checking child node: %s, %s", node.name, handler.__module__)
                 components = handler.api_components()
                 # Component should not be empty
@@ -132,8 +132,6 @@ class TestApiGenBasic(UDSTestCase):
                     types.rest.api.Components,
                     f'Component for {node.name} should be of type Components',
                 )
-                
-                    
 
                 handler_paths = handler.api_paths(full_path, tags, security)
                 self.assertIsInstance(
@@ -220,7 +218,9 @@ class TestApiGenBasic(UDSTestCase):
 
     def test_python_type_to_openapi(self) -> None:
         # Test basic types
-        self.assertEqual(util_api.python_type_to_openapi(int), types.rest.api.SchemaProperty(type='integer', format='int64'))
+        self.assertEqual(
+            util_api.python_type_to_openapi(int), types.rest.api.SchemaProperty(type='integer', format='int64')
+        )
         self.assertEqual(util_api.python_type_to_openapi(str), types.rest.api.SchemaProperty(type='string'))
         self.assertEqual(util_api.python_type_to_openapi(float), types.rest.api.SchemaProperty(type='number'))
         self.assertEqual(util_api.python_type_to_openapi(bool), types.rest.api.SchemaProperty(type='boolean'))
@@ -241,10 +241,13 @@ class TestApiGenBasic(UDSTestCase):
         )
         self.assertEqual(
             util_api.python_type_to_openapi(typing.Union[int, str]),
-            types.rest.api.SchemaProperty(type='not_used', one_of=[
-                types.rest.api.SchemaProperty(type='integer', format='int64'),
-                types.rest.api.SchemaProperty(type='string'),
-            ]),
+            types.rest.api.SchemaProperty(
+                type='not_used',
+                one_of=[
+                    types.rest.api.SchemaProperty(type='integer', format='int64'),
+                    types.rest.api.SchemaProperty(type='string'),
+                ],
+            ),
         )
         self.assertEqual(
             util_api.python_type_to_openapi(enum.Enum),
@@ -256,7 +259,7 @@ class TestApiGenBasic(UDSTestCase):
             types.rest.api.SchemaProperty(type='string', enum=[e.value for e in MyEnum]),
         )
 
-    def test_base_rest_item_api_componentss(self) -> None:
+    def test_base_rest_item_api_components(self) -> None:
 
         components = BaseRestItem.api_components()
 
@@ -273,7 +276,7 @@ class TestApiGenBasic(UDSTestCase):
         self.assertIn('field_str', properties)
         self.assertEqual(properties['field_str'], types.rest.api.SchemaProperty(type='string'))
         self.assertIn('field_int', properties)
-        self.assertEqual(properties['field_int'], types.rest.api.SchemaProperty(type='integer'))
+        self.assertEqual(properties['field_int'], types.rest.api.SchemaProperty(type='integer', format='int64'))
         self.assertIn('field_float', properties)
         self.assertEqual(properties['field_float'], types.rest.api.SchemaProperty(type='number'))
         self.assertIn('field_list', properties)
@@ -294,11 +297,38 @@ class TestApiGenBasic(UDSTestCase):
             types.rest.api.SchemaProperty(type='string', enum=[e.value for e in MyEnum]),
         )
         self.assertIn('field_optional', properties)
-        self.assertEqual(properties['field_optional'], types.rest.api.SchemaProperty(type=['string', 'null']))
+        self.assertEqual(
+            properties['field_optional'],
+            types.rest.api.SchemaProperty(
+                type='not_used',
+                one_of=[
+                    types.rest.api.SchemaProperty(type='string'),
+                    types.rest.api.SchemaProperty(type='null'),
+                ],
+            ),
+        )
         self.assertIn('field_union', properties)
-        self.assertEqual(properties['field_union'], types.rest.api.SchemaProperty(type=['string', 'integer']))
+        self.assertEqual(
+            properties['field_union'],
+            types.rest.api.SchemaProperty(
+                type='not_used',
+                one_of=[
+                    types.rest.api.SchemaProperty(type='integer', format='int64'),
+                    types.rest.api.SchemaProperty(type='string'),
+                ],
+            ),
+        )
         self.assertIn('field_union_2', properties)
-        self.assertEqual(properties['field_union_2'], types.rest.api.SchemaProperty(type=['string', 'integer']))
+        self.assertEqual(
+            properties['field_union_2'],
+            types.rest.api.SchemaProperty(
+                type='not_used',
+                one_of=[
+                    types.rest.api.SchemaProperty(type='integer', format='int64'),
+                    types.rest.api.SchemaProperty(type='string'),
+                ],
+            ),
+        )
 
     def test_base_rest_item_as_dict(self) -> None:
         components = BaseRestItem.api_components()
@@ -313,16 +343,20 @@ class TestApiGenBasic(UDSTestCase):
                         'type': 'object',
                         'properties': {
                             'field_str': {'type': 'string'},
-                            'field_int': {'type': 'integer', 'format': 'int64'},
+                            'field_int': {'format': 'int64', 'type': 'integer'},
                             'field_float': {'type': 'number'},
-                            'field_list': {'type': 'array', 'items': {'type': 'string'}},
-                            'field_list_2': {'type': 'array', 'items': {'type': 'string'}},
-                            'field_dict': {'type': 'object', 'additionalProperties': {'type': 'string'}},
-                            'field_dict_2': {'type': 'object', 'additionalProperties': {'type': 'string'}},
-                            'field_enum': {'type': 'string', 'enum': ['value1', 'value2']},
+                            'field_list': {'items': {'type': 'string'}, 'type': 'array'},
+                            'field_list_2': {'items': {'type': 'string'}, 'type': 'array'},
+                            'field_dict': {'additionalProperties': {'type': 'string'}, 'type': 'object'},
+                            'field_dict_2': {'additionalProperties': {'type': 'string'}, 'type': 'object'},
+                            'field_enum': {'enum': ['value1', 'value2'], 'type': 'string'},
                             'field_optional': {'oneOf': [{'type': 'string'}, {'type': 'null'}]},
-                            'field_union': {'oneOf': [{'type': 'string'}, {'type': 'integer'}]},
-                            'field_union_2': {'oneOf': [{'type': 'string'}, {'type': 'integer'}]},
+                            'field_union': {
+                                'oneOf': [{'type': 'string'}, {'format': 'int64', 'type': 'integer'}]
+                            },
+                            'field_union_2': {
+                                'oneOf': [{'type': 'string'}, {'format': 'int64', 'type': 'integer'}]
+                            },
                         },
                         'required': ['field_str', 'field_int', 'field_float'],
                     }
@@ -346,7 +380,15 @@ class TestApiGenBasic(UDSTestCase):
         self.assertEqual(properties['field_str'], types.rest.api.SchemaProperty(type='string'))
         self.assertIn('field_union', properties)
         self.assertEqual(
-            properties['field_union'], types.rest.api.SchemaProperty(type=['string', 'integer', 'null'])
+            properties['field_union'],
+            types.rest.api.SchemaProperty(
+                type='not_used',
+                one_of=[
+                    types.rest.api.SchemaProperty(type='string'),
+                    types.rest.api.SchemaProperty(type='integer', format='int64'),
+                    types.rest.api.SchemaProperty(type='null'),
+                ],
+            ),
         )
         self.assertIn('type', properties)
         self.assertEqual(properties['type'], types.rest.api.SchemaProperty(type='string'))

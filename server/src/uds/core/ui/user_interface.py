@@ -145,7 +145,7 @@ class gui:
     # Helpers
     @staticmethod
     def as_choices(
-        vals: _ChoicesParamType,
+        vals: _ChoicesParamType|dict[str, str]|str|collections.abc.Iterable[str|types.ui.ChoiceItem]|None = None,
     ) -> typing.Union[collections.abc.Callable[[], list['types.ui.ChoiceItem']], list['types.ui.ChoiceItem']]:
         """
         Helper to convert from array of strings (or dictionaries) to the same dict used in choice,

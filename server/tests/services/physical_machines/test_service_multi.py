@@ -222,7 +222,7 @@ class TestServiceMulti(UDSTransactionTestCase):
             service.lock_server(server.uuid)
             server_list.remove(server)
 
-        assignables = {i['id'] for i in service.enumerate_assignables()}
+        assignables = {i.id for i in service.enumerate_assignables()}
         self.assertEqual(assignables, {i.uuid for i in server_list})
 
     def test_assign_from_asignables(self) -> None:

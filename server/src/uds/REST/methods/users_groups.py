@@ -255,6 +255,8 @@ class Users(DetailHandler[UserItem]):
                         logger.exception('Saving user on removing error')
 
             user.delete()
+        except User.DoesNotExist:
+            raise exceptions.rest.NotFound(_('User not found')) from None
         except Exception as e:
             logger.error('Error on user removal of %s.%s:  %s', parent.name, item, e)
             raise exceptions.rest.ResponseError(_('Error removing user')) from e

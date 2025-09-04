@@ -60,23 +60,23 @@ class QueryFilterTest(unittest.TestCase):
         ]
 
     def test_eq_operator(self):
-        result = list(exec_query(self.data, "name eq 'Alice'"))
+        result = list(exec_query("name eq 'Alice'", self.data))
         self.assertEqual(result, [{"name": "Alice", "age": 30}])
 
         # obj
-        result = list(exec_query(self.objects, "name eq 'Alice'"))
+        result = list(exec_query("name eq 'Alice'", self.objects))
         self.assertEqual(result, [self.objects[0]])
 
     def test_gt_operator(self):
-        result = list(exec_query(self.data, "age gt 30"))
+        result = list(exec_query("age gt 30", self.data))
         self.assertEqual(result, [{"name": "Charlie", "age": 35}])
 
         # obj
-        result = list(exec_query(self.objects, "age gt 30"))
+        result = list(exec_query("age gt 30", self.objects))
         self.assertEqual(result, [self.objects[2]])
 
     def test_ge_operator(self):
-        result = list(exec_query(self.data, "age ge 30"))
+        result = list(exec_query("age ge 30", self.data))
         self.assertEqual(
             result,
             [
@@ -87,7 +87,7 @@ class QueryFilterTest(unittest.TestCase):
         )
 
         # obj
-        result = list(exec_query(self.objects, "age ge 30"))
+        result = list(exec_query("age ge 30", self.objects))
         self.assertEqual(
             result,
             [
@@ -98,7 +98,7 @@ class QueryFilterTest(unittest.TestCase):
         )
 
     def test_ne_operator(self):
-        result = list(exec_query(self.data, "name ne 'Bob'"))
+        result = list(exec_query("name ne 'Bob'", self.data))
         self.assertEqual(
             result,
             [
@@ -109,16 +109,16 @@ class QueryFilterTest(unittest.TestCase):
         )
 
     def test_and_or_not(self):
-        result = list(exec_query(self.data, "age ge 30 and not name eq 'David'"))
+        result = list(exec_query("age ge 30 and not name eq 'David'", self.data))
         self.assertEqual(result, [{"name": "Alice", "age": 30}, {"name": "Charlie", "age": 35}])
 
     def test_startswith_func(self):
-        result = list(exec_query(self.data, "startswith(name,'A')"))
+        result = list(exec_query("startswith(name,'A')", self.data))
         self.assertEqual(result, [{"name": "Alice", "age": 30}])
 
     def test_grouped_expression_with_parentheses(self):
         query = "not (age gt 30 or name eq 'Bob')"
-        result = list(exec_query(self.data, query))
+        result = list(exec_query(query, self.data))
         # We expect:
         # - Charlie has age > 30 → excluded
         # - Bob has name eq 'Bob' → excluded
@@ -131,22 +131,22 @@ class QueryFilterTest(unittest.TestCase):
 
     def test_endswith_function(self):
         query = "endswith(name,'e')"
-        result = list(exec_query(self.data, query))
+        result = list(exec_query(query, self.data))
         expected = [{"name": "Alice", "age": 30}, {"name": "Charlie", "age": 35}]
         self.assertEqual(result, expected)
 
     def test_unary_func_length(self):
-        result = list(exec_query(self.data, "length(name) eq 5"))
+        result = list(exec_query("length(name) eq 5", self.data))
         expected = [{"name": "Alice", "age": 30}, {"name": "David", "age": 30}]
         self.assertEqual(result, expected)
 
     def test_toupper_function(self):
-        result = list(exec_query(self.data, "toupper(name) eq 'ALICE'"))
+        result = list(exec_query("toupper(name) eq 'ALICE'", self.data))
         expected = [{"name": "Alice", "age": 30}]
         self.assertEqual(result, expected)
 
     def test_tolower_function(self):
-        result = list(exec_query(self.data, "tolower(name) eq 'david'"))
+        result = list(exec_query("tolower(name) eq 'david'", self.data))
         expected = [{"name": "David", "age": 30}]
         self.assertEqual(result, expected)
 
@@ -155,16 +155,16 @@ class QueryFilterTest(unittest.TestCase):
             {"first": "John", "last": "Doe"},
             {"first": "Jane", "last": "Smith"},
         ]
-        result = list(exec_query(data, "concat(first,last) eq 'JohnDoe'"))
+        result = list(exec_query("concat(first,last) eq 'JohnDoe'", data))
         expected = [{"first": "John", "last": "Doe"}]
         self.assertEqual(result, expected)
 
-        result = list(exec_query(data, "first eq concat('J', 'o', 'h', 'n')"))
+        result = list(exec_query("first eq concat('J', 'o', 'h', 'n')", data))
         expected = [{"first": "John", "last": "Doe"}]
         self.assertEqual(result, expected)
 
     def test_indexof_function_case_sensitive(self):
-        result = list(exec_query(self.data, "indexof(name,'a') ge 0"))
+        result = list(exec_query("indexof(name,'a') ge 0", self.data))
         expected = [
             {"name": "Charlie", "age": 35},
             {"name": "David", "age": 30},
@@ -172,7 +172,7 @@ class QueryFilterTest(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_indexof_function_case_insensitive(self):
-        result = list(exec_query(self.data, "indexof(tolower(name),'a') ge 0"))
+        result = list(exec_query("indexof(tolower(name),'a') ge 0", self.data))
         expected = [
             {"name": "Alice", "age": 30},
             {"name": "Charlie", "age": 35},
@@ -181,22 +181,22 @@ class QueryFilterTest(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_substringof_function(self):
-        result = list(exec_query(self.data, "substringof('li',name)"))
+        result = list(exec_query("substringof('li',name)", self.data))
         expected = [{"name": "Alice", "age": 30}, {"name": "Charlie", "age": 35}]
         self.assertEqual(result, expected)
 
     def test_contains_function(self):
-        result = list(exec_query(self.data, "contains(name,'li')"))
+        result = list(exec_query("contains(name,'li')", self.data))
         expected = [{"name": "Alice", "age": 30}, {"name": "Charlie", "age": 35}]
         self.assertEqual(result, expected)
 
     def test_substring_function_two_arguments(self):
-        result = list(exec_query(self.data, "substring(name,3) eq 'ce'"))
+        result = list(exec_query("substring(name,3) eq 'ce'", self.data))
         expected = [{"name": "Alice", "age": 30}]
         self.assertEqual(result, expected)
 
     def test_substring_function_three_arguments(self):
-        result = list(exec_query(self.data, "substring(name,1,3) eq 'li'"))
+        result = list(exec_query("substring(name,1,3) eq 'li'", self.data))
         expected = [{"name": "Alice", "age": 30}]
         self.assertEqual(result, expected)
 
@@ -205,7 +205,7 @@ class QueryFilterTest(unittest.TestCase):
             {"dob": "1990-05-12"},
             {"dob": "1985-11-30"},
         ]
-        result = list(exec_query(data, "year(dob) eq '1990'"))
+        result = list(exec_query("year(dob) eq '1990'", data))
         expected = [{"dob": "1990-05-12"}]
         self.assertEqual(result, expected)
 
@@ -214,7 +214,7 @@ class QueryFilterTest(unittest.TestCase):
             {"dob": "1990-05-12"},
             {"dob": "1985-11-30"},
         ]
-        result = list(exec_query(data, "month(dob) eq '11'"))
+        result = list(exec_query("month(dob) eq '11'", data))
         expected = [{"dob": "1985-11-30"}]
         self.assertEqual(result, expected)
 
@@ -223,7 +223,7 @@ class QueryFilterTest(unittest.TestCase):
             {"dob": "1990-05-12"},
             {"dob": "1985-11-30"},
         ]
-        result = list(exec_query(data, "day(dob) eq '12'"))
+        result = list(exec_query("day(dob) eq '12'", data))
         expected = [{"dob": "1990-05-12"}]
         self.assertEqual(result, expected)
 
@@ -232,12 +232,12 @@ class QueryFilterTest(unittest.TestCase):
             {"user": {"name": "Alice"}},
             {"user": {"name": "Bob"}},
         ]
-        result = list(exec_query(data, "user.name eq 'Bob'"))
+        result = list(exec_query("user.name eq 'Bob'", data))
         expected = [{"user": {"name": "Bob"}}]
         self.assertEqual(result, expected)
 
     def test_not_with_parentheses(self):
-        result = list(exec_query(self.data, "not (name eq 'Alice')"))
+        result = list(exec_query("not (name eq 'Alice')", self.data))
         expected = [
             {"name": "Bob", "age": 25},
             {"name": "Charlie", "age": 35},
@@ -248,21 +248,21 @@ class QueryFilterTest(unittest.TestCase):
     def test_trim_function(self):
         data_copy = copy.deepcopy(self.data)
         data_copy.append({"name": "  Bella  ", "age": 30})
-        result = list(exec_query(data_copy, "trim(name) eq 'Bella'"))
+        result = list(exec_query("trim(name) eq 'Bella'", data_copy))
         expected = [{"name": "  Bella  ", "age": 30}]
         self.assertEqual(result, expected)
 
     def test_floor_function(self):
-        result = list(exec_query(self.data, "floor(age) eq 25"))
+        result = list(exec_query("floor(age) eq 25", self.data))
         expected = [{"name": "Bob", "age": 25}]
         self.assertEqual(result, expected)
 
     def test_ceiling_function(self):
-        result = list(exec_query(self.data, "ceiling(age) eq 35"))
+        result = list(exec_query("ceiling(age) eq 35", self.data))
         expected = [{"name": "Charlie", "age": 35}]
         self.assertEqual(result, expected)
 
     def test_round_function(self):
-        result = list(exec_query(self.data, "round(age) eq 25"))
+        result = list(exec_query("round(age) eq 25", self.data))
         expected = [{"name": "Bob", "age": 25}]
         self.assertEqual(result, expected)

@@ -159,6 +159,22 @@ class SchemaProperty:
     enum: list[str | int] | None = None  # For enum types
     properties: dict[str, 'SchemaProperty'] | None = None
     one_of: list['SchemaProperty'] | None = None
+    
+    def __eq__(self, value: object) -> bool:
+        if not isinstance(value, SchemaProperty):
+            return False
+        return (
+            self.type == value.type
+            and self.format == value.format
+            and self.description == value.description
+            and self.example == value.example
+            and self.items == value.items
+            and self.additionalProperties == value.additionalProperties
+            and self.discriminator == value.discriminator
+            and self.enum == value.enum
+            and self.properties == value.properties
+            and sorted(self.one_of or [], key=lambda x: x.type) == sorted(value.one_of or [], key=lambda x: x.type)
+        )
 
     @staticmethod
     def from_field_desc(desc: 'ui.GuiElement') -> 'SchemaProperty|None':
