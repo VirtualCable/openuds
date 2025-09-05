@@ -60,7 +60,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # TIME_SECTION_START
 USE_TZ = True
-TIME_ZONE = 'Europe/Madrid'
+TIME_ZONE = 'UTC'
 # TIME_SECTION_END
 
 # Override for gettext so we can use the same syntax as in django
