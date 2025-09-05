@@ -175,6 +175,8 @@ class Transport(Module):
         userservice: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
+        *,
+        for_notify: bool = False,  # To differentiate SSO from information
     ) -> types.connections.ConnectionData:
         """
         This method must provide information about connection.

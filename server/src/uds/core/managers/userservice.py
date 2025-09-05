@@ -1064,7 +1064,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                         )
                         self.notify_preconnect(
                             userservice,
-                            transport_instance.get_connection_info(userservice, user, ''),
+                            transport_instance.get_connection_info(userservice, user, '', for_notify=True),
                         )
                         trace_logger.info(
                             'READY on service "%s" for user "%s" with transport "%s" (ip:%s)',

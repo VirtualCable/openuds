@@ -452,6 +452,8 @@ class BaseRDPTransport(transports.Transport):
         userservice: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
+        *,
+        for_notify: bool = False,
     ) -> types.connections.ConnectionData:
         username = None
         if isinstance(userservice, UserService):
