@@ -87,18 +87,9 @@ class ServersTokens(ModelHandler[TokenItem]):
         .text_column(name='os', title=_('OS'), visible=True)
         .text_column(name='username', title=_('Issued by'), visible=True)
         .datetime_column(name='stamp', title=_('Date'), visible=True)
+        .text_column(name='mac', title=_('MAC Address'), visible=False)
         .build()
     )
-
-    # table_title = _('Registered Servers')
-    # xtable_fields = [
-    #     {'hostname': {'title': _('Hostname')}},
-    #     {'ip': {'title': _('IP')}},
-    #     {'type': {'title': _('Type'), 'type': 'dict', 'dict': dict(types.servers.ServerType.enumerate())}},
-    #     {'os': {'title': _('OS')}},
-    #     {'username': {'title': _('Issued by')}},
-    #     {'stamp': {'title': _('Date'), 'type': 'datetime'}},
-    # ]
 
     def get_item(self, item: 'Model') -> TokenItem:
         item = typing.cast('models.Server', item)  # We will receive for sure
