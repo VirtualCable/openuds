@@ -69,6 +69,7 @@ class ServersTokens(ModelHandler):
         {'os': {'title': _('OS')}},
         {'username': {'title': _('Issued by')}},
         {'stamp': {'title': _('Date'), 'type': 'datetime'}},
+        {'mac': {'title': _('MAC Address')}},
     ]
 
     def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
