@@ -469,7 +469,7 @@ class BaseRDPTransport(transports.Transport):
             alt_username=username,
         )
 
-        if self.use_sso.as_bool() and isinstance(userservice, UserService):
+        if not for_notify and self.use_sso.as_bool() and isinstance(userservice, UserService):
             cdata = convert_to_credential_token(userservice, cdata)
 
         return cdata
