@@ -87,6 +87,7 @@ if kind == 'thincast':
     if sp.get('as_file', '') != '':
         logging.debug('Thincast client will use .rdp file')
         theFile = sp.get('as_file', '')
+        logging.debug(f'RDP file content (before): {theFile}')
         if '{password}' not in theFile:
             theFile += f'\npassword:s:{sp.get("password", "")}'
         theFile = theFile.format(
