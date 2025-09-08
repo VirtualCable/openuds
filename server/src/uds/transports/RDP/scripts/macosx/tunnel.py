@@ -160,7 +160,14 @@ if kind == 'msrdc':
         )
     )
     tools.addFileToUnlink(filename + '.rdp')
-else:  # freerdp, thincast or udsrdp
+
+# if kind == 'thincast':
+#         theFile = sp['as_file']  # type: ignore
+#         filename = tools.saveTempFile(theFile)
+#         shutil.move(filename, filename + '.rdp')
+#         subprocess.Popen([executable, filename + '.rdp'])
+#         tools.addFileToUnlink(filename + '.rdp')
+else:  # freerdp or udsrdp
     # Fix resolution...
     try:
         xfparms = fix_resolution()

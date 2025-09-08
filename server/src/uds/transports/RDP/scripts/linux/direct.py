@@ -2,6 +2,10 @@ import typing
 import logging
 
 logger = logging.getLogger(__name__)
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 # On older client versions, need importing globally to allow inner functions to work
 import subprocess  # type: ignore
@@ -47,7 +51,6 @@ thincast_list = [
 ]
 
 # Search Thincast first
-logger.debug('Searching for Thincast executables in known locations.')
 executable = None
 kind = ''
 for thincast in thincast_list:
@@ -90,8 +93,30 @@ logger.debug('Using RDP client: %s as kind: %s', executable, kind)
 if kind == 'thincast':
     import subprocess
     import os.path
-    params: typing.List[str] = [os.path.expandvars(i) for i in [executable] + sp['as_new_xfreerdp_params'] + ['/v:{}'.format(sp['address'])]]  # type: ignore
-    tools.addTaskToWait(subprocess.Popen(params))
+    import shutil
+
+    if sp.get('as_file', '') != '':
+        logging.debug('Thincast client will use .rdp file')
+        theFile = sp.get('as_file', '')
+        logging.debug(f'RDP file content (before): {theFile}')
+        if '{password}' not in theFile:
+            theFile += f'\npassword:s:{sp.get("password", "")}'
+        theFile = theFile.format(
+            address=sp.get('address', '')
+        )
+        #logging.debug(f'RDP file content (forced): {theFile}')
+        filename = tools.saveTempFile(theFile)
+        # Move the file to the user's home directory
+        home_dir = os.path.expanduser("~")
+        dest_filename = os.path.join(home_dir, os.path.basename(filename))
+        shutil.move(filename, filename + '.rdp')
+        shutil.move(filename + '.rdp', dest_filename)
+        subprocess.Popen([executable, dest_filename])
+        tools.addFileToUnlink(dest_filename)
+    else:
+        logging.debug('Thincast client will use command line parameters')
+        params: typing.List[str] = [os.path.expandvars(i) for i in [executable] + sp['as_new_xfreerdp_params'] + ['/v:{}'.format(sp['address'])]]  # type: ignore
+        tools.addTaskToWait(subprocess.Popen(params))
 elif kind == 'udsrdp':
     exec_udsrdp(executable)
 elif kind == 'xfreerdp':
