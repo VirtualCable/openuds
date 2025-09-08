@@ -1,4 +1,8 @@
 import typing
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 # On older client versions, need importing globally to allow inner functions to work
 import subprocess  # type: ignore
@@ -32,7 +36,7 @@ def exec_new_xfreerdp(xfreerdp: str) -> None:
 
 import os
 
-# Rutas típicas de Thincast en Linux
+# Typical Thincast Routes on Linux
 thincast_list = [
     '/usr/bin/thincast-remote-desktop-client',
     '/usr/bin/thincast',
@@ -43,7 +47,7 @@ thincast_list = [
     '/snap/bin/thincast-client'
 ]
 
-# Buscar Thincast primero
+# Search Thincast first
 executable = None
 kind = ''
 for thincast in thincast_list:
@@ -52,7 +56,7 @@ for thincast in thincast_list:
         kind = 'thincast'
         break
 
-# Si no se encuentra Thincast, buscar udsrdp y xfreerdp
+# If you don't find Thincast, search UDSRDP and XFREERDP
 if not executable:
     udsrdp: typing.Optional[str] = tools.findApp('udsrdp')
     xfreerdp: typing.Optional[str] = tools.findApp('xfreerdp3') or tools.findApp('xfreerdp') or tools.findApp('xfreerdp2')
@@ -74,12 +78,33 @@ if not executable:
 '''
     )
 
-# Ejecutar el cliente encontrado
+# Execute the client found
 if kind == 'thincast':
     import subprocess
     import os.path
-    params: typing.List[str] = [os.path.expandvars(i) for i in [executable] + sp['as_new_xfreerdp_params'] + ['/v:{}'.format(sp['address'])]]  # type: ignore
-    tools.addTaskToWait(subprocess.Popen(params))
+    import shutil
+
+    if sp.get('as_file', '') != '':
+        logging.debug('Thincast client will use .rdp file')
+        theFile = sp.get('as_file', '')
+        if '{password}' not in theFile:
+            theFile += f'\npassword:s:{sp.get("password", "")}'
+        theFile = theFile.format(
+            address=sp.get('address', '')
+        )
+        #logging.debug(f'RDP file content (forced): {theFile}')
+        filename = tools.saveTempFile(theFile)
+        # Move the file to the user's home directory
+        home_dir = os.path.expanduser("~")
+        dest_filename = os.path.join(home_dir, os.path.basename(filename))
+        shutil.move(filename, filename + '.rdp')
+        shutil.move(filename + '.rdp', dest_filename)
+        subprocess.Popen([executable, dest_filename])
+        tools.addFileToUnlink(dest_filename)
+    else:
+        logging.debug('Thincast client will use command line parameters')
+        params: typing.List[str] = [os.path.expandvars(i) for i in [executable] + sp['as_new_xfreerdp_params'] + ['/v:{}'.format(sp['address'])]]  # type: ignore
+        tools.addTaskToWait(subprocess.Popen(params))
 elif kind == 'udsrdp':
     exec_udsrdp(executable)
 elif kind == 'xfreerdp':
