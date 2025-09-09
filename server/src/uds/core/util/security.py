@@ -239,7 +239,7 @@ def secure_requests_session(*, verify: 'str|bool' = True, proxies: 'dict[str, st
     session = requests.Session()
     session.mount("https://", UDSHTTPAdapter())
     
-    if proxies:
+    if proxies is not None:
         session.proxies = proxies
 
     # Add user agent header to session
