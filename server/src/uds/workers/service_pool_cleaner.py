@@ -46,10 +46,10 @@ MAX_REMOVING_TIME = 3600 * 24 * 1  # 2 days, in seconds
 
 
 class DeployedServiceInfoItemsCleaner(Job):
-    frecuency = 3607
-    frecuency_cfg = (
-        GlobalConfig.CLEANUP_CHECK
-    )  # Request run cache "info" cleaner every configured seconds. If config value is changed, it will be used at next reload
+    frecuency = 600
+    # frecuency_cfg = (
+    #     GlobalConfig.CLEANUP_CHECK
+    # )  # Request run cache "info" cleaner every configured seconds. If config value is changed, it will be used at next reload
     friendly_name = 'Deployed Service Info Cleaner'
 
     def run(self) -> None:
