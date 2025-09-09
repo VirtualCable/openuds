@@ -2,6 +2,9 @@ import typing
 import shutil
 import os
 import os.path
+import logging
+
+logger = logging.getLogger(__name__)
 
 # On older client versions, need importing globally to allow inner functions to work
 import subprocess  # type: ignore
@@ -58,21 +61,28 @@ executable = None
 kind = ''
 
 # Check first thincast (better option right now, prefer it)
+logger.debug('Searching for Thincast in: %s', thincast_list)
 for thincast in thincast_list:
     if os.path.isfile(thincast):
+        logger.debug('Thincast found: %s', thincast)
         executable = thincast
         kind = 'thincast'
         break
 
 if not executable:
+    logger.debug('Searching for xfreerdp in: %s', xfreerdp_list)
+    found_xfreerdp = False
     for xfreerdp_executable in xfreerdp_list:
-        xfreerdp: str = tools.findApp(xfreerdp_executable)
+        xfreerdp = tools.findApp(xfreerdp_executable)
+        logger.debug('tools.findApp(%s) result: %s', xfreerdp_executable, xfreerdp)
         if xfreerdp and os.path.isfile(xfreerdp):
+            logger.debug('xfreerdp found: %s', xfreerdp)
             executable = xfreerdp
             # Ensure that the kind is 'xfreerdp' and not 'xfreerdp3' or 'xfreerdp2'
             kind = xfreerdp_executable.rstrip('3').rstrip('2')
             break
-    else:
+    if not found_xfreerdp:
+        logger.debug('Searching for MSRDC in: %s', msrdc_list)
         for msrdc in msrdc_list:
             if os.path.isdir(msrdc) and sp['as_file']:  # type: ignore
                 executable = msrdc
@@ -80,6 +90,7 @@ if not executable:
                 break
 
 if not executable:
+    logger.debug('No compatible executable found (Thincast, xfreerdp, MSRDC)')
     msrd = msrd_li = ''
     if sp['as_rdp_url']:  # type: ignore
         msrd = ', Microsoft Remote Desktop'
@@ -110,6 +121,8 @@ if not executable:
         '''
     )
 
+logger.debug('Using %s client of kind %s', executable, kind)
+
 if kind == 'msrdc':
     theFile = sp['as_file']  # type: ignore
     filename = tools.saveTempFile(theFile)
@@ -117,7 +130,7 @@ if kind == 'msrdc':
     shutil.move(filename, filename + '.rdp')
 
     # tools.addTaskToWait(subprocess.Popen(['open', filename + '.rdp']))
-    # Force MSRDP to be used with -a (thanks to Dani Torregrosa @danitorregrosa (https://github.com/danitorregrosa) )
+    # Force MSRDP to be used with -a (thanks to Dani Torregrosa @danitorregrosa (https://github.com/danitorregrosa))
     tools.addTaskToWait(
         subprocess.Popen(
             [
@@ -129,7 +142,14 @@ if kind == 'msrdc':
         )
     )
     tools.addFileToUnlink(filename + '.rdp')
-else:  # thincast, udsrdp, freerdp
+
+# if kind == 'thincast':
+#         theFile = sp['as_file']  # type: ignore
+#         filename = tools.saveTempFile(theFile)
+#         shutil.move(filename, filename + '.rdp')
+#         subprocess.Popen([executable, filename + '.rdp'])
+#         tools.addFileToUnlink(filename + '.rdp')
+else:  # udsrdp or freerdp
     # Fix resolution...
     try:
         xfparms = fix_resolution()

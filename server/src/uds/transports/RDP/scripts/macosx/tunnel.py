@@ -3,6 +3,9 @@ import typing
 import shutil
 import os
 import os.path
+import logging
+
+logger = logging.getLogger(__name__)
 
 # On older client versions, need importing globally to allow inner functions to work
 import subprocess  # type: ignore
@@ -65,25 +68,31 @@ executable = None
 kind = ''
 
 # Check first thincast (better option right now, prefer it)
+logger.debug('Searching for Thincast in: %s', thincast_list)
 for thincast in thincast_list:
     if os.path.isfile(thincast):
         executable = thincast
         kind = 'thincast'
+        logger.debug('Found Thincast client at %s', thincast)
         break
 
 if not executable:
+    logger.debug('Searching for xfreerdp in: %s', xfreerdp_list)
     for xfreerdp_executable in xfreerdp_list:
         xfreerdp: str = tools.findApp(xfreerdp_executable)
         if xfreerdp and os.path.isfile(xfreerdp):
             executable = xfreerdp
             # Ensure that the kind is 'xfreerdp' and not 'xfreerdp3' or 'xfreerdp2'
             kind = xfreerdp_executable.rstrip('3').rstrip('2')
+            logger.debug('Found xfreerdp client: %s (kind: %s)', xfreerdp, kind)
             break
     else:
+        logger.debug('Searching for Microsoft Remote Desktop in: %s', msrdc_list)
         for msrdc in msrdc_list:
             if os.path.isdir(msrdc) and sp['as_file']:  # type: ignore
                 executable = msrdc
                 kind = 'msrdc'
+                logger.debug('Found Microsoft Remote Desktop client at %s', msrdc)
                 break
 
 if not executable:
@@ -91,6 +100,7 @@ if not executable:
     if sp['as_rdp_url']:  # type: ignore
         msrd = ', Microsoft Remote Desktop'
         msrd_li = '<li><p><b>{}</b> from Apple Store</p></li>'.format(msrd)
+        logger.debug('as_rdp_url is set, will suggest Microsoft Remote Desktop')
 
     raise Exception(
         f'''<p><b>xfreerdp{msrd} or thincast client not found</b></p>
@@ -123,7 +133,12 @@ address = '127.0.0.1:{}'.format(fs.server_address[1])
 
 # Check that tunnel works..
 if fs.check() is False:
+    logger.debug('Tunnel check failed, could not connect to tunnel server')
     raise Exception('<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>')
+else:
+    logger.debug('Tunnel check succeeded, connection to tunnel server established')
+
+logger.debug('Using %s client of kind %s', executable, kind)
 
 if kind == 'msrdc':
     theFile = theFile = sp['as_file'].format(address=address)  # type: ignore
@@ -145,7 +160,14 @@ if kind == 'msrdc':
         )
     )
     tools.addFileToUnlink(filename + '.rdp')
-else:  # freerdp, thincast or udsrdp
+
+# if kind == 'thincast':
+#         theFile = sp['as_file']  # type: ignore
+#         filename = tools.saveTempFile(theFile)
+#         shutil.move(filename, filename + '.rdp')
+#         subprocess.Popen([executable, filename + '.rdp'])
+#         tools.addFileToUnlink(filename + '.rdp')
+else:  # freerdp or udsrdp
     # Fix resolution...
     try:
         xfparms = fix_resolution()

@@ -172,6 +172,7 @@ class RDPTransport(BaseRDPTransport):
                 {
                     'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
                     'address': r.address,
+                    'as_file': r.as_file,
                 }
             )
         elif os.os == types.os.KnownOS.MAC_OS:
