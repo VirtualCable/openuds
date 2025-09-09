@@ -149,7 +149,7 @@ if kind == 'msrdc':
 #         shutil.move(filename, filename + '.rdp')
 #         subprocess.Popen([executable, filename + '.rdp'])
 #         tools.addFileToUnlink(filename + '.rdp')
-else:  # udsrdp or freerdp
+else:  # for now, both xfreerdp and thincast or udsrdp
     # Fix resolution...
     try:
         xfparms = fix_resolution()

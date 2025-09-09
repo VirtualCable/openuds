@@ -172,7 +172,7 @@ class RDPTransport(BaseRDPTransport):
                 {
                     'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
                     'address': r.address,
-                    'as_file': r.as_file,
+                    'as_file': r.as_file if self.lnx_thincast_rdp_file.as_bool() else '',
                 }
             )
         elif os.os == types.os.KnownOS.MAC_OS:

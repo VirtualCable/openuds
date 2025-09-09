@@ -78,6 +78,8 @@ if not executable:
 '''
     )
 
+logging.debug(f'RDP client found: {executable} of kind {kind}')
+
 # Execute the client found
 if kind == 'thincast':
     import subprocess
