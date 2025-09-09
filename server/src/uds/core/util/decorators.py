@@ -373,14 +373,14 @@ def blocker(
                 except uds.core.exceptions.rest.BlockAccess:
                     raise exceptions.rest.AccessDenied()
 
-            request: typing.Any | None = getattr(args[0], request_attr or '_request', None)
+            req: typing.Any | None = getattr(args[0], request_attr or '_request', None)
 
             # No request object, so we can't block
-            if request is None or getattr(request, 'ip', None) is None:
-                logger.debug('No request object, so we can\'t block: (value is %s)', request)
+            if req is None or getattr(req, 'ip', None) is None:
+                logger.debug('No request object, so we can\'t block: (value is %s)', req)
                 return f(*args, **kwargs)
 
-            request = typing.cast(types.requests.ExtendedHttpRequest, request)
+            request = typing.cast(types.requests.ExtendedHttpRequest, req)
 
             ip = request.ip
 
