@@ -114,6 +114,8 @@ class TRDPTransport(BaseRDPTransport):
     lnx_custom_parameters = BaseRDPTransport.lnx_custom_parameters
     mac_custom_parameters = BaseRDPTransport.mac_custom_parameters
     wnd_custom_parameters = BaseRDPTransport.wnd_custom_parameters
+
+    lnx_thincast_rdp_file = BaseRDPTransport.lnx_thincast_rdp_file
     # optimizeTeams = BaseRDPTransport.optimizeTeams
 
     def initialize(self, values: 'types.core.ValuesType') -> None:

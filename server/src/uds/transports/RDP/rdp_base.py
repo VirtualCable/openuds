@@ -324,6 +324,15 @@ class BaseRDPTransport(transports.Transport):
         old_field_name='customParameters',
     )
 
+    lnx_thincast_rdp_file = gui.CheckBoxField(
+        label=_('Use RDP file for Thincast'),
+        order=46,
+        tooltip=_('If marked, an RDP file will be used for connections with Thincast on Linux.'),
+        tab='Linux Client',
+        default=False,
+        old_field_name='thincastRdpFile',
+    )
+
     mac_allow_msrdc = gui.CheckBoxField(
         label=_('Allow Microsoft Rdp Client'),
         order=50,

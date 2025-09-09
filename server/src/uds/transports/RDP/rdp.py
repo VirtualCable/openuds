@@ -98,6 +98,8 @@ class RDPTransport(BaseRDPTransport):
     mac_custom_parameters = BaseRDPTransport.mac_custom_parameters
     wnd_custom_parameters = BaseRDPTransport.wnd_custom_parameters
 
+    lnx_thincast_rdp_file = BaseRDPTransport.lnx_thincast_rdp_file
+
     def get_transport_script(  # pylint: disable=too-many-locals
         self,
         userservice: 'models.UserService',
