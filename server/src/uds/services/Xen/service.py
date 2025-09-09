@@ -326,8 +326,14 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
         *,
         for_unique_id: bool = False,
     ) -> str:
-        return self.mac_generator().get(self.provider().get_macs_range())
+        if not vmid or for_unique_id:
+            if isinstance(caller_instance, DynamicUserService):
+                return caller_instance.mac_generator().get(self.provider().get_macs_range())
+            return self.mac_generator().get(self.provider().get_macs_range())
 
+        with self.provider().get_connection() as api:
+            return api.get_first_mac(vmid)
+    
     def is_running(
         self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
     ) -> bool:
