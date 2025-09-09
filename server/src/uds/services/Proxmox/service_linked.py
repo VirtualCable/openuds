@@ -281,6 +281,8 @@ class ProxmoxServiceLinked(DynamicService):
     ) -> str:
         # If vmid is empty, we are requesting a new mac
         if not vmid or for_unique_id:
+            if isinstance(caller_instance, DynamicUserService):
+                return caller_instance.mac_generator().get(self.get_macs_range())
             return self.mac_generator().get(self.get_macs_range())
         return self.provider().api.get_vm_config(int(vmid)).networks[0].macaddr.lower()
 

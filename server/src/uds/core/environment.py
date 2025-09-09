@@ -215,6 +215,9 @@ class Environment:
     def __exit__(self, exc_type: typing.Any, exc_value: typing.Any, traceback: typing.Any) -> None:
         if self._key == TEST_ENV or (self._key.startswith('#_#') and self._key.endswith('#^#')):
             self.clean_related_data()
+            
+    def __str__(self) -> str:
+        return f'Environment: {self._key}'
 
 
 class Environmentable:
