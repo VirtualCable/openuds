@@ -61,16 +61,22 @@ def exec_udsrdp(udsrdp: str, port: int) -> None:
     _exec_client_with_params(udsrdp, params)
 
 def exec_new_xfreerdp(xfreerdp: str, port: int) -> None:
-    logging.debug('XFREERDP client will use command line parameters')
-    params: typing.List[str] = [os.path.expandvars(i) for i in [app] + sp['as_new_xfreerdp_params'] + [f'/v:127.0.0.1:{port}']]  # type: ignore
-    _exec_client_with_params(xfreerdp, params)
+    if sp.get('as_file', ''):
+        logger.debug('XFREERDP client will use RDP file')
+        dest_filename = _prepare_rdp_file(sp['as_file'], port, '.rdp')
+        params = [xfreerdp, dest_filename, f'/p:{sp.get("password", "")}']
+        _exec_client_with_params(xfreerdp, params, unlink_file=dest_filename)
+    else:
+        logging.debug('XFREERDP client will use command line parameters')
+        params: typing.List[str] = [os.path.expandvars(i) for i in [app] + sp['as_new_xfreerdp_params'] + [f'/v:127.0.0.1:{port}']]  # type: ignore
+        _exec_client_with_params(xfreerdp, params)
 
 def exec_thincast(thincast: str, port: int) -> None:
     if sp.get('as_file', ''):
         logger.debug('Thincast client will use RDP file')
         dest_filename = _prepare_rdp_file(sp['as_file'], port, '.rdp')
         params = [thincast, dest_filename, f'/p:{sp.get("password", "")}']
-        _exec_client_with_params(thincast, params)#unlink_file=dest_filename  
+        _exec_client_with_params(thincast, params, unlink_file=dest_filename ) 
     else:
         logging.debug('Thincast client will use command line parameters')
         params: typing.List[str] = [os.path.expandvars(i) for i in [app] + sp['as_new_xfreerdp_params'] + [f'/v:127.0.0.1:{port}']]  # type: ignore
@@ -104,7 +110,7 @@ if fs.check() is False:
 # If thincast exists, use it. If not, continue with UDSRDP/XFREERDP as before
 if thincast_executable:
     logging.debug('Thincast client found, using it')
-    logging.debug(f'RDP file params: {sp.get("as_file", "")}')
+    #logging.debug(f'RDP file params: {sp.get("as_file", "")}')
     fnc, app = exec_thincast, thincast_executable
 else:
     xfreerdp: typing.Optional[str] = tools.findApp('xfreerdp3') or tools.findApp('xfreerdp') or tools.findApp('xfreerdp2')
