@@ -115,7 +115,7 @@ class TRDPTransport(BaseRDPTransport):
     mac_custom_parameters = BaseRDPTransport.mac_custom_parameters
     wnd_custom_parameters = BaseRDPTransport.wnd_custom_parameters
 
-    lnx_thincast_rdp_file = BaseRDPTransport.lnx_thincast_rdp_file
+    lnx_use_rdp_file = BaseRDPTransport.lnx_use_rdp_file
     # optimizeTeams = BaseRDPTransport.optimizeTeams
 
     def initialize(self, values: 'types.core.ValuesType') -> None:
@@ -207,6 +207,7 @@ class TRDPTransport(BaseRDPTransport):
             sp.update(
                 {
                     'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
+                    'as_file': r.as_file if self.lnx_use_rdp_file.as_bool() else '',
                 }
             )
         elif os.os == types.os.KnownOS.MAC_OS:

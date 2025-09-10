@@ -2,6 +2,9 @@ import typing
 import shutil
 import os
 import logging
+import subprocess
+import re
+import os.path
 
 logger = logging.getLogger(__name__)
 
@@ -25,18 +28,53 @@ if 'sp' not in globals():
     # Inject local passed sp into globals for inner functions if not already there
     globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
 
+def _prepare_rdp_file(theFile: str, port: int, extension: str = '.rdp') -> str:
+    """Save RDP file to user's home directory with the given extension and return its path."""
+    # Replace the address in the RDP file with 127.0.0.1:{port}
+    # Replace any line starting with "full address:s:" with the desired value
+    theFile = theFile.format(
+        address='127.0.0.1:{}'.format(port)
+    )
+    logger.info(f'Preparing RDP file with address 127.0.0.1:{port}')
+    logger.debug(f'RDP file content (forced): {theFile}')
+    filename = tools.saveTempFile(theFile)
+    home_dir = os.path.expanduser("~")
+    base_name = os.path.basename(filename)
+    dest_filename = os.path.join(home_dir, base_name + extension)
+    temp_rdp_filename = filename + extension
+    logger.debug(f'Renaming temp file {filename} to {temp_rdp_filename}')
+    os.rename(filename, temp_rdp_filename)
+    logger.debug(f'Moving temp file {temp_rdp_filename} to {dest_filename}')
+    shutil.move(temp_rdp_filename, dest_filename)
+    logger.debug(f'RDP file content (forced): {theFile}')
+    return dest_filename
+
+def _exec_client_with_params(executable: str, params: typing.List[str], unlink_file: typing.Optional[str] = None) -> None:
+    logger.info(f'Executing {executable} with params: {params}')
+    tools.addTaskToWait(subprocess.Popen(params))
+    if unlink_file:
+        tools.addFileToUnlink(unlink_file)
 
 def exec_udsrdp(udsrdp: str, port: int) -> None:
-    import subprocess  # @Reimport
-    import os.path
-    params: typing.List[str] = [os.path.expandvars(i) for i in [udsrdp] + sp['as_new_xfreerdp_params'] + ['/v:127.0.0.1:{}'.format(port)]]  # type: ignore
-    tools.addTaskToWait(subprocess.Popen(params))
+    logging.debug('UDSRDP client will use command line parameters')
+    params: typing.List[str] = [os.path.expandvars(i) for i in [app] + sp['as_new_xfreerdp_params'] + [f'/v:127.0.0.1:{port}']]  # type: ignore
+    _exec_client_with_params(udsrdp, params)
 
 def exec_new_xfreerdp(xfreerdp: str, port: int) -> None:
-    import subprocess  # @Reimport
-    import os.path
-    params: typing.List[str] = [os.path.expandvars(i) for i in [xfreerdp] + sp['as_new_xfreerdp_params'] + ['/v:127.0.0.1:{}'.format(port)]]  # type: ignore
-    tools.addTaskToWait(subprocess.Popen(params))
+    logging.debug('XFREERDP client will use command line parameters')
+    params: typing.List[str] = [os.path.expandvars(i) for i in [app] + sp['as_new_xfreerdp_params'] + [f'/v:127.0.0.1:{port}']]  # type: ignore
+    _exec_client_with_params(xfreerdp, params)
+
+def exec_thincast(thincast: str, port: int) -> None:
+    if sp.get('as_file', ''):
+        logger.debug('Thincast client will use RDP file')
+        dest_filename = _prepare_rdp_file(sp['as_file'], port, '.rdp')
+        params = [thincast, dest_filename, f'/p:{sp.get("password", "")}']
+        _exec_client_with_params(thincast, params)#unlink_file=dest_filename  
+    else:
+        logging.debug('Thincast client will use command line parameters')
+        params: typing.List[str] = [os.path.expandvars(i) for i in [app] + sp['as_new_xfreerdp_params'] + [f'/v:127.0.0.1:{port}']]  # type: ignore
+        _exec_client_with_params(thincast, params)
 
 # Add thinclast support
 thincast_list = [
@@ -54,12 +92,6 @@ for thincast in thincast_list:
         thincast_executable = thincast
         break
 
-def exec_thincast(thincast: str, port: int) -> None:
-    import subprocess
-    import os.path
-    params: typing.List[str] = [os.path.expandvars(i) for i in [thincast] + sp['as_new_xfreerdp_params'] + ['/v:127.0.0.1:{}'.format(port)]]  # type: ignore
-    tools.addTaskToWait(subprocess.Popen(params))
-
 # Open tunnel and connect
 fs = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket'], timeout=sp['tunWait'], check_certificate=sp['tunChk'])  # type: ignore
 
@@ -73,26 +105,7 @@ if fs.check() is False:
 if thincast_executable:
     logging.debug('Thincast client found, using it')
     logging.debug(f'RDP file params: {sp.get("as_file", "")}')
-    # Check if kind is 'thincast' to handle .rdp file execution
-    if sp.get('as_file', '') != '':
-        logging.debug('Thincast client will use .rdp file')
-        theFile = sp.get('as_file', '')
-        if '{password}' not in theFile:
-            theFile += f'\npassword:s:{sp.get("password", "")}'
-        theFile = theFile.format(
-            address='127.0.0.1:{}'.format(fs.server_address[1])
-        )
-        filename = tools.saveTempFile(theFile)
-        home_dir = os.path.expanduser("~")
-        dest_filename = os.path.join(home_dir, os.path.basename(filename) + '.rdp')
-        shutil.move(filename, filename + '.rdp')
-        shutil.move(filename + '.rdp', dest_filename)
-        subprocess.Popen([thincast_executable, dest_filename])
-        tools.addFileToUnlink(dest_filename)
-        fnc, app = None, None  # Prevent further execution below
-    else:
-        logging.debug('Thincast client will use command line parameters')
-        fnc, app = exec_thincast, thincast_executable
+    fnc, app = exec_thincast, thincast_executable
 else:
     xfreerdp: typing.Optional[str] = tools.findApp('xfreerdp3') or tools.findApp('xfreerdp') or tools.findApp('xfreerdp2')
     udsrdp = tools.findApp('udsrdp')
