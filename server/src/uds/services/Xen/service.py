@@ -37,6 +37,7 @@ import typing
 from django.utils.translation import gettext_noop as _
 from uds.core import exceptions, types
 from uds.core.services.generics.dynamic.service import DynamicService
+from uds.core.services.generics.dynamic.userservice import DynamicUserService
 from uds.core.util import validators
 from uds.core.ui import gui
 
@@ -49,7 +50,6 @@ from .xen import exceptions as xen_exceptions
 if typing.TYPE_CHECKING:
     from .provider import XenProvider
     from uds.core.services.generics.dynamic.publication import DynamicPublication
-    from uds.core.services.generics.dynamic.userservice import DynamicUserService
 
 logger = logging.getLogger(__name__)
 
