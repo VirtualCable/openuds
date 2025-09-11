@@ -29,11 +29,12 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from datetime import datetime
 import logging
 import typing
 
 from django.utils.translation import gettext as _
+from django.utils import timezone
+
 from uds.core import types
 from uds.core.services.generics.dynamic.publication import DynamicPublication
 from uds.core.util import autoserializable
@@ -92,7 +93,7 @@ class XenPublication(DynamicPublication, autoserializable.AutoSerializable):
     def op_create(self) -> None:
         # Name created by DynamicPublication
         comments = _('UDS pub for {0} at {1}').format(
-            self.servicepool_name(), str(datetime.now()).split('.')[0]
+            self.servicepool_name(), str(timezone.localtime()).split('.')[0]
         )
 
         self._task = self.service().start_deploy_of_template(self._name, comments)

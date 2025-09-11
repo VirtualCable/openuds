@@ -39,6 +39,7 @@ import typing
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
 from dateutil import rrule as rules
 
 from .uuid_model import UUIDModel
@@ -156,6 +157,7 @@ class CalendarRule(UUIDModel):
             self.end if self.end else datetime.datetime.max.date(),
             datetime.datetime.max.time(),
         )
+        end = timezone.make_aware(end)
 
         # If at end of interval is requested, displace dstart to match end of interval
         dstart = (

@@ -37,6 +37,7 @@ import typing
 
 from django.db import IntegrityError, models
 from django.utils.translation import gettext as _
+from django.utils import timezone
 
 from uds.core import exceptions, types
 from uds.core.util import ensure, permissions, ui as ui_utils
@@ -81,7 +82,7 @@ class CalendarRules(DetailHandler[CalendarRuleItem]):  # pylint: disable=too-man
             name=item.name,
             comments=item.comments,
             start=item.start,
-            end=datetime.datetime.combine(item.end, datetime.time.max) if item.end else None,
+            end=timezone.make_aware(datetime.datetime.combine(item.end, datetime.time.max)) if item.end else None,
             frequency=item.frequency,
             interval=item.interval,
             duration=item.duration,
@@ -143,9 +144,9 @@ class CalendarRules(DetailHandler[CalendarRuleItem]):  # pylint: disable=too-man
             raise exceptions.rest.RequestError('Repeat must be greater than zero')
 
         # Convert timestamps to datetimes
-        fields['start'] = datetime.datetime.fromtimestamp(fields['start'])
+        fields['start'] = timezone.make_aware(datetime.datetime.fromtimestamp(fields['start']))
         if fields['end'] is not None:
-            fields['end'] = datetime.datetime.fromtimestamp(fields['end'])
+            fields['end'] = timezone.make_aware(datetime.datetime.fromtimestamp(fields['end']))
 
         calendar_rule: CalendarRule
         try:

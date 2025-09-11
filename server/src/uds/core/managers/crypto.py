@@ -33,7 +33,6 @@ import hashlib
 import array
 import uuid
 import codecs
-import datetime
 import struct
 import re
 import string
@@ -54,6 +53,7 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes, ae
 
 
 from django.conf import settings
+from django.utils import timezone
 
 from uds.core.util import singleton
 
@@ -359,7 +359,7 @@ class CryptoManager(metaclass=singleton.Singleton):
 
     def unique(self) -> str:
         return hashlib.sha3_256(
-            (self.random_string(24, True) + datetime.datetime.now().strftime('%H%M%S%f')).encode()
+            (self.random_string(24, True) + timezone.localtime().strftime('%H%M%S%f')).encode()
         ).hexdigest()
 
     def sha(self, value: typing.Union[str, bytes]) -> str:

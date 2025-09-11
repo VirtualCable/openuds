@@ -34,6 +34,8 @@ import enum
 import dataclasses
 import typing
 
+from django.utils import timezone
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -363,8 +365,9 @@ class VMInfo:
     def from_dict(data: dict[str, typing.Any], opaque_ref: str) -> 'VMInfo':
         try:
             snapshot_time = datetime.datetime.fromisoformat(data['snapshot_time'].value)
+            snapshot_time = timezone.make_aware(snapshot_time)
         except ValueError:
-            snapshot_time = datetime.datetime.now()
+            snapshot_time = timezone.localtime()
 
         other_config = typing.cast(dict[str, str], data.get('other_config', {}))
 
@@ -394,7 +397,7 @@ class VMInfo:
             power_state=PowerState.UNKNOW,
             is_control_domain=False,
             is_a_template=False,
-            snapshot_time=datetime.datetime.now(),
+            snapshot_time=timezone.localtime(),
             snapshots=[],
             VIFs=[],
             VBDs=[],
@@ -473,10 +476,12 @@ class TaskInfo:
 
         try:
             created = datetime.datetime.fromisoformat(data['created'].value)
+            created = timezone.make_aware(created)
         except ValueError:
-            created = datetime.datetime.now()
+            created = timezone.localtime()
         try:
             finished = datetime.datetime.fromisoformat(data['finished'].value)
+            finished = timezone.make_aware(finished)
         except ValueError:
             finished = created
 
@@ -500,8 +505,8 @@ class TaskInfo:
             uuid='',
             name='Unknown',
             description='Unknown task',
-            created=datetime.datetime.now(datetime.timezone.utc),
-            finished=datetime.datetime.now(datetime.timezone.utc),
+            created=timezone.now(),
+            finished=timezone.now(),
             status=TaskStatus.UNKNOW,
             result='',
             progress=1.0,

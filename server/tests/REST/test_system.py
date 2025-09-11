@@ -31,6 +31,8 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import datetime
 import logging
 
+from django.utils import timezone
+
 from uds.core.util.stats import counters
 
 from ..utils import rest
@@ -73,7 +75,7 @@ class SystemTest(rest.test.RESTTestCase):
             stats_counters.create_stats_interval_total(
                 id=pool.deployed_service.id,
                 counter_type=[counters.types.stats.CounterType.ASSIGNED, counters.types.stats.CounterType.INUSE, counters.types.stats.CounterType.CACHED],
-                since=datetime.datetime.now() - datetime.timedelta(days=DAYS),
+                since=timezone.localtime() - datetime.timedelta(days=DAYS),
                 days=DAYS,
                 number_per_hour=6,
                 value=lambda x, y: (x % y) * 10,

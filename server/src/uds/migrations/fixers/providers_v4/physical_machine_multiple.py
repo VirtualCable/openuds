@@ -35,6 +35,8 @@ import logging
 import typing
 import pickle  # nosec: pickle is used for legacy data transition
 
+from django.utils import timezone
+
 from uds.core import services, types
 from uds.core.ui import gui
 from uds.core.util import auto_attributes, autoserializable
@@ -126,7 +128,7 @@ class IPMachinesService(services.Service):
         from uds.core.util import fields
 
         FOREVER: typing.Final[datetime.timedelta] = datetime.timedelta(days=365 * 20)
-        now = datetime.datetime.now()
+        now = timezone.localtime()
         server_group = fields.get_server_group_from_field(self.server_group)
 
         for server in server_group.servers.all():

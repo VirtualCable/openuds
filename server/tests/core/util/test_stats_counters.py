@@ -38,13 +38,15 @@ from ...fixtures.stats_counters import create_stats_counters
 # We use commit/rollback
 from ...utils.test import UDSTestCase
 
+from django.utils import timezone
+
 from uds.core.util.stats import counters
 from uds import models
 
-START_DATE = datetime.datetime(2020, 1, 1, 0, 0, 0)
-END_DATE_DAY = datetime.datetime(2020, 1, 2, 0, 0, 0)
-END_DATE_MONTH = datetime.datetime(2020, 2, 1, 0, 0, 0)
-END_DATE_YEAR = datetime.datetime(2021, 1, 1, 0, 0, 0)
+START_DATE = timezone.make_aware(datetime.datetime(2020, 1, 1, 0, 0, 0))
+END_DATE_DAY = timezone.make_aware(datetime.datetime(2020, 1, 2, 0, 0, 0))
+END_DATE_MONTH = timezone.make_aware(datetime.datetime(2020, 2, 1, 0, 0, 0))
+END_DATE_YEAR = timezone.make_aware(datetime.datetime(2021, 1, 1, 0, 0, 0))
 
 class StatsCountersTest(UDSTestCase):
     def setUp(self) -> None:

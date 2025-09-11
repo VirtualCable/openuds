@@ -30,10 +30,10 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import datetime
 import logging
 import typing
 
+from django.utils import timezone
 
 from uds.REST import Handler
 from uds import models
@@ -96,7 +96,7 @@ class Tickets(Handler):
         """
         Returns a result for a Ticket request
         """
-        res = {'result': result, 'date': datetime.datetime.now()}
+        res = {'result': result, 'date': timezone.localtime()}
         if error is not None:
             res['error'] = error
         return res

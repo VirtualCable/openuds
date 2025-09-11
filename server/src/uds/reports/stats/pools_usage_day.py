@@ -36,6 +36,7 @@ import logging
 import typing
 
 from django.utils.translation import gettext, gettext_lazy as _
+from django.utils import timezone
 
 from uds.core.ui import gui
 from uds.core.util.stats import counters
@@ -84,6 +85,7 @@ class CountersPoolAssigned(StatsReport):
             
             # Convert start to datetime
             start_datetime = datetime.datetime.combine(start, datetime.time.min)
+            start_datetime = timezone.make_aware(start_datetime)
 
             for x in counters.enumerate_counters(
                 pool,

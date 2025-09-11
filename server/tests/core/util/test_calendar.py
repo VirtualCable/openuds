@@ -36,6 +36,8 @@ from uds.core.util import calendar
 from uds.models import Calendar
 import datetime
 
+from django.utils import timezone
+
 
 class CalendarTest(UDSTestCase):
 
@@ -50,46 +52,46 @@ class CalendarTest(UDSTestCase):
         # Rule with end
 
         # update 1
-        self.assertFalse(chk.check(datetime.datetime(2014, 9, 1, 21, 0, 0)))
+        self.assertFalse(chk.check(timezone.make_aware(datetime.datetime(2014, 9, 1, 21, 0, 0))))
 
         # update 2
-        self.assertFalse(chk.check(datetime.datetime(2015, 9, 1, 20, 59, 0)))
-        self.assertTrue(chk.check(datetime.datetime(2015, 9, 1, 21, 0, 0)))
+        self.assertFalse(chk.check(timezone.make_aware(datetime.datetime(2015, 9, 1, 20, 59, 0))))
+        self.assertTrue(chk.check(timezone.make_aware(datetime.datetime(2015, 9, 1, 21, 0, 0))))
 
         # update 3
-        self.assertTrue(chk.check(datetime.datetime(2015, 10, 1, 0, 0, 0)))
-        self.assertTrue(chk.check(datetime.datetime(2015, 10, 1, 1, 59, 0)))
-        self.assertFalse(chk.check(datetime.datetime(2015, 10, 1, 2, 0, 0)))
-        self.assertTrue(chk.check(datetime.datetime(2015, 10, 1, 21, 0, 0)))
+        self.assertTrue(chk.check(timezone.make_aware(datetime.datetime(2015, 10, 1, 0, 0, 0))))
+        self.assertTrue(chk.check(timezone.make_aware(datetime.datetime(2015, 10, 1, 1, 59, 0))))
+        self.assertFalse(chk.check(timezone.make_aware(datetime.datetime(2015, 10, 1, 2, 0, 0))))
+        self.assertTrue(chk.check(timezone.make_aware(datetime.datetime(2015, 10, 1, 21, 0, 0))))
 
         # update 4
-        self.assertFalse(chk.check(datetime.datetime(2015, 10, 2, 21, 0, 0)))
+        self.assertFalse(chk.check(timezone.make_aware(datetime.datetime(2015, 10, 2, 21, 0, 0))))
 
         # Rule without end, but with beginning
 
         # update 5
-        self.assertFalse(chk.check(datetime.datetime(2014, 9, 1, 8, 0, 0)))
+        self.assertFalse(chk.check(timezone.make_aware(datetime.datetime(2014, 9, 1, 8, 0, 0))))
 
         # update 6
-        self.assertFalse(chk.check(datetime.datetime(2015, 9, 1, 7, 59, 0)))
-        self.assertTrue(chk.check(datetime.datetime(2015, 9, 1, 8, 0, 0)))
+        self.assertFalse(chk.check(timezone.make_aware(datetime.datetime(2015, 9, 1, 7, 59, 0))))
+        self.assertTrue(chk.check(timezone.make_aware(datetime.datetime(2015, 9, 1, 8, 0, 0))))
 
         # updates... (total is 366, because previous updates has been cached)
         for day in range(365):
             date = datetime.date(2015, 1, 1) + datetime.timedelta(days=day)
 
             self.assertFalse(
-                chk.check(datetime.datetime.combine(date, datetime.time(7, 59, 0)))
+                chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(7, 59, 0))))
             )
             fnc = (
                 self.assertTrue
                 if date >= datetime.date(2015, 9, 1)
                 else self.assertFalse
             )
-            fnc(chk.check(datetime.datetime.combine(date, datetime.time(8, 0, 0))))
-            fnc(chk.check(datetime.datetime.combine(date, datetime.time(19, 59, 0))))
+            fnc(chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(8, 0, 0)))))
+            fnc(chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(19, 59, 0)))))
             self.assertFalse(
-                chk.check(datetime.datetime.combine(date, datetime.time(20, 0, 0)))
+                chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(20, 0, 0))))
             )
 
         self.assertEqual(chk.updates, 366)
@@ -105,21 +107,21 @@ class CalendarTest(UDSTestCase):
         for day in range(30):
             date = datetime.date(2015, 9, day + 1)
             fnc = self.assertTrue if (day + 1) in valid_days else self.assertFalse
-            fnc(chk.check(datetime.datetime.combine(date, datetime.time(10, 0, 0))))
-            fnc(chk.check(datetime.datetime.combine(date, datetime.time(11, 59, 0))))
+            fnc(chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(10, 0, 0)))))
+            fnc(chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(11, 59, 0)))))
 
             self.assertFalse(
-                chk.check(datetime.datetime.combine(date, datetime.time(9, 59, 0)))
+                chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(9, 59, 0))))
             )
             self.assertFalse(
-                chk.check(datetime.datetime.combine(date, datetime.time(12, 0, 0)))
+                chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(12, 0, 0))))
             )
 
         # update 31
-        self.assertFalse(chk.check(datetime.datetime(2015, 8, 25, 10, 0, 0)))
+        self.assertFalse(chk.check(timezone.make_aware(datetime.datetime(2015, 8, 25, 10, 0, 0))))
 
         # update 32
-        self.assertFalse(chk.check(datetime.datetime(2015, 10, 6, 10, 0, 0)))
+        self.assertFalse(chk.check(timezone.make_aware(datetime.datetime(2015, 10, 6, 10, 0, 0))))
 
         # Rule without end
 
@@ -133,13 +135,13 @@ class CalendarTest(UDSTestCase):
                 else self.assertFalse
             )
 
-            fnc(chk.check(datetime.datetime.combine(date, datetime.time(7, 0, 0))))
-            fnc(chk.check(datetime.datetime.combine(date, datetime.time(8, 59, 0))))
+            fnc(chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(7, 0, 0)))))
+            fnc(chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(8, 59, 0)))))
             self.assertFalse(
-                chk.check(datetime.datetime.combine(date, datetime.time(6, 59, 0)))
+                chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(6, 59, 0))))
             )
             self.assertFalse(
-                chk.check(datetime.datetime.combine(date, datetime.time(9, 0, 0)))
+                chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(9, 0, 0))))
             )
 
         self.assertEqual(chk.updates, 365)
@@ -165,23 +167,23 @@ class CalendarTest(UDSTestCase):
                 else self.assertFalse
             )
 
-            fnc(chk.check(datetime.datetime.combine(date, datetime.time(10, 0, 0))))
-            fnc(chk.check(datetime.datetime.combine(date, datetime.time(11, 59, 0))))
+            fnc(chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(10, 0, 0)))))
+            fnc(chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(11, 59, 0)))))
 
             self.assertFalse(
-                chk.check(datetime.datetime.combine(date, datetime.time(9, 59, 0)))
+                chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(9, 59, 0))))
             )
             self.assertFalse(
-                chk.check(datetime.datetime.combine(date, datetime.time(12, 0, 0)))
+                chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(12, 0, 0))))
             )
 
-            fnc2(chk.check(datetime.datetime.combine(date, datetime.time(7, 0, 0))))
-            fnc2(chk.check(datetime.datetime.combine(date, datetime.time(8, 59, 0))))
+            fnc2(chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(7, 0, 0)))))
+            fnc2(chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(8, 59, 0)))))
             self.assertFalse(
-                chk.check(datetime.datetime.combine(date, datetime.time(6, 59, 0)))
+                chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(6, 59, 0))))
             )
             self.assertFalse(
-                chk.check(datetime.datetime.combine(date, datetime.time(9, 0, 0)))
+                chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(9, 0, 0))))
             )
 
         self.assertEqual(chk.updates, 730)
@@ -208,23 +210,23 @@ class CalendarTest(UDSTestCase):
                 else self.assertFalse
             )
 
-            fnc(chk.check(datetime.datetime.combine(date, datetime.time(10, 0, 0))))
-            fnc(chk.check(datetime.datetime.combine(date, datetime.time(11, 59, 0))))
+            fnc(chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(10, 0, 0)))))
+            fnc(chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(11, 59, 0)))))
 
             self.assertFalse(
-                chk.check(datetime.datetime.combine(date, datetime.time(9, 59, 0)))
+                chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(9, 59, 0))))
             )
             self.assertFalse(
-                chk.check(datetime.datetime.combine(date, datetime.time(12, 0, 0)))
+                chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(12, 0, 0))))
             )
 
-            fnc2(chk.check(datetime.datetime.combine(date, datetime.time(7, 0, 0))))
-            fnc2(chk.check(datetime.datetime.combine(date, datetime.time(8, 59, 0))))
+            fnc2(chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(7, 0, 0)))))
+            fnc2(chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(8, 59, 0)))))
             self.assertFalse(
-                chk.check(datetime.datetime.combine(date, datetime.time(6, 59, 0)))
+                chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(6, 59, 0))))
             )
             self.assertFalse(
-                chk.check(datetime.datetime.combine(date, datetime.time(9, 0, 0)))
+                chk.check(timezone.make_aware(datetime.datetime.combine(date, datetime.time(9, 0, 0))))
             )
 
         self.assertEqual(chk.updates, 730)
@@ -234,25 +236,25 @@ class CalendarTest(UDSTestCase):
         chk = calendar.CalendarChecker(cal)
 
         # Minutes
-        self.assertFalse(chk.check(datetime.datetime(2014, 12, 31, 23, 59, 59)))
-        self.assertTrue(chk.check(datetime.datetime(2015, 1, 1, 0, 0, 0)))
-        self.assertTrue(chk.check(datetime.datetime(2015, 1, 1, 0, 1, 59)))
-        self.assertFalse(chk.check(datetime.datetime(2015, 1, 1, 0, 2, 0)))
+        self.assertFalse(chk.check(timezone.make_aware(datetime.datetime(2014, 12, 31, 23, 59, 59))))
+        self.assertTrue(chk.check(timezone.make_aware(datetime.datetime(2015, 1, 1, 0, 0, 0))))
+        self.assertTrue(chk.check(timezone.make_aware(datetime.datetime(2015, 1, 1, 0, 1, 59))))
+        self.assertFalse(chk.check(timezone.make_aware(datetime.datetime(2015, 1, 1, 0, 2, 0))))
 
         # Hours
-        self.assertFalse(chk.check(datetime.datetime(2015, 1, 31, 23, 59, 59)))
-        self.assertTrue(chk.check(datetime.datetime(2015, 2, 1, 0, 0, 0)))
-        self.assertTrue(chk.check(datetime.datetime(2015, 2, 1, 1, 59, 59)))
-        self.assertFalse(chk.check(datetime.datetime(2015, 2, 1, 2, 0, 0)))
+        self.assertFalse(chk.check(timezone.make_aware(datetime.datetime(2015, 1, 31, 23, 59, 59))))
+        self.assertTrue(chk.check(timezone.make_aware(datetime.datetime(2015, 2, 1, 0, 0, 0))))
+        self.assertTrue(chk.check(timezone.make_aware(datetime.datetime(2015, 2, 1, 1, 59, 59))))
+        self.assertFalse(chk.check(timezone.make_aware(datetime.datetime(2015, 2, 1, 2, 0, 0))))
 
         # Days
-        self.assertFalse(chk.check(datetime.datetime(2015, 2, 28, 23, 59, 59)))
-        self.assertTrue(chk.check(datetime.datetime(2015, 3, 1, 0, 0, 0)))
-        self.assertTrue(chk.check(datetime.datetime(2015, 3, 2, 23, 59, 59)))
-        self.assertFalse(chk.check(datetime.datetime(2015, 3, 3, 0, 0, 0)))
+        self.assertFalse(chk.check(timezone.make_aware(datetime.datetime(2015, 2, 28, 23, 59, 59))))
+        self.assertTrue(chk.check(timezone.make_aware(datetime.datetime(2015, 3, 1, 0, 0, 0))))
+        self.assertTrue(chk.check(timezone.make_aware(datetime.datetime(2015, 3, 2, 23, 59, 59))))
+        self.assertFalse(chk.check(timezone.make_aware(datetime.datetime(2015, 3, 3, 0, 0, 0))))
 
         # Weeks
-        self.assertFalse(chk.check(datetime.datetime(2015, 3, 31, 23, 59, 59)))
-        self.assertTrue(chk.check(datetime.datetime(2015, 4, 1, 8, 0, 0)))
-        self.assertTrue(chk.check(datetime.datetime(2015, 4, 15, 7, 59, 59)))
-        self.assertFalse(chk.check(datetime.datetime(2015, 4, 15, 8, 0, 0)))
+        self.assertFalse(chk.check(timezone.make_aware(datetime.datetime(2015, 3, 31, 23, 59, 59))))
+        self.assertTrue(chk.check(timezone.make_aware(datetime.datetime(2015, 4, 1, 8, 0, 0))))
+        self.assertTrue(chk.check(timezone.make_aware(datetime.datetime(2015, 4, 15, 7, 59, 59))))
+        self.assertFalse(chk.check(timezone.make_aware(datetime.datetime(2015, 4, 15, 8, 0, 0))))

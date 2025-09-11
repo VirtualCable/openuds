@@ -35,6 +35,8 @@ import logging
 import time
 import typing
 
+from django.utils import timezone
+
 from uds.core import types
 from uds.core.util import singleton
 from uds.core.util.config import GlobalConfig
@@ -183,6 +185,7 @@ class StatsManager(metaclass=singleton.Singleton):
             to = sql_now()
         elif isinstance(to, int):
             to = datetime.datetime.fromtimestamp(to)
+            to = timezone.make_aware(to)
 
         if since is None:
             if points is None:
@@ -190,6 +193,7 @@ class StatsManager(metaclass=singleton.Singleton):
             since = to - datetime.timedelta(seconds=interval_type.seconds() * points)
         elif isinstance(since, int):
             since = datetime.datetime.fromtimestamp(since)
+            since = timezone.make_aware(since)
 
         # If points has any value, ensure since..to is points long
         if points is not None:

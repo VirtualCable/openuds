@@ -30,9 +30,10 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 
+from django.utils import timezone
+
 from uds import models
 from uds.core import types
-import datetime
 
 from ..utils import helpers
 
@@ -52,7 +53,7 @@ def create_server(
         ip=ip or '127.0.0.1',
         hostname=helpers.random_string(),
         listen_port=listen_port,
-        stamp=datetime.datetime.now(),
+        stamp=timezone.localtime(),
         type=type,
         subtype=subtype or '',
         os_type=types.os.KnownOS.WINDOWS.os_name(),
@@ -81,7 +82,7 @@ def create_server_group(
     )
     for _ in range(num_servers):
         server = create_server(type, subtype=subtype, version=version, ip=ip, listen_port=listen_port)
-        server.last_ping = datetime.datetime.now()
+        server.last_ping = timezone.localtime()
         rsg.servers.add(server)
 
     return rsg

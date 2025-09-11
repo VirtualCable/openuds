@@ -37,6 +37,7 @@ import datetime
 import time
 
 from django.db import connection
+from django.utils import timezone
 
 from uds.core import consts
 from uds.core.managers.crypto import CryptoManager
@@ -80,17 +81,17 @@ class TimeTrack:
                 else 'SELECT CURRENT_TIMESTAMP'
             )
             cursor.execute(sentence)
-            date = (cursor.fetchone() or [datetime.datetime.now()])[0]
+            date = (cursor.fetchone() or [timezone.localtime()])[0]
         else:
             date = (
-                datetime.datetime.now()
+                timezone.localtime()
             )  # If not know how to get database datetime, returns local datetime (this is fine for sqlite, which is local)
 
         return date
 
     @staticmethod
     def sql_now() -> datetime.datetime:
-        now = datetime.datetime.now()
+        now = timezone.localtime()
         with TimeTrack.lock:
             diff = now - TimeTrack.last_check
             # If in last_check is in the future, or more than CACHE_TIME_TIMEOUT seconds ago, we need to refresh
@@ -104,6 +105,8 @@ class TimeTrack:
         the_time = TimeTrack.cached_time + (now - TimeTrack.last_check)
         # Keep only cent of second precision
         the_time = the_time.replace(microsecond=int(the_time.microsecond / 10000) * 10000)
+        if timezone.is_naive(the_time):
+            result = timezone.make_aware(the_time)
         return the_time
 
 

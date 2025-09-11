@@ -39,6 +39,7 @@ import logging
 import bitarray
 
 from django.core.cache import caches
+from django.utils import timezone
 
 from uds.core.util.model import sql_now
 
@@ -77,12 +78,14 @@ class CalendarChecker:
         data_date = dtime.date()
 
         start = datetime.datetime.combine(data_date, datetime.datetime.min.time())
+        start = timezone.make_aware(start)
         end = datetime.datetime.combine(data_date, datetime.datetime.max.time())
+        end = timezone.make_aware(end)
 
         for rule in self.calendar.rules.all():
             rr = rule.as_rrule()
 
-            r_end = datetime.datetime.combine(rule.end, datetime.datetime.max.time()) if rule.end else None
+            r_end = timezone.make_aware(datetime.datetime.combine(rule.end, datetime.datetime.max.time())) if rule.end else None
 
             duration_in_minutes = rule.duration_as_minutes
             frequency_in_minutes = rule.frequency_as_minutes

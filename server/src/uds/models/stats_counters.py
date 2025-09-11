@@ -37,6 +37,7 @@ import datetime
 import logging
 
 from django.db import models
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
@@ -164,4 +165,4 @@ class StatsCounters(models.Model):
         #     yield (int(i['group_by_stamp']), i['value'])
 
     def __str__(self) -> str:
-        return f'{datetime.datetime.fromtimestamp(self.stamp)} - {self.owner_id}:{self.owner_type}:{self.counter_type} {self.value}'
+        return f'{timezone.make_aware(datetime.datetime.fromtimestamp(self.stamp))} - {self.owner_id}:{self.owner_type}:{self.counter_type} {self.value}'

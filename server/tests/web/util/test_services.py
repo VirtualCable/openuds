@@ -30,11 +30,12 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import datetime
 import itertools
 import random
 import typing
 from unittest import mock
+
+from django.utils import timezone
 
 from uds import models
 from uds.core import consts, types
@@ -95,7 +96,7 @@ class TestGetServicesData(UDSTransactionTestCase):
             )
 
         data = services.get_services_info_dict(self.request)
-        now = datetime.datetime.now()
+        now = timezone.localtime()
         # Will return this:
         #  return {
         #     'services': services,
@@ -181,7 +182,7 @@ class TestGetServicesData(UDSTransactionTestCase):
             )
 
         data = services.get_services_info_dict(self.request)
-        now = datetime.datetime.now()
+        now = timezone.localtime()
 
         result_services: typing.Final[list[dict[str, typing.Any]]] = data['services']
         self.assertEqual(len(result_services), 10)

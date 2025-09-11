@@ -31,13 +31,13 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import codecs
-import datetime
 import logging
 import typing
 
 from weasyprint import HTML, CSS, default_url_fetcher  # pyright: ignore[reportUnknownVariableType]
 
 from django.utils.translation import gettext, gettext_noop as _
+from django.utils import timezone
 from django.template import loader
 
 from uds.core.ui import UserInterface, gui
@@ -178,7 +178,7 @@ class Report(UserInterface):
             .replace('{water}', water or 'UDS Report')
             .replace(
                 '{printed}',
-                _('Printed in {now:%Y, %b %d} at {now:%H:%M}').format(now=datetime.datetime.now()),
+                _('Printed in {now:%Y, %b %d} at {now:%H:%M}').format(now=timezone.localtime()),
             )
         )
 

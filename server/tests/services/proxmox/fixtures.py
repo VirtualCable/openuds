@@ -36,10 +36,11 @@ import copy
 import functools
 import random
 import typing
-import datetime
 
 from unittest import mock
 import uuid
+
+from django.utils import timezone
 
 from uds.core import types, environment
 from uds.core.ui.user_interface import gui
@@ -199,7 +200,7 @@ DEF_UPID: prox_types.ExecResult = prox_types.ExecResult(
     node=DEF_NODES[0].name,
     pid=1,
     pstart=1,
-    starttime=datetime.datetime.now(),
+    starttime=timezone.localtime(),
     type='type',
     vmid=DEF_VMS_INFO[0].id,
     user='user',
@@ -218,7 +219,7 @@ DEF_SNAPSHOTS_INFO: list[prox_types.SnapshotInfo] = [
         name=f'snap_name_{i}',
         description=f'snap desription{i}',
         parent=f'snap_parent_{i}',
-        snaptime=int(datetime.datetime.now().timestamp()),
+        snaptime=int(timezone.localtime().timestamp()),
         vmstate=bool(i % 2),
     )
     for i in range(10)
@@ -228,7 +229,7 @@ DEF_TASK_STATUS = prox_types.TaskStatus(
     node=DEF_NODES[0].name,
     pid=1,
     pstart=1,
-    starttime=datetime.datetime.now(),
+    starttime=timezone.localtime(),
     type='type',
     status=prox_types.VMStatus.STOPPED,
     exitstatus='OK',

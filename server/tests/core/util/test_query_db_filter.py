@@ -1,6 +1,8 @@
 from datetime import datetime
 import logging
 
+from django.utils import timezone
+
 from uds.models import Scheduler
 from uds.core import consts
 from uds.core.types.states import State
@@ -18,8 +20,8 @@ class DBQueryTests(UDSTestCase):
         Scheduler.objects.create(
             name='daily_job',
             frecuency=Scheduler.DAY,
-            last_execution=datetime(2025, 8, 13, 12, 0),
-            next_execution=datetime(2025, 8, 14, 12, 0),
+            last_execution=timezone.make_aware(datetime(2025, 8, 13, 12, 0)),
+            next_execution=timezone.make_aware(datetime(2025, 8, 14, 12, 0)),
             owner_server='server1',
             state=State.FOR_EXECUTE,
         )
@@ -27,8 +29,8 @@ class DBQueryTests(UDSTestCase):
         Scheduler.objects.create(
             name='hourly_job',
             frecuency=Scheduler.HOUR,
-            last_execution=datetime(2025, 8, 13, 19, 0),
-            next_execution=datetime(2025, 8, 13, 20, 0),
+            last_execution=timezone.make_aware(datetime(2025, 8, 13, 19, 0)),
+            next_execution=timezone.make_aware(datetime(2025, 8, 13, 20, 0)),
             owner_server='server2',
             state=State.RUNNING,
         )
@@ -36,8 +38,8 @@ class DBQueryTests(UDSTestCase):
         Scheduler.objects.create(
             name='weekly_job',
             frecuency=Scheduler.DAY * 7,
-            last_execution=datetime(2025, 8, 7, 12, 0),
-            next_execution=datetime(2025, 8, 14, 12, 0),
+            last_execution=timezone.make_aware(datetime(2025, 8, 7, 12, 0)),
+            next_execution=timezone.make_aware(datetime(2025, 8, 14, 12, 0)),
             owner_server='server1',
             state=State.FOR_EXECUTE,
         )
@@ -45,7 +47,7 @@ class DBQueryTests(UDSTestCase):
         Scheduler.objects.create(
             name='long_job',
             frecuency=Scheduler.DAY * 30,
-            last_execution=datetime(2025, 7, 12, 12, 0),
+            last_execution=timezone.make_aware(datetime(2025, 7, 12, 12, 0)),
             next_execution=consts.NEVER,
             owner_server='server3',
             state=State.LAUNCHING,
@@ -193,8 +195,8 @@ class DBQueryTests(UDSTestCase):
         Scheduler.objects.create(
             name='  hourly_job  ',
             frecuency=Scheduler.HOUR,
-            last_execution=datetime(2025, 8, 13, 21, 0),
-            next_execution=datetime(2025, 8, 13, 22, 0),
+            last_execution=timezone.make_aware(datetime(2025, 8, 13, 21, 0)),
+            next_execution=timezone.make_aware(datetime(2025, 8, 13, 22, 0)),
             owner_server='server4',
             state=State.FINISHED,
         )

@@ -43,8 +43,10 @@ from uds.core.util import config
 from ...utils.test import UDSTestCase
 from ...fixtures import stats_counters as fixtures_stats_counters
 
+from django.utils import timezone
 
-START_DATE = datetime.datetime(2009, 12, 4, 0, 0, 0)
+
+START_DATE = timezone.make_aware(datetime.datetime(2009, 12, 4, 0, 0, 0))
 # Some random values,
 DAYS = 4
 NUMBER_PER_HOUR = 6  # Can be any value divisor of 3600

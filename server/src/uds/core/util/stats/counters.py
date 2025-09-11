@@ -35,6 +35,7 @@ import collections.abc
 
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Model
+from django.utils import timezone
 
 from uds.core.managers.stats import StatsManager
 from uds.core.types.stats import AccumStat
@@ -206,13 +207,13 @@ def enumerate_counters(
         counter_type,
         owner_ids,
         since or consts.NEVER,
-        to or datetime.datetime.now(),
+        to or timezone.localtime(),
         interval,
         max_intervals,
         limit,
         use_max,
     ):
-        yield (datetime.datetime.fromtimestamp(i[0]), i[1])
+        yield (timezone.make_aware(datetime.datetime.fromtimestamp(i[0])), i[1])
 
 
 def enumerate_accumulated_counters(
