@@ -118,7 +118,7 @@ class StatsAcummulatorTest(UDSTestCase):
         day_stats = models.StatsCountersAccum.objects.filter(
             interval_type=models.StatsCountersAccum.IntervalType.DAY
         )
-        total_day_stats = DAYS * NUMBER_OF_POOLS * len(COUNTERS_TYPES)
+        total_day_stats = (DAYS + 1) * NUMBER_OF_POOLS * len(COUNTERS_TYPES)
         self.assertEqual(day_stats.count(), total_day_stats)
 
         # Calculate sum of stats, by hour
