@@ -203,7 +203,10 @@ class TRDPTransport(BaseRDPTransport):
                 }
             )
         elif os.os == types.os.KnownOS.LINUX:
-            r.custom_parameters = self.lnx_custom_parameters.value
+            if self.lnx_use_rdp_file.as_bool():
+                r.custom_parameters = self.wnd_custom_parameters.value
+            else:
+                r.custom_parameters = self.lnx_custom_parameters.value
             sp.update(
                 {
                     'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
