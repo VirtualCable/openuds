@@ -36,7 +36,6 @@ XenAPI
 PyJWT
 pylibmc
 gunicorn
-python-dateutil
 pywinrm
 pywinrm[credssp]
 whitenoise
@@ -44,7 +43,6 @@ setproctitle
 openpyxl
 boto3
 uvicorn[standard]
-numpy
 pandas
 xxhash
 psutil
@@ -54,7 +52,6 @@ qrcode
 qrcode[pil]
 art
 # For tunnel
-dnspython
 aiohttp
 uvloop
 argon2-cffi
