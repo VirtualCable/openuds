@@ -98,6 +98,8 @@ class RDPTransport(BaseRDPTransport):
     mac_custom_parameters = BaseRDPTransport.mac_custom_parameters
     wnd_custom_parameters = BaseRDPTransport.wnd_custom_parameters
 
+    lnx_use_rdp_file = BaseRDPTransport.lnx_use_rdp_file
+
     def get_transport_script(  # pylint: disable=too-many-locals
         self,
         userservice: 'models.UserService',
@@ -165,12 +167,15 @@ class RDPTransport(BaseRDPTransport):
                 }
             )
         elif os.os == types.os.KnownOS.LINUX:
-            r.custom_parameters = self.lnx_custom_parameters.value
+            if self.lnx_use_rdp_file.as_bool():
+                r.custom_parameters = self.wnd_custom_parameters.value
+            else:
+                r.custom_parameters = self.lnx_custom_parameters.value
             sp.update(
                 {
                     'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
                     'address': r.address,
-                    'as_file': r.as_file,
+                    'as_file': r.as_file if self.lnx_use_rdp_file.as_bool() else '',
                 }
             )
         elif os.os == types.os.KnownOS.MAC_OS:

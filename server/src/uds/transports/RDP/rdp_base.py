@@ -297,6 +297,14 @@ class BaseRDPTransport(transports.Transport):
         tab='Linux Client',
         old_field_name='alsa',
     )
+    lnx_use_rdp_file = gui.CheckBoxField(
+        label=_('Use RDP file for connections'),
+        order=42,
+        tooltip=_('If marked, an RDP file will be used for connections with Thincast or xfreerdp on Linux.'),
+        tab='Linux Client',
+        default=True,
+        old_field_name='thincastRdpFile',
+    )
     lnx_printer_string = gui.TextField(
         label=_('Printer string'),
         order=43,
