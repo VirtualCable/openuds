@@ -145,33 +145,44 @@ if kind == 'msrdc':
 
 
 if kind == 'thincast':
-    # Fix resolution...
-    try:
-        xfparms = fix_resolution()
-    except Exception as e:
-        xfparms = list(map(lambda x: x.replace('#WIDTH#', '1400').replace('#HEIGHT#', '800'), sp['as_new_xfreerdp_params']))  # type: ignore
+    if sp['as_file']:  # type: ignore
+        logger.debug('Opening Thincast with RDP file %s', sp['as_file'])
+        theFile = sp['as_file']  # type: ignore
+        filename = tools.saveTempFile(theFile)
+        # # add to file the password
+        # filename_handle = open(filename, 'a')
+        # if sp.get('password', ''):  # type: ignore
+        #     filename_handle.write(f'password 51:b:{sp["password"]}\n')  # type: ignore
+        # filename_handle.close()  
+        # Rename as .rdp, so open recognizes it
+        shutil.move(filename, filename + '.rdp')
+        params = [
+            'open',
+            '-a',
+            executable,
+            filename + '.rdp', # type: ignore
+        ]
+        logger.debug('Opening Thincast with RDP file with params: %s', ' '.join(params))
+        tools.addTaskToWait(
+            subprocess.Popen(params) # type: ignore
+        )
+       # tools.addFileToUnlink(filename + '.rdp')
+    else:
+        logger.debug('Opening Thincast with xfreerdp parameters')
+        # Fix resolution...
+        try:
+            xfparms = fix_resolution()
+        except Exception as e:
+            xfparms = list(map(lambda x: x.replace('#WIDTH#', '1400').replace('#HEIGHT#', '800'), sp['as_new_xfreerdp_params']))  # type: ignore
 
-    params = [
-        'open',
-        '-a',
-        executable,
-        '--args',
-    ] + [os.path.expandvars(i) for i in xfparms + ['/v:{}'.format(sp['address'])]]  # type: ignore
-    #logger.debug('Executing: %s', ' '.join(params))
-    subprocess.Popen(params)
-    # theFile = sp['as_file']  # type: ignore
-    # filename = tools.saveTempFile(theFile)
-    # # Rename as .rdp, so open recognizes it
-    # shutil.move(filename, filename + '.rdp')
-    # logger.debug('Opening Thincast with file %s', filename + '.rdp')
-    # tools.addTaskToWait(
-    #     subprocess.Popen([
-    #         'open',
-    #         '-a',
-    #         executable,
-    #         filename + '.rdp',
-    #     ])
-    # )
+        params = [
+            'open',
+            '-a',
+            executable,
+            '--args',
+        ] + [os.path.expandvars(i) for i in xfparms + ['/v:{}'.format(sp['address'])]]  # type: ignore
+        #logger.debug('Executing: %s', ' '.join(params))
+        subprocess.Popen(params)
 else:  # for now, both xfreerdp or udsrdp
     # Fix resolution...
     try:
