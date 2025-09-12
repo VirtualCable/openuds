@@ -46,7 +46,7 @@ msrdc_list = [
 ]
 
 thincast_list = [
-    '/Applications/Thincast Remote Desktop Client.app/Contents/MacOS/Thincast Remote Desktop Client',
+    '/Applications/Thincast Remote Desktop Client.app',
 ]
 
 xfreerdp_list = [
@@ -63,7 +63,7 @@ kind = ''
 # Check first thincast (better option right now, prefer it)
 logger.debug('Searching for Thincast in: %s', thincast_list)
 for thincast in thincast_list:
-    if os.path.isfile(thincast):
+    if os.path.isdir(thincast):
         logger.debug('Thincast found: %s', thincast)
         executable = thincast
         kind = 'thincast'
@@ -143,13 +143,36 @@ if kind == 'msrdc':
     )
     tools.addFileToUnlink(filename + '.rdp')
 
+
 if kind == 'thincast':
-        theFile = sp['as_file']  # type: ignore
-        filename = tools.saveTempFile(theFile)
-        shutil.move(filename, filename + '.rdp')
-        subprocess.Popen([executable, filename + '.rdp'])
-        tools.addFileToUnlink(filename + '.rdp')
-else:  # for now, both xfreerdp and thincast or udsrdp
+    # Fix resolution...
+    try:
+        xfparms = fix_resolution()
+    except Exception as e:
+        xfparms = list(map(lambda x: x.replace('#WIDTH#', '1400').replace('#HEIGHT#', '800'), sp['as_new_xfreerdp_params']))  # type: ignore
+
+    params = [
+        'open',
+        '-a',
+        executable,
+        '--args',
+    ] + [os.path.expandvars(i) for i in xfparms + ['/v:{}'.format(sp['address'])]]  # type: ignore
+    #logger.debug('Executing: %s', ' '.join(params))
+    subprocess.Popen(params)
+    # theFile = sp['as_file']  # type: ignore
+    # filename = tools.saveTempFile(theFile)
+    # # Rename as .rdp, so open recognizes it
+    # shutil.move(filename, filename + '.rdp')
+    # logger.debug('Opening Thincast with file %s', filename + '.rdp')
+    # tools.addTaskToWait(
+    #     subprocess.Popen([
+    #         'open',
+    #         '-a',
+    #         executable,
+    #         filename + '.rdp',
+    #     ])
+    # )
+else:  # for now, both xfreerdp or udsrdp
     # Fix resolution...
     try:
         xfparms = fix_resolution()
@@ -157,4 +180,5 @@ else:  # for now, both xfreerdp and thincast or udsrdp
         xfparms = list(map(lambda x: x.replace('#WIDTH#', '1400').replace('#HEIGHT#', '800'), sp['as_new_xfreerdp_params']))  # type: ignore
 
     params = [os.path.expandvars(i) for i in [executable] + xfparms + ['/v:{}'.format(sp['address'])]]  # type: ignore
+    logger.debug('Executing: %s', ' '.join(params))
     subprocess.Popen(params)
