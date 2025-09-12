@@ -143,12 +143,12 @@ if kind == 'msrdc':
     )
     tools.addFileToUnlink(filename + '.rdp')
 
-# if kind == 'thincast':
-#         theFile = sp['as_file']  # type: ignore
-#         filename = tools.saveTempFile(theFile)
-#         shutil.move(filename, filename + '.rdp')
-#         subprocess.Popen([executable, filename + '.rdp'])
-#         tools.addFileToUnlink(filename + '.rdp')
+if kind == 'thincast':
+        theFile = sp['as_file']  # type: ignore
+        filename = tools.saveTempFile(theFile)
+        shutil.move(filename, filename + '.rdp')
+        subprocess.Popen([executable, filename + '.rdp'])
+        tools.addFileToUnlink(filename + '.rdp')
 else:  # for now, both xfreerdp and thincast or udsrdp
     # Fix resolution...
     try:
