@@ -295,8 +295,8 @@ class RDPFile:
         # Camera?
         # res += 'camerastoredirect:s:*\n'
 
-        # If target is windows or linux, add customParameters
-        if self.target == types.os.KnownOS.WINDOWS or self.target == types.os.KnownOS.LINUX:
+        # If target is windows or linux or macOS, add customParameters
+        if self.target == types.os.KnownOS.WINDOWS or self.target == types.os.KnownOS.LINUX or self.target == types.os.KnownOS.MAC_OS:
             if self.custom_parameters and self.custom_parameters.strip() != '':
                 res += self.custom_parameters.strip() + '\n'
 

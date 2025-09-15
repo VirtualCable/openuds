@@ -99,6 +99,7 @@ class RDPTransport(BaseRDPTransport):
     wnd_custom_parameters = BaseRDPTransport.wnd_custom_parameters
 
     lnx_use_rdp_file = BaseRDPTransport.lnx_use_rdp_file
+    mac_use_rdp_file = BaseRDPTransport.mac_use_rdp_file
 
     def get_transport_script(  # pylint: disable=too-many-locals
         self,
@@ -184,7 +185,7 @@ class RDPTransport(BaseRDPTransport):
                 {
                     'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
                     'as_rdp_url': r.as_rdp_url if self.mac_allow_msrdc.as_bool() else '',
-                    'as_file': r.as_file if self.mac_allow_msrdc.as_bool() else '',
+                    'as_file': r.as_file if self.mac_use_rdp_file.as_bool() else '',
                     'address': r.address,
                 }
             )
