@@ -79,12 +79,12 @@ for thincast in thincast_list:
 if not executable:
     logger.debug('Searching for xfreerdp in: %s', xfreerdp_list)
     for xfreerdp_executable in xfreerdp_list:
-        xfreerdp: str = tools.findApp(xfreerdp_executable)
-        if xfreerdp and os.path.isfile(xfreerdp):
-            executable = xfreerdp
+        xfreerdp: str = tools.findApp(xfreerdp_executable) # type: ignore
+        if xfreerdp and os.path.isfile(xfreerdp): # type: ignore
+            executable = xfreerdp # type: ignore
             # Ensure that the kind is 'xfreerdp' and not 'xfreerdp3' or 'xfreerdp2'
             kind = xfreerdp_executable.rstrip('3').rstrip('2')
-            logger.debug('Found xfreerdp client: %s (kind: %s)', xfreerdp, kind)
+            logger.debug('Found xfreerdp client: %s (kind: %s)', xfreerdp, kind) # type: ignore
             break
     else:
         logger.debug('Searching for Microsoft Remote Desktop in: %s', msrdc_list)
@@ -129,53 +129,84 @@ if not executable:
 
 # Open tunnel
 fs = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket'], timeout=sp['tunWait'], check_certificate=sp['tunChk'])  # type: ignore
-address = '127.0.0.1:{}'.format(fs.server_address[1])
+address = '127.0.0.1:{}'.format(fs.server_address[1])  # type: ignore
 
 # Check that tunnel works..
-if fs.check() is False:
+if fs.check() is False: # type: ignore
     logger.debug('Tunnel check failed, could not connect to tunnel server')
     raise Exception('<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>')
 else:
     logger.debug('Tunnel check succeeded, connection to tunnel server established')
 
-logger.debug('Using %s client of kind %s', executable, kind)
+logger.debug('Using %s client of kind %s', executable, kind) # type: ignore
 
 if kind == 'msrdc':
     theFile = theFile = sp['as_file'].format(address=address)  # type: ignore
 
-    filename = tools.saveTempFile(theFile)
+    filename = tools.saveTempFile(theFile) # type: ignore
     # Rename as .rdp, so open recognizes it
-    shutil.move(filename, filename + '.rdp')
+    shutil.move(filename, filename + '.rdp') # type: ignore
 
     # tools.addTaskToWait(subprocess.Popen(['open', filename + '.rdp']))
     # Force MSRDP to be used with -a (thanks to Dani Torregrosa @danitorregrosa (https://github.com/danitorregrosa) )
-    tools.addTaskToWait(
+    tools.addTaskToWait( # type: ignore
         subprocess.Popen(
             [
                 'open',
                 '-a',
                 executable,
                 filename + '.rdp',
-            ]
-        )
+            ] # type: ignore
+        )  
     )
-    tools.addFileToUnlink(filename + '.rdp')
+    tools.addFileToUnlink(filename + '.rdp') # type: ignore
 
 if kind == 'thincast':
-    # Fix resolution...
-    try:
-        xfparms = fix_resolution()
-    except Exception as e:
-        xfparms = list(map(lambda x: x.replace('#WIDTH#', '1400').replace('#HEIGHT#', '800'), sp['as_new_xfreerdp_params']))  # type: ignore
+    if sp['as_file']:  # type: ignore
+        logger.debug('Opening Thincast with RDP file %s', sp['as_file']) # type: ignore
+        theFile = sp['as_file'] # type: ignore
+        theFile = theFile.format( # type: ignore
+            address='{}'.format(address)
+        )  
+        filename = tools.saveTempFile(theFile) # type: ignore
 
-    params = [
-        'open',
-        '-a',
-        executable,
-        '--args',
-    ] + [os.path.expandvars(i) for i in xfparms + ['/v:{}'.format(address)]]  # type: ignore
-    #logger.debug('Executing: %s', ' '.join(params))
-    subprocess.Popen(params)
+        # filename_handle = open(filename, 'a') # type: ignore
+        # if sp.get('password', ''):  # type: ignore
+        #     filename_handle.write(f'password 51:b:{sp["password"]}\n')  # type: ignore
+        # filename_handle.close()
+
+        # Rename as .rdp, so open recognizes it
+        shutil.move(filename, filename + '.rdp') # type: ignore
+        # show filename content in log for debug
+        with open(filename + '.rdp', 'r') as f: # type: ignore
+            logger.debug('RDP file content:\n%s', f.read()) # type: ignore 
+        params = [ # type: ignore
+            'open',
+            '-a',
+            executable,
+            filename + '.rdp', # type: ignore
+        ]
+        logger.debug('Opening Thincast with RDP file with params: %s', ' '.join(params)) # type: ignore
+        tools.addTaskToWait( # type: ignore
+            subprocess.Popen(params) # type: ignore
+        )
+        tools.addFileToUnlink(filename + '.rdp') # type: ignore
+    else:
+        logger.debug('Opening Thincast with xfreerdp parameters')
+        # Fix resolution...
+        try:
+            xfparms = fix_resolution()
+        except Exception as e:
+            xfparms = list(map(lambda x: x.replace('#WIDTH#', '1400').replace('#HEIGHT#', '800'), sp['as_new_xfreerdp_params']))  # type: ignore
+
+        params = [ # type: ignore
+            'open',
+            '-a',
+            executable,
+            '--args',
+        ] + [os.path.expandvars(i) for i in xfparms + ['/v:{}'.format(address)]]  # type: ignore
+        #logger.debug('Executing: %s', ' '.join(params))
+        subprocess.Popen(params) # type: ignore
 else:  # freerdp or udsrdp
     # Fix resolution...
     try:
@@ -183,5 +214,5 @@ else:  # freerdp or udsrdp
     except Exception as e:
         xfparms = list(map(lambda x: x.replace('#WIDTH#', '1400').replace('#HEIGHT#', '800'), sp['as_new_xfreerdp_params']))  # type: ignore
 
-    params = [os.path.expandvars(i) for i in [executable] + xfparms + ['/v:{}'.format(address)]]
-    subprocess.Popen(params)
+    params = [os.path.expandvars(i) for i in [executable] + xfparms + ['/v:{}'.format(address)]] # type: ignore
+    subprocess.Popen(params) # type: ignore

@@ -73,11 +73,11 @@ if not executable:
     logger.debug('Searching for xfreerdp in: %s', xfreerdp_list)
     found_xfreerdp = False
     for xfreerdp_executable in xfreerdp_list:
-        xfreerdp = tools.findApp(xfreerdp_executable)
-        logger.debug('tools.findApp(%s) result: %s', xfreerdp_executable, xfreerdp)
-        if xfreerdp and os.path.isfile(xfreerdp):
-            logger.debug('xfreerdp found: %s', xfreerdp)
-            executable = xfreerdp
+        xfreerdp = tools.findApp(xfreerdp_executable) # type: ignore
+        logger.debug('tools.findApp(%s) result: %s', xfreerdp_executable, xfreerdp) # type: ignore
+        if xfreerdp and os.path.isfile(xfreerdp): # type: ignore
+            logger.debug('xfreerdp found: %s', xfreerdp) # type: ignore
+            executable = xfreerdp # type: ignore
             # Ensure that the kind is 'xfreerdp' and not 'xfreerdp3' or 'xfreerdp2'
             kind = xfreerdp_executable.rstrip('3').rstrip('2')
             break
@@ -121,52 +121,73 @@ if not executable:
         '''
     )
 
-logger.debug('Using %s client of kind %s', executable, kind)
+logger.debug('Using %s client of kind %s', executable, kind) # type: ignore
 
 if kind == 'msrdc':
     theFile = sp['as_file']  # type: ignore
-    filename = tools.saveTempFile(theFile)
+    filename = tools.saveTempFile(theFile) # type: ignore
     # Rename as .rdp, so open recognizes it
-    shutil.move(filename, filename + '.rdp')
+    shutil.move(filename, filename + '.rdp') # type: ignore
 
     # tools.addTaskToWait(subprocess.Popen(['open', filename + '.rdp']))
     # Force MSRDP to be used with -a (thanks to Dani Torregrosa @danitorregrosa (https://github.com/danitorregrosa))
-    tools.addTaskToWait(
+    tools.addTaskToWait( # type: ignore
         subprocess.Popen(
             [
                 'open',
                 '-a',
                 executable,
                 filename + '.rdp',
-            ]
+            ] # type: ignore
         )
     )
-    tools.addFileToUnlink(filename + '.rdp')
+    tools.addFileToUnlink(filename + '.rdp') # type: ignore
 
 
 if kind == 'thincast':
     if sp['as_file']:  # type: ignore
-        logger.debug('Opening Thincast with RDP file %s', sp['as_file'])
+        logger.debug('Opening Thincast with RDP file %s', sp['as_file']) # type: ignore
         theFile = sp['as_file']  # type: ignore
-        filename = tools.saveTempFile(theFile)
-        # # add to file the password
-        # filename_handle = open(filename, 'a')
+        filename = tools.saveTempFile(theFile) # type: ignore
+
+        # # add to file the encrypted password for RDP
+        # import win32crypt
+        # import binascii
+
+        # def encrypt_password_rdp(plain_text_password):
+        #     # Convert password to UTF-16-LE (Unicode string used by RDP)
+        #     data = plain_text_password.encode('utf-16-le')
+        #     # Encrypt with DPAPI (CryptProtectData)
+        #     encrypted_data = win32crypt.CryptProtectData(data, None, None, None, None, 0)
+        #     # Convert bytes to hexadecimal for RDP
+        #     encrypted_hex = binascii.hexlify(encrypted_data).decode('ascii')
+        #     return encrypted_hex
+
+        # filename_handle = open(filename, 'a') # type: ignore
         # if sp.get('password', ''):  # type: ignore
-        #     filename_handle.write(f'password 51:b:{sp["password"]}\n')  # type: ignore
-        # filename_handle.close()  
+        #     encrypted_password = encrypt_password_rdp(sp["password"])
+        #     filename_handle.write(f'password 51:b:{encrypted_password}\n')  # type: ignore
+        # filename_handle.close()
+
+        # add to file the password without encryption (Thincast will encrypt it)
+        filename_handle = open(filename, 'a') # type: ignore
+        if sp.get('password', ''):  # type: ignore
+            filename_handle.write(f'password 51:b:{sp["password"]}\n')  # type: ignore
+        filename_handle.close()
+
         # Rename as .rdp, so open recognizes it
-        shutil.move(filename, filename + '.rdp')
-        params = [
+        shutil.move(filename, filename + '.rdp') # type: ignore
+        params = [ # type: ignore
             'open',
             '-a',
             executable,
             filename + '.rdp', # type: ignore
         ]
-        logger.debug('Opening Thincast with RDP file with params: %s', ' '.join(params))
-        tools.addTaskToWait(
+        logger.debug('Opening Thincast with RDP file with params: %s', ' '.join(params)) # type: ignore
+        tools.addTaskToWait( # type: ignore
             subprocess.Popen(params) # type: ignore
         )
-       # tools.addFileToUnlink(filename + '.rdp')
+        tools.addFileToUnlink(filename + '.rdp') # type: ignore
     else:
         logger.debug('Opening Thincast with xfreerdp parameters')
         # Fix resolution...
@@ -175,14 +196,14 @@ if kind == 'thincast':
         except Exception as e:
             xfparms = list(map(lambda x: x.replace('#WIDTH#', '1400').replace('#HEIGHT#', '800'), sp['as_new_xfreerdp_params']))  # type: ignore
 
-        params = [
+        params = [ # type: ignore
             'open',
             '-a',
             executable,
             '--args',
         ] + [os.path.expandvars(i) for i in xfparms + ['/v:{}'.format(sp['address'])]]  # type: ignore
         #logger.debug('Executing: %s', ' '.join(params))
-        subprocess.Popen(params)
+        subprocess.Popen(params) # type: ignore
 else:  # for now, both xfreerdp or udsrdp
     # Fix resolution...
     try:
@@ -191,5 +212,5 @@ else:  # for now, both xfreerdp or udsrdp
         xfparms = list(map(lambda x: x.replace('#WIDTH#', '1400').replace('#HEIGHT#', '800'), sp['as_new_xfreerdp_params']))  # type: ignore
 
     params = [os.path.expandvars(i) for i in [executable] + xfparms + ['/v:{}'.format(sp['address'])]]  # type: ignore
-    logger.debug('Executing: %s', ' '.join(params))
-    subprocess.Popen(params)
+    logger.debug('Executing: %s', ' '.join(params)) # type: ignore
+    subprocess.Popen(params) # type: ignore
