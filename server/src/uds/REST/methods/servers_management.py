@@ -34,6 +34,7 @@ import typing
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
+from django.db import transaction
 
 from uds import models
 from uds.core import consts, types, ui
@@ -305,9 +306,14 @@ class ServersServers(DetailHandler):
                     raise self.invalid_item_response() from None
 
             else:
+                # Remove current server and add the new one in a single transaction
                 try:
-                    server = models.Server.objects.get(uuid=process_uuid(item))
-                    parent.servers.add(server)
+                    with transaction.atomic():
+                        current_server = models.Server.objects.get(uuid=process_uuid(item))
+                        new_server = models.Server.objects.get(uuid=process_uuid(self._params['server']))
+                        parent.servers.remove(current_server)
+                        parent.servers.add(new_server)
+                        item = new_server.uuid
                 except Exception:
                     raise self.invalid_item_response() from None
             return {'id': item}
