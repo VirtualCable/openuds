@@ -303,6 +303,7 @@ class ServersServers(DetailHandler[ServerItem]):
                     raise exceptions.rest.ResponseError('Error updating server') from None
 
             else:
+                # Remove current server and add the new one in a single transaction
                 try:
                     server = models.Server.objects.get(uuid=process_uuid(item))
                     parent.servers.add(server)
