@@ -245,7 +245,7 @@ class ServicePool(UUIDModel, TaggingMixin):
     @property
     def owned_by_meta(self) -> bool:
         return self.memberOfMeta.count() > 0
-    
+
     @property
     def uses_cache(self) -> bool:
         return self.cache_l1_srvs > 0 or self.cache_l2_srvs > 0 or self.initial_srvs > 0
@@ -256,7 +256,7 @@ class ServicePool(UUIDModel, TaggingMixin):
         if self.short_name and str(self.short_name).strip():
             return str(self.short_name.strip())
         return str(self.name)
-    
+
     def can_create_userservices(self) -> bool:
         """
         If the service pool is in a state that allows to create user services
@@ -291,13 +291,12 @@ class ServicePool(UUIDModel, TaggingMixin):
             return True
 
         return False
-    
+
     def is_locked(self) -> bool:
         """
         Returns true if the service pool is locked
         """
         return self.state == types.states.State.LOCKED
-    
 
     def remaining_restraint_time(self) -> int:
         from uds.core.util.config import GlobalConfig
@@ -327,7 +326,7 @@ class ServicePool(UUIDModel, TaggingMixin):
 
     def is_usable(self) -> bool:
         return (
-            self.state == types.states.State.ACTIVE
+            self.state in (types.states.State.ACTIVE, types.states.State.LOCKED)
             and not self.is_in_maintenance()
             and not self.is_restrained()
         )
@@ -487,7 +486,7 @@ class ServicePool(UUIDModel, TaggingMixin):
         Args:
             active_publication: Active publication used as "current" publication to make checks
             skip_assigned: If true, assigned services will not be marked as removable
-            
+
         """
         now = sql_now()
         non_active_publication: 'ServicePoolPublication'
@@ -500,9 +499,9 @@ class ServicePool(UUIDModel, TaggingMixin):
             for userservice in non_active_publication.userServices.filter(state=types.states.State.PREPARING):
                 userservice.cancel()
             with transaction.atomic():
-                non_active_publication.userServices.exclude(cache_level=0).filter(state=types.states.State.USABLE).update(
-                    state=types.states.State.REMOVABLE, state_date=now
-                )
+                non_active_publication.userServices.exclude(cache_level=0).filter(
+                    state=types.states.State.USABLE
+                ).update(state=types.states.State.REMOVABLE, state_date=now)
                 if not skip_assigned:
                     non_active_publication.userServices.filter(
                         cache_level=0, state=types.states.State.USABLE, in_use=False
@@ -572,7 +571,9 @@ class ServicePool(UUIDModel, TaggingMixin):
         """
         from uds.core import services  # pylint: disable=import-outside-toplevel
 
-        services_not_needing_publication = [t.mod_type() for t in services.factory().services_not_needing_publication()]
+        services_not_needing_publication = [
+            t.mod_type() for t in services.factory().services_not_needing_publication()
+        ]
         # Get services that HAS publications
         query = (
             ServicePool.objects.filter(

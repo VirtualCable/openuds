@@ -74,3 +74,5 @@ UNLIMITED: typing.Final[int] = -1
 
 # Constant marking no more names available
 NO_MORE_NAMES: typing.Final[str] = 'NO-NAME-ERROR'
+# For convenience, same as MAC_UNKNOWN, but different meaning
+NO_MORE_MACS: typing.Final[str] = '00:00:00:00:00:00'

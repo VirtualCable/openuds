@@ -51,7 +51,7 @@ class NotificationsManager(metaclass=singleton.Singleton):
 
     _initialized: bool = False
 
-    def _ensure_local_db_exists(self) -> bool:
+    def ensure_local_db_exists(self) -> bool:
         if not apps.ready:
             return False
 
@@ -85,7 +85,7 @@ class NotificationsManager(metaclass=singleton.Singleton):
         from uds.models.notifications import Notification  # pylint: disable=import-outside-toplevel
 
         # Due to use of local db, we must ensure that it exists (and cannot do it on ready)
-        if self._ensure_local_db_exists() is False:
+        if self.ensure_local_db_exists() is False:
             return  # Not initialized apps yet, so we cannot do anything
 
         # logger.debug(

@@ -197,7 +197,7 @@ class RadiusClient:
                 if i.startswith(groupclass_prefix)
             ]
         else:
-            logger.info('No "Class (25)" attribute found')
+            logger.info('No "Class (25)" attribute found: %s', reply)
             return ([], '', b'')
 
         # ...and mfa code

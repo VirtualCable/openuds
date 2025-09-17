@@ -461,6 +461,10 @@ class ProxmoxClient:
 
     @cached('hagrps', consts.CACHE_DURATION, key_helper=caching_key_helper)
     def list_ha_groups(self, **kwargs: typing.Any) -> list[str]:
+        version = self.get_version()
+        # Version 9 does not have the security groups
+        if version[0] >= '9':
+            return []
         return [g['group'] for g in self.do_get('cluster/ha/groups')['data']]
 
     def enable_vm_ha(self, vmid: int, started: bool = False, group: typing.Optional[str] = None) -> None:
@@ -483,6 +487,10 @@ class ProxmoxClient:
             ]
             + ([('group', group)] if group else []),  # Append ha group if present
         )
+
+    @cached('ha_resources', consts.CACHE_DURATION, key_helper=caching_key_helper)
+    def list_ha_resources(self, **kwargs: typing.Any) -> list[str]:
+        return [r['sid'] for r in self.do_get('cluster/ha/resources')['data']]
 
     def disable_vm_ha(self, vmid: int) -> None:
         try:

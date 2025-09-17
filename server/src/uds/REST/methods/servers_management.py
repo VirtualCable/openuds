@@ -34,6 +34,7 @@ import typing
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
+from django.db import transaction
 
 from uds import models
 from uds.core import consts, types, ui
@@ -69,6 +70,7 @@ class ServersTokens(ModelHandler):
         {'os': {'title': _('OS')}},
         {'username': {'title': _('Issued by')}},
         {'stamp': {'title': _('Date'), 'type': 'datetime'}},
+        {'mac': {'title': _('MAC Address')}},
     ]
 
     def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
@@ -304,9 +306,14 @@ class ServersServers(DetailHandler):
                     raise self.invalid_item_response() from None
 
             else:
+                # Remove current server and add the new one in a single transaction
                 try:
-                    server = models.Server.objects.get(uuid=process_uuid(item))
-                    parent.servers.add(server)
+                    with transaction.atomic():
+                        current_server = models.Server.objects.get(uuid=process_uuid(item))
+                        new_server = models.Server.objects.get(uuid=process_uuid(self._params['server']))
+                        parent.servers.remove(current_server)
+                        parent.servers.add(new_server)
+                        item = new_server.uuid
                 except Exception:
                     raise self.invalid_item_response() from None
             return {'id': item}
@@ -528,7 +535,8 @@ class ServersGroups(ModelHandler):
                     'hostname': s[1].hostname,
                     'mac': s[1].mac if s[1].mac != consts.MAC_UNKNOWN else '',
                     'ip': s[1].ip,
-                    'load': s[0].load() if s[0] else 0,
+                    'load': s[0].load(weights=item.weights) if s[0] else 0,
+                    'weights': item.weights.as_dict(),
                 },
             }
             for s in ServerManager.manager().get_server_stats(item.servers.all())

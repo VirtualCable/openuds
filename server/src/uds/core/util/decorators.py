@@ -373,28 +373,30 @@ def blocker(
                 try:
                     return f(*args, **kwargs)
                 except uds.core.exceptions.rest.BlockAccess:
-                    raise exceptions.rest.AccessDenied
+                    raise exceptions.rest.AccessDenied()
 
-            request: typing.Optional[typing.Any] = getattr(args[0], request_attr or '_request', None)
+            request: typing.Any = getattr(args[0], request_attr or '_request', None)
 
             # No request object, so we can't block
-            if request is None or not isinstance(request, types.requests.ExtendedHttpRequest):
+            if request is None or getattr(request, 'ip', None) is None:
                 logger.debug('No request object, so we can\'t block: (value is %s)', request)
                 return f(*args, **kwargs)
+
+            request = typing.cast(types.requests.ExtendedHttpRequest, request)
 
             ip = request.ip
 
             # if ip is blocked, raise exception
             failures_count: int = mycache.get(ip, 0)
             if failures_count >= max_failures:
-                raise exceptions.rest.AccessDenied
+                raise exceptions.rest.AccessDenied()
 
             try:
                 result = f(*args, **kwargs)
             except uds.core.exceptions.rest.BlockAccess:
                 # Increment
                 mycache.put(ip, failures_count + 1, GlobalConfig.LOGIN_BLOCK.as_int())
-                raise exceptions.rest.AccessDenied
+                raise exceptions.rest.AccessDenied()
             # Any other exception will be raised
             except Exception:
                 raise
@@ -473,7 +475,7 @@ def retry_on_exception(
                         raise e
 
                     time.sleep(wait_seconds * (2 ** min(i, 4)))  # Exponential backoff until 16x
-                    
+
             # retries == 0 allowed, but only use it for testing purposes
             # because it's a nonsensical decorator otherwise
             return fnc(*args, **kwargs)
