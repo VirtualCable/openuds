@@ -215,7 +215,7 @@ class TRDPTransport(BaseRDPTransport):
                 }
             )
         elif os.os == types.os.KnownOS.MAC_OS:
-            if self.lnx_use_rdp_file.as_bool():
+            if self.mac_use_rdp_file.as_bool():
                 r.custom_parameters = self.wnd_custom_parameters.value
             else:
                 r.custom_parameters = self.lnx_custom_parameters.value
