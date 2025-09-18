@@ -58,7 +58,7 @@ class Node:
     id: str
 
     @staticmethod
-    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'Node':
+    def from_dict(dictionary: dict[str, typing.Any]) -> 'Node':
         return Node(
             name=dictionary.get('name', ''),
             online=dictionary.get('online', False),

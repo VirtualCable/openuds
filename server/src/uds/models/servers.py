@@ -109,6 +109,25 @@ class ServerGroup(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         """Sets the server type of this server"""
         self.type = value
 
+    @property
+    def weights(self) -> types.servers.ServerStatsWeights:
+        """Returns the server stats weights for this server group"""
+        weights_dict = self.properties.get('weights', None)
+        if weights_dict:
+            return types.servers.ServerStatsWeights.from_dict(weights_dict)
+        return types.servers.ServerStatsWeights()
+
+    @weights.setter
+    def weights(self, value: types.servers.ServerStatsWeights) -> None:
+        """Sets the server stats weights for this server group"""
+        self.properties['weights'] = value.as_dict()
+
+    @weights.deleter
+    def weights(self) -> None:
+        """Deletes the server stats weights for this server group"""
+        if 'weights' in self.properties:
+            del self.properties['weights']
+
     def is_managed(self) -> bool:
         """Returns if this server group is managed or not"""
         return self.server_type != types.servers.ServerType.UNMANAGED
@@ -147,7 +166,6 @@ class ServerGroup(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         except Exception:
             pass
         return None
-
 
 
 def _create_token() -> str:
@@ -250,7 +268,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     def server_type(self, value: types.servers.ServerType) -> None:
         """Sets the server type of this server"""
         self.type = value
-        
+
     def is_managed(self) -> bool:
         """Returns if this server is managed or not"""
         return self.server_type != types.servers.ServerType.UNMANAGED
@@ -296,15 +314,15 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
 
     def lock(self, duration: typing.Optional[datetime.timedelta]) -> None:
         """Locks this server for a duration
-        
+
         Args:
             duration: Duration to lock the server. If None, it will be unlocked
-            
+
         Note:
             If duration is None, the server will be unlocked
             The lock time will be calculated from current time on sql server
         """
-        
+
         if duration is None:
             self.locked_until = None
         else:

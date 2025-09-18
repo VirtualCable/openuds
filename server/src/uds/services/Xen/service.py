@@ -37,6 +37,7 @@ import typing
 from django.utils.translation import gettext_noop as _
 from uds.core import exceptions, types
 from uds.core.services.generics.dynamic.service import DynamicService
+from uds.core.services.generics.dynamic.userservice import DynamicUserService
 from uds.core.util import validators
 from uds.core.ui import gui
 
@@ -49,7 +50,6 @@ from .xen import exceptions as xen_exceptions
 if typing.TYPE_CHECKING:
     from .provider import XenProvider
     from uds.core.services.generics.dynamic.publication import DynamicPublication
-    from uds.core.services.generics.dynamic.userservice import DynamicUserService
 
 logger = logging.getLogger(__name__)
 
@@ -326,8 +326,14 @@ class XenLinkedService(DynamicService):  # pylint: disable=too-many-public-metho
         *,
         for_unique_id: bool = False,
     ) -> str:
-        return self.mac_generator().get(self.provider().get_macs_range())
+        if not vmid or for_unique_id:
+            if isinstance(caller_instance, DynamicUserService):
+                return caller_instance.mac_generator().get(self.provider().get_macs_range())
+            return self.mac_generator().get(self.provider().get_macs_range())
 
+        with self.provider().get_connection() as api:
+            return api.get_first_mac(vmid)
+    
     def is_running(
         self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
     ) -> bool:

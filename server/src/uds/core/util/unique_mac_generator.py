@@ -33,6 +33,8 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 import re
 
+from uds.core import consts
+
 from .unique_id_generator import UniqueGenerator
 
 logger = logging.getLogger(__name__)
@@ -48,8 +50,9 @@ class UniqueMacGenerator(UniqueGenerator):
         return int(mac.replace(':', ''), 16)
 
     def _to_mac_addr(self, seq: int) -> str:
-        if seq == -1:  # No mor macs available
-            return '00:00:00:00:00:00'
+        if seq == -1:  # No more macs available
+            logger.error('No more MAC addresses available')
+            return consts.NO_MORE_MACS
         return re.sub(r"(..)", r"\1:", f'{seq:012X}')[:-1]
 
     # Mac Generator rewrites the signature of parent class, so we need to redefine it here
