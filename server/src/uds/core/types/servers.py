@@ -142,6 +142,7 @@ class ServerStatsWeights:
     cpu: float = 0.3
     memory: float = 0.6
     users: float = 0.1
+    max_users: int = 100  # Max users to consider in load calculation
 
     def normalize(self) -> 'ServerStatsWeights':
         total = self.cpu + self.memory + self.users
@@ -155,6 +156,7 @@ class ServerStatsWeights:
             'cpu': self.cpu,
             'memory': self.memory,
             'users': self.users,
+            'max_users': self.max_users,
         }
 
     @staticmethod
@@ -163,6 +165,7 @@ class ServerStatsWeights:
             data.get('cpu', 0.3),
             data.get('memory', 0.6),
             data.get('users', 0.1),
+            int(data.get('max_users', 100)),
         ).normalize()
 
 
@@ -210,7 +213,7 @@ class ServerStats:
         w = (
             weights.cpu * self.cpuused
             + weights.memory * (self.memused / (self.memtotal or 1))
-            + weights.users * (min(1.0, self.current_users / 100.0))
+            + weights.users * (min(1.0, self.current_users / weights.max_users))
         )
 
         return min(max(0.0, w), 1.0)
