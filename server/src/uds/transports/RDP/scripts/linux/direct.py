@@ -43,25 +43,25 @@ def _exec_client_with_params(executable: str, params: typing.List[str], unlink_f
         tools.addFileToUnlink(unlink_file)
 
 def exec_udsrdp(udsrdp: str) -> None:
-    params = [os.path.expandvars(i) for i in [udsrdp] + sp['as_new_xfreerdp_params'] + [f'/v:{sp["address"]}']]
+    params = [os.path.expandvars(i) for i in [udsrdp] + sp['as_new_xfreerdp_params'] + [f'/v:{sp["address"]}']] # type: ignore
     _exec_client_with_params(udsrdp, params)
 
 def exec_new_xfreerdp(xfreerdp: str) -> None:
-    if sp.get('as_file', ''):
-        dest_filename = _prepare_rdp_file(sp['as_file'], '.uds.rdp')
-        params = [xfreerdp, dest_filename, f'/p:{sp.get("password", "")}']
+    if sp.get('as_file', ''): # type: ignore
+        dest_filename = _prepare_rdp_file(sp['as_file'], '.uds.rdp') # type: ignore
+        params = [xfreerdp, dest_filename, f'/p:{sp.get("password", "")}'] # type: ignore
         _exec_client_with_params(xfreerdp, params, unlink_file=dest_filename)
     else:
-        params = [os.path.expandvars(i) for i in [xfreerdp] + sp['as_new_xfreerdp_params'] + [f'/v:{sp["address"]}']]
+        params = [os.path.expandvars(i) for i in [xfreerdp] + sp['as_new_xfreerdp_params'] + [f'/v:{sp["address"]}']] # type: ignore
         _exec_client_with_params(xfreerdp, params)
 
 def exec_thincast(thincast: str) -> None:
-    if sp.get('as_file', ''):
-        dest_filename = _prepare_rdp_file(sp['as_file'], '.rdp')
-        params = [thincast, dest_filename, f'/p:{sp.get("password", "")}']
+    if sp.get('as_file', ''): # type: ignore
+        dest_filename = _prepare_rdp_file(sp['as_file'], '.rdp') # type: ignore
+        params = [thincast, dest_filename, f'/p:{sp.get("password", "")}'] # type: ignore
         _exec_client_with_params(thincast, params, unlink_file=dest_filename)
     else:
-        params = [os.path.expandvars(i) for i in [thincast] + sp['as_new_xfreerdp_params'] + [f'/v:{sp["address"]}']]
+        params = [os.path.expandvars(i) for i in [thincast] + sp['as_new_xfreerdp_params'] + [f'/v:{sp["address"]}']] # type: ignore
         _exec_client_with_params(thincast, params)
 
 # Typical Thincast Routes on Linux

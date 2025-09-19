@@ -183,7 +183,7 @@ class RDPTransport(BaseRDPTransport):
             if self.mac_use_rdp_file.as_bool():
                 r.custom_parameters = self.wnd_custom_parameters.value
             else:
-                r.custom_parameters = self.lnx_custom_parameters.value
+                r.custom_parameters = self.mac_custom_parameters.value
             sp.update(
                 {
                     'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
