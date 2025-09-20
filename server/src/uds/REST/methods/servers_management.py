@@ -145,7 +145,7 @@ class ServersServers(DetailHandler[ServerItem]):
 
     # Rest api related information to complete the auto-generated API
     REST_API_INFO = types.rest.api.RestApiInfo(
-        gui_type=types.rest.api.RestApiInfoGuiType.UNTYPED,
+        typed=types.rest.api.RestApiInfoGuiType.SINGLE_TYPE,
     )
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[ServerItem]:
@@ -463,7 +463,7 @@ class ServersGroups(ModelHandler[GroupItem]):
 
     # Rest api related information to complete the auto-generated API
     REST_API_INFO = types.rest.api.RestApiInfo(
-        gui_type=types.rest.api.RestApiInfoGuiType.TYPED,
+        typed=types.rest.api.RestApiInfoGuiType.MULTIPLE_TYPES,
     )
 
     def enum_types(

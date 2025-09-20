@@ -90,7 +90,7 @@ class Reports(model.BaseModelHandler[ReportItem]):
 
     # Rest api related information to complete the auto-generated API
     REST_API_INFO = types.rest.api.RestApiInfo(
-        gui_type=types.rest.api.RestApiInfoGuiType.TYPED,
+        typed=types.rest.api.RestApiInfoGuiType.MULTIPLE_TYPES,
     )
 
     def _locate_report(

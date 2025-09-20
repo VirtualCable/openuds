@@ -172,7 +172,7 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
 
     # Rest api related information to complete the auto-generated API
     REST_API_INFO = types.rest.api.RestApiInfo(
-        gui_type=types.rest.api.RestApiInfoGuiType.UNTYPED,
+        typed=types.rest.api.RestApiInfoGuiType.SINGLE_TYPE,
     )
 
     def get_items(

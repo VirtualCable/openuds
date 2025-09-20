@@ -317,6 +317,7 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item]):
         """
         The default is that detail element will not have any types (they are "homogeneous")
         but we provided this method, that can be overridden, in case one detail needs it
+        (for example, on services)
 
         Args:
             parent (models.Model): Parent object
@@ -329,6 +330,11 @@ class DetailHandler(BaseModelHandler[types.rest.T_Item]):
 
     @classmethod
     def possible_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[module.Module]]:
+        """
+        Note: This method returns ALL POSSIBLE TYPES for the specific model, not just those
+              related to the father. Is used for api composition.
+              enum_types, hear, is the one to filter types by parent, etc..
+        """
         return []
 
     def get_logs(self, parent: models.Model, item: str) -> list[typing.Any]:

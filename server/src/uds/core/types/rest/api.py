@@ -33,15 +33,15 @@ def _as_dict_without_none(v: typing.Any) -> typing.Any:
 
 # Types of GUI info that can be provided
 class RestApiInfoGuiType(enum.Enum):
-    UNTYPED = 0
-    TYPED = 1
-    NONE = 3
+    SINGLE_TYPE = 0
+    MULTIPLE_TYPES = 1
+    UNTYPED = 3
     
-    def is_untyped(self) -> bool:
-        return self == RestApiInfoGuiType.UNTYPED
+    def is_single_type(self) -> bool:
+        return self == RestApiInfoGuiType.SINGLE_TYPE
     
-    def is_typed(self) -> bool:
-        return self == RestApiInfoGuiType.TYPED
+    def supports_multiple_types(self) -> bool:
+        return self == RestApiInfoGuiType.MULTIPLE_TYPES
 
 @dataclasses.dataclass
 class RestApiInfo:
@@ -49,11 +49,11 @@ class RestApiInfo:
     name: str | None = None
     description: str | None = None
 
-    # Guis can have different types:
-    #  - MAIN: the gui returns with no type specified (for example, /gui)
-    #  - TYPED: the gui returns with a type specified (for example, /gui/whatever_type)
-    #  - NONE: no gui is provided
-    gui_type: 'RestApiInfoGuiType' = RestApiInfoGuiType.NONE
+    # Models can be typed, untyped or :
+    #  - SINGLE_TYPE: the gui returns with no type specified (for example, /gui)
+    #  - MULTI_TYPED: the gui returns with a type specified (for example, /gui/whatever_type)
+    #  - UNTYPED: no gui is provided
+    typed: 'RestApiInfoGuiType' = RestApiInfoGuiType.UNTYPED
 
 
 # Parameter

@@ -136,37 +136,9 @@ def api_paths(
                 security=security,
             )
         ),
-        f'{path}/{consts.rest.TYPES}': types.rest.api.PathItem(
-            get=types.rest.api.Operation(
-                summary=f'Get types of {name} items',
-                description=f'Retrieve types of {name} items',
-                parameters=[],
-                responses=api_utils.gen_response(base_type_name, single=False),
-                tags=get_tags,
-                security=security,
-            )
-        ),
-        f'{path}/{consts.rest.TYPES}/{{type}}': types.rest.api.PathItem(
-            get=types.rest.api.Operation(
-                summary=f'Get {name} item by type',
-                description=f'Retrieve a {name} item by type',
-                parameters=[
-                    types.rest.api.Parameter(
-                        name='type',
-                        in_='path',
-                        required=True,
-                        description='The type of the item',
-                        schema=types.rest.api.Schema(type='string'),
-                    )
-                ],
-                responses=api_utils.gen_response(base_type_name, with_404=True),
-                tags=get_tags,
-                security=security,
-            )
-        ),
     }
 
-    if cls.REST_API_INFO.gui_type.is_untyped():
+    if cls.REST_API_INFO.typed.is_single_type():
         api_desc[f'{path}/{consts.rest.GUI}'] = types.rest.api.PathItem(
             get=types.rest.api.Operation(
                 summary=f'Get GUI representation of {name} items',
@@ -178,24 +150,56 @@ def api_paths(
             )
         )
 
-    if cls.REST_API_INFO.gui_type.is_typed():
-        api_desc[f'{path}/{consts.rest.GUI}/{{type}}'] = types.rest.api.PathItem(
-            get=types.rest.api.Operation(
-                summary=f'Get GUI representation of {name} type',
-                description=f'Retrieve a {name} GUI representation by type',
-                parameters=[
-                    types.rest.api.Parameter(
-                        name='type',
-                        in_='path',
-                        required=True,
-                        description=f'The type of the {name} GUI representation',
-                        schema=types.rest.api.Schema(type='string'),
+    if cls.REST_API_INFO.typed.supports_multiple_types():
+        api_desc.update(
+            {
+                f'{path}/{consts.rest.GUI}/{{type}}': types.rest.api.PathItem(
+                    get=types.rest.api.Operation(
+                        summary=f'Get GUI representation of {name} type',
+                        description=f'Retrieve a {name} GUI representation by type',
+                        parameters=[
+                            types.rest.api.Parameter(
+                                name='type',
+                                in_='path',
+                                required=True,
+                                description=f'The type of the {name} GUI representation',
+                                schema=types.rest.api.Schema(type='string'),
+                            )
+                        ],
+                        responses=api_utils.gen_response('GuiElement', single=False, with_404=True),
+                        tags=get_tags,
+                        security=security,
                     )
-                ],
-                responses=api_utils.gen_response('GuiElement', single=False, with_404=True),
-                tags=get_tags,
-                security=security,
-            )
+                ),
+                f'{path}/{consts.rest.TYPES}': types.rest.api.PathItem(
+                    get=types.rest.api.Operation(
+                        summary=f'Get types of {name} items',
+                        description=f'Retrieve types of {name} items',
+                        parameters=[],
+                        responses=api_utils.gen_response(base_type_name, single=False),
+                        tags=get_tags,
+                        security=security,
+                    )
+                ),
+                f'{path}/{consts.rest.TYPES}/{{type}}': types.rest.api.PathItem(
+                    get=types.rest.api.Operation(
+                        summary=f'Get {name} item by type',
+                        description=f'Retrieve a {name} item by type',
+                        parameters=[
+                            types.rest.api.Parameter(
+                                name='type',
+                                in_='path',
+                                required=True,
+                                description='The type of the item',
+                                schema=types.rest.api.Schema(type='string'),
+                            )
+                        ],
+                        responses=api_utils.gen_response(base_type_name, with_404=True),
+                        tags=get_tags,
+                        security=security,
+                    )
+                ),
+            }
         )
 
     return api_desc

@@ -118,9 +118,7 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
         """
         return []
 
-    def enum_types(
-        self, *args: typing.Any, **kwargs: typing.Any
-    ) -> typing.Generator[types.rest.TypeInfo, None, None]:
+    def enum_types(self) -> typing.Generator[types.rest.TypeInfo, None, None]:
         for type_ in self.possible_types():
             yield type(self).as_typeinfo(type_)
 

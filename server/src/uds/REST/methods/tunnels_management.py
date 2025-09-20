@@ -181,7 +181,7 @@ class Tunnels(ModelHandler[TunnelItem]):
     REST_API_INFO = types.rest.api.RestApiInfo(
         name='Tunnels',
         description='Tunnel management',
-        gui_type=types.rest.api.RestApiInfoGuiType.UNTYPED,
+        typed=types.rest.api.RestApiInfoGuiType.SINGLE_TYPE,
     )
 
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
