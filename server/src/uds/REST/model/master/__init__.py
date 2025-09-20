@@ -85,16 +85,15 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
     # Same, but for exclude
     EXCLUDE: 'typing.ClassVar[typing.Optional[collections.abc.Mapping[str, typing.Any]]]' = None
 
+    # If this model respond to "custom" methods, we will declare them here
     # This is an array of tuples of two items, where first is method and second inticates if method needs parent id (normal behavior is it needs it)
     # For example ('services', True) -- > .../id_parent/services
     #             ('services', False) --> ..../services
-    CUSTOM_METHODS: typing.ClassVar[list[types.rest.ModelCustomMethod]] = (
-        []
-    )  # If this model respond to "custom" methods, we will declare them here
+    CUSTOM_METHODS: typing.ClassVar[list[types.rest.ModelCustomMethod]] = []
+
     # If this model has details, which ones
-    DETAIL: typing.ClassVar[typing.Optional[dict[str, type['DetailHandler[typing.Any]']]]] = (
-        None  # Dictionary containing detail routing
-    )
+    # Dictionary containing detail routing
+    DETAIL: typing.ClassVar[typing.Optional[dict[str, type['DetailHandler[typing.Any]']]]] = None
     # Fields that are going to be saved directly
     # * If a field is in the form "field:default" and field is not present in the request, default will be used
     # * If the "default" is the string "None", then the default will be None
@@ -268,13 +267,6 @@ class ModelHandler(BaseModelHandler[types.rest.T_Item], abc.ABC):
                 # logger.exception('Exception getting item from {0}'.format(self.model))
 
     def get(self) -> typing.Any:
-        """
-        Wraps real get method so we can process filters if they exists
-        """
-        return self.process_get()
-
-    #  pylint: disable=too-many-return-statements
-    def process_get(self) -> typing.Any:
         logger.debug('method GET for %s, %s', self.__class__.__name__, self._args)
         number_of_args = len(self._args)
 

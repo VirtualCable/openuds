@@ -52,7 +52,6 @@ from .services_usage import ServicesUsage
 logger = logging.getLogger(__name__)
 
 
-
 # Helper class for Provider offers
 @dataclasses.dataclass
 class OfferItem(types.rest.BaseRestItem):
@@ -98,6 +97,11 @@ class Providers(ModelHandler[ProviderItem]):
         .text_column(name='tags', title=_('Tags'), visible=False)
         .row_style(prefix='row-maintenance-', field='maintenance_mode')
     ).build()
+
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        gui_type=types.rest.api.RestApiInfoGuiType.TYPED,
+    )
 
     def get_item(self, item: 'Model') -> ProviderItem:
         item = ensure.is_instance(item, Provider)

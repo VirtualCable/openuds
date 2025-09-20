@@ -143,6 +143,11 @@ class ServersServers(DetailHandler[ServerItem]):
 
     CUSTOM_METHODS = ['maintenance', 'importcsv']
 
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        gui_type=types.rest.api.RestApiInfoGuiType.UNTYPED,
+    )
+
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[ServerItem]:
         parent = typing.cast('models.ServerGroup', parent)  # We will receive for sure
         try:
@@ -197,7 +202,7 @@ class ServersServers(DetailHandler[ServerItem]):
             .build()
         )
 
-    def get_gui(self, parent: 'Model', for_type: str = '') -> list[types.ui.GuiElement]:
+    def get_gui(self, parent: 'Model', for_type: str) -> list[types.ui.GuiElement]:
         parent = ensure.is_instance(parent, models.ServerGroup)
         kind, subkind = parent.server_type, parent.subtype
         title = _('of type') + f' {subkind.upper()} {kind.name.capitalize()}'
@@ -454,6 +459,11 @@ class ServersGroups(ModelHandler[GroupItem]):
         .numeric_column(name='servers_count', title=_('Servers'), width='5rem')
         .text_column(name='tags', title=_('tags'), visible=False)
         .build()
+    )
+
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        gui_type=types.rest.api.RestApiInfoGuiType.TYPED,
     )
 
     def enum_types(

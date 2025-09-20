@@ -119,9 +119,7 @@ def get_component_from_type(
 
             components.schemas[type_.type_type] = type_schema
 
-        if is_managed_object and isinstance(
-            item_schema, types.rest.api.Schema
-        ):
+        if is_managed_object and isinstance(item_schema, types.rest.api.Schema):
             # item_schema.discriminator = types.rest.api.Discriminator(propertyName='type')
             instance_name = f'{item_name}Instance'
             item_schema.properties['instance'] = types.rest.api.SchemaProperty(
@@ -323,7 +321,11 @@ def api_components(
 
 
 def gen_response(
-    type: str, with_404: bool = False, single: bool = True, delete: bool = False
+    type: str,
+    with_404: bool = False,
+    single: bool = True,
+    delete: bool = False,
+    with_403: bool = True,
 ) -> dict[str, types.rest.api.Response]:
     data: dict[str, types.rest.api.Response]
 
@@ -370,5 +372,92 @@ def gen_response(
                 ),
             ),
         )
+    if with_403:
+        data['403'] = types.rest.api.Response(
+            description='Forbidden. You do not have permission to access this resource with your current role.',
+            content=types.rest.api.Content(
+                media_type='application/json',
+                schema=types.rest.api.SchemaProperty(
+                    type='object',
+                    properties={
+                        'detail': types.rest.api.SchemaProperty(
+                            type='string',
+                        )
+                    },
+                ),
+            ),
+        )
 
     return data
+
+
+def gen_request_body(type: str, create: bool = True) -> types.rest.api.RequestBody:
+    return types.rest.api.RequestBody(
+        description=f'{"New" if create else "Updated"} {type} item{"s" if not create else ""} to create',
+        required=True,
+        content=types.rest.api.Content(
+            media_type='application/json',
+            schema=types.rest.api.SchemaProperty(
+                type=f'#/components/schemas/{type}' if create else 'array',
+                items=(
+                    types.rest.api.SchemaProperty(
+                        type=f'#/components/schemas/{type}',
+                    )
+                    if not create
+                    else None
+                ),
+            ),
+        ),
+    )
+
+
+def gen_odata_parameters() -> list[types.rest.api.Parameter]:
+    return [
+        types.rest.api.Parameter(
+            name='$filter',
+            in_='query',
+            required=False,
+            description='Filter items by property values (e.g., $filter=property eq value)',
+            schema=types.rest.api.Schema(type='string'),
+        ),
+        types.rest.api.Parameter(
+            name='$select',
+            in_='query',
+            required=False,
+            description='Select properties to be returned',
+            schema=types.rest.api.Schema(type='string'),
+        ),
+        types.rest.api.Parameter(
+            name='$orderby',
+            in_='query',
+            required=False,
+            description='Order items by property values (e.g., $orderby=property desc)',
+            schema=types.rest.api.Schema(type='string'),
+        ),
+        types.rest.api.Parameter(
+            name='$top',
+            in_='query',
+            required=False,
+            description='Show only the first N items',
+            schema=types.rest.api.Schema(type='integer', format='int32', minimum=1),
+        ),
+        types.rest.api.Parameter(
+            name='$skip',
+            in_='query',
+            required=False,
+            description='Skip the first N items',
+            schema=types.rest.api.Schema(type='integer', format='int32', minimum=0),
+        ),
+    ]
+
+
+def gen_uuid_parameters(with_odata: bool) -> list[types.rest.api.Parameter]:
+    return [
+        types.rest.api.Parameter(
+            name='uuid',
+            in_='path',
+            required=True,
+            description='The UUID of the item',
+            schema=types.rest.api.Schema(type='string', format='uuid'),
+        )
+    ] + (gen_odata_parameters() if with_odata else [])

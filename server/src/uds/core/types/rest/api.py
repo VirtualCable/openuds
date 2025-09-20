@@ -1,3 +1,4 @@
+import enum
 import typing
 import dataclasses
 
@@ -25,9 +26,35 @@ def _as_dict_without_none(v: typing.Any) -> typing.Any:
         return v.as_dict()
     return v
 
+
+# This class is used to provide extra information about a handler
+# (handler, model, detail, etc.)
+# So we can override names or whatever we need
+
+# Types of GUI info that can be provided
+class RestApiInfoGuiType(enum.Enum):
+    UNTYPED = 0
+    TYPED = 1
+    NONE = 3
+    
+    def is_untyped(self) -> bool:
+        return self == RestApiInfoGuiType.UNTYPED
+    
+    def is_typed(self) -> bool:
+        return self == RestApiInfoGuiType.TYPED
+
 @dataclasses.dataclass
-class HandlerApiInfo:
-    pass
+class RestApiInfo:
+
+    name: str | None = None
+    description: str | None = None
+
+    # Guis can have different types:
+    #  - MAIN: the gui returns with no type specified (for example, /gui)
+    #  - TYPED: the gui returns with a type specified (for example, /gui/whatever_type)
+    #  - NONE: no gui is provided
+    gui_type: 'RestApiInfoGuiType' = RestApiInfoGuiType.NONE
+
 
 # Parameter
 @dataclasses.dataclass
@@ -74,12 +101,14 @@ class Content:
 class RequestBody:
     required: bool
     content: Content  # e.g. {'application/json': {'schema': {...}}}
+    description: str | None = None
 
     def as_dict(self) -> dict[str, typing.Any]:
         return _as_dict_without_none(
             {
                 'required': self.required,
                 'content': self.content.as_dict(),
+                'description': self.description,
             }
         )
 
@@ -159,7 +188,7 @@ class SchemaProperty:
     enum: list[str | int] | None = None  # For enum types
     properties: dict[str, 'SchemaProperty'] | None = None
     one_of: list['SchemaProperty'] | None = None
-    
+
     def __eq__(self, value: object) -> bool:
         if not isinstance(value, SchemaProperty):
             return False
@@ -173,7 +202,8 @@ class SchemaProperty:
             and self.discriminator == value.discriminator
             and self.enum == value.enum
             and self.properties == value.properties
-            and sorted(self.one_of or [], key=lambda x: x.type) == sorted(value.one_of or [], key=lambda x: x.type)
+            and sorted(self.one_of or [], key=lambda x: x.type)
+            == sorted(value.one_of or [], key=lambda x: x.type)
         )
 
     @staticmethod
@@ -256,9 +286,10 @@ class Schema:
     properties: dict[str, SchemaProperty] = dataclasses.field(default_factory=dict[str, SchemaProperty])
     required: list[str] = dataclasses.field(default_factory=list[str])
     description: str | None = None
+    minimum: int | None = None
+    maximum: int | None = None
 
     # For use on generating schemas
-
     def as_dict(self) -> dict[str, typing.Any]:
         return _as_dict_without_none(
             {
@@ -267,6 +298,8 @@ class Schema:
                 'properties': {k: v.as_dict() for k, v in self.properties.items()} if self.properties else None,
                 'required': self.required if self.required else None,
                 'description': self.description,
+                'minimum': self.minimum,
+                'maximum': self.maximum,
             }
         )
 

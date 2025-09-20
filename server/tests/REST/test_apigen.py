@@ -67,7 +67,7 @@ class BaseRestItem(types.rest.BaseRestItem):
 
 class TestTransport(transports.Transport):
     """
-    Simpe testing transport. Currently a copy of URLCustomTransport
+    Simpe testing transport.
     """
 
     type_name = 'Test Transport'

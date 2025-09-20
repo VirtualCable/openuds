@@ -87,6 +87,11 @@ class Notifiers(ModelHandler[NotifierItem]):
         .text_column(name='tags', title=_('Tags'), visible=False)
     ).build()
 
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        gui_type=types.rest.api.RestApiInfoGuiType.TYPED,
+    )
+
     @classmethod
     def possible_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[messaging.Notifier]]:
         return messaging.factory().providers().values()

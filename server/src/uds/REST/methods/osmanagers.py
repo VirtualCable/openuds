@@ -77,6 +77,11 @@ class OsManagers(ModelHandler[OsManagerItem]):
         .build()
     )
 
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        gui_type=types.rest.api.RestApiInfoGuiType.TYPED,
+    )
+
     def os_manager_as_dict(self, item: OSManager) -> OsManagerItem:
         type_ = item.get_type()
         ret_value = OsManagerItem(

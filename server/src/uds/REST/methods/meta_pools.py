@@ -132,6 +132,11 @@ class MetaPools(ModelHandler[MetaPoolItem]):
         types.rest.ModelCustomMethod('get_fallback_access', True),
     ]
 
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        gui_type=types.rest.api.RestApiInfoGuiType.UNTYPED,
+    )
+
     def get_item(self, item: 'models.Model') -> MetaPoolItem:
         item = ensure.is_instance(item, MetaPool)
         # if item does not have an associated service, hide it (the case, for example, for a removed service)

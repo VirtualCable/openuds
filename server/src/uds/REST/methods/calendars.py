@@ -46,7 +46,6 @@ from uds.REST.model import ModelHandler
 from .calendarrules import CalendarRules
 
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -61,6 +60,7 @@ class CalendarItem(types.rest.BaseRestItem):
     number_access: int
     number_actions: int
     permission: types.permissions.PermissionType
+
 
 class Calendars(ModelHandler[CalendarItem]):
     """
@@ -82,6 +82,11 @@ class Calendars(ModelHandler[CalendarItem]):
         .numeric_column(name='number_actions', title=_('Pools with Actions'), width='5rem')
         .text_column(name='tags', title=_('tags'), visible=False)
         .build()
+    )
+
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        gui_type=types.rest.api.RestApiInfoGuiType.UNTYPED,
     )
 
     def get_item(self, item: 'models.Model') -> CalendarItem:

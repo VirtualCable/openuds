@@ -78,6 +78,11 @@ class MFA(ModelHandler[MFAItem]):
         .build()
     )
 
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        gui_type=types.rest.api.RestApiInfoGuiType.TYPED,
+    )
+
     @classmethod
     def possible_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[mfas.MFA]]:
         return mfas.factory().providers().values()

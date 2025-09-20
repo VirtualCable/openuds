@@ -47,6 +47,7 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /item path
 
+
 @dataclasses.dataclass
 class NetworkItem(types.rest.BaseRestItem):
     id: str
@@ -75,6 +76,11 @@ class Networks(ModelHandler[NetworkItem]):
         .numeric_column('authenticators_count', _('Authenticators'), width='8em')
         .text_column('tags', _('Tags'), visible=False)
         .build()
+    )
+
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        gui_type=types.rest.api.RestApiInfoGuiType.UNTYPED,
     )
 
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:

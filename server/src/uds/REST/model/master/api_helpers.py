@@ -56,12 +56,12 @@ def api_paths(
     """
     Returns the API operations that should be registered
     """
-    # The the base pathº
-    cls_model = cls.MODEL.__name__
+    
+    name = cls.REST_API_INFO.name if cls.REST_API_INFO.name else cls.MODEL.__name__
     get_tags = tags
-    put_tags = tags # + ['Create', 'Modify']
+    put_tags = tags  # + ['Create', 'Modify']
     # post_tags = tags + ['Create']
-    delete_tags = tags # + ['Delete']
+    delete_tags = tags  # + ['Delete']
 
     base_type = next(iter(api_utils.get_generic_types(cls)), None)
     if base_type is None:
@@ -70,20 +70,21 @@ def api_paths(
     else:
         base_type_name = base_type.__name__
 
-    return {
+    api_desc = {
         path: types.rest.api.PathItem(
             get=types.rest.api.Operation(
-                summary=f'Get all {cls_model} items',
-                description=f'Retrieve a list of all {cls_model} items',
-                parameters=[],
+                summary=f'Get all {name} items',
+                description=f'Retrieve a list of all {name} items',
+                parameters=api_utils.gen_odata_parameters(),
                 responses=api_utils.gen_response(base_type_name, single=False),
                 tags=get_tags,
                 security=security,
             ),
             put=types.rest.api.Operation(
-                summary=f'Creates a new {cls_model} item',
-                description=f'Creates a new, nonexisting {cls_model} item',
+                summary=f'Creates a new {name} item',
+                description=f'Creates a new, nonexisting {name} item',
                 parameters=[],
+                requestBody=api_utils.gen_request_body(base_type_name, create=True),
                 responses=api_utils.gen_response(base_type_name, with_404=True),
                 tags=put_tags,
                 security=security,
@@ -91,49 +92,25 @@ def api_paths(
         ),
         f'{path}/{{uuid}}': types.rest.api.PathItem(
             get=types.rest.api.Operation(
-                summary=f'Get {cls_model} item by UUID',
-                description=f'Retrieve a {cls_model} item by UUID',
-                parameters=[
-                    types.rest.api.Parameter(
-                        name='uuid',
-                        in_='path',
-                        required=True,
-                        description='The UUID of the item',
-                        schema=types.rest.api.Schema(type='string', format='uuid'),
-                    )
-                ],
+                summary=f'Get {name} item by UUID',
+                description=f'Retrieve a {name} item by UUID',
+                parameters=api_utils.gen_uuid_parameters(with_odata=True),
                 responses=api_utils.gen_response(base_type_name, with_404=True),
                 tags=get_tags,
                 security=security,
             ),
             put=types.rest.api.Operation(
-                summary=f'Update {cls_model} item by UUID',
-                description=f'Update an existing {cls_model} item by UUID',
-                parameters=[
-                    types.rest.api.Parameter(
-                        name='uuid',
-                        in_='path',
-                        required=True,
-                        description='The UUID of the item',
-                        schema=types.rest.api.Schema(type='string', format='uuid'),
-                    )
-                ],
+                summary=f'Update {name} item by UUID',
+                description=f'Update an existing {name} item by UUID',
+                parameters=api_utils.gen_uuid_parameters(with_odata=False),
                 responses=api_utils.gen_response(base_type_name, with_404=True),
                 tags=put_tags,
                 security=security,
             ),
             delete=types.rest.api.Operation(
-                summary=f'Delete {cls_model} item by UUID',
-                description=f'Delete a {cls_model} item by UUID',
-                parameters=[
-                    types.rest.api.Parameter(
-                        name='uuid',
-                        in_='path',
-                        required=True,
-                        description='The UUID of the item',
-                        schema=types.rest.api.Schema(type='string', format='uuid'),
-                    )
-                ],
+                summary=f'Delete {name} item by UUID',
+                description=f'Delete a {name} item by UUID',
+                parameters=api_utils.gen_uuid_parameters(with_odata=False),
                 responses=api_utils.gen_response(base_type_name, with_404=True),
                 tags=delete_tags,
                 security=security,
@@ -141,9 +118,9 @@ def api_paths(
         ),
         f'{path}/{consts.rest.OVERVIEW}': types.rest.api.PathItem(
             get=types.rest.api.Operation(
-                summary=f'Get overview of {cls_model} items',
-                description=f'Retrieve an overview of {cls_model} items',
-                parameters=[],
+                summary=f'Get overview of {name} items',
+                description=f'Retrieve an overview of {name} items',
+                parameters=api_utils.gen_odata_parameters(),
                 responses=api_utils.gen_response(base_type_name, single=False),
                 tags=get_tags,
                 security=security,
@@ -151,8 +128,8 @@ def api_paths(
         ),
         f'{path}/{consts.rest.TABLEINFO}': types.rest.api.PathItem(
             get=types.rest.api.Operation(
-                summary=f'Get table info of {cls_model} items',
-                description=f'Retrieve table info of {cls_model} items',
+                summary=f'Get table info of {name} items',
+                description=f'Retrieve table info of {name} items',
                 parameters=[],
                 responses=api_utils.gen_response('TableInfo', with_404=True),
                 tags=get_tags,
@@ -161,8 +138,8 @@ def api_paths(
         ),
         f'{path}/{consts.rest.TYPES}': types.rest.api.PathItem(
             get=types.rest.api.Operation(
-                summary=f'Get types of {cls_model} items',
-                description=f'Retrieve types of {cls_model} items',
+                summary=f'Get types of {name} items',
+                description=f'Retrieve types of {name} items',
                 parameters=[],
                 responses=api_utils.gen_response(base_type_name, single=False),
                 tags=get_tags,
@@ -171,8 +148,8 @@ def api_paths(
         ),
         f'{path}/{consts.rest.TYPES}/{{type}}': types.rest.api.PathItem(
             get=types.rest.api.Operation(
-                summary=f'Get {cls_model} item by type',
-                description=f'Retrieve a {cls_model} item by type',
+                summary=f'Get {name} item by type',
+                description=f'Retrieve a {name} item by type',
                 parameters=[
                     types.rest.api.Parameter(
                         name='type',
@@ -187,33 +164,37 @@ def api_paths(
                 security=security,
             )
         ),
-        # TODO: Fix this
-        f'{path}/{consts.rest.GUI}': types.rest.api.PathItem(
+    }
+    if cls.REST_API_INFO.gui_type.is_untyped():
+        api_desc[f'{path}/{consts.rest.GUI}'] = types.rest.api.PathItem(
             get=types.rest.api.Operation(
-                summary=f'Get GUI representation of {cls_model} items',
-                description=f'Retrieve the GUI representation of {cls_model} items',
+                summary=f'Get GUI representation of {name} items',
+                description=f'Retrieve the GUI representation of {name} items',
                 parameters=[],
-                responses=api_utils.gen_response('GuiElement', with_404=True),
+                responses=api_utils.gen_response('GuiElement', single=False, with_404=True),
                 tags=get_tags,
                 security=security,
             )
-        ),
-        f'{path}/{consts.rest.GUI}/{{type}}': types.rest.api.PathItem(
+        )
+
+    if cls.REST_API_INFO.gui_type.is_typed():
+        api_desc[f'{path}/{consts.rest.GUI}/{{type}}'] = types.rest.api.PathItem(
             get=types.rest.api.Operation(
-                summary=f'Get {cls_model} item by type',
-                description=f'Retrieve a {cls_model} item by type',
+                summary=f'Get GUI representation of {name} type',
+                description=f'Retrieve a {name} GUI representation by type',
                 parameters=[
                     types.rest.api.Parameter(
                         name='type',
                         in_='path',
                         required=True,
-                        description='The type of the item',
+                        description=f'The type of the {name} GUI representation',
                         schema=types.rest.api.Schema(type='string'),
                     )
                 ],
-                responses=api_utils.gen_response('GuiElement', with_404=True),
+                responses=api_utils.gen_response('GuiElement', single=False, with_404=True),
                 tags=get_tags,
                 security=security,
             )
-        ),
-    }
+        )
+
+    return api_desc

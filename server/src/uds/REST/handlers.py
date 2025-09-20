@@ -72,6 +72,8 @@ class Handler(abc.ABC):
 
     ROLE: typing.ClassVar[consts.UserRole] = consts.UserRole.USER  # By default, only users can access
 
+    REST_API_INFO: typing.ClassVar[types.rest.api.RestApiInfo] = types.rest.api.RestApiInfo()
+
     _request: 'ExtendedHttpRequestWithUser'  # It's a modified HttpRequest
     _path: str
     _operation: str

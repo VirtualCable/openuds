@@ -170,6 +170,11 @@ class ServicesPools(ModelHandler[ServicePoolItem]):
         types.rest.ModelCustomMethod('add_log', True),
     ]
 
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        gui_type=types.rest.api.RestApiInfoGuiType.UNTYPED,
+    )
+
     def get_items(
         self, *args: typing.Any, **kwargs: typing.Any
     ) -> typing.Generator[ServicePoolItem, None, None]:

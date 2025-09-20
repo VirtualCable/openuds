@@ -487,6 +487,12 @@ class UserServiceManager(metaclass=singleton.Singleton):
         with transaction.atomic():
             userservice = UserService.objects.select_for_update().get(id=userservice.id)
             operations_logger.info('Removing userservice %a', userservice.name)
+
+            # If already removing or removed, do nothing
+            if State.from_str(userservice.state) in (State.REMOVING, State.REMOVED):
+                logger.debug('Userservice %s already removing or removed', userservice.name)
+                return
+
             if userservice.is_usable() is False and State.from_str(userservice.state).is_removable() is False:
                 if not forced:
                     raise OperationException(
