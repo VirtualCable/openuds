@@ -95,7 +95,7 @@ def api_paths(
                 summary=f'Get {name} item by UUID',
                 description=f'Retrieve a {name} item by UUID',
                 parameters=api_utils.gen_uuid_parameters(with_odata=True),
-                responses=api_utils.gen_response(base_type_name, with_404=True),
+                responses=api_utils.gen_response(base_type_name, single=True),
                 tags=get_tags,
                 security=security,
             ),
@@ -103,7 +103,7 @@ def api_paths(
                 summary=f'Update {name} item by UUID',
                 description=f'Update an existing {name} item by UUID',
                 parameters=api_utils.gen_uuid_parameters(with_odata=True),
-                responses=api_utils.gen_response(base_type_name, with_404=True),
+                responses=api_utils.gen_response(base_type_name, single=True),
                 tags=put_tags,
                 security=security,
             ),
@@ -111,7 +111,7 @@ def api_paths(
                 summary=f'Delete {name} item by UUID',
                 description=f'Delete a {name} item by UUID',
                 parameters=api_utils.gen_uuid_parameters(with_odata=True),
-                responses=api_utils.gen_response(base_type_name, with_404=True),
+                responses=api_utils.gen_response(base_type_name, single=True),
                 tags=delete_tags,
                 security=security,
             ),
@@ -131,7 +131,7 @@ def api_paths(
                 summary=f'Get table info of {name} items',
                 description=f'Retrieve table info of {name} items',
                 parameters=[],
-                responses=api_utils.gen_response('TableInfo', with_404=True),
+                responses=api_utils.gen_response('TableInfo'),
                 tags=get_tags,
                 security=security,
             )
@@ -144,7 +144,7 @@ def api_paths(
                 summary=f'Get GUI representation of {name} items',
                 description=f'Retrieve the GUI representation of {name} items',
                 parameters=[],
-                responses=api_utils.gen_response('GuiElement', single=False, with_404=True),
+                responses=api_utils.gen_response('GuiElement', single=False),
                 tags=get_tags,
                 security=security,
             )
@@ -166,7 +166,7 @@ def api_paths(
                                 schema=types.rest.api.Schema(type='string'),
                             )
                         ],
-                        responses=api_utils.gen_response('GuiElement', single=False, with_404=True),
+                        responses=api_utils.gen_response('GuiElement', single=True),
                         tags=get_tags,
                         security=security,
                     )
@@ -176,7 +176,7 @@ def api_paths(
                         summary=f'Get types of {name} items',
                         description=f'Retrieve types of {name} items',
                         parameters=[],
-                        responses=api_utils.gen_response(base_type_name, single=False),
+                        responses=api_utils.gen_response('TypeInfo', single=False),
                         tags=get_tags,
                         security=security,
                     )
@@ -194,7 +194,7 @@ def api_paths(
                                 schema=types.rest.api.Schema(type='string'),
                             )
                         ],
-                        responses=api_utils.gen_response(base_type_name, with_404=True),
+                        responses=api_utils.gen_response('TypeInfo', single=True),
                         tags=get_tags,
                         security=security,
                     )

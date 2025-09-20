@@ -7,7 +7,7 @@ import datetime
 import enum
 import types as py_types
 
-from uds.core import types, module
+from uds.core import types
 from uds.core.types.rest.api import SchemaProperty
 
 if typing.TYPE_CHECKING:
@@ -86,16 +86,11 @@ def get_component_from_type(
 
         # A reference
         item_name = base_type.__name__
-        # For for item schema in components
+        # For item schema in components
         item_schema = next(filter(lambda x: x[0] == item_name, components.schemas.items()), (None, None))[1]
 
-        possible_types: collections.abc.Iterable[type['module.Module']] = []
         is_managed_object = issubclass(base_type, types.rest.ManagedObjectItem)
-        if is_managed_object:
-            # Managed object item class should provide types as it has "instance" field
-            possible_types = cls.possible_types()
-        else:  # BaseRestItem, does not have types as it does not have "instance" field
-            pass
+        possible_types = cls.possible_types()
 
         refs: list[str] = []
         mappings: list[tuple[str, str]] = []
@@ -113,11 +108,11 @@ def get_component_from_type(
                 if field.gui.required is True:
                     type_schema.required.append(field.name)
 
-            ref = f'#/components/schemas/{type_.type_type}'
+            ref = f'#/components/schemas/{type_.mod_type()}'
             refs.append(ref)
-            mappings.append((f'{type_.type_type}', ref))
+            mappings.append((f'{type_.mod_type()}', ref))
 
-            components.schemas[type_.type_type] = type_schema
+            components.schemas[type_.mod_type()] = type_schema
 
         if is_managed_object and isinstance(item_schema, types.rest.api.Schema):
             # item_schema.discriminator = types.rest.api.Discriminator(propertyName='type')
@@ -322,7 +317,6 @@ def api_components(
 
 def gen_response(
     type: str,
-    with_404: bool = False,
     single: bool = True,
     delete: bool = False,
     with_403: bool = True,
@@ -357,7 +351,7 @@ def gen_response(
             )
         }
 
-    if with_404:
+    if single:
         data['404'] = types.rest.api.Response(
             description=f'{type} item not found',
             content=types.rest.api.Content(
@@ -398,14 +392,7 @@ def gen_request_body(type: str, create: bool = True) -> types.rest.api.RequestBo
         content=types.rest.api.Content(
             media_type='application/json',
             schema=types.rest.api.SchemaProperty(
-                type=f'#/components/schemas/{type}' if create else 'array',
-                items=(
-                    types.rest.api.SchemaProperty(
-                        type=f'#/components/schemas/{type}',
-                    )
-                    if not create
-                    else None
-                ),
+                type=f'#/components/schemas/{type}',
             ),
         ),
     )
