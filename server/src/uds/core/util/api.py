@@ -5,6 +5,7 @@ import logging
 import dataclasses
 import datetime
 import enum
+import functools
 import types as py_types
 
 from uds.core import types
@@ -173,10 +174,16 @@ _OPENAPI_TYPE_MAP: typing.Final[dict[typing.Any, OpenApiType]] = {
 }
 
 
-def python_type_to_openapi(py_type: typing.Any) -> 'types.rest.api.SchemaProperty':
+def python_type_to_openapi(
+    py_type: typing.Any, description: str | None = None
+) -> 'types.rest.api.SchemaProperty':
     """
     Convert a Python type to an OpenAPI 3.1 schema property.
     """
+    
+    # Partial to add description to schema property if provided
+    schema_prop = functools.partial(types.rest.api.SchemaProperty, description=description)
+
 
     origin = typing.get_origin(py_type)
     args = typing.get_args(py_type)
@@ -184,12 +191,12 @@ def python_type_to_openapi(py_type: typing.Any) -> 'types.rest.api.SchemaPropert
     # list[...] → array
     if origin is list:
         item_type = args[0] if args else typing.Any
-        return types.rest.api.SchemaProperty(type='array', items=python_type_to_openapi(item_type))
+        return schema_prop(type='array', items=python_type_to_openapi(item_type))
 
     # dict[...] → object
     elif origin is dict:
         value_type = args[1] if len(args) == 2 else typing.Any
-        return types.rest.api.SchemaProperty(
+        return schema_prop(
             type='object', additionalProperties=python_type_to_openapi(value_type)
         )
 
@@ -211,7 +218,7 @@ def python_type_to_openapi(py_type: typing.Any) -> 'types.rest.api.SchemaPropert
         if len(one_of) == 1:
             return one_of[0]
 
-        return types.rest.api.SchemaProperty(
+        return schema_prop(
             type='not_used',
             one_of=one_of,
         )
@@ -222,18 +229,18 @@ def python_type_to_openapi(py_type: typing.Any) -> 'types.rest.api.SchemaPropert
     # Literal[...] → enum
     elif origin is typing.Literal:
         literal_type = typing.cast(type[typing.Any], type(args[0]) if args else str)
-        return types.rest.api.SchemaProperty(
+        return schema_prop(
             type=_OPENAPI_TYPE_MAP.get(literal_type, OpenApiType.STRING).value.type, enum=list(args)
         )
 
     # Enum classes
     # First, IntEnum --> int
     elif isinstance(py_type, type) and issubclass(py_type, enum.IntEnum):
-        return types.rest.api.SchemaProperty(type='integer', enum=[e.value for e in py_type])
+        return schema_prop(type='integer', enum=[e.value for e in py_type])
 
     # Now, StrEnum --> string
     elif isinstance(py_type, type) and issubclass(py_type, enum.StrEnum):
-        return types.rest.api.SchemaProperty(type='string', enum=[e.value for e in py_type])
+        return schema_prop(type='string', enum=[e.value for e in py_type])
 
     # Rest of cases --> enum with first item type setting the type for the field
     elif isinstance(py_type, type) and issubclass(py_type, enum.Enum):
@@ -241,15 +248,15 @@ def python_type_to_openapi(py_type: typing.Any) -> 'types.rest.api.SchemaPropert
             sample = next(iter(py_type))
             value_type = typing.cast(type[typing.Any], type(sample.value))
             openapi_type = _OPENAPI_TYPE_MAP.get(value_type, OpenApiType.STRING)
-            return types.rest.api.SchemaProperty(type=openapi_type.value.type, enum=[e.value for e in py_type])
+            return schema_prop(type=openapi_type.value.type, enum=[e.value for e in py_type])
         except StopIteration:
-            return types.rest.api.SchemaProperty(type='string')
+            return schema_prop(type='string')
     elif isinstance(py_type, type) and dataclasses.is_dataclass(py_type):
-        return types.rest.api.SchemaProperty(type=f'#/components/schemas/{py_type.__name__}')
+        return schema_prop(type=f'#/components/schemas/{py_type.__name__}')
 
     # Simple types
     oa_type = _OPENAPI_TYPE_MAP.get(py_type, OpenApiType.OBJECT)
-    return types.rest.api.SchemaProperty(type=oa_type.value.type, format=oa_type.value.format)
+    return schema_prop(type=oa_type.value.type, format=oa_type.value.format)
 
 
 def api_components(
@@ -276,15 +283,17 @@ def api_components(
 
     components = types.rest.api.Components()
     schema = types.rest.api.Schema(type='object', properties={}, description=None)
-    type_hints = typing.get_type_hints(dataclass)
+    # type_hints = typing.get_type_hints(dataclass)
 
     for field in dataclasses.fields(dataclass):
         if field.name in our_removables:
             continue
 
+        description = field.metadata.get('description')
+
         # Check the type, can be a primitive or a complex type
         # complexes types accepted are list and dict currently
-        field_type = type_hints.get(field.name)
+        field_type = field.type  # type_hints.get(field.name)
         if not field_type:
             raise Exception(f'Field {field.name} has no type hint')
 
@@ -305,7 +314,7 @@ def api_components(
                 removable_fields=child_removables.get(field.name, []),
             )
 
-        schema_prop = api_util.python_type_to_openapi(field_type)
+        schema_prop = api_util.python_type_to_openapi(field_type, description=description)
 
         schema.properties[field.name] = schema_prop
         if field.default is dataclasses.MISSING and field.default_factory is dataclasses.MISSING:
