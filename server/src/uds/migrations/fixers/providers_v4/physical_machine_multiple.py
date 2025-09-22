@@ -109,7 +109,7 @@ class IPMachinesService(services.Service):
         self.ipList.value = [_as_identifier(i) for i in _ips]
 
         if values[0] != b'v1':
-            self._token = values[1].decode()
+            self.token.value = values[1].decode()
             if values[0] in (b'v3', b'v4', b'v5', b'v6', b'v7'):
                 self.port.value = int(values[2].decode())
             if values[0] in (b'v4', b'v5', b'v6', b'v7'):
