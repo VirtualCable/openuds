@@ -33,7 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 import typing
 
-from uds.core import services, types
+from uds.core import consts, services, types
 from uds.core.util import autoserializable
 
 # Not imported at runtime, just for type checking
@@ -73,7 +73,7 @@ class IPMachinesUserService(services.UserService, autoserializable.AutoSerializa
 
     def get_unique_id(self) -> str:
         # Generate a 16 chars string mixing up all _vmid chars
-        return self._mac or self._ip
+        return self._mac if self._mac and self._mac != consts.MAC_UNKNOWN else self._ip
 
     def set_ready(self) -> types.states.TaskState:
         self.service().wakeup(self._ip, self._mac)
