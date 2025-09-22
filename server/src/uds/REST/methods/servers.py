@@ -57,7 +57,7 @@ class ServerRegisterBase(Handler):
             ip = ip.split('%')[0]
         port = self._params.get('port', consts.net.SERVER_DEFAULT_LISTEN_PORT)
 
-        mac = self._params.get('mac', consts.MAC_UNKNOWN)
+        mac = self._params.get('mac', consts.NULL_MAC)
         data = self._params.get('data', None)
         subtype = self._params.get('subtype', '')
         os = self._params.get('os', types.os.KnownOS.UNKNOWN.os_name()).lower()

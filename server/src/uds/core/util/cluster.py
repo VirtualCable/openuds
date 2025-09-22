@@ -6,6 +6,7 @@ import typing
 from django.db import transaction, OperationalError
 
 from uds import models
+from uds.core import consts
 from uds.core.util.iface import get_first_iface
 from uds.core.util.model import sql_now, get_my_ip_from_db
 
@@ -20,7 +21,7 @@ class UDSClusterNode(typing.NamedTuple):
     hostname: str
     ip: str
     last_seen: datetime.datetime
-    mac: str = '00:00:00:00:00:00'
+    mac: str = consts.NULL_MAC
 
     def as_dict(self) -> dict[str, str]:
         """
@@ -44,7 +45,7 @@ def store_cluster_info() -> None:
     """
     iface = get_first_iface()
     ip = iface.ip if iface else get_my_ip_from_db()
-    mac = iface.mac if iface else '00:00:00:00:00:00'
+    mac = iface.mac if iface else consts.NULL_MAC
 
     try:
         hostname = socket.getfqdn() + '|' + ip
@@ -82,7 +83,7 @@ def enumerate_cluster_nodes() -> list[UDSClusterNode]:
                 hostname=prop.key.split('|')[0],
                 ip=prop.key.split('|')[1],
                 last_seen=datetime.datetime.fromisoformat(prop.value['last_seen']),
-                mac=prop.value.get('mac', '00:00:00:00:00:00'),
+                mac=prop.value.get('mac', consts.NULL_MAC),
             )
             for prop in properties
             if 'last_seen' in prop.value and '|' in prop.key

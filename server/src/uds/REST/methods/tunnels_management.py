@@ -80,7 +80,7 @@ class TunnelServers(DetailHandler[TunnelServerItem]):
                     id=i.uuid,
                     hostname=i.hostname,
                     ip=i.ip,
-                    mac=i.mac if i.mac != consts.MAC_UNKNOWN else '',
+                    mac=i.mac if i.mac != consts.NULL_MAC else '',
                     maintenance=i.maintenance_mode,
                 )
                 for i in q

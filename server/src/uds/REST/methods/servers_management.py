@@ -164,7 +164,7 @@ class ServersServers(DetailHandler[ServerItem]):
                         hostname=i.hostname,
                         ip=i.ip,
                         listen_port=i.listen_port,
-                        mac=i.mac if i.mac != consts.MAC_UNKNOWN else '',
+                        mac=i.mac if i.mac != consts.NULL_MAC else '',
                         maintenance_mode=i.maintenance_mode,
                         register_username=i.register_username,
                         stamp=i.stamp,
@@ -365,11 +365,11 @@ class ServersServers(DetailHandler[ServerItem]):
                 continue
             hostname = row[0].strip()
             ip = ''
-            mac = consts.MAC_UNKNOWN
+            mac = consts.NULL_MAC
             if len(row) > 1:
                 ip = row[1].strip()
             if len(row) > 2:
-                mac = row[2].strip().upper().strip() or consts.MAC_UNKNOWN
+                mac = row[2].strip().upper().strip() or consts.NULL_MAC
                 if mac and not net.is_valid_mac(mac):
                     import_errors.append(f'Line {line_number}: MAC {mac} is invalid, skipping')
                     continue  # skip invalid macs
@@ -552,7 +552,7 @@ class ServersGroups(ModelHandler[GroupItem]):
                 'server': {
                     'id': s[1].uuid,
                     'hostname': s[1].hostname,
-                    'mac': s[1].mac if s[1].mac != consts.MAC_UNKNOWN else '',
+                    'mac': s[1].mac if s[1].mac != consts.NULL_MAC else '',
                     'ip': s[1].ip,
                     'load': s[0].load(weights=item.weights) if s[0] else 0,
                     'weights': item.weights.as_dict(),
