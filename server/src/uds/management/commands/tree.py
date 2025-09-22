@@ -130,7 +130,7 @@ class Command(BaseCommand):
             '--max-items',
             action='store',
             dest='maxitems',
-            default=400,
+            default=200,
             help='Maximum elements exported for groups and user services',
         )
 
@@ -166,7 +166,15 @@ class Command(BaseCommand):
                         fltr = servicepool.userServices.all()
                         if not options['alluserservices']:
                             fltr = fltr.filter(state=types.states.State.ERROR)
-                        for item in fltr[:max_items]:  # at most max_items items
+                        fltr_list = list(fltr)[:max_items]
+                        if len(fltr_list) < max_items:
+                            # Append rest of userservices, if there is space
+                            fltr_list += list(
+                                servicepool.userServices.exclude(
+                                    pk__in=[u.pk for u in fltr_list]
+                                )[: max_items - len(fltr_list)]
+                            )
+                        for item in fltr_list[:max_items]:  # at most max_items items
                             logs = [
                                 f'{l["date"]}: {types.log.LogLevel.from_int(l["level"])} [{l["source"]}] - {l["message"]}'
                                 for l in log.get_logs(item)
@@ -241,8 +249,22 @@ class Command(BaseCommand):
                     '_': get_serialized_from_managed_object(provider),
                     'services': services,
                 }
-
-            tree[counter('PROVIDERS')] = providers
+                
+            # Get server groups
+            server_groups: dict[str, typing.Any] = {}
+            for server_group in models.ServerGroup.objects.all():
+                servers: dict[str, typing.Any] = {}
+                for server in server_group.servers.all()[:max_items]:  # at most max_items items
+                    servers[server.hostname] = get_serialized_from_model(server, exclude_uuid=False)
+                server_groups[server_group.name] = {
+                    '_': get_serialized_from_model(server_group, exclude_uuid=False),
+                    'servers': servers,
+                }
+                
+            tree[counter('SERVICES')] = {
+                'providers': providers,
+                'server_groups': server_groups
+            }
 
             # authenticators
             authenticators: dict[str, typing.Any] = {}
@@ -380,12 +402,12 @@ class Command(BaseCommand):
 
             tree[counter('CONFIG')] = cfg
 
-            # Last 7 days of logs
+            # Last 7 days of logs or 500 entries, whichever is less
             logs = [
                 get_serialized_from_model(log_entry)
                 for log_entry in models.Log.objects.filter(
                     created__gt=now - datetime.timedelta(days=7)
-                ).order_by('-created')
+                ).order_by('-created')[:500]
             ]
             # Cluster nodes
             cluster_nodes: list[dict[str, str]] = [node.as_dict() for node in cluster.enumerate_cluster_nodes()]
