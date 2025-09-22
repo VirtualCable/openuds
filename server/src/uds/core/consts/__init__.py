@@ -44,7 +44,7 @@ from . import actor, auth, cache, calendar, images, net, os, system, ticket, res
 NEVER: typing.Final[datetime] = datetime(1972, 7, 1)
 NEVER_UNIX: typing.Final[int] = int(time.mktime(NEVER.timetuple()))
 
-# Unknown mac address "magic" value
+# Null mac address "magic" value
 NULL_MAC: typing.Final[str] = '00:00:00:00:00:00'
 
 # REST Related constants
