@@ -141,6 +141,9 @@ class IPMachinesService(services.Service):
 
     services_type_provided = types.services.ServiceType.VDI
 
+    def enumerate_servers(self) -> typing.Iterable['models.Server']:
+        return fields.get_server_group_from_field(self.server_group).servers.filter(maintenance_mode=False)
+
     def get_token(self) -> typing.Optional[str]:
         return self.token.as_str() or None
 
@@ -153,7 +156,7 @@ class IPMachinesService(services.Service):
         now = sql_now()
         return [
             gui.choice_item(server.uuid, f'{server.host}|{server.mac}')
-            for server in fields.get_server_group_from_field(self.server_group).servers.all()
+            for server in self.enumerate_servers()
             if server.locked_until is None or server.locked_until < now
         ]
 
@@ -175,14 +178,15 @@ class IPMachinesService(services.Service):
         '''
         Returns an unassigned machine
         '''
-        list_of_servers = list(fields.get_server_group_from_field(self.server_group).servers.all())
+        # Get all servers in the group, not in maintenance mode
+        list_of_servers = list(self.enumerate_servers())
         if self.randomize_host.as_bool() is True:
             random.shuffle(list_of_servers)  # Reorder the list randomly if required
 
         for server in list_of_servers:
             # If not locked or lock expired
             if server.locked_until is None or server.locked_until < sql_now():
-                # if port check enabled, check 
+                # if port check enabled, check
                 if self.port.value != 0:
                     if not net.test_connectivity(server.host, self.port.value):
                         server.lock(datetime.timedelta(minutes=self.ignore_minutes_on_failure.value))
