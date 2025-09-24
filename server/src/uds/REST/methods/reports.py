@@ -88,6 +88,11 @@ class Reports(model.BaseModelHandler[ReportItem]):
         .build()
     )
 
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        typed=types.rest.api.RestApiInfoGuiType.MULTIPLE_TYPES,
+    )
+
     def _locate_report(
         self, uuid: str, values: typing.Optional[typing.Dict[str, typing.Any]] = None
     ) -> 'Report':

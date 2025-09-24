@@ -324,12 +324,12 @@ class TestPhysicalMigration(UDSTransactionTestCase):
             # Ensure has a hostname, and MAC is empty
             self.assertNotEqual(server.hostname, '')
 
-            # 172.27.1.25 has a MAC, rest of servers have MAC_UNKNOWN (empty equivalent)
+            # 172.27.1.25 has a MAC, rest of servers have NULL_MAC (empty equivalent)
             # Also, should have 127.0.0.1 as ip if localhost
             if server.ip == '172.27.1.25':
                 self.assertEqual(server.mac, '01:23:45:67:89:AB')
             else:
-                self.assertEqual(server.mac, consts.MAC_UNKNOWN)
+                self.assertEqual(server.mac, consts.NULL_MAC)
 
             # If is 172.27.1.26 ensure is locked
             if server.ip == '172.27.1.26':

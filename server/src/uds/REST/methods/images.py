@@ -91,6 +91,11 @@ class Images(ModelHandler[ImageItem]):
     # This has no get_gui because its treated on the admin or client.
     # We expect an Image List
 
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        typed=types.rest.api.RestApiInfoGuiType.UNTYPED,
+    )
+
     def get_item(self, item: 'models.Model') -> ImageItem:
         item = ensure.is_instance(item, Image)
         return ImageItem(

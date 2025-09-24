@@ -32,6 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import time
 
+from uds.core import consts
 from uds.core.util.unique_id_generator import UniqueIDGenerator
 from uds.core.util.unique_gid_generator import UniqueGIDGenerator
 from uds.core.util.unique_mac_generator import UniqueMacGenerator
@@ -142,7 +143,7 @@ class UniqueIdTest(UDSTestCase):
             self.assertEqual(mac_to_integer(self.macs_generator.get(TEST_MAC_RANGE_FULL)), starti + x)
 
         for x in range(20):
-            self.assertEqual(self.macs_generator.get(TEST_MAC_RANGE_FULL), '00:00:00:00:00:00')
+            self.assertEqual(self.macs_generator.get(TEST_MAC_RANGE_FULL), consts.NULL_MAC)
 
     def test_name(self) -> None:
         lst: list[str] = []

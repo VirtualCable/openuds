@@ -41,6 +41,13 @@ import typing
 import secrets
 import base64
 
+
+uuid7: None|typing.Callable[[], 'uuid.UUID']
+try:
+    from edwh_uuid7 import uuid7  # type: ignore
+except ImportError:
+    uuid7 = None  # type: ignore
+
 # For password secrets
 from argon2 import PasswordHasher, Type as ArgonType
 
@@ -308,10 +315,12 @@ class CryptoManager(metaclass=singleton.Singleton):
 
     def uuid(self, obj: typing.Any = None) -> str:
         """Generates an uuid from obj. (lower case)
-        If obj is None, returns an uuid based on a random string
+        If obj is None, returns a non-deterministic uuid (preferably uuid7 if available, else uuid4)
         """
-        if obj is None:
-            obj = self.random_string()
+        if obj is None:  # Non deterministic, try to use uuid7 if available
+            if uuid7 is not None:
+                return str(uuid7())
+            return str(uuid.uuid4())
         elif isinstance(obj, bytes):
             obj = obj.decode('utf8')  # To string
         else:
@@ -320,9 +329,7 @@ class CryptoManager(metaclass=singleton.Singleton):
             except Exception:
                 obj = str(hash(obj))  # Get hash of object
 
-        return str(
-            uuid.uuid5(self._namespace, obj)
-        ).lower()  # I believe uuid returns a lowercase uuid always, but in case... :)
+        return str(uuid.uuid5(self._namespace, obj))  # Uuid is always lower case
 
     # Used to encode fields that will go inside json
     def encrypt_field_b64(self, plaintext: str, key_ascii32: str, nonce_seq: int) -> str:

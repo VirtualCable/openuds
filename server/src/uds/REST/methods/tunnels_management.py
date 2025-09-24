@@ -47,6 +47,7 @@ from uds.REST.model import DetailHandler, ModelHandler
 
 logger = logging.getLogger(__name__)
 
+
 @dataclasses.dataclass
 class TunnelServerItem(types.rest.BaseRestItem):
     id: str
@@ -57,8 +58,11 @@ class TunnelServerItem(types.rest.BaseRestItem):
 
 
 class TunnelServers(DetailHandler[TunnelServerItem]):
-    # tunnels/[id]/servers
     CUSTOM_METHODS = ['maintenance']
+
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        name='TunnelServers', description='Tunnel servers assigned to a tunnel'
+    )
 
     def get_items(
         self, parent: 'Model', item: typing.Optional[str]
@@ -76,7 +80,7 @@ class TunnelServers(DetailHandler[TunnelServerItem]):
                     id=i.uuid,
                     hostname=i.hostname,
                     ip=i.ip,
-                    mac=i.mac if i.mac != consts.MAC_UNKNOWN else '',
+                    mac=i.mac if i.mac != consts.NULL_MAC else '',
                     maintenance=i.maintenance_mode,
                 )
                 for i in q
@@ -134,6 +138,7 @@ class TunnelServers(DetailHandler[TunnelServerItem]):
         item.save()
         return 'ok'
 
+
 @dataclasses.dataclass
 class TunnelItem(types.rest.BaseRestItem):
     id: str
@@ -171,6 +176,12 @@ class Tunnels(ModelHandler[TunnelItem]):
         .numeric_column(name='servers_count', title=_('Servers'), width='1rem')
         .text_column(name='tags', title=_('tags'), visible=False)
         .build()
+    )
+
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        name='Tunnels',
+        description='Tunnel management',
+        typed=types.rest.api.RestApiInfoGuiType.SINGLE_TYPE,
     )
 
     def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:

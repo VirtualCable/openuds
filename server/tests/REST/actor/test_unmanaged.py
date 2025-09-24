@@ -33,6 +33,7 @@ import logging
 
 
 from uds import models
+from uds.core import consts
 from uds.core.managers.crypto import CryptoManager
 from ...utils import rest
 
@@ -105,8 +106,7 @@ class ActorUnmanagedTest(rest.test.RESTActorTestCase):
         if actor_token == '':
             self.fail('Service token not found')
 
-        TEST_MAC: typing.Final[str] = '00:00:00:00:00:00'
-
+        TEST_MAC: typing.Final[str] = consts.NULL_MAC
         # This will succeed, but only alias token is returned because MAC is not registered by UDS
         result = self.invoke_success(
             actor_token,

@@ -143,6 +143,11 @@ class ServersServers(DetailHandler[ServerItem]):
 
     CUSTOM_METHODS = ['maintenance', 'importcsv']
 
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        typed=types.rest.api.RestApiInfoGuiType.SINGLE_TYPE,
+    )
+
     def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[ServerItem]:
         parent = typing.cast('models.ServerGroup', parent)  # We will receive for sure
         try:
@@ -159,7 +164,7 @@ class ServersServers(DetailHandler[ServerItem]):
                         hostname=i.hostname,
                         ip=i.ip,
                         listen_port=i.listen_port,
-                        mac=i.mac if i.mac != consts.MAC_UNKNOWN else '',
+                        mac=i.mac if i.mac != consts.NULL_MAC else '',
                         maintenance_mode=i.maintenance_mode,
                         register_username=i.register_username,
                         stamp=i.stamp,
@@ -197,7 +202,7 @@ class ServersServers(DetailHandler[ServerItem]):
             .build()
         )
 
-    def get_gui(self, parent: 'Model', for_type: str = '') -> list[types.ui.GuiElement]:
+    def get_gui(self, parent: 'Model', for_type: str) -> list[types.ui.GuiElement]:
         parent = ensure.is_instance(parent, models.ServerGroup)
         kind, subkind = parent.server_type, parent.subtype
         title = _('of type') + f' {subkind.upper()} {kind.name.capitalize()}'
@@ -303,6 +308,7 @@ class ServersServers(DetailHandler[ServerItem]):
                     raise exceptions.rest.ResponseError('Error updating server') from None
 
             else:
+                # Remove current server and add the new one in a single transaction
                 try:
                     server = models.Server.objects.get(uuid=process_uuid(item))
                     parent.servers.add(server)
@@ -359,11 +365,11 @@ class ServersServers(DetailHandler[ServerItem]):
                 continue
             hostname = row[0].strip()
             ip = ''
-            mac = consts.MAC_UNKNOWN
+            mac = consts.NULL_MAC
             if len(row) > 1:
                 ip = row[1].strip()
             if len(row) > 2:
-                mac = row[2].strip().upper().strip() or consts.MAC_UNKNOWN
+                mac = row[2].strip().upper().strip() or consts.NULL_MAC
                 if mac and not net.is_valid_mac(mac):
                     import_errors.append(f'Line {line_number}: MAC {mac} is invalid, skipping')
                     continue  # skip invalid macs
@@ -455,6 +461,11 @@ class ServersGroups(ModelHandler[GroupItem]):
         .build()
     )
 
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        typed=types.rest.api.RestApiInfoGuiType.MULTIPLE_TYPES,
+    )
+
     def enum_types(
         self, *args: typing.Any, **kwargs: typing.Any
     ) -> typing.Generator[types.rest.TypeInfo, None, None]:
@@ -541,7 +552,7 @@ class ServersGroups(ModelHandler[GroupItem]):
                 'server': {
                     'id': s[1].uuid,
                     'hostname': s[1].hostname,
-                    'mac': s[1].mac if s[1].mac != consts.MAC_UNKNOWN else '',
+                    'mac': s[1].mac if s[1].mac != consts.NULL_MAC else '',
                     'ip': s[1].ip,
                     'load': s[0].load(weights=item.weights) if s[0] else 0,
                     'weights': item.weights.as_dict(),

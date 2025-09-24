@@ -167,14 +167,18 @@ ItemsResult: typing.TypeAlias = list[T_Item] | BaseRestItem | typing.Iterator[T_
 
 @dataclasses.dataclass
 class TypeInfo:
-    name: str
-    type: str
-    description: str
-    icon: str
+    name: str = dataclasses.field(metadata={'description': 'Name of the type (Human readable)'})
+    type: str = dataclasses.field(metadata={'description': 'Type name used to identify the type'})
+    description: str = dataclasses.field(metadata={'description': 'Description for this type'})
+    icon: str = dataclasses.field(metadata={'description': 'Icon of the type, in base64'})
 
-    group: typing.Optional[str] = None
+    group: typing.Optional[str] = dataclasses.field(
+        default=None, metadata={'description': 'Group name used for grouping "similar" types'}
+    )
 
-    extra: 'ExtraTypeInfo|None' = None
+    extra: 'ExtraTypeInfo|None' = dataclasses.field(
+        default=None, metadata={'description': 'Extra type info. Depends on specific type.'}
+    )
 
     def as_dict(self) -> dict[str, typing.Any]:
         res: dict[str, typing.Any] = {

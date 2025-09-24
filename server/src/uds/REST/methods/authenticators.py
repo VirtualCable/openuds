@@ -91,7 +91,7 @@ class AuthenticatorItem(types.rest.ManagedObjectItem[Authenticator]):
     users_count: int
     permission: int
 
-    type_info: types.rest.TypeInfo|None
+    type_info: types.rest.TypeInfo | None
 
 
 # Enclosed methods under /auth path
@@ -117,6 +117,11 @@ class Authenticators(ModelHandler[AuthenticatorItem]):
         .text_column(name='tags', title=_('tags'), visible=False)
         .row_style(prefix='row-state-', field='state')
         .build()
+    )
+
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        typed=types.rest.api.RestApiInfoGuiType.MULTIPLE_TYPES,
     )
 
     @classmethod

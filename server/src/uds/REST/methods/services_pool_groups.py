@@ -74,6 +74,11 @@ class ServicesPoolGroups(ModelHandler[ServicePoolGroupItem]):
         .build()
     )
 
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        typed=types.rest.api.RestApiInfoGuiType.SINGLE_TYPE,
+    )
+
     def pre_save(self, fields: dict[str, typing.Any]) -> None:
         img_id = fields['image_id']
         fields['image_id'] = None

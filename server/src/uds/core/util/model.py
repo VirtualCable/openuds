@@ -135,11 +135,11 @@ def sql_stamp() -> float:
     return float(time.mktime(sql_now().timetuple())) + sql_now().microsecond / 1000000.0
 
 
-def generate_uuid(obj: typing.Any = None) -> str:
+def generate_uuid() -> str:
     """
     Generates a ramdom uuid for models default
     """
-    return CryptoManager.manager().uuid(obj=obj).lower()
+    return CryptoManager.manager().uuid().lower()
 
 
 def process_uuid(uuid: str) -> str:

@@ -205,7 +205,7 @@ class ActorInitializeTest(rest.test.RESTActorTestCase):
         success = functools.partial(self.invoke_success, 'unmanaged')
         failure = functools.partial(self.invoke_failure, 'unmanaged')
 
-        NONEXISTING_MAC: typing.Final[str] = '00:00:00:00:00:00'
+        NONEXISTING_MAC: typing.Final[str] = consts.NULL_MAC
         USERSERVICE_MAC: typing.Final[str] = userservice.get_unique_id()
 
         # This will succeed, but only alias token is returned because MAC is not registered by UDS
@@ -281,15 +281,13 @@ class ActorInitializeTest(rest.test.RESTActorTestCase):
             userservice.deployed_service.service.token if userservice.deployed_service.service else None
         ) or ''
 
-        success = functools.partial(self.invoke_success, 'unmanaged', mac='00:00:00:00:00:00')
-        failure = functools.partial(self.invoke_failure, 'unmanaged', mac='00:00:00:00:00:00')
-
-        NONEXISTING_IP: typing.Final[str] = '00:00:00:00:00:00'
+        success = functools.partial(self.invoke_success, 'unmanaged', mac=consts.NULL_MAC)
+        failure = functools.partial(self.invoke_failure, 'unmanaged', mac=consts.NULL_MAC)
 
         # This will succeed, but only alias token is returned because MAC is not registered by UDS
         result = success(
             actor_token,
-            ip=NONEXISTING_IP,
+            ip=consts.NULL_MAC,
         )
 
         # Unmanaged host is the response for initialization of unmanaged actor ALWAYS
@@ -304,7 +302,7 @@ class ActorInitializeTest(rest.test.RESTActorTestCase):
         # Ensure that the alias returned is on alias db, and it points to the same service as the one we belong to
         alias = models.ServiceTokenAlias.objects.get(alias=alias_token)
         self.assertEqual(alias.service, userservice.deployed_service.service)
-        self.assertEqual(alias.unique_id, NONEXISTING_IP.lower())
+        self.assertEqual(alias.unique_id, consts.NULL_MAC.lower())
 
         # Now, invoke with a correct mac (Exists os user services)
         result = success(

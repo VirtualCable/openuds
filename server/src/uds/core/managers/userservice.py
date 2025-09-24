@@ -487,9 +487,21 @@ class UserServiceManager(metaclass=singleton.Singleton):
         with transaction.atomic():
             userservice = UserService.objects.select_for_update().get(id=userservice.id)
             operations_logger.info('Removing userservice %a', userservice.name)
+
+            # If already removing or removed, do nothing
+            if State.from_str(userservice.state) in (State.REMOVING, State.REMOVED):
+                logger.debug('Userservice %s already removing or removed', userservice.name)
+                return
+
             if userservice.is_usable() is False and State.from_str(userservice.state).is_removable() is False:
                 if not forced:
-                    raise OperationException(_('Can\'t remove a non active element') + ': ' + userservice.name + ', ' + userservice.state)
+                    raise OperationException(
+                        _('Can\'t remove a non active element')
+                        + ': '
+                        + userservice.name
+                        + ', '
+                        + userservice.state
+                    )
             userservice.set_state(State.REMOVING)
             logger.debug("***** The state now is %s *****", State.from_str(userservice.state).localized)
             userservice.set_in_use(False)  # For accounting, ensure that it is not in use right now
@@ -771,6 +783,11 @@ class UserServiceManager(metaclass=singleton.Singleton):
         except Exception as e:
             logger.warning('Could not check readyness of %s: %s', user_service, e)
             return False
+
+        if state == types.states.TaskState.ERROR:
+            user_service.update_data(userservice_instance)
+            user_service.set_state(State.ERROR)
+            raise InvalidServiceException('Service missing or in error state')
 
         logger.debug('State: %s', state)
 

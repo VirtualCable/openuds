@@ -51,6 +51,7 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /item path
 
+
 @dataclasses.dataclass
 class AccountItem(types.rest.BaseRestItem):
     id: str
@@ -83,6 +84,11 @@ class Accounts(ModelHandler[AccountItem]):
         .datetime_column(name='time_mark', title=_('Time mark'))
         .text_column(name='tags', title=_('tags'), visible=False)
         .build()
+    )
+
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        typed=types.rest.api.RestApiInfoGuiType.SINGLE_TYPE,
     )
 
     def get_item(self, item: 'models.Model') -> AccountItem:

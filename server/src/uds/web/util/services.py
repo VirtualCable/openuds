@@ -42,6 +42,7 @@ from uds.core.auths.auth import get_webpassword
 from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.exceptions.services import (
+    InvalidServiceException,
     MaxServicesReachedError,
     ServiceAccessDeniedByCalendar,
     ServiceNotReadyError,
@@ -468,6 +469,9 @@ def enable_service(
     except ServiceAccessDeniedByCalendar:
         logger.info('Access tried to a calendar limited access pool "%s"', service_id)
         error = types.errors.Error.SERVICE_CALENDAR_DENIED.message
+    except InvalidServiceException as e:
+        logger.warning('Invalid service: %s', e)
+        error = types.errors.Error.INVALID_SERVICE.message
     except Exception as e:
         logger.exception('Error')
         error = str(e)

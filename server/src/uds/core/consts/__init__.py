@@ -44,8 +44,8 @@ from . import actor, auth, cache, calendar, images, net, os, system, ticket, res
 NEVER: typing.Final[datetime] = datetime(1972, 7, 1, tzinfo=UTC)
 NEVER_UNIX: typing.Final[int] = int(time.mktime(NEVER.timetuple()))
 
-# Unknown mac address "magic" value
-MAC_UNKNOWN: typing.Final[str] = '00:00:00:00:00:00'
+# Null mac address "magic" value
+NULL_MAC: typing.Final[str] = '00:00:00:00:00:00'
 
 # REST Related constants
 OK: typing.Final[str] = 'ok'  # Constant to be returned when result is just "operation complete successfully"
@@ -77,8 +77,8 @@ UNLIMITED: typing.Final[int] = -1
 
 # Constant marking no more names available
 NO_MORE_NAMES: typing.Final[str] = 'NO-NAME-ERROR'
-# For convenience, same as MAC_UNKNOWN, but different meaning
-NO_MORE_MACS: typing.Final[str] = '00:00:00:00:00:00'
+# For convenience, same as NULL_MAC, but different meaning
+NO_MORE_MACS: typing.Final[str] = NULL_MAC
 
 
 class UserRole(enum.StrEnum):

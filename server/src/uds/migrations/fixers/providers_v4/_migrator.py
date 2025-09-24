@@ -87,7 +87,7 @@ def migrate(
             # Try dns lookup if servers contains hostnames
             server_ip_hostname_mac: list[tuple[str, str, str]] = []
             for server in servers:
-                mac = consts.MAC_UNKNOWN
+                mac = consts.NULL_MAC
                 try:
                     if ';' in server:
                         server, mac = server.split(';')[:2]

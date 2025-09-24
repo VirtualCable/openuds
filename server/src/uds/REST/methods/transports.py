@@ -50,6 +50,7 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /item path
 
+
 @dataclasses.dataclass
 class TransportItem(types.rest.ManagedObjectItem[Transport]):
     id: str
@@ -91,6 +92,11 @@ class Transports(ModelHandler[TransportItem]):
         .text_column(name='allowed_oss', title=_('Devices'), width='8em')
         .text_column(name='tags', title=_('tags'), visible=False)
     ).build()
+
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        typed=types.rest.api.RestApiInfoGuiType.MULTIPLE_TYPES,
+    )
 
     @classmethod
     def possible_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[transports.Transport]]:

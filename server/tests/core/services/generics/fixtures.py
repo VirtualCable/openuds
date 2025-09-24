@@ -34,7 +34,7 @@ import typing
 from unittest import mock
 import uuid
 
-from uds.core import services, types, ui, environment
+from uds.core import consts, services, types, ui, environment
 from uds.core.services.generics.fixed import service as fixed_service
 from uds.core.services.generics.fixed import userservice as fixed_userservice
 from uds.core.services.generics.dynamic import service as dynamic_service
@@ -141,7 +141,7 @@ class FixedTestingService(fixed_service.FixedService):
 
     def get_mac(self, vmid: str) -> str:
         self.mock.get_first_network_mac(vmid)
-        return '00:00:00:00:00:00'
+        return consts.NULL_MAC
 
     def get_ip(self, vmid: str) -> str:
         self.mock.get_guest_ip_address(vmid)
@@ -486,7 +486,7 @@ class DynamicTestingService(dynamic_service.DynamicService):
         caller_instance: typing.Optional[dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication],
         vmid: str,
         *,
-        force_new: bool = False,
+        for_unique_id: bool = False,
     ) -> str:
         self.mock.get_mac(caller_instance, vmid)
         return '02:04:06:08:0A:0C'
@@ -689,7 +689,7 @@ class DynamicTestingServiceForDeferredDeletion(dynamic_service.DynamicService):
         caller_instance: typing.Optional[dynamic_userservice.DynamicUserService | dynamic_publication.DynamicPublication],
         vmid: str,
         *,
-        force_new: bool = False,
+        for_unique_id: bool = False,
     ) -> str:
         return ''
 

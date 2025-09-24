@@ -104,6 +104,11 @@ class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-m
 
     CUSTOM_METHODS = ['servicepools']
 
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        typed=types.rest.api.RestApiInfoGuiType.MULTIPLE_TYPES,
+    )
+
     @staticmethod
     def service_info(item: models.Service) -> ServiceInfo:
         info = item.get_type()
