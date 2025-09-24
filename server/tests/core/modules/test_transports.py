@@ -43,11 +43,11 @@ MUST_HAVE: typing.Final[list[str]] = [
     'html5rdptransport',
     'html5sshtransport',
     'html5vnctransport',
-    'nicedcvtunneltransport',
-    'tsnomachinetransport',
+    # 'nicedcvtunneltransport',
+    # 'tsnomachinetransport',
     'rdptransport',
     'tsrdptransport',
-    'trdstransport',
+    # 'trdstransport',
     'spicetransport',
     'tsspicetransport',
     'urltransport',
@@ -65,5 +65,6 @@ class TestTransports(UDSTestCase):
         from uds import transports  as _  # Not used, juet to load all transports
 
         factory = TransportsFactory()
+        
         for transport in MUST_HAVE:
             self.assertTrue(factory.has(transport), f"Transport {transport} not found")

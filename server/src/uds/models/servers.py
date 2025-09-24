@@ -35,6 +35,7 @@ import collections.abc
 
 from django.db import models
 from django.db.models import Q
+from django.utils import timezone
 
 from uds.core import consts, types
 from uds.core.consts import NULL_MAC
@@ -350,6 +351,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         If it is not available, we return False, otherwise True
         """
         restrained_until = datetime.datetime.fromtimestamp(self.properties.get('available', consts.NEVER_UNIX))
+        restrained_until = timezone.make_aware(restrained_until)
         return restrained_until > sql_now()
 
     def set_restrained_until(self, value: typing.Optional[datetime.datetime] = None) -> None:
@@ -365,7 +367,8 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     def last_ping(self) -> datetime.datetime:
         """Returns the last ping of this server"""
         last: float = self.properties.get('last_ping', consts.NEVER_UNIX)
-        return datetime.datetime.fromtimestamp(last)
+        result = datetime.datetime.fromtimestamp(last)
+        return timezone.make_aware(result)
 
     @last_ping.setter
     def last_ping(self, value: datetime.datetime) -> None:

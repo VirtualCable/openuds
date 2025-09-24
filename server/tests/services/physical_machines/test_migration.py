@@ -34,6 +34,8 @@ import typing
 import datetime
 from unittest import mock
 
+from django.utils import timezone
+
 from uds import models
 from uds.core import consts, types
 from uds.core.util import fields
@@ -97,7 +99,7 @@ SERVICEPOOLS_DATA: typing.Final[list[dict[str, typing.Any]]] = [
         'service_id': 144,
         'osmanager_id': None,
         'state': 'A',
-        'state_date': datetime.datetime(1972, 7, 1, 0, 0),
+        'state_date': timezone.make_aware(datetime.datetime(1972, 7, 1, 0, 0)),
         'show_transports': True,
         'visible': True,
         'allow_users_remove': False,
@@ -123,7 +125,7 @@ SERVICEPOOLS_DATA: typing.Final[list[dict[str, typing.Any]]] = [
         'service_id': 142,
         'osmanager_id': None,
         'state': 'A',
-        'state_date': datetime.datetime(1972, 7, 1, 0, 0),
+        'state_date': timezone.make_aware(datetime.datetime(1972, 7, 1, 0, 0)),
         'show_transports': True,
         'visible': True,
         'allow_users_remove': False,
@@ -155,12 +157,12 @@ USERSERVICES_DATA: typing.Final[list[dict[str, typing.Any]]] = [
         'friendly_name': 'localhost',
         'state': 'U',
         'os_state': 'U',
-        'state_date': datetime.datetime(2024, 4, 25, 2, 51, 13),
-        'creation_date': datetime.datetime(2024, 4, 25, 2, 51, 12),
+        'state_date': timezone.make_aware(datetime.datetime(2024, 4, 25, 2, 51, 13)),
+        'creation_date': timezone.make_aware(datetime.datetime(2024, 4, 25, 2, 51, 12)),
         'data': 'QlpoOTFBWSZTWR3s2WMAAJbfgDAQAEF/4CEBEQC+9d8gMAD4AwyNNNMjCZGCaAwYZGmmmRhMjBNAYG9VIJ6U8jTRMEmnoGmp+qfP8+6zBteG1ucJvU7tHB7PDN+qJKe/t1dlXWO88OKzF0gvY0JepWOsfMfq2LmqsX6sdKvdkxWx5jKLe61gxYLGr6VUWMpNHla6mqi9g52xyXNkUjLmzf7nZFjfZFViriy4OVIuUa4bElzVxWyOzFJ57RVJyVVjfWvq3M5fok0ii5q2xsaqs3RV6OcZqR0VVdmT/i7kinChIDvZssY=',
         'user_id': None,  # Invalid value on a production system, but valid for tests
         'in_use': False,
-        'in_use_date': datetime.datetime(1972, 7, 1, 0, 0),
+        'in_use_date': timezone.make_aware(datetime.datetime(1972, 7, 1, 0, 0)),
         'cache_level': 0,
         'src_hostname': '172.27.0.8',
         'src_ip': '172.27.0.8',
@@ -174,12 +176,12 @@ USERSERVICES_DATA: typing.Final[list[dict[str, typing.Any]]] = [
         'friendly_name': '172.27.1.26',
         'state': 'U',
         'os_state': 'U',
-        'state_date': datetime.datetime(2024, 4, 25, 2, 56, 17),
-        'creation_date': datetime.datetime(2024, 4, 25, 2, 56, 12),
+        'state_date': timezone.make_aware(datetime.datetime(2024, 4, 25, 2, 56, 17)),
+        'creation_date': timezone.make_aware(datetime.datetime(2024, 4, 25, 2, 56, 12)),
         'data': 'QlpoOTFBWSZTWSXhxOYAAJrfgDAQAEF/4CEBEQC+td8gMAD4AwaaNNMJiZMBA0wwaaNNMJiZMBA0wb1URMJiNI0yGmk09D1Pn67XzBm8M2jk4u7Vyezw0faiS3t7dXqwdY7y3LXw8m7N0jppVjZKyMKKY1jeupIxZR1j/R9rI3Nl8bOHO5wZMVkfkb47qsGbBVs+mKirKTV+rHubKNzBWPNY3RSN/Vok2aVi5Vc1cXlSLFF1qSxs4rJHRgk/PSL0nJevjS7Vm0t4JO0UWtmUXNl7RzXsXnGikc1690ZP4XckU4UJAl4cTmA=',
         'user_id': None,
         'in_use': False,
-        'in_use_date': datetime.datetime(1972, 7, 1, 0, 0),
+        'in_use_date': timezone.make_aware(datetime.datetime(1972, 7, 1, 0, 0)),
         'cache_level': 0,
         'src_hostname': '172.27.0.1',
         'src_ip': '172.27.0.1',
@@ -193,12 +195,12 @@ USERSERVICES_DATA: typing.Final[list[dict[str, typing.Any]]] = [
         'friendly_name': 'dc.dkmon.local:1',
         'state': 'U',
         'os_state': 'U',
-        'state_date': datetime.datetime(2024, 4, 25, 3, 13, 47),
-        'creation_date': datetime.datetime(2024, 4, 25, 3, 13, 47),
+        'state_date': timezone.make_aware(datetime.datetime(2024, 4, 25, 3, 13, 47)),
+        'creation_date': timezone.make_aware(datetime.datetime(2024, 4, 25, 3, 13, 47)),
         'data': 'QlpoOTFBWSZTWbWQavUAAJlfgDAQAEF/4CEBEQC+v98hMAD4Aw0MmQMjEGJk0NMGGhkyBkYgxMmhpgbVJkekMlPEm0yhhNNqep+qePjyyiSPRImZL2HdTEyNj0YG44Sr+duhqROiOq/DM7v1kaoo5JESbgUR1yGRaj9HogUGRQsvzY+i8uHo3RvJEO5AtLi0qKHkwiVvIE0siQ82DgcVlxUjkPK0ORbzI4D3I4S/sE9ESoiZmuZzpUiscRsEnlCY9I2LhLjZDCXuMMjGzkSMIYiWKHECheiwoMTNBi00RMcjQYY1Lxv8XckU4UJC1kGr1A==',
         'user_id': None,
         'in_use': True,
-        'in_use_date': datetime.datetime(2024, 4, 25, 3, 13, 47),
+        'in_use_date': timezone.make_aware(datetime.datetime(2024, 4, 25, 3, 13, 47)),
         'cache_level': 0,
         'src_hostname': '172.27.0.8',
         'src_ip': '172.27.0.8',
@@ -332,7 +334,7 @@ class TestPhysicalMigration(UDSTransactionTestCase):
             # If is 172.27.1.26 ensure is locked
             if server.ip == '172.27.1.26':
                 self.assertTrue(
-                    server.locked_until is not None and server.locked_until > datetime.datetime.now(),
+                    server.locked_until is not None and server.locked_until > timezone.localtime(),
                     f'Server {server.ip} is not locked',
                 )
             else:

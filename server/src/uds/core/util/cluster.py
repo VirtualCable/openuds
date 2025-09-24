@@ -4,6 +4,7 @@ import socket
 import typing
 
 from django.db import transaction, OperationalError
+from django.utils import timezone
 
 from uds import models
 from uds.core import consts
@@ -82,7 +83,7 @@ def enumerate_cluster_nodes() -> list[UDSClusterNode]:
             UDSClusterNode(
                 hostname=prop.key.split('|')[0],
                 ip=prop.key.split('|')[1],
-                last_seen=datetime.datetime.fromisoformat(prop.value['last_seen']),
+                last_seen=timezone.make_aware(datetime.datetime.fromisoformat(prop.value['last_seen'])),
                 mac=prop.value.get('mac', consts.NULL_MAC),
             )
             for prop in properties

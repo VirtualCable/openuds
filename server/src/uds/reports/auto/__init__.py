@@ -36,6 +36,7 @@ import typing
 import collections.abc
 
 from django.utils.translation import gettext_noop as _
+from django.utils import timezone
 
 from uds.core.ui import gui
 from uds.core.reports import Report
@@ -147,7 +148,9 @@ class ReportAuto(Report, metaclass=ReportAutoType):
         intervals: list[tuple[datetime.datetime, datetime.datetime]] = []
         # Convert start and end dates to datetime objects from date objects
         start = datetime.datetime.combine(self.starting_date(), datetime.time.min)
+        start = timezone.make_aware(start)
         to = datetime.datetime.combine(self.ending_date(), datetime.time.max)
+        to = timezone.make_aware(to)
         while start < to:
             if self.interval.value == 'hour':
                 intervals.append((start, start + datetime.timedelta(hours=1)))

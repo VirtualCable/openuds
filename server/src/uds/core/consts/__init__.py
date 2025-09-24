@@ -34,14 +34,14 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import enum
 import time
 import typing
-from datetime import datetime
+from datetime import datetime, UTC
 
 from django.utils.translation import gettext as _
 
 from . import actor, auth, cache, calendar, images, net, os, system, ticket, rest, services, transports, ui
 
 # Date related constants
-NEVER: typing.Final[datetime] = datetime(1972, 7, 1)
+NEVER: typing.Final[datetime] = datetime(1972, 7, 1, tzinfo=UTC)
 NEVER_UNIX: typing.Final[int] = int(time.mktime(NEVER.timetuple()))
 
 # Null mac address "magic" value

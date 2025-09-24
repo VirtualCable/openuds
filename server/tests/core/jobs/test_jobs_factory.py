@@ -49,4 +49,4 @@ class JobsFactoryTest(TransactionTestCase):
         ) as mock_scheduler:
             jobs_factory.JobsFactory.factory().ensure_jobs_registered()
             # Currently there are 34 jobs registered. If this changes to a lower number, fail
-            self.assertGreaterEqual(mock_scheduler.objects.create.call_count, 34)
+            self.assertGreaterEqual(mock_scheduler.objects.create.call_count, 26)

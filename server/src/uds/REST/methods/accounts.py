@@ -36,6 +36,7 @@ import logging
 import typing
 
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
 
 from uds.REST.model import ModelHandler
 from uds.core import types
@@ -122,7 +123,7 @@ class Accounts(ModelHandler[AccountItem]):
 
         """
         item = ensure.is_instance(item, Account)
-        item.time_mark = datetime.datetime.now()
+        item.time_mark = timezone.localtime()
         item.save()
         return ''
 

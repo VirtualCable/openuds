@@ -30,9 +30,10 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import datetime
 import logging
 import typing
+
+from django.utils import timezone
 
 from uds.core import exceptions, types, consts
 from uds.core.managers.crypto import CryptoManager
@@ -67,7 +68,7 @@ class Connection(Handler):
         :return: A dictionary, suitable for response to Caller
         """
         result = result if result is not None else ''
-        res = {'result': result, 'date': datetime.datetime.now()}
+        res = {'result': result, 'date': timezone.localtime()}
         if error:
             if isinstance(error, int):
                 error = types.errors.Error.from_int(error).message

@@ -32,6 +32,8 @@ import datetime
 import collections.abc
 import typing
 
+from django.utils import timezone
+
 from uds import models
 from uds.core import environment, types
 from uds.core.osmanagers.osmanager import OSManager
@@ -158,9 +160,9 @@ def create_db_publication(
     service_pool: models.ServicePool,
 ) -> models.ServicePoolPublication:
     publication: 'models.ServicePoolPublication' = service_pool.publications.create(
-        publish_date=datetime.datetime.now(),
+        publish_date=timezone.localtime(),
         state=types.states.State.USABLE,
-        state_date=datetime.datetime.now(),
+        state_date=timezone.localtime(),
         # Rest of fields are left as default
     )
     service_pool.publications.add(publication)
@@ -196,8 +198,8 @@ def create_db_userservice(
         unique_id=helpers.random_mac(),
         state=types.states.State.USABLE,
         os_state=types.states.State.USABLE,
-        state_date=datetime.datetime.now(),
-        creation_date=datetime.datetime.now() - datetime.timedelta(minutes=30),
+        state_date=timezone.localtime(),
+        creation_date=timezone.localtime() - datetime.timedelta(minutes=30),
         user=user,
         src_hostname=helpers.random_string(32),
         src_ip=helpers.random_ip(),

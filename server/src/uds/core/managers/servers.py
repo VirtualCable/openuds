@@ -38,6 +38,7 @@ from concurrent.futures import ThreadPoolExecutor
 from django.db import transaction
 from django.db.models import Q
 from django.utils.translation import gettext as _
+from django.utils import timezone
 
 from uds import models
 from uds.core import exceptions, types
@@ -61,7 +62,7 @@ class ServerManager(metaclass=singleton.Singleton):
     BASE_PROPERTY_NAME: typing.Final[str] = 'sm_usr_'
 
     # Singleton, can initialize here
-    last_counters_clean: datetime.datetime = datetime.datetime.now()  # This is local to server, so it's ok
+    last_counters_clean: datetime.datetime = timezone.localtime()  # This is local to server, so it's ok
 
     @staticmethod
     def manager() -> 'ServerManager':
@@ -71,8 +72,8 @@ class ServerManager(metaclass=singleton.Singleton):
     def counter_storage(self) -> typing.Iterator[StorageAsDict]:
         with Storage(self.STORAGE_NAME).as_dict(atomic=True, group='counters') as storage:
             # If counters are too old, restart them
-            if datetime.datetime.now() - self.last_counters_clean > self.MAX_COUNTERS_AGE:
-                self.last_counters_clean = datetime.datetime.now()
+            if timezone.localtime() - self.last_counters_clean > self.MAX_COUNTERS_AGE:
+                self.last_counters_clean = timezone.localtime()
                 storage.clear()
             yield storage
 

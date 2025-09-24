@@ -36,6 +36,7 @@ import datetime
 import logging
 
 from django.db import models
+from django.utils import timezone
 
 from uds.core.util.model import sql_stamp_seconds
 
@@ -189,8 +190,8 @@ class StatsCountersAccum(models.Model):
 
         logger.debug(
             'Accumulating stats counters table from %s to %s',
-            datetime.datetime.fromtimestamp(start_stamp),
-            datetime.datetime.fromtimestamp(end_stamp),
+            timezone.make_aware(datetime.datetime.fromtimestamp(start_stamp)),
+            timezone.make_aware(datetime.datetime.fromtimestamp(end_stamp)),
         )
 
         # Get all records for this owner_type, counter_type, owner_id
@@ -269,4 +270,4 @@ class StatsCountersAccum(models.Model):
             accumulated = accumulated[2500:]
 
     def __str__(self) -> str:
-        return f'{datetime.datetime.fromtimestamp(self.stamp)} - {self.owner_type}:{self.owner_id}:{self.counter_type} {StatsCountersAccum.IntervalType(self.interval_type)} {self.v_count},{self.v_sum},{self.v_min},{self.v_max}'
+        return f'{timezone.make_aware(datetime.datetime.fromtimestamp(self.stamp))} - {self.owner_type}:{self.owner_id}:{self.counter_type} {StatsCountersAccum.IntervalType(self.interval_type)} {self.v_count},{self.v_sum},{self.v_min},{self.v_max}'

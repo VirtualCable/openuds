@@ -36,6 +36,7 @@ import typing
 import logging
 
 from django.db.models import QuerySet
+from django.utils import timezone
 
 from uds.models import StatsEvents
 from uds.core.util.stats.events import get_owner
@@ -52,6 +53,7 @@ LINELEN = 160
 def pretty_print(event: StatsEvents) -> str:
     # convert unix timestamp to human readable
     dt = datetime.datetime.fromtimestamp(event.stamp)
+    dt = timezone.make_aware(dt)
     # Get owner, if it already exists
     owner = get_owner(events_types.EventOwnerType.from_int(event.owner_type), event.owner_id)
     name = getattr(owner, 'name', '') if hasattr(owner, 'name') else '[*Deleted*]'

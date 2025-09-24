@@ -47,7 +47,7 @@ import abc
 from django.conf import settings
 from django.utils.translation import gettext
 from django.utils.functional import Promise  # To recognize lazy translations
-
+from django.utils import timezone
 
 from uds.core import consts, exceptions, types
 from uds.core.managers.crypto import UDSK, CryptoManager
@@ -766,7 +766,7 @@ class gui:
         def as_datetime(self) -> datetime.datetime:
             """Alias for "value" property, but as datetime.datetime"""
             # Convert date to datetime
-            return datetime.datetime.combine(self.as_date(), datetime.datetime.min.time())
+            return timezone.make_aware(datetime.datetime.combine(self.as_date(), datetime.datetime.min.time()))
 
         def as_timestamp(self) -> int:
             """Alias for "value" property, but as timestamp"""

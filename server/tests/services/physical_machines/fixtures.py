@@ -30,11 +30,12 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import datetime
 import typing
 import uuid
 
 from unittest import mock
+
+from django.utils import timezone
 
 from uds import models
 from uds.core import environment, types
@@ -88,7 +89,7 @@ def create_server_group() -> models.ServerGroup:
             ip=ip,
             mac=mac,
             hostname=f'test-{ip}',
-            stamp=datetime.datetime.now(),
+            stamp=timezone.localtime(),
         )
         server.groups.set([server_group])
 

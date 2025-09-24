@@ -147,6 +147,7 @@ def _process_request(request: 'ExtendedHttpRequest') -> typing.Optional['HttpRes
         now = timezone.now()
         try:
             expiry = datetime.datetime.fromisoformat(request.session.get(consts.auth.SESSION_EXPIRY_KEY, ''))
+            expiry = timezone.make_aware(expiry)
         except ValueError:
             expiry = now
         if expiry < now:

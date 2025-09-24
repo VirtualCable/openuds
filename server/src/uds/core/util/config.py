@@ -701,7 +701,7 @@ class GlobalConfig:
     # Site display name & copyright info
     SITE_NAME: Config.Value = Config.section(Config.SectionType.CUSTOM).value(
         'Site name',
-        'UDS Enterprise',
+        'OpenUDS',
         type=Config.FieldType.TEXT,
         help=_('Site display name'),
     )

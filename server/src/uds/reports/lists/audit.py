@@ -38,6 +38,7 @@ import typing
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
 
 from uds.core import types
 from uds.core.ui import gui
@@ -84,7 +85,9 @@ class ListReportAuditCSV(ListReport):
         )
 
         start = self.start_date.as_datetime().replace(hour=0, minute=0, second=0, microsecond=0)
+        start = timezone.make_aware(start)
         end = self.end_date.as_datetime().replace(hour=23, minute=59, second=59, microsecond=999999)
+        end = timezone.make_aware(end)
         for i in Log.objects.filter(
             created__gte=start,
             created__lte=end,

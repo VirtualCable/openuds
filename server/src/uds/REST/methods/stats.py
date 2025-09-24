@@ -34,6 +34,8 @@ import logging
 import datetime
 import typing
 
+from django.utils import timezone
+
 from uds.core import types, consts
 from uds.REST import Handler
 from uds import models
@@ -132,4 +134,4 @@ class Stats(Handler):
         Processes get method. Basically, clears & purges the cache, no matter what params
         """
         # Default returns usage stats for last day
-        return self._usage_stats(datetime.datetime.now() - datetime.timedelta(days=1))
+        return self._usage_stats(timezone.localtime() - datetime.timedelta(days=1))

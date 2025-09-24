@@ -39,6 +39,8 @@ import datetime
 from unittest import mock
 import uuid
 
+from django.utils import timezone
+
 from tests.utils import search_item_by_attr, filter_list_by_attr
 from uds.core import environment
 from uds.core.ui.user_interface import gui
@@ -129,7 +131,7 @@ DEF_VMS_INFO: typing.Final[list[xen_types.VMInfo]] = [
         power_state=xen_types.PowerState.RUNNING,
         is_control_domain=False,
         is_a_template=False,
-        snapshot_time=datetime.datetime(2024, 1, 1, 0, 0, 0),
+        snapshot_time=timezone.make_aware(datetime.datetime(2024, 1, 1, 0, 0, 0)),
         # For testing, snapshot refers to itself 3 times, just for testing...
         snapshots=[f'OpaqueRef:12345678-1234-1234-1234-1234567890{i:02x}'] * 3,
         VIFs=[],
@@ -150,8 +152,8 @@ DEF_TASK_INFO: typing.Final[xen_types.TaskInfo] = xen_types.TaskInfo(
     uuid='12345678-1234-1234-1234-1234567890ab',
     name='test_task',
     description='Test task description',
-    created=datetime.datetime(2024, 1, 1, 0, 0, 0),
-    finished=datetime.datetime(2024, 1, 1, 0, 0, 0),
+    created=timezone.make_aware(datetime.datetime(2024, 1, 1, 0, 0, 0)),
+    finished=timezone.make_aware(datetime.datetime(2024, 1, 1, 0, 0, 0)),
     status=xen_types.TaskStatus.SUCCESS,
     result=DEF_VMS_INFO[0].opaque_ref,
     progress=100,

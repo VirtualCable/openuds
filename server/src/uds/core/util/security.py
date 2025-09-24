@@ -48,6 +48,7 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.x509.oid import NameOID
 from django.conf import settings
+from django.utils import timezone
 
 from uds.core import consts
 
@@ -80,7 +81,7 @@ def create_self_signed_cert(ip: str) -> tuple[str, str, str]:
     san = x509.SubjectAlternativeName([x509.IPAddress(ipaddress.ip_address(ip))])
 
     basic_contraints = x509.BasicConstraints(ca=True, path_length=0)
-    now = datetime.datetime.now(datetime.UTC)
+    now = timezone.now()
     cert = (
         x509.CertificateBuilder()
         .subject_name(name)

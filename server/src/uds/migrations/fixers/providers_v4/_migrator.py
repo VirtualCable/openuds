@@ -28,13 +28,14 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import datetime
 import logging
 import secrets
 import typing
 
 import dns.resolver
 import dns.reversename
+
+from django.utils import timezone
 
 from uds.core import consts, types
 from uds.core.environment import Environment
@@ -131,7 +132,7 @@ def migrate(
                     listen_port=0,
                     type=types.servers.ServerType.UNMANAGED,
                     subtype=subtype,
-                    stamp=datetime.datetime.now(),
+                    stamp=timezone.localtime(),
                 )
             # Set server group on provider
             logger.info('Setting server group %s on provider %s', registered_server_group.name, record.name)
