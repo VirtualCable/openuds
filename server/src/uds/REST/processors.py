@@ -35,7 +35,6 @@ import dataclasses
 import datetime
 import json
 import logging
-import time
 import typing
 
 from django.http import HttpResponse
@@ -146,7 +145,7 @@ class ContentProcessor:
                 ]
 
             case datetime.datetime():
-                return int(time.mktime(obj.timetuple()))
+                return int(obj.timestamp())
 
             case datetime.date():
                 return '{}-{:02d}-{:02d}'.format(obj.year, obj.month, obj.day)
