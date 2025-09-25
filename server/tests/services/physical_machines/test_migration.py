@@ -284,11 +284,13 @@ class TestPhysicalMigration(UDSTransactionTestCase):
         #    - 172.27.1.25
         #    - 172.27.1.26
         #    - 172.27.1.27
-        #    - localhost;01:23:45:67:89:AB
         #  - One service pool
         #  - Two user services
         #    * First one, is localhost
         #    * Second one is 172.27.1.26
+        
+        # Note: On Gitgub automated test, localhost CAN be resolved, so i have removed it from the list of ips to add
+        # So test is valid for both cases
 
         # First, proceed to migration of data
         physical_machine_multiple.migrate(self.apps_mock(), None)
@@ -325,7 +327,6 @@ class TestPhysicalMigration(UDSTransactionTestCase):
             self.assertNotEqual(server.hostname, '')
 
             # 172.27.1.25 has a MAC, rest of servers have NULL_MAC (empty equivalent)
-            # Also, should have 127.0.0.1 as ip if localhost
             if server.ip == '172.27.1.25':
                 self.assertEqual(server.mac, '01:23:45:67:89:AB')
             else:
