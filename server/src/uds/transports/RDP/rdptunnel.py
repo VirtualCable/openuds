@@ -114,6 +114,9 @@ class TRDPTransport(BaseRDPTransport):
     lnx_custom_parameters = BaseRDPTransport.lnx_custom_parameters
     mac_custom_parameters = BaseRDPTransport.mac_custom_parameters
     wnd_custom_parameters = BaseRDPTransport.wnd_custom_parameters
+
+    lnx_use_rdp_file = BaseRDPTransport.lnx_use_rdp_file
+    mac_use_rdp_file = BaseRDPTransport.mac_use_rdp_file
     # optimizeTeams = BaseRDPTransport.optimizeTeams
 
     def initialize(self, values: 'types.core.ValuesType') -> None:
@@ -201,18 +204,25 @@ class TRDPTransport(BaseRDPTransport):
                 }
             )
         elif os.os == types.os.KnownOS.LINUX:
-            r.custom_parameters = self.lnx_custom_parameters.value
+            if self.lnx_use_rdp_file.as_bool():
+                r.custom_parameters = self.wnd_custom_parameters.value
+            else:
+                r.custom_parameters = self.lnx_custom_parameters.value
             sp.update(
                 {
                     'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
+                    'as_file': r.as_file if self.lnx_use_rdp_file.as_bool() else '',
                 }
             )
         elif os.os == types.os.KnownOS.MAC_OS:
-            r.custom_parameters = self.mac_custom_parameters.value
+            if self.mac_use_rdp_file.as_bool():
+                r.custom_parameters = self.wnd_custom_parameters.value
+            else:
+                r.custom_parameters = self.mac_custom_parameters.value
             sp.update(
                 {
                     'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
-                    'as_file': r.as_file if self.mac_allow_msrdc.as_bool() else '',
+                    'as_file': r.as_file if self.mac_use_rdp_file.as_bool() else '',
                     'as_rdp_url': r.as_rdp_url if self.mac_allow_msrdc.as_bool() else '',
                 }
             )
