@@ -207,7 +207,8 @@ class Providers(ModelHandler[ProviderItem]):
         with Environment.temporary_environment() as temp_environment:
             logger.debug('spType: %s', provider_type)
 
-            dct = self._params.copy()
+            # On 5.0 onwards, instance comes inside "instance" key
+            dct = self._params.copy()['instance']
             dct['_request'] = self._request
             test_result = provider_type.test(temp_environment, dct)
             return 'ok' if test_result.success else test_result.error
