@@ -217,7 +217,7 @@ STORAGE_DATA: typing.Final[list[dict[str, typing.Any]]] = [
     {
         'owner': 't-service-144',
         'key': '848d16fb421048c690c9761c11dc1699',
-        'data': 'gASVUwAAAAAAAABdlCiMHzE3Mi4yNy4xLjI1OzAxOjIzOjQ1OjY3Ojg5OkFCfjGUjA0xNzIuMjcuMS4yNn4xlIwNMTcyLjI3LjEuMjd+MpSMCWxvY2FsaG9zdJRlLg==',
+        'data': 'ASVRwAAAAAAAABdlCiMHzE3Mi4yNy4xLjI1OzAxOjIzOjQ1OjY3Ojg5OkFCfjGUjA0xNzIuMjcuMS4yNn4xlIwNMTcyLjI3LjEuMjd+MpRlLg==',
         'attr1': '',
     },
     {'owner': 't-service-142', 'key': 'b6ac33477ae0a82fa2681c4d398d88d7', 'data': 'gARLAS4=\n', 'attr1': ''},
