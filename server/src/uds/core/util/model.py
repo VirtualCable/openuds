@@ -81,13 +81,16 @@ class TimeTrack:
                 else 'SELECT CURRENT_TIMESTAMP'
             )
             cursor.execute(sentence)
-            date = (cursor.fetchone() or [timezone.localtime()])[0]
+            dt = (cursor.fetchone() or [timezone.localtime()])[0]
         else:
-            date = (
+            dt = (
                 timezone.localtime()
             )  # If not know how to get database datetime, returns local datetime (this is fine for sqlite, which is local)
 
-        return date
+        if timezone.is_naive(dt):
+            dt = timezone.make_aware(dt)
+
+        return dt
 
     @staticmethod
     def sql_now() -> datetime.datetime:
@@ -105,8 +108,7 @@ class TimeTrack:
         the_time = TimeTrack.cached_time + (now - TimeTrack.last_check)
         # Keep only cent of second precision
         the_time = the_time.replace(microsecond=int(the_time.microsecond / 10000) * 10000)
-        if timezone.is_naive(the_time):
-            the_time = timezone.make_aware(the_time)
+
         return the_time
 
 
