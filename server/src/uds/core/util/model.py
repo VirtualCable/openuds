@@ -106,7 +106,7 @@ class TimeTrack:
         # Keep only cent of second precision
         the_time = the_time.replace(microsecond=int(the_time.microsecond / 10000) * 10000)
         if timezone.is_naive(the_time):
-            result = timezone.make_aware(the_time)
+            the_time = timezone.make_aware(the_time)
         return the_time
 
 
