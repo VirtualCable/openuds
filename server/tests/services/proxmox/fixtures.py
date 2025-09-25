@@ -514,7 +514,7 @@ PROVIDER_VALUES_DICT: gui.ValuesDictType = {
     'concurrent_removal_limit': 1,
     'timeout': 10,
     'start_vmid': 100,
-    'macs_range': '00:00:00:00:00:00-00:00:00:ff:ff:ff',
+    'macs_range': '00:00:00:00:00:01-00:00:00:ff:ff:ff',
 }
 
 
