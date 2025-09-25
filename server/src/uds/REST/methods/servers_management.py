@@ -338,7 +338,7 @@ class ServersServers(DetailHandler):
         :param item:
         """
         item = models.Server.objects.get(uuid=process_uuid(id))
-        self.ensure_has_access(item, types.permissions.PermissionType.MANAGEMENT)
+        self.ensure_has_access(parent, types.permissions.PermissionType.MANAGEMENT)
         item.maintenance_mode = not item.maintenance_mode
         item.save()
         return 'ok'
