@@ -14,6 +14,7 @@ BASE_DIR = '/'.join(
 )  # If used 'relpath' instead of abspath, returns path of "enterprise" instead of "openuds"
 
 DEBUG = True
+PROFILING = False
 
 # USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = (

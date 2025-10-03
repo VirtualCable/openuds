@@ -657,7 +657,10 @@ class SAMLAuthenticator(auths.Authenticator):
             raise exceptions.auth.AuthenticatorException(gettext('Error processing SAML response: ') + str(e))
         errors = typing.cast(list[str], auth.get_errors())
         if errors:
-            raise exceptions.auth.AuthenticatorException('SAML response error: ' + str(errors))
+            logger.debug('Errors processing SAML response: %s (%s)', errors, auth.get_last_error_reason())  # pyright: ignore reportUnknownVariableType
+            logger.debug('post_data: %s', req['post_data'])
+            logger.info('Response XML: %s', auth.get_last_response_xml())  # pyright: ignore reportUnknownVariableType
+            raise exceptions.auth.AuthenticatorException(f'SAML response error: {errors} ({auth.get_last_error_reason()})')
 
         if not auth.is_authenticated():
             raise exceptions.auth.AuthenticatorException(gettext('SAML response not authenticated'))
