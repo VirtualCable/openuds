@@ -229,10 +229,12 @@ class Auths(Handler):
             if all_param or (auth_type.is_custom() is False and auth_type.type_type not in ('IP',)):
                 yield {
                     'authId': auth.uuid,  # Deprecated, use 'auth_id'
-                    'auth_id': auth.uuid,
+                    'auth_id': auth.uuid,  # Deprecated, use 'id'
+                    'id': auth.uuid, 
                     'authSmallName': str(auth.small_name),  # Deprecated
                     'authLabel': str(auth.small_name),  # Deprecated, use 'auth_label'
-                    'auth_label': str(auth.small_name),
+                    'auth_label': str(auth.small_name),   # Deprecated, use 'label'
+                    'label': str(auth.small_name),
                     'auth': auth.name,
                     'type': auth_type.type_type,
                     'priority': auth.priority,

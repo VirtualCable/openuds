@@ -599,8 +599,16 @@ class UserService(UUIDModel, properties.PropertiesMixin):
 
         UserServiceManager.manager().move_to_level(self, cache_level)
 
-    def set_comms_endpoint(self, comms_url: typing.Optional[str] = None) -> None:
+    def set_comms_info(self, comms_url: typing.Optional[str] = None, secret: str | None = None) -> None:
         self.properties['comms_url'] = comms_url
+        self.properties['comms_secret'] = secret
+
+    def get_comms_secret(self) -> typing.Optional[str]:
+        # Try to get the secret. If not found, it's the last part of the comms_url (after the last /)
+        return (
+            self.properties.get('comms_secret', None)
+            or (self.properties.get('comms_url', None) or '').split('/')[-1]
+        )
 
     def get_comms_endpoint(
         self, path: typing.Optional[str] = None

@@ -144,7 +144,7 @@ class ActorV3Action(Handler):
 
     @staticmethod
     def set_comms_endpoint(userservice: UserService, ip: str, port: int, secret: str) -> None:
-        userservice.set_comms_endpoint(f'https://{ip}:{port}/actor/{secret}')
+        userservice.set_comms_info(f'https://{ip}:{port}/actor/{secret}', secret)
 
     @staticmethod
     def actor_cert_result(key: str, certificate: str, password: str) -> dict[str, typing.Any]:
@@ -305,12 +305,23 @@ class Register(ActorV3Action):
 
         # Actors does not support any SERVER API version in fact, they has their own interfaces on UserServices
         # This means that we can invoke its API from user_service, but not from server (The actor token is transformed as soon as initialized to a user service token)
-        data = {
-            'pre_command': self._params['pre_command'],
-            'post_command': self._params['post_command'],
-            'run_once_command': self._params['run_once_command'],
-            'custom': self._params.get('custom', ''),
-        }
+
+        # New model has "commands" field in data, old one not
+        if 'commands' in self._params:
+            commands = self._params['commands']
+            data = {
+                'pre_command': commands.get('pre_command', ''),
+                'post_command': commands.get('post_command', ''),
+                'run_once_command': commands.get('run_once_command', ''),
+                'custom': self._params.get('custom', ''),
+            }
+        else:
+            data = {
+                'pre_command': self._params['pre_command'],
+                'post_command': self._params['post_command'],
+                'run_once_command': self._params['run_once_command'],
+                'custom': self._params.get('custom', ''),
+            }
         if actor_token:
             # Update parameters
             # type is already set
@@ -379,12 +390,12 @@ class Initialize(ActorV3Action):
                  ]
              }
         Will return on field "result" a dictinary with:
-            * own_token: Optional[str] -> Personal uuid for the service (That, on service, will be used from now onwards). If None, there is no own_token
+            * token: Optional[str] -> Personal uuid for the service (That, on service, will be used from now onwards). If None, there is no own_token
             * unique_id: Optional[str] -> If not None, unique id for the service (normally, mac adress of recognized interface)
             * os: Optional[dict] -> Data returned by os manager for setting up this service.
         Example:
             {
-                'own_token' 'asdfasdfasdffsadfasfd'
+                'token' 'asdfasdfasdffsadfasfd'
                 'unique_id': 'aa:bb:cc:dd:ee:ff'
                 'os': {
                     'action': 'rename',
@@ -413,7 +424,7 @@ class Initialize(ActorV3Action):
                 {
                     'own_token': token,  # Compat with old actor versions, TBR on 5.0
                     'token': token,  # New token, will be used from now onwards
-                    'master_token': master_token,  # Master token, to replace on unmanaged machines
+                    'master_token': master_token,  # Master token, to replace on unmanaged machines                    
                     'unique_id': unique_id,
                     'os': os,
                 }
@@ -510,8 +521,10 @@ class BaseReadyChange(ActorV3Action):
         This method will also regenerater the public-private key pair for client, that will be needed for the new ip
 
         Returns: {
-            private_key: str -> Generated private key, PEM
-            server_certificate: str -> Generated public key, PEM
+            key: str -> Generated private key, PEM
+            certificate: str -> Generated public key, PEM
+            password: str -> Password for private key
+            ciphers: str -> Ciphers that server supports (could be empty, so default of python requests will be used)
         }
         """
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
@@ -576,8 +589,10 @@ class Ready(BaseReadyChange):
             * port: port of the listener (normally 43910)
 
         Returns: {
-            private_key: str -> Generated private key, PEM
-            server_cert: str -> Generated public key, PEM
+            key: str -> Generated private key, PEM
+            certificate: str -> Generated public key, PEM
+            password: str -> Password for private key
+            ciphers: str -> Ciphers that server supports (could be empty, so default of python requests will be used)
         }
         """
         result = super().action()
@@ -815,9 +830,9 @@ class Unmanaged(ActorV3Action):
 
         try:
             token = self._params['token']
-            if ServiceTokenAlias.objects.filter(alias=token).exists():
+            if dbservice_alias := ServiceTokenAlias.objects.filter(alias=token).first():
                 # Retrieve real service from token alias
-                dbservice = ServiceTokenAlias.objects.get(alias=token).service
+                dbservice = dbservice_alias.service
             else:
                 dbservice = Service.objects.get(token=token)
             service: 'services.Service' = dbservice.get_instance()
