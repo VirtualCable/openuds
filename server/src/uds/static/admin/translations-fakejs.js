@@ -1,6 +1,5 @@
 // "Fake" javascript file for translations
 // Typescript
-gettext("Error saving: ");
 gettext("Error saving element");
 gettext("Error handling your request");
 gettext("yes");
