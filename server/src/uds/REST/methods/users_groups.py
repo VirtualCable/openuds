@@ -399,7 +399,7 @@ class Groups(DetailHandler[GroupItem]):
             .dict_column(name='skip_mfa', title=_('Skip MFA'), dct=State.literals_dict())
         ).build()
 
-    def get_types(
+    def enum_types(
         self, parent: 'Model', for_type: typing.Optional[str]
     ) -> collections.abc.Iterable[types.rest.TypeInfo]:
         parent = ensure.is_instance(parent, Authenticator)
