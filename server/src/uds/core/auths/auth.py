@@ -39,6 +39,7 @@ import logging
 import typing
 from functools import wraps
 
+from django.contrib.auth.hashers import check_password
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.urls import reverse
 from django.utils.translation import get_language
@@ -281,7 +282,7 @@ def authenticate(
         config.GlobalConfig.SUPER_USER_ALLOW_WEBACCESS.as_bool(True)
         and is_trusted_source(request.ip)
         and username == config.GlobalConfig.SUPER_USER_LOGIN.get(True)
-        and CryptoManager.manager().check_hash(password, config.GlobalConfig.SUPER_USER_PASS.get(True))
+        and check_password(password, config.GlobalConfig.SUPER_USER_PASS.get(True))
     ):
         return types.auth.LoginResult(user=root_user())
 

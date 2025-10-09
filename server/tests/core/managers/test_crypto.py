@@ -34,6 +34,7 @@ import datetime
 import uuid as uuid_type
 
 from django.conf import settings
+from django.contrib.auth.hashers import make_password
 
 from uds.core.managers import crypto
 from ...utils.test import UDSTestCase
@@ -119,7 +120,7 @@ class CryptoManagerTest(UDSTestCase):
         # knownHashValue = '4e1311c1378993b34430988f4836b8e6b8beb219'
 
         for _ in (testStr, testStr.encode('utf-8')):
-            hashValue = self.manager.hash(testStr)
+            hashValue = make_password(testStr)
             self.assertIsInstance(hashValue, str, 'Returned hash must be an string')
 
     def test_Uuid(self) -> None:

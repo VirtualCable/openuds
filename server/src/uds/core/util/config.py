@@ -36,6 +36,7 @@ import sys
 import typing
 
 from django.apps import apps
+from django.contrib.auth.hashers import make_password
 from django.db.models import signals
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
@@ -243,7 +244,7 @@ class Config:
                 value = str(value)
 
             if self._type == Config.FieldType.PASSWORD:
-                value = CryptoManager().hash(value)
+                value = make_password(value)
 
             logger.debug('Saving config %s.%s as %s', self._section.name(), self._key, value)
             try:
@@ -319,7 +320,7 @@ class Config:
                 return None  # Skip non writable elements
 
             if cfg.field_type == Config.FieldType.PASSWORD.value:
-                value = CryptoManager.manager().hash(value)
+                value = make_password(value)
 
             cfg.value = value
             cfg.save(update_fields=['value'])

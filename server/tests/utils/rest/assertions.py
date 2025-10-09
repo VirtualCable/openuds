@@ -33,7 +33,8 @@ import typing
 import collections.abc
 
 from uds import models
-from uds.core.managers.crypto import CryptoManager
+
+from django.contrib.auth.hashers import check_password
 
 from .. import ensure_data
 
@@ -86,7 +87,7 @@ def assert_user_is(
 
         # Compare password
         if compare_password:
-            if not CryptoManager().check_hash(compare_to['password'], user.password):
+            if not check_password(compare_to['password'], user.password):
                 logger.info(
                     'User password do not match: %s != %s',
                     user.password,

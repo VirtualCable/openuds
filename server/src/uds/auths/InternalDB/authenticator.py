@@ -37,11 +37,11 @@ import typing
 
 import dns.resolver
 import dns.reversename
+from django.contrib.auth.hashers import check_password
 from django.utils.translation import gettext_noop as _
 
 from uds.core import auths, types
 from uds.core.auths.auth import log_login
-from uds.core.managers.crypto import CryptoManager
 from uds.core.types.states import State
 from uds.core.ui import gui
 
@@ -173,7 +173,7 @@ class InternalDBAuth(auths.Authenticator):
             return types.auth.FAILED_AUTH
 
         # Internal Db Auth has its own groups. (That is, no external source). If a group is active it is valid
-        if CryptoManager().check_hash(credentials, user.password):
+        if check_password(credentials, user.password):
             groups_manager.validate([g.name for g in user.groups.all()])
             return types.auth.SUCCESS_AUTH
 

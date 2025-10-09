@@ -200,6 +200,11 @@ SECURE_CIPHERS = (
 # Min TLS version
 # SECURE_MIN_TLS_VERSION = '1.2'
 
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
+    'uds.core.managers.crypto.OldUDSPasswordHasher'
+]
+
 # LDAP CIFHER SUITE can be enforced here. Use GNU TLS cipher suite names in this case
 # Debian libldap uses gnutls, and it's my development environment. Continue reading for more info:
 # i.e. (GNU TLS):

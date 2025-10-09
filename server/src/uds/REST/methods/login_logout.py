@@ -35,6 +35,8 @@ import logging
 import time
 import typing
 
+from django.contrib.auth.hashers import check_password
+
 from uds.core import consts, exceptions
 from uds.core.auths.auth import authenticate
 from uds.core.managers.crypto import CryptoManager
@@ -153,7 +155,7 @@ class Login(Handler):
                 or auth_id == '00000000-0000-0000-0000-000000000000'
                 or (not auth_id and not auth_name and not auth_label)
             ):
-                if GlobalConfig.SUPER_USER_LOGIN.get(True) == username and CryptoManager.manager().check_hash(
+                if GlobalConfig.SUPER_USER_LOGIN.get(True) == username and check_password(
                     password, GlobalConfig.SUPER_USER_PASS.get(True)
                 ):
                     self.gen_auth_token(-1, username, password, locale, platform, scrambler)
