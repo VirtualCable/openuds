@@ -230,12 +230,13 @@ class Auths(Handler):
                 yield {
                     'authId': auth.uuid,  # Deprecated, use 'auth_id'
                     'auth_id': auth.uuid,  # Deprecated, use 'id'
-                    'id': auth.uuid, 
+                    'id': auth.uuid,
                     'authSmallName': str(auth.small_name),  # Deprecated
                     'authLabel': str(auth.small_name),  # Deprecated, use 'auth_label'
-                    'auth_label': str(auth.small_name),   # Deprecated, use 'label'
+                    'auth_label': str(auth.small_name),  # Deprecated, use 'label'
                     'label': str(auth.small_name),
-                    'auth': auth.name,
+                    'auth': auth.name,  # Deprecated, use 'name'
+                    'name': auth.name,
                     'type': auth_type.type_type,
                     'priority': auth.priority,
                     'isCustom': auth_type.is_custom(),  # Deprecated, use 'custom'
