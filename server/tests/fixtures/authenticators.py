@@ -33,7 +33,8 @@ import random  # nosec: testing only
 
 from uds import models
 from uds.core import types
-from uds.core.managers.crypto import CryptoManager
+
+from django.contrib.auth.hashers import make_password
 
 # Counters so we can reinvoke the same method and generate new data
 glob = {'user_id': 0, 'group_id': 0}
@@ -75,7 +76,7 @@ def create_db_users(
     users = [
         authenticator.users.create(
             name=f'user{i}',
-            password=CryptoManager.manager().hash(f'user{i}'),
+            password=make_password(f'user{i}'),
             real_name=f'Real name {i}',
             comments=f'User {i}',
             staff_member=is_staff or is_admin,
