@@ -458,13 +458,7 @@ class WinDomainOsManager(WindowsOsManager):
         return types.osmanagers.ActorData(
             action='rename_ad',
             name=userservice.get_name(),
-            # Repeat data, to keep compat with old versions of Actor on compat
-            compat=types.osmanagers.ActorData.Compat(
-                ad=self.domain.as_str(),
-                ou=self.ou.as_str(),
-                username=self.account.as_str(),
-                password=self.password.as_str(),
-            ),
+            # This is the new data format, more generic
             custom={
                 'domain': self.domain.as_str(),
                 'ou': self.ou.as_str(),

@@ -256,7 +256,8 @@ class Test(ActorV3Action):
                     token=self._params['token'], type=types.servers.ServerType.ACTOR
                 )  # Not assigned, because only needs check
             clear_failed_ip_counter(self._request)
-        except Exception:
+        except Exception as e:
+            logger.info('Test host request: %s, %s', self._params, e)
             # Increase failed attempts
             increase_failed_ip_count(self._request)
             # And return test failed
@@ -555,7 +556,9 @@ class BaseReadyChange(ActorV3Action):
                 )  # Currently, no data is received for os manager
 
         # Generates a certificate and send it to client.
-        private_key, cert, password = security.create_self_signed_cert(self._params['ip'])
+        # Password will be removed on a release after 5.0 as it is useful
+        # Currently we have to maintain it for compat with older actors
+        private_key, cert, password = security.create_self_signed_cert(self._params['ip'], with_password=True)
         # Store certificate with userService
         userservice.properties['cert'] = cert
         userservice.properties['priv'] = private_key
@@ -871,7 +874,9 @@ class Unmanaged(ActorV3Action):
             ip = self._params['id'][0]['ip']  # Get first IP if no valid ip found
 
         # Generates a certificate and send it to client (actor).
-        private_key, certificate, password = security.create_self_signed_cert(ip)
+        # Password will be removed on a release after 5.0 as it is useful
+        # Currently we have to maintain it for compat with older actors
+        private_key, certificate, password = security.create_self_signed_cert(ip, with_password=True)
 
         if valid_id:
             # If id is assigned to an user service, notify "logout" to it

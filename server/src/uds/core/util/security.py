@@ -63,7 +63,7 @@ if typing.TYPE_CHECKING:
     from uds import models
     from uds.core import types
 
-def create_self_signed_cert(ip: str) -> tuple[str, str, str]:
+def create_self_signed_cert(ip: str, with_password: bool) -> tuple[str, str, str]:
     """
     Generates a self signed certificate for the given ip.
     This method is mainly intended to be used for generating/saving Actor certificates.
@@ -75,7 +75,7 @@ def create_self_signed_cert(ip: str) -> tuple[str, str, str]:
         backend=default_backend(),
     )
     # Create a random password for private key
-    password = secrets.token_hex(consts.system.SECURITY_SECRET_SIZE)
+    password = secrets.token_hex(consts.system.SECURITY_SECRET_SIZE) if with_password else ''
 
     name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, ip)])
     san = x509.SubjectAlternativeName([x509.IPAddress(ipaddress.ip_address(ip))])
@@ -94,14 +94,17 @@ def create_self_signed_cert(ip: str) -> tuple[str, str, str]:
         .add_extension(san, False)
         .sign(key, hashes.SHA256(), default_backend())
     )
+    
+    private_key = key.private_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PrivateFormat.TraditionalOpenSSL,
+        encryption_algorithm=serialization.BestAvailableEncryption(password.encode()) if with_password else serialization.NoEncryption(),
+    ).decode()
+    certificate = cert.public_bytes(encoding=serialization.Encoding.PEM).decode()   
 
     return (
-        key.private_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PrivateFormat.TraditionalOpenSSL,
-            encryption_algorithm=serialization.BestAvailableEncryption(password.encode()),
-        ).decode(),
-        cert.public_bytes(encoding=serialization.Encoding.PEM).decode(),
+        private_key,
+        certificate,
         password,
     )
 

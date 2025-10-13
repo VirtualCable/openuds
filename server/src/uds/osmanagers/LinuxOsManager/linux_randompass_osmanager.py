@@ -99,13 +99,6 @@ class LinuxRandomPassManager(LinuxOsManager):
         return types.osmanagers.ActorData(
             action='rename',
             name=userservice.get_name(),
-            # Repeat data, to keep compat with old versions of Actor
-            # Will be removed in a couple of versions
-            compat=types.osmanagers.ActorData.Compat(
-                username=self.user_account.as_str(),
-                password='',  # On linux, user password is not needed so we provide an empty one
-                new_password=self.gen_random_password(userservice),
-            ),
             custom={
                 'username': self.user_account.as_str(),
                 'password': '',  # On linux, user password is not needed so we provide an empty one

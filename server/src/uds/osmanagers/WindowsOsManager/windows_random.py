@@ -120,13 +120,6 @@ class WinRandomPassManager(WindowsOsManager):
         return types.osmanagers.ActorData(
             action='rename',
             name=userservice.get_name(),
-            # Repeat data, to keep compat with old versions of Actor (the part outside "custom")
-            # Will be removed in a couple of versions (maybe 6.0? :D), maybe before (But not before 5.0
-            compat=types.osmanagers.ActorData.Compat(
-                username=self.user_account.value.strip(),
-                password=self.password.as_str(),
-                new_password=self.gen_random_password(userservice),
-            ),
             custom={
                 'username': self.user_account.value.strip(),
                 'password': self.password.as_str(),
