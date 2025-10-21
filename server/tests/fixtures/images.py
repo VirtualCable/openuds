@@ -62,7 +62,8 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 import logging
-import datetime
+
+from django.utils import timezone
 
 if typing.TYPE_CHECKING:
     from uds import models
@@ -364,7 +365,7 @@ QmCC
 def createImage(use_big: bool = False) -> 'models.Image':
     image = models.Image(
         name='test',
-        stamp=datetime.datetime.now(),
+        stamp=timezone.localtime(),
     )
 
     image.storeImageFromBase64(big if use_big else small)   # type: ignore

@@ -32,9 +32,9 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
-from datetime import datetime
 
 from django.utils.translation import gettext as _
+from django.utils import timezone
 
 from uds.core.services import Publication
 from uds.core import types
@@ -96,7 +96,7 @@ class OVirtPublication(Publication, autoserializable.AutoSerializable):
             'UDSP ' + self.servicepool_name() + "-" + str(self.revision())
         )
         comments = _('UDS pub for {0} at {1}').format(
-            self.servicepool_name(), str(datetime.now()).split('.')[0]
+            self.servicepool_name(), str(timezone.localtime()).split('.')[0]
         )
         self._reason = ''  # No error, no reason for it
         self._destroy_after = False

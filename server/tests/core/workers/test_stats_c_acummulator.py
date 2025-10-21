@@ -43,8 +43,10 @@ from uds.core.util import config
 from ...utils.test import UDSTestCase
 from ...fixtures import stats_counters as fixtures_stats_counters
 
+from django.utils import timezone
 
-START_DATE = datetime.datetime(2009, 12, 4, 0, 0, 0)
+
+START_DATE = datetime.datetime(2009, 12, 4, 0, 0, 0, tzinfo=datetime.timezone.utc)
 # Some random values,
 DAYS = 4
 NUMBER_PER_HOUR = 6  # Can be any value divisor of 3600
@@ -69,6 +71,9 @@ class StatsFunction:
 
 class StatsAcummulatorTest(UDSTestCase):
     def setUp(self) -> None:
+        # Set timezone for tests to UTC
+        timezone.activate(datetime.timezone.utc)
+
         # In fact, real data will not be assigned to Userservices, but it's ok for testing
         for pool_id in range(NUMBER_OF_POOLS):
             fixtures_stats_counters.create_stats_interval_total(
@@ -116,7 +121,7 @@ class StatsAcummulatorTest(UDSTestCase):
         day_stats = models.StatsCountersAccum.objects.filter(
             interval_type=models.StatsCountersAccum.IntervalType.DAY
         )
-        total_day_stats = DAYS * NUMBER_OF_POOLS * len(COUNTERS_TYPES)
+        total_day_stats = (DAYS + 1) * NUMBER_OF_POOLS * len(COUNTERS_TYPES)
         self.assertEqual(day_stats.count(), total_day_stats)
 
         # Calculate sum of stats, by hour
@@ -142,7 +147,9 @@ class StatsAcummulatorTest(UDSTestCase):
         for i in hour_stats.order_by('owner_id', 'counter_type', 'stamp'):
             stamp = i.stamp - (i.stamp % (3600 * 24)) + 3600 * 24  # Round to day and to next day
             dd = data_d.setdefault(f'{i.owner_id:03d}{i.counter_type}', {})
-            dd.setdefault(stamp, []).append({'sum': i.v_sum, 'count': i.v_count, 'max': i.v_max, 'min': i.v_min})
+            dd.setdefault(stamp, []).append(
+                {'sum': i.v_sum, 'count': i.v_count, 'max': i.v_max, 'min': i.v_min}
+            )
 
         for i in day_stats.order_by('owner_id', 'stamp'):
             stamp = i.stamp  # already rounded to day

@@ -349,7 +349,7 @@ class Config:
     @staticmethod
     def get_config_values(
         include_passwords: bool = False,
-    ) -> collections.abc.Mapping[str, collections.abc.Mapping[str, collections.abc.Mapping[str, typing.Any]]]:
+    ) -> dict[str, dict[str, dict[str, typing.Any]]]:
         """
         Returns a dictionary with all config values
         """
@@ -701,7 +701,7 @@ class GlobalConfig:
     # Site display name & copyright info
     SITE_NAME: Config.Value = Config.section(Config.SectionType.CUSTOM).value(
         'Site name',
-        'UDS Enterprise',
+        'UDS',
         type=Config.FieldType.TEXT,
         help=_('Site display name'),
     )

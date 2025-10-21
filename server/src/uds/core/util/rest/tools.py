@@ -48,7 +48,7 @@ T = typing.TypeVar('T', bound=typing.Any)
 # The callback will be called with the arguments in the order they are in the tuple, so:
 # callback(sample, arg_2, argument)
 # And the literals will be ignored
-def match(
+def match_args(
     arg_list: collections.abc.Iterable[str],
     error: collections.abc.Callable[..., typing.Any],
     *args: tuple[tuple[str, ...], collections.abc.Callable[..., T]],
@@ -67,7 +67,7 @@ def match(
     callback(sample, arg_2, argument)
     And the literals will be ignored
     """
-    arg_list = list(arg_list)  # ensure it is a list
+    arg_list = [i for i in arg_list]  # ensure it is a list
     for pattern, function in args:
         if len(arg_list) != len(pattern):
             continue
@@ -96,3 +96,4 @@ def match(
     # Invoke error callback
     error()
     return None  # In fact, error is expected to raise an exception, so this is never reached
+

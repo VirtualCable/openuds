@@ -30,106 +30,148 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import logging
 import typing
 import collections.abc
 
 from django.db import IntegrityError
 from django.utils.translation import gettext as _
+from django.db.models import Model
 
 from uds import models
 
-from uds.core import exceptions, types
+from uds.core import exceptions, types, module, services
 import uds.core.types.permissions
-from uds.core.util import log, permissions, ensure
+from uds.core.types.rest import TableInfo
+from uds.core.util import log, permissions, ensure, ui as ui_utils
 from uds.core.util.model import process_uuid
 from uds.core.environment import Environment
 from uds.core.consts.images import DEFAULT_THUMB_BASE64
-from uds.core.ui import gui
+from uds.core import ui
 from uds.core.types.states import State
 
 
 from uds.REST.model import DetailHandler
 
-# Not imported at runtime, just for type checking
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
 
-class Services(DetailHandler):  # pylint: disable=too-many-public-methods
+@dataclasses.dataclass
+class ServiceItem(types.rest.ManagedObjectItem['models.Service']):
+    id: str
+    name: str
+    tags: list[str]
+    comments: str
+    deployed_services_count: int
+    user_services_count: int
+    max_services_count_type: str
+    maintenance_mode: bool
+    permission: int
+    info: 'ServiceInfo|types.rest.NotRequired' = types.rest.NotRequired.field()
+
+
+@dataclasses.dataclass
+class ServiceInfo(types.rest.BaseRestItem):
+    icon: str
+    needs_publication: bool
+    max_deployed: int
+    uses_cache: bool
+    uses_cache_l2: bool
+    cache_tooltip: str
+    cache_tooltip_l2: str
+    needs_osmanager: bool
+    allowed_protocols: list[str]
+    services_type_provided: str
+    can_reset: bool
+    can_list_assignables: bool
+
+
+@dataclasses.dataclass
+class ServicePoolResumeItem(types.rest.BaseRestItem):
+    id: str
+    name: str
+    thumb: str
+    user_services_count: int
+    state: str
+
+
+class Services(DetailHandler[ServiceItem]):  # pylint: disable=too-many-public-methods
     """
     Detail handler for Services, whose parent is a Provider
     """
 
-    custom_methods = ['servicepools']
+    CUSTOM_METHODS = ['servicepools']
+
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        typed=types.rest.api.RestApiInfoGuiType.MULTIPLE_TYPES,
+    )
 
     @staticmethod
-    def service_info(item: models.Service) -> dict[str, typing.Any]:
+    def service_info(item: models.Service) -> ServiceInfo:
         info = item.get_type()
         overrided_fields = info.overrided_pools_fields or {}
 
-        return {
-            'icon': info.icon64().replace('\n', ''),
-            'needs_publication': info.publication_type is not None,
-            'max_deployed': info.userservices_limit,
-            'uses_cache': info.uses_cache and overrided_fields.get('uses_cache', True),
-            'uses_cache_l2': info.uses_cache_l2,
-            'cache_tooltip': _(info.cache_tooltip),
-            'cache_tooltip_l2': _(info.cache_tooltip_l2),
-            'needs_osmanager': info.needs_osmanager,
-            'allowed_protocols': info.allowed_protocols,
-            'services_type_provided': info.services_type_provided,
-            'can_reset': info.can_reset,
-            'can_list_assignables': info.can_assign(),
-        }
+        return ServiceInfo(
+            icon=info.icon64().replace('\n', ''),
+            needs_publication=info.publication_type is not None,
+            max_deployed=info.userservices_limit,
+            uses_cache=info.uses_cache and overrided_fields.get('uses_cache', True),
+            uses_cache_l2=info.uses_cache_l2,
+            cache_tooltip=_(info.cache_tooltip),
+            cache_tooltip_l2=_(info.cache_tooltip_l2),
+            needs_osmanager=info.needs_osmanager,
+            allowed_protocols=[str(i) for i in info.allowed_protocols],
+            services_type_provided=info.services_type_provided,
+            can_reset=info.can_reset,
+            can_list_assignables=info.can_assign(),
+        )
 
     @staticmethod
-    def service_to_dict(item: models.Service, perm: int, full: bool = False) -> types.rest.ItemDictType:
+    def service_item(item: models.Service, perm: int, full: bool = False) -> ServiceItem:
         """
         Convert a service db item to a dict for a rest response
         :param item: Service item (db)
         :param full: If full is requested, add "extra" fields to complete information
         """
-        item_type = item.get_type()
-        ret_value: dict[str, typing.Any] = {
-            'id': item.uuid,
-            'name': item.name,
-            'tags': [tag.tag for tag in item.tags.all()],
-            'comments': item.comments,
-            'type': item.data_type,   # Compat with old code
-            'data_type': item.data_type,
-            'type_name': _(item_type.mod_name()),
-            'deployed_services_count': item.deployedServices.count(),
-            'user_services_count': models.UserService.objects.filter(deployed_service__service=item)
+        ret_value = ServiceItem(
+            id=item.uuid,
+            name=item.name,
+            tags=[tag.tag for tag in item.tags.all()],
+            comments=item.comments,
+            deployed_services_count=item.deployedServices.count(),
+            user_services_count=models.UserService.objects.filter(deployed_service__service=item)
             .exclude(state__in=State.INFO_STATES)
             .count(),
-            'max_services_count_type': str(item.max_services_count_type),
-            'maintenance_mode': item.provider.maintenance_mode,
-            'permission': perm,
-        }
+            max_services_count_type=str(item.max_services_count_type),
+            maintenance_mode=item.provider.maintenance_mode,
+            permission=perm,
+            item=item,
+        )
+
         if full:
-            ret_value['info'] = Services.service_info(item)
+            ret_value.info = Services.service_info(item)
 
         return ret_value
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[ServiceItem]:
         parent = ensure.is_instance(parent, models.Provider)
         # Check what kind of access do we have to parent provider
         perm = permissions.effective_permissions(self._user, parent)
         try:
             if item is None:
-                return [Services.service_to_dict(k, perm) for k in parent.services.all()]
+                return [Services.service_item(k, perm) for k in self.filter_queryset(parent.services.all())]
             k = parent.services.get(uuid=process_uuid(item))
-            val = Services.service_to_dict(k, perm, full=True)
-            return self.fill_instance_fields(k, val)
+            val = Services.service_item(k, perm, full=True)
+            # On detail, ne wee to fill the instance fields by hand
+            return val
+        except models.Service.DoesNotExist:
+            raise exceptions.rest.NotFound(_('Service not found')) from None
         except Exception as e:
             logger.error('Error getting services for %s: %s', parent, e)
-            raise self.invalid_item_response(repr(e)) from e
-
-    def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
-        return types.ui.RowStyleInfo(prefix='row-maintenance-', field='maintenance_mode')
+            raise exceptions.rest.ResponseError(_('Error getting services')) from None
 
     def _delete_incomplete_service(self, service: models.Service) -> None:
         """
@@ -141,7 +183,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         except Exception:  # nosec: This is a delete, we don't care about exceptions
             pass
 
-    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
+    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> ServiceItem:
         parent = ensure.is_instance(parent, models.Provider)
         # Extract item db fields
         # We need this fields for all
@@ -188,22 +230,25 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             service.data = service_instance.serialize()
 
             service.save()
-            return {'id': service.uuid}
+            return Services.service_item(
+                service, permissions.effective_permissions(self._user, service), full=True
+            )
+
         except models.Service.DoesNotExist:
-            raise self.invalid_item_response() from None
+            raise exceptions.rest.NotFound('Service not found') from None
         except IntegrityError as e:  # Duplicate key probably
             if service and service.token and not item:
                 service.delete()
                 raise exceptions.rest.RequestError(
-                    _('Service token seems to be in use by other service. Please, select a new one.')
+                    'Service token seems to be in use by other service. Please, select a new one.'
                 ) from e
-            raise exceptions.rest.RequestError(_('Element already exists (duplicate key error)')) from e
+            raise exceptions.rest.RequestError('Element already exists (duplicate key error)') from e
         except exceptions.ui.ValidationError as e:
             if (
                 not item and service
             ):  # Only remove partially saved element if creating new (if editing, ignore this)
                 self._delete_incomplete_service(service)
-            raise exceptions.rest.RequestError(_('Input error: {0}'.format(e))) from e
+            raise exceptions.rest.ValidationError('Input error: {0}'.format(e)) from e
         except Exception as e:
             if not item and service:
                 self._delete_incomplete_service(service)
@@ -217,110 +262,99 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             if service.deployedServices.count() == 0:
                 service.delete()
                 return
-        except Exception:
-            logger.exception('Deleting service')
-            raise self.invalid_item_response() from None
+        except models.Service.DoesNotExist:
+            raise exceptions.rest.NotFound(_('Service not found')) from None
+        except Exception as e:
+            logger.error('Error deleting service %s from %s: %s', item, parent, e)
+            raise exceptions.rest.ResponseError(_('Error deleting service')) from None
 
         raise exceptions.rest.RequestError('Item has associated deployed services')
 
-    def get_title(self, parent: 'Model') -> str:
+    def get_table(self, parent: 'Model') -> TableInfo:
         parent = ensure.is_instance(parent, models.Provider)
-        try:
-            return _('Services of {}').format(parent.name)
-        except Exception:
-            return _('Current services')
-
-    def get_fields(self, parent: 'Model') -> list[typing.Any]:
-        return [
-            {'name': {'title': _('Service name'), 'visible': True, 'type': 'iconType'}},
-            {'comments': {'title': _('Comments')}},
-            {'type_name': {'title': _('Type')}},
-            {
-                'deployed_services_count': {
-                    'title': _('Services Pools'),
-                    'type': 'numeric',
-                }
-            },
-            {'user_services_count': {'title': _('User services'), 'type': 'numeric'}},
-            {
-                'max_services_count_type': {
-                    'title': _('Max services count type'),
-                    'type': 'dict',
-                    'dict': {'0': _('Standard'), '1': _('Conservative')},
+        return (
+            ui_utils.TableBuilder(_('Services of {0}').format(parent.name))
+            .icon(name='name', title=_('Name'))
+            .text_column(name='type_name', title=_('Type'))
+            .text_column(name='comments', title=_('Comments'))
+            .numeric_column(name='deployed_services_count', title=_('Services Pools'), width='12em')
+            .numeric_column(name='user_services_count', title=_('User Services'), width='12em')
+            .dict_column(
+                name='max_services_count_type',
+                title=_('Counting method'),
+                dct={
+                    types.services.ServicesCountingType.STANDARD: _('Standard'),
+                    types.services.ServicesCountingType.CONSERVATIVE: _('Conservative'),
                 },
-            },
-            {'tags': {'title': _('tags'), 'visible': False}},
-        ]
+            )
+            .text_column(name='tags', title=_('Tags'), visible=False)
+            .row_style(prefix='row-maintenance-', field='maintenance_mode')
+            .build()
+        )
 
-    def get_types(
-        self, parent: 'Model', for_type: typing.Optional[str]
-    ) -> collections.abc.Iterable[types.rest.TypeInfoDict]:
-
+    def enum_types(self, parent: 'Model', for_type: typing.Optional[str]) -> list[types.rest.TypeInfo]:
         parent = ensure.is_instance(parent, models.Provider)
         logger.debug('get_types parameters: %s, %s', parent, for_type)
-        offers: list[types.rest.TypeInfoDict] = []
+        offers: list[types.rest.TypeInfo] = []
         if for_type is None:
-            offers = [
-                {
-                    'name': _(t.mod_name()),
-                    'type': t.mod_type(),
-                    'description': _(t.description()),
-                    'icon': t.icon64().replace('\n', ''),
-                }
-                for t in parent.get_type().get_provided_services()
-            ]
+            offers = [type(self).as_typeinfo(t) for t in parent.get_type().get_provided_services()]
         else:
             for t in parent.get_type().get_provided_services():
                 if for_type == t.mod_type():
-                    offers = [
-                        {
-                            'name': _(t.mod_name()),
-                            'type': t.mod_type(),
-                            'description': _(t.description()),
-                            'icon': t.icon64().replace('\n', ''),
-                        }
-                    ]
+                    offers = [type(self).as_typeinfo(t)]
                     break
             if not offers:
                 raise exceptions.rest.NotFound('type not found')
 
-        return offers  # Default is that details do not have types
+        return offers
 
-    def get_gui(self, parent: 'Model', for_type: str) -> collections.abc.Iterable[typing.Any]:
+    @classmethod
+    def possible_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[module.Module]]:
+        """
+        If the detail has any possible types, provide them overriding this method
+        :param cls:
+        """
+        for parent_type in services.factory().providers().values():
+            for service in parent_type.get_provided_services():
+                yield service
+
+    def get_gui(self, parent: 'Model', for_type: str) -> list[types.ui.GuiElement]:
         parent = ensure.is_instance(parent, models.Provider)
         try:
             logger.debug('getGui parameters: %s, %s', parent, for_type)
             parent_instance = parent.get_instance()
             service_type = parent_instance.get_service_by_type(for_type)
             if not service_type:
-                raise self.invalid_item_response(f'Gui for {for_type} not found')
+                raise exceptions.rest.RequestError(f'Gui for type "{for_type}" not found')
             with Environment.temporary_environment() as env:
                 service = service_type(
                     env, parent_instance
                 )  # Instantiate it so it has the opportunity to alter gui description based on parent
-                local_gui = self.add_default_fields(service.gui_description(), ['name', 'comments', 'tags'])
-                self.add_field(
-                    local_gui,
-                    {
-                        'name': 'max_services_count_type',
-                        'choices': [
-                            gui.choice_item('0', _('Standard')),
-                            gui.choice_item('1', _('Conservative')),
+                overrided_fields = service.overrided_fields or {}
+
+                gui = (
+                    ui_utils.GuiBuilder()
+                    .add_stock_field(types.rest.stock.StockField.TAGS)
+                    .add_stock_field(types.rest.stock.StockField.NAME)
+                    .add_stock_field(types.rest.stock.StockField.COMMENTS)
+                    .add_choice(
+                        name='max_services_count_type',
+                        choices=[
+                            ui.gui.choice_item(
+                                str(types.services.ServicesCountingType.STANDARD.value), _('Standard')
+                            ),
+                            ui.gui.choice_item(
+                                str(types.services.ServicesCountingType.CONSERVATIVE.value), _('Conservative')
+                            ),
                         ],
-                        'label': _('Service counting method'),
-                        'tooltip': _('Kind of service counting for calculating if MAX is reached'),
-                        'type': types.ui.FieldType.CHOICE,
-                        'readonly': False,
-                        'order': 110,
-                        'tab': types.ui.Tab.ADVANCED,
-                    },
+                        label=_('Service counting method'),
+                        tooltip=_('Kind of service counting for calculating if MAX is reached'),
+                        tab=types.ui.Tab.ADVANCED,
+                    )
+                    .add_fields(service.gui_description())
                 )
 
-                # Remove all overrided fields from editables
-                overrided_fields = service.overrided_fields or {}
-                local_gui = [field_gui for field_gui in local_gui if field_gui['name'] not in overrided_fields]
-
-                return local_gui
+                return [field_gui for field_gui in gui.build() if field_gui.name not in overrided_fields]
 
         except Exception as e:
             logger.exception('get_gui')
@@ -332,29 +366,32 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             service = parent.services.get(uuid=process_uuid(item))
             logger.debug('Getting logs for %s', item)
             return log.get_logs(service)
-        except Exception:
-            raise self.invalid_item_response() from None
+        except models.Service.DoesNotExist:
+            raise exceptions.rest.NotFound(_('Service not found')) from None
+        except Exception as e:
+            logger.error('Error getting logs for %s: %s', item, e)
+            raise exceptions.rest.ResponseError(_('Error getting logs')) from None
 
-    def servicepools(self, parent: 'Model', item: str) -> types.rest.ManyItemsDictType:
+    def servicepools(self, parent: 'Model', item: str) -> list[ServicePoolResumeItem]:
         parent = ensure.is_instance(parent, models.Provider)
         service = parent.services.get(uuid=process_uuid(item))
         logger.debug('Got parameters for servicepools: %s, %s', parent, item)
-        res: types.rest.ItemListType = []
+        res: list[ServicePoolResumeItem] = []
         for i in service.deployedServices.all():
             try:
-                self.ensure_has_access(
+                self.check_access(
                     i, uds.core.types.permissions.PermissionType.READ
                 )  # Ensures access before listing...
                 res.append(
-                    {
-                        'id': i.uuid,
-                        'name': i.name,
-                        'thumb': i.image.thumb64 if i.image is not None else DEFAULT_THUMB_BASE64,
-                        'user_services_count': i.userServices.exclude(
+                    ServicePoolResumeItem(
+                        id=i.uuid,
+                        name=i.name,
+                        thumb=i.image.thumb64 if i.image is not None else DEFAULT_THUMB_BASE64,
+                        user_services_count=i.userServices.exclude(
                             state__in=(State.REMOVED, State.ERROR)
                         ).count(),
-                        'state': _('With errors') if i.is_restrained() else _('Ok'),
-                    }
+                        state=_('With errors') if i.is_restrained() else _('Ok'),
+                    )
                 )
             except exceptions.rest.AccessDenied:
                 pass

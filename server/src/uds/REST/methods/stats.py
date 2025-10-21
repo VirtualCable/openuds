@@ -34,7 +34,9 @@ import logging
 import datetime
 import typing
 
-from uds.core import types
+from django.utils import timezone
+
+from uds.core import types, consts
 from uds.REST import Handler
 from uds import models
 from uds.core.util.stats import counters
@@ -44,13 +46,7 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /cache path
 class Stats(Handler):
-    authenticated = True
-    needs_admin = True
-
-    help_paths = [
-        ('', 'Returns the last day usage statistics for all authenticators'),
-    ]
-    help_text = 'Provides access to usage statistics'
+    ROLE = consts.UserRole.ADMIN
 
     def _usage_stats(self, since: datetime.datetime) -> dict[str, list[dict[str, typing.Any]]]:
         """
@@ -138,4 +134,4 @@ class Stats(Handler):
         Processes get method. Basically, clears & purges the cache, no matter what params
         """
         # Default returns usage stats for last day
-        return self._usage_stats(datetime.datetime.now() - datetime.timedelta(days=1))
+        return self._usage_stats(timezone.localtime() - datetime.timedelta(days=1))

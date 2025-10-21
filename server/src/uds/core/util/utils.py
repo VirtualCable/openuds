@@ -40,7 +40,7 @@ import typing
 import unicodedata
 
 import django.template.defaultfilters as filters
-from django.utils import formats
+from django.utils import formats, timezone
 from django.conf import settings
 from django.utils.translation import gettext
 
@@ -106,7 +106,7 @@ def timestamp_as_str(stamp: float, format_: typing.Optional[str] = None) -> str:
     Converts a timestamp to date string using specified format (DJANGO format such us SHORT_DATETIME_FORMAT..)
     """
     format_ = formats.get_format(format_ or 'SHORT_DATETIME_FORMAT')
-    return filters.date(datetime.datetime.fromtimestamp(stamp), format_)
+    return filters.date(timezone.make_aware(datetime.datetime.fromtimestamp(stamp)), format_)
 
 
 def seconds_to_time_string(seconds: int) -> str:
@@ -197,7 +197,7 @@ class ExecutionTimer:
         - A value of <= 0.0 will not delay at all, a value of 1.0 will delay as much as the elapsed time, a value of 2.0
             will delay twice the elapsed time, and so on
         """
-        self._start = datetime.datetime.now()
+        self._start = timezone.localtime()
         self._end = self._start
         self._running = False
         
@@ -205,18 +205,18 @@ class ExecutionTimer:
         self._max_delay_rate = max_delay_rate
 
     def __enter__(self) -> 'ExecutionTimer':
-        self._start = self._end = datetime.datetime.now()
+        self._start = self._end = timezone.localtime()
         self._running = True
         return self
 
     def __exit__(self, exc_type: typing.Any, exc_value: typing.Any, traceback: typing.Any) -> None:
         self._running = False
-        self._end = datetime.datetime.now()
+        self._end = timezone.localtime()
 
     @property
     def elapsed(self) -> datetime.timedelta:
         if self._running:
-            return datetime.datetime.now() - self._start
+            return timezone.localtime() - self._start
         return self._end - self._start
 
     @property

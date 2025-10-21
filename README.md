@@ -13,5 +13,7 @@ Please feel free to contribute to this project.
 
 Notes
 =====
-* From 4.0 onwards (current master), OpenUDS has been splitted in several repositories and contains submodules. Remember to use "git clone --resursive ..." to fetch it ;-).
-* 4.0 version is tested on Python 3.11. It will probably work on 3.12 and 3.13 too (maybe 3.10, but not tested also)
+* Master version is always under heavy development and it is not recommended for use, it will probably have unfixed bugs.  Please use the latest stable branch (`v4.0` right now).
+* From `v4.0` onwards (current master), OpenUDS has been splitted in several repositories and contains submodules. Remember to use "git clone --resursive ..." to fetch it ;-).
+* `v4.0` version needs Python 3.11 (may work fine on newer versions). It uses new features only available on 3.10 or later, and is tested against 3.11. It will probably work on 3.10 too.
+

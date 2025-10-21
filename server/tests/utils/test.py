@@ -103,7 +103,7 @@ class UDSClientMixin:
         kwargs['headers'] = self.uds_headers
 
     def compose_rest_url(self, method: str) -> str:
-        return f'{REST_PATH}/{method}'
+        return f'{REST_PATH}{method}'
 
 
 class UDSClient(UDSClientMixin, Client):

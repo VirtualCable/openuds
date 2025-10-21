@@ -36,6 +36,7 @@ import datetime
 import logging
 
 from django.db import models
+from django.utils import timezone
 
 from uds.core.util.model import sql_stamp_seconds
 
@@ -71,7 +72,7 @@ class StatsCountersAccum(models.Model):
                 case self.DAY:
                     return StatsCountersAccum.IntervalType.HOUR
             raise ValueError('Invalid interval type')
-        
+
         def is_base_interval(self) -> bool:
             """Returns if this is the base interval"""
             return self == StatsCountersAccum.IntervalType.HOUR
@@ -144,7 +145,7 @@ class StatsCountersAccum(models.Model):
             type['StatsCountersAccum'],
             type['StatsCounters'],
         ]
-        # If base interval (that menas an inteval that must be readed from stats_c), 
+        # If base interval (that menas an inteval that must be readed from stats_c),
         # we will use StatsCounters to create the accum
         # Else, we will use StatsCountersAccum to create the accum from previous interval
         # (for example, to create daily accum from hourly data)
@@ -155,9 +156,7 @@ class StatsCountersAccum(models.Model):
 
         # Get last stamp in table for this interval_type
         start_record: 'StatsCounters|StatsCountersAccum|None' = (
-            StatsCountersAccum.objects.filter(interval_type=interval_type)
-            .order_by('stamp')
-            .last()
+            StatsCountersAccum.objects.filter(interval_type=interval_type).order_by('stamp').last()
         )
 
         if start_record is None:
@@ -173,24 +172,20 @@ class StatsCountersAccum(models.Model):
 
         # End date is now, adjusted to interval so we dont have "leftovers"
         current_stamp = end_stamp = StatsCountersAccum._adjust_to_interval(interval_type=interval_type)
-        
+
         # If time lapse is greater that max_days days, we will optimize in a predefined days chunks
         # This is to avoid having a huge query that will take a lot of time
         if end_stamp - start_stamp > (max_days * 24 * 3600):
-            logger.info(
-                'Accumulating stats counters table in chunks, because of large time lapse'
-            )
+            logger.info('Accumulating stats counters table in chunks, because of large time lapse')
             end_stamp = start_stamp + (max_days * 24 * 3600)
 
         # Fix end_stamp to interval, using base_end_stamp
-        end_stamp = StatsCountersAccum._adjust_to_interval(
-            end_stamp, interval_type=interval_type
-        )
+        end_stamp = StatsCountersAccum._adjust_to_interval(end_stamp, interval_type=interval_type)
 
         logger.debug(
             'Accumulating stats counters table from %s to %s',
-            datetime.datetime.fromtimestamp(start_stamp),
-            datetime.datetime.fromtimestamp(end_stamp),
+            timezone.make_aware(datetime.datetime.fromtimestamp(start_stamp)),
+            timezone.make_aware(datetime.datetime.fromtimestamp(end_stamp)),
         )
 
         # Get all records for this owner_type, counter_type, owner_id
@@ -207,7 +202,6 @@ class StatsCountersAccum(models.Model):
                     'counter_type': 'counter_type',
                 },
             )
-
             .values('group_by_stamp', 'owner_id', 'owner_type', 'counter_type')
         )
 
@@ -226,7 +220,7 @@ class StatsCountersAccum(models.Model):
                 count=models.Sum('v_count'),
                 sum=models.Sum('v_sum'),
             )
-            
+
         logger.debug('Query: %s', query.query)
 
         # Stores accumulated data in StatsCountersAccum
@@ -269,4 +263,4 @@ class StatsCountersAccum(models.Model):
             accumulated = accumulated[2500:]
 
     def __str__(self) -> str:
-        return f'{datetime.datetime.fromtimestamp(self.stamp)} - {self.owner_type}:{self.owner_id}:{self.counter_type} {StatsCountersAccum.IntervalType(self.interval_type)} {self.v_count},{self.v_sum},{self.v_min},{self.v_max}'
+        return f'{timezone.make_aware(datetime.datetime.fromtimestamp(self.stamp))} - {self.owner_type}:{self.owner_id}:{self.counter_type} {StatsCountersAccum.IntervalType(self.interval_type)} {self.v_count},{self.v_sum},{self.v_min},{self.v_max}'

@@ -495,6 +495,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="log",
             name="data",
-            field=models.CharField(default="", max_length=4096),
+            field=models.CharField(default="", max_length=4000),
         ),
     ]

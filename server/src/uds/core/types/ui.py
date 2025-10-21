@@ -37,7 +37,8 @@ import collections.abc
 from django.utils.translation import gettext_noop
 
 # Old Field name type
-OldFieldNameType = typing.Union[str,list[str],None]
+OldFieldNameType = typing.Union[str, list[str], None]
+
 
 class Tab(enum.StrEnum):
     ADVANCED = gettext_noop('Advanced')
@@ -79,6 +80,7 @@ class FieldType(enum.StrEnum):
     IMAGECHOICE = 'imgchoice'
     DATE = 'date'
     INFO = 'internal-info'
+    TAGLIST = 'taglist'
 
     @staticmethod
     def from_str(value: str) -> 'FieldType':
@@ -129,10 +131,20 @@ class Filler(typing.TypedDict):
 # Choices
 
 
-class ChoiceItem(typing.TypedDict):
+@dataclasses.dataclass
+class ChoiceItem:
     id: 'str'
     text: str
-    img: typing.NotRequired[str]  # Only for IMAGECHOICE
+    img: str | None = None  # Only for IMAGECHOICE
+
+    def as_dict(self) -> dict[str, typing.Any]:
+        data = {
+            'id': self.id,
+            'text': self.text,
+        }
+        if self.img:
+            data['img'] = self.img
+        return data
 
 
 ChoicesType = typing.Union[
@@ -149,57 +161,35 @@ class FieldInfo:
     type: FieldType
     field_name: str = ''
     old_field_name: OldFieldNameType = None
-    readonly: typing.Optional[bool] = None
-    value: typing.Union[collections.abc.Callable[[], typing.Any], typing.Any] = None
-    default: typing.Optional[typing.Union[collections.abc.Callable[[], str], str]] = None
-    required: typing.Optional[bool] = None
-    length: typing.Optional[int] = None
-    lines: typing.Optional[int] = None
-    pattern: typing.Union[FieldPatternType, 'typing.Pattern[str]'] = FieldPatternType.NONE
-    tab: typing.Union[Tab, str, None] = None
-    choices: typing.Optional[ChoicesType] = None
-    min_value: typing.Optional[int] = None
-    max_value: typing.Optional[int] = None
-    fills: typing.Optional[Filler] = None
-    rows: typing.Optional[int] = None
+    readonly: bool | None = None
+    value: collections.abc.Callable[[], typing.Any] | typing.Any | None = None
+    default: collections.abc.Callable[[], str | int | bool] | str | int | bool | None = None
+    required: bool | None = None
+    length: int | None = None
+    lines: int | None = None
+    pattern: 'FieldPatternType | str | None' = None
+    tab: Tab | str | None = None
+    choices: ChoicesType | None = None
+    min_value: int | None = None
+    max_value: int | None = None
+    fills: Filler | None = None
+    rows: int | None = None
 
     def as_dict(self) -> dict[str, typing.Any]:
         """Returns a dict with all fields that are not None"""
         return {k: v for k, v in dataclasses.asdict(self).items() if v is not None}
 
 
-class GuiElement(typing.TypedDict):
+@dataclasses.dataclass
+class GuiElement:
     name: str
-    gui: dict[str, list[dict[str, typing.Any]]]
-    value: typing.Any
-
-
-# Row styles
-@dataclasses.dataclass
-class RowStyleInfo:
-    prefix: str
-    field: str
+    gui: FieldInfo
+    value: typing.Any | None = None
 
     def as_dict(self) -> dict[str, typing.Any]:
         """Returns a dict with all fields that are not None"""
-        return dataclasses.asdict(self)
-
-    @staticmethod
-    def null() -> 'RowStyleInfo':
-        return RowStyleInfo('', '')
-
-# Table information
-@dataclasses.dataclass
-class TableInfo:
-    fields: list[FieldInfo]
-    row_style: RowStyleInfo
-    title: str
-    subtitle: typing.Optional[str] = None
-
-    def as_dict(self) -> dict[str, typing.Any]:
-        """Returns a dict with all fields that are not None"""
-        return dataclasses.asdict(self)
-    
-    @staticmethod
-    def null() -> 'TableInfo':
-        return TableInfo([], RowStyleInfo.null(), '')
+        return {
+            'name': self.name,
+            'gui': self.gui.as_dict(),
+            'value': self.value,
+        }

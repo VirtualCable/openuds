@@ -80,7 +80,7 @@ class GroupsTest(rest.test.RESTActorTestCase):
         self.assertIn('title', tableinfo)
         self.assertIn('subtitle', tableinfo)
         self.assertIn('fields', tableinfo)
-        self.assertIn('row-style', tableinfo)
+        self.assertIn('row_style', tableinfo)
 
         # Ensure at least name, comments, state and skip_mfa are present on tableinfo['fields']
         # fields: list[collections.abc.Mapping[str, typing.Any]] = tableinfo['fields']

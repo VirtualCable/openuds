@@ -37,6 +37,7 @@ import typing
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
 
 from uds.core.managers.stats import StatsManager
 from uds.core.ui import gui
@@ -108,7 +109,7 @@ class UsageByPool(StatsReport):
                                 'name': full_username,
                                 # ipv6 handled by src_ip property
                                 'origin': i.src_ip,
-                                'date': datetime.datetime.fromtimestamp(stamp),
+                                'date': timezone.make_aware(datetime.datetime.fromtimestamp(stamp)),
                                 'time': total,
                                 'pool': pool.uuid,
                                 'pool_name': pool.name,

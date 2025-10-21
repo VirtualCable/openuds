@@ -29,65 +29,83 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
+import datetime
 import logging
 import typing
 
-from django.utils.translation import gettext
-from django.utils.translation import gettext_lazy as _
-from django.db import transaction
+from django.utils.translation import gettext, gettext_lazy as _
+from django.db.models import Model
 
 from uds import models
-from uds.core import consts, types, ui
-from uds.core.util import net, permissions, ensure
+from uds.core import consts, exceptions, types
+from uds.core.types.rest import TableInfo
+from uds.core.util import net, permissions, ensure, ui as ui_utils
 from uds.core.util.model import sql_now, process_uuid
 from uds.core.exceptions.rest import NotFound, RequestError
 from uds.REST.model import DetailHandler, ModelHandler
 
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
 
+@dataclasses.dataclass
+class TokenItem(types.rest.BaseRestItem):
+    id: str
+    name: str
+    stamp: datetime.datetime
+    username: str
+    ip: str
+    hostname: str
+    listen_port: int
+    mac: str
+    token: str
+    type: str
+    os: str
+
+
 # REST API for Server Tokens management (for admin interface)
-class ServersTokens(ModelHandler):
+class ServersTokens(ModelHandler[TokenItem]):
+
     # servers/groups/[id]/servers
-    model = models.Server
-    model_exclude = {
+    MODEL = models.Server
+    EXCLUDE = {
         'type__in': [
             types.servers.ServerType.ACTOR,
             types.servers.ServerType.UNMANAGED,
         ]
     }
-    path = 'servers'
-    name = 'tokens'
+    PATH = 'servers'
+    NAME = 'tokens'
 
-    table_title = _('Registered Servers')
-    table_fields = [
-        {'hostname': {'title': _('Hostname')}},
-        {'ip': {'title': _('IP')}},
-        {'type': {'title': _('Type'), 'type': 'dict', 'dict': dict(types.servers.ServerType.enumerate())}},
-        {'os': {'title': _('OS')}},
-        {'username': {'title': _('Issued by')}},
-        {'stamp': {'title': _('Date'), 'type': 'datetime'}},
-        {'mac': {'title': _('MAC Address')}},
-    ]
+    TABLE = (
+        ui_utils.TableBuilder(_('Registered Servers'))
+        .text_column(name='hostname', title=_('Hostname'), visible=True)
+        .text_column(name='ip', title=_('IP'), visible=True)
+        .text_column(name='mac', title=_('MAC'), visible=True)
+        .text_column(name='type', title=_('Type'), visible=False)
+        .text_column(name='os', title=_('OS'), visible=True)
+        .text_column(name='username', title=_('Issued by'), visible=True)
+        .datetime_column(name='stamp', title=_('Date'), visible=True)
+        .text_column(name='mac', title=_('MAC Address'), visible=False)
+        .build()
+    )
 
-    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
+    def get_item(self, item: 'Model') -> TokenItem:
         item = typing.cast('models.Server', item)  # We will receive for sure
-        return {
-            'id': item.uuid,
-            'name': str(_('Token isued by {} from {}')).format(item.register_username, item.ip),
-            'stamp': item.stamp,
-            'username': item.register_username,
-            'ip': item.ip,
-            'hostname': item.hostname,
-            'listen_port': item.listen_port,
-            'mac': item.mac,
-            'token': item.token,
-            'type': types.servers.ServerType(item.type).as_str(),
-            'os': item.os_type,
-        }
+        return TokenItem(
+            id=item.uuid,
+            name=str(_('Token isued by {} from {}')).format(item.register_username, item.ip),
+            stamp=item.stamp,
+            username=item.register_username,
+            ip=item.ip,
+            hostname=item.hostname,
+            listen_port=item.listen_port,
+            mac=item.mac,
+            token=item.token,
+            type=types.servers.ServerType(item.type).as_str(),
+            os=item.os_type,
+        )
 
     def delete(self) -> str:
         """
@@ -96,157 +114,134 @@ class ServersTokens(ModelHandler):
         if len(self._args) != 1:
             raise RequestError('Delete need one and only one argument')
 
-        self.ensure_has_access(
-            self.model(), types.permissions.PermissionType.ALL, root=True
+        self.check_access(
+            self.MODEL(), types.permissions.PermissionType.ALL, root=True
         )  # Must have write permissions to delete
 
         try:
-            self.model.objects.get(uuid=process_uuid(self._args[0])).delete()
-        except self.model.DoesNotExist:
+            self.MODEL.objects.get(uuid=process_uuid(self._args[0])).delete()
+        except self.MODEL.DoesNotExist:
             raise NotFound('Element do not exists') from None
 
         return consts.OK
 
 
-# REST API For servers (except tunnel servers nor actors)
-class ServersServers(DetailHandler):
-    custom_methods = ['maintenance', 'importcsv']
+@dataclasses.dataclass
+class ServerItem(types.rest.BaseRestItem):
+    id: str
+    hostname: str
+    ip: str
+    listen_port: int
+    mac: str
+    maintenance_mode: bool
+    register_username: str
+    stamp: datetime.datetime
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
+
+# REST API For servers (except tunnel servers nor actors)
+class ServersServers(DetailHandler[ServerItem]):
+
+    CUSTOM_METHODS = ['maintenance', 'importcsv']
+
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        typed=types.rest.api.RestApiInfoGuiType.SINGLE_TYPE,
+    )
+
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[ServerItem]:
         parent = typing.cast('models.ServerGroup', parent)  # We will receive for sure
         try:
             if item is None:
-                q = parent.servers.all()
+                q = self.filter_queryset(parent.servers.all())
             else:
                 q = parent.servers.filter(uuid=process_uuid(item))
-            res: types.rest.ItemListType = []
+            res: list[ServerItem] = []
             i = None
             for i in q:
-                val = {
-                    'id': i.uuid,
-                    'hostname': i.hostname,
-                    'ip': i.ip,
-                    'listen_port': i.listen_port,
-                    'mac': i.mac if i.mac != consts.MAC_UNKNOWN else '',
-                    'maintenance_mode': i.maintenance_mode,
-                    'register_username': i.register_username,
-                    'stamp': i.stamp,
-                }
-                res.append(val)
+                res.append(
+                    ServerItem(
+                        id=i.uuid,
+                        hostname=i.hostname,
+                        ip=i.ip,
+                        listen_port=i.listen_port,
+                        mac=i.mac if i.mac != consts.NULL_MAC else '',
+                        maintenance_mode=i.maintenance_mode,
+                        register_username=i.register_username,
+                        stamp=i.stamp,
+                    )
+                )
             if item is None:
                 return res
             if not i:
-                raise Exception('Item not found')
+                raise exceptions.rest.NotFound(f'Server not found: {item}')
             return res[0]
-        except Exception as e:
-            logger.exception('REST servers')
-            raise self.invalid_item_response() from e
-
-    def get_title(self, parent: 'Model') -> str:
-        parent = ensure.is_instance(parent, models.ServerGroup)
-        try:
-            return (_('Servers of {0}')).format(parent.name)
+        except exceptions.rest.HandlerError:
+            raise
         except Exception:
-            return str(_('Servers'))
+            logger.exception('Error getting server')
+            raise exceptions.rest.ResponseError(_('Error getting server')) from None
 
-    def get_fields(self, parent: 'Model') -> list[typing.Any]:
+    def get_table(self, parent: 'Model') -> TableInfo:
         parent = ensure.is_instance(parent, models.ServerGroup)
+        table_info = (
+            ui_utils.TableBuilder(_('Servers of {0}').format(parent.name))
+            .text_column(name='hostname', title=_('Hostname'))
+            .text_column(name='ip', title=_('Ip'))
+            .text_column(name='mac', title=_('Mac'))
+        )
+        if parent.is_managed():
+            table_info.text_column(name='listen_port', title=_('Port'))
+
         return (
-            [
-                {
-                    'hostname': {
-                        'title': _('Hostname'),
-                    }
-                },
-                {'ip': {'title': _('Ip')}},
-            ]  # If not managed, we can show mac, else listen port (related to UDS Server)
-            + (
-                [
-                    {'mac': {'title': _('Mac')}},
-                ]
-                if not parent.is_managed()
-                else [
-                    {'mac': {'title': _('Mac')}},
-                    {'listen_port': {'title': _('Port')}},
-                ]
+            table_info.dict_column(
+                name='maintenance_mode',
+                title=_('State'),
+                dct={True: _('Maintenance'), False: _('Normal')},
             )
-            + [
-                {
-                    'maintenance_mode': {
-                        'title': _('State'),
-                        'type': 'dict',
-                        'dict': {True: _('Maintenance'), False: _('Normal')},
-                    }
-                },
-            ]
+            .row_style(prefix='row-maintenance-', field='maintenance_mode')
+            .build()
         )
 
-    def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
-        return types.ui.RowStyleInfo(prefix='row-maintenance-', field='maintenance_mode')
-
-    def get_gui(self, parent: 'Model', for_type: str = '') -> list[typing.Any]:
+    def get_gui(self, parent: 'Model', for_type: str) -> list[types.ui.GuiElement]:
         parent = ensure.is_instance(parent, models.ServerGroup)
         kind, subkind = parent.server_type, parent.subtype
         title = _('of type') + f' {subkind.upper()} {kind.name.capitalize()}'
+        gui_builder = ui_utils.GuiBuilder(order=100)
         if kind == types.servers.ServerType.UNMANAGED:
-            return self.add_field(
-                [],
-                [
-                    {
-                        'name': 'hostname',
-                        'value': '',
-                        'label': gettext('Hostname'),
-                        'tooltip': gettext('Hostname of the server. It must be resolvable by UDS'),
-                        'type': types.ui.FieldType.TEXT,
-                        'order': 100,  # At end
-                    },
-                    {
-                        'name': 'ip',
-                        'value': '',
-                        'label': gettext('IP'),
-                        'tooltip': gettext('IP of the server. Used if hostname is not resolvable by UDS'),
-                        'type': types.ui.FieldType.TEXT,
-                        'order': 101,  # At end
-                    },
-                    {
-                        'name': 'mac',
-                        'value': '',
-                        'label': gettext('Server MAC'),
-                        'tooltip': gettext('Optional MAC address of the server'),
-                        'type': types.ui.FieldType.TEXT,
-                        'order': 102,  # At end
-                    },
-                    {
-                        'name': 'title',
-                        'value': title,
-                        'type': types.ui.FieldType.INFO,
-                    },
-                ],
+            return (
+                gui_builder.add_text(
+                    name='hostname',
+                    label=gettext('Hostname'),
+                    tooltip=gettext('Hostname of the server. It must be resolvable by UDS'),
+                    default='',
+                )
+                .add_text(
+                    name='ip',
+                    label=gettext('IP'),
+                )
+                .add_text(
+                    name='mac',
+                    label=gettext('Server MAC'),
+                    tooltip=gettext('Optional MAC address of the server'),
+                    default='',
+                )
+                .add_info(
+                    name='title',
+                    default=title,
+                )
+                .build()
             )
-        else:
-            return self.add_field(
-                [],
-                [
-                    {
-                        'name': 'server',
-                        'value': '',
-                        'label': gettext('Server'),
-                        'tooltip': gettext('Server to include on group'),
-                        'type': types.ui.FieldType.CHOICE,
-                        'choices': [
-                            ui.gui.choice_item(item.uuid, item.hostname)
-                            for item in models.Server.objects.filter(type=parent.type, subtype=parent.subtype)
-                            if item.groups.count() == 0
-                        ],
-                        'order': 100,  # At end
-                    },
-                    {
-                        'name': 'title',
-                        'value': title,
-                        'type': types.ui.FieldType.INFO,
-                    },
-                ],
+
+        return (
+            gui_builder.add_text(
+                name='server',
+                label=gettext('Server'),
+                tooltip=gettext('Server to include on group'),
+                default='',
             )
+            .add_info(name='title', default=title)
+            .build()
+        )
 
     def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, models.ServerGroup)
@@ -256,10 +251,10 @@ class ServersServers(DetailHandler):
         if item is None:
             # Create new, depending on server type
             if parent.type == types.servers.ServerType.UNMANAGED:
-                # Ensure mac is emty or valid
+                # Ensure mac is empty or valid
                 mac = self._params['mac'].strip().upper()
                 if mac and not net.is_valid_mac(mac):
-                    raise self.invalid_request_response('Invalid MAC address')
+                    raise exceptions.rest.RequestError(_('Invalid MAC address'))
                 # Create a new one, and add it to group
                 server = models.Server.objects.create(
                     register_username=self._user.pretty_name,
@@ -282,16 +277,20 @@ class ServersServers(DetailHandler):
                     # Check server type is also SERVER
                     if server and server.type != types.servers.ServerType.SERVER:
                         logger.error('Server type for %s is not SERVER', server.host)
-                        raise self.invalid_request_response() from None
+                        raise exceptions.rest.RequestError('Invalid server type') from None
                     parent.servers.add(server)
-                except Exception:
-                    raise self.invalid_item_response() from None
+                except models.Server.DoesNotExist:
+                    raise exceptions.rest.NotFound(f'Server not found: {self._params["server"]}') from None
+                except Exception as e:
+                    logger.error('Error getting server: %s', e)
+                    raise exceptions.rest.ResponseError('Error getting server') from None
+
                 return {'id': server.uuid}
         else:
             if parent.type == types.servers.ServerType.UNMANAGED:
                 mac = self._params['mac'].strip().upper()
                 if mac and not net.is_valid_mac(mac):
-                    raise self.invalid_request_response('Invalid MAC address')
+                    raise exceptions.rest.RequestError('Invalid MAC address')
                 try:
                     models.Server.objects.filter(uuid=process_uuid(item)).update(
                         # Update register info also on update
@@ -302,20 +301,20 @@ class ServersServers(DetailHandler):
                         mac=mac,
                         stamp=sql_now(),  # Modified now
                     )
-                except Exception:
-                    raise self.invalid_item_response() from None
+                except models.Server.DoesNotExist:
+                    raise exceptions.rest.NotFound(f'Server not found: {item}') from None
+                except Exception as e:
+                    logger.error('Error updating server: %s', e)
+                    raise exceptions.rest.ResponseError('Error updating server') from None
 
             else:
                 # Remove current server and add the new one in a single transaction
                 try:
-                    with transaction.atomic():
-                        current_server = models.Server.objects.get(uuid=process_uuid(item))
-                        new_server = models.Server.objects.get(uuid=process_uuid(self._params['server']))
-                        parent.servers.remove(current_server)
-                        parent.servers.add(new_server)
-                        item = new_server.uuid
-                except Exception:
-                    raise self.invalid_item_response() from None
+                    server = models.Server.objects.get(uuid=process_uuid(item))
+                    parent.servers.add(server)
+                except models.Server.DoesNotExist:
+                    raise exceptions.rest.NotFound(f'Server not found: {item}') from None
+
             return {'id': item}
 
     def delete_item(self, parent: 'Model', item: str) -> None:
@@ -327,8 +326,11 @@ class ServersServers(DetailHandler):
                 server.delete()  # and delete server
             else:
                 parent.servers.remove(server)  # Just remove reference
-        except Exception:
-            raise self.invalid_item_response() from None
+        except models.Server.DoesNotExist:
+            raise exceptions.rest.NotFound(f'Server not found: {item}') from None
+        except Exception as e:
+            logger.error('Error deleting server %s from %s: %s', item, parent, e)
+            raise exceptions.rest.ResponseError('Error deleting server') from None
 
     # Custom methods
     def maintenance(self, parent: 'Model', id: str) -> typing.Any:
@@ -338,7 +340,7 @@ class ServersServers(DetailHandler):
         :param item:
         """
         item = models.Server.objects.get(uuid=process_uuid(id))
-        self.ensure_has_access(parent, types.permissions.PermissionType.MANAGEMENT)
+        self.check_access(item, types.permissions.PermissionType.MANAGEMENT)
         item.maintenance_mode = not item.maintenance_mode
         item.save()
         return 'ok'
@@ -363,11 +365,11 @@ class ServersServers(DetailHandler):
                 continue
             hostname = row[0].strip()
             ip = ''
-            mac = consts.MAC_UNKNOWN
+            mac = consts.NULL_MAC
             if len(row) > 1:
                 ip = row[1].strip()
             if len(row) > 2:
-                mac = row[2].strip().upper().strip() or consts.MAC_UNKNOWN
+                mac = row[2].strip().upper().strip() or consts.NULL_MAC
                 if mac and not net.is_valid_mac(mac):
                     import_errors.append(f'Line {line_number}: MAC {mac} is invalid, skipping')
                     continue  # skip invalid macs
@@ -415,71 +417,88 @@ class ServersServers(DetailHandler):
         return import_errors
 
 
-class ServersGroups(ModelHandler):
-    custom_methods = [('stats', True)]
-    model = models.ServerGroup
-    model_filter = {
+@dataclasses.dataclass
+class GroupItem(types.rest.BaseRestItem):
+    id: str
+    name: str
+    comments: str
+    type: str
+    subtype: str
+    type_name: str
+    tags: list[str]
+    servers_count: int
+    permission: types.permissions.PermissionType
+
+
+class ServersGroups(ModelHandler[GroupItem]):
+
+    CUSTOM_METHODS = [
+        types.rest.ModelCustomMethod('stats', True),
+    ]
+    MODEL = models.ServerGroup
+    FILTER = {
         'type__in': [
             types.servers.ServerType.SERVER,
             types.servers.ServerType.UNMANAGED,
         ]
     }
-    detail = {'servers': ServersServers}
+    DETAIL = {'servers': ServersServers}
 
-    path = 'servers'
-    name = 'groups'
+    PATH = 'servers'
+    NAME = 'groups'
 
-    save_fields = ['name', 'comments', 'type', 'tags']  # Subtype is appended on pre_save
-    table_title = _('Servers Groups')
-    table_fields = [
-        {'name': {'title': _('Name')}},
-        {'comments': {'title': _('Comments')}},
-        {'type_name': {'title': _('Type')}},
-        {'type': {'title': '', 'visible': False}},
-        {'subtype': {'title': _('Subtype')}},
-        {'servers_count': {'title': _('Servers')}},
-        {'tags': {'title': _('tags'), 'visible': False}},
-    ]
+    FIELDS_TO_SAVE = ['name', 'comments', 'type', 'tags']  # Subtype is appended on pre_save
 
-    def get_types(
+    TABLE = (
+        ui_utils.TableBuilder(_('Servers Groups'))
+        .text_column(name='name', title=_('Name'), visible=True)
+        .text_column(name='comments', title=_('Comments'))
+        .text_column(name='type_name', title=_('Type'), visible=True)
+        .text_column(name='type', title='', visible=False)
+        .text_column(name='subtype', title=_('Subtype'), visible=True)
+        .numeric_column(name='servers_count', title=_('Servers'), width='5rem')
+        .text_column(name='tags', title=_('tags'), visible=False)
+        .build()
+    )
+
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        typed=types.rest.api.RestApiInfoGuiType.MULTIPLE_TYPES,
+    )
+
+    def enum_types(
         self, *args: typing.Any, **kwargs: typing.Any
-    ) -> typing.Generator[types.rest.TypeInfoDict, None, None]:
+    ) -> typing.Generator[types.rest.TypeInfo, None, None]:
         for i in types.servers.ServerSubtype.manager().enum():
-            v = types.rest.TypeInfo(
+            yield types.rest.TypeInfo(
                 name=i.description,
                 type=f'{i.type.name}@{i.subtype}',
                 description='',
                 icon=i.icon,
                 group=gettext('Managed') if i.managed else gettext('Unmanaged'),
-            ).as_dict()
-            yield v
+            )
 
-    def get_gui(self, type_: str) -> list[typing.Any]:
-        if '@' not in type_:  # If no subtype, use default
-            type_ += '@default'
-        kind, subkind = type_.split('@')[:2]
+    def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
+        if '@' not in for_type:  # If no subtype, use default
+            for_type += '@default'
+        kind, subkind = for_type.split('@')[:2]
         if kind == types.servers.ServerType.SERVER.name:
             kind = _('Standard')
         elif kind == types.servers.ServerType.UNMANAGED.name:
             kind = _('Unmanaged')
         title = _('of type') + f' {subkind.upper()} {kind}'
-        return self.add_field(
-            self.add_default_fields(
-                [],
-                ['name', 'comments', 'tags'],
-            ),
-            [
-                {
-                    'name': 'type',
-                    'value': type_,
-                    'type': types.ui.FieldType.HIDDEN,
-                },
-                {
-                    'name': 'title',
-                    'value': title,
-                    'type': types.ui.FieldType.INFO,
-                },
-            ],
+
+        return (
+            ui_utils.GuiBuilder()
+            .add_stock_field(types.rest.stock.StockField.NAME)
+            .add_stock_field(types.rest.stock.StockField.TAGS)
+            .add_stock_field(types.rest.stock.StockField.COMMENTS)
+            .add_hidden(name='type', default=for_type)
+            .add_info(
+                name='title',
+                default=title,
+            )
+            .build()
         )
 
     def pre_save(self, fields: dict[str, typing.Any]) -> None:
@@ -489,27 +508,27 @@ class ServersGroups(ModelHandler):
         fields['subtype'] = subtype
         return super().pre_save(fields)
 
-    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
+    def get_item(self, item: 'Model') -> GroupItem:
         item = ensure.is_instance(item, models.ServerGroup)
-        return {
-            'id': item.uuid,
-            'name': item.name,
-            'comments': item.comments,
-            'type': f'{types.servers.ServerType(item.type).name}@{item.subtype}',
-            'subtype': item.subtype.capitalize(),
-            'type_name': types.servers.ServerType(item.type).name.capitalize(),
-            'tags': [tag.tag for tag in item.tags.all()],
-            'servers_count': item.servers.count(),
-            'permission': permissions.effective_permissions(self._user, item),
-        }
+        return GroupItem(
+            id=item.uuid,
+            name=item.name,
+            comments=item.comments,
+            type=f'{types.servers.ServerType(item.type).name}@{item.subtype}',
+            subtype=item.subtype.capitalize(),
+            type_name=types.servers.ServerType(item.type).name.capitalize(),
+            tags=[tag.tag for tag in item.tags.all()],
+            servers_count=item.servers.count(),
+            permission=permissions.effective_permissions(self._user, item),
+        )
 
     def delete_item(self, item: 'Model') -> None:
         item = ensure.is_instance(item, models.ServerGroup)
         """
         Processes a DELETE request
         """
-        self.ensure_has_access(
-            self.model(), permissions.PermissionType.ALL, root=True
+        self.check_access(
+            self.MODEL(), permissions.PermissionType.ALL, root=True
         )  # Must have write permissions to delete
 
         try:
@@ -518,7 +537,7 @@ class ServersGroups(ModelHandler):
                 for server in item.servers.all():
                     server.delete()
             item.delete()
-        except self.model.DoesNotExist:
+        except self.MODEL.DoesNotExist:
             raise NotFound('Element do not exists') from None
 
     def stats(self, item: 'Model') -> typing.Any:
@@ -533,7 +552,7 @@ class ServersGroups(ModelHandler):
                 'server': {
                     'id': s[1].uuid,
                     'hostname': s[1].hostname,
-                    'mac': s[1].mac if s[1].mac != consts.MAC_UNKNOWN else '',
+                    'mac': s[1].mac if s[1].mac != consts.NULL_MAC else '',
                     'ip': s[1].ip,
                     'load': s[0].load(weights=item.weights) if s[0] else 0,
                     'weights': item.weights.as_dict(),

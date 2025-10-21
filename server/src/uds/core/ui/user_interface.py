@@ -47,7 +47,7 @@ import abc
 from django.conf import settings
 from django.utils.translation import gettext
 from django.utils.functional import Promise  # To recognize lazy translations
-
+from django.utils import timezone
 
 from uds.core import consts, exceptions, types
 from uds.core.managers.crypto import UDSK, CryptoManager
@@ -56,12 +56,13 @@ from uds.core.util import modfinder, serializer, validators, ensure
 logger = logging.getLogger(__name__)
 
 # To simplify choice parameters declaration of fields
-_ChoicesParamType: typing.TypeAlias = typing.Union[
-    collections.abc.Callable[[], list['types.ui.ChoiceItem']],
-    collections.abc.Iterable[str | types.ui.ChoiceItem],
-    dict[str, str],
-    None,
-]
+_ChoicesParamType: typing.TypeAlias = collections.abc.Iterable[types.ui.ChoiceItem]|collections.abc.Callable[[], list['types.ui.ChoiceItem']]|None
+# typing.Union[
+#     collections.abc.Callable[[], list['types.ui.ChoiceItem']],
+#     collections.abc.Iterable[str | types.ui.ChoiceItem],
+#     dict[str, str],
+#     None,
+# ]
 
 
 class gui:
@@ -132,22 +133,19 @@ class gui:
         """
         if not isinstance(text, (str, Promise)):
             text = str(text)
-        return {
-            'id': str(id_),
-            'text': typing.cast(str, text),
-        }  # Cast to avoid mypy error, Promise is at all effects a str
+        return types.ui.ChoiceItem(id=str(id_), text=typing.cast(str, text))
 
     @staticmethod
     def choice_image(id_: typing.Union[str, int], text: str, img: str) -> types.ui.ChoiceItem:
         """
         Helper method to create a single choice item with image.
         """
-        return {'id': str(id_), 'text': str(text), 'img': img}
+        return types.ui.ChoiceItem(id=str(id_), text=str(text), img=img)
 
     # Helpers
     @staticmethod
     def as_choices(
-        vals: _ChoicesParamType,
+        vals: _ChoicesParamType|dict[str, str]|str|collections.abc.Iterable[str|types.ui.ChoiceItem]|None = None,
     ) -> typing.Union[collections.abc.Callable[[], list['types.ui.ChoiceItem']], list['types.ui.ChoiceItem']]:
         """
         Helper to convert from array of strings (or dictionaries) to the same dict used in choice,
@@ -160,14 +158,10 @@ class gui:
         if callable(vals):
             return vals
 
-        # Helper to convert an item to a dict
-        def _choice_from_value(val: typing.Union[str, types.ui.ChoiceItem]) -> 'types.ui.ChoiceItem':
-            if isinstance(val, dict):
-                if 'id' not in val or 'text' not in val:
-                    raise ValueError(f'Invalid choice dict: {val}')
-                return gui.choice_item(val['id'], val['text'])
-            # If val is not a dict, and it has not 'id' and 'text', raise an exception
-            return gui.choice_item(val, str(val))
+        def _choice_from_value(val: str | types.ui.ChoiceItem) -> 'types.ui.ChoiceItem':
+            if isinstance(val, str):
+                return gui.choice_item(val, val)
+            return val
 
         # If is a dict
         if isinstance(vals, dict):
@@ -188,9 +182,9 @@ class gui:
         key: typing.Optional[collections.abc.Callable[[types.ui.ChoiceItem], typing.Any]] = None,
     ) -> list[types.ui.ChoiceItem]:
         if by_id:
-            key = lambda item: item['id']
+            key = lambda item: item.id
         elif key is None:
-            key = lambda item: item['text'].lower()
+            key = lambda item: item.text.casefold()
         else:
             key = key
         return sorted(choices, key=key, reverse=reverse)
@@ -325,7 +319,7 @@ class gui:
                 value=value,
                 tab=tab,
             )
-            
+
         @property
         def field_name(self) -> str:
             """
@@ -389,22 +383,29 @@ class gui:
             """
             self._field_info.value = value
 
-        def gui_description(self) -> dict[str, typing.Any]:
+        def gui_description(self) -> types.ui.FieldInfo:
             """
             Returns the dictionary with the description of this item.
             We copy it, cause we need to translate the label and tooltip fields
             and don't want to
             alter original values.
             """
-            data = self._field_info.as_dict()
-            for i in ('value', 'old_field_name'):
-                if i in data:
-                    del data[i]  # We don't want to send some values on gui_description
-            data['label'] = gettext(data['label']) if data['label'] else ''
-            data['tooltip'] = gettext(data['tooltip']) if data['tooltip'] else ''
-            if 'tab' in data:
-                data['tab'] = gettext(data['tab'])  # Translates tab name
-            data['default'] = self.default  # We need to translate default value
+            data = copy.copy(self._field_info)
+            data.value = data.old_field_name = None  # We don't want to send some values on gui_description
+            data.label = gettext(data.label) if data.label else ''
+            # Translate label and tooltip
+            data.tooltip = gettext(data.tooltip) if data.tooltip else ''
+
+            # And, if tab is set, translate it too
+            if data.tab:
+                data.tab = gettext(data.tab)  # Translates tab name
+
+            # Choices can be a callback, resolve
+            if callable(data.choices):
+                data.choices = data.choices()
+
+            data.default = self.default
+
             return data
 
         @property
@@ -649,7 +650,7 @@ class gui:
             self.field_type = types.ui.FieldType.TEXT_AUTOCOMPLETE
             self._field_info.choices = gui.as_choices(choices or [])
 
-        def set_choices(self, values: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]) -> None:
+        def set_choices(self, values: collections.abc.Iterable[types.ui.ChoiceItem]) -> None:
             """
             Set the values for this choice field
             """
@@ -765,7 +766,7 @@ class gui:
         def as_datetime(self) -> datetime.datetime:
             """Alias for "value" property, but as datetime.datetime"""
             # Convert date to datetime
-            return datetime.datetime.combine(self.as_date(), datetime.datetime.min.time())
+            return timezone.make_aware(datetime.datetime.combine(self.as_date(), datetime.datetime.min.time()))
 
         def as_timestamp(self) -> int:
             """Alias for "value" property, but as timestamp"""
@@ -799,11 +800,11 @@ class gui:
         def value(self, value: datetime.date | str) -> None:
             self._set_value(value)
 
-        def gui_description(self) -> dict[str, typing.Any]:
+        def gui_description(self) -> types.ui.FieldInfo:
             fldgui = super().gui_description()
             # Convert if needed value and default to string (YYYY-MM-DD)
-            if 'default' in fldgui:
-                fldgui['default'] = str(fldgui['default'])
+            if fldgui.default is not None:
+                fldgui.default = str(fldgui.default)
             return fldgui
 
     class PasswordField(InputField):
@@ -1133,7 +1134,7 @@ class gui:
                 if fills['callback_name'] not in gui.callbacks:
                     gui.callbacks[fills['callback_name']] = fnc
 
-        def set_choices(self, values: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]) -> None:
+        def set_choices(self, values: collections.abc.Iterable[types.ui.ChoiceItem]) -> None:
             """
             Set the values for this choice field
             """
@@ -1185,7 +1186,7 @@ class gui:
 
             self._field_info.choices = gui.as_choices(choices or [])
 
-        def set_choices(self, values: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]) -> None:
+        def set_choices(self, values: collections.abc.Iterable[types.ui.ChoiceItem]) -> None:
             """
             Set the values for this choice field
             """
@@ -1275,7 +1276,7 @@ class gui:
             self._field_info.choices = gui.as_choices(choices or [])
 
         def set_choices(
-            self, choices: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]
+            self, choices: collections.abc.Iterable[types.ui.ChoiceItem]
         ) -> None:
             """
             Set the values for this choice field
@@ -1523,6 +1524,17 @@ class UserInterface(metaclass=UserInterfaceType):
                of this posibility in a near version...
         """
 
+    @classmethod
+    def describe_fields(cls: type[typing.Self]) -> list[types.ui.GuiElement]:
+        return [
+            types.ui.GuiElement(
+                name=key,
+                gui=val.gui_description(),
+                value=val.value if val.is_type(types.ui.FieldType.HIDDEN) else None,
+            )
+            for key, val in cls._gui_fields_template.items()
+        ]
+
     def get_fields_as_dict(self) -> gui.ValuesDictType:
         """
         Returns own data needed for user interaction as a dict of key-names ->
@@ -1636,6 +1648,11 @@ class UserInterface(metaclass=UserInterfaceType):
         # Dict of translations from old_field_name to field_name
         field_names_translations: dict[str, str] = self._get_fieldname_translations()
 
+        # Allowed conversions of type
+        VALID_CONVERSIONS: typing.Final[dict[types.ui.FieldType, list[types.ui.FieldType]]] = {
+            types.ui.FieldType.TEXT: [types.ui.FieldType.PASSWORD]
+        }
+
         # Set all values to defaults ones
         for field_name, field in self._all_serializable_fields():
             if field.is_type(types.ui.FieldType.HIDDEN) and field.is_serializable() is False:
@@ -1653,17 +1670,20 @@ class UserInterface(metaclass=UserInterfaceType):
             if internal_field_type not in FIELD_DECODERS:
                 logger.warning('Field %s has no decoder', field_name)
                 continue
-            
+
             if field_type != internal_field_type.name:
-                # Especial case for text fields converted to password fields
-                if not (internal_field_type == types.ui.FieldType.PASSWORD and field_type == types.ui.FieldType.TEXT.name):
-                    logger.warning(
-                        'Field %s has different type than expected: %s != %s',
-                        field_name,
-                        field_type,
-                        internal_field_type.name,
-                    )
-                    continue
+                if valids_for_field := VALID_CONVERSIONS.get(internal_field_type):
+                    if field_type not in [v.name for v in valids_for_field]:
+                        # If the field type is not valid for the internal field type, we log a warning
+                        # and do not include this field in the form
+                        logger.warning(
+                            'Field %s has different type than expected: %s != %s. Not included in form',
+                            field_name,
+                            field_type,
+                            internal_field_type.name,
+                        )
+                        continue
+
             self._gui[field_name].value = FIELD_DECODERS[internal_field_type](field_value)
 
         return False
@@ -1744,11 +1764,11 @@ class UserInterface(metaclass=UserInterfaceType):
         for key, val in self._gui.items():
             # Only add "value" for hidden fields on gui description. Rest of fields will be filled by client
             res.append(
-                {
-                    'name': key,
-                    'gui': val.gui_description(),
-                    'value': val.value if val.is_type(types.ui.FieldType.HIDDEN) else None,
-                }
+                types.ui.GuiElement(
+                    name=key,
+                    gui=val.gui_description(),
+                    value=val.value if val.is_type(types.ui.FieldType.HIDDEN) else None,
+                )
             )
         # logger.debug('theGui description: %s', res)
         return res
@@ -1791,11 +1811,12 @@ def password_compat_field_decoder(value: str) -> str:
     """
     Compatibility function to decode text fields converted to password fields
     """
-    try:   
+    try:
         value = CryptoManager.manager().aes_decrypt(value.encode('utf8'), UDSK, True).decode()
     except Exception:
         pass
     return value
+
 
 # Dictionaries used to encode/decode fields to be stored on database
 FIELDS_ENCODERS: typing.Final[

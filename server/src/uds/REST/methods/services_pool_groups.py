@@ -30,54 +30,54 @@
 """
 @Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import logging
 import typing
 
-from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
+from django.db.models import Model
 
 from uds.core import types
-from uds.core.consts.images import DEFAULT_THUMB_BASE64
-from uds.core.ui import gui
-from uds.core.util import ensure
+from uds.core.util import ensure, ui as ui_utils
 from uds.core.util.model import process_uuid
 from uds.models import Image, ServicePoolGroup
 from uds.REST.model import ModelHandler
 
 logger = logging.getLogger(__name__)
 
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
-from uds.core.ui import gui
 
 # Enclosed methods under /item path
 
 
-class ServicesPoolGroups(ModelHandler):
-    """
-    Handles the gallery REST interface
-    """
+@dataclasses.dataclass
+class ServicePoolGroupItem(types.rest.BaseRestItem):
+    id: str
+    name: str
+    comments: str
+    priority: int
+    image_id: str | None | types.rest.NotRequired = types.rest.NotRequired.field()
+    thumb: str | types.rest.NotRequired = types.rest.NotRequired.field()
 
-    # needs_admin = True
 
-    path = 'gallery'
-    model = ServicePoolGroup
-    save_fields = ['name', 'comments', 'image_id', 'priority']
+class ServicesPoolGroups(ModelHandler[ServicePoolGroupItem]):
 
-    table_title = _('Services Pool Groups')
-    table_fields = [
-        {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
-        {
-            'thumb': {
-                'title': _('Image'),
-                'visible': True,
-                'type': 'image',
-                'width': '96px',
-            }
-        },
-        {'name': {'title': _('Name')}},
-        {'comments': {'title': _('Comments')}},
-    ]
+    PATH = 'gallery'
+    MODEL = ServicePoolGroup
+    FIELDS_TO_SAVE = ['name', 'comments', 'image_id', 'priority']
+
+    TABLE = (
+        ui_utils.TableBuilder(_('Services Pool Groups'))
+        .numeric_column(name='priority', title=_('Priority'), width='6em')
+        .image(name='thumb', title=_('Image'), width='96px')
+        .text_column(name='name', title=_('Name'))
+        .text_column(name='comments', title=_('Comments'))
+        .build()
+    )
+
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        typed=types.rest.api.RestApiInfoGuiType.SINGLE_TYPE,
+    )
 
     def pre_save(self, fields: dict[str, typing.Any]) -> None:
         img_id = fields['image_id']
@@ -91,47 +91,33 @@ class ServicesPoolGroups(ModelHandler):
             logger.exception('At image recovering')
 
     # Gui related
-    def get_gui(self, type_: str) -> list[typing.Any]:
-        local_gui = self.add_default_fields([], ['name', 'comments', 'priority'])
+    def get_gui(self, for_type: str) -> list[typing.Any]:
+        return (
+            ui_utils.GuiBuilder()
+            .add_stock_field(types.rest.stock.StockField.NAME)
+            .add_stock_field(types.rest.stock.StockField.COMMENTS)
+            .add_stock_field(types.rest.stock.StockField.PRIORITY)
+            .new_tab(types.ui.Tab.DISPLAY)
+            .add_image_choice()
+            .build()
+        )
 
-        for field in [
-                        {
-                            'name': 'image_id',
-                            'choices': [gui.choice_image(-1, '--------', DEFAULT_THUMB_BASE64)]
-                            + gui.sorted_choices(
-                                [
-                                    gui.choice_image(v.uuid, v.name, v.thumb64)
-                                    for v in Image.objects.all()
-                                ]
-                            ),
-                            'label': gettext('Associated Image'),
-                            'tooltip': gettext('Image assocciated with this service'),
-                            'type': types.ui.FieldType.IMAGECHOICE,
-                            'order': 102,
-                        }
-        ]:
-            self.add_field(local_gui, field)
-
-        return local_gui
-
-    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
+    def get_item(self, item: 'Model') -> ServicePoolGroupItem:
         item = ensure.is_instance(item, ServicePoolGroup)
-        return {
-            'id': item.uuid,
-            'priority': item.priority,
-            'name': item.name,
-            'comments': item.comments,
-            'image_id': item.image.uuid if item.image else None,
-        }
+        return ServicePoolGroupItem(
+            id=item.uuid,
+            name=item.name,
+            comments=item.comments,
+            priority=item.priority,
+            image_id=item.image.uuid if item.image else None,
+        )
 
-    def item_as_dict_overview(
-        self, item: 'Model'
-    ) -> dict[str, typing.Any]:
+    def get_item_summary(self, item: 'Model') -> ServicePoolGroupItem:
         item = ensure.is_instance(item, ServicePoolGroup)
-        return {
-            'id': item.uuid,
-            'priority': item.priority,
-            'name': item.name,
-            'comments': item.comments,
-            'thumb': item.thumb64,
-        }
+        return ServicePoolGroupItem(
+            id=item.uuid,
+            priority=item.priority,
+            name=item.name,
+            comments=item.comments,
+            thumb=item.thumb64,
+        )

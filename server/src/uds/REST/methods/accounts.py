@@ -30,68 +30,110 @@
 """
 @Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import datetime
 import logging
 import typing
 
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
 
 from uds.REST.model import ModelHandler
 from uds.core import types
 import uds.core.types.permissions
-from uds.core.util import permissions, ensure
+from uds.core.util import permissions, ensure, ui as ui_utils
 from uds.models import Account
 from .accountsusage import AccountsUsage
 
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
+from django.db import models
 
 logger = logging.getLogger(__name__)
 
 # Enclosed methods under /item path
 
 
-class Accounts(ModelHandler):
+@dataclasses.dataclass
+class AccountItem(types.rest.BaseRestItem):
+    id: str
+    name: str
+    tags: typing.List[str]
+    comments: str
+    time_mark: typing.Optional[datetime.datetime]
+    permission: int
+
+
+class Accounts(ModelHandler[AccountItem]):
     """
     Processes REST requests about accounts
     """
 
-    model = Account
-    detail = {'usage': AccountsUsage}
+    MODEL = Account
+    DETAIL = {'usage': AccountsUsage}
 
-    custom_methods = [('clear', True), ('timemark', True)]
-
-    save_fields = ['name', 'comments', 'tags']
-
-    table_title = _('Accounts')
-    table_fields = [
-        {'name': {'title': _('Name'), 'visible': True}},
-        {'comments': {'title': _('Comments')}},
-        {'time_mark': {'title': _('Time mark'), 'type': 'callback'}},
-        {'tags': {'title': _('tags'), 'visible': False}},
+    CUSTOM_METHODS = [
+        types.rest.ModelCustomMethod('clear', True),
+        types.rest.ModelCustomMethod('timemark', True),
     ]
 
-    def item_as_dict(self, item: 'Model') -> types.rest.ItemDictType:
-        item = ensure.is_instance(item, Account)
-        return {
-            'id': item.uuid,
-            'name': item.name,
-            'tags': [tag.tag for tag in item.tags.all()],
-            'comments': item.comments,
-            'time_mark': item.time_mark,
-            'permission': permissions.effective_permissions(self._user, item),
-        }
+    FIELDS_TO_SAVE = ['name', 'comments', 'tags']
 
-    def get_gui(self, type_: str) -> list[typing.Any]:
-        return self.add_default_fields([], ['name', 'comments', 'tags'])
+    TABLE = (
+        ui_utils.TableBuilder(_('Accounts'))
+        .text_column(name='name', title=_('Name'))
+        .text_column(name='comments', title=_('Comments'))
+        .datetime_column(name='time_mark', title=_('Time mark'))
+        .text_column(name='tags', title=_('tags'), visible=False)
+        .build()
+    )
 
-    def timemark(self, item: 'Model') -> typing.Any:
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        typed=types.rest.api.RestApiInfoGuiType.SINGLE_TYPE,
+    )
+
+    def get_item(self, item: 'models.Model') -> AccountItem:
         item = ensure.is_instance(item, Account)
-        item.time_mark = datetime.datetime.now()
+        return AccountItem(
+            id=item.uuid,
+            name=item.name,
+            tags=[tag.tag for tag in item.tags.all()],
+            comments=item.comments,
+            time_mark=item.time_mark,
+            permission=permissions.effective_permissions(self._user, item),
+        )
+
+    def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
+        return (
+            ui_utils.GuiBuilder()
+            .add_stock_field(types.rest.stock.StockField.NAME)
+            .add_stock_field(types.rest.stock.StockField.COMMENTS)
+            .add_stock_field(types.rest.stock.StockField.TAGS)
+        ).build()
+
+    def timemark(self, item: 'models.Model') -> typing.Any:
+        """
+        API:
+            Generates a time mark associated with the account.
+            This is useful to easily identify when the account data was last updated.
+            (For example, one user enters an service, we get the usage data and "timemark" it, later read again
+            and we can identify that all data before this timemark has already been processed)
+
+            Arguments:
+                item: Account to timemark
+
+        """
+        item = ensure.is_instance(item, Account)
+        item.time_mark = timezone.localtime()
         item.save()
         return ''
 
-    def clear(self, item: 'Model') -> typing.Any:
+    def clear(self, item: 'models.Model') -> typing.Any:
+        """
+        Api documentation for the method. From here, will be used by the documentation generator
+        Always starts with API:
+        API:
+            Clears all usage associated with the account
+        """
         item = ensure.is_instance(item, Account)
-        self.ensure_has_access(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
+        self.check_access(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
         return item.usages.filter(user_service=None).delete()

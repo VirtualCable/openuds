@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
 
 # FT = typing.TypeVar('FT', bound=collections.abc.Callable[..., typing.Any])
 P = typing.ParamSpec('P')
-R = typing.TypeVar('R')
+R = typing.TypeVar('R', bound=typing.Any, covariant=True)  # R is covariant, so we can return a subclass of R
 
 
 @dataclasses.dataclass
@@ -147,16 +147,16 @@ class _HasConnect(typing.Protocol):
 
 # Keep this, but mypy does not likes it... it's perfect with pyright
 # We use pyright for type checking, so we will use this
-HasConnect = typing.TypeVar('HasConnect', bound=_HasConnect)
+HAS_CONNECT = typing.TypeVar('HAS_CONNECT', bound=_HasConnect)
 
 
 def ensure_connected(
-    func: collections.abc.Callable[typing.Concatenate[HasConnect, P], R],
-) -> collections.abc.Callable[typing.Concatenate[HasConnect, P], R]:
+    func: collections.abc.Callable[typing.Concatenate[HAS_CONNECT, P], R],
+) -> collections.abc.Callable[typing.Concatenate[HAS_CONNECT, P], R]:
     """This decorator calls "connect" method of the class of the wrapped object"""
 
     @functools.wraps(func)
-    def connect_and_execute(obj: HasConnect, /, *args: P.args, **kwargs: P.kwargs) -> R:
+    def connect_and_execute(obj: HAS_CONNECT, /, *args: P.args, **kwargs: P.kwargs) -> R:
         # self = typing.cast(_HasConnect, args[0])
         obj.connect()
         return func(obj, *args, **kwargs)
@@ -177,15 +177,14 @@ def ensure_connected(
 # Now, we could use this by creating two decorators, one for the class methods and one for the functions
 # But the inheritance problem will still be there, so we will keep the current implementation
 
-
 # Decorator for caching
 # This decorator will cache the result of the function for a given time, and given parameters
 def cached(
-    prefix: typing.Optional[str] = None,
-    timeout: typing.Union[collections.abc.Callable[[], int], int] = -1,
-    args: typing.Optional[typing.Union[collections.abc.Iterable[int], int]] = None,
-    kwargs: typing.Optional[typing.Union[collections.abc.Iterable[str], str]] = None,
-    key_helper: typing.Optional[collections.abc.Callable[[typing.Any], str]] = None,
+    prefix: str | None = None,
+    timeout: collections.abc.Callable[[], int] | int = -1,
+    args: collections.abc.Iterable[int] | int | None = None,
+    kwargs: collections.abc.Iterable[str] | str | None = None,
+    key_helper: collections.abc.Callable[[typing.Any], str] | None = None,
 ) -> collections.abc.Callable[[collections.abc.Callable[P, R]], collections.abc.Callable[P, R]]:
     """
     Decorator that gives us a "quick & clean" caching feature on the database.
@@ -289,16 +288,15 @@ def cached(
             data: typing.Any = None
             # If misses is 0, we are starting, so we will not try to get from cache
             if not kwargs.get('force', False) and effective_timeout > 0 and misses > 0:
+                if 'force' in kwargs:
+                    # Remove force key
+                    del kwargs['force']
                 data = cache.get(cache_key, default=consts.cache.CACHE_NOT_FOUND)
                 if data is not consts.cache.CACHE_NOT_FOUND:
                     hits += 1
                     return data
 
             misses += 1
-
-            if 'force' in kwargs:
-                # Remove force key
-                del kwargs['force']
 
             # Execute the function outside the DB transaction
             t = time.thread_time_ns()
@@ -340,8 +338,8 @@ def threaded(func: collections.abc.Callable[P, None]) -> collections.abc.Callabl
 
 
 def blocker(
-    request_attr: typing.Optional[str] = None,
-    max_failures: typing.Optional[int] = None,
+    request_attr: str | None = None,
+    max_failures: int | None = None,
     ignore_block_config: bool = False,
 ) -> collections.abc.Callable[[collections.abc.Callable[P, R]], collections.abc.Callable[P, R]]:
     """
@@ -375,14 +373,14 @@ def blocker(
                 except uds.core.exceptions.rest.BlockAccess:
                     raise exceptions.rest.AccessDenied()
 
-            request: typing.Any = getattr(args[0], request_attr or '_request', None)
+            req: typing.Any | None = getattr(args[0], request_attr or '_request', None)
 
             # No request object, so we can't block
-            if request is None or getattr(request, 'ip', None) is None:
-                logger.debug('No request object, so we can\'t block: (value is %s)', request)
+            if req is None or getattr(req, 'ip', None) is None:
+                logger.debug('No request object, so we can\'t block: (value is %s)', req)
                 return f(*args, **kwargs)
 
-            request = typing.cast(types.requests.ExtendedHttpRequest, request)
+            request = typing.cast(types.requests.ExtendedHttpRequest, req)
 
             ip = request.ip
 
@@ -412,7 +410,7 @@ def blocker(
 
 
 def profiler(
-    log_file: typing.Optional[str] = None,
+    log_file: str | None = None,
 ) -> collections.abc.Callable[[collections.abc.Callable[P, R]], collections.abc.Callable[P, R]]:
     """
     Decorator that will profile the wrapped function and log the results to the provided file
@@ -452,7 +450,7 @@ def retry_on_exception(
     retries: int,
     *,
     wait_seconds: float = 2,
-    retryable_exceptions: typing.Optional[typing.List[typing.Type[Exception]]] = None,
+    retryable_exceptions: list[type[Exception]] | None = None,
     do_log: bool = False,
 ) -> collections.abc.Callable[[collections.abc.Callable[P, R]], collections.abc.Callable[P, R]]:
     to_retry = retryable_exceptions or [Exception]

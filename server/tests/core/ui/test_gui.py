@@ -35,7 +35,7 @@ from django.conf import settings
 
 from uds.core.util import ensure
 from uds.core.ui.user_interface import gui, UDSK
-from uds.core import consts
+from uds.core import consts, types
 
 # We use commit/rollback
 from ...utils.test import UDSTestCase
@@ -53,26 +53,18 @@ class GuiTest(UDSTestCase):
         # 4.- A list of dictinaries, must be {'id': 'xxxx', 'text': 'yyy'}
         # 5.- A Dictionary, Keys will be used in 'id' and values in 'text'
         self.assertEqual(gui.as_choices([]), [])
-        self.assertEqual(gui.as_choices('aaaa'), [{'id': 'aaaa', 'text': 'aaaa'}])
+        self.assertEqual(gui.as_choices('aaaa'), [gui.choice_item('aaaa', 'aaaa')])
         self.assertEqual(
             gui.as_choices(['a', 'b']),
-            [{'id': 'a', 'text': 'a'}, {'id': 'b', 'text': 'b'}],
+            [gui.choice_item('a', 'a'), gui.choice_item('b', 'b')],
         )
         self.assertEqual(
             gui.as_choices({'a': 'b', 'c': 'd'}),
-            [{'id': 'a', 'text': 'b'}, {'id': 'c', 'text': 'd'}],
+            [gui.choice_item('a', 'b'), gui.choice_item('c', 'd')],
         )
         self.assertEqual(
             gui.as_choices({'a': 'b', 'c': 'd'}),
-            [{'id': 'a', 'text': 'b'}, {'id': 'c', 'text': 'd'}],
-        )
-        # Expect an exception if we pass a list of dictionaries without id or text
-        self.assertRaises(ValueError, gui.as_choices, [{'a': 'b', 'c': 'd'}])
-        # Also if we pass a list of dictionaries with id and text, but not all of them
-        self.assertRaises(
-            ValueError,
-            gui.as_choices,
-            [{'id': 'a', 'text': 'b'}, {'id': 'c', 'text': 'd'}, {'id': 'e'}],
+            [gui.choice_item('a', 'b'), gui.choice_item('c', 'd')],
         )
 
     def test_convert_to_list(self) -> None:
@@ -89,7 +81,7 @@ class GuiTest(UDSTestCase):
         # id, text, and base64 image
         self.assertEqual(
             gui.choice_image('id', 'text', 'image'),
-            {'id': 'id', 'text': 'text', 'img': 'image'},
+            types.ui.ChoiceItem(id='id', text='text', img='image'),
         )
 
     def test_to_bool(self) -> None:

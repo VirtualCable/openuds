@@ -66,7 +66,9 @@ class Cache:
     _serializer: typing.ClassVar[collections.abc.Callable[[typing.Any], str]] = _basic_serialize
     _deserializer: typing.ClassVar[collections.abc.Callable[[str], typing.Any]] = _basic_deserialize
 
-    def __init__(self, owner: typing.Union[str, bytes], default_timeout: int = consts.cache.DEFAULT_CACHE_TIMEOUT) -> None:
+    def __init__(
+        self, owner: typing.Union[str, bytes], default_timeout: int = consts.cache.DEFAULT_CACHE_TIMEOUT
+    ) -> None:
         self._owner = owner.decode('utf-8') if isinstance(owner, bytes) else owner
         self._timeout = default_timeout
 

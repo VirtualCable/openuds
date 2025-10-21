@@ -59,7 +59,7 @@ class URLCustomTransport(transports.Transport):
 
     own_link = True
     supported_oss = consts.os.ALL_OS_LIST
-    protocol = types.transports.Protocol.OTHER
+    PROTOCOL = types.transports.Protocol.OTHER
     group = types.transports.Grouping.DIRECT
 
     url_pattern = gui.TextField(

@@ -31,7 +31,10 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import typing
 import collections.abc
 import functools
+import datetime
 import logging
+
+from django.utils import timezone
 
 from uds import models
 
@@ -49,6 +52,7 @@ class UsersTest(rest.test.RESTActorTestCase):
     """
 
     def setUp(self) -> None:
+        timezone.activate(datetime.timezone.utc)
         super().setUp()
         self.login()
 
@@ -63,7 +67,7 @@ class UsersTest(rest.test.RESTActorTestCase):
             len(users), rest.test.NUMBER_OF_ITEMS_TO_CREATE * 3
         )  # 3 because will create admins, staff and plain users
         # Ensure values are correct
-        user: collections.abc.Mapping[str, typing.Any]
+        user: dict[str, typing.Any]
         for user in users:
             # Locate the user in the auth
             self.assertTrue(rest.assertions.assert_user_is(self.auth.users.get(name=user['name']), user))
@@ -78,7 +82,7 @@ class UsersTest(rest.test.RESTActorTestCase):
         self.assertIn('title', tableinfo)
         self.assertIn('subtitle', tableinfo)
         self.assertIn('fields', tableinfo)
-        self.assertIn('row-style', tableinfo)
+        self.assertIn('row_style', tableinfo)
 
         # Ensure at least name, role, real_name comments, state and last_access are present on tableinfo['fields']
         fields: list[collections.abc.Mapping[str, typing.Any]] = tableinfo['fields']

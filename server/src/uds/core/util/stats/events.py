@@ -37,6 +37,8 @@ import logging
 import typing
 import collections.abc
 
+from django.utils import timezone
+
 from uds.core.managers.stats import StatsManager, _REVERSE_FLDS_EQUIV
 from uds.core import types
 from uds.models import Provider, Service, ServicePool, Authenticator, OSManager
@@ -203,7 +205,7 @@ def get_events(
         limit=limit,
     ):
         yield EventTupleType(
-            datetime.datetime.fromtimestamp(i.stamp),
+            timezone.make_aware(datetime.datetime.fromtimestamp(i.stamp)),
             i.fld1,
             i.fld2,
             i.fld3,
@@ -218,7 +220,7 @@ def tail_events(wait_time: int = 2) -> typing.Generator[EventTupleType, None, No
     while True:
         for i in StatsManager.manager().tail_events(starting_id=starting_id):
             yield EventTupleType(
-                datetime.datetime.fromtimestamp(i.stamp),
+                timezone.make_aware(datetime.datetime.fromtimestamp(i.stamp)),
                 i.fld1,
                 i.fld2,
                 i.fld3,

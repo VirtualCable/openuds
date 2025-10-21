@@ -32,7 +32,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import typing
-import collections.abc
 import asyncio
 import aiohttp
 import enum
@@ -151,8 +150,6 @@ async def main():
     if options.params is not None:
         options.params = json.loads(options.params)
         
-    REST_URL = options.url
-   
     async with aiohttp.ClientSession() as session:
         # request_pools()  # Not logged in, this will generate an error
         await login(session, options.auth, options.username, options.password)

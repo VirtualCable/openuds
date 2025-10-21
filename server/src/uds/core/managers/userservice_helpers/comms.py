@@ -59,6 +59,7 @@ def _execute_actor_request(
     Returns request response value interpreted as json
     """
     url = userservice.get_comms_endpoint()
+    secret = userservice.get_comms_secret()
     if not url:
         raise exceptions.actor.NoActorComms(f'No notification urls for {userservice.friendly_name}')
 
@@ -87,7 +88,12 @@ def _execute_actor_request(
             verify = False
         session = secure_requests_session(verify=cert)
         if data is None:
-            r = session.get(url, verify=verify, timeout=TIMEOUT)
+            headers = {
+                'X-Actor-Secret': secret if secret else '',
+                'content-type': 'application/json',
+                'Accept': 'application/json',
+            }
+            r = session.get(url, verify=verify, headers=headers, timeout=TIMEOUT)
         else:
             r = session.post(
                 url,
@@ -96,7 +102,7 @@ def _execute_actor_request(
                 verify=verify,
                 timeout=TIMEOUT,
             )
-        if not(isinstance(verify, bool)):
+        if not (isinstance(verify, bool)):
             try:
                 os.remove(verify)
             except Exception:
@@ -165,9 +171,9 @@ def check_user_service_uuid(user_service: 'UserService') -> bool:
 def request_screenshot(userservice: 'UserService') -> None:
     """
     Requests an screenshot to an actor on an user service
-    
+
     This method is used to request an screenshot to an actor on an user service.
-    
+
     Args:
         userservice: User service to request screenshot from
 
@@ -180,7 +186,7 @@ def request_screenshot(userservice: 'UserService') -> None:
             userservice, 'screenshot', data={}, min_actor_version='4.0.0'
         )  # First valid version with screenshot is 3.0
     except exceptions.actor.NoActorComms:
-        pass # No actor comms, nothing to do
+        pass  # No actor comms, nothing to do
 
 
 def send_script(userservice: 'UserService', script: str, exec_on_user: bool = False) -> None:

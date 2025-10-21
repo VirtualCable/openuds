@@ -32,28 +32,29 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 import logging
-from threading import Lock
+import threading
 import datetime
-from time import mktime
+import time
 
 from django.db import connection
+from django.utils import timezone
 
 from uds.core import consts
 from uds.core.managers.crypto import CryptoManager
 
+
 logger = logging.getLogger(__name__)
 
-CACHE_TIME_TIMEOUT = 60  # Every 60 second, refresh the time from database (to avoid drifts)
+CACHE_TIME_TIMEOUT: typing.Final[int] = 60  # Every 60 second, refresh the time from database (to avoid drifts)
 
 
-# pylint: disable=too-few-public-methods
 class TimeTrack:
     """
     Reduces the queries to database to get the current time
     keeping it cached for CACHE_TIME_TIMEOUT seconds (and adjusting it based on local time)
     """
 
-    lock: typing.ClassVar[Lock] = Lock()
+    lock: typing.ClassVar[threading.Lock] = threading.Lock()
     last_check: typing.ClassVar[datetime.datetime] = consts.NEVER
     cached_time: typing.ClassVar[datetime.datetime] = consts.NEVER
     hits: typing.ClassVar[int] = 0
@@ -80,17 +81,20 @@ class TimeTrack:
                 else 'SELECT CURRENT_TIMESTAMP'
             )
             cursor.execute(sentence)
-            date = (cursor.fetchone() or [datetime.datetime.now()])[0]
+            dt = (cursor.fetchone() or [timezone.localtime()])[0]
         else:
-            date = (
-                datetime.datetime.now()
+            dt = (
+                timezone.localtime()
             )  # If not know how to get database datetime, returns local datetime (this is fine for sqlite, which is local)
 
-        return date
+        if timezone.is_naive(dt):
+            dt = timezone.make_aware(dt)
+
+        return dt
 
     @staticmethod
     def sql_now() -> datetime.datetime:
-        now = datetime.datetime.now()
+        now = timezone.localtime()
         with TimeTrack.lock:
             diff = now - TimeTrack.last_check
             # If in last_check is in the future, or more than CACHE_TIME_TIMEOUT seconds ago, we need to refresh
@@ -104,6 +108,7 @@ class TimeTrack:
         the_time = TimeTrack.cached_time + (now - TimeTrack.last_check)
         # Keep only cent of second precision
         the_time = the_time.replace(microsecond=int(the_time.microsecond / 10000) * 10000)
+
         return the_time
 
 
@@ -120,7 +125,7 @@ def sql_stamp_seconds() -> int:
     Returns:
         int: Unix timestamp
     """
-    return int(mktime(sql_now().timetuple()))
+    return int(time.mktime(sql_now().timetuple()))
 
 
 def sql_stamp() -> float:
@@ -129,14 +134,14 @@ def sql_stamp() -> float:
     Returns:
         float: Unix timestamp
     """
-    return float(mktime(sql_now().timetuple())) + sql_now().microsecond / 1000000.0
+    return float(time.mktime(sql_now().timetuple())) + sql_now().microsecond / 1000000.0
 
 
-def generate_uuid(obj: typing.Any = None) -> str:
+def generate_uuid() -> str:
     """
     Generates a ramdom uuid for models default
     """
-    return CryptoManager.manager().uuid(obj=obj).lower()
+    return CryptoManager.manager().uuid().lower()
 
 
 def process_uuid(uuid: str) -> str:
@@ -167,9 +172,9 @@ def get_my_ip_from_db() -> str:
 
         with connection.cursor() as cursor:
             cursor.execute(query)
-            result = cursor.fetchone()
-            if result:
-                result = result[0] if isinstance(result[0], str) else result[0].decode('utf8')
+            result_row = cursor.fetchone()
+            if result_row:
+                result = result_row[0] if isinstance(result_row[0], str) else result_row[0].decode('utf8')
                 return result.split(':')[0]
 
     except Exception as e:

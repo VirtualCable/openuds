@@ -34,7 +34,7 @@ import logging
 import typing
 
 from uds import models
-from uds.core import exceptions, types
+from uds.core import consts, exceptions, types
 from uds.core.auths.auth import is_trusted_source
 from uds.core.util import log, net
 from uds.core.util.model import sql_stamp_seconds
@@ -54,9 +54,9 @@ class TunnelTicket(Handler):
     Processes tunnel requests
     """
 
-    authenticated = False  # Client requests are not authenticated
-    path = 'tunnel'
-    name = 'ticket'
+    ROLE = consts.UserRole.ANONYMOUS
+    PATH = 'tunnel'
+    NAME = 'ticket'
 
     def get(self) -> collections.abc.MutableMapping[str, typing.Any]:
         """
@@ -148,12 +148,13 @@ class TunnelTicket(Handler):
 
 
 class TunnelRegister(ServerRegisterBase):
-    needs_admin = True
-    path = 'tunnel'
-    name = 'register'
+    ROLE = consts.UserRole.ADMIN
+    
+    PATH = 'tunnel'
+    NAME = 'register'
 
     # Just a compatibility method for old tunnel servers
-    def post(self) -> collections.abc.MutableMapping[str, typing.Any]:
+    def post(self) -> dict[str, typing.Any]:
         self._params['type'] = types.servers.ServerType.TUNNEL
         self._params['os'] = self._params.get(
             'os', types.os.KnownOS.LINUX.os_name()

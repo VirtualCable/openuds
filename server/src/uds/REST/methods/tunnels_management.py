@@ -29,87 +29,88 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import logging
 import typing
 
-from django.utils.translation import gettext
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
+from django.db.models import Model
 
 import uds.core.types.permissions
 from uds.core import exceptions, types, consts
-from uds.core.util import permissions, validators, ensure
+from uds.core.types.rest import TableInfo
+from uds.core.util import permissions, validators, ensure, ui as ui_utils
 from uds.core.util.model import process_uuid
 from uds import models
 from uds.REST.model import DetailHandler, ModelHandler
 
-# Not imported at runtime, just for type checking
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
 
-class TunnelServers(DetailHandler):
-    # tunnels/[id]/servers
-    custom_methods = ['maintenance']
+@dataclasses.dataclass
+class TunnelServerItem(types.rest.BaseRestItem):
+    id: str
+    hostname: str
+    ip: str
+    mac: str
+    maintenance: bool
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
+
+class TunnelServers(DetailHandler[TunnelServerItem]):
+    CUSTOM_METHODS = ['maintenance']
+
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        name='TunnelServers', description='Tunnel servers assigned to a tunnel'
+    )
+
+    def get_items(
+        self, parent: 'Model', item: typing.Optional[str]
+    ) -> types.rest.ItemsResult[TunnelServerItem]:
         parent = ensure.is_instance(parent, models.ServerGroup)
         try:
             multi = False
             if item is None:
                 multi = True
-                q = parent.servers.all().order_by('hostname')
+                q = self.filter_queryset(parent.servers.all())
             else:
                 q = parent.servers.filter(uuid=process_uuid(item))
-            res: list[dict[str, typing.Any]] = []
-            i = None
-            for i in q:
-                val = {
-                    'id': i.uuid,
-                    'hostname': i.hostname,
-                    'ip': i.ip,
-                    'mac': i.mac if not multi or i.mac != consts.MAC_UNKNOWN else '',
-                    'maintenance': i.maintenance_mode,
-                }
-                res.append(val)
+            res: list[TunnelServerItem] = [
+                TunnelServerItem(
+                    id=i.uuid,
+                    hostname=i.hostname,
+                    ip=i.ip,
+                    mac=i.mac if i.mac != consts.NULL_MAC else '',
+                    maintenance=i.maintenance_mode,
+                )
+                for i in q
+            ]
+
             if multi:
                 return res
-            if not i:
-                raise Exception('Item not found')
+            if not res:
+                raise exceptions.rest.NotFound(f'Tunnel server {item} not found')
             return res[0]
+        except exceptions.rest.HandlerError:
+            raise
         except Exception as e:
-            logger.exception('REST groups')
-            raise self.invalid_item_response() from e
+            logger.error('Error getting tunnel servers for %s: %s', parent, e)
+            raise exceptions.rest.ResponseError(_('Error getting tunnel servers')) from e
 
-    def get_title(self, parent: 'Model') -> str:
+    def get_table(self, parent: 'Model') -> TableInfo:
         parent = ensure.is_instance(parent, models.ServerGroup)
-        try:
-            return _('Servers of {0}').format(parent.name)
-        except Exception:
-            return gettext('Servers')
-
-    def get_fields(self, parent: 'Model') -> list[typing.Any]:
-        parent = ensure.is_instance(parent, models.ServerGroup)
-        return [
-            {
-                'hostname': {
-                    'title': _('Hostname'),
-                }
-            },
-            {'ip': {'title': _('Ip')}},
-            {'mac': {'title': _('Mac')}},
-            {
-                'maintenance_mode': {
-                    'title': _('State'),
-                    'type': 'dict',
-                    'dict': {True: _('Maintenance'), False: _('Normal')},
-                }
-            },
-        ]
-
-    def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
-        return types.ui.RowStyleInfo(prefix='row-maintenance-', field='maintenance_mode')
+        return (
+            ui_utils.TableBuilder(_('Servers of {0}').format(parent.name))
+            .text_column(name='hostname', title=_('Hostname'))
+            .text_column(name='ip', title=_('Ip'))
+            .text_column(name='mac', title=_('Mac'))
+            .dict_column(
+                name='maintenance',
+                title=_('State'),
+                dct={True: _('Maintenance'), False: _('Normal')},
+            )
+            .row_style(prefix='row-maintenance-', field='maintenance')
+        ).build()
 
     # Cannot save a tunnel server, it's not editable...
 
@@ -117,88 +118,107 @@ class TunnelServers(DetailHandler):
         parent = ensure.is_instance(parent, models.ServerGroup)
         try:
             parent.servers.remove(models.Server.objects.get(uuid=process_uuid(item)))
-        except Exception:
-            raise self.invalid_item_response() from None
+        except models.Server.DoesNotExist:
+            raise exceptions.rest.NotFound(_('Tunnel server not found')) from None
+        except Exception as e:
+            logger.error('Error deleting tunnel server %s from %s: %s', item, parent, e)
+            raise exceptions.rest.ResponseError(_('Error deleting tunnel server')) from None
 
     # Custom methods
     def maintenance(self, parent: 'Model', id: str) -> typing.Any:
+        """
+        API:
+            Custom method that swaps maintenance mode state for a tunnel server
+
+        """
         parent = ensure.is_instance(parent, models.ServerGroup)
-        """
-        Custom method that swaps maintenance mode state for a tunnel server
-        :param item:
-        """
         item = models.Server.objects.get(uuid=process_uuid(id))
-        self.ensure_has_access(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
+        self.check_access(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
         item.maintenance_mode = not item.maintenance_mode
         item.save()
         return 'ok'
 
 
+@dataclasses.dataclass
+class TunnelItem(types.rest.BaseRestItem):
+    id: str
+    name: str
+    comments: str
+    host: str
+    port: int
+    tags: list[str]
+    transports_count: int
+    servers_count: int
+    permission: uds.core.types.permissions.PermissionType
+
+
 # Enclosed methods under /auth path
-class Tunnels(ModelHandler):
-    path = 'tunnels'
-    name = 'tunnels'
-    model = models.ServerGroup
-    model_filter = {'type': types.servers.ServerType.TUNNEL}
-    custom_methods = [
+class Tunnels(ModelHandler[TunnelItem]):
+
+    PATH = 'tunnels'
+    NAME = 'tunnels'
+    MODEL = models.ServerGroup
+    FILTER = {'type': types.servers.ServerType.TUNNEL}
+    CUSTOM_METHODS = [
         types.rest.ModelCustomMethod('tunnels', needs_parent=True),
         types.rest.ModelCustomMethod('assign', needs_parent=True),
     ]
 
-    detail = {'servers': TunnelServers}
-    save_fields = ['name', 'comments', 'host:', 'port:0']
+    DETAIL = {'servers': TunnelServers}
+    FIELDS_TO_SAVE = ['name', 'comments', 'host:', 'port:0']
 
-    table_title = _('Tunnels')
-    table_fields = [
-        {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
-        {'comments': {'title': _('Comments')}},
-        {'host': {'title': _('Host')}},
-        {'port': {'title': _('Port')}},
-        {'servers_count': {'title': _('Servers'), 'type': 'numeric', 'width': '1rem'}},
-        {'tags': {'title': _('tags'), 'visible': False}},
-    ]
+    TABLE = (
+        ui_utils.TableBuilder(_('Tunnels'))
+        .icon(name='name', title=_('Name'))
+        .text_column(name='comments', title=_('Comments'))
+        .text_column(name='host', title=_('Host'))
+        .numeric_column(name='port', title=_('Port'), width='6em')
+        .numeric_column(name='servers_count', title=_('Servers'), width='1rem')
+        .text_column(name='tags', title=_('tags'), visible=False)
+        .build()
+    )
 
-    def get_gui(self, type_: str) -> list[typing.Any]:
-        return self.add_field(
-            self.add_default_fields(
-                [],
-                ['name', 'comments', 'tags'],
-            ),
-            [
-                {
-                    'name': 'host',
-                    'value': '',
-                    'label': gettext('Hostname'),
-                    'tooltip': gettext(
-                        'Hostname or IP address of the server where the tunnel is visible by the users'
-                    ),
-                    'type': types.ui.FieldType.TEXT,
-                    'order': 100,  # At end
-                },
-                {
-                    'name': 'port',
-                    'value': 443,
-                    'label': gettext('Port'),
-                    'tooltip': gettext('Port where the tunnel is visible by the users'),
-                    'type': types.ui.FieldType.NUMERIC,
-                    'order': 101,  # At end
-                },
-            ],
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        name='Tunnels',
+        description='Tunnel management',
+        typed=types.rest.api.RestApiInfoGuiType.SINGLE_TYPE,
+    )
+
+    def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
+        return (
+            ui_utils.GuiBuilder()
+            .add_stock_field(types.rest.stock.StockField.NAME)
+            .add_stock_field(types.rest.stock.StockField.COMMENTS)
+            .add_stock_field(types.rest.stock.StockField.TAGS)
+            .add_text(
+                name='host',
+                label=gettext('Hostname'),
+                tooltip=gettext(
+                    'Hostname or IP address of the server where the tunnel is visible by the users'
+                ),
+            )
+            .add_numeric(
+                name='port',
+                default=443,
+                label=gettext('Port'),
+                tooltip=gettext('Port where the tunnel is visible by the users'),
+            )
+            .build()
         )
 
-    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
+    def get_item(self, item: 'Model') -> TunnelItem:
         item = ensure.is_instance(item, models.ServerGroup)
-        return {
-            'id': item.uuid,
-            'name': item.name,
-            'comments': item.comments,
-            'host': item.host,
-            'port': item.port,
-            'tags': [tag.tag for tag in item.tags.all()],
-            'transports_count': item.transports.count(),
-            'servers_count': item.servers.count(),
-            'permission': permissions.effective_permissions(self._user, item),
-        }
+        return TunnelItem(
+            id=item.uuid,
+            name=item.name,
+            comments=item.comments,
+            host=item.host,
+            port=item.port,
+            tags=[tag.tag for tag in item.tags.all()],
+            transports_count=item.transports.count(),
+            servers_count=item.servers.count(),
+            permission=permissions.effective_permissions(self._user, item),
+        )
 
     def pre_save(self, fields: dict[str, typing.Any]) -> None:
         fields['type'] = types.servers.ServerType.TUNNEL.value
@@ -216,21 +236,24 @@ class Tunnels(ModelHandler):
 
     def assign(self, parent: 'Model') -> typing.Any:
         parent = ensure.is_instance(parent, models.ServerGroup)
-        self.ensure_has_access(parent, uds.core.types.permissions.PermissionType.MANAGEMENT)
+        self.check_access(parent, uds.core.types.permissions.PermissionType.MANAGEMENT)
 
         server: typing.Optional['models.Server'] = None  # Avoid warning on reference before assignment
 
         item = self._args[-1]
 
         if not item:
-            raise self.invalid_item_response('No server specified')
+            raise exceptions.rest.RequestError('No server specified')
 
         try:
             server = models.Server.objects.get(uuid=process_uuid(item))
-            self.ensure_has_access(server, uds.core.types.permissions.PermissionType.READ)
+            self.check_access(server, uds.core.types.permissions.PermissionType.READ)
             parent.servers.add(server)
-        except Exception:
-            raise self.invalid_item_response() from None
+        except models.Server.DoesNotExist:
+            raise exceptions.rest.NotFound(_('Tunnel server not found')) from None
+        except Exception as e:
+            logger.error('Error assigning server %s to %s: %s', item, parent, e)
+            raise exceptions.rest.ResponseError(_('Error assigning server')) from None
 
         return 'ok'
 

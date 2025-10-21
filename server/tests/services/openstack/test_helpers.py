@@ -79,18 +79,18 @@ class TestOpenStackHelpers(UDSTransactionTestCase):
 
                 self.assertEqual(
                     {(i.id, i.name) for i in fixtures.AVAILABILITY_ZONES_LIST},
-                    {(i['id'], i['text']) for i in availability_zone_choices},
+                    {(i.id, i.text) for i in availability_zone_choices},
                 )
                 self.assertEqual(
                     {(i.id, i.name) for i in fixtures.NETWORKS_LIST},
-                    {(i['id'], i['text']) for i in network_choices},
+                    {(i.id, i.text) for i in network_choices},
                 )
                 self.assertEqual(
-                    {i.id for i in fixtures.FLAVORS_LIST if not i.disabled}, {i['id'] for i in flavor_choices}
+                    {i.id for i in fixtures.FLAVORS_LIST if not i.disabled}, {i.id for i in flavor_choices}
                 )
                 self.assertEqual(
                     {(i.name, i.name) for i in fixtures.SECURITY_GROUPS_LIST},
-                    {(i['id'], i['text']) for i in security_groups_choices},
+                    {(i.id, i.text) for i in security_groups_choices},
                 )
 
     def test_get_volumes(self) -> None:
@@ -102,7 +102,7 @@ class TestOpenStackHelpers(UDSTransactionTestCase):
                 volume_choices = search_dict_by_attr(result, 'name', 'volume')['choices']
                 self.assertEqual(
                     {(i.id, i.name) for i in fixtures.VOLUMES_LIST},
-                    {(i['id'], i['text']) for i in volume_choices},
+                    {(i.id, i.text) for i in volume_choices},
                 )
 
     def test_list_servers(self) -> None:
@@ -115,5 +115,5 @@ class TestOpenStackHelpers(UDSTransactionTestCase):
                 server_choices = search_dict_by_attr(result, 'name', 'machines')['choices']
                 self.assertEqual(
                     {(i.id, i.name) for i in fixtures.SERVERS_LIST},
-                    {(i['id'], i['text']) for i in server_choices},
+                    {(i.id, i.text) for i in server_choices},
                 )

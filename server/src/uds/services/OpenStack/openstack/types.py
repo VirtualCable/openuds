@@ -35,6 +35,8 @@ import typing
 import dataclasses
 import enum
 
+from django.utils import timezone
+
 from uds.core import exceptions
 
 
@@ -377,6 +379,12 @@ class VolumeInfo:
 
     @staticmethod
     def from_dict(d: dict[str, typing.Any]) -> 'VolumeInfo':
+        cdt = datetime.datetime.fromisoformat(d.get('created_at') or '1970-01-01T00:00:00')
+        if timezone.is_naive(cdt):
+            cdt = timezone.make_aware(cdt)
+        udt = datetime.datetime.fromisoformat(d.get('updated_at') or '1970-01-01T00:00:00')
+        if timezone.is_naive(udt):
+            udt = timezone.make_aware(udt)
         return VolumeInfo(
             id=d['id'],
             name=d['name'] or '',
@@ -386,8 +394,8 @@ class VolumeInfo:
             bootable=d.get('bootable', False),
             encrypted=d.get('encrypted', False),
             status=VolumeStatus.from_str(d.get('status', VolumeStatus.ERROR.value)),
-            created_at=datetime.datetime.fromisoformat(d.get('created_at') or '1970-01-01T00:00:00'),
-            updated_at=datetime.datetime.fromisoformat(d.get('updated_at') or '1970-01-01T00:00:00'),
+            created_at=cdt,
+            updated_at=udt,
         )
 
 
@@ -406,7 +414,11 @@ class SnapshotInfo:
     def from_dict(d: dict[str, typing.Any]) -> 'SnapshotInfo':
         # Try to get created_at and updated_at, if not possible, just ignore it
         created_at = datetime.datetime.fromisoformat(d.get('created_at') or '1970-01-01T00:00:00')
+        if timezone.is_naive(created_at):
+            created_at = timezone.make_aware(created_at)
         updated_at = datetime.datetime.fromisoformat(d.get('updated_at') or '1970-01-01T00:00:00')
+        if timezone.is_naive(updated_at):
+            updated_at = timezone.make_aware(updated_at)
         return SnapshotInfo(
             id=d['id'],
             volume_id=d['volume_id'],

@@ -28,7 +28,6 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import enum
 import functools
 import logging
 import time
@@ -62,16 +61,6 @@ logger = logging.getLogger(__name__)
 
 # Cache the "failed login attempts" for a given IP
 cache = Cache('actorv3')
-
-
-class NotifyActionType(enum.StrEnum):
-    LOGIN = 'login'
-    LOGOUT = 'logout'
-    DATA = 'data'
-
-    @staticmethod
-    def valid_names() -> list[str]:
-        return [e.value for e in NotifyActionType]
 
 
 # Helpers
@@ -145,8 +134,9 @@ def clear_failed_ip_counter(request: 'ExtendedHttpRequest') -> None:
 
 
 class ActorV3Action(Handler):
-    authenticated = False  # Actor requests are not authenticated normally
-    path = 'actor/v3'
+    ROLE = consts.UserRole.ANONYMOUS
+    PATH = 'actor/v3'
+    NAME = 'actorv3'
 
     @staticmethod
     def actor_result(result: typing.Any = None, **kwargs: typing.Any) -> dict[str, typing.Any]:
@@ -154,7 +144,7 @@ class ActorV3Action(Handler):
 
     @staticmethod
     def set_comms_endpoint(userservice: UserService, ip: str, port: int, secret: str) -> None:
-        userservice.set_comms_endpoint(f'https://{ip}:{port}/actor/{secret}')
+        userservice.set_comms_info(f'https://{ip}:{port}/actor/{secret}', secret)
 
     @staticmethod
     def actor_cert_result(key: str, certificate: str, password: str) -> dict[str, typing.Any]:
@@ -197,7 +187,7 @@ class ActorV3Action(Handler):
         raise exceptions.rest.AccessDenied('Access denied')
 
     # Some helpers
-    def notify_service(self, action: NotifyActionType) -> None:
+    def notify_service(self, action: types.rest.actor.NotifyActionType) -> None:
         """
         Notifies the Service (not userservice) that an action has been performed
 
@@ -227,17 +217,17 @@ class ActorV3Action(Handler):
             is_remote = self._params.get('session_type', '')[:4] in ('xrdp', 'RDP-')
 
             # Must be valid
-            if action in (NotifyActionType.LOGIN, NotifyActionType.LOGOUT):
+            if action in (types.rest.actor.NotifyActionType.LOGIN, types.rest.actor.NotifyActionType.LOGOUT):
                 if not service_id:  # For login/logout, we need a valid id
                     raise Exception()
                 # Notify Service that someone logged in/out
 
-                if action == NotifyActionType.LOGIN:
+                if action == types.rest.actor.NotifyActionType.LOGIN:
                     # Try to guess if this is a remote session
                     service.process_login(service_id, remote_login=is_remote)
-                elif action == NotifyActionType.LOGOUT:
+                elif action == types.rest.actor.NotifyActionType.LOGOUT:
                     service.process_logout(service_id, remote_login=is_remote)
-            elif action == NotifyActionType.DATA:
+            elif action == types.rest.actor.NotifyActionType.DATA:
                 service.notify_data(service_id, self._params['data'])
             else:
                 raise Exception('Invalid action')
@@ -254,7 +244,7 @@ class Test(ActorV3Action):
     Tests UDS Broker actor connectivity & key
     """
 
-    name = 'test'
+    NAME = 'test'
 
     def action(self) -> dict[str, typing.Any]:
         # First, try to locate an user service providing this token.
@@ -266,7 +256,8 @@ class Test(ActorV3Action):
                     token=self._params['token'], type=types.servers.ServerType.ACTOR
                 )  # Not assigned, because only needs check
             clear_failed_ip_counter(self._request)
-        except Exception:
+        except Exception as e:
+            logger.info('Test host request: %s, %s', self._params, e)
             # Increase failed attempts
             increase_failed_ip_count(self._request)
             # And return test failed
@@ -291,10 +282,9 @@ class Register(ActorV3Action):
 
     """
 
-    authenticated = True
-    needs_staff = True
+    ROLE = consts.UserRole.STAFF
 
-    name = 'register'
+    NAME = 'register'
 
     def post(self) -> dict[str, typing.Any]:
         # If already exists a token for this MAC, return it instead of creating a new one, and update the information...
@@ -316,12 +306,23 @@ class Register(ActorV3Action):
 
         # Actors does not support any SERVER API version in fact, they has their own interfaces on UserServices
         # This means that we can invoke its API from user_service, but not from server (The actor token is transformed as soon as initialized to a user service token)
-        data = {
-            'pre_command': self._params['pre_command'],
-            'post_command': self._params['post_command'],
-            'run_once_command': self._params['run_once_command'],
-            'custom': self._params.get('custom', ''),
-        }
+
+        # New model has "commands" field in data, old one not
+        if 'commands' in self._params:
+            commands = self._params['commands']
+            data = {
+                'pre_command': commands.get('pre_command') or '',
+                'post_command': commands.get('post_command') or '',
+                'run_once_command': commands.get('run_once_command') or '',
+                'custom': self._params.get('custom') or '',
+            }
+        else:
+            data = {
+                'pre_command': self._params['pre_command'],
+                'post_command': self._params['post_command'],
+                'run_once_command': self._params['run_once_command'],
+                'custom': self._params.get('custom', ''),
+            }
         if actor_token:
             # Update parameters
             # type is already set
@@ -368,7 +369,7 @@ class Initialize(ActorV3Action):
     Also returns the id used for the rest of the actions. (Only this one will use actor key)
     """
 
-    name = 'initialize'
+    NAME = 'initialize'
 
     def action(self) -> dict[str, typing.Any]:
         """
@@ -390,12 +391,12 @@ class Initialize(ActorV3Action):
                  ]
              }
         Will return on field "result" a dictinary with:
-            * own_token: Optional[str] -> Personal uuid for the service (That, on service, will be used from now onwards). If None, there is no own_token
+            * token: Optional[str] -> Personal uuid for the service (That, on service, will be used from now onwards). If None, there is no own_token
             * unique_id: Optional[str] -> If not None, unique id for the service (normally, mac adress of recognized interface)
             * os: Optional[dict] -> Data returned by os manager for setting up this service.
         Example:
             {
-                'own_token' 'asdfasdfasdffsadfasfd'
+                'token' 'asdfasdfasdffsadfasfd'
                 'unique_id': 'aa:bb:cc:dd:ee:ff'
                 'os': {
                     'action': 'rename',
@@ -424,7 +425,7 @@ class Initialize(ActorV3Action):
                 {
                     'own_token': token,  # Compat with old actor versions, TBR on 5.0
                     'token': token,  # New token, will be used from now onwards
-                    'master_token': master_token,  # Master token, to replace on unmanaged machines
+                    'master_token': master_token,  # Master token, to replace on unmanaged machines                    
                     'unique_id': unique_id,
                     'os': os,
                 }
@@ -507,7 +508,7 @@ class BaseReadyChange(ActorV3Action):
     Records the IP change of actor
     """
 
-    name = 'notused'  # Not really important, this is not a "leaf" class and will not be directly available
+    NAME = 'notused'  # Not really important, this is not a "leaf" class and will not be directly available
 
     def action(self) -> dict[str, typing.Any]:
         """
@@ -521,8 +522,10 @@ class BaseReadyChange(ActorV3Action):
         This method will also regenerater the public-private key pair for client, that will be needed for the new ip
 
         Returns: {
-            private_key: str -> Generated private key, PEM
-            server_certificate: str -> Generated public key, PEM
+            key: str -> Generated private key, PEM
+            certificate: str -> Generated public key, PEM
+            password: str -> Password for private key
+            ciphers: str -> Ciphers that server supports (could be empty, so default of python requests will be used)
         }
         """
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
@@ -553,7 +556,9 @@ class BaseReadyChange(ActorV3Action):
                 )  # Currently, no data is received for os manager
 
         # Generates a certificate and send it to client.
-        private_key, cert, password = security.create_self_signed_cert(self._params['ip'])
+        # Password will be removed on a release after 5.0 as it is useful
+        # Currently we have to maintain it for compat with older actors
+        private_key, cert, password = security.create_self_signed_cert(self._params['ip'], with_password=True)
         # Store certificate with userService
         userservice.properties['cert'] = cert
         userservice.properties['priv'] = private_key
@@ -567,7 +572,7 @@ class IpChange(BaseReadyChange):
     Processses IP Change.
     """
 
-    name = 'ipchange'
+    NAME = 'ipchange'
 
 
 class Ready(BaseReadyChange):
@@ -575,7 +580,7 @@ class Ready(BaseReadyChange):
     Notifies the user service is ready
     """
 
-    name = 'ready'
+    NAME = 'ready'
 
     def action(self) -> dict[str, typing.Any]:
         """
@@ -587,15 +592,17 @@ class Ready(BaseReadyChange):
             * port: port of the listener (normally 43910)
 
         Returns: {
-            private_key: str -> Generated private key, PEM
-            server_cert: str -> Generated public key, PEM
+            key: str -> Generated private key, PEM
+            certificate: str -> Generated public key, PEM
+            password: str -> Password for private key
+            ciphers: str -> Ciphers that server supports (could be empty, so default of python requests will be used)
         }
         """
         result = super().action()
 
         # Set as "inUse" to false because a ready can only ocurr if an user is not logged in
         # Note that an assigned dynamic user service that gets "restarted", will be marked as not in use
-        # until it's logged ing again. So, id the system has 
+        # until it's logged ing again. So, id the system has
         userservice = self.get_userservice()
         userservice.set_in_use(False)
 
@@ -608,7 +615,7 @@ class Version(ActorV3Action):
     Used on possible "customized" actors.
     """
 
-    name = 'version'
+    NAME = 'version'
 
     def action(self) -> dict[str, typing.Any]:
         logger.debug('Version Args: %s,  Params: %s', self._args, self._params)
@@ -624,7 +631,7 @@ class Login(ActorV3Action):
     Notifies user logged id
     """
 
-    name = 'login'
+    NAME = 'login'
 
     # payload received
     #   {
@@ -673,7 +680,7 @@ class Login(ActorV3Action):
         ):  # If unamanaged host, lest do a bit more work looking for a service with the provided parameters...
             if is_managed:
                 raise
-            self.notify_service(action=NotifyActionType.LOGIN)
+            self.notify_service(action=types.rest.actor.NotifyActionType.LOGIN)
 
         return ActorV3Action.actor_result(
             {
@@ -692,7 +699,7 @@ class Logout(ActorV3Action):
     Notifies user logged out
     """
 
-    name = 'logout'
+    NAME = 'logout'
 
     @staticmethod
     def process_logout(userservice: UserService, username: str, session_id: str) -> None:
@@ -726,7 +733,7 @@ class Logout(ActorV3Action):
         except Exception:
             if is_managed:
                 raise
-            self.notify_service(NotifyActionType.LOGOUT)  # Logout notification
+            self.notify_service(types.rest.actor.NotifyActionType.LOGOUT)  # Logout notification
             # Result is that we have not processed the logout in fact, but notified the service
             return ActorV3Action.actor_result('notified')
 
@@ -738,7 +745,7 @@ class Log(ActorV3Action):
     Sends a log from the service
     """
 
-    name = 'log'
+    NAME = 'log'
 
     def action(self) -> dict[str, typing.Any]:
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
@@ -763,27 +770,49 @@ class Ticket(ActorV3Action):
     Gets an stored ticket
     """
 
-    name = 'ticket'
+    NAME = 'ticket'
 
     def action(self) -> dict[str, typing.Any]:
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
 
-        try:
-            # Simple check that token exists
-            Server.objects.get(
-                token=self._params['token'], type=types.servers.ServerType.ACTOR
-            )  # Not assigned, because only needs check
-        except Server.DoesNotExist:
-            raise exceptions.rest.BlockAccess() from None  # If too many blocks...
+        if len(self._args) > 1:
+            raise exceptions.rest.RequestError('Invalid request')
+
+        kind = self._args[0] if len(self._args) == 1 else 'server'
 
         try:
-            return ActorV3Action.actor_result(TicketStore.get(self._params['ticket'], invalidate=True))
+            match kind:
+                case 'server':
+                    # Server tickets are simple applicaitons with parameters
+                    # Enough secure this way (no onwer)
+                    try:
+                        # Simple check that token exists
+                        Server.objects.get(
+                            token=self._params['token'], type=types.servers.ServerType.ACTOR
+                        )  # Not assigned, because only needs check
+                    except Server.DoesNotExist:
+                        raise exceptions.rest.BlockAccess() from None  # If too many blocks...
+
+                    return ActorV3Action.actor_result(TicketStore.get(self._params['ticket'], invalidate=True))
+
+                case 'userservice':
+                    # Userservice also has owner, to increase security
+                    self.get_userservice()  # We just want to check that is valid
+
+                    return ActorV3Action.actor_result(
+                        TicketStore.get(
+                            uuid=self._params['ticket'], owner=self._params['token'], invalidate=True
+                        )
+                    )
+
+                case _:
+                    raise exceptions.rest.RequestError('Invalid request')
         except TicketStore.DoesNotExist:
             return ActorV3Action.actor_result(error='Invalid ticket')
 
 
 class Unmanaged(ActorV3Action):
-    name = 'unmanaged'
+    NAME = 'unmanaged'
 
     def action(self) -> dict[str, typing.Any]:
         """
@@ -804,9 +833,9 @@ class Unmanaged(ActorV3Action):
 
         try:
             token = self._params['token']
-            if ServiceTokenAlias.objects.filter(alias=token).exists():
+            if dbservice_alias := ServiceTokenAlias.objects.filter(alias=token).first():
                 # Retrieve real service from token alias
-                dbservice = ServiceTokenAlias.objects.get(alias=token).service
+                dbservice = dbservice_alias.service
             else:
                 dbservice = Service.objects.get(token=token)
             service: 'services.Service' = dbservice.get_instance()
@@ -845,7 +874,9 @@ class Unmanaged(ActorV3Action):
             ip = self._params['id'][0]['ip']  # Get first IP if no valid ip found
 
         # Generates a certificate and send it to client (actor).
-        private_key, certificate, password = security.create_self_signed_cert(ip)
+        # Password will be removed on a release after 5.0 as it is useful
+        # Currently we have to maintain it for compat with older actors
+        private_key, certificate, password = security.create_self_signed_cert(ip, with_password=True)
 
         if valid_id:
             # If id is assigned to an user service, notify "logout" to it
@@ -869,7 +900,7 @@ class Unmanaged(ActorV3Action):
 
 
 class Notify(ActorV3Action):
-    name = 'notify'
+    NAME = 'notify'
 
     def post(self) -> dict[str, typing.Any]:
         # Raplaces original post (non existent here)
@@ -878,7 +909,7 @@ class Notify(ActorV3Action):
     def get(self) -> collections.abc.MutableMapping[str, typing.Any]:
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
         try:
-            action = NotifyActionType(self._params['action'])
+            action = types.rest.actor.NotifyActionType(self._params['action'])
             _token = self._params['token']  # Just to check it exists
         except Exception as e:
             # Requested login, logout or whatever
@@ -887,11 +918,11 @@ class Notify(ActorV3Action):
         try:
             # Check block manually
             check_ip_is_blocked(self._request)  # pylint: disable=protected-access
-            if action == NotifyActionType.LOGIN:
+            if action == types.rest.actor.NotifyActionType.LOGIN:
                 Login.action(typing.cast(Login, self))
-            elif action == NotifyActionType.LOGOUT:
+            elif action == types.rest.actor.NotifyActionType.LOGOUT:
                 Logout.action(typing.cast(Logout, self))
-            elif action == NotifyActionType.DATA:
+            elif action == types.rest.actor.NotifyActionType.DATA:
                 self.notify_service(action)
 
             return ActorV3Action.actor_result('ok')

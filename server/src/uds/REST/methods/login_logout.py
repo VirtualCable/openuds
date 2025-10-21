@@ -55,8 +55,8 @@ class Login(Handler):
     Responsible of user authentication
     """
 
-    path = 'auth'
-    authenticated = False  # Public method
+    PATH = 'auth'
+    ROLE = consts.UserRole.ANONYMOUS
 
     @staticmethod
     def result(
@@ -156,7 +156,7 @@ class Login(Handler):
                 if GlobalConfig.SUPER_USER_LOGIN.get(True) == username and CryptoManager.manager().check_hash(
                     password, GlobalConfig.SUPER_USER_PASS.get(True)
                 ):
-                    self.gen_auth_token(-1, username, password, locale, platform, True, True, scrambler)
+                    self.gen_auth_token(-1, username, password, locale, platform, scrambler)
                     return Login.result(result='ok', token=self.get_auth_token())
                 return Login.result(error='Invalid credentials')
 
@@ -188,8 +188,6 @@ class Login(Handler):
                     password,
                     locale,
                     platform,
-                    auth_result.user.is_admin,
-                    auth_result.user.staff_member,
                     scrambler,
                 ),
                 scrambler=scrambler,
@@ -207,8 +205,8 @@ class Logout(Handler):
     Responsible of user de-authentication
     """
 
-    path = 'auth'
-    authenticated = True  # By default, all handlers needs authentication
+    PATH = 'auth'
+    ROLE = consts.UserRole.USER  # Must be logged in to logout :)
 
     def get(self) -> typing.Any:
         # Remove auth token
@@ -220,8 +218,8 @@ class Logout(Handler):
 
 
 class Auths(Handler):
-    path = 'auth'
-    authenticated = False  # By default, all handlers needs authentication
+    PATH = 'auth'
+    ROLE = consts.UserRole.ANONYMOUS
 
     def auths(self) -> collections.abc.Iterable[dict[str, typing.Any]]:
         all_param: bool = self._params.get('all', 'false').lower() == 'true'
@@ -231,11 +229,14 @@ class Auths(Handler):
             if all_param or (auth_type.is_custom() is False and auth_type.type_type not in ('IP',)):
                 yield {
                     'authId': auth.uuid,  # Deprecated, use 'auth_id'
-                    'auth_id': auth.uuid,
+                    'auth_id': auth.uuid,  # Deprecated, use 'id'
+                    'id': auth.uuid,
                     'authSmallName': str(auth.small_name),  # Deprecated
                     'authLabel': str(auth.small_name),  # Deprecated, use 'auth_label'
-                    'auth_label': str(auth.small_name),
-                    'auth': auth.name,
+                    'auth_label': str(auth.small_name),  # Deprecated, use 'label'
+                    'label': str(auth.small_name),
+                    'auth': auth.name,  # Deprecated, use 'name'
+                    'name': auth.name,
                     'type': auth_type.type_type,
                     'priority': auth.priority,
                     'isCustom': auth_type.is_custom(),  # Deprecated, use 'custom'

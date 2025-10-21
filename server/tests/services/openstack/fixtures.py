@@ -39,6 +39,8 @@ import random
 
 from unittest import mock
 
+from django.utils import timezone
+
 from uds.core import environment, types
 from uds.core.ui.user_interface import gui
 
@@ -138,8 +140,8 @@ DEF_VOLUMES_LIST: typing.Final[list[openstack_types.VolumeInfo]] = [
         bootable=n % 2 == 0,
         encrypted=n % 3 == 0,
         status=openstack_types.VolumeStatus.AVAILABLE,
-        created_at=datetime.datetime(2009, 12, 9, 0, 0, 0),
-        updated_at=datetime.datetime(2024, 1, 1, 0, 0, 0),
+        created_at=timezone.make_aware(datetime.datetime(2009, 12, 9, 0, 0, 0)),
+        updated_at=timezone.make_aware(datetime.datetime(2024, 1, 1, 0, 0, 0)),
     )
     for n in range(1, 16)
 ]
@@ -152,8 +154,8 @@ DEF_VOLUME_SNAPSHOTS_LIST: typing.Final[list[openstack_types.SnapshotInfo]] = [
         description=f'volume snapshot description{n}',
         status=openstack_types.SnapshotStatus.AVAILABLE,
         size=128 * n,
-        created_at=datetime.datetime(2009, 12, 9, 0, 0, 0),
-        updated_at=datetime.datetime(2024, 1, 1, 0, 0, 0),
+        created_at=timezone.make_aware(datetime.datetime(2009, 12, 9, 0, 0, 0)),
+        updated_at=timezone.make_aware(datetime.datetime(2024, 1, 1, 0, 0, 0)),
     )
     for n in range(1, 16)
 ]

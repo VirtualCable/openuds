@@ -65,7 +65,7 @@ class HTML5SSHTransport(transports.Transport):
     own_link = True
     supported_oss = consts.os.ALL_OS_LIST
     # pylint: disable=no-member  # ??? SSH is there, but pylint does not see it ???
-    protocol = types.transports.Protocol.SSH
+    PROTOCOL = types.transports.Protocol.SSH
     group = types.transports.Grouping.TUNNELED
 
     tunnel = fields.tunnel_field()

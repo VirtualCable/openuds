@@ -31,18 +31,19 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import collections.abc
+import dataclasses
 import itertools
 import logging
 import re
 import typing
 
-from django.utils.translation import gettext
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
+from django.db import models
 
-from uds.core import auths, consts, exceptions, types
+
+from uds.core import auths, consts, exceptions, types, ui
 from uds.core.environment import Environment
-from uds.core.ui import gui
-from uds.core.util import ensure, permissions
+from uds.core.util import ensure, permissions, ui as ui_utils
 from uds.core.util.model import process_uuid
 from uds.models import MFA, Authenticator, Network, Tag
 from uds.REST.model import ModelHandler
@@ -50,45 +51,89 @@ from uds.REST.model import ModelHandler
 from .users_groups import Groups, Users
 
 # Not imported at runtime, just for type checking
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
-    from uds.core.module import Module
+from uds.core.module import Module
 
 logger = logging.getLogger(__name__)
 
 
+@dataclasses.dataclass
+class AuthenticatorTypeInfo(types.rest.ExtraTypeInfo):
+    search_users_supported: bool
+    search_groups_supported: bool
+    needs_password: bool
+    label_username: str
+    label_groupname: str
+    label_password: str
+    create_users_supported: bool
+    is_external: bool
+    mfa_data_enabled: bool
+    mfa_supported: bool
+
+    def as_dict(self) -> dict[str, typing.Any]:
+        return dataclasses.asdict(self)
+
+
+@dataclasses.dataclass
+class AuthenticatorItem(types.rest.ManagedObjectItem[Authenticator]):
+    numeric_id: int
+    id: str
+    name: str
+    priority: int
+
+    tags: list[str]
+    comments: str
+    net_filtering: str
+    networks: list[str]
+    state: str
+    mfa_id: str
+    small_name: str
+    users_count: int
+    permission: int
+
+    type_info: types.rest.TypeInfo | None
+
+
 # Enclosed methods under /auth path
-class Authenticators(ModelHandler):
-    model = Authenticator
+class Authenticators(ModelHandler[AuthenticatorItem]):
+    ITEM_TYPE = AuthenticatorItem
+
+    MODEL = Authenticator
     # Custom get method "search" that requires authenticator id
-    custom_methods = [('search', True)]
-    detail = {'users': Users, 'groups': Groups}
-    save_fields = ['name', 'comments', 'tags', 'priority', 'small_name', 'mfa_id:_', 'state']
+    CUSTOM_METHODS = [types.rest.ModelCustomMethod('search', True)]
+    DETAIL = {'users': Users, 'groups': Groups}
+    FIELDS_TO_SAVE = ['name', 'comments', 'tags', 'priority', 'small_name', 'mfa_id:_', 'state']
 
-    table_title = _('Authenticators')
-    table_fields = [
-        {'numeric_id': {'title': _('Id'), 'visible': True}},
-        {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
-        {'type_name': {'title': _('Type')}},
-        {'comments': {'title': _('Comments')}},
-        {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '5rem'}},
-        {'small_name': {'title': _('Label')}},
-        {'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '1rem'}},
-        {
-            'mfa_name': {
-                'title': _('MFA'),
-            }
-        },
-        {'tags': {'title': _('tags'), 'visible': False}},
-    ]
+    TABLE = (
+        ui_utils.TableBuilder(_('Authenticators'))
+        .numeric_column(name='numeric_id', title=_('Id'), visible=True, width='1rem')
+        .icon(name='name', title=_('Name'), visible=True)
+        .text_column(name='type_name', title=_('Type'))
+        .text_column(name='comments', title=_('Comments'))
+        .numeric_column(name='priority', title=_('Priority'), width='5rem')
+        .text_column(name='small_name', title=_('Label'))
+        .numeric_column(name='users_count', title=_('Users'), width='1rem')
+        .text_column(name='mfa_name', title=_('MFA'))
+        .text_column(name='tags', title=_('tags'), visible=False)
+        .row_style(prefix='row-state-', field='state')
+        .build()
+    )
 
-    def enum_types(self) -> collections.abc.Iterable[type[auths.Authenticator]]:
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        typed=types.rest.api.RestApiInfoGuiType.MULTIPLE_TYPES,
+    )
+
+    @classmethod
+    def possible_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[auths.Authenticator]]:
         return auths.factory().providers().values()
 
-    def type_info(self, type_: type['Module']) -> typing.Optional[types.rest.AuthenticatorTypeInfo]:
+    @classmethod
+    def extra_type_info(
+        cls: type[typing.Self], type_: type['Module']
+    ) -> typing.Optional[AuthenticatorTypeInfo]:
         if issubclass(type_, auths.Authenticator):
-            return types.rest.AuthenticatorTypeInfo(
+            return AuthenticatorTypeInfo(
                 search_users_supported=type_.search_users != auths.Authenticator.search_users,
                 search_groups_supported=type_.search_groups != auths.Authenticator.search_groups,
                 needs_password=type_.needs_password,
@@ -98,95 +143,82 @@ class Authenticators(ModelHandler):
                 create_users_supported=type_.create_user != auths.Authenticator.create_user,
                 is_external=type_.external_source,
                 mfa_data_enabled=type_.mfa_data_enabled,
-                mfa_supported=type_.provides_mfa(),
+                mfa_supported=type_.provides_mfa_identifier(),
             )
         # Not of my type
         return None
 
-    def get_gui(self, type_: str) -> list[typing.Any]:
+    def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
         try:
-            auth_type = auths.factory().lookup(type_)
+            auth_type = auths.factory().lookup(for_type)
             if auth_type:
                 # Create a new instance of the authenticator to access to its GUI
                 with Environment.temporary_environment() as env:
-                    auth_instance = auth_type(env, None)
-                    field = self.add_default_fields(
-                        auth_instance.gui_description(),
-                        ['name', 'comments', 'tags', 'priority', 'small_name', 'networks'],
-                    )
-                    self.add_field(
-                        field,
-                        {
-                            'name': 'state',
-                            'value': consts.auth.VISIBLE,
-                            'choices': [
-                                {'id': consts.auth.VISIBLE, 'text': _('Visible')},
-                                {'id': consts.auth.HIDDEN, 'text': _('Hidden')},
-                                {'id': consts.auth.DISABLED, 'text': _('Disabled')},
-                            ],
-                            'label': gettext('Access'),
-                            'tooltip': gettext(
-                                'Access type for this transport. Disabled means not only hidden, but also not usable as login method.'
-                            ),
-                            'type': types.ui.FieldType.CHOICE,
-                            'order': 107,
-                            'tab': gettext('Display'),
-                        },
-                    )
                     # If supports mfa, add MFA provider selector field
-                    if auth_type.provides_mfa():
-                        self.add_field(
-                            field,
-                            {
-                                'name': 'mfa_id',
-                                'choices': [gui.choice_item('', str(_('None')))]
-                                + gui.sorted_choices(
-                                    [gui.choice_item(v.uuid, v.name) for v in MFA.objects.all()]
-                                ),
-                                'label': gettext('MFA Provider'),
-                                'tooltip': gettext('MFA provider to use for this authenticator'),
-                                'type': types.ui.FieldType.CHOICE,
-                                'order': 108,
-                                'tab': types.ui.Tab.MFA,
-                            },
+                    auth_instance = auth_type(env, None)
+                    gui = (
+                        (
+                            ui_utils.GuiBuilder()
+                            .set_order(100)
+                            .add_stock_field(types.rest.stock.StockField.PRIORITY)
+                            .add_stock_field(types.rest.stock.StockField.NAME)
+                            .add_stock_field(types.rest.stock.StockField.LABEL)
+                            .add_stock_field(types.rest.stock.StockField.NETWORKS)
+                            .add_stock_field(types.rest.stock.StockField.COMMENTS)
+                            .add_stock_field(types.rest.stock.StockField.TAGS)
                         )
-                    return field
+                        .add_fields(auth_instance.gui_description())
+                        .add_choice(
+                            name='state',
+                            default=consts.auth.VISIBLE,
+                            choices=[
+                                ui.gui.choice_item(consts.auth.VISIBLE, _('Visible')),
+                                ui.gui.choice_item(consts.auth.HIDDEN, _('Hidden')),
+                                ui.gui.choice_item(consts.auth.DISABLED, _('Disabled')),
+                            ],
+                            label=gettext('Access'),
+                        )
+                    )
+
+                    if auth_type.provides_mfa_identifier():
+                        gui.add_choice(
+                            name='mfa_id',
+                            label=gettext('MFA Provider'),
+                            choices=[ui.gui.choice_item('', str(_('None')))]
+                            + ui.gui.sorted_choices(
+                                [ui.gui.choice_item(v.uuid, v.name) for v in MFA.objects.all()]
+                            ),
+                        )
+
+                    return gui.build()
+
             raise Exception()  # Not found
         except Exception as e:
-            logger.info('Type not found: %s', e)
-            raise exceptions.rest.NotFound('type not found') from e
+            logger.info('Authenticator type not found: %s', e)
+            raise exceptions.rest.NotFound('Authenticator type not found') from e
 
-    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
-        summary = 'summarize' in self._params
-
+    def get_item(self, item: 'models.Model') -> AuthenticatorItem:
         item = ensure.is_instance(item, Authenticator)
-        v: dict[str, typing.Any] = {
-            'numeric_id': item.id,
-            'id': item.uuid,
-            'name': item.name,
-            'priority': item.priority,
-        }
-        if not summary:
-            type_ = item.get_type()
-            v.update(
-                {
-                    'tags': [tag.tag for tag in typing.cast(collections.abc.Iterable[Tag], item.tags.all())],
-                    'comments': item.comments,
-                    'net_filtering': item.net_filtering,
-                    'networks': [n.uuid for n in item.networks.all()],
-                    'state': item.state,
-                    'mfa_id': item.mfa.uuid if item.mfa else '',
-                    'small_name': item.small_name,
-                    'users_count': item.users.count(),
-                    'type': type_.mod_type(),
-                    'type_name': type_.mod_name(),
-                    'type_info': self.type_as_dict(type_),
-                    'permission': permissions.effective_permissions(self._user, item),
-                }
-            )
-        return v
 
-    def post_save(self, item: 'Model') -> None:
+        return AuthenticatorItem(
+            numeric_id=item.id,
+            id=item.uuid,
+            name=item.name,
+            priority=item.priority,
+            tags=[tag.tag for tag in typing.cast(collections.abc.Iterable[Tag], item.tags.all())],
+            comments=item.comments,
+            net_filtering=item.net_filtering,
+            networks=[n.uuid for n in item.networks.all()],
+            state=item.state,
+            mfa_id=item.mfa.uuid if item.mfa else '',
+            small_name=item.small_name,
+            users_count=item.users.count(),
+            permission=permissions.effective_permissions(self._user, item),
+            item=item,
+            type_info=type(self).as_typeinfo(item.get_type()),
+        )
+
+    def post_save(self, item: 'models.Model') -> None:
         item = ensure.is_instance(item, Authenticator)
         try:
             networks = self._params['networks']
@@ -199,13 +231,17 @@ class Authenticators(ModelHandler):
         item.networks.set(Network.objects.filter(uuid__in=networks))
 
     # Custom "search" method
-    def search(self, item: 'Model') -> list[types.rest.ItemDictType]:
+    def search(self, item: 'models.Model') -> list[types.auth.SearchResultItem.ItemDict]:
+        """
+        API:
+            Search for users or groups in this authenticator
+        """
         item = ensure.is_instance(item, Authenticator)
-        self.ensure_has_access(item, types.permissions.PermissionType.READ)
+        self.check_access(item, types.permissions.PermissionType.READ)
         try:
             type_ = self._params['type']
             if type_ not in ('user', 'group'):
-                raise self.invalid_request_response()
+                raise exceptions.rest.RequestError(_('Invalid type: {}').format(type_))
 
             term = self._params['term']
 
@@ -227,7 +263,7 @@ class Authenticators(ModelHandler):
                 )
             )
             if search_supported is False:
-                raise self.not_supported_response()
+                raise exceptions.rest.NotSupportedError(_('Search not supported'))
 
             if type_ == 'user':
                 iterable = auth.search_users(term)
@@ -237,13 +273,15 @@ class Authenticators(ModelHandler):
             return [i.as_dict() for i in itertools.islice(iterable, limit)]
         except Exception as e:
             logger.exception('Too many results: %s', e)
-            return [{'id': _('Too many results...'), 'name': _('Refine your query')}]
+            return [
+                types.auth.SearchResultItem(id=_('Too many results...'), name=_('Refine your query')).as_dict()
+            ]
             # self.invalidResponseException('{}'.format(e))
 
     def test(self, type_: str) -> typing.Any:
         auth_type = auths.factory().lookup(type_)
         if not auth_type:
-            raise self.invalid_request_response(f'Invalid type: {type_}')
+            raise exceptions.rest.RequestError(_('Invalid type: {}').format(type_))
 
         dct = self._params.copy()
         dct['_request'] = self._request
@@ -270,11 +308,9 @@ class Authenticators(ModelHandler):
         fields['small_name'] = fields['small_name'].strip().replace(' ', '_')
         # And ensure small_name chars are valid [a-zA-Z0-9:-]+
         if fields['small_name'] and not re.match(r'^[a-zA-Z0-9:.-]+$', fields['small_name']):
-            raise self.invalid_request_response(
-                _('Label must contain only letters, numbers, or symbols: - : .')
-            )
+            raise exceptions.rest.RequestError(_('Label must contain only letters, numbers, or symbols: - : .'))
 
-    def delete_item(self, item: 'Model') -> None:
+    def delete_item(self, item: 'models.Model') -> None:
         # For every user, remove assigned services (mark them for removal)
         item = ensure.is_instance(item, Authenticator)
 

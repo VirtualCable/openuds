@@ -29,31 +29,29 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
+import datetime
 import logging
 import typing
 import collections.abc
 
 from django.utils.translation import gettext as _
-from django.forms.models import model_to_dict
 from django.db import IntegrityError, transaction
+from django.db.models import Model
 from django.core.exceptions import ValidationError
 
 from uds.core.types.states import State
 
 from uds.core.auths.user import User as AUser
-from uds.core.util import log, ensure
+from uds.core.util import log, ensure, ui as ui_utils
 from uds.core.util.model import process_uuid, sql_stamp_seconds
-from uds.models import Authenticator, User, Group, ServicePool
+from uds.models import Authenticator, User, Group, ServicePool, UserService
 from uds.core.managers.crypto import CryptoManager
 from uds.core import consts, exceptions, types
 
 from uds.REST.model import DetailHandler
 
-from .user_services import AssignedService
-
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
-    from uds.models import UserService
+from .user_services import AssignedUserService, UserServiceItem
 
 
 logger = logging.getLogger(__name__)
@@ -77,8 +75,24 @@ def get_service_pools_for_groups(
         yield servicepool
 
 
-class Users(DetailHandler):
-    custom_methods = [
+@dataclasses.dataclass
+class UserItem(types.rest.BaseRestItem):
+    id: str
+    name: str
+    real_name: str
+    comments: str
+    state: str
+    staff_member: bool
+    is_admin: bool
+    last_access: datetime.datetime
+    mfa_data: str
+    role: str
+    parent: str | None
+    groups: list[str] | types.rest.NotRequired = types.rest.NotRequired.field()
+
+
+class Users(DetailHandler[UserItem]):
+    CUSTOM_METHODS = [
         'services_pools',
         'user_services',
         'clean_related',
@@ -86,116 +100,67 @@ class Users(DetailHandler):
         'enable_client_logging',
     ]
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[UserItem]:
         parent = ensure.is_instance(parent, Authenticator)
 
-        # processes item to change uuid key for id
-        def uuid_to_id(
-            iterable: collections.abc.Iterable[typing.Any],
-        ) -> collections.abc.Generator[typing.Any, None, None]:
-            for v in iterable:
-                v['id'] = v['uuid']
-                del v['uuid']
-                yield v
+        def as_user_item(user: 'User') -> UserItem:
+            return UserItem(
+                id=user.uuid,
+                name=user.name,
+                real_name=user.real_name,
+                comments=user.comments,
+                state=user.state,
+                staff_member=user.staff_member,
+                is_admin=user.is_admin,
+                last_access=user.last_access,
+                mfa_data=user.mfa_data,
+                parent=user.parent,
+                groups=[i.uuid for i in user.get_groups()],
+                role=user.get_role().as_str(),
+            )
 
-        logger.debug(item)
         # Extract authenticator
         try:
-            if item is None:
-                values = list(
-                    uuid_to_id(
-                        (
-                            i
-                            for i in parent.users.all().values(
-                                'uuid',
-                                'name',
-                                'real_name',
-                                'comments',
-                                'state',
-                                'staff_member',
-                                'is_admin',
-                                'last_access',
-                                'parent',
-                                'mfa_data',
-                            )
-                        )
-                    )
-                )
-                for res in values:
-                    res['role'] = (
-                        res['staff_member']
-                        and (res['is_admin'] and _('Admin') or _('Staff member'))
-                        or _('User')
-                    )
-                return values
+            if item is None:  # All users
+                return [as_user_item(i) for i in self.filter_queryset(parent.users.all())]
+
             u = parent.users.get(uuid__iexact=process_uuid(item))
-            res = model_to_dict(
-                u,
-                fields=(
-                    'name',
-                    'real_name',
-                    'comments',
-                    'state',
-                    'staff_member',
-                    'is_admin',
-                    'last_access',
-                    'parent',
-                    'mfa_data',
-                ),
-            )
-            res['id'] = u.uuid
-            res['role'] = (
-                res['staff_member'] and (res['is_admin'] and _('Admin') or _('Staff member')) or _('User')
-            )
+            res = as_user_item(u)
             usr = AUser(u)
-            res['groups'] = [g.db_obj().uuid for g in usr.groups()]
+            res.groups = [g.db_obj().uuid for g in usr.groups()]
             logger.debug('Item: %s', res)
             return res
+        except User.DoesNotExist:
+            raise exceptions.rest.NotFound(_('User not found')) from None
         except Exception as e:
-            # User not found
-            raise self.invalid_item_response() from e
+            logger.error('Error getting user %s: %s', item, e)
+            raise exceptions.rest.ResponseError(_('Error getting user')) from e
 
-    def get_title(self, parent: 'Model') -> str:
-        try:
-            return _('Users of {0}').format(
-                Authenticator.objects.get(uuid=process_uuid(self._kwargs['parent_id'])).name
+    def get_table(self, parent: 'Model') -> types.rest.TableInfo:
+        parent = ensure.is_instance(parent, Authenticator)
+        return (
+            ui_utils.TableBuilder(_('Users of {0}').format(parent.name))
+            .icon(name='name', title=_('Username'), visible=True)
+            .text_column(name='role', title=_('Role'))
+            .text_column(name='real_name', title=_('Name'))
+            .text_column(name='comments', title=_('Comments'))
+            .dict_column(
+                name='state', title=_('Status'), dct={State.ACTIVE: _('Enabled'), State.INACTIVE: _('Disabled')}
             )
-        except Exception:
-            return _('Current users')
-
-    def get_fields(self, parent: 'Model') -> list[typing.Any]:
-        return [
-            {
-                'name': {
-                    'title': _('Username'),
-                    'visible': True,
-                    'type': 'icon',
-                    'icon': 'fa fa-user text-success',
-                }
-            },
-            {'role': {'title': _('Role')}},
-            {'real_name': {'title': _('Name')}},
-            {'comments': {'title': _('Comments')}},
-            {
-                'state': {
-                    'title': _('state'),
-                    'type': 'dict',
-                    'dict': {State.ACTIVE: _('Enabled'), State.INACTIVE: _('Disabled')},
-                }
-            },
-            {'last_access': {'title': _('Last access'), 'type': 'datetime'}},
-        ]
-
-    def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
-        return types.ui.RowStyleInfo(prefix='row-state-', field='state')
+            .datetime_column(name='last_access', title=_('Last access'))
+            .row_style(prefix='row-state-', field='state')
+        ).build()
 
     def get_logs(self, parent: 'Model', item: str) -> list[typing.Any]:
         parent = ensure.is_instance(parent, Authenticator)
         user = None
         try:
             user = parent.users.get(uuid=process_uuid(item))
-        except Exception:
-            raise self.invalid_item_response() from None
+        except User.DoesNotExist:
+            raise exceptions.rest.NotFound(_('User not found')) from None
+        except Exception as e:
+            logger.error('Error getting user %s: %s', item, e)
+            raise exceptions.rest.ResponseError(_('Error getting user')) from e
 
         return log.get_logs(user)
 
@@ -247,21 +212,21 @@ class Users(DetailHandler):
                     groups = self.fields_from_params(['groups'])['groups']
                     # Save but skip meta groups, they are not real groups, but just a way to group users based on rules
                     user.groups.set(g for g in parent.groups.filter(uuid__in=groups) if g.is_meta is False)
-                    
+
                 return {'id': user.uuid}
         except User.DoesNotExist:
-            raise self.invalid_item_response() from None
+            raise exceptions.rest.NotFound(_('User not found')) from None
         except IntegrityError:  # Duplicate key probably
             raise exceptions.rest.RequestError(_('User already exists (duplicate key error)')) from None
         except ValidationError as e:
             raise exceptions.rest.RequestError(str(e.message)) from e
         except exceptions.auth.AuthenticatorException as e:
             raise exceptions.rest.RequestError(str(e)) from e
-        except exceptions.rest.RequestError:  # pylint: disable=try-except-raise
+        except exceptions.rest.RequestError:
             raise  # Re-raise
         except Exception as e:
-            logger.exception('Saving user')
-            raise self.invalid_request_response() from e
+            logger.error('Error saving user %s: %s', item, e)
+            raise exceptions.rest.ResponseError(_('Error saving user')) from e
 
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, Authenticator)
@@ -272,7 +237,7 @@ class Users(DetailHandler):
                     'Removal of user %s denied due to insufficients rights',
                     user.pretty_name,
                 )
-                raise self.invalid_item_response(
+                raise exceptions.rest.AccessDenied(
                     f'Removal of user {user.pretty_name} denied due to insufficients rights'
                 )
 
@@ -290,11 +255,17 @@ class Users(DetailHandler):
                         logger.exception('Saving user on removing error')
 
             user.delete()
+        except User.DoesNotExist:
+            raise exceptions.rest.NotFound(_('User not found')) from None
         except Exception as e:
             logger.error('Error on user removal of %s.%s:  %s', parent.name, item, e)
-            raise self.invalid_item_response() from e
+            raise exceptions.rest.ResponseError(_('Error removing user')) from e
 
     def services_pools(self, parent: 'Model', item: str) -> list[dict[str, typing.Any]]:
+        """
+        API:
+            Returns the service pools assigned to a user
+        """
         parent = ensure.is_instance(parent, Authenticator)
         uuid = process_uuid(item)
         user = parent.users.get(uuid=process_uuid(uuid))
@@ -315,19 +286,21 @@ class Users(DetailHandler):
 
         return res
 
-    def user_services(self, parent: 'Authenticator', item: str) -> list[dict[str, typing.Any]]:
+    def user_services(self, parent: 'Authenticator', item: str) -> list[UserServiceItem]:
         parent = ensure.is_instance(parent, Authenticator)
         uuid = process_uuid(item)
         user = parent.users.get(uuid=process_uuid(uuid))
-        res: list[dict[str, typing.Any]] = []
-        for i in user.userServices.all():
-            if i.state == State.USABLE:
-                v = AssignedService.item_as_dict(i)
-                v['pool'] = i.deployed_service.name
-                v['pool_id'] = i.deployed_service.uuid
-                res.append(v)
 
-        return res
+        def item_as_dict(assigned_user_service: 'UserService') -> UserServiceItem:
+            base = AssignedUserService.userservice_item(assigned_user_service)
+            base.pool_name = assigned_user_service.deployed_service.name
+            base.pool_id = assigned_user_service.deployed_service.uuid
+            return base
+
+        return [
+            item_as_dict(i)
+            for i in user.userServices.all().prefetch_related('deployed_service').filter(state=State.USABLE)
+        ]
 
     def clean_related(self, parent: 'Authenticator', item: str) -> dict[str, str]:
         uuid = process_uuid(item)
@@ -361,101 +334,97 @@ class Users(DetailHandler):
         return {'status': 'ok'}
 
 
-class Groups(DetailHandler):
-    custom_methods = ['services_pools', 'users']
+@dataclasses.dataclass
+class GroupItem(types.rest.BaseRestItem):
+    id: str
+    name: str
+    comments: str
+    state: str
+    type: str
+    meta_if_any: bool
+    skip_mfa: str
+    groups: list[str] | types.rest.NotRequired = types.rest.NotRequired.field()
+    pools: list[str] | types.rest.NotRequired = types.rest.NotRequired.field()
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
+
+class Groups(DetailHandler[GroupItem]):
+    CUSTOM_METHODS = ['services_pools', 'users']
+
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult['GroupItem']:
         parent = ensure.is_instance(parent, Authenticator)
         try:
             multi = False
             if item is None:
                 multi = True
-                q = parent.groups.all().order_by('name')
+                q = self.filter_queryset(parent.groups.all())
             else:
                 q = parent.groups.filter(uuid=process_uuid(item))
-            res: list[dict[str, typing.Any]] = []
+            res: list[GroupItem] = []
             i = None
             for i in q:
-                val: dict[str, typing.Any] = {
-                    'id': i.uuid,
-                    'name': i.name,
-                    'comments': i.comments,
-                    'state': i.state,
-                    'type': i.is_meta and 'meta' or 'group',
-                    'meta_if_any': i.meta_if_any,
-                    'skip_mfa': i.skip_mfa,
-                }
+                val = GroupItem(
+                    id=i.uuid,
+                    name=i.name,
+                    comments=i.comments,
+                    state=i.state,
+                    type=i.is_meta and 'meta' or 'group',
+                    meta_if_any=i.meta_if_any,
+                    skip_mfa=i.skip_mfa,
+                )
                 if i.is_meta:
-                    val['groups'] = list(x.uuid for x in i.groups.all().order_by('name'))
+                    val.groups = list(x.uuid for x in i.groups.all().order_by('name'))
                 res.append(val)
+
             if multi:
                 return res
+
             if not i:
-                raise Exception('Item not found')
+                raise exceptions.rest.NotFound(_('Group not found')) from None
             # Add pools field if 1 item only
-            result = res[0]
-            result['pools'] = [v.uuid for v in get_service_pools_for_groups([i])]
-            return result
+            res[0].pools = [v.uuid for v in get_service_pools_for_groups([i])]
+            return res[0]
+        except exceptions.rest.HandlerError:
+            raise  # Re-raise
         except Exception as e:
             logger.error('Group item not found: %s.%s: %s', parent.name, item, e)
-            raise self.invalid_item_response() from e
+            raise exceptions.rest.ResponseError(_('Error getting group')) from e
 
-    def get_title(self, parent: 'Model') -> str:
+    def get_table(self, parent: 'Model') -> types.rest.TableInfo:
         parent = ensure.is_instance(parent, Authenticator)
-        try:
-            return _('Groups of {0}').format(parent.name)
-        except Exception:
-            return _('Current groups')
+        return (
+            ui_utils.TableBuilder(_('Groups of {0}').format(parent.name))
+            .text_column(name='name', title=_('Group'), visible=True)
+            .text_column(name='comments', title=_('Comments'))
+            .dict_column(name='state', title=_('Status'), dct=State.literals_dict())
+            .dict_column(name='skip_mfa', title=_('Skip MFA'), dct=State.literals_dict())
+        ).build()
 
-    def get_fields(self, parent: 'Model') -> list[typing.Any]:
-        return [
-            {
-                'name': {
-                    'title': _('Group'),
-                }
-            },
-            {'comments': {'title': _('Comments')}},
-            {
-                'state': {
-                    'title': _('state'),
-                    'type': 'dict',
-                    'dict': {State.ACTIVE: _('Enabled'), State.INACTIVE: _('Disabled')},
-                }
-            },
-            {
-                'skip_mfa': {
-                    'title': _('Skip MFA'),
-                    'type': 'dict',
-                    'dict': {State.ACTIVE: _('Enabled'), State.INACTIVE: _('Disabled')},
-                }
-            },
-        ]
-
-    def get_types(
+    def enum_types(
         self, parent: 'Model', for_type: typing.Optional[str]
-    ) -> collections.abc.Iterable[types.rest.TypeInfoDict]:
+    ) -> collections.abc.Iterable[types.rest.TypeInfo]:
         parent = ensure.is_instance(parent, Authenticator)
         types_dict: dict[str, dict[str, str]] = {
             'group': {'name': _('Group'), 'description': _('UDS Group')},
             'meta': {'name': _('Meta group'), 'description': _('UDS Meta Group')},
         }
-        types_list: list[types.rest.TypeInfoDict] = [
-            {
-                'name': v['name'],
-                'type': k,
-                'description': v['description'],
-                'icon': '',
-            }
+        types_list: list[types.rest.TypeInfo] = [
+            types.rest.TypeInfo(
+                name=v['name'],
+                type=k,
+                description=v['description'],
+                icon='',
+            )
             for k, v in types_dict.items()
         ]
 
-        if for_type is None:
+        if not for_type:
             return types_list
 
         try:
-            return [next(filter(lambda x: x['type'] == for_type, types_list))]
-        except Exception:
-            raise self.invalid_request_response() from None
+            return [next(filter(lambda x: x.type == for_type, types_list))]
+        except StopIteration:
+            logger.error('Type %s not found in %s', for_type, types_list)
+            raise exceptions.rest.NotFound(_('Group type not found')) from None
 
     def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, Authenticator)
@@ -513,7 +482,7 @@ class Groups(DetailHandler):
             group.save()
             return {'id': group.uuid}
         except Group.DoesNotExist:
-            raise self.invalid_item_response() from None
+            raise exceptions.rest.NotFound(_('Group not found')) from None
         except IntegrityError:  # Duplicate key probably
             raise exceptions.rest.RequestError(_('User already exists (duplicate key error)')) from None
         except exceptions.auth.AuthenticatorException as e:
@@ -521,8 +490,8 @@ class Groups(DetailHandler):
         except exceptions.rest.RequestError:  # pylint: disable=try-except-raise
             raise  # Re-raise
         except Exception as e:
-            logger.exception('Saving group')
-            raise self.invalid_request_response() from e
+            logger.error('Error saving group %s: %s', item, e)
+            raise exceptions.rest.ResponseError(_('Error saving group')) from e
 
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, Authenticator)
@@ -530,10 +499,13 @@ class Groups(DetailHandler):
             group = parent.groups.get(uuid=item)
 
             group.delete()
-        except Exception:
-            raise self.invalid_item_response() from None
+        except exceptions.rest.NotFound:
+            raise exceptions.rest.NotFound(_('Group not found')) from None
+        except Exception as e:
+            logger.error('Error deleting group %s: %s', item, e)
+            raise exceptions.rest.ResponseError(_('Error deleting group')) from e
 
-    def servicesPools(self, parent: 'Model', item: str) -> list[collections.abc.Mapping[str, typing.Any]]:
+    def services_pools(self, parent: 'Model', item: str) -> list[collections.abc.Mapping[str, typing.Any]]:
         parent = ensure.is_instance(parent, Authenticator)
         uuid = process_uuid(item)
         group = parent.groups.get(uuid=process_uuid(uuid))

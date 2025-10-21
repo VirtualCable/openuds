@@ -57,7 +57,7 @@ class ServerRegisterBase(Handler):
             ip = ip.split('%')[0]
         port = self._params.get('port', consts.net.SERVER_DEFAULT_LISTEN_PORT)
 
-        mac = self._params.get('mac', consts.MAC_UNKNOWN)
+        mac = self._params.get('mac', consts.NULL_MAC)
         data = self._params.get('data', None)
         subtype = self._params.get('subtype', '')
         os = self._params.get('os', types.os.KnownOS.UNKNOWN.os_name()).lower()
@@ -138,17 +138,34 @@ class ServerRegisterBase(Handler):
 
 
 class ServerRegister(ServerRegisterBase):
-    needs_staff = True
-    path = 'servers'
-    name = 'register'
+    ROLE = consts.UserRole.STAFF    
+    
+    PATH = 'servers'
+    NAME = 'register'
+
+
+    @classmethod
+    def api_components(cls: type[typing.Self]) -> types.rest.api.Components:
+        return types.rest.api.Components(schemas={
+            'ServerRegisterItem': types.rest.api.Schema(
+                type='object',
+                description='A server object',
+                properties={
+                    'id': types.rest.api.SchemaProperty(type='string'),
+                    'name': types.rest.api.SchemaProperty(type='string'),
+                    'ip': types.rest.api.SchemaProperty(type='string'),
+                    'port': types.rest.api.SchemaProperty(type='integer'),
+                }
+            )
+        })
 
 
 # REST handlers for server actions
 class ServerTest(Handler):
-    authenticated = False  # Test is not authenticated, the auth is the token to test itself
+    ROLE = consts.UserRole.ANONYMOUS
 
-    path = 'servers'
-    name = 'test'
+    PATH = 'servers'
+    NAME = 'test'
 
     @decorators.blocker()
     def post(self) -> collections.abc.MutableMapping[str, typing.Any]:
@@ -172,9 +189,9 @@ class ServerEvent(Handler):
     * log
     """
 
-    authenticated = False  # Actor requests are not authenticated normally
-    path = 'servers'
-    name = 'event'
+    ROLE = consts.UserRole.ANONYMOUS
+    PATH = 'servers'
+    NAME = 'event'
 
     def get_user_service(self) -> models.UserService:
         '''

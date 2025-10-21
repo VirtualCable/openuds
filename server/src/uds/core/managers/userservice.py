@@ -487,6 +487,12 @@ class UserServiceManager(metaclass=singleton.Singleton):
         with transaction.atomic():
             userservice = UserService.objects.select_for_update().get(id=userservice.id)
             operations_logger.info('Removing userservice %a', userservice.name)
+
+            # If already removing or removed, do nothing
+            if State.from_str(userservice.state) in (State.REMOVING, State.REMOVED):
+                logger.debug('Userservice %s already removing or removed', userservice.name)
+                return
+
             if userservice.is_usable() is False and State.from_str(userservice.state).is_removable() is False:
                 if not forced:
                     raise OperationException(
@@ -1075,7 +1081,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                         )
                         self.notify_preconnect(
                             userservice,
-                            transport_instance.get_connection_info(userservice, user, ''),
+                            transport_instance.get_connection_info(userservice, user, '', for_notify=True),
                         )
                         trace_logger.info(
                             'READY on service "%s" for user "%s" with transport "%s" (ip:%s)',

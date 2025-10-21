@@ -30,85 +30,83 @@
 """
 @Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import logging
-import typing
 
 from django.utils.translation import gettext_lazy as _, gettext
+from django.db.models import Model
 
 from uds.models import Network
 from uds.core import types
-from uds.core.util import permissions, ensure
+from uds.core.util import permissions, ensure, ui as ui_utils
 
 from ..model import ModelHandler
 
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
 # Enclosed methods under /item path
 
 
-class Networks(ModelHandler):
+@dataclasses.dataclass
+class NetworkItem(types.rest.BaseRestItem):
+    id: str
+    name: str
+    tags: list[str]
+    net_string: str
+    transports_count: int
+    authenticators_count: int
+    permission: types.permissions.PermissionType
+
+
+class Networks(ModelHandler[NetworkItem]):
     """
     Processes REST requests about networks
     Implements specific handling for network related requests using GUI
     """
 
-    model = Network
-    save_fields = ['name', 'net_string', 'tags']
+    MODEL = Network
+    FIELDS_TO_SAVE = ['name', 'net_string', 'tags']
 
-    table_title = _('Networks')
-    table_fields = [
-        {
-            'name': {
-                'title': _('Name'),
-                'visible': True,
-                'type': 'icon',
-                'icon': 'fa fa-globe text-success',
-            }
-        },
-        {'net_string': {'title': _('Range')}},
-        {
-            'transports_count': {
-                'title': _('Transports'),
-                'type': 'numeric',
-                'width': '8em',
-            }
-        },
-        {
-            'authenticators_count': {
-                'title': _('Authenticators'),
-                'type': 'numeric',
-                'width': '8em',
-            }
-        },
-        {'tags': {'title': _('tags'), 'visible': False}},
-    ]
+    TABLE = (
+        ui_utils.TableBuilder(_('Networks'))
+        .text_column('name', _('Name'))
+        .text_column('net_string', _('Range'))
+        .numeric_column('transports_count', _('Transports'), width='8em')
+        .numeric_column('authenticators_count', _('Authenticators'), width='8em')
+        .text_column('tags', _('Tags'), visible=False)
+        .build()
+    )
 
-    def get_gui(self, type_: str) -> list[typing.Any]:
-        return self.add_field(
-            self.add_default_fields([], ['name', 'tags']),
-            {
-                'name': 'net_string',
-                'value': '',
-                'label': gettext('Network range'),
-                'tooltip': gettext(
-                    'Network range. Accepts most network definitions formats (range, subnet, host, etc...'
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        typed=types.rest.api.RestApiInfoGuiType.SINGLE_TYPE,
+    )
+
+    def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
+        return (
+            ui_utils.GuiBuilder()
+            .add_stock_field(types.rest.stock.StockField.NAME)
+            .add_stock_field(types.rest.stock.StockField.COMMENTS)
+            .add_stock_field(types.rest.stock.StockField.TAGS)
+            .add_text(
+                name='net_string',
+                label=gettext('Network range'),
+                tooltip=gettext(
+                    'Network range. Accepts most network definitions formats (range, subnet, host, etc...)'
                 ),
-                'type': types.ui.FieldType.TEXT,
-                'order': 100,  # At end
-            },
+            )
+            .build()
         )
 
-    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
+    def get_item(self, item: 'Model') -> NetworkItem:
         item = ensure.is_instance(item, Network)
-        return {
-            'id': item.uuid,
-            'name': item.name,
-            'tags': [tag.tag for tag in item.tags.all()],
-            'net_string': item.net_string,
-            'transports_count': item.transports.count(),
-            'authenticators_count': item.authenticators.count(),
-            'permission': permissions.effective_permissions(self._user, item),
-        }
+        return NetworkItem(
+            id=item.uuid,
+            name=item.name,
+            tags=[tag.tag for tag in item.tags.all()],
+            net_string=item.net_string,
+            transports_count=item.transports.count(),
+            authenticators_count=item.authenticators.count(),
+            permission=permissions.effective_permissions(self._user, item),
+        )

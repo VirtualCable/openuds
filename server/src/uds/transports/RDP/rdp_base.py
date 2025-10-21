@@ -34,8 +34,10 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
+
 from uds.core.ui import gui
 from uds.core import transports, types
+from uds.core.util.security import convert_to_credential_token
 from uds.models import UserService
 
 # Not imported at runtime, just for type checking
@@ -56,7 +58,7 @@ class BaseRDPTransport(transports.Transport):
     is_base = True
 
     icon_file = 'rdp.png'
-    protocol = types.transports.Protocol.RDP
+    PROTOCOL = types.transports.Protocol.RDP
 
     force_empty_creds = gui.CheckBoxField(
         label=_('Empty creds'),
@@ -95,6 +97,15 @@ class BaseRDPTransport(transports.Transport):
         tab=types.ui.Tab.CREDENTIALS,
         old_field_name='fixedDomain',
     )
+    use_sso = gui.CheckBoxField(
+        label=_('Use SSO'),
+        order=16,
+        tooltip=_(
+            'If checked, and user service supports it, will use UDS SSO mechanism. (Ensure you have enabled UDS SSO)'
+        ),
+        tab=types.ui.Tab.CREDENTIALS,
+        old_field_name='useSSO',
+    )
 
     allow_smartcards = gui.CheckBoxField(
         label=_('Allow Smartcards'),
@@ -116,9 +127,9 @@ class BaseRDPTransport(transports.Transport):
         tooltip=_('Local drives redirection policy'),
         default='false',
         choices=[
-            {'id': 'false', 'text': 'Allow none'},
-            {'id': 'dynamic', 'text': 'Allow PnP drives'},
-            {'id': 'true', 'text': 'Allow any drive'},
+            gui.choice_item('false', 'Allow none'),
+            gui.choice_item('dynamic', 'Allow PnP drives'),
+            gui.choice_item('true', 'Allow any drive'),
         ],
         tab=types.ui.Tab.PARAMETERS,
         old_field_name='allowDrives',
@@ -170,13 +181,13 @@ class BaseRDPTransport(transports.Transport):
         tooltip=_('USB redirection policy'),
         default='false',
         choices=[
-            {'id': 'false', 'text': 'Allow none'},
-            {'id': 'true', 'text': 'Allow all'},
-            {'id': '{ca3e7ab9-b4c3-4ae6-8251-579ef933890f}', 'text': 'Cameras'},
-            {'id': '{4d36e967-e325-11ce-bfc1-08002be10318}', 'text': 'Disk Drives'},
-            {'id': '{4d36e979-e325-11ce-bfc1-08002be10318}', 'text': 'Printers'},
-            {'id': '{50dd5230-ba8a-11d1-bf5d-0000f805f530}', 'text': 'Smartcards'},
-            {'id': '{745a17a0-74d3-11d0-b6fe-00a0c90f57da}', 'text': 'HIDs'},
+            gui.choice_item('false', 'Allow none'),
+            gui.choice_item('true', 'Allow all'),
+            gui.choice_item('{ca3e7ab9-b4c3-4ae6-8251-579ef933890f}', 'Cameras'),
+            gui.choice_item('{4d36e967-e325-11ce-bfc1-08002be10318}', 'Disk Drives'),
+            gui.choice_item('{4d36e979-e325-11ce-bfc1-08002be10318}', 'Printers'),
+            gui.choice_item('{50dd5230-ba8a-11d1-bf5d-0000f805f530}', 'Smartcards'),
+            gui.choice_item('{745a17a0-74d3-11d0-b6fe-00a0c90f57da}', 'HIDs'),
         ],
         tab=types.ui.Tab.PARAMETERS,
         old_field_name='usbRedirection',
@@ -207,20 +218,20 @@ class BaseRDPTransport(transports.Transport):
         tooltip=_('Screen size for this transport'),
         default='-1x-1',
         choices=[
-            {'id': '640x480', 'text': '640x480'},
-            {'id': '800x600', 'text': '800x600'},
-            {'id': '1024x768', 'text': '1024x768'},
-            {'id': '1366x768', 'text': '1366x768'},
-            {'id': '1920x1080', 'text': '1920x1080'},
-            {'id': '2304x1440', 'text': '2304x1440'},
-            {'id': '2560x1440', 'text': '2560x1440'},
-            {'id': '2560x1600', 'text': '2560x1600'},
-            {'id': '2880x1800', 'text': '2880x1800'},
-            {'id': '3072x1920', 'text': '3072x1920'},
-            {'id': '3840x2160', 'text': '3840x2160'},
-            {'id': '4096x2304', 'text': '4096x2304'},
-            {'id': '5120x2880', 'text': '5120x2880'},
-            {'id': '-1x-1', 'text': 'Full screen'},
+            gui.choice_item('640x480', '640x480'),
+            gui.choice_item('800x600', '800x600'),
+            gui.choice_item('1024x768', '1024x768'),
+            gui.choice_item('1366x768', '1366x768'),
+            gui.choice_item('1920x1080', '1920x1080'),
+            gui.choice_item('2304x1440', '2304x1440'),
+            gui.choice_item('2560x1440', '2560x1440'),
+            gui.choice_item('2560x1600', '2560x1600'),
+            gui.choice_item('2880x1800', '2880x1800'),
+            gui.choice_item('3072x1920', '3072x1920'),
+            gui.choice_item('3840x2160', '3840x2160'),
+            gui.choice_item('4096x2304', '4096x2304'),
+            gui.choice_item('5120x2880', '5120x2880'),
+            gui.choice_item('-1x-1', 'Full screen'),
         ],
         tab=types.ui.Tab.DISPLAY,
         old_field_name='screenSize',
@@ -232,10 +243,10 @@ class BaseRDPTransport(transports.Transport):
         tooltip=_('Color depth for this connection'),
         default='24',
         choices=[
-            {'id': '8', 'text': '8'},
-            {'id': '16', 'text': '16'},
-            {'id': '24', 'text': '24'},
-            {'id': '32', 'text': '32'},
+            gui.choice_item('8', '8'),
+            gui.choice_item('16', '16'),
+            gui.choice_item('24', '24'),
+            gui.choice_item('32', '32'),
         ],
         tab=types.ui.Tab.DISPLAY,
         old_field_name='colorDepth',
@@ -370,6 +381,14 @@ class BaseRDPTransport(transports.Transport):
         tab='Windows Client',
         old_field_name='customParametersWindows',
     )
+    
+    def initialize(self, values: types.core.ValuesType) -> None:
+        if not values:
+            return
+        
+        if self.use_sso.value:
+            self.credssp.value = False   # Credssp and SSO are mutually exclusive, use_sso has preference
+        
 
     def is_ip_allowed(self, userservice: 'models.UserService', ip: str) -> bool:
         """
@@ -396,7 +415,7 @@ class BaseRDPTransport(transports.Transport):
         user: 'models.User',
         password: str,
         *,
-        alt_username: typing.Optional[str]
+        alt_username: typing.Optional[str],
     ) -> types.connections.ConnectionData:
         username: str = alt_username or user.get_username_for_auth()
 
@@ -438,7 +457,7 @@ class BaseRDPTransport(transports.Transport):
         username, password = userservice.process_user_password(username, password)
 
         return types.connections.ConnectionData(
-            protocol=self.protocol,
+            protocol=self.PROTOCOL,
             username=username,
             service_type=types.services.ServiceType.VDI,
             password=password,
@@ -450,6 +469,8 @@ class BaseRDPTransport(transports.Transport):
         userservice: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
+        *,
+        for_notify: bool = False,
     ) -> types.connections.ConnectionData:
         username = None
         if isinstance(userservice, UserService):
@@ -458,9 +479,14 @@ class BaseRDPTransport(transports.Transport):
                 username = cdata.username or username
                 password = cdata.password or password
 
-        return self.process_user_password(
+        cdata = self.process_user_password(
             typing.cast('models.UserService', userservice),
             user,
             password,
             alt_username=username,
         )
+
+        if not for_notify and self.use_sso.as_bool() and isinstance(userservice, UserService):
+            cdata = convert_to_credential_token(userservice, cdata)
+
+        return cdata

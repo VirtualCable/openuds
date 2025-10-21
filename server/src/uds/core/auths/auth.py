@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2021 Virtual Cable S.L.U.
+# Copyright (c) 2012-2025 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -124,17 +124,14 @@ def root_user() -> models.User:
 
 # Decorator to make easier protect pages that needs to be logged in
 def weblogin_required(
-    admin: typing.Union[bool, typing.Literal['admin']] = False,
+    role: typing.Optional[consts.UserRole] = None,
 ) -> collections.abc.Callable[
     [collections.abc.Callable[..., HttpResponse]], collections.abc.Callable[..., HttpResponse]
 ]:
     """Decorator to set protection to access page
-    Look for samples at uds.core.web.views
-    if admin == True, needs admin or staff
-    if admin == 'admin', needs admin
-
+    
     Args:
-        admin (bool, optional): If True, needs admin or staff. Is it's "admin" literal, needs admin . Defaults to False (any user).
+        role (str, optional): If set, needs this role. Defaults to None.
 
     Returns:
         collections.abc.Callable[[collections.abc.Callable[..., HttpResponse]], collections.abc.Callable[..., HttpResponse]]: Decorator
@@ -142,10 +139,11 @@ def weblogin_required(
     Note:
         This decorator is used to protect pages that needs to be logged in.
         To protect against ajax calls, use `denyNonAuthenticated` instead
+        Roles as "inclusive", that is, if you set role to USER, it will allow all users that are not anonymous. (USER, STAFF, ADMIN)
     """
 
     def decorator(
-        view_func: collections.abc.Callable[..., HttpResponse],
+        view_func: collections.abc.Callable[..., HttpResponse]
     ) -> collections.abc.Callable[..., HttpResponse]:
         @wraps(view_func)
         def _wrapped_view(
@@ -158,8 +156,8 @@ def weblogin_required(
             if not request.user or not request.authorized:
                 return weblogout(request)
 
-            if admin in (True, 'admin'):
-                if request.user.is_staff() is False or (admin == 'admin' and not request.user.is_admin):
+            if role in (consts.UserRole.ADMIN, consts.UserRole.STAFF):
+                if request.user.is_staff() is False or (role == consts.UserRole.ADMIN and not request.user.is_admin):
                     return HttpResponseForbidden(_('Forbidden'))
 
             return view_func(request, *args, **kwargs)
@@ -180,7 +178,7 @@ def is_trusted_ip_forwarder(ip: str) -> bool:
 
 # Decorator to protect pages that needs to be accessed from "trusted sites"
 def needs_trusted_source(
-    view_func: collections.abc.Callable[..., HttpResponse],
+    view_func: collections.abc.Callable[..., HttpResponse]
 ) -> collections.abc.Callable[..., HttpResponse]:
     """
     Decorator to set protection to access page
@@ -420,7 +418,7 @@ def weblogin(
 
     request.session[consts.auth.SESSION_USER_KEY] = user.id
     request.session[consts.auth.SESSION_PASS_KEY] = codecs.encode(
-        CryptoManager().symmetric_encrypt(password, cookie), "base64"
+        CryptoManager.manager().symmetric_encrypt(password, cookie), "base64"
     ).decode()  # as str
 
     # Ensures that this user will have access through REST api if logged in through web interface
@@ -432,8 +430,6 @@ def weblogin(
         password,
         get_language() or '',
         request.os.os.name,
-        user.is_admin,
-        user.staff_member,
         cookie,
     )
     return True

@@ -33,6 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import typing
 from unittest import mock
 
+from uds.core import types
 from uds.services.Proxmox import helpers
 
 from . import fixtures
@@ -66,9 +67,9 @@ class TestProxmoxHelpers(UDSTransactionTestCase):
                 self.assertIsInstance(choices, list)
                 self.assertGreaterEqual(len(choices), 1)
                 for choice in choices:
-                    self.assertIsInstance(choice, dict)
-                    self.assertIsInstance(choice['id'], str)
-                    self.assertIsInstance(choice['text'], str)
+                    self.assertIsInstance(choice, types.ui.ChoiceItem)
+                    self.assertIsInstance(choice.id, str)
+                    self.assertIsInstance(choice.text, str)
 
                 api.get_vm_info.assert_called_once()
                 api.list_storages.assert_called_once()
@@ -85,8 +86,8 @@ class TestProxmoxHelpers(UDSTransactionTestCase):
                 self.assertIsInstance(choices, list)
                 self.assertGreaterEqual(len(choices), 1)
                 for choice in choices:
-                    self.assertIsInstance(choice, dict)
-                    self.assertIsInstance(choice['id'], str)
-                    self.assertIsInstance(choice['text'], str)
+                    self.assertIsInstance(choice, types.ui.ChoiceItem)
+                    self.assertIsInstance(choice.id, str)
+                    self.assertIsInstance(choice.text, str)
 
                 api.get_pool_info.assert_called_once()

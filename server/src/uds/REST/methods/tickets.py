@@ -30,17 +30,17 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import datetime
 import logging
 import typing
 
+from django.utils import timezone
 
 from uds.REST import Handler
 from uds import models
 from uds.core.managers.crypto import CryptoManager
 from uds.core.util.model import process_uuid
 from uds.core.util import ensure
-from uds.core import exceptions
+from uds.core import consts, exceptions
 
 logger = logging.getLogger(__name__)
 
@@ -89,14 +89,14 @@ class Tickets(Handler):
                  - servicePool has these groups in it's allowed list
     """
 
-    needs_admin = True  # By default, staff is lower level needed
+    ROLE = consts.UserRole.ADMIN
 
     @staticmethod
     def result(result: str = '', error: typing.Optional[str] = None) -> dict[str, typing.Any]:
         """
         Returns a result for a Ticket request
         """
-        res = {'result': result, 'date': datetime.datetime.now()}
+        res = {'result': result, 'date': timezone.localtime()}
         if error is not None:
             res['error'] = error
         return res

@@ -29,17 +29,21 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import abc
 import typing
 import logging
 import codecs
+import collections.abc
 
 from django.contrib.sessions.backends.base import SessionBase
 from django.contrib.sessions.backends.db import SessionStore
+from django.db.models import QuerySet
 
-from uds.core import consts, types
+from uds.core import consts, types, exceptions
 from uds.core.util.config import GlobalConfig
 from uds.core.auths.auth import root_user
-from uds.core.util import net
+from uds.core.util import net, query_db_filter, query_filter
+
 from uds.models import Authenticator, User
 from uds.core.managers.crypto import CryptoManager
 
@@ -52,30 +56,23 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+T = typing.TypeVar('T')
 
-class Handler:
+class Handler(abc.ABC):
     """
     REST requests handler base class
     """
 
-    name: typing.ClassVar[typing.Optional[str]] = (
+    NAME: typing.ClassVar[typing.Optional[str]] = (
         None  # If name is not used, name will be the class name in lower case
     )
-    path: typing.ClassVar[typing.Optional[str]] = (
+    PATH: typing.ClassVar[typing.Optional[str]] = (
         None  # Path for this method, so we can do /auth/login, /auth/logout, /auth/auths in a simple way
     )
-    authenticated: typing.ClassVar[bool] = (
-        True  # By default, all handlers needs authentication. Will be overwriten if needs_admin or needs_staff,
-    )
-    needs_admin: typing.ClassVar[bool] = (
-        False  # By default, the methods will be accessible by anyone if nothing else indicated
-    )
-    needs_staff: typing.ClassVar[bool] = False  # By default, staff
 
-    # For implementing help
-    # A list of pairs of (path, help) for subpaths on this handler
-    help_paths: typing.ClassVar[list[tuple[str, str]]] = []
-    help_text: typing.ClassVar[str] = 'No help available'
+    ROLE: typing.ClassVar[consts.UserRole] = consts.UserRole.USER  # By default, only users can access
+
+    REST_API_INFO: typing.ClassVar[types.rest.api.RestApiInfo] = types.rest.api.RestApiInfo()
 
     _request: 'ExtendedHttpRequestWithUser'  # It's a modified HttpRequest
     _path: str
@@ -85,11 +82,13 @@ class Handler:
     ]  # This is a deserliazied object from request. Can be anything as 'a' or {'a': 1} or ....
     # These are the "path" split by /, that is, the REST invocation arguments
     _args: list[str]
-    _kwargs: dict[str, typing.Any]  # This are the "path" split by /, that is, the REST invocation arguments
-    _headers: dict[str, str]  # Note: These are "output" headers, not input headers (input headers can be retrieved from request)
+    _headers: dict[
+        str, str
+    ]  # Note: These are "output" headers, not input headers (input headers can be retrieved from request)
     _session: typing.Optional[SessionStore]
     _auth_token: typing.Optional[str]
     _user: 'User'
+    _odata: 'types.rest.api.ODataParams'  # OData parameters, if any
 
     # The dispatcher proceses the request and calls the method with the same name as the operation
     # currently, only 'get', 'post, 'put' y 'delete' are supported
@@ -102,25 +101,16 @@ class Handler:
         method: str,
         params: dict[str, typing.Any],
         *args: str,
-        **kwargs: typing.Any,
     ):
-        logger.debug('Data: %s %s %s', self.__class__, self.needs_admin, self.authenticated)
-        if (
-            self.needs_admin or self.needs_staff
-        ) and not self.authenticated:  # If needs_admin, must also be authenticated
-            raise Exception(
-                f'class {self.__class__} is not authenticated but has needs_admin or needs_staff set!!'
-            )
-
         self._request = request
         self._path = path
         self._operation = method
         self._params = params
         self._args = list(args)  # copy of args
-        self._kwargs = kwargs
         self._headers = {}
         self._auth_token = None
-        if self.authenticated:  # Only retrieve auth related data on authenticated handlers
+
+        if self.ROLE.needs_authentication:
             try:
                 self._auth_token = self._request.headers.get(consts.auth.AUTH_TOKEN_HEADER, '')
                 self._session = SessionStore(session_key=self._auth_token)
@@ -133,22 +123,22 @@ class Handler:
             if self._auth_token is None:
                 raise AccessDenied()
 
-            if self.needs_admin and not self.is_admin():
-                raise AccessDenied()
-
-            if self.needs_staff and not self.is_staff_member():
-                raise AccessDenied()
             try:
                 self._user = self.get_user()
             except Exception as e:
                 # Maybe the user was deleted, so access is denied
                 raise AccessDenied() from e
+
+            if not self._user.can_access(self.ROLE):
+                raise AccessDenied()
         else:
             self._user = User()  # Empty user for non authenticated handlers
             self._user.state = types.states.State.ACTIVE  # Ensure it's active
 
         if self._user and self._user.state != types.states.State.ACTIVE:
             raise AccessDenied()
+
+        self._odata = types.rest.api.ODataParams.from_dict(self.query_params())
 
     def headers(self) -> dict[str, str]:
         """
@@ -159,22 +149,34 @@ class Handler:
     def header(self, header_name: str) -> typing.Optional[str]:
         """
         Get's an specific header name from REST request
-        
+
         Args:
             header_name: Name of header to retrieve
-            
+
         Returns:
             Value of header or None if not found
         """
         return self._headers.get(header_name)
 
-    def add_header(self, header: str, value: str) -> None:
+    def query_params(self) -> dict[str, str | list[str]]:
+        """
+        Returns the query parameters from the request (GET parameters)
+
+        Note:
+            Dispatcher has it own parameters processor that fills our "_params".
+            The processor tries to get from POST body json (or whatever), and, if not available
+            from GET. So maybe this returns same values as _params, but, this always are GET parameters.
+            Useful for odata fields ($filter, $skip, $top, $orderby)
+        """
+        return {k: v[0] if len(v) == 1 else v for k, v in self._request.GET.lists()}
+
+    def add_header(self, header: str, value: str | int) -> None:
         """
         Inserts a new header inside the headers list
         :param header: name of header to insert
         :param value: value of header
         """
-        self._headers[header] = value
+        self._headers[header] = str(value)
 
     def delete_header(self, header: str) -> None:
         """
@@ -208,6 +210,10 @@ class Handler:
         return self._args
 
     @property
+    def odata(self) -> 'types.rest.api.ODataParams':
+        return self._odata
+
+    @property
     def session(self) -> 'SessionStore':
         if self._session is None:
             raise Exception('No session available')
@@ -228,8 +234,6 @@ class Handler:
         password: str,
         locale: str,
         platform: str,
-        is_admin: bool,
-        staff_member: bool,
         scrambler: str,
     ) -> None:
         """
@@ -241,11 +245,10 @@ class Handler:
         :param is_admin: If user is considered admin or not
         :param staff_member: If is considered as staff member
         """
-        if is_admin:
-            staff_member = True  # Make admins also staff members :-)
-
         # crypt password and convert to base64
-        passwd = codecs.encode(CryptoManager().symmetric_encrypt(password, scrambler), 'base64').decode()
+        passwd = codecs.encode(
+            CryptoManager.manager().symmetric_encrypt(password, scrambler), 'base64'
+        ).decode()
 
         session['REST'] = {
             'auth': id_auth,
@@ -253,8 +256,6 @@ class Handler:
             'password': passwd,
             'locale': locale,
             'platform': platform,
-            'is_admin': is_admin,
-            'staff_member': staff_member,
         }
 
     def gen_auth_token(
@@ -264,8 +265,6 @@ class Handler:
         password: str,
         locale: str,
         platform: str,
-        is_admin: bool,
-        staf_member: bool,
         scrambler: str,
     ) -> str:
         """
@@ -285,8 +284,6 @@ class Handler:
             password,
             locale,
             platform,
-            is_admin,
-            staf_member,
             scrambler,
         )
         session.save()
@@ -393,3 +390,67 @@ class Handler:
             if name in self._params:
                 return self._params[name]
         return ''
+    
+    def filter_queryset(self, qs: QuerySet[typing.Any]) -> QuerySet[typing.Any]:
+        """
+        Filters the queryset based on odata
+        """
+        # OData filter
+        if self.odata.filter:
+            try:
+                qs = query_db_filter.exec_query(self.odata.filter, qs)
+            except ValueError as e:
+                raise exceptions.rest.RequestError(f'Invalid odata filter: {e}') from e
+
+        for order in self.odata.orderby:
+            qs = qs.order_by(order)
+
+        if self.odata.start is not None:
+            qs = qs[self.odata.start :]
+        if self.odata.limit is not None:
+            qs = qs[: self.odata.limit]
+
+        # Get total items and set it on X-Total-Count
+        try:
+            total_items = qs.count()
+            self.add_header('X-Total-Count', total_items)
+        except Exception as e:
+            raise exceptions.rest.RequestError(f'Invalid odata: {e}')
+
+        return qs
+
+    def filter_data(self, data: collections.abc.Iterable[T]) -> list[T]:
+        """
+        Filters the dict base on the currnet odata
+        """
+        if self.odata.filter:
+            try:
+                data = list(query_filter.exec_query(self.odata.filter, data))
+
+            except ValueError as e:
+                raise exceptions.rest.RequestError(f'Invalid odata filter: {e}') from e
+        else:
+            data = list(data)
+
+        # Get total items and set it on X-Total-Count
+        try:
+            self.add_header('X-Total-Count', len(data))
+        except Exception as e:
+            raise exceptions.rest.RequestError(f'Invalid odata: {e}')
+
+        return data
+    
+    
+    @classmethod
+    def api_components(cls: type[typing.Self]) -> types.rest.api.Components:
+        """
+        Returns the types that should be registered
+        """
+        return types.rest.api.Components()
+
+    @classmethod
+    def api_paths(cls: type[typing.Self], path: str, tags: list[str], security: str) -> dict[str, types.rest.api.PathItem]:
+        """
+        Returns the API operations that should be registered
+        """
+        return {}

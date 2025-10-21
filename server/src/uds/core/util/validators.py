@@ -312,15 +312,15 @@ def validate_host(host: str, field_name: typing.Optional[str] = None) -> str:
 def validate_host_port(host_port_pair: str, field_name: typing.Optional[str] = None) -> tuple[str, int]:
     """
     Validates that a host:port pair is valid
-    
+
     Args:
         host_port_pair (str): host:port pair to validate
         field_name (typing.Optional[str], optional): If present, the name of the field for "Raising" exceptions.
             If not present, the exception will be raised with the message "Invalid host:port pair". Defaults to None.
-            
+
     Returns:
         tuple[str, int]: host and port as tuple
-        
+
     Raises:
         exceptions.ValidationException: If value is not valid
     """
@@ -346,15 +346,15 @@ def validate_host_port(host_port_pair: str, field_name: typing.Optional[str] = N
 def validate_timeout(timeout: 'str|int', field_name: typing.Optional[str] = None) -> int:
     """
     Validates that a timeout value is valid
-    
+
     Args:
         timeout (str|int): timeout to validate
         field_name (typing.Optional[str], optional): If present, the name of the field for "Raising" exceptions.
             If not present, the exception will be raised with the message "Invalid timeout". Defaults to None.
-            
+
     Returns:
         int: timeout as integer
-        
+
     Raises:
         exceptions.ValidationException: If value is not valid
     """
@@ -364,15 +364,15 @@ def validate_timeout(timeout: 'str|int', field_name: typing.Optional[str] = None
 def validate_mac(mac: str, field_name: typing.Optional[str] = None) -> str:
     """
     Validates that a mac address is valid
-    
+
     Args:
         mac (str): mac address to validate
         field_name (typing.Optional[str], optional): If present, the name of the field for "Raising" exceptions.
             If not present, the exception will be raised with the message "Invalid MAC address". Defaults to None.
-            
+
     Returns:
         str: mac address
-        
+
     Raises:
         exceptions.ValidationException: If value is not valid
     """
@@ -393,15 +393,15 @@ def validate_mac(mac: str, field_name: typing.Optional[str] = None) -> str:
 def validate_mac_range(macrange: str, field_name: typing.Optional[str] = None) -> str:
     """
     Corrects mac range (uppercase, without spaces), and checks that is range is valid
-    
+
     Args:
         macrange (str): mac range to validate
         field_name (typing.Optional[str], optional): If present, the name of the field for "Raising" exceptions.
             If not present, the exception will be raised with the message "Invalid MAC range". Defaults to None.
-            
+
     Returns:
         str: mac range
-        
+
     Raises:
         exceptions.ValidationException: If value is not valid
     """
@@ -410,6 +410,21 @@ def validate_mac_range(macrange: str, field_name: typing.Optional[str] = None) -
         macrange_start, macrange_end = macrange.split('-')
         validate_mac(macrange_start)
         validate_mac(macrange_end)
+        mac_start_int = int(macrange_start.replace(':', ''), 16)
+        mac_end_int = int(macrange_end.replace(':', ''), 16)
+        if mac_start_int >= mac_end_int:
+            raise exceptions.ui.ValidationError(
+                _('{} is not a valid MAC range: start must be lower than end').format(macrange + field_name)
+            )
+        # Start must be greater than 0
+        if mac_start_int == 0:
+            raise exceptions.ui.ValidationError(
+                _('{} is not a valid MAC range: start must be greater than 0').format(macrange + field_name)
+            )
+
+    except exceptions.ui.ValidationError:
+        raise
+
     except Exception:
         raise exceptions.ui.ValidationError(
             _('{} is not a valid MAC range').format(macrange + field_name)
@@ -442,9 +457,9 @@ def validate_basename(basename: str, length: int = -1) -> str:
 
     Returns:
         None -- [description]
-        
+
     Raises:
-        exceptions.ValidationException: If anything goes wrong        
+        exceptions.ValidationException: If anything goes wrong
     """
     if re.match(r'^[a-zA-Z0-9][a-zA-Z0-9-]*$', basename) is None:
         raise exceptions.ui.ValidationError(_('The basename is not a valid for a hostname'))

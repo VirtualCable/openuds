@@ -30,66 +30,84 @@
 """
 @Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
+import datetime
 import logging
 import typing
 
 from django.utils.translation import gettext_lazy as _
+from django.db import models
+
+from uds.core import types
 from uds.models import Calendar
-from uds.core.util import permissions, ensure
+from uds.core.util import permissions, ensure, ui as ui_utils
 
 from uds.REST.model import ModelHandler
 from .calendarrules import CalendarRules
 
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
-
 
 logger = logging.getLogger(__name__)
 
-# Enclosed methods under /item path
+
+@dataclasses.dataclass
+class CalendarItem(types.rest.BaseRestItem):
+    id: str
+    name: str
+    tags: list[str]
+    comments: str
+    modified: datetime.datetime
+    number_rules: int
+    number_access: int
+    number_actions: int
+    permission: types.permissions.PermissionType
 
 
-class Calendars(ModelHandler):
+class Calendars(ModelHandler[CalendarItem]):
     """
     Processes REST requests about calendars
     """
 
-    model = Calendar
-    detail = {'rules': CalendarRules}
+    MODEL = Calendar
+    DETAIL = {'rules': CalendarRules}
 
-    save_fields = ['name', 'comments', 'tags']
+    FIELDS_TO_SAVE = ['name', 'comments', 'tags']
 
-    table_title = _('Calendars')
-    table_fields = [
-        {
-            'name': {
-                'title': _('Name'),
-                'visible': True,
-                'type': 'icon',
-                'icon': 'fa fa-calendar text-success',
-            }
-        },
-        {'comments': {'title': _('Comments')}},
-        {'modified': {'title': _('Modified'), 'type': 'datetime'}},
-        {'number_rules': {'title': _('Rules')}},
-        {'number_access': {'title': _('Pools with Accesses')}},
-        {'number_actions': {'title': _('Pools with Actions')}},
-        {'tags': {'title': _('tags'), 'visible': False}},
-    ]
+    TABLE = (
+        ui_utils.TableBuilder(_('Calendars'))
+        .text_column(name='name', title=_('Name'), visible=True)
+        .text_column(name='comments', title=_('Comments'))
+        .datetime_column(name='modified', title=_('Modified'))
+        .numeric_column(name='number_rules', title=_('Rules'), width='5rem')
+        .numeric_column(name='number_access', title=_('Pools with Accesses'), width='5rem')
+        .numeric_column(name='number_actions', title=_('Pools with Actions'), width='5rem')
+        .text_column(name='tags', title=_('tags'), visible=False)
+        .build()
+    )
 
-    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        typed=types.rest.api.RestApiInfoGuiType.SINGLE_TYPE,
+    )
+
+    def get_item(self, item: 'models.Model') -> CalendarItem:
         item = ensure.is_instance(item, Calendar)
-        return {
-            'id': item.uuid,
-            'name': item.name,
-            'tags': [tag.tag for tag in item.tags.all()],
-            'comments': item.comments,
-            'modified': item.modified,
-            'number_rules': item.rules.count(),
-            'number_access': item.calendaraccess_set.all().values('service_pool').distinct().count(),
-            'number_actions': item.calendaraction_set.all().values('service_pool').distinct().count(),
-            'permission': permissions.effective_permissions(self._user, item),
-        }
+        return CalendarItem(
+            id=item.uuid,
+            name=item.name,
+            tags=[tag.tag for tag in item.tags.all()],
+            comments=item.comments,
+            modified=item.modified,
+            number_rules=item.rules.count(),
+            number_access=item.calendaraccess_set.all().values('service_pool').distinct().count(),
+            number_actions=item.calendaraction_set.all().values('service_pool').distinct().count(),
+            permission=permissions.effective_permissions(self._user, item),
+        )
 
-    def get_gui(self, type_: str) -> list[typing.Any]:
-        return self.add_default_fields([], ['name', 'comments', 'tags'])
+    def get_gui(self, for_type: str) -> list[typing.Any]:
+        return (
+            ui_utils.GuiBuilder()
+            .add_stock_field(types.rest.stock.StockField.NAME)
+            .add_stock_field(types.rest.stock.StockField.COMMENTS)
+            .add_stock_field(types.rest.stock.StockField.TAGS)
+            .build()
+        )

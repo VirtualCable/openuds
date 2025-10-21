@@ -124,7 +124,7 @@ def auth_callback_stage2(request: 'ExtendedHttpRequestWithUser', ticket_id: str)
 
         # If MFA is provided, we need to redirect to MFA page
         request.authorized = True
-        if authenticator.get_type().provides_mfa() and authenticator.mfa:
+        if authenticator.get_type().provides_mfa_identifier() and authenticator.mfa:
             auth_instance = authenticator.get_instance()
             if auth_instance.mfa_identifier(result.user.name):
                 request.authorized = False  # We can ask for MFA so first disauthorize user
@@ -281,7 +281,7 @@ def ticket_auth(
         return response
     except ServiceNotReadyError:
         return errors.error_view(request, types.errors.Error.SERVICE_NOT_READY)
-    except TicketStore.InvalidTicket:
+    except TicketStore.DoesNotExist:
         return errors.error_view(request, types.errors.Error.RELOAD_NOT_SUPPORTED)
     except Authenticator.DoesNotExist:
         logger.error('Ticket has an non existing authenticator')
@@ -321,7 +321,7 @@ def login(request: types.requests.ExtendedHttpRequest, tag: typing.Optional[str]
             # If MFA is provided, we need to redirect to MFA page
             request.authorized = True
             if (
-                login_result.user.manager.get_type().provides_mfa()
+                login_result.user.manager.get_type().provides_mfa_identifier()
                 and login_result.user.manager.mfa
                 and login_result.user.groups.filter(skip_mfa=types.states.State.ACTIVE).count() == 0
             ):
@@ -350,7 +350,7 @@ def login(request: types.requests.ExtendedHttpRequest, tag: typing.Optional[str]
 
 
 @never_cache
-@auth.weblogin_required(admin=False)
+@auth.weblogin_required()
 def logout(request: types.requests.ExtendedHttpRequestWithUser) -> HttpResponse:
     auth.log_logout(request)
     request.session['restricted'] = False  # Remove restricted

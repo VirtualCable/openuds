@@ -30,78 +30,95 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
+import datetime
 import logging
 import typing
 
 from django.utils.translation import gettext as _
+from django.db.models import Model
 
 from uds.core import exceptions, types
-from uds.core.util import ensure, permissions
+from uds.core.types.rest import TableInfo
+from uds.core.util import ensure, permissions, ui as ui_utils
 from uds.core.util.model import process_uuid
 from uds.models import Account, AccountUsage
 from uds.REST.model import DetailHandler
 
-# Not imported at runtime, just for type checking
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
 
-class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
+@dataclasses.dataclass
+class AccountItem(types.rest.BaseRestItem):
+    uuid: str
+    pool_uuid: str
+    pool_name: str
+    user_uuid: str
+    user_name: str
+    start: datetime.datetime
+    end: datetime.datetime
+    running: bool
+    elapsed: str
+    elapsed_timemark: str
+    permission: int
+
+
+class AccountsUsage(DetailHandler[AccountItem]):  # pylint: disable=too-many-public-methods
     """
     Detail handler for Services, whose parent is a Provider
     """
 
     @staticmethod
-    def usage_to_dict(item: 'AccountUsage', perm: int) -> dict[str, typing.Any]:
+    def usage_to_dict(item: 'AccountUsage', perm: int) -> AccountItem:
         """
         Convert an account usage to a dictionary
         :param item: Account usage item (db)
         :param perm: permission
         """
-        return {
-            'uuid': item.uuid,
-            'pool_uuid': item.pool_uuid,
-            'pool_name': item.pool_name,
-            'user_uuid': item.user_uuid,
-            'user_name': item.user_name,
-            'start': item.start,
-            'end': item.end,
-            'running': item.user_service is not None,
-            'elapsed': item.elapsed,
-            'elapsed_timemark': item.elapsed_timemark,
-            'permission': perm,
-        }
+        return AccountItem(
+            uuid=item.uuid,
+            pool_uuid=item.pool_uuid,
+            pool_name=item.pool_name,
+            user_uuid=item.user_uuid,
+            user_name=item.user_name,
+            start=item.start,
+            end=item.end,
+            running=item.user_service is not None,
+            elapsed=item.elapsed,
+            elapsed_timemark=item.elapsed_timemark,
+            permission=perm,
+        )
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ManyItemsDictType:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> types.rest.ItemsResult[AccountItem]:
         parent = ensure.is_instance(parent, Account)
         # Check what kind of access do we have to parent provider
         perm = permissions.effective_permissions(self._user, parent)
         try:
             if not item:
-                return [AccountsUsage.usage_to_dict(k, perm) for k in parent.usages.all()]
+                return [AccountsUsage.usage_to_dict(k, perm) for k in self.filter_queryset(parent.usages.all())]
             k = parent.usages.get(uuid=process_uuid(item))
             return AccountsUsage.usage_to_dict(k, perm)
         except Exception:
             logger.exception('itemId %s', item)
-            raise self.invalid_item_response()
+            raise exceptions.rest.NotFound(_('Account usage not found: {}').format(item)) from None
 
-    def get_fields(self, parent: 'Model') -> list[typing.Any]:
-        return [
-            {'pool_name': {'title': _('Pool name')}},
-            {'user_name': {'title': _('User name')}},
-            {'running': {'title': _('Running')}},
-            {'start': {'title': _('Starts'), 'type': 'datetime'}},
-            {'end': {'title': _('Ends'), 'type': 'datetime'}},
-            {'elapsed': {'title': _('Elapsed')}},
-            {'elapsed_timemark': {'title': _('Elapsed timemark')}},
-        ]
+    def get_table(self, parent: 'Model') -> TableInfo:
+        parent = ensure.is_instance(parent, Account)
+        return (
+            ui_utils.TableBuilder(_('Usages of {0}').format(parent.name))
+            .text_column(name='pool_name', title=_('Pool name'))
+            .text_column(name='user_name', title=_('User name'))
+            .text_column(name='running', title=_('Running'))
+            .datetime_column(name='start', title=_('Starts'))
+            .datetime_column(name='end', title=_('Ends'))
+            .text_column(name='elapsed', title=_('Elapsed'))
+            .datetime_column(name='elapsed_timemark', title=_('Elapsed timemark'))
+            .row_style(prefix='row-running-', field='running')
+            .build()
+        )
 
-    def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
-        return types.ui.RowStyleInfo(prefix='row-running-', field='running')
-
-    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
+    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> AccountItem:
         raise exceptions.rest.RequestError('Accounts usage cannot be edited')
 
     def delete_item(self, parent: 'Model', item: str) -> None:
@@ -111,12 +128,5 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
             usage = parent.usages.get(uuid=process_uuid(item))
             usage.delete()
         except Exception:
-            logger.exception('Exception')
-            raise self.invalid_item_response()
-
-    def get_title(self, parent: 'Model') -> str:
-        parent = ensure.is_instance(parent, Account)
-        try:
-            return _('Usages of {0}').format(parent.name)
-        except Exception:
-            return _('Current usages')
+            logger.error('Error deleting account usage %s from %s', item, parent)
+            raise exceptions.rest.NotFound(_('Account usage not found: {}').format(item)) from None

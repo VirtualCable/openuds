@@ -42,6 +42,7 @@ from uds.web.views.main import index, logger
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.utils.translation import gettext as _
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
 
@@ -77,10 +78,10 @@ def mfa(
             stored_user_id
             and created
             and (
-                datetime.datetime.fromtimestamp(created)
+                timezone.make_aware(datetime.datetime.fromtimestamp(created))
                 + datetime.timedelta(hours=mfa_provider.remember_device)
             )
-            > datetime.datetime.now()
+            > timezone.localtime()
             # Old stored values do not have ip, so we need to check it
             and (not ip or ip == request.ip)
         ):

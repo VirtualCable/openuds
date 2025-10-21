@@ -38,7 +38,6 @@ import ssl
 import typing
 import datetime
 
-import certifi
 import requests
 import requests.adapters
 import urllib3
@@ -49,6 +48,7 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.x509.oid import NameOID
 from django.conf import settings
+from django.utils import timezone
 
 from uds.core import consts
 
@@ -59,7 +59,11 @@ logger = logging.getLogger(__name__)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
-def create_self_signed_cert(ip: str) -> tuple[str, str, str]:
+if typing.TYPE_CHECKING:
+    from uds import models
+    from uds.core import types
+
+def create_self_signed_cert(ip: str, with_password: bool) -> tuple[str, str, str]:
     """
     Generates a self signed certificate for the given ip.
     This method is mainly intended to be used for generating/saving Actor certificates.
@@ -71,13 +75,13 @@ def create_self_signed_cert(ip: str) -> tuple[str, str, str]:
         backend=default_backend(),
     )
     # Create a random password for private key
-    password = secrets.token_hex(consts.system.SECURITY_SECRET_SIZE)
+    password = secrets.token_hex(consts.system.SECURITY_SECRET_SIZE) if with_password else ''
 
     name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, ip)])
     san = x509.SubjectAlternativeName([x509.IPAddress(ipaddress.ip_address(ip))])
 
     basic_contraints = x509.BasicConstraints(ca=True, path_length=0)
-    now = datetime.datetime.now(datetime.UTC)
+    now = timezone.now()
     cert = (
         x509.CertificateBuilder()
         .subject_name(name)
@@ -90,32 +94,49 @@ def create_self_signed_cert(ip: str) -> tuple[str, str, str]:
         .add_extension(san, False)
         .sign(key, hashes.SHA256(), default_backend())
     )
+    
+    private_key = key.private_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PrivateFormat.TraditionalOpenSSL,
+        encryption_algorithm=serialization.BestAvailableEncryption(password.encode()) if with_password else serialization.NoEncryption(),
+    ).decode()
+    certificate = cert.public_bytes(encoding=serialization.Encoding.PEM).decode()   
 
     return (
-        key.private_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PrivateFormat.TraditionalOpenSSL,
-            encryption_algorithm=serialization.BestAvailableEncryption(password.encode()),
-        ).decode(),
-        cert.public_bytes(encoding=serialization.Encoding.PEM).decode(),
+        private_key,
+        certificate,
         password,
     )
 
 
-def create_client_sslcontext(verify: bool = True) -> ssl.SSLContext:
+def create_client_sslcontext(
+    verify: bool = True, ca_cert_file: str | None = None, ca_cert_data: str | None = None
+) -> ssl.SSLContext:
     """
     Creates a SSLContext for client connections.
 
     Args:
         verify: If True, the server certificate will be verified. (Default: True)
+        custom_cert: If provided, this will be used as the CA_BUNDLE file or directory with certificates of trusted CAs.
 
     Returns:
         A SSLContext object.
     """
-    ssl_context = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=certifi.where())
+
+    ssl_context = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH)
+
     if not verify:
         ssl_context.check_hostname = False
         ssl_context.verify_mode = ssl.VerifyMode.CERT_NONE
+    else:
+        if ca_cert_file:
+            # If custom_cert is provided, use it as the CA_BUNDLE file or directory with certificates of trusted CAs.
+            # This is the same as requests.Session.verify
+            ssl_context.load_verify_locations(cafile=ca_cert_file)
+        elif ca_cert_data:
+            # If custom_cert is provided, use it as the CA_BUNDLE file or directory with certificates of trusted CAs.
+            # This is the same as requests.Session.verify
+            ssl_context.load_verify_locations(cadata=ca_cert_data)
 
     # Disable TLS1.0 and TLS1.1, SSLv2 and SSLv3 are disabled by default
     # Next line is deprecated in Python 3.7
@@ -196,7 +217,7 @@ def secure_requests_session(*, verify: 'str|bool' = True, proxies: 'dict[str, st
             # See urllib3.poolmanager.SSL_KEYWORDS for all available keys.
             self._ssl_context = kwargs['ssl_context'] = create_client_sslcontext(verify=verify is True)
 
-            return super().init_poolmanager(*args, **kwargs)  # type: ignore
+            return super().init_poolmanager(*args, **kwargs)  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
 
         def cert_verify(self, conn: typing.Any, url: typing.Any, verify: 'str|bool', cert: typing.Any) -> None:
             """Verify a SSL certificate. This method should not be called from user
@@ -217,7 +238,7 @@ def secure_requests_session(*, verify: 'str|bool' = True, proxies: 'dict[str, st
             #     conn_kw = conn.__dict__['conn_kw']
             #     conn_kw['ssl_context'] = self.ssl_context
 
-            super().cert_verify(conn, url, verify, cert)  # type: ignore
+            super().cert_verify(conn, url, verify, cert)  # pyright: ignore[reportUnknownMemberType]
 
     session = requests.Session()
     session.mount("https://", UDSHTTPAdapter())
@@ -298,3 +319,29 @@ def generate_ssh_keypair_for_ssh(key_size: int = consts.system.SECURITY_KEY_SIZE
         .decode()
         .split()[1]
     )
+
+def convert_to_credential_token(userservice: 'models.UserService', crendential: 'types.connections.ConnectionData') -> 'types.connections.ConnectionData':
+    """
+    Creates a credentials token for the given username, password, and domain.
+    """
+    from uds.core.managers.crypto import CryptoManager
+    from uds import models
+
+    key = CryptoManager.manager().random_string(32, punctuation=False)
+    encrypted_username = CryptoManager.manager().encrypt_field_b64(crendential.username, key, 1)
+    encrypted_password = CryptoManager.manager().encrypt_field_b64(crendential.password, key, 2)
+    encrypted_domain = CryptoManager.manager().encrypt_field_b64(crendential.domain, key, 3)
+    ticket = models.TicketStore.create(
+        data={
+            'username': encrypted_username,
+            'password': encrypted_password,
+            'domain': encrypted_domain,
+        },
+        owner=userservice.uuid,
+        validity=120,
+    )
+    crendential.username = f'uds-{ticket}{key}'
+    crendential.password = ''
+    crendential.domain = ''
+
+    return crendential

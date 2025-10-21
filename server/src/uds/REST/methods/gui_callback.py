@@ -32,7 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 
-from uds.core import exceptions, types
+from uds.core import exceptions, types, consts
 from uds.core.ui import gui
 from uds.REST import Handler
 
@@ -42,9 +42,13 @@ logger = logging.getLogger(__name__)
 
 
 class Callback(Handler):
-    path = 'gui'
-    authenticated = True
-    needs_staff = True
+    """
+    API:
+        Executes a callback from the GUI. Internal use, not intended to be called from outside.
+    """
+    PATH = 'gui'
+
+    ROLE = consts.UserRole.STAFF
 
     def get(self) -> types.ui.CallbackResultType:
         if len(self._args) != 1:

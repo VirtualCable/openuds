@@ -30,85 +30,98 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import datetime
 import logging
 import typing
 
-from django.db import IntegrityError
+from django.db import IntegrityError, models
 from django.utils.translation import gettext as _
+from django.utils import timezone
 
-from uds.core import exceptions
-from uds.core.util import ensure, permissions
+from uds.core import exceptions, types
+from uds.core.util import ensure, permissions, ui as ui_utils
 from uds.core.util.model import process_uuid, sql_now
 from uds.models.calendar import Calendar
 from uds.models.calendar_rule import CalendarRule, FrequencyInfo
 from uds.REST.model import DetailHandler
 
 # Not imported at runtime, just for type checking
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
 
-class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
+@dataclasses.dataclass
+class CalendarRuleItem(types.rest.BaseRestItem):
+    id: str
+    name: str
+    comments: str
+    start: datetime.datetime
+    end: datetime.datetime | None
+    frequency: str
+    interval: int
+    duration: int
+    duration_unit: str
+    permission: int
+
+
+class CalendarRules(DetailHandler[CalendarRuleItem]):  # pylint: disable=too-many-public-methods
     """
     Detail handler for Services, whose parent is a Provider
     """
 
     @staticmethod
-    def rule_as_dict(item: CalendarRule, perm: int) -> dict[str, typing.Any]:
+    def rule_as_dict(item: CalendarRule, perm: int) -> CalendarRuleItem:
         """
         Convert a calrule db item to a dict for a rest response
         :param item: Rule item (db)
         :param perm: Permission of the object
         """
-        return {
-            'id': item.uuid,
-            'name': item.name,
-            'comments': item.comments,
-            'start': item.start,
-            'end': datetime.datetime.combine(item.end, datetime.time.max) if item.end else None,
-            'frequency': item.frequency,
-            'interval': item.interval,
-            'duration': item.duration,
-            'duration_unit': item.duration_unit,
-            'permission': perm,
-        }
+        return CalendarRuleItem(
+            id=item.uuid,
+            name=item.name,
+            comments=item.comments,
+            start=item.start,
+            end=timezone.make_aware(datetime.datetime.combine(item.end, datetime.time.max)) if item.end else None,
+            frequency=item.frequency,
+            interval=item.interval,
+            duration=item.duration,
+            duration_unit=item.duration_unit,
+            permission=perm,
+        )
 
-    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
+    def get_items(
+        self, parent: 'models.Model', item: typing.Optional[str]
+    ) -> types.rest.ItemsResult[CalendarRuleItem]:
         parent = ensure.is_instance(parent, Calendar)
         # Check what kind of access do we have to parent provider
         perm = permissions.effective_permissions(self._user, parent)
         try:
             if item is None:
-                return [CalendarRules.rule_as_dict(k, perm) for k in parent.rules.all()]
+                return [CalendarRules.rule_as_dict(k, perm) for k in self.filter_queryset(parent.rules.all())]
             k = parent.rules.get(uuid=process_uuid(item))
             return CalendarRules.rule_as_dict(k, perm)
+        except CalendarRule.DoesNotExist:
+            raise exceptions.rest.NotFound(_('Calendar rule not found: {}').format(item)) from None
         except Exception as e:
             logger.exception('itemId %s', item)
-            raise self.invalid_item_response() from e
+            raise exceptions.rest.RequestError(f'Error retrieving calendar rule: {e}') from e
 
-    def get_fields(self, parent: 'Model') -> list[typing.Any]:
+    def get_table(self, parent: 'models.Model') -> types.rest.TableInfo:
         parent = ensure.is_instance(parent, Calendar)
+        return (
+            ui_utils.TableBuilder(_('Rules of {0}').format(parent.name))
+            .text_column(name='name', title=_('Name'))
+            .datetime_column(name='start', title=_('Start'))
+            .date(name='end', title=_('End'))
+            .dict_column(name='frequency', title=_('Frequency'), dct=FrequencyInfo.literals_dict())
+            .numeric_column(name='interval', title=_('Interval'))
+            .numeric_column(name='duration', title=_('Duration'))
+            .text_column(name='comments', title=_('Comments'))
+            .build()
+        )
 
-        return [
-            {'name': {'title': _('Rule name')}},
-            {'start': {'title': _('Starts'), 'type': 'datetime'}},
-            {'end': {'title': _('Ends'), 'type': 'date'}},
-            {
-                'frequency': {
-                    'title': _('Repeats'),
-                    'type': 'dict',
-                    'dict': dict((v.name, str(v.value.title)) for v in FrequencyInfo),
-                }
-            },
-            {'interval': {'title': _('Every'), 'type': 'callback'}},
-            {'duration': {'title': _('Duration'), 'type': 'callback'}},
-            {'comments': {'title': _('Comments')}},
-        ]
-
-    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
+    def save_item(self, parent: 'models.Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, Calendar)
 
         # Extract item db fields
@@ -128,12 +141,12 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
         )
 
         if int(fields['interval']) < 1:
-            raise self.invalid_item_response('Repeat must be greater than zero')
+            raise exceptions.rest.RequestError('Repeat must be greater than zero')
 
         # Convert timestamps to datetimes
-        fields['start'] = datetime.datetime.fromtimestamp(fields['start'])
+        fields['start'] = timezone.make_aware(datetime.datetime.fromtimestamp(fields['start']))
         if fields['end'] is not None:
-            fields['end'] = datetime.datetime.fromtimestamp(fields['end'])
+            fields['end'] = timezone.make_aware(datetime.datetime.fromtimestamp(fields['end']))
 
         calendar_rule: CalendarRule
         try:
@@ -145,14 +158,14 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
                 calendar_rule.save()
                 return {'id': calendar_rule.uuid}
         except CalendarRule.DoesNotExist:
-            raise self.invalid_item_response() from None
+            raise exceptions.rest.NotFound(_('Calendar rule not found: {}').format(item)) from None
         except IntegrityError as e:  # Duplicate key probably
             raise exceptions.rest.RequestError(_('Element already exists (duplicate key error)')) from e
         except Exception as e:
             logger.exception('Saving calendar')
-            raise self.invalid_request_response(f'incorrect invocation to PUT: {e}') from e
+            raise exceptions.rest.RequestError(f'incorrect invocation to PUT: {e}') from e
 
-    def delete_item(self, parent: 'Model', item: str) -> None:
+    def delete_item(self, parent: 'models.Model', item: str) -> None:
         parent = ensure.is_instance(parent, Calendar)
         logger.debug('Deleting rule %s from %s', item, parent)
         try:
@@ -160,13 +173,8 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
             calendar_rule.calendar.modified = sql_now()
             calendar_rule.calendar.save()
             calendar_rule.delete()
+        except CalendarRule.DoesNotExist:
+            raise exceptions.rest.NotFound(_('Calendar rule not found: {}').format(item)) from None
         except Exception as e:
-            logger.exception('Exception')
-            raise self.invalid_item_response() from e
-
-    def get_title(self, parent: 'Model') -> str:
-        parent = ensure.is_instance(parent, Calendar)
-        try:
-            return _('Rules of {0}').format(parent.name)
-        except Exception:
-            return _('Current rules')
+            logger.error('Error deleting calendar rule %s from %s', item, parent)
+            raise exceptions.rest.RequestError(f'Error deleting calendar rule: {e}') from e

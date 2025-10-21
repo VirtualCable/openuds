@@ -35,6 +35,7 @@ import time
 import typing
 
 from django.utils.translation import gettext, gettext_lazy as _
+from django.utils import timezone
 
 from uds.core.util.stats import counters
 
@@ -71,7 +72,9 @@ class AuthenticatorsStats(StatsReportAuto):
         interval = self.get_interval_as_hours() * 3600  # Convert to seconds
 
         start = datetime.datetime.combine(self.starting_date(), datetime.time.min)
+        start = timezone.make_aware(start)
         to = datetime.datetime.combine(self.ending_date(), datetime.time.max)
+        to = timezone.make_aware(to)
 
         for a in self.get_model_records():
             # Will show a.name on every change...

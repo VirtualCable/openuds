@@ -330,7 +330,7 @@ class Authenticator(Module):
         return ''
 
     @classmethod
-    def provides_mfa(cls: typing.Type['Authenticator']) -> bool:
+    def provides_mfa_identifier(cls: typing.Type['Authenticator']) -> bool:
         """
         Returns if this authenticator provides a MFA identifier
         """

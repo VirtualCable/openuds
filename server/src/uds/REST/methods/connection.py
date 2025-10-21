@@ -30,15 +30,16 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import datetime
 import logging
 import typing
 
-from uds.core import exceptions, types
+from django.utils import timezone
+
+from uds.core import exceptions, types, consts
 from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.exceptions.services import ServiceNotReadyError
-from uds.core.util.rest.tools import match
+from uds.core.util.rest.tools import match_args
 from uds.REST import Handler
 from uds.web.util import services
 
@@ -51,9 +52,7 @@ class Connection(Handler):
     Processes actor requests
     """
 
-    authenticated = True  # Actor requests are not authenticated
-    needs_admin = False
-    needs_staff = False
+    ROLE = consts.UserRole.USER
 
     @staticmethod
     def result(
@@ -69,7 +68,7 @@ class Connection(Handler):
         :return: A dictionary, suitable for response to Caller
         """
         result = result if result is not None else ''
-        res = {'result': result, 'date': datetime.datetime.now()}
+        res = {'result': result, 'date': timezone.localtime()}
         if error:
             if isinstance(error, int):
                 error = types.errors.Error.from_int(error).message
@@ -87,7 +86,7 @@ class Connection(Handler):
         # Ensure user is present on request, used by web views methods
         self._request.user = self._user
 
-        return Connection.result(result=services.get_services_info_dict(self._request))
+        return Connection.result(result=self.filter_data(services.get_services_info_dict(self._request)))
 
     def connection(self, id_service: str, id_transport: str, skip: str = '') -> dict[str, typing.Any]:
         skip_check = skip in ('doNotCheck', 'do_not_check', 'no_check', 'nocheck', 'skip_check')
@@ -179,7 +178,7 @@ class Connection(Handler):
         def error() -> dict[str, typing.Any]:
             raise exceptions.rest.RequestError('Invalid Request')
 
-        return match(
+        return match_args(
             self._args,
             error,
             ((), self.service_list),

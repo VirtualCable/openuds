@@ -36,6 +36,8 @@ import datetime
 from ...utils.test import UDSTestCase
 from ...fixtures import services as services_fixtures
 
+from django.utils import timezone
+
 from uds.models import UserService
 from uds.core.types.states import State
 from uds.workers.stuck_cleaner import StuckCleaner
@@ -56,7 +58,7 @@ class StuckCleanerTest(UDSTestCase):
         self.userServices = services_fixtures.create_db_assigned_userservices(count=128)
         # Set state date of all to 2 days ago
         for i, us in enumerate(self.userServices):
-            us.state_date = datetime.datetime.now() - datetime.timedelta(days=2)
+            us.state_date = timezone.localtime() - datetime.timedelta(days=2)
             # one fourth has to_be_removed property set and state to State.PREPARING
             if i % 4 == 0:
                 us.destroy_after = True  # this is a property, not a field
@@ -88,7 +90,7 @@ class StuckCleanerTest(UDSTestCase):
     def test_worker_not_outdated(self) -> None:
         # Fix state_date to be less than 1 day for all user services
         for us in self.userServices:
-            us.state_date = datetime.datetime.now() - datetime.timedelta(
+            us.state_date = timezone.localtime() - datetime.timedelta(
                 hours=23, minutes=59
             )
             us.save(update_fields=['state_date'])

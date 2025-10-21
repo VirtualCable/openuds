@@ -30,19 +30,19 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import datetime
 import logging
 import typing
 
-from django.db.models import Count, Q
-from django.utils.translation import gettext
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
+from django.db.models import Model, Count, Q
 
 from uds.core import types, exceptions, consts
 from uds.core.managers.userservice import UserServiceManager
-from uds.core.ui import gui
+from uds.core import ui
 from uds.core.consts.images import DEFAULT_THUMB_BASE64
-from uds.core.util import log, permissions, ensure
+from uds.core.util import log, permissions, ensure, ui as ui_utils
 from uds.core.util.config import GlobalConfig
 from uds.core.util.model import sql_now, process_uuid
 from uds.core.types.states import State
@@ -50,23 +50,64 @@ from uds.models import Account, Image, OSManager, Service, ServicePool, ServiceP
 from uds.REST.model import ModelHandler
 
 from .op_calendars import AccessCalendars, ActionsCalendars
-from .services import Services
-from .user_services import AssignedService, CachedService, Changelog, Groups, Publications, Transports
+from .services import Services, ServiceInfo
+from .user_services import AssignedUserService, CachedService, Changelog, Groups, Publications, Transports
 
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
 
-class ServicesPools(ModelHandler):
+@dataclasses.dataclass
+class ServicePoolItem(types.rest.BaseRestItem):
+    id: str
+    name: str
+    short_name: str
+    tags: typing.List[str]
+    parent: str
+    parent_type: str
+    comments: str
+    state: str
+    thumb: str
+    account: str
+    account_id: str | None
+    service_id: str
+    provider_id: str
+    image_id: str | None
+    initial_srvs: int
+    cache_l1_srvs: int
+    cache_l2_srvs: int
+    max_srvs: int
+    show_transports: bool
+    visible: bool
+    allow_users_remove: bool
+    allow_users_reset: bool
+    ignores_unused: bool
+    fallbackAccess: str
+    meta_member: list[dict[str, str]]
+    calendar_message: str
+    custom_message: str
+    display_custom_message: bool
+    osmanager_id: str | None
+
+    user_services_count: int | types.rest.NotRequired = types.rest.NotRequired.field()
+    user_services_in_preparation: int | types.rest.NotRequired = types.rest.NotRequired.field()
+    restrained: bool | types.rest.NotRequired = types.rest.NotRequired.field()
+    permission: types.permissions.PermissionType | types.rest.NotRequired = types.rest.NotRequired.field()
+    info: ServiceInfo | types.rest.NotRequired = types.rest.NotRequired.field()
+    pool_group_id: str | None | types.rest.NotRequired = types.rest.NotRequired.field()
+    pool_group_name: str | types.rest.NotRequired = types.rest.NotRequired.field()
+    pool_group_thumb: str | types.rest.NotRequired = types.rest.NotRequired.field()
+    usage: str | types.rest.NotRequired = types.rest.NotRequired.field()
+
+
+class ServicesPools(ModelHandler[ServicePoolItem]):
     """
     Handles Services Pools REST requests
     """
 
-    model = ServicePool
-    detail = {
-        'services': AssignedService,
+    MODEL = ServicePool
+    DETAIL = {
+        'services': AssignedUserService,
         'cache': CachedService,
         'servers': CachedService,  # Alias for cache, but will change in a future release
         'groups': Groups,
@@ -77,7 +118,7 @@ class ServicesPools(ModelHandler):
         'actions': ActionsCalendars,
     }
 
-    save_fields = [
+    FIELDS_TO_SAVE = [
         'name',
         'short_name',
         'comments',
@@ -102,36 +143,41 @@ class ServicesPools(ModelHandler):
         'state:_',  # Optional field, defaults to Nothing (to apply default or existing value)
     ]
 
-    remove_fields = ['osmanager_id', 'service_id']
+    EXCLUDED_FIELDS = ['osmanager_id', 'service_id']
 
-    table_title = _('Service Pools')
-    table_fields = [
-        {'name': {'title': _('Name')}},
-        {'state': {'title': _('Status'), 'type': 'dict', 'dict': State.literals_dict()}},
-        {'user_services_count': {'title': _('User services'), 'type': 'number'}},
-        {'user_services_in_preparation': {'title': _('In Preparation')}},
-        {'usage': {'title': _('Usage')}},
-        {'visible': {'title': _('Visible'), 'type': 'callback'}},
-        {'show_transports': {'title': _('Shows transports'), 'type': 'callback'}},
-        {'pool_group_name': {'title': _('Pool group')}},
-        {'parent': {'title': _('Parent service')}},
-        {'tags': {'title': _('tags'), 'visible': False}},
-    ]
-    # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
-    table_row_style = types.ui.RowStyleInfo(prefix='row-state-', field='state')
+    TABLE = (
+        ui_utils.TableBuilder(_('Service Pools'))
+        .text_column(name='name', title=_('Name'))
+        .dict_column(name='state', title=_('Status'), dct=State.literals_dict())
+        .numeric_column(name='user_services_count', title=_('User services'))
+        .numeric_column(name='user_services_in_preparation', title=_('In Preparation'))
+        .text_column(name='usage', title=_('Usage'))
+        .boolean(name='visible', title=_('Visible'))
+        .boolean(name='show_transports', title=_('Shows transports'))
+        .text_column(name='pool_group_name', title=_('Pool group'))
+        .text_column(name='parent', title=_('Parent service'))
+        .text_column(name='tags', title=_('tags'), visible=False)
+        .row_style(prefix='row-state-', field='state')
+        .build()
+    )
 
-    custom_methods = [
-        ('set_fallback_access', True),
-        ('get_fallback_access', True),
-        ('actions_list', True),
-        ('list_assignables', True),
-        ('create_from_assignable', True),
-        ('add_log', True),
+    CUSTOM_METHODS = [
+        types.rest.ModelCustomMethod('set_fallback_access', True),
+        types.rest.ModelCustomMethod('get_fallback_access', True),
+        types.rest.ModelCustomMethod('actions_list', True),
+        types.rest.ModelCustomMethod('list_assignables', True),
+        types.rest.ModelCustomMethod('create_from_assignable', True),
+        types.rest.ModelCustomMethod('add_log', True),
     ]
+
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        typed=types.rest.api.RestApiInfoGuiType.SINGLE_TYPE,
+    )
 
     def get_items(
         self, *args: typing.Any, **kwargs: typing.Any
-    ) -> typing.Generator[types.rest.ItemDictType, None, None]:
+    ) -> typing.Generator[ServicePoolItem, None, None]:
         # Optimized query, due that there is a lot of info needed for theee
         d = sql_now() - datetime.timedelta(seconds=GlobalConfig.RESTRAINT_TIME.as_int())
         return super().get_items(
@@ -178,7 +224,7 @@ class ServicesPools(ModelHandler):
         # return super().get_items(overview=kwargs.get('overview', True), prefetch=['service', 'service__provider', 'servicesPoolGroup', 'image', 'tags'])
         # return super(ServicesPools, self).get_items(*args, **kwargs)
 
-    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
+    def get_item(self, item: 'Model') -> ServicePoolItem:
         item = ensure.is_instance(item, ServicePool)
         summary = 'summarize' in self._params
         # if item does not have an associated service, hide it (the case, for example, for a removed service)
@@ -199,78 +245,76 @@ class ServicesPools(ModelHandler):
         # This needs a lot of queries, and really does not apport anything important to the report
         # elif UserServiceManager.manager().canInitiateServiceFromDeployedService(item) is False:
         #     state = State.SLOWED_DOWN
-        val: dict[str, typing.Any] = {
-            'id': item.uuid,
-            'name': item.name,
-            'short_name': item.short_name,
-            'tags': [tag.tag for tag in item.tags.all()],
-            'parent': item.service.name,
-            'parent_type': item.service.data_type,
-            'comments': item.comments,
-            'state': state,
-            'thumb': item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64,
-            'account': item.account.name if item.account is not None else '',
-            'account_id': item.account.uuid if item.account is not None else None,
-            'service_id': item.service.uuid,
-            'provider_id': item.service.provider.uuid,
-            'image_id': item.image.uuid if item.image is not None else None,
-            'initial_srvs': item.initial_srvs,
-            'cache_l1_srvs': item.cache_l1_srvs,
-            'cache_l2_srvs': item.cache_l2_srvs,
-            'max_srvs': item.max_srvs,
-            'show_transports': item.show_transports,
-            'visible': item.visible,
-            'allow_users_remove': item.allow_users_remove,
-            'allow_users_reset': item.allow_users_reset,
-            'ignores_unused': item.ignores_unused,
-            'fallbackAccess': item.fallbackAccess,
-            'meta_member': [
-                {'id': i.meta_pool.uuid, 'name': i.meta_pool.name} for i in item.memberOfMeta.all()
-            ],
-            'calendar_message': item.calendar_message,
-            'custom_message': item.custom_message,
-            'display_custom_message': item.display_custom_message,
-        }
+        val: ServicePoolItem = ServicePoolItem(
+            id=item.uuid,
+            name=item.name,
+            short_name=item.short_name,
+            tags=[tag.tag for tag in item.tags.all()],
+            parent=item.service.name,
+            parent_type=item.service.data_type,
+            comments=item.comments,
+            state=state,
+            thumb=item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64,
+            account=item.account.name if item.account is not None else '',
+            account_id=item.account.uuid if item.account is not None else None,
+            service_id=item.service.uuid,
+            provider_id=item.service.provider.uuid,
+            image_id=item.image.uuid if item.image is not None else None,
+            initial_srvs=item.initial_srvs,
+            cache_l1_srvs=item.cache_l1_srvs,
+            cache_l2_srvs=item.cache_l2_srvs,
+            max_srvs=item.max_srvs,
+            show_transports=item.show_transports,
+            visible=item.visible,
+            allow_users_remove=item.allow_users_remove,
+            allow_users_reset=item.allow_users_reset,
+            ignores_unused=item.ignores_unused,
+            fallbackAccess=item.fallbackAccess,
+            meta_member=[{'id': i.meta_pool.uuid, 'name': i.meta_pool.name} for i in item.memberOfMeta.all()],
+            calendar_message=item.calendar_message,
+            custom_message=item.custom_message,
+            display_custom_message=item.display_custom_message,
+            osmanager_id=item.osmanager.uuid if item.osmanager else None,
+        )
+        if summary:
+            return val
 
-        # Extended info
-        if not summary:
-            if hasattr(item, 'valid_count'):
-                valid_count = getattr(item, 'valid_count')
-                preparing_count = getattr(item, 'preparing_count')
-                restrained = getattr(item, 'error_count') >= GlobalConfig.RESTRAINT_COUNT.as_int()
-                usage_count = getattr(item, 'usage_count')
-            else:
-                valid_count = item.userServices.exclude(state__in=State.INFO_STATES).count()
-                preparing_count = item.userServices.filter(state=State.PREPARING).count()
-                restrained = item.is_restrained()
-                usage_count = -1
+        if hasattr(item, 'valid_count'):
+            valid_count = getattr(item, 'valid_count')
+            preparing_count = getattr(item, 'preparing_count')
+            restrained = getattr(item, 'error_count') >= GlobalConfig.RESTRAINT_COUNT.as_int()
+            usage_count = getattr(item, 'usage_count')
+        else:
+            valid_count = item.userServices.exclude(state__in=State.INFO_STATES).count()
+            preparing_count = item.userServices.filter(state=State.PREPARING).count()
+            restrained = item.is_restrained()
+            usage_count = -1
 
-            poolgroup_id = None
-            poolgroup_name = _('Default')
-            poolgroup_thumb = DEFAULT_THUMB_BASE64
-            if item.servicesPoolGroup is not None:
-                poolgroup_id = item.servicesPoolGroup.uuid
-                poolgroup_name = item.servicesPoolGroup.name
-                if item.servicesPoolGroup.image is not None:
-                    poolgroup_thumb = item.servicesPoolGroup.image.thumb64
+        poolgroup_id = None
+        poolgroup_name = _('Default')
+        poolgroup_thumb = DEFAULT_THUMB_BASE64
+        if item.servicesPoolGroup is not None:
+            poolgroup_id = item.servicesPoolGroup.uuid
+            poolgroup_name = item.servicesPoolGroup.name
+            if item.servicesPoolGroup.image is not None:
+                poolgroup_thumb = item.servicesPoolGroup.image.thumb64
 
-            val['user_services_count'] = valid_count
-            val['user_services_in_preparation'] = preparing_count
-            val['restrained'] = restrained
-            val['permission'] = permissions.effective_permissions(self._user, item)
-            val['info'] = Services.service_info(item.service)
-            val['pool_group_id'] = poolgroup_id
-            val['pool_group_name'] = poolgroup_name
-            val['pool_group_thumb'] = poolgroup_thumb
-            val['usage'] = str(item.usage(usage_count).percent) + '%'
-
-        if item.osmanager:
-            val['osmanager_id'] = item.osmanager.uuid
+        val.thumb = item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64
+        val.user_services_count = valid_count
+        val.user_services_in_preparation = preparing_count
+        val.tags = [tag.tag for tag in item.tags.all()]
+        val.restrained = restrained
+        val.permission = permissions.effective_permissions(self._user, item)
+        val.info = Services.service_info(item.service)
+        val.pool_group_id = poolgroup_id
+        val.pool_group_name = poolgroup_name
+        val.pool_group_thumb = poolgroup_thumb
+        val.usage = str(item.usage(usage_count).percent) + '%'
 
         return val
 
     # Gui related
-    def get_gui(self, type_: str) -> list[typing.Any]:
+    def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
         # if OSManager.objects.count() < 1:  # No os managers, can't create db
         #    raise exceptions.rest.ResponseError(gettext('Create at least one OS Manager before creating a new service pool'))
         if Service.objects.count() < 1:
@@ -278,202 +322,148 @@ class ServicesPools(ModelHandler):
                 gettext('Create at least a service before creating a new service pool')
             )
 
-        g = self.add_default_fields([], ['name', 'comments', 'tags'])
-
-        for f in [
-            {
-                'name': 'short_name',
-                'type': 'text',
-                'label': _('Short name'),
-                'tooltip': _('Short name for user service visualization'),
-                'required': False,
-                'length': 64,
-                'order': 0 - 95,
-            },
-            {
-                'name': 'service_id',
-                'choices': [gui.choice_item('', '')]
-                + gui.sorted_choices(
-                    [gui.choice_item(v.uuid, v.provider.name + '\\' + v.name) for v in Service.objects.all()]
+        gui = (
+            (
+                ui_utils.GuiBuilder()
+                .add_stock_field(types.rest.stock.StockField.NAME)
+                .add_stock_field(types.rest.stock.StockField.COMMENTS)
+                .add_stock_field(types.rest.stock.StockField.TAGS)
+            )
+            .set_order(-95)
+            .add_text(
+                name='short_name',
+                label=gettext('Short name'),
+                tooltip=gettext('Short name for user service visualization'),
+                length=32,
+            )
+            .set_order(100)
+            .add_choice(
+                name='service_id',
+                choices=[ui.gui.choice_item('', '')]
+                + ui.gui.sorted_choices(
+                    [ui.gui.choice_item(v.uuid, v.provider.name + '\\' + v.name) for v in Service.objects.all()]
                 ),
-                'label': gettext('Base service'),
-                'tooltip': gettext('Service used as base of this service pool'),
-                'type': types.ui.FieldType.CHOICE,
-                'readonly': True,
-                'order': 100,  # Ensures is At end
-            },
-            {
-                'name': 'osmanager_id',
-                'choices': [gui.choice_item(-1, '')]
-                + gui.sorted_choices([gui.choice_item(v.uuid, v.name) for v in OSManager.objects.all()]),
-                'label': gettext('OS Manager'),
-                'tooltip': gettext('OS Manager used as base of this service pool'),
-                'type': types.ui.FieldType.CHOICE,
-                'readonly': True,
-                'order': 101,
-            },
-            {
-                'name': 'allow_users_remove',
-                'value': False,
-                'label': gettext('Allow removal by users'),
-                'tooltip': gettext(
-                    'If active, the user will be allowed to remove the service "manually". Be careful with this, because the user will have the "power" to delete it\'s own service'
-                ),
-                'type': types.ui.FieldType.CHECKBOX,
-                'order': 111,
-                'tab': gettext('Advanced'),
-            },
-            {
-                'name': 'allow_users_reset',
-                'value': False,
-                'label': gettext('Allow reset by users'),
-                'tooltip': gettext('If active, the user will be allowed to reset the service'),
-                'type': types.ui.FieldType.CHECKBOX,
-                'order': 112,
-                'tab': gettext('Advanced'),
-            },
-            {
-                'name': 'ignores_unused',
-                'value': False,
-                'label': gettext('Ignores unused'),
-                'tooltip': gettext(
-                    'If the option is enabled, UDS will not attempt to detect and remove the user services assigned but not in use.'
-                ),
-                'type': types.ui.FieldType.CHECKBOX,
-                'order': 113,
-                'tab': gettext('Advanced'),
-            },
-            {
-                'name': 'visible',
-                'value': True,
-                'label': gettext('Visible'),
-                'tooltip': gettext('If active, transport will be visible for users'),
-                'type': types.ui.FieldType.CHECKBOX,
-                'order': 107,
-                'tab': gettext('Display'),
-            },
-            {
-                'name': 'image_id',
-                'choices': [gui.choice_image(-1, '--------', DEFAULT_THUMB_BASE64)]
-                + gui.sorted_choices(
-                    [gui.choice_image(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]
-                ),
-                'label': gettext('Associated Image'),
-                'tooltip': gettext('Image assocciated with this service'),
-                'type': types.ui.FieldType.IMAGECHOICE,
-                'order': 120,
-                'tab': gettext('Display'),
-            },
-            {
-                'name': 'pool_group_id',
-                'choices': [gui.choice_image(-1, _('Default'), DEFAULT_THUMB_BASE64)]
-                + gui.sorted_choices(
-                    [gui.choice_image(v.uuid, v.name, v.thumb64) for v in ServicePoolGroup.objects.all()]
-                ),
-                'label': gettext('Pool group'),
-                'tooltip': gettext('Pool group for this pool (for pool classify on display)'),
-                'type': types.ui.FieldType.IMAGECHOICE,
-                'order': 121,
-                'tab': gettext('Display'),
-            },
-            {
-                'name': 'calendar_message',
-                'value': '',
-                'label': gettext('Calendar access denied text'),
-                'tooltip': gettext(
-                    'Custom message to be shown to users if access is limited by calendar rules.'
-                ),
-                'type': types.ui.FieldType.TEXT,
-                'order': 122,
-                'tab': gettext('Display'),
-            },
-            {
-                'name': 'custom_message',
-                'value': '',
-                'label': gettext('Custom launch message text'),
-                'tooltip': gettext(
+                label=gettext('Base service'),
+                tooltip=gettext('Service used as base of this service pool'),
+                readonly=True,
+            )
+            .add_choice(
+                name='osmanager_id',
+                choices=[ui.gui.choice_item(-1, '')]
+                + ui.gui.sorted_choices([ui.gui.choice_item(v.uuid, v.name) for v in OSManager.objects.all()]),
+                label=gettext('OS Manager'),
+                tooltip=gettext('OS Manager used as base of this service pool'),
+                readonly=True,
+            )
+            .add_checkbox(
+                name='publish_on_save',
+                default=True,
+                label=gettext('Publish on save'),
+                tooltip=gettext('If active, the service will be published when saved'),
+            )
+            .new_tab(types.ui.Tab.DISPLAY)
+            .add_checkbox(
+                name='visible',
+                default=True,
+                label=gettext('Visible'),
+                tooltip=gettext('If active, transport will be visible for users'),
+            )
+            .add_image_choice()
+            .add_image_choice(
+                name='pool_group_id',
+                choices=[
+                    ui.gui.choice_image(v.uuid, v.name, v.thumb64) for v in ServicePoolGroup.objects.all()
+                ],
+                label=gettext('Pool group'),
+                tooltip=gettext('Pool group for this pool (for pool classify on display)'),
+            )
+            .add_text(
+                name='calendar_message',
+                label=gettext('Calendar access denied text'),
+                tooltip=gettext('Custom message to be shown to users if access is limited by calendar rules.'),
+            )
+            .add_text(
+                name='custom_message',
+                label=gettext('Custom launch message text'),
+                tooltip=gettext(
                     'Custom message to be shown to users, if active, when trying to start a service from this pool.'
                 ),
-                'type': types.ui.FieldType.TEXT,
-                'order': 123,
-                'tab': gettext('Display'),
-            },
-            {
-                'name': 'display_custom_message',
-                'value': False,
-                'label': gettext('Enable custom launch message'),
-                'tooltip': gettext('If active, the custom launch message will be shown to users'),
-                'type': types.ui.FieldType.CHECKBOX,
-                'order': 124,
-                'tab': gettext('Display'),
-            },
-            {
-                'name': 'initial_srvs',
-                'value': '0',
-                'min_value': '0',
-                'label': gettext('Initial available services'),
-                'tooltip': gettext('Services created initially for this service pool'),
-                'type': types.ui.FieldType.NUMERIC,
-                'order': 130,
-                'tab': gettext('Availability'),
-            },
-            {
-                'name': 'cache_l1_srvs',
-                'value': '0',
-                'min_value': '0',
-                'label': gettext('Services to keep in cache'),
-                'tooltip': gettext('Services kept in cache for improved user service assignation'),
-                'type': types.ui.FieldType.NUMERIC,
-                'order': 131,
-                'tab': gettext('Availability'),
-            },
-            {
-                'name': 'cache_l2_srvs',
-                'value': '0',
-                'min_value': '0',
-                'label': gettext('Services to keep in L2 cache'),
-                'tooltip': gettext('Services kept in cache of level2 for improved service generation'),
-                'type': types.ui.FieldType.NUMERIC,
-                'order': 132,
-                'tab': gettext('Availability'),
-            },
-            {
-                'name': 'max_srvs',
-                'value': '0',
-                'min_value': '0',
-                'label': gettext('Maximum number of services to provide'),
-                'tooltip': gettext(
-                    'Maximum number of service (assigned and L1 cache) that can be created for this service'
+            )
+            .add_checkbox(
+                name='display_custom_message',
+                default=False,
+                label=gettext('Enable custom launch message'),
+                tooltip=gettext('If active, the custom launch message will be shown to users'),
+            )
+            .new_tab(gettext('Availability'))
+            .add_numeric(
+                name='initial_srvs',
+                default=0,
+                min_value=0,
+                label=gettext('Initial available services'),
+                tooltip=gettext('Services created initially for this service pool'),
+            )
+            .add_numeric(
+                name='cache_l1_srvs',
+                default=0,
+                min_value=0,
+                label=gettext('Services to keep in cache'),
+                tooltip=gettext('Services kept in cache for improved user service assignation'),
+            )
+            .add_numeric(
+                name='cache_l2_srvs',
+                default=0,
+                min_value=0,
+                label=gettext('Services to keep in L2 cache'),
+                tooltip=gettext('Services kept in cache of level2 for improved service assignation'),
+            )
+            .add_numeric(
+                name='max_srvs',
+                default=0,
+                min_value=0,
+                label=gettext('Max services per user'),
+                tooltip=gettext('Maximum number of services that can be assigned to a user from this pool'),
+            )
+            .add_checkbox(
+                name='show_transports',
+                default=False,
+                label=gettext('Show transports'),
+                tooltip=gettext('If active, transports will be shown to users'),
+            )
+            .new_tab(types.ui.Tab.ADVANCED)
+            .add_checkbox(
+                name='allow_users_remove',
+                default=False,
+                label=gettext('Allow removal by users'),
+                tooltip=gettext(
+                    'If active, the user will be allowed to remove the service "manually". Be careful with this, because the user will have the "power" to delete its own service'
                 ),
-                'type': types.ui.FieldType.NUMERIC,
-                'order': 133,
-                'tab': gettext('Availability'),
-            },
-            {
-                'name': 'show_transports',
-                'value': True,
-                'label': gettext('Show transports'),
-                'tooltip': gettext('If active, alternative transports for user will be shown'),
-                'type': types.ui.FieldType.CHECKBOX,
-                'tab': gettext('Advanced'),
-                'order': 130,
-            },
-            {
-                'name': 'account_id',
-                'choices': [gui.choice_item(-1, '')]
-                + gui.sorted_choices([gui.choice_item(v.uuid, v.name) for v in Account.objects.all()]),
-                'label': gettext('Accounting'),
-                'tooltip': gettext('Account associated to this service pool'),
-                'type': types.ui.FieldType.CHOICE,
-                'tab': gettext('Advanced'),
-                'order': 131,
-            },
-        ]:
-            self.add_field(g, f)
+            )
+            .add_checkbox(
+                name='allow_users_reset',
+                default=False,
+                label=gettext('Allow reset by users'),
+                tooltip=gettext('If active, the user will be allowed to reset the service'),
+            )
+            .add_checkbox(
+                name='ignores_unused',
+                default=False,
+                label=gettext('Ignores unused'),
+                tooltip=gettext(
+                    'If the option is enabled, UDS will not attempt to detect and remove the user services assigned but not in use.'
+                ),
+            )
+            .add_choice(
+                name='account_id',
+                choices=[ui.gui.choice_item('', '')]
+                + ui.gui.sorted_choices([ui.gui.choice_item(v.uuid, v.name) for v in Account.objects.all()]),
+                label=gettext('Account'),
+                tooltip=gettext('Account used for this service pool'),
+                readonly=True,
+            )
+        )
+        return gui.build()
 
-        return g
-
-    # pylint: disable=too-many-statements
     def pre_save(self, fields: dict[str, typing.Any]) -> None:
         # logger.debug(self._params)
 
@@ -505,7 +495,9 @@ class ServicesPools(ModelHandler):
                         fields['osmanager_id'] = osmanager.id
                     except Exception:
                         if fields.get('state') != State.LOCKED:
-                            raise exceptions.rest.RequestError(gettext('This service requires an OS Manager')) from None
+                            raise exceptions.rest.RequestError(
+                                gettext('This service requires an OS Manager')
+                            ) from None
                         del fields['osmanager_id']
                 else:
                     del fields['osmanager_id']
@@ -536,7 +528,7 @@ class ServicesPools(ModelHandler):
                     #    fields['initial_srvs'] = min(fields['initial_srvs'], service_type.userservices_limit)
                     #    fields['cache_l1_srvs'] = min(fields['cache_l1_srvs'], service_type.userservices_limit)
             except Exception as e:
-                raise exceptions.rest.RequestError(gettext('This parameters provided are not valid')) from e
+                raise exceptions.rest.RequestError(gettext('This service requires an OS Manager')) from e
 
             # If max < initial or cache_1 or cache_l2
             fields['max_srvs'] = max(
@@ -550,36 +542,36 @@ class ServicesPools(ModelHandler):
             # *** ACCOUNT ***
             account_id = fields['account_id']
             fields['account_id'] = None
+            logger.debug('Account id: %s', account_id)
 
-            if account_id and account_id != '-1':
-                logger.debug('Account id: %s', account_id)
+            if account_id != '-1':
                 try:
                     fields['account_id'] = Account.objects.get(uuid=process_uuid(account_id)).id
                 except Exception:
-                    logger.warning('Getting account ID: %s %s', account_id)
+                    logger.exception('Getting account ID')
 
             # **** IMAGE ***
             image_id = fields['image_id']
             fields['image_id'] = None
-            if image_id and image_id != '-1':
-                logger.debug('Image id: %s', image_id)
-                try:
+            logger.debug('Image id: %s', image_id)
+            try:
+                if image_id != '-1':
                     image = Image.objects.get(uuid=process_uuid(image_id))
                     fields['image_id'] = image.id
-                except Exception:
-                    logger.warning('At image recovering: %s', image_id)
+            except Exception:
+                logger.exception('At image recovering')
 
             # Servicepool Group
             pool_group_id = fields['pool_group_id']
             del fields['pool_group_id']
             fields['servicesPoolGroup_id'] = None
-            if pool_group_id and pool_group_id != '-1':
-                logger.debug('pool_group_id: %s', pool_group_id)
-                try:
+            logger.debug('pool_group_id: %s', pool_group_id)
+            try:
+                if pool_group_id != '-1':
                     spgrp = ServicePoolGroup.objects.get(uuid=process_uuid(pool_group_id))
                     fields['servicesPoolGroup_id'] = spgrp.id
-                except Exception:
-                    logger.warning('At service pool group recovering: %s', pool_group_id)
+            except Exception:
+                logger.exception('At service pool group recovering')
 
         except (exceptions.rest.RequestError, exceptions.rest.ResponseError):
             raise
@@ -614,7 +606,7 @@ class ServicesPools(ModelHandler):
     # Set fallback status
     def set_fallback_access(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)
-        self.ensure_has_access(item, types.permissions.PermissionType.MANAGEMENT)
+        self.check_access(item, types.permissions.PermissionType.MANAGEMENT)
 
         fallback = self._params.get('fallbackAccess', self.params.get('fallback', None))
         if fallback:
@@ -683,7 +675,7 @@ class ServicesPools(ModelHandler):
     def create_from_assignable(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)
         if 'user_id' not in self._params or 'assignable_id' not in self._params:
-            return self.invalid_request_response('Invalid parameters')
+            raise exceptions.rest.RequestError('Invalid parameters')
 
         logger.debug('Creating from assignable: %s', self._params)
         UserServiceManager.manager().create_from_assignable(
@@ -697,10 +689,10 @@ class ServicesPools(ModelHandler):
     def add_log(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)
         if 'message' not in self._params:
-            return self.invalid_request_response('Invalid parameters')
+            raise exceptions.rest.RequestError('Invalid parameters')
         if 'level' not in self._params:
-            return self.invalid_request_response('Invalid parameters')
-        
+            raise exceptions.rest.RequestError('Invalid parameters')
+
         log.log(
             item,
             level=types.log.LogLevel.from_str(self._params['level']),
@@ -708,4 +700,3 @@ class ServicesPools(ModelHandler):
             source=types.log.LogSource.REST,
             log_name=self._params.get('log_name', None),
         )
-        

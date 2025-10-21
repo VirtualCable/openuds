@@ -35,7 +35,7 @@ import struct
 import array
 import typing
 
-from uds.core import types
+from uds.core import consts, types
 
 
 def list_ifaces() -> typing.Iterator[types.net.Iface]:
@@ -102,7 +102,7 @@ def list_ifaces() -> typing.Iterator[types.net.Iface]:
     for ifname in _list_ifaces():
         ip, mac = _get_iface_ip_addr(ifname), _get_iface_mac_addr(ifname)
         if (
-            mac != '00:00:00:00:00:00' and mac and ip and ip.startswith('169.254') is False
+            mac != consts.NULL_MAC and mac and ip and ip.startswith('169.254') is False
         ):  # Skips local interfaces & interfaces with no dhcp IPs
             yield types.net.Iface(name=ifname, mac=mac, ip=ip)
 

@@ -41,7 +41,6 @@ from . import (
     permissions,
     pools,
     requests,
-    rest,
     servers,
     services,
     states,
@@ -51,6 +50,7 @@ from . import (
     core,
     log,
     net,
+    rest,
 )
 
 # Log is not imported here, as it is a special case with lots of dependencies

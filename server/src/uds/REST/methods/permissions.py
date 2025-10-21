@@ -34,16 +34,16 @@ import collections.abc
 import logging
 import typing
 
+from django.db.models import Model
+
 import uds.core.types.permissions
 from uds import models
-from uds.core import exceptions
+from uds.core import consts, exceptions
 from uds.core.util import permissions
-from uds.core.util.rest.tools import match
+from uds.core.util.rest.tools import match_args
 from uds.REST import Handler
 
 # Not imported at runtime, just for type checking
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +54,7 @@ class Permissions(Handler):
     Processes permissions requests
     """
 
-    needs_admin = True
+    ROLE = consts.UserRole.ADMIN
 
     @staticmethod
     def get_class(class_name: str) -> type['Model']:
@@ -72,7 +72,6 @@ class Permissions(Handler):
             'mfa': models.MFA,
             'servers-groups': models.ServerGroup,
             'tunnels-tunnels': models.ServerGroup,  # Same as servers-groups, but different items
-            
         }.get(class_name, None)
 
         if cls is None:
@@ -95,21 +94,19 @@ class Permissions(Handler):
                 entity = perm.user
 
             # If entity is None, it means that the permission is not valid anymore (user or group deleted on db manually?)
-            if not entity:
-                continue
-
-            res.append(
-                {
-                    'id': perm.uuid,
-                    'type': kind,
-                    'auth': entity.manager.uuid,
-                    'auth_name': entity.manager.name,
-                    'entity_id': entity.uuid,
-                    'entity_name': entity.name,
-                    'perm': perm.permission,
-                    'perm_name': perm.as_str,
-                }
-            )
+            if entity:
+                res.append(
+                    {
+                        'id': perm.uuid,
+                        'type': kind,
+                        'auth': entity.manager.uuid,
+                        'auth_name': entity.manager.name,
+                        'entity_id': entity.uuid,
+                        'entity_name': entity.name,
+                        'perm': perm.permission,
+                        'perm_name': perm.as_str,
+                    }
+                )
 
         return sorted(res, key=lambda v: v['auth_name'] + v['entity_name'])
 
@@ -118,10 +115,10 @@ class Permissions(Handler):
         Processes get requests
         """
         logger.debug('Permissions args for GET: %s', self._args)
-        
+
         # Update some XXX/YYYY to XXX-YYYY (as server/groups, that is a valid class name)
         if len(self._args) == 3:
-            self._args = [self._args[0]+ '-' + self._args[1], self._args[2]]
+            self._args = [self._args[0] + '-' + self._args[1], self._args[2]]
 
         if len(self._args) != 2:
             raise exceptions.rest.RequestError('Invalid request')
@@ -136,11 +133,17 @@ class Permissions(Handler):
         Processes put requests
         """
         logger.debug('Put args: %s', self._args)
-        
+
         # Update some XXX/YYYY to XXX-YYYY (as server/groups, that is a valid class name)
         if len(self._args) == 6:
-            self._args = [self._args[0]+ '-' + self._args[1], self._args[2], self._args[3], self._args[4], self._args[5]]
-            
+            self._args = [
+                self._args[0] + '-' + self._args[1],
+                self._args[2],
+                self._args[3],
+                self._args[4],
+                self._args[5],
+            ]
+
         if len(self._args) != 5 and len(self._args) != 1:
             raise exceptions.rest.RequestError('Invalid request')
 
@@ -169,33 +172,10 @@ class Permissions(Handler):
             raise exceptions.rest.RequestError('Invalid request')
 
         # match is a helper function that will match the args with the given patterns
-        return match(self._args,
+        return match_args(
+            self._args,
             no_match,
             (('<cls>', '<obj>', 'users', 'add', '<user>'), add_user_permission),
             (('<cls>', '<obj>', 'groups', 'add', '<group>'), add_group_permission),
-            (('revoke', ), revoke)
+            (('revoke',), revoke),
         )
-
-        # Old code: (Replaced by code above :) )
-        # if la == 5 and self._args[3] == 'add':
-        #
-        #     cls = Permissions.getClass(self._args[0])
-        #
-        #     obj = cls.objects.get(uuid=self._args[1])
-        #
-        #     if self._args[2] == 'users':
-        #         user = models.User.objects.get(uuid=self._args[4])
-        #         permissions.add_user_permission(user, obj, perm)
-        #     elif self._args[2] == 'groups':
-        #         group = models.Group.objects.get(uuid=self._args[4])
-        #         permissions.add_group_permission(group, obj, perm)
-        #     else:
-        #         raise exceptions.rest.RequestError('Ivalid request')
-        #     return Permissions.permsToDict(permissions.getPermissions(obj))
-        #
-        # if la == 1 and self._args[0] == 'revoke':
-        #     for permId in self._params.get('items', []):
-        #         permissions.revoke_permission_by_id(permId)
-        #     return []
-        #
-        # raise exceptions.rest.RequestError('Invalid request')

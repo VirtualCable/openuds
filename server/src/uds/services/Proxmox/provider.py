@@ -161,6 +161,7 @@ class ProxmoxProvider(services.ServiceProvider):
 
         if values is not None:
             self.timeout.value = validators.validate_timeout(self.timeout.value)
+            self.macs_range.value = validators.validate_mac_range(self.macs_range.value)
             logger.debug(self.host.value)
 
         # All proxmox use same UniqueId generator, even if they are different servers

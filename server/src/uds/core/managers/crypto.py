@@ -33,13 +33,20 @@ import hashlib
 import array
 import uuid
 import codecs
-import datetime
 import struct
 import re
 import string
 import logging
 import typing
 import secrets
+import base64
+
+
+uuid7: None|typing.Callable[[], 'uuid.UUID']
+try:
+    from edwh_uuid7 import uuid7  # type: ignore
+except ImportError:
+    uuid7 = None  # type: ignore
 
 # For password secrets
 from argon2 import PasswordHasher, Type as ArgonType
@@ -49,9 +56,11 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes, aead
+
 
 from django.conf import settings
+from django.utils import timezone
 
 from uds.core.util import singleton
 
@@ -306,10 +315,12 @@ class CryptoManager(metaclass=singleton.Singleton):
 
     def uuid(self, obj: typing.Any = None) -> str:
         """Generates an uuid from obj. (lower case)
-        If obj is None, returns an uuid based on a random string
+        If obj is None, returns a non-deterministic uuid (preferably uuid7 if available, else uuid4)
         """
-        if obj is None:
-            obj = self.random_string()
+        if obj is None:  # Non deterministic, try to use uuid7 if available
+            if uuid7 is not None:
+                return str(uuid7())
+            return str(uuid.uuid4())
         elif isinstance(obj, bytes):
             obj = obj.decode('utf8')  # To string
         else:
@@ -318,9 +329,32 @@ class CryptoManager(metaclass=singleton.Singleton):
             except Exception:
                 obj = str(hash(obj))  # Get hash of object
 
-        return str(
-            uuid.uuid5(self._namespace, obj)
-        ).lower()  # I believe uuid returns a lowercase uuid always, but in case... :)
+        return str(uuid.uuid5(self._namespace, obj))  # Uuid is always lower case
+
+    # Used to encode fields that will go inside json
+    def encrypt_field_b64(self, plaintext: str, key_ascii32: str, nonce_seq: int) -> str:
+        """
+        Cipher a `plaintext` with AES-256-GCM using `key_ascii32` (32 bytes ASCII)
+        and a nonce of 12 bytes with last one being a simple seq, starting at 1.
+
+        Args:
+            plaintext: The plaintext to encrypt.
+            key_ascii32: The 32 bytes ASCII key to use for encryption.
+            nonce_seq: The nonce sequence number (1, 2, 3...).
+
+        Returns the ciphertext+tag in standard Base64.
+        """
+        key_bytes = key_ascii32.encode("ascii")
+        if len(key_bytes) != 32:
+            raise ValueError("The key must be exactly 32 bytes ASCII")
+
+        # Nonce is 12 bytes with the last byte = nonce_seq
+        nonce = bytearray(12)
+        nonce[-1] = nonce_seq  # 1, 2, 3...
+
+        # Initialize AES-GCM
+        aesgcm = aead.AESGCM(key_bytes)
+        return base64.b64encode(aesgcm.encrypt(bytes(nonce), plaintext.encode("utf-8"), None)).decode()
 
     def random_string(self, length: int = 40, digits: bool = True, punctuation: bool = False) -> str:
         base = (
@@ -332,7 +366,7 @@ class CryptoManager(metaclass=singleton.Singleton):
 
     def unique(self) -> str:
         return hashlib.sha3_256(
-            (self.random_string(24, True) + datetime.datetime.now().strftime('%H%M%S%f')).encode()
+            (self.random_string(24, True) + timezone.localtime().strftime('%H%M%S%f')).encode()
         ).hexdigest()
 
     def sha(self, value: typing.Union[str, bytes]) -> str:

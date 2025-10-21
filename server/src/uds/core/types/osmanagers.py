@@ -40,32 +40,13 @@ class ActorData:
     name: str
     custom: dict[str, typing.Any] = dataclasses.field(default_factory=dict[str, typing.Any])
 
-    # Items to be removed. Kept for compat with 3.6 actor
-    @dataclasses.dataclass
-    class Compat:
-        username: str = ''
-        password: str = ''
-        new_password: str = ''
-        ad: str = ''
-        ou: str = ''
-
-        def as_dict(self) -> dict[str, typing.Any]:
-            return {
-                'username': self.username,
-                'password': self.password,
-                'new_password': self.new_password,
-                'ad': self.ad,
-                'ou': self.ou,
-            }
-
-    compat: Compat = dataclasses.field(default_factory=Compat)
 
     def as_dict(self) -> dict[str, typing.Any]:
         return {
             'action': self.action,
             'name': self.name,
             'custom': self.custom,
-        } | self.compat.as_dict()
+        }
 
     @staticmethod
     def null() -> 'ActorData':

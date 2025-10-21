@@ -35,9 +35,10 @@ import collections.abc
 
 from django.db import models
 from django.db.models import Q
+from django.utils import timezone
 
 from uds.core import consts, types
-from uds.core.consts import MAC_UNKNOWN
+from uds.core.consts import NULL_MAC
 from uds.core.types.requests import ExtendedHttpRequest
 from uds.core.util import net, properties, resolver
 from uds.core.util.model import sql_stamp, sql_now
@@ -231,7 +232,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     # os type of server (linux, windows, etc..)
     os_type = models.CharField(max_length=32, default=types.os.KnownOS.UNKNOWN.os_name())
     # mac address of registered server, if any. Important for VDI actor servers mainly, informative for others
-    mac = models.CharField(max_length=32, default=MAC_UNKNOWN, db_index=True)
+    mac = models.CharField(max_length=32, default=NULL_MAC, db_index=True)
     # certificate of server, if any. VDI Actors will have it's certificate on a property of the userService
     # In fact CA of the certificate, but self signed will be created most times, so it will be the certificate itself
     certificate = models.TextField(default='', blank=True)
@@ -350,6 +351,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         If it is not available, we return False, otherwise True
         """
         restrained_until = datetime.datetime.fromtimestamp(self.properties.get('available', consts.NEVER_UNIX))
+        restrained_until = timezone.make_aware(restrained_until)
         return restrained_until > sql_now()
 
     def set_restrained_until(self, value: typing.Optional[datetime.datetime] = None) -> None:
@@ -365,7 +367,8 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     def last_ping(self) -> datetime.datetime:
         """Returns the last ping of this server"""
         last: float = self.properties.get('last_ping', consts.NEVER_UNIX)
-        return datetime.datetime.fromtimestamp(last)
+        result = datetime.datetime.fromtimestamp(last)
+        return timezone.make_aware(result)
 
     @last_ping.setter
     def last_ping(self, value: datetime.datetime) -> None:

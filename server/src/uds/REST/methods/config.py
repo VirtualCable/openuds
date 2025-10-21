@@ -33,6 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import typing
 import logging
 
+from uds.core import consts
 from uds.core.util.config import Config as CfgConfig
 from uds.REST import Handler
 
@@ -42,10 +43,15 @@ logger = logging.getLogger(__name__)
 
 # Enclosed methods under /config path
 class Config(Handler):
-    needs_admin = True  # By default, staff is lower level needed
+    """
+    API:
+        Get or update UDS configuration
+    """
+
+    ROLE = consts.UserRole.ADMIN
 
     def get(self) -> typing.Any:
-        return CfgConfig.get_config_values(self.is_admin())
+        return self.filter_data(CfgConfig.get_config_values(self.is_admin()))
 
     def put(self) -> typing.Any:
         for section, section_dict in typing.cast(dict[str, dict[str, dict[str, str]]], self._params).items():
@@ -60,5 +66,11 @@ class Config(Handler):
                         self._user.name,
                     )
                 else:
-                    logger.error('Non existing config value %s.%s to %s by %s', section, key, vals['value'], self._user.name)
+                    logger.error(
+                        'Non existing config value %s.%s to %s by %s',
+                        section,
+                        key,
+                        vals['value'],
+                        self._user.name,
+                    )
         return 'done'

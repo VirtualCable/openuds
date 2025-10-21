@@ -30,13 +30,15 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import logging
 import typing
 
 from django.utils.translation import gettext_lazy as _
 
-from uds.core import types, consts
-from uds.core.util.rest.tools import match
+from uds.core import exceptions, types, consts
+from uds.core.util.rest.tools import match_args
+from uds.core.util import ui as ui_utils
 from uds.REST import model
 from uds import reports
 
@@ -58,25 +60,42 @@ VALID_PARAMS = (
 )
 
 
+@dataclasses.dataclass
+class ReportItem(types.rest.BaseRestItem):
+    id: str
+    mime_type: str
+    encoded: bool
+    group: str
+    name: str
+    description: str
+
+
 # Enclosed methods under /actor path
-class Reports(model.BaseModelHandler):
+class Reports(model.BaseModelHandler[ReportItem]):
     """
     Processes reports requests
     """
 
-    needs_admin = True  # By default, staff is lower level needed
+    ROLE = consts.UserRole.ADMIN
 
-    table_title = _('Available reports')
-    table_fields = [
-        {'group': {'title': _('Group')}},
-        {'name': {'title': _('Name')}},
-        {'description': {'title': _('Description')}},
-        {'mime_type': {'title': _('Generates')}},
-    ]
-    # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
-    table_row_style = types.ui.RowStyleInfo(prefix='row-state-', field='state')
+    TABLE = (
+        ui_utils.TableBuilder(_('Available reports'))
+        .text_column(name='group', title=_('Group'), visible=True)
+        .text_column(name='name', title=_('Name'), visible=True)
+        .text_column(name='description', title=_('Description'), visible=True)
+        .text_column(name='mime_type', title=_('Generates'), visible=True)
+        .row_style(prefix='row-state-', field='state')
+        .build()
+    )
 
-    def _locate_report(self, uuid: str, values: typing.Optional[typing.Dict[str, typing.Any]] = None) -> 'Report':
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        typed=types.rest.api.RestApiInfoGuiType.MULTIPLE_TYPES,
+    )
+
+    def _locate_report(
+        self, uuid: str, values: typing.Optional[typing.Dict[str, typing.Any]] = None
+    ) -> 'Report':
         found = None
         logger.debug('Looking for report %s', uuid)
         for i in reports.available_reports:
@@ -85,7 +104,7 @@ class Reports(model.BaseModelHandler):
                 break
 
         if not found:
-            raise self.invalid_request_response('Invalid report uuid!')
+            raise exceptions.rest.NotFound(f'Report not found: {uuid}') from None
 
         return found
 
@@ -93,21 +112,19 @@ class Reports(model.BaseModelHandler):
         logger.debug('method GET for %s, %s', self.__class__.__name__, self._args)
 
         def error() -> typing.NoReturn:
-            raise self.invalid_request_response()
+            raise exceptions.rest.RequestError('Invalid report uuid!')
 
         def report_gui(report_id: str) -> typing.Any:
             return self.get_gui(report_id)
 
-        return match(
+        return match_args(
             self._args,
             error,
-            ((), lambda: list(self.get_items())),
+            ((), lambda: list(self.filter_data(self.get_items()))),
             ((consts.rest.OVERVIEW,), lambda: list(self.get_items())),
             (
                 (consts.rest.TABLEINFO,),
-                lambda: self.process_table_fields(
-                    str(self.table_title), self.table_fields, self.table_row_style
-                ),
+                lambda: self.TABLE.as_dict(),
             ),
             ((consts.rest.GUI, '<report>'), report_gui),
         )
@@ -124,7 +141,7 @@ class Reports(model.BaseModelHandler):
         )
 
         if len(self._args) != 1:
-            raise self.invalid_request_response()
+            raise exceptions.rest.RequestError('Invalid report uuid!')
 
         report = self._locate_report(self._args[0], self._params)
 
@@ -142,23 +159,21 @@ class Reports(model.BaseModelHandler):
             return data
         except Exception as e:
             logger.exception('Generating report')
-            raise self.invalid_request_response(str(e))
+            raise exceptions.rest.RequestError(str(e)) from e
 
     # Gui related
-    def get_gui(self, type_: str) -> list[typing.Any]:
-        report = self._locate_report(type_)
-        return sorted(report.gui_description(), key=lambda f: f['gui']['order'])
+    def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
+        report = self._locate_report(for_type)
+        return sorted(report.gui_description(), key=lambda f: f.gui.order)
 
     # Returns the list of
-    def get_items(
-        self, *args: typing.Any, **kwargs: typing.Any
-    ) -> typing.Generator[types.rest.ItemDictType, None, None]:
+    def get_items(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Generator[ReportItem, None, None]:
         for i in reports.available_reports:
-            yield {
-                'id': i.get_uuid(),
-                'mime_type': i.mime_type,
-                'encoded': i.encoded,
-                'group': i.translated_group(),
-                'name': i.translated_name(),
-                'description': i.translated_description(),
-            }
+            yield ReportItem(
+                id=i.get_uuid(),
+                mime_type=i.mime_type,
+                encoded=i.encoded,
+                group=i.translated_group(),
+                name=i.translated_name(),
+                description=i.translated_description(),
+            )

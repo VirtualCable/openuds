@@ -31,16 +31,16 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import collections.abc
+import dataclasses
 import datetime
 import json
 import logging
-import time
 import typing
 
 from django.http import HttpResponse
 from django.utils.functional import Promise as DjangoPromise
 
-from uds.core import consts
+from uds.core import consts, types
 
 from .utils import to_incremental_json
 
@@ -65,9 +65,14 @@ class ContentProcessor:
     extensions: typing.ClassVar[collections.abc.Iterable[str]] = []
 
     _request: 'HttpRequest'
+    _odata: 'types.rest.api.ODataParams|None' = None
 
     def __init__(self, request: 'HttpRequest'):
         self._request = request
+        self._odata = None
+
+    def set_odata(self, odata: 'types.rest.api.ODataParams') -> None:
+        self._odata = odata
 
     def process_get_parameters(self) -> dict[str, typing.Any]:
         """
@@ -105,38 +110,63 @@ class ContentProcessor:
         yield self.render(obj).encode('utf8')
 
     @staticmethod
-    def process_for_render(obj: typing.Any) -> typing.Any:
+    def process_for_render(
+        obj: typing.Any,
+        data_transformer: collections.abc.Callable[[dict[str, typing.Any]], dict[str, typing.Any]],
+    ) -> typing.Any:
         """
         Helper for renderers. Alters some types so they can be serialized correctly (as we want them to be)
         """
-        if obj is None or isinstance(obj, (bool, int, float, str)):
-            return obj
+        match obj:
+            case types.rest.BaseRestItem():
+                return ContentProcessor.process_for_render(obj.as_dict(), data_transformer)
+            # Dataclass
+            case None | bool() | int() | float() | str():
+                return obj
+            case dict():
+                return data_transformer(
+                    {
+                        k: ContentProcessor.process_for_render(v, data_transformer)
+                        for k, v in typing.cast(dict[str, typing.Any], obj).items()
+                        if not isinstance(v, types.rest.NotRequired)  # Skip
+                    }
+                )
 
-        if isinstance(obj, DjangoPromise):
-            return str(obj)  # This is for translations
+            case DjangoPromise():
+                return str(obj)  # This is for translations
 
-        if isinstance(obj, dict):
-            return {
-                k: ContentProcessor.process_for_render(v)
-                for k, v in typing.cast(dict[str, typing.Any], obj).items()
-            }
+            case bytes():
+                return obj.decode('utf-8')
 
-        if isinstance(obj, bytes):
-            return obj.decode('utf-8')
+            case collections.abc.Iterable():
+                return [
+                    ContentProcessor.process_for_render(v, data_transformer)
+                    for v in typing.cast(collections.abc.Iterable[typing.Any], obj)
+                ]
 
-        if isinstance(obj, collections.abc.Iterable):
-            return [
-                ContentProcessor.process_for_render(v)
-                for v in typing.cast(collections.abc.Iterable[typing.Any], obj)
-            ]
+            case datetime.datetime():
+                return int(obj.timestamp())
 
-        if isinstance(obj, (datetime.datetime,)):  # Datetime as timestamp
-            return int(time.mktime(obj.timetuple()))
+            case datetime.date():
+                return '{}-{:02d}-{:02d}'.format(obj.year, obj.month, obj.day)
 
-        if isinstance(obj, (datetime.date,)):  # Date as string
-            return '{}-{:02d}-{:02d}'.format(obj.year, obj.month, obj.day)
+            case _:
+                # Any class with as_dict method shoud be processed
+                if as_dict := getattr(obj, 'as_dict', None):
+                    try:
+                        obj = as_dict()
+                        return ContentProcessor.process_for_render(obj, data_transformer)
+                    except Exception as e:
+                        # Maybe the as_dict method is not implemented as we expect.. should not happen
+                        logger.warning('Obj has as_dict method but failed to call it: %s', e)
+                        # Will return obj as str in this case, or if it is a dataclass, can return as dict
 
-        return str(obj)
+                if dataclasses.is_dataclass(obj):
+                    # If already has a "as_dict" method, use it, and if not, default
+                    obj = dataclasses.asdict(typing.cast(typing.Any, obj))
+                    return ContentProcessor.process_for_render(obj, data_transformer)
+
+                return str(obj)
 
 
 class MarshallerProcessor(ContentProcessor):
@@ -169,7 +199,11 @@ class MarshallerProcessor(ContentProcessor):
             raise ParametersException(str(e))
 
     def render(self, obj: typing.Any) -> str:
-        return self.marshaller.dumps(ContentProcessor.process_for_render(obj))
+        def none_transformer(dct: dict[str, typing.Any]) -> dict[str, typing.Any]:
+            return dct
+
+        dct_filter = none_transformer if self._odata is None else self._odata.select_filter
+        return self.marshaller.dumps(ContentProcessor.process_for_render(obj, dct_filter))
 
 
 # ---------------

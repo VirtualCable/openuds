@@ -30,87 +30,87 @@
 """
 @Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import logging
 import typing
 
-from django.utils.translation import gettext_lazy as _, gettext
+from django.utils.translation import gettext_lazy as _
+from django.db import models
+
 from uds.models import Image
 from uds.core import types
-from uds.core.util import ensure
+from uds.core.util import ensure, ui as ui_utils
 
 from uds.REST.model import ModelHandler
 
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
 # Enclosed methods under /item path
 
 
-class Images(ModelHandler):
+@dataclasses.dataclass
+class ImageItem(types.rest.BaseRestItem):
+    id: str
+    name: str
+    data: str = ''
+    size: str = ''
+    thumb: str = ''
+
+
+class Images(ModelHandler[ImageItem]):
     """
     Handles the gallery REST interface
     """
 
-    path = 'gallery'
-    model = Image
-    save_fields = ['name', 'data']
+    PATH = 'gallery'
+    MODEL = Image
+    FIELDS_TO_SAVE = ['name', 'data']
 
-    table_title = _('Image Gallery')
-    table_fields = [
-        {
-            'thumb': {
-                'title': _('Image'),
-                'visible': True,
-                'type': 'image',
-                'width': '96px',
-            }
-        },
-        {'name': {'title': _('Name')}},
-        {'size': {'title': _('Size')}},
-    ]
+    TABLE = (
+        ui_utils.TableBuilder(_('Image Gallery'))
+        .image('thumb', _('Image'), width='96px')
+        .text_column('name', _('Name'))
+        .text_column('size', _('Size'))
+        .build()
+    )
 
     def pre_save(self, fields: dict[str, typing.Any]) -> None:
         fields['image'] = fields['data']
         del fields['data']
-        #fields['data'] = Image.prepareForDb(Image.decode64(fields['data']))[2]
+        # fields['data'] = Image.prepareForDb(Image.decode64(fields['data']))[2]
 
-    def post_save(self, item: 'Model') -> None:
+    def post_save(self, item: 'models.Model') -> None:
         item = ensure.is_instance(item, Image)
         # Updates the thumbnail and re-saves it
         logger.debug('After save: item = %s', item)
-        #item.updateThumbnail()
-        #item.save()
+        # item.updateThumbnail()
+        # item.save()
 
-    def get_gui(self, type_: str) -> list[typing.Any]:
-        return self.add_field(
-            self.add_default_fields([], ['name']),
-            {
-                'name': 'data',
-                'value': '',
-                'label': gettext('Image'),
-                'tooltip': gettext('Image object'),
-                'type': types.ui.FieldType.IMAGECHOICE,
-                'order': 100,  # At end
-            },
+    # Note:
+    # This has no get_gui because its treated on the admin or client.
+    # We expect an Image List
+
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        typed=types.rest.api.RestApiInfoGuiType.UNTYPED,
+    )
+
+    def get_item(self, item: 'models.Model') -> ImageItem:
+        item = ensure.is_instance(item, Image)
+        return ImageItem(
+            id=item.uuid,
+            name=item.name,
+            data=item.data64,
         )
 
-    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
+    def get_item_summary(self, item: 'models.Model') -> ImageItem:
         item = ensure.is_instance(item, Image)
-        return {
-            'id': item.uuid,
-            'name': item.name,
-            'data': item.data64,
-        }
-
-    def item_as_dict_overview(self, item: 'Model') -> dict[str, typing.Any]:
-        item = ensure.is_instance(item, Image)
-        return {
-            'id': item.uuid,
-            'size': '{}x{}, {} bytes (thumb {} bytes)'.format(
+        return ImageItem(
+            id=item.uuid,
+            size='{}x{}, {} bytes (thumb {} bytes)'.format(
                 item.width, item.height, len(item.data), len(item.thumb)
             ),
-            'name': item.name,
-            'thumb': item.thumb64,
-        }
+            name=item.name,
+            thumb=item.thumb64,
+        )

@@ -73,7 +73,7 @@ class IPMachinesUserService(services.UserService, autoserializable.AutoSerializa
 
     def get_unique_id(self) -> str:
         # Generate a 16 chars string mixing up all _vmid chars
-        return self._mac if self._mac and self._mac != consts.MAC_UNKNOWN else self._ip
+        return self._mac if self._mac and self._mac != consts.NULL_MAC else self._ip
 
     def set_ready(self) -> types.states.TaskState:
         self.service().wakeup(self._ip, self._mac)

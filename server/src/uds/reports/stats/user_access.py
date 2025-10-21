@@ -38,6 +38,7 @@ import typing
 import django.template.defaultfilters as filters
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
 
 from uds.core.managers.stats import StatsManager
 from uds.core.reports import graphs
@@ -134,6 +135,7 @@ class StatsReportLogin(StatsReport):
             stats.events.types.stats.EventOwnerType.AUTHENTICATOR, stats.events.types.stats.EventType.LOGIN, since=start, to=end
         ):
             s = datetime.datetime.fromtimestamp(val.stamp)
+            s = timezone.make_aware(s)
             data_week[s.weekday()] += 1
             data_hour[s.hour] += 1
             data_week_hour[s.weekday()][s.hour] += 1
@@ -150,7 +152,7 @@ class StatsReportLogin(StatsReport):
         graph1 = io.BytesIO()
         
         def _tick_fnc1(l: int) -> str:
-            return filters.date(datetime.datetime.fromtimestamp(l), x_label_format)
+            return filters.date(timezone.make_aware(datetime.datetime.fromtimestamp(l)), x_label_format)
 
         x = [v[0] for v in data]
         d: dict[str, typing.Any] = {

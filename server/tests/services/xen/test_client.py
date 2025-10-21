@@ -34,10 +34,11 @@ import contextlib
 import collections.abc
 
 # import random
-import datetime
 import logging
 import time
 import typing
+
+from django.utils import timezone
 
 from uds.services.Xen.xen import (
     types as xen_types,
@@ -108,7 +109,7 @@ class TestXenClient(UDSTransactionTestCase):
         for n in range(number_of_disks):
             VDI_RECORD: dict[str, typing.Any] = {
                 'name_label': f'TEST_EMPTY_DISK_{custom_str}_{n}',
-                'name_description': f'Testing disk {datetime.datetime.now()}',  # Description
+                'name_description': f'Testing disk {timezone.localtime()}',  # Description
                 'SR': self.sr.opaque_ref,
                 'virtual_size': str(10 * 1024),  # 10 MB
                 'type': 'user',

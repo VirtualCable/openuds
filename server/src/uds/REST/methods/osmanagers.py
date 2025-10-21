@@ -31,55 +31,75 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import collections.abc
+import dataclasses
 import logging
 import typing
 
-from django.utils.translation import gettext, gettext_lazy as _
+from django.db.models import Model
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
 
 from uds.core import exceptions, osmanagers, types
 from uds.core.environment import Environment
 from uds.core.util import ensure, permissions
+from uds.core.util import ui as ui_utils
 from uds.models import OSManager
 from uds.REST.model import ModelHandler
-
-if typing.TYPE_CHECKING:
-    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
 # Enclosed methods under /osm path
 
 
-class OsManagers(ModelHandler):
-    model = OSManager
-    save_fields = ['name', 'comments', 'tags']
+@dataclasses.dataclass
+class OsManagerItem(types.rest.ManagedObjectItem[OSManager]):
+    id: str
+    name: str
+    tags: list[str]
+    deployed_count: int
+    servicesTypes: list[str]
+    comments: str
+    permission: types.permissions.PermissionType
 
-    table_title = _('OS Managers')
-    table_fields = [
-        {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
-        {'type_name': {'title': _('Type')}},
-        {'comments': {'title': _('Comments')}},
-        {'deployed_count': {'title': _('Used by'), 'type': 'numeric', 'width': '8em'}},
-        {'tags': {'title': _('tags'), 'visible': False}},
-    ]
 
-    def os_manager_as_dict(self, osm: OSManager) -> dict[str, typing.Any]:
-        type_ = osm.get_type()
-        return {
-            'id': osm.uuid,
-            'name': osm.name,
-            'tags': [tag.tag for tag in osm.tags.all()],
-            'deployed_count': osm.deployedServices.count(),
-            'type': type_.mod_type(),
-            'type_name': type_.mod_name(),
-            'servicesTypes': [
+class OsManagers(ModelHandler[OsManagerItem]):
+
+    MODEL = OSManager
+    FIELDS_TO_SAVE = ['name', 'comments', 'tags']
+
+    TABLE = (
+        ui_utils.TableBuilder(_('OS Managers'))
+        .icon(name='name', title=_('Name'))
+        .text_column(name='type_name', title=_('Type'))
+        .text_column(name='comments', title=_('Comments'))
+        .numeric_column(name='deployed_count', title=_('Used by'), width='8em')
+        .text_column(name='tags', title=_('Tags'), visible=False)
+        .build()
+    )
+
+    # Rest api related information to complete the auto-generated API
+    REST_API_INFO = types.rest.api.RestApiInfo(
+        typed=types.rest.api.RestApiInfoGuiType.MULTIPLE_TYPES,
+    )
+
+    def os_manager_as_dict(self, item: OSManager) -> OsManagerItem:
+        type_ = item.get_type()
+        ret_value = OsManagerItem(
+            id=item.uuid,
+            name=item.name,
+            tags=[tag.tag for tag in item.tags.all()],
+            deployed_count=item.deployedServices.count(),
+            servicesTypes=[
                 type_.services_types
             ],  # A list for backward compatibility. TODO: To be removed when admin interface is changed
-            'comments': osm.comments,
-            'permission': permissions.effective_permissions(self._user, osm),
-        }
+            comments=item.comments,
+            permission=permissions.effective_permissions(self._user, item),
+            item=item,
+        )
+        # Fill type and type_name
+        return ret_value
 
-    def item_as_dict(self, item: 'Model') -> types.rest.ItemDictType:
+    def get_item(self, item: 'Model') -> OsManagerItem:
         item = ensure.is_instance(item, OSManager)
         return self.os_manager_as_dict(item)
 
@@ -92,22 +112,26 @@ class OsManagers(ModelHandler):
             )
 
     # Types related
-    def enum_types(self) -> collections.abc.Iterable[type[osmanagers.OSManager]]:
+    @classmethod
+    def possible_types(cls: type[typing.Self]) -> collections.abc.Iterable[type[osmanagers.OSManager]]:
         return osmanagers.factory().providers().values()
 
     # Gui related
-    def get_gui(self, type_: str) -> list[typing.Any]:
+    def get_gui(self, for_type: str) -> list[types.ui.GuiElement]:
         try:
-            osmanager_type = osmanagers.factory().lookup(type_)
+            osmanager_type = osmanagers.factory().lookup(for_type)
 
             if not osmanager_type:
                 raise exceptions.rest.NotFound('OS Manager type not found')
             with Environment.temporary_environment() as env:
                 osmanager = osmanager_type(env, None)
-
-                return self.add_default_fields(
-                    osmanager.gui_description(),
-                    ['name', 'comments', 'tags'],
+                return (
+                    ui_utils.GuiBuilder()
+                    .add_stock_field(types.rest.stock.StockField.NAME)
+                    .add_stock_field(types.rest.stock.StockField.TAGS)
+                    .add_stock_field(types.rest.stock.StockField.COMMENTS)
+                    .add_fields(osmanager.gui_description())
+                    .build()
                 )
         except:
-            raise exceptions.rest.NotFound('type not found')
+            raise exceptions.rest.NotFound(_('OS Manager type not found: {}').format(for_type))

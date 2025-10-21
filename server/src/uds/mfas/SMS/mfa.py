@@ -135,7 +135,11 @@ class SMSMFA(mfas.MFA):
         order=3,
         tooltip=_('Method for sending SMS'),
         required=True,
-        choices=('GET', 'POST', 'PUT'),
+        choices=[
+            gui.choice_item('GET', 'GET'),
+            gui.choice_item('POST', 'POST'),
+            gui.choice_item('PUT', 'PUT'),
+        ],
         tab=_('HTTP Server'),
         old_field_name='sendingMethod',
     )
@@ -185,7 +189,11 @@ class SMSMFA(mfas.MFA):
         order=5,
         tooltip=_('Encoding for SMS'),
         required=True,
-        choices=('utf-8', 'utf-16', 'iso-8859-1'),
+        choices=[
+            gui.choice_item('utf-8', 'utf-8'),
+            gui.choice_item('utf-16', 'utf-16'),
+            gui.choice_item('iso-8859-1', 'iso-8859-1'),
+        ],
         tab=_('HTTP Server'),
     )
 
@@ -194,11 +202,11 @@ class SMSMFA(mfas.MFA):
         order=20,
         tooltip=_('Method for sending SMS'),
         required=True,
-        choices={
-            '0': _('None'),
-            '1': _('HTTP Basic Auth'),
-            '2': _('HTTP Digest Auth'),
-        },
+        choices=[
+            gui.choice_item('0', _('None')),
+            gui.choice_item('1', _('HTTP Basic Auth')),
+            gui.choice_item('2', _('HTTP Digest Auth')),
+        ],
         tab=_('HTTP Authentication'),
         old_field_name='authenticationMethod',
     )
@@ -238,12 +246,12 @@ class SMSMFA(mfas.MFA):
         default='0',
         tooltip=_('Action for SMS response error'),
         required=True,
-        choices={
-            '0': _('Allow user login'),
-            '1': _('Deny user login'),
-            '2': _('Allow user to login if its IP is in the networks list'),
-            '3': _('Deny user to login if its IP is in the networks list'),
-        },
+        choices=[
+            gui.choice_item('0', _('Allow user login')),
+            gui.choice_item('1', _('Deny user login')),
+            gui.choice_item('2', _('Allow user to login if its IP is in the networks list')),
+            gui.choice_item('3', _('Deny user to login if its IP is in the networks list')),
+        ],
         tab=types.ui.Tab.CONFIG,
         old_field_name='responseErrorAction',
     )

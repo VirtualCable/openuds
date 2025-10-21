@@ -59,7 +59,7 @@ class Log(models.Model):
     source = models.CharField(max_length=16, default='internal', db_index=True)
     level = models.PositiveIntegerField(default=0, db_index=True)
     name = models.CharField(max_length=64, default='')  # If syslog, log name, else empty
-    data = models.CharField(max_length=4096, default='')
+    data = models.CharField(max_length=4000, default='')
 
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[Log]'

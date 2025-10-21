@@ -31,18 +31,21 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # pyright: reportUnusedImport=false
+import enum
 import time
 import typing
-from datetime import datetime
+import datetime
+
+from django.utils.translation import gettext as _
 
 from . import actor, auth, cache, calendar, images, net, os, system, ticket, rest, services, transports, ui
 
 # Date related constants
-NEVER: typing.Final[datetime] = datetime(1972, 7, 1)
+NEVER: typing.Final[datetime.datetime] = datetime.datetime(1972, 7, 1, tzinfo=datetime.timezone.utc)
 NEVER_UNIX: typing.Final[int] = int(time.mktime(NEVER.timetuple()))
 
-# Unknown mac address "magic" value
-MAC_UNKNOWN: typing.Final[str] = '00:00:00:00:00:00'
+# Null mac address "magic" value
+NULL_MAC: typing.Final[str] = '00:00:00:00:00:00'
 
 # REST Related constants
 OK: typing.Final[str] = 'ok'  # Constant to be returned when result is just "operation complete successfully"
@@ -74,5 +77,62 @@ UNLIMITED: typing.Final[int] = -1
 
 # Constant marking no more names available
 NO_MORE_NAMES: typing.Final[str] = 'NO-NAME-ERROR'
-# For convenience, same as MAC_UNKNOWN, but different meaning
-NO_MORE_MACS: typing.Final[str] = MAC_UNKNOWN
+# For convenience, same as NULL_MAC, but different meaning
+NO_MORE_MACS: typing.Final[str] = NULL_MAC
+
+
+class UserRole(enum.StrEnum):
+    """
+    Roles for users
+    """
+
+    ADMIN = 'admin'
+    STAFF = 'staff'
+    USER = 'user'
+    ANONYMOUS = 'anonymous'
+    
+    @property
+    def needs_authentication(self) -> bool:
+        """
+        Checks if this role needs authentication
+        
+        Returns:
+            True if this role needs authentication, False otherwise
+        """
+        return self != UserRole.ANONYMOUS
+
+    def can_access(self, role: 'UserRole') -> bool:
+        """
+        Checks if this role can access to the requested role
+        
+        That is, if this role is greater or equal to the requested role
+        
+        Args:
+            role: Role to check against
+            
+        Returns:
+            True if this role can access to the requested role, False otherwise
+        """
+        ROLE_PRECEDENCE: typing.Final = {
+            UserRole.ADMIN: 3,
+            UserRole.STAFF: 2,
+            UserRole.USER: 1,
+            UserRole.ANONYMOUS: 0,
+        }
+
+        return ROLE_PRECEDENCE[self] >= ROLE_PRECEDENCE[role]
+    
+    def as_str(self) -> str:
+        """
+        Returns the string representation of the role
+        
+        Returns:
+            The string representation of the role
+        """
+        # _('Admin') or _('Staff member')) or _('User')
+        return {
+            UserRole.ADMIN: _('Admin'),
+            UserRole.STAFF: _('Staff member'),
+            UserRole.USER: _('User'),
+            UserRole.ANONYMOUS: _('Anonymous'),
+        }.get(self, _('Unknown role'))  # Default case, should not happen
