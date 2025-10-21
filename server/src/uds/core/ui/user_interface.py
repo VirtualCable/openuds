@@ -133,14 +133,14 @@ class gui:
         """
         if not isinstance(text, (str, Promise)):
             text = str(text)
-        return types.ui.ChoiceItem(id=str(id_), text=typing.cast(str, text))
+        return types.ui.ChoiceItem(id=id_, text=typing.cast(str, text))
 
     @staticmethod
     def choice_image(id_: typing.Union[str, int], text: str, img: str) -> types.ui.ChoiceItem:
         """
         Helper method to create a single choice item with image.
         """
-        return types.ui.ChoiceItem(id=str(id_), text=str(text), img=img)
+        return types.ui.ChoiceItem(id=id_, text=str(text), img=img)
 
     # Helpers
     @staticmethod

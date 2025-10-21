@@ -133,7 +133,7 @@ class Filler(typing.TypedDict):
 
 @dataclasses.dataclass
 class ChoiceItem:
-    id: 'str'
+    id: 'str|int'
     text: str
     img: str | None = None  # Only for IMAGECHOICE
 
