@@ -96,7 +96,10 @@ def _process_response(
         response['X-XSS-Protection'] = '1; mode=block'
         # Add Content-Security-Policy, see https://www.owasp.org/index.php/Content_Security_Policy
         response['Content-Security-Policy'] = (
-            "default-src 'self' 'unsafe-inline' 'unsafe-eval' uds: udss:; img-src 'self' https: data:; frame-ancestors 'none';"
+            "default-src 'self' 'unsafe-inline' 'unsafe-eval' uds: udss:; "
+            "style-src 'self' 'unsafe-inline'; "
+            "img-src 'self' https: data:; object-src 'none'; base-uri 'self'; "
+            "frame-ancestors 'none'; form-action 'self';"
         )
     return response
 
