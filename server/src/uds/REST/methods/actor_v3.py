@@ -311,10 +311,10 @@ class Register(ActorV3Action):
         if 'commands' in self._params:
             commands = self._params['commands']
             data = {
-                'pre_command': commands.get('pre_command', ''),
-                'post_command': commands.get('post_command', ''),
-                'run_once_command': commands.get('run_once_command', ''),
-                'custom': self._params.get('custom', ''),
+                'pre_command': commands.get('pre_command') or '',
+                'post_command': commands.get('post_command') or '',
+                'run_once_command': commands.get('run_once_command') or '',
+                'custom': self._params.get('custom') or '',
             }
         else:
             data = {
