@@ -35,7 +35,7 @@ import enum
 import logging
 import typing
 
-from uds.core import consts, types
+from uds.core import types
 from uds.core.services.generics.dynamic.userservice import DynamicUserService
 from uds.core.managers.userservice import UserServiceManager
 from uds.core.util import autoserializable
@@ -184,11 +184,6 @@ class ProxmoxUserserviceLinked(DynamicUserService):
     def op_create(self) -> None:
         template_id = int(self.publication().get_template_id())
         name = self.get_vmname()
-
-        if name == consts.NO_MORE_NAMES:
-            raise Exception(
-                'No more names available for this service. (Increase digits for this service to fix)'
-            )
 
         comments = 'UDS Linked clone'
         task_result = self.service().clone_vm(name, comments, template_id)
