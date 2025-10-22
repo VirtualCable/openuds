@@ -155,7 +155,7 @@ class IPMachinesService(services.Service):
     def enumerate_assignables(self) -> collections.abc.Iterable[types.ui.ChoiceItem]:
         now = sql_now()
         return [
-            gui.choice_item(server.uuid, f'{server.host}|{server.mac}')
+            gui.choice_item(server.uuid, f'{server.host}|{server.mac}|{server.hostname}')
             for server in self.enumerate_servers()
             if server.locked_until is None or server.locked_until < now
         ]
