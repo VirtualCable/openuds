@@ -134,6 +134,7 @@ class OpenshiftServiceFixed(FixedService):  # pylint: disable=too-many-public-me
                 for k in self.machines.as_list()
                 if k not in assigned_servers
                 and k in servers  # Only machines not assigned, and that exist on provider will be available
+                and k in servers  # Only machines not assigned, and that exist on provider will be available
             ]
 
     def get_and_assign(self) -> str:
