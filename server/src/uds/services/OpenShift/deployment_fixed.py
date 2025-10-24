@@ -64,13 +64,13 @@ class OpenshiftUserServiceFixed(FixedUserService, autoserializable.AutoSerializa
         return types.states.TaskState.FINISHED
 
     def op_start(self) -> None:
-        instance = self.service().provider().api.get_instance_info(self._vmid)
+        instance = self.service().provider().api.get_vm_info(self._vmid)
 
         if instance.status.is_off():
             self.service().provider().api.start_instance(self._vmid)
 
     def op_stop(self) -> None:
-        instance = self.service().provider().api.get_instance_info(self._vmid)
+        instance = self.service().provider().api.get_vm_info(self._vmid)
 
         # If instance is not running, do nothing
         if instance.status.is_off():
@@ -86,7 +86,7 @@ class OpenshiftUserServiceFixed(FixedUserService, autoserializable.AutoSerializa
         """
         Checks the status of the instance and returns the appropriate TaskState.
         """
-        instance = self.service().provider().api.get_instance_info(self._vmid)
+        instance = self.service().provider().api.get_vm_info(self._vmid)
 
         if instance.status in status:
             return types.states.TaskState.FINISHED

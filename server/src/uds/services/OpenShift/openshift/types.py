@@ -33,12 +33,15 @@ class InstanceStatus(enum.StrEnum):
     RESIZING = 'resizing'
     RESTARTING = 'restarting'
     RESTORING = 'restoring'
-    RUNNING = 'running'
-    STOPPED = 'stopped'
-    SUSPENDED = 'suspended'
-    SUSPENDING = 'suspending'
+    RUNNING = 'Running'
+    STOPPED = 'Stopped'
+    SUSPENDED = 'Suspended'
+    SUSPENDING = 'Suspending'
     UNKNOWN = 'unknown'
     WARNING = 'warning'
+    PENDING = 'Pending'
+    SCHEDULING = 'Scheduling'
+    SCHEDULED = 'Scheduled'
 
     # Not usable, own state
     # We do not support multinode instances, and will not support them because it's a nonsense for UDS
@@ -241,53 +244,43 @@ class InstanceInfo:
 #* --- OpenShift resource TypedDicts ---
 
 @dataclasses.dataclass
-class VMMetadata:
+class VMInterfaceInfo:
     name: str
-    namespace: str
-    uid: str
+    mac_address: str
+    ip_address: str
 
     @staticmethod
-    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'VMMetadata':
-        return VMMetadata(
-            name=dictionary.get('name', ''),
-            namespace=dictionary.get('namespace', ''),
-            uid=dictionary.get('uid', ''),
-        )
+    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'VMInterfaceInfo':
+        try:
+            return VMInterfaceInfo(
+                name=dictionary.get('interfaceName', ''),
+                mac_address=dictionary.get('mac', ''),
+                ip_address=dictionary.get('ipAddress', ''),
+            )
+        except Exception as e:
+            logger.error(f'Error creating VMInterfaceInfo from dict: {e}')
+            raise exceptions.OpenshiftError('Invalid VMInterfaceInfo data') from e
 
 @dataclasses.dataclass
 class VMVolumeTemplate:
     name: str
     storage: str
-    storage_class: str
 
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'VMVolumeTemplate':
-        meta = dictionary.get('metadata', {})
-        spec = dictionary.get('spec', {})
-        storage = spec.get('storage', {})
-        resources = storage.get('resources', {})
-        requests = resources.get('requests', {})
-        return VMVolumeTemplate(
-            name=meta.get('name', ''),
-            storage=requests.get('storage', ''),
-            storage_class=storage.get('storageClassName', ''),
-        )
-
-@dataclasses.dataclass
-class VMInterface:
-    name: str
-    model: str
-    mac_address: str
-    state: str
-
-    @staticmethod
-    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'VMInterface':
-        return VMInterface(
-            name=dictionary.get('name', ''),
-            model=dictionary.get('model', ''),
-            mac_address=dictionary.get('macAddress', ''),
-            state=dictionary.get('state', ''),
-        )
+        try:
+            meta = dictionary.get('metadata', {})
+            spec = dictionary.get('spec', {})
+            storage = spec.get('storage', {})
+            resources = storage.get('resources', {})
+            requests = resources.get('requests', {})
+            return VMVolumeTemplate(
+                name=meta.get('name', ''),
+                storage=requests.get('storage', '')
+            )
+        except Exception as e:
+            logger.error(f'Error creating VMVolumeTemplate from dict: {e}')
+            raise exceptions.OpenshiftError('Invalid VMVolumeTemplate data') from e
 
 @dataclasses.dataclass
 class VMDeviceDisk:
@@ -296,10 +289,14 @@ class VMDeviceDisk:
 
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'VMDeviceDisk':
-        return VMDeviceDisk(
-            name=dictionary.get('name', ''),
-            boot_order=dictionary.get('bootOrder', 0),
-        )
+        try:
+            return VMDeviceDisk(
+                name=dictionary.get('name', ''),
+                boot_order=dictionary.get('bootOrder', 0),
+            )
+        except Exception as e:
+            logger.error(f'Error creating VMDeviceDisk from dict: {e}')
+            raise exceptions.OpenshiftError('Invalid VMDeviceDisk data') from e
 
 @dataclasses.dataclass
 class VMVolume:
@@ -308,61 +305,92 @@ class VMVolume:
 
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'VMVolume':
-        dv = dictionary.get('dataVolume', {})
-        return VMVolume(
-            name=dictionary.get('name', ''),
-            data_volume=dv.get('name', ''),
-        )
-
-@dataclasses.dataclass
-class VMDomain:
-    architecture: str
-    disks: list[VMDeviceDisk]
-    interfaces: list[VMInterface]
-    volumes: list[VMVolume]
-    subdomain: str
-
-    @staticmethod
-    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'VMDomain':
-        return VMDomain(
-            architecture=dictionary.get('architecture', ''),
-            disks=[VMDeviceDisk.from_dict(disk) for disk in dictionary.get('domain', {}).get('devices', {}).get('disks', [])],
-            interfaces=[VMInterface.from_dict(iface) for iface in dictionary.get('domain', {}).get('devices', {}).get('interfaces', [])],
-            volumes=[VMVolume.from_dict(vol) for vol in dictionary.get('volumes', [])],
-            subdomain=dictionary.get('subdomain', ''),
-        )
-
-@dataclasses.dataclass
-class VMStatus:
-    printable_status: str
-    run_strategy: str
-
-    @staticmethod
-    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'VMStatus':
-        return VMStatus(
-            printable_status=dictionary.get('printableStatus', ''),
-            run_strategy=dictionary.get('runStrategy', ''),
-        )
+        try:
+            dv = dictionary.get('dataVolume', {})
+            return VMVolume(
+                name=dictionary.get('name', ''),
+                data_volume=dv.get('name', ''),
+            )
+        except Exception as e:
+            logger.error(f'Error creating VMVolume from dict: {e}')
+            raise exceptions.OpenshiftError('Invalid VMVolume data') from e
 
 @dataclasses.dataclass
 class VMDefinition:
-    metadata: VMMetadata
-    run_strategy: str
-    status: VMStatus
+    name: str
+    namespace: str
+    uid: str
+    status: InstanceStatus
     volume_template: VMVolumeTemplate
-    domain: VMDomain
+    disks: list[VMDeviceDisk]
+    volumes: list[VMVolume]
+
+    def validate(self) -> 'VMDefinition':
+        if not self.is_usable():
+            raise exceptions.OpenshiftError(f'VM Instance {self.name} is not usable (status: {self.status})')
+
+        return self
+
+    def is_usable(self) -> bool:
+        return self.status.is_usable()
 
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'VMDefinition':
-        spec = dictionary.get('spec', {})
-        template = spec.get('template', {}).get('spec', {})
-        return VMDefinition(
-            metadata=VMMetadata.from_dict(dictionary.get('metadata', {})),
-            run_strategy=spec.get('runStrategy', ''),
-            status=VMStatus.from_dict(dictionary.get('status', {})),
-            volume_template=VMVolumeTemplate.from_dict(spec.get('dataVolumeTemplates', [{}])[0]),
-            domain=VMDomain.from_dict(template),
-        )
+        try:
+            metadata = dictionary.get('metadata', {})
+            status_data = dictionary.get('status', {})
+            status_str = status_data.get('printableStatus', 'UNKNOWN')
+            spec = dictionary.get('spec', {})
+            template = spec.get('template', {}).get('spec', {})
+            return VMDefinition(
+                name=metadata.get('name', ''),
+                namespace=metadata.get('namespace', ''),
+                uid=metadata.get('uid', ''),
+                status=InstanceStatus.from_string(status_str),
+                volume_template=VMVolumeTemplate.from_dict(spec.get('dataVolumeTemplates', [{}])[0]),
+                disks=[VMDeviceDisk.from_dict(disk) for disk in template.get('devices', {}).get('disks', [])],
+                volumes=[VMVolume.from_dict(vol) for vol in template.get('volumes', [])],
+            )
+        except Exception as e:
+            logger.error(f'Error creating VMDefinition from dict: {e}')
+            raise exceptions.OpenshiftError('Invalid VMDefinition data') from e
+        
+@dataclasses.dataclass
+class VMInstanceInfo:
+    name: str
+    namespace: str
+    uid: str
+    interfaces: list[VMInterfaceInfo]
+    status: InstanceStatus
+    phase: InstanceStatus = InstanceStatus.UNKNOWN  # Use InstanceStatus for phase
+
+    def validate(self) -> 'VMInstanceInfo':
+        if not self.is_usable():
+            raise exceptions.OpenshiftError(f'VM Instance {self.name} is not usable (status: {self.status})')
+
+        return self
+
+    def is_usable(self) -> bool:
+        return self.status.is_usable()
+
+    @staticmethod
+    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'VMInstanceInfo':
+        try:
+            metadata = dictionary.get('metadata', {})
+            status_data = dictionary.get('status', {})
+            phase_str = status_data.get('phase', '')
+            status_str = phase_str or status_data.get('printableStatus', 'UNKNOWN')
+            return VMInstanceInfo(
+                name=metadata.get('name', ''),
+                namespace=metadata.get('namespace', ''),
+                uid=metadata.get('uid', ''),
+                interfaces=[VMInterfaceInfo.from_dict(iface) for iface in status_data.get('interfaces', [])],
+                status=InstanceStatus.from_string(status_str),
+                phase=InstanceStatus.from_string(phase_str) if phase_str else InstanceStatus.UNKNOWN
+            )
+        except Exception as e:
+            logger.error(f'Error creating VMInstanceInfo from dict: {e}')
+            raise exceptions.OpenshiftError('Invalid VM Instance data') from e
 
     
 class ManagedFieldType(TypedDict, total=False):

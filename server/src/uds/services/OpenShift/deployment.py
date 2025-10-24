@@ -85,7 +85,7 @@ class OpenshiftUserService(DynamicUserService, autoserializable.AutoSerializable
         """
         # We need to wait for the name te be created, but don't want to loose the _name
         self._waiting_name = True
-        instance_info = self.service().api.get_instance_info(self.publication().get_template_id())
+        instance_info = self.service().api.get_vm_info(self.publication().get_template_id())
         if instance_info.status.is_cloning():
             self.retry_later()
         elif not instance_info.status.is_cloneable():
@@ -112,7 +112,7 @@ class OpenshiftUserService(DynamicUserService, autoserializable.AutoSerializable
             self._vmid = found[0].get('metadata', {}).get('uid', '')
             self._waiting_name = False
 
-        instance = self.service().api.get_instance_info(self._vmid)
+        instance = self.service().api.get_vm_info(self._vmid)
         if not instance.interfaces or getattr(instance.interfaces[0], 'mac_address', '') == '':
             return types.states.TaskState.RUNNING
         return types.states.TaskState.FINISHED
@@ -122,7 +122,7 @@ class OpenshiftUserService(DynamicUserService, autoserializable.AutoSerializable
         """
         Checks if machine has started
         """
-        if self.service().api.get_instance_info(self._vmid).status.is_running():
+        if self.service().api.get_vm_info(self._vmid).status.is_running():
             return types.states.TaskState.FINISHED
 
         return types.states.TaskState.RUNNING
@@ -131,7 +131,7 @@ class OpenshiftUserService(DynamicUserService, autoserializable.AutoSerializable
         """
         Checks if machine has stopped
         """
-        instance = self.service().api.get_instance_info(self._vmid)
+        instance = self.service().api.get_vm_info(self._vmid)
         if (
             instance.status.is_stopped() or instance.status.is_provisioning()
         ):  # Provisioning means it's not running

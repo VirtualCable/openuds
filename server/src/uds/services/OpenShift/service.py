@@ -102,9 +102,9 @@ class OpenshiftService(DynamicService):  # pylint: disable=too-many-public-metho
 
         self.template.set_choices(
             [
-                gui.choice_item(str(template.metadata.uid), f'{template.metadata.name} ({template.metadata.namespace})')
+                gui.choice_item(str(template.uid), f'{template.name} ({template.namespace})')
                 for template in self.provider().api.list_vms()
-                if not template.metadata.name.startswith('UDS-') # if template.is_usable() and not...
+                if template.is_usable() and not template.name.startswith('UDS-')
             ]
         )
 
@@ -141,7 +141,10 @@ class OpenshiftService(DynamicService):  # pylint: disable=too-many-public-metho
         Returns the ip of the machine
         If cannot be obtained, MUST raise an exception
         """
-        return self.api.get_instance_info(vmid, force=True).validate().interfaces[0].ip_address if vmid else ''
+        vm_instance_details = self.api.get_vm_instance_info(vmid)
+        if not vm_instance_details or not vm_instance_details.interfaces:
+            raise morph_exceptions.OpenshiftNotFoundError(f'No interfaces found for VM {vmid}')
+        return vm_instance_details.interfaces[0].ip_address
 
     def get_mac(
         self,
@@ -157,13 +160,25 @@ class OpenshiftService(DynamicService):  # pylint: disable=too-many-public-metho
            vmid can be '' if we are requesting a new mac (on some services, where UDS generate the machines MAC)
            If the service does not support this, it can raise an exception
         """
-        return self.api.get_instance_info(vmid, force=True).validate().interfaces[0].mac_address if vmid else ''
+        vm_instance_details = self.api.get_vm_instance_info(vmid)
+        if not vm_instance_details or not vm_instance_details.interfaces:
+            raise morph_exceptions.OpenshiftNotFoundError(f'No interfaces found for VM {vmid}')
+        return vm_instance_details.interfaces[0].mac_address
 
     def is_running(
         self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
     ) -> bool:
-        vm_info = self.api.get_instance_info(vmid).validate()
-        return vm_info.status.is_running()
+        """
+        Checks if the VM instance is currently running.
+        """
+        vm_instance_details = self.api.get_vm_instance_info(vmid)
+        if not vm_instance_details:
+            return False
+        # Use both status and phase to determine if running
+        return (
+            getattr(vm_instance_details.status, "name", "").lower() == "running"
+            or getattr(vm_instance_details.phase, "name", "").lower() == "running"
+        )
 
     def start(
         self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
@@ -196,11 +211,11 @@ class OpenshiftService(DynamicService):  # pylint: disable=too-many-public-metho
         Deletes the vm
         """
         logger.debug('Deleting Openshift instance %s', vmid)
-        self.api.delete_instance(vmid, force=True)  # Force deletion, as we are not using soft delete
+        self.api.delete_instance(vmid)  # Force deletion, as we are not using soft delete
 
     def is_deleted(self, vmid: str) -> bool:
         try:
-            self.api.get_instance_info(vmid)
+            self.api.get_vm_info(vmid)
         except morph_exceptions.OpenshiftNotFoundError:
             return True
         return False

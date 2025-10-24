@@ -46,6 +46,9 @@ if typing.TYPE_CHECKING:
     from .provider import OpenshiftProvider
     from uds.core.services.generics.fixed.userservice import FixedUserService
 
+from .openshift import exceptions as morph_exceptions
+from .openshift import exceptions as morph_exceptions
+
 
 logger = logging.getLogger(__name__)
 
@@ -105,9 +108,9 @@ class OpenshiftServiceFixed(FixedService):  # pylint: disable=too-many-public-me
 
         self.machines.set_choices(
             [
-                gui.choice_item(str(machine.metadata.uid), f'{machine.metadata.name} ({machine.metadata.namespace})')
+                gui.choice_item(str(machine.uid), f'{machine.name} ({machine.namespace})')
                 for machine in self.provider().api.list_vms()
-                if not machine.metadata.name.startswith('UDS-') # if server.is_usable() and not...
+                if machine.is_usable() and not machine.name.startswith('UDS-')
             ]
         )
 
@@ -116,11 +119,11 @@ class OpenshiftServiceFixed(FixedService):  # pylint: disable=too-many-public-me
 
     def is_avaliable(self) -> bool:
         return self.provider().is_available()
-    
+
     def enumerate_assignables(self) -> collections.abc.Iterable[types.ui.ChoiceItem]:
         # Obtain machines names and ids for asignables
         servers = {
-            str(server.metadata.uid): server.metadata.name for server in self.api.list_vms() if not server.metadata.name.startswith('UDS-') # and server.is_usable()
+            str(server.uid): server.name for server in self.api.list_vms() if not server.name.startswith('UDS-') and server.is_usable()
         }
 
         with self._assigned_access() as assigned_servers:
@@ -139,8 +142,8 @@ class OpenshiftServiceFixed(FixedService):  # pylint: disable=too-many-public-me
                     if checking_vmid not in assigned:  # Not already assigned
                         try:
                             # Invoke to check it exists, do not need to store the result
-                            self.api.get_instance_info(
-                                int(checking_vmid)
+                            self.api.get_vm_info(
+                                checking_vmid
                             )  # Will raise OpenshiftDoesNotExists if not found
                             found_vmid = checking_vmid
                             break
@@ -170,20 +173,39 @@ class OpenshiftServiceFixed(FixedService):  # pylint: disable=too-many-public-me
         """
         if self.on_logout.value == 'stop':
             vmid = userservice_instance._vmid
-            if self.api.get_instance_info(vmid).status.is_running():
+            vm_info = self.api.get_vm_info(vmid)
+            if vm_info and (
+                getattr(vm_info.status, "name", "").lower() == "running"
+            ):
                 userservice_instance._queue.insert(0, types.services.Operation.NOP)
                 userservice_instance._queue.insert(1, types.services.Operation.SHUTDOWN)
                 self.do_log(types.log.LogLevel.INFO, f'Stopping machine {vmid} after logout')
 
-    def get_mac(self, vmid: str) -> str:
-        # No mac on openshift instances, return ip instead
-        return self.api.get_instance_info(vmid).validate().interfaces[0].mac_address if vmid else ''
-
     def get_ip(self, vmid: str) -> str:
-        return self.api.get_instance_info(vmid).validate().interfaces[0].ip_address if vmid else ''
+        """
+        Returns the IP address of the machine.
+        If cannot be obtained, raises an exception.
+        """
+        vm_instance_details = self.api.get_vm_instance_info(vmid)
+        if not vm_instance_details or not vm_instance_details.interfaces:
+            raise morph_exceptions.OpenshiftNotFoundError(f'No interfaces found for VM {vmid}')
+        return vm_instance_details.interfaces[0].ip_address
+
+    def get_mac(self, vmid: str) -> str:
+        """
+        Returns the MAC address of the machine.
+        If cannot be obtained, raises an exception.
+        """
+        vm_instance_details = self.api.get_vm_instance_info(vmid)
+        if not vm_instance_details or not vm_instance_details.interfaces:
+            raise morph_exceptions.OpenshiftNotFoundError(f'No interfaces found for VM {vmid}')
+        return vm_instance_details.interfaces[0].mac_address
 
     def get_name(self, vmid: str) -> str:
-        return self.api.get_instance_info(vmid).validate().name
+        vm_info = self.api.get_vm_info(vmid)
+        if not vm_info or not hasattr(vm_info, "name"):
+            raise morph_exceptions.OpenshiftNotFoundError(f'No name found for VM {vmid}')
+        return vm_info.name
 
     def remove_and_free(self, vmid: str) -> types.states.TaskState:
         try:
