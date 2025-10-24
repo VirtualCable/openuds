@@ -108,7 +108,7 @@ class OpenshiftServiceFixed(FixedService):  # pylint: disable=too-many-public-me
 
         self.machines.set_choices(
             [
-                gui.choice_item(str(machine.uid), f'{machine.name} ({machine.namespace})')
+                gui.choice_item(str(machine.name), f'{machine.name} ({machine.namespace})')
                 for machine in self.provider().api.list_vms()
                 if machine.is_usable() and not machine.name.startswith('UDS-')
             ]
