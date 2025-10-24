@@ -129,7 +129,8 @@ class OpenshiftServiceFixed(FixedService):  # pylint: disable=too-many-public-me
             return [
                 gui.choice_item(k, servers[k])
                 for k in self.machines.as_list()
-                if k not in assigned_servers and k in servers
+                if k not in assigned_servers
+                and k in servers  # Only machines not assigned, and that exist on provider will be available
             ]
 
     def get_and_assign(self) -> str:
@@ -141,7 +142,7 @@ class OpenshiftServiceFixed(FixedService):  # pylint: disable=too-many-public-me
                         try:
                             # Invoke to check it exists, do not need to store the result
                             self.api.get_vm_info(
-                                checking_vmid
+                                int(checking_vmid)
                             )  # Will raise OpenshiftDoesNotExists if not found
                             found_vmid = checking_vmid
                             break
