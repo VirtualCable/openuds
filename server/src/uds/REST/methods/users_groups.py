@@ -38,6 +38,7 @@ import collections.abc
 from django.utils.translation import gettext as _
 from django.db import IntegrityError, transaction
 from django.db.models import Model
+from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
 
 from uds.core.types.states import State
@@ -46,7 +47,6 @@ from uds.core.auths.user import User as AUser
 from uds.core.util import log, ensure, ui as ui_utils
 from uds.core.util.model import process_uuid, sql_stamp_seconds
 from uds.models import Authenticator, User, Group, ServicePool, UserService
-from uds.core.managers.crypto import CryptoManager
 from uds.core import consts, exceptions, types
 
 from uds.REST.model import DetailHandler
@@ -180,7 +180,7 @@ class Users(DetailHandler[UserItem]):
 
         if 'password' in self._params:
             valid_fields.append('password')
-            self._params['password'] = CryptoManager().hash(self._params['password'])
+            self._params['password'] = make_password(self._params['password'])
 
         if 'mfa_data' in self._params:
             valid_fields.append('mfa_data')

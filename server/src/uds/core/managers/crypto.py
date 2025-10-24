@@ -61,6 +61,7 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes, ae
 
 from django.conf import settings
 from django.utils import timezone
+from django.contrib.auth.hashers import BasePasswordHasher
 
 from uds.core.util import singleton
 
@@ -267,52 +268,6 @@ class CryptoManager(metaclass=singleton.Singleton):
         """
         return settings.SECRET_KEY[:length]
 
-    def salt(self, length: int = 16) -> str:
-        """
-        Get a random salt random string
-        """
-        return secrets.token_hex(length)
-
-    def hash(self, value: typing.Union[str, bytes]) -> str:
-        if isinstance(value, str):
-            value = value.encode()
-
-        # Argon2
-        return '{ARGON2}' + PasswordHasher(type=ArgonType.ID).hash(value)
-
-    def check_hash(self, value: typing.Union[str, bytes], hash_value: str) -> bool:
-        if isinstance(value, str):
-            value = value.encode()
-
-        if not value:
-            return not hash_value
-
-        if hash_value[:8] == '{SHA256}':
-            return secrets.compare_digest(hashlib.sha3_256(value).hexdigest(), hash_value[8:])
-        if hash_value[:12] == '{SHA256SALT}':
-            # Extract 16 chars salt and hash
-            salt = hash_value[12:28].encode()
-            value = salt + value
-            return secrets.compare_digest(hashlib.sha3_256(value).hexdigest(), hash_value[28:])
-        # Argon2
-        if hash_value[:8] == '{ARGON2}':
-            ph = PasswordHasher()  # Type is implicit in hash
-            try:
-                ph.verify(hash_value[8:], value)
-                return True
-            except Exception:
-                return False  # Verify will raise an exception if not valid
-
-        # Old sha1
-        return secrets.compare_digest(
-            hash_value,
-            str(
-                hashlib.sha1(
-                    value
-                ).hexdigest()  # nosec: Old SHA1 password, not used anymore but need to be supported
-            ),
-        )
-
     def uuid(self, obj: typing.Any = None) -> str:
         """Generates an uuid from obj. (lower case)
         If obj is None, returns a non-deterministic uuid (preferably uuid7 if available, else uuid4)
@@ -374,3 +329,59 @@ class CryptoManager(metaclass=singleton.Singleton):
             value = value.encode()
 
         return hashlib.sha3_256(value).hexdigest()
+
+
+class OldUDSPasswordHasher(BasePasswordHasher):
+    algorithm = 'old_uds_hasher'
+
+
+    def encode(self, password: typing.Union[str, bytes], salt: typing.Optional[str] = None) -> str:
+        if isinstance(password, str):
+            password = password.encode()
+
+        # Argon2
+        encoded = '{ARGON2}' + PasswordHasher(type=ArgonType.ID).hash(password)
+        return f"{self.algorithm}${encoded}"
+
+    def verify(self, password: typing.Union[str, bytes], encoded: str) -> bool:
+        if isinstance(password, str):
+            password = password.encode()
+
+        if not password:
+            return not encoded
+
+        if encoded.startswith(f'{self.algorithm}$'):
+            encoded = encoded[len(f'{self.algorithm}$'):]
+        if encoded[:8] == '{SHA256}':
+            return secrets.compare_digest(hashlib.sha3_256(password).hexdigest(), encoded[8:])
+        if encoded[:12] == '{SHA256SALT}':
+            # Extract 16 chars salt and hash
+            salt = encoded[12:28].encode()
+            password = salt + password
+            return secrets.compare_digest(hashlib.sha3_256(password).hexdigest(), encoded[28:])
+        # Argon2
+        if encoded[:8] == '{ARGON2}':
+            ph = PasswordHasher()  # Type is implicit in hash
+            try:
+                ph.verify(encoded[8:], password)
+                return True
+            except Exception:
+                return False  # Verify will raise an exception if not valid
+
+        # Old sha1
+        return secrets.compare_digest(
+            encoded,
+            str(
+                hashlib.sha1(
+                    password
+                ).hexdigest()  # nosec: Old SHA1 password, not used anymore but need to be supported
+            ),
+        )
+
+    def harden_runtime(self, password, encoded):
+        # The runtime for Argon2 is too complicated to implement a sensible
+        # hardening algorithm.
+        pass
+
+    def must_update(self, encoded: str) -> bool:
+        return not encoded.startswith(f'{self.algorithm}$')
