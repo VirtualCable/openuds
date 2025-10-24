@@ -104,7 +104,7 @@ class OpenshiftService(DynamicService):  # pylint: disable=too-many-public-metho
             [
                 gui.choice_item(str(template.metadata.uid), f'{template.metadata.name} ({template.metadata.namespace})')
                 for template in self.provider().api.list_vms()
-                if not template.metadata.name.startswith('UDS-')
+                if not template.metadata.name.startswith('UDS-') # if template.is_usable() and not...
             ]
         )
 

@@ -521,14 +521,12 @@ class OpenshiftClient:
         """
         Fetch all VMs from KubeVirt API in the current namespace as VMDefinition objects using do_paginated_request.
         """
-        yield from (
-            types.VMDefinition.from_dict(vm)
-            for vm in self.do_paginated_request(
-                'GET',
-                f'apis/kubevirt.io/v1/namespaces/{self.namespace}/virtualmachines',
-                'items'
-            )
+        response = self.do_request(
+            'GET',
+            f"apis/kubevirt.io/v1/namespaces/{self.namespace}/virtualmachines"
         )
+        vms = response.get('items', [])
+        yield from (types.VMDefinition.from_dict(vm) for vm in vms)
 
     @cached('vms', consts.CACHE_INFO_DURATION)
     def list_vms(self) -> list[types.VMDefinition]:

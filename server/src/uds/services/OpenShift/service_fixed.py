@@ -107,7 +107,7 @@ class OpenshiftServiceFixed(FixedService):  # pylint: disable=too-many-public-me
             [
                 gui.choice_item(str(machine.metadata.uid), f'{machine.metadata.name} ({machine.metadata.namespace})')
                 for machine in self.provider().api.list_vms()
-                if not machine.metadata.name.startswith('UDS-')
+                if not machine.metadata.name.startswith('UDS-') # if server.is_usable() and not...
             ]
         )
 
@@ -116,20 +116,12 @@ class OpenshiftServiceFixed(FixedService):  # pylint: disable=too-many-public-me
 
     def is_avaliable(self) -> bool:
         return self.provider().is_available()
-
+    
     def enumerate_assignables(self) -> collections.abc.Iterable[types.ui.ChoiceItem]:
         # Obtain machines names and ids for asignables
-        servers = {}
-        vm_items = self.api.enumerate_instances()
-        for vm in vm_items:
-            name = vm.get('metadata', {}).get('name', 'UNKNOWN')
-            namespace = vm.get('metadata', {}).get('namespace', '')
-            # Exclude templates whose name starts with 'UDS-'
-            if name.startswith('UDS-'):
-                continue
-            # Show namespace if not default
-            label = f"{name} ({namespace})" if namespace and namespace != 'default' else name
-            servers[name] = label
+        servers = {
+            str(server.metadata.uid): server.metadata.name for server in self.api.list_vms() if not server.metadata.name.startswith('UDS-') # and server.is_usable()
+        }
 
         with self._assigned_access() as assigned_servers:
             return [
