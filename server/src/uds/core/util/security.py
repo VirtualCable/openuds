@@ -186,7 +186,9 @@ def check_certificate_matches_private_key(*, cert: str, key: str) -> bool:
         return False
 
 
-def secure_requests_session(*, verify: 'str|bool' = True, proxies: 'dict[str, str]|None' = None) -> 'requests.Session':
+def secure_requests_session(
+    *, verify: 'str|bool' = True, proxies: 'dict[str, str]|None' = None
+) -> 'requests.Session':
     '''
     Generates a requests.Session object with a custom adapter that uses a custom SSLContext.
     This is intended to be used for requests that need to be secure, but not necessarily verified.
@@ -242,7 +244,7 @@ def secure_requests_session(*, verify: 'str|bool' = True, proxies: 'dict[str, st
 
     session = requests.Session()
     session.mount("https://", UDSHTTPAdapter())
-    
+
     if proxies is not None:
         session.proxies = proxies
 
