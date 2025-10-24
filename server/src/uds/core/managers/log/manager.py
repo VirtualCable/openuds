@@ -67,7 +67,7 @@ class LogManager(metaclass=singleton.Singleton):
         Logs a message associated to owner
         """
         # Ensure message fits on space
-        message = str(message)[:4096]
+        message = str(message)[:4000]
 
         # now, we add new log
         try:
