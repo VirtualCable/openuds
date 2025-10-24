@@ -100,23 +100,6 @@ class OpenshiftService(DynamicService):  # pylint: disable=too-many-public-metho
     def init_gui(self) -> None:
         self.prov_uuid.value = self.provider().get_uuid()
 
-        vm_items = self.api.enumerate_vms()
-        choices = []
-        logger.debug('VMs found: %s', vm_items)
-        for vm in vm_items:
-            name = vm.get('metadata', {}).get('name', 'UNKNOWN')
-            namespace = vm.get('metadata', {}).get('namespace', '')
-            # Exclude templates whose name starts with 'UDS-'
-            if name.upper().startswith('UDS-'):
-                continue
-            # Show namespace if not default
-            label = f"{name} ({namespace})" if namespace and namespace != 'default' else name
-            choices.append(gui.choice_item(name, label))
-        self.template.set_choices(choices)
-
-    def init_gui(self) -> None:
-        self.prov_uuid.value = self.provider().get_uuid()
-
         self.template.set_choices(
             [
                 gui.choice_item(str(template.metadata.uid), f'{template.metadata.name} ({template.metadata.namespace})')
