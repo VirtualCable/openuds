@@ -1,0 +1,62 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="OpenShift UDS - Mapa de Componentes" id="openshift-uds-map">
+    <mxGraphModel dx="1000" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <!-- Archivos principales -->
+        <mxCell id="2" value="deployment.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc" vertex="1" parent="1">
+          <mxGeometry x="60" y="60" width="120" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="3" value="provider.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4" vertex="1" parent="1">
+          <mxGeometry x="220" y="60" width="120" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="4" value="publication.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc" vertex="1" parent="1">
+          <mxGeometry x="380" y="60" width="120" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="5" value="service.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc" vertex="1" parent="1">
+          <mxGeometry x="540" y="60" width="120" height="40" as="geometry"/>
+        </mxCell>
+        <!-- Submódulo openshift/ -->
+        <mxCell id="6" value="openshift/client.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7" vertex="1" parent="1">
+          <mxGeometry x="220" y="180" width="140" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="7" value="openshift/consts.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7" vertex="1" parent="1">
+          <mxGeometry x="380" y="180" width="140" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="8" value="openshift/types.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7" vertex="1" parent="1">
+          <mxGeometry x="540" y="180" width="140" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="9" value="openshift/exceptions.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7" vertex="1" parent="1">
+          <mxGeometry x="700" y="180" width="140" height="40" as="geometry"/>
+        </mxCell>
+        <!-- Proceso de creación de instancia -->
+        <mxCell id="10" value="Inicio: Solicitud de Instancia" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff" vertex="1" parent="1">
+          <mxGeometry x="60" y="300" width="180" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="11" value="provider.py: Valida y prepara recursos" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4" vertex="1" parent="1">
+          <mxGeometry x="260" y="300" width="200" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="12" value="deployment.py: Despliega la instancia" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc" vertex="1" parent="1">
+          <mxGeometry x="500" y="300" width="200" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="13" value="publication.py: Publica acceso" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc" vertex="1" parent="1">
+          <mxGeometry x="740" y="300" width="180" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="14" value="service.py: Gestiona ciclo de vida" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc" vertex="1" parent="1">
+          <mxGeometry x="960" y="300" width="200" height="40" as="geometry"/>
+        </mxCell>
+        <!-- Relaciones entre archivos principales y submódulo -->
+        <mxCell id="15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="3" target="6"/>
+        <mxCell id="16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="2" target="6"/>
+        <mxCell id="17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="4" target="7"/>
+        <mxCell id="18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="5" target="8"/>
+        <!-- Flujo de proceso -->
+        <mxCell id="19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="10" target="11"/>
+        <mxCell id="20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="11" target="12"/>
+        <mxCell id="21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="12" target="13"/>
+        <mxCell id="22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="13" target="14"/>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
