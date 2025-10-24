@@ -8,6 +8,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
+import re
 
 from uds.core.types.states import TaskState
 from uds.core.util import autoserializable
@@ -36,14 +37,34 @@ class OpenshiftTemplatePublication(DynamicPublication, autoserializable.AutoSeri
     def service(self) -> 'OpenshiftService':
         return typing.cast('OpenshiftService', super().service())
 
+    def sanitize_name(self, name: str) -> str:
+        # Sanitize the name to comply with RFC 1123: lowercase, alphanumeric, '-', '.', start/end with alphanumeric
+        name = name.lower()
+        name = re.sub(r'[^a-z0-9.-]', '-', name)
+        name = re.sub(r'-+', '-', name)
+        name = re.sub(r'^[^a-z0-9]+', '', name)
+        name = re.sub(r'[^a-z0-9]+$', '', name)
+        return name[:63]  # Max length for DNS subdomain names
+
     def op_create(self) -> None:
         logger.info("Starting publication process: template cloning.")
         self._waiting_name = True
         api = self.service().api
-        template_vm_name = self.service().template.value
+        template_vm_uuid = self.service().template.value
         namespace = api.namespace
         api_url = api.api_url
         storage_class = getattr(self.service(), 'storage_class', 'default')  # Ajusta si tienes un campo real
+
+        # Buscar el nombre real de la máquina a partir del UUID
+        template_vm_name = None
+        for vm in api.list_vms():
+            if str(getattr(vm, 'uid', getattr(vm, 'uuid', None))) == template_vm_uuid:
+                template_vm_name = vm.name
+                break
+        if not template_vm_name:
+            logger.error(f"VM name not found for UUID {template_vm_uuid}")
+            self._error(f"VM name not found for UUID {template_vm_uuid}")
+            return
 
         logger.info(f"Getting template PVC/DataVolume '{template_vm_name}'.")
         source_pvc_name, vol_type = api.get_vm_pvc_or_dv_name(api_url, namespace, template_vm_name)  # type: ignore
@@ -53,26 +74,35 @@ class OpenshiftTemplatePublication(DynamicPublication, autoserializable.AutoSeri
         size = api.get_pvc_size(api_url, namespace, source_pvc_name)
         logger.info(f"PVC size: {size}.")
 
-        new_pvc_name = f"{self._name}-disk"
+        new_pvc_name = self.sanitize_name(f"{self._name}-disk")
         logger.info(f"Cloning PVC '{source_pvc_name}' to '{new_pvc_name}' using DataVolume.")
         ok = api.clone_pvc_with_datavolume(api_url, namespace, source_pvc_name, new_pvc_name, storage_class, size)
         if not ok:
             logger.error(f"Error cloning PVC {source_pvc_name}.")
             self._error(f"Error cloning PVC {source_pvc_name}")
             return
-
-        logger.info(f"Waiting for DataVolume '{new_pvc_name}' to be ready.")
-        if not api.wait_for_datavolume_clone_progress(api_url, namespace, new_pvc_name):
-            logger.error(f"Timeout waiting for DataVolume clone {new_pvc_name}.")
-            self._error(f"Timeout waiting for DataVolume clone {new_pvc_name}")
-            return
-
+        
         logger.info(f"Creating new VM '{self._name}' from cloned PVC '{new_pvc_name}'.")
-        ok = api.create_vm_from_pvc(api_url, namespace, template_vm_name, self._name, new_pvc_name, source_pvc_name)
+        ok = api.create_vm_from_pvc(
+            api_url=api_url,
+            namespace=namespace,
+            source_vm_name=template_vm_name,
+            new_vm_name=self.sanitize_name(self._name),
+            new_dv_name=new_pvc_name,
+            source_pvc_name=new_pvc_name,
+        )
         if not ok:
             logger.error(f"Error creating VM {self._name} from cloned PVC.")
             self._error(f"Error creating VM {self._name} from cloned PVC")
             return
+        else:
+            logger.info(f"VM '{self._name}' creation initiated successfully.")
+
+        # logger.info(f"Waiting for DataVolume '{new_pvc_name}' to be ready.")
+        # if not api.wait_for_datavolume_clone_progress(api_url, namespace, new_pvc_name):
+        #     logger.error(f"Timeout waiting for DataVolume clone {new_pvc_name}.")
+        #     self._error(f"Timeout waiting for DataVolume clone {new_pvc_name}")
+        #     return
 
         logger.info(f"VM '{self._name}' created successfully.")
         self._vmid = self._name

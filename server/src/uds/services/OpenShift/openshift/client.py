@@ -349,7 +349,7 @@ class OpenshiftClient:
 
     def get_pvc_size(self, api_url: str, namespace: str, pvc_name: str) -> str:
         url = f"{api_url}/api/v1/namespaces/{namespace}/persistentvolumeclaims/{pvc_name}"
-        headers = {"Authorization": f"Bearer {token}", "Accept": "application/json"}
+        headers = {"Authorization": f"Bearer {self.get_token()}", "Accept": "application/json"}
         response = requests.get(url, headers=headers, verify=False)
         if response.status_code == 200:
             pvc = response.json()
@@ -361,7 +361,7 @@ class OpenshiftClient:
     def clone_pvc_with_datavolume(self, api_url: str, namespace: str, source_pvc_name: str, cloned_pvc_name: str, storage_class: str, storage_size: str) -> bool:
         dv_url = f"{api_url}/apis/cdi.kubevirt.io/v1beta1/namespaces/{namespace}/datavolumes"
         headers = {
-            "Authorization": f"Bearer {token}",
+            "Authorization": f"Bearer {self.get_token()}",
             "Accept": "application/json",
             "Content-Type": "application/json"
         }
@@ -382,17 +382,17 @@ class OpenshiftClient:
         }
         response = requests.post(dv_url, headers=headers, json=body, verify=False)
         if response.status_code == 201:
-            logging.info(f"DataVolume '{cloned_pvc_name}' creado exitosamente")
+            logging.info(f"DataVolume '{cloned_pvc_name}' created successfully")
             return True
-        logging.error(f"Fallo al crear DataVolume: {response.status_code} {response.text}")
+        logging.error(f"Failed to create DataVolume: {response.status_code} {response.text}")
         return False
 
     def create_vm_from_pvc(self, api_url: str, namespace: str, source_vm_name: str, new_vm_name: str, new_dv_name: str, source_pvc_name: str) -> bool:
         original_vm_url = f"{api_url}/apis/kubevirt.io/v1/namespaces/{namespace}/virtualmachines/{source_vm_name}"
-        headers = {"Authorization": f"Bearer {token}", "Accept": "application/json"}
+        headers = {"Authorization": f"Bearer {self.get_token()}", "Accept": "application/json"}
         resp = requests.get(original_vm_url, headers=headers, verify=False)
         if resp.status_code != 200:
-            logging.error(f"No se pudo obtener la VM origen: {resp.status_code} {resp.text}")
+            logging.error(f"Could not get source VM: {resp.status_code} {resp.text}")
             return False
 
         vm_obj = resp.json()
@@ -427,18 +427,21 @@ class OpenshiftClient:
         for iface in interfaces:
             iface.pop('macAddress', None)
 
+        logger.info(f"Creating VM '{new_vm_name}' from cloned PVC '{new_dv_name}'.")
+        logger.info(f"VM Object: {vm_obj}")
+
         create_url = f"{api_url}/apis/kubevirt.io/v1/namespaces/{namespace}/virtualmachines"
         headers["Content-Type"] = "application/json"
         resp = requests.post(create_url, headers=headers, json=vm_obj, verify=False)
         if resp.status_code == 201:
-            logging.info(f"VM '{new_vm_name}' creada correctamente con DataVolumeTemplate.")
+            logging.info(f"VM '{new_vm_name}' successfully created with DataVolumeTemplate.")
             return True
-        logging.error(f"Error creando VM: {resp.status_code} {resp.text}")
+        logging.error(f"Error creating VM: {resp.status_code} {resp.text}")
         return False
 
     def wait_for_datavolume_clone_progress(self, api_url: str, namespace: str, datavolume_name: str, timeout: int = 3000, polling_interval: int = 5) -> bool:
         url = f"{api_url}/apis/cdi.kubevirt.io/v1beta1/namespaces/{namespace}/datavolumes/{datavolume_name}"
-        headers = {"Authorization": f"Bearer {token}", "Accept": "application/json"}
+        headers = {"Authorization": f"Bearer {self.get_token()}", "Accept": "application/json"}
         start = time.time()
         while time.time() - start < timeout:
             response = requests.get(url, headers=headers, verify=False)
@@ -463,7 +466,7 @@ class OpenshiftClient:
     def start_vm(self, api_url: str, namespace: str, vm_name: str) -> bool:
         url = f"{api_url}/apis/kubevirt.io/v1/namespaces/{namespace}/virtualmachines/{vm_name}"
         headers = {
-            "Authorization": f"Bearer {token}",
+            "Authorization": f"Bearer {self.get_token()}",
             "Content-Type": "application/merge-patch+json",
             "Accept": "application/json"
         }
@@ -483,7 +486,7 @@ class OpenshiftClient:
     def stop_vm(self, api_url: str, namespace: str, vm_name: str) -> bool:
         url = f"{api_url}/apis/kubevirt.io/v1/namespaces/{namespace}/virtualmachines/{vm_name}"
         headers = {
-            "Authorization": f"Bearer {token}",
+            "Authorization": f"Bearer {self.get_token()}",
             "Content-Type": "application/merge-patch+json",
             "Accept": "application/json"
         }

@@ -108,9 +108,9 @@ class OpenshiftServiceFixed(FixedService):  # pylint: disable=too-many-public-me
 
         self.machines.set_choices(
             [
-                gui.choice_item(str(machine.metadata.uid), f'{machine.metadata.name} ({machine.metadata.namespace})')
+                gui.choice_item(str(machine.uid), f'{machine.name} ({machine.namespace})')
                 for machine in self.provider().api.list_vms()
-                if not machine.metadata.name.startswith('UDS-')
+                if machine.is_usable() and not machine.name.startswith('UDS-')
             ]
         )
 
@@ -121,11 +121,9 @@ class OpenshiftServiceFixed(FixedService):  # pylint: disable=too-many-public-me
         return self.provider().is_available()
 
     def enumerate_assignables(self) -> collections.abc.Iterable[types.ui.ChoiceItem]:
-        # Obtain machines names and ids for assignables
+        # Obtain machines names and ids for asignables
         servers = {
-            str(server.metadata.uid): server.metadata.name
-            for server in self.api.list_vms()
-            if not server.metadata.name.startswith('UDS-')
+            str(server.name): server.name for server in self.api.list_vms() if not server.name.startswith('UDS-') and server.is_usable()
         }
 
         with self._assigned_access() as assigned_servers:
@@ -133,8 +131,7 @@ class OpenshiftServiceFixed(FixedService):  # pylint: disable=too-many-public-me
                 gui.choice_item(k, servers[k])
                 for k in self.machines.as_list()
                 if k not in assigned_servers
-                and k in servers  # Only machines not assigned, and that exist on provider will be available
-                and k in servers  # Only machines not assigned, and that exist on provider will be available
+                and k in servers  # Only machines not assigned, and that exists on provider will be available
             ]
 
     def get_and_assign(self) -> str:
@@ -206,9 +203,9 @@ class OpenshiftServiceFixed(FixedService):  # pylint: disable=too-many-public-me
 
     def get_name(self, vmid: str) -> str:
         vm_info = self.api.get_vm_info(vmid)
-        if not vm_info or not hasattr(vm_info, "metadata") or not hasattr(vm_info.metadata, "name"):
+        if not vm_info or not hasattr(vm_info, "name"):
             raise morph_exceptions.OpenshiftNotFoundError(f'No name found for VM {vmid}')
-        return vm_info.metadata.name
+        return vm_info.name
 
     def remove_and_free(self, vmid: str) -> types.states.TaskState:
         try:
