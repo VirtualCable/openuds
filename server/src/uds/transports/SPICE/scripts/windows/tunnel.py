@@ -15,8 +15,8 @@ from uds.tunnel import forward  # type: ignore
 executable = None
 for env in ('PROGRAMFILES', 'PROGRAMW6432'):
     if env in os.environ:
-        for p in glob.glob(os.environ[env] + '\\virt-viewer*'):
-            executable = tools.findApp('remote-viewer.exe', p)
+        for base_folder in glob.glob(os.environ[env] + '\\virt-viewer*'):
+            executable = tools.findApp('remote-viewer.exe', os.path.join(base_folder, 'bin'))
             if executable is not None:
                 break
 
@@ -39,9 +39,7 @@ if sp['ticket']:  # type: ignore
 
     # Check that tunnel works..
     if fs.check() is False:
-        raise Exception(
-            '<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>'
-        )
+        raise Exception('<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>')
 
 fss = None
 if sp['ticket_secure']:  # type: ignore

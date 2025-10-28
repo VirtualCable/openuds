@@ -14,8 +14,8 @@ from uds import tools  # type: ignore
 executable = None
 for env in ('PROGRAMFILES', 'PROGRAMW6432'):
     if env in os.environ:
-        for p in glob.glob(os.environ[env] + '\\virt-viewer*'):
-            executable = tools.findApp('remote-viewer.exe', p)
+        for base_folder in glob.glob(os.environ[env] + '\\virt-viewer*'):
+            executable = tools.findApp('remote-viewer.exe', os.path.join(base_folder, 'bin'))
             if executable is not None:
                 break
 
