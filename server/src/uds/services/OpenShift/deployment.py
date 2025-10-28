@@ -34,8 +34,8 @@ class OpenshiftUserService(DynamicUserService, autoserializable.AutoSerializable
 
     '''
 
-    # Due to Openshift not providing on early stage the id of the instance, we need to wait until the name is created
-    # before destroying it, so we can find the instance by name.
+    # Due to Openshift not providing on early stage the id of the vm, we need to wait until the name is created
+    # before destroying it, so we can find the vm by name.
     wait_until_finish_to_destroy: typing.ClassVar[bool] = True
 
     _waiting_name = autoserializable.BoolField(default=False)
@@ -43,9 +43,9 @@ class OpenshiftUserService(DynamicUserService, autoserializable.AutoSerializable
     # Custom queue
     _create_queue = [
         types.services.Operation.INITIALIZE,  # Used in base class to remove duplicates
-        types.services.Operation.CREATE,  # Creating already starts the instance
-        # Starts the instance. If we include this, we will force to wait for the instance to be running
-        # Note that while deploying, the instance is IN FACT already running, so we must not include this
+        types.services.Operation.CREATE,  # Creating already starts the vm
+        # Starts the vm. If we include this, we will force to wait for the vm to be running
+        # Note that while deploying, the vm is IN FACT already running, so we must not include this
         # becoase the actor could call us before we are "ready"
         # types.services.Operation.START,
         types.services.Operation.FINISH,
@@ -63,17 +63,17 @@ class OpenshiftUserService(DynamicUserService, autoserializable.AutoSerializable
         types.services.Operation.SUSPEND,
         types.services.Operation.FINISH,
     ]
-
-    def _vm_name(self) -> str:
-        """
-        Returns the name of the VM, which is the same as the user service name
-        """
-        return f'UDS-Instance-{self._name}'
-
+    
     def service(self) -> 'OpenshiftService':
+        """
+        Get the Openshift service.
+        """
         return typing.cast('OpenshiftService', super().service())
 
     def publication(self) -> 'OpenshiftTemplatePublication':
+        """
+        Get the Openshift publication.
+        """
         pub = super().publication()
         if pub is None:
             raise Exception('No publication for this element!')
@@ -81,60 +81,103 @@ class OpenshiftUserService(DynamicUserService, autoserializable.AutoSerializable
 
     def op_create(self) -> None:
         """
-        Deploys a machine from template for user/cache
+        Starts the deployment process for a user or cache, cloning the template publication.
         """
-        # We need to wait for the name te be created, but don't want to loose the _name
+        logger.info("Starting publication process: template cloning.")
         self._waiting_name = True
-        instance_info = self.service().api.get_vm_info(self.publication().get_template_id())
-        if instance_info.status.is_cloning():
-            self.retry_later()
-        elif not instance_info.status.is_cloneable():
-            self.error(
-                f'Instance {self.service().template.value} is not cloneable, status: {instance_info.status}'
-            )
-        else:
-            # Note that name was created by DynamicPublication on "Initialize" operation
-            self.service().api.clone_instance(
-                instance_info.id,
-                self._vm_name(),
-            )
+        api = self.service().api
+        publication_vm_name = self.publication()._name
+        namespace = api.namespace
+        api_url = api.api_url
 
+        logger.info(f"Getting template PVC/DataVolume '{publication_vm_name}'.")
+        source_pvc_name, vol_type = api.get_vm_pvc_or_dv_name(api_url, namespace, publication_vm_name)
+        logger.info(f"Source PVC/DataVolume: {source_pvc_name}, type: {vol_type}.")
+
+        logger.info(f"Getting PVC size '{source_pvc_name}'.")
+        size = api.get_pvc_size(api_url, namespace, source_pvc_name)
+        logger.info(f"PVC size: {size}.")
+
+        new_pvc_name = f"{self._name}-disk"
+        
+        logger.info(f"Creating new VM '{self._name}' from cloned PVC '{new_pvc_name}'.")
+        ok = api.create_vm_from_pvc(
+            api_url=api_url,
+            namespace=namespace,
+            source_vm_name=publication_vm_name,
+            new_vm_name=self._name,
+            new_dv_name=new_pvc_name,
+            source_pvc_name=source_pvc_name,
+        )
+        if not ok:
+            logger.error(f"Error creating VM {self._name} from cloned PVC.")
+            return
+        else:
+            logger.info(f"VM '{self._name}' creation initiated successfully.")
+
+        logger.info(f"Waiting for DataVolume '{new_pvc_name}' to be ready.")
+        if not api.wait_for_datavolume_clone_progress(api_url, namespace, new_pvc_name):
+            logger.error(f"Timeout waiting for DataVolume clone {new_pvc_name}.")
+            return
+
+        logger.info(f"VM '{self._name}' created successfully.")
+        self._waiting_name = False
+
+    # In fact, we probably don't need to check task status, but this way we can include the error
     def op_create_checker(self) -> types.states.TaskState:
         """
-        Checks the state of a deploy for a user or cache, robust and delegando a OpenshiftClient.
+        Checks the state of a deploy for a user or cache, esperando correctamente el DataVolume y la VM.
+        If the VM is not found, consider it deleted and finish the operation.
         """
-        if self._waiting_name:
-            # Buscar la VM clonada por nombre usando enumerate_instances
-            vms = self.service().api.enumerate_instances()
-            found = [vm for vm in vms if vm.get('metadata', {}).get('name') == self._vm_name()]
-            if not found:
-                return types.states.TaskState.RUNNING
-            self._vmid = found[0].get('metadata', {}).get('uid', '')
-            self._waiting_name = False
-
-        instance = self.service().api.get_vm_info(self._vmid)
-        if not instance.interfaces or getattr(instance.interfaces[0], 'mac_address', '') == '':
+        api = self.service().api
+        new_dv_name = f"{self._name}-disk"
+        # Esperar a que el DataVolume esté en Succeeded
+        dv_status = api.get_datavolume_phase(new_dv_name)
+        if dv_status != 'Succeeded':
+            return types.states.TaskState.RUNNING
+        # Buscar la VM por nombre
+        vm = api.get_vm_info(self._name)
+        if not vm:
+            # VM not found, consider it deleted and finish
+            logger.info(f"VM '{self._name}' not found, considering as deleted. Finishing operation.")
+            return types.states.TaskState.FINISHED
+        
+        # Comprobar que la VM tiene interfaces y MAC address
+        vmi = api.get_vm_instance_info(self._name)
+        if not vmi or not getattr(vmi, 'interfaces', None) or getattr(vmi.interfaces[0], 'mac_address', '') == '':
             return types.states.TaskState.RUNNING
         return types.states.TaskState.FINISHED
 
-    # In fact, we probably don't need to check task status, but this way we can include the error
-    def op_start_checker(self) -> types.states.TaskState:
+    def op_delete_checker(self) -> types.states.TaskState:
         """
-        Checks if machine has started
+        Checks if the VM is deleted. If not found, consider it deleted and finish.
         """
-        if self.service().api.get_vm_info(self._vmid).status.is_running():
+        api = self.service().api
+        vm = api.get_vm_info(self._name)
+        if not vm:
+            logger.info(f"VM '{self._name}' not found during delete check, considering as deleted. Finishing operation.")
             return types.states.TaskState.FINISHED
-
         return types.states.TaskState.RUNNING
 
-    def op_stop_checker(self) -> types.states.TaskState:
+    def op_delete_completed_checker(self) -> types.states.TaskState:
         """
-        Checks if machine has stopped
+        Always return FINISHED for completed delete operation.
         """
-        instance = self.service().api.get_vm_info(self._vmid)
-        if (
-            instance.status.is_stopped() or instance.status.is_provisioning()
-        ):  # Provisioning means it's not running
-            return types.states.TaskState.FINISHED
+        return types.states.TaskState.FINISHED
 
+    def op_cancel_checker(self) -> types.states.TaskState:
+        """
+        Checks if the VM is canceled. If not found, consider it canceled and finish.
+        """
+        api = self.service().api
+        vm = api.get_vm_info(self._name)
+        if not vm:
+            logger.info(f"VM '{self._name}' not found during cancel check, considering as canceled. Finishing operation.")
+            return types.states.TaskState.FINISHED
         return types.states.TaskState.RUNNING
+
+    def op_cancel_completed_checker(self) -> types.states.TaskState:
+        """
+        Always return FINISHED for completed cancel operation.
+        """
+        return types.states.TaskState.FINISHED

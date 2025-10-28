@@ -9,6 +9,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 
 import logging
 import typing
+import re
 
 from django.utils.translation import gettext_noop as _
 
@@ -34,7 +35,7 @@ class OpenshiftProvider(ServiceProvider):
     offers = [OpenshiftService, OpenshiftServiceFixed]
     type_name = _('Openshift Provider')
     type_type = 'OpenshiftProvider'
-    type_description = _('Openshift based instances provider')
+    type_description = _('Openshift based VMs provider')
     icon_file = 'provider.png'
 
     # Gui
@@ -83,7 +84,7 @@ class OpenshiftProvider(ServiceProvider):
     concurrent_removal_limit = fields.concurrent_removal_limit_field()
     timeout = fields.timeout_field()
 
-    _cached_api: typing.Optional['client.OpenshiftClient'] = None
+    _cached_api: typing.Optional['client.OpenshiftClient'] = None #! DUDA
 
     def initialize(self, values: 'core_types.core.ValuesType') -> None:
         # No port validation needed, URLs are used
@@ -120,3 +121,15 @@ class OpenshiftProvider(ServiceProvider):
             return core_types.core.TestResult(True, _('Connection works fine'))
 
         return core_types.core.TestResult(False, _('Connection failed. Check connection params'))
+    
+    # Utility
+    def sanitized_name(self, name: str) -> str:
+        """
+        Sanitizes the VM name to comply with RFC 1123:
+        - Lowercase
+        - Alphanumeric, '-', '.'
+        - Starts/ends with alphanumeric
+        - Max length 63 chars
+        """
+        name = re.sub(r'^[^a-z0-9]+|[^a-z0-9.-]|-{2,}|[^a-z0-9]+$', '-', name.lower())
+        return name[:63]

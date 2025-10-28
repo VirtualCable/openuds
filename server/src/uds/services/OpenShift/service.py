@@ -9,6 +9,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import logging
+import collections.abc
 import typing
 
 from django.utils.translation import gettext_lazy as _
@@ -33,18 +34,16 @@ if typing.TYPE_CHECKING:
     from .openshift.client import OpenshiftClient
 
 
-class OpenshiftService(DynamicService):  # pylint: disable=too-many-public-methods
-
-    # Description of service
-    type_name = _('Instance clone')
+class OpenshiftService(DynamicService):
+    type_name = _('VM clone')
     type_type = 'OpenshiftFullService'
-    type_description = _('This service provides access to cloned instances on Openshift')
+    type_description = _('This service provides access to cloned VMs on Openshift')
     icon_file = 'service.png'
 
     uses_cache = True  # Cache are running machine awaiting to be assigned
-    cache_tooltip = _('Number of desired Instances to keep running waiting for an user')
+    cache_tooltip = _('Number of desired VMs to keep running waiting for an user')
     uses_cache_l2 = True  # L2 Cache are running machines in suspended state
-    cache_tooltip_l2 = _('Number of desired Instances to keep stopped waiting for use')
+    cache_tooltip_l2 = _('Number of desired VMs to keep stopped waiting for use')
     needs_osmanager = True  # If the service needs a s.o. manager (managers are related to agents provided by services itselfs, i.e. virtual machines with agent)
     can_reset = True
 
@@ -58,8 +57,8 @@ class OpenshiftService(DynamicService):  # pylint: disable=too-many-public-metho
 
     template = gui.ChoiceField(
         order=3,
-        label=_('Template Instance'),
-        tooltip=_('Template to use for instances'),
+        label=_('Template VM'),
+        tooltip=_('Template to use for VMs'),
         required=True,
     )
 
@@ -83,7 +82,7 @@ class OpenshiftService(DynamicService):  # pylint: disable=too-many-public-metho
     prov_uuid = gui.HiddenField(value=None)
 
 
-    _cached_api: typing.Optional['OpenshiftClient'] = None
+    _cached_api: typing.Optional['OpenshiftClient'] = None #! DUDA
 
     @property
     def api(self) -> 'OpenshiftClient':
@@ -92,12 +91,18 @@ class OpenshiftService(DynamicService):  # pylint: disable=too-many-public-metho
         return self._cached_api
 
     def initialize(self, values: 'types.core.ValuesType') -> None:
+        """
+        Initialize the service with the given values.
+        """
         if not values:
             return
 
         self.basename.value = validators.validate_basename(self.basename.value, length=self.lenname.as_int())
 
     def init_gui(self) -> None:
+        """
+        Initialize the GUI elements for the service.
+        """
         self.prov_uuid.value = self.provider().get_uuid()
 
         self.template.set_choices(
@@ -109,6 +114,9 @@ class OpenshiftService(DynamicService):  # pylint: disable=too-many-public-metho
         )
 
     def provider(self) -> 'OpenshiftProvider':
+        """
+        Get the Openshift provider.
+        """
         return typing.cast('OpenshiftProvider', super().provider())
 
     def get_basename(self) -> str:
@@ -118,10 +126,10 @@ class OpenshiftService(DynamicService):  # pylint: disable=too-many-public-metho
     def get_lenname(self) -> int:
         """Returns configured length for machine names"""
         return self.lenname.as_int()
-
+    
     # Utility
     def sanitized_name(self, name: str) -> str:
-        """Sanitizes a name for Openshift (only allowed chars)
+        """Sanitizes a name for Azure (only allowed chars)
 
         Args:
             name (str): Name to sanitize
@@ -129,26 +137,39 @@ class OpenshiftService(DynamicService):  # pylint: disable=too-many-public-metho
         Returns:
             str: Sanitized name
         """
-        return ''.join(c for c in name if c.isalnum() or c in ('-', '_', '.', ' ')).strip()
+        return self.provider().sanitized_name(name)
 
-    def is_avaliable(self) -> bool:
+    def find_duplicates(self, name: str, mac: str) -> collections.abc.Iterable[str]:
+        """
+        Finds duplicate VMs by name.
+        """
+        for vm in self.api.list_vms():
+            if vm.name == name:
+                yield vm.name
+
+    def is_available(self) -> bool:
+        """
+        Checks if provider is available
+        """
         return self.provider().is_available()
 
     def get_ip(
-        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str #! DUDA
     ) -> str:
         """
         Returns the ip of the machine
         If cannot be obtained, MUST raise an exception
         """
-        vm_instance_details = self.api.get_vm_instance_info(vmid)
-        if not vm_instance_details or not vm_instance_details.interfaces:
+        logger.debug('Getting IP for VM ID: %s', vmid)
+
+        vmi_info = self.api.get_vm_instance_info(vmid)
+        if not vmi_info or not vmi_info.interfaces:
             raise morph_exceptions.OpenshiftNotFoundError(f'No interfaces found for VM {vmid}')
-        return vm_instance_details.interfaces[0].ip_address
+        return vmi_info.interfaces[0].ip_address
 
     def get_mac(
         self,
-        caller_instance: typing.Optional['DynamicUserService | DynamicPublication'],
+        caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], #! DUDA
         vmid: str,
         *,
         for_unique_id: bool = False,
@@ -160,60 +181,69 @@ class OpenshiftService(DynamicService):  # pylint: disable=too-many-public-metho
            vmid can be '' if we are requesting a new mac (on some services, where UDS generate the machines MAC)
            If the service does not support this, it can raise an exception
         """
-        vm_instance_details = self.api.get_vm_instance_info(vmid)
-        if not vm_instance_details or not vm_instance_details.interfaces:
+        if vmid == '':
+            return ''
+        logger.debug('Getting MAC for VM ID: %s', vmid)
+        vmi_info = self.api.get_vm_instance_info(vmid)
+        if not vmi_info or not vmi_info.interfaces:
+            logger.warning(f'No interfaces found for VM {vmid}. Detalles: {vmi_info}')
+            # Opcional: retornar None o string vacía según la lógica de negocio
+            # return None
             raise morph_exceptions.OpenshiftNotFoundError(f'No interfaces found for VM {vmid}')
-        return vm_instance_details.interfaces[0].mac_address
+        return vmi_info.interfaces[0].mac_address
 
     def is_running(
-        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str #! DUDA
     ) -> bool:
         """
         Checks if the VM instance is currently running.
         """
-        vm_instance_details = self.api.get_vm_instance_info(vmid)
-        if not vm_instance_details:
+        vmi_info = self.api.get_vm_instance_info(vmid)
+        if not vmi_info:
             return False
         # Use both status and phase to determine if running
         return (
-            getattr(vm_instance_details.status, "name", "").lower() == "running"
-            or getattr(vm_instance_details.phase, "name", "").lower() == "running"
+            getattr(vmi_info.status, "name", "").lower() == "running"
+            or getattr(vmi_info.phase, "name", "").lower() == "running"
         )
 
     def start(
-        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str #! DUDA
     ) -> None:
         """
         Starts the machine
         Can return a task, or None if no task is returned
         """
-        self.api.start_instance(vmid)
+        self.api.start_vm_instance(vmid)
 
     def stop(
-        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str #! DUDA
     ) -> None:
         """
         Stops the machine
         Can return a task, or None if no task is returned
         """
-        self.api.stop_instance(vmid)
+        self.api.stop_vm_instance(vmid)
 
     def shutdown(
-        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str
+        self, caller_instance: typing.Optional['DynamicUserService | DynamicPublication'], vmid: str #! DUDA
     ) -> None:
         """
         Shutdowns the machine, same as stop (both tries soft shutdown, it's a openshift thing)
         """
-        self.api.stop_instance(vmid)
+        self.api.stop_vm_instance(vmid)
 
     def execute_delete(self, vmid: str) -> None:
         """
-        Deletes the vm
+        Deletes the VM
         """
-        logger.debug('Deleting Openshift instance %s', vmid)
-        self.api.delete_instance(vmid)  # Force deletion, as we are not using soft delete
+        logger.debug('Deleting Openshift VM %s', vmid)
+        self.api.delete_vm_instance(vmid)  # Force deletion, as we are not using soft delete
 
     def is_deleted(self, vmid: str) -> bool:
+        """
+        Checks if the VM is deleted.
+        """
         try:
             self.api.get_vm_info(vmid)
         except morph_exceptions.OpenshiftNotFoundError:

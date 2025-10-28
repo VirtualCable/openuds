@@ -35,7 +35,7 @@ from uds.core import types
 from uds.core.services.generics.fixed.userservice import FixedUserService
 from uds.core.util import autoserializable
 
-from .openshift import types as morph_types
+from .openshift import types as opensh_types
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -49,49 +49,46 @@ class OpenshiftUserServiceFixed(FixedUserService, autoserializable.AutoSerializa
     suggested_delay = 4
 
     def service(self) -> 'service_fixed.OpenshiftServiceFixed':
+        """
+        Get the Openshift service.
+        """
         return typing.cast('service_fixed.OpenshiftServiceFixed', super().service())
 
-    def reset(self) -> types.states.TaskState:
-        """
-        HPE Openshift, reset operation just restarts the instance.
-        """
-        if self._vmid != '':
-            try:
-                self.service().api.restart_instance(self._vmid)
-            except Exception:  # nosec: if cannot reset, ignore it
-                pass  # If could not reset, ignore it...
-
-        return types.states.TaskState.FINISHED
-
     def op_start(self) -> None:
-        instance = self.service().provider().api.get_vm_info(self._vmid)
+        """
+        Start a VM by name.
+        """
+        vm = self.service().provider().api.get_vm_info(self._name)
 
-        if instance.status.is_off():
-            self.service().provider().api.start_instance(self._vmid)
+        if vm and vm.status.is_off():
+            self.service().provider().api.start_vm_instance(self._name)
 
     def op_stop(self) -> None:
-        instance = self.service().provider().api.get_vm_info(self._vmid)
+        """
+        Stop a VM by name.
+        """
+        vm = self.service().provider().api.get_vm_info(self._name)
 
-        # If instance is not running, do nothing
-        if instance.status.is_off():
-            logger.debug('Machine %s is already stopped', self._vmid)
+        # If vm is not running, do nothing
+        if vm and vm.status.is_off():
+            logger.debug('Machine %s is already stopped', self._name)
             return
 
-        # If instance is running, stop it
-        logger.debug('Machine %s is running, stopping it', self._vmid)
-        self.service().api.stop_instance(self._vmid)
+        # If vm is running, stop it
+        logger.debug('Machine %s is running, stopping it', self._name)
+        self.service().api.stop_vm_instance(self._name)
 
     # Check methods
-    def _check_status(self, *status: morph_types.InstanceStatus) -> types.states.TaskState:
+    def _check_status(self, *status: opensh_types.VMStatus) -> types.states.TaskState:
         """
-        Checks the status of the instance and returns the appropriate TaskState.
+        Checks the status of the vm and returns the appropriate TaskState.
         """
-        instance = self.service().provider().api.get_vm_info(self._vmid)
+        vm = self.service().provider().api.get_vm_info(self._name)
 
-        if instance.status in status:
+        if vm and vm.status in status:
             return types.states.TaskState.FINISHED
-        elif instance.status.is_error():
-            return self.error(f'Instance {self._vmid} is in error state: {instance.status}')
+        elif vm and vm.status.is_error():
+            return self.error(f'VM {self._name} is in error state: {vm.status}')
 
         return types.states.TaskState.RUNNING
 
@@ -101,8 +98,7 @@ class OpenshiftUserServiceFixed(FixedUserService, autoserializable.AutoSerializa
         Checks if machine has started
         """
         return self._check_status(
-            morph_types.InstanceStatus.RUNNING,
-            morph_types.InstanceStatus.PROVISIONING,
+            opensh_types.VMStatus.RUNNING,
         )
 
     def op_stop_checker(self) -> types.states.TaskState:
@@ -110,6 +106,6 @@ class OpenshiftUserServiceFixed(FixedUserService, autoserializable.AutoSerializa
         Checks if machine has stoped
         """
         return self._check_status(
-            morph_types.InstanceStatus.STOPPED,
-            morph_types.InstanceStatus.SUSPENDED,
+            opensh_types.VMStatus.STOPPED,
+            opensh_types.VMStatus.SUSPENDED,
         )
