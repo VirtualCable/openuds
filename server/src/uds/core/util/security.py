@@ -63,6 +63,7 @@ if typing.TYPE_CHECKING:
     from uds import models
     from uds.core import types
 
+
 def create_self_signed_cert(ip: str, with_password: bool) -> tuple[str, str, str]:
     """
     Generates a self signed certificate for the given ip.
@@ -94,13 +95,13 @@ def create_self_signed_cert(ip: str, with_password: bool) -> tuple[str, str, str
         .add_extension(san, False)
         .sign(key, hashes.SHA256(), default_backend())
     )
-    
+
     private_key = key.private_bytes(
         encoding=serialization.Encoding.PEM,
-        format=serialization.PrivateFormat.TraditionalOpenSSL,
-        encryption_algorithm=serialization.BestAvailableEncryption(password.encode()) if with_password else serialization.NoEncryption(),
+        format=serialization.PrivateFormat.PKCS8,
+        encryption_algorithm=serialization.BestAvailableEncryption(password.encode()),
     ).decode()
-    certificate = cert.public_bytes(encoding=serialization.Encoding.PEM).decode()   
+    certificate = cert.public_bytes(encoding=serialization.Encoding.PEM).decode()
 
     return (
         private_key,
@@ -186,7 +187,9 @@ def check_certificate_matches_private_key(*, cert: str, key: str) -> bool:
         return False
 
 
-def secure_requests_session(*, verify: 'str|bool' = True, proxies: 'dict[str, str]|None' = None) -> 'requests.Session':
+def secure_requests_session(
+    *, verify: 'str|bool' = True, proxies: 'dict[str, str]|None' = None
+) -> 'requests.Session':
     '''
     Generates a requests.Session object with a custom adapter that uses a custom SSLContext.
     This is intended to be used for requests that need to be secure, but not necessarily verified.
@@ -217,7 +220,11 @@ def secure_requests_session(*, verify: 'str|bool' = True, proxies: 'dict[str, st
             # See urllib3.poolmanager.SSL_KEYWORDS for all available keys.
             self._ssl_context = kwargs['ssl_context'] = create_client_sslcontext(verify=verify is True)
 
-            return super().init_poolmanager(*args, **kwargs)  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+            return (
+                super().init_poolmanager(  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+                    *args, **kwargs
+                )
+            )
 
         def cert_verify(self, conn: typing.Any, url: typing.Any, verify: 'str|bool', cert: typing.Any) -> None:
             """Verify a SSL certificate. This method should not be called from user
@@ -242,7 +249,7 @@ def secure_requests_session(*, verify: 'str|bool' = True, proxies: 'dict[str, st
 
     session = requests.Session()
     session.mount("https://", UDSHTTPAdapter())
-    
+
     if proxies is not None:
         session.proxies = proxies
 
@@ -320,7 +327,10 @@ def generate_ssh_keypair_for_ssh(key_size: int = consts.system.SECURITY_KEY_SIZE
         .split()[1]
     )
 
-def convert_to_credential_token(userservice: 'models.UserService', crendential: 'types.connections.ConnectionData') -> 'types.connections.ConnectionData':
+
+def convert_to_credential_token(
+    userservice: 'models.UserService', crendential: 'types.connections.ConnectionData'
+) -> 'types.connections.ConnectionData':
     """
     Creates a credentials token for the given username, password, and domain.
     """
