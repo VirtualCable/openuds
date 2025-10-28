@@ -9,10 +9,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 
 import logging
 import typing
-<<<<<<< HEAD
-=======
 import re
->>>>>>> origin/dev/janier/master
 
 from django.utils.translation import gettext_noop as _
 
@@ -38,11 +35,7 @@ class OpenshiftProvider(ServiceProvider):
     offers = [OpenshiftService, OpenshiftServiceFixed]
     type_name = _('Openshift Provider')
     type_type = 'OpenshiftProvider'
-<<<<<<< HEAD
-    type_description = _('Openshift based instances provider')
-=======
     type_description = _('Openshift based VMs provider')
->>>>>>> origin/dev/janier/master
     icon_file = 'provider.png'
 
     # Gui
@@ -91,11 +84,7 @@ class OpenshiftProvider(ServiceProvider):
     concurrent_removal_limit = fields.concurrent_removal_limit_field()
     timeout = fields.timeout_field()
 
-<<<<<<< HEAD
-    _cached_api: typing.Optional['client.OpenshiftClient'] = None
-=======
     _cached_api: typing.Optional['client.OpenshiftClient'] = None #! DUDA
->>>>>>> origin/dev/janier/master
 
     def initialize(self, values: 'core_types.core.ValuesType') -> None:
         # No port validation needed, URLs are used
@@ -132,8 +121,6 @@ class OpenshiftProvider(ServiceProvider):
             return core_types.core.TestResult(True, _('Connection works fine'))
 
         return core_types.core.TestResult(False, _('Connection failed. Check connection params'))
-<<<<<<< HEAD
-=======
     
     # Utility
     def sanitized_name(self, name: str) -> str:
@@ -146,4 +133,3 @@ class OpenshiftProvider(ServiceProvider):
         """
         name = re.sub(r'^[^a-z0-9]+|[^a-z0-9.-]|-{2,}|[^a-z0-9]+$', '-', name.lower())
         return name[:63]
->>>>>>> origin/dev/janier/master

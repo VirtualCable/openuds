@@ -34,13 +34,8 @@ class OpenshiftUserService(DynamicUserService, autoserializable.AutoSerializable
 
     '''
 
-<<<<<<< HEAD
-    # Due to Openshift not providing on early stage the id of the instance, we need to wait until the name is created
-    # before destroying it, so we can find the instance by name.
-=======
     # Due to Openshift not providing on early stage the id of the vm, we need to wait until the name is created
     # before destroying it, so we can find the vm by name.
->>>>>>> origin/dev/janier/master
     wait_until_finish_to_destroy: typing.ClassVar[bool] = True
 
     _waiting_name = autoserializable.BoolField(default=False)
@@ -48,15 +43,9 @@ class OpenshiftUserService(DynamicUserService, autoserializable.AutoSerializable
     # Custom queue
     _create_queue = [
         types.services.Operation.INITIALIZE,  # Used in base class to remove duplicates
-<<<<<<< HEAD
-        types.services.Operation.CREATE,  # Creating already starts the instance
-        # Starts the instance. If we include this, we will force to wait for the instance to be running
-        # Note that while deploying, the instance is IN FACT already running, so we must not include this
-=======
         types.services.Operation.CREATE,  # Creating already starts the vm
         # Starts the vm. If we include this, we will force to wait for the vm to be running
         # Note that while deploying, the vm is IN FACT already running, so we must not include this
->>>>>>> origin/dev/janier/master
         # becoase the actor could call us before we are "ready"
         # types.services.Operation.START,
         types.services.Operation.FINISH,
@@ -74,19 +63,6 @@ class OpenshiftUserService(DynamicUserService, autoserializable.AutoSerializable
         types.services.Operation.SUSPEND,
         types.services.Operation.FINISH,
     ]
-<<<<<<< HEAD
-
-    def _vm_name(self) -> str:
-        """
-        Returns the name of the VM, which is the same as the user service name
-        """
-        return f'UDS-Instance-{self._name}'
-
-    def service(self) -> 'OpenshiftService':
-        return typing.cast('OpenshiftService', super().service())
-
-    def publication(self) -> 'OpenshiftTemplatePublication':
-=======
     
     def service(self) -> 'OpenshiftService':
         """
@@ -98,7 +74,6 @@ class OpenshiftUserService(DynamicUserService, autoserializable.AutoSerializable
         """
         Get the Openshift publication.
         """
->>>>>>> origin/dev/janier/master
         pub = super().publication()
         if pub is None:
             raise Exception('No publication for this element!')
@@ -106,65 +81,6 @@ class OpenshiftUserService(DynamicUserService, autoserializable.AutoSerializable
 
     def op_create(self) -> None:
         """
-<<<<<<< HEAD
-        Deploys a machine from template for user/cache
-        """
-        # We need to wait for the name te be created, but don't want to loose the _name
-        self._waiting_name = True
-        instance_info = self.service().api.get_vm_info(self.publication().get_template_id())
-        if instance_info.status.is_cloning():
-            self.retry_later()
-        elif not instance_info.status.is_cloneable():
-            self.error(
-                f'Instance {self.service().template.value} is not cloneable, status: {instance_info.status}'
-            )
-        else:
-            # Note that name was created by DynamicPublication on "Initialize" operation
-            self.service().api.clone_instance(
-                instance_info.id,
-                self._vm_name(),
-            )
-
-    def op_create_checker(self) -> types.states.TaskState:
-        """
-        Checks the state of a deploy for a user or cache, robust and delegando a OpenshiftClient.
-        """
-        if self._waiting_name:
-            # Buscar la VM clonada por nombre usando enumerate_instances
-            vms = self.service().api.enumerate_instances()
-            found = [vm for vm in vms if vm.get('metadata', {}).get('name') == self._vm_name()]
-            if not found:
-                return types.states.TaskState.RUNNING
-            self._vmid = found[0].get('metadata', {}).get('uid', '')
-            self._waiting_name = False
-
-        instance = self.service().api.get_vm_info(self._vmid)
-        if not instance.interfaces or getattr(instance.interfaces[0], 'mac_address', '') == '':
-            return types.states.TaskState.RUNNING
-        return types.states.TaskState.FINISHED
-
-    # In fact, we probably don't need to check task status, but this way we can include the error
-    def op_start_checker(self) -> types.states.TaskState:
-        """
-        Checks if machine has started
-        """
-        if self.service().api.get_vm_info(self._vmid).status.is_running():
-            return types.states.TaskState.FINISHED
-
-        return types.states.TaskState.RUNNING
-
-    def op_stop_checker(self) -> types.states.TaskState:
-        """
-        Checks if machine has stopped
-        """
-        instance = self.service().api.get_vm_info(self._vmid)
-        if (
-            instance.status.is_stopped() or instance.status.is_provisioning()
-        ):  # Provisioning means it's not running
-            return types.states.TaskState.FINISHED
-
-        return types.states.TaskState.RUNNING
-=======
         Starts the deployment process for a user or cache, cloning the template publication.
         """
         logger.info("Starting publication process: template cloning.")
@@ -205,6 +121,7 @@ class OpenshiftUserService(DynamicUserService, autoserializable.AutoSerializable
             return
 
         logger.info(f"VM '{self._name}' created successfully.")
+        self._vmid = self._name  # Assign the VM identifier for future operations (deletion, etc.)
         self._waiting_name = False
 
     # In fact, we probably don't need to check task status, but this way we can include the error
@@ -265,4 +182,3 @@ class OpenshiftUserService(DynamicUserService, autoserializable.AutoSerializable
         Always return FINISHED for completed cancel operation.
         """
         return types.states.TaskState.FINISHED
->>>>>>> origin/dev/janier/master
