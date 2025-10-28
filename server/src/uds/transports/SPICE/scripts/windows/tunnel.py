@@ -12,6 +12,7 @@ from uds.tunnel import forward  # type: ignore
 
 # Lets find remote viewer
 # There is a bug that when installed, the remote viewer (at least 64 bits version) does not store correctly its path, so lets find it "a las bravas"
+executable = None
 for env in ('PROGRAMFILES', 'PROGRAMW6432'):
     if env in os.environ:
         for p in glob.glob(os.environ[env] + '\\virt-viewer*'):
