@@ -12,9 +12,10 @@ from uds import tools  # type: ignore
 # Lets find remote viewer
 # There is a bug that when installed, the remote viewer (at least 64 bits version) does not store correctly its path, so lets find it "a las bravas"
 executable = None
+
 for env in ('PROGRAMFILES', 'PROGRAMW6432'):
     if env in os.environ:
-        for base_folder in glob.glob(os.environ[env] + '\\virt-viewer*'):
+        for base_folder in glob.glob(os.environ[env] + '\\VirtViewer*'):
             executable = tools.findApp('remote-viewer.exe', os.path.join(base_folder, 'bin'))
             if executable is not None:
                 break
