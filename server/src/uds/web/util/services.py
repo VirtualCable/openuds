@@ -186,6 +186,9 @@ def get_services_info_dict(
     # Preload all assigned user services for this user
     # Add meta pools data first
     for meta in available_metapools:
+        if not meta.members.filter(enabled=True).exists():
+            # No enabled members, skip
+            continue
         # Check that we have access to at least one transport on some of its children
         transports_in_meta: list[collections.abc.Mapping[str, typing.Any]] = []
         in_use: bool = typing.cast(typing.Any, meta).number_in_use > 0  # Anotated value
@@ -218,10 +221,10 @@ def get_services_info_dict(
             reducer: collections.abc.Callable[[set[Transport], set[Transport]], set[Transport]] = (
                 lambda x, y: x & y
             )
-            transports_in_all_pools = reduce(
+            transports_in_all_pools: collections.abc.Iterable[Transport] = reduce(
                 reducer,
                 [{t for t in _valid_transports(member)} for member in sorted_members],
-            )
+            ) if len(sorted_members) > 0 else []
             transports_in_meta = _build_transports_for_meta(
                 transports_in_all_pools,
                 is_by_label=False,

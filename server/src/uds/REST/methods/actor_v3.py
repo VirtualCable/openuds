@@ -323,6 +323,7 @@ class Register(ActorV3Action):
                 'run_once_command': self._params['run_once_command'],
                 'custom': self._params.get('custom', ''),
             }
+
         if actor_token:
             # Update parameters
             # type is already set
@@ -425,7 +426,7 @@ class Initialize(ActorV3Action):
                 {
                     'own_token': token,  # Compat with old actor versions, TBR on 5.0
                     'token': token,  # New token, will be used from now onwards
-                    'master_token': master_token,  # Master token, to replace on unmanaged machines                    
+                    'master_token': master_token,  # Master token, to replace on unmanaged machines
                     'unique_id': unique_id,
                     'os': os,
                 }
