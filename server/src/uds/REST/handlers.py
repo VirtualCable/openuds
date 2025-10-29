@@ -391,9 +391,12 @@ class Handler(abc.ABC):
                 return self._params[name]
         return ''
     
-    def filter_queryset(self, qs: QuerySet[typing.Any]) -> QuerySet[typing.Any]:
+    def filter_queryset(self, qs: QuerySet[typing.Any]) -> list[typing.Any]:
         """
         Filters the queryset based on odata
+        
+        Note: We return a list, because after applying slicing, querysets may be evaluated
+              by using _result_cache, so we force evaluation here to avoid issues later.
         """
         # OData filter
         if self.odata.filter:
@@ -402,22 +405,26 @@ class Handler(abc.ABC):
             except ValueError as e:
                 raise exceptions.rest.RequestError(f'Invalid odata filter: {e}') from e
 
-        for order in self.odata.orderby:
-            qs = qs.order_by(order)
-
+        # order_by must be unique and all fields are summited by once
+        if self.odata.orderby:
+            qs = qs.order_by(*self.odata.orderby)
+            
+        # If odata start/limit are set, apply them
         if self.odata.start is not None:
             qs = qs[self.odata.start :]
         if self.odata.limit is not None:
             qs = qs[: self.odata.limit]
+            
+        result = list(qs)
 
         # Get total items and set it on X-Total-Count
         try:
-            total_items = qs.count()
+            total_items = len(result)
             self.add_header('X-Total-Count', total_items)
         except Exception as e:
             raise exceptions.rest.RequestError(f'Invalid odata: {e}')
 
-        return qs
+        return result
 
     def filter_data(self, data: collections.abc.Iterable[T]) -> list[T]:
         """
