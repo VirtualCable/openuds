@@ -12,12 +12,13 @@ from uds.tunnel import forward  # type: ignore
 
 # Lets find remote viewer
 # There is a bug that when installed, the remote viewer (at least 64 bits version) does not store correctly its path, so lets find it "a las bravas"
-extraPaths = ()
+executable = None
 for env in ('PROGRAMFILES', 'PROGRAMW6432'):
     if env in os.environ:
-        extraPaths += tuple(p + '\\bin' for p in glob.glob(os.environ[env] + '\\VirtViewer*'))  # type: ignore
-
-executable = tools.findApp('remote-viewer.exe', extraPaths)
+        for base_folder in glob.glob(os.environ[env] + '\\VirtViewer*'):
+            executable = tools.findApp('remote-viewer.exe', os.path.join(base_folder, 'bin'))
+            if executable is not None:
+                break
 
 if executable is None:
     raise Exception(
@@ -38,9 +39,7 @@ if sp['ticket']:  # type: ignore
 
     # Check that tunnel works..
     if fs.check() is False:
-        raise Exception(
-            '<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>'
-        )
+        raise Exception('<p>Could not connect to tunnel server.</p><p>Please, check your network settings.</p>')
 
 fss = None
 if sp['ticket_secure']:  # type: ignore
