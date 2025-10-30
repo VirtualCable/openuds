@@ -41,6 +41,7 @@ class AutoSpecMethodInfo:
     returns: typing.Any = None  # Can be a callable or a value
     partial_args: typing.Tuple[typing.Any, ...] = ()
     partial_kwargs: dict[str, typing.Any] = dataclasses.field(default_factory=dict[str, typing.Any])
+    needs_self: bool = False  # If the method needs self as first argument (for side_effect callables)
 
 
 def autospec(
@@ -64,9 +65,14 @@ def autospec(
         name = method_info.name if isinstance(method_info.name, str) else method_info.name.__name__
         mck = getattr(obj, name)
         if callable(method_info.returns):
-            mck.side_effect = functools.partial(
-                method_info.returns, *method_info.partial_args, **method_info.partial_kwargs
-            )
+            if method_info.needs_self:
+                def side_effect_with_self(*args: typing.Any, **kwargs: typing.Any) -> typing.Any:
+                    return method_info.returns(obj, *args, **kwargs)
+                mck.side_effect = side_effect_with_self
+            else:
+                mck.side_effect = functools.partial(
+                    method_info.returns, *method_info.partial_args, **method_info.partial_kwargs
+                )
             # mck.side_effect = method_info.returns
         else:
             mck.return_value = method_info.returns
