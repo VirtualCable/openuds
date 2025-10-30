@@ -486,6 +486,8 @@ class SAMLAuthenticator(auths.Authenticator):
                         verify=self.check_https_certificate.as_bool(),
                         timeout=10,
                     )
+                    if resp.status_code != 200:
+                        raise Exception(f'Invalid response code: {resp.status_code} ({resp.content})')
                     val = resp.content.decode()
                     # 10 years, unless edited the metadata will be kept
                     self.cache.put('idpMetadata', val, 86400 * 365 * 10)
@@ -657,7 +659,22 @@ class SAMLAuthenticator(auths.Authenticator):
             raise exceptions.auth.AuthenticatorException(gettext('Error processing SAML response: ') + str(e))
         errors = typing.cast(list[str], auth.get_errors())
         if errors:
-            raise exceptions.auth.AuthenticatorException('SAML response error: ' + str(errors))
+            logger.debug('Errors processing SAML response: %s (%s)', errors, auth.# The above code
+            # seems to be a
+            # comment in Python.
+            # It is not
+            # performing any
+            # action in the code
+            # but is simply
+            # providing a
+            # description or
+            # note about the
+            # purpose of the
+            # code that follows.
+            get_last_error_reason())  # pyright: ignore reportUnknownVariableType
+            logger.debug('post_data: %s', req['post_data'])
+            logger.info('Response XML: %s', auth.get_last_response_xml())  # pyright: ignore reportUnknownVariableType
+            raise exceptions.auth.AuthenticatorException(f'SAML response error: {errors} ({auth.get_last_error_reason()})')
 
         if not auth.is_authenticated():
             raise exceptions.auth.AuthenticatorException(gettext('SAML response not authenticated'))

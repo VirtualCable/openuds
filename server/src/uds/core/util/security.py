@@ -94,7 +94,7 @@ def create_self_signed_cert(ip: str) -> tuple[str, str, str]:
     return (
         key.private_bytes(
             encoding=serialization.Encoding.PEM,
-            format=serialization.PrivateFormat.TraditionalOpenSSL,
+            format=serialization.PrivateFormat.PKCS8,
             encryption_algorithm=serialization.BestAvailableEncryption(password.encode()),
         ).decode(),
         cert.public_bytes(encoding=serialization.Encoding.PEM).decode(),
@@ -165,7 +165,9 @@ def check_certificate_matches_private_key(*, cert: str, key: str) -> bool:
         return False
 
 
-def secure_requests_session(*, verify: 'str|bool' = True, proxies: 'dict[str, str]|None' = None) -> 'requests.Session':
+def secure_requests_session(
+    *, verify: 'str|bool' = True, proxies: 'dict[str, str]|None' = None
+) -> 'requests.Session':
     '''
     Generates a requests.Session object with a custom adapter that uses a custom SSLContext.
     This is intended to be used for requests that need to be secure, but not necessarily verified.
@@ -221,7 +223,7 @@ def secure_requests_session(*, verify: 'str|bool' = True, proxies: 'dict[str, st
 
     session = requests.Session()
     session.mount("https://", UDSHTTPAdapter())
-    
+
     if proxies is not None:
         session.proxies = proxies
 

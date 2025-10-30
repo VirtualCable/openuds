@@ -76,8 +76,8 @@ def get_urlpatterns_from_modules() -> list[typing.Any]:
                     # Append patters from mod
                     for up in urlpatterns:
                         patterns.append(up)
-                except Exception:
-                    logger.error('No patterns found in %s', module_fullname)
+                except Exception as e:
+                    logger.error('No patterns found in %s (%s)', module_fullname, e)
         except Exception:
             logger.exception('Processing dispatchers loading')
 
