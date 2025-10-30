@@ -5,17 +5,30 @@ import os.path
 import shutil
 import os
 
+# Asegura que subprocess, shutil, os, os.path y typing estén en el scope global para clientes antiguos (3.6)
+globals()['subprocess'] = subprocess
+globals()['shutil'] = shutil
+globals()['os'] = os
+globals()['os.path'] = os.path
+globals()['typing'] = typing
 
-logger = logging.getLogger(__name__)
+try:
+    from uds.log import logger  # For UDS Clients 3.6
+except ImportError:
+    logger = logging.getLogger(__name__)  # For UDS Clients 4.0
 
-# On older client versions, need importing globally to allow inner functions to work
-import subprocess  # type: ignore
+# También asegura logger en globales
+globals()['logger'] = logger
 
-
+# Avoid type checking annoing errors
 try:
     from uds import tools  # type: ignore
 except ImportError:
     tools: typing.Any = None
+    raise
+
+# Asegura tools en globales
+globals()['tools'] = tools
 
 if 'sp' not in globals():
     # Inject local passed sp into globals for inner functions if not already there
@@ -64,6 +77,13 @@ def exec_thincast(thincast: str) -> None:
         params = [os.path.expandvars(i) for i in [thincast] + sp['as_new_xfreerdp_params'] + [f'/v:{sp["address"]}']] # type: ignore
         _exec_client_with_params(thincast, params)
 
+# Añade las funciones al scope global para clientes antiguos (3.6)
+globals()['_prepare_rdp_file'] = _prepare_rdp_file
+globals()['_exec_client_with_params'] = _exec_client_with_params
+globals()['exec_udsrdp'] = exec_udsrdp
+globals()['exec_new_xfreerdp'] = exec_new_xfreerdp
+globals()['exec_thincast'] = exec_thincast
+
 # Typical Thincast Routes on Linux
 thincast_list = [
     '/usr/bin/thincast-remote-desktop-client',
@@ -106,7 +126,7 @@ if not executable:
 '''
     )
 else:
-    logging.debug(f'RDP client found: {executable} of kind {kind}')
+    logger.debug(f'RDP client found: {executable} of kind {kind}')
 
     # Execute the client found
     if kind == 'thincast':
