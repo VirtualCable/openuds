@@ -46,7 +46,7 @@ class AutoSpecMethodInfo:
 def autospec(
     cls: type,
     metods_info: collections.abc.Iterable[AutoSpecMethodInfo],
-    inner_data: typing.Any = None,
+    test_data: dict[str, typing.Any]|None = None,
     **kwargs: typing.Any
 ) -> mock.Mock:
     """
@@ -71,6 +71,15 @@ def autospec(
         else:
             mck.return_value = method_info.returns
 
-    obj._inner_data = inner_data
+    obj._test_data = dict() if test_data is None else test_data
+    
+    def get_test_data(attr: str) -> typing.Any:
+        return obj._test_data.get(attr)
+    
+    def set_test_data(attr: str, data: typing.Any) -> None:
+        obj._test_data[attr] = data
+
+    obj.get_test_data = get_test_data
+    obj.set_test_data = set_test_data
 
     return obj
