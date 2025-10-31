@@ -297,33 +297,28 @@ class OpenshiftClient:
         """
         Monitor the clone process of a virtual machine.
         """
-        clone_url = f"{api_url}/apis/clone.kubevirt.io/v1alpha1/namespaces/{namespace}/virtualmachineclones/{clone_name}"
-        headers = {"Authorization": f"Bearer {self.get_token()}", "Accept": "application/json"}
+        path = f"/apis/clone.kubevirt.io/v1alpha1/namespaces/{namespace}/virtualmachineclones/{clone_name}"
         logging.info("Monitoring clone process for '%s'...", clone_name)
         while True:
             try:
-                response = requests.get(clone_url, headers=headers, verify=False)
-                if response.status_code == 200:
-                    clone_data = response.json()
-                    status = clone_data.get('status', {})
-                    phase = status.get('phase', 'Unknown')
-                    logging.info("Phase: %s", phase)
-                    for condition in status.get('conditions', []):
-                        ctype = condition.get('type', '')
-                        cstatus = condition.get('status', '')
-                        cmsg = condition.get('message', '')
-                        logging.info("  %s: %s - %s", ctype, cstatus, cmsg)
-                    if phase == 'Succeeded':
-                        logging.info("Clone '%s' completed successfully!", clone_name)
-                        break
-                    elif phase == 'Failed':
-                        logging.error("Clone '%s' failed!", clone_name)
-                        break
-                elif response.status_code == 404:
-                    logging.warning("Clone resource '%s' not found. May have been cleaned up.", clone_name)
+                response = self.do_request('GET', path)
+                status = response.get('status', {})
+                phase = status.get('phase', 'Unknown')
+                logging.info("Phase: %s", phase)
+                for condition in status.get('conditions', []):
+                    ctype = condition.get('type', '')
+                    cstatus = condition.get('status', '')
+                    cmsg = condition.get('message', '')
+                    logging.info("  %s: %s - %s", ctype, cstatus, cmsg)
+                if phase == 'Succeeded':
+                    logging.info("Clone '%s' completed successfully!", clone_name)
                     break
-                else:
-                    logging.error("Error monitoring clone: %d", response.status_code)
+                elif phase == 'Failed':
+                    logging.error("Clone '%s' failed!", clone_name)
+                    break
+            except exceptions.OpenshiftNotFoundError:
+                logging.warning("Clone resource '%s' not found. May have been cleaned up.", clone_name)
+                break
             except Exception as e:
                 logging.error("Monitoring exception: %s", e)
             logging.info("Waiting %d seconds before next check...", polling_interval)
@@ -333,19 +328,16 @@ class OpenshiftClient:
         """
         Returns the name of the PVC or DataVolume used by the VM.
         """
-        vm_url = f"{api_url}/apis/kubevirt.io/v1/namespaces/{namespace}/virtualmachines/{vm_name}"
-        headers = {"Authorization": f"Bearer {self.get_token()}", "Accept": "application/json"}
-        response = requests.get(vm_url, headers=headers, verify=False)
-        if response.status_code == 200:
-            vm_obj = response.json()
-            volumes = vm_obj.get("spec", {}).get("template", {}).get("spec", {}).get("volumes", [])
-            for vol in volumes:
-                pvc = vol.get("persistentVolumeClaim")
-                if pvc:
-                    return pvc.get("claimName"), "pvc"
-                dv = vol.get("dataVolume")
-                if dv:
-                    return dv.get("name"), "dv"
+        path = f"/apis/kubevirt.io/v1/namespaces/{namespace}/virtualmachines/{vm_name}"
+        response = self.do_request('GET', path)
+        volumes = response.get("spec", {}).get("template", {}).get("spec", {}).get("volumes", [])
+        for vol in volumes:
+            pvc = vol.get("persistentVolumeClaim")
+            if pvc:
+                return pvc.get("claimName"), "pvc"
+            dv = vol.get("dataVolume")
+            if dv:
+                return dv.get("name"), "dv"
         raise Exception(f"No PVC or DataVolume found in VM {vm_name}")
 
     def get_datavolume_phase(self, datavolume_name: str) -> str:
@@ -353,13 +345,10 @@ class OpenshiftClient:
         Get the phase of a DataVolume.
         Returns the phase as a string.
         """
-        url = f"{self.api_url}/apis/cdi.kubevirt.io/v1beta1/namespaces/{self.namespace}/datavolumes/{datavolume_name}"
-        headers = {'Authorization': f'Bearer {self.get_token()}', 'Accept': 'application/json'}
+        path = f"/apis/cdi.kubevirt.io/v1beta1/namespaces/{self.namespace}/datavolumes/{datavolume_name}"
         try:
-            response = requests.get(url, headers=headers, verify=self._verify_ssl, timeout=self._timeout)
-            if response.status_code == 200:
-                dv = response.json()
-                return dv.get('status', {}).get('phase', '')
+            response = self.do_request('GET', path)
+            return response.get('status', {}).get('phase', '')
         except Exception:
             pass
         return ''
@@ -369,17 +358,14 @@ class OpenshiftClient:
         Get the size of a DataVolume.
         Returns the size as a string.
         """
-        url = f"{api_url}/apis/cdi.kubevirt.io/v1beta1/namespaces/{namespace}/datavolumes/{dv_name}"
-        headers = {"Authorization": f"Bearer {self.get_token()}", "Accept": "application/json"}
-        response = requests.get(url, headers=headers, verify=False)
-        if response.status_code == 200:
-            dv = response.json()
-            size = dv.get("status", {}).get("amount", None)
-            if size:
-                return size
-            return (
-                dv.get("spec", {}).get("pvc", {}).get("resources", {}).get("requests", {}).get("storage") or ""
-            )
+        path = f"/apis/cdi.kubevirt.io/v1beta1/namespaces/{namespace}/datavolumes/{dv_name}"
+        response = self.do_request('GET', path)
+        size = response.get("status", {}).get("amount", None)
+        if size:
+            return size
+        return (
+            response.get("spec", {}).get("pvc", {}).get("resources", {}).get("requests", {}).get("storage") or ""
+        )
         raise Exception(f"Could not get the size of DataVolume {dv_name}")
 
     def get_pvc_size(self, api_url: str, namespace: str, pvc_name: str) -> str:
@@ -387,14 +373,11 @@ class OpenshiftClient:
         Get the size of a PVC.
         Returns the size as a string.
         """
-        url = f"{api_url}/api/v1/namespaces/{namespace}/persistentvolumeclaims/{pvc_name}"
-        headers = {"Authorization": f"Bearer {self.get_token()}", "Accept": "application/json"}
-        response = requests.get(url, headers=headers, verify=False)
-        if response.status_code == 200:
-            pvc = response.json()
-            capacity = pvc.get("status", {}).get("capacity", {}).get("storage")
-            if capacity:
-                return capacity
+        path = f"/api/v1/namespaces/{namespace}/persistentvolumeclaims/{pvc_name}"
+        response = self.do_request('GET', path)
+        capacity = response.get("status", {}).get("capacity", {}).get("storage")
+        if capacity:
+            return capacity
         raise Exception(f"Could not get the size of PVC {pvc_name}")
 
     def clone_pvc_with_datavolume(
@@ -410,12 +393,7 @@ class OpenshiftClient:
         Clone a PVC using a DataVolume.
         Returns True if the DataVolume was created successfully, else False.
         """
-        dv_url = f"{api_url}/apis/cdi.kubevirt.io/v1beta1/namespaces/{namespace}/datavolumes"
-        headers = {
-            "Authorization": f"Bearer {self.get_token()}",
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-        }
+        path = f"/apis/cdi.kubevirt.io/v1beta1/namespaces/{namespace}/datavolumes"
         body: dict[str, typing.Any] = {
             "apiVersion": "cdi.kubevirt.io/v1beta1",
             "kind": "DataVolume",
@@ -429,12 +407,13 @@ class OpenshiftClient:
                 },
             },
         }
-        response = requests.post(dv_url, headers=headers, json=body, verify=False)
-        if response.status_code == 201:
+        try:
+            self.do_request('POST', path, data=body)
             logging.info(f"DataVolume '{cloned_pvc_name}' created successfully")
             return True
-        logging.error(f"Failed to create DataVolume: {response.status_code} {response.text}")
-        return False
+        except Exception as e:
+            logging.error(f"Failed to create DataVolume: {e}")
+            return False
 
     def create_vm_from_pvc(
         self,
@@ -449,16 +428,13 @@ class OpenshiftClient:
         Create a new VM from a cloned PVC using DataVolumeTemplates.
         Returns True if the VM was created successfully, else False.
         """
-        original_vm_url = (
-            f"{api_url}/apis/kubevirt.io/v1/namespaces/{namespace}/virtualmachines/{source_vm_name}"
-        )
-        headers = {"Authorization": f"Bearer {self.get_token()}", "Accept": "application/json"}
-        resp = requests.get(original_vm_url, headers=headers, verify=False)
-        if resp.status_code != 200:
-            logging.error(f"Could not get source VM: {resp.status_code} {resp.text}")
+        path = f"/apis/kubevirt.io/v1/namespaces/{namespace}/virtualmachines/{source_vm_name}"
+        try:
+            vm_obj = self.do_request('GET', path)
+        except Exception as e:
+            logging.error(f"Could not get source VM: {e}")
             return False
 
-        vm_obj = resp.json()
         vm_obj['metadata']['name'] = new_vm_name
 
         for k in ['resourceVersion', 'uid', 'selfLink']:
@@ -504,28 +480,27 @@ class OpenshiftClient:
         logger.info(f"Creating VM '{new_vm_name}' from cloned PVC '{new_dv_name}'.")
         logger.info(f"VM Object: {vm_obj}")
 
-        create_url = f"{api_url}/apis/kubevirt.io/v1/namespaces/{namespace}/virtualmachines"
-        headers["Content-Type"] = "application/json"
-        resp = requests.post(create_url, headers=headers, json=vm_obj, verify=False)
-        if resp.status_code == 201:
+        create_path = f"/apis/kubevirt.io/v1/namespaces/{namespace}/virtualmachines"
+        try:
+            self.do_request('POST', create_path, data=vm_obj)
             logging.info(f"VM '{new_vm_name}' created successfully with DataVolumeTemplate.")
             return True
-        logging.error(f"Error creating VM: {resp.status_code} {resp.text}")
-        return False
+        except Exception as e:
+            logging.error(f"Error creating VM: {e}")
+            return False
 
     def delete_vm(self, api_url: str, namespace: str, vm_name: str) -> bool:
         """
         Delete a VM by name.
         Returns True if the VM was deleted successfully, else False.
         """
-        url = f"{api_url}/apis/kubevirt.io/v1/namespaces/{namespace}/virtualmachines/{vm_name}"
-        headers = {"Authorization": f"Bearer {self.get_token()}", "Accept": "application/json"}
-        response = requests.delete(url, headers=headers, verify=False)
-        if response.status_code in [200, 202]:
+        path = f"/apis/kubevirt.io/v1/namespaces/{namespace}/virtualmachines/{vm_name}"
+        try:
+            self.do_request('DELETE', path)
             logging.info(f"VM {vm_name} deleted successfully.")
             return True
-        else:
-            logging.error(f"Error deleting VM {vm_name}: {response.status_code} - {response.text}")
+        except Exception as e:
+            logging.error(f"Error deleting VM {vm_name}: {e}")
             return False
 
     def wait_for_datavolume_clone_progress(
@@ -535,14 +510,12 @@ class OpenshiftClient:
         Wait for a DataVolume clone to complete.
         Returns True if the clone completed successfully, else False.
         """
-        url = f"{api_url}/apis/cdi.kubevirt.io/v1beta1/namespaces/{namespace}/datavolumes/{datavolume_name}"
-        headers = {"Authorization": f"Bearer {self.get_token()}", "Accept": "application/json"}
+        path = f"/apis/cdi.kubevirt.io/v1beta1/namespaces/{namespace}/datavolumes/{datavolume_name}"
         start = time.time()
         while time.time() - start < timeout:
-            response = requests.get(url, headers=headers, verify=False)
-            if response.status_code == 200:
-                dv = response.json()
-                status = dv.get('status', {})
+            try:
+                response = self.do_request('GET', path)
+                status = response.get('status', {})
                 phase = status.get('phase')
                 progress = status.get('progress', 'N/A')
                 logging.info(f"DataVolume {datavolume_name} status: {phase}, progress: {progress}")
@@ -552,8 +525,8 @@ class OpenshiftClient:
                 elif phase == 'Failed':
                     logging.error(f"DataVolume {datavolume_name} clone failed")
                     return False
-            else:
-                logging.error(f"Error querying DataVolume {datavolume_name}: {response.status_code}")
+            except Exception as e:
+                logging.error(f"Error querying DataVolume {datavolume_name}: {e}")
             time.sleep(polling_interval)
         logging.error(f"Timeout waiting for DataVolume {datavolume_name} clone")
         return False
@@ -563,40 +536,47 @@ class OpenshiftClient:
         Start a VM by name.
         Returns True if the VM was started successfully, else False.
         """
-        url = f"{api_url}/apis/kubevirt.io/v1/namespaces/{namespace}/virtualmachines/{vm_name}"
-        headers = {
-            "Authorization": f"Bearer {self.get_token()}",
-            "Content-Type": "application/merge-patch+json",
-            "Accept": "application/json",
-        }
-        body: dict[str, typing.Any] = {"spec": {"runStrategy": "Always"}}
-        response = requests.patch(url, headers=headers, json=body, verify=False)
-        if response.status_code in [200, 201]:
-            logging.info(f"VM {vm_name} started.")
-            return True
-        else:
-            logging.info(f"Error starting VM {vm_name}: {response.status_code} - {response.text}")
+
+        # Get Vm info 
+        path = f"/apis/kubevirt.io/v1/namespaces/{namespace}/virtualmachines/{vm_name}"
+        try:
+            vm_obj = self.do_request('GET', path)
+        except Exception as e:
+            logging.error(f"Could not get source VM: {e}")
             return False
+        
+        # Update runStrategy to Always
+        vm_obj['spec']['runStrategy'] = 'Always'
+        try:
+            self.do_request('PUT', path, data=vm_obj)
+            logging.info(f"VM {vm_name} will be started.")
+            return True
+        except Exception as e:
+            logging.info(f"Error starting VM {vm_name}: {e}")
+            return False 
 
     def stop_vm(self, api_url: str, namespace: str, vm_name: str) -> bool:
         """
         Stop a VM by name.
         Returns True if the VM was stopped successfully, else False.
         """
-        url = f"{api_url}/apis/kubevirt.io/v1/namespaces/{namespace}/virtualmachines/{vm_name}"
-        headers = {
-            "Authorization": f"Bearer {self.get_token()}",
-            "Content-Type": "application/merge-patch+json",
-            "Accept": "application/json",
-        }
-        body: dict[str, typing.Any] = {"spec": {"runStrategy": "Halted"}}
-        response = requests.patch(url, headers=headers, json=body, verify=False)
-        if response.status_code in [200, 201]:
+        # Get Vm info 
+        path = f"/apis/kubevirt.io/v1/namespaces/{namespace}/virtualmachines/{vm_name}"
+        try:
+            vm_obj = self.do_request('GET', path)
+        except Exception as e:
+            logging.error(f"Could not get source VM: {e}")
+            return False
+
+        # Update runStrategy to Halted
+        vm_obj['spec']['runStrategy'] = 'Halted'
+        try:
+            self.do_request('PUT', path, data=vm_obj)
             logging.info(f"VM {vm_name} will be stopped.")
             return True
-        else:
-            logging.info(f"Error stopping VM {vm_name}: {response.status_code} - {response.text}")
-            return False
+        except Exception as e:
+            logging.info(f"Error starting VM {vm_name}: {e}")
+            return False 
 
     def copy_vm_same_size(
         self, api_url: str, namespace: str, source_vm_name: str, new_vm_name: str, storage_class: str
@@ -688,22 +668,3 @@ class OpenshiftClient:
         except Exception as e:
             logging.error(f"Error deleting VM: {e}")
             return False
-
-    def clone_vm_instance(self, source_vm_name: str, new_vm_name: str, storage_class: str) -> bool:
-        """
-        Clone a VM by name, creating a new VM with the same size.
-        Returns True if clone succeeded, False otherwise.
-        """
-        try:
-            self.copy_vm_same_size(self.api_url, self.namespace, source_vm_name, new_vm_name, storage_class)
-            return True
-        except Exception as e:
-            logging.error(f"Error cloning VM: {e}")
-            return False
-
-    @staticmethod
-    def validate_vm_id(vm_id: str | int) -> None:
-        try:
-            int(vm_id)
-        except ValueError:
-            raise exceptions.OpenshiftNotFoundError(f'VM {vm_id} not found')
