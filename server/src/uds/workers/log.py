@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 
 
 class LogMaintenance(Job):
-    frecuency = 30  # Once every hour
+    frecuency = 3600  # Once every hour
     # frecuency_cfg = GlobalConfig.XXXX
     friendly_name = 'Log maintenance'
 
