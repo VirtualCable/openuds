@@ -42,7 +42,10 @@ class SystemInformation(Job):
     friendly_name = 'System Information update'
 
     def run(self) -> None:
+        logger.debug('System information started')
         try:
             cluster.store_cluster_info()
         except Exception as e:
             logger.error('Error storing cluster hostname: %s', e)
+            
+        logger.debug('System information done')
