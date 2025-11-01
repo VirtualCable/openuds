@@ -73,18 +73,23 @@ class LogMaintenance(Job):
             removing_before = sql_now() - datetime.timedelta(seconds=3600)
             if 0 < max_elements < count:  # Negative max elements means "unlimited"
                 # Recent logs (last hour)
-                recent_ids = set(models.Log.objects.filter(
-                    owner_id=owner_id,
-                    owner_type=owner_type,
-                    created__gte=removing_before
-                ).values_list('id', flat=True))
+                recent_ids = set(
+                    models.Log.objects.filter(
+                        owner_id=owner_id, owner_type=owner_type, created__gte=removing_before
+                    ).values_list('id', flat=True)
+                )
 
-                # Old logs (before last hour)
-                old_ids_to_keep = set(models.Log.objects.filter(
-                    owner_id=owner_id,
-                    owner_type=owner_type,
-                    created__lt=removing_before
-                ).order_by('-created', '-id').values_list('id', flat=True)[:max_elements])
+                num_to_keep = max_elements - len(recent_ids)
+                old_ids_to_keep: set[int] = set()
+                if num_to_keep > 0:
+                    # Old logs (before last hour)
+                    old_ids_to_keep = set(
+                        models.Log.objects.filter(
+                            owner_id=owner_id, owner_type=owner_type, created__lt=removing_before
+                        )
+                        .order_by('-created', '-id')
+                        .values_list('id', flat=True)[:num_to_keep]
+                    )
 
                 # IDs to keep
                 ids_to_keep = recent_ids.union(old_ids_to_keep)
