@@ -288,3 +288,4 @@ class ServiceCacheUpdater(Job):
                 self.reduce_l2_cache(servicepool_stat)
             elif servicepool_stat.is_l2_cache_growth_required():  # We need more L2 items
                 self.grow_l2_cache(servicepool_stat)
+        logger.debug('Cache checking done')
