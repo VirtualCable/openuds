@@ -46,7 +46,7 @@ logger = logging.getLogger(__name__)
 
 
 class BaseThread(threading.Thread, abc.ABC):
-    
+
     @abc.abstractmethod
     def request_stop(self) -> None:
         raise NotImplementedError
@@ -108,7 +108,9 @@ class TaskManager(metaclass=singleton.Singleton):
     def add_other_tasks(self) -> None:
         logger.info("Registering other tasks")
 
-        from uds.core.messaging.processor import MessageProcessorThread  # pylint: disable=import-outside-toplevel
+        from uds.core.messaging.processor import (
+            MessageProcessorThread,
+        )  # pylint: disable=import-outside-toplevel
 
         thread = MessageProcessorThread()
         thread.start()
@@ -126,11 +128,14 @@ class TaskManager(metaclass=singleton.Singleton):
         self.register_scheduled_tasks()
 
         n_schedulers: int = GlobalConfig.SCHEDULER_THREADS.as_int()
-        n_delayed_tasks: int = GlobalConfig.DELAYED_TASKS_THREADS.as_int()
+        if n_schedulers < 1:
+            n_schedulers = 1  # At least one scheduler
 
-        logger.info(
-            'Starting %s schedulers and %s task executors', n_schedulers, n_delayed_tasks
-        )
+        n_delayed_tasks: int = GlobalConfig.DELAYED_TASKS_THREADS.as_int()
+        if n_delayed_tasks < 1:
+            n_delayed_tasks = 1  # At least one delayed task
+
+        logger.info('Starting %s schedulers and %s task executors', n_schedulers, n_delayed_tasks)
 
         signal.signal(signal.SIGTERM, TaskManager.sig_term)
         signal.signal(signal.SIGINT, TaskManager.sig_term)
