@@ -1,4 +1,6 @@
 name: Test OpenUDS
+permissions:
+  contents: read
 
 on:
   push:
