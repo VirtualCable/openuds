@@ -31,6 +31,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 
 import random
 import typing
+import inspect
 import collections.abc
 
 from django.test import SimpleTestCase
@@ -139,13 +140,15 @@ class RestStruct:
 
     def as_dict(self, **kwargs: typing.Any) -> dict[str, typing.Any]:
         # Use kwargs to override values
-        res = {k: kwargs.get(k, getattr(self, k)) for k in self.__annotations__}  # pylint: disable=no-member
+        annotations = inspect.get_annotations(self.__class__)
+        # Extract type from annotations
+        res = {k: kwargs.get(k, getattr(self, k)) for k in annotations}  # pylint: disable=no-member
         # Remove None values for optional fields
         return {
             k: v
             for k, v in res.items()
             if v is not None
-            or self.__annotations__[k]  # pylint: disable=no-member
+            or annotations[k]  # pylint: disable=no-member
             not in (
                 typing.Optional[str],
                 typing.Optional[bool],
@@ -158,4 +161,5 @@ class RestStruct:
     def random_create(cls, **kwargs: typing.Any) -> 'RestStruct':
         # Use kwargs to override values
         # Extract type from annotations
-        return cls(**{k: random_value(v, kwargs.get(k, None)) for k, v in cls.__annotations__.items()})
+        annotations = inspect.get_annotations(cls)
+        return cls(**{k: random_value(v, kwargs.get(k, None)) for k, v in annotations.items()})
