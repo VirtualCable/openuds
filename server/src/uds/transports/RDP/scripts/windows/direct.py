@@ -51,4 +51,4 @@ if executable is None:
 
 subprocess.Popen([executable, filename])  # nosec
 
-# tools.addFileToUnlink(filename)
+tools.addFileToUnlink(filename)
