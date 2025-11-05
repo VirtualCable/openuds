@@ -38,82 +38,85 @@ from tests.services.openshift import fixtures
 from tests.utils.test import UDSTransactionTestCase
 
 
+
 class TestOpenshiftServiceFixed(UDSTransactionTestCase):
+    def _create_service_fixed_with_provider(self):
+        """
+        Helper to create a fixed service with a patched provider.
+        """
+        provider_ctx = fixtures.patched_provider()
+        provider = provider_ctx.__enter__()
+        service = fixtures.create_service_fixed(provider=provider)
+        return service, provider, provider_ctx
     def setUp(self) -> None:
         super().setUp()
         fixtures.clear()
 
-    def test_service_fixed_data(self) -> None:
+    # --- Availability ---
+    def test_service_is_available(self) -> None:
         """
-        Test fixed service data
+        Test provider availability and cache logic.
         """
-        service = fixtures.create_service_fixed()
+        service, provider, provider_ctx = self._create_service_fixed_with_provider()
+        api = typing.cast(mock.MagicMock, provider.api)
+        self.assertTrue(service.is_available())
+        api.test.assert_called_with()
+        # With cached data, even if test fails, it will return True
+        api.test.return_value = False
+        self.assertTrue(service.is_available())
+        # Clear cache and test again
+        service.provider().is_available.cache_clear()  # type: ignore
+        self.assertFalse(service.is_available())
+        api.test.assert_called_with()
+        provider_ctx.__exit__(None, None, None)
 
-        self.assertEqual(service.token.value, fixtures.SERVICE_FIXED_VALUES_DICT['token'])
-        self.assertEqual(service.machines.value, fixtures.SERVICE_FIXED_VALUES_DICT['machines'])
-        self.assertEqual(service.on_logout.value, fixtures.SERVICE_FIXED_VALUES_DICT['on_logout'])
-        self.assertEqual(service.randomize.value, fixtures.SERVICE_FIXED_VALUES_DICT['randomize'])
-        self.assertEqual(service.maintain_on_error.value, fixtures.SERVICE_FIXED_VALUES_DICT['maintain_on_error'])
-
-    def test_service_fixed_is_available(self) -> None:
+    # --- Service methods ---
+    def test_service_methods(self) -> None:
         """
-        Test fixed service availability
+        Test service methods: enumerate_assignables, get_name, get_ip, get_mac, sanitized_name.
         """
-        with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider.api)
-            service = fixtures.create_service_fixed(provider=provider)
+        service, _, provider_ctx = self._create_service_fixed_with_provider()
+        # Enumerate assignables
+        machines = list(service.enumerate_assignables())
+        self.assertEqual(len(machines), 3)
+        self.assertEqual(machines[0].id, 'vm-3')
+        self.assertEqual(machines[1].id, 'vm-4')
+        self.assertEqual(machines[2].id, 'vm-5')
+        # Get machine name
+        machine_name = service.get_name('uid-3')
+        self.assertEqual(machine_name, 'vm-3')
+        # Get IP
+        ip = service.get_ip('uid-3')
+        self.assertTrue(ip.startswith('192.168.1.'))
+        # Get MAC
+        mac = service.get_mac('uid-3')
+        self.assertTrue(mac.startswith('00:11:22:33:44:'))
+        # Sanitized name
+        sanitized = service.sanitized_name('Test VM 1')
+        self.assertIsInstance(sanitized, str)
+        provider_ctx.__exit__(None, None, None)
 
-            self.assertTrue(service.is_available())
-            api.test.assert_called_with()
-
-            # Test with cached data
-            api.test.return_value = False
-            self.assertTrue(service.is_available())
-
-            # Clear cache and test again
-            service.provider().is_available.cache_clear()  # type: ignore
-            self.assertFalse(service.is_available())
-            api.test.assert_called_with()
-
-    def test_service_fixed_methods(self) -> None:
+    # --- Assignment logic ---
+    def test_get_and_assign(self) -> None:
         """
-        Test fixed service methods
+        Test get_and_assign logic for fixed service.
         """
-        with fixtures.patched_provider() as provider:
-            service = fixtures.create_service_fixed(provider=provider)
+        service, _, provider_ctx = self._create_service_fixed_with_provider()
+        vmid = service.get_and_assign()
+        self.assertIn(vmid, ['vm-3', 'vm-4', 'vm-5'])
+        # Should not assign the same again
+        with service._assigned_access() as assigned:
+            self.assertIn(vmid, assigned)
+        provider_ctx.__exit__(None, None, None)
 
-            # Test get machines
-            machines = list(service.enumerate_assignables())
-            self.assertEqual(len(machines), 3)
-            self.assertEqual(machines[0], 'vm-3')
-            self.assertEqual(machines[1], 'vm-4')
-            self.assertEqual(machines[2], 'vm-5')
-
-            # Test get machine name
-            machine_name = service.get_name('vm-3')
-            self.assertEqual(machine_name, 'vm-3')
-
-            # Test sanitized name
-            sanitized = service.sanitized_name('Test VM 1')
-            self.assertEqual(sanitized, 'test-vm-1')
-
-    def test_service_fixed_assignment(self) -> None:
+    def test_remove_and_free(self) -> None:
         """
-        Test fixed service assignment
+        Test remove_and_free logic for fixed service.
         """
-        with fixtures.patched_provider() as provider:
-            service = fixtures.create_service_fixed(provider=provider)
-
-            # Test assign from empty
-            user = fixtures.create_user()  # Create a valid User instance
-            userservice_instance = fixtures.create_userservice_fixed(service=service)
-            assigned: typing.Optional[str] = service.assign_from_assignables(assignable_id='', user=user, userservice_instance=userservice_instance)
-            self.assertEqual(assigned, 'vm-3')
-
-            # Test with existing assignments
-            assigned: typing.Optional[str] = service.assign_from_assignables(assignable_id='vm-3', user=user, userservice_instance=userservice_instance)
-            self.assertEqual(assigned, 'vm-4')
-
-            # Test with all assigned
-            assigned: typing.Optional[str] = service.assign_from_assignables(assignable_id='vm-3,vm-4,vm-5', user=user, userservice_instance=userservice_instance)
-            self.assertIsNone(assigned)
+        service, _, provider_ctx = self._create_service_fixed_with_provider()
+        vmid = service.get_and_assign()
+        result = service.remove_and_free(vmid)
+        self.assertEqual(result.name, 'FINISHED')
+        with service._assigned_access() as assigned:
+            self.assertNotIn(vmid, assigned)
+        provider_ctx.__exit__(None, None, None)

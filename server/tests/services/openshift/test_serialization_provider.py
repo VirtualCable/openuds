@@ -30,43 +30,54 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import pickle
-
 from tests.services.openshift import fixtures
-
 from tests.utils.test import UDSTransactionTestCase
+from uds.services.OpenShift.provider import OpenshiftProvider
 
+PROVIDER_SERIALIZE_DATA = (
+    '{'
+    '"cluster_url": "https://oauth-openshift.apps-crc.testing", '
+    '"api_url": "https://api.crc.testing:6443", '
+    '"username": "kubeadmin", '
+    '"password": "test-password", '
+    '"namespace": "default", '
+    '"verify_ssl": false, '
+    '"concurrent_creation_limit": 1, '
+    '"concurrent_removal_limit": 1, '
+    '"timeout": 10'
+    '}'
+)
 
 class TestOpenshiftProviderSerialization(UDSTransactionTestCase):
-    def test_provider_serialization(self) -> None:
-        """
-        Test provider serialization
-        """
-        provider = fixtures.create_provider()
-
-        # Serialize and deserialize
-        data = pickle.dumps(provider)
-        provider2 = pickle.loads(data)
-
-        self.assertEqual(provider2.cluster_url.value, fixtures.PROVIDER_VALUES_DICT['cluster_url'])
-        self.assertEqual(provider2.api_url.value, fixtures.PROVIDER_VALUES_DICT['api_url'])
-        self.assertEqual(provider2.username.value, fixtures.PROVIDER_VALUES_DICT['username'])
-        self.assertEqual(provider2.password.value, fixtures.PROVIDER_VALUES_DICT['password'])
-        self.assertEqual(provider2.namespace.value, fixtures.PROVIDER_VALUES_DICT['namespace'])
-        self.assertEqual(provider2.verify_ssl.value, fixtures.PROVIDER_VALUES_DICT['verify_ssl'])
-
+    # --- Serialization Tests ---
     def test_provider_methods_after_serialization(self) -> None:
         """
-        Test provider methods after serialization
+        Test that provider methods return correct values after serialization and deserialization.
         """
+        from uds.core import environment
+
         provider = fixtures.create_provider()
+        data = provider.serialize()
 
-        # Serialize and deserialize
-        data = pickle.dumps(provider)
-        provider2 = pickle.loads(data)
+        provider2 = OpenshiftProvider(environment=environment.Environment.testing_environment())
+        provider2.deserialize(data)
 
-        # Test methods after serialization
-        self.assertEqual(provider2.get_name(), 'Openshift Provider')
-        self.assertEqual(provider2.get_description(), 'Openshift Provider')
-        self.assertEqual(provider2.get_cluster_url(), 'https://oauth-openshift.apps-crc.testing')
-        self.assertEqual(provider2.get_api_url(), 'https://api.crc.testing:6443')
+        self.assertEqual(str(provider2.type_name), 'Openshift Provider')
+        self.assertEqual(str(provider2.type_description), 'Openshift based VMs provider')
+        self.assertEqual(provider2.cluster_url.value, fixtures.PROVIDER_VALUES_DICT['cluster_url'])
+        self.assertEqual(provider2.api_url.value, fixtures.PROVIDER_VALUES_DICT['api_url'])
+
+    def test_provider_serialization(self) -> None:
+        """
+        Test that all provider fields are correctly serialized and deserialized.
+        """
+        from uds.core import environment
+
+        provider = fixtures.create_provider()
+        data = provider.serialize()  
+
+        provider2 = OpenshiftProvider(environment=environment.Environment.testing_environment())
+        provider2.deserialize(data)
+
+        for field in fixtures.PROVIDER_VALUES_DICT:
+            self.assertEqual(getattr(provider2, field).value, fixtures.PROVIDER_VALUES_DICT[field])

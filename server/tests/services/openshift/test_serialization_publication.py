@@ -38,37 +38,68 @@ from tests.utils.test import UDSTransactionTestCase
 
 
 class TestOpenshiftPublicationSerialization(UDSTransactionTestCase):
-    def setUp(self) -> None:
-        fixtures.clear()
+    EXPECTED_FIELDS = {'_name', '_waiting_name', '_reason', '_queue', '_vmid', '_is_flagged_for_destroy'}
 
-    def test_publication_serialization(self) -> None:
+    def setUp(self) -> None:
         """
-        Test publication serialization
+        Set up test environment and clear fixtures before each test.
+        """
+        super().setUp()
+        fixtures.clear()
+        
+    def _make_publication(self):
+        """
+        Helper to create a publication with all fields set for serialization tests.
         """
         publication = fixtures.create_publication()
         publication._name = 'test-template'
         publication._reason = 'test-reason'
         publication._waiting_name = True
+        return publication
 
-        # Serialize and deserialize
-        data = pickle.dumps(publication)
-        publication2 = pickle.loads(data)
-
-        self.assertEqual(publication2._name, 'test-template')
-        self.assertEqual(publication2._reason, 'test-reason')
-        self.assertEqual(publication2._waiting_name, True)
-
-    def test_publication_methods_after_serialization(self) -> None:
+    # --- Field Check Helper ---
+    def check_fields(self, instance: 'fixtures.publication.OpenshiftTemplatePublication') -> None:
         """
-        Test publication methods after serialization
+        Helper to check expected field values in a publication instance.
+        """
+        self.assertEqual(instance._name, 'test-template')
+        self.assertEqual(instance._reason, 'test-reason')
+        self.assertTrue(instance._waiting_name)
+
+    # --- Serialization Tests ---
+    def test_autoserialization_fields(self) -> None:
+        """
+        Test that autoserializable fields match the expected set.
         """
         publication = fixtures.create_publication()
-        publication._name = 'test-template'
+        fields = set(f[0] for f in publication._autoserializable_fields())
+        self.assertSetEqual(fields, self.EXPECTED_FIELDS)
 
-        # Serialize and deserialize
+    def test_pickle_serialization(self) -> None:
+        """
+        Test that publication object is correctly serialized and deserialized using pickle.
+        """
+        publication = self._make_publication()
         data = pickle.dumps(publication)
         publication2 = pickle.loads(data)
+        self.check_fields(publication2)
 
-        # Test methods after serialization
-        self.assertEqual(publication2.get_name(), 'test-template')
+    def test_marshal_unmarshal(self) -> None:
+        """
+        Test that publication object is correctly marshaled and unmarshaled.
+        """
+        publication = self._make_publication()
+        marshaled = publication.marshal()
+        publication2 = fixtures.create_publication()
+        publication2.unmarshal(marshaled)
+        self.check_fields(publication2)
+
+    def test_methods_after_serialization(self) -> None:
+        """
+        Test that publication methods return correct values after serialization and deserialization.
+        """
+        publication = self._make_publication()
+        data = pickle.dumps(publication)
+        publication2 = pickle.loads(data)
+        self.assertEqual(publication2._name, 'test-template')
         self.assertEqual(publication2.get_template_id(), 'test-template')

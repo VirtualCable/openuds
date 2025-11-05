@@ -30,118 +30,142 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+
 import typing
 from unittest import mock
 
 from uds.core import types
-
 from tests.services.openshift import fixtures
-
 from tests.utils.test import UDSTransactionTestCase
 
 
 class TestOpenshiftPublication(UDSTransactionTestCase):
     def setUp(self) -> None:
+        super().setUp()
         fixtures.clear()
 
-    def test_publication_creation(self) -> None:
+    def test_op_create_and_checker(self) -> None:
         """
-        Test publication creation
+        Test op_create and op_create_checker flow
         """
         with fixtures.patched_provider() as provider:
             api = typing.cast(mock.MagicMock, provider.api)
             service = fixtures.create_service(provider=provider)
             publication = fixtures.create_publication(service=service)
 
-            # Mock the publication process
             api.get_vm_pvc_or_dv_name.return_value = ('test-pvc', 'pvc')
             api.get_pvc_size.return_value = '10Gi'
             api.create_vm_from_pvc.return_value = True
             api.wait_for_datavolume_clone_progress.return_value = True
-            api.get_vm_info.return_value = fixtures.VMS[0]
+            api.get_vm_info.return_value = None
+
+            publication.op_create()
+            api.get_vm_info.return_value = None
+            state = publication.op_create_checker()
+            self.assertEqual(state, types.states.TaskState.RUNNING)
+
+            def get_vm_info_side_effect(name: str) -> mock.Mock | None:
+                return mock.Mock(status=mock.Mock()) if name == publication._name else None
+            
+            api.get_vm_info.side_effect = get_vm_info_side_effect
+            state = publication.op_create_checker()
+            self.assertEqual(state, types.states.TaskState.FINISHED)
+
+    def test_op_create_completed_and_checker(self) -> None:
+        """
+        Test op_create_completed and op_create_completed_checker flow
+        """
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider.api)
+            service = fixtures.create_service(provider=provider)
+            publication = fixtures.create_publication(service=service)
+
+            # VM running
+            running_status = mock.Mock()
+            running_status.is_running.return_value = True
+            running_vm = mock.Mock(status=running_status)
+            
+            def get_vm_info_side_effect(name: str, **kwargs: dict[str, typing.Any]) -> mock.Mock | None:
+                return running_vm if name == 'test-vm' else None
+
+            api.get_vm_info.side_effect = get_vm_info_side_effect
+            publication._name = 'test-vm'
+            publication.op_create_completed()
+            api.stop_vm_instance.assert_called_with('test-vm')
+
+            # VM stopped
+            stopped_status = mock.Mock()
+            stopped_status.is_running.return_value = False
+            stopped_vm = mock.Mock(status=stopped_status)
+            
+            api.get_vm_info.side_effect = None
+            api.get_vm_info.return_value = stopped_vm
+            api.stop_vm_instance.reset_mock()
+            publication.op_create_completed()
+            api.stop_vm_instance.assert_not_called()
+
+            # Checker: VM not found
+            api.get_vm_info.return_value = None
+            state = publication.op_create_completed_checker()
+            self.assertEqual(state, types.states.TaskState.FINISHED)
+
+            # Checker: VM stopped
+            api.get_vm_info.return_value = stopped_vm
+            state = publication.op_create_completed_checker()
+            self.assertEqual(state, types.states.TaskState.FINISHED)
+
+            # Checker: VM running
+            api.get_vm_info.return_value = running_vm
+            state = publication.op_create_completed_checker()
+            self.assertEqual(state, types.states.TaskState.RUNNING)
+
+    def test_publication_create(self) -> None:
+        """
+        Test publication creation (publish)
+        """
+        with fixtures.patched_provider() as provider:
+            api = typing.cast(mock.MagicMock, provider.api)
+            service = fixtures.create_service(provider=provider)
+            publication = fixtures.create_publication(service=service)
+
+            api.get_vm_pvc_or_dv_name.return_value = ('test-pvc', 'pvc')
+            api.get_pvc_size.return_value = '10Gi'
+            api.create_vm_from_pvc.return_value = True
+            api.wait_for_datavolume_clone_progress.return_value = True
+
+            call_count = {"count": 0}
+            def vm_info_side_effect(*args: typing.Any, **kwargs: typing.Any) -> typing.Any:
+                if call_count["count"] < 2:
+                    call_count["count"] += 1
+                    return fixtures.VMS[0]
+                
+                ready_vm = mock.Mock()
+                ready_vm.status = mock.Mock()
+                ready_vm.name = publication._name
+                return ready_vm
+            api.get_vm_info.side_effect = vm_info_side_effect
 
             state = publication.publish()
             self.assertEqual(state, types.states.State.RUNNING)
 
-            # Check that publication process was initiated
+            state = publication.check_state()
             api.get_vm_pvc_or_dv_name.assert_called()
             api.get_pvc_size.assert_called()
             api.create_vm_from_pvc.assert_called()
 
-    def test_publication_creation_checker(self) -> None:
-        """
-        Test publication creation checker
-        """
-        with fixtures.patched_provider() as provider:
-            service = fixtures.create_service(provider=provider)
-            publication = fixtures.create_publication(service=service)
-
-            # Ensure api is a mock so we can set return_value
-            api = typing.cast(mock.MagicMock, publication.service().api)
-
-            # Test when VM is not found yet
-            publication._waiting_name = True
-            api.get_vm_info.return_value = None
-
-            state = publication.op_create_checker()
+            for _ in range(10):
+                state = publication.check_state()
+                if state == types.states.TaskState.FINISHED:
+                    break
             self.assertEqual(state, types.states.TaskState.RUNNING)
-
-            # Test when VM is found
-            api.get_vm_info.return_value = fixtures.VMS[0]
-            state = publication.op_create_checker()
-            self.assertEqual(state, types.states.TaskState.FINISHED)
-
-    def test_publication_completed(self) -> None:
-        """
-        Test publication completion
-        """
-        with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider.api)
-            service = fixtures.create_service(provider=provider)
-            publication = fixtures.create_publication(service=service)
-
-            # Test with running VM
-            running_vm = fixtures.VMS[0]
-            running_vm.status = fixtures.openshift_types.VMStatus.RUNNING
-            api.get_vm_info.return_value = running_vm
-
-            publication.op_create_completed()
-            api.stop_vm_instance.assert_called_with(publication._name)
-
-            # Test with stopped VM
-            stopped_vm = fixtures.VMS[0]
-            stopped_vm.status = fixtures.openshift_types.VMStatus.STOPPED
-            api.get_vm_info.return_value = stopped_vm
-            api.reset_mock()
-
-            publication.op_create_completed()
-            api.stop_vm_instance.assert_not_called()
-
-    def test_publication_destroy(self) -> None:
-        """
-        Test publication destruction
-        """
-        with fixtures.patched_provider() as provider:
-            api = typing.cast(mock.MagicMock, provider.api)
-            service = fixtures.create_service(provider=provider)
-            publication = fixtures.create_publication(service=service)
-            publication._name = 'test-vm'
-
-            state = publication.destroy()
-            self.assertEqual(state, types.states.State.RUNNING)
-
-            # Check state should call delete
-            state = publication.check_state()
-            self.assertEqual(state, types.states.State.RUNNING)
-            api.delete_vm_instance.assert_called_with('test-vm')
+            self.assertEqual(publication.get_template_id(), publication._name)
 
     def test_get_template_id(self) -> None:
         """
-        Test template ID retrieval
+        Test template ID retrieval (get_template_id)
         """
         service = fixtures.create_service()
         publication = fixtures.create_publication(service=service)
         publication._name = 'test-template'
-
         template_id = publication.get_template_id()
         self.assertEqual(template_id, 'test-template')

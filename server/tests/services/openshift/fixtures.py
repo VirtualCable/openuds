@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+"""
+Test fixtures for OpenShift service tests.
+Provides reusable functions and mock objects for unit testing OpenShift provider, service, deployment, publication, and user service logic.
+All functions are designed to be used across multiple test modules for consistency and maintainability.
+"""
 
 #
 # Copyright (c) 2024 Virtual Cable S.L.U.
@@ -42,7 +47,6 @@ import uuid
 from uds.core import environment
 from uds.core.ui.user_interface import gui
 from uds.models.user import User
-from unittest import mock
 
 from uds.services.OpenShift import service, service_fixed, provider, publication, deployment, deployment_fixed
 from uds.services.OpenShift.openshift import types as openshift_types, exceptions as openshift_exceptions
@@ -59,7 +63,6 @@ DEF_VMS: list[openshift_types.VM] = [
     )
     for i in range(1, 11)
 ]
-
 DEF_VM_INSTANCES: list[openshift_types.VMInstance] = [
     openshift_types.VMInstance(
         name=f'vm-{i}',
@@ -85,7 +88,8 @@ VM_INSTANCES: list[openshift_types.VMInstance] = copy.deepcopy(DEF_VM_INSTANCES)
 
 def clear() -> None:
     """
-    Resets all values to the default ones
+    Reset all VM and VMInstance values to their default state.
+    Use this before each test to ensure a clean environment.
     """
     VMS[:] = copy.deepcopy(DEF_VMS)
     VM_INSTANCES[:] = copy.deepcopy(DEF_VM_INSTANCES)
@@ -93,7 +97,8 @@ def clear() -> None:
 
 def replace_vm_info(vm_name: str, **kwargs: typing.Any) -> None:
     """
-    Set the values of VMS by name
+    Update attributes of a VM in VMS by name.
+    Raises OpenshiftNotFoundError if VM is not found.
     """
     try:
         vm = next(vm for vm in VMS if vm.name == vm_name)
@@ -104,6 +109,10 @@ def replace_vm_info(vm_name: str, **kwargs: typing.Any) -> None:
 
 
 def replacer_vm_info(**kwargs: typing.Any) -> typing.Callable[..., None]:
+    """
+    Returns a partial function to update VM info with preset kwargs.
+    Useful for patching or repeated updates in tests.
+    """
     return functools.partial(replace_vm_info, **kwargs)
 
 
@@ -111,6 +120,10 @@ T = typing.TypeVar('T')
 
 
 def returner(value: T, *args: typing.Any, **kwargs: typing.Any) -> typing.Callable[..., T]:
+    """
+    Returns a function that always returns the given value.
+    Useful for mocking return values in tests.
+    """
     def inner(*args: typing.Any, **kwargs: typing.Any) -> T:
         return value
 
@@ -152,34 +165,47 @@ SERVICE_FIXED_VALUES_DICT: gui.ValuesDictType = {
 
 def create_client_mock() -> mock.Mock:
     """
-    Create a mock of OpenshiftClient
+    Create a MagicMock for OpenshiftClient with default behaviors and side effects.
+    Used to simulate API responses in provider/service tests.
     """
     client = mock.MagicMock()
 
-    vms = copy.deepcopy(DEF_VMS)
-    vm_instances = copy.deepcopy(DEF_VM_INSTANCES)
-
-    # Setup client methods
+    # Prepare deep copies of default data
     client.test.return_value = True
-    client.list_vms.return_value = vms
-    client.get_vm_info.return_value = lambda vm_name: next((vm for vm in vms if vm.name == vm_name), None)  # type: ignore[arg-type]
-    client.get_vm_instance_info.return_value = lambda vm_name: next((vmi for vmi in vm_instances if vmi.name == vm_name), None)  # type: ignore[arg-type]
+    client.list_vms.return_value = copy.deepcopy(DEF_VMS)
     client.start_vm_instance.return_value = True
     client.stop_vm_instance.return_value = True
     client.delete_vm_instance.return_value = True
-    client.get_datavolume_phase.return_value = 'Succeeded'
-    client.get_vm_pvc_or_dv_name.return_value = ('test-pvc', 'pvc')
-    client.get_pvc_size.return_value = '10Gi'
+    client.get_datavolume_phase.return_value = "Succeeded"
+    client.get_vm_pvc_or_dv_name.return_value = ("test-pvc", "pvc")
+    client.get_pvc_size.return_value = "10Gi"
     client.create_vm_from_pvc.return_value = True
     client.wait_for_datavolume_clone_progress.return_value = True
+
+    def get_vm_info_side_effect(vm_name: str, **kwargs: typing.Any) -> openshift_types.VM | None:
+        for vm in VMS:
+            if vm.name == vm_name:
+                return vm
+        return None
+
+    def get_vm_instance_info_side_effect(vm_name: str, **kwargs: typing.Any) -> openshift_types.VMInstance | None:
+        for inst in VM_INSTANCES:
+            if inst.name == vm_name:
+                return inst
+        return None
+
+    client.get_vm_info.side_effect = get_vm_info_side_effect
+    client.get_vm_instance_info.side_effect = get_vm_instance_info_side_effect
 
     return client
 
 
 @contextlib.contextmanager
-def patched_provider(
-    **kwargs: typing.Any,
-) -> typing.Generator[provider.OpenshiftProvider, None, None]:
+def patched_provider(**kwargs: typing.Any) -> typing.Generator[provider.OpenshiftProvider, None, None]:
+    """
+    Context manager that yields a provider with a patched OpenshiftClient mock.
+    Use this to ensure all API calls are intercepted and controlled in tests.
+    """
     client = create_client_mock()
     prov = create_provider(**kwargs)
     prov._cached_api = client
@@ -188,7 +214,8 @@ def patched_provider(
 
 def create_provider(**kwargs: typing.Any) -> provider.OpenshiftProvider:
     """
-    Create a provider
+    Create an OpenshiftProvider instance with default or overridden values.
+    Used for provider-level tests and as a dependency for other fixtures.
     """
     values = PROVIDER_VALUES_DICT.copy()
     values.update(kwargs)
@@ -203,7 +230,8 @@ def create_service(
     provider: typing.Optional[provider.OpenshiftProvider] = None, **kwargs: typing.Any
 ) -> service.OpenshiftService:
     """
-    Create a dynamic service
+    Create an OpenshiftService instance (dynamic service).
+    Used for service-level tests and as a dependency for user services and publications.
     """
     uuid_ = str(uuid.uuid4())
     values = SERVICE_VALUES_DICT.copy()
@@ -221,7 +249,8 @@ def create_service_fixed(
     provider: typing.Optional[provider.OpenshiftProvider] = None, **kwargs: typing.Any
 ) -> service_fixed.OpenshiftServiceFixed:
     """
-    Create a fixed service
+    Create an OpenshiftServiceFixed instance (fixed service).
+    Used for fixed service tests and as a dependency for fixed user services.
     """
     uuid_ = str(uuid.uuid4())
     values = SERVICE_FIXED_VALUES_DICT.copy()
@@ -239,7 +268,8 @@ def create_publication(
     **kwargs: typing.Any,
 ) -> publication.OpenshiftTemplatePublication:
     """
-    Create a publication
+    Create an OpenshiftTemplatePublication instance.
+    Used for publication-level tests and as a dependency for user services.
     """
     uuid_ = str(uuid.uuid4())
     pub = publication.OpenshiftTemplatePublication(
@@ -258,7 +288,8 @@ def create_userservice(
     publication: typing.Optional[publication.OpenshiftTemplatePublication] = None,
 ) -> deployment.OpenshiftUserService:
     """
-    Create a dynamic user service
+    Create an OpenshiftUserService instance (dynamic user service).
+    Used for user service tests that require a publication and service.
     """
     uuid_ = str(uuid.uuid4())
     return deployment.OpenshiftUserService(
@@ -273,7 +304,8 @@ def create_userservice_fixed(
     service: typing.Optional[service_fixed.OpenshiftServiceFixed] = None,
 ) -> deployment_fixed.OpenshiftUserServiceFixed:
     """
-    Create a fixed user service
+    Create an OpenshiftUserServiceFixed instance (fixed user service).
+    Used for tests of fixed user service logic and lifecycle.
     """
     uuid_ = str(uuid.uuid4().hex)
     return deployment_fixed.OpenshiftUserServiceFixed(
@@ -298,7 +330,8 @@ def create_user(
     comments: str = '',
 ) -> User:
     """
-    Creates a mock User instance for testing purposes.
+    Create a mock User instance for testing.
+    All fields can be customized for specific test scenarios.
     """
     user = mock.Mock(spec=User)
     user.name = name
