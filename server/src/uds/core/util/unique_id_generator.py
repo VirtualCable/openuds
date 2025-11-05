@@ -163,7 +163,6 @@ class UniqueGenerator:
             logger.debug('Last: %s', last)
             seq = last.seq + 1
         except Exception:
-            # logger.exception('Error here')
             seq = 0
         with transaction.atomic():
             self._range_filter(seq).delete()  # Clean ups all unassigned after last assigned in this range

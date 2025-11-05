@@ -15,7 +15,7 @@ cryptography
 python3-saml
 six
 dnspython
-lxml
+# lxml  must be installed source to avoid conflicts
 ovirt-engine-sdk-python
 pycurl
 matplotlib

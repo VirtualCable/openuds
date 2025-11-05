@@ -101,6 +101,18 @@ class OpenshiftClient:
         except Exception as ex:
             logging.error(f"Could not obtain token: {ex}")
             raise
+    
+    def connect(self, force: bool = False) -> requests.Session:
+        # For testing, always use the fixed token
+        session = self._session = security.secure_requests_session(verify=self._verify_ssl)
+        session.headers.update(
+            {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': f'Bearer {self.get_token()}',
+            }
+        )
+        return session
 
     def connect(self, force: bool = False) -> requests.Session:
         # For testing, always use the fixed token
