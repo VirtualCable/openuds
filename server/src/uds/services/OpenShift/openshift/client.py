@@ -34,7 +34,6 @@ import urllib.parse
 import logging
 import requests
 import time
-import token
 
 from uds.core.util import security
 from uds.core.util.cache import Cache
@@ -42,9 +41,7 @@ from uds.core.util.decorators import cached
 
 from . import types, consts, exceptions
 
-
 logger = logging.getLogger(__name__)
-
 
 class OpenshiftClient:
     cluster_url: str
@@ -89,20 +86,7 @@ class OpenshiftClient:
     def session(self) -> requests.Session:
         return self.connect()
 
-    def connect(self, force: bool = False) -> requests.Session:
-        # For testing, always use the fixed token
-        session = self._session = security.secure_requests_session(verify=self._verify_ssl)
-        session.headers.update(
-            {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer sha256~m4wPsB2IKXszCMtEW3Fdngebm-sSuuuBxAd4x74n1IA',
-            }
-        )
-        return session
-
     def get_token(self) -> str | None:
-        return "sha256~m4wPsB2IKXszCMtEW3Fdngebm-sSuuuBxAd4x74n1IA"
         try:
             url = (
                 f"{self.cluster_url}/oauth/authorize?client_id=openshift-challenging-client&response_type=token"
@@ -117,6 +101,18 @@ class OpenshiftClient:
         except Exception as ex:
             logging.error(f"Could not obtain token: {ex}")
             raise
+
+    def connect(self, force: bool = False) -> requests.Session:
+        # For testing, always use the fixed token
+        session = self._session = security.secure_requests_session(verify=self._verify_ssl)
+        session.headers.update(
+            {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': f'Bearer {self.get_token()}',
+            }
+        )
+        return session
 
     def get_api_url(self, path: str, *parameters: tuple[str, str]) -> str:
         url = self.api_url + path
