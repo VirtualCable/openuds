@@ -96,7 +96,7 @@ class NotificationsManager(metaclass=singleton.Singleton):
             message = message % args
         except Exception:
             message = message + ' ' + str(args) + ' (format error)'
-        message = message[:4096]  # Max length of message
+        message = message[:4000]  # Max length of message, fixed to ensure it also supports sqlserver
         # Store the notification on local persistent storage
         # Will be processed by UDS backend
         try:
