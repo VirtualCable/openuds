@@ -16,10 +16,10 @@ const errorString = `You need to have xfreerdp or Thincast installed and in path
 
 // Try, in order of preference, to find other RDP clients
 const executablePath =
+    Process.findExecutable('udsrdp') ||
     Process.findExecutable('thincast-remote-desktop-client') ||
     Process.findExecutable('thincast-client') ||
     Process.findExecutable('thincast') ||
-    Process.findExecutable('udsrdp') ||
     Process.findExecutable('xfreerdp3') ||
     Process.findExecutable('xfreerdp') ||
     Process.findExecutable('xfreerdp');
