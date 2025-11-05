@@ -31,6 +31,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import datetime
 import logging
+import typing
 
 from django.db.models import Count
 
@@ -41,7 +42,7 @@ from uds.core.util.model import sql_now
 from uds.core.util import config
 
 # from uds.core.util.config import GlobalConfig
-
+MAX_BATCH_SIZE: typing.Final[int] = 32768
 
 logger = logging.getLogger(__name__)
 
@@ -52,6 +53,7 @@ class LogMaintenance(Job):
     friendly_name = 'Log maintenance'
 
     def run(self) -> None:
+        logger.debug('Starting Log maintenance')
         # Select all disctinct owner_id and owner_type and count of each
         # For each one, check if it has more than max_elements, and if so, delete the oldest ones
         for owner_id, owner_type, count in (
@@ -68,19 +70,30 @@ class LogMaintenance(Job):
                 continue
 
             max_elements = owner_type.get_max_elements()
-            # Ensures that last hour logs are not deleted
-            removing_before = sql_now() - datetime.timedelta(seconds=3600)
+
             if 0 < max_elements < count:  # Negative max elements means "unlimited"
-                # We will delete the oldest ones
-                for record in models.Log.objects.filter(
-                    owner_id=owner_id,
-                    owner_type=owner_type,
-                    created__lt=removing_before,
-                ).order_by('created', 'id')[: count - max_elements + 1]:
-                    record.delete()
+                logger.debug(
+                    'Log maintenance: Owner %s of type %s has %d logs, max is %d, cleaning up',
+                    owner_id,
+                    owner_type.name,
+                    count,
+                    max_elements,
+                )
+                ids_to_delete = list(
+                    models.Log.objects.filter(
+                        owner_id=owner_id,
+                        owner_type=owner_type,
+                    )
+                    .order_by('created', 'id')
+                    .values_list('id', flat=True)[max_elements : max_elements + MAX_BATCH_SIZE]
+                )
+
+                if ids_to_delete:
+                    models.Log.objects.filter(id__in=ids_to_delete).delete()
 
         # Also, delete all logs older than config.GlobalConfig.STATS_DURATION.as_int()*2 days
         # This is to ensure we do not have "orphan" logs too old
         models.Log.objects.filter(
             created__lt=sql_now() - datetime.timedelta(days=config.GlobalConfig.STATS_DURATION.as_int() * 2)
         ).delete()
+        logger.debug('Log maintenance done')

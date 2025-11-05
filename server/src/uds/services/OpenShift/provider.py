@@ -43,17 +43,17 @@ class OpenshiftProvider(ServiceProvider):
         order=1,
         length=128,
         label=_('Cluster OAuth URL'),
-        tooltip=_('Openshift OAuth URL, e.g. https://oauth-openshift.apps-crc.testing'),
+        tooltip=_('Openshift OAuth URL, e.g. https://oauth-openshift.apps-crc.testing or https://console-openshift.apps-crc.testing'),
         required=True,
-        default='https://oauth-openshift.apps-crc.testing',
+        default='',
     )
     api_url = gui.TextField(
         order=2,
         length=128,
         label=_('API URL'),
-        tooltip=_('Openshift API URL, e.g. https://localhost:6443'),
+        tooltip=_('Openshift API URL, e.g. https://api.crc.testing:6443'),
         required=True,
-        default='https://localhost:6443',
+        default='',
     )
     username = gui.TextField(
         order=3,
@@ -69,7 +69,7 @@ class OpenshiftProvider(ServiceProvider):
         label=_('Password'),
         tooltip=_('Password of the user of Openshift Server'),
         required=True,
-        default='Tn5u8-9k9I9-6WF3Y-q5hSB',
+        default='',
     )
     namespace = gui.TextField(
         order=5,
@@ -84,7 +84,7 @@ class OpenshiftProvider(ServiceProvider):
     concurrent_removal_limit = fields.concurrent_removal_limit_field()
     timeout = fields.timeout_field()
 
-    _cached_api: typing.Optional['client.OpenshiftClient'] = None #! DUDA
+    _cached_api: typing.Optional['client.OpenshiftClient'] = None # Cached API client
 
     def initialize(self, values: 'core_types.core.ValuesType') -> None:
         # No port validation needed, URLs are used

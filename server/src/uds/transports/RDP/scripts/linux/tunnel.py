@@ -1,11 +1,21 @@
 import typing
 import shutil
 import os
-import logging
 import subprocess
 import os.path
 
-logger = logging.getLogger(__name__)
+# Asegura que subprocess y shutil estén en el scope global para clientes antiguos (3.6)
+globals()['subprocess'] = subprocess
+globals()['shutil'] = shutil
+globals()['os'] = os
+globals()['os.path'] = os.path
+globals()['typing'] = typing
+
+try:
+    from uds.log import logger  # For UDS Clients 3.6
+except ImportError:
+    import logger
+    logger = logger.getLogger(__name__)  # For UDS Clients 4.0
 
 # On older client versions, need importing globally to allow inner functions to work
 import subprocess  # type: ignore
@@ -55,7 +65,7 @@ def _exec_client_with_params(executable: str, params: typing.List[str], unlink_f
         tools.addFileToUnlink(unlink_file)
 
 def exec_udsrdp(udsrdp: str, port: int) -> None:
-    logging.debug('UDSRDP client will use command line parameters')
+    logger.debug('UDSRDP client will use command line parameters')
     params: typing.List[str] = [os.path.expandvars(i) for i in [app] + sp['as_new_xfreerdp_params'] + [f'/v:127.0.0.1:{port}']]  # type: ignore
     _exec_client_with_params(udsrdp, params)
 
@@ -66,7 +76,7 @@ def exec_new_xfreerdp(xfreerdp: str, port: int) -> None:
         params = [xfreerdp, dest_filename, f'/p:{sp.get("password", "")}'] # type: ignore
         _exec_client_with_params(xfreerdp, params, unlink_file=dest_filename)
     else:
-        logging.debug('XFREERDP client will use command line parameters')
+        logger.debug('XFREERDP client will use command line parameters (xfreerdp)')
         params: typing.List[str] = [os.path.expandvars(i) for i in [app] + sp['as_new_xfreerdp_params'] + [f'/v:127.0.0.1:{port}']]  # type: ignore
         _exec_client_with_params(xfreerdp, params)
 
@@ -77,7 +87,7 @@ def exec_thincast(thincast: str, port: int) -> None:
         params = [thincast, dest_filename, f'/p:{sp.get("password", "")}'] # type: ignore
         _exec_client_with_params(thincast, params, unlink_file=dest_filename)
     else:
-        logging.debug('Thincast client will use command line parameters')
+        logger.debug('Thincast client will use command line parameters (xfreerdp)')
         params: typing.List[str] = [os.path.expandvars(i) for i in [app] + sp['as_new_xfreerdp_params'] + [f'/v:127.0.0.1:{port}']]  # type: ignore
         _exec_client_with_params(thincast, params)
 
@@ -108,8 +118,7 @@ if fs.check() is False:
 
 # If thincast exists, use it. If not, continue with UDSRDP/XFREERDP as before
 if thincast_executable:
-    logging.debug('Thincast client found, using it')
-    #logging.debug(f'RDP file params: {sp.get("as_file", "")}')
+    logger.debug('Thincast client found, using it')
     fnc, app = exec_thincast, thincast_executable
 else:
     xfreerdp: typing.Optional[str] = tools.findApp('xfreerdp3') or tools.findApp('xfreerdp') or tools.findApp('xfreerdp2')
@@ -129,6 +138,17 @@ else:
         </ul>
 '''
         )
+
+# Asegura que app y fnc sean globales para clientes antiguos (3.6)
+globals()['app'] = app
+globals()['fnc'] = fnc
+
+# Añade las funciones al scope global para clientes antiguos (3.6)
+globals()['_prepare_rdp_file'] = _prepare_rdp_file
+globals()['_exec_client_with_params'] = _exec_client_with_params
+globals()['exec_udsrdp'] = exec_udsrdp
+globals()['exec_new_xfreerdp'] = exec_new_xfreerdp
+globals()['exec_thincast'] = exec_thincast
 
 if fnc is not None and app is not None:
     fnc(app, fs.server_address[1])
