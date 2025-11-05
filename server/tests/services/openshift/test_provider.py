@@ -135,6 +135,8 @@ class TestOpenshiftProvider(UDSTransactionTestCase):
             ('Test-VM-1', 'test-vm-1'),
             ('Test_VM@2', 'test-vm-2'),
             ('My Test VM!!!', 'my-test-vm'),
+            ('Test !!! this is', 'test-this-is'),
+            ('UDS-Pub-Hello World!!--2025065122-v1', 'uds-pub-hello-world-2025065122-v1'),
             ('a' * 100, 'a' * 63),  # Test truncation
         ]
         for input_name, expected in test_cases:
