@@ -116,7 +116,10 @@ class DjangoQueryTransformer(lark.Transformer[typing.Any, Q | AnnotatedField]):
 
     @lark.visitors.v_args(inline=True)
     def field(self, arg: lark.Token) -> FieldName:
-        return FieldName(arg.value)
+        field_name = arg.value
+        if "__" in field_name:
+            raise ValueError("Field names cannot contain '__'")
+        return FieldName(field_name)
 
     @lark.visitors.v_args(inline=True)
     def binary_expr(self, left: typing.Any, op: typing.Any, right: typing.Any) -> Q:

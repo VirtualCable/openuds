@@ -17,3 +17,4 @@ Notes
 * From `v4.0` onwards (current master), OpenUDS has been splitted in several repositories and contains submodules. Remember to use "git clone --resursive ..." to fetch it ;-).
 * `v4.0` version needs Python 3.11 (may work fine on newer versions). It uses new features only available on 3.10 or later, and is tested against 3.11. It will probably work on 3.10 too.
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/VirtualCable/openuds)

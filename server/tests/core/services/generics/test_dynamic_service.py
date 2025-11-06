@@ -45,8 +45,8 @@ from . import fixtures
 @dataclasses.dataclass
 class DynamicServiceIterationInfo:
     queue: list[types.services.Operation]
-    service_calls: list[mock._Call] = dataclasses.field(default_factory=list)
-    user_service_calls: list[mock._Call] = dataclasses.field(default_factory=list)
+    service_calls: list[mock._Call] = dataclasses.field(default_factory=list[mock._Call])
+    user_service_calls: list[mock._Call] = dataclasses.field(default_factory=list[mock._Call])
     state: str = types.states.TaskState.RUNNING
 
     def __mul__(self, other: int) -> list['DynamicServiceIterationInfo']:
