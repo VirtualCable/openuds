@@ -315,10 +315,14 @@ class Transport(Module):
         osname: str,
         type: typing.Literal['tunnel', 'direct'],
         params: collections.abc.Mapping[str, typing.Any],
+        client_version: str | None = None,
     ) -> types.transports.TransportScript:
         """
         Returns a script for the given os and type
         """
+        if (client_version or '0.0') >= '5.0.0':
+            return self.get_relative_script(f'scripts/{osname.lower()}/{type}.js', params)
+
         return self.get_relative_script(f'scripts/{osname.lower()}/{type}.py', params)
 
     def get_link(

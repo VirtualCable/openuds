@@ -26,7 +26,7 @@ const executablePath =
 
 if (!executablePath) {
     Logger.error('No RDP client found on system');
-    throw new Error('No RDP client found on system');
+    throw new Error(errorString);
 }
 
 // using Utils.expandVars, expand variables of data.freerdp_params (that is an array of strings)
@@ -43,7 +43,7 @@ if (data.as_file) {
 
     // Append to removable task to delete the file later
     Tasks.addEarlyUnlinkableFile(rdpFilePath);
-    let password = data.password ? `/p:${data.password}` : '';
+    let password = data.password ? `/p:${data.password}` : '/p:';
     // Launch the RDP client with the temp file
     process = Process.launch(executablePath, [rdpFilePath, password]);  // the addres in INSIDE the file is already set to
 } else {

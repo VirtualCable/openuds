@@ -32,6 +32,9 @@ if (!executablePath) {
 // using Utils.expandVars, expand variables of data.freerdp_params (that is an array of strings)
 let parameters = data.freerdp_params.map((param) => Utils.expandVars(param));
 
+// Note: we use "script mode" of boa, and top level await is not allowed
+// So we need a helper function to use await inside, and use .then
+
 let tunnel = null;
 try {
     tunnel = Tasks.startTunnel(data.tunHost, data.tunPort, data.ticket, null, data.tunChk);
